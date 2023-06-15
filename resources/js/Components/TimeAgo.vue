@@ -17,7 +17,7 @@ const formattedDate = computed(() => {
         return '';
     } else {
         const fechaActual = new Date(); // Fecha actual
-        const fechaPublicacion = props.date instanceof Date ? props.date : new Date(props.date);
+        const fechaPublicacion = props.date instanceof Date ? props.date : new Date(props.date * 1000);
 
         const title = fechaPublicacion.toLocaleString();
 

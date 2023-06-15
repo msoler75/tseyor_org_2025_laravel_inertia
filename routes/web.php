@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\NoticiasController;
+use App\Http\Controllers\ArchivosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,8 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::get('/archivos{ruta}', [ArchivosController::class, 'index'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
 Route::get('/noticias', [NoticiasController::class, 'index'])->name('noticias');
 Route::get('/noticias/{id}', [NoticiasController::class, 'show'])->name('noticia');
