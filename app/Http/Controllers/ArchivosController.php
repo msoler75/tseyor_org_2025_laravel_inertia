@@ -13,7 +13,7 @@ class ArchivosController extends Controller
     {
         $ruta = $request->path();
 
-        Log::info("explorar archivos en ". $ruta);
+        Log::info("explorar archivos en " . $ruta);
         // Obtener la URL relativa actual de la aplicación
         $baseUrl = url("");
 
@@ -22,7 +22,7 @@ class ArchivosController extends Controller
         if ($ruta != "archivos" && $ruta != "/archivos") {
             // Agregar elemento de carpeta padre
             $carpeta = $ruta;
-            $lm=Storage::disk('public')->lastModified($carpeta);
+            $lm = Storage::disk('public')->lastModified($carpeta);
             $archivos_internos = Storage::disk('public')->files($carpeta);
             $subcarpetas_internas = Storage::disk('public')->directories($carpeta);
             $items[] = [
@@ -38,8 +38,8 @@ class ArchivosController extends Controller
 
         // Agregar carpetas a la colección de elementos
         $carpetas = Storage::disk('public')->directories($ruta);
-        Log::info("actualizarItems.ruta=". $ruta);
-        Log::info("actualizarItems.carpetas=". count($carpetas));
+        Log::info("actualizarItems.ruta=" . $ruta);
+        Log::info("actualizarItems.carpetas=" . count($carpetas));
         //dd($carpetas);
         foreach ($carpetas as $carpeta) {
             $archivos_internos = Storage::disk('public')->files($carpeta);
@@ -68,12 +68,14 @@ class ArchivosController extends Controller
             ];
         }
 
-        Log::info("actualizarItems.items=". count($items));
+        Log::info("actualizarItems.items=" . count($items));
 
         return Inertia::render('Archivos', [
             'items' => $items,
             'ruta' => $ruta
         ]);
     }
+
+
 
 }

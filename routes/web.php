@@ -28,6 +28,7 @@ Route::get('/', function () {
 
 Route::get('/archivos{ruta}', [ArchivosController::class, 'index'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
+
 Route::get('/noticias', [NoticiasController::class, 'index'])->name('noticias');
 Route::get('/noticias/{id}', [NoticiasController::class, 'show'])->name('noticia');
 
