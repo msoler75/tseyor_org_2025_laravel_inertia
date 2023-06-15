@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\FilesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::post('/files/upload/file', [FilesController::class, 'uploadFile'])->name('files.upload.file');
+Route::post('/files/upload/image', [FilesController::class, 'uploadImage'])->name('files.upload.image');
+Route::put('/files/mkdir', [FilesController::class, 'makeDir'])->name('files.mkdir');
