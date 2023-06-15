@@ -18,7 +18,7 @@ class NoticiasController extends Controller
             ->orWhere('texto', 'like', '%' . $filtro . '%')
             ->paginate(12)
             :
-            Noticia::latest()->paginate(12);
+            Noticia::latest()->paginate(10);
 
         $recientes = Noticia::select(['slug', 'titulo', 'published_at'])->where('estado', 'P')->latest()->take(24)->get();
 

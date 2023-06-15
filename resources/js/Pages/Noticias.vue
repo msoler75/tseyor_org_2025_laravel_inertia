@@ -13,7 +13,8 @@
                             <input name="buscar" type="search" placeholder="Texto..." v-model="filtro"
                                 class="w-full max-w-[200px] border border-gray-200 rounded focus:outline-none focus:border-gray-400" />
 
-                            <button type="submit" @click.prevent="buscar()" class="btn-primary">
+                            <button type="submit" @click.prevent="buscar()" class="btn-primary"
+                            :disabled="filtro==filtroResultados">
                                 Buscar
                             </button>
 
@@ -53,6 +54,10 @@
                         </div>
                     </div>
                 </div>
+
+
+                <pagination class="mt-6" :links="resultados.links" />
+
             </div>
 
             <div class="min-w-[250px] lg:min-w-[440px]">
@@ -78,6 +83,7 @@ import { ref, watch } from 'vue';
 import TimeAgo from '@/Components/TimeAgo.vue';
 import { Link, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import Pagination from '@/Components/Pagination.vue'
 
 defineOptions({ layout: AppLayout })
 
