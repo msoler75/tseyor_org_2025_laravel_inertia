@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\NoticiasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,9 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/noticias', [NoticiasController::class, 'index'])->name('noticias');
+Route::get('/noticias/{id}', [NoticiasController::class, 'show'])->name('noticia');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -33,3 +37,5 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
+

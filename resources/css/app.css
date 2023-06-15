@@ -2,6 +2,122 @@
 @tailwind components;
 @tailwind utilities;
 
+
 [x-cloak] {
     display: none;
+}
+
+
+@layer base {
+    h1 {
+        @apply text-4xl font-bold leading-tight text-gray-900;
+    }
+
+    h2 {
+        @apply text-3xl font-semibold text-gray-900;
+    }
+
+    h3 {
+        @apply text-2xl font-semibold text-gray-900;
+    }
+
+    p {
+        @apply my-6 text-base text-gray-700;
+    }
+
+    ul {
+        @apply list-disc pl-8 text-gray-700;
+    }
+
+    a {
+        @apply text-blue-500 underline;
+    }
+
+    a:hover {
+        @apply text-blue-600;
+    }
+
+    code {
+        @apply bg-gray-100 p-1 font-mono text-sm;
+    }
+
+    pre {
+        @apply bg-gray-100 p-4 text-sm;
+    }
+
+
+    html {
+        font-size: 15px;
+    }
+
+    @media (min-width: 768px) {
+        html {
+            font-size: 16px;
+        }
+    }
+
+    @media (min-width: 1280px) {
+        html {
+            font-size: 17px;
+        }
+    }
+
+    @media (min-width: 1920px) {
+        html {
+            font-size: 18px;
+        }
+    }
+
+}
+
+
+
+
+
+@layer components {
+
+
+    /* Estilos para formularios */
+    label {
+        @apply block font-semibold text-gray-700 mb-2;
+    }
+
+    input {
+        @apply block w-full px-4 py-2 leading-tight text-gray-700 bg-white border border-gray-400 rounded shadow appearance-none focus:outline-none;
+    }
+
+    form .error {
+        @apply text-red-500 text-sm ml-1 mt-1;
+    }
+
+    /* Estilos para botones */
+    .btn {
+        @apply inline-block font-semibold text-white px-4 rounded transition duration-500 ease-in-out cursor-pointer;
+    }
+
+    .btn:hover {
+        @apply bg-purple-600;
+    }
+
+    .btn:focus,
+    .btn:active {
+        @apply outline-none shadow-outline;
+    }
+
+    .btn-primary {
+        @apply px-4 py-2  text-white bg-blue-500 rounded hover:bg-blue-600;
+    }
+
+    .btn-secondary {
+        @apply px-4 py-2  text-gray-600 bg-white rounded border border-gray-200 hover:bg-gray-50;
+    }
+
+}
+
+
+@layer utilities {
+    .shadow-outline {
+        box-shadow: 0 0 0 3px rgba(164, 202, 254, 0.45);
+        outline: none;
+    }
 }
