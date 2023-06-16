@@ -94,7 +94,7 @@
                         <tr v-for="item in itemsOrdenados"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-blue-100' : '')" :key="item.ruta"
                             v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
-                            <td v-if="seleccionando" @click="item.seleccionado = !item.seleccionado"
+                            <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
@@ -334,6 +334,9 @@ const props = defineProps({
 
 const items = ref([...props.items])
 
+// icono de carpeta
+const folderIcon = 'ph:folder-simple-duotone';
+
 
 // SELECCION
 
@@ -358,31 +361,70 @@ watch(()=>items, verificarFinSeleccion, {deep: true})
 // EVENTOS TOUCH
 
 function onTouchStart(item) {
+    console.log('touchStart')
+    item.touching = true
     if (seleccionando.value)
         item.seleccionado = !item.seleccionado
     else
         item.longTouchTimer = setTimeout(() => {
+            if (!seleccionandoConMouse) {
             item.seleccionado = true;
             seleccionando.value = true
+            }
         }, 700); // tiempo en milisegundos para considerar un "long touch"
 }
 
 function onTouchEnd(item) {
+    console.log('touchEnd')
     clearTimeout(item.longTouchTimer);
+    item.touching = false
+}
+
+function toggleItem(item)
+{
+    console.log('toggleItem')
+    if(!item.touching)
+    item.seleccionado = !item.seleccionado
+    item.touching = false
 }
 
 // SUBIR ARCHIVOS
 const modalSubirArchivos = ref(false)
 
-
-
-
-
 const modalCrearCarpeta = ref(false)
 
+
+const dropzoneOptions = ref({
+    url: route('files.upload.file'),
+    thumbnailWidth: 150,
+    maxFilesize: 50
+})
+
+function sendingEvent(file, xhr, formData) {
+    formData.append('destinationPath', props.ruta);
+}
+
+
+var someUploaded = ref(false)
+function successEvent(file, response) {
+    someUploaded.value = true
+    //console.log('successEvent', props.ruta)
+    //router.get("/" + props.ruta)
+}
+
+watch(modalSubirArchivos, (value) => {
+    if (value)
+        someUploaded.value = false
+    else if (someUploaded.value) {
+        // recargamos la vista
+        router.get("/" + props.ruta)
+    }
+})
+
+
+// ORDENACION
+
 const ordenarPor = ref("fechaDesc")
-
-
 
 const itemsOrdenados = computed(() => {
     // Separar las carpetas y los archivos en dos grupos
@@ -437,35 +479,6 @@ const itemsOrdenados = computed(() => {
 });
 
 
-const dropzoneOptions = ref({
-    url: route('files.upload.file'),
-    thumbnailWidth: 150,
-    maxFilesize: 50
-})
-
-function sendingEvent(file, xhr, formData) {
-    formData.append('destinationPath', props.ruta);
-}
-
-
-var someUploaded = ref(false)
-function successEvent(file, response) {
-    someUploaded.value = true
-    //console.log('successEvent', props.ruta)
-    //router.get("/" + props.ruta)
-}
-
-watch(modalSubirArchivos, (value) => {
-    if (value)
-        someUploaded.value = false
-    else if (someUploaded.value) {
-        // recargamos la vista
-        router.get("/" + props.ruta)
-    }
-})
-
-const folderIcon = 'ph:folder-simple-duotone';
-
 /* function crearCarpetaKeydown(event) {
     if (event.keyCode === 27) {
         modalCrearCarpeta.value = false;
@@ -477,6 +490,8 @@ const folderIcon = 'ph:folder-simple-duotone';
 // RENOMBRAR ITEM
 const nuevoNombre = ref("")
 const itemRenombrando = ref(null)
+const modalRenombrarItem = ref(false)
+
 function abrirModalRenombrar(item) {
     itemRenombrando.value = item
     nuevoNombre.value = item.nombre
