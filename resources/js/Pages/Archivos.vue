@@ -131,10 +131,10 @@
 
 
 
-        <div :class="vista === 'lista' ? 'lista' : 'grid'" class="select-none py-4 sm:px-6 lg:px-8">
-            <div v-if="vista === 'lista'">
-                <table>
-                    <thead>
+        <div :class="vista === 'lista' ? 'lista' : 'grid'" class="select-none py-4 px-2 sm:px-6 lg:px-8">
+            <div v-if="vista === 'lista'" class="mr-2">
+                <table class="w-full lg:w-auto">
+                    <thead class="hidden sm:table-header-group">
                         <tr>
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
                             <th></th>
@@ -155,20 +155,33 @@
                             </td>
                             <td>
                                 <Icon :icon="item.tipo === 'carpeta' ? folderIcon : getIconFromFileName(item.nombre)"
+                                    class="text-4xl sm:text-base"
                                     :class="item.tipo === 'carpeta' ? 'text-yellow-500 transform scale-150' : ''" />
                             </td>
-                            <td>
+                            <td class="sm:hidden">
+                                <div class="flex flex-col">
+                                    <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">{{ item.nombre }}</Link>
+                                    <div v-else-if="seleccionando" :title="item.nombre">{{ item.nombre }}</div>
+                                    <a v-else :href="item.ruta" download>{{ item.nombre }}</a>
+                                    <small class="w-full flex justify-between items-center">
+                                        <span v-if="item.tipo === 'carpeta'">{{ item.archivos + item.subcarpetas }}
+                                            elementos</span>
+                                        <FileSize v-else :size="item.tamano" />
+                                        <TimeAgo :date="item.fecha_modificacion" />
+                                    </small>
+                                </div>
+                            </td>
+                            <td class="hidden sm:table-cell">
                                 <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">{{ item.nombre }}</Link>
                                 <span v-else-if="seleccionando">{{ item.nombre }}</span>
                                 <a v-else :href="item.ruta" download>{{ item.nombre }}</a>
                             </td>
-                            <td>
-                                <span v-if="item.tipo === 'carpeta'" class="text-sm">{{ item.archivos }} archivos, {{
-                                    item.subcarpetas }}
-                                    subcarpetas</span>
+                            <td class="hidden sm:table-cell">
+                                <span v-if="item.tipo === 'carpeta'" class="text-sm">{{ item.archivos + item.subcarpetas }}
+                                    elementos</span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
                             </td>
-                            <td>
+                            <td class="hidden sm:table-cell">
                                 <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
                             </td>
                             <td class="hidden md:table-cell">
@@ -191,7 +204,7 @@
 
                                             <div v-if="!seleccionando"
                                                 class="flex gap-3  items-center px-4 py-2   hover:bg-white cursor-pointer"
-                                                @click="abrirEliminarModal(item.nombre)">
+                                                @click="abrirEliminarModal(item)">
                                                 <Icon icon="ph:trash-duotone" />
                                                 <span>Eliminar</span>
                                             </div>
@@ -281,7 +294,7 @@
 
                                             <div v-if="!seleccionando"
                                                 class="flex gap-3  items-center px-4 py-2   hover:bg-white cursor-pointer"
-                                                @click="abrirEliminarModal(item.nombre)">
+                                                @click="abrirEliminarModal(item)">
                                                 <Icon icon="ph:trash-duotone" />
                                                 <span>Eliminar</span>
                                             </div>
@@ -357,36 +370,39 @@
 
 
         <!-- Modal Crear Carpeta -->
-        <Modal :show="modalCrearCarpeta" @close="modalCrearCarpeta = false">
+        <Modal :show="modalCrearCarpeta" @close="modalCrearCarpeta = false" maxWidth="sm">
 
-            <form class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full
-                p-7" role="dialog" aria-modal="true" aria-labelledby="modal-headline" @submit.prevent="crearCarpeta">
+            <form class="p-7" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
+                @submit.prevent="crearCarpeta">
+
                 <div class="flex flex-col gap-4">
                     <label for="nombreCarpeta">Nombre de la nueva carpeta:</label>
                     <input id="nombreCarpeta" v-model="nombreCarpeta" type="text" required>
                 </div>
 
                 <div class="py-3 sm:flex sm:justify-end gap-5">
-                    <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn-secondary">
-                        Cancelar
-                    </button>
 
                     <button @click.prevent="crearCarpeta" type="button" class="btn-primary">
                         Crear Carpeta
                     </button>
+
+                    <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn-secondary">
+                        Cancelar
+                    </button>
+
                 </div>
             </form>
         </Modal>
 
 
         <!-- Modal Renombrar Item -->
-        <Modal :show="modalRenombrarItem" @close="modalRenombrarItem = false">
+        <Modal :show="modalRenombrarItem" @close="modalRenombrarItem = false" maxWidth="sm">
 
-            <form class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full
-    p-7" role="dialog" aria-modal="true" aria-labelledby="modal-headline" @submit.prevent="renombrarItem">
+            <form class="p-7" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
+                @submit.prevent="renombrarItem">
                 <div class="flex flex-col gap-4">
-                    <label for="nombreCarpeta">Nombre de la nueva carpeta:</label>
-                    <input id="nombreCarpeta" v-model="nombreCarpeta" type="text" required>
+                    <label for="nuevoNombre">Nombre de la nueva carpeta:</label>
+                    <input id="nuevoNombre" v-model="nuevoNombre" type="text" required>
                 </div>
 
                 <div class="py-3 sm:flex sm:justify-end gap-5">
@@ -405,15 +421,15 @@
 
 
         <!-- Modal Confirmación de eliminar Archivo -->
-        <ConfirmationModal :show="modalEliminarArchivo" @close="modalEliminarArchivo = false">
+        <ConfirmationModal :show="modalEliminarItem" @close="modalEliminarItem = false">
             <template #content>
-                ¿Quieres eliminar {{ nombreArchivoEliminar }}?
+                ¿Quieres eliminar {{ itemAEliminar.nombre }}?
             </template>
             <template #footer>
                 <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
                     @submit.prevent="crearCarpeta">
 
-                    <button @click.prevent="modalEliminarArchivo = false" type="button" class="btn-secondary">
+                    <button @click.prevent="modalEliminarItem = false" type="button" class="btn-secondary">
                         Cancelar
                     </button>
 
@@ -671,26 +687,26 @@ function abrirModalRenombrar(item) {
     itemRenombrando.value = item
     nuevoNombre.value = item.nombre
     modalRenombrarItem.value = true
+    setTimeout(() => {
+        if (modalRenombrarItem.value)
+            document.querySelector('#nuevoNombre').focus()
+    }, 500)
 }
-
-function abrirModalCrearCarpeta() {
-    modalCrearCarpeta.value = true;
-    setTimeout(() => document.getElementById('nombreCarpeta').focus(), 150)
-}
-
 
 function renombrarItem() {
-    const url = ('/api/files/' + props.ruta + "/" + nombreArchivoEliminar.value).replace(/\/\//g, '/')
-    modalEliminarArchivo.value = false
-    axios.delete(url)
+    modalRenombrarItem.value = false
+    axios.post(route('files.rename'), {
+        folder: props.ruta,
+        oldName: itemRenombrando.value.nombre,
+        newName: nuevoNombre.value,
+    })
         .then(response => {
-            // reloadPage()
-            const idx = items.value.findIndex(item => item.nombre == nombreArchivoEliminar.value)
-            if (idx != -1)
-                items.value.splice(idx, 1)
+            console.log({ response })
+            const item = items.value.find(it => it.nombre == itemRenombrando.value.nombre)
+            item.nombre = nuevoNombre.value
         })
         .catch(err => {
-            const errorMessage = err.response.data.error || 'Ocurrió un error al eliminar el archivo'
+            const errorMessage = err.response.data.error || 'Ocurrió un error al renombrar el archivo'
             alert(errorMessage)
         })
 }
@@ -698,6 +714,15 @@ function renombrarItem() {
 // CREAR CARPETA
 
 const nombreCarpeta = ref("")
+
+function abrirModalCrearCarpeta() {
+    modalCrearCarpeta.value = true
+    nombreCarpeta.value = ""
+    setTimeout(() => {
+        if (modalCrearCarpeta.value)
+            document.querySelector('#nombreCarpeta').focus()
+    }, 500)
+}
 
 function crearCarpeta() {
     modalCrearCarpeta.value = false
@@ -714,21 +739,21 @@ function crearCarpeta() {
 
 // ELIMINAR
 
-const nombreArchivoEliminar = ref("")
-const modalEliminarArchivo = ref(false)
+const itemAEliminar = ref("")
+const modalEliminarItem = ref(false)
 
-function abrirEliminarModal(nombre) {
-    nombreArchivoEliminar.value = nombre
-    modalEliminarArchivo.value = true
+function abrirEliminarModal(item) {
+    itemAEliminar.value = item
+    modalEliminarItem.value = true
 }
 
 function eliminarArchivo() {
-    const url = ('/api/files/' + props.ruta + "/" + nombreArchivoEliminar.value).replace(/\/\//g, '/')
-    modalEliminarArchivo.value = false
+    const url = ('/api/files/' + props.ruta + "/" + itemAEliminar.value.nombre).replace(/\/\//g, '/')
+    modalEliminarItem.value = false
     axios.delete(url)
         .then(response => {
             // reloadPage()
-            const idx = items.value.findIndex(item => item.nombre == nombreArchivoEliminar.value)
+            const idx = items.value.findIndex(item => item.nombre == itemAEliminar.value.nombre)
             if (idx != -1)
                 items.value.splice(idx, 1)
         })

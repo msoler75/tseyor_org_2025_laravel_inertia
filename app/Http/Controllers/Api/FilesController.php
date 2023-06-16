@@ -218,7 +218,6 @@ class FilesController extends Controller
             return response()->json(['error' => 'Faltan parámetros'], 400);
         }
 
-
         if ($folder == ".." || strpos($folder, "../") !== false || strpos($folder, "/..") !== false) {
             return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
         }
@@ -241,7 +240,7 @@ class FilesController extends Controller
             }
         } else {
             // Intentar renombrar el archivo
-            if (Storage::rename($itemAntes, $itemDespues)) {
+            if (Storage::move($itemAntes, $itemDespues)) {
                 return response()->json(['message' => 'Archivo renombrado correctamente'], 200);
             } else {
                 return response()->json(['error' => 'No se pudo renombrar el archivo'], 500);
