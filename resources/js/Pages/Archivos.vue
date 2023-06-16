@@ -2,82 +2,131 @@
     <div class="max-w-screen-xl mx-auto">
         <div class="w-full sticky top-0 bg-gray-100 px-4 mt-12 pb-1 z-10 sm:px-6 lg:px-8">
 
-            <h1>{{ ruta }}</h1>
+            <div class="flex flex-nowrap justify-between mb-4 lg:mb-7">
+                <h1 class="mb-0 overflow-x-auto">{{ ruta }}</h1>
+
+                <div class="flex gap-3 flex-nowrap">
+
+                    <button class="btn-secondary" @click="toggleVista">
+                        <Icon v-show="vista == 'lista'" icon="ph:list-dashes-bold" class="transform scale-150" />
+                        <Icon v-show="vista == 'grid'" icon="ph:grid-nine-fill" class="transform scale-150" />
+                    </button>
+
+                    <Dropdown align="right" width="48">
+                        <template #trigger>
+                            <button class="btn-secondary p-3">
+                                <Icon icon="mdi:dots-vertical" class="text-xl" />
+
+                            </button>
+                        </template>
+
+                        <template #content>
+                            <div class="bg-gray-50">
+                                <!-- Account Management -->
+                                <div v-if="!seleccionando"
+                                    class="flex gap-3 items-center px-4 py-2   hover:bg-white cursor-pointer"
+                                    @click="modalSubirArchivos = true">
+                                    <Icon icon="ph:upload-duotone" />
+                                    <span>Subir archivos</span>
+                                </div>
+
+                                <div v-if="!seleccionando"
+                                    class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer"
+                                    @click="abrirModalCrearCarpeta">
+                                    <Icon icon="ph:folder-plus-duotone" />
+                                    <span>Crear carpeta</span>
+                                </div>
+
+
+                                <div v-if="!seleccionando"
+                                    class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer"
+                                    @click="seleccionando = true">
+                                    <Icon icon="ph:check-duotone" />
+                                    <span>Seleccionar</span>
+                                </div>
+
+                                <div v-else
+                                    class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer whitespace-nowrap"
+                                    @click="cancelarSeleccion">
+                                    <Icon icon="ph:x-square-duotone" />
+                                    <span>Cancelar selección</span>
+                                </div>
+
+                            </div>
+
+                        </template>
+                    </Dropdown>
+                </div>
+            </div>
 
 
             <!-- Botones -->
-            <div class="flex justify-end mb-7 gap-4 select-none">
+            <div class="w-full flex mb-7 gap-4 select-none  overflow-x-auto scrollbar-hidden" :seleccionando="seleccionando"
+            :class="seleccionando?'':'justify-end'">
 
-                <button
-                    class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue"
-                    @click="toggleVista">
-                    {{ vista !== 'lista' ? 'Miniaturas' : 'Lista' }}
+                <button v-if="store.isMovingFiles || store.isCopyingFiles" class="btn-primary flex gap-3 items-center"
+                    @click="cancelarOperacion">
+                    <Icon icon="material-symbols:close-rounded" />
+                    <span>Cancelar</span>
                 </button>
 
-                <select v-if="!seleccionando" v-model="ordenarPor" class="rounded">
-                    <option value="fechaDesc">Recientes</option>
-                    <option value="fechaAsc">Antiguos</option>
-                    <option value="nombreAsc">A-Z</option>
-                    <option value="nombreDesc">Z-A</option>
-                    <option value="tamañoAsc">Pequeños</option>
-                    <option value="tamañoDesc">Grandes</option>
-                </select>
+                <button v-else-if="seleccionando" class="btn-primary flex gap-3 items-center" @click="cancelarSeleccion">
+                    <Icon icon="material-symbols:close-rounded" />
+                    <span>Cancelar</span>
+                </button>
 
+                <button v-if="store.isMovingFiles" class="btn-primary flex gap-3 items-center"
+                    :disabled="store.sourcePath == ruta">
+                    <Icon icon="ph:clipboard-duotone" />
+                    <span>Mover aquí</span>
+                </button>
 
+                <button v-else-if="store.isCopyingFiles" class="btn-primary flex gap-3 items-center"
+                    :disabled="store.sourcePath == ruta">
+                    <Icon icon="ph:clipboard-duotone" />
+                    <span>Pegar aquí</span>
+                </button>
 
-                <Dropdown align="right" width="48">
-                    <template #trigger>
-                        <button class="btn-secondary p-3">
-                            <Icon icon="mdi:dots-vertical" class="text-xl" />
+                <template v-else>
+                    <button v-if="itemsSeleccionados.length == 1" class="btn-primary flex gap-3 items-center">
+                        <Icon icon="ph:cursor-text-duotone" />
+                        <span>Renombrar</span>
+                    </button>
 
-                        </button>
-                    </template>
+                    <button v-if="itemsSeleccionados.length" class="btn-primary flex gap-3 items-center"
+                        @click="moverItems">
+                        <Icon icon="ph:scissors-duotone" /><span>Mover</span>
+                    </button>
 
-                    <template #content>
-                        <div class="bg-gray-50">
-                            <!-- Account Management -->
-                            <div class="flex gap-3 items-center px-4 py-2   hover:bg-white cursor-pointer"
-                                @click="modalSubirArchivos = true">
-                                <Icon icon="ph:upload-duotone" />
-                                <span>Subir archivos</span>
-                            </div>
+                    <button v-if="itemsSeleccionados.length" class="btn-primary flex gap-3 items-center"
+                        @click="copiarItems">
+                        <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
+                    </button>
 
-                            <div class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer"
-                                @click="abrirModalCrearCarpeta">
-                                <Icon icon="ph:folder-plus-duotone" />
-                                <span>Crear carpeta</span>
-                            </div>
+                    <button v-if="itemsSeleccionados.length" class="btn-primary flex gap-3 items-center"
+                        @click="eliminarItems">
+                        <Icon icon="ph:trash-duotone" />
+                        <span>Eliminar</span>
+                    </button>
 
+                    <select v-if="!seleccionando" v-model="ordenarPor" class="rounded">
+                        <option value="fechaDesc">Recientes</option>
+                        <option value="fechaAsc">Antiguos</option>
+                        <option value="nombreAsc">A-Z</option>
+                        <option value="nombreDesc">Z-A</option>
+                        <option value="tamañoAsc">Pequeños</option>
+                        <option value="tamañoDesc">Grandes</option>
+                    </select>
 
-                            <div v-if="!seleccionando"
-                                class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer"
-                                @click="seleccionando = true">
-                                <Icon icon="ph:check-duotone" />
-                                <span>Seleccionar</span>
-                            </div>
-
-                            <div v-else
-                                class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer whitespace-nowrap"
-                                @click="cancelarSeleccion">
-                                <Icon icon="ph:x-square-duotone" />
-                                <span>Cancelar selección</span>
-                            </div>
-
-                            <div>
-                                ph:scissors-duotone
-                            </div>
-                        </div>
-
-                    </template>
-                </Dropdown>
-
+                </template>
             </div>
+
 
         </div>
 
 
 
-        <div :class="vista === 'lista' ? 'lista' : 'grid'" class="select-none py-12 sm:px-6 lg:px-8">
+        <div :class="vista === 'lista' ? 'lista' : 'grid'" class="select-none py-4 sm:px-6 lg:px-8">
             <div v-if="vista === 'lista'">
                 <table>
                     <thead>
@@ -141,7 +190,8 @@
                                                 <span>Eliminar</span>
                                             </div>
 
-                                            <div class="flex gap-3  items-center px-4 py-2   hover:bg-white cursor-pointer"
+                                            <div v-if="!buscandoCarpetaDestino"
+                                                class="flex gap-3  items-center px-4 py-2   hover:bg-white cursor-pointer"
                                                 @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                 <template v-if="!item.seleccionado">
                                                     <Icon icon="ph:check-fat-duotone" />
@@ -172,7 +222,13 @@
             </div>
             <div v-else-if="vista === 'grid'">
                 <div class="grid grid-cols-3 gap-4">
-                    <div v-for="item in itemsOrdenados" :class="item.clase" :key="item.ruta">
+                    <div v-for="item in itemsOrdenados" :key="item.ruta"
+                        :class="item.clase + ' ' + (item.seleccionado ? 'bg-blue-100' : '')">
+                        <div v-if="seleccionando" @click.prevent="toggleItem(item)"
+                            class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
+                            <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
+                            <Icon v-else icon="ph:square" />
+                        </div>
                         <div class="flex flex-col items-center justify-center">
                             <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">
                             <img v-if="isImage(item.nombre)" :src="item.ruta" class="overflow-hidden w-[180px] h-[120px]">
@@ -195,6 +251,59 @@
                                     <FileSize :size="item.tamano" /> -
                                     <TimeAgo :date="item.fecha_modificacion" />
                                 </template>
+                            </div>
+
+
+                            <div class="w-full flex justify-end">
+                                <Dropdown align="right" width="48">
+                                    <template #trigger>
+                                        <button class="btn-secondary p-1">
+                                            <Icon icon="mdi:dots-horizontal" class="text-xl" />
+                                        </button>
+                                    </template>
+
+                                    <template #content>
+                                        <div class="bg-gray-50">
+
+                                            <div v-if="!seleccionando"
+                                                class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer"
+                                                @click="abrirModalRenombrar(item)">
+                                                <Icon icon="ph:cursor-text-duotone" />
+                                                <span>Renombrar</span>
+                                            </div>
+
+                                            <div v-if="!seleccionando"
+                                                class="flex gap-3  items-center px-4 py-2   hover:bg-white cursor-pointer"
+                                                @click="abrirEliminarModal(item.nombre)">
+                                                <Icon icon="ph:trash-duotone" />
+                                                <span>Eliminar</span>
+                                            </div>
+
+                                            <div v-if="buscandoCarpetaDestino"
+                                                class="flex gap-3  items-center px-4 py-2   hover:bg-white cursor-pointer"
+                                                @click="seleccionando = true; item.seleccionado = !item.seleccionado">
+                                                <template v-if="!item.seleccionado">
+                                                    <Icon icon="ph:check-fat-duotone" />
+                                                    <span>Seleccionar</span>
+                                                </template>
+                                                <template v-else>
+                                                    <Icon icon="ph:square" />
+                                                    <span>Deseleccionar</span>
+                                                </template>
+                                            </div>
+
+                                            <div v-if="seleccionando"
+                                                class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer whitespace-nowrap"
+                                                @click="cancelarSeleccion">
+                                                <Icon icon="ph:x-square-duotone" />
+                                                <span>Cancelar selección</span>
+                                            </div>
+
+
+                                        </div>
+
+                                    </template>
+                                </Dropdown>
                             </div>
                         </div>
                     </div>
@@ -324,6 +433,7 @@ import Dropzone from 'vue2-dropzone-vue3'
 import Dropdown from '@/Components/Dropdown.vue';
 import Modal from '@/Components/Modal.vue'
 import ConfirmationModal from '@/Components/ConfirmationModal.vue'
+import { useStore } from '@/store';
 
 defineOptions({ layout: AppLayout })
 
@@ -350,13 +460,14 @@ function cancelarSeleccion() {
 // verifica que cuando no hay ningun item seleccionado, se termina el modo de selección
 function verificarFinSeleccion() {
     if (!seleccionando.value) return
-    const alguno = items.value.find(item=>item.seleccionado)
+    if (screen.width >= 1024) return
+    const alguno = items.value.find(item => item.seleccionado)
     if (!alguno)
         seleccionando.value = false
 }
 
 // si hay alfun cambio en los items
-watch(()=>items, verificarFinSeleccion, {deep: true})
+watch(() => items, verificarFinSeleccion, { deep: true })
 
 // EVENTOS TOUCH
 
@@ -367,10 +478,8 @@ function onTouchStart(item) {
         item.seleccionado = !item.seleccionado
     else
         item.longTouchTimer = setTimeout(() => {
-            if (!seleccionandoConMouse) {
             item.seleccionado = true;
             seleccionando.value = true
-            }
         }, 700); // tiempo en milisegundos para considerar un "long touch"
 }
 
@@ -380,13 +489,43 @@ function onTouchEnd(item) {
     item.touching = false
 }
 
-function toggleItem(item)
-{
+function toggleItem(item) {
     console.log('toggleItem')
-    if(!item.touching)
-    item.seleccionado = !item.seleccionado
+    if (!item.touching)
+        item.seleccionado = !item.seleccionado
     item.touching = false
 }
+
+const itemsSeleccionados = computed(() => items.value.filter(item => item.seleccionado))
+
+
+
+// COPIAR Y MOVER ITEMS
+const store = useStore();
+
+const buscandoCarpetaDestino = computed(() => store.isMovingFiles || store.isCopyingFiles)
+
+function moverItems() {
+    seleccionando.value = false
+    store.isMovingFiles = true
+    store.sourcePath = props.ruta
+    store.filesToMove = [...itemsSeleccionados.value.map(item => item.nombre)]
+}
+
+function copiarItems() {
+    seleccionando.value = false
+    store.isCopyingFiles = true
+    store.sourcePath = props.ruta
+    store.filesToCopy = [...itemsSeleccionados.value.map(item => item.nombre)]
+}
+
+function cancelarOperacion() {
+    store.isMovingFiles = false
+    store.isCopyingFiles = false
+    store.filesToMove = []
+    store.filesToCopy = []
+}
+
 
 // SUBIR ARCHIVOS
 const modalSubirArchivos = ref(false)
