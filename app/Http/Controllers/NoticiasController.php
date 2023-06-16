@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Noticia;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class NoticiasController extends Controller
 {
@@ -22,7 +21,7 @@ class NoticiasController extends Controller
 
         $recientes = Noticia::select(['slug', 'titulo', 'published_at'])->where('estado', 'P')->latest()->take(24)->get();
 
-        return Inertia::render('Noticias', [
+        return Inertia::render('Noticias/Index', [
             'filtroResultados' => $filtro,
             'resultados' => $resultados,
             'recientes' => $recientes
@@ -39,7 +38,7 @@ class NoticiasController extends Controller
             abort(404); // Manejo de noticia no encontrada
         }
 
-        return Inertia::render('Noticia', [
+        return Inertia::render('Noticias/Noticia', [
             'noticia' => $noticia
         ]);
     }

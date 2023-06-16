@@ -3,8 +3,9 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ArchivosController;
+use App\Http\Controllers\NoticiasController;
+use App\Http\Controllers\ComunicadosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,9 @@ Route::get('/archivos{ruta}', [ArchivosController::class, 'index'])->where(['rut
 
 Route::get('/noticias', [NoticiasController::class, 'index'])->name('noticias');
 Route::get('/noticias/{id}', [NoticiasController::class, 'show'])->name('noticia');
+
+Route::get('/comunicados', [ComunicadosController::class, 'index'])->name('comunicados');
+Route::get('/comunicados/{id}', [ComunicadosController::class, 'show'])->name('comunicado');
 
 Route::middleware([
     'auth:sanctum',
