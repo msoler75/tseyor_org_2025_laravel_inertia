@@ -93,7 +93,7 @@ class FilesController extends Controller
         if ($url && preg_match('/admin\/(.*?)\/\d+\/edit/', $url, $matches)) {
             $folder = $matches[1];
         } else {
-           // $folder = null;
+            // $folder = null;
         }
 
         if (!$file) {
@@ -162,5 +162,141 @@ class FilesController extends Controller
         return response()->json([
             'message' => 'folderCreated'
         ], 200);
+    }
+
+
+    // Elimina un item, indicado en ruta
+    public function delete($ruta)
+    {
+        // Concatenar la ruta completa al archivo
+        $archivo = 'public/' . $ruta;
+
+        // Verificar si la ruta contiene saltos de carpeta
+        if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
+            return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
+        }
+
+        // Verificar que el archivo exista
+        if (!Storage::exists($archivo)) {
+            return response()->json(['error' => 'El archivo no existe'], 404);
+        }
+
+        // Verificar si la ruta es una carpeta
+        if (Storage::isDirectory($archivo)) {
+            // Verificar si la carpeta está vacía antes de eliminarla
+            if (count(Storage::allFiles($archivo)) > 0) {
+                return response()->json(['error' => 'No se puede eliminar la carpeta porque no está vacía'], 400);
+            }
+
+            // Eliminar la carpeta vacía
+            if (Storage::deleteDirectory($archivo)) {
+                return response()->json(['message' => 'Carpeta eliminada correctamente'], 200);
+            } else {
+                return response()->json(['error' => 'No se pudo eliminar la carpeta'], 500);
+            }
+        }
+
+        // Intentar eliminar el archivo
+        else if (Storage::delete($archivo)) {
+            return response()->json(['message' => 'Archivo eliminado correctamente'], 200);
+        } else {
+            return response()->json(['error' => 'No se pudo eliminar el archivo'], 500);
+        }
+    }
+
+
+    public function rename(Request $request)
+    {
+        $folder = $request->folder;
+        $oldName = $request->oldName;
+        $newName = $request->newName;
+
+
+        // Verificar si faltan parámetros
+        if (!$request->filled(['folder', 'oldName', 'newName'])) {
+            return response()->json(['error' => 'Faltan parámetros'], 400);
+        }
+
+
+        if ($folder == ".." || strpos($folder, "../") !== false || strpos($folder, "/..") !== false) {
+            return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
+        }
+
+        $itemAntes = 'public/' . $folder . "/" . $oldName;
+        $itemDespues = 'public/' . $folder . "/" . $newName;
+
+        // Verificar que el item exista
+        if (!Storage::exists($itemAntes)) {
+            return response()->json(['error' => "El item '$itemAntes' no existe"], 404);
+        }
+
+        // Verificar si el item es una carpeta
+        if (Storage::isDirectory($itemAntes)) {
+            // Intentar renombrar la carpeta
+            if (Storage::moveDirectory($itemAntes, $itemDespues)) {
+                return response()->json(['message' => 'Carpeta renombrada correctamente'], 200);
+            } else {
+                return response()->json(['error' => 'No se pudo renombrar la carpeta'], 500);
+            }
+        } else {
+            // Intentar renombrar el archivo
+            if (Storage::rename($itemAntes, $itemDespues)) {
+                return response()->json(['message' => 'Archivo renombrado correctamente'], 200);
+            } else {
+                return response()->json(['error' => 'No se pudo renombrar el archivo'], 500);
+            }
+        }
+    }
+
+
+
+    public function move(Request $request)
+    {
+        $sourceFolder = $request->sourceFolder;
+        $destinationFolder = $request->targetFolder;
+
+        if (!$sourceFolder || !$destinationFolder) {
+            return response()->json(['error' => 'Faltan parámetros'], 400);
+        }
+
+        if (strpos($sourceFolder, '..') !== false || strpos($destinationFolder, '..') !== false) {
+            return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
+        }
+
+        $items = $request->items;
+
+        if (!is_array($items)) {
+            return response()->json(['error' => 'Los elementos no son un array'], 400);
+        }
+
+        // Mover cada item a la nueva carpeta de destino
+        foreach ($items as $item) {
+            $itemSource = 'public/' . $sourceFolder . "/" . $item;
+            $itemDestination = 'public/' . $destinationFolder . "/" . $item;
+
+            // Verificar que el item exista
+            if (!Storage::exists($itemSource)) {
+                return response()->json(['error' => "El item '$itemSource' no existe"], 404);
+            }
+
+            // Verificar si el item es una carpeta
+            if (Storage::isDirectory($itemSource)) {
+                // Intentar mover la carpeta
+                if (Storage::moveDirectory($itemSource, $itemDestination)) {
+                    return response()->json(['message' => 'Carpeta movida correctamente'], 200);
+                } else {
+                    return response()->json(['error' => 'No se pudo mover la carpeta'], 500);
+                }
+            } else {
+                // Intentar mover el archivo
+                if (Storage::move($itemSource, $itemDestination)) {
+                    return response()->json(['message' => 'Archivo movido correctamente'], 200);
+                } else {
+                    return response()->json(['error' => 'No se pudo mover el archivo'], 500);
+                }
+            }
+        }
+
+        return response()->json(['message' => 'Items movidos correctamente'], 200);
     }
 }
