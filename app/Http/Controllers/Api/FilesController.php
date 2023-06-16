@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 
 class FilesController extends Controller
@@ -182,7 +183,7 @@ class FilesController extends Controller
         }
 
         // Verificar si la ruta es una carpeta
-        if (Storage::isDirectory($archivo)) {
+        if (Storage::directoryExists($archivo)) {
             // Verificar si la carpeta está vacía antes de eliminarla
             if (count(Storage::allFiles($archivo)) > 0) {
                 return response()->json(['error' => 'No se puede eliminar la carpeta porque no está vacía'], 400);
@@ -231,9 +232,9 @@ class FilesController extends Controller
         }
 
         // Verificar si el item es una carpeta
-        if (Storage::isDirectory($itemAntes)) {
+        if (Storage::directoryExists($itemAntes)) {
             // Intentar renombrar la carpeta
-            if (Storage::moveDirectory($itemAntes, $itemDespues)) {
+            if (Storage::move($itemAntes, $itemDespues)) {
                 return response()->json(['message' => 'Carpeta renombrada correctamente'], 200);
             } else {
                 return response()->json(['error' => 'No se pudo renombrar la carpeta'], 500);
@@ -269,34 +270,163 @@ class FilesController extends Controller
             return response()->json(['error' => 'Los elementos no son un array'], 400);
         }
 
+        Log::info("Items a mover: " . var_export($items, true));
+
         // Mover cada item a la nueva carpeta de destino
+        $successCount = 0;
+        $errorCount = 0;
+        $errorMessages = [];
+
         foreach ($items as $item) {
             $itemSource = 'public/' . $sourceFolder . "/" . $item;
             $itemDestination = 'public/' . $destinationFolder . "/" . $item;
 
             // Verificar que el item exista
             if (!Storage::exists($itemSource)) {
-                return response()->json(['error' => "El item '$itemSource' no existe"], 404);
+                $errorCount++;
+                $errorMessages[] = "El item '$itemSource' no existe";
+                continue;
             }
 
             // Verificar si el item es una carpeta
-            if (Storage::isDirectory($itemSource)) {
+            if (Storage::directoryExists($itemSource)) {
                 // Intentar mover la carpeta
-                if (Storage::moveDirectory($itemSource, $itemDestination)) {
-                    return response()->json(['message' => 'Carpeta movida correctamente'], 200);
+                if (Storage::move($itemSource, $itemDestination)) {
+                    $successCount++;
+                    // Agregar registro de movimiento a archivo de log
+                    Log::info("Carpeta '$item' movida de '$sourceFolder' a '$destinationFolder'");
                 } else {
-                    return response()->json(['error' => 'No se pudo mover la carpeta'], 500);
+                    $errorCount++;
+                    $errorMessages[] = "No se pudo mover la carpeta '$itemSource'";
                 }
             } else {
+                // Verificar si el archivo de destino ya existe
+                $counter = 1;
+                while (Storage::exists($itemDestination)) {
+                    $itemName = pathinfo($item, PATHINFO_FILENAME);
+                    $itemExtension = pathinfo($item, PATHINFO_EXTENSION);
+                    $itemBaseName = $itemName . '_' . $counter;
+                    $itemDestination = 'public/' . $destinationFolder . "/" . $itemBaseName . '.' . $itemExtension;
+                    $counter++;
+                }
+
                 // Intentar mover el archivo
+                Log::info("Trataremos de mover de $itemSource a $itemDestination");
                 if (Storage::move($itemSource, $itemDestination)) {
-                    return response()->json(['message' => 'Archivo movido correctamente'], 200);
+                    $successCount++;
+                    // Agregar registro de movimiento a archivo de log
+                    Log::info("Archivo '$item' movido de '$sourceFolder' a '$destinationFolder'");
                 } else {
-                    return response()->json(['error' => 'No se pudo mover el archivo'], 500);
+                    $errorCount++;
+                    $errorMessages[] = "No se pudo mover el archivo '$itemSource'";
                 }
             }
         }
 
-        return response()->json(['message' => 'Items movidos correctamente'], 200);
+        if ($successCount > 0) {
+            $message = $successCount == 1 ? '1 item movido correctamente' : $successCount . ' items movidos correctamente';
+            $response = ['message' => $message];
+        } else {
+            $response = ['error' => 'No se pudo mover ningún item'];
+        }
+
+        if ($errorCount > 0) {
+            $response['errors'] = $errorMessages;
+        }
+
+        // Agregar registro de resumen a archivo de log
+        Log::info("$successCount elementos movidos correctamente y $errorCount elementos fallidos");
+
+        return response()->json($response, $successCount > 0 ? 200 : 500);
+    }
+
+
+    public function copy(Request $request)
+    {
+        $sourceFolder = $request->sourceFolder;
+        $destinationFolder = $request->targetFolder;
+
+        if (!$sourceFolder || !$destinationFolder) {
+            return response()->json(['error' => 'Faltan parámetros'], 400);
+        }
+
+        if (strpos($sourceFolder, '..') !== false || strpos($destinationFolder, '..') !== false) {
+            return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
+        }
+
+        $items = $request->items;
+
+        if (!is_array($items)) {
+            return response()->json(['error' => 'Los elementos no son un array'], 400);
+        }
+
+        Log::info("Items a copiar: " . var_export($items, true));
+
+        // Copiar cada item a la nueva carpeta de destino
+        $successCount = 0;
+        $errorCount = 0;
+        $errorMessages = [];
+
+        foreach ($items as $item) {
+            $itemSource = 'public/' . $sourceFolder . "/" . $item;
+            $itemDestination = 'public/' . $destinationFolder . "/" . $item;
+
+            // Verificar que el item exista
+            if (!Storage::exists($itemSource)) {
+                $errorCount++;
+                $errorMessages[] = "El item '$itemSource' no existe";
+                continue;
+            }
+
+            // Verificar si el item es una carpeta
+            if (Storage::directoryExists($itemSource)) {
+                // Intentar copiar la carpeta
+                if (Storage::copyDirectory($itemSource, $itemDestination)) {
+                    $successCount++;
+                    // Agregar registro de copia a archivo de log
+                    Log::info("Carpeta '$item' copiada de '$sourceFolder' a '$destinationFolder'");
+                } else {
+                    $errorCount++;
+                    $errorMessages[] = "No se pudo copiar la carpeta '$itemSource'";
+                }
+            } else {
+                // Verificar si el archivo de destino ya existe
+                $counter = 1;
+                while (Storage::exists($itemDestination)) {
+                    $itemName = pathinfo($item, PATHINFO_FILENAME);
+                    $itemExtension = pathinfo($item, PATHINFO_EXTENSION);
+                    $itemBaseName = $itemName . '_' . $counter;
+                    $itemDestination = 'public/' . $destinationFolder . "/" . $itemBaseName . '.' . $itemExtension;
+                    $counter++;
+                }
+
+                // Intentar copiar el archivo
+                Log::info("Trataremos de copiar de $itemSource a $itemDestination");
+                if (Storage::copy($itemSource, $itemDestination)) {
+                    $successCount++;
+                    // Agregar registro de copia a archivo de log
+                    Log::info("Archivo '$item' copiado de '$sourceFolder' a '$destinationFolder'");
+                } else {
+                    $errorCount++;
+                    $errorMessages[] = "No se pudo copiar el archivo '$itemSource'";
+                }
+            }
+        }
+
+        if ($successCount > 0) {
+            $message = $successCount == 1 ? '1 item copiado correctamente' : $successCount . ' items copiados correctamente';
+            $response = ['message' => $message];
+        } else {
+            $response = ['error' => 'No se pudo copiar ningún item'];
+        }
+
+        if ($errorCount > 0) {
+            $response['errors'] = $errorMessages;
+        }
+
+        // Agregar registro de resumen a archivo de log
+        Log::info("$successCount elementos copiados correctamente y $errorCount elementos fallidos");
+
+        return response()->json($response, $successCount > 0 ? 200 : 500);
     }
 }
