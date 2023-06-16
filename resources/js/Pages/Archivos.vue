@@ -1,11 +1,21 @@
 <template>
     <div class="max-w-screen-xl mx-auto">
-        <div class="w-full sticky top-0 bg-gray-100 px-4 mt-12 pb-1 z-10 sm:px-6 lg:px-8">
+        <div class="w-full sticky top-0 pt-3 bg-gray-100 px-4 mt-12 pb-1 z-10 sm:px-6 lg:px-8">
 
-            <div class="flex flex-nowrap justify-between mb-4 lg:mb-7">
-                <h1 class="mb-0 overflow-x-auto">{{ ruta }}</h1>
+            <div class="w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
+                <h1 :title="ruta" v-if="!seleccionando" class="w-full mb-0 text-ellipsis overflow-hidden">{{ ruta }}</h1>
 
-                <div class="flex gap-3 flex-nowrap">
+                <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
+
+                    <button v-if="seleccionando" class="btn-secondary flex gap-3 items-center" @click="cancelarSeleccion">
+                        <Icon icon="material-symbols:close-rounded" />
+                        <span>{{ itemsSeleccionados.length }}</span>
+                    </button>
+
+
+                    <button v-if="seleccionando" class="btn-secondary ml-auto" @click="seleccionarTodos">
+                        <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
+                    </button>
 
                     <button class="btn-secondary" @click="toggleVista">
                         <Icon v-show="vista == 'lista'" icon="ph:list-dashes-bold" class="transform scale-150" />
@@ -62,7 +72,7 @@
 
             <!-- Botones -->
             <div class="w-full flex mb-7 gap-4 select-none  overflow-x-auto scrollbar-hidden" :seleccionando="seleccionando"
-            :class="seleccionando?'':'justify-end'">
+                :class="seleccionando ? '' : 'justify-end'">
 
                 <button v-if="store.isMovingFiles || store.isCopyingFiles" class="btn-primary flex gap-3 items-center"
                     @click="cancelarOperacion">
@@ -70,19 +80,14 @@
                     <span>Cancelar</span>
                 </button>
 
-                <button v-else-if="seleccionando" class="btn-primary flex gap-3 items-center" @click="cancelarSeleccion">
-                    <Icon icon="material-symbols:close-rounded" />
-                    <span>Cancelar</span>
-                </button>
-
                 <button v-if="store.isMovingFiles" class="btn-primary flex gap-3 items-center"
-                    :disabled="store.sourcePath == ruta">
+                    :disabled="store.sourcePath == ruta" @click="moverItems">
                     <Icon icon="ph:clipboard-duotone" />
                     <span>Mover aquí</span>
                 </button>
 
                 <button v-else-if="store.isCopyingFiles" class="btn-primary flex gap-3 items-center"
-                    :disabled="store.sourcePath == ruta">
+                    :disabled="store.sourcePath == ruta" @click="copiarItems">
                     <Icon icon="ph:clipboard-duotone" />
                     <span>Pegar aquí</span>
                 </button>
@@ -94,12 +99,12 @@
                     </button>
 
                     <button v-if="itemsSeleccionados.length" class="btn-primary flex gap-3 items-center"
-                        @click="moverItems">
+                        @click="prepararMoverItems">
                         <Icon icon="ph:scissors-duotone" /><span>Mover</span>
                     </button>
 
                     <button v-if="itemsSeleccionados.length" class="btn-primary flex gap-3 items-center"
-                        @click="copiarItems">
+                        @click="prepararCopiarItems">
                         <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
                     </button>
 
@@ -136,7 +141,7 @@
                             <th class="text-left">Nombre</th>
                             <th>Tamaño</th>
                             <th>Fecha</th>
-                            <th></th>
+                            <th class="hidden md:table-cell"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -154,6 +159,7 @@
                             </td>
                             <td>
                                 <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">{{ item.nombre }}</Link>
+                                <span v-else-if="seleccionando">{{ item.nombre }}</span>
                                 <a v-else :href="item.ruta" download>{{ item.nombre }}</a>
                             </td>
                             <td>
@@ -165,7 +171,7 @@
                             <td>
                                 <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
                             </td>
-                            <td>
+                            <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <button class="btn-secondary p-3">
@@ -234,13 +240,14 @@
                             <img v-if="isImage(item.nombre)" :src="item.ruta" class="overflow-hidden w-[180px] h-[120px]">
                             <Icon v-else :icon="folderIcon" class="text-8xl mb-4 text-yellow-500 transform scale-150" />
                             </Link>
-                            <a v-else :href="item.ruta" download>
+                            <component v-else :is="seleccionando?'div':'a'" :href="item.ruta" download>
                                 <img v-if="isImage(item.nombre)" :src="item.ruta"
                                     class="overflow-hidden w-[180px] h-[120px]">
                                 <Icon v-else :icon="getIconFromFileName(item.nombre)" class="text-8xl mb-4" />
-                            </a>
+                            </component>
                             <div class="text-sm text-center">
                                 <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">{{ item.nombre }}</Link>
+                                <span v-else-if="seleccionando">{{ item.nombre }}</span>
                                 <a v-else :href="item.ruta" download>{{ item.nombre }}</a>
                             </div>
                             <div class="text-gray-500 text-xs">
@@ -457,6 +464,10 @@ function cancelarSeleccion() {
     items.value.forEach(item => item.seleccionado = false)
 }
 
+function seleccionarTodos() {
+    items.value.forEach(item => item.seleccionado = true)
+}
+
 // verifica que cuando no hay ningun item seleccionado, se termina el modo de selección
 function verificarFinSeleccion() {
     if (!seleccionando.value) return
@@ -505,18 +516,42 @@ const store = useStore();
 
 const buscandoCarpetaDestino = computed(() => store.isMovingFiles || store.isCopyingFiles)
 
-function moverItems() {
+function prepararMoverItems() {
     seleccionando.value = false
     store.isMovingFiles = true
     store.sourcePath = props.ruta
     store.filesToMove = [...itemsSeleccionados.value.map(item => item.nombre)]
 }
 
-function copiarItems() {
+function prepararCopiarItems() {
     seleccionando.value = false
     store.isCopyingFiles = true
     store.sourcePath = props.ruta
     store.filesToCopy = [...itemsSeleccionados.value.map(item => item.nombre)]
+}
+
+function copiarItems() {
+    axios.post(route('files.copy'), {
+        sourceFolder: store.sourcePath,
+        targetFolder: props.ruta,
+        items: store.filesToCopy
+    }).then(response => {
+        console.log({ response })
+        reloadPage()
+    })
+    cancelarOperacion()
+}
+
+function moverItems() {
+    axios.post(route('files.move'), {
+        sourceFolder: store.sourcePath,
+        targetFolder: props.ruta,
+        items: store.filesToMove
+    }).then(response => {
+        console.log({ response })
+        reloadPage()
+    })
+    cancelarOperacion()
 }
 
 function cancelarOperacion() {
@@ -524,6 +559,7 @@ function cancelarOperacion() {
     store.isCopyingFiles = false
     store.filesToMove = []
     store.filesToCopy = []
+    items.value.forEach(item => { item.seleccionado = false })
 }
 
 
@@ -548,7 +584,7 @@ var someUploaded = ref(false)
 function successEvent(file, response) {
     someUploaded.value = true
     //console.log('successEvent', props.ruta)
-    //router.get("/" + props.ruta)
+    //reloadPage()
 }
 
 watch(modalSubirArchivos, (value) => {
@@ -556,7 +592,7 @@ watch(modalSubirArchivos, (value) => {
         someUploaded.value = false
     else if (someUploaded.value) {
         // recargamos la vista
-        router.get("/" + props.ruta)
+        reloadPage()
     }
 })
 
@@ -648,7 +684,7 @@ function renombrarItem() {
     modalEliminarArchivo.value = false
     axios.delete(url)
         .then(response => {
-            // router.get("/" + props.ruta)
+            // reloadPage()
             const idx = items.value.findIndex(item => item.nombre == nombreArchivoEliminar.value)
             if (idx != -1)
                 items.value.splice(idx, 1)
@@ -671,7 +707,7 @@ function crearCarpeta() {
         folder: props.ruta, name: nombreCarpeta.value
     }).then((response) => {
         console.log({ response })
-        router.get("/" + props.ruta)
+        reloadPage()
     })
 }
 
@@ -691,7 +727,7 @@ function eliminarArchivo() {
     modalEliminarArchivo.value = false
     axios.delete(url)
         .then(response => {
-            // router.get("/" + props.ruta)
+            // reloadPage()
             const idx = items.value.findIndex(item => item.nombre == nombreArchivoEliminar.value)
             if (idx != -1)
                 items.value.splice(idx, 1)
@@ -773,6 +809,10 @@ const toggleVista = () => {
     vista.value = vista.value === 'lista' ? 'grid' : 'lista';
 }
 
+
+function reloadPage() {
+    router.get("/" + props.ruta)
+}
 </script>
 
 <style scoped>
