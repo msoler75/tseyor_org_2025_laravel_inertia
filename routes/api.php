@@ -22,4 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/files/upload/file', [FilesController::class, 'uploadFile'])->name('files.upload.file');
 Route::post('/files/upload/image', [FilesController::class, 'uploadImage'])->name('files.upload.image');
-Route::put('/files/mkdir', [FilesController::class, 'makeDir'])->name('files.mkdir');
+Route::post('/files/rename', [FilesController::class, 'rename'])->name('files.rename');
+Route::post('/files/move', [FilesController::class, 'move'])->name('files.move');
+Route::post('/files/copy', [FilesController::class, 'copy'])->name('files.copy');
+Route::put('/files/mkdir', [FilesController::class, 'createFolder'])->name('files.mkdir');
+Route::delete('/files{ruta}', [FilesController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
