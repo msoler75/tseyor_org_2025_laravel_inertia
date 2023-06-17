@@ -18,13 +18,13 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
-watch(() => props.show, () => {
+/* watch(() => props.show, () => {
     if (props.show) {
         document.body.style.overflow = 'hidden';
     } else {
         document.body.style.overflow = null;
     }
-});
+}); */
 
 const close = () => {
     if (props.closeable) {
