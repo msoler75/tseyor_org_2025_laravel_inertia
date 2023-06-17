@@ -9,7 +9,7 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import NavAside from '@/Components/NavAside.vue';
 import navItems from '@/navigation.js'
-import { vOnClickOutside } from '@vueuse/components'
+import { Icon } from '@iconify/vue';
 
 const navigationItems = ref(navItems)
 
@@ -74,7 +74,7 @@ watch(activeTab, (value) => {
     else
         timer = setTimeout(() => {
             ghostTab.value = activeTab.value
-        }, 100)
+        }, 75)
 })
 
 </script>
@@ -113,9 +113,8 @@ watch(activeTab, (value) => {
                                 <div v-for="tab of navigationItems" :key="tab.url" @click="toggleTab(tab)"
                                     class="relative bg-green-200" @mouseover="activateTab(tab)">
                                     {{ tab.title }} {{ tab.open }}
-                                    <div v-show="tab.open"
-                                        class="bg-orange-100 absolute z-30 -left-[5rem] -right-[5rem] -bottom-8 border-2 border-pink-500 h-14">
-                                        {{ tab.open }}</div>
+                                    <div v-show="tab.open" class="absolute z-30 -left-[5rem] -right-[5rem] -bottom-8  h-14">
+                                    </div>
                                 </div>
                             </div>
 
@@ -127,15 +126,27 @@ watch(activeTab, (value) => {
                             leave-active-class="transition ease-in duration-75"
                             leave-from-class="transform opacity-100 scale-100"
                             leave-to-class="transform opacity-0 scale-95">
-                            <div v-show="activeTab" class="absolute top-[120%] bg-pink-400 mx-[5rem] z-40"
+                            <div v-show="activeTab" class="absolute top-[120%]  mx-[5rem] z-40"
                                 style="width:calc(100% - 10rem)">
-                                <div  v-if="ghostTab && ghostTab.submenu" class="w-full h-30 flex gap-0 p-20 z-40 top-8" >
-                                    <div  v-for="section, index of ghostTab.submenu.sections" :key="index">
-                                        {{ section.title }}
+                                <div v-if="ghostTab && ghostTab.submenu"
+                                    class="w-full h-30 flex justify-between gap-10 p-12 z-40 top-8 bg-white shadow-lg rounded-md border-gray-100 border">
+                                    <div v-for="section, index of ghostTab.submenu.sections" :key="index">
+                                        <div class="text-gray-500 my-5 uppercase tracking-wide ">{{ section.title }}</div>
+                                        <div class="flex flex-col gap-7 mb-7">
+                                            <Link :href="item.url" v-for="item of section.items" :key="item.url" class="flex gap-3 p-3 rounded-md hover:bg-blue-50 transition duration-100 cursor-pointer">
+                                                <Icon :icon="item.icon" class="text-3xl text-blue-400" />
+                                                <div class="flex flex-col gap-2">
+                                                    <strong class="item-lg">{{ item.title }}</strong>
+                                                    <span class="text-gray-500 text-sm">{{ item.description }}</span>
+                                                </div>
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </transition>
+
+
 
                         <div v-if="$page.props.auth.user" class="hidden sm:flex sm:items-center sm:ml-6"
                             @mouseover="closeTabs()">
@@ -387,7 +398,12 @@ watch(activeTab, (value) => {
             </header>
 
             <!-- Page Content -->
-            <main @mouseover="closeTabs()">
+            <main @mouseover="closeTabs()" class="relative">
+                <transition enter-active-class="ease-in-out transition duration-100"
+                    leave-active-class="ease-in-out transition duration-100" enter-class="opacity-0"
+                    leave-to-class="opacity-0">
+                    <div v-if="activeTab" class="absolute w-full h-full" style="background:rgba(0,0,0,.1)"></div>
+                </transition>
                 <slot />
             </main>
         </div>
