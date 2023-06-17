@@ -19,7 +19,7 @@ const items = [
             {
               title: "Submenu 1.1.1",
               url: "/url1.1.1",
-              description: "Inner Submenu 1.1.1",
+              description: "Inner Submenu 1.1.1 lorem ipsum",
               icon: "ph:shield-chevron",
             },
             {
@@ -36,13 +36,13 @@ const items = [
             {
               title: "Submenu 1.2.1",
               url: "/url1.1.1",
-              description: "Inner Submenu 1.2.1",
+              description: "Inner Submenu 1.2.1 varem suo",
               icon: "ph:shield-chevron",
             },
             {
               title: "Submenu 1.2.2",
               url: "/url1.2.2",
-              description: "Inner Submenu 1.2.2",
+              description: "Inner Submenu 1.2.2 lorem ipsum et quodis",
               icon: "ph:shield-chevron",
             },
           ],
@@ -53,7 +53,7 @@ const items = [
             {
               title: "Submenu 1.3.1",
               url: "/url1.3.1",
-              description: "Inner Submenu 1.3.1",
+              description: "Inner Submenu 1.3.1 fati pelis um tarso doble",
               icon: "ph:shield-chevron",
             },
             {
@@ -81,7 +81,7 @@ const items = [
             {
               title: "Submenu 2.1.1",
               url: "/url2.1.1",
-              description: "Inner Submenu 2.1.1",
+              description: "Inner Submenu 2.1.1 peris quilineoms hum varus",
               icon: "ph:shield-chevron",
             },
             {
