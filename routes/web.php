@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\ArchivosController;
 use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ComunicadosController;
+use App\Http\Controllers\EntradasController;
 use App\Http\Controllers\LibrosController;
 
 /*
@@ -39,6 +40,9 @@ Route::get('/comunicados/{id}', [ComunicadosController::class, 'show'])->name('c
 
 Route::get('/libros', [LibrosController::class, 'index'])->name('libros');
 Route::get('/libros/{id}', [LibrosController::class, 'show'])->name('libro');
+
+Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');
+Route::get('/entradas/{id}', [EntradasController::class, 'show'])->name('entrada');
 
 Route::middleware([
     'auth:sanctum',

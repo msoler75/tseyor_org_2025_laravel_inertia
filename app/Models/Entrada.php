@@ -11,7 +11,10 @@ class Entrada extends Model
         'titulo',
         'slug',
         'descripcion',
+        'categoria',
         'texto',
-        'imagen'
+        'imagen',
+        'estado',
+        'published_at'
     ];
 }
