@@ -15,11 +15,11 @@ class ComunicadosController extends Controller
 
         $resultados = $filtro ? Comunicado::where('titulo', 'like', '%' . $filtro . '%')
             ->orWhere('texto', 'like', '%' . $filtro . '%')
-            ->paginate(12)
+            ->paginate(12)->appends(['buscar' => $filtro])
             :
             Comunicado::latest()->paginate(10);
 
-        $recientes = Comunicado::select(['slug', 'titulo', 'published_at'])->latest()->take(24)->get();
+        $recientes = Comunicado::select(['slug', 'titulo', 'published_at'])/*->where('estado', 'P')->*/->latest()->take(24)->get();
 
         return Inertia::render('Comunicados/Index', [
             'filtroResultados' => $filtro,

@@ -15,7 +15,7 @@ class NoticiasController extends Controller
 
         $resultados = $filtro ? Noticia::where('titulo', 'like', '%' . $filtro . '%')
             ->orWhere('texto', 'like', '%' . $filtro . '%')
-            ->paginate(12)
+            ->paginate(12)->appends(['buscar' => $filtro])
             :
             Noticia::latest()->paginate(10);
 
