@@ -11,15 +11,22 @@ class ComunicadosController extends Controller
 
     public function index(Request $request)
     {
-         $filtro = $request->input('buscar');
+        $filtro = $request->input('buscar');
 
-        $resultados = $filtro ? Comunicado::where('titulo', 'like', '%' . $filtro . '%')
-            ->orWhere('texto', 'like', '%' . $filtro . '%')
-            ->paginate(12)->appends(['buscar' => $filtro])
+        $resultados = $filtro ? Comunicado::select(['slug', 'titulo', 'descripcion', 'published_at'])
+            ->where('visibilidad', 'P')
+            ->where(function ($query) use ($filtro) {
+                $query->where('titulo', 'like', '%' . $filtro . '%')
+                    ->orWhere('texto', 'like', '%' . $filtro . '%');
+            })
+            ->paginate(12)
+            ->appends(['buscar' => $filtro])
             :
-            Comunicado::latest()->paginate(10);
+            Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
+            ->where('visibilidad', 'P')
+            ->latest()->paginate(10);
 
-        $recientes = Comunicado::select(['slug', 'titulo', 'published_at'])/*->where('estado', 'P')->*/->latest()->take(24)->get();
+        $recientes = Comunicado::select(['slug', 'titulo', 'fecha_comunicado'])->where('visibilidad', 'P')->latest()->take(24)->get();
 
         return Inertia::render('Comunicados/Index', [
             'filtrado' => $filtro,
@@ -43,4 +50,14 @@ class ComunicadosController extends Controller
         ]);
     }
 
+    public function archive()
+    {
+        $comunicados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
+        ->where('visibilidad', 'P')
+        ->latest()->paginate(10);
+
+        return Inertia::render('Comunicados/Archivo', [
+            'listado' => $comunicados
+        ]);
+    }
 }

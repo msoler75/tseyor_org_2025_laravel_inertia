@@ -13,14 +13,15 @@ class NoticiasController extends Controller
     {
          $filtro = $request->input('buscar');
 
-        $resultados = $filtro ? Noticia::where('titulo', 'like', '%' . $filtro . '%')
+        $resultados = $filtro ? Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])
+        ->where('titulo', 'like', '%' . $filtro . '%')
             ->orWhere('descripcion', 'like', '%' . $filtro . '%')
             ->orWhere('texto', 'like', '%' . $filtro . '%')
             ->paginate(10)->appends(['buscar' => $filtro])
             :
-            Noticia::latest()->paginate(10);
+            Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])->latest()->paginate(10);
 
-        $recientes = Noticia::select(['slug', 'titulo', 'published_at'])->where('estado', 'P')->latest()->take(24)->get();
+        $recientes = Noticia::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->latest()->take(24)->get();
 
         return Inertia::render('Noticias/Index', [
             'filtrado' => $filtro,

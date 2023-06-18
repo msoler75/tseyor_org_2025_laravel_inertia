@@ -15,7 +15,8 @@ class Comunicado extends Model
         'descripcion',
         'texto',
         'imagen',
-        'fechaComunicado'
+        'fechaComunicado',
+        'visibilidad'
     ];
 
     // hooks del modelo

@@ -1,8 +1,8 @@
 
 <template>
     <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
-        <h1>Entradas</h1>
-        <p>Aquí puedes ver las últimas entradas de Tseyor.</p>
+        <h1>Blog</h1>
+        <p>Aquí puedes conocer sobre la vida de la comunidad Tseyor.</p>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
@@ -38,7 +38,7 @@
 
                 <div class="grid grid-cols-1 gap-8 mt-8">
                     <div v-if="listado.data.length > 0" v-for="entrada in listado.data" :key="entrada.id"
-                        class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        class="card bg-base-100 shadow">
                         <img :src="entrada.imagen_url" :alt="entrada.titulo" class="h-48 object-cover w-full" />
                         <div class="p-4">
                             <h2 class="text-lg font-bold mb-2">{{ entrada.titulo }}</h2>
@@ -61,7 +61,7 @@
             </div>
 
             <div class="min-w-[250px] lg:min-w-[440px]">
-                <div class="card shadow rounded p-10 space-y-7">
+                <div class="card bg-base-100 shadow p-10 space-y-7">
                     <h2 class="mb-5">Acceso rápido</h2>
                     <ul class="list-disc">
                         <li v-for="entrada in recientes" :key="entrada.id">

@@ -7,21 +7,21 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 
 const form = useForm({
-    name: '',
+    nombre: '',
 });
 
-const createTeam = () => {
-    form.post(route('teams.store'), {
-        errorBag: 'createTeam',
+const createEquipo = () => {
+    form.post(route('equipos.store'), {
+        errorBag: 'createEquipo',
         preserveScroll: true,
     });
 };
 </script>
 
 <template>
-    <FormSection @submitted="createTeam">
+    <FormSection @submitted="createEquipo">
         <template #title>
-            Team Details
+            Equipo Details
         </template>
 
         <template #description>
@@ -30,13 +30,13 @@ const createTeam = () => {
 
         <template #form>
             <div class="col-span-6">
-                <InputLabel value="Team Owner" />
+                <InputLabel value="Equipo Owner" />
 
                 <div class="flex items-center mt-2">
-                    <img class="object-cover w-12 h-12 rounded-full" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
+                    <img class="object-cover w-12 h-12 rounded-full" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.nombre">
 
                     <div class="ml-4 leading-tight">
-                        <div class="text-gray-900 dark:text-white">{{ $page.props.auth.user.name }}</div>
+                        <div class="text-gray-900 dark:text-white">{{ $page.props.auth.user.nombre }}</div>
                         <div class="text-sm text-gray-700 dark:text-gray-300">
                             {{ $page.props.auth.user.email }}
                         </div>
@@ -45,15 +45,15 @@ const createTeam = () => {
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="Team Name" />
+                <InputLabel for="nombre" value="Equipo Name" />
                 <TextInput
-                    id="name"
-                    v-model="form.name"
+                    id="nombre"
+                    v-model="form.nombre"
                     type="text"
                     class="block w-full mt-1"
                     autofocus
                 />
-                <InputError :message="form.errors.name" class="mt-2" />
+                <InputError :message="form.errors.nombre" class="mt-2" />
             </div>
         </template>
 

@@ -20,7 +20,7 @@ defineProps({
 
 const showingNavigationDropdown = ref(false);
 
-const switchToTeam = (team) => {
+const switchToEquipo = (team) => {
     router.put(route('current-team.update'), {
         team_id: team.id,
     }, {
@@ -38,7 +38,7 @@ const sideBarShow = ref(true)
 </script>
 
 <template>
-    <div data-theme="tseyor">
+    <div>
         <NavAside :show="sideBarShow" @close="sideBarShow = false" class="lg:hidden" />
         pepe
 
@@ -48,8 +48,8 @@ const sideBarShow = ref(true)
 
         <Banner />
 
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 hidden lg:block">
+        <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+            <nav class="bg-base-100 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 hidden lg:block">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="hidden lg:flex justify-between h-16 relative">
@@ -87,7 +87,7 @@ const sideBarShow = ref(true)
                             <div v-show="nav.activeTab" class="absolute top-[120%]  mx-[5rem] z-40"
                                 style="width:calc(100% - 10rem)">
                                 <div v-if="nav.ghostTab && nav.ghostTab.submenu"
-                                    class="w-full h-30 flex flex-col z-40 top-8 bg-white shadow-lg rounded-md border-gray-100 border">
+                                    class="w-full h-30 flex flex-col z-40 top-8 bg-base-100 shadow-lg rounded-md border-gray-100 border">
                                     <div class="flex justify-between gap-10 p-12">
                                         <div v-for="section, index of nav.ghostTab.submenu.sections" :key="index"
                                             class="flex-1">
@@ -96,6 +96,7 @@ const sideBarShow = ref(true)
                                             </div>
                                             <div class="flex flex-col gap-7 mb-7">
                                                 <Link :href="item.url" v-for="item of section.items" :key="item.url"
+                                                @click="nav.closeTabs"
                                                     class="flex gap-3 p-3 rounded-lg hover:bg-blue-50 transition duration-100 cursor-pointer">
                                                 <div class="flex justify-start" style="min-width:2.2rem">
                                                     <Icon :icon="item.icon" class="text-3xl text-blue-400 flex-shrink-0" />
@@ -119,12 +120,12 @@ const sideBarShow = ref(true)
                         <div v-if="$page.props.auth.user" class="hidden sm:flex sm:items-center sm:ml-6"
                             @mouseover="nav.closeTabs()">
                             <div class="ml-3 relative">
-                                <!-- Teams Dropdown -->
-                                <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
+                                <!-- Equipos Dropdown -->
+                                <Dropdown v-if="$page.props.jetstream.hasEquipoFeatures" align="right" width="60">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
+                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-base-100 dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
                                                 {{ $page.props.auth.user.current_team.name }}
 
                                                 <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
@@ -139,34 +140,34 @@ const sideBarShow = ref(true)
 
                                     <template #content>
                                         <div class="w-60">
-                                            <!-- Team Management -->
-                                            <template v-if="$page.props.jetstream.hasTeamFeatures">
+                                            <!-- Equipo Management -->
+                                            <template v-if="$page.props.jetstream.hasEquipoFeatures">
                                                 <div class="block px-4 py-2 text-xs text-gray-400">
-                                                    Manage Team
+                                                    Manage Equipo
                                                 </div>
 
-                                                <!-- Team Settings -->
+                                                <!-- Equipo Settings -->
                                                 <DropdownLink
-                                                    :href="route('teams.show', $page.props.auth.user.current_team)">
-                                                    Team Settings
+                                                    :href="route('equipos.show', $page.props.auth.user.current_team)">
+                                                    Equipo Settings
                                                 </DropdownLink>
 
-                                                <DropdownLink v-if="$page.props.jetstream.canCreateTeams"
-                                                    :href="route('teams.create')">
-                                                    Create New Team
+                                                <DropdownLink v-if="$page.props.jetstream.canCreateEquipos"
+                                                    :href="route('equipos.create')">
+                                                    Create New Equipo
                                                 </DropdownLink>
 
-                                                <!-- Team Switcher -->
+                                                <!-- Equipo Switcher -->
                                                 <template v-if="$page.props.auth.user.all_teams.length > 1">
                                                     <div class="border-t border-gray-200 dark:border-gray-600" />
 
                                                     <div class="block px-4 py-2 text-xs text-gray-400">
-                                                        Switch Teams
+                                                        Switch Equipos
                                                     </div>
 
                                                     <template v-for="team in $page.props.auth.user.all_teams"
                                                         :key="team.id">
-                                                        <form @submit.prevent="switchToTeam(team)">
+                                                        <form @submit.prevent="switchToEquipo(team)">
                                                             <DropdownLink as="button">
                                                                 <div class="flex items-center">
                                                                     <svg v-if="team.id == $page.props.auth.user.current_team_id"
@@ -203,7 +204,7 @@ const sideBarShow = ref(true)
 
                                         <span v-else class="inline-flex rounded-md">
                                             <button type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
+                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-base-100 dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
                                                 {{ $page.props.auth.user.name }}
 
                                                 <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
@@ -308,35 +309,35 @@ const sideBarShow = ref(true)
                                 </ResponsiveNavLink>
                             </form>
 
-                            <!-- Team Management -->
-                            <template v-if="$page.props.jetstream.hasTeamFeatures">
+                            <!-- Equipo Management -->
+                            <template v-if="$page.props.jetstream.hasEquipoFeatures">
                                 <div class="border-t border-gray-200 dark:border-gray-600" />
 
                                 <div class="block px-4 py-2 text-xs text-gray-400">
-                                    Manage Team
+                                    Manage Equipo
                                 </div>
 
-                                <!-- Team Settings -->
-                                <ResponsiveNavLink :href="route('teams.show', $page.props.auth.user.current_team)"
-                                    :active="route().current('teams.show')">
-                                    Team Settings
+                                <!-- Equipo Settings -->
+                                <ResponsiveNavLink :href="route('equipos.show', $page.props.auth.user.current_team)"
+                                    :active="route().current('equipos.show')">
+                                    Equipo Settings
                                 </ResponsiveNavLink>
 
-                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')"
-                                    :active="route().current('teams.create')">
-                                    Create New Team
+                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateEquipos" :href="route('equipos.create')"
+                                    :active="route().current('equipos.create')">
+                                    Create New Equipo
                                 </ResponsiveNavLink>
 
-                                <!-- Team Switcher -->
+                                <!-- Equipo Switcher -->
                                 <template v-if="$page.props.auth.user.all_teams.length > 1">
                                     <div class="border-t border-gray-200 dark:border-gray-600" />
 
                                     <div class="block px-4 py-2 text-xs text-gray-400">
-                                        Switch Teams
+                                        Switch Equipos
                                     </div>
 
                                     <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
-                                        <form @submit.prevent="switchToTeam(team)">
+                                        <form @submit.prevent="switchToEquipo(team)">
                                             <ResponsiveNavLink as="button">
                                                 <div v-if="$page.props.auth.user" class="flex items-center">
                                                     <svg v-if="team.id == $page.props.auth.user.current_team_id"
@@ -359,7 +360,7 @@ const sideBarShow = ref(true)
             </nav>
 
             <!-- Page Heading -->
-            <header v-if="$slots.header" class="bg-white dark:bg-gray-800 shadow">
+            <header v-if="$slots.header" class="bg-base-100 dark:bg-gray-800 shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>

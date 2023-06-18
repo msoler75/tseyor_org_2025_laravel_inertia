@@ -34,14 +34,14 @@
                             <div class="bg-gray-50">
                                 <!-- Account Management -->
                                 <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2   hover:bg-white cursor-pointer"
+                                    class="flex gap-3 items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                     @click="modalSubirArchivos = true">
                                     <Icon icon="ph:upload-duotone" />
                                     <span>Subir archivos</span>
                                 </div>
 
                                 <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer"
+                                    class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                     @click="abrirModalCrearCarpeta">
                                     <Icon icon="ph:folder-plus-duotone" />
                                     <span>Crear carpeta</span>
@@ -49,14 +49,14 @@
 
 
                                 <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer"
+                                    class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                     @click="seleccionando = true">
                                     <Icon icon="ph:check-duotone" />
                                     <span>Seleccionar</span>
                                 </div>
 
                                 <div v-else
-                                    class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer whitespace-nowrap"
+                                    class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                     @click="cancelarSeleccion">
                                     <Icon icon="ph:x-square-duotone" />
                                     <span>Cancelar selección</span>
@@ -196,21 +196,21 @@
                                         <div class="bg-gray-50">
 
                                             <div v-if="!seleccionando"
-                                                class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer"
+                                                class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                 @click="abrirModalRenombrar(item)">
                                                 <Icon icon="ph:cursor-text-duotone" />
                                                 <span>Renombrar</span>
                                             </div>
 
                                             <div v-if="!seleccionando"
-                                                class="flex gap-3  items-center px-4 py-2   hover:bg-white cursor-pointer"
+                                                class="flex gap-3  items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                                 @click="abrirEliminarModal(item)">
                                                 <Icon icon="ph:trash-duotone" />
                                                 <span>Eliminar</span>
                                             </div>
 
                                             <div v-if="!buscandoCarpetaDestino"
-                                                class="flex gap-3  items-center px-4 py-2   hover:bg-white cursor-pointer"
+                                                class="flex gap-3  items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                                 @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                 <template v-if="!item.seleccionado">
                                                     <Icon icon="ph:check-fat-duotone" />
@@ -223,7 +223,7 @@
                                             </div>
 
                                             <div v-if="seleccionando"
-                                                class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer whitespace-nowrap"
+                                                class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                 @click="cancelarSeleccion">
                                                 <Icon icon="ph:x-square-duotone" />
                                                 <span>Cancelar selección</span>
@@ -286,21 +286,21 @@
                                         <div class="bg-gray-50">
 
                                             <div v-if="!seleccionando"
-                                                class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer"
+                                                class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                 @click="abrirModalRenombrar(item)">
                                                 <Icon icon="ph:cursor-text-duotone" />
                                                 <span>Renombrar</span>
                                             </div>
 
                                             <div v-if="!seleccionando"
-                                                class="flex gap-3  items-center px-4 py-2   hover:bg-white cursor-pointer"
+                                                class="flex gap-3  items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                                 @click="abrirEliminarModal(item)">
                                                 <Icon icon="ph:trash-duotone" />
                                                 <span>Eliminar</span>
                                             </div>
 
                                             <div v-if="buscandoCarpetaDestino"
-                                                class="flex gap-3  items-center px-4 py-2   hover:bg-white cursor-pointer"
+                                                class="flex gap-3  items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                                 @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                 <template v-if="!item.seleccionado">
                                                     <Icon icon="ph:check-fat-duotone" />
@@ -313,7 +313,7 @@
                                             </div>
 
                                             <div v-if="seleccionando"
-                                                class="flex gap-3 items-center px-4 py-2  hover:bg-white cursor-pointer whitespace-nowrap"
+                                                class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                 @click="cancelarSeleccion">
                                                 <Icon icon="ph:x-square-duotone" />
                                                 <span>Cancelar selección</span>
@@ -343,9 +343,9 @@
 
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+                <div class="inline-block align-bottom bg-base-100 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
                     role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="bg-base-100 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 
                         <Dropzone id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
                             v-on:vdropzone-sending="sendingEvent" v-on:vdropzone-success="successEvent">

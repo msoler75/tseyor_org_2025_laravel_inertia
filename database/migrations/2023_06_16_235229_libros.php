@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('imagen');
             $table->string('edicion');
             $table->string('paginas');
-            $table->string('estado');
+            $table->string('visibilidad');
             $table->string('pdf');
             $table->timestamp('published_at');
             $table->timestamps();
