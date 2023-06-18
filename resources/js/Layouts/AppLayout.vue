@@ -10,8 +10,9 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import NavAside from '@/Components/NavAside.vue';
 import navItems from '@/navigation.js'
 import { Icon } from '@iconify/vue';
+import {useNav} from '@/Stores/nav'
 
-const navigationItems = ref(navItems)
+const nav = useNav()
 
 defineProps({
     title: String,
@@ -31,74 +32,31 @@ const logout = () => {
     router.post(route('logout'));
 };
 
-const sideBarShow = ref(false)
+const sideBarShow = ref(true)
 
-function toggleTab(tab) {
-    console.log('toggleTab', tab, tab.title, tab.open)
-    let oldState = !!tab.open
-    if (!oldState || !tab.submenu)
-        closeTabs()
-    tab.open = !oldState
-    console.log('tab is now', tab.open)
-}
-
-function activateTab(tab) {
-    tab.activating = true
-    console.log('activateTab', event, tab.title)
-    if (!tab.open || !tab.submenu)
-        closeTabs()
-    setTimeout(() => {
-        tab.open = true
-    }, 1)
-}
-function closeTabs() {
-    console.log('close tabs')
-    for (let tab of navigationItems.value) {
-        tab.open = false
-    }
-}
-
-function closeTab(tab) {
-    console.log('close tab')
-    if (tab) tab.open = false
-}
-
-const activeTab = computed(() => navigationItems.value.find(tab => tab.open))
-
-const ghostTab = ref(null)
-let timer = null
-watch(activeTab, (value) => {
-    clearTimeout(timer)
-    if (value)
-        ghostTab.value = value
-    else
-        timer = setTimeout(() => {
-            ghostTab.value = activeTab.value
-        }, 75)
-})
 
 </script>
 
 <template>
     <div>
-        <!-- <NavAside :show="sideBarShow" :items="navigationItems" @close="sideBarShow = false" /> -->
-        {{ sideBarShow }}
+        <NavAside :show="sideBarShow"  @close="sideBarShow = false" class="lg:hidden" />
+        pepe
 
-        <button class="btn-primary" @click="sideBarShow = !sideBarShow">SideBar</button>
+        <button class="absolute right-0 btn-primary" @click="sideBarShow = !sideBarShow">SideBar</button>
 
         <Head :title="title" />
 
         <Banner />
 
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+            <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 hidden lg:block">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16 relative">
+                    <div class="hidden lg:flex justify-between h-16 relative">
 
-                        <div class="flex ">
+                        <div class="flex">
                             <!-- Logo -->
-                            <div class="shrink-0 flex items-center" @mouseover="closeTabs()">
+                            <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
                                 <Link :href="route('dashboard')">
                                 <ApplicationMark class="block h-9 w-auto" />
                                 </Link>
@@ -110,8 +68,8 @@ watch(activeTab, (value) => {
                                     Dashboard
                                 </NavLink>
 
-                                <div v-for="tab of navigationItems" :key="tab.url" @click="toggleTab(tab)"
-                                    class="relative bg-green-200" @mouseover="activateTab(tab)">
+                                <div v-for="tab of nav.items" :key="tab.url" @click="nav.toggleTab(tab)"
+                                    class="relative bg-green-200" @mouseover="nav.activateTab(tab)">
                                     {{ tab.title }} {{ tab.open }}
                                     <div v-show="tab.open" class="absolute z-30 -left-[5rem] -right-[5rem] -bottom-8  h-14">
                                     </div>
@@ -126,22 +84,32 @@ watch(activeTab, (value) => {
                             leave-active-class="transition ease-in duration-75"
                             leave-from-class="transform opacity-100 scale-100"
                             leave-to-class="transform opacity-0 scale-95">
-                            <div v-show="activeTab" class="absolute top-[120%]  mx-[5rem] z-40"
+                            <div v-show="nav.activeTab" class="absolute top-[120%]  mx-[5rem] z-40"
                                 style="width:calc(100% - 10rem)">
-                                <div v-if="ghostTab && ghostTab.submenu"
-                                    class="w-full h-30 flex justify-between gap-10 p-12 z-40 top-8 bg-white shadow-lg rounded-md border-gray-100 border">
-                                    <div v-for="section, index of ghostTab.submenu.sections" :key="index">
-                                        <div class="text-gray-500 my-5 uppercase tracking-wide ">{{ section.title }}</div>
-                                        <div class="flex flex-col gap-7 mb-7">
-                                            <Link :href="item.url" v-for="item of section.items" :key="item.url" class="flex gap-3 p-3 rounded-md hover:bg-blue-50 transition duration-100 cursor-pointer">
-                                                <Icon :icon="item.icon" class="text-3xl text-blue-400" />
-                                                <div class="flex flex-col gap-2">
-                                                    <strong class="item-lg">{{ item.title }}</strong>
-                                                    <span class="text-gray-500 text-sm">{{ item.description }}</span>
-                                                </div>
-                                            </Link>
+                                <div v-if="nav.ghostTab && nav.ghostTab.submenu"
+                                    class="w-full h-30 flex flex-col z-40 top-8 bg-white shadow-lg rounded-md border-gray-100 border">
+                                    <div class="flex justify-between gap-10 p-12">
+                                        <div v-for="section, index of nav.ghostTab.submenu.sections" :key="index"
+                                            class="flex-1">
+                                            <div class="text-gray-500 my-5 uppercase tracking-widest text-xs">{{
+                                                section.title }}
+                                            </div>
+                                            <div class="flex flex-col gap-7 mb-7">
+                                                <Link :href="item.url" v-for="item of section.items" :key="item.url"
+                                                    class="flex gap-3 p-3 rounded-lg hover:bg-blue-50 transition duration-100 cursor-pointer">
+                                                    <div class="flex justify-start" style="min-width:2.2rem">
+                                                        <Icon :icon="item.icon" class="text-3xl text-blue-400 flex-shrink-0" />
+                                                    </div>
+                                                    <div class="flex flex-col">
+                                                        <strong class="item-lg">{{ item.title }}</strong>
+                                                        <span class="text-gray-500 text-sm">{{ item.description }}</span>
+                                                    </div>
+                                                </Link>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div v-if="nav.ghostTab.submenu.footer" v-html="nav.ghostTab.submenu.footer"
+                                        class="p-5 bg-gray-100" />
                                 </div>
                             </div>
                         </transition>
@@ -149,7 +117,7 @@ watch(activeTab, (value) => {
 
 
                         <div v-if="$page.props.auth.user" class="hidden sm:flex sm:items-center sm:ml-6"
-                            @mouseover="closeTabs()">
+                            @mouseover="nav.closeTabs()">
                             <div class="ml-3 relative">
                                 <!-- Teams Dropdown -->
                                 <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
@@ -398,14 +366,14 @@ watch(activeTab, (value) => {
             </header>
 
             <!-- Page Content -->
-            <main @mouseover="closeTabs()" class="relative">
-                <transition enter-active-class="ease-in-out transition duration-100"
+            <main @mouseover="nav.closeTabs()" class="relative">
+                <transition class="hidden lg:block"
+                enter-active-class="ease-in-out transition duration-100"
                     leave-active-class="ease-in-out transition duration-100" enter-class="opacity-0"
                     leave-to-class="opacity-0">
-                    <div v-if="activeTab" class="absolute w-full h-full" style="background:rgba(0,0,0,.1)"></div>
+                    <div v-if="nav.activeTab" class="absolute w-full h-full" style="background:rgba(0,0,0,.1)"></div>
                 </transition>
                 <slot />
             </main>
         </div>
-    </div>
-</template>
+    </div></template>

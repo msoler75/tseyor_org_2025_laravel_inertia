@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia';
 
-export const useStore=defineStore('app',{
+export const useFilesStore=defineStore('files',{
     state:()=> ({
         // file operations
         isMovingFiles: false,
