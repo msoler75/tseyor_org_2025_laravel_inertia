@@ -20,6 +20,7 @@ class Contacto extends Model
         'social',
         'email',
         'centro_id',
-        'user_id'
+        'user_id',
+        'visibilidad'
     ];
 }

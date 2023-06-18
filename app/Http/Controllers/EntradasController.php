@@ -20,7 +20,7 @@ class EntradasController extends Controller
             :
             Entrada::latest()->paginate(10);
 
-        $recientes = Entrada::select(['slug', 'titulo', 'published_at'])->where('estado', 'P')->latest()->take(24)->get();
+        $recientes = Entrada::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->latest()->take(24)->get();
 
         return Inertia::render('Entradas/Index', [
             'filtrado' => $filtro,

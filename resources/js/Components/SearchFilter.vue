@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center">
-    <div class="flex w-full bg-white rounded shadow">
+    <div class="flex w-full bg-base-100 rounded shadow">
       <dropdown :auto-close="false" class="focus:z-10 px-4 hover:bg-gray-100 border-r focus:border-white rounded-l focus:ring md:px-6" placement="bottom-start">
         <template #default>
           <div class="flex items-baseline">
@@ -11,7 +11,7 @@
           </div>
         </template>
         <template #dropdown>
-          <div class="mt-2 px-4 py-6 w-screen bg-white rounded shadow-xl" :style="{ maxWidth: `${maxWidth}px` }">
+          <div class="mt-2 px-4 py-6 w-screen bg-base-100 rounded shadow-xl" :style="{ maxWidth: `${maxWidth}px` }">
             <slot />
           </div>
         </template>

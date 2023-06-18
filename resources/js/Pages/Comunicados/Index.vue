@@ -14,7 +14,7 @@
                                 class="w-full max-w-[200px] border border-gray-200 rounded focus:outline-none focus:border-gray-400" />
 
                             <button type="submit" @click.prevent="buscar()" class="btn btn-primary"
-                            :disabled="filtro==filtrado">
+                                :disabled="filtro == filtrado">
                                 Buscar
                             </button>
 
@@ -27,7 +27,7 @@
 
 
 
-                <h1 v-if="listado.a.length > 0">
+                <h1 v-if="listado.data.length > 0">
                     <template v-if="filtrado">
                         Resultados de '{{ filtrado }}'
                     </template>
@@ -36,16 +36,17 @@
                 <div v-else>No hay resultados</div>
 
 
-                <div class="grid grid-cols-1 gap-8 mt-8">
-                    <div v-if="listado.a.length > 0" v-for="comunicado in lislistado.y="comunicado.id"
-                        class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div v-if="listado.data.length > 0" class="grid gap-4"
+                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+                    <div v-if="listado.data.length > 0" v-for="comunicado in listado.data" :key="comunicado.id"
+                        class="card bg-base-100">
                         <img :src="comunicado.imagen_url" :alt="comunicado.titulo" class="h-48 object-cover w-full" />
                         <div class="p-4">
                             <h2 class="text-lg font-bold mb-2">{{ comunicado.titulo }}</h2>
                             <p class="text-gray-700 text-sm">{{ comunicado.descripcion }}</p>
                             <Link :href="`/comunicados/${comunicado.slug}`"
                                 class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
-                                Leer más
+                            Leer más
                             </Link>
 
                             <p class="text-gray-600 mb-2 w-full text-xs text-right">
@@ -67,11 +68,14 @@
                         <li v-for="comunicado in recientes" :key="comunicado.id">
                             <Link :href="`/comunicados/${comunicado.slug}`"
                                 class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
-                                {{ comunicado.titulo }}
+                            {{ comunicado.titulo }}
                             </Link>
                         </li>
                     </ul>
 
+                    <p class="mt-5">
+                        <Link :href="route('archivo.comunicados')">Ver listado completo</Link>
+                    </p>
                 </div>
             </div>
         </div>
@@ -89,7 +93,7 @@ defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     filtro: { default: () => "" },
-   listado: {
+    listado: {
         default: () => []
     },
     recientes: {
@@ -97,8 +101,8 @@ const props = defineProps({
     }
 });
 
-const filtro = ref(props.filtrado
-const listado= ref(props.listado);
+const filtro = ref(props.filtrado)
+const listado = ref(props.listado)
 const recientes = ref(props.recientes)
 
 watch(filtro, () => {

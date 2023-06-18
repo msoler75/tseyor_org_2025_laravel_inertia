@@ -1,88 +1,91 @@
 export default [
-    /*{
-            title: "Menu 0",
-            icon: "ph:shield-chevron",
-            description: "description 0",
-            url: "/url0",
-          },*/
+    {
+            title: "Novedades",
+            icon: "vscode-icons:file-type-bolt",
+            description: "Novedades",
+            url: "/novedades",
+          },
 
     {
-      title: "Menu 1",
-      icon: "ph:shield-chevron",
-      open: true,
+      title: "Contenidos",
+      description: "Comunicados, libros, artículos, noticias...",
+      icon: "ph:article-duotone",
+      open: false,
       submenu: {
-        header: "esto es un header 1",
+        // header: "Novedades",
         sections: [
+
           {
-            title: "Sección 1.1",
+            title: "Noticias y Eventos",
             items: [
+                {
+                    title: "Noticias",
+                    url: "/noticias",
+                    description: "Noticias y anuncios de la comunidad Tseyor",
+                    icon: "ph:megaphone-simple-duotone",
+                  },
               {
-                title: "Submenu 1.1.1",
-                url: "/url1.1.1",
-                description: "Inner Submenu 1.1.1 lorem ipsum",
-                icon: "ph:shield-chevron",
+                title: "Eventos",
+                url: "/eventos",
+                description: "Cursos, convivencias y encuentros",
+                icon: "ph:calendar-duotone",
+              }
+            ],
+          },
+          {
+            title: "Documentos",
+            items: [
+                {
+                    title: "Comunicados",
+                    url: "/comunicados",
+                    description: "Comunicados recibidos de las estrellas",
+                    icon: "solar:ufo-2-bold-duotone",
+                  },
+              {
+                title: "Libros",
+                url: "/libros",
+                description: "Todos los temas de la filosofía Tseyor",
+                icon: "ph:book-bookmark-duotone",
               },
               {
-                title: "Submenu 1.1.2",
-                url: "/url1.1.2",
-                description: "Inner Submenu 1.1.2",
-                icon: "ph:shield-chevron",
+                title: "Blog",
+                url: "/entradas",
+                description: "Artículos de nuestros blog",
+                icon: "ph:pencil-line-duotone",
               },
             ],
           },
           {
-            title: "Sección 1.2",
+            title: "Media",
             items: [
-              {
-                title: "Submenu 1.2.1",
-                url: "/url1.1.1",
-                description: "Inner Submenu 1.2.1 varem suo",
-                icon: "ph:shield-chevron",
-              },
-              {
-                title: "Submenu 1.2.2",
-                url: "/url1.2.2",
-                description: "Inner Submenu 1.2.2 lorem ipsum et quodis",
-                icon: "ph:shield-chevron",
-              },
+                {
+                    title: "Libros",
+                    url: "/libros",
+                    description: "Todos los temas de la filosofía Tseyor",
+                    icon: "ph:book-bookmark-duotone",
+                  }
             ],
-          },
-          {
-            title: "Sección 1.3",
-            items: [
-              {
-                title: "Submenu 1.3.1",
-                url: "/url1.3.1",
-                description: "Inner Submenu 1.3.1 fati pelis um tarso doble",
-                icon: "ph:shield-chevron",
-              },
-              {
-                title: "Submenu 1.3.2",
-                url: "/url1.3.2",
-                description: "Inner Submenu 1.3.2",
-                icon: "ph:shield-chevron",
-              },
-            ],
-          },
+          }
+
         ],
         footer: "Esto es un footer 1",
       },
     },
 
     {
-      title: "Menu 2",
-      icon: "ph:shield-chevron",
+      title: "Organización",
+      icon: "ph:shield-cheph:tree-duotone",
       submenu: {
-        header: "esto es un header 2",
+        // header: "esto es un header 2",
         sections: [
           {
-            title: "Sección 2.1",
+            title: "Equipos",
             items: [
               {
-                title: "Submenu 2.1.1",
-                url: "/url2.1.1",
-                description: "Inner Submenu 2.1.1 peris quilineoms hum varus",
-                icon: "ph:shield-chevron",
+                title: "Centros",
+                url: "/centros",
+                description: "Centros Tseyor en el mundo",
+                icon: "ph:lighthouse-duotone",
               },
               {
                 title: "Submenu 2.1.2",

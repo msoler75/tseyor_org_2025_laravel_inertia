@@ -22,7 +22,7 @@
                 <div class="flex justify-end mb-5">
                     <form :action="`/contactos?buscar=${filtro}`">
                         <div class="flex gap-4">
-                            <input name="buscar" type="search" placeholder="Palabras clave..." v-model="filtro"
+                            <input name="buscar" type="search" placeholder="País, dirección..." v-model="filtro"
                                 class="w-full max-w-[200px] border border-gray-200 rounded focus:outline-none focus:border-gray-400" />
 
                             <button type="submit" @click.prevent="buscar()" class="btn btn-primary"

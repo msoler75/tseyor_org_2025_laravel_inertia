@@ -6,19 +6,19 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class UpdateTeamNameTest extends TestCase
+class UpdateEquipoNameTest extends TestCase
 {
     use RefreshDatabase;
 
     public function test_team_names_can_be_updated(): void
     {
-        $this->actingAs($user = User::factory()->withPersonalTeam()->create());
+        $this->actingAs($user = User::factory()->withPersonalEquipo()->create());
 
-        $response = $this->put('/teams/'.$user->currentTeam->id, [
-            'name' => 'Test Team',
+        $response = $this->put('/equipos/'.$user->currentEquipo->id, [
+            'name' => 'Test Equipo',
         ]);
 
-        $this->assertCount(1, $user->fresh()->ownedTeams);
-        $this->assertEquals('Test Team', $user->currentTeam->fresh()->name);
+        $this->assertCount(1, $user->fresh()->ownedEquipos);
+        $this->assertEquals('Test Equipo', $user->currentEquipo->fresh()->name);
     }
 }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('descripcion', 400);
             $table->text('texto');
             $table->string('categoria');
-            $table->string('estado');
+            $table->string('visibilidad');
             $table->datetime('published_at');
             $table->timestamps();
         });

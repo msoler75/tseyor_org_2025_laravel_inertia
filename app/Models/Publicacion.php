@@ -5,17 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
-class Libro extends Model
+class Publicacion extends Model
 {
     protected $fillable = [
         'titulo',
         'slug',
         'descripcion',
-        'categoria',
+        'texto',
         'imagen',
-        'edicion',
-        'paginas',
-        'pdf',
         'published_at',
         'visibilidad'
     ];
@@ -30,7 +27,8 @@ class Libro extends Model
         ->where('visibilidad', 'P')
         ->where(function($query) use ($term){
            $query->where('titulo', 'LIKE', "%{$term}%")
-                 ->orWhere('descripcion', 'LIKE', "%{$term}%");
+                ->orWhere('descripcion', 'LIKE', "%{$term}%")
+                 ->orWhere('texto', 'LIKE', "%{$term}%");
         });
     }
 }

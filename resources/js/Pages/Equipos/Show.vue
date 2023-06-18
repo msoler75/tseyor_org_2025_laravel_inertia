@@ -1,9 +1,9 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import DeleteTeamForm from '@/Pages/Teams/Partials/DeleteTeamForm.vue';
+import DeleteEquipoForm from '@/Pages/Equipos/Partials/DeleteEquipoForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
-import TeamMemberManager from '@/Pages/Teams/Partials/TeamMemberManager.vue';
-import UpdateTeamNameForm from '@/Pages/Teams/Partials/UpdateTeamNameForm.vue';
+import EquipoMemberManager from '@/Pages/Equipos/Partials/EquipoMemberManager.vue';
+import UpdateEquipoNameForm from '@/Pages/Equipos/Partials/UpdateEquipoNameForm.vue';
 
 defineProps({
     team: Object,
@@ -13,28 +13,28 @@ defineProps({
 </script>
 
 <template>
-    <AppLayout title="Team Settings">
+    <AppLayout title="Equipo Settings">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Team Settings
+                Equipo Settings
             </h2>
         </template>
 
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <UpdateTeamNameForm :team="team" :permissions="permissions" />
+                <UpdateEquipoNameForm :team="team" :permissions="permissions" />
 
-                <TeamMemberManager
+                <EquipoMemberManager
                     class="mt-10 sm:mt-0"
                     :team="team"
                     :available-roles="availableRoles"
                     :user-permissions="permissions"
                 />
 
-                <template v-if="permissions.canDeleteTeam && ! team.personal_team">
+                <template v-if="permissions.canDeleteEquipo && ! team.personal_team">
                     <SectionBorder />
 
-                    <DeleteTeamForm class="mt-10 sm:mt-0" :team="team" />
+                    <DeleteEquipoForm class="mt-10 sm:mt-0" :team="team" />
                 </template>
             </div>
         </div>

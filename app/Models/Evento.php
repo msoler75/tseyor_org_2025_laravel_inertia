@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
-class Entrada extends Model
+class Evento extends Model
 {
     protected $fillable = [
         'titulo',
@@ -15,10 +15,15 @@ class Entrada extends Model
         'texto',
         'imagen',
         'published_at',
+        'fecha_inicio',
+        'fecha_fin',
+        'hora_inicio',
         'visibilidad'
     ];
 
     protected $dates = [
-        'published_at'
+        'published_at',
+        'fecha_inicio',
+        'fecha_fin',
     ];
 }

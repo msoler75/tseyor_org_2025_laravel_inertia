@@ -1,13 +1,13 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import CreateTeamForm from '@/Pages/Teams/Partials/CreateTeamForm.vue';
+import CreateTeamForm from '@/Pages/Equipos/Partials/CreateTeamForm.vue';
 </script>
 
 <template>
-    <AppLayout title="Create Team">
+    <AppLayout title="Crear Equipo">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Create Team
+                Crear Equipo
             </h2>
         </template>
 

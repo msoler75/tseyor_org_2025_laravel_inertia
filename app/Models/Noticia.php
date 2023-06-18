@@ -13,8 +13,8 @@ class Noticia extends Model
         'descripcion',
         'texto',
         'imagen',
-        'estado',
-        'published_at'
+        'published_at',
+        'visibilidad'
     ];
 
     protected $dates = [
@@ -24,9 +24,10 @@ class Noticia extends Model
     public static function search($term)
     {
         return static::query()
-        ->where('estado', 'P')
+        ->where('visibilidad', 'P')
         ->where(function($query) use ($term){
            $query->where('titulo', 'LIKE', "%{$term}%")
+                ->orWhere('descripcion', 'LIKE', "%{$term}%")
                  ->orWhere('texto', 'LIKE', "%{$term}%");
         });
     }

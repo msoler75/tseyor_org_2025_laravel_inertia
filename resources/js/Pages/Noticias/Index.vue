@@ -18,8 +18,7 @@
                                 Buscar
                             </button>
 
-                            <button v-if="filtrado" type="button" @click.prevent="filtro = ''"
-                                class="btn btn-secondary">
+                            <button v-if="filtrado" type="button" @click.prevent="filtro = ''" class="btn btn-secondary">
                                 Limpiar
                             </button>
                         </div>
@@ -37,9 +36,11 @@
                 <div v-else>No hay resultados</div>
 
 
-                <div class="grid grid-cols-1 gap-8 mt-8">
+                <div v-if="listado.data.length > 0" class="grid gap-4"
+                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(20rem, 1fr))` }">
+
                     <div v-if="listado.data.length > 0" v-for="noticia in listado.data" :key="noticia.id"
-                        class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        class="card bg-base-100">
                         <img :src="noticia.imagen_url" :alt="noticia.titulo" class="h-48 object-cover w-full" />
                         <div class="p-4">
                             <h2 class="text-lg font-bold mb-2">{{ noticia.titulo }}</h2>
@@ -56,24 +57,21 @@
                     </div>
                 </div>
 
-
                 <pagination class="mt-6" :links="listado.links" />
 
             </div>
 
-            <div class="min-w-[250px] lg:min-w-[440px]">
-                <div class="card shadow rounded p-10 space-y-7">
-                    <h2 class="mb-5">Acceso rápido</h2>
-                    <ul class="list-disc">
-                        <li v-for="noticia in recientes" :key="noticia.id">
-                            <Link :href="`/noticias/${noticia.slug}`"
-                                class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
-                            {{ noticia.titulo }}
-                            </Link>
-                        </li>
-                    </ul>
+            <div class="card bg-base-100 min-w-[250px] lg:min-w-[350px] space-y-7 px-5 py-9 self-baseline">
+                <h2 class="mb-5">Acceso rápido</h2>
+                <ul class="list-disc">
+                    <li v-for="noticia in recientes" :key="noticia.id">
+                        <Link :href="`/noticias/${noticia.slug}`"
+                            class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
+                        {{ noticia.titulo }}
+                        </Link>
+                    </li>
+                </ul>
 
-                </div>
             </div>
         </div>
     </div>
@@ -99,7 +97,7 @@ const props = defineProps({
 });
 
 const filtro = ref(props.filtrado)
-const listado = ref(props.listado);
+const listado = ref(props.listado)
 const recientes = ref(props.recientes)
 
 watch(filtro, () => {
