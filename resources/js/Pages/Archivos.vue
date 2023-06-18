@@ -456,7 +456,7 @@ import Dropzone from 'vue2-dropzone-vue3'
 import Dropdown from '@/Components/Dropdown.vue';
 import Modal from '@/Components/Modal.vue'
 import ConfirmationModal from '@/Components/ConfirmationModal.vue'
-import { useStore } from '@/store';
+import { useFilesStore } from '@/Stores/files';
 
 defineOptions({ layout: AppLayout })
 
@@ -528,7 +528,7 @@ const itemsSeleccionados = computed(() => items.value.filter(item => item.selecc
 
 
 // COPIAR Y MOVER ITEMS
-const store = useStore();
+const store = useFilesStore();
 
 const buscandoCarpetaDestino = computed(() => store.isMovingFiles || store.isCopyingFiles)
 
