@@ -14,16 +14,17 @@ class NoticiasController extends Controller
          $filtro = $request->input('buscar');
 
         $resultados = $filtro ? Noticia::where('titulo', 'like', '%' . $filtro . '%')
+            ->orWhere('descripcion', 'like', '%' . $filtro . '%')
             ->orWhere('texto', 'like', '%' . $filtro . '%')
-            ->paginate(12)->appends(['buscar' => $filtro])
+            ->paginate(10)->appends(['buscar' => $filtro])
             :
             Noticia::latest()->paginate(10);
 
         $recientes = Noticia::select(['slug', 'titulo', 'published_at'])->where('estado', 'P')->latest()->take(24)->get();
 
         return Inertia::render('Noticias/Index', [
-            'filtroResultados' => $filtro,
-            'resultados' => $resultados,
+            'filtrado' => $filtro,
+            'listado' => $resultados,
             'recientes' => $recientes
         ]);
     }

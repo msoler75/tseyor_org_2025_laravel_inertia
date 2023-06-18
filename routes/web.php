@@ -8,6 +8,8 @@ use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ComunicadosController;
 use App\Http\Controllers\EntradasController;
 use App\Http\Controllers\LibrosController;
+use App\Http\Controllers\CentrosController;
+use App\Http\Controllers\ContactosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +42,13 @@ Route::get('/comunicados/{id}', [ComunicadosController::class, 'show'])->name('c
 
 Route::get('/libros', [LibrosController::class, 'index'])->name('libros');
 Route::get('/libros/{id}', [LibrosController::class, 'show'])->name('libro');
+
+Route::get('/centros', [CentrosController::class, 'index'])->name('centros');
+Route::get('/centros/{id}', [CentrosController::class, 'show'])->name('centro');
+
+Route::get('/contactos', [ContactosController::class, 'index'])->name('contactos');
+Route::get('/contactos/{id}', [ContactosController::class, 'show'])->name('contacto');
+
 
 Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');
 Route::get('/entradas/{id}', [EntradasController::class, 'show'])->name('entrada');

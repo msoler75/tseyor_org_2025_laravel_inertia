@@ -188,7 +188,7 @@ const displayableRole = (role) => {
                 <!-- Pending Team Member Invitation List -->
                 <template #content>
                     <div class="space-y-6">
-                        <div v-for="invitation in team.team_invitations" :key="invitation.id" class="flex items-center justify-between">
+                        <div v-for="invitation in team.team_invitations" :key="invitation.id" class="card bg-base-100">
                             <div class="text-gray-600 dark:text-gray-400">
                                 {{ invitation.email }}
                             </div>
@@ -225,7 +225,7 @@ const displayableRole = (role) => {
                 <!-- Team Member List -->
                 <template #content>
                     <div class="space-y-6">
-                        <div v-for="user in team.users" :key="user.id" class="flex items-center justify-between">
+                        <div v-for="user in team.users" :key="user.id" class="card bg-base-100">
                             <div class="flex items-center">
                                 <img class="w-8 h-8 rounded-full object-cover" :src="user.profile_photo_url" :alt="user.name">
                                 <div class="ml-4 dark:text-white">

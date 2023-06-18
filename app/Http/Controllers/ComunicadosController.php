@@ -22,8 +22,8 @@ class ComunicadosController extends Controller
         $recientes = Comunicado::select(['slug', 'titulo', 'published_at'])/*->where('estado', 'P')->*/->latest()->take(24)->get();
 
         return Inertia::render('Comunicados/Index', [
-            'filtroResultados' => $filtro,
-            'resultados' => $resultados,
+            'filtrado' => $filtro,
+            'listado' => $resultados,
             'recientes' => $recientes
         ]);
     }

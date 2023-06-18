@@ -96,7 +96,7 @@ const close = () => {
                             <Icon v-if="tab.open" icon="ion:chevron-up-outline" />
                             <Icon v-else icon="ion:chevron-down-outline" />
                         </button>
-                        <Collapse as="section" v-if="tab.submenu" :when="tab.open"
+                        <Collapse as="section" v-if="tab.submenu" :when="!!tab.open"
                             class="flex justify-start  flex-col w-full md:w-auto items-start pb-1 v-collapse">
                             <template v-for="section of tab.submenu.sections" :key="section.title">
                                 <button v-for="item of section.items" :key="item.url"
