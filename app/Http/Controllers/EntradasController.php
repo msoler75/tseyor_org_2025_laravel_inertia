@@ -23,8 +23,8 @@ class EntradasController extends Controller
         $recientes = Entrada::select(['slug', 'titulo', 'published_at'])->where('estado', 'P')->latest()->take(24)->get();
 
         return Inertia::render('Entradas/Index', [
-            'filtroResultados' => $filtro,
-            'resultados' => $resultados,
+            'filtrado' => $filtro,
+            'listado' => $resultados,
             'recientes' => $recientes
         ]);
     }

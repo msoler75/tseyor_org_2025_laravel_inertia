@@ -1,5 +1,5 @@
 <template>
-    <span :title="formattedDate">{{ tiempo }}</span>
+    <span :title="formattedDate" class="timeago">{{ tiempo }}</span>
 </template>
 
 <script setup>

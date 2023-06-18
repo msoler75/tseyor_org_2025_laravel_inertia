@@ -7,24 +7,24 @@
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
 
-                    <button v-if="seleccionando" class="btn-secondary flex gap-3 items-center" @click="cancelarSeleccion">
+                    <button v-if="seleccionando" class="btn btn-secondary flex gap-3 items-center" @click="cancelarSeleccion">
                         <Icon icon="material-symbols:close-rounded" />
                         <span>{{ itemsSeleccionados.length }}</span>
                     </button>
 
 
-                    <button v-if="seleccionando" class="btn-secondary ml-auto" @click="seleccionarTodos">
+                    <button v-if="seleccionando" class="btn btn-secondary ml-auto" @click="seleccionarTodos">
                         <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                     </button>
 
-                    <button class="btn-secondary" @click="toggleVista">
+                    <button class="btn btn-secondary" @click="toggleVista">
                         <Icon v-show="vista == 'lista'" icon="ph:list-dashes-bold" class="transform scale-150" />
                         <Icon v-show="vista == 'grid'" icon="ph:grid-nine-fill" class="transform scale-150" />
                     </button>
 
                     <Dropdown align="right" width="48">
                         <template #trigger>
-                            <button class="btn-secondary p-3">
+                            <button class="btn btn-secondary p-3">
                                 <Icon icon="mdi:dots-vertical" class="text-xl" />
 
                             </button>
@@ -74,41 +74,41 @@
             <div class="w-full flex mb-7 gap-4 select-none  overflow-x-auto scrollbar-hidden" :seleccionando="seleccionando"
                 :class="seleccionando ? '' : 'justify-end'">
 
-                <button v-if="store.isMovingFiles || store.isCopyingFiles" class="btn-primary flex gap-3 items-center"
+                <button v-if="store.isMovingFiles || store.isCopyingFiles" class="btn btn-primary flex gap-3 items-center"
                     @click="cancelarOperacion">
                     <Icon icon="material-symbols:close-rounded" />
                     <span>Cancelar</span>
                 </button>
 
-                <button v-if="store.isMovingFiles" class="btn-primary flex gap-3 items-center"
+                <button v-if="store.isMovingFiles" class="btn btn-primary flex gap-3 items-center"
                     :disabled="store.sourcePath == ruta" @click="moverItems">
                     <Icon icon="ph:clipboard-duotone" />
                     <span>Mover aquí</span>
                 </button>
 
-                <button v-else-if="store.isCopyingFiles" class="btn-primary flex gap-3 items-center"
+                <button v-else-if="store.isCopyingFiles" class="btn btn-primary flex gap-3 items-center"
                     :disabled="store.sourcePath == ruta" @click="copiarItems">
                     <Icon icon="ph:clipboard-duotone" />
                     <span>Pegar aquí</span>
                 </button>
 
                 <template v-else>
-                    <button v-if="itemsSeleccionados.length == 1" class="btn-primary flex gap-3 items-center">
+                    <button v-if="itemsSeleccionados.length == 1" class="btn btn-primary flex gap-3 items-center">
                         <Icon icon="ph:cursor-text-duotone" />
                         <span>Renombrar</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length" class="btn-primary flex gap-3 items-center"
+                    <button v-if="itemsSeleccionados.length" class="btn btn-primary flex gap-3 items-center"
                         @click="prepararMoverItems">
                         <Icon icon="ph:scissors-duotone" /><span>Mover</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length" class="btn-primary flex gap-3 items-center"
+                    <button v-if="itemsSeleccionados.length" class="btn btn-primary flex gap-3 items-center"
                         @click="prepararCopiarItems">
                         <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length" class="btn-primary flex gap-3 items-center"
+                    <button v-if="itemsSeleccionados.length" class="btn btn-primary flex gap-3 items-center"
                         @click="eliminarItems">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
@@ -187,7 +187,7 @@
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
-                                        <button class="btn-secondary p-3">
+                                        <button class="btn btn-secondary p-3">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
                                         </button>
                                     </template>
@@ -277,7 +277,7 @@
                             <div class="w-full flex justify-end">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
-                                        <button class="btn-secondary p-1">
+                                        <button class="btn btn-secondary p-1">
                                             <Icon icon="mdi:dots-horizontal" class="text-xl" />
                                         </button>
                                     </template>
@@ -358,7 +358,7 @@
                     </div>
 
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button @click="modalSubirArchivos = false" type="button" class="btn-secondary">
+                        <button @click="modalSubirArchivos = false" type="button" class="btn btn-secondary">
                             Cerrar
                         </button>
                     </div>
@@ -382,11 +382,11 @@
 
                 <div class="py-3 sm:flex sm:justify-end gap-5">
 
-                    <button @click.prevent="crearCarpeta" type="button" class="btn-primary">
+                    <button @click.prevent="crearCarpeta" type="button" class="btn btn-primary">
                         Crear Carpeta
                     </button>
 
-                    <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn-secondary">
+                    <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn btn-secondary">
                         Cancelar
                     </button>
 
@@ -406,11 +406,11 @@
                 </div>
 
                 <div class="py-3 sm:flex sm:justify-end gap-5">
-                    <button @click.prevent="modalRenombrarItem = false" type="button" class="btn-secondary">
+                    <button @click.prevent="modalRenombrarItem = false" type="button" class="btn btn-secondary">
                         Cancelar
                     </button>
 
-                    <button @click.prevent="renombrarItem" type="button" class="btn-primary">
+                    <button @click.prevent="renombrarItem" type="button" class="btn btn-primary">
                         Renombrar
                     </button>
                 </div>
@@ -429,11 +429,11 @@
                 <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
                     @submit.prevent="crearCarpeta">
 
-                    <button @click.prevent="modalEliminarItem = false" type="button" class="btn-secondary">
+                    <button @click.prevent="modalEliminarItem = false" type="button" class="btn btn-secondary">
                         Cancelar
                     </button>
 
-                    <button @click.prevent="eliminarArchivo" type="button" class="btn-primary">
+                    <button @click.prevent="eliminarArchivo" type="button" class="btn btn-primary">
                         Eliminar
                     </button>
                 </form>

@@ -10,7 +10,7 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import NavAside from '@/Components/NavAside.vue';
 import navItems from '@/navigation.js'
 import { Icon } from '@iconify/vue';
-import {useNav} from '@/Stores/nav'
+import { useNav } from '@/Stores/nav'
 
 const nav = useNav()
 
@@ -38,11 +38,11 @@ const sideBarShow = ref(true)
 </script>
 
 <template>
-    <div>
-        <NavAside :show="sideBarShow"  @close="sideBarShow = false" class="lg:hidden" />
+    <div data-theme="tseyor">
+        <NavAside :show="sideBarShow" @close="sideBarShow = false" class="lg:hidden" />
         pepe
 
-        <button class="absolute right-0 btn-primary" @click="sideBarShow = !sideBarShow">SideBar</button>
+        <button class="absolute right-0 btn btn-primary" @click="sideBarShow = !sideBarShow">SideBar</button>
 
         <Head :title="title" />
 
@@ -97,13 +97,13 @@ const sideBarShow = ref(true)
                                             <div class="flex flex-col gap-7 mb-7">
                                                 <Link :href="item.url" v-for="item of section.items" :key="item.url"
                                                     class="flex gap-3 p-3 rounded-lg hover:bg-blue-50 transition duration-100 cursor-pointer">
-                                                    <div class="flex justify-start" style="min-width:2.2rem">
-                                                        <Icon :icon="item.icon" class="text-3xl text-blue-400 flex-shrink-0" />
-                                                    </div>
-                                                    <div class="flex flex-col">
-                                                        <strong class="item-lg">{{ item.title }}</strong>
-                                                        <span class="text-gray-500 text-sm">{{ item.description }}</span>
-                                                    </div>
+                                                <div class="flex justify-start" style="min-width:2.2rem">
+                                                    <Icon :icon="item.icon" class="text-3xl text-blue-400 flex-shrink-0" />
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <strong class="item-lg">{{ item.title }}</strong>
+                                                    <span class="text-gray-500 text-sm">{{ item.description }}</span>
+                                                </div>
                                                 </Link>
                                             </div>
                                         </div>
@@ -367,8 +367,7 @@ const sideBarShow = ref(true)
 
             <!-- Page Content -->
             <main @mouseover="nav.closeTabs()" class="relative">
-                <transition class="hidden lg:block"
-                enter-active-class="ease-in-out transition duration-100"
+                <transition class="hidden lg:block" enter-active-class="ease-in-out transition duration-100"
                     leave-active-class="ease-in-out transition duration-100" enter-class="opacity-0"
                     leave-to-class="opacity-0">
                     <div v-if="nav.activeTab" class="absolute w-full h-full" style="background:rgba(0,0,0,.1)"></div>
@@ -376,4 +375,5 @@ const sideBarShow = ref(true)
                 <slot />
             </main>
         </div>
-    </div></template>
+    </div>
+</template>

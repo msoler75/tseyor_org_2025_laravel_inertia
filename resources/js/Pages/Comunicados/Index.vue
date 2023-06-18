@@ -13,12 +13,12 @@
                             <input name="buscar" type="search" placeholder="Texto..." v-model="filtro"
                                 class="w-full max-w-[200px] border border-gray-200 rounded focus:outline-none focus:border-gray-400" />
 
-                            <button type="submit" @click.prevent="buscar()" class="btn-primary"
-                            :disabled="filtro==filtroResultados">
+                            <button type="submit" @click.prevent="buscar()" class="btn btn-primary"
+                            :disabled="filtro==filtrado">
                                 Buscar
                             </button>
 
-                            <button v-if="filtroResultados" type="button" @click.prevent="filtro = ''" class="btn-secondary">
+                            <button v-if="filtrado" type="button" @click.prevent="filtro = ''" class="btn btn-secondary">
                                 Limpiar
                             </button>
                         </div>
@@ -27,9 +27,9 @@
 
 
 
-                <h1 v-if="resultados.data.length > 0">
-                    <template v-if="filtroResultados">
-                        Resultados de '{{ filtroResultados }}'
+                <h1 v-if="listado.a.length > 0">
+                    <template v-if="filtrado">
+                        Resultados de '{{ filtrado }}'
                     </template>
                 </h1>
 
@@ -37,7 +37,7 @@
 
 
                 <div class="grid grid-cols-1 gap-8 mt-8">
-                    <div v-if="resultados.data.length > 0" v-for="comunicado in resultados.data" :key="comunicado.id"
+                    <div v-if="listado.a.length > 0" v-for="comunicado in lislistado.y="comunicado.id"
                         class="bg-white rounded-lg shadow-lg overflow-hidden">
                         <img :src="comunicado.imagen_url" :alt="comunicado.titulo" class="h-48 object-cover w-full" />
                         <div class="p-4">
@@ -56,7 +56,7 @@
                 </div>
 
 
-                <pagination class="mt-6" :links="resultados.links" />
+                <pagination class="mt-6" :links="listado.links" />
 
             </div>
 
@@ -88,8 +88,8 @@ import Pagination from '@/Components/Pagination.vue'
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    filtroResultados: { default: () => "" },
-    resultados: {
+    filtro: { default: () => "" },
+   listado: {
         default: () => []
     },
     recientes: {
@@ -97,12 +97,12 @@ const props = defineProps({
     }
 });
 
-const filtro = ref(props.filtroResultados)
-const resultados = ref(props.resultados);
+const filtro = ref(props.filtrado
+const listado= ref(props.listado);
 const recientes = ref(props.recientes)
 
 watch(filtro, () => {
-    if (filtro.value == "" && props.filtroResultados)
+    if (filtro.value == "" && props.filtrado)
         router.visit(route('comunicados'))
 })
 

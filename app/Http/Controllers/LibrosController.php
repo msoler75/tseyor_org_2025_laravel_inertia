@@ -17,13 +17,11 @@ class LibrosController extends Controller
         $resultados = $categoria ?
             Libro::where('categoria', '=', $categoria)
             ->paginate(12)->appends(['categoria' => $categoria])
-            :
-            (
-            $filtro ? Libro::where('titulo', 'like', '%' . $filtro . '%')
-            ->orWhere('descripcion', 'like', '%' . $filtro . '%')
-            ->paginate(10)->appends(['buscar' => $filtro])
-            :
-            Libro::latest()->paginate(10)
+            : ($filtro ? Libro::where('titulo', 'like', '%' . $filtro . '%')
+                ->orWhere('descripcion', 'like', '%' . $filtro . '%')
+                ->paginate(10)->appends(['buscar' => $filtro])
+                :
+                Libro::latest()->paginate(10)
             );
 
         $categorias = Libro::selectRaw('categoria as nombre, count(*) as total')
@@ -31,8 +29,8 @@ class LibrosController extends Controller
             ->get();
 
         return Inertia::render('Libros/Index', [
-            'filtroResultados' => $filtro,
-            'resultados' => $resultados,
+            'filtrado' => $filtro,
+            'listado' => $resultados,
             'categorias' => $categorias
         ]);
     }

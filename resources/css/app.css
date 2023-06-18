@@ -94,42 +94,7 @@
         @apply text-red-500 text-sm ml-1 mt-1;
     }
 
-    /* Estilos para botones */
-    button,
-    .btn {
-        @apply inline-block font-semibold px-4 rounded transition duration-500 ease-in-out cursor-pointer;
-    }
 
-    button:hover:not(:disabled),
-    .btn:hover:not(:disabled) {
-        @apply bg-blue-100;
-    }
-
-    .btn:focus,
-    .btn:active {
-        @apply outline-none shadow-outline;
-    }
-
-    button:disabled,
-    .btn:disabled {
-        @apply opacity-50;
-      }
-
-    .btn-primary {
-        @apply px-4 py-2  text-white bg-blue-500 rounded;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-        @apply bg-blue-600;
-    }
-
-    .btn-secondary {
-        @apply px-4 py-2  text-gray-600 bg-white rounded border border-gray-200;
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-        @apply bg-gray-50;
-    }
 
 }
 
@@ -139,4 +104,9 @@
         box-shadow: 0 0 0 3px rgba(164, 202, 254, 0.45);
         outline: none;
     }
+
+    .timeago {
+        @apply text-sm;
+    }
 }
+
