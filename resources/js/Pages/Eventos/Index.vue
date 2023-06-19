@@ -3,16 +3,23 @@
     <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
         <h1>Eventos</h1>
         <p>Cursos y encuentros de la comunidad Tseyor a los que puedes acudir.</p>
+
+        <div class="flex justify-end mb-5">
+                    <SearchInput />
+                </div>
+
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
 
             <div
-                class="card bg-base-100 shadow flex-wrap flex-row md:mt-[4.4rem] md:flex-col p-5 lg:p-10 gap-4 mx-auto self-baseline md:sticky top-3">
-                <Link :href="`${route('eventos')}`">
+                class="card bg-base-100 shadow flex-wrap flex-row mb-3 md:flex-col p-5 lg:p-10 gap-4 mx-auto self-baseline md:sticky top-3">
+                <Link :href="`${route('eventos')}`"
+                :class="!filtrado&&!categoriaActiva ? 'text-blue-700 font-bold' : ''">
                 <span class="capitalize">Novedades</span>
                 </Link>
 
-                <div v-for="categoria of categorias" :key="categoria.nombre" class="flex gap-2">
+                <div v-for="categoria of categorias" :key="categoria.nombre" class="flex gap-2"
+                :class="categoriaActiva == categoria.nombre ? 'text-blue-700 font-bold' : ''">
                     <Link :href="`${route('eventos')}?categoria=${categoria.nombre}`">
                     <span class="capitalize">{{ categoria.nombre }}</span>
                     <small v-if="categoria.total > 0">({{ categoria.total }})</small>
@@ -22,9 +29,7 @@
 
             <div class="w-full flex-grow">
 
-                <div class="flex justify-end mb-5">
-                    <SearchInput />
-                </div>
+
 
                 <SearchResultsHeader :results="listado" />
 
@@ -73,6 +78,8 @@ import SearchResultsHeader from '@/Components/SearchResultsHeader.vue'
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
+    categoriaActiva: {default: ()=> ''},
+    filtrado: {default: ()=> ''},
     listado: {
         default: () => { data: [] }
     },
@@ -83,5 +90,6 @@ const props = defineProps({
 
 const listado = ref(props.listado);
 const categorias = ref(props.categorias)
+
 
 </script>

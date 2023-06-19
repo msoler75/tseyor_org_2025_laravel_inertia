@@ -27,6 +27,7 @@ class NoticiasController extends Controller
         $recientes = Noticia::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->latest()->take(24)->get();
 
         return Inertia::render('Noticias/Index', [
+            'filtrado' => $filtro,
             'listado' => $resultados,
             'recientes' => $recientes
         ]);

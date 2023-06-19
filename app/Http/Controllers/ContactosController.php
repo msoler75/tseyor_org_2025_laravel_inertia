@@ -31,6 +31,7 @@ class ContactosController extends Controller
 
         return Inertia::render('Contactos/Index', [
             'filtrado' => $filtro,
+            'paisActivo'=>$pais,
             'listado' => $resultados,
             'paises' => $paises
         ]);

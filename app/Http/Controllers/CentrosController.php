@@ -30,6 +30,8 @@ class CentrosController extends Controller
             ->get();
 
         return Inertia::render('Centros/Index', [
+            'filtrado' => $filtro,
+            'paisActivo' => $pais,
             'listado' => $resultados,
             'paises' => $paises
         ]);

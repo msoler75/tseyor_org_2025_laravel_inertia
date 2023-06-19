@@ -12,11 +12,13 @@
 
 
             <div class="card bg-base-100 shadow flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4 self-baseline">
-                    <Link :href="`${route('libros')}`">
+                    <Link :href="`${route('libros')}`"
+                    :class="!filtrado&&!categoriaActiva ? 'text-blue-700 font-bold' : ''">
                     <span class="capitalize">Novedades</span>
                     </Link>
 
-                    <div v-for="categoria of categorias" :key="categoria.nombre" class="flex gap-2">
+                    <div v-for="categoria of categorias" :key="categoria.nombre" class="flex gap-2"
+                    :class="categoriaActiva == categoria.nombre ? 'text-blue-700 font-bold' : ''">
                         <Link :href="`${route('libros')}?categoria=${categoria.nombre}`">
                         <span class="capitalize">{{ categoria.nombre }}</span>
                         <small v-if="categoria.total > 0">({{ categoria.total }})</small>
@@ -74,6 +76,8 @@ import SearchResultsHeader from '@/Components/SearchResultsHeader.vue'
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
+    categoriaActiva: {default: ()=> ''},
+    filtrado: {default: ()=> ''},
    listado: {
         default: () => {data:[]}
     },

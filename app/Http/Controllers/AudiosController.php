@@ -29,6 +29,8 @@ class AudiosController extends Controller
             ->get();
 
         return Inertia::render('Audios/Index', [
+            'filtrado' => $filtro,
+            'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias
         ]);
