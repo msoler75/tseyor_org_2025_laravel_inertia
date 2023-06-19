@@ -16,13 +16,13 @@ class CentrosController extends Controller
 
         $resultados = $pais ?
             Centro::where('pais', '=', $pais)
-            ->paginate(50)->appends(['pais' => $pais])
+            ->paginate(10)->appends(['pais' => $pais])
             : ($filtro ? Centro::where('nombre', 'like', '%' . $filtro . '%')
                 ->orWhere('pais', 'like', '%' . $filtro . '%')
                 ->orWhere('poblacion', 'like', '%' . $filtro . '%')
-                ->paginate(50)->appends(['buscar' => $filtro])
+                ->paginate(10)->appends(['buscar' => $filtro])
                 :
-                Centro::latest()->paginate(50)
+                Centro::latest()->paginate(10)
             );
 
         $paises = Centro::selectRaw('pais as nombre, count(*) as total')
@@ -30,7 +30,6 @@ class CentrosController extends Controller
             ->get();
 
         return Inertia::render('Centros/Index', [
-            'filtrado' => $filtro,
             'listado' => $resultados,
             'paises' => $paises
         ]);

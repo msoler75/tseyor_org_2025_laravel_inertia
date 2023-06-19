@@ -57,23 +57,26 @@ const sideBarShow = ref(true)
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
-                                <Link :href="route('dashboard')">
-                                <ApplicationMark class="block h-9 w-auto" />
+                                <Link :href="route('novedades')">
+                                <ApplicationMark class="block h-12 w-auto" />
                                 </Link>
                             </div>
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
-                                </NavLink>
 
-                                <div v-for="tab of nav.items" :key="tab.url" @click="nav.toggleTab(tab)"
-                                    class="relative bg-green-200" @mouseover="nav.activateTab(tab)">
-                                    {{ tab.title }} {{ tab.open }}
-                                    <div v-show="tab.open" class="absolute z-30 -left-[5rem] -right-[5rem] -bottom-8  h-14">
-                                    </div>
-                                </div>
+
+                                <template v-for="tab of nav.items" :key="tab.url">
+                                    <NavLink v-if="tab.url" :href="tab.url" @mouseover="nav.closeTabs()"
+                                        :active="route().current('dashboard')">
+                                        {{ tab.title }}
+                                    </NavLink>
+                                    <NavLink v-else @click="nav.toggleTab(tab)" @mouseover="nav.activateTab(tab)">
+                                        {{ tab.title }}
+                                        <div v-show="tab.open"
+                                            class="absolute z-30 -left-[5rem] -right-[5rem] -bottom-8  h-14" />
+                                    </NavLink>
+                                </template>
                             </div>
 
 
@@ -96,7 +99,7 @@ const sideBarShow = ref(true)
                                             </div>
                                             <div class="flex flex-col gap-7 mb-7">
                                                 <Link :href="item.url" v-for="item of section.items" :key="item.url"
-                                                @click="nav.closeTabs"
+                                                    @click="nav.closeTabs"
                                                     class="flex gap-3 p-3 rounded-lg hover:bg-blue-50 transition duration-100 cursor-pointer">
                                                 <div class="flex justify-start" style="min-width:2.2rem">
                                                     <Icon :icon="item.icon" class="text-3xl text-blue-400 flex-shrink-0" />
@@ -323,8 +326,8 @@ const sideBarShow = ref(true)
                                     Equipo Settings
                                 </ResponsiveNavLink>
 
-                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateEquipos" :href="route('equipos.create')"
-                                    :active="route().current('equipos.create')">
+                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateEquipos"
+                                    :href="route('equipos.create')" :active="route().current('equipos.create')">
                                     Create New Equipo
                                 </ResponsiveNavLink>
 
@@ -368,11 +371,15 @@ const sideBarShow = ref(true)
 
             <!-- Page Content -->
             <main @mouseover="nav.closeTabs()" class="relative">
-                <transition class="hidden lg:block" enter-active-class="ease-in-out transition duration-100"
-                    leave-active-class="ease-in-out transition duration-100" enter-class="opacity-0"
+                <transition enter-active-class="transition-opacity duration-100"
+                    leave-active-class="transition-opacity duration-100" enter-class="opacity-0"
                     leave-to-class="opacity-0">
-                    <div v-if="nav.activeTab" class="absolute w-full h-full" style="background:rgba(0,0,0,.1)"></div>
+                    <div v-if="nav.activeTab" class="absolute w-full h-full bg-black bg-opacity-10">
+                        <!-- Contenido del elemento -->
+                    </div>
                 </transition>
+
+
                 <slot />
             </main>
         </div>

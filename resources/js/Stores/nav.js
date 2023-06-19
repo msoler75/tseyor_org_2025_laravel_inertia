@@ -27,6 +27,7 @@ export const useNav = defineStore("nav", {
       tab.open = !oldState;
       if (tab.open) this.activeTabChange(tab);
       console.log("tab is now", tab.open);
+      return false
     },
     activeTabChange(newTab) {
       clearTimeout(this.timer);

@@ -4,44 +4,30 @@
         <h1>Noticias</h1>
         <p>Aquí puedes ver las últimas noticias de Tseyor.</p>
 
+        <div class="flex justify-end mb-5">
+            <SearchInput />
+        </div>
+
+
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
+
+
             <div class="w-full flex-grow">
-                <div class="flex justify-end mb-5">
-                    <form :action="`/noticias?buscar=${filtro}`">
-                        <div class="flex gap-4 mt-5">
-                            <input name="buscar" type="search" placeholder="Texto..." v-model="filtro"
-                                class="w-full max-w-[200px] border border-gray-200 rounded focus:outline-none focus:border-gray-400" />
-
-                            <button type="submit" @click.prevent="buscar()" class="btn btn-primary"
-                                :disabled="filtro == filtrado">
-                                Buscar
-                            </button>
-
-                            <button v-if="filtrado" type="button" @click.prevent="filtro = ''" class="btn btn-secondary">
-                                Limpiar
-                            </button>
-                        </div>
-                    </form>
-                </div>
 
 
 
-                <h1 v-if="listado.data.length > 0">
-                    <template v-if="filtrado">
-                        Resultados de '{{ filtrado }}'
-                    </template>
-                </h1>
 
-                <div v-else>No hay resultados</div>
+        <SearchResultsHeader :results="listado" />
+
 
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(20rem, 1fr))` }">
 
                     <div v-if="listado.data.length > 0" v-for="noticia in listado.data" :key="noticia.id"
-                        class="card bg-base-100">
-                        <img :src="noticia.imagen_url" :alt="noticia.titulo" class="h-48 object-cover w-full" />
+                        class="card bg-base-100 shadow">
+                        <img :src="noticia.imagen" :alt="noticia.titulo" class="h-48 object-cover w-full" />
                         <div class="p-4">
                             <h2 class="text-lg font-bold mb-2">{{ noticia.titulo }}</h2>
                             <p class="text-gray-700 text-sm">{{ noticia.descripcion }}</p>
@@ -61,8 +47,8 @@
 
             </div>
 
-            <div class="card bg-base-100 min-w-[250px] lg:min-w-[350px] space-y-7 px-5 py-9 self-baseline">
-                <h2 class="mb-5">Acceso rápido</h2>
+            <div class="card bg-base-100 shadow min-w-[250px] lg:min-w-[350px] space-y-7 px-5 py-9 self-baseline">
+                <h2 class="mb-5">Recientes</h2>
                 <ul class="list-disc">
                     <li v-for="noticia in recientes" :key="noticia.id">
                         <Link :href="`/noticias/${noticia.slug}`"
@@ -83,6 +69,8 @@ import TimeAgo from '@/Components/TimeAgo.vue';
 import { Link, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Pagination from '@/Components/Pagination.vue'
+import SearchInput from '@/Components/SearchInput.vue'
+import SearchResultsHeader from '@/Components/SearchResultsHeader.vue'
 
 defineOptions({ layout: AppLayout })
 

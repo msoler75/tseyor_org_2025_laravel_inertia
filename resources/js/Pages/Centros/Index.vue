@@ -11,7 +11,8 @@
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-            <div class="card bg-base-100 shadow flex-wrap flex-row md:mt-[5rem] md:flex-col p-5 lg:p-10 gap-4 mx-auto">
+            <div
+                class="card bg-base-100 shadow flex-wrap flex-row md:mt-[4.45rem] md:flex-col p-5 lg:p-10 gap-4 mx-auto  self-baseline">
                 <Link :href="`${route('centros')}`">
                 <span class="capitalize">Novedades</span>
                 </Link>
@@ -26,37 +27,17 @@
 
             <div class="w-full flex-grow">
                 <div class="flex justify-end mb-5">
-                    <form :action="`/centros?buscar=${filtro}`">
-                        <div class="flex gap-4">
-                            <input name="buscar" type="search" placeholder="País, dirección..." v-model="filtro"
-                                class="w-full max-w-[200px] border border-gray-200 rounded focus:outline-none focus:border-gray-400" />
-
-                            <button type="submit" @click.prevent="buscar()" class="btn btn-primary"
-                                :disabled="filtro == filtrado">
-                                Buscar
-                            </button>
-
-                            <button v-if="filtrado" type="button" @click.prevent="filtro = ''" class="btn btn-secondary">
-                                Limpiar
-                            </button>
-                        </div>
-                    </form>
+                    <SearchInput />
                 </div>
 
-                <h1 v-if="listado.data.length > 0">
-                    <span v-if="filtrado">
-                        Resultados de '{{ filtrado }}'
-                    </span>
-                </h1>
-
-                <div v-else>No hay resultados</div>
+                <SearchResultsHeader :results="listado" />
 
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
-                    <div v-for="centro in listado.data" :key="centro.id" class="card bg-base-100">
+                    <div v-for="centro in listado.data" :key="centro.id" class="card bg-base-100 shadow">
                         <img :src="centro.imagen_url" :alt="centro.nombre" class="h-48 object-cover w-full" />
-                        <div class="p-5 flex flex-col">
+                        <div class="p-5 flex flex-col flex-grow">
                             <h2 class="text-lg font-bold mb-2">{{ centro.nombre }}</h2>
                             <div class="flex gap-2">
                                 <p class="inline-block text-xs bg-gray-500 text-gray-50 rounded-full py-1 px-3">{{
@@ -65,12 +46,11 @@
                                     centro.poblacion }}</p>
 
                             </div>
-                            <Link :href="`/centros/${centro.slug}`"
-                                class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
+                            <Link :href="`/centros/${centro.slug}`" class="btn btn-primary mt-auto">
                             Ver centro
                             </Link>
 
-                            <p class="text-gray-600 mb-2 w-full text-xs text-right">
+                            <p v-if="false" class="text-gray-600 mb-2 w-full text-xs text-right">
                                 <TimeAgo :date="centro.updated_at" />
                             </p>
                         </div>
@@ -78,7 +58,7 @@
                 </div>
 
 
-                <pagination class="mt-6" :links="listado.links" :url="urlPaginacion(listado.path)" />
+                <pagination class="mt-6" :links="listado.links" />
 
             </div>
 
@@ -90,17 +70,18 @@
 
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import TimeAgo from '@/Components/TimeAgo.vue';
-import { Link, router } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import SearchInput from '@/Components/SearchInput.vue'
+import SearchResultsHeader from '@/Components/SearchResultsHeader.vue'
 import Pagination from '@/Components/Pagination.vue'
 import { Icon } from '@iconify/vue';
 
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    filtrado: { default: () => "" },
     listado: {
         default: () => { data: [] }
     },
@@ -109,23 +90,8 @@ const props = defineProps({
     }
 });
 
-const filtro = ref(props.filtrado)
 const listado = ref(props.listado);
 const paises = ref(props.paises)
 
-function urlPaginacion(path) {
-    return route('centros', {
-        page: 'pagina',
-        buscar: props.filtrado,
-    }).replace('pagina', path);
-}
 
-watch(filtro, () => {
-    if (filtro.value == "" && props.filtrado)
-        router.visit(route('centros'))
-})
-
-function buscar() {
-    router.get(route('centros'), { buscar: filtro.value }, { replace: true })
-}
 </script>

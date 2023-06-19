@@ -11,23 +11,10 @@
         mb-7
         " />
 
-        <div class="flex justify-end mb-7">
-            <form :action="`/audios?buscar=${filtro}`">
-                <div class="flex gap-4">
-                    <input name="buscar" type="search" placeholder="Buscar..." v-model="filtro"
-                        class="w-full max-w-[200px] border border-gray-200 rounded focus:outline-none focus:border-gray-400" />
 
-                    <button type="submit" @click.prevent="buscar()" class="btn btn-primary" :disabled="filtro == filtrado">
-                        Buscar
-                    </button>
-
-                    <button v-if="filtrado" type="button" @click.prevent="filtro = ''" class="btn btn-secondary">
-                        Limpiar
-                    </button>
-                </div>
-            </form>
+        <div class="flex justify-end mb-5">
+            <SearchInput/>
         </div>
-
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
@@ -48,12 +35,7 @@
 
             <div class="w-full flex-grow">
 
-                <h1 v-if="filtrado && listado.data.length > 0" class="mt-0">
-                    Resultados de '{{ filtrado }}'
-                </h1>
-
-                <h1 v-else-if="filtrado && listado.data.length == 0">No hay resultados</h1>
-
+                <SearchResultsHeader :results="listado"/>
 
                 <div v-if="listado.data.length > 0" class="grid gap-4 max-w-full"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(32rem, 1fr))` }">
@@ -80,7 +62,7 @@
                 </div>
 
 
-                <pagination class="mt-6" :links="listado.links" :url="urlPaginacion(listado.path)" />
+                <pagination class="mt-6" :links="listado.links" />
 
             </div>
 
@@ -92,17 +74,18 @@
 
 
 <script setup>
-import { ref, watch } from 'vue';
-import { Link, router } from '@inertiajs/vue3'
+import { ref } from 'vue';
+import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import Pagination from '@/Components/Pagination.vue'
 import AudioPlayer from '@/Components/AudioPlayer.vue'
+import SearchInput from '@/Components/SearchInput.vue'
+import SearchResultsHeader from '@/Components/SearchResultsHeader.vue'
+import Pagination from '@/Components/Pagination.vue'
 import { Icon } from '@iconify/vue';
 
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    filtrado: { default: () => "" },
     listado: {
         default: () => { data: [] }
     },
@@ -111,31 +94,13 @@ const props = defineProps({
     }
 });
 
-const filtro = ref(props.filtrado)
 const listado = ref(props.listado);
 const categorias = ref(props.categorias)
-
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const categoriaActiva = ref(urlParams.get('categoria'))
 const playFile = ref(null)
-
-function urlPaginacion(path) {
-    return route('audios', {
-        page: 'pagina',
-        buscar: props.filtrado,
-    }).replace('pagina', path);
-}
-
-watch(filtro, () => {
-    if (filtro.value == "" && props.filtrado)
-        router.visit(route('audios'))
-})
-
-function buscar() {
-    router.get(route('audios'), { buscar: filtro.value }, { replace: true })
-}
 
 function play(audio) {
     playFile.value = {

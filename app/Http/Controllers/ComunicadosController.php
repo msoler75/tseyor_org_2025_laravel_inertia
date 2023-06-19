@@ -29,7 +29,6 @@ class ComunicadosController extends Controller
         $recientes = Comunicado::select(['slug', 'titulo', 'fecha_comunicado'])->where('visibilidad', 'P')->latest()->take(24)->get();
 
         return Inertia::render('Comunicados/Index', [
-            'filtrado' => $filtro,
             'listado' => $resultados,
             'recientes' => $recientes
         ]);
@@ -50,11 +49,13 @@ class ComunicadosController extends Controller
         ]);
     }
 
-    public function archive()
+    public function archive(Request $request)
     {
+        $filtro = $request->input('buscar');
+
         $comunicados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
         ->where('visibilidad', 'P')
-        ->latest()->paginate(10);
+        ->latest()->paginate(10)->appends(['buscar' => $filtro]);
 
         return Inertia::render('Comunicados/Archivo', [
             'listado' => $comunicados
