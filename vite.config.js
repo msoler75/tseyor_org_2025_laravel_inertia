@@ -21,7 +21,7 @@ export default defineConfig({
         }),
         Components({
             dts: true,
-            dirs: ['resources/js/Components', 'resources/js/Sections', 'resources/js/Layouts'],
+            dirs: ['resources/js/Components', 'resources/js/Icons', 'resources/js/Sections', 'resources/js/Layouts'],
 
          }),
          AutoImport({

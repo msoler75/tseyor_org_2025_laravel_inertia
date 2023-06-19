@@ -18,7 +18,7 @@
 
                     <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
                     :class="paisActivo == pais.nombre ? 'text-blue-700 font-bold' : ''">
-                        <Link :href="`${route('contactos')}?pais=${pais.nombre}`">
+                        <Link :href="`${route('contactos')}?pais=${pais.codigo}`">
                         <span class="capitalize">{{ pais.nombre }}</span>
                         <small v-if="pais.total > 0">({{ pais.total }})</small>
                         </Link>
@@ -38,13 +38,11 @@
                         <img :src="contacto.imagen_url" :alt="contacto.nombre" class="h-48 object-cover w-full" />
                         <div class="p-5 flex flex-col">
                             <h2 class="text-lg font-bold mb-2">{{ contacto.nombre }}</h2>
-                            <div class="flex gap-2">
-                                <p class="inline-block text-xs bg-gray-500 text-gray-50 rounded-full py-1 px-3">{{
-                                    contacto.pais }}</p>
-                                <p class="inline-block text-xs bg-gray-500 text-gray-50 rounded-full py-1 px-3">{{
+                                <div class="my-4 badge badge-primary badge-outline">{{
+                                    contacto.pais }}</div>
+                                <p class="text-xs">{{
                                     contacto.poblacion }}</p>
 
-                            </div>
                             <Link :href="`/contactos/${contacto.slug}`"
                                 class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
                             Ver contacto
