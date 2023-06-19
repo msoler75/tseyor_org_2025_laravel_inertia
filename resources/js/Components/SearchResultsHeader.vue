@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="(filtrado && results.data.length > 0) || (filtrado && results.data.length == 0)" >
         <h1 v-if="filtrado && results.data.length > 0" class="mt-0">
             {{results.total }} resultado(s) para '{{ filtrado }}'
         </h1>

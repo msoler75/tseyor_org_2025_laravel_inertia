@@ -29,7 +29,6 @@ class LibrosController extends Controller
             ->get();
 
         return Inertia::render('Libros/Index', [
-            'filtrado' => $filtro,
             'listado' => $resultados,
             'categorias' => $categorias
         ]);
