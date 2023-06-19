@@ -45,6 +45,7 @@ declare module 'vue' {
     NewsLetterSignup: typeof import('./resources/js/Sections/NewsLetterSignup.vue')['default']
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
+    Prose: typeof import('./resources/js/Components/Prose.vue')['default']
     ResponsiveNavLink: typeof import('./resources/js/Components/ResponsiveNavLink.vue')['default']
     RichText: typeof import('./resources/js/Sections/RichText.vue')['default']
     SearchFilter: typeof import('./resources/js/Components/SearchFilter.vue')['default']
