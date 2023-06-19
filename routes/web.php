@@ -11,6 +11,7 @@ use App\Http\Controllers\EventosController;
 use App\Http\Controllers\LibrosController;
 use App\Http\Controllers\CentrosController;
 use App\Http\Controllers\ContactosController;
+use App\Http\Controllers\AudiosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,8 @@ Route::get('/', function () {
 
 Route::get('/archivos{ruta}', [ArchivosController::class, 'index'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
+Route::get('/audios', [AudiosController::class, 'index'])->name('audios');
+Route::get('/audios/{id}', [AudiosController::class, 'show'])->name('audio');
 
 Route::get('/noticias', [NoticiasController::class, 'index'])->name('noticias');
 Route::get('/noticias/{id}', [NoticiasController::class, 'show'])->name('noticia');
