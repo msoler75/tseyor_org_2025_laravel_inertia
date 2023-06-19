@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue';
 import { Collapse } from 'vue-collapsed'
 import { Icon } from '@iconify/vue';
 import { vOnClickOutside } from '@vueuse/components'

@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import TimeAgo from '@/Components/TimeAgo.vue';
+
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })

@@ -8,13 +8,11 @@
             <SearchInput />
         </div>
 
-
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="w-full flex-grow">
 
-        <SearchResultsHeader :results="listado" />
-
+              <SearchResultsHeader :results="listado" />
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(20rem, 1fr))` }">
@@ -59,13 +57,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import TimeAgo from '@/Components/TimeAgo.vue';
+
 import { Link, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import Pagination from '@/Components/Pagination.vue'
-import SearchInput from '@/Components/SearchInput.vue'
-import SearchResultsHeader from '@/Components/SearchResultsHeader.vue'
 
 defineOptions({ layout: AppLayout })
 
@@ -79,16 +73,7 @@ const props = defineProps({
     }
 });
 
-const filtro = ref(props.filtrado)
 const listado = ref(props.listado)
 const recientes = ref(props.recientes)
 
-watch(filtro, () => {
-    if (filtro.value == "" && props.filtrado)
-        router.visit(route('noticias'))
-})
-
-function buscar() {
-    router.get(route('noticias'), { buscar: filtro.value }, { replace: true })
-}
 </script>

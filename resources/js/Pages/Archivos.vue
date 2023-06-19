@@ -446,16 +446,16 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import TimeAgo from '@/Components/TimeAgo.vue';
-import FileSize from '@/Components/FileSize.vue';
+
+
 import { Link, router, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { Icon } from '@iconify/vue';
-// import Uploader from '@/Components/Uploader.vue'
+//
 import Dropzone from 'vue2-dropzone-vue3'
-import Dropdown from '@/Components/Dropdown.vue';
-import Modal from '@/Components/Modal.vue'
-import ConfirmationModal from '@/Components/ConfirmationModal.vue'
+
+
+
 import { useFilesStore } from '@/Stores/files';
 
 defineOptions({ layout: AppLayout })

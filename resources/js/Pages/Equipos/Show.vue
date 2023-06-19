@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import DeleteEquipoForm from '@/Pages/Equipos/Partials/DeleteEquipoForm.vue';
-import SectionBorder from '@/Components/SectionBorder.vue';
+
 import EquipoMemberManager from '@/Pages/Equipos/Partials/EquipoMemberManager.vue';
 import UpdateEquipoNameForm from '@/Pages/Equipos/Partials/UpdateEquipoNameForm.vue';
 
