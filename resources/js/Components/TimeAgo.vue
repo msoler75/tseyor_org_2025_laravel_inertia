@@ -3,8 +3,6 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-
 
 const props = defineProps({
     date: String | Number
@@ -17,7 +15,13 @@ const formattedDate = computed(() => {
         return '';
     } else {
         const fechaActual = new Date(); // Fecha actual
-        const fechaPublicacion = props.date instanceof Date ? props.date : new Date(props.date * 1000);
+
+        const fechaPublicacion =
+  props.date instanceof Date
+    ? props.date
+    : typeof props.date === 'number'
+    ? new Date(props.date * 1000)
+    : new Date(props.date);
 
         const title = fechaPublicacion.toLocaleString();
 

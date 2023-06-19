@@ -12,12 +12,12 @@
         </button>
 
         <div class="flex items-center relative" :style="{ 'max-width': maxWidth + 'px' }">
-            <Icon icon="ph:magnifying-glass-light" class="absolute z-10 right-2" />
+            <Icon icon="ph:magnifying-glass-light" class="absolute z-10 right-2 transform scale-110 -translate-y-[.1rem] text-gray-600" />
             <form @submit.prevent="submit">
                 <input
-                    class="pr-8 focus:bg-base-100 relative bg-transparent border-transparent shadow-none px-6 py-3 focus:shadow-outline
+                    class="pr-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
                     text-right w-full focus:rounded-md"
-                    :class="filtro?'border-0 border-b border-gray-700 focus:border-b':''"
+                    :class="filtro?'border-0 border-b border-gray-700 focus:border-b':'border-transparent'"
                     @keydown.Esc="clearInput" autocomplete="off" type="text" name="buscar" :placeholder="placeholder"
                     v-model="filtro" />
             </form>
@@ -28,7 +28,6 @@
 <script setup>
 import { Icon } from '@iconify/vue';
 import { router } from '@inertiajs/vue3';
-import { ref, onMounted, defineEmits } from 'vue';
 
 const maxWidth = ref(200);
 const placeholder = ref('Buscar...');

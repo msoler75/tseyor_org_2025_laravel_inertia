@@ -74,13 +74,13 @@
 
 
 <script setup>
-import { ref } from 'vue';
-import TimeAgo from '@/Components/TimeAgo.vue';
+
+
 import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import SearchInput from '@/Components/SearchInput.vue'
-import SearchResultsHeader from '@/Components/SearchResultsHeader.vue'
-import Pagination from '@/Components/Pagination.vue'
+
+
+
 import { Icon } from '@iconify/vue';
 
 defineOptions({ layout: AppLayout })
