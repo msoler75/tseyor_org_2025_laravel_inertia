@@ -1,13 +1,14 @@
 
 <template>
     <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
-        <div class="flex gap-4 justify-between items-start">
+        <div class="flex gap-4 items-start">
             <div>
                 <h1>Centros Tseyor</h1>
                 <p>Casas y Muulasterios Tseyor a los que puedes acudir para dirigir tu camino hacia las estrellas.</p>
             </div>
-            <Icon icon="vscode-icons:file-type-lighthouse" class="text-9xl text-gray-500" />
+            <Icon icon="vscode-icons:file-type-lighthouse" class="text-9xl text-gray-500 flex-shrink-0" />
         </div>
+
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="card bg-base-100 shadow flex-wrap flex-row md:mt-[5rem] md:flex-col p-5 lg:p-10 gap-4 mx-auto">
