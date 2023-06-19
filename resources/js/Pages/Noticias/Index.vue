@@ -11,15 +11,9 @@
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-
-
             <div class="w-full flex-grow">
 
-
-
-
         <SearchResultsHeader :results="listado" />
-
 
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
@@ -47,7 +41,8 @@
 
             </div>
 
-            <div class="card bg-base-100 shadow min-w-[250px] lg:min-w-[350px] space-y-7 px-5 py-9 self-baseline">
+            <div class="card bg-base-100 shadow min-w-[250px] lg:min-w-[350px] space-y-7 px-5 py-9 self-baseline"
+            v-if="listado.first_page_url.indexOf('?buscar=')<0">
                 <h2 class="mb-5">Recientes</h2>
                 <ul class="list-disc">
                     <li v-for="noticia in recientes" :key="noticia.id">

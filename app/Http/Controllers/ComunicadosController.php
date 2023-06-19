@@ -13,7 +13,7 @@ class ComunicadosController extends Controller
     {
         $filtro = $request->input('buscar');
 
-        $resultados = $filtro ? Comunicado::select(['slug', 'titulo', 'descripcion', 'published_at'])
+        $resultados = $filtro ? Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
             ->where('visibilidad', 'P')
             ->where(function ($query) use ($filtro) {
                 $query->where('titulo', 'like', '%' . $filtro . '%')

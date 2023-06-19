@@ -3,9 +3,14 @@
     <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
         <h1>Contactos</h1>
         <p>Contactos distribuidos en todo el planeta a los que puedes acudir para consultar tus inquietudes.</p>
+
+        <div class="flex justify-end mb-5">
+            <SearchInput/>
+        </div>
+
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-                <div class="card flex-wrap flex-row md:flex-col bg-base-100 p-5 lg:p-10 gap-4">
+                <div class="card bg-base-100 shadow flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4">
                     <Link :href="`${route('contactos')}`">
                     <span class="capitalize">Novedades</span>
                     </Link>
@@ -19,36 +24,15 @@
                 </div>
 
             <div class="w-full flex-grow">
-                <div class="flex justify-end mb-5">
-                    <form :action="`/contactos?buscar=${filtro}`">
-                        <div class="flex gap-4">
-                            <input name="buscar" type="search" placeholder="País, dirección..." v-model="filtro"
-                                class="w-full max-w-[200px] border border-gray-200 rounded focus:outline-none focus:border-gray-400" />
 
-                            <button type="submit" @click.prevent="buscar()" class="btn btn-primary"
-                                :disabled="filtro == filtrado">
-                                Buscar
-                            </button>
 
-                            <button v-if="filtrado" type="button" @click.prevent="filtro = ''" class="btn btn-secondary">
-                                Limpiar
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <SearchResultsHeader :results="listado"/>
 
-                <h1 v-if="listado.data.length > 0">
-                    <span v-if="filtrado">
-                        Resultados de '{{ filtrado }}'
-                    </span>
-                </h1>
-
-                <div v-else>No hay resultados</div>
 
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
-                    <div v-for="contacto in listado.data" :key="contacto.id" class="card bg-base-100">
+                    <div v-for="contacto in listado.data" :key="contacto.id" class="card bg-base-100 shadow">
                         <img :src="contacto.imagen_url" :alt="contacto.nombre" class="h-48 object-cover w-full" />
                         <div class="p-5 flex flex-col">
                             <h2 class="text-lg font-bold mb-2">{{ contacto.nombre }}</h2>
@@ -72,7 +56,7 @@
                 </div>
 
 
-                <pagination class="mt-6" :links="listado.links" :url="urlPaginacion(listado.path)" />
+                <pagination class="mt-6" :links="listado.links"  />
 
             </div>
 
@@ -84,16 +68,17 @@
 
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import TimeAgo from '@/Components/TimeAgo.vue';
 import { Link, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Pagination from '@/Components/Pagination.vue'
+import SearchInput from '@/Components/SearchInput.vue'
+import SearchResultsHeader from '@/Components/SearchResultsHeader.vue'
 
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    filtrado: { default: () => "" },
     listado: {
         default: () => { data: [] }
     },
@@ -102,23 +87,7 @@ const props = defineProps({
     }
 });
 
-const filtro = ref(props.filtrado)
 const listado = ref(props.listado);
 const paises = ref(props.paises)
 
-function urlPaginacion(path) {
-    return route('contactos', {
-        page: 'pagina',
-        buscar: props.filtrado,
-    }).replace('pagina', path);
-}
-
-watch(filtro, () => {
-    if (filtro.value == "" && props.filtrado)
-        router.visit(route('contactos'))
-})
-
-function buscar() {
-    router.get(route('contactos'), { buscar: filtro.value }, { replace: true })
-}
 </script>
