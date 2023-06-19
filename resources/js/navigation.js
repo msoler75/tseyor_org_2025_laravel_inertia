@@ -59,10 +59,10 @@ export default [
             title: "Media",
             items: [
                 {
-                    title: "Libros",
-                    url: "/libros",
-                    description: "Todos los temas de la filosofía Tseyor",
-                    icon: "ph:book-bookmark-duotone",
+                    title: "Audios",
+                    url: "/audios",
+                    description: "Meditaciones, cuentos, canciones...",
+                    icon: "ph:music-notes-duotone",
                   }
             ],
           }
