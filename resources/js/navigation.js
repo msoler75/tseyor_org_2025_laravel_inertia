@@ -39,7 +39,7 @@ export default [
                     title: "Comunicados",
                     url: "/comunicados",
                     description: "Comunicados recibidos de las estrellas",
-                    icon: "solar:ufo-2-bold-duotone",
+                    icon: "ph:star-four-duotone",
                   },
               {
                 title: "Libros",

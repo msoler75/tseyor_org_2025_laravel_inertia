@@ -12,6 +12,7 @@ use App\Http\Controllers\LibrosController;
 use App\Http\Controllers\CentrosController;
 use App\Http\Controllers\ContactosController;
 use App\Http\Controllers\AudiosController;
+use App\Http\Controllers\NovedadesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,12 +55,13 @@ Route::get('/centros/{id}', [CentrosController::class, 'show'])->name('centro');
 Route::get('/contactos', [ContactosController::class, 'index'])->name('contactos');
 Route::get('/contactos/{id}', [ContactosController::class, 'show'])->name('contacto');
 
-
 Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');
 Route::get('/entradas/{id}', [EntradasController::class, 'show'])->name('entrada');
 
 Route::get('/eventos', [EventosController::class, 'index'])->name('eventos');
 Route::get('/eventos/{id}', [EventosController::class, 'show'])->name('evento');
+
+Route::get('/novedades', [NovedadesController::class, 'index'])->name('novedades');
 
 Route::middleware([
     'auth:sanctum',

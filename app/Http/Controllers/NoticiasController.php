@@ -11,12 +11,15 @@ class NoticiasController extends Controller
 
     public function index(Request $request)
     {
-         $filtro = $request->input('buscar');
+        $filtro = $request->input('buscar');
 
         $resultados = $filtro ? Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])
-        ->where('titulo', 'like', '%' . $filtro . '%')
-            ->orWhere('descripcion', 'like', '%' . $filtro . '%')
-            ->orWhere('texto', 'like', '%' . $filtro . '%')
+            ->where('visibilidad', 'P')
+            ->where(function ($query) use ($filtro) {
+                $query->where('titulo', 'like', '%' . $filtro . '%')
+                    ->orWhere('descripcion', 'like', '%' . $filtro . '%')
+                    ->orWhere('texto', 'like', '%' . $filtro . '%');
+            })
             ->paginate(10)->appends(['buscar' => $filtro])
             :
             Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])->latest()->paginate(10);
@@ -44,5 +47,4 @@ class NoticiasController extends Controller
             'noticia' => $noticia
         ]);
     }
-
 }
