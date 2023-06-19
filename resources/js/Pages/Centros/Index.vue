@@ -9,15 +9,21 @@
             <Icon icon="vscode-icons:file-type-lighthouse" class="text-9xl text-gray-500 flex-shrink-0" />
         </div>
 
+        <div class="flex justify-end mb-5">
+                    <SearchInput />
+                </div>
+
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div
-                class="card bg-base-100 shadow flex-wrap flex-row md:mt-[4.45rem] md:flex-col p-5 lg:p-10 gap-4 mx-auto  self-baseline">
-                <Link :href="`${route('centros')}`">
+                class="card bg-base-100 shadow flex-wrap flex-row  md:flex-col p-5 lg:p-10 gap-4 mx-auto  self-baseline">
+                <Link :href="`${route('centros')}`"
+                :class="!filtrado&&!paisActivo ? 'text-blue-700 font-bold' : ''">
                 <span class="capitalize">Novedades</span>
                 </Link>
 
-                <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2">
+                <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
+                :class="paisActivo == pais.nombre ? 'text-blue-700 font-bold' : ''">
                     <Link :href="`${route('centros')}?pais=${pais.nombre}`">
                     <span class="capitalize">{{ pais.nombre }}</span>
                     <small v-if="pais.total > 0">({{ pais.total }})</small>
@@ -26,9 +32,7 @@
             </div>
 
             <div class="w-full flex-grow">
-                <div class="flex justify-end mb-5">
-                    <SearchInput />
-                </div>
+
 
                 <SearchResultsHeader :results="listado" />
 
@@ -82,6 +86,8 @@ import { Icon } from '@iconify/vue';
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
+    paisActivo: {default: ()=> ''},
+    filtrado: {default: ()=> ''},
     listado: {
         default: () => { data: [] }
     },

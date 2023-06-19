@@ -30,6 +30,7 @@ class EventosController extends Controller
 
         return Inertia::render('Eventos/Index', [
             'filtrado' => $filtro,
+            'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias
         ]);

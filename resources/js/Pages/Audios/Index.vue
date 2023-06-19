@@ -20,7 +20,8 @@
 
 
             <div class="card bg-base-100 shadow self-baseline flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4">
-                <Link :href="`${route('audios')}`">
+                <Link :href="`${route('audios')}`"
+                :class="!filtrado&&!categoriaActiva ? 'text-blue-700 font-bold' : ''">
                 <span class="capitalize">Novedades</span>
                 </Link>
 
@@ -86,6 +87,8 @@ import { Icon } from '@iconify/vue';
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
+    categoriaActiva: {default: ()=> ''},
+    filtrado: {default: ()=> ''},
     listado: {
         default: () => { data: [] }
     },
@@ -97,9 +100,6 @@ const props = defineProps({
 const listado = ref(props.listado);
 const categorias = ref(props.categorias)
 
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-const categoriaActiva = ref(urlParams.get('categoria'))
 const playFile = ref(null)
 
 function play(audio) {
