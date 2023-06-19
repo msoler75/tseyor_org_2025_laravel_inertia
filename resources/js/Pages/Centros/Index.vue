@@ -44,9 +44,9 @@
                         <div class="p-5 flex flex-col flex-grow">
                             <h2 class="text-lg font-bold mb-2">{{ centro.nombre }}</h2>
                             <div class="flex gap-2">
-                                <p class="inline-block text-xs bg-gray-500 text-gray-50 rounded-full py-1 px-3">{{
+                                <p class="categoria">{{
                                     centro.pais }}</p>
-                                <p class="inline-block text-xs bg-gray-500 text-gray-50 rounded-full py-1 px-3">{{
+                                <p class="categoria">{{
                                     centro.poblacion }}</p>
 
                             </div>
