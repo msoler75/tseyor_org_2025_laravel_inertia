@@ -46,8 +46,37 @@ class LibrosController extends Controller
             abort(404); // Manejo de libro no encontrada
         }
 
+        // Obtener libros relacionados por categoría o coincidencia de palabras clave en la descripción
+        $relacionados = Libro::where('categoria', $libro->categoria)
+            ->orWhere(function ($query) use ($libro) {
+                $tituloPalabras = explode(' ', $libro->titulo);
+                $palabrasClave = [];
+
+                foreach ($tituloPalabras as $palabra) {
+                    // Filtrar palabras de menos de 3 letras y palabras comunes
+                    if (strlen($palabra) > 2 && !in_array($palabra, ['y', 'o', 'en'])) {
+                        $palabrasClave[] = $palabra;
+                    }
+                }
+
+                if (!empty($palabrasClave)) {
+                    foreach ($palabrasClave as $clave) {
+                        $query->orWhere(function ($query) use ($clave) {
+                            // Asignar una puntuación más alta si la palabra clave aparece en el título
+                            $query->where('descripcion', 'like', '%' . $clave . '%')
+                                ->orWhere('titulo', 'like', '%' . $clave . '%');
+                        });
+                    }
+                }
+            })
+            ->orderByRaw('(CASE WHEN titulo LIKE ? THEN 2 WHEN descripcion LIKE ? THEN 1 ELSE 0 END) DESC', [$libro->titulo.'%', '%'.$libro->titulo.'%'])
+            ->take(8)
+            ->get();
+
         return Inertia::render('Libros/Libro', [
-            'libro' => $libro
+            'libro' => $libro,
+            'relacionados' => $relacionados
         ]);
     }
+
 }
