@@ -10,20 +10,18 @@
         </div>
 
         <div class="flex justify-end mb-5">
-                    <SearchInput />
-                </div>
+            <SearchInput />
+        </div>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-            <div
-                class="card bg-base-100 shadow flex-wrap flex-row  md:flex-col p-5 lg:p-10 gap-4 mx-auto  self-baseline">
-                <Link :href="`${route('centros')}`"
-                :class="!filtrado&&!paisActivo ? 'text-blue-700 font-bold' : ''">
+            <div class="card bg-base-100 shadow flex-wrap flex-row  md:flex-col p-5 lg:p-10 gap-4 mx-auto  self-baseline">
+                <Link :href="`${route('centros')}`" :class="!filtrado && !paisActivo ? 'text-blue-700 font-bold' : ''">
                 <span class="capitalize">Novedades</span>
                 </Link>
 
                 <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
-                :class="paisActivo == pais.nombre ? 'text-blue-700 font-bold' : ''">
+                    :class="paisActivo == pais.nombre ? 'text-blue-700 font-bold' : ''">
                     <Link :href="`${route('centros')}?pais=${pais.codigo}`">
                     <span class="capitalize">{{ pais.nombre }}</span>
                     <small v-if="pais.total > 0">({{ pais.total }})</small>
@@ -43,13 +41,10 @@
                         <img :src="centro.imagen_url" :alt="centro.nombre" class="h-48 object-cover w-full" />
                         <div class="p-5 flex flex-col flex-grow">
                             <h2 class="text-lg font-bold mb-2">{{ centro.nombre }}</h2>
-                            <div class="flex gap-2">
-                                <p class="categoria">{{
-                                    centro.pais }}</p>
-                                <p class="categoria">{{
-                                    centro.poblacion }}</p>
-
-                            </div>
+                            <div class="my-4 badge badge-primary badge-outline">{{
+                                centro.pais }}</div>
+                            <p class="text-xs">{{
+                                centro.poblacion }}</p>
                             <Link :href="`/centros/${centro.slug}`" class="btn btn-primary mt-auto">
                             Ver centro
                             </Link>
@@ -71,23 +66,16 @@
     </div>
 </template>
 
-
-
 <script setup>
-
-
 import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-
-
-
 import { Icon } from '@iconify/vue';
 
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    paisActivo: {default: ()=> ''},
-    filtrado: {default: ()=> ''},
+    paisActivo: { default: () => '' },
+    filtrado: { default: () => '' },
     listado: {
         default: () => { data: [] }
     },
@@ -98,6 +86,5 @@ const props = defineProps({
 
 const listado = ref(props.listado);
 const paises = ref(props.paises)
-
 
 </script>
