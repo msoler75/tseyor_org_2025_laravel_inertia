@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Centro;
+use App\Pigmalion\Countries;
 
 class CentrosController extends Controller
 {
@@ -25,9 +26,19 @@ class CentrosController extends Controller
                 Centro::latest()->paginate(10)
             );
 
-        $paises = Centro::selectRaw('pais as nombre, count(*) as total')
+        $paises = Centro::selectRaw('pais as codigo, count(*) as total')
             ->groupBy('pais')
             ->get();
+
+
+        // Traducir el código ISO del país a su nombre correspondiente
+        foreach ($paises as $idx => $pais) {
+            $paises[$idx]["nombre"] = Countries::getCountry($pais["codigo"]);
+        }
+
+        foreach ($resultados as $idx => $centro) {
+            $centro->pais = Countries::getCountry($centro->pais);
+        }
 
         return Inertia::render('Centros/Index', [
             'filtrado' => $filtro,
@@ -46,6 +57,8 @@ class CentrosController extends Controller
         if (!$centro) {
             abort(404); // Manejo de Centro no encontrada
         }
+
+        $centro->pais = Countries::getCountry($centro->pais);
 
         return Inertia::render('Centros/Centro', [
             'centro' => $centro

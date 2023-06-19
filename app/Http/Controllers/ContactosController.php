@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Contacto;
+use App\Pigmalion\Countries;
 
 class ContactosController extends Controller
 {
@@ -25,13 +26,22 @@ class ContactosController extends Controller
                 Contacto::latest()->paginate(50)
             );
 
-        $paises = Contacto::selectRaw('pais as nombre, count(*) as total')
+        $paises = Contacto::selectRaw('pais as codigo, count(*) as total')
             ->groupBy('pais')
             ->get();
 
+        // Traducir el código ISO del país a su nombre correspondiente
+        foreach ($paises as $idx => $pais) {
+            $paises[$idx]["nombre"] = Countries::getCountry($pais["codigo"]);
+        }
+
+        foreach ($resultados as $idx => $centro) {
+            $centro->pais = Countries::getCountry($centro->pais);
+        }
+
         return Inertia::render('Contactos/Index', [
             'filtrado' => $filtro,
-            'paisActivo'=>$pais,
+            'paisActivo' => $pais,
             'listado' => $resultados,
             'paises' => $paises
         ]);

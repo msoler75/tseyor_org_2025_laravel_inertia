@@ -24,7 +24,7 @@
 
                 <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
                 :class="paisActivo == pais.nombre ? 'text-blue-700 font-bold' : ''">
-                    <Link :href="`${route('centros')}?pais=${pais.nombre}`">
+                    <Link :href="`${route('centros')}?pais=${pais.codigo}`">
                     <span class="capitalize">{{ pais.nombre }}</span>
                     <small v-if="pais.total > 0">({{ pais.total }})</small>
                     </Link>
