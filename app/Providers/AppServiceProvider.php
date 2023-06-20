@@ -15,6 +15,7 @@ use App\Models\Normativa;
 // use TCG\Voyager\Facades\Voyager;
 // use App\FormFields\MarkdownImagesField;
 use App\Pigmalion\Contenidos;
+use App\Http\Controllers\ContactosController;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -60,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
 
         Contacto::saving(function ($contacto) {
             Contenidos::rellenarSlugImagenYDescripcion($contacto);
+            ContactosController::rellenarLatitudYLongitud($contacto);
         });
 
         Evento::saving(function ($evento) {
@@ -112,9 +114,6 @@ class AppServiceProvider extends ServiceProvider
             Contenidos::guardarContenido("publicaciones", $publicacion);
         });
 
-
     }
-
-
 
 }

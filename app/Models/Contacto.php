@@ -19,6 +19,8 @@ class Contacto extends Model
         'telefono',
         'social',
         'email',
+        'latitud',
+        'longitud',
         'centro_id',
         'user_id',
         'visibilidad'

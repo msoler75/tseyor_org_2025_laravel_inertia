@@ -52,7 +52,7 @@ Route::get('/libros/{id}', [LibrosController::class, 'show'])->name('libro');
 Route::get('/centros', [CentrosController::class, 'index'])->name('centros');
 Route::get('/centros/{id}', [CentrosController::class, 'show'])->name('centro');
 
-Route::get('/contactos', [ContactosController::class, 'index'])->name('contactos');
+Route::get('/donde-estamos', [ContactosController::class, 'index'])->name('contactos');
 Route::get('/contactos/{id}', [ContactosController::class, 'show'])->name('contacto');
 
 Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');

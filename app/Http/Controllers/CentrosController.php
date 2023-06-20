@@ -12,38 +12,36 @@ class CentrosController extends Controller
 
     public function index(Request $request)
     {
-        $filtro = $request->input('buscar');
-        $pais = $request->input('pais');
+        $muulasterios =
+            Centro::select(['id', 'nombre', 'imagen', 'pais'])
+            ->where('nombre', 'like', 'Muulasterio%')
+            ->take(7)->get();
 
-        $resultados = $pais ?
-            Centro::where('pais', '=', $pais)
-            ->paginate(10)->appends(['pais' => $pais])
-            : ($filtro ? Centro::where('nombre', 'like', '%' . $filtro . '%')
-                ->orWhere('pais', 'like', '%' . $filtro . '%')
-                ->orWhere('poblacion', 'like', '%' . $filtro . '%')
-                ->paginate(10)->appends(['buscar' => $filtro])
-                :
-                Centro::latest()->paginate(10)
-            );
+        $casas =
+            Centro::select(['id', 'nombre', 'imagen', 'pais'])
+            ->where('nombre', 'like', 'Casa%')
+            ->take(7)->get();
 
         $paises = Centro::selectRaw('pais as codigo, count(*) as total')
             ->groupBy('pais')
             ->get();
-
 
         // Traducir el código ISO del país a su nombre correspondiente
         foreach ($paises as $idx => $pais) {
             $paises[$idx]["nombre"] = Countries::getCountry($pais["codigo"]);
         }
 
-        foreach ($resultados as $idx => $centro) {
+        foreach ($muulasterios as $idx => $centro) {
+            $centro->pais = Countries::getCountry($centro->pais);
+        }
+
+        foreach ($casas as $idx => $centro) {
             $centro->pais = Countries::getCountry($centro->pais);
         }
 
         return Inertia::render('Centros/Index', [
-            'filtrado' => $filtro,
-            'paisActivo' => $pais,
-            'listado' => $resultados,
+            'muulasterios' => $muulasterios,
+            'casas' => $casas,
             'paises' => $paises
         ]);
     }

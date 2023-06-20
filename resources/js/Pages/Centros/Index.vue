@@ -1,90 +1,120 @@
-
 <template>
-    <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
-        <div class="flex gap-4 items-start">
-            <div>
-                <h1>Centros Tseyor</h1>
-                <p>Casas y Muulasterios Tseyor a los que puedes acudir para dirigir tu camino hacia las estrellas.</p>
+    <div class="container px-4 py-12 mx-auto sm:px-6 lg:px-8">
+
+        <!-- Encabezado de la página -->
+        <header v-if="false" class="my-12">
+            <div class="px-2 sm:px-5">
+                <h1 class="text-4xl font-bold mb-2">Centros Tseyor</h1>
+                <p class="text-lg">Descubre nuestros lugares de hermandad y paz interior.</p>
             </div>
-            <Icon icon="vscode-icons:file-type-lighthouse" class="text-9xl text-gray-500 flex-shrink-0" />
-        </div>
+        </header>
 
-        <div class="flex justify-end mb-5">
-            <SearchInput />
-        </div>
+        <Hero title="Centros Tseyor" subtitle="Descubre nuestros lugares de hermandad y paz interior."
+            buttonLabel="Ver Mapa" :href="route('contactos')" />
 
-        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <div class="flex flex-col lg:flex-row gap-12 justify-center relative">
+            <div class="mx-auto max-w-[800px] space-y-12">
+                <!-- Sección de Muulasterios Tseyor -->
+                <section class="card bg-base-100 shadow p-7">
+                    <div class="mx-auto px-2 sm:px-5">
+                        <h2 class="">Muulasterios Tseyor</h2>
+                        <p class="text-lg mb-8">Los Muulasterios Tseyor son nuestros centros energéticos más destacados. Son
+                            lugares para la meditación, el equilibrio y la paz interior.</p>
+                        <!-- Imágenes de los Muulasterios -->
+                        <Carousel :per-page="1">
+                            <Slide v-for="centro in muulasterios" :key="centro.id">
+                                <div :style="`background-image: url(${centro.imagen}); background-size: cover; background-position: center center;`"
+                                    class="w-full h-[60vh]"></div>
+                            </Slide>
+                        </Carousel>
+                    </div>
+                </section>
 
-            <div class="card bg-base-100 shadow flex-wrap flex-row  md:flex-col p-5 lg:p-10 gap-4 mx-auto  self-baseline">
-                <Link :href="`${route('centros')}`" :class="!filtrado && !paisActivo ? 'text-blue-700 font-bold' : ''">
-                <span class="capitalize">Novedades</span>
-                </Link>
+                <!-- Sección de Casas Tseyor -->
+                <section class="card bg-base-100 shadow p-7 ">
+                    <div class=" mx-auto px-2 sm:px-5">
+                        <h2 class="">Casas Tseyor</h2>
+                        <p class="text-lg mb-8">Nuestras Casas Tseyor también forman parte de los Pueblos Tseyor. Son
+                            espacios para la hermandad y el autodescubrimiento.</p>
 
-                <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
-                    :class="paisActivo == pais.nombre ? 'text-blue-700 font-bold' : ''">
-                    <Link :href="`${route('centros')}?pais=${pais.codigo}`">
-                    <span class="capitalize">{{ pais.nombre }}</span>
-                    <small v-if="pais.total > 0">({{ pais.total }})</small>
-                    </Link>
-                </div>
+                        <!-- Imágenes de las Casas -->
+                        <Carousel :per-page="1">
+                            <Slide v-for="centro in casas" :key="centro.id">
+                                <div :style="`background-image: url(${centro.imagen}); background-size: cover; background-position: center center;`"
+                                    class="w-full h-[60vh]"></div>
+                            </Slide>
+                        </Carousel>
+                    </div>
+                </section>
+
+                <!-- Sección de Casas Tseyor -->
+                <section class="card bg-base-100 shadow p-7 ">
+                    <h2 class="">Mapa de Centros</h2>
+                    <div class="flex flex-wrap justify-between gap-7 items-center">
+                        <p>Consulta si tienes un centro Tseyor cerca de ti.</p>
+                        <Link :href="route('contactos')" class="btn btn-primary w-fit">Ver Mapa</Link>
+                    </div>
+                </section>
+
+
+                <!-- Sección de Blogs -->
+                <section class="card bg-base-100 shadow p-7 ">
+                    <h2>Blog de Pueblo Tseyor</h2>
+                    <div class="flex flex-wrap sm:flex-nowrap justify-between gap-7 items-center">
+                        <p>En nuestro blog podrás conocer algunas de las experiencias que hemos vivido.</p>
+                        <Link :href="`${route('entradas')}?categoria=pueblo tseyor`" class="btn btn-primary w-fit">
+                        Visitar Blog
+                        </Link>
+                    </div>
+                </section>
+
             </div>
 
-            <div class="w-full flex-grow">
-
-
-                <SearchResultsHeader :results="listado" />
-
-
-                <div v-if="listado.data.length > 0" class="grid gap-4"
-                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
-                    <div v-for="centro in listado.data" :key="centro.id" class="card bg-base-100 shadow">
-                        <img :src="centro.imagen_url" :alt="centro.nombre" class="h-48 object-cover w-full" />
-                        <div class="p-5 flex flex-col flex-grow">
-                            <h2 class="text-lg font-bold mb-2">{{ centro.nombre }}</h2>
-                            <div class="my-4 badge badge-primary badge-outline">{{
-                                centro.pais }}</div>
-                            <p class="text-xs">{{
-                                centro.poblacion }}</p>
-                            <Link :href="`/centros/${centro.slug}`" class="btn btn-primary mt-auto">
-                            Ver centro
+            <section class="card bg-base-100 shadow p-7 lg:w-[460px] self-baseline sticky top-5">
+                <div class="flex flex-col px-2 sm:px-5">
+                    <h2>Nuestros centros</h2>
+                    <div class="flex flex-wrap lg:grid grid-cols-2 gap-10">
+                        <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2">
+                            <Link :href="`${route('contactos')}?pais=${pais.codigo}`">
+                            <span class="capitalize">{{ pais.nombre }}</span>
                             </Link>
-
-                            <p v-if="false" class="text-gray-600 mb-2 w-full text-xs text-right">
-                                <TimeAgo :date="centro.updated_at" />
-                            </p>
                         </div>
                     </div>
                 </div>
+            </section>
 
 
-                <pagination class="mt-6" :links="listado.links" />
-
-            </div>
 
 
         </div>
+
     </div>
 </template>
+
+
 
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { Icon } from '@iconify/vue';
 
+import { Carousel, Slide } from '@jambonn/vue-concise-carousel';
+import '@jambonn/vue-concise-carousel/lib/vue-concise-carousel.css'
+
+
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    paisActivo: { default: () => '' },
-    filtrado: { default: () => '' },
-    listado: {
-        default: () => { data: [] }
+    casas: {
+        default: () => []
+    },
+    muulasterios: {
+        default: () => []
     },
     paises: {
         default: () => []
     }
 });
 
-const listado = ref(props.listado);
-const paises = ref(props.paises)
-
 </script>
+

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Contacto;
 use App\Pigmalion\Countries;
+use GuzzleHttp\Client;
 
 class ContactosController extends Controller
 {
@@ -44,7 +45,7 @@ class ContactosController extends Controller
             'paisActivo' => $pais,
             'listado' => $resultados,
             'paises' => $paises,
-            'apikey' => env('GOOGLE_MAPS_API_KEY', ''),
+            'apiKey' => env('GOOGLE_MAPS_API_KEY', ''),
         ]);
     }
 
@@ -63,5 +64,56 @@ class ContactosController extends Controller
         return Inertia::render('Contactos/Contacto', [
             'contacto' => $contacto
         ]);
+    }
+
+
+    public static function obtenerCoordenadas($direccion)
+{
+    $apiKey = env('GOOGLE_MAPS_API_KEY', ''); // Reemplaza con tu propia API key de Google Maps
+
+    $client = new Client();
+
+    // Realizar solicitud a la API de geocodificación de Google Maps
+    $response = $client->get('https://maps.googleapis.com/maps/api/geocode/json', [
+        'query' => [
+            'address' => $direccion,
+            'key' => $apiKey,
+        ],
+    ]);
+
+    // Obtener el cuerpo de la respuesta y decodificarlo como JSON
+    $data = json_decode($response->getBody(), true);
+
+    // Verificar si se obtuvo una respuesta válida
+    if ($response->getStatusCode() === 200 && isset($data['results'][0]['geometry']['location'])) {
+        $location = $data['results'][0]['geometry']['location'];
+
+        $latitud = $location['lat'];
+        $longitud = $location['lng'];
+
+        return ['latitud' => $latitud, 'longitud' => $longitud];
+    }
+
+    return null;
+}
+
+    public static function rellenarLatitudYLongitud($contacto)
+    {
+        $direccion = $contacto->direccion . ", "
+        . $contacto->poblacion . ", "
+        . $contacto->provincia . ", "
+        . $contacto->pais;
+
+        // Obtener las coordenadas de latitud y longitud
+        $coordenadas = ContactosController::obtenerCoordenadas($direccion);
+
+        if ($coordenadas !== null) {
+            // Guardar las coordenadas en el modelo Contacto
+            $contacto->latitud = $coordenadas['latitud'];
+            $contacto->longitud = $coordenadas['longitud'];
+        } else {
+            // Manejar el caso en que no se puedan obtener las coordenadas
+            // (por ejemplo, dirección inválida)
+        }
     }
 }
