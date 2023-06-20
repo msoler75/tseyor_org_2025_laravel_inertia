@@ -2,8 +2,7 @@
 <template>
     <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
         <h1>Audios</h1>
-        <p>Audios que recogen toda la información de las conversaciones interdimensionales mantenidas con nuestros Guías
-            Estelares.</p>
+        <p>Relájate y disfruta de los talleres, meditaciones, cuentos y otros materiales de la filosofía de Tseyor.</p>
 
 
         <AudioPlayer id="player" v-if="playFile" :music="playFile" class="mx-auto max-w-[700px]
@@ -19,7 +18,7 @@
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
 
-            <div class="card bg-base-100 shadow self-baseline flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4">
+            <div class="card bg-base-100 shadow self-baseline flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4 sticky top-5">
                 <Link :href="`${route('audios')}`"
                 :class="!filtrado&&!categoriaActiva ? 'text-blue-700 font-bold' : ''">
                 <span class="capitalize">Novedades</span>

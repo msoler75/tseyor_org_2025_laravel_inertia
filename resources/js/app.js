@@ -1,5 +1,6 @@
 import './bootstrap';
 import '../css/app.css';
+import '../css/tabs.css';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
@@ -24,7 +25,6 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(pinia)
-
             // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs
             //.component("Link", Link)
             // .component("Icon", Icon)
