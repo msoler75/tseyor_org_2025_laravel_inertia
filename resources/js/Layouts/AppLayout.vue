@@ -366,7 +366,7 @@ const sideBarShow = ref(true)
                 <transition enter-active-class="transition-opacity duration-100"
                     leave-active-class="transition-opacity duration-100" enter-class="opacity-0"
                     leave-to-class="opacity-0">
-                    <div v-if="nav.activeTab" class="absolute w-full h-full bg-black bg-opacity-10">
+                    <div v-if="nav.activeTab" class="z-30 absolute w-full h-full bg-black bg-opacity-10">
                         <!-- Contenido del elemento -->
                     </div>
                 </transition>

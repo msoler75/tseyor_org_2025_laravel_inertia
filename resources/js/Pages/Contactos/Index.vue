@@ -5,50 +5,46 @@
         <p>Contactos distribuidos en todo el planeta a los que puedes acudir para consultar tus inquietudes.</p>
 
         <div class="flex justify-end mb-5">
-            <SearchInput/>
+            <SearchInput />
         </div>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-                <div class="card bg-base-100 shadow flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4 self-baseline">
-                    <Link :href="`${route('contactos')}`"
-                    :class="!filtrado&&!paisActivo ? 'text-blue-700 font-bold' : ''">
-                    <span class="capitalize">Novedades</span>
-                    </Link>
+            <div class="card bg-base-100 shadow flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4 self-baseline">
+                <Link :href="`${route('contactos')}`" :class="!filtrado && !paisActivo ? 'text-blue-700 font-bold' : ''">
+                <span class="capitalize">Novedades</span>
+                </Link>
 
-                    <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
+                <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
                     :class="paisActivo == pais.nombre ? 'text-blue-700 font-bold' : ''">
-                        <Link :href="`${route('contactos')}?pais=${pais.codigo}`">
-                        <span class="capitalize">{{ pais.nombre }}</span>
-                        <small v-if="pais.total > 0">({{ pais.total }})</small>
-                        </Link>
-                    </div>
+                    <Link :href="`${route('contactos')}?pais=${pais.codigo}`">
+                    <span class="capitalize">{{ pais.nombre }}</span>
+                    <small v-if="pais.total > 0">({{ pais.total }})</small>
+                    </Link>
                 </div>
+            </div>
 
             <div class="w-full flex-grow">
 
 
-                <SearchResultsHeader :results="listado"/>
-
+                <SearchResultsHeader :results="listado" />
 
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
                     <div v-for="contacto in listado.data" :key="contacto.id" class="card bg-base-100 shadow">
                         <img :src="contacto.imagen_url" :alt="contacto.nombre" class="h-48 object-cover w-full" />
-                        <div class="p-5 flex flex-col">
+                        <div class="p-5 flex flex-col flex-grow">
                             <h2 class="text-lg font-bold mb-2">{{ contacto.nombre }}</h2>
-                                <div class="my-4 badge badge-primary badge-outline">{{
-                                    contacto.pais }}</div>
-                                <p class="text-xs">{{
-                                    contacto.poblacion }}</p>
-
-                            <Link :href="`/contactos/${contacto.slug}`"
-                                class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
+                            <div class="my-4 badge badge-primary badge-outline">{{
+                                contacto.pais }}</div>
+                            <p class="text-xs">{{
+                                contacto.poblacion }}</p>
+                            <Link :href="`/contacto/${contacto.slug}`" class="btn btn-primary mt-auto">
                             Ver contacto
                             </Link>
 
-                            <p class="text-gray-600 mb-2 w-full text-xs text-right">
+                            <p v-if="false" class="text-gray-600 mb-2 w-full text-xs text-right">
                                 <TimeAgo :date="contacto.updated_at" />
                             </p>
                         </div>
@@ -56,7 +52,7 @@
                 </div>
 
 
-                <pagination class="mt-6" :links="listado.links"  />
+                <pagination class="mt-6" :links="listado.links" />
 
             </div>
 
@@ -77,8 +73,8 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    paisActivo: {default: ()=> ''},
-    filtrado: {default: ()=> ''},
+    paisActivo: { default: () => '' },
+    filtrado: { default: () => '' },
     listado: {
         default: () => { data: [] }
     },
