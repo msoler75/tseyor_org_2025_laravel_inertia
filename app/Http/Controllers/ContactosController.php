@@ -43,7 +43,8 @@ class ContactosController extends Controller
             'filtrado' => $filtro,
             'paisActivo' => $pais,
             'listado' => $resultados,
-            'paises' => $paises
+            'paises' => $paises,
+            'apikey' => env('GOOGLE_MAPS_API_KEY', ''),
         ]);
     }
 
@@ -56,6 +57,8 @@ class ContactosController extends Controller
         if (!$contacto) {
             abort(404); // Manejo de Contacto no encontrada
         }
+
+        $contacto->pais = Countries::getCountry($contacto->pais);
 
         return Inertia::render('Contactos/Contacto', [
             'contacto' => $contacto
