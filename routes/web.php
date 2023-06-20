@@ -34,6 +34,8 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/novedades', [NovedadesController::class, 'index'])->name('novedades');
+
 Route::get('/archivos{ruta}', [ArchivosController::class, 'index'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
 Route::get('/audios', [AudiosController::class, 'index'])->name('audios');
@@ -49,11 +51,6 @@ Route::get('/archivo/comunicados', [ComunicadosController::class, 'archive'])->n
 Route::get('/libros', [LibrosController::class, 'index'])->name('libros');
 Route::get('/libros/{id}', [LibrosController::class, 'show'])->name('libro');
 
-Route::get('/centros', [CentrosController::class, 'index'])->name('centros');
-Route::get('/centros/{id}', [CentrosController::class, 'show'])->name('centro');
-
-Route::get('/donde-estamos', [ContactosController::class, 'index'])->name('contactos');
-Route::get('/contactos/{id}', [ContactosController::class, 'show'])->name('contacto');
 
 Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');
 Route::get('/entradas/{id}', [EntradasController::class, 'show'])->name('entrada');
@@ -61,7 +58,18 @@ Route::get('/entradas/{id}', [EntradasController::class, 'show'])->name('entrada
 Route::get('/eventos', [EventosController::class, 'index'])->name('eventos');
 Route::get('/eventos/{id}', [EventosController::class, 'show'])->name('evento');
 
-Route::get('/novedades', [NovedadesController::class, 'index'])->name('novedades');
+
+Route::get('/donde-estamos', [ContactosController::class, 'index'])->name('contactos');
+Route::get('/contactos/{id}', [ContactosController::class, 'show'])->name('contacto');
+
+Route::get('/centros', [CentrosController::class, 'index'])->name('centros');
+Route::get('/centros/{id}', [CentrosController::class, 'show'])->name('centro');
+
+Route::get('/quienes-somos', function () {
+    return Inertia::render('QuienesSomos', []);
+})->name('quienes-somos');
+
+
 
 Route::middleware([
     'auth:sanctum',
@@ -72,5 +80,3 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
-
-

@@ -1,7 +1,7 @@
 export default [
     {
             title: "Novedades",
-            icon: "vscode-icons:file-type-bolt",
+            icon: "ph:clock-counter-clockwise-duotone",
             description: "Novedades",
             url: route('novedades'),
           },
@@ -23,6 +23,7 @@ export default [
                     url: route('noticias'),
                     description: "Noticias y anuncios de la comunidad Tseyor",
                     icon: "ph:megaphone-simple-duotone",
+                    class: 'border-b'
                   },
               {
                 title: "Eventos",
@@ -79,28 +80,28 @@ export default [
         // header: "esto es un header 2",
         sections: [
           {
-            title: "Equipos",
+            title: "Lugares Tseyor",
             items: [
               {
-                title: "Centros",
-                url: route('centros'),
-                description: "Centros Tseyor en el mundo",
-                icon: "ph:lighthouse-duotone",
-              },
-              {
-                title: "Contactos",
+                title: "Dónde estamos",
                 url: route('contactos'),
                 description: "Todas las ubicaciones donde encontrar Tseyor",
                 icon: "ph:map-pin-line-duotone",
               },
+              {
+                title: "Centros Tseyor",
+                url: route('centros'),
+                description: "Centros Tseyor en el mundo",
+                icon: "ph:lighthouse-duotone",
+              }
             ],
           },
           {
-            title: "Sección 2.2",
+            title: "Presentación",
             items: [
               {
-                title: "Submenu 2.2.1",
-                url: 'url2.1.1',
+                title: "¿Quiénes somos?",
+                url: route('quienes-somos'),
                 description: "Inner Submenu 2.2.1",
                 icon: "ph:shield-chevron",
               },
