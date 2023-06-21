@@ -3,7 +3,7 @@ export default [
             title: "Novedades",
             icon: "ph:clock-counter-clockwise-duotone",
             description: "Novedades",
-            url: route('novedades'),
+            url: 'novedades',
           },
 
     {
@@ -20,14 +20,14 @@ export default [
             items: [
                 {
                     title: "Noticias",
-                    url: route('noticias'),
+                    url: 'noticias',
                     description: "Noticias y anuncios de la comunidad Tseyor",
                     icon: "ph:megaphone-simple-duotone",
                     class: 'border-b'
                   },
               {
                 title: "Eventos",
-                url: route('eventos'),
+                url: 'eventos',
                 description: "Cursos, convivencias y encuentros",
                 icon: "ph:calendar-duotone",
               }
@@ -38,19 +38,19 @@ export default [
             items: [
                 {
                     title: "Comunicados",
-                    url: route('comunicados'),
+                    url: 'comunicados',
                     description: "Comunicados recibidos de las estrellas",
                     icon: "ph:star-four-duotone",
                   },
               {
                 title: "Libros",
-                url: route('libros'),
+                url: 'libros',
                 description: "Todos los temas de la filosofía Tseyor",
                 icon: "ph:book-bookmark-duotone",
               },
               {
                 title: "Blog",
-                url: route('entradas'),
+                url: 'entradas',
                 description: "Artículos de nuestros blog",
                 icon: "ph:pencil-line-duotone",
               },
@@ -61,7 +61,7 @@ export default [
             items: [
                 {
                     title: "Audios",
-                    url: route('audios'),
+                    url: 'audios',
                     description: "Meditaciones, cuentos, canciones...",
                     icon: "ph:music-notes-duotone",
                   }
@@ -84,13 +84,13 @@ export default [
             items: [
               {
                 title: "Dónde estamos",
-                url: route('contactos'),
+                url: 'contactos',
                 description: "Todas las ubicaciones donde encontrar Tseyor",
                 icon: "ph:map-pin-line-duotone",
               },
               {
                 title: "Centros Tseyor",
-                url: route('centros'),
+                url: 'centros',
                 description: "Centros Tseyor en el mundo",
                 icon: "ph:lighthouse-duotone",
               }
@@ -101,16 +101,10 @@ export default [
             items: [
               {
                 title: "¿Quiénes somos?",
-                url: route('quienes-somos'),
+                url: 'quienes-somos',
                 description: "Conoce nuestra historia y valores",
                 icon: "ph:users-three-duotone",
-              },
-              {
-                title: "Submenu 2.2.2",
-                url: 'url2.2.2',
-                description: "Inner Submenu 2.2.2",
-                icon: "ph:shield-chevron",
-              },
+              }
             ],
           },
           {
@@ -118,16 +112,11 @@ export default [
             items: [
               {
                 title: "Curso Holístico Tseyor",
-                url: '/cursos',
+                url: 'cursos',
                 description: "Aprende gratis nuestra filosofía",
                 icon: "ph:chalkboard-teacher-duotone",
-              },
-              {
-                title: "Submenu 2.3.2",
-                url: 'url2.3.2',
-                description: "Inner Submenu 2.3.2",
-                icon: "ph:shield-chevron",
-              },
+              }
+
             ],
           },
         ],

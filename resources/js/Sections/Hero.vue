@@ -48,6 +48,11 @@ defineProps({
         type: String,
         required: false,
         default: null
+    },
+    textClass: {
+        type: String,
+        required: false,
+        default: "justify-evenly gap-5"
     }
 })
 </script>
