@@ -15,24 +15,7 @@ export default [
         // header: "Novedades",
         sections: [
 
-          {
-            title: "Noticias y Eventos",
-            items: [
-                {
-                    title: "Noticias",
-                    url: 'noticias',
-                    description: "Noticias y anuncios de la comunidad Tseyor",
-                    icon: "ph:megaphone-simple-duotone",
-                    class: 'border-b'
-                  },
-              {
-                title: "Eventos",
-                url: 'eventos',
-                description: "Cursos, convivencias y encuentros",
-                icon: "ph:calendar-duotone",
-              }
-            ],
-          },
+
           {
             title: "Documentos",
             items: [
@@ -54,6 +37,24 @@ export default [
                 description: "Artículos de nuestros blog",
                 icon: "ph:pencil-line-duotone",
               },
+            ],
+          },
+          {
+            title: "Noticias y Eventos",
+            items: [
+                {
+                    title: "Noticias",
+                    url: 'noticias',
+                    description: "Noticias y anuncios de la comunidad Tseyor",
+                    icon: "ph:megaphone-simple-duotone",
+                    class: 'border-b'
+                  },
+              {
+                title: "Eventos",
+                url: 'eventos',
+                description: "Cursos, convivencias y encuentros",
+                icon: "ph:calendar-duotone",
+              }
             ],
           },
           {
