@@ -115,6 +115,14 @@
 
 
 
+.sections>* {
+    @apply w-full mx-auto;
+}
 
+.sections>*>* {
+    @apply mx-auto;
+}
 
-
+.sections>*:nth-child(2n) {
+    @apply bg-base-100 border-b border-t border-gray-200;
+}

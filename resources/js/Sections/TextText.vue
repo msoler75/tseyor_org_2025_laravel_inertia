@@ -1,16 +1,12 @@
 <template>
     <div class="py-12">
-        <div class="container space-y-5">
-            <h2 class="md:w-1/2 text-2xl font-bold">{{ title }}</h2>
-            <div v-if="subtitle" class="md:w-1/2 text-lg text-center my-0">
-                {{ subtitle }}
-            </div>
-        </div>
         <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-7 lg:gap-12">
-            <div>
+            <h2 class="text-2xl font-bold order-0 mb-0">{{ title }}</h2>
+            <h2 class="text-2xl font-bold mb-0 order-3  md:order-2">{{ title2 }}</h2>
+            <div class="order-2">
                 <slot name="text1"></slot>
             </div>
-            <div>
+            <div class="order-3">
                 <slot name="text2"></slot>
             </div>
         </div>
@@ -23,9 +19,10 @@ defineProps({
         type: String,
         required: true,
     },
-    subtitle: {
+    title2: {
         type: String,
-        required: true,
+        required: false,
+        default: null
     }
 })
 </script>

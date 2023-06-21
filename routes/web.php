@@ -69,6 +69,9 @@ Route::get('/quienes-somos', function () {
     return Inertia::render('QuienesSomos', []);
 })->name('quienes-somos');
 
+Route::get('/cursos', function () {
+    return Inertia::render('Cursos', []);
+})->name('cursos');
 
 
 Route::middleware([
