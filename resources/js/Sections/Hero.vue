@@ -2,13 +2,16 @@
     <TextImage
     :title="title"
     :subtitle="subtitle"
-    :text="text"
     :srcImage="srcImage"
     :buttonLabel="buttonLabel"
     :href="href"
     :imageRight="imageRight"
+    :imageClass="imageClass"
+    :textClass="textClass"
     class="bg-hero bg-cover bg-center py-20"
-    />
+    >
+    <slot></slot>
+    </TextImage>
 </template>
 
 <script setup>
@@ -20,11 +23,8 @@ defineProps({
     },
     subtitle: {
         type: String,
-        required: true,
-    },
-    text: {
-        type: String,
-        required: true,
+        required: false,
+        default: null,
     },
     buttonLabel: {
         type: String,
@@ -36,12 +36,18 @@ defineProps({
     },
     srcImage: {
         type: String,
-        required: true
+        required: false,
+        default: null
     },
     imageRight: {
         type: Boolean,
         required: false,
         default: false
+    },
+    imageClass: {
+        type: String,
+        required: false,
+        default: null
     }
 })
 </script>
