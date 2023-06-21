@@ -12,13 +12,13 @@
         </button>
 
         <div class="flex items-center relative" :style="{ 'max-width': maxWidth + 'px' }">
-            <Icon icon="ph:magnifying-glass-light" class="absolute z-10 right-2 transform scale-110 -translate-y-[.1rem] text-gray-600" />
+            <Icon icon="ph:magnifying-glass-light"
+                class="absolute z-10 right-2 transform scale-110 -translate-y-[.1rem] text-gray-600" />
             <form @submit.prevent="submit">
-                <input
-                    class="pr-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
+                <input class="pr-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
                     text-right w-full focus:rounded-md"
-                    :class="filtro?'border-0 border-b border-gray-700 focus:border-b':'border-transparent'"
-                    @keydown.Esc="clearInput" autocomplete="off" type="text" name="buscar" :placeholder="placeholder"
+                    :class="filtro ? 'border-0 border-b border-gray-700 focus:border-b' : 'border-transparent'"
+                    @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"
                     v-model="filtro" />
             </form>
         </div>
@@ -29,8 +29,20 @@
 import { Icon } from '@iconify/vue';
 import { router } from '@inertiajs/vue3';
 
+const props = defineProps({
+    keyword: {
+        type: String,
+        required: false,
+        default: "buscar"
+    },
+    placeholder: {
+        type: String,
+        required: false,
+        default: "Buscar..."
+    }
+})
+
 const maxWidth = ref(200);
-const placeholder = ref('Buscar...');
 const filtro = ref('');
 const currentUrl = ref('');
 const filtrado = ref('');
@@ -42,14 +54,16 @@ onMounted(() => {
     currentUrl.value = window.location.href.replace(/\?.*/, '');
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    filtrado.value = urlParams.get('buscar');
+    filtrado.value = urlParams.get(props.keyword);
     filtro.value = filtrado.value;
     emit('update', filtrado.value);
     document.addEventListener('keydown', handleKeyDown);
 });
 
 const submit = () => {
-    router.get(currentUrl.value, { buscar: filtro.value });
+    const args = {}
+    args[props.keyword] = filtro.value
+    router.get(currentUrl.value, args);
     emit('search');
 };
 
