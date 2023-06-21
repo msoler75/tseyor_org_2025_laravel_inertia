@@ -30,9 +30,9 @@ const gridClass = computed(() => {
         case 2:
             return 'grid-cols-2 lg:max-w-[1024px]'
         case 3:
-            return 'grid-cols-2 sm:grid-cols-3 lg:max-w-[1024px]'
+            return 'grid-cols-2 md:grid-cols-3'
         default:
-            return 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 lg:max-w-[1024px]'
+            return 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
     }
 
 })

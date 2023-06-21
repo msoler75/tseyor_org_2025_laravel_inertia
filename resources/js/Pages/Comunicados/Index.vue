@@ -7,7 +7,7 @@
 
                 <div class="flex gap-12">
                     <div>
-                        <h1>Comunicados</h1>
+                        <h1>Comunicados Recientes</h1>
                         <p>Aquí puedes encontrar los últimas comunicados de Tseyor.</p>
                     </div>
 
