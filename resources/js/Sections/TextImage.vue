@@ -1,8 +1,8 @@
 <template>
     <div class="py-12">
         <div class="container mx-auto text-center" :class="srcImage ? 'grid grid-cols-1 md:grid-cols-2 gap-7 lg:gap-12' : ''">
-            <div v-if="srcImage" class="flex justify-center" :class="imageClass + ' ' + (imageRight ? 'md:order-last' : '')">
-                <img :src="srcImage" :alt="title" class="max-h-[400px]">
+            <div v-if="srcImage" class="flex justify-center" :class="imageRight ? 'md:order-last' : ''">
+                <img :src="srcImage" :alt="title" class="max-h-[400px]" :class="imageClass" >
             </div>
             <div class="flex flex-col items-center" :class="textClass">
                 <h2 class="text-2xl font-bold mb-0">{{ title }}</h2>

@@ -47,14 +47,15 @@
             <!-- Sección: Los guías estelares -->
             <TextImage title="Libro: Los Guías Estelares" subtitle="Libro que recoge toda la historia del grupo e información detallada de cada guía estelar de
                             TSEYOR." srcImage="https://via.placeholder.com/700x1000.png/0000ff?text=guia-estelar.jpg"
-                buttonLabel="Descargar libro" href="/libro" image-right />
+                buttonLabel="Descargar libro" href="/libro" />
         </Section>
 
         <Section>
             <!-- Sección: Comunicados -->
             <TextImage title="Comunicados recibidos telepáticamente"
                 srcImage="https://via.placeholder.com/700x600.png/0000ff?text=Puente.jpg" buttonLabel="Ver Comunicados"
-                href="/comunicados">
+                href="/comunicados"
+                image-right >
                 <p>Los comunicados son las conversaciones interdimensionales realizadas telepáticamente por nuestro hermano
                     Chac-Mool Puente, quien ha recibido una preparación desde
                     hace más de 40 años para asumir dicha labor, como intermediario entre los dos mundos.</p>
