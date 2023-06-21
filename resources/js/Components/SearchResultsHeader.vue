@@ -13,12 +13,17 @@ import { ref, onMounted } from 'vue';
 const filtrado = ref('');
 
 const props = defineProps({
-    results : {}
+    results : {},
+    keyword: {
+        type: String,
+        required: false,
+        default: "buscar"
+    }
 })
 
 onMounted(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    filtrado.value = urlParams.get('buscar');
+    filtrado.value = urlParams.get(props.keyword);
 });
 </script>
