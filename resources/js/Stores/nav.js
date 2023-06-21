@@ -9,11 +9,15 @@ export const useNav = defineStore("nav", {
   }),
   getters: {
     activeTab: (state) => state.items.find((tab) => tab.open),
+    in: (state)=>(tab, ruta) =>{
+        // comprueba si la ruta está en alguno de los items del tab
+        return !!tab.submenu.sections.find(section=>section.items.find(item=>item.url==ruta))
+    }
   },
   actions: {
     activateTab(tab) {
       tab.activating = true;
-      console.log("activateTab", tab.title);
+      // console.log("activateTab", tab.title);
       if (!tab.open || !tab.submenu) this.closeTabs();
       setTimeout(() => {
         tab.open = true;
@@ -21,12 +25,12 @@ export const useNav = defineStore("nav", {
       }, 1);
     },
     toggleTab(tab) {
-      console.log("toggleTab", tab, tab.title, tab.open);
+      // console.log("toggleTab", tab, tab.title, tab.open);
       let oldState = !!tab.open;
       if (!oldState || !tab.submenu) this.closeTabs();
       tab.open = !oldState;
       if (tab.open) this.activeTabChange(tab);
-      console.log("tab is now", tab.open);
+      // console.log("tab is now", tab.open);
       return false
     },
     activeTabChange(newTab) {
@@ -38,13 +42,13 @@ export const useNav = defineStore("nav", {
         }, 75);
     },
     closeTab(tab) {
-      console.log("close tab");
+      // console.log("close tab");
       if (tab) tab.open = false;
     },
     closeTabs() {
       for (const tab of this.items) {
         tab.open = false;
       }
-    },
+    }
   },
 });
