@@ -1,8 +1,6 @@
 <template>
-    <div class="container mx-auto">
-      <div class="aspect-w-16 aspect-h-9">
-        <iframe :src="videoUrl" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
-      </div>
+    <div class="container mx-auto py-5 flex justify-center">
+        <iframe class="w-full max-w-[800px] aspect-video" :src="videoUrl" frameborder="0" allowfullscreen></iframe>
     </div>
   </template>
 

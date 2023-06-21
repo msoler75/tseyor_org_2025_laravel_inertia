@@ -1,9 +1,14 @@
 <template>
     <Sections>
 
-        <Hero title="Curso Holístico Tseyor" subtitle="Conoce las enseñanzas de los Guías de las Estrellas."
+        <Hero title="Curso Holístico Tseyor"
+            subtitle="Conoce las enseñanzas de los Guías de las Estrellas con nuestro curso gratuito."
             srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=curso-holistico.jpg" image-right
             buttonLabel="Inscríbete" href="/cursos"></Hero>
+
+        <Section class="!bg-gray-900">
+            <VideoPlayer videoUrl="https://www.youtube.com/embed/AkOZbfGdXbU" />
+        </Section>
 
 
         <Section>
@@ -31,6 +36,8 @@
 
             ]" />
         </Section>
+
+
 
 
 

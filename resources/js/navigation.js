@@ -102,8 +102,8 @@ export default [
               {
                 title: "¿Quiénes somos?",
                 url: route('quienes-somos'),
-                description: "Inner Submenu 2.2.1",
-                icon: "ph:shield-chevron",
+                description: "Conoce nuestra historia y valores",
+                icon: "ph:users-three-duotone",
               },
               {
                 title: "Submenu 2.2.2",
@@ -114,13 +114,13 @@ export default [
             ],
           },
           {
-            title: "Sección 2.3",
+            title: "Cursos",
             items: [
               {
-                title: "Submenu 2.3.1",
-                url: 'url2.3.1',
-                description: "Inner Submenu 2.3.1",
-                icon: "ph:shield-chevron",
+                title: "Curso Holístico Tseyor",
+                url: '/cursos',
+                description: "Aprende gratis nuestra filosofía",
+                icon: "ph:chalkboard-teacher-duotone",
               },
               {
                 title: "Submenu 2.3.2",
