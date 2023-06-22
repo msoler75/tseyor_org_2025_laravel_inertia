@@ -114,8 +114,14 @@ export default [
               {
                 title: "Curso Holístico Tseyor",
                 url: 'cursos',
-                description: "Aprende gratis nuestra filosofía",
+                description: "Conoce nuestro curso de origen estelar",
                 icon: "ph:chalkboard-teacher-duotone",
+              },
+              {
+                title: "Inscríbete a nuestro curso",
+                url: 'cursos.inscripcion',
+                description: "Aprende gratis nuestra filosofía",
+                icon: "ph:note-pencil-duotone",
               }
 
             ],

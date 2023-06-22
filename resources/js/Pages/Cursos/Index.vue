@@ -4,15 +4,14 @@
         <Hero title="Curso Holístico Tseyor"
             subtitle="Conoce las enseñanzas de los Guías de las Estrellas con nuestro curso gratuito."
             srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=curso-holistico.jpg" image-right
-            buttonLabel="Inscríbete" href="/cursos"></Hero>
+            buttonLabel="Inscríbete" :href="route('cursos.inscripcion')"></Hero>
 
-        <Section class="relative overflow-hidden !bg-black">
-
-            <!-- Space -->
-            <Space class="hidden lg:block absolute left-0 z-10"/>
-
-            <VideoPlayer class="opacity-0" videoUrl="https://www.youtube.com/embed/AkOZbfGdXbU" />
-            <VideoPlayer class="absolute top-0 left-0 right-0 z-10" videoUrl="https://www.youtube.com/embed/AkOZbfGdXbU" />
+        <Section :style="{
+            'background-size': 'cover',
+            'background-attachment': 'fixed',
+            background: 'black url(/storage/imagenes/space.jpg) repeat'
+        }">
+            <VideoPlayer class="" videoUrl="https://www.youtube.com/embed/AkOZbfGdXbU" />
         </Section>
 
 
@@ -45,8 +44,7 @@
 
         <Section>
             <TextImage title="Libro del Curso Holístico"
-                srcImage="https://via.placeholder.com/400x600.png/0000ff?text=CURSO HOLISTICO"
-                buttonLabel="Descargar Libro"
+                srcImage="https://via.placeholder.com/400x600.png/0000ff?text=CURSO HOLISTICO" buttonLabel="Descargar Libro"
                 href="/ong">
                 <p>Lee este conjunto de historias para comprender la filosofía de Tseyor.</p>
             </TextImage>
