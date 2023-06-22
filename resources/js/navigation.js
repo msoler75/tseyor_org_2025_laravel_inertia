@@ -65,6 +65,12 @@ export default [
                     url: 'audios',
                     description: "Meditaciones, cuentos, canciones...",
                     icon: "ph:music-notes-duotone",
+                  },
+                  {
+                    title: "Vídeos",
+                    url: 'videos',
+                    description: "Meditaciones, cuentos, canciones...",
+                    icon: "ph:youtube-logo-duotone",
                   }
             ],
           }

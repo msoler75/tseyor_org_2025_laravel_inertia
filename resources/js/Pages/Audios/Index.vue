@@ -77,10 +77,6 @@
 
 import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-
-
-
-
 import { Icon } from '@iconify/vue';
 
 defineOptions({ layout: AppLayout })
