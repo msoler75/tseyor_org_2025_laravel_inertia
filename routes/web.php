@@ -41,6 +41,11 @@ Route::get('/archivos{ruta}', [ArchivosController::class, 'index'])->where(['rut
 Route::get('/audios', [AudiosController::class, 'index'])->name('audios');
 Route::get('/audios/{id}', [AudiosController::class, 'show'])->name('audio');
 
+Route::get('/videos', function () {
+    return Inertia::render('Videos', []);
+})->name('videos');
+
+
 Route::get('/noticias', [NoticiasController::class, 'index'])->name('noticias');
 Route::get('/noticias/{id}', [NoticiasController::class, 'show'])->name('noticia');
 
