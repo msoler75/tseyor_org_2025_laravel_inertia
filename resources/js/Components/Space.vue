@@ -16,7 +16,7 @@ const props = defineProps({
         default: 1920
     },
     maxHeight: {
-        default: 500
+        default: 1080
     }
 })
 

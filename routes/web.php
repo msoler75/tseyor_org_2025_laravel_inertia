@@ -70,8 +70,13 @@ Route::get('/quienes-somos', function () {
 })->name('quienes-somos');
 
 Route::get('/cursos', function () {
-    return Inertia::render('Cursos', []);
+    return Inertia::render('Cursos/Index', []);
 })->name('cursos');
+
+Route::get('/cursos/inscripcion', function () {
+    return Inertia::render('Cursos/Inscripcion', []);
+})->name('cursos.inscripcion');
+Route::post('/inscripcion', 'InscripcionController@store')->name('inscripcion.store');
 
 
 Route::middleware([
