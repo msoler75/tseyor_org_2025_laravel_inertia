@@ -3,28 +3,10 @@
 
         <Hero title="¿Quiénes Somos?" subtitle="TSEYOR es un grupo de contacto extraterrestre que mantiene conversaciones regulares con seres
                         humanos del cosmos pertenecientes a la Confederación de Mundos Habitados de la Galaxia."
-            srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=quienes-somos.jpg" image-right></Hero>
-
-
-        <Section>
-            <TextImage title="Los tiempos que corren"
-                srcImage="https://via.placeholder.com/563x269.png/5000dd?text=tiempos-que-corren">
-                <p>Estamos en unos momentos de transformación y transmutación en los que debemos trabajar en
-                    nuestro desarrollo personal, equilibrio, armonía y conexión con nuestra realidad objetiva.</p>
-                <p> Nuestra vibración energética se elevará para acoger la energía proveniente del cosmos y
-                    facilitar la transformación de la humanidad y el planeta mismo.</p>
-            </TextImage>
-        </Section>
-
-
-        <Section>
-            <TextImage title="Una puerta abierta al infinito"
-                srcImage="https://via.placeholder.com/963x569.png/f00fdd?text=groupMeeting" image-right>
-                <p>El grupo Tseyor participa en una aventura que consiste en acceder a nuestra realidad objetiva,
-                    espiritual e interdimensional a través de la puerta abierta al infinito desde nuestro corazón y
-                    nuestro pensamiento inspirado en los valores y las energías cósmicas.</p>
-            </TextImage>
-        </Section>
+            srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=quienes-somos.jpg" image-right
+            buttonLabel="Conoce nuestros orígenes"
+            :href="route('origenes-de-tseyor')">
+        </Hero>
 
         <Section>
             <TextImage title="¿Donde estamos?" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Mapamundi"
@@ -32,6 +14,8 @@
                 <p>Encuentra alguno de nuestros centros o representantes cerca de ti.</p>
             </TextImage>
         </Section>
+
+
 
         <Section>
             <TextImage title="¿Con quiénes contactamos?"
@@ -43,12 +27,14 @@
             </TextImage>
         </Section>
 
+
         <Section>
-            <!-- Sección: Los guías estelares -->
-            <TextImage title="Libro: Los Guías Estelares" subtitle="Libro que recoge toda la historia del grupo e información detallada de cada guía estelar de
-                            TSEYOR." srcImage="https://via.placeholder.com/700x1000.png/0000ff?text=guia-estelar.jpg"
-                buttonLabel="Descargar libro" href="/libro" />
+            <TextImage title="Nuestra filosofía" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía"
+            buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')">
+                <p>Seguimos la filosofía nos ha patrocinado la Confederación de Mundos Habitados de la Galaxia.</p>
+            </TextImage>
         </Section>
+
 
         <Section>
             <!-- Sección: Comunicados -->
@@ -124,24 +110,7 @@
             </Hero>
         </Section>
 
-        <Section>
-            <TextImage title="Las sociedades armónicas"
-                srcImage="https://via.placeholder.com/700x600.png/0000ff?text=ONG.jpg" buttonLabel="Descargar Libro"
-                href="/sociedades">
-                <p>
-                    A este tipo de sociedades pertenecen las civilizaciones que forman parte de la citada
-                    Confederación de Mundos Habitados. Son sociedades que han superado todas nuestras lacras, en
-                    las
-                    que predomina la hermandad, la entrega a los demás y la libertad sin más restricción que la
-                    responsabilidad de cada cual.
-                </p>
-                <p>
-                    A nuestro planeta le ha llegado el momento de transformarse en el soporte de una sociedad
-                    armónica en contacto con todas las que nos rodean, y que están colaborando en nuestra
-                    transformación de forma pacífica y sin interferencias.
-                </p>
-            </TextImage>
-        </Section>
+
 
 
         <!-- Sección: Quiero ser de Tseyor -->

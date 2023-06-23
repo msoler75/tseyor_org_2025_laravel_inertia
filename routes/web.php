@@ -7,6 +7,8 @@ use App\Http\Controllers\ArchivosController;
 use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ComunicadosController;
 use App\Http\Controllers\EntradasController;
+use App\Http\Controllers\GuiasController;
+use App\Http\Controllers\LugaresController;
 use App\Http\Controllers\EventosController;
 use App\Http\Controllers\LibrosController;
 use App\Http\Controllers\CentrosController;
@@ -61,6 +63,12 @@ Route::get('/libros/{id}', [LibrosController::class, 'show'])->name('libro');
 Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');
 Route::get('/entradas/{id}', [EntradasController::class, 'show'])->name('entrada');
 
+Route::get('/guias', [GuiasController::class, 'index'])->name('guias');
+Route::get('/guias/{id}', [GuiasController::class, 'show'])->name('guia');
+
+Route::get('/lugares', [LugaresController::class, 'index'])->name('lugares');
+Route::get('/lugares/{id}', [LugaresController::class, 'show'])->name('lugar');
+
 Route::get('/eventos', [EventosController::class, 'index'])->name('eventos');
 Route::get('/eventos/{id}', [EventosController::class, 'show'])->name('evento');
 
@@ -78,6 +86,10 @@ Route::get('/quienes-somos', function () {
 Route::get('/origenes-de-tseyor', function () {
     return Inertia::render('Presentacion/OrigenesTseyor', []);
 })->name('origenes-de-tseyor');
+
+Route::get('/filosofia', function () {
+    return Inertia::render('Presentacion/Filosofia', []);
+})->name('filosofia');
 
 Route::get('/cursos', [CursosController::class, 'index'])->name('cursos');
 

@@ -12,6 +12,8 @@ use App\Models\Libro;
 use App\Models\Publicacion;
 use App\Models\Evento;
 use App\Models\Normativa;
+use App\Models\Lugar;
+use App\Models\Guia;
 // use TCG\Voyager\Facades\Voyager;
 // use App\FormFields\MarkdownImagesField;
 use App\Pigmalion\Contenidos;
@@ -76,6 +78,15 @@ class AppServiceProvider extends ServiceProvider
             Contenidos::rellenarSlugImagenYDescripcion($publicacion);
         });
 
+
+        Guia::saving(function ($guia) {
+            Contenidos::rellenarSlugImagenYDescripcion($guia);
+        });
+
+
+        Lugar::saving(function ($lugar) {
+            Contenidos::rellenarSlugImagenYDescripcion($lugar);
+        });
 
         // SAVED
         Noticia::saved(function ($noticia) {
