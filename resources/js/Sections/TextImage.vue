@@ -1,11 +1,12 @@
 <template>
     <div class="py-12">
         <div class="container mx-auto text-center" :class="srcImage ? 'grid grid-cols-1 md:grid-cols-2 gap-7 lg:gap-12' : ''">
-            <div v-if="srcImage" class="flex justify-center" :class="imageRight ? 'md:order-last' : ''">
+            <div v-if="srcImage" class="flex flex-col items-center gap-1" :class="imageRight ? 'md:order-last' : ''">
                 <img :src="srcImage" :alt="title" class="max-h-[400px]" :class="imageClass" >
+                <small v-if="caption">{{caption}}</small>
             </div>
             <div class="flex flex-col items-center" :class="textClass">
-                <h2 class="text-2xl font-bold mb-0">{{ title }}</h2>
+                <h2 v-if="title" class="text-2xl font-bold mb-0">{{ title }}</h2>
                 <div v-if="subtitle" class="text-lg text-center my-0">
                     {{ subtitle }}
                 </div>
@@ -24,12 +25,11 @@
 defineProps({
     title: {
         type: String,
-        required: true,
+        required: false,
     },
     subtitle: {
         type: String,
         required: false,
-        default: null,
     },
     buttonLabel: {
         type: String,
@@ -58,6 +58,9 @@ defineProps({
         type: String,
         required: false,
         default: "justify-evenly gap-5"
+    },
+    caption: {
+        type: String
     }
 })
 
