@@ -111,6 +111,12 @@ export default [
                 route: 'quienes-somos',
                 description: "Conoce nuestra historia y valores",
                 icon: "ph:users-three-duotone",
+              },
+              {
+                title: "Orígenes de Tseyor",
+                route: 'origenes-de-tseyor',
+                description: "El orígen del contacto",
+                icon: "ph:planet-duotone",
               }
             ],
           },

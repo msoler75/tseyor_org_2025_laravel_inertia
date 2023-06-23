@@ -1,0 +1,116 @@
+<template>
+    <Sections>
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/sello-tseyor.png"
+            image-right>
+                <p>Somos <b>TSEYOR</b>, un grupo de contacto extraterrestre con fines de divulgación y ayuda humanitaria a través de la <b>ONG Mundo Armónico Tseyor</b>.</p>
+                <p>Hemos mantenido contacto <b>por más de 40 años</b> con seres humanos vivos de diversos planetas de la galaxia.</p>
+            </TextImage>
+        </Section>
+
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/Melinus.jpg">
+                <p>El primer contacto fue hace más de 40 años, a través de una experiencia de hipnosis, con un ser llamado <b>Melinus</b>, de <b>Ganímedes</b>, quien tiene una apariencia humana.</p>
+                <p><b>Melinus</b> aprovechó durante unas sesiones de practicantes de hipnosis para <b>comunicarse telepáticamente</b> e invitó a los presentes a iniciar una ronda de conversaciones amistosas.</p>
+            </TextImage>
+        </Section>
+
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/Puente.jpg"
+            image-right>
+                <p>Nuestro amigo <b>Josep</b> de Barcelona, España, estuvo presente en esas sesiones de conversación con <b>Melinus</b>.</p>
+                <p>(Con el tiempo nuestro amigo recibiría la formación necesaria para ser hoy día el canal de comunicación oficial del grupo Tseyor)</p>
+            </TextImage>
+        </Section>
+
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/guias-estelares.png">
+                <p><b>Melinus</b> se presentó como miembro de la <b>Confederación de Mundos Habitados de la Galaxia</b>, un conjunto de inteligencias del universo unidos con un propósito común de <b>ayuda humanitaria</b> en estos tiempos, que se anticipaban ya de un carácter trascendente.
+.</p>
+            </TextImage>
+        </Section>
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/avistamiento.jpg"
+            caption="Fotografía tomada el 31 de Agosto de 1982"
+            image-right>
+                <p>Nuestro canalizador <b>Josep</b>, junto con otros hombres y mujeres, tuvieron en años sucesivos múltiples experiencias de <b>avistamientos de naves</b>, previa cita con los seres de las estrellas quienes determinaban un día, hora, y lugar, y aparecían con sus naves señalándoles que efectivamente el <b>contacto extraterrestre</b> era auténtico.
+</p>
+            </TextImage>
+        </Section>
+
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/Ostracita.jpg"
+            caption="Ostracita">
+                <p>Años más tarde, <b>Melinus</b> pasó el testigo a otra colega, de nombre <b>Ostracita</b>, psicóloga y también de Ganímedes, quien siguió las conversaciones con planteamientos muy enriquecedores para este pequeño grupo de hombres y mujeres.
+</p>
+            </TextImage>
+        </Section>
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/siliNur-Olion.png"
+            image-right>
+                <p><b>Ostracita</b> daría paso a <b>Sili-Nur</b>, psicóloga transpersonal de Venus, quien siguió <b>retroalimentando</b> ese fuego de inquietudes, conversaciones e interés por otros mundos y otros pensamientos, que en el fondo era todo parte de un <b>proceso regenerador espiritual</b> de gran calado.</p>
+                <p>También se les presentaría a <b>Olión</b>, de Ganímedes, cuyos bisabuelos son de origen terrestre.</p>
+            </TextImage>
+        </Section>
+
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/Montserrat.jpg">
+                <p>Tras superar varias vicisitudes, en el año 2001 la <b>Confederación</b> hizo una llamada telepática a nuestro amigo <b>Josep</b>, quien atravesaba por un momento de gran inquietud interior.</p>
+                <p>Le citaron para que acudiera a la mágica montaña de <b>Montserrat</b>, en la noche, a una hora y un lugar concretos. <b>Josep</b>, junto a su pareja <b>Marisa</b>, acudieron al encuentro.</p>
+            </TextImage>
+        </Section>
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/reconstruccion-avistamiento.jpg"
+            caption="Reconstrucción del momento del avistamiento en la explanada de Montserrat, en la medianoche del 8 junio de 2001."
+            image-right>
+                <p>Dentro del coche, esperando el momento, <b>Marisa</b> recibió un mensaje telepático de <b>Olión</b>, para que reorientaran el vehículo.</p>
+                <p>A la hora acordada <b>una gran nave</b> apareció a pocos metros de distancia, ligera como una pluma. Esto fue motivo de gran entusiasmo para ambos, especialmente para <b>Josep</b>.</p>
+            </TextImage>
+        </Section>
+
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/Sala-y-Puente-2020.jpg"
+            caption="Sala y Puente en las convivencias de Casa Tseyor de Barcelona, 2020">
+                <p>A continuación la Confederación propuso a ambos seguir adelante y formar parte de <b>un proyecto de cierta envergadura</b>, que se reafirmaría en los años sucesivos. </p>
+                <p><b>Josep</b> recibió más adelante su nombre espiritual <b>Puente</b>, y el reconocimiento como <b>Chac-Mool de TSEYOR</b> (mensajero entre los dos mundos).</p>
+                <p>A su vez, <b>Marisa</b> recibió el nombre de <b>Sala</b> y ha sido y es un apoyo indispensable para todos.</p>
+            </TextImage>
+        </Section>
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/sellos.png"
+            image-right>
+                <p>Junto a nuevos miembros del grupo crearon la asociación sin ánimo de lucro <b>Tseyor Centro de Estudios Socioculturales.</b></p>
+                <p>Años más tarde se unieron muchas más personas y se creó la <b>Universidad Tseyor de Granada</b>, y posteriormente la <b>ONG Mundo Armónico Tseyor</b>.</p>
+            </TextImage>
+        </Section>
+
+
+        <Section>
+            <TextImage srcImage="/storage/imagenes/presentacion/origenes/grupo.jpg">
+                <p>Y esa fue, a grandes rasgos, la creación del proyecto Tseyor desde sus comienzos.</p>
+                <p>Hay muchas más historias que contar, pero que no cabrían en esta presentación, así que si te interesa las puedes conocer en nuestra web.</p>
+            </TextImage>
+        </Section>
+
+    </Sections>
+</template>
+
+
+
+<script setup>
+
+import AppLayout from '@/Layouts/AppLayout.vue'
+defineOptions({ layout: AppLayout })
+
+</script>

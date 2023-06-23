@@ -72,8 +72,12 @@ Route::get('/centros', [CentrosController::class, 'index'])->name('centros');
 Route::get('/centros/{id}', [CentrosController::class, 'show'])->name('centro');
 
 Route::get('/quienes-somos', function () {
-    return Inertia::render('QuienesSomos', []);
+    return Inertia::render('Presentacion/QuienesSomos', []);
 })->name('quienes-somos');
+
+Route::get('/origenes-de-tseyor', function () {
+    return Inertia::render('Presentacion/OrigenesTseyor', []);
+})->name('origenes-de-tseyor');
 
 Route::get('/cursos', [CursosController::class, 'index'])->name('cursos');
 
