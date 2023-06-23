@@ -95,27 +95,21 @@
             </TextImage>
         </Section>
 
-        <!-- Sección: Qué significa TSEYOR -->
-        <Section>
-            <Hero title="¿Qué significa TSEYOR?" buttonLabel="Más información" href="/tseyor-significado">
-                <p class="text-center">
-                    Tseyor es un acrónimo que corresponde a:
-                </p>
-                <p class="text-center text-xl">
-                    <b>T</b>iempo <b>S</b>imbólico <b>E</b>stelar del <b>YO</b> en <b>R</b>etroalimentación
-                </p>
-                <p class="text-center">
-                    Y en él están incluidas miles de personas que anhelan el perfeccionamiento de su pensamiento.
-                </p>
-            </Hero>
+          <!-- Sección: ONG -->
+          <Section>
+            <TextImage title="Blog"
+                srcImage="https://via.placeholder.com/700x600.png/0000ff?text=ONG.jpg" buttonLabel="Leer Blog"
+                href="/blog">
+                <p>En nuestros blog podrás ver algunas de nuestras actividades que hemos ido realizando todos estos años.</p>
+            </TextImage>
         </Section>
-
-
 
 
         <!-- Sección: Quiero ser de Tseyor -->
         <Hero title="Quiero ser de Tseyor" subtitle="Entra a forma parte del grupo" buttonLabel="Formulario de inscripción"
             href="/inscripcion" textClass="space-y-8" />
+
+
     </Sections>
 </template>
 
