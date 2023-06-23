@@ -13,37 +13,37 @@ const props = defineProps({
 });
 
 const form = useForm({
-    nombre: props.team.nombre,
+    name: props.team.name,
 });
 
-const updateEquipoName = () => {
-    form.put(route('equipos.update', props.team), {
-        errorBag: 'updateEquipoName',
+const updateTeamName = () => {
+    form.put(route('teams.update', props.team), {
+        errorBag: 'updateTeamName',
         preserveScroll: true,
     });
 };
 </script>
 
 <template>
-    <FormSection @submitted="updateEquipoName">
+    <FormSection @submitted="updateTeamName">
         <template #title>
-            Equipo Name
+            Team Name
         </template>
 
         <template #description>
-            The team's nombre and owner information.
+            The team's name and owner information.
         </template>
 
         <template #form>
-            <!-- Equipo Owner Information -->
+            <!-- Team Owner Information -->
             <div class="col-span-6">
-                <InputLabel value="Equipo Owner" />
+                <InputLabel value="Team Owner" />
 
                 <div class="flex items-center mt-2">
-                    <img class="w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url" :alt="team.owner.nombre">
+                    <img class="w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url" :alt="team.owner.name">
 
                     <div class="ml-4 leading-tight">
-                        <div class="text-gray-900 dark:text-white">{{ team.owner.nombre }}</div>
+                        <div class="text-gray-900 dark:text-white">{{ team.owner.name }}</div>
                         <div class="text-gray-700 dark:text-gray-300 text-sm">
                             {{ team.owner.email }}
                         </div>
@@ -51,23 +51,23 @@ const updateEquipoName = () => {
                 </div>
             </div>
 
-            <!-- Equipo Name -->
+            <!-- Team Name -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="nombre" value="Equipo Name" />
+                <InputLabel for="name" value="Team Name" />
 
                 <TextInput
-                    id="nombre"
-                    v-model="form.nombre"
+                    id="name"
+                    v-model="form.name"
                     type="text"
                     class="mt-1 block w-full"
-                    :disabled="! permissions.canUpdateEquipo"
+                    :disabled="! permissions.canUpdateTeam"
                 />
 
-                <InputError :message="form.errors.nombre" class="mt-2" />
+                <InputError :message="form.errors.name" class="mt-2" />
             </div>
         </template>
 
-        <template v-if="permissions.canUpdateEquipo" #actions>
+        <template v-if="permissions.canUpdateTeam" #actions>
             <ActionMessage :on="form.recentlySuccessful" class="mr-3">
                 Saved.
             </ActionMessage>
