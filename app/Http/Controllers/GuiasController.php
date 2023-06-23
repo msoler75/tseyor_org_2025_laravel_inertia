@@ -10,13 +10,26 @@ class GuiasController extends Controller
 {
     public function index(Request $request)
     {
-        $listado = Guia::select(['nombre', 'slug', 'descripcion', 'imagen'])->take(50)->get();
+        $guias = Guia::select(['nombre', 'slug', 'descripcion', 'imagen'])->take(50)->get();
 
-        $todos = Guia::select(['slug', 'nombre', 'categoria'])->take(100)->get();
+        return Inertia::render('Guias/Index', [
+            'guias' => $guias
+        ]);
+    }
 
-        return Inertia::render('Lugares/Index', [
-            'listado' => $listado,
-            'todos' => $todos
+
+    public function show($id)
+    {
+        $guia = Guia::where('slug', $id)
+            ->orWhere('id', $id)
+            ->firstOrFail();
+
+        if (!$guia) {
+            abort(404); // Manejo de Centro no encontrada
+        }
+
+        return Inertia::render('Guias/Guia', [
+            'guia' => $guia
         ]);
     }
 }

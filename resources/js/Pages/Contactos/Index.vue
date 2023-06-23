@@ -34,7 +34,7 @@
                     </tab>
 
 
-                    <tab name="Contactos">
+                    <tab name="Listado">
                         <div v-if="listado.data.length > 0" class="grid gap-4"
                             :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
                             <div v-for="contacto in listado.data" :key="contacto.id" class="card bg-base-100 shadow">

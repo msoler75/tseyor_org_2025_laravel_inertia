@@ -8,7 +8,6 @@
             ></Hero>
 
 
-
         <Section>
             <TextImage title="Los tiempos que corren"
                 srcImage="https://via.placeholder.com/563x269.png/5000dd?text=tiempos-que-corren">
@@ -47,6 +46,27 @@
                 </p>
             </TextImage>
         </Section>
+
+
+                    <!-- Sección: Qué significa TSEYOR -->
+                    <Section>
+            <Hero title="¿Qué significa TSEYOR?" buttonLabel="Más información" href="/tseyor-significado">
+                <p class="text-center">
+                    Tseyor es un acrónimo que corresponde a:
+                </p>
+                <p class="text-center text-xl">
+                    <b>T</b>iempo <b>S</b>imbólico <b>E</b>stelar del <b>YO</b> en <b>R</b>etroalimentación
+                </p>
+                <p class="text-center">
+                    Y en él están incluidas miles de personas que anhelan el perfeccionamiento de su pensamiento.
+                </p>
+            </Hero>
+        </Section>
+
+
+        <!-- Sección: Quiero ser de Tseyor -->
+        <Hero title="Quiero ser de Tseyor" subtitle="Entra a forma parte del grupo" buttonLabel="Formulario de inscripción"
+            href="/inscripcion" textClass="space-y-8" />
 
     </Sections>
 </template>

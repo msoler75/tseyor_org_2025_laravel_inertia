@@ -63,11 +63,11 @@ Route::get('/libros/{id}', [LibrosController::class, 'show'])->name('libro');
 Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');
 Route::get('/entradas/{id}', [EntradasController::class, 'show'])->name('entrada');
 
-Route::get('/guias', [GuiasController::class, 'index'])->name('guias');
-Route::get('/guias/{id}', [GuiasController::class, 'show'])->name('guia');
+Route::get('/enciclopedia/guias', [GuiasController::class, 'index'])->name('enciclopedia.guias');
+Route::get('/enciclopedia/guias/{id}', [GuiasController::class, 'show'])->name('enciclopedia.guia');
 
-Route::get('/lugares', [LugaresController::class, 'index'])->name('lugares');
-Route::get('/lugares/{id}', [LugaresController::class, 'show'])->name('lugar');
+Route::get('/enciclopedia/lugares', [LugaresController::class, 'index'])->name('enciclopedia.lugares');
+Route::get('/enciclopedia/lugares/{id}', [LugaresController::class, 'show'])->name('enciclopedia.lugar');
 
 Route::get('/eventos', [EventosController::class, 'index'])->name('eventos');
 Route::get('/eventos/{id}', [EventosController::class, 'show'])->name('evento');
