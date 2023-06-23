@@ -7,6 +7,8 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { Icon } from '@iconify/vue';
+import { Link } from '@inertiajs/vue3';
+
 // https://github.com/John-Weeks-Dev/facebook-clone/blob/master/resources/js/app.js
 import { createPinia } from 'pinia'
 const pinia = createPinia()
@@ -20,14 +22,12 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
         // https://chriswray.dev/posts/how-to-add-components-globally-in-an-inertiajs-application
         .mixin({
-            components: { Icon}
+            components: { Icon, Link}
         })
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(pinia)
             // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs
-            //.component("Link", Link)
-            // .component("Icon", Icon)
             .mount(el);
     },
     progress: {

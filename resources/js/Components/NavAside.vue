@@ -1,9 +1,6 @@
 <script setup>
 import { Collapse } from 'vue-collapsed'
-import { Icon } from '@iconify/vue';
-import { vOnClickOutside } from '@vueuse/components'
 import { useNav } from '@/Stores/nav'
-import { Link } from '@inertiajs/vue3'
 
 const nav = useNav()
 
@@ -69,7 +66,7 @@ const close = () => {
                                 <button v-for="item of section.items" :key="item.url"
                                     class="flex justify-start items-center space-x-6   rounded px-3 py-5  w-full ">
                                     <Icon :icon="item.icon" />
-                                    <div class="text-base leading-4">{{ item.title }}</div>
+                                    <Link :href="item.url" class="text-base leading-4">{{ item.title }}</Link>
                                 </button>
                             </template>
                         </Collapse>

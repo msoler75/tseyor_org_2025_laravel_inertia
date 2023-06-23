@@ -42,12 +42,18 @@
         </Section>
 
 
+
+
         <Section>
             <TextImage title="Libro del Curso Holístico"
                 srcImage="https://via.placeholder.com/400x600.png/0000ff?text=CURSO HOLISTICO" buttonLabel="Descargar Libro"
                 href="/ong">
                 <p>Lee este conjunto de historias para comprender la filosofía de Tseyor.</p>
             </TextImage>
+        </Section>
+
+        <Section>
+            <FeaturedPosts title="Próximos cursos" :posts="cursos" />
         </Section>
 
 
@@ -59,9 +65,15 @@
 <script setup>
 
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { Icon } from '@iconify/vue';
-import { Link } from '@inertiajs/vue3'
 
 defineOptions({ layout: AppLayout })
+
+const props = defineProps({
+  proximosCursos: {
+    required: true
+  }
+})
+
+const cursos = computed(() =>  props.proximosCursos.map(c => ({ title: c.titulo, description: c.descripcion, date: c.fecha_inicio, url: `/eventos/${c.slug}` })))
 
 </script>

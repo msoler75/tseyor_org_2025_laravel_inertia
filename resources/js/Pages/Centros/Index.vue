@@ -94,10 +94,7 @@
 
 
 <script setup>
-import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { Icon } from '@iconify/vue';
-
 import { Carousel, Slide } from '@jambonn/vue-concise-carousel';
 import '@jambonn/vue-concise-carousel/lib/vue-concise-carousel.css'
 

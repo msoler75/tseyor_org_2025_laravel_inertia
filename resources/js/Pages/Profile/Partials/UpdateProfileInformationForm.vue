@@ -1,12 +1,6 @@
 <script setup>
 
-import { Link, router, useForm } from '@inertiajs/vue3';
-
-
-
-
-
-
+import { router, useForm } from '@inertiajs/vue3';
 
 
 const props = defineProps({
