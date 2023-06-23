@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Audio;
+use App\Models\Lugar;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 120; $i++) {
+        for ($i = 1; $i <= 12; $i++) {
             $data = $this->generateRandomData();
-            Audio::create($data);
+            Lugar::create($data);
         }
     }
 
@@ -25,7 +25,8 @@ class DatabaseSeeder extends Seeder
         $faker = \Faker\Factory::create();
 
         $codigos_pais = ['ES', 'MX', 'AR', 'CO', 'PE', 'CL', 'VE', 'EC', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'UY', 'PA'];
-        $categorias = ['Meditaciones', 'Cuentos', 'Clásica', 'Canciones', 'Reflexiones', 'Talleres'];
+        // $categorias = ['Meditaciones', 'Cuentos', 'Clásica', 'Canciones', 'Reflexiones', 'Talleres'];
+        $categorias = ['Bases', 'Planetas', 'Otros lugares'];
         $files = ['https://cdn.pixabay.com/audio/2023/04/03/audio_047543feac.mp3',
         'https://cdn.pixabay.com/audio/2023/01/01/audio_816821e627.mp3',
         'https://cdn.pixabay.com/audio/2022/08/25/audio_4f3b0a816e.mp3',
@@ -42,13 +43,13 @@ class DatabaseSeeder extends Seeder
     ];
 
         return [
-            'titulo' => $faker->sentence(5),
+            'nombre' => $faker->sentence(5),
             'slug' => $faker->slug(),
             'categoria' => $faker->randomElement($categorias),
-            'audio' => $faker->randomElement($files),
+            //'audio' => $faker->randomElement($files),
             'descripcion' => $faker->paragraph(1),
-            'visibilidad'=>'P'
-
+            'texto' => $faker->paragraph(5),
+            'imagen' => $faker->imageUrl(800, 600)
             /* 'provincia' => $faker->state(),
             'direccion' => $faker->address(),
             'codigo' => $faker->postcode(),

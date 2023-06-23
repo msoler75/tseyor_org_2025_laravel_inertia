@@ -103,6 +103,13 @@
             </TextImage>
         </Section>
 
+        <Section>
+            <!-- Sección: Los guías estelares -->
+            <TextImage title="Libro: Los Guías Estelares" subtitle="Libro que recoge toda la historia del grupo e información detallada de cada guía estelar de
+                            TSEYOR." srcImage="https://via.placeholder.com/700x1000.png/0000ff?text=guia-estelar.jpg"
+                buttonLabel="Descargar libro" href="/libro" />
+        </Section>
+
     </Sections>
 </template>
 

@@ -109,8 +109,14 @@ export default [
               {
                 title: "¿Quiénes somos?",
                 route: 'quienes-somos',
-                description: "Conoce nuestra historia y valores",
+                description: "Descubre quiénes somos y cómo podemos ayudarnos",
                 icon: "ph:users-three-duotone",
+              },
+              {
+                title: "Nuestra Filosofía",
+                route: 'filosofia',
+                description: "Conoce la filosofía cósmico crística",
+                icon: "ph:fish-simple-duotone",
               },
               {
                 title: "Orígenes de Tseyor",
