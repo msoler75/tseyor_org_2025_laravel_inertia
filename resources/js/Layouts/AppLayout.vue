@@ -1,7 +1,5 @@
 <script setup>
-import { Head, Link, router } from '@inertiajs/vue3';
-import navItems from '@/navigation.js'
-import { Icon } from '@iconify/vue';
+import { Head } from '@inertiajs/vue3';
 import { useNav } from '@/Stores/nav'
 
 const nav = useNav()
@@ -59,7 +57,7 @@ const sideBarShow = ref(true)
 
                                 <template v-for="tab of nav.items" :key="tab.url">
                                     <NavLink v-if="tab.url" :href="tab.url" @mouseover="nav.closeTabs()"
-                                        :active="!nav.activeTab&&route().current(tab.url)">
+                                        :active="!nav.activeTab&&route().current(tab.route)">
                                         {{ tab.title }}
                                     </NavLink>
                                     <NavLink v-else @click="nav.toggleTab(tab)" @mouseover="nav.activateTab(tab)"
@@ -91,7 +89,7 @@ const sideBarShow = ref(true)
                                                 section.title }}
                                             </div>
                                             <div class="flex flex-col gap-7 mb-7">
-                                                <Link :href="route(item.url)" v-for="item of section.items" :key="item.url"
+                                                <Link :href="item.url" v-for="item of section.items" :key="item.url"
                                                     @click="nav.closeTabs"
                                                     class="flex gap-3 p-3 rounded-lg hover:bg-blue-50 transition duration-100 cursor-pointer">
                                                 <div class="flex justify-start" style="min-width:2.2rem">

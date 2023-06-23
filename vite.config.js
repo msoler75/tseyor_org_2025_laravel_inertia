@@ -3,6 +3,7 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
+import inertia_vue3 from '@inertiajs/vue3'
 
 export default defineConfig({
     plugins: [
@@ -29,7 +30,8 @@ export default defineConfig({
             dirs: ['resources/js/composables'],
             imports:[
                 {
-                    vue: ['ref', 'computed', 'watch', 'onMounted', 'defineEmits'],
+                    vue: ['ref',  'reactive', 'nextTick', 'computed', 'watch', 'onMounted', 'onUnmount', 'defineEmits', 'useSlots'],
+                    inertia_vue3: ['Link']
                 }
             ]
           })

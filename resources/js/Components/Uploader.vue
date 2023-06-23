@@ -62,10 +62,9 @@
 <script>
 import Dropzone from 'dropzone';
 import 'dropzone/dist/dropzone.css';
-import { Icon } from '@iconify/vue';
+
 
 export default {
-    components: { Icon },
     props: {
         targetPath: {}
     },

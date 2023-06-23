@@ -13,6 +13,7 @@ use App\Http\Controllers\CentrosController;
 use App\Http\Controllers\ContactosController;
 use App\Http\Controllers\AudiosController;
 use App\Http\Controllers\NovedadesController;
+use App\Http\Controllers\CursosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,9 +75,7 @@ Route::get('/quienes-somos', function () {
     return Inertia::render('QuienesSomos', []);
 })->name('quienes-somos');
 
-Route::get('/cursos', function () {
-    return Inertia::render('Cursos/Index', []);
-})->name('cursos');
+Route::get('/cursos', [CursosController::class, 'index'])->name('cursos');
 
 Route::get('/cursos/inscripcion', function () {
     return Inertia::render('Cursos/Inscripcion', []);

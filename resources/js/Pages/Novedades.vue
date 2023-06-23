@@ -40,14 +40,7 @@
 
 
 <script setup>
-import { ref, watch } from 'vue';
-
-import { Link, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-
-
-
-
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({

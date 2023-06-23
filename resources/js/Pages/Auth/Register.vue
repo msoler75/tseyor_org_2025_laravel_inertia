@@ -1,12 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
-
-
-
-
-
-
-
+import { Head, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
     name: '',

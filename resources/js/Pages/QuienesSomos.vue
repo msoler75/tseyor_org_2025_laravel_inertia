@@ -154,7 +154,7 @@
 <script setup>
 
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { Link } from '@inertiajs/vue3'
+
 
 defineOptions({ layout: AppLayout })
 

@@ -69,7 +69,7 @@
 
 
 <script setup>
-import { Link } from '@inertiajs/vue3'
+
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { Tabs, Tab } from 'vue3-tabs-component';
 

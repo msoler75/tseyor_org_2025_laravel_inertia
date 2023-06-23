@@ -61,13 +61,7 @@
 </template>
 
 <script setup>
-
-
-import { Link, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-
-
-
 
 defineOptions({ layout: AppLayout })
 

@@ -445,12 +445,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-
-
-import { Link, router, useForm } from '@inertiajs/vue3'
+//import { Link, router, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { Icon } from '@iconify/vue';
+
 //
 import Dropzone from 'vue2-dropzone-vue3'
 

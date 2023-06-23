@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { Icon } from '@iconify/vue';
+
 import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
