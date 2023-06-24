@@ -1,8 +1,10 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { useNav } from '@/Stores/nav'
 
+const anuncio = computed(()=>usePage().props.anuncio || '');
 const nav = useNav()
+const sideBarShow = ref(false)
 
 defineProps({
     title: String,
@@ -22,21 +24,19 @@ const logout = () => {
     router.post(route('logout'));
 };
 
-const sideBarShow = ref(true)
-
-
 </script>
 
 <template>
     <div>
+        <Announcement :text="anuncio" />
+
         <NavAside :show="sideBarShow" @close="sideBarShow = false" class="lg:hidden" />
 
-        <button class="absolute right-0 btn btn-primary" @click="sideBarShow = !sideBarShow">SideBar</button>
+        <button class="lg:hidden absolute left-0 btn btn-primary z-50" @click="sideBarShow = !sideBarShow">SideBar</button>
 
         <Head :title="title" />
 
         <Banner />
-
 
         <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
             <nav class="bg-base-100 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 hidden lg:block">
@@ -57,12 +57,12 @@ const sideBarShow = ref(true)
 
                                 <template v-for="tab of nav.items" :key="tab.url">
                                     <NavLink v-if="tab.url" :href="tab.url" @mouseover="nav.closeTabs()"
-                                        :active="!nav.activeTab&&route().current(tab.route)">
+                                        :active="!nav.activeTab && route().current(tab.route)">
                                         {{ tab.title }}
                                     </NavLink>
                                     <NavLink v-else @click="nav.toggleTab(tab)" @mouseover="nav.activateTab(tab)"
-                                    :active="tab.open||(!nav.activeTab&&nav.in(tab, route().current()))"
-                                    class="relative navigation-tab">
+                                        :active="tab.open || (!nav.activeTab && nav.in(tab, route().current()))"
+                                        class="relative navigation-tab">
                                         {{ tab.title }}
                                         <div v-show="tab.open"
                                             class="hover-helper absolute z-40  -left-[7rem] -right-[7rem] top-[88%]  h-6" />
@@ -363,8 +363,7 @@ const sideBarShow = ref(true)
             <!-- Page Content -->
             <main @mouseover="nav.closeTabs()" class="relative">
                 <transition enter-active-class="transition-opacity duration-100"
-                    leave-active-class="transition-opacity duration-100" enter-class="opacity-0"
-                    leave-to-class="opacity-0">
+                    leave-active-class="transition-opacity duration-100" enter-class="opacity-0" leave-to-class="opacity-0">
                     <div v-if="nav.activeTab" class="z-30 absolute w-full h-full bg-black bg-opacity-10">
                         <!-- Contenido del elemento -->
                     </div>
@@ -377,18 +376,25 @@ const sideBarShow = ref(true)
     </div>
 </template>
 
+
+
 <style scoped>
-.top-navigation > .navigation-tab:nth-child(2) > .hover-helper {
+.top-navigation>.navigation-tab:nth-child(2)>.hover-helper {
     transform: translateX(4rem);
 }
-.top-navigation > .navigation-tab:nth-child(3) > .hover-helper {
+
+.top-navigation>.navigation-tab:nth-child(3)>.hover-helper {
     transform: translateX(1rem);
 }
 
-.top-navigation > .navigation-tab:nth-child(5) > .hover-helper {
+.top-navigation>.navigation-tab:nth-child(5)>.hover-helper {
     transform: translateX(-1rem);
 }
-.top-navigation > .navigation-tab:nth-child(6) > .hover-helper {
+
+.top-navigation>.navigation-tab:nth-child(6)>.hover-helper {
     transform: translateX(-4rem);
 }
 </style>
+
+
+
