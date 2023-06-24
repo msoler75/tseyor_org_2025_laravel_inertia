@@ -33,7 +33,10 @@ class LugaresController extends Controller
             abort(404); // Manejo de Centro no encontrada
         }
 
+        $lugares = Lugar::select(['nombre', 'slug'])->take(50)->get();
+
         return Inertia::render('Lugares/Lugar', [
+            'lugares' => $lugares,
             'lugar' => $lugar
         ]);
     }

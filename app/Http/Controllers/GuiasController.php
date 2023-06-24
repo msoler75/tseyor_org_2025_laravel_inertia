@@ -28,8 +28,11 @@ class GuiasController extends Controller
             abort(404); // Manejo de Centro no encontrada
         }
 
+        $guias = Guia::select(['nombre', 'slug'])->take(50)->get();
+
         return Inertia::render('Guias/Guia', [
-            'guia' => $guia
+            'guia' => $guia,
+            'guias' => $guias
         ]);
     }
 }
