@@ -31,6 +31,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
+            'anuncio'=>"cargado desde el server <b>negrita</b><i>italica</i><a href='http://tseyor.org'>Tseyor.org</a>",
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
                     'location' => $request->url(),
