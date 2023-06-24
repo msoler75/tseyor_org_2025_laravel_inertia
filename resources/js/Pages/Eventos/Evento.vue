@@ -1,8 +1,14 @@
 <template>
+    <div>
+        <div class="sticky top-0 bg-base-100 py-5 border-t border-b border-base-300 z-30">
+            <h1 class="container mx-auto my-2">
+                {{
+                    evento.titulo }} {{ evento.titulo }}
+                    </h1>
+                    <small class="container mx-auto text-right block">{{ evento.categoria }}</small>
+                </div>
     <div class="container py-12 mx-auto space-y-12 mt-12">
-        <h1 class="px-2 sm:px-5 sticky top-5 bg-base-100 py-5 border rounded-lg shadow border-base-300 z-30">{{
-            evento.titulo }} {{ evento.titulo }}</h1>
-        <div class="container mx-auto flex flex-wrap md:flex-nowrap gap-7 px-2 sm:px-5">
+        <div class="mx-auto flex flex-wrap md:flex-nowrap gap-7">
             <div class="w-full md:w-1/2 md:order-last">
                 <div class="card bg-base-100 md:max-w-[300px] shadow p-4">
                     <p class="mb-2 flex gap-3 items-center">
@@ -32,6 +38,7 @@
             </div>
         </div>
     </div>
+</div>
 </template>
 
 <script setup>
