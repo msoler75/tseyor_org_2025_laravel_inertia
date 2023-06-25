@@ -17,6 +17,9 @@ use App\Http\Controllers\AudiosController;
 use App\Http\Controllers\NovedadesController;
 use App\Http\Controllers\CursosController;
 use App\Http\Controllers\InscripcionController;
+use App\Pigmalion\SEO;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +32,7 @@ use App\Http\Controllers\InscripcionController;
 |
 */
 
+/*
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -36,6 +40,12 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+*/
+
+
+Route::get('/', function () {
+    return Inertia::render('Portada');
 });
 
 Route::get('/novedades', [NovedadesController::class, 'index'])->name('novedades');
@@ -81,15 +91,18 @@ Route::get('/centros', [CentrosController::class, 'index'])->name('centros');
 Route::get('/centros/{id}', [CentrosController::class, 'show'])->name('centro');
 
 Route::get('/quienes-somos', function () {
-    return Inertia::render('Presentacion/QuienesSomos', []);
+    return Inertia::render('Presentacion/QuienesSomos', [])
+        ->withViewData(SEO::get('quienes-somos'));
 })->name('quienes-somos');
 
 Route::get('/origenes-de-tseyor', function () {
-    return Inertia::render('Presentacion/OrigenesTseyor', []);
+    return Inertia::render('Presentacion/OrigenesTseyor', [])
+    ->withViewData(SEO::get('origenes-de-tseyor'));
 })->name('origenes-de-tseyor');
 
 Route::get('/filosofia', function () {
-    return Inertia::render('Presentacion/Filosofia', []);
+    return Inertia::render('Presentacion/Filosofia', [])
+        ->withViewData(SEO::get('filosofia'));
 })->name('filosofia');
 
 Route::get('/cursos', [CursosController::class, 'index'])->name('cursos');

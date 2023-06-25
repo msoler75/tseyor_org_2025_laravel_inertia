@@ -2,15 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use RalphJSmit\Laravel\SEO\Support\HasSEO;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
+use App\Models\SEOModel;
 
-
-class Noticia extends Model
+class Noticia extends SEOModel
 {
-    use HasSEO;
-
     protected $fillable = [
         'titulo',
         'slug',
@@ -36,19 +31,4 @@ class Noticia extends Model
             });
     }
 
-
-    // https://github.com/ralphjsmit/laravel-seo
-    public function getDynamicSEOData(): SEOData
-    {
-        return new SEOData(
-            title: $this->titulo,
-            description: $this->descripcion,
-            image: url($this->imagen),
-            author: 'tseyor',
-            // published_time: $this->published_at,
-            // section: $this->categoria
-            // tags:
-            // schema:
-        );
-    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Entrada;
+use App\Pigmalion\SEO;
 
 class EntradasController extends Controller
 {
@@ -26,7 +27,8 @@ class EntradasController extends Controller
             'filtrado' => $filtro,
             'listado' => $resultados,
             'recientes' => $recientes
-        ]);
+        ])
+        ->withViewData(SEO::get('entradas'));
     }
 
     public function show($id)
@@ -41,6 +43,8 @@ class EntradasController extends Controller
 
         return Inertia::render('Entradas/Entrada', [
             'entrada' => $entrada
-        ]);
+        ])
+       ->withViewData(SEO::from($entrada));
+        ;
     }
 }

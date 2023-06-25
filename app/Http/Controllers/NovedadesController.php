@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Contenido;
+use App\Pigmalion\SEO;
 
 class NovedadesController extends Controller
 {
@@ -30,6 +31,7 @@ class NovedadesController extends Controller
         return Inertia::render('Novedades', [
             'filtrado' => $filtro,
             'listado' => $resultados
-        ]);
+        ])
+        ->withViewData(SEO::get('novedades'));
     }
 }

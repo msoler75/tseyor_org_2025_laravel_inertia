@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Lugar;
+use App\Pigmalion\SEO;
 
 class LugaresController extends Controller
 {
@@ -18,7 +19,8 @@ class LugaresController extends Controller
         return Inertia::render('Lugares/Index', [
             'listado' => $listado,
             'todos' => $todos
-        ]);
+        ])
+            ->withViewData(SEO::get('lugares'));
     }
 
 
@@ -38,6 +40,7 @@ class LugaresController extends Controller
         return Inertia::render('Lugares/Lugar', [
             'lugares' => $lugares,
             'lugar' => $lugar
-        ]);
+        ])
+            ->withViewData(SEO::from($lugar));
     }
 }

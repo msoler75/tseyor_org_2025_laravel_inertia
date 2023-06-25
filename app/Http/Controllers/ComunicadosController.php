@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Comunicado;
+use App\Pigmalion\SEO;
 
 class ComunicadosController extends Controller
 {
@@ -55,7 +56,8 @@ class ComunicadosController extends Controller
             'listado' => $resultados,
             'recientes' => $recientes,
             'archivo' => $archivo
-        ]);
+        ])
+        ->withViewData(SEO::get('comunicados'));
     }
 
     public function show($id)
@@ -70,7 +72,8 @@ class ComunicadosController extends Controller
 
         return Inertia::render('Comunicados/Comunicado', [
             'comunicado' => $comunicado
-        ]);
+        ])
+       ->withViewData(SEO::from($comunicado));
     }
 
     public function archive(Request $request)

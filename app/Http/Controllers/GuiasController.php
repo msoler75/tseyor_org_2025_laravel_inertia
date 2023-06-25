@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Guia;
+use App\Pigmalion\SEO;
 
 class GuiasController extends Controller
 {
@@ -14,7 +15,8 @@ class GuiasController extends Controller
 
         return Inertia::render('Guias/Index', [
             'guias' => $guias
-        ]);
+        ])
+        ->withViewData(SEO::get('guias'));
     }
 
 
@@ -33,6 +35,7 @@ class GuiasController extends Controller
         return Inertia::render('Guias/Guia', [
             'guia' => $guia,
             'guias' => $guias
-        ]);
+        ])
+       ->withViewData(SEO::from($guia));
     }
 }

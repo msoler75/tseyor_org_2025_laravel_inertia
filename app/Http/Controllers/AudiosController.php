@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Audio;
+use App\Pigmalion\SEO;
 
 class AudiosController extends Controller
 {
@@ -33,7 +34,8 @@ class AudiosController extends Controller
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias
-        ]);
+        ])
+        ->withViewData(SEO::get('audios'));
     }
 
     public function show($id)
@@ -48,6 +50,7 @@ class AudiosController extends Controller
 
         return Inertia::render('Audios/Audio', [
             'audio' => $audio
-        ]);
+        ])
+       ->withViewData(SEO::from($audio));
     }
 }
