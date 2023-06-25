@@ -16,6 +16,7 @@ use App\Http\Controllers\ContactosController;
 use App\Http\Controllers\AudiosController;
 use App\Http\Controllers\NovedadesController;
 use App\Http\Controllers\CursosController;
+use App\Http\Controllers\InscripcionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,7 +97,7 @@ Route::get('/cursos', [CursosController::class, 'index'])->name('cursos');
 Route::get('/cursos/inscripcion', function () {
     return Inertia::render('Cursos/Inscripcion', []);
 })->name('cursos.inscripcion');
-Route::post('/inscripcion', 'InscripcionController@store')->name('inscripcion.store');
+Route::post('/inscripcion', [InscripcionController::class, 'store'])->name('inscripcion.store');
 
 
 Route::middleware([
