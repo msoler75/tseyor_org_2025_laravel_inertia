@@ -48,7 +48,10 @@ class EventosController extends Controller
 
         return Inertia::render('Eventos/Evento', [
             'evento' => $evento
-        ]);
+        ])
+        // https://inertiajs.com/responses
+        // ->withViewData(['meta' => $event->meta]);
+        ;
     }
 
 }

@@ -9,16 +9,16 @@ class Inscripcion extends Model
 {
     use HasFactory;
 
+    protected $table = 'inscripciones';
+
     protected $fillable = [
-        'name',
-        'day',
-        'month',
-        'year',
-        'city',
+        'nombre',
+        'fecha_nacimiento',
+        'ciudad',
         'region',
+        'pais',
         'email',
-        'phone',
-        'contact',
-        'agreement',
+        'telefono',
+        'comentario',
     ];
 }

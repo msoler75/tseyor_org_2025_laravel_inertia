@@ -1,21 +1,42 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="tseyor">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title inertia>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Scripts -->
-        @routes
-        @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
-        @inertiaHead
-    </head>
-    <body class="font-sans antialiased">
-        @inertia
-    </body>
+    <!-- Metaetiquetas para SEO -->
+    <meta name="description" content="Descripción de la página">
+    <meta name="keywords" content="palabras clave, separadas por comas">
+    <link rel="canonical" href="https://www.ejemplo.com/pagina.html">
+
+    <!-- Metaetiquetas para compartir en redes sociales -->
+    <meta property="og:title" content="Título de la página">
+    <meta property="og:description" content="Descripción de la página">
+    <meta property="og:image" content="https://www.ejemplo.com/imagen.png">
+    <meta property="og:url" content="https://www.ejemplo.com/pagina.html">
+    <meta property="og:type" content="website">
+
+    <!-- Metaetiqueta para Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Título de la página">
+    <meta name="twitter:description" content="Descripción de la página">
+    <meta name="twitter:image" content="https://www.ejemplo.com/imagen.png">
+
+    <!-- Fonts -->
+    <!-- <link rel="preconnect" href="https://fonts.bunny.net"> -->
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+    <!-- Scripts -->
+    @routes
+    @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
+    @inertiaHead
+</head>
+
+<body class="font-sans antialiased">
+    @inertia
+</body>
+
 </html>
