@@ -13,7 +13,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { createPinia } from 'pinia'
 const pinia = createPinia()
 
-const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
+const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'TSEYOR';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

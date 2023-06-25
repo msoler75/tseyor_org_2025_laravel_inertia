@@ -89,6 +89,6 @@ class SEO
 
     public static function from($model)
     {
-        return ['seo' => $model];
+        return ['seo' =>$model];
     }
 }
