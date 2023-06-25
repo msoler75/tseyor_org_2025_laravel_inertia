@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Models\Contacto;
 use App\Pigmalion\Countries;
 use GuzzleHttp\Client;
+use App\Pigmalion\SEO;
 
 class ContactosController extends Controller
 {
@@ -46,7 +47,8 @@ class ContactosController extends Controller
             'listado' => $resultados,
             'paises' => $paises,
             'apiKey' => env('GOOGLE_MAPS_API_KEY', ''),
-        ]);
+        ])
+        ->withViewData(SEO::get('contactos'));
     }
 
     public function show($id)
@@ -63,7 +65,8 @@ class ContactosController extends Controller
 
         return Inertia::render('Contactos/Contacto', [
             'contacto' => $contacto
-        ]);
+        ])
+       ->withViewData(SEO::from($contacto));
     }
 
 

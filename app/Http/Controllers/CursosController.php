@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Evento;
+use App\Pigmalion\SEO;
 
 class CursosController extends Controller
 {
@@ -16,6 +17,7 @@ class CursosController extends Controller
 
         return Inertia::render('Cursos/Index', [
             'proximosCursos' => $proximosCursos
-        ]);
+        ])
+        ->withViewData(SEO::get('cursos'));
     }
 }

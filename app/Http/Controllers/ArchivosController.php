@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class ArchivosController extends Controller
 {
@@ -73,7 +74,13 @@ class ArchivosController extends Controller
         return Inertia::render('Archivos', [
             'items' => $items,
             'ruta' => $ruta
-        ]);
+        ])
+        ->withViewData([
+            'seo' => new SEOData(
+                title: 'Archivos de Tseyor',
+                description: 'Contenido de '.$ruta,
+            )
+            ]);
     }
 
 

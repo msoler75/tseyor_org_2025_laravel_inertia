@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Centro;
 use App\Pigmalion\Countries;
+use App\Pigmalion\SEO;
 
 class CentrosController extends Controller
 {
@@ -43,7 +44,8 @@ class CentrosController extends Controller
             'muulasterios' => $muulasterios,
             'casas' => $casas,
             'paises' => $paises
-        ]);
+        ])
+            ->withViewData(SEO::get('centros'));
     }
 
     public function show($id)
@@ -60,6 +62,7 @@ class CentrosController extends Controller
 
         return Inertia::render('Centros/Centro', [
             'centro' => $centro
-        ]);
+        ])
+            ->withViewData(SEO::from($centro));
     }
 }

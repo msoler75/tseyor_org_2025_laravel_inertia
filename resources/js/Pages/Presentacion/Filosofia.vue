@@ -1,5 +1,11 @@
 <template>
     <Sections>
+        <!--
+            <Seo
+        title="Filosofía de Tseyor"
+        description="Conoce la filosofía que proviene de las estrellas"
+        />
+    -->
 
         <Hero title="La Filosofía Tseyor" subtitle="No habremos de creer nada, en lugar de eso comprobaremos mediante la experimentación."
             srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=no-creer-nada" image-right
@@ -73,6 +79,8 @@
 
 <script setup>
 
+import { usePage } from "@inertiajs/vue3";
+const page = usePage()
 import AppLayout from '@/Layouts/AppLayout.vue'
 defineOptions({ layout: AppLayout })
 

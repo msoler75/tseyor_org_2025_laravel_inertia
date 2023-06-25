@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Noticia;
-use RalphJSmit\Laravel\SEO\Support\SEOData;
+use App\Pigmalion\SEO;
 
 
 class NoticiasController extends Controller
@@ -33,12 +33,7 @@ class NoticiasController extends Controller
             'listado' => $resultados,
             'recientes' => $recientes
         ])
-            ->withViewData([
-                'seo' => new SEOData(
-                    title: 'Noticias de Tseyor',
-                    description: 'Anuncios e información relevante de la comunidad Tseyor',
-                )
-            ]);;
+            ->withViewData(SEO::get('noticias'));
     }
 
     public function show($id)
@@ -54,6 +49,6 @@ class NoticiasController extends Controller
         return Inertia::render('Noticias/Noticia', [
             'noticia' => $noticia
         ])
-            ->withViewData(['seo' => $noticia]);;
+            ->withViewData(SEO::from($noticia));
     }
 }

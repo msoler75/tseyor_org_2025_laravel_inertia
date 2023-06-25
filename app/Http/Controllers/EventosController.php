@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Evento;
+use App\Pigmalion\SEO;
 
 class EventosController extends Controller
 {
@@ -33,7 +34,8 @@ class EventosController extends Controller
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias
-        ]);
+        ])
+        ->withViewData(SEO::get('eventos'));
     }
 
     public function show($id)
@@ -50,7 +52,7 @@ class EventosController extends Controller
             'evento' => $evento
         ])
         // https://inertiajs.com/responses
-        // ->withViewData(['meta' => $event->meta]);
+        ->withViewData(SEO::from($evento));
         ;
     }
 

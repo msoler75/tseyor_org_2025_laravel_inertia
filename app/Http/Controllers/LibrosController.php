@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Libro;
+use App\Pigmalion\SEO;
 
 class LibrosController extends Controller
 {
@@ -33,7 +34,8 @@ class LibrosController extends Controller
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias
-        ]);
+        ])
+        ->withViewData(SEO::get('libros'));
     }
 
     public function show($id)
@@ -76,7 +78,8 @@ class LibrosController extends Controller
         return Inertia::render('Libros/Libro', [
             'libro' => $libro,
             'relacionados' => $relacionados
-        ]);
+        ])
+       ->withViewData(SEO::from($libro));
     }
 
 }
