@@ -7,26 +7,10 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Metaetiquetas para SEO -->
-    <meta name="description" content="Descripción de la página">
-    <meta name="keywords" content="palabras clave, separadas por comas">
-    <link rel="canonical" href="https://www.ejemplo.com/pagina.html">
-
-    <!-- Metaetiquetas para compartir en redes sociales -->
-    <meta property="og:title" content="Título de la página">
-    <meta property="og:description" content="Descripción de la página">
-    <meta property="og:image" content="https://www.ejemplo.com/imagen.png">
-    <meta property="og:url" content="https://www.ejemplo.com/pagina.html">
-    <meta property="og:type" content="website">
-
-    <!-- Metaetiqueta para Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Título de la página">
-    <meta name="twitter:description" content="Descripción de la página">
-    <meta name="twitter:image" content="https://www.ejemplo.com/imagen.png">
+    {!! seo($seo ?? null) !!}
 
     <!-- Fonts -->
-    <!-- <link rel="preconnect" href="https://fonts.bunny.net"> -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->

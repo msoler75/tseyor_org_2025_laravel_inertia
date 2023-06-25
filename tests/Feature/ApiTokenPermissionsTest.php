@@ -20,7 +20,7 @@ class ApiTokenPermissionsTest extends TestCase
             return;
         }
 
-        $this->actingAs($user = User::factory()->withPersonalEquipo()->create());
+        $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
         $token = $user->tokens()->create([
             'name' => 'Test Token',
