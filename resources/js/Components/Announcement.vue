@@ -9,12 +9,17 @@
 </template>
 
 <script setup>
+import { useNav } from '@/Stores/nav'
+const nav = useNav()
 const show = ref(true)
-defineProps({
+const props = defineProps({
     text: {}
 })
 
+nav.announce = !!props.text
+
 function hide() {
     show.value = false
+    nav.announce = false
 }
 </script>

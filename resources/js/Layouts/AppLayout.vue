@@ -1,14 +1,22 @@
 <script setup>
 import { Head, usePage } from '@inertiajs/vue3';
 import { useNav } from '@/Stores/nav'
+const page = usePage()
 
-const anuncio = computed(()=>usePage().props.anuncio || '');
+const anuncio = computed(()=>page.props.anuncio || '');
 const nav = useNav()
 const sideBarShow = ref(false)
 
 defineProps({
     title: String,
 });
+
+
+
+
+
+ const portada = computed(()=>page.url=='/')
+
 
 const showingNavigationDropdown = ref(false);
 
@@ -27,8 +35,11 @@ const logout = () => {
 </script>
 
 <template>
-    <div>
-        <Announcement :text="anuncio" />
+    <div class="">
+        <Announcement :text="anuncio"
+
+        :class="nav.fullPage?'w-full fixed top-0 z-40':'block'"
+        />
 
         <NavAside :show="sideBarShow" @close="sideBarShow = false" class="lg:hidden" />
 
@@ -38,8 +49,14 @@ const logout = () => {
 
         <Banner />
 
-        <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <nav class="bg-base-100 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 hidden lg:block">
+
+        <div >
+            <nav class="w-full border-gray-100 dark:border-gray-700 bg-base-100 hidden lg:block top-0 z-40 -translate-y-[1px] transition duration-400 "
+            :data-theme="(portada&&nav.scrollY<300?'dark':'light')"
+            :class="
+            (portada&&nav.scrollY<300?'bg-transparent ':'border-b ')+
+            (nav.defaultClass+' ' + (nav.fullPage?'fixed border-gray-300 ':'sticky '))+
+            (nav.fullPage&&nav.announce?'top-[51px] ':'top-0 ')">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="hidden lg:flex justify-between h-16 relative">
@@ -47,7 +64,7 @@ const logout = () => {
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
-                                <Link :href="route('novedades')">
+                                <Link :href="route('portada')">
                                 <ApplicationMark class="block h-12 w-auto" />
                                 </Link>
                             </div>
@@ -352,6 +369,8 @@ const logout = () => {
                     </div>
                 </div>
             </nav>
+
+
 
             <!-- Page Heading -->
             <header v-if="$slots.header" class="bg-base-100 dark:bg-gray-800 shadow">
