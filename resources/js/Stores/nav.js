@@ -33,6 +33,12 @@ export const useNav = defineStore("nav", {
     items:navigationItems.map(mapItem),
     ghostTab: null,
     timer: null,
+    announce: false,
+    defaultClass:'',
+    class:'',
+    // position: 'sticky',
+    fullPage: false,
+    scrollY: 0
   }),
   getters: {
     activeTab: (state) => state.items.find((tab) => tab.open),

@@ -6,8 +6,26 @@
     }">
         <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative">
             <h1>Inscripción al Curso Holístico Tseyor<small>&nbsp;(gratuito)</small></h1>
-            <p>Rellena este formulario para poder ofrecerte un curso adaptado a tus necesidades.</p>
-            <form @submit.prevent="submit">
+            <div v-if="submitted" class="space-y-7">
+                <div class="alert alert-success">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Se han enviado los datos correctamente.</span>
+                </div>
+
+                <div class="alert">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+  <span>Revisa tu bandeja de correo.</span>
+</div>
+
+<div class="pt-7">
+    <h2>¿Y ahora qué?</h2>
+    <p>Puedes disfrutar de alguno de nuestros <Link :href="route('audios')">audios</Link> o leer alguno de los <Link :href="route('comunicados')">comunicados</Link> de nuestros guías estelares.</p>
+    <p>También puedes escuchar nuestra <Link :href="route('radio')">Radio TSEYOR</Link>.</p>
+</div>
+
+            </div>
+            <form v-else @submit.prevent="submit">
+                <p>Rellena este formulario para poder ofrecerte un curso adaptado a tus necesidades.</p>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="nombre">Nombre y apellidos:</label>
                     <input class="form-input w-full" id="nombre" type="text" v-model="form.nombre" required>
@@ -112,6 +130,7 @@ for (let year = currentYear - 18; year >= minYear; year--) {
     years.value.push(year.toString());
 }
 
+let submitted = ref(false)
 
 const form = useForm('inscripcion', {
     nombre: '',
@@ -132,8 +151,9 @@ function submit() {
     form.clearErrors()
     form.post(route('inscripcion.store'), {
         preserveScroll: true,
-        //onSuccess: () => form.reset('password'),
-    }
-    )
+        onSuccess: () => {
+            submitted.value = true
+        }
+    });
 }
 </script>

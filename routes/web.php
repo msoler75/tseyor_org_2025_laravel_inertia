@@ -15,7 +15,9 @@ use App\Http\Controllers\CentrosController;
 use App\Http\Controllers\ContactosController;
 use App\Http\Controllers\AudiosController;
 use App\Http\Controllers\NovedadesController;
+use App\Http\Controllers\PortadaController;
 use App\Http\Controllers\CursosController;
+use App\Http\Controllers\RadioController;
 use App\Http\Controllers\InscripcionController;
 use App\Pigmalion\SEO;
 
@@ -44,9 +46,7 @@ Route::get('/', function () {
 */
 
 
-Route::get('/', function () {
-    return Inertia::render('Portada');
-});
+Route::get('/', [PortadaController::class, 'index'])->name('portada');
 
 Route::get('/novedades', [NovedadesController::class, 'index'])->name('novedades');
 
@@ -56,7 +56,8 @@ Route::get('/audios', [AudiosController::class, 'index'])->name('audios');
 Route::get('/audios/{id}', [AudiosController::class, 'show'])->name('audio');
 
 Route::get('/videos', function () {
-    return Inertia::render('Videos', []);
+    return Inertia::render('Videos', [])
+        ->withViewData(SEO::get('videos'));
 })->name('videos');
 
 
@@ -97,7 +98,7 @@ Route::get('/quienes-somos', function () {
 
 Route::get('/origenes-de-tseyor', function () {
     return Inertia::render('Presentacion/OrigenesTseyor', [])
-    ->withViewData(SEO::get('origenes-de-tseyor'));
+        ->withViewData(SEO::get('origenes-de-tseyor'));
 })->name('origenes-de-tseyor');
 
 Route::get('/filosofia', function () {
@@ -107,8 +108,11 @@ Route::get('/filosofia', function () {
 
 Route::get('/cursos', [CursosController::class, 'index'])->name('cursos');
 
+Route::get('/radio', [RadioController::class, 'index'])->name('radio');
+
 Route::get('/cursos/inscripcion', function () {
-    return Inertia::render('Cursos/Inscripcion', []);
+    return Inertia::render('Cursos/Inscripcion', [])
+        ->withViewData(SEO::get('cursos.inscripcion'));
 })->name('cursos.inscripcion');
 Route::post('/inscripcion', [InscripcionController::class, 'store'])->name('inscripcion.store');
 

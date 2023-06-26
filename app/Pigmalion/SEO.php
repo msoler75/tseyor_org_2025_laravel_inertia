@@ -69,7 +69,20 @@ class SEO
             'audios' => [
                 'title' => 'Audios de Tseyor',
                 'description' => 'Talleres, meditaciones, reflexiones y música dimanados de las estrellas'
+            ],
+            'videos' => [
+                'title' => 'Videos de Tseyor',
+                'description' => 'Cuentos, encuentros, meditaciones, reflexiones y música'
+            ],
+            'cursos.inscripcion'=> [
+                'title' =>'Inscripción al Curso Holístico TSEYOR',
+                'description' => 'Rellena los datos para que puedas recibir este curso completamente gratuito'
+            ],
+            'radio'=> [
+                'title' =>'Radio Tseyor',
+                'description' => 'Escucha comunicados, talleres, meditaciones, charlas, tertilias...'
             ]
+
         ];
 
         $obj = $data[$route] ?? [

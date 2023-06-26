@@ -20,7 +20,7 @@ class InscripcionController extends Controller
             'region' => 'required|max:255',
             'pais' => 'required|max:255',
             'email' => 'required|email|max:255',
-            'telefono' => 'required|max:255',
+            'telefono' => 'max:255',
             'comentario' => 'nullable'
         ]);
 

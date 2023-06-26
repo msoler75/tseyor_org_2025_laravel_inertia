@@ -37,6 +37,7 @@ declare module 'vue' {
     FeatureRows: typeof import('./resources/js/Sections/FeatureRows.vue')['default']
     FileSize: typeof import('./resources/js/Components/FileSize.vue')['default']
     FormSection: typeof import('./resources/js/Components/FormSection.vue')['default']
+    FullPage: typeof import('./resources/js/Sections/FullPage.vue')['default']
     GridFill: typeof import('./resources/js/Components/GridFill.vue')['default']
     Hero: typeof import('./resources/js/Sections/Hero.vue')['default']
     HeroImage: typeof import('./resources/js/Sections/HeroImage.vue')['default']
