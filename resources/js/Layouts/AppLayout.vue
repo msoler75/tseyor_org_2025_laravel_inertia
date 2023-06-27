@@ -50,8 +50,8 @@ const logout = () => {
         <Banner />
 
 
-        <div >
-            <nav class="w-full border-gray-100 dark:border-gray-700 bg-base-100 hidden lg:block top-0 z-40 -translate-y-[1px] transition duration-400 "
+        <div class="bg-gray-100">
+            <nav class="w-full border-gray-300 dark:border-gray-700 bg-base-100 hidden lg:block top-0 z-40 -translate-y-[1px] transition duration-400 "
             :data-theme="(portada&&nav.scrollY<300?'dark':'light')"
             :class="
             (portada&&nav.scrollY<300?'bg-transparent ':'border-b ')+
@@ -64,7 +64,8 @@ const logout = () => {
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
-                                <Link :href="route('portada')">
+                                <Link :href="route('portada')"
+                                 class="rounded-full outline outline-white">
                                 <ApplicationMark class="block h-12 w-auto" />
                                 </Link>
                             </div>
