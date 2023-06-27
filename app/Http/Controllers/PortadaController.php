@@ -7,6 +7,8 @@ use App\Models\Comunicado;
 use App\Models\Libro;
 use App\Models\Audio;
 use App\Models\User;
+use App\Models\Entrada;
+use App\Models\Centro;
 
 class PortadaController extends Controller
 {
@@ -20,12 +22,17 @@ class PortadaController extends Controller
             'Portada',
             [
                 'stats' => Inertia::lazy(function () {
+                    $cc = Comunicado::count();
                     return
                         [
-                            'comunicados' => Comunicado::count(),
+                            'comunicados' => $cc,
+                            'paginas' => $cc *12 + $cc %7,
                             'libros' => Libro::count(),
                             'usuarios' => User::count(),
-                            'audios' => Audio::count()
+                            'audios' => Audio::count(),
+                            'entradas' => Entrada::count(),
+                            'videos' => 20,
+                            'centros' => Centro::count()
                         ];
                 })
             ]
