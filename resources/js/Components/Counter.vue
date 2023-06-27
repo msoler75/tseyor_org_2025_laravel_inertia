@@ -1,92 +1,92 @@
 <template>
     <span class="counter">{{ counter }}</span>
-  </template>
+</template>
 
-  <script setup>
-  import { ref, watch, onMounted, onUnmounted } from 'vue';
+<script setup>
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 
-  const props = defineProps({
+const props = defineProps({
     from: {
-      type: Number,
-      required: false,
-      default: 0
+        type: Number,
+        required: false,
+        default: 0
     },
     to: {
-      type: Number,
-      required: true,
+        type: Number,
+        required: true,
     },
     duration: {
-      type: Number,
-      required: false,
-      default: 1500
+        type: Number,
+        required: false,
+        default: 1500
     },
     count: {
-      type: Boolean,
-      default: true,
+        type: Boolean,
+        default: true,
     },
     delay: {
-      type: Number,
-      default: 0,
+        type: Number,
+        default: 0,
     },
-  });
+});
 
-  const counter = ref(props.from);
-  let requestId = null;
-  let start = null;
+const counter = ref(props.from);
+let requestId = null;
+let start = null;
 
-  function animateCounter(timestamp) {
+function animateCounter(timestamp) {
     if (!start) start = timestamp;
-    const progress = Math.max(0,timestamp - start - props.delay);
+    const progress = Math.max(0, timestamp - start - props.delay);
 
     const diff = props.to - props.from;
     const value = props.from + diff * Math.min(progress / props.duration, 1);
     counter.value = Math.floor(value);
 
     if (progress < props.duration) {
-      requestId = requestAnimationFrame(animateCounter);
+        requestId = requestAnimationFrame(animateCounter);
     } else {
-      requestId = null;
-      counter.value = props.to;
+        requestId = null;
+        counter.value = props.to;
     }
-  }
+}
 
-  function startCounter() {
+function startCounter() {
     if (requestId !== null) {
-      cancelAnimationFrame(requestId);
+        cancelAnimationFrame(requestId);
     }
 
     requestId = requestAnimationFrame(animateCounter);
-  }
+}
 
-  watch(
+watch(
     () => props.count,
     (value) => {
-      if (value) {
-        setTimeout(() => {
-          startCounter();
-        }, props.delay);
-      } else {
-        cancelAnimationFrame(requestId);
-        requestId = null;
-      }
+        if (value) {
+            setTimeout(() => {
+                startCounter();
+            }, props.delay);
+        } else {
+            cancelAnimationFrame(requestId);
+            requestId = null;
+        }
     },
-  );
+);
 
-  onMounted(() => {
+onMounted(() => {
     if (props.count) {
-      setTimeout(() => {
-        startCounter();
-      }, props.delay);
+        setTimeout(() => {
+            startCounter();
+        }, props.delay);
     }
-  });
+});
 
-  onUnmounted(() => {
+onUnmounted(() => {
     cancelAnimationFrame(requestId);
     requestId = null;
-  });
+});
 
-  // Verificar que los valores de entrada sean numéricos
-  if (isNaN(props.from) || isNaN(props.to) || isNaN(props.duration) || isNaN(props.delay)) {
+// Verificar que los valores de entrada sean numéricos
+if (isNaN(props.from) || isNaN(props.to) || isNaN(props.duration) || isNaN(props.delay)) {
     console.error('Los valores de entrada para el contador no son numéricos');
-  }
-  </script>
+}
+</script>
