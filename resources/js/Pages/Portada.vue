@@ -71,9 +71,26 @@
 
         </Section>
 
-        <Section>
-            stats:
-            {{ stats }}
+        <Section ref="contadoresEl">
+            stats: {{ stats }}
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 text-lg" v-if="stats">
+                <div class="flex flex-col items-center gap-3">
+                    <Counter :to="stats.comunicados" :count="contando" class="text-2xl" />
+                    <span>Comunicados</span>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <Counter :to="stats.libros" :count="contando" :delay="200" class="text-2xl" />
+                    <span>Libros</span>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <Counter :to="stats.audios" :count="contando" :delay="400" class="text-2xl" />
+                    <span>Audios</span>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <Counter :to="stats.usuarios" :count="contando" :delay="600" class="text-2xl" />
+                    <span>Usuarios</span>
+                </div>
+            </div>
         </Section>
 
 
@@ -139,6 +156,7 @@
 </template>
 
 <script setup>
+import { useNav } from '@/Stores/nav'
 import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
 defineOptions({ layout: AppLayout })
@@ -147,6 +165,23 @@ defineOptions({ layout: AppLayout })
 defineProps({
     stats: {}
 })
+
+const nav = useNav()
+const contadoresEl = ref(null)
+const contadoresTop = ref(99999)
+const contando = ref(false)
+
+watch(() => nav.scrollY, (value) => {
+    if (value < contadoresTop.value - screen.height / 2) {
+        contando.value = false
+    } else if (!contando.value) {
+        contando.value = true
+    }
+})
+
+function calculaHCounter() {
+    contadoresTop.value = contadoresEl.value && contadoresEl.value.$el ? contadoresEl.value.$el.getBoundingClientRect().top : 99999
+}
 
 // https://www.danmatthews.me/posts/lazy-loading-inertia-js
 // cargamos las estadísticas un poco más tarde para que la portada cargue más rápido
@@ -158,6 +193,8 @@ onMounted(() => {
     }, 3000
     )
     // nav.position = 'fixed'
+    // contadoresEl.value.$el.getBoundingClientRect().top
+    calculaHCounter()
 })
 
 
