@@ -7,16 +7,13 @@ const anuncio = computed(()=>page.props.anuncio || '');
 const nav = useNav()
 const sideBarShow = ref(false)
 
+nav.announce = !!anuncio
+
 defineProps({
     title: String,
 });
 
-
-
-
-
- const portada = computed(()=>page.url=='/')
-
+const portada = computed(()=>page.url=='/')
 
 const showingNavigationDropdown = ref(false);
 
@@ -36,10 +33,7 @@ const logout = () => {
 
 <template>
     <div class="">
-        <Announcement :text="anuncio"
-
-        :class="nav.fullPage?'w-full fixed top-0 z-40':'block'"
-        />
+        <Announcement :text="anuncio" :class="nav.fullPage?'w-full fixed top-0 z-40':'block'"/>
 
         <NavAside :show="sideBarShow" @close="sideBarShow = false" class="lg:hidden" />
 
@@ -49,15 +43,15 @@ const logout = () => {
 
         <Banner />
 
-
         <div class="bg-gray-100">
             <nav class="w-full border-gray-300 dark:border-gray-700 bg-base-100 hidden lg:block top-0 z-40 -translate-y-[1px] transition duration-400 "
             :data-theme="(portada&&nav.scrollY<300?'dark':'light')"
             :class="
             (portada&&nav.scrollY<300?'bg-transparent ':'border-b ')+
             (nav.defaultClass+' ' + (nav.fullPage?'fixed border-gray-300 ':'sticky '))+
-            (nav.fullPage&&nav.announce?'top-[51px] ':'top-0 ')">
+            (nav.fullPage&&nav.announce?'top-[36px] ':'top-0 ')">
                 <!-- Primary Navigation Menu -->
+
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="hidden lg:flex justify-between h-16 relative">
 
@@ -66,7 +60,7 @@ const logout = () => {
                             <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
                                 <Link :href="route('portada')"
                                  class="rounded-full outline outline-white">
-                                <ApplicationMark class="block h-12 w-auto" />
+                                <ApplicationMark class="block h-11 w-auto" />
                                 </Link>
                             </div>
 

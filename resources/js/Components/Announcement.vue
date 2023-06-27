@@ -1,5 +1,5 @@
 <template>
-    <div v-if="text&&show" class="bg-primary text-primary-content px-4 lg:px-8 py-2 lg:py-3 flex justify-between items-center">
+    <div v-if="text&&showit" class="bg-primary text-primary-content px-4 lg:px-8 py-1 flex justify-between items-center">
         <div class="text-transparent">.....</div>
         <div class="text-sm" v-html="text" />
         <button class="text-2xl" @click="hide">
@@ -11,15 +11,13 @@
 <script setup>
 import { useNav } from '@/Stores/nav'
 const nav = useNav()
-const show = ref(true)
 const props = defineProps({
     text: {}
 })
-
-nav.announce = !!props.text
+const showit = ref(!!props.text)
 
 function hide() {
-    show.value = false
+    showit.value = false
     nav.announce = false
 }
 </script>

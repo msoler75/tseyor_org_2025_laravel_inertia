@@ -1,42 +1,82 @@
 <template>
     <FullPage>
         <Section :style="{
-            background: 'black url(https://via.placeholder.com/1980x1024.png/00000?text=Espacio) center',
+            background: 'black url(/storage/imagenes/portada/stars-1845140_1920.jpg) bottom',
             backgroundSize: 'cover'
-        }">
+        }" data-theme="dark">
+            <Hero title="Contacto Extraterrestre"
+            xsrcImage="/storage/imagenes/portada/unidad.jpg"
+            :href="route('cursos')"
+            buttonLabel="Curso gratuito"
+                textClass="bg-black bg-opacity-50 p-5 rounded-xl justify-center" image-right>
+                <blockquote>En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
+                    Nosotros aquí en este nivel estamos reforzados particularmente por la Confederación de Mundos Habitados
+                    de la Galaxia.</blockquote>
+            </Hero>
         </Section>
+
         <Section>
-            <div class="container mx-auto">
-
-                Identifica los valores y el mensaje de tu ONG: Como su ONG se enfoca en la meditación, el autodescubrimiento
-                y
-                la transmutación, puedes utilizar imágenes que reflejen la paz, la serenidad y el crecimiento personal.
-                También
-                puedes utilizar imágenes relacionadas con el espacio y las estrellas para transmitir el mensaje de que su
-                filosofía proviene de las estrellas.
-
-                Utiliza colores apropiados: El azul cielo y el blanco son colores apropiados para transmitir la paz, la
-                calma y
-                la serenidad. Puedes utilizar otros tonos de azul para complementar el diseño.
-
-                Diseña un encabezado claro y directo: Algunos ejemplos de encabezados que podrías utilizar son: "Meditación
-                para
-                el autodescubrimiento y la transmutación", "Filosofía cósmico-crística para la hermandad y la
-                retroalimentación", "Descubre tu verdadero ser con TSEYOR".
-
-                Crea un diseño limpio y ordenado: Algunas Sectiones que podrías incluir en la portada son: "Sobre nosotros",
-                "Filosofía TSEYOR", "Actividades y eventos", "Pueblos Tseyor", "Universidad Tseyor de Granada", y
-                "Contacto".
-
-                Utiliza llamadas a la acción: Algunas opciones para las llamadas a la acción podrían ser: "Únete a la
-                comunidad
-                TSEYOR", "Descubre tu camino de autodescubrimiento", o "Explora nuestro calendario de eventos".
-
-                Espero que estas sugerencias te sean útiles par
-
-                yyy
-            </div>
+            <Hero title="El proceso de autodescubrimiento"
+                subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad."
+                :href="route('cursos')"
+            buttonLabel="Curso gratuito"
+            srcImage="https://via.placeholder.com/1263x1569.png/000fdd?text=Meditación"
+            textClass="container"
+            full
+            cover
+            />
         </Section>
+
+        <Section>
+            <Hero title="El proceso de autodescubrimiento"
+                subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad."
+                :href="route('cursos')"
+            buttonLabel="Curso gratuito"
+            srcImage="https://via.placeholder.com/1263x1569.png/000fdd?text=Meditación"
+            textClass="container"
+            full
+            cover
+            image-right
+            />
+        </Section>
+
+
+        <Section>
+            <Hero title="El proceso de autodescubrimiento"
+                subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad." />
+        </Section>
+
+        <Section>
+            Identifica los valores y el mensaje de tu ONG: Como su ONG se enfoca en la meditación, el autodescubrimiento
+            y
+            la transmutación, puedes utilizar imágenes que reflejen la paz, la serenidad y el crecimiento personal.
+            También
+            puedes utilizar imágenes relacionadas con el espacio y las estrellas para transmitir el mensaje de que su
+            filosofía proviene de las estrellas.
+
+            Utiliza colores apropiados: El azul cielo y el blanco son colores apropiados para transmitir la paz, la
+            calma y
+            la serenidad. Puedes utilizar otros tonos de azul para complementar el diseño.
+
+            Diseña un encabezado claro y directo: Algunos ejemplos de encabezados que podrías utilizar son: "Meditación
+            para
+            el autodescubrimiento y la transmutación", "Filosofía cósmico-crística para la hermandad y la
+            retroalimentación", "Descubre tu verdadero ser con TSEYOR".
+
+            Crea un diseño limpio y ordenado: Algunas Sectiones que podrías incluir en la portada son: "Sobre nosotros",
+            "Filosofía TSEYOR", "Actividades y eventos", "Pueblos Tseyor", "Universidad Tseyor de Granada", y
+            "Contacto".
+
+            Utiliza llamadas a la acción: Algunas opciones para las llamadas a la acción podrían ser: "Únete a la
+            comunidad
+            TSEYOR", "Descubre tu camino de autodescubrimiento", o "Explora nuestro calendario de eventos".
+
+            Espero que estas sugerencias te sean útiles par
+
+            yyy
+
+        </Section>
+
 
         <Section>
             <TextImage title="Nuestra filosofía" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía"
@@ -73,38 +113,38 @@
 
         <Section ref="contadoresEl">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-7 gap-y-20 text-lg" v-if="stats">
-                <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.comunicados" :count="contando" :delay="0" class="text-2xl" />
-                    <span>Comunicados</span>
-                </div>
-                <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.paginas" :count="contando" :delay="200" class="text-2xl" />
-                    <span>Páginas transcritas</span>
-                </div>
-                <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.libros" :count="contando" :delay="400" class="text-2xl" />
-                    <span>Libros</span>
-                </div>
-                <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.audios" :count="contando" :delay="600" class="text-2xl" />
-                    <span>Audios</span>
-                </div>
-                <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.videos" :count="contando" :delay="800" class="text-2xl" />
-                    <span>Vídeos</span>
-                </div>
-                <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.usuarios" :count="contando" :delay="1000" class="text-2xl" />
-                    <span>Voluntarios</span>
-                </div>
-                <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.centros" :count="contando" :delay="1200" class="text-2xl" />
-                    <span>Centros Tseyor</span>
-                </div>
-                <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.entradas" :count="contando" :delay="1400" class="text-2xl" />
-                    <span>Entradas de Blog</span>
-                </div>
+                <Link class="btn flex-col h-auto p-4" :href="route('comunicados')">
+                <Counter :to="stats.comunicados" :count="contando" :delay="0" class="text-2xl" />
+                <span>Comunicados</span>
+                </Link>
+                <Link class="btn flex-col h-auto p-4" :href="route('comunicados')">
+                <Counter :to="stats.paginas" :count="contando" :delay="200" class="text-2xl" />
+                <span>Páginas transcritas</span>
+                </Link>
+                <Link class="btn flex-col h-auto p-4" :href="route('libros')">
+                <Counter :to="stats.libros" :count="contando" :delay="400" class="text-2xl" />
+                <span>Libros</span>
+                </Link>
+                <Link class="btn flex-col h-auto p-4" :href="route('audios')">
+                <Counter :to="stats.audios" :count="contando" :delay="600" class="text-2xl" />
+                <span>Audios</span>
+                </Link>
+                <Link class="btn flex-col h-auto p-4" :href="route('videos')">
+                <Counter :to="stats.videos" :count="contando" :delay="800" class="text-2xl" />
+                <span>Vídeos</span>
+                </Link>
+                <Link class="btn flex-col h-auto p-4" :href="route('libros')">
+                <Counter :to="stats.usuarios" :count="contando" :delay="1000" class="text-2xl" />
+                <span>Voluntarios</span>
+                </Link>
+                <Link class="btn flex-col h-auto p-4" :href="route('centros')">
+                <Counter :to="stats.centros" :count="contando" :delay="1200" class="text-2xl" />
+                <span>Centros Tseyor</span>
+                </Link>
+                <Link class="btn flex-col h-auto p-4" :href="route('entradas')">
+                <Counter :to="stats.entradas" :count="contando" :delay="1400" class="text-2xl" />
+                <span>Entradas de Blog</span>
+                </Link>
             </div>
         </Section>
 
