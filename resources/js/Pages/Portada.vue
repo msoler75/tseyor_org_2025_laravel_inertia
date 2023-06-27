@@ -72,23 +72,38 @@
         </Section>
 
         <Section ref="contadoresEl">
-            stats: {{ stats }}
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 text-lg" v-if="stats">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-7 gap-y-20 text-lg" v-if="stats">
                 <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.comunicados" :count="contando" class="text-2xl" />
+                    <Counter :to="stats.comunicados" :count="contando" :delay="0" class="text-2xl" />
                     <span>Comunicados</span>
                 </div>
                 <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.libros" :count="contando" :delay="200" class="text-2xl" />
+                    <Counter :to="stats.paginas" :count="contando" :delay="200" class="text-2xl" />
+                    <span>Páginas transcritas</span>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <Counter :to="stats.libros" :count="contando" :delay="400" class="text-2xl" />
                     <span>Libros</span>
                 </div>
                 <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.audios" :count="contando" :delay="400" class="text-2xl" />
+                    <Counter :to="stats.audios" :count="contando" :delay="600" class="text-2xl" />
                     <span>Audios</span>
                 </div>
                 <div class="flex flex-col items-center gap-3">
-                    <Counter :to="stats.usuarios" :count="contando" :delay="600" class="text-2xl" />
-                    <span>Usuarios</span>
+                    <Counter :to="stats.videos" :count="contando" :delay="800" class="text-2xl" />
+                    <span>Vídeos</span>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <Counter :to="stats.usuarios" :count="contando" :delay="1000" class="text-2xl" />
+                    <span>Voluntarios</span>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <Counter :to="stats.centros" :count="contando" :delay="1200" class="text-2xl" />
+                    <span>Centros Tseyor</span>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <Counter :to="stats.entradas" :count="contando" :delay="1400" class="text-2xl" />
+                    <span>Entradas de Blog</span>
                 </div>
             </div>
         </Section>
