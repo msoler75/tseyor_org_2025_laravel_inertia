@@ -12,7 +12,7 @@
 
 
             <div
-                class="card bg-base-100 shadow flex-wrap flex-row mb-3 md:flex-col p-5 lg:p-10 gap-4 mx-auto self-baseline md:sticky-at-top">
+                class="card bg-base-100 shadow flex-wrap flex-row mb-3 md:flex-col p-5 lg:p-10 gap-4 mx-auto self-baseline w-full justify-evenly md:w-auto md:sticky md:top-20">
                 <Link :href="`${route('eventos')}`"
                 :class="!filtrado&&!categoriaActiva ? 'text-blue-700 font-bold' : ''">
                 <span class="capitalize">Novedades</span>

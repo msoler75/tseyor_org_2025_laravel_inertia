@@ -1,9 +1,11 @@
 <template>
     <div class="max-w-screen-xl mx-auto">
-        <div class="w-full sticky top-0 lg:top-18 pt-7 lg:pt-20  border-b  bg-gray-100 px-4 pb-0 z-10 sm:px-6 lg:px-8">
+        <div class="w-full sticky top-4 pt-16 border-b  bg-gray-100 px-4 pb-0 z-10 sm:px-6 lg:px-8">
 
             <div class="w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
-                <h1 :title="ruta" v-if="!seleccionando" class="w-full mb-0 text-ellipsis overflow-hidden">{{ ruta }}</h1>
+                <h1 :title="ruta" v-if="!seleccionando" class="w-full mb-0 text-ellipsis overflow-hidden flex gap-4 items-center">
+                    <Icon icon="ph:folder-notch-open-duotone"/>
+                    {{ ruta }}</h1>
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
 
