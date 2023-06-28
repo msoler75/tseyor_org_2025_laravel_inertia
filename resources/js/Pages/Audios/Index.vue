@@ -18,7 +18,7 @@
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
 
-            <div class="card bg-base-100 shadow self-baseline flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4 sticky top-5">
+            <div class="card bg-base-100 shadow self-baseline flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4 sticky-at-top">
                 <Link :href="`${route('audios')}`"
                 :class="!filtrado&&!categoriaActiva ? 'text-blue-700 font-bold' : ''">
                 <span class="capitalize">Novedades</span>

@@ -1,6 +1,6 @@
 <template>
     <div class="max-w-screen-xl mx-auto">
-        <div class="w-full sticky top-0 pt-3 bg-gray-100 px-4 mt-12 pb-1 z-10 sm:px-6 lg:px-8">
+        <div class="w-full sticky-at-top pt-3 bg-gray-100 px-4 mt-12 pb-1 z-10 sm:px-6 lg:px-8">
 
             <div class="w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
                 <h1 :title="ruta" v-if="!seleccionando" class="w-full mb-0 text-ellipsis overflow-hidden">{{ ruta }}</h1>

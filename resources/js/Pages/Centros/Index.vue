@@ -70,7 +70,7 @@
 
             </div>
 
-            <section class="card bg-base-100 shadow p-7 lg:w-[460px] self-baseline sticky top-5">
+            <section class="card bg-base-100 shadow p-7 lg:w-[460px] self-baseline sticky-at-top">
                 <div class="flex flex-col px-2 sm:px-5">
                     <h2>Nuestros centros</h2>
                     <div class="flex flex-wrap lg:grid grid-cols-2 gap-10">
