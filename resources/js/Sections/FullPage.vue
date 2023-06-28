@@ -1,6 +1,12 @@
 <template>
-    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen scroll-smooth" ref="container">
+    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen" ref="container">
         <slot></slot>
+        <TransitionFade>
+            <div v-show="showScrollDown"
+                class="transition duration-300 bg-yellow fixed bottom-3 left-0 w-full flex justify-center z-30 mix-blend-exclusion text-white">
+                <Icon icon="ph:caret-double-down-duotone" @click="scrollToNextMandatory" />
+            </div>
+        </TransitionFade>
     </Sections>
 </template>
 
@@ -19,6 +25,9 @@ const handleScroll = () => {
     // Hacer algo con la posición actual del scroll Y, como actualizar una variable reactiva
 };
 
+var scrollTimer = null
+const showScrollDown = ref(false)
+
 onMounted(() => {
     // primer establecimiento de valor
     handleScroll()
@@ -26,6 +35,9 @@ onMounted(() => {
     container.value.$el.addEventListener('scroll', handleScroll, { passive: true });
     // marcamos que estamos en modo "full page" para que la barra de navegación sea flotante
     nav.fullPage = true
+    scrollTimer = setTimeout(() => {
+        showScrollDown.value = true
+    }, 3000)
 });
 
 
@@ -33,13 +45,61 @@ onMounted(() => {
 onBeforeUnmount(() => {
     container.value.$el.removeEventListener('scroll', handleScroll);
     nav.fullPage = false
+    clearTimeout(scrollTimer)
 });
 
+
+
+function scrollToNextMandatory() {
+    // Obtenemos el elemento contenedor
+    console.log({ container })
+    const cont = container.value.$el;
+
+    // Calculamos la altura de la mitad del contenedor
+    const containerHeight = cont.clientHeight;
+    const halfContainerHeight = containerHeight / 2;
+
+    // Obtenemos todos los elementos hijos con la propiedad scroll-snap-type: mandatory
+    const mandatoryElems = document.querySelectorAll('.sections > .section');
+
+    // Encontramos el elemento actualmente visible
+    let currentElem = null;
+    for (let i = 0; i < mandatoryElems.length; i++) {
+        const mandatoryElem = mandatoryElems[i];
+        const rect = mandatoryElem.getBoundingClientRect();
+        if (rect.top <= halfContainerHeight && rect.bottom >= halfContainerHeight) {
+            currentElem = mandatoryElem;
+            break;
+        }
+    }
+
+    // Si encontramos el elemento actualmente visible, buscamos el siguiente elemento
+    if (currentElem) {
+        let nextMandatoryElem = null;
+        for (let i = 0; i < mandatoryElems.length; i++) {
+            const mandatoryElem = mandatoryElems[i];
+            const rect = mandatoryElem.getBoundingClientRect();
+            if (rect.top >= currentElem.getBoundingClientRect().bottom) {
+                nextMandatoryElem = mandatoryElem;
+                break;
+            }
+        }
+
+        // Si encontramos un elemento, hacemos scroll hacia él con animación
+        if (nextMandatoryElem) {
+            nextMandatoryElem.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }
+}
 </script>
 
 
 <style scoped>
-:deep(.section) {
+:slotted(.section) {
     @apply h-screen snap-center flex flex-col justify-center;
 }
+
 </style>
