@@ -25,6 +25,7 @@
                 <Link v-if="buttonLabel && href" :href="href" class="my-2 btn btn-primary">
                 {{ buttonLabel }}
                 </Link>
+                <span v-if="buttonLabel && href" class="md:hidden"></span>
             </div>
         </div>
     </div>
