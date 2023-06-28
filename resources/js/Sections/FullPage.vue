@@ -1,6 +1,5 @@
 <template>
-    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen" ref="container"
-    :style="{
+    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen" ref="container" :style="{
         '--sectionHeight': sectionHeight
     }">
         <slot></slot>
@@ -113,5 +112,4 @@ function scrollToNextMandatory() {
     height: var(--sectionHeight);
     @apply snap-center flex flex-col justify-center;
 }
-
 </style>
