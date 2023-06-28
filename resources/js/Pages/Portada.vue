@@ -1,14 +1,11 @@
 <template>
     <FullPage>
         <Section :style="{
-            background: 'black url(/storage/imagenes/portada/stars-1845140_1920.jpg) bottom',
+            background: 'black url(/storage/imagenes/portada/earth-1756274.jpg) bottom',
             backgroundSize: 'cover'
         }" data-theme="dark">
-            <Hero title="Contacto Extraterrestre"
-            xsrcImage="/storage/imagenes/portada/unidad.jpg"
-            :href="route('cursos')"
-            buttonLabel="Curso gratuito"
-                textClass="bg-black bg-opacity-50 p-5 rounded-xl justify-center" image-right>
+            <Hero title="Contacto Extraterrestre" xsrcImage="/storage/imagenes/portada/unidad.jpg" :href="route('cursos')"
+                buttonLabel="Curso gratuito" textClass="bg-black bg-opacity-70 p-5 rounded-xl justify-center" image-right>
                 <blockquote>En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
                     Nosotros aquí en este nivel estamos reforzados particularmente por la Confederación de Mundos Habitados
                     de la Galaxia.</blockquote>
@@ -18,98 +15,37 @@
         <Section>
             <Hero title="El proceso de autodescubrimiento"
                 subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad."
-                :href="route('cursos')"
-            buttonLabel="Curso gratuito"
-            srcImage="https://via.placeholder.com/1263x1569.png/000fdd?text=Meditación"
-            textClass="container"
-            full
-            cover
-            />
+                :href="route('cursos')" buttonLabel="Curso gratuito"
+                srcImage="/storage/imagenes/portada/1560780877_017869_1560780990_noticia_normal_recorte1.jpg"
+                textClass="container" full cover />
         </Section>
 
         <Section>
-            <Hero title="El proceso de autodescubrimiento"
-                subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad."
-                :href="route('cursos')"
-            buttonLabel="Curso gratuito"
-            srcImage="https://via.placeholder.com/1263x1569.png/000fdd?text=Meditación"
-            textClass="container"
-            full
-            cover
-            image-right
-            />
+            <Hero title="Los Guías Estelares"
+                subtitle="Recibimos las referencias de nuestros tutores de la Confederación de Mundos Habitados de la Galaxia"
+                :href="route('enciclopedia.guias')" buttonLabel="Guías Estelares"
+                srcImage="/storage/imagenes/portada/todos-los-guias-compressor.jpg" textClass="container" full cover
+                image-right />
         </Section>
 
 
         <Section>
-            <Hero title="El proceso de autodescubrimiento"
-                subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad." />
+            <Hero title="Comunidad Tseyor"
+                subtitle="Somos una comunidad de personas normales y corrientes que trabajamos hacia la instauración
+                de                las Sociedades Armónicas de la Galaxia."
+                buttonLabel="Únete a la comunidad TSEYOR" :href="route('cursos')"
+                srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Comunidad%20Tseyor" textClass="container" full
+                cover />
         </Section>
 
         <Section>
-            Identifica los valores y el mensaje de tu ONG: Como su ONG se enfoca en la meditación, el autodescubrimiento
-            y
-            la transmutación, puedes utilizar imágenes que reflejen la paz, la serenidad y el crecimiento personal.
-            También
-            puedes utilizar imágenes relacionadas con el espacio y las estrellas para transmitir el mensaje de que su
-            filosofía proviene de las estrellas.
-
-            Utiliza colores apropiados: El azul cielo y el blanco son colores apropiados para transmitir la paz, la
-            calma y
-            la serenidad. Puedes utilizar otros tonos de azul para complementar el diseño.
-
-            Diseña un encabezado claro y directo: Algunos ejemplos de encabezados que podrías utilizar son: "Meditación
-            para
-            el autodescubrimiento y la transmutación", "Filosofía cósmico-crística para la hermandad y la
-            retroalimentación", "Descubre tu verdadero ser con TSEYOR".
-
-            Crea un diseño limpio y ordenado: Algunas Sectiones que podrías incluir en la portada son: "Sobre nosotros",
-            "Filosofía TSEYOR", "Actividades y eventos", "Pueblos Tseyor", "Universidad Tseyor de Granada", y
-            "Contacto".
-
-            Utiliza llamadas a la acción: Algunas opciones para las llamadas a la acción podrían ser: "Únete a la
-            comunidad
-            TSEYOR", "Descubre tu camino de autodescubrimiento", o "Explora nuestro calendario de eventos".
-
-            Espero que estas sugerencias te sean útiles par
-
-            yyy
-
+            <Hero title="Filosofía Cósmico-Crística"
+                subtitle="A través de la comunicación con seres de otras civilizaciones avanzadas, hemos aprendido la filosofía cósmico-crística que nos guía hacia la hermandad, la humildad y la retroalimentación."
+                buttonLabel="conoce nuestra filosofía" :href="route('filosofia')"
+                srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía" textClass="container" full
+                cover  image-right />
         </Section>
 
-
-        <Section>
-            <TextImage title="Nuestra filosofía" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía"
-                buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')">
-                <p>Seguimos la filosofía nos ha patrocinado la Confederación de Mundos Habitados de la Galaxia.</p>
-            </TextImage>
-        </Section>
-
-        <Section>
-            <div class="container mx-auto">
-
-                Autodescubrimiento: Descubre tu verdadero ser a través de la meditación y la transmutación, y experimenta el
-                crecimiento personal que necesitas para alcanzar la plenitud.
-
-                Filosofía cósmico-crística: A través de la comunicación con seres de otras civilizaciones avanzadas, hemos
-                aprendido la filosofía "cósmico-crística" que nos guía hacia la hermandad, la humildad y la
-                retroalimentación.
-
-                Comunidad TSEYOR: Somos una comunidad de personas normales y corrientes que trabajamos hacia la instauración
-                de
-                las Sociedades Armónicas de la Galaxia y el bienestar de nuestro planeta.
-
-                Divulgación: A través de la Universidad Tseyor de Granada, activamos departamentos de divulgación para
-                divulgar
-                nuestro mensaje de las estrellas y lograr un mundo más armónico.
-
-                Respeto: Respetamos todas las creencias y valores, y trabajamos en armonía con todas las personas y
-                comunidades
-                para lograr nuestro objetivo común.
-            </div>
-
-
-        </Section>
 
         <Section ref="contadoresEl">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-7 gap-y-20 text-lg" v-if="stats">
@@ -148,65 +84,18 @@
             </div>
         </Section>
 
-
         <Section>
-            Pueblos Tseyor
-        </Section>
-        <Section>
-            <div class="container mx-auto">
-
-                Sección "Universidad Tseyor de Granada": Información sobre la Universidad Tseyor de Granada, sus
-                departamentos
-                de divulgación y sus programas de estudio, así como una llamada a la acción que invite a los visitantes a
-                explorar más.
-            </div>
+            <TextText title="Suscríbete"
+                subtitle="Recibe nuestro boletín con los últimos comunicados, noticias, eventos..."
+                buttonLabel="RECIBIR BOLEtín" :href="route('filosofia')"
+                textClass="container"
+                full
+                cover />
+                <div class="flex gap-5">
+                    <input type="email" class="max-w-[300px] mx-auto" placeholder="correo@..."/> <button class="btn btn-primary">Suscribirse</button>
+                </div>
         </Section>
 
-        <Section>
-            Sección "Contacto": Información de contacto de su ONG, incluyendo dirección, correo electrónico y número de
-            teléfono, así como un formulario de contacto para que los visitantes puedan enviar sus preguntas o comentarios.
-        </Section>
-
-
-
-        <Section>
-            <TextImage title="Nuestra filosofía" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía"
-                buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')">
-                <p>Seguimos la filosofía nos ha patrocinado la Confederación de Mundos Habitados de la Galaxia.</p>
-            </TextImage>
-        </Section>
-
-
-        <Section>
-            <TextImage title="Nuestra filosofía" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía"
-                buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')">
-                <p>Seguimos la filosofía nos ha patrocinado la Confederación de Mundos Habitados de la Galaxia.</p>
-            </TextImage>
-        </Section>
-
-
-        <Section>
-            <TextImage title="Nuestra filosofía" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía"
-                buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')">
-                <p>Seguimos la filosofía nos ha patrocinado la Confederación de Mundos Habitados de la Galaxia.</p>
-            </TextImage>
-        </Section>
-
-
-        <Section>
-            <TextImage title="Nuestra filosofía" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía"
-                buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')">
-                <p>Seguimos la filosofía nos ha patrocinado la Confederación de Mundos Habitados de la Galaxia.</p>
-            </TextImage>
-        </Section>
-
-
-        <Section>
-            <TextImage title="Nuestra filosofía" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía"
-                buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')">
-                <p>Seguimos la filosofía nos ha patrocinado la Confederación de Mundos Habitados de la Galaxia.</p>
-            </TextImage>
-        </Section>
     </FullPage>
 </template>
 

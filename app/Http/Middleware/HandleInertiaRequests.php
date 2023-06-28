@@ -31,7 +31,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            'anuncio'=>"cargado desde el server <b>negrita</b><i>italica</i><a href='http://tseyor.org'>Tseyor.org</a>",
+            'anuncio'=>env('ANUNCIO_GLOBAL_HTML'),
             'meta_image_default'=> env('META_IMAGE_DEFAULT'),
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
