@@ -70,6 +70,12 @@ export default [
               description: "Meditaciones, cuentos, canciones...",
               icon: "ph:youtube-logo-duotone",
             },
+            {
+                title: "Archivos",
+                route: "archivos0",
+                description: "Todos los archivos y documentos en carpetas",
+                icon: "ph:archive-box-duotone",
+              },
           ],
         },
       ],

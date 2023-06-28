@@ -50,6 +50,7 @@ Route::get('/', [PortadaController::class, 'index'])->name('portada');
 
 Route::get('/novedades', [NovedadesController::class, 'index'])->name('novedades');
 
+Route::get('/archivos', [ArchivosController::class, 'index'])->name('archivos0');
 Route::get('/archivos{ruta}', [ArchivosController::class, 'index'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
 Route::get('/audios', [AudiosController::class, 'index'])->name('audios');
