@@ -9,7 +9,7 @@
 
         <div class="w-full flex gap-5 flex-wrap lg:flex-nowrap">
 
-            <div class="card bg-base-100 shadow flex-wrap flex-row lg:flex-col p-5 lg:p-10 gap-4 self-baseline">
+            <div class="card bg-base-100 shadow flex-wrap lg:flex-nowrap flex-row lg:flex-col p-5 lg:p-10 gap-7 self-baseline lg:sticky lg:top-20 overflow-y-auto lg:max-h-[calc(100vh-10rem)] select-none">
                 <Link :href="`${route('contactos')}`" :class="!filtrado && !paisActivo ? 'text-blue-700 font-bold' : ''">
                 <span class="capitalize">Novedades</span>
                 </Link>
