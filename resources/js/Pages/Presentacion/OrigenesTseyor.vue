@@ -1,5 +1,8 @@
 <template>
-    <FullPage>
+    <FullPage
+    style="max-height: calc(100vh - 4rem);
+    margin-top: 4rem"
+    sectionHeight="calc(100vh - 4rem)">
 
         <Section>
             <Hero full srcImage="/storage/imagenes/presentacion/origenes/sello-tseyor.png" image-right>
