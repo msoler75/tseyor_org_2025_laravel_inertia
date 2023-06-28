@@ -1,29 +1,52 @@
 <template>
-    <div class="container mx-auto">
-      <div class="flex justify-center">
-        <div class="max-w-lg mx-auto">
-          <div v-for="testimonial in testimonials" :key="testimonial.id" class="p-6 bg-white rounded shadow mb-8">
-            <p class="text-gray-600 mb-4">{{ testimonial.text }}</p>
-            <div class="flex items-center">
-              <img :src="testimonial.avatar" class="h-10 w-10 rounded-full mr-4" alt="Testimonial Avatar" />
-              <div>
-                <h4 class="font-bold">{{ testimonial.name }}</h4>
-                <p class="text-sm text-gray-500">{{ testimonial.subtitle }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div class="testimonial">
+      <div class="testimonial-photo">
+        <img :src="testimonial.photo" alt="Testimonial photo" />
+      </div>
+      <div class="testimonial-text">
+        <p>{{ testimonial.text }}</p>
+      </div>
+      <div class="testimonial-author">
+        <div class="testimonial-author-name">{{ testimonial.name }}</div>
+        <div class="testimonial-author-role">{{ testimonial.role }}</div>
       </div>
     </div>
   </template>
 
-  <script>
-  export default {
-    props: {
-      testimonials: {
-        type: Array,
-        required: true,
-      },
+  <script setup>
+  import { defineProps } from 'vue';
+
+  const props = defineProps({
+    testimonial: {
+      type: Object,
+      required: true,
     },
-  };
+  });
   </script>
+
+  <style scoped>
+  .testimonial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .testimonial-photo {
+    margin-bottom: 1rem;
+  }
+
+  .testimonial-photo img {
+    border-radius: 50%;
+  }
+
+  .testimonial-text {
+    margin-bottom: 1rem;
+  }
+
+  .testimonial-author-name {
+    font-weight: bold;
+  }
+
+  </style>

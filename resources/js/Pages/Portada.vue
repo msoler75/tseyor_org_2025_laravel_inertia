@@ -1,5 +1,6 @@
 <template>
     <FullPage>
+
         <Section :style="{
             background: 'black url(/storage/imagenes/portada/earth-1756274.jpg) bottom',
             backgroundSize: 'cover'
@@ -17,9 +18,7 @@
                 subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad."
                 :href="route('cursos')" buttonLabel="Curso gratuito"
                 srcImage="/storage/imagenes/portada/1560780877_017869_1560780990_noticia_normal_recorte1.jpg"
-                textClass="container"
-                imageSideClass="bg-right"
-                full cover />
+                textClass="container" imageSideClass="bg-right" full cover />
         </Section>
 
         <Section>
@@ -32,25 +31,23 @@
 
 
         <Section>
-            <Hero title="Comunidad Tseyor"
-                subtitle="Somos una comunidad de personas normales y corrientes que trabajamos hacia la instauración
-                de                las Sociedades Armónicas de la Galaxia."
-                buttonLabel="Únete a la comunidad TSEYOR" :href="route('cursos')"
-                srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Comunidad%20Tseyor" textClass="container" full
-                cover />
+            <Hero title="Comunidad Tseyor" subtitle="Somos una comunidad de personas normales y corrientes que trabajamos hacia la instauración
+                de                las Sociedades Armónicas de la Galaxia." buttonLabel="Únete a la comunidad TSEYOR"
+                :href="route('cursos')" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Comunidad%20Tseyor"
+                textClass="container" full cover />
         </Section>
 
         <Section>
             <Hero title="Filosofía Cósmico-Crística"
                 subtitle="A través de la comunicación con seres de otras civilizaciones avanzadas, hemos aprendido la filosofía cósmico-crística que nos guía hacia la hermandad, la humildad y la retroalimentación."
                 buttonLabel="conoce nuestra filosofía" :href="route('filosofia')"
-                srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía" textClass="container" full
-                cover  image-right />
+                srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía" textClass="container" full cover
+                image-right />
         </Section>
 
 
-        <Section ref="contadoresEl">
-            <div class="grid grid-cols-2 md:px-5 md:grid-cols-4 gap-x-7 gap-y-20 text-lg" v-if="stats">
+        <Section ref="contadoresEl" >
+            <div class="grid grid-cols-2 md:px-5 md:grid-cols-4 gap-x-7 gap-y-20 text-lg mt-20 md:mt-0" v-if="stats">
                 <Link class="btn flex-col h-auto p-4" :href="route('comunicados')">
                 <Counter :to="stats.comunicados" :count="contando" :delay="0" class="text-2xl" />
                 <span>Comunicados</span>
@@ -86,16 +83,23 @@
             </div>
         </Section>
 
+
+
+        <Section >
+            <h2 class="mt-[8rem] text-2xl font-bold mb-0">Miembros de Tseyor</h2>
+            <TestimonialSlider :testimonials="testimonials" class="h-full"/>
+        </Section>
+
+
+
+
         <Section>
-            <TextText title="Suscríbete"
-                subtitle="Recibe nuestro boletín con los últimos comunicados, noticias, eventos..."
-                buttonLabel="RECIBIR BOLEtín" :href="route('filosofia')"
-                textClass="container"
-                full
-                cover />
-                <div class="flex gap-5">
-                    <input type="email" class="max-w-[300px] mx-auto" placeholder="correo@..."/> <button class="btn btn-primary">Suscribirse</button>
-                </div>
+            <TextText title="Suscríbete" subtitle="Recibe nuestro boletín con los últimos comunicados, noticias, eventos..."
+                buttonLabel="RECIBIR BOLEtín" :href="route('filosofia')" textClass="container" full cover />
+            <div class="flex gap-5">
+                <input type="email" class="max-w-[300px] mx-auto" placeholder="correo@..." /> <button
+                    class="btn btn-primary">Suscribirse</button>
+            </div>
         </Section>
 
     </FullPage>
@@ -106,7 +110,6 @@ import { useNav } from '@/Stores/nav'
 import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
 defineOptions({ layout: AppLayout })
-
 
 defineProps({
     stats: {}
@@ -143,6 +146,27 @@ onMounted(() => {
     calculaHCounter()
 })
 
+
+const testimonials = ref([
+    {
+        name: 'John Doe',
+        role: 'CEO',
+        photo: 'https://via.placeholder.com/150',
+        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac leo ullamcorper, consectetur nisi nec, posuere mi.',
+    },
+    {
+        name: 'Jane Smith',
+        role: 'Designer',
+        photo: 'https://via.placeholder.com/150',
+        text: 'Duis mollis, turpis quis dapibus fringilla, tortor ex faucibus justo, eu molestie purus diam vel orci.',
+    },
+    {
+        name: 'Jim Johnson',
+        role: 'Developer',
+        photo: 'https://via.placeholder.com/150',
+        text: 'Etiam ornare nulla non ligula posuere, vel bibendum urna pharetra. Proin vestibulum orci sed ex lobortis, ac tincidunt est consectetur.',
+    },
+])
 
 </script>
 

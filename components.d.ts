@@ -76,6 +76,7 @@ declare module 'vue' {
     TextInput: typeof import('./resources/js/Components/TextInput.vue')['default']
     TextText: typeof import('./resources/js/Sections/TextText.vue')['default']
     TimeAgo: typeof import('./resources/js/Components/TimeAgo.vue')['default']
+    TransitionFade: typeof import('./resources/js/Sections/TransitionFade.vue')['default']
     Uploader: typeof import('./resources/js/Components/Uploader.vue')['default']
     VideoPlayer: typeof import('./resources/js/Sections/VideoPlayer.vue')['default']
     Welcome: typeof import('./resources/js/Components/Welcome.vue')['default']
