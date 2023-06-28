@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div class="sticky-at-top bg-base-100 py-5 border-t border-b border-base-300 z-30">
+        <div class="sticky top-8 pt-10 bg-base-100 pb-4 border-b border-base-300 z-30">
             <h1 class="container mx-auto my-2">
                 {{evento.titulo }}
             </h1>
             <small class="container mx-auto text-right block">{{ evento.categoria }}</small>
         </div>
-        <div class="container py-12 mx-auto space-y-12">
+        <div class="container py-7 mx-auto space-y-12">
             <div class="mx-auto flex flex-wrap md:flex-nowrap gap-7">
                 <div class="w-full md:w-1/2 md:order-last">
                     <div class="card bg-base-100 md:max-w-[300px] shadow p-4">

@@ -37,14 +37,12 @@ const logout = () => {
 
         <NavAside :show="sideBarShow" @close="sideBarShow = false" class="lg:hidden" />
 
-        <button class="lg:hidden absolute left-0 btn btn-primary z-50" @click="sideBarShow = !sideBarShow">SideBar</button>
-
         <Head :title="title" />
 
         <Banner />
 
         <div class="bg-gray-100">
-            <nav class="w-full border-gray-300 dark:border-gray-700 bg-base-100 hidden lg:block top-0 z-40 -translate-y-[1px] transition duration-400 "
+            <nav class="w-full border-gray-300 dark:border-gray-700 bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "
             :data-theme="(portada&&nav.scrollY<300?'dark':'light')"
             :class="
             (portada&&nav.scrollY<300?'bg-transparent ':'border-b ')+
@@ -53,9 +51,9 @@ const logout = () => {
                 <!-- Primary Navigation Menu -->
 
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="hidden lg:flex justify-between h-16 relative">
+                    <div class="flex justify-between h-16 relative">
 
-                        <div class="flex">
+                        <div class="hidden lg:flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
                                 <Link :href="route('portada')"
@@ -85,7 +83,7 @@ const logout = () => {
 
                         </div>
 
-                        <transition enter-active-class="transition ease-out duration-200"
+                        <transition class="hidden lg:flex" enter-active-class="transition ease-out duration-200"
                             enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
                             leave-active-class="transition ease-in duration-75"
                             leave-from-class="transform opacity-100 scale-100"
@@ -252,10 +250,10 @@ const logout = () => {
                         </div>
 
                         <!-- Hamburger -->
-                        <div class="-mr-2 flex items-center sm:hidden">
+                        <div class="-mr-2 flex items-center lg:hidden">
                             <button
                                 class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
-                                @click="showingNavigationDropdown = !showingNavigationDropdown">
+                                @click="sideBarShow = !sideBarShow">
                                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
                                         :class="{ 'hidden': showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }"
@@ -378,7 +376,7 @@ const logout = () => {
             <main @mouseover="nav.closeTabs()" class="relative">
                 <transition enter-active-class="transition-opacity duration-100"
                     leave-active-class="transition-opacity duration-100" enter-class="opacity-0" leave-to-class="opacity-0">
-                    <div v-if="nav.activeTab" class="z-30 absolute w-full h-full bg-black bg-opacity-10">
+                    <div v-if="nav.activeTab" class="hidden lg:block z-30 absolute w-full h-full bg-black bg-opacity-10">
                         <!-- Contenido del elemento -->
                     </div>
                 </transition>
