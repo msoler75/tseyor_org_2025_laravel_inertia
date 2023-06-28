@@ -3,18 +3,18 @@
         <div class="mx-auto text-center" :class="(srcImage ? 'grid grid-cols-1 md:grid-cols-2 gap-7 lg:gap-12 ' : '') +
             (full ? 'w-full h-full p-0' : 'container')
             ">
-            <div v-if="srcImage" class="flex flex-col items-center gap-1 max-h-screen" :class="(imageRight ? 'md:order-last ' : '') +
+            <div v-if="srcImage" class="flex flex-col items-center gap-1 max-h-screen bg-center" :class="(imageRight ? 'md:order-last ' : '') +
                 (full ? 'justify-center ' : '') +
-                (full && !cover ? 'pt-[100px] relative max-h-[calc(100vh - 220px)]' : '')
-                " :style="cover ? {
-        'background': `url(${srcImage}) center`,
+                (full && !cover ? 'pt-[100px] relative max-h-[calc(100vh - 220px)] ' : '')
+                +imageSideClass" :style="cover ? {
+        'background-image': `url(${srcImage})`,
         'background-size': 'cover'
     } : {}">
                 <img v-if="!cover" :src="srcImage" :alt="title" :class="imageClass"
                     :style="{ 'max-height': 'calc(100% - 52px)' }">
                 <small v-if="caption">{{ caption }}</small>
             </div>
-            <div class="flex flex-col justify-center items-center gap-7" :class="textClass">
+            <div class="flex flex-col items-center gap-7" :class="(full?'justify-center ':'justify-evenly ')+textClass">
                 <h2 v-if="title" class="text-2xl font-bold mb-0">{{ title }}</h2>
                 <div v-if="subtitle" class="text-lg text-center my-0">
                     {{ subtitle }}
@@ -63,10 +63,14 @@ defineProps({
         type: String,
         required: false
     },
+    imageSideClass: {
+        type: String,
+        required: false
+    },
     textClass: {
         type: String,
         required: false,
-        default: "justify-evenly gap-5"
+        default: "container gap-5"
     },
     full: {
         type: Boolean,

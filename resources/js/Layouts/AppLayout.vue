@@ -49,7 +49,7 @@ const logout = () => {
             :class="
             (portada&&nav.scrollY<300?'bg-transparent ':'border-b ')+
             (nav.defaultClass+' ' + (nav.fullPage?'fixed border-gray-300 ':'sticky '))+
-            (nav.fullPage&&nav.announce?'top-[36px] ':'top-0 ')">
+            (nav.fullPage&&nav.announce?'top-[2rem] ':'top-0 ')">
                 <!-- Primary Navigation Menu -->
 
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

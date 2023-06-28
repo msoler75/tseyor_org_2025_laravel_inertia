@@ -1,6 +1,6 @@
 <template>
     <TextImage :title="title" :subtitle="subtitle" :srcImage="srcImage" :buttonLabel="buttonLabel" :href="href"
-        :imageRight="imageRight" :imageClass="imageClass" :textClass="textClass" :full="full" :cover="cover" class="bg-hero bg-cover bg-center py-20">
+        :imageRight="imageRight" :imageClass="imageClass" :imageSideClass="imageSideClass" :textClass="textClass" :full="full" :cover="cover" class="bg-hero bg-cover bg-center py-20">
         <slot></slot>
     </TextImage>
 </template>
@@ -37,10 +37,14 @@ defineProps({
         type: String,
         required: false
     },
+    imageSideClass: {
+        type: String,
+        required: false
+    },
     textClass: {
         type: String,
         required: false,
-        default: "justify-evenly gap-5"
+        default: "container gap-5"
     },
     full: {
         type: Boolean,

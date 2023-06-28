@@ -17,7 +17,9 @@
                 subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad."
                 :href="route('cursos')" buttonLabel="Curso gratuito"
                 srcImage="/storage/imagenes/portada/1560780877_017869_1560780990_noticia_normal_recorte1.jpg"
-                textClass="container" full cover />
+                textClass="container"
+                imageSideClass="bg-right"
+                full cover />
         </Section>
 
         <Section>
