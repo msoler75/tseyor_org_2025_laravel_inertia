@@ -25,7 +25,7 @@
 
             </div>
             <form v-else @submit.prevent="submit">
-                <p>Rellena este formulario para poder ofrecerte un curso adaptado a tus necesidades.</p>
+                <p>Rellena este formulario para poder ofrecerte un curso adaptado a tus necesidades. <Link :href="route('cursos')">¿qué es el curso?</Link></p>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="nombre">Nombre y apellidos:</label>
                     <input class="form-input w-full" id="nombre" type="text" v-model="form.nombre" required>

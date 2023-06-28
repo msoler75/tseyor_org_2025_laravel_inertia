@@ -4,12 +4,14 @@
             (full ? 'w-full h-full p-0' : 'container')
             ">
             <div v-if="srcImage" class="flex flex-col items-center gap-1 max-h-screen" :class="(imageRight ? 'md:order-last ' : '') +
-                (full ? 'justify-center' : '')"
-                :style="cover?{
-                    'background': `url(${srcImage}) center`,
-                    'background-size': 'cover'
-                }:{}">
-                <img v-if="!cover" :src="srcImage" :alt="title" class="max-h-[400px]" :class="imageClass">
+                (full ? 'justify-center ' : '') +
+                (full && !cover ? 'pt-[100px] relative max-h-[calc(100vh - 220px)]' : '')
+                " :style="cover ? {
+        'background': `url(${srcImage}) center`,
+        'background-size': 'cover'
+    } : {}">
+                <img v-if="!cover" :src="srcImage" :alt="title" :class="imageClass"
+                    :style="{ 'max-height': 'calc(100% - 52px)' }">
                 <small v-if="caption">{{ caption }}</small>
             </div>
             <div class="flex flex-col justify-center items-center gap-7" :class="textClass">
