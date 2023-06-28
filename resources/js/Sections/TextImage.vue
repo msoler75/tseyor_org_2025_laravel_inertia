@@ -1,5 +1,5 @@
 <template>
-    <div :class="full ? '!py-0 bg-red-100 w-full h-full max-h-screen flex flex-col justify-center' : 'py-12'">
+    <div :class="full ? '!py-0 w-full h-full max-h-screen flex flex-col justify-center' : 'py-12'">
         <div class="mx-auto text-center" :class="(srcImage ? 'grid grid-cols-1 md:grid-cols-2 gap-7 lg:gap-12 ' : '') +
             (full ? 'w-full h-full p-0' : 'container')
             ">
