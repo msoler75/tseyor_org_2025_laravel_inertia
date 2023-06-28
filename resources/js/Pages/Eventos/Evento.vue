@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="sticky top-0 bg-base-100 py-5 border-t border-b border-base-300 z-30">
+        <div class="sticky-at-top bg-base-100 py-5 border-t border-b border-base-300 z-30">
             <h1 class="container mx-auto my-2">
                 {{evento.titulo }}
             </h1>

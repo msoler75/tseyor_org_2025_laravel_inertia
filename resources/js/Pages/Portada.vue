@@ -50,7 +50,7 @@
 
 
         <Section ref="contadoresEl">
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-7 gap-y-20 text-lg" v-if="stats">
+            <div class="grid grid-cols-2 md:px-5 md:grid-cols-4 gap-x-7 gap-y-20 text-lg" v-if="stats">
                 <Link class="btn flex-col h-auto p-4" :href="route('comunicados')">
                 <Counter :to="stats.comunicados" :count="contando" :delay="0" class="text-2xl" />
                 <span>Comunicados</span>

@@ -107,6 +107,10 @@
 
 
 
+    .sticky-at-top {
+        @apply sticky top-5 lg:top-20;
+    }
+
 }
 
 
