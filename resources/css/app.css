@@ -119,7 +119,7 @@
     @apply mx-auto;
 }
 
-.sections>*:nth-child(2n) {
+.sections>.section:nth-child(2n) {
     @apply bg-base-100 border-b border-t border-gray-200;
 }
 

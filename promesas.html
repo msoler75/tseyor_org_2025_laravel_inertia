@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+<body>
+
+    <button>llamar a api</button>
+
+
+    <button id="btn2">resolver promesa</button>
+
+    <script>
+
+        // sintaxis tradicional
+        /*
+                var p = new Promise(function (resolve, reject) {
+                    setTimeout(function () {
+                        console.log('ya está!')
+                        resolve(33)
+                    }, 4000)
+                })
+                */
+
+        /*
+        var p1 =
+            new Promise((resolve, reject) => {
+                setTimeout(function () {
+                    resolve(33)
+                }, 4000)
+            })
+
+                .then(resultado => {
+                    console.log('tarea 1 completada. Resultado:', resultado)
+                })
+
+                .catch(error => {
+                    console.log('error:', error)
+                })
+
+
+        var p2 = new Promise((resolve) => {
+            setTimeout(function () {
+                resolve()
+            }, 3000)
+        })
+
+            .then(() => {
+                console.log('tarea 2 completada!')
+            })
+
+
+        const tareas = [p1, p2]
+        Promise.all(tareas)
+            .then(() => {
+                console.log('todas las tareas terminadas')
+            })
+
+            */
+
+        function llamar_api() {
+            return new Promise((resolve, reject) => {
+                setTimeout(function () {
+                    reject(33)
+                }, 4000)
+            })
+        }
+
+        metodo1()
+
+        /*
+        function metodo1() {
+            const resultado = llamar_api().then((resultado)=>{
+                console.log('api:', resultado)
+            })
+        }
+        */
+
+        async function metodo1() {
+            const resultado1 = await llamar_api().catch(err => {
+                console.log('hubo un error', err)
+            })
+
+            console.log('api:', resultado1)
+
+            const resultado2 = await llamar_api()
+
+            console.log('api:', resultado2)
+        }
+
+        /*
+                // más tipo JAVA
+
+                async function metodo1() {
+                        try {
+
+                        const resultado1 = await llamar_api()
+
+                        console.log('api:', resultado1)
+
+                        const resultado2 = await llamar_api()
+
+                        console.log('api:', resultado2)
+                        } catch (err) {
+                        console.log('hubo un error', err)
+                }*/
+
+        async function api_call2() {
+
+            const datos = await fetch('https://jsonplaceholder.typicode.com/users')
+                .then(response => response.json())
+                .catch(error => console.error('custom_catch_error:', error))
+
+            // muestro los datos
+            console.log('datos:', datos)
+        }
+
+
+        document.querySelector("button").addEventListener("click", () => {
+            api_call2();
+        })
+
+
+        async function main() {
+
+            const btn2 = document.querySelector("#btn2")
+
+            // como hacer con un await que despierte una promesa al pulsar un botón
+            const resultado = await new Promise((resolve, reject) => {
+                btn2.addEventListener("click", ()=>{
+                    resolve(40)
+                })
+            })
+
+            console.log('fin de promesa de botón. resultado:', resultado)
+        }
+
+        main()
+
+
+        // AJAX ES:
+        // 1 detectar una activación o evento del usuario o evento de la app
+        // 2 fetch al servidor para obtener nueva información o informar de cambios, y lo actualizas en el modelo de datos
+        // 3 actualizar en el DOM la información nueva () document.createElement appendChild) (este paso ya no es necesario en tecnologías reactivas (VUE REACT ANGULAR SVELTE))
+
+
+    </script>
+
+</body>
+
+</html>

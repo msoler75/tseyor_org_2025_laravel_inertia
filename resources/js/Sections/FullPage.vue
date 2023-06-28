@@ -1,10 +1,13 @@
 <template>
-    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen" ref="container">
+    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen" ref="container"
+    :style="{
+        '--sectionHeight': sectionHeight
+    }">
         <slot></slot>
         <TransitionFade>
             <div v-show="showScrollDown"
-                class="transition duration-300 bg-yellow fixed bottom-3 left-0 w-full flex justify-center z-30 mix-blend-exclusion text-white">
-                <Icon icon="ph:caret-double-down-duotone" @click="scrollToNextMandatory" />
+                class="transition duration-300 fixed bottom-3 left-0 w-full flex justify-center z-30 text-white mix-blend-exclusion">
+                <Icon icon="ph:caret-double-down-duotone" @click="scrollToNextMandatory" class="" />
             </div>
         </TransitionFade>
     </Sections>
@@ -13,6 +16,14 @@
 <script setup>
 import { onBeforeUnmount } from 'vue'
 import { useNav } from '@/Stores/nav'
+
+defineProps({
+    sectionHeight: {
+        type: String,
+        required: false,
+        default: '100vh'
+    }
+})
 
 const container = ref(null)
 
@@ -99,7 +110,8 @@ function scrollToNextMandatory() {
 
 <style scoped>
 :slotted(.section) {
-    @apply h-screen snap-center flex flex-col justify-center;
+    height: var(--sectionHeight);
+    @apply snap-center flex flex-col justify-center;
 }
 
 </style>
