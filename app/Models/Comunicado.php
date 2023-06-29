@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\SEOModel;
 
 
-class Comunicado extends Model
+class Comunicado extends SEOModel
 {
     protected $fillable = [
         'numero',

@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\SEOModel;
 
-class Lugar extends Model
+class Lugar extends SEOModel
 {
     use HasFactory;
 

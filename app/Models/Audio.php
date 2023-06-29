@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\SEOModel;
 
 
-class Audio extends Model
+class Audio extends SEOModel
 {
     /**
      * El nombre de la tabla asociada al modelo.
