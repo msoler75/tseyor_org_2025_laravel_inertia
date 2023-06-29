@@ -190,30 +190,5 @@ return [
 
 
 
-    /**
-     * GZIP COMPRESSION
-     *
-     */
-
-     'gzip' => [
-        'compress' => true,
-        'level' => 6,
-        'min_length' => 1024,
-        'exclude' => [
-            '/path/to/excluded/route',
-        ],
-    ],
-
-
-    /**
-     * BROTLI
-     */
-    'brotli' => [
-        'enabled' => true,
-        'quality' => 5,
-        'mode' => BROTLI_MODE_TEXT,
-        'minimum_size' => 1024,
-        'options' => [],
-    ],
 
 ];

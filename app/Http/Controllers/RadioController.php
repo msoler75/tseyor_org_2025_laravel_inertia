@@ -12,15 +12,15 @@ use App\Pigmalion\SEO;
 
 class RadioController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Iniciamos una transacción
         DB::beginTransaction();
 
         try {
 
-            $categoria = 'comunicados';
-            $setting_name = 'radio_' . $categoria;
+            $emisora = $request->emisora ?? 'comunicados';
+            $setting_name = 'radio_' . $emisora;
             $setting = Setting::find($setting_name);
 
             try {
@@ -66,13 +66,16 @@ class RadioController extends Controller
                 } else {
 
                     // obtenemos la playlist
-                    $playlist = RadioItem::select(['id', 'audio', 'duracion'])->where("categoria", $categoria)->get()->toArray();
+                    $playlist = RadioItem::select(['id', 'audio', 'duracion'])->where("categoria", $emisora)->get()->toArray();
+
+                    if(!count($playlist))
+                    return Inertia::render('Radio/Index', ['error' => "La emisora '$emisora' no existe o no dispone de contenidos actualmente."]);
 
                     // buscamos el indice del audio actual
                     $idx = 0;
                     if ($audio_actual) {
                         foreach ($playlist as $indice => $item) {
-                            if ($item['audio'] === $audio_actual) {
+                            if ($item['id'] === $audio_actual['id']) {
                                 $idx = $indice;
                                 break;
                             }
