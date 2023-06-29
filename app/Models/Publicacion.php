@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\SEOModel;
 
 
-class Publicacion extends Model
+class Publicacion extends SEOModel
 {
     protected $fillable = [
         'titulo',

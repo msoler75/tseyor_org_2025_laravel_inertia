@@ -16,6 +16,7 @@
         @waiting="waiting"
         @abort="abort"
         preload="auto"
+        :currentTime="startTime"
       />
       <div
         class="p-5 pb-2 lg:p-7 lg:pb-3"
@@ -210,6 +211,9 @@
       },
       artist() {
         return this.music && this.music.artist ? this.music.artist : "";
+      },
+      startTime() {
+        return this.music && this.music.startAt ?  this.music.startAt : 0
       }
     },
     watch: {

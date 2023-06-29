@@ -53,6 +53,13 @@ export default [
               description: "Cursos, convivencias y encuentros",
               icon: "ph:calendar-duotone",
             },
+            {
+                title: "Radio",
+                route: "radio",
+                description: "Escucha comunicados y entrevistas en Radio Tseyor",
+                icon: "ph:calendar-duotone",
+              },
+
           ],
         },
         {
