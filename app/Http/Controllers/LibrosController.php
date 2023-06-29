@@ -35,7 +35,7 @@ class LibrosController extends Controller
             'listado' => $resultados,
             'categorias' => $categorias
         ])
-        ->withViewData(SEO::get('libros'));
+            ->withViewData(SEO::get('libros'));
     }
 
     public function show($id)
@@ -49,8 +49,9 @@ class LibrosController extends Controller
         }
 
         // Obtener libros relacionados por categoría o coincidencia de palabras clave en la descripción
-        $relacionados = Libro::where('categoria', $libro->categoria)
-            ->orWhere(function ($query) use ($libro) {
+        $relacionados = Libro::where('id', '!=', $libro->id)
+            ->where('categoria', $libro->categoria)
+            ->where(function ($query) use ($libro) {
                 $tituloPalabras = explode(' ', $libro->titulo);
                 $palabrasClave = [];
 
@@ -62,16 +63,16 @@ class LibrosController extends Controller
                 }
 
                 if (!empty($palabrasClave)) {
-                    foreach ($palabrasClave as $clave) {
-                        $query->orWhere(function ($query) use ($clave) {
+                    $query->where(function ($query) use ($palabrasClave) {
+                        foreach ($palabrasClave as $clave) {
                             // Asignar una puntuación más alta si la palabra clave aparece en el título
                             $query->where('descripcion', 'like', '%' . $clave . '%')
                                 ->orWhere('titulo', 'like', '%' . $clave . '%');
-                        });
-                    }
+                        }
+                    });
                 }
             })
-            ->orderByRaw('(CASE WHEN titulo LIKE ? THEN 2 WHEN descripcion LIKE ? THEN 1 ELSE 0 END) DESC', [$libro->titulo.'%', '%'.$libro->titulo.'%'])
+            ->orderByRaw('(CASE WHEN titulo LIKE ? THEN 2 WHEN descripcion LIKE ? THEN 1 ELSE 0 END) DESC', [$libro->titulo . '%', '%' . $libro->titulo . '%'])
             ->take(8)
             ->get();
 
@@ -79,7 +80,6 @@ class LibrosController extends Controller
             'libro' => $libro,
             'relacionados' => $relacionados
         ])
-       ->withViewData(SEO::from($libro));
+            ->withViewData(SEO::from($libro));
     }
-
 }
