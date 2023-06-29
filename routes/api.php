@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\FilesController;
+use App\Http\Controllers\Api\ComentariosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,3 +28,8 @@ Route::post('/files/move', [FilesController::class, 'move'])->name('files.move')
 Route::post('/files/copy', [FilesController::class, 'copy'])->name('files.copy');
 Route::put('/files/mkdir', [FilesController::class, 'createFolder'])->name('files.mkdir');
 Route::delete('/files{ruta}', [FilesController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
+
+
+
+Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comentarios');
+// Route::post('/comentariosX', [ComentariosController::class, 'create'])->name('comentario.nuevo');
