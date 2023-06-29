@@ -1,6 +1,8 @@
 <template>
     <div class="flex items-center gap-3">
 
+        <slot></slot>
+
 
         <button v-if="filtro" type="button" @click="clearInput" class="btn">
             Limpiar

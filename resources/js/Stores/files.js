@@ -1,15 +1,13 @@
-import {defineStore} from 'pinia';
+import { defineStore } from "pinia";
 
-export const useFilesStore=defineStore('files',{
-    state:()=> ({
-        // file operations
-        isMovingFiles: false,
-        isCopyingFiles: false,
-        filesToMove: [],
-        filesToCopy: []
-    }),
-	getters:{
-	},
-	actions:{
-	}
+export const useFilesStore = defineStore("files", {
+  state: () => ({
+    // file operations
+    isMovingFiles: false,
+    isCopyingFiles: false,
+    filesToMove: [],
+    filesToCopy: [],
+  }),
+  getters: {},
+  actions: {},
 });

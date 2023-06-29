@@ -47,7 +47,13 @@
 
 
     html {
-        font-size: 15px;
+        font-size: 14px;
+    }
+
+    @media (min-width: 360px) {
+        html {
+            font-size: 15px;
+        }
     }
 
     @media (min-width: 768px) {

@@ -45,7 +45,7 @@
                                         contacto.pais }}</div>
                                     <p class="text-xs">{{
                                         contacto.poblacion }}</p>
-                                    <Link :href="`/contacto/${contacto.slug}`" class="btn btn-primary mt-auto">
+                                    <Link :href="route('contacto',contacto.slug)" class="btn mt-auto">
                                     Ver contacto
                                     </Link>
 
