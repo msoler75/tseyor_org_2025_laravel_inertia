@@ -25,14 +25,13 @@
                 <div class="grid gap-8"
                 :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(12rem, 1fr))` }">
                     <div v-if="guias.length > 0" v-for="guia in guias" :key="guia.slug"
-                        class="card bg-base-100 shadow">
+                        class="card bg-base-100 shadow overflow-hidden">
                         <img :src="guia.imagen" :alt="guia.nombre" class="h-48 object-cover w-full" />
-                        <div class="p-4 flex flex-col flex-grow">
-                            <h2 class="text-lg font-bold mb-2">{{ guia.nombre }}</h2>
+                        <div class="p-4 flex flex-col flex-grow gap-7">
                             <!-- <p class="text-gray-700 text-sm">{{ guia.descripcion }}</p> -->
                             <Link :href="route('enciclopedia.guia', guia.slug)"
-                                class="btn btn-primary mt-auto">
-                                Ver guia
+                                class="btn mt-auto">
+                                {{guia.nombre}}
                             </Link>
                         </div>
                     </div>
