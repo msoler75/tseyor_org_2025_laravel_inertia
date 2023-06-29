@@ -57,7 +57,7 @@ export default [
                 title: "Radio",
                 route: "radio",
                 description: "Escucha comunicados y entrevistas en Radio Tseyor",
-                icon: "ph:calendar-duotone",
+                icon: "ph:radio-duotone",
               },
 
           ],
