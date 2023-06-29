@@ -22,7 +22,7 @@ const props = defineProps({
 const music = computed(() => {
     return {
         src: props.estado.audio_actual,
-        title: 'ererer',
+        title: props.estado.audio_actual.substr(props.estado.audio_actual.lastIndexOf('/')+1),
         artist: 'Radio Tseyor',
         startAt: props.estado.tiempo_sistema - props.estado.arranco_en
     }
