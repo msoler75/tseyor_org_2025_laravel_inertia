@@ -20,16 +20,14 @@
                 </div>
             </div>
 
-            ccid: {{ comentarioId }}
             <ResponderComentario v-if="user && respondiendo" class="my-7" :contenido-id="contenidoId" :key="comentarioId"
                 :comentario-id="comentarioId" @respondido="nuevaRespuesta" />
 
-            <div v-if="respuestas.length" class="list" :style="'--profundidad: ' + profundidad">
-                <TransitionGroup name="pop">
-                    <Comentario v-for="respuesta in respuestas" :key="respuesta.id" :autor="respuesta.autor"
+            <div v-show="respuestasList.length" :style="'--profundidad: ' + profundidad">
+                <TransitionGroup name="comment">
+                    <Comentario v-for="respuesta in respuestasList" :key="respuesta.id" :autor="respuesta.autor"
                         :comentario-id="respuesta.id" :contenido-id="contenidoId" :fecha="respuesta.created_at"
-                        :texto="respuesta.texto" :respuestas="respuesta.respuestas" :profundidad="profundidad + 1"
-                        />
+                        :texto="respuesta.texto" :respuestas="respuesta.respuestas" :profundidad="profundidad + 1" />
                 </TransitionGroup>
             </div>
         </div>
@@ -56,16 +54,16 @@ const props = defineProps({
 });
 
 const respondiendo = ref(false)
-const respuestas = ref(props.respuestas)
+const respuestasList = ref(props.respuestas)
 
 function nuevaRespuesta(respuesta) {
     console.log('comentario.nuevaRespuesta', respuesta)
     if (respuesta.respuesta_a == props.comentarioId)
         respondiendo.value = false
-    respuestas.unshift({
+        respuestasList.value.unshift({
         id: Math.random(),
         autor,
-        texto: comentario.texto,
+        texto: respuesta.texto,
         respuesta_a: props.comentarioId,
         fecha: new Date()
     })
