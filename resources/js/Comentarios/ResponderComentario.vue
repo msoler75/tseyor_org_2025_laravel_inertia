@@ -1,16 +1,16 @@
 <template>
-    <div v-if="user && !respondido" class="w-full space-y-1 flex-grow flex gap-3">
+    <div class="w-full space-y-1 flex-grow flex gap-3">
         <img :src="'/storage/' + autor.imagen" class="w-16 h-16 rounded-full">
         <div class="w-full flex flex-col gap-3 mb-3">
             <!-- body -->
+            cid: {{ comentarioId }}
             <textarea class="rounded-lg w-full" v-model="texto"></textarea>
-            <div class="w-full flex justify-end"><button class="btn btn-primary" @click="responder">Enviar</button>
+            <div class="w-full flex justify-end">
+                <button class="btn btn-primary" @click="responder" :disabled="!texto">Enviar</button>
             </div>
         </div>
     </div>
 </template>
-
-
 
 
 <script setup>
@@ -18,13 +18,12 @@ import { usePage } from '@inertiajs/vue3';
 const page = usePage()
 const user = page.props.auth.user
 const props = defineProps({
-    contenidoId: { type: String }
+    comentarioId: { type: String | Number }
 })
 
 const emit = defineEmits(['respondido'])
 
 const texto = ref("")
-const respondido = ref(false)
 const autor = computed(() => (
     {
         id: user.id,
@@ -34,7 +33,9 @@ const autor = computed(() => (
 ))
 
 function responder() {
-    respondido.value = true
-    emit('respondido', texto.value);
+    const respuesta = { respuesta_a: props.comentarioId, texto: texto.value }
+    console.log('respondercomentario.derponder', respuesta)
+    emit('respondido', respuesta);
+    texto.value = ""
 }
 </script>

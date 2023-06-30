@@ -13,20 +13,24 @@
                         <div>{{ texto }}</div>
                     </div>
                     <!-- actions -->
-                    <div class="pl-3 flex gap-5 text-sm" v-if="page.props.auth.user && !respondiendo">
+                    <div class="pl-3 flex gap-5 text-sm" v-if="user && !respondiendo">
                         <!-- <a href="#">Me gusta</a> -->
                         <span @click="respondiendo = true" class="cursor-pointer">Responder</span>
                     </div>
                 </div>
             </div>
 
-            <ResponderComentario v-if="respondiendo" class="my-7" :contenido-id="contenidoId" :responder-a="comentarioId"
-                @respondido="nuevaRespuesta" />
+            ccid: {{ comentarioId }}
+            <ResponderComentario v-if="user && respondiendo" class="my-7" :contenido-id="contenidoId" :key="comentarioId"
+                :comentario-id="comentarioId" @respondido="nuevaRespuesta" />
 
             <div v-if="respuestas.length" class="list" :style="'--profundidad: ' + profundidad">
-                <Comentario v-for="respuesta in respuestas" :key="respuesta.id" :autor="respuesta.autor"
-                    :fecha="respuesta.created_at" :texto="respuesta.texto" :respuestas="respuesta.respuestas"
-                    :profundidad="profundidad + 1"></Comentario>
+                <TransitionGroup name="pop">
+                    <Comentario v-for="respuesta in respuestas" :key="respuesta.id" :autor="respuesta.autor"
+                        :comentario-id="respuesta.id" :contenido-id="contenidoId" :fecha="respuesta.created_at"
+                        :texto="respuesta.texto" :respuestas="respuesta.respuestas" :profundidad="profundidad + 1"
+                        />
+                </TransitionGroup>
             </div>
         </div>
     </div>
@@ -34,7 +38,6 @@
 
 <script setup>
 import { usePage } from '@inertiajs/vue3';
-const page = usePage()
 
 const props = defineProps({
     comentarioId: String | Number,
@@ -52,19 +55,23 @@ const props = defineProps({
     }
 });
 
+const respondiendo = ref(false)
 const respuestas = ref(props.respuestas)
 
-const respondiendo = ref(false)
-
 function nuevaRespuesta(respuesta) {
-    respondiendo.value = false
-    respuestas.value.unshift({
+    console.log('comentario.nuevaRespuesta', respuesta)
+    if (respuesta.respuesta_a == props.comentarioId)
+        respondiendo.value = false
+    respuestas.unshift({
+        id: Math.random(),
         autor,
-        texto: respuesta,
+        texto: comentario.texto,
+        respuesta_a: props.comentarioId,
         fecha: new Date()
     })
 }
 
+const page = usePage()
 const user = page.props.auth.user
 const autor = computed(() => (
     {
