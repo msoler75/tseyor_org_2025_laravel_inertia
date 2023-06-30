@@ -3,13 +3,16 @@
         <div class="w-full sticky top-4 pt-16 border-b  bg-gray-100 px-4 pb-0 z-10 sm:px-6 lg:px-8">
 
             <div class="w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
-                <h1 :title="ruta" v-if="!seleccionando" class="w-full mb-0 text-ellipsis overflow-hidden flex gap-4 items-center">
-                    <Icon icon="ph:folder-notch-open-duotone"/>
-                    {{ ruta }}</h1>
+                <h1 :title="ruta" v-if="!seleccionando"
+                    class="w-full mb-0 text-ellipsis overflow-hidden flex gap-4 items-center">
+                    <Icon icon="ph:folder-notch-open-duotone" />
+                    {{ ruta }}
+                </h1>
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
 
-                    <button v-if="seleccionando" class="btn btn-secondary flex gap-3 items-center" @click="cancelarSeleccion">
+                    <button v-if="seleccionando" class="btn btn-secondary flex gap-3 items-center"
+                        @click="cancelarSeleccion">
                         <Icon icon="material-symbols:close-rounded" />
                         <span>{{ itemsSeleccionados.length }}</span>
                     </button>
@@ -189,7 +192,7 @@
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
-                                        <button class="btn btn-secondary p-3">
+                                        <button class="btn p-3">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
                                         </button>
                                     </template>
@@ -279,7 +282,7 @@
                             <div class="w-full flex justify-end">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
-                                        <button class="btn btn-secondary p-1">
+                                        <button class="btn p-1">
                                             <Icon icon="mdi:dots-horizontal" class="text-xl" />
                                         </button>
                                     </template>
@@ -447,15 +450,10 @@
 </template>
 
 <script setup>
-//import { Link, router, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-
-//
 import Dropzone from 'vue2-dropzone-vue3'
-
-
-
 import { useFilesStore } from '@/Stores/files';
+import { router } from '@inertiajs/vue3';
 
 defineOptions({ layout: AppLayout })
 
@@ -463,8 +461,6 @@ const props = defineProps({
     ruta: {},
     items: {}
 });
-
-const items = ref([...props.items])
 
 // icono de carpeta
 const folderIcon = 'ph:folder-simple-duotone';
@@ -476,24 +472,24 @@ const seleccionando = ref(false)
 
 function cancelarSeleccion() {
     seleccionando.value = false
-    items.value.forEach(item => item.seleccionado = false)
+    props.items.forEach(item => item.seleccionado = false)
 }
 
 function seleccionarTodos() {
-    items.value.forEach(item => item.seleccionado = true)
+    props.items.forEach(item => item.seleccionado = true)
 }
 
 // verifica que cuando no hay ningun item seleccionado, se termina el modo de selección
 function verificarFinSeleccion() {
     if (!seleccionando.value) return
     if (screen.width >= 1024) return
-    const alguno = items.value.find(item => item.seleccionado)
+    const alguno = props.items.find(item => item.seleccionado)
     if (!alguno)
         seleccionando.value = false
 }
 
 // si hay alfun cambio en los items
-watch(() => items, verificarFinSeleccion, { deep: true })
+watch(() => props.items, verificarFinSeleccion, { deep: true })
 
 // EVENTOS TOUCH
 
@@ -522,7 +518,7 @@ function toggleItem(item) {
     item.touching = false
 }
 
-const itemsSeleccionados = computed(() => items.value.filter(item => item.seleccionado))
+const itemsSeleccionados = computed(() => props.items.filter(item => item.seleccionado))
 
 
 
@@ -574,7 +570,7 @@ function cancelarOperacion() {
     store.isCopyingFiles = false
     store.filesToMove = []
     store.filesToCopy = []
-    items.value.forEach(item => { item.seleccionado = false })
+    props.items.forEach(item => { item.seleccionado = false })
 }
 
 
@@ -618,8 +614,8 @@ const ordenarPor = ref("fechaDesc")
 
 const itemsOrdenados = computed(() => {
     // Separar las carpetas y los archivos en dos grupos
-    const carpetas = items.value.filter(item => item.tipo === 'carpeta');
-    const archivos = items.value.filter(item => item.tipo !== 'carpeta');
+    const carpetas = props.items.filter(item => item.tipo === 'carpeta');
+    const archivos = props.items.filter(item => item.tipo !== 'carpeta');
 
     switch (ordenarPor.value) {
         case 'normal':
@@ -646,11 +642,11 @@ const itemsOrdenados = computed(() => {
 
         case 'nombreAsc':
             // Ordenar todos los elementos por nombre ascendente
-            return items.value.sort((a, b) => a.nombre.localeCompare(b.nombre));
+            return props.items.sort((a, b) => a.nombre.localeCompare(b.nombre));
 
         case 'nombreDesc':
             // Ordenar todos los elementos por nombre descendente
-            return items.value.sort((a, b) => b.nombre.localeCompare(a.nombre));
+            return props.items.sort((a, b) => b.nombre.localeCompare(a.nombre));
 
         case 'tamañoAsc':
             // Ordenar los archivos por tamaño ascendente
@@ -664,7 +660,7 @@ const itemsOrdenados = computed(() => {
 
         default:
             // Si el criterio de ordenación no coincide, devolver el listado sin cambios
-            return items.value;
+            return props.items;
     }
 });
 
@@ -701,7 +697,7 @@ function renombrarItem() {
     })
         .then(response => {
             console.log({ response })
-            const item = items.value.find(it => it.nombre == itemRenombrando.value.nombre)
+            const item = props.items.find(it => it.nombre == itemRenombrando.value.nombre)
             item.nombre = nuevoNombre.value
         })
         .catch(err => {
@@ -752,9 +748,9 @@ function eliminarArchivo() {
     axios.delete(url)
         .then(response => {
             // reloadPage()
-            const idx = items.value.findIndex(item => item.nombre == itemAEliminar.value.nombre)
+            const idx = props.items.findIndex(item => item.nombre == itemAEliminar.value.nombre)
             if (idx != -1)
-                items.value.splice(idx, 1)
+                props.items.splice(idx, 1)
         })
         .catch(err => {
             const errorMessage = err.response.data.error || 'Ocurrió un error al eliminar el archivo'
@@ -835,7 +831,9 @@ const toggleVista = () => {
 
 
 function reloadPage() {
-    router.get("/" + props.ruta)
+    router.reload({
+        only: ['items']
+    })
 }
 </script>
 
