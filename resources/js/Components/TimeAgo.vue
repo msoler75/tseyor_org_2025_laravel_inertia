@@ -17,11 +17,11 @@ const formattedDate = computed(() => {
         const fechaActual = new Date(); // Fecha actual
 
         const fechaPublicacion =
-  props.date instanceof Date
-    ? props.date
-    : typeof props.date === 'number'
-    ? new Date(props.date * 1000)
-    : new Date(props.date);
+            props.date instanceof Date
+                ? props.date
+                : typeof props.date === 'number'
+                    ? new Date(props.date * 1000)
+                    : new Date(props.date);
 
         const title = fechaPublicacion.toLocaleString();
 
@@ -57,6 +57,6 @@ const formattedDate = computed(() => {
 });
 
 function pluralize(word, count) {
-  return count === 1 ? word : word.endsWith('s') ? `${word}es` : `${word}s`;
+    return count === 1 ? word : word.endsWith('s') ? `${word}es` : `${word}s`;
 }
 </script>
