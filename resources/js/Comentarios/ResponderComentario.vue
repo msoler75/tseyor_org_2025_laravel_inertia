@@ -60,6 +60,9 @@ function responder() {
     // limpiamos el mensaje de error
     error.value = ""
 
+    // guardamos el texto por si lo hemos de recuperar
+    const oldTexto = texto.value
+
     axios.post(route('comentario.nuevo'), {
         contenido_id: props.contenidoId,
         respuesta_a: props.comentarioId,
@@ -70,6 +73,7 @@ function responder() {
         })
         .catch(err => {
             error.value = "No se ha podido enviar el comentario."
+            texto.value = oldTexto
         })
 
     texto.value = ""
