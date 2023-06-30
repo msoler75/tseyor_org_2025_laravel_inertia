@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+// use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Comentario;
@@ -10,6 +11,11 @@ class ComentariosController extends Controller
 {
     public function index(Request $request)
     {
+        // funcionan ambos métodos
+        // $user = auth()->user();
+        // $user = $request->user();
+        // dd($user);
+
         $cid = $request->input('contenido_id') ?? "";
 
         if (!$cid)
@@ -85,8 +91,8 @@ class ComentariosController extends Controller
                     $comentario['respuestas'][] = agregar_comentario($comentarios, $respuesta);
                 }
 
-                 // Agregamos el comentario raíz al árbol
-                 $arbol_comentarios[] = $comentario;
+                // Agregamos el comentario raíz al árbol
+                $arbol_comentarios[] = $comentario;
             }
         }
 
@@ -98,7 +104,33 @@ class ComentariosController extends Controller
 
     public function create(Request $request)
     {
-        // ...
+        $contenido_id = $request->contenido_id;
+        $respuesta_a = $request->respuesta_a ?? null;
+        $texto = $request->texto;
+
+        if (!$texto || !$contenido_id) {
+            return response()->json(['error' => 'Faltan parámetros'], 400);
+        }
+
+        // dd(Auth::user());
+        //dd($contenido_id);
+
+         /* return response()->json(
+            [],
+            404
+        ); */
+
+        $comentario = new Comentario;
+        $comentario->texto = $texto;
+        $comentario->contenido_id = $contenido_id;
+        $comentario->user_id = auth()->user()->id; // Asignar el ID del usuario autenticado
+        $comentario->respuesta_a = $respuesta_a;
+        $comentario->save();
+
+        return response()->json(
+            $comentario->toArray(),
+            200
+        );
     }
 }
 
