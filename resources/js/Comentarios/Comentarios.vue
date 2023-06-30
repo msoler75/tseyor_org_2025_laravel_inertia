@@ -10,6 +10,7 @@
                             :comentario-id="comentario.id" :contenido-id="contenidoId" :fecha="comentario.created_at"
                             :texto="comentario.texto" :respuestas="comentario.respuestas" />
                     </TransitionGroup>
+                    <p v-if="!cargando && !comentarios.length">No hay comentarios</p>
                 </div>
             </div>
         </div>
@@ -34,11 +35,13 @@ function nuevoComentario(comentario) {
 }
 
 const comentarios = ref([])
+const cargando = ref(true)
 
 // cargamos los comentarios de este contenido
 onMounted(() => {
     axios.get(route('comentarios') + '?contenido_id=' + props.contenidoId).then(response => {
         comentarios.value = response.data.comentarios
+        cargando.value = false
     })
 })
 

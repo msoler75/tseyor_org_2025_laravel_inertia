@@ -21,7 +21,7 @@
             </div>
 
             <ResponderComentario v-if="user && respondiendo" class="my-7" :contenido-id="contenidoId" :key="comentarioId"
-                :comentario-id="comentarioId" @respondido="nuevaRespuesta" />
+                :focus="true" :comentario-id="comentarioId" @respondido="nuevaRespuesta" />
 
             <div v-show="respuestasList.length" :style="'--profundidad: ' + profundidad">
                 <TransitionGroup name="comment">
@@ -60,7 +60,7 @@ function nuevaRespuesta(respuesta) {
     console.log('comentario.nuevaRespuesta', respuesta)
     if (respuesta.respuesta_a == props.comentarioId)
         respondiendo.value = false
-        respuestasList.value.unshift({
+    respuestasList.value.unshift({
         id: Math.random(),
         autor,
         texto: respuesta.texto,

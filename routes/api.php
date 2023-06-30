@@ -30,6 +30,17 @@ Route::put('/files/mkdir', [FilesController::class, 'createFolder'])->name('file
 Route::delete('/files{ruta}', [FilesController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
 
 
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+});
+
 
 Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comentarios');
-// Route::post('/comentariosX', [ComentariosController::class, 'create'])->name('comentario.nuevo');
+
+Route::middleware(['web'])->group(function () {
+    Route::post('/comentarios', [ComentariosController::class, 'create'])->name('comentario.nuevo');
+})
+    ->middleware(['auth']);

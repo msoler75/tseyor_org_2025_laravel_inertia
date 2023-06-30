@@ -23,6 +23,9 @@ use App\Pigmalion\SEO;
 
 
 
+use App\Http\Controllers\Api\ComentariosController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -127,3 +130,7 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
+
+
+Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comentarios');

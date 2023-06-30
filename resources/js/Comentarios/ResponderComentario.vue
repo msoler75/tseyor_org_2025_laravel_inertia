@@ -3,9 +3,20 @@
         <img :src="'/storage/' + autor.imagen" class="w-16 h-16 rounded-full">
         <div class="w-full flex flex-col gap-3 mb-3">
             <!-- body -->
-            <textarea class="rounded-lg w-full" v-model="texto"></textarea>
-            <div class="w-full flex justify-end">
-                <button class="btn btn-primary" @click="responder" :disabled="!texto">Enviar</button>
+            <form @submit.prevent="responder">
+                <textarea class="rounded-lg w-full" v-model="texto" placeholder="Escribe tu comentario..."
+                    @keydown.ctrl.enter="responder" ref="inputText"></textarea>
+                <div class="w-full flex justify-end">
+                    <button class="btn btn-primary" @click="responder" :disabled="!texto">Enviar</button>
+                </div>
+            </form>
+            <div v-if="error" class="alert alert-error">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ error }}</span>
             </div>
         </div>
     </div>
@@ -14,15 +25,29 @@
 
 <script setup>
 import { usePage } from '@inertiajs/vue3';
+import axios from 'axios';
+import { nextTick, onMounted } from 'vue';
 const page = usePage()
 const user = page.props.auth.user
 const props = defineProps({
-    comentarioId: String | Number
+    comentarioId: String | Number,
+    contenidoId: String,
+    focus: Boolean
+})
+
+const inputText = ref(null)
+
+onMounted(() => {
+    if (props.focus)
+        nextTick(() => {
+            inputText.value.focus()
+        })
 })
 
 const emit = defineEmits(['respondido'])
 
 const texto = ref("")
+const error = ref(null)
 const autor = computed(() => (
     {
         id: user.id,
@@ -32,9 +57,21 @@ const autor = computed(() => (
 ))
 
 function responder() {
-    const respuesta = { id:Math.random(),respuesta_a: props.comentarioId, texto: texto.value }
-    console.log('respondercomentario.derponder', respuesta)
-    emit('respondido', respuesta);
+    // limpiamos el mensaje de error
+    error.value = ""
+
+    axios.post(route('comentario.nuevo'), {
+        contenido_id: props.contenidoId,
+        respuesta_a: props.comentarioId,
+        texto: texto.value
+    })
+        .then(respuesta => {
+            emit('respondido', respuesta.data);
+        })
+        .catch(err => {
+            error.value = "No se ha podido enviar el comentario."
+        })
+
     texto.value = ""
 }
 </script>
