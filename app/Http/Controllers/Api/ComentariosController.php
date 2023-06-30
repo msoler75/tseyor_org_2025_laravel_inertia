@@ -17,29 +17,84 @@ class ComentariosController extends Controller
                 'error' => 'debe especificar contenido_id'
             ], 400);
 
+        // obtenemos todos los comentarios de la base de datos
         $comentarios = Comentario::join('users', 'comentarios.user_id', '=', 'users.id')
             ->where('contenido_id', $cid)
             ->select('comentarios.*', 'users.name as user_name', 'users.profile_photo_path as user_photo')
             ->get()
             ->toArray();
 
-        foreach ($comentarios as $idx => $comment) {
-            $comentarios[$idx]['autor'] = [
-                'id' => $comment['user_id'],
-                'nombre' => $comment['user_name'],
-                'imagen' => $comment['user_photo']
+
+        // funciones auxiliares
+        function buscar_respuestas($comentarios, $comentario_id)
+        {
+            $respuestas = [];
+
+            foreach ($comentarios as $comment) {
+                if ($comment['respuesta_a'] == $comentario_id) {
+                    $respuestas[] = $comment;
+                }
+            }
+
+            return $respuestas;
+        }
+
+        function agregar_comentario($comentarios, $comentario)
+        {
+            $comentario_anidado = [
+                'id' => $comentario['id'],
+                'texto' => $comentario['texto'],
+                'fecha' => $comentario['created_at'],
+                'autor' => [
+                    'id' => $comentario['user_id'],
+                    'nombre' => $comentario['user_name'],
+                    'imagen' => $comentario['user_photo']
+                ],
+                'respuestas' => []
             ];
-            unset($comentarios[$idx]['contenido_id']);
-            unset($comentarios[$idx]['user_id']);
-            unset($comentarios[$idx]['user_name']);
-            unset($comentarios[$idx]['user_photo']);
-            // unset($comentarios[$idx]['author']);
+
+            // Buscamos y agregamos las respuestas al comentario anidado
+            $respuestas = buscar_respuestas($comentarios, $comentario['id']);
+            foreach ($respuestas as $respuesta) {
+                $comentario_anidado['respuestas'][] = agregar_comentario($comentarios, $respuesta);
+            }
+
+            return $comentario_anidado;
+        }
+
+        // creamos el árbol de comentarios
+        $arbol_comentarios = [];
+
+        foreach ($comentarios as $idx => $comment) {
+            if (!$comment['respuesta_a']) { // Si es un comentario raíz
+                $comentario = [
+                    'id' => $comment['id'],
+                    'texto' => $comment['texto'],
+                    'fecha' => $comment['created_at'],
+                    'autor' => [
+                        'id' => $comment['user_id'],
+                        'nombre' => $comment['user_name'],
+                        'imagen' => $comment['user_photo']
+                    ],
+                    'respuestas' => []
+                ];
+
+                // Buscamos y agregamos las respuestas al comentario raíz
+                $respuestas = buscar_respuestas($comentarios, $comment['id']);
+                foreach ($respuestas as $respuesta) {
+                    $comentario['respuestas'][] = agregar_comentario($comentarios, $respuesta);
+                }
+
+                 // Agregamos el comentario raíz al árbol
+                 $arbol_comentarios[] = $comentario;
+            }
         }
 
         return response()->json([
-            'comentarios' => $comentarios
+            'comentarios' => $arbol_comentarios
         ], 200);
     }
+
 
     public function create(Request $request)
     {

@@ -10,26 +10,26 @@
 
 @layer base {
     h1 {
-        @apply text-4xl mb-9 font-bold leading-tight ;
+        @apply text-4xl mb-9 font-bold leading-tight;
     }
 
     h2 {
-        @apply text-3xl mb-7 font-semibold ;
+        @apply text-3xl mb-7 font-semibold;
     }
 
     h3 {
-        @apply text-2xl mb-5 font-semibold ;
+        @apply text-2xl mb-5 font-semibold;
     }
 
     p {
-        @apply my-6 text-base ;
+        @apply my-6 text-base;
     }
 
     ul {
-        @apply list-disc pl-8 ;
+        @apply list-disc pl-8;
     }
 
-    p a{
+    p a {
         @apply text-blue-500 underline;
     }
 
@@ -85,11 +85,11 @@
 
     /* Estilos para formularios */
     label {
-        @apply block font-semibold  mb-2;
+        @apply block font-semibold mb-2;
     }
 
     input {
-        @apply block w-full px-4 py-2 leading-tight  bg-base-100 border border-gray-400 rounded shadow appearance-none focus:outline-none;
+        @apply block w-full px-4 py-2 leading-tight bg-base-100 border border-gray-400 rounded shadow appearance-none focus:outline-none;
     }
 
     select {
@@ -132,3 +132,14 @@
 
 
 
+
+.pop-enter-active,
+.pop-leave-active {
+    transition: transform 0.3s ease;
+}
+
+/* Define el estado inicial */
+.pop-enter,
+.pop-leave-to {
+    transform: scale(0);
+}
