@@ -3,7 +3,6 @@
         <img :src="'/storage/' + autor.imagen" class="w-16 h-16 rounded-full">
         <div class="w-full flex flex-col gap-3 mb-3">
             <!-- body -->
-            cid: {{ comentarioId }}
             <textarea class="rounded-lg w-full" v-model="texto"></textarea>
             <div class="w-full flex justify-end">
                 <button class="btn btn-primary" @click="responder" :disabled="!texto">Enviar</button>
@@ -18,7 +17,7 @@ import { usePage } from '@inertiajs/vue3';
 const page = usePage()
 const user = page.props.auth.user
 const props = defineProps({
-    comentarioId: { type: String | Number }
+    comentarioId: String | Number
 })
 
 const emit = defineEmits(['respondido'])
@@ -33,7 +32,7 @@ const autor = computed(() => (
 ))
 
 function responder() {
-    const respuesta = { respuesta_a: props.comentarioId, texto: texto.value }
+    const respuesta = { id:Math.random(),respuesta_a: props.comentarioId, texto: texto.value }
     console.log('respondercomentario.derponder', respuesta)
     emit('respondido', respuesta);
     texto.value = ""
