@@ -39,7 +39,7 @@ function updateDarkState() {
     if (isDark.value)
         document.documentElement.setAttribute('data-theme', 'winter')
     else
-        document.documentElement.setAttribute('data-theme', 'summe')
+        document.documentElement.removeAttribute('data-theme')
 }
 
 watch(isDark, value => {
