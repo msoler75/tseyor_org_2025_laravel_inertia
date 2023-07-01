@@ -65,6 +65,73 @@ localStorage.theme = 'dark'
 localStorage.removeItem('theme')
 */
 
+
+/*
+
+tri-estado:
+
+
+<template>
+  <div :class="theme">
+    <!-- Contenido de la aplicación aquí -->
+  </div>
+</template>
+
+<script setup>
+import { useDark, useColorScheme } from 'vue-use';
+
+    const isDark = useDark();
+    const colorScheme = useColorScheme();
+
+    // Variable de estado que controla el tema actual
+    const currentTheme = Vue.ref('system');
+
+    // Función para actualizar el tema actual
+    const updateTheme = () => {
+      if (currentTheme.value === 'system') {
+        currentTheme.value = colorScheme.value;
+      }
+    };
+
+    // Actualiza el tema cuando cambia el color esquema
+    Vue.watch(colorScheme, updateTheme);
+
+    // Función para cambiar el tema manualmente
+    const setTheme = (theme) => {
+      currentTheme.value = theme;
+    };
+
+    // Vigila los cambios en la variable de estado currentTheme
+    Vue.watch(currentTheme, (theme) => {
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else if (theme === 'dark') {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      } else if (theme === 'system') {
+        updateTheme();
+
+        if (currentTheme.value === 'light') {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        } else if (currentTheme.value === 'dark') {
+          document.documentElement.classList.remove('light');
+          document.documentElement.classList.add('dark');
+        }
+      }
+    });
+
+    // Retorna la variable de estado currentTheme y la función setTheme
+    return {
+      currentTheme,
+      setTheme,
+    };
+  },
+};
+
+*/
+
 </script>
 
 <template>

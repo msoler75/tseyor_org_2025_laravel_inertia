@@ -46,8 +46,8 @@
                         <img :src="libro.imagen" :alt="libro.titulo" class="w-1/2 object-cover" />
                         <div class="p-4 flex flex-col">
                             <h2 class="text-lg font-bold leading-6 mb-4">{{ libro.titulo }}</h2>
-                            <div class="flex justify-between text-xs">
-                                <div class="badge badge-primary badge-outline">
+                            <div class="flex flex-wrap justify-between text-xs gap-3">
+                                <div class="badge badge-primary badge-outline whitespace-nowrap">
                                     <Link :href="`${route('libros')}?categoria=${libro.categoria}`">
                                     {{ libro.categoria }}
                                     </Link>
