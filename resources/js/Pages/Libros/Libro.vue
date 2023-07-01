@@ -19,7 +19,9 @@
                 <div class="prose" v-html="libro.descripcion"></div>
                 <div class="w-full flex justify-center sm:justify-end mt-7">
 
-                    <a class="btn btn-primary w-fit flex gap-3" :href="libro.pdf" download><Icon icon="ph:download-duotone"/> Descargar en PDF</a>
+                    <a class="btn btn-primary w-fit flex gap-3" :href="libro.pdf" download>
+                        <Icon icon="ph:download-duotone" /> Descargar en PDF
+                    </a>
                 </div>
             </div>
         </div>
@@ -29,13 +31,12 @@
         <h2 class="text-xl font-bold mt-8">Libros relacionados</h2>
         <div class="grid gap-4 mt-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
 
-            <div v-for="libro in relacionados" :key="libro.id"
-                class="card flex-row bg-base-100 shadow">
+            <div v-for="libro in relacionados" :key="libro.id" class="card flex-row bg-base-100 shadow">
                 <img :src="libro.imagen" :alt="libro.titulo" class="w-1/2 object-cover" />
                 <div class="p-4 flex flex-col">
                     <h2 class="text-lg font-bold leading-6 mb-4">{{ libro.titulo }}</h2>
-                    <div class="flex justify-between text-xs">
-                        <div class="badge badge-primary badge-outline">
+                    <div class="flex flex-wrap justify-between text-xs gap-3">
+                        <div class="badge badge-primary badge-outline whitespace-nowrap">
                             <Link :href="`${route('libros')}?categoria=${libro.categoria}`">
                             {{ libro.categoria }}
                             </Link>
