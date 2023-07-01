@@ -5,9 +5,9 @@ import { useDark, useToggle } from "@vueuse/core";
 
 const page = usePage()
 
-const anuncio = computed(() => page.props.anuncio || '');
 const nav = useNav()
 const sideBarShow = ref(false)
+const anuncio = computed(() => page.props.anuncio || '');
 
 nav.announce = !!anuncio
 
@@ -36,14 +36,13 @@ const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
 function updateDarkState() {
-    console.log('updateDarkState', isDark.value)
-    if(isDark.value)
-    document.documentElement.setAttribute('data-theme', 'winter')
+    if (isDark.value)
+        document.documentElement.setAttribute('data-theme', 'winter')
     else
-    document.documentElement.removeAttribute('data-theme')
+        document.documentElement.setAttribute('data-theme', 'summe')
 }
 
-watch(isDark, value=> {
+watch(isDark, value => {
     updateDarkState()
 })
 
@@ -80,9 +79,7 @@ localStorage.removeItem('theme')
 
         <div class="bg-base-200">
             <nav class="w-full border-gray-300 dark:border-gray-700 bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "
-                :data-theme="
-
-                    (portada && nav.scrollY < 300 ? 'bg-transparent ' : portada ? 'bg-opacity-20 hover:bg-opacity-100 transition duration-200 ' : 'border-b ') +
+                :data-theme="portada && nav.scrollY < 300 ? 'winter' : ''" :class="(portada && nav.scrollY < 300 ? 'dark bg-transparent ' : portada ? 'bg-opacity-20 hover:bg-opacity-100 transition duration-200 ' : 'border-b ') +
                     (nav.defaultClass + ' ' + (nav.fullPage ? 'fixed border-gray-300 ' : 'sticky ')) +
                     (nav.fullPage && nav.announce ? 'top-[2rem] ' : 'top-0 ')">
                 <!-- Primary Navigation Menu -->

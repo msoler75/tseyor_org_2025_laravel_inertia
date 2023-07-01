@@ -4,7 +4,7 @@
         <Section :style="{
             background: 'black url(/storage/imagenes/portada/earth-1756274.jpg) bottom',
             backgroundSize: 'cover'
-        }" data-theme="dark">
+        }" data-theme="winter">
             <Hero title="Contacto Extraterrestre" xsrcImage="/storage/imagenes/portada/unidad.jpg" :href="route('cursos')"
                 buttonLabel="Curso gratuito" textClass="bg-black bg-opacity-70 p-5 rounded-xl justify-center" image-right>
                 <blockquote>En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
