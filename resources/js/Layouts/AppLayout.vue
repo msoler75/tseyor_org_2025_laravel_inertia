@@ -1,9 +1,11 @@
 <script setup>
 import { Head, usePage, router } from '@inertiajs/vue3';
 import { useNav } from '@/Stores/nav'
+import { useDark, useToggle } from "@vueuse/core";
+
 const page = usePage()
 
-const anuncio = computed(()=>page.props.anuncio || '');
+const anuncio = computed(() => page.props.anuncio || '');
 const nav = useNav()
 const sideBarShow = ref(false)
 
@@ -13,11 +15,11 @@ defineProps({
     title: String,
 });
 
-const portada = computed(()=>page.url=='/')
+const portada = computed(() => page.url == '/')
 
 const showingNavigationDropdown = ref(false);
 
-const switchToEquipo = (team) => {
+const switchToTeam = (team) => {
     router.put(route('current-team.update'), {
         team_id: team.id,
     }, {
@@ -29,11 +31,46 @@ const logout = () => {
     router.post(route('logout'));
 };
 
+// DARK MODE
+const isDark = useDark();
+const toggleDark = useToggle(isDark);
+
+function updateDarkState() {
+    console.log('updateDarkState', isDark.value)
+    if(isDark.value)
+    document.documentElement.setAttribute('data-theme', 'winter')
+    else
+    document.documentElement.removeAttribute('data-theme')
+}
+
+watch(isDark, value=> {
+    updateDarkState()
+})
+
+updateDarkState()
+/*
+// On page load or when changing themes, best to add inline in `head` to avoid FOUC
+if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  document.documentElement.classList.add('dark')
+} else {
+  document.documentElement.classList.remove('dark')
+}
+
+// Whenever the user explicitly chooses light mode
+localStorage.theme = 'light'
+
+// Whenever the user explicitly chooses dark mode
+localStorage.theme = 'dark'
+
+// Whenever the user explicitly chooses to respect the OS preference
+localStorage.removeItem('theme')
+*/
+
 </script>
 
 <template>
     <div class="">
-        <Announcement :text="anuncio" :class="nav.fullPage?'w-full fixed top-0 z-40':'block'"/>
+        <Announcement :text="anuncio" :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'" />
 
         <NavAside :show="sideBarShow" @close="sideBarShow = false" class="lg:hidden" />
 
@@ -41,13 +78,13 @@ const logout = () => {
 
         <Banner />
 
-        <div class="bg-gray-100">
+        <div class="bg-base-200">
             <nav class="w-full border-gray-300 dark:border-gray-700 bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "
-            :data-theme="(portada&&nav.scrollY<300?'dark':'light')"
-            :class="
-            (portada&&nav.scrollY<300?'bg-transparent ':portada?'bg-opacity-20 hover:bg-opacity-100 transition duration-200 ':'border-b ')+
-            (nav.defaultClass+' ' + (nav.fullPage?'fixed border-gray-300 ':'sticky '))+
-            (nav.fullPage&&nav.announce?'top-[2rem] ':'top-0 ')">
+                :data-theme="
+
+                    (portada && nav.scrollY < 300 ? 'bg-transparent ' : portada ? 'bg-opacity-20 hover:bg-opacity-100 transition duration-200 ' : 'border-b ') +
+                    (nav.defaultClass + ' ' + (nav.fullPage ? 'fixed border-gray-300 ' : 'sticky ')) +
+                    (nav.fullPage && nav.announce ? 'top-[2rem] ' : 'top-0 ')">
                 <!-- Primary Navigation Menu -->
 
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,11 +93,14 @@ const logout = () => {
                         <div class="hidden lg:flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
-                                <Link :href="route('portada')"
-                                 class="rounded-full outline outline-white">
+                                <Link :href="route('portada')" class="rounded-full outline outline-white">
                                 <ApplicationMark class="block h-11 w-auto" />
                                 </Link>
                             </div>
+
+                            <button @click="toggleDark()" class="px-4 py-2 text-white bg-gray-600 dark:bg-purple-700">
+                                Dark Toggle
+                            </button>
 
                             <!-- Navigation Links -->
                             <div class="hidden top-navigation space-x-8 sm:-my-px sm:ml-10 sm:flex">
@@ -101,7 +141,7 @@ const logout = () => {
                                             <div class="flex flex-col gap-7 mb-7">
                                                 <Link :href="item.url" v-for="item of section.items" :key="item.url"
                                                     @click="nav.closeTabs"
-                                                    class="flex gap-3 p-3 rounded-lg hover:bg-blue-50 transition duration-100 cursor-pointer">
+                                                    class="flex gap-3 p-3 rounded-lg hover:bg-base-200 transition duration-100 cursor-pointer">
                                                 <div class="flex justify-start" style="min-width:2.2rem">
                                                     <Icon :icon="item.icon" class="text-3xl text-blue-400 flex-shrink-0" />
                                                 </div>
@@ -114,7 +154,7 @@ const logout = () => {
                                         </div>
                                     </div>
                                     <div v-if="nav.ghostTab.submenu.footer" v-html="nav.ghostTab.submenu.footer"
-                                        class="p-5 bg-gray-100" />
+                                        class="p-5 bg-base-100" />
                                 </div>
                             </div>
                         </transition>
@@ -124,8 +164,8 @@ const logout = () => {
                         <div v-if="$page.props.auth.user" class="hidden sm:flex sm:items-center sm:ml-6"
                             @mouseover="nav.closeTabs()">
                             <div class="ml-3 relative">
-                                <!-- Equipos Dropdown -->
-                                <Dropdown v-if="$page.props.jetstream.hasEquipoFeatures" align="right" width="60">
+                                <!-- Teams Dropdown -->
+                                <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button type="button"
@@ -144,34 +184,34 @@ const logout = () => {
 
                                     <template #content>
                                         <div class="w-60">
-                                            <!-- Equipo Management -->
-                                            <template v-if="$page.props.jetstream.hasEquipoFeatures">
+                                            <!-- Team Management -->
+                                            <template v-if="$page.props.jetstream.hasTeamFeatures">
                                                 <div class="block px-4 py-2 text-xs text-gray-400">
-                                                    Manage Equipo
+                                                    Manage Team
                                                 </div>
 
-                                                <!-- Equipo Settings -->
+                                                <!-- Team Settings -->
                                                 <DropdownLink
-                                                    :href="route('equipos.show', $page.props.auth.user.current_team)">
-                                                    Equipo Settings
+                                                    :href="route('teams.show', $page.props.auth.user.current_team)">
+                                                    Team Settings
                                                 </DropdownLink>
 
-                                                <DropdownLink v-if="$page.props.jetstream.canCreateEquipos"
-                                                    :href="route('equipos.create')">
-                                                    Create New Equipo
+                                                <DropdownLink v-if="$page.props.jetstream.canCreateTeams"
+                                                    :href="route('teams.create')">
+                                                    Create New Team
                                                 </DropdownLink>
 
-                                                <!-- Equipo Switcher -->
+                                                <!-- Team Switcher -->
                                                 <template v-if="$page.props.auth.user.all_teams.length > 1">
                                                     <div class="border-t border-gray-200 dark:border-gray-600" />
 
                                                     <div class="block px-4 py-2 text-xs text-gray-400">
-                                                        Switch Equipos
+                                                        Switch Teams
                                                     </div>
 
                                                     <template v-for="team in $page.props.auth.user.all_teams"
                                                         :key="team.id">
-                                                        <form @submit.prevent="switchToEquipo(team)">
+                                                        <form @submit.prevent="switchToTeam(team)">
                                                             <DropdownLink as="button">
                                                                 <div class="flex items-center">
                                                                     <svg v-if="team.id == $page.props.auth.user.current_team_id"
@@ -313,35 +353,35 @@ const logout = () => {
                                 </ResponsiveNavLink>
                             </form>
 
-                            <!-- Equipo Management -->
-                            <template v-if="$page.props.jetstream.hasEquipoFeatures">
+                            <!-- Team Management -->
+                            <template v-if="$page.props.jetstream.hasTeamFeatures">
                                 <div class="border-t border-gray-200 dark:border-gray-600" />
 
                                 <div class="block px-4 py-2 text-xs text-gray-400">
-                                    Manage Equipo
+                                    Manage Team
                                 </div>
 
-                                <!-- Equipo Settings -->
-                                <ResponsiveNavLink :href="route('equipos.show', $page.props.auth.user.current_team)"
-                                    :active="route().current('equipos.show')">
-                                    Equipo Settings
+                                <!-- Team Settings -->
+                                <ResponsiveNavLink :href="route('teams.show', $page.props.auth.user.current_team)"
+                                    :active="route().current('teams.show')">
+                                    Team Settings
                                 </ResponsiveNavLink>
 
-                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateEquipos"
-                                    :href="route('equipos.create')" :active="route().current('equipos.create')">
-                                    Create New Equipo
+                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')"
+                                    :active="route().current('teams.create')">
+                                    Create New Team
                                 </ResponsiveNavLink>
 
-                                <!-- Equipo Switcher -->
+                                <!-- Team Switcher -->
                                 <template v-if="$page.props.auth.user.all_teams.length > 1">
                                     <div class="border-t border-gray-200 dark:border-gray-600" />
 
                                     <div class="block px-4 py-2 text-xs text-gray-400">
-                                        Switch Equipos
+                                        Switch Teams
                                     </div>
 
                                     <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
-                                        <form @submit.prevent="switchToEquipo(team)">
+                                        <form @submit.prevent="switchToTeam(team)">
                                             <ResponsiveNavLink as="button">
                                                 <div v-if="$page.props.auth.user" class="flex items-center">
                                                     <svg v-if="team.id == $page.props.auth.user.current_team_id"
@@ -408,5 +448,12 @@ const logout = () => {
 }
 </style>
 
+<style>
+.navigation-tab {
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'><path fill='black' d='M12 20.5l-9-9v-2l9 9 9-9v2z'></path></svg>") 16 16, auto;
+}
 
-
+.dark .navigation-tab {
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'><path fill='white' d='M12 20.5l-9-9v-2l9 9 9-9v2z'></path></svg>") 16 16, auto;
+}
+</style>

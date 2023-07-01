@@ -1,19 +1,23 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
-const props = defineProps({
+  import { Link } from '@inertiajs/vue3';
+  const props = defineProps({
     href: String,
-    active: Boolean
-});
+    active: Boolean,
+  });
 
-const classes = computed(() => {
-    return props.active
-        ? 'inline-flex items-center px-1 pt-1 border-b-4 border-blue-400 dark:border-blue-600 text-sm font-medium leading-5 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-blue-700 transition duration-150 ease-in-out'
-        : 'inline-flex items-center px-1 pt-1 border-b-4 border-transparent text-sm font-medium leading-5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-blue-300 dark:hover:border-blue-700 focus:outline-none focus:text-gray-700 dark:focus:text-gray-300 focus:border-blue-300 dark:focus:border-blue-700 transition duration-150 ease-in-out';
-});
+  const baseClass = 'inline-flex items-center px-1 pt-1 border-b-4 text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out';
+
+  const classes = computed(() => {
+    return [
+      baseClass,
+      'text-gray-500 dark:text-gray-100 focus:text-gray-700 dark:focus:text-gray-300 focus:border-blue-300 dark:focus:border-blue-700 hover:border-blue-400 hover:dark:border-blue-600',
+      props.active ? 'border-blue-400 dark:border-blue-600 active' : 'border-transparent'
+    ].join(' ');
+  });
 </script>
 
 <template>
-    <component :is="href ? Link : 'div'" :href="href" :class="classes">
-        <slot />
-    </component>
+  <component :is="href ? Link : 'div'" :href="href" :class="classes" class="text-blue-900 dark:text-blue-50">
+    <slot />
+  </component>
 </template>

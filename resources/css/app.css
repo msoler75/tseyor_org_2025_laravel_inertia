@@ -38,11 +38,11 @@
     }
 
     code {
-        @apply bg-gray-100 p-1 font-mono text-sm;
+        @apply bg-base-200 p-1 font-mono text-sm;
     }
 
     pre {
-        @apply bg-gray-100 p-4 text-sm;
+        @apply bg-base-200 p-4 text-sm;
     }
 
 

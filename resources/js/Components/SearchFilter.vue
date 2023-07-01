@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center">
     <div class="flex w-full bg-base-100 rounded shadow">
-      <dropdown :auto-close="false" class="focus:z-10 px-4 hover:bg-gray-100 border-r focus:border-white rounded-l focus:ring md:px-6" placement="bottom-start">
+      <dropdown :auto-close="false" class="focus:z-10 px-4 hover:bg-base-200 border-r focus:border-white rounded-l focus:ring md:px-6" placement="bottom-start">
         <template #default>
           <div class="flex items-baseline">
             <span class="hidden text-gray-700 md:inline">Filter</span>
