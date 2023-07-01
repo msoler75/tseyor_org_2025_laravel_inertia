@@ -4,7 +4,7 @@
         <div class="w-full flex flex-col gap-3 mb-3">
             <!-- body -->
             <form @submit.prevent="responder">
-                <textarea class="rounded-lg w-full" v-model="texto" placeholder="Escribe tu comentario..."
+                <textarea class="textarea text-rounded-lg w-full" v-model="texto" placeholder="Escribe tu comentario..."
                     @keydown.ctrl.enter="responder" ref="inputText"></textarea>
                 <div class="w-full flex justify-end">
                     <button class="btn btn-primary" @click="responder" :disabled="!texto">Enviar</button>

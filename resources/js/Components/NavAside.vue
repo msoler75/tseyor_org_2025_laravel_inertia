@@ -30,7 +30,7 @@ const close = () => {
             <div v-if="show" class="fixed top-0 left-0 w-full h-full z-40" style="background:rgba(0,0,0,.4)"></div>
         </transition>
 
-        <div class="fixed top-0 left-0 h-full bg-gray-100 shadow-lg  transition duration-200 z-50 overflow-y-auto"
+        <div class="fixed top-0 left-0 h-full bg-base-100 shadow-lg transition duration-200 z-50 overflow-y-auto"
             :class="!show ? '-translate-x-full' : ''">
             <div class="rounded-r xl:hidden flex justify-between w-full p-6 items-center">
                 <!--- more free and premium Tailwind CSS components at https://tailwinduikit.com/ --->

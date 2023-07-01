@@ -10,16 +10,16 @@ const props = defineProps({
     team: Object,
 });
 
-const confirmingEquipoDeletion = ref(false);
+const confirmingTeamDeletion = ref(false);
 const form = useForm({});
 
-const confirmEquipoDeletion = () => {
-    confirmingEquipoDeletion.value = true;
+const confirmTeamDeletion = () => {
+    confirmingTeamDeletion.value = true;
 };
 
-const deleteEquipo = () => {
-    form.delete(route('equipos.destroy', props.team), {
-        errorBag: 'deleteEquipo',
+const deleteTeam = () => {
+    form.delete(route('teams.destroy', props.team), {
+        errorBag: 'deleteTeam',
     });
 };
 </script>
@@ -27,7 +27,7 @@ const deleteEquipo = () => {
 <template>
     <ActionSection>
         <template #title>
-            Delete Equipo
+            Delete Team
         </template>
 
         <template #description>
@@ -40,15 +40,15 @@ const deleteEquipo = () => {
             </div>
 
             <div class="mt-5">
-                <DangerButton @click="confirmEquipoDeletion">
-                    Delete Equipo
+                <DangerButton @click="confirmTeamDeletion">
+                    Delete Team
                 </DangerButton>
             </div>
 
-            <!-- Delete Equipo Confirmation Modal -->
-            <ConfirmationModal :show="confirmingEquipoDeletion" @close="confirmingEquipoDeletion = false">
+            <!-- Delete Team Confirmation Modal -->
+            <ConfirmationModal :show="confirmingTeamDeletion" @close="confirmingTeamDeletion = false">
                 <template #title>
-                    Delete Equipo
+                    Delete Team
                 </template>
 
                 <template #content>
@@ -56,7 +56,7 @@ const deleteEquipo = () => {
                 </template>
 
                 <template #footer>
-                    <SecondaryButton @click="confirmingEquipoDeletion = false">
+                    <SecondaryButton @click="confirmingTeamDeletion = false">
                         Cancel
                     </SecondaryButton>
 
@@ -64,9 +64,9 @@ const deleteEquipo = () => {
                         class="ml-3"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
-                        @click="deleteEquipo"
+                        @click="deleteTeam"
                     >
-                        Delete Equipo
+                        Delete Team
                     </DangerButton>
                 </template>
             </ConfirmationModal>
