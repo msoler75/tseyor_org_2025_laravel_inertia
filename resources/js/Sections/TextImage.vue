@@ -22,7 +22,11 @@
                 <div v-show="textPresent" class="prose md:my-5 text-justify hyphens-auto" ref="textdiv">
                     <slot class="text-lg text-justify"></slot>
                 </div>
-                <Link v-if="buttonLabel && href" :href="href" class="my-2 btn btn-primary">
+                <a v-if="buttonLabel && href && href.match(/\.(pdf|mp3|mp4|docx|jp?eg|png|webp|ppt|pps)$/i)" :href="href"
+                    class="my-2 btn btn-primary flex gap-3" download>
+                    <Icon icon="ph:download-duotone" /> {{ buttonLabel }}
+                </a>
+                <Link v-else-if="buttonLabel && href" :href="href" class="my-2 btn btn-primary">
                 {{ buttonLabel }}
                 </Link>
                 <span v-if="buttonLabel && href" class="md:hidden"></span>
