@@ -111,6 +111,18 @@ export default [
               description: "Centros Tseyor en el mundo",
               icon: "ph:lighthouse-duotone",
             },
+            {
+                title: "ONG Mundo Armónico Tseyor",
+                route: "ong",
+                description: "Conoce nuestra ONG y sus objetivos",
+                icon: "ph:handshake-duotone",
+              },
+              {
+                title: "Universidad Tseyor de Granada",
+                route: "utg",
+                description: "Conoce nuestra Universidad y sus departamentos",
+                icon: "ph:student-duotone",
+              },
           ],
         },
         {
@@ -134,6 +146,7 @@ export default [
               description: "El orígen del contacto",
               icon: "ph:shooting-star-duotone",
             },
+
           ],
         },
         {

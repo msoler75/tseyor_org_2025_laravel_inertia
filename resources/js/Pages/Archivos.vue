@@ -1,8 +1,7 @@
 <template>
-    <div class="max-w-screen-xl mx-auto">
-        <div class="w-full sticky top-4 pt-16 border-b  bg-gray-100 px-4 pb-0 z-10 sm:px-6 lg:px-8">
-
-            <div class="w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
+    <div class="">
+        <div class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-lg bg-base-100  px-4 pb-0 z-10 sm:px-6 lg:px-8">
+            <div class="container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
                 <h1 :title="ruta" v-if="!seleccionando"
                     class="w-full mb-0 text-ellipsis overflow-hidden flex gap-4 items-center">
                     <Icon icon="ph:folder-notch-open-duotone" />
@@ -138,7 +137,7 @@
 
         <div :class="vista === 'lista' ? 'lista' : 'grid'" class="select-none py-4 px-2 sm:px-6 lg:px-8">
             <div v-if="vista === 'lista'" class="mr-2">
-                <table class="w-full lg:w-auto">
+                <table class="w-full lg:w-auto mx-auto">
                     <thead class="hidden sm:table-header-group">
                         <tr>
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
@@ -340,7 +339,7 @@
 
 
         <!-- Modal Upload -->
-        <div v-show="modalSubirArchivos" class="fixed z-10 inset-0 overflow-y-auto">
+        <div v-show="modalSubirArchivos" class="fixed z-10 inset-0 overflow-y-auto" scroll-region>
             <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <div class="fixed inset-0 transition-opacity" aria-hidden="true">
                     <div class="absolute inset-0 bg-gray-500 opacity-75"></div>

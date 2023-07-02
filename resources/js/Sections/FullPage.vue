@@ -1,7 +1,9 @@
 <template>
     <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen" ref="container" :style="{
         '--sectionHeight': sectionHeight
-    }">
+    }"
+    scroll-region
+    >
         <slot></slot>
         <TransitionFade>
             <div v-show="showScrollDown"

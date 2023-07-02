@@ -121,6 +121,23 @@ Route::get('/cursos/inscripcion', function () {
 Route::post('/inscripcion', [InscripcionController::class, 'store'])->name('inscripcion.store');
 
 
+Route::get('/ong', function () {
+    return Inertia::render('Ong/Index', [])
+        ->withViewData(SEO::get('ong'));
+})->name('ong');
+Route::get('/ong/muular', function () {
+    return Inertia::render('Ong/Muular', [])
+        ->withViewData(SEO::get('muular'));
+})->name('muular');
+Route::get('/utg', function () {
+    return Inertia::render('Utg/Index', [])
+        ->withViewData(SEO::get('utg'));
+})->name('utg');
+Route::get('/utg/departamento/{id}', function ($id) {
+    return Inertia::render('Utg/Departamento', ['id'=>$id]);
+})->name('utg.departamento');
+
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
