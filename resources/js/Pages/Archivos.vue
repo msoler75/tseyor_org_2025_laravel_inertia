@@ -158,7 +158,7 @@
                                 <Icon v-else icon="ph:square" />
                             </td>
                             <td>
-                                <Icon :icon="item.tipo === 'carpeta' ? folderIcon : getIconFromFileName(item.nombre)"
+                                <Icon :icon="item.tipo === 'carpeta' ? (!item.privada?'ph:folder-simple-duotone':'ph:folder-lock-duotone') : getIconFromFileName(item.nombre)"
                                     class="text-4xl sm:text-base"
                                     :class="item.tipo === 'carpeta' ? 'text-yellow-500 transform scale-150' : ''" />
                             </td>
@@ -255,7 +255,7 @@
                         <div class="flex flex-col items-center justify-center">
                             <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">
                             <img v-if="isImage(item.nombre)" :src="item.ruta" class="overflow-hidden w-[180px] h-[120px]">
-                            <Icon v-else :icon="folderIcon" class="text-8xl mb-4 text-yellow-500 transform scale-150" />
+                            <Icon v-else :icon="!item.privada?'ph:folder-simple-duotone':'ph:folder-lock-duotone'" class="text-8xl mb-4 text-yellow-500 transform scale-150" />
                             </Link>
                             <component v-else :is="seleccionando?'div':'a'" :href="item.ruta" download>
                                 <img v-if="isImage(item.nombre)" :src="item.ruta"

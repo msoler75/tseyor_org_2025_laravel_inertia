@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use App\Policies\CarpetaPolicy;
+use Illuminate\Auth\Access\AuthorizationException;
+use App\Models\Carpeta;
 
 class ArchivosController extends Controller
 {
@@ -15,6 +18,12 @@ class ArchivosController extends Controller
         $ruta = $request->path();
 
         Log::info("explorar archivos en " . $ruta);
+
+        $carpetaPolicy = new CarpetaPolicy();
+        if (!$carpetaPolicy->leer(auth()->user(), $ruta)) {
+            throw new AuthorizationException('No tienes permisos para leer la carpeta', 403);
+        }
+
         // Obtener la URL relativa actual de la aplicación
         $baseUrl = url("");
 
@@ -22,10 +31,8 @@ class ArchivosController extends Controller
 
         if ($ruta != "archivos" && $ruta != "/archivos") {
             // Agregar elemento de carpeta padre
-            $carpeta = $ruta;
-            $lm = Storage::disk('public')->lastModified($carpeta);
-            $archivos_internos = Storage::disk('public')->files($carpeta);
-            $subcarpetas_internas = Storage::disk('public')->directories($carpeta);
+            $archivos_internos = Storage::disk('public')->files($ruta);
+            $subcarpetas_internas = Storage::disk('public')->directories($ruta);
             $items[] = [
                 'nombre' => "..",
                 'clase' => "parent",
@@ -33,7 +40,7 @@ class ArchivosController extends Controller
                 'ruta' => str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url(dirname($ruta)))),
                 'archivos' => count($archivos_internos),
                 'subcarpetas' => count($subcarpetas_internas),
-                'fecha_modificacion' => Storage::disk('public')->lastModified($carpeta),
+                'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
             ];
         }
 
@@ -45,15 +52,20 @@ class ArchivosController extends Controller
         foreach ($carpetas as $carpeta) {
             $archivos_internos = Storage::disk('public')->files($carpeta);
             $subcarpetas_internas = Storage::disk('public')->directories($carpeta);
-            $items[] = [
+            $item = [
                 'nombre' => basename($carpeta),
                 'clase' => "",
                 'tipo' => 'carpeta',
                 'ruta' => str_replace($baseUrl, '',  str_replace('/storage', '', Storage::disk('public')->url($carpeta))),
                 'archivos' => count($archivos_internos),
                 'subcarpetas' => count($subcarpetas_internas),
-                'fecha_modificacion' => Storage::disk('public')->lastModified($carpeta),
+                'fecha_modificacion' => Storage::disk('public')->lastModified($carpeta)
             ];
+            // Obtener información de la carpeta correspondiente, si existe
+            $carpetaModel = Carpeta::where('ruta', $ruta."/". $item['nombre'])->first();
+            if ($carpetaModel)
+                $item['privada'] = $carpetaModel->privada;
+            $items[] = $item;
         }
 
         // Agregar archivos a la colección de elementos
@@ -75,14 +87,11 @@ class ArchivosController extends Controller
             'items' => $items,
             'ruta' => $ruta
         ])
-        ->withViewData([
-            'seo' => new SEOData(
-                title: 'Archivos de Tseyor',
-                description: 'Contenido de '.$ruta,
-            )
+            ->withViewData([
+                'seo' => new SEOData(
+                    title: 'Archivos de Tseyor',
+                    description: 'Contenido de ' . $ruta,
+                )
             ]);
     }
-
-
-
 }
