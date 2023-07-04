@@ -10,6 +10,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Permiso;
+use App\Models\Team;
 
 class User extends Authenticatable
 {
@@ -58,4 +60,15 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+
+    public function permisos()
+    {
+        return $this->hasMany(Permiso::class);
+    }
+
+    public function equipos()
+    {
+        return $this->belongsToMany(Team::class);
+    }
 }
