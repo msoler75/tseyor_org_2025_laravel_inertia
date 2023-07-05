@@ -9,7 +9,6 @@ class Carpeta extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'ruta', 'publica'];
-
+    protected $fillable = [ 'ruta', 'permisos', 'user_id', 'team_id'];
 
 }

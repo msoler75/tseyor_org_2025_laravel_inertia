@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\FilesController;
+use App\Http\Controllers\ArchivosController;
 use App\Http\Controllers\Api\ComentariosController;
 
 /*
@@ -21,13 +21,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('/files/upload/file', [FilesController::class, 'uploadFile'])->name('files.upload.file');
-Route::post('/files/upload/image', [FilesController::class, 'uploadImage'])->name('files.upload.image');
-Route::post('/files/rename', [FilesController::class, 'rename'])->name('files.rename');
-Route::post('/files/move', [FilesController::class, 'move'])->name('files.move');
-Route::post('/files/copy', [FilesController::class, 'copy'])->name('files.copy');
-Route::put('/files/mkdir', [FilesController::class, 'createFolder'])->name('files.mkdir');
-Route::delete('/files{ruta}', [FilesController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
+Route::post('/files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');
+Route::post('/files/upload/image', [ArchivosController::class, 'uploadImage'])->name('files.upload.image');
+Route::post('/files/rename', [ArchivosController::class, 'rename'])->name('files.rename');
+Route::post('/files/move', [ArchivosController::class, 'move'])->name('files.move');
+Route::post('/files/copy', [ArchivosController::class, 'copy'])->name('files.copy');
+Route::put('/files/mkdir', [ArchivosController::class, 'createFolder'])->name('files.mkdir');
+Route::delete('/files{ruta}', [ArchivosController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
 
 
 Route::middleware([

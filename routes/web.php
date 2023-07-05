@@ -10,6 +10,7 @@ use App\Http\Controllers\EntradasController;
 use App\Http\Controllers\GuiasController;
 use App\Http\Controllers\LugaresController;
 use App\Http\Controllers\EventosController;
+use App\Http\Controllers\EquiposController;
 use App\Http\Controllers\LibrosController;
 use App\Http\Controllers\CentrosController;
 use App\Http\Controllers\ContactosController;
@@ -56,6 +57,7 @@ Route::get('/novedades', [NovedadesController::class, 'index'])->name('novedades
 Route::get('/archivos', [ArchivosController::class, 'index'])->name('archivos0');
 Route::get('/archivos{ruta}', [ArchivosController::class, 'index'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
+
 Route::get('/audios', [AudiosController::class, 'index'])->name('audios');
 Route::get('/audios/{id}', [AudiosController::class, 'show'])->name('audio');
 
@@ -88,6 +90,8 @@ Route::get('/enciclopedia/lugares/{id}', [LugaresController::class, 'show'])->na
 Route::get('/eventos', [EventosController::class, 'index'])->name('eventos');
 Route::get('/eventos/{id}', [EventosController::class, 'show'])->name('evento');
 
+Route::get('/equipos', [EquiposController::class, 'index'])->name('equipos');
+Route::get('/equipos/{id}', [EquiposController::class, 'show'])->name('equipo');
 
 Route::get('/donde-estamos', [ContactosController::class, 'index'])->name('contactos');
 Route::get('/contactos/{id}', [ContactosController::class, 'show'])->name('contacto');

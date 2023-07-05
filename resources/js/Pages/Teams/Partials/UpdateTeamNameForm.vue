@@ -8,6 +8,7 @@ const props = defineProps({
 
 const form = useForm({
     name: props.team.name,
+    description: props.team.description
 });
 
 const updateTeamName = () => {
@@ -31,10 +32,11 @@ const updateTeamName = () => {
         <template #form>
             <!-- Team Owner Information -->
             <div class="col-span-6">
-                <InputLabel value="Team Owner" />
+                <InputLabel value="Creador del equipo" />
 
                 <div class="flex items-center mt-2">
-                    <img class="w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url" :alt="team.owner.name">
+                    <img class="w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url"
+                        :alt="team.owner.name">
 
                     <div class="ml-4 leading-tight">
                         <div class="text-gray-900 dark:text-white">{{ team.owner.name }}</div>
@@ -46,18 +48,22 @@ const updateTeamName = () => {
             </div>
 
             <!-- Team Name -->
-            <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="Team Name" />
+            <div class="col-span-6 sm:col-span-4 space-y-7">
 
-                <TextInput
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    :disabled="! permissions.canUpdateTeam"
-                />
+                <div class="flex flex-col gap-2">
+                    <InputLabel for="name" value="Nombre del equipo" />
+                    <TextInput id="name" v-model="form.name" type="text" class="block w-full"
+                        :disabled="!permissions.canUpdateTeam" />
+                    <InputError :message="form.errors.name" />
+                </div>
 
-                <InputError :message="form.errors.name" class="mt-2" />
+                <div class="flex flex-col gap-2">
+                    <InputLabel for="description" value="Descripción" />
+                    <TextArea id="description" v-model="form.description" class="block w-full"
+                        :disabled="!permissions.canUpdateTeam" />
+                    <InputError :message="form.errors.description" />
+                </div>
+
             </div>
         </template>
 
