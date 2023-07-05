@@ -122,7 +122,7 @@ export default [
                 route: "utg",
                 description: "Conoce nuestra Universidad y sus departamentos",
                 icon: "ph:student-duotone",
-              },
+              }
           ],
         },
         {
@@ -163,6 +163,12 @@ export default [
                 route: "enciclopedia.lugares",
                 description: "Planetas, bases intraterrenas y otros lugares",
                 icon: "ph:planet-duotone",
+              },
+              {
+                title: "Equipos",
+                route: "equipos",
+                description: "Equipos de trabajo",
+                icon: "ph:users-four-duotone",
               },
             ],
         },

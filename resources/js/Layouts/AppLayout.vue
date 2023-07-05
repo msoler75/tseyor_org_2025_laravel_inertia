@@ -157,8 +157,8 @@ import { useDark, useColorScheme } from 'vue-use';
                         <div class="hidden lg:flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
-                                <Link :href="route('portada')" class="rounded-full outline outline-white">
-                                <ApplicationMark class="block h-11 w-auto" />
+                                <Link :href="route('portada')">
+                                <ApplicationMark/>
                                 </Link>
                             </div>
 
@@ -328,11 +328,11 @@ import { useDark, useColorScheme } from 'vue-use';
                                     <template #content>
                                         <!-- Account Management -->
                                         <div class="block px-4 py-2 text-xs text-gray-400">
-                                            Manage Account
+                                            Perfil
                                         </div>
 
                                         <DropdownLink :href="route('profile.show')">
-                                            Profile
+                                            Mi Cuenta
                                         </DropdownLink>
 
                                         <DropdownLink v-if="$page.props.jetstream.hasApiFeatures"
@@ -345,7 +345,7 @@ import { useDark, useColorScheme } from 'vue-use';
                                         <!-- Authentication -->
                                         <form @submit.prevent="logout">
                                             <DropdownLink as="button">
-                                                Log Out
+                                                Cerrar Sesión
                                             </DropdownLink>
                                         </form>
                                     </template>

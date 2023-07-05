@@ -1,6 +1,7 @@
 <template>
     <div class="">
-        <div class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-lg bg-base-100  px-4 pb-0 z-10 sm:px-6 lg:px-8">
+        <div
+            class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-lg bg-base-100  px-4 pb-0 z-10 sm:px-6 lg:px-8">
             <div class="container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
                 <h1 :title="ruta" v-if="!seleccionando"
                     class="w-full mb-0 text-ellipsis overflow-hidden flex gap-4 items-center">
@@ -145,6 +146,8 @@
                             <th class="text-left">Nombre</th>
                             <th>Tamaño</th>
                             <th>Fecha</th>
+                            <th>Permisos</th>
+                            <th>Propietario</th>
                             <th class="hidden md:table-cell"></th>
                         </tr>
                     </thead>
@@ -158,7 +161,8 @@
                                 <Icon v-else icon="ph:square" />
                             </td>
                             <td>
-                                <Icon :icon="item.tipo === 'carpeta' ? (!item.privada?'ph:folder-simple-duotone':'ph:folder-lock-duotone') : getIconFromFileName(item.nombre)"
+                                <Icon
+                                    :icon="item.tipo === 'carpeta' ? (!item.privada ? 'ph:folder-simple-duotone' : 'ph:folder-lock-duotone') : getIconFromFileName(item.nombre)"
                                     class="text-4xl sm:text-base"
                                     :class="item.tipo === 'carpeta' ? 'text-yellow-500 transform scale-150' : ''" />
                             </td>
@@ -188,6 +192,8 @@
                             <td class="hidden sm:table-cell">
                                 <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
                             </td>
+                            <td>{{ item.permisos }}</td>
+                            <td>{{ item.propietario ?( item.propietario.usuario + '/' + item.propietario.grupo) : ''}}</td>
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
@@ -255,7 +261,8 @@
                         <div class="flex flex-col items-center justify-center">
                             <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">
                             <img v-if="isImage(item.nombre)" :src="item.ruta" class="overflow-hidden w-[180px] h-[120px]">
-                            <Icon v-else :icon="!item.privada?'ph:folder-simple-duotone':'ph:folder-lock-duotone'" class="text-8xl mb-4 text-yellow-500 transform scale-150" />
+                            <Icon v-else :icon="!item.privada ? 'ph:folder-simple-duotone' : 'ph:folder-lock-duotone'"
+                                class="text-8xl mb-4 text-yellow-500 transform scale-150" />
                             </Link>
                             <component v-else :is="seleccionando?'div':'a'" :href="item.ruta" download>
                                 <img v-if="isImage(item.nombre)" :src="item.ruta"
