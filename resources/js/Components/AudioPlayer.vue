@@ -1,5 +1,5 @@
 <template>
-    <div class="select-none">
+    <div class="card bg-base-100 shadow select-none">
       <audio
         :autoplay="autoplay"
         :src="src"
@@ -58,7 +58,7 @@
         </div>
       </div>
       <div
-        class=" text-black dark:bg-gray-900 dark:text-white lg:rounded-b-xl pb-6 px-1 sm:px-3 lg:px-1 xl:px-3 flex justify-between items-center"
+        class=" lg:rounded-b-xl pb-6 px-1 sm:px-3 lg:px-1 xl:px-3 flex justify-between items-center"
       >
         <button
           type="button"

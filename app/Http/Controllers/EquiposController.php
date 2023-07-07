@@ -41,13 +41,19 @@ class EquiposController extends Controller
 
     public function show($id)
     {
-        $equipo = Equipo::with('usuarios')
+        $equipo = Equipo::with(['usuarios' => function ($query) {
+            $query->select('users.id', 'name as nombre', 'users.slug', 'profile_photo_path as avatar')
+                ->take(30);
+        }])
             ->where('slug', $id)
             ->orWhere('id', $id)
             ->firstOrFail();
 
+        $totalMiembros = $equipo->usuarios()->count();
+
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
+            'totalMiembros' => $totalMiembros,
         ]);
     }
 }
