@@ -12,6 +12,7 @@ declare module 'vue' {
     ActionMessage: typeof import('./resources/js/Components/ActionMessage.vue')['default']
     ActionSection: typeof import('./resources/js/Components/ActionSection.vue')['default']
     Announcement: typeof import('./resources/js/Components/Announcement.vue')['default']
+    AppFooter: typeof import('./resources/js/Components/AppFooter.vue')['default']
     AppLayout: typeof import('./resources/js/Layouts/AppLayout.vue')['default']
     ApplicationLogo: typeof import('./resources/js/Components/ApplicationLogo.vue')['default']
     ApplicationMark: typeof import('./resources/js/Components/ApplicationMark.vue')['default']
