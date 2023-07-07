@@ -16,6 +16,10 @@
                     <p class="mb-4">{{ equipo.descripcion }}</p>
                 </div>
             </div>
+
+            <div class="card bg-base-100 shadow">
+                <Members :users="equipo.usuarios" />
+            </div>
         </div>
     </div>
 </template>

@@ -7,9 +7,9 @@
 
 <script>
 export default {
-    props:{
+    props: {
         w: {
-            type: String | Number,
+            type: [String, Number],
             default: '16rem'
         }
     }
