@@ -2,9 +2,9 @@
 import { Head, usePage, router } from '@inertiajs/vue3';
 import { useNav } from '@/Stores/nav'
 import { useDark, useToggle } from "@vueuse/core";
+import {footerSections, footerSocial}  from "../footer.js";
 
 const page = usePage()
-
 const nav = useNav()
 const sideBarShow = ref(false)
 const anuncio = computed(() => page.props.anuncio || '');
@@ -486,6 +486,11 @@ import { useDark, useColorScheme } from 'vue-use';
 
                 <slot />
             </main>
+
+            <Footer
+            :sections="footerSections"
+            :socialLinks="footerSocial"
+            />
         </div>
     </div>
 </template>

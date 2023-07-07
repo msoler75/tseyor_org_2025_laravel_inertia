@@ -42,6 +42,7 @@ declare module 'vue' {
     FeaturedPosts: typeof import('./resources/js/Sections/FeaturedPosts.vue')['default']
     FeatureRows: typeof import('./resources/js/Sections/FeatureRows.vue')['default']
     FileSize: typeof import('./resources/js/Components/FileSize.vue')['default']
+    Footer: typeof import('./resources/js/Sections/Footer.vue')['default']
     FormSection: typeof import('./resources/js/Components/FormSection.vue')['default']
     FullPage: typeof import('./resources/js/Sections/FullPage.vue')['default']
     GridFill: typeof import('./resources/js/Components/GridFill.vue')['default']
