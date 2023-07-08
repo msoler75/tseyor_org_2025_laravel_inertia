@@ -133,14 +133,9 @@ Route::get('/ong/muular', function () {
     return Inertia::render('Ong/Muular', [])
         ->withViewData(SEO::get('muular'));
 })->name('muular');
-Route::get('/utg', function () {
-    return Inertia::render('Utg/Index', [])
-        ->withViewData(SEO::get('utg'));
-})->name('utg');
-Route::get('/utg/departamento/{id}', function ($id) {
-    return Inertia::render('Utg/Departamento', ['id'=>$id]);
-})->name('utg.departamento');
 
+Route::get('/utg', [EquiposController::class, 'index_utg'])->name('utg');
+Route::get('/utg/departamentos/{id}', [EquiposController::class, 'show'])->name('utg.departamento');
 
 Route::middleware([
     'auth:sanctum',

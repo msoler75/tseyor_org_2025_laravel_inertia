@@ -1,5 +1,5 @@
 <template>
-    <div class="grid gap-4 justify-center"
+    <div class="grid justify-center"
         :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(${w}, 1fr))` }">
         <slot></slot>
     </div>
@@ -15,3 +15,10 @@ export default {
     }
 }
 </script>
+
+
+<style scoped>
+.grid:not(class*=[gap-]) {
+    @apply gap-4;
+}
+</style>
