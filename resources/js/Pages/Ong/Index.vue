@@ -1,5 +1,5 @@
 <template>
-    <Sections class="white-first">
+    <Sections white-first>
         <Section>
             <Text>
                 <img src="https://tseyor.org/images/ong-logo.webp?ts=1386336254&thumb=709x278&quality=87&fe=JPG">

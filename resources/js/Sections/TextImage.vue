@@ -1,6 +1,6 @@
 <template>
     <div :class="full ? '!py-0 w-full h-full flex flex-col justify-center' : 'py-12'">
-        <div class="mx-auto text-center" :class="(srcImage ? 'grid grid-rows-[60fr_40fr] md:grid-rows-1 grid-cols-1 md:grid-cols-2 gap-7 lg:gap-12 ' : '') +
+        <div class="mx-auto text-center" :class="(srcImage ? 'with-image grid grid-cols-1 md:grid-cols-2 gap-7 lg:gap-12 ' : '') +
             (full ? 'w-full h-full p-0' : 'container')
             ">
             <div v-if="srcImage" class="flex flex-col justify-center items-center gap-1 max-h-full bg-center" :class="(imageRight ? 'md:order-last ' : '') +
@@ -100,9 +100,18 @@ const textPresent = computed(() => textdiv.value && textdiv.value.children.lengt
     max-height: calc(var(--sectionHeight) *.6 - 2rem);
 }
 
+.with-image {
+grid-template-rows: min(60fr, var(--sectionHeight)) 40fr;
+}
+
 @screen md {
     .image-h {
         max-height: calc(var(--sectionHeight) - 5rem);
     }
+
+    .with-image {
+        grid-template-rows: 1fr;
+    }
 }
+
 </style>

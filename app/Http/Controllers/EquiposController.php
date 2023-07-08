@@ -17,7 +17,7 @@ class EquiposController extends Controller
         $resultados = $categoria ?
             Equipo::withCount('usuarios')
             ->where('categoria', '=', $categoria)
-            ->paginate(12)->appends(['categoria' => $categoria])
+            ->paginate(10)->appends(['categoria' => $categoria])
             : ($filtro ? Equipo::withCount('usuarios')
                 ->where('nombre', 'like', '%' . $filtro . '%')
                 ->orWhere('descripcion', 'like', '%' . $filtro . '%')
@@ -39,10 +39,24 @@ class EquiposController extends Controller
             ->withViewData(SEO::get('equipos'));
     }
 
+    public function index_utg()
+    {
+        $categoria = 'utg';
+        $departamentos = Equipo::where('categoria', '=', $categoria)
+            ->take(6)->get();
+
+        return Inertia::render(
+            'Utg/Index', [
+                'departamentos' => $departamentos
+            ]
+        )
+            ->withViewData(SEO::get('utg'));
+    }
+
     public function show($id)
     {
         $equipo = Equipo::with(['usuarios' => function ($query) {
-            $query->select('users.id', 'name as nombre', 'users.slug', 'profile_photo_path as avatar')
+            $query->select('users.id', 'users.name as nombre', 'users.slug', 'profile_photo_path as avatar')
                 ->take(30);
         }])
             ->where('slug', $id)

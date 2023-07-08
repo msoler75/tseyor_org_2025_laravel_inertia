@@ -94,6 +94,7 @@ declare module 'vue' {
     Uploader: typeof import('./resources/js/Components/Uploader.vue')['default']
     UserComment: typeof import('./resources/js/Components/UserComment.vue')['default']
     UserCommentsTree: typeof import('./resources/js/Components/UserCommentsTree.vue')['default']
+    Users: typeof import('./resources/js/Components/Users.vue')['default']
     VideoPlayer: typeof import('./resources/js/Sections/VideoPlayer.vue')['default']
     Welcome: typeof import('./resources/js/Components/Welcome.vue')['default']
   }
