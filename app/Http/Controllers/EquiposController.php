@@ -9,6 +9,9 @@ use App\Pigmalion\SEO;
 
 class EquiposController extends Controller
 {
+    /**
+     * Lista de equipos
+     */
     public function index(Request $request)
     {
         $filtro = $request->input('buscar');
@@ -39,20 +42,9 @@ class EquiposController extends Controller
             ->withViewData(SEO::get('equipos'));
     }
 
-    public function index_utg()
-    {
-        $categoria = 'utg';
-        $departamentos = Equipo::where('categoria', '=', $categoria)
-            ->take(6)->get();
-
-        return Inertia::render(
-            'Utg/Index', [
-                'departamentos' => $departamentos
-            ]
-        )
-            ->withViewData(SEO::get('utg'));
-    }
-
+     /**
+     * Muestra un equipo o departamento
+     */
     public function show($id)
     {
         $equipo = Equipo::with(['usuarios' => function ($query) {
@@ -69,5 +61,24 @@ class EquiposController extends Controller
             'equipo' => $equipo,
             'totalMiembros' => $totalMiembros,
         ]);
+    }
+
+
+    /**
+     * Página de la UTG
+     */
+    public function index_utg()
+    {
+        $categoria = 'utg';
+        $departamentos = Equipo::where('categoria', '=', $categoria)
+            ->take(6)->get();
+
+        return Inertia::render(
+            'Utg/Index',
+            [
+                'departamentos' => $departamentos
+            ]
+        )
+            ->withViewData(SEO::get('utg'));
     }
 }
