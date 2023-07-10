@@ -1,7 +1,7 @@
 <template>
-    <div class="">
+    <div class="h-full flex flex-col">
         <div
-            class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-lg bg-base-100  px-4 pb-0 z-10 sm:px-6 lg:px-8">
+            class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 z-10 sm:px-6 lg:px-8">
             <div class="container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
                 <h1 :title="ruta" v-if="!seleccionando"
                     class="w-full mb-0 text-ellipsis overflow-hidden flex gap-4 items-center">
@@ -136,7 +136,7 @@
 
 
 
-        <div :class="vista === 'lista' ? 'lista' : 'grid'" class="select-none py-4 px-2 sm:px-6 lg:px-8">
+        <div :class="vista === 'lista' ? 'lista' : 'grid'" class="select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8">
             <div v-if="vista === 'lista'" class="mr-2">
                 <table class="w-full lg:w-auto mx-auto">
                     <thead class="hidden sm:table-header-group">
