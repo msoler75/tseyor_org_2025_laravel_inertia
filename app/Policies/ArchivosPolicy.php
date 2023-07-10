@@ -36,9 +36,9 @@ class ArchivosPolicy
     public function obtenerCarpeta($ruta)
     {
         //$carpeta = Carpeta::where('ruta', $ruta)->first();
-        $carpeta = Carpeta::select(['carpetas.*', 'teams.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+        $carpeta = Carpeta::select(['carpetas.*', 'equipos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             ->leftJoin('users', 'users.id', '=', 'user_id')
-            ->leftJoin('teams', 'teams.id', '=', 'team_id')
+            ->leftJoin('equipos', 'equipos.id', '=', 'group_id')
             ->whereRaw("'$ruta' LIKE CONCAT(ruta, '%')")
             ->orderByRaw('LENGTH(ruta) DESC')
             ->first();
@@ -56,7 +56,7 @@ class ArchivosPolicy
             ->whereIn('modelo_id', $carpeta->pluck('id'))
             ->whereRaw("'$carpeta->ruta' LIKE CONCAT(carpetas.ruta, '%')")
             ->where(function ($query) use ($equipos_ids, $user_id) {
-                $query->whereIn('permisos.team_id', $equipos_ids)
+                $query->whereIn('permisos.group_id', $equipos_ids)
                     ->orWhere('permisos.user_id', $user_id);
             })
             ->where('accion', $accion)
@@ -83,7 +83,7 @@ class ArchivosPolicy
         }
 
         // Verificar el permiso del grupo
-        if ($user && $carpeta->team_id && $user->equipos()->where('id', $carpeta->team_id)->exists() && ($permisos & ($bits << 3)) !== 0) {
+        if ($user && $carpeta->group_id && $user->equipos()->where('id', $carpeta->group_id)->exists() && ($permisos & ($bits << 3)) !== 0) {
             return true;
         }
 

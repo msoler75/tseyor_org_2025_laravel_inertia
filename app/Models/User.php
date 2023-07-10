@@ -11,7 +11,8 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Permiso;
-use App\Models\Team;
+use App\Models\Equipo;
+use App\Models\Membresia;
 
 class User extends Authenticatable
 {
@@ -69,6 +70,8 @@ class User extends Authenticatable
 
     public function equipos()
     {
-        return $this->belongsToMany(Team::class);
+        return $this->belongsToMany(Equipo::class, 'equipo_user')
+            ->using(Membresia::class)
+            ->withPivot(['user_id', 'rol']);
     }
 }

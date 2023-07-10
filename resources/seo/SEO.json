@@ -82,5 +82,13 @@
     "utg": {
         "title": "Universidad Tseyor de Granada",
         "description": "Universidad para el desarrollo de múltiples materias"
+    },
+    "equipos": {
+        "title": "Equipos de Tseyor",
+        "description": "Listado de equipos y departamentos de Tseyor"
+    },
+    "departamentos": {
+        "title": "Departamentos de la UTG",
+        "description": "Listado de departamentos de la Universudad Tseyor de Granada"
     }
 }

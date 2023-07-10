@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ArchivosController;
@@ -135,6 +136,12 @@ Route::get('/ong/muular', function () {
 })->name('muular');
 
 Route::get('/utg', [EquiposController::class, 'index_utg'])->name('utg');
+Route::get(
+    '/utg/departamentos',
+    function () {
+        return Redirect::to('/equipos?categoria=utg');
+    }
+)->name('utg.departamentos');
 Route::get('/utg/departamentos/{id}', [EquiposController::class, 'show'])->name('utg.departamento');
 
 Route::middleware([
