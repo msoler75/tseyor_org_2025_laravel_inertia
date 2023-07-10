@@ -170,6 +170,12 @@ export default [
                 description: "Equipos de trabajo",
                 icon: "ph:users-four-duotone",
               },
+              {
+                title: "Usuarios",
+                route: "usuarios",
+                description: "Listado de Usuarios",
+                icon: "ph:users-duotone",
+              },
             ],
         },
         {

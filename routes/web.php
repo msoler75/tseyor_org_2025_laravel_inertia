@@ -21,6 +21,7 @@ use App\Http\Controllers\PortadaController;
 use App\Http\Controllers\CursosController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\UsuariosController;
 use App\Pigmalion\SEO;
 
 
@@ -144,6 +145,9 @@ Route::get(
 )->name('utg.departamentos');
 Route::get('/utg/departamentos/{id}', [EquiposController::class, 'show'])->name('utg.departamento');
 
+Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios');
+Route::get('/usuarios/{id}', [UsuariosController::class, 'show'])->name('usuario');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -153,6 +157,7 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
 
 
 
