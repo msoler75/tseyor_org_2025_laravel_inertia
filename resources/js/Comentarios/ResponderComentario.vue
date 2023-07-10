@@ -31,7 +31,7 @@ const page = usePage()
 const user = page.props.auth.user
 const props = defineProps({
     comentarioId: String | Number,
-    contenidoId: String,
+    url: String,
     focus: Boolean
 })
 
@@ -64,7 +64,7 @@ function responder() {
     const oldTexto = texto.value
 
     axios.post(route('comentario.nuevo'), {
-        contenido_id: props.contenidoId,
+        url: props.url,
         respuesta_a: props.comentarioId,
         texto: texto.value
     })

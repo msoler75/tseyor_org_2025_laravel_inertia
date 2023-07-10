@@ -16,16 +16,16 @@ class ComentariosController extends Controller
         // $user = $request->user();
         // dd($user);
 
-        $cid = $request->input('contenido_id') ?? "";
+        $url = $request->input('url') ?? "";
 
-        if (!$cid)
+        if (!$url)
             return response()->json([
-                'error' => 'debe especificar contenido_id'
+                'error' => 'debe especificar url'
             ], 400);
 
         // obtenemos todos los comentarios de la base de datos
         $comentarios = Comentario::join('users', 'comentarios.user_id', '=', 'users.id')
-            ->where('contenido_id', $cid)
+            ->where('url', $url)
             ->select('comentarios.*', 'users.name as user_name', 'users.profile_photo_path as user_photo')
             ->get()
             ->toArray();
@@ -104,16 +104,16 @@ class ComentariosController extends Controller
 
     public function create(Request $request)
     {
-        $contenido_id = $request->contenido_id;
+        $url = $request->url;
         $respuesta_a = $request->respuesta_a ?? null;
         $texto = $request->texto;
 
-        if (!$texto || !$contenido_id) {
+        if (!$texto || !$url) {
             return response()->json(['error' => 'Faltan parámetros'], 400);
         }
 
         // dd(Auth::user());
-        //dd($contenido_id);
+        //dd($url);
 
          /* return response()->json(
             [],
@@ -122,7 +122,7 @@ class ComentariosController extends Controller
 
         $comentario = new Comentario;
         $comentario->texto = $texto;
-        $comentario->contenido_id = $contenido_id;
+        $comentario->url = $url;
         $comentario->user_id = auth()->user()->id; // Asignar el ID del usuario autenticado
         $comentario->respuesta_a = $respuesta_a;
         $comentario->save();

@@ -1,9 +1,11 @@
 <template>
     <div class="avatar">
-        <Link v-if="link" :href="route('usuario', { id: user.slug || user.id })">
-        <img :src="urlImage" :alt="name" :title="name" />
-        </Link>
-        <img v-else :src="urlImage" :alt="name" :title="name" />
+        <div class="w-32 rounded-full">
+            <Link v-if="link" :href="route('usuario', { id: user.slug || user.id })">
+            <img :src="urlImage" :alt="name" :title="name" />
+            </Link>
+            <img v-else :src="urlImage" :alt="name" :title="name" />
+        </div>
     </div>
 </template>
 

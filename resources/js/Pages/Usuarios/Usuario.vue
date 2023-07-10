@@ -29,7 +29,7 @@
                 <h2 class="text-center">Últimos comentarios</h2>
                 <ul class="list-none space-y-5">
                     <li v-for="comentario of comentarios" class="w-full flex flex-col gap-3 md:flex-row justify-between items-baseline">
-                        <Link :href="comentario.contenido_id" class="prose">
+                        <Link :href="comentario.url" class="prose">
                         <blockquote>
                             <p>
                                 {{ comentario.texto }}

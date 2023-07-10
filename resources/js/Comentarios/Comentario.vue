@@ -20,13 +20,13 @@
                 </div>
             </div>
 
-            <ResponderComentario v-if="user && respondiendo" class="my-7" :contenido-id="contenidoId" :key="comentarioId"
+            <ResponderComentario v-if="user && respondiendo" class="my-7" :url="url" :key="comentarioId"
                 :focus="true" :comentario-id="comentarioId" @respondido="nuevaRespuesta" />
 
             <div v-show="respuestasList.length" :style="'--profundidad: ' + profundidad">
                 <TransitionGroup name="comment">
                     <Comentario v-for="respuesta in respuestasList" :key="respuesta.id" :autor="respuesta.autor"
-                        :comentario-id="respuesta.id" :contenido-id="contenidoId" :fecha="respuesta.created_at"
+                        :comentario-id="respuesta.id" :url="url" :fecha="respuesta.created_at"
                         :texto="respuesta.texto" :respuestas="respuesta.respuestas" :profundidad="profundidad + 1" />
                 </TransitionGroup>
             </div>
@@ -39,7 +39,7 @@ import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     comentarioId: String | Number,
-    contenidoId: String | Number,
+    url: String | Number,
     autor: Object,
     texto: String,
     fecha: Number | String,
