@@ -11,7 +11,7 @@
             <div class="prose" v-html="noticia.texto"></div>
 
         </div>
-        <Comentarios :contenido-id="`noticia-${noticia.id}`"  />
+        <Comentarios :url="`/noticias/${noticia.id}`"/>
     </div>
 </template>
 

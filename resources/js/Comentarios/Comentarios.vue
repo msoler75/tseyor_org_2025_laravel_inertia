@@ -3,11 +3,11 @@
         <div class="container mx-auto space-y-2">
             <div class="mx-auto sm:max-w-[640px]">
                 <h2 class="mb-9">Comentarios</h2>
-                <ResponderComentario v-if="user" class="my-7" :contenido-id="contenidoId" @respondido="nuevoComentario" />
+                <ResponderComentario v-if="user" class="my-7" :url="url" @respondido="nuevoComentario" />
                 <div class="w-full" style="--profundidad: 0;">
                     <TransitionGroup name="comment">
                         <Comentario v-for="comentario in comentarios" :key="comentario.id" :autor="comentario.autor"
-                            :comentario-id="comentario.id" :contenido-id="contenidoId" :fecha="comentario.created_at"
+                            :comentario-id="comentario.id" :url="url" :fecha="comentario.created_at"
                             :texto="comentario.texto" :respuestas="comentario.respuestas" />
                     </TransitionGroup>
                     <p v-if="!cargando && !comentarios.length">No hay comentarios</p>
@@ -23,8 +23,14 @@
 import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
-    contenidoId: String
+    url: {
+        type: String,
+        default() {
+            return window.location.pathname;
+        }
+    }
 })
+
 
 const page = usePage()
 const user = page.props.auth.user
@@ -39,7 +45,7 @@ const cargando = ref(true)
 
 // cargamos los comentarios de este contenido
 onMounted(() => {
-    axios.get(route('comentarios') + '?contenido_id=' + props.contenidoId).then(response => {
+    axios.get(route('comentarios') + '?url=' + props.url).then(response => {
         comentarios.value = response.data.comentarios
         cargando.value = false
     })
