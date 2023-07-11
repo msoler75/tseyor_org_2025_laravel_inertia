@@ -37,15 +37,38 @@ class ArchivosController extends Controller
         $items = [];
         $carpeta_actual = null;
 
+        // elemento de carpeta actual
+        $archivos_internos = Storage::disk('public')->files($ruta);
+        $subcarpetas_internas = Storage::disk('public')->directories($ruta);
+
+        $item = [
+            'nombre' => basename($ruta),
+            'actual' => true,
+            'tipo' => 'carpeta',
+            'ruta' => $rutaBase,
+            'url' => $rutaBase,
+            'carpeta' => $rutaPadre,
+            'archivos' => count($archivos_internos),
+            'subcarpetas' => count($subcarpetas_internas),
+            'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
+        ];
+
+        $c = $ArchivosPolicy->obtenerCarpeta($ruta);
+        $item['permisos'] =  optional($c)->permisos ?? 0;
+        $item['propietario'] = ['usuario' => optional($c)->propietario_usuario, 'grupo' => optional($c)->propietario_grupo];
+        $carpeta_actual = $c;
+
+        $items[] = $item;
+
+
+        // Agregar elemento de carpeta padre
         if ($ruta != "archivos" && $ruta != "/archivos") {
-            // Agregar elemento de carpeta padre
             $archivos_internos = Storage::disk('public')->files($ruta);
             $subcarpetas_internas = Storage::disk('public')->directories($ruta);
 
             $item = [
                 'nombre' => basename($ruta),
-                'mostrar' => '..',
-                'clase' => 'parent',
+                'padre' => true,
                 'tipo' => 'carpeta',
                 'ruta' => $rutaBase,
                 'url' => $rutaPadre,
@@ -58,10 +81,9 @@ class ArchivosController extends Controller
             if (!$ArchivosPolicy->leer($user, $ruta))
                 $item['privada'] = true;
 
-            $c = $ArchivosPolicy->obtenerCarpeta($ruta);
+            $c = $ArchivosPolicy->obtenerCarpeta(dirname($ruta));
             $item['permisos'] =  optional($c)->permisos ?? 0;
             $item['propietario'] = ['usuario' => optional($c)->propietario_usuario, 'grupo' => optional($c)->propietario_grupo];
-            $carpeta_actual = $c;
 
             $items[] = $item;
         }
