@@ -1,12 +1,11 @@
 <template>
     <div class="h-full flex flex-col">
 
-        <div
-            class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 z-10 sm:px-6 lg:px-8">
-            <div class="container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
+        <div class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 z-10 sm:px-6 lg:px-8">
+            <div class="lg:container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
                 <div :title="ruta" v-if="!seleccionando" class="flex items-center gap-3 text-2xl font-bold">
                     <Icon icon="ph:folder-notch-open-duotone" />
-                    <Breadcrumb :path="items.length&&items[0].clase=='parent'?items[0].ruta:ruta" />
+                    <Breadcrumb :path="items.length&&items[0].padre?items[0].ruta:ruta" />
                 </div>
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
@@ -18,11 +17,17 @@
                     </button>
 
 
-                    <button v-if="seleccionando" class="btn btn-secondary ml-auto" @click="seleccionarTodos">
+                    <button v-if="seleccionando" class="btn btn-secondary ml-auto" @click="seleccionarTodos"
+                    title="Seleccionar todos">
                         <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                     </button>
 
-                    <button class="btn btn-secondary" @click="toggleVista">
+                    <Link v-if="items.length>1 && items[1].padre" :href="items[1].url" class="btn btn-secondary w-fit"
+                        title="Ir a una carpeta superior">
+                            <Icon icon="ph:skip-back-duotone" class="transform scale-125"/></Link>
+
+                    <button class="btn btn-secondary" @click="toggleVista"
+                    title="Cambiar vista">
                         <Icon v-show="vista == 'lista'" icon="ph:list-dashes-bold" class="transform scale-150" />
                         <Icon v-show="vista == 'grid'" icon="ph:grid-nine-fill" class="transform scale-150" />
                     </button>
@@ -43,6 +48,13 @@
                                     <Icon icon="ph:upload-duotone" />
                                     <span>Subir archivos</span>
                                 </div>
+
+                                <div v-if="!seleccionando"
+                                                class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
+                                                @click="abrirModalRenombrar(items[0])">
+                                                <Icon icon="ph:cursor-text-duotone" />
+                                                <span>Renombrar</span>
+                                            </div>
 
                                 <div v-if="!seleccionando"
                                     class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
@@ -137,8 +149,17 @@
 
 
         <div :class="vista === 'lista' ? 'lista' : 'grid'"
-            class="select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8">
-            <div v-if="vista === 'lista'" class="mr-2">
+            class="select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14">
+
+            <div v-if="!itemsOrdenados.length" class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
+
+
+                <Icon icon="ph:warning-diamond-duotone" class="text-4xl"/>
+            <div>
+                No hay archivos</div>
+
+                </div>
+            <div v-else-if="vista === 'lista'" class="mr-2">
                 <table class="w-full lg:w-auto mx-auto">
                     <thead class="hidden sm:table-header-group">
                         <tr>
@@ -162,36 +183,30 @@
                                 <Icon v-else icon="ph:square" />
                             </td>
                             <td>
-                                <FolderIcon v-if="item.tipo === 'carpeta'" :private="item.privada" :url="item.ruta" />
-                                <FileIcon v-else :url="item.ruta" />
+                                <FolderIcon v-if="item.tipo === 'carpeta'" :private="item.privada" :url="item.url" />
+                                <FileIcon v-else :url="item.url" />
                             </td>
                             <td class="sm:hidden">
                                 <div class="flex flex-col">
-                                    <Link v-if="item.tipo === 'carpeta'" :href="item.url">{{ item.mostrar || item.nombre }}
-                                    </Link>
-                                    <div v-else-if="seleccionando" :title="item.nombre">{{ item.mostrar || item.nombre }}
-                                    </div>
-                                    <a v-else :href="item.url" download>{{ item.mostrar || item.nombre }}</a>
+                                    <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"/>
+                                    <div v-else-if="seleccionando" :title="item.nombre" v-html="nombreItem(item)"/>
+                                    <a v-else :href="item.url" download v-html="nombreItem(item)"/>
                                     <small class="w-full flex justify-between items-center">
                                         <span v-if="item.tipo === 'carpeta'">{{ item.archivos + item.subcarpetas }}
-                                            elementos</span>
+                                            {{plural('elemento', item.archivos + item.subcarpetas)}}</span>
                                         <FileSize v-else :size="item.tamano" />
                                         <TimeAgo :date="item.fecha_modificacion" />
                                     </small>
                                 </div>
                             </td>
-                            <td>
-                                {{ item }}
-                            </td>
                             <td class="hidden sm:table-cell">
-                                <Link v-if="item.tipo === 'carpeta'" :href="item.url">{{ item.mostrar || item.nombre }}
-                                </Link>
-                                <span v-else-if="seleccionando">{{ item.mostrar || item.nombre }}</span>
-                                <a v-else :href="item.url" download>{{ item.mostrar || item.nombre }}</a>
+                                <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"/>
+                                <span v-else-if="seleccionando" v-html="nombreItem(item)"/>
+                                <a v-else :href="item.url" download v-html="nombreItem(item)"/>
                             </td>
                             <td class="hidden sm:table-cell">
                                 <span v-if="item.tipo === 'carpeta'" class="text-sm">{{ item.archivos + item.subcarpetas }}
-                                    elementos</span>
+                                    {{plural('elemento',  item.archivos + item.subcarpetas ) }}</span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
                             </td>
                             <td class="hidden sm:table-cell">
@@ -217,14 +232,14 @@
                                                 <span>Renombrar</span>
                                             </div>
 
-                                            <div v-if="!seleccionando && item.clase != 'parent'"
+                                            <div v-if="!seleccionando && !item.padre"
                                                 class="flex gap-3  items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                                 @click="abrirEliminarModal(item)">
                                                 <Icon icon="ph:trash-duotone" />
                                                 <span>Eliminar</span>
                                             </div>
 
-                                            <div v-if="!buscandoCarpetaDestino && item.clase != 'parent'"
+                                            <div v-if="!buscandoCarpetaDestino && !item.padre"
                                                 class="flex gap-3  items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                                 @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                 <template v-if="!item.seleccionado">
@@ -264,17 +279,17 @@
                             <Icon v-else icon="ph:square" />
                         </div>
                         <div class="flex flex-col items-center justify-center">
-                            <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.ruta" :private="item.privada"
+                            <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
                                 class="text-8xl mb-4" />
                             <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download>
-                                <img :src="item.ruta" class="overflow-hidden w-[180px] h-[120px]">
+                                <img :src="item.url" class="overflow-hidden w-[180px] h-[120px]">
                             </a>
-                            <FileIcon v-else :url="item.ruta" class="text-8xl mb-4" />
+                            <FileIcon v-else :url="item.url" class="text-8xl mb-4" />
 
                             <div class="text-sm text-center">
-                                <Link v-if="item.tipo === 'carpeta'" :href="item.url">{{ item.mostrar || item.nombre }}</Link>
-                                <span v-else-if="seleccionando">{{ item.mostrar || item.nombre }}</span>
-                                <a v-else :href="item.url" download>{{ item.mostrar || item.nombre }}</a>
+                                <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"/>
+                                <span v-else-if="seleccionando" v-html="nombreItem(item)"/>
+                                <a v-else :href="item.url" download v-html="nombreItem(item)"/>
                             </div>
                             <div class="text-gray-500 text-xs">
                                 <template v-if="item.tipo === 'carpeta'">{{ item.archivos + ' archivos, ' +
@@ -436,7 +451,7 @@
         <!-- Modal Confirmación de eliminar Archivo -->
         <ConfirmationModal :show="modalEliminarItem" @close="modalEliminarItem = false">
             <template #content>
-                ¿Quieres eliminar {{ itemAEliminar.mostrar || itemAEliminar.nombre }}?
+                ¿Quieres eliminar {{ itemAEliminar.nombre }}?
             </template>
             <template #footer>
                 <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
@@ -470,9 +485,16 @@ const props = defineProps({
     items: {}
 });
 
-// icono de carpeta
-const folderIcon = 'ph:folder-simple-duotone';
 
+function nombreItem(item) {
+    if(item.actual) return `<span class='text-neutral opacity-70'>&lt;${item.nombre}&gt;</span>`
+    if(item.padre) return `<span class='text-neutral opacity-70'>&lt;atrás&gt;</span>`
+    return item.nombre
+}
+
+function plural(label, count) {
+    return label + (count>1?'s':'')
+}
 
 // SELECCION
 
@@ -628,15 +650,16 @@ const ordenarPor = ref("fechaDesc")
 
 const itemsOrdenados = computed(() => {
     // Separar las carpetas y los archivos en dos grupos
-    const carpetas = props.items.filter(item => item.tipo === 'carpeta');
-    const archivos = props.items.filter(item => item.tipo !== 'carpeta');
+    const items = props.items.filter(item=>!item.padre&&!item.actual)
+    const carpetas = items.filter(item => item.tipo === 'carpeta')
+    const archivos = items.filter(item => item.tipo !== 'carpeta');
 
     switch (ordenarPor.value) {
         case 'normal':
             // Ordenar las carpetas y los archivos por separado
             carpetas.sort((a, b) => {
-                if (a.mostrar === '..') return -Infinity;
-                if (b.mostrar === '..') return Infinity;
+                if (a.padre||a.actual) return -Infinity;
+                if (b.padre||b.actual) return Infinity;
                 return a.nombre.localeCompare(b.nombre);
             });
             archivos.sort((a, b) => a.fecha_modificacion - b.fecha_modificacion);
@@ -656,11 +679,11 @@ const itemsOrdenados = computed(() => {
 
         case 'nombreAsc':
             // Ordenar todos los elementos por nombre ascendente
-            return props.items.sort((a, b) => a.nombre.localeCompare(b.nombre));
+            return items.sort((a, b) => a.nombre.localeCompare(b.nombre));
 
         case 'nombreDesc':
             // Ordenar todos los elementos por nombre descendente
-            return props.items.sort((a, b) => b.nombre.localeCompare(a.nombre));
+            return items.sort((a, b) => b.nombre.localeCompare(a.nombre));
 
         case 'tamañoAsc':
             // Ordenar los archivos por tamaño ascendente
@@ -674,7 +697,7 @@ const itemsOrdenados = computed(() => {
 
         default:
             // Si el criterio de ordenación no coincide, devolver el listado sin cambios
-            return props.items;
+            return itemsFiltrados;
     }
 });
 
@@ -720,7 +743,7 @@ function renombrarItem() {
             item.nombre = nuevoNombre.value
         })
         .catch(err => {
-            const errorMessage = err.response.data.error || 'Ocurrió un error al renombrar el archivo'
+            const errorMessage = err.response.data.error || 'Ocurrió un error al renombrar el elemento'
             alert(errorMessage)
         })
 }
