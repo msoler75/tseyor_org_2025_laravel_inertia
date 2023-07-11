@@ -4,11 +4,51 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Carpeta extends Model
 {
     use HasFactory;
 
-    protected $fillable = [ 'ruta', 'permisos', 'user_id', 'team_id'];
+    protected $fillable = ['ruta', 'permisos', 'user_id', 'team_id'];
 
+
+    /**
+     * Dada una carpeta, busca los 10 archivos más recientes en esta o subcarpetas
+     *
+     * retorna un array de archivos
+     * */
+    private function buscarArchivosRecursivo($directorio, &$todos)
+    {
+        $patron = $directorio . '/*';
+        $archivos = glob($patron);
+
+        foreach ($archivos as $archivo) {
+            if (is_file($archivo)) {
+                $fecha_modificacion = filemtime($archivo);
+                $ruta_completa = $archivo;
+                $ruta_relativa = str_replace(Storage::disk('public')->path(''), '', $ruta_completa);
+                $ruta_publica = Storage::disk('public')->url($ruta_relativa);
+                $todos[] = ['archivo' => basename($ruta_publica), 'url' => $ruta_publica, 'fecha_modificacion' => $fecha_modificacion];
+            } else {
+                $this->buscarArchivosRecursivo($archivo, $todos);
+            }
+        }
+    }
+
+    public function ultimosArchivos()
+    {
+        $todos = [];
+        $ruta_completa = Storage::disk('public')->path($this->ruta);
+
+        $this->buscarArchivosRecursivo($ruta_completa, $todos);
+
+        usort($todos, function ($a, $b) {
+            return $b['fecha_modificacion'] - $a['fecha_modificacion'];
+        });
+
+        $ultimos = array_slice($todos, 0, 10);
+
+        return $ultimos;
+    }
 }

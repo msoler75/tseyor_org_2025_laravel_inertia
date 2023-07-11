@@ -1,27 +1,68 @@
 <template>
     <div>
-        <div class="sticky top-8 pt-10 bg-base-100 pb-4 border-b border-base-300 z-30">
-            <h1 class="container mx-auto my-2">
-                {{ equipo.nombre }}
-            </h1>
-            <div class="container mx-auto">{{ equipo.descripcion }}</div>
-            <small class="container mx-auto text-right block">{{ equipo.categoria }}</small>
-        </div>
-        <div class="container py-7 mx-auto space-y-12">
-            <div>
-            </div>
-            <div class="w-full md:w-1/2">
-                <div class="lg:max-w-[500px]">
-                    <img :src="'/storage/'+equipo.imagen" alt="Imagen del equipo" class="w-full mb-4">
-                    <p class="mb-4">{{ equipo.descripcion }}</p>
+        <div class="sticky top-8 pt-10 bg-base-100 pb-7 border-b border-gray-300 z-30">
+            <div class="container mx-auto flex gap-5">
+                <img :src="urlImage" alt="Imagen del equipo" class="w-32 object-cover rounded-lg">
+                <div class="space-y-3">
+                    <h1 class="my-2">
+                        {{ equipo.nombre }}
+                    </h1>
+                    <div class="">{{ equipo.descripcion }}</div>
+                    <small class="badge badge-neutral">{{ equipo.categoria }}</small>
                 </div>
             </div>
+        </div>
 
-            <div class="card bg-base-100 shadow p-5">
-                <Users v-if="equipo" :users="equipo.usuarios"
-                :count="13"
-                />
-            </div>
+        <div class="container mx-auto py-12">
+            <GridFill class="gap-7" w="24rem">
+
+                <div class="card shadow p-5 bg-base-300 border-4 border-orange-400">
+                    <h2>Anuncio</h2>
+                    <div class="prose">
+                        <p>WEriwqeriqw roiwqe owpeq riowqeriowirowe wer wer owjqer wrwqe rewq ewr ww qer wqer wqrwer we</p>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow p-5">
+                    <h2>Últimos Archivos</h2>
+                    <div>
+                        <File v-for="item, index of ultimosArchivos" :key="index"
+                        :url="item.url" :name="item.archivo"/>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow p-5">
+                    <h2>Carpetas</h2>
+                    <div>
+                        <Folder v-for="item, index of carpetas" :key="index" :url="item.ruta" />
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow p-5">
+                    <h2>Publicaciones</h2>
+                    <div>
+                        <ul>
+                            <li> item 1</li>
+                            <li> item 2</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow p-5">
+                    <h2>Libros recomendados</h2>
+                    <div>
+                        <ul>
+                            <li> item 1</li>
+                            <li> item 2</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow p-5">
+                    <h2>Miembros</h2>
+                    <Users v-if="equipo" :users="equipo.usuarios" :count="13" />
+                </div>
+            </GridFill>
         </div>
     </div>
 </template>
@@ -36,7 +77,15 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    totalMiembros: Number
+    totalMiembros: Number,
+    ultimosArchivos: {},
+    carpetas: {}
 })
 
+
+const urlImage = computed(() => {
+    if (!props.equipo.imagen) return '/storage/profile-photos/user.png'
+    if (props.equipo.imagen.match(/^https?:\/\//)) return props.equipo.imagen
+    return '/storage/' + props.equipo.imagen
+})
 </script>

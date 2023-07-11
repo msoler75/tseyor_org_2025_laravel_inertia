@@ -144,7 +144,7 @@ import { useDark, useColorScheme } from 'vue-use';
         <Banner />
 
         <div class="bg-base-200 flex-grow flex flex-col">
-            <nav class="w-full border-gray-300 dark:border-gray-700 bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "
+            <nav class="w-full border-gray-300  bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "
                 :data-theme="portada && nav.scrollY < 300 ? 'winter' : ''" :class="(portada && nav.scrollY < 300 ? 'dark bg-transparent ' : portada ? 'bg-opacity-20 hover:bg-opacity-100 transition duration-200 ' : 'border-b ') +
                     (nav.defaultClass + ' ' + (nav.fullPage ? 'fixed border-gray-300 ' : 'sticky ')) +
                     (nav.fullPage && nav.announce ? 'top-[2rem] ' : 'top-0 ')">
