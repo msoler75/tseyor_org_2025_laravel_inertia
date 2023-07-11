@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Equipo;
+use App\Models\Carpeta;
 use App\Pigmalion\SEO;
+use App\Policies\ArchivosPolicy;
 
 class EquiposController extends Controller
 {
@@ -42,7 +44,7 @@ class EquiposController extends Controller
             ->withViewData(SEO::get('equipos'));
     }
 
-     /**
+    /**
      * Muestra un equipo o departamento
      */
     public function show($id)
@@ -55,10 +57,30 @@ class EquiposController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
+        $carpetas = Carpeta::where('group_id', '=', $equipo->id)->get();
+
+        $ultimosArchivos = [];
+
+        $user = auth()->user();
+        $ArchivosPolicy = new ArchivosPolicy();
+        foreach ($carpetas as $carpeta) {
+            if ($ArchivosPolicy->leer($user, $carpeta->ruta)) {
+                $archivos = $carpeta->ultimosArchivos();
+                $ultimosArchivos = array_merge($ultimosArchivos, $archivos);
+            }
+        }
+
+        // ordenamos con recientes primero
+        usort($ultimosArchivos, function ($a, $b) {
+            return $b['fecha_modificacion'] - $a['fecha_modificacion'];
+        });
+
         $totalMiembros = $equipo->usuarios()->count();
 
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
+            'carpetas' => $carpetas,
+            'ultimosArchivos' => $ultimosArchivos,
             'totalMiembros' => $totalMiembros,
         ]);
     }

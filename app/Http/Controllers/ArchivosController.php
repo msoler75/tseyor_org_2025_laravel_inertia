@@ -29,7 +29,10 @@ class ArchivosController extends Controller
         }
 
         // Obtener la URL relativa actual de la aplicación
-        $baseUrl = url("");
+        $baseUrl = url('');
+
+        $rutaBase = str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url($ruta)));
+        $rutaPadre = dirname($rutaBase);
 
         $items = [];
         $carpeta_actual = null;
@@ -38,11 +41,15 @@ class ArchivosController extends Controller
             // Agregar elemento de carpeta padre
             $archivos_internos = Storage::disk('public')->files($ruta);
             $subcarpetas_internas = Storage::disk('public')->directories($ruta);
+
             $item = [
-                'nombre' => "..",
-                'clase' => "parent",
+                'nombre' => basename($ruta),
+                'mostrar' => '..',
+                'clase' => 'parent',
                 'tipo' => 'carpeta',
-                'ruta' => str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url(dirname($ruta)))),
+                'ruta' => $rutaBase,
+                'url' => $rutaPadre,
+                'carpeta' => $rutaPadre,
                 'archivos' => count($archivos_internos),
                 'subcarpetas' => count($subcarpetas_internas),
                 'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
@@ -67,11 +74,14 @@ class ArchivosController extends Controller
         foreach ($carpetas as $carpeta) {
             $archivos_internos = Storage::disk('public')->files($carpeta);
             $subcarpetas_internas = Storage::disk('public')->directories($carpeta);
+            $urlItem = str_replace($baseUrl, '',  str_replace('/storage', '', Storage::disk('public')->url($carpeta)));
             $item = [
                 'nombre' => basename($carpeta),
-                'clase' => "",
+                'clase' => '',
                 'tipo' => 'carpeta',
-                'ruta' => str_replace($baseUrl, '',  str_replace('/storage', '', Storage::disk('public')->url($carpeta))),
+                'ruta' => $urlItem,
+                'url' => $urlItem,
+                'carpeta' => $rutaBase,
                 'archivos' => count($archivos_internos),
                 'subcarpetas' => count($subcarpetas_internas),
                 'fecha_modificacion' => Storage::disk('public')->lastModified($carpeta)
@@ -93,11 +103,14 @@ class ArchivosController extends Controller
         // Agregar archivos a la colección de elementos
         $archivos = Storage::disk('public')->files($ruta);
         foreach ($archivos as $archivo) {
+            $urlItem = str_replace($baseUrl, '', Storage::disk('public')->url($ruta . '/' . basename($archivo)));
             $item = [
                 'nombre' => basename($archivo),
-                'clase' => "",
+                'clase' => '',
                 'tipo' => 'archivo',
-                'ruta' => str_replace($baseUrl, '', Storage::disk('public')->url($ruta . '/' . basename($archivo))),
+                'ruta' => $urlItem,
+                'url' => $urlItem,
+                'carpeta' => $rutaBase,
                 'tamano' => Storage::disk('public')->size($archivo),
                 'fecha_modificacion' => Storage::disk('public')->lastModified($archivo),
             ];
@@ -265,11 +278,12 @@ class ArchivosController extends Controller
         }
 
 
-        $user = auth()->user();
+       /* $user = auth()->user();
         $ArchivosPolicy = new ArchivosPolicy();
         if (!$ArchivosPolicy->escribir($user, $folder)) {
-            throw new AuthorizationException('No tienes permisos para leer la carpeta', 403);
+            throw new AuthorizationException('No tienes permisos para crear la carpeta', 403);
         }
+        */
 
 
         if (!mkdir($newFolderPath, 0755)) {
@@ -324,12 +338,15 @@ class ArchivosController extends Controller
     }
 
 
+    /**
+     * Renombra un archuvo que está en una carpeta $folder de viejo nombre $oldName a $newName
+     */
     public function rename(Request $request)
     {
         $folder = $request->folder;
         $oldName = $request->oldName;
         $newName = $request->newName;
-
+        // dd("folder=$folder  oldName=$oldName  newName=$newName");
 
         // Verificar si faltan parámetros
         if (!$request->filled(['folder', 'oldName', 'newName'])) {
@@ -340,8 +357,9 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
         }
 
-        $itemAntes = 'public/' . $folder . "/" . $oldName;
-        $itemDespues = 'public/' . $folder . "/" . $newName;
+        $itemAntes = 'public' . $folder . "/" . $oldName;
+        $itemDespues = 'public' . $folder . "/" . $newName;
+        // dd("itemAntes=$itemAntes itemDespues=$itemDespues");
 
         // Verificar que el item exista
         if (!Storage::exists($itemAntes)) {

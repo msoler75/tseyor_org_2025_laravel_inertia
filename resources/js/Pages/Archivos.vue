@@ -1,13 +1,13 @@
 <template>
     <div class="h-full flex flex-col">
+
         <div
             class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 z-10 sm:px-6 lg:px-8">
             <div class="container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
-                <h1 :title="ruta" v-if="!seleccionando"
-                    class="w-full mb-0 text-ellipsis overflow-hidden flex gap-4 items-center">
+                <div :title="ruta" v-if="!seleccionando" class="flex items-center gap-3 text-2xl font-bold">
                     <Icon icon="ph:folder-notch-open-duotone" />
-                    {{ ruta }}
-                </h1>
+                    <Breadcrumb :path="items.length&&items[0].clase=='parent'?items[0].ruta:ruta" />
+                </div>
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
 
@@ -31,7 +31,6 @@
                         <template #trigger>
                             <button class="btn btn-secondary p-3">
                                 <Icon icon="mdi:dots-vertical" class="text-xl" />
-
                             </button>
                         </template>
 
@@ -98,7 +97,8 @@
                 </button>
 
                 <template v-else>
-                    <button v-if="itemsSeleccionados.length == 1" class="btn btn-primary flex gap-3 items-center">
+                    <button v-if="itemsSeleccionados.length == 1" class="btn btn-primary flex gap-3 items-center"
+                        @click="abrirModalRenombrar(itemsSeleccionados[0])">
                         <Icon icon="ph:cursor-text-duotone" />
                         <span>Renombrar</span>
                     </button>
@@ -136,7 +136,8 @@
 
 
 
-        <div :class="vista === 'lista' ? 'lista' : 'grid'" class="select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8">
+        <div :class="vista === 'lista' ? 'lista' : 'grid'"
+            class="select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8">
             <div v-if="vista === 'lista'" class="mr-2">
                 <table class="w-full lg:w-auto mx-auto">
                     <thead class="hidden sm:table-header-group">
@@ -161,16 +162,16 @@
                                 <Icon v-else icon="ph:square" />
                             </td>
                             <td>
-                                <Icon
-                                    :icon="item.tipo === 'carpeta' ? (!item.privada ? 'ph:folder-simple-duotone' : 'ph:folder-lock-duotone') : getIconFromFileName(item.nombre)"
-                                    class="text-4xl sm:text-base"
-                                    :class="item.tipo === 'carpeta' ? 'text-yellow-500 transform scale-150' : ''" />
+                                <FolderIcon v-if="item.tipo === 'carpeta'" :private="item.privada" :url="item.ruta" />
+                                <FileIcon v-else :url="item.ruta" />
                             </td>
                             <td class="sm:hidden">
                                 <div class="flex flex-col">
-                                    <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">{{ item.nombre }}</Link>
-                                    <div v-else-if="seleccionando" :title="item.nombre">{{ item.nombre }}</div>
-                                    <a v-else :href="item.ruta" download>{{ item.nombre }}</a>
+                                    <Link v-if="item.tipo === 'carpeta'" :href="item.url">{{ item.mostrar || item.nombre }}
+                                    </Link>
+                                    <div v-else-if="seleccionando" :title="item.nombre">{{ item.mostrar || item.nombre }}
+                                    </div>
+                                    <a v-else :href="item.url" download>{{ item.mostrar || item.nombre }}</a>
                                     <small class="w-full flex justify-between items-center">
                                         <span v-if="item.tipo === 'carpeta'">{{ item.archivos + item.subcarpetas }}
                                             elementos</span>
@@ -179,10 +180,14 @@
                                     </small>
                                 </div>
                             </td>
+                            <td>
+                                {{ item }}
+                            </td>
                             <td class="hidden sm:table-cell">
-                                <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">{{ item.nombre }}</Link>
-                                <span v-else-if="seleccionando">{{ item.nombre }}</span>
-                                <a v-else :href="item.ruta" download>{{ item.nombre }}</a>
+                                <Link v-if="item.tipo === 'carpeta'" :href="item.url">{{ item.mostrar || item.nombre }}
+                                </Link>
+                                <span v-else-if="seleccionando">{{ item.mostrar || item.nombre }}</span>
+                                <a v-else :href="item.url" download>{{ item.mostrar || item.nombre }}</a>
                             </td>
                             <td class="hidden sm:table-cell">
                                 <span v-if="item.tipo === 'carpeta'" class="text-sm">{{ item.archivos + item.subcarpetas }}
@@ -193,7 +198,7 @@
                                 <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
                             </td>
                             <td>{{ item.permisos }}</td>
-                            <td>{{ item.propietario ?( item.propietario.usuario + '/' + item.propietario.grupo) : ''}}</td>
+                            <td>{{ item.propietario ? (item.propietario.usuario + '/' + item.propietario.grupo) : '' }}</td>
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
@@ -212,14 +217,14 @@
                                                 <span>Renombrar</span>
                                             </div>
 
-                                            <div v-if="!seleccionando"
+                                            <div v-if="!seleccionando && item.clase != 'parent'"
                                                 class="flex gap-3  items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                                 @click="abrirEliminarModal(item)">
                                                 <Icon icon="ph:trash-duotone" />
                                                 <span>Eliminar</span>
                                             </div>
 
-                                            <div v-if="!buscandoCarpetaDestino"
+                                            <div v-if="!buscandoCarpetaDestino && item.clase != 'parent'"
                                                 class="flex gap-3  items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                                 @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                 <template v-if="!item.seleccionado">
@@ -259,20 +264,17 @@
                             <Icon v-else icon="ph:square" />
                         </div>
                         <div class="flex flex-col items-center justify-center">
-                            <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">
-                            <img v-if="isImage(item.nombre)" :src="item.ruta" class="overflow-hidden w-[180px] h-[120px]">
-                            <Icon v-else :icon="!item.privada ? 'ph:folder-simple-duotone' : 'ph:folder-lock-duotone'"
-                                class="text-8xl mb-4 text-yellow-500 transform scale-150" />
-                            </Link>
-                            <component v-else :is="seleccionando?'div':'a'" :href="item.ruta" download>
-                                <img v-if="isImage(item.nombre)" :src="item.ruta"
-                                    class="overflow-hidden w-[180px] h-[120px]">
-                                <Icon v-else :icon="getIconFromFileName(item.nombre)" class="text-8xl mb-4" />
-                            </component>
+                            <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.ruta" :private="item.privada"
+                                class="text-8xl mb-4" />
+                            <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download>
+                                <img :src="item.ruta" class="overflow-hidden w-[180px] h-[120px]">
+                            </a>
+                            <FileIcon v-else :url="item.ruta" class="text-8xl mb-4" />
+
                             <div class="text-sm text-center">
-                                <Link v-if="item.tipo === 'carpeta'" :href="item.ruta">{{ item.nombre }}</Link>
-                                <span v-else-if="seleccionando">{{ item.nombre }}</span>
-                                <a v-else :href="item.ruta" download>{{ item.nombre }}</a>
+                                <Link v-if="item.tipo === 'carpeta'" :href="item.url">{{ item.mostrar || item.nombre }}</Link>
+                                <span v-else-if="seleccionando">{{ item.mostrar || item.nombre }}</span>
+                                <a v-else :href="item.url" download>{{ item.mostrar || item.nombre }}</a>
                             </div>
                             <div class="text-gray-500 text-xs">
                                 <template v-if="item.tipo === 'carpeta'">{{ item.archivos + ' archivos, ' +
@@ -434,7 +436,7 @@
         <!-- Modal Confirmación de eliminar Archivo -->
         <ConfirmationModal :show="modalEliminarItem" @close="modalEliminarItem = false">
             <template #content>
-                ¿Quieres eliminar {{ itemAEliminar.nombre }}?
+                ¿Quieres eliminar {{ itemAEliminar.mostrar || itemAEliminar.nombre }}?
             </template>
             <template #footer>
                 <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
@@ -526,6 +528,12 @@ function toggleItem(item) {
 
 const itemsSeleccionados = computed(() => props.items.filter(item => item.seleccionado))
 
+
+watch(() => itemsSeleccionados.value.length, (value) => {
+    console.log('itemsSeleccionados.length=', value)
+    if (!value)
+        cancelarSeleccion()
+})
 
 
 // COPIAR Y MOVER ITEMS
@@ -627,8 +635,8 @@ const itemsOrdenados = computed(() => {
         case 'normal':
             // Ordenar las carpetas y los archivos por separado
             carpetas.sort((a, b) => {
-                if (a.nombre === '..') return -Infinity;
-                if (b.nombre === '..') return Infinity;
+                if (a.mostrar === '..') return -Infinity;
+                if (b.mostrar === '..') return Infinity;
                 return a.nombre.localeCompare(b.nombre);
             });
             archivos.sort((a, b) => a.fecha_modificacion - b.fecha_modificacion);
@@ -685,6 +693,7 @@ const itemRenombrando = ref(null)
 const modalRenombrarItem = ref(false)
 
 function abrirModalRenombrar(item) {
+    item.seleccionado = false // para el caso de renombrar un item seleccionado
     itemRenombrando.value = item
     nuevoNombre.value = item.nombre
     modalRenombrarItem.value = true
@@ -697,13 +706,17 @@ function abrirModalRenombrar(item) {
 function renombrarItem() {
     modalRenombrarItem.value = false
     axios.post(route('files.rename'), {
-        folder: props.ruta,
+        folder: itemRenombrando.value.carpeta,
         oldName: itemRenombrando.value.nombre,
         newName: nuevoNombre.value,
     })
         .then(response => {
             console.log({ response })
             const item = props.items.find(it => it.nombre == itemRenombrando.value.nombre)
+            item.ruta = item.carpeta + '/' + nuevoNombre.value
+            const parts = item.url.split('/')
+            parts[parts.length - 1] = parts[parts.length - 1].replace(item.nombre, nuevoNombre.value)
+            item.url = parts.join('/')
             item.nombre = nuevoNombre.value
         })
         .catch(err => {
@@ -777,53 +790,6 @@ function isImage(fileName) {
         case 'png': return true;
     }
     return false
-}
-
-
-// ITEM ICONO
-
-const getIconFromFileName = (fileName) => {
-    const ext = fileName.split('.').pop().toLowerCase();
-
-    switch (ext) {
-        case 'mp3': return 'teenyicons:mp3-outline';
-        case 'wav': return 'uil:file-audio-wave';
-        case 'ogg': return 'carbon:document-audio';
-        case 'flac': return 'uil:headphones-alt';
-        case 'wma': return 'iconoir:file-audio';
-        case 'aiff': return 'ant-design:file-audio-outlined';
-        case 'm4a': return 'ant-design:file-audio-filled';
-        case 'aac': return 'uil:file-audio';
-        case 'amr': return 'clarity:file-audio';
-        case 'mka': return 'codicon:wave';
-        // Más extensiones de audio..
-        case 'pdf': return 'fa6-solid:file-pdf';
-        case 'zip': return 'ant-design:file-zip-outlined';
-        case 'rar': return 'mdi:file-powerpoint';
-        case '7z': return 'mdi:file-zip-outline';
-        // habituales:
-        case 'mp3': return 'teenyicons:mp3-outline';
-        case 'mp4': return 'la:file-video';
-        case 'svg':
-        case 'webp':
-        case 'jpg':
-        case 'jpeg':
-        case 'png': return 'streamline:image-picture-landscape-1-photos-photo-landscape-picture-photography-camera-pictures';
-        case 'zip': return 'ant-design:file-zip-outlined';
-        case 'doc': return 'ant-design:file-word-outlined';
-        case 'docx': return 'ant-design:file-word-outlined';
-        case 'txt': return 'carbon:document-text-outline';
-        case 'xls': return 'ant-design:file-excel-outlined';
-        case 'xlsx': return 'ant-design:file-excel-outlined';
-        case 'ppt': return 'ant-design:file-powerpoint-outlined';
-        case 'pptx': return 'ant-design:file-powerpoint-outlined';
-        case 'sql': return 'ant-design:file-sql-outlined';
-        case 'js': return 'ant-design:file-js-outlined';
-        case 'ts': return 'uil:file-typescript-alt';
-        case 'py': return 'uil:file-python';
-        // Más extensiones de archivo...
-        default: return 'fa:file'; // Ícono predeterminado
-    }
 }
 
 

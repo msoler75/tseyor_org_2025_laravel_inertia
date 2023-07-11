@@ -1,0 +1,18 @@
+<template>
+    <Link :href="href" class="flex gap-3 items-baseline">
+    <Icon :icon="private ? 'ph:folder-lock-duotone' : 'ph:folder-simple-duotone'" class="text-yellow-500 transform scale-150" />
+    {{ name ? url.substring(url.lastIndexOf('/') + 1) : '' }}</Link>
+</template>
+
+<script setup>
+const props = defineProps({
+    url: String,
+    private: Boolean,
+    name: {
+        type: Boolean,
+        default: false
+    }
+})
+
+const href = computed(() => props.url && !props.url.startsWith('/') ? '/' + props.url : props.url)
+</script>

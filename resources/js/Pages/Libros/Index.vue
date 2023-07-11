@@ -54,7 +54,7 @@
                                 </div>
                                 <TimeAgo :date="libro.published_at" />
                             </div>
-                            <p class="text-gray-700 text-sm">{{ libro.descripcion }}</p>
+                            <p class="text-sm">{{ libro.descripcion }}</p>
                             <Link :href="route('libro', libro.slug)" class="btn mt-auto">
                             Ver libro
                             </Link>
