@@ -34,15 +34,19 @@
                 <div v-if="listado.data.length > 0" class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(20rem, 1fr))` }">
                     <div v-if="listado.data.length > 0" v-for="equipo in listado.data" :key="equipo.id"
-                        class="card flex-row bg-base-100 shadow overflow-hidden">
-                        <img :src="equipo.imagen" :alt="equipo.nombre" class="w-1/2 object-cover" />
+                        class="card flex-row bg-base-100 shadow overflow-hidden" relative>
+
+                        <Link :href="`/equipos/${equipo.slug || equipo.id}`" class="w-1/2 h-full absolute left-0 top-0 " />
+                        <img :src="equipo.imagen" :alt="equipo.nombre" class="w-1/2 object-cover cursor-pointer"
+                            @click="" />
+
                         <div class="card-body p-5">
                             <h2 class="text-lg font-bold mb-2 capitalize">{{ equipo.nombre }}</h2>
                             <p class="text-gray-700 text-sm">{{ equipo.descripcion }}</p>
                             <div class="card-actions justify-end">
                                 <Link :href="`/equipos/${equipo.slug || equipo.id}`"
                                     class="flex gap-3 items-center text-sm">
-                                <Icon icon="ph:arrow-fat-line-right-duotone"/>Ver Equipo
+                                <Icon icon="ph:arrow-fat-line-right-duotone" />Ver Equipo
                                 </Link>
                             </div>
                         </div>

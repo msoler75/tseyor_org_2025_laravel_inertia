@@ -7,13 +7,16 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use App\Policies\ArchivosPolicy;
+use App\Policies\AlmacenamientoPolicy;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\UploadedFile;
 use App\Models\Carpeta;
 
-class ArchivosController extends Controller
+/**
+ *
+ */
+class AlmacenamientoController extends Controller
 {
     public function index(Request $request)
     {
@@ -23,8 +26,8 @@ class ArchivosController extends Controller
 
         Log::info("explorar archivos en " . $ruta);
 
-        $ArchivosPolicy = new ArchivosPolicy();
-        if (!$ArchivosPolicy->leer($user, $ruta)) {
+        $AlmacenamientoPolicy = new AlmacenamientoPolicy();
+        if (!$AlmacenamientoPolicy->leer($user, $ruta)) {
             throw new AuthorizationException('No tienes permisos para leer la carpeta', 403);
         }
 
@@ -53,7 +56,7 @@ class ArchivosController extends Controller
             'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
         ];
 
-        $c = $ArchivosPolicy->obtenerCarpeta($ruta);
+        $c = $AlmacenamientoPolicy->obtenerCarpeta($ruta);
         $item['permisos'] =  optional($c)->permisos ?? 0;
         $item['propietario'] = ['usuario' => optional($c)->propietario_usuario, 'grupo' => optional($c)->propietario_grupo];
         $carpeta_actual = $c;
@@ -78,10 +81,10 @@ class ArchivosController extends Controller
                 'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
             ];
 
-            if (!$ArchivosPolicy->leer($user, $ruta))
+            if (!$AlmacenamientoPolicy->leer($user, $ruta))
                 $item['privada'] = true;
 
-            $c = $ArchivosPolicy->obtenerCarpeta(dirname($ruta));
+            $c = $AlmacenamientoPolicy->obtenerCarpeta(dirname($ruta));
             $item['permisos'] =  optional($c)->permisos ?? 0;
             $item['propietario'] = ['usuario' => optional($c)->propietario_usuario, 'grupo' => optional($c)->propietario_grupo];
 
@@ -109,13 +112,13 @@ class ArchivosController extends Controller
                 'fecha_modificacion' => Storage::disk('public')->lastModified($carpeta)
             ];
             // Obtener información de la carpeta correspondiente, si existe
-            //$ArchivosPolicy = new ArchivosPolicy();
-            //$carpetaModel = $ArchivosPolicy->carpeta;
+            //$AlmacenamientoPolicy = new AlmacenamientoPolicy();
+            //$carpetaModel = $AlmacenamientoPolicy->carpeta;
             //if ($carpetaModel)
-            if (!$ArchivosPolicy->leer($user, $ruta . "/" . $item['nombre']))
+            if (!$AlmacenamientoPolicy->leer($user, $ruta . "/" . $item['nombre']))
                 $item['privada'] = true;
 
-            $c = $ArchivosPolicy->obtenerCarpeta($ruta . "/" . $item['nombre']);
+            $c = $AlmacenamientoPolicy->obtenerCarpeta($ruta . "/" . $item['nombre']);
             $item['permisos'] =  optional($c)->permisos ?? 0;
             $item['propietario'] = ['usuario' => optional($c)->propietario_usuario, 'grupo' => optional($c)->propietario_grupo];
 
@@ -159,6 +162,16 @@ class ArchivosController extends Controller
 
 
 
+
+
+    ////////////////////////////////////////////////////////////////////
+    ///// API
+    ////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * Procesa la subida de archivos
+     */
     public function processUpload(Request $request, UploadedFile $file, string $folder)
     {
         if (!$file) {
@@ -304,9 +317,9 @@ class ArchivosController extends Controller
         }
 
 
-       /* $user = auth()->user();
-        $ArchivosPolicy = new ArchivosPolicy();
-        if (!$ArchivosPolicy->escribir($user, $folder)) {
+        /* $user = auth()->user();
+        $AlmacenamientoPolicy = new AlmacenamientoPolicy();
+        if (!$AlmacenamientoPolicy->escribir($user, $folder)) {
             throw new AuthorizationException('No tienes permisos para crear la carpeta', 403);
         }
         */
@@ -413,7 +426,9 @@ class ArchivosController extends Controller
     }
 
 
-
+    /**
+     * Mueve un conjunto de archivos a otra carpeta
+     */
     public function move(Request $request)
     {
         $sourceFolder = $request->sourceFolder;
@@ -504,6 +519,9 @@ class ArchivosController extends Controller
     }
 
 
+    /**
+     * Copia un conjunto de archivos a otra carpeta
+     */
     public function copy(Request $request)
     {
         $sourceFolder = $request->sourceFolder;

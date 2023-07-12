@@ -2,27 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Model;
 
 class Equipo extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'nombre',
+        'slug',
         'descripcion',
+        // 'group_id'
     ];
 
     public function usuarios()
     {
         return $this->belongsToMany(User::class, 'equipo_user')
             ->using(Membresia::class)
-            ->withPivot(['user_id', 'rol']);
+            ->withPivot(['user_id', 'rol'])
+            ->withTimestamps();
     }
 }
 
-class Membresia extends \Illuminate\Database\Eloquent\Relations\Pivot
+class Membresia extends Pivot
 {
     protected $table = 'equipo_user';
 

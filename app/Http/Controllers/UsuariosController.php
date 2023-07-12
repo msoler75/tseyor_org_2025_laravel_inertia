@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Models\Equipo;
 use App\Models\Comentario;
 use App\Pigmalion\SEO;
 
@@ -48,9 +49,15 @@ class UsuariosController extends Controller
             ->take(7)
             ->get();
 
+        $administrar = true;
+
+        $equipos = $administrar ? Equipo::select('id', 'slug', 'nombre')->get() : [];
+
         return Inertia::render('Usuarios/Usuario', [
             'usuario' => $usuario,
-            'comentarios' => $comentarios
+            'comentarios' => $comentarios,
+            'equipos' => $equipos,
+            'administrar' => $administrar
         ])
             ->withViewData(SEO::from($usuario));
     }

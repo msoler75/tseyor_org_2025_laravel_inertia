@@ -672,11 +672,7 @@ const itemsOrdenados = computed(() => {
     switch (ordenarPor.value) {
         case 'normal':
             // Ordenar las carpetas y los archivos por separado
-            carpetas.sort((a, b) => {
-                if (a.padre || a.actual) return -Infinity;
-                if (b.padre || b.actual) return Infinity;
-                return a.nombre.localeCompare(b.nombre);
-            });
+            carpetas.sort((a, b) => a.nombre.localeCompare(b.nombre));
             archivos.sort((a, b) => a.fecha_modificacion - b.fecha_modificacion);
 
             // Combinar los grupos en el orden adecuado
