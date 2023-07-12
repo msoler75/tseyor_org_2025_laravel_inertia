@@ -260,6 +260,10 @@ class ArchivosController extends Controller
         return $this->processUpload($request, $file, $folder);
     }
 
+
+    /**
+     * Crea una carpeta
+     */
     public function createFolder(Request $request)
     {
         $folder = $request->folder;
@@ -320,11 +324,13 @@ class ArchivosController extends Controller
     }
 
 
-    // Elimina un item, indicado en ruta
+    /**
+     * Elimina un item, indicado en ruta
+     */
     public function delete($ruta)
     {
         // Concatenar la ruta completa al archivo
-        $archivo = 'public/' . $ruta;
+        $archivo = 'public' . str_replace('/storage', '', $ruta);
 
         // Verificar si la ruta contiene saltos de carpeta
         if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
