@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Equipo;
 use App\Models\Carpeta;
+use App\Models\User;
 use App\Pigmalion\SEO;
-use App\Policies\ArchivosPolicy;
+use App\Policies\AlmacenamientoPolicy;
 
 class EquiposController extends Controller
 {
@@ -62,9 +63,9 @@ class EquiposController extends Controller
         $ultimosArchivos = [];
 
         $user = auth()->user();
-        $ArchivosPolicy = new ArchivosPolicy();
+        $AlmacenamientoPolicy = new AlmacenamientoPolicy();
         foreach ($carpetas as $carpeta) {
-            if ($ArchivosPolicy->leer($user, $carpeta->ruta)) {
+            if ($AlmacenamientoPolicy->leer($user, $carpeta->ruta)) {
                 $archivos = $carpeta->ultimosArchivos();
                 $ultimosArchivos = array_merge($ultimosArchivos, $archivos);
             }
@@ -102,5 +103,57 @@ class EquiposController extends Controller
             ]
         )
             ->withViewData(SEO::get('utg'));
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////////
+    ///// API
+    ////////////////////////////////////////////////////////////////////
+
+    /**
+     * Agrega un usuario a un equipo
+     */
+    public function addMember($idEquipo, $idUsuario)
+    {
+        // Obtenemos el usuario y el equipo
+        $equipo = Equipo::findOrFail($idEquipo);
+        $usuario = User::findOrFail($idUsuario);
+
+        // agregamos el usuario al equipo
+        $equipo->usuarios()->syncWithoutDetaching([$idUsuario]);
+
+        return response()->json(['mensaje'=>'El usuario fue añadido al equipo'], 200);
+    }
+
+
+    /**
+     * Elimina un usuario de un equipo
+     */
+    public function removeMember($idEquipo, $idUsuario)
+    {
+        // Obtenemos el usuario y el equipo
+        $equipo = Equipo::findOrFail($idEquipo);
+        $usuario = User::findOrFail($idUsuario);
+        // removemos el usuario del equipo
+        $equipo->usuarios()->detach($idUsuario);
+
+        return response()->json(['mensaje'=>'El usuario fue removido del equipo'], 200);
+    }
+
+
+    /**
+     * Elimina un usuario de un equipo
+     */
+    public function updateMember($idEquipo, $idUsuario, $rol)
+    {
+        // Obtenemos el usuario y el equipo
+        $usuario = User::findOrFail($idUsuario);
+        $equipo = Equipo::findOrFail($idEquipo);
+
+        // Actualizamos el rol del usuario en el equipo
+        $equipo->usuarios()->updateExistingPivot($idUsuario, ['rol' => $rol]);
+
+        return response()->json(['mensaje'=>'El usuario fue actualizado dentro del equipo'], 200);
     }
 }

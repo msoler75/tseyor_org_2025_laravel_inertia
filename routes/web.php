@@ -4,7 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\ArchivosController;
+use App\Http\Controllers\AlmacenamientoController;
 use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ComunicadosController;
 use App\Http\Controllers\EntradasController;
@@ -56,8 +56,8 @@ Route::get('/', [PortadaController::class, 'index'])->name('portada');
 
 Route::get('/novedades', [NovedadesController::class, 'index'])->name('novedades');
 
-Route::get('/archivos', [ArchivosController::class, 'index'])->name('archivos0');
-Route::get('/archivos{ruta}', [ArchivosController::class, 'index'])->where(['ruta' => '(\/.+)?'])->name('archivos');
+Route::get('/archivos', [AlmacenamientoController::class, 'index'])->name('archivos0');
+Route::get('/archivos{ruta}', [AlmacenamientoController::class, 'index'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
 
 Route::get('/audios', [AudiosController::class, 'index'])->name('audios');
@@ -157,8 +157,3 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
-
-
-
-
-Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comentarios');

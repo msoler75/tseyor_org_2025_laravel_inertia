@@ -17,10 +17,20 @@
                 </blockquote>
             </div>
 
-            <Link class="badge badge-neutral" v-for="equipo of usuario.equipos" :key="equipo.id"
+            <Link class="badge badge-neutral gap-2" v-for="equipo of usuario.equipos" :key="equipo.id"
                 :href="route('equipo', equipo.slug || equipo.id)">
+            <span v-if="administrar" @click.prevent="abrirModalEliminarEquipo(equipo)">x</span>
             {{ equipo.nombre }}
             </Link>
+
+            <div v-if="administrar" class="mt-7">
+                <form @submit.prevent="agregarEquipo" class="flex gap-3">
+                    <select v-model="equipoSeleccionado" placeholder="Elige un equipo...">
+                        <option v-for="equipo of equipos" :key="equipo.id" :value="equipo.id">{{ equipo.nombre }}</option>
+                    </select>
+                    <input type="submit" class="btn btn-primary" value="Agregar Equipo" :disabled="!equipoSeleccionado">
+                </form>
+            </div>
 
         </Section>
 
@@ -28,7 +38,8 @@
             <div class="container mx-auto">
                 <h2 class="text-center">Últimos comentarios</h2>
                 <ul class="list-none space-y-5">
-                    <li v-for="comentario of comentarios" class="w-full flex flex-col gap-3 md:flex-row justify-between items-baseline">
+                    <li v-for="comentario of comentarios"
+                        class="w-full flex flex-col gap-3 md:flex-row justify-between items-baseline">
                         <Link :href="comentario.url" class="prose">
                         <blockquote>
                             <p>
@@ -42,10 +53,35 @@
             </div>
         </Section>
 
+
+        <!-- Modal Confirmación de eliminar Archivo -->
+        <ConfirmationModal :show="modalEliminarEquipo" @close="modalEliminarEquipo = false">
+            <template #title>
+                Confirmación de eliminación
+            </template>
+            <template #content>
+                ¿Quieres eliminar {{ equipoAEliminar.nombre }}?
+            </template>
+            <template #footer>
+                <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
+                    @submit.prevent="eliminarEquipo">
+
+                    <button @click.prevent="modalEliminarEquipo = false" type="button" class="btn btn-secondary">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn btn-primary">
+                        Eliminar
+                    </button>
+                </form>
+            </template>
+        </ConfirmationModal>
+
     </Sections>
 </template>
 
 <script setup>
+import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
@@ -58,6 +94,14 @@ const props = defineProps({
     comentarios: {
         type: Array,
         required: true
+    },
+    administrar: {
+        type: Boolean,
+        default: false
+    },
+    equipos: {
+        type: Array,
+        default: []
     }
 })
 
@@ -68,4 +112,46 @@ const urlImage = computed(() => {
     return '/storage/' + image.value
 })
 
+
+const modalEliminarEquipo = ref(false)
+const equipoAEliminar = ref(null)
+const equipoSeleccionado = ref(null)
+const error = ref(null)
+
+function abrirModalEliminarEquipo(equipo) {
+    equipoAEliminar.value = equipo
+    modalEliminarEquipo.value = true
+}
+
+function eliminarEquipo() {
+    console.log('eliminar Equipo', equipoAEliminar.value, 'user:', props.usuario.id)
+    modalEliminarEquipo.value = false
+    axios.put(route('equipo.remover', { idEquipo: equipoAEliminar.value.id, idUsuario: props.usuario.id }))
+        .then(respuesta => {
+            reload()
+        })
+        .catch(err => {
+            console.log({err})
+            error.value = "No se ha podido remover el equipo."
+        })
+}
+
+function reload() {
+    console.log('reload')
+    router.reload({
+        only: ['usuario']
+    })
+}
+
+function agregarEquipo() {
+    console.log('agregar Equipo', { idEquipo: equipoSeleccionado.value, idUsuario: props.usuario.id })
+    axios.put(route('equipo.agregar', { idEquipo: equipoSeleccionado.value, idUsuario: props.usuario.id }))
+        .then(respuesta => {
+            reload()
+        })
+        .catch(err => {
+            console.log({err})
+            error.value = "No se ha podido agregar el equipo."
+        })
+}
 </script>

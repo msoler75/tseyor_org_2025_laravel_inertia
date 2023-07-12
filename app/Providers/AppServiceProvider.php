@@ -14,6 +14,11 @@ use App\Models\Evento;
 use App\Models\Normativa;
 use App\Models\Lugar;
 use App\Models\Guia;
+use App\Models\Equipo;
+use App\Models\Grupo;
+use App\Models\Membresia;
+use App\Observers\MembresiaObserver;
+
 // use TCG\Voyager\Facades\Voyager;
 // use App\FormFields\MarkdownImagesField;
 use App\Pigmalion\Contenidos;
@@ -124,6 +129,26 @@ class AppServiceProvider extends ServiceProvider
         Publicacion::saved(function ($publicacion) {
             Contenidos::guardarContenido("publicaciones", $publicacion);
         });
+
+
+
+
+        // Equipos y grupos
+
+        // Lógica que se ejecutará cuando se cree un nuevo equipo
+        Equipo::created(function ($equipo) {
+            // Crea un nuevo grupo con el mismo nombre del equipo
+            $grupo = Grupo::create(['nombre' => $equipo->nombre, 'slug'=>$equipo->slug]);
+
+            $equipo->group_id = $grupo->id;
+
+            // Guarda los cambios en el modelo Equipo
+            $equipo->save();
+        });
+
+
+        // observamos los cambios en membresías de equipos
+        Membresia::observe(MembresiaObserver::class);
 
     }
 
