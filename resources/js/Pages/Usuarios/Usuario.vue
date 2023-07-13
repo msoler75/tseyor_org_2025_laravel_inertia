@@ -17,16 +17,19 @@
                 </blockquote>
             </div>
 
-            <Link class="badge badge-neutral gap-2" v-for="equipo of usuario.equipos" :key="equipo.id"
-                :href="route('equipo', equipo.slug || equipo.id)">
-            <span v-if="administrar" @click.prevent="abrirModalEliminarEquipo(equipo)">x</span>
-            {{ equipo.nombre }}
-            </Link>
+            <div class="flex flex-wrap justify-center gap-5">
+                <Link class="badge badge-neutral gap-2" v-for="equipo of usuario.equipos" :key="equipo.id"
+                    :href="route('equipo', equipo.slug || equipo.id)">
+                <span v-if="administrar" @click.prevent="abrirModalEliminarEquipo(equipo)">x</span>
+                {{ equipo.nombre }}
+                </Link>
 
-            <div v-if="administrar" class="mt-7">
+            </div>
+
+            <div v-if="administrar&&equiposFiltrados.length" class="mt-7">
                 <form @submit.prevent="agregarEquipo" class="flex gap-3">
-                    <select v-model="equipoSeleccionado" placeholder="Elige un equipo...">
-                        <option v-for="equipo of equipos" :key="equipo.id" :value="equipo.id">{{ equipo.nombre }}</option>
+                    <select v-model="equipoSeleccionado" placeholder="Elige un equipo..." class="text-gray-900">
+                        <option v-for="equipo of equiposFiltrados" :key="equipo.id" :value="equipo.id">{{ equipo.nombre }}</option>
                     </select>
                     <input type="submit" class="btn btn-primary" value="Agregar Equipo" :disabled="!equipoSeleccionado">
                 </form>
@@ -60,7 +63,7 @@
                 Confirmación de eliminación
             </template>
             <template #content>
-                ¿Quieres eliminar {{ equipoAEliminar.nombre }}?
+                ¿Quieres eliminar {{ equipoAEliminar.nombre }} de este usuario?
             </template>
             <template #footer>
                 <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
@@ -105,6 +108,9 @@ const props = defineProps({
     }
 })
 
+// todos los equipos, excepto los que el usuario ya es miembro
+const equiposFiltrados = computed(()=>props.equipos.filter(e=>!props.usuario.equipos.find(ue=>ue.id==e.id)))
+
 const image = computed(() => props.usuario.avatar || props.usuario.profile_ptoho_path || props.usuario.imagen)
 const urlImage = computed(() => {
     if (!image.value) return '/storage/profile-photos/user.png'
@@ -131,7 +137,7 @@ function eliminarEquipo() {
             reload()
         })
         .catch(err => {
-            console.log({err})
+            console.log({ err })
             error.value = "No se ha podido remover el equipo."
         })
 }
@@ -150,7 +156,7 @@ function agregarEquipo() {
             reload()
         })
         .catch(err => {
-            console.log({err})
+            console.log({ err })
             error.value = "No se ha podido agregar el equipo."
         })
 }

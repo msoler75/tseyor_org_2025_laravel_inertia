@@ -7,16 +7,15 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use App\Policies\AlmacenamientoPolicy;
+use App\Policies\LinuxPolicy;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\UploadedFile;
-use App\Models\Carpeta;
 
 /**
  *
  */
-class AlmacenamientoController extends Controller
+class ArchivosController extends Controller
 {
     public function index(Request $request)
     {
@@ -24,10 +23,11 @@ class AlmacenamientoController extends Controller
 
         $user = auth()->user();
 
-        Log::info("explorar archivos en " . $ruta);
+        $LinuxPolicy = new LinuxPolicy();
 
-        $AlmacenamientoPolicy = new AlmacenamientoPolicy();
-        if (!$AlmacenamientoPolicy->leer($user, $ruta)) {
+        $nodo = $LinuxPolicy->obtenerMejorNodo($ruta);
+
+        if (!$LinuxPolicy->leer($nodo, $user)) {
             throw new AuthorizationException('No tienes permisos para leer la carpeta', 403);
         }
 
@@ -38,7 +38,6 @@ class AlmacenamientoController extends Controller
         $rutaPadre = dirname($rutaBase);
 
         $items = [];
-        $carpeta_actual = null;
 
         // elemento de carpeta actual
         $archivos_internos = Storage::disk('public')->files($ruta);
@@ -56,11 +55,10 @@ class AlmacenamientoController extends Controller
             'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
         ];
 
-        $c = $AlmacenamientoPolicy->obtenerCarpeta($ruta);
-        $item['permisos'] =  optional($c)->permisos ?? 0;
-        $item['propietario'] = ['usuario' => optional($c)->propietario_usuario, 'grupo' => optional($c)->propietario_grupo];
-        $carpeta_actual = $c;
 
+        $nodoCarpeta = $nodo;
+        $item['permisos'] =  optional($nodo)->permisos ?? 0;
+        $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
         $items[] = $item;
 
 
@@ -81,21 +79,20 @@ class AlmacenamientoController extends Controller
                 'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
             ];
 
-            if (!$AlmacenamientoPolicy->leer($user, $ruta))
+            $nodo = $LinuxPolicy->obtenerMejorNodo(dirname($ruta));
+            if (!$nodo || !$LinuxPolicy->leer($nodo, $user))
                 $item['privada'] = true;
 
-            $c = $AlmacenamientoPolicy->obtenerCarpeta(dirname($ruta));
-            $item['permisos'] =  optional($c)->permisos ?? 0;
-            $item['propietario'] = ['usuario' => optional($c)->propietario_usuario, 'grupo' => optional($c)->propietario_grupo];
+            $item['permisos'] =  optional($nodo)->permisos ?? 0;
+            $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
 
             $items[] = $item;
         }
 
         // Agregar carpetas a la colección de elementos
         $carpetas = Storage::disk('public')->directories($ruta);
-        Log::info("actualizarItems.ruta=" . $ruta);
-        Log::info("actualizarItems.carpetas=" . count($carpetas));
-        //dd($carpetas);
+        $nodos = $LinuxPolicy->obtenerNodos($ruta);
+
         foreach ($carpetas as $carpeta) {
             $archivos_internos = Storage::disk('public')->files($carpeta);
             $subcarpetas_internas = Storage::disk('public')->directories($carpeta);
@@ -112,15 +109,14 @@ class AlmacenamientoController extends Controller
                 'fecha_modificacion' => Storage::disk('public')->lastModified($carpeta)
             ];
             // Obtener información de la carpeta correspondiente, si existe
-            //$AlmacenamientoPolicy = new AlmacenamientoPolicy();
-            //$carpetaModel = $AlmacenamientoPolicy->carpeta;
-            //if ($carpetaModel)
-            if (!$AlmacenamientoPolicy->leer($user, $ruta . "/" . $item['nombre']))
-                $item['privada'] = true;
 
-            $c = $AlmacenamientoPolicy->obtenerCarpeta($ruta . "/" . $item['nombre']);
-            $item['permisos'] =  optional($c)->permisos ?? 0;
-            $item['propietario'] = ['usuario' => optional($c)->propietario_usuario, 'grupo' => optional($c)->propietario_grupo];
+            $nodo = $nodos->where('ruta', $ruta . "/" . $item['nombre'])->first();
+            if (!$nodo)
+                $nodo = $nodoCarpeta;
+            if (!$nodo || !$LinuxPolicy->leer($nodo, $user))
+                $item['privada'] = true;
+            $item['permisos'] =  optional($nodo)->permisos ?? 0;
+            $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
 
             $items[] = $item;
         }
@@ -140,13 +136,14 @@ class AlmacenamientoController extends Controller
                 'fecha_modificacion' => Storage::disk('public')->lastModified($archivo),
             ];
 
-            $item['permisos'] =  optional($carpeta_actual)->permisos ?? 0;
-            $item['propietario'] = ['usuario' => optional($carpeta_actual)->propietario_usuario, 'grupo' => optional($carpeta_actual)->propietario_grupo];
+            $nodo = $nodos->where('ruta', $ruta . "/" . $item['nombre'])->first();
+            if (!$nodo)
+                $nodo = $nodoCarpeta;
+            $item['permisos'] =  optional($nodo)->permisos ?? 0;
+            $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
 
             $items[] = $item;
         }
-
-        Log::info("actualizarItems.items=" . count($items));
 
         return Inertia::render('Archivos', [
             'items' => $items,
@@ -318,8 +315,8 @@ class AlmacenamientoController extends Controller
 
 
         /* $user = auth()->user();
-        $AlmacenamientoPolicy = new AlmacenamientoPolicy();
-        if (!$AlmacenamientoPolicy->escribir($user, $folder)) {
+        $LinuxPolicy = new LinuxPolicy();
+        if (!$LinuxPolicy->escribir($user, $folder)) {
             throw new AuthorizationException('No tienes permisos para crear la carpeta', 403);
         }
         */
@@ -448,8 +445,6 @@ class AlmacenamientoController extends Controller
             return response()->json(['error' => 'Los elementos no son un array'], 400);
         }
 
-        Log::info("Items a mover: " . var_export($items, true));
-
         // Mover cada item a la nueva carpeta de destino
         $successCount = 0;
         $errorCount = 0;
@@ -488,8 +483,6 @@ class AlmacenamientoController extends Controller
                     $counter++;
                 }
 
-                // Intentar mover el archivo
-                Log::info("Trataremos de mover de $itemSource a $itemDestination");
                 if (Storage::move($itemSource, $itemDestination)) {
                     $successCount++;
                     // Agregar registro de movimiento a archivo de log
@@ -541,8 +534,6 @@ class AlmacenamientoController extends Controller
             return response()->json(['error' => 'Los elementos no son un array'], 400);
         }
 
-        Log::info("Items a copiar: " . var_export($items, true));
-
         // Copiar cada item a la nueva carpeta de destino
         $successCount = 0;
         $errorCount = 0;
@@ -581,8 +572,6 @@ class AlmacenamientoController extends Controller
                     $counter++;
                 }
 
-                // Intentar copiar el archivo
-                Log::info("Trataremos de copiar de $itemSource a $itemDestination");
                 if (Storage::copy($itemSource, $itemDestination)) {
                     $successCount++;
                     // Agregar registro de copia a archivo de log

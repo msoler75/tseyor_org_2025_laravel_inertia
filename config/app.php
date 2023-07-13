@@ -190,5 +190,14 @@ return [
 
 
 
+    /**
+     * La umask establece los permisos que se deben restar de los permisos predeterminados totales del sistema de archivos
+     * para determinar los permisos reales que se aplicarán al nuevo archivo o carpeta.
+     * La umask es una configuración en el sistema operativo Unix y Linux que controla los permisos predeterminados
+     * que se aplican a los archivos y carpetas recién creados.
+     *  */
+    'umask' => "0022",
+
+
 
 ];

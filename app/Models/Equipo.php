@@ -11,7 +11,10 @@ class Equipo extends Model
         'nombre',
         'slug',
         'descripcion',
-        // 'group_id'
+        'imagen',
+        'categoria',
+        'user_id',
+        'group_id'
     ];
 
     public function usuarios()

@@ -26,7 +26,7 @@
                 <div class="card bg-base-100 shadow p-5">
                     <h2>Últimos Archivos</h2>
                     <div>
-                        <File v-for="item, index of ultimosArchivos" :key="index"
+                        <FileIcon v-for="item, index of ultimosArchivos" :key="index"
                         :url="item.url" :name="item.archivo"/>
                     </div>
                 </div>
@@ -34,7 +34,10 @@
                 <div class="card bg-base-100 shadow p-5">
                     <h2>Carpetas</h2>
                     <div>
-                        <Folder v-for="item, index of carpetas" :key="index" :url="item.ruta" />
+                        <div class="flex gap-3" v-for="item, index of carpetas" :key="index" >
+                            <FolderIcon :url="item.ruta" />
+                            <Link :href="'/'+item.ruta">{{ item.ruta.substring(item.ruta.lastIndexOf('/')+1) }}</Link>
+                        </div>
                     </div>
                 </div>
 

@@ -8,7 +8,8 @@ use App\Models\Equipo;
 use App\Models\Carpeta;
 use App\Models\User;
 use App\Pigmalion\SEO;
-use App\Policies\AlmacenamientoPolicy;
+use App\Policies\LinuxPolicy;
+use Illuminate\Support\Str;
 
 class EquiposController extends Controller
 {
@@ -63,9 +64,10 @@ class EquiposController extends Controller
         $ultimosArchivos = [];
 
         $user = auth()->user();
-        $AlmacenamientoPolicy = new AlmacenamientoPolicy();
+        $LinuxPolicy = new LinuxPolicy();
         foreach ($carpetas as $carpeta) {
-            if ($AlmacenamientoPolicy->leer($user, $carpeta->ruta)) {
+            $nodo = $LinuxPolicy->obtenerMejorNodo($carpeta->ruta);
+            if ($nodo&&$LinuxPolicy->leer($nodo, $user)) {
                 $archivos = $carpeta->ultimosArchivos();
                 $ultimosArchivos = array_merge($ultimosArchivos, $archivos);
             }
@@ -107,9 +109,43 @@ class EquiposController extends Controller
 
 
 
+    /**
+     ** Crea un nuevo equipo
+     */
+    public function store(Request $request)
+    {
+        // Validar los datos
+        $validatedData = $request->validate([
+            'nombre' => 'required|max:32',
+            'descripcion' => 'max:400',
+            'imagen'=> 'max:255',
+        ]);
+
+        $user = auth()->user();
+
+        // Crear una nueva instancia de Inscripcion y guardarla en la base de datos
+        $equipo = Equipo::create([
+            'nombre' => $validatedData['nombre'],
+            'slug' => Str::slug($validatedData['nombre']),
+            'imagen'=> $validatedData['imagen'],
+            'descripcion' => $validatedData['descripcion'],
+            'user_id' => $user->id ?? 1
+        ]);
+
+        if ($equipo) {
+            return to_route('equipo', $equipo->slug);
+        } else {
+            // Devolver un objeto JSON con los errores de validación
+            return redirect()->back()->withErrors(['msg', 'No se pudo crear el equipo, inténtalo de nuevo']);
+        }
+    }
+
+
     ////////////////////////////////////////////////////////////////////
     ///// API
     ////////////////////////////////////////////////////////////////////
+
+
 
     /**
      * Agrega un usuario a un equipo
@@ -123,7 +159,7 @@ class EquiposController extends Controller
         // agregamos el usuario al equipo
         $equipo->usuarios()->syncWithoutDetaching([$idUsuario]);
 
-        return response()->json(['mensaje'=>'El usuario fue añadido al equipo'], 200);
+        return response()->json(['mensaje' => 'El usuario fue añadido al equipo'], 200);
     }
 
 
@@ -138,7 +174,7 @@ class EquiposController extends Controller
         // removemos el usuario del equipo
         $equipo->usuarios()->detach($idUsuario);
 
-        return response()->json(['mensaje'=>'El usuario fue removido del equipo'], 200);
+        return response()->json(['mensaje' => 'El usuario fue removido del equipo'], 200);
     }
 
 
@@ -154,6 +190,6 @@ class EquiposController extends Controller
         // Actualizamos el rol del usuario en el equipo
         $equipo->usuarios()->updateExistingPivot($idUsuario, ['rol' => $rol]);
 
-        return response()->json(['mensaje'=>'El usuario fue actualizado dentro del equipo'], 200);
+        return response()->json(['mensaje' => 'El usuario fue actualizado dentro del equipo'], 200);
     }
 }
