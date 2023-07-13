@@ -16,40 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `almacenamiento`
---
-
-DROP TABLE IF EXISTS `almacenamiento`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `almacenamiento` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `ruta` varchar(255) NOT NULL,
-  `es_carpeta` tinyint(1) unsigned DEFAULT NULL,
-  `user_id` bigint(20) unsigned DEFAULT NULL,
-  `group_id` bigint(20) unsigned DEFAULT NULL,
-  `permisos` smallint(4) unsigned DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `ruta` (`ruta`) USING BTREE,
-  KEY `es_carpeta` (`es_carpeta`),
-  KEY `user_id` (`user_id`),
-  KEY `group_id` (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `almacenamiento`
---
-
-LOCK TABLES `almacenamiento` WRITE;
-/*!40000 ALTER TABLE `almacenamiento` DISABLE KEYS */;
-INSERT INTO `almacenamiento` VALUES (3,'archivos',NULL,1,1,1755,'2023-07-04 20:36:03','2023-07-04 20:36:04'),(4,'archivos/salud',NULL,1,3,1750,'2023-07-04 20:41:54','2023-07-04 20:41:55');
-/*!40000 ALTER TABLE `almacenamiento` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `audios`
 --
 
@@ -336,7 +302,7 @@ CREATE TABLE `equipo_user` (
   KEY `equipo_user_equipo_id_foreign` (`equipo_id`),
   CONSTRAINT `equipo_user_equipo_id_foreign` FOREIGN KEY (`equipo_id`) REFERENCES `equipos` (`id`) ON DELETE CASCADE,
   CONSTRAINT `equipo_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -345,7 +311,7 @@ CREATE TABLE `equipo_user` (
 
 LOCK TABLES `equipo_user` WRITE;
 /*!40000 ALTER TABLE `equipo_user` DISABLE KEYS */;
-INSERT INTO `equipo_user` VALUES (3,1,1,NULL,'2023-07-13 00:19:58','2023-07-13 00:19:58');
+INSERT INTO `equipo_user` VALUES (6,1,2,NULL,'2023-07-13 00:43:53','2023-07-13 00:43:53'),(8,1,1,NULL,'2023-07-13 00:44:04','2023-07-13 00:44:04'),(9,1,3,NULL,'2023-07-13 00:45:35','2023-07-13 00:45:35');
 /*!40000 ALTER TABLE `equipo_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -362,7 +328,7 @@ CREATE TABLE `equipos` (
   `slug` varchar(32) DEFAULT NULL,
   `descripcion` varchar(400) DEFAULT NULL,
   `imagen` varchar(255) DEFAULT NULL,
-  `categoria` varchar(50) DEFAULT NULL,
+  `categoria` varchar(50) DEFAULT 'general',
   `user_id` bigint(20) unsigned NOT NULL,
   `group_id` bigint(20) unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -374,7 +340,7 @@ CREATE TABLE `equipos` (
   KEY `equipos_group_id_foreign` (`group_id`),
   CONSTRAINT `equipos_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `equipos_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -383,7 +349,7 @@ CREATE TABLE `equipos` (
 
 LOCK TABLES `equipos` WRITE;
 /*!40000 ALTER TABLE `equipos` DISABLE KEYS */;
-INSERT INTO `equipos` VALUES (1,'Administradores','root','Administradores','https://via.placeholder.com/700x700.png/0F0CD3?text=administradores','tseyor',1,1,'2023-07-05 18:16:31','2023-07-05 18:16:32'),(2,'Consejeros','consejeros','Han participado en el Consejo de los Doce','https://via.placeholder.com/700x700.png/0FACD3?text=consejeros','tseyor',1,2,'2023-07-05 18:17:36','2023-07-05 18:17:36'),(3,'Salud','salud','Departamento de Salud de la UTG','https://via.placeholder.com/700x700.png/FFACD3?text=Depart. de salud','utg',1,3,'2023-07-08 01:13:16','2023-07-08 01:13:16');
+INSERT INTO `equipos` VALUES (1,'Administradores','root','Administradores','https://via.placeholder.com/700x700.png/0F0CD3?text=administradores','tseyor',1,1,'2023-07-05 18:16:31','2023-07-05 18:16:32'),(2,'Consejeros','consejeros','Han participado en el Consejo de los Doce','https://via.placeholder.com/700x700.png/0FACD3?text=consejeros','tseyor',1,2,'2023-07-05 18:17:36','2023-07-05 18:17:36'),(3,'Salud','salud','Departamento de Salud de la UTG','https://via.placeholder.com/700x700.png/FFACD3?text=Depart. de salud','utg',1,3,'2023-07-08 01:13:16','2023-07-08 01:13:16'),(4,'aprendices mancos','aprendices-mancos','de todo',NULL,NULL,1,4,'2023-07-13 02:05:42','2023-07-13 02:05:42'),(5,'ererewe wer werwe','ererewe-wer-werwe',NULL,NULL,NULL,1,5,'2023-07-13 02:09:20','2023-07-13 02:09:20'),(6,'aprendices infantiles','aprendices-infantiles','awfwew',NULL,NULL,1,6,'2023-07-13 02:19:26','2023-07-13 02:19:26'),(7,'xxx aaa','xxx-aaa',NULL,NULL,NULL,1,7,'2023-07-13 02:28:56','2023-07-13 02:28:56'),(8,'amor a primera vista','amor-a-primera-vista',NULL,NULL,NULL,1,8,'2023-07-13 02:29:28','2023-07-13 02:29:28'),(9,'pepito palotes','pepito-palotes',NULL,NULL,NULL,1,9,'2023-07-13 02:34:44','2023-07-13 02:34:44'),(10,'qwer ewqr','qwer-ewqr','wqe',NULL,NULL,1,10,'2023-07-13 02:36:46','2023-07-13 02:36:46'),(11,'xxxa','xxxa',NULL,NULL,NULL,1,11,'2023-07-13 02:37:13','2023-07-13 02:37:13'),(12,'qwerewqrweqrewre wqer weqr','qwerewqrweqrewre-wqer-weqr',NULL,NULL,NULL,1,12,'2023-07-13 02:40:50','2023-07-13 02:40:50'),(13,'petete amor','petete-amor',NULL,NULL,NULL,1,13,'2023-07-13 02:45:21','2023-07-13 02:45:21'),(14,'peteta vista','peteta-vista',NULL,NULL,'general',1,14,'2023-07-13 02:46:17','2023-07-13 02:46:17');
 /*!40000 ALTER TABLE `equipos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -473,7 +439,7 @@ CREATE TABLE `grupo_user` (
   KEY `grupo_user_group_id_foreign` (`group_id`) USING BTREE,
   CONSTRAINT `grupo_user_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE,
   CONSTRAINT `grupo_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -482,6 +448,7 @@ CREATE TABLE `grupo_user` (
 
 LOCK TABLES `grupo_user` WRITE;
 /*!40000 ALTER TABLE `grupo_user` DISABLE KEYS */;
+INSERT INTO `grupo_user` VALUES (6,1,2,'2023-07-13 00:43:53','2023-07-13 00:43:53'),(8,1,1,'2023-07-13 00:44:04','2023-07-13 00:44:04'),(9,1,3,'2023-07-13 00:45:35','2023-07-13 00:45:35');
 /*!40000 ALTER TABLE `grupo_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -499,7 +466,7 @@ CREATE TABLE `grupos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -508,7 +475,7 @@ CREATE TABLE `grupos` (
 
 LOCK TABLES `grupos` WRITE;
 /*!40000 ALTER TABLE `grupos` DISABLE KEYS */;
-INSERT INTO `grupos` VALUES (1,'administradores','administradores','2023-07-12 19:53:18','2023-07-12 19:53:19'),(2,'consejeros','consejeros','2023-07-12 19:53:39','2023-07-12 19:53:40'),(3,'salud','salud','2023-07-12 15:37:38','2023-07-12 15:37:39');
+INSERT INTO `grupos` VALUES (1,'administradores','administradores','2023-07-12 19:53:18','2023-07-12 19:53:19'),(2,'consejeros','consejeros','2023-07-12 19:53:39','2023-07-12 19:53:40'),(3,'salud','salud','2023-07-12 15:37:38','2023-07-12 15:37:39'),(4,'aprendices mancos','aprendices-mancos','2023-07-13 02:05:42','2023-07-13 02:05:42'),(5,'ererewe wer werwe','ererewe-wer-werwe','2023-07-13 02:09:20','2023-07-13 02:09:20'),(6,'aprendices infantiles','aprendices-infantiles','2023-07-13 02:19:26','2023-07-13 02:19:26'),(7,'xxx aaa','xxx-aaa','2023-07-13 02:28:56','2023-07-13 02:28:56'),(8,'amor a primera vista','amor-a-primera-vista','2023-07-13 02:29:28','2023-07-13 02:29:28'),(9,'pepito palotes','pepito-palotes','2023-07-13 02:34:44','2023-07-13 02:34:44'),(10,'qwer ewqr','qwer-ewqr','2023-07-13 02:36:46','2023-07-13 02:36:46'),(11,'xxxa','xxxa','2023-07-13 02:37:13','2023-07-13 02:37:13'),(12,'qwerewqrweqrewre wqer weqr','qwerewqrweqrewre-wqer-weqr','2023-07-13 02:40:50','2023-07-13 02:40:50'),(13,'petete amor','petete-amor','2023-07-13 02:45:21','2023-07-13 02:45:21'),(14,'peteta vista','peteta-vista','2023-07-13 02:46:17','2023-07-13 02:46:17');
 /*!40000 ALTER TABLE `grupos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -678,6 +645,40 @@ LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
 INSERT INTO `migrations` VALUES (1,'2014_10_12_000000_create_users_table',1),(2,'2014_10_12_100000_create_password_reset_tokens_table',1),(3,'2014_10_12_200000_add_two_factor_columns_to_users_table',1),(4,'2019_08_19_000000_create_failed_jobs_table',1),(5,'2019_12_14_000001_create_personal_access_tokens_table',1),(6,'2020_05_21_100000_create_teams_table',1),(7,'2020_05_21_200000_create_team_user_table',1),(8,'2020_05_21_300000_create_team_invitations_table',1),(9,'2023_06_14_202416_create_sessions_table',1),(10,'2023_06_16_235229_libros',2),(11,'2023_06_17_020244_entradas',3),(13,'2023_06_21_232143_create_inscripcions_table',4),(14,'2023_06_23_214200_lugares',5),(15,'2023_06_23_214203_guias',5),(16,'2023_06_25_005826_create_seo_table',6),(18,'2023_06_27_220834_create_radio_table',7),(20,'2023_06_29_140527_import_radio',8),(21,'2023_06_29_213725_comentarios_create',9),(22,'2023_07_03_155134_create_permisos_table',10),(23,'2023_07_03_214322_create_carpeta_migration',11),(25,'2023_07_05_173522_create_equipos_table',12),(26,'2023_07_05_173954_create_equipo_user_table',13);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `nodos`
+--
+
+DROP TABLE IF EXISTS `nodos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `nodos` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `ruta` varchar(255) NOT NULL,
+  `es_carpeta` tinyint(1) unsigned DEFAULT NULL,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `group_id` bigint(20) unsigned DEFAULT NULL,
+  `permisos` char(4) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `ruta` (`ruta`) USING BTREE,
+  KEY `es_carpeta` (`es_carpeta`),
+  KEY `user_id` (`user_id`),
+  KEY `group_id` (`group_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `nodos`
+--
+
+LOCK TABLES `nodos` WRITE;
+/*!40000 ALTER TABLE `nodos` DISABLE KEYS */;
+INSERT INTO `nodos` VALUES (3,'archivos',1,1,1,'1755','2023-07-04 20:36:03','2023-07-04 20:36:04'),(4,'archivos/noticias/1.jpg',1,1,3,'1750','2023-07-04 20:41:54','2023-07-04 20:41:55'),(5,'archivos/equipos/aprendices-infantiles',1,1,6,'1005','2023-07-13 02:19:26','2023-07-13 02:19:26'),(6,'archivos/equipos/xxx-aaa',1,1,7,'1005','2023-07-13 02:28:56','2023-07-13 02:28:56'),(7,'archivos/equipos/amor-a-primera-vista',1,1,8,'1755','2023-07-13 02:29:28','2023-07-13 02:29:28'),(8,'archivos/equipos/pepito-palotes',1,1,9,'1005','2023-07-13 02:34:44','2023-07-13 02:34:44'),(9,'archivos/equipos/qwer-ewqr',1,1,10,'1005','2023-07-13 02:36:46','2023-07-13 02:36:46'),(10,'archivos/equipos/xxxa',1,1,11,'1005','2023-07-13 02:37:13','2023-07-13 02:37:13'),(11,'archivos/equipos/qwerewqrweqrewre-wqer-weqr',1,1,12,'1755','2023-07-13 02:40:50','2023-07-13 02:40:50'),(12,'archivos/equipos/peteta-vista',1,1,14,'1755','2023-07-13 02:46:17','2023-07-13 02:46:17'),(13,'archivos/noticias',1,1,1,'1744','2023-07-13 00:23:11','2023-07-13 00:23:13'),(15,'archivos/noticias/archivo/2.jpg',1,1,1,'1500','2023-07-13 01:36:33','2023-07-13 01:36:34'),(16,'archivos/noticias/pe.jpg',1,1,1,'1600','2023-07-13 01:35:54','2023-07-13 01:35:54'),(17,'archivos/noticias/amor',1,2,1,'1440','2023-07-13 01:38:17','2023-07-13 01:38:17');
+/*!40000 ALTER TABLE `nodos` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -895,7 +896,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('gqpQUfqZvfvbBYrB4BTdFrHP3QpbpszxE5A5jnHm',1,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36','YTo1OntzOjY6Il90b2tlbiI7czo0MDoiTENVSHloMW9kZGNwNDZDYXZ4UU5nY1hmbjcyaldKMGtPWGl6bEVocyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTtzOjIxOiJwYXNzd29yZF9oYXNoX3NhbmN0dW0iO3M6NjA6IiQyeSQxMCRQNGl3ZGtZa1JuVDd6L3NVM2VreVV1S3BWRnFBWC9zeHNxVi9wZ1hvb2I4dVJNUWJpNU1HaSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC91c3Vhcmlvcy9yb290Ijt9fQ==',1689193195);
+INSERT INTO `sessions` VALUES ('gqpQUfqZvfvbBYrB4BTdFrHP3QpbpszxE5A5jnHm',1,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36','YTo1OntzOjY6Il90b2tlbiI7czo0MDoiTENVSHloMW9kZGNwNDZDYXZ4UU5nY1hmbjcyaldKMGtPWGl6bEVocyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTtzOjIxOiJwYXNzd29yZF9oYXNoX3NhbmN0dW0iO3M6NjA6IiQyeSQxMCRQNGl3ZGtZa1JuVDd6L3NVM2VreVV1S3BWRnFBWC9zeHNxVi9wZ1hvb2I4dVJNUWJpNU1HaSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjk6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9lcXVpcG9zIjt9fQ==',1689212631);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1062,4 +1063,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-12 16:20:15
+-- Dump completed on 2023-07-12 21:45:10
