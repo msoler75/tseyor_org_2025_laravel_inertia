@@ -21,28 +21,30 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-Route::post('/files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');
-Route::post('/files/upload/image', [ArchivosController::class, 'uploadImage'])->name('files.upload.image');
-Route::post('/files/rename', [ArchivosController::class, 'rename'])->name('files.rename');
-Route::post('/files/move', [ArchivosController::class, 'move'])->name('files.move');
-Route::post('/files/copy', [ArchivosController::class, 'copy'])->name('files.copy');
-Route::put('/files/mkdir', [ArchivosController::class, 'createFolder'])->name('files.mkdir');
-Route::delete('/files{ruta}', [ArchivosController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
-
-
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
+    // ni idea
 });
+
 
 
 Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comentarios');
 
 Route::middleware(['web'])->group(function () {
     Route::post('/comentarios', [ComentariosController::class, 'create'])->name('comentario.nuevo');
+
+    // archivos
+    Route::post('/files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');
+    Route::post('/files/upload/image', [ArchivosController::class, 'uploadImage'])->name('files.upload.image');
+    Route::post('/files/rename', [ArchivosController::class, 'rename'])->name('files.rename');
+    Route::post('/files/move', [ArchivosController::class, 'move'])->name('files.move');
+    Route::post('/files/copy', [ArchivosController::class, 'copy'])->name('files.copy');
+    Route::put('/files/mkdir', [ArchivosController::class, 'makeDir'])->name('files.mkdir');
+    Route::delete('/files{ruta}', [ArchivosController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
 })
     ->middleware(['auth']);
 

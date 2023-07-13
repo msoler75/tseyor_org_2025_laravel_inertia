@@ -104,6 +104,12 @@ class ComentariosController extends Controller
 
     public function create(Request $request)
     {
+        $user = auth()->user();
+
+        if(!$user) {
+            return response()->json(['error' => 'No autorizado'], 401);
+        }
+
         $url = $request->url;
         $respuesta_a = $request->respuesta_a ?? null;
         $texto = $request->texto;
@@ -123,7 +129,7 @@ class ComentariosController extends Controller
         $comentario = new Comentario;
         $comentario->texto = $texto;
         $comentario->url = $url;
-        $comentario->user_id = auth()->user()->id; // Asignar el ID del usuario autenticado
+        $comentario->user_id = $user->id; // Asignar el ID del usuario autenticado
         $comentario->respuesta_a = $respuesta_a;
         $comentario->save();
 

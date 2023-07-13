@@ -11,6 +11,8 @@ use App\Policies\LinuxPolicy;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Config;
+use App\Models\Nodo;
 
 /**
  *
@@ -21,6 +23,16 @@ class ArchivosController extends Controller
     {
         $ruta = $request->path();
 
+        // Obtener la URL relativa actual de la aplicación
+        $baseUrl = url('');
+
+        $rutaBase = str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url($ruta)));
+
+        // Comprobar si la carpeta existe
+        if (!Storage::disk('public')->exists($rutaBase)) {
+            abort(404, 'Ruta no encontrada');
+        }
+
         $user = auth()->user();
 
         $LinuxPolicy = new LinuxPolicy();
@@ -29,16 +41,13 @@ class ArchivosController extends Controller
         // dd($aclEjecutar);
         // $aclLeer = $LinuxPolicy->acl($user, 'leer');
 
+        // comprobamos el permiso de ejecución (listar) en la carpeta
         $nodo = $LinuxPolicy->obtenerMejorNodo($ruta);
-
         if (!$LinuxPolicy->ejecutar($nodo, $user, $aclEjecutar)) {
             throw new AuthorizationException('No tienes permisos para ver la carpeta', 403);
         }
 
-        // Obtener la URL relativa actual de la aplicación
-        $baseUrl = url('');
 
-        $rutaBase = str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url($ruta)));
         $rutaPadre = dirname($rutaBase);
 
         $items = [];
@@ -149,9 +158,16 @@ class ArchivosController extends Controller
             $items[] = $item;
         }
 
+
+        // comprobamos los permisos de escritura (para saber si puede crear carpetas, o renombrar archivos)
+        $aclEscribir = $LinuxPolicy->acl($user, 'escribir');
+        $puedeEscribir = $LinuxPolicy->escribir($nodoCarpeta, $user, $aclEscribir);
+
+
         return Inertia::render('Archivos', [
             'items' => $items,
-            'ruta' => $ruta
+            'ruta' => $ruta,
+            'puedeEscribir' => $puedeEscribir
         ])
             ->withViewData([
                 'seo' => new SEOData(
@@ -165,7 +181,8 @@ class ArchivosController extends Controller
     /**
      * Controla el acceso a las descargas
      */
-    public function download(string $ruta) {
+    public function download(string $ruta)
+    {
         $path = storage_path('app/public/' . $ruta);
 
         /*if (Gate::denies('download-file', $path)) {
@@ -291,8 +308,14 @@ class ArchivosController extends Controller
     /**
      * Crea una carpeta
      */
-    public function createFolder(Request $request)
+    public function makeDir(Request $request)
     {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'No autorizado'], 401);
+        }
+
         $folder = $request->folder;
         $name = $request->name;
 
@@ -330,20 +353,42 @@ class ArchivosController extends Controller
             ], 409);
         }
 
-
-        /* $user = auth()->user();
+        // comprobamos los permisos de escritura
         $LinuxPolicy = new LinuxPolicy();
-        if (!$LinuxPolicy->escribir($user, $folder)) {
-            throw new AuthorizationException('No tienes permisos para crear la carpeta', 403);
+        $acl = $LinuxPolicy->acl($user, 'escribir');
+        $nodo = $LinuxPolicy->obtenerMejorNodo($folder);
+        if (!$nodo || !$LinuxPolicy->escribir($nodo, $user, $acl)) {
+            return response()->json([
+                'error' => 'No tienes permisos'
+            ], 403);
         }
-        */
 
-
+        // creamos la carpeta
         if (!mkdir($newFolderPath, 0755)) {
             return response()->json([
                 'error' => 'unableToCreateFolder'
             ], 500);
         }
+
+
+        // Creamos el nodo
+
+        // Obtén el valor de umask desde el archivo de configuración
+        $umask = Config::get('app.umask');
+
+        // Convertir umask y permisos a octal
+        $umask = octdec($umask);
+
+        // aplicamos el umask, con el sticky bit 1
+        $permisos = 01777 & ~$umask;
+
+        Nodo::create([
+            'ruta' => $folder . '/' . $name,
+            'user_id' => $user->id,
+            'group_id' => 1,
+            'permisos' => decoct($permisos),
+            'es_carpeta' => true
+        ]);
 
         return response()->json([
             'message' => 'folderCreated'
@@ -356,6 +401,12 @@ class ArchivosController extends Controller
      */
     public function delete($ruta)
     {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'No autorizado'], 401);
+        }
+
         // Concatenar la ruta completa al archivo
         $archivo = 'public' . str_replace('/storage', '', $ruta);
 
@@ -367,6 +418,16 @@ class ArchivosController extends Controller
         // Verificar que el archivo exista
         if (!Storage::exists($archivo)) {
             return response()->json(['error' => 'El archivo no existe'], 404);
+        }
+
+        // comprobamos los permisos de escritura
+        $LinuxPolicy = new LinuxPolicy();
+        $acl = $LinuxPolicy->acl($user, 'escribir');
+        $nodo = $LinuxPolicy->obtenerMejorNodo($ruta);
+        if (!$nodo || !$LinuxPolicy->escribir($nodo, $user, $acl)) {
+            return response()->json([
+                'error' => 'No tienes permisos'
+            ], 403);
         }
 
         // Verificar si la ruta es una carpeta
@@ -398,6 +459,12 @@ class ArchivosController extends Controller
      */
     public function rename(Request $request)
     {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'No autorizado'], 401);
+        }
+
         $folder = $request->folder;
         $oldName = $request->oldName;
         $newName = $request->newName;
@@ -415,6 +482,17 @@ class ArchivosController extends Controller
         $itemAntes = 'public' . $folder . "/" . $oldName;
         $itemDespues = 'public' . $folder . "/" . $newName;
         // dd("itemAntes=$itemAntes itemDespues=$itemDespues");
+
+
+        // comprobamos los permisos de escritura
+        $LinuxPolicy = new LinuxPolicy();
+        $acl = $LinuxPolicy->acl($user, 'escribir');
+        $nodo = $LinuxPolicy->obtenerMejorNodo($ruta);
+        if (!$nodo || !$LinuxPolicy->escribir($nodo, $user, $acl)) {
+            return response()->json([
+                'error' => 'No tienes permisos'
+            ], 403);
+        }
 
         // Verificar que el item exista
         if (!Storage::exists($itemAntes)) {
@@ -445,6 +523,12 @@ class ArchivosController extends Controller
      */
     public function move(Request $request)
     {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'No autorizado'], 401);
+        }
+
         $sourceFolder = $request->sourceFolder;
         $destinationFolder = $request->targetFolder;
 
@@ -461,6 +545,30 @@ class ArchivosController extends Controller
         if (!is_array($items)) {
             return response()->json(['error' => 'Los elementos no son un array'], 400);
         }
+
+        // comprobamos los permisos de lectura y escritura
+        $LinuxPolicy = new LinuxPolicy();
+        $aclLeer = $LinuxPolicy->acl($user, 'leer');
+        $aclEscribir = $LinuxPolicy->acl($user, 'escribir');
+        $nodoSource = $LinuxPolicy->obtenerMejorNodo($sourceFolder);
+        $nodoDestination = $LinuxPolicy->obtenerMejorNodo($destinationFolder);
+
+        if (!$nodoSource || !$LinuxPolicy->leer($nodoSource, $user, $aclLeer)) {
+            return response()->json([
+                'error' => 'No tienes permisos de lectura en la carpeta origen'
+            ], 403);
+        }
+        if (!$LinuxPolicy->escribir($nodoSource, $user, $aclEscribir)) {
+            return response()->json([
+                'error' => 'No tienes permisos de escritura en la carpeta origen'
+            ], 403);
+        }
+        if (!$nodoDestination || !$LinuxPolicy->escribir($nodoDestination, $user, $aclEscribir)) {
+            return response()->json([
+                'error' => 'No tienes permisos en la carpeta destino'
+            ], 403);
+        }
+
 
         // Mover cada item a la nueva carpeta de destino
         $successCount = 0;
@@ -534,6 +642,12 @@ class ArchivosController extends Controller
      */
     public function copy(Request $request)
     {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'No autorizado'], 401);
+        }
+
         $sourceFolder = $request->sourceFolder;
         $destinationFolder = $request->targetFolder;
 
@@ -549,6 +663,25 @@ class ArchivosController extends Controller
 
         if (!is_array($items)) {
             return response()->json(['error' => 'Los elementos no son un array'], 400);
+        }
+
+
+        // comprobamos los permisos de lectura y escritura
+        $LinuxPolicy = new LinuxPolicy();
+        $aclLeer = $LinuxPolicy->acl($user, 'leer');
+        $aclEscribir = $LinuxPolicy->acl($user, 'escribir');
+        $nodoSource = $LinuxPolicy->obtenerMejorNodo($sourceFolder);
+        $nodoDestination = $LinuxPolicy->obtenerMejorNodo($destinationFolder);
+
+        if (!$nodoSource || !$LinuxPolicy->leer($nodoSource, $user, $aclLeer)) {
+            return response()->json([
+                'error' => 'No tienes permisos para leer los archivos'
+            ], 403);
+        }
+        if (!$nodoDestination || !$LinuxPolicy->escribir($nodoDestination, $user, $aclEscribir)) {
+            return response()->json([
+                'error' => 'No tienes permisos para escribir'
+            ], 403);
         }
 
         // Copiar cada item a la nueva carpeta de destino
