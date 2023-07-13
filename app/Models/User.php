@@ -12,6 +12,7 @@ use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Permiso;
 use App\Models\Equipo;
+use App\Models\Grupo;
 use App\Models\Membresia;
 
 class User extends Authenticatable
@@ -77,7 +78,7 @@ class User extends Authenticatable
 
     public function grupos()
     {
-        return $this->belongsToMany(Grupo::class, 'grupo_user')
+        return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'group_id')
             ->using(Pertenencia::class)
             ->withPivot(['user_id']);
     }

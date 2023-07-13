@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Archivo extends Model
 {
-    protected $table = 'almacenamiento';
+    protected $table = 'nodos';
 
     protected $esCarpeta = false;
 
@@ -18,6 +18,11 @@ class Archivo extends Model
 
         static::addGlobalScope('es_carpeta', function ($query) {
             $query->where('es_carpeta', false);
+        });
+
+
+        static::creating(function ($carpeta) {
+            $carpeta->es_carpeta = false;
         });
     }
 

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class Carpeta extends Model
 {
-    protected $table = 'almacenamiento';
+    protected $table = 'nodos';
 
     protected $esCarpeta = true;
 
@@ -20,6 +20,10 @@ class Carpeta extends Model
         static::addGlobalScope('es_carpeta', function ($query) {
             $query->where('es_carpeta', true);
         });
+
+        static::creating(function ($carpeta) {
+            $carpeta->es_carpeta = true;
+        });
     }
 
 
@@ -28,7 +32,7 @@ class Carpeta extends Model
      *
      * retorna un array de archivos
      * */
-    private function buscarArchivosRecursivo($directorio, &$todos)
+    private function listarArchivosRecursivo($directorio, &$todos)
     {
         $patron = $directorio . '/*';
         $archivos = glob($patron);
@@ -41,7 +45,7 @@ class Carpeta extends Model
                 $ruta_publica = Storage::disk('public')->url($ruta_relativa);
                 $todos[] = ['archivo' => basename($ruta_publica), 'url' => $ruta_publica, 'fecha_modificacion' => $fecha_modificacion];
             } else {
-                $this->buscarArchivosRecursivo($archivo, $todos);
+                $this->listarArchivosRecursivo($archivo, $todos);
             }
         }
     }
@@ -51,7 +55,7 @@ class Carpeta extends Model
         $todos = [];
         $ruta_completa = Storage::disk('public')->path($this->ruta);
 
-        $this->buscarArchivosRecursivo($ruta_completa, $todos);
+        $this->listarArchivosRecursivo($ruta_completa, $todos);
 
         usort($todos, function ($a, $b) {
             return $b['fecha_modificacion'] - $a['fecha_modificacion'];
