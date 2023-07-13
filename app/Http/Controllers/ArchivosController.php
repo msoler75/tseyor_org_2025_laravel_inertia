@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use App\Models\Nodo;
+use App\Models\Equipo;
+use App\Models\User;
 
 /**
  *
@@ -163,11 +165,30 @@ class ArchivosController extends Controller
         $aclEscribir = $LinuxPolicy->acl($user, 'escribir');
         $puedeEscribir = $LinuxPolicy->escribir($nodoCarpeta, $user, $aclEscribir);
 
+        $propietario = null;
+
+        // comprobamos si la carpeta es de un equipo
+        $equipo = Equipo::where('group_id', $nodoCarpeta->group_id)->first();
+        if ($equipo)
+            $propietario = [
+                'url' => route('equipo', $equipo->slug || $equipo->id),
+                'nombre' => $equipo->nombre,
+                'tipo' => 'equipo'
+            ];
+        else {
+            $usuario = User::where('group_id', $nodoCarpeta->user_id)->first();
+            $propietario = [
+                'url' => route('usuario', $usuario->slug || $usuario->id),
+                'nombre' => $usuario->name,
+                'tipo' => 'usuario'
+            ];
+        }
 
         return Inertia::render('Archivos', [
             'items' => $items,
             'ruta' => $ruta,
-            'puedeEscribir' => $puedeEscribir
+            'puedeEscribir' => $puedeEscribir,
+            'propietario' => $propietario
         ])
             ->withViewData([
                 'seo' => new SEOData(

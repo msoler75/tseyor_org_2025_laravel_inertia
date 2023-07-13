@@ -1,8 +1,6 @@
 <template>
     <div class="h-full flex flex-col">
-        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <div
-            class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 z-10 sm:px-6 lg:px-8">
+        <div class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30">
             <div class="lg:container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
                 <div :title="ruta" v-if="!seleccionando" class="flex items-center gap-3 text-2xl font-bold">
                     <Icon icon="ph:folder-notch-open-duotone" />
@@ -11,31 +9,37 @@
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
 
-                    <button v-if="seleccionando" class="btn btn-secondary flex gap-3 items-center"
+                    <button v-if="seleccionando" class="btn btn-neutral flex gap-3 items-center"
                         @click="cancelarSeleccion" title="Cancelar selección">
                         <Icon icon="material-symbols:close-rounded" />
                         <span>{{ itemsSeleccionados.length }}</span>
                     </button>
 
 
-                    <button v-if="seleccionando" class="btn btn-secondary ml-auto" @click="seleccionarTodos"
+                    <button v-if="seleccionando" class="btn btn-neutral ml-auto" @click="seleccionarTodos"
                         title="Seleccionar todos">
                         <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                     </button>
 
-                    <Link v-if="items.length > 1 && items[1].padre" :href="items[1].url" class="btn btn-secondary w-fit"
+                    <Link v-if="items.length > 1 && items[1].padre" :href="items[1].url" class="btn btn-neutral w-fit"
                         title="Ir a una carpeta superior">
                     <Icon icon="ph:skip-back-duotone" class="transform scale-125" />
                     </Link>
 
-                    <button class="btn btn-secondary" @click="toggleVista" title="Cambiar vista">
+                    <Link v-if="propietario" class="btn btn-neutral" :href="propietario.url"
+                    :title="tituloPropietario">
+                    <Icon :icon="propietario.tipo=='equipo'?'ph:users-four-duotone':'ph:user-duotone'" class="transform scale-150"/></Link>
+
+                    <button class="btn btn-neutral" @click="toggleVista" title="Cambiar vista">
                         <Icon v-show="vista == 'lista'" icon="ph:list-dashes-bold" class="transform scale-150" />
                         <Icon v-show="vista == 'grid'" icon="ph:grid-nine-fill" class="transform scale-150" />
                     </button>
 
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
                     <Dropdown v-if="puedeEscribir" align="right" width="48">
                         <template #trigger>
-                            <button class="btn btn-secondary p-3">
+                            <button class="btn btn-neutral p-3">
                                 <Icon icon="mdi:dots-vertical" class="text-xl" />
                             </button>
                         </template>
@@ -161,9 +165,9 @@
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
                 <div>No hay archivos</div>
             </div>
-            <div v-if="vista === 'lista'" :class="itemsOrdenados.length?'mr-2 min-h-[300px]':''">
+            <div v-if="vista === 'lista'" :class="itemsOrdenados.length ? 'mr-2 min-h-[300px]' : ''">
                 <table class="w-full lg:w-auto mx-auto">
-                    <thead class="hidden sm:table-header-group" :class="itemsOrdenados.length?'':'opacity-0'">
+                    <thead class="hidden sm:table-header-group" :class="itemsOrdenados.length ? '' : 'opacity-0'">
                         <tr>
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
                             <th></th>
@@ -177,14 +181,16 @@
                     </thead>
                     <TransitionGroup tag="tbody" name="files">
                         <tr v-for="item in itemsOrdenados"
-                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-blue-100' : '')" :key="item.ruta"
+                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')" :key="item.ruta"
                             v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </td>
-                            <td>
+                            <td class="relative">
+                                <div class="absolute top-0 left-0 w-full h-full z-10" v-if="seleccionando"
+                                @click="item.seleccionado=!item.seleccionado"/>
                                 <FolderIcon v-if="item.tipo === 'carpeta'" :private="item.privada" :url="item.url" />
                                 <FileIcon v-else :url="item.url" />
                             </td>
@@ -201,7 +207,9 @@
                                     </small>
                                 </div>
                             </td>
-                            <td class="hidden sm:table-cell">
+                            <td class="hidden sm:table-cell relative">
+                                <div class="absolute top-0 left-0 w-full h-full z-10" v-if="seleccionando"
+                                @click="item.seleccionado=!item.seleccionado"/>
                                 <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)" />
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
                                 <a v-else :href="item.url" download v-html="nombreItem(item)" />
@@ -275,15 +283,17 @@
                 <div class="grid grid-cols-3 gap-4">
                     <TransitionGroup name="files">
                         <div v-for="item in itemsOrdenados" :key="item.ruta"
-                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-blue-100' : '')">
+                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')">
                             <div v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </div>
-                            <div class="flex flex-col items-center justify-center">
+                            <div class="flex flex-col items-center justify-center relative">
+                                <div class="absolute  top-0 left-0 w-full h-full z-10" v-if="seleccionando"
+                                @click="item.seleccionado=!item.seleccionado"/>
                                 <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
-                                    class="text-8xl mb-4" />
+                                    class="text-8xl mb-4" :disabled="seleccionando"/>
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download>
                                     <img :src="item.url" class="overflow-hidden w-[180px] h-[120px]">
                                 </a>
@@ -309,7 +319,7 @@
                                     <Dropdown align="right" width="48" v-if="puedeEscribir">
                                         <template #trigger>
                                             <button class="btn p-1">
-                                                <Icon icon="mdi:dots-horizontal" class="text-xl" />
+                                                <Icon icon="mdi:dots-horizontal" class="text-xl z-20" />
                                             </button>
                                         </template>
 
@@ -323,14 +333,14 @@
                                                     <span>Renombrar</span>
                                                 </div>
 
-                                                <div v-if="!seleccionando"
+                                                <div v-if="!seleccionando  && !item.padre"
                                                     class="flex gap-3  items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                                     @click="abrirEliminarModal(item)">
                                                     <Icon icon="ph:trash-duotone" />
                                                     <span>Eliminar</span>
                                                 </div>
 
-                                                <div v-if="buscandoCarpetaDestino"
+                                                <div v-if="!buscandoCarpetaDestino  && !item.padre"
                                                     class="flex gap-3  items-center px-4 py-2   hover:bg-base-100 cursor-pointer"
                                                     @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                     <template v-if="!item.seleccionado">
@@ -390,7 +400,7 @@
                     </div>
 
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button @click="modalSubirArchivos = false" type="button" class="btn btn-secondary">
+                        <button @click="modalSubirArchivos = false" type="button" class="btn btn-neutral">
                             Cerrar
                         </button>
                     </div>
@@ -418,7 +428,7 @@
                         Crear Carpeta
                     </button>
 
-                    <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn btn-secondary">
+                    <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn btn-neutral">
                         Cancelar
                     </button>
 
@@ -440,7 +450,7 @@
                 </div>
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
-                    <button @click.prevent="modalRenombrarItem = false" type="button" class="btn btn-secondary">
+                    <button @click.prevent="modalRenombrarItem = false" type="button" class="btn btn-neutral">
                         Cancelar
                     </button>
 
@@ -472,7 +482,7 @@
                 <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
                     @submit.prevent="crearCarpeta">
 
-                    <button @click.prevent="modalEliminarItem = false" type="button" class="btn btn-secondary">
+                    <button @click.prevent="modalEliminarItem = false" type="button" class="btn btn-neutral">
                         Cancelar
                     </button>
 
@@ -496,10 +506,16 @@ import { router } from '@inertiajs/vue3';
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    ruta: {},
-    items: {},
-    puedeEscribir: Boolean
+    ruta: String,
+    items: Array,
+    puedeEscribir: Boolean,
+    propietario: Object
 });
+
+const tituloPropietario = computed(()=>{
+    if(!props.propietario) return ''
+    return 'Propietario: ' + props.propietario.nombre
+})
 
 
 function nombreItem(item) {
