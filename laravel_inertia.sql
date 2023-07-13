@@ -107,7 +107,7 @@ CREATE TABLE `comentarios` (
   KEY `comentarios_respuesta_a_foreign` (`respuesta_a`),
   CONSTRAINT `comentarios_respuesta_a_foreign` FOREIGN KEY (`respuesta_a`) REFERENCES `comentarios` (`id`),
   CONSTRAINT `comentarios_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -116,7 +116,7 @@ CREATE TABLE `comentarios` (
 
 LOCK TABLES `comentarios` WRITE;
 /*!40000 ALTER TABLE `comentarios` DISABLE KEYS */;
-INSERT INTO `comentarios` VALUES (1,'noticia-1','me encanta!',1,NULL,NULL,'2023-06-30 19:44:33','2023-06-30 19:44:33'),(2,'noticia-1','werewrewer',1,NULL,NULL,'2023-06-30 19:45:28','2023-06-30 19:45:28'),(3,'noticia-1','werewqr wqer\nwerweqr',1,NULL,NULL,'2023-06-30 19:45:32','2023-06-30 19:45:32'),(4,'noticia-1','ererer weqr qwer',1,1,NULL,'2023-06-30 19:49:55','2023-06-30 19:49:55'),(5,'noticia-1','wqerwer',1,1,NULL,'2023-06-30 19:55:02','2023-06-30 19:55:02'),(6,'noticia-1','wqerwer',1,NULL,NULL,'2023-06-30 19:56:20','2023-06-30 19:56:20'),(7,'noticia-1','wqewer',1,NULL,NULL,'2023-06-30 19:56:33','2023-06-30 19:56:33'),(8,'noticia-1','erewqr wqe',1,NULL,NULL,'2023-06-30 19:58:55','2023-06-30 19:58:55'),(9,'noticia-1','ergerwger',1,NULL,NULL,'2023-06-30 19:59:03','2023-06-30 19:59:03'),(10,'noticia-1','comentario super largo e importante a recordar',1,NULL,NULL,'2023-06-30 20:00:06','2023-06-30 20:00:06'),(11,'noticia-1','wqwe',1,NULL,NULL,'2023-06-30 20:00:39','2023-06-30 20:00:39'),(12,'noticia-4','qwere',1,NULL,NULL,'2023-07-01 01:47:52','2023-07-01 01:47:52'),(13,'noticia-4','qwerwerwe',1,12,NULL,'2023-07-01 01:48:02','2023-07-01 01:48:02'),(14,'http://localhost:8000/noticias4','comentario genial!!',1,NULL,NULL,'2023-07-10 21:17:54','2023-07-10 21:17:54'),(15,'undefined/4','wqeqwerqwe',1,NULL,NULL,'2023-07-10 21:19:09','2023-07-10 21:19:09'),(16,'/noticias/noticia-4','extrañamente bien',1,NULL,NULL,'2023-07-10 21:23:37','2023-07-10 21:23:37'),(17,'/noticias/noticia-4','muy bien!',1,NULL,NULL,'2023-07-10 21:23:52','2023-07-10 21:23:52'),(18,'/noticias/4','esta sí va',1,NULL,NULL,'2023-07-10 21:24:58','2023-07-10 21:24:58'),(19,'/noticias/noticia-4','wqerweqr',1,NULL,NULL,'2023-07-10 21:25:32','2023-07-10 21:25:32'),(20,'/noticias/4','ergrgergregergree',1,NULL,NULL,'2023-07-11 05:58:46','2023-07-11 05:58:46');
+INSERT INTO `comentarios` VALUES (1,'noticia-1','me encanta!',1,NULL,NULL,'2023-06-30 19:44:33','2023-06-30 19:44:33'),(2,'noticia-1','werewrewer',1,NULL,NULL,'2023-06-30 19:45:28','2023-06-30 19:45:28'),(3,'noticia-1','werewqr wqer\nwerweqr',1,NULL,NULL,'2023-06-30 19:45:32','2023-06-30 19:45:32'),(4,'noticia-1','ererer weqr qwer',1,1,NULL,'2023-06-30 19:49:55','2023-06-30 19:49:55'),(5,'noticia-1','wqerwer',1,1,NULL,'2023-06-30 19:55:02','2023-06-30 19:55:02'),(6,'noticia-1','wqerwer',1,NULL,NULL,'2023-06-30 19:56:20','2023-06-30 19:56:20'),(7,'noticia-1','wqewer',1,NULL,NULL,'2023-06-30 19:56:33','2023-06-30 19:56:33'),(8,'noticia-1','erewqr wqe',1,NULL,NULL,'2023-06-30 19:58:55','2023-06-30 19:58:55'),(9,'noticia-1','ergerwger',1,NULL,NULL,'2023-06-30 19:59:03','2023-06-30 19:59:03'),(10,'noticia-1','comentario super largo e importante a recordar',1,NULL,NULL,'2023-06-30 20:00:06','2023-06-30 20:00:06'),(11,'noticia-1','wqwe',1,NULL,NULL,'2023-06-30 20:00:39','2023-06-30 20:00:39'),(12,'noticia-4','qwere',1,NULL,NULL,'2023-07-01 01:47:52','2023-07-01 01:47:52'),(13,'noticia-4','qwerwerwe',1,12,NULL,'2023-07-01 01:48:02','2023-07-01 01:48:02'),(14,'http://localhost:8000/noticias4','comentario genial!!',1,NULL,NULL,'2023-07-10 21:17:54','2023-07-10 21:17:54'),(15,'undefined/4','wqeqwerqwe',1,NULL,NULL,'2023-07-10 21:19:09','2023-07-10 21:19:09'),(16,'/noticias/noticia-4','extrañamente bien',1,NULL,NULL,'2023-07-10 21:23:37','2023-07-10 21:23:37'),(17,'/noticias/noticia-4','muy bien!',1,NULL,NULL,'2023-07-10 21:23:52','2023-07-10 21:23:52'),(18,'/noticias/4','esta sí va',1,NULL,NULL,'2023-07-10 21:24:58','2023-07-10 21:24:58'),(19,'/noticias/noticia-4','wqerweqr',1,NULL,NULL,'2023-07-10 21:25:32','2023-07-10 21:25:32'),(20,'/noticias/4','ergrgergregergree',1,NULL,NULL,'2023-07-11 05:58:46','2023-07-11 05:58:46'),(21,'/noticias/4','qwerweqr',2,NULL,NULL,'2023-07-13 21:11:37','2023-07-13 21:11:37'),(22,'/noticias/4','wqerwqe',2,NULL,NULL,'2023-07-13 21:16:08','2023-07-13 21:16:08');
 /*!40000 ALTER TABLE `comentarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -340,7 +340,7 @@ CREATE TABLE `equipos` (
   KEY `equipos_group_id_foreign` (`group_id`),
   CONSTRAINT `equipos_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `equipos_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -349,7 +349,7 @@ CREATE TABLE `equipos` (
 
 LOCK TABLES `equipos` WRITE;
 /*!40000 ALTER TABLE `equipos` DISABLE KEYS */;
-INSERT INTO `equipos` VALUES (1,'Administradores','root','Administradores','https://via.placeholder.com/700x700.png/0F0CD3?text=administradores','tseyor',1,1,'2023-07-05 18:16:31','2023-07-05 18:16:32'),(2,'Consejeros','consejeros','Han participado en el Consejo de los Doce','https://via.placeholder.com/700x700.png/0FACD3?text=consejeros','tseyor',1,2,'2023-07-05 18:17:36','2023-07-05 18:17:36'),(3,'Salud','salud','Departamento de Salud de la UTG','https://via.placeholder.com/700x700.png/FFACD3?text=Depart. de salud','utg',1,3,'2023-07-08 01:13:16','2023-07-08 01:13:16'),(4,'aprendices mancos','aprendices-mancos','de todo',NULL,NULL,1,4,'2023-07-13 02:05:42','2023-07-13 02:05:42'),(5,'ererewe wer werwe','ererewe-wer-werwe',NULL,NULL,NULL,1,5,'2023-07-13 02:09:20','2023-07-13 02:09:20'),(6,'aprendices infantiles','aprendices-infantiles','awfwew',NULL,NULL,1,6,'2023-07-13 02:19:26','2023-07-13 02:19:26'),(7,'xxx aaa','xxx-aaa',NULL,NULL,NULL,1,7,'2023-07-13 02:28:56','2023-07-13 02:28:56'),(8,'amor a primera vista','amor-a-primera-vista',NULL,NULL,NULL,1,8,'2023-07-13 02:29:28','2023-07-13 02:29:28'),(9,'pepito palotes','pepito-palotes',NULL,NULL,NULL,1,9,'2023-07-13 02:34:44','2023-07-13 02:34:44'),(10,'qwer ewqr','qwer-ewqr','wqe',NULL,NULL,1,10,'2023-07-13 02:36:46','2023-07-13 02:36:46'),(11,'xxxa','xxxa',NULL,NULL,NULL,1,11,'2023-07-13 02:37:13','2023-07-13 02:37:13'),(12,'qwerewqrweqrewre wqer weqr','qwerewqrweqrewre-wqer-weqr',NULL,NULL,NULL,1,12,'2023-07-13 02:40:50','2023-07-13 02:40:50'),(13,'petete amor','petete-amor',NULL,NULL,NULL,1,13,'2023-07-13 02:45:21','2023-07-13 02:45:21'),(14,'peteta vista','peteta-vista',NULL,NULL,'general',1,14,'2023-07-13 02:46:17','2023-07-13 02:46:17');
+INSERT INTO `equipos` VALUES (1,'Administradores','root','Administradores','https://via.placeholder.com/700x700.png/0F0CD3?text=administradores','tseyor',1,1,'2023-07-05 18:16:31','2023-07-05 18:16:32'),(2,'Consejeros','consejeros','Han participado en el Consejo de los Doce','https://via.placeholder.com/700x700.png/0FACD3?text=consejeros','tseyor',1,2,'2023-07-05 18:17:36','2023-07-05 18:17:36'),(3,'Salud','salud','Departamento de Salud de la UTG','https://via.placeholder.com/700x700.png/FFACD3?text=Depart. de salud','utg',1,3,'2023-07-08 01:13:16','2023-07-08 01:13:16'),(4,'aprendices mancos','aprendices-mancos','de todo',NULL,NULL,1,4,'2023-07-13 02:05:42','2023-07-13 02:05:42'),(5,'ererewe wer werwe','ererewe-wer-werwe',NULL,NULL,NULL,1,5,'2023-07-13 02:09:20','2023-07-13 02:09:20'),(6,'aprendices infantiles','aprendices-infantiles','awfwew',NULL,NULL,1,6,'2023-07-13 02:19:26','2023-07-13 02:19:26'),(7,'xxx aaa','xxx-aaa',NULL,NULL,NULL,1,7,'2023-07-13 02:28:56','2023-07-13 02:28:56'),(8,'amor a primera vista','amor-a-primera-vista',NULL,NULL,NULL,1,8,'2023-07-13 02:29:28','2023-07-13 02:29:28'),(9,'pepito palotes','pepito-palotes',NULL,NULL,NULL,1,9,'2023-07-13 02:34:44','2023-07-13 02:34:44'),(10,'qwer ewqr','qwer-ewqr','wqe',NULL,NULL,1,10,'2023-07-13 02:36:46','2023-07-13 02:36:46'),(11,'xxxa','xxxa',NULL,NULL,NULL,1,11,'2023-07-13 02:37:13','2023-07-13 02:37:13'),(12,'qwerewqrweqrewre wqer weqr','qwerewqrweqrewre-wqer-weqr',NULL,NULL,NULL,1,12,'2023-07-13 02:40:50','2023-07-13 02:40:50'),(13,'petete amor','petete-amor',NULL,NULL,NULL,1,13,'2023-07-13 02:45:21','2023-07-13 02:45:21'),(14,'peteta vista','peteta-vista',NULL,NULL,'general',1,14,'2023-07-13 02:46:17','2023-07-13 02:46:17'),(15,'departamento de salud','departamento-de-salud',NULL,NULL,'general',1,15,'2023-07-13 06:04:22','2023-07-13 06:04:22');
 /*!40000 ALTER TABLE `equipos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -439,7 +439,7 @@ CREATE TABLE `grupo_user` (
   KEY `grupo_user_group_id_foreign` (`group_id`) USING BTREE,
   CONSTRAINT `grupo_user_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE,
   CONSTRAINT `grupo_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -448,7 +448,7 @@ CREATE TABLE `grupo_user` (
 
 LOCK TABLES `grupo_user` WRITE;
 /*!40000 ALTER TABLE `grupo_user` DISABLE KEYS */;
-INSERT INTO `grupo_user` VALUES (6,1,2,'2023-07-13 00:43:53','2023-07-13 00:43:53'),(8,1,1,'2023-07-13 00:44:04','2023-07-13 00:44:04'),(9,1,3,'2023-07-13 00:45:35','2023-07-13 00:45:35');
+INSERT INTO `grupo_user` VALUES (6,1,2,'2023-07-13 00:43:53','2023-07-13 00:43:53'),(8,1,1,'2023-07-13 00:44:04','2023-07-13 00:44:04'),(9,1,3,'2023-07-13 00:45:35','2023-07-13 00:45:35'),(10,2,2,'2023-07-13 16:20:44','2023-07-13 16:20:45');
 /*!40000 ALTER TABLE `grupo_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -466,7 +466,7 @@ CREATE TABLE `grupos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -475,7 +475,7 @@ CREATE TABLE `grupos` (
 
 LOCK TABLES `grupos` WRITE;
 /*!40000 ALTER TABLE `grupos` DISABLE KEYS */;
-INSERT INTO `grupos` VALUES (1,'administradores','administradores','2023-07-12 19:53:18','2023-07-12 19:53:19'),(2,'consejeros','consejeros','2023-07-12 19:53:39','2023-07-12 19:53:40'),(3,'salud','salud','2023-07-12 15:37:38','2023-07-12 15:37:39'),(4,'aprendices mancos','aprendices-mancos','2023-07-13 02:05:42','2023-07-13 02:05:42'),(5,'ererewe wer werwe','ererewe-wer-werwe','2023-07-13 02:09:20','2023-07-13 02:09:20'),(6,'aprendices infantiles','aprendices-infantiles','2023-07-13 02:19:26','2023-07-13 02:19:26'),(7,'xxx aaa','xxx-aaa','2023-07-13 02:28:56','2023-07-13 02:28:56'),(8,'amor a primera vista','amor-a-primera-vista','2023-07-13 02:29:28','2023-07-13 02:29:28'),(9,'pepito palotes','pepito-palotes','2023-07-13 02:34:44','2023-07-13 02:34:44'),(10,'qwer ewqr','qwer-ewqr','2023-07-13 02:36:46','2023-07-13 02:36:46'),(11,'xxxa','xxxa','2023-07-13 02:37:13','2023-07-13 02:37:13'),(12,'qwerewqrweqrewre wqer weqr','qwerewqrweqrewre-wqer-weqr','2023-07-13 02:40:50','2023-07-13 02:40:50'),(13,'petete amor','petete-amor','2023-07-13 02:45:21','2023-07-13 02:45:21'),(14,'peteta vista','peteta-vista','2023-07-13 02:46:17','2023-07-13 02:46:17');
+INSERT INTO `grupos` VALUES (1,'administradores','admin','2023-07-12 19:53:18','2023-07-12 19:53:19'),(2,'consejeros','consejeros','2023-07-12 19:53:39','2023-07-12 19:53:40'),(3,'salud','salud','2023-07-12 15:37:38','2023-07-12 15:37:39'),(4,'aprendices mancos','aprendices-mancos','2023-07-13 02:05:42','2023-07-13 02:05:42'),(5,'ererewe wer werwe','ererewe-wer-werwe','2023-07-13 02:09:20','2023-07-13 02:09:20'),(6,'aprendices infantiles','aprendices-infantiles','2023-07-13 02:19:26','2023-07-13 02:19:26'),(7,'xxx aaa','xxx-aaa','2023-07-13 02:28:56','2023-07-13 02:28:56'),(8,'amor a primera vista','amor-a-primera-vista','2023-07-13 02:29:28','2023-07-13 02:29:28'),(9,'pepito palotes','pepito-palotes','2023-07-13 02:34:44','2023-07-13 02:34:44'),(10,'qwer ewqr','qwer-ewqr','2023-07-13 02:36:46','2023-07-13 02:36:46'),(11,'xxxa','xxxa','2023-07-13 02:37:13','2023-07-13 02:37:13'),(12,'qwerewqrweqrewre wqer weqr','qwerewqrweqrewre-wqer-weqr','2023-07-13 02:40:50','2023-07-13 02:40:50'),(13,'petete amor','petete-amor','2023-07-13 02:45:21','2023-07-13 02:45:21'),(14,'peteta vista','peteta-vista','2023-07-13 02:46:17','2023-07-13 02:46:17'),(15,'departamento de salud','departamento-de-salud','2023-07-13 06:04:22','2023-07-13 06:04:22');
 /*!40000 ALTER TABLE `grupos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -668,7 +668,7 @@ CREATE TABLE `nodos` (
   KEY `es_carpeta` (`es_carpeta`),
   KEY `user_id` (`user_id`),
   KEY `group_id` (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Información sobre archivos y carpetas tipo linux';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -677,7 +677,7 @@ CREATE TABLE `nodos` (
 
 LOCK TABLES `nodos` WRITE;
 /*!40000 ALTER TABLE `nodos` DISABLE KEYS */;
-INSERT INTO `nodos` VALUES (3,'archivos',1,1,1,'1755','2023-07-04 20:36:03','2023-07-04 20:36:04'),(4,'archivos/noticias/1.jpg',1,1,3,'1750','2023-07-04 20:41:54','2023-07-04 20:41:55'),(5,'archivos/equipos/aprendices-infantiles',1,1,6,'1005','2023-07-13 02:19:26','2023-07-13 02:19:26'),(6,'archivos/equipos/xxx-aaa',1,1,7,'1005','2023-07-13 02:28:56','2023-07-13 02:28:56'),(7,'archivos/equipos/amor-a-primera-vista',1,1,8,'1755','2023-07-13 02:29:28','2023-07-13 02:29:28'),(8,'archivos/equipos/pepito-palotes',1,1,9,'1005','2023-07-13 02:34:44','2023-07-13 02:34:44'),(9,'archivos/equipos/qwer-ewqr',1,1,10,'1005','2023-07-13 02:36:46','2023-07-13 02:36:46'),(10,'archivos/equipos/xxxa',1,1,11,'1005','2023-07-13 02:37:13','2023-07-13 02:37:13'),(11,'archivos/equipos/qwerewqrweqrewre-wqer-weqr',1,1,12,'1755','2023-07-13 02:40:50','2023-07-13 02:40:50'),(12,'archivos/equipos/peteta-vista',1,1,14,'1755','2023-07-13 02:46:17','2023-07-13 02:46:17'),(13,'archivos/noticias',1,1,1,'1744','2023-07-13 00:23:11','2023-07-13 00:23:13'),(15,'archivos/noticias/archivo/2.jpg',1,1,1,'1500','2023-07-13 01:36:33','2023-07-13 01:36:34'),(16,'archivos/noticias/pe.jpg',1,1,1,'1600','2023-07-13 01:35:54','2023-07-13 01:35:54'),(17,'archivos/noticias/amor',1,2,1,'1440','2023-07-13 01:38:17','2023-07-13 01:38:17');
+INSERT INTO `nodos` VALUES (3,'archivos',1,1,1,'1755','2023-07-04 20:36:03','2023-07-04 20:36:04'),(4,'archivos/noticias/1.jpg',1,1,3,'1750','2023-07-04 20:41:54','2023-07-04 20:41:55'),(5,'archivos/equipos/aprendices-infantiles',1,1,6,'1005','2023-07-13 02:19:26','2023-07-13 02:19:26'),(6,'archivos/equipos/xxx-aaa',1,1,7,'1005','2023-07-13 02:28:56','2023-07-13 02:28:56'),(7,'archivos/equipos/amor-a-primera-vista',1,1,8,'1755','2023-07-13 02:29:28','2023-07-13 02:29:28'),(8,'archivos/equipos/pepito-palotes',1,1,9,'1005','2023-07-13 02:34:44','2023-07-13 02:34:44'),(9,'archivos/equipos/qwer-ewqr',1,1,10,'1005','2023-07-13 02:36:46','2023-07-13 02:36:46'),(10,'archivos/equipos/xxxa',1,1,11,'1005','2023-07-13 02:37:13','2023-07-13 02:37:13'),(11,'archivos/equipos/qwerewqrweqrewre-wqer-weqr',1,1,12,'1755','2023-07-13 02:40:50','2023-07-13 02:40:50'),(12,'archivos/equipos/peteta-vista',1,1,14,'1755','2023-07-13 02:46:17','2023-07-13 02:46:17'),(13,'archivos/noticias',1,1,1,'1740','2023-07-13 00:23:11','2023-07-13 00:23:13'),(15,'archivos/noticias/archivo/2.jpg',1,1,1,'1500','2023-07-13 01:36:33','2023-07-13 01:36:34'),(16,'archivos/noticias/pe.jpg',1,1,1,'1600','2023-07-13 01:35:54','2023-07-13 01:35:54'),(17,'archivos/noticias/amor',1,2,1,'1440','2023-07-13 01:38:17','2023-07-13 01:38:17'),(18,'archivos/equipos/departamento-de-salud',1,1,15,'1755','2023-07-13 06:04:22','2023-07-13 06:04:22'),(19,'archivos/salud',1,1,1,'1750','2023-07-13 14:29:43','2023-07-13 14:29:43'),(20,'archivos/salud/pepito1',1,2,1,'1755','2023-07-13 17:00:52','2023-07-13 17:00:53'),(23,'archivos/salud/pepito8',1,2,1,'1755','2023-07-13 21:18:42','2023-07-13 21:18:42'),(24,'archivos/salud/pepito9',1,2,1,'1755','2023-07-13 21:19:07','2023-07-13 21:19:07'),(25,'archivos/salud/pepito1/xx',1,2,1,'1755','2023-07-13 21:42:18','2023-07-13 21:42:18'),(26,'archivos/salud/pepito1/werwer',1,2,1,'1755','2023-07-13 21:42:34','2023-07-13 21:42:34'),(27,'archivos/salud/pepito1/rewr',1,2,1,'1755','2023-07-13 21:42:55','2023-07-13 21:42:55'),(28,'archivos/salud/px0',1,2,1,'1755','2023-07-13 21:44:02','2023-07-13 21:44:02');
 /*!40000 ALTER TABLE `nodos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -754,7 +754,7 @@ CREATE TABLE `permisos` (
   `group_id` bigint(20) unsigned DEFAULT NULL,
   `modelo` varchar(255) NOT NULL,
   `modelo_id` bigint(20) unsigned DEFAULT NULL,
-  `accion` varchar(50) NOT NULL,
+  `verbos` varchar(50) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
@@ -762,7 +762,7 @@ CREATE TABLE `permisos` (
   KEY `permisos_group_id_foreign` (`group_id`) USING BTREE,
   CONSTRAINT `permisos_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `equipos` (`id`) ON DELETE CASCADE,
   CONSTRAINT `permisos_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -771,6 +771,7 @@ CREATE TABLE `permisos` (
 
 LOCK TABLES `permisos` WRITE;
 /*!40000 ALTER TABLE `permisos` DISABLE KEYS */;
+INSERT INTO `permisos` VALUES (1,2,NULL,'nodos',13,'leer,ejecutar','2023-07-13 14:31:09','2023-07-13 14:31:10'),(2,2,NULL,'nodos',19,'leer,escribir,ejecutar','2023-07-13 15:18:39','2023-07-13 15:18:41');
 /*!40000 ALTER TABLE `permisos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -896,7 +897,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('gqpQUfqZvfvbBYrB4BTdFrHP3QpbpszxE5A5jnHm',1,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36','YTo1OntzOjY6Il90b2tlbiI7czo0MDoiTENVSHloMW9kZGNwNDZDYXZ4UU5nY1hmbjcyaldKMGtPWGl6bEVocyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTtzOjIxOiJwYXNzd29yZF9oYXNoX3NhbmN0dW0iO3M6NjA6IiQyeSQxMCRQNGl3ZGtZa1JuVDd6L3NVM2VreVV1S3BWRnFBWC9zeHNxVi9wZ1hvb2I4dVJNUWJpNU1HaSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjk6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9lcXVpcG9zIjt9fQ==',1689212631);
+INSERT INTO `sessions` VALUES ('8xX9xSm4SZwEIbgIQ2hPh5SzYRcxYgxwksxe1RVe',2,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36','YTo1OntzOjY6Il90b2tlbiI7czo0MDoiUklNN1VQdVl1b204MEhIZDc0V0w5MTNuOHJXNnlraHlRWWJUemM0YSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcmNoaXZvcy9zYWx1ZCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjI7czoyMToicGFzc3dvcmRfaGFzaF9zYW5jdHVtIjtzOjYwOiIkMnkkMTAka2UyM3NRMTAxMzNpMDlFTHQxTktsLmhtUjBMTFNUdm1sdXlqLkZzWVU3N3hZWk01OGpOT1ciO30=',1689277828);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1050,7 +1051,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Admin Master','root','msgp753@gmail.com',NULL,'$2y$10$P4iwdkYkRnT7z/sU3ekyUuKpVFqAX/sxsqV/pgXoob8uRMQbi5MGi',NULL,NULL,NULL,'cSS4jyGD9MXS9xCnAzzOYmeuZJ8lToviIwIuX6gNsL5a6S7tz9tpfUq2iSXF',2,'profile-photos/0EmyKHb9eJoAnZ8t9KaTqLX6hfn9wNKC5Bu6meQP.jpg','2023-06-15 01:14:05','2023-07-01 01:11:03','La vida es maravillosa'),(2,'pepito','pepito','pepito@gmail.com',NULL,'$2y$10$ke23sQ10133i09ELt1NKl.hmR0LLSTvmluyj.FsYU77xYZM58jNOW',NULL,NULL,NULL,NULL,5,'profile-photos/ZnXNkyff6k7FKEQjzINYzWgKAC8zhkiclYD2pPYk.jpg','2023-07-05 05:18:28','2023-07-05 18:54:01','Esto es lo que hay'),(3,'ahora es el momento la pm',NULL,'qwerwe@wqer.com',NULL,'$2y$10$BLbACkCx6RaiwH2F.MYu/e7pNj409yQomLw6ll6WU10qnxd.eBlNu',NULL,NULL,NULL,NULL,NULL,NULL,'2023-07-05 19:48:24','2023-07-05 19:48:24','Me gusta ver pasar el tiempo');
+INSERT INTO `users` VALUES (1,'Admin Master','admin','msgp753@gmail.com',NULL,'$2y$10$P4iwdkYkRnT7z/sU3ekyUuKpVFqAX/sxsqV/pgXoob8uRMQbi5MGi',NULL,NULL,NULL,'HUQJMx11GFsa3iClIe1AP8LEpglrpUFrEBLSqYxdjm2U2x65uJqbdyLwMVeL',2,'profile-photos/0EmyKHb9eJoAnZ8t9KaTqLX6hfn9wNKC5Bu6meQP.jpg','2023-06-15 01:14:05','2023-07-01 01:11:03','La vida es maravillosa'),(2,'pepito','pepito','pepito@gmail.com',NULL,'$2y$10$ke23sQ10133i09ELt1NKl.hmR0LLSTvmluyj.FsYU77xYZM58jNOW',NULL,NULL,NULL,'OuKR4NfCJV9mj1raP35wGohJwp3ch6skM8qDgn2SV9T6sLKt0KoZopIKBAYO',5,'profile-photos/ZnXNkyff6k7FKEQjzINYzWgKAC8zhkiclYD2pPYk.jpg','2023-07-05 05:18:28','2023-07-05 18:54:01','Esto es lo que hay'),(3,'ahora es el momento la pm',NULL,'qwerwe@wqer.com',NULL,'$2y$10$BLbACkCx6RaiwH2F.MYu/e7pNj409yQomLw6ll6WU10qnxd.eBlNu',NULL,NULL,NULL,NULL,NULL,NULL,'2023-07-05 19:48:24','2023-07-05 19:48:24','Me gusta ver pasar el tiempo');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -1063,4 +1064,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-12 21:45:10
+-- Dump completed on 2023-07-13 15:51:05
