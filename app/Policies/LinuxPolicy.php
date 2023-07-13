@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * El nodos simula los permisos de linux con usuarios y grupos
- * Este clase sirve para gestionar los permisos de acceso a un elemento de nodos, que puede ser un archivo o una carpeta
+ * Este clase sirve para gestionar los permisos de acceso a un elemento de nodos, que permisoNodo ser un archivo o una carpeta
  */
 class LinuxPolicy
 {
@@ -19,19 +19,31 @@ class LinuxPolicy
 
     /* funciones básicas de permisos */
 
-    public function leer(Nodo $nodo, ?User $user): bool
+    public function leer(Nodo $nodo, ?User $user, $acl = NULL): bool
     {
-        return $this->puede($nodo, $user, 0b100, 'leer');
+        $concedido = $this->permisoNodo($nodo, $user, 0b100);
+
+        if ($concedido) return true;
+
+        return $acl ? $this->tieneAcceso($nodo, $acl, 'leer') : false;
     }
 
-    public function escribir(Nodo $nodo, ?User $user): bool
+    public function escribir(Nodo $nodo, ?User $user, $acl = NULL): bool
     {
-        return $this->puede($nodo, $user, 0b010, 'escribir');
+        $concedido = $this->permisoNodo($nodo, $user, 0b010);
+
+        if ($concedido) return true;
+
+        return $acl ? $this->tieneAcceso($nodo, $acl, 'escribir') : false;
     }
 
-    public function ejecutar(Nodo $nodo, ?User $user): bool
+    public function ejecutar(Nodo $nodo, ?User $user, $acl = NULL): bool
     {
-        return $this->puede($nodo, $user, 0b001, 'ejecutar');
+        $concedido = $this->permisoNodo($nodo, $user, 0b001);
+
+        if ($concedido) return true;
+
+        return $acl ? $this->tieneAcceso($nodo, $acl, 'ejecutar') : false;
     }
 
     /**
@@ -61,7 +73,7 @@ class LinuxPolicy
             ->get();
     }
 
-    private function puede(Nodo $nodo, ?User $user, int $bits, string $accion): bool
+    private function permisoNodo(Nodo $nodo, ?User $user, int $bits): bool
     {
         try {
             if (!$nodo) {
@@ -86,8 +98,6 @@ class LinuxPolicy
             }
 
             return false;
-
-            // return $this->permisoAdicional($user, $nodo, $accion);
         } catch (\Exception $e) {
             // La ruta no existe o hay un error al obtener los metadatos
             return false;
@@ -95,28 +105,44 @@ class LinuxPolicy
     }
 
 
-
-    private function permisoAdicional(?User $user, Nodo $nodo, string $accion): bool
+    /**
+     * Access Control List. Devuelve un listado de permisos para este usuario
+     */
+    public function acl(?User $user, string $accion)
     {
-        // TO-DO??
-        return false;
-
         $user_id = $user ? $user->id : -1;
-        $grupos_ids = $user ? $user->grupos()->pluck('id') : [];
+        $grupos_ids = $user ? $user->grupos()->pluck('grupos.id') : [];
 
-        $permiso = Permiso::join('nodos', 'permisos.modelo_id', '=', 'nodos.id')
-            ->where('modelo', 'Carpeta')
-            ->whereIn('modelo_id', $nodo->pluck('id'))
-            ->whereRaw("'$nodo->ruta' LIKE CONCAT(nodos.ruta, '%')")
+        return Permiso::select('permisos.*', 'nodos.ruta')
+            ->leftJoin('nodos', 'permisos.modelo_id', '=', 'nodos.id')
+            ->where('modelo', 'nodos')
             ->where(function ($query) use ($grupos_ids, $user_id) {
-                $query->whereIn('permisos.group_id', $grupos_ids)
-                    ->orWhere('permisos.user_id', $user_id);
+                $query
+                    ->where('permisos.user_id', $user_id)
+                    ->orWhereIn('permisos.group_id', $grupos_ids);
             })
             ->where('accion', $accion)
-            ->orderByRaw('LENGTH(nodos.ruta) DESC')
-            ->limit(1)
-            ->exists();
+            ->get();
+    }
 
-        return $permiso;
+
+    /**
+     * Comprueba con la ACL si tiene el acceso a un nodo en concreto
+     */
+    public function tieneAcceso(Nodo $nodo, $acl)
+    {
+        // tiene acceso global para todos los nodos?
+        if ($acl->whereNull('modelo_id')->count() > 0)
+            return true;
+
+        // tiene acceso a este nodo?
+        if ($acl->where('modelo_id', $nodo->id)->count() > 0)
+            return true;
+
+        // tiene acceso a una carpeta padre?
+        if ($acl->where("'$nodo->ruta' LIKE CONCAT(ruta, '%')")->count() > 0)
+            return true;
+
+        return false;
     }
 }

@@ -24,11 +24,15 @@ class ArchivosController extends Controller
         $user = auth()->user();
 
         $LinuxPolicy = new LinuxPolicy();
+        $aclEjecutar = $LinuxPolicy->acl($user, 'ejecutar');
+
+        // dd($aclEjecutar);
+        // $aclLeer = $LinuxPolicy->acl($user, 'leer');
 
         $nodo = $LinuxPolicy->obtenerMejorNodo($ruta);
 
-        if (!$LinuxPolicy->leer($nodo, $user)) {
-            throw new AuthorizationException('No tienes permisos para leer la carpeta', 403);
+        if (!$LinuxPolicy->ejecutar($nodo, $user, $aclEjecutar)) {
+            throw new AuthorizationException('No tienes permisos para ver la carpeta', 403);
         }
 
         // Obtener la URL relativa actual de la aplicación
@@ -80,7 +84,7 @@ class ArchivosController extends Controller
             ];
 
             $nodo = $LinuxPolicy->obtenerMejorNodo(dirname($ruta));
-            if (!$nodo || !$LinuxPolicy->leer($nodo, $user))
+            if (!$nodo || !$LinuxPolicy->ejecutar($nodo, $user, $aclEjecutar))
                 $item['privada'] = true;
 
             $item['permisos'] =  optional($nodo)->permisos ?? 0;
@@ -113,7 +117,7 @@ class ArchivosController extends Controller
             $nodo = $nodos->where('ruta', $ruta . "/" . $item['nombre'])->first();
             if (!$nodo)
                 $nodo = $nodoCarpeta;
-            if (!$nodo || !$LinuxPolicy->leer($nodo, $user))
+            if (!$nodo || !$LinuxPolicy->ejecutar($nodo, $user, $aclEjecutar))
                 $item['privada'] = true;
             $item['permisos'] =  optional($nodo)->permisos ?? 0;
             $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
@@ -157,6 +161,19 @@ class ArchivosController extends Controller
             ]);
     }
 
+
+    /**
+     * Controla el acceso a las descargas
+     */
+    public function download(string $ruta) {
+        $path = storage_path('app/public/' . $ruta);
+
+        /*if (Gate::denies('download-file', $path)) {
+            abort(403, 'Unauthorized action.');
+        }*/
+
+        return response()->download($path);
+    }
 
 
 

@@ -23,7 +23,7 @@
                     </div>
                 </div>
 
-                <div class="card bg-base-100 shadow p-5">
+                <div class="card bg-base-100 shadow p-5" v-if="ultimosArchivos.length">
                     <h2>Últimos Archivos</h2>
                     <div>
                         <div v-for="item, index of ultimosArchivos" :key="index" class="flex gap-3 items-baseline" >
@@ -33,7 +33,7 @@
                     </div>
                 </div>
 
-                <div class="card bg-base-100 shadow p-5">
+                <div class="card bg-base-100 shadow p-5" v-if="carpetas.length">
                     <h2>Carpetas</h2>
                     <div>
                         <div v-for="item, index of carpetas" :key="index" class="flex gap-3 items-baseline">
@@ -43,7 +43,7 @@
                     </div>
                 </div>
 
-                <div class="card bg-base-100 shadow p-5">
+                <div class="card bg-base-100 shadow p-5" v-if="false">
                     <h2>Publicaciones</h2>
                     <div>
                         <ul>
