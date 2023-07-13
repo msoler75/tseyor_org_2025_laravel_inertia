@@ -139,9 +139,20 @@ class LinuxPolicy
         if ($acl->where('modelo_id', $nodo->id)->count() > 0)
             return true;
 
+        // dd($nodo);
+
         // tiene acceso a una carpeta padre?
-        if ($acl->where("'$nodo->ruta' LIKE CONCAT(ruta, '%')")->count() > 0)
-            return true;
+
+        // no sé porqué pero no funciona:
+        //if ($acl->where("'$nodo->ruta'", 'LIKE', "CONCAT(ruta, '%')")->count() > 0)
+        //  return true;
+
+        $aclArray = $acl->toArray();
+        foreach ($aclArray as $registro) {
+            if (strpos($nodo->ruta, $registro['ruta']) === 0) {
+                return true;
+            }
+        }
 
         return false;
     }
