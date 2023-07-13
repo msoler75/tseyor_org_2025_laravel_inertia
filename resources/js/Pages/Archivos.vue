@@ -1,6 +1,6 @@
 <template>
     <div class="h-full flex flex-col">
-
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <div
             class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 z-10 sm:px-6 lg:px-8">
             <div class="lg:container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
@@ -33,7 +33,7 @@
                         <Icon v-show="vista == 'grid'" icon="ph:grid-nine-fill" class="transform scale-150" />
                     </button>
 
-                    <Dropdown align="right" width="48">
+                    <Dropdown v-if="puedeEscribir" align="right" width="48">
                         <template #trigger>
                             <button class="btn btn-secondary p-3">
                                 <Icon icon="mdi:dots-vertical" class="text-xl" />
@@ -99,15 +99,19 @@
                 </button>
 
                 <button v-if="store.isMovingFiles" class="btn btn-primary flex gap-3 items-center"
-                    :disabled="store.sourcePath == ruta" @click="moverItems">
+                    :disabled="store.sourcePath == ruta || !puedeEscribir" @click="moverItems"
+                    title="Mover los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
-                    <span>Mover aquí</span>
+                    <span v-if="puedeEscribir">Mover aquí</span>
+                    <span v-else>No tienes permisos aquí</span>
                 </button>
 
                 <button v-else-if="store.isCopyingFiles" class="btn btn-primary flex gap-3 items-center"
-                    :disabled="store.sourcePath == ruta" @click="copiarItems">
+                    :disabled="store.sourcePath == ruta || !puedeEscribir" @click="copiarItems"
+                    title="Copiar los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
-                    <span>Pegar aquí</span>
+                    <span v-if="puedeEscribir">Pegar aquí</span>
+                    <span v-else>No tienes permisos aquí</span>
                 </button>
 
                 <template v-else>
@@ -154,16 +158,12 @@
             class="select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14">
 
             <div v-if="!itemsOrdenados.length" class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
-
-
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
-                <div>
-                    No hay archivos</div>
-
+                <div>No hay archivos</div>
             </div>
-            <div v-else-if="vista === 'lista'" class="mr-2">
+            <div v-if="vista === 'lista'" :class="itemsOrdenados.length?'mr-2 min-h-[300px]':''">
                 <table class="w-full lg:w-auto mx-auto">
-                    <thead class="hidden sm:table-header-group">
+                    <thead class="hidden sm:table-header-group" :class="itemsOrdenados.length?'':'opacity-0'">
                         <tr>
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
                             <th></th>
@@ -206,7 +206,7 @@
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
                                 <a v-else :href="item.url" download v-html="nombreItem(item)" />
                             </td>
-                            <td class="hidden sm:table-cell">
+                            <td class="hidden sm:table-cell py-2">
                                 <span v-if="item.tipo === 'carpeta'" class="text-sm">
                                     {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
@@ -217,7 +217,7 @@
                             <td>{{ item.permisos }}</td>
                             <td>{{ item.propietario ? (item.propietario.usuario + '/' + item.propietario.grupo) : '' }}</td>
                             <td class="hidden md:table-cell">
-                                <Dropdown align="right" width="48">
+                                <Dropdown align="right" width="48" v-if="puedeEscribir">
                                     <template #trigger>
                                         <button class="p-3">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
@@ -306,7 +306,7 @@
 
 
                                 <div class="w-full flex justify-end">
-                                    <Dropdown align="right" width="48">
+                                    <Dropdown align="right" width="48" v-if="puedeEscribir">
                                         <template #trigger>
                                             <button class="btn p-1">
                                                 <Icon icon="mdi:dots-horizontal" class="text-xl" />
@@ -497,7 +497,8 @@ defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     ruta: {},
-    items: {}
+    items: {},
+    puedeEscribir: Boolean
 });
 
 
@@ -601,6 +602,11 @@ function copiarItems() {
         console.log({ response })
         reloadPage()
     })
+        .catch(err => {
+            const errorMessage = err.response.data.error || 'Ocurrió un error al copiar los elementos'
+            alert(errorMessage)
+        })
+
     cancelarOperacion()
 }
 
@@ -613,6 +619,11 @@ function moverItems() {
         console.log({ response })
         reloadPage()
     })
+        .catch(err => {
+            const errorMessage = err.response.data.error || 'Ocurrió un error al mover los elementos'
+            alert(errorMessage)
+        })
+
     cancelarOperacion()
 }
 
@@ -630,12 +641,22 @@ const modalSubirArchivos = ref(false)
 
 const modalCrearCarpeta = ref(false)
 
+const token = ref("")
 
 const dropzoneOptions = ref({
     url: route('files.upload.file'),
     thumbnailWidth: 150,
-    maxFilesize: 50
+    maxFilesize: 50,
+    headers: {
+        'X-CSRF-Token': token.value
+    },
 })
+
+
+onMounted(() => {
+    token.value = document.querySelector('input[name="_token"]').value
+})
+
 
 function sendingEvent(file, xhr, formData) {
     formData.append('destinationPath', props.ruta);
@@ -782,6 +803,10 @@ function crearCarpeta() {
         console.log({ response })
         reloadPage()
     })
+        .catch(err => {
+            console.log({ err })
+            alert(err.response.data.error)
+        })
 }
 
 

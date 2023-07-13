@@ -12,9 +12,6 @@ use App\Models\Centro;
 
 class PortadaController extends Controller
 {
-    /**
-     * Show the form for creating the resource.
-     */
 
     public function index()
     {
@@ -26,7 +23,7 @@ class PortadaController extends Controller
                     return
                         [
                             'comunicados' => $cc,
-                            'paginas' => $cc *12 + $cc %7,
+                            'paginas' => $cc * 12 + $cc % 7,
                             'libros' => Libro::count(),
                             'usuarios' => User::count(),
                             'audios' => Audio::count(),

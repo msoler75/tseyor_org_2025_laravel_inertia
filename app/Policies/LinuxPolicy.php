@@ -108,7 +108,7 @@ class LinuxPolicy
     /**
      * Access Control List. Devuelve un listado de permisos para este usuario
      */
-    public function acl(?User $user, string $accion)
+    public function acl(?User $user, string $verbo)
     {
         $user_id = $user ? $user->id : -1;
         $grupos_ids = $user ? $user->grupos()->pluck('grupos.id') : [];
@@ -121,7 +121,7 @@ class LinuxPolicy
                     ->where('permisos.user_id', $user_id)
                     ->orWhereIn('permisos.group_id', $grupos_ids);
             })
-            ->where('accion', $accion)
+            ->where('verbos', 'LIKE', '%' . $verbo .'%')
             ->get();
     }
 
