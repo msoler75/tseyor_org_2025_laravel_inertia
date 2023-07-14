@@ -5,7 +5,8 @@ namespace App\Policies;
 use App\Models\Permiso;
 use App\Models\Nodo;
 use App\Models\User;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Esta clase simula los permisos de linux con usuarios y grupos.
@@ -117,8 +118,7 @@ class LinuxPolicy
                     $query->orWhere('verbos', 'LIKE', '%' . $verbo . '%');
                 }
             })*/
-            ->get()
-            ;
+            ->get();
     }
 
 
@@ -128,10 +128,10 @@ class LinuxPolicy
     public static function tieneAcceso(Nodo $nodo, $acl, $verbo = null)
     {
         // filtramos por verbo
-        if($verbo)
-        $acl = $acl->filter(function ($nodo) use ($verbo) {
-            return strpos($nodo->verbos, $verbo) !== false;
-        });
+        if ($verbo)
+            $acl = $acl->filter(function ($nodo) use ($verbo) {
+                return strpos($nodo->verbos, $verbo) !== false;
+            });
 
         // tiene acceso global para todos los nodos?
         if ($acl->whereNull('modelo_id')->count() > 0)
@@ -141,21 +141,52 @@ class LinuxPolicy
         if ($acl->where('modelo_id', $nodo->id)->count() > 0)
             return true;
 
-        // dd($nodo);
-
         // tiene acceso a una carpeta padre?
 
-        // no sé porqué pero no funciona:
+        // parece que los LIKE no funcionan aquí:
         //if ($acl->where("'$nodo->ruta'", 'LIKE', "CONCAT(ruta, '%')")->count() > 0)
         //  return true;
 
-        $aclArray = $acl->toArray();
-        foreach ($aclArray as $registro) {
+        foreach ($acl->toArray() as $registro) {
             if (strpos($nodo->ruta, $registro['ruta']) === 0) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Renombra los nodos afectados por cambios en la ruta
+     * Ejemplo: renombrar un archivo, o mover un archivo de una carpeta a otra
+     */
+    public static function move($from, $to)
+    {
+        Nodo::where('ruta', 'like', "$from/%")
+            ->orWhere('ruta', $from)
+            ->update([
+                'ruta' => DB::raw("CONCAT('$to', SUBSTRING(ruta, LENGTH('$from') + 1))")
+            ]);
+    }
+
+
+    public static function crearNodo(?User $user, string $ruta, bool $es_carpeta = false)
+    {
+        // Obtén el valor de umask desde el archivo de configuración
+        $umask = Config::get('app.umask');
+
+        // Convertir umask y permisos a octal
+        $umask = octdec($umask);
+
+        // aplicamos el umask, con el sticky bit 1
+        $permisos = 01777 & ~$umask;
+
+        Nodo::create([
+                'ruta' => $ruta,
+                'user_id' => optional($user)->id ?? 1,
+                'group_id' => 1,
+                'permisos' => decoct($permisos),
+                'es_carpeta' => $es_carpeta
+            ]);
     }
 }

@@ -3,9 +3,9 @@
         <div
             class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-200  px-4 pb-0 sm:px-6 lg:px-8 z-30">
             <div class="lg:container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
-                <div :title="ruta" v-if="!seleccionando" class="flex items-center gap-3 text-2xl font-bold">
+                <div :title="items[0].ruta" v-if="!seleccionando" class="flex items-center gap-3 text-2xl font-bold">
                     <Icon icon="ph:folder-notch-open-duotone" />
-                    <Breadcrumb :path="items.length && items[0].padre ? items[0].ruta : ruta" />
+                    <Breadcrumb :path="items.length && items[0].actual ? items[0].ruta : ruta" />
                 </div>
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
@@ -37,8 +37,6 @@
                         <Icon v-show="vista == 'lista'" icon="ph:list-dashes-bold" class="transform scale-150" />
                         <Icon v-show="vista == 'grid'" icon="ph:grid-nine-fill" class="transform scale-150" />
                     </button>
-
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                     <Dropdown v-if="puedeEscribir && !seleccionando" align="right" width="48">
                         <template #trigger>
@@ -519,7 +517,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Dropzone from 'vue2-dropzone-vue3'
 import { useFilesStore } from '@/Stores/files';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 
 defineOptions({ layout: AppLayout })
 
@@ -680,20 +678,18 @@ const modalSubirArchivos = ref(false)
 
 const modalCrearCarpeta = ref(false)
 
-const token = ref("")
+const page = usePage()
+console.log(page)
+
+console.log('csrf', page.props.csrf_token)
 
 const dropzoneOptions = ref({
     url: route('files.upload.file'),
     thumbnailWidth: 150,
     maxFilesize: 50,
     headers: {
-        'X-CSRF-Token': token.value
+        'X-CSRF-Token': page.props.csrf_token,
     },
-})
-
-
-onMounted(() => {
-    token.value = document.querySelector('input[name="_token"]').value
 })
 
 
@@ -807,12 +803,20 @@ function renombrarItem() {
     })
         .then(response => {
             console.log({ response })
-            const item = props.items.find(it => it.nombre == itemRenombrando.value.nombre)
+            const item = itemRenombrando.value // props.items.find(it => it.nombre == itemRenombrando.value.nombre)
+            console.log('renombrar item', item)
             item.ruta = item.carpeta + '/' + nuevoNombre.value
             const parts = item.url.split('/')
             parts[parts.length - 1] = parts[parts.length - 1].replace(item.nombre, nuevoNombre.value)
             item.url = parts.join('/')
             item.nombre = nuevoNombre.value
+            if(item.actual) {
+                // reemplazar la URL actual en el historial del navegador
+                window.history.replaceState(null, null, item.ruta);
+
+                // reemplazar el título de la página
+                document.title = item.ruta
+            }
         })
         .catch(err => {
             const errorMessage = err.response.data.error || 'Ocurrió un error al renombrar el elemento'
