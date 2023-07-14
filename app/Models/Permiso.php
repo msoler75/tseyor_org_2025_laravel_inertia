@@ -13,7 +13,7 @@ class Permiso extends Model
     protected $table = 'permisos';
 
     protected $fillable = [
-        'user_id', 'team_id', 'modelo', 'modelo_id', 'accion', 'permitido'
+        'user_id', 'team_id', 'modelo', 'modelo_id', 'verbos', 'permitido'
     ];
 
     public function user()

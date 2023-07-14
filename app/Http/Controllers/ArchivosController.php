@@ -23,8 +23,9 @@ use Illuminate\Support\Facades\DB;
  */
 class ArchivosController extends Controller
 {
-
-
+    /**
+     * Listado de una carpeta. Comprueba todos los permisos de acceso
+     */
     public function index(Request $request)
     {
         $ruta = $request->path();
@@ -41,15 +42,12 @@ class ArchivosController extends Controller
 
         $user = auth()->user();
 
-        $LinuxPolicy = new LinuxPolicy();
-        $aclEjecutar = $LinuxPolicy->acl($user, 'ejecutar');
-
-        // dd($aclEjecutar);
-        // $aclLeer = $LinuxPolicy->acl($user, 'leer');
+        $acl = LinuxPolicy::acl($user, ['ejecutar', 'escribir']);
+        // dd($acl->toArray());
 
         // comprobamos el permiso de ejecución (listar) en la carpeta
-        $nodo = $LinuxPolicy->obtenerMejorNodo($ruta);
-        if (!$LinuxPolicy->ejecutar($nodo, $user, $aclEjecutar)) {
+        $nodo = LinuxPolicy::nodoHeredado($ruta);
+        if (!LinuxPolicy::ejecutar($nodo, $user, $acl)) {
             throw new AuthorizationException('No tienes permisos para ver la carpeta', 403);
         }
 
@@ -98,8 +96,8 @@ class ArchivosController extends Controller
                 'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
             ];
 
-            $nodo = $LinuxPolicy->obtenerMejorNodo(dirname($ruta));
-            if (!$nodo || !$LinuxPolicy->ejecutar($nodo, $user, $aclEjecutar))
+            $nodo = LinuxPolicy::nodoHeredado(dirname($ruta));
+            if (!$nodo || !LinuxPolicy::ejecutar($nodo, $user, $acl))
                 $item['privada'] = true;
 
             $item['permisos'] =  optional($nodo)->permisos ?? 0;
@@ -110,7 +108,9 @@ class ArchivosController extends Controller
 
         // Agregar carpetas a la colección de elementos
         $carpetas = Storage::disk('public')->directories($ruta);
-        $nodos = $LinuxPolicy->obtenerNodos($ruta);
+
+        // obtenemos todos los nodos de la carpeta
+        $nodos = LinuxPolicy::nodosCarpeta($ruta);
 
         foreach ($carpetas as $carpeta) {
             $archivos_internos = Storage::disk('public')->files($carpeta);
@@ -132,7 +132,9 @@ class ArchivosController extends Controller
             $nodo = $nodos->where('ruta', $ruta . "/" . $item['nombre'])->first();
             if (!$nodo)
                 $nodo = $nodoCarpeta;
-            if (!$nodo || !$LinuxPolicy->ejecutar($nodo, $user, $aclEjecutar))
+                //if($nodo->ruta=='archivos/salud')
+                  //  dd($nodo);
+            if (!$nodo || !LinuxPolicy::ejecutar($nodo, $user, $acl))
                 $item['privada'] = true;
             $item['permisos'] =  optional($nodo)->permisos ?? 0;
             $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
@@ -166,12 +168,11 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de escritura (para saber si puede crear carpetas, o renombrar archivos)
-        $aclEscribir = $LinuxPolicy->acl($user, 'escribir');
-        $puedeEscribir = $LinuxPolicy->escribir($nodoCarpeta, $user, $aclEscribir);
+        $puedeEscribir = LinuxPolicy::escribir($nodoCarpeta, $user, $acl);
 
         $propietario = null;
 
-        // comprobamos si la carpeta es de un equipo
+        // comprobamos si la carpeta es de un equipo, o de un usuario, en cuyo caso buscamos la forma de referenciarlo
         $equipo = Equipo::where('group_id', $nodoCarpeta->group_id)->first();
         if ($equipo)
             $propietario = [
@@ -196,7 +197,7 @@ class ArchivosController extends Controller
         ])
             ->withViewData([
                 'seo' => new SEOData(
-                    title: 'Archivos de Tseyor',
+                    title: $ruta,
                     description: 'Contenido de ' . $ruta,
                 )
             ]);
@@ -379,10 +380,9 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de escritura
-        $LinuxPolicy = new LinuxPolicy();
-        $acl = $LinuxPolicy->acl($user, 'escribir');
-        $nodo = $LinuxPolicy->obtenerMejorNodo($folder);
-        if (!$nodo || !$LinuxPolicy->escribir($nodo, $user, $acl)) {
+        $acl = LinuxPolicy::acl($user, ['escribir']);
+        $nodo = LinuxPolicy::nodoHeredado($folder);
+        if (!$nodo || !LinuxPolicy::escribir($nodo, $user, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -446,10 +446,9 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de escritura
-        $LinuxPolicy = new LinuxPolicy();
-        $acl = $LinuxPolicy->acl($user, 'escribir');
-        $nodo = $LinuxPolicy->obtenerMejorNodo($ruta);
-        if (!$nodo || !$LinuxPolicy->escribir($nodo, $user, $acl)) {
+        $acl = LinuxPolicy::acl($user, ['escribir']);
+        $nodo = LinuxPolicy::nodoHeredado($ruta);
+        if (!$nodo || !LinuxPolicy::escribir($nodo, $user, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -518,10 +517,9 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de escritura
-        $LinuxPolicy = new LinuxPolicy();
-        $acl = $LinuxPolicy->acl($user, 'escribir');
-        $nodo = $LinuxPolicy->obtenerMejorNodo($rutaAntes);
-        if (!$nodo || !$LinuxPolicy->escribir($nodo, $user, $acl)) {
+        $acl = LinuxPolicy::acl($user, ['escribir']);
+        $nodo = LinuxPolicy::nodoHeredado($rutaAntes);
+        if (!$nodo || !LinuxPolicy::escribir($nodo, $user, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -595,23 +593,21 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de lectura y escritura
-        $LinuxPolicy = new LinuxPolicy();
-        $aclLeer = $LinuxPolicy->acl($user, 'leer');
-        $aclEscribir = $LinuxPolicy->acl($user, 'escribir');
-        $nodoSource = $LinuxPolicy->obtenerMejorNodo($sourceFolder);
-        $nodoDestination = $LinuxPolicy->obtenerMejorNodo($destinationFolder);
+        $acl = LinuxPolicy::acl($user, ['leer', 'escribir']);
+        $nodoSource = LinuxPolicy::nodoHeredado($sourceFolder);
+        $nodoDestination = LinuxPolicy::nodoHeredado($destinationFolder);
 
-        if (!$nodoSource || !$LinuxPolicy->leer($nodoSource, $user, $aclLeer)) {
+        if (!$nodoSource || !LinuxPolicy::leer($nodoSource, $user, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos de lectura en la carpeta origen'
             ], 403);
         }
-        if (!$LinuxPolicy->escribir($nodoSource, $user, $aclEscribir)) {
+        if (!LinuxPolicy::escribir($nodoSource, $user, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos de escritura en la carpeta origen'
             ], 403);
         }
-        if (!$nodoDestination || !$LinuxPolicy->escribir($nodoDestination, $user, $aclEscribir)) {
+        if (!$nodoDestination || !LinuxPolicy::escribir($nodoDestination, $user, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos en la carpeta destino'
             ], 403);
@@ -715,18 +711,16 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de lectura y escritura
-        $LinuxPolicy = new LinuxPolicy();
-        $aclLeer = $LinuxPolicy->acl($user, 'leer');
-        $aclEscribir = $LinuxPolicy->acl($user, 'escribir');
-        $nodoSource = $LinuxPolicy->obtenerMejorNodo($sourceFolder);
-        $nodoDestination = $LinuxPolicy->obtenerMejorNodo($destinationFolder);
+        $acl = LinuxPolicy::acl($user, ['leer', 'escribir']);
+        $nodoSource = LinuxPolicy::nodoHeredado($sourceFolder);
+        $nodoDestination = LinuxPolicy::nodoHeredado($destinationFolder);
 
-        if (!$nodoSource || !$LinuxPolicy->leer($nodoSource, $user, $aclLeer)) {
+        if (!$nodoSource || !LinuxPolicy::leer($nodoSource, $user, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos para leer los archivos'
             ], 403);
         }
-        if (!$nodoDestination || !$LinuxPolicy->escribir($nodoDestination, $user, $aclEscribir)) {
+        if (!$nodoDestination || !LinuxPolicy::escribir($nodoDestination, $user, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos para escribir'
             ], 403);

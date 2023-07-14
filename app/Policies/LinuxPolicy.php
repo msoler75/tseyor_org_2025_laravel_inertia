@@ -5,51 +5,39 @@ namespace App\Policies;
 use App\Models\Permiso;
 use App\Models\Nodo;
 use App\Models\User;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 
 /**
- * El nodos simula los permisos de linux con usuarios y grupos
- * Este clase sirve para gestionar los permisos de acceso a un elemento de nodos, que permisoNodo ser un archivo o una carpeta
+ * Esta clase simula los permisos de linux con usuarios y grupos.
+ * Un nodo es un archivo o una carpeta.
+ * Podemos comprobar los permisos básicos (leer, escribir, ejecutar, o rwx).
+ * Además de los permisos básicos, está el ACL (Access Control List) con el modelo Permiso.
  */
 class LinuxPolicy
 {
 
-
-    /* funciones básicas de permisos */
-
-    public function leer(Nodo $nodo, ?User $user, $acl = NULL): bool
+    /**
+     * funciones básicas para comprobar permisos. Consulta la ACL
+     */
+    public static function leer(Nodo $nodo, ?User $user, $acl = null): bool
     {
-        $concedido = $this->permisoNodo($nodo, $user, 0b100);
-
-        if ($concedido) return true;
-
-        return $acl ? $this->tieneAcceso($nodo, $acl, 'leer') : false;
+        return self::permisoNodo($nodo, $user, 0b100) ? true : ($acl ? self::tieneAcceso($nodo, $acl, 'leer') : false);
     }
 
-    public function escribir(Nodo $nodo, ?User $user, $acl = NULL): bool
+    public static function escribir(Nodo $nodo, ?User $user, $acl = null): bool
     {
-        $concedido = $this->permisoNodo($nodo, $user, 0b010);
-
-        if ($concedido) return true;
-
-        return $acl ? $this->tieneAcceso($nodo, $acl, 'escribir') : false;
+        return self::permisoNodo($nodo, $user, 0b010) ? true : ($acl ? self::tieneAcceso($nodo, $acl, 'escribir') : false);
     }
 
-    public function ejecutar(Nodo $nodo, ?User $user, $acl = NULL): bool
+    public static function ejecutar(Nodo $nodo, ?User $user, $acl = null): bool
     {
-        $concedido = $this->permisoNodo($nodo, $user, 0b001);
-
-        if ($concedido) return true;
-
-        return $acl ? $this->tieneAcceso($nodo, $acl, 'ejecutar') : false;
+        return self::permisoNodo($nodo, $user, 0b001) ? true : ($acl ? self::tieneAcceso($nodo, $acl, 'ejecutar') : false);
     }
 
     /**
-     * Obtiene el item más cercano siendo el mismo o antecesor de la ruta
+     * Obtiene el nodo más cercano siendo el mismo o antecesor de la ruta
      */
-    public function obtenerMejorNodo($ruta)
+    public static function nodoHeredado($ruta)
     {
         return Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             ->leftJoin('users', 'users.id', '=', 'user_id')
@@ -60,9 +48,9 @@ class LinuxPolicy
     }
 
     /**
-     * Obtiene todos los items de la carpeta, sin incluir el item de la carpeta
+     * Obtiene todos los nodos de la carpeta, sin incluir el nodo de la carpeta
      */
-    public function obtenerNodos($ruta)
+    public static function nodosCarpeta($ruta)
     {
         return Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             ->leftJoin('users', 'users.id', '=', 'user_id')
@@ -73,7 +61,10 @@ class LinuxPolicy
             ->get();
     }
 
-    private function permisoNodo(Nodo $nodo, ?User $user, int $bits): bool
+    /**
+     * Usa la máscara de bits para saber si hay permisos para este nodo
+     */
+    public static function permisoNodo(Nodo $nodo, ?User $user, int $bits): bool
     {
         try {
             if (!$nodo) {
@@ -108,7 +99,7 @@ class LinuxPolicy
     /**
      * Access Control List. Devuelve un listado de permisos para este usuario
      */
-    public function acl(?User $user, string $verbo)
+    public static function acl(?User $user, array $verbos)
     {
         $user_id = $user ? $user->id : -1;
         $grupos_ids = $user ? $user->grupos()->pluck('grupos.id') : [];
@@ -121,16 +112,27 @@ class LinuxPolicy
                     ->where('permisos.user_id', $user_id)
                     ->orWhereIn('permisos.group_id', $grupos_ids);
             })
-            ->where('verbos', 'LIKE', '%' . $verbo .'%')
-            ->get();
+            /*->where(function ($query) use ($verbos) {
+                foreach ($verbos as $verbo) {
+                    $query->orWhere('verbos', 'LIKE', '%' . $verbo . '%');
+                }
+            })*/
+            ->get()
+            ;
     }
 
 
     /**
      * Comprueba con la ACL si tiene el acceso a un nodo en concreto
      */
-    public function tieneAcceso(Nodo $nodo, $acl)
+    public static function tieneAcceso(Nodo $nodo, $acl, $verbo = null)
     {
+        // filtramos por verbo
+        if($verbo)
+        $acl = $acl->filter(function ($nodo) use ($verbo) {
+            return strpos($nodo->verbos, $verbo) !== false;
+        });
+
         // tiene acceso global para todos los nodos?
         if ($acl->whereNull('modelo_id')->count() > 0)
             return true;

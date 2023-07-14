@@ -75,7 +75,7 @@ const color = computed(() => {
         case 'ra':
         case 'wav':
         case 'wma':
-            return 'text-blue-800';
+            return 'text-blue-800 dark:text-blue-200';
 
         // imágenes:
         case 'bmp':
@@ -89,7 +89,7 @@ const color = computed(() => {
         case 'tif':
         case 'tiff':
         case 'webp':
-            return 'text-green-800';
+            return 'text-green-800 dark:text-green-200';
 
         // documentos de texto:
         case 'doc':
@@ -99,20 +99,20 @@ const color = computed(() => {
         case 'rtf':
         case 'txt':
         case 'wpd':
-            return 'text-red-800';
+            return 'text-red-800 dark:text-red-200';
 
         // hojas de cálculo:
         case 'ods':
         case 'xls':
         case 'xlsx':
-            return 'text-indigo-800';
+            return 'text-indigo-800 dark:text-indigo-200';
 
         // presentaciones:
         case 'key':
         case 'odp':
         case 'ppt':
         case 'pptx':
-            return 'text-yellow-800';
+            return 'text-yellow-800 dark:text-yellow-200';
 
         // archivos comprimidos:
         case '7z':
@@ -122,7 +122,7 @@ const color = computed(() => {
         case 'tar':
         case 'xz':
         case 'zip':
-            return 'text-purple-800';
+            return 'text-purple-800 dark:text-purple-200';
 
         // vídeos:
         case 'avi':
@@ -134,7 +134,7 @@ const color = computed(() => {
         case 'mpg':
         case 'webm':
         case 'wmv':
-            return 'text-pink-800';
+            return 'text-pink-800 dark:text-pink-200';
 
         // otros:
         case 'csv':
