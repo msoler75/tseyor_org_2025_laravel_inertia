@@ -1,5 +1,6 @@
 <script setup>
 import { Head, usePage, router } from '@inertiajs/vue3';
+import { onBeforeUnmount } from 'vue';
 import { useNav } from '@/Stores/nav'
 import { useDark, useToggle } from "@vueuse/core";
 
@@ -130,6 +131,23 @@ import { useDark, useColorScheme } from 'vue-use';
 };
 
 */
+
+
+
+const handleScroll = () => {
+    nav.scrollY = window.scrollY || window.pageYOffset
+};
+
+onMounted(() => {
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+});
+
+
+onBeforeUnmount(() => {
+    window.removeEventListener('scroll', handleScroll);
+});
+
 
 </script>
 
