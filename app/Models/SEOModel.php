@@ -15,7 +15,7 @@ class SEOModel extends Model
     public function getDynamicSEOData(): SEOData
     {
         return new SEOData(
-            title: $this->titulo ?? $this->nombre && null,
+            title: $this->titulo ?? $this->nombre ?? $this->name && null,
             description: $this->descripcion ?? mb_substr(strip_tags($this->texto ?? ""), 0, 400 - 3),
             image: url($this->imagen),
             author: $this->autor ?? 'tseyor',

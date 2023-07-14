@@ -59,15 +59,15 @@ class EquiposController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
-        $carpetas = Carpeta::where('group_id', '=', $equipo->id)->get();
+        $carpetas = Carpeta::where('group_id', '=', $equipo->id)->take(3)->get();
 
         $ultimosArchivos = [];
 
         $user = auth()->user();
-        $LinuxPolicy = new LinuxPolicy();
+        $acl = LinuxPolicy::acl($user, ['leer', 'ejecutar']);
         foreach ($carpetas as $carpeta) {
-            $nodo = $LinuxPolicy->obtenerMejorNodo($carpeta->ruta);
-            if ($nodo&&$LinuxPolicy->leer($nodo, $user)) {
+            $nodo = LinuxPolicy::nodoHeredado($carpeta->ruta);
+            if ($nodo && LinuxPolicy::ejecutar($nodo, $user, $acl)) {
                 $archivos = $carpeta->ultimosArchivos();
                 $ultimosArchivos = array_merge($ultimosArchivos, $archivos);
             }
@@ -83,9 +83,10 @@ class EquiposController extends Controller
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
             'carpetas' => $carpetas,
-            'ultimosArchivos' => $ultimosArchivos,
-            'totalMiembros' => $totalMiembros,
-        ]);
+            'ultimosArchivos' =>  array_slice($ultimosArchivos, 0, 3),
+            'totalMiembros' => $totalMiembros
+        ])
+        ->withViewData(SEO::from($equipo));
     }
 
 
@@ -118,7 +119,7 @@ class EquiposController extends Controller
         $validatedData = $request->validate([
             'nombre' => 'required|max:32',
             'descripcion' => 'max:400',
-            'imagen'=> 'max:255',
+            'imagen' => 'max:255',
         ]);
 
         $user = auth()->user();
@@ -127,7 +128,7 @@ class EquiposController extends Controller
         $equipo = Equipo::create([
             'nombre' => $validatedData['nombre'],
             'slug' => Str::slug($validatedData['nombre']),
-            'imagen'=> $validatedData['imagen'],
+            'imagen' => $validatedData['imagen'],
             'descripcion' => $validatedData['descripcion'],
             'user_id' => $user->id ?? 1
         ]);

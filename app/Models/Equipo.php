@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\SEOModel;
 
-class Equipo extends Model
+
+class Equipo extends SEOModel
 {
     protected $fillable = [
         'nombre',
