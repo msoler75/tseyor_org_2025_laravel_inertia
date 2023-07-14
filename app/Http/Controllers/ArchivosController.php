@@ -15,12 +15,16 @@ use Illuminate\Support\Facades\Config;
 use App\Models\Nodo;
 use App\Models\Equipo;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
 
 /**
  *
  */
 class ArchivosController extends Controller
 {
+
+
     public function index(Request $request)
     {
         $ruta = $request->path();
@@ -486,10 +490,10 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No autorizado'], 401);
         }
 
-        $folder = $request->folder;
+        $folder = $this->normalizarRuta($request->folder);
         $oldName = $request->oldName;
         $newName = $request->newName;
-        // dd("folder=$folder  oldName=$oldName  newName=$newName");
+        //  dd("folder=$folder  oldName=$oldName  newName=$newName");
 
         // Verificar si faltan parámetros
         if (!$request->filled(['folder', 'oldName', 'newName'])) {
@@ -500,42 +504,65 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
         }
 
-        $itemAntes = 'public' . $folder . "/" . $oldName;
-        $itemDespues = 'public' . $folder . "/" . $newName;
+        $rutaAntes = $folder . '/' . $oldName;
+        $rutaDespues = $folder . '/' . $newName;
+        $itemAntes = 'public' . '/' . $rutaAntes;
+        $itemDespues = 'public' . '/' . $rutaDespues;
+
         // dd("itemAntes=$itemAntes itemDespues=$itemDespues");
-
-
-        // comprobamos los permisos de escritura
-        $LinuxPolicy = new LinuxPolicy();
-        $acl = $LinuxPolicy->acl($user, 'escribir');
-        $nodo = $LinuxPolicy->obtenerMejorNodo($ruta);
-        if (!$nodo || !$LinuxPolicy->escribir($nodo, $user, $acl)) {
-            return response()->json([
-                'error' => 'No tienes permisos'
-            ], 403);
-        }
 
         // Verificar que el item exista
         if (!Storage::exists($itemAntes)) {
             return response()->json(['error' => "El item '$itemAntes' no existe"], 404);
         }
 
+
+        // comprobamos los permisos de escritura
+        $LinuxPolicy = new LinuxPolicy();
+        $acl = $LinuxPolicy->acl($user, 'escribir');
+        $nodo = $LinuxPolicy->obtenerMejorNodo($rutaAntes);
+        if (!$nodo || !$LinuxPolicy->escribir($nodo, $user, $acl)) {
+            return response()->json([
+                'error' => 'No tienes permisos'
+            ], 403);
+        }
+
+        //$rutaAbsolutaAntes = realpath(Storage::disk('public')->path($rutaAntes));
+        //$rutaAbsolutaDespues = preg_replace("/[\/\\\\]/", DIRECTORY_SEPARATOR, Storage::disk('public')->path($rutaDespues));
+
+        // dd("rename($rutaAbsolutaAntes, $rutaAbsolutaDespues");
         // Verificar si el item es una carpeta
         if (Storage::directoryExists($itemAntes)) {
             // Intentar renombrar la carpeta
             if (Storage::move($itemAntes, $itemDespues)) {
-                return response()->json(['message' => 'Carpeta renombrada correctamente'], 200);
+            //if (rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
+                $response = response()->json(['message' => 'Carpeta renombrada correctamente'], 200);
             } else {
+                //$error = error_get_last();
+                //dd($error);
                 return response()->json(['error' => 'No se pudo renombrar la carpeta'], 500);
             }
         } else {
             // Intentar renombrar el archivo
             if (Storage::move($itemAntes, $itemDespues)) {
-                return response()->json(['message' => 'Archivo renombrado correctamente'], 200);
+            //if (rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
+                // actualizamos la ruta del nodo
+                $response = response()->json(['message' => 'Archivo renombrado correctamente'], 200);
             } else {
+                //$error = error_get_last();
+                //dd($error);
                 return response()->json(['error' => 'No se pudo renombrar el archivo'], 500);
             }
         }
+
+        // debemos renombrar todas las rutas afectadas en los nodos
+        Nodo::where('ruta', 'like', "$rutaAntes/%")
+        ->orWhere('ruta', $rutaAntes)
+        ->update([
+            'ruta' => DB::raw("CONCAT('$rutaDespues', SUBSTRING(ruta, LENGTH('$rutaAntes') + 1))")
+        ]);
+
+        return $response;
     }
 
 
@@ -769,5 +796,16 @@ class ArchivosController extends Controller
         Log::info("$successCount elementos copiados correctamente y $errorCount elementos fallidos");
 
         return response()->json($response, $successCount > 0 ? 200 : 500);
+    }
+
+    /**
+     * Quita la primera barra si es necesario
+     */
+    private function normalizarRuta($ruta)
+    {
+        if (strpos($ruta, '/') === 0) {
+            return substr($ruta, 1);
+        }
+        return $ruta;
     }
 }
