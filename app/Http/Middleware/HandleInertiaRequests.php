@@ -33,6 +33,7 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'anuncio'=>env('ANUNCIO_GLOBAL_HTML'),
             'meta_image_default'=> env('META_IMAGE_DEFAULT'),
+            'csrf_token' => csrf_token(),
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
                     'location' => $request->url(),

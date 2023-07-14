@@ -11,11 +11,9 @@ use App\Policies\LinuxPolicy;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Config;
-use App\Models\Nodo;
 use App\Models\Equipo;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+
 
 
 /**
@@ -280,6 +278,9 @@ class ArchivosController extends Controller
         $filename = $newFilename;
         $storedPath = $file->storeAs($folder, $filename, 'public');
 
+        // creamos su nodo
+        LinuxPolicy::crearNodo(auth()->user(), $folder.'/'.$filename);
+
         // Obtener la URL pública del archivo
         $url = Storage::url($storedPath);
 
@@ -395,25 +396,8 @@ class ArchivosController extends Controller
             ], 500);
         }
 
-
-        // Creamos el nodo
-
-        // Obtén el valor de umask desde el archivo de configuración
-        $umask = Config::get('app.umask');
-
-        // Convertir umask y permisos a octal
-        $umask = octdec($umask);
-
-        // aplicamos el umask, con el sticky bit 1
-        $permisos = 01777 & ~$umask;
-
-        Nodo::create([
-            'ruta' => $folder . '/' . $name,
-            'user_id' => $user->id,
-            'group_id' => 1,
-            'permisos' => decoct($permisos),
-            'es_carpeta' => true
-        ]);
+       // Creamos el nodo
+       LinuxPolicy::crearNodo($user, $folder . '/' . $name, true);
 
         return response()->json([
             'message' => 'folderCreated'
@@ -554,11 +538,7 @@ class ArchivosController extends Controller
         }
 
         // debemos renombrar todas las rutas afectadas en los nodos
-        Nodo::where('ruta', 'like', "$rutaAntes/%")
-        ->orWhere('ruta', $rutaAntes)
-        ->update([
-            'ruta' => DB::raw("CONCAT('$rutaDespues', SUBSTRING(ruta, LENGTH('$rutaAntes') + 1))")
-        ]);
+        LinuxPolicy::move($rutaAntes, $rutaDespues);
 
         return $response;
     }
@@ -620,8 +600,10 @@ class ArchivosController extends Controller
         $errorMessages = [];
 
         foreach ($items as $item) {
-            $itemSource = 'public/' . $sourceFolder . "/" . $item;
-            $itemDestination = 'public/' . $destinationFolder . "/" . $item;
+            $rutaAntes =  $sourceFolder . "/" . $item;
+            $rutaDespues =  $destinationFolder . "/" . $item;
+            $itemSource = 'public/' . $rutaAntes;
+            $itemDestination = 'public/' . $rutaDespues;
 
             // Verificar que el item exista
             if (!Storage::exists($itemSource)) {
@@ -637,6 +619,9 @@ class ArchivosController extends Controller
                     $successCount++;
                     // Agregar registro de movimiento a archivo de log
                     Log::info("Carpeta '$item' movida de '$sourceFolder' a '$destinationFolder'");
+
+                    // cambias los nodos afectados
+                      LinuxPolicy::move($rutaAntes, $rutaDespues);
                 } else {
                     $errorCount++;
                     $errorMessages[] = "No se pudo mover la carpeta '$itemSource'";
@@ -648,7 +633,8 @@ class ArchivosController extends Controller
                     $itemName = pathinfo($item, PATHINFO_FILENAME);
                     $itemExtension = pathinfo($item, PATHINFO_EXTENSION);
                     $itemBaseName = $itemName . '_' . $counter;
-                    $itemDestination = 'public/' . $destinationFolder . "/" . $itemBaseName . '.' . $itemExtension;
+                    $rutaDespues =  $destinationFolder . "/" . $itemBaseName . '.' . $itemExtension;
+                    $itemDestination = 'public/' . $rutaDespues;
                     $counter++;
                 }
 
@@ -656,6 +642,10 @@ class ArchivosController extends Controller
                     $successCount++;
                     // Agregar registro de movimiento a archivo de log
                     Log::info("Archivo '$item' movido de '$sourceFolder' a '$destinationFolder'");
+
+                    // debemos renombrar todas las rutas afectadas en los nodos
+                    LinuxPolicy::move($rutaAntes, $rutaDespues);
+
                 } else {
                     $errorCount++;
                     $errorMessages[] = "No se pudo mover el archivo '$itemSource'";
@@ -802,4 +792,5 @@ class ArchivosController extends Controller
         }
         return $ruta;
     }
+
 }
