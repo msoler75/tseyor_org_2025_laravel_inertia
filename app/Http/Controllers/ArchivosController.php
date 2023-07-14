@@ -295,7 +295,7 @@ class ArchivosController extends Controller
     public function uploadFile(Request $request)
     {
         $file = $request->file('file');
-        $folder =  $request->destinationPath;
+        $folder = $this->normalizarRuta($request->destinationPath);
 
         return $this->processUpload($request, $file, $folder);
     }
@@ -304,7 +304,7 @@ class ArchivosController extends Controller
     public function uploadImage(Request $request)
     {
         $file = $request->file('image');
-        $folder = $request->destinationPath;
+        $folder = $this->normalizarRuta($request->destinationPath);
 
         // detecta si estamos editando un tipo de datos y lo extrae, para asignarle después una carpeta
         $url = $request->headers->get('referer');
@@ -343,7 +343,7 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No autorizado'], 401);
         }
 
-        $folder = $request->folder;
+        $folder = $this->normalizarRuta($request->folder);
         $name = $request->name;
 
         if (!$folder) {

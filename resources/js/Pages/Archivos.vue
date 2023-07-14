@@ -3,9 +3,9 @@
         <div
             class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-200  px-4 pb-0 sm:px-6 lg:px-8 z-30">
             <div class="lg:container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
-                <div :title="items[0].ruta" v-if="!seleccionando" class="flex items-center gap-3 text-2xl font-bold">
+                <div :title="rutaActual" v-if="!seleccionando" class="flex items-center gap-3 text-2xl font-bold">
                     <Icon icon="ph:folder-notch-open-duotone" />
-                    <Breadcrumb :path="items.length && items[0].actual ? items[0].ruta : ruta" />
+                    <Breadcrumb :path="rutaActual" />
                 </div>
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
@@ -105,7 +105,7 @@
                 </button>
 
                 <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-3 items-center"
-                    :disabled="store.sourcePath == ruta || !puedeEscribir" @click="moverItems"
+                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click="moverItems"
                     title="Mover los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
                     <span v-if="puedeEscribir">Mover aquí</span>
@@ -113,7 +113,7 @@
                 </button>
 
                 <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-3 items-center"
-                    :disabled="store.sourcePath == ruta || !puedeEscribir" @click="copiarItems"
+                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click="copiarItems"
                     title="Copiar los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
                     <span v-if="puedeEscribir">Pegar aquí</span>
@@ -231,7 +231,7 @@
                                 <a v-else :href="item.url" download v-html="nombreItem(item)"
                                     :class="seleccionando ? 'pointer-events-none' : ''" />
                             </td>
-                            <td class="hidden sm:table-cell py-2 text-center" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
+                            <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
                                 <span v-if="item.tipo === 'carpeta'" class="text-sm">
                                     {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
@@ -439,7 +439,6 @@
                 </div>
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
-
                     <button @click.prevent="crearCarpeta" type="button" class="btn btn-primary">
                         Crear Carpeta
                     </button>
@@ -447,7 +446,6 @@
                     <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn btn-neutral">
                         Cancelar
                     </button>
-
                 </div>
             </form>
         </Modal>
@@ -522,11 +520,12 @@ import { router, usePage } from '@inertiajs/vue3';
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    ruta: String,
     items: Array,
     puedeEscribir: Boolean,
     propietario: Object
 });
+
+const rutaActual = computed(()=>props.items.length?props.items[0].ruta:'')
 
 const tituloPropietario = computed(() => {
     if (!props.propietario) return ''
@@ -618,21 +617,21 @@ const buscandoCarpetaDestino = computed(() => store.isMovingFiles || store.isCop
 function prepararMoverItems() {
     seleccionando.value = false
     store.isMovingFiles = true
-    store.sourcePath = props.ruta
+    store.sourcePath = rutaActual.value
     store.filesToMove = [...itemsSeleccionados.value.map(item => item.nombre)]
 }
 
 function prepararCopiarItems() {
     seleccionando.value = false
     store.isCopyingFiles = true
-    store.sourcePath = props.ruta
+    store.sourcePath = rutaActual.value
     store.filesToCopy = [...itemsSeleccionados.value.map(item => item.nombre)]
 }
 
 function copiarItems() {
     axios.post(route('files.copy'), {
         sourceFolder: store.sourcePath,
-        targetFolder: props.ruta,
+        targetFolder: rutaActual.value,
         items: store.filesToCopy
     }).then(response => {
         console.log({ response })
@@ -649,7 +648,7 @@ function copiarItems() {
 function moverItems() {
     axios.post(route('files.move'), {
         sourceFolder: store.sourcePath,
-        targetFolder: props.ruta,
+        targetFolder: rutaActual.value,
         items: store.filesToMove
     }).then(response => {
         console.log({ response })
@@ -694,7 +693,7 @@ const dropzoneOptions = ref({
 
 
 function sendingEvent(file, xhr, formData) {
-    formData.append('destinationPath', props.ruta);
+    formData.append('destinationPath', rutaActual.value);
 }
 
 
@@ -842,7 +841,7 @@ function crearCarpeta() {
     if (!nombreCarpeta.value) return
 
     axios.put(route('files.mkdir'), {
-        folder: props.ruta, name: nombreCarpeta.value
+        folder: rutaActual.value, name: nombreCarpeta.value
     }).then((response) => {
         console.log({ response })
         reloadPage()
@@ -875,7 +874,7 @@ function eliminarArchivos() {
 }
 
 function eliminarArchivo(item) {
-    const url = ('/api/files/' + item.ruta).replace(/\/\//g, '/')
+    const url = ('/api/files/' + item.items[0].ruta).replace(/\/\//g, '/')
     return axios.delete(url)
         .then(response => {
             item.eliminado = true
