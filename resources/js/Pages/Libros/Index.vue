@@ -35,31 +35,18 @@
                 <SearchResultsHeader :results="listado" />
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
-                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
                     <div v-show="selectors.soloTitulosLibros" v-for="libro in listado.data" :key="libro.id"
                         class="card shadow bg-base-100 p-5">
                         <Link :href="route('libro', libro.slug)" class="flex items-center gap-3">
                         <Icon icon="ph:book-duotone" /> {{ libro.titulo }}</Link>
                     </div>
-                    <div v-show="!selectors.soloTitulosLibros" v-for="libro in listado.data" :key="libro.id"
-                        class="card flex-row bg-base-100 shadow">
-                        <Image :src="libro.imagen" :alt="libro.titulo" class="w-1/2 object-cover" />
-                        <div class="p-4 flex flex-col">
-                            <h2 class="text-lg font-bold leading-6 mb-4">{{ libro.titulo }}</h2>
-                            <div class="flex flex-wrap justify-between text-xs gap-3">
-                                <div class="badge badge-primary badge-outline whitespace-nowrap">
-                                    <Link :href="`${route('libros')}?categoria=${libro.categoria}`">
-                                    {{ libro.categoria }}
-                                    </Link>
-                                </div>
-                                <TimeAgo :date="libro.published_at" />
-                            </div>
-                            <p class="text-sm">{{ libro.descripcion }}</p>
-                            <Link :href="route('libro', libro.slug)" class="btn mt-auto">
-                            Ver libro
-                            </Link>
-                        </div>
-                    </div>
+                    <CardContent v-show="!selectors.soloTitulosLibros"  v-for="contenido in listado.data" :key="contenido.id"
+                        :title="contenido.titulo" :image="contenido.imagen" :href="route('libro', contenido.slug)"
+                        :description="contenido.descripcion" :date="contenido.published_at"
+                        :tag="contenido.categoria"
+                        image-left
+                        imageClass="w-60 h-80 rounded"/>
 
                 </div>
 

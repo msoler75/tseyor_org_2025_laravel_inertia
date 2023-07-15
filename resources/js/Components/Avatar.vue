@@ -2,9 +2,9 @@
     <div class="avatar">
         <div class="w-32 rounded-full">
             <Link v-if="link" :href="route('usuario', { id: user.slug || user.id })">
-            <Image :src="urlImage" :alt="name" :title="name" fallback="/storage/profile-photos/user.png"/>
+            <Image :src="image" :alt="name" :title="name" fallback="/storage/profile-photos/user.png"/>
             </Link>
-            <Image v-else :src="urlImage" :alt="name" :title="name"  fallback="/storage/profile-photos/user.png" />
+            <Image v-else :src="image" :alt="name" :title="name"  fallback="/storage/profile-photos/user.png" />
         </div>
     </div>
 </template>
@@ -16,10 +16,5 @@ const props = defineProps({
 })
 
 const name = computed(() => props.user.name || props.user.nombre)
-const image = computed(() => props.user.avatar || props.user.profile_ptoho_path || props.user.imagen)
-const urlImage = computed(() => {
-    if (!image.value) return '/storage/profile-photos/user.png'
-    if (image.value.match(/^https?:\/\//)) return image.value
-    return '/storage/' + image.value
-})
+const image = computed(() => props.user.avatar || props.user.profile_photo_path || props.user.imagen)
 </script>

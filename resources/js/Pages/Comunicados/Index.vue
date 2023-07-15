@@ -25,27 +25,16 @@
 
                     <div class="flex-grow">
 
-                        <SearchResultsHeader :results="listado" keyword="buscar_recientes"/>
+                        <SearchResultsHeader :results="listado" keyword="buscar_recientes" />
 
                         <div v-if="listado.data.length > 0" class="grid gap-4"
                             :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
-                            <div v-if="listado.data.length > 0" v-for="comunicado in listado.data" :key="comunicado.id"
-                                class="card bg-base-100 shadow">
-                                <Image :src="comunicado.imagen_url" :alt="comunicado.titulo"
-                                    class="h-48 object-cover w-full" />
-                                <div class="p-4">
-                                    <h2 class="text-lg font-bold mb-2">{{ comunicado.titulo }}</h2>
-                                    <p class="text-gray-700 text-sm">{{ comunicado.descripcion }}</p>
-                                    <Link :href="`/comunicados/${comunicado.slug}`"
-                                        class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
-                                    Leer más
-                                    </Link>
 
-                                    <p class="text-gray-600 mb-2 w-full text-xs text-right">
-                                        <TimeAgo :date="comunicado.published_at" />
-                                    </p>
-                                </div>
-                            </div>
+                            <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data"
+                                :key="contenido.id" :title="contenido.titulo" :image="contenido.imagen"
+                                :href="route('comunicado', contenido.slug)" :description="contenido.descripcion"
+                                :date="contenido.published_at" />
+
                         </div>
 
                         <pagination class="mt-6" :links="listado.links" />
@@ -81,10 +70,10 @@
                 <p>Consulta todos los comunicados registrados en archivo.</p>
 
                 <div class="flex justify-end mb-5">
-                    <SearchInput keyword="buscar_archivo"/>
+                    <SearchInput keyword="buscar_archivo" />
                 </div>
 
-                <SearchResultsHeader :results="archivo"  keyword="buscar_archivo"/>
+                <SearchResultsHeader :results="archivo" keyword="buscar_archivo" />
 
                 <table class="table">
                     <thead>

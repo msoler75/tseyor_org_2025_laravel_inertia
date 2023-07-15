@@ -18,22 +18,10 @@
 
                 <div class="grid gap-8"
                 :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
-                    <div v-if="listado.data.length > 0" v-for="entrada in listado.data" :key="entrada.id"
-                        class="card bg-base-100 shadow">
-                        <Image :src="entrada.imagen_url" :alt="entrada.titulo" class="h-48 object-cover w-full" />
-                        <div class="p-4">
-                            <h2 class="text-lg font-bold mb-2">{{ entrada.titulo }}</h2>
-                            <p class="text-gray-700 text-sm">{{ entrada.descripcion }}</p>
-                            <Link :href="`/entradas/${entrada.slug}`"
-                                class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
-                                Leer más
-                            </Link>
-
-                            <p class="text-gray-600 mb-2 w-full text-xs text-right">
-                                <TimeAgo :date="entrada.published_at" />
-                            </p>
-                        </div>
-                    </div>
+                <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data" :key="contenido.id"
+                        :title="contenido.titulo" :image="contenido.imagen" :href="route('entrada', contenido.slug)"
+                        :description="contenido.descripcion" :date="contenido.published_at"
+                        imageClass="h-80"/>
                 </div>
 
 
