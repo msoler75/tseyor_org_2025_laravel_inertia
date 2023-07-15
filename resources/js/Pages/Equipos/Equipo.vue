@@ -55,7 +55,7 @@
                         <div v-for="item, index of ultimosArchivos" :key="index"
                             class="flex gap-3 items-center py-2 w-full">
                             <FileIcon :url="item.url" :name="item.archivo" />
-                            <Link :href="item.url" class="py-1 animated">{{ item.url.substring(item.url.lastIndexOf('/') +
+                            <Link :href="item.url" class="py-1 hover:underline">{{ item.url.substring(item.url.lastIndexOf('/') +
                                 1)
                             }}</Link>
                             <TimeAgo class="ml-auto" :date="item.fecha_modificacion" />
@@ -68,7 +68,7 @@
                     <div>
                         <div v-for="item, index of carpetas" :key="index" class="flex gap-3 items-baseline py-2">
                             <FolderIcon :url="item.ruta" />
-                            <Link :href="'/' + item.ruta" class="py-1 animated">{{
+                            <Link :href="'/' + item.ruta" class="py-1 hover:underline">{{
                                 item.ruta.substring(item.ruta.lastIndexOf('/') + 1) }}</Link>
                         </div>
                     </div>
