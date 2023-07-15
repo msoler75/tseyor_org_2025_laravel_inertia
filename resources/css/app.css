@@ -179,8 +179,8 @@ main a.animated::after {
     bottom: -2px;
     width: 0%;
     height: 4px;
-    background: #def;
     transition: .5s width ease;
+    @apply bg-primary bg-opacity-30;
 }
 
 
