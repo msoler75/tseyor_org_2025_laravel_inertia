@@ -6,7 +6,7 @@
       </p>
       <div class="flex flex-col md:flex-row mb-4">
         <div class="w-full md:w-1/2 md:mr-8 mb-4 md:mb-0">
-          <img :src="contacto.imagen" :alt="contacto.nombre" class="w-full h-64 object-cover">
+          <Image :src="contacto.imagen" :alt="contacto.nombre" class="w-full h-64 object-cover"/>
         </div>
         <div class="w-full md:w-1/2">
           <p v-if="contacto.pais" class="text-lg"><strong>País:</strong> {{ contacto.pais }}</p>

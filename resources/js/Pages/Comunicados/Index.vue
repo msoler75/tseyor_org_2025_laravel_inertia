@@ -31,7 +31,7 @@
                             :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
                             <div v-if="listado.data.length > 0" v-for="comunicado in listado.data" :key="comunicado.id"
                                 class="card bg-base-100 shadow">
-                                <img :src="comunicado.imagen_url" :alt="comunicado.titulo"
+                                <Image :src="comunicado.imagen_url" :alt="comunicado.titulo"
                                     class="h-48 object-cover w-full" />
                                 <div class="p-4">
                                     <h2 class="text-lg font-bold mb-2">{{ comunicado.titulo }}</h2>

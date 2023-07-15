@@ -20,7 +20,7 @@
                 :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
                     <div v-if="listado.data.length > 0" v-for="entrada in listado.data" :key="entrada.id"
                         class="card bg-base-100 shadow">
-                        <img :src="entrada.imagen_url" :alt="entrada.titulo" class="h-48 object-cover w-full" />
+                        <Image :src="entrada.imagen_url" :alt="entrada.titulo" class="h-48 object-cover w-full" />
                         <div class="p-4">
                             <h2 class="text-lg font-bold mb-2">{{ entrada.titulo }}</h2>
                             <p class="text-gray-700 text-sm">{{ entrada.descripcion }}</p>

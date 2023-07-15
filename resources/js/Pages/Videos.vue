@@ -8,7 +8,7 @@
       <a href="https://www.youtube.com/@tseyor" target="_blank" class="text-blue-600 hover:text-blue-800 font-bold text-lg">youtube.com/@tseyor</a>
       <div>
         <a href="https://www.youtube.com/@tseyor" target="_blank">
-          <img src="/biblioteca/videos/YouTube_logo_2017.svg?ts=1679515913" alt="Logo de Youtube" class="w-16 h-16 mx-auto">
+          <Image src="/biblioteca/videos/YouTube_logo_2017.svg?ts=1679515913" alt="Logo de Youtube" class="w-16 h-16 mx-auto"/>
         </a>
       </div>
     </div>

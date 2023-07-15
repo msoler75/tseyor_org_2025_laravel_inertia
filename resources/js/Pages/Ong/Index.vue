@@ -2,7 +2,7 @@
     <Sections white-first>
         <Section>
             <Text>
-                <img src="https://tseyor.org/images/ong-logo.webp?ts=1386336254&thumb=709x278&quality=87&fe=JPG">
+                <Image src="https://tseyor.org/images/ong-logo.webp?ts=1386336254&thumb=709x278&quality=87&fe=JPG"/>
                 <blockquote>
                     <p>Se está preparando un gran cambio y ello comportará también grandes dificultades. Nuestro grupo, el
                         grupo Tseyor, pondrá su granito de arena para paliarlas.

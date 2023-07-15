@@ -3,7 +3,7 @@
         <div class="sticky top-14 py-5 bg-base-100 border-b border-gray-300 z-30"
             :class="nav.scrollY < 200 ? 'hidden' : ''">
             <div class="container mx-auto flex gap-5 items-center">
-                <img :src="urlImage" alt="Imagen del equipo" class="h-10 object-cover rounded-lg">
+                <Image :src="equipo.imagen" alt="Imagen del equipo" class="h-10 object-cover rounded-lg"/>
                 <h1 class="my-2 text-2xl">
                     {{ equipo.nombre }}
                 </h1>
@@ -19,7 +19,7 @@
 
                 <div class="sm:card sm:bg-base-100 sm:shadow sm:p-5 flex gap-5 sm:col-span-2">
                     <div class="w-full flex flex-wrap h-full gap-5 justify-center items-center">
-                        <img :src="urlImage" alt="Imagen del equipo" class="w-[200px] sm:w-40 object-cover rounded-lg">
+                        <Image :src="equipo.imagen" alt="Imagen del equipo" class="w-[200px] sm:w-40 object-cover rounded-lg"/>
                         <div class="flex-grow space-y-5 justify-center sm:justify-start text-center sm:text-left">
                             <h2 class="my-2">
                                 {{ equipo.nombre }}
@@ -119,14 +119,6 @@ const props = defineProps({
     ultimosArchivos: {},
     carpetas: {}
 })
-
-
-const urlImage = computed(() => {
-    if (!props.equipo.imagen) return '/storage/profile-photos/user.png'
-    if (props.equipo.imagen.match(/^https?:\/\//)) return props.equipo.imagen
-    return '/storage/' + props.equipo.imagen
-})
-
 
 const nav = useNav()
 

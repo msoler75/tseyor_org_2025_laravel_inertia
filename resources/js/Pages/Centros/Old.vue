@@ -38,7 +38,7 @@
                 <div v-if="listado.data.length > 0" class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
                     <div v-for="centro in listado.data" :key="centro.id" class="card bg-base-100 shadow">
-                        <img :src="centro.imagen_url" :alt="centro.nombre" class="h-48 object-cover w-full" />
+                        <Image :src="centro.imagen_url" :alt="centro.nombre" class="h-48 object-cover w-full" />
                         <div class="p-5 flex flex-col flex-grow">
                             <h2 class="text-lg font-bold mb-2">{{ centro.nombre }}</h2>
                             <div class="my-4 badge badge-primary badge-outline">{{
