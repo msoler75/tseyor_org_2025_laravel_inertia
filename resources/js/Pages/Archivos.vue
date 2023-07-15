@@ -317,7 +317,7 @@
                                 <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
                                     class="text-8xl mb-4" :disabled="seleccionando" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download>
-                                    <img :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain">
+                                    <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain"/>
                                 </a>
                                 <FileIcon v-else :url="item.url" class="text-8xl mb-4" />
 

@@ -5,7 +5,7 @@
             Última actualización: <TimeAgo :date="centro.updated_at" />
         </p>
         <div class="mb-4">
-            <img :src="centro.imagen" :alt="centro.nombre" class="w-full h-64 object-cover">
+            <Image :src="centro.imagen" :alt="centro.nombre" class="w-full h-64 object-cover"/>
         </div>
         <p>{{ centro.pais }}</p>
         <p>{{ centro.poblacion }}</p>

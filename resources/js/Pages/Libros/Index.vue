@@ -43,7 +43,7 @@
                     </div>
                     <div v-show="!selectors.soloTitulosLibros" v-for="libro in listado.data" :key="libro.id"
                         class="card flex-row bg-base-100 shadow">
-                        <img :src="libro.imagen" :alt="libro.titulo" class="w-1/2 object-cover" />
+                        <Image :src="libro.imagen" :alt="libro.titulo" class="w-1/2 object-cover" />
                         <div class="p-4 flex flex-col">
                             <h2 class="text-lg font-bold leading-6 mb-4">{{ libro.titulo }}</h2>
                             <div class="flex flex-wrap justify-between text-xs gap-3">

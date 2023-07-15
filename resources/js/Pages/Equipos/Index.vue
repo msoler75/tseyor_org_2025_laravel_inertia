@@ -37,11 +37,11 @@
                         class="card flex-row bg-base-100 shadow overflow-hidden" relative>
 
                         <Link :href="`/equipos/${equipo.slug || equipo.id}`" class="w-1/2 h-full absolute left-0 top-0 " />
-                        <img :src="equipo.imagen" :alt="equipo.nombre" class="w-1/2 object-cover cursor-pointer"
+                        <Image :src="equipo.imagen" :alt="equipo.nombre" class="w-1/2 object-cover cursor-pointer"
                             @click="" />
 
                         <div class="card-body p-5">
-                            <h2 class="text-lg font-bold mb-2 capitalize">{{ equipo.nombre }}</h2>
+                            <Link :href="route('equipo', equipo.slug)"><h2 class="text-lg font-bold mb-2 capitalize">{{ equipo.nombre }}</h2></Link>
                             <p class="opacity-80 text-sm">{{ equipo.descripcion }}</p>
                             <!--
                                 <div class="card-actions justify-end">

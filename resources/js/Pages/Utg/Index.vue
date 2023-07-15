@@ -53,7 +53,7 @@
                 <GridFill w="24rem">
                     <div v-for="departamento of departamentos" :key="departamento.nombre" class="flex gap-3 items-start">
                         <div class="w-14 h-14 overflow-hidden">
-                            <img :src="'/storage/' + departamento.imagen">
+                            <Image :src="'/storage/' + departamento.imagen"/>
                         </div>
                         <div class="flex flex-col gap-4">
                             <Link :href="route('utg.departamento', departamento.slug)" class="font-bold text-lg">{{

@@ -31,7 +31,7 @@
                 </div>
                 <div class="w-full md:w-1/2">
                     <div class="lg:max-w-[500px]">
-                        <img :src="evento.imagen" alt="Imagen del evento" class="w-full mb-4">
+                        <Image :src="evento.imagen" alt="Imagen del evento" class="w-full mb-4"/>
                         <p class="mb-4">{{ evento.texto }}</p>
                     </div>
                 </div>

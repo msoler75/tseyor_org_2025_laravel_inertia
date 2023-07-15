@@ -26,7 +26,7 @@
                 :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(12rem, 1fr))` }">
                     <div v-if="guias.length > 0" v-for="guia in guias" :key="guia.slug"
                         class="card bg-base-100 shadow overflow-hidden">
-                        <img :src="guia.imagen" :alt="guia.nombre" class="h-48 object-cover w-full" />
+                        <Image :src="guia.imagen" :alt="guia.nombre" class="h-48 object-cover w-full" />
                         <div class="p-4 flex flex-col flex-grow gap-7">
                             <!-- <p class="text-gray-700 text-sm">{{ guia.descripcion }}</p> -->
                             <Link :href="route('enciclopedia.guia', guia.slug)"

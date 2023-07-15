@@ -5,7 +5,7 @@
             <TimeAgo :date="entrada.published_at" />
         </p>
         <div class="mb-4">
-            <img :src="entrada.imagen" :alt="entrada.titulo" class="w-full h-64 object-cover">
+            <Image :src="entrada.imagen" :alt="entrada.titulo" class="w-full h-64 object-cover"/>
         </div>
         <div class="prose" v-html="entrada.texto"></div>
     </div>

@@ -19,7 +19,7 @@
 
                     <div v-if="listado.data.length > 0" v-for="noticia in listado.data" :key="noticia.id"
                         class="card bg-base-100 shadow">
-                        <img :src="noticia.imagen" :alt="noticia.titulo" class="h-48 object-cover w-full" />
+                        <Image :src="noticia.imagen" :alt="noticia.titulo" class="h-48 object-cover w-full" />
                         <div class="p-4">
                             <h2 class="text-lg font-bold mb-2">{{ noticia.titulo }}</h2>
                             <p class="text-gray-700 text-sm">{{ noticia.descripcion }}</p>

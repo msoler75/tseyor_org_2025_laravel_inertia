@@ -3,7 +3,7 @@
         <Section class="container mx-auto flex flex-col items-center py-20">
             <div class="avatar">
                 <div class="w-32 h-32 rounded-full">
-                    <img :src="urlImage" :alt="`Imagen del usuario ${usuario.name || usuario.slug}`" />
+                    <Image :src="urlImage" :alt="`Imagen del usuario ${usuario.name || usuario.slug}`" />
                 </div>
             </div>
 

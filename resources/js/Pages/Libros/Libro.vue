@@ -4,7 +4,7 @@
 
 
             <div class=" card bg-base-100 shadow-2xl w-fit flex justify-center mx-auto">
-                <img :src="libro.imagen" :alt="libro.titulo" class="object-contain rounded-[2px]">
+                <ImageShadow :src="libro.imagen" :alt="libro.titulo" zclass="object-contain rounded-[2px]"/>
             </div>
 
             <div class="p-6">
@@ -32,7 +32,7 @@
         <div class="grid gap-4 mt-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
 
             <div v-for="libro in relacionados" :key="libro.id" class="card flex-row bg-base-100 shadow">
-                <img :src="libro.imagen" :alt="libro.titulo" class="w-1/2 object-cover" />
+                <Image :src="libro.imagen" :alt="libro.titulo" class="w-1/2 object-cover" />
                 <div class="p-4 flex flex-col">
                     <h2 class="text-lg font-bold leading-6 mb-4">{{ libro.titulo }}</h2>
                     <div class="flex flex-wrap justify-between text-xs gap-3">

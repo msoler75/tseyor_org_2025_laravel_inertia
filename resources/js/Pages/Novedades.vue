@@ -15,7 +15,7 @@
             :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
             <div v-for="contenido in listado.data" :key="contenido.slug" class="card bg-base-100 shadow flex-row ">
 
-                <img :src="contenido.imagen" :alt="contenido.titulo" class="h-48 object-cover w-full" />
+                <Image :src="contenido.imagen" :alt="contenido.titulo" class="h-48 object-cover w-full" />
                 <div class="p-4 flex flex-col">
                     <h2 class="text-lg font-bold mb-2">{{ contenido.titulo }}</h2>
                     <div class="flex justify-between">

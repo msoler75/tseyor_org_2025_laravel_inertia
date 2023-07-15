@@ -3,7 +3,7 @@
         <div class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
                 <div class="w-full h-auto mx-auto">
-                    <img :src="guia.imagen" :alt="guia.nombre" class="w-full h-auto">
+                    <Image :src="guia.imagen" :alt="guia.nombre" class="w-full h-auto"/>
                 </div>
             </div>
             <div class="w-full lg:w-2/3 flex-shrink-0 text-left">
