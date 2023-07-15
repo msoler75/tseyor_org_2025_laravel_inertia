@@ -191,3 +191,30 @@ main a.hover\:underline:hover {
 main a.hover\:underline:hover::after {
     width: 100%;
 }
+
+
+
+
+
+/*
+main a.hover\:right-arrow {
+    position: relative;
+}
+
+main a.hover\:right-arrow::after {
+    content: "->";
+    position: absolute;
+    right: 1rem;
+    top: 40%;
+    opacity: 0;
+    transition: all .3s ease;
+}
+
+main a.hover\:right-arrow:hover::after {
+    opacity: 1;
+    transform: translateX(1rem)
+}
+*/
+
+
+

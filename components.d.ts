@@ -24,6 +24,8 @@ declare module 'vue' {
     BlogPosts: typeof import('./resources/js/Sections/BlogPosts.vue')['default']
     Breadcrumb: typeof import('./resources/js/Components/Breadcrumb.vue')['default']
     CallToAction: typeof import('./resources/js/Sections/CallToAction.vue')['default']
+    Card: typeof import('./resources/js/Components/Card.vue')['default']
+    CardContent: typeof import('./resources/js/Components/CardContent.vue')['default']
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']
     ClientsOrPartners: typeof import('./resources/js/Sections/ClientsOrPartners.vue')['default']
     Comentario: typeof import('./resources/js/Comentarios/Comentario.vue')['default']

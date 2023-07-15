@@ -29,26 +29,14 @@
         <hr class="my-14" />
 
         <h2 class="text-xl font-bold mt-8">Libros relacionados</h2>
-        <div class="grid gap-4 mt-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
+        <div class="grid gap-4 mt-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(32rem, 1fr))` }">
 
-            <div v-for="libro in relacionados" :key="libro.id" class="card flex-row bg-base-100 shadow">
-                <Image :src="libro.imagen" :alt="libro.titulo" class="w-1/2 object-cover" />
-                <div class="p-4 flex flex-col">
-                    <h2 class="text-lg font-bold leading-6 mb-4">{{ libro.titulo }}</h2>
-                    <div class="flex flex-wrap justify-between text-xs gap-3">
-                        <div class="badge badge-primary badge-outline whitespace-nowrap">
-                            <Link :href="`${route('libros')}?categoria=${libro.categoria}`">
-                            {{ libro.categoria }}
-                            </Link>
-                        </div>
-                        <TimeAgo :date="libro.published_at" />
-                    </div>
-                    <p class="text-gray-700 text-sm">{{ libro.descripcion }}</p>
-                    <Link :href="route('libro', libro.slug)" class="btn mt-auto">
-                    Ver libro
-                    </Link>
-                </div>
-            </div>
+            <CardContent v-for="contenido in relacionados" :key="contenido.id"
+                        :title="contenido.titulo" :image="contenido.imagen" :href="route('libro', contenido.slug)"
+                        :description="contenido.descripcion" :date="contenido.published_at"
+                        :tag="contenido.categoria"
+                        image-left
+                        imageClass="h-80"/>
         </div>
 
 
