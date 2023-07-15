@@ -42,13 +42,19 @@
 
                         <div class="card-body p-5">
                             <h2 class="text-lg font-bold mb-2 capitalize">{{ equipo.nombre }}</h2>
-                            <p class="text-gray-700 text-sm">{{ equipo.descripcion }}</p>
-                            <div class="card-actions justify-end">
-                                <Link :href="`/equipos/${equipo.slug || equipo.id}`"
+                            <p class="opacity-80 text-sm">{{ equipo.descripcion }}</p>
+                            <!--
+                                <div class="card-actions justify-end">
+                                    <Link :href="`/equipos/${equipo.slug || equipo.id}`"
                                     class="flex gap-3 items-center text-sm">
-                                <Icon icon="ph:arrow-fat-line-right-duotone" />Ver Equipo
+                                    <Icon icon="ph:arrow-fat-line-right-duotone" />Ver Equipo
                                 </Link>
                             </div>
+                        -->
+                        <div class="hidden sm:flex sm:ml-auto gap-3 text-2xl items-center self-end justify-center">
+                            <Icon icon="ph:user-duotone" />
+                            {{ equipo.usuarios_count }}
+                        </div>
                         </div>
                     </div>
                 </div>

@@ -4,7 +4,7 @@
         <Section :style="{
             background: 'black url(/storage/imagenes/portada/earth-1756274.jpg) bottom',
             backgroundSize: 'cover'
-        }" data-theme="winter">
+            }" data-theme="winter">
             <Hero title="Contacto Extraterrestre" xsrcImage="/storage/imagenes/portada/unidad.jpg" :href="route('cursos')"
                 buttonLabel="Curso gratuito" textClass="bg-black bg-opacity-70 p-5 rounded-xl justify-center" image-right>
                 <blockquote>En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
@@ -32,7 +32,7 @@
 
         <Section>
             <Hero title="Comunidad Tseyor" subtitle="Somos una comunidad de personas normales y corrientes que trabajamos hacia la instauración
-                de                las Sociedades Armónicas de la Galaxia." buttonLabel="Únete a la comunidad TSEYOR"
+                de las Sociedades Armónicas de la Galaxia." buttonLabel="Únete a la comunidad TSEYOR"
                 :href="route('cursos')" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Comunidad%20Tseyor"
                 textClass="container" full cover />
         </Section>

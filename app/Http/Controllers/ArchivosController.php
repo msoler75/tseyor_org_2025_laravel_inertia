@@ -41,7 +41,6 @@ class ArchivosController extends Controller
         $user = auth()->user();
 
         $acl = LinuxPolicy::acl($user, ['ejecutar', 'escribir']);
-        // dd($acl->toArray());
 
         // comprobamos el permiso de ejecución (listar) en la carpeta
         $nodo = LinuxPolicy::nodoHeredado($ruta);
@@ -130,8 +129,8 @@ class ArchivosController extends Controller
             $nodo = $nodos->where('ruta', $ruta . "/" . $item['nombre'])->first();
             if (!$nodo)
                 $nodo = $nodoCarpeta;
-                //if($nodo->ruta=='archivos/salud')
-                  //  dd($nodo);
+            //if($nodo->ruta=='archivos/salud')
+            //  dd($nodo);
             if (!$nodo || !LinuxPolicy::ejecutar($nodo, $user, $acl))
                 $item['privada'] = true;
             $item['permisos'] =  optional($nodo)->permisos ?? 0;
@@ -279,7 +278,7 @@ class ArchivosController extends Controller
         $storedPath = $file->storeAs($folder, $filename, 'public');
 
         // creamos su nodo
-        LinuxPolicy::crearNodo(auth()->user(), $folder.'/'.$filename);
+        LinuxPolicy::crearNodo(auth()->user(), $folder . '/' . $filename);
 
         // Obtener la URL pública del archivo
         $url = Storage::url($storedPath);
@@ -381,7 +380,7 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de escritura
-        $acl = LinuxPolicy::acl($user, ['escribir']);
+        $acl = LinuxPolicy::acl($user);
         $nodo = LinuxPolicy::nodoHeredado($folder);
         if (!$nodo || !LinuxPolicy::escribir($nodo, $user, $acl)) {
             return response()->json([
@@ -396,8 +395,8 @@ class ArchivosController extends Controller
             ], 500);
         }
 
-       // Creamos el nodo
-       LinuxPolicy::crearNodo($user, $folder . '/' . $name, true);
+        // Creamos el nodo
+        LinuxPolicy::crearNodo($user, $folder . '/' . $name, true);
 
         return response()->json([
             'message' => 'folderCreated'
@@ -430,7 +429,7 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de escritura
-        $acl = LinuxPolicy::acl($user, ['escribir']);
+        $acl = LinuxPolicy::acl($user);
         $nodo = LinuxPolicy::nodoHeredado($ruta);
         if (!$nodo || !LinuxPolicy::escribir($nodo, $user, $acl)) {
             return response()->json([
@@ -501,7 +500,7 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de escritura
-        $acl = LinuxPolicy::acl($user, ['escribir']);
+        $acl = LinuxPolicy::acl($user);
         $nodo = LinuxPolicy::nodoHeredado($rutaAntes);
         if (!$nodo || !LinuxPolicy::escribir($nodo, $user, $acl)) {
             return response()->json([
@@ -517,7 +516,7 @@ class ArchivosController extends Controller
         if (Storage::directoryExists($itemAntes)) {
             // Intentar renombrar la carpeta
             if (Storage::move($itemAntes, $itemDespues)) {
-            //if (rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
+                //if (rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
                 $response = response()->json(['message' => 'Carpeta renombrada correctamente'], 200);
             } else {
                 //$error = error_get_last();
@@ -527,7 +526,7 @@ class ArchivosController extends Controller
         } else {
             // Intentar renombrar el archivo
             if (Storage::move($itemAntes, $itemDespues)) {
-            //if (rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
+                //if (rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
                 // actualizamos la ruta del nodo
                 $response = response()->json(['message' => 'Archivo renombrado correctamente'], 200);
             } else {
@@ -555,8 +554,8 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No autorizado'], 401);
         }
 
-        $sourceFolder = $request->sourceFolder;
-        $destinationFolder = $request->targetFolder;
+        $sourceFolder = $this->normalizarRuta($request->sourceFolder);
+        $destinationFolder = $this->normalizarRuta($request->targetFolder);
 
         if (!$sourceFolder || !$destinationFolder) {
             return response()->json(['error' => 'Faltan parámetros'], 400);
@@ -573,9 +572,11 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de lectura y escritura
-        $acl = LinuxPolicy::acl($user, ['leer', 'escribir']);
+        $acl = LinuxPolicy::acl($user);
         $nodoSource = LinuxPolicy::nodoHeredado($sourceFolder);
         $nodoDestination = LinuxPolicy::nodoHeredado($destinationFolder);
+
+        // dd($nodoSource);
 
         if (!$nodoSource || !LinuxPolicy::leer($nodoSource, $user, $acl)) {
             return response()->json([
@@ -621,7 +622,7 @@ class ArchivosController extends Controller
                     Log::info("Carpeta '$item' movida de '$sourceFolder' a '$destinationFolder'");
 
                     // cambias los nodos afectados
-                      LinuxPolicy::move($rutaAntes, $rutaDespues);
+                    LinuxPolicy::move($rutaAntes, $rutaDespues);
                 } else {
                     $errorCount++;
                     $errorMessages[] = "No se pudo mover la carpeta '$itemSource'";
@@ -645,7 +646,6 @@ class ArchivosController extends Controller
 
                     // debemos renombrar todas las rutas afectadas en los nodos
                     LinuxPolicy::move($rutaAntes, $rutaDespues);
-
                 } else {
                     $errorCount++;
                     $errorMessages[] = "No se pudo mover el archivo '$itemSource'";
@@ -682,8 +682,8 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No autorizado'], 401);
         }
 
-        $sourceFolder = $request->sourceFolder;
-        $destinationFolder = $request->targetFolder;
+        $sourceFolder = $this->normalizarRuta($request->sourceFolder);
+        $destinationFolder = $this->normalizarRuta($request->targetFolder);
 
         if (!$sourceFolder || !$destinationFolder) {
             return response()->json(['error' => 'Faltan parámetros'], 400);
@@ -701,7 +701,7 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de lectura y escritura
-        $acl = LinuxPolicy::acl($user, ['leer', 'escribir']);
+        $acl = LinuxPolicy::acl($user);
         $nodoSource = LinuxPolicy::nodoHeredado($sourceFolder);
         $nodoDestination = LinuxPolicy::nodoHeredado($destinationFolder);
 
@@ -792,5 +792,4 @@ class ArchivosController extends Controller
         }
         return $ruta;
     }
-
 }

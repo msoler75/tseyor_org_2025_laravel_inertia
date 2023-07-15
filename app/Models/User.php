@@ -14,6 +14,7 @@ use App\Models\Permiso;
 use App\Models\Equipo;
 use App\Models\Grupo;
 use App\Models\Membresia;
+use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable
 {
@@ -78,8 +79,11 @@ class User extends Authenticatable
 
     public function grupos()
     {
-        return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'group_id')
-            ->using(Pertenencia::class)
-            ->withPivot(['user_id']);
+        return Cache::remember("user_grupos_" . $this->id, 30, function () {
+            return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'group_id')
+                ->using(Pertenencia::class)
+                ->withPivot(['user_id'])
+                ->get();
+        });
     }
 }
