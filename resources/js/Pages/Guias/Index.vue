@@ -4,7 +4,7 @@
         <h1>Guías Estelares</h1>
         <p>Tutores de la Confederación y otros hermanos de las estrellas.</p>
 
-         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="min-w-[150px] lg:min-w-[240px] ">
                 <div class="card bg-base-100 shadow p-10 space-y-7">
@@ -13,7 +13,7 @@
                         <li v-for="guia in guias" :key="guia.slug">
                             <Link :href="route('enciclopedia.guia', guia.slug)"
                                 class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
-                                {{ guia.nombre }}
+                            {{ guia.nombre }}
                             </Link>
                         </li>
                     </ul>
@@ -22,19 +22,13 @@
 
             <div class="w-full flex-grow">
 
-                <div class="grid gap-8"
-                :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(12rem, 1fr))` }">
-                    <div v-if="guias.length > 0" v-for="guia in guias" :key="guia.slug"
-                        class="card bg-base-100 shadow overflow-hidden">
-                        <Image :src="guia.imagen" :alt="guia.nombre" class="h-48 object-cover w-full" />
-                        <div class="p-4 flex flex-col flex-grow gap-7">
-                            <!-- <p class="text-gray-700 text-sm">{{ guia.descripcion }}</p> -->
-                            <Link :href="route('enciclopedia.guia', guia.slug)"
-                                class="btn mt-auto">
-                                {{guia.nombre}}
-                            </Link>
-                        </div>
-                    </div>
+                <div class="grid gap-8" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(12rem, 1fr))` }">
+                    <CardContent v-for="contenido in guias" :key="contenido.id" :image="contenido.imagen"
+                        :href="route('enciclopedia.guia', contenido.slug)" imageClass="h-60">
+                        <div
+                            class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
+                            {{ contenido.nombre }}</div>
+                    </CardContent>
                 </div>
 
 

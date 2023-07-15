@@ -10,19 +10,11 @@
 
                 <div class="grid gap-8"
                 :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
-                    <div v-if="listado.data.length > 0" v-for="lugar in listado.data" :key="lugar.id"
-                        class="card bg-base-100 shadow overflow-hidden">
-                        <Image :src="lugar.imagen" :alt="lugar.nombre" class="h-48 object-cover w-full" />
-                        <div class="p-4 flex flex-col flex-grow">
-                            <h2 class="text-lg font-bold mb-2">{{ lugar.nombre }}</h2>
-                            <p class="text-gray-700 text-sm">{{ lugar.descripcion }}</p>
-                            <Link
-                            :href="route('enciclopedia.lugar', lugar.slug)"
-                                class="mt-auto btn text-sm font-semibold">
-                                Ver Lugar
-                            </Link>
-                        </div>
-                    </div>
+                <CardContent v-for="contenido in listado.data" :key="contenido.id"
+                        :image="contenido.imagen" :href="route('enciclopedia.lugares', contenido.slug)"
+                        imageClass="h-60">
+                        <div class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">{{ contenido.nombre }}</div>
+                        </CardContent>
                 </div>
 
 
