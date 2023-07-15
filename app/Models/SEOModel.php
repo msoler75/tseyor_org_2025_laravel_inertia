@@ -14,10 +14,11 @@ class SEOModel extends Model
     // https://github.com/ralphjsmit/laravel-seo
     public function getDynamicSEOData(): SEOData
     {
+        $image = $this->imagen ? url($this->imagen) : '';
         return new SEOData(
             title: $this->titulo ?? $this->nombre ?? $this->name && null,
             description: $this->descripcion ?? mb_substr(strip_tags($this->texto ?? ""), 0, 400 - 3),
-            image: url($this->imagen),
+            image: $image,
             author: $this->autor ?? 'tseyor',
             published_time: Carbon::createFromFormat('Y-m-d H:i:s', $this->published_at ?? $this->created_at) ?? null,
             section: $this->categoria ?? ''

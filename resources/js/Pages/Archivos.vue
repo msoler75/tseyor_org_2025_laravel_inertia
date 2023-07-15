@@ -1,7 +1,7 @@
 <template>
     <div class="h-full flex flex-col">
         <div
-            class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-200  px-4 pb-0 sm:px-6 lg:px-8 z-30">
+            class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30">
             <div class="lg:container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
                 <div :title="rutaActual" v-if="!seleccionando" class="flex items-center gap-3 text-2xl font-bold">
                     <Icon icon="ph:folder-notch-open-duotone" />
@@ -49,21 +49,21 @@
                             <div class="bg-base-100">
                                 <!-- Account Management -->
                                 <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2  hover:bg-base-200 cursor-pointer"
+                                    class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                     @click="modalSubirArchivos = true">
                                     <Icon icon="ph:upload-duotone" />
                                     <span>Subir archivos</span>
                                 </div>
 
                                 <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-200 cursor-pointer"
+                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                     @click="abrirModalRenombrar(items[0])">
                                     <Icon icon="ph:cursor-text-duotone" />
                                     <span>Renombrar</span>
                                 </div>
 
                                 <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-200 cursor-pointer"
+                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                     @click="abrirModalCrearCarpeta">
                                     <Icon icon="ph:folder-plus-duotone" />
                                     <span>Crear carpeta</span>
@@ -71,14 +71,14 @@
 
 
                                 <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-200 cursor-pointer"
+                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                     @click="seleccionando = true">
                                     <Icon icon="ph:check-duotone" />
                                     <span>Abrir Selección</span>
                                 </div>
 
                                 <div v-else
-                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-200 cursor-pointer whitespace-nowrap"
+                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                     @click="cancelarSeleccion">
                                     <Icon icon="ph:x-square-duotone" />
                                     <span>Cancelar selección</span>
@@ -175,7 +175,7 @@
 
 
         <div :class="vista === 'lista' ? 'lista' : 'grid'"
-            class="select-none flex-grow bg-base-200 py-4 px-2 sm:px-6 lg:px-8 pb-14">
+            class="select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14">
 
             <div v-if="!itemsOrdenados.length" class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
@@ -231,17 +231,21 @@
                                 <a v-else :href="item.url" download v-html="nombreItem(item)"
                                     :class="seleccionando ? 'pointer-events-none' : ''" />
                             </td>
-                            <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
+                            <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart="onTouchStart(item)"
+                                v-on:touchend="onTouchEnd(item)">
                                 <span v-if="item.tipo === 'carpeta'" class="text-sm">
                                     {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
                             </td>
-                            <td class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
+                            <td class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
+                                v-on:touchend="onTouchEnd(item)">
                                 <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
                             </td>
-                            <td class="hidden sm:table-cell text-center" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">{{ item.permisos }}</td>
-                            <td class="hidden sm:table-cell text-center" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">{{ item.propietario ? (item.propietario.usuario +
-                                '/' + item.propietario.grupo) : '' }}</td>
+                            <td class="hidden sm:table-cell text-center" v-on:touchstart="onTouchStart(item)"
+                                v-on:touchend="onTouchEnd(item)">{{ item.permisos }}</td>
+                            <td class="hidden sm:table-cell text-center" v-on:touchstart="onTouchStart(item)"
+                                v-on:touchend="onTouchEnd(item)">{{ item.propietario ? (item.propietario.usuario +
+                                    '/' + item.propietario.grupo) : '' }}</td>
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48" v-if="puedeEscribir">
                                     <template #trigger>
@@ -254,21 +258,21 @@
                                         <div class="bg-base-100">
 
                                             <div v-if="!seleccionando"
-                                                class="flex gap-3 items-center px-4 py-2 hover:bg-base-200 cursor-pointer"
+                                                class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                                 @click="abrirModalRenombrar(item)">
                                                 <Icon icon="ph:cursor-text-duotone" />
                                                 <span>Renombrar</span>
                                             </div>
 
                                             <div v-if="!seleccionando && !item.padre"
-                                                class="flex gap-3  items-center px-4 py-2  hover:bg-base-200 cursor-pointer"
+                                                class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                 @click="abrirEliminarModal(item)">
                                                 <Icon icon="ph:trash-duotone" />
                                                 <span>Eliminar</span>
                                             </div>
 
                                             <div v-if="!buscandoCarpetaDestino && !item.padre"
-                                                class="flex gap-3  items-center px-4 py-2  hover:bg-base-200 cursor-pointer"
+                                                class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                 @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                 <template v-if="!item.seleccionado">
                                                     <Icon icon="ph:check-fat-duotone" />
@@ -281,7 +285,7 @@
                                             </div>
 
                                             <div v-if="seleccionando"
-                                                class="flex gap-3 items-center px-4 py-2 hover:bg-base-200 cursor-pointer whitespace-nowrap"
+                                                class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                 @click="cancelarSeleccion">
                                                 <Icon icon="ph:x-square-duotone" />
                                                 <span>Cancelar selección</span>
@@ -343,21 +347,21 @@
                                             <div class="bg-base-100">
 
                                                 <div v-if="!seleccionando"
-                                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-200 cursor-pointer"
+                                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                                     @click="abrirModalRenombrar(item)">
                                                     <Icon icon="ph:cursor-text-duotone" />
                                                     <span>Renombrar</span>
                                                 </div>
 
                                                 <div v-if="!seleccionando && !item.padre"
-                                                    class="flex gap-3  items-center px-4 py-2  hover:bg-base-200 cursor-pointer"
+                                                    class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                     @click="abrirEliminarModal(item)">
                                                     <Icon icon="ph:trash-duotone" />
                                                     <span>Eliminar</span>
                                                 </div>
 
                                                 <div v-if="!buscandoCarpetaDestino && !item.padre"
-                                                    class="flex gap-3  items-center px-4 py-2  hover:bg-base-200 cursor-pointer"
+                                                    class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                     @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                     <template v-if="!item.seleccionado">
                                                         <Icon icon="ph:check-fat-duotone" />
@@ -370,7 +374,7 @@
                                                 </div>
 
                                                 <div v-if="seleccionando"
-                                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-200 cursor-pointer whitespace-nowrap"
+                                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                     @click="cancelarSeleccion">
                                                     <Icon icon="ph:x-square-duotone" />
                                                     <span>Cancelar selección</span>
@@ -393,36 +397,24 @@
 
 
         <!-- Modal Upload -->
-        <div v-show="modalSubirArchivos" class="fixed z-10 inset-0 overflow-y-auto" scroll-region>
-            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-                </div>
+        <Modal :show="modalSubirArchivos">
 
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-                <div class="inline-block align-bottom bg-base-100 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
-                    role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-                    <div class="bg-base-100 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-
-                        <Dropzone id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
-                            v-on:vdropzone-sending="sendingEvent" v-on:vdropzone-success="successEvent">
-                            <div class="flex flex-col items-center">
-                                <Icon icon="mdi:cloud-upload-outline" class="text-5xl" />
-                                <span>Arrastra los archivos aquí o haz clic para subirlos</span>
-                            </div>
-                        </Dropzone>
-
+            <div class="p-5 flex flex-col gap-5 items-center">
+                <Dropzone class="w-full" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
+                    v-on:vdropzone-sending="sendingEvent" v-on:vdropzone-success="successEvent">
+                    <div class="flex flex-col items-center">
+                        <Icon icon="mdi:cloud-upload-outline" class="text-5xl" />
+                        <span>Arrastra los archivos aquí o haz clic para subirlos</span>
                     </div>
+                </Dropzone>
 
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button @click="modalSubirArchivos = false" type="button" class="btn btn-neutral">
-                            Cerrar
-                        </button>
-                    </div>
-                </div>
+
+                <button @click="modalSubirArchivos = false" type="button" class="btn btn-neutral">
+                    Cerrar
+                </button>
             </div>
-        </div>
+
+        </Modal>
 
 
 
@@ -525,7 +517,7 @@ const props = defineProps({
     propietario: Object
 });
 
-const rutaActual = computed(()=>props.items.length?props.items[0].ruta:'')
+const rutaActual = computed(() => props.items.length ? props.items[0].ruta : '')
 
 const tituloPropietario = computed(() => {
     if (!props.propietario) return ''
@@ -677,6 +669,7 @@ const modalSubirArchivos = ref(false)
 
 const modalCrearCarpeta = ref(false)
 
+
 const page = usePage()
 console.log(page)
 
@@ -712,6 +705,7 @@ watch(modalSubirArchivos, (value) => {
         reloadPage()
     }
 })
+
 
 
 // ORDENACION
@@ -809,7 +803,7 @@ function renombrarItem() {
             parts[parts.length - 1] = parts[parts.length - 1].replace(item.nombre, nuevoNombre.value)
             item.url = parts.join('/')
             item.nombre = nuevoNombre.value
-            if(item.actual) {
+            if (item.actual) {
                 // reemplazar la URL actual en el historial del navegador
                 window.history.replaceState(null, null, item.ruta);
 
@@ -951,7 +945,7 @@ table th {
 
 <style>
 .vue-dropzone {
-    background: white;
+    @apply bg-base-100;
     border-radius: 5px;
     border: 2px dashed rgb(0, 135, 247);
     border-image: none;

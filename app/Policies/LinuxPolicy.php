@@ -7,6 +7,8 @@ use App\Models\Nodo;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Cache;
+
 
 /**
  * Esta clase simula los permisos de linux con usuarios y grupos.
@@ -65,7 +67,7 @@ class LinuxPolicy
     /**
      * Usa la máscara de bits para saber si hay permisos para este nodo
      */
-    public static function permisoNodo(Nodo $nodo, ?User $user, int $bits): bool
+    public static function permisoNodo(Nodo $nodo, User $user, int $bits): bool
     {
         try {
             if (!$nodo) {
@@ -74,14 +76,16 @@ class LinuxPolicy
 
             $permisos = octdec($nodo->permisos);
 
-            // Verificar el permiso del propietario (owner)
-            if ($user && $nodo->user_id && $nodo->user_id === optional($user)->id && ($permisos & ($bits << 6)) !== 0) {
-                return true;
-            }
+            if ($user) {
+                // Verificar el permiso del propietario (owner)
+                if ($nodo->user_id && $nodo->user_id === $user->id && ($permisos & ($bits << 6)) !== 0) {
+                    return true;
+                }
 
-            // Verificar el permiso del grupo
-            if ($user && $nodo->group_id && $user->grupos()->where('grupos.id', $nodo->group_id)->exists() && ($permisos & ($bits << 3)) !== 0) {
-                return true;
+                // Verificar el permiso del grupo
+                if ($nodo->group_id && $user->grupos()->where('grupos.id', $nodo->group_id)->isNotEmpty() && ($permisos & ($bits << 3)) !== 0) {
+                    return true;
+                }
             }
 
             // Verificar el permiso de otros (others)
@@ -99,8 +103,9 @@ class LinuxPolicy
 
     /**
      * Access Control List. Devuelve un listado de permisos para este usuario
+     * $verbos es opcional, permite preseleccionar los permisos segun ciertos verbos específicos, se usa para mejorar rendimiento
      */
-    public static function acl(?User $user, array $verbos)
+    public static function acl(?User $user, array $verbos = null)
     {
         $user_id = $user ? $user->id : -1;
         $grupos_ids = $user ? $user->grupos()->pluck('grupos.id') : [];
@@ -113,11 +118,12 @@ class LinuxPolicy
                     ->where('permisos.user_id', $user_id)
                     ->orWhereIn('permisos.group_id', $grupos_ids);
             })
-            /*->where(function ($query) use ($verbos) {
-                foreach ($verbos as $verbo) {
-                    $query->orWhere('verbos', 'LIKE', '%' . $verbo . '%');
-                }
-            })*/
+            ->where(function ($query) use ($verbos) {
+                if ($verbos)
+                    foreach ($verbos as $verbo) {
+                        $query->orWhere('verbos', 'LIKE', '%' . $verbo . '%');
+                    }
+            })
             ->get();
     }
 
@@ -182,11 +188,11 @@ class LinuxPolicy
         $permisos = 01777 & ~$umask;
 
         Nodo::create([
-                'ruta' => $ruta,
-                'user_id' => optional($user)->id ?? 1,
-                'group_id' => 1,
-                'permisos' => decoct($permisos),
-                'es_carpeta' => $es_carpeta
-            ]);
+            'ruta' => $ruta,
+            'user_id' => optional($user)->id ?? 1,
+            'group_id' => 1,
+            'permisos' => decoct($permisos),
+            'es_carpeta' => $es_carpeta
+        ]);
     }
 }

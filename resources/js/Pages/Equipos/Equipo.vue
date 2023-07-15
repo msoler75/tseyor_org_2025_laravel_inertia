@@ -24,7 +24,7 @@
                             <h2 class="my-2">
                                 {{ equipo.nombre }}
                             </h2>
-                            <div class="">{{ equipo.descripcion }}</div>
+                            <div class="opacity-80">{{ equipo.descripcion }}</div>
                             <small class="badge badge-neutral">{{ equipo.categoria }}</small>
                             <div class="sm:hidden flex justify-center text-2xl mt-12">
                                 <Icon icon="ph:user-duotone" />
@@ -40,18 +40,13 @@
                     </div>
                 </div>
 
-                <div class="card shadow p-5 bg-base-300 border-4 border-orange-400">
-                    <h2>Anuncio</h2>
-                    <div class="prose">
-                        <p>WEriwqeriqw roiwqe owpeq riowqeriowirowe wer wer owjqer wrwqe rewq ewr ww qer wqer wqrwer we</p>
-                    </div>
+                <div class="card shadow p-5 bg-base-100 border border-orange-400 justify-center items-center" v-if="equipo.anuncio">
+                    <div class="prose" v-html="equipo.anuncio"/>
                 </div>
 
-                <div class="card bg-base-100 shadow p-5 lg:hidden">
-                    <p><strong>Reuniones:</strong> Lunes y Jueves a las 20h</p>
-                    <p>
-                        <Link href="http://whatsapp.me/2342342342">Grupo Whatsapp</Link>
-                    </p>
+                <div class="card bg-base-100 shadow p-5" v-if="equipo.reuniones">
+                    <h2>Reuniones</h2>
+                    <div class="prose" v-html="equipo.reuniones"/>
                 </div>
 
                 <div class="card bg-base-100 shadow p-5" v-if="ultimosArchivos.length">
@@ -112,7 +107,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { useNav } from '@/Stores/nav'
-
 
 defineOptions({ layout: AppLayout })
 

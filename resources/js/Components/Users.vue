@@ -18,7 +18,6 @@
 </template>
 
 <script setup>
-import { defineProps, computed } from 'vue';
 
 const props = defineProps({
     compact: {

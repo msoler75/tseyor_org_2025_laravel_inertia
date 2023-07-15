@@ -16,44 +16,79 @@ const fileName = computed(() => props.url.substring(props.url.lastIndexOf('/') +
 const iconType = computed(() => {
     const ext = fileName.value.split('.').pop().toLowerCase();
     switch (ext) {
-        case 'mp3': return 'teenyicons:mp3-outline';
-        case 'wav': return 'uil:file-audio-wave';
-        case 'ogg': return 'carbon:document-audio';
-        case 'flac': return 'uil:headphones-alt';
-        case 'wma': return 'iconoir:file-audio';
-        case 'aiff': return 'ant-design:file-audio-outlined';
-        case 'm4a': return 'ant-design:file-audio-filled';
-        case 'aac': return 'uil:file-audio';
-        case 'amr': return 'clarity:file-audio';
-        case 'mka': return 'codicon:wave';
-        // Más extensiones de audio..
-        case 'pdf': return 'fa6-solid:file-pdf';
-        case 'zip': return 'fa6-solid:file-zipper';
-        case 'rar': return 'mdi:file-powerpoint';
-        case '7z': return 'mdi:file-zip-outline';
-        // habituales:
-        case 'mp3': return 'teenyicons:mp3-outline';
-        case 'mp4': return 'la:file-video';
-        case 'svg':
-        case 'webp':
-        case 'jpg':
-        case 'jpeg':
-        case 'png': return 'streamline:image-picture-landscape-1-photos-photo-landscape-picture-photography-camera-pictures';
-        case 'zip': return 'ant-design:file-zip-outlined';
-        case 'doc': return 'ant-design:file-word-outlined';
-        case 'docx': return 'ant-design:file-word-outlined';
-        case 'txt': return 'carbon:document-text-outline';
-        case 'xls': return 'ant-design:file-excel-outlined';
-        case 'xlsx': return 'ant-design:file-excel-outlined';
-        case 'ppt': return 'ant-design:file-powerpoint-outlined';
-        case 'pptx': return 'ant-design:file-powerpoint-outlined';
-        case 'sql': return 'ant-design:file-sql-outlined';
-        case 'js': return 'ant-design:file-js-outlined';
-        case 'ts': return 'uil:file-typescript-alt';
-        case 'py': return 'uil:file-python';
-        // Más extensiones de archivo...
-        default: return 'fa:file'; // Ícono predeterminado
-    }
+    // Audio
+    case 'mp3':
+    case 'wav':
+    case 'ogg':
+    case 'flac':
+    case 'wma':
+    case 'aiff':
+    case 'm4a':
+    case 'aac':
+    case 'amr':
+    case 'mka':
+        return 'file-icons:audio';
+
+    // Vídeos
+    case 'mp4':
+    case 'mkv':
+    case 'avi':
+    case 'mov':
+    case 'wmv':
+        return 'file-icons:video';
+
+    // PDF
+    case 'pdf':
+        return 'file-icons:adobe-acrobat';
+
+    // Archivos comprimidos
+    case 'zip':
+    case 'rar':
+    case '7z':
+        return 'file-icons:archive';
+
+    // Documentos de Microsoft Office
+    case 'doc':
+    case 'docx':
+        return 'file-icons:microsoft-word';
+
+    case 'xls':
+    case 'xlsx':
+        return 'file-icons:microsoft-excel';
+
+    case 'ppt':
+    case 'pptx':
+        return 'file-icons:microsoft-powerpoint';
+
+    // Otros documentos
+    case 'txt':
+        return 'file-icons:plain-text';
+
+    case 'sql':
+        return 'file-icons:database';
+
+    case 'js':
+        return 'file-icons:javascript';
+
+    case 'ts':
+        return 'file-icons:typescript';
+
+    case 'py':
+        return 'file-icons:python';
+
+    // Imágenes
+    case 'svg':
+    case 'webp':
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+        return 'bi:image-fill';
+
+    // Otros tipos de archivo
+    default:
+        return 'file-icons:bloc';
+}
+
 })
 
 const color = computed(() => {
@@ -75,7 +110,7 @@ const color = computed(() => {
         case 'ra':
         case 'wav':
         case 'wma':
-            return 'text-blue-800 dark:text-blue-200';
+            return 'text-blue-800 dark:text-blue-400';
 
         // imágenes:
         case 'bmp':
@@ -89,7 +124,7 @@ const color = computed(() => {
         case 'tif':
         case 'tiff':
         case 'webp':
-            return 'text-green-800 dark:text-green-200';
+            return 'text-green-800 dark:text-green-400';
 
         // documentos de texto:
         case 'doc':
@@ -99,20 +134,20 @@ const color = computed(() => {
         case 'rtf':
         case 'txt':
         case 'wpd':
-            return 'text-red-800 dark:text-red-200';
+            return 'text-red-800 dark:text-red-400';
 
         // hojas de cálculo:
         case 'ods':
         case 'xls':
         case 'xlsx':
-            return 'text-indigo-800 dark:text-indigo-200';
+            return 'text-indigo-800 dark:text-indigo-400';
 
         // presentaciones:
         case 'key':
         case 'odp':
         case 'ppt':
         case 'pptx':
-            return 'text-yellow-800 dark:text-yellow-200';
+            return 'text-yellow-800 dark:text-yellow-400';
 
         // archivos comprimidos:
         case '7z':
@@ -122,7 +157,7 @@ const color = computed(() => {
         case 'tar':
         case 'xz':
         case 'zip':
-            return 'text-purple-800 dark:text-purple-200';
+            return 'text-purple-800 dark:text-purple-400';
 
         // vídeos:
         case 'avi':
@@ -134,7 +169,7 @@ const color = computed(() => {
         case 'mpg':
         case 'webm':
         case 'wmv':
-            return 'text-pink-800 dark:text-pink-200';
+            return 'text-pink-800 dark:text-pink-400';
 
         // otros:
         case 'csv':
