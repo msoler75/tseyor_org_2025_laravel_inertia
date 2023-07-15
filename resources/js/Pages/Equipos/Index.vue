@@ -32,31 +32,18 @@
 
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
-                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(20rem, 1fr))` }">
-                    <div v-if="listado.data.length > 0" v-for="equipo in listado.data" :key="equipo.id"
-                        class="card flex-row bg-base-100 shadow overflow-hidden" relative>
+                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
 
-                        <Link :href="`/equipos/${equipo.slug || equipo.id}`" class="w-1/2 h-full absolute left-0 top-0 " />
-                        <Image :src="equipo.imagen" :alt="equipo.nombre" class="w-1/2 object-cover cursor-pointer"
-                            @click="" />
-
-                        <div class="card-body p-5">
-                            <Link :href="route('equipo', equipo.slug)"><h2 class="text-lg font-bold mb-2 capitalize">{{ equipo.nombre }}</h2></Link>
-                            <p class="opacity-80 text-sm">{{ equipo.descripcion }}</p>
-                            <!--
-                                <div class="card-actions justify-end">
-                                    <Link :href="`/equipos/${equipo.slug || equipo.id}`"
-                                    class="flex gap-3 items-center text-sm">
-                                    <Icon icon="ph:arrow-fat-line-right-duotone" />Ver Equipo
-                                </Link>
-                            </div>
-                        -->
-                        <div class="hidden sm:flex sm:ml-auto gap-3 text-2xl items-center self-end justify-center">
+                    <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
+                    :title="contenido.nombre"
+                        :href="route('equipo', contenido.slug)" image-left imageClass="min-h-32" class="h-32"
+                        :description="contenido.descripcion">
+                        <div class="mb-2 mr-6 flex sm:ml-auto gap-3 text-2xl items-center self-end justify-center">
                             <Icon icon="ph:user-duotone" />
-                            {{ equipo.usuarios_count }}
+                            {{ contenido.usuarios_count }}
                         </div>
-                        </div>
-                    </div>
+                    </CardContent>
+
                 </div>
 
 
