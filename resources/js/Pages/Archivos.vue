@@ -226,9 +226,11 @@
                             <td class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
                                 v-on:touchend="onTouchEnd(item)">
                                 <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
+                                class="animated"
                                     :class="seleccionando ? 'pointer-events-none' : ''" />
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
                                 <a v-else :href="item.url" download v-html="nombreItem(item)"
+                                class="animated"
                                     :class="seleccionando ? 'pointer-events-none' : ''" />
                             </td>
                             <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart="onTouchStart(item)"
@@ -315,7 +317,7 @@
                                 <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
                                     class="text-8xl mb-4" :disabled="seleccionando" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download>
-                                    <img :src="item.url" class="overflow-hidden w-[180px] h-[120px]">
+                                    <img :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain">
                                 </a>
                                 <FileIcon v-else :url="item.url" class="text-8xl mb-4" />
 

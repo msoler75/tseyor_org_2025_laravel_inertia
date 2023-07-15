@@ -27,7 +27,7 @@ const iconType = computed(() => {
     case 'aac':
     case 'amr':
     case 'mka':
-        return 'file-icons:audio';
+        return 'ph:music-notes-fill';
 
     // Vídeos
     case 'mp4':
@@ -110,7 +110,7 @@ const color = computed(() => {
         case 'ra':
         case 'wav':
         case 'wma':
-            return 'text-blue-800 dark:text-blue-400';
+            return 'text-purple-800 dark:text-purple-400';
 
         // imágenes:
         case 'bmp':
@@ -127,14 +127,17 @@ const color = computed(() => {
             return 'text-green-800 dark:text-green-400';
 
         // documentos de texto:
-        case 'doc':
-        case 'docx':
         case 'odt':
         case 'pdf':
         case 'rtf':
         case 'txt':
         case 'wpd':
             return 'text-red-800 dark:text-red-400';
+
+        // word:
+        case 'doc':
+        case 'docx':
+        return 'text-blue-800 dark:text-blue-400';
 
         // hojas de cálculo:
         case 'ods':
