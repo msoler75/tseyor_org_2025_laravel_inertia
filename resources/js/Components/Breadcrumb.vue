@@ -25,7 +25,7 @@ const items = computed(() => {
             </li>
             <li class="flex items-center space-x-3">
                 <component :is="index<items.length-1?Link: 'div' " :href="item.url"
-                    :class="index < items.length - 1 ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-600'">{{ item.label }}</component>
+                    :class="index < items.length - 1 ? 'text-gray-700 dark:text-gray-300 hover:underline' : 'text-gray-400 dark:text-gray-600'">{{ item.label }}</component>
             </li>
         </template>
     </ol>

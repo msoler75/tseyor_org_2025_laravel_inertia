@@ -226,11 +226,11 @@
                             <td class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
                                 v-on:touchend="onTouchEnd(item)">
                                 <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
-                                class="animated"
+                                class="hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" />
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
                                 <a v-else :href="item.url" download v-html="nombreItem(item)"
-                                class="animated"
+                                class="hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" />
                             </td>
                             <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart="onTouchStart(item)"

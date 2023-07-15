@@ -169,10 +169,10 @@ html, body, #app, #app>div {
 }
 
 
-main a.animated{
+main a.hover\:underline{
     position: relative;
 }
-main a.animated::after {
+main a.hover\:underline::after {
     content: "";
     position: absolute;
     left: 0;
@@ -184,6 +184,10 @@ main a.animated::after {
 }
 
 
-main a.animated:hover::after {
+main a.hover\:underline:hover {
+    text-decoration: none;
+}
+
+main a.hover\:underline:hover::after {
     width: 100%;
 }
