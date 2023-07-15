@@ -12,6 +12,10 @@ const props = defineProps({
         type: String,
         required: true
     },
+    fallback: {
+        type: String,
+        required: false
+    },
     alt: {
         type: String,
     },
@@ -20,6 +24,6 @@ const props = defineProps({
     }
 });
 
-const finalSrc = computed(() => imageUrl(props.src))
+const finalSrc = computed(() => imageUrl(props.src, props.fallback))
 
 </script>

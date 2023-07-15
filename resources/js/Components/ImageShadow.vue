@@ -1,6 +1,6 @@
 <template>
     <div class="vue-image-shadow" :class="shadowClass" :style="shadowStyle">
-        <img class="vue-image-shadow-img" :src="finalSrc" :alt="alt" :width="width" :style="imgStyle" />
+        <Image class="vue-image-shadow-img" :src="finalSrc" :alt="alt" :width="width" :style="imgStyle" />
         <div class="vue-image-shadow-card" :style="cardStyle">
         </div>
     </div>

@@ -2,9 +2,9 @@
     <div class="avatar">
         <div class="w-32 rounded-full">
             <Link v-if="link" :href="route('usuario', { id: user.slug || user.id })">
-            <img :src="urlImage" :alt="name" :title="name" />
+            <Image :src="urlImage" :alt="name" :title="name" fallback="/storage/profile-photos/user.png"/>
             </Link>
-            <img v-else :src="urlImage" :alt="name" :title="name" />
+            <Image v-else :src="urlImage" :alt="name" :title="name"  fallback="/storage/profile-photos/user.png" />
         </div>
     </div>
 </template>
