@@ -2,7 +2,8 @@ import { defineStore } from "pinia";
 
 export const useSelectors = defineStore("selectors", {
   state: () => ({
-    soloTitulosLibros: false
+    soloTitulosLibros: false,
+    archivosVista: 'normal'
   }),
   getters: {},
   actions: {},

@@ -34,8 +34,10 @@
                     </Link>
 
                     <button class="btn btn-neutral" @click="toggleVista" title="Cambiar vista">
-                        <Icon v-show="vista == 'lista'" icon="ph:list-dashes-bold" class="transform scale-150" />
-                        <Icon v-show="vista == 'grid'" icon="ph:grid-nine-fill" class="transform scale-150" />
+                        <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
+                            class="transform scale-150" />
+                        <Icon v-show="selectors.archivosVista == 'grid'" icon="ph:grid-nine-fill"
+                            class="transform scale-150" />
                     </button>
 
                     <Dropdown v-if="puedeEscribir && !seleccionando" align="right" width="48">
@@ -174,14 +176,14 @@
 
 
 
-        <div :class="vista === 'lista' ? 'lista' : 'grid'"
+        <div :class="selectors.archivosVista === 'lista' ? 'lista' : 'grid'"
             class="select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14">
 
             <div v-if="!itemsOrdenados.length" class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
                 <div>No hay archivos</div>
             </div>
-            <div v-if="vista === 'lista'" :class="itemsOrdenados.length ? 'mr-2 min-h-[300px]' : ''">
+            <div v-if="selectors.archivosVista === 'lista'" :class="itemsOrdenados.length ? 'mr-2 min-h-[300px]' : ''">
                 <table class="w-full lg:w-auto mx-auto">
                     <thead class="hidden sm:table-header-group" :class="itemsOrdenados.length ? '' : 'opacity-0'">
                         <tr>
@@ -226,11 +228,9 @@
                             <td class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
                                 v-on:touchend="onTouchEnd(item)">
                                 <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
-                                class="hover:underline"
-                                    :class="seleccionando ? 'pointer-events-none' : ''" />
+                                    class="py-1 hover:underline" :class="seleccionando ? 'pointer-events-none' : ''" />
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
-                                <a v-else :href="item.url" download v-html="nombreItem(item)"
-                                class="hover:underline"
+                                <a v-else :href="item.url" download v-html="nombreItem(item)" class="py-1 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" />
                             </td>
                             <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart="onTouchStart(item)"
@@ -303,7 +303,7 @@
                     </TransitionGroup>
                 </table>
             </div>
-            <div v-else-if="vista === 'grid'">
+            <div v-else-if="selectors.archivosVista === 'grid'">
                 <div class="grid grid-cols-3 gap-4">
                     <TransitionGroup name="files">
                         <div v-for="item in itemsOrdenados" :key="item.ruta"
@@ -317,14 +317,16 @@
                                 <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
                                     class="text-8xl mb-4" :disabled="seleccionando" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download>
-                                    <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain"/>
+                                    <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain" />
                                 </a>
                                 <FileIcon v-else :url="item.url" class="text-8xl mb-4" />
 
                                 <div class="text-sm text-center">
-                                    <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)" class="hover:underline"/>
+                                    <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
+                                        class="py-1 hover:underline" />
                                     <span v-else-if="seleccionando" v-html="nombreItem(item)" />
-                                    <a v-else :href="item.url" download v-html="nombreItem(item)" class="hover:underline"/>
+                                    <a v-else :href="item.url" download v-html="nombreItem(item)"
+                                        class="py-1 hover:underline" />
                                 </div>
                                 <div class="text-gray-500 text-xs">
                                     <template v-if="item.tipo === 'carpeta'">{{ item.archivos + ' archivos, ' +
@@ -510,6 +512,7 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import Dropzone from 'vue2-dropzone-vue3'
 import { useFilesStore } from '@/Stores/files';
 import { router, usePage } from '@inertiajs/vue3';
+import { useSelectors } from '@/Stores/selectors'
 
 defineOptions({ layout: AppLayout })
 
@@ -899,10 +902,12 @@ function isImage(fileName) {
 
 
 // VISTA DE ITEMS
-const vista = ref('lista');
+const selectors = useSelectors()
+if (!['lista', 'grid'].includes(selectors.archivosVista))
+    selectors.archivosVista = 'lista'
 
 const toggleVista = () => {
-    vista.value = vista.value === 'lista' ? 'grid' : 'lista';
+    selectors.archivosVista = selectors.archivosVista === 'grid' ? 'lista' : 'grid';
 }
 
 
