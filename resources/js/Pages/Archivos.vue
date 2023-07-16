@@ -322,9 +322,9 @@
                                 <FileIcon v-else :url="item.url" class="text-8xl mb-4" />
 
                                 <div class="text-sm text-center">
-                                    <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)" />
+                                    <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)" class="hover:underline"/>
                                     <span v-else-if="seleccionando" v-html="nombreItem(item)" />
-                                    <a v-else :href="item.url" download v-html="nombreItem(item)" />
+                                    <a v-else :href="item.url" download v-html="nombreItem(item)" class="hover:underline"/>
                                 </div>
                                 <div class="text-gray-500 text-xs">
                                     <template v-if="item.tipo === 'carpeta'">{{ item.archivos + ' archivos, ' +

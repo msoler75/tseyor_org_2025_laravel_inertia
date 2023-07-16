@@ -8,5 +8,5 @@ export const imageUrl = (src, defaultUrl) => {
   }
   if (!src) return defaultUrl;
   if (src.match(/^https?:\/\//)) return src;
-  return "/storage/" + src;
+  return "/storage/" + src.replace(/^\/storage\//, '');
 };
