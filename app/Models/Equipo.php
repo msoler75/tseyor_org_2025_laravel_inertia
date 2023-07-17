@@ -27,6 +27,16 @@ class Equipo extends SEOModel
             ->withPivot(['user_id', 'rol'])
             ->withTimestamps();
     }
+
+    public function coordinadores()
+    {
+        return $this->belongsToMany(User::class, 'equipo_user')
+            ->using(Membresia::class)
+            ->withPivot(['user_id', 'rol'])
+            ->where('rol','coordinador');
+    }
+
+
 }
 
 class Membresia extends Pivot

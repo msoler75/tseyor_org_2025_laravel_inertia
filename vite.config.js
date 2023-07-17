@@ -46,7 +46,7 @@ export default defineConfig({
             "defineEmits",
             "useSlots",
           ],
-          inertia_vue3: ["Link"],
+          "@inertiajs/vue3": ["Link", "router", "usePage", "useForm"],
         },
       ],
     }),

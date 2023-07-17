@@ -28,6 +28,7 @@
         "@jambonn/vue-concise-carousel": "^2.1.29",
         "@popperjs/core": "^2.11.8",
         "@splidejs/vue-splide": "^0.6.12",
+        "@vueup/vue-quill": "^1.2.0",
         "@vueuse/components": "^10.2.0",
         "@vueuse/core": "^10.2.0",
         "pinia": "^2.0.0-rc.10",
