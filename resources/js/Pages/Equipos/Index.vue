@@ -35,9 +35,8 @@
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
 
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
-                    :title="contenido.nombre"
-                        :href="route('equipo', contenido.slug)" image-left imageClass="min-h-32" class="h-32"
-                        :description="contenido.descripcion">
+                        :title="contenido.nombre" :href="route('equipo', contenido.slug)" image-left
+                        image-class="min-h-[150px]" class="min-h-16" :description="contenido.descripcion">
                         <div class="mb-2 mr-6 flex sm:ml-auto gap-3 text-2xl items-center self-end justify-center">
                             <Icon icon="ph:user-duotone" />
                             {{ contenido.usuarios_count }}
@@ -45,7 +44,6 @@
                     </CardContent>
 
                 </div>
-
 
                 <pagination class="mt-6" :links="listado.links" />
 

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Pigmalion\SEO;
 use App\Policies\LinuxPolicy;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class EquiposController extends Controller
 {
@@ -84,9 +85,15 @@ class EquiposController extends Controller
             'equipo' => $equipo,
             'carpetas' => $carpetas,
             'ultimosArchivos' =>  array_slice($ultimosArchivos, 0, 3),
-            'totalMiembros' => $totalMiembros
+            'totalMiembros' => $totalMiembros,
+            'usuarios' => Inertia::lazy(function () use ($id) {
+                return Equipo::where('slug', $id)
+                    ->orWhere('id', $id)
+                    ->firstOrFail()->usuarios()->get();
+                //return Equipo::findOrFail($id)->usuarios()->get();
+            })
         ])
-        ->withViewData(SEO::from($equipo));
+            ->withViewData(SEO::from($equipo));
     }
 
 
@@ -146,6 +153,48 @@ class EquiposController extends Controller
     ///// API
     ////////////////////////////////////////////////////////////////////
 
+
+ /**
+     ** Crea un nuevo equipo
+     */
+    public function update(Request $request, $idEquipo)
+    {
+        $equipo = Equipo::findOrFail($idEquipo);
+
+        // Validar los datos
+        $validatedData = $request->validate([
+            'nombre' => 'required|max:32',
+            'descripcion' => 'required|max:400',
+            'anuncio' => 'max:400',
+            'reuniones' => 'max:400',
+            'imagen' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Ajustar las reglas de validación según tus necesidades
+        ]);
+
+        $user = auth()->user();
+
+        // Verificar si el usuario es un coordinador del equipo
+        /*if (!$equipo->coordinadores->contains($user)) {
+            return response()->json(['error' => 'No tienes permisos para editar este equipo.'], 403);
+        }*/
+
+        // Actualizar los datos del equipo
+        $equipo->nombre = $validatedData['nombre'];
+        $equipo->descripcion = $validatedData['descripcion'];
+        $equipo->anuncio = $validatedData['anuncio'];
+        $equipo->reuniones = $validatedData['reuniones'];
+        // $equipo->imagen = $validatedData['imagen'];
+
+        // Subir la nueva imagen (si se proporciona)
+        $newImage = $request->file('imagen');
+        if ($newImage) {
+            $path = $newImage->store('public/imagenes/equipos');
+            $equipo->imagen = Storage::url($path);
+        }
+
+        $equipo->save();
+
+        return response()->json($equipo->toArray(), 200);
+    }
 
 
     /**
