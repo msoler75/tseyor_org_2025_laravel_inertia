@@ -54,5 +54,5 @@ Route::middleware(['web'])->group(function () {
 //Route::put('/equipos/{idEquipo}/agregar/{idUsuario}', [EquiposController::class, 'addMember'])->name('equipo.agregar');
 //Route::put('/equipos/{idEquipo}/remover/{idUsuario}', [EquiposController::class, 'removeMember'])->name('equipo.remover');
 Route::post('/equipos/{id}', [EquiposController::class, 'update'])->name('equipo.modificar');
-// Route::put('/equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
+Route::put('/equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
     });

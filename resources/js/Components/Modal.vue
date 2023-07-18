@@ -17,14 +17,6 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
-/* watch(() => props.show, () => {
-    if (props.show) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = null;
-    }
-}); */
-
 const close = () => {
     if (props.closeable) {
         emit('close');
@@ -39,9 +31,17 @@ const closeOnEscape = (e) => {
 
 onMounted(() => document.addEventListener('keydown', closeOnEscape));
 
+/* watch(() => props.show, () => {
+    if (props.show) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = null;
+    }
+}); */
+
 onUnmounted(() => {
     document.removeEventListener('keydown', closeOnEscape);
-    document.body.style.overflow = null;
+    //document.body.style.overflow = null;
 });
 
 const maxWidthClass = computed(() => {
