@@ -13,7 +13,7 @@ const props = defineProps({
     contentClasses: {
         type: Array,
         default: () => ['py-1', 'bg-base-100 dark:bg-gray-700'],
-    },
+    }
 });
 
 let open = ref(false);

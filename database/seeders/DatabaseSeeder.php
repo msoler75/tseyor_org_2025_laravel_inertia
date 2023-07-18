@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Lugar;
+use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 12; $i++) {
+        for ($i = 1; $i <=500; $i++) {
             $data = $this->generateRandomData();
-            Lugar::create($data);
+            User::create($data);
         }
     }
 
@@ -24,9 +24,10 @@ class DatabaseSeeder extends Seeder
     {
         $faker = \Faker\Factory::create();
 
-        $codigos_pais = ['ES', 'MX', 'AR', 'CO', 'PE', 'CL', 'VE', 'EC', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'UY', 'PA'];
+        //$codigos_pais = ['ES', 'MX', 'AR', 'CO', 'PE', 'CL', 'VE', 'EC', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'UY', 'PA'];
         // $categorias = ['Meditaciones', 'Cuentos', 'Clásica', 'Canciones', 'Reflexiones', 'Talleres'];
-        $categorias = ['Bases', 'Planetas', 'Otros lugares'];
+        //$categorias = ['Bases', 'Planetas', 'Otros lugares'];
+        /*
         $files = ['https://cdn.pixabay.com/audio/2023/04/03/audio_047543feac.mp3',
         'https://cdn.pixabay.com/audio/2023/01/01/audio_816821e627.mp3',
         'https://cdn.pixabay.com/audio/2022/08/25/audio_4f3b0a816e.mp3',
@@ -40,16 +41,19 @@ class DatabaseSeeder extends Seeder
         'https://cdn.pixabay.com/audio/2023/03/02/audio_88af125093.mp3',
         'https://cdn.pixabay.com/audio/2021/12/01/audio_2fe16fd258.mp3',
         'https://cdn.pixabay.com/audio/2022/03/10/audio_f485a07711.mp3'
-    ];
+    ];*/
 
         return [
-            'nombre' => $faker->sentence(5),
+            'name' => $faker->userName(),
             'slug' => $faker->slug(),
-            'categoria' => $faker->randomElement($categorias),
+            'email' =>$faker->email(),
+            'password'=>$faker->password(),
+            //'categoria' => $faker->randomElement($categorias),
             //'audio' => $faker->randomElement($files),
-            'descripcion' => $faker->paragraph(1),
-            'texto' => $faker->paragraph(5),
-            'imagen' => $faker->imageUrl(800, 600)
+            //'descripcion' => $faker->paragraph(1),
+            //'texto' => $faker->paragraph(5),
+            //'imagen' => $faker->imageUrl(800, 600)
+            'profile_photo_path' =>$faker->imageUrl(600, 600),
             /* 'provincia' => $faker->state(),
             'direccion' => $faker->address(),
             'codigo' => $faker->postcode(),

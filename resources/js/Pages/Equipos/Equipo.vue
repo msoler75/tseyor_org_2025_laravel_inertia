@@ -125,48 +125,56 @@
                     </ul>
                 </div>
 
-                <Modal :show="modalConfiguracion" maxWidth="md">
+                <Modal :show="modalConfiguracion" maxWidth="md" @close="modalConfiguracion=false">
 
                     <form class="bg-base-200 p-5 space-y-7" @submit.prevent="guardarConfiguracion">
                         <h3>Configuración del Equipo</h3>
 
-                        <div>
-                            <label for="nombre">Nombre</label>
-                            <input id="nombre" v-model="config.nombre" required :readonly="equipo.usuarios.length >= 3"
-                                class="input" />
-                            <div v-if="config.errors.nombre" class="error">{{ config.errors.nombre[0] }}</div>
-                            <div v-else class="text-sm">Nombre del equipo. No se puede editar si tiene 3 miembros o más.
+
+                            <div>
+                                <label for="nombre">Nombre</label>
+                                <input id="nombre" v-model="config.nombre" required :readonly="equipo.usuarios.length >= 3"
+                                    class="input" />
+                                <div v-if="config.errors.nombre" class="error">{{ config.errors.nombre[0] }}</div>
+                                <div v-else class="text-sm">Nombre del equipo. No se puede editar si tiene 3 miembros o más.
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label for="descripcion">Descripción</label>
-                            <textarea id="descripcion" v-model="config.descripcion" required
-                                class="shadow textarea w-full"></textarea>
-                            <div v-if="config.errors.descripcion" class="error">{{ config.errors.descripcion[0] }}</div>
-                            <div v-else class="text-sm">Descripción del equipo y sus funciones.</div>
-                        </div>
+                            <div>
+                                <label for="descripcion">Descripción</label>
+                                <textarea id="descripcion" v-model="config.descripcion" required
+                                    class="shadow textarea w-full"></textarea>
+                                <div v-if="config.errors.descripcion" class="error">{{ config.errors.descripcion[0] }}</div>
+                                <div v-else class="text-sm">Descripción del equipo y sus funciones.</div>
+                            </div>
 
-                        <div>
-                            <label for="imagen">Imagen</label>
-                            <input type="file" id="imagen" @change="changeInputFile" accept="image/*" class="file-input">
-                            <div v-if="config.errors.imagen" class="error">{{ config.errors.imagen[0] }}</div>
-                            <div v-else class="text-sm">Sube una nueva imagen si quieres cambiar la actual.</div>
-                        </div>
+                            <div>
+                                <label for="imagen">Imagen</label>
+                                <input type="file" id="imagen" @change="changeInputFile" accept="image/*"
+                                    class="file-input">
+                                <div v-if="config.errors.imagen" class="error">{{ config.errors.imagen[0] }}</div>
+                                <div v-else class="text-sm">Sube una nueva imagen si quieres cambiar la actual.</div>
+                            </div>
 
-                        <div>
-                            <label for="anuncio">Anuncio</label>
-                            <QuillEditor id="anuncio" theme="snow" v-model:content="config.anuncio" contentType="html" />
-                            <div v-if="config.errors.anuncio" class="error">{{ config.errors.anuncio[0] }}</div>
-                            <div v-else class="text-sm">Anuncio de caracter general. Se puede dejar en blanco.</div>
-                        </div>
 
-                        <div>
-                            <label for="reuniones">Reuniones</label>
-                            <QuillEditor id="reuniones" theme="snow" v-model:content="config.reuniones" contentType="html" />
-                            <div v-if="config.errors.reuniones" class="error">{{ config.errors.reuniones[0] }}</div>
-                            <div v-else class="text-sm">Ejemplo: Los lunes a las 13h. Se puede dejar en blanco.</div>
-                        </div>
+
+                            <div>
+                                <label for="anuncio">Anuncio</label>
+                                <QuillEditor id="anuncio" theme="snow" v-model:content="config.anuncio"
+                                    contentType="html" />
+                                <div v-if="config.errors.anuncio" class="error">{{ config.errors.anuncio[0] }}</div>
+                                <div v-else class="text-sm">Anuncio de caracter general. Se puede dejar en blanco.</div>
+                            </div>
+
+                            <div>
+                                <label for="reuniones">Reuniones</label>
+                                <QuillEditor id="reuniones" theme="snow" v-model:content="config.reuniones"
+                                    contentType="html" />
+                                <div v-if="config.errors.reuniones" class="error">{{ config.errors.reuniones[0] }}</div>
+                                <div v-else class="text-sm">Ejemplo: Los lunes a las 13h. Se puede dejar en blanco.</div>
+                            </div>
+
+
 
                         <div class="py-3 flex justify-between sm:justify-end gap-5">
                             <button type="submit" class="btn btn-primary">
@@ -181,14 +189,30 @@
                 </Modal>
 
 
-                <Modal :show="modalUsuarios" maxWidth="sm">
-                    <div class="p-5 flex flex-col gap-5">
+                <Modal :show="modalUsuarios" maxWidth="sm" @close="modalUsuarios=false">
+                    <div class="bg-base-200 p-5 flex flex-col gap-5 max-h-[90vh] select-none">
                         <h3>Miembros del Equipo</h3>
-                        <ul class="list-none p-0">
-                            <li v-for="usuario of usuarios" :key="usuario.id">
-                                {{ usuario.name }}
-                            </li>
-                        </ul>
+
+                        <input type="search" class="input shadow flex-shrink-0" placeholder="Buscar..."
+                            v-model="usuarioBuscar">
+                        <div class="overflow-y-auto bg-base-100 shadow">
+                            <table class="table w-full">
+                                <tbody class="divide-y">
+                                    <tr v-for="user of usuariosFilto" :key="user.id"
+                                        class="cursor-pointer" :class="user.pivot.rol == 'coordinador' ? 'bg-blue-50' : ''">
+                                        <td>{{ user.name }}</td>
+                                        <td>
+                                            <select v-model="user.pivot.rol" class="select" @change="changeRol(user)">
+                                                <option value="coordinador">coordinador</option>
+                                                <option value=""><span class="opacity-50">miembro</span></option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
                         <div class="py-3 flex justify-between sm:justify-end gap-5">
                             <button @click.prevent="modalUsuarios = false" type="button" class="btn btn-neutral">
                                 cerrar
@@ -197,6 +221,7 @@
                     </div>
                 </Modal>
 
+
             </GridFill>
         </div>
     </div>
@@ -204,6 +229,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
+import { useFuse } from '@vueuse/integrations/useFuse'
 import { useNav } from '@/Stores/nav'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -290,6 +316,15 @@ function guardarConfiguracion() {
 // ADMINISTRAR USUARIOS
 
 const modalUsuarios = ref(false)
+const usuarioBuscar = ref("")
+const usuariosFuse = useFuse(usuarioBuscar, () => props.usuarios, { fuseOptions: { keys: ['name', 'email'], threshold: 0.3 } })
+
+const usuariosFilto = computed(() => {
+    if (!props.usuarios) return []
+    if (usuarioBuscar.value)
+        return usuariosFuse.results.value.map(r => ({ id: r.item.id, name: r.item.name /* +r.refIndex*/, pivot: r.item.pivot }))
+    return props.usuarios
+});
 
 function administrarUsuarios() {
     modalUsuarios.value = true
@@ -299,11 +334,20 @@ function administrarUsuarios() {
         })
     }
 }
+
+function changeRol(user) {
+    console.log('changedRol', user)
+    axios.put(route('equipo.modificarRol', {idEquipo: props.equipo.id, idUsuario: user.id, rol:user.pivot.rol ||'miembro'}))
+    .catch(err=>{
+        alert("No se han podido guardar los cambios")
+    });
+}
+
+
 </script>
 
 
 <style>
 .ql-editor {
     @apply bg-base-100;
-}
-</style>
+}</style>

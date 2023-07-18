@@ -54,6 +54,7 @@ class EquiposController extends Controller
     {
         $equipo = Equipo::with(['usuarios' => function ($query) {
             $query->select('users.id', 'users.name as nombre', 'users.slug', 'profile_photo_path as avatar')
+                ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
                 ->take(30);
         }])
             ->where('slug', $id)
@@ -89,7 +90,9 @@ class EquiposController extends Controller
             'usuarios' => Inertia::lazy(function () use ($id) {
                 return Equipo::where('slug', $id)
                     ->orWhere('id', $id)
-                    ->firstOrFail()->usuarios()->get();
+                    ->firstOrFail()->usuarios()
+                    ->orderByRaw("CASE WHEN rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
+                    ->get();
                 //return Equipo::findOrFail($id)->usuarios()->get();
             })
         ])
@@ -236,6 +239,9 @@ class EquiposController extends Controller
         // Obtenemos el usuario y el equipo
         $usuario = User::findOrFail($idUsuario);
         $equipo = Equipo::findOrFail($idEquipo);
+
+        if($rol=='miembro')
+            $rol = NULL;
 
         // Actualizamos el rol del usuario en el equipo
         $equipo->usuarios()->updateExistingPivot($idUsuario, ['rol' => $rol]);
