@@ -11,8 +11,8 @@
                 {{ usuario.name || usuario.slug }}
             </h1>
 
-            <div class="prose my-7">
-                <blockquote>
+            <div class="prose my-7" >
+                <blockquote v-if="usuario.frase">
                     <p>{{ usuario.frase }}</p>
                 </blockquote>
             </div>

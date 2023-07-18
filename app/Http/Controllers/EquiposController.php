@@ -171,20 +171,22 @@ class EquiposController extends Controller
             'anuncio' => 'max:400',
             'reuniones' => 'max:400',
             'imagen' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Ajustar las reglas de validación según tus necesidades
+            'informacion' => 'max:65000'
         ]);
 
         $user = auth()->user();
 
         // Verificar si el usuario es un coordinador del equipo
-        /*if (!$equipo->coordinadores->contains($user)) {
+        if (!$equipo->coordinadores->contains($user)) {
             return response()->json(['error' => 'No tienes permisos para editar este equipo.'], 403);
-        }*/
+        }
 
         // Actualizar los datos del equipo
         $equipo->nombre = $validatedData['nombre'];
         $equipo->descripcion = $validatedData['descripcion'];
         $equipo->anuncio = $validatedData['anuncio'];
         $equipo->reuniones = $validatedData['reuniones'];
+        $equipo->informacion = $validatedData['informacion'];
         // $equipo->imagen = $validatedData['imagen'];
 
         // Subir la nueva imagen (si se proporciona)
@@ -242,6 +244,7 @@ class EquiposController extends Controller
 
         if($rol=='miembro')
             $rol = NULL;
+
 
         // Actualizamos el rol del usuario en el equipo
         $equipo->usuarios()->updateExistingPivot($idUsuario, ['rol' => $rol]);

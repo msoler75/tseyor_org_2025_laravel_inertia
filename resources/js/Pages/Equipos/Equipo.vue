@@ -78,29 +78,14 @@
                     </div>
                 </div>
 
-                <div class="card bg-base-100 shadow p-5" v-if="false">
-                    <h3>Publicaciones</h3>
-                    <div>
-                        <ul>
-                            <li> item 1</li>
-                            <li> item 2</li>
-                        </ul>
-                    </div>
-                </div>
-
                 <div class="card bg-base-100 shadow p-5">
                     <h3>Miembros</h3>
                     <Users v-if="equipo" :users="equipo.usuarios" :count="13" />
                 </div>
 
-                <div class="card bg-base-100 shadow p-5">
-                    <h3>Libros recomendados</h3>
-                    <div>
-                        <ul>
-                            <li> item 1</li>
-                            <li> item 2</li>
-                        </ul>
-                    </div>
+                <div v-if="equipo.informacion" class="card bg-base-100 shadow p-5">
+                    <h3>Información adicional</h3>
+                    <div class="prose" v-html="equipo.informacion"/>
                 </div>
 
 
@@ -108,13 +93,13 @@
                     <h3>Administración</h3>
                     <ul class="list-none p-0 space-y-2">
                         <li class="flex gap-2 items-center cursor-pointer">
-                            <Icon icon="ph:share-fat-duotone" />Enlace del equipo
+                            <Icon icon="ph:envelope-duotone" />Administrar peticiones de ingreso
                         </li>
                         <li class="flex gap-2 items-center">
                             <Icon icon="ph:user-plus-duotone" />Invitar a usuario/s
                         </li>
                         <li class="flex gap-2 items-center cursor-pointer">
-                            <Icon icon="ph:envelope-duotone" />Administrar peticiones de ingreso
+                            <Icon icon="ph:share-fat-duotone" />Enlace del equipo
                         </li>
                         <li class="flex gap-2 items-center cursor-pointer" @click="administrarUsuarios">
                             <Icon icon="ph:users-duotone" />Administrar usuarios
@@ -125,55 +110,88 @@
                     </ul>
                 </div>
 
-                <Modal :show="modalConfiguracion" maxWidth="md" @close="modalConfiguracion=false">
+                <Modal :show="modalConfiguracion" maxWidth="lg" @close="modalConfiguracion = false">
 
-                    <form class="bg-base-200 p-5 space-y-7" @submit.prevent="guardarConfiguracion">
+                    <form class="bg-base-200 p-5 select-none" @submit.prevent="guardarConfiguracion">
                         <h3>Configuración del Equipo</h3>
 
+                        <tabs>
+                            <tab name="General" class="space-y-6">
 
-                            <div>
-                                <label for="nombre">Nombre</label>
-                                <input id="nombre" v-model="config.nombre" required :readonly="equipo.usuarios.length >= 3"
-                                    class="input" />
-                                <div v-if="config.errors.nombre" class="error">{{ config.errors.nombre[0] }}</div>
-                                <div v-else class="text-sm">Nombre del equipo. No se puede editar si tiene 3 miembros o más.
+                                <div>
+                                    <label for="nombre">Nombre</label>
+                                    <input id="nombre" v-model="edicion.nombre" required
+                                        :readonly="equipo.usuarios.length >= 3" class="input" />
+                                    <div v-if="edicion.errors.nombre" class="error">{{ edicion.errors.nombre[0] }}</div>
+                                    <div v-else class="text-sm">Nombre del equipo. No se puede editar si tiene 3 miembros o
+                                        más.
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <label for="descripcion">Descripción</label>
-                                <textarea id="descripcion" v-model="config.descripcion" required
-                                    class="shadow textarea w-full"></textarea>
-                                <div v-if="config.errors.descripcion" class="error">{{ config.errors.descripcion[0] }}</div>
-                                <div v-else class="text-sm">Descripción del equipo y sus funciones.</div>
-                            </div>
+                                <div>
+                                    <label for="descripcion">Descripción</label>
+                                    <textarea id="descripcion" v-model="edicion.descripcion" required
+                                        class="shadow textarea w-full"></textarea>
+                                    <div v-if="edicion.errors.descripcion" class="error">{{ edicion.errors.descripcion[0] }}
+                                    </div>
+                                    <div v-else class="text-sm">Descripción del equipo y sus funciones.</div>
+                                </div>
 
-                            <div>
-                                <label for="imagen">Imagen</label>
-                                <input type="file" id="imagen" @change="changeInputFile" accept="image/*"
-                                    class="file-input">
-                                <div v-if="config.errors.imagen" class="error">{{ config.errors.imagen[0] }}</div>
-                                <div v-else class="text-sm">Sube una nueva imagen si quieres cambiar la actual.</div>
-                            </div>
+                            </tab>
+
+                            <tab name="imagen">
+
+                                <div>
+
+                                    <div class="flex justify-center">
+                                        <Image v-if="equipo.imagen" :src="equipo.imagen" class="h-32 mb-8" />
+                                    </div>
+
+                                    <label for="imagen">Imagen</label>
+                                    <input type="file" id="imagen" @change="changeInputFile" accept="image/*"
+                                        class="file-input">
+                                    <div v-if="edicion.errors.imagen" class="error">{{ edicion.errors.imagen[0] }}</div>
+                                    <div v-else class="text-sm">Sube una nueva imagen si quieres cambiar la actual.</div>
+                                </div>
+
+                            </tab>
 
 
+                            <tab name="Anuncio" class="space-y-6">
 
-                            <div>
-                                <label for="anuncio">Anuncio</label>
-                                <QuillEditor id="anuncio" theme="snow" v-model:content="config.anuncio"
-                                    contentType="html" />
-                                <div v-if="config.errors.anuncio" class="error">{{ config.errors.anuncio[0] }}</div>
-                                <div v-else class="text-sm">Anuncio de caracter general. Se puede dejar en blanco.</div>
-                            </div>
+                                <div>
+                                    <label for="anuncio">Anuncio</label>
+                                    <QuillEditor id="anuncio" theme="snow" v-model:content="edicion.anuncio"
+                                        contentType="html" />
+                                    <div v-if="edicion.errors.anuncio" class="error">{{ edicion.errors.anuncio[0] }}</div>
+                                    <div v-else class="text-sm">Anuncio de caracter general. Se puede dejar en blanco.</div>
+                                </div>
 
-                            <div>
-                                <label for="reuniones">Reuniones</label>
-                                <QuillEditor id="reuniones" theme="snow" v-model:content="config.reuniones"
-                                    contentType="html" />
-                                <div v-if="config.errors.reuniones" class="error">{{ config.errors.reuniones[0] }}</div>
-                                <div v-else class="text-sm">Ejemplo: Los lunes a las 13h. Se puede dejar en blanco.</div>
-                            </div>
+                            </tab>
 
+                            <tab name="Reuniones">
+
+                                <div>
+                                    <label for="reuniones">Reuniones</label>
+                                    <QuillEditor id="reuniones" theme="snow" v-model:content="edicion.reuniones"
+                                        contentType="html" />
+                                    <div v-if="edicion.errors.reuniones" class="error">{{ edicion.errors.reuniones[0] }}</div>
+                                    <div v-else class="text-sm">Ejemplo: Los lunes a las 13h. Se puede dejar en blanco.
+                                    </div>
+                                </div>
+                            </tab>
+
+                            <tab name="Información">
+                                <div>
+                                    <label for="informacion">informacion</label>
+                                    <QuillEditor id="informacion" theme="snow" v-model:content="edicion.informacion"
+                                        contentType="html" />
+                                    <div v-if="edicion.errors.informacion" class="error">{{ edicion.errors.informacion[0] }}
+                                    </div>
+                                    <div v-else class="text-sm">Información adicional del equipo.</div>
+                                </div>
+                            </tab>
+                        </tabs>
 
 
                         <div class="py-3 flex justify-between sm:justify-end gap-5">
@@ -189,7 +207,7 @@
                 </Modal>
 
 
-                <Modal :show="modalUsuarios" maxWidth="sm" @close="modalUsuarios=false">
+                <Modal :show="modalUsuarios" maxWidth="sm" @close="modalUsuarios = false">
                     <div class="bg-base-200 p-5 flex flex-col gap-5 max-h-[90vh] select-none">
                         <h3>Miembros del Equipo</h3>
 
@@ -198,8 +216,8 @@
                         <div class="overflow-y-auto bg-base-100 shadow">
                             <table class="table w-full">
                                 <tbody class="divide-y">
-                                    <tr v-for="user of usuariosFilto" :key="user.id"
-                                        class="cursor-pointer" :class="user.pivot.rol == 'coordinador' ? 'bg-blue-50' : ''">
+                                    <tr v-for="user of usuariosFilto" :key="user.id" class="cursor-pointer"
+                                        :class="user.pivot.rol == 'coordinador' ? 'bg-blue-50' : ''">
                                         <td>{{ user.name }}</td>
                                         <td>
                                             <select v-model="user.pivot.rol" class="select" @change="changeRol(user)">
@@ -229,6 +247,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
+import { Tabs, Tab } from 'vue3-tabs-component';
 import { useFuse } from '@vueuse/integrations/useFuse'
 import { useNav } from '@/Stores/nav'
 import { QuillEditor } from '@vueup/vue-quill'
@@ -251,25 +270,25 @@ const nav = useNav()
 
 // Configuracion DEL EQUIPOS
 
-const config = reactive({ id: props.equipo.id, imagen: null, nombre: null, descripcion: null, anuncio: null, reuniones: null, errors: {}, processing: false })
-const campos = ['nombre', 'descripcion', 'imagen', 'anuncio', 'reuniones']
+const edicion = reactive({ id: props.equipo.id, imagen: null, nombre: null, descripcion: null, anuncio: null, reuniones: null, errors: {}, processing: false })
+const campos = ['nombre', 'descripcion', 'imagen', 'anuncio', 'reuniones', 'informacion']
 const modalConfiguracion = ref(false)
 
 function editarConfiguracion() {
     for (const campo of campos)
-        config[campo] = props.equipo[campo]
-    config.imagen = null
+        edicion[campo] = props.equipo[campo]
+    edicion.imagen = null
     modalConfiguracion.value = true
 }
 
 function changeInputFile(event) {
     console.log('changeInput', event)
-    config.imagen = event.target.files[0]
+    edicion.imagen = event.target.files[0]
 }
 
 function limpiarErrores() {
-    Object.keys(config.errors).forEach(key => {
-        delete config.errors[key];
+    Object.keys(edicion.errors).forEach(key => {
+        delete edicion.errors[key];
     });
 }
 
@@ -281,22 +300,24 @@ function cerrarConfiguracion() {
 function guardarConfiguracion() {
 
     const data = new FormData();
-    data.append('nombre', config.nombre);
-    data.append('descripcion', config.descripcion);
-    if (config.imagen)
-        data.append('imagen', config.imagen);
-    data.append('anuncio', config.anuncio);
-    data.append('reuniones', config.reuniones);
+    data.append('nombre', edicion.nombre);
+    data.append('descripcion', edicion.descripcion);
+    if (edicion.imagen)
+        data.append('imagen', edicion.imagen);
+    data.append('anuncio', edicion.anuncio);
+    data.append('reuniones', edicion.reuniones);
+    data.append('informacion', edicion.informacion);
 
     // actualizamos en el servidor
-    console.log(config)
-    config.processing = true;
+    console.log(edicion)
+    edicion.processing = true;
     axios.post(route('equipo.modificar', props.equipo.id), data).then((response) => {
-        config.processing = false;
+        edicion.processing = false;
 
+        console.log('guardado!', response)
         // actualizamos en la página
         for (const campo of campos)
-            props.equipo[campo] = config[campo]
+            props.equipo[campo] = edicion[campo]
         props.equipo.imagen = response.data.imagen
 
         limpiarErrores();
@@ -305,9 +326,12 @@ function guardarConfiguracion() {
         modalConfiguracion.value = false
 
     }).catch(error => {
-        config.processing = false;
+        edicion.processing = false;
         console.log('error', error)
-        config.errors = error.response.data.errors
+        if(error.response.data.errors)
+            edicion.errors = error.response.data.errors
+        else //error general
+        alert(error.response.data.error)
     });
 
 
@@ -337,10 +361,10 @@ function administrarUsuarios() {
 
 function changeRol(user) {
     console.log('changedRol', user)
-    axios.put(route('equipo.modificarRol', {idEquipo: props.equipo.id, idUsuario: user.id, rol:user.pivot.rol ||'miembro'}))
-    .catch(err=>{
-        alert("No se han podido guardar los cambios")
-    });
+    axios.put(route('equipo.modificarRol', { idEquipo: props.equipo.id, idUsuario: user.id, rol: user.pivot.rol || 'miembro' }))
+        .catch(err => {
+            alert("No se han podido guardar los cambios")
+        });
 }
 
 
@@ -350,4 +374,5 @@ function changeRol(user) {
 <style>
 .ql-editor {
     @apply bg-base-100;
-}</style>
+}
+</style>
