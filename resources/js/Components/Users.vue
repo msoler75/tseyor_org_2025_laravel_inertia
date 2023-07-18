@@ -7,7 +7,7 @@
             </div>
         </div>
     </div>
-    <GridFill v-else w="4rem" class="gap-none">
+    <GridFill v-else w="2.9rem" class="gap-1">
         <Avatar v-for="user of users" :key="user.id" :user="user" />
         <div v-if="count>users.length" class="avatar placeholder">
             <div class="bg-neutral-focus text-neutral-content">

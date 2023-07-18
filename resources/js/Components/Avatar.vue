@@ -1,10 +1,10 @@
 <template>
-    <div class="avatar">
+    <div class="avatar" :title="user.name || user.nombre || user.slug">
         <div class="w-32 rounded-full">
             <Link v-if="link" :href="route('usuario', { id: user.slug || user.id })">
-            <Image :src="image" :alt="name" :title="name" fallback="/storage/profile-photos/user.png"/>
+            <Image :src="image" :alt="name" :title="name" fallback="/storage/profile-photos/user.png" />
             </Link>
-            <Image v-else :src="image" :alt="name" :title="name"  fallback="/storage/profile-photos/user.png" />
+            <Image v-else :src="image" :alt="name" :title="name" fallback="/storage/profile-photos/user.png" />
         </div>
     </div>
 </template>

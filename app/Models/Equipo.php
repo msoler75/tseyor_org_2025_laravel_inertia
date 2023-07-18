@@ -17,7 +17,8 @@ class Equipo extends SEOModel
         'user_id',
         'group_id',
         'anuncio',
-        'reuniones'
+        'reuniones',
+        'informacion'
     ];
 
     public function usuarios()
