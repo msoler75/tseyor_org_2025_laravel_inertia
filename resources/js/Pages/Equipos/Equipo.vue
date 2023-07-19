@@ -85,7 +85,7 @@
 
                 <div v-if="equipo.informacion" class="card bg-base-100 shadow p-5">
                     <h3>Información adicional</h3>
-                    <div class="prose" v-html="equipo.informacion"/>
+                    <div class="prose" v-html="equipo.informacion" />
                 </div>
 
 
@@ -95,7 +95,7 @@
                         <li class="flex gap-2 items-center cursor-pointer">
                             <Icon icon="ph:envelope-duotone" />Administrar peticiones de ingreso
                         </li>
-                        <li class="flex gap-2 items-center">
+                        <li class="flex gap-2 items-center" @click="abrirInvitaciones">
                             <Icon icon="ph:user-plus-duotone" />Invitar a usuario/s
                         </li>
                         <li class="flex gap-2 items-center cursor-pointer">
@@ -175,7 +175,8 @@
                                     <label for="reuniones">Reuniones</label>
                                     <QuillEditor id="reuniones" theme="snow" v-model:content="edicion.reuniones"
                                         contentType="html" />
-                                    <div v-if="edicion.errors.reuniones" class="error">{{ edicion.errors.reuniones[0] }}</div>
+                                    <div v-if="edicion.errors.reuniones" class="error">{{ edicion.errors.reuniones[0] }}
+                                    </div>
                                     <div v-else class="text-sm">Ejemplo: Los lunes a las 13h. Se puede dejar en blanco.
                                     </div>
                                 </div>
@@ -239,6 +240,61 @@
                     </div>
                 </Modal>
 
+                <Modal :show="mostrarMensaje">
+                    <div class="p-5">
+                        <p class="text-center">{{ $page.props.flash.message }}</p>
+                        <div class="py-3 flex justify-center">
+                            <button @click.prevent="mostrarMensaje = false" type="button" class="btn btn-neutral">
+                                Gracias
+                            </button>
+                        </div>
+                    </div>
+
+                </Modal>
+
+
+                <!-- MODAL DE INVITACIONES -->
+                <Modal :show="mostrarInvitar" @close="mostrarInvitar = false">
+                    <div class="p-5">
+                        <form @submit.prevent="invite" class="flex flex-col gap-7">
+
+                            <div>
+                                <textarea class="w-full" v-model="correos"></textarea>
+                                <small>Escribe las direcciones de correo separadas por comas, por espacios, o en cada
+                                    línea.</small>
+                            </div>
+
+                            <div>
+                                <input type="search" class="input shadow flex-shrink-0" placeholder="Buscar usuario..."
+                                    v-model="usuarioBuscar" @input="buscarUsuarios">
+
+                                <div class="overflow-y-auto bg-base-100 shadow max-h-[60vh]">
+                                    <table class="table w-full">
+                                        <tbody class="divide-y">
+                                            <tr v-for="user of usuariosEncontrados" :key="user.id">
+                                                <td>{{ user.name }}</td>
+                                                <td>
+                                                    <button class="btn"
+                                                        @click="correos += '\n' + user.email">Agregar</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="py-3 flex justify-between sm:justify-end gap-5">
+                                <button type="submit" class="btn btn-primary">
+                                    Invitar
+                                </button>
+
+                                <button @click.prevent="mostrarInvitar = false" type="button" class="btn btn-neutral">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </Modal>
 
             </GridFill>
         </div>
@@ -251,6 +307,7 @@ import { Tabs, Tab } from 'vue3-tabs-component';
 import { useFuse } from '@vueuse/integrations/useFuse'
 import { useNav } from '@/Stores/nav'
 import { QuillEditor } from '@vueup/vue-quill'
+import { useThrottle } from '@vueuse/core';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 defineOptions({ layout: AppLayout })
@@ -268,7 +325,13 @@ const props = defineProps({
 
 const nav = useNav()
 
-// Configuracion DEL EQUIPOS
+// MENSAJE FLASH
+const page = usePage()
+const mostrarMensaje = ref(page.props.flash.message)
+
+
+
+// Diálogo Modal de Configuracion DEL EQUIPO
 
 const edicion = reactive({ id: props.equipo.id, imagen: null, nombre: null, descripcion: null, anuncio: null, reuniones: null, errors: {}, processing: false })
 const campos = ['nombre', 'descripcion', 'imagen', 'anuncio', 'reuniones', 'informacion']
@@ -282,7 +345,7 @@ function editarConfiguracion() {
 }
 
 function changeInputFile(event) {
-    console.log('changeInput', event)
+    // console.log('changeInput', event)
     edicion.imagen = event.target.files[0]
 }
 
@@ -328,16 +391,16 @@ function guardarConfiguracion() {
     }).catch(error => {
         edicion.processing = false;
         console.log('error', error)
-        if(error.response.data.errors)
+        if (error.response.data.errors)
             edicion.errors = error.response.data.errors
         else //error general
-        alert(error.response.data.error)
+            alert(error.response.data.error)
     });
 
 
 }
 
-// ADMINISTRAR USUARIOS
+// Diálogo de ADMINISTRAR USUARIOS
 
 const modalUsuarios = ref(false)
 const usuarioBuscar = ref("")
@@ -351,6 +414,7 @@ const usuariosFilto = computed(() => {
 });
 
 function administrarUsuarios() {
+    usuarioBuscar.value = ''
     modalUsuarios.value = true
     if (!props.usuarios) {
         router.reload({
@@ -367,6 +431,47 @@ function changeRol(user) {
         });
 }
 
+
+// Diálogo de INVITACIONES A FORMAR PARTE DEL EQUIPO
+
+const mostrarInvitar = ref(false)
+const correos = ref('');
+const usuariosEncontrados = ref([]);
+
+function abrirInvitaciones() {
+    usuarioBuscar.value = ''
+    mostrarInvitar.value = true
+}
+
+const buscarUsuarios = useThrottle(() => {
+    const query = usuarioBuscar.value.trim();
+
+    if (query.length >= 3) {
+        axios
+            .get(`/api/buscar-usuarios?query=${query}`)
+            .then(response => {
+                usuariosEncontrados.value = response.data;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+}, 500);
+
+function invitar() {
+    axios
+        .post(route('invite', { idEquipo: props.equipo.id }), {
+            correos: correos.value,
+        })
+        .then(response => {
+            // Procesar la respuesta del controlador si es necesario
+            console.log(response.data);
+        })
+        .catch(error => {
+            // Manejar cualquier error de la solicitud
+            console.error(error);
+        });
+};
 
 </script>
 

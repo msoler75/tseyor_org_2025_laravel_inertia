@@ -9,6 +9,8 @@ import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import { Icon } from "@iconify/vue";
 import { Head, Link } from "@inertiajs/vue3";
 
+
+
 // https://github.com/John-Weeks-Dev/facebook-clone/blob/master/resources/js/app.js
 import { createPinia } from "pinia";
 const pinia = createPinia();

@@ -6,15 +6,11 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Equipo;
 use App\Models\Carpeta;
-use App\Models\Invitacion;
 use App\Models\User;
 use App\Pigmalion\SEO;
 use App\Policies\LinuxPolicy;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\URL;
-use App\Mail\InvitacionEquipoEmail;
 
 class EquiposController extends Controller
 {
@@ -23,7 +19,6 @@ class EquiposController extends Controller
      */
     public function index(Request $request)
     {
-
         $filtro = $request->input('buscar');
         $categoria = $request->input('categoria');
 
@@ -162,7 +157,7 @@ class EquiposController extends Controller
     ////////////////////////////////////////////////////////////////////
 
 
-    /**
+ /**
      ** Crea un nuevo equipo
      */
     public function update(Request $request, $idEquipo)
@@ -248,7 +243,7 @@ class EquiposController extends Controller
         $usuario = User::findOrFail($idUsuario);
         $equipo = Equipo::findOrFail($idEquipo);
 
-        if ($rol == 'miembro')
+        if($rol=='miembro')
             $rol = NULL;
 
 
@@ -260,115 +255,6 @@ class EquiposController extends Controller
 
 
 
+// INVITACIONES
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // INVITACIONES
-
-
-
-    /**
-     * Envia invitaciones a usuarios
-     * retorna JSON
-     */
-    public function invite(Request $request, $idEquipo)
-    {
-        // Validar los datos
-        $validatedData = $request->validate([
-            'correos' => 'required|array',
-            'correos.*' => 'email',
-        ]);
-
-        $equipo = Equipo::findOrFail($idEquipo);
-
-        foreach ($validatedData['correos'] as $correo) {
-            // Verificar si el correo ya está asociado al equipo
-            if ($equipo->usuarios()->where('email', $correo)->exists()) {
-                continue;
-            }
-
-            // Verificar si ya se envió una invitación a ese correo
-            if (Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)->exists()) {
-                continue;
-            }
-
-            // Generar el token para la invitación
-            $token = sha1(time() . $correo);
-
-            // Verificar si el usuario ya tiene una cuenta
-            $usuario = User::where('email', $correo)->first();
-            $user_id = optional($usuario)->id ?? null;
-
-            // Crear la invitación en la base de datos
-            Invitacion::create([
-                'equipo_id' => $idEquipo,
-                'email' => $correo,
-                'token' => $token,
-                'user_id' => $user_id
-            ]);
-
-            // Generar la URL firmada para aceptar la invitación
-            $aceptarUrl = URL::signedRoute('invitacion.aceptar', ['token' => $token]);
-
-            // Generar la URL firmada para declinar la invitación
-            $declinarUrl = URL::signedRoute('invitacion.declinar', ['token' => $token]);
-
-            // Enviar el correo de invitación
-            Mail::to($correo)->send(new InvitacionEquipoEmail($equipo, $usuario, $aceptarUrl, $declinarUrl));
-        }
-
-        return response()->json(['mensaje' => 'Invitaciones enviadas correctamente.'], 200);
-    }
-
-
-    /**
-     * Enlace accedido por el usuario
-     */
-    public function acceptInvitation($token)
-    {
-        $invitacion = Invitacion::where('token', $token)->firstOrFail();
-
-        $urlEquipo = route('equipo', $invitacion->equipo()->slug);
-
-        // Verificar si la invitación ya fue aceptada o declinada previamente
-        if ($invitacion->accepted_at || $invitacion->declined_at) {
-            return redirect($urlEquipo)->with('message', 'La invitación ya ha sido aceptada o declinada anteriormente.');
-        }
-
-        // Verificar si el usuario ya tiene una cuenta
-        $usuario = User::where('email', $invitacion->email)->first();
-        if ($usuario) {
-            // Asociar al usuario al equipo y marcar la invitación como aceptada
-            $usuario->equipos()->attach($invitacion->equipo_id);
-            $invitacion->update(['accepted_at' => now()]);
-
-            return redirect($urlEquipo)->with('message', 'Invitación aceptada. Ya eres parte del equipo.');
-        }
-
-        // Si el usuario no tiene una cuenta, redirigirlo a la página de registro
-        $registroUrl = URL::signedRoute('register', ['email' => $invitacion->email]);
-
-        return redirect($registroUrl)->with('message', 'Regístrese para aceptar la invitación.');
-    }
-
-
-    /**
-     *  Enlace accedido por el usuario
-     */
-    public function declineInvitation($token)
-    {
-        $invitacion = Invitacion::where('token', $token)->firstOrFail();
-
-        $urlEquipo = route('equipo', $invitacion->equipo()->slug);
-
-        // Verificar si la invitación ya fue aceptada o declinada previamente
-        if ($invitacion->accepted_at || $invitacion->declined_at) {
-            return redirect($urlEquipo)->with('message', 'La invitación ya ha sido aceptada o declinada anteriormente.');
-        }
-
-        // Marcar la invitación como declinada
-        $invitacion->update(['declined_at' => now()]);
-
-        return redirect($urlEquipo)->with('message', 'Invitación declinada.');
-    }
 }

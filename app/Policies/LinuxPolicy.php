@@ -67,7 +67,7 @@ class LinuxPolicy
     /**
      * Usa la máscara de bits para saber si hay permisos para este nodo
      */
-    public static function permisoNodo(Nodo $nodo, User $user, int $bits): bool
+    public static function permisoNodo(Nodo $nodo, ?User $user, int $bits): bool
     {
         try {
             if (!$nodo) {
