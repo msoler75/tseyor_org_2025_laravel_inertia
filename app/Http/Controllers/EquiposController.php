@@ -61,7 +61,7 @@ class EquiposController extends Controller
             $query->select('users.id', 'users.name as nombre', 'users.slug', 'profile_photo_path as avatar')
                 ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
                 // ->take(30)
-                ;
+            ;
         }])
             ->where('slug', $id)
             ->orWhere('id', $id)
@@ -157,13 +157,8 @@ class EquiposController extends Controller
     }
 
 
-    ////////////////////////////////////////////////////////////////////
-    ///// API
-    ////////////////////////////////////////////////////////////////////
-
-
     /**
-     ** Crea un nuevo equipo
+     ** Guarda datos del equipo
      */
     public function update(Request $request, $idEquipo)
     {
@@ -193,7 +188,6 @@ class EquiposController extends Controller
         $equipo->anuncio = $validatedData['anuncio'];
         $equipo->reuniones = $validatedData['reuniones'];
         $equipo->informacion = $validatedData['informacion'];
-        // $equipo->imagen = $validatedData['imagen'];
 
         // Subir la nueva imagen (si se proporciona)
         $newImage = $request->file('imagen');
@@ -259,9 +253,6 @@ class EquiposController extends Controller
     }
 
 
-
-
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // INVITACIONES
 
@@ -277,10 +268,12 @@ class EquiposController extends Controller
         $validatedData = $request->validate([
             'correos' => 'required|array',
             'correos.*' => 'email',
+            'usuarios' => 'array'
         ]);
 
         $equipo = Equipo::findOrFail($idEquipo);
 
+        // mandamos invitaciones a los correos proporcionados
         foreach ($validatedData['correos'] as $correo) {
             // Verificar si el correo ya está asociado al equipo
             if ($equipo->usuarios()->where('email', $correo)->exists()) {
@@ -305,6 +298,53 @@ class EquiposController extends Controller
                 'email' => $correo,
                 'token' => $token,
                 'user_id' => $user_id
+            ]);
+
+            // Generar la URL firmada para aceptar la invitación
+            $aceptarUrl = URL::signedRoute('invitacion.aceptar', ['token' => $token]);
+
+            // Generar la URL firmada para declinar la invitación
+            $declinarUrl = URL::signedRoute('invitacion.declinar', ['token' => $token]);
+
+            // Enviar el correo de invitación
+            Mail::to($correo)->send(new InvitacionEquipoEmail($equipo, $usuario, $aceptarUrl, $declinarUrl));
+        }
+
+        // mandamos invitaciones a los usuarios registrados
+        foreach ($validatedData['usuarios'] as $id) {
+
+            // Cargar el usuario
+            $usuario = User::find($id);
+
+            if (!$usuario) continue; // el usuario debería existir
+
+            $correo = $usuario->email;
+            if(!$correo) continue;
+
+            // Verificar si el usuario ya es miembro del equipo
+            if ($equipo->usuarios()->where('id', $usuario->id)->exists()) {
+                continue;
+            }
+
+            // Verificar si ya se envió una invitación a ese correo
+            if (Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)->exists()) {
+                continue;
+            }
+
+            // Verificar si ya se envió una invitación a ese usuario
+            if (Invitacion::where('equipo_id', $idEquipo)->where('user_id', $id)->exists()) {
+                continue;
+            }
+
+            // Generar el token para la invitación
+            $token = sha1(time() . $id);
+
+            // Crear la invitación en la base de datos
+            Invitacion::create([
+                'equipo_id' => $idEquipo,
+                'email' => $correo,
+                'token' => $token,
+                'user_id' => $usuario->id
             ]);
 
             // Generar la URL firmada para aceptar la invitación

@@ -115,7 +115,7 @@
                     <form class="bg-base-200 p-5 select-none" @submit.prevent="guardarConfiguracion">
                         <h3>Configuración del Equipo</h3>
 
-                        <tabs>
+                        <tabs :options="{ useUrlFragment: false }">
                             <tab name="General" class="space-y-6">
 
                                 <div>
@@ -219,7 +219,7 @@
                                 <tbody class="divide-y">
                                     <tr v-for="user of usuariosFilto" :key="user.id" class="cursor-pointer"
                                         :class="user.pivot.rol == 'coordinador' ? 'bg-blue-50' : ''">
-                                        <td>{{ user.name }}</td>
+                                        <td>{{ user.nombre }}</td>
                                         <td>
                                             <select v-model="user.pivot.rol" class="select" @change="changeRol(user)">
                                                 <option value="coordinador">coordinador</option>
@@ -255,80 +255,95 @@
 
                 <!-- MODAL DE INVITACIONES -->
                 <Modal :show="mostrarInvitar" @close="mostrarInvitar = false" maxWidth="md">
-                    <div class="p-5 bg-base-200">
-                        <form @submit.prevent="invite" class="flex flex-col gap-7 select-none">
+                    <div class="p-5 bg-base-200 max-h-full">
+                        <form @submit.prevent="invitar" class="flex flex-col gap-7 select-none">
 
-<tabs>
+                            <tabs>
 
 
-<tab name="Buscar usuarios">
-                                <input type="search" class="input shadow flex-shrink-0 rounded-none border-b border-gray-500" placeholder="Buscar usuario..."
-                                    v-model="usuarioBuscar" @input="buscarUsuarios">
+                                <tab name="Buscar usuarios">
 
-                                <div class="overflow-y-auto max-h-[350px] shadow">
-                                    <table v-if="usuariosParaInvitar.length" class="table w-full bg-base-100  rounded-none">
-                                        <tbody class="divide-y">
-                                            <tr v-for="user of usuariosParaInvitar" :key="user.id">
-                                                <td>{{ user.name }}</td>
-                                                <td>
-                                                    <div v-if="user.miembro" class="uppercase p-1">Ya es miembro</div>
-                                                    <div v-else-if="user.agregado" class="btn bg-base-100 border-none pointer-events-none">
-                                                        <Icon icon="ph:check-circle-duotone"/> Agregado
-                                                    </div>
-                                                    <div v-else class="btn" @click="agregarInvitado(user)">
-                                                        Agregar
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div v-else-if="usuarioBuscar" class="p-2 bg-base-100">
-                                        No hay resultados
+                                    <div class="min-h-[200px]">
+                                        <input type="search"
+                                            class="input shadow flex-shrink-0 rounded-none border-b border-gray-500"
+                                            placeholder="Buscar usuario..." v-model="usuarioBuscar">
+
+                                        <div
+                                            class="overflow-y-auto max-h-[calc(100vh-480px)] md:max-h-[calc(100vh-420px)] shadow">
+                                            <table v-if="usuariosParaInvitar.length"
+                                                class="table w-full bg-base-100  rounded-none">
+                                                <tbody class="divide-y">
+                                                    <tr v-for="user of usuariosParaInvitar" :key="user.id">
+                                                        <td>{{ user.nombre }}</td>
+                                                        <td>
+                                                            <div v-if="user.miembro" class="uppercase p-1">Ya es miembro
+                                                            </div>
+                                                            <div v-else-if="user.agregado"
+                                                                class="btn bg-base-100 border-none pointer-events-none">
+                                                                <Icon icon="ph:check-circle-duotone" /> Agregado
+                                                            </div>
+                                                            <div v-else class="btn" @click="agregarInvitado(user)">
+                                                                Agregar
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div v-else-if="usuarioBuscar" class="p-2 bg-base-100">
+                                                No hay resultados
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </tab>
+                                </tab>
 
 
-                            <tab :name="`Agregados ${usuariosInvitados.length?'('+usuariosInvitados.length+')':''}`">
+                                <tab
+                                    :name="`Agregados ${usuariosInvitados.length ? '(' + usuariosInvitados.length + ')' : ''}`">
+                                    <div class="min-h-[200px]">
 
-                                <div class="overflow-y-auto max-h-[350px] mt-3">
+                                        <div
+                                            class="overflow-y-auto max-h-[calc(100vh-480px)] md:max-h-[calc(100vh-420px)]  mt-3">
 
-                                    <table v-if="usuariosInvitados.length" class="table w-full bg-base-300  shadow">
-                                        <tbody class="divide-y">
-                                            <tr v-for="user of usuariosInvitados" :key="user.id">
-                                                <td>{{ user.name }}</td>
-                                                <td>
-                                                    <div v-if="user.invitado" class="btn" @click="removerInvitado(user)">
-                                                       Remover
-                                                    </div>
-                                                    <div v-else class="btn" @click="agregarInvitado(user)">
-                                                        Agregar
-                                                    </div>
+                                            <table v-if="usuariosInvitados.length" class="table w-full bg-base-100  shadow">
+                                                <tbody class="divide-y">
+                                                    <tr v-for="user of usuariosInvitados" :key="user.id">
+                                                        <td>{{ user.nombre }}</td>
+                                                        <td>
+                                                            <div v-if="user.invitado" class="btn"
+                                                                @click="removerInvitado(user)">
+                                                                Remover
+                                                            </div>
+                                                            <div v-else class="btn" @click="agregarInvitado(user)">
+                                                                Agregar
+                                                            </div>
 
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div v-else class="p-2">
-                                        Ningun usuario agregado.
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div v-else class="p-1">
+                                                Ningun usuario agregado.
+                                            </div>
+
+                                        </div>
                                     </div>
 
-                                </div>
+                                </tab>
 
-                        </tab>
+                                <tab :name="`Correos ${correosInvitados.length ? '(' + correosInvitados.length + ')' : ''}`">
 
-                        <tab name="Correos">
+                                    <p>A las personas que no disponen de cuenta en tseyor.org puedes invitarlas por correo.</p>
 
-                            <p>Para personas que no tengan su cuenta en tseyor.org puedes invitarlas por correo.</p>
+                                    <div>
+                                        <textarea class="w-full" v-model="correos"
+                                            placeholder="correo1@gmail.com, correo2@yahoo.es, ..."></textarea>
+                                        <small>Escribe las direcciones de correo separadas por comas, por espacios, o en
+                                            cada
+                                            línea.</small>
+                                    </div>
+                                </tab>
 
-                            <div>
-                                <textarea class="w-full" v-model="correos" placeholder="correo1@gmail.com, correo2@yahoo.es, ..."></textarea>
-                                <small>Escribe las direcciones de correo separadas por comas, por espacios, o en cada
-                                    línea.</small>
-                            </div>
-                        </tab>
-
-                        </tabs>
+                            </tabs>
 
                             <div class="py-3 flex justify-between sm:justify-end gap-5">
                                 <button type="submit" class="btn btn-primary" :disabled="!numeroInvitados">
@@ -480,10 +495,16 @@ const mostrarInvitar = ref(false)
 const correos = ref('');
 const usuariosEncontrados = ref([]);
 const usuariosInvitados = ref([])
-const numeroInvitados = computed(() => usuariosInvitados.value.length)
 
-const buscarUsuarios = useDebounce(() => {
-    const query = usuarioBuscar.value.trim();
+const debouncedBuscar = useDebounce(usuarioBuscar, 800);
+
+watch(debouncedBuscar, buscarUsuarios)
+
+const correosInvitados = computed(()=>correos.value.split(/[\s,\n]+/m).map(c=>c.trim()).filter(c=>!!c).filter(c=>c.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)))
+const numeroInvitados = computed(()=>usuariosInvitados.value.length + correosInvitados.value.length)
+
+function buscarUsuarios() {
+    const query = debouncedBuscar.value.trim();
 
     if (query.length >= 3) {
         axios
@@ -497,45 +518,43 @@ const buscarUsuarios = useDebounce(() => {
             });
     }
     else usuariosEncontrados.value = []
-}, 500);
+}
 
 const usuariosParaInvitar = computed(() => {
     // añade el atributo 'miembro' a true si es miembro del equipo
     // le quitamos los usuarios que ya están invitados
     return usuariosEncontrados.value
-        .map(u => ({ ...u,
+        .map(u => ({
+            ...u,
             agregado: !!usuariosInvitados.value.find(ui => ui.id == u.id),
-            miembro: props.equipo.usuarios.find(eu => eu.id == u.id)?1:0 }))
-        .sort((a,b)=>(a.miembro-b.miembro))
+            miembro: props.equipo.usuarios.find(eu => eu.id == u.id) ? 1 : 0
+        }))
+        .sort((a, b) => (a.miembro - b.miembro))
 
 })
 
+// abre el diálogo modal
 function abrirInvitaciones() {
     usuarioBuscar.value = ''
     mostrarInvitar.value = true
 }
 
 function agregarInvitado(user) {
-    // primero comprobamos que no esté ya incluido
-    let idx = usuariosInvitados.value.findIndex(u => u.id == user.id)
-    if (idx == -1)
-        usuariosInvitados.value.push({ ...user, invitado: true })
-    else
-        usuariosInvitados.value[idx].invitado = true
+    usuariosInvitados.value.push({ ...user, invitado: true })
 }
 
 function removerInvitado(user) {
     // lo quitamos de invitados
     const idx = usuariosInvitados.value.findIndex(u => u.id == user.id)
     if (idx > -1)
-        // usuariosInvitados.value[idx].invitado = false
         usuariosInvitados.value.splice(idx, 1)
 }
 
 function invitar() {
     axios
-        .post(route('invite', { idEquipo: props.equipo.id }), {
-            correos: correos.value,
+        .post(route('invitar', { idEquipo: props.equipo.id }), {
+            correos: correosInvitados.value,
+            usuarios: usuariosInvitados.value.map(u=>u.id)
         })
         .then(response => {
             // Procesar la respuesta del controlador si es necesario
@@ -553,5 +572,4 @@ function invitar() {
 <style>
 .ql-editor {
     @apply bg-base-100;
-}
-</style>
+}</style>

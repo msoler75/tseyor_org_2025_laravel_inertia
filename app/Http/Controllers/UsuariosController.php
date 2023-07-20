@@ -68,7 +68,7 @@ class UsuariosController extends Controller
 
     public function search($buscar)
     {
-        $resultados = User::select(['id', 'name'])
+        $resultados = User::select(['id', 'name as nombre'])
             ->where('slug', 'like', '%' . $buscar . '%')
             ->orWhere('name', 'like', '%' . $buscar . '%')
             ->orWhere('email', 'like', '%' . $buscar . '%')

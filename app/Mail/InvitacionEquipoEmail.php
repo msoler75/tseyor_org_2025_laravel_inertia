@@ -7,17 +7,18 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Equipo;
+use App\Models\User;
 
 class InvitacionEquipoEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $equipo;
-    public $aceptarUrl;
-    public $declinarUrl;
-    public $usuario;
+    public Equipo $equipo;
+    public string $aceptarUrl;
+    public string $declinarUrl;
+    public User $usuario;
 
-    public function __construct(Equipo $equipo, $usuario, $aceptarUrl, $declinarUrl)
+    public function __construct(Equipo $equipo, ?User $usuario, string $aceptarUrl, string $declinarUrl)
     {
         $this->equipo = $equipo;
         $this->usuario = $usuario;
