@@ -24,6 +24,13 @@ class EquiposController extends Controller
     public function index(Request $request)
     {
 
+        $urlEquipo = route('equipo', 15);
+
+
+        // Verificar si el usuario ya tiene una cuenta
+            return redirect($urlEquipo)->with('message', 'Invitación aceptada. Ya eres parte del equipo.');
+
+
         $filtro = $request->input('buscar');
         $categoria = $request->input('categoria');
 

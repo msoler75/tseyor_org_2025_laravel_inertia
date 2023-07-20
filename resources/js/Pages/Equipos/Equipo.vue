@@ -6,13 +6,13 @@
         <div class="container mx-auto py-12">
             <GridFill class="gap-7" w="20rem">
 
-                <EquipoInformacion :equipo="equipo"/>
+                <EquipoInformacion :equipo="equipo" />
 
-                <Card  v-if="equipo.anuncio" class="border border-orange-400 justify-center items-center">
+                <Card v-if="equipo.anuncio" class="border border-orange-400 justify-center items-center">
                     <div class="prose" v-html="equipo.anuncio" />
                 </Card>
 
-                <Card  v-if="equipo.reuniones">
+                <Card v-if="equipo.reuniones">
                     <h3>Reuniones</h3>
                     <div class="prose" v-html="equipo.reuniones" />
                 </Card>
@@ -55,22 +55,22 @@
                 </Card>
 
 
-                <EquipoAdmin :equipo="equipo"/>
+                <EquipoAdmin :equipo="equipo" />
 
             </GridFill>
         </div>
 
-        <Modal :show="mostrarMensaje">
-        <div class="p-5">
-            <p class="text-center">{{ $page.props.flash.message }}</p>
-            <div class="py-3 flex justify-center">
-                <button @click.prevent="mostrarMensaje = false" type="button" class="btn btn-neutral">
-                    Gracias
-                </button>
-            </div>
-        </div>
 
-    </Modal>
+        <Modal :show="mostrarMensaje">
+            <div class="p-5 mt-auto mb-auto">
+                <p class="text-center">{{ $page.props.flash.message }}</p>
+                <div class="py-3 flex justify-center">
+                    <button @click.prevent="mostrarMensaje = false" type="button" class="btn btn-neutral">
+                        Gracias
+                    </button>
+                </div>
+            </div>
+        </Modal>
 
     </div>
 </template>
@@ -105,4 +105,5 @@ const mostrarMensaje = ref(page.props.flash.message)
 <style>
 .ql-editor {
     @apply bg-base-100;
-}</style>
+}
+</style>
