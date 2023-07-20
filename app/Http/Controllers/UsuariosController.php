@@ -61,4 +61,19 @@ class UsuariosController extends Controller
         ])
             ->withViewData(SEO::from($usuario));
     }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // JSON
+
+    public function search($buscar)
+    {
+        $resultados = User::select(['id', 'name'])
+            ->where('slug', 'like', '%' . $buscar . '%')
+            ->orWhere('name', 'like', '%' . $buscar . '%')
+            ->orWhere('email', 'like', '%' . $buscar . '%')
+            ->take(10)->get()->toArray();
+
+            return response()->json($resultados, 200);
+    }
 }

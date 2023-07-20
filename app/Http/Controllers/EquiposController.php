@@ -60,7 +60,8 @@ class EquiposController extends Controller
         $equipo = Equipo::with(['usuarios' => function ($query) {
             $query->select('users.id', 'users.name as nombre', 'users.slug', 'profile_photo_path as avatar')
                 ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
-                ->take(30);
+                // ->take(30)
+                ;
         }])
             ->where('slug', $id)
             ->orWhere('id', $id)
@@ -85,13 +86,12 @@ class EquiposController extends Controller
             return $b['fecha_modificacion'] - $a['fecha_modificacion'];
         });
 
-        $totalMiembros = $equipo->usuarios()->count();
-
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
             'carpetas' => $carpetas,
             'ultimosArchivos' =>  array_slice($ultimosArchivos, 0, 3),
-            'totalMiembros' => $totalMiembros,
+            // 'totalMiembros' => $totalMiembros,
+            /*
             'usuarios' => Inertia::lazy(function () use ($id) {
                 return Equipo::where('slug', $id)
                     ->orWhere('id', $id)
@@ -99,7 +99,7 @@ class EquiposController extends Controller
                     ->orderByRaw("CASE WHEN rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
                     ->get();
                 //return Equipo::findOrFail($id)->usuarios()->get();
-            })
+            }) */
         ])
             ->withViewData(SEO::from($equipo));
     }
