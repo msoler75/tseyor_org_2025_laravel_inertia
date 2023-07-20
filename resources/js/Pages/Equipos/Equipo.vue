@@ -95,7 +95,7 @@
                         <li class="flex gap-2 items-center cursor-pointer">
                             <Icon icon="ph:envelope-duotone" />Administrar peticiones de ingreso
                         </li>
-                        <li class="flex gap-2 items-center" @click="abrirInvitaciones">
+                        <li class="flex gap-2 items-center cursor-pointer" @click="abrirInvitaciones">
                             <Icon icon="ph:user-plus-duotone" />Invitar a usuario/s
                         </li>
                         <li class="flex gap-2 items-center cursor-pointer">
@@ -254,38 +254,85 @@
 
 
                 <!-- MODAL DE INVITACIONES -->
-                <Modal :show="mostrarInvitar" @close="mostrarInvitar = false">
-                    <div class="p-5">
-                        <form @submit.prevent="invite" class="flex flex-col gap-7">
+                <Modal :show="mostrarInvitar" @close="mostrarInvitar = false" maxWidth="md">
+                    <div class="p-5 bg-base-200">
+                        <form @submit.prevent="invite" class="flex flex-col gap-7 select-none">
 
-                            <div>
-                                <textarea class="w-full" v-model="correos"></textarea>
-                                <small>Escribe las direcciones de correo separadas por comas, por espacios, o en cada
-                                    línea.</small>
-                            </div>
+<tabs>
 
-                            <div>
-                                <input type="search" class="input shadow flex-shrink-0" placeholder="Buscar usuario..."
+
+<tab name="Buscar usuarios">
+                                <input type="search" class="input shadow flex-shrink-0 rounded-none border-b border-gray-500" placeholder="Buscar usuario..."
                                     v-model="usuarioBuscar" @input="buscarUsuarios">
 
-                                <div class="overflow-y-auto bg-base-100 shadow max-h-[60vh]">
-                                    <table class="table w-full">
+                                <div class="overflow-y-auto max-h-[350px] shadow">
+                                    <table v-if="usuariosParaInvitar.length" class="table w-full bg-base-100  rounded-none">
                                         <tbody class="divide-y">
-                                            <tr v-for="user of usuariosEncontrados" :key="user.id">
+                                            <tr v-for="user of usuariosParaInvitar" :key="user.id">
                                                 <td>{{ user.name }}</td>
                                                 <td>
-                                                    <button class="btn"
-                                                        @click="correos += '\n' + user.email">Agregar</button>
+                                                    <div v-if="user.miembro" class="uppercase p-1">Ya es miembro</div>
+                                                    <div v-else-if="user.agregado" class="btn bg-base-100 border-none pointer-events-none">
+                                                        <Icon icon="ph:check-circle-duotone"/> Agregado
+                                                    </div>
+                                                    <div v-else class="btn" @click="agregarInvitado(user)">
+                                                        Agregar
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <div v-else-if="usuarioBuscar" class="p-2 bg-base-100">
+                                        No hay resultados
+                                    </div>
                                 </div>
+                            </tab>
+
+
+                            <tab :name="`Agregados ${usuariosInvitados.length?'('+usuariosInvitados.length+')':''}`">
+
+                                <div class="overflow-y-auto max-h-[350px] mt-3">
+
+                                    <table v-if="usuariosInvitados.length" class="table w-full bg-base-300  shadow">
+                                        <tbody class="divide-y">
+                                            <tr v-for="user of usuariosInvitados" :key="user.id">
+                                                <td>{{ user.name }}</td>
+                                                <td>
+                                                    <div v-if="user.invitado" class="btn" @click="removerInvitado(user)">
+                                                       Remover
+                                                    </div>
+                                                    <div v-else class="btn" @click="agregarInvitado(user)">
+                                                        Agregar
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div v-else class="p-2">
+                                        Ningun usuario agregado.
+                                    </div>
+
+                                </div>
+
+                        </tab>
+
+                        <tab name="Correos">
+
+                            <p>Para personas que no tengan su cuenta en tseyor.org puedes invitarlas por correo.</p>
+
+                            <div>
+                                <textarea class="w-full" v-model="correos" placeholder="correo1@gmail.com, correo2@yahoo.es, ..."></textarea>
+                                <small>Escribe las direcciones de correo separadas por comas, por espacios, o en cada
+                                    línea.</small>
                             </div>
+                        </tab>
+
+                        </tabs>
 
                             <div class="py-3 flex justify-between sm:justify-end gap-5">
-                                <button type="submit" class="btn btn-primary">
-                                    Invitar
+                                <button type="submit" class="btn btn-primary" :disabled="!numeroInvitados">
+                                    Invitar <span v-if="numeroInvitados">({{ numeroInvitados }})</span>
                                 </button>
 
                                 <button @click.prevent="mostrarInvitar = false" type="button" class="btn btn-neutral">
@@ -307,7 +354,7 @@ import { Tabs, Tab } from 'vue3-tabs-component';
 import { useFuse } from '@vueuse/integrations/useFuse'
 import { useNav } from '@/Stores/nav'
 import { QuillEditor } from '@vueup/vue-quill'
-import { useThrottle } from '@vueuse/core';
+import { useDebounce } from '@vueuse/core';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 defineOptions({ layout: AppLayout })
@@ -404,23 +451,18 @@ function guardarConfiguracion() {
 
 const modalUsuarios = ref(false)
 const usuarioBuscar = ref("")
-const usuariosFuse = useFuse(usuarioBuscar, () => props.usuarios, { fuseOptions: { keys: ['name', 'email'], threshold: 0.3 } })
+const usuariosFuse = useFuse(usuarioBuscar, () => props.equipo.usuarios, { fuseOptions: { keys: ['name', 'email'], threshold: 0.3 } })
 
 const usuariosFilto = computed(() => {
-    if (!props.usuarios) return []
+    if (!props.equipo.usuarios) return []
     if (usuarioBuscar.value)
         return usuariosFuse.results.value.map(r => ({ id: r.item.id, name: r.item.name /* +r.refIndex*/, pivot: r.item.pivot }))
-    return props.usuarios
+    return props.equipo.usuarios
 });
 
 function administrarUsuarios() {
     usuarioBuscar.value = ''
     modalUsuarios.value = true
-    if (!props.usuarios) {
-        router.reload({
-            only: ['usuarios']
-        })
-    }
 }
 
 function changeRol(user) {
@@ -437,26 +479,58 @@ function changeRol(user) {
 const mostrarInvitar = ref(false)
 const correos = ref('');
 const usuariosEncontrados = ref([]);
+const usuariosInvitados = ref([])
+const numeroInvitados = computed(() => usuariosInvitados.value.length)
 
-function abrirInvitaciones() {
-    usuarioBuscar.value = ''
-    mostrarInvitar.value = true
-}
-
-const buscarUsuarios = useThrottle(() => {
+const buscarUsuarios = useDebounce(() => {
     const query = usuarioBuscar.value.trim();
 
     if (query.length >= 3) {
         axios
-            .get(`/api/buscar-usuarios?query=${query}`)
+            .get(route('usuarios.buscar', query))
             .then(response => {
+                console.log('response', response.data)
                 usuariosEncontrados.value = response.data;
             })
             .catch(error => {
                 console.error(error);
             });
     }
+    else usuariosEncontrados.value = []
 }, 500);
+
+const usuariosParaInvitar = computed(() => {
+    // añade el atributo 'miembro' a true si es miembro del equipo
+    // le quitamos los usuarios que ya están invitados
+    return usuariosEncontrados.value
+        .map(u => ({ ...u,
+            agregado: !!usuariosInvitados.value.find(ui => ui.id == u.id),
+            miembro: props.equipo.usuarios.find(eu => eu.id == u.id)?1:0 }))
+        .sort((a,b)=>(a.miembro-b.miembro))
+
+})
+
+function abrirInvitaciones() {
+    usuarioBuscar.value = ''
+    mostrarInvitar.value = true
+}
+
+function agregarInvitado(user) {
+    // primero comprobamos que no esté ya incluido
+    let idx = usuariosInvitados.value.findIndex(u => u.id == user.id)
+    if (idx == -1)
+        usuariosInvitados.value.push({ ...user, invitado: true })
+    else
+        usuariosInvitados.value[idx].invitado = true
+}
+
+function removerInvitado(user) {
+    // lo quitamos de invitados
+    const idx = usuariosInvitados.value.findIndex(u => u.id == user.id)
+    if (idx > -1)
+        // usuariosInvitados.value[idx].invitado = false
+        usuariosInvitados.value.splice(idx, 1)
+}
 
 function invitar() {
     axios

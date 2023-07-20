@@ -139,6 +139,7 @@ Route::get(
 Route::get('/utg/departamentos/{id}', [EquiposController::class, 'show'])->name('utg.departamento');
 
 Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios');
+Route::get('/usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->name('usuarios.buscar');
 Route::get('/usuarios/{id}', [UsuariosController::class, 'show'])->name('usuario');
 
 Route::middleware([
