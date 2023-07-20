@@ -84,10 +84,9 @@ Route::get('/equipos/nuevo', function() {
 Route::post('/equipos', [EquiposController::class, 'store'])->name('equipo.nuevo');
 Route::get('/equipos/{id}', [EquiposController::class, 'show'])->name('equipo');
 
-
-Route::post('/invitar/{idEquipo}', [InvitacionesController::class, 'invite'])->name('invitacion.aceptar');
-Route::get('/invitacion/{token}/aceptar', [InvitacionesController::class, 'acceptInvitation'])->name('invitacion.aceptar');
-Route::get('/invitacion/{token}/declinar', [InvitacionesController::class, 'declineInvitation'])->name('invitacion.declinar');
+Route::post('/invitar/{idEquipo}', [EquiposController::class, 'invite'])->name('invitar');
+Route::get('/invitacion/{token}/aceptar', [EquiposController::class, 'acceptInvitation'])->name('invitacion.aceptar');
+Route::get('/invitacion/{token}/declinar', [EquiposController::class, 'declineInvitation'])->name('invitacion.declinar');
 
 
 Route::get('/donde-estamos', [ContactosController::class, 'index'])->name('contactos');

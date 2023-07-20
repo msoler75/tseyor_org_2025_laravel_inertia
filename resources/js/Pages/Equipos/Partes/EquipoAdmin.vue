@@ -1,0 +1,448 @@
+<template>
+    <div>
+    <Card class="select-none">
+        <h3>Administración</h3>
+        <ul class="list-none p-0 space-y-2">
+            <li class="flex gap-2 items-center cursor-pointer">
+                <Icon icon="ph:envelope-duotone" />Administrar peticiones de ingreso
+            </li>
+            <li class="flex gap-2 items-center cursor-pointer" @click="abrirInvitaciones">
+                <Icon icon="ph:user-plus-duotone" />Invitar a usuario/s
+            </li>
+            <li class="flex gap-2 items-center cursor-pointer">
+                <Icon icon="ph:share-fat-duotone" />Enlace del equipo
+            </li>
+            <li class="flex gap-2 items-center cursor-pointer" @click="administrarUsuarios">
+                <Icon icon="ph:users-duotone" />Administrar miembros
+            </li>
+            <li class="flex gap-2 items-center cursor-pointer" @click="editarConfiguracion">
+                <Icon icon="ph:gear-six-duotone" />Configuración
+            </li>
+        </ul>
+    </Card>
+
+
+    <Modal :show="modalConfiguracion" maxWidth="lg" @close="modalConfiguracion = false">
+
+        <form class="bg-base-200 p-5 select-none" @submit.prevent="guardarConfiguracion">
+            <h3>Configuración del Equipo</h3>
+
+            <tabs :options="{ useUrlFragment: false }">
+                <tab name="General" class="space-y-6">
+
+                    <div>
+                        <label for="nombre">Nombre</label>
+                        <input id="nombre" v-model="edicion.nombre" required :readonly="equipo.usuarios.length >= 3"
+                            class="input" />
+                        <div v-if="edicion.errors.nombre" class="error">{{ edicion.errors.nombre[0] }}</div>
+                        <div v-else class="text-sm">Nombre del equipo. No se puede editar si tiene 3 miembros o
+                            más.
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" v-model="edicion.descripcion" required
+                            class="shadow textarea w-full"></textarea>
+                        <div v-if="edicion.errors.descripcion" class="error">{{ edicion.errors.descripcion[0] }}
+                        </div>
+                        <div v-else class="text-sm">Descripción del equipo y sus funciones.</div>
+                    </div>
+
+                </tab>
+
+                <tab name="imagen">
+
+                    <div>
+
+                        <div class="flex justify-center">
+                            <Image v-if="equipo.imagen" :src="equipo.imagen" class="h-32 mb-8" />
+                        </div>
+
+                        <label for="imagen">Imagen</label>
+                        <input type="file" id="imagen" @change="changeInputFile" accept="image/*" class="file-input">
+                        <div v-if="edicion.errors.imagen" class="error">{{ edicion.errors.imagen[0] }}</div>
+                        <div v-else class="text-sm">Sube una nueva imagen si quieres cambiar la actual.</div>
+                    </div>
+
+                </tab>
+
+
+                <tab name="Anuncio" class="space-y-6">
+
+                    <div>
+                        <label for="anuncio">Anuncio</label>
+                        <QuillEditor id="anuncio" theme="snow" v-model:content="edicion.anuncio" contentType="html" />
+                        <div v-if="edicion.errors.anuncio" class="error">{{ edicion.errors.anuncio[0] }}</div>
+                        <div v-else class="text-sm">Anuncio de caracter general. Se puede dejar en blanco.</div>
+                    </div>
+
+                </tab>
+
+                <tab name="Reuniones">
+
+                    <div>
+                        <label for="reuniones">Reuniones</label>
+                        <QuillEditor id="reuniones" theme="snow" v-model:content="edicion.reuniones" contentType="html" />
+                        <div v-if="edicion.errors.reuniones" class="error">{{ edicion.errors.reuniones[0] }}
+                        </div>
+                        <div v-else class="text-sm">Ejemplo: Los lunes a las 13h. Se puede dejar en blanco.
+                        </div>
+                    </div>
+                </tab>
+
+                <tab name="Información">
+                    <div>
+                        <label for="informacion">informacion</label>
+                        <QuillEditor id="informacion" theme="snow" v-model:content="edicion.informacion"
+                            contentType="html" />
+                        <div v-if="edicion.errors.informacion" class="error">{{ edicion.errors.informacion[0] }}
+                        </div>
+                        <div v-else class="text-sm">Información adicional del equipo.</div>
+                    </div>
+                </tab>
+            </tabs>
+
+
+            <div class="py-3 flex justify-between sm:justify-end gap-5">
+                <button type="submit" class="btn btn-primary">
+                    Guardar
+                </button>
+
+                <button @click.prevent="cerrarConfiguracion" type="button" class="btn btn-neutral">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </Modal>
+
+
+    <Modal :show="modalMiembros" maxWidth="sm" @close="modalMiembros = false">
+        <div class="bg-base-200 p-5 flex flex-col gap-5 max-h-[90vh] select-none">
+            <h3>Miembros del Equipo</h3>
+
+            <input type="search" class="input shadow flex-shrink-0" placeholder="Buscar..." v-model="miembroBuscar">
+
+            <div class="overflow-y-auto bg-base-100 shadow">
+                <table class="table w-full">
+                    <tbody class="divide-y">
+                        <tr v-for="user of miembrosFiltrado" :key="user.id" class="cursor-pointer"
+                            :class="user.pivot.rol == 'coordinador' ? 'bg-blue-50' : ''">
+                            <td>{{ user.nombre }}</td>
+                            <td>
+                                <select v-model="user.pivot.rol" class="select" @change="changeRol(user)">
+                                    <option value="coordinador">coordinador</option>
+                                    <option value=""><span class="opacity-50">miembro</span></option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="py-3 flex justify-between sm:justify-end gap-5">
+                <button @click.prevent="modalMiembros = false" type="button" class="btn btn-neutral">
+                    cerrar
+                </button>
+            </div>
+        </div>
+    </Modal>
+
+
+
+
+    <!-- MODAL DE INVITACIONES -->
+    <Modal :show="mostrarInvitar" @close="mostrarInvitar = false" maxWidth="md">
+        <div class="p-5 bg-base-200 max-h-full">
+            <h3>Invitar al equipo</h3>
+            <form @submit.prevent="invitar" class="flex flex-col gap-7 select-none">
+
+                <tabs>
+
+
+                    <tab name="Buscar usuarios">
+
+                        <div class="min-h-[200px]">
+                            <input type="search" class="input shadow flex-shrink-0 rounded-none border-b border-gray-500"
+                                placeholder="Buscar usuario..." v-model="usuarioBuscar">
+
+                            <div class="overflow-y-auto max-h-[calc(100vh-480px)] md:max-h-[calc(100vh-420px)] shadow">
+                                <table v-if="usuariosParaInvitar.length" class="table w-full bg-base-100  rounded-none">
+                                    <tbody class="divide-y">
+                                        <tr v-for="user of usuariosParaInvitar" :key="user.id">
+                                            <td>{{ user.nombre }}</td>
+                                            <td>
+                                                <div v-if="user.miembro" class="uppercase p-1">Ya es miembro
+                                                </div>
+                                                <div v-else-if="user.agregado"
+                                                    class="btn bg-base-100 border-none pointer-events-none">
+                                                    <Icon icon="ph:check-circle-duotone" /> Agregado
+                                                </div>
+                                                <div v-else class="btn" @click="agregarInvitado(user)">
+                                                    Agregar
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div v-else-if="usuarioBuscar" class="p-2 bg-base-100">
+                                    No hay resultados
+                                </div>
+                            </div>
+                        </div>
+                    </tab>
+
+
+                    <tab :name="`Agregados ${usuariosInvitados.length ? '(' + usuariosInvitados.length + ')' : ''}`">
+                        <div class="min-h-[200px]">
+
+                            <div class="overflow-y-auto max-h-[calc(100vh-480px)] md:max-h-[calc(100vh-420px)]  mt-3">
+
+                                <table v-if="usuariosInvitados.length" class="table w-full bg-base-100  shadow">
+                                    <tbody class="divide-y">
+                                        <tr v-for="user of usuariosInvitados" :key="user.id">
+                                            <td>{{ user.nombre }}</td>
+                                            <td>
+                                                <div v-if="user.invitado" class="btn" @click="removerInvitado(user)">
+                                                    Remover
+                                                </div>
+                                                <div v-else class="btn" @click="agregarInvitado(user)">
+                                                    Agregar
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div v-else class="p-1">
+                                    Ningún usuario agregado a la invitación.
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </tab>
+
+                    <tab :name="`Correos ${correosInvitados.length ? '(' + correosInvitados.length + ')' : ''}`">
+
+                        <p>A las personas que no disponen de cuenta en tseyor.org puedes invitarlas por correo.</p>
+
+                        <div>
+                            <textarea class="w-full" v-model="correos"
+                                placeholder="correo1@gmail.com, correo2@yahoo.es, ..."></textarea>
+                            <small>Escribe las direcciones de correo separadas por comas, por espacios, o en
+                                cada
+                                línea.</small>
+                        </div>
+                    </tab>
+
+                </tabs>
+
+                <div class="py-3 flex justify-between sm:justify-end gap-5">
+                    <button type="submit" class="btn btn-primary" :disabled="!numeroInvitados">
+                        Invitar <span v-if="numeroInvitados">({{ numeroInvitados }})</span>
+                    </button>
+
+                    <button @click.prevent="mostrarInvitar = false" type="button" class="btn btn-neutral">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </Modal>
+
+</div>
+</template>
+
+
+<script setup>
+import { Tabs, Tab } from 'vue3-tabs-component';
+import { useFuse } from '@vueuse/integrations/useFuse'
+import { QuillEditor } from '@vueup/vue-quill'
+import { useDebounce } from '@vueuse/core';
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+
+const props = defineProps({ equipo: { type: Object, required: true } })
+
+// Diálogo Modal de Configuracion DEL EQUIPO
+
+const edicion = reactive({ id: props.equipo.id, imagen: null, nombre: null, descripcion: null, anuncio: null, reuniones: null, errors: {}, processing: false })
+const campos = ['nombre', 'descripcion', 'imagen', 'anuncio', 'reuniones', 'informacion']
+const modalConfiguracion = ref(false)
+
+function editarConfiguracion() {
+    for (const campo of campos)
+        edicion[campo] = props.equipo[campo]
+    edicion.imagen = null
+    modalConfiguracion.value = true
+}
+
+function changeInputFile(event) {
+    // console.log('changeInput', event)
+    edicion.imagen = event.target.files[0]
+}
+
+function limpiarErrores() {
+    Object.keys(edicion.errors).forEach(key => {
+        delete edicion.errors[key];
+    });
+}
+
+function cerrarConfiguracion() {
+    limpiarErrores()
+    modalConfiguracion.value = false
+}
+
+function guardarConfiguracion() {
+
+    const data = new FormData();
+    data.append('nombre', edicion.nombre);
+    data.append('descripcion', edicion.descripcion);
+    if (edicion.imagen)
+        data.append('imagen', edicion.imagen);
+    data.append('anuncio', edicion.anuncio);
+    data.append('reuniones', edicion.reuniones);
+    data.append('informacion', edicion.informacion);
+
+    // actualizamos en el servidor
+    console.log(edicion)
+    edicion.processing = true;
+    axios.post(route('equipo.modificar', props.equipo.id), data).then((response) => {
+        edicion.processing = false;
+
+        console.log('guardado!', response)
+        // actualizamos en la página
+        for (const campo of campos)
+            props.equipo[campo] = edicion[campo]
+        props.equipo.imagen = response.data.imagen
+
+        limpiarErrores();
+
+        // cerramos el modal
+        modalConfiguracion.value = false
+
+    }).catch(error => {
+        edicion.processing = false;
+        console.log('error', error)
+        if (error.response.data.errors)
+            edicion.errors = error.response.data.errors
+        else //error general
+            alert(error.response.data.error)
+    });
+
+
+}
+
+// Diálogo de ADMINISTRAR Miembros
+
+const modalMiembros = ref(false)
+const miembroBuscar = ref("")
+const usuariosFuse = useFuse(miembroBuscar, () => props.equipo.usuarios, { fuseOptions: { keys: ['nombre', 'email'], threshold: 0.3 } })
+
+const miembrosFiltrado = computed(() => {
+    if (!props.equipo.usuarios) return []
+    if (miembroBuscar.value)
+        return usuariosFuse.results.value.map(r => ({ id: r.item.id, nombre: r.item.nombre /* +r.refIndex*/, pivot: r.item.pivot }))
+    return props.equipo.usuarios
+});
+
+function administrarUsuarios() {
+    miembroBuscar.value = ''
+    modalMiembros.value = true
+}
+
+function changeRol(user) {
+    console.log('changedRol', user)
+    axios.put(route('equipo.modificarRol', { idEquipo: props.equipo.id, idUsuario: user.id, rol: user.pivot.rol || 'miembro' }))
+        .catch(err => {
+            alert("No se han podido guardar los cambios")
+        });
+}
+
+
+// Diálogo de INVITACIONES A FORMAR PARTE DEL EQUIPO
+const mostrarInvitar = ref(false)
+const correos = ref('');
+const usuariosEncontrados = ref([]);
+const usuariosInvitados = ref([])
+const usuarioBuscar = ref("")
+const debouncedBuscar = useDebounce(usuarioBuscar, 800);
+
+watch(debouncedBuscar, buscarUsuarios)
+
+const correosInvitados = computed(() => correos.value.split(/[\s,\n]+/m).map(c => c.trim()).filter(c => !!c).filter(c => c.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)))
+const numeroInvitados = computed(() => usuariosInvitados.value.length + correosInvitados.value.length)
+
+
+// abre el diálogo modal
+function abrirInvitaciones() {
+    usuarioBuscar.value = ''
+    mostrarInvitar.value = true
+}
+
+
+function buscarUsuarios() {
+    const query = debouncedBuscar.value.trim();
+
+    if (query.length >= 3) {
+        axios
+            .get(route('usuarios.buscar', query))
+            .then(response => {
+                console.log('response', response.data)
+                usuariosEncontrados.value = response.data;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+    else usuariosEncontrados.value = []
+}
+
+const usuariosParaInvitar = computed(() => {
+    // añade el atributo 'miembro' a true si es miembro del equipo
+    // le quitamos los usuarios que ya están invitados
+    return usuariosEncontrados.value
+        .map(u => ({
+            ...u,
+            agregado: !!usuariosInvitados.value.find(ui => ui.id == u.id),
+            miembro: props.equipo.usuarios.find(eu => eu.id == u.id) ? 1 : 0
+        }))
+        .sort((a, b) => (a.miembro - b.miembro))
+
+})
+
+
+
+function agregarInvitado(user) {
+    usuariosInvitados.value.push({ ...user, invitado: true })
+}
+
+function removerInvitado(user) {
+    // lo quitamos de invitados
+    const idx = usuariosInvitados.value.findIndex(u => u.id == user.id)
+    if (idx > -1)
+        usuariosInvitados.value.splice(idx, 1)
+}
+
+function invitar() {
+    axios
+        .post(route('invitar', { idEquipo: props.equipo.id }), {
+            correos: correosInvitados.value,
+            usuarios: usuariosInvitados.value.map(u => u.id)
+        })
+        .then(response => {
+            // Procesar la respuesta del controlador si es necesario
+            console.log(response.data);
+        })
+        .catch(error => {
+            // Manejar cualquier error de la solicitud
+            console.error(error);
+        });
+};
+
+
+
+
+
+</script>

@@ -89,6 +89,7 @@ declare module 'vue' {
     Services: typeof import('./resources/js/Sections/Services.vue')['default']
     SocialMediaFeeds: typeof import('./resources/js/Sections/SocialMediaFeeds.vue')['default']
     Space: typeof import('./resources/js/Components/Space.vue')['default']
+    Tarjeta: typeof import('./resources/js/Components/Tarjeta.vue')['default']
     TeamMembers: typeof import('./resources/js/Sections/TeamMembers.vue')['default']
     Testimonial: typeof import('./resources/js/Sections/Testimonial.vue')['default']
     TestimonialSlider: typeof import('./resources/js/Sections/TestimonialSlider.vue')['default']
