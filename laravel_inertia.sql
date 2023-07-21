@@ -846,38 +846,6 @@ LOCK TABLES `personal_access_tokens` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `peticiones`
---
-
-DROP TABLE IF EXISTS `peticiones`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `peticiones` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) unsigned NOT NULL,
-  `equipo_id` bigint(20) unsigned NOT NULL,
-  `fecha_aceptacion` date DEFAULT NULL,
-  `fecha_denegacion` date DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `peticiones_user_id_foreign` (`user_id`),
-  KEY `peticiones_equipo_id_foreign` (`equipo_id`),
-  CONSTRAINT `peticiones_equipo_id_foreign` FOREIGN KEY (`equipo_id`) REFERENCES `equipos` (`id`),
-  CONSTRAINT `peticiones_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `peticiones`
---
-
-LOCK TABLES `peticiones` WRITE;
-/*!40000 ALTER TABLE `peticiones` DISABLE KEYS */;
-/*!40000 ALTER TABLE `peticiones` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `radio`
 --
 
@@ -966,7 +934,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('RgPrEImChhZyphlaSs2ZNEEUaOTrwNTIAoZQpbDZ',2,'127.0.0.1','Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36','YTo1OntzOjY6Il90b2tlbiI7czo0MDoibW44bG1vc3hPTk5oc2JaNXVPUE5tM291SmZaMURHdmt2ZE05N3FJbyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTM6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9lcXVpcG9zL2RlcGFydGFtZW50by1kZS1zYWx1ZC0zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MjtzOjIxOiJwYXNzd29yZF9oYXNoX3NhbmN0dW0iO3M6NjA6IiQyeSQxMCRrZTIzc1ExMDEzM2kwOUVMdDFOS2wuaG1SMExMU1R2bWx1eWouRnNZVTc3eFlaTTU4ak5PVyI7fQ==',1689904011);
+INSERT INTO `sessions` VALUES ('L6loQYGXgidJM0wA7edFrBwIgTueJ1kqANmtb65E',NULL,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36','YTozOntzOjY6Il90b2tlbiI7czo0MDoiRzFnbmJiZHJQR2V2ejM2Y0hTVVJRenlic3FuYWRJM3JWYk1QVmppUSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTM6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9lcXVpcG9zL2RlcGFydGFtZW50by1kZS1zYWx1ZC0zIjt9fQ==',1689974602);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -994,6 +962,41 @@ LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
 INSERT INTO `settings` VALUES ('radio_comunicados','{\"reproduciendo_jingle\":false,\"audio_actual\":{\"id\":10,\"audio\":\"https:\\/\\/tseyor.org\\/biblioteca\\/comunicados\\/audios\\/TSEYOR 050506 (024).mp3\",\"duracion\":\"1:15:25\"},\"current_duracion\":0,\"arranco_en\":1689517229,\"ultimo_jingle\":1}','2023-07-16 18:20:29','2023-06-29 19:43:51');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `solicitudes`
+--
+
+DROP TABLE IF EXISTS `solicitudes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `solicitudes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `equipo_id` bigint(20) unsigned NOT NULL,
+  `por_user_id` bigint(20) unsigned NOT NULL,
+  `fecha_aceptacion` date DEFAULT NULL,
+  `fecha_denegacion` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `peticiones_equipo_id_foreign` (`equipo_id`),
+  KEY `peticiones_user_id_foreign` (`user_id`),
+  KEY `peticiones_por_user_id_foreign` (`por_user_id`),
+  CONSTRAINT `peticiones_equipo_id_foreign` FOREIGN KEY (`equipo_id`) REFERENCES `equipos` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `peticiones_por_user_id_foreign` FOREIGN KEY (`por_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `peticiones_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `solicitudes`
+--
+
+LOCK TABLES `solicitudes` WRITE;
+/*!40000 ALTER TABLE `solicitudes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `solicitudes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1133,4 +1136,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-20 22:33:44
+-- Dump completed on 2023-07-21 17:23:26

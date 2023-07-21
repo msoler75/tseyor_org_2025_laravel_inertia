@@ -21,6 +21,7 @@ use App\Http\Controllers\CursosController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\DevController;
 use App\Pigmalion\SEO;
 
 
@@ -147,6 +148,10 @@ Route::get('/utg/departamentos/{id}', [EquiposController::class, 'show'])->name(
 Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios');
 Route::get('/usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->name('usuarios.buscar');
 Route::get('/usuarios/{id}', [UsuariosController::class, 'show'])->name('usuario');
+
+Route::get('/login/1', [DevController::class, 'loginUser1'])->name('login1');
+Route::get('/login/2', [DevController::class, 'loginUser2'])->name('login2');
+
 
 Route::middleware([
     'auth:sanctum',

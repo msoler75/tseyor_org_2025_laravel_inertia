@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Solicitud extends Model
 {
+
+    protected $table="solicitudes";
     /**
      * The attributes that are mass assignable.
      *
@@ -14,6 +16,7 @@ class Solicitud extends Model
     protected $fillable = [
         'user_id',
         'equipo_id',
+        'por_user_id', // quien acepta o deniega la solicitud
         'fecha_aceptacion',
         'fecha_denegacion'
     ];
@@ -23,7 +26,7 @@ class Solicitud extends Model
      */
     public function usuario()
     {
-        return $this->belongsTo(Usuario::class);
+        return $this->belongsTo(User::class);
     }
 
     /**
