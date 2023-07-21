@@ -88,6 +88,11 @@ Route::post('/invitar/{idEquipo}', [EquiposController::class, 'invite'])->name('
 Route::get('/invitacion/{token}/aceptar', [EquiposController::class, 'acceptInvitation'])->name('invitacion.aceptar');
 Route::get('/invitacion/{token}/declinar', [EquiposController::class, 'declineInvitation'])->name('invitacion.declinar');
 
+Route::get('/equipos/{id}/solicitudes', [EquiposController::class, 'solicitudes'])->name('equipo.solicitudes');
+Route::get('/equipos/{id}/solicitar', [EquiposController::class, 'solicitar'])->name('equipo.solicitar');
+Route::get('/solicitud/{id}/aceptar', [EquiposController::class, 'aceptarSolicitud'])->name('solicitud.aceptar');
+Route::get('/solicitud/{id}/denegar', [EquiposController::class, 'denegarSolicitud'])->name('solicitud.denegar');
+
 
 Route::get('/donde-estamos', [ContactosController::class, 'index'])->name('contactos');
 Route::get('/contactos/{id}', [ContactosController::class, 'show'])->name('contacto');

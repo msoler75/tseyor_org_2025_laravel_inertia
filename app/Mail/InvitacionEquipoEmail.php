@@ -28,9 +28,10 @@ class InvitacionEquipoEmail extends Mailable
 
     public function build()
     {
-        return $this->markdown('emails.invitacion-equipo-email')
+        return $this->markdown('emails.invitacion-equipo')
             ->subject('¡Has sido invitado al equipo ' . $this->equipo->nombre . '!')
             ->with([
+                'equipo' => $this->equipo,
                 'nombreUsuario'=> optional($this->usuario)-> name ?? '',
                 'aceptarUrl' => $this->aceptarUrl,
                 'declinarUrl' => $this->declinarUrl

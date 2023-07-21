@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Models\Equipo;
 use App\Models\Carpeta;
 use App\Models\Invitacion;
+use App\Models\Solicitud;
 use App\Models\User;
 use App\Pigmalion\SEO;
 use App\Policies\LinuxPolicy;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use App\Mail\InvitacionEquipoEmail;
+use App\Mail\IncorporacionEquipoEmail;
 
 class EquiposController extends Controller
 {
@@ -182,9 +184,8 @@ class EquiposController extends Controller
         $user = auth()->user();
 
         // Verificar si el usuario es un coordinador del equipo
-        if (!$equipo->coordinadores->contains($user)) {
+        if (!$equipo->coordinadores->contains($user))
             return response()->json(['error' => 'No tienes permisos para editar este equipo.'], 403);
-        }
 
         // Actualizar los datos del equipo
         $equipo->nombre = trim($validatedData['nombre']);
@@ -324,7 +325,7 @@ class EquiposController extends Controller
             if (!$usuario) continue; // el usuario debería existir
 
             $correo = $usuario->email;
-            if(!$correo) continue;
+            if (!$correo) continue;
 
             // Verificar si el usuario ya es miembro del equipo
             if ($equipo->usuarios()->where('id', $usuario->id)->exists()) {
@@ -415,5 +416,141 @@ class EquiposController extends Controller
         $invitacion->update(['declined_at' => now()]);
 
         return redirect($urlEquipo)->with('message', 'Invitación declinada.');
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+    // SOLICITUDES
+    //////////////////////////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * listar solicitudes pendientes
+     */
+    public function solicitudes($idEquipo)
+    {
+        // debe ser un usuario registrado e iniciada su sesión
+        $user = auth()->user();
+        if (!$user)
+            return response()->json(['error' => 'Debe iniciar sesión'], 401);
+
+        // carga el equipo
+        $equipo = Equipo::findOrFail($idEquipo);
+
+        // verificar si es coordinador del equipo
+        if (!$equipo->coordinadores->contains($user))
+            return response()->json(['error' => 'No tienes permisos para editar este equipo'], 403);
+
+        // carga la lista de solicitudes pendientes
+        $solicitudes = Solicitud::with('usuario')
+            ->where('equipo_id', $idEquipo)
+            ->whereIsNull('fecha_aceptacion')
+            ->whereIsNull('fecha_denegacion')
+            ->get();
+
+        return response()->json($solicitudes, 200);
+    }
+
+    /**
+     * Crea una solicitud de incorporación al equipo
+     */
+    public function solicitar($idEquipo)
+    {
+        $user = auth()->user();
+
+        // debe ser un usuario registrado e iniciada su sesión
+        if (!$user)
+            return response()->json(['error' => 'Debe iniciar sesión'], 401);
+
+        // comprueba si no tenía ya una solicitud previa
+        if (Solicitud::where('user_id', $user->id)
+            ->where('equipo_id', $idEquipo)
+            ->whereIsNull('fecha_aceptacion')
+            ->whereIsNull('fecha_denegacion')
+            ->exists()
+        )
+            return response()->json(['error' => 'Ya tiene una solicitud previa'], 400);
+
+        // crea la solicitud
+        Solicitud::create([
+            'user_id' => $user->id,
+            'equipo_id' => $idEquipo
+        ]);
+
+        return response()->json(['message' => 'Solicitud enviada'], 200);
+    }
+
+
+    private function validarSolicitud($idSolicitud)
+    {
+        $user = auth()->user();
+
+        // debe ser un usuario registrado e iniciada su sesión
+        if (!$user)
+            return response()->json(['error' => 'Debe iniciar sesión'], 401);
+
+        // carga la solicitud
+        $solicitud = Solicitud::findOrFail($idSolicitud);
+
+        // carga el equipo
+        $equipo = $solicitud->equipo();
+
+        // verificar si es coordinador del equipo
+        if (!$equipo->coordinadores->contains($user))
+            return response()->json(['error' => 'No tienes permisos para editar este equipo'], 403);
+
+        // comprueba si estaba pendiente
+        if ($solicitud->fecha_aceptacion)
+            return response()->json(['message' => 'Ya fue aceptada previamente'], 200);
+
+        // comprueba si estaba denegada
+        if ($solicitud->fecha_denegacion)
+            return response()->json(['message' => 'Ya fue denegada previamente'], 400);
+
+        return $solicitud;
+    }
+
+    /**
+     * Acepta una solicitud de incorporación al equipo
+     */
+    public function aceptarSolicitud($idSolicitud)
+    {
+        $solicitud = $this->validarSolicitud($idSolicitud);
+
+        // la marca como aceptada
+        $solicitud->update([
+            'fecha_aceptacion' => now()
+        ]);
+
+        $solicitante = $solicitud->usuario();
+
+        // agregamos el usuario al equipo
+        $solicitud->equipo()->usuarios()->syncWithoutDetaching([$solicitante->id]);
+
+        // Enviar el correo informativo
+        Mail::to($solicitante->email)->send(new IncorporacionEquipoEmail($solicitud->equipo(), $solicitante, true, true));
+
+        return response()->json(['message' => 'Solicitud aceptada'], 200);
+    }
+
+
+    /**
+     * Deniega una solicitud de incorporación al equipo
+     */
+    public function denegarSolicitud($idSolicitud)
+    {
+        $solicitud = $this->validarSolicitud($idSolicitud);
+
+        // la marca como denegada
+        $solicitud->update([
+            'fecha_denegacion' => now()
+        ]);
+
+        $solicitante = $solicitud->usuario();
+
+        // Enviar el correo informativo
+        Mail::to($solicitante->email)->send(new IncorporacionEquipoEmail($solicitud->equipo(), $solicitante, false, true));
+
+        return response()->json(['message' => 'Solicitud denegada'], 200);
     }
 }
