@@ -1,9 +1,14 @@
 <template>
     <div>
+
+
         <EquipoCabecera :equipo="equipo" />
 
 
         <div class="container mx-auto py-12">
+
+            <Back :href="route('equipos')" class="mb-7">Equipos</Back>
+
             <GridFill class="gap-7" w="20rem">
 
                 <EquipoInformacion :equipo="equipo" />
@@ -61,7 +66,7 @@
         </div>
 
 
-        <Modal :show="mostrarMensaje">
+        <Modal :show="mostrarMensaje" centered>
             <div class="p-5 mt-auto mb-auto">
                 <p class="text-center">{{ $page.props.flash.message }}</p>
                 <div class="py-3 flex justify-center">
