@@ -3,8 +3,8 @@
         <Card class="select-none">
             <h3>Administración</h3>
             <ul class="list-none p-0 space-y-2">
-                <li class="flex gap-2 items-center cursor-pointer" @click="peticiones.mostrar">
-                    <Icon icon="ph:envelope-duotone" />Administrar peticiones de ingreso
+                <li class="flex gap-2 items-center cursor-pointer" @click="solicitudes.mostrar">
+                    <Icon icon="ph:envelope-duotone" />Administrar solicitudes
                 </li>
                 <li class="flex gap-2 items-center cursor-pointer" @click="modalEnlace = true">
                     <Icon icon="ph:share-fat-duotone" />Enlace del equipo
@@ -27,8 +27,7 @@
 
         <ModalInvitaciones :equipo="props.equipo" ref="invitaciones" />
 
-        <ModalPeticiones :equipo="props.equipo" ref="peticiones" />
-
+        <ModalSolicitudes :equipo="props.equipo" ref="solicitudes" />
 
         <Modal :show="modalEnlace" @close="modalEnlace = false" centered>
             <div class="p-5">
@@ -53,14 +52,14 @@
 import ModalConfiguracion from './ModalConfiguracion.vue'
 import ModalInvitaciones from './ModalInvitaciones.vue'
 import ModalMiembros from './ModalMiembros.vue'
-import ModalPeticiones from './ModalPeticiones.vue'
+import ModalSolicitudes from './ModalSolicitudes.vue'
 
 const props = defineProps({ equipo: { type: Object, required: true } })
 
 const miembros = ref()
 const config = ref()
 const invitaciones = ref()
-const peticiones = ref()
+const solicitudes = ref()
 
 const modalEnlace = ref(false)
 

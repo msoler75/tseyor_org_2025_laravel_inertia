@@ -133,6 +133,23 @@ import { useDark, useColorScheme } from 'vue-use';
 */
 
 
+function login1() {
+    console.log('login1')
+    axios.get(route('login1'))
+    .then((response)=>{
+        console.log('response', response)
+        router.reload()
+    }
+    )
+}
+
+function login2() {
+    axios.get(route('login2'))
+    .then(()=>
+    router.reload()
+    )
+}
+
 
 const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset
@@ -147,6 +164,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.removeEventListener('scroll', handleScroll);
 });
+
+
 
 
 </script>
@@ -175,13 +194,20 @@ onBeforeUnmount(() => {
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
                                 <Link :href="route('portada')">
-                                <ApplicationMark/>
+                                <ApplicationMark />
                                 </Link>
                             </div>
 
-                            <button @click="toggleDark()" class="px-4 py-2 text-white bg-gray-600 dark:bg-purple-700">
-                                Dark Toggle
-                            </button>
+                            <div class="flex gap-2">
+
+                                <button @click="toggleDark()" class="px-4 py-2 text-white bg-gray-600 dark:bg-purple-700">
+                                    Dark Toggle
+                                </button>
+
+                                <button @click="login1" class="btn">Login 1</button>
+
+                                <button @click="login2">Login 2</button>
+                            </div>
 
                             <!-- Navigation Links -->
                             <div class="hidden top-navigation space-x-8 sm:-my-px sm:ml-10 sm:flex">
@@ -322,7 +348,7 @@ onBeforeUnmount(() => {
                                     <template #trigger>
                                         <button v-if="$page.props.jetstream.managesProfilePhotos"
                                             class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                            <Avatar :user="$page.props.auth.user" :link="false"/>
+                                            <Avatar :user="$page.props.auth.user" :link="false" />
                                         </button>
 
                                         <span v-else class="inline-flex rounded-md">
@@ -504,7 +530,7 @@ onBeforeUnmount(() => {
                 <slot />
             </main>
 
-            <AppFooter v-if="!nav.fullPage"/>
+            <AppFooter v-if="!nav.fullPage" />
         </div>
     </div>
 </template>

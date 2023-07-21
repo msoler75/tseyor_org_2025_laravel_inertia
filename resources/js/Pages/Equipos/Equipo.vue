@@ -1,17 +1,23 @@
 <template>
     <div>
-
-
         <EquipoCabecera :equipo="equipo" />
-
 
         <div class="container mx-auto py-12">
 
-            <Back :href="route('equipos')" class="mb-7">Equipos</Back>
+            {{ solicitud }}
+
+            <div class="flex justify-between items-center mb-5">
+                <Back :href="route('equipos')">Equipos</Back>
+
+                <EquipoMembresia class="hidden sm:block" :equipo-id="equipo.id" v-model="solicitud" :soyMiembro="soyMiembro"/>
+
+            </div>
 
             <GridFill class="gap-7" w="20rem">
 
                 <EquipoInformacion :equipo="equipo" />
+
+                <EquipoMembresia class="sm:hidden" :equipo-id="equipo.id" v-model="solicitud" :soyMiembro="soyMiembro"/>
 
                 <Card v-if="equipo.anuncio" class="border border-orange-400 justify-center items-center">
                     <div class="prose" v-html="equipo.anuncio" />
@@ -51,7 +57,7 @@
 
                 <Card>
                     <h3>Miembros</h3>
-                    <Users v-if="equipo" :users="equipo.usuarios" :count="13" />
+                    <Users v-if="equipo" :users="equipo.usuarios.slice(0,17)" :count="equipo.usuarios.length" />
                 </Card>
 
                 <Card v-if="equipo.informacion">
@@ -60,7 +66,7 @@
                 </Card>
 
 
-                <EquipoAdmin :equipo="equipo" />
+                <EquipoAdmin v-if="equipo.admin" :equipo="equipo" />
 
             </GridFill>
         </div>
@@ -85,6 +91,7 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import EquipoAdmin from './Partes/EquipoAdmin.vue'
 import EquipoCabecera from './Partes/EquipoCabecera.vue'
 import EquipoInformacion from './Partes/EquipoInformacion.vue'
+import EquipoMembresia from './Partes/EquipoMembresia.vue'
 
 defineOptions({ layout: AppLayout })
 
@@ -93,16 +100,21 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    // usuarios: {},
-    // totalMiembros: Number,
     ultimosArchivos: {},
-    carpetas: {}
+    carpetas: {},
+    miSolicitud: {},
+    solicitudesPendientes: Array,
+    soyMiembro: Boolean,
+    soyCoordinador: Boolean
 })
 
 // MENSAJE FLASH
 const page = usePage()
 const mostrarMensaje = ref(page.props.flash.message)
 
+
+// solicitud
+const solicitud = ref(props.miSolicitud)
 
 </script>
 

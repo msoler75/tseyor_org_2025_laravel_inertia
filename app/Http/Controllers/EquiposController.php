@@ -93,11 +93,50 @@ class EquiposController extends Controller
             return $b['fecha_modificacion'] - $a['fecha_modificacion'];
         });
 
+
+        $solicitud = null;
+        $solicitudes = [];
+
+        $soyMiembro = false;
+        $soyCoordinador = false;
+
+        if ($user) {
+            // Verificar si el usuario ya es miembro del equipo
+            if (!$equipo->usuarios()->where('users.id', $user->id)->exists()) {
+
+                $soyMiembro = true;
+
+                // verificar si es coordinador del equipo
+                if (!$equipo->coordinadores->contains($user)) {
+
+                    // soy coordinador de este equipo
+                    $soyCoordinador = true;
+
+                    // carga la lista de solicitudes pendientes
+                    $solicitudes = Solicitud::with('usuario')
+                        ->where('equipo_id', $equipo->id)
+                        ->whereNull('fecha_aceptacion')
+                        ->whereNull('fecha_denegacion')
+                        ->get();
+                }
+            } else {
+                // si no somos miembros, comprobamos la solicitud de ingreso
+                // obtenemos la solicitud más reciente (si es que la hay)
+                $solicitud = Solicitud::where('user_id', $user->id)
+                    ->where('equipo_id', $equipo->id)
+                    ->orderBy('created_at', 'desc') // recientes primero
+                    ->first();
+            }
+        }
+
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
             'carpetas' => $carpetas,
-            'ultimosArchivos' =>  array_slice($ultimosArchivos, 0, 3),
-            // 'totalMiembros' => $totalMiembros,
+            'ultimosArchivos' =>  array_slice($ultimosArchivos, 0, 10),
+            'miSolicitud' => $solicitud,
+            'solicitudesPendientes' => $solicitudes,
+            'soyMiembro' => $soyMiembro,
+            'soyCoordinador' => $soyCoordinador
             /*
             'usuarios' => Inertia::lazy(function () use ($id) {
                 return Equipo::where('slug', $id)
@@ -439,14 +478,15 @@ class EquiposController extends Controller
 
         // verificar si es coordinador del equipo
         if (!$equipo->coordinadores->contains($user))
-            return response()->json(['error' => 'No tienes permisos para editar este equipo'], 403);
+            return response()->json(['error' => 'No tienes permisos'], 403);
 
         // carga la lista de solicitudes pendientes
         $solicitudes = Solicitud::with('usuario')
             ->where('equipo_id', $idEquipo)
-            ->whereIsNull('fecha_aceptacion')
-            ->whereIsNull('fecha_denegacion')
-            ->get();
+            //->whereNull('fecha_aceptacion')
+            //->whereNull('fecha_denegacion')
+            ->orderByRaw("COALESCE(fecha_aceptacion, fecha_denegacion, created_at) DESC")
+            ->take(150)->get();
 
         return response()->json($solicitudes, 200);
     }
@@ -465,19 +505,19 @@ class EquiposController extends Controller
         // comprueba si no tenía ya una solicitud previa
         if (Solicitud::where('user_id', $user->id)
             ->where('equipo_id', $idEquipo)
-            ->whereIsNull('fecha_aceptacion')
-            ->whereIsNull('fecha_denegacion')
+            ->whereNull('fecha_aceptacion')
+            ->whereNull('fecha_denegacion')
             ->exists()
         )
             return response()->json(['error' => 'Ya tiene una solicitud previa'], 400);
 
         // crea la solicitud
-        Solicitud::create([
+        $solicitud = Solicitud::create([
             'user_id' => $user->id,
             'equipo_id' => $idEquipo
         ]);
 
-        return response()->json(['message' => 'Solicitud enviada'], 200);
+        return response()->json(['message' => 'Solicitud enviada', 'solicitud'=>$solicitud], 200);
     }
 
 
@@ -519,7 +559,8 @@ class EquiposController extends Controller
 
         // la marca como aceptada
         $solicitud->update([
-            'fecha_aceptacion' => now()
+            'fecha_aceptacion' => now(),
+            'por_user_id' => auth()->user()->id
         ]);
 
         $solicitante = $solicitud->usuario();
@@ -543,7 +584,8 @@ class EquiposController extends Controller
 
         // la marca como denegada
         $solicitud->update([
-            'fecha_denegacion' => now()
+            'fecha_denegacion' => now(),
+            'por_user_id' => auth()->user()->id
         ]);
 
         $solicitante = $solicitud->usuario();
