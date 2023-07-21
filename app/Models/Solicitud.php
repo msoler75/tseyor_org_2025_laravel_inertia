@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Peticion extends Model
+class Solicitud extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -14,7 +14,6 @@ class Peticion extends Model
     protected $fillable = [
         'user_id',
         'equipo_id',
-        'aceptada',
         'fecha_aceptacion',
         'fecha_denegacion'
     ];

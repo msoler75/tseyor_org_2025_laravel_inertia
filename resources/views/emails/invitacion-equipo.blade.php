@@ -1,23 +1,44 @@
 @component('mail::message')
-{{ __('¡Has sido invitado a unirte al equipo :team!', ['team' => $invitation->team->nombre]) }}
-
-@if (Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::registration()))
-{{ __("Si no tienes una cuenta, puedes crear una haciendo clic en el botón de abajo. Después de crear una cuenta, puedes hacer clic en el botón de aceptar invitación en este correo electrónico para aceptar la invitación al equipo:") }}
-
-@component('mail::button', ['url' => route('register')])
-{{ __('Crear cuenta') }}
-@endcomponent
-
-{{ __("Si ya tienes una cuenta, puedes aceptar esta invitación haciendo clic en el botón de abajo:") }}
+@if ($nombreUsuario)
+# ¡Hola, {{ $nombreUsuario }}!
 
 @else
-{{ __("Puedes aceptar esta invitación haciendo clic en el botón de abajo:") }}
+# ¡Hola!
+
+@endif
+
+¡Has sido invitado al equipo {{ $equipo->nombre }} de tseyor.org!
+
+@if ($nombreUsuario)
+Puedes aceptar esta invitación haciendo clic en el siguiente botón:
+
+@component('mail::button', ['url' => $aceptarUrl])
+Aceptar Invitación
+@endcomponent
+
+@else
+Si no dispones de una cuenta en el sitio tseyor.org, necesitas seguir los siguientes pasos para unirte al equipo:
+
+Paso 1: Crea una cuenta haciendo clic en el siguiente botón:
+@component('mail::button', ['url' => route('register')])
+Crear cuenta
+@endcomponent
+
+Paso 2: Después de crear tu cuenta, puedes hacer clic en el siguiente botón para aceptar la invitación:
+@component('mail::button', ['url' => $aceptarUrl])
+Aceptar Invitación
+@endcomponent
+
+
 @endif
 
 
-@component('mail::button', ['url' => $acceptUrl])
-{{ __('Aceptar invitación') }}
-@endcomponent
+Si no deseas aceptar la invitación, puedes declinarla haciendo clic en el siguiente enlace:
+[Declinar Invitación]({{ $declinarUrl }})
 
-{{ __("Si no esperabas recibir una invitación a este equipo, puedes descartar este correo electrónico.") }}
+Atentamente,
+Coordinadores de [{{ $equipo->nombre }}]({{ route('equipo', $equipo->slug) }})
+
+
+[tseyor.org](https://tseyor.org)
 @endcomponent
