@@ -31,18 +31,18 @@
 
 
         <Modal :show="modalEnlace" @close="modalEnlace = false" centered>
-            <Card>
+            <div class="p-5">
                 <h3><span class="font-italic">{{ equipo.nombre }}</span></h3>
                 <div class="my-7">
                     {{ route('equipo', equipo.slug) }}
                 </div>
 
-                <div class="py-3 flex justify-center">
+                <div class="py-3 flex justify-end">
                     <button @click.prevent="modalEnlace = false" type="button" class="btn btn-neutral">
                         cerrar
                     </button>
                 </div>
-            </Card>
+            </div>
         </Modal>
 
     </div>
