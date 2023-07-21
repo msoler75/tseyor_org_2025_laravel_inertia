@@ -20,6 +20,7 @@ declare module 'vue' {
     AuthenticationCard: typeof import('./resources/js/Components/AuthenticationCard.vue')['default']
     AuthenticationCardLogo: typeof import('./resources/js/Components/AuthenticationCardLogo.vue')['default']
     Avatar: typeof import('./resources/js/Components/Avatar.vue')['default']
+    Back: typeof import('./resources/js/Components/Back.vue')['default']
     Banner: typeof import('./resources/js/Components/Banner.vue')['default']
     BlogPosts: typeof import('./resources/js/Sections/BlogPosts.vue')['default']
     Breadcrumb: typeof import('./resources/js/Components/Breadcrumb.vue')['default']

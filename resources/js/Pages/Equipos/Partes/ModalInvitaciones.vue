@@ -42,7 +42,7 @@
                     </tab>
 
 
-                    <tab :name="`Agregados ${usuariosInvitados.length ? '(' + usuariosInvitados.length + ')' : ''}`">
+                    <tab :name="`Invitados ${usuariosInvitados.length ? '(' + usuariosInvitados.length + ')' : ''}`">
                         <div class="min-h-[200px]">
 
                             <div class="overflow-y-auto max-h-[calc(100vh-480px)] md:max-h-[calc(100vh-420px)]  mt-3">

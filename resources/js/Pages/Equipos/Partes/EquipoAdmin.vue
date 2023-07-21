@@ -3,10 +3,10 @@
         <Card class="select-none">
             <h3>Administración</h3>
             <ul class="list-none p-0 space-y-2">
-                <li class="flex gap-2 items-center cursor-pointer">
+                <li class="flex gap-2 items-center cursor-pointer" @click="peticiones.mostrar">
                     <Icon icon="ph:envelope-duotone" />Administrar peticiones de ingreso
                 </li>
-                <li class="flex gap-2 items-center cursor-pointer">
+                <li class="flex gap-2 items-center cursor-pointer" @click="modalEnlace = true">
                     <Icon icon="ph:share-fat-duotone" />Enlace del equipo
                 </li>
                 <li class="flex gap-2 items-center cursor-pointer" @click="invitaciones.mostrar">
@@ -27,6 +27,24 @@
 
         <ModalInvitaciones :equipo="props.equipo" ref="invitaciones" />
 
+        <ModalPeticiones :equipo="props.equipo" ref="peticiones" />
+
+
+        <Modal :show="modalEnlace" @close="modalEnlace = false" centered>
+            <Card>
+                <h3><span class="font-italic">{{ equipo.nombre }}</span></h3>
+                <div class="my-7">
+                    {{ route('equipo', equipo.slug) }}
+                </div>
+
+                <div class="py-3 flex justify-center">
+                    <button @click.prevent="modalEnlace = false" type="button" class="btn btn-neutral">
+                        cerrar
+                    </button>
+                </div>
+            </Card>
+        </Modal>
+
     </div>
 </template>
 
@@ -35,15 +53,15 @@
 import ModalConfiguracion from './ModalConfiguracion.vue'
 import ModalInvitaciones from './ModalInvitaciones.vue'
 import ModalMiembros from './ModalMiembros.vue'
+import ModalPeticiones from './ModalPeticiones.vue'
 
 const props = defineProps({ equipo: { type: Object, required: true } })
 
 const miembros = ref()
 const config = ref()
 const invitaciones = ref()
+const peticiones = ref()
 
-function abrirInvitaciones() {
-    console.log(invitaciones)
-    invitaciones.value.abrirInvitaciones()
-}
+const modalEnlace = ref(false)
+
 </script>
