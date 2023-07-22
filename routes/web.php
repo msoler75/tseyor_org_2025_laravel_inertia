@@ -78,22 +78,6 @@ Route::get('/enciclopedia/lugares/{id}', [LugaresController::class, 'show'])->na
 Route::get('/eventos', [EventosController::class, 'index'])->name('eventos');
 Route::get('/eventos/{id}', [EventosController::class, 'show'])->name('evento');
 
-Route::get('/equipos', [EquiposController::class, 'index'])->name('equipos');
-Route::get('/equipos/nuevo', function() {
-    return Inertia::render('Equipos/Nuevo', []);
-})->name('equipo.crear');
-Route::post('/equipos', [EquiposController::class, 'store'])->name('equipo.nuevo');
-Route::get('/equipos/{id}', [EquiposController::class, 'show'])->name('equipo');
-
-Route::post('/invitar/{idEquipo}', [EquiposController::class, 'invite'])->name('invitar');
-Route::get('/invitacion/{token}/aceptar', [EquiposController::class, 'acceptInvitation'])->name('invitacion.aceptar');
-Route::get('/invitacion/{token}/declinar', [EquiposController::class, 'declineInvitation'])->name('invitacion.declinar');
-
-Route::get('/equipos/{id}/solicitudes', [EquiposController::class, 'solicitudes'])->name('equipo.solicitudes');
-Route::get('/equipos/{id}/solicitar', [EquiposController::class, 'solicitar'])->name('equipo.solicitar');
-Route::get('/solicitud/{id}/aceptar', [EquiposController::class, 'aceptarSolicitud'])->name('solicitud.aceptar');
-Route::get('/solicitud/{id}/denegar', [EquiposController::class, 'denegarSolicitud'])->name('solicitud.denegar');
-
 
 Route::get('/donde-estamos', [ContactosController::class, 'index'])->name('contactos');
 Route::get('/contactos/{id}', [ContactosController::class, 'show'])->name('contacto');
@@ -162,3 +146,32 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
+
+
+
+// EQUIPOS
+
+Route::get('/equipos', [EquiposController::class, 'index'])->name('equipos');
+Route::get('/equipos/nuevo', function() {
+    return Inertia::render('Equipos/Nuevo', []);
+})->name('equipo.crear');
+Route::post('/equipos', [EquiposController::class, 'store'])->name('equipo.nuevo');
+Route::get('/equipos/{id}', [EquiposController::class, 'show'])->name('equipo');
+
+// invitaciones y respuesta
+Route::post('/invitar/{idEquipo}', [EquiposController::class, 'invite'])->name('invitar');
+Route::get('/invitacion/{token}/aceptar', [EquiposController::class, 'acceptInvitation'])->name('invitacion.aceptar');
+Route::get('/invitacion/{token}/declinar', [EquiposController::class, 'declineInvitation'])->name('invitacion.declinar');
+
+// solicitudes y respuesta
+Route::get('/equipos/{id}/solicitudes', [EquiposController::class, 'solicitudes'])->name('equipo.solicitudes');
+Route::get('/equipos/{id}/solicitar', [EquiposController::class, 'solicitar'])->name('equipo.solicitar');
+Route::get('/solicitud/{id}/aceptar', [EquiposController::class, 'aceptarSolicitud'])->name('solicitud.aceptar');
+Route::get('/solicitud/{id}/denegar', [EquiposController::class, 'denegarSolicitud'])->name('solicitud.denegar');
+
+// administración de miembros
+Route::put('/equipos/{idEquipo}/{idUsuario}/agregar', [EquiposController::class, 'addMember'])->name('equipo.agregar');
+Route::put('/equipos/{idEquipo}/{idUsuario}/remover', [EquiposController::class, 'removeMember'])->name('equipo.remover');
+Route::post('/equipos/{id}', [EquiposController::class, 'update'])->name('equipo.modificar');
+Route::put('/equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');

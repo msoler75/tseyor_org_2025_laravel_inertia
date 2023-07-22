@@ -267,7 +267,7 @@ class EquiposController extends Controller
         $usuario = User::findOrFail($idUsuario);
 
         // agregamos el usuario al equipo
-        $equipo->miembros->syncWithoutDetaching([$idUsuario]);
+        $equipo->miembros()->syncWithoutDetaching([$idUsuario]);
 
         return response()->json(['mensaje' => 'El usuario fue añadido al equipo'], 200);
     }
@@ -282,7 +282,7 @@ class EquiposController extends Controller
         $equipo = Equipo::findOrFail($idEquipo);
         $usuario = User::findOrFail($idUsuario);
         // removemos el usuario del equipo
-        $equipo->miembros->detach($idUsuario);
+        $equipo->miembros()->detach($idUsuario);
 
         return response()->json(['mensaje' => 'El usuario fue removido del equipo'], 200);
     }
@@ -302,7 +302,7 @@ class EquiposController extends Controller
 
 
         // Actualizamos el rol del usuario en el equipo
-        $equipo->miembros->updateExistingPivot($idUsuario, ['rol' => $rol]);
+        $equipo->miembros()->updateExistingPivot($idUsuario, ['rol' => $rol]);
 
         return response()->json(['mensaje' => 'El usuario fue actualizado dentro del equipo'], 200);
     }
