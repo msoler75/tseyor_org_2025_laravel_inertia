@@ -13,7 +13,7 @@
                                 <tr v-for="solicitud of equipo.solicitudesPendientes" :key="solicitud.id"
                                     class="cursor-pointer">
                                     <td>
-                                        <Avatar :user="solicitud.usuario" openTab />
+                                        <Avatar v-if="solicitud.usuario" :user="solicitud.usuario" openTab />
                                     </td>
                                     <td>
                                         <a :href="route('usuario', solicitud.usuario.slug || solicitud.usuario.id)"
@@ -23,19 +23,21 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <div v-if="solicitud.fecha_aceptacion" class="py-3 uppercase text-success" >
+                                        <div v-if="solicitud.fecha_aceptacion" class="py-3 uppercase text-success">
                                             solicitud aceptada
                                         </div>
-                                        <div v-else-if="solicitud.fecha_denegacion" class="py-3 uppercase text-error" >
+                                        <div v-else-if="solicitud.fecha_denegacion" class="py-3 uppercase text-error">
                                             solicitud denegada
                                         </div>
                                         <div v-else class="flex gap-3 mr-5 flex-shrink-0">
                                             <button class="btn" @click="aceptar(solicitud)">
-                                                <Icon icon="ph:thumbs-up-duotone"/>
-                                               <span class="hidden sm:inline"> aceptar</span></button>
+                                                <Icon icon="ph:thumbs-up-duotone" />
+                                                <span class="hidden sm:inline"> aceptar</span>
+                                            </button>
                                             <button class="btn" @click="denegar(solicitud)">
-                                                <Icon icon="ph:thumbs-down-duotone"/>
-                                                <span class="hidden sm:inline">denegar</span></button>
+                                                <Icon icon="ph:thumbs-down-duotone" />
+                                                <span class="hidden sm:inline">denegar</span>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -60,12 +62,22 @@
                             </thead>
                             <tbody>
                                 <tr v-for="solicitud of solicitudesHistorial" :key="solicitud.id">
-                                    <td><TimeAgo :date="solicitud.created_at"/></td>
-                                    <td><User :user="solicitud.usuario"/></td>
+                                    <td>
+                                        <TimeAgo :date="solicitud.created_at" />
+                                    </td>
+                                    <td>
+                                        <User :user="solicitud.usuario" />
+                                    </td>
                                     <td><span v-if="solicitud.fecha_aceptacion" class="text-success">Aceptada</span>
-                                        <span v-else class="text-error">Denegada</span></td>
-                                    <td><TimeAgo :date="solicitud.fecha_aceptacion||solicitud.fecha_denegacion"/></td>
-                                    <td><User :user="solicitud.coordinador"/></td>
+                                        <span v-else-if="solicitud.fecha_denegacion" class="text-error">Denegada</span>
+                                    </td>
+                                    <td>
+                                        <TimeAgo v-if="solicitud.fecha_aceptacion || solicitud.fecha_denegacion"
+                                            :date="solicitud.fecha_aceptacion || solicitud.fecha_denegacion" />
+                                    </td>
+                                    <td>
+                                        <User v-if="solicitud.coordinador" :user="solicitud.coordinador" />
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -96,8 +108,8 @@ const solicitudesHistorial = ref([])
 
 const props = defineProps({ equipo: { type: Object, required: true } })
 
-const numPendientes = computed(()=>{
-    return props.equipo.solicitudesPendientes.filter(s=>!s.fecha_aceptacion&&!s.fecha_denegacion).length
+const numPendientes = computed(() => {
+    return props.equipo.solicitudesPendientes.filter(s => !s.fecha_aceptacion && !s.fecha_denegacion).length
 })
 
 // Diálogo de ADMINISTRAR solicitudes de incorporación al equipo
@@ -120,24 +132,27 @@ onMounted(() => {
 })
 
 function aceptar(solicitud) {
-    solicitud.fecha_aceptacion = new Date()
+    solicitud.fecha_aceptacion = new Date().toISOString()
+    solicitud.coordinador = usePage().props.auth.user
     axios.get(route('solicitud.aceptar', solicitud.id))
-    .then(response=> {
-        solicitudesHistorial.value.unshift(solicitud)
-    })
-    .catch(error=>{
-        alert("Hubo algún error")
-    })
+        .then(response => {
+            solicitudesHistorial.value.unshift(solicitud)
+            // emit('')
+        })
+        .catch(error => {
+            alert("Hubo algún error")
+        })
 }
 
 function denegar(solicitud) {
-    solicitud.fecha_denegacion = new Date()
+    solicitud.fecha_denegacion = new Date().toISOString()
+    solicitud.coordinador = usePage().props.auth.user
     axios.get(route('solicitud.denegar', solicitud.id))
-    .then(response=> {
-        solicitudesHistorial.value.unshift(solicitud)
-    })
-    .catch(error=>{
-        alert("Hubo algún error")
-    })
+        .then(response => {
+            solicitudesHistorial.value.unshift(solicitud)
+        })
+        .catch(error => {
+            alert("Hubo algún error")
+        })
 }
 </script>

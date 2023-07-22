@@ -1,7 +1,7 @@
 <template>
     <div class="avatar" :title="user.name || user.nombre || user.slug">
         <div class="rounded-full" :class="imageClass">
-            <User :user="user" :popupCard="popupCard" v-if="link" target="_blank" class="w-full h-full">
+            <User :user="user" :popupCard="popupCard" v-if="link" class="w-full h-full">
                 <Image :src="image" :alt="name" :title="name" :fallback="fallbackImage"   />
             </User>
             <Image v-else :src="image" :alt="name" :title="name" :fallback="fallbackImage" />

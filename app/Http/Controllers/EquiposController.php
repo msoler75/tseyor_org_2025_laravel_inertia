@@ -129,6 +129,8 @@ class EquiposController extends Controller
                 // obtenemos la solicitud más reciente (si es que la hay)
                 $solicitud = Solicitud::where('user_id', $user->id)
                     ->where('equipo_id', $equipo->id)
+                    ->whereNull('fecha_aceptacion')
+                    ->whereNull('fecha_denegacion')
                     ->orderBy('created_at', 'desc') // recientes primero
                     ->first();
             }
@@ -473,7 +475,7 @@ class EquiposController extends Controller
 
 
     /**
-     * listar solicitudes pendientes
+     * listar historial de solicitudes resueltas
      */
     public function solicitudes($idEquipo)
     {
@@ -495,8 +497,7 @@ class EquiposController extends Controller
         $solicitudes = Solicitud::with('usuario')
             ->with('coordinador')
             ->where('equipo_id', $idEquipo)
-            //->whereNull('fecha_aceptacion')
-            //->whereNull('fecha_denegacion')
+            ->whereRaw('(fecha_aceptacion IS NOT NULL OR fecha_denegacion IS NOT NULL)')
             ->orderByRaw("COALESCE(fecha_aceptacion, fecha_denegacion, created_at) DESC")
             ->take(150)->get();
 
