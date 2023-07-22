@@ -21,7 +21,7 @@ class Equipo extends SEOModel
         'informacion'
     ];
 
-    public function usuarios()
+    public function miembros()
     {
         return $this->belongsToMany(User::class, 'equipo_user')
             ->using(Membresia::class)

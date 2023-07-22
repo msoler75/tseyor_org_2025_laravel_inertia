@@ -46,13 +46,13 @@ const props = defineProps({ equipo: { type: Object, required: true } })
 
 const modalMiembros = ref(false)
 const miembroBuscar = ref("")
-const usuariosFuse = useFuse(miembroBuscar, () => props.equipo.usuarios, { fuseOptions: { keys: ['nombre', 'email'], threshold: 0.3 } })
+const usuariosFuse = useFuse(miembroBuscar, () => props.equipo.miembros, { fuseOptions: { keys: ['nombre', 'email'], threshold: 0.3 } })
 
 const miembrosFiltrado = computed(() => {
-    if (!props.equipo.usuarios) return []
+    if (!props.equipo.miembros) return []
     if (miembroBuscar.value)
         return usuariosFuse.results.value.map(r => ({ id: r.item.id, nombre: r.item.nombre /* +r.refIndex*/, pivot: r.item.pivot }))
-    return props.equipo.usuarios
+    return props.equipo.miembros
 });
 
 // mostrar modal

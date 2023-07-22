@@ -1,29 +1,52 @@
 <template>
-    <Modal :show="modalSolicitudes" maxWidth="sm" @close="modalSolicitudes = false">
-        <div class="bg-base-200 p-5 flex flex-col gap-5 max-h-[90vh] select-none">
+    <Modal :show="modalSolicitudes" @close="modalSolicitudes = false">
+        <div class="bg-base-200 p-5 flex flex-col gap-5 select-none">
             <h3>Solicitudes de ingreso</h3>
 
-            <input type="search" class="input shadow flex-shrink-0" placeholder="Buscar..." v-model="miembroBuscar">
+            <tabs>
+                <tab :name="`Solicitudes pendientes (${equipo.solicitudesPendientes.length})`">
 
-            <div class="overflow-y-auto bg-base-100 shadow">
-                <table v-if="equipo.solicitudesPendientes.length " class="table w-full">
-                    <tbody class="divide-y">
-                        <tr v-for="solicitud of equipo.solicitudesPendientes" :key="user.id" class="cursor-pointer"
-                            :class="user.pivot.rol == 'coordinador' ? 'bg-blue-50' : ''">
-                            <td><Avatar :user="solicitud.usuario"/></td>
-                            <td>{{ solicitud.nombre }}</td>
-                            <td>{{ solicitud.email }}</td>
-                            <td>
-                                <button class="btn">aceptar</button>
-                                <button class="btn">denegar</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div v-else class="py-2">
-                    No hay solicitudes pendientes.
-                </div>
-            </div>
+                    <div v-if="equipo.solicitudesPendientes.length"
+                        class="overflow-y-auto bg-base-100 shadow max-h-[calc(100vh-470px)]">
+                        <table class="table w-full">
+                            <tbody class="divide-y">
+                                <tr v-for="solicitud of equipo.solicitudesPendientes" :key="solicitud.id"
+                                    class="cursor-pointer">
+                                    <td>
+                                        <Avatar :user="solicitud.usuario" openTab />
+                                    </td>
+                                    <td>
+                                        <a :href="route('usuario', solicitud.usuario.slug || solicitud.usuario.id)"
+                                            target="_blank">
+                                            {{ solicitud.usuario.name }}
+                                            &lt;{{ solicitud.usuario.email }}&gt;
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <div class="flex gap-3">
+                                            <button class="btn">aceptar</button>
+                                            <button class="btn">denegar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-else class="py-2">
+                        No hay solicitudes pendientes.
+                    </div>
+                </tab>
+
+                <tab name="Historial">
+                    <div v-if="solicitudesHistorial.length"
+                        class="overflow-y-auto bg-base-100 shadow max-h-[calc(100vh-470px)]">
+                        <ul>
+                            <li v-for="solicitud of solicitudesHistorial" :key="solicitud.id">{{ solicitud }}</li>
+                        </ul>
+                    </div>
+                </tab>
+            </tabs>
+
 
 
             <div class="py-3 flex justify-between sm:justify-end gap-5">
@@ -37,6 +60,7 @@
 
 
 <script setup>
+import { Tabs, Tab } from 'vue3-tabs-component';
 
 defineExpose({
     mostrar

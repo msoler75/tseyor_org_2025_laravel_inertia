@@ -161,7 +161,7 @@ const usuariosParaInvitar = computed(() => {
         .map(u => ({
             ...u,
             agregado: !!usuariosInvitados.value.find(ui => ui.id == u.id),
-            miembro: props.equipo.usuarios.find(eu => eu.id == u.id) ? 1 : 0
+            miembro: props.equipo.miembros.find(eu => eu.id == u.id) ? 1 : 0
         }))
         .sort((a, b) => (a.miembro - b.miembro))
 

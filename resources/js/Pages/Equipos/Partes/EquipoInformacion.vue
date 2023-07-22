@@ -12,14 +12,14 @@
                 <div class="badge badge-neutral">{{ equipo.categoria }}</div>
                 <div class="sm:hidden flex justify-center text-2xl mt-12">
                     <Icon icon="ph:user-duotone" />
-                    {{ equipo.usuarios.length }}
+                    {{ equipo.miembros.length }}
                 </div>
 
             </div>
 
             <div class="hidden sm:flex sm:ml-auto gap-3 text-2xl items-center self-end justify-center">
                 <Icon icon="ph:user-duotone" />
-                {{ equipo.usuarios.length }}
+                {{ equipo.miembros.length }}
             </div>
         </div>
     </div>

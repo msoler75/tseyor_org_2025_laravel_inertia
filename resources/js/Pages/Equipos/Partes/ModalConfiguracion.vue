@@ -9,7 +9,7 @@
 
                     <div>
                         <label for="nombre">Nombre</label>
-                        <input id="nombre" v-model="edicion.nombre" required :readonly="equipo.usuarios.length >= 3"
+                        <input id="nombre" v-model="edicion.nombre" required :readonly="equipo.miembros.length >= 3"
                             class="input" />
                         <div v-if="edicion.errors.nombre" class="error">{{ edicion.errors.nombre[0] }}</div>
                         <div v-else class="text-sm">Nombre del equipo. No se puede editar si tiene 3 miembros o
