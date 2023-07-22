@@ -35,15 +35,15 @@ class EquiposController extends Controller
         $categoria = $request->input('categoria');
 
         $resultados = $categoria ?
-            Equipo::withCount('usuarios')
+            Equipo::withCount('miembros')
             ->where('categoria', '=', $categoria)
             ->paginate(10)->appends(['categoria' => $categoria])
-            : ($filtro ? Equipo::withCount('usuarios')
+            : ($filtro ? Equipo::withCount('miembros')
                 ->where('nombre', 'like', '%' . $filtro . '%')
                 ->orWhere('descripcion', 'like', '%' . $filtro . '%')
                 ->paginate(10)->appends(['buscar' => $filtro])
                 :
-                Equipo::withCount('usuarios')->latest()->paginate(10)
+                Equipo::withCount('miembros')->latest()->paginate(10)
             );
 
         $categorias = Equipo::selectRaw('categoria as nombre, count(*) as total')
@@ -64,7 +64,7 @@ class EquiposController extends Controller
      */
     public function show($id)
     {
-        $equipo = Equipo::with(['usuarios' => function ($query) {
+        $equipo = Equipo::with(['miembros' => function ($query) {
             $query->select('users.id', 'users.name as nombre', 'users.slug', 'profile_photo_path as avatar')
                 ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
                 // ->take(30)
@@ -101,23 +101,28 @@ class EquiposController extends Controller
         $soyCoordinador = false;
 
         if ($user) {
-            // Verificar si el usuario ya es miembro del equipo
-            if (!$equipo->usuarios()->where('users.id', $user->id)->exists()) {
 
-                $soyMiembro = true;
+            $soyMiembro = $equipo->miembros->contains(function ($usuario) use ($user) {
+                return $usuario->id === $user->id;
+            });
+
+            // Verificar si el usuario ya es miembro del equipo
+            if ($soyMiembro) {
 
                 // verificar si es coordinador del equipo
-                if (!$equipo->coordinadores->contains($user)) {
-
+                if ($equipo->coordinadores->contains(function ($coordinador) use ($user) {
+                    return $coordinador->id === $user->id;
+                }))
+                {
                     // soy coordinador de este equipo
                     $soyCoordinador = true;
 
                     // carga la lista de solicitudes pendientes
                     $solicitudes = Solicitud::with('usuario')
-                        ->where('equipo_id', $equipo->id)
-                        ->whereNull('fecha_aceptacion')
-                        ->whereNull('fecha_denegacion')
-                        ->get();
+                    ->where('equipo_id', $equipo->id)
+                    ->whereNull('fecha_aceptacion')
+                    ->whereNull('fecha_denegacion')
+                    ->get();
                 }
             } else {
                 // si no somos miembros, comprobamos la solicitud de ingreso
@@ -129,12 +134,13 @@ class EquiposController extends Controller
             }
         }
 
+        $equipo->solicitudesPendientes= $solicitudes;
+
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
             'carpetas' => $carpetas,
             'ultimosArchivos' =>  array_slice($ultimosArchivos, 0, 10),
             'miSolicitud' => $solicitud,
-            'solicitudesPendientes' => $solicitudes,
             'soyMiembro' => $soyMiembro,
             'soyCoordinador' => $soyCoordinador
             /*
@@ -257,7 +263,7 @@ class EquiposController extends Controller
         $usuario = User::findOrFail($idUsuario);
 
         // agregamos el usuario al equipo
-        $equipo->usuarios()->syncWithoutDetaching([$idUsuario]);
+        $equipo->miembros()->syncWithoutDetaching([$idUsuario]);
 
         return response()->json(['mensaje' => 'El usuario fue añadido al equipo'], 200);
     }
@@ -272,7 +278,7 @@ class EquiposController extends Controller
         $equipo = Equipo::findOrFail($idEquipo);
         $usuario = User::findOrFail($idUsuario);
         // removemos el usuario del equipo
-        $equipo->usuarios()->detach($idUsuario);
+        $equipo->miembros()->detach($idUsuario);
 
         return response()->json(['mensaje' => 'El usuario fue removido del equipo'], 200);
     }
@@ -292,7 +298,7 @@ class EquiposController extends Controller
 
 
         // Actualizamos el rol del usuario en el equipo
-        $equipo->usuarios()->updateExistingPivot($idUsuario, ['rol' => $rol]);
+        $equipo->miembros()->updateExistingPivot($idUsuario, ['rol' => $rol]);
 
         return response()->json(['mensaje' => 'El usuario fue actualizado dentro del equipo'], 200);
     }
@@ -321,7 +327,7 @@ class EquiposController extends Controller
         // mandamos invitaciones a los correos proporcionados
         foreach ($validatedData['correos'] as $correo) {
             // Verificar si el correo ya está asociado al equipo
-            if ($equipo->usuarios()->where('email', $correo)->exists()) {
+            if ($equipo->miembros()->where('email', $correo)->exists()) {
                 continue;
             }
 
@@ -367,7 +373,7 @@ class EquiposController extends Controller
             if (!$correo) continue;
 
             // Verificar si el usuario ya es miembro del equipo
-            if ($equipo->usuarios()->where('id', $usuario->id)->exists()) {
+            if ($equipo->miembros()->where('id', $usuario->id)->exists()) {
                 continue;
             }
 
@@ -566,7 +572,7 @@ class EquiposController extends Controller
         $solicitante = $solicitud->usuario();
 
         // agregamos el usuario al equipo
-        $solicitud->equipo()->usuarios()->syncWithoutDetaching([$solicitante->id]);
+        $solicitud->equipo->miembros()->syncWithoutDetaching([$solicitante->id]);
 
         // Enviar el correo informativo
         Mail::to($solicitante->email)->send(new IncorporacionEquipoEmail($solicitud->equipo(), $solicitante, true, true));

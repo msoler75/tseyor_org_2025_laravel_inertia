@@ -14,9 +14,9 @@ class Solicitud extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
-        'equipo_id',
-        'por_user_id', // quien acepta o deniega la solicitud
+        'user_id', // usuario que realiza la solicitud
+        'equipo_id', // equipo donde realiza la solicitud de ingreso
+        'por_user_id', // usuario que acepta o deniega la solicitud
         'fecha_aceptacion',
         'fecha_denegacion'
     ];
@@ -26,7 +26,7 @@ class Solicitud extends Model
      */
     public function usuario()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     /**
@@ -34,6 +34,6 @@ class Solicitud extends Model
      */
     public function equipo()
     {
-        return $this->belongsTo(Equipo::class);
+        return $this->belongsTo(Equipo::class, 'equipo_id', 'id');
     }
 }

@@ -7,7 +7,7 @@
             </h1>
             <div class="hidden sm:flex ml-auto gap-3 text-2xl items-center">
                 <Icon icon="ph:user-duotone" />
-                {{ equipo.usuarios.length }}
+                {{ equipo.miembros.length }}
             </div>
         </div>
     </div>

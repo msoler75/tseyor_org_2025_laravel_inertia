@@ -5,6 +5,7 @@
             <ul class="list-none p-0 space-y-2">
                 <li class="flex gap-2 items-center cursor-pointer" @click="solicitudes.mostrar">
                     <Icon icon="ph:envelope-duotone" />Administrar solicitudes
+                    <span v-if="equipo.solicitudesPendientes.length" class="text-primary text-sm">({{ equipo.solicitudesPendientes.length }})</span>
                 </li>
                 <li class="flex gap-2 items-center cursor-pointer" @click="modalEnlace = true">
                     <Icon icon="ph:share-fat-duotone" />Enlace del equipo
