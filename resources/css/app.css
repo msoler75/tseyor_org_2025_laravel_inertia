@@ -157,13 +157,6 @@
 
 
 
-.avatar {
-    @apply justify-center;
-}
-.avatar > * {
-    @apply w-12 h-12 rounded-full overflow-hidden;
-}
-
 html, body, #app, #app>div {
     height: 100%
 }

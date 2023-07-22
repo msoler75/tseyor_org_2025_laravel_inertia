@@ -5,7 +5,7 @@
             <ul class="list-none p-0 space-y-2">
                 <li class="flex gap-2 items-center cursor-pointer" @click="solicitudes.mostrar">
                     <Icon icon="ph:envelope-duotone" />Administrar solicitudes
-                    <span v-if="equipo.solicitudesPendientes.length" class="text-primary text-sm">({{ equipo.solicitudesPendientes.length }})</span>
+                    <span v-if="numSolicitudesPendientes" class="text-primary text-sm">({{ numSolicitudesPendientes }})</span>
                 </li>
                 <li class="flex gap-2 items-center cursor-pointer" @click="modalEnlace = true">
                     <Icon icon="ph:share-fat-duotone" />Enlace del equipo
@@ -63,5 +63,9 @@ const invitaciones = ref()
 const solicitudes = ref()
 
 const modalEnlace = ref(false)
+
+const numSolicitudesPendientes =  computed(()=>{
+    return props.equipo.solicitudesPendientes.filter(s=>!s.fecha_aceptacion&&!s.fecha_denegacion).length
+})
 
 </script>

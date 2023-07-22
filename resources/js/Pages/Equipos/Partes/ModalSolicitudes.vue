@@ -3,8 +3,8 @@
         <div class="bg-base-200 p-5 flex flex-col gap-5 select-none">
             <h3>Solicitudes de ingreso</h3>
 
-            <tabs>
-                <tab :name="`Solicitudes pendientes (${equipo.solicitudesPendientes.length})`">
+            <tabs :options="{ useUrlFragment: false }">
+                <tab :name="`Solicitudes pendientes (${numPendientes})`">
 
                     <div v-if="equipo.solicitudesPendientes.length"
                         class="overflow-y-auto bg-base-100 shadow max-h-[calc(100vh-470px)]">
@@ -23,9 +23,19 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <div class="flex gap-3">
-                                            <button class="btn">aceptar</button>
-                                            <button class="btn">denegar</button>
+                                        <div v-if="solicitud.fecha_aceptacion" class="py-3 uppercase text-success" >
+                                            solicitud aceptada
+                                        </div>
+                                        <div v-else-if="solicitud.fecha_denegacion" class="py-3 uppercase text-error" >
+                                            solicitud denegada
+                                        </div>
+                                        <div v-else class="flex gap-3 mr-5 flex-shrink-0">
+                                            <button class="btn" @click="aceptar(solicitud)">
+                                                <Icon icon="ph:thumbs-up-duotone"/>
+                                               <span class="hidden sm:inline"> aceptar</span></button>
+                                            <button class="btn" @click="denegar(solicitud)">
+                                                <Icon icon="ph:thumbs-down-duotone"/>
+                                                <span class="hidden sm:inline">denegar</span></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -40,9 +50,25 @@
                 <tab name="Historial">
                     <div v-if="solicitudesHistorial.length"
                         class="overflow-y-auto bg-base-100 shadow max-h-[calc(100vh-470px)]">
-                        <ul>
-                            <li v-for="solicitud of solicitudesHistorial" :key="solicitud.id">{{ solicitud }}</li>
-                        </ul>
+                        <table class="table">
+                            <thead>
+                                <th>Fecha de solicitud</th>
+                                <th>Usuario</th>
+                                <th>Respuesta</th>
+                                <th></th>
+                                <th>Por</th>
+                            </thead>
+                            <tbody>
+                                <tr v-for="solicitud of solicitudesHistorial" :key="solicitud.id">
+                                    <td><TimeAgo :date="solicitud.created_at"/></td>
+                                    <td><User :user="solicitud.usuario"/></td>
+                                    <td><span v-if="solicitud.fecha_aceptacion" class="text-success">Aceptada</span>
+                                        <span v-else class="text-error">Denegada</span></td>
+                                    <td><TimeAgo :date="solicitud.fecha_aceptacion||solicitud.fecha_denegacion"/></td>
+                                    <td><User :user="solicitud.coordinador"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </tab>
             </tabs>
@@ -70,6 +96,10 @@ const solicitudesHistorial = ref([])
 
 const props = defineProps({ equipo: { type: Object, required: true } })
 
+const numPendientes = computed(()=>{
+    return props.equipo.solicitudesPendientes.filter(s=>!s.fecha_aceptacion&&!s.fecha_denegacion).length
+})
+
 // Diálogo de ADMINISTRAR solicitudes de incorporación al equipo
 
 const modalSolicitudes = ref(false)
@@ -89,4 +119,25 @@ onMounted(() => {
         })
 })
 
+function aceptar(solicitud) {
+    solicitud.fecha_aceptacion = new Date()
+    axios.get(route('solicitud.aceptar', solicitud.id))
+    .then(response=> {
+        solicitudesHistorial.value.unshift(solicitud)
+    })
+    .catch(error=>{
+        alert("Hubo algún error")
+    })
+}
+
+function denegar(solicitud) {
+    solicitud.fecha_denegacion = new Date()
+    axios.get(route('solicitud.denegar', solicitud.id))
+    .then(response=> {
+        solicitudesHistorial.value.unshift(solicitud)
+    })
+    .catch(error=>{
+        alert("Hubo algún error")
+    })
+}
 </script>

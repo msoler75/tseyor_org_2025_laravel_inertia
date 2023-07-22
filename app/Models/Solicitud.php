@@ -22,7 +22,7 @@ class Solicitud extends Model
     ];
 
     /**
-     * Get the usuario that owns the peticion.
+     * Get the usuario that sent the peticion.
      */
     public function usuario()
     {
@@ -35,5 +35,13 @@ class Solicitud extends Model
     public function equipo()
     {
         return $this->belongsTo(Equipo::class, 'equipo_id', 'id');
+    }
+
+      /**
+     * Get the user that answered the peticion.
+     */
+    public function coordinador()
+    {
+        return $this->belongsTo(User::class, 'por_user_id', 'id');
     }
 }

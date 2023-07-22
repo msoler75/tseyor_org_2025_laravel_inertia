@@ -1,22 +1,38 @@
 <template>
     <div class="avatar" :title="user.name || user.nombre || user.slug">
-        <div class="w-32 rounded-full">
-            <component :is="openTab?'a':Link" v-if="link" target="_blank" :href="route('usuario', { id: user.slug || user.id })">
-            <Image :src="image" :alt="name" :title="name" fallback="/storage/profile-photos/user.png" />
-            </component>
-            <Image v-else :src="image" :alt="name" :title="name" fallback="/storage/profile-photos/user.png" />
+        <div class="rounded-full" :class="imageClass">
+            <User :user="user" :popupCard="popupCard" v-if="link" target="_blank" class="w-full h-full">
+                <Image :src="image" :alt="name" :title="name" :fallback="fallbackImage"   />
+            </User>
+            <Image v-else :src="image" :alt="name" :title="name" :fallback="fallbackImage" />
         </div>
     </div>
 </template>
 
 <script setup>
-import {Link} from '@inertiajs/vue3'
+const fallbackImage = ref('/storage/profile-photos/user.png')
+
 const props = defineProps({
     user: { type: Object, required: true },
     link: { type: Boolean, default: true },
-    openTab: {type: Boolean, default: false}
+    big: { type: Boolean, default: false },
+    popupCard: { type: Boolean, default: true }
 })
 
 const name = computed(() => props.user.name || props.user.nombre)
 const image = computed(() => props.user.avatar || props.user.profile_photo_path || props.user.imagen)
+
+const imageClass=computed(()=>{
+    if(props.big) return 'w-32 h-32'
+    return 'w-16 h-16'
+})
 </script>
+
+<style scoped>
+.avatar {
+    @apply justify-center flex-shrink-0 flex-grow-0;
+}
+.avatar > * {
+    @apply rounded-full overflow-hidden flex-shrink-0 ;
+}
+</style>
