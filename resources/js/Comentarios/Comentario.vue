@@ -1,6 +1,6 @@
 <template>
     <div class="w-full flex gap-3">
-        <img :src="'/storage/' + autor.imagen" class="w-16 h-16 rounded-full">
+        <Avatar :user="autor" />
         <div class="flex-grow">
             <div class="flex flex-col gap-3 mb-3">
                 <div class="flex flex-col gap-1">

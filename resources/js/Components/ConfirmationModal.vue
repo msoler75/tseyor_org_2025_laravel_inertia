@@ -16,6 +16,10 @@ defineProps({
         type: Boolean,
         default: true,
     },
+    centered: {
+        type: Boolean,
+        default: false
+    }
 });
 
 const close = () => {
@@ -28,6 +32,7 @@ const close = () => {
         :show="show"
         :max-width="maxWidth"
         :closeable="closeable"
+        :centered="centered"
         @close="close"
     >
         <div class="bg-base-100 dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">

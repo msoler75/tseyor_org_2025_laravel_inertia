@@ -1,6 +1,6 @@
 <template>
     <component :is="popupCard ? 'div' : Link" :href="route('usuario', { id: user.slug || user.id })"
-        :title="user.name || user.nombre || user.slug" class="cursor-pointer" :class="class" @click="onClick">
+        :title="user.name || user.nombre || user.slug" class="inline-block font-bold cursor-pointer" :class="class" @click="onClick">
         <template v-slot:default>
             <span v-if="!$slots.default">{{ name }}</span>
             <slot />

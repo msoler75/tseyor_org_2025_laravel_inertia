@@ -137,7 +137,7 @@ function aceptar(solicitud) {
     axios.get(route('solicitud.aceptar', solicitud.id))
         .then(response => {
             solicitudesHistorial.value.unshift(solicitud)
-            // emit('')
+            props.equipo.usuarios.unshift(solicitud.usuario)
         })
         .catch(error => {
             alert("Hubo algún error")
