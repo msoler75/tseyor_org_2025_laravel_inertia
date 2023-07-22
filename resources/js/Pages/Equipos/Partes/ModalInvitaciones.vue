@@ -6,7 +6,7 @@
             <h3>Invitar al equipo</h3>
             <form @submit.prevent="invitar" class="flex flex-col gap-7 select-none">
 
-                <tabs>
+                <tabs :options="{ useUrlFragment: false }">
 
 
                     <tab name="Buscar usuarios">

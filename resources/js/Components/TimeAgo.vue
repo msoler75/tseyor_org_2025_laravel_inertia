@@ -1,5 +1,5 @@
 <template>
-    <span :title="formattedDate" class="timeago">{{ tiempo }}</span>
+    <span :title="formattedDate" class="timeago" @click="modoAgo=!modoAgo" :style="modoAgo?{}:{fontSize:'80%'}">{{ modoAgo?timeAgo:formattedDate }}</span>
 </template>
 
 <script setup>
@@ -8,7 +8,8 @@ const props = defineProps({
     date: String | Number
 })
 
-const tiempo = ref('');
+const timeAgo = ref('');
+const modoAgo = ref(true)
 
 const formattedDate = computed(() => {
     if (!props.date) {
@@ -31,24 +32,24 @@ const formattedDate = computed(() => {
             fechaPublicacion.getMonth() === fechaActual.getMonth() &&
             fechaPublicacion.getDate() === fechaActual.getDate()
         ) {
-            tiempo.value = 'hoy';
+            timeAgo.value = 'hoy';
         } else {
             const diferencia = Math.floor((fechaActual.getTime() - fechaPublicacion.getTime()) / 1000);
 
             if (diferencia < 60) {
-                tiempo.value = `hace ${diferencia} ${pluralize('segundo', diferencia)}`;
+                timeAgo.value = `hace ${diferencia} ${pluralize('segundo', diferencia)}`;
             } else if (diferencia < 3600) {
-                tiempo.value = `hace ${Math.floor(diferencia / 60)} ${pluralize('minuto', Math.floor(diferencia / 60))}`;
+                timeAgo.value = `hace ${Math.floor(diferencia / 60)} ${pluralize('minuto', Math.floor(diferencia / 60))}`;
             } else if (diferencia < 86400) {
-                tiempo.value = `hace ${Math.floor(diferencia / 3600)} ${pluralize('hora', Math.floor(diferencia / 3600))}`;
+                timeAgo.value = `hace ${Math.floor(diferencia / 3600)} ${pluralize('hora', Math.floor(diferencia / 3600))}`;
             } else if (diferencia < 604800) {
-                tiempo.value = `hace ${Math.floor(diferencia / 86400)} ${pluralize('día', Math.floor(diferencia / 86400))}`;
+                timeAgo.value = `hace ${Math.floor(diferencia / 86400)} ${pluralize('día', Math.floor(diferencia / 86400))}`;
             } else if (diferencia < 2592000) {
-                tiempo.value = `hace ${Math.floor(diferencia / 604800)} ${pluralize('semana', Math.floor(diferencia / 604800))}`;
+                timeAgo.value = `hace ${Math.floor(diferencia / 604800)} ${pluralize('semana', Math.floor(diferencia / 604800))}`;
             } else if (diferencia < 31536000) {
-                tiempo.value = `hace ${Math.floor(diferencia / 2592000)} ${pluralize('mes', Math.floor(diferencia / 2592000))}`;
+                timeAgo.value = `hace ${Math.floor(diferencia / 2592000)} ${pluralize('mes', Math.floor(diferencia / 2592000))}`;
             } else {
-                tiempo.value = `hace ${Math.floor(diferencia / 31536000)} ${pluralize('año', Math.floor(diferencia / 31536000))}`;
+                timeAgo.value = `hace ${Math.floor(diferencia / 31536000)} ${pluralize('año', Math.floor(diferencia / 31536000))}`;
             }
         }
 

@@ -15,6 +15,7 @@
                                 <select v-model="user.pivot.rol" class="select" @change="changeRol(user)">
                                     <option value="coordinador">coordinador</option>
                                     <option value=""><span class="opacity-50">miembro</span></option>
+                                    <option value="eliminar">eliminar</option>
                                 </select>
                             </td>
                         </tr>
@@ -51,8 +52,8 @@ const usuariosFuse = useFuse(miembroBuscar, () => props.equipo.miembros, { fuseO
 const miembrosFiltrado = computed(() => {
     if (!props.equipo.miembros) return []
     if (miembroBuscar.value)
-        return usuariosFuse.results.value.map(r => ({ id: r.item.id, nombre: r.item.nombre /* +r.refIndex*/, pivot: r.item.pivot }))
-    return props.equipo.miembros
+        return usuariosFuse.results.value.map(r => ({ id: r.item.id, nombre: r.item.nombre /* +r.refIndex*/, pivot: r.item.pivot, rol: ''+r.item.pivot.rol }))
+    return props.equipo.miembros.map(u=>({...u, rol: ''+u.pivot.rol}))
 });
 
 // mostrar modal
@@ -62,7 +63,7 @@ function mostrar() {
 }
 
 function changeRol(user) {
-    console.log('changedRol', user)
+    console.log('changedRol', user.rol, '->', user.pivot.rol)
     axios.put(route('equipo.modificarRol', { idEquipo: props.equipo.id, idUsuario: user.id, rol: user.pivot.rol || 'miembro' }))
         .catch(err => {
             alert("No se han podido guardar los cambios")

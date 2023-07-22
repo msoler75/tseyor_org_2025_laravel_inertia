@@ -14,7 +14,7 @@
                     <TimeAgo :date="lugar.updated_at" />
                 </p>
                 <div class="mb-4"></div>
-                <tabs>
+                <tabs >
                     <tab v-if="lugar.descripcion || lugar.texto" name="Descripción">
                         <div v-if="lugar.texto" class="prose" v-html="lugar.texto"></div>
                         <div v-else class="prose">{{ lugar.descripcion }}</div>

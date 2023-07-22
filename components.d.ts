@@ -105,6 +105,7 @@ declare module 'vue' {
     TransitionFade: typeof import('./resources/js/Sections/TransitionFade.vue')['default']
     TransitionList: typeof import('./resources/js/Sections/TransitionList.vue')['default']
     Uploader: typeof import('./resources/js/Components/Uploader.vue')['default']
+    User: typeof import('./resources/js/Components/User.vue')['default']
     UserComment: typeof import('./resources/js/Components/UserComment.vue')['default']
     UserCommentsTree: typeof import('./resources/js/Components/UserCommentsTree.vue')['default']
     Users: typeof import('./resources/js/Components/Users.vue')['default']
