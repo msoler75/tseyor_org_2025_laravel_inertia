@@ -3,7 +3,7 @@
         eres miembro
     </div>
     <div v-else-if="solicitud && !solicitud.fecha_denegacion" class="uppercase py-3 text-center">
-        Solicitud pendiente
+        Solicitud enviada
     </div>
     <button v-else class="btn btn-primary w-fit" @click="solicitarIngreso">
         <span v-if="solicitando" class="flex gap-2 items-center">
