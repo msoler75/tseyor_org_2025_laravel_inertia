@@ -1,11 +1,21 @@
 <template>
-    <div v-if="soyMiembro" class="uppercase py-3">
-        eres miembro
+    <div v-if="soyMiembro">
+        <Dropdown>
+            <template #trigger>
+                <div class="uppercase py-3">
+                    <span v-if="soyCoordinador">eres coordinador</span>
+                    <span v-else>eres miembro</span>
+                </div>
+            </template>
+            <template #content>
+                Rol:
+            </template>
+        </Dropdown>
     </div>
     <div v-else-if="solicitud && !solicitud.fecha_denegacion" class="uppercase py-3 text-center">
         Solicitud enviada
     </div>
-    <button v-else class="btn btn-primary w-fit" @click="solicitarIngreso">
+    <button v-else-if="$page.props.user" class="btn btn-primary w-fit" @click="solicitarIngreso">
         <span v-if="solicitando" class="flex gap-2 items-center">
             <Spinner /> Solicitando...
         </span>
@@ -19,7 +29,8 @@
 const props = defineProps({
     modelValue: { required: true },
     equipoId: Number,
-    soyMiembro: Boolean
+    soyMiembro: Boolean,
+    soyCoordinador: Boolean
 })
 
 const emit = defineEmits(['update:modelValue'])

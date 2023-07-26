@@ -12,10 +12,10 @@
                             :class="user.pivot.rol == 'coordinador' ? 'bg-blue-50' : ''">
                             <td>{{ user.nombre }}</td>
                             <td>
-                                <select v-model="user.pivot.rol" class="select" @change="changeRol(user)">
+                                <select v-model="user.pivot.rol" class="select" @change="cambiarRol(user)">
                                     <option value="coordinador">coordinador</option>
                                     <option value="">miembro</option>
-                                    <option value="eliminar">eliminar</option>
+                                    <option v-if="user.pivot.rol!='coordinador'" value="eliminar">eliminar</option>
                                 </select>
                             </td>
                         </tr>
@@ -35,7 +35,7 @@
     </Modal>
 
 
-    <!-- Delete Token Confirmation Modal -->
+    <!-- Confirmación de eliminación de miembro -->
     <ConfirmationModal :show="usuarioEliminar != null" @close="usuarioEliminar = null" centered>
         <template #title>
             Eliminar usuario del equipo
@@ -57,6 +57,35 @@
             </DangerButton>
         </template>
     </ConfirmationModal>
+
+
+     <!-- Confirmación de degradación de coordinador -->
+     <ConfirmationModal :show="coordinadorDegradar != null" @close="coordinadorDegradar = null" centered>
+        <template #title>
+            Quitar permisos de coordinador/a
+        </template>
+
+        <template #content>
+            <div v-if="coordinadorDegradar.id==$page.props.user.id">
+                ¿Quieres dejar de ser coordinador/a de este equipo?
+            </div>
+            <div v-else>
+                ¿Quieres remover los permisos de coordinador/a a
+                <User v-if="coordinadorDegradar" :user="coordinadorDegradar" />?
+            </div>
+            <p  v-if="coordinadores.length==1">Si lo haces el equipo se quedará sin coordinadores, y se asignará la coordinación al miembro más antiguo.</p>
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="coordinadorDegradar = null">
+                Cancelar
+            </SecondaryButton>
+
+            <DangerButton class="ml-3" @click="degradarCoordinador">
+                Quitar permisos
+            </DangerButton>
+        </template>
+    </ConfirmationModal>
 </template>
 
 
@@ -68,14 +97,17 @@ defineExpose({
 });
 
 const props = defineProps({ equipo: { type: Object, required: true } })
-const prevState = ref({})
+const page = usePage()
+const prevState = ref({}) // para guardar el estado previo de cada usuario en el select
 const usuarioEliminar = ref(null)
+const coordinadorDegradar = ref(null)
 
 // Diálogo de ADMINISTRAR Miembros
 
 const modalMiembros = ref(false)
 const miembroBuscar = ref("")
 const usuariosFuse = useFuse(miembroBuscar, () => props.equipo.miembros, { fuseOptions: { keys: ['nombre', 'email'], threshold: 0.3 } })
+const coordinadores = computed(()=>equipo.miembros.filter(u=>u.pivot.rol=='coordinador'))
 
 const miembrosFiltrado = computed(() => {
     if (!props.equipo.miembros) return []
@@ -90,25 +122,56 @@ function mostrar() {
     modalMiembros.value = true
 }
 
-function changeRol(user) {
+function cambiarRol(user) {
     console.log('changedRol', prevState.value[user.id], '->', user.pivot.rol)
+    console.log('coordinadores', coordinadores.value.length)
     if (user.pivot.rol == 'eliminar') {
         usuarioEliminar.value = user
         // restauramos su estado actual
         user.pivot.rol = prevState.value[user.id]
     }
-    else {
-        axios.put(route('equipo.modificarRol', { idEquipo: props.equipo.id, idUsuario: user.id, rol: user.pivot.rol || 'miembro' }))
+    else if (user.pivot.rol == 'coordinador') {
+        // para degradarnos a nosotros mismos hemos de confirmar tal acción
+        // también hemos de confirmarlo si ya solo queda un solo coordinador
+        if((page.props.user && coordinadores.value.includes(page.props.user.id)) ||
+        coordinadores.value.length==1
+        ) {
+            coordinadorDegradar.value = user
+
+            // restauramos su estado actual
+            user.pivot.rol = prevState.value[user.id]
+        }
+    }
+    else modificarRol(user)
+}
+
+function modificarRol(user) {
+    axios.put(route('equipo.modificarRol', { idEquipo: props.equipo.id, idUsuario: user.id, rol: user.pivot.rol || 'miembro' }))
             .then(response => {
                 prevState.value[user.id] = user.pivot.rol
+                if(response.data.nuevoCoordinador) {
+                    const idx = props.equipo.miembros.findIndex(u=>u.id==nuevoCoordinador)
+                    if(idx>-1) {
+                        const u = props.equipo.miembros[idx]
+                        u.pivot.rol='coordinador'
+                        alert(u.name||u.nombre + ' ha adoptado el rol de coordinación del equipo')
+                    }
+                }
             })
             .catch(err => {
                 alert("No se han podido guardar los cambios")
             });
-    }
 }
 
 
+function degradarCoordinador() {
+    coordinadorDegradar.value.pivot.rol = null
+    modificarRol(coordinadorDegradar.value)
+    coordinadorDegradar.value = null
+}
+
+
+// guardamos el estado de cada miembro, porque el select lo cambiará y a veces queremos cancelar el cambio
 function guardaEstadoPrevio() {
     prevState.value = {}
     for (var usuario of props.equipo.miembros) {
@@ -135,5 +198,7 @@ function eliminarMiembro() {
         })
     usuarioEliminar.value = null
 }
+
+
 
 </script>

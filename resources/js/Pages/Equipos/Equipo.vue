@@ -6,14 +6,14 @@
             <div class="flex justify-between items-center mb-5">
                 <Back :href="route('equipos')">Equipos</Back>
 
-                <EquipoMembresia class="hidden sm:block" :equipo-id="equipo.id" v-model="solicitud" :soyMiembro="soyMiembro"/>
+                <EquipoMembresia class="hidden sm:block" :equipo-id="equipo.id" v-model="solicitud" :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"/>
             </div>
 
             <GridFill class="gap-7" w="20rem">
 
                 <EquipoInformacion :equipo="equipo" />
 
-                <EquipoMembresia class="sm:hidden mx-auto" :equipo-id="equipo.id" v-model="solicitud" :soyMiembro="soyMiembro"/>
+                <EquipoMembresia class="sm:hidden mx-auto" :equipo-id="equipo.id" v-model="solicitud" :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"/>
 
                 <Card v-if="equipo.anuncio" class="border border-orange-400 justify-center items-center">
                     <div class="prose" v-html="equipo.anuncio" />

@@ -34,11 +34,73 @@ class Equipo extends SEOModel
         return $this->belongsToMany(User::class, 'equipo_user')
             ->using(Membresia::class)
             ->withPivot(['user_id', 'rol'])
-            ->where('rol','coordinador');
+            ->where('rol', 'coordinador');
+    }
+
+    public function creador() // creador del equipo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function grupo()
+    {
+        return $this->belongsTo(Grupo::class, 'group_id', 'id');
+    }
+
+    // carpetas del equipoç
+    public function carpetas()
+    {
+        return $this->hasMany(Carpeta::class, 'group_id', 'id');
+    }
+
+    // helpers
+    public function esCoordinador($user_id)
+    {
+        return $this->coordinadores->contains(function ($coordinador) use ($user_id) {
+            return $coordinador->id === $user_id;
+        });
     }
 
 
+    public function esMiembro($user_id)
+    {
+        return $this->miembros->contains(function ($miembro) use ($user_id) {
+            return $miembro->id === $user_id;
+        });
+    }
+
+
+
+    public function otorgarPermisosCarpetas($idUsuario) {
+        // otorgamos permisos al usuario para administrar las carpetas del equipo
+        foreach ($this->carpetas as $carpeta) {
+            Permiso::updateOrCreate(
+                [
+                    'user_id' => $idUsuario,
+                    'modelo' => 'nodos',
+                    'modelo_id' => $carpeta->id,
+                    'verbos' => 'leer,escribir,ejecutar'
+                ]
+            );
+        }
+    }
+
+    public function removerPermisosCarpetas($idUsuario) {
+        foreach ($this->carpetas as $carpeta) {
+            $permiso = Permiso::where([
+                'user_id' => $idUsuario,
+                'modelo' => 'nodos',
+                'modelo_id' => $carpeta->id,
+            ])->first();
+
+            if ($permiso) {
+                $permiso->delete();
+            }
+        }
+    }
+
 }
+
 
 class Membresia extends Pivot
 {
