@@ -9,6 +9,7 @@ use App\Models\Carpeta;
 use App\Models\Invitacion;
 use App\Models\Solicitud;
 use App\Models\User;
+use App\Models\Permiso;
 use App\Pigmalion\SEO;
 use App\Policies\LinuxPolicy;
 use Illuminate\Support\Str;
@@ -74,7 +75,7 @@ class EquiposController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
-        $carpetas = Carpeta::where('group_id', '=', $equipo->id)->take(3)->get();
+        $carpetas = $equipo->carpetas()->get();
 
         $ultimosArchivos = [];
 
@@ -102,27 +103,22 @@ class EquiposController extends Controller
 
         if ($user) {
 
-            $soyMiembro = $equipo->miembros->contains(function ($usuario) use ($user) {
-                return $usuario->id === $user->id;
-            });
+            $soyMiembro = $equipo->esMiembro($user->id);
 
             // Verificar si el usuario ya es miembro del equipo
             if ($soyMiembro) {
 
                 // verificar si es coordinador del equipo
-                if ($equipo->coordinadores->contains(function ($coordinador) use ($user) {
-                    return $coordinador->id === $user->id;
-                }))
-                {
+                if($equipo->esCoordinador($user->id)){
                     // soy coordinador de este equipo
                     $soyCoordinador = true;
 
                     // carga la lista de solicitudes pendientes
                     $solicitudes = Solicitud::with('usuario')
-                    ->where('equipo_id', $equipo->id)
-                    ->whereNull('fecha_aceptacion')
-                    ->whereNull('fecha_denegacion')
-                    ->get();
+                        ->where('equipo_id', $equipo->id)
+                        ->whereNull('fecha_aceptacion')
+                        ->whereNull('fecha_denegacion')
+                        ->get();
                 }
             } else {
                 // si no somos miembros, comprobamos la solicitud de ingreso
@@ -136,7 +132,7 @@ class EquiposController extends Controller
             }
         }
 
-        $equipo->solicitudesPendientes= $solicitudes;
+        $equipo->solicitudesPendientes = $solicitudes;
 
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
@@ -231,9 +227,7 @@ class EquiposController extends Controller
         $user = auth()->user();
 
         // Verificar si el usuario es un coordinador del equipo
-        if (!$equipo->coordinadores->contains(function ($coordinador) use ($user) {
-            return $coordinador->id === $user->id;
-        }))
+        if(!$equipo->esCoordinador($user->id))
             return response()->json(['error' => 'No tienes permisos para editar este equipo.'], 403);
 
         // Actualizar los datos del equipo
@@ -269,7 +263,7 @@ class EquiposController extends Controller
         // agregamos el usuario al equipo
         $equipo->miembros()->syncWithoutDetaching([$idUsuario]);
 
-        return response()->json(['mensaje' => 'El usuario fue añadido al equipo'], 200);
+        return response()->json(['message' => 'El usuario fue añadido al equipo'], 200);
     }
 
 
@@ -281,10 +275,24 @@ class EquiposController extends Controller
         // Obtenemos el usuario y el equipo
         $equipo = Equipo::findOrFail($idEquipo);
         $usuario = User::findOrFail($idUsuario);
+
         // removemos el usuario del equipo
         $equipo->miembros()->detach($idUsuario);
 
-        return response()->json(['mensaje' => 'El usuario fue removido del equipo'], 200);
+        // por si tuviera permisos, se los removemos
+        $equipo->removerPermisosCarpetas($idUsuario);
+
+        // por si hubiera asignación de nuevo coordinador
+        $idNuevoCoordinador = $this->asignarNuevoCoordinador($equipo, $idUsuario);
+
+        $message = 'El usuario fue removido del equipo';
+        if ($idNuevoCoordinador)
+            return response()->json([
+                'message' => $message,
+                'nuevoCoordinador' => $idNuevoCoordinador
+            ]);
+
+        return response()->json(['message' => $message], 200);
     }
 
 
@@ -304,9 +312,47 @@ class EquiposController extends Controller
         // Actualizamos el rol del usuario en el equipo
         $equipo->miembros()->updateExistingPivot($idUsuario, ['rol' => $rol]);
 
-        return response()->json(['mensaje' => 'El usuario fue actualizado dentro del equipo'], 200);
+        if($rol=='coordinador') {
+            $equipo->otorgarPermisosCarpetas($idUsuario);
+        } else {
+            $equipo->removerPermisosCarpetas($idUsuario);
+        }
+
+        $idNuevoCoordinador = $this->asignarNuevoCoordinador($equipo, $idUsuario);
+
+        $message = 'El usuario fue actualizado dentro del equipo';
+        if ($idNuevoCoordinador)
+            return response()->json([
+                'message' => $message,
+                'nuevoCoordinador' => $idNuevoCoordinador
+            ]);
+
+        return response()->json(['message' => $message], 200);
     }
 
+
+    /**
+     * Comprueba si el equipo no dispone de coordinadores, en tal caso asigna el miembro más antiguo como tal
+     */
+    private function asignarNuevoCoordinador($equipo, $idUsuarioExcluir = 0)
+    {
+        // si no quedan coordinadores, hemos de asignar alguno de entre los miembros del equipo, siendo los candidatos los más antiguos
+        if (!$equipo->coordinadores()->count()) {
+            $miembroAntiguo = $equipo->miembros()
+                ->where('id', '!=', $idUsuarioExcluir) // filtramos los miembros con id distinto al usuario que se acaba de modificar
+                ->oldest('created_at') // ordenamos los miembros por fecha de creación ascendente
+                ->first(); // obtenemos el primer miembro de la lista, que será el más antiguo
+
+            if ($miembroAntiguo)
+            {
+                // Actualizamos el rol del usuario en el equipo
+                $equipo->miembros()->updateExistingPivot($miembroAntiguo->id, ['rol' => 'coordinador']);
+                // le damos permisos
+                $equipo->otorgarPermisosCarpetas( $miembroAntiguo->id);
+                return $miembroAntiguo->id;
+            }
+        }
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // INVITACIONES
@@ -413,7 +459,7 @@ class EquiposController extends Controller
             Mail::to($correo)->send(new InvitacionEquipoEmail($equipo, $usuario, $aceptarUrl, $declinarUrl));
         }
 
-        return response()->json(['mensaje' => 'Invitaciones enviadas correctamente.'], 200);
+        return response()->json(['message' => 'Invitaciones enviadas correctamente.'], 200);
     }
 
 
@@ -488,9 +534,7 @@ class EquiposController extends Controller
         $equipo = Equipo::findOrFail($idEquipo);
 
         // verificar si es coordinador del equipo
-        if (!$equipo->coordinadores->contains(function ($coordinador) use ($user) {
-            return $coordinador->id === $user->id;
-        }))
+        if(!$equipo->esCoordinador($user->id))
             return response()->json(['error' => 'No tienes permisos'], 403);
 
         // carga la lista de solicitudes pendientes
@@ -530,7 +574,7 @@ class EquiposController extends Controller
             'equipo_id' => $idEquipo
         ]);
 
-        return response()->json(['message' => 'Solicitud enviada', 'solicitud'=>$solicitud], 200);
+        return response()->json(['message' => 'Solicitud enviada', 'solicitud' => $solicitud], 200);
     }
 
 
@@ -549,9 +593,7 @@ class EquiposController extends Controller
         $equipo = $solicitud->equipo;
 
         // verificar si es coordinador del equipo
-        if (!$equipo->coordinadores->contains(function ($coordinador) use ($user) {
-            return $coordinador->id === $user->id;
-        }))
+        if(!$equipo->esCoordinador($user->id))
             return response()->json(['error' => 'No tienes permisos para editar este equipo'], 403);
 
         // comprueba si estaba pendiente
@@ -584,7 +626,7 @@ class EquiposController extends Controller
         $solicitud->equipo->miembros()->syncWithoutDetaching([$solicitante->id]);
 
         // Enviar el correo informativo
-       // Mail::to($solicitante->email)->send(new IncorporacionEquipoEmail($solicitud->equipo, $solicitante, true, true));
+        // Mail::to($solicitante->email)->send(new IncorporacionEquipoEmail($solicitud->equipo, $solicitante, true, true));
 
         return response()->json(['message' => 'Solicitud aceptada'], 200);
     }
@@ -610,4 +652,8 @@ class EquiposController extends Controller
 
         return response()->json(['message' => 'Solicitud denegada'], 200);
     }
+
+
+
+
 }

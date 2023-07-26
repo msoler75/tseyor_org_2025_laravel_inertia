@@ -140,6 +140,7 @@ function aceptar(solicitud) {
             props.equipo.usuarios.unshift(solicitud.usuario)
         })
         .catch(error => {
+            console.log('error', error)
             alert("Hubo algún error")
         })
 }
@@ -152,6 +153,7 @@ function denegar(solicitud) {
             solicitudesHistorial.value.unshift(solicitud)
         })
         .catch(error => {
+            console.log('error', error)
             alert("Hubo algún error")
         })
 }

@@ -24,7 +24,7 @@ const image = computed(() => props.user.avatar || props.user.profile_photo_path 
 
 const imageClass=computed(()=>{
     if(props.big) return 'w-32 h-32'
-    return 'w-16 h-16'
+    return 'w-14 h-14'
 })
 </script>
 
