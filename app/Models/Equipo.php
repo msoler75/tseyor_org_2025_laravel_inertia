@@ -25,7 +25,7 @@ class Equipo extends SEOModel
     {
         return $this->belongsToMany(User::class, 'equipo_user')
             ->using(Membresia::class)
-            ->withPivot(['user_id', 'rol'])
+            ->withPivot('rol')
             ->withTimestamps();
     }
 
@@ -33,7 +33,7 @@ class Equipo extends SEOModel
     {
         return $this->belongsToMany(User::class, 'equipo_user')
             ->using(Membresia::class)
-            ->withPivot(['user_id', 'rol'])
+            ->withPivot('rol')
             ->where('rol', 'coordinador');
     }
 
@@ -47,13 +47,12 @@ class Equipo extends SEOModel
         return $this->belongsTo(Grupo::class, 'group_id', 'id');
     }
 
-    // carpetas del equipoç
+    // carpetas del equipo
     public function carpetas()
     {
         return $this->hasMany(Carpeta::class, 'group_id', 'id');
     }
 
-    // helpers
     public function esCoordinador($user_id)
     {
         return $this->coordinadores->contains(function ($coordinador) use ($user_id) {
