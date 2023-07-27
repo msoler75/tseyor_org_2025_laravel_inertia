@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use App\Mail\InvitacionEquipoEmail;
 use App\Mail\IncorporacionEquipoEmail;
+use Illuminate\Support\Facades\Gate;
 
 class EquiposController extends Controller
 {
@@ -109,7 +110,7 @@ class EquiposController extends Controller
             if ($soyMiembro) {
 
                 // verificar si es coordinador del equipo
-                if($equipo->esCoordinador($user->id)){
+                if ($equipo->esCoordinador($user->id)) {
                     // soy coordinador de este equipo
                     $soyCoordinador = true;
 
@@ -214,6 +215,11 @@ class EquiposController extends Controller
     {
         $equipo = Equipo::findOrFail($idEquipo);
 
+        // Verificar si el usuario es un coordinador del equipo
+        if (Gate::denies('esCoordinador', $equipo)) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
         // Validar los datos
         $validatedData = $request->validate([
             'nombre' => 'required|max:32',
@@ -224,11 +230,6 @@ class EquiposController extends Controller
             'informacion' => 'max:65000'
         ]);
 
-        $user = auth()->user();
-
-        // Verificar si el usuario es un coordinador del equipo
-        if(!$equipo->esCoordinador($user->id))
-            return response()->json(['error' => 'No tienes permisos para editar este equipo.'], 403);
 
         // Actualizar los datos del equipo
         $equipo->nombre = trim($validatedData['nombre']);
@@ -260,6 +261,10 @@ class EquiposController extends Controller
         $equipo = Equipo::findOrFail($idEquipo);
         $usuario = User::findOrFail($idUsuario);
 
+        if (Gate::denies('esCoordinador', $equipo)) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
         // agregamos el usuario al equipo
         $equipo->miembros()->syncWithoutDetaching([$idUsuario]);
 
@@ -275,6 +280,10 @@ class EquiposController extends Controller
         // Obtenemos el usuario y el equipo
         $equipo = Equipo::findOrFail($idEquipo);
         $usuario = User::findOrFail($idUsuario);
+
+        if (Gate::denies('esCoordinador', $equipo)) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
 
         // removemos el usuario del equipo
         $equipo->miembros()->detach($idUsuario);
@@ -301,18 +310,21 @@ class EquiposController extends Controller
      */
     public function updateMember($idEquipo, $idUsuario, $rol)
     {
-        // Obtenemos el usuario y el equipo
+        // Obtenemos el usuario y el equipo que vamos a gestionar
         $usuario = User::findOrFail($idUsuario);
         $equipo = Equipo::findOrFail($idEquipo);
+
+        if (Gate::denies('esCoordinador', $equipo)) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
 
         if ($rol == 'miembro')
             $rol = NULL;
 
-
         // Actualizamos el rol del usuario en el equipo
         $equipo->miembros()->updateExistingPivot($idUsuario, ['rol' => $rol]);
 
-        if($rol=='coordinador') {
+        if ($rol == 'coordinador') {
             $equipo->otorgarPermisosCarpetas($idUsuario);
         } else {
             $equipo->removerPermisosCarpetas($idUsuario);
@@ -339,16 +351,15 @@ class EquiposController extends Controller
         // si no quedan coordinadores, hemos de asignar alguno de entre los miembros del equipo, siendo los candidatos los más antiguos
         if (!$equipo->coordinadores()->count()) {
             $miembroAntiguo = $equipo->miembros()
-                ->where('id', '!=', $idUsuarioExcluir) // filtramos los miembros con id distinto al usuario que se acaba de modificar
+                ->where('users.id', '!=', $idUsuarioExcluir) // filtramos los miembros con id distinto al usuario que se acaba de modificar
                 ->oldest('created_at') // ordenamos los miembros por fecha de creación ascendente
                 ->first(); // obtenemos el primer miembro de la lista, que será el más antiguo
 
-            if ($miembroAntiguo)
-            {
+            if ($miembroAntiguo) {
                 // Actualizamos el rol del usuario en el equipo
                 $equipo->miembros()->updateExistingPivot($miembroAntiguo->id, ['rol' => 'coordinador']);
                 // le damos permisos
-                $equipo->otorgarPermisosCarpetas( $miembroAntiguo->id);
+                $equipo->otorgarPermisosCarpetas($miembroAntiguo->id);
                 return $miembroAntiguo->id;
             }
         }
@@ -373,7 +384,12 @@ class EquiposController extends Controller
         ]);
 
         $equipo = Equipo::findOrFail($idEquipo);
-        dd($equipo);
+
+
+        // Verificar si el usuario es un coordinador del equipo
+        if (Gate::denies('esCoordinador', $equipo)) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
 
         // mandamos invitaciones a los correos proporcionados
         foreach ($validatedData['correos'] as $correo) {
@@ -525,17 +541,12 @@ class EquiposController extends Controller
      */
     public function solicitudes($idEquipo)
     {
-        // debe ser un usuario registrado e iniciada su sesión
-        $user = auth()->user();
-        if (!$user)
-            return response()->json(['error' => 'Debe iniciar sesión'], 401);
-
         // carga el equipo
         $equipo = Equipo::findOrFail($idEquipo);
 
-        // verificar si es coordinador del equipo
-        if(!$equipo->esCoordinador($user->id))
-            return response()->json(['error' => 'No tienes permisos'], 403);
+        if (Gate::denies('esCoordinador', $equipo)) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
 
         // carga la lista de solicitudes pendientes
         $solicitudes = Solicitud::with('usuario')
@@ -578,14 +589,11 @@ class EquiposController extends Controller
     }
 
 
+    /**
+     * método auxiliar
+     */
     private function validarSolicitud($idSolicitud)
     {
-        $user = auth()->user();
-
-        // debe ser un usuario registrado e iniciada su sesión
-        if (!$user)
-            return response()->json(['error' => 'Debe iniciar sesión'], 401);
-
         // carga la solicitud
         $solicitud = Solicitud::findOrFail($idSolicitud);
 
@@ -593,8 +601,9 @@ class EquiposController extends Controller
         $equipo = $solicitud->equipo;
 
         // verificar si es coordinador del equipo
-        if(!$equipo->esCoordinador($user->id))
-            return response()->json(['error' => 'No tienes permisos para editar este equipo'], 403);
+        if (Gate::denies('esCoordinador', $equipo)) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
 
         // comprueba si estaba pendiente
         if ($solicitud->fecha_aceptacion)
@@ -652,8 +661,4 @@ class EquiposController extends Controller
 
         return response()->json(['message' => 'Solicitud denegada'], 200);
     }
-
-
-
-
 }
