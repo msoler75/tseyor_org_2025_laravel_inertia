@@ -4,7 +4,7 @@
         <form class="bg-base-200 p-5 select-none" @submit.prevent="guardarConfiguracion">
             <h3>Configuración del Equipo</h3>
 
-            <tabs :options="{ useUrlFragment: false }">
+            <tabs ref="tabsElem" :options="{ useUrlFragment: false }">
                 <tab name="General" class="space-y-6">
 
                     <div>
@@ -82,7 +82,11 @@
 
 
             <div class="py-3 flex justify-between sm:justify-end gap-5">
-                <button type="submit" class="btn btn-primary">
+                <div v-if="edicion.processing" class="flex gap-3 btn">
+                        <Spinner /> Guardando...
+                </div>
+
+                <button v-else type="submit" class="btn btn-primary">
                     Guardar
                 </button>
 
@@ -105,8 +109,9 @@ defineExpose({
     mostrar
 });
 
-
 const props = defineProps({ equipo: { type: Object, required: true } })
+
+const tabsElem = ref(null)
 
 // Diálogo Modal de Configuracion DEL EQUIPO
 
@@ -170,8 +175,20 @@ function guardarConfiguracion() {
     }).catch(error => {
         edicion.processing = false;
         console.log('error', error)
-        if (error.response.data.errors)
+        if (error.response.data.errors) {
             edicion.errors = error.response.data.errors
+            console.log(edicion.errors)
+            if (('nombre' in edicion.errors) || ('descripcion' in edicion.errors))
+                tabsElem.value.selectTab('#general')
+            else if ('imagen' in edicion.errors)
+                tabsElem.value.selectTab('#imagen')
+            else if ('anuncio' in edicion.errors)
+                tabsElem.value.selectTab('#anuncio')
+            else if ('reuniones' in edicion.errors)
+                tabsElem.value.selectTab('#reuniones')
+            else if ('informacion' in edicion.errors)
+                tabsElem.value.selectTab('#informacion')
+        }
         else //error general
             alert(error.response.data.error)
     });
@@ -180,3 +197,9 @@ function guardarConfiguracion() {
 }
 
 </script>
+
+<style scoped>
+ :deep(.ql-editor) {
+        max-height: calc(100vh - 500px);
+	}
+</style>
