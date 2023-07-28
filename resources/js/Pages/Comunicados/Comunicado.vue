@@ -1,10 +1,17 @@
 <template>
     <div class="container mx-auto px-4 py-8">
-        <h1 class="max-w-xl md:w-[120%] mx-auto">{{ comunicado.titulo }}</h1>
-        <p class="text-gray-600 text-sm mb-2">
-            <TimeAgo :date="comunicado.published_at" />
-        </p>
-       <Prose :content="comunicado.texto"/>
+        <div class="prose mx-auto">
+            <h1 >{{ comunicado.titulo }}</h1>
+
+            <div class="text-neutral text-sm mb-2">
+            <TimeAgo :date="comunicado.fecha_comunicado" />
+        </div>
+    </div>
+
+       <Content :content="comunicado.texto" class="pb-12"/>
+
+       <Comentarios :url="route('comunicado', comunicado.id)" />
+
     </div>
 </template>
 
@@ -20,18 +27,5 @@ const props = defineProps({
     },
 });
 
-onMounted(() => {
-    replaceImagesWithHTML()
-})
-
-function replaceImagesWithHTML() {
-    const imagenes = document.querySelectorAll('.container img')
-    imagenes.forEach((imagen) => {
-        const wrapper = document.createElement('div')
-        wrapper.className = 'image-expanded'
-        imagen.parentNode.insertBefore(wrapper, imagen)
-        wrapper.appendChild(imagen)
-    })
-}
 </script>
 
