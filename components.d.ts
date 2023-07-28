@@ -36,6 +36,7 @@ declare module 'vue' {
     ConfirmationModal: typeof import('./resources/js/Components/ConfirmationModal.vue')['default']
     ConfirmsPassword: typeof import('./resources/js/Components/ConfirmsPassword.vue')['default']
     Contact: typeof import('./resources/js/Sections/Contact.vue')['default']
+    Content: typeof import('./resources/js/Components/Content.vue')['default']
     copy: typeof import('./resources/js/Components/TextInput copy.vue')['default']
     Counter: typeof import('./resources/js/Components/Counter.vue')['default']
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
