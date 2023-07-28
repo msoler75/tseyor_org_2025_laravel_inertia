@@ -1,17 +1,14 @@
 <?php
 
-use App\Models\Equipo;
+namespace App\Policies;
+
 use App\Models\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
+use App\Models\Equipo;
 
 class EquipoPolicy
 {
-    use HandlesAuthorization;
-
-
-    public function esCoordinador(User $user, Equipo $equipo)
+    public function esCoordinador(?User $user, Equipo $equipo) :bool
     {
-        return $equipo->esCoordinador($user->id);
+        return $equipo->esCoordinador(optional($user)->id);
     }
 }
-
