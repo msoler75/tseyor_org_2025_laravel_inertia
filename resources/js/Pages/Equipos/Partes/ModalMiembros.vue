@@ -114,7 +114,7 @@ const coordinadores = computed(() => props.equipo ? props.equipo.miembros.filter
 const miembrosFiltrado = computed(() => {
     if (!props.equipo.miembros) return []
     return miembroBuscar.value ?
-        usuariosFuse.results.value
+        usuariosFuse.results.value.map(x => x.item)
         : props.equipo.miembros
 });
 
@@ -124,7 +124,8 @@ const miembrosListado = computed(() => miembrosFiltrado.value.map(u => {
         u.pivot.rol = '';
     }
     return u;
-}));
+})
+    .sort((a, b) => (a.pivot.rol == 'coordinador' ? -1 : 0) - (b.pivot.rol == 'coordinador' ? -1 : 0)));
 
 // mostrar modal
 function mostrar() {
@@ -162,7 +163,7 @@ function modificarRol(user) {
     console.log('modificarRol', user.id, user.pivot.rol)
     axios.put(route('equipo.modificarRol', { idEquipo: props.equipo.id, idUsuario: user.id, rol: user.pivot.rol || 'miembro' }))
         .then(response => {
-            console.log({response})
+            console.log({ response })
             prevState.value[user.id] = user.pivot.rol
             if (response.data.nuevoCoordinador) {
                 const coordinador = props.equipo.miembros.find(u => u.id == response.data.nuevoCoordinador)
@@ -173,10 +174,10 @@ function modificarRol(user) {
             }
         })
         .catch(err => {
-            console.log({err})
-            alert("No se han podido guardar los cambios")
+            console.log({ err })
+            alert(err.response.data.error || 'Hubo un error')
             // restauramos el estado previo
-            user.pivot.rol =  prevState.value[user.id]
+            user.pivot.rol = prevState.value[user.id]
         });
 }
 
@@ -214,8 +215,9 @@ function eliminarMiembro() {
         })
         .catch(err => {
             console.log({ err })
-            alert("Hubo un error")
+            alert(err.response.data.error || 'Hubo un error')
         })
+
     confirmarEliminar.value = null
 }
 
