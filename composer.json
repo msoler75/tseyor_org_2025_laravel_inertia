@@ -6,6 +6,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "backpack/crud": "^6.1",
+        "backpack/theme-tabler": "^1.0",
         "guzzlehttp/guzzle": "^7.7",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laravel/framework": "^10.10",
@@ -16,6 +18,7 @@
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
+        "backpack/generators": "^4.0",
         "barryvdh/laravel-debugbar": "^3.8",
         "fakerphp/faker": "^1.9.1",
         "laravel-lang/common": "^3.1",
@@ -51,7 +54,8 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "post-install-cmd": ["php artisan storage:link"]
     },
     "extra": {
         "laravel": {
