@@ -83,7 +83,7 @@
     {{-- How to add some JS to the field? --}}
     @bassetBlock('path/to/script.js')
         <script>
-            // Mapeo de traducciones de comandos básicos
+            // Mapeo de traducciones de botones de Quill Editor
             const translations = {
                 bold: 'Negrita',
                 italic: 'Cursiva',
@@ -116,11 +116,10 @@
                 'list bullet': 'Lista',
             }
 
-            // Función para obtener el atajo de teclado humano legible
+            // Función para obtener el atajo de teclado humano-legible
             var bindings = null;
 
             function getShortcut(buttonName) {
-                console.log('getShortcut', buttonName)
                 if (!bindings) return "";
                 var shortcut = null;
 
@@ -146,13 +145,10 @@
                     }
                 }
 
-
-                console.log('Atajo de teclado de "' + buttonName + '": ' + shortcut);
                 return shortcut ? "(" + shortcut + ")" : "";
             }
 
             function nombreBoton(buttonName) {
-                console.log('nombreBoton', buttonName.toLowerCase())
                 // Traducir el nombre del comando si está en el mapeo de traducciones
                 if (translations.hasOwnProperty(buttonName.toLowerCase())) {
                     buttonName = translations[buttonName.toLowerCase()];
@@ -165,26 +161,12 @@
                 // present as data-init-function in the HTML above; the
                 // element parameter here will be the jQuery wrapped
                 // element where init function was defined
-                console.log(element.val());
+                // console.log(element.val());
 
-                // carga el contenido del campo
+
+                // carga el contenido del  campo
+                // reemplazamos los caracteres para incorporar fragmentos de HTML en el markdown
                 var raw_markdown = document.querySelector('#editor').innerHTML.replace(/&gt;/g, '>').replace(/&lt;/g, '<')
-
-                console.log({
-                    raw_markdown
-                })
-
-                // inicializa el contenido
-                var md = window.markdownit({
-                    html: true,
-                    linkify: true
-                });
-
-                var result = md.render(raw_markdown);
-
-                console.log({
-                    result
-                })
 
 
                 // prepara la barra de botones
@@ -252,17 +234,37 @@
                     theme: 'snow'
                 });
 
-                // Enable all tooltips
-                $('[data-toggle="tooltip"]').tooltip();
 
+                // cada vez que se modifique el texto, guardamos el contenido en el campo input de tipo hidden
                 quill.on('text-change', function(delta, oldDelta, source) {
                     var editorInput = document.querySelector('#quill-input');
-                    editorInput.value = toMarkdown(quill.root.innerHTML);
+                    // hacemos un pequeño reemplazo para guardar las clases en p
+                    editorInput.value = toMarkdown(quill.root.innerHTML.replace(/<p class=["']([^>]*)["'][^>]*>/g, "$&{class:$1}"));
                 });
 
-                // pega el contenido
-                quill.clipboard.dangerouslyPasteHTML(result + "\n");
 
+
+
+                // vamos a renderizar el markdown
+                var md = window.markdownit({
+                    html: true,
+                    linkify: true
+                });
+
+                // renderizamos, y sustituimos las clases de p
+                var contentHTML = md.render(raw_markdown).replace(/<p>{class:([^}]*)}/g, "<p class='$1'>").replace(/<p>\s+<\/p>\n?/g, '').replace(/\n/g,'')
+
+                console.log({
+                    raw_markdown
+                })
+
+                console.log({
+                    contentHTML
+                })
+
+                // pega el contenido
+                // quill.clipboard.dangerouslyPasteHTML(contentHTML + "\n");
+                quill.root.innerHTML = contentHTML
 
                 // Obtener los atajos de teclado actuales
                 bindings = quill.getModule('keyboard').options.bindings;
@@ -281,8 +283,8 @@
                     classes = button
                         .replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
 
-                        if($(e).parent().attr("value"))
-                    classes +=" " + $(e).parent().attr("value")
+                    if ($(e).parent().attr("value"))
+                        classes += " " + $(e).parent().attr("value")
 
                     new bootstrap.Tooltip(e, {
                         title: nombreBoton(classes) + " " + getShortcut(button),
@@ -298,9 +300,8 @@
                         .replace(/(^\w{1})|(\s+\w{1})/g, letter =>
                             letter.toUpperCase());
 
-
-                    if($(e).attr("value"))
-                    classes +=" " + $(e).attr("value")
+                    if ($(e).attr("value"))
+                        classes += " " + $(e).attr("value")
 
                     new bootstrap.Tooltip(e, {
                         title: nombreBoton(classes) + " " + getShortcut(button),
