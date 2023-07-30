@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\SEOModel;
 
 
 class Comunicado extends SEOModel
 {
+    use CrudTrait;
     protected $fillable = [
         'numero',
         'categoria',
