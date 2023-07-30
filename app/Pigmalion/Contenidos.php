@@ -20,6 +20,7 @@ class Contenidos
             foreach ($candidatos as $campo) {
                 if (in_array($campo, $fillable)) {
                     $objeto->slug = Str::slug($objeto->{$campo});
+                    dd($objeto->slug);
                     break;
                 }
             }
@@ -61,7 +62,7 @@ class Contenidos
     public static function guardarContenido($coleccion, $datos)
     {
         $contenido = Contenido::where('coleccion', $coleccion)
-            ->where('id', $datos->id)->first();
+            ->where('id_ref', $datos->id)->first();
 
         if ($contenido == null) {
             // Crear un nuevo modelo Contenido
