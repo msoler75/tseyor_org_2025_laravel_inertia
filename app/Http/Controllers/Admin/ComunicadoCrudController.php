@@ -62,7 +62,7 @@ class ComunicadoCrudController extends CrudController
         ]);
         CRUD::setFromDb(); // set fields from db columns.
 
-        CRUD::field('texto')->type('mymarkdown');
+        CRUD::field('texto')->type('quilleditor');
 
         /**
          * Fields can be defined using the fluent syntax:
@@ -87,7 +87,7 @@ class ComunicadoCrudController extends CrudController
         ]);
         CRUD::setFromDb();
 
-        CRUD::field('texto')->type('mymarkdown');
+        CRUD::field('texto')->type('easymde');
 
         // CRUD::field('slug')->remove();
         */
