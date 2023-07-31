@@ -1,12 +1,14 @@
 <template>
-    <a :href="href" class="flex gap-3 items-baseline" download :class="color">
+    <a v-if="link||!link" :href="href" class="flex gap-3 items-baseline" download :class="color">
         <Icon :icon="iconType" />
     </a>
+    <Icon v-else :icon="iconType"  :class="color" />
 </template>
 
 <script setup>
 const props = defineProps({
-    url: String
+    url: String,
+    link: {type: Boolean, default: true}
 })
 
 const href = computed(() => props.url && !props.url.startsWith('/') ? '/' + props.url : props.url)
