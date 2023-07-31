@@ -49,6 +49,7 @@ declare module 'vue' {
     FeatureRows: typeof import('./resources/js/Sections/FeatureRows.vue')['default']
     File: typeof import('./resources/js/Components/File.vue')['default']
     FileIcon: typeof import('./resources/js/Components/FileIcon.vue')['default']
+    FileManager: typeof import('./resources/js/Components/FileManager.vue')['default']
     FileSize: typeof import('./resources/js/Components/FileSize.vue')['default']
     Folder: typeof import('./resources/js/Components/Folder.vue')['default']
     FolderIcon: typeof import('./resources/js/Components/FolderIcon.vue')['default']
