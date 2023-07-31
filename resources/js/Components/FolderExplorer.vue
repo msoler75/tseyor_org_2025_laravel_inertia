@@ -5,7 +5,7 @@
             <div class="lg:container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
                 <div :title="rutaActual" v-if="!seleccionando" class="flex items-center gap-3 text-2xl font-bold">
                     <Icon icon="ph:folder-notch-open-duotone" />
-                    <Breadcrumb :path="rutaActual" />
+                    <Breadcrumb :path="rutaActual" :links="!embed" @folder="clickBreadcrumb($event)"/>
                 </div>
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
@@ -22,12 +22,13 @@
                         <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                     </button>
 
-                    <Link v-if="items.length > 1 && items[1].padre && !seleccionando" :href="items[1].url"
-                        class="btn btn-neutral w-fit" title="Ir a una carpeta superior">
-                    <Icon icon="ph:skip-back-duotone" class="transform scale-125" />
-                    </Link>
+                    <ConditionalLink v-if="items.length > 1 && items[1].padre && !seleccionando" :href="items[1].url"
+                        class="btn btn-neutral w-fit" title="Ir a una carpeta superior" @click="clickFolder(items[1], $event)"
+                        :link="!embed">
+                        <Icon icon="ph:skip-back-duotone" class="transform scale-125" />
+                    </ConditionalLink>
 
-                    <Link v-if="propietario && !seleccionando" class="btn btn-neutral" :href="propietario.url"
+                    <Link v-if="!embed && propietario && !seleccionando" class="btn btn-neutral" :href="propietario.url"
                         :title="tituloPropietario">
                     <Icon :icon="propietario.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'"
                         class="transform scale-150" />
@@ -206,17 +207,23 @@
                                 <Icon v-else icon="ph:square" />
                             </td>
                             <td class="relative w-4" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
-                                <FolderIcon v-if="item.tipo === 'carpeta'" :private="item.privada" :url="item.url"
-                                    :class="seleccionando ? 'pointer-events-none' : ''" />
-                                <FileIcon v-else :url="item.url" :class="seleccionando ? 'pointer-events-none' : ''" />
+                                <FolderIcon v-if="item.tipo === 'carpeta'" class="cursor-pointer" :private="item.privada"
+                                    :url="item.url" :class="seleccionando ? 'pointer-events-none' : ''"
+                                    @click="clickFolder(item, $event)" :link="!embed" />
+                                <FileIcon v-else :url="item.url" class="cursor-pointer"
+                                    :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
+                                    :link="!embed" />
                             </td>
                             <td class="sm:hidden" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
                                 <div class="flex flex-col">
-                                    <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
-                                        :class="seleccionando ? 'pointer-events-none' : ''" />
+                                    <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url"
+                                        v-html="nombreItem(item)" class="cursor-pointer"
+                                        :class="seleccionando ? 'pointer-events-none' : ''"
+                                        @click="clickFolder(item, $event)" :link="!embed" />
                                     <div v-else-if="seleccionando" :title="item.nombre" v-html="nombreItem(item)" />
                                     <a v-else :href="item.url" download v-html="nombreItem(item)"
-                                        :class="seleccionando ? 'pointer-events-none' : ''" />
+                                        :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
+                                        :link="!embed" />
                                     <small class="w-full flex justify-between items-center">
                                         <span v-if="item.tipo === 'carpeta'">
                                             {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
@@ -227,11 +234,13 @@
                             </td>
                             <td class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
                                 v-on:touchend="onTouchEnd(item)">
-                                <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
-                                    class="py-1 hover:underline" :class="seleccionando ? 'pointer-events-none' : ''" />
+                                <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
+                                    class="cursor-pointer   py-1 hover:underline"
+                                    :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
+                                    :link="!embed" />
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
                                 <a v-else :href="item.url" download v-html="nombreItem(item)" class="py-1 hover:underline"
-                                    :class="seleccionando ? 'pointer-events-none' : ''" />
+                                    :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)" />
                             </td>
                             <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart="onTouchStart(item)"
                                 v-on:touchend="onTouchEnd(item)">
@@ -315,18 +324,21 @@
                             </div>
                             <div class="flex flex-col items-center justify-center relative">
                                 <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
-                                    class="text-8xl mb-4" :disabled="seleccionando" />
+                                    class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
+                                    @click="clickFolder(item, $event)" :link="!embed" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download>
                                     <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain" />
                                 </a>
-                                <FileIcon v-else :url="item.url" class="text-8xl mb-4" />
+                                <FileIcon v-else :url="item.url" class="cursor-pointer text-8xl mb-4"
+                                    @click="clickFile(item, $event)" :link="!embed" />
 
                                 <div class="text-sm text-center">
-                                    <Link v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
-                                        class="py-1 hover:underline" />
+                                    <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url"
+                                        v-html="nombreItem(item)" class="py-1 hover:underline"
+                                        @click="clickFolder(item, $event)" :link="!embed" />
                                     <span v-else-if="seleccionando" v-html="nombreItem(item)" />
                                     <a v-else :href="item.url" download v-html="nombreItem(item)"
-                                        class="py-1 hover:underline" />
+                                        @click="clickFile(item, $event)" :link="!embed" class="py-1 hover:underline" />
                                 </div>
                                 <div class="text-gray-500 text-xs">
                                     <template v-if="item.tipo === 'carpeta'">{{ item.archivos + ' archivos, ' +
@@ -516,10 +528,13 @@ import { useSelectors } from '@/Stores/selectors'
 
 defineOptions({ layout: AppLayout })
 
+const emit = defineEmits(['updated', 'folder:value', 'file:value']);
+
 const props = defineProps({
     items: Array,
     puedeEscribir: Boolean,
-    propietario: Object
+    propietario: Object,
+    embed: { type: Boolean, default: false }
 });
 
 const rutaActual = computed(() => props.items.length ? props.items[0].ruta : '')
@@ -562,7 +577,7 @@ function verificarFinSeleccion() {
         seleccionando.value = false
 }
 
-// si hay alfun cambio en los items
+// si hay algun cambio en los items
 watch(() => props.items, verificarFinSeleccion, { deep: true })
 
 // EVENTOS TOUCH
@@ -910,13 +925,43 @@ const toggleVista = () => {
     selectors.archivosVista = selectors.archivosVista === 'grid' ? 'lista' : 'grid';
 }
 
-
 function reloadPage() {
-    router.reload({
-        only: ['items']
-    })
+    emit('updated')
+}
+
+
+// EMBED
+
+function clickFolder(item, event) {
+    console.log('clickFolder', item)
+    if (props.embed) {
+        emit('folder', item)
+        event.preventDefault()
+    }
+}
+
+function clickFile(item, event) {
+    console.log('clickFile', item)
+    if (props.embed) {
+        emit('file', item)
+        event.preventDefault()
+    }
+}
+
+function clickBreadcrumb(item) {
+    console.log('clickBreadcrumb', item)
+    if (props.embed) {
+        emit('folder', item)
+    }
 }
 </script>
+
+
+
+
+
+
+
 
 <style scoped>
 table td,
@@ -1000,5 +1045,4 @@ table th {
 .files-leave-to {
     opacity: 0;
     transform: scale(0);
-}
-</style>
+}</style>

@@ -197,7 +197,7 @@ class ArchivosController extends Controller
             return response()->json($respuesta, 200);
         }
 
-        return Inertia::render('Archivos/Index', $respuesta)
+        return Inertia::render('Archivos', $respuesta)
             ->withViewData([
                 'seo' => new SEOData(
                     title: $ruta,

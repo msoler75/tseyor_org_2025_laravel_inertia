@@ -1,7 +1,7 @@
 <template>
-    <Link :href="href" class="flex gap-3 items-baseline">
+    <ConditionalLink :href="href" class="flex gap-3 items-baseline" :link="link">
     <Icon :icon="private ? 'ph:folder-lock-duotone' : 'ph:folder-simple-duotone'" class="text-yellow-500 transform scale-150" />
-    {{ name ? url.substring(url.lastIndexOf('/') + 1) : '' }}</Link>
+    {{ name ? url.substring(url.lastIndexOf('/') + 1) : '' }}</ConditionalLink>
 </template>
 
 <script setup>
@@ -11,7 +11,8 @@ const props = defineProps({
     name: {
         type: Boolean,
         default: false
-    }
+    },
+    link: {type: Boolean, default: true}
 })
 
 const href = computed(() => props.url && !props.url.startsWith('/') ? '/' + props.url : props.url)

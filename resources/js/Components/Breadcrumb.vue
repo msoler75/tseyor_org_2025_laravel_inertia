@@ -1,12 +1,17 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+// import { Link } from '@inertiajs/vue3';
+import ConditionalLink from './ConditionalLink.vue'
+
+const emit = defineEmits(['folder:value'])
+
 const props = defineProps({
-    path: String
+    path: String,
+    links: { type: Boolean, default: true }
 })
 
 const items = computed(() => {
     const r = []
-    const parts = props.path.split('/').filter(x=>!!x)
+    const parts = props.path.split('/').filter(x => !!x)
     let url = ''
     for (var part of parts) {
         url += '/' + part
@@ -14,18 +19,29 @@ const items = computed(() => {
     }
     return r
 })
+
+function handleClick(item, event) {
+    console.log('breadcrumb.handleClick', item, event)
+    if(!props.links) {
+        console.log('emit')
+        emit('folder', item)
+        event.preventDefault()
+    }
+}
 </script>
 
 
 <template>
     <ol class="list-reset flex gap-1">
         <template v-for="item, index, of items" :key="index">
-            <li v-if="index>0">
+            <li v-if="index > 0">
                 <span class="mx-2 text-neutral-500 dark:text-neutral-400">/</span>
             </li>
             <li class="flex items-center space-x-3">
-                <component :is="index<items.length-1?Link: 'div' " :href="item.url"
-                    :class="index < items.length - 1 ? 'text-gray-700 dark:text-gray-300 hover:underline' : 'text-gray-400 dark:text-gray-600'">{{ item.label }}</component>
+                <component :is="index<items.length-1?ConditionalLink: 'div' " :href="item.url" :link="links"
+                    @click="handleClick(item, $event)"
+                    :class="index < items.length - 1 ? 'text-gray-700 dark:text-gray-300 hover:underline' : 'text-gray-400 dark:text-gray-600'">
+                    {{ item.label }}</component>
             </li>
         </template>
     </ol>
