@@ -6,6 +6,8 @@
 </template>
 
 <script setup>
+import { Icon } from "@iconify/vue";
+
 const props = defineProps({
     url: String,
     link: {type: Boolean, default: true}

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\UploadedFile;
 use App\Models\Equipo;
 use App\Models\User;
-
+use App\Models\Nodo;
 
 
 /**
@@ -21,17 +21,52 @@ use App\Models\User;
  */
 class ArchivosController extends Controller
 {
+
+    /**
+     * Método por defecto para listar archivos
+     */
+    public function archivos(Request $request)
+    {
+        $ruta = $request->path();
+
+        return $this->list($ruta, false);
+    }
+
+
+    /**
+     * Para el gestor de archivos o Media Manager
+     */
+    public function filemanager(Request $request, $ruta = "/")
+    {
+        return $this->list($ruta, true);
+    }
+
     /**
      * Listado de una carpeta. Comprueba todos los permisos de acceso
      */
-    public function index(Request $request)
+    public function list($ruta, $json)
     {
-        $ruta = $request->path();
+        $ruta = ltrim($ruta, '/');
+
+        if (strpos($ruta, ':') !== false) {
+            if ($json) {
+                return response()->json(['error' => 'Acceso denegado'], 403);
+            }
+            abort(403, 'Acceso denegado');
+        }
+
+        if (strpos($ruta, '..') !== false) {
+            if ($json) {
+                return response()->json(['error' => 'No se permiten rutas relativas'], 400);
+            }
+            abort(400, 'No se permiten rutas relativas');
+        }
 
         // Obtener la URL relativa actual de la aplicación
         $baseUrl = url('');
 
         $rutaBase = str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url($ruta)));
+
 
         // Comprobar si la carpeta existe
         if (!Storage::disk('public')->exists($rutaBase)) {
@@ -44,10 +79,11 @@ class ArchivosController extends Controller
 
         // comprobamos el permiso de ejecución (listar) en la carpeta
         $nodo = LinuxPolicy::nodoHeredado($ruta);
+
+
         if (!LinuxPolicy::ejecutar($nodo, $user, $acl)) {
             throw new AuthorizationException('No tienes permisos para ver la carpeta', 403);
         }
-
 
         $rutaPadre = dirname($rutaBase);
 
@@ -77,7 +113,8 @@ class ArchivosController extends Controller
 
 
         // Agregar elemento de carpeta padre
-        if ($ruta != "archivos" && $ruta != "/archivos") {
+        $padre = dirname($ruta);
+        if ($padre && $padre != "\\" && $padre != "//") {
             $archivos_internos = Storage::disk('public')->files($ruta);
             $subcarpetas_internas = Storage::disk('public')->directories($ruta);
 
@@ -85,15 +122,15 @@ class ArchivosController extends Controller
                 'nombre' => basename($ruta),
                 'padre' => true,
                 'tipo' => 'carpeta',
-                'ruta' => $rutaBase,
+                'ruta' => $rutaPadre,
                 'url' => $rutaPadre,
                 'carpeta' => $rutaPadre,
                 'archivos' => count($archivos_internos),
                 'subcarpetas' => count($subcarpetas_internas),
-                'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
+                'fecha_modificacion' => Storage::disk('public')->lastModified($padre),
             ];
 
-            $nodo = LinuxPolicy::nodoHeredado(dirname($ruta));
+            $nodo = LinuxPolicy::nodoHeredado($padre);
             if (!$nodo || !LinuxPolicy::ejecutar($nodo, $user, $acl))
                 $item['privada'] = true;
 
@@ -193,7 +230,7 @@ class ArchivosController extends Controller
             'propietario' => $propietario
         ];
 
-        if ($request->has('json')) {
+        if ($json) {
             return response()->json($respuesta, 200);
         }
 
@@ -210,7 +247,7 @@ class ArchivosController extends Controller
     /**
      * Controla el acceso a las descargas
      */
-    public function download(string $ruta)
+    public function storage(string $ruta)
     {
         $path = storage_path('app/public/' . $ruta);
 

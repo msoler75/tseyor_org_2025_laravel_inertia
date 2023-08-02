@@ -19,7 +19,7 @@ return [
     // if it exists, otherwise it will load it from the fallback namespace.
 
     'view_namespace' => 'backpack.theme-tabler::',
-    'view_namespace_fallback' => 'backpack.theme-tabler::',
+    'view_namespace_fallback' => 'vendor.backpack.theme-tabler::',
 
     /*
     |--------------------------------------------------------------------------
@@ -73,10 +73,10 @@ return [
     // ------
 
     // Developer or company name. Shown in footer.
-    'developer_name' => 'Cristian Tabacitu',
+    'developer_name' => 'Pigmalión',
 
     // Developer website. Link in footer. Type false if you want to hide it.
-    'developer_link' => 'http://tabacitu.ro',
+    'developer_link' => 'https://github.com/msoler75',
 
     // Show powered by Laravel Backpack in the footer? true/false
     'show_powered_by' => true,
@@ -106,7 +106,7 @@ return [
     // CSS files that are loaded in all pages, using Laravel's @vite() helper
     // Please note that support for Vite was added in Laravel 9.19. Earlier versions are not able to use this feature.
     'vite_styles' => [ // resource file_path
-        // 'resources/css/app.css',
+        'resources/css/app.css',
     ],
 
     // --------------
@@ -115,6 +115,9 @@ return [
 
     // JS files that are loaded in all pages, using Laravel's asset() helper
     'scripts' => [
+        // 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.3/vue.global.min.js'
+        // https://unpkg.com/vue@3.3/dist/vue.esm-browser.js
+        // 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.runtime.esm-bundler.min.js'
         // 'js/example.js',
         // 'https://unpkg.com/vue@2.4.4/dist/vue.min.js',
         // 'https://unpkg.com/react@16/umd/react.production.min.js',
@@ -128,7 +131,7 @@ return [
 
     // JS files that are loaded in all pages, using Laravel's @vite() helper
     'vite_scripts' => [ // resource file_path
-        // 'resources/js/app.js',
+        'resources/js/backpack/app.js',
     ],
 
 ];

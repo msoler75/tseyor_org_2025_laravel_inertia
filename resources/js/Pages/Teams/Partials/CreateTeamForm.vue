@@ -30,7 +30,7 @@ const createTeam = () => {
 
                 <div class="flex items-center mt-2">
                     <Image class="object-cover w-12 h-12 rounded-full" :src="$page.props.auth.user.profile_photo_url"
-                        :alt="$page.props.auth.user.name">
+                        :alt="$page.props.auth.user.name" />
 
                     <div class="ml-4 leading-tight">
                         <div class="text-gray-900 dark:text-white">{{ $page.props.auth.user.name }}</div>

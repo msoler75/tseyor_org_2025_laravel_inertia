@@ -1,13 +1,11 @@
-import { defineStore } from "pinia";
+import { createGlobalState, useStorage } from "@vueuse/core";
 
-export const useFilesStore = defineStore("files", {
-  state: () => ({
-    // file operations
+// file operations
+export const useFilesOperation = createGlobalState(() =>
+  useStorage("vue-use-locale-storage", {
     isMovingFiles: false,
     isCopyingFiles: false,
     filesToMove: [],
     filesToCopy: [],
-  }),
-  getters: {},
-  actions: {},
-});
+  })
+  );

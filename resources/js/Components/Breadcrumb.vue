@@ -32,7 +32,7 @@ function handleClick(item, event) {
 
 
 <template>
-    <ol class="list-reset flex gap-1">
+    <ol v-if="items.length" class="list-reset flex gap-1">
         <template v-for="item, index, of items" :key="index">
             <li v-if="index > 0">
                 <span class="mx-2 text-neutral-500 dark:text-neutral-400">/</span>
@@ -44,5 +44,10 @@ function handleClick(item, event) {
                     {{ item.label }}</component>
             </li>
         </template>
+    </ol>
+    <ol v-else>
+        <li class="py-1">
+                <span class="mx-2 text-neutral-500 dark:text-neutral-400">/</span>
+            </li>
     </ol>
 </template>

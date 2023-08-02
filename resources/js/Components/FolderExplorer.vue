@@ -1,32 +1,43 @@
 <template>
     <div class="h-full flex flex-col">
-        <div
-            class="w-full sticky top-4 pt-16 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30">
-            <div class="lg:container mx-auto w-full flex flex-nowrap justify-between mb-4 lg:mb-7">
-                <div :title="rutaActual" v-if="!seleccionando" class="flex items-center gap-3 text-2xl font-bold">
-                    <Icon icon="ph:folder-notch-open-duotone" />
-                    <Breadcrumb :path="rutaActual" :links="!embed" @folder="clickBreadcrumb($event)"/>
+        <div class="w-full border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
+            :class="embed ? 'pt-4' : 'sticky top-4 pt-16'">
+            <div class="w-full flex flex-nowrap justify-between mb-4 lg:mb-7" :class="embed ? '' : 'lg:container mx-auto'">
+
+                <div class="flex gap-3">
+
+                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral cursor-pointer"
+                        @click="clickFolder({ url: '' }, $event)" :link="!embed" title="Ir a la carpeta base">
+                        <Icon icon="ph:house-line-duotone" class="text-2xl" />
+                    </ConditionalLink>
+
+                    <ConditionalLink v-if="items.length > 1 && items[1].padre && !seleccionando" :href="items[1].url"
+                        class="btn btn-neutral w-fit" title="Ir a una carpeta superior"
+                        @click="clickFolder(items[1], $event)" :link="!embed">
+                        <Icon icon="ph:arrow-bend-left-up-duotone" class="text-2xl" />
+                    </ConditionalLink>
+
+                    <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="!embed" @folder="clickBreadcrumb($event)"
+                        title="Ruta actual"
+                        class="text-3xl font-bold items-center ml-2"
+                        />
                 </div>
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
 
-                    <button v-if="seleccionando" class="btn btn-neutral flex gap-3 items-center" @click="cancelarSeleccion"
-                        title="Cancelar selección">
+                    <button v-if="seleccionando" class="btn btn-neutral flex gap-3 items-center"
+                        @click.prevent="cancelarSeleccion" title="Cancelar selección">
                         <Icon icon="material-symbols:close-rounded" />
                         <span>{{ itemsSeleccionados.length }}</span>
                     </button>
 
 
-                    <button v-if="seleccionando" class="btn btn-neutral ml-auto" @click="seleccionarTodos"
+                    <button v-if="seleccionando" class="btn btn-neutral ml-auto" @click.prevent="seleccionarTodos"
                         title="Seleccionar todos">
                         <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                     </button>
 
-                    <ConditionalLink v-if="items.length > 1 && items[1].padre && !seleccionando" :href="items[1].url"
-                        class="btn btn-neutral w-fit" title="Ir a una carpeta superior" @click="clickFolder(items[1], $event)"
-                        :link="!embed">
-                        <Icon icon="ph:skip-back-duotone" class="transform scale-125" />
-                    </ConditionalLink>
+
 
                     <Link v-if="!embed && propietario && !seleccionando" class="btn btn-neutral" :href="propietario.url"
                         :title="tituloPropietario">
@@ -34,7 +45,29 @@
                         class="transform scale-150" />
                     </Link>
 
-                    <button class="btn btn-neutral" @click="toggleVista" title="Cambiar vista">
+
+                    <Dropdown>
+                        <template #trigger>
+                            <span class="btn btn-neutral" title="Ordenar los elementos">
+                                <Icon icon="lucide:arrow-down-wide-narrow" class="text-2xl" />
+                            </span>
+                        </template>
+                        <template #content>
+                            <div class="bg-base-100 select-none">
+                                <div v-for="label, value in ordenaciones" :key="value"
+                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                    @click="ordenarPor = value">
+                                    <div class="w-3">
+                                        <Icon icon="ph:check" v-if="ordenarPor == value" />
+                                    </div>
+                                    {{ label }}
+                                </div>
+                            </div>
+                        </template>
+                    </Dropdown>
+
+
+                    <button class="btn btn-neutral w-[58px]" @click.prevent="toggleVista" title="Cambiar vista">
                         <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
                             class="transform scale-150" />
                         <Icon v-show="selectors.archivosVista == 'grid'" icon="ph:grid-nine-fill"
@@ -43,9 +76,9 @@
 
                     <Dropdown v-if="puedeEscribir && !seleccionando" align="right" width="48">
                         <template #trigger>
-                            <button class="btn btn-neutral p-3">
+                            <div class="btn btn-neutral p-3">
                                 <Icon icon="mdi:dots-vertical" class="text-xl" />
-                            </button>
+                            </div>
                         </template>
 
                         <template #content>
@@ -96,19 +129,20 @@
             </div>
 
 
-            <!-- Botones -->
+            <!-- SEGUNDA FILA: Botones de Operaciones -->
             <div class="lg:container mx-auto w-full flex mb-7 gap-4 select-none overflow-x-auto scrollbar-hidden"
+                v-if="itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles"
                 :seleccionando="seleccionando"
                 :class="seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
 
                 <button v-if="store.isMovingFiles || store.isCopyingFiles" class="btn btn-secondary flex gap-3 items-center"
-                    @click="cancelarOperacion">
+                    @click.prevent="cancelarOperacion">
                     <Icon icon="material-symbols:close-rounded" />
                     <span>Cancelar</span>
                 </button>
 
                 <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-3 items-center"
-                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click="moverItems"
+                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click.prevent="moverItems"
                     title="Mover los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
                     <span v-if="puedeEscribir">Mover aquí</span>
@@ -116,7 +150,7 @@
                 </button>
 
                 <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-3 items-center"
-                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click="copiarItems"
+                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click.prevent="copiarItems"
                     title="Copiar los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
                     <span v-if="puedeEscribir">Pegar aquí</span>
@@ -125,37 +159,25 @@
 
                 <template v-else>
 
-
-
-
                     <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-3 items-center"
-                        @click="prepararMoverItems">
+                        @click.prevent="prepararMoverItems">
                         <Icon icon="ph:scissors-duotone" /><span>Mover</span>
                     </button>
 
                     <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-3 items-center"
-                        @click="prepararCopiarItems">
+                        @click.prevent="prepararCopiarItems">
                         <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
                     </button>
 
                     <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-3 items-center"
-                        @click="abrirEliminarModal(null)">
+                        @click.prevent="abrirEliminarModal(null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
 
-                    <select v-if="!seleccionando" v-model="ordenarPor" class="rounded">
-                        <option value="fechaDesc">Recientes</option>
-                        <option value="fechaAsc">Antiguos</option>
-                        <option value="nombreAsc">A-Z</option>
-                        <option value="nombreDesc">Z-A</option>
-                        <option value="tamañoAsc">Pequeños</option>
-                        <option value="tamañoDesc">Grandes</option>
-                    </select>
-
                     <button v-if="itemsSeleccionados.length == 1"
                         class="md:hidden btn btn-secondary flex gap-3 items-center"
-                        @click="abrirModalRenombrar(itemsSeleccionados[0])">
+                        @click.prevent="abrirModalRenombrar(itemsSeleccionados[0])">
                         <Icon icon="ph:cursor-text-duotone" />
                         <span>Renombrar</span>
                     </button>
@@ -260,9 +282,9 @@
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48" v-if="puedeEscribir">
                                     <template #trigger>
-                                        <button class="p-3">
+                                        <span class="p-3">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
-                                        </button>
+                                        </span>
                                     </template>
 
                                     <template #content>
@@ -326,7 +348,8 @@
                                 <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
                                     class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
                                     @click="clickFolder(item, $event)" :link="!embed" />
-                                <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download>
+                                <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
+                                    @click="clickFile(item, $event)">
                                     <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain" />
                                 </a>
                                 <FileIcon v-else :url="item.url" class="cursor-pointer text-8xl mb-4"
@@ -354,9 +377,9 @@
                                 <div class="w-full flex justify-end">
                                     <Dropdown align="right" width="48" v-if="puedeEscribir">
                                         <template #trigger>
-                                            <button class="btn p-1">
+                                            <span class="btn p-1">
                                                 <Icon icon="mdi:dots-horizontal" class="text-xl z-20" />
-                                            </button>
+                                            </span>
                                         </template>
 
                                         <template #content>
@@ -425,7 +448,7 @@
                 </Dropzone>
 
 
-                <button @click="modalSubirArchivos = false" type="button" class="btn btn-neutral">
+                <button @click.prevent="modalSubirArchivos = false" type="button" class="btn btn-neutral">
                     Cerrar
                 </button>
             </div>
@@ -520,13 +543,10 @@
 </template>
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 import Dropzone from 'vue2-dropzone-vue3'
-import { useFilesStore } from '@/Stores/files';
-import { router, usePage } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
+import { useFilesOperation } from '@/Stores/files';
 import { useSelectors } from '@/Stores/selectors'
-
-defineOptions({ layout: AppLayout })
 
 const emit = defineEmits(['updated', 'folder:value', 'file:value']);
 
@@ -622,7 +642,7 @@ watch(() => itemsSeleccionados.value.length, (value) => {
 
 
 // COPIAR Y MOVER ITEMS
-const store = useFilesStore();
+let store = useFilesOperation()
 
 const buscandoCarpetaDestino = computed(() => store.isMovingFiles || store.isCopyingFiles)
 
@@ -691,16 +711,13 @@ const modalCrearCarpeta = ref(false)
 
 
 const page = usePage()
-console.log(page)
-
-console.log('csrf', page.props.csrf_token)
 
 const dropzoneOptions = ref({
-    url: route('files.upload.file'),
+    url: '/files/upload/file', //route('files.upload.file'),
     thumbnailWidth: 150,
     maxFilesize: 50,
     headers: {
-        'X-CSRF-Token': page.props.csrf_token,
+        'X-CSRF-Token': page.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content,
     },
 })
 
@@ -729,6 +746,16 @@ watch(modalSubirArchivos, (value) => {
 
 
 // ORDENACION
+
+const ordenaciones = {
+    fechaDesc: 'Recientes',
+    fechaAsc: 'Antiguos',
+    nombreAsc: 'A-Z',
+    nombreDesc: 'Z-A',
+    tamañoAsc: 'Pequeños',
+    tamañoDesc: 'Grandes',
+}
+
 
 const ordenarPor = ref("fechaDesc")
 
@@ -918,11 +945,14 @@ function isImage(fileName) {
 
 // VISTA DE ITEMS
 const selectors = useSelectors()
-if (!['lista', 'grid'].includes(selectors.archivosVista))
-    selectors.archivosVista = 'lista'
+if (!['lista', 'grid'].includes(selectors.value.archivosVista))
+    selectors.value.archivosVista = 'lista'
 
+
+console.log(selectors.value)
 const toggleVista = () => {
-    selectors.archivosVista = selectors.archivosVista === 'grid' ? 'lista' : 'grid';
+    selectors.value.archivosVista = selectors.value.archivosVista === 'grid' ? 'lista' : 'grid';
+    console.log(selectors.value)
 }
 
 function reloadPage() {
@@ -1045,4 +1075,5 @@ table th {
 .files-leave-to {
     opacity: 0;
     transform: scale(0);
-}</style>
+}
+</style>
