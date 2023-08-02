@@ -1,10 +1,9 @@
-import { defineStore } from "pinia";
+import { createGlobalState, useStorage } from "@vueuse/core";
 
-export const useSelectors = defineStore("selectors", {
-  state: () => ({
+// ui selectors
+export const useSelectors = createGlobalState(() =>
+  useStorage("vue-use-locale-storage", {
     soloTitulosLibros: false,
-    archivosVista: 'normal'
-  }),
-  getters: {},
-  actions: {},
-});
+    archivosVista: "normal",
+  })
+);

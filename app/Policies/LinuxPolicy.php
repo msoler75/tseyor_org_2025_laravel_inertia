@@ -42,12 +42,19 @@ class LinuxPolicy
      */
     public static function nodoHeredado($ruta)
     {
-        return Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+        $nodo = Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             ->leftJoin('users', 'users.id', '=', 'user_id')
             ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
             ->whereRaw("'$ruta' LIKE CONCAT(nodos.ruta, '%')")
             ->orderByRaw('LENGTH(nodos.ruta) DESC')
             ->first();
+
+        if (!$nodo) {
+            // crea un nodo por con los permisos por defecto
+            $nodo = new Nodo();
+            $nodo->ruta =  ltrim($ruta, '/');
+        }
+        return $nodo;
     }
 
     /**

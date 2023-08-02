@@ -7,6 +7,11 @@
 <label>{!! $field['label'] !!}</label>
 @include('crud::fields.inc.translatable_icon')
 
+<div id="app">
+    <file-manager url="/"></file-manag>
+</div>
+
+
 
 @php
     // Suponiendo que $field['value'] contiene el HTML con entidades HTML como "&lt;" y "&gt;"
@@ -15,6 +20,7 @@
     // decodificamos las etiquetas HTML
     $decodedHtml = str_replace(['&lt;', '&gt;'], ['<', '>'], $htmlCode);
 @endphp
+
 
 <input id="quill-input" type="hidden" name="{{ $field['name'] }}" data-init-function="bpFieldInitDummyFieldElement"
     @include('crud::fields.inc.attributes') value="{{ $decodedHtml }}" />
@@ -105,7 +111,7 @@
             <option value="rgb(0, 41, 102)">darker blue</option>
             <option value="rgb(61, 20, 102)">darker purple</option>
             <option value="rgb(0, 0, 0)">black</option>
-          </select>
+        </select>
 
         <select class="ql-background">
             <option value="rgb(255, 255, 255)">white</option>
@@ -144,8 +150,6 @@
 
 {{-- CUSTOM CSS --}}
 @push('crud_fields_styles')
-    {{-- How to load a CSS file? --}}
-    @basset('quilleditorFieldStyle.css')
 
     {{-- How to add some CSS? --}}
     @bassetBlock('backpack/crud/fields/quilleditor_field-style.css')
@@ -235,6 +239,12 @@
 
 {{-- CUSTOM JS --}}
 @push('crud_fields_scripts')
+
+
+
+
+
+
     <!-- Quill Editor -->
     <!-- curated things about quill -->
     <!-- https://github.com/quilljs/awesome-quill -->
@@ -257,11 +267,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js"></script>
 
 
-    {{-- How to load a JS file? --}}
-    @basset('quilleditorFieldScript.js')
+
+
 
     {{-- How to add some JS to the field? --}}
-    @bassetBlock('path/to/script.js')
+    @bassetBlock('backpack/crud/fields/quilleditor.js')
         <script>
             // configuración original de la barra de botones
             var toolbarOptions = [
@@ -414,6 +424,10 @@
                     /<p>\s+<\/p>\n?/g, '').replace(/\n/g, '')
             }
 
+
+
+
+
             function bpFieldInitDummyFieldElement(element) {
                 // this function will be called on pageload, because it's
                 // present as data-init-function in the HTML above; the
@@ -421,6 +435,18 @@
                 // element where init function was defined
                 // console.log(element.val());
 
+
+                console.log('going to mount vue')
+                /*axios.get('http://tseyor.org/any.js')
+
+                const { createApp, ref } = Vue
+
+                const app = window.init_vue(create_app);
+                app.mount("#app")*/
+                //window.init_vue();
+                //setTimeout(()=>{
+                    window.app.mount("#app");
+                //}, 2000)
 
                 // carga el contenido del  campo
                 // reemplazamos los caracteres para incorporar fragmentos de HTML en el markdown

@@ -41,10 +41,12 @@ Route::get('/', [PortadaController::class, 'index'])->name('portada');
 
 Route::get('/novedades', [NovedadesController::class, 'index'])->name('novedades');
 
-Route::get('/archivos', [ArchivosController::class, 'index'])->name('archivos0');
-Route::get('/archivos{ruta}', [ArchivosController::class, 'index'])->where(['ruta' => '(\/.+)?'])->name('archivos');
+Route::get('/archivos', [ArchivosController::class, 'archivos'])->name('archivos0');
+Route::get('/archivos{ruta}', [ArchivosController::class, 'archivos'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
-Route::get('/storage/{ruta}', [ArchivosController::class, 'download'])->where(['ruta' => '(\/.+)?'])->name('storage');
+Route::get('/filemanager{ruta}', [ArchivosController::class, 'filemanager'])->where(['ruta' => '(\/.*)?'])->name('filemanager');
+
+Route::get('/storage/{ruta}', [ArchivosController::class, 'storage'])->where(['ruta' => '(\/.+)?'])->name('storage');
 
 Route::get('/audios', [AudiosController::class, 'index'])->name('audios');
 Route::get('/audios/{id}', [AudiosController::class, 'show'])->name('audio');

@@ -5,7 +5,7 @@ import "../css/tabs.css";
 import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
-import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
+import { ZiggyVue } from "ziggy";
 import { Icon } from "@iconify/vue";
 import { Head, Link } from "@inertiajs/vue3";
 
@@ -30,7 +30,7 @@ createInertiaApp({
       createApp({ render: () => h(App, props) })
         // https://chriswray.dev/posts/how-to-add-components-globally-in-an-inertiajs-application
         .mixin({
-          components: { Icon, Head, Link }
+          components: { Icon, Head, Link },
         })
         .use(plugin)
         .use(ZiggyVue, Ziggy)

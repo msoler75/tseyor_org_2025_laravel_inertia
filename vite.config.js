@@ -6,9 +6,26 @@ import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
 
 export default defineConfig({
+  /* build: {
+    outDir: 'dist',
+    rollupOptions: {
+     // Deshabilitamos inlineDynamicImports para evitar este error
+     inlineDynamicImports: false
+    },
+    lib: {
+        entry: "./resources/js/backpack/index.js",
+      formats: ['es', 'umd'],
+      name: 'components'
+    }
+  }, */
+  resolve: {
+    alias: {
+        ziggy: 'vendor/tightenco/ziggy/dist/vue.es.js'
+    },
+},
   plugins: [
     laravel({
-      input: "resources/js/app.js",
+      input: ["resources/js/app.js", "resources/js/backpack/app.js", "resources.js/backpack/components.js"],
       ssr: "resources/js/ssr.js",
       refresh: true,
     }),

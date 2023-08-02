@@ -22,7 +22,7 @@ return [
      * Possible values: horizontal, horizontal_dark, horizontal_overlap, vertical,
      * vertical_dark, vertical_transparent (legacy theme), right_vertical, right_vertical_dark, right_vertical_transparent
      */
-    'layout' => 'horizontal_overlap',
+    'layout' => 'vertical_dark',
 
     /**
      * Pick a login page layout.
@@ -50,7 +50,6 @@ return [
      * these options will help you achieve that.
      */
     'options' => [
-        /**
         /**
          * The available color modes.
          */
@@ -167,4 +166,5 @@ return [
      * 2. Replace the value of layout on this file with "your-custom-layout"
      * 3. Customize the blade and place components such as sidebar, header, top-bar, where you need them!
      */
+
 ];
