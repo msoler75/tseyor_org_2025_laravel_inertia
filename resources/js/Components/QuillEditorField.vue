@@ -12,10 +12,11 @@
             </div>
         </Modal>
 
-        <div v-show="!editingMarkdown">
-            <QuillEditor ref="qeditor" theme="snow" :value="contenidoHtml" @input="updateHtml" contentType="html"
-                :modules="modules" toolbar="#toolbar_1"
-                @ready="onQuillReady">
+        <div v-show="!editingMarkdown" ref="quillwrapper" class="bg-base-100"
+        :class="inFullScreen?'fullscreen':''"
+        >
+            <QuillEditor ref="qeditor" theme="snow" v-model:content="contenidoHtml" contentType="html" :modules="modules"
+                toolbar="#toolbar_1" @ready="onQuillReady">
                 <template #toolbar>
                     <div id="toolbar_1" quill__toolbar>
                         <span class="ql-formats">
@@ -140,7 +141,13 @@
                         </span>
                         <span class="ql-formats ql-no-hide">
                             <button class="ql-html" @click.prevent="onHtml">
-                                <Icon icon="ph:brackets-angle-bold" />
+                                <Icon icon="mdi:application-brackets-outline" />
+                            </button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-fullscreen" @click.prevent="toggleFullscreen">
+                            <Icon icon="fluent:arrow-expand-24-filled" v-if="!inFullScreen"/>
+                            <Icon icon="fluent:arrow-minimize-24-regular" v-else/>
                             </button>
                         </span>
                     </div>
@@ -148,11 +155,14 @@
             </QuillEditor>
         </div>
 
-        <button v-show="editingMarkdown" @click.prevent="editingMarkdown=false">Volver</button>
+        <button v-show="editingMarkdown" @click.prevent="editingMarkdown = false"
+            class="flex gap-3 mb-1 items-center btn btn-neutral">
+            <Icon icon="ph:arrow-left-duotone" />Volver al Editor normal
+        </button>
 
-        <MdEditor :value="contenidoMD" @onChange="updateMD" v-show="editingMarkdown" noMermaid noKatex noUploadImg
-        :toolbarsExclude="['save', 'sub', 'sup', 'katex', 'mermaid', 'htmlPreview', 'catalog', 'github', 'revoke', 'next']"
-        />
+        <MdEditor v-model="contenidoMD" v-show="editingMarkdown"
+            :toolbarsExclude="['save', 'sub', 'sup', 'katex', 'mermaid', 'htmlPreview', 'catalog', 'github', 'revoke', 'next', 'image']"
+            :footers="[]" :preview="false" />
     </div>
 </template>
 
@@ -168,6 +178,8 @@ import 'md-editor-v3/lib/style.css';
 
 import MarkdownIt from 'markdown-it'
 import TurndownService from 'turndown'
+
+import screenfull from 'screenfull'
 
 const props = defineProps({
     fieldName: String,
@@ -212,22 +224,25 @@ function onQuillReady() {
 const contenidoHtml = ref(props.content)
 const contenidoMD = ref(HtmlToMarkdown(props.content))
 
+/*
 // Intercepta los cambios en el valor contenidoMD
 const updateMD = (newValue) => {
     console.log('updateMD', newValue)
     contenidoMD.value = newValue;
     contenidoHtml.value = MarkdownToHtml(newValue)
     console.log('HTML:', contenidoHtml.value)
+    qeditor.value.setHTML(contenidoHtml.value)
 };
 
 // Intercepta los cambios en el valor contenidoMD
-const updateHtml = () => {
+const updateHtml = (x) => {
     const newValue = qeditor.value.getHTML()
     console.log('updateHtml', newValue)
     // contenidoHtml.value = newValue;
     contenidoMD.value = HtmlToMarkdown(newValue)
     console.log("MD:", contenidoMD.value)
 };
+*/
 
 const qeditor = ref(null)
 
@@ -259,6 +274,20 @@ function prepareHtmlButton() {
 
 const editingHtml = ref(false)
 const editingMarkdown = ref(false)
+
+watch(editingMarkdown, (value) => {
+    if (value)
+        contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
+    else
+        contenidoHtml.value = MarkdownToHtml(contenidoMD.value)
+})
+
+
+watch(contenidoHtml, (value)=>{
+    contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
+})
+
+
 
 function onHtml(evt) {
     const quill = qeditor.value.getQuill()
@@ -307,6 +336,26 @@ function MarkdownToHtml(raw_markdown) {
         /<p>\s+<\/p>\n?/g, '').replace(/\n/g, '')
 }
 
+
+const inFullScreen = ref(false)
+
+const quillwrapper = ref(null)
+function toggleFullscreen() {
+    const element = quillwrapper.value
+    if (screenfull.isEnabled) {
+        screenfull.toggle(element);
+        inFullScreen.value = !inFullScreen.value
+    }
+}
+
+
+if (screenfull.isEnabled) {
+	screenfull.on('change', () => {
+		inFullScreen.value = screenfull.isFullscreen
+	});
+}
+
+
 </script>
 
 
@@ -318,9 +367,12 @@ function MarkdownToHtml(raw_markdown) {
     display: none;
 }
 
+
 .ql-editor {
     max-height: 80vh;
-    background: red;
+}
+.fullscreen .ql-editor{
+    max-height: calc(100vh - 41px)
 }
 
 .ql-editor p {
