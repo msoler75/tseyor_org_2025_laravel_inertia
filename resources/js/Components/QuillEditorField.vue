@@ -1,6 +1,8 @@
 <template>
     <div :editingHtml="editingHtml">
-        <input type="hidden" :name="fieldName" v-model="contenidoMD" />
+        <input type="hidden" :name="name" v-model="contenidoMD" />
+
+        fieldName::{{ name }}
 
         <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
             <div class="flex flex-col">
@@ -16,7 +18,7 @@
             <QuillEditor ref="qeditor" theme="snow" v-model:content="contenidoHtml" contentType="html" :modules="modules"
                 toolbar="#toolbar_1" @ready="onQuillReady">
                 <template #toolbar>
-                    <div id="toolbar_1" quill__toolbar>
+                    <div id="toolbar_1" quill__toolbar class="text-base-content">
                         <span class="ql-formats">
                             <button type="button" class="ql-header" value="1">Heading 1</button>
                             <button type="button" class="ql-header" value="2">Heading 2</button>
@@ -183,7 +185,7 @@ import TurndownService from 'turndown'
 import screenfull from 'screenfull'
 
 const props = defineProps({
-    fieldName: String,
+    name: String,
     content: { type: String, default: 'Hola mundo 2' }
 })
 
@@ -225,8 +227,8 @@ function onQuillReady() {
     bindings = quill.getModule('keyboard').options.bindings;
 }
 
-const contenidoHtml = ref(props.content)
-const contenidoMD = ref(HtmlToMarkdown(props.content))
+const contenidoMD = ref(props.content)
+const contenidoHtml = ref(MarkdownToHtml(props.content))
 
 /*
 // Intercepta los cambios en el valor contenidoMD
