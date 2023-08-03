@@ -13,6 +13,7 @@ import { createApp } from "vue/dist/vue.esm-bundler.js";
 // 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.3/vue.global.min.js'
 import { Icon } from "@iconify/vue";
 import { Link } from "@inertiajs/vue3";
+import FloatingVue from 'floating-vue'
 
 // my components
 import FileManager from "../Components/FileManager.vue";
@@ -52,6 +53,7 @@ app.component("Modal", Modal);
 app.component("ConfirmationModal", ConfirmationModal);
 app.component("Image", Image);
 */
+.use(FloatingVue)
 .mixin({
   components: {Icon,Link, FileManager },
 })
