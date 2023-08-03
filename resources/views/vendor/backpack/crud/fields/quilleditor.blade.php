@@ -8,7 +8,9 @@
 @include('crud::fields.inc.translatable_icon')
 
 <div id="app">
-    <file-manager url="/"></file-manag>
+    <file-manager url="/"
+    v-bind:insertar="()=>onInsert"
+    ></file-manag>
 </div>
 
 
@@ -265,9 +267,6 @@
     <!-- markdown converters -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/to-markdown/3.0.4/to-markdown.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js"></script>
-
-
-
 
 
     {{-- How to add some JS to the field? --}}
@@ -627,6 +626,10 @@
                 myDropDown.attach(quill)
                 */
 
+            }
+
+            function onInsert(text) {
+                console.log('quill.onInsert', text)
             }
         </script>
     @endBassetBlock

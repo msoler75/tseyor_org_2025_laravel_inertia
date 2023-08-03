@@ -36,6 +36,9 @@ use App\Pigmalion\SEO;
 |
 */
 
+Route::get('/test', function () {
+    return Inertia::render('Test', []);
+})->name('test');
 
 Route::get('/', [PortadaController::class, 'index'])->name('portada');
 
