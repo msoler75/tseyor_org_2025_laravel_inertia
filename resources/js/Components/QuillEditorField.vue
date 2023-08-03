@@ -12,9 +12,7 @@
             </div>
         </Modal>
 
-        <div v-show="!editingMarkdown" ref="quillwrapper" class="bg-base-100"
-        :class="inFullScreen?'fullscreen':''"
-        >
+        <div v-show="!editingMarkdown" ref="quillwrapper" class="bg-base-100" :class="inFullScreen ? 'fullscreen' : ''">
             <QuillEditor ref="qeditor" theme="snow" v-model:content="contenidoHtml" contentType="html" :modules="modules"
                 toolbar="#toolbar_1" @ready="onQuillReady">
                 <template #toolbar>
@@ -126,7 +124,7 @@
                         <span class="ql-formats">
                             <button type="button" class="ql-image transform scale-125">Image</button>
                             <button class="ql-file-manager" @click.prevent="showMediaManager = true">
-                                <Icon icon="ph:folder-notch-open-duotone" class="transform scale-125"/>
+                                <Icon icon="ph:folder-notch-open-duotone" class="transform scale-125" />
                             </button>
                         </span>
                         <span class="ql-formats">
@@ -135,8 +133,8 @@
                             </button>
                         </span>
                         <span class="ql-formats">
-                            <button class="ql-md" @click.prevent="editingMarkdown = !editingMarkdown">
-                                <Icon icon="teenyicons:markdown-solid" class="transform scale-125"/>
+                            <button class="ql-md" @click.prevent="switchToMarkdown">
+                                <Icon icon="teenyicons:markdown-solid" class="transform scale-125" />
                             </button>
                         </span>
                         <span class="ql-formats ql-no-hide">
@@ -146,8 +144,8 @@
                         </span>
                         <span class="ql-formats">
                             <button class="ql-fullscreen" @click.prevent="toggleFullscreen">
-                            <Icon icon="fluent:arrow-expand-24-filled" v-if="!inFullScreen"/>
-                            <Icon icon="fluent:arrow-minimize-24-regular" v-else/>
+                                <Icon icon="fluent:arrow-expand-24-filled" v-if="!inFullScreen" />
+                                <Icon icon="fluent:arrow-minimize-24-regular" v-else />
                             </button>
                         </span>
                     </div>
@@ -283,7 +281,7 @@ watch(editingMarkdown, (value) => {
 })
 
 
-watch(contenidoHtml, (value)=>{
+watch(contenidoHtml, (value) => {
     contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
 })
 
@@ -350,11 +348,16 @@ function toggleFullscreen() {
 
 
 if (screenfull.isEnabled) {
-	screenfull.on('change', () => {
-		inFullScreen.value = screenfull.isFullscreen
-	});
+    screenfull.on('change', () => {
+        inFullScreen.value = screenfull.isFullscreen
+    });
 }
 
+function switchToMarkdown() {
+    editingMarkdown.value = true
+    if (inFullScreen.value) // quita el fullscreen
+        toggleFullscreen()
+}
 
 </script>
 
@@ -371,7 +374,8 @@ if (screenfull.isEnabled) {
 .ql-editor {
     max-height: 80vh;
 }
-.fullscreen .ql-editor{
+
+.fullscreen .ql-editor {
     max-height: calc(100vh - 41px)
 }
 
