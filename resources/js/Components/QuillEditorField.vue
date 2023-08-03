@@ -124,7 +124,7 @@
                         <span class="ql-formats">
                             <button type="button" class="ql-image transform scale-125">Image</button>
                             <button class="ql-file-manager" @click.prevent="showMediaManager = true">
-                                <Icon icon="ph:folder-notch-open-duotone" class="transform scale-125" />
+                                <Icon icon="ph:folder-notch-open-duotone" class="transform scale-110" />
                             </button>
                         </span>
                         <span class="ql-formats">
@@ -170,6 +170,9 @@ import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import BlotFormatter from 'quill-blot-formatter'
 import ImageUploader from 'quill-image-uploader'
+
+import {createTooltip} from 'floating-vue'
+import 'floating-vue/dist/style.css'
 
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
@@ -217,6 +220,9 @@ const modules = ref([
 
 function onQuillReady() {
     console.log('Quill Ready!')
+    // Obtener los atajos de teclado actuales
+    const quill = qeditor.value.getQuill()
+    bindings = quill.getModule('keyboard').options.bindings;
 }
 
 const contenidoHtml = ref(props.content)
@@ -309,7 +315,10 @@ function onHtml(evt) {
     quillEd_txtArea_1.setAttribute('quill__html', wasActiveTxtArea_1 ? '' : '-active-');
 }
 
-onMounted(() => prepareHtmlButton())
+onMounted(() => {
+    prepareHtmlButton()
+    installToolTips()
+})
 
 
 
@@ -335,6 +344,8 @@ function MarkdownToHtml(raw_markdown) {
 }
 
 
+// FULLSCREEN
+
 const inFullScreen = ref(false)
 
 const quillwrapper = ref(null)
@@ -359,8 +370,164 @@ function switchToMarkdown() {
         toggleFullscreen()
 }
 
-</script>
 
+// TOOLTIPS
+
+// Mapeo de traducciones de botones de Quill Editor
+const translations = {
+    bold: 'Negrita',
+    italic: 'Cursiva',
+    underline: 'Subrayado',
+    strike: 'Tachado',
+    image: 'Imagen',
+    video: 'Video',
+    link: 'Enlace',
+    code: 'Código',
+    align: 'Alinear',
+    header: 'Título',
+    'header 1': 'Título 1',
+    'header 2': 'Título 2',
+    'header 3': 'Título 3',
+    script: 'Superíndice/Subíndice',
+    'blockquote': 'Cita en bloque',
+    'code-block': 'Bloque de código',
+    'clean': 'Borrar formato',
+    'formula': 'Fórmula',
+    'list': 'Lista',
+    'indent': 'Indentar',
+    'indent -1': 'Indentar -1',
+    'indent +1': 'Indentar +1',
+    'size': 'Tamaño',
+    'color': 'Color del texto',
+    'font color': 'Color del texto',
+    'highlight color': 'Color de fondo',
+    'background': 'Color de fondo',
+    'code block': 'Bloque de código',
+    'list ordered': 'Lista ordenada',
+    'list bullet': 'Lista de puntos',
+    'md':'Editor de Markdown',
+    'html': 'Editor de Html',
+    'fullscreen': 'Pantalla completa'
+}
+
+// Función para obtener el atajo de teclado humano-legible
+var bindings = null;
+
+function getShortcut(buttonName) {
+    if (!bindings) return "";
+    var shortcut = null;
+
+    if (bindings.hasOwnProperty(buttonName)) {
+        var binding = bindings[buttonName];
+
+        if (typeof binding.key == 'string') {
+            var key = binding.key.toUpperCase()
+
+            shortcut = binding.shortKey ? 'CTRL+' + key : key;
+
+            if (binding.shiftKey) {
+                shortcut = 'SHIFT+' + shortcut;
+            }
+
+            if (binding.altKey) {
+                shortcut = 'ALT+' + shortcut;
+            }
+
+            if (binding.metaKey) {
+                shortcut = 'CMD+' + shortcut;
+            }
+        }
+    }
+
+    return shortcut ? "(" + shortcut + ")" : "";
+}
+
+function nombreBoton(buttonName) {
+    // Traducir el nombre del comando si está en el mapeo de traducciones
+    if (translations.hasOwnProperty(buttonName.toLowerCase())) {
+        buttonName = translations[buttonName.toLowerCase()];
+    }
+    return buttonName
+}
+
+
+
+function installToolTips() {
+
+    // tooltips
+    // https://github.com/quilljs/quill/issues/2078#issuecomment-1031579345
+    var elems = document.querySelectorAll('#toolbar_1 .ql-toolbar .ql-formats .ql-picker .ql-picker-label')
+    for (var e of elems) {
+        let classes = e.parentNode.className
+        console.log('classes', classes)
+
+        let button = classes
+            .replace('ql-color-picker', '')
+            .replace('ql-color', 'font-color')
+            .replace('ql-background', 'highlight-color')
+            .replace('transform', '')
+            .replace(/scale-\d+/, '')
+            .replace('ql-icon-picker', '')
+            .replace('ql-active', '')
+            .replace('ql-picker', '').trim()
+            .replace('ql-', '').replace('-', ' ')
+        classes = button
+            .replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+
+        var value = e.parentNode.getAttribute("value")
+        if (value)
+            classes += " " + value
+
+        /*new bootstrap.Tooltip(e, {
+            title: nombreBoton(classes) + " " + getShortcut(button),
+        });*/
+        /*e.directiveName = {
+            value: 'valor de la directiva', // Puedes pasar cualquier valor aquí
+            arg: null, // El valor de arg depende de la directiva que estés usando
+            modifiers: {}, // Los modificadores también dependen de la directiva
+          };
+        setAttribute("v-tooltip*/
+        const tooltip = createTooltip(e, {
+                triggers: ['hover'],
+                content:  nombreBoton(classes) + " " + getShortcut(button)
+        })
+    }
+
+
+
+    elems = document.querySelectorAll('.ql-toolbar [class*="ql-"]')
+    console.log('elems', elems)
+    for (var e of elems) {
+        console.log(e.tagName)
+        if(!['BUTTON', 'SPAN'].includes(e.tagName)) continue
+
+        let classes = e.getAttribute("class")
+        if(classes.match(/ql-formats|ql-picker-label/)) continue
+
+        console.log('adding tooltip for ', classes)
+        let button = classes.replace('ql-active', '')
+        .replace('transform', '')
+        .replace(/scale-\d+/, '')
+        .replace(/ql-picker|ql-icon-picker|ql-color-picker/g, '')
+        .replace('ql-', '').replace('-', ' ')
+
+        classes = button.trim()
+            .replace(/(^\w{1})|(\s+\w{1})/g, letter =>
+                letter.toUpperCase());
+
+        var value = e.getAttribute("value")
+        if (value)
+            classes += " " + value
+
+
+            const tooltip = createTooltip(e, {
+                triggers: ['hover'],
+                content:  nombreBoton(classes) + " " + getShortcut(button),
+            })
+    }
+}
+
+</script>
 
 
 <style>

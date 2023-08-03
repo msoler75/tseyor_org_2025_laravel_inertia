@@ -8,7 +8,7 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "ziggy";
 import { Icon } from "@iconify/vue";
 import { Head, Link } from "@inertiajs/vue3";
-
+import FloatingVue from 'floating-vue'
 
 
 // https://github.com/John-Weeks-Dev/facebook-clone/blob/master/resources/js/app.js
@@ -35,6 +35,7 @@ createInertiaApp({
         .use(plugin)
         .use(ZiggyVue, Ziggy)
         .use(pinia)
+        .use(FloatingVue)
         // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs
         .mount(el)
     );
