@@ -124,9 +124,9 @@
                             </select>
                         </span>
                         <span class="ql-formats">
-                            <button type="button" class="ql-image">Image</button>
+                            <button type="button" class="ql-image transform scale-125">Image</button>
                             <button class="ql-file-manager" @click.prevent="showMediaManager = true">
-                                <Icon icon="ph:folder-notch-open-duotone" />
+                                <Icon icon="ph:folder-notch-open-duotone" class="transform scale-125"/>
                             </button>
                         </span>
                         <span class="ql-formats">
@@ -136,12 +136,12 @@
                         </span>
                         <span class="ql-formats">
                             <button class="ql-md" @click.prevent="editingMarkdown = !editingMarkdown">
-                                <Icon icon="teenyicons:markdown-solid" />
+                                <Icon icon="teenyicons:markdown-solid" class="transform scale-125"/>
                             </button>
                         </span>
                         <span class="ql-formats ql-no-hide">
                             <button class="ql-html" @click.prevent="onHtml">
-                                <Icon icon="mdi:application-brackets-outline" />
+                                <Icon icon="mdi:application-brackets-outline" class="transform scale-125" />
                             </button>
                         </span>
                         <span class="ql-formats">
