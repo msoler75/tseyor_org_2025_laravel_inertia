@@ -1,7 +1,7 @@
 <template>
-    <div class="h-full flex flex-col">
-        <div class="w-full border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
-            :class="embed ? 'pt-4' : 'sticky top-4 pt-16'">
+    <div class="h-full flex flex-col relative">
+        <div class="w-full sticky top-2 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
+            :class="embed ? 'pt-4' : ' pt-16'">
             <div class="w-full flex flex-nowrap justify-between mb-4 lg:mb-7" :class="embed ? '' : 'lg:container mx-auto'">
 
                 <div class="flex gap-3">
@@ -187,26 +187,22 @@
                         <span>Propiedades</span>
                     </button>
 
-
                 </template>
-
-
-
             </div>
-
-
         </div>
 
 
+        <div  class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14"
+        :class="contentClass" >
 
-        <div :class="selectors.archivosVista === 'lista' ? 'lista' : 'grid'"
-            class="select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14">
-
-            <div v-if="!itemsOrdenados.length" class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
+        <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
+            <Spinner />
+        </div>
+            <div v-else-if="!itemsOrdenados.length" class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
                 <div>No hay archivos</div>
             </div>
-            <div v-if="selectors.archivosVista === 'lista'" :class="itemsOrdenados.length ? 'mr-2 min-h-[300px]' : ''">
+            <div v-else-if="selectors.archivosVista === 'lista'" :class="itemsOrdenados.length ? 'mr-2 min-h-[300px]' : ''">
                 <table class="w-full lg:w-auto mx-auto">
                     <thead class="hidden sm:table-header-group" :class="itemsOrdenados.length ? '' : 'opacity-0'">
                         <tr>
@@ -436,7 +432,7 @@
 
 
         <!-- Modal Upload -->
-        <Modal :show="modalSubirArchivos">
+        <Modal :show="modalSubirArchivos" @close="modalSubirArchivos=true">
 
             <div class="p-5 flex flex-col gap-5 items-center">
                 <Dropzone class="w-full" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
@@ -554,10 +550,15 @@ const props = defineProps({
     items: Array,
     puedeEscribir: Boolean,
     propietario: Object,
-    embed: { type: Boolean, default: false }
+    cargando: Boolean,
+    embed: { type: Boolean, default: false },
+    contentClass: String
 });
 
 const rutaActual = computed(() => props.items.length ? props.items[0].ruta : '')
+
+
+// ALGUNOS HELPERS PARA MOSTRAR DATOS
 
 const tituloPropietario = computed(() => {
     if (!props.propietario) return ''
@@ -706,10 +707,7 @@ function cancelarOperacion() {
 
 // SUBIR ARCHIVOS
 const modalSubirArchivos = ref(false)
-
 const modalCrearCarpeta = ref(false)
-
-
 const page = usePage()
 
 const dropzoneOptions = ref({
@@ -742,7 +740,6 @@ watch(modalSubirArchivos, (value) => {
         reloadPage()
     }
 })
-
 
 
 // ORDENACION

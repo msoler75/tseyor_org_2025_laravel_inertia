@@ -1,20 +1,46 @@
 <template>
-    <div v-if="cargaInicial" class="w-full p-12 flex justify-center items-center text-3xl">
-        <Spinner />
+    <div>
+        <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario"
+            @updated="reloadFolder" @folder="onFolder" @file="onFile" :embed="true"
+            :cargando="cargaInicial"
+            :contentClass="contentClass"
+            />
+
+        <Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
+
+            <div class="bg-base-100 p-3">
+                <Image :src="mostrandoImagen.url" class="w-full max-h-[calc(100vh-170px)] object-contain" />
+
+                <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
+                    <button @click.prevent="insertarImagen" type="button" class="btn btn-primary">
+                        Insertar
+                    </button>
+
+                    <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+
+        </Modal>
     </div>
-    <FolderExplorer v-else :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario" @updated="reloadFolder"
-        @folder="folder" @file="file" :embed="true" />
 </template>
 
 
 <script setup>
 const props = defineProps({
-    url: { type: String, required: false, default:"/" },
+    url: { type: String, required: false, default: "/" },
+    contentClass: String
 });
+
+
+const emit = defineEmits(['image:value'])
 
 const cargaInicial = ref(true)
 
-const items = ref([])
+const items = ref([{
+    ruta: props.url
+}])
 const puedeEscribir = ref(false)
 const propietario = ref(null)
 
@@ -23,7 +49,7 @@ const currentUrl = ref(props.url)
 function loadFolder() {
     console.log('loadFolder', currentUrl.value)
     // axios.get(route('filemanager', currentUrl.value).replace(/%2F/g, '/'))
-     axios.get('/filemanager'+ currentUrl.value)
+    axios.get('/filemanager' + currentUrl.value)
         .then(response => {
             console.log('response', response)
             items.value = response.data.items
@@ -46,15 +72,25 @@ function reloadFolder() {
     loadFolder()
 }
 
-function folder(item) {
+function onFolder(item) {
     console.log('folder change to', item)
     currentUrl.value = item.url
     loadFolder()
 }
 
-function file(item) {
+const mostrandoImagen = ref(null)
+
+function onFile(item) {
     console.log('file clicked', item)
+    if (item.url.match(/\.(gif|png|webp|svg|jpe?g)$/i))
+        mostrandoImagen.value = item
 }
 
+
+function insertarImagen() {
+    console.log('insertarImagen', mostrandoImagen.value)
+    emit('image', mostrandoImagen.value.url)
+    mostrandoImagen.value = null
+}
 </script>
 
