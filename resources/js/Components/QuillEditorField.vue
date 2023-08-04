@@ -2,8 +2,6 @@
     <div :editingHtml="editingHtml">
         <input type="hidden" :name="name" v-model="contenidoMD" />
 
-        fieldName::{{ name }}
-
         <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
             <div class="flex flex-col">
                 <FileManager url="/imagenes/portada" class="max-h-[90vh] flex-grow" @image="onInsertImage"
@@ -14,11 +12,15 @@
             </div>
         </Modal>
 
-        <div v-show="!editingMarkdown" ref="quillwrapper" class="bg-base-100" :class="inFullScreen ? 'fullscreen' : ''">
+        theme:: {{ mytheme }}
+        global theme: {{ globaltheme }}
+
+        <div v-show="!editingMarkdown" ref="quillwrapper" class="bg-base-100 text-base-content"
+            :class="inFullScreen ? 'fullscreen' : ''" :data-theme="mytheme">
             <QuillEditor ref="qeditor" theme="snow" v-model:content="contenidoHtml" contentType="html" :modules="modules"
                 toolbar="#toolbar_1" @ready="onQuillReady">
                 <template #toolbar>
-                    <div id="toolbar_1" quill__toolbar class="text-base-content">
+                    <div id="toolbar_1" quill__toolbar>
                         <span class="ql-formats">
                             <button type="button" class="ql-header" value="1">Heading 1</button>
                             <button type="button" class="ql-header" value="2">Heading 2</button>
@@ -155,10 +157,10 @@
             </QuillEditor>
         </div>
 
-        <button v-show="editingMarkdown" @click.prevent="editingMarkdown = false"
-            class="flex gap-3 mb-1 items-center btn btn-neutral">
+        <div v-show="editingMarkdown" @click="editingMarkdown = false"
+            class="w-fit flex gap-3 my-2 items-center btn btn-neutral">
             <Icon icon="ph:arrow-left-duotone" />Volver al Editor normal
-        </button>
+        </div>
 
         <MdEditor v-model="contenidoMD" v-show="editingMarkdown"
             :toolbarsExclude="['save', 'sub', 'sup', 'katex', 'mermaid', 'htmlPreview', 'catalog', 'github', 'revoke', 'next', 'image']"
@@ -173,7 +175,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import BlotFormatter from 'quill-blot-formatter'
 import ImageUploader from 'quill-image-uploader'
 
-import {createTooltip} from 'floating-vue'
+import { createTooltip } from 'floating-vue'
 import 'floating-vue/dist/style.css'
 
 import { MdEditor } from 'md-editor-v3';
@@ -184,10 +186,46 @@ import TurndownService from 'turndown'
 
 import screenfull from 'screenfull'
 
+// PROPS
+
 const props = defineProps({
     name: String,
     content: { type: String, default: 'Hola mundo 2' }
 })
+
+
+// MOUNTED
+
+onMounted(() => {
+    initThemeObserver()
+    prepareHtmlButton()
+    installToolTips()
+    updateTheme()
+})
+
+
+// DARK MODE
+
+const htmlElement = ref(document.documentElement);
+const globaltheme = ref(htmlElement.value.getAttribute('data-bs-theme'));
+const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+            globaltheme.value = mutation.target.getAttribute('data-theme');
+        }
+    }
+});
+
+function initThemeObserver() {
+    const htmlElement = document.documentElement;
+    observer.observe(htmlElement, { attributes: true });
+}
+
+// traduce el tema
+const mytheme = computed(() => globaltheme.value == 'light' ? '' : 'winter')
+
+
+// QUILL EDITOR
 
 const modules = ref([
     {
@@ -317,11 +355,6 @@ function onHtml(evt) {
     quillEd_txtArea_1.setAttribute('quill__html', wasActiveTxtArea_1 ? '' : '-active-');
 }
 
-onMounted(() => {
-    prepareHtmlButton()
-    installToolTips()
-})
-
 
 
 function HtmlToMarkdown(html) {
@@ -349,7 +382,6 @@ function MarkdownToHtml(raw_markdown) {
 // FULLSCREEN
 
 const inFullScreen = ref(false)
-
 const quillwrapper = ref(null)
 function toggleFullscreen() {
     const element = quillwrapper.value
@@ -407,7 +439,7 @@ const translations = {
     'code block': 'Bloque de código',
     'list ordered': 'Lista ordenada',
     'list bullet': 'Lista de puntos',
-    'md':'Editor de Markdown',
+    'md': 'Editor de Markdown',
     'html': 'Editor de Html',
     'fullscreen': 'Pantalla completa'
 }
@@ -490,8 +522,8 @@ function installToolTips() {
           };
         setAttribute("v-tooltip*/
         const tooltip = createTooltip(e, {
-                triggers: ['hover'],
-                content:  nombreBoton(classes) + " " + getShortcut(button)
+            triggers: ['hover'],
+            content: nombreBoton(classes) + " " + getShortcut(button)
         })
     }
 
@@ -501,17 +533,17 @@ function installToolTips() {
     console.log('elems', elems)
     for (var e of elems) {
         console.log(e.tagName)
-        if(!['BUTTON', 'SPAN'].includes(e.tagName)) continue
+        if (!['BUTTON', 'SPAN'].includes(e.tagName)) continue
 
         let classes = e.getAttribute("class")
-        if(classes.match(/ql-formats|ql-picker-label/)) continue
+        if (classes.match(/ql-formats|ql-picker-label/)) continue
 
         console.log('adding tooltip for ', classes)
         let button = classes.replace('ql-active', '')
-        .replace('transform', '')
-        .replace(/scale-\d+/, '')
-        .replace(/ql-picker|ql-icon-picker|ql-color-picker/g, '')
-        .replace('ql-', '').replace('-', ' ')
+            .replace('transform', '')
+            .replace(/scale-\d+/, '')
+            .replace(/ql-picker|ql-icon-picker|ql-color-picker/g, '')
+            .replace('ql-', '').replace('-', ' ')
 
         classes = button.trim()
             .replace(/(^\w{1})|(\s+\w{1})/g, letter =>
@@ -522,10 +554,10 @@ function installToolTips() {
             classes += " " + value
 
 
-            const tooltip = createTooltip(e, {
-                triggers: ['hover'],
-                content:  nombreBoton(classes) + " " + getShortcut(button),
-            })
+        const tooltip = createTooltip(e, {
+            triggers: ['hover'],
+            content: nombreBoton(classes) + " " + getShortcut(button),
+        })
     }
 }
 
