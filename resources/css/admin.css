@@ -1,0 +1,7 @@
+body {
+    height: unset !important
+}
+
+.page {
+    min-height: 100vh;
+}
