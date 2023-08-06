@@ -1,5 +1,6 @@
 <template>
     <div :editingHtml="editingHtml">
+        <div v-html="contenidoMD.replace(/\n/g, '<br>')"></div>
         <input type="hidden" :name="name" v-model="contenidoMD" />
 
         <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
@@ -11,9 +12,6 @@
                 </div>
             </div>
         </Modal>
-
-        theme:: {{ mytheme }}
-        global theme: {{ globaltheme }}
 
         <div v-show="!editingMarkdown" ref="quillwrapper" class="bg-base-100 text-base-content"
             :class="inFullScreen ? 'fullscreen' : ''" :data-theme="mytheme">
@@ -183,6 +181,7 @@ import 'md-editor-v3/lib/style.css';
 
 import MarkdownIt from 'markdown-it'
 import TurndownService from 'turndown'
+import {gfm} from 'turndown-plugin-gfm'
 
 import screenfull from 'screenfull'
 
@@ -200,11 +199,10 @@ onMounted(() => {
     initThemeObserver()
     prepareHtmlButton()
     installToolTips()
-    updateTheme()
 })
 
 
-// DARK MODE
+// DETECT CHANGE IN COLOR MODE
 
 const htmlElement = ref(document.documentElement);
 const globaltheme = ref(htmlElement.value.getAttribute('data-bs-theme'));
@@ -221,8 +219,8 @@ function initThemeObserver() {
     observer.observe(htmlElement, { attributes: true });
 }
 
-// traduce el tema
-const mytheme = computed(() => globaltheme.value == 'light' ? '' : 'winter')
+// traduce el tema global, al tema del componente
+const mytheme = computed(() => globaltheme.value == 'dark' ? 'winter' : '' )
 
 
 // QUILL EDITOR
@@ -265,29 +263,6 @@ function onQuillReady() {
     bindings = quill.getModule('keyboard').options.bindings;
 }
 
-const contenidoMD = ref(props.content)
-const contenidoHtml = ref(MarkdownToHtml(props.content))
-
-/*
-// Intercepta los cambios en el valor contenidoMD
-const updateMD = (newValue) => {
-    console.log('updateMD', newValue)
-    contenidoMD.value = newValue;
-    contenidoHtml.value = MarkdownToHtml(newValue)
-    console.log('HTML:', contenidoHtml.value)
-    qeditor.value.setHTML(contenidoHtml.value)
-};
-
-// Intercepta los cambios en el valor contenidoMD
-const updateHtml = (x) => {
-    const newValue = qeditor.value.getHTML()
-    console.log('updateHtml', newValue)
-    // contenidoHtml.value = newValue;
-    contenidoMD.value = HtmlToMarkdown(newValue)
-    console.log("MD:", contenidoMD.value)
-};
-*/
-
 const qeditor = ref(null)
 
 const showMediaManager = ref(false)
@@ -301,6 +276,7 @@ function onInsertImage(src) {
     quill.insertEmbed(range.index, 'image', src);
 }
 
+// HTML BUTTON
 
 var quillEd_txtArea_1 = null;
 
@@ -317,31 +293,14 @@ function prepareHtmlButton() {
 }
 
 const editingHtml = ref(false)
-const editingMarkdown = ref(false)
-
-watch(editingMarkdown, (value) => {
-    if (value)
-        contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
-    else
-        contenidoHtml.value = MarkdownToHtml(contenidoMD.value)
-})
-
-
-watch(contenidoHtml, (value) => {
-    contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
-})
-
-
 
 function onHtml(evt) {
-    const quill = qeditor.value.getQuill()
     var wasActiveTxtArea_1 = (quillEd_txtArea_1.getAttribute('quill__html').indexOf('-active-') > -1);
-    console.log({ wasActiveTxtArea_1 })
     editingHtml.value = !wasActiveTxtArea_1
 
     if (wasActiveTxtArea_1) {
         //html editor to quill
-        quill.root.innerHtml = quillEd_txtArea_1.value.replace(/>\n/g, '>')
+        contenidoHtml.value = quillEd_txtArea_1.value.replace(/>\n/g, '>')
         evt.target.classList.remove('ql-active');
     } else {
         //quill to html editor
@@ -357,8 +316,39 @@ function onHtml(evt) {
 
 
 
+// FULLSCREEN
+
+const inFullScreen = ref(false)
+const quillwrapper = ref(null)
+function toggleFullscreen() {
+    const element = quillwrapper.value
+    if (screenfull.isEnabled) {
+        screenfull.toggle(element);
+        inFullScreen.value = !inFullScreen.value
+    }
+}
+
+if (screenfull.isEnabled) {
+    screenfull.on('change', () => {
+        inFullScreen.value = screenfull.isFullscreen
+    });
+}
+
+
+// CONVERT MD <-> HTML
+
+const contenidoMD = ref(props.content)
+const contenidoHtml = ref(MarkdownToHtml(props.content))
+
+watch(contenidoHtml, (value) => {
+    contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
+})
+
+const turndownService = new TurndownService({bulletListMarker:'-', headingStyle: 'atx'})
+turndownService.use(gfm)
+
 function HtmlToMarkdown(html) {
-    const turndownService = new TurndownService()
+    // convertimos cualquier clase dentro de párrafo p en un marcaje especial
     return turndownService.turndown(html.replace(/<p class=["']([^>]*)["'][^>]*>/g, "$&{class:$1}"));
 }
 
@@ -379,24 +369,16 @@ function MarkdownToHtml(raw_markdown) {
 }
 
 
-// FULLSCREEN
+// SWITCH EDITORS
 
-const inFullScreen = ref(false)
-const quillwrapper = ref(null)
-function toggleFullscreen() {
-    const element = quillwrapper.value
-    if (screenfull.isEnabled) {
-        screenfull.toggle(element);
-        inFullScreen.value = !inFullScreen.value
-    }
-}
+const editingMarkdown = ref(false)
 
-
-if (screenfull.isEnabled) {
-    screenfull.on('change', () => {
-        inFullScreen.value = screenfull.isFullscreen
-    });
-}
+watch(editingMarkdown, (value) => {
+    if (value)
+        contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
+    else
+        contenidoHtml.value = MarkdownToHtml(contenidoMD.value)
+})
 
 function switchToMarkdown() {
     editingMarkdown.value = true
@@ -485,7 +467,6 @@ function nombreBoton(buttonName) {
 }
 
 
-
 function installToolTips() {
 
     // tooltips
@@ -493,7 +474,6 @@ function installToolTips() {
     var elems = document.querySelectorAll('#toolbar_1 .ql-toolbar .ql-formats .ql-picker .ql-picker-label')
     for (var e of elems) {
         let classes = e.parentNode.className
-        console.log('classes', classes)
 
         let button = classes
             .replace('ql-color-picker', '')
@@ -512,33 +492,19 @@ function installToolTips() {
         if (value)
             classes += " " + value
 
-        /*new bootstrap.Tooltip(e, {
-            title: nombreBoton(classes) + " " + getShortcut(button),
-        });*/
-        /*e.directiveName = {
-            value: 'valor de la directiva', // Puedes pasar cualquier valor aquí
-            arg: null, // El valor de arg depende de la directiva que estés usando
-            modifiers: {}, // Los modificadores también dependen de la directiva
-          };
-        setAttribute("v-tooltip*/
         const tooltip = createTooltip(e, {
             triggers: ['hover'],
             content: nombreBoton(classes) + " " + getShortcut(button)
         })
     }
 
-
-
     elems = document.querySelectorAll('.ql-toolbar [class*="ql-"]')
-    console.log('elems', elems)
     for (var e of elems) {
-        console.log(e.tagName)
         if (!['BUTTON', 'SPAN'].includes(e.tagName)) continue
 
         let classes = e.getAttribute("class")
         if (classes.match(/ql-formats|ql-picker-label/)) continue
 
-        console.log('adding tooltip for ', classes)
         let button = classes.replace('ql-active', '')
             .replace('transform', '')
             .replace(/scale-\d+/, '')
@@ -552,7 +518,6 @@ function installToolTips() {
         var value = e.getAttribute("value")
         if (value)
             classes += " " + value
-
 
         const tooltip = createTooltip(e, {
             triggers: ['hover'],
