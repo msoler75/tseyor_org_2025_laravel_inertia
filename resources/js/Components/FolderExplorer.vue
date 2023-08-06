@@ -707,7 +707,6 @@ function cancelarOperacion() {
 
 // SUBIR ARCHIVOS
 const modalSubirArchivos = ref(false)
-const modalCrearCarpeta = ref(false)
 const page = usePage()
 
 const dropzoneOptions = ref({
@@ -736,6 +735,7 @@ watch(modalSubirArchivos, (value) => {
     if (value)
         someUploaded.value = false
     else if (someUploaded.value) {
+        someUploaded.value = false
         // recargamos la vista
         reloadPage()
     }
@@ -863,6 +863,7 @@ function renombrarItem() {
 
 // CREAR CARPETA
 
+const modalCrearCarpeta = ref(false)
 const nombreCarpeta = ref("")
 
 function abrirModalCrearCarpeta() {

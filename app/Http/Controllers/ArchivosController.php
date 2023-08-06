@@ -346,6 +346,8 @@ class ArchivosController extends Controller
     public function uploadImage(Request $request)
     {
         $file = $request->file('image');
+        if(!$file)
+        $file = $request->file('file');
         $folder = $this->normalizarRuta($request->destinationPath);
 
         // detecta si estamos editando un tipo de datos y lo extrae, para asignarle después una carpeta
