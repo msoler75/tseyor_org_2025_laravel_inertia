@@ -42,6 +42,7 @@ declare module 'vue' {
     DropdownLink: typeof import('./resources/js/Components/DropdownLink.vue')['default']
     Editor: typeof import('./resources/js/Components/Editor.vue')['default']
     EditorField: typeof import('./resources/js/Components/EditorField.vue')['default']
+    EditorFull: typeof import('./resources/js/Components/EditorFull.vue')['default']
     FakeApp: typeof import('./resources/js/Components/FakeApp.vue')['default']
     FAQ: typeof import('./resources/js/Sections/FAQ.vue')['default']
     FeatureColumns: typeof import('./resources/js/Sections/FeatureColumns.vue')['default']

@@ -247,7 +247,7 @@ onBeforeUnmount(() => {
                                             </div>
                                             <div class="flex flex-col gap-7 mb-7">
                                                 <Link :href="item.url" v-for="item of section.items" :key="item.url"
-                                                    @click="nav.closeTabs"
+                                                    @click="nav.closeTabs()"
                                                     class="flex gap-3 p-3 rounded-lg hover:bg-base-200 transition duration-100 cursor-pointer">
                                                 <div class="flex justify-start" style="min-width:2.2rem">
                                                     <Icon :icon="item.icon" class="text-3xl text-blue-400 flex-shrink-0" />
