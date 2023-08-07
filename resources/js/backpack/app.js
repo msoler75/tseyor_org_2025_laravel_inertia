@@ -16,7 +16,7 @@ import { Link } from "@inertiajs/vue3";
 import FloatingVue from 'floating-vue'
 
 // my components
-import QuillEditorField from "../Components/QuillEditorField.vue";
+import EditorField from "../Components/EditorField.vue";
 /* import FolderExplorer from "../Components/FolderExplorer.vue";
 import FolderIcon from "../Components/FolderIcon.vue";
 import FileIcon from "../Components/FileIcon.vue";
@@ -53,7 +53,7 @@ app.component("Modal", Modal);
 app.component("ConfirmationModal", ConfirmationModal);
 app.component("Image", Image);
 */
-.component("quilleditorfield", QuillEditorField)
+.component("editorfield", EditorField)
 .use(FloatingVue)
 .mixin({
   components: {Icon,Link },

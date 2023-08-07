@@ -11,6 +11,7 @@ declare module 'vue' {
     Accordion: typeof import('./resources/js/Components/Accordion.vue')['default']
     ActionMessage: typeof import('./resources/js/Components/ActionMessage.vue')['default']
     ActionSection: typeof import('./resources/js/Components/ActionSection.vue')['default']
+    AdminColorModeAdapter: typeof import('./resources/js/Components/AdminColorModeAdapter.vue')['default']
     Announcement: typeof import('./resources/js/Components/Announcement.vue')['default']
     AppFooter: typeof import('./resources/js/Components/AppFooter.vue')['default']
     AppLayout: typeof import('./resources/js/Layouts/AppLayout.vue')['default']
