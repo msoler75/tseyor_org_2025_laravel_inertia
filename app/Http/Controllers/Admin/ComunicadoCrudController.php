@@ -62,7 +62,7 @@ class ComunicadoCrudController extends CrudController
         ]);
         CRUD::setFromDb(); // set fields from db columns.
 
-        CRUD::field('texto')->type('quilleditor');
+        CRUD::field('texto')->type('fullmarkdown');
 
         /**
          * Fields can be defined using the fluent syntax:

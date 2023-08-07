@@ -1,4 +1,4 @@
-{{-- quilleditor_field field --}}
+{{-- fullmarkdown field --}}
 @php
     $field['value'] = old_empty_or_null($field['name'], '') ?? ($field['value'] ?? ($field['default'] ?? ''));
 @endphp
@@ -24,7 +24,7 @@
 
 
     <div id="app">
-       <QuillEditorField name="{{$field['name']}}"
+       <EditorField name="{{$field['name']}}"
        content="{{$decodedHtml}}"
        />
     </div>
@@ -40,7 +40,7 @@
 @push('crud_fields_styles')
 
     {{-- How to add some CSS? --}}
-    @bassetBlock('backpack/crud/fields/quilleditor_field-style.css')
+    @bassetBlock('backpack/crud/fields/fullmarkdown_field-style.css')
     <style>
         </style>
     @endBassetBlock
@@ -52,7 +52,7 @@
 
 
     {{-- How to add some JS to the field? --}}
-    @bassetBlock('backpack/crud/fields/quilleditor.js')
+    @bassetBlock('backpack/crud/fields/fullmarkdown.js')
         <script>
 
 

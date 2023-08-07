@@ -328,7 +328,7 @@ class ArchivosController extends Controller
 
         return response()->json([
             'data' => [
-                'filePath' => substr($url, 1)
+                'filePath' => "/" . substr($url, 1)
             ]
         ], 200);
     }
