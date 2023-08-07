@@ -1,6 +1,6 @@
 <template>
     <div :data-theme="theme" class="bg-base-100">
-        <span v-if="editingMarkdown" class="btn mb-2" @click="editingMarkdown = false">
+        <span v-if="editingMarkdown" class="btn mb-2" @click="editingMarkdown = false" >
             <Icon icon="ph:arrow-left" />Volver al editor normal
         </span>
         <div v-show="!editingMarkdown" >
@@ -93,7 +93,7 @@ const toolbarButtons = computed(() => {
     if (props.toolbar)
         return props.toolbar
     if (props.fullEditor)
-        return 'undo redo | bold italic underline strikethrough | styles | alignleft aligncenter alignright alignjustify | blockquote numlist bullist | fontsizes fonts | forecolor backcolor | insertimage mediamanager | codesample table | markdown customDateButton | fullscreen'
+        return 'undo redo | bold italic underline strikethrough | styles | alignleft aligncenter alignright alignjustify | blockquote numlist bullist | fontsizes fonts | forecolor backcolor | insertimage mediamanager | codesample table emoticons | markdown customDateButton | fullscreen'
     return 'undo redo | blocks | bold italic | forecolor backcolor | emoticons'
 })
 
