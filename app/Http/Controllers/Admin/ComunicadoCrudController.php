@@ -45,6 +45,13 @@ class ComunicadoCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+        /* CRUD::field([   // Custom Field
+            'name'  => 'imagen',
+            'label' => 'Imagen de portada',
+            'type'  => 'image_cover',
+            'from' => 'texto'
+        ]); */
     }
 
     /**
@@ -57,17 +64,12 @@ class ComunicadoCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'descripcion' => 'required|min:16',
-            'texto' => 'required|min:64',
         ]);
         CRUD::setFromDb(); // set fields from db columns.
 
-        CRUD::field('texto')->type('fullmarkdown');
+        CRUD::field('texto')->type('markdown_full');
 
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
+        CRUD::field('imagen')->type('image_cover')->attributes(['from'=>'texto']);
     }
 
     /**

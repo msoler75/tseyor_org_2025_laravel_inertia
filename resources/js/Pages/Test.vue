@@ -1,7 +1,10 @@
 <template>
    <div class="bg-base-300">
     <p>hola perico</p>
-       <Editor v-model="content" @ready="ready" @load="ready" @blur="blur" @focus="focus" @change="change"  format="md" full-editor/>
+        <input name="texto" type="text">
+       <!-- <Editor v-model="content" @ready="ready" @load="ready" @blur="blur" @focus="focus" @change="change"  format="md" full-editor/> -->
+       <ImageCoverField from="texto"/>
+
        {{ content }}
        <p>como va todo?</p>
     </div>

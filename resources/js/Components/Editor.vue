@@ -1,9 +1,9 @@
 <template>
     <div :data-theme="theme" class="bg-base-100">
-        <span v-if="editingMarkdown" class="btn mb-2" @click="editingMarkdown = false" >
+        <span v-if="editingMarkdown" class="btn mb-2" @click="editingMarkdown = false">
             <Icon icon="ph:arrow-left" />Volver al editor normal
         </span>
-        <div v-show="!editingMarkdown" >
+        <div v-show="!editingMarkdown">
             <TinyEditor :api-key="key" :init="{
                 height: height,
                 language_url: '/assets/js/tiny.es.js',
@@ -33,27 +33,14 @@
             </div>
         </Modal>
 
-        <!-- Modal Upload -->
-        <Modal :show="modalSubirArchivos" @close="modalSubirArchivos = true">
+        <!-- Modal Upload Image -->
+        <ModalDropZone v-model="modalSubirArchivos" @uploaded="uploadedImage($event)"
+            placeholder="Arrastra la imagen aquí o haz clic" url="/api/files/upload/image" :options="{
+                maxFiles: 1,
+                acceptedFiles: 'image/*'
+            }" />
 
-            <div class="p-5 flex flex-col gap-5 items-center">
-                <Dropzone class="w-full" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
-                    v-on:vdropzone-sending="sendingEvent" v-on:vdropzone-success="successEvent">
-                    <div class="flex flex-col items-center">
-                        <Icon icon="mdi:cloud-upload-outline" class="text-5xl" />
-                        <span>Arrastra la imagen aquí o haz clic para elegirla</span>
-                    </div>
-                </Dropzone>
-
-
-                <button @click.prevent="modalSubirArchivos = false" type="button" class="btn btn-neutral">
-                    Cerrar
-                </button>
-            </div>
-
-        </Modal>
-
-
+        <!-- Editor Markdown MDEditor -->
         <MdEditor v-model="contenidoMD" v-show="editingMarkdown"
             :toolbarsExclude="['save', 'sub', 'sup', 'katex', 'mermaid', 'htmlPreview', 'catalog', 'github', 'revoke', 'next', 'image']"
             :footers="[]" :preview="false" />
@@ -71,9 +58,9 @@ import MarkdownIt from 'markdown-it'
 import TurndownService from 'turndown'
 import { gfm } from 'turndown-plugin-gfm'
 
-import Dropzone from 'vue2-dropzone-vue3'
+// import { onThemeChange, currentTheme } from '@/composables/themeadapter'
 
-import {onThemeChange, currentTheme} from '@/composables/themeadapter'
+import { onThemeChange, updateTheme } from '@/composables/themeadapter'
 
 const key = ref(import.meta.env.VITE_TINY_API_KEY)
 
@@ -98,12 +85,31 @@ const toolbarButtons = computed(() => {
 })
 
 
+// UPLOAD IMAGE
+
+
+const modalSubirArchivos = ref(false)
+
+function uploadedImage(src) {
+    // console.log('uploadedImage', src)
+    insertImage(src)
+    modalSubirArchivos.value = false
+}
+
 // COLOR MODE
 
-const globalTheme = ref(currentTheme())
-const theme = computed(()=>globalTheme.value=='dark'?'winter':'')
+/* const globalTheme = ref(currentTheme())
+const theme = computed(() => globalTheme.value == 'dark' ? 'winter' : '')
 
-onThemeChange().to((theme)=>globalTheme.value=theme)
+onThemeChange().to((theme) => globalTheme.value = theme)
+*/
+
+
+onThemeChange().to(updateTheme)
+
+//onMounted(()=>
+updateTheme()
+//)
 
 
 // CONVERT MD <-> HTML
@@ -114,7 +120,7 @@ turndownService.keep(['span'])
 
 function HtmlToMarkdown(html) {
     // convertimos cualquier clase dentro de párrafo p en un marcaje especial
-    console.log('HtmlToMarkdown', html)
+    // console.log('HtmlToMarkdown', html)
     return turndownService.turndown(html.replace(/<p style=["']([^>]*)["'][^>]*>/g, "$&{style=$1}"));
 }
 
@@ -144,44 +150,6 @@ watch(contenidoHtml, (value) => {
 })
 
 
-// SUBIR IMAGEN
-
-const modalSubirArchivos = ref(false)
-const page = usePage()
-
-const dropzoneOptions = ref({
-    url: '/api/files/upload/image',
-    thumbnailWidth: 150,
-    maxFilesize: 50,
-    multiple: false,
-    headers: {
-        'X-CSRF-Token': page.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content,
-    },
-})
-
-function sendingEvent(file, xhr, formData) {
-    formData.append('destinationPath', props.mediaFolder);
-}
-
-var someUploaded = ref(false)
-function successEvent(file, response) {
-    console.log('successEvent', response)
-    if (response.data.filePath) {
-        someUploaded.value = true
-        insertImage(response.data.filePath)
-        modalSubirArchivos.value = false
-    }
-}
-
-watch(modalSubirArchivos, (value) => {
-    if (value)
-        someUploaded.value = false
-    else if (someUploaded.value) {
-        someUploaded.value = false
-        // recargamos la vista
-        // reloadPage()
-    }
-})
 
 
 // MEDIA MANAGER
