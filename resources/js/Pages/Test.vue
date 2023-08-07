@@ -1,7 +1,7 @@
 <template>
    <div class="bg-base-300">
     <p>hola perico</p>
-       <Editor v-model="content" @ready="ready" @load="ready" @blur="blur" @focus="focus" @change="change" full-editor format="md"/>
+       <Editor v-model="content" @ready="ready" @load="ready" @blur="blur" @focus="focus" @change="change"  format="md" full-editor/>
        {{ content }}
        <p>como va todo?</p>
     </div>
