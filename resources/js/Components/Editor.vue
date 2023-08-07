@@ -13,9 +13,10 @@
                 plugins: [
                     'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
                     'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
-                    'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                    'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount',
+                    'emoticons'
                 ],
-                toolbar: 'undo redo | heading1 heading2 bold italic underline strikethrough | styles | alignleft aligncenter alignright alignjustify | blockquote numlist bullist | fontsizes fonts | forecolor backcolor | image insertimage mediamanager | codesample table | markdown customDateButton | fullscreen',
+                toolbar: toolbarButtons,
                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }" :initial-value="modelValue" @change="onChange" />
         </div>
@@ -81,6 +82,16 @@ const props = defineProps({
     modelValue: { type: String },
     height: { type: Number, default: 500 },
     mediaFolder: { type: String, default: '/media' },
+    toolbar: { type: String, default: '' },
+    fullEditor: { type: Boolean, default: false }
+})
+
+const toolbarButtons = computed(() => {
+    if (props.toolbar)
+        return props.toolbar
+    if (props.fullEditor)
+        return 'undo redo | bold italic underline strikethrough | styles | alignleft aligncenter alignright alignjustify | blockquote numlist bullist | fontsizes fonts | forecolor backcolor | image insertimage mediamanager | codesample table | markdown customDateButton | fullscreen'
+    return 'undo redo | blocks | bold italic | forecolor backcolor emoticons'
 })
 
 // CONVERT MD <-> HTML
@@ -139,7 +150,7 @@ function sendingEvent(file, xhr, formData) {
 
 var someUploaded = ref(false)
 function successEvent(file, response) {
-    if(response.data.filePath) {
+    if (response.data.filePath) {
         someUploaded.value = true
         insertImage(response.data.filePath)
         modalSubirArchivos.value = false
@@ -169,6 +180,9 @@ function insertImage(src) {
 // TINYMCE SETUP
 
 function editorSetup(editor) {
+
+    if(!props.fullEditor) return
+
     //add icons:
     editor.ui.registry.addIcon('markdown', '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M7 15V9l2 2l2-2v6m3-2l2 2l2-2m-2 2V9"/></g></svg>')
     editor.ui.registry.addIcon('mediamanager', '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none"><path fill="currentColor" d="M3 17V5h7l2 2h9v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" opacity=".16"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17V5h7l2 2h9v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 19l7-7l7 7"/><path stroke="currentColor" stroke-linejoin="round" stroke-width="3" d="M7.5 9.5h.01v.01H7.5z"/></g></svg>')
