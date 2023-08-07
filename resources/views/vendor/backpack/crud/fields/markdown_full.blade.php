@@ -18,13 +18,7 @@
     $decodedHtml = str_replace(['&lt;', '&gt;'], ['<', '>'], $htmlCode);
 @endphp
 
-
-<input type="hidden" name="{{ $field['name'] }}" data-init-function="bpFieldInitDummyFieldElement"
-    @include('crud::fields.inc.attributes') value="{{ $decodedHtml }}" />
-
-
 <EditorFullField name="{{$field['name']}}" content="{{$decodedHtml}}"/>
-
 
 {{-- HINT --}}
 @if (isset($field['hint']))

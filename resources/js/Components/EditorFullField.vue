@@ -1,6 +1,6 @@
 <template>
     <div>
-        <input type="hidden" :name="name" v-model="contenido" />
+        <input type="hidden" id="xxx" :name="name" v-model="contenido" />
         <Editor v-model="contenido" full-editor :format="format"/>
         <!-- <div v-html="contenido.replace(/\n/g, '<br>')"></div> -->
     </div>

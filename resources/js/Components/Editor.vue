@@ -1,5 +1,5 @@
 <template>
-    <div :data-theme="theme" class="bg-base-100">
+    <div class="bg-base-100">
         <span v-if="editingMarkdown" class="btn mb-2" @click="editingMarkdown = false">
             <Icon icon="ph:arrow-left" />Volver al editor normal
         </span>
@@ -58,8 +58,6 @@ import MarkdownIt from 'markdown-it'
 import TurndownService from 'turndown'
 import { gfm } from 'turndown-plugin-gfm'
 
-// import { onThemeChange, currentTheme } from '@/composables/themeadapter'
-
 import { onThemeChange, updateTheme } from '@/composables/themeadapter'
 
 const key = ref(import.meta.env.VITE_TINY_API_KEY)
@@ -98,19 +96,10 @@ function uploadedImage(src) {
 
 // COLOR MODE
 
-/* const globalTheme = ref(currentTheme())
-const theme = computed(() => globalTheme.value == 'dark' ? 'winter' : '')
-
-onThemeChange().to((theme) => globalTheme.value = theme)
-*/
-
-
 onThemeChange().to(updateTheme)
 
-//onMounted(()=>
+// updates in body element
 updateTheme()
-//)
-
 
 // CONVERT MD <-> HTML
 
@@ -140,15 +129,12 @@ function MarkdownToHtml(raw_markdown) {
         /<p>\s+<\/p>\n?/g, '').replace(/\n/g, '')
 }
 
-
-
 const contenidoMD = ref(props.format == 'md' ? props.modelValue : HtmlToMarkdown(props.modelValue))
 const contenidoHtml = ref(props.format == 'html' ? props.modelValue : MarkdownToHtml(props.modelValue))
 
 watch(contenidoHtml, (value) => {
     contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
 })
-
 
 
 

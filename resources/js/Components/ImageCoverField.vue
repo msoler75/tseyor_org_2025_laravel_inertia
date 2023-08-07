@@ -1,6 +1,7 @@
 <template>
     <div>
-        <input type="text" :name="name" :value="selected">
+        xx
+        <input type="text" :name="name" v-model="selected">
 
         <ModalDropZone v-model="modalSubirImage" @uploaded="uploadedImage($event)"
             placeholder="Arrastra la imagen aquí o haz clic" url="/api/files/upload/image" :options="{
@@ -37,24 +38,34 @@ const images = ref([])
 const imagesUploaded = ref([])
 const selected = ref(props.value)
 
+// watch(() => props.value, (value) => selected.value = value)
+
+var fromValue = null
+
 function updateImages() {
-    console.log('updateImages', inputField.value)
-    const regex = /!\[.*?\]\((.*?)\)/g;
-    images.value.splice(0, images.value.length)
+    if (inputField.value != fromValue) {
+        fromValue = inputField.value
 
-    let match;
-    while ((match = regex.exec(inputField.value)) !== null) {
-        images.value.push(match[1]);
+        const regex = /!\[.*?\]\((.*?)\)/g;
+        images.value.splice(0, images.value.length)
+
+        let match;
+        while ((match = regex.exec(fromValue)) !== null) {
+            images.value.push(match[1]);
+        }
+
+        if (selected.value)
+            images.value.push(selected.value)
+
+        for (const url of imagesUploaded.value)
+            images.value.push(url)
+
+        // elimina repetidos
+        images.value = [...new Set(images.value)];
+
+        if (images.value.length && !selected.value)
+            selected.value = images.value[0]
     }
-
-    for (const url of imagesUploaded.value)
-        images.value.push(url)
-
-    // elimina repetidos
-    images.value = [...new Set(images.value)];
-
-    if(images.value.length && !selected.value)
-        selected.value = images.value[0]
 }
 
 
