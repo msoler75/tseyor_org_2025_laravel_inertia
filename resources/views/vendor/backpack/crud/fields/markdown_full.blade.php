@@ -1,4 +1,4 @@
-{{-- fullmarkdown field --}}
+{{-- markdown_full_field field --}}
 @php
     $field['value'] = old_empty_or_null($field['name'], '') ?? ($field['value'] ?? ($field['default'] ?? ''));
 @endphp
@@ -19,15 +19,11 @@
 @endphp
 
 
-<input id="quill-input" type="hidden" name="{{ $field['name'] }}" data-init-function="bpFieldInitDummyFieldElement"
+<input type="hidden" name="{{ $field['name'] }}" data-init-function="bpFieldInitDummyFieldElement"
     @include('crud::fields.inc.attributes') value="{{ $decodedHtml }}" />
 
 
-    <div id="app">
-       <EditorField name="{{$field['name']}}"
-       content="{{$decodedHtml}}"
-       />
-    </div>
+<EditorFullField name="{{$field['name']}}" content="{{$decodedHtml}}"/>
 
 
 {{-- HINT --}}
@@ -63,8 +59,11 @@
                 // element where init function was defined
                 // console.log(element.val());
 
+                // const md_field_name = "{{ $field['name'] }}";
 
-                console.log('going to mount vue')
+                // const id = "#vue-app-"+md_field_name
+
+                // console.log('going to mount vue')
                 /*axios.get('http://tseyor.org/any.js')
 
                 const { createApp, ref } = Vue
@@ -73,7 +72,7 @@
                 app.mount("#app")*/
                 //window.init_vue();
                 //setTimeout(()=>{
-                    window.app.mount("#app");
+                    // window.app.mount(id);
                 //}, 2000)
 
                 // carga el contenido del  campo

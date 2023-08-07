@@ -51,3 +51,17 @@ export const onThemeChange = () => {
 export const    currentTheme = ()=> {
     return document.documentElement.getAttribute("data-bs-theme")
   }
+
+
+
+
+  export const updateTheme = () => {
+
+    const globalTheme = currentTheme()
+
+    const theme =  globalTheme== 'dark' ? 'winter' : ''
+
+    document.querySelector("body").setAttribute("data-theme", theme)
+
+
+  }
