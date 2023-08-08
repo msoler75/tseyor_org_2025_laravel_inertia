@@ -27,7 +27,7 @@
 
 
 
-                <Dropzone class="w-full" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
+                <Dropzone class="w-full !hover:bg-orange-200 dark:hover:bg-orange-900 hover:border-orange-500 cursor-pointer" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
                     v-on:vdropzone-sending="sendingEvent" v-on:vdropzone-success="successEvent">
                     <div class="flex flex-col items-center">
                         <Icon icon="mdi:cloud-upload-outline" class="text-5xl" />
@@ -146,3 +146,4 @@ function successEvent(file, response) {
 }
 
 </script>
+

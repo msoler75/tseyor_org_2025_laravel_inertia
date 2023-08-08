@@ -17,3 +17,4 @@ const props = defineProps({
 const contenido = ref(props.content)
 
 </script>
+

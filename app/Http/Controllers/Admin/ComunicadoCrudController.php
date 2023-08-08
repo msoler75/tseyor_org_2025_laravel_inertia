@@ -46,12 +46,29 @@ class ComunicadoCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
-        /* CRUD::field([   // Custom Field
-            'name'  => 'imagen',
-            'label' => 'Imagen de portada',
-            'type'  => 'image_cover',
-            'from' => 'texto'
-        ]); */
+
+        $this->crud->addColumn([
+            'name'  => 'titulo',
+            'label' => 'Título',
+            'type'  => 'text'
+        ]);
+
+        $this->crud->addColumn([
+            'name'  => 'categoria',
+            'label' => 'Categoría',
+            'type'  => 'enum',
+            'options'     => ['GEN' => 'General', 'TAP' => 'TAP', 'DOCEM' => 'Doce del Muulasterio', 'MUUL' => 'Muul']
+        ]);
+
+        $this->crud->addColumn([
+            'name'  => 'visibilidad',
+            'label' => 'Estado',
+            'type'  => 'enum',
+            'options' => [
+                'B' => '⚠️ Borrador',
+                'P' => '✔️ Publicado'
+            ]
+        ]);
 
         $this->crud->addButtonFromView('top', 'import', 'import', 'end');
     }
@@ -69,9 +86,32 @@ class ComunicadoCrudController extends CrudController
         ]);
         CRUD::setFromDb(); // set fields from db columns.
 
+        CRUD::field([
+            'name' => 'numero',
+            'wrapper' => [
+                'class' => 'form-group col-md-3'
+            ]
+        ]);
+
+        CRUD::field([   // select_from_array
+            'name'        => 'categoria',
+            'label'       => "Categoría",
+            'type'        => 'select_from_array',
+            'options'     => ['GEN' => 'General', 'TAP' => 'TAP', 'DOCEM' => 'Doce del Muulasterio', 'MUUL' => 'Muul'],
+            'allows_null' => false,
+            'default'     => 'GEN',
+            // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
+
+            'wrapper'   => [
+                'class'      => 'form-group col-md-3'
+            ],
+        ]);
+
         CRUD::field('texto')->type('markdown_full');
 
         CRUD::field('imagen')->type('image_cover')->attributes(['from' => 'texto']);
+
+        CRUD::field('visibilidad')->type('visibilidad');
     }
 
     /**
@@ -95,6 +135,59 @@ class ComunicadoCrudController extends CrudController
 
         // CRUD::field('slug')->remove();
         */
+    }
+
+
+    protected function show($id)
+    {
+        return redirect("/comunicados/$id?preview");
+    }
+
+    // show whatever you want
+    protected function setupShowOperation2()
+    {
+        // MAYBE: do stuff before the autosetup
+
+        // automatically add the columns
+        // $this->autoSetupShowOperation();
+
+        $id = 0;
+        if (preg_match('/\/(\d+)\/show$/', $_SERVER['REQUEST_URI'], $match))
+            $id = $match[1];
+
+        // https://backpackforlaravel.com/docs/6.x/crud-columns#custom_html-1
+        if($id)
+        $this->crud->addColumn(
+            [
+                'name'     => 'my_custom_html',
+                'label'    => 'Ver en Web',
+                'type'     => 'custom_html',
+                'value'    => "<a href='/comunicados/$id?preview' target='_blank'>➡️ Ver Comunicado en el Sitio Web</a>"
+            ]
+        );
+
+        CRUD::column('titulo')->type('text');
+        CRUD::column('numero')->type('number');
+        CRUD::column('categoria')->type('text');
+        CRUD::column('descripcion')->type('textarea');
+        CRUD::column('texto')->type('mymarkdown');
+        CRUD::column('imagen')->type('image');
+
+        $this->crud->addColumn([
+            'name' => 'visibilidad',
+            'label' => 'Estado',
+            'type'  => 'enum',
+            'options' => [
+                'B' => '⚠️ Borrador',
+                'P' => '✔️ Publicado'
+            ]
+        ]);
+
+        // MAYBE: do stuff after the autosetup
+
+
+        // or maybe remove a column
+        // CRUD::column('text')->remove();
     }
 
 

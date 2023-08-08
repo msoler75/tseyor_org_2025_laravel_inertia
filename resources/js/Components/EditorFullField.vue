@@ -8,6 +8,7 @@
 
 
 <script setup>
+
 const props = defineProps({
     name: String,
     content: { type: String, default: '' },
@@ -17,3 +18,4 @@ const props = defineProps({
 const contenido = ref(props.content)
 
 </script>
+

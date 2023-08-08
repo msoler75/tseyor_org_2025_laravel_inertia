@@ -6,7 +6,7 @@
 
 
 @include('crud::fields.inc.wrapper_start')
-    <label>{!! $field['label'] !!}</label>
+    <label>{!! $field['label'] !!} &nbsp;<small>(imagen de portada)</small></label>
     @include('crud::fields.inc.translatable_icon')
 
     <ImageCoverField from="{{ $field['attributes']['from'] ?? 'texto' }}" name="{{$field['name']}}" value="{{$field['value']}}"/>

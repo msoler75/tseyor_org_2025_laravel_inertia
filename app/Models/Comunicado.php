@@ -10,15 +10,15 @@ class Comunicado extends SEOModel
 {
     use CrudTrait;
     protected $fillable = [
+        'titulo',
         'numero',
         'categoria',
-        'titulo',
-        'slug',
         'descripcion',
         'texto',
         'imagen',
         'fechaComunicado',
-        'visibilidad'
+        'visibilidad',
+        'slug',
     ];
 
     // hooks del modelo
