@@ -52,6 +52,8 @@ class ComunicadoCrudController extends CrudController
             'type'  => 'image_cover',
             'from' => 'texto'
         ]); */
+
+        $this->crud->addButtonFromView('top', 'import', 'import', 'end');
     }
 
     /**
@@ -69,7 +71,7 @@ class ComunicadoCrudController extends CrudController
 
         CRUD::field('texto')->type('markdown_full');
 
-        CRUD::field('imagen')->type('image_cover')->attributes(['from'=>'texto']);
+        CRUD::field('imagen')->type('image_cover')->attributes(['from' => 'texto']);
     }
 
     /**
@@ -93,6 +95,11 @@ class ComunicadoCrudController extends CrudController
 
         // CRUD::field('slug')->remove();
         */
+    }
 
+
+    public function import()
+    {
+        // whatever you decide to do
     }
 }
