@@ -1,6 +1,5 @@
 <template>
     <div>
-        xx
         <input type="text" :name="name" v-model="selected">
 
         <ModalDropZone v-model="modalSubirImage" @uploaded="uploadedImage($event)"
@@ -9,15 +8,13 @@
                 acceptedFiles: 'image/*'
             }" />
 
-        {{ images }}
-
         <div class="flex overflow-x-auto">
             <div v-for="url of images" :key="url" class="border-4 border-transparent flex-shrink-0"
                 :class="url == selected ? 'border-orange-500' : ''" @click="selected = url">
                 <img :src="url" style="height:150px" />
             </div>
             <div @click="modalSubirImage = true"
-                class="flex justify-center items-center w-[150px] bg-gray-500 cursor-pointer flex-shrink-0">
+                class="flex justify-center items-center w-[150px] border-gray-700 dark:border-gray-300  border opacity-80 hover:opacity-100 bg-gray-500 cursor-pointer flex-shrink-0">
                 <Icon icon="ic:outline-add-photo-alternate" class="text-4xl" />
             </div>
         </div>
