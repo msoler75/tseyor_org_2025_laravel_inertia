@@ -49,7 +49,7 @@
 
                     <div>
                         <label for="anuncio">Anuncio</label>
-                        <QuillEditor id="anuncio" theme="snow" v-model:content="edicion.anuncio" contentType="html" />
+                        <Editor id="anuncio" v-model="edicion.anuncio" format="html"/>
                         <div v-if="edicion.errors.anuncio" class="error">{{ edicion.errors.anuncio[0] }}</div>
                         <div v-else class="text-sm">Anuncio de caracter general. Se puede dejar en blanco.</div>
                     </div>
@@ -60,7 +60,7 @@
 
                     <div>
                         <label for="reuniones">Reuniones</label>
-                        <QuillEditor id="reuniones" theme="snow" v-model:content="edicion.reuniones" contentType="html" />
+                        <Editor id="reuniones" v-model="edicion.reuniones"  format="html"/>
                         <div v-if="edicion.errors.reuniones" class="error">{{ edicion.errors.reuniones[0] }}
                         </div>
                         <div v-else class="text-sm">Ejemplo: Los lunes a las 13h. Se puede dejar en blanco.
@@ -71,8 +71,7 @@
                 <tab name="Información">
                     <div>
                         <label for="informacion">informacion</label>
-                        <QuillEditor id="informacion" theme="snow" v-model:content="edicion.informacion"
-                            contentType="html" />
+                        <Editor id="informacion" v-model="edicion.informacion" format="html"/>
                         <div v-if="edicion.errors.informacion" class="error">{{ edicion.errors.informacion[0] }}
                         </div>
                         <div v-else class="text-sm">Información adicional del equipo.</div>
@@ -102,8 +101,6 @@
 
 <script setup>
 import { Tabs, Tab } from 'vue3-tabs-component';
-import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 defineExpose({
     mostrar
