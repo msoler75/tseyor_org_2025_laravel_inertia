@@ -3,6 +3,12 @@
         <span v-if="editingMarkdown" class="btn mb-2" @click="editingMarkdown = false">
             <Icon icon="ph:arrow-left" />Volver al editor normal
         </span>
+
+<!--
+    <div>MD: {{contenidoMD}}</div>
+    <div>HTML: {{ contenidoHtml }}</div>
+-->
+
         <div v-show="!editingMarkdown">
             <TinyEditor :api-key="key" :init="{
                 height: height,
@@ -11,7 +17,8 @@
                 menubar: false,
                 statusbar: false,
                 setup: editorSetup,
-                relative_urls : false,
+                relative_urls: false,
+                block_formats: 'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3',
                 plugins: [
                     'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
                     'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
@@ -111,7 +118,27 @@ turndownService.keep(['span'])
 function HtmlToMarkdown(html) {
     // convertimos cualquier clase dentro de párrafo p en un marcaje especial
     // console.log('HtmlToMarkdown', html)
-    return turndownService.turndown(html.replace(/<p style=["']([^>]*)["'][^>]*>/g, "$&{style=$1}"));
+    return turndownService.turndown(html
+
+        // reemplazamos los atributos de imagen
+        .replace(/<img\s+([^>]+)>/g,
+            (match, atributos) => {
+                console.log('r1', { match, atributos })
+                var values = []
+                atributos.replace(/(\w+)=['"](.*?)['"]/g, (match, atributo, valor) => {
+                    console.log('r2', { atributo, valor })
+                    if (atributo === 'width' || atributo === 'height') {
+                        values.push(`${atributo}=${valor}`)
+                    }
+                    return match
+                })
+                console.log('values', values)
+                return match + (values.length ? `{${values.join(', ')}}` : '')
+            })
+             // reemplazamos los estilos de párrafo
+    .replace(/<p style=["']([^>]*)["'][^>]*>/g, '$&{style=$1}')
+
+            )
 }
 
 // cambia los caracteres codificados de < y > a su valor real
@@ -126,8 +153,25 @@ function MarkdownToHtml(raw_markdown) {
         linkify: true
     });
 
-    return md.render(raw_markdown).replace(/<p>{style=([^}]*)}/g, "<p style='$1'>").replace(
-        /<p>\s+<\/p>\n?/g, '').replace(/\n/g, '')
+    return md.render(raw_markdown)
+    // primero reemplazamos las imágenes con atributos
+    .replace(/(<img[^>]*>){(\w+=[^}]+)}/g, (match, img, attributes) => {
+            console.log('r1', {match, attributes})
+            var values = []
+            attributes.replace(/(\w+)=([^,]+)/g, (match, atributo, valor) => {
+                console.log('r2', {match, atributo, valor})
+                values.push(`${atributo}=${valor}`)
+                return match
+            })
+            console.log({values})
+            return img.replace('<img', '<img '+values.join(' '))
+        })
+    // reemplazamos los párrafos con estilos
+    .replace(/<p>{style=([^}]*)}/g, "<p style='$1'>")
+    // quitamos los espacios sobrantes
+    .replace(/<p>\s+<\/p>\n?/g, '').replace(/\n/g, '')
+
+
 }
 
 const contenidoMD = ref(props.format == 'md' ? props.modelValue : HtmlToMarkdown(props.modelValue))
