@@ -57,7 +57,7 @@ class ComunicadosController extends Controller
             'recientes' => $recientes,
             'archivo' => $archivo
         ])
-        ->withViewData(SEO::get('comunicados'));
+            ->withViewData(SEO::get('comunicados'));
     }
 
     public function show($id)
@@ -66,14 +66,16 @@ class ComunicadosController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
-        if (!$comunicado) {
+        $previewMode = request()->has('preview');
+
+        if (!$comunicado || !$previewMode && $comunicado->visibilidad !== 'P') {
             abort(404); // Manejo de comunicado no encontrada
         }
 
         return Inertia::render('Comunicados/Comunicado', [
             'comunicado' => $comunicado
         ])
-       ->withViewData(SEO::from($comunicado));
+            ->withViewData(SEO::from($comunicado));
     }
 
     public function archive(Request $request)
