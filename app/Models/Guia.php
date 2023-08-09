@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\SEOModel;
 
 class Guia extends SEOModel
 {
-    use HasFactory;
+    use CrudTrait;
 
     protected $fillable = [
         'nombre',

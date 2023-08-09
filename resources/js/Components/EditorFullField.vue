@@ -1,7 +1,7 @@
 <template>
     <div>
         <input type="hidden" id="xxx" :name="name" v-model="contenido" />
-        <Editor v-model="contenido" full-editor :format="format"/>
+        <Editor v-model="contenido" full-editor :format="format" :mediaFolder="folder"/>
         <!-- <div v-html="contenido.replace(/\n/g, '<br>')"></div> -->
     </div>
 </template>
@@ -12,7 +12,8 @@
 const props = defineProps({
     name: String,
     content: { type: String, default: '' },
-    format: { type: String, default: 'md' } // 'md', 'html'
+    format: { type: String, default: 'md' }, // 'md', 'html'
+    folder: String
 })
 
 const contenido = ref(props.content)

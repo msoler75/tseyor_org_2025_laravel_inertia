@@ -9,7 +9,7 @@
     <label>{!! $field['label'] !!} &nbsp;<small>(imagen de portada)</small></label>
     @include('crud::fields.inc.translatable_icon')
 
-    <ImageCoverField from="{{ $field['attributes']['from'] ?? 'texto' }}" name="{{$field['name']}}" value="{{$field['value']}}"/>
+    <ImageCoverField from="{{ $field['attributes']['from'] ?? 'texto' }}" folder="{{ $field['attributes']['folder'] ?? 'media' }}" name="{{$field['name']}}" value="{{$field['value']}}"/>
 
     {{-- HINT --}}
     @if (isset($field['hint']))

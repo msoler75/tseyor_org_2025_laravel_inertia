@@ -297,8 +297,11 @@ class ArchivosController extends Controller
             ], 413);
         }
 
+        $path = Storage::disk('public')->path($folder);
+        //dd($path);
+
         // Crear la carpeta si no existe
-        $path = storage_path("app/" . $folder);
+        // $path = storage_path("app/" . $folder);
         if (!File::exists($path)) {
             File::makeDirectory($path, 0755, true, true);
         }
@@ -339,6 +342,7 @@ class ArchivosController extends Controller
         $file = $request->file('file');
         $folder = $this->normalizarRuta($request->destinationPath);
 
+
         return $this->processUpload($request, $file, $folder);
     }
 
@@ -347,33 +351,34 @@ class ArchivosController extends Controller
     {
         $file = $request->file('image');
         if(!$file)
-        $file = $request->file('file');
-        $folder = $this->normalizarRuta($request->destinationPath);
+            $file = $request->file('file');
 
-        // detecta si estamos editando un tipo de datos y lo extrae, para asignarle después una carpeta
-        $url = $request->headers->get('referer');
+
+
+            if (!$file) {
+                return response()->json([
+                    'error' => 'noFileGiven'
+                ], 400);
+            }
+
+            $allowedTypes = ['jpeg', 'jpg', 'png', 'gif', 'webp'];
+
+            if (!in_array(strtolower($file->getClientOriginalExtension()), $allowedTypes)) {
+                return response()->json([
+                    'error' => 'typeNotAllowed'
+                ], 415);
+            }
+
+            $folder = $this->normalizarRuta($request->destinationPath);
+            // detecta si estamos editando un tipo de datos y lo extrae, para asignarle después una carpeta
+            /* $url = $request->headers->get('referer');
         if ($url && preg_match('/admin\/(.*?)\/\d+\/edit/', $url, $matches)) {
             $folder = $matches[1];
         } else {
             // $folder = null;
+        } */
+            return $this->processUpload($request, $file, $folder);
         }
-
-        if (!$file) {
-            return response()->json([
-                'error' => 'noFileGiven'
-            ], 400);
-        }
-
-        $allowedTypes = ['jpeg', 'jpg', 'png', 'gif', 'webp'];
-
-        if (!in_array(strtolower($file->getClientOriginalExtension()), $allowedTypes)) {
-            return response()->json([
-                'error' => 'typeNotAllowed'
-            ], 415);
-        }
-
-        return $this->processUpload($request, $file, $folder);
-    }
 
 
     /**
@@ -833,7 +838,11 @@ class ArchivosController extends Controller
     private function normalizarRuta($ruta)
     {
         if (strpos($ruta, '/') === 0) {
-            return substr($ruta, 1);
+            $ruta = substr($ruta, 1);
+        }
+
+        if(strpos($ruta, 'storage') === 0) {
+            $ruta = substr($ruta, 8);
         }
         return $ruta;
     }

@@ -43,6 +43,7 @@
 
         <!-- Modal Upload Image -->
         <ModalDropZone v-model="modalSubirArchivos" @uploaded="uploadedImage($event)"
+            :mediaFolder="mediaFolder"
             placeholder="Arrastra la imagen aquí o haz clic" url="/api/files/upload/image" :options="{
                 maxFiles: 1,
                 acceptedFiles: 'image/*'

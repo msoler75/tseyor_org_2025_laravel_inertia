@@ -58,6 +58,7 @@ const props = defineProps({
         type: String,
         default: 'Arrastra el archivo aquí o haz clic'
     },
+    mediaFolder: String,
     options: Object // dropzone.js options:  https://docs.dropzone.dev/configuration/basics/configuration-options
 })
 
