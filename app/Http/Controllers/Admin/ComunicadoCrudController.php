@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\ComunicadoRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class ComunicadoCrudController
@@ -84,6 +84,7 @@ class ComunicadoCrudController extends CrudController
         CRUD::setValidation([
             'titulo' => 'required|min:8',
         ]);
+
         CRUD::setFromDb(); // set fields from db columns.
 
         CRUD::field([
@@ -107,11 +108,29 @@ class ComunicadoCrudController extends CrudController
             ],
         ]);
 
-        CRUD::field('texto')->type('markdown_full');
+        $folder = $this->mediaFolder();
 
-        CRUD::field('imagen')->type('image_cover')->attributes(['from' => 'texto']);
+        CRUD::field('texto')->type('markdown_full')->attributes(['folder' => $folder]);
+
+        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
         CRUD::field('visibilidad')->type('visibilidad');
+    }
+
+    private function mediaFolder()
+    {
+        $anioActual = date('Y');
+        $mesActual = date('m');
+
+        $folder = "/media/comunicados/$anioActual/$mesActual";
+
+        // Verificar si la carpeta existe en el disco 'public'
+        if (!Storage::disk('public')->exists($folder)) {
+            // Crear la carpeta en el disco 'public'
+            Storage::disk('public')->makeDirectory($folder);
+        }
+
+        return $folder;
     }
 
     /**
@@ -156,15 +175,15 @@ class ComunicadoCrudController extends CrudController
             $id = $match[1];
 
         // https://backpackforlaravel.com/docs/6.x/crud-columns#custom_html-1
-        if($id)
-        $this->crud->addColumn(
-            [
-                'name'     => 'my_custom_html',
-                'label'    => 'Ver en Web',
-                'type'     => 'custom_html',
-                'value'    => "<a href='/comunicados/$id?preview' target='_blank'>➡️ Ver Comunicado en el Sitio Web</a>"
-            ]
-        );
+        if ($id)
+            $this->crud->addColumn(
+                [
+                    'name'     => 'my_custom_html',
+                    'label'    => 'Ver en Web',
+                    'type'     => 'custom_html',
+                    'value'    => "<a href='/comunicados/$id?preview' target='_blank'>➡️ Ver Comunicado en el Sitio Web</a>"
+                ]
+            );
 
         CRUD::column('titulo')->type('text');
         CRUD::column('numero')->type('number');

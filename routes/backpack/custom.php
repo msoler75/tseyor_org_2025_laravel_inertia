@@ -19,5 +19,5 @@ Route::group([
     Route::crud('user', 'UserCrudController');
     Route::crud('comunicado', 'ComunicadoCrudController');
     Route::get('comunicado/import', 'ComunicadoCrudController@import');
+    Route::crud('guia', 'GuiaCrudController');
 }); // this should be the absolute last line of this file
-

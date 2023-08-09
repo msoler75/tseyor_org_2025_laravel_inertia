@@ -18,7 +18,7 @@
     $decodedHtml = str_replace(['&lt;', '&gt;'], ['<', '>'], $htmlCode);
 @endphp
 
-<EditorFullField name="{{$field['name']}}" content="{{$decodedHtml}}"/>
+<EditorFullField name="{{$field['name']}}" folder="{{ $field['attributes']['folder'] ?? 'media'}}" content="{{$decodedHtml}}"/>
 
 {{-- HINT --}}
 @if (isset($field['hint']))

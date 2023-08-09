@@ -3,7 +3,9 @@
         <input type="text" :name="name" v-model="selected">
 
         <ModalDropZone v-model="modalSubirImage" @uploaded="uploadedImage($event)"
-            placeholder="Arrastra la imagen aquí o haz clic" url="/api/files/upload/image" :options="{
+            placeholder="Arrastra la imagen aquí o haz clic" url="/api/files/upload/image"
+            :mediaFolder="folder"
+            :options="{
                 maxFiles: 1,
                 acceptedFiles: 'image/*'
             }" />
@@ -16,7 +18,7 @@
             </div>
             <div @click="modalSubirImage = true"
             title="Añadir una imagen"
-                class="flex justify-center items-center w-[150px] border-gray-700 dark:border-gray-300  border opacity-80 hover:opacity-100 bg-gray-500 cursor-pointer flex-shrink-0">
+                class="flex justify-center items-center w-[150px] h-[150px] border-gray-700 dark:border-gray-300  border opacity-80 hover:opacity-100 bg-gray-500 cursor-pointer flex-shrink-0">
                 <Icon icon="ic:outline-add-photo-alternate" class="text-4xl" />
             </div>
         </div>
@@ -28,6 +30,7 @@
 const props = defineProps({
     from: String,
     name: String,
+    folder: String, // carpeta de destino
     value: String
 })
 

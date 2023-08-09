@@ -9,7 +9,9 @@ const nav = useNav()
 const sideBarShow = ref(false)
 const anuncio = computed(() => page.props.anuncio || '');
 
-nav.announce = !!anuncio
+console.log({anuncio})
+
+nav.announce = !!anuncio.value
 
 defineProps({
     title: String,
@@ -172,7 +174,7 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="flex flex-col">
-        <Announcement :text="anuncio" :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'" />
+        <Announcement v-if="anuncio" :text="anuncio" :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'" />
 
         <NavAside :show="sideBarShow" @close="sideBarShow = false" class="lg:hidden" />
 
