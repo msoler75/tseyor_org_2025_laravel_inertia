@@ -7,13 +7,14 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use App\Policies\LinuxPolicy;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\UploadedFile;
 use App\Models\Equipo;
 use App\Models\User;
 use App\Models\Nodo;
+use App\Models\Acl;
+use Illuminate\Support\Facades\Gate;
 
 
 /**
@@ -75,13 +76,13 @@ class ArchivosController extends Controller
 
         $user = auth()->user();
 
-        $acl = LinuxPolicy::acl($user, ['ejecutar', 'escribir']);
+        $acl = Acl::from($user, ['ejecutar', 'escribir']);
 
         // comprobamos el permiso de ejecución (listar) en la carpeta
-        $nodo = LinuxPolicy::nodoHeredado($ruta);
+        $nodo = Nodo::desde($ruta);
 
 
-        if (!LinuxPolicy::ejecutar($nodo, $user, $acl)) {
+        if (Gate::denies('ejecutar', $nodo, $acl)) {
             throw new AuthorizationException('No tienes permisos para ver la carpeta', 403);
         }
 
@@ -130,8 +131,8 @@ class ArchivosController extends Controller
                 'fecha_modificacion' => Storage::disk('public')->lastModified($padre),
             ];
 
-            $nodo = LinuxPolicy::nodoHeredado($padre);
-            if (!$nodo || !LinuxPolicy::ejecutar($nodo, $user, $acl))
+            $nodo = Nodo::desde($padre);
+            if (!$nodo || Gate::denies('ejecutar', $nodo, $acl))
                 $item['privada'] = true;
 
             $item['permisos'] =  optional($nodo)->permisos ?? 0;
@@ -144,7 +145,7 @@ class ArchivosController extends Controller
         $carpetas = Storage::disk('public')->directories($ruta);
 
         // obtenemos todos los nodos de la carpeta
-        $nodos = LinuxPolicy::nodosCarpeta($ruta);
+        $nodos = Nodo::hijos($ruta);
 
         foreach ($carpetas as $carpeta) {
             $archivos_internos = Storage::disk('public')->files($carpeta);
@@ -168,7 +169,7 @@ class ArchivosController extends Controller
                 $nodo = $nodoCarpeta;
             //if($nodo->ruta=='archivos/salud')
             //  dd($nodo);
-            if (!$nodo || !LinuxPolicy::ejecutar($nodo, $user, $acl))
+            if (!$nodo || Gate::denies('ejecutar', $nodo, $acl))
                 $item['privada'] = true;
             $item['permisos'] =  optional($nodo)->permisos ?? 0;
             $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
@@ -202,7 +203,7 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de escritura (para saber si puede crear carpetas, o renombrar archivos)
-        $puedeEscribir = LinuxPolicy::escribir($nodoCarpeta, $user, $acl);
+        $puedeEscribir = Gate::allows('escribir', $nodoCarpeta, $acl);
 
         $propietario = null;
 
@@ -324,7 +325,7 @@ class ArchivosController extends Controller
         $storedPath = $file->storeAs($folder, $filename, 'public');
 
         // creamos su nodo
-        LinuxPolicy::crearNodo(auth()->user(), $folder . '/' . $filename);
+        Nodo::crear(auth()->user(), $folder . '/' . $filename);
 
         // Obtener la URL pública del archivo
         $url = Storage::url($storedPath);
@@ -430,9 +431,9 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de escritura
-        $acl = LinuxPolicy::acl($user);
-        $nodo = LinuxPolicy::nodoHeredado($folder);
-        if (!$nodo || !LinuxPolicy::escribir($nodo, $user, $acl)) {
+        $acl = Acl::from($user);
+        $nodo = Nodo::desde($folder);
+        if (!$nodo || Gate::denies('escribir', $nodo, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -446,7 +447,7 @@ class ArchivosController extends Controller
         }
 
         // Creamos el nodo
-        LinuxPolicy::crearNodo($user, $folder . '/' . $name, true);
+        Nodo::crear($user, $folder . '/' . $name, true);
 
         return response()->json([
             'message' => 'folderCreated'
@@ -479,9 +480,9 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de escritura
-        $acl = LinuxPolicy::acl($user);
-        $nodo = LinuxPolicy::nodoHeredado($ruta);
-        if (!$nodo || !LinuxPolicy::escribir($nodo, $user, $acl)) {
+        $acl = Acl::from($user);
+        $nodo = Nodo::desde($ruta);
+        if (!$nodo || Gate::denies('escribir', $nodo, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -550,9 +551,9 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de escritura
-        $acl = LinuxPolicy::acl($user);
-        $nodo = LinuxPolicy::nodoHeredado($rutaAntes);
-        if (!$nodo || !LinuxPolicy::escribir($nodo, $user, $acl)) {
+        $acl = Acl::from($user);
+        $nodo = Nodo::desde($rutaAntes);
+        if (!$nodo || Gate::denies('escribir', $nodo, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -587,7 +588,7 @@ class ArchivosController extends Controller
         }
 
         // debemos renombrar todas las rutas afectadas en los nodos
-        LinuxPolicy::move($rutaAntes, $rutaDespues);
+        Nodo::mover($rutaAntes, $rutaDespues);
 
         return $response;
     }
@@ -622,23 +623,23 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de lectura y escritura
-        $acl = LinuxPolicy::acl($user);
-        $nodoSource = LinuxPolicy::nodoHeredado($sourceFolder);
-        $nodoDestination = LinuxPolicy::nodoHeredado($destinationFolder);
+        $acl = Acl::from($user);
+        $nodoSource = Nodo::desde($sourceFolder);
+        $nodoDestination = Nodo::desde($destinationFolder);
 
         // dd($nodoSource);
 
-        if (!$nodoSource || !LinuxPolicy::leer($nodoSource, $user, $acl)) {
+        if (!$nodoSource || Gate::denies('leer', $nodoSource, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos de lectura en la carpeta origen'
             ], 403);
         }
-        if (!LinuxPolicy::escribir($nodoSource, $user, $acl)) {
+        if (Gate::denies('escribir', $nodoSource, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos de escritura en la carpeta origen'
             ], 403);
         }
-        if (!$nodoDestination || !LinuxPolicy::escribir($nodoDestination, $user, $acl)) {
+        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos en la carpeta destino'
             ], 403);
@@ -672,7 +673,7 @@ class ArchivosController extends Controller
                     Log::info("Carpeta '$item' movida de '$sourceFolder' a '$destinationFolder'");
 
                     // cambias los nodos afectados
-                    LinuxPolicy::move($rutaAntes, $rutaDespues);
+                    Nodo::mover($rutaAntes, $rutaDespues);
                 } else {
                     $errorCount++;
                     $errorMessages[] = "No se pudo mover la carpeta '$itemSource'";
@@ -695,7 +696,7 @@ class ArchivosController extends Controller
                     Log::info("Archivo '$item' movido de '$sourceFolder' a '$destinationFolder'");
 
                     // debemos renombrar todas las rutas afectadas en los nodos
-                    LinuxPolicy::move($rutaAntes, $rutaDespues);
+                    Nodo::mover($rutaAntes, $rutaDespues);
                 } else {
                     $errorCount++;
                     $errorMessages[] = "No se pudo mover el archivo '$itemSource'";
@@ -751,16 +752,16 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de lectura y escritura
-        $acl = LinuxPolicy::acl($user);
-        $nodoSource = LinuxPolicy::nodoHeredado($sourceFolder);
-        $nodoDestination = LinuxPolicy::nodoHeredado($destinationFolder);
+        $acl = Acl::from($user);
+        $nodoSource = Nodo::desde($sourceFolder);
+        $nodoDestination = Nodo::desde($destinationFolder);
 
-        if (!$nodoSource || !LinuxPolicy::leer($nodoSource, $user, $acl)) {
+        if (!$nodoSource || Gate::denies('leer',$nodoSource,  $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos para leer los archivos'
             ], 403);
         }
-        if (!$nodoDestination || !LinuxPolicy::escribir($nodoDestination, $user, $acl)) {
+        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination, $user, $acl)) {
             return response()->json([
                 'error' => 'No tienes permisos para escribir'
             ], 403);

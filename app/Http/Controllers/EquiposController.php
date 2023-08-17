@@ -9,9 +9,9 @@ use App\Models\Carpeta;
 use App\Models\Invitacion;
 use App\Models\Solicitud;
 use App\Models\User;
-use App\Models\Permiso;
+use App\Models\Nodo;
+use App\Models\Acl;
 use App\Pigmalion\SEO;
-use App\Policies\LinuxPolicy;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
@@ -81,10 +81,10 @@ class EquiposController extends Controller
         $ultimosArchivos = [];
 
         $user = auth()->user();
-        $acl = LinuxPolicy::acl($user, ['leer', 'ejecutar']);
+        $acl = Acl::from($user, ['leer', 'ejecutar']);
         foreach ($carpetas as $carpeta) {
-            $nodo = LinuxPolicy::nodoHeredado($carpeta->ruta);
-            if ($nodo && LinuxPolicy::ejecutar($nodo, $user, $acl)) {
+            $nodo = Nodo::desde($carpeta->ruta);
+            if ($nodo && Gate::allows('ejecutar', $nodo, $acl)) {
                 $archivos = $carpeta->ultimosArchivos();
                 $ultimosArchivos = array_merge($ultimosArchivos, $archivos);
             }
