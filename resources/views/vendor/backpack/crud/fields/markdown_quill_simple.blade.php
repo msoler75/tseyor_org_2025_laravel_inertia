@@ -19,7 +19,7 @@
 @endphp
 
 
-<QuillEditorFullField name="{{ $field['name'] }}" content="{{ $decodedHtml }}" />
+<QuillEditorSimpleField name="{{ $field['name'] }}" content="{{ $decodedHtml }}" />
 
 
 {{-- HINT --}}

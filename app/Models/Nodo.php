@@ -33,6 +33,7 @@ class Nodo extends Model
     }
 
 
+    // accesors
     public function getNombreUsuarioAttribute()
     {
         return $this->user->name; // Reemplaza `name` por el nombre del atributo que contiene el nombre del usuario en tu modelo `User`

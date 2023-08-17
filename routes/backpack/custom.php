@@ -22,7 +22,7 @@ Route::group([
     Route::crud('guia', 'GuiaCrudController');
     Route::crud('nodo', 'NodoCrudController');
     Route::crud('acl', 'AclCrudController');
-    Route::crud('grupos', 'GruposCrudController');
     Route::crud('grupo-user', 'GrupoUserCrudController');
     Route::crud('grupo', 'GrupoCrudController');
+    Route::crud('equipo', 'EquipoCrudController');
 }); // this should be the absolute last line of this file

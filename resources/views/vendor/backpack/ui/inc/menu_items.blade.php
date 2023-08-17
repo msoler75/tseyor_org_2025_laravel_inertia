@@ -7,6 +7,7 @@
 
 <x-backpack::menu-item title="Guias" icon="la la-star" :link="backpack_url('guia')" />
 
+<x-backpack::menu-item title="Equipos" icon="la la-users" :link="backpack_url('equipo')" />
 
 <x-backpack::menu-dropdown title="Usuarios y permisos" icon="la la-puzzle-piece">
     <!-- <x-backpack::menu-dropdown-header title="Permisos" /> -->
@@ -21,3 +22,4 @@
     <x-backpack::menu-dropdown-item title="Grupos" icon="la la-user-friends" :link="backpack_url('grupo')" />
     <x-backpack::menu-dropdown-item title="Usuarios y grupos" icon="la la-object-group" :link="backpack_url('grupo-user')" />
 </x-backpack::menu-dropdown>
+
