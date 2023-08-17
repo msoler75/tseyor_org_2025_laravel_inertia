@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use App\Models\SEOModel;
 
 
 class Equipo extends SEOModel
 {
+    use CrudTrait;
     protected $fillable = [
         'nombre',
         'slug',
@@ -53,6 +55,15 @@ class Equipo extends SEOModel
         return $this->hasMany(Carpeta::class, 'group_id', 'id');
     }
 
+
+    // accesors
+    public function getCreadorNombreAttribute()
+    {
+        return $this->creador->name;
+    }
+
+
+    // métodos
     public function esCoordinador($user_id)
     {
         return $this->coordinadores->contains(function ($coordinador) use ($user_id) {

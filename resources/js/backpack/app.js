@@ -12,12 +12,14 @@ import { Link } from "@inertiajs/vue3";
 
 import TinyMCEFullField from "../Components/TinyMCEFullField.vue";
 import TinyMCESimpleField from "../Components/TinyMCESimpleField.vue";
-import QuillEditorField from "../Components/QuillEditorField.vue";
+import QuillEditorFullField from "../Components/QuillEditorFullField.vue";
+import QuillEditorSimpleField from "../Components/QuillEditorSimpleField.vue";
 import ImageCoverField from "../Components/ImageCoverField.vue";
 
 console.log("app initiating...");
 window.app = createApp({})
-  .component("quilleditorfield", QuillEditorField)
+  .component("quilleditorfullfield", QuillEditorFullField)
+  .component("quilleditorsimplefield", QuillEditorSimpleField)
   .component("tinymcefullfield", TinyMCEFullField)
   .component("tinymcesimplefield", TinyMCESimpleField)
   .component("imagecoverfield", ImageCoverField)

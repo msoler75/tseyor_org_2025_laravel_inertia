@@ -45,7 +45,7 @@ const selected = ref(props.value)
 var fromValue = null
 
 function updateImages() {
-    if (inputField.value != fromValue) {
+    if (inputField && inputField.value != fromValue) {
         fromValue = inputField.value
 
         const regex = /!\[.*?\]\((.*?)\)/g;

@@ -37,7 +37,7 @@ class Acl extends Model
     }
 
 
-
+    // accesors
     public function getRutaNodoAttribute()
     {
         return $this->nodo->ruta;
@@ -80,5 +80,4 @@ class Acl extends Model
             })
             ->get();
     }
-
 }
