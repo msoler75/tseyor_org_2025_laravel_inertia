@@ -49,7 +49,8 @@
 
                     <div>
                         <label for="anuncio">Anuncio</label>
-                        <Editor id="anuncio" v-model="edicion.anuncio" format="html"/>
+                        <QuillEditor id="anuncio" v-model="edicion.anuncio" format="html" :toolbar="toolbarAnuncio"
+                        />
                         <div v-if="edicion.errors.anuncio" class="error">{{ edicion.errors.anuncio[0] }}</div>
                         <div v-else class="text-sm">Anuncio de caracter general. Se puede dejar en blanco.</div>
                     </div>
@@ -60,7 +61,7 @@
 
                     <div>
                         <label for="reuniones">Reuniones</label>
-                        <Editor id="reuniones" v-model="edicion.reuniones"  format="html"/>
+                        <QuillEditor id="reuniones" v-model="edicion.reuniones"  format="html"/>
                         <div v-if="edicion.errors.reuniones" class="error">{{ edicion.errors.reuniones[0] }}
                         </div>
                         <div v-else class="text-sm">Ejemplo: Los lunes a las 13h. Se puede dejar en blanco.
@@ -71,7 +72,7 @@
                 <tab name="Información">
                     <div>
                         <label for="informacion">informacion</label>
-                        <Editor id="informacion" v-model="edicion.informacion" format="html"/>
+                        <QuillEditor id="informacion" v-model="edicion.informacion" format="html"/>
                         <div v-if="edicion.errors.informacion" class="error">{{ edicion.errors.informacion[0] }}
                         </div>
                         <div v-else class="text-sm">Información adicional del equipo.</div>
@@ -115,6 +116,27 @@ const tabsElem = ref(null)
 const edicion = reactive({ id: props.equipo.id, imagen: null, nombre: null, descripcion: null, anuncio: null, reuniones: null, errors: {}, processing: false })
 const campos = ['nombre', 'descripcion', 'imagen', 'anuncio', 'reuniones', 'informacion']
 const modalConfiguracion = ref(false)
+
+const toolbarAnuncio = [
+  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  // ['blockquote', 'code-block'],
+
+  //[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+  //[{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+  //[{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+  //[{ 'direction': 'rtl' }],                         // text direction
+
+  // [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+  //[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+  ['link'],
+
+  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+ // [{ 'font': [] }],
+  //[{ 'align': [] }],
+
+  ['clean']]
 
 
 // mostrar modal

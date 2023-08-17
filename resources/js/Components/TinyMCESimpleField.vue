@@ -1,7 +1,7 @@
 <template>
     <div>
         <input type="hidden" :name="name" v-model="contenido" />
-        <Editor v-model="contenido" :format="format"/>
+        <TinyMCE v-model="contenido" :format="format"/>
         <!-- <div v-html="contenido.replace(/\n/g, '<br>')"></div> -->
     </div>
 </template>

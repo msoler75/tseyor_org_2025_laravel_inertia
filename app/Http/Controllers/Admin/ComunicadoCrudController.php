@@ -110,7 +110,9 @@ class ComunicadoCrudController extends CrudController
 
         $folder = $this->mediaFolder();
 
-        CRUD::field('texto')->type('markdown_full')->attributes(['folder' => $folder]);
+        // CRUD::field('texto')->type('markdown_tinymce')->attributes(['folder' => $folder]);
+
+        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 

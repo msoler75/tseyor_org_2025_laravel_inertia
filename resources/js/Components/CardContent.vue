@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { imageUrl } from '@/utils.js'
+import { imageUrl } from '@/composables/utils.js'
 import { Link } from '@inertiajs/vue3'
 
 const props = defineProps({

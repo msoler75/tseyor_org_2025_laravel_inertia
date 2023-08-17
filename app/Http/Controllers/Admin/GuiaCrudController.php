@@ -86,11 +86,11 @@ class GuiaCrudController extends CrudController
             ],
         ]);
 
-        CRUD::field('texto')->type('markdown_full');
+        CRUD::field('texto')->type('markdown_quill');
 
-        CRUD::field('citas')->type('markdown_full');
+        CRUD::field('citas')->type('markdown_quill');
 
-        CRUD::field('experiencia')->type('markdown_full');
+        CRUD::field('experiencia')->type('markdown_quill');
 
         CRUD::field('libros')->type('textarea')->hint('pepito');
 

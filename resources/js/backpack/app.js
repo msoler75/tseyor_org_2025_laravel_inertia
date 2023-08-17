@@ -10,18 +10,19 @@ import { createApp } from "vue/dist/vue.esm-bundler.js";
 import { Icon } from "@iconify/vue";
 import { Link } from "@inertiajs/vue3";
 
-import EditorFullField from "../Components/EditorFullField.vue";
-import EditorSimpleField from "../Components/EditorSimpleField.vue";
+import TinyMCEFullField from "../Components/TinyMCEFullField.vue";
+import TinyMCESimpleField from "../Components/TinyMCESimpleField.vue";
+import QuillEditorField from "../Components/QuillEditorField.vue";
 import ImageCoverField from "../Components/ImageCoverField.vue";
 
 console.log("app initiating...");
 window.app = createApp({})
-  .component("editorfullfield", EditorFullField)
-  .component("editorsimplefield", EditorSimpleField)
+  .component("quilleditorfield", QuillEditorField)
+  .component("tinymcefullfield", TinyMCEFullField)
+  .component("tinymcesimplefield", TinyMCESimpleField)
   .component("imagecoverfield", ImageCoverField)
   .mixin({
     components: { Icon, Link },
   })
   .use(ZiggyVue, Ziggy)
-  .mount(".page")
-  ;
+  .mount(".page");
