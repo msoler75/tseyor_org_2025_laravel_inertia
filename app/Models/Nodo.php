@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class Nodo extends Model
 {
+    use CrudTrait;
     protected $fillable = ['ruta', 'permisos', 'user_id', 'group_id', 'es_carpeta'];
 
 
@@ -18,6 +20,28 @@ class Nodo extends Model
         'group_id' => 1, // O null si no tiene grupo por defecto
         'es_carpeta' => 1, // Por ejemplo, un valor booleano como valor predeterminado
     ];
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Grupo::class, 'group_id', 'id');
+    }
+
+
+    public function getNombreUsuarioAttribute()
+    {
+        return $this->user->name; // Reemplaza `name` por el nombre del atributo que contiene el nombre del usuario en tu modelo `User`
+    }
+
+    public function getNombreGrupoAttribute()
+    {
+        return $this->group->nombre; // Reemplaza `nombre` por el nombre del atributo que contiene el nombre del grupo en tu modelo `Grupo`
+    }
 
 
 
