@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
 
@@ -12,11 +13,47 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Acl extends Model
 {
+    use CrudTrait;
 
     protected $table = 'nodos_acl';
 
 
-    protected $fillable = ['user_id', 'group_id', 'nodo_id', 'verbos'];
+    protected $fillable = ['nodo_id', 'user_id', 'group_id', 'verbos'];
+
+
+    public function nodo()
+    {
+        return $this->belongsTo(Nodo::class, 'nodo_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Grupo::class, 'group_id', 'id');
+    }
+
+
+
+    public function getRutaNodoAttribute()
+    {
+        return $this->nodo->ruta;
+    }
+
+
+    public function getNombreUsuarioAttribute()
+    {
+        return optional($this->user)->name;
+    }
+
+    public function getNombreGrupoAttribute()
+    {
+        return optional($this->group)->nombre;
+    }
+
 
 
     /**
