@@ -5,7 +5,7 @@
 
 
 <script setup>
-import { imageUrl } from '@/utils.js'
+import { imageUrl } from '@/composables/utils.js'
 
 const props = defineProps({
     src: {

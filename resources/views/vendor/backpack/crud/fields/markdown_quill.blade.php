@@ -1,4 +1,4 @@
-{{-- markdown_full_field field --}}
+{{-- quilleditor_field field --}}
 @php
     $field['value'] = old_empty_or_null($field['name'], '') ?? ($field['value'] ?? ($field['default'] ?? ''));
 @endphp
@@ -18,7 +18,17 @@
     $decodedHtml = str_replace(['&lt;', '&gt;'], ['<', '>'], $htmlCode);
 @endphp
 
-<EditorFullField name="{{$field['name']}}" folder="{{ $field['attributes']['folder'] ?? 'media'}}" content="{{$decodedHtml}}"/>
+
+<input id="quill-input" type="hidden" name="{{ $field['name'] }}" data-init-function="bpFieldInitDummyFieldElement"
+    @include('crud::fields.inc.attributes') value="{{ $decodedHtml }}" />
+
+
+    <div id="app">
+       <QuillEditorField name="{{$field['name']}}"
+       content="{{$decodedHtml}}"
+       />
+    </div>
+
 
 {{-- HINT --}}
 @if (isset($field['hint']))
@@ -30,7 +40,7 @@
 @push('crud_fields_styles')
 
     {{-- How to add some CSS? --}}
-    @bassetBlock('backpack/crud/fields/fullmarkdown_field-style.css')
+    @bassetBlock('backpack/crud/fields/quilleditor_field-style.css')
     <style>
         </style>
     @endBassetBlock
@@ -42,7 +52,7 @@
 
 
     {{-- How to add some JS to the field? --}}
-    @bassetBlock('backpack/crud/fields/fullmarkdown.js')
+    @bassetBlock('backpack/crud/fields/quilleditor.js')
         <script>
 
 
@@ -53,11 +63,8 @@
                 // element where init function was defined
                 // console.log(element.val());
 
-                // const md_field_name = "{{ $field['name'] }}";
 
-                // const id = "#vue-app-"+md_field_name
-
-                // console.log('going to mount vue')
+                console.log('going to mount vue')
                 /*axios.get('http://tseyor.org/any.js')
 
                 const { createApp, ref } = Vue
@@ -66,7 +73,7 @@
                 app.mount("#app")*/
                 //window.init_vue();
                 //setTimeout(()=>{
-                    // window.app.mount(id);
+                    window.app.mount("#app");
                 //}, 2000)
 
                 // carga el contenido del  campo

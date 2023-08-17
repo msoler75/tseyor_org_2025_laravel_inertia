@@ -63,9 +63,7 @@ import TinyEditor from '@tinymce/tinymce-vue'
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 
-import MarkdownIt from 'markdown-it'
-import TurndownService from 'turndown'
-import { gfm } from 'turndown-plugin-gfm'
+import {HtmlToMarkdown, MarkdownToHtml} from '@/composables/markdown.js'
 
 import { onThemeChange, updateTheme } from '@/composables/themeadapter'
 
@@ -112,74 +110,11 @@ updateTheme()
 
 // CONVERT MD <-> HTML
 
-const turndownService = new TurndownService({ bulletListMarker: '-', headingStyle: 'atx' })
-turndownService.use(gfm)
-turndownService.keep(['span'])
-
-function HtmlToMarkdown(html) {
-    // convertimos cualquier clase dentro de párrafo p en un marcaje especial
-    // console.log('HtmlToMarkdown', html)
-    return turndownService.turndown(html
-
-        // reemplazamos los atributos de imagen
-        .replace(/<img\s+([^>]+)>/g,
-            (match, atributos) => {
-                console.log('r1', { match, atributos })
-                var values = []
-                atributos.replace(/(\w+)=['"](.*?)['"]/g, (match, atributo, valor) => {
-                    console.log('r2', { atributo, valor })
-                    if (atributo === 'width' || atributo === 'height') {
-                        values.push(`${atributo}=${valor}`)
-                    }
-                    return match
-                })
-                console.log('values', values)
-                return match + (values.length ? `{${values.join(', ')}}` : '')
-            })
-             // reemplazamos los estilos de párrafo
-    .replace(/<p style=["']([^>]*)["'][^>]*>/g, '$&{style=$1}')
-
-            )
-}
-
-// cambia los caracteres codificados de < y > a su valor real
-function DecodeHtml(html) {
-    return html.replace(/&gt;/g, '>').replace(/&lt;/g, '<')
-}
-
-function MarkdownToHtml(raw_markdown) {
-    // vamos a renderizar el markdown, y sustituimos las clases de p
-    var md = new MarkdownIt({
-        html: true,
-        linkify: true
-    });
-
-    return md.render(raw_markdown)
-    // primero reemplazamos las imágenes con atributos
-    .replace(/(<img[^>]*>){(\w+=[^}]+)}/g, (match, img, attributes) => {
-            console.log('r1', {match, attributes})
-            var values = []
-            attributes.replace(/(\w+)=([^,]+)/g, (match, atributo, valor) => {
-                console.log('r2', {match, atributo, valor})
-                values.push(`${atributo}=${valor}`)
-                return match
-            })
-            console.log({values})
-            return img.replace('<img', '<img '+values.join(' '))
-        })
-    // reemplazamos los párrafos con estilos
-    .replace(/<p>{style=([^}]*)}/g, "<p style='$1'>")
-    // quitamos los espacios sobrantes
-    .replace(/<p>\s+<\/p>\n?/g, '').replace(/\n/g, '')
-
-
-}
-
 const contenidoMD = ref(props.format == 'md' ? props.modelValue : HtmlToMarkdown(props.modelValue))
 const contenidoHtml = ref(props.format == 'html' ? props.modelValue : MarkdownToHtml(props.modelValue))
 
 watch(contenidoHtml, (value) => {
-    contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
+    contenidoMD.value = HtmlToMarkdown(value)
 })
 
 
