@@ -20,6 +20,5 @@
     <x-backpack::menu-dropdown-item title="Nodos" icon="la la-cube" :link="backpack_url('nodo')" />
     <x-backpack::menu-dropdown-item title="Lista de acceso" icon="la la-list" :link="backpack_url('acl')" />
     <x-backpack::menu-dropdown-item title="Grupos" icon="la la-user-friends" :link="backpack_url('grupo')" />
-    <x-backpack::menu-dropdown-item title="Usuarios y grupos" icon="la la-object-group" :link="backpack_url('grupo-user')" />
 </x-backpack::menu-dropdown>
 

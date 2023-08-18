@@ -46,19 +46,41 @@ class AclCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
-         $this->crud->addColumn([
+
+
+        $this->crud->addColumn([
             'name' => 'RutaNodo',
             'label' => 'Ruta',
+            'model'       => 'App\Models\Nodo',
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                $query->orWhereHas('nodo', function ($q) use ($searchTerm) {
+                    $q->where('ruta', 'like', '%' . $searchTerm . '%');
+                });
+            },
+            'orderable'   => true,
+            'orderLogic'  => function ($query, $column, $columnDirection) {
+                return $query->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
+                    ->orderBy('nodos.ruta', $columnDirection)->select('nodos_acl.*');
+            },
         ]);
 
-         $this->crud->addColumn([
+
+        $this->crud->addColumn([
+            'label' => 'Creado en',
+            'type' => 'datetime',
+            'name' => 'created_at',
+        ]);
+
+        $this->crud->addColumn([
             'name' => 'NombreUsuario',
             'label' => 'Usuario',
+            'orderable'   => true,
         ]);
 
         $this->crud->addColumn([
             'name' => 'NombreGrupo',
             'label' => 'Grupo',
+            'orderable'   => true,
         ]);
 
 

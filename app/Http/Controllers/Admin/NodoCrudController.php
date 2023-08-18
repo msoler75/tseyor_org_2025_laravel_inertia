@@ -55,14 +55,43 @@ class NodoCrudController extends CrudController
             'label' => 'Ruta',
         ]);
 
+        $this->crud->addColumn([
+            'label' => 'Creado en',
+            'type' => 'datetime',
+            'name' => 'created_at',
+        ]);
+
+
          $this->crud->addColumn([
             'name' => 'NombreUsuario',
             'label' => 'Usuario',
+            'model'       => 'App\Models\User',
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                $query->orWhereHas('user', function ($q) use ($searchTerm) {
+                    $q->where('name', 'like', '%' . $searchTerm . '%');
+                });
+            },
+            'orderable'   => true,
+            'orderLogic'  => function ($query, $column, $columnDirection) {
+                return $query->leftJoin('users', 'nodos.user_id', '=', 'users.id')
+                    ->orderBy('users.name', $columnDirection)->select('nodos.*');
+            },
         ]);
 
         $this->crud->addColumn([
             'name' => 'NombreGrupo',
             'label' => 'Grupo',
+            'model'       => 'App\Models\Grupo',
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                $query->orWhereHas('group', function ($q) use ($searchTerm) {
+                    $q->where('nombre', 'like', '%' . $searchTerm . '%');
+                });
+            },
+            'orderable'   => true,
+            'orderLogic'  => function ($query, $column, $columnDirection) {
+                return $query->leftJoin('users', 'nodos.user_id', '=', 'users.id')
+                    ->orderBy('users.name', $columnDirection)->select('nodos.*');
+            },
         ]);
     }
 
