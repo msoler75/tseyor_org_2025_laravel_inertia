@@ -9,6 +9,9 @@
     <x-backpack::menu-dropdown-item title="Entradas de Blog" icon="la la-pencil-alt" :link="backpack_url('entrada')" />
     <x-backpack::menu-dropdown-item title="Libros" icon="la la-book" :link="backpack_url('libro')" />
     <x-backpack::menu-dropdown-item title="Noticias" icon="la la-volume-up" :link="backpack_url('noticia')" />
+    <x-backpack::menu-dropdown-header title="Glosario" />
+    <x-backpack::menu-dropdown-item title="Guias Estelares" icon="la la-star" :link="backpack_url('guia')" />
+    <x-backpack::menu-dropdown-item title="Lugares del Universo" icon="la la-map-marker" :link="backpack_url('lugar')" />
 </x-backpack::menu-dropdown>
 
 
@@ -22,11 +25,6 @@
     <x-backpack::menu-dropdownitem title="Centros" icon="la la-map-marker" :link="backpack_url('centro')" />
     <x-backpack::menu-dropdown-item title="Contactos" icon="la la-address-book" :link="backpack_url('contacto')" />
     <x-backpack::menu-dropdown-item title="Salas virtuales" icon="la la-hospital-alt" :link="backpack_url('sala')" />
-</x-backpack::menu-dropdown>
-
-<x-backpack::menu-dropdown title="Glosario" icon="la la-bookmark">
-    <x-backpack::menu-dropdown-item title="Guias Estelares" icon="la la-star" :link="backpack_url('guia')" />
-    <x-backpack::menu-dropdown-item title="Lugares del Universo" icon="la la-map-marker" :link="backpack_url('lugar')" />
 </x-backpack::menu-dropdown>
 
 <x-backpack::menu-dropdown title="Gestión de Equipos" icon="la la-users">
@@ -43,7 +41,6 @@
 </x-backpack::menu-dropdown>
 
 <x-backpack::menu-dropdown title="Usuarios y permisos" icon="la la-user-lock">
-    <!-- <x-backpack::menu-dropdown-header title="Permisos" /> -->
     <x-backpack::menu-dropdown-item title="Usuarios" icon="la la-user" :link="backpack_url('user')" />
     <x-backpack::menu-dropdown-item title="Roles" icon="la la-group" :link="backpack_url('role')" />
     <x-backpack::menu-dropdown-item title="Permisos" icon="la la-key" :link="backpack_url('permission')" />

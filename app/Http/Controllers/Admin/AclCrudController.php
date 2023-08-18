@@ -27,8 +27,12 @@ class AclCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Acl::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/acl');
-        CRUD::setEntityNameStrings('acl', 'acls');
+        CRUD::setEntityNameStrings('Lista de acceso', 'Listas de acceso');
     }
+
+
+
+
 
     /**
      * Define what happens when the List operation is loaded.
@@ -104,6 +108,13 @@ class AclCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+         CRUD::field('nodo_id')->type('select')->attribute('ruta');
+         CRUD::field('user_id')->type('select');
+         CRUD::field('group_id')->type('select');
+
+                 CRUD::field('verbos')->makeLast();
+
     }
 
     /**
@@ -114,6 +125,36 @@ class AclCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        $this->setupCreateOperation();
+        // CRUD::setValidation(AclRequest::class);
+        CRUD::setFromDb(); // set fields from db columns.
+
+        /**
+         * Fields can be defined using the fluent syntax:
+         * - CRUD::field('price')->type('number');
+         */
+
+         CRUD::field('nodo_id')->type('hidden');//->attributes(['readonly'=>'1']);
+         CRUD::field('user_id')->type('hidden');//->attributes(['readonly'=>'1']);
+         CRUD::field('group_id')->type('hidden');//->attributes(['readonly'=>'1']);
+
+         CRUD::field([
+            'name' => 'RutaNodo',
+            'label' => 'Ruta',
+            'attributes'=>['disabled'=>'disabled']
+         ]);
+
+         CRUD::field([
+            'name' => 'NombreUsuario',
+            'label' => 'Usuario',
+            'attributes'=>['disabled'=>'disabled']
+         ]);
+
+         CRUD::field([
+            'name' => 'NombreGrupo',
+            'label' => 'Grupo',
+            'attributes'=>['disabled'=>'disabled']
+         ]);
+
+         CRUD::field('verbos')->makeLast();
     }
 }
