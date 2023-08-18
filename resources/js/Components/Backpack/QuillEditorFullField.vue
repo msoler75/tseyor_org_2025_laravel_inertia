@@ -456,6 +456,8 @@ function installToolTips() {
         let classes = e.parentNode.className
         console.log('classes', classes)
 
+        if(classes.match('tooltip')) continue
+
         let button = classes
             .replace('ql-color-picker', '')
             .replace('ql-color', 'font-color')
@@ -498,6 +500,8 @@ function installToolTips() {
 
         let classes = e.getAttribute("class")
         if (classes.match(/ql-formats|ql-picker-label/)) continue
+
+        if(classes.match('tooltip')) continue
 
         console.log('adding tooltip for ', classes)
         let button = classes.replace('ql-active', '')
