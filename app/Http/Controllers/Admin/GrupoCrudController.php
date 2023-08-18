@@ -39,12 +39,26 @@ class GrupoCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+         $this->crud->addColumn([
+            'name' => 'nombre',
+            'label' => 'Nombre',
+        ]);
+
+
+        $this->crud->addColumn([
+            'label' => 'Creado en',
+            'type' => 'datetime',
+            'name' => 'created_at',
+        ]);
+
+         CRUD::column('usuarios')->type('relationship_count');
     }
 
     /**
@@ -62,7 +76,18 @@ class GrupoCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-         CRUD::field('usuarios')->type('select_multiple');
+
+
+
+
+         /* CRUD::field('usuarios')->type('select_multiple')
+         ->wrapper(); */
+
+         CRUD::addField([
+            'name' => 'usuarios',
+            'type'      => 'select_multiple',
+            'wrapper' => ['class' => 'form-group col-md-4'],
+        ]);
 
     }
 
