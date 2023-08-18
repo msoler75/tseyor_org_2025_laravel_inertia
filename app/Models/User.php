@@ -69,6 +69,11 @@ class User extends Authenticatable
     ];
 
 
+    public function contacto() // contacto relacionado con este usuario
+    {
+        return $this->belongsTo(Contacto::class, 'contacto_id');
+    }
+
     public function permisos()
     {
         return $this->hasMany(Permiso::class);

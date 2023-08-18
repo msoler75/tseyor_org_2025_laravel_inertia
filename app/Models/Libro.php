@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\SEOModel;
 
 
 class Libro extends SEOModel
 {
+    use CrudTrait;
     protected $fillable = [
         'titulo',
         'slug',
@@ -16,12 +18,7 @@ class Libro extends SEOModel
         'edicion',
         'paginas',
         'pdf',
-        'published_at',
         'visibilidad'
-    ];
-
-    protected $dates = [
-        'published_at',
     ];
 
     public static function search($term)

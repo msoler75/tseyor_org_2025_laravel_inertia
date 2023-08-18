@@ -24,4 +24,18 @@ Route::group([
     Route::crud('acl', 'AclCrudController');
     Route::crud('grupo', 'GrupoCrudController');
     Route::crud('equipo', 'EquipoCrudController');
+    Route::crud('noticia', 'NoticiaCrudController');
+    Route::crud('entrada', 'EntradaCrudController');
+    Route::crud('audio', 'AudioCrudController');
+    Route::crud('contacto', 'ContactoCrudController');
+    Route::crud('centro', 'CentroCrudController');
+    Route::crud('comentario', 'ComentarioCrudController');
+    Route::crud('evento', 'EventoCrudController');
+    Route::crud('inscripcion', 'InscripcionCrudController');
+    Route::crud('lugar', 'LugarCrudController');
+    Route::crud('normativa', 'NormativaCrudController');
+    Route::crud('publicacion', 'PublicacionCrudController');
+    Route::crud('solicitud', 'SolicitudCrudController');
+    Route::crud('libro', 'LibroCrudController');
+    Route::crud('sala', 'SalaCrudController');
 }); // this should be the absolute last line of this file

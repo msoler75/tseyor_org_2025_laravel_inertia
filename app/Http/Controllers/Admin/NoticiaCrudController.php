@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\Storage;
 
 /**
- * Class AclCrudController
+ * Class NoticiaCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class AclCrudController extends CrudController
+class NoticiaCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -25,9 +26,9 @@ class AclCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Acl::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/acl');
-        CRUD::setEntityNameStrings('acl', 'acls');
+        CRUD::setModel(\App\Models\Noticia::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/noticia');
+        CRUD::setEntityNameStrings('noticia', 'noticias');
     }
 
     /**
@@ -38,55 +39,12 @@ class AclCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        //CRUD::setFromDb(); // set columns from db columns.
+        CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
-
-
-        $this->crud->addColumn([
-            'name' => 'RutaNodo',
-            'label' => 'Ruta',
-            'model'       => 'App\Models\Nodo',
-            'searchLogic' => function ($query, $column, $searchTerm) {
-                $query->orWhereHas('nodo', function ($q) use ($searchTerm) {
-                    $q->where('ruta', 'like', '%' . $searchTerm . '%');
-                });
-            },
-            'orderable'   => true,
-            'orderLogic'  => function ($query, $column, $columnDirection) {
-                return $query->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
-                    ->orderBy('nodos.ruta', $columnDirection)->select('nodos_acl.*');
-            },
-        ]);
-
-
-        $this->crud->addColumn([
-            'label' => 'Creado en',
-            'type' => 'datetime',
-            'name' => 'created_at',
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'NombreUsuario',
-            'label' => 'Usuario',
-            'orderable'   => true,
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'NombreGrupo',
-            'label' => 'Grupo',
-            'orderable'   => true,
-        ]);
-
-
-        $this->crud->addColumn([
-            'name' => 'verbos',
-            'label' => 'Verbos',
-        ]);
     }
 
     /**
@@ -97,13 +55,44 @@ class AclCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(AclRequest::class);
+        CRUD::setValidation([
+            'titulo' => 'required|min:8',
+            'descripcion' => 'required|max:400'
+        ]);
+        // CRUD::setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+         $folder = $this->mediaFolder();
+
+         CRUD::field('descripcion')->type('textarea');
+
+         CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
+
+         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
+
+         CRUD::field('visibilidad')->type('visibilidad');
+    }
+
+
+    private function mediaFolder()
+    {
+        $anioActual = date('Y');
+        $mesActual = date('m');
+
+        $folder = "/media/noticias/$anioActual/$mesActual";
+
+        // Verificar si la carpeta existe en el disco 'public'
+        if (!Storage::disk('public')->exists($folder)) {
+            // Crear la carpeta en el disco 'public'
+            Storage::disk('public')->makeDirectory($folder);
+        }
+
+        return $folder;
     }
 
     /**

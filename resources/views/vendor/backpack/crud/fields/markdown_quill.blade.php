@@ -19,7 +19,7 @@
 @endphp
 
 
-<QuillEditorFullField name="{{ $field['name'] }}" content="{{ $decodedHtml }}" />
+<QuillEditorFullField name="{{ $field['name'] }}" folder="{{ $field['attributes']['folder'] ?? 'media'}}" content="{{ $decodedHtml }}" />
 
 
 {{-- HINT --}}

@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\SalaRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class UserCrudController
+ * Class SalaCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class UserCrudController extends CrudController
+class SalaCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -25,9 +26,9 @@ class UserCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\User::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
-        CRUD::setEntityNameStrings('user', 'users');
+        CRUD::setModel(\App\Models\Sala::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/sala');
+        CRUD::setEntityNameStrings('sala', 'salas');
     }
 
     /**
@@ -40,14 +41,12 @@ class UserCrudController extends CrudController
     {
         CRUD::setFromDb(); // set columns from db columns.
 
-        CRUD::column('frase')->type('check');
-        CRUD::column('email_verified_at')->type('check');
-        CRUD::column('profile_photo_path')->type('image');
-
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+         CRUD::column('enlace')->type('url');
     }
 
     /**
@@ -59,21 +58,17 @@ class UserCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            'name' => 'required|min:2',
-            'password' =>'required|min:6'
+            'nombre' => 'required',
+            'enlace' => 'required',
         ]);
         CRUD::setFromDb(); // set fields from db columns.
-
-        CRUD::field('profile_photo_url')->type('text');
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
 
-         \App\Models\User::creating(function ($entry) {
-            $entry->password = \Hash::make($entry->password);
-        });
+         CRUD::field('enlace')->type('url');
     }
 
     /**
@@ -84,37 +79,6 @@ class UserCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        CRUD::setValidation([
-            'name' => 'required|min:2',
-        ]);
-        CRUD::setFromDb(); // set fields from db columns.
-
-        CRUD::field('password')->hint('Escribe una contraseña solo si deseas cambiarla.');
-
-        CRUD::field('profile_photo_url')->type('text');
-
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
-
-         \App\Models\User::updating(function ($entry) {
-            if (request('password') == null) {
-                $entry->password = $entry->getOriginal('password');
-            } else {
-                $entry->password = \Hash::make(request('password'));
-            }
-        });
+        $this->setupCreateOperation();
     }
-
-
-
-
-    protected function setupShowOperation()
-    {
-       CRUD::setFromDb(); // set fields from db columns.
-       CRUD::column('email_verified_at')->type('text');
-       CRUD::column('profile_photo_url')->type('image');
-    }
-
 }

@@ -163,7 +163,6 @@ onMounted(() => {
 // COLOR MODE
 
 onThemeChange().to(updateTheme)
-updateTheme() // updates in body element
 
 
 // QUILL EDITOR

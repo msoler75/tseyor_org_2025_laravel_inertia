@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\Storage;
 
 /**
- * Class UserCrudController
+ * Class LibroCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class UserCrudController extends CrudController
+class LibroCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -25,9 +26,9 @@ class UserCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\User::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
-        CRUD::setEntityNameStrings('user', 'users');
+        CRUD::setModel(\App\Models\Libro::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/libro');
+        CRUD::setEntityNameStrings('libro', 'libros');
     }
 
     /**
@@ -39,10 +40,6 @@ class UserCrudController extends CrudController
     protected function setupListOperation()
     {
         CRUD::setFromDb(); // set columns from db columns.
-
-        CRUD::column('frase')->type('check');
-        CRUD::column('email_verified_at')->type('check');
-        CRUD::column('profile_photo_path')->type('image');
 
         /**
          * Columns can be defined using the fluent syntax:
@@ -59,22 +56,52 @@ class UserCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            'name' => 'required|min:2',
-            'password' =>'required|min:6'
+            'titulo' => 'required|min:8',
+            'descripcion' => 'required|max:400'
         ]);
+        // CRUD::setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
-
-        CRUD::field('profile_photo_url')->type('text');
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
 
-         \App\Models\User::creating(function ($entry) {
-            $entry->password = \Hash::make($entry->password);
-        });
+        $folderImages = "/media/libros";
+
+        $folderPDF = "/media/libros/pdf";
+
+        // Verificar si la carpeta existe en el disco 'public'
+        if (!Storage::disk('public')->exists($folderImages)) {
+            // Crear la carpeta en el disco 'public'
+            Storage::disk('public')->makeDirectory($folderImages);
+        }
+
+        if (!Storage::disk('public')->exists($folderPDF)) {
+            // Crear la carpeta en el disco 'public'
+            Storage::disk('public')->makeDirectory($folderPDF);
+        }
+
+        CRUD::field('descripcion')->type('textarea');
+
+        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folderImages]);
+
+        CRUD::field('visibilidad')->type('visibilidad');
+
+        CRUD::field(
+            [
+                'name' => 'pdf',
+                'label' => 'Archivo PDF',
+                'type' => 'upload',
+                'upload' => true,
+                'upload_folder' => $folderPDF,
+                'attributes' => [
+                    'accept' => '.pdf',
+                ],
+            ]
+        );
     }
+
 
     /**
      * Define what happens when the Update operation is loaded.
@@ -84,37 +111,6 @@ class UserCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        CRUD::setValidation([
-            'name' => 'required|min:2',
-        ]);
-        CRUD::setFromDb(); // set fields from db columns.
-
-        CRUD::field('password')->hint('Escribe una contraseña solo si deseas cambiarla.');
-
-        CRUD::field('profile_photo_url')->type('text');
-
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
-
-         \App\Models\User::updating(function ($entry) {
-            if (request('password') == null) {
-                $entry->password = $entry->getOriginal('password');
-            } else {
-                $entry->password = \Hash::make(request('password'));
-            }
-        });
+        $this->setupCreateOperation();
     }
-
-
-
-
-    protected function setupShowOperation()
-    {
-       CRUD::setFromDb(); // set fields from db columns.
-       CRUD::column('email_verified_at')->type('text');
-       CRUD::column('profile_photo_url')->type('image');
-    }
-
 }

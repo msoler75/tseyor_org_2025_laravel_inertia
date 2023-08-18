@@ -145,17 +145,6 @@ class ComunicadoCrudController extends CrudController
     {
         $this->setupCreateOperation();
 
-        /* CRUD::setValidation([
-            'titulo' => 'required|min:8',
-            'descripcion' => 'required|min:16',
-            'texto' => 'required|min:64',
-        ]);
-        CRUD::setFromDb();
-
-        CRUD::field('texto')->type('easymde');
-
-        // CRUD::field('slug')->remove();
-        */
     }
 
 

@@ -103,7 +103,7 @@ class NodoCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+         CRUD::setValidation([
             'ruta' => 'required|min:2',
             'permisos' => 'required',
         ]);

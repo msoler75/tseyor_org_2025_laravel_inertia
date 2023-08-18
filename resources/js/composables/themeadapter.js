@@ -15,6 +15,7 @@ export const onThemeChange = () => {
       for (const mutation of mutationsList) {
         if (mutation.type === "attributes") {
           // Se ha producido un cambio en un atributo
+          console.log('theme changed!')
 
           // Obtén el nombre del atributo modificado
           const attributeName = mutation.attributeName;

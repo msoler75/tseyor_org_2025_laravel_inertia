@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\SEOModel;
 
 
 class Normativa extends SEOModel
 {
+    use CrudTrait;
     protected $fillable = [
         'titulo',
         'slug',
