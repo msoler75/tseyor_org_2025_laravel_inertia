@@ -85,13 +85,13 @@ class GuiaCrudController extends CrudController
             ],
         ]);
 
-        CRUD::field('texto')->type('markdown_quill');
+        CRUD::field('texto')->type('markdown_quill_simple');
 
-        CRUD::field('citas')->type('markdown_quill');
+        CRUD::field('citas')->type('markdown_quill_simple');
 
-        CRUD::field('experiencia')->type('markdown_quill');
+        CRUD::field('experiencia')->type('markdown_quill_simple');
 
-        CRUD::field('libros')->type('textarea')->hint('pepito');
+        CRUD::field('libros')->type('textarea')->hint('Libros de consulta de este Guía Estelar');
 
 
         $folder = 'media/guias';

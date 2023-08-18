@@ -5,9 +5,9 @@
         <div v-show="!editingMarkdown" ref="quillwrapper" class="bg-base-100 text-base-content"
             :class="inFullScreen ? 'fullscreen' : ''" >
             <QuillEditor ref="qeditor" theme="snow" v-model:content="contenidoHtml" contentType="html" :modules="modules"
-                toolbar="#toolbar_1" @ready="onQuillReady">
+            :toolbar="`#toolbar_quill_${name}`" @ready="onQuillReady">
                 <template #toolbar>
-                    <div id="toolbar_1" quill__toolbar>
+                    <div :id="`toolbar_quill_${name}`" quill__toolbar>
                         <span class="ql-formats">
                             <button type="button" class="ql-header" value="1">Heading 1</button>
                             <button type="button" class="ql-header" value="2">Heading 2</button>
