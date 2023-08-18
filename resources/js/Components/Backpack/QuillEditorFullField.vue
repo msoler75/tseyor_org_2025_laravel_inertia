@@ -4,7 +4,7 @@
 
         <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
             <div class="flex flex-col">
-                <FileManager url="/imagenes/portada" class="max-h-[90vh] flex-grow" @image="onInsertImage"
+                <FileManager :url="mediaFolder" class="max-h-[90vh] flex-grow" @image="onInsertImage"
                     content-class="max-h-[calc(100vh-240px)] overflow-y-auto" />
                 <div class="p-3 flex justify-end">
                     <button @click.prevent="showMediaManager = false" class="btn btn-neutral">Cerrar</button>
@@ -188,7 +188,8 @@ import { onThemeChange, updateTheme } from '@/composables/themeadapter'
 
 const props = defineProps({
     name: String,
-    content: { type: String, default: '' }
+    content: { type: String, default: '' },
+    mediaFolder: { type: String, default: '/media' },
 })
 
 
@@ -204,7 +205,6 @@ onMounted(() => {
 // COLOR MODE
 
 onThemeChange().to(updateTheme)
-updateTheme() // updates in body element
 
 
 // QUILL EDITOR
@@ -520,6 +520,8 @@ function installToolTips() {
             content: nombreBoton(classes) + " " + getShortcut(button),
         })
     }
+
+    console.log('tooltips installed')
 }
 
 </script>

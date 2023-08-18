@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\GuiaRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -61,7 +60,7 @@ class GuiaCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+         CRUD::setValidation([
             'nombre' => 'required|min:2',
             // 'descripcion' => 'required|min:16',
         ]);
@@ -94,7 +93,10 @@ class GuiaCrudController extends CrudController
 
         CRUD::field('libros')->type('textarea')->hint('pepito');
 
-        CRUD::field('imagen')->type('image_cover')->attributes(['from' => 'texto', 'folder' => 'media/guias']);
+
+        $folder = 'media/guias';
+
+        CRUD::field('imagen')->type('image_cover')->attributes(['from' => 'texto', 'folder' => $folder]);
     }
 
     /**

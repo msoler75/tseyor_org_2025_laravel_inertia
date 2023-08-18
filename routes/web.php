@@ -113,7 +113,7 @@ Route::get('/cursos/inscripcion', function () {
     return Inertia::render('Cursos/Inscripcion', [])
         ->withViewData(SEO::get('cursos.inscripcion'));
 })->name('cursos.inscripcion');
-Route::post('/inscripcion', [InscripcionController::class, 'store'])->name('inscripcion.store');
+Route::post('/cursos/inscripcion', [InscripcionController::class, 'store'])->name('cursos.inscripcion.store');
 
 
 Route::get('/ong', function () {

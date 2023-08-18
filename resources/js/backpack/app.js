@@ -10,11 +10,11 @@ import { createApp } from "vue/dist/vue.esm-bundler.js";
 import { Icon } from "@iconify/vue";
 import { Link } from "@inertiajs/vue3";
 
-import TinyMCEFullField from "../Components/TinyMCEFullField.vue";
-import TinyMCESimpleField from "../Components/TinyMCESimpleField.vue";
-import QuillEditorFullField from "../Components/QuillEditorFullField.vue";
-import QuillEditorSimpleField from "../Components/QuillEditorSimpleField.vue";
-import ImageCoverField from "../Components/ImageCoverField.vue";
+import TinyMCEFullField from "../Components/Backpack/TinyMCEFullField.vue";
+import TinyMCESimpleField from "../Components/Backpack/TinyMCESimpleField.vue";
+import QuillEditorFullField from "../Components/Backpack/QuillEditorFullField.vue";
+import QuillEditorSimpleField from "../Components/Backpack/QuillEditorSimpleField.vue";
+import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
 
 console.log("app initiating...");
 window.app = createApp({})

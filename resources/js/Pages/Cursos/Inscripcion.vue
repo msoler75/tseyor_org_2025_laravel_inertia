@@ -149,7 +149,7 @@ const form = useForm('inscripcion', {
 function submit() {
     // Clear all errors...
     form.clearErrors()
-    form.post(route('inscripcion.store'), {
+    form.post(route('cursos.inscripcion.store'), {
         preserveScroll: true,
         onSuccess: () => {
             submitted.value = true
