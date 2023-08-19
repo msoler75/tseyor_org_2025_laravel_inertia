@@ -3,7 +3,9 @@ import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount } from 'vue';
 import { useNav } from '@/Stores/nav'
 import { useDark, useToggle } from "@vueuse/core";
+import { useGlobalState } from '@/Stores/global'
 
+const state = useGlobalState()
 const page = usePage()
 const nav = useNav()
 const sideBarShow = ref(false)
@@ -27,6 +29,7 @@ const switchToTeam = (team) => {
 };
 
 const logout = () => {
+    state.permisos.value = []
     router.post(route('logout'));
 };
 
@@ -135,18 +138,20 @@ import { useDark, useColorScheme } from 'vue-use';
 function login1() {
     console.log('login1')
     axios.get(route('login1'))
-    .then((response)=>{
-        console.log('response', response)
-        router.reload()
-    }
-    )
+        .then((response) => {
+            state.cargarPermisos()
+            console.log('response', response)
+            router.reload()
+        }
+        )
 }
 
 function login2() {
     axios.get(route('login2'))
-    .then(()=>
-    router.reload()
-    )
+        .then(() => {
+            state.cargarPermisos()
+            router.reload()
+        })
 }
 
 

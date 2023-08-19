@@ -136,6 +136,7 @@ Route::get('/utg/departamentos/{id}', [EquiposController::class, 'show'])->name(
 
 Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios');
 Route::get('/usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->name('usuarios.buscar');
+Route::get('/usuarios/_permisos', [UsuariosController::class, 'permissions'])->name('usuario.permisos');
 Route::get('/usuarios/{id}', [UsuariosController::class, 'show'])->name('usuario');
 
 Route::get('/login/1', [DevController::class, 'loginUser1'])->name('login1');

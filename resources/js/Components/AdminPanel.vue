@@ -28,8 +28,9 @@
 </template>
 
 <script setup>
+import {useGlobalState} from '@/Stores/global'
 
-const permisos = usePage().props.permisos
+const state = useGlobalState()
 
 const props = defineProps({
     necesita: { type: [String, Array], required: true },
@@ -37,9 +38,9 @@ const props = defineProps({
     contenido: Object,
 })
 
-const editor = ref(
-    typeof props.necesita == 'string' ? permisos.includes(props.necesita) :
-        permisos.filter(permiso => props.necesita.includes(permiso)).length
+const editor = computed(()=>
+    typeof props.necesita == 'string' ? state.permisos.value.includes(props.necesita) :
+    state.permisos.value.filter(permiso => props.necesita.includes(permiso)).length
 )
 
 const isDraft = ref(props.contenido && ('visibilidad' in props.contenido) && props.contenido.visibilidad != 'P')
