@@ -1,6 +1,11 @@
 
 <template>
-    <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
+    <div class="container py-12 mx-auto">
+
+        <AdminPanel modelo="guia" necesita="administrar contenidos" class="mb-3"/>
+
+
+
         <h1>Guías Estelares</h1>
         <p>Tutores de la Confederación y otros hermanos de las estrellas.</p>
 

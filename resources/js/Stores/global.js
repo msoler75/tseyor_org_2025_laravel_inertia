@@ -7,7 +7,7 @@ export const useGlobalState = createGlobalState(() => {
     function cargarPermisos() {
         axios.get(route('usuario.permisos'))
         .then(response=>{
-            //console.log('permisos response', response)
+            console.log('permisos response', response)
             permisos.value = response.data
         })
     }

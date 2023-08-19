@@ -28,7 +28,7 @@ class EntradasController extends Controller
             'listado' => $resultados,
             'recientes' => $recientes
         ])
-        ->withViewData(SEO::get('entradas'));
+            ->withViewData(SEO::get('entradas'));
     }
 
     public function show($id)
@@ -37,14 +37,16 @@ class EntradasController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
-        if (!$entrada) {
-            abort(404); // Manejo de entrada no encontrada
+        $borrador = request()->has('borrador');
+        $publicado =  $entrada->visibilidad == 'P';
+        $editor = optional(auth()->user())->can('administrar contenidos');
+        if (!$entrada || (!$publicado && !$borrador && !$editor)) {
+            abort(404);
         }
 
         return Inertia::render('Entradas/Entrada', [
             'entrada' => $entrada
         ])
-       ->withViewData(SEO::from($entrada));
-        ;
+            ->withViewData(SEO::from($entrada));;
     }
 }

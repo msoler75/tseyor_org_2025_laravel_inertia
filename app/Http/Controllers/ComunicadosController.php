@@ -89,11 +89,8 @@ class ComunicadosController extends Controller
             ->firstOrFail();
 
         $borrador = request()->has('borrador');
-
         $publicado =  $comunicado->visibilidad == 'P';
-
-        $editor = optional(auth()->user())->can('editar contenidos');
-
+        $editor = optional(auth()->user())->can('administrar contenidos');
         if (!$comunicado || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Manejo de comunicado no encontrado o no autorizado
         }

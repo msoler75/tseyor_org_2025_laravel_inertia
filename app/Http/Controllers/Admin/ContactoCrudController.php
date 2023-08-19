@@ -40,7 +40,37 @@ class ContactoCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
+
+        $this->crud->addColumn([
+            'name'  => 'nombre',
+            'label' => 'Nombre',
+            'type'  => 'text'
+        ]);
+
+
+        $this->crud->addColumn([
+            'name' => 'updated_at',
+            'label' => 'Modificado',
+            'type' => 'datetime', // Puedes usar 'datetime' o 'date' según el formato que desees mostrar
+        ]);
+
+
+        $this->crud->addColumn([
+            'name'  => 'pais',
+            'label' => 'Pais',
+            'type'  => 'text'
+        ]);
+
+        $this->crud->addColumn([
+            'name'  => 'visibilidad',
+            'label' => 'Estado',
+            'type'  => 'enum',
+            'options' => [
+                'B' => '⚠️ Borrador',
+                'P' => '✔️ Publicado'
+            ]
+        ]);
     }
 
     /**
@@ -90,5 +120,10 @@ class ContactoCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    protected function show($id)
+    {
+        return redirect("/contactos/$id?borrador");
     }
 }

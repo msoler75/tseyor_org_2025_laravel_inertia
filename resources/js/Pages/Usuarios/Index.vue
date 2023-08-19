@@ -1,6 +1,8 @@
 
 <template>
     <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
+        <AdminPanel modelo="user" necesita="administrar usuarios" class="mb-3"/>
+
         <h1>Usuarios</h1>
 
         <div class="flex justify-end mb-5">

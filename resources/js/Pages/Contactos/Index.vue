@@ -1,6 +1,9 @@
 
 <template>
-    <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
+    <div class="container py-12 mx-auto">
+
+        <AdminPanel modelo="contacto" necesita="administrar directorio" class="mb-3" />
+
         <h1 class="text-center mb-0">Dónde estamos</h1>
 
         <div class="flex justify-end mb-5 transform lg:translate-y-[3.5rem]">
@@ -9,7 +12,8 @@
 
         <div class="w-full flex gap-5 flex-wrap lg:flex-nowrap">
 
-            <div class="card bg-base-100 shadow flex-wrap lg:flex-nowrap flex-row lg:flex-col p-5 lg:p-10 gap-7 self-baseline lg:sticky lg:top-20 overflow-y-auto lg:max-h-[calc(100vh-10rem)] select-none">
+            <div
+                class="card bg-base-100 shadow flex-wrap lg:flex-nowrap flex-row lg:flex-col p-5 lg:p-10 gap-7 self-baseline lg:sticky lg:top-20 overflow-y-auto lg:max-h-[calc(100vh-10rem)] select-none">
                 <Link :href="`${route('contactos')}`" :class="!filtrado && !paisActivo ? 'text-blue-700 font-bold' : ''">
                 <span class="capitalize">Novedades</span>
                 </Link>
@@ -45,7 +49,7 @@
                                         contacto.pais }}</div>
                                     <p class="text-xs">{{
                                         contacto.poblacion }}</p>
-                                    <Link :href="route('contacto',contacto.slug)" class="btn mt-auto">
+                                    <Link :href="route('contacto', contacto.slug)" class="btn mt-auto">
                                     Ver contacto
                                     </Link>
 

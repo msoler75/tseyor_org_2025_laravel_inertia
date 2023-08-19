@@ -1,5 +1,11 @@
 <template>
     <Sections>
+
+        <div class="flex justify-between items-center mb-20">
+            <Back>Usuarios</Back>
+            <AdminPanel modelo="user" necesita="administrar usuarios" :contenido="usuario"/>
+        </div>
+
         <Section class="container mx-auto flex flex-col items-center py-20">
             <div class="avatar">
                 <div class="w-32 h-32 rounded-full">

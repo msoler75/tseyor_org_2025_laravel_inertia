@@ -1,6 +1,9 @@
 
 <template>
-    <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
+    <div class="container py-12 mx-auto">
+
+        <AdminPanel necesita="administrar contenidos" class="mb-3"/>
+
         <h1>Novedades</h1>
         <p>Todas las novedades de los contenidos de Tseyor.</p>
 

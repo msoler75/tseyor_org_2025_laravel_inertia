@@ -1,6 +1,8 @@
 <template>
     <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
 
+            <AdminPanel modelo="video" necesita="administrar contenidos" class="mb-3"/>
+
 <section class="py-10 space-y-20 container mx-auto">
     <h1 class="text-4xl font-bold text-center mb-10">Vídeos TSEYOR</h1>
     <div class="flex flex-wrap justify-center items-center gap-10 card flex-row bg-base-100 shadow rounded-lg p-6">
