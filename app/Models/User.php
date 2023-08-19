@@ -17,6 +17,8 @@ use App\Models\Grupo;
 use App\Models\Membresia;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class User extends Authenticatable
 {
@@ -95,4 +97,5 @@ class User extends Authenticatable
                 ->get();
         });
     }
+
 }
