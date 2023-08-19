@@ -6,9 +6,27 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Comunicado;
 use App\Pigmalion\SEO;
+use Backpack\PermissionManager\app\Models\PermissionManager;
 
 class ComunicadosController extends Controller
 {
+
+    /**
+     * Display a listing of the resource.
+     *
+     *   https://github.com/codename-12/crud-laravel-with-spatie-permission/blob/master/app/Http/Controllers/PegawaiController.php
+     *
+     * @return \Illuminate\Http\Response
+     */
+    /*
+    function __construct()
+    {
+         $this->middleware('permission:pegawai-list|pegawai-create|pegawai-edit|pegawai-delete', ['only' => ['index','show']]);
+         $this->middleware('permission:pegawai-create', ['only' => ['create','store']]);
+         $this->middleware('permission:pegawai-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:pegawai-delete', ['only' => ['destroy']]);
+    }
+    */
 
     public function index(Request $request)
     {
@@ -16,6 +34,10 @@ class ComunicadosController extends Controller
         $filtro_archivo = $request->input('buscar_archivo');
         $vista = $request->input('vista');
 
+        // hay dos filtros, uno para cada tipo de vista (recientes ó archivo)
+
+
+        // devuelve los comunicados recientes segun el filtro, o los más recientes si no hay filtro
         $resultados = $filtro_recientes ? Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
             ->where('visibilidad', 'P')
             ->where(function ($query) use ($filtro_recientes) {
@@ -24,7 +46,7 @@ class ComunicadosController extends Controller
             })
             ->paginate(10, ["*"], "page_recientes")
             ->appends(['buscar_recientes' => $filtro_recientes,  'vista' => $vista])
-            :
+           :
             Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
             ->where('visibilidad', 'P')
             ->latest()
@@ -35,6 +57,7 @@ class ComunicadosController extends Controller
 
         $recientes = Comunicado::select(['slug', 'titulo', 'fecha_comunicado'])->where('visibilidad', 'P')->latest()->take(24)->get();
 
+        // devuelve los comunicados archivados segun el filtro, o los más recientes si no hay filtro
         $archivo = $filtro_archivo ?
             Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
             ->where('visibilidad', 'P')
@@ -49,13 +72,17 @@ class ComunicadosController extends Controller
             ->latest()
             ->paginate(12, ["*"], "page_archivo")->appends(['buscar_archivo' => $filtro_archivo, 'vista' => $vista]);
 
+            $user = auth()->user();
+            $permisos = optional($user)->getPermissionNames();
+
         return Inertia::render('Comunicados/Index', [
             'vista' => $vista,
             'filtrado_reciente' => $filtro_recientes,
             'filtrado_archivo' => $filtro_archivo,
             'listado' => $resultados,
             'recientes' => $recientes,
-            'archivo' => $archivo
+            'archivo' => $archivo,
+            'permisos' =>  $permisos
         ])
             ->withViewData(SEO::get('comunicados'));
     }
@@ -72,8 +99,12 @@ class ComunicadosController extends Controller
             abort(404); // Manejo de comunicado no encontrada
         }
 
+        $user = auth()->user();
+        $permisos = optional($user)->getPermissionNames();
+
         return Inertia::render('Comunicados/Comunicado', [
-            'comunicado' => $comunicado
+            'comunicado' => $comunicado,
+            'permisos' => $permisos
         ])
             ->withViewData(SEO::from($comunicado));
     }

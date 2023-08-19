@@ -8,6 +8,16 @@ body {
 
 
 
-form[action*='admin/role'] label {
-    width: fit-content;
+form [data-entity='user_role_permission'] .checkbox label,
+form [bp-field-name='permissions'] label
+{
+    width: 200px;
+}
+
+form [data-entity='user_role_permission'] .checkbox,
+form [bp-field-name='permissions'] .checkbox
+{
+    margin-bottom: 20px;
+    border: none;
+    user-select: none;
 }

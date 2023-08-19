@@ -2,6 +2,10 @@
 <template>
     <div class="container px-4 py-12 mx-auto sm:px-6 lg:px-8">
 
+
+        {{ permisos }}
+        <AdminPanel modelo="comunicado" v-if="permisos.includes('editar contenidos')"/>
+
         <tabs>
             <tab name="Recientes">
 
@@ -118,7 +122,8 @@ const props = defineProps({
     filtrado: {},
     listado: {},
     recientes: {},
-    archivo: {}
+    archivo: {},
+    permisos: {}
 });
 
 // const listado = ref(props.listado)
