@@ -1,5 +1,10 @@
 <template>
     <div>
+        <div class="flex justify-between items-center mb-20">
+            <Back>Equipos</Back>
+            <AdminPanel modelo="equipo" necesita="administrar equipos" :contenido="equipo"/>
+        </div>
+
         <EquipoCabecera :equipo="equipo" />
 
         <div class="container mx-auto py-12">

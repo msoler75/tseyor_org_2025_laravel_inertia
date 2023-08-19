@@ -1,6 +1,9 @@
 
 <template>
-    <div class="container py-12 mx-auto sm:px-6 lg:px-8">
+    <div class="container py-12 mx-auto">
+
+        <AdminPanel modelo="libro" necesita="administrar contenidos" class="mb-3"/>
+
         <h1>Libros</h1>
         <p>Libros que recogen toda la información de las conversaciones interdimensionales mantenidas con nuestros Guías
             Estelares.</p>

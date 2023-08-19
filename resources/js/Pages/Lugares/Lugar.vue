@@ -1,5 +1,11 @@
 <template>
     <div class="container mx-auto px-4 py-8 w-full">
+
+        <div class="flex justify-between items-center mb-20">
+            <Back>Lugares</Back>
+            <AdminPanel modelo="lugar" necesita="administrar contenidos" :contenido="lugar"/>
+        </div>
+
         <div class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
                 <div class="w-full h-auto mx-auto">

@@ -1,6 +1,9 @@
 
 <template>
-    <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
+    <div class="container py-12 mx-auto">
+
+        <AdminPanel modelo="audio" necesita="administrar contenidos" class="mb-3"/>
+
         <h1>Audios</h1>
         <p>Relájate y disfruta de los talleres, meditaciones, cuentos y otros materiales de la filosofía de Tseyor.</p>
 

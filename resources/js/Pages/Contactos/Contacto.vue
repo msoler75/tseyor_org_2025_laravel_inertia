@@ -1,5 +1,10 @@
 <template>
     <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-20">
+            <Back href="/donde-estamos">Dónde estamos</Back>
+            <AdminPanel modelo="contacto" necesita="administrar directorio" :contenido="contacto"/>
+        </div>
+
       <h1 class="text-3xl font-bold mb-4">{{ contacto.nombre }}</h1>
       <p class="text-gray-600 text-sm mb-2">
         Última actualización: <TimeAgo :date="contacto.updated_at" />

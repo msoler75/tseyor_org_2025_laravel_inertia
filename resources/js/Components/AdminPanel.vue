@@ -47,6 +47,6 @@ const isDraft = ref(props.contenido && ('visibilidad' in props.contenido) && pro
 
 const editUrl = ref(props.contenido ? `/admin/${props.modelo.replace(/e?s$/, '')}/${props.contenido.id}/edit` : null)
 
-const adminUrl = ref(`/admin/${props.modelo.replace(/e?s$/, '')}`)
+const adminUrl = ref(props.modelo?`/admin/${props.modelo.replace(/e?s$/, '')}`:'/admin')
 
 </script>

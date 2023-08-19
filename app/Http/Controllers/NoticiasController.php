@@ -42,8 +42,11 @@ class NoticiasController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
-        if (!$noticia) {
-            abort(404); // Manejo de noticia no encontrada
+        $borrador = request()->has('borrador');
+        $publicado =  $noticia->visibilidad == 'P';
+        $editor = optional(auth()->user())->can('administrar contenidos');
+        if (!$noticia || (!$publicado && !$borrador && !$editor)) {
+            abort(404);
         }
 
         return Inertia::render('Noticias/Noticia', [

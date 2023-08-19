@@ -44,9 +44,13 @@ class LibrosController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
-        if (!$libro) {
-            abort(404); // Manejo de libro no encontrada
+        $borrador = request()->has('borrador');
+        $publicado =  $libro->visibilidad == 'P';
+        $editor = optional(auth()->user())->can('administrar contenidos');
+        if (!$libro || (!$publicado && !$borrador && !$editor)) {
+            abort(404);
         }
+
 
         // Obtener libros relacionados por categoría o coincidencia de palabras clave en la descripción
         $relacionados = Libro::where('id', '!=', $libro->id)

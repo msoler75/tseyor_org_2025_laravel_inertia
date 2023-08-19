@@ -1,8 +1,13 @@
 <template>
     <div>
         <div class="sticky top-8 pt-10 bg-base-100 pb-4 border-b border-base-300 z-30">
+            <div class="container mx-auto flex justify-between items-center mb-3">
+                <Back>Eventos</Back>
+                <AdminPanel modelo="evento" necesita="administrar social" :contenido="evento" />
+            </div>
+
             <h1 class="container mx-auto my-2">
-                {{evento.titulo }}
+                {{ evento.titulo }}
             </h1>
             <small class="container mx-auto text-right block">{{ evento.categoria }}</small>
         </div>
@@ -31,7 +36,7 @@
                 </div>
                 <div class="w-full md:w-1/2">
                     <div class="lg:max-w-[500px]">
-                        <Image :src="evento.imagen" alt="Imagen del evento" class="w-full mb-4"/>
+                        <Image :src="evento.imagen" alt="Imagen del evento" class="w-full mb-4" />
                         <p class="mb-4">{{ evento.texto }}</p>
                     </div>
                 </div>

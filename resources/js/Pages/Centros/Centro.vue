@@ -1,5 +1,11 @@
 <template>
     <div class="container mx-auto px-4 py-8">
+
+        <div class="flex justify-between items-center mb-20">
+            <Back>Centros</Back>
+            <AdminPanel modelo="centro" necesita="administrar directorio" :contenido="centro"/>
+        </div>
+
         <h1>{{ centro.nombre }}</h1>
         <p class="text-gray-600 text-sm mb-2">
             Última actualización: <TimeAgo :date="centro.updated_at" />

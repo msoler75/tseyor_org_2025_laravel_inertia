@@ -48,7 +48,7 @@ class ContactosController extends Controller
             'paises' => $paises,
             'apiKey' => env('GOOGLE_MAPS_API_KEY', ''),
         ])
-        ->withViewData(SEO::get('contactos'));
+            ->withViewData(SEO::get('contactos'));
     }
 
     public function show($id)
@@ -57,8 +57,11 @@ class ContactosController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
-        if (!$contacto) {
-            abort(404); // Manejo de Contacto no encontrada
+        $borrador = request()->has('borrador');
+        $publicado =  $contacto->visibilidad == 'P';
+        $editor = optional(auth()->user())->can('administrar directorio');
+        if (!$contacto || (!$publicado && !$borrador && !$editor)) {
+            abort(404); // Manejo de comunicado no encontrado o no autorizado
         }
 
         $contacto->pais = Countries::getCountry($contacto->pais);
@@ -66,46 +69,46 @@ class ContactosController extends Controller
         return Inertia::render('Contactos/Contacto', [
             'contacto' => $contacto
         ])
-       ->withViewData(SEO::from($contacto));
+            ->withViewData(SEO::from($contacto));
     }
 
 
     public static function obtenerCoordenadas($direccion)
-{
-    $apiKey = env('GOOGLE_MAPS_API_KEY', ''); // Reemplaza con tu propia API key de Google Maps
+    {
+        $apiKey = env('GOOGLE_MAPS_API_KEY', ''); // Reemplaza con tu propia API key de Google Maps
 
-    $client = new Client();
+        $client = new Client();
 
-    // Realizar solicitud a la API de geocodificación de Google Maps
-    $response = $client->get('https://maps.googleapis.com/maps/api/geocode/json', [
-        'query' => [
-            'address' => $direccion,
-            'key' => $apiKey,
-        ],
-    ]);
+        // Realizar solicitud a la API de geocodificación de Google Maps
+        $response = $client->get('https://maps.googleapis.com/maps/api/geocode/json', [
+            'query' => [
+                'address' => $direccion,
+                'key' => $apiKey,
+            ],
+        ]);
 
-    // Obtener el cuerpo de la respuesta y decodificarlo como JSON
-    $data = json_decode($response->getBody(), true);
+        // Obtener el cuerpo de la respuesta y decodificarlo como JSON
+        $data = json_decode($response->getBody(), true);
 
-    // Verificar si se obtuvo una respuesta válida
-    if ($response->getStatusCode() === 200 && isset($data['results'][0]['geometry']['location'])) {
-        $location = $data['results'][0]['geometry']['location'];
+        // Verificar si se obtuvo una respuesta válida
+        if ($response->getStatusCode() === 200 && isset($data['results'][0]['geometry']['location'])) {
+            $location = $data['results'][0]['geometry']['location'];
 
-        $latitud = $location['lat'];
-        $longitud = $location['lng'];
+            $latitud = $location['lat'];
+            $longitud = $location['lng'];
 
-        return ['latitud' => $latitud, 'longitud' => $longitud];
+            return ['latitud' => $latitud, 'longitud' => $longitud];
+        }
+
+        return null;
     }
-
-    return null;
-}
 
     public static function rellenarLatitudYLongitud($contacto)
     {
         $direccion = $contacto->direccion . ", "
-        . $contacto->poblacion . ", "
-        . $contacto->provincia . ", "
-        . $contacto->pais;
+            . $contacto->poblacion . ", "
+            . $contacto->provincia . ", "
+            . $contacto->pais;
 
         // Obtener las coordenadas de latitud y longitud
         $coordenadas = ContactosController::obtenerCoordenadas($direccion);

@@ -3,7 +3,7 @@
 
         <div class="flex justify-between items-center mb-20">
             <Back>Comunicados</Back>
-            <AdminPanel modelo="comunicado" necesita="editar contenidos" :contenido="comunicado"/>
+            <AdminPanel modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado"/>
         </div>
 
         <div class="prose mx-auto">

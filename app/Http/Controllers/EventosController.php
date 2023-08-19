@@ -35,7 +35,7 @@ class EventosController extends Controller
             'listado' => $resultados,
             'categorias' => $categorias
         ])
-        ->withViewData(SEO::get('eventos'));
+            ->withViewData(SEO::get('eventos'));
     }
 
     public function show($id)
@@ -44,16 +44,17 @@ class EventosController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
-        if (!$evento) {
-            abort(404); // Manejo de evento no encontrada
+        $borrador = request()->has('borrador');
+        $publicado =  $evento->visibilidad == 'P';
+        $editor = optional(auth()->user())->can('administrar social');
+        if (!$evento || (!$publicado && !$borrador && !$editor)) {
+            abort(404);
         }
 
         return Inertia::render('Eventos/Evento', [
             'evento' => $evento
         ])
-        // https://inertiajs.com/responses
-        ->withViewData(SEO::from($evento));
-        ;
+            // https://inertiajs.com/responses
+            ->withViewData(SEO::from($evento));;
     }
-
 }

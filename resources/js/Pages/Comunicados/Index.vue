@@ -1,8 +1,8 @@
 
 <template>
-    <div class="container px-4 py-12 mx-auto sm:px-6 lg:px-8">
+    <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="comunicado" necesita="editar contenidos" class="mb-3"/>
+        <AdminPanel modelo="comunicado" necesita="administrar contenidos" class="mb-3"/>
 
         <tabs>
             <tab name="Recientes">

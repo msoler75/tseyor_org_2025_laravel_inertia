@@ -31,8 +31,11 @@ class LugaresController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
-        if (!$lugar) {
-            abort(404); // Manejo de Centro no encontrada
+        $borrador = request()->has('borrador');
+        $publicado =  $lugar->visibilidad == 'P';
+        $editor = optional(auth()->user())->can('administrar contenidos');
+        if (!$lugar || (!$publicado && !$borrador && !$editor)) {
+            abort(404);
         }
 
         $lugares = Lugar::select(['nombre', 'slug'])->take(50)->get();

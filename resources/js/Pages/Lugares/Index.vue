@@ -1,6 +1,9 @@
 
 <template>
-    <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
+    <div class="container py-12 mx-auto">
+
+        <AdminPanel modelo="lugar" necesita="administrar contenidos" class="mb-3"/>
+
         <h1>Lugares de la Galaxia</h1>
         <p>Aquí puedes conocer sobre la vida en otros lugares del cosmos que desconocías.</p>
 
