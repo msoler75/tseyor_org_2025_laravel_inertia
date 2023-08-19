@@ -1,12 +1,17 @@
 <template>
-    <Link :href="href" class="flex gap-2 text-sm items-center hover:underline">
+    <Link :href="enlace" class="flex h-fit gap-2 text-sm items-center hover:underline">
     <Icon icon="ph:arrow-left-light" />
     <slot />
     </Link>
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
     href: String
 })
+
+const currentUrl = window.location.href;
+const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+const enlace = ref(props.href || parentUrl)
+
 </script>

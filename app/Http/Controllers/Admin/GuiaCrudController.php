@@ -113,6 +113,6 @@ class GuiaCrudController extends CrudController
 
     protected function show($id)
     {
-        return redirect("/enciclopedia/guias/$id?preview");
+        return redirect("/enciclopedia/guias/$id?borrador");
     }
 }

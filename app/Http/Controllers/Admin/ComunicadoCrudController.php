@@ -150,7 +150,7 @@ class ComunicadoCrudController extends CrudController
 
     protected function show($id)
     {
-        return redirect("/comunicados/$id?preview");
+        return redirect("/comunicados/$id?borrador");
     }
 
     // show whatever you want
@@ -172,7 +172,7 @@ class ComunicadoCrudController extends CrudController
                     'name'     => 'my_custom_html',
                     'label'    => 'Ver en Web',
                     'type'     => 'custom_html',
-                    'value'    => "<a href='/comunicados/$id?preview' target='_blank'>➡️ Ver Comunicado en el Sitio Web</a>"
+                    'value'    => "<a href='/comunicados/$id?borrador' target='_blank'>➡️ Ver Comunicado en el Sitio Web</a>"
                 ]
             );
 
