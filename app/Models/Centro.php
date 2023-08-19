@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\SEOModel;
-
+use App\Pigmalion\Countries;
 
 class Centro extends SEOModel
 {
@@ -23,6 +23,13 @@ class Centro extends SEOModel
     public function contacto() // contacto relacionado con este centro
     {
         return $this->belongsTo(Contacto::class, 'contacto_id');
+    }
+
+
+    // ACCESOR
+    public function getNombrePaisAttribute()
+    {
+        return Countries::getCountry($this->pais);
     }
 
 }

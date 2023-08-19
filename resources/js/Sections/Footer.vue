@@ -17,7 +17,7 @@
                 <div class="space-y-2">
                     <h3 class="text-lg font-bold text-center">Redes Sociales</h3>
                     <div class="flex justify-center gap-4">
-                        <a v-for="(social, i) in socialLinks" :key="i" :href="social.link" class="text-white">
+                        <a v-for="(social, i) in socialLinks" :key="i" :href="social.link" target="_blank" class="text-white">
                             <Icon :icon="social.icon" class="text-xl"></Icon>
                         </a>
                     </div>

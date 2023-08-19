@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\SEOModel;
-
+use App\Pigmalion\Countries;
 
 class Contacto extends SEOModel
 {
@@ -27,4 +27,11 @@ class Contacto extends SEOModel
         'user_id',
         'visibilidad'
     ];
+
+     // ACCESOR
+     public function getNombrePaisAttribute()
+     {
+         return Countries::getCountry($this->pais);
+     }
+
 }

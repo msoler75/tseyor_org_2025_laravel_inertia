@@ -39,14 +39,43 @@ class EquipoCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
 
-         CRUD::column('CreadorNombre')->type('text')->label("Creado por");
+
+        $this->crud->addColumn([
+            'name'  => 'nombre',
+            'label' => 'Nombre',
+            'type'  => 'text'
+        ]);
+
+
+        $this->crud->addColumn([
+            'name' => 'updated_at',
+            'label' => 'Modificado',
+            'type' => 'datetime',
+        ]);
+
+
+        $this->crud->addColumn([
+            'name' => 'imagen',
+            'label' => 'Imagen',
+            'type' => 'image',
+        ]);
+
+
+        $this->crud->addColumn([
+            'label' => 'miembros',
+            'value' => function($entry) {
+                return $entry->miembros()->count();
+            }
+        ]);
+
+        CRUD::column('CreadorNombre')->type('text')->label("Creado por");
     }
 
     /**
@@ -110,8 +139,6 @@ class EquipoCrudController extends CrudController
 
     protected function show($id)
     {
-        $equipo = Equipo::findOrFail($id);
-
-        return redirect("/equipos/". $equipo->slug);
+        return redirect("/equipos/$id");
     }
 }

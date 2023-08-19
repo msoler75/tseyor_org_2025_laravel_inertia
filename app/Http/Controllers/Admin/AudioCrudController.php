@@ -38,12 +38,34 @@ class AudioCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        $this->crud->addColumn([
+            'name'  => 'titulo',
+            'label' => 'Título',
+            'type'  => 'text'
+        ]);
 
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+
+        $this->crud->addColumn([
+            'name' => 'updated_at',
+            'label' => 'Modificado',
+            'type' => 'datetime',
+        ]);
+
+
+        $this->crud->addColumn([
+            'name'  => 'categoria',
+            'label' => 'Categoría',
+            'type'  => 'text',
+        ]);
+
+        $this->crud->addColumn([
+            'name'  => 'visibilidad',
+            'label' => 'Estado',
+            'type'  => 'text',
+            'value' => function($entry) {
+                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            }
+        ]);
     }
 
     /**
@@ -72,5 +94,11 @@ class AudioCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+
+    protected function show($id)
+    {
+        return redirect("/audios/$id?borrador");
     }
 }

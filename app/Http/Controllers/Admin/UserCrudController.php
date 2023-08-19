@@ -117,4 +117,9 @@ class UserCrudController extends CrudController
        CRUD::column('profile_photo_url')->type('image');
     }
 
+
+    protected function show($id)
+    {
+        return redirect("/usuarios/$id");
+    }
 }
