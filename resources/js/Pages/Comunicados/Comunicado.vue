@@ -1,7 +1,10 @@
 <template>
-    <div class="container mx-auto px-4 py-8 mt-20">
+    <div class="container mx-auto px-4 py-8">
 
-        <AdminPanel modelo="comunicado" :contenido="comunicado" v-if="permisos.includes('editar contenidos')"/>
+        <div class="flex justify-between items-center mb-20">
+            <Back>Comunicados</Back>
+            <AdminPanel modelo="comunicado" necesita="editar contenidos" :contenido="comunicado"/>
+        </div>
 
         <div class="prose mx-auto">
             <h1>{{ comunicado.titulo }}</h1>

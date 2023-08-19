@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Comunicado;
 use App\Pigmalion\SEO;
-use Backpack\PermissionManager\app\Models\PermissionManager;
+use Illuminate\Support\Facades\Auth;
 
 class ComunicadosController extends Controller
 {
@@ -46,13 +46,12 @@ class ComunicadosController extends Controller
             })
             ->paginate(10, ["*"], "page_recientes")
             ->appends(['buscar_recientes' => $filtro_recientes,  'vista' => $vista])
-           :
+            :
             Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
             ->where('visibilidad', 'P')
             ->latest()
             ->paginate(10, ["*"], "page_recientes")
             ->appends(['vista' => $vista]);
-
 
 
         $recientes = Comunicado::select(['slug', 'titulo', 'fecha_comunicado'])->where('visibilidad', 'P')->latest()->take(24)->get();
@@ -72,17 +71,13 @@ class ComunicadosController extends Controller
             ->latest()
             ->paginate(12, ["*"], "page_archivo")->appends(['buscar_archivo' => $filtro_archivo, 'vista' => $vista]);
 
-            $user = auth()->user();
-            $permisos = optional($user)->getPermissionNames();
-
         return Inertia::render('Comunicados/Index', [
             'vista' => $vista,
             'filtrado_reciente' => $filtro_recientes,
             'filtrado_archivo' => $filtro_archivo,
             'listado' => $resultados,
             'recientes' => $recientes,
-            'archivo' => $archivo,
-            'permisos' =>  $permisos
+            'archivo' => $archivo
         ])
             ->withViewData(SEO::get('comunicados'));
     }
@@ -93,18 +88,18 @@ class ComunicadosController extends Controller
             ->orWhere('id', $id)
             ->firstOrFail();
 
-        $previewMode = request()->has('preview');
+        $borrador = request()->has('borrador');
 
-        if (!$comunicado || !$previewMode && $comunicado->visibilidad !== 'P') {
-            abort(404); // Manejo de comunicado no encontrada
+        $publicado =  $comunicado->visibilidad == 'P';
+
+        $editor = optional(auth()->user())->can('editar contenidos');
+
+        if (!$comunicado || (!$publicado && !$borrador && !$editor)) {
+            abort(404); // Manejo de comunicado no encontrado o no autorizado
         }
-
-        $user = auth()->user();
-        $permisos = optional($user)->getPermissionNames();
 
         return Inertia::render('Comunicados/Comunicado', [
             'comunicado' => $comunicado,
-            'permisos' => $permisos
         ])
             ->withViewData(SEO::from($comunicado));
     }
