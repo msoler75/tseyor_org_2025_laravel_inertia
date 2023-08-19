@@ -66,6 +66,9 @@ class UsuariosController extends Controller
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // JSON
 
+    /**
+     * Busca usuarios y retorna lista de usuarios (solo 10 primeros)
+     */
     public function search($buscar)
     {
         $resultados = User::select(['id', 'name as nombre'])
@@ -74,6 +77,16 @@ class UsuariosController extends Controller
             ->orWhere('email', 'like', '%' . $buscar . '%')
             ->take(10)->get()->toArray();
 
-            return response()->json($resultados, 200);
+        return response()->json($resultados, 200);
+    }
+
+    /**
+     * Retorna los permisos de usuario actual
+     */
+    public function permissions()
+    {
+        $user = auth()->user();
+        $permisos = $user ? $user->getAllPermissions()->pluck('name') : [];
+        return response()->json($permisos, 200);
     }
 }

@@ -32,14 +32,10 @@ class HandleInertiaRequests extends Middleware
     {
         // si no muestra algun dato de .env, hay que borrar la cache
 
-        $user = auth()->user();
-        $permisos = $user ? $user->getAllPermissions()->pluck('name') : [];
-
         return array_merge(parent::share($request), [
             'flash' => [
                 'message' => fn () => $request->session()->get('message')
             ],
-            'permisos'=>$permisos,
             'anuncio'=>env('ANUNCIO_GLOBAL_HTML'),
             'meta_image_default'=> env('META_IMAGE_DEFAULT'),
             'csrf_token' => csrf_token(),

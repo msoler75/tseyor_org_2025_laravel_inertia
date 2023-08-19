@@ -1,10 +1,12 @@
 <template>
-    <Sections>
+    <FullPage>
 
-        <Hero title="Curso Holístico Tseyor"
-            subtitle="Conoce las enseñanzas de los Guías de las Estrellas con nuestro curso gratuito."
-            srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=curso-holistico.jpg" image-right
-            buttonLabel="Inscríbete" :href="route('cursos.inscripcion')"></Hero>
+        <Section>
+            <Hero title="Curso Holístico Tseyor"
+                subtitle="Conoce las enseñanzas de los Guías de las Estrellas con nuestro curso gratuito."
+                srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=curso-holistico.jpg" image-right
+                buttonLabel="Inscríbete" :href="route('cursos.inscripcion')"></Hero>
+        </Section>
 
         <Section :style="{
             'background-size': 'cover',
@@ -57,7 +59,7 @@
         </Section>
 
 
-    </Sections>
+    </FullPage>
 </template>
 
 
@@ -69,11 +71,11 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-  proximosCursos: {
-    required: true
-  }
+    proximosCursos: {
+        required: true
+    }
 })
 
-const cursos = computed(() =>  props.proximosCursos.map(c => ({ title: c.titulo, description: c.descripcion, date: c.fecha_inicio, url: `/eventos/${c.slug}` })))
+const cursos = computed(() => props.proximosCursos.map(c => ({ title: c.titulo, description: c.descripcion, date: c.fecha_inicio, url: `/eventos/${c.slug}` })))
 
 </script>
