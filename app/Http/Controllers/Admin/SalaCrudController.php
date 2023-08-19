@@ -39,14 +39,29 @@ class SalaCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        $this->crud->addColumn([
+            'name'  => 'nombre',
+            'label' => 'Nombre',
+            'type'  => 'text'
+        ]);
 
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+        $this->crud->addColumn([
+            'name' => 'updated_at',
+            'label' => 'Modificado',
+            'type' => 'datetime',
+        ]);
 
-         CRUD::column('enlace')->type('url');
+        CRUD::column('enlace')->type('url');
+
+        $this->crud->addColumn([
+            'name'  => 'visibilidad',
+            'label' => 'Estado',
+            'type'  => 'text',
+            'value' => function($entry) {
+                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            }
+        ]);
+
     }
 
     /**
@@ -80,5 +95,11 @@ class SalaCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+
+    protected function show($id)
+    {
+        return redirect("/salas/$id");
     }
 }

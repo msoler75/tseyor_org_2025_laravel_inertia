@@ -73,4 +73,10 @@ class PublicacionCrudController extends CrudController
     {
         $this->setupCreateOperation();
     }
+
+
+    protected function show($id)
+    {
+        return redirect("/publicaciones/$id?borrador");
+    }
 }

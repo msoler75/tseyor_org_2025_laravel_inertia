@@ -39,12 +39,41 @@ class CentroCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+         $this->crud->addColumn([
+            'name'  => 'nombre',
+            'label' => 'Nombre',
+            'type'  => 'text'
+        ]);
+
+
+        $this->crud->addColumn([
+            'name' => 'updated_at',
+            'label' => 'Modificado',
+            'type' => 'datetime', // Puedes usar 'datetime' o 'date' según el formato que desees mostrar
+        ]);
+
+
+        $this->crud->addColumn([
+            'name'  => 'imagen',
+            'label' => 'Imagen',
+            'type'  => 'image'
+        ]);
+
+
+        $this->crud->addColumn([
+            'name'  => 'nombrePais',
+            'label' => 'País',
+            'type'  => 'text',
+        ]);
+
+
     }
 
     /**
@@ -109,5 +138,11 @@ class CentroCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+
+    protected function show($id)
+    {
+        return redirect("/centros/$id");
     }
 }

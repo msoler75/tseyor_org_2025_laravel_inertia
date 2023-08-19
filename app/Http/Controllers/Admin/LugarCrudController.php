@@ -27,7 +27,7 @@ class LugarCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Lugar::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/lugar');
-        CRUD::setEntityNameStrings('lugar', 'lugars');
+        CRUD::setEntityNameStrings('lugar', 'lugares de la galaxia');
     }
 
     /**
@@ -72,5 +72,11 @@ class LugarCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+
+    protected function show($id)
+    {
+        return redirect("/enciclopedia/lugares/$id");
     }
 }

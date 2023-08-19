@@ -34,7 +34,7 @@ const state = useGlobalState()
 
 const props = defineProps({
     necesita: { type: [String, Array], required: true },
-    modelo: { type: String, required: true },
+    modelo: String,
     contenido: Object,
 })
 

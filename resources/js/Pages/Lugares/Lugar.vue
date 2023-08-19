@@ -2,7 +2,7 @@
     <div class="container mx-auto px-4 py-8 w-full">
 
         <div class="flex justify-between items-center mb-20">
-            <Back>Lugares</Back>
+            <Back>Lugares de la Galaxia</Back>
             <AdminPanel modelo="lugar" necesita="administrar contenidos" :contenido="lugar"/>
         </div>
 

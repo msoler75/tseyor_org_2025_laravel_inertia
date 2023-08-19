@@ -70,11 +70,10 @@ class ComunicadoCrudController extends CrudController
         $this->crud->addColumn([
             'name'  => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'enum',
-            'options' => [
-                'B' => '⚠️ Borrador',
-                'P' => '✔️ Publicado'
-            ]
+            'type'  => 'text',
+            'value' => function($entry) {
+                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            }
         ]);
 
         $this->crud->addButtonFromView('top', 'import', 'import', 'end');
@@ -191,13 +190,12 @@ class ComunicadoCrudController extends CrudController
         CRUD::column('imagen')->type('image');
 
         $this->crud->addColumn([
-            'name' => 'visibilidad',
+            'name'  => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'enum',
-            'options' => [
-                'B' => '⚠️ Borrador',
-                'P' => '✔️ Publicado'
-            ]
+            'type'  => 'text',
+            'value' => function($entry) {
+                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            }
         ]);
 
         // MAYBE: do stuff after the autosetup

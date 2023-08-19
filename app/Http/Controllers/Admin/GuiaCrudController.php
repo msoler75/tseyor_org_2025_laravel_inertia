@@ -48,7 +48,6 @@ class GuiaCrudController extends CrudController
 
          CRUD::column('nombre')->type('text');
          CRUD::column('imagen')->type('image');
-         CRUD::column('descripcion')->type('text');
 
     }
 
@@ -113,6 +112,6 @@ class GuiaCrudController extends CrudController
 
     protected function show($id)
     {
-        return redirect("/enciclopedia/guias/$id?borrador");
+        return redirect("/enciclopedia/guias/$id");
     }
 }

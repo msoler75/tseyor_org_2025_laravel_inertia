@@ -7,6 +7,8 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use App\Pigmalion\Countries;
 
 
+
+
 /**
  * Class ContactoCrudController
  * @package App\Http\Controllers\Admin
@@ -55,21 +57,26 @@ class ContactoCrudController extends CrudController
             'type' => 'datetime', // Puedes usar 'datetime' o 'date' según el formato que desees mostrar
         ]);
 
+        $this->crud->addColumn([
+            'name'  => 'imagen',
+            'label' => 'Imagen',
+            'type'  => 'image'
+        ]);
 
         $this->crud->addColumn([
-            'name'  => 'pais',
-            'label' => 'Pais',
-            'type'  => 'text'
+            'name'  => 'nombrePais',
+            'label' => 'País',
+            'type'  => 'text',
         ]);
+
 
         $this->crud->addColumn([
             'name'  => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'enum',
-            'options' => [
-                'B' => '⚠️ Borrador',
-                'P' => '✔️ Publicado'
-            ]
+            'type'  => 'text',
+            'value' => function($entry) {
+                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            }
         ]);
     }
 
