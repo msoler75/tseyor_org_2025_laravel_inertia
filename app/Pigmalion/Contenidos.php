@@ -46,6 +46,7 @@ class Contenidos
         // generamos una descripción a partir del texto si es necesario
         if (in_array('descripcion', $fillable) && empty($objeto->descripcion)) {
             $descripcion = mb_substr(strip_tags($html), 0, 400 - 3);
+            $descripcion = str_replace("\n", ' ', $descripcion); // Agregar espacio entre líneas
             $descripcion = rtrim($descripcion, "!,.-");
             $descripcion = substr($descripcion, 0, strrpos($descripcion, ' ')) . '...';
             $objeto->descripcion = $descripcion;

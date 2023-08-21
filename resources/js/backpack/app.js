@@ -16,15 +16,19 @@ import QuillEditorFullField from "../Components/Backpack/QuillEditorFullField.vu
 import QuillEditorSimpleField from "../Components/Backpack/QuillEditorSimpleField.vue";
 import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
 
-console.log("app initiating...");
-window.app = createApp({})
-  .component("quilleditorfullfield", QuillEditorFullField)
-  .component("quilleditorsimplefield", QuillEditorSimpleField)
-  .component("tinymcefullfield", TinyMCEFullField)
-  .component("tinymcesimplefield", TinyMCESimpleField)
-  .component("imagecoverfield", ImageCoverField)
-  .mixin({
-    components: { Icon, Link },
-  })
-  .use(ZiggyVue, Ziggy)
-  .mount(".page");
+// only in forms
+const elem = document.querySelector(".page form[method='post']");
+if (elem) {
+  console.log("loading vue 3 fields...");
+  window.app = createApp({})
+    .component("quilleditorfullfield", QuillEditorFullField)
+    .component("quilleditorsimplefield", QuillEditorSimpleField)
+    .component("tinymcefullfield", TinyMCEFullField)
+    .component("tinymcesimplefield", TinyMCESimpleField)
+    .component("imagecoverfield", ImageCoverField)
+    .mixin({
+      components: { Icon, Link },
+    })
+    .use(ZiggyVue, Ziggy)
+    .mount(elem);
+}
