@@ -26,14 +26,47 @@ onMounted(() => {
         const imgElements = container.value.$el.querySelectorAll('img');
 
         // añadimos la clase especial para contenedor de imagenes
-        for(const img of imgElements)
-            img.parentNode.className='images-wrapper'
+        for (const img of imgElements)
+            img.parentNode.className = 'images-wrapper'
 
         // guardamos el array de imagenes del contenido
         images.value = Array.from(imgElements)
         for (const index in images.value)
             images.value[index].addEventListener('click', () => handlePreview(index))
+
+
+    // Obtener todos los enlaces de desplazamiento
+    var scrollLinks = document.querySelectorAll('.footnote-ref a, a.footnote-backref');
+
+    console.log({scrollLinks})
+
+    // Agregar evento de clic a cada enlace
+    scrollLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            console.log('clicked!')
+
+            var targetId = this.getAttribute('href').substring(1);
+            var targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                console.log('got target')
+                var offset = 80;
+                var targetRect = targetElement.getBoundingClientRect();
+                var targetOffsetTop = window.scrollY + targetRect.top - offset;
+
+                window.scrollTo({
+                    top: targetOffsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
     });
+
+});
+
+
 });
 
 function handlePreview(index) {
@@ -78,6 +111,7 @@ function detectFormat(text) {
 :deep(img) {
     @apply max-w-full mx-auto mb-3;
 }
+
 /* amplia la imagen en el ancho */
 @media (min-width: 1154px) {
     :deep(p.images-wrapper) {

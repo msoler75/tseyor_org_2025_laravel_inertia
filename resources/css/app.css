@@ -113,6 +113,11 @@
         color: #666;
     }
 
+
+    a.footnote-backref {
+        @apply no-underline;
+    }
+
 }
 
 
@@ -208,6 +213,7 @@ main a.hover\:right-arrow:hover::after {
     transform: translateX(1rem)
 }
 */
+
 
 
 

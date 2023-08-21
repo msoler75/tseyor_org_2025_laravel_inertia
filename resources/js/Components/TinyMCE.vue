@@ -20,9 +20,9 @@
                 relative_urls: false,
                 block_formats: 'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3',
                 plugins: [
-                    'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
+                    'advlist',  'autolink',
                     'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
-                    'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount',
+                     'fullscreen',  'insertdatetime', 'media', 'table', 'help', 'wordcount',
                     'emoticons'
                 ],
                 toolbar: toolbarButtons,
