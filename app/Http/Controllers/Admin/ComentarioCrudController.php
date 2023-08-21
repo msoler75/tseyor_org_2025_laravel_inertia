@@ -39,7 +39,7 @@ class ComentarioCrudController extends CrudController
     protected function setupListOperation()
     {
         CRUD::setFromDb(); // set columns from db columns.
-
+        // dd(env('APP_NAME'));
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');

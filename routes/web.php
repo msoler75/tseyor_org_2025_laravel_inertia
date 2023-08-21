@@ -181,3 +181,10 @@ Route::put('/equipos/{idEquipo}/{idUsuario}/agregar', [EquiposController::class,
 Route::put('/equipos/{idEquipo}/{idUsuario}/remover', [EquiposController::class, 'removeMember'])->name('equipo.remover');
 Route::post('/equipos/{id}', [EquiposController::class, 'update'])->name('equipo.modificar');
 Route::put('/equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
+
+
+
+
+Route::get('/phpinfo', function () {
+    return phpinfo();
+});

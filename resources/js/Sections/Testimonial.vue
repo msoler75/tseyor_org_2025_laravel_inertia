@@ -14,9 +14,7 @@
   </template>
 
   <script setup>
-  import { defineProps } from 'vue';
-
-  const props = defineProps({
+  defineProps({
     testimonial: {
       type: Object,
       required: true,

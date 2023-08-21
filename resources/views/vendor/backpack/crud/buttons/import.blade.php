@@ -1,45 +1,30 @@
 @if ($crud->hasAccess('create'))
-    <a href="javascript:void(0)" onclick="importTransaction(this)" data-route="{{ url($crud->route.'/import') }}" class="btn btn-sm btn-link" data-button-type="import">
-<span class="ladda-label"><i class="la la-plus"></i> Importar desde Word</span>
-</a>
+    <input type="file" name="word_file" id="word_file" style="display: none;" accept='.doc, .docx'>
+    <a href="javascript:void(0)" onclick="importTransaction(this)" class="ml-2 btn btn-secondary" data-button-type="import">
+        <span class="ladda-label"><i class="la la-upload"></i> Importar desde Word</span>
+    </a>
 @endif
 
-@push('after_scripts')
 <script>
-    if (typeof importTransaction != 'function') {
-      $("[data-button-type=import]").unbind('click');
+    function importTransaction(button) {
+        var fileInput = document.getElementById('word_file');
+        fileInput.onchange = function() {
+            var file = fileInput.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
 
-      function importTransaction(button) {
-          // ask for confirmation before deleting an item
-          // e.preventDefault();
-          var button = $(button);
-          var route = button.attr('data-route');
+            axios.post('/admin/comunicado/importar', formData)
+                .then(function (response) {
+                    // Éxito en la importación, maneja la respuesta del servidor
+                    console.log(response);
+                    window.location.href = "/admin/comunicado/"+response.data.id+"/edit"
+                })
+                .catch(function (error) {
+                    // Error en la importación, maneja el error
+                    console.error(error);
+                });
+        };
 
-          $.ajax({
-              url: route,
-              type: 'POST',
-              success: function(result) {
-                  // Show an alert with the result
-                  console.log(result,route);
-                  new Noty({
-                      text: "Some Tx had been imported",
-                      type: "success"
-                  }).show();
-
-                  // Hide the modal, if any
-                  $('.modal').modal('hide');
-
-                  crud.table.ajax.reload();
-              },
-              error: function(result) {
-                  // Show an alert with the result
-                  new Noty({
-                      text: "The new entry could not be created. Please try again.",
-                      type: "warning"
-                  }).show();
-              }
-          });
-      }
+        fileInput.click();
     }
 </script>
-@endpush

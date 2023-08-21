@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Comunicado;
 
 /**
  * Class ComunicadoCrudController
@@ -46,7 +47,7 @@ class ComunicadoCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
-         $this->crud->addColumn([
+        $this->crud->addColumn([
             'name'  => 'titulo',
             'label' => 'Título',
             'type'  => 'text'
@@ -71,8 +72,8 @@ class ComunicadoCrudController extends CrudController
             'name'  => 'visibilidad',
             'label' => 'Estado',
             'type'  => 'text',
-            'value' => function($entry) {
-                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
 
@@ -150,7 +151,6 @@ class ComunicadoCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
-
     }
 
 
@@ -193,8 +193,8 @@ class ComunicadoCrudController extends CrudController
             'name'  => 'visibilidad',
             'label' => 'Estado',
             'type'  => 'text',
-            'value' => function($entry) {
-                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
 
@@ -205,9 +205,133 @@ class ComunicadoCrudController extends CrudController
         // CRUD::column('text')->remove();
     }
 
-
     public function import()
     {
-        // whatever you decide to do
+        // Directorio temporal para almacenar el archivo ZIP
+        $tempDir = sys_get_temp_dir();
+
+        // Generar un nombre único para el archivo ZIP
+        $outputFilePath = tempnam($tempDir, 'import_') . '.zip';
+
+        // Ruta del archivo .docx recibido
+        $tempFilePath = $_FILES['file']['tmp_name'];
+
+        // Obtener la extensión del archivo original
+        $originalExtension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+
+        // Generar una nueva ruta para la copia del archivo con la extensión correcta
+        $docxFilePath = $tempDir . '/import_' . uniqid() . '.' . $originalExtension;
+
+        // Copiar el archivo temporal a la nueva ubicación con la extensión correcta
+        if (!copy($tempFilePath, $docxFilePath)) {
+            return "Error al copiar nuevo archivo";
+        }
+
+        // Obtener la URL de la variable de entorno
+        $wordToMdUrl = env('WORD_TO_MD_URL');
+
+        if (!$wordToMdUrl)
+            return response()->json([
+                "error" => "Servidor de conversión no configurado"
+            ], 500);
+
+        // Realizar la petición al servidor para convertir el archivo .docx a markdown
+        $curl = curl_init();
+
+        $postData = [
+            'file' => curl_file_create($docxFilePath)
+        ];
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $wordToMdUrl,
+            CURLOPT_RETURNTRANSFER => true,
+            // CURLOPT_VERBOSE => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $postData
+        ]);
+
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        curl_close($curl);
+
+        // Verificar el código de respuesta HTTP
+        if ($httpCode === 200) {
+            // Guardar la respuesta en un archivo ZIP
+            file_put_contents($outputFilePath, $response);
+
+            // Descomprimir el archivo ZIP
+            $zip = new \ZipArchive();
+            if ($zip->open($outputFilePath) === true) {
+                // Extraer el archivo content.md
+                $contentMd = $zip->getFromName('output.md');
+
+                // Extraer las imágenes de la carpeta 'media'
+                $mediaFolder = 'media/';
+                $extractedImages = array();
+                for ($i = 0; $i < $zip->numFiles; $i++) {
+                    $filename = $zip->getNameIndex($i);
+                    if (strpos($filename, $mediaFolder) === 0) {
+                        $extractedImages[] = $filename;
+                        $zip->extractTo($tempDir, $filename);
+                    }
+                }
+
+                $zip->close();
+
+                $comunicado = Comunicado::create([
+                    "titulo" => substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 10),
+                    "texto" => $contentMd
+                ]);
+
+                // Copiaremos las imágenes a la carpeta de destino
+                $destinationFolder = "media/comunicados/id_{$comunicado->id}";
+
+                // Verificar si la carpeta existe en el disco 'public'
+                if (!Storage::disk('public')->exists($destinationFolder)) {
+                    // Crear la carpeta en el disco 'public'
+                    Storage::disk('public')->makeDirectory($destinationFolder);
+                }
+
+                // reemplazar la ubicación de las imágenes en el texto del comunicado
+                $comunicado->texto = preg_replace("/\bmedia\//", "$destinationFolder/", $comunicado->texto);
+                $comunicado->texto = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->texto);
+
+                $comunicado->imagen = preg_replace("/\bmedia\//", "$destinationFolder/", $comunicado->imagen);
+                $comunicado->imagen = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->imagen);
+                $comunicado->save();
+
+                // Copiamos las imágenes a la carpeta de destino
+                foreach ($extractedImages as $image) {
+                    $imageFilename = basename($image);
+                    // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("storage/".$destinationFolder . "/" .  $imageFilename));
+                    copy($tempDir . '/' . $image, public_path("storage/".$destinationFolder . "/" .  $imageFilename));
+                }
+
+                // Eliminar los archivos y carpetas temporales
+                @unlink($outputFilePath);
+                foreach ($extractedImages as $image) {
+                    @unlink($tempDir . '/' . $image);
+                }
+                @unlink($tempDir . '/output.md');
+
+                return response()->json([
+                    "id" => $comunicado->id
+                ], 200);
+            } else {
+                return response()->json([
+                    "error" => $response
+                ], 500);
+            }
+        } else {
+            // Mostrar información sobre el error
+            $error = curl_error($curl);
+            $verboseInfo = curl_multi_getcontent($curl);
+            return response()->json([
+                "error" => "Error en la solicitud cURL: " . $error . ' response:' . $response . ' v:' . $verboseInfo
+            ], 500);
+        }
+
+        return 'final';
     }
 }
