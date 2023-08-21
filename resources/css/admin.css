@@ -21,3 +21,8 @@ form [bp-field-name='permissions'] .checkbox
     border: none;
     user-select: none;
 }
+
+
+.container-tight {
+    max-width: 40rem !important;
+}

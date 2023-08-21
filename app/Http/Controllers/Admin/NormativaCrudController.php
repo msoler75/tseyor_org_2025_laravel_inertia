@@ -76,13 +76,36 @@ class NormativaCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(NormativaRequest::class);
+        CRUD::setValidation([
+            'titulo' => 'required|min:8',
+            'descripcion' => 'required|max:400'
+        ]);
+        // CRUD::setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+         CRUD::field([   // select_from_array
+            'name'        => 'categoria',
+            'label'       => "Categoría",
+            'type'        => 'select_from_array',
+            'options'     => ['General', 'Muulasterios', 'Otros'],
+            'allows_null' => false,
+            'default'     => 'General',
+            // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
+            'wrapper'   => [
+                'class'      => 'form-group col-md-3'
+            ],
+        ])->after('slug');
+
+         CRUD::field('descripcion')->type('textarea');
+
+         CRUD::field('texto')->type('markdown_quill_simple');
+
+         CRUD::field('visibilidad')->type('visibilidad');
     }
 
     /**

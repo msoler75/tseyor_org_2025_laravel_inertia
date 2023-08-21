@@ -14,7 +14,7 @@ class Sala extends SEOModel
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'salas';
+    protected $table = 'videos';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];

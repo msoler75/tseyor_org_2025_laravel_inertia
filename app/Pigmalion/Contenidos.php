@@ -20,7 +20,7 @@ class Contenidos
             foreach ($candidatos as $campo) {
                 if (in_array($campo, $fillable)) {
                     $objeto->slug = Str::slug($objeto->{$campo});
-                    dd($objeto->slug);
+                    // dd($objeto->slug);
                     break;
                 }
             }

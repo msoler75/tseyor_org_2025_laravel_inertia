@@ -18,7 +18,7 @@ Route::group([
 ], function () { // custom admin routes
     Route::crud('user', 'UserCrudController');
     Route::crud('comunicado', 'ComunicadoCrudController');
-    Route::get('comunicado/import', 'ComunicadoCrudController@import');
+    Route::post('comunicado/importar', 'ComunicadoCrudController@import');
     Route::crud('guia', 'GuiaCrudController');
     Route::crud('nodo', 'NodoCrudController');
     Route::crud('acl', 'AclCrudController');
