@@ -13,7 +13,7 @@
         while(elem.tagName!="TR")
             elem = elem.parentNode
         const id = elem.firstChild.firstChild.innerText
-        console.log('id', id)
+        // console.log('id', id)
         var fileInput = document.getElementById('word_file');
         fileInput.onchange = function() {
             var file = fileInput.files[0];
@@ -29,6 +29,7 @@
                 })
                 .catch(function (error) {
                     // Error en la importación, maneja el error
+                    alert(error.response.data.error)
                     console.error(error);
                 });
         };
