@@ -48,7 +48,7 @@ class ComunicadoCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
-         $this->crud->addColumn([
+        $this->crud->addColumn([
             'name'  => 'id',
             'label' => 'id',
             'type'  => 'number'
@@ -145,7 +145,6 @@ class ComunicadoCrudController extends CrudController
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
         CRUD::field('visibilidad')->type('visibilidad');
-
     }
 
     private function mediaFolder()
@@ -230,55 +229,39 @@ class ComunicadoCrudController extends CrudController
     public function importCreate()
     {
         try {
-            $result =  WordImport::fromFormFile($_FILES['file']);
-            // extrae las variables del array asociativo
-            ['zipFile' => $zipFile, 'content' => $content, 'images' => $images] = $result;
+
+            return WordImport::CRUD(function ($result) {
+
+                ['zipFile' => $zipFile, 'content' => $content, 'images' => $images] = $result;
+
+                $comunicado = Comunicado::create([
+                    "titulo" => substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 10),
+                    "texto" => $content
+                ]);
+
+                // Copiaremos las imágenes a la carpeta de destino
+                $imagesFolder = "media/comunicados/id_{$comunicado->id}";
+
+                // copia las imágenes desde la carpeta temporal al directorio destino
+                WordImport::copyImagesFromTemp($images, $imagesFolder);
+
+                // reemplazar la ubicación de las imágenes en el texto del comunicado
+                $comunicado->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $comunicado->texto);
+                $comunicado->texto = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->texto);
+
+                $comunicado->imagen = preg_replace("/\bmedia\//", "$imagesFolder/", $comunicado->imagen);
+                $comunicado->imagen = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->imagen);
+                $comunicado->save();
+
+                return response()->json([
+                    "id" => $comunicado->id
+                ], 200);
+            });
         } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()
             ], 500);
         }
-
-        $comunicado = Comunicado::create([
-            "titulo" => substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 10),
-            "texto" => $content
-        ]);
-
-        // Copiaremos las imágenes a la carpeta de destino
-        $destinationFolder = "media/comunicados/id_{$comunicado->id}";
-
-        // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk('public')->exists($destinationFolder)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($destinationFolder);
-        }
-
-        // Obtener la ruta completa de la carpeta de destino en el disco 'public'
-        $destinationFolderPath = storage_path('app/public/' . $destinationFolder);
-
-        // reemplazar la ubicación de las imágenes en el texto del comunicado
-        $comunicado->texto = preg_replace("/\bmedia\//", "$destinationFolder/", $comunicado->texto);
-        $comunicado->texto = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->texto);
-
-        $comunicado->imagen = preg_replace("/\bmedia\//", "$destinationFolder/", $comunicado->imagen);
-        $comunicado->imagen = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->imagen);
-        $comunicado->save();
-
-        // Directorio temporal
-        $tempDir = sys_get_temp_dir();
-
-        // Copiamos las imágenes a la carpeta de destino
-        foreach ($images as $image) {
-            $imageFilename = basename($image);
-            // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("storage/".$destinationFolder . "/" .  $imageFilename));
-            copy($tempDir . '/' . $image, $destinationFolderPath. "/" .  $imageFilename);
-        }
-
-        WordImport::cleanTempFiles($zipFile, $images);
-
-        return response()->json([
-            "id" => $comunicado->id
-        ], 200);
     }
 
 
@@ -286,63 +269,39 @@ class ComunicadoCrudController extends CrudController
     public function importUpdate($id)
     {
         try {
-            $result =  WordImport::fromFormFile($_FILES['file']);
-            // extrae las variables del array asociativo
-            ['zipFile' => $zipFile, 'content' => $content, 'images' => $images] = $result;
+
+            return WordImport::CRUD(function ($result) use ($id) {
+
+                ['zipFile' => $zipFile, 'content' => $content, 'images' => $images] = $result;
+
+                $comunicado = Comunicado::findOrFail($id);
+
+                $comunicado->texto = $content;
+
+                // Copiaremos las imágenes a la carpeta de destino
+                $imagesFolder = "media/comunicados/id_{$comunicado->id}";
+
+                // reemplazar la ubicación de las imágenes en el texto del comunicado
+                $comunicado->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $comunicado->texto);
+                $comunicado->texto = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->texto);
+
+                $comunicado->descripcion = null; // para que se regenere
+
+                $comunicado->imagen = null;
+                $comunicado->save();
+
+                // Borramos las imágenes que pudiera haber, previas
+                WordImport::deleteFilesFromFolder($imagesFolder);
+
+                // copia las imágenes desde la carpeta temporal al directorio destino
+                WordImport::copyImagesFromTemp($images, $imagesFolder);
+
+                return response()->json([], 200);
+            });
         } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()
             ], 500);
         }
-
-        $comunicado = Comunicado::findOrFail($id);
-
-        $comunicado->texto = $content;
-
-        // Copiaremos las imágenes a la carpeta de destino
-        $destinationFolder = "media/comunicados/id_{$comunicado->id}";
-
-        // Verificar si la carpeta existe en el disco 'public' y crearla si hace falta
-        if (!Storage::disk('public')->exists($destinationFolder)) {
-            Storage::disk('public')->makeDirectory($destinationFolder);
-        }
-
-        // Obtener la ruta completa de la carpeta de destino en el disco 'public'
-        $destinationFolderPath = storage_path('app/public/' . $destinationFolder);
-
-        // eliminamos todas las imagenes de esta carpeta:
-        // Obtener la lista de archivos en la carpeta
-        $files = glob($destinationFolderPath . '/*');
-
-        // Iterar sobre los archivos y eliminarlos
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                unlink($file);
-            }
-        }
-
-        // reemplazar la ubicación de las imágenes en el texto del comunicado
-        $comunicado->texto = preg_replace("/\bmedia\//", "$destinationFolder/", $comunicado->texto);
-        $comunicado->texto = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->texto);
-
-        $comunicado->descripcion = null; // para que se regenere
-
-        $comunicado->imagen = null;
-        $comunicado->save();
-
-
-        // Directorio temporal
-        $tempDir = sys_get_temp_dir();
-
-        // Copiamos las imágenes a la carpeta de destino
-        foreach ($images as $image) {
-            $imageFilename = basename($image);
-            // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("storage/".$destinationFolder . "/" .  $imageFilename));
-            copy($tempDir . '/' . $image, $destinationFolderPath . "/" .  $imageFilename);
-        }
-
-        WordImport::cleanTempFiles($zipFile, $images);
-
-        return response()->json([], 200);
     }
 }

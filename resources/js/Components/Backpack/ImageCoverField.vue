@@ -66,12 +66,12 @@ function updateImages() {
     if (props.value)
         images.value.push(props.value)
 
+    for (const url of imagesFrom.value)
+        images.value.push(url)
+
     if (selected.value)
         images.value.push(selected.value)
 
-
-    for (const url of imagesFrom.value)
-        images.value.push(url)
 
     // elimina repetidos
     images.value = [...new Set(images.value)];

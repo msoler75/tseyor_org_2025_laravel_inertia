@@ -22,11 +22,13 @@ class NovedadesController extends Controller
                     //->orWhere('texto', 'like', '%' . $filtro . '%')
                     ;
             })
+            ->latest('updated_at') // Ordenar por updated_at
             ->paginate(10)->appends(['buscar' => $filtro])
             :
             Contenido::select(['slug_ref', 'titulo', 'descripcion', 'fecha', 'coleccion'])
             ->where('visibilidad', 'P')
-            ->latest()->paginate(10);
+            ->latest('updated_at') // Ordenar por updated_at
+            ->paginate(10);
 
         return Inertia::render('Novedades', [
             'filtrado' => $filtro,

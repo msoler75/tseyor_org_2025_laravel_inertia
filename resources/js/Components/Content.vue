@@ -52,7 +52,7 @@ onMounted(() => {
 
             if (targetElement) {
                 console.log('got target')
-                var offset = 80;
+                var offset = 90;
                 var targetRect = targetElement.getBoundingClientRect();
                 var targetOffsetTop = window.scrollY + targetRect.top - offset;
 
