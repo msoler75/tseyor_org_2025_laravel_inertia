@@ -7,20 +7,22 @@
 
 <script>
     function importUpdate(button) {
+        var modelo = location.href.split('/').pop()
         var fileInput = document.getElementById('word_file');
         fileInput.onchange = function() {
             var file = fileInput.files[0];
             var formData = new FormData();
             formData.append('file', file);
 
-            axios.post('/admin/comunicado/importar/crear', formData)
+            axios.post('/admin/'+modelo+'/importar/crear', formData)
                 .then(function (response) {
                     // Éxito en la importación, maneja la respuesta del servidor
                     console.log(response);
-                    window.location.href = "/admin/comunicado/"+response.data.id+"/edit"
+                    window.location.href = '/admin/'+modelo+'/'+response.data.id+'/edit'
                 })
                 .catch(function (error) {
                     // Error en la importación, maneja el error
+                    alert(error.response.data.error)
                     console.error(error);
                 });
         };
