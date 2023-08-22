@@ -11,6 +11,29 @@ use App\Models\Contenido;
  */
 class WordImport
 {
+
+
+    /**
+     * Esta es la función principal a la que podemos llamar desde un controlador CRUD de backpack
+     */
+    public static function CRUD($callback)
+    {
+        $result =  WordImport::fromFormFile($_FILES['file']);
+
+        // extrae las variables del array asociativo
+        ['zipFile' => $zipFile, 'content' => $content, 'images' => $images] = $result;
+
+        // llamamos al método personalizado del crud
+        $result = $callback($result);
+
+        // borramos los archivos temporales
+        WordImport::cleanTempFiles($zipFile, $images);
+
+        return $result;
+    }
+
+
+
     /**
      * Se le pasa normalmente $_FILES['file']
      */
@@ -27,7 +50,7 @@ class WordImport
         $originalExtension = pathinfo($word_file['name'], PATHINFO_EXTENSION);
 
         // Generar una nueva ruta para la copia del archivo con la extensión correcta
-        $docxFilePath = $tempDir . '/' . $originalFileName . '_'. uniqid() . '.' . $originalExtension;
+        $docxFilePath = $tempDir . '/' . $originalFileName . '_' . uniqid() . '.' . $originalExtension;
 
         // Copiar el archivo temporal a la nueva ubicación con la extensión correcta
         if (!copy($word_file['tmp_name'], $docxFilePath)) {
@@ -96,10 +119,13 @@ class WordImport
         }
     }
 
+    /**
+     * Borra los archivos temporales de operaciones de extracción de zip
+     */
     public static  function cleanTempFiles($zipFilePath, $extractedImages)
     {
-         // Directorio temporal para almacenar el archivo ZIP
-         $tempDir = sys_get_temp_dir();
+        // Directorio temporal para almacenar el archivo ZIP
+        $tempDir = sys_get_temp_dir();
 
         // Eliminar los archivos y carpetas temporales
         @unlink($zipFilePath);
@@ -107,5 +133,61 @@ class WordImport
             @unlink($tempDir . '/' . $image);
         }
         // @unlink($tempDir . '/output.md');
+    }
+
+
+    /**
+     * Borra los archivos de una carpeta
+     */
+    public static function deleteFilesFromFolder($folder)
+    {
+        // Verificar si la carpeta existe en el disco 'public' y crearla si hace falta
+        if (Storage::disk('public')->exists($folder)) {
+
+            // por seguridad, no se permiten rutas relativas extrañas
+            if (strpos($folder, "..") !== FALSE)
+                return;
+
+            // por seguridad, no se permiten rutas absolutas
+            if (strpos($folder, "/") == 0)
+                return;
+
+            // Obtener la ruta completa de la carpeta de destino en el disco 'public'
+            $destinationFolderPath = storage_path('app/public/' . $folder);
+
+            // eliminamos todas las imagenes de esta carpeta:
+            // Obtener la lista de archivos en la carpeta
+            $files = glob($destinationFolderPath . '/*');
+
+            // Iterar sobre los archivos y eliminarlos
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    unlink($file);
+                }
+            }
+        }
+    }
+
+
+    public static function copyImagesFromTemp($imagesTemp, $imagesDestinationFolder)
+    {
+        // Directorio temporal
+        $tempDir = sys_get_temp_dir();
+
+        // Obtener la ruta completa de la carpeta de destino en el disco 'public'
+        $destinationFolderPath = storage_path('app/public/' . $imagesDestinationFolder);
+
+        // Verificar si la carpeta existe en el disco 'public'
+        if (!Storage::disk('public')->exists($imagesDestinationFolder)) {
+            // Crear la carpeta en el disco 'public'
+            Storage::disk('public')->makeDirectory($imagesDestinationFolder);
+        }
+
+        // Copiamos las imágenes a la carpeta de destino
+        foreach ($imagesTemp as $image) {
+            $imageFilename = basename($image);
+            // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("storage/".$destinationFolder . "/" .  $imageFilename));
+            copy($tempDir . '/' . $image, $destinationFolderPath . "/" .  $imageFilename);
+        }
     }
 }
