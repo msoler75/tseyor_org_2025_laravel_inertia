@@ -17,7 +17,7 @@
             axios.post('/admin/'+modelo+'/importar/crear', formData)
                 .then(function (response) {
                     // Éxito en la importación, maneja la respuesta del servidor
-                    console.log(response);
+                    // console.log(response);
                     window.location.href = '/admin/'+modelo+'/'+response.data.id+'/edit'
                 })
                 .catch(function (error) {

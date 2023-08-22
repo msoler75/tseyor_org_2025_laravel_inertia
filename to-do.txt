@@ -1,0 +1,17 @@
+select_ajax2
+
+Registro de acciones de los editores:
+-Para cada acción del CRUD, se debe registrar en una tabla, para seguimiento
+-Se debe guardar una copia con toda la información (puede ser en json) del registro actualizado
+-Se debe guardar el autor de la acción
+
+
+Widgets Admin Dashboard:
+-Ultimos registros de acciones
+-Ultimos usuarios ingresados en la web
+-Ultimos usuarios registrados (creados)
+-Últimos Comentarios
+-Actividad reciente (últimos contenidos)
+-Estadísticas de uso
+
+
