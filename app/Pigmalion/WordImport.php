@@ -3,42 +3,26 @@
 namespace App\Pigmalion;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use App\Models\Contenido;
 
 /**
  * Importa el contenido de un documento Microsoft Word
  */
 class WordImport
 {
-
+    public array $images = [];
+    public string $zipFile = "";
+    public string $content = "";
+    public string $mediaFolder = "";
+    public string $mediaFolderPath = "";
 
     /**
      * Esta es la función principal a la que podemos llamar desde un controlador CRUD de backpack
      */
-    public static function CRUD($callback)
+    public function __construct()
     {
-        $result =  WordImport::fromFormFile($_FILES['file']);
+        // por defecto, tomamos el valor del campo 'file'
+        $word_file = $_FILES['file'];
 
-        // extrae las variables del array asociativo
-        ['zipFile' => $zipFile, 'content' => $content, 'images' => $images] = $result;
-
-        // llamamos al método personalizado del crud
-        $result = $callback($result);
-
-        // borramos los archivos temporales
-        WordImport::cleanTempFiles($zipFile, $images);
-
-        return $result;
-    }
-
-
-
-    /**
-     * Se le pasa normalmente $_FILES['file']
-     */
-    public static function fromFormFile(array $word_file)
-    {
         // Directorio temporal para almacenar el archivo ZIP
         $tempDir = sys_get_temp_dir();
 
@@ -93,7 +77,6 @@ class WordImport
             if ($zip->open($zipFilePath) === true) {
                 // Extraer el archivo content.md
                 $contentMd = $zip->getFromName('output.md');
-                // dd($contentMd);
 
                 // Extraer las imágenes de la carpeta 'media'
                 $mediaFolder = 'media/';
@@ -108,7 +91,11 @@ class WordImport
 
                 $zip->close();
 
-                return ['zipFile' => $zipFilePath, 'content' => $contentMd, 'images' => $extractedImages];
+                // rellenamos los atributos con toda la información
+                $this->zipFile = $zipFilePath;
+                $this->content = $contentMd;
+                $this->images = $extractedImages;
+
             } else {
                 throw new \Exception("Error al descomprimir el .zip");
             }
@@ -119,17 +106,37 @@ class WordImport
         }
     }
 
+
+
+    /**
+     * Liberamos los archivos temporales
+     */
+    public function __destruct() {
+        // borramos los archivos temporales
+        $this->cleanTempFiles();
+    }
+
+
+
+    /**
+     * Se le pasa normalmente $_FILES['file']
+     */
+    public static function fromFormFile(array $word_file)
+    {
+
+    }
+
     /**
      * Borra los archivos temporales de operaciones de extracción de zip
      */
-    public static  function cleanTempFiles($zipFilePath, $extractedImages)
+    public function cleanTempFiles()
     {
         // Directorio temporal para almacenar el archivo ZIP
         $tempDir = sys_get_temp_dir();
 
         // Eliminar los archivos y carpetas temporales
-        @unlink($zipFilePath);
-        foreach ($extractedImages as $image) {
+        @unlink($this->zipFile);
+        foreach ($this->images as $image) {
             @unlink($tempDir . '/' . $image);
         }
         // @unlink($tempDir . '/output.md');
@@ -169,8 +176,15 @@ class WordImport
     }
 
 
-    public static function copyImagesFromTemp($imagesTemp, $imagesDestinationFolder)
+    public function copyImagesTo($imagesDestinationFolder, $deletePrevious = false)
     {
+        $this->mediaFolder = $imagesDestinationFolder;
+
+        if ($deletePrevious) {
+            // Borramos las imágenes que pudiera haber, previas
+            WordImport::deleteFilesFromFolder($imagesDestinationFolder);
+        }
+
         // Directorio temporal
         $tempDir = sys_get_temp_dir();
 
@@ -184,7 +198,7 @@ class WordImport
         }
 
         // Copiamos las imágenes a la carpeta de destino
-        foreach ($imagesTemp as $image) {
+        foreach ($this->images as $image) {
             $imageFilename = basename($image);
             // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("storage/".$destinationFolder . "/" .  $imageFilename));
             copy($tempDir . '/' . $image, $destinationFolderPath . "/" .  $imageFilename);
