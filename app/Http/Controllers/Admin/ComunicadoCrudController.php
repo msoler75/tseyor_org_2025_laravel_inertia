@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Comunicado;
 use App\Pigmalion\WordImport;
+use App\Models\Comunicado;
 
 /**
  * Class ComunicadoCrudController
@@ -92,8 +92,6 @@ class ComunicadoCrudController extends CrudController
         CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
 
         CRUD::addButtonFromView('line', 'import_update', 'import_update', 'beginning');
-
-        //$this->crud->addButton('line', 'import_update', 'view', 'crud::buttons.custom', 'beginning');
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
     }
@@ -232,27 +230,27 @@ class ComunicadoCrudController extends CrudController
 
             $imported = new WordImport();
 
-            $comunicado = Comunicado::create([
-                "titulo" => substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 10),
+            $contenido = Comunicado::create([
+                "titulo" => "Importado de ". $_FILES['file']['name'] . "_". substr(str_shuffle('0123456789'), 0, 5),
                 "texto" => $imported->content
             ]);
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "media/comunicados/id_{$comunicado->id}";
+            $imagesFolder = "media/comunicados/_{$contenido->id}";
 
             // copia las imágenes desde la carpeta temporal al directorio destino
             $imported->copyImagesTo($imagesFolder);
 
             // reemplazar la ubicación de las imágenes en el texto del comunicado
-            $comunicado->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $comunicado->texto);
-            $comunicado->texto = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->texto);
+            $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
+            $contenido->texto = preg_replace("/\.\/media\//", "/storage/media/", $contenido->texto);
 
-            $comunicado->imagen = preg_replace("/\bmedia\//", "$imagesFolder/", $comunicado->imagen);
-            $comunicado->imagen = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->imagen);
-            $comunicado->save();
+            $contenido->imagen = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->imagen);
+            $contenido->imagen = preg_replace("/\.\/media\//", "/storage/media/", $contenido->imagen);
+            $contenido->save();
 
             return response()->json([
-                "id" => $comunicado->id
+                "id" => $contenido->id
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -268,21 +266,21 @@ class ComunicadoCrudController extends CrudController
         try {
             $imported = new WordImport();
 
-            $comunicado = Comunicado::findOrFail($id);
+            $contenido = Comunicado::findOrFail($id);
 
-            $comunicado->texto = $imported->content;
+            $contenido->texto = $imported->content;
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "media/comunicados/id_{$comunicado->id}";
+            $imagesFolder = "media/comunicados/_{$contenido->id}";
 
             // reemplazar la ubicación de las imágenes en el texto del comunicado
-            $comunicado->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $comunicado->texto);
-            $comunicado->texto = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->texto);
+            $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
+            $contenido->texto = preg_replace("/\.\/media\//", "/storage/media/", $contenido->texto);
 
-            $comunicado->descripcion = null; // para que se regenere
+            $contenido->descripcion = null; // para que se regenere
 
-            $comunicado->imagen = null; // para que se elija otra nueva, si la hay
-            $comunicado->save();
+            $contenido->imagen = null; // para que se elija otra nueva, si la hay
+            $contenido->save();
 
             // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
             $imported->copyImagesTo($imagesFolder, true);

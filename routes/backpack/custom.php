@@ -18,8 +18,6 @@ Route::group([
 ], function () { // custom admin routes
     Route::crud('user', 'UserCrudController');
     Route::crud('comunicado', 'ComunicadoCrudController');
-    Route::post('comunicado/importar/crear', 'ComunicadoCrudController@importCreate');
-    Route::post('comunicado/importar/actualizar/{id}', 'ComunicadoCrudController@importUpdate');
     Route::crud('guia', 'GuiaCrudController');
     Route::crud('nodo', 'NodoCrudController');
     Route::crud('acl', 'AclCrudController');
@@ -39,4 +37,20 @@ Route::group([
     Route::crud('solicitud', 'SolicitudCrudController');
     Route::crud('libro', 'LibroCrudController');
     Route::crud('sala', 'SalaCrudController');
+
+    Route::post('comunicado/importar/crear', 'ComunicadoCrudController@importCreate');
+    Route::post('comunicado/importar/actualizar/{id}', 'ComunicadoCrudController@importUpdate');
+
+    Route::post('noticia/importar/crear', 'NoticiaCrudController@importCreate');
+    Route::post('noticia/importar/actualizar/{id}', 'NoticiaCrudController@importUpdate');
+
+    Route::post('evento/importar/crear', 'EventoCrudController@importCreate');
+    Route::post('evento/importar/actualizar/{id}', 'EventoCrudController@importUpdate');
+
+    Route::post('entrada/importar/crear', 'EntradaCrudController@importCreate');
+    Route::post('entrada/importar/actualizar/{id}', 'EntradaCrudController@importUpdate');
+
+    Route::post('normativa/importar/crear', 'NormativaCrudController@importCreate');
+    Route::post('normativa/importar/actualizar/{id}', 'NormativaCrudController@importUpdate');
+
 }); // this should be the absolute last line of this file
