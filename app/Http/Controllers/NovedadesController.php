@@ -14,7 +14,7 @@ class NovedadesController extends Controller
     {
         $filtro = $request->input('buscar');
 
-        $resultados = $filtro ? Contenido::select(['slug_ref', 'titulo', 'descripcion', 'fecha', 'coleccion'])
+        $resultados = $filtro ? Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
             ->where('visibilidad', 'P')
             ->where(function ($query) use ($filtro) {
                 $query->where('titulo', 'like', '%' . $filtro . '%')
@@ -25,7 +25,7 @@ class NovedadesController extends Controller
             ->latest('updated_at') // Ordenar por updated_at
             ->paginate(10)->appends(['buscar' => $filtro])
             :
-            Contenido::select(['slug_ref', 'titulo', 'descripcion', 'fecha', 'coleccion'])
+            Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
             ->where('visibilidad', 'P')
             ->latest('updated_at') // Ordenar por updated_at
             ->paginate(10);

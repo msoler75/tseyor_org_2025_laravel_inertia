@@ -5,7 +5,7 @@
 
 
 <script setup>
-import { imageUrl } from '@/composables/utils.js'
+import { getImageUrl } from '@/composables/utils.js'
 
 const props = defineProps({
     src: {
@@ -24,6 +24,6 @@ const props = defineProps({
     }
 });
 
-const finalSrc = computed(() => imageUrl(props.src, props.fallback))
+const finalSrc = computed(() => getImageUrl(props.src, props.fallback))
 
 </script>
