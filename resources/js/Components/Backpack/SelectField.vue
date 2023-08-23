@@ -1,9 +1,10 @@
 <template>
     <input type="hidden" v-model="selectedOutput" :name="name">
-    <v-select v-model="selected" :placeholder="placeholder" :multiple="!!multiple" label="name" :filterable="false"
+    <v-select v-model="selected" :placeholder="placeholder" :multiple="!!multiple" label="label" :filterable="false"
         :options="optionsLabel" @search="onSearch"
-        :selectable="(option) => !isSelected(option.value)"
+        :deselectFromDropdown="!!multiple"
         :closeOnSelect="!multiple"
+        transition=""
         >
         <template #no-options>
             No hay resultados
@@ -30,19 +31,19 @@ import 'vue-select/dist/vue-select.css';
 const props = defineProps({
     name: String,
     model: String,
-    displayField: String,
+    labelOption: String, // para la obtención del valor displayable de la colección
     placeholder: { default: 'Buscar...' },
-    options: { type: String, default: "[]" },
+    options: { type: String, default: null },
     value: {type: String, default: "[]"},
     multiple: { default: 0 },
     // url: { type: String, required: true },
 });
 
-console.log("1", props.value)
+const url = '/admin/search/' + props.model
+
 const selected = ref(JSON.parse(props.value?props.value:"[]"))
 const selectedOutput = ref("")
 function updateSelected() {
-    console.log('updateSelected', selected.value)
     if (typeof selected.value === 'string' || typeof selected.value === 'number') {
         selectedOutput.value = selected.value
     } else if(Array.isArray(selected.value)) {
@@ -55,37 +56,41 @@ function updateSelected() {
     }
 }
 
-updateSelected()
-watch(selected, () => updateSelected())
-
-const url = '/admin/search/' + props.model
-
-const options = ref(props.options ? JSON.parse(props.options) : []);
+const optionsArray = ref(props.options ? JSON.parse(props.options) : selected.value);
 const optionsLabel = computed(() => {
-    return options.value
+    return optionsArray.value
         .map(item => {
+            // si ya tenemos los valores formateados, devolvemos el item
+            if(('label' in item) && ('value' in item)) return item
             return {
                 value: item.id,
-                label: props.displayField ? item[props.displayField] :
-                    item.name || item.title || item.nombre || item.titulo || item.ruta,
-                    name: item.id
+                label: props.labelOption ? item[props.labelOption] :
+                    item.name || item.title || item.nombre || item.titulo || item.ruta
             }
         })
 })
 
+updateSelected()
+watch(selected, () => updateSelected())
+
+
 function isSelected(value) {
-    return Array.isArray(selected.value)?selected.value.find(item => item.value == value):selected?selected.id==value:false
+    return Array.isArray(selected.value)?selected.value.find(item => item.value == value):selected?selected.value==value:false
 }
+
+var debounce = null
 
 async function onSearch(search, loading) {
     if (search.length) {
         loading(true);
-        modelSearch(loading, search);
+        clearTimeout(debounce)
+        debounce = setTimeout(()=>modelSearch(loading, search), 800);
     }
 }
 
 onMounted(()=>{
-    modelSearch(()=>{}, '')
+    if(!optionsArray.value.length)
+     modelSearch(()=>{}, '')
 })
 
 async function modelSearch(loading, search) {
@@ -94,7 +99,7 @@ async function modelSearch(loading, search) {
         const response = await fetch(url + '?q=' + search);
         const json = await response.json();
         console.log({ json })
-        options.value = json.results
+        optionsArray.value = json.results
         loading(false);
     } catch (error) {
         console.error(error);

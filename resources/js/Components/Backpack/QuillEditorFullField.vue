@@ -224,15 +224,15 @@ const modules = ref([
                     const formData = new FormData();
                     formData.append("image", file);
                     formData.append("destinationPath", `/imagenes`)
-                    console.log('upload')
+                    // console.log('upload')
                     axios.post('/api/files/upload/image', formData)
                         .then(res => {
-                            console.log('upload result', res)
+                            // console.log('upload result', res)
                             resolve(res.data.data.filePath);
                         })
                         .catch(err => {
                             reject("Upload failed");
-                            console.error("Error:", err)
+                            // console.error("Error:", err)
                         })
                 })
             }
@@ -241,7 +241,7 @@ const modules = ref([
 ])
 
 function onQuillReady() {
-    console.log('Quill Ready!')
+    // console.log('Quill Ready!')
     // Obtener los atajos de teclado actuales
     const quill = qeditor.value.getQuill()
     bindings = quill.getModule('keyboard').options.bindings;
@@ -277,7 +277,7 @@ const showMediaManager = ref(false)
 function onInsertImage(src) {
     // console.log('onInsertImage', img)
     const quill = qeditor.value.getQuill()
-    console.log({ quill })
+    // console.log({ quill })
     // quill.insertText(0, `![](${src})`);
     var range = quill.getSelection();
     quill.insertEmbed(range.index, 'image', src);
@@ -318,7 +318,7 @@ watch(contenidoHtml, (value) => {
 function onHtml(evt) {
     const quill = qeditor.value.getQuill()
     var wasActiveTxtArea_1 = (quillEd_txtArea_1.getAttribute('quill__html').indexOf('-active-') > -1);
-    console.log({ wasActiveTxtArea_1 })
+    // console.log({ wasActiveTxtArea_1 })
     editingHtml.value = !wasActiveTxtArea_1
 
     if (wasActiveTxtArea_1) {
@@ -454,7 +454,7 @@ function installToolTips() {
     var elems = document.querySelectorAll('#toolbar_1 .ql-toolbar .ql-formats .ql-picker .ql-picker-label')
     for (var e of elems) {
         let classes = e.parentNode.className
-        console.log('classes', classes)
+        // console.log('classes', classes)
 
         if(classes.match('tooltip')) continue
 
@@ -493,9 +493,9 @@ function installToolTips() {
 
 
     elems = document.querySelectorAll('.ql-toolbar [class*="ql-"]')
-    console.log('elems', elems)
+    // console.log('elems', elems)
     for (var e of elems) {
-        console.log(e.tagName)
+        //console.log(e.tagName)
         if (!['BUTTON', 'SPAN'].includes(e.tagName)) continue
 
         let classes = e.getAttribute("class")
@@ -503,7 +503,7 @@ function installToolTips() {
 
         if(classes.match('tooltip')) continue
 
-        console.log('adding tooltip for ', classes)
+        // console.log('adding tooltip for ', classes)
         let button = classes.replace('ql-active', '')
             .replace('transform', '')
             .replace(/scale-\d+/, '')
@@ -525,7 +525,7 @@ function installToolTips() {
         })
     }
 
-    console.log('tooltips installed')
+    // console.log('tooltips installed')
 }
 
 </script>

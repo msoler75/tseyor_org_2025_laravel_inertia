@@ -109,6 +109,34 @@ class Equipo extends SEOModel
         }
     }
 
+
+
+    // ACCESOR
+
+    public function getMiembrosJSONAttribute()
+    {
+        $users = $this->miembros()->select('users.id', 'users.name', 'users.email')->get();
+        $usersWithoutPivot = $users->map(function ($user) {
+            return [
+                'value' => $user->id,
+                'label' => $user->name //"{$user->name} <{$user->email}>"
+            ];
+        });
+        return $usersWithoutPivot->toJson();
+    }
+
+    public function getCoordinadoresJSONAttribute()
+    {
+        $users = $this->coordinadores()->select('users.id', 'users.name', 'users.email')->get();
+        $usersWithoutPivot = $users->map(function ($user) {
+            return [
+                'value' => $user->id,
+                'label' => $user->name // "{$user->name} <{$user->email}>"
+            ];
+        });
+        return $usersWithoutPivot->toJson();
+    }
+
 }
 
 
