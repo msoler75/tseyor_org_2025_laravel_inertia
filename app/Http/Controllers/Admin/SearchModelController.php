@@ -43,7 +43,7 @@ class SearchModelController extends Controller
         foreach ($existingFields as $field) {
             $queryBuilder->orWhere($field, 'like', "%$query%");
         }
-        $results = $queryBuilder->take(128)->get();
+        $results = $queryBuilder->take(32)->get();
 
         // Devolver los resultados en JSON
         return response()->json(['results' => $results]);

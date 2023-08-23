@@ -255,6 +255,7 @@ class UserCrudController extends CrudController
             [
                 'name'              => 'GruposJSON',
                 'label'             => 'Grupos',
+                // 'labelOption'       => 'nombre',
                 'type'              => 'select_model',
                 'model' => 'grupo',
                 'options' => null,
