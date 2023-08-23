@@ -11,6 +11,7 @@ declare global {
   const computed: typeof import('vue')['computed']
   const currentTheme: typeof import('./resources/js/composables/themeadapter.js')['currentTheme']
   const defineEmits: typeof import('vue')['defineEmits']
+  const getImageUrl: typeof import('./resources/js/composables/utils.js')['getImageUrl']
   const imageUrl: typeof import('./resources/js/composables/utils.js')['imageUrl']
   const nextTick: typeof import('vue')['nextTick']
   const onMounted: typeof import('vue')['onMounted']

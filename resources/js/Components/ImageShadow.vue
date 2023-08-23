@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { imageUrl } from '@/composables/utils.js'
+import { getImageUrl } from '@/composables/utils.js'
 
 const props = defineProps({
     className: {
@@ -42,7 +42,7 @@ const shadowClass = ref({});
 const shadowStyle = ref({});
 const imgStyle = ref({});
 const cardStyle = ref({});
-const finalSrc = computed(() => imageUrl(props.src))
+const finalSrc = computed(() => getImageUrl(props.src))
 
 onMounted(() => {
     loadStyle();

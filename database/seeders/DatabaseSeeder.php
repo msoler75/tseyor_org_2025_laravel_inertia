@@ -52,8 +52,8 @@ class DatabaseSeeder extends Seeder
             //'audio' => $faker->randomElement($files),
             //'descripcion' => $faker->paragraph(1),
             //'texto' => $faker->paragraph(5),
-            //'imagen' => $faker->imageUrl(800, 600)
-            'profile_photo_path' =>$faker->imageUrl(600, 600),
+            //'imagen' => $faker->getImageUrl(800, 600)
+            'profile_photo_path' =>$faker->getImageUrl(600, 600),
             /* 'provincia' => $faker->state(),
             'direccion' => $faker->address(),
             'codigo' => $faker->postcode(),
