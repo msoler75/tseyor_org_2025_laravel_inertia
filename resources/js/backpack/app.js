@@ -15,6 +15,7 @@ import TinyMCESimpleField from "../Components/Backpack/TinyMCESimpleField.vue";
 import QuillEditorFullField from "../Components/Backpack/QuillEditorFullField.vue";
 import QuillEditorSimpleField from "../Components/Backpack/QuillEditorSimpleField.vue";
 import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
+import SelectField from "../Components/Backpack/SelectField.vue";
 
 // only in forms
 const elem = document.querySelector(".page form[method='post']");
@@ -26,6 +27,7 @@ if (elem) {
     .component("tinymcefullfield", TinyMCEFullField)
     .component("tinymcesimplefield", TinyMCESimpleField)
     .component("imagecoverfield", ImageCoverField)
+    .component("selectfield", SelectField)
     .mixin({
       components: { Icon, Link },
     })

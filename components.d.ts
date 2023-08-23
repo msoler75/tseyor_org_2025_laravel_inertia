@@ -95,6 +95,7 @@ declare module 'vue' {
     SectionBorder: typeof import('./resources/js/Components/SectionBorder.vue')['default']
     Sections: typeof import('./resources/js/Sections/Sections.vue')['default']
     SectionTitle: typeof import('./resources/js/Components/SectionTitle.vue')['default']
+    SelectField: typeof import('./resources/js/Components/Backpack/SelectField.vue')['default']
     Seo: typeof import('./resources/js/Components/Seo.vue')['default']
     Services: typeof import('./resources/js/Sections/Services.vue')['default']
     SocialMediaFeeds: typeof import('./resources/js/Sections/SocialMediaFeeds.vue')['default']
