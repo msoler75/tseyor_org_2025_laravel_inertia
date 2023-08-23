@@ -15,3 +15,7 @@ Widgets Admin Dashboard:
 -Estadísticas de uso
 
 
+
+
+https://github.com/Laravel-Backpack/BackupManager
+https://github.com/Laravel-Backpack/revise-operation

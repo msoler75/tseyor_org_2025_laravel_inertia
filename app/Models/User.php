@@ -88,7 +88,7 @@ class User extends Authenticatable
             ->withPivot(['user_id', 'rol']);
     }
 
-    public function grupos()
+    /*public function grupos()
     {
         return Cache::remember("user_grupos_" . $this->id, 30, function () {
             return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'group_id')
@@ -96,6 +96,27 @@ class User extends Authenticatable
                 ->withPivot(['user_id'])
                 ->get();
         });
+    }*/
+
+    public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'group_id')
+            ->using(Pertenencia::class)
+            ->withPivot(['user_id']);
     }
 
+
+    // ACCESOR
+
+    public function getGruposJSONAttribute()
+    {
+        $grupos = $this->grupos()->select('grupos.id', 'grupos.nombre')->get();
+        $gruposWithoutPivot = $grupos->map(function ($grupo) {
+            return [
+                'value' => $grupo->id,
+                'label' => $grupo->nombre,
+            ];
+        });
+        return $gruposWithoutPivot->toJson();
+    }
 }

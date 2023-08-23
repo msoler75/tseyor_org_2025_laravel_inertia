@@ -53,4 +53,6 @@ Route::group([
     Route::post('normativa/importar/crear', 'NormativaCrudController@importCreate');
     Route::post('normativa/importar/actualizar/{id}', 'NormativaCrudController@importUpdate');
 
+    Route::get('search/{model}', 'SearchModelController@index');
+
 }); // this should be the absolute last line of this file
