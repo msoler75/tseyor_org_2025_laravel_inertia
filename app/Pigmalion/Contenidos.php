@@ -79,6 +79,7 @@ class Contenidos
         $contenido->texto = $datos->texto ?? ($datos->direccion . " " . $datos->codigo . " " . $datos->provincia . " " . $datos->email . " " . $datos->telefono);
         $contenido->imagen = $datos->imagen;
         $contenido->fecha = $datos->published_at ?? $datos->updated_at ?? null;
+        $contenido->visibilidad = $datos->visibilidad ?? 'P';
 
 
         // Guardar el modelo en la base de datos
