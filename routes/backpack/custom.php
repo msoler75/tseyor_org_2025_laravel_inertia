@@ -55,4 +55,5 @@ Route::group([
 
     Route::get('search/{model}', 'SearchModelController@index');
 
+    Route::crud('setting', 'SettingCrudController');
 }); // this should be the absolute last line of this file

@@ -62,8 +62,8 @@ class AudioCrudController extends CrudController
             'name'  => 'visibilidad',
             'label' => 'Estado',
             'type'  => 'text',
-            'value' => function($entry) {
-                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
     }
@@ -83,7 +83,32 @@ class AudioCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+        // donde se guardan los archivos de audio
+        $folder = "media/audios";
+
+        CRUD::field('audio')->type('upload')
+            ->withFiles([
+                'disk' => 'public', // the disk where file will be stored
+                'path' => $folder, // the path inside the disk where file will be stored
+            ])
+            ->attributes(['accept' => "audio/*"]);
+
+        CRUD::field([   // select_from_array
+            'name'        => 'categoria',
+            'label'       => "Categoría",
+            'type'        => 'select_from_array',
+            'options'     => ['Meditaciones'=>'Meditaciones', 'Talleres'=>'Talleres', 'Cuentos'=>'Cuentos', 'Reflexiones'=>'Reflexiones', 'Música clásica'=>'Música clásica', 'Otros'=>'Otros'],
+            'allows_null' => false,
+            'default'     => 'Meditaciones',
+            'wrapper'   => [
+                'class'      => 'form-group col-md-3'
+            ],
+        ]);
+
+        CRUD::field('visibilidad')->type('visibilidad');
     }
+
 
     /**
      * Define what happens when the Update operation is loaded.
