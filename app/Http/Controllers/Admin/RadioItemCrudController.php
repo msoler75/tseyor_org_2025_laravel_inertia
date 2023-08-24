@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\SettingRequest;
+use App\Http\Requests\RadioItemRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class SettingCrudController
+ * Class RadioItemCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class SettingCrudController extends CrudController
+class RadioItemCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +26,9 @@ class SettingCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Setting::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/setting');
-        CRUD::setEntityNameStrings('ajuste', 'ajustes');
+        CRUD::setModel(\App\Models\RadioItem::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/radio-item');
+        CRUD::setEntityNameStrings('audio', 'Listado Radio Tseyor');
     }
 
     /**
@@ -46,9 +46,11 @@ class SettingCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
+        CRUD::column('Archivo');
 
-        CRUD::column('name')->type('text')->label('nombre');
-        CRUD::column('description')->type('text')->label('descripcion');
+        CRUD::column('duracion');
+
+        CRUD::column('desactivado')->type("check");
     }
 
     /**
@@ -68,7 +70,6 @@ class SettingCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
-        CRUD::field('value')->type('json');
     }
 
     /**
