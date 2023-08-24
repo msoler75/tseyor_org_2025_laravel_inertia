@@ -46,3 +46,5 @@
     <x-backpack::menu-dropdown-item title="Permisos" icon="la la-key" :link="backpack_url('permission')" />
 </x-backpack::menu-dropdown>
 
+
+<x-backpack::menu-item title="Settings" icon="la la-question" :link="backpack_url('setting')" />

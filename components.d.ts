@@ -70,6 +70,7 @@ declare module 'vue' {
     ImageShadow: typeof import('./resources/js/Components/ImageShadow.vue')['default']
     InputError: typeof import('./resources/js/Components/InputError.vue')['default']
     InputLabel: typeof import('./resources/js/Components/InputLabel.vue')['default']
+    JSONEditorField: typeof import('./resources/js/Components/Backpack/JSONEditorField.vue')['default']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     ModalDropZone: typeof import('./resources/js/Components/ModalDropZone.vue')['default']
     NavAside: typeof import('./resources/js/Components/NavAside.vue')['default']

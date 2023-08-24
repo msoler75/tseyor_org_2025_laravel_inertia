@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\SEOModel;
+use Illuminate\Database\Eloquent\Model;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 
 
-class Setting extends SEOModel
+class Setting extends Model
 {
-
-    protected $primaryKey = 'name';
+    use CrudTrait;
 
     protected $fillable = [
         'name',
+        'description',
         'value',
     ];
 }
