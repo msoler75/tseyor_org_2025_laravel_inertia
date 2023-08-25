@@ -1,44 +1,40 @@
 import { defineStore } from "pinia";
-import navigationItems from "../navigation.js";
-
+// import navigationItems from "../navigation.js";
 
 const mapItem = (item) => {
-    if (item.route) {
-      return { ...item, url: route(item.route) };
-    } else {
-      return {
-        ...item,
-        submenu: mapSubmenu(item.submenu),
-      };
-    }
-  };
+  if (item.route) {
+    return { ...item, url: route(item.route) };
+  } else {
+    return {
+      ...item,
+      submenu: mapSubmenu(item.submenu),
+    };
+  }
+};
 
-  const mapSection = (section) => ({
-    ...section,
-    items: section.items.map((item) =>
-      item.route ? { ...item, url: route(item.route) } : item
-    ),
-  });
+const mapSection = (section) => ({
+  ...section,
+  items: section.items.map((item) =>
+    item.route ? { ...item, url: route(item.route) } : item
+  ),
+});
 
-  const mapSubmenu = (submenu) => ({
-    ...submenu,
-    sections: submenu.sections.map(mapSection),
-  });
-
-
-
+const mapSubmenu = (submenu) => ({
+  ...submenu,
+  sections: submenu.sections.map(mapSection),
+});
 
 export const useNav = defineStore("nav", {
   state: () => ({
-    items:navigationItems.map(mapItem),
+    items: [], //navigationItems.map(mapItem),
     ghostTab: null,
     timer: null,
     announce: false,
-    defaultClass:'',
-    class:'',
+    defaultClass: "",
+    class: "",
     // position: 'sticky',
     fullPage: false,
-    scrollY: 0
+    scrollY: 0,
   }),
   getters: {
     activeTab: (state) => state.items.find((tab) => tab.open),
@@ -50,6 +46,10 @@ export const useNav = defineStore("nav", {
     },
   },
   actions: {
+    setItems(items) {
+      const tabs = items.map(mapItem);
+      for (const tab of tabs) this.items.push(tab);
+    },
     activateTab(tab) {
       tab.activating = true;
       // console.log("activateTab", tab.title);
