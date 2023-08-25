@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ArchivosController;
 use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ComunicadosController;
@@ -35,6 +36,9 @@ use App\Pigmalion\SEO;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+Route::get('/settings/{id}', [SettingsController::class, 'show'])->name('setting');
 
 Route::get('/test', function () {
     return Inertia::render('Test', []);
