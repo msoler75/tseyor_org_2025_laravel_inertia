@@ -53,6 +53,9 @@ Route::group([
     Route::post('normativa/importar/crear', 'NormativaCrudController@importCreate');
     Route::post('normativa/importar/actualizar/{id}', 'NormativaCrudController@importUpdate');
 
+    Route::post('publicacion/importar/crear', 'PublicacionCrudController@importCreate');
+    Route::post('publicacion/importar/actualizar/{id}', 'PublicacionCrudController@importUpdate');
+
     Route::get('search/{model}', 'SearchModelController@index');
 
     Route::crud('setting', 'SettingCrudController');

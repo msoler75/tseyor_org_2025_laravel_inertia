@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\Storage;
+use App\Pigmalion\WordImport;
+use App\Models\Publicacion;
 
 /**
  * Class PublicacionCrudController
@@ -27,7 +30,7 @@ class PublicacionCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Publicacion::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/publicacion');
-        CRUD::setEntityNameStrings('publicacion', 'publicacions');
+        CRUD::setEntityNameStrings('publicacion', 'publicaciones');
     }
 
     /**
@@ -38,12 +41,53 @@ class PublicacionCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+              // CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+         $this->crud->addColumn([
+            'name'  => 'id',
+            'label' => 'id',
+            'type'  => 'number'
+        ]);
+
+        $this->crud->addColumn([
+            'name'  => 'titulo',
+            'label' => 'Título',
+            'type'  => 'text'
+        ]);
+
+
+        $this->crud->addColumn([
+            'name' => 'updated_at',
+            'label' => 'Modificado',
+            'type' => 'datetime', // Puedes usar 'datetime' o 'date' según el formato que desees mostrar
+        ]);
+
+        $this->crud->addColumn([
+            'name'  => 'categoria',
+            'label' => 'Categoría',
+            'type'  => 'text',
+        ]);
+
+
+        $this->crud->addColumn([
+            'name'  => 'visibilidad',
+            'label' => 'Estado',
+            'type'  => 'text',
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
+            }
+        ]);
+
+        CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
+
+        CRUD::addButtonFromView('line', 'import_update', 'import_update', 'beginning');
+
+        CRUD::setOperationSetting('lineButtonsAsDropdown', true);
     }
 
     /**
@@ -54,14 +98,58 @@ class PublicacionCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(PublicacionRequest::class);
+        CRUD::setValidation([
+            'titulo' => 'required|min:8',
+            'descripcion' => 'max:400',
+        ]);
+
         CRUD::setFromDb(); // set fields from db columns.
 
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
+
+        CRUD::field([   // select_from_array
+            'name'        => 'categoria',
+            'label'       => "Categoría",
+            'type'        => 'select_from_array',
+            'options'     => ['General' => 'General', 'OD' => 'Orden del día', 'Acta' => 'Acta', 'Anexo'=>'Anexo', 'Acuerdo'=>'Acuerdo'],
+            'allows_null' => false,
+            'default'     => 'General',
+            // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
+
+            'wrapper'   => [
+                'class'      => 'form-group col-md-3'
+            ],
+        ])->after('titulo');
+
+        $folder = $this->mediaFolder();
+
+        CRUD::field('descripcion')->type('textarea');
+
+        // CRUD::field('texto')->type('markdown_tinymce')->attributes(['folder' => $folder]);
+
+        CRUD::field('texto')->type('markdown_tinymce')->attributes(['folder' => $folder]);
+
+        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
+
+        CRUD::field('visibilidad')->type('visibilidad');
     }
+
+
+    private function mediaFolder()
+    {
+        $anioActual = date('Y');
+        $mesActual = date('m');
+
+        $folder = "/media/publicaciones/$anioActual/$mesActual";
+
+        // Verificar si la carpeta existe en el disco 'public'
+        if (!Storage::disk('public')->exists($folder)) {
+            // Crear la carpeta en el disco 'public'
+            Storage::disk('public')->makeDirectory($folder);
+        }
+
+        return $folder;
+    }
+
 
     /**
      * Define what happens when the Update operation is loaded.
@@ -78,5 +166,75 @@ class PublicacionCrudController extends CrudController
     protected function show($id)
     {
         return redirect("/publicaciones/$id?borrador");
+    }
+
+
+    public function importCreate()
+    {
+        try {
+
+            $imported = new WordImport();
+
+            $contenido = Publicacion::create([
+                "titulo" => "Importado de ". $_FILES['file']['name'] . "_". substr(str_shuffle('0123456789'), 0, 5),
+                "texto" => $imported->content
+            ]);
+
+            // Copiaremos las imágenes a la carpeta de destino
+            $imagesFolder = "media/publicaciones/_{$contenido->id}";
+
+            // copia las imágenes desde la carpeta temporal al directorio destino
+            $imported->copyImagesTo($imagesFolder);
+
+            // reemplazar la ubicación de las imágenes en el texto del comunicado
+            $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
+            $contenido->texto = preg_replace("/\.\/media\//", "/storage/media/", $contenido->texto);
+
+            $contenido->imagen = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->imagen);
+            $contenido->imagen = preg_replace("/\.\/media\//", "/storage/media/", $contenido->imagen);
+            $contenido->save();
+
+            return response()->json([
+                "id" => $contenido->id
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+    public function importUpdate($id)
+    {
+        try {
+            $imported = new WordImport();
+
+            $contenido = Publicacion::findOrFail($id);
+
+            $contenido->texto = $imported->content;
+
+            // Copiaremos las imágenes a la carpeta de destino
+            $imagesFolder = "media/publicaciones/_{$contenido->id}";
+
+            // reemplazar la ubicación de las imágenes en el texto del comunicado
+            $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
+            $contenido->texto = preg_replace("/\.\/media\//", "/storage/media/", $contenido->texto);
+
+            $contenido->descripcion = null; // para que se regenere
+
+            $contenido->imagen = null; // para que se elija otra nueva, si la hay
+            $contenido->save();
+
+            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
+            $imported->copyImagesTo($imagesFolder, true);
+
+            return response()->json([], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 }

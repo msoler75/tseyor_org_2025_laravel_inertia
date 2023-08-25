@@ -9,9 +9,11 @@ use App\Models\SEOModel;
 class Publicacion extends SEOModel
 {
     use CrudTrait;
+
+    protected $table = 'publicaciones';
+
     protected $fillable = [
         'titulo',
-        'slug',
         'descripcion',
         'texto',
         'imagen',

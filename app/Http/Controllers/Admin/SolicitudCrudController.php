@@ -27,7 +27,7 @@ class SolicitudCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Solicitud::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/solicitud');
-        CRUD::setEntityNameStrings('solicitud', 'solicituds');
+        CRUD::setEntityNameStrings('solicitud', 'solicitudes');
     }
 
     /**
@@ -38,12 +38,51 @@ class SolicitudCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+         $this->crud->addColumn([
+            'name' => 'created_at',
+            'label' => 'Realizada',
+            'orderable'   => true,
+        ]);
+
+         $this->crud->addColumn([
+            'name' => 'NombreUsuario',
+            'label' => 'Usuario',
+            'orderable'   => true,
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'NombreEquipo',
+            'label' => 'Equipo',
+            'orderable'   => true,
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'fecha_aceptacion',
+            'label' => 'Aceptado',
+            'type' => 'datetime'
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'fecha_denegacion',
+            'label' => 'Denegado',
+            'type' => 'datetime'
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'NombreCoordinador',
+            'label' => 'Coordinador',
+        ]);
+
+
+        CRUD::setOperationSetting('lineButtonsAsDropdown', true);
+
     }
 
     /**
@@ -61,6 +100,11 @@ class SolicitudCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+         CRUD::field('user_id')->attributes(['disabled'=>'disabled']);
+
+
+         CRUD::field('equipo_id')->type('select')->model('App\Models\Equipo');
     }
 
     /**

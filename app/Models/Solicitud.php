@@ -46,4 +46,26 @@ class Solicitud extends Model
     {
         return $this->belongsTo(User::class, 'por_user_id', 'id');
     }
+
+
+
+    // accesors
+    public function getNombreEquipoAttribute()
+    {
+        return optional($this->equipo)->nombre;
+    }
+
+
+    public function getNombreUsuarioAttribute()
+    {
+        return optional($this->usuario)->name;
+    }
+
+    public function getNombreCoordinadorAttribute()
+    {
+        return optional($this->coordinador)->name;
+    }
+
+
+
 }
