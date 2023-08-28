@@ -48,6 +48,7 @@ class ComunicadoImport
                 echo "procesando... ";
 
                 $archivoWord = self::searchDocx($numero, $categoria, $fecha);
+                $imported = null;
 
                 try {
 
@@ -102,9 +103,12 @@ class ComunicadoImport
 
                     echo "guardado con id {$comunicado->id}\n";
                 } catch (Exception $e) {
-                    $imported->deleteTempAtEnd = false;
-                    echo "Exception\n";
-                    echo "zip File: {$imported->zipFile}\n";
+                    echo "!!!! Exception\n";
+                    if($imported)
+                    {
+                        $imported->deleteTempAtEnd = false;
+                        echo "zip File: {$imported->zipFile}\n";
+                    }
                     throw $e;
                 }
             }
@@ -130,7 +134,7 @@ class ComunicadoImport
             $patronBusqueda = "/^\(0*{$numeroRegex}\)/";
         } else {
             // Patrón de búsqueda para otras categorías
-            $patronBusqueda = "/^\(0*{$numeroRegex}\).+{$categoriaFormateada}/";
+            $patronBusqueda = "/^\(0*{$numeroRegex}\).+{$categoriaFormateada}/i";
         }
 
         // Obtener todos los archivos en la carpeta
