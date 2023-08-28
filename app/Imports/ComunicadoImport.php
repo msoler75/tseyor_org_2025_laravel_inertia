@@ -6,6 +6,7 @@ use \DateTime;
 use \Exception;
 use App\Models\Comunicado;
 use App\Pigmalion\WordImport;
+use Illuminate\Support\Str;
 
 class ComunicadoImport
 {
@@ -15,12 +16,6 @@ class ComunicadoImport
 
         // Ruta del archivo "comunicados.lst"
         $lista_comunicados = base_path('resources/data/comunicados.lst');
-
-        // Ruta de la carpeta de archivos PDF
-        $rutaPdf = 'ruta/a/biblioteca/comunicados/pdf/';
-
-        // Ruta de la carpeta de archivos MP3
-        $rutaMp3 = 'ruta/a/biblioteca/comunicados/mp3/';
 
         // Leer el archivo línea por línea
         $lineas = file($lista_comunicados, FILE_IGNORE_NEW_LINES);
@@ -38,22 +33,48 @@ class ComunicadoImport
             $nombrePdf = $campos[4] . '.pdf';
             $nombresMp3 = isset($campos[5]) ? explode(',', $campos[5]) : [];
 
+            $tituloFormato = ($categoria == 'GEN' ?'': $categoria . " ") . $numero . ". " . $titulo;
+
             echo "$numero $categoria $fecha $titulo ... ";
 
             // Comprobamos si el comunicado ya existe
             $existeComunicado = Comunicado::where('numero', $numero)
-                ->where('titulo', $titulo)
+                ->where('titulo', $tituloFormato)
                 ->exists();
 
             if ($existeComunicado) {
                 echo "ya existe\n";
-            }
-            else{
+            } else {
                 echo "procesando... ";
 
                 $archivoWord = self::searchDocx($numero, $categoria, $fecha);
 
                 $imported = new WordImport($archivoWord);
+
+                $dateObj = DateTime::createFromFormat('y/m/d', $fecha);
+
+                if (!$dateObj) {
+                    echo "Error en formato de Fecha para $fecha";
+                    die;
+                }
+
+                $texto = $imported->content;
+
+                $año = $dateObj->format('Y');
+
+                // Copiaremos las imágenes a la carpeta de destino
+                $imagesFolder = "media/comunicados/$año/" . ($categoria == 'GEN' ?'': $categoria . "_") . $numero;
+
+                // copia las imágenes desde la carpeta temporal al directorio destino
+                if($imported->copyImagesTo($imagesFolder)) {
+                    // reemplazar la ubicación de las imágenes en el texto del comunicado
+                    $texto = preg_replace("/\bmedia\//", "$imagesFolder/", $texto);
+                    $texto = preg_replace("/\.\/media\//", "/storage/media/", $texto);
+                }
+
+                // Rutas de las carpetas
+                $rutaPdf = 'media/comunicados/pdf/' .  $año . '/';
+                $rutaMp3 = 'media/comunicados/mp3/' .  $año . '/';
 
                 // Asignar los nombres de los archivos MP3
                 $mp3 = [];
@@ -62,42 +83,22 @@ class ComunicadoImport
                         $mp3[] = $rutaMp3 . $nombreMp3 . '.mp3';
                 }
 
-                $dateObj = DateTime::createFromFormat('d/m/y', $fecha);
-
-                if(!$dateObj)
-                {
-                    echo "Error en formato de Fecha para $fecha";
-                    die;
-                }
 
                 // Crear una nueva instancia de Comunicado
                 $comunicado = Comunicado::create([
-                    "titulo" => $titulo,
-                    "texto" => $imported->content,
+                    "titulo" => $tituloFormato,
+                    "slug" => null,
+                    "fecha_comunicado"  => $dateObj->format('Y-m-d'),
+                    "texto" => $texto,
                     "numero" => $numero,
                     "categoria" => $categoria,
-                    "fecha_comunicado"  => $dateObj->format('Y-m-d'),
-                    "pdf" => $nombrePdf,
-                    "audios" => json_encode($mp3)
+                    "pdf" => $rutaPdf . $nombrePdf,
+                    "audios" => json_encode($mp3),
+                    "visibilidad" => 'P'
                 ]);
 
-                // Copiaremos las imágenes a la carpeta de destino
-                $imagesFolder = "media/comunicados/_{$comunicado->id}";
 
-                // copia las imágenes desde la carpeta temporal al directorio destino
-                $imported->copyImagesTo($imagesFolder);
-
-                // reemplazar la ubicación de las imágenes en el texto del comunicado
-                $comunicado->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $comunicado->texto);
-                $comunicado->texto = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->texto);
-
-                $comunicado->imagen = preg_replace("/\bmedia\//", "$imagesFolder/", $comunicado->imagen);
-                $comunicado->imagen = preg_replace("/\.\/media\//", "/storage/media/", $comunicado->imagen);
-
-                // Guardar el comunicado en la base de datos o realizar cualquier otra operación necesaria
-                $comunicado->save();
-
-                echo "guardado\n";
+                echo "guardado con id {$comunicado->id}\n";
             }
         }
     }
@@ -146,7 +147,7 @@ class ComunicadoImport
             $nombreArchivo = basename($archivo);
 
             // Utilizar expresiones regulares para extraer la fecha del nombre del archivo
-            $patronFecha = '/\b(\d{6})\b/';
+            $patronFecha = '/(\d{6})/';
             preg_match($patronFecha, $nombreArchivo, $coincidencias);
 
             if (!empty($coincidencias) && $coincidencias[1] === $fechaArchivo) {

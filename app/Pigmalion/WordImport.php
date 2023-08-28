@@ -41,9 +41,6 @@ class WordImport
             }
         }
 
-        // Generar un nombre único para el archivo ZIP
-        $zipFilePath = tempnam($tempDir, 'import_') . '.zip';
-
         // Obtener la URL de la variable de entorno
         $wordToMdUrl = env('WORD_TO_MD_URL');
 
@@ -72,6 +69,10 @@ class WordImport
 
         // Verificar el código de respuesta HTTP
         if ($httpCode === 200) {
+
+             // Generar un nombre único para el archivo ZIP
+            $zipFilePath = tempnam($tempDir, 'import_') . '.zip';
+
             // Guardar la respuesta en un archivo ZIP
             file_put_contents($zipFilePath, $response);
 
@@ -120,14 +121,6 @@ class WordImport
     }
 
 
-
-    /**
-     * Se le pasa normalmente $_FILES['file']
-     */
-    public static function fromFormFile(array $word_file)
-    {
-    }
-
     /**
      * Borra los archivos temporales de operaciones de extracción de zip
      */
@@ -137,7 +130,9 @@ class WordImport
         $tempDir = sys_get_temp_dir();
 
         // Eliminar los archivos y carpetas temporales
-        @unlink($this->zipFile);
+        if($this->zipFile)
+            @unlink($this->zipFile);
+        if($this->images)
         foreach ($this->images as $image) {
             @unlink($tempDir . '/' . $image);
         }
@@ -180,6 +175,9 @@ class WordImport
 
     public function copyImagesTo($imagesDestinationFolder, $deletePrevious = false)
     {
+        if(!count($this->images))
+            return 0;
+
         $this->mediaFolder = $imagesDestinationFolder;
 
         if ($deletePrevious) {
@@ -205,5 +203,7 @@ class WordImport
             // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("storage/".$destinationFolder . "/" .  $imageFilename));
             copy($tempDir . '/' . $image, $destinationFolderPath . "/" .  $imageFilename);
         }
+
+        return count($this->images);
     }
 }
