@@ -71,10 +71,14 @@ class EquiposController extends Controller
                 ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
                 // ->take(30)
             ;
-        }])
-            ->where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        }]);
+
+
+        if (is_numeric($id)) {
+            $equipo = $equipo->findOrFail($id);
+        } else {
+            $equipo = $equipo->where('slug', $id)->firstOrFail();
+        }
 
         $carpetas = $equipo->carpetas()->get();
 

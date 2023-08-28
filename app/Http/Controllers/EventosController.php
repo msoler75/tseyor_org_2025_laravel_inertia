@@ -40,9 +40,11 @@ class EventosController extends Controller
 
     public function show($id)
     {
-        $evento = Evento::where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $evento = Evento::findOrFail($id);
+        } else {
+            $evento = Evento::where('slug', $id)->firstOrFail();
+        }
 
         $borrador = request()->has('borrador');
         $publicado =  $evento->visibilidad == 'P';
