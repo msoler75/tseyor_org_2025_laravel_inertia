@@ -21,7 +21,7 @@ class Libro extends SEOModel
         'visibilidad'
     ];
 
-    public static function search($term)
+    /* public static function search($term)
     {
         return static::query()
         ->where('visibilidad', 'P')
@@ -30,4 +30,5 @@ class Libro extends SEOModel
                  ->orWhere('descripcion', 'LIKE', "%{$term}%");
         });
     }
+    */
 }

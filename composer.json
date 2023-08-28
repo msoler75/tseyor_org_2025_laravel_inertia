@@ -14,9 +14,12 @@
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^3.2",
         "laravel/sanctum": "^3.2",
+        "laravel/scout": "*",
         "laravel/tinker": "^2.8",
         "ralphjsmit/laravel-seo": "^1.4",
         "spatie/laravel-permission": "^5.10",
+        "teamtnt/laravel-scout-tntsearch-driver": "^13.2",
+        "teamtnt/tntsearch": "^4.2",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {

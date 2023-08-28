@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\SEOModel;
+use Laravel\Scout\Searchable;
 
 
 class Comunicado extends SEOModel
 {
     use CrudTrait;
+    use Searchable;
 
     protected $fillable = [
         'titulo',
@@ -33,11 +35,45 @@ class Comunicado extends SEOModel
         });
     }
 
-    public static function search($term)
+    /* public static function search($term)
     {
         return static::query()
             ->where('titulo', 'LIKE', "%{$term}%")
             ->orWhere('texto', 'LIKE', "%{$term}%")
             ->orWhere('numero', '=', "{$term}");
+    }
+    */
+
+
+
+    // SCOUT
+
+
+     /**
+     * Solo se indexa si acaso está publicado
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return $this->visibilidad == 'P';
+    }
+
+
+   /**
+     * Get the indexable data array for the model.
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id, // <- Always include the primary key
+            'titulo' => $this->titulo,
+            'imagen' => $this->imagen,
+            'descripcion' => $this->descripcion,
+            'texto' => $this->texto,
+            'categoria' => $this->categoria,
+            'numero' => $this->numero,
+            'fecha_comunicado' => $this->fecha_comunicado,
+        ];
     }
 }

@@ -191,7 +191,9 @@ main a.hover\:underline:hover::after {
 }
 
 
-
+main em.search-term {
+    background: yellow;
+}
 
 
 /*

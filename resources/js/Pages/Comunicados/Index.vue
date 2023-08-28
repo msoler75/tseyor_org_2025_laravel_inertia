@@ -29,7 +29,7 @@
 
                         <SearchResultsHeader :results="listado" keyword="buscar_recientes" />
 
-                        <div v-if="listado.data.length > 0" class="grid gap-4"
+                        <div v-if="listado.data && listado.data.length > 0" class="grid gap-4"
                             :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
 
                             <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data"
@@ -43,7 +43,7 @@
 
                     </div>
 
-                    <div class="min-w-[250px] lg:min-w-[440px]" v-if="listado.first_page_url.indexOf('?buscar=') < 0">
+                    <div class="min-w-[250px] lg:min-w-[440px]" v-if="!mostrandoBusqueda">
                         <div class="card bg-base-100 shadow  p-10 space-y-7">
 
                             <h2 class="mb-5">Recientes</h2>
@@ -126,6 +126,7 @@ const props = defineProps({
 // const listado = ref(props.listado)
 // const recientes = ref(props.recientes)
 
+    const mostrandoBusqueda = computed(()=>window.location.search)
 
 </script>
 

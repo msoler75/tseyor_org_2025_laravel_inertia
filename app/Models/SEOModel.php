@@ -26,4 +26,7 @@ class SEOModel extends Model
             // schema:
         );
     }
+
+
+
 }

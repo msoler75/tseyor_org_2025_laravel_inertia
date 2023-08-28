@@ -23,6 +23,7 @@ class Contenido extends SEOModel
         'fecha',
     ];
 
+    /*
     public static function search($term)
     {
         return static::select(['coleccion', 'id_ref', 'descripcion', 'imagen', 'slug_ref', 'fecha'])
@@ -33,4 +34,5 @@ class Contenido extends SEOModel
             ->orWhere('texto', 'LIKE', "%{$term}%")
             ->get();
     }
+    */
 }
