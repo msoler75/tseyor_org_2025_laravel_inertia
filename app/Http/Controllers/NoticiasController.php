@@ -38,9 +38,11 @@ class NoticiasController extends Controller
 
     public function show($id)
     {
-        $noticia = Noticia::where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $noticia = Noticia::findOrFail($id);
+        } else {
+            $noticia = Noticia::where('slug', $id)->firstOrFail();
+        }
 
         $borrador = request()->has('borrador');
         $publicado =  $noticia->visibilidad == 'P';

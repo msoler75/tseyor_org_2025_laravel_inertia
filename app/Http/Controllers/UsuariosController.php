@@ -33,10 +33,11 @@ class UsuariosController extends Controller
 
     public function show($id)
     {
-        $usuario = User::with('equipos')
-            ->where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $usuario = User::with('equipos')->findOrFail($id);
+        } else {
+            $usuario = User::with('equipos')->where('slug', $id)->firstOrFail();
+        }
 
         if (!$usuario) {
             abort(404); // usuario no encontrado

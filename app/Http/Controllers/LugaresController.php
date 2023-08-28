@@ -27,9 +27,11 @@ class LugaresController extends Controller
 
     public function show($id)
     {
-        $lugar = Lugar::where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $lugar = Lugar::findOrFail($id);
+        } else {
+            $lugar = Lugar::where('slug', $id)->firstOrFail();
+        }
 
         $borrador = request()->has('borrador');
         $publicado =  $lugar->visibilidad == 'P';

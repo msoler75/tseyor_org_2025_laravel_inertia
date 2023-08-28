@@ -33,9 +33,11 @@ class EntradasController extends Controller
 
     public function show($id)
     {
-        $entrada = Entrada::where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $entrada = Entrada::findOrFail($id);
+        } else {
+            $entrada = Entrada::where('slug', $id)->firstOrFail();
+        }
 
         $borrador = request()->has('borrador');
         $publicado =  $entrada->visibilidad == 'P';

@@ -22,12 +22,14 @@ class GuiasController extends Controller
 
     public function show($id)
     {
-        $guia = Guia::where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $guia = Guia::findOrFail($id);
+        } else {
+            $guia = Guia::where('slug', $id)->firstOrFail();
+        }
 
         if (!$guia) {
-            abort(404); // Manejo de Centro no encontrada
+            abort(404); // Guía Estelar no encontrada
         }
 
         $guias = Guia::select(['nombre', 'slug'])->take(50)->get();

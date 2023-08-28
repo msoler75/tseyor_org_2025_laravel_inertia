@@ -40,9 +40,11 @@ class AudiosController extends Controller
 
     public function show($id)
     {
-        $audio = Audio::where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $audio = Audio::findOrFail($id);
+        } else {
+            $audio = Audio::where('slug', $id)->firstOrFail();
+        }
 
         if (!$audio) {
             abort(404); // Manejo de audio no encontrada

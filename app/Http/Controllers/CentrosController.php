@@ -50,9 +50,11 @@ class CentrosController extends Controller
 
     public function show($id)
     {
-        $centro = Centro::where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $centro = Centro::findOrFail($id);
+        } else {
+            $centro = Centro::where('slug', $id)->firstOrFail();
+        }
 
         if (!$centro) {
             abort(404); // Manejo de Centro no encontrada

@@ -40,9 +40,11 @@ class LibrosController extends Controller
 
     public function show($id)
     {
-        $libro = Libro::where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $libro = Libro::findOrFail($id);
+        } else {
+            $libro = Libro::where('slug', $id)->firstOrFail();
+        }
 
         $borrador = request()->has('borrador');
         $publicado =  $libro->visibilidad == 'P';

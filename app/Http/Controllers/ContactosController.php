@@ -53,9 +53,11 @@ class ContactosController extends Controller
 
     public function show($id)
     {
-        $contacto = Contacto::where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $contacto = Contacto::findOrFail($id);
+        } else {
+            $contacto = Contacto::where('slug', $id)->firstOrFail();
+        }
 
         $borrador = request()->has('borrador');
         $publicado =  $contacto->visibilidad == 'P';
