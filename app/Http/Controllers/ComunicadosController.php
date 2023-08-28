@@ -84,9 +84,11 @@ class ComunicadosController extends Controller
 
     public function show($id)
     {
-        $comunicado = Comunicado::where('slug', $id)
-            ->orWhere('id', $id)
-            ->firstOrFail();
+        if (is_numeric($id)) {
+            $comunicado = Comunicado::findOrFail($id);
+        } else {
+            $comunicado = Comunicado::where('slug', $id)->firstOrFail();
+        }
 
         $borrador = request()->has('borrador');
         $publicado =  $comunicado->visibilidad == 'P';

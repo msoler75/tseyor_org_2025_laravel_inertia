@@ -56,7 +56,7 @@ Route::get('/filemanager{ruta}', [ArchivosController::class, 'filemanager'])->wh
 Route::get('/storage/{ruta}', [ArchivosController::class, 'storage'])->where(['ruta' => '(\/.+)?'])->name('storage');
 
 Route::get('/audios', [AudiosController::class, 'index'])->name('audios');
-Route::get('/audios/{id}', [AudiosController::class, 'show'])->name('audio');
+Route::get('/audios/{slug}', [AudiosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('audio');
 
 Route::get('/videos', function () {
     return Inertia::render('Videos', [])
@@ -65,34 +65,34 @@ Route::get('/videos', function () {
 
 
 Route::get('/noticias', [NoticiasController::class, 'index'])->name('noticias');
-Route::get('/noticias/{id}', [NoticiasController::class, 'show'])->name('noticia');
+Route::get('/noticias/{slug}', [NoticiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('noticia');
 
 Route::get('/comunicados', [ComunicadosController::class, 'index'])->name('comunicados');
-Route::get('/comunicados/{id}', [ComunicadosController::class, 'show'])->name('comunicado');
+Route::get('/comunicados/{slug}', [ComunicadosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('comunicado');
 Route::get('/archivo/comunicados', [ComunicadosController::class, 'archive'])->name('archivo.comunicados');
 
 Route::get('/libros', [LibrosController::class, 'index'])->name('libros');
-Route::get('/libros/{id}', [LibrosController::class, 'show'])->name('libro');
+Route::get('/libros/{slug}', [LibrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('libro');
 
 
 Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');
-Route::get('/entradas/{id}', [EntradasController::class, 'show'])->name('entrada');
+Route::get('/entradas/{slug}', [EntradasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('entrada');
 
 Route::get('/enciclopedia/guias', [GuiasController::class, 'index'])->name('enciclopedia.guias');
-Route::get('/enciclopedia/guias/{id}', [GuiasController::class, 'show'])->name('enciclopedia.guia');
+Route::get('/enciclopedia/guias/{slug}', [GuiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('enciclopedia.guia');
 
 Route::get('/enciclopedia/lugares', [LugaresController::class, 'index'])->name('enciclopedia.lugares');
-Route::get('/enciclopedia/lugares/{id}', [LugaresController::class, 'show'])->name('enciclopedia.lugar');
+Route::get('/enciclopedia/lugares/{slug}', [LugaresController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('enciclopedia.lugar');
 
 Route::get('/eventos', [EventosController::class, 'index'])->name('eventos');
-Route::get('/eventos/{id}', [EventosController::class, 'show'])->name('evento');
+Route::get('/eventos/{slug}', [EventosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('evento');
 
 
 Route::get('/donde-estamos', [ContactosController::class, 'index'])->name('contactos');
-Route::get('/contactos/{id}', [ContactosController::class, 'show'])->name('contacto');
+Route::get('/contactos/{slug}', [ContactosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('contacto');
 
 Route::get('/centros', [CentrosController::class, 'index'])->name('centros');
-Route::get('/centros/{id}', [CentrosController::class, 'show'])->name('centro');
+Route::get('/centros/{slug}', [CentrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('centro');
 
 Route::get('/quienes-somos', function () {
     return Inertia::render('Presentacion/QuienesSomos', [])
@@ -136,12 +136,12 @@ Route::get(
         return Redirect::to('/equipos?categoria=utg');
     }
 )->name('utg.departamentos');
-Route::get('/utg/departamentos/{id}', [EquiposController::class, 'show'])->name('utg.departamento');
+Route::get('/utg/departamentos/{slug}', [EquiposController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('utg.departamento');
 
 Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios');
 Route::get('/usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->name('usuarios.buscar');
 Route::get('/usuarios/_permisos', [UsuariosController::class, 'permissions'])->name('usuario.permisos');
-Route::get('/usuarios/{id}', [UsuariosController::class, 'show'])->name('usuario');
+Route::get('/usuarios/{slug}', [UsuariosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('usuario');
 
 Route::get('/login/1', [DevController::class, 'loginUser1'])->name('login1');
 Route::get('/login/2', [DevController::class, 'loginUser2'])->name('login2');
@@ -167,7 +167,7 @@ Route::get('/equipos/nuevo', function() {
     return Inertia::render('Equipos/Nuevo', []);
 })->name('equipo.crear');
 Route::post('/equipos', [EquiposController::class, 'store'])->name('equipo.nuevo');
-Route::get('/equipos/{id}', [EquiposController::class, 'show'])->name('equipo');
+Route::get('/equipos/{slug}', [EquiposController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('equipo');
 
 // invitaciones y respuesta
 Route::post('/invitar/{idEquipo}', [EquiposController::class, 'invite'])->name('invitar');

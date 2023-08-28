@@ -19,6 +19,8 @@ class Comunicado extends SEOModel
         'imagen',
         'fechaComunicado',
         'visibilidad',
+        'pdf',
+        'audios',
         'slug',
     ];
 

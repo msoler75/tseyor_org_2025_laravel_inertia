@@ -33,7 +33,7 @@ class ComunicadoImport
             $nombrePdf = $campos[4] . '.pdf';
             $nombresMp3 = isset($campos[5]) ? explode(',', $campos[5]) : [];
 
-            $tituloFormato = ($categoria == 'GEN' ?'': $categoria . " ") . $numero . ". " . $titulo;
+            $tituloFormato = ($categoria == 'GEN' ? '' : $categoria . " ") . $numero . ". " . $titulo;
 
             echo "$numero $categoria $fecha $titulo ... ";
 
@@ -49,56 +49,64 @@ class ComunicadoImport
 
                 $archivoWord = self::searchDocx($numero, $categoria, $fecha);
 
-                $imported = new WordImport($archivoWord);
+                try {
 
-                $dateObj = DateTime::createFromFormat('y/m/d', $fecha);
+                    $imported = new WordImport($archivoWord);
 
-                if (!$dateObj) {
-                    echo "Error en formato de Fecha para $fecha";
-                    die;
+                    $dateObj = DateTime::createFromFormat('y/m/d', $fecha);
+
+                    if (!$dateObj) {
+                        echo "Error en formato de Fecha para $fecha";
+                        die;
+                    }
+
+                    $texto = $imported->content;
+
+                    $año = $dateObj->format('Y');
+
+
+                    // Copiaremos las imágenes a la carpeta de destino
+                    $imagesFolder = "media/comunicados/$año/" . ($categoria == 'GEN' ? '' : $categoria . "_") . $numero;
+
+                    // copia las imágenes desde la carpeta temporal al directorio destino
+                    if ($imported->copyImagesTo($imagesFolder)) {
+                        // reemplazar la ubicación de las imágenes en el texto del comunicado
+                        $texto = preg_replace("/\bmedia\//", "$imagesFolder/", $texto);
+                        $texto = preg_replace("/\.\/media\//", "/storage/media/", $texto);
+                    }
+
+                    // Rutas de las carpetas
+                    $rutaPdf = 'media/comunicados/pdf/' .  $año . '/';
+                    $rutaMp3 = 'media/comunicados/mp3/' .  $año . '/';
+
+                    // Asignar los nombres de los archivos MP3
+                    $mp3 = [];
+                    foreach ($nombresMp3 as $nombreMp3) {
+                        if ($nombreMp3)
+                            $mp3[] = $rutaMp3 . $nombreMp3 . '.mp3';
+                    }
+
+                    // Crear una nueva instancia de Comunicado
+                    $comunicado = Comunicado::create([
+                        "titulo" => $tituloFormato,
+                        "slug" => null,
+                        "fecha_comunicado"  => $dateObj->format('Y-m-d'),
+                        "texto" => $texto,
+                        "numero" => $numero,
+                        "categoria" => $categoria,
+                        "pdf" => $rutaPdf . $nombrePdf,
+                        "audios" => json_encode($mp3),
+                        "visibilidad" => 'P'
+                    ]);
+
+
+                    echo "guardado con id {$comunicado->id}\n";
+                } catch (Exception $e) {
+                    $imported->deleteTempAtEnd = false;
+                    echo "Exception\n";
+                    echo "zip File: {$imported->zipFile}\n";
+                    throw $e;
                 }
-
-                $texto = $imported->content;
-
-                $año = $dateObj->format('Y');
-
-                // Copiaremos las imágenes a la carpeta de destino
-                $imagesFolder = "media/comunicados/$año/" . ($categoria == 'GEN' ?'': $categoria . "_") . $numero;
-
-                // copia las imágenes desde la carpeta temporal al directorio destino
-                if($imported->copyImagesTo($imagesFolder)) {
-                    // reemplazar la ubicación de las imágenes en el texto del comunicado
-                    $texto = preg_replace("/\bmedia\//", "$imagesFolder/", $texto);
-                    $texto = preg_replace("/\.\/media\//", "/storage/media/", $texto);
-                }
-
-                // Rutas de las carpetas
-                $rutaPdf = 'media/comunicados/pdf/' .  $año . '/';
-                $rutaMp3 = 'media/comunicados/mp3/' .  $año . '/';
-
-                // Asignar los nombres de los archivos MP3
-                $mp3 = [];
-                foreach ($nombresMp3 as $nombreMp3) {
-                    if ($nombreMp3)
-                        $mp3[] = $rutaMp3 . $nombreMp3 . '.mp3';
-                }
-
-
-                // Crear una nueva instancia de Comunicado
-                $comunicado = Comunicado::create([
-                    "titulo" => $tituloFormato,
-                    "slug" => null,
-                    "fecha_comunicado"  => $dateObj->format('Y-m-d'),
-                    "texto" => $texto,
-                    "numero" => $numero,
-                    "categoria" => $categoria,
-                    "pdf" => $rutaPdf . $nombrePdf,
-                    "audios" => json_encode($mp3),
-                    "visibilidad" => 'P'
-                ]);
-
-
-                echo "guardado con id {$comunicado->id}\n";
             }
         }
     }
