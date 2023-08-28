@@ -31,13 +31,30 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         // si no muestra algun dato de .env, hay que borrar la cache
+        $ajaxWords = ['buscar', 'buscar_recientes', 'buscar_archivo'];
 
+        $isAjax = false;
+        foreach ($ajaxWords as $word)
+            if ($request->has($word)) {
+                $isAjax = true;
+                break;
+            }
+
+        // versión corta
+        if ($isAjax)
+            return array_merge(parent::share($request), [
+                'flash' => [
+                    'message' => fn () => $request->session()->get('message')
+                ]
+            ]);
+
+        // llamada normal
         return array_merge(parent::share($request), [
             'flash' => [
                 'message' => fn () => $request->session()->get('message')
             ],
-            'anuncio'=>env('ANUNCIO_GLOBAL_HTML'),
-            'meta_image_default'=> env('META_IMAGE_DEFAULT'),
+            'anuncio' => env('ANUNCIO_GLOBAL_HTML'),
+            'meta_image_default' => env('META_IMAGE_DEFAULT'),
             'csrf_token' => csrf_token(),
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [

@@ -72,11 +72,14 @@ class UsuariosController extends Controller
      */
     public function search($buscar)
     {
-        $resultados = User::select(['id', 'name as nombre'])
+        /*$resultados = User::select(['id', 'name as nombre'])
             ->where('slug', 'like', '%' . $buscar . '%')
             ->orWhere('name', 'like', '%' . $buscar . '%')
             ->orWhere('email', 'like', '%' . $buscar . '%')
-            ->take(10)->get()->toArray();
+            ->take(10)->get()->toArray();*/
+
+            $resultados = User::select(['id', 'name as nombre'])
+            ->search($buscar)->take(10)->get()->toArray();
 
         return response()->json($resultados, 200);
     }

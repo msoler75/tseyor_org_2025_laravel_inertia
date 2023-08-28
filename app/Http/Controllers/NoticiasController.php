@@ -15,7 +15,7 @@ class NoticiasController extends Controller
     {
         $filtro = $request->input('buscar');
 
-        $resultados = $filtro ? Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])
+        $resultados = $filtro ? /*Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])
             ->where('visibilidad', 'P')
             ->where(function ($query) use ($filtro) {
                 $query->where('titulo', 'like', '%' . $filtro . '%')
@@ -23,6 +23,8 @@ class NoticiasController extends Controller
                     ->orWhere('texto', 'like', '%' . $filtro . '%');
             })
             ->paginate(10)->appends(['buscar' => $filtro])
+            */
+            Noticia::search($filtro)->where('visibilidad', 'P')->paginate(10)
             :
             Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])->where('visibilidad', 'P')->latest()->paginate(10);
 

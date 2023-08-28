@@ -28,3 +28,8 @@ https://github.com/Laravel-Backpack/revise-operation
 Importar datos
 -exportar todos los comunicados en .json
 -importarlos via script (md) o usando documentos word (docx)
+
+
+
+TNTSearch
+https://tnt.studio/searching-for-users-with-laravel-scout-and-tntsearch
