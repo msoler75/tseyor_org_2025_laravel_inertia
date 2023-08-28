@@ -77,7 +77,10 @@ class ComunicadoCrudController extends CrudController
         $this->crud->addColumn([
             'name'  => 'numero',
             'label' => 'Numero',
-            'type'  => 'number'
+            'type'  => 'text',
+            'wrapper' => [
+                'class' => 'form-group col-md-3'
+            ]
         ]);
 
         $this->crud->addColumn([

@@ -35,4 +35,3 @@ const props = defineProps({
 });
 
 </script>
-
