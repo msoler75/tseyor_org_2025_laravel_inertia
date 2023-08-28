@@ -19,7 +19,8 @@ class Contenidos
             $candidatos = ["titulo", "nombre"];
             foreach ($candidatos as $campo) {
                 if (in_array($campo, $fillable)) {
-                    $objeto->slug = Str::slug($objeto->{$campo});
+                    $prefijo = $objeto->numero ? $objeto->numero . "-" : "";
+                    $objeto->slug = Str::slug($prefijo . $objeto->{$campo});
                     // dd($objeto->slug);
                     break;
                 }
