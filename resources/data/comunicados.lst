@@ -27,7 +27,7 @@ XII;GEN;04/12/28;Posibles problemas en las comunicaciones;041228 (XII);
 012;GEN;05/02/11;La revolución de nuestro mundo interior;050211 (012);050211 (012)
 013;GEN;05/02/18;La música del silencio;050218 (013);050218 (013) a,050218 (013) b
 014;GEN;05/02/25;La rutinaria noria del absoluto;050225 (014);
-014b;GEN;05/02/26;Una torrencial lluvia de energías;050226 (014b);
+014bis;GEN;05/02/26;Una torrencial lluvia de energías;050226 (014b);
 015;GEN;05/03/05;Recuperar el paraíso perdido;050305 (015);
 016;GEN;05/03/11;Estar y no estar;050311 (016);050311 (016)
 017;GEN;05/03/18;Los escépticos tambien cuentan;050318 (017);
@@ -37,7 +37,7 @@ XII;GEN;04/12/28;Posibles problemas en las comunicaciones;041228 (XII);
 021;GEN;05/04/15;Nuevas ideas, nuevos arquetipos;050415 (021);050415 (021)
 022;GEN;05/04/22;La clave: el movimiento continuo;050422 (022);050422 (022)
 023;GEN;05/04/29;El mundo de los sueños I;050429 (023);050429 (023)
-023b;GEN;05/05/03;El mundo de los sueños II: el pensamiento abstracto;050503 (023b);
+023bis;GEN;05/05/03;El mundo de los sueños II: el pensamiento abstracto;050503 (023b);
 024;GEN;05/05/06;El mundo de los sueños III: un mundo completo e infinito;050506 (024);050506 (024)
 025;GEN;05/05/13;El universo es mental;050513 (025);050513 (025)
 026;GEN;05/05/20;Todos participamos en todo el universo;050520 (026);050520 (026)
@@ -55,10 +55,10 @@ XII;GEN;04/12/28;Posibles problemas en las comunicaciones;041228 (XII);
 038;GEN;05/08/05;La escalera;050805 (038);050805 (038)
 039;GEN;05/08/19;El compromiso;050819 (039);050819 (039)
 040;GEN;05/08/26;Dinámica grupal;050826 (040) PAB;050826 (040) PAB
-041;GEN;05/09/02;Los tiempos que corren i;050902 (041);050902 (041)
+041;GEN;05/09/02;Los tiempos que corren;050902 (041);050902 (041)
 042;GEN;05/09/09;Renunciar al cambio;050909 (042);050909 (042)
 043;GEN;05/09/16;Empezar a andar;050916 (043);050916 (043)
-044;GEN;05/09/23;Los tiempos que corren;050923 (044);
+044;GEN;05/09/23;Los tiempos que corren II;050923 (044);
 045;GEN;05/09/30;Iluminación y oscurantismo;050930 (045) PAB;
 046;GEN;05/10/07;La semilla del hombre de las estrellas;051007 (046);051007 (046)
 047;GEN;05/10/14;El planeta agguniom;051014 (047);051014 (047)
@@ -82,7 +82,7 @@ XII;GEN;04/12/28;Posibles problemas en las comunicaciones;041228 (XII);
 065;GEN;06/02/17;Ficción y realidad;060217 (065);060217 (065) a,060217 (065) b
 066;GEN;06/02/24;Pensamiento global u holográfico;060224 (066) PAB;060224 (066) PAB a,060224 (066) PAB b
 067;GEN;06/03/03;La iniciación;060303 (067);060303 (067)
-067b;GEN;06/03/05;Primera entrega de nombres simbólicos;060305 (067b);060305 (067b) a,060305 (067b) b
+067bis;GEN;06/03/05;Primera entrega de nombres simbólicos;060305 (067b);060305 (067b) a,060305 (067b) b
 068;GEN;06/03/10;El puzle holográfico cuántico;060310 (068);060310 (068) a,060310 (068) b
 069;GEN;06/03/17;Bienvenida a Orsil;060317 (069);060317 (069)
 070;GEN;06/03/24;Universidad del puzle holográfico cuántico;060324 (070);060324 (070) a,060324 (070) b
@@ -157,7 +157,7 @@ XII;GEN;04/12/28;Posibles problemas en las comunicaciones;041228 (XII);
 139;GEN;07/07/20;El control de la entropía y jornada de iniciaciones;070720 (139);070720 (139) a,070720 (139) b,070720 (139) c,070720 (139) d
 140;GEN;07/07/27;Paciencia;070727 (140);070727 (140) a,070727 (140) b
 141;GEN;07/08/03;Un error muy sutil;070803 (141);070803 (141)
-141b;GEN;07/08/04;Mensaje de Shilcars: encuentro en México;070804 (141b);
+141bis;GEN;07/08/04;Mensaje de Shilcars: encuentro en México;070804 (141b);
 142;GEN;07/08/10;Un proceso planetario muy difícil;070810 (142);070810 (142)
 143;GEN;07/08/24;Adonais nos envia energía de sanación;070824 (143);070824 (143)
 144;GEN;07/08/31;Cada vez la ascensión va a ser mas difícil;070831 (144);070831 (144)
@@ -211,7 +211,6 @@ XII;GEN;04/12/28;Posibles problemas en las comunicaciones;041228 (XII);
 192;GEN;08/05/10;Reunión del grupo "pueblo tseyor" ii;080510 (192);080510 (192)
 193;GEN;08/05/12;Una ceremonia sencilla... Pulsar sanador tseyor con Melcor;080512 (193);080512 (193)
 194;GEN;08/05/16;Pregonamos la alegría y la felicidad;080516 (194);080516 (194)
-S/N;GEN;08/05/16;Entrevista sirio en radio palma de mallorca;;080516 (SN) ENT
 195;GEN;08/05/17;Reunión del grupo "pueblo tseyor" iii;080517 (195);080517 (195)
 196;GEN;08/05/19;Hablando claro - intervención Melcor en púlsar sanador de tseyor;080519 (196);080519 (196)
 197;GEN;08/05/23;Sed humildes;080523 (197);080523 (197)
@@ -255,16 +254,16 @@ S/N;GEN;08/05/16;Entrevista sirio en radio palma de mallorca;;080516 (SN) ENT
 235;GEN;08/12/12;El cuento del sabio que creía en si mismo;081212 (235);081212 (235)
 236;GEN;08/12/14;La responsabilidad de las salas de sanación (Melcor);081214 (236);081214 (236)
 237;GEN;08/12/22;Bendiciones a pulsar sanador, a la confederación y a salas de sanación que se replican (Melcor);081222 (237);081222 (237)
-238;GEN;08/12/29;Nuestra ocupación esencial es la de mantenernos sanos mentalmente. (Melcor);081229 (238);081229 (238)
-239;GEN;09/01/05;Nuestras mentes y cuerpos estan sanando. (Melcor);090105 (239);090105 (239)
+238;GEN;08/12/29;Nuestra ocupación esencial es la de mantenernos sanos mentalmente;081229 (238);081229 (238)
+239;GEN;09/01/05;Nuestras mentes y cuerpos estan sanando;090105 (239);090105 (239)
 240;GEN;09/01/09;Presentación de Seiph. Taller de autoobservación de Seiph;090109 (240);090109 (240)
-241;GEN;09/01/16;Sed niños, alegres, confiados, responsables.;090116 (241);090116 (241)
+241;GEN;09/01/16;Sed niños, alegres, confiados, responsables;090116 (241);090116 (241)
 242;GEN;09/01/30;Es hora de que hagamos balance;090130 (242);090130 (242)
-243;GEN;09/02/02;Una esfera en la que nos hemos englobado todos. (Melcor);090202 (243);090202 (243)
+243;GEN;09/02/02;Una esfera en la que nos hemos englobado todos;090202 (243);090202 (243)
 244;GEN;09/02/06;Aproximación a espacios adimencionales con toda libertad;090206 (244) PAB;090206 (244) PAB
 245;GEN;09/02/13;El trabajo exóterico y esotérico. Segundo aniversario del décimo pliego. Despedida de Orsil;090213 (245);090213 (245)
 246;GEN;09/02/27;Un puente con nuestra réplica en la nave;090227 (246);090227 (246)
-247;GEN;09/03/06;Apertura del undécimo pliego. (instauración de los g.T.I);090306 (247);090306 (247)
+247;GEN;09/03/06;Apertura del undécimo pliego. Instauración de los GTI;090306 (247);090306 (247)
 248;GEN;09/03/08;La meditación es recogimiento, sin pensamiento alguno;090308 (248);
 249;GEN;09/03/13;Sincronía por hermandad;090313 (249);090313 (249)
 250;GEN;09/03/27;Renunciar a los efectos ilusorios de este mundo 3d;090327 (250);090327 (250)
@@ -272,7 +271,7 @@ S/N;GEN;08/05/16;Entrevista sirio en radio palma de mallorca;;080516 (SN) ENT
 252;GEN;09/04/10;La autorrealización del ser;090410 (252);090410 (252)
 253;GEN;09/04/24;Debemos despertar del sueño de los sentidos;090424 (253);090424 (253)
 254;GEN;09/05/01;Ejercicio de búsqueda de lo que no sabemos que sabemos;090501 (254);090501 (254)
-255;GEN;09/05/04;Elección de un compromisario para la vacante de pulsar sanador de tseyor (Melcor).;090504 (255);090504 (255)
+255;GEN;09/05/04;Elección de un compromisario para la vacante de pulsar sanador de tseyor;090504 (255);090504 (255)
 256;GEN;09/05/08;Sociedades armónicas basadas en el intercambio;090508 (256);090508 (256)
 257;GEN;09/05/11;Intervención de Melcor: sois completamente libres;090511 (257);
 258;GEN;09/05/15;El tren de tseyor;090515 (258) PAB;090515 (258) PAB
@@ -350,7 +349,7 @@ S/N;GEN;08/05/16;Entrevista sirio en radio palma de mallorca;;080516 (SN) ENT
 330;GEN;10/08/26;Dos tipos de información: exotérica y esotérica;100826 (330);100826 (330)
 331;GEN;10/09/03;Es momento de despertar. Continuación del "cuento del pequeño cristian" segunda parte. Primer acto;100903 (331);100903 (331)
 332;GEN;10/09/10;Estamos en fase de pruebas;100910 (332);100910 (332)
-333;GEN;10/09/17;Confiemos en nosotros mismos (cuento del pequeño cristian segunda parte. Segundo acto;100917 (333);100917 (333)
+333;GEN;10/09/17;Confiemos en nosotros mismos. Cuento del pequeño cristian, segunda parte, segundo acto;100917 (333);100917 (333)
 334;GEN;10/09/21;El apego es miedo;100921 (334);100921 (334)
 335;GEN;10/09/24;Existe un mundo feliz, acompasado, equilibrado;100924 (335);100924 (335)
 336;GEN;10/09/30;Taller de auto-observación de Melcor. El origen de nuestro pensamiento;100930 (336) TRI;100930 (336) TRI
