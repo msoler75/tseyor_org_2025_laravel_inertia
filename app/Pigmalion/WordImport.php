@@ -14,6 +14,7 @@ class WordImport
     public string $content = "";
     public string $mediaFolder = "";
     public string $mediaFolderPath = "";
+    public bool $deleteTempAtEnd = true;
 
     /**
      * Esta es la función principal a la que podemos llamar desde un controlador CRUD de backpack
@@ -117,7 +118,8 @@ class WordImport
     public function __destruct()
     {
         // borramos los archivos temporales
-        $this->cleanTempFiles();
+        if($this->deleteTempAtEnd)
+            $this->cleanTempFiles();
     }
 
 
