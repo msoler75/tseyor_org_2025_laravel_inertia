@@ -20,6 +20,7 @@ class Busquedas
                 $textoLimpio = preg_replace('/\bimg\b/', '', $textoLimpio); // Eliminar la palabra "img"
                 // eliminamos caracters de markdown
                 $textoLimpio = preg_replace("/[#*]/", "", $textoLimpio);
+                $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
 
                 // extraemos la parte más relevante
                 $parteRelevante = $h->extractRelevant($busqueda, $textoLimpio, 400);

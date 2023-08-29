@@ -2,132 +2,131 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="comunicado" necesita="administrar contenidos" class="mb-3"/>
+        <AdminPanel modelo="comunicado" necesita="administrar contenidos" class="mb-3" />
 
-        <tabs>
-            <tab name="Recientes">
+        <div class="flex gap-12">
+            <div>
+                <h1>Comunicados de Tseyor</h1>
+                <p>Aquí puedes encontrar todos los comunicados de Tseyor.</p>
+            </div>
 
-                <div class="flex gap-12">
-                    <div>
-                        <h1>Comunicados Recientes</h1>
-                        <p>Aquí puedes encontrar los últimas comunicados de Tseyor.</p>
-                    </div>
+            <Planets />
 
-                    <Planets />
+        </div>
+
+
+
+        <div class="flex flex-wrap justify-between mb-5 items-baseline mt-7 gap-5">
+
+            <a v-for="categoria, index of categorias" :key="index"
+            :style="{order: categoria.order}"
+            class="cursor-pointer hover:underline select-none"
+                @click="seleccionado(index)">
+                <span :class="categoriaActual == index ? 'border-b-4 border-secondary font-bold' : ''">
+                    {{ categoria.etiqueta }}
+                </span>
+            </a>
+
+            <div class="flex gap-2 select-none"><input id="tabla" type="checkbox" v-model="tabla"><label for="tabla">Solo
+                    listado</label></div>
+
+            <SearchInput />
+        </div>
+
+        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+
+            <div class="flex-grow">
+
+                <SearchResultsHeader :results="listado" />
+
+                <div v-if="(!vistaActual || vistaActual == 'tarjetas' || mostrandoBusqueda) && listado.data && listado.data.length > 0"
+                    class="grid gap-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+
+                    <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data" :key="contenido.id"
+                        :title="contenido.titulo" :image="contenido.imagen" :href="route('comunicado', contenido.slug)"
+                        :description="contenido.descripcion" :date="contenido.published_at" />
 
                 </div>
 
 
-                <div class="flex justify-end mb-5">
-                    <SearchInput keyword="buscar_recientes" />
-                </div>
-
-
-                <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
-
-                    <div class="flex-grow">
-
-                        <SearchResultsHeader :results="listado" keyword="buscar_recientes" />
-
-                        <div v-if="listado.data && listado.data.length > 0" class="grid gap-4"
-                            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
-
-                            <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data"
-                                :key="contenido.id" :title="contenido.titulo" :image="contenido.imagen"
-                                :href="route('comunicado', contenido.slug)" :description="contenido.descripcion"
-                                :date="contenido.published_at" />
-
-                        </div>
-
-                        <pagination class="mt-6" :links="listado.links" />
-
-                    </div>
-
-                    <div class="min-w-[250px] lg:min-w-[440px]" v-if="!mostrandoBusqueda">
-                        <div class="card bg-base-100 shadow  p-10 space-y-7">
-
-                            <h2 class="mb-5">Recientes</h2>
-                            <ul class="list-disc">
-                                <li v-for="comunicado in recientes" :key="comunicado.id">
-                                    <Link :href="`/comunicados/${comunicado.slug}`"
-                                        class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
-                                    {{ comunicado.titulo }}
-                                    </Link>
-                                </li>
-                            </ul>
-
-
-                        </div>
-                    </div>
-                </div>
-
-            </tab>
-
-
-
-
-            <tab name="Archivados ⭐">
-
-                <h1>Archivo de Comunicados</h1>
-                <p>Consulta todos los comunicados registrados en archivo.</p>
-
-                <div class="flex justify-end mb-5">
-                    <SearchInput keyword="buscar_archivo" />
-                </div>
-
-                <SearchResultsHeader :results="archivo" keyword="buscar_archivo" />
-
-                <table class="table">
+                <table v-else-if="vistaActual == 'tabla' && listado.data && listado.data.length > 0" class="table">
                     <thead>
                         <tr class="table-row">
-                            <th scope="col" class="table-header">Número</th>
-                            <th scope="col" class="table-header">Categoría</th>
                             <th scope="col" class="table-header">Fecha</th>
+                            <!-- <th scope="col" class="table-header">Categoría</th>
+                            <th scope="col" class="table-header">Número</th> -->
                             <th scope="col" class="table-header">Título</th>
                         </tr>
                     </thead>
                     <tbody class="table-body">
                         <tr v-for="(comunicado, index) of archivo.data" :key="comunicado.slug" class="table-row">
-                            <td class="table-cell">{{ comunicado.numero }}</td>
-                            <td class="table-cell">{{ comunicado.categoria }}</td>
                             <td class="table-cell">{{ comunicado.fecha_comunicado }}</td>
+                            <!-- <td class="table-cell">{{ comunicado.categoria }}</td>
+                            <td class="table-cell">{{ comunicado.numero }}</td> -->
                             <td class="table-cell">{{ comunicado.titulo }}</td>
                         </tr>
                     </tbody>
                 </table>
 
+                <pagination class="mt-6" :links="listado.links" />
 
-                <pagination class="mt-6" :links="archivo.links" />
+            </div>
 
 
-
-            </tab>
-
-        </tabs>
-
+        </div>
     </div>
 </template>
 
 <script setup>
 
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { Tabs, Tab } from 'vue3-tabs-component';
 
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    vista: {},
+    vista: { default: '' },
+    categoria: { default: 'recientes' },
+    año: {},
     filtrado: {},
     listado: {},
     recientes: {},
     archivo: {}
 });
 
+
+const tabla = ref(props.vista == 'tabla')
+const vistaActual = ref(props.vista)
+const categoriaActual = ref(props.categoria)
+
+watch(tabla, (value) => {
+    vistaActual.value = value ? 'tabla' : 'tarjetas'
+})
+
 // const listado = ref(props.listado)
 // const recientes = ref(props.recientes)
 
-    const mostrandoBusqueda = computed(()=>window.location.search)
+const mostrandoBusqueda = computed(() => window.location.search.indexOf(/buscar/) > -1)
 
+// Obtener la fecha actual
+const añoActual = new Date().getFullYear()
+
+const categorias = ref({
+    recientes: {etiqueta:'Recientes', order: -3},
+    general: {etiqueta:'Lista general', order: -2 },
+    buscador: {etiqueta:'Buscador avanzado', order: -1}})
+
+categorias.value[añoActual] = {etiqueta: añoActual, order: 0}
+categorias.value[añoActual-1] = {etiqueta: añoActual-1, order: 0}
+categorias.value[añoActual-2] = {etiqueta: añoActual-2, order: 0}
+
+function seleccionado(categoria) {
+    categoriaActual.value = categoria
+}
+
+watch(categoriaActual, (value) => {
+    const currentUrl = window.location.href.replace(/\?.*/, '')
+    router.get(currentUrl, { categoria: value })
+})
 </script>
 
 
