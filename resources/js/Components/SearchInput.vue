@@ -41,7 +41,8 @@ const props = defineProps({
         type: String,
         required: false,
         default: "Buscar..."
-    }
+    },
+    arguments: {}
 })
 
 const maxWidth = ref(200);
@@ -63,8 +64,10 @@ onMounted(() => {
 });
 
 const submit = () => {
-    const args = {}
+    var args = {}
     args[props.keyword] = filtro.value
+    if(typeof props.arguments === 'object')
+    args = {...props.arguments, ...args}
     router.get(currentUrl.value, args);
     emit('search');
 };
