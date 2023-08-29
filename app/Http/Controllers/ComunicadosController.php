@@ -31,59 +31,62 @@ class ComunicadosController extends Controller
 
     public function index(Request $request)
     {
-        $filtro_recientes = $request->input('buscar_recientes');
-        $filtro_archivo = $request->input('buscar_archivo');
+        $buscar = $request->input('buscar');
+        $categoria = $request->input('categoria');
         $vista = $request->input('vista');
 
         // hay dos filtros, uno para cada tipo de vista (recientes ó archivo)
 
         // $tnt = new TNTSearch();
         // devuelve los comunicados recientes segun el filtro, o los más recientes si no hay filtro
-        $resultados = $filtro_recientes ? Comunicado::search($filtro_recientes)
-            ->paginate(10, "page_recientes")
-            ->appends(['buscar_recientes' => $filtro_recientes,  'vista' => $vista])
-            /*->where('visibilidad', 'P')
-            ->where(function ($query) use ($filtro_recientes) {
-                $query->where('titulo', 'like', '%' . $filtro_recientes . '%')
-                    ->orWhere('texto', 'like', '%' . $filtro_recientes . '%');
-            })
-            ->paginate(10, ["*"], "page_recientes")
-            ->appends(['buscar_recientes' => $filtro_recientes,  'vista' => $vista]) */
-            :
-            Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
-            ->where('visibilidad', 'P')
-            ->latest()
-            ->paginate(10, ["*"], "page_recientes")
-            ->appends(['vista' => $vista]);
+        if($buscar) {
+            $resultados = Comunicado::search($buscar);
+            Busquedas::formatearResultados($resultados, $buscar);
+        }
+        else {
+            $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
+            ->where('visibilidad', 'P');
 
-        // Formatear resultados de busqueda
-        if($filtro_recientes)
-            Busquedas::formatearResultados($resultados, $filtro_recientes);
+            if(!$categoria||$categoria=='recientes')
+            $resultados = $resultados->latest();
+            elseif($categoria=='general')
+            $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
+            else if(is_numeric($categoria))
+                $resultados = $resultados->whereRaw('YEAR(fecha_comunicado) ='. $categoria)->orderBy('fecha_comunicado', 'ASC');
+        }
 
-        $recientes = Comunicado::select(['slug', 'titulo', 'fecha_comunicado'])->where('visibilidad', 'P')->latest()->take(24)->get();
+        $resultados = $resultados
+            ->paginate(15)
+            ->appends(['buscar' => $buscar,  'vista' => $vista, 'categoria'=>$categoria]);
+
+        /*$recientes = Comunicado::select(['slug', 'titulo', 'fecha_comunicado'])->where('visibilidad', 'P')->latest()->take(24)->get();
 
         // devuelve los comunicados archivados segun el filtro, o los más recientes si no hay filtro
-        $archivo = $filtro_archivo ?
-            Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
-            ->where('visibilidad', 'P')
-            ->where(function ($query) use ($filtro_archivo) {
-                $query->where('titulo', 'like', '%' . $filtro_archivo . '%')
-                    ->orWhere('texto', 'like', '%' . $filtro_archivo . '%');
-            })
-            ->paginate(12, ["*"], "page_archivo")->appends(['buscar_archivo' => $filtro_archivo, 'vista' => $vista])
+        $archivo = $filtro_archivo ? Comunicado::search($filtro_archivo)
+            ->paginate(10, "page_archivo")
+            ->appends(['buscar_archivo' => $filtro_archivo,  'vista' => $vista])
             :
             Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
             ->where('visibilidad', 'P')
             ->latest()
             ->paginate(12, ["*"], "page_archivo")->appends(['buscar_archivo' => $filtro_archivo, 'vista' => $vista]);
 
+        /*if($filtro_archivo)
+            $archivo->transform(function ($item) {
+                //unset($item['descripcion']);
+                //unset($item['texto']);
+                return $item;
+            });
+            */
+
+                // Limpiar el texto y eliminar elementos no deseados
+
+
         return Inertia::render('Comunicados/Index', [
             'vista' => $vista,
-            'filtrado_reciente' => $filtro_recientes,
-            'filtrado_archivo' => $filtro_archivo,
-            'listado' => $resultados,
-            'recientes' => $recientes,
-            'archivo' => $archivo
+            'categoria' => $categoria,
+            'buscar' => $buscar,
+            'listado' => $resultados
         ])
             ->withViewData(SEO::get('comunicados'));
     }
