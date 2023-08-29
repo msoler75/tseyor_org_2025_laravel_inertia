@@ -4,7 +4,7 @@
         <slot></slot>
 
 
-        <button v-if="filtro" type="button" @click="clearInput" class="btn">
+        <button v-if="filtro" type="button" @click="clearInput" class="btn border border-gray-500 border-opacity-20">
             Limpiar
         </button>
 
