@@ -10,17 +10,13 @@
                 <p>Aquí puedes encontrar todos los comunicados de Tseyor.</p>
             </div>
 
-            vista: {{ vista }}
-
-            vistaActual:: {{vistaActual}}
-
             <Planets />
 
         </div>
 
 
 
-        <div class="flex flex-wrap justify-between mb-5 items-baseline mt-7 gap-5">
+        <div class="flex flex-wrap justify-between items-baseline my-7 gap-5">
 
             <a v-for="categoria, index of categorias" :key="index"
             :style="{order: categoria.order}"
@@ -35,7 +31,7 @@
             <div class="flex gap-2 select-none"><input id="tabla" type="checkbox" v-model="tabla"><label for="tabla">Solo
                     listado</label></div>
 
-            <SearchInput :arguments="{vista: vistaActual}" />
+            <SearchInput :arguments="{vista: vistaActual}"  />
         </div>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
@@ -100,7 +96,7 @@ const props = defineProps({
 
 const tabla = ref(props.vista == 'tabla')
 const vistaActual = ref(props.vista)
-const categoriaActual = ref(props.categoria)
+const categoriaActual = ref(props.categoria ||'recientes')
 
 watch(tabla, (value) => {
     console.log(value)
@@ -116,7 +112,7 @@ const categorias = ref({
     resultados: {etiqueta:'Resultados', order: -4, _class: categoriaActual.value==='resultados'?'':'hidden'},
     recientes: {etiqueta:'Recientes', order: -3},
     general: {etiqueta:'Lista general', order: -2 },
-    buscador: {etiqueta:'Buscador avanzado', order: -1}})
+})
 
 categorias.value[añoActual] = {etiqueta: añoActual, order: 0}
 categorias.value[añoActual-1] = {etiqueta: añoActual-1, order: 0}
