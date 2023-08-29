@@ -10,6 +10,10 @@
                 <p>Aquí puedes encontrar todos los comunicados de Tseyor.</p>
             </div>
 
+            vista: {{ vista }}
+
+            vistaActual:: {{vistaActual}}
+
             <Planets />
 
         </div>
@@ -21,6 +25,7 @@
             <a v-for="categoria, index of categorias" :key="index"
             :style="{order: categoria.order}"
             class="cursor-pointer hover:underline select-none"
+            :class="categoria._class"
                 @click="seleccionado(index)">
                 <span :class="categoriaActual == index ? 'border-b-4 border-secondary font-bold' : ''">
                     {{ categoria.etiqueta }}
@@ -30,7 +35,7 @@
             <div class="flex gap-2 select-none"><input id="tabla" type="checkbox" v-model="tabla"><label for="tabla">Solo
                     listado</label></div>
 
-            <SearchInput />
+            <SearchInput :arguments="{vista: vistaActual}" />
         </div>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
@@ -39,10 +44,10 @@
 
                 <SearchResultsHeader :results="listado" />
 
-                <div v-if="(!vistaActual || vistaActual == 'tarjetas' || mostrandoBusqueda) && listado.data && listado.data.length > 0"
+                <div v-if="(!vistaActual || vistaActual == 'tarjetas') && listado.data && listado.data.length > 0"
                     class="grid gap-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
 
-                    <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data" :key="contenido.id"
+                    <CardContent v-for="contenido in listado.data" :key="contenido.id"
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('comunicado', contenido.slug)"
                         :description="contenido.descripcion" :date="contenido.published_at" />
 
@@ -59,11 +64,11 @@
                         </tr>
                     </thead>
                     <tbody class="table-body">
-                        <tr v-for="(comunicado, index) of archivo.data" :key="comunicado.slug" class="table-row">
+                        <tr v-for="(comunicado, index) of listado.data" :key="comunicado.slug" class="table-row">
                             <td class="table-cell">{{ comunicado.fecha_comunicado }}</td>
                             <!-- <td class="table-cell">{{ comunicado.categoria }}</td>
                             <td class="table-cell">{{ comunicado.numero }}</td> -->
-                            <td class="table-cell">{{ comunicado.titulo }}</td>
+                            <td class="table-cell" v-html="comunicado.titulo"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -93,24 +98,22 @@ const props = defineProps({
     archivo: {}
 });
 
-
 const tabla = ref(props.vista == 'tabla')
 const vistaActual = ref(props.vista)
 const categoriaActual = ref(props.categoria)
 
 watch(tabla, (value) => {
+    console.log(value)
     vistaActual.value = value ? 'tabla' : 'tarjetas'
 })
 
-// const listado = ref(props.listado)
-// const recientes = ref(props.recientes)
 
-const mostrandoBusqueda = computed(() => window.location.search.indexOf(/buscar/) > -1)
 
 // Obtener la fecha actual
 const añoActual = new Date().getFullYear()
 
 const categorias = ref({
+    resultados: {etiqueta:'Resultados', order: -4, _class: categoriaActual.value==='resultados'?'':'hidden'},
     recientes: {etiqueta:'Recientes', order: -3},
     general: {etiqueta:'Lista general', order: -2 },
     buscador: {etiqueta:'Buscador avanzado', order: -1}})
@@ -125,7 +128,7 @@ function seleccionado(categoria) {
 
 watch(categoriaActual, (value) => {
     const currentUrl = window.location.href.replace(/\?.*/, '')
-    router.get(currentUrl, { categoria: value })
+    router.get(currentUrl, { categoria: value, vista: vistaActual.value })
 })
 </script>
 
