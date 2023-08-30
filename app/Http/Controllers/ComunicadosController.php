@@ -34,6 +34,9 @@ class ComunicadosController extends Controller
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
         $vista = $request->input('vista');
+        $tipo = $request->input('tipo');
+        $año = $request->input('ano');
+        $orden = $request->input('orden');
 
         // hay dos filtros, uno para cada tipo de vista (recientes ó archivo)
 
@@ -41,6 +44,16 @@ class ComunicadosController extends Controller
         // devuelve los comunicados recientes segun el filtro, o los más recientes si no hay filtro
         if ($buscar) {
             $resultados = Comunicado::search($buscar);
+            if (is_numeric($año))
+                $resultados = $resultados->where("ano", $año);
+
+            if ($tipo != 'todos')
+                $resultados = $resultados->where('categoria', $tipo);
+
+            if ($orden == 'recientes')
+                $resultados = $resultados->orderBy('fecha_comunicado', 'DESC');
+            else if ($orden == 'antiguos')
+                $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
         } else {
             $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
                 ->where('visibilidad', 'P');
@@ -55,7 +68,7 @@ class ComunicadosController extends Controller
 
         $resultados = $resultados
             ->paginate(15)
-            ->appends(['buscar' => $buscar,  'vista' => $vista, 'categoria' => $categoria]);
+            ->appends(['buscar' => $buscar,  'vista' => $vista, 'categoria' => $categoria, 'tipo' => $tipo, 'ano' => $año, 'orden' => $orden]);
 
         if ($buscar)
             Busquedas::formatearResultados($resultados, $buscar);
@@ -63,7 +76,10 @@ class ComunicadosController extends Controller
 
         return Inertia::render('Comunicados/Index', [
             'vista' => $vista,
-            'categoria' => $buscar?'resultados':$categoria,
+            'categoria' => $buscar ? 'resultados' : $categoria,
+            'tipo' => $tipo,
+            'ano' => $año,
+            'orden' => $orden,
             'buscar' => $buscar,
             'listado' => $resultados
         ])

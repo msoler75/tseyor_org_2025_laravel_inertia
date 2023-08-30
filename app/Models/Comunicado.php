@@ -19,11 +19,16 @@ class Comunicado extends SEOModel
         'descripcion',
         'texto',
         'imagen',
-        'fechaComunicado',
+        'fecha_comunicado',
+        'ano',
         'visibilidad',
         'pdf',
         'audios',
         'slug',
+    ];
+
+    protected $dates = [
+        'fechaComunicado',
     ];
 
     // hooks del modelo
@@ -74,6 +79,7 @@ class Comunicado extends SEOModel
             'categoria' => $this->categoria,
             'numero' => $this->numero,
             'fecha_comunicado' => $this->fecha_comunicado,
+            'ano' => $this->ano
         ];
     }
 }
