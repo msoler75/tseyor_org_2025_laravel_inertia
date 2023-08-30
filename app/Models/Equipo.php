@@ -10,6 +10,8 @@ use App\Models\SEOModel;
 class Equipo extends SEOModel
 {
     use CrudTrait;
+
+
     protected $fillable = [
         'nombre',
         'slug',

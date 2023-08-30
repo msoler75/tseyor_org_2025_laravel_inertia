@@ -92,6 +92,7 @@ class ComunicadoImport
                         "titulo" => $tituloFormato,
                         "slug" => null,
                         "fecha_comunicado"  => $dateObj->format('Y-m-d'),
+                        "ano" => $año,
                         "texto" => $texto,
                         "numero" => $numero,
                         "categoria" => $categoria,
@@ -99,7 +100,6 @@ class ComunicadoImport
                         "audios" => json_encode($mp3),
                         "visibilidad" => 'P'
                     ]);
-
 
                     echo "guardado con id {$comunicado->id}\n";
                 } catch (Exception $e) {

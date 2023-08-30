@@ -9,7 +9,7 @@
         </button>
 
 
-        <button v-if="filtro" type="submit" @click.prevent="submit" class="btn btn-primary" :disabled="filtro == filtrado">
+        <button v-if="filtro" type="submit" @click.prevent="submit" class="btn btn-primary" :disabled="filtro == filtrado && !cambiado">
             Buscar
         </button>
 
@@ -21,7 +21,7 @@
                     text-right w-full focus:rounded-md"
                     :class="filtro ? 'border-0 border-b border-gray-700 focus:border-b' : 'border-transparent'"
                     @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"
-                    v-model="filtro" />
+                    @focus="$emit('focus')" @blur="$emit('blur')" v-model="filtro" />
             </form>
         </div>
     </div>
@@ -51,7 +51,7 @@ const currentUrl = ref('');
 const filtrado = ref('');
 let reloadTimeout = null;
 
-const emit = defineEmits(['update', 'search']);
+const emit = defineEmits(['update', 'search', 'focus', 'blur']);
 
 onMounted(() => {
     currentUrl.value = window.location.href.replace(/\?.*/, '');
@@ -63,11 +63,17 @@ onMounted(() => {
     document.addEventListener('keydown', handleKeyDown);
 });
 
+const cambiado = ref(false)
+
+// si hay algun cambio en los argumentos de búsqueda
+watch(()=>props.arguments, (value) => cambiado.value = true, { deep: true })
+
 const submit = () => {
     var args = {}
     args[props.keyword] = filtro.value
-    if(typeof props.arguments === 'object')
-    args = {...props.arguments, ...args}
+    if (typeof props.arguments === 'object')
+        args = { ...props.arguments, ...args }
+    cambiado.value = false
     router.get(currentUrl.value, args);
     emit('search');
 };
