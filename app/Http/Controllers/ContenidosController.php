@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Contenido;
 use App\Pigmalion\SEO;
+use App\Pigmalion\Busquedas;
 
-class NovedadesController extends Controller
+class ContenidosController extends Controller
 {
 
     public function index(Request $request)
@@ -18,9 +19,9 @@ class NovedadesController extends Controller
             ->where('visibilidad', 'P')
             ->where(function ($query) use ($filtro) {
                 $query->where('titulo', 'like', '%' . $filtro . '%')
-                   // ->orWhere('descripcion', 'like', '%' . $filtro . '%')
+                    // ->orWhere('descripcion', 'like', '%' . $filtro . '%')
                     //->orWhere('texto', 'like', '%' . $filtro . '%')
-                    ;
+                ;
             })
             ->latest('updated_at') // Ordenar por updated_at
             ->paginate(10)->appends(['buscar' => $filtro])
@@ -34,6 +35,21 @@ class NovedadesController extends Controller
             'filtrado' => $filtro,
             'listado' => $resultados
         ])
-        ->withViewData(SEO::get('novedades'));
+            ->withViewData(SEO::get('novedades'));
+    }
+
+
+    public function search(Request $request)
+    {
+        $buscar = $request->input('q');
+
+        $resultados = Contenido::search($buscar)->paginate(10);
+
+        if (strlen($buscar) < 3)
+            Busquedas::limpiarResultados($resultados, $buscar);
+        else
+            Busquedas::formatearResultados($resultados, $buscar);
+
+        return response()->json($resultados, 200);
     }
 }

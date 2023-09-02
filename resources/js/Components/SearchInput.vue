@@ -14,7 +14,7 @@
         </button>
 
         <div class="flex items-center relative" :style="{ 'max-width': maxWidth + 'px' }">
-            <Icon icon="ph:magnifying-glass-light"
+            <Icon icon="ph:magnifying-glass-bold"
                 class="absolute z-10 right-2 transform scale-110 -translate-y-[.1rem] text-gray-600" />
             <form @submit.prevent="submit">
                 <input class="pr-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
@@ -69,7 +69,7 @@ const cambiado = ref(false)
 // si hay algun cambio en los argumentos de búsqueda
 watch(()=>props.arguments, (value) => cambiado.value = true, { deep: true })
 
-watch(query, (value) => emit('update:modelValue', value))
+watch(query, (value) => emit('update:modelValue', valueç))
 
 const submit = () => {
     var args = {}
