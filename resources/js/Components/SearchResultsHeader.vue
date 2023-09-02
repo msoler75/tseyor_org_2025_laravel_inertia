@@ -1,10 +1,9 @@
 <template>
-    <div v-if="(filtrado && results.data.length > 0) || (filtrado && results.data.length == 0)" >
-        <h3 v-if="filtrado && results.data.length > 0" class="mt-0">
-            {{results.total }} {{results.total==1?'resultado':'resultados'}} para '{{ filtrado }}'
-        </h3>
-
-        <h1 v-else-if="filtrado && results.data.length == 0">No hay resultados para '{{ filtrado }}'</h1>
+    <div class="text-xl font-bold">
+        <div v-if="queryString && results.data.length > 0">
+            {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}{{ stringArguments }}
+        </div>
+        <div v-else-if="queryString && results.data.length == 0">No hay resultados{{ stringArguments }}</div>
     </div>
 </template>
 
@@ -13,17 +12,24 @@ import { ref, onMounted } from 'vue';
 const filtrado = ref('');
 
 const props = defineProps({
-    results : {},
+    results: {},
     keyword: {
         type: String,
         required: false,
         default: "buscar"
-    }
+    },
+    arguments: {}
 })
 
+const queryString = window.location.search;
+
 onMounted(() => {
-    const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     filtrado.value = urlParams.get(props.keyword);
 });
+
+const stringArguments = computed(() => {
+    if (props.arguments) return ''
+    return ` para '${filtrado.value}'`
+})
 </script>

@@ -33,3 +33,6 @@ Importar datos
 
 TNTSearch
 https://tnt.studio/searching-for-users-with-laravel-scout-and-tntsearch
+
+
+https://airports.tnt.studio/tnt-analytics

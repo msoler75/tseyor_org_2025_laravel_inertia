@@ -31,6 +31,11 @@ class Comunicado extends SEOModel
         'fechaComunicado',
     ];
 
+
+    public $sortable = [
+        'fechaComunicado'
+    ];
+
     // hooks del modelo
     protected static function booted()
     {

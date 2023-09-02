@@ -4,8 +4,7 @@
 /public/build
 /public/hot
 /public/storage
-/storage/*.key
-/storage/*.index
+/storage/indexes
 /vendor
 .env
 .env.backup
