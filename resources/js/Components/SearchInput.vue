@@ -4,12 +4,12 @@
         <slot></slot>
 
 
-        <button v-if="filtro" type="button" @click="clearInput" class="btn border border-gray-500 border-opacity-20">
+        <button v-if="query" type="button" @click="clearInput" class="btn border border-gray-500 border-opacity-20">
             Limpiar
         </button>
 
 
-        <button v-if="filtro" type="submit" @click.prevent="submit" class="btn btn-primary" :disabled="filtro == filtrado && !cambiado">
+        <button v-if="query" type="submit" @click.prevent="submit" class="btn btn-primary" :disabled="query == savedQuery && !cambiado">
             Buscar
         </button>
 
@@ -19,9 +19,9 @@
             <form @submit.prevent="submit">
                 <input class="pr-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
                     text-right w-full focus:rounded-md"
-                    :class="filtro ? 'border-0 border-b border-gray-700 focus:border-b' : 'border-transparent'"
+                    :class="query ? 'border-0 border-b border-gray-700 focus:border-b' : 'border-transparent'"
                     @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"
-                    @focus="$emit('focus')" @blur="$emit('blur')" v-model="filtro" />
+                    @focus="$emit('focus')" @blur="$emit('blur')" v-model="query" />
             </form>
         </div>
     </div>
@@ -32,6 +32,7 @@
 import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
+    modelValue: String,
     keyword: {
         type: String,
         required: false,
@@ -46,20 +47,20 @@ const props = defineProps({
 })
 
 const maxWidth = ref(200);
-const filtro = ref('');
+const query = ref('');
 const currentUrl = ref('');
-const filtrado = ref('');
+const savedQuery = ref('');
 let reloadTimeout = null;
 
-const emit = defineEmits(['update', 'search', 'focus', 'blur']);
+const emit = defineEmits(['update:modelValue', 'search', 'focus', 'blur']);
 
 onMounted(() => {
     currentUrl.value = window.location.href.replace(/\?.*/, '');
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    filtrado.value = urlParams.get(props.keyword);
-    filtro.value = filtrado.value;
-    emit('update', filtrado.value);
+    savedQuery.value = urlParams.get(props.keyword);
+    query.value = savedQuery.value;
+    emit('update:modelValue', query.value);
     document.addEventListener('keydown', handleKeyDown);
 });
 
@@ -68,9 +69,11 @@ const cambiado = ref(false)
 // si hay algun cambio en los argumentos de búsqueda
 watch(()=>props.arguments, (value) => cambiado.value = true, { deep: true })
 
+watch(query, (value) => emit('update:modelValue', value))
+
 const submit = () => {
     var args = {}
-    args[props.keyword] = filtro.value
+    args[props.keyword] = query.value
     if (typeof props.arguments === 'object')
         args = { ...props.arguments, ...args }
     cambiado.value = false
@@ -79,14 +82,14 @@ const submit = () => {
 };
 
 const clearInput = () => {
-    filtro.value = '';
-    emit('update', '');
+    query.value = '';
+    emit('update:modelValue', query.value);
 
     if (reloadTimeout) {
         clearTimeout(reloadTimeout);
     }
 
-    if (filtrado.value)
+    if (savedQuery.value)
         reloadTimeout = setTimeout(() => {
             router.get(currentUrl.value);
         }, 1000);

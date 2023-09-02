@@ -3,10 +3,14 @@
 namespace App\Models;
 
 use App\Models\SEOModel;
-
+use Laravel\Scout\Searchable;
 
 class Contenido extends SEOModel
 {
+
+    use Searchable;
+
+
     protected $fillable = [
         'coleccion',
         'id_ref',
@@ -35,4 +39,24 @@ class Contenido extends SEOModel
             ->get();
     }
     */
+
+
+    /**
+     * Solo se indexa si acaso está publicado
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return $this->visibilidad == 'P';
+    }
+
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return $this->toArray();
+    }
 }

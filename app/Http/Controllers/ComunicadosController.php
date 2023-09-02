@@ -32,52 +32,42 @@ class ComunicadosController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
-        $categoria = $request->input('categoria');
         $vista = $request->input('vista');
-        $tipo = $request->input('tipo');
+        $categoria = $request->input('categoria');
         $año = $request->input('ano');
         $orden = $request->input('orden');
 
-        // hay dos filtros, uno para cada tipo de vista (recientes ó archivo)
-
-        // $tnt = new TNTSearch();
-        // devuelve los comunicados recientes segun el filtro, o los más recientes si no hay filtro
+        // devuelve los comunicados recientes segun la busqueda
         if ($buscar) {
             $resultados = Comunicado::search($buscar);
-            if (is_numeric($año))
-                $resultados = $resultados->where("ano", $año);
-
-            if ($tipo != 'todos')
-                $resultados = $resultados->where('categoria', $tipo);
-
-            if ($orden == 'recientes')
-                $resultados = $resultados->orderBy('fecha_comunicado', 'DESC');
-            else if ($orden == 'antiguos')
-                $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
         } else {
-            $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
+            // obtiene los comunicados sin busqueda
+            $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano'])
                 ->where('visibilidad', 'P');
-
-            if (!$categoria || $categoria == 'recientes')
-                $resultados = $resultados->latest();
-            elseif ($categoria == 'general')
-                $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
-            else if (is_numeric($categoria))
-                $resultados = $resultados->whereRaw('YEAR(fecha_comunicado) =' . $categoria)->orderBy('fecha_comunicado', 'ASC');
         }
+
+        // parámetros
+        if (is_numeric($año))
+            $resultados = $resultados->where("ano", $año);
+
+        if (is_numeric($categoria))
+            $resultados = $resultados->where('categoria', $categoria);
+
+         if (!$orden || $orden == 'recientes')
+            $resultados = $resultados->orderBy('fecha_comunicado', 'DESC');
+        else if ($orden == 'cronologico')
+            $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
 
         $resultados = $resultados
             ->paginate(15)
-            ->appends(['buscar' => $buscar,  'vista' => $vista, 'categoria' => $categoria, 'tipo' => $tipo, 'ano' => $año, 'orden' => $orden]);
+            ->appends(['buscar' => $buscar,  'vista' => $vista, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden]);
 
         if ($buscar)
             Busquedas::formatearResultados($resultados, $buscar);
 
-
         return Inertia::render('Comunicados/Index', [
             'vista' => $vista,
-            'categoria' => $buscar ? 'resultados' : $categoria,
-            'tipo' => $tipo,
+            'categoria' => $categoria,
             'ano' => $año,
             'orden' => $orden,
             'buscar' => $buscar,
@@ -85,6 +75,8 @@ class ComunicadosController extends Controller
         ])
             ->withViewData(SEO::get('comunicados'));
     }
+
+
 
     public function show($id)
     {

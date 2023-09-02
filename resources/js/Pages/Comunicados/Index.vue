@@ -4,6 +4,8 @@
 
         <AdminPanel modelo="comunicado" necesita="administrar contenidos" class="mb-3" />
 
+        query: {{ query }}
+
         <div class="flex gap-12">
             <div>
                 <h1>Comunicados de Tseyor</h1>
@@ -15,44 +17,47 @@
         </div>
 
 
+        <div class="flex flex-wrap justify-between items-center my-4 gap-x-12 gap-y-7">
 
-        <div class="flex flex-wrap justify-between items-baseline my-7 gap-x-12 gap-y-7">
-
-            <a v-for="categoria, index of categorias" :key="index" :style="{ order: categoria.order }"
-                class="cursor-pointer hover:underline select-none" :class="categoria._class" @click="seleccionado(index)">
-                <span :class="categoriaActual == index ? 'border-b-4 border-secondary font-bold' : ''">
-                    {{ categoria.etiqueta }}
-                </span>
-            </a>
-
-            <div class="flex gap-2 select-none"><input id="tabla" type="checkbox" v-model="tabla"><label for="tabla">Solo
-                    listado</label></div>
-
-            <SearchInput :arguments="{ ...busqueda, vista: vistaActual }" class="ml-auto" @focus="enBusqueda = true" />
-        </div>
-
-
-        <div v-show="enBusqueda" class="mb-7 -mt-4 flex flex-wrap justify-end gap-4">
-            <select v-model="busqueda.tipo">
-                <option value="todos">Todos los comunicados</option>
-                <option v-for="etiqueta, tipo  of tiposBusqueda" :key="tipo" :value="tipo">{{ etiqueta }}</option>
+            <select v-model="busqueda.orden">
+                <option value="relevancia" v-if="query">Relevancia</option>
+                <option value="recientes">Recientes primero</option>
+                <option value="cronologico">Cronológico</option>
             </select>
+
+            <select v-model="busqueda.categoria">
+                <option value="todos">Todos los comunicados</option>
+                <option v-for="etiqueta, categoria  of categoriasBusqueda" :key="categoria" :value="categoria">{{ etiqueta
+                }}</option>
+            </select>
+
             <select v-model="busqueda.ano">
                 <option value="todos">Cualquier año</option>
                 <option v-for="año of añosBusqueda" :key="año" :value="año">{{ año }}</option>
             </select>
-            <select v-model="busqueda.orden">
-                <option value="relevancia">Relevancia</option>
-                <option value="recientes">Primero los recientes</option>
-                <option value="antiguos">Primero los antiguos</option>
-            </select>
+
+            <SearchInput :arguments="{ ...busqueda, vista: vistaActual }" class="ml-auto" v-model="query"
+                @focus="focusQuery" @blur="blurQuery" />
+
+            <div class="select-none text-2xl cursor-pointer" title="Elige la visualización en modo tabla o listado"
+                @click="tabla = !tabla">
+                <Icon v-show="!tabla" icon="ph:text-align-justify-bold" />
+                <Icon v-show="tabla" icon="ph:grid-four-duotone" />
+            </div>
         </div>
+
+
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="flex-grow">
 
-                <SearchResultsHeader :results="listado" />
+                <div class="flex justify-between items-center my-5">
+
+                    <SearchResultsHeader :results="listado" :arguments="{ ...busqueda, vista: vistaActual }" />
+
+                </div>
+
 
                 <div v-if="(!vistaActual || vistaActual == 'tarjetas') && listado.data && listado.data.length > 0"
                     class="grid gap-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
@@ -100,8 +105,7 @@ defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     vista: { default: '' },
-    categoria: { default: 'recientes' },
-    tipo: {},
+    categoria: {},
     ano: {},
     orden: {},
     buscar: {},
@@ -113,54 +117,73 @@ const props = defineProps({
 // Obtener la fecha actual
 const añoActual = new Date().getFullYear()
 
-const tiposBusqueda =
+const categoriasBusqueda =
 {
-    GEN: 'General',
-    TAP: 'TAP',
-    DDM: 'Doce del Muulasterio',
-    MUL: 'Comunicados para los Muul'
+    0: 'General',
+    1: 'TAP',
+    2: 'Doce del Muulasterio',
+    3: 'Comunicados Muul'
 }
 
 const añosBusqueda = []
 for (var i = 2004; i <= añoActual; i++)
     añosBusqueda.push(i)
 
-
-const enBusqueda = ref(props.buscar)
-const busqueda = ref({ tipo: props.tipo || 'todos', ano: props.ano || 'todos', orden: props.orden || 'relevancia' })
+const query = ref("")
+const busqueda = ref({ categoria: props.categoria || 'todos', ano: props.ano || 'todos', orden: props.orden || 'recientes' })
 
 const tabla = ref(props.vista == 'tabla')
 const vistaActual = ref(props.vista)
-const categoriaActual = ref(props.categoria || 'recientes')
 
 watch(tabla, (value) => {
     console.log(value)
     vistaActual.value = value ? 'tabla' : 'tarjetas'
 })
 
+watch(busqueda, (value) => {
+    if (!inQuery.value) {
+        const currentUrl = window.location.href.replace(/\?.*/, '')
 
+        var args = {}
+        if (query.value)
+            args.buscar = query.value
 
+        if (busqueda.value.categoria != 'todos')
+            args.categoria = busqueda.value.categoria
 
+        if (busqueda.value.ano != 'todos')
+            args.ano = busqueda.value.ano
 
+        if (busqueda.value.orden != 'recientes')
+            args.orden = busqueda.value.orden
 
-const categorias = ref({
-    resultados: { etiqueta: 'Resultados', order: -4, _class: categoriaActual.value === 'resultados' ? '' : 'hidden' },
-    recientes: { etiqueta: 'Recientes', order: -3 },
-    general: { etiqueta: 'Lista general', order: -2 },
-})
+        if (vistaActual.value == 'tabla')
+            args.vista = 'tabla'
 
-categorias.value[añoActual] = { etiqueta: añoActual, order: 0 }
-categorias.value[añoActual - 1] = { etiqueta: añoActual - 1, order: 0 }
-categorias.value[añoActual - 2] = { etiqueta: añoActual - 2, order: 0 }
+        router.get(currentUrl, args)
+    }
+}, { deep: true })
 
-function seleccionado(categoria) {
-    categoriaActual.value = categoria
+const inQuery = ref(false)
+function focusQuery() {
+    inQuery.value = true
 }
 
-watch(categoriaActual, (value) => {
-    const currentUrl = window.location.href.replace(/\?.*/, '')
-    router.get(currentUrl, { categoria: value, vista: vistaActual.value })
+function blurQuery() {
+    inQuery.value = false
+}
+
+onMounted(() => {
+    watch(query, () => {
+        // console.log('query', query.value)
+        if (query.value)
+            busqueda.value.orden = 'relevancia'
+        else
+            busqueda.value.orden = 'recientes'
+    })
 })
+
+
 </script>
 
 
