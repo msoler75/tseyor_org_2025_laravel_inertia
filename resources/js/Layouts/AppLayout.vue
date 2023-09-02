@@ -210,7 +210,7 @@ axios.get(route('setting', 'navigation'))
                 <!-- Primary Navigation Menu -->
 
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16 relative">
+                    <div class="flex justify-between h-16 relative items-center">
 
                         <div class="hidden lg:flex">
                             <!-- Logo -->
@@ -235,6 +235,8 @@ axios.get(route('setting', 'navigation'))
                             <NavTabs class="hidden top-navigation space-x-8 sm:-my-px sm:ml-10 sm:flex" />
 
                         </div>
+
+                        <SearchAll/>
 
                         <transition class="hidden lg:flex" enter-active-class="transition ease-out duration-200"
                             enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"

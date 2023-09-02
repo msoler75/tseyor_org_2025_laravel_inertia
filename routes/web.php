@@ -16,7 +16,7 @@ use App\Http\Controllers\LibrosController;
 use App\Http\Controllers\CentrosController;
 use App\Http\Controllers\ContactosController;
 use App\Http\Controllers\AudiosController;
-use App\Http\Controllers\NovedadesController;
+use App\Http\Controllers\ContenidosController;
 use App\Http\Controllers\PortadaController;
 use App\Http\Controllers\CursosController;
 use App\Http\Controllers\RadioController;
@@ -46,7 +46,8 @@ Route::get('/test', function () {
 
 Route::get('/', [PortadaController::class, 'index'])->name('portada');
 
-Route::get('/novedades', [NovedadesController::class, 'index'])->name('novedades');
+Route::get('/novedades', [ContenidosController::class, 'index'])->name('novedades');
+Route::get('/buscar', [ContenidosController::class, 'search'])->name('buscar');
 
 Route::get('/archivos', [ArchivosController::class, 'archivos'])->name('archivos0');
 Route::get('/archivos{ruta}', [ArchivosController::class, 'archivos'])->where(['ruta' => '(\/.+)?'])->name('archivos');
