@@ -17,24 +17,24 @@
 
         <div class="flex flex-wrap justify-between items-center my-4 gap-x-12 gap-y-7">
 
-            <select v-model="busqueda.orden">
+            <select v-model="busqueda.orden" class="sel-trans">
                 <option value="relevancia" v-if="query">Relevancia</option>
                 <option value="recientes">Recientes primero</option>
                 <option value="cronologico">Cronológico</option>
             </select>
 
-            <select v-model="busqueda.categoria">
+            <select v-model="busqueda.categoria" class="sel-trans">
                 <option value="todos">Todos los comunicados</option>
                 <option v-for="etiqueta, categoria  of categoriasBusqueda" :key="categoria" :value="categoria">{{ etiqueta
                 }}</option>
             </select>
 
-            <select v-model="busqueda.ano">
+            <select v-model="busqueda.ano" class="sel-trans">
                 <option value="todos">Cualquier año</option>
                 <option v-for="año of añosBusqueda" :key="año" :value="año">{{ año }}</option>
             </select>
 
-            <SearchInput :arguments="{ ...busqueda, vista: vistaActual }" class="ml-auto" v-model="query"
+            <SearchInput :arguments="{ ...busqueda, vista: vistaActual }" class="ml-auto sel-trans" v-model="query"
                 @focus="focusQuery" @blur="blurQuery" />
 
             <div class="select-none text-2xl cursor-pointer" title="Elige la visualización en modo tabla o listado"
@@ -205,5 +205,9 @@ onMounted(() => {
 
 .table-cell {
     @apply px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900;
+}
+
+.sel-trans {
+    @apply bg-transparent border-transparent border-b-gray-500;
 }
 </style>
