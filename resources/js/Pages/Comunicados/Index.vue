@@ -4,8 +4,6 @@
 
         <AdminPanel modelo="comunicado" necesita="administrar contenidos" class="mb-3" />
 
-        query: {{ query }}
-
         <div class="flex gap-12">
             <div>
                 <h1>Comunicados de Tseyor</h1>

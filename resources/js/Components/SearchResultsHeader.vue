@@ -9,7 +9,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-const filtrado = ref('');
+const query = ref('');
 
 const props = defineProps({
     results: {},
@@ -25,11 +25,11 @@ const queryString = window.location.search;
 
 onMounted(() => {
     const urlParams = new URLSearchParams(queryString);
-    filtrado.value = urlParams.get(props.keyword);
+    query.value = urlParams.get(props.keyword);
 });
 
 const stringArguments = computed(() => {
-    if (props.arguments) return ''
-    return ` para '${filtrado.value}'`
+    if (props.arguments && !query.value) return ''
+    return ` para '${query.value}'`
 })
 </script>
