@@ -1,20 +1,24 @@
 <template>
-    <div class="container mx-auto px-4 py-8">
+    <div class="py-8">
 
-        <div class="flex justify-between items-center mb-20">
+        <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Comunicados</Back>
-            <AdminPanel modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado"/>
+            <AdminPanel modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado" />
         </div>
 
-        <div class="prose mx-auto">
-            <h1>{{ comunicado.titulo }}</h1>
+        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0">
 
-            <div class="text-neutral text-sm mb-2">
-                <TimeAgo :date="comunicado.fecha_comunicado" />
+            <div class="prose mx-auto">
+                <h1>{{ comunicado.titulo }}</h1>
+
+                <div class="text-neutral text-sm mb-2">
+                    <TimeAgo :date="comunicado.fecha_comunicado" />
+                </div>
             </div>
-        </div>
 
-        <Content :content="comunicado.texto" class="pb-12" />
+            <Content :content="comunicado.texto" class="pb-12" />
+
+        </div>
 
         <Comentarios :url="route('comunicado', comunicado.id)" />
 
