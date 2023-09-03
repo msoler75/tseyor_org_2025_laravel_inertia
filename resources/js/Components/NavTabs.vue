@@ -8,7 +8,7 @@
             <NavLink v-else @click="nav.toggleTab(tab)" @mouseover="nav.activateTab(tab)"
                 :active="tab.open || (!nav.activeTab && nav.in(tab, route().current()))" class="relative navigation-tab">
                 {{ tab.title }}
-                <div v-show="tab.open" class="hover-helper absolute z-40  -left-[7rem] -right-[7rem] top-[88%]  h-6" />
+                <div v-show="tab.open" class="hover-helper absolute z-40 -left-[7rem] -right-[7rem] top-[88%]  h-8" />
             </NavLink>
         </template>
     </div>
@@ -22,6 +22,11 @@ const nav = useNav()
 
 
 <style scoped>
+/*
+.hover-helper {
+    @apply bg-yellow-300;
+}
+*/
 .top-navigation>.navigation-tab:nth-child(2)>.hover-helper {
     transform: translateX(4rem);
 }

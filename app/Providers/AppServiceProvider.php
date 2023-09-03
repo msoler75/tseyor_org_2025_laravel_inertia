@@ -3,26 +3,25 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Models\Centro;
+/*use App\Models\Centro;
 use App\Models\Contacto;
 use App\Models\Comunicado;
 use App\Models\Entrada;
 use App\Models\Noticia;
 use App\Models\Libro;
 use App\Models\Publicacion;
+use App\Models\Pagina;
 use App\Models\Evento;
 use App\Models\Normativa;
 use App\Models\Lugar;
 use App\Models\Guia;
+use App\Pigmalion\Contenidos;
+use App\Http\Controllers\ContactosController;
+*/
 use App\Models\Equipo;
 use App\Models\Membresia;
 use App\Observers\MembresiaObserver;
 use App\Observers\EquipoObserver;
-
-// use TCG\Voyager\Facades\Voyager;
-// use App\FormFields\MarkdownImagesField;
-use App\Pigmalion\Contenidos;
-use App\Http\Controllers\ContactosController;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -52,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         // BEFORE SAVE
-        Comunicado::saving(function ($comunicado) {
+        /*Comunicado::saving(function ($comunicado) {
             Contenidos::rellenarSlugImagenYDescripcion($comunicado);
         });
 
@@ -136,7 +135,11 @@ class AppServiceProvider extends ServiceProvider
             Contenidos::guardarContenido("publicaciones", $publicacion);
         });
 
+        Pagina::saved(function ($pagina) {
+            Contenidos::guardarContenido("paginas", $pagina);
+        });
 
+        */
 
 
         // Equipos y grupos

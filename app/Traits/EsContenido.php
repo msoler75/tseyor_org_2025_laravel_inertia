@@ -1,13 +1,38 @@
 <?php
 
-namespace App\Pigmalion;
+namespace App\Traits;
 
-use Illuminate\Support\Facades\Storage;
+// use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Contenido;
 
-class Contenidos
+
+trait EsContenido
 {
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+            // Acciones antes de guardar el modelo
+            self::rellenarSlugImagenYDescripcion($model);
+        });
+
+        static::saved(function ($model) {
+            // Acciones después de que el modelo se haya guardado
+            self::guardarContenido($model->table, $model);
+        });
+
+        static::deleting(function ($model) {
+            // Acciones antes de borrar el modelo
+            // ...
+        });
+
+        static::deleted(function ($model) {
+            // Acciones después de que el modelo se haya borrado
+            // ...
+        });
+    }
 
 
     public static function rellenarSlugImagenYDescripcion($objeto)
@@ -87,4 +112,5 @@ class Contenidos
         // Guardar el modelo en la base de datos
         $contenido->save();
     }
+
 }

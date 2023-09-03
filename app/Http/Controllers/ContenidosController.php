@@ -43,12 +43,14 @@ class ContenidosController extends Controller
     {
         $buscar = $request->input('q');
 
-        $resultados = Contenido::search($buscar)->paginate(10);
+        $buscarFiltrado = Busquedas::descartarPalabrasComunes($buscar);
+
+        $resultados = Contenido::search($buscarFiltrado)->paginate(10);
 
         if (strlen($buscar) < 3)
-            Busquedas::limpiarResultados($resultados, $buscar);
+            Busquedas::limpiarResultados($resultados, $buscarFiltrado);
         else
-            Busquedas::formatearResultados($resultados, $buscar);
+            Busquedas::formatearResultados($resultados, $buscarFiltrado);
 
         return response()->json($resultados, 200);
     }
