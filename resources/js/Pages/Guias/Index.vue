@@ -16,7 +16,7 @@
                     <h2 class="mb-5">Listado</h2>
                     <ul class="list-disc">
                         <li v-for="guia in guias" :key="guia.slug">
-                            <Link :href="route('enciclopedia.guia', guia.slug)"
+                            <Link :href="route('guia', guia.slug)"
                                 class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
                             {{ guia.nombre }}
                             </Link>
@@ -29,7 +29,7 @@
 
                 <div class="grid gap-8" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(12rem, 1fr))` }">
                     <CardContent v-for="contenido in guias" :key="contenido.id" :image="contenido.imagen"
-                        :href="route('enciclopedia.guia', contenido.slug)" imageClass="h-60">
+                        :href="route('guia', contenido.slug)" imageClass="h-60">
                         <div
                             class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
                             {{ contenido.nombre }}</div>

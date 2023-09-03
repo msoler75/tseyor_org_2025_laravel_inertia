@@ -24,7 +24,7 @@
         <Section>
             <Hero title="Los Guías Estelares"
                 subtitle="Recibimos las referencias de nuestros tutores de la Confederación de Mundos Habitados de la Galaxia"
-                :href="route('enciclopedia.guias')" buttonLabel="Guías Estelares"
+                :href="route('guias')" buttonLabel="Guías Estelares"
                 srcImage="/storage/imagenes/portada/todos-los-guias-compressor.jpg" textClass="container" full cover
                 image-right />
         </Section>

@@ -23,23 +23,12 @@
                 <kbd class="kbd cursor-pointer select-none text-xs font-semibold" @click="mostrarModal = false">ESC</kbd>
 
             </div>
-            <div v-if="false"
-                class="p-3 flex flex-wrap gap-3 select-none border-t border-b border-gray-500 border-opacity-30 shadow">
-                <div v-if="colecciones.length > 1" v-for="col of colecciones" :key="col"
-                    class="badge badge-info cursor-pointer capitalize" @click="toggleFiltro(col)"
-                    :class="filtrada(col) == 0 ? 'opacity-50 hover:opacity-100' : ''">
-                    <!--<Icon icon="ph:dot-outline-bold" v-show="noFiltros" />
-                    <Icon icon="ph:check-duotone" v-show="filtrada(col) == 1" />
-                    <Icon icon="ph:x-duotone" v-show="filtrada(col) == 1" />
-                -->
-                    {{ col == 'paginas' ? 'secciones web' : col }}
-                </div>
-            </div>
+
 
             <div  v-for="grupo of resultadosAgrupados" :key="grupo" class="flex flex-wrap p-3">
-                <div class="w-full flex justify-between px-2 mt-3 mb-2 font-bold capitalize">{{ grupo.coleccion }}</div>
+                <div class="w-full flex justify-between px-2 mt-3 mb-2 font-bold capitalize">{{ traducir(grupo.coleccion) }}</div>
                 <Link v-for="item of grupo.items" :key="item.id"
-                class="w-full py-3 px-4 bg-base-200 bg-opacity-50 rounded-lg m-2 flex justify-between"
+                class="w-full py-3 px-4 bg-base-200 bg-opacity-50 rounded-lg m-2 flex gap-3 justify-between"
                 :href="item.coleccion != 'paginas' ? (route(item.coleccion) + '/' + (item.slug_ref || item.id_ref)) : '/' + item.slug_ref"
                              @click="mostrarModal = false"
                 >
@@ -81,7 +70,7 @@ const resultadosAgrupados = computed(() => {
 
     // Ordenar el array de items
     items.sort((a, b) => {
-        const prioridad = ['libros', 'centros', 'páginas'] // paginas es el más prioritario
+        const prioridad = ['libros', 'centros', 'guias', 'páginas'] // paginas es el más prioritario
 
         const indexA = prioridad.indexOf(a.coleccion)
         const indexB = prioridad.indexOf(b.coleccion)
@@ -137,38 +126,14 @@ watch(query, (value) => {
         results.value = { data: [] }
 })
 
-const colecciones = computed(() => {
-    const r = { todo: 1 }
-    for (var item of results.value.data)
-        r[item.coleccion] = 1
-    return Object.keys(r)
-})
-
-const filtros = ref({})
-
-function toggleFiltro(coleccion) {
-    if (coleccion == 'todo') {
-        filtros.value = {}
-        return
-    }
-    filtros.value[coleccion] = !filtros.value[coleccion]
-    var alguno = false
-    for (var k in filtros.value) {
-        if (filtros.value[k]) alguno = true
-    }
-    if (!alguno)
-        filtros.value = {}
+const traducciones = {
+    paginas: 'páginas',
+    guias: 'guías estelares'
 }
 
-// hay algun filtro?
-const noFiltros = computed(() => !Object.keys(filtros.value).length)
-
-// está seleccionado o deseleccionado un filtro en concreto?
-function filtrada(coleccion) {
-    if (noFiltros.value) return null
-    return filtros.value[coleccion] ? 1 : 0
+function traducir(col) {
+    return traducciones[col] || col
 }
-
 
 </script>
 

@@ -154,13 +154,13 @@ export default [
             items: [
               {
                 title: "Guías Estelares",
-                route: "enciclopedia.guias",
+                route: "guias",
                 description: "Conoce a los tutores de la Confederación",
                 icon: "ph:user-gear-duotone",
               },
               {
                 title: "Lugares de la Galaxia",
-                route: "enciclopedia.lugares",
+                route: "lugares",
                 description: "Planetas, bases intraterrenas y otros lugares",
                 icon: "ph:planet-duotone",
               },
