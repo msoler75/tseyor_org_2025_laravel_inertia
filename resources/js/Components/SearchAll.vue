@@ -8,8 +8,8 @@
     </button>
 
 
-    <Modal :show="mostrarModal" @close="mostrarModal = false" maxWidth="lg" class="modal-search">
-        <div class="bg-base-100 flex flex-col text-sm pb-7">
+    <Modal :show="mostrarModal" @close="mostrarModal = false" maxWidth="lg">
+        <div class="modal-search bg-base-100 flex flex-col text-sm pb-7">
             <div class="flex gap-2 items-center  p-3">
                 <Icon v-show="!loading" icon="ph:magnifying-glass-bold" class="text-lg" />
                 <Spinner v-show="loading" class="text-lg" />
@@ -25,16 +25,18 @@
             </div>
 
 
-            <div  v-for="grupo of resultadosAgrupados" :key="grupo" class="flex flex-wrap p-3">
-                <div class="w-full flex justify-between px-2 mt-3 mb-2 font-bold capitalize">{{ traducir(grupo.coleccion) }}</div>
+            <div v-for="grupo of resultadosAgrupados" :key="grupo" class="busqueda-resultados flex flex-wrap p-3">
+                <div class="w-full flex justify-between px-2 mt-3 mb-2 font-bold capitalize">{{ traducir(grupo.coleccion) }}
+                </div>
                 <Link v-for="item of grupo.items" :key="item.id"
-                class="w-full py-3 px-4 bg-base-200 bg-opacity-50 rounded-lg m-2 flex gap-3 justify-between"
-                :href="item.coleccion != 'paginas' ? (route(item.coleccion) + '/' + (item.slug_ref || item.id_ref)) : '/' + item.slug_ref"
-                             @click="mostrarModal = false"
-                >
-                <div v-html="item.titulo"/>
+                    class="w-full py-3 px-4 bg-base-200 bg-opacity-50 rounded-lg m-2 flex gap-3 justify-between items-center"
+                    @mouseover="seleccionarItem(item)"
+                    :href="item.coleccion != 'paginas' ? (route(item.coleccion) + '/' + (item.slug_ref || item.id_ref)) : '/' + item.slug_ref"
+                    @click="mostrarModal = false"
+                    :class="itemSeleccionado && itemSeleccionado.id == item.id ? 'seleccionado bg-primary' : ''">
+                <div v-html="item.titulo" />
                 <span class="text-lg">›</span>
-            </Link>
+                </Link>
             </div>
 
         </div>
@@ -54,8 +56,10 @@ const results = ref({ data: [] })
 const resultadosAgrupados = computed(() => {
     const agrupados = {}
 
+
+
     for (var item of results.value.data) {
-        var coleccion = item.coleccion=='paginas'?'páginas':item.coleccion
+        var coleccion = item.coleccion == 'paginas' ? 'páginas' : item.coleccion
         if (!agrupados[coleccion]) {
             agrupados[coleccion] = []
         }
@@ -77,14 +81,49 @@ const resultadosAgrupados = computed(() => {
 
         return indexB - indexA
     })
+
+    nextTick(() => {
+        seleccionarItem(null)
+        siguienteItem()
+    })
+
     return items
 })
+
+const itemsArray = computed(() => {
+    const items = []
+    for (var grupo of resultadosAgrupados.value) {
+        for (var item of grupo.items)
+            items.push(item)
+    }
+    return items
+})
+
 
 onMounted(() => {
     window.addEventListener('keydown', function (event) {
         if (event.ctrlKey && event.key === 'k') {
             event.preventDefault()
             mostrarModal.value = true
+        }
+        if (mostrarModal.value) {
+            switch (event.key) {
+                case 'Enter':
+                    if (itemSeleccionado.value) {
+                        event.preventDefault()
+                        const elem = document.querySelector('.busqueda-resultados .seleccionado')
+                        elem.click()
+                    }
+                    break;
+                case 'ArrowDown':
+                    event.preventDefault()
+                    siguienteItem()
+                    break;
+                case 'ArrowUp':
+                    event.preventDefault()
+                    anteriorItem()
+                    break;
+            }
         }
     });
 })
@@ -133,6 +172,34 @@ const traducciones = {
 
 function traducir(col) {
     return traducciones[col] || col
+}
+
+
+const itemSeleccionado = ref(null)
+
+function seleccionarItem(item) {
+    itemSeleccionado.value = item
+}
+
+function siguienteItem() {
+    console.log('siguienteItem', itemsArray)
+    if (!itemSeleccionado.value) {
+        itemSeleccionado.value = itemsArray.value[0]
+        return
+    }
+    var idx = itemsArray.value.findIndex(x => x.id == itemSeleccionado.value.id)
+    idx = (idx + 1) % itemsArray.value.length
+    seleccionarItem(itemsArray.value[idx])
+}
+
+function anteriorItem() {
+    if (!itemSeleccionado.value) {
+        itemSeleccionado.value = itemsArray.value[itemsArray.length - 1]
+        return
+    }
+    var idx = itemsArray.value.findIndex(x => x.id == itemSeleccionado.value.id)
+    idx = (idx + itemsArray.value.length - 1) % itemsArray.value.length
+    seleccionarItem(itemsArray.value[idx])
 }
 
 </script>

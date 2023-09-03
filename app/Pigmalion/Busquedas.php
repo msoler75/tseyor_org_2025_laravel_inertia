@@ -65,6 +65,7 @@ class Busquedas
                 $item->titulo = $h->highlight($item->titulo, $busqueda, "em", $options);
 
                 unset($item['texto']);
+                unset($item['visibilidad']);
                 return $item;
             });
     }
@@ -87,6 +88,7 @@ class Busquedas
                 $item->titulo = $h->highlight($item->titulo, $busqueda, "em", $options);
 
                 unset($item['texto']);
+                unset($item['visibilidad']);
                 return $item;
             });
     }
