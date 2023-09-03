@@ -21,7 +21,6 @@
         "tailwindcss": "^3.1.0",
         "unplugin-auto-import": "^0.16.4",
         "unplugin-vue-components": "^0.25.1",
-        "vite": "^4.0.0",
         "vite-plugin-compression": "^0.5.1",
         "vue": "^3.3.3"
     },
