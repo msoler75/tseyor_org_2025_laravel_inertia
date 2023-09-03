@@ -60,7 +60,7 @@ trait EsContenido
         ) {
             //$parsedown = new Parsedown();
             //$html = $parsedown->text($objeto->texto);
-            $html = Str::markdown($objeto->texto);
+            $html = Str::markdown($objeto->texto ?? "");
         }
         // Rellenamos imagen (si está vacía) con el contenido del texto (si existe)
         if (in_array('imagen', $fillable) && empty($objeto->imagen)) {
@@ -118,10 +118,10 @@ trait EsContenido
 
         // Asignar las propiedades del modelo con los datos recibidos
         $contenido->titulo = $datos->titulo ?? $datos->nombre;
-        $contenido->slug_ref = $datos->slug ?? null;
+        $contenido->slug_ref = $datos->slug ?? $datos->url ?? null;
         $contenido->descripcion = $datos->descripcion ?? ($datos->pais . " " . $datos->poblacion);
         $contenido->texto = $datos->texto ?? ($datos->direccion . " " . $datos->codigo . " " . $datos->provincia . " " . $datos->email . " " . $datos->telefono);
-        $contenido->imagen = $datos->imagen;
+        $contenido->imagen = $datos->imagen ?? null;
         $contenido->fecha = $datos->published_at ?? $datos->updated_at ?? null;
         $contenido->visibilidad = $datos->visibilidad ?? 'P';
 
