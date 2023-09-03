@@ -32,30 +32,34 @@ class Busquedas
         return empty($resultado) ? $buscar : $resultado;
     }
 
-    public static function formatearResultados($resultados, $busqueda)
+    public static function formatearResultados($resultados, $busqueda, $soloTitulo = false)
     {
         $options  = ['tagOptions' => ['class' => 'search-term']];
         $h = new Highlighter();
 
         $resultados
-            ->transform(function ($item) use ($h, $options, $busqueda) {
+            ->transform(function ($item) use ($h, $options, $busqueda, $soloTitulo) {
 
                 // Log::info('formatearResultados ' . $item->id);
 
-                // Limpiar el texto y eliminar elementos no deseados
-                if ($item->texto && strlen($item->texto)>256) {
+                if ($soloTitulo)
+                    unset($item['descripcion']);
+                else {
+                    // Limpiar el texto y eliminar elementos no deseados
+                    if ($item->texto && strlen($item->texto) > 256) {
 
-                    $textoLimpio = strip_tags($item->texto); // Eliminar etiquetas HTML
-                    $textoLimpio = preg_replace('/\bimg\b/', '', $textoLimpio); // Eliminar la palabra "img"
-                    // eliminamos caracters de markdown
-                    $textoLimpio = preg_replace("/[#*]/", "", $textoLimpio);
-                    $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
-                } else $textoLimpio = $item->descripcion;
+                        $textoLimpio = strip_tags($item->texto); // Eliminar etiquetas HTML
+                        $textoLimpio = preg_replace('/\bimg\b/', '', $textoLimpio); // Eliminar la palabra "img"
+                        // eliminamos caracters de markdown
+                        $textoLimpio = preg_replace("/[#*]/", "", $textoLimpio);
+                        $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
+                    } else $textoLimpio = $item->descripcion;
 
-                // extraemos la parte más relevante
-                $parteRelevante = $h->extractRelevant($busqueda, $textoLimpio, 400);
+                    // extraemos la parte más relevante
+                    $parteRelevante = $h->extractRelevant($busqueda, $textoLimpio, 400);
 
-                $item->descripcion = $h->highlight($parteRelevante, $busqueda, "em", $options);
+                    $item->descripcion = $h->highlight($parteRelevante, $busqueda, "em", $options);
+                }
 
                 // Realizar el mismo proceso para el campo 'titulo'
                 $item->titulo = $h->highlight($item->titulo, $busqueda, "em", $options);
@@ -66,14 +70,17 @@ class Busquedas
     }
 
 
-    public static function limpiarResultados($resultados, $busqueda)
+    public static function limpiarResultados($resultados, $busqueda, $soloTitulo = false)
     {
         $options  = ['tagOptions' => ['class' => 'search-term']];
         $h = new Highlighter();
 
         $resultados
-            ->transform(function ($item) use ($h, $options, $busqueda) {
+            ->transform(function ($item) use ($h, $options, $busqueda, $soloTitulo) {
 
+                if($soloTitulo)
+                    unset($item['descripcion']);
+                else
                 $item->descripcion = $h->highlight($item->descripcion, $busqueda, "em", $options);
 
                 // Realizar el mismo proceso para el campo 'titulo'

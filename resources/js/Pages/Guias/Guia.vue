@@ -50,7 +50,7 @@
 
         <div class="card bg-base-100 shadow flex-wrap flex-row p-5 lg:p-10 gap-4">
             <div v-for="item of guias" :key="item.slug" class="flex gap-2">
-                <Link v-show="item.slug!=guia.slug" :href="route('enciclopedia.guia', item.slug)">
+                <Link v-show="item.slug!=guia.slug" :href="route('guia', item.slug)">
                 <span class="capitalize">{{ item.nombre }}</span>
                 </Link>
             </div>

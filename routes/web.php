@@ -79,11 +79,11 @@ Route::get('/libros/{slug}', [LibrosController::class, 'show'])->where('slug', '
 Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');
 Route::get('/entradas/{slug}', [EntradasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('entrada');
 
-Route::get('/enciclopedia/guias', [GuiasController::class, 'index'])->name('enciclopedia.guias');
-Route::get('/enciclopedia/guias/{slug}', [GuiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('enciclopedia.guia');
+Route::get('/guias', [GuiasController::class, 'index'])->name('guias');
+Route::get('/guias/{slug}', [GuiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('guia');
 
-Route::get('/enciclopedia/lugares', [LugaresController::class, 'index'])->name('enciclopedia.lugares');
-Route::get('/enciclopedia/lugares/{slug}', [LugaresController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('enciclopedia.lugar');
+Route::get('/lugares', [LugaresController::class, 'index'])->name('lugares');
+Route::get('/lugares/{slug}', [LugaresController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('lugar');
 
 Route::get('/eventos', [EventosController::class, 'index'])->name('eventos');
 Route::get('/eventos/{slug}', [EventosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('evento');
