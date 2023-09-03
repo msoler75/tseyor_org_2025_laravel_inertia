@@ -30,5 +30,4 @@ class SEOModel extends Model
     }
 
 
-
 }
