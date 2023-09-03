@@ -62,13 +62,30 @@ trait EsContenido
             //$html = $parsedown->text($objeto->texto);
             $html = Str::markdown($objeto->texto);
         }
-        // rellenamos imagen (si está vacía) con el contenido del texto (si existe)
+        // Rellenamos imagen (si está vacía) con el contenido del texto (si existe)
         if (in_array('imagen', $fillable) && empty($objeto->imagen)) {
             $matches = [];
-            preg_match('/<img [^>]*src=["\']([^"\']+)/i', $html, $matches);
-            $objeto->imagen = isset($matches[1]) ? $matches[1] : null;
-            $storageFolderName = basename(storage_path());
-            $objeto->imagen = str_replace(url('/') . "/" . $storageFolderName, "", $objeto->imagen); // remueve la parte base
+            preg_match_all('/<img [^>]*src=["\']([^"\']+)/i', $html, $matches);
+
+            // busca la primera imagen que tenga unas dimensiones minimas
+            foreach ($matches[1] as $imageUrl) {
+                $imagePath = str_replace(url('/'), '', $imageUrl); // Obtener la ruta relativa de la imagen
+                $absolutePath = public_path($imagePath); // Obtener la ruta absoluta de la imagen
+
+                // Obtener las dimensiones de la imagen
+                $imageSize = getimagesize($absolutePath);
+                $imageWidth = $imageSize[0];
+                $imageHeight = $imageSize[1];
+
+                // Verificar las dimensiones mínimas requeridas (ancho y alto)
+                $minWidth = 300; // Ancho mínimo deseado
+                $minHeight = 300; // Alto mínimo deseado
+
+                if ($imageWidth >= $minWidth && $imageHeight >= $minHeight) {
+                    $objeto->imagen = $imagePath;
+                    break; // Salir del bucle después de encontrar la primera imagen adecuada
+                }
+            }
         }
         // generamos una descripción a partir del texto si es necesario
         if (in_array('descripcion', $fillable) && empty($objeto->descripcion)) {
@@ -112,5 +129,4 @@ trait EsContenido
         // Guardar el modelo en la base de datos
         $contenido->save();
     }
-
 }
