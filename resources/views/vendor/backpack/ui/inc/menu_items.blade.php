@@ -9,6 +9,7 @@
     <x-backpack::menu-dropdown-item title="Entradas de Blog" icon="la la-pencil-alt" :link="backpack_url('entrada')" />
     <x-backpack::menu-dropdown-item title="Libros" icon="la la-book" :link="backpack_url('libro')" />
     <x-backpack::menu-dropdown-item title="Noticias" icon="la la-volume-up" :link="backpack_url('noticia')" />
+    <x-backpack::menu-dropdown-item title="Páginas" icon="la la-pager" :link="backpack_url('pagina')" />
     <x-backpack::menu-dropdown-item title="Radio Tseyor" icon="la la-broadcast-tower" :link="backpack_url('radio-item')" />
     <x-backpack::menu-dropdown-header title="Glosario" />
     <x-backpack::menu-dropdown-item title="Guias Estelares" icon="la la-star" :link="backpack_url('guia')" />

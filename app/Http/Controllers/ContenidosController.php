@@ -17,6 +17,7 @@ class ContenidosController extends Controller
 
         $resultados = $filtro ? Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
             ->where('visibilidad', 'P')
+            ->whereNot('coleccion', 'paginas')
             ->where(function ($query) use ($filtro) {
                 $query->where('titulo', 'like', '%' . $filtro . '%')
                     // ->orWhere('descripcion', 'like', '%' . $filtro . '%')
@@ -28,6 +29,7 @@ class ContenidosController extends Controller
             :
             Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
             ->where('visibilidad', 'P')
+            ->whereNot('coleccion', 'paginas')
             ->latest('updated_at') // Ordenar por updated_at
             ->paginate(10);
 
@@ -47,9 +49,9 @@ class ContenidosController extends Controller
 
         $resultados = Contenido::search($buscarFiltrado)->paginate(10);
 
-        if (strlen($buscar) < 3)
+        /*if (strlen($buscar) < 3)
             Busquedas::limpiarResultados($resultados, $buscarFiltrado);
-        else
+        else*/
             Busquedas::formatearResultados($resultados, $buscarFiltrado);
 
         return response()->json($resultados, 200);

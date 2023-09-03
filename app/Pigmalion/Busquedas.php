@@ -43,11 +43,14 @@ class Busquedas
                 // Log::info('formatearResultados ' . $item->id);
 
                 // Limpiar el texto y eliminar elementos no deseados
-                $textoLimpio = strip_tags($item->texto); // Eliminar etiquetas HTML
-                $textoLimpio = preg_replace('/\bimg\b/', '', $textoLimpio); // Eliminar la palabra "img"
-                // eliminamos caracters de markdown
-                $textoLimpio = preg_replace("/[#*]/", "", $textoLimpio);
-                $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
+                if ($item->texto && strlen($item->texto)>256) {
+
+                    $textoLimpio = strip_tags($item->texto); // Eliminar etiquetas HTML
+                    $textoLimpio = preg_replace('/\bimg\b/', '', $textoLimpio); // Eliminar la palabra "img"
+                    // eliminamos caracters de markdown
+                    $textoLimpio = preg_replace("/[#*]/", "", $textoLimpio);
+                    $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
+                } else $textoLimpio = $item->descripcion;
 
                 // extraemos la parte más relevante
                 $parteRelevante = $h->extractRelevant($busqueda, $textoLimpio, 400);

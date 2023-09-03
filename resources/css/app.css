@@ -192,7 +192,9 @@ main a.hover\:underline:hover::after {
 
 
 em.search-term {
-    background: yellow;
+    /*background: yellow;*/
+    text-decoration: underline;
+    @apply text-primary;
 }
 
 
