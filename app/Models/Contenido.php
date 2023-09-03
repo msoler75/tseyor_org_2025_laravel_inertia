@@ -4,12 +4,11 @@ namespace App\Models;
 
 use App\Models\SEOModel;
 use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Model;
 
-class Contenido extends SEOModel
+class Contenido extends Model
 {
-
     use Searchable;
-
 
     protected $fillable = [
         'coleccion',

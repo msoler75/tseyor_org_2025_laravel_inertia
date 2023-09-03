@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Carbon\Carbon;
+use App\Traits\EsContenido;
 
 class SEOModel extends Model
 {
     use HasSEO;
+    use EsContenido;
 
     // https://github.com/ralphjsmit/laravel-seo
     public function getDynamicSEOData(): SEOData

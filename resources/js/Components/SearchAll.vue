@@ -24,7 +24,7 @@
 
             </div>
             <div class="p-3 flex flex-wrap gap-3 select-none border-t border-b border-gray-500 border-opacity-30 shadow">
-                <div v-for="col of colecciones" :key="col" class="badge badge-info cursor-pointer" @click="toggleFiltro(col)"
+                <div v-if="colecciones.length>1" v-for="col of colecciones" :key="col" class="badge badge-info cursor-pointer" @click="toggleFiltro(col)"
                 :class="filtrada(col)==0?'opacity-50 hover:opacity-100':''"
                 >
                     <!--<Icon icon="ph:dot-outline-bold" v-show="noFiltros" />
@@ -42,7 +42,7 @@
                     >
                     <div class="flex items-center justify-between mb-2">
                         <Link :href="route(item.coleccion)+'/'+(item.slug_ref||item.id_ref)" @click="mostrarModal = false" class="text-lg font-bold flex-shrink" v-html="item.titulo"/>
-                        <Link :href="route(item.coleccion)" @click="mostrarModal = false" class="badge badge-info gap-2 cursor-pointer text-xs">{{ item.coleccion }}</Link>
+                        <Link :href="route(item.coleccion)" @click="mostrarModal = false" class="badge badge-ghost gap-2 cursor-pointer text-xs">{{ item.coleccion }}</Link>
                     </div>
                     <div v-html="item.descripcion"/>
                 </div>
@@ -145,6 +145,6 @@ function filtrada(coleccion) {
 
 <style scoped>
 .search-input {
-    @apply !border-none hover:!border-none active:!border-none focus:!border-none focus:!outline-none focus:!ring-0;
+    @apply bg-transparent !border-none hover:!border-none active:!border-none focus:!border-none focus:!outline-none focus:!ring-0;
 }
 </style>

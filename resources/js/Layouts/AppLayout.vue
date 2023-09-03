@@ -173,11 +173,11 @@ onBeforeUnmount(() => {
 const loader = ref(true)
 
 axios.get(route('setting', 'navigation'))
-.then(response=>{
-    console.log('response', response.data.value)
-    nav.setItems(response.data.value)
-    loader.value = false
-})
+    .then(response => {
+        console.log('response', response.data.value)
+        nav.setItems(response.data.value)
+        loader.value = false
+    })
 
 </script>
 
@@ -186,10 +186,11 @@ axios.get(route('setting', 'navigation'))
     <div class="flex flex-col">
 
 
-            <!-- Loader -->
-    <div v-if="loader" class="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 backdrop-blur-lg">
-        <Loader class="w-[7.77rem]" :running="true" />
-    </div>
+        <!-- Loader -->
+        <div v-if="loader"
+            class="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 backdrop-blur-lg">
+            <Loader class="w-[7.77rem]" :running="true" />
+        </div>
 
 
         <Announcement :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'" />
@@ -220,23 +221,25 @@ axios.get(route('setting', 'navigation'))
                                 </Link>
                             </div>
 
-                            <div class="flex gap-2">
-
-                                <button @click="toggleDark()" class="px-4 py-2 text-white bg-gray-600 dark:bg-purple-700">
-                                    Dark Toggle
-                                </button>
-
-                                <button @click="login1" class="btn">Login 1</button>
-
-                                <button @click="login2">Login 2</button>
-                            </div>
-
                             <!-- Main Navigation Tabs -->
                             <NavTabs class="hidden top-navigation space-x-8 sm:-my-px sm:ml-10 sm:flex" />
 
                         </div>
 
-                        <SearchAll/>
+                        <div class="flex gap-2">
+
+                            <button @click="toggleDark()" class="px-4 py-2 text-white bg-gray-600 dark:bg-purple-700">
+                                Dark Toggle
+                            </button>
+
+                            <button @click="login1" class="btn">Login 1</button>
+
+                            <button @click="login2">Login 2</button>
+                        </div>
+
+
+
+                        <SearchAll />
 
                         <transition class="hidden lg:flex" enter-active-class="transition ease-out duration-200"
                             enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
