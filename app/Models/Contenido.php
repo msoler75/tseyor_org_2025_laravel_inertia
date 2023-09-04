@@ -58,7 +58,7 @@ class Contenido extends Model
     {
         $coleccionesConDescripcion = ['paginas', 'centros', 'audios', 'guias', 'libros', 'lugares', 'videos'];
 
-        $coleccionesConTexto = ['paginas',  'guias', 'lugares'];
+        $coleccionesConTexto = ['paginas',  'terminos'];
 
         return [
             'id' => $this->id, // <- Always include the primary key
@@ -66,7 +66,6 @@ class Contenido extends Model
             // 'imagen' => $this->imagen,
             'descripcion' => in_array($this->coleccion, $coleccionesConDescripcion) ? $this->descripcion : "",
             'texto' => in_array($this->coleccion, $coleccionesConTexto) ? $this->texto : "",
-            'categoria' => $this->categoria,
         ];
     }
 }
