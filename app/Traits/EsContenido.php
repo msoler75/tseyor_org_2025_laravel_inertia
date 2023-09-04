@@ -24,11 +24,15 @@ trait EsContenido
         });
 
         static::deleting(function ($model) {
+             // dd("deleting");
+             //self::removerContenido($model);
             // Acciones antes de borrar el modelo
             // ...
         });
 
         static::deleted(function ($model) {
+            //dd("deleted", $model);
+            self::removerContenido($model);
             // Acciones después de que el modelo se haya borrado
             // ...
         });
@@ -79,7 +83,7 @@ trait EsContenido
 
                 // Verificar las dimensiones mínimas requeridas (ancho y alto)
                 $minWidth = 300; // Ancho mínimo deseado
-                $minHeight = 300; // Alto mínimo deseado
+                $minHeight = 250; // Alto mínimo deseado
 
                 if ($imageWidth >= $minWidth && $imageHeight >= $minHeight) {
                     $objeto->imagen = $imagePath;
@@ -128,5 +132,18 @@ trait EsContenido
 
         // Guardar el modelo en la base de datos
         $contenido->save();
+    }
+
+
+    public static function removerContenido($objeto)
+    {
+        $coleccion = $objeto->table;
+        $contenido = Contenido::where('coleccion', $coleccion)
+        ->where('id_ref', $objeto->id);
+
+        if($contenido) {
+            // elimina el contenido asociado
+            $contenido->delete();
+        }
     }
 }

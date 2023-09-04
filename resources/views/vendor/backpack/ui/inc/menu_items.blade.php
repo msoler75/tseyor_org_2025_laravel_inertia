@@ -11,7 +11,10 @@
     <x-backpack::menu-dropdown-item title="Noticias" icon="la la-volume-up" :link="backpack_url('noticia')" />
     <x-backpack::menu-dropdown-item title="Páginas" icon="la la-pager" :link="backpack_url('pagina')" />
     <x-backpack::menu-dropdown-item title="Radio Tseyor" icon="la la-broadcast-tower" :link="backpack_url('radio-item')" />
-    <x-backpack::menu-dropdown-header title="Glosario" />
+</x-backpack::menu-dropdown>
+
+<x-backpack::menu-dropdown title="Glosario" icon="la la-list-ul">
+    <x-backpack::menu-dropdown-item title="Términos" icon="la la-edit" :link="backpack_url('termino')" />
     <x-backpack::menu-dropdown-item title="Guias Estelares" icon="la la-star" :link="backpack_url('guia')" />
     <x-backpack::menu-dropdown-item title="Lugares de la Galaxia" icon="la la-map-marker" :link="backpack_url('lugar')" />
 </x-backpack::menu-dropdown>
@@ -52,3 +55,4 @@
 <x-backpack::menu-dropdown title="Configuración" icon="la la-cog">
     <x-backpack::menu-dropdown-item title="Ajustes" icon="la la-sliders-h" :link="backpack_url('setting')" />
 </x-backpack::menu-dropdown>
+
