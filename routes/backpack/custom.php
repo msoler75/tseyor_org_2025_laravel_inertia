@@ -62,4 +62,5 @@ Route::group([
     Route::crud('radio-item', 'RadioItemCrudController');
     Route::crud('pagina', 'PaginaCrudController');
     Route::crud('termino', 'TerminoCrudController');
+    Route::crud('video', 'VideoCrudController');
 }); // this should be the absolute last line of this file

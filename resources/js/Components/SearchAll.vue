@@ -26,20 +26,19 @@
 
             <div class="overflow-y-auto max-h-[calc(100vh-170px)] border-t border-gray-500 border-opacity-20">
 
-                <div v-if="resultadosAgrupados.length" class="p-7">
-                    <div v-if="query">
-                        <div class="text-center text-lg text-gray-500">
-                            No hay resultados para "<span class="text-primary">{{query}}</span>"
-                        </div>
+                <div v-if="!resultadosAgrupados.length" class="p-7">
+                    <div v-if="lastQuery" class="text-center text-lg text-gray-500">
+                        No hay resultados para "<span class="text-primary">{{ lastQuery }}</span>"
+                    </div>
 
-                        <div class="mt-14">
-                            <span class="font-bold">Prueba a buscar:</span>
-                            <div v-for="q of queries" :key="q" @click="query=q" class="bg-base-200 bg-opacity-50 flex items-center justify-between w-full py-3 px-4 my-2 cursor-pointer rounded-lg">
-                                <span>
-                                    {{q}}
-                                </span>
-                                <span class="text-lg">›</span>
-                        </div>
+                    <div class="mt-14">
+                        <span class="font-bold">Prueba a buscar:</span>
+                        <div v-for="q of queries" :key="q" @click="query = q"
+                            class="bg-base-200 bg-opacity-50 flex items-center justify-between w-full py-3 px-4 my-2 cursor-pointer rounded-lg">
+                            <span>
+                                {{ q }}
+                            </span>
+                            <span class="text-lg">›</span>
                         </div>
                     </div>
                 </div>
@@ -72,6 +71,8 @@ const mostrarModal = ref(false)
 const input = ref(null)
 
 const query = ref("")
+
+const lastQuery = ref("")
 
 const queries = ref(['libros de referencia', 'donde puedo inscribirme', 'ayuda humanitaria'])
 
@@ -167,9 +168,11 @@ function buscar() {
                 console.log(response)
                 results.value = response.data
                 loading.value = false
+                lastQuery.value = query.value
             })
             .catch(error => {
                 loading.value = false
+                lastQuery.value = query.value
             })
     }
 
