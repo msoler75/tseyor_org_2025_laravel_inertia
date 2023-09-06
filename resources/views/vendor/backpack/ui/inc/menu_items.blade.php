@@ -11,6 +11,7 @@
     <x-backpack::menu-dropdown-item title="Noticias" icon="la la-volume-up" :link="backpack_url('noticia')" />
     <x-backpack::menu-dropdown-item title="Páginas" icon="la la-pager" :link="backpack_url('pagina')" />
     <x-backpack::menu-dropdown-item title="Radio Tseyor" icon="la la-broadcast-tower" :link="backpack_url('radio-item')" />
+    <x-backpack::menu-dropdown-item title="Videos" icon="la la-youtube" :link="backpack_url('video')" />
 </x-backpack::menu-dropdown>
 
 <x-backpack::menu-dropdown title="Glosario" icon="la la-list-ul">
@@ -55,4 +56,5 @@
 <x-backpack::menu-dropdown title="Configuración" icon="la la-cog">
     <x-backpack::menu-dropdown-item title="Ajustes" icon="la la-sliders-h" :link="backpack_url('setting')" />
 </x-backpack::menu-dropdown>
+
 

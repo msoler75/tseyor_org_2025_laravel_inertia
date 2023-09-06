@@ -63,6 +63,10 @@ class ComunicadoImport
 
                     $texto = $imported->content;
 
+                    $texto = preg_replace("/(www\.)?tseyor\.com/", "tseyor.org", $texto);
+
+                    $texto = preg_replace("/#{4,99}\s*/", "", $texto);
+
                     $año = $dateObj->format('Y');
 
 
