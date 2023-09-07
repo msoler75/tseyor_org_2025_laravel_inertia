@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\CRUD\app\Library\Widget;
+
 
 /**
  * Class TerminCrudController
@@ -27,7 +29,7 @@ class TerminoCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Termino::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/termino');
-        CRUD::setEntityNameStrings('termino', 'terminos');
+        CRUD::setEntityNameStrings('término', 'términos');
     }
 
     /**
@@ -44,6 +46,22 @@ class TerminoCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+
+   //add div row using 'div' widget and make other widgets inside it to be in a row
+   Widget::add()->to('before_content')->type('div')->class('row')->content([
+
+    //widget made using fluent syntax
+    Widget::make()
+        ->type('card')
+        ->class('card bg-dark text-white mb-1') // optional
+        ->content([
+            'body'=>'Términos del glosario. No se incluyen términos de Guías Estelares ni de Lugares, como bases o planetas, porque estos van en sus propios tipos de contenidos.'
+        ])
+
+
+]);
+
     }
 
     /**

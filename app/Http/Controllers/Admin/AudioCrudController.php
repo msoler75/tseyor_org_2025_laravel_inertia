@@ -87,6 +87,10 @@ class AudioCrudController extends CrudController
         // donde se guardan los archivos de audio
         $folder = "media/audios";
 
+        CRUD::field('descripcion')->type('textarea');
+
+        CRUD::field('enlace')->type('text')->hint('Solo si es un audio externo, poner la url aquí. En tal caso no debe subirse el archivo audio.');
+
         CRUD::field('audio')->type('upload')
             ->withFiles([
                 'disk' => 'public', // the disk where file will be stored

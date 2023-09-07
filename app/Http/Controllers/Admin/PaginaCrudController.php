@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\PaginaRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\CRUD\app\Library\Widget;
 
 /**
  * Class PaginaCrudController
@@ -28,7 +29,7 @@ class PaginaCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Pagina::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/pagina');
-        CRUD::setEntityNameStrings('pagina', 'paginas');
+        CRUD::setEntityNameStrings('página', 'páginas');
     }
 
     /**
@@ -45,6 +46,21 @@ class PaginaCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+
+   //add div row using 'div' widget and make other widgets inside it to be in a row
+   Widget::add()->to('before_content')->type('div')->class('row')->content([
+
+    //widget made using fluent syntax
+    Widget::make()
+        ->type('card')
+        ->class('card bg-dark text-white mb-1') // optional
+        ->content([
+            'body'=>'Estas páginas en realidad solo sirven para indexar el SEO y para el buscador.'
+        ])
+
+
+]);
 
         $this->crud->addColumn([
             'name'  => 'titulo',
@@ -90,13 +106,13 @@ class PaginaCrudController extends CrudController
 
         CRUD::setFromDb(); // set fields from db columns.
 
-        CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->hint('Descripción corta para el SEO.');
 
         $folder = "/media/paginas";
 
         // CRUD::field('texto')->type('markdown_tinymce')->attributes(['folder' => $folder]);
 
-        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder])->hint('Poner solo el texto o palabras clave para indexar esta página.');
 
         CRUD::field('visibilidad')->type('visibilidad');
     }

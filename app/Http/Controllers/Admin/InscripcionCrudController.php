@@ -27,7 +27,7 @@ class InscripcionCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Inscripcion::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/inscripcion');
-        CRUD::setEntityNameStrings('inscripcion', 'inscripcions');
+        CRUD::setEntityNameStrings('inscripción', 'inscripciones');
     }
 
     /**
