@@ -21,7 +21,7 @@ class VideoCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
@@ -33,42 +33,68 @@ class VideoCrudController extends CrudController
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        $this->crud->addColumn([
+            'name'  => 'titulo',
+            'label' => 'Título',
+            'type'  => 'text'
+        ]);
 
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+
+        $this->crud->addColumn([
+            'name' => 'updated_at',
+            'label' => 'Modificado',
+            'type' => 'datetime',
+        ]);
+
+
+        $this->crud->addColumn([
+            'name'  => 'visibilidad',
+            'label' => 'Estado',
+            'type'  => 'text',
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
+            }
+        ]);
     }
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            // 'name' => 'required|min:2',
+            'titulo' => 'required|min:2',
         ]);
-        CRUD::setFromDb(); // set fields from db columns.
+        // CRUD::setFromDb(); // set fields from db columns.
 
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+         CRUD::field('titulo')->type('text');
+
+         CRUD::field('slug')->type('text');
+
+         CRUD::field('descripcion')->type('textarea');
+
+         CRUD::field('enlace')->type('text')->hint('Enlace al vídeo de youtube.');
+
+         CRUD::field('visibilidad')->type('visibilidad');
     }
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */

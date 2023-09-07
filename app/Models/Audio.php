@@ -21,6 +21,7 @@ class Audio extends SEOModel
         'slug',
         'descripcion',
         'categoria',
+        'enlace',
         'audio',
         'visibilidad',
         'duracion'

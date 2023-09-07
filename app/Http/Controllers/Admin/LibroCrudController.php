@@ -104,9 +104,21 @@ class LibroCrudController extends CrudController
             Storage::disk('public')->makeDirectory($folderPDF);
         }
 
+
+        CRUD::field('categoria')->hint('Monografías, Obras de referencia, Cuentos, Talleres... Se pueden poner varias categorías separadas por coma.');
+
         CRUD::field('descripcion')->type('textarea');
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folderImages]);
+
+
+        CRUD::field('edicion')->wrapper([
+            'class'      => 'form-group col-md-3'
+        ]);
+
+        CRUD::field('paginas')->wrapper([
+            'class'      => 'form-group col-md-3'
+        ]);
 
         CRUD::field('visibilidad')->type('visibilidad');
 
