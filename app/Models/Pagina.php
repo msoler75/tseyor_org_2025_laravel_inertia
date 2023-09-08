@@ -11,7 +11,7 @@ class Pagina extends SeoModel
 
     protected $fillable = [
         'titulo',
-        'url',
+        'ruta',
         'descripcion',
         'texto',
         'imagen',

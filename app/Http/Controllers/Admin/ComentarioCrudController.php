@@ -72,5 +72,7 @@ class ComentarioCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+
+        CRUD::field('user_id')->type('textarea');
     }
 }

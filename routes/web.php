@@ -196,3 +196,8 @@ Route::put('/equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::c
 Route::get('/phpinfo', function () {
     return phpinfo();
 });
+
+
+Route::fallback(function () {
+    return app()->call('App\Http\Controllers\PaginasController@index');
+});

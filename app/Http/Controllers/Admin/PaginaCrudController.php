@@ -6,6 +6,7 @@ use App\Http\Requests\PaginaRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Widget;
+use App\Models\Pagina;
 
 /**
  * Class PaginaCrudController
@@ -56,7 +57,7 @@ class PaginaCrudController extends CrudController
         ->type('card')
         ->class('card bg-dark text-white mb-1') // optional
         ->content([
-            'body'=>'Estas páginas en realidad solo sirven para indexar el SEO y para el buscador.'
+            'body'=>'Estas páginas solo se cargan si no están ya predefinidas, y en cualquier sirven para el SEO y para indexar el buscador.'
         ])
 
 
@@ -68,7 +69,6 @@ class PaginaCrudController extends CrudController
             'type'  => 'text'
         ]);
 
-
         $this->crud->addColumn([
             'name' => 'updated_at',
             'label' => 'Modificado',
@@ -76,10 +76,11 @@ class PaginaCrudController extends CrudController
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'url',
-            'label' => 'url',
-            'type'  => 'text',
+            'name' => 'ruta',
+            'label' => 'Ruta',
+            'type' => 'text'
         ]);
+
 
         $this->crud->addColumn([
             'name'  => 'visibilidad',
@@ -126,5 +127,13 @@ class PaginaCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+
+    protected function show($id)
+    {
+        $pagina = Pagina::findOrFail($id);
+
+        return redirect("/{$pagina->ruta}?borrador");
     }
 }
