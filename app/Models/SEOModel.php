@@ -16,7 +16,7 @@ class SEOModel extends Model
     // https://github.com/ralphjsmit/laravel-seo
     public function getDynamicSEOData(): SEOData
     {
-        $image = $this->imagen ? url($this->imagen) : '';
+        $image = $this->imagen ? url($this->imagen) :  env('META_IMAGE_DEFAULT', null);
         return new SEOData(
             title: $this->titulo ?? $this->nombre ?? $this->name && null,
             description: $this->descripcion ?? mb_substr(strip_tags($this->texto ?? ""), 0, 400 - 3),

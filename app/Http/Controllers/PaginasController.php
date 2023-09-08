@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pagina;
 use Inertia\Inertia;
+use App\Pigmalion\SEO;
 
 class PaginasController extends Controller
 {
-    //
-    public function index(Request $request, $path) {
+
+    public function show($path) {
 
          $pagina = Pagina::where('ruta', $path)->firstOrFail();
 
@@ -22,6 +23,7 @@ class PaginasController extends Controller
 
          return Inertia::render('Pagina', [
             'pagina' => $pagina,
-         ]);
+         ])
+         ->withViewData(SEO::from($pagina));
     }
 }

@@ -198,7 +198,7 @@ Route::get('/phpinfo', function () {
 });
 
 
-Route::get('{ruta}', 'App\Http\Controllers\PaginasController@index')->where('ruta', '[a-z0-9\-]+')->name('pagina');
+Route::get('{ruta}', 'App\Http\Controllers\PaginasController@show')->where('ruta', '[a-z0-9\-]+')->name('pagina');
 
 
 /* Route::fallback(function () {
