@@ -117,9 +117,9 @@ Route::get('/cursos', [CursosController::class, 'index'])->name('cursos');
 
 Route::get('/radio', [RadioController::class, 'index'])->name('radio');
 
-Route::get('/cursos/inscripcion', function () {
+Route::get('inscripcion', function () {
     return Inertia::render('Cursos/Inscripcion', [])
-        ->withViewData(SEO::get('cursos.inscripcion'));
+        ->withViewData(SEO::get('inscripcion'));
 })->name('cursos.inscripcion');
 Route::post('/cursos/inscripcion', [InscripcionController::class, 'store'])->name('cursos.inscripcion.store');
 
@@ -198,7 +198,7 @@ Route::get('/phpinfo', function () {
 });
 
 
-Route::get('{ruta}', 'App\Http\Controllers\PaginasController@index')->where('ruta', '[a-z0-9\-]+')->name('audio');
+Route::get('{ruta}', 'App\Http\Controllers\PaginasController@index')->where('ruta', '[a-z0-9\-]+')->name('pagina');
 
 
 /* Route::fallback(function () {
