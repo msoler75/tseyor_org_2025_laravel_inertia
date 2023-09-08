@@ -10,7 +10,7 @@ class SEO
 {
     public static function get($route)
     {
-        $pagina = Pagina::where('ruta', $route)->where('visibilidad', 'P');
+        $pagina = Pagina::where('ruta', $route)->where('visibilidad', 'P')->first();
 
         if ($pagina)
             return [
