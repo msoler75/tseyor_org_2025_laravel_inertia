@@ -19,7 +19,7 @@ class ImportComunicados extends Command
      *
      * @var string
      */
-    protected $description = 'Importa los comunicados en la base de datos.';
+    protected $description = 'Importa los comunicados en la base de datos desde documentos Word y listado de comunicados .lst';
 
     /**
      * Execute the console command.

@@ -9,6 +9,8 @@ class Pagina extends SeoModel
 {
     use CrudTrait;
 
+    protected $table = 'paginas';
+
     protected $fillable = [
         'titulo',
         'ruta',
