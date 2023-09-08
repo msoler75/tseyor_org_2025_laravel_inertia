@@ -14,7 +14,8 @@ class Guia extends SEOModel
         'slug',
         'descripcion',
         'categoria',
-        'texto',
+        'texto', //presentación
+        'comunicado',
         'experiencia',
         'imagen',
         'citas',

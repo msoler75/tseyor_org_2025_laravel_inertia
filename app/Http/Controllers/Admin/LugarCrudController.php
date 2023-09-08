@@ -77,6 +77,6 @@ class LugarCrudController extends CrudController
 
     protected function show($id)
     {
-        return redirect("/enciclopedia/lugares/$id");
+        return redirect("/lugares/$id");
     }
 }

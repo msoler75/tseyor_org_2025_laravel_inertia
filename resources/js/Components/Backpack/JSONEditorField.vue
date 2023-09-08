@@ -20,7 +20,14 @@ const props = defineProps({
     value: String
 })
 
-const decode = (str) => JSON.parse(str)
+const decode = (str) => {
+    try {
+        JSON.parse(str)
+    }
+    catch(err){
+        return null
+    }
+}
 
 const localValue = ref(decode(props.value))
 
