@@ -139,9 +139,9 @@ class ComunicadoCrudController extends CrudController
 
         CRUD::field('descripcion')->type('textarea');
 
-        // CRUD::field('texto')->type('markdown_tinymce')->attributes(['folder' => $folder]);
+        // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
-        CRUD::field('texto')->type('markdown_tinymce')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 

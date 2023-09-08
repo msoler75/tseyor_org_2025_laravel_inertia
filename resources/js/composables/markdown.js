@@ -19,16 +19,16 @@ export function HtmlToMarkdown(html) {
         // reemplazamos los atributos de imagen
         .replace(/<img\s+([^>]+)>/g,
             (match, atributos) => {
-                console.log('r1', { match, atributos })
+                // console.log('r1', { match, atributos })
                 var values = []
                 atributos.replace(/(\w+)=['"](.*?)['"]/g, (match, atributo, valor) => {
-                    console.log('r2', { atributo, valor })
+                    // console.log('r2', { atributo, valor })
                     if (atributo === 'width' || atributo === 'height') {
                         values.push(`${atributo}=${valor}`)
                     }
                     return match
                 })
-                console.log('values', values)
+                // console.log('values', values)
                 return match + (values.length ? `{${values.join(', ')}}` : '')
             })
              // reemplazamos los estilos de párrafo
@@ -69,3 +69,42 @@ export function MarkdownToHtml(raw_markdown) {
 
 
 }
+
+
+
+export function detectFormat(text) {
+    // Contamos la cantidad de etiquetas HTML
+    const htmlTagsCount = (text.match(/<\/?[a-z][a-z0-9]*\b[^>]*>/gi) || []).length;
+
+    // Contamos la cantidad de marcadores Markdown
+    const markdownMarkersCount = (text.match(/^#\s+\S+|^-|[*\[\]`!]|\!\[|\]\(/gm) || []).length;
+
+    // Calculamos la probabilidad de que sea Markdown o HTML
+    const totalMarkers = markdownMarkersCount + htmlTagsCount;
+    const markdownProbability = markdownMarkersCount / (totalMarkers + 1);
+    const htmlProbability = htmlTagsCount / (totalMarkers + 1);
+
+    console.log({htmlTagsCount,markdownMarkersCount,  totalMarkers, markdownProbability,htmlProbability })
+
+    // Establecemos un umbral de probabilidad para determinar el formato
+    const threshold = 0.6;
+
+    // Detectar si el texto está en formato Markdown
+    if (markdownProbability >= threshold && markdownProbability > htmlProbability) {
+        console.log('formato MARKDOWN detectado', markdownProbability)
+      return { format: "md", probability: markdownProbability };
+    }
+
+    // Detectar si el texto está en formato HTML
+    const htmlPattern = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/i;
+    const containsHTMLPattern = htmlPattern.test(text);
+
+    if (htmlProbability >= threshold && htmlProbability > markdownProbability && containsHTMLPattern) {
+        console.log('formato HTML detectado', htmlProbability)
+      return { format: "html", probability: htmlProbability };
+    }
+
+    // Si no se detecta un formato claro, se considera ambiguo
+    console.log('formato AMBIGUO')
+    return { format: "ambiguous", probability: 0.5 };
+  }

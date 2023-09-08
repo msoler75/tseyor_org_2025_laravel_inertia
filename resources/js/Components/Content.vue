@@ -8,6 +8,7 @@
 <script setup>
 import { v3ImgPreviewFn } from 'v3-img-preview'
 import Markdown from 'vue3-markdown-it';
+import {detectFormat} from '@/composables/markdown.js'
 
 const props = defineProps({
     content: {
@@ -75,34 +76,6 @@ function handlePreview(index) {
 }
 
 
-function detectFormat(text) {
-    // Contamos la cantidad de etiquetas HTML
-    const htmlTagsCount = (text.match(/<\/?[a-z][a-z0-9]*\b[^>]*>/gi) || []).length;
-
-    // Contamos la cantidad de marcadores Markdown
-    const markdownMarkersCount = (text.match(/[*#_>\[\]`!-]|\!\[|\]\(/g) || []).length;
-
-    console.log({ htmlTagsCount, markdownMarkersCount })
-
-    // Usamos una expresión regular para detectar si hay algún patrón de HTML en el texto
-    const htmlPattern = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/i;
-    const containsHTMLPattern = htmlPattern.test(text);
-
-    // Calculamos la probabilidad de que sea Markdown o HTML
-    const totalMarkers = markdownMarkersCount + htmlTagsCount;
-    const markdownProbability = markdownMarkersCount / (totalMarkers + 1);
-    const htmlProbability = htmlTagsCount / (totalMarkers + 1);
-
-    // Establecemos un umbral de probabilidad para determinar el formato
-    const threshold = 0.6;
-    if (markdownProbability >= threshold && markdownProbability > htmlProbability) {
-        return { format: "Markdown", probability: markdownProbability };
-    } else if (htmlProbability >= threshold && htmlProbability > markdownProbability && containsHTMLPattern) {
-        return { format: "HTML", probability: htmlProbability };
-    } else {
-        return { format: "Ambiguous", probability: 0.5 };
-    }
-}
 
 </script>
 

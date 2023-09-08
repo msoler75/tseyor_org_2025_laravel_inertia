@@ -178,7 +178,7 @@ import 'floating-vue/dist/style.css'
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 
-import {HtmlToMarkdown, MarkdownToHtml} from '@/composables/markdown.js'
+import {HtmlToMarkdown, MarkdownToHtml, detectFormat} from '@/composables/markdown.js'
 
 import screenfull from 'screenfull'
 
@@ -191,6 +191,8 @@ const props = defineProps({
     content: { type: String, default: '' },
     mediaFolder: { type: String, default: '/media' },
 })
+
+const emit = defineEmits(['update:modelValue', 'change'])
 
 
 // MOUNTED
@@ -247,8 +249,26 @@ function onQuillReady() {
     bindings = quill.getModule('keyboard').options.bindings;
 }
 
-const contenidoMD = ref(props.content)
-const contenidoHtml = ref(MarkdownToHtml(props.content))
+
+// CONVERT MD <-> HTML
+
+const format = ['Markdown', 'Ambiguous'].includes(detectFormat(props.content).format) ? 'md' : 'html'
+
+const contenidoMD = ref(format == 'md' ? props.content : HtmlToMarkdown(props.content))
+const contenidoHtml = ref(format == 'html' ? props.content : MarkdownToHtml(props.content))
+
+watch(contenidoHtml, (value) => {
+    contenidoMD.value = HtmlToMarkdown(value)
+    if (props.format == 'md') {
+        emit('change', contenidoMD.value)
+        emit('update:modelValue', contenidoMD.value)
+    }
+    else {
+        emit('change', contenidoHtml.value)
+        emit('update:modelValue', contenidoHtml.value)
+    }
+})
+
 
 /*
 // Intercepta los cambios en el valor contenidoMD

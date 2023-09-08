@@ -1,6 +1,5 @@
 <template>
-        <QuillEditor theme="snow" v-model:content="contenidoHtml" contentType="html"
-                :toolbar="toolbar"/>
+    <QuillEditor theme="snow" v-model:content="contenidoHtml" contentType="html" :toolbar="toolbar" />
 </template>
 
 
@@ -8,21 +7,24 @@
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
-import {HtmlToMarkdown, MarkdownToHtml} from '@/composables/markdown.js'
+import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
 
 const emit = defineEmits(['update:modelValue', 'change'])
 
 const props = defineProps({
     modelValue: { type: String },
-    format: {type: String, default: 'md'},
-    toolbar: {default: null} // null, 'essential' , 'minimal', 'full'   or   https://quilljs.com/docs/modules/toolbar/
+    format: { type: String, default: 'detect' },
+    toolbar: { default: null } // null, 'essential' , 'minimal', 'full'   or   https://quilljs.com/docs/modules/toolbar/
 })
 
 
 // CONVERT MD <-> HTML
 
-const contenidoMD = ref(props.format == 'md' ? props.modelValue : HtmlToMarkdown(props.modelValue))
-const contenidoHtml = ref(props.format == 'html' ? props.modelValue : MarkdownToHtml(props.modelValue))
+const format = computed(() => props.format != 'detect' ? props.format:
+['Markdown', 'Ambiguous'].includes(detectFormat(props.modelValue).format) ? 'md' : 'html')
+
+const contenidoMD = ref(format.value.toLowerCase() == 'md' ? props.modelValue : HtmlToMarkdown(props.modelValue))
+const contenidoHtml = ref(format.value.toLowerCase() == 'html' ? props.modelValue : MarkdownToHtml(props.modelValue))
 
 watch(contenidoHtml, (value) => {
     contenidoMD.value = HtmlToMarkdown(value)

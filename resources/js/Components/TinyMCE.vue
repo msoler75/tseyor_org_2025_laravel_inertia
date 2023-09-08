@@ -4,7 +4,7 @@
             <Icon icon="ph:arrow-left" />Volver al editor normal
         </span>
 
-<!--
+        <!--
     <div>MD: {{contenidoMD}}</div>
     <div>HTML: {{ contenidoHtml }}</div>
 -->
@@ -20,9 +20,9 @@
                 relative_urls: false,
                 block_formats: 'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3',
                 plugins: [
-                    'advlist',  'autolink',
+                    'advlist', 'autolink',
                     'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
-                     'fullscreen',  'insertdatetime', 'media', 'table', 'help', 'wordcount',
+                    'fullscreen', 'insertdatetime', 'media', 'table', 'help', 'wordcount',
                     'emoticons'
                 ],
                 toolbar: toolbarButtons,
@@ -42,8 +42,7 @@
         </Modal>
 
         <!-- Modal Upload Image -->
-        <ModalDropZone v-model="modalSubirArchivos" @uploaded="uploadedImage($event)"
-            :mediaFolder="mediaFolder"
+        <ModalDropZone v-model="modalSubirArchivos" @uploaded="uploadedImage($event)" :mediaFolder="mediaFolder"
             placeholder="Arrastra la imagen aquí o haz clic" url="/api/files/upload/image" :options="{
                 maxFiles: 1,
                 acceptedFiles: 'image/*'
@@ -63,7 +62,7 @@ import TinyEditor from '@tinymce/tinymce-vue'
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 
-import {HtmlToMarkdown, MarkdownToHtml} from '@/composables/markdown.js'
+import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
 
 import { onThemeChange, updateTheme } from '@/composables/themeadapter'
 
@@ -73,7 +72,7 @@ const emit = defineEmits(['update:modelValue', 'change'])
 
 const props = defineProps({
     modelValue: { type: String },
-    format: { type: String, default: 'md' }, // 'md', 'html'
+    format: { type: String, default: 'detect' }, // 'md', 'html'
     height: { type: Number, default: 500 },
     mediaFolder: { type: String, default: '/media' },
     toolbar: { type: String, default: '' },
@@ -110,8 +109,12 @@ updateTheme()
 
 // CONVERT MD <-> HTML
 
-const contenidoMD = ref(props.format == 'md' ? props.modelValue : HtmlToMarkdown(props.modelValue))
-const contenidoHtml = ref(props.format == 'html' ? props.modelValue : MarkdownToHtml(props.modelValue))
+
+const format = computed(() => props.format != 'detect' ? props.format :
+    ['Markdown', 'Ambiguous'].includes(detectFormat(props.modelValue).format) ? 'md' : 'html')
+
+const contenidoMD = ref(format.value.toLowerCase() == 'md' ? props.modelValue : HtmlToMarkdown(props.modelValue))
+const contenidoHtml = ref(format.value.toLowerCase() == 'html' ? props.modelValue : MarkdownToHtml(props.modelValue))
 
 watch(contenidoHtml, (value) => {
     contenidoMD.value = HtmlToMarkdown(value)
