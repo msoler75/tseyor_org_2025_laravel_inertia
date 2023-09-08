@@ -77,7 +77,7 @@ export function detectFormat(text) {
     const htmlTagsCount = (text.match(/<\/?[a-z][a-z0-9]*\b[^>]*>/gi) || []).length;
 
     // Contamos la cantidad de marcadores Markdown
-    const markdownMarkersCount = (text.match(/^#\s+\S+|^-|[*\[\]`!]|\!\[|\]\(/gm) || []).length;
+    const markdownMarkersCount = (text.match(/^#\s+\S+|^-|^>\s+\S+|-{4,99}|\||[*\[\]`!]|\!\[|\]\(/gm) || []).length;
 
     // Calculamos la probabilidad de que sea Markdown o HTML
     const totalMarkers = markdownMarkersCount + htmlTagsCount;
