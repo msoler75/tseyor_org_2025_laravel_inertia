@@ -9,9 +9,7 @@ use Inertia\Inertia;
 class PaginasController extends Controller
 {
     //
-    public function index(Request $request) {
-
-         $path = $request->path();
+    public function index(Request $request, $path) {
 
          $pagina = Pagina::where('ruta', $path)->firstOrFail();
 

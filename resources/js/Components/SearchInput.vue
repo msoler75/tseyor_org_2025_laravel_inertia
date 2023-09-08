@@ -69,7 +69,7 @@ const cambiado = ref(false)
 // si hay algun cambio en los argumentos de búsqueda
 watch(()=>props.arguments, (value) => cambiado.value = true, { deep: true })
 
-watch(query, (value) => emit('update:modelValue', valueç))
+watch(query, (value) => emit('update:modelValue', value))
 
 const submit = () => {
     var args = {}
