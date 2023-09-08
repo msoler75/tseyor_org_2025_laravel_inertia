@@ -198,6 +198,9 @@ Route::get('/phpinfo', function () {
 });
 
 
-Route::fallback(function () {
+Route::get('{ruta}', 'App\Http\Controllers\PaginasController@index')->where('ruta', '[a-z0-9\-]+')->name('audio');
+
+
+/* Route::fallback(function () {
     return app()->call('App\Http\Controllers\PaginasController@index');
-});
+}); */

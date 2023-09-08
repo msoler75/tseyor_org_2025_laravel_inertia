@@ -122,7 +122,7 @@ trait EsContenido
 
         // Asignar las propiedades del modelo con los datos recibidos
         $contenido->titulo = $datos->titulo ?? $datos->nombre;
-        $contenido->slug_ref = $datos->slug ?? $datos->url ?? null;
+        $contenido->slug_ref = $datos->slug ?? $datos->ruta ?? null;
         $contenido->descripcion = $datos->descripcion ?? ($datos->pais . " " . $datos->poblacion);
         $contenido->texto = $datos->texto ?? ($datos->direccion . " " . $datos->codigo . " " . $datos->provincia . " " . $datos->email . " " . $datos->telefono);
         $contenido->imagen = $datos->imagen ?? null;
