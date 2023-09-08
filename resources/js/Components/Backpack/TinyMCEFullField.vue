@@ -12,7 +12,7 @@
 const props = defineProps({
     name: String,
     content: { type: String, default: '' },
-    format: { type: String, default: 'md' }, // 'md', 'html'
+    format: { type: String, default: 'detect' }, // 'md', 'html'
     folder: String
 })
 

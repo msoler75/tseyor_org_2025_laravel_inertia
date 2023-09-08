@@ -101,7 +101,7 @@ class PaginaCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            'titulo' => 'required|min:8',
+            'titulo' => 'required|min:3',
             'descripcion' => 'max:400',
         ]);
 
@@ -111,9 +111,9 @@ class PaginaCrudController extends CrudController
 
         $folder = "/media/paginas";
 
-        // CRUD::field('texto')->type('markdown_tinymce')->attributes(['folder' => $folder]);
+        // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
-        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder])->hint('Poner solo el texto o palabras clave para indexar esta página.');
+        CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder])->hint('Poner solo el texto o palabras clave para indexar esta página.');
 
         CRUD::field('visibilidad')->type('visibilidad');
     }

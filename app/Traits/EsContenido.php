@@ -24,8 +24,8 @@ trait EsContenido
         });
 
         static::deleting(function ($model) {
-             // dd("deleting");
-             //self::removerContenido($model);
+            // dd("deleting");
+            //self::removerContenido($model);
             // Acciones antes de borrar el modelo
             // ...
         });
@@ -73,21 +73,25 @@ trait EsContenido
 
             // busca la primera imagen que tenga unas dimensiones minimas
             foreach ($matches[1] as $imageUrl) {
-                $imagePath = str_replace(url('/'), '', $imageUrl); // Obtener la ruta relativa de la imagen
-                $absolutePath = public_path($imagePath); // Obtener la ruta absoluta de la imagen
 
-                // Obtener las dimensiones de la imagen
-                $imageSize = getimagesize($absolutePath);
-                $imageWidth = $imageSize[0];
-                $imageHeight = $imageSize[1];
+                if (!preg_match("/^https?:/", $imageUrl)) {
 
-                // Verificar las dimensiones mínimas requeridas (ancho y alto)
-                $minWidth = 300; // Ancho mínimo deseado
-                $minHeight = 250; // Alto mínimo deseado
+                    $imagePath = str_replace(url('/'), '', $imageUrl); // Obtener la ruta relativa de la imagen
+                    $absolutePath = public_path($imagePath); // Obtener la ruta absoluta de la imagen
 
-                if ($imageWidth >= $minWidth && $imageHeight >= $minHeight) {
-                    $objeto->imagen = $imagePath;
-                    break; // Salir del bucle después de encontrar la primera imagen adecuada
+                    // Obtener las dimensiones de la imagen
+                    $imageSize = getimagesize($absolutePath);
+                    $imageWidth = $imageSize[0];
+                    $imageHeight = $imageSize[1];
+
+                    // Verificar las dimensiones mínimas requeridas (ancho y alto)
+                    $minWidth = 300; // Ancho mínimo deseado
+                    $minHeight = 250; // Alto mínimo deseado
+
+                    if ($imageWidth >= $minWidth && $imageHeight >= $minHeight) {
+                        $objeto->imagen = $imagePath;
+                        break; // Salir del bucle después de encontrar la primera imagen adecuada
+                    }
                 }
             }
         }
@@ -139,9 +143,9 @@ trait EsContenido
     {
         $coleccion = $objeto->table;
         $contenido = Contenido::where('coleccion', $coleccion)
-        ->where('id_ref', $objeto->id);
+            ->where('id_ref', $objeto->id);
 
-        if($contenido) {
+        if ($contenido) {
             // elimina el contenido asociado
             $contenido->delete();
         }
