@@ -34,8 +34,7 @@ const props = defineProps({
     comunicado: {
         type: Object,
         required: true,
-    },
-    permisos: {}
+    }
 });
 
 </script>
