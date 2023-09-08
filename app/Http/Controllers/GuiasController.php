@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Guia;
+use App\Models\Libro;
 use App\Pigmalion\SEO;
 
 class GuiasController extends Controller
@@ -34,9 +35,14 @@ class GuiasController extends Controller
 
         $guias = Guia::select(['nombre', 'slug'])->take(50)->get();
 
+        $libros_slug = json_decode($guia->libros, true);
+
+        $libros = Libro::whereIn('slug', $libros_slug)->get();
+
         return Inertia::render('Guias/Guia', [
             'guia' => $guia,
-            'guias' => $guias
+            'guias' => $guias,
+            'libros' => $libros
         ])
        ->withViewData(SEO::from($guia));
     }
