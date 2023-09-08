@@ -22,7 +22,7 @@
                 plugins: [
                     'advlist', 'autolink',
                     'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
-                    'fullscreen', 'insertdatetime', 'media', 'table', 'help', 'wordcount',
+                    'code', 'fullscreen', 'insertdatetime', 'media', 'table', 'help', 'wordcount',
                     'emoticons'
                 ],
                 toolbar: toolbarButtons,
@@ -84,7 +84,7 @@ const toolbarButtons = computed(() => {
     if (props.toolbar)
         return props.toolbar
     if (props.fullEditor)
-        return 'undo redo | bold italic underline strikethrough | styles | alignleft aligncenter alignright alignjustify | blockquote numlist bullist | fontsizes fonts | forecolor backcolor | insertimage mediamanager | codesample table emoticons | markdown customDateButton | fullscreen'
+        return 'undo redo | bold italic underline strikethrough | styles | alignleft aligncenter alignright alignjustify | blockquote numlist bullist | fontsizes fonts | forecolor backcolor | insertimage mediamanager | codesample table emoticons | code markdown customDateButton | fullscreen'
     return 'undo redo | blocks | bold italic | forecolor backcolor | emoticons'
 })
 
