@@ -1,5 +1,5 @@
 <template>
-    <input type="hidden" :name="name" v-model="localValue">
+    <input type="hidden" :name="name" :value="localValueString">
     <JsonEditorVue
     mode="text"
     v-model="localValue"
@@ -32,6 +32,8 @@ const decode = (str) => {
 }
 
 const localValue = ref(decode(props.value))
+
+const localValueString = computed(()=>JSON.stringify(localValue.value))
 
 console.log({localValue})
 </script>

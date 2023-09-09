@@ -65,6 +65,7 @@ class GuiaCrudController extends CrudController
          CRUD::setValidation([
             'nombre' => 'required|min:2',
             // 'descripcion' => 'required|min:16',
+            'imagen' =>'required'
         ]);
         CRUD::setFromDb(); // set fields from db columns.
 
@@ -72,6 +73,8 @@ class GuiaCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+         CRUD::field('descripcion')->type('text');
 
          CRUD::field([   // select_from_array
             'name'        => 'categoria',
