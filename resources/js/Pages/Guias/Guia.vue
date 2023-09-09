@@ -6,7 +6,6 @@
             <AdminPanel modelo="guia" necesita="administrar contenidos" :contenido="guia" />
         </div>
 
-
         <div class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
                 <div class="w-full h-auto mx-auto">
@@ -27,9 +26,7 @@
                     </tab>
 
                     <tab v-if="libros" name="Bibliografía">
-                        <Prose v-if="libros.texto" class="mb-12">
-                        {{ libros.texto }}
-                        </Prose>
+                        <Prose v-if="libros.texto" class="mb-12" v-html="libros.texto"/>
                         <div class="flex flex-wrap gap-5">
                             <Link :href="route('libro', libro.slug)" v-if="libros" v-for="libro, index of libros.items"
                                 :key="index" class="flex">
