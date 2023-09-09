@@ -252,7 +252,7 @@ function onQuillReady() {
 
 // CONVERT MD <-> HTML
 
-const format = ['Markdown', 'Ambiguous'].includes(detectFormat(props.content).format) ? 'md' : 'html'
+const format = ['md', 'ambiguous'].includes(detectFormat(props.content).format) ? 'md' : 'html'
 
 const contenidoMD = ref(format == 'md' ? props.content : HtmlToMarkdown(props.content))
 const contenidoHtml = ref(format == 'html' ? props.content : MarkdownToHtml(props.content))

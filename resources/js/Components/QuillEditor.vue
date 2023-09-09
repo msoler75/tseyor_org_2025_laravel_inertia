@@ -21,7 +21,7 @@ const props = defineProps({
 // CONVERT MD <-> HTML
 
 const format = computed(() => props.format != 'detect' ? props.format:
-['Markdown', 'Ambiguous'].includes(detectFormat(props.modelValue).format) ? 'md' : 'html')
+['md', 'ambiguous'].includes(detectFormat(props.modelValue).format) ? 'md' : 'html')
 
 const contenidoMD = ref(format.value.toLowerCase() == 'md' ? props.modelValue : HtmlToMarkdown(props.modelValue))
 const contenidoHtml = ref(format.value.toLowerCase() == 'html' ? props.modelValue : MarkdownToHtml(props.modelValue))

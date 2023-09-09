@@ -17,7 +17,7 @@ const props = defineProps({
     },
 });
 
-const isMarkdown = computed(() => ['Markdown', 'Ambiguous'].includes(detectFormat(props.content).format) )
+const isMarkdown = computed(() => ['markdown', 'ambiguous'].includes(detectFormat(props.content).format) )
 const container = ref(null)
 const images = ref([])
 
