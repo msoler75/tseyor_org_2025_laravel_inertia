@@ -87,14 +87,7 @@ class GuiaCrudController extends CrudController
             ],
         ]);
 
-        CRUD::field('texto')->type('markdown_quill_simple');
-
-
-        CRUD::field('comunicado')->type('markdown_quill_simple');
-
-        CRUD::field('experiencia')->type('markdown_quill_simple');
-
-        CRUD::field('citas')->type('markdown_quill_simple');
+        CRUD::field('texto')->type('text_tinymce');
 
         CRUD::field('libros')->type('json')->hint('Libros de consulta de este Guía Estelar');
 
