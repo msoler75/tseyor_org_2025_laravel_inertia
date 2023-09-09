@@ -2,7 +2,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="guia" necesita="administrar contenidos" class="mb-3"/>
+        <AdminPanel modelo="guia" necesita="administrar contenidos" class="mb-3" />
 
 
 
@@ -11,18 +11,14 @@
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-            <div class="min-w-[150px] lg:min-w-[240px] ">
-                <div class="card bg-base-100 shadow p-10 space-y-7 sticky top-20">
-                    <h2 class="mb-5">Listado</h2>
-                    <ul class="list-disc">
-                        <li v-for="guia in guias" :key="guia.slug">
-                            <Link :href="route('guia', guia.slug)"
-                                class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
-                            {{ guia.nombre }}
-                            </Link>
-                        </li>
-                    </ul>
-                </div>
+            <div
+                class="w-full h-fit md:w-auto min-w-[150px] lg:min-w-[240px] card bg-base-100 shadow p-10 md:sticky md:top-20 flex-row md:flex-col flex-wrap md:gap-1">
+                <Link v-for="guia in guias" :key="guia.slug" :href="route('guia', guia.slug)"
+                    class="inline font-semibold p-3 md:px-0 md:py-1 w-fit">
+                {{ guia.nombre }}
+                </Link>
+
+
             </div>
 
             <div class="w-full flex-grow">
