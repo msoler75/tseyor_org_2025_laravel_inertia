@@ -22,25 +22,16 @@
                 </p>
                 <div class="mb-4"></div>
                 <tabs>
-                    <tab v-if="guia.texto" name="Presentación">
-                        <div class="prose" v-html="MarkdownToHtml(guia.texto)"></div>
-                    </tab>
-
-                    <tab v-if="guia.comunicado" name="Comunicado">
-                        <div class="prose" v-html="MarkdownToHtml(guia.comunicado)"></div>
-                    </tab>
-
-                    <tab v-if="guia.experiencia" name="Experiencia">
-                        <div class="prose" v-html="MarkdownToHtml(guia.experiencia)"></div>
-                    </tab>
-
-                    <tab v-if="guia.citas" name="Citas">
-                        <div class="prose" v-html="MarkdownToHtml(guia.citas)"></div>
+                    <tab v-for="seccion, index of secciones" :key="index" :name="seccion.titulo">
+                        <div class="prose" v-html="MarkdownToHtml(seccion.texto)"></div>
                     </tab>
 
                     <tab v-if="libros" name="Bibliografía">
+                        <Prose v-if="libros.texto" class="mb-12">
+                        {{ libros.texto }}
+                        </Prose>
                         <div class="flex flex-wrap gap-5">
-                            <Link :href="route('libro', libro.slug)" v-if="libros" v-for="libro, index of libros"
+                            <Link :href="route('libro', libro.slug)" v-if="libros" v-for="libro, index of libros.items"
                                 :key="index" class="flex">
                             <Image :src="libro.imagen" :alt="libro.titulo" class="object-contain rounded-[2px] w-48 shadow-xl"  />
                             </Link>
@@ -70,7 +61,7 @@
 
 import { Tabs, Tab } from 'vue3-tabs-component';
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { MarkdownToHtml } from '@/composables/markdown.js'
+import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
 
 defineOptions({ layout: AppLayout })
 
@@ -85,8 +76,55 @@ const props = defineProps({
         required: true,
     },
     libros: {
-        type: Array,
+        type: Object,
         required: false
     }
 });
+
+const format = detectFormat(props.guia.texto)
+
+const texto = ref(props.guia.texto)
+
+if(format.format=='html')
+    texto.value = HtmlToMarkdown(texto.value)
+
+const secciones = ref(parseMarkdownToSections(texto.value))
+
+function parseMarkdownToSections(text) {
+  const lines = text.split('\n');
+  const sections = [];
+  let currentSection = null;
+
+  lines.forEach((line) => {
+    // Verificar si es un título
+    const matches = line.match(/^(#+)\s+(.*)$/);
+    if (matches) {
+      const level = matches[1].length;
+      const titulo = matches[2];
+      const texto = '';
+
+      // Si ya hay una sección actual, almacenarla
+      if (currentSection !== null) {
+        sections.push(currentSection);
+      }
+
+      // Crear una nueva sección con el título y contenido vacío
+      currentSection = {
+        titulo,
+        texto,
+        level,
+      };
+    } else if (currentSection !== null) {
+      // Agregar el contenido a la sección actual
+      currentSection.texto += line + '\n';
+    }
+  });
+
+  // Añadir la última sección al array de secciones
+  if (currentSection !== null) {
+    sections.push(currentSection);
+  }
+
+  return sections;
+}
 </script>

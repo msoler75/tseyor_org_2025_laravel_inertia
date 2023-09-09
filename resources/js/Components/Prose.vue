@@ -1,5 +1,5 @@
 <template>
-     <div class="prose p-content text-justify mx-auto">
+     <div class="prose p-content text-justify">
         <slot />
         </div>
 </template>

@@ -12,14 +12,10 @@ class Guia extends SEOModel
     protected $fillable = [
         'nombre',
         'slug',
-        'descripcion',
         'categoria',
-        'texto', //presentación
-        'comunicado',
-        'experiencia',
+        'descripcion',
+        'texto',
         'imagen',
-        'citas',
-        'libros',
-        'relacionados'
+        'libros'
     ];
 }

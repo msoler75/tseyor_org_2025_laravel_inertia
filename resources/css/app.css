@@ -132,7 +132,7 @@
         @apply block font-semibold mb-2;
     }
 
-    input:not([type="image"],[type="radio"])
+    input:not([type="image"],[type="radio"],[type="checkbox"])
     {
         @apply block w-full px-4 py-2 leading-tight bg-base-100 border border-gray-400 rounded shadow appearance-none focus:outline-none;
     }

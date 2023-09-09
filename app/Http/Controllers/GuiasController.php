@@ -35,14 +35,28 @@ class GuiasController extends Controller
 
         $guias = Guia::select(['nombre', 'slug'])->take(50)->get();
 
-        $libros_slug = json_decode($guia->libros, true);
+        try {
 
-        $libros = Libro::whereIn('slug', $libros_slug)->get();
+            $data = json_decode($guia->libros, true);
+
+            $libros_texto = $data['texto'];
+
+            $libros_slug = $data['items'];
+
+            $libros = Libro::whereIn('slug', $libros_slug)->get();
+        }
+        catch(\Exception $e) {
+
+        }
 
         return Inertia::render('Guias/Guia', [
             'guia' => $guia,
             'guias' => $guias,
-            'libros' => $libros
+            'libros_texto'=>$libros_texto ?? null,
+            'libros' => [
+                'texto' => $data['texto'] ?? null,
+                'items' => $libros ?? []
+            ]
         ])
        ->withViewData(SEO::from($guia));
     }
