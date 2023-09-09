@@ -1,3 +1,6 @@
+-Eliminar acentos en busqueda de contenidos
+
+
 Registro de acciones de los editores:
 -Para cada acción del CRUD, se debe registrar en una tabla, para seguimiento
 -Se debe guardar una copia con toda la información (puede ser en json) del registro actualizado  (https://github.com/Laravel-Backpack/revise-operation)

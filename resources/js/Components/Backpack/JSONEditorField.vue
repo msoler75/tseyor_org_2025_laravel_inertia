@@ -21,8 +21,10 @@ const props = defineProps({
 })
 
 const decode = (str) => {
+    console.log('decode', str)
+    if(!str) return '{}'
     try {
-        JSON.parse(str)
+        return JSON.parse(str)
     }
     catch(err){
         return null

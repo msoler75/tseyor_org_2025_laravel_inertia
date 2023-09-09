@@ -33,6 +33,7 @@ class GuiasController extends Controller
             abort(404); // Guía Estelar no encontrada
         }
 
+
         $guias = Guia::select(['nombre', 'slug'])->take(50)->get();
 
         try {
