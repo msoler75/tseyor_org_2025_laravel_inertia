@@ -8,8 +8,9 @@
 
         <div class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
-                <div class="w-full h-auto mx-auto">
-                    <Image :src="guia.imagen" :alt="guia.nombre" class="w-full h-auto" />
+                <div class="w-full h-auto mx-auto"
+                :class="imagenes.length>1?'':'md:sticky md:top-20'">
+                    <Image v-for="imagen, index of imagenes" :key="index" :src="imagen" :alt="guia.nombre" class="w-full h-auto mb-4" />
                 </div>
             </div>
             <div class="w-full lg:w-2/3 flex-shrink-0 text-left">
@@ -84,6 +85,20 @@ const texto = ref(props.guia.texto)
 
 if(format.format=='html')
     texto.value = HtmlToMarkdown(texto.value)
+
+// este truco es para tener más de una imagen en un mismo guía estelar (mo y rhaum)
+const imagenes = ref([props.guia.imagen]);
+
+const regex = /[?&](imagenes|images)=([^&]+)/;
+const matches = props.guia.imagen.match(regex);
+
+if (matches) {
+  const imgs = matches[2];
+  imagenes.value = imgs.split(',');
+}
+
+
+// divide las secciones segun los títulos en diferentes tabs
 
 const secciones = ref(parseMarkdownToSections(texto.value))
 
