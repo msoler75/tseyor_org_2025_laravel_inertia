@@ -20,7 +20,6 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useNav } from '@/Stores/nav';
 
 defineProps({

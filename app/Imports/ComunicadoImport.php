@@ -86,9 +86,10 @@ class ComunicadoImport
 
                     // Asignar los nombres de los archivos MP3
                     $mp3 = [];
+                    $prefijo = "TSEYOR ";
                     foreach ($nombresMp3 as $nombreMp3) {
                         if ($nombreMp3)
-                            $mp3[] = $rutaMp3 . $nombreMp3 . '.mp3';
+                            $mp3[] = $rutaMp3 . $prefijo . $nombreMp3 . '.mp3';
                     }
 
                     // Crear una nueva instancia de Comunicado

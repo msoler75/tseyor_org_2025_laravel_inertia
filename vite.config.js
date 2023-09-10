@@ -59,6 +59,7 @@ export default defineConfig({
             "computed",
             "watch",
             "onMounted",
+            "onBeforeUnmount",
             "onUnmounted",
             "defineEmits",
             "useSlots",
