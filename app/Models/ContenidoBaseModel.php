@@ -8,7 +8,11 @@ use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Carbon\Carbon;
 use App\Traits\EsContenido;
 
-// SEO Model extiende un modelo básico SEO con el trait EsContenido
+/*
+ ContenidoBaseModel es un modelo básico que sirve para:
+ - SEO
+ - Gestionar una base para los contenidos con el trait EsContenido
+ */
 
 class ContenidoBaseModel extends Model
 {
@@ -33,7 +37,7 @@ class ContenidoBaseModel extends Model
 
 
     /**
-     * Función heredable para cada modelo
+     * Función heredable para cada modelo, sirve para indicarle al buscador global qué texto o palabras clave indexan este contenido
      */
     public function getTextoBuscador()
     {
