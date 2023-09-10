@@ -4,8 +4,10 @@ import { onBeforeUnmount } from 'vue';
 import { useNav } from '@/Stores/nav'
 import { useDark, useToggle } from "@vueuse/core";
 import { useGlobalState } from '@/Stores/global'
+import { usePlayerState } from '@/Stores/player'
 
 const state = useGlobalState()
+const player = usePlayerState()
 const page = usePage()
 const nav = useNav()
 const sideBarShow = ref(false)
@@ -201,7 +203,7 @@ axios.get(route('setting', 'navigation'))
 
         <Banner />
 
-
+        <AudioPlayer v-if="!player.closed.value" :music="player.audio.value" :mini="player.mini.value" class="rounded-tl-3xl fixed bottom-0 right-0 z-20 bg-base-100 border-gray-400 dark:border-white border-t border-l" />
 
         <div class="bg-base-200 flex-grow flex flex-col">
             <nav class="w-full border-gray-300  bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "

@@ -1,6 +1,6 @@
 
 <template>
-    <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
+    <div class="container mx-auto py-20">
         <h1>Radio Tseyor</h1>
 
         <div v-if="error" class="alert alert-error">
@@ -11,7 +11,7 @@
             <span>{{ error }}</span>
         </div>
 
-        <AudioPlayer v-else :music="music" @ended="recargar" />
+        <AudioPlayer v-else :music="music" @ended="recargar" class="card bg-base-100 shadow w-[600px]" />
 
     </div>
 </template>
@@ -20,6 +20,10 @@
 <script setup>
 import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
+
+import { usePlayerState } from '@/Stores/player'
+
+const player = usePlayerState()
 
 defineOptions({ layout: AppLayout })
 

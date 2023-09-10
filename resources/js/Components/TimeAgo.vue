@@ -1,11 +1,13 @@
 <template>
-    <span :title="formattedDate" class="timeago" @click="modoAgo=!modoAgo" :style="modoAgo?{}:{fontSize:'80%'}">{{ modoAgo?timeAgo:formattedDate }}</span>
+    <span :title="formattedDate" class="timeago" @click="modoAgo = !modoAgo" :style="modoAgo ? {} : { fontSize: '80%' }">{{
+        modoAgo ? timeAgo : formattedDate }}</span>
 </template>
 
 <script setup>
 
 const props = defineProps({
-    date: String | Number
+    date: String | Number,
+    includeTime: { type: Boolean, default: true },
 })
 
 const timeAgo = ref('');
@@ -24,7 +26,12 @@ const formattedDate = computed(() => {
                     ? new Date(props.date * 1000)
                     : new Date(props.date);
 
-        const title = fechaPublicacion.toLocaleString();
+        const title = props.includeTime ? fechaPublicacion.toLocaleString() :
+            fechaPublicacion.toLocaleDateString([], {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            });
 
         // Verificar si la date es hoy sin tener en cuenta la hora
         if (

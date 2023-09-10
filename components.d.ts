@@ -98,6 +98,7 @@ declare module 'vue' {
     Testimonial: typeof import('./resources/js/Sections/Testimonial.vue')['default']
     TestimonialSlider: typeof import('./resources/js/Sections/TestimonialSlider.vue')['default']
     Text: typeof import('./resources/js/Sections/Text.vue')['default']
+    TextAnimation: typeof import('./resources/js/Components/TextAnimation.vue')['default']
     TextArea: typeof import('./resources/js/Components/TextArea.vue')['default']
     TextImage: typeof import('./resources/js/Sections/TextImage.vue')['default']
     TextInput: typeof import('./resources/js/Components/TextInput.vue')['default']
