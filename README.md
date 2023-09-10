@@ -48,21 +48,19 @@ php artisan import:paginas
 
 ## Búsquedas
 
-Para realizar búsquedas en tu aplicación utilizando Laravel Scout, puedes utilizar los siguientes comandos:
+Cuando un modelo utiliza el trait _Searchable_, se crea automáticamente un índice con los nuevos datos o cuando se modifican los existentes.
+
+Si ya tienes datos en un modelo antes de agregar el trait o si deseas recrear por completo el índice de un modelo, ejecuta el siguiente comando:
 
 ```bash
 php artisan scout:import "App\Models\Comunicado"
 ```
 
-Este comando creará un índice de los comunicados para ser usado en el buscador específico de comunicados. 
-
-Una vez creado el índice no es necesario hacer nada más pues ya se indexa automáticamente con los nuevos comunicados o modificación de los mismos.
+Puedes ver el estado actual del buscador:
  
 ```bash
 php artisan scout:status
 ```
-
-Este comando te permitirá ver el estado actual del buscador.
 
 ## Contenidos
 
