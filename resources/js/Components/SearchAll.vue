@@ -53,7 +53,7 @@
                     </div>
                     <Link v-for="item of grupo.items" :key="item.id" :id="item.idDom"
                         class="w-full py-3 px-4 bg-base-200 bg-opacity-50 rounded-lg m-2 flex gap-3 justify-between items-center"
-                        role="option" @mouseover="seleccionarItem(item)"
+                        role="option" @mouseover="seleccionarItem(item, true)"
                         :href="item.coleccion != 'paginas' ? (route(item.coleccion) + '/' + (item.slug_ref || item.id_ref)) : '/' + item.slug_ref"
                         @click="mostrarModal = false" :aria-selected="itemSeleccionado && itemSeleccionado.id == item.id"
                         :class="itemSeleccionado && itemSeleccionado.id == item.id ? 'seleccionado bg-primary' : ''">
@@ -168,12 +168,10 @@ watch(mostrarModal, (value) => {
 const loading = ref(false)
 
 function buscar() {
-    console.log('buscar', query.value)
     if (query.value) {
         loading.value = true
         axios.get(route('buscar') + '?q=' + query.value)
             .then(response => {
-                console.log(response)
                 results.value = response.data
                 loading.value = false
                 lastQuery.value = query.value
@@ -189,10 +187,9 @@ function buscar() {
 var timer = null
 
 watch(query, (value) => {
-    console.log('query changed', value)
     clearTimeout(timer)
     if (value)
-        timer = setTimeout(buscar, 250)
+        timer = setTimeout(buscar, 500)
     else
         results.value = { data: [] }
 })
@@ -213,33 +210,30 @@ function traducir(col) {
 
 const itemSeleccionado = ref(null)
 
-function seleccionarItem(item) {
-    console.log('seleccionarItem', item)
+function seleccionarItem(item, noScroll) {
     itemSeleccionado.value = item
-    if (item) {
+    if (item && !noScroll) {
         // comprueba si el resultado está fuera de visión, en tal caso desplaza el scroll
-        const id = item.idDom
-        const element = document.querySelector("#" + id)
+        const element = document.querySelector("#" + item.idDom)
+        if (!element) return
 
         const container = document.getElementById('search-input-list');
 
         const containerRect = container.getBoundingClientRect();
         const elementRect = element.getBoundingClientRect();
-        console.log({container, element, containerRect, elementRect})
 
         // Verificar si el elemento está fuera del contenedor
         if (
             elementRect.bottom > containerRect.bottom ||
             elementRect.top < containerRect.top
         ) {
-            element.scrollIntoView({ behavior: 'smooth', block:'center', inline: 'nearest' });
+            element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
         }
 
     }
 }
 
 function siguienteItem() {
-    console.log('siguienteItem', itemsArray)
     if (!itemSeleccionado.value) {
         itemSeleccionado.value = itemsArray.value[0]
         return
