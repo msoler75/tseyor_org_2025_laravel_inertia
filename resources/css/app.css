@@ -199,6 +199,10 @@ em.search-term {
 }
 
 
+.search-input {
+    @apply bg-transparent !border-none hover:!border-none active:!border-none focus:!border-none focus:!outline-none focus:!ring-0;
+}
+
 /*
 main a.hover\:right-arrow {
     position: relative;
