@@ -16,7 +16,7 @@
                 </div>
             </div>
 
-            <Content :content="comunicado.texto" class="pb-12" />
+            <Content :content="comunicado.texto" class="pb-12 mx-auto" />
 
         </div>
 
