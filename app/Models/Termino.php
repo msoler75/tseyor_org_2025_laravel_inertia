@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 
-class Termino extends SEOModel
+class Termino extends ContenidoBaseModel
 {
     use CrudTrait;
 
@@ -18,4 +18,13 @@ class Termino extends SEOModel
         'text',
         'visibilidad'
     ];
+
+
+    /**
+     * Función heredable para cada modelo
+     */
+    public function getTextoBuscador()
+    {
+        return html_entity_decode(strip_tags($this->texto));
+    }
 }

@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 
-class Lugar extends SEOModel
+class Lugar extends ContenidoBaseModel
 {
     use CrudTrait;
     use HasFactory;

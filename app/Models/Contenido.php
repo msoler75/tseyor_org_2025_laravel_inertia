@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +16,7 @@ class Contenido extends Model
         'slug_ref',
         'titulo',
         'descripcion',
-        'texto',
+        'texto_busqueda',
         'imagen',
         'fecha',
         'visibilidad'
@@ -56,16 +56,13 @@ class Contenido extends Model
      */
     public function toSearchableArray(): array
     {
-        $coleccionesConDescripcion = ['paginas', 'centros', 'audios', 'guias', 'libros', 'lugares', 'videos'];
-
-        $coleccionesConTexto = ['paginas',  'terminos'];
+        // $coleccionesConDescripcion = ['paginas', 'centros', 'audios', 'guias', 'libros', 'lugares'];
 
         return [
             'id' => $this->id, // <- Always include the primary key
             'titulo' => $this->titulo,
-            // 'imagen' => $this->imagen,
-            'descripcion' => in_array($this->coleccion, $coleccionesConDescripcion) ? $this->descripcion : "",
-            'texto' => in_array($this->coleccion, $coleccionesConTexto) ? $this->texto : "",
+            // 'descripcion' => in_array($this->coleccion, $coleccionesConDescripcion) ? $this->descripcion : "",
+            'texto_busqueda' => $this->texto_busqueda,
         ];
     }
 }

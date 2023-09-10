@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 
-class Pagina extends SeoModel
+class Pagina extends ContenidoBaseModel
 {
     use CrudTrait;
 
@@ -19,5 +19,15 @@ class Pagina extends SeoModel
         'imagen',
         'visibilidad'
     ];
+
+
+
+     /**
+     * Función heredable para cada modelo
+     */
+    public function getTextoBuscador() {
+        // incluimos la descripcion breve (SEO) y el texto de la página
+        return $this->descripcion . " " . html_entity_decode(strip_tags($this->texto));
+    }
 
 }

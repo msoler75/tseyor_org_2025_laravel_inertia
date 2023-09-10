@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 
 
-class Normativa extends SEOModel
+class Normativa extends ContenidoBaseModel
 {
     use CrudTrait;
     use Searchable;

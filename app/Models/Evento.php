@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 
 
-class Evento extends SEOModel
+class Evento extends ContenidoBaseModel
 {
     use CrudTrait;
 

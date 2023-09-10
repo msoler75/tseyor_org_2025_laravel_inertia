@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 use App\Pigmalion\Countries;
 use App\Http\Controllers\ContactosController;
 
-class Contacto extends SEOModel
+class Contacto extends ContenidoBaseModel
 {
     use CrudTrait;
 
@@ -47,6 +47,12 @@ class Contacto extends SEOModel
      public function getNombrePaisAttribute()
      {
          return Countries::getCountry($this->pais);
+     }
+
+
+     // obtiene el texto para el buscador, lo que nos interesa que encuentre de este contenido
+     public function getTextoBuscador() {
+        return $this->poblacion .", ". $this->NombrePais;
      }
 
 }

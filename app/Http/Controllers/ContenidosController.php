@@ -50,9 +50,9 @@ class ContenidosController extends Controller
         $resultados = Contenido::search($buscarFiltrado)->paginate(10);
 
         if (strlen($buscar) < 3)
-            Busquedas::limpiarResultados($resultados, $buscarFiltrado, true);
+        Busquedas::limpiarResultados($resultados, $buscarFiltrado, true);
         else
-            Busquedas::formatearResultados($resultados, $buscarFiltrado, true);
+        Busquedas::formatearResultados($resultados, $buscarFiltrado, true);
 
         return response()->json($resultados, 200);
     }

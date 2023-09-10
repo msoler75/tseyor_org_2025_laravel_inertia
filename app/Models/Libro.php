@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 
-class Libro extends SEOModel
+class Libro extends ContenidoBaseModel
 {
 
     use CrudTrait;
@@ -43,5 +43,17 @@ class Libro extends SEOModel
     public function shouldBeSearchable(): bool
     {
         return $this->visibilidad == 'P';
+    }
+
+
+
+
+
+     /**
+     * Función heredable para cada modelo
+     */
+    public function getTextoBuscador() {
+        // incluimos la descripcion breve
+        return $this->descripcion;
     }
 }
