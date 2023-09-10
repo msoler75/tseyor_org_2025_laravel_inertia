@@ -1,6 +1,6 @@
 <template>
-    <Prose ref="container">
-        <Markdown v-if="isMarkdown" :source="content" :html="true" :linkify="true" />
+    <Prose ref="container" class="text-container">
+        <Markdown v-if="isMarkdown" :source="content" :html="true" :linkify="true"/>
         <div v-else v-html="content" />
     </Prose>
 </template>
@@ -17,7 +17,7 @@ const props = defineProps({
     },
 });
 
-const isMarkdown = computed(() => ['markdown', 'ambiguous'].includes(detectFormat(props.content).format) )
+const isMarkdown = computed(() => ['md', 'ambiguous'].includes(detectFormat(props.content).format) )
 const container = ref(null)
 const images = ref([])
 
@@ -83,6 +83,19 @@ function handlePreview(index) {
 <style scoped>
 :deep(img) {
     @apply max-w-full mx-auto mb-3;
+}
+
+
+.text-container :deep(h1) {
+    @apply text-2xl;
+}
+
+.text-container :deep(h2) {
+    @apply text-xl;
+}
+
+.text-container :deep(h3) {
+    @apply text-lg;
 }
 
 /* amplia la imagen en el ancho */
