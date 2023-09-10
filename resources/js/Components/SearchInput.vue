@@ -17,7 +17,7 @@
             <Icon icon="ph:magnifying-glass-bold"
                 class="absolute z-10 right-2 transform scale-110 -translate-y-[.1rem] text-gray-600" />
             <form @submit.prevent="submit">
-                <input class="pr-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
+                <input class="search-input pr-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
                     text-right w-full focus:rounded-md"
                     :class="query ? 'border-0 border-b border-gray-700 focus:border-b' : 'border-transparent'"
                     @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"

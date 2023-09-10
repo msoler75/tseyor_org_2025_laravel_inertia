@@ -15,7 +15,7 @@
         <SearchResultsHeader :results="listado" />
 
         <div v-if="listado.data.length > 0" class="grid gap-4"
-            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
             <CardContent v-for="contenido in listado.data" :key="contenido.slug"
             image-left
             :title="contenido.titulo"
