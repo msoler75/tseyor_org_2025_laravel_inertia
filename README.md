@@ -66,16 +66,16 @@ php artisan scout:status
 
 El modelo _Contenido_ es multi-uso. 
 
-- Es una copia de los datos base de cualquier colección (noticias, comunicados, páginas, normativas, eventos, blog...) y sirve a propósito para ver las Novedades del sitio.
+- Es una copia o "espejo" de los datos básicos de muchos otros modelos (noticias, comunicados, páginas, normativas, eventos, blog...) y sirve para listar las Novedades del sitio.
 - Es un índice global para el buscador general _SearchAll_
 
-Para ello cada vez que se crea o se actualiza un registro de cualquier modelo (que herede de _ContenidoBaseModel_) automáticamente se crea o actualizar un _Contenido_ "espejo" con:
+Para ello cada vez que se crea o se actualiza un registro de cualquier modelo (que herede de _ContenidoBaseModel_) automáticamente se crea o actualizar un _Contenido_ "espejo" que contiene:
 
-- Los datos esenciales (título, descripción, fecha) para listar las novedades del sitio.
-- Los datos para indexar la búsqueda de ese contenido en el buscador general (SearchAll) con el método _getTextoBuscador_
+- Los datos esenciales (título, descripción, fecha, imagen, colección) para listar las novedades del sitio de una sola vez.
+- Además del título, el texto o palabras clave para el buscador general (SearchAll) con el método _getTextoBuscador_
 
 
-Los contenidos se generan y actualizan de forma automática, pero se puede usar este comando para recrear los contenidos de algún modelo en concreto.
+Los contenidos se generan y actualizan de forma automática, pero se puede usar este comando para recrear los contenidos de algún modelo en concreto:
 
 ```bash
 php artisan contenidos:import noticias
