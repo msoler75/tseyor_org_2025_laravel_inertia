@@ -14,17 +14,20 @@
                 <Icon v-show="!loading" icon="ph:magnifying-glass-bold" class="text-lg" />
                 <Spinner v-show="loading" class="text-lg" />
                 <div class="flex-grow relative">
-                    <input ref="input" class="search-input" v-model="query" aria-autocomplete="both"
-                        aria-labelledby="search-input-label" autocomplete="off" autocorrect="off" autocapitalize="off"
-                        enterkeyhint="go" spellcheck="false" placeholder="Buscar en el sitio web..." maxlength="64"
-                        type="search" aria-activedescendant="search-input-item-1" aria-controls="search-input-list">
+                    <input id="search-input" ref="input" class="search-input w-full" v-model="query"
+                        aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off" enterkeyhint="go"
+                        spellcheck="false" placeholder="Buscar en el sitio web..." maxlength="64" type="search"
+                        aria-owns="search-input-list"
+                        :aria-activedescendant="itemSeleccionado ? itemSeleccionado.idDom : ''"
+                        aria-controls="search-input-list" aria-haspopup="true">
                 </div>
 
                 <kbd class="kbd cursor-pointer select-none text-xs font-semibold" @click="mostrarModal = false">ESC</kbd>
 
             </div>
 
-            <div class="overflow-y-auto max-h-[calc(100vh-170px)] border-t border-gray-500 border-opacity-20">
+            <div class="overflow-y-auto max-h-[calc(100vh-170px)] border-t border-gray-500 border-opacity-20"
+                id="search-input-list">
 
                 <div v-if="!resultadosAgrupados.length" class="p-7">
                     <div v-if="lastQuery" class="text-center text-lg text-gray-500">
@@ -48,11 +51,11 @@
                     <div class="w-full flex justify-between px-2 mt-3 mb-2 font-bold capitalize">{{
                         traducir(grupo.coleccion) }}
                     </div>
-                    <Link v-for="item of grupo.items" :key="item.id"
+                    <Link v-for="item of grupo.items" :key="item.id" :id="item.idDom"
                         class="w-full py-3 px-4 bg-base-200 bg-opacity-50 rounded-lg m-2 flex gap-3 justify-between items-center"
-                        @mouseover="seleccionarItem(item)"
+                        role="option" @mouseover="seleccionarItem(item)"
                         :href="item.coleccion != 'paginas' ? (route(item.coleccion) + '/' + (item.slug_ref || item.id_ref)) : '/' + item.slug_ref"
-                        @click="mostrarModal = false"
+                        @click="mostrarModal = false" :aria-selected="itemSeleccionado && itemSeleccionado.id == item.id"
                         :class="itemSeleccionado && itemSeleccionado.id == item.id ? 'seleccionado bg-primary' : ''">
                     <div v-html="item.titulo" />
                     <span class="text-lg">›</span>
@@ -83,6 +86,10 @@ const resultadosAgrupados = computed(() => {
 
     for (var key in results.value.data) {
         const item = results.value.data[key]
+
+        if (!item.idDom)
+            item.idDom = 'result-' + item.slug_ref + '-' + Math.floor(Math.random() * 1000)
+
         if (!agrupados[item.coleccion]) {
             agrupados[item.coleccion] = []
         }
@@ -190,6 +197,8 @@ watch(query, (value) => {
         results.value = { data: [] }
 })
 
+
+
 const traducciones = {
     paginas: 'páginas',
     guias: 'guías estelares',
@@ -205,7 +214,28 @@ function traducir(col) {
 const itemSeleccionado = ref(null)
 
 function seleccionarItem(item) {
+    console.log('seleccionarItem', item)
     itemSeleccionado.value = item
+    if (item) {
+        // comprueba si el resultado está fuera de visión, en tal caso desplaza el scroll
+        const id = item.idDom
+        const element = document.querySelector("#" + id)
+
+        const container = document.getElementById('search-input-list');
+
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+        console.log({container, element, containerRect, elementRect})
+
+        // Verificar si el elemento está fuera del contenedor
+        if (
+            elementRect.bottom > containerRect.bottom ||
+            elementRect.top < containerRect.top
+        ) {
+            element.scrollIntoView({ behavior: 'smooth', block:'center', inline: 'nearest' });
+        }
+
+    }
 }
 
 function siguienteItem() {
@@ -231,8 +261,3 @@ function anteriorItem() {
 
 </script>
 
-<style scoped>
-.search-input {
-    @apply bg-transparent !border-none hover:!border-none active:!border-none focus:!border-none focus:!outline-none focus:!ring-0;
-}
-</style>
