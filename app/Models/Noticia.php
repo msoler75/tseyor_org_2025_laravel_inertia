@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 use Laravel\Scout\Engines\Engine;
 use Laravel\Scout\EngineManager;
 
-class Noticia extends SEOModel
+class Noticia extends ContenidoBaseModel
 {
     use CrudTrait;
     use Searchable;

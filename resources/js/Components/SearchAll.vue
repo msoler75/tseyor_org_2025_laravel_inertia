@@ -81,7 +81,8 @@ const results = ref({ data: [] })
 const resultadosAgrupados = computed(() => {
     const agrupados = {}
 
-    for (var item of results.value.data) {
+    for (var key in results.value.data) {
+        const item = results.value.data[key]
         if (!agrupados[item.coleccion]) {
             agrupados[item.coleccion] = []
         }

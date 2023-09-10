@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 use App\Pigmalion\Countries;
 
-class Centro extends SEOModel
+class Centro extends ContenidoBaseModel
 {
     use CrudTrait;
 
@@ -31,5 +31,7 @@ class Centro extends SEOModel
     {
         return Countries::getCountry($this->pais);
     }
+
+
 
 }

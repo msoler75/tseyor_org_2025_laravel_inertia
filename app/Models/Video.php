@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 
-class Video extends SEOModel
+class Video extends ContenidoBaseModel
 {
     use CrudTrait;
 

@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use App\Models\SEOModel;
+use App\Models\ContenidoBaseModel;
 
 
-class Equipo extends SEOModel
+class Equipo extends ContenidoBaseModel
 {
     use CrudTrait;
 
