@@ -54,7 +54,7 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style>
+<style scoped>
 .text-container {
     overflow: hidden;
     white-space: nowrap;
