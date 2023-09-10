@@ -71,21 +71,20 @@ El modelo _Contenido_ es multi-uso.
 - Es una copia de los datos base de cualquier colección (noticias, comunicados, páginas, normativas, eventos, blog...) y sirve a propósito para ver las Novedades del sitio.
 - Es un índice global para el buscador general _SearchAll_
 
-Para ello cada vez que se crea un nuevo dato de cualquier modelo que hereda de _ContenidoBaseModel_ se crea un nuevo _Contenido_ con los datos válidos para la 2 propósitos:
+Para ello cada vez que se crea o se actualiza un registro de cualquier modelo (que herede de _ContenidoBaseModel_) automáticamente se crea o actualizar un _Contenido_ "espejo" con:
 
-- Los datos esenciales para ver las nocedades de ese contenido (título, descripción, fecha)
+- Los datos esenciales (título, descripción, fecha) para listar las novedades del sitio.
 - Los datos para indexar la búsqueda de ese contenido en el buscador general (SearchAll) con el método _getTextoBuscador_
 
 
-Se puede usar estos comandos para recrear los contenidos a partir de las colecciones.
+Los contenidos se generan y actualizan de forma automática, pero se puede usar este comando para recrear los contenidos de algún modelo en concreto.
 
 ```bash
 php artisan contenidos:import noticias
 ```
 
-Este comando recrea todos los contenidos a partir de las noticias.
+Este comando recrea todos los contenidos "espejo" de las noticias.
 
-No es necesario lanzar este comando cuando se crean nuevas noticias o comunicados, o se editan, pues automáticamente el trait _EsContenido_ ya gestiona la creación o actualización automática del contenido a partir de todas los modelos implicados.
 
 ## Contribuciones
 
