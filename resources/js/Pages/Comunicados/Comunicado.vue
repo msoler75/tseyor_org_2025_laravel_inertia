@@ -14,13 +14,20 @@
 
                 <div class="text-neutral text-sm mb-2 flex justify-between">
                     <div class="flex gap-2">
-                        <span v-for="audio of mp3" :key="audio" class="badge badge-primary cursor-pointer gap-2 select-none"
-                        @click="clickAudio(audio)">
-                            <Icon icon="material-symbols:volume-up-outline-rounded"/>
-                            Escuchar {{ audio.label }}
+                        <span v-for="audio of mp3" :key="audio" class="badge badge-primary cursor-pointer gap-1 select-none"
+                            @click="clickPlay(audio)">
+                            <Icon icon="material-symbols:volume-up-outline-rounded" class="mr-2" />
+                            <template v-if="player.music.value && player.music.value.src == audio.src">
+                                <span v-if="player.state.value == 'playing'">Escuchando</span>
+                                <span v-else-if="player.state.value == 'paused'">En pausa</span>
+                                <span v-else="player.state.value == 'paused'">Escuchaste</span>{{ audio.label }}
+                            </template>
+                            <template v-else>
+                                Escuchar {{ audio.label }}
+                            </template>
                         </span>
                     </div>
-                    <TimeAgo :date="comunicado.fecha_comunicado" :includeTime="false"/>
+                    <TimeAgo :date="comunicado.fecha_comunicado" :includeTime="false" />
                 </div>
             </div>
 
@@ -53,22 +60,31 @@ const mp3 = ref([])
 try {
     const audios = JSON.parse(props.comunicado.audios)
     const r = []
-    const some = audios.length>1
-    for(var idx in audios) {
+    const some = audios.length > 1
+    for (var idx in audios) {
         const audio = audios[idx]
-        const label = some?`Audio ${idx}`:'Audio'
-        const title = some?`${props.comunicado.titulo} (${idx})`:props.comunicado.titulo
-        r.push({title, label, src: `/storage/${audio}`})
+        const label = some ? `Audio ${idx}` : 'Audio'
+        const title = some ? `${props.comunicado.titulo} (${idx})` : props.comunicado.titulo
+        r.push({ title, label, src: `/storage/${audio}` })
     }
     mp3.value = r
 }
-catch(err) {
+catch (err) {
 
 }
 
 
-function clickAudio(audio) {
-    player.play(audio)
+function clickPlay(audio) {
+    switch (player.state.value) {
+        case 'playing':
+        case 'paused':
+            player.playPause();
+            break;
+        default:
+            player.play(audio);
+    }
 }
+
+
 
 </script>

@@ -137,6 +137,14 @@ import { useDark, useColorScheme } from 'vue-use';
 */
 
 
+// AUDIO PLAYER
+
+player.init()
+
+
+// DEV LOGINS
+
+
 function login1() {
     console.log('login1')
     axios.get(route('login1'))
@@ -203,7 +211,7 @@ axios.get(route('setting', 'navigation'))
 
         <Banner />
 
-        <AudioPlayer v-if="!player.closed.value" :music="player.audio.value" :mini="player.mini.value" class="rounded-tl-3xl fixed bottom-0 right-0 z-20 bg-base-100 border-gray-400 dark:border-white border-t border-l" />
+        <AudioPlayer v-if="!player.closed.value" class="rounded-tl-3xl fixed bottom-0 right-0 z-20 bg-base-100 border-gray-400 dark:border-white border-t border-l"/>
 
         <div class="bg-base-200 flex-grow flex flex-col">
             <nav class="w-full border-gray-300  bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "

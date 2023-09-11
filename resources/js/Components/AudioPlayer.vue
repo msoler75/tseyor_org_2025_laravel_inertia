@@ -1,30 +1,30 @@
 <template>
     <div class="select-none">
-        <audio :autoplay="autoplay" :src="src" ref="audio" class="hidden" @loadedmetadata="loadedmetadata"
-            @canplay="canplay" @error="error" @progress="progress" @timeupdate="timeupdate" @ended="ended" @play="play"
-            @paused="paused" @waiting="waiting" @abort="abort" preload="auto" :currentTime="startTime" />
-        <div v-show="mini" @mousemove="activatePlayer" @mouseleave="collapsePlayer">
-            <div class="mx-auto flex justify-between items-center"
-            :class="expanded?'w-full max-w-lg gap-3':'pr-4'">
 
+        <div v-show="player.mini.value" @mousemove="activatePlayer" @mouseleave="collapsePlayer">
+            <div class="mx-auto flex justify-between items-center" :class="expanded ? 'w-full max-w-lg gap-3' : 'pr-4'">
                 <button type="button"
                     class="btn btn-primary rounded-full w-12 h-12 flex justify-center items-center transform scale-75 text-3xl"
-                    @click="playPauseBtn">
-                    <Icon v-show="playState == 'stopped'" icon="ph:play-duotone" class="transform scale-[2]" />
-                    <Icon v-show="playState == 'paused'" icon="ph:play-pause-duotone" class="transform scale-[2]" />
-                    <Icon v-show="playState == 'playing'" icon="ph:pause-duotone" class="transform scale-[2]" />
+                    @click="player.playPause">
+                    <Icon v-show="player.state.value == 'stopped'" icon="ph:play-duotone" class="transform scale-[2]" />
+                    <Icon v-show="player.state.value == 'paused'" icon="ph:play-pause-duotone"
+                        class="transform scale-[2]" />
+                    <Icon v-show="player.state.value == 'playing'" icon="ph:pause-duotone" class="transform scale-[2]" />
                 </button>
 
-                <TextAnimation :text="title + artist" class="transform duration-300" :class="expanded?'w-100':'w-0'"></TextAnimation>
+                <TextAnimation :text="player.title.value + ' ' + player.artist.value"
+                    class="transform player.duration.value-300" :class="expanded ? 'w-100' : 'w-0'" />
 
-                <div class="flex justify-end gap-1 w-32 font-mono transform scale-y-150" v-if="audio">
-                    <span>{{ formatTime(currentTime) }}</span>
+                <div class="flex justify-end gap-1 w-32 font-mono transform scale-y-150">
+                    <span>{{ formatTime(player.currentTime.value) }}</span>
                     /
-                    <span>{{ formatTime(duration) }}</span>
+                    <span>{{ formatTime(player.duration.value) }}</span>
                 </div>
 
 
-                <button type="button" @click="stepBackward" class="transform scale-75 duration-300 overflow-hidden" :class="expanded?'w-[34px] ml-auto':'w-0'">
+                <button type="button" @click="player.stepBackward"
+                    class="transform scale-75 player.duration.value-300 overflow-hidden"
+                    :class="expanded ? 'w-[34px] ml-auto' : 'w-0'">
                     <svg width="34" height="39" fill="none">
                         <path
                             d="M12.878 26.12c1.781 0 3.09-1.066 3.085-2.515.004-1.104-.665-1.896-1.824-2.075v-.068c.912-.235 1.505-.95 1.5-1.93.005-1.283-1.048-2.379-2.727-2.379-1.602 0-2.89.968-2.932 2.387h1.274c.03-.801.784-1.287 1.64-1.287.892 0 1.475.541 1.471 1.346.004.844-.673 1.398-1.64 1.398h-.738v1.074h.737c1.21 0 1.91.614 1.91 1.491 0 .848-.738 1.424-1.765 1.424-.946 0-1.683-.486-1.734-1.262H9.797c.055 1.424 1.317 2.395 3.08 2.395zm7.734.025c2.016 0 3.196-1.645 3.196-4.504 0-2.838-1.197-4.488-3.196-4.488-2.003 0-3.196 1.645-3.2 4.488 0 2.855 1.18 4.5 3.2 4.504zm0-1.138c-1.18 0-1.892-1.185-1.892-3.366.004-2.174.716-3.371 1.892-3.371 1.172 0 1.888 1.197 1.888 3.37 0 2.182-.712 3.367-1.888 3.367z"
@@ -35,7 +35,9 @@
                     </svg>
                 </button>
 
-                <button type="button" @click="stepForward" class="transform scale-75 duration-300 overflow-hidden" :class="expanded?'w-[34px] ml-auto':'w-0'">
+                <button type="button" @click="player.stepForward"
+                    class="transform scale-75 player.duration.value-300 overflow-hidden"
+                    :class="expanded ? 'w-[34px] ml-auto' : 'w-0'">
                     <svg width="34" height="39" fill="none">
                         <path
                             d="M12.878 26.12c1.781 0 3.09-1.066 3.085-2.515.004-1.104-.665-1.896-1.824-2.075v-.068c.912-.235 1.505-.95 1.5-1.93.005-1.283-1.048-2.379-2.727-2.379-1.602 0-2.89.968-2.932 2.387h1.274c.03-.801.784-1.287 1.64-1.287.892 0 1.475.541 1.471 1.346.004.844-.673 1.398-1.64 1.398h-.738v1.074h.737c1.21 0 1.91.614 1.91 1.491 0 .848-.738 1.424-1.765 1.424-.946 0-1.683-.486-1.734-1.262H9.797c.055 1.424 1.317 2.395 3.08 2.395zm7.734.025c2.016 0 3.196-1.645 3.196-4.504 0-2.838-1.197-4.488-3.196-4.488-2.003 0-3.196 1.645-3.2 4.488 0 2.855 1.18 4.5 3.2 4.504zm0-1.138c-1.18 0-1.892-1.185-1.892-3.366.004-2.174.716-3.371 1.892-3.371 1.172 0 1.888 1.197 1.888 3.37 0 2.182-.712 3.367-1.888 3.367z"
@@ -46,15 +48,15 @@
                     </svg>
                 </button>
 
-                <a download target="_blank" :href="src"
-                    title="Descargar audio"
-                    class="text-2xl transform duration-300 overflow-hidden" :class="expanded?'w-[34px] ml-auto':'w-0'">
+                <a download target="_blank" :href="player.src.value" title="Descargar audio"
+                    class="text-2xl transform player.duration.value-300 overflow-hidden"
+                    :class="expanded ? 'w-[34px] ml-auto' : 'w-0'">
                     <Icon icon="ph:download-duotone" />
                 </a>
 
             </div>
         </div>
-        <div v-show="!mini">
+        <div v-show="!player.mini.value">
             <div class="p-5 pb-2 lg:p-7 lg:pb-3">
                 <div class="flex items-center space-x-3.5 sm:space-x-5 lg:space-x-3.5 xl:space-x-5">
                     <div class="min-w-0 flex-auto">
@@ -63,21 +65,22 @@
         </p> -->
                         <h2
                             class="text-black dark:text-white text-base sm:text-xl lg:text-base xl:text-xl font-semibold truncate">
-                            {{ title }}
+                            {{ player.title.value }}
                         </h2>
                         <p
                             class="text-gray-500 dark:text-gray-400 text-base sm:text-lg lg:text-base xl:text-lg font-medium">
-                            {{ artist }}
+                            {{ player.artist.value }}
                         </p>
                     </div>
                 </div>
                 <div class="space-y-2">
                     <div class="relative overflow-hidden">
-                        <progress :max="duration" :value="currentTime" ref="progressEl" class="w-full h-6 rounded-md" />
+                        <progress :max="player.duration.value" :value="player.currentTime.value"
+                            class="w-full h-6 rounded-md" @click="progressClickHandler" ref="progressEl" />
                     </div>
                     <div class="text-gray-500 dark:text-gray-400 flex justify-between text-sm font-medium tabular-nums">
-                        <div>{{ formatTime(currentTime) }}</div>
-                        <div>{{ formatTime(duration) }}</div>
+                        <div>{{ formatTime(player.currentTime.value) }}</div>
+                        <div>{{ formatTime(player.duration.value) }}</div>
                     </div>
                 </div>
             </div>
@@ -101,7 +104,7 @@
       </svg>
     </button>
     -->
-                <button type="button" class="mx-auto" @click="stepBackward">
+                <button type="button" class="mx-auto" @click="player.stepBackward">
                     <svg width="34" height="39" fill="none">
                         <path
                             d="M12.878 26.12c1.781 0 3.09-1.066 3.085-2.515.004-1.104-.665-1.896-1.824-2.075v-.068c.912-.235 1.505-.95 1.5-1.93.005-1.283-1.048-2.379-2.727-2.379-1.602 0-2.89.968-2.932 2.387h1.274c.03-.801.784-1.287 1.64-1.287.892 0 1.475.541 1.471 1.346.004.844-.673 1.398-1.64 1.398h-.738v1.074h.737c1.21 0 1.91.614 1.91 1.491 0 .848-.738 1.424-1.765 1.424-.946 0-1.683-.486-1.734-1.262H9.797c.055 1.424 1.317 2.395 3.08 2.395zm7.734.025c2.016 0 3.196-1.645 3.196-4.504 0-2.838-1.197-4.488-3.196-4.488-2.003 0-3.196 1.645-3.2 4.488 0 2.855 1.18 4.5 3.2 4.504zm0-1.138c-1.18 0-1.892-1.185-1.892-3.366.004-2.174.716-3.371 1.892-3.371 1.172 0 1.888 1.197 1.888 3.37 0 2.182-.712 3.367-1.888 3.367z"
@@ -113,12 +116,13 @@
                 </button>
                 <button type="button"
                     class="btn btn-primary mx-auto rounded-full  w-12 h-12 flex justify-center items-center"
-                    @click="playPauseBtn">
-                    <Icon v-show="playState == 'stopped'" icon="ph:play-duotone" class="transform scale-150" />
-                    <Icon v-show="playState == 'paused'" icon="ph:play-pause-duotone" class="transform scale-150" />
-                    <Icon v-show="playState == 'playing'" icon="ph:pause-duotone" class="transform scale-150" />
+                    @click="player.playPause">
+                    <Icon v-show="player.state.value == 'stopped'" icon="ph:play-duotone" class="transform scale-150" />
+                    <Icon v-show="player.state.value == 'paused'" icon="ph:play-pause-duotone"
+                        class="transform scale-150" />
+                    <Icon v-show="player.state.value == 'playing'" icon="ph:pause-duotone" class="transform scale-150" />
                 </button>
-                <button type="button" class="mx-auto" @click="stepForward">
+                <button type="button" class="mx-auto" @click="player.stepForward">
                     <svg width="34" height="39" fill="none">
                         <path
                             d="M12.878 26.12c1.781 0 3.09-1.066 3.085-2.515.004-1.104-.665-1.896-1.824-2.075v-.068c.912-.235 1.505-.95 1.5-1.93.005-1.283-1.048-2.379-2.727-2.379-1.602 0-2.89.968-2.932 2.387h1.274c.03-.801.784-1.287 1.64-1.287.892 0 1.475.541 1.471 1.346.004.844-.673 1.398-1.64 1.398h-.738v1.074h.737c1.21 0 1.91.614 1.91 1.491 0 .848-.738 1.424-1.765 1.424-.946 0-1.683-.486-1.734-1.262H9.797c.055 1.424 1.317 2.395 3.08 2.395zm7.734.025c2.016 0 3.196-1.645 3.196-4.504 0-2.838-1.197-4.488-3.196-4.488-2.003 0-3.196 1.645-3.2 4.488 0 2.855 1.18 4.5 3.2 4.504zm0-1.138c-1.18 0-1.892-1.185-1.892-3.366.004-2.174.716-3.371 1.892-3.371 1.172 0 1.888 1.197 1.888 3.37 0 2.182-.712 3.367-1.888 3.367z"
@@ -128,8 +132,8 @@
                         <path d="M17 0l8 6-8 6V0z" fill="currentColor" />
                     </svg>
                 </button>
-                <a download target="_blank" :href="src" class="mx-auto flex justify-center items-center text-3xl"
-                    title="Descargar audio">
+                <a download target="_blank" :href="player.src.value"
+                    class="mx-auto flex justify-center items-center text-3xl" title="Descargar audio">
                     <Icon icon="ph:download-duotone" />
                 </a>
             </div>
@@ -139,25 +143,34 @@
 
 
 <script setup>
+import { usePlayerState } from '@/Stores/player'
 
-const props = defineProps({
-    music: {
-        type: Object,
-        required: true
-    },
-    autoplay: {
-        type: Boolean,
-        required: false,
-        default: true
-    },
-    mini: {
-        type: Boolean,
-        default: false
-    }
-});
+const player = usePlayerState()
 
-const audio = ref(null);
-const progressEl = ref(null);
+// expansión de audioplayer
+
+const expanded = ref(false)
+
+var timerToCollapse = null
+
+function activatePlayer() {
+    expanded.value = true
+    clearTimeout(timerToCollapse)
+    timerToCollapse = setTimeout(() => {
+        expanded.value = false
+    }, 7000)
+}
+
+function collapsePlayer() {
+    clearTimeout(timerToCollapse)
+    timerToCollapse = setTimeout(() => {
+        expanded.value = false
+    }, 3500)
+}
+
+
+// velocidades
+
 const speeds = [
     {
         label: "0.5",
@@ -189,125 +202,14 @@ const speeds = [
     }
 ];
 const playSpeedIdx = ref(2);
-const playState = ref("stopped");
-const currentTime = ref(0);
-const duration = ref(0);
-const expanded = ref(false)
+// const startTime = computed(() => props.music && props.music.startAt ? props.music.startAt : 0);
 
-var timerToCollapse = null
-
-const src = computed(() => props.music && props.music.src ? props.music.src : "");
-const title = computed(() => props.music && props.music.title ? props.music.title : "");
-const artist = computed(() => props.music && props.music.artist ? props.music.artist : "");
-const startTime = computed(() => props.music && props.music.startAt ? props.music.startAt : 0);
-
-onMounted(() => {
-    const progressClickHandler = (e) => {
-        const sliderLeft = e.offsetX;
-        const width = progressEl.value ? progressEl.value.width || progressEl.value.offsetWidth : 0.000001;
-        const tempPercent = sliderLeft / width;
-        audio.value.currentTime = tempPercent * audio.value.duration;
-        currentTime.value = tempPercent * audio.value.duration;
-    };
-
-    console.log({ progressEl })
-    progressEl.value.onclick = progressClickHandler;
-});
-
-const emit = defineEmits([
-    'abort',
-    'error',
-    'canplay',
-    'play',
-    'paused',
-    'ended',
-    'progress',
-    'timeupdate',
-    'waiting'
-]);
-
-const abort = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("abort", ev);
-    emit("abort", ev);
-};
-
-const error = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("error", ev);
-    emit("error", ev);
-};
-
-const loadedmetadata = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("loadedmetadata", ev);
-};
-
-const canplay = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("canplay", ev);
-    emit("canplay", ev);
-
-    duration.value = audio.value.duration;
-    console.log('duration', duration.value)
-    currentTime.value = audio.value.currentTime;
-    if (props.autoplay) audio.value.play();
-};
-
-const play = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("play", ev);
-    emit("play", ev);
-    playState.value = "playing";
-};
-
-const paused = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("paused", ev);
-    emit("paused", ev);
-    playState.value = "paused";
-};
-
-const ended = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("ended", ev);
-    emit("ended", ev);
-    playState.value = "stopped";
-};
-
-const progress = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("progress", ev);
-    emit("progress", ev);
-    // duration.value = audio.value ? audio.value.duration : 0;
-};
-
-const timeupdate = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("timeupdate", ev);
-    emit("timeupdate", ev);
-    currentTime.value = audio.value.currentTime;
-};
-
-const waiting = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("waiting", ev);
-    emit("waiting", ev);
-};
-
-const playPauseBtn = () => {
-    if (audio.value.paused) {
-        audio.value.play();
-        playState.value = "playing";
-    } else {
-        audio.value.pause();
-        playState.value = "paused";
-    }
-};
-
-const stepForward = () => {
-    debugger;
-    if (playState.value === "playing") {
-        // this.audio.pause()
-        audio.value.currentTime += 30;
-        // this.audio.play()
-    } else {
-        audio.value.currentTime += 30;
-    }
-};
-
-const stepBackward = () => {
-    audio.value.currentTime -= 30;
+const progressEl = ref(null)
+const progressClickHandler = (e) => {
+    const sliderLeft = e.offsetX;
+    const width = progressEl.value ? progressEl.value.width || progressEl.value.offsetWidth : 0.000001;
+    const tempPercent = sliderLeft / width;
+    player.audioElem.value.currentTime = tempPercent * player.duration.value;
 };
 
 const changePlaySpeed = () => {
@@ -328,20 +230,8 @@ const formatTime = (ts) => {
         : minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
 };
 
-function activatePlayer () {
-    expanded.value = true
-    clearTimeout(timerToCollapse)
-    timerToCollapse = setTimeout(()=>{
-        expanded.value = false
-    }, 7000)
-}
 
-function collapsePlayer() {
-    clearTimeout(timerToCollapse)
-    timerToCollapse = setTimeout(()=>{
-        expanded.value = false
-    }, 3500)
-}
+
 </script>
 
 <style scoped>
