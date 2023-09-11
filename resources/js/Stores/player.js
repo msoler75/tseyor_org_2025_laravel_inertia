@@ -31,7 +31,8 @@ export const usePlayerState = createGlobalState(() => {
   // crea un objeto de audio HTML5
   function init() {
     if(!document) return
-    audio = document.createElement("audio");
+
+    audio =new Audio()
     audio.autoplay = autoplay.value; // Suponiendo que `autoplay` es una variable definida previamente
     audio.className = "hidden";
 
@@ -50,7 +51,7 @@ export const usePlayerState = createGlobalState(() => {
     // audio.currentTime = startTime; // Suponiendo que `startTime` es una variable definida previamente
 
     // Agregar el elemento audio al DOM
-    document.body.appendChild(audio);
+    // document.body.appendChild(audio);
   }
 
   function play(newMusic, isRadio) {
@@ -91,7 +92,7 @@ export const usePlayerState = createGlobalState(() => {
 
 
   const stepForward = () => {
-    if (state.value === "playing") {
+    if (!audio.paused && !audio.ended) {
         // audio.pause()
         audio.currentTime += 30;
         // audio.play()
