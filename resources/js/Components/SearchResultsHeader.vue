@@ -28,7 +28,8 @@ onMounted(() => {
 });
 
 const stringArguments = computed(() => {
-    if (props.arguments && !query.value) return ''
+    // if (props.arguments && !query.value) return ''
+    if (!query.value) return ''
     return ` para '${query.value}'`
 })
 </script>

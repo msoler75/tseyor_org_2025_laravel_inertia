@@ -8,7 +8,7 @@
         <p>Cursos y encuentros de la comunidad Tseyor a los que puedes acudir.</p>
 
         <div class="flex justify-end mb-5">
-            <SearchInput />
+            <SearchInput  />
         </div>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
@@ -33,7 +33,7 @@
 
 
 
-                <SearchResultsHeader :results="listado" />
+                <SearchResultsHeader v-if="filtrado" :results="listado" class="mb-5"/>
 
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"

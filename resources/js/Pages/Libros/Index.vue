@@ -35,7 +35,7 @@
 
             <div class="w-full flex-grow">
 
-                <SearchResultsHeader :results="listado" />
+                <SearchResultsHeader v-if="filtrado" :results="listado" class="mb-5" />
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">

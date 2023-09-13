@@ -76,6 +76,6 @@ const props = defineProps({
     }
 })
 
-const cursos = computed(() => props.proximosCursos.map(c => ({ title: c.titulo, description: c.descripcion, date: c.fecha_inicio, url: `/eventos/${c.slug}` })))
+const cursos = computed(() => props.proximosCursos.map(c => ({ title: c.titulo, description: c.descripcion, date: c.fecha_inicio, url: route('evento', c.slug) })))
 
 </script>
