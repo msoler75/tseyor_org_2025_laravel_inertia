@@ -166,35 +166,45 @@ watch(mostrarModal, (value) => {
 })
 
 const loading = ref(false)
+const queryLoading = ref("")
+var timer = null
 
 function buscar() {
+    if(loading.value)
+    {
+        console.log('esperando carga de anterior busqueda', queryLoading.value, query.value)
+        // clearTimeout(timer)
+        timer = setTimeout(buscar, 250)
+        return
+    }
     if (query.value) {
+        var currentQuery = query.value
+        queryLoading.value = currentQuery
         loading.value = true
         axios.get(route('buscar') + '?q=' + query.value)
             .then(response => {
                 results.value = response.data
                 loading.value = false
-                lastQuery.value = query.value
             })
             .catch(error => {
                 loading.value = false
-                lastQuery.value = query.value
+            })
+            .finally(()=>{
+                lastQuery.value = currentQuery
             })
     }
 
 }
 
-var timer = null
-
 watch(query, (value) => {
     clearTimeout(timer)
     if (value)
-        timer = setTimeout(buscar, 500)
-    else
+        timer = setTimeout(buscar, 250)
+    else {
+        lastQuery.value = null
         results.value = { data: [] }
+    }
 })
-
-
 
 const traducciones = {
     paginas: 'páginas',
@@ -207,6 +217,8 @@ function traducir(col) {
     return traducciones[col] || col
 }
 
+
+// SELECCIONES DE ITEM
 
 const itemSeleccionado = ref(null)
 
