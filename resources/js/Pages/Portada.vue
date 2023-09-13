@@ -7,9 +7,9 @@
             }" data-theme="winter">
             <Hero title="Contacto Extraterrestre" xsrcImage="/storage/imagenes/portada/unidad.jpg" :href="route('cursos')"
                 buttonLabel="Curso gratuito" textClass="bg-black bg-opacity-70 p-5 rounded-xl justify-center" image-right>
-                <blockquote>En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
+                <em>En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
                     Nosotros aquí en este nivel estamos reforzados particularmente por la Confederación de Mundos Habitados
-                    de la Galaxia.</blockquote>
+                    de la Galaxia.</em>
             </Hero>
         </Section>
 

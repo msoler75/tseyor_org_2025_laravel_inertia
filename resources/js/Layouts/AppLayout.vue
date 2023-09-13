@@ -386,6 +386,9 @@ axios.get(route('setting', 'navigation'))
                                 </Dropdown>
                             </div>
                         </div>
+                        <Link :href="route('login')" class="text-2xl bg-base-300 rounded-full p-2 shadow">
+                            <Icon icon="ph:sign-in-duotone" title="Iniciar sesión"/>
+                        </Link>
 
                         <!-- Hamburger -->
                         <div class="-mr-2 flex items-center lg:hidden">
