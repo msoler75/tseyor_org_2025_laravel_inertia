@@ -12,15 +12,15 @@ class EventosController extends Controller
 
     public function index(Request $request)
     {
-        $filtro = $request->input('buscar');
+        $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
         $resultados = $categoria ?
             Evento::where('categoria', '=', $categoria)
             ->paginate(12)->appends(['categoria' => $categoria])
-            : ($filtro ? Evento::where('titulo', 'like', '%' . $filtro . '%')
-                ->orWhere('descripcion', 'like', '%' . $filtro . '%')
-                ->paginate(10)->appends(['buscar' => $filtro])
+            : ($buscar ? Evento::where('titulo', 'like', '%' . $buscar . '%')
+                ->orWhere('descripcion', 'like', '%' . $buscar . '%')
+                ->paginate(10)->appends(['buscar' => $buscar])
                 :
                 Evento::latest()->paginate(10)
             );
@@ -30,7 +30,7 @@ class EventosController extends Controller
             ->get();
 
         return Inertia::render('Eventos/Index', [
-            'filtrado' => $filtro,
+            'filtrado' => $buscar,
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias
