@@ -51,7 +51,7 @@ class Contacto extends ContenidoBaseModel
 
 
      // obtiene el texto para el buscador, lo que nos interesa que encuentre de este contenido
-     public function getTextoBuscador() {
+     public function getTextoContenidoBuscador() {
         return $this->poblacion .", ". $this->NombrePais;
      }
 

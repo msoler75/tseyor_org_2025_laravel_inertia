@@ -16,12 +16,12 @@
 
             <div
                 class="card bg-base-100 shadow flex-wrap flex-row mb-3 md:flex-col p-5 lg:p-10 gap-4 mx-auto self-baseline w-full justify-evenly md:w-auto md:sticky md:top-20">
-                <Link :href="`${route('eventos')}`" :class="!filtrado && !categoriaActiva ? 'text-blue-700 font-bold' : ''">
+                <Link :href="`${route('eventos')}`" :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
                 <span class="capitalize">Novedades</span>
                 </Link>
 
                 <div v-for="categoria of categorias" :key="categoria.nombre" class="flex gap-2"
-                    :class="categoriaActiva == categoria.nombre ? 'text-blue-700 font-bold' : ''">
+                    :class="categoriaActiva == categoria.nombre ? 'text-primary font-bold' : ''">
                     <Link :href="`${route('eventos')}?categoria=${categoria.nombre}`">
                     <span class="capitalize">{{ categoria.nombre }}</span>
                     <small v-if="categoria.total > 0">({{ categoria.total }})</small>

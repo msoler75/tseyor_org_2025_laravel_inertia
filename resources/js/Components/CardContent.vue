@@ -9,11 +9,11 @@
             }" />
         </div>
         <div v-if="title || tag || description || date" class="p-4 flex flex-col w-full">
-            <h2 v-if="title" class="text-lg font-bold mb-2 transition duration-300 group-hover:text-primary  group-hover:drop-shadow" v-html="title"/>
-            <div v-if="tag" class="flex justify-between">
-                <div class="badge badge-primary badge-outline">{{ tag }}</div>
+            <h2 v-if="title" class="text-lg font-bold mb-3 transition duration-300 group-hover:text-primary  group-hover:drop-shadow" v-html="title"/>
+            <div v-if="tag" class="flex justify-between mb-3 max-w-full">
+                <div class="badge badge-primary badge-outline h-fit">{{ tag }} </div>
             </div>
-            <div v-if="description" class="lg:opacity-50 transition duration-300 group-hover:opacity-90 text-sm" v-html="description"/>
+            <div v-if="description" class="lg:opacity-50 transition duration-300 group-hover:opacity-90 text-sm" v-html="description.substring(0, descriptionLength)"/>
             <TimeAgo v-if="date" :date="date" class="text-right mt-auto opacity-50" style="font-size: 60%" />
         </div>
         <slot />
@@ -35,6 +35,7 @@ const props = defineProps({
     tag: String,
     tagLink: String,
     description: String,
+    descriptionLength: {type: Number, default: 400},
     date: String,
     imageClass: {
         type: String,

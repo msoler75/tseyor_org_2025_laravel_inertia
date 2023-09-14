@@ -9,11 +9,11 @@
         <div class="max-w-[900px] mx-auto flex flex-col md:flex-row gap-10 mt-12">
 
 
-            <div class=" card bg-base-100 shadow-2xl w-fit h-fit flex justify-center mx-auto">
-                <ImageShadow :src="libro.imagen" :alt="libro.titulo" zclass="object-contain rounded-[2px]"/>
+            <div class=" card bg-base-100 shadow-2xl w-fit h-fit flex justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0">
+                <ImageShadow :src="libro.imagen" :alt="libro.titulo" class="object-contain rounded-[2px]"/>
             </div>
 
-            <div class="p-6">
+            <div class="px-6">
 
                 <h1 class="text-2xl font-bold mb-4">{{ libro.titulo }}</h1>
                 <p class="text-gray-600 text-sm mb-2 flex justify-between">
@@ -23,7 +23,7 @@
                 </p>
                 <p class="mb-8 text-xs">Edición: {{ libro.edicion }}, páginas: {{ libro.paginas }}</p>
                 <div class="prose" v-html="libro.descripcion"></div>
-                <div class="w-full flex justify-center sm:justify-end mt-7">
+                <div class="w-full flex justify-end mt-7">
 
                     <a class="btn btn-primary w-fit flex gap-3" :href="libro.pdf" download>
                         <Icon icon="ph:download-duotone" /> Descargar en PDF

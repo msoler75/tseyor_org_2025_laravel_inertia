@@ -1,9 +1,9 @@
 <template>
     <div class="text-xl font-bold">
-        <div v-if="queryString && results.data.length > 0">
+        <div v-if="queryString && results.total > 0">
             {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}{{ stringArguments }}
         </div>
-        <div v-else-if="queryString && results.data.length == 0">No hay resultados{{ stringArguments }}</div>
+        <div v-else-if="queryString && results.total == 0">No hay resultados{{ stringArguments }}</div>
     </div>
 </template>
 

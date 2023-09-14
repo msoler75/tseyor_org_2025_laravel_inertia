@@ -23,7 +23,7 @@ class Termino extends ContenidoBaseModel
     /**
      * Función heredable para cada modelo
      */
-    public function getTextoBuscador()
+    public function getTextoContenidoBuscador()
     {
         return html_entity_decode(strip_tags($this->texto));
     }

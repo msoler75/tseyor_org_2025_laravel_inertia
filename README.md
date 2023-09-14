@@ -72,7 +72,7 @@ El modelo _Contenido_ es multi-uso.
 Para ello cada vez que se crea o se actualiza un registro de cualquier modelo (que herede de _ContenidoBaseModel_) automáticamente se crea o actualizar un _Contenido_ "espejo" que contiene:
 
 - Los datos esenciales (título, descripción, fecha, imagen, colección) para listar las novedades del sitio de una sola vez.
-- Además del título, el texto o palabras clave para el buscador general (SearchAll) con el método _getTextoBuscador_
+- Además del título, el texto o palabras clave para el buscador general (SearchAll) con el método _getTextoContenidoBuscador_
 
 
 Los contenidos se generan y actualizan de forma automática, pero se puede usar este comando para recrear los contenidos de algún modelo en concreto:

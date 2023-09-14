@@ -25,7 +25,7 @@ class Pagina extends ContenidoBaseModel
      /**
      * Función heredable para cada modelo
      */
-    public function getTextoBuscador() {
+    public function getTextoContenidoBuscador() {
         // incluimos la descripcion breve (SEO) y el texto de la página
         return $this->descripcion . " " . html_entity_decode(strip_tags($this->texto));
     }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
+use Illuminate\Support\Facades\Cache;
 
 class Libro extends ContenidoBaseModel
 {
@@ -26,21 +27,40 @@ class Libro extends ContenidoBaseModel
 
     public $table = 'libros';
 
-    /* public static function search($term)
+    /**
+     * Para el controlador de libros.
+     * Elimina la cache de catgorias cuando hay cambios en algun libro
+     */
+    public static function boot()
     {
-        return static::query()
-        ->where('visibilidad', 'P')
-        ->where(function($query) use ($term){
-           $query->where('titulo', 'LIKE', "%{$term}%")
-                 ->orWhere('descripcion', 'LIKE', "%{$term}%");
+        parent::boot();
+
+        static::saved(function ($model) {
+            Cache::forget('libros_categorias');
+        });
+
+        static::deleted(function ($model) {
+            Cache::forget('libros_categorias');
         });
     }
-    */
-
 
 
     /**
-     * Solo se indexa si acaso está publicado
+     * Searchable: Get the indexable data array for the model.
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'titulo' => $this->titulo,
+            'descripcion' => $this->descripcion
+        ];
+    }
+
+    /**
+     * Searchable: Solo se indexa si acaso está publicado
      */
     public function shouldBeSearchable(): bool
     {
@@ -48,14 +68,14 @@ class Libro extends ContenidoBaseModel
     }
 
 
-
-
-
-     /**
-     * Función heredable para cada modelo
+    /**
+     * ContenidoBaseModel: obtiene el texto para el buscador global
      */
-    public function getTextoBuscador() {
+    public function getTextoContenidoBuscador()
+    {
         // incluimos la descripcion breve
         return $this->descripcion;
     }
+
+
 }

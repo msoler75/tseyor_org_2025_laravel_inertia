@@ -16,12 +16,12 @@
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="card bg-base-100 shadow flex-wrap flex-row  md:flex-col p-5 lg:p-10 gap-4 mx-auto  self-baseline">
-                <Link :href="`${route('centros')}`" :class="!filtrado && !paisActivo ? 'text-blue-700 font-bold' : ''">
+                <Link :href="`${route('centros')}`" :class="!filtrado && !paisActivo ? 'text-primary font-bold' : ''">
                 <span class="capitalize">Novedades</span>
                 </Link>
 
                 <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
-                    :class="paisActivo == pais.nombre ? 'text-blue-700 font-bold' : ''">
+                    :class="paisActivo == pais.nombre ? 'text-primary font-bold' : ''">
                     <Link :href="`${route('centros')}?pais=${pais.codigo}`">
                     <span class="capitalize">{{ pais.nombre }}</span>
                     <small v-if="pais.total > 0">({{ pais.total }})</small>
