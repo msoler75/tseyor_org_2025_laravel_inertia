@@ -46,7 +46,7 @@ class LibroImport
                     $imagen = str_replace("/images/portadas/", $media_folder, urldecode($data['image']));
                     // Crear un nuevo modelo Libro con los datos extraídos
                     $libro = new Libro([
-                        'titulo' => $data['titulo'],
+                        'titulo' => html_entity_decode($data['titulo']),
                         'descripcion' => $data['descripcion'],
                         'categoria' => mb_strtolower($data['categoria']),
                         'imagen' => $imagen,

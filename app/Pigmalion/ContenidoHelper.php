@@ -106,7 +106,7 @@ class ContenidoHelper {
         $contenido->descripcion = mb_substr($contenido->descripcion, 0, 399);
 
         // obtiene el texto que servirá para indexar el buscador
-        $contenido->texto_busqueda = $model->getTextoBuscador();
+        $contenido->texto_busqueda = $model->getTextoContenidoBuscador();
 
         // Guardar el modelo en la base de datos
         $contenido->save();

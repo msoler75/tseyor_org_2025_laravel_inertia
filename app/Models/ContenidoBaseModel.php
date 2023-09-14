@@ -39,7 +39,7 @@ class ContenidoBaseModel extends Model
     /**
      * Función heredable para cada modelo, sirve para indicarle al buscador global qué texto o palabras clave indexan este contenido
      */
-    public function getTextoBuscador()
+    public function getTextoContenidoBuscador()
     {
         return null;
     }

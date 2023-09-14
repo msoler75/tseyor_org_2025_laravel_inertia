@@ -19,16 +19,18 @@
 
 
             <div
-                class="card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 gap-4 self-baseline xl:sticky xl:top-20">
-                <Link :href="`${route('libros')}`" :class="!filtrado && !categoriaActiva ? 'text-blue-700 font-bold' : ''">
+                class="gap-3 xl:gap-0 xl:max-w-[260px] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline xl:sticky xl:top-20">
+                <Link :href="`${route('libros')}`"
+                class="py-2 hover:text-primary transition-colors duration-250"
+                :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
                 <span class="capitalize">Novedades</span>
                 </Link>
 
-                <div v-for="categoria of categorias" :key="categoria.nombre" class="flex gap-2"
-                    :class="categoriaActiva == categoria.nombre ? 'text-blue-700 font-bold' : ''">
-                    <Link :href="`${route('libros')}?categoria=${categoria.nombre}`">
+                <div v-for="categoria of categorias" :key="categoria.nombre" class="flex"
+                    :class="categoriaActiva == categoria.nombre ? 'text-primary font-bold' : ''">
+                    <Link :href="`${route('libros')}?categoria=${categoria.nombre}`" class="py-2 hover:text-primary transition-colors duration-250">
                     <span class="capitalize">{{ categoria.nombre }}</span>
-                    <small v-if="categoria.total > 0">({{ categoria.total }})</small>
+                    <small v-if="categoria.total > 0"> ({{ categoria.total }})</small>
                     </Link>
                 </div>
             </div>
@@ -37,19 +39,20 @@
 
                 <SearchResultsHeader v-if="filtrado" :results="listado" class="mb-5" />
 
-                <div v-if="listado.data.length > 0" class="grid gap-4"
+                <div class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
                     <div v-show="selectors.soloTitulosLibros" v-for="libro in listado.data" :key="libro.id"
-                        class="card shadow bg-base-100 p-5">
+                        class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
                         <Link :href="route('libro', libro.slug)" class="flex items-center gap-3">
-                        <Icon icon="ph:book-duotone" /> {{ libro.titulo }}</Link>
+                        <Icon icon="ph:book-duotone" class="flex-shrink-0" /> <span v-html="libro.titulo"/></Link>
                     </div>
+
                     <CardContent v-show="!selectors.soloTitulosLibros"  v-for="contenido in listado.data" :key="contenido.id"
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('libro', contenido.slug)"
-                        :description="contenido.descripcion" :date="contenido.published_at"
+                        :description="contenido.descripcion.substring(0,320-contenido.titulo.length*2.5)+'...'" :date="contenido.published_at"
                         :tag="contenido.categoria"
                         image-left
-                        imageClass="w-60 h-80 rounded"/>
+                        imageClass="w-[250px] h-[355px]"/>
 
                 </div>
 

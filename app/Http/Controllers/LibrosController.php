@@ -7,26 +7,37 @@ use Inertia\Inertia;
 use App\Models\Libro;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Cache;
+use App\Pigmalion\Busquedas;
 
 class LibrosController extends Controller
 {
 
     public function index(Request $request)
     {
-        $filtro = $request->input('buscar');
+        $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
         $resultados = $categoria ?
             Libro::where('categoria', 'LIKE', "%$categoria%")
             ->paginate(12)->appends(['categoria' => $categoria])
-            : ($filtro ? Libro::where('titulo', 'like', '%' . $filtro . '%')
-                ->orWhere('descripcion', 'like', '%' . $filtro . '%')
-                ->paginate(10)->appends(['buscar' => $filtro])
+            : ($buscar ?
+                Libro::search($buscar)->paginate(10)
+                ->appends(['buscar' => $buscar])
+                /*Libro::where('titulo', 'like', '%' . $buscar . '%')
+                ->orWhere('descripcion', 'like', '%' . $buscar . '%')
+                ->paginate(10)->appends(['buscar' => $buscar])
+                */
+
                 :
                 Libro::latest()->paginate(10)
             );
 
-        $categorias = Cache::remember('libros_categorias', 1, function () {
+            if($buscar)
+            Busquedas::formatearResultados($resultados, $buscar);
+
+        $una_semana = 60 * 24 * 7; // tiempo de cache
+
+        $categorias = Cache::remember('libros_categorias', $una_semana, function () {
 
             $c = [];
             $libros = Libro::select('categoria')->get();
@@ -60,11 +71,11 @@ class LibrosController extends Controller
             return (object) ['nombre' => $nombre, 'total' => $total];
         }, array_keys($categorias), $categorias);
 
-            //  dd($categorias);
+        //  dd($categorias);
 
 
         return Inertia::render('Libros/Index', [
-            'filtrado' => $filtro,
+            'filtrado' => $buscar,
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias
