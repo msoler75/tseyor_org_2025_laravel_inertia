@@ -33,7 +33,7 @@
 
 
 
-                <SearchResultsHeader v-if="filtrado" :results="listado" class="mb-5"/>
+                <SearchResultsHeader  :results="listado" />
 
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"

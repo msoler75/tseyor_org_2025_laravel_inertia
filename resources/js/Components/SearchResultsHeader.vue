@@ -1,7 +1,7 @@
 <template>
     <div class="text-xl font-bold">
-        <div v-if="queryString && results.total > 0">
-            {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}{{ stringArguments }}
+        <div v-if="queryString && results.total > 0" class="mb-5">
+            {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}{{ stringArguments }}:
         </div>
         <div v-else-if="queryString && results.total == 0">No hay resultados{{ stringArguments }}</div>
     </div>

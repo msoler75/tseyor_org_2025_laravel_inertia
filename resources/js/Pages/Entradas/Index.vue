@@ -16,7 +16,7 @@
             <div class="w-full flex-grow">
 
 
-                <SearchResultsHeader :results="listado"/>
+                <SearchResultsHeader :results="listado" />
 
 
                 <div class="grid gap-8"

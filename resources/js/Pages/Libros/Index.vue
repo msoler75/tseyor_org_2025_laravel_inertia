@@ -37,7 +37,7 @@
 
             <div class="w-full flex-grow">
 
-                <SearchResultsHeader v-if="filtrado" :results="listado" class="mb-5" />
+                <SearchResultsHeader  :results="listado"  />
 
                 <div class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
@@ -49,7 +49,8 @@
 
                     <CardContent v-show="!selectors.soloTitulosLibros"  v-for="contenido in listado.data" :key="contenido.id"
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('libro', contenido.slug)"
-                        :description="contenido.descripcion.substring(0,320-contenido.titulo.length*2.5)+'...'" :date="contenido.published_at"
+                        :description="contenido.descripcion" :date="contenido.published_at"
+                        :maxLength = "320-contenido.titulo.length*2.5"
                         :tag="contenido.categoria"
                         image-left
                         imageClass="w-[250px] h-[355px]"/>

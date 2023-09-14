@@ -5,15 +5,18 @@
                relative" :class="imageLeft ? 'flex-row' : ''">
         <div class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
-                'background-image': 'url(\''+getImageUrl(image)+'\')'
+                'background-image': 'url(\'' + getImageUrl(image) + '\')'
             }" />
         </div>
         <div v-if="title || tag || description || date" class="p-4 flex flex-col w-full">
-            <h2 v-if="title" class="text-lg font-bold mb-3 transition duration-300 group-hover:text-primary  group-hover:drop-shadow" v-html="title"/>
+            <h2 v-if="title"
+                class="text-lg font-bold mb-3 transition duration-300 group-hover:text-primary  group-hover:drop-shadow"
+                v-html="title" />
             <div v-if="tag" class="flex justify-between mb-3 max-w-full">
                 <div class="badge badge-primary badge-outline h-fit">{{ tag }} </div>
             </div>
-            <div v-if="description" class="lg:opacity-50 transition duration-300 group-hover:opacity-90 text-sm" v-html="description.substring(0, descriptionLength)"/>
+            <div v-if="description" class="lg:opacity-50 transition duration-300 group-hover:opacity-90 text-sm"
+                v-html="descriptionFinal" />
             <TimeAgo v-if="date" :date="date" class="text-right mt-auto opacity-50" style="font-size: 60%" />
         </div>
         <slot />
@@ -35,11 +38,18 @@ const props = defineProps({
     tag: String,
     tagLink: String,
     description: String,
-    descriptionLength: {type: Number, default: 400},
+    maxLength: { type: Number, default: 400 },
     date: String,
     imageClass: {
         type: String,
         default: ''
     }
+})
+
+const descriptionFinal = computed(() => {
+    if (props.description.length < props.maxLength)
+        return props.description
+
+    return props.description.substring(0, props.maxLength - 3) + '...'
 })
 </script>
