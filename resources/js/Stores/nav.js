@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-// import navigationItems from "../navigation.js";
+import navigationItems from "../navigation.js";
 
 const mapItem = (item) => {
   if (item.route) {
@@ -26,7 +26,8 @@ const mapSubmenu = (submenu) => ({
 
 export const useNav = defineStore("nav", {
   state: () => ({
-    items: [], //navigationItems.map(mapItem),
+    //items: [],
+    items: navigationItems.map(mapItem),
     ghostTab: null,
     timer: null,
     announce: false,

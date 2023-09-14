@@ -9,7 +9,7 @@
         <div class="max-w-[900px] mx-auto flex flex-col md:flex-row gap-10 mt-12">
 
 
-            <div class=" card bg-base-100 shadow-2xl w-fit flex justify-center mx-auto">
+            <div class=" card bg-base-100 shadow-2xl w-fit h-fit flex justify-center mx-auto">
                 <ImageShadow :src="libro.imagen" :alt="libro.titulo" zclass="object-contain rounded-[2px]"/>
             </div>
 

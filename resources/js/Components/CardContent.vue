@@ -5,7 +5,7 @@
                relative" :class="imageLeft ? 'flex-row' : ''">
         <div class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
-                'background-image': 'url('+getImageUrl(image)+')'
+                'background-image': 'url(\''+getImageUrl(image)+'\')'
             }" />
         </div>
         <div v-if="title || tag || description || date" class="p-4 flex flex-col w-full">

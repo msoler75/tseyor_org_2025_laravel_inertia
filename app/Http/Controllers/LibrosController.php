@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Libro;
 use App\Pigmalion\SEO;
+use Illuminate\Support\Facades\Cache;
 
 class LibrosController extends Controller
 {
@@ -16,7 +17,7 @@ class LibrosController extends Controller
         $categoria = $request->input('categoria');
 
         $resultados = $categoria ?
-            Libro::where('categoria', '=', $categoria)
+            Libro::where('categoria', 'LIKE', "%$categoria%")
             ->paginate(12)->appends(['categoria' => $categoria])
             : ($filtro ? Libro::where('titulo', 'like', '%' . $filtro . '%')
                 ->orWhere('descripcion', 'like', '%' . $filtro . '%')
@@ -25,9 +26,42 @@ class LibrosController extends Controller
                 Libro::latest()->paginate(10)
             );
 
-        $categorias = Libro::selectRaw('categoria as nombre, count(*) as total')
-            ->groupBy('categoria')
-            ->get();
+        $categorias = Cache::remember('libros_categorias', 1, function () {
+
+            $c = [];
+            $libros = Libro::select('categoria')->get();
+            // Recorrer todos los libros, para cada uno separar las categorias por coma, y esas son contadas en $categorias
+            // ejemplo: si la categoria es 'Monografías, cuentos', pues tiene 2 categorías.
+            // entonces hay que agregar en $categorias la clave 'Monografías' y el contador a 1, y la clave 'Cuentos' y el contador a 1
+            // si en siguiente libro es también una monografía, aumenta el contador de $categorias['Monografías']
+            //
+
+            foreach ($libros as $libro) {
+                $categoriasLibro = explode(',', $libro->categoria);
+                foreach ($categoriasLibro as $categoria) {
+                    $categoria = trim($categoria);
+                    if (!empty($categoria)) {
+                        if (isset($c[$categoria])) {
+                            $c[$categoria]++;
+                        } else {
+                            $c[$categoria] = 1;
+                        }
+                    }
+                }
+            }
+
+            return $c;
+        });
+
+        ksort($categorias);
+
+
+        $categorias = array_map(function ($nombre, $total) {
+            return (object) ['nombre' => $nombre, 'total' => $total];
+        }, array_keys($categorias), $categorias);
+
+            //  dd($categorias);
+
 
         return Inertia::render('Libros/Index', [
             'filtrado' => $filtro,

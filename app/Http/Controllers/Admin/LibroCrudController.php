@@ -79,7 +79,7 @@ class LibroCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'descripcion' => 'required|max:400'
+            'descripcion' => 'required|max:2048'
         ]);
         // CRUD::setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
