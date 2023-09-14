@@ -212,7 +212,8 @@ axios.get(route('setting', 'navigation'))
 
         <Banner />
 
-        <AudioPlayer v-if="!player.closed.value" class="rounded-tl-3xl fixed bottom-0 right-0 z-20 bg-base-100 border-gray-400 dark:border-white border-t border-l"/>
+        <AudioPlayer v-if="!player.closed.value"
+            class="rounded-tl-3xl fixed bottom-0 right-0 z-20 bg-base-100 border-gray-400 dark:border-white border-t border-l" />
 
         <div class="bg-base-200 flex-grow flex flex-col">
             <nav class="w-full border-gray-300  bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "
@@ -237,14 +238,8 @@ axios.get(route('setting', 'navigation'))
 
                         </div>
 
-                        <div class="flex gap-2">
-
-                            <button @click="toggleDark()" class="px-4 py-2 text-white bg-gray-600 dark:bg-purple-700">
-                                Dark Toggle
-                            </button>
-
+                        <div class="mx-auto flex gap-2">
                             <button @click="login1" class="btn">Login 1</button>
-
                             <button @click="login2">Login 2</button>
                         </div>
 
@@ -261,152 +256,164 @@ axios.get(route('setting', 'navigation'))
                         </transition>
 
 
+                        <div class="ml-auto flex items-center gap-3">
 
-                        <div v-if="$page.props.auth.user" class="hidden sm:flex sm:items-center sm:ml-6"
-                            @mouseover="nav.closeTabs()">
-                            <div class="ml-3 relative">
-                                <!-- Teams Dropdown -->
-                                <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-base-100 dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
-                                                {{ $page.props.auth.user.current_team.name }}
 
-                                                <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                    stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
 
-                                    <template #content>
-                                        <div class="w-60">
-                                            <!-- Team Management -->
-                                            <template v-if="$page.props.jetstream.hasTeamFeatures">
-                                                <div class="block px-4 py-2 text-xs text-gray-400">
-                                                    Manage Team
-                                                </div>
+                            <button @click="toggleDark()"
+                                class="my-auto p-1 w-10 h-10 flex justify-center items-center rounded-full bg-base-300 shadow text-xl sm:ml-6">
+                                <Icon v-show="isDark" icon="ph:sun-dim-duotone" />
+                                <Icon v-show="!isDark" icon="ph:moon-duotone" />
+                            </button>
 
-                                                <!-- Team Settings -->
-                                                <DropdownLink
-                                                    :href="route('teams.show', $page.props.auth.user.current_team)">
-                                                    Team Settings
-                                                </DropdownLink>
+                            <div v-if="$page.props.auth.user" class="hidden sm:flex sm:items-center"
+                                @mouseover="nav.closeTabs()">
+                                <div class="ml-3 relative">
+                                    <!-- Teams Dropdown -->
+                                    <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
+                                        <template #trigger>
+                                            <span class="inline-flex rounded-md">
+                                                <button type="button"
+                                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-base-100 dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
+                                                    {{ $page.props.auth.user.current_team.name }}
 
-                                                <DropdownLink v-if="$page.props.jetstream.canCreateTeams"
-                                                    :href="route('teams.create')">
-                                                    Create New Team
-                                                </DropdownLink>
+                                                    <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                        stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </template>
 
-                                                <!-- Team Switcher -->
-                                                <template v-if="$page.props.auth.user.all_teams.length > 1">
-                                                    <div class="border-t border-gray-200 dark:border-gray-600" />
-
+                                        <template #content>
+                                            <div class="w-60">
+                                                <!-- Team Management -->
+                                                <template v-if="$page.props.jetstream.hasTeamFeatures">
                                                     <div class="block px-4 py-2 text-xs text-gray-400">
-                                                        Switch Teams
+                                                        Manage Team
                                                     </div>
 
-                                                    <template v-for="team in $page.props.auth.user.all_teams"
-                                                        :key="team.id">
-                                                        <form @submit.prevent="switchToTeam(team)">
-                                                            <DropdownLink as="button">
-                                                                <div class="flex items-center">
-                                                                    <svg v-if="team.id == $page.props.auth.user.current_team_id"
-                                                                        class="mr-2 h-5 w-5 text-green-400"
-                                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                                        viewBox="0 0 24 24" stroke-width="1.5"
-                                                                        stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                                            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                                    </svg>
+                                                    <!-- Team Settings -->
+                                                    <DropdownLink
+                                                        :href="route('teams.show', $page.props.auth.user.current_team)">
+                                                        Team Settings
+                                                    </DropdownLink>
 
-                                                                    <div>{{ team.name }}</div>
-                                                                </div>
-                                                            </DropdownLink>
-                                                        </form>
+                                                    <DropdownLink v-if="$page.props.jetstream.canCreateTeams"
+                                                        :href="route('teams.create')">
+                                                        Create New Team
+                                                    </DropdownLink>
+
+                                                    <!-- Team Switcher -->
+                                                    <template v-if="$page.props.auth.user.all_teams.length > 1">
+                                                        <div class="border-t border-gray-200 dark:border-gray-600" />
+
+                                                        <div class="block px-4 py-2 text-xs text-gray-400">
+                                                            Switch Teams
+                                                        </div>
+
+                                                        <template v-for="team in $page.props.auth.user.all_teams"
+                                                            :key="team.id">
+                                                            <form @submit.prevent="switchToTeam(team)">
+                                                                <DropdownLink as="button">
+                                                                    <div class="flex items-center">
+                                                                        <svg v-if="team.id == $page.props.auth.user.current_team_id"
+                                                                            class="mr-2 h-5 w-5 text-green-400"
+                                                                            xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                            viewBox="0 0 24 24" stroke-width="1.5"
+                                                                            stroke="currentColor">
+                                                                            <path stroke-linecap="round"
+                                                                                stroke-linejoin="round"
+                                                                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                        </svg>
+
+                                                                        <div>{{ team.name }}</div>
+                                                                    </div>
+                                                                </DropdownLink>
+                                                            </form>
+                                                        </template>
                                                     </template>
                                                 </template>
-                                            </template>
-                                        </div>
-                                    </template>
-                                </Dropdown>
-                            </div>
+                                            </div>
+                                        </template>
+                                    </Dropdown>
+                                </div>
 
-                            <!-- Settings Dropdown -->
-                            <div class="ml-3 relative">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <button v-if="$page.props.jetstream.managesProfilePhotos"
-                                            class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                            <Avatar :user="$page.props.auth.user" :link="false" />
-                                        </button>
-
-                                        <span v-else class="inline-flex rounded-md">
-                                            <button type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-base-100 dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
-                                                {{ $page.props.auth.user.name }}
-
-                                                <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                    stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                                </svg>
+                                <!-- Settings Dropdown -->
+                                <div class="ml-3 relative">
+                                    <Dropdown align="right" width="48">
+                                        <template #trigger>
+                                            <button v-if="$page.props.jetstream.managesProfilePhotos"
+                                                class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
+                                                <Avatar :user="$page.props.auth.user" :link="false" />
                                             </button>
-                                        </span>
-                                    </template>
 
-                                    <template #content>
-                                        <!-- Account Management -->
-                                        <div class="block px-4 py-2 text-xs text-gray-400">
-                                            Perfil
-                                        </div>
+                                            <span v-else class="inline-flex rounded-md">
+                                                <button type="button"
+                                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-base-100 dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
+                                                    {{ $page.props.auth.user.name }}
 
-                                        <DropdownLink :href="route('profile.show')">
-                                            Mi Cuenta
-                                        </DropdownLink>
+                                                    <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                        stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </template>
 
-                                        <DropdownLink v-if="$page.props.jetstream.hasApiFeatures"
-                                            :href="route('api-tokens.index')">
-                                            API Tokens
-                                        </DropdownLink>
+                                        <template #content>
+                                            <!-- Account Management -->
+                                            <div class="block px-4 py-2 text-xs text-gray-400">
+                                                Perfil
+                                            </div>
 
-                                        <div class="border-t border-gray-200 dark:border-gray-600" />
-
-                                        <!-- Authentication -->
-                                        <form @submit.prevent="logout">
-                                            <DropdownLink as="button">
-                                                Cerrar Sesión
+                                            <DropdownLink :href="route('profile.show')">
+                                                Mi Cuenta
                                             </DropdownLink>
-                                        </form>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                        </div>
-                        <Link v-else :href="route('login')" class="text-2xl bg-base-300 rounded-full p-2 shadow">
-                            <Icon icon="ph:sign-in-duotone" title="Iniciar sesión"/>
-                        </Link>
 
-                        <!-- Hamburger -->
-                        <div class="-mr-2 flex items-center lg:hidden">
-                            <button
-                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
-                                @click="sideBarShow = !sideBarShow">
-                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path
-                                        :class="{ 'hidden': showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }"
-                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16" />
-                                    <path
-                                        :class="{ 'hidden': !showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }"
-                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
+                                            <DropdownLink v-if="$page.props.jetstream.hasApiFeatures"
+                                                :href="route('api-tokens.index')">
+                                                API Tokens
+                                            </DropdownLink>
+
+                                            <div class="border-t border-gray-200 dark:border-gray-600" />
+
+                                            <!-- Authentication -->
+                                            <form @submit.prevent="logout">
+                                                <DropdownLink as="button">
+                                                    Cerrar Sesión
+                                                </DropdownLink>
+                                            </form>
+                                        </template>
+                                    </Dropdown>
+                                </div>
+                            </div>
+                            <Link v-else :href="route('login')" class="text-2xl bg-base-300 rounded-full p-2 shadow">
+                            <Icon icon="ph:sign-in-duotone" title="Iniciar sesión" />
+                            </Link>
+
+                            <!-- Hamburger -->
+                            <div class="-mr-2 flex items-center lg:hidden">
+                                <button
+                                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
+                                    @click="sideBarShow = !sideBarShow">
+                                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                        <path
+                                            :class="{ 'hidden': showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 6h16M4 12h16M4 18h16" />
+                                        <path
+                                            :class="{ 'hidden': !showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 </div>

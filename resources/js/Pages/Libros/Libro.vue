@@ -13,7 +13,7 @@
                 <ImageShadow :src="libro.imagen" :alt="libro.titulo" class="object-contain rounded-[2px]"/>
             </div>
 
-            <div class="px-6">
+            <div class="p-6 card bg-base-100 shadow">
 
                 <h1 class="text-2xl font-bold mb-4">{{ libro.titulo }}</h1>
                 <p class="text-gray-600 text-sm mb-2 flex justify-between">
@@ -21,9 +21,9 @@
                         class="no-underline badge badge-primary badge-outline">{{ libro.categoria }}</Link>
                     <TimeAgo :date="libro.published_at" />
                 </p>
-                <p class="mb-8 text-xs">Edición: {{ libro.edicion }}, páginas: {{ libro.paginas }}</p>
+                <p class="mb-8 text-xs">{{ edicionPaginas }}</p>
                 <div class="prose" v-html="libro.descripcion"></div>
-                <div class="w-full flex justify-end mt-7">
+                <div class="w-full flex mt-auto justify-end pt-7">
 
                     <a class="btn btn-primary w-fit flex gap-3" :href="libro.pdf" download>
                         <Icon icon="ph:download-duotone" /> Descargar en PDF
@@ -35,14 +35,15 @@
         <hr class="my-14" />
 
         <h2 class="text-xl font-bold mt-8">Libros relacionados</h2>
-        <div class="grid gap-4 mt-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(32rem, 1fr))` }">
+        <div class="grid gap-4 mt-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
 
             <CardContent v-for="contenido in relacionados" :key="contenido.id"
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('libro', contenido.slug)"
                         :description="contenido.descripcion" :date="contenido.published_at"
+                        :maxLength = "400-contenido.titulo.length*2.5"
                         :tag="contenido.categoria"
                         image-left
-                        imageClass="h-80"/>
+                        imageClass="w-[200px] h-[300px]"/>
         </div>
 
 
@@ -63,4 +64,17 @@ const props = defineProps({
         type: Array, required: true
     }
 });
+
+
+const edicionPaginas = computed(()=>{
+    const str = []
+
+    if(props.libro.edicion)
+    str.push(`Edición: ${props.libro.edicion}ª` )
+
+    if(props.libro.paginas)
+    str.push(`${str.length?'p':'P'}áginas: ${props.libro.paginas}`)
+
+    return str.join(", ")
+})
 </script>
