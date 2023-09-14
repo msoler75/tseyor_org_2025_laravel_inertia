@@ -24,6 +24,8 @@ class Libro extends ContenidoBaseModel
         'visibilidad'
     ];
 
+    public $table = 'libros';
+
     /* public static function search($term)
     {
         return static::query()

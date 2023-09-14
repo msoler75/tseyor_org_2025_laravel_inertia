@@ -102,6 +102,9 @@ class ContenidoHelper {
         $contenido->fecha = $model->published_at ?? $model->updated_at ?? null;
         $contenido->visibilidad = $model->visibilidad ?? 'P';
 
+        if(strlen($contenido->descripcion)>400)
+        $contenido->descripcion = mb_substr($contenido->descripcion, 0, 399);
+
         // obtiene el texto que servirá para indexar el buscador
         $contenido->texto_busqueda = $model->getTextoBuscador();
 

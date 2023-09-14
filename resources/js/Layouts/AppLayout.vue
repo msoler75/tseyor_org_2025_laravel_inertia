@@ -181,14 +181,15 @@ onBeforeUnmount(() => {
 
 
 const loader = ref(true)
-
+loader.value = false
+/*
 axios.get(route('setting', 'navigation'))
     .then(response => {
         console.log('response', response.data.value)
         nav.setItems(response.data.value)
         loader.value = false
     })
-
+*/
 </script>
 
 <template>
