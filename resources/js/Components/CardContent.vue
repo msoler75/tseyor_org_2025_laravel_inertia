@@ -15,7 +15,8 @@
             <div v-if="tag" class="flex justify-between mb-3 max-w-full">
                 <div class="badge badge-primary badge-outline h-fit">{{ tag }} </div>
             </div>
-            <div v-if="description" class="lg:opacity-50 transition duration-300 group-hover:opacity-90 text-sm"
+            <div v-if="description" class="text-gradient lg:opacity-50 transition duration-300 group-hover:opacity-90 text-sm text-ellipsis overflow-hidden "
+            :class="descriptionClass"
                 v-html="descriptionFinal" />
             <TimeAgo v-if="date" :date="date" class="text-right mt-auto opacity-50" style="font-size: 60%" />
         </div>
@@ -38,9 +39,13 @@ const props = defineProps({
     tag: String,
     tagLink: String,
     description: String,
-    maxLength: { type: Number, default: 400 },
+    maxLength: { type: Number, default: 1024 },
     date: String,
     imageClass: {
+        type: String,
+        default: ''
+    },
+    descriptionClass: {
         type: String,
         default: ''
     }
@@ -53,3 +58,13 @@ const descriptionFinal = computed(() => {
     return props.description.substring(0, props.maxLength - 3) + '...'
 })
 </script>
+
+
+<style scoped>
+  .text-gradient {
+    height: 100%;
+    background-image: linear-gradient(to bottom, #000 0%, #000 70%, #fff 95%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>

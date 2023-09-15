@@ -26,6 +26,12 @@ class ImportPaginas extends Command
      */
     public function handle()
     {
-        PaginaImport::importar();
+        echo $this->description . "\n";
+        if ($this->confirm('¿Está seguro de que desea importar las páginas? Esto borrará los registros actuales.')) {
+            PaginaImport::importar();
+            $this->info('¡Las páginas se importaron correctamente!');
+        } else {
+            $this->info('La importación de páginas fue cancelada.');
+        }
     }
 }

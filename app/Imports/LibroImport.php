@@ -15,7 +15,10 @@ class LibroImport
 
         $carpeta_libros = 'd:\tseyor.org\biblioteca\libros\*.html';
 
-        $media_folder = "media/libros/";
+        $media_folder = "media/libros";
+
+        echo "Debes copiar las imagenes de los libros a $media_folder/portadas\n";
+        echo "Debes copiar los archivos pdf a $media_folder/pdf\n";
 
         $htmlFiles = glob($carpeta_libros);
 
@@ -43,14 +46,16 @@ class LibroImport
                         $data['categoria'] = 'Monografías';
 
 
-                    $imagen = str_replace("/images/portadas/", $media_folder, urldecode($data['image']));
+                    $imagen = str_replace("/images/portadas", "$media_folder/portadas", urldecode($data['image']));
+                    $pdf = str_replace("/biblioteca/libros/pdf", "$media_folder/pdf", urldecode($data['pdf']));
+
                     // Crear un nuevo modelo Libro con los datos extraídos
                     $libro = new Libro([
                         'titulo' => html_entity_decode($data['titulo']),
                         'descripcion' => $data['descripcion'],
                         'categoria' => mb_strtolower($data['categoria']),
                         'imagen' => $imagen,
-                        'pdf' => $data['pdf'],
+                        'pdf' => $pdf,
                         'visibilidad' => 'P',
                         'edicion' => isset($data['edicion']) && is_numeric($data['edicion']) ? $data['edicion'] : null,
                         'paginas' => isset($data['paginas']) && is_numeric($data['paginas']) ? $data['paginas'] : null
