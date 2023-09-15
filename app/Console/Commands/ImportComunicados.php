@@ -26,7 +26,7 @@ class ImportComunicados extends Command
      */
     public function handle()
     {
-        echo $this->description . "\n";
+        $this->info("$this->description");
         if ($this->confirm('¿Está seguro de que desea importar los comunicados? Esto borrará los registros actuales.')) {
             ComunicadoImport::importar();
             $this->info('¡Los comunicados se importaron correctamente!');

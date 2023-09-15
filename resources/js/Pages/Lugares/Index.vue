@@ -2,7 +2,12 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="lugar" necesita="administrar contenidos" class="mb-3"/>
+
+        <div class="flex justify-between items-center mb-20">
+            <Back href="/glosario">Glosario</Back>
+            <AdminPanel modelo="lugar" necesita="administrar contenidos"/>
+        </div>
+
 
         <h1>Lugares de la Galaxia</h1>
         <p>Aquí puedes conocer sobre la vida en otros lugares del cosmos que desconocías.</p>

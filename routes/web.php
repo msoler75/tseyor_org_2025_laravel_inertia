@@ -10,6 +10,7 @@ use App\Http\Controllers\ComunicadosController;
 use App\Http\Controllers\EntradasController;
 use App\Http\Controllers\GuiasController;
 use App\Http\Controllers\LugaresController;
+use App\Http\Controllers\TerminosController;
 use App\Http\Controllers\EventosController;
 use App\Http\Controllers\EquiposController;
 use App\Http\Controllers\LibrosController;
@@ -79,8 +80,8 @@ Route::get('/libros/{slug}', [LibrosController::class, 'show'])->where('slug', '
 Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');
 Route::get('/entradas/{slug}', [EntradasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('entrada');
 
-Route::get('/glosario', [GuiasController::class, 'index'])->name('terminos');
-Route::get('/glosario/{slug}', [EventosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('termino');
+Route::get('/glosario', [TerminosController::class, 'index'])->name('terminos');
+Route::get('/glosario/{slug}', [TerminosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('termino');
 
 Route::get('/guias', [GuiasController::class, 'index'])->name('guias');
 Route::get('/guias/{slug}', [GuiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('guia');
