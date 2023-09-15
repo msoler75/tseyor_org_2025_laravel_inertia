@@ -28,27 +28,35 @@ class ContenidosImport extends Command
      */
     public function handle()
     {
+
+        $this->info("$this->description");
+
         $coleccion = $this->argument('coleccion');
 
-        // Verificar si la clase del modelo existe
-        $inflector = InflectorFactory::create()->build();
-        $nombreSingular = $inflector->singularize($coleccion);
-        $claseModelo = 'App\\Models\\' . ucfirst($nombreSingular);
+        if ($this->confirm('¿Está seguro de que desea recrear los contenidos? Esto borrará los registros actuales.')) {
 
-        if (!class_exists($claseModelo)) {
-            $this->error("La colección $coleccion no tiene un modelo asociado.");
-            return;
+            // Verificar si la clase del modelo existe
+            $inflector = InflectorFactory::create()->build();
+            $nombreSingular = $inflector->singularize($coleccion);
+            $claseModelo = 'App\\Models\\' . ucfirst($nombreSingular);
+
+            if (!class_exists($claseModelo)) {
+                $this->error("La colección $coleccion no tiene un modelo asociado.");
+                return;
+            }
+
+            // Borramos todos los contenidos de esa colección
+            Contenido::where('coleccion', $coleccion)->delete();
+
+            // Obtenemos todos los datos de esa colección
+            $modelos = app()->make($claseModelo)::all();
+            foreach ($modelos as $model) {
+                ContenidoHelper::guardarContenido($coleccion, $model);
+            }
+
+            $this->info("Importación de contenidos completada para la colección $coleccion.");
+        } else {
+            $this->info('Operación cancelada.');
         }
-
-        // Borramos todos los contenidos de esa colección
-        Contenido::where('coleccion', $coleccion)->delete();
-
-        // Obtenemos todos los datos de esa colección
-        $modelos = app()->make($claseModelo)::all();
-        foreach ($modelos as $model) {
-            ContenidoHelper::guardarContenido($coleccion, $model);
-        }
-
-        $this->info("Importación de contenidos completada para la colección $coleccion.");
     }
 }

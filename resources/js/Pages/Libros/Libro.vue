@@ -42,6 +42,7 @@
                         :description="contenido.descripcion" :date="contenido.published_at"
                         :tag="contenido.categoria"
                         image-left
+                        class="h-[300px]"
                         imageClass="w-[200px] h-[300px]"/>
         </div>
 
