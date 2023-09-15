@@ -40,7 +40,6 @@
             <CardContent v-for="contenido in relacionados" :key="contenido.id"
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('libro', contenido.slug)"
                         :description="contenido.descripcion" :date="contenido.published_at"
-                        :maxLength = "400-contenido.titulo.length*2.5"
                         :tag="contenido.categoria"
                         image-left
                         imageClass="w-[200px] h-[300px]"/>

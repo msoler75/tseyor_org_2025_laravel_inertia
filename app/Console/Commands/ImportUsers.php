@@ -26,6 +26,12 @@ class ImportUsers extends Command
      */
     public function handle()
     {
-        UserImport::importar();
+        echo $this->description . "\n";
+        if ($this->confirm('¿Está seguro de que desea importar los usuarios? Esto borrará los registros actuales.')) {
+            UserImport::importar();
+            $this->info('¡Los usuarios se importaron correctamente!');
+        } else {
+            $this->info('La importación de usuarios fue cancelada.');
+        }
     }
 }

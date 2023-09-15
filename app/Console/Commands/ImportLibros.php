@@ -26,8 +26,16 @@ class ImportLibros extends Command
      */
     public function handle()
     {
-        LibroImport::importar();
-
-        LibroImport::fusionarCategoriasSimilares();
+        echo $this->description . "\n";
+        if ($this->confirm('¿Está seguro de que desea importar los libros? Esto borrará los registros actuales.')) {
+            LibroImport::importar();
+            LibroImport::fusionarCategoriasSimilares();
+            $this->info('¡Los libros se importaron correctamente!');
+        } else {
+            $this->info('La importación de libros fue cancelada.');
+        }
     }
+
+
+
 }

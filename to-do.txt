@@ -1,3 +1,12 @@
+tailwindcss  -> after:content-['_↗']
+
+Ejemplo:
+
+<p>Higher resolution means more than just a better-quality image. With a Retina
+6K display, <a class="text-blue-600 after:content-['_↗'] ..." href="https://www.
+apple.com/pro-display-xdr/" target="_blank">Pro Display XDR</a> gives you
+nearly 40 percent more screen real estate than a 5K display.</p>
+
 
 
 Registro de acciones de los editores:
