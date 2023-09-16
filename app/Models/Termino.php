@@ -12,10 +12,10 @@ class Termino extends ContenidoBaseModel
     protected $table = 'terminos';
 
     protected $fillable = [
-        'titulo',
+        'nombre',
         'slug',
         'descripcion',
-        'text',
+        'texto',
         'visibilidad'
     ];
 

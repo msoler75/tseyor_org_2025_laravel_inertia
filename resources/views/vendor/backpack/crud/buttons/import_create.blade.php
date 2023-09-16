@@ -1,12 +1,12 @@
 @if ($crud->hasAccess('create'))
     <input type="file" name="word_file" id="word_file" style="display: none;" accept='.doc, .docx'>
-    <a href="javascript:void(0)" onclick="importUpdate(this)" class="ml-2 btn btn-secondary" data-button-type="import">
+    <a href="javascript:void(0)" onclick="sendWordFileToCreate(this)" class="ml-2 btn btn-secondary" data-button-type="import">
         <span class="ladda-label"><i class="la la-upload"></i> Crear desde Word</span>
     </a>
 @endif
 
 <script>
-    function importUpdate(button) {
+    function sendWordFileToCreate(button) {
         var modelo = location.href.split('/').pop()
         var fileInput = document.getElementById('word_file');
         fileInput.onchange = function() {

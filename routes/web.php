@@ -27,6 +27,12 @@ use App\Http\Controllers\DevController;
 use App\Pigmalion\SEO;
 
 
+
+// a borrar:
+
+Route::get('/glosario/parse', [TerminosController::class, 'parse'])->name('parse');
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -37,6 +43,12 @@ use App\Pigmalion\SEO;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+
+
+
+
 
 Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
 Route::get('/settings/{id}', [SettingsController::class, 'show'])->name('setting');
