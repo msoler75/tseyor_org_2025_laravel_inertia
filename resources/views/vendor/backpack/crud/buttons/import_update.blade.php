@@ -1,13 +1,13 @@
 @if ($crud->hasAccess('update'))
     <input type="file" name="word_file" id="word_file" style="display: none;" accept='.doc, .docx'>
-    <a href="javascript:void(0)" onclick="importCreate(this)" class="dropdown-item" data-button-type="import">
+    <a href="javascript:void(0)" onclick="sendWordFileToUpdate(this)" class="dropdown-item" data-button-type="import">
         <span class="ladda-label"><i class="la la-upload"></i> Actualizar desde Word</span>
     </a>
 @endif
 
 <script>
 
-    function importCreate(button) {
+    function sendWordFileToUpdate(button) {
         var modelo = location.href.split('/').pop()
         var elem = button.parentNode
         while(elem.tagName!="TR")
@@ -20,7 +20,7 @@
             var formData = new FormData();
             formData.append('file', file);
 
-            axios.post(modelo+'/importar/actualizar/'+id, formData)
+            axios.post('/admin/'+modelo+'/importar/actualizar/'+id, formData)
                 .then(function (response) {
                     // Éxito en la importación, maneja la respuesta del servidor
                     // console.log(response);
