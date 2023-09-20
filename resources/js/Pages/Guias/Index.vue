@@ -2,11 +2,15 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="guia" necesita="administrar contenidos" class="mb-3" />
+        <div class="flex justify-between items-center mb-20">
+            <i></i>
+            <AdminPanel modelo="guia" necesita="administrar contenidos" />
+        </div>
 
+        <h1>Glosario - Guías Estelares</h1>
 
+        <GlosarioTabs />
 
-        <h1>Guías Estelares</h1>
         <p>Tutores de la Confederación y otros hermanos de las estrellas.</p>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">

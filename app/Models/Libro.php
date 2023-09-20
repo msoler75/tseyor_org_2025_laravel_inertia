@@ -71,11 +71,11 @@ class Libro extends ContenidoBaseModel
     /**
      * ContenidoBaseModel: obtiene el texto para el buscador global
      */
-    public function getTextoContenidoBuscador()
+    /* public function getTextoContenidoBuscador()
     {
         // incluimos la descripcion breve
         return $this->descripcion;
-    }
+    }*/
 
 
 }

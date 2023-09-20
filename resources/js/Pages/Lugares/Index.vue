@@ -4,12 +4,15 @@
 
 
         <div class="flex justify-between items-center mb-20">
-            <Back href="/glosario">Glosario</Back>
+            <i></i>
             <AdminPanel modelo="lugar" necesita="administrar contenidos"/>
         </div>
 
 
-        <h1>Lugares de la Galaxia</h1>
+        <h1>Glosario - Lugares de la Galaxia</h1>
+
+        <GlosarioTabs/>
+
         <p>Aquí puedes conocer sobre la vida en otros lugares del cosmos que desconocías.</p>
 
          <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">

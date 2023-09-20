@@ -15,9 +15,13 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    format: {
+        type: String,
+        default: ''
+    }
 });
 
-const isMarkdown = computed(() => ['md', 'ambiguous'].includes(detectFormat(props.content).format) )
+const isMarkdown = computed(() => props.format=='md'?true:['md', 'ambiguous'].includes(detectFormat(props.content).format) )
 const container = ref(null)
 const images = ref([])
 
@@ -101,8 +105,9 @@ function handlePreview(index) {
 /* amplia la imagen en el ancho */
 @media (min-width: 1154px) {
     :deep(p.images-wrapper) {
-        width: 150%;
-        margin-left: -25%;
+        /* width: 150%;
+        margin-left: -25%; */
+        text-align: center;
     }
 }
 </style>

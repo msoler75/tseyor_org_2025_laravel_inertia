@@ -62,7 +62,10 @@ class Busquedas
                 }
 
                 // Realizar el mismo proceso para el campo 'titulo'
+                if($item->titulo)
                 $item->titulo = $h->highlight($item->titulo, $busqueda, "em", $options);
+                if($item->nombre)
+                $item->nombre = $h->highlight($item->nombre, $busqueda, "em", $options);
 
                 unset($item['texto']);
                 unset($item['texto_busqueda']);

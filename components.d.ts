@@ -52,6 +52,7 @@ declare module 'vue' {
     Footer: typeof import('./resources/js/Sections/Footer.vue')['default']
     FormSection: typeof import('./resources/js/Components/FormSection.vue')['default']
     FullPage: typeof import('./resources/js/Sections/FullPage.vue')['default']
+    GlosarioTabs: typeof import('./resources/js/Components/GlosarioTabs.vue')['default']
     GridFill: typeof import('./resources/js/Components/GridFill.vue')['default']
     Hero: typeof import('./resources/js/Sections/Hero.vue')['default']
     Image: typeof import('./resources/js/Components/Image.vue')['default']

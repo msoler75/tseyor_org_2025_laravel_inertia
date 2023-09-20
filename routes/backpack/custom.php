@@ -64,6 +64,9 @@ Route::group([
     Route::crud('termino', 'TerminoCrudController');
 
     Route::post('termino/importar/crear', 'TerminoCrudController@importCreate');
+    Route::get('termino/importando/paso1', 'TerminoCrudController@importando1');
+    Route::get('termino/importando/paso2', 'TerminoCrudController@importando2');
+    Route::get('termino/importando/test', 'TerminoCrudController@test');
 
     Route::crud('video', 'VideoCrudController');
 }); // this should be the absolute last line of this file
