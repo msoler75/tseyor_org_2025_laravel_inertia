@@ -20,8 +20,8 @@
             image-left
             :title="contenido.titulo"
             :image="contenido.imagen"
-            :href="`/${contenido.coleccion}/${contenido.slug_ref}`"
-            :tag="contenido.coleccion"
+            :href="route(contenido.coleccion)+'/'+contenido.slug_ref"
+            :tag="traducir(contenido.coleccion)"
             :description="contenido.descripcion"
             :date="contenido.fecha"/>
         </div>
@@ -46,6 +46,17 @@ const props = defineProps({
 
 const listado = ref(props.listado);
 
+
+const traducciones = {
+    paginas: 'páginas',
+    guias: 'guías estelares',
+    terminos: 'glosario',
+    lugares: 'lugares de la galaxia'
+}
+
+function traducir(col) {
+    return traducciones[col] || col
+}
 
 
 </script>

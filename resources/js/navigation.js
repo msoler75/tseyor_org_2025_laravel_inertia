@@ -53,12 +53,7 @@ export default [
               description: "Cursos, convivencias y encuentros",
               icon: "ph:calendar-duotone",
             },
-            {
-                title: "Radio",
-                route: "radio",
-                description: "Escucha comunicados y entrevistas en Radio Tseyor",
-                icon: "ph:radio-duotone",
-              },
+
 
           ],
         },
@@ -78,17 +73,85 @@ export default [
               icon: "ph:youtube-logo-duotone",
             },
             {
-                title: "Archivos",
-                route: "archivos0",
-                description: "Todos los archivos y documentos en carpetas",
-                icon: "ph:archive-box-duotone",
+                title: "Radio",
+                route: "radio",
+                description: "Escucha comunicados y entrevistas en Radio Tseyor",
+                icon: "ph:radio-duotone",
               },
+
           ],
         },
       ],
-      footer: "Esto es un footer 1",
+      // footer: "Esto es un footer 1",
     },
   },
+
+
+  {
+    title: "Formación",
+    icon: "ph:ph:graduation-cap-duotone",
+    submenu: {
+      // header: "esto es un header 2",
+      sections: [
+        {
+            title: "Cursos",
+            items: [
+              {
+                title: "Curso Holístico Tseyor",
+                route: "cursos",
+                description: "Conoce nuestro curso de origen estelar",
+                icon: "ph:chalkboard-teacher-duotone",
+              },
+              {
+                title: "Inscríbete a nuestro curso",
+                route: "cursos.inscripcion",
+                description: "Aprende gratis nuestra filosofía",
+                icon: "ph:note-pencil-duotone",
+              },
+
+            ],
+          },
+
+          {
+            title: "Glosario",
+            items: [
+                {
+                    title: "Glosario de términos",
+                    route: "terminos",
+                    description: "Índice de términos del conocimiento de Tseyor",
+                    icon: "ph:list-magnifying-glass-duotone",
+                  },
+                {
+                    title: "Guías Estelares",
+                    route: "guias",
+                    description: "Conoce a los tutores de la Confederación",
+                    icon: "ph:user-gear-duotone",
+                  },
+                  {
+                    title: "Lugares de la Galaxia",
+                    route: "lugares",
+                    description: "Planetas, bases intraterrenas y otros lugares",
+                    icon: "ph:planet-duotone",
+                  },
+            ],
+          },
+
+
+          {
+            title: "Referencia",
+            items: [
+                {
+                    title: "Libros para comenzar",
+                    route: "terminos",
+                    description: "Dónde comenzar en la lectura de Tseyor",
+                    icon: "ph:list-magnifying-glass-duotone",
+                  },
+            ],
+          },
+        ]
+    }
+},
+
 
   {
     title: "Organización",
@@ -96,6 +159,30 @@ export default [
     submenu: {
       // header: "esto es un header 2",
       sections: [
+        {
+            title: "Presentación",
+            items: [
+              {
+                title: "¿Quiénes somos?",
+                route: "quienes-somos",
+                description: "Descubre quiénes somos y cómo podemos ayudarnos",
+                icon: "ph:users-three-duotone",
+              },
+              {
+                title: "Nuestra Filosofía",
+                route: "filosofia",
+                description: "Conoce la filosofía cósmico crística",
+                icon: "ph:fish-simple-duotone",
+              },
+              {
+                title: "Orígenes de Tseyor",
+                route: "origenes-de-tseyor",
+                description: "El orígen del contacto",
+                icon: "ph:shooting-star-duotone",
+              },
+
+            ],
+          },
         {
           title: "Lugares Tseyor",
           items: [
@@ -109,96 +196,126 @@ export default [
               title: "Centros Tseyor",
               route: "centros",
               description: "Centros Tseyor en el mundo",
-              icon: "ph:lighthouse-duotone",
+              icon: "ph:house-line-duotone",
             },
             {
-                title: "ONG Mundo Armónico Tseyor",
-                route: "ong",
-                description: "Conoce nuestra ONG y sus objetivos",
-                icon: "ph:handshake-duotone",
-              },
-              {
-                title: "Universidad Tseyor de Granada",
-                route: "utg",
-                description: "Conoce nuestra Universidad y sus departamentos",
-                icon: "ph:student-duotone",
+                title: "Contactar",
+                route: "contactar",
+                description: "Contacta con nosotros",
+                icon: "ph:envelope-duotone",
               }
           ],
         },
-        {
-          title: "Presentación",
-          items: [
-            {
-              title: "¿Quiénes somos?",
-              route: "quienes-somos",
-              description: "Descubre quiénes somos y cómo podemos ayudarnos",
-              icon: "ph:users-three-duotone",
-            },
-            {
-              title: "Nuestra Filosofía",
-              route: "filosofia",
-              description: "Conoce la filosofía cósmico crística",
-              icon: "ph:fish-simple-duotone",
-            },
-            {
-              title: "Orígenes de Tseyor",
-              route: "origenes-de-tseyor",
-              description: "El orígen del contacto",
-              icon: "ph:shooting-star-duotone",
-            },
 
-          ],
-        },
         {
-            title: "Seres de las estrellas",
+            title: "Estructura",
+            items:[
+                {
+                    title: "Asociación Tseyor",
+                    route: "utg",
+                    description: "Conoce la primera entidad de Tseyor",
+                    icon: "ph:tree-duotone",
+                  },
+                  {
+                    title: "Universidad Tseyor de Granada",
+                    route: "utg",
+                    description: "Conoce nuestra Universidad y sus departamentos",
+                    icon: "ph:student-duotone",
+                  },
+                {
+                    title: "ONG Mundo Armónico Tseyor",
+                    route: "ong",
+                    description: "Conoce nuestra ONG y sus objetivos",
+                    icon: "ph:handshake-duotone",
+                  },
+            ]
+        },
+      ],
+      // footer: "Esto es un footer 2",
+    },
+  },
+
+  {
+    title: "Comunidad",
+    icon: "ph:globe-duotone",
+    submenu: {
+      header: "Para miembros de Tseyor",
+      sections: [
+        {
+            title: "Equipos y usuarios",
             items: [
-              {
-                title: "Guías Estelares",
-                route: "guias",
-                description: "Conoce a los tutores de la Confederación",
-                icon: "ph:user-gear-duotone",
-              },
-              {
-                title: "Lugares de la Galaxia",
-                route: "lugares",
-                description: "Planetas, bases intraterrenas y otros lugares",
-                icon: "ph:planet-duotone",
-              },
-              {
+
+            {
                 title: "Equipos",
                 route: "equipos",
                 description: "Equipos de trabajo",
                 icon: "ph:users-four-duotone",
-              },
-              {
+            },
+            {
                 title: "Usuarios",
                 route: "usuarios",
                 description: "Listado de Usuarios",
                 icon: "ph:users-duotone",
-              },
+            },
+
             ],
-        },
-        {
-          title: "Cursos",
-          items: [
-            {
-              title: "Curso Holístico Tseyor",
-              route: "cursos",
-              description: "Conoce nuestro curso de origen estelar",
-              icon: "ph:chalkboard-teacher-duotone",
             },
+
             {
-              title: "Inscríbete a nuestro curso",
-              route: "cursos.inscripcion",
-              description: "Aprende gratis nuestra filosofía",
-              icon: "ph:note-pencil-duotone",
-            },
-          ],
-        },
-      ],
-      footer: "Esto es un footer 2",
-    },
-  },
+                title: "Documentos y archivos",
+                items: [
+                {
+                    title: "Meditaciones",
+                    route: "equipos",
+                    description: "Meditaciones para el trabajo interior",
+                    icon: "ph:file-text-duotone",
+                },
+                {
+                    title: "Normativas",
+                    route: "equipos",
+                    description: "Estatutos, protocolos y normativas",
+                    icon: "ph:hand-palm-duotone",
+                },
+                {
+                    title: "Archivos",
+                    route: "archivos0",
+                    description: "Todos los archivos y documentos en carpetas",
+                    icon: "ph:archive-box-duotone",
+                  },
+                ],
+                },
+
+
+                {
+                    title: "Herramientas",
+                    items: [
+                         {
+                        title: "Muular Electrónico",
+                        route: "equipos",
+                        description: "Meditaciones para el trabajo interior",
+                        icon: "ph:file-text-duotone",
+                    },
+                    {
+                        title: "Juego del puzle",
+                        route: "equipos",
+                        description: "Meditaciones para el trabajo interior",
+                        icon: "ph:file-text-duotone",
+                    },
+                     {
+                        title: "Cartas para el autodescubrimiento",
+                        route: "equipos",
+                        description: "Meditaciones para el trabajo interior",
+                        icon: "ph:file-text-duotone",
+                    },
+                    ],
+                    }
+      ]
+    }
+}
 
 
  ];
+
+
+
+

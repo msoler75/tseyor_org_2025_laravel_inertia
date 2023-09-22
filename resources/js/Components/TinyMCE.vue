@@ -10,7 +10,8 @@
 -->
 
         <div v-show="!editingMarkdown">
-            <TinyEditor :api-key="key" :init="{
+
+            <TinyEditor v-if="editando" :api-key="key" :init="{
                 height: height,
                 language_url: '/assets/js/tiny.es.js',
                 language: 'es',
@@ -28,6 +29,15 @@
                 toolbar: toolbarButtons,
                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }" :initial-value="contenidoHtml" @change="onChange" />
+            <div v-else >
+                <template v-if="contenidoHtml">
+                    <span class="text-xs opacity-70">Vista previa:</span>
+                    <Content :content="contenidoHtml" class="max-h-[30ch] overflow-y-scroll border p-3" :format="format"/>
+                </template>
+                <div v-else class="text-sm opacity-70">(no hay texto)</div>
+                <div class="btn btn-primary btn-sm mt-2" @click="editando = true">Editar</div>
+            </div>
+
         </div>
 
 
@@ -79,6 +89,7 @@ const props = defineProps({
     fullEditor: { type: Boolean, default: false }
 })
 
+const editando = ref(false)
 
 const toolbarButtons = computed(() => {
     if (props.toolbar)

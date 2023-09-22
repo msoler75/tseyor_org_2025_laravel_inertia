@@ -4,8 +4,10 @@
             <span></span>
             <AdminPanel modelo="pagina" necesita="administrar contenidos" :contenido="pagina" />
         </div>
-    <h1 class="text-center capitalize">{{ pagina.titulo }}</h1>
-    <Content :content="pagina.texto" class="pb-12" />
+        <div class="py-14 px-5 md:px-14 card bg-base-100 shadow mx-auto w-fit">
+            <h1 class="text-center capitalize">{{ pagina.titulo }}</h1>
+            <Content :content="pagina.texto" class="pb-12 mx-auto" format="md"/>
+        </div>
 </div>
 </template>
 

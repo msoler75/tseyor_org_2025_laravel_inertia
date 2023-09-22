@@ -18,6 +18,8 @@ class Termino extends ContenidoBaseModel
         'slug',
         'descripcion',
         'texto',
+        'ref_terminos',
+        'ref_libros',
         'visibilidad'
     ];
 
@@ -33,7 +35,7 @@ class Termino extends ContenidoBaseModel
         return [
             'id' => $this->id,
             'nombre' => $this->nombre,
-            'texto' => $this->texto
+            'texto' => $this->texto,
         ];
     }
 
@@ -51,7 +53,6 @@ class Termino extends ContenidoBaseModel
      */
     public function getTextoContenidoBuscador()
     {
-        // return html_entity_decode(strip_tags($this->texto));
-        return "";
+        return null;
     }
 }

@@ -69,6 +69,17 @@
             </Hero>
         </Section>
 
+         <Section>
+            <TextImage title="Glosario"
+                srcImage="https://via.placeholder.com/700x400.png/00ffff?text=Glosario" buttonLabel="Ir al Glosario"
+                image-right
+                href="/glosario">
+                <p>
+                   Consulta todos los términos de la filosofía Tseyor en nuestro glosario de términos. También podrás ver los Guías Estelares y los Lugares de la Galaxia.
+                </p>
+            </TextImage>
+        </Section>
+
 
         <!-- Sección: Quiero ser de Tseyor -->
         <Hero title="Quiero ser de Tseyor" subtitle="Entra a forma parte del grupo" buttonLabel="Formulario de inscripción"

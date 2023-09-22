@@ -16,18 +16,19 @@ class Pagina extends ContenidoBaseModel
         'ruta',
         'descripcion',
         'texto',
-        'imagen',
+        'palabras_clave',
         'visibilidad'
     ];
 
 
 
-     /**
+    /**
      * Función heredable para cada modelo
      */
-    public function getTextoContenidoBuscador() {
-        // incluimos la descripcion breve (SEO) y el texto de la página
-        return $this->descripcion . " " . html_entity_decode(strip_tags($this->texto));
+    public function getTextoContenidoBuscador()
+    {
+        // incluimos la descripcion breve (SEO) y las palabras clave
+        return rtrim($this->descripcion, "\t\n .") . ". " . $this->palabras_clave;
+        //html_entity_decode(strip_tags($this->palabras_clave));
     }
-
 }

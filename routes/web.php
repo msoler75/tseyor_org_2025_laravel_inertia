@@ -22,6 +22,7 @@ use App\Http\Controllers\PortadaController;
 use App\Http\Controllers\CursosController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\ContactarController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\DevController;
 use App\Pigmalion\SEO;
@@ -76,6 +77,7 @@ Route::get('/videos', function () {
     return Inertia::render('Videos', [])
         ->withViewData(SEO::get('videos'));
 })->name('videos');
+
 
 
 Route::get('/noticias', [NoticiasController::class, 'index'])->name('noticias');
@@ -136,6 +138,11 @@ Route::get('inscripcion', function () {
 })->name('cursos.inscripcion');
 Route::post('/cursos/inscripcion', [InscripcionController::class, 'store'])->name('cursos.inscripcion.store');
 
+Route::get('/contactar',  function () {
+    return Inertia::render('Contactar', [])
+        ->withViewData(SEO::get('contactar'));
+})->name('contactar');
+Route::post('/contactar/enviar', [ContactarController::class, 'send'])->name('contactar.send');
 
 Route::get('/ong', function () {
     return Inertia::render('Ong/Index', [])

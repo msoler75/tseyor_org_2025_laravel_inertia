@@ -56,6 +56,9 @@ Route::group([
     Route::post('publicacion/importar/crear', 'PublicacionCrudController@importCreate');
     Route::post('publicacion/importar/actualizar/{id}', 'PublicacionCrudController@importUpdate');
 
+    Route::post('meditacion/importar/crear', 'MeditacionCrudController@importCreate');
+    Route::post('meditacion/importar/actualizar/{id}', 'MeditacionCrudController@importUpdate');
+
     Route::get('search/{model}', 'SearchModelController@index');
 
     Route::crud('setting', 'SettingCrudController');
@@ -69,4 +72,6 @@ Route::group([
     Route::get('termino/importando/test', 'TerminoCrudController@test');
 
     Route::crud('video', 'VideoCrudController');
+
+    Route::crud('meditacion', 'MeditacionCrudController');
 }); // this should be the absolute last line of this file

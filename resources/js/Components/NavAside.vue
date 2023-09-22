@@ -35,7 +35,10 @@ const close = () => {
             <div class="rounded-r xl:hidden flex justify-between w-full p-6 items-center">
                 <!--- more free and premium Tailwind CSS components at https://tailwinduikit.com/ --->
                 <div class="flex justify-between  items-center space-x-3">
-                    <p class="text-2xl leading-6 ">TSEYOR</p>
+                    <Link :href="route('portada')">
+                                <ApplicationMark />
+                                </Link>
+                    <div class="text-2xl leading-6 font-bold font-serif">TSEYOR</div>
                 </div>
             </div>
             <div
@@ -46,7 +49,7 @@ const close = () => {
                     <Icon icon="ion:chevron-up-outline" />
                     <p class="text-2xl leading-6 ">OvonRueden</p>
                 </div>
-                <div class="flex flex-col justify-start items-center   px-6  border-gray-600 w-full">
+                <div class="flex flex-col justify-start items-center   px-6  border-gray-600 w-[310px]">
                     <template v-for="tab, index in nav.items" :key="index">
                         <button v-if="tab.submenu" @click="nav.toggleTab(tab)"
                             class="flex justify-between items-center w-full py-5">
@@ -55,7 +58,7 @@ const close = () => {
                             <Icon v-else icon="ion:chevron-down-outline" />
                         </button>
                         <Link v-else
-                        class="flex justify-start items-center space-x-6   rounded px-3 py-5  w-full "
+                        class="flex justify-start items-center space-x-6   rounded py-5  w-full "
                          :href="tab.url">
                             <Icon :icon="tab.icon" />
                             <div class="text-base leading-4 ">{{ tab.title }}</div>
@@ -64,7 +67,7 @@ const close = () => {
                             class="flex justify-start  flex-col w-full md:w-auto items-start pb-1 v-collapse">
                             <template v-for="section of tab.submenu.sections" :key="section.title">
                                 <button v-for="item of section.items" :key="item.url"
-                                    class="flex justify-start items-center space-x-6   rounded px-3 py-5  w-full ">
+                                    class="flex justify-start items-center space-x-6   rounded  py-5  w-full ">
                                     <Icon :icon="item.icon" />
                                     <Link :href="item.url" class="text-base leading-4">{{ item.title }}</Link>
                                 </button>
