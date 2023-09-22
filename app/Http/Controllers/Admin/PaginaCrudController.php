@@ -113,7 +113,9 @@ class PaginaCrudController extends CrudController
 
         // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
-        CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder])->hint('Poner solo el texto o palabras clave para indexar esta página.');
+        CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder])->hint('Contenido de la página.');
+
+        CRUD::field('palabras_clave')->type('textarea')->hint('Poner solo el texto o palabras clave para indexar esta página en el buscador global.');
 
         CRUD::field('visibilidad')->type('visibilidad');
     }

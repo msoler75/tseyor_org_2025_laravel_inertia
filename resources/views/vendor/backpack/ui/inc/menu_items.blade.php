@@ -42,6 +42,13 @@
 </x-backpack::menu-dropdown>
 @endcan
 
+
+@can('administrar contenidos')
+<x-backpack::menu-dropdown title="Comunidad" icon="la la-globe">
+    <x-backpack::menu-dropdown-item title="Meditaciones" icon="la la-smile-beam" :link="backpack_url('meditacion')" />
+</x-backpack::menu-dropdown>
+@endcan
+
 @can('administrar equipos')
 <x-backpack::menu-dropdown title="Gestión de Equipos" icon="la la-users">
     <x-backpack::menu-dropdown-item title="Equipos" icon="la la-users" :link="backpack_url('equipo')" />

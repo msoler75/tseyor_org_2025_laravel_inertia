@@ -57,8 +57,8 @@ class TerminosController extends Controller
             'letras' => $letras,
             'filtrado' => $buscar,
             'letra' => $letra
-        ]);
-        // ->withViewData(SEO::get('glosario'));
+        ])
+        ->withViewData(SEO::get('glosario'));
     }
 
 

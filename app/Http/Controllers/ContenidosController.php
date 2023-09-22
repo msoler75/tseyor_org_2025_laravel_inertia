@@ -11,45 +11,52 @@ use App\Pigmalion\Busquedas;
 class ContenidosController extends Controller
 {
 
+    /**
+     * Novedades
+     */
     public function index(Request $request)
     {
-        $filtro = $request->input('buscar');
+        $buscar = $request->input('buscar');
 
-        $resultados = $filtro ? Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
+        $resultados = $buscar ? Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
             ->where('visibilidad', 'P')
             ->whereNot('coleccion', 'paginas')
-            ->where(function ($query) use ($filtro) {
-                $query->where('titulo', 'like', '%' . $filtro . '%')
-                    // ->orWhere('descripcion', 'like', '%' . $filtro . '%')
-                    //->orWhere('texto', 'like', '%' . $filtro . '%')
+            ->whereNot('coleccion', 'terminos')
+            ->where(function ($query) use ($buscar) {
+                $query->where('titulo', 'like', '%' . $buscar . '%')
+                    // ->orWhere('descripcion', 'like', '%' . $buscar . '%')
+                    ->orWhere('texto_busqueda', 'like', '%' . $buscar . '%')
                 ;
             })
             ->latest('updated_at') // Ordenar por updated_at
-            ->paginate(10)->appends(['buscar' => $filtro])
+            ->paginate(10)->appends(['buscar' => $buscar])
             :
             Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
             ->where('visibilidad', 'P')
             ->whereNot('coleccion', 'paginas')
+            ->whereNot('coleccion', 'terminos')
             ->latest('updated_at') // Ordenar por updated_at
             ->paginate(10);
 
         return Inertia::render('Novedades', [
-            'filtrado' => $filtro,
+            'filtrado' => $buscar,
             'listado' => $resultados
         ])
             ->withViewData(SEO::get('novedades'));
     }
 
-
+    /**
+     * Buscador global
+     * */
     public function search(Request $request)
     {
-        $buscar = $request->input('q');
+        $buscar = $request->input('query');
 
         $buscarFiltrado = Busquedas::descartarPalabrasComunes($buscar);
 
-        $resultados = Contenido::search($buscarFiltrado)->paginate(10);
+        $resultados = Contenido::search($buscarFiltrado)->paginate(64); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
 
-        if (strlen($buscar) < 3)
+       if (strlen($buscar) < 3)
         Busquedas::limpiarResultados($resultados, $buscarFiltrado, true);
         else
         Busquedas::formatearResultados($resultados, $buscarFiltrado, true);

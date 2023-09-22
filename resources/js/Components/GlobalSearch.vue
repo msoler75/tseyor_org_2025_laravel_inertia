@@ -77,7 +77,7 @@ const query = ref("")
 
 const lastQuery = ref("")
 
-const queries = ref(['libros de referencia', 'donde puedo inscribirme', 'ayuda humanitaria'])
+const queries = ref(['Contacta con nosotros', '¿Dónde estamos?', 'Libros para comenzar', '¿Dónde puedo inscribirme?', 'Ayuda humanitaria'])
 
 const results = ref({ data: [] })
 
@@ -181,7 +181,7 @@ function buscar() {
         var currentQuery = query.value
         queryLoading.value = currentQuery
         loading.value = true
-        axios.get(route('buscar') + '?q=' + query.value)
+        axios.get(route('buscar') + '?query=' + query.value)
             .then(response => {
                 results.value = response.data
                 loading.value = false

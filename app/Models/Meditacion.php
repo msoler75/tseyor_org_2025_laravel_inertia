@@ -7,27 +7,22 @@ use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 
 
-class Publicacion extends ContenidoBaseModel
+class Meditacion extends ContenidoBaseModel
 {
     use CrudTrait;
     use Searchable;
 
-    protected $table = 'publicaciones';
+    protected $table = 'meditaciones';
 
     protected $fillable = [
         'titulo',
+        'slug',
         'categoria',
         'descripcion',
         'texto',
-        'published_at',
         'visibilidad',
-        'user_id',
-        'equipo_id'
     ];
 
-    protected $dates = [
-        'published_at',
-    ];
 
     /* public static function search($term)
     {
@@ -40,30 +35,6 @@ class Publicacion extends ContenidoBaseModel
         });
     }
     */
-
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function equipo()
-    {
-        return $this->belongsTo(Equipo::class, 'equipo_id', 'id');
-    }
-
-
-
-    // accesors
-    public function getNombreUsuarioAttribute()
-    {
-        return $this->user->name; // Reemplaza `name` por el nombre del atributo que contiene el nombre del usuario en tu modelo `User`
-    }
-
-    public function getNombreEquipoAttribute()
-    {
-        return $this->equipo->nombre; // Reemplaza `nombre` por el nombre del atributo que contiene el nombre del grupo en tu modelo `Grupo`
-    }
 
 
 

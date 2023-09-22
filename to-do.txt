@@ -1,3 +1,8 @@
+contactarcontroller.send
+meditaciones.vue (publicaciones?)
+normativas.vue
+
+
 tailwindcss  -> after:content-['_↗']
 
 Ejemplo:
