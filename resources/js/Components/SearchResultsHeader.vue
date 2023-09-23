@@ -1,9 +1,9 @@
 <template>
     <div class="text-xl font-bold">
-        <div v-if="queryString && results.total > 0" class="mb-5">
-            {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}{{ stringArguments }}:
+        <div v-if="queryString && results.total > 0" :class="classes">
+            {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}<span v-html="stringArguments"/> :
         </div>
-        <div v-else-if="queryString && results.total == 0">No hay resultados{{ stringArguments }}</div>
+        <div v-else-if="queryString && results.total == 0">No hay resultados<span v-html="stringArguments"/></div>
     </div>
 </template>
 
@@ -17,6 +17,8 @@ const props = defineProps({
         required: false,
         default: "buscar"
     },
+    classes: {default: 'mb-5'},
+    category: {},
     arguments: {}
 })
 
@@ -29,6 +31,7 @@ onMounted(() => {
 
 const stringArguments = computed(() => {
     // if (props.arguments && !query.value) return ''
+    if(props.category) return ` en <em>${props.category}</em>`
     if (!query.value) return ''
     return ` para '${query.value}'`
 })
