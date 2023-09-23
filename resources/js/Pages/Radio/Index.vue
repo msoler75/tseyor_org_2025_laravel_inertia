@@ -21,9 +21,9 @@
 import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
 
-import { usePlayerState } from '@/Stores/player'
+import { usePlayer } from '@/Stores/player'
 
-const player = usePlayerState()
+const player = usePlayer()
 
 defineOptions({ layout: AppLayout })
 

@@ -5,13 +5,14 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
-use Illuminate\Support\Facades\Cache;
+use App\Traits\EsCategorizable;
 
 class Libro extends ContenidoBaseModel
 {
 
     use CrudTrait;
     use Searchable;
+    use EsCategorizable;
 
     protected $fillable = [
         'titulo',
@@ -27,22 +28,6 @@ class Libro extends ContenidoBaseModel
 
     public $table = 'libros';
 
-    /**
-     * Para el controlador de libros.
-     * Elimina la cache de catgorias cuando hay cambios en algun libro
-     */
-    public static function boot()
-    {
-        parent::boot();
-
-        static::saved(function ($model) {
-            Cache::forget('libros_categorias');
-        });
-
-        static::deleted(function ($model) {
-            Cache::forget('libros_categorias');
-        });
-    }
 
 
     /**

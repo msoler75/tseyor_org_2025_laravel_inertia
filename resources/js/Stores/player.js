@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { createGlobalState } from "@vueuse/core";
 
-export const usePlayerState = createGlobalState(() => {
+export const usePlayer = createGlobalState(() => {
   // elemento HTML 5 de audio
   var audio = null
 

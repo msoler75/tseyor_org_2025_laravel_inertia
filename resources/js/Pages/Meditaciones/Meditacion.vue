@@ -2,15 +2,15 @@
     <div class="py-8">
 
         <div class="container mx-auto flex justify-between items-center mb-20">
-            <Back>Comunicados</Back>
-            <AdminPanel modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado" />
+            <Back>Meditaciones</Back>
+            <AdminPanel modelo="meditacion" necesita="administrar contenidos" :contenido="meditacion" />
         </div>
 
 
         <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0">
 
             <div class="prose mx-auto">
-                <h1>{{ comunicado.titulo }}</h1>
+                <h1>{{ meditacion.titulo }}</h1>
 
                 <div class="text-neutral text-sm mb-2 flex justify-between">
                     <div class="flex gap-2">
@@ -27,15 +27,15 @@
                             </template>
                         </span>
                     </div>
-                    <TimeAgo :date="comunicado.fecha_comunicado" :includeTime="false" />
+                    <TimeAgo :date="meditacion.updated_at" :includeTime="false" />
                 </div>
             </div>
 
-            <Content :content="comunicado.texto" class="pb-12 mx-auto" />
+            <Content :content="meditacion.texto" class="pb-12 mx-auto" />
 
         </div>
 
-        <Comentarios :url="route('comunicado', comunicado.id)" />
+        <Comentarios :url="route('meditacion', meditacion.id)" />
 
     </div>
 </template>
@@ -49,7 +49,7 @@ const player = usePlayer()
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
-    comunicado: {
+    meditacion: {
         type: Object,
         required: true,
     }
@@ -58,13 +58,13 @@ const props = defineProps({
 const mp3 = ref([])
 
 try {
-    const audios = JSON.parse(props.comunicado.audios)
+    const audios = JSON.parse(props.meditacion.audios)
     const r = []
     const some = audios.length > 1
     for (var idx in audios) {
         const audio = audios[idx]
         const label = some ? `Audio ${idx}` : 'Audio'
-        const title = some ? `${props.comunicado.titulo} (${idx})` : props.comunicado.titulo
+        const title = some ? `${props.meditacion.titulo} (${idx})` : props.meditacion.titulo
         r.push({ title, label, src: `/storage/${audio}` })
     }
     mp3.value = r

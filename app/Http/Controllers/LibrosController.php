@@ -35,44 +35,8 @@ class LibrosController extends Controller
             if($buscar)
             Busquedas::formatearResultados($resultados, $buscar);
 
-        $una_semana = 60 * 24 * 7; // tiempo de cache
-
-        $categorias = Cache::remember('libros_categorias', $una_semana, function () {
-
-            $c = [];
-            $libros = Libro::select('categoria')->get();
-            // Recorrer todos los libros, para cada uno separar las categorias por coma, y esas son contadas en $categorias
-            // ejemplo: si la categoria es 'Monografías, cuentos', pues tiene 2 categorías.
-            // entonces hay que agregar en $categorias la clave 'Monografías' y el contador a 1, y la clave 'Cuentos' y el contador a 1
-            // si en siguiente libro es también una monografía, aumenta el contador de $categorias['Monografías']
-            //
-
-            foreach ($libros as $libro) {
-                $categoriasLibro = explode(',', $libro->categoria);
-                foreach ($categoriasLibro as $categoria) {
-                    $categoria = trim($categoria);
-                    if (!empty($categoria)) {
-                        if (isset($c[$categoria])) {
-                            $c[$categoria]++;
-                        } else {
-                            $c[$categoria] = 1;
-                        }
-                    }
-                }
-            }
-
-            return $c;
-        });
-
-        ksort($categorias);
-
-
-        $categorias = array_map(function ($nombre, $total) {
-            return (object) ['nombre' => $nombre, 'total' => $total];
-        }, array_keys($categorias), $categorias);
-
-        //  dd($categorias);
-
+        // obtiene el listado de categorías de los Libros
+        $categorias = (new Libro())->getCategorias();
 
         return Inertia::render('Libros/Index', [
             'filtrado' => $buscar,

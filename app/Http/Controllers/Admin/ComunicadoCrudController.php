@@ -145,6 +145,8 @@ class ComunicadoCrudController extends CrudController
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
+        CRUD::field('audios')->type('json');
+
         CRUD::field('visibilidad')->type('visibilidad');
     }
 

@@ -4,10 +4,10 @@ import { onBeforeUnmount } from 'vue';
 import { useNav } from '@/Stores/nav'
 import { useDark, useToggle } from "@vueuse/core";
 import { useGlobalState } from '@/Stores/global'
-import { usePlayerState } from '@/Stores/player'
+import { usePlayer } from '@/Stores/player'
 
 const state = useGlobalState()
-const player = usePlayerState()
+const player = usePlayer()
 const page = usePage()
 const nav = useNav()
 const sideBarShow = ref(false)

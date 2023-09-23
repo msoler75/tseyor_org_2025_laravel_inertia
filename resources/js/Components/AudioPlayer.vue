@@ -152,9 +152,9 @@
 
 
 <script setup>
-import { usePlayerState } from '@/Stores/player'
+import { usePlayer } from '@/Stores/player'
 
-const player = usePlayerState()
+const player = usePlayer()
 
 // expansión de audioplayer
 
