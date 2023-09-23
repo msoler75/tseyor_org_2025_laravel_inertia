@@ -2,7 +2,7 @@
     <div class="py-8">
 
         <div class="container mx-auto flex justify-between items-center mb-20">
-            <Back>Informes</Back>
+            <Back :href="route('equipo', equipo.slug)">{{ equipo.nombre }}</Back>
             <AdminPanel modelo="informe" necesita="administrar contenidos" :contenido="informe" />
         </div>
 
@@ -14,6 +14,7 @@
 
                 <div class="text-neutral text-sm mb-2 flex justify-between">
                     <div class="flex gap-2">
+                        <div class="badge badge-outline">{{ informe.categoria }}</div>
                         <span v-for="audio of mp3" :key="audio" class="badge badge-primary cursor-pointer gap-1 select-none"
                             @click="clickPlay(audio)">
                             <Icon icon="material-symbols:volume-up-outline-rounded" class="mr-2" />
@@ -52,7 +53,8 @@ const props = defineProps({
     informe: {
         type: Object,
         required: true,
-    }
+    },
+    equipo: {}
 });
 
 const mp3 = ref([])

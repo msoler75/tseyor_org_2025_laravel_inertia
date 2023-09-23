@@ -1,6 +1,6 @@
 <template>
     <Link :href="enlace" class="flex h-fit gap-2 text-sm items-center hover:underline">
-    <Icon icon="ph:arrow-left-light" />
+    <Icon icon="ph:arrow-left" />
     <slot />
     </Link>
 </template>

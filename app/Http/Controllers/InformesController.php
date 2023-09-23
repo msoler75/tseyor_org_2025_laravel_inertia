@@ -44,25 +44,28 @@ class InformesController extends Controller
             'listado' => $resultados,
             'categorias'=>$categorias
         ])
-            ->withViewData(SEO::get('Informes'));
+            ->withViewData(SEO::get('informes'));
     }
 
 
 
     public function show($id)
     {
-        $Informe = Informe::findOrFail($id);
+        $informe = Informe::findOrFail($id);
 
+        $user = auth()->user();
         $borrador = request()->has('borrador');
-        $publicado =  $Informe->visibilidad == 'P';
-        $editor = optional(auth()->user())->can('administrar equipos');
-        if (!$Informe || (!$publicado && !$borrador && !$editor)) {
+        $publicado =  $informe->visibilidad == 'P';
+        $editor = optional($user)->can('administrar equipos');
+        $coordinador = $user && $informe->equipo->esCoordinador(optional($user)->id);
+        if (!$informe || (!$publicado && !$borrador && !$editor && !$coordinador)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
         return Inertia::render('Informes/Informe', [
-            'Informe' => $Informe,
+            'informe' => $informe,
+            'equipo' => $informe->equipo
         ])
-            ->withViewData(SEO::from($Informe));
+            ->withViewData(SEO::from($informe));
     }
 }
