@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use App\Models\Meditacion;
+use App\Models\Informe;
 use App\Pigmalion\SEO;
 use App\Pigmalion\Busquedas;
 
-class MeditacionesController extends Controller
+class InformesController extends Controller
 {
     //
     public function index(Request $request)
@@ -18,10 +18,10 @@ class MeditacionesController extends Controller
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
-            $resultados = Meditacion::search($buscar);
+            $resultados = Informe::search($buscar);
         } else {
             // obtiene los items sin busqueda
-            $resultados = Meditacion::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
+            $resultados = Informe::select(['titulo', 'descripcion', 'updated_at', 'categoria'])
                 ->where('visibilidad', 'P');
         }
 
@@ -36,37 +36,33 @@ class MeditacionesController extends Controller
         if ($buscar)
             Busquedas::formatearResultados($resultados, $buscar);
 
-        $categorias = (new Meditacion())->getCategorias();
+        $categorias = (new Informe())->getCategorias();
 
-        return Inertia::render('Meditaciones/Index', [
+        return Inertia::render('Informes/Index', [
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
             'categorias'=>$categorias
         ])
-            ->withViewData(SEO::get('meditaciones'));
+            ->withViewData(SEO::get('Informes'));
     }
 
 
 
     public function show($id)
     {
-        if (is_numeric($id)) {
-            $meditacion = Meditacion::findOrFail($id);
-        } else {
-            $meditacion = Meditacion::where('slug', $id)->firstOrFail();
-        }
+        $Informe = Informe::findOrFail($id);
 
         $borrador = request()->has('borrador');
-        $publicado =  $meditacion->visibilidad == 'P';
-        $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$meditacion || (!$publicado && !$borrador && !$editor)) {
+        $publicado =  $Informe->visibilidad == 'P';
+        $editor = optional(auth()->user())->can('administrar equipos');
+        if (!$Informe || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
-        return Inertia::render('Meditaciones/Meditacion', [
-            'meditacion' => $meditacion,
+        return Inertia::render('Informes/Informe', [
+            'Informe' => $Informe,
         ])
-            ->withViewData(SEO::from($meditacion));
+            ->withViewData(SEO::from($Informe));
     }
 }

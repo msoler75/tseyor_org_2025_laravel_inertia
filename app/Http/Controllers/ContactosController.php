@@ -14,16 +14,16 @@ class ContactosController extends Controller
 
     public function index(Request $request)
     {
-        $filtro = $request->input('buscar');
+        $buscar = $request->input('buscar');
         $pais = $request->input('pais');
 
         $resultados = $pais ?
             Contacto::where('pais', '=', $pais)
             ->paginate(50)->appends(['pais' => $pais])
-            : ($filtro ? Contacto::where('nombre', 'like', '%' . $filtro . '%')
-                ->orWhere('pais', 'like', '%' . $filtro . '%')
-                ->orWhere('poblacion', 'like', '%' . $filtro . '%')
-                ->paginate(50)->appends(['buscar' => $filtro])
+            : ($buscar ? Contacto::where('nombre', 'like', '%' . $buscar . '%')
+                ->orWhere('pais', 'like', '%' . $buscar . '%')
+                ->orWhere('poblacion', 'like', '%' . $buscar . '%')
+                ->paginate(50)->appends(['buscar' => $buscar])
                 :
                 Contacto::latest()->paginate(50)
             );
@@ -42,7 +42,7 @@ class ContactosController extends Controller
         }
 
         return Inertia::render('Contactos/Index', [
-            'filtrado' => $filtro,
+            'filtrado' => $buscar,
             'paisActivo' => $pais,
             'listado' => $resultados,
             'paises' => $paises,
@@ -63,7 +63,7 @@ class ContactosController extends Controller
         $publicado =  $contacto->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar directorio');
         if (!$contacto || (!$publicado && !$borrador && !$editor)) {
-            abort(404); // Manejo de comunicado no encontrado o no autorizado
+            abort(404); // Item no encontrado o no autorizado
         }
 
         $contacto->pais = Countries::getCountry($contacto->pais);

@@ -24,6 +24,8 @@ use App\Http\Controllers\RadioController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\ContactarController;
 use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\PublicacionesController;
+use App\Http\Controllers\InformesController;
 use App\Http\Controllers\MeditacionesController;
 use App\Http\Controllers\DevController;
 use App\Pigmalion\SEO;
@@ -162,6 +164,12 @@ Route::get(
     }
 )->name('utg.departamentos');
 Route::get('/utg/departamentos/{slug}', [EquiposController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('utg.departamento');
+
+Route::get('/publicaciones', [PublicacionesController::class, 'index'])->name('publicaciones');
+Route::get('/publicaciones/{slug}', [PublicacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('publicacion');
+
+Route::get('/informes', [InformesController::class, 'index'])->name('informes');
+Route::get('/informes/{slug}', [InformesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('informe');
 
 Route::get('/meditaciones', [MeditacionesController::class, 'index'])->name('meditaciones');
 Route::get('/meditaciones/{slug}', [MeditacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('meditacion');

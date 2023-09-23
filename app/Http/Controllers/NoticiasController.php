@@ -13,25 +13,25 @@ class NoticiasController extends Controller
 
     public function index(Request $request)
     {
-        $filtro = $request->input('buscar');
+        $buscar = $request->input('buscar');
 
-        $resultados = $filtro ? /*Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])
+        $resultados = $buscar ? /*Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])
             ->where('visibilidad', 'P')
-            ->where(function ($query) use ($filtro) {
-                $query->where('titulo', 'like', '%' . $filtro . '%')
-                    ->orWhere('descripcion', 'like', '%' . $filtro . '%')
-                    ->orWhere('texto', 'like', '%' . $filtro . '%');
+            ->where(function ($query) use ($buscar) {
+                $query->where('titulo', 'like', '%' . $buscar . '%')
+                    ->orWhere('descripcion', 'like', '%' . $buscar . '%')
+                    ->orWhere('texto', 'like', '%' . $buscar . '%');
             })
-            ->paginate(10)->appends(['buscar' => $filtro])
+            ->paginate(10)->appends(['buscar' => $buscar])
             */
-            Noticia::search($filtro)->where('visibilidad', 'P')->paginate(10)
+            Noticia::search($buscar)->where('visibilidad', 'P')->paginate(10)
             :
             Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])->where('visibilidad', 'P')->latest()->paginate(10);
 
         $recientes = Noticia::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->latest()->take(24)->get();
 
         return Inertia::render('Noticias/Index', [
-            'filtrado' => $filtro,
+            'filtrado' => $buscar,
             'listado' => $resultados,
             'recientes' => $recientes
         ])

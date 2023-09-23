@@ -5,7 +5,13 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\Cache;
 
-trait EsCategorizable {
+
+/**
+ *  Para los modelos que tienen el campo 'categoria'
+ *  Permite cachear un listado de todas las categorías del modelo y el nº de items para cada categoría.
+ */
+trait EsCategorizable
+{
 
     /**
      * Elimina la cache de categorias cuando hay cambios en algun item
@@ -26,58 +32,66 @@ trait EsCategorizable {
     /**
      * Obtiene un listado de categorías con sus contadores para este modelo
      */
-    public function getCategorias() {
+    public function getCategorias()
+    {
 
-            $cache_label = $this->getTable() . "_categorias";
+        $cache_label = $this->getTable() . "_categorias";
 
-            $una_semana = 60 * 24 * 7; // tiempo de cache
+        $una_semana = 60 * 24 * 7; // tiempo de cache
 
-            $categorias = Cache::remember($cache_label, $una_semana, function ()  {
+        return Cache::remember($cache_label, $una_semana, function () {
 
-                $c = [];
-                $items = $this->select('categoria')->get();
-                // Recorrer todos los libros, para cada uno separar las categorias por coma, y esas son contadas en $categorias
-                // ejemplo: si la categoria es 'Monografías, cuentos', pues tiene 2 categorías.
-                // entonces hay que agregar en $categorias la clave 'Monografías' y el contador a 1, y la clave 'Cuentos' y el contador a 1
-                // si en siguiente libro es también una monografía, aumenta el contador de $categorias['Monografías']
-                //
+            $c = [];
+            $items = $this->select('categoria')->get();
 
-                foreach ($items as $item) {
-                    $categoriasItem = explode(',', $item->categoria);
-                    foreach ($categoriasItem as $categoria) {
-                        $categoria = trim($categoria);
-                        if (!empty($categoria)) {
-                            if (isset($c[$categoria])) {
-                                $c[$categoria]++;
-                            } else {
-                                $c[$categoria] = 1;
-                            }
+            /*      Una forma sencilla sería esta:
+
+                    return $this->selectRaw('categoria as nombre, count(*) as total')
+                    ->groupBy('categoria')
+                    ->get();
+
+                    Pero no sirve cuando las categorías son múltiples. Por eso aplicaremos el siguiente algoritmo:
+
+                    1.- Recorrer todos los items, para cada uno separar las categorias por coma, y esas son contadas en $categorias
+                    Ejemplo: si la columna categoria es 'Monografías, cuentos', pues tiene 2 categorías.
+                    2.-  entonces hay que agregar en $categorias la clave 'Monografías' y el contador a 1, y la clave 'Cuentos' y el contador a 1
+                    3.- si en siguienteitem es también una monografía, aumenta el contador de $categorias['Monografías']
+
+                */
+
+            foreach ($items as $item) {
+                $categoriasItem = explode(',', $item->categoria);
+                foreach ($categoriasItem as $categoria) {
+                    $categoria = trim($categoria);
+                    if (!empty($categoria)) {
+                        if (isset($c[$categoria])) {
+                            $c[$categoria]++;
+                        } else {
+                            $c[$categoria] = 1;
                         }
                     }
                 }
+            }
 
-                return $c;
-            });
+            ksort($c);
 
-            ksort($categorias);
-
-
-            $categorias = array_map(function ($nombre, $total) {
+            $c = array_map(function ($nombre, $total) {
                 return (object) ['nombre' => $nombre, 'total' => $total];
-            }, array_keys($categorias), $categorias);
+            }, array_keys($c), $c);
 
-            return $categorias;
-        }
+            return $c;
+        });
+    }
 
 
-        /**
-         * Elimina la cache de categorías
-         */
-        public function clearCategories() {
+    /**
+     * Elimina la cache de categorías
+     */
+    public function clearCategories()
+    {
 
-                $cache_label = $this->getTable() . "_categorias";
+        $cache_label = $this->getTable() . "_categorias";
 
-                Cache::forget($cache_label);
-        }
-
+        Cache::forget($cache_label);
+    }
 }

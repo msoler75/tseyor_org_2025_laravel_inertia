@@ -8,55 +8,22 @@ use Laravel\Scout\Searchable;
 use App\Traits\EsCategorizable;
 
 
-class Publicacion extends ContenidoBaseModel
+class Informe extends ContenidoBaseModel
 {
     use CrudTrait;
     use Searchable;
     use EsCategorizable;
 
-    protected $table = 'publicaciones';
+    protected $table = 'meditaciones';
 
     protected $fillable = [
         'titulo',
-        'slug',
         'categoria',
         'descripcion',
         'texto',
-        'imagen',
-        'published_at',
+        'audios',
         'visibilidad',
-        'user_id',
-        'equipo_id'
     ];
-
-    protected $dates = [
-        'published_at',
-    ];
-
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function equipo()
-    {
-        return $this->belongsTo(Equipo::class, 'equipo_id', 'id');
-    }
-
-
-
-    // accesors
-    public function getNombreUsuarioAttribute()
-    {
-        return $this->user->name; // Reemplaza `name` por el nombre del atributo que contiene el nombre del usuario en tu modelo `User`
-    }
-
-    public function getNombreEquipoAttribute()
-    {
-        return $this->equipo->nombre; // Reemplaza `nombre` por el nombre del atributo que contiene el nombre del grupo en tu modelo `Grupo`
-    }
-
 
 
       // SCOUT

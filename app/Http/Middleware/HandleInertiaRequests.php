@@ -31,7 +31,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         // si no muestra algun dato de .env, hay que borrar la cache
-        $ajaxWords = ['buscar', 'buscar_recientes', 'buscar_archivo'];
+        $ajaxWords = ['filtrado', 'buscar_recientes', 'buscar_archivo'];
 
         $isAjax = false;
         foreach ($ajaxWords as $word)

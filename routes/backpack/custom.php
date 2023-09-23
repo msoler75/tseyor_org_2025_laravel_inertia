@@ -34,9 +34,17 @@ Route::group([
     Route::crud('lugar', 'LugarCrudController');
     Route::crud('normativa', 'NormativaCrudController');
     Route::crud('publicacion', 'PublicacionCrudController');
+    Route::crud('informe', 'InformeCrudController');
     Route::crud('solicitud', 'SolicitudCrudController');
     Route::crud('libro', 'LibroCrudController');
     Route::crud('sala', 'SalaCrudController');
+    Route::crud('meditacion', 'MeditacionCrudController');
+    Route::crud('setting', 'SettingCrudController');
+    Route::crud('radio-item', 'RadioItemCrudController');
+    Route::crud('pagina', 'PaginaCrudController');
+    Route::crud('termino', 'TerminoCrudController');
+    Route::crud('video', 'VideoCrudController');
+
 
     Route::post('comunicado/importar/crear', 'ComunicadoCrudController@importCreate');
     Route::post('comunicado/importar/actualizar/{id}', 'ComunicadoCrudController@importUpdate');
@@ -56,22 +64,20 @@ Route::group([
     Route::post('publicacion/importar/crear', 'PublicacionCrudController@importCreate');
     Route::post('publicacion/importar/actualizar/{id}', 'PublicacionCrudController@importUpdate');
 
+    Route::post('informe/importar/crear', 'InformeCrudController@importCreate');
+    Route::post('informe/importar/actualizar/{id}', 'InformeCrudController@importUpdate');
+
     Route::post('meditacion/importar/crear', 'MeditacionCrudController@importCreate');
     Route::post('meditacion/importar/actualizar/{id}', 'MeditacionCrudController@importUpdate');
-
-    Route::get('search/{model}', 'SearchModelController@index');
-
-    Route::crud('setting', 'SettingCrudController');
-    Route::crud('radio-item', 'RadioItemCrudController');
-    Route::crud('pagina', 'PaginaCrudController');
-    Route::crud('termino', 'TerminoCrudController');
 
     Route::post('termino/importar/crear', 'TerminoCrudController@importCreate');
     Route::get('termino/importando/paso1', 'TerminoCrudController@importando1');
     Route::get('termino/importando/paso2', 'TerminoCrudController@importando2');
     Route::get('termino/importando/test', 'TerminoCrudController@test');
 
-    Route::crud('video', 'VideoCrudController');
 
-    Route::crud('meditacion', 'MeditacionCrudController');
+    Route::get('search/{model}', 'SearchModelController@index');
+
+
+
 }); // this should be the absolute last line of this file

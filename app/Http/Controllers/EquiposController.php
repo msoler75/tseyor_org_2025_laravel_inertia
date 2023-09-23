@@ -33,27 +33,28 @@ class EquiposController extends Controller
         //  return redirect($urlEquipo)->with('message', 'Invitación aceptada. Ya eres parte del equipo.');
 
 
-        $filtro = $request->input('buscar');
+        $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
         $resultados = $categoria ?
             Equipo::withCount('miembros')
             ->where('categoria', '=', $categoria)
             ->paginate(10)->appends(['categoria' => $categoria])
-            : ($filtro ? Equipo::withCount('miembros')
-                ->where('nombre', 'like', '%' . $filtro . '%')
-                ->orWhere('descripcion', 'like', '%' . $filtro . '%')
-                ->paginate(10)->appends(['buscar' => $filtro])
+            : ($buscar ? Equipo::withCount('miembros')
+                ->where('nombre', 'like', '%' . $buscar . '%')
+                ->orWhere('descripcion', 'like', '%' . $buscar . '%')
+                ->paginate(10)->appends(['buscar' => $buscar])
                 :
                 Equipo::withCount('miembros')->latest()->paginate(10)
             );
 
-        $categorias = Equipo::selectRaw('categoria as nombre, count(*) as total')
+        $categorias = (new Equipo())->getCategorias();
+        /*$categorias = Equipo::selectRaw('categoria as nombre, count(*) as total')
             ->groupBy('categoria')
-            ->get();
+            ->get();*/
 
         return Inertia::render('Equipos/Index', [
-            'filtrado' => $filtro,
+            'filtrado' => $buscar,
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias

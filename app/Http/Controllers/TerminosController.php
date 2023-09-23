@@ -28,7 +28,7 @@ class TerminosController extends Controller
         ->paginate(60)
         ->appends(['letra'=> $letra])
             :
-            ($buscar ? Termino::search($buscar)->paginate(60)->appends(['buscar'=>$buscar])
+            ($buscar ? Termino::search($buscar)->paginate(60)->appends(['filtrado'=>$buscar])
              :
             Termino::select(['slug', 'nombre'])
             ->orderBy('nombre', 'asc')

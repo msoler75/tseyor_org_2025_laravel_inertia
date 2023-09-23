@@ -14,18 +14,18 @@ class UsuariosController extends Controller
 
     public function index(Request $request)
     {
-        $filtro = $request->input('buscar');
+        $buscar = $request->input('buscar');
 
-        $resultados = ($filtro ? User::where('slug', 'like', '%' . $filtro . '%')
-            ->orWhere('name', 'like', '%' . $filtro . '%')
-            ->orWhere('email', 'like', '%' . $filtro . '%')
-            ->paginate(10)->appends(['buscar' => $filtro])
+        $resultados = ($buscar ? User::where('slug', 'like', '%' . $buscar . '%')
+            ->orWhere('name', 'like', '%' . $buscar . '%')
+            ->orWhere('email', 'like', '%' . $buscar . '%')
+            ->paginate(10)->appends(['buscar' => $buscar])
             :
             User::latest()->paginate(50)
         );
 
         return Inertia::render('Usuarios/Index', [
-            'filtrado' => $filtro,
+            'filtrado' => $buscar,
             'listado' => $resultados,
         ])
             ->withViewData(SEO::get('usuarios'));

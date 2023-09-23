@@ -18,7 +18,7 @@ class PaginasController extends Controller
          $publicado =  $pagina->visibilidad == 'P';
          $editor = optional(auth()->user())->can('administrar contenidos');
          if (!$pagina || (!$publicado && !$borrador && !$editor)) {
-             abort(404); // Manejo de comunicado no encontrado o no autorizado
+             abort(404); // Item no encontrado o no autorizado
          }
 
          return Inertia::render('Pagina', [

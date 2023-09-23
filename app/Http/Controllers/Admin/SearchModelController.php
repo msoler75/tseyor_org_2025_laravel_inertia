@@ -13,7 +13,7 @@ class SearchModelController extends Controller
     {
         // to-do: añadir seguridad (csrf?)
 
-        /* if (Gate::denies('buscar', $nodo, $acl)) {
+        /* if (Gate::denies('filtrado', $nodo, $acl)) {
             throw new AuthorizationException('No tienes permisos para ver la carpeta', 403);
         }
         */

@@ -18,10 +18,12 @@ class ContenidosController extends Controller
     {
         $buscar = $request->input('buscar');
 
+        // estos tipos de datos no aparecen en Novedades
+        $coleccionesExcluidas = ['paginas', 'informes', 'terminos', 'lugares', 'guias'];
+
         $resultados = $buscar ? Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
             ->where('visibilidad', 'P')
-            ->whereNot('coleccion', 'paginas')
-            ->whereNot('coleccion', 'terminos')
+            ->whereNotIn('coleccion', $coleccionesExcluidas )
             ->where(function ($query) use ($buscar) {
                 $query->where('titulo', 'like', '%' . $buscar . '%')
                     // ->orWhere('descripcion', 'like', '%' . $buscar . '%')
@@ -33,8 +35,7 @@ class ContenidosController extends Controller
             :
             Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
             ->where('visibilidad', 'P')
-            ->whereNot('coleccion', 'paginas')
-            ->whereNot('coleccion', 'terminos')
+            ->whereNotIn('coleccion', $coleccionesExcluidas )
             ->latest('updated_at') // Ordenar por updated_at
             ->paginate(10);
 

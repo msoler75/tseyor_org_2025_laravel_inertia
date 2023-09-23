@@ -12,15 +12,15 @@ class AudiosController extends Controller
 
     public function index(Request $request)
     {
-        $filtro = $request->input('buscar');
+        $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
         $resultados = $categoria ?
             Audio::where('categoria', '=', $categoria)
             ->paginate(50)->appends(['categoria' => $categoria])
-            : ($filtro ? Audio::where('titulo', 'like', '%' . $filtro . '%')
-                ->orWhere('descripcion', 'like', '%' . $filtro . '%')
-                ->paginate(50)->appends(['buscar' => $filtro])
+            : ($buscar ? Audio::where('titulo', 'like', '%' . $buscar . '%')
+                ->orWhere('descripcion', 'like', '%' . $buscar . '%')
+                ->paginate(50)->appends(['buscar' => $buscar])
                 :
                 Audio::latest()->paginate(50)
             );
@@ -30,7 +30,7 @@ class AudiosController extends Controller
             ->get();
 
         return Inertia::render('Audios/Index', [
-            'filtrado' => $filtro,
+            'filtrado' => $buscar,
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias

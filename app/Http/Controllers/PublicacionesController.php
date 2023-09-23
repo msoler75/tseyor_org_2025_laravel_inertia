@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use App\Models\Meditacion;
+use App\Models\Publicacion;
 use App\Pigmalion\SEO;
 use App\Pigmalion\Busquedas;
 
-class MeditacionesController extends Controller
+class PublicacionesController extends Controller
 {
     //
     public function index(Request $request)
@@ -18,10 +18,10 @@ class MeditacionesController extends Controller
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
-            $resultados = Meditacion::search($buscar);
+            $resultados = Publicacion::search($buscar);
         } else {
             // obtiene los items sin busqueda
-            $resultados = Meditacion::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
+            $resultados = Publicacion::select(['titulo', 'slug',  'descripcion', 'updated_at', 'categoria'])
                 ->where('visibilidad', 'P');
         }
 
@@ -31,20 +31,20 @@ class MeditacionesController extends Controller
 
         $resultados = $resultados
             ->paginate(12)
-            ->appends(['buscar' => $buscar,  'categoria' => $categoria]);
+            ->appends(['buscar' => $buscar, 'categoria' => $categoria]);
 
         if ($buscar)
             Busquedas::formatearResultados($resultados, $buscar);
 
-        $categorias = (new Meditacion())->getCategorias();
+        $categorias = (new Publicacion())->getCategorias();
 
-        return Inertia::render('Meditaciones/Index', [
+        return Inertia::render('Publicaciones/Index', [
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'categorias'=>$categorias
+            'categorias' => $categorias
         ])
-            ->withViewData(SEO::get('meditaciones'));
+            ->withViewData(SEO::get('publicaciones'));
     }
 
 
@@ -52,21 +52,21 @@ class MeditacionesController extends Controller
     public function show($id)
     {
         if (is_numeric($id)) {
-            $meditacion = Meditacion::findOrFail($id);
+            $publicacion = Publicacion::findOrFail($id);
         } else {
-            $meditacion = Meditacion::where('slug', $id)->firstOrFail();
+            $publicacion = Publicacion::where('slug', $id)->firstOrFail();
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $meditacion->visibilidad == 'P';
+        $publicado =  $publicacion->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$meditacion || (!$publicado && !$borrador && !$editor)) {
+        if (!$publicacion || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
-        return Inertia::render('Meditaciones/Meditacion', [
-            'meditacion' => $meditacion,
+        return Inertia::render('Publicaciones/Publicacion', [
+            'publicacion' => $publicacion,
         ])
-            ->withViewData(SEO::from($meditacion));
+            ->withViewData(SEO::from($publicacion));
     }
 }
