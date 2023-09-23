@@ -11,6 +11,7 @@ use App\Models\Solicitud;
 use App\Models\User;
 use App\Models\Nodo;
 use App\Models\Acl;
+use App\Models\Informe;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +32,6 @@ class EquiposController extends Controller
         //$urlEquipo = route('equipo', 15);
         // Verificar si el usuario ya tiene una cuenta
         //  return redirect($urlEquipo)->with('message', 'Invitación aceptada. Ya eres parte del equipo.');
-
 
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
@@ -140,10 +140,15 @@ class EquiposController extends Controller
 
         $equipo->solicitudesPendientes = $solicitudes;
 
+        // informes
+
+        $informes = Informe::where('equipo_id', $equipo->id)->where('visibilidad', 'P')->latest('updated_at')->take(5)->get()->toArray();
+
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
             'carpetas' => $carpetas,
             'ultimosArchivos' =>  array_slice($ultimosArchivos, 0, 10),
+            'ultimosInformes' => $informes,
             'miSolicitud' => $solicitud,
             'soyMiembro' => $soyMiembro,
             'soyCoordinador' => $soyCoordinador
