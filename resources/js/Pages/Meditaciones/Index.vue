@@ -1,8 +1,8 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <div class="container mx-auto flex justify-between items-center mb-20">
-            <Back>Comunidad</Back>
+        <div class="flex justify-between items-center mb-20">
+            <Back href="/comunidad">Comunidad</Back>
             <AdminPanel modelo="meditacion" necesita="administrar contenidos" />
         </div>
 

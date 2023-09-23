@@ -19,7 +19,7 @@ class ContenidosController extends Controller
         $buscar = $request->input('buscar');
 
         // estos tipos de datos no aparecen en Novedades
-        $coleccionesExcluidas = ['paginas', 'informes', 'terminos', 'lugares', 'guias'];
+        $coleccionesExcluidas = ['paginas', 'informes', /*'meditaciones',*/ 'terminos', 'lugares', 'guias'];
 
         $resultados = $buscar ? Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
             ->where('visibilidad', 'P')

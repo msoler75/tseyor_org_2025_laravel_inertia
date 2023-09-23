@@ -242,7 +242,6 @@ export default [
         {
           title: "Equipos y usuarios",
           items: [
-
             {
               title: "Equipos",
               route: "equipos",
@@ -259,7 +258,7 @@ export default [
               title: "Informes",
               route: "informes",
               description: "Informes de los equipos",
-              icon: "ph:users-duotone",
+              icon: "ph:files-duotone",
             },
           ],
         },
