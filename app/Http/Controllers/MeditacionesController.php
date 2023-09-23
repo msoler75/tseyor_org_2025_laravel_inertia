@@ -26,11 +26,11 @@ class MeditacionesController extends Controller
         }
 
         // parámetros
-        if (is_numeric($categoria))
+        if ($categoria)
             $resultados = $resultados->where('categoria', $categoria);
 
         $resultados = $resultados
-            ->paginate(15)
+            ->paginate(12)
             ->appends(['buscar' => $buscar,  'categoria' => $categoria]);
 
         if ($buscar)
@@ -39,7 +39,7 @@ class MeditacionesController extends Controller
         $categorias = (new Meditacion())->getCategorias();
 
         return Inertia::render('Meditaciones/Index', [
-            'categoria' => $categoria,
+            'categoriaActiva' => $categoria,
             'buscar' => $buscar,
             'listado' => $resultados,
             'categorias'=>$categorias
