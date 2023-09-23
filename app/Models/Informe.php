@@ -14,7 +14,7 @@ class Informe extends ContenidoBaseModel
     use Searchable;
     use EsCategorizable;
 
-    protected $table = 'meditaciones';
+    protected $table = 'informes';
 
     protected $fillable = [
         'titulo',

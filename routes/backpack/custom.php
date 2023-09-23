@@ -31,14 +31,14 @@ Route::group([
     Route::crud('comentario', 'ComentarioCrudController');
     Route::crud('evento', 'EventoCrudController');
     Route::crud('inscripcion', 'InscripcionCrudController');
-    Route::crud('lugar', 'LugarCrudController');
-    Route::crud('normativa', 'NormativaCrudController');
+    Route::crud('meditacion', 'MeditacionCrudController');
     Route::crud('publicacion', 'PublicacionCrudController');
     Route::crud('informe', 'InformeCrudController');
+    Route::crud('lugar', 'LugarCrudController');
+    Route::crud('normativa', 'NormativaCrudController');
     Route::crud('solicitud', 'SolicitudCrudController');
     Route::crud('libro', 'LibroCrudController');
     Route::crud('sala', 'SalaCrudController');
-    Route::crud('meditacion', 'MeditacionCrudController');
     Route::crud('setting', 'SettingCrudController');
     Route::crud('radio-item', 'RadioItemCrudController');
     Route::crud('pagina', 'PaginaCrudController');
