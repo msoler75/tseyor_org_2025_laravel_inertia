@@ -37,11 +37,11 @@ class ComunicadosController extends Controller
         $año = $request->input('ano');
         $orden = $request->input('orden');
 
-        // devuelve los comunicados recientes segun la busqueda
+        // devuelve los items recientes segun la busqueda
         if ($buscar) {
             $resultados = Comunicado::search($buscar);
         } else {
-            // obtiene los comunicados sin busqueda
+            // obtiene los items sin busqueda
             $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano'])
                 ->where('visibilidad', 'P');
         }
@@ -70,7 +70,7 @@ class ComunicadosController extends Controller
             'categoria' => $categoria,
             'ano' => $año,
             'orden' => $orden,
-            'buscar' => $buscar,
+            'filtrado' => $buscar,
             'listado' => $resultados
         ])
             ->withViewData(SEO::get('comunicados'));
@@ -90,7 +90,7 @@ class ComunicadosController extends Controller
         $publicado =  $comunicado->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
         if (!$comunicado || (!$publicado && !$borrador && !$editor)) {
-            abort(404); // Manejo de comunicado no encontrado o no autorizado
+            abort(404); // Item no encontrado o no autorizado
         }
 
         return Inertia::render('Comunicados/Comunicado', [
@@ -103,11 +103,11 @@ class ComunicadosController extends Controller
 
     public function archive(Request $request)
     {
-        $filtro = $request->input('buscar');
+        $buscar = $request->input('buscar');
 
         $comunicados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
             ->where('visibilidad', 'P')
-            ->latest()->paginate(10)->appends(['buscar' => $filtro]);
+            ->latest()->paginate(10)->appends(['buscar' => $buscar]);
 
         return Inertia::render('Comunicados/Archivo', [
             'listado' => $comunicados

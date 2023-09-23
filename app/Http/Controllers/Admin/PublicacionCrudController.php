@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use Illuminate\Support\Facades\Storage;
 use App\Pigmalion\WordImport;
 use App\Models\Publicacion;
 
@@ -41,14 +40,14 @@ class PublicacionCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-              // CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
 
-         $this->crud->addColumn([
+        $this->crud->addColumn([
             'name'  => 'id',
             'label' => 'id',
             'type'  => 'number'
@@ -105,12 +104,11 @@ class PublicacionCrudController extends CrudController
 
         CRUD::setFromDb(); // set fields from db columns.
 
-
         CRUD::field([   // select_from_array
             'name'        => 'categoria',
             'label'       => "Categoría",
             'type'        => 'select_from_array',
-            'options'     => ['General' => 'General', 'OD' => 'Orden del día', 'Acta' => 'Acta', 'Anexo'=>'Anexo', 'Acuerdo'=>'Acuerdo'],
+            'options'     => ['Retroalimentación' => 'Retroalimentación', 'Experiencias' => 'Experiencias', 'Mensajes' => 'Mensajes', 'Otros' => 'Otros'],
             'allows_null' => false,
             'default'     => 'General',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
@@ -120,36 +118,24 @@ class PublicacionCrudController extends CrudController
             ],
         ])->after('titulo');
 
-        $folder = $this->mediaFolder();
+        $folder = "media/publicaciones";
+
+        CRUD::field('user_id')->type('select')->after('titulo')->wrapper(['class' => 'form-group col-md-3']);
+
+        CRUD::field('equipo_id')->type('select')->after('titulo')->wrapper(['class' => 'form-group col-md-3']);
 
         CRUD::field('descripcion')->type('textarea');
 
-        // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
+        CRUD::field('slug')->type('text')->after('titulo');
 
         CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
+        CRUD::field('audios')->type('json');
+
         CRUD::field('visibilidad')->type('visibilidad');
     }
-
-
-    private function mediaFolder()
-    {
-        $anioActual = date('Y');
-        $mesActual = date('m');
-
-        $folder = "/media/publicaciones/$anioActual/$mesActual";
-
-        // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk('public')->exists($folder)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($folder);
-        }
-
-        return $folder;
-    }
-
 
     /**
      * Define what happens when the Update operation is loaded.
@@ -162,12 +148,10 @@ class PublicacionCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
     protected function show($id)
     {
         return redirect("/publicaciones/$id?borrador");
     }
-
 
     public function importCreate()
     {
@@ -176,7 +160,7 @@ class PublicacionCrudController extends CrudController
             $imported = new WordImport();
 
             $contenido = Publicacion::create([
-                "titulo" => "Importado de ". $_FILES['file']['name'] . "_". substr(str_shuffle('0123456789'), 0, 5),
+                "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
                 "texto" => $imported->content
             ]);
 

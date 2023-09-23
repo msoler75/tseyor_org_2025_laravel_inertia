@@ -5,20 +5,24 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
+use App\Traits\EsCategorizable;
 
 
 class Publicacion extends ContenidoBaseModel
 {
     use CrudTrait;
     use Searchable;
+    use EsCategorizable;
 
     protected $table = 'publicaciones';
 
     protected $fillable = [
         'titulo',
+        'slug',
         'categoria',
         'descripcion',
         'texto',
+        'imagen',
         'published_at',
         'visibilidad',
         'user_id',
@@ -28,18 +32,6 @@ class Publicacion extends ContenidoBaseModel
     protected $dates = [
         'published_at',
     ];
-
-    /* public static function search($term)
-    {
-        return static::query()
-        ->where('visibilidad', 'P')
-        ->where(function($query) use ($term){
-           $query->where('titulo', 'LIKE', "%{$term}%")
-                ->orWhere('descripcion', 'LIKE', "%{$term}%")
-                 ->orWhere('texto', 'LIKE', "%{$term}%");
-        });
-    }
-    */
 
 
     public function user()

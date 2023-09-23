@@ -114,8 +114,8 @@ class NodoCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-         CRUD::field('user_id')->type('select');
-         CRUD::field('group_id')->type('select');
+         CRUD::field('user_id')->type('select')->wrapper(['class' => 'form-group col-md-3']);
+         CRUD::field('group_id')->type('select')->wrapper(['class' => 'form-group col-md-3']);
     }
 
     /**

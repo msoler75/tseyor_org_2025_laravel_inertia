@@ -12,19 +12,19 @@ class EntradasController extends Controller
 
     public function index(Request $request)
     {
-        $filtro = $request->input('buscar');
+        $buscar = $request->input('buscar');
 
-        $resultados = $filtro ? Entrada::where('titulo', 'like', '%' . $filtro . '%')
-            ->orWhere('descripcion', 'like', '%' . $filtro . '%')
-            ->orWhere('texto', 'like', '%' . $filtro . '%')
-            ->paginate(12)->appends(['buscar' => $filtro])
+        $resultados = $buscar ? Entrada::where('titulo', 'like', '%' . $buscar . '%')
+            ->orWhere('descripcion', 'like', '%' . $buscar . '%')
+            ->orWhere('texto', 'like', '%' . $buscar . '%')
+            ->paginate(12)->appends(['buscar' => $buscar])
             :
             Entrada::latest()->paginate(10);
 
         $recientes = Entrada::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->latest()->take(24)->get();
 
         return Inertia::render('Entradas/Index', [
-            'filtrado' => $filtro,
+            'filtrado' => $buscar,
             'listado' => $resultados,
             'recientes' => $recientes
         ])

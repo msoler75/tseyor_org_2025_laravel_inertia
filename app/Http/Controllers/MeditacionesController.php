@@ -16,11 +16,11 @@ class MeditacionesController extends Controller
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        // devuelve los comunicados recientes segun la busqueda
+        // devuelve los items recientes segun la busqueda
         if ($buscar) {
             $resultados = Meditacion::search($buscar);
         } else {
-            // obtiene los comunicados sin busqueda
+            // obtiene los items sin busqueda
             $resultados = Meditacion::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
                 ->where('visibilidad', 'P');
         }
@@ -40,7 +40,7 @@ class MeditacionesController extends Controller
 
         return Inertia::render('Meditaciones/Index', [
             'categoriaActiva' => $categoria,
-            'buscar' => $buscar,
+            'filtrado' => $buscar,
             'listado' => $resultados,
             'categorias'=>$categorias
         ])
@@ -61,7 +61,7 @@ class MeditacionesController extends Controller
         $publicado =  $meditacion->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
         if (!$meditacion || (!$publicado && !$borrador && !$editor)) {
-            abort(404); // Manejo de comunicado no encontrado o no autorizado
+            abort(404); // Item no encontrado o no autorizado
         }
 
         return Inertia::render('Meditaciones/Meditacion', [

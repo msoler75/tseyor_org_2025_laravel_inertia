@@ -47,6 +47,7 @@
 <x-backpack::menu-dropdown title="Comunidad" icon="la la-globe">
     <x-backpack::menu-dropdown-item title="Meditaciones" icon="la la-smile-beam" :link="backpack_url('meditacion')" />
     <x-backpack::menu-dropdown-item title="Normativas" icon="la la-balance-scale" :link="backpack_url('normativa')" />
+    <x-backpack::menu-dropdown-item title="Publicaciones" icon="la la-pencil-alt" :link="backpack_url('publicacion')" />
 </x-backpack::menu-dropdown>
 @endcan
 
@@ -54,7 +55,7 @@
 <x-backpack::menu-dropdown title="Gestión de Equipos" icon="la la-users">
     <x-backpack::menu-dropdown-item title="Equipos" icon="la la-users" :link="backpack_url('equipo')" />
     <x-backpack::menu-dropdown-item title="Solicitudes" icon="la la-hand-paper" :link="backpack_url('solicitud')" />
-    <x-backpack::menu-dropdown-item title="Publicaciones" icon="la la-pencil-alt" :link="backpack_url('publicacion')" />
+    <x-backpack::menu-dropdown-item title="Informes" icon="la la-file-invoice" :link="backpack_url('informe')" />
 </x-backpack::menu-dropdown>
 @endcan
 

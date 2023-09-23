@@ -42,7 +42,7 @@
 
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('meditacion', contenido.slug)"
                         class="hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
-                        <Icon icon="ph:magic-wand-duotone" class="flex-shrink-0"/>
+                        <Icon icon="ph:dot-fill" class="flex-shrink-0"/>
                         <div class="max-w-[calc(100%-7rem)]">
                             <div v-html="contenido.titulo" class="capitalize lowercase font-bold"/>
                         <div v-if="filtrado" v-html="contenido.descripcion" class="mt-3"/>
