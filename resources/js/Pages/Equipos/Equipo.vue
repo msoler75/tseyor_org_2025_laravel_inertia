@@ -1,24 +1,20 @@
 <template>
     <div>
-        <div class="flex justify-between items-center mb-20">
+        <div class="container mx-auto py-12 flex justify-between items-center">
             <Back>Equipos</Back>
+            <EquipoMembresia class="hidden sm:flex mx-auto badge badge-info" :equipo-id="equipo.id" v-model="solicitud" :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"/>
             <AdminPanel modelo="equipo" necesita="administrar equipos" :contenido="equipo"/>
         </div>
 
         <EquipoCabecera :equipo="equipo" />
 
-        <div class="container mx-auto py-12">
-            <div class="flex justify-between items-center mb-5">
-                <Back :href="route('equipos')">Equipos</Back>
-
-                <EquipoMembresia class="hidden sm:block" :equipo-id="equipo.id" v-model="solicitud" :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"/>
-            </div>
+        <div class="container mx-auto">
 
             <GridFill class="gap-7" w="20rem">
 
                 <EquipoInformacion :equipo="equipo" />
 
-                <EquipoMembresia class="sm:hidden mx-auto" :equipo-id="equipo.id" v-model="solicitud" :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"/>
+                <EquipoMembresia class="sm:hidden mx-auto badge badge-info" :equipo-id="equipo.id" v-model="solicitud" :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"/>
 
                 <Card v-if="equipo.anuncio" class="border border-orange-400 justify-center items-center">
                     <div class="prose" v-html="equipo.anuncio" />
@@ -92,6 +88,10 @@ import EquipoAdmin from './Partes/EquipoAdmin.vue'
 import EquipoCabecera from './Partes/EquipoCabecera.vue'
 import EquipoInformacion from './Partes/EquipoInformacion.vue'
 import EquipoMembresia from './Partes/EquipoMembresia.vue'
+
+import {useGlobalState} from '@/Stores/global'
+
+const state = useGlobalState()
 
 defineOptions({ layout: AppLayout })
 

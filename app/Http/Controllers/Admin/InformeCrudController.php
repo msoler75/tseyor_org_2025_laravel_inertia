@@ -120,13 +120,18 @@ class InformeCrudController extends CrudController
             ],
         ])->after('titulo');
 
+
+        CRUD::field('equipo_id')->type('select')->after('titulo')->wrapper(['class' => 'form-group col-md-3']);
+
         $folder = $this->mediaFolder();
 
         CRUD::field('descripcion')->type('textarea');
 
         CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
-        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
+        CRUD::field('audios')->type('json');
+
+        // CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
         CRUD::field('visibilidad')->type('visibilidad');
     }

@@ -14,5 +14,9 @@ export const useGlobalState = createGlobalState(() => {
 
     cargarPermisos()
 
-    return { permisos, cargarPermisos };
+    function tienePermiso(permiso) {
+        return permisos.value.includes(permiso)
+    }
+
+    return { permisos, cargarPermisos, tienePermiso };
 });

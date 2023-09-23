@@ -2,11 +2,10 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel necesita="administrar contenidos" class="mb-3"/>
+        <AdminPanel necesita="administrar contenidos" class="mb-3" />
 
         <h1>Novedades</h1>
         <p>Todas las novedades de los contenidos de Tseyor.</p>
-
 
         <div class="flex justify-end mb-5">
             <SearchInput />

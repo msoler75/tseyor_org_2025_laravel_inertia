@@ -19,11 +19,18 @@ class Informe extends ContenidoBaseModel
     protected $fillable = [
         'titulo',
         'categoria',
+        'equipo_id',
         'descripcion',
         'texto',
         'audios',
         'visibilidad',
     ];
+
+
+      public function equipo()
+    {
+        return $this->belongsTo(Equipo::class, 'equipo_id', 'id');
+    }
 
 
       // SCOUT
