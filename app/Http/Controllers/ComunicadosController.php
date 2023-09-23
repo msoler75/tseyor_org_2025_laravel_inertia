@@ -99,6 +99,8 @@ class ComunicadosController extends Controller
             ->withViewData(SEO::from($comunicado));
     }
 
+
+
     public function archive(Request $request)
     {
         $filtro = $request->input('buscar');

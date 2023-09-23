@@ -109,7 +109,7 @@ class MeditacionCrudController extends CrudController
             'name'        => 'categoria',
             'label'       => "Categoría",
             'type'        => 'select_from_array',
-            'options'     => ['Letanía', 'Talleres', 'Cuentos', 'Meditaciones', 'Extractos', 'Láminas', 'Otros'],
+            'options'     => ['Meditaciones'=>'Meditaciones','Letanía'=>'Letanía', 'Talleres'=>'Talleres', 'Cuentos'=>'Cuentos', 'Extractos'=>'Extractos', 'Láminas'=>'Láminas', 'Otros'=>'Otros'],
             'allows_null' => false,
             'default'     => 'General',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
@@ -126,6 +126,8 @@ class MeditacionCrudController extends CrudController
         // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
         CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
+
+        CRUD::field('audios')->type('json');
 
         CRUD::field('visibilidad')->type('visibilidad');
     }
