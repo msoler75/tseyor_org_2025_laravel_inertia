@@ -29,7 +29,7 @@ class InformeCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(\App\Models\Informe::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/informes');
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/informe');
         CRUD::setEntityNameStrings('informe', 'informes');
     }
 
@@ -123,8 +123,6 @@ class InformeCrudController extends CrudController
         $folder = $this->mediaFolder();
 
         CRUD::field('descripcion')->type('textarea');
-
-        // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
         CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
