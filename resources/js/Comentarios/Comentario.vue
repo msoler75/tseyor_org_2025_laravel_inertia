@@ -20,14 +20,14 @@
                 </div>
             </div>
 
-            <ResponderComentario v-if="user && respondiendo" class="my-7" :url="url" :key="comentarioId"
-                :focus="true" :comentario-id="comentarioId" @respondido="nuevaRespuesta" />
+            <ResponderComentario v-if="user && respondiendo" class="my-7" :url="url" :key="comentarioId" :focus="true"
+                :comentario-id="comentarioId" @respondido="nuevaRespuesta" />
 
             <div v-show="respuestasList.length" :style="'--profundidad: ' + profundidad">
                 <TransitionGroup name="comment">
                     <Comentario v-for="respuesta in respuestasList" :key="respuesta.id" :autor="respuesta.autor"
-                        :comentario-id="respuesta.id" :url="url" :fecha="respuesta.created_at"
-                        :texto="respuesta.texto" :respuestas="respuesta.respuestas" :profundidad="profundidad + 1" />
+                        :comentario-id="respuesta.id" :url="url" :fecha="respuesta.created_at" :texto="respuesta.texto"
+                        :respuestas="respuesta.respuestas" :profundidad="profundidad + 1" />
                 </TransitionGroup>
             </div>
         </div>
@@ -62,7 +62,7 @@ function nuevaRespuesta(respuesta) {
         respondiendo.value = false
     respuestasList.value.unshift({
         id: Math.random(),
-        autor,
+        nuevoAutor,
         texto: respuesta.texto,
         respuesta_a: props.comentarioId,
         fecha: new Date()
@@ -71,13 +71,17 @@ function nuevaRespuesta(respuesta) {
 
 const page = usePage()
 const user = page.props.auth.user
-const autor = computed(() => (
+const nuevoAutor = computed(() => user ?
     {
         id: user.id,
         nombre: user.name,
         imagen: user.profile_photo_path
+    } : {
+        id: 0,
+        nombre: "",
+        imagen: ""
     }
-))
+)
 
 </script>
 
