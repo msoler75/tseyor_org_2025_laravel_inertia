@@ -10,7 +10,9 @@ use App\Pigmalion\SEO;
 class PaginasController extends Controller
 {
 
-    public function show($path) {
+    public function show(Request $request) {
+
+        $path = $request->path();
 
          $pagina = Pagina::where('ruta', $path)->firstOrFail();
 

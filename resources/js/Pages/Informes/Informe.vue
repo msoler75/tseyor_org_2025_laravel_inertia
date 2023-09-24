@@ -1,8 +1,14 @@
 <template>
-    <div class="py-8">
+    <div>
 
-        <div class="container mx-auto flex justify-between items-center mb-20">
-            <Back :href="route('equipo', equipo.slug)">{{ equipo.nombre }}</Back>
+
+        <div class="container py-12 mx-auto flex justify-between items-center">
+            <Back class="hover:underline" :href="route('equipo.informes', equipo.slug)">Informes del equipo</Back>
+            <Link v-if="equipo && equipo.slug && equipo.nombre" :href="route('equipo', equipo.slug)" class="flex h-fit gap-2 text-sm items-center hover:underline">
+                {{ equipo.nombre }}
+                <Icon icon="ph:arrow-right" />
+            </Link>
+            <span v-else></span>
             <AdminPanel modelo="informe" necesita="administrar contenidos" :contenido="informe" />
         </div>
 
@@ -11,7 +17,7 @@
 
             <div class="prose mx-auto">
                 <h1>{{ informe.titulo }}</h1>
-
+                <p v-if="equipo && equipo.nombre" class="text-neutral opacity-50">{{ equipo.nombre }}</p>
                 <div class="text-neutral text-sm mb-2 flex justify-between">
                     <div class="flex gap-2">
                         <div class="badge badge-outline">{{ informe.categoria }}</div>
@@ -54,7 +60,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    equipo: {}
+    equipo: {
+        type: Object,
+        required: true
+    }
 });
 
 const mp3 = ref([])

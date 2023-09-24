@@ -12,11 +12,9 @@
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-
-            <div
-                class="card bg-base-100 shadow flex-wrap flex-row mb-3 md:flex-col p-5 lg:p-10 gap-4 mx-auto self-baseline w-full justify-evenly md:w-auto md:sticky md:top-20">
+            <div class="card bg-base-100 shadow flex-wrap flex-row mb-3 md:flex-col p-5 lg:p-10 gap-4 mx-auto self-baseline w-full justify-evenly md:w-auto md:sticky md:top-20">
                 <Link :href="`${route('equipos')}`" :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
-                <span class="capitalize">Nuevos</span>
+                <span class="capitalize">Todos</span>
                 </Link>
 
                 <div v-for="categoria of categorias" :key="categoria.nombre" class="flex gap-2"
@@ -31,7 +29,6 @@
             <div class="w-full flex-grow">
 
                 <SearchResultsHeader :results="listado" />
-
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
@@ -50,7 +47,6 @@
                 <pagination class="mt-6" :links="listado.links" />
 
             </div>
-
 
         </div>
     </div>
