@@ -2,12 +2,18 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-20">
-            <Back href="/equipos">Equipos</Back>
+            <Back v-if="equipo" :href="route('equipo', equipo.slug)">{{equipo.nombre}}</Back>
+            <Back v-else :href="route('equipos')">Equipos</Back>
             <AdminPanel modelo="informe" necesita="administrar contenidos" />
         </div>
 
-        <h1>Informes</h1>
+        <template v-if="equipo">
+            <h3>Informes de {{ equipo.nombre }}</h3>
+        </template>
+        <template v-else>
+            <h1>Informes</h1>
         <p>Informes de trabajo de los equipos Tseyor.</p>
+        </template >
 
         <div class="flex justify-end mb-5">
             <SearchInput />
@@ -20,7 +26,7 @@
                 class="gap-3 xl:gap-0 w-full md:w-[21ch] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline md:sticky md:top-20">
                 <Link :href="`${route('informes')}`" class="py-2 hover:text-primary transition-colors duration-250"
                     :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
-                <span class="capitalize">Novedades</span>
+                <span class="capitalize">Últimos</span>
                 </Link>
 
                 <div v-for="categoria of categorias" :key="categoria.nombre" class="flex"
@@ -40,7 +46,7 @@
                 <div class="grid gap-2 py-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
 
 
-                    <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('informe', contenido.slug)"
+                    <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('informe', contenido.id)"
                         class="hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
                         <Icon icon="ph:dot-fill" class="flex-shrink-0"/>
                         <div class="max-w-[calc(100%-7rem)]">
@@ -74,7 +80,8 @@ const props = defineProps({
     },
     categorias: {
         default: () => []
-    }
+    },
+    equipo: {type: Object}
 });
 
 const listado = ref(props.listado);

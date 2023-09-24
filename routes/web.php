@@ -168,8 +168,6 @@ Route::get('/utg/departamentos/{slug}', [EquiposController::class, 'show'])->whe
 Route::get('/publicaciones', [PublicacionesController::class, 'index'])->name('publicaciones');
 Route::get('/publicaciones/{slug}', [PublicacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('publicacion');
 
-Route::get('/informes', [InformesController::class, 'index'])->name('informes');
-Route::get('/informes/{slug}', [InformesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('informe');
 
 Route::get('/meditaciones', [MeditacionesController::class, 'index'])->name('meditaciones');
 Route::get('/meditaciones/{slug}', [MeditacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('meditacion');
@@ -205,6 +203,13 @@ Route::get('/equipos/nuevo', function() {
 Route::post('/equipos', [EquiposController::class, 'store'])->name('equipo.nuevo');
 Route::get('/equipos/{slug}', [EquiposController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('equipo');
 
+
+// informes de equipo
+
+Route::get('/informes', [InformesController::class, 'index'])->name('informes');
+Route::get('/informes/{id}', [InformesController::class, 'show'])->name('informe');
+Route::get('/equipos/{slug}/informes', [InformesController::class, 'equipo'])->where('slug', '[a-z0-9\-]+')->name('equipo.informes');
+
 // invitaciones y respuesta
 Route::post('/invitar/{idEquipo}', [EquiposController::class, 'invite'])->name('invitar');
 Route::get('/invitacion/{token}/aceptar', [EquiposController::class, 'acceptInvitation'])->name('invitacion.aceptar');
@@ -229,6 +234,8 @@ Route::get('/phpinfo', function () {
     return phpinfo();
 });
 
+
+Route::get('asociacion', 'App\Http\Controllers\PaginasController@show')->name('asociacion');
 
 Route::get('{ruta}', 'App\Http\Controllers\PaginasController@show')->where('ruta', '[a-z0-9\-]+')->name('pagina');
 

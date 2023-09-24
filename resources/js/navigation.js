@@ -210,7 +210,7 @@ export default [
           items: [
             {
               title: "Asociación Tseyor",
-              route: "utg",
+              route: "asociacion",
               description: "Conoce la primera entidad de Tseyor",
               icon: "ph:tree-duotone",
             },

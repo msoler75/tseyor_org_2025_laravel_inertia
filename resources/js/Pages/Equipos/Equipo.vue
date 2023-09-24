@@ -33,9 +33,20 @@
                         <div v-for="item, index of ultimosArchivos" :key="index"
                             class="flex gap-3 items-center py-2 w-full">
                             <FileIcon :url="item.url" :name="item.archivo" />
-                            <Link :href="item.url" class="py-1 hover:underline">{{
-                                item.url.substring(item.url.lastIndexOf('/') + 1) }}</Link>
+                            <a download :href="item.url" class="py-1 hover:underline">{{
+                                item.url.substring(item.url.lastIndexOf('/') + 1) }}</a>
                             <TimeAgo class="ml-auto" :date="item.fecha_modificacion" />
+                        </div>
+                    </div>
+                </Card>
+
+                <Card v-if="carpetas.length">
+                    <h3>Carpetas</h3>
+                    <div>
+                        <div v-for="item, index of carpetas" :key="index" class="flex gap-3 items-baseline py-2">
+                            <FolderIcon :url="item.ruta" />
+                            <Link :href="'/' + item.ruta" class="py-1 hover:underline">{{
+                                item.ruta.substring(item.ruta.lastIndexOf('/') + 1) }}</Link>
                         </div>
                     </div>
                 </Card>
@@ -43,7 +54,7 @@
                 <Card v-if="ultimosInformes.length" class="gap-3">
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="mb-0">Últimos Informes</h3>
-                        <Link :href="route('informes')+'?equipo='+equipo.id" class="text-xs ml-auto flex items-center gap-2 hover:underline">Ver todos</Link>
+                        <Link :href="route('equipo.informes', equipo.slug)" class="text-xs ml-auto flex items-center gap-2 hover:underline">Ver todos</Link>
                     </div>
                     <div class="w-full">
                         <Link v-for="item, index of ultimosInformes" :key="index"
@@ -57,17 +68,6 @@
                             </div>
                         </div>
                         </Link>
-                    </div>
-                </Card>
-
-                <Card v-if="carpetas.length">
-                    <h3>Carpetas</h3>
-                    <div>
-                        <div v-for="item, index of carpetas" :key="index" class="flex gap-3 items-baseline py-2">
-                            <FolderIcon :url="item.ruta" />
-                            <Link :href="'/' + item.ruta" class="py-1 hover:underline">{{
-                                item.ruta.substring(item.ruta.lastIndexOf('/') + 1) }}</Link>
-                        </div>
                     </div>
                 </Card>
 

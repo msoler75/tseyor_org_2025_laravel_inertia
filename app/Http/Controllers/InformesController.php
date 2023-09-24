@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Informe;
+use App\Models\Equipo;
 use App\Pigmalion\SEO;
 use App\Pigmalion\Busquedas;
 
@@ -15,13 +16,29 @@ class InformesController extends Controller
     {
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
+        $equipo_id = $request->input('equipo');
+
+        return $this->listar($buscar, $categoria, $equipo_id);
+    }
+
+    public function equipo(Request $request, $equipo_slug)
+    {
+        $buscar = $request->input('buscar');
+        $categoria = $request->input('categoria');
+        return $this->listar($buscar, $categoria, $equipo_slug);
+    }
+
+    private function listar($buscar, $categoria, $equipo_id_slug)
+    {
+        if ($equipo_id_slug)
+            $equipo = is_numeric($equipo_id_slug) ? Equipo::find($equipo_id_slug) : Equipo::where('slug', $equipo_id_slug)->first();
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
             $resultados = Informe::search($buscar);
         } else {
             // obtiene los items sin busqueda
-            $resultados = Informe::select(['titulo', 'descripcion', 'updated_at', 'categoria'])
+            $resultados = Informe::select(['id', 'titulo', 'descripcion', 'updated_at', 'categoria'])
                 ->where('visibilidad', 'P');
         }
 
@@ -29,20 +46,26 @@ class InformesController extends Controller
         if ($categoria)
             $resultados = $resultados->where('categoria', $categoria);
 
+        if ($equipo)
+            $resultados = $resultados->where('equipo_id', $equipo->id);
+
         $resultados = $resultados
             ->paginate(12)
-            ->appends(['buscar' => $buscar,  'categoria' => $categoria]);
+            ->appends(['buscar' => $buscar,  'categoria' => $categoria, 'equipo' => $equipo->id]);
 
         if ($buscar)
             Busquedas::formatearResultados($resultados, $buscar);
 
         $categorias = (new Informe())->getCategorias();
 
+
+
         return Inertia::render('Informes/Index', [
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'categorias'=>$categorias
+            'categorias' => $categorias,
+            'equipo' => $equipo
         ])
             ->withViewData(SEO::get('informes'));
     }
