@@ -32,17 +32,17 @@ trait EsCategorizable
     /**
      * Obtiene un listado de categorías con sus contadores para este modelo
      */
-    public function getCategorias()
+    public function getCategorias($key = "", $items = null)
     {
 
-        $cache_label = $this->getTable() . "_categorias";
+        $cache_label = $this->getTable() . "_categorias".$key;
 
         $una_semana = 60 * 24 * 7; // tiempo de cache
 
-        return Cache::remember($cache_label, $una_semana, function () {
+        return Cache::remember($cache_label, $una_semana, function () use ($items) {
 
             $c = [];
-            $items = $this->select('categoria')->get();
+            $items = $items?$items:$this->select('categoria')->get();
 
             /*      Una forma sencilla sería esta:
 

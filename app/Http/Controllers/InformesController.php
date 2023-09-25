@@ -21,6 +21,9 @@ class InformesController extends Controller
         return $this->listar($buscar, $categoria, $equipo_id);
     }
 
+
+
+    //
     public function equipo(Request $request, $equipo_slug)
     {
         $buscar = $request->input('buscar');
@@ -28,37 +31,48 @@ class InformesController extends Controller
         return $this->listar($buscar, $categoria, $equipo_slug);
     }
 
+
+    //
     private function listar($buscar, $categoria, $equipo_id_slug)
     {
+        $equipo = null;
         if ($equipo_id_slug)
-            $equipo = is_numeric($equipo_id_slug) ? Equipo::find($equipo_id_slug) : Equipo::where('slug', $equipo_id_slug)->first();
+            $equipo =  is_numeric($equipo_id_slug) ? Equipo::find($equipo_id_slug) : Equipo::where('slug', $equipo_id_slug)->first();
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
-            $resultados = Informe::search($buscar);
+            $resultados = Informe::search($buscar)
+            // Agregamos la join y el select
+            ->query(function ($query) {
+                return $query->select(['informes.id', 'informes.titulo', 'informes.descripcion', 'informes.updated_at', 'informes.categoria', 'equipos.nombre as nombre_equipo', 'equipos.slug as slug_equipo'])
+                ->join('equipos', 'informes.equipo_id', '=', 'equipos.id');
+            });
         } else {
             // obtiene los items sin busqueda
-            $resultados = Informe::select(['id', 'titulo', 'descripcion', 'updated_at', 'categoria'])
-                ->where('visibilidad', 'P');
+            $resultados = Informe::select(['informes.id', 'informes.titulo', 'informes.descripcion', 'informes.updated_at', 'informes.categoria', 'equipos.nombre as nombre_equipo', 'equipos.slug as slug_equipo'])
+                ->join('equipos', 'informes.equipo_id', '=', 'equipos.id')
+                ->where('informes.visibilidad', 'P');
         }
-
-        // parámetros
-        if ($categoria)
-            $resultados = $resultados->where('categoria', $categoria);
 
         if ($equipo)
             $resultados = $resultados->where('equipo_id', $equipo->id);
 
+        // obtiene las categorías según los resultados de búsqueda
+        $categorias = (new Informe())->getCategorias("_{$buscar}__" . ($equipo ? $equipo->id : ""), $resultados->get());
+
+        // parámetros
+        if ($categoria)
+            $resultados = $resultados->where('informes.categoria', $categoria);
+
+        if (!$buscar)
+            $resultados = $resultados->orderBy('informes.updated_at', 'desc');
+
         $resultados = $resultados
             ->paginate(12)
-            ->appends(['buscar' => $buscar,  'categoria' => $categoria, 'equipo' => $equipo->id]);
+            ->appends(['buscar' => $buscar,  'categoria' => $categoria, 'equipo' => $equipo_id_slug]);
 
         if ($buscar)
             Busquedas::formatearResultados($resultados, $buscar);
-
-        $categorias = (new Informe())->getCategorias();
-
-
 
         return Inertia::render('Informes/Index', [
             'categoriaActiva' => $categoria,

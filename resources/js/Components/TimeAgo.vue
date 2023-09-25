@@ -1,5 +1,5 @@
 <template>
-    <span :title="formattedDate" class="timeago" @click="modoAgo = !modoAgo" :style="modoAgo ? {} : { fontSize: '80%' }">{{
+    <span :title="formattedDate" class="timeago" @click="modoAgo = !modoAgo">{{
         modoAgo ? timeAgo : formattedDate }}</span>
 </template>
 

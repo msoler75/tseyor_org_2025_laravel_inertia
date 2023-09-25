@@ -142,7 +142,7 @@ class EquiposController extends Controller
 
         // informes
 
-        $informes = Informe::where('equipo_id', $equipo->id)->where('visibilidad', 'P')->latest('updated_at')->take(5)->get()->toArray();
+        $informes = Informe::where('equipo_id', $equipo->id)->where('visibilidad', 'P')->latest('updated_at')->take(3)->get()->toArray();
 
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,

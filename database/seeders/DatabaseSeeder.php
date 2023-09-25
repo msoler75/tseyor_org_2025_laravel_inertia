@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Meditacion;
+use App\Models\Informe;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <=100; $i++) {
+        for ($i = 1; $i <=200; $i++) {
             $data = $this->generateRandomData();
-            Meditacion::create($data);
+            Informe::create($data);
         }
     }
 
@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
         //$codigos_pais = ['ES', 'MX', 'AR', 'CO', 'PE', 'CL', 'VE', 'EC', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'UY', 'PA'];
         // $categorias = ['Meditaciones', 'Cuentos', 'Clásica', 'Canciones', 'Reflexiones', 'Talleres'];
         $categorias = //['Bases', 'Planetas', 'Otros lugares'];
-        ['Meditaciones','Letanía', 'Talleres', 'Cuentos', 'Extractos', 'Láminas', 'Otros'];
+        ['Actas','Orden del día', 'Informe', 'Resumen', 'Otros'];
         /*
         $files = ['https://cdn.pixabay.com/audio/2023/04/03/audio_047543feac.mp3',
         'https://cdn.pixabay.com/audio/2023/01/01/audio_816821e627.mp3',
@@ -44,14 +44,17 @@ class DatabaseSeeder extends Seeder
         'https://cdn.pixabay.com/audio/2022/03/10/audio_f485a07711.mp3'
     ];*/
 
+    $equipos = [15, 2, 3, 4];
+
         return [
             'titulo' => $faker->text(60),
             //'name' => $faker->userName(),
-            'slug' => $faker->slug(),
+            // 'slug' => $faker->slug(),
             //'email' =>$faker->email(),
             //'password'=>$faker->password(),
             'categoria' => $faker->randomElement($categorias),
             //'audio' => $faker->randomElement($files),
+            'equipo_id' => $faker->randomElement($equipos),
             'descripcion' => $faker->paragraph(1),
             'texto' => $faker->paragraph(5),
             'visibilidad' => 'P'
