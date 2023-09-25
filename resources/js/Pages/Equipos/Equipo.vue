@@ -60,7 +60,7 @@
                         <Link v-for="item, index of ultimosInformes" :key="index"
                             class="flex gap-3 py-2 w-full items-baseline hover:bg-base-200/40 rounded-xl p-2" :href="route('informe', item.id)">
                         <Icon icon="ph:file-duotone" />
-                        <div>
+                        <div class="w-full">
                             <div class="mb-2">{{ item.titulo }}</div>
                             <div class="flex justify-between w-full">
                                 <span class="badge badge-info">{{ item.categoria }}</span>

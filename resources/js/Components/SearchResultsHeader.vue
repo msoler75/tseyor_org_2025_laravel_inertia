@@ -30,9 +30,16 @@ onMounted(() => {
 });
 
 const stringArguments = computed(() => {
-    // if (props.arguments && !query.value) return ''
-    if(props.category) return ` en <em>${props.category}</em>`
-    if (!query.value) return ''
-    return ` para '${query.value}'`
-})
+  let phrase = '';
+
+  if (props.category && query.value) {
+    phrase = ` para '${query.value}' en <em>${props.category}</em>`;
+  } else if (props.category) {
+    phrase = ` en <em>${props.category}</em>`;
+  } else if (query.value) {
+    phrase = ` para '${query.value}'`;
+  }
+
+  return phrase;
+});
 </script>

@@ -2,8 +2,12 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-20">
-            <Back v-if="equipo" :href="route('equipo', equipo.slug)">{{equipo.nombre}}</Back>
+            <Back v-if="equipo&&equipo.slug" :href="route('equipo', equipo.slug)">{{equipo.nombre}}</Back>
             <Back v-else :href="route('equipos')">Equipos</Back>
+            <Link v-if="equipo" :href="route('informes')" class="flex h-fit gap-2 text-sm items-center hover:underline">
+                Todos los informes
+                <Icon icon="ph:arrow-right" />
+            </Link>
             <AdminPanel modelo="informe" necesita="administrar contenidos" />
         </div>
 
@@ -24,14 +28,15 @@
 
              <div
                 class="gap-3 xl:gap-0 w-full md:w-[21ch] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline md:sticky md:top-20">
-                <Link :href="`${route('informes')}`" class="py-2 hover:text-primary transition-colors duration-250"
-                    :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
-                <span class="capitalize">Últimos</span>
+                <Link :href="(equipo?route('equipo.informes', equipo.slug):route('informes'))+(filtrado?`?buscar=${filtrado}`:'')" class="py-2 hover:text-primary transition-colors duration-250"
+                    :class="!categoriaActiva ? 'text-primary font-bold' : ''">
+                <div class="inline capitalize"><span v-if="filtrado">Todos</span><span v-else>Últimos</span> <small>({{total}})</small></div>
                 </Link>
+
 
                 <div v-for="categoria of categorias" :key="categoria.nombre" class="flex"
                     :class="categoriaActiva == categoria.nombre ? 'text-primary font-bold' : ''">
-                    <Link :href="`${route('informes')}?categoria=${categoria.nombre}`"
+                    <Link :href="(equipo?route('equipo.informes', equipo.slug):route('informes'))+`?categoria=${categoria.nombre}`+(filtrado?`&buscar=${filtrado}`:'')"
                         class="py-2 hover:text-primary transition-colors duration-250">
                     <span class="capitalize">{{ categoria.nombre }}</span>
                     <small v-if="categoria.total > 0"> ({{ categoria.total }})</small>
@@ -47,19 +52,21 @@
 
 
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('informe', contenido.id)"
-                        class="hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
+                        class="group hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
                         <Icon icon="ph:dot-fill" class="flex-shrink-0"/>
-                        <div class="max-w-[calc(100%-7rem)]">
+                        <div class="w-full">
                             <div v-html="contenido.titulo" class="capitalize lowercase font-bold"/>
                         <div v-if="filtrado" v-html="contenido.descripcion" class="mt-3"/>
-                        <span v-if="!categoriaActiva" class="badge mt-4 text-xs">{{ contenido.categoria }}</span>
+                        <div class="flex gap-3 items-center mt-4 w-full">
+                            <span v-if="!categoriaActiva" class="badge badge-primary text-xs">{{ contenido.categoria }}</span>
+                            <Link v-if="!equipo" class="badge text-xs" :href="route('equipo', contenido.slug_equipo)">{{ contenido.nombre_equipo }}</Link>
+                            <TimeAgo class="text-xs ml-auto opacity-50 group-hover:opacity-100 transition-opacity duration-200" :date="contenido.updated_at" />
+                        </div>
                     </div>
                 </Link>
                 </div>
 
-
                 <pagination class="mt-6" :links="listado.links" />
-
 
             </div>
         </div>
@@ -81,10 +88,16 @@ const props = defineProps({
     categorias: {
         default: () => []
     },
-    equipo: {type: Object}
+    equipo: {type: Object, required: false}
 });
 
 const listado = ref(props.listado);
 // const categorias = ref(props.categorias)
 
+const total = computed(()=>{
+    var n = 0
+    for(var c of props.categorias)
+    n+=c.total
+    return n
+})
 </script>
