@@ -216,7 +216,7 @@ class ArchivosController extends Controller
                 'tipo' => 'equipo'
             ];
         else {
-            $usuario = User::where('group_id', $nodoCarpeta->user_id)->first();
+            $usuario = User::find($nodoCarpeta->user_id);
             $propietario = [
                 'url' => route('usuario', $usuario->slug || $usuario->id),
                 'nombre' => $usuario->name,

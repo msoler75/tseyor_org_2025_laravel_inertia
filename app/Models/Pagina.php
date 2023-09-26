@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
-
 class Pagina extends ContenidoBaseModel
 {
     use CrudTrait;
@@ -19,7 +18,6 @@ class Pagina extends ContenidoBaseModel
         'palabras_clave',
         'visibilidad'
     ];
-
 
 
     /**

@@ -28,4 +28,6 @@ class PaginasController extends Controller
          ])
          ->withViewData(SEO::from($pagina));
     }
+
+
 }

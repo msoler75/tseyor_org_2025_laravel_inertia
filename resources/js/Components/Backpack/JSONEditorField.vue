@@ -1,6 +1,6 @@
 <template>
     <input type="hidden" :name="name" :value="localValueString">
-    <JsonEditorVue
+    <component :is="editorComponent"
     mode="text"
     v-model="localValue"
     v-bind="{/* local props & attrs */}"
@@ -11,10 +11,12 @@
 </template>
 
 <script setup>
-import JsonEditorVue from 'json-editor-vue'
+// import JsonEditorVue from 'json-editor-vue'
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
 // npm i json-editor-vue vanilla-jsoneditor
+import {defineAsyncComponent} from 'vue'
 
+ // importación dinámica:
 const props = defineProps({
     name: String,
     value: String
@@ -35,5 +37,9 @@ const localValue = ref(decode(props.value))
 
 const localValueString = computed(()=>JSON.stringify(localValue.value))
 
-console.log({localValue})
+const editorComponent = defineAsyncComponent(() =>
+    import('json-editor-vue').then((module) => module.default)
+);
+
+// console.log({localValue})
 </script>

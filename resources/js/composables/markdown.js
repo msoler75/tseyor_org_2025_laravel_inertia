@@ -1,4 +1,5 @@
-import MarkdownIt from 'markdown-it'
+//import MarkdownIt from 'markdown-it'
+import showdown from 'showdown'
 import TurndownService from 'turndown'
 import { gfm } from 'turndown-plugin-gfm'
 
@@ -44,12 +45,17 @@ export function DecodeHtml(html) {
 
 export function MarkdownToHtml(raw_markdown) {
     // vamos a renderizar el markdown, y sustituimos las clases de p
-    var md = new MarkdownIt({
+    /* var md = new MarkdownIt({
         html: true,
         linkify: true
     });
-
     return md.render(raw_markdown)
+    */
+
+    const converter = new showdown.Converter()
+    converter.setFlavor('github')
+    return converter.makeHtml(raw_markdown)
+
     // primero reemplazamos las imágenes con atributos
     .replace(/(<img[^>]*>){(\w+=[^}]+)}/g, (match, img, attributes) => {
             console.log('r1', {match, attributes})
