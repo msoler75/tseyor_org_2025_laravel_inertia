@@ -34,55 +34,61 @@ trait EsCategorizable
      */
     public function getCategorias($key = "", $items = null)
     {
+        if($items) return $this->obtenerCategorias($items);
 
-        $cache_label = $this->getTable() . "_categorias".$key;
+        $cache_label = $this->getTable() . "_categorias" . $key;
 
-        $una_semana = 60 * 24 * 7; // tiempo de cache
+        $un_año = 60 * 24 * 365; // tiempo de cache: 1 año
 
-        return Cache::remember($cache_label, $una_semana, function () use ($items) {
+        return Cache::remember($cache_label, $un_año, function () use ($items) {
 
-            $c = [];
-            $items = $items?$items:$this->select('categoria')->get();
+            $items = $this->select('categoria')->get();
 
-            /*      Una forma sencilla sería esta:
-
-                    return $this->selectRaw('categoria as nombre, count(*) as total')
-                    ->groupBy('categoria')
-                    ->get();
-
-                    Pero no sirve cuando las categorías son múltiples. Por eso aplicaremos el siguiente algoritmo:
-
-                    1.- Recorrer todos los items, para cada uno separar las categorias por coma, y esas son contadas en $categorias
-                    Ejemplo: si la columna categoria es 'Monografías, cuentos', pues tiene 2 categorías.
-                    2.-  entonces hay que agregar en $categorias la clave 'Monografías' y el contador a 1, y la clave 'Cuentos' y el contador a 1
-                    3.- si en siguienteitem es también una monografía, aumenta el contador de $categorias['Monografías']
-
-                */
-
-            foreach ($items as $item) {
-                $categoriasItem = explode(',', $item->categoria);
-                foreach ($categoriasItem as $categoria) {
-                    $categoria = trim($categoria);
-                    if (!empty($categoria)) {
-                        if (isset($c[$categoria])) {
-                            $c[$categoria]++;
-                        } else {
-                            $c[$categoria] = 1;
-                        }
-                    }
-                }
-            }
-
-            ksort($c);
-
-            $c = array_map(function ($nombre, $total) {
-                return (object) ['nombre' => $nombre, 'total' => $total];
-            }, array_keys($c), $c);
-
-            return $c;
+            return $this->obtenerCategorias($items);
         });
     }
 
+
+    public function obtenerCategorias($items)
+    {
+        /*      Una forma sencilla sería esta:
+
+                   return $this->selectRaw('categoria as nombre, count(*) as total')
+                   ->groupBy('categoria')
+                   ->get();
+
+                   Pero no sirve cuando las categorías son múltiples. Por eso aplicaremos el siguiente algoritmo:
+
+                   1.- Recorrer todos los items, para cada uno separar las categorias por coma, y esas son contadas en $categorias
+                   Ejemplo: si la columna categoria es 'Monografías, cuentos', pues tiene 2 categorías.
+                   2.-  entonces hay que agregar en $categorias la clave 'Monografías' y el contador a 1, y la clave 'Cuentos' y el contador a 1
+                   3.- si en siguienteitem es también una monografía, aumenta el contador de $categorias['Monografías']
+
+               */
+
+        $c = [];
+        foreach ($items as $item) {
+            $categoriasItem = explode(',', $item->categoria);
+            foreach ($categoriasItem as $categoria) {
+                $categoria = trim($categoria);
+                if (!empty($categoria)) {
+                    if (isset($c[$categoria])) {
+                        $c[$categoria]++;
+                    } else {
+                        $c[$categoria] = 1;
+                    }
+                }
+            }
+        }
+
+        ksort($c);
+
+        $c = array_map(function ($nombre, $total) {
+            return (object) ['nombre' => $nombre, 'total' => $total];
+        }, array_keys($c), $c);
+
+        return $c;
+    }
 
     /**
      * Elimina la cache de categorías

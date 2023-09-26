@@ -81,7 +81,6 @@ declare module 'vue' {
     ResponderComentario: typeof import('./resources/js/Comentarios/ResponderComentario.vue')['default']
     ResponsiveNavLink: typeof import('./resources/js/Components/ResponsiveNavLink.vue')['default']
     RichText: typeof import('./resources/js/Sections/RichText.vue')['default']
-    SearchAll: typeof import('./resources/js/Components/SearchAll.vue')['default']
     SearchFilter: typeof import('./resources/js/Components/SearchFilter.vue')['default']
     SearchInput: typeof import('./resources/js/Components/SearchInput.vue')['default']
     SearchResultsHeader: typeof import('./resources/js/Components/SearchResultsHeader.vue')['default']

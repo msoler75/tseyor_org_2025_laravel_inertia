@@ -1,14 +1,18 @@
 <template>
     <Prose ref="container" class="text-container">
-        <Markdown v-if="isMarkdown" :source="content" :html="true" :linkify="true"/>
+        <!--
+            <Markdown v-if="isMarkdown" :source="content" :html="true" :linkify="true" />
+        -->
+        <VueShowdown v-if="isMarkdown" :markdown="content" flavor="github" :options="{ emoji: true }"/>
         <div v-else v-html="content" />
     </Prose>
 </template>
 
 <script setup>
-import { v3ImgPreviewFn } from 'v3-img-preview'
-import Markdown from 'vue3-markdown-it';
-import {detectFormat} from '@/composables/markdown.js'
+// import { v3ImgPreviewFn } from 'v3-img-preview'
+// import Markdown from 'vue3-markdown-it';
+import { detectFormat } from '@/composables/markdown.js'
+import { VueShowdown } from 'vue-showdown';
 
 const props = defineProps({
     content: {
@@ -21,61 +25,68 @@ const props = defineProps({
     }
 });
 
-const isMarkdown = computed(() => props.format=='md'?true:['md', 'ambiguous'].includes(detectFormat(props.content).format) )
+const isMarkdown = computed(() => props.format == 'md' ? true : ['md', 'ambiguous'].includes(detectFormat(props.content).format))
 const container = ref(null)
 const images = ref([])
 
-onMounted(() => {
-    nextTick(() => {
-        console.log('container:', container.value.$el)
-        const imgElements = container.value.$el.querySelectorAll('img');
+var  v3ImgPreviewFn = null
 
-        // añadimos la clase especial para contenedor de imagenes
-        for (const img of imgElements)
-            img.parentNode.className = 'images-wrapper'
+onMounted(async () => {
 
-        // guardamos el array de imagenes del contenido
-        images.value = Array.from(imgElements)
-        for (const index in images.value)
-            images.value[index].addEventListener('click', () => handlePreview(index))
+    // importación dinámica:
+    await import('v3-img-preview').then((module) => {
+        v3ImgPreviewFn = module.v3ImgPreviewFn;
+
+        nextTick(() => {
+            console.log('container:', container.value.$el)
+            const imgElements = container.value.$el.querySelectorAll('img');
+
+            // añadimos la clase especial para contenedor de imagenes
+            for (const img of imgElements)
+                img.parentNode.className = 'images-wrapper'
+
+            // guardamos el array de imagenes del contenido
+            images.value = Array.from(imgElements)
+            for (const index in images.value)
+                images.value[index].addEventListener('click', () => handlePreview(index))
 
 
-    // Obtener todos los enlaces de desplazamiento
-    var scrollLinks = document.querySelectorAll('.footnote-ref a, a.footnote-backref');
+            // Obtener todos los enlaces de desplazamiento
+            var scrollLinks = document.querySelectorAll('.footnote-ref a, a.footnote-backref');
 
-    console.log({scrollLinks})
+            console.log({ scrollLinks })
 
-    // Agregar evento de clic a cada enlace
-    scrollLinks.forEach(function (link) {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
+            // Agregar evento de clic a cada enlace
+            scrollLinks.forEach(function (link) {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
 
-            console.log('clicked!')
+                    console.log('clicked!')
 
-            var targetId = this.getAttribute('href').substring(1);
-            var targetElement = document.getElementById(targetId);
+                    var targetId = this.getAttribute('href').substring(1);
+                    var targetElement = document.getElementById(targetId);
 
-            if (targetElement) {
-                console.log('got target')
-                var offset = 90;
-                var targetRect = targetElement.getBoundingClientRect();
-                var targetOffsetTop = window.scrollY + targetRect.top - offset;
+                    if (targetElement) {
+                        console.log('got target')
+                        var offset = 90;
+                        var targetRect = targetElement.getBoundingClientRect();
+                        var targetOffsetTop = window.scrollY + targetRect.top - offset;
 
-                window.scrollTo({
-                    top: targetOffsetTop,
-                    behavior: 'smooth'
+                        window.scrollTo({
+                            top: targetOffsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
                 });
-            }
+            });
+
         });
     });
-
-});
-
-
 });
 
 function handlePreview(index) {
     console.log('clicked ', index, images.value[index])
+    if(v3ImgPreviewFn)
     v3ImgPreviewFn({ images: images.value.map(img => img.src), index })
 }
 

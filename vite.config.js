@@ -4,6 +4,7 @@ import laravel from "laravel-vite-plugin";
 import vue from "@vitejs/plugin-vue";
 import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
   /* build: {
@@ -25,8 +26,8 @@ export default defineConfig({
 },
   plugins: [
     laravel({
-      input: ["resources/js/app.js", "resources/js/backpack/app.js", "resources.js/backpack/components.js"],
-      ssr: "resources/js/ssr.js",
+      input: ["resources/js/app.js", "resources/js/backpack/app.js"/*, "resources.js/backpack/components.js"*/],
+      // ssr: "resources/js/ssr.js",
       refresh: true,
     }),
     vue({
@@ -69,5 +70,6 @@ export default defineConfig({
       ],
     }),
     viteCompression(),
+    visualizer(),
   ],
 });
