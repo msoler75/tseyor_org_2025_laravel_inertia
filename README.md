@@ -83,6 +83,60 @@ php artisan contenidos:import noticias
 
 Este comando recrea todos los contenidos "espejo" de las noticias.
 
+# Deploy
+
+Para mejorar el rendimiento:
+
+## Cambios en Response de Inertia
+
+Para evitar procesar innecesariamente estos datos, y salvar unos 400 ms, añadiremos estas lineas:
+
+vendor\inertiajs\inertia-laravel\src\Response.php (ahorro de hasta 85 ms):
+```
+ public function resolvePropertyInstances(array $props, Request $request, bool $unpackDotProps = true): array
+    {
+        foreach ($props as $key => $value) {
+            if($key=='ziggy')continue; // añadimos esta línea
+            if($key=='routes')continue; // añadimos esta línea
+            if($key=='methods')continue; // añadimos esta línea
+```
+
+vendor\tightenco\ziggy\src\Ziggy.php en el método _constructor, se coloca este código (ahorro de hasta 400 ms):
+```
+if (!static::$cache) {
+            // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
+            $cache_routes = base_path("bootstrap/cache/routes-v7.php");
+            $cache_ziggy = base_path("bootstrap/cache/ziggy2.json");
+            if (
+                !file_exists($cache_ziggy) ||
+                !file_exists($cache_routes) ||
+                filemtime($cache_routes) > filemtime($cache_ziggy)
+            ) {
+                static::$cache = $this->nameKeyedRoutes();
+                file_put_contents($cache_ziggy, static::$cache->toJson());
+            } else {
+                try {
+                    $ziggy_content = file_get_contents($cache_ziggy);
+                    static::$cache = collect(json_decode($ziggy_content, true));
+                } catch (\Exception $e) {
+                    static::$cache = $this->nameKeyedRoutes(); // por si hubiera algun error
+                }
+            }
+        }
+```
+
+vendor\laravel\framework\src\Illuminate\Foundation\Application.php en el método registerConfiguredProviders (ahorro de hasta 30 ms):
+```
+ $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
+// añadir este bloque:
+        $is_admin = str_starts_with($_SERVER['REQUEST_URI']??"", "/admin");
+        $providers[1] = array_filter(
+            $providers->toArray()[1],
+            function ($item) use ($is_admin) {
+                return $is_admin || !str_starts_with($item, "Backpack");
+            }
+        );
+```
 
 ## Contribuciones
 

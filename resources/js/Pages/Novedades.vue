@@ -25,7 +25,6 @@
             :date="contenido.fecha"/>
         </div>
 
-
         <pagination class="mt-6" :links="listado.links" />
 
     </div>

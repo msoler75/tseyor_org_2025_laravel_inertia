@@ -18,27 +18,15 @@ class ContenidosController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
-        $pagina = $request->input('page', 1); // Obtener el número de página actual
 
         // estos tipos de datos no aparecen en Novedades
         $coleccionesExcluidas = ['paginas', 'informes', /*'meditaciones',*/'terminos', 'lugares', 'guias'];
 
-        $cacheKey = 'contenidos_' . $buscar . '_page_' . $pagina;
-
-        $un_dia = 60 * 24;
-
-        $resultados = Cache::remember($cacheKey, $un_dia, function () use ($buscar, $coleccionesExcluidas) {
-
-            return $buscar ? Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
-                ->where('visibilidad', 'P')
-                ->whereNotIn('coleccion', $coleccionesExcluidas)
-                ->where(function ($query) use ($buscar) {
-                    $query->where('titulo', 'like', '%' . $buscar . '%')
-                        // ->orWhere('descripcion', 'like', '%' . $buscar . '%')
-                        ->orWhere('texto_busqueda', 'like', '%' . $buscar . '%')
-                    ;
+        $resultados =  $buscar ? Contenido::search($buscar)
+                //->whereNotIn('coleccion', $coleccionesExcluidas)
+                ->query(function ($query) use($coleccionesExcluidas) {
+                    return $query->whereNotIn('coleccion', $coleccionesExcluidas);
                 })
-                ->latest('updated_at') // Ordenar por updated_at
                 ->paginate(10)->appends(['buscar' => $buscar])
                 :
                 Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
@@ -46,8 +34,6 @@ class ContenidosController extends Controller
                     ->whereNotIn('coleccion', $coleccionesExcluidas)
                     ->latest('updated_at') // Ordenar por updated_at
                     ->paginate(10);
-
-        });
 
         return Inertia::render('Novedades', [
             'filtrado' => $buscar,
