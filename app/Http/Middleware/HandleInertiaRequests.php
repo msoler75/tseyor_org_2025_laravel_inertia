@@ -32,7 +32,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         // si no muestra algun dato de .env, hay que borrar la cache
-        $ajaxWords = ['buscar', 'buscar_recientes', 'buscar_archivo'];
+        /*$ajaxWords = ['buscar', 'buscar_recientes', 'buscar_archivo'];
 
         $isAjax = false;
         foreach ($ajaxWords as $word)
@@ -47,9 +47,9 @@ class HandleInertiaRequests extends Middleware
                 'flash' => [
                     'message' => fn() => $request->session()->get('message')
                 ]
-            ]);
+            ]);*/
 
-
+/*
          $_ = new T(__CLASS__, "share:ziggy_create_Array");
 
         // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
@@ -71,27 +71,29 @@ class HandleInertiaRequests extends Middleware
             }
         }
         $_ = null;
+        // dd($ziggy_arr);
 
 
-
+*/
         //T::xprint();
         //die;
 
         // dd($ziggy_arr);
+
 
         // llamada normal
         return array_merge(parent::share($request), [
             'flash' => [
                 'message' => fn() => $request->session()->get('message')
             ],
-            'anuncio' => env('ANUNCIO_GLOBAL_HTML'),
-            'meta_image_default' => env('META_IMAGE_DEFAULT'),
+            'anuncio' => config('app.anuncio'),
+            'meta_image_default' => config('app.metaImageDefault'),
             'csrf_token' => csrf_token(),
-            'ziggy' => function () use ($request, $ziggy_arr) {
+            /*'ziggy' => function () use (ç$request, $ziggy_arr) {
                 return array_merge($ziggy_arr, [
                     'location' => $request->url(),
                 ]);
-            },
+            },*/
         ]);
     }
 }
