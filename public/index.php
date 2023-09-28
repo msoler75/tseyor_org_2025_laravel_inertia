@@ -2,6 +2,7 @@
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
+use App\T;
 
 //xdebug_info();
 // phpinfo();
@@ -55,8 +56,18 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
 
+error_reporting(E_ALL);
+error_reporting(-1);
+ini_set('error_reporting', E_ALL);
+
+
 $response = $kernel->handle(
     $request = Request::capture()
-)->send();
+);
+
+ T::xprint();
+ die;
+
+$response->send();
 
 $kernel->terminate($request, $response);

@@ -22,7 +22,7 @@ const props = defineProps({
     arguments: {}
 })
 
-const queryString = window.location.search;
+const queryString = window.location.search.replace(/[\?&]page=\d+/, '');
 
 onMounted(() => {
     const urlParams = new URLSearchParams(queryString);
