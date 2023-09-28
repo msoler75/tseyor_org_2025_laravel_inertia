@@ -129,7 +129,7 @@ vendor\laravel\framework\src\Illuminate\Foundation\Application.php en el método
 ```
  $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 // añadir este bloque:
-        $is_admin = str_starts_with($_SERVER['REQUEST_URI']??"", "/admin");
+        $is_admin = str_starts_with($_SERVER['REQUEST_URI']??"/admin", "/admin"); // si no hay request puede ser un comando artisan
         $providers[1] = array_filter(
             $providers->toArray()[1],
             function ($item) use ($is_admin) {

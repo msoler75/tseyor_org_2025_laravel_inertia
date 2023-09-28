@@ -94,8 +94,8 @@ const form = useForm('inscripcion', {
 function submit() {
     // Clear all errors...
     form.clearErrors()
-    form.post(route('contactar.store'), {
-        preserveScroll: true,
+    form.post(route('contactar.send')+'?test=1', {
+        preserveScroll: false,
         onSuccess: () => {
             submitted.value = true
         }
