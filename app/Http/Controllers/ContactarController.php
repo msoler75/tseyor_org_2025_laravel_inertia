@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FormularioContactoEmail;
+use App\Mail\FormularioContactoEnviadoEmail;
+use App\Models\Email;
 
 class ContactarController extends Controller
 {
     // enviar mensaje de contacto
-    public function send(Request $request) {
+    public function send(Request $request)
+    {
 
         // Validar los datos
         $validatedData = $request->validate([
@@ -15,11 +20,57 @@ class ContactarController extends Controller
             'pais' => 'required|max:255',
             'email' => 'required|email|max:255',
             'telefono' => 'max:255',
-            'comentario' => 'required'
+            'comentario' => 'required',
+            'destinatario' => 'max:255',
         ]);
 
+        $destinatario = $validatedData['destinatario'] ?? 'secretaria@tseyor.org';
 
-        // To-DO : email
+        $emailEnviado = new FormularioContactoEnviadoEmail(
+            $validatedData['nombre'],
+            $validatedData['pais'],
+            $validatedData['email'],
+            $validatedData['telefono'],
+            $validatedData['comentario'],
+        );
+
+
+        $email = new Email([
+            'fromEmail' => $validatedData['email'],
+            'fromName' => $validatedData['nombre'],
+            'toEmail' => $destinatario,
+            'toName' => '', // Puedes establecer un valor adecuado para el destinatario si lo tienes disponible
+            'subject' => '', // Puedes establecer un valor adecuado para el asunto si lo tienes disponible
+            'body' => '', // Puedes establecer un valor adecuado para el cuerpo del mensaje si lo tienes disponible
+        ]);
+
+        $email->save();
+
+        //test
+        /*$test = $request->has('test');
+
+        if ($test)
+            return $emailEnviado->render();*/
+
+        // mensaje de confirmación al autor
+        Mail::to($validatedData['email'])
+            ->cc('pigmalion@tseyor.org')
+            ->send(
+                $emailEnviado
+            );
+
+        // mensaje al destinatario
+        Mail::to($destinatario)
+            ->cc('pigmalion@tseyor.org')
+            ->send(
+                new FormularioContactoEmail(
+                    $validatedData['nombre'],
+                    $validatedData['pais'],
+                    $validatedData['email'],
+                    $validatedData['telefono'],
+                    $validatedData['comentario'],
+                )
+            );
 
         return redirect()->back()->with('success', 'La inscripción se ha guardado correctamente');
     }

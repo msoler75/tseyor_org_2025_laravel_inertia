@@ -1,3 +1,6 @@
+-maquetación email:
+D:\projects\tseyor\laravel_inertia\resources\views\vendor\mail
+
 contactarcontroller.send
 meditaciones.vue (publicaciones?)
 normativas.vue
