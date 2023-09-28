@@ -2,7 +2,7 @@
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
-use App\T;
+// use App\T;
 
 //xdebug_info();
 // phpinfo();
@@ -65,8 +65,8 @@ $response = $kernel->handle(
     $request = Request::capture()
 );
 
- T::xprint();
- die;
+ //T::xprint();
+ //die;
 
 $response->send();
 

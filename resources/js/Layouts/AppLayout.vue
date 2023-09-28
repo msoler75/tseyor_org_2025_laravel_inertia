@@ -22,13 +22,13 @@ const portada = computed(() => page.url == '/')
 
 const showingNavigationDropdown = ref(false);
 
-const switchToTeam = (team) => {
+/*const switchToTeam = (team) => {
     router.put(route('current-team.update'), {
         team_id: team.id,
     }, {
         preserveState: false,
     });
-};
+}; */
 
 const logout = () => {
     state.permisos.value = []
@@ -287,7 +287,7 @@ axios.get(route('setting', 'navigation'))
                                 <Icon v-show="!isDark" icon="ph:moon-duotone" />
                             </button>
 
-                            <div v-if="$page.props.auth.user" class="hidden sm:flex sm:items-center"
+                            <div v-if="$page.props.auth?.user" class="hidden sm:flex sm:items-center"
                                 @mouseover="nav.closeTabs()">
                                 <div class="ml-3 relative">
                                     <!-- Teams Dropdown -->
@@ -423,7 +423,7 @@ axios.get(route('setting', 'navigation'))
                 </div>
 
                 <!-- Responsive Navigation Menu -->
-                <div :class="{ 'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown }"
+                <div v-if="false" :class="{ 'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown }"
                     class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
