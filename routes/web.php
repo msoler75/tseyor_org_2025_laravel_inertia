@@ -146,6 +146,7 @@ Route::get('/contactar',  function () {
         ->withViewData(SEO::get('contactar'));
 })->name('contactar');
 Route::post('/contactar/enviar', [ContactarController::class, 'send'])->name('contactar.send');
+Route::get('/contactar/test', [ContactarController::class, 'test'])->name('contactar.test');
 
 Route::get('/ong', function () {
     return Inertia::render('Ong/Index', [])

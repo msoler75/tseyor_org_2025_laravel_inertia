@@ -1,11 +1,24 @@
-@component('mail::message')
-# Mensaje de {{$nombre}}
+@extends('emails.master')
 
-Nombre: {{nombre}}
-Pais: {{pais}}
-Correo: {{correo}}
-Teléfono:  {{telefono}}
-Comentario: {{comentario}}
+@section('titulo')
+Mensaje de {{$nombre}}
+@endsection
 
-[tseyor.org](https://tseyor.org)
-@endcomponent
+@section('subtitulo')
+Desde el formulario de contacto
+@endsection
+
+@section('contenido')
+
+Nombre: {{$nombre}}
+
+Pais: {{$pais}}
+
+Correo: {{$correo}}
+
+Teléfono:  {{$telefono}}
+
+Comentario: {{$comentario}}
+
+@endsection
+
