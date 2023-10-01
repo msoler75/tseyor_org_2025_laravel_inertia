@@ -10,10 +10,8 @@ class Email extends Model
     use HasFactory;
 
     protected $fillable = [
-        'fromEmail',
-        'fromName',
-        'toEmail',
-        'toName',
+        'from',
+        'to',
         'subject',
         'body'
     ];

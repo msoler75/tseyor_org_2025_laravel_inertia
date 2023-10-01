@@ -106,4 +106,10 @@ return [
         'table' => 'failed_jobs',
     ],
 
+
+
+    /*
+    | Maximum time processing queue un controller, in seconds
+    */
+    'max_time_processing_queue' => 60,
 ];
