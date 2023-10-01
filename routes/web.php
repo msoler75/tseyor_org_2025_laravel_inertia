@@ -27,6 +27,7 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\PublicacionesController;
 use App\Http\Controllers\InformesController;
 use App\Http\Controllers\MeditacionesController;
+use App\Http\Controllers\ProcesarColaController;
 use App\Http\Controllers\DevController;
 use App\Pigmalion\SEO;
 
@@ -192,6 +193,8 @@ Route::middleware([
     })->name('dashboard');
 });
 
+
+Route::get('/__process_jobs', [ProcesarColaController::class, 'process'])->name('process.jobs');
 
 
 

@@ -16,7 +16,7 @@ class ContactarController extends Controller
     {
 
         // Validar los datos
-        $validatedData = $request->validate([
+        $data = $request->validate([
             'nombre' => 'required|max:255',
             'pais' => 'required|max:255',
             'email' => 'required|email|max:255',
@@ -25,20 +25,11 @@ class ContactarController extends Controller
             'destinatario' => 'max:255',
         ]);
 
-        $destinatario = $validatedData['destinatario'] ?? 'secretaria@tseyor.org';
+        $destinatario = $data['destinatario'] ?? 'secretaria@tseyor.org';
 
-        $emailEnviado = new FormularioContactoEnviadoEmail(
-            $validatedData['nombre'],
-            $validatedData['pais'],
-            $validatedData['email'],
-            $validatedData['telefono'],
-            $validatedData['comentario'],
-        );
-
-
-        $email = new Email([
-            'fromEmail' => $validatedData['email'],
-            'fromName' => $validatedData['nombre'],
+        /* $email = new Email([
+            'fromEmail' => $data['email'],
+            'fromName' => $data['nombre'],
             'toEmail' => $destinatario,
             'toName' => '',
             // Puedes establecer un valor adecuado para el destinatario si lo tienes disponible
@@ -46,9 +37,9 @@ class ContactarController extends Controller
             // Puedes establecer un valor adecuado para el asunto si lo tienes disponible
             'body' => '',
             // Puedes establecer un valor adecuado para el cuerpo del mensaje si lo tienes disponible
-        ]);
+        ]); */
 
-        $email->save();
+        // $email->save();
 
         //test
         /*$test = $request->has('test');
@@ -57,26 +48,32 @@ class ContactarController extends Controller
             return $emailEnviado->render();*/
 
         // mensaje de confirmación al autor
-        Mail::to($validatedData['email'])
+        Mail::to($data['email'])
             ->cc('pigmalion@tseyor.org')
-            ->send(
-                $emailEnviado
+            ->queue(
+                new FormularioContactoEnviadoEmail(
+                    $data['nombre'],
+                    $data['pais'],
+                    $data['email'],
+                    $data['telefono'],
+                    $data['comentario'],
+                )
             );
 
         // mensaje al destinatario
         Mail::to($destinatario)
             ->cc('pigmalion@tseyor.org')
-            ->send(
+            ->queue(
                 new FormularioContactoEmail(
-                    $validatedData['nombre'],
-                    $validatedData['pais'],
-                    $validatedData['email'],
-                    $validatedData['telefono'],
-                    $validatedData['comentario'],
+                    $data['nombre'],
+                    $data['pais'],
+                    $data['email'],
+                    $data['telefono'],
+                    $data['comentario'],
                 )
             );
 
-        return redirect()->back()->with('success', 'La inscripción se ha guardado correctamente');
+        return redirect()->back()->with('success', 'Se ha enviado correctamente');
     }
 
 
@@ -84,8 +81,8 @@ class ContactarController extends Controller
     {
         $markdown = new Markdown(view(), config('mail.markdown'));
 
-         return $markdown->render('emails.formulario-contacto', (
-           ["nombre"=>"Juan",
+         return $markdown->render('emails.formulario-contacto-enviado', (
+           ["nombre"=>"Juan Fernández",
             "pais"=>"España",
             "correo"=>"jmsoler77@gmail.com",
             "telefono"=>"77-0343234321",
