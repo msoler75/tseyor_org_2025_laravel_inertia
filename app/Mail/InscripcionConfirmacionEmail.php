@@ -8,19 +8,25 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Email;
 
-class FormularioContactoEmail extends Mailable implements ShouldQueue
+class InscripcionConfirmacionEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     public $nombre;
+    public $fecha;
+    public $ciudad;
+    public $region;
     public $pais;
     public $email;
     public $telefono;
     public $comentario;
 
-    public function __construct(string $nombre, string $pais, string $email, string $telefono, string $comentario)
+    public function __construct(string $nombre, string $fecha, string $ciudad, string $region, string $pais, string $email, string $telefono, string $comentario)
     {
         $this->nombre = $nombre;
+        $this->fecha = $fecha;
+        $this->ciudad = $ciudad;
+        $this->region = $region;
         $this->pais = $pais;
         $this->email = $email;
         $this->telefono = $telefono;
@@ -29,15 +35,20 @@ class FormularioContactoEmail extends Mailable implements ShouldQueue
 
     public function build()
     {
-        return $this->markdown('emails.formulario-contacto')
-            ->subject('Mensaje desde el formulario de contacto de ' . $this->nombre)
+        return $this->markdown('emails.formulario-inscripcion-confirmacion')
+            ->subject('Inscripción al Curso Holístico de ' . $this->nombre)
             ->replyTo($this->email)
             ->with([
                 'nombre' => $this->nombre,
+                'fecha_nacimiento' => $this->fecha,
+                'ciudad' => $this->ciudad,
+                'region' => $this->region,
                 'pais' => $this->pais,
                 'email' => $this->email,
                 'telefono' => $this->telefono,
                 'comentario' => $this->comentario,
             ]);
     }
+
+
 }

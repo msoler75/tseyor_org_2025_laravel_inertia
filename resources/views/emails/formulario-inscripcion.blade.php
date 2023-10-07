@@ -1,16 +1,22 @@
 @extends('emails.master')
 
 @section('titulo')
-Mensaje de {{$nombre}}
+Inscripción al Curso Holístico
 @endsection
 
 @section('subtitulo')
-Desde el formulario de contacto
+{{$nombre}}
 @endsection
 
 @section('contenido')
 
 Nombre: {{$nombre}}
+
+Fecha de nacimiento: {{$fecha}} ({{$edad}} años)
+
+Ciudad: {{$ciudad}}
+
+Región: {{$region}}
 
 Pais: {{$pais}}
 

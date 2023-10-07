@@ -21,7 +21,7 @@ Nombre: {{$nombre}}
 
 Pais: {{$pais}}
 
-Correo: {{$correo}}
+Correo: {{$email}}
 
 Teléfono:  {{$telefono}}
 
