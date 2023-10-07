@@ -1,11 +1,17 @@
 <template>
-    <div class="w-full relative py-12" :style="{
+    <div class="w-full relative py-12"  id="myform" :style="{
         'background-size': 'cover',
         'background-attachment': 'fixed',
         background: 'black url(/storage/imagenes/space.jpg) repeat'
     }">
         <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative">
             <h1>Contactar con Tseyor</h1>
+            <div v-if="error">
+                <div class="alert alert-error">
+                    <Icon icon="ph:warning-circle-duotone" class="text-2xl"/>
+                    <span> {{ error }}</span>
+                </div>
+            </div>
             <div v-if="submitted" class="space-y-7">
                 <div class="alert alert-success">
                     <Icon icon="ph:check-circle-bold" class="text-2xl"/>
@@ -29,6 +35,7 @@
                 </div>
 
             </div>
+             <!-- Formulario empieza aquí -->
             <form v-else @submit.prevent="submit">
                 <p>Escribenos con el siguiente formulario o dirígete a alguno de nuestros <Link :href="route('contactos')">representantes</Link></p>
                 <div class="mb-4">
@@ -80,7 +87,8 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 defineOptions({ layout: AppLayout })
 
 
-let submitted = ref(false)
+const submitted = ref(false)
+const error = ref(false)
 
 const form = useForm('inscripcion', {
     nombre: '',
@@ -91,13 +99,25 @@ const form = useForm('inscripcion', {
     acepto: false
 })
 
+
+function scrollTop() {
+    document.getElementById("myform").scrollIntoView(true)
+}
+
 function submit() {
     // Clear all errors...
+    error.value = false
     form.clearErrors()
     form.post(route('contactar.send')+'?test=1', {
-        preserveScroll: false,
+        preserveScroll: true,
         onSuccess: () => {
             submitted.value = true
+            scrollTop()
+        },
+        onError: (response) => {
+            // console.log('onError', response)
+            error.value = response[0]
+            scrollTop()
         }
     });
 }

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class FormularioContactoEnviadoEmail extends Mailable implements ShouldQueue
+class FormularioContactoConfirmacionEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -28,7 +28,7 @@ class FormularioContactoEnviadoEmail extends Mailable implements ShouldQueue
 
     public function build()
     {
-        return $this->markdown('emails.formulario-contacto-enviado')
+        return $this->markdown('emails.formulario-contacto-confirmacion')
             ->subject('Mensaje desde el formulario de contacto de ' . $this->nombre)
             ->replyTo($this->email)
             ->with([
