@@ -2,7 +2,8 @@
     <div class="tabs tabs-boxed mb-12 gap-7 bg-base-300 w-fit uppercase font-bold">
         <component v-for="tab, index of tabs" :key="index" :href="tab.link" :is="IAmHere(tab.link)?'span': Link" class="tab"
             :class="IAmHere(tab.link) ? 'tab-active cursor-default' : ''"
-            :title="tab.title" v-html="tab.label"></component>
+            :title="tab.title" v-html="tab.label"
+            @click="selected=tab.link"></component>
     </div>
 </template>
 
@@ -27,8 +28,10 @@ const tabs = [
     }
 ]
 
+const selected = ref(null);
+
 function IAmHere(url) {
-    return location.pathname.includes(url.replace(/https?:\/\/[^\/]+/, ''))
+    return selected.value?url==selected.value: location.pathname.includes(url.replace(/https?:\/\/[^\/]+/, ''))
 }
 
 </script>
