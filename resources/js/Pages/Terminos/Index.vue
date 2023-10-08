@@ -30,9 +30,9 @@
                     </Link>
                 </div>
 
-                <div class="hidden md:grid grid-cols-2 gap-2">
+                <div class="hidden md:grid grid-flow-dense grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :style="{ order: reposicionar(index) }" :href="route('terminos') + '?letra=' + letraItem">
+                        :style="{'grid-column': Math.floor(index / (letras.length/2))+1 }" :href="route('terminos') + '?letra=' + letraItem">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -41,7 +41,7 @@
 
             <div class="w-full flex-grow">
 
-                <SearchResultsHeader :results="listado" />
+                <SearchResultsHeader v-if="!letra" :results="listado" />
 
                 <div class="grid gap-8 mb-14" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('termino', contenido.slug)"
@@ -77,10 +77,5 @@ const props = defineProps({
 
 const listado = ref(props.listado);
 
-
-function reposicionar(index) {
-    const mid = props.letras.length / 2
-    return index < mid ? index * 2 : ((index - mid - props.letras.length % 2) * 2 + 1)
-}
 </script>
 

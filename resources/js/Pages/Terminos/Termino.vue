@@ -26,16 +26,16 @@
                     </Link>
                 </div>
 
-                <div class="hidden md:grid grid-cols-2 gap-2">
+                <div class="hidden md:grid grid-flow-dense grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :style="{ order: reposicionar(index) }" :href="route('terminos') + '?letra=' + letraItem">
+                        :style="{'grid-column': Math.floor(index / (letras.length/2))+1 }" :href="route('terminos') + '?letra=' + letraItem">
                     {{ letraItem }}
                     </Link>
                 </div>
             </div>
 
             <div>
-                <div class="py-[10ch] bg-base-100 md:max-w-[80ch] mx-auto shadow-xl mb-20 px-7 rounded-xl">
+                <div class="py-[5ch] bg-base-100 md:max-w-[80ch] mx-auto shadow-xl mb-20 px-7 rounded-xl">
 
                     <div class="prose mx-auto">
                         <h1 class="text-center xl:text-left capitalize lowercase">{{ termino.nombre }}</h1>
@@ -77,7 +77,7 @@
             <div class="w-[7rem] card bg-base-100 shadow p-5 h-fit sticky top-20 opacity-0 hidden lg:flex">
                 <div class="letras grid grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :style="{ order: reposicionar(index) }" :href="route('terminos') + '?letra=' + letraItem">
+                       :href="route('terminos') + '?letra=' + letraItem">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -124,11 +124,6 @@ const props = defineProps({
         required: true,
     },
 });
-
-function reposicionar(index) {
-    const mid = props.letras.length / 2
-    return index < mid ? index * 2 : ((index - mid - props.letras.length % 2) * 2 + 1)
-}
 
 function buscarClick(query) {
     router.visit(route('terminos') + '?buscar=' + query)
