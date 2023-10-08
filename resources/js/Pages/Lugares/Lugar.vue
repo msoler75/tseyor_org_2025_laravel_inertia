@@ -1,8 +1,9 @@
 <template>
-    <div class="container mx-auto px-4 py-8 w-full">
+     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-20">
             <Back>Índice</Back>
+            <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center" title='Descarga todo el glosario en pdf'><Icon icon="ph:download-duotone" />Descargar</Link>
             <AdminPanel modelo="lugar" necesita="administrar contenidos" :contenido="lugar" />
         </div>
 

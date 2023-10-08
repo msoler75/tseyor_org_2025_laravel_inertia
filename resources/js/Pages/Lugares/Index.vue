@@ -5,6 +5,7 @@
 
         <div class="flex justify-between items-center mb-20">
             <Back class="opacity-0 pointer-events-none">Glosario</Back>
+            <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center" title='Descarga todo el glosario en pdf'><Icon icon="ph:download-duotone" />Descargar</Link>
             <AdminPanel modelo="lugar" necesita="administrar contenidos" />
         </div>
 

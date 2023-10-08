@@ -16,20 +16,15 @@ const tabs = [
         'title': 'Conoce los conceptos básicos o palabras clave de la filosofía Tseyor'
     },
     {
-        'label': 'Guías&nbsp;<span class="hidden md:inline">Estelares</span>',
+        'label': 'Guías&nbsp;<span class="hidden sm:inline">Estelares</span>',
         'link': route('guias'),
         'title': 'Tutores de la Confederación y otros hermanos de las estrellas.'
     },
     {
-        'label': 'Lugares&nbsp;<span class="hidden md:inline">de la galaxia</span>',
+        'label': 'Lugares&nbsp;<span class="hidden sm:inline">de la galaxia</span>',
         'link': route('lugares'),
         'title': 'Lugares de interés'
-    },
-    {
-        'label': 'Descargar&nbsp;<span class="hidden xl:inline">glosario en pdf</span>',
-        'link': '/libros/glosario-terminologico',
-        'title': 'Descarga todo el glosario en pdf'
-    },
+    }
 ]
 
 function IAmHere(url) {
