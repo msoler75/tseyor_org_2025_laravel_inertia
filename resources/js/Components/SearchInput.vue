@@ -41,7 +41,8 @@ const props = defineProps({
         required: false,
         default: "Buscar..."
     },
-    arguments: {}
+    arguments: {},
+    doSearch: {type: Boolean, default: true}
 })
 
 const maxWidth = ref(200);
@@ -76,7 +77,7 @@ const submit = () => {
         args = { ...props.arguments, ...args }
     cambiado.value = false
     router.get(currentUrl.value, args);
-    emit('search');
+    emit('search', query.value);
 };
 
 const clearInput = () => {

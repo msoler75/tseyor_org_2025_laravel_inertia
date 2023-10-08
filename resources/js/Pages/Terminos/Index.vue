@@ -4,16 +4,16 @@
 
 
         <div class="flex justify-between items-center mb-20">
-            <i></i>
+            <Back class="opacity-0 pointer-events-none">Glosario</Back>
             <AdminPanel modelo="termino" necesita="administrar contenidos" />
         </div>
 
 
-        <h1>Glosario - Índice de términos</h1>
+        <div class="mx-auto flex flex-col justify-center items-center">
+            <h1>Glosario</h1>
+            <GlosarioTabs/>
+        </div>
 
-        <GlosarioTabs/>
-
-        <p>Conoce los conceptos básicos de Tseyor a partir de los comunicados de los Guías Estelares.</p>
 
         <div class="flex justify-end mb-5">
             <SearchInput/>
@@ -21,14 +21,22 @@
 
         <div class="w-full flex gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 
-            <div class="card bg-base-100 shadow p-5 h-fit sticky top-20">
-                <div class="letras grid grid-cols-2 gap-2">
-                    <Link v-for="letraItem, index in letras" :key="index" class="p-2" :style="{ order: reposicionar(index) }"
-                    :href="route('terminos')+'?letra='+letraItem" :class="letra==letraItem?'pointer-events-none font-bold text-primary':''">
+            <div class="w-full md:w-[7rem] flex-shrink-0 card bg-base-100 shadow p-5 h-fit md:sticky md:top-20">
+                <div class="flex flex-wrap md:hidden  gap-2">
+                    <Link v-for="letraItem, index in letras" :key="index" class="p-2"
+                        :href="route('terminos') + '?letra=' + letraItem">
+                    {{ letraItem }}
+                    </Link>
+                </div>
+
+                <div class="hidden md:grid grid-cols-2 gap-2">
+                    <Link v-for="letraItem, index in letras" :key="index" class="p-2"
+                        :style="{ order: reposicionar(index) }" :href="route('terminos') + '?letra=' + letraItem">
                     {{ letraItem }}
                     </Link>
                 </div>
             </div>
+
 
             <div class="w-full flex-grow">
 

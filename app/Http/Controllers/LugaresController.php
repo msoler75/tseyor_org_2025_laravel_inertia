@@ -11,10 +11,15 @@ class LugaresController extends Controller
 {
     public function index(Request $request)
     {
-        $listado = Lugar::select(['slug', 'nombre', 'imagen', 'categoria'])
-            ->latest()->paginate(10);
+        $buscar = $request->input('buscar');
 
-        $todos = Lugar::select(['slug', 'nombre', 'categoria'])->take(100)->get();
+        $listado = $buscar ? Lugar::search($buscar)
+            :
+            Lugar::select(['nombre', 'slug', 'descripcion', 'imagen']);
+
+        $listado = $listado->paginate(12);
+
+        $todos = Lugar::select(['slug', 'nombre', 'categoria'])->take(1000)->get();
 
         return Inertia::render('Lugares/Index', [
             'listado' => $listado,

@@ -21,44 +21,29 @@ class TerminosController extends Controller
 
         $letraLike = strtolower($letra) . "%";
 
-        $listado = $letra?
-        Termino::select(['slug', 'nombre'])
-        ->where('slug', 'LIKE', $letraLike)
-        ->orderBy('nombre', 'asc')
-        ->paginate(60)
-        ->appends(['letra'=> $letra])
-            :
-            ($buscar ? Termino::search($buscar)->paginate(60)->appends(['filtrado'=>$buscar])
-             :
+        $listado = $letra ?
             Termino::select(['slug', 'nombre'])
-            ->orderBy('nombre', 'asc')
-            ->paginate(60));
+                ->where('slug', 'LIKE', $letraLike)
+                ->orderBy('nombre', 'asc')
+                ->paginate(60)
+                ->appends(['letra' => $letra])
+            :
+            ($buscar ? Termino::search($buscar)->paginate(60)->appends(['filtrado' => $buscar])
+                :
+                Termino::select(['slug', 'nombre'])
+                    ->orderBy('nombre', 'asc')
+                    ->paginate(60));
 
-            if ($buscar)
+        if ($buscar)
             Busquedas::formatearResultados($listado, $buscar);
-
-        $una_semana = 60 * 24 * 7; // tiempo de cache
-
-        $letras = Cache::remember('letras_glosario', $una_semana, function () {
-            $todos = Termino::select('nombre')->orderBy('nombre', 'asc')->get();
-
-            $letras = [];
-
-            foreach ($todos->toArray() as $item) {
-                $letras[strtoupper(substr(Str::ascii($item['nombre']), 0, 1))] = 1;
-            }
-
-            return array_keys($letras);
-        });
-
 
         return Inertia::render('Terminos/Index', [
             'listado' => $listado,
-            'letras' => $letras,
+            'letras' => $this->listaLetras(),
             'filtrado' => $buscar,
             'letra' => $letra
         ])
-        ->withViewData(SEO::get('glosario'));
+            ->withViewData(SEO::get('glosario'));
     }
 
 
@@ -71,7 +56,7 @@ class TerminosController extends Controller
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $termino->visibilidad == 'P';
+        $publicado = $termino->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
         if (!$termino || (!$publicado && !$borrador && !$editor)) {
             abort(404);
@@ -114,11 +99,30 @@ class TerminosController extends Controller
             'termino' => $termino,
             'siguiente' => $siguiente,
             'anterior' => $anterior,
+            'letras' => $this->listaLetras(),
             'referencias' => [
                 'terminos' => $ref_terminos,
                 'libros' => $ref_libros
             ]
         ])
             ->withViewData(SEO::from($termino));
+    }
+
+
+    private function listaLetras()
+    {
+        $una_semana = 60 * 24 * 7; // tiempo de cache
+
+        return Cache::remember('letras_glosario', $una_semana, function () {
+            $todos = Termino::select('nombre')->orderBy('nombre', 'asc')->get();
+
+            $letras = [];
+
+            foreach ($todos->toArray() as $item) {
+                $letras[strtoupper(substr(Str::ascii($item['nombre']), 0, 1))] = 1;
+            }
+
+            return array_keys($letras);
+        });
     }
 }
