@@ -2,8 +2,17 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-20">
-            <Back>Guías Estelares</Back>
+            <Back>Índice</Back>
             <AdminPanel modelo="guia" necesita="administrar contenidos" :contenido="guia" />
+        </div>
+
+        <div class="mx-auto flex flex-col justify-center items-center">
+            <h1>Glosario</h1>
+            <GlosarioTabs />
+        </div>
+
+        <div class="flex justify-end mb-5">
+            <SearchInput :doSearch="false" @search="buscarClick" />
         </div>
 
         <div class="flex flex-wrap lg:flex-nowrap gap-10">
@@ -59,6 +68,7 @@
 
 import { Tabs, Tab } from 'vue3-tabs-component';
 import AppLayout from '@/Layouts/AppLayout.vue'
+import { router } from '@inertiajs/vue3';
 import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
 
 defineOptions({ layout: AppLayout })
@@ -138,5 +148,9 @@ function parseMarkdownToSections(text) {
   }
 
   return sections;
+}
+
+function buscarClick(query) {
+    router.visit(route('guias') + '?buscar=' + query)
 }
 </script>

@@ -36,8 +36,7 @@ class InscripcionConfirmacionEmail extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->markdown('emails.formulario-inscripcion-confirmacion')
-            ->subject('Inscripción al Curso Holístico de ' . $this->nombre)
-            ->replyTo($this->email)
+            ->subject('Te has inscrito al Curso Holístico de Tseyor')
             ->with([
                 'nombre' => $this->nombre,
                 'fecha_nacimiento' => $this->fecha,

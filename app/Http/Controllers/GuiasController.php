@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Guia;
+use App\Models\Contenido;
 use App\Models\Libro;
 use App\Pigmalion\SEO;
 
@@ -12,12 +13,18 @@ class GuiasController extends Controller
 {
     public function index(Request $request)
     {
-        $guias = Guia::select(['nombre', 'slug', 'descripcion', 'imagen'])->take(50)->get();
+        $buscar = $request->input('buscar');
+
+        $guias = $buscar ? Guia::search($buscar)
+            :
+            Guia::select(['nombre', 'slug', 'descripcion', 'imagen']);
+
+        $guias = $guias->paginate(24);
 
         return Inertia::render('Guias/Index', [
             'guias' => $guias
         ])
-        ->withViewData(SEO::get('guias'));
+            ->withViewData(SEO::get('guias'));
     }
 
 
@@ -45,20 +52,19 @@ class GuiasController extends Controller
             $libros_slug = $data['items'];
 
             $libros = Libro::whereIn('slug', $libros_slug)->get();
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
 
         }
 
         return Inertia::render('Guias/Guia', [
             'guia' => $guia,
             'guias' => $guias,
-            'libros_texto'=>$libros_texto ?? null,
+            'libros_texto' => $libros_texto ?? null,
             'libros' => [
                 'texto' => $data['texto'] ?? null,
                 'items' => $libros ?? []
             ]
         ])
-       ->withViewData(SEO::from($guia));
+            ->withViewData(SEO::from($guia));
     }
 }

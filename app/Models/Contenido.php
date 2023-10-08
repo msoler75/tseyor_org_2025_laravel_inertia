@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 

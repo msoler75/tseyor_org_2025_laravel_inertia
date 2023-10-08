@@ -29,11 +29,12 @@ class InscripcionController extends Controller
         ]);
 
         // Construir la fecha
-        $fecha = $dataValidated['dia'] . "-" . $dataValidated['mes'] . "-" . $dataValidated['anyo'];
+        $fecha_esp = $dataValidated['dia'] . "-" . $dataValidated['mes'] . "-" . $dataValidated['anyo'];
+        $fecha_sql = $dataValidated['anyo'] . "-" . $dataValidated['mes'] . "-" . $dataValidated['dia'];
 
         $data = [
             'nombre' => $dataValidated['nombre'],
-            'fecha_nacimiento' => $fecha,
+            'fecha_nacimiento' => $fecha_sql,
             'ciudad' => $dataValidated['ciudad'],
             'region' => $dataValidated['region'],
             'pais' => $dataValidated['pais'],
@@ -52,7 +53,7 @@ class InscripcionController extends Controller
             ->queue(
                 new InscripcionConfirmacionEmail(
                     $data['nombre'],
-                    $data['fecha_nacimiento'],
+                    $fecha_esp,
                     $data['ciudad'],
                     $data['region'],
                     $data['pais'],
@@ -68,7 +69,7 @@ class InscripcionController extends Controller
             ->queue(
                 new InscripcionEmail(
                     $data['nombre'],
-                    $data['fecha_nacimiento'],
+                    $fecha_esp,
                     $data['ciudad'],
                     $data['region'],
                     $data['pais'],

@@ -29,8 +29,7 @@ class FormularioContactoConfirmacionEmail extends Mailable implements ShouldQueu
     public function build()
     {
         return $this->markdown('emails.formulario-contacto-confirmacion')
-            ->subject('Mensaje desde el formulario de contacto de ' . $this->nombre)
-            ->replyTo($this->email)
+            ->subject('Tu mensaje se ha enviado')
             ->with([
                 'nombre' => $this->nombre,
                 'pais' => $this->pais,

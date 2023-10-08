@@ -2,14 +2,23 @@
     <div class="container mx-auto px-4 py-8 w-full">
 
         <div class="flex justify-between items-center mb-20">
-            <Back>Lugares de la Galaxia</Back>
-            <AdminPanel modelo="lugar" necesita="administrar contenidos" :contenido="lugar"/>
+            <Back>Índice</Back>
+            <AdminPanel modelo="lugar" necesita="administrar contenidos" :contenido="lugar" />
+        </div>
+
+        <div class="mx-auto flex flex-col justify-center items-center">
+            <h1>Glosario</h1>
+            <GlosarioTabs />
+        </div>
+
+        <div class="flex justify-end mb-5">
+            <SearchInput :doSearch="false" @search="buscarClick" />
         </div>
 
         <div class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
                 <div class="w-full h-auto mx-auto">
-                    <Image :src="lugar.imagen" :alt="lugar.nombre" class="w-full h-auto"/>
+                    <Image :src="lugar.imagen" :alt="lugar.nombre" class="w-full h-auto" />
                 </div>
             </div>
 
@@ -20,7 +29,7 @@
                     <TimeAgo :date="lugar.updated_at" />
                 </p>
                 <div class="mb-4"></div>
-                <tabs >
+                <tabs>
                     <tab v-if="lugar.descripcion || lugar.texto" name="Descripción">
                         <div v-if="lugar.texto" class="prose" v-html="lugar.texto"></div>
                         <div v-else class="prose">{{ lugar.descripcion }}</div>
@@ -55,6 +64,7 @@
 
 import { Tabs, Tab } from 'vue3-tabs-component';
 import AppLayout from '@/Layouts/AppLayout.vue'
+import { router } from '@inertiajs/vue3';
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
@@ -67,4 +77,8 @@ const props = defineProps({
         required: true
     }
 });
+
+function buscarClick(query) {
+    router.visit(route('lugares') + '?buscar=' + query)
+}
 </script>
