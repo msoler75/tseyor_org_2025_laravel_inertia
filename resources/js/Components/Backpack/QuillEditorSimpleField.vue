@@ -141,7 +141,7 @@ import {HtmlToMarkdown, MarkdownToHtml} from '@/composables/markdown.js'
 
 import screenfull from 'screenfull'
 
-import { onThemeChange, updateTheme } from '@/composables/themeadapter'
+import { onThemeChange, updateTheme } from '@/composables/themeAdapter'
 
 // PROPS
 

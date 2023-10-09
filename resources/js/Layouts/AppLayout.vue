@@ -3,10 +3,10 @@ import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount } from 'vue';
 import { useNav } from '@/Stores/nav'
 import { useDark, useToggle } from "@vueuse/core";
-import { useGlobalState } from '@/Stores/global'
+import { usePermisos } from '@/Stores/permisos'
 import { usePlayer } from '@/Stores/player'
 
-const state = useGlobalState()
+const permisos = usePermisos()
 const player = usePlayer()
 const page = usePage()
 const nav = useNav()
@@ -31,7 +31,7 @@ const showingNavigationDropdown = ref(false);
 }; */
 
 const logout = () => {
-    state.permisos.value = []
+    permisos.permisos.value = []
     router.post(route('logout'));
 };
 
@@ -149,7 +149,7 @@ function login1() {
     console.log('login1')
     axios.get(route('login1'))
         .then((response) => {
-            state.cargarPermisos()
+            permisos.cargarPermisos()
             console.log('response', response)
             router.reload()
         }
@@ -159,7 +159,7 @@ function login1() {
 function login2() {
     axios.get(route('login2'))
         .then(() => {
-            state.cargarPermisos()
+            permisos.cargarPermisos()
             router.reload()
         })
 }
@@ -212,7 +212,7 @@ axios.get(route('setting', 'navigation'))
 
         <Banner />
 
-        <AudioPlayer v-if="!player.closed.value"
+        <AudioPlayer v-if="!player.closed"
             class="rounded-tl-3xl fixed bottom-0 right-0 z-20 bg-base-100 border-gray-400 dark:border-white border-t border-l" />
 
         <div class="bg-base-200 flex-grow flex flex-col">
