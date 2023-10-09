@@ -182,7 +182,7 @@ import {HtmlToMarkdown, MarkdownToHtml, detectFormat} from '@/composables/markdo
 
 import screenfull from 'screenfull'
 
-import { onThemeChange, updateTheme } from '@/composables/themeadapter'
+import { onThemeChange, updateTheme } from '@/composables/themeAdapter'
 
 // PROPS
 

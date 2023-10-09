@@ -1,7 +1,9 @@
 import {ref} from "vue";
-import {createGlobalState} from  "@vueuse/core"
+//import {createGlobalState} from  "@vueuse/core"
+import { defineStore } from "pinia";
 
-export const useGlobalState = createGlobalState(() => {
+//export const useGlobalState = createGlobalState(() => {
+export const usePermisos = defineStore("permisos", () => {
     const permisos = ref([]); // permisos de usuario
 
     function cargarPermisos() {

@@ -74,7 +74,7 @@ import 'md-editor-v3/lib/style.css';
 
 import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
 
-import { onThemeChange, updateTheme } from '@/composables/themeadapter'
+import { onThemeChange, updateTheme } from '@/composables/themeAdapter'
 
 const key = ref(import.meta.env.VITE_TINY_API_KEY)
 

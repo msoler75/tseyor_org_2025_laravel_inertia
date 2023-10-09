@@ -268,7 +268,7 @@ export default [
           items: [
             {
               title: "Meditaciones",
-              route: "equipos",
+              route: "meditaciones",
               description: "Meditaciones para el trabajo interior",
               icon: "ph:file-text-duotone",
             },

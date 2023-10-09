@@ -28,9 +28,9 @@
 </template>
 
 <script setup>
-import {useGlobalState} from '@/Stores/global'
+import {usePermisos} from '@/Stores/permisos'
 
-const state = useGlobalState()
+const permisos = usePermisos()
 
 const props = defineProps({
     necesita: { type: [String, Array], required: true },
@@ -39,8 +39,8 @@ const props = defineProps({
 })
 
 const editor = computed(()=>
-    typeof props.necesita == 'string' ? state.permisos.value.includes(props.necesita) :
-    state.permisos.value.filter(permiso => props.necesita.includes(permiso)).length
+    typeof props.necesita == 'string' ? permisos.permisos.includes(props.necesita) :
+    permisos.permisos.filter(permiso => props.necesita.includes(permiso)).length
 )
 
 const isDraft = ref(props.contenido && ('visibilidad' in props.contenido) && props.contenido.visibilidad != 'P')

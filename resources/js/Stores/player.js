@@ -1,9 +1,11 @@
 import { ref } from "vue";
-import { createGlobalState } from "@vueuse/core";
+//import { createGlobalState } from "@vueuse/core";
+import { defineStore } from "pinia";
 
-export const usePlayer = createGlobalState(() => {
+//export const usePlayer = createGlobalState(() => {
+export const usePlayer = defineStore("player", () => {
   // elemento HTML 5 de audio
-  var audio = null
+  var audio = null;
 
   // variables reactivas
 
@@ -12,17 +14,16 @@ export const usePlayer = createGlobalState(() => {
   const radioMode = ref(false);
   const closed = ref(true);
   const mini = ref(true);
-  const autoplay = ref(true)
-  const duration = ref(0)
-  const currentTime = ref(0)
-
+  const autoplay = ref(true);
+  const duration = ref(0);
+  const currentTime = ref(0);
 
   // variables computadas
 
-  const src = computed(()=>audio.src)
-  const title = computed(()=>music.value?music.value.title:null)
-  const artist = computed(()=>music.value?music.value.artist:null)
-  const audioElem = computed(()=>audio)
+  const src = computed(() => audio.src);
+  const title = computed(() => (music.value ? music.value.title : null));
+  const artist = computed(() => (music.value ? music.value.artist : null));
+  const audioElem = computed(() => audio);
 
   /**
    * Métodos
@@ -30,9 +31,9 @@ export const usePlayer = createGlobalState(() => {
 
   // crea un objeto de audio HTML5
   function init() {
-    if(!document) return
+    if (!document) return;
 
-    audio =new Audio()
+    audio = new Audio();
     audio.autoplay = autoplay.value; // Suponiendo que `autoplay` es una variable definida previamente
     audio.className = "hidden";
 
@@ -55,57 +56,54 @@ export const usePlayer = createGlobalState(() => {
   }
 
   function play(newMusic, isRadio) {
-    console.log('player.play')
+    if (process.env.NODE_ENV === "development") console.log("player.play");
     music.value = newMusic;
     radioMode.value = !!isRadio;
     closed.value = false;
 
-
-    audio.src = newMusic.src
-    audio.play()
+    audio.src = newMusic.src;
+    audio.play();
   }
 
   function pause() {
-    audio.pause()
-    state.value = 'paused'
+    audio.pause();
+    state.value = "paused";
   }
 
-    // alterna entre play y pausa
-  function playPause()
-  {
-    if(audio.paused)
-    {
-        audio.play()
+  // alterna entre play y pausa
+  function playPause() {
+    try {
+      if (audio.paused) {
+        audio.play();
         state.value = "playing";
-    }
-    else {
-        audio.pause()
+      } else {
+        audio.pause();
         state.value = "paused";
+      }
+    } catch (e) {
+      console.error("playPause interrupted", e);
+      state.value = "error";
     }
   }
 
   function close() {
-    audio.pause()
-    state.value = 'stopped'
-    closed.value = true
+    audio.pause();
+    closed.value = true;
   }
-
 
   const stepForward = () => {
     if (!audio.paused && !audio.ended) {
-        // audio.pause()
-        audio.currentTime += 30;
-        // audio.play()
+      // audio.pause()
+      audio.currentTime += 30;
+      // audio.play()
     } else {
-        audio.currentTime += 30;
+      audio.currentTime += 30;
     }
-};
+  };
 
-const stepBackward = () => {
+  const stepBackward = () => {
     audio.currentTime -= 30;
-};
-
-
+  };
 
   /**
    * Eventos
@@ -116,11 +114,11 @@ const stepBackward = () => {
 
   const error = (ev) => {
     if (process.env.NODE_ENV === "development") console.log("error", ev);
+    state.value = "error";
   };
 
   const loadedmetadata = (ev) => {
-    if (process.env.NODE_ENV === "development")
-      console.log("loadedmetadata", ev);
+    if (process.env.NODE_ENV === "development") console.log("loadedmetadata", ev);
   };
 
   const canplay = (ev) => {
@@ -160,5 +158,24 @@ const stepBackward = () => {
     if (process.env.NODE_ENV === "development") console.log("waiting", ev);
   };
 
-  return { music, audioElem, state, radioMode, closed, mini, duration, currentTime, src,title, artist, init, play, pause, playPause, close, stepForward, stepBackward };
+  return {
+    music,
+    audioElem,
+    state,
+    radioMode,
+    closed,
+    mini,
+    duration,
+    currentTime,
+    src,
+    title,
+    artist,
+    init,
+    play,
+    pause,
+    playPause,
+    close,
+    stepForward,
+    stepBackward,
+  };
 });
