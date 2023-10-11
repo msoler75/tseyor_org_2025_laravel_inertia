@@ -17,7 +17,6 @@ declare module 'vue' {
     AppLayout: typeof import('./resources/js/Layouts/AppLayout.vue')['default']
     ApplicationLogo: typeof import('./resources/js/Components/ApplicationLogo.vue')['default']
     ApplicationMark: typeof import('./resources/js/Components/ApplicationMark.vue')['default']
-    AudioBadge: typeof import('./resources/js/Components/AudioBadge.vue')['default']
     AudioPlayer: typeof import('./resources/js/Components/AudioPlayer.vue')['default']
     Audios: typeof import('./resources/js/Components/Audios.vue')['default']
     AuthenticationCard: typeof import('./resources/js/Components/AuthenticationCard.vue')['default']

@@ -32,7 +32,6 @@ class ComunicadosController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
-        $vista = $request->input('vista');
         $categoria = $request->input('categoria');
         $año = $request->input('ano');
         $orden = $request->input('orden');
@@ -60,13 +59,12 @@ class ComunicadosController extends Controller
 
         $resultados = $resultados
             ->paginate(15)
-            ->appends(['buscar' => $buscar,  'vista' => $vista, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden]);
+            ->appends(['buscar' => $buscar,  'categoria' => $categoria, 'ano' => $año, 'orden' => $orden]);
 
         if ($buscar)
             Busquedas::formatearResultados($resultados, $buscar);
 
         return Inertia::render('Comunicados/Index', [
-            'vista' => $vista,
             'categoria' => $categoria,
             'ano' => $año,
             'orden' => $orden,
