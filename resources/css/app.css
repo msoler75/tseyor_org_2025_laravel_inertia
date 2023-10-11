@@ -225,4 +225,8 @@ main a.hover\:right-arrow:hover::after {
 
 
 
-
+#v3-img-preview-container-id .arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

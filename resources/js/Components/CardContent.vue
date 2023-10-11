@@ -67,4 +67,7 @@ const descriptionFinal = computed(() => {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-</style>
+.dark .text-gradient {
+    background-image: linear-gradient(to bottom,#fff 0%,#fff 70%,#0000 95%)
+  }
+  </style>

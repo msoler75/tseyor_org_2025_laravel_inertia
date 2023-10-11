@@ -34,13 +34,13 @@
                 <option v-for="año of añosBusqueda" :key="año" :value="año">{{ año }}</option>
             </select>
 
-            <SearchInput :arguments="{ ...busqueda, vista: vistaActual }" class="ml-auto sel-trans" v-model="query"
+            <SearchInput :arguments="busqueda" class="ml-auto sel-trans" v-model="query"
                 @focus="focusQuery" @blur="blurQuery" />
 
             <div class="select-none text-2xl cursor-pointer" title="Elige la visualización en modo tabla o listado"
-                @click="tabla = !tabla">
-                <Icon v-show="!tabla" icon="ph:text-align-justify-bold" />
-                <Icon v-show="tabla" icon="ph:grid-four-duotone" />
+                @click="selectors.vistaComunicados=selectors.vistaComunicados!='tabla'?'tabla':'tarjetas'">
+                <Icon v-show="selectors.vistaComunicados!='tabla'" icon="ph:squares-four-duotone" />
+                <Icon v-show="selectors.vistaComunicados=='tabla'" icon="ph:grid-four-duotone" />
             </div>
         </div>
 
@@ -52,12 +52,12 @@
 
                 <div class="flex justify-between items-center my-5">
 
-                    <SearchResultsHeader :results="listado" :arguments="{ ...busqueda, vista: vistaActual }" />
+                    <SearchResultsHeader :results="listado" :arguments="busqueda" />
 
                 </div>
 
 
-                <div v-if="(!vistaActual || vistaActual == 'tarjetas') && listado.data && listado.data.length > 0"
+                <div v-if="(selectors.vistaComunicados != 'tabla') && listado.data && listado.data.length > 0"
                     class="grid gap-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
 
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
@@ -67,7 +67,7 @@
                 </div>
 
 
-                <table v-else-if="vistaActual == 'tabla' && listado.data && listado.data.length > 0" class="table">
+                <table v-else-if="selectors.vistaComunicados == 'tabla' && listado.data && listado.data.length > 0" class="table bg-base-100">
                     <thead>
                         <tr class="table-row">
                             <th scope="col" class="table-header">Fecha</th>
@@ -98,11 +98,11 @@
 <script setup>
 
 import AppLayout from '@/Layouts/AppLayout.vue'
-
+import { useSelectors } from '@/Stores/selectors'
 defineOptions({ layout: AppLayout })
+const selectors = useSelectors()
 
 const props = defineProps({
-    vista: { default: '' },
     categoria: {},
     ano: {},
     orden: {},
@@ -130,14 +130,6 @@ for (var i = 2004; i <= añoActual; i++)
 const query = ref("")
 const busqueda = ref({ categoria: props.categoria || 'todos', ano: props.ano || 'todos', orden: props.orden || 'recientes' })
 
-const tabla = ref(props.vista == 'tabla')
-const vistaActual = ref(props.vista)
-
-watch(tabla, (value) => {
-    console.log(value)
-    vistaActual.value = value ? 'tabla' : 'tarjetas'
-})
-
 watch(busqueda, (value) => {
     if (!inQuery.value) {
         const currentUrl = window.location.href.replace(/\?.*/, '')
@@ -154,9 +146,6 @@ watch(busqueda, (value) => {
 
         if (busqueda.value.orden != 'recientes')
             args.orden = busqueda.value.orden
-
-        if (vistaActual.value == 'tabla')
-            args.vista = 'tabla'
 
         router.get(currentUrl, args)
     }
@@ -188,26 +177,19 @@ onMounted(() => {
 
 <style scoped>
 .table {
-    @apply min-w-full divide-y divide-gray-200 bg-white;
-}
-
-.table-row {
-    @apply bg-gray-50;
+    @apply min-w-full divide-y divide-gray-500/50 ;
 }
 
 .table-header {
-    @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+    @apply px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider;
 }
 
-.table-body {
-    @apply divide-y divide-gray-200;
-}
 
 .table-cell {
-    @apply px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900;
+    @apply px-6 py-4 whitespace-nowrap text-sm font-medium;
 }
 
 .sel-trans {
-    @apply bg-transparent border-transparent border-b-gray-500;
+    @apply bg-transparent border-transparent border-b-gray-500/50;
 }
 </style>
