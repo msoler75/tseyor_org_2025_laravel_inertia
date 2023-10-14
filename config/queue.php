@@ -112,4 +112,9 @@ return [
     | Maximum time processing queue un controller, in seconds
     */
     'max_time_processing_queue' => 60,
+
+    /*
+    | Minimum time required to process a job, in seconds
+    */
+    'min_time_job' => 20,
 ];

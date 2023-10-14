@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\WordImport;
 use App\Models\Comunicado;
 use App\Http\Requests\StoreComunicadoRequest;
+use App\Jobs\ProcesarComunicado;
 
 /**
  * Class ComunicadoCrudController
@@ -209,6 +210,19 @@ class ComunicadoCrudController extends CrudController
         ]);
 
         CRUD::field('visibilidad')->type('visibilidad');
+
+
+
+        Comunicado::saved(function ($comunicado) {
+            // Aquí puedes escribir tu lógica personalizada
+            // que se ejecutará después de crear o actualizar un comunicado.
+
+            if($comunicado->audios || $comunicado->pdf) {
+                dispatch( new ProcesarComunicado($comunicado));
+            }
+        });
+
+
     }
 
     private function mediaFolder()
