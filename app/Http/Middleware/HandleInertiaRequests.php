@@ -49,32 +49,32 @@ class HandleInertiaRequests extends Middleware
                 ]
             ]);*/
 
-/*
-         $_ = new T(__CLASS__, "share:ziggy_create_Array");
+        /*
+                 $_ = new T(__CLASS__, "share:ziggy_create_Array");
 
-        // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
-        $cache_routes = base_path("bootstrap/cache/routes-v7.php");
-        $cache_ziggy = base_path("bootstrap/cache/ziggy.json");
-        if (
-            !file_exists($cache_ziggy) ||
-            !file_exists($cache_routes) ||
-            filemtime($cache_routes) > filemtime($cache_ziggy)
-        ) {
-            $ziggy_arr = (new Ziggy)->toArray();
-            file_put_contents($cache_ziggy, json_encode($ziggy_arr));
-        } else {
-            try {
-                $ziggy_content = file_get_contents($cache_ziggy);
-                $ziggy_arr = json_decode($ziggy_content, true);
-            } catch (\Exception $e) {
-                $ziggy_arr = (new Ziggy)->toArray(); // por si hubiera algun error
-            }
-        }
-        $_ = null;
-        // dd($ziggy_arr);
+                // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
+                $cache_routes = base_path("bootstrap/cache/routes-v7.php");
+                $cache_ziggy = base_path("bootstrap/cache/ziggy.json");
+                if (
+                    !file_exists($cache_ziggy) ||
+                    !file_exists($cache_routes) ||
+                    filemtime($cache_routes) > filemtime($cache_ziggy)
+                ) {
+                    $ziggy_arr = (new Ziggy)->toArray();
+                    file_put_contents($cache_ziggy, json_encode($ziggy_arr));
+                } else {
+                    try {
+                        $ziggy_content = file_get_contents($cache_ziggy);
+                        $ziggy_arr = json_decode($ziggy_content, true);
+                    } catch (\Exception $e) {
+                        $ziggy_arr = (new Ziggy)->toArray(); // por si hubiera algun error
+                    }
+                }
+                $_ = null;
+                // dd($ziggy_arr);
 
 
-*/
+        */
         //T::xprint();
         //die;
 
@@ -87,7 +87,7 @@ class HandleInertiaRequests extends Middleware
                 'message' => fn() => $request->session()->get('message')
             ],
             'anuncio' => config('app.anuncio'),
-            'meta_image_default' => config('app.metaImageDefault'),
+            'meta_image_default' => config('seo.image.fallback'),
             'csrf_token' => csrf_token(),
             /*'ziggy' => function () use (ç$request, $ziggy_arr) {
                 return array_merge($ziggy_arr, [

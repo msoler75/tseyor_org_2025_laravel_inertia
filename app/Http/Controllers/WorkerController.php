@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Queue\WorkerOptions;
-use App\Workers\WorkerEmails;
+use App\Workers\WorkerLock;
 
 class WorkerController extends Controller
 {
@@ -41,7 +41,7 @@ class WorkerController extends Controller
         $resetScope = null; // Puedes proporcionar un callable aquí si es necesario
 
         // Crea una instancia del Worker con los parámetros necesarios
-        $worker = new WorkerEmails($manager, $events, $exceptions, $isDownForMaintenance, $resetScope);
+        $worker = new WorkerLock($manager, $events, $exceptions, $isDownForMaintenance, $resetScope);
 
         while (true) {
 

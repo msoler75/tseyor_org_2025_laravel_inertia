@@ -11,6 +11,7 @@
         "backpack/theme-tabler": "^1.0",
         "guzzlehttp/guzzle": "^7.7",
         "inertiajs/inertia-laravel": "^0.6.8",
+        "jargoud/laravel-backpack-dropzone": "^3.0",
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^3.2",
         "laravel/sanctum": "^3.2",
@@ -75,5 +76,11 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "laravel-backpack-dropzone": {
+            "type": "vcs",
+            "url": "https://github.com/jargoud/laravel-backpack-dropzone.git"
+        }
+    }
 }

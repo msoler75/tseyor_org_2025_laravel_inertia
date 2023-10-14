@@ -17,7 +17,7 @@ class SEO
                 'seo' => new SEOData(
                     title: $pagina->titulo,
                     description: $pagina->descripcion,
-                    image: $pagina->imagen ?? env('META_IMAGE_DEFAULT', null)
+                    image: $pagina->imagen ?? config('seo.image.fallback')
                 )
             ];
     }

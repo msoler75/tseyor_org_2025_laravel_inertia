@@ -5,7 +5,7 @@ namespace App\Imports;
 use \DateTime;
 use \Exception;
 use App\Models\Comunicado;
-use App\Pigmalion\WordImport;
+use App\Services\WordImport;
 use Illuminate\Support\Str;
 
 class ComunicadoImport

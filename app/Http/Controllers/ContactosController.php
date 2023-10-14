@@ -46,7 +46,7 @@ class ContactosController extends Controller
             'paisActivo' => $pais,
             'listado' => $resultados,
             'paises' => $paises,
-            'apiKey' => env('GOOGLE_MAPS_API_KEY', ''),
+            'apiKey' => config('services.google_maps.apikey')
         ])
             ->withViewData(SEO::get('contactos'));
     }
@@ -77,7 +77,7 @@ class ContactosController extends Controller
 
     public static function obtenerCoordenadas($direccion)
     {
-        $apiKey = env('GOOGLE_MAPS_API_KEY', ''); // Reemplaza con tu propia API key de Google Maps
+        $apiKey = config('services.google_maps.apikey'); // Reemplaza con tu propia API key de Google Maps
 
         $client = new Client();
 
