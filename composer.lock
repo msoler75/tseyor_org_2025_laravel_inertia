@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c2e75914b1b0eb688bd0d479ce43449b",
+    "content-hash": "bc25b02af1088c7d1cebbf8f9822b08d",
     "packages": [
         {
             "name": "backpack/basset",
@@ -1873,6 +1873,78 @@
             "time": "2023-01-17T01:02:51+00:00"
         },
         {
+            "name": "jargoud/laravel-backpack-dropzone",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jargoud/laravel-backpack-dropzone.git",
+                "reference": "dcaeac6a38861b4d5688ef7badd8e919221f91ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jargoud/laravel-backpack-dropzone/zipball/dcaeac6a38861b4d5688ef7badd8e919221f91ef",
+                "reference": "dcaeac6a38861b4d5688ef7badd8e919221f91ef",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/support": "^10.0",
+                "php": "^8.2",
+                "pion/laravel-chunk-upload": "^1.5"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^4.0",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jargoud\\LaravelBackpackDropzone\\Providers\\LaravelBackpackDropzoneServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jargoud\\LaravelBackpackDropzone\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Jargoud\\LaravelBackpackDropzone\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test-coverage": [
+                    "vendor/bin/phpunit --coverage-html coverage"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jérémy Argoud",
+                    "email": "jeremy.argoud@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Dropzone field for Laravel Backpack",
+            "homepage": "https://github.com/jargoud/laravel-backpack-dropzone",
+            "keywords": [
+                "jargoud",
+                "laravel-backpack-dropzone"
+            ],
+            "support": {
+                "source": "https://github.com/jargoud/laravel-backpack-dropzone/tree/3.0.0",
+                "issues": "https://github.com/jargoud/laravel-backpack-dropzone/issues"
+            },
+            "time": "2023-05-24T12:51:58+00:00"
+        },
+        {
             "name": "jaybizzle/crawler-detect",
             "version": "v1.2.115",
             "source": {
@@ -3692,6 +3764,72 @@
                 }
             ],
             "time": "2023-02-25T19:38:58+00:00"
+        },
+        {
+            "name": "pion/laravel-chunk-upload",
+            "version": "v1.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pionl/laravel-chunk-upload.git",
+                "reference": "dcf5cf42059910242c31fc34d0ea147d07478473"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pionl/laravel-chunk-upload/zipball/dcf5cf42059910242c31fc34d0ea147d07478473",
+                "reference": "dcf5cf42059910242c31fc34d0ea147d07478473",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "5.2 - 5.8 | ^6.0 | ^7.0 | ^8.0 | ^9.0 | ^10.0",
+                "illuminate/filesystem": "5.2 - 5.8 | ^6.0 | ^7.0 | ^8.0 | ^9.0 | ^10.0",
+                "illuminate/http": "5.2 - 5.8 | ^6.0 | ^7.0 | ^8.0 | ^9.0 | ^10.0",
+                "illuminate/support": "5.2 - 5.8 | ^6.0 | ^7.0 | ^8.0 | ^9.0 | ^10.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16.0",
+                "mockery/mockery": "^1.1.0 | ^1.3.0",
+                "overtrue/phplint": "^1.1 | ^2.0",
+                "phpunit/phpunit": "5.7 | 6.0 | 7.0 | 7.5 | 8.4 | ^8.5 | ^9.3 | ^10.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Pion\\Laravel\\ChunkUpload\\Providers\\ChunkUploadServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Pion\\Laravel\\ChunkUpload\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Martin Kluska",
+                    "email": "martin@kluska.cz"
+                }
+            ],
+            "description": "Service for chunked upload with several js providers",
+            "support": {
+                "issues": "https://github.com/pionl/laravel-chunk-upload/issues",
+                "source": "https://github.com/pionl/laravel-chunk-upload/tree/v1.5.2"
+            },
+            "funding": [
+                {
+                    "url": "https://revolut.me/martinpv7n",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/pionl",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-03-15T21:02:42+00:00"
         },
         {
             "name": "pragmarx/google2fa",

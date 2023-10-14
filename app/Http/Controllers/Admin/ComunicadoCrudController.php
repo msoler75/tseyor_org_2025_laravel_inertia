@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
-use App\Pigmalion\WordImport;
+use App\Services\WordImport;
 use App\Models\Comunicado;
+use App\Http\Requests\StoreComunicadoRequest;
 
 /**
  * Class ComunicadoCrudController
@@ -49,44 +50,44 @@ class ComunicadoCrudController extends CrudController
          */
 
         $this->crud->addColumn([
-            'name'  => 'id',
+            'name' => 'id',
             'label' => 'id',
-            'type'  => 'number'
+            'type' => 'number'
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'titulo',
+            'name' => 'titulo',
             'label' => 'Título',
-            'type'  => 'text'
+            'type' => 'text'
         ]);
 
 
         $this->crud->addColumn([
             'name' => 'updated_at',
             'label' => 'Modificado',
-            'type' => 'datetime', // Puedes usar 'datetime' o 'date' según el formato que desees mostrar
+            'type' => 'datetime',
+            // Puedes usar 'datetime' o 'date' según el formato que desees mostrar
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'categoria',
+            'name' => 'categoriaNombre',
             'label' => 'Categoría',
-            'type'  => 'enum',
-            'options'     => ['GEN' => 'General', 'TAP' => 'TAP', 'DOCEM' => 'Doce del Muulasterio', 'MUUL' => 'Muul']
+            'type' => 'text',
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'numero',
+            'name' => 'numero',
             'label' => 'Numero',
-            'type'  => 'text',
+            'type' => 'text',
             'wrapper' => [
                 'class' => 'form-group col-md-3'
             ]
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
+            'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
@@ -107,10 +108,12 @@ class ComunicadoCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+        CRUD::setValidation(StoreComunicadoRequest::class);
+        /*CRUD::setValidation([
             'titulo' => 'required|min:8',
+            'texto'=>'required',
             'descripcion' => 'max:400',
-        ]);
+        ]);*/
 
         CRUD::setFromDb(); // set fields from db columns.
 
@@ -121,17 +124,18 @@ class ComunicadoCrudController extends CrudController
             ]
         ]);
 
-        CRUD::field([   // select_from_array
-            'name'        => 'categoria',
-            'label'       => "Categoría",
-            'type'        => 'select_from_array',
-            'options'     => ['GEN' => 'General', 'TAP' => 'TAP', 'DOCEM' => 'Doce del Muulasterio', 'MUUL' => 'Muul'],
+        CRUD::field([
+            // select_from_array
+            'name' => 'categoria',
+            'label' => "Categoría",
+            'type' => 'select_from_array',
+            'options' => ['0' => 'General', '1' => 'TAP', '2' => 'Doce del Muulasterio', '3' => 'Muul'],
             'allows_null' => false,
-            'default'     => 'GEN',
+            'default' => '0',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
-            'wrapper'   => [
-                'class'      => 'form-group col-md-3'
+            'wrapper' => [
+                'class' => 'form-group col-md-3'
             ],
         ]);
 
@@ -145,7 +149,64 @@ class ComunicadoCrudController extends CrudController
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
-        CRUD::field('audios')->type('json');
+
+        CRUD::field('ano')->type('number')->attributes(['min' => 2001, 'max' => 2054])->wrapper([
+            'class' => 'form-group col-md-3'
+        ]);
+
+        CRUD::field('fecha_comunicado')->wrapper([
+            'class' => 'form-group col-md-3'
+        ]);
+
+        // CRUD::field('audios')->type('json');
+
+        CRUD::field([
+            'name' => 'audios',
+            'label' => 'Audios',
+            'type' => 'dropzone',
+            'view_namespace' => 'dropzone::fields',
+            'allow_multiple' => true,
+            // https://github.com/jargoud/laravel-backpack-dropzone
+
+            'config' => [
+                // any option from the Javascript library
+                // https://github.com/dropzone/dropzone/blob/main/src/options.js
+                'chunkSize' => 1024 * 1024 * 2,
+                // for 2 MB
+                'chunking' => true,
+                'acceptedFiles' => '.mp3,.mpeg,.mpg,.mp4,.m4a,.wav,.opus,.flac,.wma,.aac,.ogg,.au',
+                'addRemoveLinks'=> true,
+                'dictRemoveFileConfirmation'=> '¿Quieres eliminar este archivo?',
+                'dictRemoveFile' => 'Eliminar'
+            ],
+            // 'disk' => 'public',
+            /*'type' => 'upload_multple',
+            'attributes' => [
+                'accept' => ".mp4,audio/*"
+            ],
+            'withFiles' => [
+                'disk' => 'public',
+                // the disk where file will be stored
+                'path' => 'media/comunicados/temp',
+                // the path inside the disk where file will be stored
+            ] */
+        ]);
+
+        CRUD::field([
+            'name' => 'pdf',
+            'label' => 'Pdf',
+            'type' => 'upload',
+            // 'disk' => 'public',
+            'attributes' => [
+                'accept' => "application/pdf"
+            ],
+            'withFiles' => [
+                'disk' => 'public',
+                // the disk where file will be stored
+                'path' => 'uploads/pdf',
+                // the path inside the disk where file will be stored
+            ]
+        ]);
 
         CRUD::field('visibilidad')->type('visibilidad');
     }
@@ -199,10 +260,10 @@ class ComunicadoCrudController extends CrudController
         if ($id)
             $this->crud->addColumn(
                 [
-                    'name'     => 'my_custom_html',
-                    'label'    => 'Ver en Web',
-                    'type'     => 'custom_html',
-                    'value'    => "<a href='/comunicados/$id?borrador' target='_blank'>➡️ Ver Comunicado en el Sitio Web</a>"
+                    'name' => 'my_custom_html',
+                    'label' => 'Ver en Web',
+                    'type' => 'custom_html',
+                    'value' => "<a href='/comunicados/$id?borrador' target='_blank'>➡️ Ver Comunicado en el Sitio Web</a>"
                 ]
             );
 
@@ -214,9 +275,9 @@ class ComunicadoCrudController extends CrudController
         CRUD::column('imagen')->type('image');
 
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
+            'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
@@ -236,7 +297,7 @@ class ComunicadoCrudController extends CrudController
             $imported = new WordImport();
 
             $contenido = Comunicado::create([
-                "titulo" => "Importado de ". $_FILES['file']['name'] . "_". substr(str_shuffle('0123456789'), 0, 5),
+                "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
                 "texto" => $imported->content
             ]);
 

@@ -111,4 +111,10 @@ class ComunicadosController extends Controller
             'listado' => $comunicados
         ]);
     }
+
+
+    public function procesar() {
+        // comprueba en los comunicados si hay audios que aun no se han convertido, o si hay pdf que no se han preparado con sus metadatos
+        $audiosPendientes = Comunicado::where('audios', 'LIKE', '%upload%');
+    }
 }

@@ -15,7 +15,8 @@
     //die;
 @endphp
 
-<JSONEditorField name="{{ $field['name'] }}" value="{{ $value }}"></JSONEditorField>
+<!-- <JSONEditorField name="{{ $field['name'] }}" value="{{ $value }}"></JSONEditorField> -->
+<textarea name="{{ $field['name'] }}" style="width: 100%; height: 200px">{{ $value }}"</textarea>
 
 {{-- HINT --}}
 @if (isset($field['hint']))

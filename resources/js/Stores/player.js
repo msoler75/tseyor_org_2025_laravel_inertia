@@ -88,6 +88,7 @@ export const usePlayer = defineStore("player", () => {
 
   function close() {
     audio.pause();
+    state.value = "stopped"
     closed.value = true;
   }
 

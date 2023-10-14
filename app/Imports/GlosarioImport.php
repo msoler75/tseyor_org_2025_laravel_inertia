@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Pigmalion\WordImport;
+use App\Services\WordImport;
 use App\Models\Termino;
 use Illuminate\Support\Facades\Log;
 

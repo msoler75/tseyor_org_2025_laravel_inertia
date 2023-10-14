@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,10 +12,15 @@ use Illuminate\Support\Facades\Auth;
  */
 class DevController extends Controller
 {
-public function loginUser1()
+    /**
+     * Logs in a user.
+     *
+     * @return JsonResponse JSON response with a success message
+     */
+    public function loginUser1(): JsonResponse
     {
         $user = User::find(3);
-        Auth::login($user); // Autenticar al usuario 1
+        Auth::login($user); // Autenticar al usuario 3
         return response()->json(['message' => 'usuario cambiado'], 200);
     }
 

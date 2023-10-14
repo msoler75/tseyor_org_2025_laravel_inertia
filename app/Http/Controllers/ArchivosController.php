@@ -354,8 +354,6 @@ class ArchivosController extends Controller
         if(!$file)
             $file = $request->file('file');
 
-
-
             if (!$file) {
                 return response()->json([
                     'error' => 'noFileGiven'

@@ -205,9 +205,4 @@ return [
     */
     'anuncio' => env('ANUNCIO_GLOBAL_HTML'),
 
-    /**
-     * Meta image en el header, para la imagen por defecto (SEO)
-     */
-    'metaImageDefault' => env('META_IMAGE_DEFAULT'),
-
 ];
