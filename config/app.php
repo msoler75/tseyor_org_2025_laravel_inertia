@@ -205,4 +205,5 @@ return [
     */
     'anuncio' => env('ANUNCIO_GLOBAL_HTML'),
 
+
 ];

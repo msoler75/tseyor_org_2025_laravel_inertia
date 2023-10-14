@@ -55,7 +55,7 @@ class WorkerController extends Controller
             $elapsedTime = time() - $start;
             $remainingTime = $maxExecutionTime - $elapsedTime;
 
-            if (!$pendingTasks || $remainingTime < 15) {
+            if (!$pendingTasks || $remainingTime < config("queue.min_time_job", 20)) {
                 break; // Detén la ejecución si queda poco tiempo
             }
         }
