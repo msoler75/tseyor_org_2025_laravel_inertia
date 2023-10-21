@@ -7,6 +7,10 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
 use App\Services\WordImport;
 use App\Models\Informe;
+use App\Jobs\ProcesarAudios;
+
+// esto permite testar la conversión de audio al guardar el comunicado
+define('TESTAR_CONVERTIDOR_AUDIO', false);
 
 /**
  * Class InformeCrudController
@@ -28,7 +32,7 @@ class InformeCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Informe::class);
+        CRUD::setModel(Informe::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/informe');
         CRUD::setEntityNameStrings('informe', 'informes');
     }
@@ -41,43 +45,44 @@ class InformeCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-              // CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
 
-         $this->crud->addColumn([
-            'name'  => 'id',
+        $this->crud->addColumn([
+            'name' => 'id',
             'label' => 'id',
-            'type'  => 'number'
+            'type' => 'number'
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'titulo',
+            'name' => 'titulo',
             'label' => 'Título',
-            'type'  => 'text'
+            'type' => 'text'
         ]);
 
 
         $this->crud->addColumn([
             'name' => 'updated_at',
             'label' => 'Modificado',
-            'type' => 'datetime', // Puedes usar 'datetime' o 'date' según el formato que desees mostrar
+            'type' => 'datetime',
+            // Puedes usar 'datetime' o 'date' según el formato que desees mostrar
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'categoria',
+            'name' => 'categoria',
             'label' => 'Categoría',
-            'type'  => 'text',
+            'type' => 'text',
         ]);
 
 
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
+            'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
@@ -106,17 +111,18 @@ class InformeCrudController extends CrudController
         CRUD::setFromDb(); // set fields from db columns.
 
 
-        CRUD::field([   // select_from_array
-            'name'        => 'categoria',
-            'label'       => "Categoría",
-            'type'        => 'select_from_array',
-            'options'     => ['General' => 'General', 'OD' => 'Orden del día', 'Acta' => 'Acta', 'Anexo'=>'Anexo', 'Acuerdo'=>'Acuerdo'],
+        CRUD::field([
+            // select_from_array
+            'name' => 'categoria',
+            'label' => "Categoría",
+            'type' => 'select_from_array',
+            'options' => ['General' => 'General', 'OD' => 'Orden del día', 'Acta' => 'Acta', 'Anexo' => 'Anexo', 'Acuerdo' => 'Acuerdo'],
             'allows_null' => false,
-            'default'     => 'General',
+            'default' => 'General',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
-            'wrapper'   => [
-                'class'      => 'form-group col-md-3'
+            'wrapper' => [
+                'class' => 'form-group col-md-3'
             ],
         ])->after('titulo');
 
@@ -129,12 +135,60 @@ class InformeCrudController extends CrudController
 
         CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
-        CRUD::field('audios')->type('json');
+        CRUD::field([
+            'name' => 'audios',
+            'label' => 'Audios',
+            'type' => 'dropzone',
+            'view_namespace' => 'dropzone::fields',
+            'allow_multiple' => true,
+            // https://github.com/jargoud/laravel-backpack-dropzone
+
+            'config' => [
+                // any option from the Javascript library
+                // https://github.com/dropzone/dropzone/blob/main/src/options.js
+                'chunkSize' => 1024 * 1024 * 2,
+                // for 2 MB
+                'chunking' => true,
+                'acceptedFiles' => '.mp3,.mpeg,.mpg,.mp4,.m4a,.wav,.opus,.flac,.wma,.aac,.ogg,.au',
+                'addRemoveLinks'=> true,
+                'dictRemoveFileConfirmation'=> '¿Quieres eliminar este archivo?',
+                'dictRemoveFile' => 'Eliminar'
+            ],
+            // 'disk' => 'public',
+            /*'type' => 'upload_multple',
+            'attributes' => [
+                'accept' => ".mp4,audio/*"
+            ],
+            'withFiles' => [
+                'disk' => 'public',
+                // the disk where file will be stored
+                'path' => 'media/comunicados/temp',
+                // the path inside the disk where file will be stored
+            ] */
+        ]);
 
         // CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
         CRUD::field('visibilidad')->type('visibilidad');
+
+        Informe::saved(function ($informe) {
+            // Aquí puedes escribir tu lógica personalizada
+            // que se ejecutará después de crear o actualizar un informe.
+
+            if ($informe->audios) {
+                // dd($comunicado);
+                if (TESTAR_CONVERTIDOR_AUDIO) {
+                    $p = new ProcesarAudios($informe);
+                    $p->handle();
+                } else {
+                    dispatch(new ProcesarAudios($informe));
+                }
+
+            }
+        });
     }
+
+
 
 
     private function mediaFolder()
@@ -179,7 +233,7 @@ class InformeCrudController extends CrudController
             $imported = new WordImport();
 
             $contenido = Informe::create([
-                "titulo" => "Importado de ". $_FILES['file']['name'] . "_". substr(str_shuffle('0123456789'), 0, 5),
+                "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
                 "texto" => $imported->content
             ]);
 

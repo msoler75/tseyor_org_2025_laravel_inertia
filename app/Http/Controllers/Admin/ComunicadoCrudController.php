@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\WordImport;
 use App\Models\Comunicado;
 use App\Http\Requests\StoreComunicadoRequest;
-use App\Jobs\ProcesarComunicado;
+use App\Jobs\ProcesarAudios;
 
 
 // esto permite testar la conversión de audio al guardar el comunicado
@@ -221,14 +221,14 @@ class ComunicadoCrudController extends CrudController
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un comunicado.
 
-            if($comunicado->audios || $comunicado->pdf) {
+            if($comunicado->audios) {
                 // dd($comunicado);
                 if(TESTAR_CONVERTIDOR_AUDIO) {
-                    $p = new ProcesarComunicado($comunicado);
+                    $p = new ProcesarAudios($comunicado);
                     $p->handle();
                 }
                 else{
-                    dispatch( new ProcesarComunicado($comunicado));
+                    dispatch( new ProcesarAudios($comunicado));
                 }
 
             }

@@ -37,18 +37,16 @@ class ProcesarAudios implements ShouldQueue
         $audios_procesados = 0;
         $index = 0;
 
+        $audios = $this->contenido->obtenerAudiosArray();
         $folder = $this->contenido->generarRutaAudios();
 
         // $folder = "media/informes/{$equipo->slug}/$año";
-        foreach ($this->contenido->audios as $key => $audio) {
+        foreach ($audios as $key => $audio) {
             if ($this->mustBeProcessed($audio)) {
                 $audios_pendientes++;
                 if ($audios_procesados == 0) // solo procesa 1 audio cada vez, ya que es muy costoso
                 {
-
                     $outputFile = $this->contenido->generarNombreAudio($index);
-
-                    // $outputFile = "$equipo $fecha $tipo" . ($multiple ? " " . ('a' + $idx) : "") . ".mp3";
                     $outputFilePath = $folder . "/" . $outputFile;
                     $converter = new AudioConverter($audio, $outputFilePath);
                     $converter->convert();

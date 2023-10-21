@@ -12,8 +12,6 @@
             <div class="prose mx-auto">
                 <h1>{{ comunicado.titulo }}</h1>
 
-                audios: {{comunicado.audios}}
-
                 <div class="text-neutral text-sm mb-2 flex justify-between">
                     <Audios :audios="parseAudios(comunicado.audios, comunicado.titulo)"/>
                     <TimeAgo :date="comunicado.fecha_comunicado" :includeTime="false" />

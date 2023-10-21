@@ -41,11 +41,11 @@ class Informe extends ContenidoConAudios
     public function generarNombreAudio($index)
     {
         $tipo = $this->categoria;
-        $fecha = date('ymd', $this->created_at);
-        $audios = gettype($this->audios) === "string" ? json_decode($this->audios, true) : $this->audios;
+        $fecha = $this->created_at->format('ymd');
+        $audios = $this->obtenerAudiosArray();
         $multiple = count($audios) > 1;
         $equipo = $this->equipo;
-        return "$equipo $fecha $tipo" . ($multiple ? " " . ('a' + $index) : "") . ".mp3";
+        return "{$equipo->nombre} - $fecha $tipo" . ($multiple ? " " . ('a' + $index) : "") . ".mp3";
     }
 
     /**
@@ -53,7 +53,7 @@ class Informe extends ContenidoConAudios
      **/
     public function generarRutaAudios()
     {
-        $año = date('Y', $this->created_at);
+        $año = $this->created_at->year;
         return "media/informes/{$this->equipo->slug}/$año";
     }
 

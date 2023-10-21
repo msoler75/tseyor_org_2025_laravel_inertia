@@ -36,6 +36,7 @@ class Comunicado extends ContenidoConAudios
     ];
 
     // hooks del modelo
+    /*
     protected static function booted()
     {
         // cuando se guarda el item
@@ -43,6 +44,7 @@ class Comunicado extends ContenidoConAudios
             // $comunicado->slug = "heidi2";
         });
     }
+    */
 
     /* public static function search($term)
     {
@@ -76,7 +78,7 @@ class Comunicado extends ContenidoConAudios
         }
 
         $fecha = date('ymd', strtotime($this->fecha_comunicado));
-        $audios = gettype($this->audios) === "string" ? json_decode($this->audios, true) : $this->audios;
+        $audios = $this->obtenerAudiosArray();
         $multiple = count($audios) > 1;
         return "TSEYOR $fecha ({$this->numero})" . $tipo . ($multiple ? " " . ('a' + $index) : "") . ".mp3";
     }
