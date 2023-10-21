@@ -2,31 +2,30 @@
 
 namespace App\Jobs;
 
-use App\Models\Comunicado;
 use Illuminate\Support\Facades\Bus;
 use App\Services\AudioConverter;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use App\Models\ContenidoConAudios;
 
 /**
  * Procesa los audios y el pdf de un comunicado (si es necesario)
  */
-class ProcesarComunicado implements ShouldQueue
+class ProcesarAudios implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public Comunicado $comunicado;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(public Comunicado $c)
+    public function __construct(public ContenidoConAudios $contenido)
     {
-        $this->comunicado = $c;
+        $this->contenido = $contenido;
     }
 
     /**
@@ -34,53 +33,44 @@ class ProcesarComunicado implements ShouldQueue
      */
     public function handle(): void
     {
-        switch ($this->comunicado->categoria) {
-            case 1:
-                $tipo = "TAP";
-                break;
-            case 2:
-                $tipo = "DDM";
-                break;
-            case 3:
-                $tipo = "MUUL";
-                break;
-        }
-
-        $fecha = date('ymd', strtotime($this->comunicado->fecha_comunicado));
-        $audios = json_decode($this->comunicado->audios, true);
-        $multiple = count($audios) > 1;
-
         $audios_pendientes = 0;
         $audios_procesados = 0;
-        $idx = 0;
-        foreach ($audios as $key => $audio) {
+        $index = 0;
+
+        $folder = $this->contenido->generarRutaAudios();
+
+        // $folder = "media/informes/{$equipo->slug}/$año";
+        foreach ($this->contenido->audios as $key => $audio) {
             if ($this->mustBeProcessed($audio)) {
                 $audios_pendientes++;
                 if ($audios_procesados == 0) // solo procesa 1 audio cada vez, ya que es muy costoso
                 {
-                    $outputFile = "TSEYOR $fecha ({$this->comunicado->num})" . $tipo . ($multiple ? " " . ('a' + $idx) : "") . ".mp3";
 
-                    $converter = new AudioConverter($audio, $outputFile);
+                    $outputFile = $this->contenido->generarNombreAudio($index);
+
+                    // $outputFile = "$equipo $fecha $tipo" . ($multiple ? " " . ('a' + $idx) : "") . ".mp3";
+                    $outputFilePath = $folder . "/" . $outputFile;
+                    $converter = new AudioConverter($audio, $outputFilePath);
                     $converter->convert();
 
-                    $audios[$key] = $outputFile;
+                    $audios[$key] = $outputFilePath;
 
                     $audios_procesados++;
                     $audios_pendientes--;
                 }
             }
 
-            $idx++;
+            $index++;
         }
 
         if ($audios_procesados > 0) {
-            $this->comunicado->audios = json_encode($audios);
-            $this->comunicado->save();
+            $this->contenido->audios = json_encode($audios);
+            $this->contenido->save();
         }
 
         if ($audios_pendientes > 0) {
             // Encolar la tarea nuevamente
-            Bus::dispatch(new self($this->comunicado));
+            Bus::dispatch(new self($this->contenido));
         }
     }
 

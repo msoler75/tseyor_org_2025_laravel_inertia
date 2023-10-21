@@ -10,6 +10,10 @@ use App\Models\Comunicado;
 use App\Http\Requests\StoreComunicadoRequest;
 use App\Jobs\ProcesarComunicado;
 
+
+// esto permite testar la conversión de audio al guardar el comunicado
+define('TESTAR_CONVERTIDOR_AUDIO', false);
+
 /**
  * Class ComunicadoCrudController
  * @package App\Http\Controllers\Admin
@@ -30,7 +34,7 @@ class ComunicadoCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Comunicado::class);
+        CRUD::setModel(Comunicado::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/comunicado');
         CRUD::setEntityNameStrings('comunicado', 'comunicados');
     }
@@ -218,7 +222,15 @@ class ComunicadoCrudController extends CrudController
             // que se ejecutará después de crear o actualizar un comunicado.
 
             if($comunicado->audios || $comunicado->pdf) {
-                dispatch( new ProcesarComunicado($comunicado));
+                // dd($comunicado);
+                if(TESTAR_CONVERTIDOR_AUDIO) {
+                    $p = new ProcesarComunicado($comunicado);
+                    $p->handle();
+                }
+                else{
+                    dispatch( new ProcesarComunicado($comunicado));
+                }
+
             }
         });
 

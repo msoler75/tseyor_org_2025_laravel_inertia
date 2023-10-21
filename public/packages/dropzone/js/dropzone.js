@@ -120,22 +120,18 @@
         renameFilename: null,
         renameFile: null,
         forceFallback: !1,
-        dictDefaultMessage: "Drop files here to upload",
-        dictFallbackMessage:
-          "Your browser does not support drag'n'drop file uploads.",
-        dictFallbackText:
-          "Please use the fallback form below to upload your files like in the olden days.",
-        dictFileTooBig:
-          "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
-        dictInvalidFileType: "You can't upload files of this type.",
-        dictResponseError: "Server responded with {{statusCode}} code.",
-        dictCancelUpload: "Cancel upload",
-        dictUploadCanceled: "Upload canceled.",
-        dictCancelUploadConfirmation:
-          "Are you sure you want to cancel this upload?",
-        dictRemoveFile: "Remove file",
+        dictDefaultMessage: "Arrastra los archivos aquí para subirlos",
+        dictFallbackMessage: "Tu navegador no admite la carga de archivos mediante arrastrar y soltar.",
+        dictFallbackText: "Utiliza el formulario de respaldo a continuación para subir tus archivos como en los viejos tiempos.",
+        dictFileTooBig: "El archivo es demasiado grande ({{filesize}}MiB). Tamaño máximo de archivo: {{maxFilesize}}MiB.",
+        dictInvalidFileType: "No puedes subir archivos de este tipo.",
+        dictResponseError: "El servidor respondió con el código {{statusCode}}.",
+        dictCancelUpload: "Cancelar subida",
+        dictUploadCanceled: "Subida cancelada.",
+        dictCancelUploadConfirmation: "¿Estás seguro de que deseas cancelar esta subida?",
+        dictRemoveFile: "Eliminar archivo",
         dictRemoveFileConfirmation: null,
-        dictMaxFilesExceeded: "You can not upload any more files.",
+        dictMaxFilesExceeded: "No puedes subir más archivos.",
         dictFileSizeUnits: { tb: "TB", gb: "GB", mb: "MB", kb: "KB", b: "b" },
         init() {},
         params(e, t, i) {

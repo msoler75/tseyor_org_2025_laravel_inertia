@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
+use App\Models\ContenidoConAudios;
 use Laravel\Scout\Searchable;
 use App\Traits\EsCategorizable;
 
 
-class Informe extends ContenidoBaseModel
+class Informe extends ContenidoConAudios
 {
     use CrudTrait;
     use Searchable;
@@ -27,16 +27,42 @@ class Informe extends ContenidoBaseModel
     ];
 
 
-      public function equipo()
+    public function equipo()
     {
         return $this->belongsTo(Equipo::class, 'equipo_id', 'id');
     }
 
 
-      // SCOUT
+    // ContenidoConAudios
+
+    /**
+     * Nombre de los archivos de audio
+     **/
+    public function generarNombreAudio($index)
+    {
+        $tipo = $this->categoria;
+        $fecha = date('ymd', $this->created_at);
+        $audios = gettype($this->audios) === "string" ? json_decode($this->audios, true) : $this->audios;
+        $multiple = count($audios) > 1;
+        $equipo = $this->equipo;
+        return "$equipo $fecha $tipo" . ($multiple ? " " . ('a' + $index) : "") . ".mp3";
+    }
+
+    /**
+     * En qué carpeta se guardarán los audios
+     **/
+    public function generarRutaAudios()
+    {
+        $año = date('Y', $this->created_at);
+        return "media/informes/{$this->equipo->slug}/$año";
+    }
 
 
-     /**
+
+    // SCOUT
+
+
+    /**
      * Solo se indexa si acaso está publicado
      */
     public function shouldBeSearchable(): bool
@@ -45,7 +71,7 @@ class Informe extends ContenidoBaseModel
     }
 
 
-   /**
+    /**
      * Get the indexable data array for the model.
      *
      * @return array<string, mixed>
@@ -53,7 +79,8 @@ class Informe extends ContenidoBaseModel
     public function toSearchableArray(): array
     {
         return [
-            'id' => $this->id, // <- Always include the primary key
+            'id' => $this->id,
+            // <- Always include the primary key
             'titulo' => $this->titulo,
             'descripcion' => $this->descripcion,
             'texto' => $this->texto,
