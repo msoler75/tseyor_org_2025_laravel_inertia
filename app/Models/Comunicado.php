@@ -3,12 +3,10 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
+use App\Models\ContenidoConAudios;
 use Laravel\Scout\Searchable;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Arr;
 
-class Comunicado extends ContenidoBaseModel
+class Comunicado extends ContenidoConAudios
 {
     use CrudTrait;
     use Searchable;
@@ -54,6 +52,43 @@ class Comunicado extends ContenidoBaseModel
             ->orWhere('numero', '=', "{$term}");
     }
     */
+
+
+
+    // ContenidoConAudios
+
+    /**
+     * Nombre de los archivos de audio
+     **/
+    public function generarNombreAudio($index)
+    {
+        $tipo = "";
+        switch (intval($this->categoria)) {
+            case 1:
+                $tipo = " TAP";
+                break;
+            case 2:
+                $tipo = " DDM";
+                break;
+            case 3:
+                $tipo = " MUUL";
+                break;
+        }
+
+        $fecha = date('ymd', strtotime($this->fecha_comunicado));
+        $audios = gettype($this->audios) === "string" ? json_decode($this->audios, true) : $this->audios;
+        $multiple = count($audios) > 1;
+        return "TSEYOR $fecha ({$this->numero})" . $tipo . ($multiple ? " " . ('a' + $index) : "") . ".mp3";
+    }
+
+    /**
+     * En qué carpeta se guardarán los audios
+     **/
+    public function generarRutaAudios()
+    {
+        $año = date('Y', strtotime($this->fecha_comunicado));
+        return "media/comunicados/audios/$año";
+    }
 
 
     // ACCESSORS

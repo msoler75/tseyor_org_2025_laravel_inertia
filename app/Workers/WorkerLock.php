@@ -23,10 +23,11 @@ class WorkerLock extends Worker
         $lockName = 'worker_emails_lock';
         $lockTimeout = 1; // Tiempo de expiración del bloqueo en segundos
 
-        $lock = Cache::lock($lockName, $lockTimeout);
+        //$lock = Cache::lock($lockName, $lockTimeout);
 
         // adquiere el lock
-        if ($lock->get()) {
+        //if ($lock->get())
+        {
 
             try {
 
@@ -64,7 +65,7 @@ class WorkerLock extends Worker
                 Log::error($e->getMessage());
 
             } finally {
-                $lock->release();
+                //$lock->release();
                 $this->sleep($options->sleep);
             }
         }
