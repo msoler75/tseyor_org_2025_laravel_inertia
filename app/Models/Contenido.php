@@ -59,9 +59,9 @@ class Contenido extends Model
 
         return [
             'id' => $this->id, // <- Always include the primary key
-            'titulo' => $this->titulo,
+            'title' => $this->titulo,
             // 'descripcion' => in_array($this->coleccion, $coleccionesConDescripcion) ? $this->descripcion : "",
-            'texto_busqueda' => $this->texto_busqueda,
+            'content' => $this->texto_busqueda,
         ];
     }
 }

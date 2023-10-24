@@ -34,8 +34,8 @@ class Termino extends ContenidoBaseModel
     {
         return [
             'id' => $this->id,
-            'nombre' => $this->nombre,
-            'texto' => $this->texto,
+            'title' => $this->nombre,
+            'content' => $this->texto,
         ];
     }
 

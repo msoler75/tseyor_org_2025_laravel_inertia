@@ -67,10 +67,9 @@ class Noticia extends ContenidoBaseModel
     {
         return [
             'id' => $this->id, // <- Always include the primary key
-            'titulo' => $this->titulo,
-            'texto' => $this->texto,
-            'imagen' => $this->imagen,
-            'updated_at' => $this->updated_at,
+            'title' => $this->titulo,
+            'description' => $this->descripcion,
+            'content' => $this->texto
         ];
     }
 }
