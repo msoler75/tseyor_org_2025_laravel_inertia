@@ -39,8 +39,8 @@ class Libro extends ContenidoBaseModel
     {
         return [
             'id' => $this->id,
-            'titulo' => $this->titulo,
-            'descripcion' => $this->descripcion
+            'title' => $this->titulo,
+            'content' => $this->descripcion
         ];
     }
 

@@ -277,13 +277,12 @@ class Comunicado extends ContenidoConAudios
         return [
             'id' => $this->id,
             // <- Always include the primary key
-            'titulo' => $this->titulo,
-            'imagen' => $this->imagen,
-            'descripcion' => $this->descripcion,
-            'texto' => $this->texto,
+            'title' => $this->titulo,
+            'description' => $this->descripcion,
+            'content' => $this->texto,
             'categoria' => $this->categoria,
             'numero' => $this->numero,
-            'fecha_comunicado' => $this->fecha_comunicado,
+            // 'fecha_comunicado' => $this->fecha_comunicado,
             'ano' => $this->ano
         ];
     }

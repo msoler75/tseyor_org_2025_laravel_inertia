@@ -73,9 +73,9 @@ class Meditacion extends ContenidoBaseModel
     {
         return [
             'id' => $this->id, // <- Always include the primary key
-            'titulo' => $this->titulo,
-            'descripcion' => $this->descripcion,
-            'texto' => $this->texto,
+            'title' => $this->titulo,
+            'description' => $this->descripcion,
+            'content' => $this->texto,
         ];
     }
 }

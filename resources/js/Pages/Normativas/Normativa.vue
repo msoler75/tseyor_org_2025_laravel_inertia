@@ -12,7 +12,7 @@
                 <h1>{{ normativa.titulo }}</h1>
 
                 <div class="text-neutral text-sm mb-2 flex justify-between">
-                    <TimeAgo :date="normativa.updated_at" :includeTime="false" />
+                    <div class="ml-auto">Última actualización: <TimeAgo :date="normativa.updated_at" :includeTime="false" /></div>
                 </div>
             </div>
 
