@@ -1,6 +1,7 @@
 <template>
     <div class="flex gap-2">
-        <span v-for="audio of audios" :key="audio" class="badge badge-primary cursor-pointer gap-1 select-none"
+        <span v-for="audio of audios" :key="audio" class="badge cursor-pointer gap-1 select-none"
+            :class="player.music && player.music.src == audio.src?'badge-secondary':'badge-primary'"
             @click="clickPlay(audio)">
             <Icon icon="material-symbols:volume-up-outline-rounded" class="mr-2" />
             <template v-if="player.music && player.music.src == audio.src">
@@ -29,17 +30,21 @@ const props = defineProps({
 const player = usePlayer()
 
 function clickPlay(audio) {
-    switch (player.state) {
-        /*case 'error':
-            player.play()
-            break*/
-        case 'playing':
-        case 'paused':
-            player.playPause()
-            break
-        default:
-            player.play(audio)
+    if (player.music && player.music.src == audio.src) {
+        switch (player.state) {
+            /*case 'error':
+                player.play()
+                break*/
+            case 'playing':
+            case 'paused':
+                player.playPause()
+                break
+            default:
+                player.play(audio)
+        }
     }
+    // nuevo audio
+    else player.play(audio)
 }
 
 </script>

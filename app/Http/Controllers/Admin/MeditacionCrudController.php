@@ -28,7 +28,7 @@ class MeditacionCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Meditacion::class);
+        CRUD::setModel(Meditacion::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/meditacion');
         CRUD::setEntityNameStrings('meditacion', 'meditaciones');
     }
@@ -127,7 +127,7 @@ class MeditacionCrudController extends CrudController
 
         CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
-        CRUD::field('audios')->type('json');
+        CRUD::field('audios')->type('text')->hint('Ruta a los audios separados por coma');
 
         CRUD::field('visibilidad')->type('visibilidad');
     }

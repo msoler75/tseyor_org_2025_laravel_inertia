@@ -27,17 +27,28 @@ class Meditacion extends ContenidoBaseModel
     ];
 
 
-    /* public static function search($term)
+     // ContenidoConAudios
+
+    /**
+     * Nombre de los archivos de audio
+     **/
+    public function generarNombreAudio($index)
     {
-        return static::query()
-        ->where('visibilidad', 'P')
-        ->where(function($query) use ($term){
-           $query->where('titulo', 'LIKE', "%{$term}%")
-                ->orWhere('descripcion', 'LIKE', "%{$term}%")
-                 ->orWhere('texto', 'LIKE', "%{$term}%");
-        });
+        $tipo = $this->categoria;
+        $fecha = $this->created_at->format('ymd');
+        $audios = $this->obtenerAudiosArray();
+        $multiple = count($audios) > 1;
+        return $this->nombre . ($multiple ? " " . ('a' + $index) : "") . ".mp3";
     }
-    */
+
+    /**
+     * En qué carpeta se guardarán los audios
+     **/
+    public function generarRutaAudios()
+    {
+        $año = $this->created_at->year;
+        return "media/informes/{$this->equipo->slug}/$año";
+    }
 
 
 
