@@ -1,17 +1,22 @@
 export const parseAudios = (json, titulo) => {
-    try {
-        const audios = JSON.parse(json)
-        const r = []
-        const some = audios.length > 1
-        for (var idx in audios) {
-            const audio = audios[idx]
-            const label = some ? `Audio ${idx}` : 'Audio'
-            const title = some ? `${titulo} (${idx})` : titulo
-            r.push({ title, label, src: `/storage/${audio}` })
-        }
-        return r
+  var audios = [];
+  try {
+    audios = JSON.parse(json);
+  } catch (err) {
+    audios = json.split(",").map((x) => x.trim());
+  }
+  try {
+    const r = [];
+    const some = audios.length > 1;
+    for (var idx in audios) {
+      const index = parseInt(idx) + 1;
+      const audio = audios[idx];
+      const label = some ? `Audio ${index}` : "Audio";
+      const title = some ? `${titulo} (audio ${index})` : titulo;
+      r.push({ title, label, src: `/storage/${audio}` });
     }
-    catch (err) {
-        return []
-    }
-}
+    return r;
+  } catch (err) {
+    return [];
+  }
+};

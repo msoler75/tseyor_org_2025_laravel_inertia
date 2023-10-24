@@ -20,7 +20,7 @@ export const usePlayer = defineStore("player", () => {
 
   // variables computadas
 
-  const src = computed(() => audio.src);
+  //const src = computed(() => audio.src);
   const title = computed(() => (music.value ? music.value.title : null));
   const artist = computed(() => (music.value ? music.value.artist : null));
   const audioElem = computed(() => audio);
@@ -168,7 +168,7 @@ export const usePlayer = defineStore("player", () => {
     mini,
     duration,
     currentTime,
-    src,
+    // src,
     title,
     artist,
     init,
