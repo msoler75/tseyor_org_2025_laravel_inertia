@@ -12,7 +12,7 @@ use App\Jobs\ProcesarAudios;
 
 
 // esto permite testar la conversión de audio al guardar el comunicado
-define('TESTAR_CONVERTIDOR_AUDIO', false);
+define('TESTAR_CONVERTIDOR_AUDIO2', false);
 
 /**
  * Class ComunicadoCrudController
@@ -223,7 +223,7 @@ class ComunicadoCrudController extends CrudController
 
             if($comunicado->audios) {
                 // dd($comunicado);
-                if(TESTAR_CONVERTIDOR_AUDIO) {
+                if(TESTAR_CONVERTIDOR_AUDIO2) {
                     $p = new ProcesarAudios($comunicado);
                     $p->handle();
                 }

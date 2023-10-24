@@ -27,6 +27,7 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\PublicacionesController;
 use App\Http\Controllers\InformesController;
 use App\Http\Controllers\MeditacionesController;
+use App\Http\Controllers\NormativasController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\DevController;
 use App\Pigmalion\SEO;
@@ -173,6 +174,9 @@ Route::get('/publicaciones/{slug}', [PublicacionesController::class, 'show'])->w
 
 Route::get('/meditaciones', [MeditacionesController::class, 'index'])->name('meditaciones');
 Route::get('/meditaciones/{slug}', [MeditacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('meditacion');
+
+Route::get('/normativas', [NormativasController::class, 'index'])->name('normativas');
+Route::get('/normativas/{slug}', [NormativasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('normativa');
 
 Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios');
 Route::get('/usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->name('usuarios.buscar');
