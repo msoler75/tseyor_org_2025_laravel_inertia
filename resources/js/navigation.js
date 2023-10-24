@@ -274,7 +274,7 @@ export default [
             },
             {
               title: "Normativas",
-              route: "equipos",
+              route: "normativas",
               description: "Estatutos, protocolos y normativas",
               icon: "ph:hand-palm-duotone",
             },

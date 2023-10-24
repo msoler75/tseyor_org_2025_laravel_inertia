@@ -5,19 +5,19 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
-
+use App\Traits\EsCategorizable;
 
 class Normativa extends ContenidoBaseModel
 {
     use CrudTrait;
     use Searchable;
+    use EsCategorizable;
 
     protected $fillable = [
         'titulo',
         'slug',
         'descripcion',
         'texto',
-        'imagen',
         'published_at',
         'visibilidad'
     ];
@@ -25,22 +25,6 @@ class Normativa extends ContenidoBaseModel
     protected $dates = [
         'published_at',
     ];
-
-    /* public static function search($term)
-    {
-        return static::query()
-        ->where('visibilidad', 'P')
-        ->where(function($query) use ($term){
-           $query->where('titulo', 'LIKE', "%{$term}%")
-                ->orWhere('descripcion', 'LIKE', "%{$term}%")
-                 ->orWhere('texto', 'LIKE', "%{$term}%");
-        });
-    }
-    */
-
-
-
-
 
 
     // SCOUT
@@ -65,8 +49,8 @@ class Normativa extends ContenidoBaseModel
         return [
             'id' => $this->id, // <- Always include the primary key
             'titulo' => $this->titulo,
-            'texto' => $this->texto,
-            'categoria' => $this->categoria,
+            'descripcion' => $this->descripcion,
+            'texto' => $this->texto
         ];
     }
 }
