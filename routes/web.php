@@ -22,6 +22,7 @@ use App\Http\Controllers\PortadaController;
 use App\Http\Controllers\CursosController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\ExperienciasController;
 use App\Http\Controllers\ContactarController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\PublicacionesController;
@@ -138,12 +139,21 @@ Route::get('/cursos', [CursosController::class, 'index'])->name('cursos');
 Route::get('/radio', [RadioController::class, 'index'])->name('radio');
 
 Route::get('inscripcion', function () {
-    return Inertia::render('Cursos/Inscripcion', [])
+    return Inertia::render('Cursos/NuevaInscripcion', [])
         ->withViewData(SEO::get('inscripcion'));
-})->name('cursos.inscripcion');
+})->name('cursos.inscripcion.nueva');
 Route::post('/cursos/inscripcion', [InscripcionController::class, 'store'])->name('cursos.inscripcion.store');
 
-Route::get('/contactar',  function () {
+
+Route::get('/experiencias', [ExperienciasController::class, 'index'])->name('experiencias');
+Route::get('/experiencias/{id}', [ExperienciasController::class, 'show'])->name('experiencia');
+Route::get('experiencias/nueva', function () {
+    return Inertia::render('Experiencias/Nueva', [])
+        ->withViewData(SEO::get('experiencia.nueva'));
+})->name('experiencia.nueva');
+Route::post('/experiencias', [ExperienciasController::class, 'store'])->name('experiencia.store');
+
+Route::get('/contactar', function () {
     return Inertia::render('Contactar', [])
         ->withViewData(SEO::get('contactar'));
 })->name('contactar');
@@ -205,7 +215,7 @@ Route::get('/__process_jobs', [WorkerController::class, 'process'])->name('proce
 // EQUIPOS
 
 Route::get('/equipos', [EquiposController::class, 'index'])->name('equipos');
-Route::get('/equipos/nuevo', function() {
+Route::get('/equipos/nuevo', function () {
     return Inertia::render('Equipos/Nuevo', []);
 })->name('equipo.crear');
 Route::post('/equipos', [EquiposController::class, 'store'])->name('equipo.nuevo');

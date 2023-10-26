@@ -44,7 +44,7 @@ Route::group([
     Route::crud('pagina', 'PaginaCrudController');
     Route::crud('termino', 'TerminoCrudController');
     Route::crud('video', 'VideoCrudController');
-
+    Route::crud('experiencia', 'ExperienciaCrudController');
 
     Route::post('comunicado/importar/crear', 'ComunicadoCrudController@importCreate');
     Route::post('comunicado/importar/actualizar/{id}', 'ComunicadoCrudController@importUpdate');
@@ -77,6 +77,7 @@ Route::group([
 
 
     Route::get('search/{model}', 'SearchModelController@index');
+
 
 
 
