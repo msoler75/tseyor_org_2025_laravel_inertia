@@ -37,7 +37,7 @@ use App\Pigmalion\SEO;
 
 // a borrar:
 
-Route::get('/glosario/parse', [TerminosController::class, 'parse'])->name('parse');
+Route::get('glosario/parse', [TerminosController::class, 'parse'])->name('parse');
 
 
 /*
@@ -57,144 +57,144 @@ Route::get('/glosario/parse', [TerminosController::class, 'parse'])->name('parse
 
 
 
-Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
-Route::get('/settings/{id}', [SettingsController::class, 'show'])->name('setting');
+Route::get('settings', [SettingsController::class, 'index'])->name('settings');
+Route::get('settings/{id}', [SettingsController::class, 'show'])->name('setting');
 
-Route::get('/test', function () {
+Route::get('test', function () {
     return Inertia::render('Test', []);
 })->name('test');
 
-Route::get('/', [PortadaController::class, 'index'])->name('portada');
+Route::get('', [PortadaController::class, 'index'])->name('portada');
 
-Route::get('/novedades', [ContenidosController::class, 'index'])->name('novedades');
-Route::get('/buscar', [ContenidosController::class, 'search'])->name('buscar');
+Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades');
+Route::get('buscar', [ContenidosController::class, 'search'])->name('buscar');
 
-Route::get('/archivos', [ArchivosController::class, 'archivos'])->name('archivos0');
-Route::get('/archivos{ruta}', [ArchivosController::class, 'archivos'])->where(['ruta' => '(\/.+)?'])->name('archivos');
+Route::get('archivos', [ArchivosController::class, 'archivos'])->name('archivos0');
+Route::get('archivos{ruta}', [ArchivosController::class, 'archivos'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
-Route::get('/filemanager{ruta}', [ArchivosController::class, 'filemanager'])->where(['ruta' => '(\/.*)?'])->name('filemanager');
+Route::get('filemanager{ruta}', [ArchivosController::class, 'filemanager'])->where(['ruta' => '(\/.*)?'])->name('filemanager');
 
-Route::get('/storage/{ruta}', [ArchivosController::class, 'storage'])->where(['ruta' => '(\/.+)?'])->name('storage');
+Route::get('storage/{ruta}', [ArchivosController::class, 'storage'])->where(['ruta' => '(\/.+)?'])->name('storage');
 
-Route::get('/audios', [AudiosController::class, 'index'])->name('audios');
-Route::get('/audios/{slug}', [AudiosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('audio');
+Route::get('audios', [AudiosController::class, 'index'])->name('audios');
+Route::get('audios/{slug}', [AudiosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('audio');
 
-Route::get('/videos', function () {
+Route::get('videos', function () {
     return Inertia::render('Videos', [])
         ->withViewData(SEO::get('videos'));
 })->name('videos');
 
 
 
-Route::get('/noticias', [NoticiasController::class, 'index'])->name('noticias');
-Route::get('/noticias/{slug}', [NoticiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('noticia');
+Route::get('noticias', [NoticiasController::class, 'index'])->name('noticias');
+Route::get('noticias/{slug}', [NoticiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('noticia');
 
-Route::get('/comunicados', [ComunicadosController::class, 'index'])->name('comunicados');
-Route::get('/comunicados/{slug}', [ComunicadosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('comunicado');
-Route::get('/archivo/comunicados', [ComunicadosController::class, 'archive'])->name('archivo.comunicados');
+Route::get('comunicados', [ComunicadosController::class, 'index'])->name('comunicados');
+Route::get('comunicados/{slug}', [ComunicadosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('comunicado');
+Route::get('archivo/comunicados', [ComunicadosController::class, 'archive'])->name('archivo.comunicados');
 
-Route::get('/libros', [LibrosController::class, 'index'])->name('libros');
-Route::get('/libros/{slug}', [LibrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('libro');
-
-
-Route::get('/entradas', [EntradasController::class, 'index'])->name('entradas');
-Route::get('/entradas/{slug}', [EntradasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('entrada');
-
-Route::get('/glosario', [TerminosController::class, 'index'])->name('terminos');
-Route::get('/glosario/{slug}', [TerminosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('termino');
-
-Route::get('/guias', [GuiasController::class, 'index'])->name('guias');
-Route::get('/guias/{slug}', [GuiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('guia');
-
-Route::get('/lugares', [LugaresController::class, 'index'])->name('lugares');
-Route::get('/lugares/{slug}', [LugaresController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('lugar');
-
-Route::get('/eventos', [EventosController::class, 'index'])->name('eventos');
-Route::get('/eventos/{slug}', [EventosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('evento');
+Route::get('libros', [LibrosController::class, 'index'])->name('libros');
+Route::get('libros/{slug}', [LibrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('libro');
 
 
-Route::get('/donde-estamos', [ContactosController::class, 'index'])->name('contactos');
-Route::get('/contactos/{slug}', [ContactosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('contacto');
+Route::get('entradas', [EntradasController::class, 'index'])->name('entradas');
+Route::get('entradas/{slug}', [EntradasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('entrada');
 
-Route::get('/centros', [CentrosController::class, 'index'])->name('centros');
-Route::get('/centros/{slug}', [CentrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('centro');
+Route::get('glosario', [TerminosController::class, 'index'])->name('terminos');
+Route::get('glosario/{slug}', [TerminosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('termino');
 
-Route::get('/quienes-somos', function () {
+Route::get('guias', [GuiasController::class, 'index'])->name('guias');
+Route::get('guias/{slug}', [GuiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('guia');
+
+Route::get('lugares', [LugaresController::class, 'index'])->name('lugares');
+Route::get('lugares/{slug}', [LugaresController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('lugar');
+
+Route::get('eventos', [EventosController::class, 'index'])->name('eventos');
+Route::get('eventos/{slug}', [EventosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('evento');
+
+
+Route::get('donde-estamos', [ContactosController::class, 'index'])->name('contactos');
+Route::get('contactos/{slug}', [ContactosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('contacto');
+
+Route::get('centros', [CentrosController::class, 'index'])->name('centros');
+Route::get('centros/{slug}', [CentrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('centro');
+
+Route::get('quienes-somos', function () {
     return Inertia::render('Presentacion/QuienesSomos', [])
         ->withViewData(SEO::get('quienes-somos'));
 })->name('quienes-somos');
 
-Route::get('/origenes-de-tseyor', function () {
+Route::get('origenes-de-tseyor', function () {
     return Inertia::render('Presentacion/OrigenesTseyor', [])
         ->withViewData(SEO::get('origenes-de-tseyor'));
 })->name('origenes-de-tseyor');
 
-Route::get('/filosofia', function () {
+Route::get('filosofia', function () {
     return Inertia::render('Presentacion/Filosofia', [])
         ->withViewData(SEO::get('filosofia'));
 })->name('filosofia');
 
-Route::get('/cursos', [CursosController::class, 'index'])->name('cursos');
+Route::get('cursos', [CursosController::class, 'index'])->name('cursos');
 
-Route::get('/radio', [RadioController::class, 'index'])->name('radio');
+Route::get('radio', [RadioController::class, 'index'])->name('radio');
 
 Route::get('inscripcion', function () {
     return Inertia::render('Cursos/NuevaInscripcion', [])
         ->withViewData(SEO::get('inscripcion'));
 })->name('cursos.inscripcion.nueva');
-Route::post('/cursos/inscripcion', [InscripcionController::class, 'store'])->name('cursos.inscripcion.store');
+Route::post('inscripcion/store', [InscripcionController::class, 'store'])->name('cursos.inscripcion.store');
 
 
-Route::get('/experiencias', [ExperienciasController::class, 'index'])->name('experiencias');
-Route::get('/experiencias/{id}', [ExperienciasController::class, 'show'])->name('experiencia');
+Route::post('experiencia/store', [ExperienciasController::class, 'store']);
+Route::get('experiencias', [ExperienciasController::class, 'index'])->name('experiencias');
 Route::get('experiencias/nueva', function () {
-    return Inertia::render('Experiencias/Nueva', [])
+    return Inertia::render('Experiencias/NuevaExperiencia', [])
         ->withViewData(SEO::get('experiencia.nueva'));
 })->name('experiencia.nueva');
-Route::post('/experiencias', [ExperienciasController::class, 'store'])->name('experiencia.store');
+Route::get('experiencias/{id}', [ExperienciasController::class, 'show'])->name('experiencia');
 
-Route::get('/contactar', function () {
+Route::get('contactar', function () {
     return Inertia::render('Contactar', [])
         ->withViewData(SEO::get('contactar'));
 })->name('contactar');
-Route::post('/contactar/enviar', [ContactarController::class, 'send'])->name('contactar.send');
-Route::get('/contactar/test', [ContactarController::class, 'test'])->name('contactar.test');
+Route::post('contactar/enviar', [ContactarController::class, 'send'])->name('contactar.send');
+Route::get('contactar/test', [ContactarController::class, 'test'])->name('contactar.test');
 
-Route::get('/ong', function () {
+Route::get('ong', function () {
     return Inertia::render('Ong/Index', [])
         ->withViewData(SEO::get('ong'));
 })->name('ong');
-Route::get('/ong/muular', function () {
+Route::get('ong/muular', function () {
     return Inertia::render('Ong/Muular', [])
         ->withViewData(SEO::get('muular'));
 })->name('muular');
 
-Route::get('/utg', [EquiposController::class, 'index_utg'])->name('utg');
+Route::get('utg', [EquiposController::class, 'index_utg'])->name('utg');
 Route::get(
     '/utg/departamentos',
     function () {
-        return Redirect::to('/equipos?categoria=utg');
+        return Redirect::to('equipos?categoria=utg');
     }
 )->name('utg.departamentos');
-Route::get('/utg/departamentos/{slug}', [EquiposController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('utg.departamento');
+Route::get('utg/departamentos/{slug}', [EquiposController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('utg.departamento');
 
-Route::get('/publicaciones', [PublicacionesController::class, 'index'])->name('publicaciones');
-Route::get('/publicaciones/{slug}', [PublicacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('publicacion');
+Route::get('publicaciones', [PublicacionesController::class, 'index'])->name('publicaciones');
+Route::get('publicaciones/{slug}', [PublicacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('publicacion');
 
 
-Route::get('/meditaciones', [MeditacionesController::class, 'index'])->name('meditaciones');
-Route::get('/meditaciones/{slug}', [MeditacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('meditacion');
+Route::get('meditaciones', [MeditacionesController::class, 'index'])->name('meditaciones');
+Route::get('meditaciones/{slug}', [MeditacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('meditacion');
 
-Route::get('/normativas', [NormativasController::class, 'index'])->name('normativas');
-Route::get('/normativas/{slug}', [NormativasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('normativa');
+Route::get('normativas', [NormativasController::class, 'index'])->name('normativas');
+Route::get('normativas/{slug}', [NormativasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('normativa');
 
-Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios');
-Route::get('/usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->name('usuarios.buscar');
-Route::get('/usuarios/_permisos', [UsuariosController::class, 'permissions'])->name('usuario.permisos');
-Route::get('/usuarios/{slug}', [UsuariosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('usuario');
+Route::get('usuarios', [UsuariosController::class, 'index'])->name('usuarios');
+Route::get('usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->name('usuarios.buscar');
+Route::get('usuarios/_permisos', [UsuariosController::class, 'permissions'])->name('usuario.permisos');
+Route::get('usuarios/{slug}', [UsuariosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('usuario');
 
-Route::get('/login/1', [DevController::class, 'loginUser1'])->name('login1');
-Route::get('/login/2', [DevController::class, 'loginUser2'])->name('login2');
+Route::get('login/1', [DevController::class, 'loginUser1'])->name('login1');
+Route::get('login/2', [DevController::class, 'loginUser2'])->name('login2');
 
 
 Route::middleware([
@@ -202,53 +202,53 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
+    Route::get('dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
 
 
-Route::get('/__process_jobs', [WorkerController::class, 'process'])->name('process.jobs');
+Route::get('__process_jobs', [WorkerController::class, 'process'])->name('process.jobs');
 
 
 
 // EQUIPOS
 
-Route::get('/equipos', [EquiposController::class, 'index'])->name('equipos');
-Route::get('/equipos/nuevo', function () {
+Route::get('equipos', [EquiposController::class, 'index'])->name('equipos');
+Route::get('equipos/nuevo', function () {
     return Inertia::render('Equipos/Nuevo', []);
-})->name('equipo.crear');
-Route::post('/equipos', [EquiposController::class, 'store'])->name('equipo.nuevo');
-Route::get('/equipos/{slug}', [EquiposController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('equipo');
+})->name('equipo.nuevo');
+Route::post('equipo/store', [EquiposController::class, 'store']);
+Route::get('equipos/{slug}', [EquiposController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('equipo');
 
 
 // informes de equipo
 
-Route::get('/informes', [InformesController::class, 'index'])->name('informes');
-Route::get('/informes/{id}', [InformesController::class, 'show'])->name('informe');
-Route::get('/equipos/{slug}/informes', [InformesController::class, 'equipo'])->where('slug', '[a-z0-9\-]+')->name('equipo.informes');
+Route::get('informes', [InformesController::class, 'index'])->name('informes');
+Route::get('informes/{id}', [InformesController::class, 'show'])->name('informe');
+Route::get('equipos/{slug}/informes', [InformesController::class, 'equipo'])->where('slug', '[a-z0-9\-]+')->name('equipo.informes');
 
 // invitaciones y respuesta
-Route::post('/invitar/{idEquipo}', [EquiposController::class, 'invite'])->name('invitar');
-Route::get('/invitacion/{token}/aceptar', [EquiposController::class, 'acceptInvitation'])->name('invitacion.aceptar');
-Route::get('/invitacion/{token}/declinar', [EquiposController::class, 'declineInvitation'])->name('invitacion.declinar');
+Route::post('invitar/{idEquipo}', [EquiposController::class, 'invite'])->name('invitar');
+Route::get('invitacion/{token}/aceptar', [EquiposController::class, 'acceptInvitation'])->name('invitacion.aceptar');
+Route::get('invitacion/{token}/declinar', [EquiposController::class, 'declineInvitation'])->name('invitacion.declinar');
 
 // solicitudes y respuesta
-Route::get('/equipos/{id}/solicitudes', [EquiposController::class, 'solicitudes'])->name('equipo.solicitudes');
-Route::get('/equipos/{id}/solicitar', [EquiposController::class, 'solicitar'])->name('equipo.solicitar');
-Route::get('/solicitud/{id}/aceptar', [EquiposController::class, 'aceptarSolicitud'])->name('solicitud.aceptar');
-Route::get('/solicitud/{id}/denegar', [EquiposController::class, 'denegarSolicitud'])->name('solicitud.denegar');
+Route::get('equipos/{id}/solicitudes', [EquiposController::class, 'solicitudes'])->name('equipo.solicitudes');
+Route::get('equipos/{id}/solicitar', [EquiposController::class, 'solicitar'])->name('equipo.solicitar');
+Route::get('solicitud/{id}/aceptar', [EquiposController::class, 'aceptarSolicitud'])->name('solicitud.aceptar');
+Route::get('solicitud/{id}/denegar', [EquiposController::class, 'denegarSolicitud'])->name('solicitud.denegar');
 
 // administración de miembros
-Route::put('/equipos/{idEquipo}/{idUsuario}/agregar', [EquiposController::class, 'addMember'])->name('equipo.agregar');
-Route::put('/equipos/{idEquipo}/{idUsuario}/remover', [EquiposController::class, 'removeMember'])->name('equipo.remover');
-Route::post('/equipos/{id}', [EquiposController::class, 'update'])->name('equipo.modificar');
-Route::put('/equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
+Route::put('equipos/{idEquipo}/{idUsuario}/agregar', [EquiposController::class, 'addMember'])->name('equipo.agregar');
+Route::put('equipos/{idEquipo}/{idUsuario}/remover', [EquiposController::class, 'removeMember'])->name('equipo.remover');
+Route::post('equipos/{id}', [EquiposController::class, 'update'])->name('equipo.modificar');
+Route::put('equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
 
 
 
 
-Route::get('/phpinfo', function () {
+Route::get('phpinfo', function () {
     return phpinfo();
 });
 

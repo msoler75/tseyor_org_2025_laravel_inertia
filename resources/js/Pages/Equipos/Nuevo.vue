@@ -34,7 +34,7 @@ function submit() {
     form.clearErrors()
 
     // Send the form data to your server-side endpoint for creating a team
-    form.post(route('equipo.nuevo'), {
+    form.post('/equipo/store', {
         preserveScroll: true,
         onSuccess: (response) => {
             console.log('respuesta', response)

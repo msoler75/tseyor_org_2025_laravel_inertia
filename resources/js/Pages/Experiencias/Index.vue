@@ -9,6 +9,10 @@
         <h1>Experiencias Intedimensionales</h1>
         <p>Sueños, meditaciones, extrapolaciones y trabajos grupales.</p>
 
+        <Link :href="route('experiencia.nueva')" class="btn btn-primary">
+            <Icon icon="ph:plus-square-duotone"/> Envía tu experiencia
+        </Link>
+
         <div class="flex justify-end mb-5">
             <SearchInput />
         </div>
@@ -33,7 +37,7 @@
                 </div>
             </div>
 
-            <div class="w-full flex-grow card shadow bg-base-100 px-5 py-7">
+            <div class="cloud w-full flex-grow card shadow bg-base-100 px-5 py-7">
 
                 <SearchResultsHeader :results="listado" :category="categoriaActiva" />
 
@@ -85,3 +89,37 @@ const listado = ref(props.listado);
 // const categorias = ref(props.categorias)
 
 </script>
+
+<style scoped>
+.cloud {
+    background-color: transparent;
+    background-image: radial-gradient(white 70%, transparent 30%);
+    background-size: calc(var(--border-thickness) * 2) calc(var(--border-thickness) * 2);
+    background-position: 0 0;
+    position: relative;
+    z-index: 1;
+    --box-size: 100%;
+  --border-thickness: 5%;
+  box-shadow: none;
+}
+
+.dark .cloud {
+    background-image: radial-gradient(black 70%, transparent 30%);
+}
+
+.cloud::before {
+    content: "";
+    display: block;
+    background-color: hsla(0, 0%, 100%, 1);
+    position: absolute;
+    top: var(--border-thickness);
+    left: var(--border-thickness);
+    height: calc(var(--box-size) - var(--border-thickness) * 2);
+    width: calc(var(--box-size) - var(--border-thickness) * 2);
+    z-index: -1;
+}
+
+.dark .cloud::before {
+    background-color: rgb(0, 0, 0);
+}
+</style>
