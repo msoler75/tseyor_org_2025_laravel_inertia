@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Normativa;
+use App\Models\Experiencia;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 120; $i++) {
             $data = $this->generateRandomData();
-            Normativa::create($data);
+            Experiencia::create($data);
         }
     }
 
@@ -24,7 +24,12 @@ class DatabaseSeeder extends Seeder
     {
         $faker = \Faker\Factory::create();
 
-        $categorias = ['Muulasterios y Casas Tseyor', 'General', 'Áhora del Junantal', 'Divulgación', 'Organización'];
+        $categorias = ['Sueños',
+        'Extrapolaciones',
+        'Seiph',
+        'Otros',
+        'Experiencia de campo (Grupal)',
+        'Rescate adimensional (Grupal)'];
         // $categorias = ['Meditaciones', 'Cuentos', 'Clásica', 'Canciones', 'Reflexiones', 'Talleres'];
         //$codigos_pais = ['ES', 'MX', 'AR', 'CO', 'PE', 'CL', 'VE', 'EC', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'UY', 'PA'];
         /*
@@ -46,13 +51,15 @@ class DatabaseSeeder extends Seeder
         // $equipos = [15, 2, 3, 4];
 
         return [
-            'titulo' => $faker->text(60),
+            'nombre' => $faker->text(60),
             'categoria' => $faker->randomElement($categorias),
-            'descripcion' => $faker->paragraph(1),
+            // 'descripcion' => $faker->paragraph(1),
             //'name' => $faker->userName(),
             // 'slug' => $faker->slug(),
             //'email' =>$faker->email(),
             //'password'=>$faker->password(),
+            'fecha' => $faker->dateTime(),
+            'lugar' => $faker->text(30),
             //'audio' => $faker->randomElement($files),
             // 'equipo_id' => $faker->randomElement($equipos),
             'texto' => $faker->paragraph(20),

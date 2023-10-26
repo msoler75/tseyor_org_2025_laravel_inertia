@@ -1,11 +1,6 @@
-meditaciones.vue (publicaciones?)
-normativas.vue
-
 
 tailwindcss  -> after:content-['_↗']
-
 Ejemplo:
-
 <p>Higher resolution means more than just a better-quality image. With a Retina
 6K display, <a class="text-blue-600 after:content-['_↗'] ..." href="https://www.
 apple.com/pro-display-xdr/" target="_blank">Pro Display XDR</a> gives you

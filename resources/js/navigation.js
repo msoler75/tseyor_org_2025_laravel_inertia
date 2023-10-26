@@ -106,7 +106,7 @@ export default [
             },
             {
               title: "Inscríbete a nuestro curso",
-              route: "cursos.inscripcion",
+              route: "cursos.inscripcion.nueva",
               description: "Aprende gratis nuestra filosofía",
               icon: "ph:note-pencil-duotone",
             },
@@ -259,6 +259,12 @@ export default [
               route: "informes",
               description: "Informes de los equipos",
               icon: "ph:files-duotone",
+            },
+             {
+              title: "Experiencias",
+              description: "Experiencias interdimensionales",
+              route: "experiencias",
+              icon: "ph:butterfly-duotone",
             },
           ],
         },

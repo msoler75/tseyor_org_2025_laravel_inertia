@@ -93,3 +93,5 @@ exit;
 
 
 @endcanany
+
+<x-backpack::menu-item title="Experiencias" icon="la la-question" :link="backpack_url('experiencia')" />
