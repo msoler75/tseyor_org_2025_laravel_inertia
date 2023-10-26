@@ -25,8 +25,9 @@ class ExperienciasController extends Controller
             $resultados = Experiencia::search($buscar);
         } else {
             // obtiene los items sin busqueda
-            $resultados = Experiencia::select(['id', 'nombre', 'fecha', 'texto', 'updated_at', 'categoria'])
-                ->where('visibilidad', 'P');
+            $resultados = Experiencia::select(['id', 'nombre', 'fecha', 'lugar', 'texto', 'updated_at', 'categoria'])
+                ->where('visibilidad', 'P')
+                ->orderBy('updated_at', 'desc');
         }
 
         // parámetros
@@ -84,6 +85,9 @@ class ExperienciasController extends Controller
             'categoria' => 'required',
             'texto' => 'required|max:65000',
         ]);
+
+        if ($data['fecha'] == null)
+            $data['fecha'] = date("Y-m-d");
 
         // Crear una nueva instancia de Inscripcion y guardarla en la base de datos
         $experiencia = Experiencia::create($data);

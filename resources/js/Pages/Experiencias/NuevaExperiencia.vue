@@ -4,6 +4,13 @@
         'background-attachment': 'fixed',
         background: 'black url(/storage/imagenes/space.jpg) repeat'
     }">
+
+        <div class="container mx-auto flex justify-between items-center mb-20 text-white">
+            <Back>Experiencias</Back>
+            <AdminPanel modelo="experiencia" necesita="administrar experiencias" :contenido="experiencia" />
+        </div>
+
+
         <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative">
             <h1>Comparte tus experiencias interdimensionales</h1>
             <div v-if="error">
@@ -17,22 +24,22 @@
                     <Icon icon="ph:check-circle-bold" class="text-2xl" />
                     <span>Se han enviado los datos correctamente.</span>
                 </div>
+                <div>Puedes ver <Link :href="route('experiencias')" class="underline">otras experiencias</Link></div>
             </div>
             <!-- Formulario empieza aquí -->
             <form v-else @submit.prevent="submit">
-                <p>Rellena este formulario para poder ofrecerte un curso adaptado a tus necesidades.
-                    <Link :href="route('cursos')">¿qué es el curso?</Link>
-                </p>
-                <div class="mb-4">
-                    <label class="block font-bold mb-2" for="tipo">Tipo de experiencia:</label>
-                    <div class="flex gap-3">
-                        <label v-for="tipo of tipos" :key="tipo" class="inline-flex items-center">
-                            <input type="radio" class="form-radio" name="categoria" :value="tipo" v-model="form.tipo"
-                                :disabled="tipo.match(/grupal/i) && !page.props.auth?.user">
-                            <span class="ml-2">{{ tipo }}</span>
+                <div class="mb-4 bg-base-200 p-2 rounded">
+                    <label class="block font-bold mb-2" for="categoria">Categoría de la experiencia:</label>
+                    <div class="flex flex-wrap gap-3">
+                        <label v-for="categoria, index of categorias" :key="categoria" class="inline-flex items-center"
+                        :class="categoria.match(/grupal/i) && !page.props.auth?.user?'opacity-50':''"
+                        >
+                            <input type="radio" class="form-radio" name="categoria" :value="categoria" v-model="form.categoria"
+                                :disabled="categoria.match(/grupal/i) && !page.props.auth?.user" :required="index==0">
+                            <span class="ml-2">{{ categoria }}</span>
                         </label>
                     </div>
-                    <span v-if="form.errors.tipo" class="error">{{ form.errors.tipo }}</span>
+                    <span v-if="form.errors.categoria" class="error">{{ form.errors.categoria }}</span>
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="nombre">{{ form.categoria.match(/grupal/i) ?
@@ -43,7 +50,6 @@
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="fecha">Fecha de la experiencia:</label>
                     <input class="form-input w-full" id="fecha" type="text" v-model="form.fecha" placeholder="hoy">
-                    <small>Deja el campo vacío si fue hoy</small>
                     <span v-if="form.errors.fecha" class="error">{{ form.errors.fecha }}</span>
                 </div>
                 <div class="mb-4">
@@ -52,9 +58,9 @@
                     <span v-if="form.errors.lugar" class="error">{{ form.errors.lugar }}</span>
                 </div>
                 <div class="mb-4">
-                    <label class="block font-bold mb-2" for="descripcion">Descripción de la experiencia:</label>
-                    <textarea class="form-textarea w-full" id="descripcion" v-model="form.descripcion"></textarea>
-                    <span v-if="form.errors.descripcion" class="error">{{ form.errors.descripcion }}</span>
+                    <label class="block font-bold mb-2" for="texto">Descripción de la experiencia:</label>
+                    <textarea class="form-textarea w-full" id="texto" v-model="form.texto" required></textarea>
+                    <span v-if="form.errors.texto" class="error">{{ form.errors.texto }}</span>
                 </div>
                 <button type="submit" class="btn btn-primary" :disabled="form.processing">
                     Enviar
@@ -79,7 +85,7 @@ const page = usePage()
 const submitted = ref(false)
 const error = ref(false)
 
-const tipos = [
+const categorias = [
     'Sueños',
     'Extrapolaciones',
     'Seiph',
@@ -93,9 +99,8 @@ const form = useForm('inscripcion', {
     fecha: '',
     lugar: '',
     categoria: '',
-    descripcion: '',
+    texto: '',
     user_id: page.props.auth?.user?.id,
-    acepto: false
 })
 
 function scrollTop() {
@@ -106,7 +111,7 @@ function submit() {
     // Clear all errors...
     error.value = false
     form.clearErrors()
-    form.post(route('experiencia.nueva'), {
+    form.post('/experiencia/store', {
         preserveScroll: true,
         onSuccess: () => {
             submitted.value = true

@@ -43,13 +43,20 @@
 @endcan
 
 
-@can('administrar contenidos')
+@canany(['administrar contenidos', 'administrar experiencias'])
 <x-backpack::menu-dropdown title="Comunidad" icon="la la-globe">
+    @canany(['administrar contenidos', 'administrar experiencias'])
     <x-backpack::menu-dropdown-item title="Meditaciones" icon="la la-smile-beam" :link="backpack_url('meditacion')" />
+    @endcanany
+    @can('administrar contenidos')
     <x-backpack::menu-dropdown-item title="Normativas" icon="la la-balance-scale" :link="backpack_url('normativa')" />
     <x-backpack::menu-dropdown-item title="Publicaciones" icon="la la-pencil-alt" :link="backpack_url('publicacion')" />
+    @endcan
+    @can('administrar experiencias')
+    <x-backpack::menu-dropdown-item title="Experiencias" icon="lab la-fly" :link="backpack_url('experiencia')" />
+    @endcan
 </x-backpack::menu-dropdown>
-@endcan
+@endcanany
 
 @can('administrar equipos')
 <x-backpack::menu-dropdown title="Gestión de Equipos" icon="la la-users">
@@ -94,4 +101,3 @@ exit;
 
 @endcanany
 
-<x-backpack::menu-item title="Experiencias" icon="la la-question" :link="backpack_url('experiencia')" />
