@@ -324,6 +324,7 @@ class EquiposController extends Controller
         $usuario = User::findOrFail($idUsuario);
         $equipo = Equipo::findOrFail($idEquipo);
 
+        // solo podemos actualizar los miembros si somos coordinadores
         if (Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }

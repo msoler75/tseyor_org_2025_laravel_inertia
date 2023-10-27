@@ -76,13 +76,12 @@ class ArchivosController extends Controller
 
         $user = auth()->user();
 
-        $acl = Acl::from($user, ['ejecutar', 'escribir']);
+        // $acl = Acl::from($user, ['ejecutar', 'escribir']);
 
         // comprobamos el permiso de ejecución (listar) en la carpeta
         $nodo = Nodo::desde($ruta);
 
-
-        if (Gate::denies('ejecutar', $nodo, $acl)) {
+        if (Gate::denies('ejecutar', $nodo/*, $acl*/)) {
             throw new AuthorizationException('No tienes permisos para ver la carpeta', 403);
         }
 
@@ -132,7 +131,7 @@ class ArchivosController extends Controller
             ];
 
             $nodo = Nodo::desde($padre);
-            if (!$nodo || Gate::denies('ejecutar', $nodo, $acl))
+            if (!$nodo || Gate::denies('ejecutar', $nodo/*, $acl*/))
                 $item['privada'] = true;
 
             $item['permisos'] =  optional($nodo)->permisos ?? 0;
@@ -169,7 +168,7 @@ class ArchivosController extends Controller
                 $nodo = $nodoCarpeta;
             //if($nodo->ruta=='archivos/salud')
             //  dd($nodo);
-            if (!$nodo || Gate::denies('ejecutar', $nodo, $acl))
+            if (!$nodo || Gate::denies('ejecutar', $nodo/*, $acl*/))
                 $item['privada'] = true;
             $item['permisos'] =  optional($nodo)->permisos ?? 0;
             $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
@@ -203,7 +202,7 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de escritura (para saber si puede crear carpetas, o renombrar archivos)
-        $puedeEscribir = Gate::allows('escribir', $nodoCarpeta, $acl);
+    $puedeEscribir = Gate::allows('escribir', $nodoCarpeta/*, $acl*/);
 
         $propietario = null;
 
@@ -325,7 +324,7 @@ class ArchivosController extends Controller
         $storedPath = $file->storeAs($folder, $filename, 'public');
 
         // creamos su nodo
-        Nodo::crear(auth()->user(), $folder . '/' . $filename);
+        Nodo::crear($folder . '/' . $filename, false, auth()->user());
 
         // Obtener la URL pública del archivo
         $url = Storage::url($storedPath);
@@ -429,9 +428,9 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de escritura
-        $acl = Acl::from($user);
+        //$acl = Acl::from($user);
         $nodo = Nodo::desde($folder);
-        if (!$nodo || Gate::denies('escribir', $nodo, $acl)) {
+        if (!$nodo || Gate::denies('escribir', $nodo/*, $acl*/)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -444,8 +443,8 @@ class ArchivosController extends Controller
             ], 500);
         }
 
-        // Creamos el nodo
-        Nodo::crear($user, $folder . '/' . $name, true);
+        // Creamos el nodo de la carpeta
+        Nodo::crear($folder . '/' . $name, true, $user);
 
         return response()->json([
             'message' => 'folderCreated'
@@ -478,9 +477,9 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de escritura
-        $acl = Acl::from($user);
+        //$acl = Acl::from($user);
         $nodo = Nodo::desde($ruta);
-        if (!$nodo || Gate::denies('escribir', $nodo, $acl)) {
+        if (!$nodo || Gate::denies('escribir', $nodo/*, $acl*/)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -549,9 +548,9 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de escritura
-        $acl = Acl::from($user);
+        // $acl = Acl::from($user);
         $nodo = Nodo::desde($rutaAntes);
-        if (!$nodo || Gate::denies('escribir', $nodo, $acl)) {
+        if (!$nodo || Gate::denies('escribir', $nodo/*, $acl*/)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -621,23 +620,23 @@ class ArchivosController extends Controller
         }
 
         // comprobamos los permisos de lectura y escritura
-        $acl = Acl::from($user);
+        // $acl = Acl::from($user);
         $nodoSource = Nodo::desde($sourceFolder);
         $nodoDestination = Nodo::desde($destinationFolder);
 
         // dd($nodoSource);
 
-        if (!$nodoSource || Gate::denies('leer', $nodoSource, $acl)) {
+        if (!$nodoSource || Gate::denies('leer', $nodoSource/*, $acl*/)) {
             return response()->json([
                 'error' => 'No tienes permisos de lectura en la carpeta origen'
             ], 403);
         }
-        if (Gate::denies('escribir', $nodoSource, $acl)) {
+        if (Gate::denies('escribir', $nodoSource/*, $acl*/)) {
             return response()->json([
                 'error' => 'No tienes permisos de escritura en la carpeta origen'
             ], 403);
         }
-        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination, $acl)) {
+        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination/*, $acl*/)) {
             return response()->json([
                 'error' => 'No tienes permisos en la carpeta destino'
             ], 403);
@@ -750,16 +749,16 @@ class ArchivosController extends Controller
 
 
         // comprobamos los permisos de lectura y escritura
-        $acl = Acl::from($user);
+        // $acl = Acl::from($user);
         $nodoSource = Nodo::desde($sourceFolder);
         $nodoDestination = Nodo::desde($destinationFolder);
 
-        if (!$nodoSource || Gate::denies('leer',$nodoSource,  $acl)) {
+        if (!$nodoSource || Gate::denies('leer',$nodoSource/*,  $acl*/)) {
             return response()->json([
                 'error' => 'No tienes permisos para leer los archivos'
             ], 403);
         }
-        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination, $user, $acl)) {
+        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination, $user/*, $acl*/)) {
             return response()->json([
                 'error' => 'No tienes permisos para escribir'
             ], 403);

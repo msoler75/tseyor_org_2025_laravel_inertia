@@ -37,7 +37,10 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'frase'
+        'name',
+        'email',
+        'password',
+        'frase'
     ];
 
     /**
@@ -103,6 +106,14 @@ class User extends Authenticatable
         return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'group_id')
             ->using(Pertenencia::class)
             ->withPivot(['user_id']);
+    }
+
+    /**
+     * Obtiene el Access Control List, es una colección de permisos a ciertos nodos, para este usuario
+     */
+    public function acessControlList()
+    {
+        return Acl::from($this);
     }
 
 
