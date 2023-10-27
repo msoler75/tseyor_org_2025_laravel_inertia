@@ -88,11 +88,10 @@ class Equipo extends ContenidoBaseModel
     public function otorgarPermisosCarpetas($idUsuario) {
         // otorgamos permisos al usuario para administrar las carpetas del equipo
         foreach ($this->carpetas as $carpeta) {
-            Permiso::updateOrCreate(
+            Acl::updateOrCreate(
                 [
                     'user_id' => $idUsuario,
-                    'modelo' => 'nodos',
-                    'modelo_id' => $carpeta->id,
+                    'nodo_id' => $carpeta->id,
                     'verbos' => 'leer,escribir,ejecutar'
                 ]
             );
@@ -101,10 +100,9 @@ class Equipo extends ContenidoBaseModel
 
     public function removerPermisosCarpetas($idUsuario) {
         foreach ($this->carpetas as $carpeta) {
-            $permiso = Permiso::where([
+            $permiso = Acl::where([
                 'user_id' => $idUsuario,
-                'modelo' => 'nodos',
-                'modelo_id' => $carpeta->id,
+                'nodo_id' => $carpeta->id,
             ])->first();
 
             if ($permiso) {

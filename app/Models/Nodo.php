@@ -16,9 +16,12 @@ class Nodo extends Model
     protected $attributes = [
         'ruta' => 'archivos',
         'permisos' => '1755',
-        'user_id' => null, // Por ejemplo, puedes usar 0 como valor predeterminado para el user_id
-        'group_id' => 1, // O null si no tiene grupo por defecto
-        'es_carpeta' => 1, // Por ejemplo, un valor booleano como valor predeterminado
+        'user_id' => null,
+        // Por ejemplo, puedes usar 0 como valor predeterminado para el user_id
+        'group_id' => 1,
+        // O null si no tiene grupo por defecto
+        'es_carpeta' => 1,
+        // Por ejemplo, un valor booleano como valor predeterminado
     ];
 
 
@@ -61,7 +64,7 @@ class Nodo extends Model
         if (!$nodo) {
             // crea un nodo por con los permisos por defecto
             $nodo = new Nodo();
-            $nodo->ruta =  ltrim($ruta, '/');
+            $nodo->ruta = ltrim($ruta, '/');
         }
         return $nodo;
     }
@@ -84,7 +87,7 @@ class Nodo extends Model
 
 
 
-     /**
+    /**
      * Renombra los nodos afectados por cambios en la ruta
      * Ejemplo: renombrar un archivo, o mover un archivo de una carpeta a otra
      */
@@ -97,8 +100,10 @@ class Nodo extends Model
             ]);
     }
 
-
-    public static function crear(?User $user, string $ruta, bool $es_carpeta = false)
+    /**
+     * Crea un nuevo nodo, indicando la ruta y opcionalmente el usuario propietario
+     */
+    public static function crear(string $ruta, bool $es_carpeta = false, ?User $user = null)
     {
         // Obtén el valor de umask desde el archivo de configuración
         $umask = Config::get('app.umask');

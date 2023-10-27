@@ -2,9 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\Acl;
+// use App\Models\Acl;
 use App\Models\Nodo;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 
 /**
@@ -19,19 +20,22 @@ class NodoPolicy
     /**
      * funciones básicas para comprobar permisos. Consulta la ACL
      */
-    public function leer(?User $user, Nodo $nodo, ?Acl $acl = null): bool
+    public function leer(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
     {
-        return $this->permisoNodo($user, $nodo, 0b100) ? true : ($acl ? $this->tieneAcceso($nodo, $acl, 'leer') : false);
+        $aclist = optional($user)->acessControlList();
+        return $this->permisoNodo($user, $nodo, 0b100) ? true : ($aclist ? $this->tieneAcceso($nodo, $aclist, 'leer') : false);
     }
 
-    public function escribir(?User $user, Nodo $nodo, ?Acl $acl = null): bool
+    public function escribir(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
     {
-        return $this->permisoNodo($user, $nodo, 0b010) ? true : ($acl ? $this->tieneAcceso($nodo, $acl, 'escribir') : false);
+        $aclist = optional($user)->acessControlList();
+        return $this->permisoNodo($user, $nodo, 0b010) ? true : ($aclist ? $this->tieneAcceso($nodo, $aclist, 'escribir') : false);
     }
 
-    public function ejecutar(?User $user, Nodo $nodo, ?Acl $acl = null): bool
+    public function ejecutar(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
     {
-        return $this->permisoNodo($user, $nodo, 0b001) ? true : ($acl ? $this->tieneAcceso($nodo, $acl, 'ejecutar') : false);
+        $aclist = optional($user)->acessControlList();
+        return $this->permisoNodo($user, $nodo, 0b001) ? true : ($aclist ? $this->tieneAcceso($nodo, $aclist, 'ejecutar') : false);
     }
 
 
@@ -77,29 +81,29 @@ class NodoPolicy
     /**
      * Comprueba con la ACL si tiene el acceso a un nodo en concreto
      */
-    public static function tieneAcceso(Nodo $nodo, Acl $acl, string $verbo = null)
+    public static function tieneAcceso(Nodo $nodo, Collection $aclist, string $verbo = null)
     {
         // filtramos por verbo
         if ($verbo)
-            $acl = $acl->filter(function ($nodo) use ($verbo) {
+            $aclist = $aclist->filter(function ($nodo) use ($verbo) {
                 return strpos($nodo->verbos, $verbo) !== false;
             });
 
         // tiene acceso global para todos los nodos?
-        if ($acl->whereNull('nodo_id')->count() > 0)
+        if ($aclist->whereNull('nodo_id')->count() > 0)
             return true;
 
         // tiene acceso a este nodo?
-        if ($acl->where('nodo_id', $nodo->id)->count() > 0)
+        if ($aclist->where('nodo_id', $nodo->id)->count() > 0)
             return true;
 
         // tiene acceso a una carpeta padre?
 
         // parece que los LIKE no funcionan aquí:
-        //if ($acl->where("'$nodo->ruta'", 'LIKE', "CONCAT(ruta, '%')")->count() > 0)
+        //if ($aclist->where("'$nodo->ruta'", 'LIKE', "CONCAT(ruta, '%')")->count() > 0)
         //  return true;
 
-        foreach ($acl->toArray() as $registro) {
+        foreach ($aclist->toArray() as $registro) {
             if (strpos($nodo->ruta, $registro['ruta']) === 0) {
                 return true;
             }

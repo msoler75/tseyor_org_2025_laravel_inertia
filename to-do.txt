@@ -23,7 +23,7 @@ Widgets Admin Dashboard:
 -Estadísticas de uso
 
 Equipos:
--publicaciones de equipo
+-informes de equipo
 -revisar permisos coordinadores (publicaciones, archivos)
 
 
