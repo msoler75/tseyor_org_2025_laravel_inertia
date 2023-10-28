@@ -194,7 +194,8 @@
         </div>
 
 
-        <div class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14" :class="contentClass">
+        <div class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14  min-h-[300px]"
+            :class="contentClass">
 
             <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
                 <Spinner />
@@ -204,10 +205,10 @@
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
                 <div>No hay archivos</div>
             </div>
-            <div v-else-if="selectors.archivosVista === 'lista'" :class="itemsOrdenados.length ? 'mr-2 min-h-[300px]' : ''">
+            <div v-else-if="selectors.archivosVista === 'lista'" :class="itemsOrdenados.length ? 'mr-2' : ''">
                 <table class="w-full lg:w-auto mx-auto">
                     <thead class="hidden sm:table-header-group" :class="itemsOrdenados.length ? '' : 'opacity-0'">
-                        <tr>
+                        <tr v-if="itemsMostrar.length">
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
                             <th></th>
                             <th class="text-left">Nombre</th>
@@ -219,7 +220,7 @@
                         </tr>
                     </thead>
                     <TransitionGroup tag="tbody" name="files">
-                        <tr v-for="item in mostrandoResultados?resultadosBusqueda:itemsOrdenados"
+                        <tr v-for="item in itemsMostrar"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')" :key="item.ruta">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
@@ -335,7 +336,7 @@
             <div v-else-if="selectors.archivosVista === 'grid'">
                 <div class="grid grid-cols-3 gap-4">
                     <TransitionGroup name="files">
-                        <div v-for="item in itemsOrdenados" :key="item.ruta"
+                        <div v-for="item in  itemsMostrar" :key="item.ruta"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')">
                             <div v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
@@ -427,6 +428,11 @@
                         </div>
                     </TransitionGroup>
                 </div>
+            </div>
+
+            <div class="w-full text-center h-[3rem] mt-3">
+                <div v-if="buscando">Buscando...</div>
+                <div v-else-if="mostrandoResultados && !resultadosBusqueda.length">No hay resultados</div>
             </div>
         </div>
 
@@ -634,9 +640,9 @@ function onSearch() {
             nombre: buscar.value
         }
     })
-    .then(response => {
-        const data = response.data
-        console.log({ data })
+        .then(response => {
+            const data = response.data
+            console.log({ data })
             resultadosBusqueda.value = data.resultados
             buscarMasResultados(data.carpetas_pendientes)
         })
@@ -652,16 +658,23 @@ function buscarMasResultados(carpetas_pendientes) {
         .then(response => {
             const data = response.data
             console.log({ data })
-            for (const resultado of data.resultados)  {
+            for (const resultado of data.resultados) {
                 // agregamos el resultado si acaso no estaba ya
-                if(!resultadosBusqueda.value.find(item=>item.ruta==resultado.ruta))
+                if (!resultadosBusqueda.value.find(item => item.ruta == resultado.ruta))
                     resultadosBusqueda.value.push(resultado)
             }
-            if (data.carpetas_pendientes&&data.carpetas_pendientes.length)
+            if (data.carpetas_pendientes && data.carpetas_pendientes.length)
                 buscarMasResultados(data.carpetas_pendientes)
             else buscando.value = false // fin de la busqueda
         })
 }
+
+// ITEMS A MOSTRAR
+
+
+const itemsMostrar = computed(() => mostrandoResultados.value ? resultadosBusqueda.value : itemsOrdenados.value)
+
+
 
 // SELECCION
 
