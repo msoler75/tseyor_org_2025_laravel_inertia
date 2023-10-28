@@ -219,7 +219,7 @@
                         </tr>
                     </thead>
                     <TransitionGroup tag="tbody" name="files">
-                        <tr v-for="item in itemsOrdenados"
+                        <tr v-for="item in mostrandoResultados?resultadosBusqueda:itemsOrdenados"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')" :key="item.ruta">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
@@ -439,13 +439,13 @@
 
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
-                <button @click.prevent="onSearch" type="button" class="btn btn-primary btn-sm" :disabled="!buscar">
-                    Buscar archivos
-                </button>
+                    <button @click.prevent="onSearch" type="button" class="btn btn-primary btn-sm" :disabled="!buscar">
+                        Buscar archivos
+                    </button>
 
-                <button @click.prevent="showSearchInput = false" type="button" class="btn btn-neutral btn-sm">
-                    Cancelar
-                </button>
+                    <button @click.prevent="showSearchInput = false" type="button" class="btn btn-neutral btn-sm">
+                        Cancelar
+                    </button>
                 </div>
             </form>
 
@@ -602,25 +602,65 @@ function plural(count, label) {
 
 const showSearchInput = ref(false)
 const inputSearch = ref(null)
-const buscar=ref(null)
+const buscar = ref(null)
+const mostrandoResultados = ref(false)
+const resultadosBusqueda = ref([])
+const buscando = ref(false)
 
 
 function showSearch() {
     showSearchInput.value = true
-    nextTick(()=>{
+    buscar.value = ""
+    nextTick(() => {
         inputSearch.value.focus()
     })
 }
 
+
+
 function onSearch() {
-    if(!buscar.value) {
+    if (!buscar.value) {
         // cerramos el modal
         // showSearchInput.value = false
         return
     }
+    showSearchInput.value = false
     const currentUrl = window.location.href.replace(/\?.*/, '');
-    // console.log('buscar', buscar.value)
-    router.get(currentUrl +'?buscar='+buscar.value)
+    buscando.value = true
+    mostrandoResultados.value = true
+    axios(route('archivos.buscar'), {
+        params: {
+            ruta: currentUrl,
+            nombre: buscar.value
+        }
+    })
+    .then(response => {
+        const data = response.data
+        console.log({ data })
+            resultadosBusqueda.value = data.resultados
+            buscarMasResultados(data.carpetas_pendientes)
+        })
+}
+
+function buscarMasResultados(carpetas_pendientes) {
+    axios(route('archivos.buscar'), {
+        params: {
+            carpetas_pendientes: JSON.stringify(carpetas_pendientes),
+            nombre: buscar.value
+        }
+    })
+        .then(response => {
+            const data = response.data
+            console.log({ data })
+            for (const resultado of data.resultados)  {
+                // agregamos el resultado si acaso no estaba ya
+                if(!resultadosBusqueda.value.find(item=>item.ruta==resultado.ruta))
+                    resultadosBusqueda.value.push(resultado)
+            }
+            if (data.carpetas_pendientes&&data.carpetas_pendientes.length)
+                buscarMasResultados(data.carpetas_pendientes)
+            else buscando.value = false // fin de la busqueda
+        })
 }
 
 // SELECCION

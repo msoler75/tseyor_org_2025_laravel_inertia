@@ -70,7 +70,9 @@ Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades
 Route::get('buscar', [ContenidosController::class, 'search'])->name('buscar');
 
 Route::get('archivos', [ArchivosController::class, 'archivos'])->name('archivos0');
+Route::get('archivos/buscar', [ArchivosController::class, 'buscar'])->name('archivos.buscar');
 Route::get('archivos{ruta}', [ArchivosController::class, 'archivos'])->where(['ruta' => '(\/.+)?'])->name('archivos');
+
 
 Route::get('filemanager{ruta}', [ArchivosController::class, 'filemanager'])->where(['ruta' => '(\/.*)?'])->name('filemanager');
 

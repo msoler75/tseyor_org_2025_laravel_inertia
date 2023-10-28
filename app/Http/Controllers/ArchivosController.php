@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\Nodo;
 use App\Models\Acl;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 
 /**
@@ -28,7 +29,7 @@ class ArchivosController extends Controller
      */
     public function archivos(Request $request)
     {
-        return $this->list($request->path(), false, $request->buscar);
+        return $this->list($request->path(), false);
     }
 
 
@@ -37,16 +38,14 @@ class ArchivosController extends Controller
      */
     public function filemanager(Request $request, $ruta = "/")
     {
-        return $this->list($ruta, true, $request->buscar);
+        return $this->list($ruta, true);
     }
 
     /**
      * Listado de una carpeta. Comprueba todos los permisos de acceso
      */
-    public function list($ruta, $json, $buscar = null)
+    public function list($ruta, $json)
     {
-        //if($buscar)
-        //dd($buscar);
         $ruta = ltrim($ruta, '/');
 
         if (strpos($ruta, ':') !== false) {
@@ -103,34 +102,14 @@ class ArchivosController extends Controller
             $items[] = $this->prepararItem($padre, null, ['tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
         }
 
-        // si es una busqueda, queremos ver los items resultado
-        // esta es una búsqueda rápida inicial usando los nodos, después consultaremos nuevos resultados con ajax
-        if ($buscar) {
-            $results = Nodo::search($buscar)->query(function ($query) use ($ruta) {
-                return $query->whereRaw("ruta LIKE '$ruta%'");
-            })->get()->toArray();
 
-            $archivos = [];
-            $carpetas = [];
-            foreach ($results as $result) {
-                if (!Storage::disk('public')->exists($result['ruta']))
-                    continue;
-                if ($result['es_carpeta'])
-                    $carpetas[] = $result['ruta'];
-                else
-                    $archivos[] = $result['ruta'];
-            }
-        } else
-            // obtenemos todos los nodos de la carpeta
-            $nodos = Nodo::hijos($ruta);
+        // obtenemos todos los nodos de la carpeta
+        $nodos = Nodo::hijos($ruta);
 
 
         // Agregar carpetas a la colección de elementos
         foreach ($carpetas as $carpeta) {
-            if ($buscar)
-                $nodo = Nodo::where('ruta', $carpeta)->first();
-            else
-                $nodo = $nodos->where('ruta', $carpeta /*$ruta . "/" .  basename($carpeta)*/)->first();
+            $nodo = $nodos->where('ruta', $carpeta /*$ruta . "/" .  basename($carpeta)*/)->first();
             $items[] = $this->prepararItem(
                 $carpeta,
                 $nodo,
@@ -144,10 +123,7 @@ class ArchivosController extends Controller
 
         // Agregar archivos a la colección de elementos
         foreach ($archivos as $archivo) {
-            if ($buscar)
-                $nodo = Nodo::where('ruta', $archivo)->first();
-            else
-                $nodo = $nodos->where('ruta', $archivo)->first();
+            $nodo = $nodos->where('ruta', $archivo)->first();
             $items[] = $this->prepararItem($archivo, $nodo, [
                 'tipo' => 'archivo',
                 'tamano' => Storage::disk('public')->size($archivo),
@@ -199,7 +175,7 @@ class ArchivosController extends Controller
     /**
      * Prepara el item de un listado de una carpeta
      */
-    private function prepararItem(string $ruta, ?Nodo $nodo, array $options) : array
+    private function prepararItem(string $ruta, ?Nodo $nodo, array $options): array
     {
         $baseUrl = url('');
         $rutaBase = str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url($ruta)));
@@ -207,7 +183,7 @@ class ArchivosController extends Controller
         $item = [
             'nombre' => basename($ruta),
             'ruta' => $ruta,
-            'url' => ($options['tipo'] ?? '') == 'archivo' ? '/storage' .$rutaBase : $rutaBase,
+            'url' => ($options['tipo'] ?? '') == 'archivo' ? '/storage' . $rutaBase : $rutaBase,
             'carpeta' => $rutaPadre,
             'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
         ];
@@ -219,6 +195,134 @@ class ArchivosController extends Controller
         $item['permisos'] = optional($nodo)->permisos ?? 0;
         $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
         return $item;
+    }
+
+    /**
+     * Esta función ajax sirve para buscar progresivamente archivos que tengan o contengan un nombre
+     */
+    public function buscar(Request $request)
+    {
+        // nombre a buscar
+        $nombre = $request->nombre;
+
+        // ruta donde empezar a buscar
+        $baseUrl = url('');
+        $ruta = ltrim(str_replace($baseUrl, '', $request->ruta), "/");
+
+        // carpetas donde falta buscar
+        $carpetas_pendientes = @json_decode($request->carpetas_pendientes, false);
+
+        // estamos en la primera busqueda (porque no hay carpetas pendientes)
+        if (empty($carpetas_pendientes)) {
+
+            // la ruta inicial es la primera carpeta donde buscaremos después en disco
+            $carpetas_pendientes = [$ruta];
+
+            // realizamos una rápida búsqueda inicial, usando nodos
+
+            $nodos = Nodo::search($nombre)->query(function ($query) use ($ruta) {
+                return $query->whereRaw("ruta LIKE '$ruta%'");
+            })->take(50)->get();
+
+            $resultados = [];
+            foreach ($nodos as $nodo) {
+                if (!Storage::disk('public')->exists($nodo->ruta))
+                    continue;
+                if ($nodo->es_carpeta)
+                    $resultados[] = $this->prepararItem($nodo->ruta, $nodo, [
+                        'tipo' => 'carpeta',
+                        'archivos' => count(Storage::disk('public')->files($nodo->ruta)),
+                        'subcarpetas' => count(Storage::disk('public')->directories($nodo->ruta))
+                    ]);
+                else
+                    $resultados[] = $this->prepararItem($nodo->ruta, $nodo, [
+                        'tipo' => 'archivo',
+                        'tamano' => Storage::disk('public')->size($nodo->ruta),
+                    ]);
+            }
+
+            $carpetas_pendientes = [$ruta];
+            $carpetas_pendientes = [$ruta];
+
+        } else {
+
+            // realizamos una busqueda real en disco
+
+            $start_time = microtime(true);
+            $tiempo_transcurrido = 0;
+            $resultados = [];
+
+            // tiempo máximo de búsqueda: 500 milisegundos
+            while (count($carpetas_pendientes) > 0 && $tiempo_transcurrido < 500) {
+                // Obtener la primera carpeta pendiente para procesar
+                $carpeta = array_shift($carpetas_pendientes);
+                if (!$carpeta)
+                    continue;
+                $carpeta = ltrim(str_replace($baseUrl, '', $carpeta), "/");
+                if (!preg_match("/^archivos/", $carpeta))
+                    continue;
+
+                // Buscar archivos y subcarpetas dentro de la carpeta actual
+                $archivos = Storage::disk('public')->files($carpeta);
+                $subcarpetas = Storage::disk('public')->directories($carpeta);
+
+                // Comprobar si algún archivo tiene un nombre similar a la cadena de búsqueda
+                foreach ($archivos as $archivo) {
+                    if ($this->matchSearch(basename($archivo), $nombre))
+                        $resultados[] = $this->prepararItem($archivo, null, [
+                            'tipo' => 'archivo',
+                            'tamano' => Storage::disk('public')->size($archivo)
+                        ]);
+                }
+
+                // Comprobar si alguna subcarpeta tiene un nombre similar a la cadena de búsqueda
+                foreach ($subcarpetas as $subcarpeta) {
+                    $item = null;
+                    if ($this->matchSearch(basename($archivo), $nombre)) {
+                        $item = $this->prepararItem($archivo, null, [
+                            'tipo' => 'carpeta',
+                            'archivos' => count(Storage::disk('public')->files($carpeta)),
+                            'subcarpetas' => count(Storage::disk('public')->directories($carpeta))
+                        ]);
+                        $resultados[] = $item;
+                    }
+
+                    // miramos si podemos buscar en esta carpeta
+                    if ($item == null) {
+                        $nodo = Nodo::desde($ruta);
+                        if (!$nodo || Gate::denies('ejecutar', $nodo))
+                            $item['privada'] = true; // carpeta no accesible
+                    }
+
+                    if (!($item['privada'] ?? false))
+                        // para que se procese en la siguiente iteración del bucle
+                        $carpetas_pendientes[] = $subcarpeta;
+
+                }
+
+                // Calcular el tiempo transcurrido en milisegundos
+                $tiempo_transcurrido = (microtime(true) - $start_time) * 1000;
+            }
+        }
+
+        $response = [
+            'resultados' => $resultados,
+            'carpetas_pendientes' => $carpetas_pendientes
+        ];
+
+        return response()->json($response, 200);
+
+    }
+
+    private function matchSearch($str, $term)
+    {
+        $str = Str::lower(Str::ascii($str));
+        $term = Str::lower(Str::ascii($term));
+        if (strpos($term, ".") === false) // removemos la extension del archivo
+            $str = preg_replace("/\.[^.]{2,8}$/", "", $str);
+        if (str_contains($str, $term))
+            return true;
+        return levenshtein($term, $str, 1, 3, 4) < 7;
     }
 
 
