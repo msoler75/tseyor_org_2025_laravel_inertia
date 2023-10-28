@@ -80,12 +80,13 @@ class ArchivosController extends Controller
 
         // comprobamos el permiso de ejecución (listar) en la carpeta
         $nodo = Nodo::desde($ruta);
+        $nodoCarpeta = $nodo;
 
-        if (Gate::denies('ejecutar', $nodo /*, $acl*/)) {
+        if (Gate::denies('ejecutar', $nodo)) {
             throw new AuthorizationException('No tienes permisos para ver la carpeta', 403);
         }
 
-        $rutaPadre = dirname($rutaBase);
+
 
         $items = [];
 
@@ -93,49 +94,17 @@ class ArchivosController extends Controller
         $archivos = Storage::disk('public')->files($ruta);
         $carpetas = Storage::disk('public')->directories($ruta);
 
-        $item = [
-            'nombre' => basename($ruta),
-            'actual' => true,
-            'tipo' => 'carpeta',
-            'ruta' => $rutaBase,
-            'url' => $rutaBase,
-            'carpeta' => $rutaPadre,
-            'archivos' => count($archivos),
-            'subcarpetas' => count($carpetas),
-            'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
-        ];
+        // agregamos la carpeta actual
+        $items[] = $this->prepararItem($ruta, $nodo, ['tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
 
-        $nodoCarpeta = $nodo;
-        $item['permisos'] = optional($nodo)->permisos ?? 0;
-        $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
-        $items[] = $item;
-
-        // Agregar elemento de carpeta padre
+        // agregamos carpeta padre
         $padre = dirname($ruta);
         if ($padre && $padre != "\\" && $padre != "//") {
-            $item = [
-                'nombre' => basename($ruta),
-                'padre' => true,
-                'tipo' => 'carpeta',
-                'ruta' => $rutaPadre,
-                'url' => $rutaPadre,
-                'carpeta' => $rutaPadre,
-                'archivos' => count($archivos),
-                'subcarpetas' => count($carpetas),
-                'fecha_modificacion' => Storage::disk('public')->lastModified($padre),
-            ];
-
-            $nodo = Nodo::desde($padre);
-            if (!$nodo || Gate::denies('ejecutar', $nodo /*, $acl*/))
-                $item['privada'] = true;
-
-            $item['permisos'] = optional($nodo)->permisos ?? 0;
-            $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
-
-            $items[] = $item;
+            $items[] = $this->prepararItem($padre, null, ['tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
         }
 
         // si es una busqueda, queremos ver los items resultado
+        // esta es una búsqueda rápida inicial usando los nodos, después consultaremos nuevos resultados con ajax
         if ($buscar) {
             $results = Nodo::search($buscar)->query(function ($query) use ($ruta) {
                 return $query->whereRaw("ruta LIKE '$ruta%'");
@@ -158,69 +127,35 @@ class ArchivosController extends Controller
 
         // Agregar carpetas a la colección de elementos
         foreach ($carpetas as $carpeta) {
-            $archivos_internos = Storage::disk('public')->files($carpeta);
-            $subcarpetas_internas = Storage::disk('public')->directories($carpeta);
-            $urlItem = str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url($carpeta)));
-            $item = [
-                'nombre' => basename($carpeta),
-                'clase' => '',
-                'tipo' => 'carpeta',
-                'ruta' => $urlItem,
-                'url' => $urlItem,
-                'carpeta' => $rutaBase,
-                'archivos' => count($archivos_internos),
-                'subcarpetas' => count($subcarpetas_internas),
-                'fecha_modificacion' => Storage::disk('public')->lastModified($carpeta)
-            ];
-            // Obtener información de la carpeta correspondiente, si existe
-
             if ($buscar)
                 $nodo = Nodo::where('ruta', $carpeta)->first();
             else
-                $nodo = $nodos->where('ruta', $ruta . "/" . $item['nombre'])->first();
-            if (!$nodo)
-                $nodo = $nodoCarpeta;
-            //if($nodo->ruta=='archivos/salud')
-            //  dd($nodo);
-            if (!$nodo || Gate::denies('ejecutar', $nodo /*, $acl*/))
-                $item['privada'] = true;
-            $item['permisos'] = optional($nodo)->permisos ?? 0;
-            $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
-
-            $items[] = $item;
+                $nodo = $nodos->where('ruta', $carpeta /*$ruta . "/" .  basename($carpeta)*/)->first();
+            $items[] = $this->prepararItem(
+                $carpeta,
+                $nodo,
+                [
+                    'tipo' => 'carpeta',
+                    'archivos' => count(Storage::disk('public')->files($carpeta)),
+                    'subcarpetas' => count(Storage::disk('public')->directories($carpeta))
+                ]
+            );
         }
-
-
 
         // Agregar archivos a la colección de elementos
         foreach ($archivos as $archivo) {
-            $urlItem = str_replace($baseUrl, '', Storage::disk('public')->url($ruta . '/' . basename($archivo)));
-            $item = [
-                'nombre' => basename($archivo),
-                'clase' => '',
-                'tipo' => 'archivo',
-                'ruta' => $urlItem,
-                'url' => $urlItem,
-                'carpeta' => $rutaBase,
-                'tamano' => Storage::disk('public')->size($archivo),
-                'fecha_modificacion' => Storage::disk('public')->lastModified($archivo),
-            ];
-
             if ($buscar)
                 $nodo = Nodo::where('ruta', $archivo)->first();
             else
-                $nodo = $nodos->where('ruta', $ruta . "/" . $item['nombre'])->first();
-            if (!$nodo)
-                $nodo = $nodoCarpeta;
-            $item['permisos'] = optional($nodo)->permisos ?? 0;
-            $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
-
-            $items[] = $item;
+                $nodo = $nodos->where('ruta', $archivo)->first();
+            $items[] = $this->prepararItem($archivo, $nodo, [
+                'tipo' => 'archivo',
+                'tamano' => Storage::disk('public')->size($archivo),
+            ]);
         }
 
-
         // comprobamos los permisos de escritura (para saber si puede crear carpetas, o renombrar archivos)
-        $puedeEscribir = Gate::allows('escribir', $nodoCarpeta /*, $acl*/);
+        $puedeEscribir = Gate::allows('escribir', $nodoCarpeta);
 
         $propietario = null;
 
@@ -254,12 +189,38 @@ class ArchivosController extends Controller
 
         return Inertia::render('Archivos', $respuesta)
             ->withViewData([
-                    'seo' => new SEOData(
-                        title: $ruta,
-                        description: 'Contenido de ' . $ruta,
-                    )
-                ]);
+                'seo' => new SEOData(
+                    title: $ruta,
+                    description: 'Contenido de ' . $ruta,
+                )
+            ]);
     }
+
+    /**
+     * Prepara el item de un listado de una carpeta
+     */
+    private function prepararItem(string $ruta, ?Nodo $nodo, array $options) : array
+    {
+        $baseUrl = url('');
+        $rutaBase = str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url($ruta)));
+        $rutaPadre = str_replace("\\", "/", dirname($rutaBase));
+        $item = [
+            'nombre' => basename($ruta),
+            'ruta' => $ruta,
+            'url' => ($options['tipo'] ?? '') == 'archivo' ? '/storage' .$rutaBase : $rutaBase,
+            'carpeta' => $rutaPadre,
+            'fecha_modificacion' => Storage::disk('public')->lastModified($ruta),
+        ];
+        $item = array_merge($item, $options);
+        if (!$nodo)
+            $nodo = Nodo::desde($ruta);
+        if (!$nodo || (($options['tipo'] ?? '') == 'carpeta' && Gate::denies('ejecutar', $nodo)))
+            $item['privada'] = true; // carpeta no accesible
+        $item['permisos'] = optional($nodo)->permisos ?? 0;
+        $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
+        return $item;
+    }
+
 
 
     /**
@@ -448,7 +409,7 @@ class ArchivosController extends Controller
         // comprobamos los permisos de escritura
         //$acl = Acl::from($user);
         $nodo = Nodo::desde($folder);
-        if (!$nodo || Gate::denies('escribir', $nodo /*, $acl*/)) {
+        if (!$nodo || Gate::denies('escribir', $nodo)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -497,7 +458,7 @@ class ArchivosController extends Controller
         // comprobamos los permisos de escritura
         //$acl = Acl::from($user);
         $nodo = Nodo::desde($ruta);
-        if (!$nodo || Gate::denies('escribir', $nodo /*, $acl*/)) {
+        if (!$nodo || Gate::denies('escribir', $nodo)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -568,7 +529,7 @@ class ArchivosController extends Controller
         // comprobamos los permisos de escritura
         // $acl = Acl::from($user);
         $nodo = Nodo::desde($rutaAntes);
-        if (!$nodo || Gate::denies('escribir', $nodo /*, $acl*/)) {
+        if (!$nodo || Gate::denies('escribir', $nodo)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
@@ -644,17 +605,17 @@ class ArchivosController extends Controller
 
         // dd($nodoSource);
 
-        if (!$nodoSource || Gate::denies('leer', $nodoSource /*, $acl*/)) {
+        if (!$nodoSource || Gate::denies('leer', $nodoSource)) {
             return response()->json([
                 'error' => 'No tienes permisos de lectura en la carpeta origen'
             ], 403);
         }
-        if (Gate::denies('escribir', $nodoSource /*, $acl*/)) {
+        if (Gate::denies('escribir', $nodoSource)) {
             return response()->json([
                 'error' => 'No tienes permisos de escritura en la carpeta origen'
             ], 403);
         }
-        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination /*, $acl*/)) {
+        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination)) {
             return response()->json([
                 'error' => 'No tienes permisos en la carpeta destino'
             ], 403);
@@ -776,7 +737,7 @@ class ArchivosController extends Controller
                 'error' => 'No tienes permisos para leer los archivos'
             ], 403);
         }
-        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination, $user /*, $acl*/)) {
+        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination, $user)) {
             return response()->json([
                 'error' => 'No tienes permisos para escribir'
             ], 403);
