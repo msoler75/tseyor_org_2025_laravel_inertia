@@ -1,46 +1,48 @@
 <template>
     <div class="h-full flex flex-col relative">
-        <div class="w-full sticky top-2 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
+        <div class="w-full sticky top-4 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
             :class="embed ? 'pt-4' : ' pt-16'">
-            <div class="w-full flex flex-nowrap justify-between mb-4 lg:mb-7" :class="embed ? '' : 'lg:container mx-auto'">
+            <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
 
                 <div class="flex gap-3">
 
-                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral cursor-pointer"
-                        @click="clickFolder({ url: '' }, $event)" :link="!embed" title="Ir a la carpeta base">
+                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer"
+                        @click="clickFolder({ url: '' }, $event)" :is-link="!embed" title="Ir a la carpeta base">
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
                     </ConditionalLink>
 
                     <ConditionalLink v-if="items.length > 1 && items[1].padre && !seleccionando" :href="items[1].url"
-                        class="btn btn-neutral w-fit" title="Ir a una carpeta superior"
-                        @click="clickFolder(items[1], $event)" :link="!embed">
+                        class="btn btn-neutral btn-sm w-fit" title="Ir a una carpeta superior"
+                        @click="clickFolder(items[1], $event)" :is-link="!embed">
                         <Icon icon="ph:arrow-bend-left-up-duotone" class="text-2xl" />
                     </ConditionalLink>
 
                     <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="!embed" @folder="clickBreadcrumb($event)"
-                        title="Ruta actual"
-                        class="text-3xl font-bold items-center ml-2"
-                        />
+                        title="Ruta actual" class="text-3xl font-bold items-center ml-2" />
                 </div>
 
                 <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
 
-                    <button v-if="seleccionando" class="btn btn-neutral flex gap-3 items-center"
+                    <button v-if="seleccionando" class="btn btn-neutral btn-sm flex gap-3 items-center"
                         @click.prevent="cancelarSeleccion" title="Cancelar selección">
                         <Icon icon="material-symbols:close-rounded" />
                         <span>{{ itemsSeleccionados.length }}</span>
                     </button>
 
 
-                    <button v-if="seleccionando" class="btn btn-neutral ml-auto" @click.prevent="seleccionarTodos"
+                    <button v-if="seleccionando" class="btn btn-neutral btn-sm ml-auto" @click.prevent="seleccionarTodos"
                         title="Seleccionar todos">
                         <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                     </button>
 
+                    <button v-if="!seleccionando" class="btn btn-neutral btn-sm" title="Buscar archivos..."
+                        @click="showSearch">
+                        <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
+                    </button>
 
 
-                    <Link v-if="!embed && propietario && !seleccionando" class="btn btn-neutral" :href="propietario.url"
-                        :title="tituloPropietario">
+                    <Link v-if="!embed && propietario && !seleccionando" class="btn btn-neutral btn-sm"
+                        :href="propietario.url" :title="tituloPropietario">
                     <Icon :icon="propietario.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'"
                         class="transform scale-150" />
                     </Link>
@@ -48,7 +50,7 @@
 
                     <Dropdown>
                         <template #trigger>
-                            <span class="btn btn-neutral" title="Ordenar los elementos">
+                            <span class="btn btn-neutral btn-sm" title="Ordenar los elementos">
                                 <Icon icon="lucide:arrow-down-wide-narrow" class="text-2xl" />
                             </span>
                         </template>
@@ -67,7 +69,7 @@
                     </Dropdown>
 
 
-                    <button class="btn btn-neutral w-[58px]" @click.prevent="toggleVista" title="Cambiar vista">
+                    <button class="btn btn-neutral btn-sm" @click.prevent="toggleVista" title="Cambiar vista">
                         <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
                             class="transform scale-150" />
                         <Icon v-show="selectors.archivosVista == 'grid'" icon="ph:grid-nine-fill"
@@ -76,7 +78,7 @@
 
                     <Dropdown v-if="puedeEscribir && !seleccionando" align="right" width="48">
                         <template #trigger>
-                            <div class="btn btn-neutral p-3">
+                            <div class="btn btn-neutral btn-sm cursor-pointer">
                                 <Icon icon="mdi:dots-vertical" class="text-xl" />
                             </div>
                         </template>
@@ -192,13 +194,13 @@
         </div>
 
 
-        <div  class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14"
-        :class="contentClass" >
+        <div class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14" :class="contentClass">
 
-        <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
-            <Spinner />
-        </div>
-            <div v-else-if="!itemsOrdenados.length" class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
+            <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
+                <Spinner />
+            </div>
+            <div v-else-if="!itemsOrdenados.length"
+                class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
                 <div>No hay archivos</div>
             </div>
@@ -227,21 +229,21 @@
                             <td class="relative w-4" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
                                 <FolderIcon v-if="item.tipo === 'carpeta'" class="cursor-pointer" :private="item.privada"
                                     :url="item.url" :class="seleccionando ? 'pointer-events-none' : ''"
-                                    @click="clickFolder(item, $event)" :link="!embed" />
+                                    @click="clickFolder(item, $event)" :is-link="!embed" />
                                 <FileIcon v-else :url="item.url" class="cursor-pointer"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
-                                    :link="!embed" />
+                                    :is-link="!embed" />
                             </td>
                             <td class="sm:hidden" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
                                 <div class="flex flex-col">
                                     <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
                                         :class="seleccionando ? 'pointer-events-none' : ''"
-                                        @click="clickFolder(item, $event)" :link="!embed" />
+                                        @click="clickFolder(item, $event)" :is-link="!embed" />
                                     <div v-else-if="seleccionando" :title="item.nombre" v-html="nombreItem(item)" />
                                     <a v-else :href="item.url" download v-html="nombreItem(item)"
                                         :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
-                                        :link="!embed" />
+                                        :is-link="!embed" />
                                     <small class="w-full flex justify-between items-center">
                                         <span v-if="item.tipo === 'carpeta'">
                                             {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
@@ -255,7 +257,7 @@
                                 <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
                                     class="cursor-pointer   py-1 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
-                                    :link="!embed" />
+                                    :is-link="!embed" />
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
                                 <a v-else :href="item.url" download v-html="nombreItem(item)" class="py-1 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)" />
@@ -278,7 +280,7 @@
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48" v-if="puedeEscribir">
                                     <template #trigger>
-                                        <span class="p-3">
+                                        <span class="p-3 cursor-pointer">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
                                         </span>
                                     </template>
@@ -343,21 +345,21 @@
                             <div class="flex flex-col items-center justify-center relative">
                                 <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
                                     class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
-                                    @click="clickFolder(item, $event)" :link="!embed" />
+                                    @click="clickFolder(item, $event)" :is-link="!embed" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
                                     @click="clickFile(item, $event)">
                                     <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain" />
                                 </a>
                                 <FileIcon v-else :url="item.url" class="cursor-pointer text-8xl mb-4"
-                                    @click="clickFile(item, $event)" :link="!embed" />
+                                    @click="clickFile(item, $event)" :is-link="!embed" />
 
                                 <div class="text-sm text-center">
                                     <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="py-1 hover:underline"
-                                        @click="clickFolder(item, $event)" :link="!embed" />
+                                        @click="clickFolder(item, $event)" :is-link="!embed" />
                                     <span v-else-if="seleccionando" v-html="nombreItem(item)" />
                                     <a v-else :href="item.url" download v-html="nombreItem(item)"
-                                        @click="clickFile(item, $event)" :link="!embed" class="py-1 hover:underline" />
+                                        @click="clickFile(item, $event)" :is-link="!embed" class="py-1 hover:underline" />
                                 </div>
                                 <div class="text-gray-500 text-xs">
                                     <template v-if="item.tipo === 'carpeta'">{{ item.archivos + ' archivos, ' +
@@ -429,10 +431,30 @@
         </div>
 
 
+        <!-- Modal Search -->
+        <Modal :show="showSearchInput" @close="showSearchInput = false" maxWidth="sm">
+
+            <form class="p-5 flex flex-col gap-5 items-center" @submit.prevent="onSearch">
+                <input ref="inputSearch" type="search" placeholder="Nombre de archivo..." v-model="buscar">
+
+
+                <div class="py-3 flex justify-between sm:justify-end gap-5">
+                <button @click.prevent="onSearch" type="button" class="btn btn-primary btn-sm" :disabled="!buscar">
+                    Buscar archivos
+                </button>
+
+                <button @click.prevent="showSearchInput = false" type="button" class="btn btn-neutral btn-sm">
+                    Cancelar
+                </button>
+                </div>
+            </form>
+
+        </Modal>
+
 
 
         <!-- Modal Upload -->
-        <Modal :show="modalSubirArchivos" @close="modalSubirArchivos=true">
+        <Modal :show="modalSubirArchivos" @close="modalSubirArchivos = false">
 
             <div class="p-5 flex flex-col gap-5 items-center">
                 <Dropzone class="w-full" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
@@ -444,7 +466,7 @@
                 </Dropzone>
 
 
-                <button @click.prevent="modalSubirArchivos = false" type="button" class="btn btn-neutral">
+                <button @click.prevent="modalSubirArchivos = false" type="button" class="btn btn-neutral btn-sm">
                     Cerrar
                 </button>
             </div>
@@ -466,11 +488,11 @@
                 </div>
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
-                    <button @click.prevent="crearCarpeta" type="button" class="btn btn-primary">
+                    <button @click.prevent="crearCarpeta" type="button" class="btn btn-primary btn-sm">
                         Crear Carpeta
                     </button>
 
-                    <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn btn-neutral">
+                    <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn btn-neutral btn-sm">
                         Cancelar
                     </button>
                 </div>
@@ -491,11 +513,11 @@
                 </div>
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
-                    <button @click.prevent="modalRenombrarItem = false" type="button" class="btn btn-neutral">
+                    <button @click.prevent="modalRenombrarItem = false" type="button" class="btn btn-neutral btn-sm">
                         Cancelar
                     </button>
 
-                    <button @click.prevent="renombrarItem" type="button" class="btn btn-primary">
+                    <button @click.prevent="renombrarItem" type="button" class="btn btn-primary btn-sm">
                         Renombrar
                     </button>
                 </div>
@@ -523,11 +545,11 @@
                 <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
                     @submit.prevent="crearCarpeta">
 
-                    <button @click.prevent="modalEliminarItem = false" type="button" class="btn btn-neutral">
+                    <button @click.prevent="modalEliminarItem = false" type="button" class="btn btn-neutral btn-sm">
                         Cancelar
                     </button>
 
-                    <button @click.prevent="eliminarArchivos" type="button" class="btn btn-primary">
+                    <button @click.prevent="eliminarArchivos" type="button" class="btn btn-primary btn-sm">
                         Eliminar
                     </button>
                 </form>
@@ -574,6 +596,31 @@ function nombreItem(item) {
 
 function plural(count, label) {
     return `${count} ${label + (count != 1 ? 's' : '')}`
+}
+
+// BUSCAR
+
+const showSearchInput = ref(false)
+const inputSearch = ref(null)
+const buscar=ref(null)
+
+
+function showSearch() {
+    showSearchInput.value = true
+    nextTick(()=>{
+        inputSearch.value.focus()
+    })
+}
+
+function onSearch() {
+    if(!buscar.value) {
+        // cerramos el modal
+        // showSearchInput.value = false
+        return
+    }
+    const currentUrl = window.location.href.replace(/\?.*/, '');
+    // console.log('buscar', buscar.value)
+    router.get(currentUrl +'?buscar='+buscar.value)
 }
 
 // SELECCION
