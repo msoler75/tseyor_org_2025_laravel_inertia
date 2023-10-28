@@ -6,10 +6,14 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Laravel\Scout\Searchable;
 
 class Nodo extends Model
 {
     use CrudTrait;
+    use Searchable;
+
+
     protected $fillable = ['ruta', 'permisos', 'user_id', 'group_id', 'es_carpeta'];
 
 
@@ -121,6 +125,20 @@ class Nodo extends Model
             'permisos' => decoct($permisos),
             'es_carpeta' => $es_carpeta
         ]);
+    }
+
+
+
+    // SCOUT searchable
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            // <- Always include the primary key
+            'title' => basename($this->ruta),
+            'ruta' => $this->ruta
+        ];
     }
 
 }

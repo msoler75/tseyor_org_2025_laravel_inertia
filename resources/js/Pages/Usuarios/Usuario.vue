@@ -149,7 +149,7 @@ function eliminarEquipo() {
 }
 
 function reload() {
-    console.log('reload')
+    // console.log('reload')
     router.reload({
         only: ['usuario']
     })
