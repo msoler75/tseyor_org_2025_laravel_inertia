@@ -5,7 +5,7 @@
             <Hero title="Curso Holístico Tseyor"
                 subtitle="Conoce las enseñanzas de los Guías de las Estrellas con nuestro curso gratuito."
                 srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=curso-holistico.jpg" image-right
-                buttonLabel="Inscríbete" :href="route('cursos.inscripcion')"></Hero>
+                buttonLabel="Inscríbete" :href="route('cursos.inscripcion.nueva')"></Hero>
         </Section>
 
         <Section :style="{

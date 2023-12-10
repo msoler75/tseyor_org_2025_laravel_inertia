@@ -10,7 +10,7 @@
                 <p>Aquí puedes encontrar todos los comunicados de Tseyor.</p>
             </div>
 
-            <Planets />
+            <!-- <Planets /> -->
 
         </div>
 
@@ -61,7 +61,9 @@
                     class="grid gap-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
 
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
-                        :image="contenido.imagen" :href="route('comunicado', contenido.slug)"
+                        :image="contenido.imagen"
+                        image-class="h-80"
+                        :href="route('comunicado', contenido.slug)"
                         :description="contenido.descripcion" :date="contenido.published_at" />
 
                 </div>

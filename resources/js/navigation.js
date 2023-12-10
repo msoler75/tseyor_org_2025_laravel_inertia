@@ -7,7 +7,7 @@ export default [
   },
 
   {
-    title: "Contenidos",
+    title: "Biblioteca",
     description: "Comunicados, libros, artículos, noticias...",
     icon: "ph:article-duotone",
     open: false,

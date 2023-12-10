@@ -107,7 +107,7 @@
 
         <!-- Sección: Quiero ser de Tseyor -->
         <Hero title="Quiero ser de Tseyor" subtitle="Entra a forma parte del grupo" buttonLabel="Formulario de inscripción"
-            :href="route('cursos.inscripcion')" textClass="space-y-8" />
+            :href="route('cursos.inscripcion.nueva')" textClass="space-y-8" />
 
 
     </Sections>
