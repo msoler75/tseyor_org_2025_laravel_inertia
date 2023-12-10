@@ -4,7 +4,15 @@
             :class="embed ? 'pt-4' : ' pt-16'">
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
 
-                <div class="flex gap-3">
+                <button v-if="!seleccionando&&mostrandoResultados" class="btn btn-neutral btn-sm" title="Cerrar búsqueda"
+                    @click="mostrandoResultados=false">
+                    <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
+                    <Icon icon="ph:x-bold" />
+                    </button>
+
+                <div  class="flex gap-3">
+
+
 
                     <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer"
                         @click="clickFolder({ url: '' }, $event)" :is-link="!embed" title="Ir a la carpeta base">
@@ -28,14 +36,14 @@
                         <Icon icon="material-symbols:close-rounded" />
                         <span>{{ itemsSeleccionados.length }}</span>
                     </button>
+                    
 
-
-                    <button v-if="seleccionando" class="btn btn-neutral btn-sm ml-auto" @click.prevent="seleccionarTodos"
+                    <button v-if="seleccionando" class="btn btn-neutral btn-sm mr-auto" @click.prevent="seleccionarTodos"
                         title="Seleccionar todos">
                         <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                     </button>
 
-                    <button v-if="!seleccionando" class="btn btn-neutral btn-sm" title="Buscar archivos..."
+                    <button v-if="!seleccionando&&!mostrandoResultados" class="btn btn-neutral btn-sm" title="Buscar archivos"
                         @click="showSearch">
                         <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                     </button>
@@ -130,6 +138,7 @@
                 </div>
             </div>
 
+            store: {{store}}
 
             <!-- SEGUNDA FILA: Botones de Operaciones -->
             <div class="lg:container mx-auto w-full flex mb-7 gap-4 select-none overflow-x-auto scrollbar-hidden"
@@ -184,7 +193,8 @@
                         <span>Renombrar</span>
                     </button>
 
-                    <button v-if="seleccionando" class="btn btn-secondary">
+                    <button v-if="seleccionando && itemsSeleccionados.length>0" class="btn btn-secondary"
+                    @click.prevent="abrirModalPropiedades()">
                         <Icon icon="ph:info-duotone" />
                         <span>Propiedades</span>
                     </button>
@@ -506,6 +516,28 @@
         </Modal>
 
 
+
+          <!-- Modal Propiedades -->
+          <Modal :show="modalPropiedades" @close="modalPropiedades = false" maxWidth="md">
+            <div class="p-5">
+                <div v-for="item of itemsSeleccionados">
+                    <table>
+                        <tr><th>Archivo: </th><td>{{ item.nombre }}</td></tr>
+                            <tr><th>Carpeta</th><td>/{{item.ruta.substring(0, item.ruta.lastIndexOf('/'))}}</td></tr>
+                            <tr><th>Permisos:</th><td>{{item.permisos}}</td></tr>
+                            <tr><th>&nbsp;</th><td></td></tr>
+                    </table>
+            </div>
+
+    <div class="py-3 flex justify-between sm:justify-end gap-5">
+        <button @click.prevent="modalPropiedades = false" type="button" class="btn btn-neutral btn-sm">
+            Cerrar
+        </button>
+    </div>
+</div>
+</Modal>
+
+
         <!-- Modal Renombrar Item -->
         <Modal :show="modalRenombrarItem" @close="modalRenombrarItem = false">
 
@@ -732,7 +764,7 @@ function toggleItem(item) {
     item.touching = false
 }
 
-const itemsSeleccionados = computed(() => props.items.filter(item => item.seleccionado && !item.eliminado))
+const itemsSeleccionados = computed(() => props.items.filter(item => !['.','..'].includes(item.nombre) && item.seleccionado && !item.eliminado))
 
 
 watch(() => itemsSeleccionados.value.length, (value) => {
@@ -913,6 +945,12 @@ const itemsOrdenados = computed(() => {
     }
 } */
 
+// PROPIEDADES
+
+const modalPropiedades = ref(false)
+function abrirModalPropiedades() {
+    modalPropiedades.value = true
+}
 
 // RENOMBRAR ITEM
 const nuevoNombre = ref("")
@@ -1043,13 +1081,13 @@ function isImage(fileName) {
 
 // VISTA DE ITEMS
 const selectors = useSelectors()
-if (!['lista', 'grid'].includes(selectors.value.archivosVista))
-    selectors.value.archivosVista = 'lista'
+if (!['lista', 'grid'].includes(selectors.archivosVista))
+    selectors.archivosVista = 'lista'
 
 
 console.log(selectors.value)
 const toggleVista = () => {
-    selectors.value.archivosVista = selectors.value.archivosVista === 'grid' ? 'lista' : 'grid';
+    selectors.archivosVista = selectors.archivosVista === 'grid' ? 'lista' : 'grid';
     console.log(selectors.value)
 }
 

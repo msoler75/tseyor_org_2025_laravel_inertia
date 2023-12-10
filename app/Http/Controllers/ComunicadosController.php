@@ -41,7 +41,7 @@ class ComunicadosController extends Controller
             $resultados = Comunicado::search($buscar);
         } else {
             // obtiene los items sin busqueda
-            $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano'])
+            $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano', 'imagen'])
                 ->where('visibilidad', 'P');
         }
 
