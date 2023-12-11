@@ -41,6 +41,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('/files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');
     Route::post('/files/upload/image', [ArchivosController::class, 'uploadImage'])->name('files.upload.image');
     Route::post('/files/rename', [ArchivosController::class, 'rename'])->name('files.rename');
+    Route::post('/files/update', [ArchivosController::class, 'update'])->name('files.update');
     Route::post('/files/move', [ArchivosController::class, 'move'])->name('files.move');
     Route::post('/files/copy', [ArchivosController::class, 'copy'])->name('files.copy');
     Route::put('/files/mkdir', [ArchivosController::class, 'makeDir'])->name('files.mkdir');

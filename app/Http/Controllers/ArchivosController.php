@@ -617,8 +617,71 @@ class ArchivosController extends Controller
     }
 
 
+
     /**
-     * Renombra un archuvo que está en una carpeta $folder de viejo nombre $oldName a $newName
+     * Cambia los permisos de un nodo
+     * parámetros: ruta, user_id, group_id, permisos
+     */
+    public function update(Request $request) {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'No autorizado'], 401);
+        }
+
+        $ruta = $this->normalizarRuta($request->ruta);
+        $permisos = $request->permisos;
+
+        if (!Storage::exists($ruta)) {
+            return response()->json(['error' => "La ruta '$ruta' no existe"], 404);
+        }
+
+        
+        // se requiere permisos de escritura en el nodo
+        $nodoItem = Nodo::desde($ruta);
+        if (!$nodoItem || Gate::denies('escribir', $nodoItem)) {
+            return response()->json([
+                'error' => 'No tienes permisos'
+            ], 403);
+        }
+        
+        // comprobamos sticky bit. Si está activado no podemos modificar un archivo o carpeta si no es de nuestra propiedad
+        $nodoContenedor = Nodo::desde(dirname($ruta));
+        if($nodoContenedor->sticky && $nodoItem->user_id!=$user->id) {
+            return response()->json([
+                'error' => 'No tienes permisos de propietario'
+            ], 403);
+        }
+
+        $esCarpeta = Storage::directoryExists($ruta);
+
+        $update = [];
+        if($permisos)
+            $update['permisos'] = $permisos;
+        if($request->user_id)
+            $update['user_id'] = $request->user_id;
+        if($request->group_id)
+            $update['group_id'] = $request->group_id;
+
+        $nodo = Nodo::where('ruta', $ruta)->first();
+        if(!$nodo) {
+            Nodo::create([
+                'ruta'=>$ruta,
+                'es_carpeta'=>$esCarpeta,
+                'user_id' =>$update['user_id']?$update['user_id']:$nodoItem->user_id,
+                'group_id' =>$update['group_id']?$update['group_id']:$nodoItem->group_id,
+                'permisos' => $update['permisos']?$update['permisos']:$permisos,
+            ]);
+        }else {
+            $nodo->update($update);
+        }
+
+        return response()->json(['message' => $esCarpeta?"Carpeta modificada":"Archivo modificado"], 200);
+    }
+
+    /**
+     * Renombra un archivo o carpeta que está en una carpeta $folder de viejo nombre $oldName a $newName
+     * parámetros: folder (carpeta donde está el nodo), oldName (nombre actual del nodo), newName (nuevo nombre del nodo)
      */
     public function rename(Request $request)
     {
@@ -655,15 +718,26 @@ class ArchivosController extends Controller
         }
 
 
-        // comprobamos los permisos de escritura
-        // $acl = Acl::from($user);
-        $nodo = Nodo::desde($rutaAntes);
-        if (!$nodo || Gate::denies('escribir', $nodo)) {
+        // se requiere: permisos de escritura en la carpeta contenedora del item, y permisos de escritura en el item
+        $nodoContenedor = Nodo::desde($folder);
+        $nodoItem = Nodo::desde($rutaAntes);
+        if (!$nodoContenedor || !$nodoItem || Gate::denies('escribir', $nodoContenedor) || Gate::denies('escribir', $nodoItem)) {
             return response()->json([
-                'error' => 'No tienes permisos'
+                'error' => 'No tienes permisos de escritura'
             ], 403);
         }
 
+        /*
+        En sistemas operativos basados en UNIX, como Linux, el sticky bit es un atributo de permisos especial que se puede aplicar a directorios. Este bit tiene un propósito específico y afecta la forma en que los usuarios pueden acceder y manipular archivos dentro de ese directorio.
+        Cuando el sticky bit está configurado en un directorio, los usuarios pueden eliminar o renombrar únicamente los archivos que son de su propiedad. Esto significa que, incluso si otros usuarios tienen permisos de escritura en el directorio, no podrán eliminar o renombrar archivos que no sean de su propiedad.
+        El propósito principal del sticky bit es asegurar que los usuarios no eliminen o modifiquen archivos de otros usuarios en directorios compartidos, como /tmp. Este directorio suele tener el sticky bit activado para evitar que los usuarios borren o modifiquen archivos de otros usuarios en un entorno multiusuario.
+        */
+        if($nodoContenedor->sticky && $nodoItem->user_id!=$user->id) {
+            return response()->json([
+                'error' => 'No tienes permisos de propietario'
+            ], 403);
+        }
+        
         //$rutaAbsolutaAntes = realpath(Storage::disk('public')->path($rutaAntes));
         //$rutaAbsolutaDespues = preg_replace("/[\/\\\\]/", DIRECTORY_SEPARATOR, Storage::disk('public')->path($rutaDespues));
 
@@ -701,6 +775,7 @@ class ArchivosController extends Controller
 
     /**
      * Mueve un conjunto de archivos a otra carpeta
+     * sourceFolder, destinationFolder, items
      */
     public function move(Request $request)
     {
@@ -739,7 +814,7 @@ class ArchivosController extends Controller
                 'error' => 'No tienes permisos de lectura en la carpeta origen'
             ], 403);
         }
-        if (Gate::denies('escribir', $nodoSource)) {
+       if (Gate::denies('escribir', $nodoSource)) {
             return response()->json([
                 'error' => 'No tienes permisos de escritura en la carpeta origen'
             ], 403);
@@ -761,6 +836,16 @@ class ArchivosController extends Controller
             $rutaDespues = $destinationFolder . "/" . $item;
             $itemSource = 'public/' . $rutaAntes;
             $itemDestination = 'public/' . $rutaDespues;
+
+            // Comprobamos sticky bit (si está activado no podemos mover archivos o carpetas que no son nuestros)
+            if($nodoSource->sticky) {
+                $nodoItem = Nodo::desde($rutaAntes);
+                if($nodoItem->user_id!=$user->id) {
+                    $errorCount++;
+                    $errorMessages[] = "El item '$itemSource' no se pudo mover";
+                    continue;
+                }
+            } 
 
             // Verificar que el item exista
             if (!Storage::exists($itemSource)) {
@@ -952,4 +1037,7 @@ class ArchivosController extends Controller
         }
         return $ruta;
     }
+
+
+    
 }
