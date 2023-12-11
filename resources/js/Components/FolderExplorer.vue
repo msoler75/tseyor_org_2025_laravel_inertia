@@ -4,28 +4,29 @@
             :class="embed ? 'pt-4' : ' pt-16'">
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
 
-                <button v-if="!seleccionando&&mostrandoResultados" class="btn btn-neutral btn-sm" title="Cerrar búsqueda"
-                    @click="mostrandoResultados=false">
+                <button v-if="!seleccionando && mostrandoResultados" class="btn btn-neutral btn-sm" title="Cerrar búsqueda"
+                    @click="mostrandoResultados = false">
                     <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                     <Icon icon="ph:x-bold" />
-                    </button>
+                </button>
 
-                <div  class="flex gap-3">
-
-
+                <div class="flex gap-3">
 
                     <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer"
-                        @click="clickFolder({ url: '' }, $event)" :is-link="!embed" title="Ir a la carpeta base">
+                    href=""
+                        @click="clickFolder({ url: '' }, $event)" :is-link="!embed" title="Ir a la carpeta base"
+                        :class="rutaActual == 'archivos' ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
                     </ConditionalLink>
 
                     <ConditionalLink v-if="items.length > 1 && items[1].padre && !seleccionando" :href="items[1].url"
                         class="btn btn-neutral btn-sm w-fit" title="Ir a una carpeta superior"
-                        @click="clickFolder(items[1], $event)" :is-link="!embed">
+                        @click="clickFolder(items[1], $event)" :is-link="!embed"
+                        :class="rutaActual == 'archivos' ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:arrow-bend-left-up-duotone" class="text-2xl" />
                     </ConditionalLink>
 
-                    <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="!embed" @folder="clickBreadcrumb($event)"
+                    <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="false&&!embed" @folder="clickBreadcrumb($event)"
                         title="Ruta actual" class="text-3xl font-bold items-center ml-2" />
                 </div>
 
@@ -36,15 +37,15 @@
                         <Icon icon="material-symbols:close-rounded" />
                         <span>{{ itemsSeleccionados.length }}</span>
                     </button>
-                    
+
 
                     <button v-if="seleccionando" class="btn btn-neutral btn-sm mr-auto" @click.prevent="seleccionarTodos"
                         title="Seleccionar todos">
                         <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                     </button>
 
-                    <button v-if="!seleccionando&&!mostrandoResultados" class="btn btn-neutral btn-sm" title="Buscar archivos"
-                        @click="showSearch">
+                    <button v-if="!seleccionando && !mostrandoResultados" class="btn btn-neutral btn-sm"
+                        title="Buscar archivos" @click="showSearch">
                         <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                     </button>
 
@@ -130,6 +131,14 @@
                                     <span>Cancelar selección</span>
                                 </div>
 
+
+                                <div 
+                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                        @click.prevent="abrirModalPropiedades(items[0])">
+                        <Icon icon="ph:info-duotone" />
+                        <span>Propiedades</span>
+                    </div>
+
                             </div>
 
                         </template>
@@ -138,7 +147,7 @@
                 </div>
             </div>
 
-            store: {{store}}
+            store: {{ store }}
 
             <!-- SEGUNDA FILA: Botones de Operaciones -->
             <div class="lg:container mx-auto w-full flex mb-7 gap-4 select-none overflow-x-auto scrollbar-hidden"
@@ -193,8 +202,8 @@
                         <span>Renombrar</span>
                     </button>
 
-                    <button v-if="seleccionando && itemsSeleccionados.length>0" class="btn btn-secondary"
-                    @click.prevent="abrirModalPropiedades()">
+                    <button v-if="seleccionando && itemsSeleccionados.length > 0" class="btn btn-secondary"
+                        @click.prevent="abrirModalPropiedades()">
                         <Icon icon="ph:info-duotone" />
                         <span>Propiedades</span>
                     </button>
@@ -334,6 +343,13 @@
                                             </div>
 
 
+                                            <div
+                                                class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                                @click.prevent="abrirModalPropiedades(item)">
+                                                <Icon icon="ph:info-duotone" />
+                                                <span>Propiedades</span>
+                                            </div>
+
                                         </div>
 
                                     </template>
@@ -428,6 +444,13 @@
                                                     <span>Cancelar selección</span>
                                                 </div>
 
+                                                <div
+                                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                                    @click.prevent="abrirModalPropiedades(item)">
+                                                    <Icon icon="ph:info-duotone" />
+                                                    <span>Propiedades</span>
+                                                </div>
+
 
                                             </div>
 
@@ -517,25 +540,59 @@
 
 
 
-          <!-- Modal Propiedades -->
-          <Modal :show="modalPropiedades" @close="modalPropiedades = false" maxWidth="md">
+        <!-- Modal Propiedades -->
+        <Modal :show="modalPropiedades" @close="modalPropiedades = false" maxWidth="md">
             <div class="p-5">
-                <div v-for="item of itemsSeleccionados">
-                    <table>
-                        <tr><th>Archivo: </th><td>{{ item.nombre }}</td></tr>
-                            <tr><th>Carpeta</th><td>/{{item.ruta.substring(0, item.ruta.lastIndexOf('/'))}}</td></tr>
-                            <tr><th>Permisos:</th><td>{{item.permisos}}</td></tr>
-                            <tr><th>&nbsp;</th><td></td></tr>
+                <div v-for="item of itemsPropiedades">
+                    <table class="propiedades">
+                        <tr>
+                            <th>Archivo: </th>
+                            <td>{{ item.nombre }}</td>
+                        </tr>
+                        <tr>
+                            <th>Carpeta</th>
+                            <td>{{ item.carpeta }}</td>
+                        </tr>
+                        <tr>
+                            <th>Permisos:</th>
+                            <td>{{ item.permisos }}</td>
+                        </tr>
+                        <tr>
+                            <th>Propietario:</th>
+                            <td>{{ item.propietario.usuario }}/{{ item.propietario.grupo }}</td>
+                        </tr>
+                        <tr>
+                            <th>Última modificación:</th>
+                            <td>
+                                <TimeAgo :date="item.fecha_modificacion" />
+                            </td>
+                        </tr>
+                       <tr v-if="item.acl">
+                        <th>Acceso:</th>
+                        <td>
+                            <div v-for="acl of item.acl" :key="acl.id" class="flex gap-3 items-center">
+                                    <Icon v-if="acl.usuario" icon="ph:user-duotone"/>
+                                    {{acl.usuario }}  
+                                    <Icon v-if="acl.grupo" icon="ph:users-three-duotone"/>
+                                    {{acl.grupo}}
+                                    : {{acl.verbos}}
+                            </div>
+                        </td>
+                       </tr> 
+                        <tr>
+                            <th>&nbsp;</th>
+                            <td></td>
+                        </tr>
                     </table>
-            </div>
+                </div>
 
-    <div class="py-3 flex justify-between sm:justify-end gap-5">
-        <button @click.prevent="modalPropiedades = false" type="button" class="btn btn-neutral btn-sm">
-            Cerrar
-        </button>
-    </div>
-</div>
-</Modal>
+                <div class="py-3 flex justify-between sm:justify-end gap-5">
+                    <button @click.prevent="modalPropiedades = false" type="button" class="btn btn-neutral btn-sm">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </Modal>
 
 
         <!-- Modal Renombrar Item -->
@@ -764,7 +821,7 @@ function toggleItem(item) {
     item.touching = false
 }
 
-const itemsSeleccionados = computed(() => props.items.filter(item => !['.','..'].includes(item.nombre) && item.seleccionado && !item.eliminado))
+const itemsSeleccionados = computed(() => props.items.filter(item => !['.', '..'].includes(item.nombre) && item.seleccionado && !item.eliminado))
 
 
 watch(() => itemsSeleccionados.value.length, (value) => {
@@ -948,7 +1005,9 @@ const itemsOrdenados = computed(() => {
 // PROPIEDADES
 
 const modalPropiedades = ref(false)
-function abrirModalPropiedades() {
+const itemsPropiedades = ref(null)
+function abrirModalPropiedades(item) {
+    itemsPropiedades.value = item?[item]:itemsSeleccionados.value
     modalPropiedades.value = true
 }
 
@@ -1212,4 +1271,7 @@ table th {
     opacity: 0;
     transform: scale(0);
 }
-</style>
+
+.propiedades th {
+    text-align: left
+}</style>

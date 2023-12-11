@@ -80,4 +80,19 @@ class Acl extends Model
             })
             ->get();
     }
+
+
+
+
+    /**
+     * Devuelve un listado de permisos acl para un array de nodos
+     */
+    public static function inNodes(array $nodo_ids)
+    {
+        return Acl::select('nodos_acl.*', 'grupos.nombre as grupo', 'users.name as usuario')
+            ->leftJoin('users', 'nodos_acl.user_id', '=', 'users.id')
+            ->leftJoin('grupos', 'nodos_acl.group_id', '=', 'grupos.id')
+            ->whereIn('nodo_id', $nodo_ids)
+            ->get();
+    }
 }

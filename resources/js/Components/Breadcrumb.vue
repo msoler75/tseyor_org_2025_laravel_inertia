@@ -38,9 +38,11 @@ function handleClick(item, event) {
                 <span class="mx-2 text-neutral-500 dark:text-neutral-400">/</span>
             </li>
             <li class="flex items-center space-x-3">
-                <component :is="index<items.length-1?ConditionalLink: 'div' " :href="item.url" :link="links"
+                <component :is="links && index<items.length-1?ConditionalLink: 'div' " :href="item.url" 
                     @click="handleClick(item, $event)"
-                    :class="index < items.length - 1 ? 'text-gray-700 dark:text-gray-300 hover:underline' : 'text-gray-400 dark:text-gray-600'">
+                    :class="!links ? 'pointer-events-none' :index < items.length - 1 ? 'text-gray-700 dark:text-gray-300 hover:underline' : 'text-gray-400 dark:text-gray-600'"
+                    :is-link="true"
+                    >
                     {{ item.label }}</component>
             </li>
         </template>
