@@ -73,7 +73,7 @@ class ArchivosController extends Controller
             abort(404, 'Ruta no encontrada');
         }
 
-        $user = auth()->user();
+        // $user = auth()->user();
 
         // $acl = Acl::from($user, ['ejecutar', 'escribir']);
 
@@ -94,23 +94,31 @@ class ArchivosController extends Controller
         $carpetas = Storage::disk('public')->directories($ruta);
 
         // agregamos la carpeta actual
-        $items[] = $this->prepararItem($ruta, $nodo, ['tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
+        $items[] = $this->prepareItemList($ruta, $nodo, ['tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
 
         // agregamos carpeta padre
         $padre = dirname($ruta);
+        $nodoPadre = null;
         if ($padre && $padre != "\\" && $padre != "//") {
-            $items[] = $this->prepararItem($padre, null, ['tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
+            $nodoPadre =  Nodo::desde($padre);
+            $items[] = $this->prepareItemList($padre, $nodoPadre, ['tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
         }
 
 
         // obtenemos todos los nodos de la carpeta
-        $nodos = Nodo::hijos($ruta);
+        $nodosHijos = Nodo::hijos($ruta);
 
+         // Obtenemos todos los ids de todos los nodos implicados
+         $nodosIdsArr =$nodosHijos->pluck('id')->toArray();
+        if($nodoPadre)
+            array_push($nodosIdsArr, $nodoPadre->id);
+        if($nodo)
+            array_push($nodosIdsArr, $nodo->id);
 
         // Agregar carpetas a la colección de elementos
         foreach ($carpetas as $carpeta) {
-            $nodo = $nodos->where('ruta', $carpeta /*$ruta . "/" .  basename($carpeta)*/)->first();
-            $items[] = $this->prepararItem(
+            $nodo = $nodosHijos->where('ruta', $carpeta /*$ruta . "/" .  basename($carpeta)*/)->first();
+            $items[] = $this->prepareItemList(
                 $carpeta,
                 $nodo,
                 [
@@ -123,8 +131,8 @@ class ArchivosController extends Controller
 
         // Agregar archivos a la colección de elementos
         foreach ($archivos as $archivo) {
-            $nodo = $nodos->where('ruta', $archivo)->first();
-            $items[] = $this->prepararItem($archivo, $nodo, [
+            $nodo = $nodosHijos->where('ruta', $archivo)->first();
+            $items[] = $this->prepareItemList($archivo, $nodo, [
                 'tipo' => 'archivo',
                 'tamano' => Storage::disk('public')->size($archivo),
             ]);
@@ -133,9 +141,7 @@ class ArchivosController extends Controller
         // comprobamos los permisos de escritura (para saber si puede crear carpetas, o renombrar archivos)
         $puedeEscribir = Gate::allows('escribir', $nodoCarpeta);
 
-        $propietario = null;
-
-        // comprobamos si la carpeta es de un equipo, o de un usuario, en cuyo caso buscamos la forma de referenciarlo
+        // obtenemos el propietario de la ruta actual, que puede ser un usuario o un grupo/equipo
         $equipo = Equipo::where('group_id', $nodoCarpeta->group_id)->first();
         if ($equipo)
             $propietario = [
@@ -151,6 +157,24 @@ class ArchivosController extends Controller
                 'tipo' => 'usuario'
             ];
         }
+
+
+        // Obtenemos de una vez todos los ACL
+        $acl = Acl::inNodes($nodosIdsArr);
+        
+        // Agregamos la información de Access Control List para cada item
+         foreach($items as $idx=>$item) {
+            if($item['nodo_id']) {
+                $a = $acl->where('nodo.id', '=', $item['nodo_id'])->toArray();
+                foreach($a as $k=>$x) {
+                    unset($a[$k]['nodo']);
+                    unset($a[$k]['nodo_id']);
+                }
+                $items[$idx]['acl'] = array_values($a);
+            }
+            else
+                $items[$idx]['acl'] = null;
+         }
 
         $respuesta = [
             'items' => $items,
@@ -175,7 +199,7 @@ class ArchivosController extends Controller
     /**
      * Prepara el item de un listado de una carpeta
      */
-    private function prepararItem(string $ruta, ?Nodo $nodo, array $options): array
+    private function prepareItemList(string $ruta, ?Nodo $nodo,array $options): array
     {
         $baseUrl = url('');
         $rutaBase = str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url($ruta)));
@@ -192,6 +216,7 @@ class ArchivosController extends Controller
             $nodo = Nodo::desde($ruta);
         if (!$nodo || (($options['tipo'] ?? '') == 'carpeta' && Gate::denies('ejecutar', $nodo)))
             $item['privada'] = true; // carpeta no accesible
+        $item['nodo_id'] = optional($nodo)->id ?? null;
         $item['permisos'] = optional($nodo)->permisos ?? 0;
         $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
         return $item;
@@ -229,13 +254,13 @@ class ArchivosController extends Controller
                 if (!Storage::disk('public')->exists($nodo->ruta))
                     continue;
                 if ($nodo->es_carpeta)
-                    $resultados[] = $this->prepararItem($nodo->ruta, $nodo, [
+                    $resultados[] = $this->prepareItemList($nodo->ruta, $nodo, [
                         'tipo' => 'carpeta',
                         'archivos' => count(Storage::disk('public')->files($nodo->ruta)),
                         'subcarpetas' => count(Storage::disk('public')->directories($nodo->ruta))
                     ]);
                 else
-                    $resultados[] = $this->prepararItem($nodo->ruta, $nodo, [
+                    $resultados[] = $this->prepareItemList($nodo->ruta, $nodo, [
                         'tipo' => 'archivo',
                         'tamano' => Storage::disk('public')->size($nodo->ruta),
                     ]);
@@ -269,7 +294,7 @@ class ArchivosController extends Controller
                 // Comprobar si algún archivo tiene un nombre similar a la cadena de búsqueda
                 foreach ($archivos as $archivo) {
                     if ($this->matchSearch(basename($archivo), $nombre))
-                        $resultados[] = $this->prepararItem($archivo, null, [
+                        $resultados[] = $this->prepareItemList($archivo, null, [
                             'tipo' => 'archivo',
                             'tamano' => Storage::disk('public')->size($archivo)
                         ]);
@@ -279,7 +304,7 @@ class ArchivosController extends Controller
                 foreach ($subcarpetas as $subcarpeta) {
                     $item = null;
                     if ($this->matchSearch(basename($archivo), $nombre)) {
-                        $item = $this->prepararItem($archivo, null, [
+                        $item = $this->prepareItemList($archivo, null, [
                             'tipo' => 'carpeta',
                             'archivos' => count(Storage::disk('public')->files($carpeta)),
                             'subcarpetas' => count(Storage::disk('public')->directories($carpeta))
