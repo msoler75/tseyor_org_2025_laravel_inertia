@@ -98,7 +98,6 @@ Route::get('archivo/comunicados', [ComunicadosController::class, 'archive'])->na
 Route::get('libros', [LibrosController::class, 'index'])->name('libros');
 Route::get('libros/{slug}', [LibrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('libro');
 
-
 Route::get('entradas', [EntradasController::class, 'index'])->name('entradas');
 Route::get('entradas/{slug}', [EntradasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('entrada');
 

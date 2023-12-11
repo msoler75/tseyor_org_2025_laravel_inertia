@@ -541,7 +541,7 @@
 
 
         <!-- Modal Propiedades -->
-        <Modal :show="modalPropiedades" @close="modalPropiedades = false" maxWidth="md">
+        <Modal :show="modalPropiedades" @close="modalPropiedades = false" >
             <div class="p-5">
                 <div v-for="item of itemsPropiedades">
                     <table class="propiedades">
@@ -552,14 +552,18 @@
                         <tr>
                             <th>Carpeta</th>
                             <td>{{ item.carpeta }}</td>
-                        </tr>
-                        <tr>
-                            <th>Permisos:</th>
-                            <td>{{ item.permisos }}</td>
-                        </tr>
+                        </tr>                       
                         <tr>
                             <th>Propietario:</th>
-                            <td>{{ item.propietario.usuario }}/{{ item.propietario.grupo }}</td>
+                            <td class="flex gap-3 items-center">
+                                <span class="flex items-center gap-3" title="usuario">
+                                    <Icon icon="ph:user-duotone" /> {{ item.propietario.usuario }}
+                                </span> 
+                                    <span class="opacity-30">|</span>
+                                    <span class="flex items-center gap-3" title="grupo">
+                                    <Icon icon="ph:users-three-duotone"/> {{ item.propietario.grupo }}
+                                </span> 
+                            </td>
                         </tr>
                         <tr>
                             <th>Última modificación:</th>
@@ -567,18 +571,28 @@
                                 <TimeAgo :date="item.fecha_modificacion" />
                             </td>
                         </tr>
+                        <tr>
+                            <th>Permisos:</th>
+                            <td>{{ item.permisos }}</td>
+                        </tr>
+                        <tr>
+                        <th></th>
+                        <td><PermisosInfo :es-carpeta="item.tipo!='archivo'" :propietario-user="item.user_id" :propietario-group="item.group_id" :permisos="item.permisos"/></td>
+                       </tr>
                        <tr v-if="item.acl">
-                        <th>Acceso:</th>
+                        <th class="align-top">Acceso adicional:</th>
                         <td>
                             <div v-for="acl of item.acl" :key="acl.id" class="flex gap-3 items-center">
-                                    <Icon v-if="acl.usuario" icon="ph:user-duotone"/>
+                                -
+                                    <Icon v-if="acl.usuario" icon="ph:user-duotone" title="usuario"/>
                                     {{acl.usuario }}  
-                                    <Icon v-if="acl.grupo" icon="ph:users-three-duotone"/>
+                                    <Icon v-if="acl.grupo" icon="ph:users-three-duotone" title="grupo"/>
                                     {{acl.grupo}}
                                     : {{acl.verbos}}
                             </div>
                         </td>
                        </tr> 
+                       
                         <tr>
                             <th>&nbsp;</th>
                             <td></td>

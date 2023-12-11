@@ -39,6 +39,7 @@ class Nodo extends Model
         return $this->belongsTo(Grupo::class, 'group_id', 'id');
     }
 
+    
 
     // accesors
     public function getNombreUsuarioAttribute()
@@ -49,6 +50,12 @@ class Nodo extends Model
     public function getNombreGrupoAttribute()
     {
         return $this->group->nombre; // Reemplaza `nombre` por el nombre del atributo que contiene el nombre del grupo en tu modelo `Grupo`
+    }
+
+
+    public function getStickyAttribute(): bool {
+        $permisos = octdec($this->permisos);
+        return $permisos & (0b001 << 9);
     }
 
 
