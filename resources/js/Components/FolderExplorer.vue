@@ -15,7 +15,14 @@
 
                     <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ buscar }}'</span>:</span>
 
-                    <button  class="ml-auto btn btn-neutral btn-sm" title="Cerrar búsqueda"
+                    <button class="ml-auto  btn btn-neutral btn-sm" @click.prevent="toggleVista" title="Cambiar vista">
+                        <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
+                            class="transform scale-150" />
+                        <Icon v-show="selectors.archivosVista == 'grid'" icon="ph:grid-nine-fill"
+                            class="transform scale-150" />
+                    </button>
+
+                    <button  class="btn btn-neutral btn-sm" title="Cerrar búsqueda"
                     @click="mostrandoResultados = false">
                     <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                     <Icon icon="ph:x-bold" />
