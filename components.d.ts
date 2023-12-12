@@ -74,6 +74,7 @@ declare module 'vue' {
     NewsLetterSignup: typeof import('./resources/js/Sections/NewsLetterSignup.vue')['default']
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
     PermisosInfo: typeof import('./resources/js/Components/PermisosInfo.vue')['default']
+    PermisosNodo: typeof import('./resources/js/Components/PermisosNodo.vue')['default']
     Planets: typeof import('./resources/js/Icons/Planets.vue')['default']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
     Prose: typeof import('./resources/js/Components/Prose.vue')['default']

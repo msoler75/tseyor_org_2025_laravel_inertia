@@ -73,10 +73,22 @@ Route::get('archivos', [ArchivosController::class, 'archivos'])->name('archivos0
 Route::get('archivos/buscar', [ArchivosController::class, 'buscar'])->name('archivos.buscar');
 Route::get('archivos{ruta}', [ArchivosController::class, 'archivos'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
-
 Route::get('filemanager{ruta}', [ArchivosController::class, 'filemanager'])->where(['ruta' => '(\/.*)?'])->name('filemanager');
 
 Route::get('storage/{ruta}', [ArchivosController::class, 'storage'])->where(['ruta' => '(\/.+)?'])->name('storage');
+
+
+ // archivos
+ Route::post('/files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');
+ Route::post('/files/upload/image', [ArchivosController::class, 'uploadImage'])->name('files.upload.image');
+ Route::post('/files/rename', [ArchivosController::class, 'rename'])->name('files.rename');
+ Route::post('/files/update', [ArchivosController::class, 'update'])->name('files.update');
+ Route::post('/files/move', [ArchivosController::class, 'move'])->name('files.move');
+ Route::post('/files/copy', [ArchivosController::class, 'copy'])->name('files.copy');
+ Route::put('/files/mkdir', [ArchivosController::class, 'makeDir'])->name('files.mkdir');
+ Route::delete('/files{ruta}', [ArchivosController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
+
+
 
 Route::get('audios', [AudiosController::class, 'index'])->name('audios');
 Route::get('audios/{slug}', [AudiosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('audio');
