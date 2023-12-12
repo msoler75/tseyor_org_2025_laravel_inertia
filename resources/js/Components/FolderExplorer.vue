@@ -607,13 +607,15 @@
                        <tr v-if="item.acl&&item.acl.length">
                         <th class="align-top">Acceso adicional</th>
                         <td>
-                            <div v-for="acl of item.acl" :key="acl.id" class="flex gap-3 items-center">
-                                -
-                                    <Icon v-if="acl.usuario" icon="ph:user-duotone" title="usuario"/>
-                                    {{acl.usuario }}
+                            <div v-for="acl of item.acl" :key="acl.id" class="flex gap-1 items-center">
+                                ✅<Icon v-if="acl.usuario" icon="ph:user-duotone" title="usuario"/>
+                                    <span class="font-bold">{{acl.usuario }}</span>
                                     <Icon v-if="acl.grupo" icon="ph:users-three-duotone" title="grupo"/>
-                                    {{acl.grupo}}
-                                    : {{acl.verbos}}
+                                    <span class="font-bold">{{acl.grupo}}</span>
+                                    : {{acl.verbos.replace(/,?ejecutar/,item.tipo=='archivo'?'':',listar')
+                                    .replace(/(,?)leer/,'$1descargar')
+                                    .replace(/,/g, ', ')
+                                }}
                             </div>
                         </td>
                        </tr>
