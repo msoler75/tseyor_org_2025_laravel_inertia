@@ -32,15 +32,15 @@ function handleClick(item, event) {
 
 
 <template>
-    <ol v-if="items.length" class="list-reset flex gap-1">
+    <ol v-if="items.length" class="list-reset flex gap-1" >
         <template v-for="item, index, of items" :key="index">
-            <li v-if="index > 0">
+            <li class="flex items-center space-x-1">
                 <span class="mx-2 text-neutral-500 dark:text-neutral-400">/</span>
-            </li>
-            <li class="flex items-center space-x-3">
-                <component :is="links && index<items.length-1?ConditionalLink: 'div' " :href="item.url" 
+                <component :is="links && index<items.length-1?ConditionalLink: 'div' " :href="item.url"
                     @click="handleClick(item, $event)"
-                    :class="!links ? 'pointer-events-none' :index < items.length - 1 ? 'text-gray-700 dark:text-gray-300 hover:underline' : 'text-gray-400 dark:text-gray-600'"
+                    class="whitespace-nowrap max-w-[50vw] truncate"
+                    :title="item.label"
+                    :class="!links ? 'pointer-events-none' :index < items.length - 1 ? 'opacity-90 hover:underline' : ''"
                     :is-link="true"
                     >
                     {{ item.label }}</component>

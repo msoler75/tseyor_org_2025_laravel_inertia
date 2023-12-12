@@ -2,18 +2,25 @@
     <div class="h-full flex flex-col relative">
         <div class="w-full sticky top-4 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
             :class="embed ? 'pt-4' : ' pt-16'">
+
+            <div  :class="embed ? '' : 'lg:container mx-auto'">
+                <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="!embed" @folder="clickBreadcrumb($event)"
+                title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5" />
+            </div>
+
+
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
 
-                <button v-if="!seleccionando && mostrandoResultados" class="btn btn-neutral btn-sm" title="Cerrar búsqueda"
+                <div class="flex gap-3 w-full max-w-full">
+
+                    <button v-if="!seleccionando && mostrandoResultados" class="btn btn-neutral btn-sm" title="Cerrar búsqueda"
                     @click="mostrandoResultados = false">
                     <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                     <Icon icon="ph:x-bold" />
                 </button>
 
-                <div class="flex gap-3">
-
                     <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer"
-                    href=""
+                    href="/archivos"
                         @click="clickFolder({ url: '' }, $event)" :is-link="!embed" title="Ir a la carpeta base"
                         :class="rutaActual == 'archivos' ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
@@ -26,18 +33,20 @@
                         <Icon icon="ph:arrow-bend-left-up-duotone" class="text-2xl" />
                     </ConditionalLink>
 
-                    <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="false&&!embed" @folder="clickBreadcrumb($event)"
-                        title="Ruta actual" class="text-3xl font-bold items-center ml-2" />
-                </div>
-
-                <div class="flex gap-3 flex-nowrap" :class="seleccionando ? 'w-full' : ''">
-
                     <button v-if="seleccionando" class="btn btn-neutral btn-sm flex gap-3 items-center"
                         @click.prevent="cancelarSeleccion" title="Cancelar selección">
                         <Icon icon="material-symbols:close-rounded" />
                         <span>{{ itemsSeleccionados.length }}</span>
                     </button>
 
+                    <div class="ml-auto flex gap-3">
+
+                        <button class="btn btn-neutral btn-sm" @click.prevent="toggleVista" title="Cambiar vista">
+                        <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
+                            class="transform scale-150" />
+                        <Icon v-show="selectors.archivosVista == 'grid'" icon="ph:grid-nine-fill"
+                            class="transform scale-150" />
+                    </button>
 
                     <button v-if="seleccionando" class="btn btn-neutral btn-sm mr-auto" @click.prevent="seleccionarTodos"
                         title="Seleccionar todos">
@@ -48,14 +57,6 @@
                         title="Buscar archivos" @click="showSearch">
                         <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                     </button>
-
-
-                    <Link v-if="!embed && propietario && !seleccionando" class="btn btn-neutral btn-sm"
-                        :href="propietario.url" :title="tituloPropietario">
-                    <Icon :icon="propietario.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'"
-                        class="transform scale-150" />
-                    </Link>
-
 
                     <Dropdown>
                         <template #trigger>
@@ -77,13 +78,16 @@
                         </template>
                     </Dropdown>
 
+                    <Link v-if="!embed && propietario && !seleccionando" class="btn btn-neutral btn-sm"
+                        :href="propietario.url" :title="tituloPropietario">
+                    <Icon :icon="propietario.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'"
+                        class="transform scale-150" />
+                    </Link>
 
-                    <button class="btn btn-neutral btn-sm" @click.prevent="toggleVista" title="Cambiar vista">
-                        <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
-                            class="transform scale-150" />
-                        <Icon v-show="selectors.archivosVista == 'grid'" icon="ph:grid-nine-fill"
-                            class="transform scale-150" />
-                    </button>
+
+
+
+
 
                     <Dropdown v-if="puedeEscribir && !seleccionando" align="right" width="48">
                         <template #trigger>
@@ -132,7 +136,7 @@
                                 </div>
 
 
-                                <div 
+                                <div
                                     class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                         @click.prevent="abrirModalPropiedades(items[0])">
                         <Icon icon="ph:info-duotone" />
@@ -147,7 +151,8 @@
                 </div>
             </div>
 
-            store: {{ store }}
+
+            </div>
 
             <!-- SEGUNDA FILA: Botones de Operaciones -->
             <div class="lg:container mx-auto w-full flex mb-7 gap-4 select-none overflow-x-auto scrollbar-hidden"
@@ -543,60 +548,55 @@
         <!-- Modal Propiedades -->
         <Modal :show="modalPropiedades" @close="modalPropiedades = false" >
             <div class="p-5">
-                <div v-for="item of itemsPropiedades">
+                <div v-for="item, index of itemsPropiedades" :key="item.url" class="pb-4" :class="index>0?'pt-4 border-t border-base-200':''">
                     <table class="propiedades">
                         <tr>
-                            <th>Archivo: </th>
+                            <th>Archivo </th>
                             <td>{{ item.nombre }}</td>
                         </tr>
                         <tr>
                             <th>Carpeta</th>
                             <td>{{ item.carpeta }}</td>
-                        </tr>                       
+                        </tr>
                         <tr>
-                            <th>Propietario:</th>
+                            <th>Ruta completa</th>
+                            <td>{{ item.carpeta }}/{{ item.nombre }}</td>
+                        </tr>
+                        <tr>
+                            <th>Propietario</th>
                             <td class="flex gap-3 items-center">
                                 <span class="flex items-center gap-3" title="usuario">
                                     <Icon icon="ph:user-duotone" /> {{ item.propietario.usuario }}
-                                </span> 
+                                </span>
                                     <span class="opacity-30">|</span>
                                     <span class="flex items-center gap-3" title="grupo">
                                     <Icon icon="ph:users-three-duotone"/> {{ item.propietario.grupo }}
-                                </span> 
+                                </span>
                             </td>
                         </tr>
                         <tr>
-                            <th>Última modificación:</th>
+                            <th>Fecha</th>
                             <td>
                                 <TimeAgo :date="item.fecha_modificacion" />
                             </td>
                         </tr>
                         <tr>
-                            <th>Permisos:</th>
-                            <td>{{ item.permisos }}</td>
+                            <th class="align-top">Permisos</th>
+                            <td><PermisosNodo :es-carpeta="item.tipo!='archivo'" :propietario-user="item.user_id" :propietario-group="item.group_id" :permisos="item.permisos"/></td>
                         </tr>
-                        <tr>
-                        <th></th>
-                        <td><PermisosInfo :es-carpeta="item.tipo!='archivo'" :propietario-user="item.user_id" :propietario-group="item.group_id" :permisos="item.permisos"/></td>
-                       </tr>
-                       <tr v-if="item.acl">
-                        <th class="align-top">Acceso adicional:</th>
+                       <tr v-if="item.acl&&item.acl.length">
+                        <th class="align-top">Acceso adicional</th>
                         <td>
                             <div v-for="acl of item.acl" :key="acl.id" class="flex gap-3 items-center">
                                 -
                                     <Icon v-if="acl.usuario" icon="ph:user-duotone" title="usuario"/>
-                                    {{acl.usuario }}  
+                                    {{acl.usuario }}
                                     <Icon v-if="acl.grupo" icon="ph:users-three-duotone" title="grupo"/>
                                     {{acl.grupo}}
                                     : {{acl.verbos}}
                             </div>
                         </td>
-                       </tr> 
-                       
-                        <tr>
-                            <th>&nbsp;</th>
-                            <td></td>
-                        </tr>
+                       </tr>
                     </table>
                 </div>
 

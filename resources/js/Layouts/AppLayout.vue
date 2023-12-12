@@ -388,8 +388,8 @@ axios.get(route('setting', 'navigation'))
 
                                         <template #content>
                                             <!-- Account Management -->
-                                            <div class="block px-4 py-2 text-xs text-gray-400">
-                                                Perfil
+                                            <div class="font-bold px-4 py-2">
+                                                {{$page.props.auth.user.name}}
                                             </div>
 
                                             <DropdownLink :href="route('profile.show')">
