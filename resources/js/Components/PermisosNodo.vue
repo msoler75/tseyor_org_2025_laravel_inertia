@@ -1,37 +1,41 @@
 <template>
-    <div class="relative flex gap-2 items-center" >
-        <span>{{permisos}} {{permisosChars}}</span>
-        <span title="Ver detalles"><Icon v-show="!mostrarPropiedades" icon="ph-info-duotone" class="cursor-pointer" @click="mostrarPropiedades=true" /></span>
+    <div class="relative flex gap-2 items-center">
+        <span>{{ permisos }} {{ permisosChars }}</span>
+        <span title="Ver detalles">
+            <Icon v-show="!mostrarPropiedades" icon="ph-info-duotone" class="cursor-pointer"
+                @click="mostrarPropiedades = true" />
+        </span>
     </div>
     <div v-show="mostrarPropiedades" class="relative pr-8">
-        <span title="Cerrar detalles" class="absolute -translate-y-6 right-0 top-0 cursor-pointer" @click="mostrarPropiedades=false">✕</span>
-        <div  v-for="frase of obtenerFrasePermisos()" :key="frase">
-            - {{frase}}
+        <span title="Cerrar detalles" class="absolute -translate-y-6 right-0 top-0 cursor-pointer"
+            @click="mostrarPropiedades = false">✕</span>
+        <div v-for="frase of obtenerFrasePermisos()" :key="frase">
+            {{ frase }}
         </div>
     </div>
 </template>
-  
+
 <script setup>
 import { defineProps } from 'vue';
 
 const props = defineProps({
     esCarpeta: Boolean,
     propietarioUser: Number,
-    propietarioGrupo: Number,
+    propietarioGroup: Number,
     permisos: String,
 });
 
 const mostrarPropiedades = ref(false)
 
-const permisosChars = computed(()=>{
+const permisosChars = computed(() => {
     const p = parseInt(props.permisos, 8)
-    return ch(p,9,'d')+ 
-    ch(p,8,'r')+ch(p,7,'w')+ch(p,6,'x')+' '+
-    ch(p,5,'r')+ch(p,4,'w')+ch(p,3,'x')+' '+
-    ch(p,2,'r')+ch(p,1,'w')+ch(p,0,'x')
+    return ch(p, 9, 'd') +
+        ch(p, 8, 'r') + ch(p, 7, 'w') + ch(p, 6, 'x') + ' ' +
+        ch(p, 5, 'r') + ch(p, 4, 'w') + ch(p, 3, 'x') + ' ' +
+        ch(p, 2, 'r') + ch(p, 1, 'w') + ch(p, 0, 'x')
 })
 
-const ch = (permisos, pos, char)=> bitHabilitado(permisos, pos) ? char : '-'
+const ch = (permisos, pos, char) => bitHabilitado(permisos, pos) ? char : '-'
 
 const obtenerFrasePermisos = () => {
     const permisosNumericos = parseInt(props.permisos, 8)
@@ -43,49 +47,77 @@ const obtenerFrasePermisos = () => {
     }
 };
 
+
+const pQuien = ['el usuario propietario', 'el grupo propietario', 'el resto de usuarios']
+
+const pCarpeta = {
+    bits: {
+        r: 'descargar',
+        w: 'escribir (añadir, modificar y eliminar)',
+        x: 'listar',
+    },
+    que: 'contenidos de la carpeta'
+}
+
+const pArchivo = {
+    bits:{
+        r: 'descargar',
+        w: 'escribir (añadir, modificar y eliminar)',
+        x: 'ejecutar'
+    },
+    que: 'el archivo'
+}
+
+
+function generarFrases(pUser, pGroup, pOthers, pType) {
+        const fraseUsuario = generarFrase(pQuien[0], pUser, pType)
+
+    const fraseGroup = generarFrase(pQuien[1], pGroup, pType)
+
+    const fraseOthers = generarFrase(pQuien[2], pOthers, pType)
+
+    return [fraseUsuario, fraseGroup, fraseOthers]
+    }
+
+function generarFrase(quien, bits, permisosTipo) {
+    let todosNum = 3
+    if(permisosTipo.bits.x =='ejecutar')
+    {
+        todosNum = 2
+        bits=bits.filter(bit=>bit!='x')
+    }
+    const icon = bits.length === 0 ? '🚫' : '✅'
+    return icon + ' ' + quien + ' ' + (bits.length === 0 ? ' no tiene permisos' :
+        bits.length === todosNum ? 'tiene todos los permisos' : 'puede ' + bits.map(x => permisosTipo.bits[x]).join(', ') + ' ' + permisosTipo.que)
+}
+
+function generarFrasesBase(permisos, pTipo) {
+    const pUser = []
+    const pGroup = []
+    const pOthers = []
+
+    if (bitHabilitado(permisos, 8)) pUser.push('r')
+    if (bitHabilitado(permisos, 7)) pUser.push('w')
+    if (bitHabilitado(permisos, 6)) pUser.push('x')
+
+    if (bitHabilitado(permisos, 5)) pGroup.push('r')
+    if (bitHabilitado(permisos, 4)) pGroup.push('w')
+    if (bitHabilitado(permisos, 3)) pGroup.push('x')
+
+    if (bitHabilitado(permisos, 2)) pOthers.push('r')
+    if (bitHabilitado(permisos, 1)) pOthers.push('w')
+    if (bitHabilitado(permisos, 0)) pOthers.push('x')
+
+    return generarFrases(pUser, pGroup, pOthers, pTipo)
+}
+
 const obtenerFraseCarpeta = (permisos) => {
-    console.log('permisos', permisos, typeof permisos)
-
-    const fraseSticky = bitHabilitado(permisos, 9) ? 'los contenidos de la carpeta son administrados por sus propietarios' : '';
-
-    const fraseUsuarioLeer = bitHabilitado(permisos, 8) ? 'el usuario propietario puede descargar los contenidos de la carpeta' : '';
-    const fraseUsuarioEscribir = bitHabilitado(permisos, 7) ? 'el usuario propietario puede subir archivos a la carpeta' : '';
-    const fraseUsuarioEjecutar = bitHabilitado(permisos, 6) ? 'el usuario propietario puede ver el contenido de la carpeta' : '';
-
-    const fraseGrupoLeer = bitHabilitado(permisos, 5) ? 'el grupo propietario puede descargar los contenidos de la carpeta' : '';
-    const fraseGrupoEscribir = bitHabilitado(permisos, 4) ? 'el grupo propietario puede subir archivos a la carpeta' : '';
-    const fraseGrupoEjecutar = bitHabilitado(permisos, 3) ? 'el grupo propietario puede ver el contenido de la carpeta' : '';
-
-    const fraseTodosLeer = bitHabilitado(permisos, 2) ? 'todos los usuarios pueden descargar los contenidos de la carpeta' : '';
-    const fraseTodosEscribir = bitHabilitado(permisos, 1) ? 'todos los usuarios pueden subir archivos a la carpeta' : '';
-    const fraseTodosEjecutar = bitHabilitado(permisos, 0) ? 'todos los usuarios pueden ver el contenido de la carpeta' : '';
-
-    const frases = [fraseSticky, fraseTodosEjecutar, fraseTodosLeer, fraseTodosEscribir,
-        fraseGrupoEjecutar, fraseGrupoLeer, fraseGrupoEscribir,
-        fraseUsuarioEjecutar, fraseUsuarioLeer, fraseUsuarioEscribir].filter(x => x);
-
-    return frases
+    const fraseSticky = bitHabilitado(permisos, 9) ? '🔒 los contenidos de la carpeta son administrados por sus propietarios' : '';
+    return [fraseSticky, ...generarFrasesBase(permisos, pCarpeta)].filter(x => x)
 };
 
 const obtenerFraseArchivo = (permisos) => {
-    console.log('permisos', permisos)
-    const fraseUsuarioLeer = bitHabilitado(permisos, 8) ? 'todos los usuarios pueden descargar este archivo' : '';
-    const fraseUsuarioEscribir = bitHabilitado(permisos, 7) ? 'todos los usuarios pueden modificar/renombrar este archivo' : '';
-    const fraseUsuarioEjecutar = false &&  bitHabilitado(permisos, 6) ? 'todos los usuarios pueden ejecutar este archivo' : '';
-
-    const fraseGrupoLeer = bitHabilitado(permisos, 5) ? 'el grupo propietario puede descargar este archivo' : '';
-    const fraseGrupoEscribir = bitHabilitado(permisos, 4) ? 'el grupo propietario puede modificar/renombrar este archivo' : '';
-    const fraseGrupoEjecutar = false && bitHabilitado(permisos, 3) ? 'el grupo propietario puede ejecutar este archivo' : '';
-
-    const fraseTodosLeer = bitHabilitado(permisos, 2) ? 'el usuario propietario puede descargar este archivo' : '';
-    const fraseTodosEscribir = bitHabilitado(permisos, 1) ? 'el usuario propietario puede modificar/renombrar este archivo' : '';
-    const fraseTodosEjecutar = false && bitHabilitado(permisos, 0) ? 'el usuario propietario puede ejecutar este archivo' : '';
-
-    const frases = [fraseTodosLeer, fraseTodosEjecutar, fraseTodosEscribir,
-        fraseGrupoLeer, fraseGrupoEjecutar, fraseGrupoEscribir,
-        fraseUsuarioLeer, fraseUsuarioEjecutar, fraseUsuarioEscribir].filter(x => x);
-
-    return frases
+    return generarFrasesBase(permisos, pArchivo)
 };
 
 const bitHabilitado = (permisos, posicion) => {
@@ -93,5 +125,5 @@ const bitHabilitado = (permisos, posicion) => {
 };
 
 </script>
-  
+
 
