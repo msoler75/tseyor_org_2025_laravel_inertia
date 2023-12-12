@@ -11,13 +11,22 @@
 
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
 
-                <div class="flex gap-3 w-full max-w-full">
+                <div class="flex gap-3 items-center w-full" v-if="!seleccionando && mostrandoResultados">
 
-                    <button v-if="!seleccionando && mostrandoResultados" class="btn btn-neutral btn-sm" title="Cerrar búsqueda"
+                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ buscar }}'</span>:</span>
+
+                    <button  class="ml-auto btn btn-neutral btn-sm" title="Cerrar búsqueda"
                     @click="mostrandoResultados = false">
                     <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                     <Icon icon="ph:x-bold" />
                 </button>
+
+
+            </div>
+
+
+                <div v-if="!mostrandoResultados" class="flex gap-3 w-full max-w-full">
+
 
                     <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer"
                     href="/archivos"
@@ -238,8 +247,9 @@
                             <th class="text-left">Nombre</th>
                             <th>Tamaño</th>
                             <th>Fecha</th>
-                            <th class="hidden sm:table-cell">Permisos</th>
-                            <th class="hidden sm:table-cell">Propietario</th>
+                            <th v-if="!mostrandoResultados" class="hidden sm:table-cell">Permisos</th>
+                            <th v-if="!mostrandoResultados" class="hidden sm:table-cell">Propietario</th>
+                            <th v-if="mostrandoResultados">Carpeta</th>
                             <th class="hidden md:table-cell"></th>
                         </tr>
                     </thead>
@@ -293,15 +303,18 @@
                                     {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
                             </td>
-                            <td class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
+                            <td  class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
                                 v-on:touchend="onTouchEnd(item)">
                                 <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
                             </td>
-                            <td class="hidden sm:table-cell text-center" v-on:touchstart="onTouchStart(item)"
+                            <td  v-if="!mostrandoResultados" class="hidden sm:table-cell text-center" v-on:touchstart="onTouchStart(item)"
                                 v-on:touchend="onTouchEnd(item)">{{ item.permisos }}</td>
-                            <td class="hidden sm:table-cell text-center" v-on:touchstart="onTouchStart(item)"
+                            <td  v-if="!mostrandoResultados" class="hidden sm:table-cell text-center" v-on:touchstart="onTouchStart(item)"
                                 v-on:touchend="onTouchEnd(item)">{{ item.propietario ? (item.propietario.usuario +
                                     '/' + item.propietario.grupo) : '' }}</td>
+                                   <td  v-if="mostrandoResultados">
+                                    {{item.carpeta}}
+                                   </td>
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48" v-if="puedeEscribir">
                                     <template #trigger>

@@ -307,11 +307,11 @@ class ArchivosController extends Controller
                 // Comprobar si alguna subcarpeta tiene un nombre similar a la cadena de búsqueda
                 foreach ($subcarpetas as $subcarpeta) {
                     $item = null;
-                    if ($this->matchSearch(basename($archivo), $nombre)) {
-                        $item = $this->prepareItemList($archivo, null, [
+                    if ($this->matchSearch(basename($subcarpeta), $nombre)) {
+                        $item = $this->prepareItemList($subcarpeta, null, [
                             'tipo' => 'carpeta',
-                            'archivos' => count(Storage::disk('public')->files($carpeta)),
-                            'subcarpetas' => count(Storage::disk('public')->directories($carpeta))
+                            'archivos' => count(Storage::disk('public')->files($subcarpeta)),
+                            'subcarpetas' => count(Storage::disk('public')->directories($subcarpeta))
                         ]);
                         $resultados[] = $item;
                     }
