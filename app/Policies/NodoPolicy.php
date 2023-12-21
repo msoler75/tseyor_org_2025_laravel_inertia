@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Log;
  * Podemos comprobar los permisos básicos (leer, escribir, ejecutar, o rwx).
  * Además de los permisos básicos, está el ACL (Access Control List) con el modelo Acl.
  *
+ * Nota: El sticky bit no se gestiona aquí. Por tanto debe controlarse en otros controladores.
+ *
  *
  * Linux permision
  * --------------
@@ -62,20 +64,20 @@ class NodoPolicy
      */
     public function leer(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
     {
-        $aclist = optional($user)->acessControlList();
-        return $this->permisoNodo($user, $nodo, 0b100) ? true : ($aclist ? $this->tieneAcceso($nodo, $aclist, 'leer') : false);
+        $aclist = optional($user)->accessControlList();
+        return $this->permisoNodo($user, $nodo, 0b100) ? true : ($aclist ? $nodo->tieneAcceso($aclist, 'leer') : false);
     }
 
     public function escribir(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
     {
-        $aclist = optional($user)->acessControlList();
-        return $this->permisoNodo($user, $nodo, 0b010) ? true : ($aclist ? $this->tieneAcceso($nodo, $aclist, 'escribir') : false);
+        $aclist = optional($user)->accessControlList();
+        return $this->permisoNodo($user, $nodo, 0b010) ? true : ($aclist ? $nodo->tieneAcceso($aclist, 'escribir') : false);
     }
 
     public function ejecutar(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
     {
-        $aclist = optional($user)->acessControlList();
-        return $this->permisoNodo($user, $nodo, 0b001) ? true : ($aclist ? $this->tieneAcceso($nodo, $aclist, 'ejecutar') : false);
+        $aclist = optional($user)->accessControlList();
+        return $this->permisoNodo($user, $nodo, 0b001) ? true : ($aclist ? $nodo->tieneAcceso($aclist, 'ejecutar') : false);
     }
 
 
@@ -116,40 +118,6 @@ class NodoPolicy
     }
 
 
-
-    /**
-     * Comprueba con la ACL si tiene el acceso a un nodo en concreto
-     */
-    public static function tieneAcceso(Nodo $nodo, Collection $aclist, string $verbo = null)
-    {
-        // filtramos por verbo
-        if ($verbo)
-            $aclist = $aclist->filter(function ($nodo) use ($verbo) {
-                return strpos($nodo->verbos, $verbo) !== false;
-            });
-
-        // tiene acceso global para todos los nodos?
-        if ($aclist->whereNull('nodo_id')->count() > 0)
-            return true;
-
-        // tiene acceso a este nodo?
-        if ($aclist->where('nodo_id', $nodo->id)->count() > 0)
-            return true;
-
-        // tiene acceso a una carpeta padre?
-
-        // parece que los LIKE no funcionan aquí:
-        //if ($aclist->where("'$nodo->ruta'", 'LIKE', "CONCAT(ruta, '%')")->count() > 0)
-        //  return true;
-
-        foreach ($aclist->toArray() as $registro) {
-            if (strpos($nodo->ruta, $registro['ruta']) === 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
 
 }

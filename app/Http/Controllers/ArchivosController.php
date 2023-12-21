@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 
+/*
+    En sistemas operativos basados en UNIX, como Linux, el sticky bit es un atributo de permisos especial que se puede aplicar a directorios. Este bit tiene un propósito específico y afecta la forma en que los usuarios pueden acceder y manipular archivos dentro de ese directorio.
+    Cuando el sticky bit está configurado en un directorio, los usuarios pueden eliminar o renombrar únicamente los archivos que son de su propiedad. Esto significa que, incluso si otros usuarios tienen permisos de escritura en el directorio, no podrán eliminar o renombrar archivos que no sean de su propiedad.
+    El propósito principal del sticky bit es asegurar que los usuarios no eliminen o modifiquen archivos de otros usuarios en directorios compartidos, como /tmp. Este directorio suele tener el sticky bit activado para evitar que los usuarios borren o modifiquen archivos de otros usuarios en un entorno multiusuario.
+*/
+
 /**
  *
  */
@@ -67,7 +73,6 @@ class ArchivosController extends Controller
 
         $rutaBase = str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url($ruta)));
 
-
         // Comprobar si la carpeta existe
         if (!Storage::disk('public')->exists($rutaBase)) {
             abort(404, 'Ruta no encontrada');
@@ -76,8 +81,6 @@ class ArchivosController extends Controller
             // no es una carpeta, así que derivamos a la descarga
             return $this->storage($rutaBase);
         }
-
-        // $user = auth()->user();
 
         // $acl = Acl::from($user, ['ejecutar', 'escribir']);
 
@@ -89,8 +92,7 @@ class ArchivosController extends Controller
             throw new AuthorizationException('No tienes permisos para ver la carpeta', 403);
         }
 
-
-
+        // creamos la lista de items que retornaremos
         $items = [];
 
         // elementos de la ruta
@@ -104,20 +106,12 @@ class ArchivosController extends Controller
         $padre = dirname($ruta);
         $nodoPadre = null;
         if ($padre && $padre != "\\" && $padre != "//") {
-            $nodoPadre =  Nodo::desde($padre);
+            $nodoPadre = Nodo::desde($padre);
             $items[] = $this->prepareItemList($padre, $nodoPadre, ['tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
         }
 
-
         // obtenemos todos los nodos de la carpeta
         $nodosHijos = Nodo::hijos($ruta);
-
-         // Obtenemos todos los ids de todos los nodos implicados
-         $nodosIdsArr =$nodosHijos->pluck('id')->toArray();
-        if($nodoPadre)
-            array_push($nodosIdsArr, $nodoPadre->id);
-        if($nodo)
-            array_push($nodosIdsArr, $nodo->id);
 
         // Agregar carpetas a la colección de elementos
         foreach ($carpetas as $carpeta) {
@@ -142,9 +136,6 @@ class ArchivosController extends Controller
             ]);
         }
 
-        // comprobamos los permisos de escritura (para saber si puede crear carpetas, o renombrar archivos)
-        $puedeEscribir = Gate::allows('escribir', $nodoCarpeta);
-
         // obtenemos el propietario de la ruta actual, que puede ser un usuario o un grupo/equipo
         $equipo = Equipo::where('group_id', $nodoCarpeta->group_id)->first();
         if ($equipo)
@@ -162,28 +153,53 @@ class ArchivosController extends Controller
             ];
         }
 
+        // Obtenemos todos los ids de todos los nodos implicados
+        $nodosIdsArr = $nodosHijos->pluck('id')->toArray();
+        if ($nodoCarpeta)
+            array_push($nodosIdsArr, $nodoCarpeta->id);
+        if ($nodoPadre)
+            array_push($nodosIdsArr, $nodoPadre->id);
+
         // Obtenemos de una vez todos los ACL
         $acl = Acl::inNodes($nodosIdsArr);
 
+        $user = auth()->user();
+        $aclUser = optional($user)->accessControlList();
+
         // Agregamos la información de Access Control List para cada item
-         foreach($items as $idx=>$item) {
-            if($item['nodo_id']) {
+        foreach ($items as $idx => $item) {
+            if ($item['nodo_id']) {
                 $a = $acl->where('nodo.id', '=', $item['nodo_id'])->toArray();
-                foreach($a as $k=>$x) {
+                foreach ($a as $k => $x) {
                     unset($a[$k]['nodo']);
                     unset($a[$k]['nodo_id']);
                 }
                 $items[$idx]['acl'] = array_values($a);
-            }
-            else
+            } else
                 $items[$idx]['acl'] = null;
-         }
+
+
+            // agregamos información para saber si podemos editar este item
+            // omitimos el item padre
+            if (!($item['padre']??0)) {
+                $nodoItem = $item['nodo'];
+                $items[$idx]['puedeEscribir'] = $nodoItem ? Gate::allows('escribir', $nodoItem) : false;
+                $items[$idx]['puedeLeer'] = $nodoItem ? Gate::allows('leer', $nodoItem) : false;
+                $nodoContenedor = $idx===0?$nodoPadre:$nodoCarpeta;
+                // comprobamos el sticky bit de la carpeta padre del item
+                if ((!$nodoContenedor || $nodoContenedor->sticky) && $nodoItem->user_id != optional($user)->id) {
+                    if (!$aclUser || !$nodoItem->tieneAcceso($aclUser, 'escribir'))
+                        $items[$idx]['puedeEscribir'] = false;
+                }
+            }
+            // eliminamos la entrada del nodo de los resultados
+            unset($items[$idx]['nodo']);
+        }
 
         $respuesta = [
             'items' => $items,
             'ruta' => $ruta,
-            'puedeEscribir' => $puedeEscribir,
-            'propietario' => $propietario
+            'propietarioRef' => $propietario
         ];
 
         if ($json) {
@@ -192,17 +208,17 @@ class ArchivosController extends Controller
 
         return Inertia::render('Archivos', $respuesta)
             ->withViewData([
-                'seo' => new SEOData(
-                    title: $ruta,
-                    description: 'Contenido de ' . $ruta,
-                )
-            ]);
+                    'seo' => new SEOData(
+                        title: $ruta,
+                        description: 'Contenido de ' . $ruta,
+                    )
+                ]);
     }
 
     /**
      * Prepara el item de un listado de una carpeta
      */
-    private function prepareItemList(string $ruta, ?Nodo $nodo,array $options): array
+    private function prepareItemList(string $ruta, ?Nodo $nodo, array $options): array
     {
         $baseUrl = url('');
         $rutaBase = str_replace($baseUrl, '', str_replace('/storage', '', Storage::disk('public')->url($ruta)));
@@ -222,12 +238,18 @@ class ArchivosController extends Controller
             $item['privada'] = true; // carpeta no accesible
         $item['nodo_id'] = optional($nodo)->id ?? null;
         $item['permisos'] = optional($nodo)->permisos ?? 0;
-        $item['propietario'] = ['usuario' => optional($nodo)->propietario_usuario, 'grupo' => optional($nodo)->propietario_grupo];
+        $item['propietario'] = ['usuario' => ['id'=>optional($nodo)->user_id, 'nombre'=>optional($nodo)->propietario_usuario],
+                                'grupo' =>   ['id' =>optional($nodo)->group_id, 'nombre'=>optional($nodo)->propietario_grupo]
+                                ];
+        $item['nodo'] = $nodo; // temporal
         return $item;
     }
 
     /**
      * Esta función ajax sirve para buscar progresivamente archivos que tengan o contengan un nombre
+     * Primero devuelve una respuesta rápida  a través de consulta de nodos
+     * Una vez presentada la primera respuesta rápida, escanea el disco para buscar resultados e irlos devolviendo progresivamente
+     * Para esta progresiva entrega de resultados usa una lista de carpetas_pendientes donde va haciendo las búsquedas
      */
     public function buscar(Request $request)
     {
@@ -269,9 +291,6 @@ class ArchivosController extends Controller
                         'tamano' => Storage::disk('public')->size($nodo->ruta),
                     ]);
             }
-
-            $carpetas_pendientes = [$ruta];
-            $carpetas_pendientes = [$ruta];
 
         } else {
 
@@ -584,21 +603,29 @@ class ArchivosController extends Controller
         }
 
         // Verificar que el archivo exista
-        if (!Storage::exists($archivo)) {
+        if (!Storage::disk('public')->exists($archivo)) {
             return response()->json(['error' => 'El archivo no existe'], 404);
         }
 
         // comprobamos los permisos de escritura
-        //$acl = Acl::from($user);
-        $nodo = Nodo::desde($ruta);
-        if (!$nodo || Gate::denies('escribir', $nodo)) {
+        $nodoItem = Nodo::desde($ruta);
+        if (!$nodoItem || Gate::denies('escribir', $nodoItem)) {
             return response()->json([
                 'error' => 'No tienes permisos'
             ], 403);
         }
 
+        // comprobamos sticky bit y acl
+        $nodoContenedor = Nodo::desde(dirname($ruta));
+        if ($nodoContenedor->sticky && $nodoItem->user_id != $user->id) {
+            if (!$nodoItem->tieneAcceso($user->accessControlList(), 'escribir'))
+                return response()->json([
+                    'error' => 'No tienes permisos de propietario'
+                ], 403);
+        }
+
         // Verificar si la ruta es una carpeta
-        if (Storage::directoryExists($archivo)) {
+        if (Storage::disk('public')->directoryExists($archivo)) {
             // Verificar si la carpeta está vacía antes de eliminarla
             if (count(Storage::allFiles($archivo)) > 0) {
                 return response()->json(['error' => 'No se puede eliminar la carpeta porque no está vacía'], 400);
@@ -626,7 +653,8 @@ class ArchivosController extends Controller
      * Cambia los permisos de un nodo
      * parámetros: ruta, user_id, group_id, permisos
      */
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         $user = auth()->user();
 
         if (!$user) {
@@ -636,10 +664,9 @@ class ArchivosController extends Controller
         $ruta = $this->normalizarRuta($request->ruta);
         $permisos = $request->permisos;
 
-        if (!Storage::exists($ruta)) {
+        if (!Storage::disk('public')->exists($ruta)) {
             return response()->json(['error' => "La ruta '$ruta' no existe"], 404);
         }
-
 
         // se requiere permisos de escritura en el nodo
         $nodoItem = Nodo::desde($ruta);
@@ -649,38 +676,39 @@ class ArchivosController extends Controller
             ], 403);
         }
 
-        // comprobamos sticky bit. Si está activado no podemos modificar un archivo o carpeta si no es de nuestra propiedad
+        // comprobamos sticky bit y acl
         $nodoContenedor = Nodo::desde(dirname($ruta));
-        if($nodoContenedor->sticky && $nodoItem->user_id!=$user->id) {
-            return response()->json([
-                'error' => 'No tienes permisos de propietario'
-            ], 403);
+        if ($nodoContenedor->sticky && $nodoItem->user_id != $user->id) {
+            if (!$nodoItem->tieneAcceso($user->accessControlList(), 'escribir'))
+                return response()->json([
+                    'error' => 'No tienes permisos de propietario'
+                ], 403);
         }
 
-        $esCarpeta = Storage::directoryExists($ruta);
+        $esCarpeta = Storage::disk('public')->directoryExists($ruta);
 
         $update = [];
-        if($permisos)
+        if ($permisos)
             $update['permisos'] = $permisos;
-        if($request->user_id)
+        if ($request->user_id)
             $update['user_id'] = $request->user_id;
-        if($request->group_id)
+        if ($request->group_id)
             $update['group_id'] = $request->group_id;
 
         $nodo = Nodo::where('ruta', $ruta)->first();
-        if(!$nodo) {
+        if (!$nodo) {
             Nodo::create([
-                'ruta'=>$ruta,
-                'es_carpeta'=>$esCarpeta,
-                'user_id' =>$update['user_id']?$update['user_id']:$nodoItem->user_id,
-                'group_id' =>$update['group_id']?$update['group_id']:$nodoItem->group_id,
-                'permisos' => $update['permisos']?$update['permisos']:$permisos,
+                'ruta' => $ruta,
+                'es_carpeta' => $esCarpeta,
+                'user_id' => $update['user_id'] ? $update['user_id'] : $nodoItem->user_id,
+                'group_id' => $update['group_id'] ? $update['group_id'] : $nodoItem->group_id,
+                'permisos' => $update['permisos'] ? $update['permisos'] : $permisos,
             ]);
-        }else {
+        } else {
             $nodo->update($update);
         }
 
-        return response()->json(['message' => $esCarpeta?"Carpeta modificada":"Archivo modificado"], 200);
+        return response()->json(['message' => $esCarpeta ? "Carpeta modificada" : "Archivo modificado"], 200);
     }
 
     /**
@@ -717,7 +745,7 @@ class ArchivosController extends Controller
         // dd("itemAntes=$itemAntes itemDespues=$itemDespues");
 
         // Verificar que el item exista
-        if (!Storage::exists($itemAntes)) {
+        if (!Storage::disk('public')->exists($itemAntes)) {
             return response()->json(['error' => "El item '$itemAntes' no existe"], 404);
         }
 
@@ -731,15 +759,12 @@ class ArchivosController extends Controller
             ], 403);
         }
 
-        /*
-        En sistemas operativos basados en UNIX, como Linux, el sticky bit es un atributo de permisos especial que se puede aplicar a directorios. Este bit tiene un propósito específico y afecta la forma en que los usuarios pueden acceder y manipular archivos dentro de ese directorio.
-        Cuando el sticky bit está configurado en un directorio, los usuarios pueden eliminar o renombrar únicamente los archivos que son de su propiedad. Esto significa que, incluso si otros usuarios tienen permisos de escritura en el directorio, no podrán eliminar o renombrar archivos que no sean de su propiedad.
-        El propósito principal del sticky bit es asegurar que los usuarios no eliminen o modifiquen archivos de otros usuarios en directorios compartidos, como /tmp. Este directorio suele tener el sticky bit activado para evitar que los usuarios borren o modifiquen archivos de otros usuarios en un entorno multiusuario.
-        */
-        if($nodoContenedor->sticky && $nodoItem->user_id!=$user->id) {
-            return response()->json([
-                'error' => 'No tienes permisos de propietario'
-            ], 403);
+        // comprobamos sticky bit y acl
+        if ($nodoContenedor->sticky && $nodoItem->user_id != $user->id) {
+            if (!$nodoItem->tieneAcceso($user->accessControlList(), 'escribir'))
+                return response()->json([
+                    'error' => 'No tienes permisos de propietario'
+                ], 403);
         }
 
         //$rutaAbsolutaAntes = realpath(Storage::disk('public')->path($rutaAntes));
@@ -747,7 +772,7 @@ class ArchivosController extends Controller
 
         // dd("rename($rutaAbsolutaAntes, $rutaAbsolutaDespues");
         // Verificar si el item es una carpeta
-        if (Storage::directoryExists($itemAntes)) {
+        if (Storage::disk('public')->directoryExists($itemAntes)) {
             // Intentar renombrar la carpeta
             if (Storage::move($itemAntes, $itemDespues)) {
                 //if (rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
@@ -818,7 +843,7 @@ class ArchivosController extends Controller
                 'error' => 'No tienes permisos de lectura en la carpeta origen'
             ], 403);
         }
-       if (Gate::denies('escribir', $nodoSource)) {
+        if (Gate::denies('escribir', $nodoSource)) {
             return response()->json([
                 'error' => 'No tienes permisos de escritura en la carpeta origen'
             ], 403);
@@ -842,9 +867,9 @@ class ArchivosController extends Controller
             $itemDestination = 'public/' . $rutaDespues;
 
             // Comprobamos sticky bit (si está activado no podemos mover archivos o carpetas que no son nuestros)
-            if($nodoSource->sticky) {
+            if ($nodoSource->sticky) {
                 $nodoItem = Nodo::desde($rutaAntes);
-                if($nodoItem->user_id!=$user->id) {
+                if ($nodoItem->user_id != $user->id) {
                     $errorCount++;
                     $errorMessages[] = "El item '$itemSource' no se pudo mover";
                     continue;
@@ -852,14 +877,14 @@ class ArchivosController extends Controller
             }
 
             // Verificar que el item exista
-            if (!Storage::exists($itemSource)) {
+            if (!Storage::disk('public')->exists($itemSource)) {
                 $errorCount++;
                 $errorMessages[] = "El item '$itemSource' no existe";
                 continue;
             }
 
             // Verificar si el item es una carpeta
-            if (Storage::directoryExists($itemSource)) {
+            if (Storage::disk('public')->directoryExists($itemSource)) {
                 // Intentar mover la carpeta
                 if (Storage::move($itemSource, $itemDestination)) {
                     $successCount++;
@@ -875,7 +900,7 @@ class ArchivosController extends Controller
             } else {
                 // Verificar si el archivo de destino ya existe
                 $counter = 1;
-                while (Storage::exists($itemDestination)) {
+                while (Storage::disk('public')->exists($itemDestination)) {
                     $itemName = pathinfo($item, PATHINFO_FILENAME);
                     $itemExtension = pathinfo($item, PATHINFO_EXTENSION);
                     $itemBaseName = $itemName . '_' . $counter;
@@ -971,14 +996,14 @@ class ArchivosController extends Controller
             $itemDestination = 'public/' . $destinationFolder . "/" . $item;
 
             // Verificar que el item exista
-            if (!Storage::exists($itemSource)) {
+            if (!Storage::disk('public')->exists($itemSource)) {
                 $errorCount++;
                 $errorMessages[] = "El item '$itemSource' no existe";
                 continue;
             }
 
             // Verificar si el item es una carpeta
-            if (Storage::directoryExists($itemSource)) {
+            if (Storage::disk('public')->directoryExists($itemSource)) {
                 // Intentar copiar la carpeta
                 if (Storage::copyDirectory($itemSource, $itemDestination)) {
                     $successCount++;
@@ -991,7 +1016,7 @@ class ArchivosController extends Controller
             } else {
                 // Verificar si el archivo de destino ya existe
                 $counter = 1;
-                while (Storage::exists($itemDestination)) {
+                while (Storage::disk('public')->exists($itemDestination)) {
                     $itemName = pathinfo($item, PATHINFO_FILENAME);
                     $itemExtension = pathinfo($item, PATHINFO_EXTENSION);
                     $itemBaseName = $itemName . '_' . $counter;

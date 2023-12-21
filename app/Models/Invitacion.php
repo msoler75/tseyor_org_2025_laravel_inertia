@@ -28,6 +28,11 @@ class Invitacion extends Model
     // Relación con el equipo
     public function equipo()
     {
-        return $this->belongsTo(Equipo::class, 'equipo');
+        return $this->belongsTo(Equipo::class, 'equipo_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

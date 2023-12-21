@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {
@@ -30,6 +31,7 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
     use HasRoles;
+    use Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -111,7 +113,7 @@ class User extends Authenticatable
     /**
      * Obtiene el Access Control List, es una colección de permisos a ciertos nodos, para este usuario
      */
-    public function acessControlList()
+    public function accessControlList()
     {
         return Acl::from($this);
     }

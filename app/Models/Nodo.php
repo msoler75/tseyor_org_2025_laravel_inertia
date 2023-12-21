@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Collection;
 
 class Nodo extends Model
 {
@@ -39,7 +40,7 @@ class Nodo extends Model
         return $this->belongsTo(Grupo::class, 'group_id', 'id');
     }
 
-    
+
 
     // accesors
     public function getNombreUsuarioAttribute()
@@ -133,6 +134,44 @@ class Nodo extends Model
             'es_carpeta' => $es_carpeta
         ]);
     }
+
+
+
+
+    /**
+     * Comprueba con la ACL si tiene el acceso a un nodo en concreto
+     */
+    public function tieneAcceso(Collection $aclist, string $verbo = null)
+    {
+        // filtramos por verbo
+        if ($verbo)
+            $aclist = $aclist->filter(function ($nodo) use ($verbo) {
+                return strpos($this->verbos, $verbo) !== false;
+            });
+
+        // tiene acceso global para todos los nodos?
+        if ($aclist->whereNull('nodo_id')->count() > 0)
+            return true;
+
+        // tiene acceso a este nodo?
+        if ($aclist->where('nodo_id', $this->id)->count() > 0)
+            return true;
+
+        // tiene acceso a una carpeta padre?
+
+        // parece que los LIKE no funcionan aquí:
+        //if ($aclist->where("'$nodo->ruta'", 'LIKE', "CONCAT(ruta, '%')")->count() > 0)
+        //  return true;
+
+        foreach ($aclist->toArray() as $registro) {
+            if (strpos($this->ruta, $registro['ruta']) === 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
 
 
