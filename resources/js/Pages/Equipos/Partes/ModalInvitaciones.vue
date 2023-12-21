@@ -1,7 +1,7 @@
 <template>
 
     <!-- MODAL DE INVITACIONES -->
-    <Modal :show="mostrarInvitar" @close="mostrarInvitar = false" maxWidth="md">
+    <Modal :show="mostrarInvitar" @close="mostrarInvitar = false" maxWidth="xl">
         <div class="p-5 bg-base-200 max-h-full">
             <h3>Invitar al equipo</h3>
             <form @submit.prevent="invitar" class="flex flex-col gap-7 select-none">
@@ -27,9 +27,16 @@
                                                     class="btn bg-base-100 border-none pointer-events-none">
                                                     <Icon icon="ph:check-circle-duotone" /> Agregado
                                                 </div>
+                                               <div v-else-if="user.invitacion"  class="btn bg-base-100 border-none pointer-events-none">
+                                                    <Icon icon="ph:check-circle-info" /> Ya invitado
+                                                </div>
                                                 <div v-else class="btn" @click="agregarInvitado(user)">
                                                     Agregar
                                                 </div>
+                                                <!-- se puede reenviar solo si la invitacion (usando invitacion.created_at que es un string con la fecha) se hizo hace al menos dos días  -->
+                                                <div v-if="!user.agregado && user.invitacion && (new Date() - new Date(user.invitacion.created_at)) > 202800000 "  class="btn" @click="agregarInvitado(user)">
+                                                        Reenviar
+                                                    </div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -52,7 +59,7 @@
                                         <tr v-for="user of usuariosInvitados" :key="user.id">
                                             <td>{{ user.nombre }}</td>
                                             <td>
-                                                <div v-if="user.invitado" class="btn" @click="removerInvitado(user)">
+                                                <div v-if="user.invitacion" class="btn" @click="removerInvitado(user)">
                                                     Remover
                                                 </div>
                                                 <div v-else class="btn" @click="agregarInvitado(user)">
@@ -85,10 +92,35 @@
                         </div>
                     </tab>
 
+
+                    <tab :name="`Invitaciones pendientes ${invitaciones.length?'('+invitaciones.length+')':''}`">
+                        <p v-if="!invitaciones.length">
+                        No hay invitaciones pendientes</p>
+                        <table v-else class="table w-full bg-base-100  shadow">
+                            <thead>
+                                <th>Fecha</th><th>Usuario/correo</th><th>Estado</th>
+                            </thead>
+                            <tbody>
+                                <tr v-for="inv of invitaciones" :key="inv.id">
+                                    <td>
+                                        <TimeAgo :date="inv.created_at"></TimeAgo>
+                                    </td>
+                                    <td>
+                                        {{ inv.user?inv.user.name:inv.email  }}
+                                    </td>
+                                    <td>
+                                        {{ !inv.accepted_at &&!inv.declined_at ? 'Pendiente':inv.accepted_at?'Aceptada':'Rechazada' }}
+                                    </td>
+                                    </tr>
+                            </tbody>
+                        </table>
+                    </tab>
+
                 </tabs>
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
-                    <button type="submit" class="btn btn-primary" :disabled="!numeroInvitados">
+                    <button type="submit" class="btn btn-primary" :disabled="invitando||!numeroInvitados">
+                        <Spinner v-show="invitando" class="mr-3"/>
                         Invitar <span v-if="numeroInvitados">({{ numeroInvitados }})</span>
                     </button>
 
@@ -127,7 +159,7 @@ watch(debouncedBuscar, buscarUsuarios)
 
 const correosInvitados = computed(() => correos.value.split(/[\s,\n]+/m).map(c => c.trim()).filter(c => !!c).filter(c => c.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)))
 const numeroInvitados = computed(() => usuariosInvitados.value.length + correosInvitados.value.length)
-
+const invitando = ref(false)
 
 // abre el diálogo modal
 function mostrar() {
@@ -161,16 +193,32 @@ const usuariosParaInvitar = computed(() => {
         .map(u => ({
             ...u,
             agregado: !!usuariosInvitados.value.find(ui => ui.id == u.id),
-            miembro: props.equipo.miembros.find(eu => eu.id == u.id) ? 1 : 0
+            miembro: props.equipo.miembros.find(eu => eu.id == u.id) ? 1 : 0,
+            invitacion: invitaciones.value.find(ui=>ui.user_id==u.id&&!ui.accepted_at&&!ui.declined_at),
         }))
         .sort((a, b) => (a.miembro - b.miembro))
 
 })
 
+const invitaciones=ref([])
+function recargarInvitaciones() {
+    axios.get(route('equipo.invitaciones', props.equipo.id))
+    .then(
+        response=>
+        {
+            invitaciones.value = response.data.invitaciones
+            console.log(response.data)
+        }
+    )
+}
+
+recargarInvitaciones()
+
+
 
 
 function agregarInvitado(user) {
-    usuariosInvitados.value.push({ ...user, invitado: true })
+    usuariosInvitados.value.push({ ...user, invitacion: true })
 }
 
 function removerInvitado(user) {
@@ -180,7 +228,33 @@ function removerInvitado(user) {
         usuariosInvitados.value.splice(idx, 1)
 }
 
+
+function mandado(num) {
+    return num==1?'Se ha mandado':'Se han mandado'
+}
+
+function invitacionesPlural(num) {
+    return num==1?'invitación':'invitaciones'
+}
+
+function usuariosPlural(num) {
+    return num==1?'usuario':'usuarios'
+}
+
+function yason(num) {
+    return num==1?'ya es miembro':'ya son miembros'
+}
+
+function yatiene(num) {
+    return num==1?'ya tiene':'ya tienen'
+}
+
+function existe(num) {
+    return num==1?'existe':'existen'
+}
+
 function invitar() {
+    invitando.value = true
     axios
         .post(route('invitar', { idEquipo: props.equipo.id }), {
             correos: correosInvitados.value,
@@ -188,11 +262,32 @@ function invitar() {
         })
         .then(response => {
             // Procesar la respuesta del controlador si es necesario
+            const data = response.data
+            alert((data.invitados.length?`${mandado(data.invitados.length)} ${data.invitados.length} ${invitacionesPlural(data.invitados.length)}`:`No se han mandado las invitaciones`)+
+            `\n`+
+            (data.yaSonMiembros.length?`${data.yaSonMiembros.length} ${usuariosPlural(data.yaSonMiembros.length)} ${yason(data.yaSonMiembros.length)} del equipo\n`:'')+
+            (data.invitacionReciente.length?`${data.invitacionReciente.length} ${usuariosPlural(data.invitacionReciente.length)} ${yatiene(data.invitacionReciente.length)} una invitación reciente\n`:'')+
+            (data.noEncontrados.length?`${data.noEncontrados.length} ${usuariosPlural(data.noEncontrados.length)} no ${existe(data.noEncontrados.length)}\n`:''));
+
+            // borramos lista de invitados
+            correos.value = ""
+            correosInvitados.value = []
+            usuariosInvitados.value = []
+
+            recargarInvitaciones()
+            invitando.value = false
             console.log(response.data);
         })
         .catch(error => {
             // Manejar cualquier error de la solicitud
-            console.error(error);
+            switch(error.response.status) {
+                case 403: alert("No estás autorizado"); break;
+                case 404:
+                case 410: alert("Error interno. El equipo no existe"); break;
+                default: alert("Hubo un error, no se pudo mandar las invitaciones.")
+            }
+            console.error(response);
+            invitando.value = false
         });
 };
 

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\URL;
 use App\Mail\InvitacionEquipoEmail;
 use App\Mail\IncorporacionEquipoEmail;
 use Illuminate\Support\Facades\Gate;
+use Carbon\Carbon;
 
 class EquiposController extends Controller
 {
@@ -38,8 +39,8 @@ class EquiposController extends Controller
 
         $resultados = $categoria ?
             Equipo::withCount('miembros')
-            ->where('categoria', '=', $categoria)
-            ->paginate(10)->appends(['categoria' => $categoria])
+                ->where('categoria', '=', $categoria)
+                ->paginate(10)->appends(['categoria' => $categoria])
             : ($buscar ? Equipo::withCount('miembros')
                 ->where('nombre', 'like', '%' . $buscar . '%')
                 ->orWhere('descripcion', 'like', '%' . $buscar . '%')
@@ -147,7 +148,7 @@ class EquiposController extends Controller
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
             'carpetas' => $carpetas,
-            'ultimosArchivos' =>  array_slice($ultimosArchivos, 0, 10),
+            'ultimosArchivos' => array_slice($ultimosArchivos, 0, 10),
             'ultimosInformes' => $informes,
             'miSolicitud' => $solicitud,
             'soyMiembro' => $soyMiembro,
@@ -380,6 +381,27 @@ class EquiposController extends Controller
     // INVITACIONES
 
 
+    /**
+     * Invitaciones pendientes
+     */
+    public function invitations($idEquipo)
+    {
+        // Marcar invitaciones caducadas (1 mes)
+        Invitacion::where('equipo_id', $idEquipo)
+            ->where('accepted_at', null)
+            ->where('declined_at', null)
+            ->where('created_at', '<=', Carbon::now()->subMonth())
+            ->update(['declined_at' => Carbon::now()]);
+
+        // seleccionamos invitaciones a este equipo que están pendientes
+        $invitaciones = Invitacion::where('equipo_id', $idEquipo)
+            ->where('accepted_at', null)
+            ->where('declined_at', null)
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->take(150)->get(); // máximo 150
+        return response()->json(compact('invitaciones'), 200);
+    }
 
     /**
      * Envia invitaciones a usuarios
@@ -389,28 +411,38 @@ class EquiposController extends Controller
     {
         // Validar los datos
         $validatedData = $request->validate([
-            'correos' => 'required|array',
+            'correos' => 'array',
             'correos.*' => 'email',
             'usuarios' => 'array'
         ]);
 
         $equipo = Equipo::findOrFail($idEquipo);
 
-
         // Verificar si el usuario es un coordinador del equipo
         if (Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
+        $yaSonMiembros = [];
+        $invitacionReciente = [];
+        $invitados = [];
+        $noEncontrados = [];
+
         // mandamos invitaciones a los correos proporcionados
         foreach ($validatedData['correos'] as $correo) {
             // Verificar si el correo ya está asociado al equipo
-            if ($equipo->miembros->where('email', $correo)->exists()) {
+            if ($equipo->miembros->where('email', $correo)->first()) {
+                $yaSonMiembros[] = $correo;
                 continue;
             }
 
-            // Verificar si ya se envió una invitación a ese correo
-            if (Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)->exists()) {
+            // Verificar si ya se envió una invitación a ese correo recientemente (ultimos dos días)
+            if (
+                Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)
+                    ->whereDate('created_at', '>=', Carbon::now()->subDays(2))
+                    ->first()
+            ) {
+                $invitacionReciente[] = $correo;
                 continue;
             }
 
@@ -435,8 +467,15 @@ class EquiposController extends Controller
             // Generar la URL firmada para declinar la invitación
             $declinarUrl = URL::signedRoute('invitacion.declinar', ['token' => $token]);
 
+            $invitados[] = $correo;
+
             // Enviar el correo de invitación
-            Mail::to($correo)->send(new InvitacionEquipoEmail($equipo, $usuario, $aceptarUrl, $declinarUrl));
+            try {
+                Mail::to($correo)->send(new InvitacionEquipoEmail($equipo, $usuario, $aceptarUrl, $declinarUrl));
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Error del servidor. No se ha podido enviar la invitación: ' . $e->getMessage()], 500);
+            }
+
         }
 
         // mandamos invitaciones a los usuarios registrados
@@ -445,28 +484,45 @@ class EquiposController extends Controller
             // Cargar el usuario
             $usuario = User::find($id);
 
-            if (!$usuario) continue; // el usuario debería existir
+
+            if (!$usuario) {
+                $noEncontrados[] = $id;
+                continue; // el usuario debería existir
+            }
 
             $correo = $usuario->email;
-            if (!$correo) continue;
+            if (!$correo) {
+                $noEncontrados[] = $id;
+                continue;
+            }
 
             // Verificar si el usuario ya es miembro del equipo
-            if ($equipo->miembros->where('id', $usuario->id)->exists()) {
+            if ($equipo->miembros->where('id', $usuario->id)->first()) {
+                $yaSonMiembros[] = $id;
                 continue;
             }
 
             // Verificar si ya se envió una invitación a ese correo
-            if (Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)->exists()) {
+            if (Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)
+                ->whereDate('created_at', '>=', Carbon::now()->subDays(2))
+                ->first()) {
+                $invitacionReciente[] = $id;
                 continue;
             }
 
+
+
             // Verificar si ya se envió una invitación a ese usuario
-            if (Invitacion::where('equipo_id', $idEquipo)->where('user_id', $id)->exists()) {
+            if (Invitacion::where('equipo_id', $idEquipo)
+                ->whereDate('created_at', '>=', Carbon::now()->subDays(2))
+                ->where('user_id', $id)->first()) {
+                $invitacionReciente[] = $id;
                 continue;
             }
 
             // Generar el token para la invitación
             $token = sha1(time() . $id);
+
 
             // Crear la invitación en la base de datos
             Invitacion::create([
@@ -482,11 +538,18 @@ class EquiposController extends Controller
             // Generar la URL firmada para declinar la invitación
             $declinarUrl = URL::signedRoute('invitacion.declinar', ['token' => $token]);
 
+
+            $invitados[] = $usuario->id;
+
             // Enviar el correo de invitación
-            Mail::to($correo)->send(new InvitacionEquipoEmail($equipo, $usuario, $aceptarUrl, $declinarUrl));
+            try {
+                Mail::to($correo)->send(new InvitacionEquipoEmail($equipo, $usuario, $aceptarUrl, $declinarUrl));
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Error del servidor. No se ha podido enviar la invitación: ' . $e->getMessage()], 500);
+            }
         }
 
-        return response()->json(['message' => 'Invitaciones enviadas correctamente.'], 200);
+        return response()->json(['message' => 'Invitaciones enviadas correctamente.', ...compact('invitados', 'yaSonMiembros', 'noEncontrados', 'invitacionReciente')], 200);
     }
 
 
@@ -501,7 +564,7 @@ class EquiposController extends Controller
 
         // Verificar si la invitación ya fue aceptada o declinada previamente
         if ($invitacion->accepted_at || $invitacion->declined_at) {
-            return redirect($urlEquipo)->with('message', 'La invitación ya ha sido aceptada o declinada anteriormente.');
+            return redirect($urlEquipo)->with('message', 'La invitación ha caducado o ya ha sido procesada.');
         }
 
         // Verificar si el usuario ya tiene una cuenta
@@ -509,6 +572,19 @@ class EquiposController extends Controller
         if ($usuario) {
             // Asociar al usuario al equipo y marcar la invitación como aceptada
             $usuario->equipos()->attach($invitacion->equipo_id);
+
+            // actualizamos posibles otras invitaciones al mismo usuario como declinadas
+            $invitacionesPendientes = Invitacion::where('equipo_id', $invitacion->equipo_id)
+                ->where('user_id', $usuario->id)
+                ->where('accepted_at', null)
+                ->where('declined_at', null)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            foreach ($invitacionesPendientes as $invitacion) {
+                $invitacion->update(['declined_at' => Carbon::now()]);
+            }
+
+            // marcamos la invitación actual como aceptada
             $invitacion->update(['accepted_at' => now()]);
 
             return redirect($urlEquipo)->with('message', 'Invitación aceptada. Ya eres parte del equipo.');
@@ -532,7 +608,20 @@ class EquiposController extends Controller
 
         // Verificar si la invitación ya fue aceptada o declinada previamente
         if ($invitacion->accepted_at || $invitacion->declined_at) {
-            return redirect($urlEquipo)->with('message', 'La invitación ya ha sido aceptada o declinada anteriormente.');
+            return redirect($urlEquipo)->with('message', 'La invitación ha caducado o ya ha sido procesada.');
+        }
+
+        if ($invitacion->user_id) {
+            // actualizamos posibles otras invitaciones al mismo usuario como declinadas
+            $invitacionesPendientes = Invitacion::where('equipo_id', $invitacion->equipo_id)
+                ->where('user_id', $invitacion->user_id)
+                ->where('accepted_at', null)
+                ->where('declined_at', null)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            foreach ($invitacionesPendientes as $invitacion) {
+                $invitacion->update(['declined_at' => Carbon::now()]);
+            }
         }
 
         // Marcar la invitación como declinada
@@ -582,11 +671,12 @@ class EquiposController extends Controller
             return response()->json(['error' => 'Debe iniciar sesión'], 401);
 
         // comprueba si no tenía ya una solicitud previa
-        if (Solicitud::where('user_id', $user->id)
-            ->where('equipo_id', $idEquipo)
-            ->whereNull('fecha_aceptacion')
-            ->whereNull('fecha_denegacion')
-            ->exists()
+        if (
+            Solicitud::where('user_id', $user->id)
+                ->where('equipo_id', $idEquipo)
+                ->whereNull('fecha_aceptacion')
+                ->whereNull('fecha_denegacion')
+                ->exists()
         )
             return response()->json(['error' => 'Ya tiene una solicitud previa'], 400);
 

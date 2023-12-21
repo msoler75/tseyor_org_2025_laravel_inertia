@@ -1,6 +1,6 @@
 <template>
     <AdminPanel modelo="nodo" necesita="administrar archivos" class="mb-3"/>
-    <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario" @updated="reloadPage"/>
+    <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietarioRef="propietarioRef" @updated="reloadPage"/>
 </template>
 
 <script setup>
@@ -11,7 +11,7 @@ defineOptions({ layout: AppLayout })
 const props = defineProps({
     items: Array,
     puedeEscribir: Boolean,
-    propietario: Object
+    propietarioRef: Object
 });
 
 function reloadPage() {

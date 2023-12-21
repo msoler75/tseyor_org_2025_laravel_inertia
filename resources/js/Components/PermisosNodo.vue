@@ -20,8 +20,6 @@ import { defineProps } from 'vue';
 
 const props = defineProps({
     esCarpeta: Boolean,
-    propietarioUser: Number,
-    propietarioGroup: Number,
     permisos: String,
 });
 
@@ -29,7 +27,7 @@ const mostrarPropiedades = ref(false)
 
 const permisosChars = computed(() => {
     const p = parseInt(props.permisos, 8)
-    return ch(p, 9, 'd') +
+    return (props.esCarpeta?ch(p, 9, 't'):'') +
         ch(p, 8, 'r') + ch(p, 7, 'w') + ch(p, 6, 'x') + ' ' +
         ch(p, 5, 'r') + ch(p, 4, 'w') + ch(p, 3, 'x') + ' ' +
         ch(p, 2, 'r') + ch(p, 1, 'w') + ch(p, 0, 'x')
@@ -112,7 +110,7 @@ function generarFrasesBase(permisos, pTipo) {
 }
 
 const obtenerFraseCarpeta = (permisos) => {
-    const fraseSticky = bitHabilitado(permisos, 9) ? '🔒 los contenidos de la carpeta son administrados por sus propietarios' : '';
+    const fraseSticky = props.esCarpeta&&bitHabilitado(permisos, 9) ? '🔒 los contenidos de la carpeta son administrados por sus propietarios' : '';
     return [fraseSticky, ...generarFrasesBase(permisos, pCarpeta)].filter(x => x)
 };
 

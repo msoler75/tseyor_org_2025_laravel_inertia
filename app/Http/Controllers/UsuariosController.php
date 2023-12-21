@@ -78,8 +78,9 @@ class UsuariosController extends Controller
             ->orWhere('email', 'like', '%' . $buscar . '%')
             ->take(10)->get()->toArray();*/
 
-            $resultados = User::select(['id', 'name as nombre'])
-            ->search($buscar)->take(10)->get()->toArray();
+            $resultados = User::search($buscar)->take(10)->get()->toArray();
+            foreach($resultados as $idx => $u)
+                $resultados[$idx]['nombre'] = $u['name'];
 
         return response()->json($resultados, 200);
     }

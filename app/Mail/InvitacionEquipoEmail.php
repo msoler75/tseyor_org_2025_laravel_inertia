@@ -16,7 +16,7 @@ class InvitacionEquipoEmail extends Mailable
     public Equipo $equipo;
     public string $aceptarUrl;
     public string $declinarUrl;
-    public User $usuario;
+    public ?User $usuario;
 
     public function __construct(Equipo $equipo, ?User $usuario, string $aceptarUrl, string $declinarUrl)
     {

@@ -3,9 +3,9 @@
         <div class="w-full sticky top-4 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
             :class="embed ? 'pt-4' : ' pt-16'">
 
-            <div  :class="embed ? '' : 'lg:container mx-auto'">
+            <div :class="embed ? '' : 'lg:container mx-auto'">
                 <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="!embed" @folder="clickBreadcrumb($event)"
-                title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5" />
+                    title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5" />
             </div>
 
 
@@ -22,21 +22,19 @@
                             class="transform scale-150" />
                     </button>
 
-                    <button  class="btn btn-neutral btn-sm" title="Cerrar búsqueda"
-                    @click="mostrandoResultados = false">
-                    <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
-                    <Icon icon="ph:x-bold" />
-                </button>
+                    <button class="btn btn-neutral btn-sm" title="Cerrar búsqueda" @click="mostrandoResultados = false">
+                        <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
+                        <Icon icon="ph:x-bold" />
+                    </button>
 
 
-            </div>
+                </div>
 
 
                 <div v-if="!mostrandoResultados" class="flex gap-3 w-full max-w-full">
 
 
-                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer"
-                    href="/archivos"
+                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer" href="/archivos"
                         @click="clickFolder({ url: '' }, $event)" :is-link="!embed" title="Ir a la carpeta base"
                         :class="rutaActual == 'archivos' ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
@@ -58,114 +56,113 @@
                     <div class="ml-auto flex gap-3">
 
                         <button class="btn btn-neutral btn-sm" @click.prevent="toggleVista" title="Cambiar vista">
-                        <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
-                            class="transform scale-150" />
-                        <Icon v-show="selectors.archivosVista == 'grid'" icon="ph:grid-nine-fill"
-                            class="transform scale-150" />
-                    </button>
+                            <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
+                                class="transform scale-150" />
+                            <Icon v-show="selectors.archivosVista == 'grid'" icon="ph:grid-nine-fill"
+                                class="transform scale-150" />
+                        </button>
 
-                    <button v-if="seleccionando" class="btn btn-neutral btn-sm mr-auto" @click.prevent="seleccionarTodos"
-                        title="Seleccionar todos">
-                        <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
-                    </button>
+                        <button v-if="seleccionando" class="btn btn-neutral btn-sm mr-auto"
+                            @click.prevent="seleccionarTodos" title="Seleccionar todos">
+                            <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
+                        </button>
 
-                    <button v-if="!seleccionando && !mostrandoResultados" class="btn btn-neutral btn-sm"
-                        title="Buscar archivos" @click="showSearch">
-                        <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
-                    </button>
+                        <button v-if="!seleccionando && !mostrandoResultados" class="btn btn-neutral btn-sm"
+                            title="Buscar archivos" @click="showSearch">
+                            <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
+                        </button>
 
-                    <Dropdown>
-                        <template #trigger>
-                            <span class="btn btn-neutral btn-sm" title="Ordenar los elementos">
-                                <Icon icon="lucide:arrow-down-wide-narrow" class="text-2xl" />
-                            </span>
-                        </template>
-                        <template #content>
-                            <div class="bg-base-100 select-none">
-                                <div v-for="label, value in ordenaciones" :key="value"
-                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                    @click="ordenarPor = value">
-                                    <div class="w-3">
-                                        <Icon icon="ph:check" v-if="ordenarPor == value" />
+                        <Dropdown>
+                            <template #trigger>
+                                <span class="btn btn-neutral btn-sm" title="Ordenar los elementos">
+                                    <Icon icon="lucide:arrow-down-wide-narrow" class="text-2xl" />
+                                </span>
+                            </template>
+                            <template #content>
+                                <div class="bg-base-100 select-none">
+                                    <div v-for="label, value in ordenaciones" :key="value"
+                                        class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                        @click="ordenarPor = value">
+                                        <div class="w-3">
+                                            <Icon icon="ph:check" v-if="ordenarPor == value" />
+                                        </div>
+                                        {{ label }}
                                     </div>
-                                    {{ label }}
                                 </div>
-                            </div>
-                        </template>
-                    </Dropdown>
+                            </template>
+                        </Dropdown>
 
-                    <Link v-if="!embed && propietario && !seleccionando" class="btn btn-neutral btn-sm"
-                        :href="propietario.url" :title="tituloPropietario">
-                    <Icon :icon="propietario.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'"
-                        class="transform scale-150" />
-                    </Link>
-
+                        <Link v-if="!embed && propietarioRef && !seleccionando" class="btn btn-neutral btn-sm"
+                            :href="propietarioRef.url" :title="tituloPropietario">
+                        <Icon :icon="propietarioRef.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'"
+                            class="transform scale-150" />
+                        </Link>
 
 
 
 
 
-                    <Dropdown v-if="puedeEscribir && !seleccionando" align="right" width="48">
-                        <template #trigger>
-                            <div class="btn btn-neutral btn-sm cursor-pointer">
-                                <Icon icon="mdi:dots-vertical" class="text-xl" />
-                            </div>
-                        </template>
 
-                        <template #content>
-                            <div class="bg-base-100">
-                                <!-- Account Management -->
-                                <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
-                                    @click="modalSubirArchivos = true">
-                                    <Icon icon="ph:upload-duotone" />
-                                    <span>Subir archivos</span>
+                        <Dropdown v-if="!seleccionando" align="right" width="48">
+                            <template #trigger>
+                                <div class="btn btn-neutral btn-sm cursor-pointer">
+                                    <Icon icon="mdi:dots-vertical" class="text-xl" />
+                                </div>
+                            </template>
+
+                            <template #content>
+                                <div class="bg-base-100">
+                                    <!-- Account Management -->
+                                    <div v-if="puedeEscribir && !seleccionando"
+                                        class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
+                                        @click="modalSubirArchivos = true">
+                                        <Icon icon="ph:upload-duotone" />
+                                        <span>Subir archivos</span>
+                                    </div>
+
+                                    <div v-if="puedeEscribir && !seleccionando"
+                                        class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                        @click="abrirModalRenombrar(items[0])">
+                                        <Icon icon="ph:cursor-text-duotone" />
+                                        <span>Renombrar</span>
+                                    </div>
+
+                                    <div v-if="puedeEscribir && !seleccionando"
+                                        class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                        @click="abrirModalCrearCarpeta">
+                                        <Icon icon="ph:folder-plus-duotone" />
+                                        <span>Crear carpeta</span>
+                                    </div>
+
+
+                                    <div v-if="puedeLeer && !seleccionando && items.filter(x => !x.padre).length > 1"
+                                        class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                        @click="seleccionando = true">
+                                        <Icon icon="ph:check-duotone" />
+                                        <span>Abrir Selección</span>
+                                    </div>
+
+                                    <div v-else-if="seleccionando"
+                                        class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                        @click="cancelarSeleccion">
+                                        <Icon icon="ph:x-square-duotone" />
+                                        <span>Cancelar selección</span>
+                                    </div>
+
+
+                                    <div class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                        @click.prevent="abrirModalPropiedades(items[0])">
+                                        <Icon icon="ph:info-duotone" />
+                                        <span>Propiedades</span>
+                                    </div>
+
                                 </div>
 
-                                <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                    @click="abrirModalRenombrar(items[0])">
-                                    <Icon icon="ph:cursor-text-duotone" />
-                                    <span>Renombrar</span>
-                                </div>
+                            </template>
+                        </Dropdown>
 
-                                <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                    @click="abrirModalCrearCarpeta">
-                                    <Icon icon="ph:folder-plus-duotone" />
-                                    <span>Crear carpeta</span>
-                                </div>
-
-
-                                <div v-if="!seleccionando"
-                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                    @click="seleccionando = true">
-                                    <Icon icon="ph:check-duotone" />
-                                    <span>Abrir Selección</span>
-                                </div>
-
-                                <div v-else
-                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                                    @click="cancelarSeleccion">
-                                    <Icon icon="ph:x-square-duotone" />
-                                    <span>Cancelar selección</span>
-                                </div>
-
-
-                                <div
-                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                        @click.prevent="abrirModalPropiedades(items[0])">
-                        <Icon icon="ph:info-duotone" />
-                        <span>Propiedades</span>
                     </div>
-
-                            </div>
-
-                        </template>
-                    </Dropdown>
-
                 </div>
-            </div>
 
 
             </div>
@@ -200,8 +197,8 @@
 
                 <template v-else>
 
-                    <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-3 items-center"
-                        @click.prevent="prepararMoverItems">
+                    <button v-if="itemsSeleccionados.length && puedeMoverSeleccionados"
+                        class="btn btn-secondary flex gap-3 items-center" @click.prevent="prepararMoverItems">
                         <Icon icon="ph:scissors-duotone" /><span>Mover</span>
                     </button>
 
@@ -264,7 +261,8 @@
                         <tr v-for="item in itemsMostrar"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')" :key="item.ruta">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
-                                class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
+                                class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100"
+                                :class="item.puedeLeer ? '' : 'opacity-40 pointer-events-none'">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </td>
@@ -310,20 +308,22 @@
                                     {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
                             </td>
-                            <td  class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
+                            <td class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
                                 v-on:touchend="onTouchEnd(item)">
                                 <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
                             </td>
-                            <td  v-if="!mostrandoResultados" class="hidden sm:table-cell text-center" v-on:touchstart="onTouchStart(item)"
-                                v-on:touchend="onTouchEnd(item)">{{ item.permisos }}</td>
-                            <td  v-if="!mostrandoResultados" class="hidden sm:table-cell text-center" v-on:touchstart="onTouchStart(item)"
-                                v-on:touchend="onTouchEnd(item)">{{ item.propietario ? (item.propietario.usuario +
-                                    '/' + item.propietario.grupo) : '' }}</td>
-                                   <td  v-if="mostrandoResultados">
-                                    {{item.carpeta}}
-                                   </td>
+                            <td v-if="!mostrandoResultados" class="hidden sm:table-cell text-center"
+                                v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">{{ item.permisos }}
+                            </td>
+                            <td v-if="!mostrandoResultados" class="hidden sm:table-cell text-center"
+                                v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">{{ item.propietario ?
+                                    (item.propietario.usuario.nombre +
+                                        '/' + item.propietario.grupo.nombre) : '' }}</td>
+                            <td v-if="mostrandoResultados">
+                                {{ item.carpeta }}
+                            </td>
                             <td class="hidden md:table-cell">
-                                <Dropdown align="right" width="48" v-if="puedeEscribir">
+                                <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <span class="p-3 cursor-pointer">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
@@ -333,21 +333,21 @@
                                     <template #content>
                                         <div class="bg-base-100">
 
-                                            <div v-if="!seleccionando"
+                                            <div v-if="item.puedeEscribir && !seleccionando"
                                                 class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                                 @click="abrirModalRenombrar(item)">
                                                 <Icon icon="ph:cursor-text-duotone" />
                                                 <span>Renombrar</span>
                                             </div>
 
-                                            <div v-if="!seleccionando && !item.padre"
+                                            <div v-if="item.puedeEscribir && !seleccionando && !item.padre"
                                                 class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                 @click="abrirEliminarModal(item)">
                                                 <Icon icon="ph:trash-duotone" />
                                                 <span>Eliminar</span>
                                             </div>
 
-                                            <div v-if="!buscandoCarpetaDestino && !item.padre"
+                                            <div v-if="item.puedeLeer && !buscandoCarpetaDestino && !item.padre"
                                                 class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                 @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                 <template v-if="!item.seleccionado">
@@ -368,8 +368,7 @@
                                             </div>
 
 
-                                            <div
-                                                class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                            <div class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                 @click.prevent="abrirModalPropiedades(item)">
                                                 <Icon icon="ph:info-duotone" />
                                                 <span>Propiedades</span>
@@ -390,7 +389,8 @@
                         <div v-for="item in  itemsMostrar" :key="item.ruta"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')">
                             <div v-if="seleccionando" @click.prevent="toggleItem(item)"
-                                class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
+                                class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100"
+                                :class="item.puedeLeer ? '' : 'opacity-40 pointer-events-none'">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </div>
@@ -449,7 +449,7 @@
                                                     <span>Eliminar</span>
                                                 </div>
 
-                                                <div v-if="!buscandoCarpetaDestino && !item.padre"
+                                                <div v-if="item.puedeLeer && !buscandoCarpetaDestino && !item.padre"
                                                     class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                     @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                     <template v-if="!item.seleccionado">
@@ -469,8 +469,7 @@
                                                     <span>Cancelar selección</span>
                                                 </div>
 
-                                                <div
-                                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                                <div class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                     @click.prevent="abrirModalPropiedades(item)">
                                                     <Icon icon="ph:info-duotone" />
                                                     <span>Propiedades</span>
@@ -566,9 +565,10 @@
 
 
         <!-- Modal Propiedades -->
-        <Modal :show="modalPropiedades" @close="modalPropiedades = false" >
+        <Modal :show="modalPropiedades" @close="modalPropiedades = false">
             <div class="p-5">
-                <div v-for="item, index of itemsPropiedades" :key="item.url" class="pb-4" :class="index>0?'pt-4 border-t border-base-200':''">
+                <div v-for="item, index of itemsPropiedades" :key="item.url" class="pb-4"
+                    :class="index > 0 ? 'pt-4 border-t border-base-200' : ''">
                     <table class="propiedades">
                         <tr>
                             <th>Archivo </th>
@@ -586,11 +586,11 @@
                             <th>Propietario</th>
                             <td class="flex gap-3 items-center">
                                 <span class="flex items-center gap-3" title="usuario">
-                                    <Icon icon="ph:user-duotone" /> {{ item.propietario.usuario }}
+                                    <Icon icon="ph:user-duotone" /> {{ item.propietario.usuario.nombre }}
                                 </span>
-                                    <span class="opacity-30">|</span>
-                                    <span class="flex items-center gap-3" title="grupo">
-                                    <Icon icon="ph:users-three-duotone"/> {{ item.propietario.grupo }}
+                                <span class="opacity-30">|</span>
+                                <span class="flex items-center gap-3" title="grupo">
+                                    <Icon icon="ph:users-three-duotone" /> {{ item.propietario.grupo.nombre }}
                                 </span>
                             </td>
                         </tr>
@@ -601,23 +601,100 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="align-top">Permisos</th>
-                            <td><PermisosNodo :es-carpeta="item.tipo!='archivo'" :propietario-user="item.user_id" :propietario-group="item.group_id" :permisos="item.permisos"/></td>
+                            <th>Nodo ID</th>
+                            <td>{{ item.nodo_id }}</td>
                         </tr>
-                       <tr v-if="item.acl&&item.acl.length">
-                        <th class="align-top">Acceso adicional</th>
-                        <td>
-                            <div v-for="acl of item.acl" :key="acl.id" class="flex gap-1 items-center">
-                                <PermisosAcl :acl="acl" :tipo="item.tipo"/>
-                            </div>
-                        </td>
-                       </tr>
+                        <tr>
+                            <th class="align-top">Permisos</th>
+                            <td>
+                                <PermisosNodo :es-carpeta="item.tipo != 'archivo'" :permisos="item.permisos" />
+                                <button v-if="item.puedeEscribir && item.propietario.usuario.id == user?.id"
+                                    class="my-2 btn btn-xs btn-secondary text-xs"
+                                    @click="abrirModalCambiarPermisos(item)">Cambiar permisos</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="align-top">Acceso adicional</th>
+                            <td>
+                                <div v-if="item.acl && item.acl.length">
+                                    <div v-for="acl of item.acl" :key="acl.id" class="flex gap-1 items-center">
+                                        <PermisosAcl :acl="acl" :tipo="item.tipo" />
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    No hay
+                                </div>
+                                <button v-if="item.puedeEscribir && item.propietario.usuario.id == user?.id"
+                                    class="my-2 btn btn-xs btn-secondary text-xs">cambiar acceso</button>
+                            </td>
+                        </tr>
                     </table>
                 </div>
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
                     <button @click.prevent="modalPropiedades = false" type="button" class="btn btn-neutral btn-sm">
                         Cerrar
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
+
+
+        <!-- Modal Cambiar Permisos -->
+        <Modal :show="modalCambiarPermisos" @close="modalCambiarPermisos = false" maxWidth="sm">
+            <div class="p-5">
+                <form>
+                    <p>/{{itemCambiandoPermisos.ruta}}</p>
+                    <fieldset  class="border border-solid border-neutral p-3 select-none">
+                        <legend>Permisos de propietario:</legend>
+                        <div class="flex gap-5">
+                            <div class="flex gap-1 items-baseline"><input id="bit8" type="checkbox" v-model="permisosBits[8]"><label for="bit8">Leer</label></div>
+                            <div class="flex gap-1 items-baseline"><input id="bit7" type="checkbox" v-model="permisosBits[7]"><label for="bit7">Escribir</label></div>
+                            <div v-if="itemCambiandoPermisos.tipo == 'carpeta'" class="flex gap-1 items-baseline"><input id="bit6" type="checkbox" v-model="permisosBits[6]"><label for="bit4">Listar</label></div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset  class="border border-solid border-neutral p-3 select-none">
+                        <legend>Permisos de grupo:</legend>
+                        <div class="flex gap-5">
+                            <div class="flex gap-1 items-baseline"><input id="bit5" type="checkbox" v-model="permisosBits[5]"><label for="bit5">Leer</label></div>
+                            <div class="flex gap-1 items-baseline"><input id="bit4" type="checkbox" v-model="permisosBits[4]"><label for="bit4">Escribir</label></div>
+                            <div v-if="itemCambiandoPermisos.tipo == 'carpeta'" class="flex gap-1 items-baseline"><input id="bit3" type="checkbox" v-model="permisosBits[3]"><label for="bit3">Listar</label></div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset  class="border border-solid border-neutral p-3 select-none">
+                        <legend>Permisos públicos:</legend>
+                        <div class="flex gap-5">
+                            <div class="flex gap-1 items-baseline"><input id="bit2" type="checkbox" v-model="permisosBits[2]"><label for="bit2">Leer</label></div>
+                            <div class="flex gap-1 items-baseline"><input id="bit1" type="checkbox" v-model="permisosBits[1]"><label for="bit1">Escribir</label></div>
+                            <div v-if="itemCambiandoPermisos.tipo == 'carpeta'" class="flex gap-1 items-baseline"><input id="bit0" type="checkbox" v-model="permisosBits[0]"><label for="bit0">Listar</label></div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset v-if="itemCambiandoPermisos.tipo=='carpeta'" class="border border-solid border-neutral p-3 select-none">
+                        <legend>Proteger contenidos (sticky bit):</legend>
+                        <div class="flex gap-5">
+                            <div class="flex gap-1 items-baseline"><input id="bit9" type="checkbox" v-model="permisosBits[9]"><label for="bit9">Proteger contenidos</label></div>
+                        </div>
+                        <small>solo los propietarios pueden modificar o eliminar sus contenidos</small>
+                    </fieldset>
+
+                    <fieldset class="mt-2 flex gap-2">
+                    <label for="permi">Valor numérico:</label><input type="text" v-model="permisosNumerico"
+                    class="max-w-[5rem]"
+                    @change="permisosNumericoChange" @keyup="permisosNumericoChange">
+                    </fieldset>
+                </form>
+
+                <div class="py-3 flex justify-between sm:justify-end gap-5">
+                    <button @click.prevent="modalCambiarPermisos = false" type="button" class="btn btn-neutral btn-sm">
+                        Cancelar
+                    </button>
+
+                    <button @click.prevent="cambiarPermisos" type="button" class="btn btn-primary btn-sm">
+                        Aplicar
                     </button>
                 </div>
             </div>
@@ -694,21 +771,28 @@ const emit = defineEmits(['updated', 'folder:value', 'file:value']);
 
 const props = defineProps({
     items: Array,
-    puedeEscribir: Boolean,
-    propietario: Object,
+    propietarioRef: Object,
     cargando: Boolean,
     embed: { type: Boolean, default: false },
     contentClass: String
 });
 
+// puede editar la carpeta actual?
+const puedeEscribir = computed(() => props.items.length ? props.items[0].puedeEscribir : false)
+const puedeLeer = computed(() => props.items.length ? props.items[0].puedeLeer : false)
+const puedeMoverSeleccionados = computed(() => itemsSeleccionados.find(item => item.puedeEscribir))
+// ruta actual
 const rutaActual = computed(() => props.items.length ? props.items[0].ruta : '')
 
+// otros datos
+const page = usePage()
+const user = computed(() => page.props.auth?.user)
 
 // ALGUNOS HELPERS PARA MOSTRAR DATOS
 
 const tituloPropietario = computed(() => {
-    if (!props.propietario) return ''
-    return 'Propietario: ' + props.propietario.nombre
+    if (!props.propietarioRef) return ''
+    return 'Propietario: ' + props.propietarioRef.nombre
 })
 
 
@@ -925,7 +1009,6 @@ function cancelarOperacion() {
 
 // SUBIR ARCHIVOS
 const modalSubirArchivos = ref(false)
-const page = usePage()
 
 const dropzoneOptions = ref({
     url: '/files/upload/file', //route('files.upload.file'),
@@ -1036,9 +1119,72 @@ const itemsOrdenados = computed(() => {
 const modalPropiedades = ref(false)
 const itemsPropiedades = ref(null)
 function abrirModalPropiedades(item) {
-    itemsPropiedades.value = item?[item]:itemsSeleccionados.value
+    itemsPropiedades.value = item ? [item] : itemsSeleccionados.value
     modalPropiedades.value = true
 }
+
+watch(modalPropiedades, (newValue) => {
+    if (!newValue && permisosModificados.value) {
+        // actualizamos vista de la carpeta
+        reloadPage()
+    }
+})
+
+// PERMISOS
+
+const modalCambiarPermisos = ref(false)
+const itemCambiandoPermisos = ref(null)
+const permisosModificados = ref(false)
+const permisosBits = ref([])
+const permisosNumerico = ref("")
+const permisosNumericoComputed = computed(()=>{
+    let p = 0
+    for(let i=0;i<10;i++)
+        p=p+permisosBits.value[i]*Math.pow(2,i)
+        return p.toString(8)
+})
+
+watch(permisosNumericoComputed, (value)=>{
+    console.log('permisosBits change', value)
+    permisosNumerico.value = permisosNumericoComputed.value
+})
+
+function calcularPermisosBits() {
+  const octalPermisos = permisosNumerico.value // Obtener el número en octal como una cadena de texto
+  const decimalPermisos = parseInt(octalPermisos, 8); // Convertir el número octal a decimal
+  permisosBits.value = []; // Limpiar el array de bits
+  for (let i = 0; i < 10; i++) {
+    const bit = (decimalPermisos >> i) & 1; // Extraer el bit en la posición i
+    permisosBits.value.push(!!bit); // Agregar el bit al array de bits
+  }
+}
+
+function abrirModalCambiarPermisos(item) {
+    itemCambiandoPermisos.value = item
+    modalCambiarPermisos.value = true
+    permisosNumerico.value = item.permisos
+    calcularPermisosBits()
+}
+
+function permisosNumericoChange() {
+    if(permisosNumerico.value.length>=3)
+    calcularPermisosBits()
+}
+
+function cambiarPermisos() {
+    axios.post(route('files.update'), {
+        ruta: itemCambiandoPermisos.value.ruta,
+        permisos: permisosNumerico.value
+    })
+        .then(response => {
+            console.log(response.data)
+            // cierra el modal y actualiza los permisos
+            itemCambiandoPermisos.value.permisos = permisosNumerico.value
+            permisosModificados.value = true
+            modalCambiarPermisos.value = false
+        })
+}
+
 
 // RENOMBRAR ITEM
 const nuevoNombre = ref("")

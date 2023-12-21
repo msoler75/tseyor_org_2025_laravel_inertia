@@ -70,7 +70,7 @@ Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades
 Route::get('buscar', [ContenidosController::class, 'search'])->name('buscar');
 
 Route::get('archivos', [ArchivosController::class, 'archivos'])->name('archivos0');
-Route::get('archivos/buscar', [ArchivosController::class, 'buscar'])->name('archivos.buscar');
+Route::get('archivos_buscar', [ArchivosController::class, 'buscar'])->name('archivos.buscar');
 Route::get('archivos{ruta}', [ArchivosController::class, 'archivos'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
 Route::get('filemanager{ruta}', [ArchivosController::class, 'filemanager'])->where(['ruta' => '(\/.*)?'])->name('filemanager');
@@ -78,16 +78,15 @@ Route::get('filemanager{ruta}', [ArchivosController::class, 'filemanager'])->whe
 Route::get('storage/{ruta}', [ArchivosController::class, 'storage'])->where(['ruta' => '(\/.+)?'])->name('storage');
 
 
- // archivos
- Route::post('/files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');
- Route::post('/files/upload/image', [ArchivosController::class, 'uploadImage'])->name('files.upload.image');
- Route::post('/files/rename', [ArchivosController::class, 'rename'])->name('files.rename');
- Route::post('/files/update', [ArchivosController::class, 'update'])->name('files.update');
- Route::post('/files/move', [ArchivosController::class, 'move'])->name('files.move');
- Route::post('/files/copy', [ArchivosController::class, 'copy'])->name('files.copy');
- Route::put('/files/mkdir', [ArchivosController::class, 'makeDir'])->name('files.mkdir');
- Route::delete('/files{ruta}', [ArchivosController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
-
+ // manejo de archivos
+ Route::post('files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');
+ Route::post('files/upload/image', [ArchivosController::class, 'uploadImage'])->name('files.upload.image');
+ Route::post('files/rename', [ArchivosController::class, 'rename'])->name('files.rename');
+ Route::post('files/update', [ArchivosController::class, 'update'])->name('files.update');
+ Route::post('files/move', [ArchivosController::class, 'move'])->name('files.move');
+ Route::post('files/copy', [ArchivosController::class, 'copy'])->name('files.copy');
+ Route::put('files/mkdir', [ArchivosController::class, 'makeDir'])->name('files.mkdir');
+ Route::delete('files{ruta}', [ArchivosController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
 
 
 Route::get('audios', [AudiosController::class, 'index'])->name('audios');
@@ -233,7 +232,7 @@ Route::get('equipos/nuevo', function () {
 })->name('equipo.nuevo');
 Route::post('equipo/store', [EquiposController::class, 'store']);
 Route::get('equipos/{slug}', [EquiposController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('equipo');
-
+Route::post('equipos/{id}', [EquiposController::class, 'update'])->name('equipo.modificar');
 
 // informes de equipo
 
@@ -242,6 +241,7 @@ Route::get('informes/{id}', [InformesController::class, 'show'])->name('informe'
 Route::get('equipos/{slug}/informes', [InformesController::class, 'equipo'])->where('slug', '[a-z0-9\-]+')->name('equipo.informes');
 
 // invitaciones y respuesta
+Route::get('equipos/{id}/invitaciones', [EquiposController::class, 'invitations'])->name('equipo.invitaciones');
 Route::post('invitar/{idEquipo}', [EquiposController::class, 'invite'])->name('invitar');
 Route::get('invitacion/{token}/aceptar', [EquiposController::class, 'acceptInvitation'])->name('invitacion.aceptar');
 Route::get('invitacion/{token}/declinar', [EquiposController::class, 'declineInvitation'])->name('invitacion.declinar');
@@ -255,7 +255,6 @@ Route::get('solicitud/{id}/denegar', [EquiposController::class, 'denegarSolicitu
 // administración de miembros
 Route::put('equipos/{idEquipo}/{idUsuario}/agregar', [EquiposController::class, 'addMember'])->name('equipo.agregar');
 Route::put('equipos/{idEquipo}/{idUsuario}/remover', [EquiposController::class, 'removeMember'])->name('equipo.remover');
-Route::post('equipos/{id}', [EquiposController::class, 'update'])->name('equipo.modificar');
 Route::put('equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
 
 
