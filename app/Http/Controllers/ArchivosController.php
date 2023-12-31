@@ -510,6 +510,24 @@ class ArchivosController extends Controller
     }
 
 
+
+    function validarNombre($nombre) {
+        // Expresión regular para Windows
+        $patronWindows = '/^[a-zA-Z0-9\s_\-().\[\]{}!,@áéíóúÁÉÍÓÚàèòÀÈÒçÇ]*$/';
+
+        // Expresión regular para Linux
+        $patronLinux = '/^[a-zA-Z0-9\s_.\-áéíóúÁÉÍÓÚàèòÀÈÒçÇ]*$/';
+
+        // $patronAmbos = '^[a-zA-Z0-9\s_\-().\[\]{}!,@áéíóúÁÉÍÓÚàèòÀÈÒüÜñÑçÇ]*$';
+
+        // Verificar según el sistema operativo
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            return preg_match($patronWindows, $nombre);
+        } else {
+            return preg_match($patronLinux, $nombre);
+        }
+    }
+
     /**
      * Crea una carpeta
      */
@@ -567,10 +585,16 @@ class ArchivosController extends Controller
             ], 403);
         }
 
-        // creamos la carpeta
-        if (!mkdir($newFolderPath, 0755)) {
+        if(!$this->validarNombre($name)) {
             return response()->json([
-                'error' => 'unableToCreateFolder'
+                'error' => 'El nombre de la carpeta no es válido. Solo se permiten caracteres alfanúmericos, espacios, guiones y puntos'
+            ], 400);
+        }
+
+        // creamos la carpeta
+        if (!@mkdir($newFolderPath, 0755)) {
+            return response()->json([
+                'error' => 'No se ha podido crear la carpeta. Por favor consulta con el administrador'
             ], 500);
         }
 
@@ -739,8 +763,8 @@ class ArchivosController extends Controller
 
         $rutaAntes = $folder . '/' . $oldName;
         $rutaDespues = $folder . '/' . $newName;
-        $itemAntes = 'public' . '/' . $rutaAntes;
-        $itemDespues = 'public' . '/' . $rutaDespues;
+        $itemAntes =  $rutaAntes;
+        $itemDespues =  $rutaDespues;
 
         // dd("itemAntes=$itemAntes itemDespues=$itemDespues");
 
@@ -767,32 +791,24 @@ class ArchivosController extends Controller
                 ], 403);
         }
 
-        //$rutaAbsolutaAntes = realpath(Storage::disk('public')->path($rutaAntes));
-        //$rutaAbsolutaDespues = preg_replace("/[\/\\\\]/", DIRECTORY_SEPARATOR, Storage::disk('public')->path($rutaDespues));
+        if(!$this->validarNombre($newName)) {
+            return response()->json([
+                'error' => 'El nuevo nombre no es válido. Solo se permiten caracteres alfanúmericos, espacios, guiones y puntos'
+            ], 400);
+        }
+
+
+        $rutaAbsolutaAntes = realpath(Storage::disk('public')->path($rutaAntes));
+        $rutaAbsolutaDespues = preg_replace("/[\/\\\\]/", DIRECTORY_SEPARATOR, Storage::disk('public')->path($rutaDespues));
 
         // dd("rename($rutaAbsolutaAntes, $rutaAbsolutaDespues");
-        // Verificar si el item es una carpeta
-        if (Storage::disk('public')->directoryExists($itemAntes)) {
-            // Intentar renombrar la carpeta
-            if (Storage::move($itemAntes, $itemDespues)) {
-                //if (rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
-                $response = response()->json(['message' => 'Carpeta renombrada correctamente'], 200);
-            } else {
-                //$error = error_get_last();
-                //dd($error);
-                return response()->json(['error' => 'No se pudo renombrar la carpeta'], 500);
-            }
+        // Intentar renombrar el item
+        //if (Storage::move($itemAntes, $itemDespues)) {
+        if (rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
+            $response = response()->json(['message' => 'Se ha aplicado el nuevo nombre'], 200);
         } else {
-            // Intentar renombrar el archivo
-            if (Storage::move($itemAntes, $itemDespues)) {
-                //if (rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
-                // actualizamos la ruta del nodo
-                $response = response()->json(['message' => 'Archivo renombrado correctamente'], 200);
-            } else {
-                //$error = error_get_last();
-                //dd($error);
-                return response()->json(['error' => 'No se pudo renombrar el archivo'], 500);
-            }
+            //if(Storage::disk('public')->directoryExists($itemAntes))
+            return response()->json(['error' => 'No se pudo renombrar'], 500);
         }
 
         // debemos renombrar todas las rutas afectadas en los nodos

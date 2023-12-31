@@ -92,11 +92,11 @@ class NodoPolicy
     public function permisoNodo(?User $user, Nodo $nodo, int $bits): bool
     {
         try {
-            if (!$nodo)
-                return false;
+            //if (!$nodo)
+              //  return false;
 
             // elimino el sticky bit
-            $permisos = octdec(substr($nodo->permisos, -1));
+            $permisos = octdec(strlen($nodo->permisos)>3?substr($nodo->permisos, 1):$nodo->permisos);
 
             if ($user) {
                 // Verificar el permiso del propietario (owner)

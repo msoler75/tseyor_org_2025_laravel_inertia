@@ -1,6 +1,6 @@
 <template>
     <ConditionalLink :href="href" class="flex gap-3 items-baseline" :link="link">
-    <Icon :icon="private ? 'ph:folder-lock-duotone' : 'ph:folder-simple-duotone'" class="text-yellow-500 transform scale-150" />
+    <Icon :icon="owner?'ph:folder-user-duotone':private ? 'ph:folder-lock-duotone' : 'ph:folder-simple-duotone'" class="text-yellow-500 transform scale-150" />
     {{ name ? url.substring(url.lastIndexOf('/') + 1) : '' }}</ConditionalLink>
 </template>
 
@@ -8,6 +8,7 @@
 const props = defineProps({
     url: String,
     private: Boolean,
+    owner: Boolean,
     name: {
         type: Boolean,
         default: false
