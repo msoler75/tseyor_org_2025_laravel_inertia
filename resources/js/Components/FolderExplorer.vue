@@ -268,6 +268,7 @@
                             </td>
                             <td class="relative w-4" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
                                 <FolderIcon v-if="item.tipo === 'carpeta'" class="cursor-pointer" :private="item.privada"
+                                :owner="item.propietario.usuario.id===user?.id"
                                     :url="item.url" :class="seleccionando ? 'pointer-events-none' : ''"
                                     @click="clickFolder(item, $event)" :is-link="!embed" />
                                 <FileIcon v-else :url="item.url" class="cursor-pointer"
@@ -396,6 +397,7 @@
                             </div>
                             <div class="flex flex-col items-center justify-center relative">
                                 <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
+                                :owner="item.propietario.usuario.id===user?.id"
                                     class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
                                     @click="clickFolder(item, $event)" :is-link="!embed" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
@@ -551,8 +553,15 @@
                 </div>
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
-                    <button @click.prevent="crearCarpeta" type="button" class="btn btn-primary btn-sm">
+                    <button @click.prevent="crearCarpeta" type="button" class="btn btn-primary btn-sm"
+                    :disabled="creandoCarpeta">
+                        <div v-if="creandoCarpeta" class="flex items-center gap-3">
+                            <Spinner />
+                            Creando...
+                        </div>
+                        <span v-else>
                         Crear Carpeta
+                        </span>
                     </button>
 
                     <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn btn-neutral btn-sm">
@@ -592,6 +601,8 @@
                                 <span class="flex items-center gap-3" title="grupo">
                                     <Icon icon="ph:users-three-duotone" /> {{ item.propietario.grupo.nombre }}
                                 </span>
+
+                                <div v-if="item.propietario.usuario.id==user?.id" class="badge badge-secondary">Eres el propietario</div>
                             </td>
                         </tr>
                         <tr>
@@ -625,7 +636,8 @@
                                     No hay
                                 </div>
                                 <button v-if="item.puedeEscribir && item.propietario.usuario.id == user?.id"
-                                    class="my-2 btn btn-xs btn-secondary text-xs">cambiar acceso</button>
+                                    class="my-2 btn btn-xs btn-secondary text-xs"
+                                    @click="abrirModalCambiarAcl(item)">Cambiar acceso</button>
                             </td>
                         </tr>
                     </table>
@@ -701,6 +713,28 @@
         </Modal>
 
 
+
+        <!-- Modal Cambiar ACL -->
+        <Modal :show="modalCambiarAcl" @close="modalCambiarAcl = false" maxWidth="sm">
+            <div class="p-5">
+                <form>
+                    <p>/{{itemCambiandoAcl.ruta}}</p>
+
+                </form>
+
+                <div class="py-3 flex justify-between sm:justify-end gap-5">
+                    <button @click.prevent="modalCambiarAcl = false" type="button" class="btn btn-neutral btn-sm">
+                        Cancelar
+                    </button>
+
+                    <button @click.prevent="cambiarAcl" type="button" class="btn btn-primary btn-sm">
+                        Aplicar
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
+
         <!-- Modal Renombrar Item -->
         <Modal :show="modalRenombrarItem" @close="modalRenombrarItem = false">
 
@@ -708,8 +742,9 @@
                 @submit.prevent="renombrarItem">
                 <div class="flex flex-col gap-4">
                     <label for="nuevoNombre">Nuevo nombre:</label>
-                    <div class="flex items-center gap-1">
-                        {{ itemRenombrando.carpeta }}/ <input id="nuevoNombre" v-model="nuevoNombre" type="text" required>
+                    <div class="flex items-center gap-1 flex-wrap">
+                    <div>{{ itemRenombrando.carpeta }}/</div>
+                    <input id="nuevoNombre" v-model="nuevoNombre" type="text" required class="max-w-[32ch]">
                     </div>
                 </div>
 
@@ -718,8 +753,15 @@
                         Cancelar
                     </button>
 
-                    <button @click.prevent="renombrarItem" type="button" class="btn btn-primary btn-sm">
+                    <button @click.prevent="renombrarItem" type="button" class="btn btn-primary btn-sm"
+                    :disabled="renombrandoItem">
+                        <div v-if="renombrandoItem" class="flex items-center gap-3">
+                            <Spinner />
+                            Renombrando...
+                        </div>
+                        <span v-else>
                         Renombrar
+                        </span>
                     </button>
                 </div>
             </form>
@@ -1186,13 +1228,43 @@ function cambiarPermisos() {
 }
 
 
+// ACL
+
+const modalCambiarAcl = ref(false)
+const itemCambiandoAcl = ref(null)
+
+function abrirModalCambiarAcl(item) {
+    itemCambiandoAcl.value = item
+    modalCambiarAcl.value = true
+}
+
+
+function cambiarAcl() {
+    /* axios.post(route('files.update'), {
+        ruta: itemCambiandoAcl.value.ruta,
+        permisos: permisosNumerico.value
+    })
+        .then(response => {
+            console.log(response.data)
+            // cierra el modal y actualiza los permisos
+            itemCambiandoAcl.value.permisos = permisosNumerico.value
+            permisosModificados.value = true
+            modalCambiarPermisos.value = false
+        })
+        */
+}
+
+
+
 // RENOMBRAR ITEM
 const nuevoNombre = ref("")
 const itemRenombrando = ref(null)
 const modalRenombrarItem = ref(false)
+const renombrandoItem = ref(false)
 
 function abrirModalRenombrar(item) {
     // item.seleccionado = false // para el caso de renombrar un item seleccionado
+    renombrandoItem.value = false
     itemRenombrando.value = item
     nuevoNombre.value = item.nombre
     modalRenombrarItem.value = true
@@ -1203,8 +1275,8 @@ function abrirModalRenombrar(item) {
 }
 
 function renombrarItem() {
-    modalRenombrarItem.value = false
     itemRenombrando.value.seleccionado = false
+    renombrandoItem.value = true
     axios.post(route('files.rename'), {
         folder: itemRenombrando.value.carpeta,
         oldName: itemRenombrando.value.nombre,
@@ -1212,6 +1284,7 @@ function renombrarItem() {
     })
         .then(response => {
             console.log({ response })
+            modalRenombrarItem.value = false
             const item = itemRenombrando.value // props.items.find(it => it.nombre == itemRenombrando.value.nombre)
             console.log('renombrar item', item)
             item.ruta = item.carpeta + '/' + nuevoNombre.value
@@ -1230,6 +1303,7 @@ function renombrarItem() {
         .catch(err => {
             const errorMessage = err.response.data.error || 'Ocurrió un error al renombrar el elemento'
             alert(errorMessage)
+            renombrandoItem.value = false
         })
 }
 
@@ -1237,8 +1311,10 @@ function renombrarItem() {
 
 const modalCrearCarpeta = ref(false)
 const nombreCarpeta = ref("")
+const creandoCarpeta = ref(false)
 
 function abrirModalCrearCarpeta() {
+    creandoCarpeta.value = false
     modalCrearCarpeta.value = true
     nombreCarpeta.value = ""
     setTimeout(() => {
@@ -1248,18 +1324,20 @@ function abrirModalCrearCarpeta() {
 }
 
 function crearCarpeta() {
-    modalCrearCarpeta.value = false
+    creandoCarpeta.value = true
     if (!nombreCarpeta.value) return
 
     axios.put(route('files.mkdir'), {
         folder: rutaActual.value, name: nombreCarpeta.value
     }).then((response) => {
         console.log({ response })
+        modalCrearCarpeta.value = false
         reloadPage()
     })
         .catch(err => {
             console.log({ err })
             alert(err.response.data.error)
+            creandoCarpeta.value = false
         })
 }
 
