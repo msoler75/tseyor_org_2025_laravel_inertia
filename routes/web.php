@@ -203,6 +203,7 @@ Route::get('normativas/{slug}', [NormativasController::class, 'show'])->where('s
 Route::get('usuarios', [UsuariosController::class, 'index'])->name('usuarios');
 Route::get('usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->name('usuarios.buscar');
 Route::get('usuarios/_permisos', [UsuariosController::class, 'permissions'])->name('usuario.permisos');
+Route::get('usuarios/_grupos', [UsuariosController::class, 'grupos'])->name('grupos');
 Route::get('usuarios/{slug}', [UsuariosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('usuario');
 
 Route::get('login/1', [DevController::class, 'loginUser1'])->name('login1');

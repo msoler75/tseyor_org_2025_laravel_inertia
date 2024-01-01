@@ -20,6 +20,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
+const modal_id = ref(null)
 
 const close = () => {
     if (props.closeable) {
@@ -29,9 +30,25 @@ const close = () => {
 
 const closeOnEscape = (e) => {
     if (e.key === 'Escape' && props.show) {
-        close();
+        // we close only if this modal is in the top, the last in the modals current opened
+        if (window.modals[window.modals.length - 1] === modal_id.value)
+            close();
     }
 };
+
+// creamos un array de diálogos para saber cuales son los modales abiertos
+watch(() => props.show, (newValue) => {
+    if (!window.modals)
+        window.modals = []
+    // get a very simple uuid
+    if (!modal_id.value)
+        modal_id.value = Math.random().toString(36).substr(2, 9);
+    if (newValue) {
+        window.modals.push(modal_id.value)
+    }
+    else
+        window.modals.splice(window.modals.indexOf(modal_id.value), 1)
+});
 
 onMounted(() => document.addEventListener('keydown', closeOnEscape));
 
@@ -65,29 +82,23 @@ const maxWidthClass = computed(() => {
     <teleport to="body">
         <transition leave-active-class="duration-200">
             <div v-show="show" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 select-none" scroll-region
-            :class="centered?' flex items-center':''">
-                <transition
-                    enter-active-class="ease-out duration-300"
-                    enter-from-class="opacity-0"
-                    enter-to-class="opacity-100"
-                    leave-active-class="ease-in duration-200"
-                    leave-from-class="opacity-100"
-                    leave-to-class="opacity-0"
-                >
+                :class="centered ? ' flex items-center' : ''">
+                <transition enter-active-class="ease-out duration-300" enter-from-class="opacity-0"
+                    enter-to-class="opacity-100" leave-active-class="ease-in duration-200" leave-from-class="opacity-100"
+                    leave-to-class="opacity-0">
                     <div v-show="show" class="fixed inset-0 transform transition-all" @click="close">
                         <div class="absolute inset-0 bg-gray-500 dark:bg-gray-900 opacity-75" />
                     </div>
                 </transition>
 
-                <transition
-                    enter-active-class="ease-out duration-300"
+                <transition enter-active-class="ease-out duration-300"
                     enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    enter-to-class="opacity-100 translate-y-0 sm:scale-100"
-                    leave-active-class="ease-in duration-200"
+                    enter-to-class="opacity-100 translate-y-0 sm:scale-100" leave-active-class="ease-in duration-200"
                     leave-from-class="opacity-100 translate-y-0 sm:scale-100"
-                    leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                >
-                    <div v-show="show" class="mb-6 bg-base-100 dark:bg-gray-800 dark:border dark:border-gray-500 rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto" :class="maxWidthClass">
+                    leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                    <div v-show="show"
+                        class="mb-6 bg-base-100 dark:bg-gray-800 dark:border dark:border-gray-500 rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto"
+                        :class="maxWidthClass">
                         <slot v-if="show" />
                     </div>
                 </transition>
