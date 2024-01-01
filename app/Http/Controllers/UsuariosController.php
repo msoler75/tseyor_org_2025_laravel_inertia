@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Equipo;
+use App\Models\Grupo;
 use App\Models\Comentario;
 use App\Pigmalion\SEO;
 
@@ -93,5 +94,13 @@ class UsuariosController extends Controller
         $user = auth()->user();
         $permisos = $user ? $user->getAllPermissions()->pluck('name') : [];
         return response()->json($permisos, 200);
+    }
+
+    /**
+     * Retorna la lista de grupos
+     */
+    public function grupos() {
+        $grupos = Grupo::get();
+        return response()->json($grupos, 200);
     }
 }

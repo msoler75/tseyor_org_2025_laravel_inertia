@@ -181,11 +181,11 @@ class ArchivosController extends Controller
 
             // agregamos información para saber si podemos editar este item
             // omitimos el item padre
-            if (!($item['padre']??0)) {
+            if (!($item['padre'] ?? 0)) {
                 $nodoItem = $item['nodo'];
                 $items[$idx]['puedeEscribir'] = $nodoItem ? Gate::allows('escribir', $nodoItem) : false;
                 $items[$idx]['puedeLeer'] = $nodoItem ? Gate::allows('leer', $nodoItem) : false;
-                $nodoContenedor = $idx===0?$nodoPadre:$nodoCarpeta;
+                $nodoContenedor = $idx === 0 ? $nodoPadre : $nodoCarpeta;
                 // comprobamos el sticky bit de la carpeta padre del item
                 if ((!$nodoContenedor || $nodoContenedor->sticky) && $nodoItem->user_id != optional($user)->id) {
                     if (!$aclUser || !$nodoItem->tieneAcceso($aclUser, 'escribir'))
@@ -208,11 +208,11 @@ class ArchivosController extends Controller
 
         return Inertia::render('Archivos', $respuesta)
             ->withViewData([
-                    'seo' => new SEOData(
-                        title: $ruta,
-                        description: 'Contenido de ' . $ruta,
-                    )
-                ]);
+                'seo' => new SEOData(
+                    title: $ruta,
+                    description: 'Contenido de ' . $ruta,
+                )
+            ]);
     }
 
     /**
@@ -238,9 +238,10 @@ class ArchivosController extends Controller
             $item['privada'] = true; // carpeta no accesible
         $item['nodo_id'] = optional($nodo)->id ?? null;
         $item['permisos'] = optional($nodo)->permisos ?? 0;
-        $item['propietario'] = ['usuario' => ['id'=>optional($nodo)->user_id, 'nombre'=>optional($nodo)->propietario_usuario],
-                                'grupo' =>   ['id' =>optional($nodo)->group_id, 'nombre'=>optional($nodo)->propietario_grupo]
-                                ];
+        $item['propietario'] = [
+            'usuario' => ['id' => optional($nodo)->user_id, 'nombre' => optional($nodo)->propietario_usuario],
+            'grupo' => ['id' => optional($nodo)->group_id, 'nombre' => optional($nodo)->propietario_grupo]
+        ];
         $item['nodo'] = $nodo; // temporal
         return $item;
     }
@@ -511,7 +512,8 @@ class ArchivosController extends Controller
 
 
 
-    function validarNombre($nombre) {
+    function validarNombre($nombre)
+    {
         // Expresión regular para Windows
         $patronWindows = '/^[a-zA-Z0-9\s_\-().\[\]{}!,@áéíóúÁÉÍÓÚàèòÀÈÒçÇ]*$/';
 
@@ -585,7 +587,7 @@ class ArchivosController extends Controller
             ], 403);
         }
 
-        if(!$this->validarNombre($name)) {
+        if (!$this->validarNombre($name)) {
             return response()->json([
                 'error' => 'El nombre de la carpeta no es válido. Solo se permiten caracteres alfanúmericos, espacios, guiones y puntos'
             ], 400);
@@ -686,6 +688,7 @@ class ArchivosController extends Controller
         }
 
         $ruta = $this->normalizarRuta($request->ruta);
+        // cambia los permisos
         $permisos = $request->permisos;
 
         if (!Storage::disk('public')->exists($ruta)) {
@@ -721,19 +724,66 @@ class ArchivosController extends Controller
 
         $nodo = Nodo::where('ruta', $ruta)->first();
         if (!$nodo) {
-            Nodo::create([
+            $nodo = Nodo::create([
                 'ruta' => $ruta,
                 'es_carpeta' => $esCarpeta,
                 'user_id' => $update['user_id'] ? $update['user_id'] : $nodoItem->user_id,
                 'group_id' => $update['group_id'] ? $update['group_id'] : $nodoItem->group_id,
-                'permisos' => $update['permisos'] ? $update['permisos'] : $permisos,
+                'permisos' => $update['permisos'] ? $update['permisos'] : $nodoItem->permisos,
             ]);
         } else {
-            $nodo->update($update);
+            if (count($update))
+                $nodo->update($update);
         }
 
-        return response()->json(['message' => $esCarpeta ? "Carpeta modificada" : "Archivo modificado"], 200);
+        $item = $this->prepareItemList($ruta, $nodo, []);
+
+        $newAcls = $request->acl;
+        if ($newAcls) {
+            foreach ($newAcls as $idx => $newAcl) {
+                // buscamos los acl para saber si son nuevos o conviene actualizarlos
+                if ($newAcl['id'] < 0) {
+                    // es un nuevo acceso
+                    unset($acl['id']);
+                    $newAcl['nodo_id'] = $nodo->id;
+                    // creamos un nuevo registro
+                    $acl = Acl::create($newAcl);
+                    $newAcls[$idx]['id'] = $acl->id;  //actualizamos el id del nuevo acl con el creado en la tabla
+                } else {
+                    // actualizamos el acl
+                    $acl = Acl::where('id', $newAcl['id'])->first();
+                    if ($acl->verbos != $newAcl['verbos'])
+                        $acl->update(['verbos' => $newAcl['verbos']]);
+                }
+            }
+
+            // eliminamos los acl que no están en el update
+            $aclsCheck = Acl::where('nodo_id', '=', $nodo->id)->get();
+            foreach ($aclsCheck as $aclCheck) {
+                $encontrado = false;
+                foreach ($newAcls as $newAcl) {
+                    if ($newAcl['id'] == $aclCheck->id)
+                        $encontrado = true;
+                }
+                if (!$encontrado)
+                $aclCheck->delete();
+            }
+
+            $acls = Acl::inNodes([$nodo->id]);
+            if ($item['nodo_id']) {
+                $a = $acls->where('nodo.id', '=', $item['nodo_id'])->toArray();
+                foreach ($a as $k => $x) {
+                    unset($a[$k]['nodo']);
+                    unset($a[$k]['nodo_id']);
+                }
+                $item['acl'] = array_values($a);
+            }
+        }
+
+        return response()->json($item, 200);
     }
+
+
 
     /**
      * Renombra un archivo o carpeta que está en una carpeta $folder de viejo nombre $oldName a $newName
@@ -763,8 +813,8 @@ class ArchivosController extends Controller
 
         $rutaAntes = $folder . '/' . $oldName;
         $rutaDespues = $folder . '/' . $newName;
-        $itemAntes =  $rutaAntes;
-        $itemDespues =  $rutaDespues;
+        $itemAntes = $rutaAntes;
+        $itemDespues = $rutaDespues;
 
         // dd("itemAntes=$itemAntes itemDespues=$itemDespues");
 
@@ -791,7 +841,7 @@ class ArchivosController extends Controller
                 ], 403);
         }
 
-        if(!$this->validarNombre($newName)) {
+        if (!$this->validarNombre($newName)) {
             return response()->json([
                 'error' => 'El nuevo nombre no es válido. Solo se permiten caracteres alfanúmericos, espacios, guiones y puntos'
             ], 400);
