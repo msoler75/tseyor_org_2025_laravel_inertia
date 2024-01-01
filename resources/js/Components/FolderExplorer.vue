@@ -743,7 +743,7 @@
                 <div class="font-bold text-lg">Acceso adicional</div>
                 <form>
                     <p>/{{ itemCambiandoAcl.ruta }}</p>
-                    <table>
+                    <table v-if="itemCambiandoAcl?.aclEditar?.length">
                         <thead class="text-sm">
                             <tr>
                                 <th></th>
@@ -771,6 +771,9 @@
                             </tr>
                         </tbody>
                     </table>
+                <div v-else>
+                    No hay accesos adicionales
+                </div>
 
                     <div class="flex gap-3 my-4">
                         <button class="btn btn-xs text-xs btn-secondary" @click.prevent="abrirModalBuscarUsuario">+
