@@ -1391,7 +1391,8 @@ const usuariosEncontrados = ref([]);
 const usuariosParaAgregar = computed(() => usuariosEncontrados.value
         .map(u => ({
             ...u,
-            acceso: !!itemCambiandoAcl.value.aclEditar.find(acl => acl.user_id == u.id) // ya está en la lista de acceso?
+            acceso: itemCambiandoAcl.value.propietario.usuario?.id == u.id  //  no es el propietario,
+                || itemCambiandoAcl.value.aclEditar.find(acl => acl.user_id == u.id) // y no está ya en la lista de acceso
         })
         ))
 // agregar grupo
@@ -1404,6 +1405,8 @@ watch(debouncedBuscar, buscarUsuarios)
 
 function abrirModalCambiarAcl(item) {
     itemCambiandoAcl.value = item
+    if(!item.acl)
+    item.acl = []
     // guardamos los valores antes de la edición
     itemCambiandoAcl.value.aclEditar = [...itemCambiandoAcl.value.acl]
     itemCambiandoAcl.value.aclEditar.forEach(acl => {
@@ -1484,14 +1487,14 @@ function agregarGrupoAcl() {
         leer: false,
         escribir: false,
         ejecutar: false,
-        usuario: grupo.nombre
+        grupo: grupo.nombre
     })
     modalBuscarGrupo.value = false
     grupoElegido.value = null
 }
 
 function cambiarAcl() {
-    const newAcl = JSON.parse(JSON.stringify(itemCambiandoAcl.value.aclEditar))
+    var newAcl = JSON.parse(JSON.stringify(itemCambiandoAcl.value.aclEditar))
     newAcl.forEach(acl => {
         acl.verbos = ['leer', 'escribir', 'ejecutar'].filter(verbo => acl[verbo]).join(',')
         delete acl.leer
@@ -1502,13 +1505,14 @@ function cambiarAcl() {
         delete acl.updated_at
         delete acl.created_at
     })
+    newAcl = newAcl.filter(acl=>acl.verbos)
     guardandoAcl.value = true
     axios.post(route('files.update'), {
         ruta: itemCambiandoAcl.value.ruta,
         acl: newAcl
     })
         .then(response => {
-            console.log(response.data)
+            console.log({response})
             // cierra el modal y actualiza los permisos
             itemCambiandoAcl.value.acl = response.data.acl
             permisosModificados.value = true
