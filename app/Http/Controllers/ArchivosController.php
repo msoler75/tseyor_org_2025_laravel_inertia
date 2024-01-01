@@ -744,7 +744,7 @@ class ArchivosController extends Controller
                 // buscamos los acl para saber si son nuevos o conviene actualizarlos
                 if ($newAcl['id'] < 0) {
                     // es un nuevo acceso
-                    unset($acl['id']);
+                    unset($newAcl['id']);
                     $newAcl['nodo_id'] = $nodo->id;
                     // creamos un nuevo registro
                     $acl = Acl::create($newAcl);
