@@ -29,7 +29,6 @@ class EquiposController extends Controller
      */
     public function index(Request $request)
     {
-
         //$urlEquipo = route('equipo', 15);
         // Verificar si el usuario ya tiene una cuenta
         //  return redirect($urlEquipo)->with('message', 'Invitación aceptada. Ya eres parte del equipo.');
@@ -75,7 +74,6 @@ class EquiposController extends Controller
             ;
         }]);
 
-
         if (is_numeric($id)) {
             $equipo = $equipo->findOrFail($id);
         } else {
@@ -87,10 +85,9 @@ class EquiposController extends Controller
         $ultimosArchivos = [];
 
         $user = auth()->user();
-        $acl = Acl::from($user, ['leer', 'ejecutar']);
         foreach ($carpetas as $carpeta) {
             $nodo = Nodo::desde($carpeta->ruta);
-            if ($nodo && Gate::allows('ejecutar', $nodo, $acl)) {
+            if ($nodo && Gate::allows('ejecutar', $nodo)) {
                 $archivos = $carpeta->ultimosArchivos();
                 $ultimosArchivos = array_merge($ultimosArchivos, $archivos);
             }

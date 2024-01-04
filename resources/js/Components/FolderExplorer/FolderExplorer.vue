@@ -266,7 +266,7 @@
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </td>
-                            <td class="relative w-4" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
+                            <td class="relative w-4" v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">
                                 <FolderIcon v-if="item.tipo === 'carpeta'" class="cursor-pointer" :private="item.privada"
                                     :owner="item.propietario.usuario.id === user?.id" :url="item.url"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
@@ -275,7 +275,7 @@
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
                                     :is-link="!embed" />
                             </td>
-                            <td class="sm:hidden" v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">
+                            <td class="sm:hidden" v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">
                                 <div class="flex flex-col">
                                     <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
@@ -293,8 +293,8 @@
                                     </small>
                                 </div>
                             </td>
-                            <td class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
-                                v-on:touchend="onTouchEnd(item)">
+                            <td class="hidden sm:table-cell" v-on:touchstart.passive="ontouchstart(item)"
+                                v-on:touchend.passive="ontouchend(item)">
                                 <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
                                     class="cursor-pointer   py-1 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
@@ -303,21 +303,21 @@
                                 <a v-else :href="item.url" download v-html="nombreItem(item)" class="py-1 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)" />
                             </td>
-                            <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart="onTouchStart(item)"
-                                v-on:touchend="onTouchEnd(item)">
+                            <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart.passive="ontouchstart(item)"
+                                v-on:touchend.passive="ontouchend(item)">
                                 <span v-if="item.tipo === 'carpeta'" class="text-sm">
                                     {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
                             </td>
-                            <td class="hidden sm:table-cell" v-on:touchstart="onTouchStart(item)"
-                                v-on:touchend="onTouchEnd(item)">
+                            <td class="hidden sm:table-cell" v-on:touchstart.passive="ontouchstart(item)"
+                                v-on:touchend.passive="ontouchend(item)">
                                 <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
                             </td>
                             <td v-if="!mostrandoResultados" class="hidden sm:table-cell text-center"
-                                v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">{{ item.permisos }}
+                                v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">{{ item.permisos }}
                             </td>
                             <td v-if="!mostrandoResultados" class="hidden sm:table-cell text-center"
-                                v-on:touchstart="onTouchStart(item)" v-on:touchend="onTouchEnd(item)">{{ item.propietario ?
+                                v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">{{ item.propietario ?
                                     (item.propietario.usuario.nombre +
                                         '/' + item.propietario.grupo.nombre) : '' }}</td>
                             <td v-if="mostrandoResultados">
@@ -741,7 +741,7 @@
         <Modal :show="modalCambiarAcl" @close="modalCambiarAcl = false" maxWidth="md">
             <div class="p-5">
                 <div class="font-bold text-lg">Acceso adicional</div>
-                <form>
+                <form class="overflow-x-auto">
                     <p>/{{ itemCambiandoAcl.ruta }}</p>
                     <table v-if="itemCambiandoAcl?.aclEditar?.length">
                         <thead class="text-sm">
@@ -961,6 +961,10 @@ const props = defineProps({
     contentClass: String
 });
 
+// para evitar modificación de la prop
+// https://github.com/inertiajs/inertia/issues/854#issuecomment-896089483
+const itemsCopy = computed(()=>JSON.parse(JSON.stringify(props.items)))
+
 // puede editar la carpeta actual?
 const puedeEscribir = computed(() => props.items.length ? props.items[0].puedeEscribir : false)
 const puedeLeer = computed(() => props.items.length ? props.items[0].puedeLeer : false)
@@ -1089,8 +1093,8 @@ watch(() => props.items, verificarFinSeleccion, { deep: true })
 
 // EVENTOS TOUCH
 
-function onTouchStart(item) {
-    console.log('touchStart')
+function ontouchstart(item) {
+    console.log('touchstart.passive')
     item.touching = true
     if (seleccionando.value) {
         item.seleccionado = !item.seleccionado
@@ -1105,8 +1109,8 @@ function onTouchStart(item) {
         }, 700); // tiempo en milisegundos para considerar un "long touch"
 }
 
-function onTouchEnd(item) {
-    console.log('touchEnd')
+function ontouchend(item) {
+    console.log('touchend.passive')
     clearTimeout(item.longTouchTimer);
     item.touching = false
 }
@@ -1243,7 +1247,7 @@ const ordenarPor = ref("fechaDesc")
 
 const itemsOrdenados = computed(() => {
     // Separar las carpetas y los archivos en dos grupos
-    const items = props.items.filter(item => !item.padre && !item.actual && !item.eliminado)
+    const items = itemsCopy.value.filter(item => !item.padre && !item.actual && !item.eliminado)
     const carpetas = items.filter(item => item.tipo === 'carpeta')
     const archivos = items.filter(item => item.tipo !== 'carpeta');
 
