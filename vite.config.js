@@ -42,7 +42,8 @@ export default defineConfig({
       dts: true,
       dirs: [
         "resources/js/Components",
-        "resources/js/Comentarios",
+        "resources/js/Components/Comentarios",
+        "resources/js/Components/FolderExplorer",
         "resources/js/Icons",
         "resources/js/Sections",
         "resources/js/Layouts",
