@@ -2,7 +2,8 @@
     <div>
         <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario"
             @updated="reloadFolder" @folder="onFolder" @file="onFile" :embed="true"
-            :url = "url"
+            :ruta = "ruta"
+            :rutaBase = "ruta"
             :cargando="cargando"
             :contentClass="contentClass"
             />
@@ -30,7 +31,7 @@
 
 <script setup>
 const props = defineProps({
-    url: { type: String, required: false, default: "/" },
+    ruta: { type: String, required: false, default: "" },
     contentClass: String
 });
 
@@ -40,12 +41,12 @@ const emit = defineEmits(['image:value'])
 const cargando = ref(true)
 
 const items = ref([{
-    ruta: props.url
+    ruta: props.ruta
 }])
 const puedeEscribir = ref(false)
 const propietario = ref(null)
 
-const currentUrl = ref(props.url)
+const currentUrl = ref('/' + props.ruta)
 
 function loadFolder() {
     cargando.value = true

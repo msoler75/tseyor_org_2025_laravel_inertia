@@ -4,7 +4,7 @@
 
         <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
             <div class="flex flex-col">
-                <FileManager :url="mediaFolder" class="max-h-[90vh] flex-grow" @image="onInsertImage"
+                <FileManager :ruta="mediaFolder" class="max-h-[90vh] flex-grow" @image="onInsertImage"
                     content-class="max-h-[calc(100vh-240px)] overflow-y-auto" />
                 <div class="p-3 flex justify-end">
                     <button @click.prevent="showMediaManager = false" class="btn btn-neutral">Cerrar</button>
@@ -189,7 +189,7 @@ import { onThemeChange, updateTheme } from '@/composables/themeAdapter'
 const props = defineProps({
     name: String,
     content: { type: String, default: '' },
-    mediaFolder: { type: String, default: '/media' },
+    mediaFolder: { type: String, default: 'media' },
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
