@@ -54,7 +54,8 @@ class Nodo extends Model
     }
 
 
-    public function getStickyAttribute(): bool {
+    public function getStickyAttribute(): bool
+    {
         $permisos = octdec($this->permisos);
         return $permisos & (0b001 << 9);
     }
@@ -141,8 +142,14 @@ class Nodo extends Model
     /**
      * Comprueba con la ACL si tiene el acceso a un nodo en concreto
      */
-    public function tieneAcceso(Collection $aclist, string $verbo = null)
+    public function tieneAcceso(?User $user, string $verbo = null)
     {
+        $aclist = optional($user)->accessControlList();
+        if (!$aclist)
+            return false;
+
+        $aclListArray = $aclist->toArray();
+
         // filtramos por verbo
         if ($verbo)
             $aclist = $aclist->filter(function ($nodo) use ($verbo) {
@@ -150,12 +157,33 @@ class Nodo extends Model
             });
 
         // tiene acceso global para todos los nodos?
-        if ($aclist->whereNull('nodo_id')->count() > 0)
-            return true;
+        if (1) { // probamos diferentes implementaciones
+            if ($aclist->whereNull('nodo_id')->count() > 0)
+                return true;
 
-        // tiene acceso a este nodo?
-        if ($aclist->where('nodo_id', $this->id)->count() > 0)
-            return true;
+            // tiene acceso a este nodo?
+            if ($aclist->where('nodo_id', $this->id)->count() > 0)
+                return true;
+        } else {
+            // Filtramos por verbo
+            $aclListArray = array_filter($aclListArray, function ($nodo) use ($verbo) {
+                return strpos($this->verbos, $verbo) !== false;
+            });
+
+            // Tiene acceso global para todos los nodos?
+            $nodoIdIsNull = false;
+
+            foreach ($aclListArray as $nodo) {
+                if (!isset($nodo['nodo_id'])) {
+                    $nodoIdIsNull = true;
+                    break;
+                }
+            }
+
+            if ($nodoIdIsNull) {
+                return true;
+            }
+        }
 
         // tiene acceso a una carpeta padre?
 
@@ -163,7 +191,7 @@ class Nodo extends Model
         //if ($aclist->where("'$nodo->ruta'", 'LIKE', "CONCAT(ruta, '%')")->count() > 0)
         //  return true;
 
-        foreach ($aclist->toArray() as $registro) {
+        foreach ($aclListArray as $registro) {
             if (strpos($this->ruta, $registro['ruta']) === 0) {
                 return true;
             }
