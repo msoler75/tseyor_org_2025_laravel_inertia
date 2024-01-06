@@ -1035,17 +1035,13 @@ function onSearch() {
             const data = response.data
             console.log({ data })
             resultadosBusqueda.value = data.resultados
-            buscarMasResultados(data.carpetas_pendientes)
+            buscarMasResultados()
         })
 }
 
-function buscarMasResultados(carpetas_pendientes) {
-    axios(route('archivos.buscar'), {
-        params: {
-            carpetas_pendientes: JSON.stringify(carpetas_pendientes),
-            nombre: buscar.value
-        }
-    })
+function buscarMasResultados() {
+    if(!mostrandoResultados.value) return
+    axios.post(route('archivos.buscar'))
         .then(response => {
             const data = response.data
             console.log({ data })
@@ -1054,9 +1050,10 @@ function buscarMasResultados(carpetas_pendientes) {
                 if (!resultadosBusqueda.value.find(item => item.ruta == resultado.ruta))
                     resultadosBusqueda.value.push(resultado)
             }
-            if (data.carpetas_pendientes && data.carpetas_pendientes.length)
-                buscarMasResultados(data.carpetas_pendientes)
-            else buscando.value = false // fin de la busqueda
+            if (data.finalizado)
+                buscando.value = false // fin de la busqueda
+            else
+                buscarMasResultados()
         })
 }
 

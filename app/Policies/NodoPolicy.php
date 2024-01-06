@@ -7,6 +7,7 @@ use App\Models\Nodo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Esta clase simula los permisos de linux con usuarios y grupos.
@@ -64,20 +65,17 @@ class NodoPolicy
      */
     public function leer(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
     {
-        $aclist = optional($user)->accessControlList();
-        return $this->permisoNodo($user, $nodo, 0b100) ? true : ($aclist ? $nodo->tieneAcceso($aclist, 'leer') : false);
+        return $this->permisoNodo($user, $nodo, 0b100) ? true : $nodo->tieneAcceso($user, 'leer');
     }
 
     public function escribir(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
     {
-        $aclist = optional($user)->accessControlList();
-        return $this->permisoNodo($user, $nodo, 0b010) ? true : ($aclist ? $nodo->tieneAcceso($aclist, 'escribir') : false);
+        return $this->permisoNodo($user, $nodo, 0b010) ? true : $nodo->tieneAcceso($user, 'escribir');
     }
 
     public function ejecutar(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
     {
-        $aclist = optional($user)->accessControlList();
-        return $this->permisoNodo($user, $nodo, 0b001) ? true : ($aclist ? $nodo->tieneAcceso($aclist, 'ejecutar') : false);
+        return $this->permisoNodo($user, $nodo, 0b001) ? true : $nodo->tieneAcceso($user, 'ejecutar');
     }
 
 
@@ -104,8 +102,15 @@ class NodoPolicy
                     return true;
 
                 // Verificar el permiso del grupo
-                if ($nodo->group_id && $user->grupos()->where('grupos.id', $nodo->group_id)->exists() && ($permisos & ($bits << 3)) !== 0)
+                if($user && $nodo->group_id) {
+                    $cacheKey = 'user_grupos_exists_' . $user->id . '_group_' . $nodo->group_id;
+                    $cacheTime = 30;
+                    $exists = Cache::remember($cacheKey, $cacheTime, function () use ($user, $nodo) {
+                        return $user->grupos()->where('grupos.id', $nodo->group_id)->exists();
+                    });
+                    if ($exists && ($permisos & ($bits << 3)) !== 0)
                     return true;
+                }
             }
             // Verificar el permiso de otros (others)
             return $permisos & $bits !== 0;

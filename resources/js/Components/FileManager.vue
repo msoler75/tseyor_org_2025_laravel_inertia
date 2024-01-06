@@ -3,7 +3,7 @@
         <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario"
             @updated="reloadFolder" @folder="onFolder" @file="onFile" :embed="true"
             :url = "url"
-            :cargando="cargaInicial"
+            :cargando="cargando"
             :contentClass="contentClass"
             />
 
@@ -37,7 +37,7 @@ const props = defineProps({
 
 const emit = defineEmits(['image:value'])
 
-const cargaInicial = ref(true)
+const cargando = ref(true)
 
 const items = ref([{
     ruta: props.url
@@ -48,6 +48,7 @@ const propietario = ref(null)
 const currentUrl = ref(props.url)
 
 function loadFolder() {
+    cargando.value = true
     console.log('loadFolder', currentUrl.value)
     // axios.get(route('filemanager', currentUrl.value).replace(/%2F/g, '/'))
     axios.get('/filemanager' + currentUrl.value)
@@ -56,7 +57,7 @@ function loadFolder() {
             items.value = response.data.items
             puedeEscribir.value = response.data.puedeEscribir
             propietario.value = response.data.propietario
-            cargaInicial.value = false
+            cargando.value = false
         })
         .catch(err => {
             console.log(err)

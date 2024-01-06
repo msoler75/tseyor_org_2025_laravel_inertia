@@ -16,7 +16,8 @@ use App\Models\Nodo;
 use App\Models\Acl;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
-
+use App\Pigmalion\TiempoEjecucion as T;
+use App\Pigmalion\Profiler;
 
 /*
     En sistemas operativos basados en UNIX, como Linux, el sticky bit es un atributo de permisos especial que se puede aplicar a directorios. Este bit tiene un propósito específico y afecta la forma en que los usuarios pueden acceder y manipular archivos dentro de ese directorio.
@@ -52,6 +53,10 @@ class ArchivosController extends Controller
      */
     public function list($ruta, $json)
     {
+        new T("ArchivosController.list($ruta)");
+
+        $p1 = new T("ArchivosController.list($ruta) P1");
+
         $ruta = urldecode(ltrim($ruta, '/'));
 
         if (strpos($ruta, ':') !== false) {
@@ -82,11 +87,18 @@ class ArchivosController extends Controller
             return $this->storage($rutaBase);
         }
 
+        unset($p1);
+        $p1b = new T("ArchivosController.list($ruta) P1B");
+
         // $acl = Acl::from($user, ['ejecutar', 'escribir']);
 
         // comprobamos el permiso de ejecución (listar) en la carpeta
         $nodo = Nodo::desde($ruta);
         $nodoCarpeta = $nodo;
+
+
+        unset($p1b);
+        $p1c = new T("ArchivosController.list($ruta) P1C");
 
         if (Gate::denies('ejecutar', $nodo)) {
             throw new AuthorizationException('No tienes permisos para ver la carpeta', 403);
@@ -95,9 +107,16 @@ class ArchivosController extends Controller
         // creamos la lista de items que retornaremos
         $items = [];
 
+
+        unset($p1c);
+        $p2 = new T("ArchivosController.list($ruta) P2");
+
         // elementos de la ruta
         $archivos = Storage::disk('public')->files($ruta);
         $carpetas = Storage::disk('public')->directories($ruta);
+
+        unset($p2);
+        $p3 = new T("ArchivosController.list($ruta) P3");
 
         // agregamos la carpeta actual
         $items[] = $this->prepareItemList($ruta, $nodo, ['tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
@@ -113,6 +132,11 @@ class ArchivosController extends Controller
         // obtenemos todos los nodos de la carpeta
         $nodosHijos = Nodo::hijos($ruta);
 
+
+        unset($p3);
+        $p4 = new T("ArchivosController.list($ruta) P4 (carpetas)");
+
+
         // Agregar carpetas a la colección de elementos
         foreach ($carpetas as $carpeta) {
             $nodo = $nodosHijos->where('ruta', $carpeta /*$ruta . "/" .  basename($carpeta)*/)->first();
@@ -126,6 +150,9 @@ class ArchivosController extends Controller
                 ]
             );
         }
+
+        unset($p4);
+        $p4b = new T("ArchivosController.list($ruta) P4B (archivos)");
 
         // Agregar archivos a la colección de elementos
         foreach ($archivos as $archivo) {
@@ -153,6 +180,11 @@ class ArchivosController extends Controller
             ];
         }
 
+
+        unset($p4b);
+        $p5 = new T("ArchivosController.list($ruta) P5");
+
+
         // Obtenemos todos los ids de todos los nodos implicados
         $nodosIdsArr = $nodosHijos->pluck('id')->toArray();
         if ($nodoCarpeta)
@@ -162,44 +194,70 @@ class ArchivosController extends Controller
 
         // Obtenemos de una vez todos los ACL
         $acl = Acl::inNodes($nodosIdsArr);
+        $aclArray = $acl->toArray();
 
         $user = auth()->user();
         $aclUser = optional($user)->accessControlList();
 
+
+        unset($p5);
+        $p5b = new T("ArchivosController.list($ruta) P5B");
         // Agregamos la información de Access Control List para cada item
         foreach ($items as $idx => $item) {
+            $end_part_a = Profiler::calling("p5.part_a");
             if ($item['nodo_id']) {
-                $a = $acl->where('nodo.id', '=', $item['nodo_id'])->toArray();
+                $a = [];
+                foreach ($aclArray as $aclItem) {
+                    if ($aclItem['nodo_id'] == $item['nodo_id']) {
+                        $a[] = $aclItem;
+                    }
+                }
                 foreach ($a as $k => $x) {
                     unset($a[$k]['nodo']);
                     unset($a[$k]['nodo_id']);
                 }
-                $items[$idx]['acl'] = array_values($a);
+                $items[$idx]['acl'] = $a;
             } else
                 $items[$idx]['acl'] = null;
 
+            $end_part_a();
 
             // agregamos información para saber si podemos editar este item
             // omitimos el item padre
             if (!($item['padre'] ?? 0)) {
                 $nodoItem = $item['nodo'];
+                $end_puede_escribir = Profiler::calling("p5.puedeEscribir");
                 $items[$idx]['puedeEscribir'] = $nodoItem ? Gate::allows('escribir', $nodoItem) : false;
+                $end_puede_escribir();
+
+                $end_puede_leer = Profiler::calling("p5.puedeLeer");
                 $items[$idx]['puedeLeer'] = $nodoItem ? Gate::allows('leer', $nodoItem) : false;
+                $end_puede_leer();
                 $nodoContenedor = $idx === 0 ? $nodoPadre : $nodoCarpeta;
                 // comprobamos el sticky bit de la carpeta padre del item
+                $end_part_c = Profiler::calling("p5.part_c");
                 if ((!$nodoContenedor || $nodoContenedor->sticky) && $nodoItem->user_id != optional($user)->id) {
-                    if (!$aclUser || !$nodoItem->tieneAcceso($aclUser, 'escribir'))
+                    if (!$aclUser || !$nodoItem->tieneAcceso($user, 'escribir'))
                         $items[$idx]['puedeEscribir'] = false;
                 }
+                $end_part_c();
             }
             // eliminamos la entrada del nodo de los resultados
             unset($items[$idx]['nodo']);
         }
 
+        //dd($items);
+
+        dd(Profiler::results());
+
         $respuesta = [
             'items' => $items,
-            'ruta' => $ruta,
-            'propietarioRef' => $propietario
+            // información adicional de los elementos se calculan aquí
+            'info' => Inertia::lazy(function () {
+
+            }),
+        'ruta' => $ruta,
+        'propietarioRef' => $propietario
         ];
 
         if ($json) {
@@ -262,10 +320,12 @@ class ArchivosController extends Controller
         $ruta = ltrim(str_replace($baseUrl, '', $request->ruta), "/");
 
         // carpetas donde falta buscar
-        $carpetas_pendientes = @json_decode($request->carpetas_pendientes, false);
+        $carpetas_pendientes = [];
 
-        // estamos en la primera busqueda (porque no hay carpetas pendientes)
-        if (empty($carpetas_pendientes)) {
+        // estamos en la primera busqueda (es un método GET)
+        if (
+            $request->method() == 'GET'
+            /*empty($carpetas_pendientes)*/) {
 
             // la ruta inicial es la primera carpeta donde buscaremos después en disco
             $carpetas_pendientes = [$ruta];
@@ -293,7 +353,17 @@ class ArchivosController extends Controller
                     ]);
             }
 
+            // guardamos las carpetas pendientes en la sesión:
+            $request->session()->put('carpetas_pendientes', $carpetas_pendientes);
+
+            // guardamos el nombre buscado
+            $request->session()->put('buscar_nombre', $nombre);
+
         } else {
+
+            // recuperamos los parámetros de búsqueda de la sesión
+            $carpetas_pendientes = $request->session()->get('carpetas_pendientes');
+            $nombre = $request->session()->get('buscar_nombre');
 
             // realizamos una busqueda real en disco
 
@@ -308,8 +378,8 @@ class ArchivosController extends Controller
                 if (!$carpeta)
                     continue;
                 $carpeta = ltrim(str_replace($baseUrl, '', $carpeta), "/");
-                if (!preg_match("/^archivos/", $carpeta))
-                    continue;
+                //if (!preg_match("/^archivos/", $carpeta))
+                //  continue;
 
                 // Buscar archivos y subcarpetas dentro de la carpeta actual
                 $archivos = Storage::disk('public')->files($carpeta);
@@ -351,12 +421,15 @@ class ArchivosController extends Controller
 
                 // Calcular el tiempo transcurrido en milisegundos
                 $tiempo_transcurrido = (microtime(true) - $start_time) * 1000;
+
+                // guardamos los cambios de las carpetas pendientes en la sesión:
+                $request->session()->put('carpetas_pendientes', $carpetas_pendientes);
             }
         }
 
         $response = [
-            'resultados' => $resultados,
-            'carpetas_pendientes' => $carpetas_pendientes
+            'finalizado' => !count($carpetas_pendientes),
+            'resultados' => $resultados
         ];
 
         return response()->json($response, 200);
@@ -389,7 +462,7 @@ class ArchivosController extends Controller
         $nodo = Nodo::desde($ruta);
 
         // comprobamos permisos de lectura
-        if(Gate::denies('leer', $nodo))
+        if (Gate::denies('leer', $nodo))
             abort(403, 'No tienes permisos.');
 
         $path = storage_path('app/public/' . $ruta);
@@ -773,7 +846,7 @@ class ArchivosController extends Controller
                         $encontrado = true;
                 }
                 if (!$encontrado)
-                $aclCheck->delete();
+                    $aclCheck->delete();
             }
 
             $acls = Acl::inNodes([$nodo->id]);

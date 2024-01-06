@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Access control List
@@ -65,20 +65,24 @@ class Acl extends Model
         $user_id = $user ? $user->id : -1;
         $grupos_ids = $user ? $user->grupos()->pluck('grupos.id') : [];
 
-        return Acl::select('nodos_acl.*', 'nodos.ruta')
-            ->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
-            ->where(function ($query) use ($grupos_ids, $user_id) {
-                $query
-                    ->where('nodos_acl.user_id', $user_id)
-                    ->orWhereIn('nodos_acl.group_id', $grupos_ids);
-            })
-            ->where(function ($query) use ($verbos) {
-                if ($verbos)
-                    foreach ($verbos as $verbo) {
-                        $query->orWhere('nodos_acl.verbos', 'LIKE', '%' . $verbo . '%');
-                    }
-            })
-            ->get();
+        $cacheKey = 'acl_' . $user_id . '_' . $verbos; // Clave para identificar la cache
+        $cacheTime = 60; // Tiempo en segundos para mantener la cache
+        return Cache::remember($cacheKey, $cacheTime, function () use ($grupos_ids, $user_id, $verbos) {
+            return Acl::select('nodos_acl.*', 'nodos.ruta')
+                ->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
+                ->where(function ($query) use ($grupos_ids, $user_id) {
+                    $query
+                        ->where('nodos_acl.user_id', $user_id)
+                        ->orWhereIn('nodos_acl.group_id', $grupos_ids);
+                })
+                ->where(function ($query) use ($verbos) {
+                    if ($verbos)
+                        foreach ($verbos as $verbo) {
+                            $query->orWhere('nodos_acl.verbos', 'LIKE', '%' . $verbo . '%');
+                        }
+                })
+                ->get();
+        });
     }
 
 
