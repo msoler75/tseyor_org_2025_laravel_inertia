@@ -363,6 +363,10 @@ class ArchivosController extends Controller
 
     }
 
+
+    /**
+     * Fuzzy match file names
+     */
     private function matchSearch($str, $term)
     {
         $str = Str::lower(Str::ascii($str));
@@ -386,7 +390,7 @@ class ArchivosController extends Controller
 
         // comprobamos permisos de lectura
         if(Gate::denies('leer', $nodo))
-        abort(403, 'No tienes permisos.');
+            abort(403, 'No tienes permisos.');
 
         $path = storage_path('app/public/' . $ruta);
         return response()->download($path);
@@ -613,6 +617,7 @@ class ArchivosController extends Controller
 
     /**
      * Elimina un item, indicado en ruta
+     * retorna JSON
      */
     public function delete($ruta)
     {
@@ -790,6 +795,7 @@ class ArchivosController extends Controller
     /**
      * Renombra un archivo o carpeta que está en una carpeta $folder de viejo nombre $oldName a $newName
      * parámetros: folder (carpeta donde está el nodo), oldName (nombre actual del nodo), newName (nuevo nombre del nodo)
+     * @return \Illuminate\Http\Response JSON
      */
     public function rename(Request $request)
     {
@@ -872,7 +878,10 @@ class ArchivosController extends Controller
 
     /**
      * Mueve un conjunto de archivos a otra carpeta
-     * sourceFolder, destinationFolder, items
+     * @param string sourceFolder
+     * @param string destinationFolder
+     * @param array items
+     * @return \Illuminate\Http\Response JSON
      */
     public function move(Request $request)
     {

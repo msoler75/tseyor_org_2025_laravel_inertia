@@ -954,6 +954,7 @@ import { useDebounce } from '@vueuse/core';
 const emit = defineEmits(['updated', 'folder:value', 'file:value']);
 
 const props = defineProps({
+    url: {type: String, required: false},
     items: Array,
     propietarioRef: Object,
     cargando: Boolean,
@@ -994,7 +995,7 @@ function plural(count, label) {
     return `${count} ${label + (count != 1 ? 's' : '')}`
 }
 
-// BUSCAR
+// BUSCAR ARCHIVOS
 
 const showSearchInput = ref(false)
 const inputSearch = ref(null)
@@ -1021,7 +1022,7 @@ function onSearch() {
         return
     }
     showSearchInput.value = false
-    const currentUrl = window.location.href.replace(/\?.*/, '');
+    const currentUrl = props.url || window.location.href.replace(/\?.*/, '');
     buscando.value = true
     mostrandoResultados.value = true
     axios(route('archivos.buscar'), {
