@@ -381,12 +381,14 @@ class ArchivosController extends Controller
      */
     public function storage(string $ruta)
     {
+        // obtenemos el nodo correspondiente
+        $nodo = Nodo::desde($ruta);
+
+        // comprobamos permisos de lectura
+        if(Gate::denies('leer', $nodo))
+        abort(403, 'No tienes permisos.');
+
         $path = storage_path('app/public/' . $ruta);
-
-        /*if (Gate::denies('download-file', $path)) {
-            abort(403, 'Unauthorized action.');
-        }*/
-
         return response()->download($path);
     }
 
