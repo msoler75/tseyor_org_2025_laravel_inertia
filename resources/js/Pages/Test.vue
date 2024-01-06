@@ -4,7 +4,12 @@
         <input name="texto" type="text">
        <!-- <Editor v-model="content" @ready="ready" @load="ready" @blur="blur" @focus="focus" @change="change"  format="md" full-editor/> -->
        <ImageCoverField from="texto"/>
-
+       <Modal :show="true" maxWidth="4xl">
+            <div class="flex flex-col">
+       <FileManager url="/media" class="max-h-[90vh] flex-grow"
+                    content-class="max-h-[calc(100vh-240px)] overflow-y-auto" />
+                    </div>
+                    </Modal>
        {{ content }}
        <p>como va todo?</p>
     </div>

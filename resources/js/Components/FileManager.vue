@@ -2,6 +2,7 @@
     <div>
         <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario"
             @updated="reloadFolder" @folder="onFolder" @file="onFile" :embed="true"
+            :url = "url"
             :cargando="cargaInicial"
             :contentClass="contentClass"
             />
