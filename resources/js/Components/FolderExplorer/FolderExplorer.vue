@@ -8,7 +8,6 @@
                     title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5" />
             </div>
 
-
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
 
                 <div class="flex gap-3 items-center w-full" v-if="!seleccionando && mostrandoResultados">
@@ -122,7 +121,7 @@
 
                                     <div v-if="puedeEscribir && !seleccionando"
                                         class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                        @click="abrirModalRenombrar(items[0])">
+                                        @click="abrirModalRenombrar(itemsCopy[0])">
                                         <Icon icon="ph:cursor-text-duotone" />
                                         <span>Renombrar</span>
                                     </div>
@@ -135,7 +134,7 @@
                                     </div>
 
 
-                                    <div v-if="puedeLeer && !seleccionando && items.filter(x => !x.padre).length > 1"
+                                    <div v-if="puedeLeer && !seleccionando && itemsCopy.filter(x => !x.padre).length > 1"
                                         class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="seleccionando = true">
                                         <Icon icon="ph:check-duotone" />
@@ -151,7 +150,7 @@
 
 
                                     <div class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                                        @click.prevent="abrirModalPropiedades(items[0])">
+                                        @click.prevent="abrirModalPropiedades(itemsCopy[0])">
                                         <Icon icon="ph:info-duotone" />
                                         <span>Propiedades</span>
                                     </div>
@@ -251,8 +250,10 @@
                             <th class="text-left">Nombre</th>
                             <th>Tamaño</th>
                             <th>Fecha</th>
-                            <th v-if="!mostrandoResultados" class="hidden sm:table-cell">Permisos</th>
-                            <th v-if="!mostrandoResultados" class="hidden sm:table-cell">Propietario</th>
+                            <th v-if="mostrarPermisosPropietario && !mostrandoResultados" class="hidden sm:table-cell">
+                                Permisos</th>
+                            <th v-if="mostrarPermisosPropietario && !mostrandoResultados" class="hidden sm:table-cell">
+                                Propietario</th>
                             <th v-if="mostrandoResultados">Carpeta</th>
                             <th class="hidden md:table-cell"></th>
                         </tr>
@@ -266,16 +267,18 @@
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </td>
-                            <td class="relative w-4" v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">
+                            <td class="relative w-4" v-on:touchstart.passive="ontouchstart(item)"
+                                v-on:touchend.passive="ontouchend(item)">
                                 <FolderIcon v-if="item.tipo === 'carpeta'" class="cursor-pointer" :private="item.privada"
-                                    :owner="item.propietario.usuario.id === user?.id" :url="item.url"
+                                    :owner="item.propietario?.usuario.id === user?.id" :url="item.url"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
                                     :is-link="!embed" />
                                 <FileIcon v-else :url="item.url" class="cursor-pointer"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
                                     :is-link="!embed" />
                             </td>
-                            <td class="sm:hidden" v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">
+                            <td class="sm:hidden" v-on:touchstart.passive="ontouchstart(item)"
+                                v-on:touchend.passive="ontouchend(item)">
                                 <div class="flex flex-col">
                                     <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
@@ -313,13 +316,17 @@
                                 v-on:touchend.passive="ontouchend(item)">
                                 <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
                             </td>
-                            <td v-if="!mostrandoResultados" class="hidden sm:table-cell text-center"
-                                v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">{{ item.permisos }}
+                            <td v-if="mostrarPermisosPropietario && !mostrandoResultados"
+                                class="hidden sm:table-cell text-center" v-on:touchstart.passive="ontouchstart(item)"
+                                v-on:touchend.passive="ontouchend(item)">{{
+                                    item.permisos || '...' }}
                             </td>
-                            <td v-if="!mostrandoResultados" class="hidden sm:table-cell text-center"
-                                v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">{{ item.propietario ?
-                                    (item.propietario.usuario.nombre +
-                                        '/' + item.propietario.grupo.nombre) : '' }}</td>
+                            <td v-if="mostrarPermisosPropietario && !mostrandoResultados"
+                                class="hidden sm:table-cell text-center min-w-[10rem]"
+                                v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">
+                                {{ item.propietario?.usuario.nombre || '...' }}/{{ item.propietario?.grupo.nombre || '...'
+                                }}
+                            </td>
                             <td v-if="mostrandoResultados">
                                 {{ item.carpeta }}
                             </td>
@@ -397,7 +404,7 @@
                             </div>
                             <div class="flex flex-col items-center justify-center relative">
                                 <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
-                                    :owner="item.propietario.usuario.id === user?.id" class="cursor-pointer text-8xl mb-4"
+                                    :owner="item.propietario?.usuario.id === user?.id" class="cursor-pointer text-8xl mb-4"
                                     :disabled="seleccionando" @click="clickFolder(item, $event)" :is-link="!embed" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
                                     @click="clickFile(item, $event)">
@@ -594,14 +601,15 @@
                             <th>Propietario</th>
                             <td class="flex gap-3 items-center">
                                 <span class="flex items-center gap-3" title="usuario">
-                                    <Icon icon="ph:user-duotone" /> {{ item.propietario.usuario.nombre }}
+                                    <Icon icon="ph:user-duotone" /> {{ item.propietario?.usuario.nombre }}
                                 </span>
                                 <span class="opacity-30">|</span>
                                 <span class="flex items-center gap-3" title="grupo">
-                                    <Icon icon="ph:users-three-duotone" /> {{ item.propietario.grupo.nombre }}
+                                    <Icon icon="ph:users-three-duotone" /> {{ item.propietario?.grupo.nombre }}
                                 </span>
 
-                                <div v-if="item.propietario.usuario.id == user?.id" class="badge badge-warning text-xs">Eres
+                                <div v-if="item.propietario?.usuario.id == user?.id" class="badge badge-warning text-xs">
+                                    Eres
                                     el propietario</div>
                             </td>
                         </tr>
@@ -619,7 +627,7 @@
                             <th class="align-top">Permisos</th>
                             <td>
                                 <PermisosNodo :es-carpeta="item.tipo != 'archivo'" :permisos="item.permisos" />
-                                <button v-if="item.puedeEscribir && item.propietario.usuario.id == user?.id"
+                                <button v-if="item.puedeEscribir && item.propietario?.usuario.id == user?.id"
                                     class="my-2 btn btn-xs btn-secondary text-xs"
                                     @click="abrirModalCambiarPermisos(item)">Cambiar permisos</button>
                             </td>
@@ -635,7 +643,7 @@
                                 <div v-else>
                                     No hay
                                 </div>
-                                <button v-if="item.puedeEscribir && item.propietario.usuario.id == user?.id"
+                                <button v-if="item.puedeEscribir && item.propietario?.usuario.id == user?.id"
                                     class="my-2 btn btn-xs btn-secondary text-xs"
                                     @click="abrirModalCambiarAcl(item)">Cambiar acceso</button>
                             </td>
@@ -755,8 +763,8 @@
                         </thead>
                         <tbody>
                             <tr v-for="acl of itemCambiandoAcl.aclEditar" :key="acl.id">
-                                <td :title="acl.usuario?'usuario':'grupo'">
-                                    <Icon v-if="acl.usuario" icon="ph:user-duotone"  />
+                                <td :title="acl.usuario ? 'usuario' : 'grupo'">
+                                    <Icon v-if="acl.usuario" icon="ph:user-duotone" />
                                     <Icon v-else icon="ph:users-three-duotone" />
                                 </td>
                                 <td :title="acl.usuario ? 'usuario' : 'grupo'"><span class="font-bold">{{ acl.usuario ||
@@ -771,14 +779,15 @@
                             </tr>
                         </tbody>
                     </table>
-                <div v-else>
-                    No hay accesos adicionales
-                </div>
+                    <div v-else>
+                        No hay accesos adicionales
+                    </div>
 
                     <div class="flex gap-3 my-4">
                         <button class="btn btn-xs text-xs btn-secondary" @click.prevent="abrirModalBuscarUsuario">+
                             Usuario</button>
-                        <button class="btn btn-xs text-xs btn-secondary"  @click.prevent="abrirModalBuscarGrupo">+ Grupo</button>
+                        <button class="btn btn-xs text-xs btn-secondary" @click.prevent="abrirModalBuscarGrupo">+
+                            Grupo</button>
                     </div>
 
                 </form>
@@ -848,13 +857,13 @@
 
 
 
-         <!-- Modal elegir grupo -->
-         <Modal :show="modalBuscarGrupo" @close="modalBuscarGrupo = false" max-width="sm">
+        <!-- Modal elegir grupo -->
+        <Modal :show="modalBuscarGrupo" @close="modalBuscarGrupo = false" max-width="sm">
             <div class="p-5">
                 <div class="font-bold text-lg">Buscar grupo</div>
                 <select v-model="grupoElegido" class="select w-full border border-primary" placeholder="Elige un grupo">
-                    <option v-for="grupo of gruposElegibles" :key="grupo.id" :value="grupo.id">{{grupo.nombre}} </option>
-                    </select>
+                    <option v-for="grupo of gruposElegibles" :key="grupo.id" :value="grupo.id">{{ grupo.nombre }} </option>
+                </select>
 
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
@@ -951,10 +960,13 @@ import { useFilesOperation } from '@/Stores/files';
 import { useSelectors } from '@/Stores/selectors'
 import { useDebounce } from '@vueuse/core';
 
+
+const mostrarPermisosPropietario = ref(false)
+
 const emit = defineEmits(['updated', 'folder:value', 'file:value']);
 
 const props = defineProps({
-    url: {type: String, required: false},
+    ruta: { type: String, required: false },
     items: Array,
     propietarioRef: Object,
     cargando: Boolean,
@@ -964,14 +976,28 @@ const props = defineProps({
 
 // para evitar modificación de la prop
 // https://github.com/inertiajs/inertia/issues/854#issuecomment-896089483
-const itemsCopy = computed(()=>JSON.parse(JSON.stringify(props.items)))
+const itemsCopy = ref(JSON.parse(JSON.stringify(props.items)))
+/* const itemsComplete = computed(() => itemsCopy.value.map(item => {
+    const inf = info.value[item.nombre] || {}
+    return { ...item,
+        puedeEscribir: inf.puedeEscribir,
+        puedeLeer: inf.puedeLeer,
+        permisos: inf.permisos,
+    propietario:inf.propietario }
+}
+))*/
+
+watch(()=>props.items, ()=>{
+    itemsCopy.value = JSON.parse(JSON.stringify(props.items))
+    cargarInfo()
+})
 
 // puede editar la carpeta actual?
-const puedeEscribir = computed(() => props.items.length ? props.items[0].puedeEscribir : false)
-const puedeLeer = computed(() => props.items.length ? props.items[0].puedeLeer : false)
-const puedeMoverSeleccionados = computed(() => itemsSeleccionados.find(item => item.puedeEscribir))
+const puedeEscribir = computed(() => itemsCopy.value.length ? itemsCopy.value[0].puedeEscribir : false)
+const puedeLeer = computed(() => itemsCopy.value.length ? itemsCopy.value[0].puedeLeer : false)
+const puedeMoverSeleccionados = computed(() => itemsSeleccionados.value.find(item => item.puedeEscribir))
 // ruta actual
-const rutaActual = computed(() => props.items.length ? props.items[0].ruta : '')
+const rutaActual = computed(() => itemsCopy.value.length ? itemsCopy.value[0].ruta : '')
 
 // otros datos
 const page = usePage()
@@ -1040,7 +1066,7 @@ function onSearch() {
 }
 
 function buscarMasResultados() {
-    if(!mostrandoResultados.value) return
+    if (!mostrandoResultados.value) return
     axios.post(route('archivos.buscar'))
         .then(response => {
             const data = response.data
@@ -1070,24 +1096,24 @@ const seleccionando = ref(false)
 
 function cancelarSeleccion() {
     seleccionando.value = false
-    props.items.forEach(item => item.seleccionado = false)
+    itemsCopy.value.forEach(item => item.seleccionado = false)
 }
 
 function seleccionarTodos() {
-    props.items.forEach(item => item.seleccionado = true)
+    itemsCopy.value.forEach(item => item.seleccionado = true)
 }
 
 // verifica que cuando no hay ningun item seleccionado, se termina el modo de selección
 function verificarFinSeleccion() {
     if (!seleccionando.value) return
     if (screen.width >= 1024) return
-    const alguno = props.items.find(item => item.seleccionado)
+    const alguno = itemsCopy.value.find(item => item.seleccionado)
     if (!alguno)
         seleccionando.value = false
 }
 
 // si hay algun cambio en los items
-watch(() => props.items, verificarFinSeleccion, { deep: true })
+watch(() => itemsCopy, verificarFinSeleccion, { deep: true })
 
 // EVENTOS TOUCH
 
@@ -1120,7 +1146,7 @@ function toggleItem(item) {
     item.touching = false
 }
 
-const itemsSeleccionados = computed(() => props.items.filter(item => !['.', '..'].includes(item.nombre) && item.seleccionado && !item.eliminado))
+const itemsSeleccionados = computed(() => itemsCopy.value.filter(item => !['.', '..'].includes(item.nombre) && item.seleccionado && !item.eliminado))
 
 
 watch(() => itemsSeleccionados.value.length, (value) => {
@@ -1189,7 +1215,7 @@ function cancelarOperacion() {
     store.isCopyingFiles = false
     store.filesToMove = []
     store.filesToCopy = []
-    props.items.forEach(item => { item.seleccionado = false })
+    itemsCopy.value.forEach(item => { item.seleccionado = false })
 }
 
 
@@ -1391,24 +1417,24 @@ const usuarioBuscar = ref("")
 const debouncedBuscar = useDebounce(usuarioBuscar, 800);
 const usuariosEncontrados = ref([]);
 const usuariosParaAgregar = computed(() => usuariosEncontrados.value
-        .map(u => ({
-            ...u,
-            acceso: itemCambiandoAcl.value.propietario.usuario?.id == u.id  //  no es el propietario,
-                || itemCambiandoAcl.value.aclEditar.find(acl => acl.user_id == u.id) // y no está ya en la lista de acceso
-        })
-        ))
+    .map(u => ({
+        ...u,
+        acceso: itemCambiandoAcl.value.propietario.usuario?.id == u.id  //  no es el propietario,
+            || itemCambiandoAcl.value.aclEditar.find(acl => acl.user_id == u.id) // y no está ya en la lista de acceso
+    })
+    ))
 // agregar grupo
 const modalBuscarGrupo = ref(false)
 const grupoElegido = ref(null)
 const grupos = ref([])
-const gruposElegibles = computed(()=>grupos.value.filter(g=>!itemCambiandoAcl.value.aclEditar.find(acl=>acl.group_id==g.id)))
+const gruposElegibles = computed(() => grupos.value.filter(g => !itemCambiandoAcl.value.aclEditar.find(acl => acl.group_id == g.id)))
 
 watch(debouncedBuscar, buscarUsuarios)
 
 function abrirModalCambiarAcl(item) {
     itemCambiandoAcl.value = item
-    if(!item.acl)
-    item.acl = []
+    if (!item.acl)
+        item.acl = []
     // guardamos los valores antes de la edición
     itemCambiandoAcl.value.aclEditar = [...itemCambiandoAcl.value.acl]
     itemCambiandoAcl.value.aclEditar.forEach(acl => {
@@ -1470,19 +1496,18 @@ function agregarUsuarioAcl(user) {
 function abrirModalBuscarGrupo() {
     grupoElegido.value = null
     modalBuscarGrupo.value = true
-    if(!grupos.value.length) {
+    if (!grupos.value.length) {
         fetch(route('grupos'))
-        .then(response=>response.json())
-        .then(response=>
-        {
-            console.log({response})
-            grupos.value = response
-        })
+            .then(response => response.json())
+            .then(response => {
+                console.log({ response })
+                grupos.value = response
+            })
     }
 }
 
 function agregarGrupoAcl() {
-    const grupo = grupos.value.find(g=>g.id==grupoElegido.value)
+    const grupo = grupos.value.find(g => g.id == grupoElegido.value)
     itemCambiandoAcl.value.aclEditar.push({
         id: -grupo.id,
         group_id: grupo.id,
@@ -1507,14 +1532,14 @@ function cambiarAcl() {
         delete acl.updated_at
         delete acl.created_at
     })
-    newAcl = newAcl.filter(acl=>acl.verbos)
+    newAcl = newAcl.filter(acl => acl.verbos)
     guardandoAcl.value = true
     axios.post(route('files.update'), {
         ruta: itemCambiandoAcl.value.ruta,
         acl: newAcl
     })
         .then(response => {
-            console.log({response})
+            console.log({ response })
             // cierra el modal y actualiza los permisos
             itemCambiandoAcl.value.acl = response.data.acl
             permisosModificados.value = true
@@ -1558,7 +1583,7 @@ function renombrarItem() {
         .then(response => {
             console.log({ response })
             modalRenombrarItem.value = false
-            const item = itemRenombrando.value // props.items.find(it => it.nombre == itemRenombrando.value.nombre)
+            const item = itemRenombrando.value // itemsComplete.find(it => it.nombre == itemRenombrando.value.nombre)
             console.log('renombrar item', item)
             item.ruta = item.carpeta + '/' + nuevoNombre.value
             const parts = item.url.split('/')
@@ -1636,7 +1661,9 @@ function eliminarArchivos() {
 }
 
 function eliminarArchivo(item) {
-    const url = ('/api/files/' + item.items[0].ruta).replace(/\/\//g, '/')
+    console.log('eloiminar¡', item)
+    const url = (route('files.delete', ('/' +item.ruta).replace(/\/\//g, '/'))).replace(/%2F/g, '/')
+    console.log({url})
     return axios.delete(url)
         .then(response => {
             item.eliminado = true
@@ -1680,6 +1707,55 @@ function reloadPage() {
     emit('updated')
 }
 
+// const info = ref({})
+
+onMounted(() => {
+    console.log('onmounted')
+    nextTick(() => {
+        cargarInfo()
+    }
+    )
+})
+
+// Carga la información adicional de los contenidos de la carpeta actual
+function cargarInfo() {
+    axios.get(route('archivos.info') + '?ruta=' + rutaActual.value)
+        .then(response => {
+            // info.value = response.data
+            const info = response.data
+            const fields = ['nodo_id', 'puedeEscribir', 'puedeLeer', 'permisos', 'propietario', 'privada', 'acl']
+            for (const item of itemsCopy.value) {
+                const inf = info[item.nombre]
+                if (inf) {
+                    for (const field of fields)
+                        item[field] = inf[field]
+                }
+            }
+        })
+}
+
+// copia datos de una fuente (de tipo objeto o de tipo array) a un destino, concretamente la clave k
+// de forma que mantiene la reactividad
+function copyData(dest, src, key) {
+    // primera llamada
+    if (!key) {
+        for (const key in src)
+            copyData(dest, src, key)
+        return
+    }
+    // si es un objeto, copiamos con recursividad
+    if (typeof src[key] === 'object') {
+        console.log('copiando', key)
+        if (!dest[key])
+            dest[key] = {}
+        for (const subkey in src[key])
+            copyData(dest[key], src[key], subkey)
+        return
+    }
+
+    if (src[key])
+        dest[key] = src[key]
+}
 
 // EMBED
 

@@ -17,11 +17,10 @@ class Nodo extends Model
 
     protected $fillable = ['ruta', 'permisos', 'user_id', 'group_id', 'es_carpeta'];
 
-
     protected $attributes = [
-        'ruta' => 'archivos',
+        'ruta' => '',
         'permisos' => '1755',
-        'user_id' => null,
+        'user_id' => 1,
         // Por ejemplo, puedes usar 0 como valor predeterminado para el user_id
         'group_id' => 1,
         // O null si no tiene grupo por defecto
@@ -32,7 +31,7 @@ class Nodo extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function group()
@@ -78,6 +77,8 @@ class Nodo extends Model
             // crea un nodo por con los permisos por defecto
             $nodo = new Nodo();
             $nodo->ruta = ltrim($ruta, '/');
+            $nodo->propietario_usuario = "admin"; // valores por defecto
+            $nodo->propietario_grupo = "admin";
         }
         return $nodo;
     }
