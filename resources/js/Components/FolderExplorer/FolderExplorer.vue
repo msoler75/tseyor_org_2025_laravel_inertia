@@ -32,17 +32,16 @@
 
                 <div v-if="!mostrandoResultados" class="flex gap-3 w-full max-w-full">
 
-
-                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer" href="/archivos"
-                        @click="clickFolder({ url: '' }, $event)" :is-link="!embed" title="Ir a la carpeta base"
-                        :class="rutaActual == 'archivos' ? 'opacity-50 pointer-events-none' : ''">
+                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer" :href=" '/' + rutaBase"
+                        @click="clickFolder({ url: '/' + rutaBase }, $event)" :is-link="!embed" title="Ir a la carpeta base"
+                        :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
                     </ConditionalLink>
 
                     <ConditionalLink v-if="items.length > 1 && items[1].padre && !seleccionando" :href="items[1].url"
                         class="btn btn-neutral btn-sm w-fit" title="Ir a una carpeta superior"
                         @click="clickFolder(items[1], $event)" :is-link="!embed"
-                        :class="rutaActual == 'archivos' ? 'opacity-50 pointer-events-none' : ''">
+                        :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:arrow-bend-left-up-duotone" class="text-2xl" />
                     </ConditionalLink>
 
@@ -966,7 +965,8 @@ const mostrarPermisosPropietario = ref(false)
 const emit = defineEmits(['updated', 'folder:value', 'file:value']);
 
 const props = defineProps({
-    ruta: { type: String, required: false },
+    ruta: { type: String, required: true },
+    rutaBase: { type: String, required: false, default: ''},
     items: Array,
     propietarioRef: Object,
     cargando: Boolean,
