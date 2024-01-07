@@ -6,5 +6,6 @@ export const useSelectors = defineStore("selectors", {
     soloTitulosLibros: false,
     archivosVista: "normal",
     vistaComunicados: "tarjetas",
+    mostrarPermisos: false // muestra permisos en el listado de archivos. útil para administradores
   }),
 });
