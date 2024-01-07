@@ -249,9 +249,9 @@
                             <th class="text-left">Nombre</th>
                             <th>Tamaño</th>
                             <th>Fecha</th>
-                            <th v-if="mostrarPermisosPropietario && !mostrandoResultados" class="hidden sm:table-cell">
+                            <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Permisos</th>
-                            <th v-if="mostrarPermisosPropietario && !mostrandoResultados" class="hidden sm:table-cell">
+                            <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Propietario</th>
                             <th v-if="mostrandoResultados">Carpeta</th>
                             <th class="hidden md:table-cell"></th>
@@ -315,12 +315,12 @@
                                 v-on:touchend.passive="ontouchend(item)">
                                 <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
                             </td>
-                            <td v-if="mostrarPermisosPropietario && !mostrandoResultados"
+                            <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
                                 class="hidden sm:table-cell text-center" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">{{
                                     item.permisos || '...' }}
                             </td>
-                            <td v-if="mostrarPermisosPropietario && !mostrandoResultados"
+                            <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
                                 class="hidden sm:table-cell text-center min-w-[10rem]"
                                 v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">
                                 {{ item.propietario?.usuario.nombre || '...' }}/{{ item.propietario?.grupo.nombre || '...'
@@ -958,11 +958,7 @@ import { usePage } from '@inertiajs/vue3';
 import { useFilesOperation } from '@/Stores/files';
 import { useSelectors } from '@/Stores/selectors'
 import { useDebounce } from '@vueuse/core';
-
-
-const mostrarPermisosPropietario = ref(false)
-
-const emit = defineEmits(['updated', 'folder:value', 'file:value']);
+import { usePlayer } from '@/Stores/player'
 
 const props = defineProps({
     ruta: { type: String, required: true },
@@ -974,15 +970,38 @@ const props = defineProps({
     contentClass: String
 });
 
+const emit = defineEmits(['updated', 'folder:value', 'file:value']);
+
 // para evitar modificación de la prop
 // https://github.com/inertiajs/inertia/issues/854#issuecomment-896089483
 const itemsCopy = ref(JSON.parse(JSON.stringify(props.items)))
-
 
 watch(()=>props.items, ()=>{
     itemsCopy.value = JSON.parse(JSON.stringify(props.items))
     cargarInfo()
 })
+
+// para reproducir audios
+const player = usePlayer()
+
+onMounted(() => {
+    console.log('onmounted')
+    nextTick(() => {
+        cargarInfo()
+    })
+
+    document.addEventListener('keydown', onKeyDown);
+})
+
+onUnmounted(()=> {
+    document.removeEventListener('keydown', onKeyDown);
+})
+
+function onKeyDown(event) {
+    //Si es Ctrl+I
+    if(event.ctrlKey && event.key === 'i')
+        selectors.mostrarPermisos = !selectors.mostrarPermisos
+}
 
 // puede editar la carpeta actual?
 const puedeEscribir = computed(() => itemsCopy.value.length ? itemsCopy.value[0].puedeEscribir : false)
@@ -1699,15 +1718,6 @@ function reloadPage() {
     emit('updated')
 }
 
-// const info = ref({})
-
-onMounted(() => {
-    console.log('onmounted')
-    nextTick(() => {
-        cargarInfo()
-    }
-    )
-})
 
 // Carga la información adicional de los contenidos de la carpeta actual
 function cargarInfo() {
