@@ -532,13 +532,15 @@ class ArchivosController extends Controller
 
         if (in_array(strtolower($file->getClientOriginalExtension()), $deniedTypes)) {
             return response()->json([
-                'error' => 'typeNotAllowed'
+                'error' => 'Archivo no permitido'
             ], 415);
         }
 
-        if ($file->getSize() > 5000000) {
+
+        $max_upload_size = config('filesystems.max_upload_size');
+        if ($file->getSize() > $max_upload_size) {
             return response()->json([
-                'error' => 'fileTooLarge'
+                'error' => 'Archivo demasiado grande'
             ], 413);
         }
 

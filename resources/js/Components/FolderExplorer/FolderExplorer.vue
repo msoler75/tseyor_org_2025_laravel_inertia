@@ -1776,6 +1776,13 @@ function clickFile(item, event) {
         emit('file', item)
         event.preventDefault()
     }
+    else {
+        // si es un audio:
+        if(item.nombre.match(/\.(mp3|mp4|ogg|wav|flac|aac|wma|aiff|amr|opus)$/i)) {
+            player.play({src:item.url, title: item.nombre, artist: null})
+            event.preventDefault()
+        }
+    }
 }
 
 function clickBreadcrumb(item) {
