@@ -273,12 +273,11 @@ class ArchivosController extends Controller
                     }
                 }
                 foreach ($a as $k => $x) {
-                    unset($a[$k]['nodo']);
                     unset($a[$k]['nodo_id']);
                 }
-                $items[$idx]['acl'] = $a;
+                $info[$idx]['acl'] = $a;
             } else
-                $items[$idx]['acl'] = null;
+                $info[$idx]['acl'] = null;
 
             // agregamos información para saber si podemos editar este item
             // omitimos el item padre
