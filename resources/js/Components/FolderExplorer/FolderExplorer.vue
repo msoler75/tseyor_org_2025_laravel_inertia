@@ -977,15 +977,7 @@ const props = defineProps({
 // para evitar modificación de la prop
 // https://github.com/inertiajs/inertia/issues/854#issuecomment-896089483
 const itemsCopy = ref(JSON.parse(JSON.stringify(props.items)))
-/* const itemsComplete = computed(() => itemsCopy.value.map(item => {
-    const inf = info.value[item.nombre] || {}
-    return { ...item,
-        puedeEscribir: inf.puedeEscribir,
-        puedeLeer: inf.puedeLeer,
-        permisos: inf.permisos,
-    propietario:inf.propietario }
-}
-))*/
+
 
 watch(()=>props.items, ()=>{
     itemsCopy.value = JSON.parse(JSON.stringify(props.items))
@@ -1724,6 +1716,7 @@ function cargarInfo() {
             // info.value = response.data
             const info = response.data
             const fields = ['nodo_id', 'puedeEscribir', 'puedeLeer', 'permisos', 'propietario', 'privada', 'acl']
+            console.log('cargadaInfo', info)
             for (const item of itemsCopy.value) {
                 const inf = info[item.nombre]
                 if (inf) {
