@@ -86,8 +86,8 @@ export default {
             maxFilesize: 3,
             filesizeBase: 1000,
             addRemoveLinks: true,
-            dictRemoveFile: 'Remove file',
-            dictFileTooBig: 'File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.',
+            dictRemoveFile: 'Eliminar archivo',
+            dictFileTooBig: 'Archivo demasiado grande ({{filesize}}MiB). Máximo tamaño: {{maxFilesize}}MiB.',
             init: function () {
                 this.on('success', function (file, response) {
                     console.log('File uploaded: ', file.name);

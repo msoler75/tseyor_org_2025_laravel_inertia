@@ -48,7 +48,7 @@
                     </svg>
                 </button>
 
-                <a download target="_blank" :href="player.src" title="Descargar audio"
+                <a download target="_blank" :href="player.music.src" title="Descargar audio"
                     class="text-2xl transform duration-300" :class="expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'"
                     @mousemove="activatePlayer">
                     <Icon icon="ph:download-duotone" />
@@ -135,7 +135,7 @@
                         <path d="M17 0l8 6-8 6V0z" fill="currentColor" />
                     </svg>
                 </button>
-                <a download target="_blank" :href="player.src" class="mx-auto flex justify-center items-center text-3xl"
+                <a download target="_blank" :href="player.music.src" class="mx-auto flex justify-center items-center text-3xl"
                     title="Descargar audio">
                     <Icon icon="ph:download-duotone" />
                 </a>
