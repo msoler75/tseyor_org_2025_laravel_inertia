@@ -421,14 +421,6 @@ class ArchivosController extends Controller
         $baseUrl = url('');
         // $ruta = ltrim(str_replace($baseUrl, '', $request->ruta), "/");
 
-        $ruta = $request->ruta;
-
-        if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
-            return response()->json(['error' => 'Ruta relativa no permitida'], 400);
-        }
-
-        list($disk, $ruta) = $this->diskRuta($ruta);
-
         // carpetas donde falta buscar
         $carpetas_pendientes = [];
 
@@ -440,8 +432,20 @@ class ArchivosController extends Controller
 
         // es una nueva búsqueda o el id de busqueda es otro
         if (!$id_busqueda || $id_busqueda != $id_busqueda_actual) {
+
+            $ruta = $request->ruta;
+
+            if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
+                return response()->json(['error' => 'Ruta relativa no permitida'], 400);
+            }
+
+            list($disk, $ruta) = $this->diskRuta($ruta);
+
             // la ruta inicial es la primera carpeta donde buscaremos después en disco
             $carpetas_pendientes = [$ruta];
+
+            Log::info("Nueva busqueda en $ruta. Buscando $nombre ...");
+            Log::info("carpetas_pendientes", $carpetas_pendientes);
 
             // realizamos una rápida búsqueda inicial, usando nodos
             $nodos = Nodo::search($nombre)->query(function ($query) use ($ruta) {
@@ -450,8 +454,11 @@ class ArchivosController extends Controller
 
             $resultados = [];
             foreach ($nodos as $nodo) {
-                if (!Storage::disk($disk)->exists($nodo->ruta))
+                Log::info("nodo encontrado: ". $nodo->id . " - " . $nodo->nombre . " - " . $nodo->ruta);
+                if (!Storage::disk($disk)->exists($nodo->ruta)) {
+                    Log::info("no existe archivo o carpeta");
                     continue;
+                }
                 if ($nodo->es_carpeta)
                     $resultados[] = $this->prepareItemList($disk, $nodo->ruta, $nodo, [
                         'tipo' => 'carpeta',
@@ -468,18 +475,29 @@ class ArchivosController extends Controller
             // guardamos las carpetas pendientes en la sesión:
             $request->session()->put('carpetas_pendientes', $carpetas_pendientes);
 
+            Log::info("guardamos carpetas_pendientes", $carpetas_pendientes);
+
             // generamos un id de busqueda
             $id_busqueda_actual = uniqid();
 
             $request->session()->put('id_busqueda', $id_busqueda_actual);
+            $request->session()->put('buscar_ruta', $ruta);
 
         } else {
 
-            $id_busqueda_actual = null;
+            // continuación de búsqueda, ahora en el sistema de archivos
+            Log::info("continuacion de busqueda");
 
             // recuperamos los parámetros de búsqueda de la sesión
             $carpetas_pendientes = $request->session()->get('carpetas_pendientes');
             $nombre = $request->session()->get('buscar_nombre');
+            $ruta = $request->session()->get('buscar_ruta');
+
+            Log::info("recuperamos nombre: $nombre, ruta: $ruta");
+            Log::info("recuperamos carpetas_pendientes", $carpetas_pendientes);
+
+
+            list($disk, $ruta) = $this->diskRuta($ruta);
 
             // realizamos una busqueda real en disco
 
@@ -487,8 +505,8 @@ class ArchivosController extends Controller
             $tiempo_transcurrido = 0;
             $resultados = [];
 
-            // tiempo máximo de búsqueda: 500 milisegundos
-            while (count($carpetas_pendientes) > 0 && $tiempo_transcurrido < 500) {
+            // tiempo máximo de búsqueda: 900 milisegundos
+            while (count($carpetas_pendientes) > 0 && $tiempo_transcurrido < 900) {
                 // Obtener la primera carpeta pendiente para procesar
                 $carpeta = array_shift($carpetas_pendientes);
                 if (!$carpeta)
@@ -503,6 +521,7 @@ class ArchivosController extends Controller
 
                 // Comprobar si algún archivo tiene un nombre similar a la cadena de búsqueda
                 foreach ($archivos as $archivo) {
+                    Log::info("archivo $archivo");
                     if ($this->matchSearch(basename($archivo), $nombre))
                         $resultados[] = $this->prepareItemList($disk, $archivo, null, [
                             'tipo' => 'archivo',
@@ -513,6 +532,7 @@ class ArchivosController extends Controller
                 // Comprobar si alguna subcarpeta tiene un nombre similar a la cadena de búsqueda
                 foreach ($subcarpetas as $subcarpeta) {
                     $item = null;
+                    Log::info("carpeta $subcarpeta");
                     if ($this->matchSearch(basename($subcarpeta), $nombre)) {
                         $item = $this->prepareItemList($disk, $subcarpeta, null, [
                             'tipo' => 'carpeta',
@@ -540,6 +560,8 @@ class ArchivosController extends Controller
 
                 // guardamos los cambios de las carpetas pendientes en la sesión:
                 $request->session()->put('carpetas_pendientes', $carpetas_pendientes);
+
+                Log::info("guardamos carpetas_pendientes", $carpetas_pendientes);
             }
         }
 

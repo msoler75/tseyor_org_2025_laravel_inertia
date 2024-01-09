@@ -40,7 +40,7 @@
                     </button>
 
                     <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
-                        Cancelar
+                        {{modoInsertar?'Cancelar':'Cerrar'}}
                     </button>
                 </div>
             </div>
