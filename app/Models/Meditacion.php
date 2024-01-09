@@ -47,7 +47,7 @@ class Meditacion extends ContenidoBaseModel
     public function generarRutaAudios()
     {
         $año = $this->created_at->year;
-        return "media/informes/{$this->equipo->slug}/$año";
+        return "medios/informes/{$this->equipo->slug}/$año";
     }
 
 

@@ -97,7 +97,7 @@ class ContactoCrudController extends CrudController
 
         CRUD::setFromDb(); // set columns from db columns.
 
-        $folder = "/media/contactos";
+        $folder = "/medios/contactos";
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder]);
 

@@ -72,12 +72,11 @@ Route::get('buscar', [ContenidosController::class, 'search'])->name('buscar');
 Route::get('archivos', [ArchivosController::class, 'archivos'])->name('archivos0');
 Route::get('archivos_info', [ArchivosController::class, 'info'])->name('archivos.info');
 Route::get('archivos_buscar', [ArchivosController::class, 'buscar'])->name('archivos.buscar');
-Route::post('archivos_buscar', [ArchivosController::class, 'buscar'])->name('archivos.buscar2');
 Route::get('archivos{ruta}', [ArchivosController::class, 'archivos'])->where(['ruta' => '(\/.+)?'])->name('archivos');
 
 Route::get('filemanager{ruta}', [ArchivosController::class, 'filemanager'])->where(['ruta' => '(\/.*)?'])->name('filemanager');
 
-Route::get('storage/{ruta}', [ArchivosController::class, 'storage'])->where(['ruta' => '(\/.+)?'])->name('storage');
+Route::get('almacen{ruta}', [ArchivosController::class, 'descargar'])->where(['ruta' => '(\/.+)?'])->name('storage');
 
 
  // manejo de archivos

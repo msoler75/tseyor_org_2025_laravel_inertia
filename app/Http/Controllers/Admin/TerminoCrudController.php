@@ -87,7 +87,7 @@ class TerminoCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-        $folder = "/media/terminos";
+        $folder = "/medios/terminos";
 
         CRUD::field('descripcion')->type('textarea');
 
@@ -206,7 +206,7 @@ No confundiremos el Cristo Cósmico con Cristo como religión. (Rasbek, TAP 162)
 >
 > (Véase *Réplica*).
 
-<img src='./media/image10.jpeg' style=\"width:3.1239in;height:1.75in\" />
+<img src='./medios/image10.jpeg' style=\"width:3.1239in;height:1.75in\" />
 
 > **Fotograma del *film Cocoon***
 >

@@ -45,7 +45,7 @@ class ContenidoConAudios extends ContenidoBaseModel
     {
         $modelName = $this->getMorphClass();
         $año = $this->created_at->year;
-        return "media/$modelName/$año";
+        return "medios/$modelName/$año";
     }
 
 }

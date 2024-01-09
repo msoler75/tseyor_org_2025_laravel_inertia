@@ -122,7 +122,7 @@ class NoticiaCrudController extends CrudController
         $anioActual = date('Y');
         $mesActual = date('m');
 
-        $folder = "/media/noticias/$anioActual/$mesActual";
+        $folder = "/medios/noticias/$anioActual/$mesActual";
 
         // Verificar si la carpeta existe en el disco 'public'
         if (!Storage::disk('public')->exists($folder)) {
@@ -164,17 +164,17 @@ class NoticiaCrudController extends CrudController
             ]);
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "media/noticias/_{$contenido->id}";
+            $imagesFolder = "medios/noticias/_{$contenido->id}";
 
             // copia las imágenes desde la carpeta temporal al directorio destino
             $imported->copyImagesTo($imagesFolder);
 
             // reemplazar la ubicación de las imágenes en el texto del comunicado
             $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/media\//", "/storage/media/", $contenido->texto);
+            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
 
             $contenido->imagen = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->imagen);
-            $contenido->imagen = preg_replace("/\.\/media\//", "/storage/media/", $contenido->imagen);
+            $contenido->imagen = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->imagen);
             $contenido->save();
 
             return response()->json([
@@ -199,11 +199,11 @@ class NoticiaCrudController extends CrudController
             $contenido->texto = $imported->content;
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "media/noticias/_{$contenido->id}";
+            $imagesFolder = "medios/noticias/_{$contenido->id}";
 
             // reemplazar la ubicación de las imágenes en el texto del comunicado
             $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/media\//", "/storage/media/", $contenido->texto);
+            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
 
             $contenido->descripcion = null; // para que se regenere
 

@@ -118,7 +118,7 @@ class PublicacionCrudController extends CrudController
             ],
         ])->after('titulo');
 
-        $folder = "media/publicaciones";
+        $folder = "medios/publicaciones";
 
         CRUD::field('user_id')->type('select')->after('titulo')->wrapper(['class' => 'form-group col-md-3']);
 
@@ -165,17 +165,17 @@ class PublicacionCrudController extends CrudController
             ]);
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "media/publicaciones/_{$contenido->id}";
+            $imagesFolder = "medios/publicaciones/_{$contenido->id}";
 
             // copia las imágenes desde la carpeta temporal al directorio destino
             $imported->copyImagesTo($imagesFolder);
 
             // reemplazar la ubicación de las imágenes en el texto del comunicado
             $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/media\//", "/storage/media/", $contenido->texto);
+            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
 
             $contenido->imagen = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->imagen);
-            $contenido->imagen = preg_replace("/\.\/media\//", "/storage/media/", $contenido->imagen);
+            $contenido->imagen = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->imagen);
             $contenido->save();
 
             return response()->json([
@@ -200,11 +200,11 @@ class PublicacionCrudController extends CrudController
             $contenido->texto = $imported->content;
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "media/publicaciones/_{$contenido->id}";
+            $imagesFolder = "medios/publicaciones/_{$contenido->id}";
 
             // reemplazar la ubicación de las imágenes en el texto del comunicado
             $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/media\//", "/storage/media/", $contenido->texto);
+            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
 
             $contenido->descripcion = null; // para que se regenere
 

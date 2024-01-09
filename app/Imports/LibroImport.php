@@ -15,7 +15,7 @@ class LibroImport
 
         $carpeta_libros = 'd:\tseyor.org\biblioteca\libros\*.html';
 
-        $media_folder = "media/libros";
+        $media_folder = "medios/libros";
 
         echo "Debes copiar las imagenes de los libros a $media_folder/portadas\n";
         echo "Debes copiar los archivos pdf a $media_folder/pdf\n";

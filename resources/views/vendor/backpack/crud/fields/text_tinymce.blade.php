@@ -18,7 +18,7 @@
     $decodedHtml = str_replace(['&lt;', '&gt;'], ['<', '>'], $htmlCode);
 @endphp
 
-<TinyMCEFullField name="{{$field['name']}}" folder="{{ $field['attributes']['folder'] ?? 'media'}}" content="{{$decodedHtml}}"/>
+<TinyMCEFullField name="{{$field['name']}}" folder="{{ $field['attributes']['folder'] ?? 'medios'}}" content="{{$decodedHtml}}"/>
 
 {{-- HINT --}}
 @if (isset($field['hint']))
