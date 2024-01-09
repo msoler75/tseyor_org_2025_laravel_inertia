@@ -19,7 +19,7 @@ class GlosarioImport
         Log::info("Convertido a MD. Copiando imagenes...");
 
         // Copiaremos las imágenes a la carpeta de destino
-        $imagesFolder = "media/glosario";
+        $imagesFolder = "medios/glosario";
 
         // copia las imágenes desde la carpeta temporal al directorio destino
         $imported->copyImagesTo($imagesFolder, true);
@@ -159,7 +159,7 @@ class GlosarioImport
         // cambia las url de las imagenes para que apunten a la carpeta correcta
         function prepararImagenes($descripcion)
         {
-            return preg_replace("#\.\/media\/#", "/storage/media/glosario/", $descripcion);
+            return preg_replace("#\.\/medios\/#", "/almacen/medios/glosario/", $descripcion);
         }
 
         function quitarCitas($descripcion)

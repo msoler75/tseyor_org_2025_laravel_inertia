@@ -89,9 +89,9 @@ class LibroCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-        $folderImages = "/media/libros";
+        $folderImages = "/medios/libros";
 
-        $folderPDF = "/media/libros/pdf";
+        $folderPDF = "/medios/libros/pdf";
 
         // Verificar si la carpeta existe en el disco 'public'
         if (!Storage::disk('public')->exists($folderImages)) {

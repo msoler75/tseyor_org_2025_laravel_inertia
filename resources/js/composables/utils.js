@@ -1,5 +1,5 @@
 const fallback_images = ["f1.jpg", "f2.jpg", "f3.jpg", "f4.jpg"];
-const fallback_folder = "/storage/imagenes/fallback";
+const fallback_folder = "/almacen/medios/imagenes_contenidos_por_defecto";
 
 export const getImageUrl = (src, defaultUrl) => {
   if (!defaultUrl) {
@@ -8,5 +8,6 @@ export const getImageUrl = (src, defaultUrl) => {
   }
   if (!src) return defaultUrl;
   if (src.match(/^https?:\/\//)) return src;
-  return "/storage/" + src.replace(/^\/storage\//, '');
+  //const prefix = src.match(/^\/archivos/) ? '' : "/almacen"
+  return src // prefix  + src
 };

@@ -6,7 +6,7 @@
        <ImageCoverField from="texto"/>
        <Modal :show="true" maxWidth="4xl">
             <div class="flex flex-col">
-       <FileManager ruta="media" class="max-h-[90vh] flex-grow"
+       <FileManager ruta="" class="max-h-[90vh] flex-grow"
                     content-class="max-h-[calc(100vh-240px)] overflow-y-auto" />
                     </div>
                     </Modal>

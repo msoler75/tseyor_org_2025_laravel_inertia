@@ -83,8 +83,8 @@ class WordImport
                 // Extraer el archivo content.md
                 $contentMd = $zip->getFromName('output.md');
 
-                // Extraer las imágenes de la carpeta 'media'
-                $mediaFolder = 'media/';
+                // Extraer las imágenes de la carpeta 'medios'
+                $mediaFolder = 'medios/';
                 $extractedImages = array();
                 for ($i = 0; $i < $zip->numFiles; $i++) {
                     $filename = $zip->getNameIndex($i);
@@ -202,7 +202,7 @@ class WordImport
         // Copiamos las imágenes a la carpeta de destino
         foreach ($this->images as $image) {
             $imageFilename = basename($image);
-            // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("storage/".$destinationFolder . "/" .  $imageFilename));
+            // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("almacen/".$destinationFolder . "/" .  $imageFilename));
             copy($tempDir . '/' . $image, $destinationFolderPath . "/" .  $imageFilename);
         }
 

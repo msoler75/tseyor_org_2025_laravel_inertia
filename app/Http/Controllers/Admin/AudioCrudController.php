@@ -85,7 +85,7 @@ class AudioCrudController extends CrudController
          */
 
         // donde se guardan los archivos de audio
-        $folder = "media/audios";
+        $folder = "medios/audios";
 
         CRUD::field('descripcion')->type('textarea');
 

@@ -94,7 +94,7 @@ class GuiaCrudController extends CrudController
 
         CRUD::field('libros')->type('json')->hint('Libros de consulta de este Guía Estelar');
 
-        $folder = 'media/guias';
+        $folder = 'medios/guias';
 
         CRUD::field('imagen')->type('image_cover')->attributes(['from' => 'texto', 'folder' => $folder]);
     }

@@ -51,7 +51,7 @@ if ($httpCode === 200) {
         return "contenido:" . $contentMd;
 
         // Extraer las imágenes de la carpeta 'media'
-        $mediaFolder = 'media/';
+        $mediaFolder = 'medios/';
         $extractedImages = array();
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $filename = $zip->getNameIndex($i);

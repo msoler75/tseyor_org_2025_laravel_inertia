@@ -36,10 +36,18 @@ return [
             'throw' => false,
         ],
 
+        'archivos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/archivos'),
+            'url' => env('APP_URL').'/archivos',
+            'visibility' => 'private',
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL').'/almacen',
             'visibility' => 'public',
             'throw' => false,
         ],
@@ -70,7 +78,7 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
+        public_path('almacen') => storage_path('app/public'),
     ],
 
 

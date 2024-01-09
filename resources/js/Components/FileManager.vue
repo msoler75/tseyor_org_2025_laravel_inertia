@@ -1,12 +1,29 @@
 <template>
     <div>
-        <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario"
-            @updated="reloadFolder" @folder="onFolder" @file="onFile" :embed="true"
-            :ruta = "ruta"
-            :rutaBase = "ruta"
-            :cargando="cargando"
-            :contentClass="contentClass"
-            />
+        <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario" @updated="reloadFolder"
+            @disk="onDisk" @folder="onFolder" @file="onFile" :embed="true" :ruta="ruta" rutaBase="" :cargando="cargando"
+            :contentClass="contentClass" />
+
+        <Modal :show="mostrandoArchivo" @close="mostrandoArchivo = null" maxWidth="xl">
+
+            <div class="bg-base-100 p-3">
+                <div>{{ mostrandoArchivo.nombre }}</div>
+
+                <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
+
+                    <button @click.prevent="descargarArchivo" type="button" class="btn btn-secondary">
+                        Descargar
+                    </button>
+
+                    <button @click.prevent="mostrandoArchivo = null" type="button" class="btn btn-neutral">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+
+        </Modal>
+
+
 
         <Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
 
@@ -14,8 +31,12 @@
                 <Image :src="mostrandoImagen.url" class="w-full max-h-[calc(100vh-170px)] object-contain" />
 
                 <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
-                    <button @click.prevent="insertarImagen" type="button" class="btn btn-primary">
+                    <button v-if="modoInsertar" @click.prevent="insertarImagen" type="button" class="btn btn-primary">
                         Insertar
+                    </button>
+
+                    <button @click.prevent="descargarImagen" type="button" class="btn btn-secondary">
+                        Abrir
                     </button>
 
                     <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
@@ -32,6 +53,7 @@
 <script setup>
 const props = defineProps({
     ruta: { type: String, required: false, default: "" },
+    modoInsertar : { type: Boolean, default: false},
     contentClass: String
 });
 
@@ -61,8 +83,14 @@ function loadFolder() {
             cargando.value = false
         })
         .catch(err => {
+            cargando.value = false
             console.log(err)
-            alert("Hubo un error al cargar la carpeta")
+            const data = err.response?.data
+            const message = data?.message
+            if (message)
+                alert(message)
+            else
+                alert("Hubo un error al cargar la carpeta")
         })
 }
 
@@ -75,6 +103,13 @@ function reloadFolder() {
     loadFolder()
 }
 
+
+function onDisk(item) {
+    console.log('disk change to', item)
+    currentUrl.value = item.url
+    loadFolder()
+}
+
 function onFolder(item) {
     console.log('folder change to', item)
     currentUrl.value = item.url
@@ -82,18 +117,32 @@ function onFolder(item) {
 }
 
 const mostrandoImagen = ref(null)
+const mostrandoArchivo = ref(null)
 
 function onFile(item) {
     console.log('file clicked', item)
     if (item.url.match(/\.(gif|png|webp|svg|jpe?g)$/i))
         mostrandoImagen.value = item
+    else
+        mostrandoArchivo.value = item
 }
 
 
 function insertarImagen() {
     console.log('insertarImagen', mostrandoImagen.value)
-    emit('image', mostrandoImagen.value.url)
+    emit('image:value', mostrandoImagen.value.url)
     mostrandoImagen.value = null
+}
+
+function descargarImagen() {
+    // abre en una nueva ventana
+    window.open(mostrandoImagen.value.url, '_blank')
+}
+
+function descargarArchivo() {
+    // abre en una nueva ventana
+    window.open(mostrandoArchivo.value.url, '_blank')
+    mostrandoArchivo.value = false
 }
 </script>
 

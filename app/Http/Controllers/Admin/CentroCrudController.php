@@ -97,7 +97,7 @@ class CentroCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-        $folder = "/media/centros";
+        $folder = "/medios/centros";
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder]);
 

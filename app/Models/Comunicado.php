@@ -89,7 +89,7 @@ class Comunicado extends ContenidoConAudios
     public function generarRutaAudios()
     {
         $año = date('Y', strtotime($this->fecha_comunicado));
-        return "media/comunicados/audios/$año";
+        return "medios/comunicados/audios/$año";
     }
 
 
@@ -121,7 +121,7 @@ class Comunicado extends ContenidoConAudios
 
         $attribute_name = "audios";
         $disk = "public";
-        $destination_path = "media/comunicados/mp3";
+        $destination_path = "medios/comunicados/mp3";
 
         // $this->uploadMultipleFilesToDisk($value, $attribute_name, $disk, $destination_path);
 
@@ -198,7 +198,7 @@ class Comunicado extends ContenidoConAudios
 
         $attribute_name = "pdf";
         $disk = "public";
-        $destination_path = "media/comunicados/pdf";
+        $destination_path = "medios/comunicados/pdf";
         $fileName = null;
 
         //$this->uploadFileToDisk($value, $attribute_name, $disk, $destination_path, $fileName = null);

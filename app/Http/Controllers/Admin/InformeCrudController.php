@@ -162,7 +162,7 @@ class InformeCrudController extends CrudController
             'withFiles' => [
                 'disk' => 'public',
                 // the disk where file will be stored
-                'path' => 'media/comunicados/temp',
+                'path' => 'medios/comunicados/temp',
                 // the path inside the disk where file will be stored
             ] */
         ]);
@@ -196,7 +196,7 @@ class InformeCrudController extends CrudController
         $anioActual = date('Y');
         $mesActual = date('m');
 
-        $folder = "/media/informes/$anioActual/$mesActual";
+        $folder = "/medios/informes/$anioActual/$mesActual";
 
         // Verificar si la carpeta existe en el disco 'public'
         if (!Storage::disk('public')->exists($folder)) {
@@ -238,17 +238,17 @@ class InformeCrudController extends CrudController
             ]);
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "media/informe/_{$contenido->id}";
+            $imagesFolder = "medios/informe/_{$contenido->id}";
 
             // copia las imágenes desde la carpeta temporal al directorio destino
             $imported->copyImagesTo($imagesFolder);
 
             // reemplazar la ubicación de las imágenes en el texto del comunicado
             $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/media\//", "/storage/media/", $contenido->texto);
+            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
 
             //$contenido->imagen = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->imagen);
-            //$contenido->imagen = preg_replace("/\.\/media\//", "/storage/media/", $contenido->imagen);
+            //$contenido->imagen = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->imagen);
             $contenido->save();
 
             return response()->json([
@@ -273,11 +273,11 @@ class InformeCrudController extends CrudController
             $contenido->texto = $imported->content;
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "media/informes/_{$contenido->id}";
+            $imagesFolder = "medios/informes/_{$contenido->id}";
 
             // reemplazar la ubicación de las imágenes en el texto del comunicado
             $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/media\//", "/storage/media/", $contenido->texto);
+            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
 
             $contenido->descripcion = null; // para que se regenere
 

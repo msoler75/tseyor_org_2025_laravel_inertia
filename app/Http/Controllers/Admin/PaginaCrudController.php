@@ -109,7 +109,7 @@ class PaginaCrudController extends CrudController
 
         CRUD::field('descripcion')->type('textarea')->hint('Descripción corta para el SEO.');
 
-        $folder = "/media/paginas";
+        $folder = "/medios/paginas";
 
         // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 

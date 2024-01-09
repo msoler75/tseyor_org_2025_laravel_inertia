@@ -1,7 +1,7 @@
 <template>
     <div class="h-full flex flex-col relative">
-        <div class="w-full sticky top-4 border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
-            :class="embed ? 'pt-4' : ' pt-16'">
+        <div class="w-full sticky border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
+            :class="embed ? 'pt-4 top-0' : ' pt-16 top-4'">
 
             <div :class="embed ? '' : 'lg:container mx-auto'">
                 <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="!embed" @folder="clickBreadcrumb($event)"
@@ -38,7 +38,7 @@
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
                     </ConditionalLink>
 
-                    <ConditionalLink v-if="items.length > 1 && items[1].padre && !seleccionando" :href="items[1].url"
+                    <ConditionalLink v-if="items.length > 1 && !seleccionando" :href="items[1].url"
                         class="btn btn-neutral btn-sm w-fit" title="Ir a una carpeta superior"
                         @click="clickFolder(items[1], $event)" :is-link="!embed"
                         :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
@@ -268,8 +268,11 @@
                             </td>
                             <td class="relative w-4" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
-                                <FolderIcon v-if="item.tipo === 'carpeta'" class="cursor-pointer" :private="item.privada"
-                                    :owner="item.propietario?.usuario.id === user?.id" :url="item.url"
+                                ruta:{{item.ruta}} url: {{item.url}}
+                                <DiskIcon v-if="item.tipo==='disco'" :url="item.url" class="cursor-pointer"
+                                    @click="clickDisk(item, $event)" :is-link="!embed"/>
+                                <FolderIcon v-else-if="item.tipo === 'carpeta'" class="cursor-pointer" :private="item.privada"
+                                    :owner="item.propietario && item.propietario?.usuario.id === user?.id" :url="item.url"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
                                     :is-link="!embed" />
                                 <FileIcon v-else :url="item.url" class="cursor-pointer"
@@ -278,8 +281,12 @@
                             </td>
                             <td class="sm:hidden" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
+
                                 <div class="flex flex-col">
-                                    <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url"
+                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
+                                        v-html="nombreItem(item)" class="cursor-pointer"
+                                        @click="clickDisk(item, $event)" :is-link="!embed" />
+                                    <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
                                         :class="seleccionando ? 'pointer-events-none' : ''"
                                         @click="clickFolder(item, $event)" :is-link="!embed" />
@@ -287,17 +294,22 @@
                                     <a v-else :href="item.url" download v-html="nombreItem(item)"
                                         :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
                                         :is-link="!embed" />
+
                                     <small class="w-full flex justify-between items-center">
-                                        <span v-if="item.tipo === 'carpeta'">
+                                        <span v-if="item.tipo==='disco'">****</span>
+                                        <span v-else-if="item.tipo === 'carpeta'">
                                             {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
                                         <FileSize v-else :size="item.tamano" />
-                                        <TimeAgo :date="item.fecha_modificacion" />
+                                        <TimeAgo v-if="item.fecha_modificacion" :date="item.fecha_modificacion" />
                                     </small>
                                 </div>
                             </td>
                             <td class="hidden sm:table-cell" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
-                                <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
+                                <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
+                                    class="cursor-pointer   py-1 hover:underline"
+                                    @click="clickDisk(item, $event)" :is-link="!embed" />
+                                <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
                                     class="cursor-pointer   py-1 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
                                     :is-link="!embed" />
@@ -307,13 +319,15 @@
                             </td>
                             <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
-                                <span v-if="item.tipo === 'carpeta'" class="text-sm">
+                                <span v-if="item.tipo==='disco'">-</span>
+                                <span v-else-if="item.tipo === 'carpeta'" class="text-sm">
                                     {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
                             </td>
                             <td class="hidden sm:table-cell" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
-                                <TimeAgo :date="item.fecha_modificacion" class="block text-center" />
+                                <TimeAgo v-if="item.fecha_modificacion" :date="item.fecha_modificacion" class="block text-center" />
+                                <span>-</span>
                             </td>
                             <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
                                 class="hidden sm:table-cell text-center" v-on:touchstart.passive="ontouchstart(item)"
@@ -391,7 +405,7 @@
                 </table>
             </div>
             <div v-else-if="selectors.archivosVista === 'grid'">
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-3 gap-4 pt-6">
                     <TransitionGroup name="files">
                         <div v-for="item in  itemsMostrar" :key="item.ruta"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')">
@@ -402,8 +416,10 @@
                                 <Icon v-else icon="ph:square" />
                             </div>
                             <div class="flex flex-col items-center justify-center relative">
-                                <FolderIcon v-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
-                                    :owner="item.propietario?.usuario.id === user?.id" class="cursor-pointer text-8xl mb-4"
+                                <DiskIcon v-if="item.tipo==='disco'" :url="item.url" class="cursor-pointer text-8xl mb-4"
+                                    @click="clickDisk(item, $event)"  :is-link="!embed"/>
+                                <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
+                                    :owner="item.propietario && item.propietario?.usuario.id === user?.id" class="cursor-pointer text-8xl mb-4"
                                     :disabled="seleccionando" @click="clickFolder(item, $event)" :is-link="!embed" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
                                     @click="clickFile(item, $event)">
@@ -413,7 +429,10 @@
                                     @click="clickFile(item, $event)" :is-link="!embed" />
 
                                 <div class="text-sm text-center">
-                                    <ConditionalLink v-if="item.tipo === 'carpeta'" :href="item.url"
+                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
+                                        v-html="nombreItem(item)" class="py-1 hover:underline"
+                                        @click="clickDisk(item, $event)" :is-link="!embed" />
+                                    <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="py-1 hover:underline"
                                         @click="clickFolder(item, $event)" :is-link="!embed" />
                                     <span v-else-if="seleccionando" v-html="nombreItem(item)" />
@@ -421,11 +440,12 @@
                                         @click="clickFile(item, $event)" :is-link="!embed" class="py-1 hover:underline" />
                                 </div>
                                 <div class="text-gray-500 text-xs">
-                                    <template v-if="item.tipo === 'carpeta'">{{ item.archivos + ' archivos, ' +
+                                    <span v-if="item.tipo==='disco'"/>
+                                    <template v-else-if="item.tipo === 'carpeta'">{{ item.archivos + ' archivos, ' +
                                         item.subcarpetas + ' subcarpetas' }}
                                     </template>
                                     <template v-else>
-                                        <FileSize :size="item.tamano" /> -
+                                        <FileSize :size="item.tamano" />
                                         <TimeAgo :date="item.fecha_modificacion" />
                                     </template>
                                 </div>
@@ -970,7 +990,7 @@ const props = defineProps({
     contentClass: String
 });
 
-const emit = defineEmits(['updated', 'folder:value', 'file:value']);
+const emit = defineEmits(['updated', 'disk', 'folder', 'file']);
 
 // para evitar modificación de la prop
 // https://github.com/inertiajs/inertia/issues/854#issuecomment-896089483
@@ -1012,7 +1032,7 @@ const rutaActual = computed(() => itemsCopy.value.length ? itemsCopy.value[0].ru
 
 // otros datos
 const page = usePage()
-const user = computed(() => page.props.auth?.user)
+const user = computed(() => page.props?.auth?.user)
 
 // ALGUNOS HELPERS PARA MOSTRAR DATOS
 
@@ -1040,7 +1060,7 @@ const buscar = ref(null)
 const mostrandoResultados = ref(false)
 const resultadosBusqueda = ref([])
 const buscando = ref(false)
-
+const id_busqueda = ref(null)
 
 function showSearch() {
     showSearchInput.value = true
@@ -1059,10 +1079,10 @@ function onSearch() {
         return
     }
     showSearchInput.value = false
-    const currentUrl = props.url || window.location.href.replace(/\?.*/, '');
+    const currentUrl = props.ruta || window.location.href.replace(/\?.*/, '');
     buscando.value = true
     mostrandoResultados.value = true
-    axios(route('archivos.buscar'), {
+    axios('/archivos_buscar', {
         params: {
             ruta: currentUrl,
             nombre: buscar.value
@@ -1071,6 +1091,7 @@ function onSearch() {
         .then(response => {
             const data = response.data
             console.log({ data })
+            id_busqueda.value = data.id_busqueda
             resultadosBusqueda.value = data.resultados
             buscarMasResultados()
         })
@@ -1078,7 +1099,7 @@ function onSearch() {
 
 function buscarMasResultados() {
     if (!mostrandoResultados.value) return
-    axios.post(route('archivos.buscar'))
+    axios('/archivos_buscar?id_busqueda='+id_busqueda.value )
         .then(response => {
             const data = response.data
             console.log({ data })
@@ -1096,9 +1117,7 @@ function buscarMasResultados() {
 
 // ITEMS A MOSTRAR
 
-
 const itemsMostrar = computed(() => mostrandoResultados.value ? resultadosBusqueda.value : itemsOrdenados.value)
-
 
 
 // SELECCION
@@ -1187,7 +1206,7 @@ function prepararCopiarItems() {
 }
 
 function copiarItems() {
-    axios.post(route('files.copy'), {
+    axios.post('/files/copy', {
         sourceFolder: store.sourcePath,
         targetFolder: rutaActual.value,
         items: store.filesToCopy
@@ -1204,7 +1223,7 @@ function copiarItems() {
 }
 
 function moverItems() {
-    axios.post(route('files.move'), {
+    axios.post('/files/move', {
         sourceFolder: store.sourcePath,
         targetFolder: rutaActual.value,
         items: store.filesToMove
@@ -1398,7 +1417,7 @@ function permisosNumericoChange() {
 
 function cambiarPermisos() {
     guardandoPermisos.value = true
-    axios.post(route('files.update'), {
+    axios.post('/files/update', {
         ruta: itemCambiandoPermisos.value.ruta,
         permisos: permisosNumerico.value
     })
@@ -1545,7 +1564,7 @@ function cambiarAcl() {
     })
     newAcl = newAcl.filter(acl => acl.verbos)
     guardandoAcl.value = true
-    axios.post(route('files.update'), {
+    axios.post('/files/update', {
         ruta: itemCambiandoAcl.value.ruta,
         acl: newAcl
     })
@@ -1586,7 +1605,7 @@ function abrirModalRenombrar(item) {
 function renombrarItem() {
     itemRenombrando.value.seleccionado = false
     renombrandoItem.value = true
-    axios.post(route('files.rename'), {
+    axios.post('/files/rename', {
         folder: itemRenombrando.value.carpeta,
         oldName: itemRenombrando.value.nombre,
         newName: nuevoNombre.value,
@@ -1636,7 +1655,7 @@ function crearCarpeta() {
     creandoCarpeta.value = true
     if (!nombreCarpeta.value) return
 
-    axios.put(route('files.mkdir'), {
+    axios.put('/files.mkdir', {
         folder: rutaActual.value, name: nombreCarpeta.value
     }).then((response) => {
         console.log({ response })
@@ -1673,7 +1692,7 @@ function eliminarArchivos() {
 
 function eliminarArchivo(item) {
     console.log('eloiminar¡', item)
-    const url = (route('files.delete', ('/' +item.ruta).replace(/\/\//g, '/'))).replace(/%2F/g, '/')
+    const url = '/files'+ ('/' +item.ruta).replace(/\/\//g, '/').replace(/%2F/g, '/')
     console.log({url})
     return axios.delete(url)
         .then(response => {
@@ -1721,7 +1740,7 @@ function reloadPage() {
 
 // Carga la información adicional de los contenidos de la carpeta actual
 function cargarInfo() {
-    axios.get(route('archivos.info') + '?ruta=' + rutaActual.value)
+    axios.get('/archivos_info' + '?ruta=' + rutaActual.value)
         .then(response => {
             // info.value = response.data
             const info = response.data
@@ -1762,6 +1781,14 @@ function copyData(dest, src, key) {
 
 // EMBED
 
+
+function clickDisk(item, event) {
+    console.log('clickDisk', item)
+    if (props.embed) {
+        emit('disk', item)
+        event.preventDefault()
+    }
+}
 function clickFolder(item, event) {
     console.log('clickFolder', item)
     if (props.embed) {

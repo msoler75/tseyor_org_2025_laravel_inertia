@@ -40,7 +40,7 @@ class ProcesarAudios implements ShouldQueue
         $audios = $this->contenido->obtenerAudiosArray();
         $folder = $this->contenido->generarRutaAudios();
 
-        // $folder = "media/informes/{$equipo->slug}/$año";
+        // $folder = "medios/informes/{$equipo->slug}/$año";
         foreach ($audios as $key => $audio) {
             if ($this->mustBeProcessed($audio)) {
                 $audios_pendientes++;

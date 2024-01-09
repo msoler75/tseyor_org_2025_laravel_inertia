@@ -71,18 +71,18 @@ class ComunicadoImport
 
 
                     // Copiaremos las imágenes a la carpeta de destino
-                    $imagesFolder = "media/comunicados/$año/" . ($categoria == 'GEN' ? '' : $categoria . "_") . $numero;
+                    $imagesFolder = "medios/comunicados/$año/" . ($categoria == 'GEN' ? '' : $categoria . "_") . $numero;
 
                     // copia las imágenes desde la carpeta temporal al directorio destino
                     if ($imported->copyImagesTo($imagesFolder)) {
                         // reemplazar la ubicación de las imágenes en el texto del comunicado
                         $texto = preg_replace("/\bmedia\//", "$imagesFolder/", $texto);
-                        $texto = preg_replace("/\.\/media\//", "/storage/media/", $texto);
+                        $texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $texto);
                     }
 
                     // Rutas de las carpetas
-                    $rutaPdf = 'media/comunicados/pdf/' .  $año . '/';
-                    $rutaMp3 = 'media/comunicados/mp3/' .  $año . '/';
+                    $rutaPdf = 'medios/comunicados/pdf/' .  $año . '/';
+                    $rutaMp3 = 'medios/comunicados/mp3/' .  $año . '/';
 
                     // Asignar los nombres de los archivos MP3
                     $mp3 = [];
