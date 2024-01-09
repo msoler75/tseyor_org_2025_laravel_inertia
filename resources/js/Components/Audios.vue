@@ -40,11 +40,11 @@ function clickPlay(audio) {
                 player.playPause()
                 break
             default:
-                player.play(audio)
+                player.play(audio.src, audio.title)
         }
     }
     // nuevo audio
-    else player.play(audio)
+    else player.play(audio.src, audio.title)
 }
 
 </script>

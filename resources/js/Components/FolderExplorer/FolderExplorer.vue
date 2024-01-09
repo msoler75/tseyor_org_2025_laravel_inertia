@@ -4,7 +4,7 @@
             :class="embed ? 'pt-4 top-0' : ' pt-16 top-4'">
 
             <div :class="embed ? '' : 'lg:container mx-auto'">
-                <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="!embed" @folder="clickBreadcrumb($event)"
+                <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="true" :intercept-click="true" @folder="clickBreadcrumb($event)"
                     title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5" />
             </div>
 
@@ -33,12 +33,14 @@
                 <div v-if="!mostrandoResultados" class="flex gap-3 w-full max-w-full">
 
                     <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer" :href=" '/' + rutaBase"
-                        @click="clickFolder({ url: '/' + rutaBase }, $event)" :is-link="!embed" title="Ir a la carpeta base"
+                    :tag="embed?'span':'a'"
+                        @click="clickFolder({ ruta: '/' + rutaBase }, $event)" :is-link="!embed" title="Ir a la carpeta base"
                         :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
                     </ConditionalLink>
 
                     <ConditionalLink v-if="items.length > 1 && !seleccionando" :href="items[1].url"
+                        :tag="embed?'span':'a'"
                         class="btn btn-neutral btn-sm w-fit" title="Ir a una carpeta superior"
                         @click="clickFolder(items[1], $event)" :is-link="!embed"
                         :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
@@ -268,7 +270,6 @@
                             </td>
                             <td class="relative w-4" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
-                                ruta:{{item.ruta}} url: {{item.url}}
                                 <DiskIcon v-if="item.tipo==='disco'" :url="item.url" class="cursor-pointer"
                                     @click="clickDisk(item, $event)" :is-link="!embed"/>
                                 <FolderIcon v-else-if="item.tipo === 'carpeta'" class="cursor-pointer" :private="item.privada"
@@ -285,7 +286,7 @@
                                 <div class="flex flex-col">
                                     <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
-                                        @click="clickDisk(item, $event)" :is-link="!embed" />
+                                        @click="clickDisk(item, $event)" :is-link="false" />
                                     <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
                                         :class="seleccionando ? 'pointer-events-none' : ''"
@@ -308,7 +309,7 @@
                                 v-on:touchend.passive="ontouchend(item)">
                                 <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
                                     class="cursor-pointer   py-1 hover:underline"
-                                    @click="clickDisk(item, $event)" :is-link="!embed" />
+                                    @click="clickDisk(item, $event)" :is-link="false" />
                                 <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
                                     class="cursor-pointer   py-1 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
@@ -327,7 +328,7 @@
                             <td class="hidden sm:table-cell" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
                                 <TimeAgo v-if="item.fecha_modificacion" :date="item.fecha_modificacion" class="block text-center" />
-                                <span>-</span>
+                                <span v-else>-</span>
                             </td>
                             <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
                                 class="hidden sm:table-cell text-center" v-on:touchstart.passive="ontouchstart(item)"
@@ -344,7 +345,7 @@
                                 {{ item.carpeta }}
                             </td>
                             <td class="hidden md:table-cell">
-                                <Dropdown align="right" width="48">
+                                <Dropdown align="right" width="48" v-if="item.tipo!=='disco'">
                                     <template #trigger>
                                         <span class="p-3 cursor-pointer">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
@@ -1044,7 +1045,7 @@ const tituloPropietario = computed(() => {
 
 function nombreItem(item) {
     if (item.actual) return `<span class='text-neutral opacity-70'>&lt;${item.nombre}&gt;</span>`
-    if (item.padre) return `<span class='text-neutral opacity-70'>&lt;atrás&gt;</span>`
+    if (item.padre) return `<span class='text-neutral opacity-70'>&lt;arriba&gt;</span>`
     return item.nombre
 }
 
@@ -1784,10 +1785,8 @@ function copyData(dest, src, key) {
 
 function clickDisk(item, event) {
     console.log('clickDisk', item)
-    if (props.embed) {
-        emit('disk', item)
-        event.preventDefault()
-    }
+    emit('disk', item)
+    event.preventDefault()
 }
 function clickFolder(item, event) {
     console.log('clickFolder', item)
@@ -1805,17 +1804,17 @@ function clickFile(item, event) {
     }
     else {
         // si es un audio:
-        if(item.nombre.match(/\.(mp3|mp4|ogg|wav|flac|aac|wma|aiff|amr|opus)$/i)) {
-            player.play({src:item.url, title: item.nombre, artist: null})
+        if(player.isPlayable(item.url)) {
+            player.play(item.url, item.nombre)
             event.preventDefault()
         }
     }
 }
 
 function clickBreadcrumb(item) {
-    console.log('clickBreadcrumb', item)
+    console.log('clickBreadcrumb', {item})
     if (props.embed) {
-        emit('folder', item)
+        emit('folder', {...item, ruta: item.url})
     }
 }
 </script>

@@ -17,6 +17,9 @@
 
 
 <script setup>
+import AppLayout from '@/Layouts/AppLayout.vue'
+defineOptions({ layout: AppLayout })
+
 const content = ref("# hola mundo!\nfrase 1")
 
 function ready() {

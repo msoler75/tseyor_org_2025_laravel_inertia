@@ -40,7 +40,7 @@ class ArchivosController extends Controller
             return ['raiz', '']; // raiz
 
         if (strpos($ruta, 'archivos') === 0) {
-            $ruta = preg_replace("#^archivos\/?#", "", $ruta);
+            // $ruta = preg_replace("#^archivos\/?#", "", $ruta);
             return ['archivos', $ruta];
         } else {
             return ['public', $ruta];
@@ -100,6 +100,9 @@ class ArchivosController extends Controller
                     'carpeta' => '',
                     'tipo' => 'carpeta',
                     'actual' => true,
+                    'tamano' => 0,
+                    'archivos' => 0,
+                    'subcarpetas' => 2,
                     'url' => '/'
                 ],
                 [
@@ -140,7 +143,7 @@ class ArchivosController extends Controller
         // si es un archivo, procedemos a la descarga
         if (!Storage::disk($disk)->directoryExists($rutaBase)) {
             // no es una carpeta, así que derivamos a la descarga
-            return $this->descargar('/archivos/' . $rutaBase);
+            return $this->descargar('/' . /* '/archivos/' . */ $rutaBase);
         }
 
         unset($p1);
@@ -179,11 +182,14 @@ class ArchivosController extends Controller
 
         // agregamos carpeta padre
         $padre = dirname($ruta);
+        if($padre=='.')
+            $padre = "";
         $nodoPadre = null;
-        if ($padre && $padre != "\\" && $padre != "//") {
+        if ($ruta) {
             $nodoPadre = Nodo::desde($padre);
             $items[] = $this->prepareItemList($disk, $padre, $nodoPadre, ['tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
         }
+        // dd($ruta, $padre, $items);
 
         // obtenemos todos los nodos de la carpeta
         // $nodosHijos = Nodo::hijos($ruta);
@@ -272,8 +278,10 @@ class ArchivosController extends Controller
 
         // agregamos carpeta padre
         $padre = dirname($ruta);
+        if($padre==".")
+            $padre = "";
         $nodoPadre = null;
-        if ($padre && $padre != "\\" && $padre != "//") {
+        if ($padre) {
             $nodoPadre = Nodo::desde($padre);
         }
 
@@ -381,20 +389,20 @@ class ArchivosController extends Controller
     private function prepareItemList(string $disk, string $ruta, ?Nodo $nodo, array $options): array
     {
         $ruta = rtrim($ruta, '/');
-        $baseUrl = url('');
+        // $baseUrl = url('');
         $rutaBase = $ruta; //str_replace($baseUrl, '', str_replace('/almacen', '', Storage::disk($disk)->url($ruta)));
-        $prefix = $disk === 'archivos' ? 'archivos/' : '';
-        $rutaPadre = str_replace("\\", "/", dirname($ruta));
+        $prefix = '' ; //$disk === 'archivos' ? 'archivos/' : '';
+        $carpeta = str_replace("\\", "/", dirname($ruta));
         $item = [
             'nombre' => basename($ruta),
             'ruta' => rtrim($prefix . $rutaBase, '/'),
             // 'url' => Storage::disk($disk)->url(str_replace(' ', '%20', $rutaBase)),
             // 'url' => str_replace($baseUrl, '', str_replace('/almacen', '', Storage::disk($disk)->url($ruta))), // Storage::disk($disk)->url(urldecode($ruta)),
-            'carpeta' => $rutaPadre,
+            'carpeta' => $carpeta,
             'fecha_modificacion' => Storage::disk($disk)->lastModified($ruta),
         ];
         $item = array_merge($item, $options);
-        $item['url'] =( $disk=='public' ? '/almacen' : '' ) . '/' . $prefix . $ruta;
+        $item['url'] =rtrim(( $ruta && $disk=='public' ? '/almacen' : '' ) . '/' . $prefix . $ruta, '/');
         return $item;
     }
 

@@ -38,7 +38,7 @@ return [
 
         'archivos' => [
             'driver' => 'local',
-            'root' => storage_path('app/archivos'),
+            'root' => storage_path('app'),
             'url' => env('APP_URL').'/archivos',
             'visibility' => 'private',
             'throw' => false,
