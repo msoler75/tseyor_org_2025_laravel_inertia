@@ -4,6 +4,7 @@
             :class="embed ? 'pt-8 top-0' : ' pt-16 top-4'">
 
             <div :class="embed ? '' : 'lg:container mx-auto'">
+                seleccionando: {{seleccionando}}
                 <Breadcrumb v-if="embed" v-show="!seleccionando" :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
                     title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5"
                     rootLabel="web:" rootUrl=""/>
@@ -106,7 +107,7 @@
 
 
 
-                        <Dropdown v-if="!seleccionando" align="right" width="48">
+                        <Dropdown v-if="!enRaiz && !seleccionando" align="right" width="48" :class="!info_cargada?'opacity-50 pointer-events-none':''">
                             <template #trigger>
                                 <div class="btn btn-neutral btn-sm cursor-pointer">
                                     <Icon icon="mdi:dots-vertical" class="text-xl" />
@@ -138,7 +139,7 @@
                                     </div>
 
 
-                                    <div v-if="puedeLeer && !seleccionando && itemsCopy.filter(x => !x.padre).length > 1"
+                                    <div v-if="!enRaiz && puedeLeer && !seleccionando && itemsCopy.filter(x => !x.padre).length > 1"
                                         class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="seleccionando = true">
                                         <Icon icon="ph:check-duotone" />
@@ -253,9 +254,9 @@
                         <tr v-if="itemsMostrar.length">
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
                             <th></th>
-                            <th class="text-left">Nombre</th>
-                            <th>Tamaño</th>
-                            <th>Fecha</th>
+                            <th class="min-w-[14rem] text-left">Nombre</th>
+                            <th class="min-w-[12rem]">Tamaño</th>
+                            <th class="min-w-[12rem]">Fecha</th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Permisos</th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
@@ -277,17 +278,16 @@
                                 v-on:touchend.passive="ontouchend(item)">
                                 <DiskIcon v-if="item.tipo==='disco'" :url="item.url" class="cursor-pointer"
                                     @click="clickDisk(item, $event)" :is-link="!embed"/>
-                                <FolderIcon v-else-if="item.tipo === 'carpeta'" class="cursor-pointer" :private="item.privada"
+                                <FolderIcon v-else-if="item.tipo === 'carpeta'" class="cursor-pointer text-4xl sm:text-xl" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id" :url="item.url"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
                                     :is-link="!embed" />
-                                <FileIcon v-else :url="item.url" class="cursor-pointer"
+                                <FileIcon v-else :url="item.url" class="cursor-pointer text-4xl sm:text-xl"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
                                     :is-link="!embed" />
                             </td>
-                            <td class="sm:hidden" v-on:touchstart.passive="ontouchstart(item)"
+                            <td class="sm:hidden py-3" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
-
                                 <div class="flex flex-col">
                                     <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
@@ -310,20 +310,20 @@
                                     </small>
                                 </div>
                             </td>
-                            <td class="hidden sm:table-cell" v-on:touchstart.passive="ontouchstart(item)"
+                            <td class="hidden sm:table-cell py-3" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
                                 <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
-                                    class="cursor-pointer   py-1 hover:underline"
+                                    class="cursor-pointer py-3 hover:underline"
                                     @click="clickDisk(item, $event)" :is-link="false" />
                                 <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
-                                    class="cursor-pointer   py-1 hover:underline"
+                                    class="cursor-pointer py-3 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
                                     :is-link="!embed" />
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
-                                <a v-else :href="item.url" download v-html="nombreItem(item)" class="py-1 hover:underline"
+                                <a v-else :href="item.url" download v-html="nombreItem(item)" class="py-3 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)" />
                             </td>
-                            <td class="hidden sm:table-cell py-3 text-center" v-on:touchstart.passive="ontouchstart(item)"
+                            <td class="hidden sm:table-cell text-center" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
                                 <span v-if="item.tipo==='disco'">-</span>
                                 <span v-else-if="item.tipo === 'carpeta'" class="text-sm">
@@ -350,9 +350,9 @@
                                 {{ item.carpeta }}
                             </td>
                             <td class="hidden md:table-cell">
-                                <Dropdown align="right" width="48" v-if="item.tipo!=='disco'">
+                                <Dropdown align="right" width="48" v-if="item.tipo!=='disco'" :class="!info_cargada?'opacity-80 pointer-events-none':''">
                                     <template #trigger>
-                                        <span class="p-3 cursor-pointer">
+                                        <span class="cursor-pointer">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
                                         </span>
                                     </template>
@@ -458,7 +458,7 @@
 
 
                                 <div class="w-full flex justify-end">
-                                    <Dropdown align="right" width="48" v-if="puedeEscribir">
+                                    <Dropdown align="right" width="48" :class="!info_cargada?'opacity-80 pointer-events-none':''">
                                         <template #trigger>
                                             <span class="btn p-1">
                                                 <Icon icon="mdi:dots-horizontal" class="text-xl z-20" />
@@ -1030,6 +1030,9 @@ function onKeyDown(event) {
     if(event.ctrlKey && event.key === 'i')
         selectors.mostrarPermisos = !selectors.mostrarPermisos
 }
+
+// estamos en la raíz?
+const enRaiz = computed(()=>props.items[1]?.tipo==='disco')
 
 // puede editar la carpeta actual?
 const puedeEscribir = computed(() => itemsCopy.value.length ? itemsCopy.value[0].puedeEscribir : false)
@@ -1745,8 +1748,11 @@ function reloadPage() {
 }
 
 
+const info_cargada = ref(false)
+
 // Carga la información adicional de los contenidos de la carpeta actual
 function cargarInfo() {
+    info_cargada.value = false
     axios.get('/archivos_info' + '?ruta=' + rutaActual.value)
         .then(response => {
             // info.value = response.data
@@ -1760,6 +1766,8 @@ function cargarInfo() {
                         item[field] = inf[field]
                 }
             }
+
+            info_cargada.value = true
         })
 }
 
@@ -1796,6 +1804,11 @@ function clickDisk(item, event) {
 }
 function clickFolder(item, event) {
     console.log('clickFolder', item)
+    if(seleccionando.value) {
+        item.seleccionado = !item.seleccionado
+        event.preventDefault()
+    }
+else 
     if (props.embed) {
         emit('folder', item)
         event.preventDefault()
@@ -1803,7 +1816,12 @@ function clickFolder(item, event) {
 }
 
 function clickFile(item, event) {
-    console.log('clickFile', item)
+    console.log('clickFile', item) 
+    if(seleccionando.value)  {
+        item.seleccionado = !item.seleccionado
+        event.preventDefault()
+    }
+else 
     if (props.embed) {
         emit('file', item)
         event.preventDefault()

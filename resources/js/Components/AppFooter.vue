@@ -1,5 +1,5 @@
 <template>
-    <Footer :sections="sections" :socialLinks="socialLinks" />
+    <Footer :sections="sections" :socialLinks="socialLinks" class="z-10"/>
 </template>
 
 
