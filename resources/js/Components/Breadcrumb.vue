@@ -8,10 +8,15 @@ const props = defineProps({
     path: String,
     links: { type: Boolean, default: true },
     interceptClick: { type: Boolean, default: false },
+    rootLabel: {type: String, require: false},
+    rootUrl:  {type: String, require: false},
 })
 
 const items = computed(() => {
     const r = []
+    if(props.rootLabel)
+    r.push({label: props.rootLabel, url: props.rootUrl})
+
     const parts = props.path.split('/').filter(x => !!x)
     let url = ''
     for (var part of parts) {
@@ -40,7 +45,7 @@ function handleClick(item, event) {
     <ol v-if="items.length" class="list-reset flex gap-1" >
         <template v-for="item, index, of items" :key="index">
             <li class="flex items-center space-x-1">
-                <span class="mx-2 text-neutral-500 dark:text-neutral-400">/</span>
+                <span v-if="!rootLabel||index>0" class="mx-2 text-neutral-500 dark:text-neutral-400">/</span>
                 <Link v-if="links && index<items.length-1" :href="item.url"
                 @click.native.capture="handleClick(item, $event)"
                 class="whitespace-nowrap max-w-[50vw] truncate hover:underline"
@@ -48,7 +53,7 @@ function handleClick(item, event) {
                 :class="!links? 'pointer-events-none' : ''"
                 >
                 {{ item.label }}</Link>
-                <span v-else class="opacity-90">{{ item.label }}</span>
+                <span v-else class="opacity-80">{{ item.label }}</span>
             </li>
         </template>
     </ol>

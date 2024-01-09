@@ -1,10 +1,13 @@
 <template>
     <div class="h-full flex flex-col relative">
         <div class="w-full sticky border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
-            :class="embed ? 'pt-4 top-0' : ' pt-16 top-4'">
+            :class="embed ? 'pt-8 top-0' : ' pt-16 top-4'">
 
             <div :class="embed ? '' : 'lg:container mx-auto'">
-                <Breadcrumb v-if="!seleccionando" :path="rutaActual" :links="true" :intercept-click="true" @folder="clickBreadcrumb($event)"
+                <Breadcrumb v-if="embed" v-show="!seleccionando" :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
+                    title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5"
+                    rootLabel="web:" rootUrl=""/>
+                <Breadcrumb v-else v-show="!seleccionando" :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
                     title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5" />
             </div>
 
@@ -243,7 +246,9 @@
                 <div>No hay archivos</div>
             </div>
             <div v-else-if="selectors.archivosVista === 'lista'" :class="itemsOrdenados.length ? 'mr-2' : ''">
-                <table class="w-full lg:w-auto mx-auto">
+                <table class="w-full lg:w-auto mx-auto"
+                :class="transitionActive?'animating':''"
+                >
                     <thead class="hidden sm:table-header-group" :class="itemsOrdenados.length ? '' : 'opacity-0'">
                         <tr v-if="itemsMostrar.length">
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
@@ -993,6 +998,8 @@ const props = defineProps({
 
 const emit = defineEmits(['updated', 'disk', 'folder', 'file']);
 
+const transitionActive = ref(false)
+
 // para evitar modificación de la prop
 // https://github.com/inertiajs/inertia/issues/854#issuecomment-896089483
 const itemsCopy = ref(JSON.parse(JSON.stringify(props.items)))
@@ -1080,12 +1087,11 @@ function onSearch() {
         return
     }
     showSearchInput.value = false
-    const currentUrl = props.ruta || window.location.href.replace(/\?.*/, '');
     buscando.value = true
     mostrandoResultados.value = true
     axios('/archivos_buscar', {
         params: {
-            ruta: currentUrl,
+            ruta: rutaActual.value,
             nombre: buscar.value
         }
     })
@@ -1881,18 +1887,18 @@ table th {
 }
 
 /* moving */
-.files-move {
+.animating .files-move {
     transition: all 600ms ease-in-out 50ms;
 }
 
 /* appearing */
-.files-enter-active {
+.animating .files-enter-active {
     transition: all 400ms ease-out;
     transform: scale(0);
 }
 
 /* disappearing */
-.files-leave-active {
+.animating .files-leave-active {
     transition: all 200ms ease-in;
     position: absolute;
     z-index: 0;
@@ -1900,12 +1906,12 @@ table th {
 }
 
 /* appear at / disappear to */
-.files-enter-to {
+.animating .files-enter-to {
     opacity: 1;
     transform: scale(1);
 }
 
-.files-leave-to {
+.animating .files-leave-to {
     opacity: 0;
     transform: scale(0);
 }
