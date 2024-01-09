@@ -7,7 +7,7 @@
         <Modal :show="mostrandoArchivo" @close="mostrandoArchivo = null" maxWidth="xl">
 
             <div class="bg-base-100 p-3">
-                <div>{{ mostrandoArchivo.nombre }}</div>
+                <div class="p-8">{{ mostrandoArchivo.nombre }}</div>
 
                 <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
 
@@ -35,8 +35,8 @@
                         Insertar
                     </button>
 
-                    <button @click.prevent="descargarImagen" type="button" class="btn btn-secondary">
-                        Abrir
+                    <button @click.prevent="descargarImagen" type="button" class="btn btn-secondary flex gap-2 items-center">
+                        <Icon icon="ph:arrow-square-out-duotone" class="text-xl"/> Abrir
                     </button>
 
                     <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
@@ -51,12 +51,15 @@
 
 
 <script setup>
+import { usePlayer } from '@/Stores/player'
+
 const props = defineProps({
     ruta: { type: String, required: false, default: "" },
     modoInsertar : { type: Boolean, default: false},
     contentClass: String
 });
 
+const player = usePlayer()
 
 const emit = defineEmits(['image:value'])
 
@@ -106,13 +109,13 @@ function reloadFolder() {
 
 function onDisk(item) {
     console.log('disk change to', item)
-    currentUrl.value = item.url
+    currentUrl.value = '/' + item.ruta
     loadFolder()
 }
 
 function onFolder(item) {
     console.log('folder change to', item)
-    currentUrl.value = item.url
+    currentUrl.value = '/' + item.ruta
     loadFolder()
 }
 
@@ -123,6 +126,8 @@ function onFile(item) {
     console.log('file clicked', item)
     if (item.url.match(/\.(gif|png|webp|svg|jpe?g)$/i))
         mostrandoImagen.value = item
+    else if(player.isPlayable(item.url))
+        player.play(item.url, item.nombre)
     else
         mostrandoArchivo.value = item
 }

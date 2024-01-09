@@ -6,11 +6,14 @@ import { useDark, useToggle } from "@vueuse/core";
 import { usePermisos } from '@/Stores/permisos'
 import { usePlayer } from '@/Stores/player'
 
+console.log('app initiating...')
+
 const permisos = usePermisos()
 const player = usePlayer()
 const page = usePage()
 const nav = useNav()
 const sideBarShow = ref(false)
+
 
 defineProps({
     title: String,
@@ -50,6 +53,7 @@ watch(isDark, value => {
     updateDarkState()
 })
 
+console.log('app.update dark state')
 updateDarkState()
 /*
 // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -138,7 +142,7 @@ import { useDark, useColorScheme } from 'vue-use';
 
 
 // AUDIO PLAYER
-
+console.log('player.init ...')
 player.init()
 
 

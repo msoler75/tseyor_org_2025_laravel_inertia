@@ -31,6 +31,8 @@ export const usePlayer = defineStore("player", () => {
 
   // crea un objeto de audio HTML5
   function init() {
+
+    console.log('player.init()...')
     if (!document) return;
 
     audio = new Audio();
@@ -53,15 +55,27 @@ export const usePlayer = defineStore("player", () => {
 
     // Agregar el elemento audio al DOM
     // document.body.appendChild(audio);
+
+    console.log('player.init() ended!')
   }
 
-  function play(newMusic, isRadio) {
+  function isPlayable(src) {
+    console.log('isPlayable?', src)
+    return src.match(/\.(mp3|mp4|ogg|wav|flac|aac|wma|aiff|amr|opus)$/i)
+  }
+
+  function play(src, title, options ={}) {
+    if(!audio) {
+        console.error('audio no inicializado')
+        return
+    }
+    const {artist, isRadio} = options
     if (process.env.NODE_ENV === "development") console.log("player.play");
-    music.value = newMusic;
+    music.value = {src, title, artist};
     radioMode.value = !!isRadio;
     closed.value = false;
 
-    audio.src = newMusic.src;
+    audio.src = src;
     audio.play();
   }
 
@@ -172,6 +186,7 @@ export const usePlayer = defineStore("player", () => {
     title,
     artist,
     init,
+    isPlayable,
     play,
     pause,
     playPause,
