@@ -175,9 +175,9 @@ main a.hover\:underline::after {
     content: "";
     position: absolute;
     left: 0;
-    bottom: -.1rem;
+    bottom: 0;
     width: 0%;
-    height: 4px;
+    height: .2rem;
     transition: .2s width ease;
     @apply bg-primary bg-opacity-30;
 }

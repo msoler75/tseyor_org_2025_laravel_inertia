@@ -15,6 +15,8 @@ const nav = useNav()
 const sideBarShow = ref(false)
 
 
+console.log({page})
+
 defineProps({
     title: String,
 });
@@ -194,6 +196,9 @@ axios.get(route('setting', 'navigation'))
         loader.value = false
     })
 */
+
+// const route = useRoute();
+
 </script>
 
 <template>
@@ -541,8 +546,9 @@ axios.get(route('setting', 'navigation'))
 
                 <slot />
             </main>
-
-            <AppFooter v-if="!nav.fullPage" />
+            
+            <!--  queremos que si la ruta actual es /archivos, no se muestre el footer: -->
+            <AppFooter v-if="!nav.fullPage && !page.url.match(/^\/archivos/)" />
         </div>
     </div>
 </template>
