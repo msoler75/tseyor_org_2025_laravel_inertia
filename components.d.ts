@@ -24,7 +24,7 @@ declare module 'vue' {
     Avatar: typeof import('./resources/js/Components/Avatar.vue')['default']
     Back: typeof import('./resources/js/Components/Back.vue')['default']
     Banner: typeof import('./resources/js/Components/Banner.vue')['default']
-    Breadcrumb: typeof import('./resources/js/Components/Breadcrumb.vue')['default']
+    Breadcrumb: typeof import('./resources/js/Components/FolderExplorer/Breadcrumb.vue')['default']
     Card: typeof import('./resources/js/Components/Card.vue')['default']
     CardContent: typeof import('./resources/js/Components/CardContent.vue')['default']
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']
