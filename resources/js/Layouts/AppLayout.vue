@@ -222,7 +222,7 @@ axios.get(route('setting', 'navigation'))
         <Banner />
 
         <AudioPlayer v-if="!player.closed"
-            class="rounded-tl-3xl fixed bottom-0 right-0 z-20 bg-base-100 border-gray-400 dark:border-white border-t border-l" />
+            class="rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l" />
 
         <div class="bg-base-200 flex-grow flex flex-col">
             <nav class="w-full border-gray-300  bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "

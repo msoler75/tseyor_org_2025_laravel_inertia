@@ -1412,9 +1412,9 @@ class ArchivosController extends Controller
         list($disk1, $sourceFolder) = $this->diskRuta($sourceFolder);
         list($disk2, $destinationFolder) = $this->diskRuta($destinationFolder);
 
-        if ($disk1 != $disk2) {
+        /* if ($disk1 != $disk2) {
             return response()->json(['error' => 'No se permite mover entre discos'], 403);
-        }
+        } */
 
         $disk = $disk1;
 

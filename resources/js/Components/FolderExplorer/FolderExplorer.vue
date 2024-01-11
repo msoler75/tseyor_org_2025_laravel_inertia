@@ -187,9 +187,15 @@
                         <tr v-if="itemsMostrar.length">
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
                             <th></th>
-                            <th class="min-w-[16rem] text-left">Nombre</th>
-                            <th class="min-w-[8rem]">Tamaño</th>
-                            <th class="min-w-[12rem]">Fecha</th>
+                            <th class="min-w-[16rem] text-left cursor-pointer"
+                            @click="ordenarPor=ordenarPor=='nombreAsc'?'nombreDesc':'nombreAsc'"
+                            >Nombre <span v-if="ordenarPor=='nombreDesc'">↑</span><span v-if="ordenarPor=='nombreAsc'">↓</span></th>
+                            <th class="min-w-[8rem] cursor-pointer"
+                            @click="ordenarPor=ordenarPor=='tamañoDesc'?'tamañoAsc':'tamañoDesc'"
+                            >Tamaño <span v-if="ordenarPor=='tamañoDesc'">↑</span><span v-if="ordenarPor=='tamañoAsc'">↓</span></th>
+                            <th class="min-w-[12rem] cursor-pointer"
+                            @click="ordenarPor=ordenarPor=='fechaDesc'?'fechaAsc':'fechaDesc'"
+                            >Fecha <span v-if="ordenarPor=='fechaDesc'">↑</span><span v-if="ordenarPor=='fechaAsc'">↓</span></th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Permisos</th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
@@ -1312,23 +1318,18 @@ const itemsOrdenados = computed(() => {
     const archivos = items.filter(item => item.tipo !== 'carpeta');
 
     switch (ordenarPor.value) {
-        case 'normal':
-            // Ordenar las carpetas y los archivos por separado
-            carpetas.sort((a, b) => a.nombre.localeCompare(b.nombre));
-            archivos.sort((a, b) => a.fecha_modificacion - b.fecha_modificacion);
-
-            // Combinar los grupos en el orden adecuado
-            return [...carpetas, ...archivos];
 
         case 'fechaAsc':
             // Ordenar los archivos por fecha de modificación ascendente
+            carpetas.sort((a, b) => a.fecha_modificacion - b.fecha_modificacion);
             archivos.sort((a, b) => a.fecha_modificacion - b.fecha_modificacion);
             return [...carpetas, ...archivos];
 
         case 'fechaDesc':
             // Ordenar los archivos por fecha de modificación descendente
+            carpetas.sort((a, b) => b.fecha_modificacion - a.fecha_modificacion);
             archivos.sort((a, b) => b.fecha_modificacion - a.fecha_modificacion);
-            return [...carpetas, ...archivos];
+            return [...archivos, ...carpetas];
 
         case 'nombreAsc':
             // Ordenar todos los elementos por nombre ascendente
@@ -1620,7 +1621,7 @@ function renombrarItem() {
             console.log({ response })
             modalRenombrarItem.value = false
             const item = itemRenombrando.value // itemsComplete.find(it => it.nombre == itemRenombrando.value.nombre)
-            console.log('renombrar item', item)
+            // console.log('renombrar item', item)
             item.ruta = item.carpeta + '/' + nuevoNombre.value
             const parts = item.url.split('/')
             parts[parts.length - 1] = parts[parts.length - 1].replace(item.nombre, nuevoNombre.value)
