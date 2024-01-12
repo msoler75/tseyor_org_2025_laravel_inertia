@@ -107,7 +107,7 @@ onMounted(() => {
                 </Link>
 
                 <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Registrarse
+                    Crear Cuenta
                 </PrimaryButton>
             </div>
         </form>
