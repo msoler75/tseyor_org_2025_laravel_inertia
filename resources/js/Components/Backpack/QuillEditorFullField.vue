@@ -5,6 +5,7 @@
         <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
             <div class="flex flex-col">
                 <FileManager :ruta="mediaFolder" class="max-h-[90vh] flex-grow" @image="onInsertImage"
+                    :modo-insertar="true"
                     content-class="max-h-[calc(100vh-240px)] overflow-y-auto" />
                 <div class="p-3 flex justify-end">
                     <button @click.prevent="showMediaManager = false" class="btn btn-neutral">Cerrar</button>
@@ -189,7 +190,7 @@ import { onThemeChange, updateTheme } from '@/composables/themeAdapter'
 const props = defineProps({
     name: String,
     content: { type: String, default: '' },
-    mediaFolder: { type: String, default: 'media' },
+    mediaFolder: { type: String, default: 'medios' },
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
@@ -295,12 +296,14 @@ const qeditor = ref(null)
 const showMediaManager = ref(false)
 
 function onInsertImage(src) {
-    // console.log('onInsertImage', img)
+    console.log('onInsertImage', src)
     const quill = qeditor.value.getQuill()
     // console.log({ quill })
     // quill.insertText(0, `![](${src})`);
     var range = quill.getSelection();
     quill.insertEmbed(range.index, 'image', src);
+
+    showMediaManager.value = false
 }
 
 

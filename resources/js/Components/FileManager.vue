@@ -2,6 +2,7 @@
     <div>
         <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario" @updated="reloadFolder"
             @disk="onDisk" @folder="onFolder" @file="onFile" :embed="true" :ruta="ruta" rutaBase="" :cargando="cargando"
+            class="max-h-[calc(100vh-160px)]"
             :contentClass="contentClass" />
 
         <Modal :show="mostrandoArchivo" @close="mostrandoArchivo = null" maxWidth="xl">
@@ -61,7 +62,7 @@ const props = defineProps({
 
 const player = usePlayer()
 
-const emit = defineEmits(['image:value'])
+const emit = defineEmits(['image'])
 
 const cargando = ref(true)
 
@@ -135,7 +136,7 @@ function onFile(item) {
 
 function insertarImagen() {
     console.log('insertarImagen', mostrandoImagen.value)
-    emit('image:value', mostrandoImagen.value.url)
+    emit('image', mostrandoImagen.value.url)
     mostrandoImagen.value = null
 }
 

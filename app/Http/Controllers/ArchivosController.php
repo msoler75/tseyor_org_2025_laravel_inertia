@@ -1224,6 +1224,7 @@ class ArchivosController extends Controller
         return response()->json(['error' => 'No se pudo renombrar'], 500);
     }*/
         if ($this->safe_rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
+            //if(File::move(Storage::disk($disk)->path($rutaAntes), Storage::disk($disk)->path($rutaDespues) )){
             $response = response()->json(['message' => 'Se ha aplicado el nuevo nombre'], 200);
         } else {
             return response()->json(['error' => 'No se pudo renombrar'], 500);
@@ -1262,14 +1263,14 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
         }
 
-        list($disk1, $sourceFolder) = $this->diskRuta($sourceFolder);
-        list($disk2, $destinationFolder) = $this->diskRuta($destinationFolder);
+        list($diskSource, $sourceFolder) = $this->diskRuta($sourceFolder);
+        list($diskDest, $destinationFolder) = $this->diskRuta($destinationFolder);
 
-        if ($disk1 != $disk2) {
+        /*if ($disk1 != $disk2) {
             return response()->json(['error' => 'No se permite mover entre discos'], 403);
-        }
+        }*/
 
-        $disk = $disk1;
+        // $disk = $disk1;
 
         $items = $request->items;
 
@@ -1323,16 +1324,17 @@ class ArchivosController extends Controller
             }
 
             // Verificar que el item exista
-            if (!Storage::disk($disk)->exists($itemSource)) {
+            if (!Storage::disk($diskSource)->exists($itemSource)) {
                 $errorCount++;
                 $errorMessages[] = "El item '$itemSource' no existe";
                 continue;
             }
 
             // Verificar si el item es una carpeta
-            if (Storage::disk($disk)->directoryExists($itemSource)) {
+            if (Storage::disk($diskSource)->directoryExists($itemSource)) {
                 // Intentar mover la carpeta
-                if (Storage::move($itemSource, $itemDestination)) {
+                if(File::moveDirectory(Storage::disk($diskSource)->path($rutaAntes), Storage::disk($diskDest)->path($rutaDespues) )){
+                // if (Storage::move($itemSource, $itemDestination)) {
                     $successCount++;
                     // Agregar registro de movimiento a archivo de log
                     Log::info("Carpeta '$item' movida de '$sourceFolder' a '$destinationFolder'");
@@ -1346,7 +1348,7 @@ class ArchivosController extends Controller
             } else {
                 // Verificar si el archivo de destino ya existe
                 $counter = 1;
-                while (Storage::disk($disk)->exists($itemDestination)) {
+                while (Storage::disk($diskDest)->exists($itemDestination)) {
                     $itemName = pathinfo($item, PATHINFO_FILENAME);
                     $itemExtension = pathinfo($item, PATHINFO_EXTENSION);
                     $itemBaseName = $itemName . '_' . $counter;
@@ -1355,7 +1357,8 @@ class ArchivosController extends Controller
                     $counter++;
                 }
 
-                if (Storage::move($itemSource, $itemDestination)) {
+                if(File::move(Storage::disk($diskSource)->path($rutaAntes), Storage::disk($diskDest)->path($rutaDespues) )){
+                // if (Storage::move($itemSource, $itemDestination)) {
                     $successCount++;
                     // Agregar registro de movimiento a archivo de log
                     Log::info("Archivo '$item' movido de '$sourceFolder' a '$destinationFolder'");
@@ -1386,6 +1389,23 @@ class ArchivosController extends Controller
         return response()->json($response, $successCount > 0 ? 200 : 500);
     }
 
+/*
+    private function copy_storage($from, $to, $directory = '/')
+    {
+        foreach (Storage::disk($from)->files($directory) as $file) {
+            if (Storage::disk($to)->exists($file) && Storage::disk($to)->size($file) != Storage::disk($from)->size($file)) {
+                Storage::disk($to)->delete($file);
+            }
+            if (! Storage::disk($to)->exists($file)) {
+                Storage::disk($to)->writeStream($file, Storage::disk($from)->readStream($file));
+                echo "Copied: $file\n";
+            }
+        }
+        foreach (Storage::disk($from)->directories($directory) as $dir) {
+            $this->copy_storage($from, $to, $dir);
+        }
+    }
+*/
 
     /**
      * Copia un conjunto de archivos a otra carpeta
@@ -1409,14 +1429,14 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
         }
 
-        list($disk1, $sourceFolder) = $this->diskRuta($sourceFolder);
-        list($disk2, $destinationFolder) = $this->diskRuta($destinationFolder);
+        list($diskSource, $sourceFolder) = $this->diskRuta($sourceFolder);
+        list($diskDest, $destinationFolder) = $this->diskRuta($destinationFolder);
 
         /* if ($disk1 != $disk2) {
             return response()->json(['error' => 'No se permite mover entre discos'], 403);
         } */
 
-        $disk = $disk1;
+        // $disk = $diskSource;
 
         $items = $request->items;
 
@@ -1434,7 +1454,7 @@ class ArchivosController extends Controller
                 'error' => 'No tienes permisos para leer los archivos'
             ], 403);
         }
-        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination, $user)) {
+        if (!$nodoDestination || Gate::denies('escribir', $nodoDestination)) {
             return response()->json([
                 'error' => 'No tienes permisos para escribir'
             ], 403);
@@ -1450,16 +1470,21 @@ class ArchivosController extends Controller
             $itemDestination = $destinationFolder . "/" . $item;
 
             // Verificar que el item exista
-            if (!Storage::disk($disk)->exists($itemSource)) {
+            if (!Storage::disk($diskSource)->exists($itemSource)) {
                 $errorCount++;
-                $errorMessages[] = "El item '$itemSource' no existe";
+                $errorMessages[] = "El elemento '$itemSource' no existe";
                 continue;
             }
 
             // Verificar si el item es una carpeta
-            if (Storage::disk($disk)->directoryExists($itemSource)) {
+            if (Storage::disk($diskSource)->directoryExists($itemSource)) {
                 // Intentar copiar la carpeta
-                if (Storage::disk($disk)->copyDirectory($itemSource, $itemDestination)) {
+               // if($diskSource == $diskDest) 
+                 //   $result =  Storage::disk($disk)->copyDirectory($itemSource, $itemDestination);
+                //else {
+                    $result = File::copyDirectory(Storage::disk($diskSource)->path($itemSource), Storage::disk($diskDest)->path($itemDestination) );
+                //}
+                if ($result) {
                     $successCount++;
                     // Agregar registro de copia a archivo de log
                     Log::info("Carpeta '$item' copiada de '$sourceFolder' a '$destinationFolder'");
@@ -1468,9 +1493,9 @@ class ArchivosController extends Controller
                     $errorMessages[] = "No se pudo copiar la carpeta '$itemSource'";
                 }
             } else {
-                // Verificar si el archivo de destino ya existe
+                // Verificar si el archivo de destino ya existe, en tal caso le añadiremos un sufijo _n
                 $counter = 1;
-                while (Storage::disk($disk)->exists($itemDestination)) {
+                while (Storage::disk($diskDest)->exists($itemDestination)) {
                     $itemName = pathinfo($item, PATHINFO_FILENAME);
                     $itemExtension = pathinfo($item, PATHINFO_EXTENSION);
                     $itemBaseName = $itemName . '_' . $counter;
@@ -1478,11 +1503,22 @@ class ArchivosController extends Controller
                     $counter++;
                 }
 
-                if (Storage::copy($itemSource, $itemDestination)) {
+                // copia en un mismo disco
+                //if($diskSource == $diskDest) 
+                  //  $result = Storage::disk($diskSource)->copy($itemSource, $itemDestination);
+                //else {
+                    // copia entre discos
+                  //  $content = Storage::disk($diskSource)->get($itemSource);
+//                    $result = Storage::disk($diskDest)->put($itemDestination, $content);
+  //              }
+
+                $result = File::copy(Storage::disk($diskSource)->path($itemSource), Storage::disk($diskDest)->path($itemDestination) );
+
+                if ($result) {
                     $successCount++;
-                    // Agregar registro de copia a archivo de log
                     Log::info("Archivo '$item' copiado de '$sourceFolder' a '$destinationFolder'");
                 } else {
+                    // Agregar registro de copia a archivo de log
                     $errorCount++;
                     $errorMessages[] = "No se pudo copiar el archivo '$itemSource'";
                 }
