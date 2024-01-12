@@ -1,7 +1,7 @@
 <template>
     <div class="h-full flex flex-col relative">
         <div class="w-full sticky border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
-            :class="embed ? 'pt-8 top-0' : ' pt-16 top-4'">
+            :class="embed ? 'pt-[2rem] top-0' : ' pt-[4rem] top-[1.5rem]'">
 
             <div :class="embed ? '' : 'lg:container mx-auto'">
                 <Breadcrumb v-if="embed"  :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
@@ -1300,6 +1300,7 @@ watch(modalSubirArchivos, (value) => {
 // ORDENACION
 
 const ordenaciones = {
+    normal: 'Normal',
     fechaDesc: 'Recientes',
     fechaAsc: 'Antiguos',
     nombreAsc: 'A-Z',
@@ -1309,7 +1310,7 @@ const ordenaciones = {
 }
 
 
-const ordenarPor = ref("fechaDesc")
+const ordenarPor = ref("normal")
 
 const itemsOrdenados = computed(() => {
     // Separar las carpetas y los archivos en dos grupos
@@ -1318,6 +1319,12 @@ const itemsOrdenados = computed(() => {
     const archivos = items.filter(item => item.tipo !== 'carpeta');
 
     switch (ordenarPor.value) {
+
+        case 'normal':
+              // Ordenar los archivos por fecha de modificación descendente
+            carpetas.sort((a, b) => b.nombre.toUpperCase() - a.nombre.toUpperCase());
+            archivos.sort((a, b) => b.fecha_modificacion - a.fecha_modificacion);
+            return [...carpetas, ...archivos];
 
         case 'fechaAsc':
             // Ordenar los archivos por fecha de modificación ascendente
