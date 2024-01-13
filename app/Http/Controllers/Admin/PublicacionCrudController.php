@@ -137,7 +137,7 @@ class PublicacionCrudController extends CrudController
         CRUD::field('visibilidad')->type('visibilidad');
 
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
-        CRUD::field('published_at')->type('datetime')->attributes(['step'=>1]);
+        CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step'=>1]);
     }
 
     /**
