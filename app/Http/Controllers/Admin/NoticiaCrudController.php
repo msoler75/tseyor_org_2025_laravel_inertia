@@ -58,7 +58,7 @@ class NoticiaCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'updated_at',
             'label' => 'Modificado',
-            'type' => 'datetime',
+            'type' => 'datetime'
         ]);
 
 
@@ -114,6 +114,9 @@ class NoticiaCrudController extends CrudController
          CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
          CRUD::field('visibilidad')->type('visibilidad');
+
+         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
+        CRUD::field('published_at')->type('datetime')->attributes(['step'=>1]);
     }
 
 
