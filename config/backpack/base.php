@@ -126,14 +126,14 @@ return [
     // The password reset configuration for Backpack.
     // If null, the config.auth.defaults.passwords value will be used.
     // 'passwords' => 'backpack',
-    'passwords' => 'backpack',
+    'passwords' => '',
 
     // What kind of avatar will you like to show to the user?
     // Default: gravatar (automatically use the gravatar for their email)
     // Other options:
     // - null (generic image with their first letter)
     // - example_method_name (specify the method on the User model that returns the URL)
-    'avatar_type' => 'gravatar',
+    'avatar_type' => '',
 
     // Gravatar fallback options are 'identicon', 'monsterid', 'wavatar', 'retro', 'robohash', 'blank'
     // 'blank' will keep the generic image with the user first letter
