@@ -14,6 +14,9 @@ class Libro extends ContenidoBaseModel
     use Searchable;
     use EsCategorizable;
 
+    // incluye la categoría 'todos'
+    public $incluyeCategoriaTodos = "Todos";
+
     protected $fillable = [
         'titulo',
         'slug',

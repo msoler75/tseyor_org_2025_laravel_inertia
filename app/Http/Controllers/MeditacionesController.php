@@ -22,12 +22,15 @@ class MeditacionesController extends Controller
         } else {
             // obtiene los items sin busqueda
             $resultados = Meditacion::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
-                ->where('visibilidad', 'P');
+                ->where('visibilidad', 'P')
+                ->when($categoria === '_', function ($query) {
+                    $query->orderByRaw('LOWER(titulo)');
+                });
         }
 
         // parámetros
         if ($categoria)
-            $resultados = $resultados->where('categoria', $categoria);
+            $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%");
 
         $resultados = $resultados
             ->paginate(12)

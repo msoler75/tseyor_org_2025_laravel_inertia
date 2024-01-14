@@ -76,7 +76,7 @@ class TerminoCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            'titulo' => 'required|min:8',
+            'nombre' => 'required|min:1',
             'descripcion' => 'required|max:400'
         ]);
         // CRUD::setValidation(EntradaRequest::class);

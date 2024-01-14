@@ -62,7 +62,7 @@ class InformesController extends Controller
 
         // parámetros
         if ($categoria)
-            $resultados = $resultados->where('informes.categoria', $categoria);
+            $resultados = $resultados->where('informes.categoria', 'LIKE', "%$categoria%");
 
         if (!$buscar)
             $resultados = $resultados->orderBy('informes.updated_at', 'desc');

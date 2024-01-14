@@ -28,18 +28,19 @@
 
              <div
                 class="gap-3 xl:gap-0 w-full md:w-[21ch] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline md:sticky md:top-20">
-                <Link :href="(equipo?route('equipo.informes', equipo.slug):route('informes'))+(filtrado?`?buscar=${filtrado}`:'')" class="py-2 hover:text-primary transition-colors duration-250"
-                    :class="!categoriaActiva ? 'text-primary font-bold' : ''">
-                <div class="inline capitalize"><span v-if="filtrado">Todos</span><span v-else>Últimos</span> <small>({{total}})</small></div>
+
+                <Link :href="`${route('informes')}`" class="py-2 hover:text-primary transition-colors duration-250"
+                    :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
+                <span class="capitalize">Novedades</span>
                 </Link>
 
 
                 <div v-for="categoria of categorias" :key="categoria.nombre" class="flex"
-                    :class="categoriaActiva == categoria.nombre ? 'text-primary font-bold' : ''">
-                    <Link :href="(equipo?route('equipo.informes', equipo.slug):route('informes'))+`?categoria=${categoria.nombre}`+(filtrado?`&buscar=${filtrado}`:'')"
+                    :class="categoriaActiva == (categoria.valor || categoria.nombre) ? 'text-primary font-bold' : ''">
+                    <Link :href="(equipo?route('equipo.informes', equipo.slug):route('informes'))+`?categoria=${categoria.valor || categoria.nombre}`+(filtrado?`&buscar=${filtrado}`:'')"
                         class="py-2 hover:text-primary transition-colors duration-250">
                     <span class="capitalize">{{ categoria.nombre }}</span>
-                    <small v-if="categoria.total > 0"> ({{ categoria.total }})</small>
+                    <small> ({{ categoria.total }})</small>
                     </Link>
                 </div>
             </div>
@@ -58,7 +59,7 @@
                             <div v-html="contenido.titulo" class="capitalize lowercase font-bold"/>
                         <div v-if="filtrado" v-html="contenido.descripcion" class="mt-3"/>
                         <div class="flex gap-3 items-center mt-4 w-full">
-                            <span v-if="!categoriaActiva" class="badge badge-primary text-xs">{{ contenido.categoria }}</span>
+                            <span v-if="!categoriaActiva||categoriaActiva=='_'" class="badge badge-primary text-xs">{{ contenido.categoria }}</span>
                             <Link v-if="!equipo" class="badge text-xs" :href="route('equipo', contenido.slug_equipo)">{{ contenido.nombre_equipo }}</Link>
                             <TimeAgo class="text-xs ml-auto opacity-50 group-hover:opacity-100 transition-opacity duration-200" :date="contenido.updated_at" />
                         </div>
@@ -97,7 +98,7 @@ const listado = ref(props.listado);
 const total = computed(()=>{
     var n = 0
     for(var c of props.categorias)
-    n+=c.total
+    n+=c.valor=='_'?0:c.total
     return n
 })
 </script>

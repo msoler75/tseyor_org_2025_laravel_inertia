@@ -11,6 +11,19 @@ class SpanishTokenizer extends AbstractTokenizer implements TokenizerInterface
 
     public function tokenize($text, $stopwords = [])
     {
+        /* if(!is_string($text))
+        {
+            $backtrace = debug_backtrace();
+
+            foreach ($backtrace as $i => $call) {
+                if ($i === 0) {
+                    echo "Llamada actual: {$call['function']}\n";
+                } else {
+                    echo "Llamada {$i}: {$call['function']} en " . ($call['file'] ?? '')." línea ".($call['line'] ?? '') ."\n";
+                }
+            }
+            die;
+        } */
         $text = mb_strtolower($text);
         $text = $this->removeAccents($text); // Eliminar acentos, ñ y ç
         $split = preg_split($this->getPattern(), $text, -1, PREG_SPLIT_NO_EMPTY);
