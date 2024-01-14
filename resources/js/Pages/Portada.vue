@@ -2,7 +2,7 @@
     <FullPage>
 
         <Section :style="{
-            background: 'black url(/storage/imagenes/portada/earth-1756274.jpg) bottom',
+            background: 'black url(/almacen/medios/portada/earth-1756274.jpg) bottom',
             backgroundSize: 'cover'
             }" data-theme="winter">
             <Hero title="Contacto Extraterrestre" xsrcImage="/storage/imagenes/portada/unidad.jpg" :href="route('cursos')"
@@ -17,7 +17,7 @@
             <Hero title="El proceso de autodescubrimiento"
                 subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad."
                 :href="route('cursos')" buttonLabel="Curso gratuito"
-                srcImage="/storage/imagenes/portada/1560780877_017869_1560780990_noticia_normal_recorte1.jpg"
+                srcImage="/almacen/medios/portada/1560780877_017869_1560780990_noticia_normal_recorte1.jpg"
                 textClass="container" imageSideClass="bg-right" full cover />
         </Section>
 
@@ -25,7 +25,7 @@
             <Hero title="Los Guías Estelares"
                 subtitle="Recibimos las referencias de nuestros tutores de la Confederación de Mundos Habitados de la Galaxia"
                 :href="route('guias')" buttonLabel="Guías Estelares"
-                srcImage="/storage/imagenes/portada/todos-los-guias-compressor.jpg" textClass="container" full cover
+                srcImage="/almacen/medios/portada/todos-los-guias-compressor.jpg" textClass="container" full cover
                 image-right />
         </Section>
 

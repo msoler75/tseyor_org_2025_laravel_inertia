@@ -19,7 +19,10 @@ class LibrosController extends Controller
 
         $resultados = $categoria ?
             Libro::where('categoria', 'LIKE', "%$categoria%")
-            ->paginate(12)->appends(['categoria' => $categoria])
+            ->when($categoria === '_', function ($query) {
+                $query->orderByRaw('LOWER(titulo)');
+            })
+            ->paginate(20)->appends(['categoria' => $categoria])
             : ($buscar ?
                 Libro::search($buscar)->paginate(10)
                 ->appends(['buscar' => $buscar])
@@ -29,7 +32,7 @@ class LibrosController extends Controller
                 */
 
                 :
-                Libro::latest()->paginate(10)
+                Libro::latest()->paginate(20)
             );
 
             if($buscar)

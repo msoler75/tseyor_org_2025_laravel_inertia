@@ -14,6 +14,9 @@ class Meditacion extends ContenidoBaseModel
     use Searchable;
     use EsCategorizable;
 
+    // incluye la categoría 'todas'
+    public $incluyeCategoriaTodos = "Todas";
+
     protected $table = 'meditaciones';
 
     protected $fillable = [

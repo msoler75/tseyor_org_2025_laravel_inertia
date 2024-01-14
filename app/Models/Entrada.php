@@ -9,6 +9,7 @@ use App\Models\ContenidoBaseModel;
 class Entrada extends ContenidoBaseModel
 {
     use CrudTrait;
+
     protected $fillable = [
         'titulo',
         'slug',

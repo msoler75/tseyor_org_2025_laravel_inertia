@@ -87,6 +87,9 @@ trait EsCategorizable
             return (object) ['nombre' => $nombre, 'total' => $total];
         }, array_keys($c), $c);
 
+        if($this->incluyeCategoriaTodos)
+            array_unshift($c, ['nombre' => $this->incluyeCategoriaTodos, 'valor'=>'_', 'total' => count($items)]);
+
         return $c;
     }
 

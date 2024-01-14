@@ -13,6 +13,9 @@ class Normativa extends ContenidoBaseModel
     use Searchable;
     use EsCategorizable;
 
+    // incluye la categoría 'todas'
+    public $incluyeCategoriaTodos = "Todas";
+
     protected $fillable = [
         'titulo',
         'slug',

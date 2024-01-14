@@ -27,7 +27,11 @@ class NormativasController extends Controller
 
         // parámetros
         if ($categoria)
-            $resultados = $resultados->where('categoria', $categoria);
+            $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%")
+            ->when($categoria === '_', function ($query) {
+                $query->orderByRaw('LOWER(titulo)');
+            });
+
 
         $resultados = $resultados
             ->paginate(12)
