@@ -2,7 +2,7 @@
     <div class="w-full relative py-12" id="myform" :style="{
         'background-size': 'cover',
         'background-attachment': 'fixed',
-        background: 'black url(/storage/imagenes/space.jpg) repeat'
+        background: 'black url(/almacen/medios/fondos/space.jpg) repeat'
     }">
 
         <div class="container mx-auto flex justify-between items-center mb-20 text-white">

@@ -16,7 +16,7 @@ export const sections = [
         items: [
             { label: "Comunicados", route: 'comunicados' },
             { label: "Libros", route: 'libros' },
-            { label: "Donar", route: 'novedades' },
+            { label: "Donar", url: 'donar' },
             { label: "Noticias", route: 'noticias' },
             { label: "Curso Holístico", route: 'cursos' },
             { label: "Quiénes Somos", route: 'quienes-somos' },

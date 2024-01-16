@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
+
 class Pagina extends ContenidoBaseModel
 {
     use CrudTrait;

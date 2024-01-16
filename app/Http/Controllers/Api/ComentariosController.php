@@ -12,9 +12,10 @@ class ComentariosController extends Controller
     public function index(Request $request)
     {
         // funcionan ambos métodos
-        // $user = auth()->user();
         // $user = $request->user();
         // dd($user);
+
+
 
         $url = $request->input('url') ?? "";
 

@@ -31,7 +31,7 @@
                     <TimeAgo :date="guia.updated_at" />
                 </p>
                 <div class="mb-4"></div>
-                <tabs>
+                <tabs  :options="{ disableScrollBehavior: true }">
                     <tab v-for="seccion, index of secciones" :key="index" :name="seccion.titulo">
                         <div class="prose" v-html="MarkdownToHtml(seccion.texto)"></div>
                     </tab>

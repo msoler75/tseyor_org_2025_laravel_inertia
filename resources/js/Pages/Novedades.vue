@@ -49,7 +49,8 @@ const traducciones = {
     paginas: 'páginas',
     guias: 'guías estelares',
     terminos: 'glosario',
-    lugares: 'lugares de la galaxia'
+    lugares: 'lugares de la galaxia',
+    entradas: 'blogs'
 }
 
 function traducir(col) {

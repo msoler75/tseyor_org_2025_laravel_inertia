@@ -11,7 +11,7 @@
         <Section :style="{
             'background-size': 'cover',
             'background-attachment': 'fixed',
-            background: 'black url(/storage/imagenes/space.jpg) repeat'
+            background: 'black url(/almacen/medios/fondos/space.jpg) repeat'
         }">
             <VideoPlayer class="" videoUrl="https://www.youtube.com/embed/AkOZbfGdXbU" />
         </Section>
