@@ -3,7 +3,7 @@
         <div class="bg-base-200 p-5 flex flex-col gap-5 select-none">
             <h3>Solicitudes de ingreso</h3>
 
-            <tabs :options="{ useUrlFragment: false }">
+            <tabs  :options="{ disableScrollBehavior: true }" :options="{ useUrlFragment: false }">
                 <tab :name="`Solicitudes pendientes (${numPendientes})`">
 
                     <div v-if="equipo.solicitudesPendientes.length"

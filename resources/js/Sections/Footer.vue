@@ -6,7 +6,7 @@
                     <h3 class="text-lg font-bold">{{ section.title }}</h3>
                     <ul class="list-none">
                         <li v-for="(item, i) in section.items" :key="i">
-                            <a :href="route(item.route)" class="text-white">{{ item.label }}</a>
+                            <a :href="item.route?route(item.route):item.url" class="text-white">{{ item.label }}</a>
                         </li>
                     </ul>
                 </div>

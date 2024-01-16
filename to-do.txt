@@ -1,3 +1,9 @@
+Falta: sección Muul - Divulgación - tarjeta de visita
+
+Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
+
+Creación de eventos por los usuarios autorizados
+
 
 tailwindcss  -> after:content-['_↗']
 Ejemplo:

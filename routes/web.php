@@ -261,7 +261,11 @@ Route::put('equipos/{idEquipo}/{idUsuario}/remover', [EquiposController::class, 
 Route::put('equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
 
 
+// comentarios
 
+
+Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comentarios');
+Route::post('/comentarios', [ComentariosController::class, 'create'])->name('comentario.nuevo');
 
 Route::get('phpinfo', function () {
     return phpinfo();
@@ -271,18 +275,6 @@ Route::get('phpinfo', function () {
 Route::get('asociacion', 'App\Http\Controllers\PaginasController@show')->name('asociacion');
 
 Route::get('{ruta}', 'App\Http\Controllers\PaginasController@show')->where('ruta', '[a-z0-9\-]+')->name('pagina');
-
-// comentarios
-
-
-Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comentarios');
-
-Route::middleware(['web'])->group(function () {
-    Route::post('/comentarios', [ComentariosController::class, 'create'])->name('comentario.nuevo');
-
-
-})
-    ->middleware(['auth']);
 
 
 /* Route::fallback(function () {

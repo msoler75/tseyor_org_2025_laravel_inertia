@@ -4,7 +4,7 @@
         <form class="bg-base-200 p-5 select-none" @submit.prevent="guardarConfiguracion">
             <h3>Configuración del Equipo</h3>
 
-            <tabs ref="tabsElem" :options="{ useUrlFragment: false }">
+            <tabs  :options="{ disableScrollBehavior: true }" ref="tabsElem" :options="{ useUrlFragment: false }">
                 <tab name="General" class="space-y-6">
 
                     <div>

@@ -55,13 +55,11 @@ class Contenido extends Model
      */
     public function toSearchableArray(): array
     {
-        // $coleccionesConDescripcion = ['paginas', 'centros', 'audios', 'guias', 'libros', 'lugares'];
-
         return [
             'id' => $this->id, // <- Always include the primary key
-            'title' => $this->titulo,
+            'titulo' => $this->titulo,
             // 'descripcion' => in_array($this->coleccion, $coleccionesConDescripcion) ? $this->descripcion : "",
-            'content' => $this->texto_busqueda,
+            'texto_busqueda' => $this->texto_busqueda,
         ];
     }
 }

@@ -51,8 +51,8 @@ class Termino extends ContenidoBaseModel
     /**
      * Función heredable de ContenidoBaseModel para la busqueda global
      */
-    public function getTextoContenidoBuscador()
+    /*public function getTextoContenidoBuscador()
     {
         return null;
-    }
+    }*/
 }

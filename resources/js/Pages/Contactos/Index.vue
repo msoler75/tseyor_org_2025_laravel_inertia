@@ -31,9 +31,8 @@
 
                 <SearchResultsHeader :results="listado" />
 
-                <tabs>
-                    <tab name="Mapa">
-
+                <tabs  :options="{ disableScrollBehavior: true }">
+                    <tab name="Mapa" >
                         <div ref="map" class="map-container"></div>
                     </tab>
 

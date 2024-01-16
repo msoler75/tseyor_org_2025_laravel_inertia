@@ -142,7 +142,7 @@ export default [
           items: [
             {
               title: "Libros para comenzar",
-              route: "terminos",
+              url: "comenzar",
               description: "Dónde comenzar en la lectura de Tseyor",
               icon: "ph:list-magnifying-glass-duotone",
             },
