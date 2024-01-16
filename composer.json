@@ -11,6 +11,7 @@
         "backpack/theme-tabler": "^1.0",
         "guzzlehttp/guzzle": "^7.7",
         "inertiajs/inertia-laravel": "^0.6.8",
+        "intervention/image": "^3.2",
         "jargoud/laravel-backpack-dropzone": "^3.0",
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^3.2",

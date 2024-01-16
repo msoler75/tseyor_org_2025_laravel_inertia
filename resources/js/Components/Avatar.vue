@@ -20,7 +20,7 @@ const props = defineProps({
 })
 
 const name = computed(() => props.user.name || props.user.nombre)
-const image = computed(() => props.user.avatar || props.user.profile_photo_path || props.user.imagen)
+const image = computed(() => props.user.avatar || props.user.profile_photo_url || props.user.imagen)
 
 const imageClass=computed(()=>{
     if(props.big) return 'w-32 h-32'

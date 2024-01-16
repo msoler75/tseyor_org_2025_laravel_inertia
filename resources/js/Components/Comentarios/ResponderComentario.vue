@@ -52,7 +52,7 @@ const autor = computed(() => (
     {
         id: user.id,
         nombre: user.name,
-        imagen: user.profile_photo_path
+        imagen: user.profile_photo_url
     }
 ))
 
