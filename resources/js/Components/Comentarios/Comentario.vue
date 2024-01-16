@@ -75,7 +75,7 @@ const nuevoAutor = computed(() => user ?
     {
         id: user.id,
         nombre: user.name,
-        imagen: user.profile_photo_path
+        imagen: user.profile_photo_url
     } : {
         id: 0,
         nombre: "",
