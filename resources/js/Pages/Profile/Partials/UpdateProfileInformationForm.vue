@@ -17,6 +17,14 @@ const form = useForm({
 const verificationLinkSent = ref(null);
 const photoPreview = ref(null);
 const photoInput = ref(null);
+const saved = ref(true)
+
+watch(() => form.name, () => {
+    saved.value = false
+})
+watch(() => form.email, () => {
+    saved.value = false
+});
 
 const updateProfileInformation = () => {
     if (photoInput.value) {
@@ -26,7 +34,10 @@ const updateProfileInformation = () => {
     form.post(route('user-profile-information.update'), {
         errorBag: 'updateProfileInformation',
         preserveScroll: true,
-        onSuccess: () => clearPhotoFileInput(),
+        onSuccess: () => {
+            clearPhotoFileInput(),
+            saved.value = true
+        }
     });
 };
 
@@ -47,6 +58,7 @@ const updatePhotoPreview = () => {
 
     reader.onload = (e) => {
         photoPreview.value = e.target.result;
+        saved.value = false
     };
 
     reader.readAsDataURL(photo);
@@ -173,8 +185,9 @@ const clearPhotoFileInput = () => {
                 Guardado.
             </ActionMessage>
 
-            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Guardar
+            <PrimaryButton :disabled="form.processing||saved">
+                <Spinner v-if="form.processing"/>
+                {{form.processing?'Guardando':'Guardar'}}
             </PrimaryButton>
         </template>
     </FormSection>

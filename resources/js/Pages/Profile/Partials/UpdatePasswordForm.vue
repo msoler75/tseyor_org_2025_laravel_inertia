@@ -2,14 +2,9 @@
 
 import { useForm } from '@inertiajs/vue3';
 
-
-
-
-
-
-
 const passwordInput = ref(null);
 const currentPasswordInput = ref(null);
+const saved = ref(true)
 
 const form = useForm({
     current_password: '',
@@ -17,11 +12,18 @@ const form = useForm({
     password_confirmation: '',
 });
 
+watch(() => form.current_password, () => {
+    saved.value = false
+})
+
 const updatePassword = () => {
     form.put(route('user-password.update'), {
         errorBag: 'updatePassword',
         preserveScroll: true,
-        onSuccess: () => form.reset(),
+        onSuccess: () => {
+            form.reset()
+            saved.value = true
+        },
         onError: () => {
             if (form.errors.password) {
                 form.reset('password', 'password_confirmation');
@@ -40,16 +42,16 @@ const updatePassword = () => {
 <template>
     <FormSection @submitted="updatePassword">
         <template #title>
-            Update Password
+            Aquí puedes cambiar contraseña
         </template>
 
         <template #description>
-            Ensure your account is using a long, random password to stay secure.
+            Rellena los campos si quieres cambiar tu contraseña. Asegúrate que estás usando una contraseña larga y variada para proteger tu cuenta.
         </template>
 
         <template #form>
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="current_password" value="Current Password" />
+                <InputLabel for="current_password" value="Contraseña actual" />
                 <TextInput
                     id="current_password"
                     ref="currentPasswordInput"
@@ -62,7 +64,7 @@ const updatePassword = () => {
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="password" value="New Password" />
+                <InputLabel for="password" value="Nueva contraseña" />
                 <TextInput
                     id="password"
                     ref="passwordInput"
@@ -75,7 +77,7 @@ const updatePassword = () => {
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
+                <InputLabel for="password_confirmation" value="Confirmar nueva contraseña" />
                 <TextInput
                     id="password_confirmation"
                     v-model="form.password_confirmation"
@@ -89,11 +91,12 @@ const updatePassword = () => {
 
         <template #actions>
             <ActionMessage :on="form.recentlySuccessful" class="mr-3">
-                Saved.
+                Guardado.
             </ActionMessage>
 
-            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Save
+            <PrimaryButton :disabled="form.processing||saved">
+                <Spinner v-if="form.processing"/>
+                {{form.processing?'Guardando':'Guardar'}}
             </PrimaryButton>
         </template>
     </FormSection>
