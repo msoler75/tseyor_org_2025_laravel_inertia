@@ -7,7 +7,7 @@
                     <!-- body -->
                     <div class="card bg-base-100 shadow p-3 gap-3 w-full">
                         <div class="w-full flex justify-between">
-                            <strong>{{ autor.nombre }}</strong>
+                            <strong>autor.nombre: {{ autor?.nombre }}</strong>
                             <TimeAgo :fecha="fecha" class="text-xs" />
                         </div>
                         <div>{{ texto }}</div>

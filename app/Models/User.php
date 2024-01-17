@@ -33,6 +33,30 @@ class User extends Authenticatable
     use HasRoles;
     use Searchable;
 
+    // cuando se crea un usuario, llenaremos el campo "frase" con una frase aleatoria desde un archivo de texto
+    public static function boot() {
+        parent::boot();
+
+        static::saved(function ($user) {
+            // rellena la frase, si está está vacía
+            if(trim($user)!="") return;
+
+            // archivo está en @/resources/txt/frases_cortas.txt
+            $file = base_path('resources/txt/frases_cortas.txt');
+            $content = file_get_contents($file);
+            $frases = preg_split("/\r\n|\n|\r/", $content, -1, PREG_SPLIT_NO_EMPTY);
+            // mezclamos el orden de las frases
+            shuffle($frases);
+            $loops = count($frases);
+            do {
+                $frase = array_pop($frases);
+                // comprobamos que la frase no la tiene otro usuario
+            } while($loops-- > 0 && User::where('frase', $frase)->count() > 0);
+            $user->frase = $frase;
+            $user->save();
+        });
+    }
+
     /**
      * The attributes that are mass assignable.
      *
