@@ -29,7 +29,7 @@
 
             <div class="w-full flex-grow">
 
-                <SearchResultsHeader :results="listado" />
+                <SearchResultsHeader v-if="!paisActivo" :results="listado" />
 
                 <tabs :options="{ disableScrollBehavior: true }">
                     <tab name="Mapa">
