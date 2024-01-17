@@ -632,6 +632,9 @@ class ArchivosController extends Controller
         if (Storage::disk($disk)->directoryExists($ruta))
             abort(403, 'Acceso no permitido.');
 
+        if(!Storage::disk($disk)->exists($ruta))
+            abort(404);
+
         if ($disk != 'public') {
             // obtenemos el nodo correspondiente
             $nodo = Nodo::desde($ruta);
@@ -640,6 +643,7 @@ class ArchivosController extends Controller
             if (Gate::denies('leer', $nodo))
                 abort(403, 'No tienes permisos.');
         }
+
 
 
         $path = Storage::disk($disk)->path($ruta);
@@ -1479,7 +1483,7 @@ class ArchivosController extends Controller
             // Verificar si el item es una carpeta
             if (Storage::disk($diskSource)->directoryExists($itemSource)) {
                 // Intentar copiar la carpeta
-               // if($diskSource == $diskDest) 
+               // if($diskSource == $diskDest)
                  //   $result =  Storage::disk($disk)->copyDirectory($itemSource, $itemDestination);
                 //else {
                     $result = File::copyDirectory(Storage::disk($diskSource)->path($itemSource), Storage::disk($diskDest)->path($itemDestination) );
@@ -1504,7 +1508,7 @@ class ArchivosController extends Controller
                 }
 
                 // copia en un mismo disco
-                //if($diskSource == $diskDest) 
+                //if($diskSource == $diskDest)
                   //  $result = Storage::disk($diskSource)->copy($itemSource, $itemDestination);
                 //else {
                     // copia entre discos

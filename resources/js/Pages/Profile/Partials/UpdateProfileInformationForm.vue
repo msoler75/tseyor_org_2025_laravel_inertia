@@ -91,7 +91,7 @@ const clearPhotoFileInput = () => {
                 >
 
                 <InputLabel for="photo" value="Imagen de perfil" />
-{{ user.profile_photo_url }}
+
                 <!-- Current Profile Photo -->
                 <div v-show="! photoPreview" class="mt-2">
                     <img :src="user.profile_photo_url" :alt="user.name" class="rounded-full h-20 w-20 object-cover"/>
