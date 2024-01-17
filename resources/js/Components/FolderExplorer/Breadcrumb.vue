@@ -17,8 +17,9 @@ const items = computed(() => {
     if (props.rootLabel)
         r.push({ label: props.rootLabel, url: props.rootUrl })
 
-    const parts = props.path.split('/').filter(x => !!x)
+    const parts = props.path?.split('/').filter(x => !!x)
     let url = ''
+    if(parts)
     for (var part of parts) {
         url += '/' + part
         r.push({ label: part, url: url })
@@ -49,7 +50,7 @@ function handleClick(item, event) {
                 <Link v-if="links && index < items.length - 1" :href="item.url" @click.native.capture="handleClick(item, $event)"
                     class="whitespace-nowrap max-w-[50vw] truncate hover:underline py-2" :title="item.label"
                     :class="!links ? 'pointer-events-none' : ''">{{ item.label }}</Link>
-                <span v-else class="opacity-80">{{ item.label }}</span>
+                <span v-else class="opacity-80 py-2">{{ item.label }}</span>
             </li>
         </template>
     </ol>

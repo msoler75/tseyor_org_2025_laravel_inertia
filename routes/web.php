@@ -78,7 +78,8 @@ Route::get('archivos{ruta}', [ArchivosController::class, 'archivos'])->where(['r
 Route::get('filemanager{ruta}', [ArchivosController::class, 'filemanager'])->where(['ruta' => '(\/.*)?'])->name('filemanager');
 
 Route::get('almacen{ruta}', [ArchivosController::class, 'descargar'])->where(['ruta' => '(\/.+)?'])->name('storage');
-Route::get('mis_archivos', [ArchivosController::class, 'myFiles'])->name('mis_archivos');
+Route::get('mis_archivos', [ArchivosController::class, 'archivos'])->name('mis_archivos');
+Route::get('archivos_raiz', [ArchivosController::class, 'archivos'])->name('archivos_raiz');
 
  // manejo de archivos
  Route::post('files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');

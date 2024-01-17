@@ -66,6 +66,8 @@ class Nodo extends Model
      */
     public static function desde($ruta)
     {
+        if($ruta=='mis_archivos') return null;
+
         $nodo = Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             ->leftJoin('users', 'users.id', '=', 'user_id')
             ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
@@ -81,6 +83,20 @@ class Nodo extends Model
             $nodo->propietario_grupo = "admin";
         }
         return $nodo;
+    }
+
+
+     /**
+     * Obtiene todos los nodos de un usuario
+     */
+    public static function de($idUser)
+    {
+        return Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+            ->leftJoin('users', 'users.id', '=', 'user_id')
+            ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
+            ->where('nodos.user_id', '=', $idUser)
+            ->orderByRaw('LENGTH(nodos.ruta) DESC')
+            ->get();
     }
 
 
