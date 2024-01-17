@@ -45,28 +45,15 @@ const submit = () => {
 
             <div>
                 <InputLabel for="email" value="Correo electrónico" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+                <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full" required autofocus
+                    autocomplete="username" />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
             <div class="mt-4">
                 <InputLabel for="password" value="Contraseña" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="current-password"
-                />
+                <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full" required
+                    autocomplete="current-password" />
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
@@ -77,20 +64,24 @@ const submit = () => {
                 </label>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                    ¿Olvidaste tu contraseña?
+            <div class="flex items-center justify-between mt-4">
+                <Link v-if="canResetPassword" :href="route('password.request')"
+                    class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+                ¿Olvidaste tu contraseña?
                 </Link>
 
-                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Iniciar Sesión
+                <PrimaryButton class="ml-4" :disabled="form.processing">
+                    <Spinner v-if="form.processing" />
+                    {{ form.processing ? 'Validando' : 'Iniciar sesión' }}
                 </PrimaryButton>
+
             </div>
 
             <div class="text-center mt-10">
-                No dispongo de cuenta 
-                <Link href="/register" class="underline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                    Registrarme
+                No dispongo de cuenta
+                <Link href="/register"
+                    class="underline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+                Registrarme
                 </Link>
             </div>
         </form>
