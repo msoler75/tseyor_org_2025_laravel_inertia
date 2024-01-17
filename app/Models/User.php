@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
-// use Laravel\Jetstream\HasTeams;
+use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Permiso;
 use App\Models\Equipo;
@@ -27,7 +27,7 @@ class User extends Authenticatable
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
-    // use HasTeams;
+    use HasTeams;
     use Notifiable;
     use TwoFactorAuthenticatable;
     use HasRoles;
@@ -131,5 +131,20 @@ class User extends Authenticatable
             ];
         });
         return $gruposWithoutPivot->toJson();
+    }
+
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            // <- Always include the primary key
+            'nombre' => $this->name,
+        ];
     }
 }
