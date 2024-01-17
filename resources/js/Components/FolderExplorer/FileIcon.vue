@@ -13,12 +13,12 @@ const props = defineProps({
     link: {type: Boolean, default: true}
 })
 
-const href = computed(() => props.url && !props.url.startsWith('/') ? '/' + props.url : props.url)
+const href = computed(() => props.url && !props.url?.startsWith('/') ? '/' + props.url : props.url)
 
-const fileName = computed(() => props.url.substring(props.url.lastIndexOf('/') + 1))
+const fileName = computed(() => props.url?.substring(props.url.lastIndexOf('/') + 1))
 
 const iconType = computed(() => {
-    const ext = fileName.value.split('.').pop().toLowerCase();
+    const ext = fileName.value?.split('.').pop().toLowerCase();
     switch (ext) {
     // Audio
     case 'mp3':
@@ -96,7 +96,7 @@ const iconType = computed(() => {
 })
 
 const color = computed(() => {
-    const ext = fileName.value.split('.').pop().toLowerCase();
+    const ext = fileName.value?.split('.').pop().toLowerCase();
     switch (ext) {
         // audio:
         case '3ga':

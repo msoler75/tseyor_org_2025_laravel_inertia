@@ -3,7 +3,10 @@
         <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario" @updated="reloadFolder"
             @disk="onDisk" @folder="onFolder" @file="onFile" :embed="true" :ruta="ruta" rutaBase="" :cargando="cargando"
             class="max-h-[calc(100vh-160px)]"
-            :contentClass="contentClass" />
+            :contentClass="contentClass"
+            rootLabel="web:"
+            rootUrl=""
+            />
 
         <Modal :show="mostrandoArchivo" @close="mostrandoArchivo = null" maxWidth="xl">
 

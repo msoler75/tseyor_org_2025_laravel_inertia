@@ -15,7 +15,8 @@
             </div>
         </template>
         <div v-else class="w-fit ml-auto">
-            <a :href="adminUrl" class="no-underline hover:underline">Administrar</a>
+            <div v-if="soloInforma">ERES ADMINISTRADOR</div>
+            <a v-else :href="adminUrl" class="no-underline hover:underline">Administrar</a>
         </div>
     </div>
     <div v-else-if="isDraft" class="alert alert-warning w-fit ml-auto">
@@ -36,6 +37,7 @@ const props = defineProps({
     necesita: { type: [String, Array], required: true },
     modelo: String,
     contenido: Object,
+    soloInforma: Boolean
 })
 
 const editor = computed(()=>

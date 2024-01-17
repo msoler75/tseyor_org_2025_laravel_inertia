@@ -53,9 +53,10 @@ class NodoCrudController extends CrudController
          $this->crud->addColumn([
             'name' => 'ruta',
             'label' => 'Ruta',
+            'limit'=>200
         ]);
 
-        $this->crud->addColumn([
+        /*$this->crud->addColumn([
             'label' => 'Creado en',
             'type' => 'datetime',
             'name' => 'created_at',
@@ -93,6 +94,7 @@ class NodoCrudController extends CrudController
                     ->orderBy('users.name', $columnDirection)->select('nodos.*');
             },
         ]);
+        */
     }
 
     /**

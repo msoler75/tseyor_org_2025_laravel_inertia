@@ -4,11 +4,9 @@
             :class="embed ? 'pt-[2rem] top-0' : ' pt-[4rem] top-[1.5rem]'">
 
             <div :class="embed ? '' : 'lg:container mx-auto'">
-                <Breadcrumb v-if="embed"  :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
+                <Breadcrumb  :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
                     title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5"
-                    rootLabel="web:" rootUrl=""/>
-                <Breadcrumb v-else  :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
-                    title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5" />
+                    :rootLabel="rootLabel" :rootUrl="rootUrl"/>
             </div>
 
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
@@ -165,10 +163,10 @@
                 </div>
 
             </div>
-           
+
         </div>
 
-        
+
         <div class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14 min-h-[300px]" :class="contentClass">
 
             <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
@@ -200,14 +198,14 @@
                                 Permisos</th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Propietario</th>
-                            <th v-if="mostrandoResultados">Carpeta</th>
+                            <th v-if="mostrandoResultados||mostrarRutas||rutaActual=='mis_archivos'">Ubicación</th>
                             <th class="hidden md:table-cell"></th>
                         </tr>
                     </thead>
                     <TransitionGroup tag="tbody" name="files">
                         <tr v-for="item in itemsMostrar"
                             :key="item.ruta"
-                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '') + (!seleccionando || item.puedeLeer ? '' : 'opacity-50 pointer-events-none')"
+                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '') + (!seleccionando || esAdministrador || item.puedeLeer ? '' : 'opacity-50 pointer-events-none')"
                             >
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
@@ -231,7 +229,7 @@
                                 <div class="flex flex-col">
                                     <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
-                                        @click="clickDisk(item, $event)" :is-link="false" />
+                                        @click="clickDisk(item, $event)" :is-link="!embed" />
                                     <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
                                         :class="seleccionando ? 'pointer-events-none' : ''"
@@ -254,7 +252,7 @@
                                 v-on:touchend.passive="ontouchend(item)">
                                 <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
                                     class="cursor-pointer py-3 hover:underline"
-                                    @click="clickDisk(item, $event)" :is-link="false" />
+                                    @click="clickDisk(item, $event)" :is-link="!embed" />
                                 <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
                                     class="cursor-pointer py-3 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
@@ -286,8 +284,8 @@
                                 {{ item.propietario?.usuario.nombre || '...' }}/{{ item.propietario?.grupo.nombre || '...'
                                 }}
                             </td>
-                            <td v-if="mostrandoResultados">
-                                {{ item.carpeta }}
+                            <td v-if="mostrandoResultados||mostrarRutas||rutaActual=='mis_archivos'">
+                                /{{ item.carpeta }}
                             </td>
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48" v-if="item.tipo!=='disco'" :class="!info_cargada?'opacity-80 pointer-events-none':''">
@@ -300,21 +298,21 @@
                                     <template #content>
                                         <div class="bg-base-100">
 
-                                            <div v-if="item.puedeEscribir && !seleccionando"
+                                            <div v-if="(esAdministrador || item.puedeEscribir) && !seleccionando"
                                                 class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                                 @click="abrirModalRenombrar(item)">
                                                 <Icon icon="ph:cursor-text-duotone" />
                                                 <span>Renombrar</span>
                                             </div>
 
-                                            <div v-if="item.puedeEscribir && !seleccionando && !item.padre"
+                                            <div v-if="(esAdministrador || item.puedeEscribir) && !seleccionando && !item.padre"
                                                 class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                 @click="abrirEliminarModal(item)">
                                                 <Icon icon="ph:trash-duotone" />
                                                 <span>Eliminar</span>
                                             </div>
 
-                                            <div v-if="item.puedeLeer && !buscandoCarpetaDestino && !item.padre"
+                                            <div v-if="(esAdministrador || item.puedeLeer) && !buscandoCarpetaDestino && !item.padre"
                                                 class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                 @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                 <template v-if="!item.seleccionado">
@@ -357,7 +355,7 @@
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')">
                             <div v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100"
-                                :class="item.puedeLeer ? '' : 'opacity-40 pointer-events-none'">
+                                :class="esAdministrador || item.puedeLeer  ? '' : 'opacity-40 pointer-events-none'">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </div>
@@ -422,7 +420,7 @@
                                                     <span>Eliminar</span>
                                                 </div>
 
-                                                <div v-if="item.puedeLeer && !buscandoCarpetaDestino && !item.padre"
+                                                <div v-if="(esAdministrador ||  item.puedeLeer) && !buscandoCarpetaDestino && !item.padre"
                                                     class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                     @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                     <template v-if="!item.seleccionado">
@@ -465,7 +463,7 @@
                 <div v-else-if="mostrandoResultados && !resultadosBusqueda.length">No hay resultados</div>
             </div>
         </div>
-    
+
 
          <!--  Botones de Operaciones -->
          <teleport to="body">
@@ -657,7 +655,7 @@
                             <th class="align-top">Permisos</th>
                             <td>
                                 <PermisosNodo :es-carpeta="item.tipo != 'archivo'" :permisos="item.permisos" />
-                                <button v-if="item.puedeEscribir && item.propietario?.usuario.id == user?.id"
+                                <button v-if="esAdministrador || item.propietario?.usuario.id == user?.id"
                                     class="my-2 btn btn-xs btn-secondary text-xs"
                                     @click="abrirModalCambiarPermisos(item)">Cambiar permisos</button>
                             </td>
@@ -673,7 +671,7 @@
                                 <div v-else>
                                     No hay
                                 </div>
-                                <button v-if="item.puedeEscribir && item.propietario?.usuario.id == user?.id"
+                                <button v-if="esAdministrador || item.propietario?.usuario.id == user?.id"
                                     class="my-2 btn btn-xs btn-secondary text-xs"
                                     @click="abrirModalCambiarAcl(item)">Cambiar acceso</button>
                             </td>
@@ -986,6 +984,11 @@ import { useFilesOperation } from '@/Stores/files';
 import { useSelectors } from '@/Stores/selectors'
 import { useDebounce } from '@vueuse/core';
 import { usePlayer } from '@/Stores/player'
+import {usePermisos} from '@/Stores/permisos'
+
+const permisos = usePermisos()
+
+const esAdministrador = computed(()=>!!permisos.permisos.filter(p=>p=='administrar archivos'))
 
 const props = defineProps({
     ruta: { type: String, required: true },
@@ -994,7 +997,10 @@ const props = defineProps({
     propietarioRef: Object,
     cargando: Boolean,
     embed: { type: Boolean, default: false },
-    contentClass: String
+    contentClass: String,
+    rootLabel: { type: String, require: false },
+    rootUrl: { type: String, require: false },
+    mostrarRutas: {type: Boolean, default: false}
 });
 
 const emit = defineEmits(['updated', 'disk', 'folder', 'file']);
@@ -1034,12 +1040,12 @@ function onKeyDown(event) {
 }
 
 // estamos en la raíz?
-const enRaiz = computed(()=>props.items[1]?.tipo==='disco')
+const enRaiz = computed(()=>props.items[1]?.tipo==='disco'||props.items[0].ruta=='mis_archivos')
 
 // puede editar la carpeta actual?
-const puedeEscribir = computed(() => itemsCopy.value.length ? itemsCopy.value[0].puedeEscribir : false)
-const puedeLeer = computed(() => itemsCopy.value.length ? itemsCopy.value[0].puedeLeer : false)
-const puedeMoverSeleccionados = computed(() => itemsSeleccionados.value.find(item => item.puedeEscribir))
+const puedeEscribir = computed(() => esAdministrador.value || (itemsCopy.value.length ? itemsCopy.value[0].puedeEscribir : false))
+const puedeLeer = computed(() => esAdministrador.value || (itemsCopy.value.length ? itemsCopy.value[0].puedeLeer : false))
+const puedeMoverSeleccionados = computed(() => esAdministrador.value || itemsSeleccionados.value.find(item => item.puedeEscribir))
 // ruta actual
 const rutaActual = computed(() => itemsCopy.value.length ? itemsCopy.value[0].ruta : '')
 
@@ -1814,7 +1820,7 @@ function clickFolder(item, event) {
         item.seleccionado = !item.seleccionado
         event.preventDefault()
     }
-else 
+else
     if (props.embed) {
         emit('folder', item)
         event.preventDefault()
@@ -1822,12 +1828,12 @@ else
 }
 
 function clickFile(item, event) {
-    console.log('clickFile', item) 
+    console.log('clickFile', item)
     if(seleccionando.value)  {
         item.seleccionado = !item.seleccionado
         event.preventDefault()
     }
-else 
+else
     if (props.embed) {
         emit('file', item)
         event.preventDefault()
