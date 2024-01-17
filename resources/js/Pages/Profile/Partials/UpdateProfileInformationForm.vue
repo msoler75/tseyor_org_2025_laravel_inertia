@@ -11,6 +11,7 @@ const form = useForm({
     _method: 'PUT',
     name: props.user.name,
     email: props.user.email,
+    frase: props.user.frase,
     photo: null,
 });
 
@@ -19,12 +20,9 @@ const photoPreview = ref(null);
 const photoInput = ref(null);
 const saved = ref(true)
 
-watch(() => form.name, () => {
+watch(() => form.name+form.email, () => {
     saved.value = false
 })
-watch(() => form.email, () => {
-    saved.value = false
-});
 
 const updateProfileInformation = () => {
     if (photoInput.value) {
@@ -84,11 +82,11 @@ const clearPhotoFileInput = () => {
 <template>
     <FormSection @submitted="updateProfileInformation">
         <template #title>
-            Información de perfil
+            Información de cuenta
         </template>
 
         <template #description>
-            Actualiza tu información de perfil y tu correo electrónico.
+            Actualiza tu información de cuenta y tu correo electrónico.
         </template>
 
         <template #form>

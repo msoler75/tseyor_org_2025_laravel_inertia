@@ -42,7 +42,7 @@ const updatePassword = () => {
 <template>
     <FormSection @submitted="updatePassword">
         <template #title>
-            Aquí puedes cambiar contraseña
+            Contraseña
         </template>
 
         <template #description>

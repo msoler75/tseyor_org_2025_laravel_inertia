@@ -2,13 +2,6 @@
 
 import { useForm } from '@inertiajs/vue3';
 
-
-
-
-
-
-
-
 const props = defineProps({
     sessions: Array,
 });
@@ -114,7 +107,7 @@ const closeModal = () => {
                             v-model="form.password"
                             type="password"
                             class="mt-1 block w-3/4"
-                            placeholder="Password"
+                            placeholder="Contraseña"
                             autocomplete="current-password"
                             @keyup.enter="logoutOtherBrowserSessions"
                         />
@@ -130,7 +123,6 @@ const closeModal = () => {
 
                     <PrimaryButton
                         class="ml-3"
-                        :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                         @click="logoutOtherBrowserSessions"
                     >
