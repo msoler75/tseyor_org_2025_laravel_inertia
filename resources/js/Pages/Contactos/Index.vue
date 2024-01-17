@@ -21,8 +21,8 @@
                 <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
                     :class="paisActivo == pais.nombre ? 'text-primary font-bold' : ''">
                     <Link :href="`${route('contactos')}?pais=${pais.codigo}`">
-                    <span class="capitalize">{{ pais.nombre }}</span>
-                    <small v-if="pais.total > 0">({{ pais.total }})</small>
+                    <span class="capitalize" :class="pais.codigo==paisActivo?'font-bold':''">{{ pais.nombre }}</span>
+                    <small v-if="pais.total > 0"> ({{ pais.total }})</small>
                     </Link>
                 </div>
             </div>
@@ -31,32 +31,23 @@
 
                 <SearchResultsHeader :results="listado" />
 
-                <tabs  :options="{ disableScrollBehavior: true }">
-                    <tab name="Mapa" >
+                <tabs :options="{ disableScrollBehavior: true }">
+                    <tab name="Mapa">
                         <div ref="map" class="map-container"></div>
                     </tab>
 
 
                     <tab name="Listado">
-                        <div v-if="listado.data.length > 0" class="grid gap-4"
-                            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
-                            <div v-for="contacto in listado.data" :key="contacto.id" class="card bg-base-100 shadow">
-                                <Image :src="contacto.imagen_url" :alt="contacto.nombre" class="h-48 object-cover w-full" />
-                                <div class="p-5 flex flex-col flex-grow">
-                                    <h2 class="text-lg font-bold mb-2">{{ contacto.nombre }}</h2>
-                                    <div class="my-4 badge badge-primary badge-outline">{{
-                                        contacto.pais }}</div>
-                                    <p class="text-xs">{{
-                                        contacto.poblacion }}</p>
-                                    <Link :href="route('contacto', contacto.slug)" class="btn mt-auto">
-                                    Ver contacto
-                                    </Link>
 
-                                    <p v-if="false" class="text-gray-600 mb-2 w-full text-xs text-right">
-                                        <TimeAgo :date="contacto.updated_at" />
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="grid gap-8"
+                            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(12rem, 1fr))` }">
+                            <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen_url"
+                                :href="route('contacto', contenido.slug)" imageClass="h-60"
+                                :tag="paisActivo ? '' : contenido.pais">
+                                <div
+                                    class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
+                                    {{ contenido.nombre }}</div>
+                            </CardContent>
                         </div>
 
                         <pagination class="mt-6" :links="listado.links" />

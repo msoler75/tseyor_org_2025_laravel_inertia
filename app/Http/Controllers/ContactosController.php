@@ -19,22 +19,25 @@ class ContactosController extends Controller
 
         $resultados = $pais ?
             Contacto::where('pais', '=', $pais)
+            ->where('visibilidad', 'P')
             ->paginate(50)->appends(['pais' => $pais])
             : ($buscar ? Contacto::where('nombre', 'like', '%' . $buscar . '%')
+                ->where('visibilidad', 'P')
                 ->orWhere('pais', 'like', '%' . $buscar . '%')
                 ->orWhere('poblacion', 'like', '%' . $buscar . '%')
                 ->paginate(50)->appends(['buscar' => $buscar])
                 :
-                Contacto::latest()->paginate(50)
+                Contacto::latest()->where('visibilidad', 'P')->paginate(50)
             );
 
         $paises = Contacto::selectRaw('pais as codigo, count(*) as total')
+            ->where('visibilidad', 'P')
             ->groupBy('pais')
             ->get();
 
         // Traducir el código ISO del país a su nombre correspondiente
-        foreach ($paises as $idx => $pais) {
-            $paises[$idx]["nombre"] = Countries::getCountry($pais["codigo"]);
+        foreach ($paises as $idx => $paisx) {
+            $paises[$idx]["nombre"] = Countries::getCountry($paisx["codigo"]);
         }
 
         foreach ($resultados as $idx => $centro) {
