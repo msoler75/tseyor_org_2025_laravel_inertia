@@ -1,5 +1,3 @@
-registro de usuarios peta
-
 Falta: sección Muul - Divulgación - tarjeta de visita
 
 Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas

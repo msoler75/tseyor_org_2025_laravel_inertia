@@ -55,4 +55,6 @@ class Contacto extends ContenidoBaseModel
         return $this->poblacion .", ". $this->NombrePais;
      }
 
+
+
 }
