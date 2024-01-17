@@ -64,6 +64,12 @@ class UsuariosController extends Controller
             ->withViewData(SEO::from($usuario));
     }
 
+    // guardamos cambios en un usuario
+    public function store(Request $request, $id) {
+        $user = User::findOrFail($id);
+        $user->update($request->all());
+        return response()->json($user, 200);
+    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////

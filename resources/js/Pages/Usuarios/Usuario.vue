@@ -17,9 +17,18 @@
                 </h1>
 
                 <div class="prose my-7">
-                    <blockquote v-if="usuario.frase">
-                        <p>{{ usuario.frase }}</p>
-                    </blockquote>
+                    <form @submit.prevent="onSubmit">
+                        <textarea class="w-full max-w-full" cols=160 v-if="editandoFrase" v-model="nuevaFrase"></textarea>
+                        <blockquote v-else>
+                            <p>{{ usuario.frase }}</p>
+                        </blockquote>
+                        <div v-if="user?.id==usuario.id"  class="w-full flex justify-center gap-4">
+                            <button v-if="!editandoFrase" class="btn btn-primary btn-sm" @click="editarFrase">Editar frase</button>
+                            <button v-if="!editandoFrase" class="btn btn-primary btn-sm" @click="generarFrase">Generar frase</button>
+                            <button type="submit" v-if="editandoFrase" class="btn btn-primary btn-sm" @click="guardarFrase">Guardar</button>
+                            <button v-if="editandoFrase" class="btn btn-error btn-sm" @click="cancelarFrase">Cancelar</button>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="flex flex-wrap justify-center gap-5">
@@ -92,6 +101,11 @@
 <script setup>
 import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage()
+const user = page.props.auth.user
+
 
 defineOptions({ layout: AppLayout })
 
@@ -124,6 +138,8 @@ const urlImage = computed(() => {
     return '/storage/' + image.value
 })
 
+const nuevaFrase = ref(props.usuario.frase)
+const editandoFrase = ref(false)
 
 const modalEliminarEquipo = ref(false)
 const equipoAEliminar = ref(null)
@@ -165,5 +181,39 @@ function agregarEquipo() {
             console.log({ err })
             error.value = "No se ha podido agregar el equipo."
         })
+}
+
+
+
+function editarFrase() {
+    nuevaFrase.value = props.usuario.frase
+    editandoFrase.value = true
+}
+
+function guardarFrase() {
+
+    axios.put(route('usuario.guardar', props.usuario.id), { frase: nuevaFrase.value })
+    .then(respuesta => {
+        reload()
+        editandoFrase.value = false
+        })
+        .catch(err => {
+            console.log({ err })
+            error.value = "No se ha podido editar la frase."
+        })
+}
+
+function generarFrase() {
+    nuevaFrase.value = ""
+    guardarFrase()
+}
+
+function cancelarFrase() {
+    editandoFrase.value = false
+}
+
+function onSubmit() {
+    if(editandoFrase.value)
+        guardarFrase()
 }
 </script>
