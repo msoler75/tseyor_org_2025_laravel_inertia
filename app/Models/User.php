@@ -39,7 +39,7 @@ class User extends Authenticatable
 
         static::saved(function ($user) {
             // rellena la frase, si está está vacía
-            if(trim($user)!="") return;
+            if(trim($user->frase)!="") return;
 
             // archivo está en @/resources/txt/frases_cortas.txt
             $file = base_path('resources/txt/frases_cortas.txt');
