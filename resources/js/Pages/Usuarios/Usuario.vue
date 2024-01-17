@@ -1,92 +1,92 @@
 <template>
-    <Sections>
+    <div class="pt-8">
 
-        <div class="flex justify-between items-center mb-20">
+        <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Usuarios</Back>
-            <AdminPanel modelo="user" necesita="administrar usuarios" :contenido="usuario"/>
+            <span></span>
+            <AdminPanel modelo="user" necesita="administrar usuarios" :contenido="usuario" />
         </div>
 
-        <Section class="container mx-auto flex flex-col items-center py-20">
-            <div class="avatar">
-                <div class="w-32 h-32 rounded-full">
-                    <Image :src="urlImage" :alt="`Imagen del usuario ${usuario.name || usuario.slug}`" />
+        <Sections>
+
+            <Section class="mx-auto flex flex-col items-center py-20">
+                <Avatar big :link="false" :user="usuario" />
+
+                <h1 class="text-center my-2">
+                    {{ usuario.name || usuario.slug }}
+                </h1>
+
+                <div class="prose my-7">
+                    <blockquote v-if="usuario.frase">
+                        <p>{{ usuario.frase }}</p>
+                    </blockquote>
                 </div>
-            </div>
 
-            <h1 class="text-center my-2">
-                {{ usuario.name || usuario.slug }}
-            </h1>
+                <div class="flex flex-wrap justify-center gap-5">
+                    <Link class="badge badge-neutral gap-2" v-for="equipo of usuario.equipos" :key="equipo.id"
+                        :href="route('equipo', equipo.slug || equipo.id)">
+                    <span v-if="administrar" @click.prevent="abrirModalEliminarEquipo(equipo)">x</span>
+                    {{ equipo.nombre }}
+                    </Link>
 
-            <div class="prose my-7" >
-                <blockquote v-if="usuario.frase">
-                    <p>{{ usuario.frase }}</p>
-                </blockquote>
-            </div>
+                </div>
 
-            <div class="flex flex-wrap justify-center gap-5">
-                <Link class="badge badge-neutral gap-2" v-for="equipo of usuario.equipos" :key="equipo.id"
-                    :href="route('equipo', equipo.slug || equipo.id)">
-                <span v-if="administrar" @click.prevent="abrirModalEliminarEquipo(equipo)">x</span>
-                {{ equipo.nombre }}
-                </Link>
+                <div v-if="administrar && equiposFiltrados.length" class="mt-7">
+                    <form @submit.prevent="agregarEquipo" class="flex gap-3">
+                        <select v-model="equipoSeleccionado" placeholder="Elige un equipo..." class="text-gray-900">
+                            <option v-for="equipo of equiposFiltrados" :key="equipo.id" :value="equipo.id">{{ equipo.nombre
+                            }}</option>
+                        </select>
+                        <input type="submit" class="btn btn-primary" value="Agregar Equipo" :disabled="!equipoSeleccionado">
+                    </form>
+                </div>
 
-            </div>
+            </Section>
 
-            <div v-if="administrar&&equiposFiltrados.length" class="mt-7">
-                <form @submit.prevent="agregarEquipo" class="flex gap-3">
-                    <select v-model="equipoSeleccionado" placeholder="Elige un equipo..." class="text-gray-900">
-                        <option v-for="equipo of equiposFiltrados" :key="equipo.id" :value="equipo.id">{{ equipo.nombre }}</option>
-                    </select>
-                    <input type="submit" class="btn btn-primary" value="Agregar Equipo" :disabled="!equipoSeleccionado">
-                </form>
-            </div>
-
-        </Section>
-
-        <Section class="py-20">
-            <div class="container mx-auto">
-                <h2 class="text-center">Últimos comentarios</h2>
-                <ul class="list-none space-y-5">
-                    <li v-for="comentario of comentarios"
-                        class="w-full flex flex-col gap-3 md:flex-row justify-between items-baseline">
-                        <Link :href="comentario.url" class="prose">
-                        <blockquote>
-                            <p>
-                                {{ comentario.texto }}
-                            </p>
-                        </blockquote>
-                        </Link>
-                        <TimeAgo :date="comentario.created_at" class="text-sm" />
-                    </li>
-                </ul>
-            </div>
-        </Section>
+            <Section class="py-20">
+                <div class="mx-auto">
+                    <h2 class="text-center">Últimos comentarios</h2>
+                    <ul class="list-none space-y-5">
+                        <li v-for="comentario of comentarios"
+                            class="w-full flex flex-col gap-3 md:flex-row justify-between items-baseline">
+                            <Link :href="comentario.url" class="prose">
+                            <blockquote>
+                                <p>
+                                    {{ comentario.texto }}
+                                </p>
+                            </blockquote>
+                            </Link>
+                            <TimeAgo :date="comentario.created_at" class="text-sm" />
+                        </li>
+                    </ul>
+                </div>
+            </Section>
 
 
-        <!-- Modal Confirmación de eliminar Archivo -->
-        <ConfirmationModal :show="modalEliminarEquipo" @close="modalEliminarEquipo = false">
-            <template #title>
-                Confirmación de eliminación
-            </template>
-            <template #content>
-                ¿Quieres eliminar {{ equipoAEliminar.nombre }} de este usuario?
-            </template>
-            <template #footer>
-                <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
-                    @submit.prevent="eliminarEquipo">
+            <!-- Modal Confirmación de eliminar Archivo -->
+            <ConfirmationModal :show="modalEliminarEquipo" @close="modalEliminarEquipo = false">
+                <template #title>
+                    Confirmación de eliminación
+                </template>
+                <template #content>
+                    ¿Quieres eliminar {{ equipoAEliminar.nombre }} de este usuario?
+                </template>
+                <template #footer>
+                    <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
+                        @submit.prevent="eliminarEquipo">
 
-                    <button @click.prevent="modalEliminarEquipo = false" type="button" class="btn btn-secondary">
-                        Cancelar
-                    </button>
+                        <button @click.prevent="modalEliminarEquipo = false" type="button" class="btn btn-secondary">
+                            Cancelar
+                        </button>
 
-                    <button type="submit" class="btn btn-primary">
-                        Eliminar
-                    </button>
-                </form>
-            </template>
-        </ConfirmationModal>
-
-    </Sections>
+                        <button type="submit" class="btn btn-primary">
+                            Eliminar
+                        </button>
+                    </form>
+                </template>
+            </ConfirmationModal>
+        </Sections>
+    </div>
 </template>
 
 <script setup>
@@ -115,7 +115,7 @@ const props = defineProps({
 })
 
 // todos los equipos, excepto los que el usuario ya es miembro
-const equiposFiltrados = computed(()=>props.equipos.filter(e=>!props.usuario.equipos.find(ue=>ue.id==e.id)))
+const equiposFiltrados = computed(() => props.equipos.filter(e => !props.usuario.equipos.find(ue => ue.id == e.id)))
 
 const image = computed(() => props.usuario.avatar || props.usuario.profile_ptoho_path || props.usuario.imagen)
 const urlImage = computed(() => {

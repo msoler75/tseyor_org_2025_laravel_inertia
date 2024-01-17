@@ -377,7 +377,7 @@ axios.get(route('setting', 'navigation'))
                                         <template #trigger>
                                             <button v-if="$page.props.jetstream.managesProfilePhotos"
                                                 class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                                <Avatar :user="$page.props.auth.user" :link="false" />
+                                                <Avatar imageClass="w-12 h-12" :user="$page.props.auth.user" :link="false" />
                                             </button>
 
                                             <span v-else class="inline-flex rounded-md">
@@ -400,6 +400,14 @@ axios.get(route('setting', 'navigation'))
                                             <div class="font-bold px-4 py-2">
                                                 {{$page.props.auth.user.name}}
                                             </div>
+
+                                            <DropdownLink :href="route('usuario', $page.props.auth.user.id)">
+                                                Mi Perfil
+                                            </DropdownLink>
+
+                                            <DropdownLink :href="route('mis_archivos', $page.props.auth.user.id)">
+                                                Mis Archivos
+                                            </DropdownLink>
 
                                             <DropdownLink :href="route('profile.show')">
                                                 Mi Cuenta
@@ -546,7 +554,7 @@ axios.get(route('setting', 'navigation'))
 
                 <slot />
             </main>
-            
+
             <!--  queremos que si la ruta actual es /archivos, no se muestre el footer: -->
             <AppFooter v-if="!nav.fullPage && !page.url.match(/^\/archivos/)" />
         </div>

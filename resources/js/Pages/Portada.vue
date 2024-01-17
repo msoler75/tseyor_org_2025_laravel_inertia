@@ -2,7 +2,7 @@
     <FullPage>
 
         <Section :style="{
-            background: 'black url(/almacen/medios/portada/earth-1756274.jpg) bottom',
+            background: 'black url(/almacen/medios/portada/earth-1756274.jpg) center',
             backgroundSize: 'cover'
             }" data-theme="winter">
             <Hero title="Contacto Extraterrestre" xsrcImage="/storage/imagenes/portada/unidad.jpg" :href="route('cursos')"

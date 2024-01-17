@@ -269,6 +269,68 @@ class ArchivosController extends Controller
     }
 
     /**
+     * Devuelve la lista de carpetas del usuario
+     */
+    public function myFiles()
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            abort(404); // usuario no encontrado
+        }
+
+        $nodos = Nodo::where('user_id', '=', $user->id)->get();
+
+        $items = [];
+        foreach ($nodos as $nodo) {
+            $ruta = $nodo->ruta;
+            list($disk, $ruta) = $this->diskRuta($ruta);
+
+            if ($nodo->es_carpeta)
+                $item = $this->prepareItemList($disk, $nodo->ruta, $nodo, [
+                    'tipo' => 'carpeta',
+                    'archivos' => count(Storage::disk($disk)->files($nodo->ruta)),
+                    'subcarpetas' => count(Storage::disk($disk)->directories($nodo->ruta))
+                ]);
+            else
+                $item = $this->prepareItemList($disk, $nodo->ruta, $nodo, [
+                    'tipo' => 'archivo',
+                    'tamano' => Storage::disk($disk)->size($nodo->ruta),
+                ]);
+
+            $info = $this->prepareItemInfo($nodo->ruta, $item['nombre'], $item['tipo'], $nodo);
+
+            $fields = ['nodo_id', 'puedeEscribir', 'puedeLeer', 'permisos', 'propietario', 'privada'];
+            foreach ($fields as $field)
+                if (isset($info[$field]))
+                    $item[$field] = $info[$field];
+
+            $items[] = $item;
+        }
+
+        $ruta = '';
+
+        $propietario = [
+            'url' => route('usuario', $user->slug || $user->id),
+            'nombre' => $user->name,
+            'tipo' => 'usuario'
+        ];
+
+        return Inertia::render('Archivos', [
+            'items' => $items,
+            'ruta' => $ruta,
+            'propietarioRef' => $propietario
+        ])
+            ->withViewData([
+                    'seo' => new SEOData(
+                        title: 'Mis archivos',
+                        description: 'Archivos de ' . $user->name,
+                    )
+                ]);
+    }
+
+
+    /**
      * Obtiene para cada item de items la información de permisos, acl
      */
     private function calc_info($ruta, $items): array
@@ -292,23 +354,13 @@ class ArchivosController extends Controller
         $info = [];
 
         foreach ($items as $item) {
-            $info_item = ["nombre" => $item['nombre']];
 
             $nodo = $nodosHijos->where('ruta', $item['ruta'])->first();
-
             if (!$nodo)
                 $nodo = Nodo::desde($ruta);
-            if (!$nodo || (($item['tipo'] ?? '') == 'carpeta' && Gate::denies('ejecutar', $nodo)))
-                $info_item['privada'] = true; // carpeta no accesible
-            $info_item['nodo_id'] = optional($nodo)->id ?? null;
-            $info_item['permisos'] = optional($nodo)->permisos ?? 0;
-            if ($nodo)
-                $info_item['propietario'] = [
-                    'usuario' => ['id' => $nodo->user_id, 'nombre' => $nodo->propietario_usuario],
-                    'grupo' => ['id' => $nodo->group_id, 'nombre' => $nodo->propietario_grupo]
-                ];
+            $info_item = $this->prepareItemInfo($item['ruta'], $item['nombre'], $item['tipo'] ?? 'archivo', $nodo);
+
             $info_item['nodo'] = $nodo; // temporal
-            $info_item['ruta'] = $item['ruta'];
             // agregamos el item
             $info[$item['nombre']] = $info_item;
         }
@@ -354,8 +406,8 @@ class ArchivosController extends Controller
                 $info[$idx]['puedeLeer'] = $nodoItem ? Gate::allows('leer', $nodoItem) : false;
                 $nodoContenedor = $idx === 0 ? $nodoPadre : $nodoCarpeta;
                 // comprobamos el sticky bit de la carpeta padre del item
-                if ((!$nodoContenedor || $nodoContenedor->sticky) && $nodoItem->user_id != optional($user)->id) {
-                    if (!$aclUser || !$nodoItem->tieneAcceso($user, 'escribir'))
+                if ((!$nodoContenedor || $nodoContenedor->sticky) && optional($nodoItem)->user_id != optional($user)->id) {
+                    if (!$aclUser || !optional($nodoItem)->tieneAcceso($user, 'escribir'))
                         $info[$idx]['puedeEscribir'] = false;
                 }
             }
@@ -364,6 +416,24 @@ class ArchivosController extends Controller
         }
 
         return $info;
+    }
+
+    /**
+     * Prepara datos informativos para un item
+     */
+    private function prepareItemInfo($ruta, $nombre, $tipo, $nodo)
+    {
+        $info_item = ["nombre" => $nombre, "ruta" => $ruta];
+        if (!$nodo || ($tipo == 'carpeta' && Gate::denies('ejecutar', $nodo)))
+            $info_item['privada'] = true; // carpeta no accesible
+        $info_item['nodo_id'] = optional($nodo)->id ?? null;
+        $info_item['permisos'] = optional($nodo)->permisos ?? 0;
+        if ($nodo)
+            $info_item['propietario'] = [
+                'usuario' => ['id' => $nodo->user_id, 'nombre' => $nodo->propietario_usuario],
+                'grupo' => ['id' => $nodo->group_id, 'nombre' => $nodo->propietario_grupo]
+            ];
+        return $info_item;
     }
 
 
@@ -632,7 +702,7 @@ class ArchivosController extends Controller
         if (Storage::disk($disk)->directoryExists($ruta))
             abort(403, 'Acceso no permitido.');
 
-        if(!Storage::disk($disk)->exists($ruta))
+        if (!Storage::disk($disk)->exists($ruta))
             abort(404);
 
         if ($disk != 'public') {
@@ -1337,8 +1407,8 @@ class ArchivosController extends Controller
             // Verificar si el item es una carpeta
             if (Storage::disk($diskSource)->directoryExists($itemSource)) {
                 // Intentar mover la carpeta
-                if(File::moveDirectory(Storage::disk($diskSource)->path($rutaAntes), Storage::disk($diskDest)->path($rutaDespues) )){
-                // if (Storage::move($itemSource, $itemDestination)) {
+                if (File::moveDirectory(Storage::disk($diskSource)->path($rutaAntes), Storage::disk($diskDest)->path($rutaDespues))) {
+                    // if (Storage::move($itemSource, $itemDestination)) {
                     $successCount++;
                     // Agregar registro de movimiento a archivo de log
                     Log::info("Carpeta '$item' movida de '$sourceFolder' a '$destinationFolder'");
@@ -1361,8 +1431,8 @@ class ArchivosController extends Controller
                     $counter++;
                 }
 
-                if(File::move(Storage::disk($diskSource)->path($rutaAntes), Storage::disk($diskDest)->path($rutaDespues) )){
-                // if (Storage::move($itemSource, $itemDestination)) {
+                if (File::move(Storage::disk($diskSource)->path($rutaAntes), Storage::disk($diskDest)->path($rutaDespues))) {
+                    // if (Storage::move($itemSource, $itemDestination)) {
                     $successCount++;
                     // Agregar registro de movimiento a archivo de log
                     Log::info("Archivo '$item' movido de '$sourceFolder' a '$destinationFolder'");
@@ -1393,23 +1463,23 @@ class ArchivosController extends Controller
         return response()->json($response, $successCount > 0 ? 200 : 500);
     }
 
-/*
-    private function copy_storage($from, $to, $directory = '/')
-    {
-        foreach (Storage::disk($from)->files($directory) as $file) {
-            if (Storage::disk($to)->exists($file) && Storage::disk($to)->size($file) != Storage::disk($from)->size($file)) {
-                Storage::disk($to)->delete($file);
+    /*
+        private function copy_storage($from, $to, $directory = '/')
+        {
+            foreach (Storage::disk($from)->files($directory) as $file) {
+                if (Storage::disk($to)->exists($file) && Storage::disk($to)->size($file) != Storage::disk($from)->size($file)) {
+                    Storage::disk($to)->delete($file);
+                }
+                if (! Storage::disk($to)->exists($file)) {
+                    Storage::disk($to)->writeStream($file, Storage::disk($from)->readStream($file));
+                    echo "Copied: $file\n";
+                }
             }
-            if (! Storage::disk($to)->exists($file)) {
-                Storage::disk($to)->writeStream($file, Storage::disk($from)->readStream($file));
-                echo "Copied: $file\n";
+            foreach (Storage::disk($from)->directories($directory) as $dir) {
+                $this->copy_storage($from, $to, $dir);
             }
         }
-        foreach (Storage::disk($from)->directories($directory) as $dir) {
-            $this->copy_storage($from, $to, $dir);
-        }
-    }
-*/
+    */
 
     /**
      * Copia un conjunto de archivos a otra carpeta
@@ -1483,10 +1553,10 @@ class ArchivosController extends Controller
             // Verificar si el item es una carpeta
             if (Storage::disk($diskSource)->directoryExists($itemSource)) {
                 // Intentar copiar la carpeta
-               // if($diskSource == $diskDest)
-                 //   $result =  Storage::disk($disk)->copyDirectory($itemSource, $itemDestination);
+                // if($diskSource == $diskDest)
+                //   $result =  Storage::disk($disk)->copyDirectory($itemSource, $itemDestination);
                 //else {
-                    $result = File::copyDirectory(Storage::disk($diskSource)->path($itemSource), Storage::disk($diskDest)->path($itemDestination) );
+                $result = File::copyDirectory(Storage::disk($diskSource)->path($itemSource), Storage::disk($diskDest)->path($itemDestination));
                 //}
                 if ($result) {
                     $successCount++;
@@ -1509,14 +1579,14 @@ class ArchivosController extends Controller
 
                 // copia en un mismo disco
                 //if($diskSource == $diskDest)
-                  //  $result = Storage::disk($diskSource)->copy($itemSource, $itemDestination);
+                //  $result = Storage::disk($diskSource)->copy($itemSource, $itemDestination);
                 //else {
-                    // copia entre discos
-                  //  $content = Storage::disk($diskSource)->get($itemSource);
+                // copia entre discos
+                //  $content = Storage::disk($diskSource)->get($itemSource);
 //                    $result = Storage::disk($diskDest)->put($itemDestination, $content);
-  //              }
+                //              }
 
-                $result = File::copy(Storage::disk($diskSource)->path($itemSource), Storage::disk($diskDest)->path($itemDestination) );
+                $result = File::copy(Storage::disk($diskSource)->path($itemSource), Storage::disk($diskDest)->path($itemDestination));
 
                 if ($result) {
                     $successCount++;
