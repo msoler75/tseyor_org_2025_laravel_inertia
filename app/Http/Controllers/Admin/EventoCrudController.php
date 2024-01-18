@@ -118,7 +118,7 @@ class EventoCrudController extends CrudController
             'name'        => 'categoria',
             'label'       => "Categoría",
             'type'        => 'select_from_array',
-            'options' => ['Curso' , 'Convivencias' , 'Encuentro' , 'Presentación'],
+            'options' => ['Curso'=>'Curso' , 'Convivencias'=>'Convivencias' , 'Encuentro'=>'Encuentro' , 'Presentación'=>'Presentación'],
             'allows_null' => false,
             'default'     => 'Encuentro',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;

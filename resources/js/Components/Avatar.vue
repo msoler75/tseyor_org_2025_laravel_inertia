@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-const fallbackImage = ref('/storage/profile-photos/user.png')
+const fallbackImage = ref('/almacen/profile-photos/user.png')
 
 const props = defineProps({
     user: { type: Object, required: true },
@@ -19,6 +19,8 @@ const props = defineProps({
     imageClass: { type: String, required: false },
     popupCard: { type: Boolean, default: true }
 })
+
+console.log('preparing avatar. user=', props.user)
 
 const name = computed(() => props.user.name || props.user.nombre)
 const image = computed(() => props.user.avatar || props.user.profile_photo_url || props.user.imagen)

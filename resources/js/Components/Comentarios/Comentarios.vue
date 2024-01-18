@@ -5,7 +5,7 @@
                 <h2 class="mb-9">Comentarios</h2>
                 <ResponderComentario v-if="user" class="my-7" :url="url" @respondido="nuevoComentario" />
                 <div class="w-full" style="--profundidad: 0;">
-                    <TransitionGroup name="comment">
+                    <TransitionGroup v-if="comentarios.length" name="comment">
                         <Comentario v-for="comentario in comentarios" :key="comentario.id" :autor="comentario.autor"
                             :comentario-id="comentario.id" :url="url" :fecha="comentario.created_at"
                             :texto="comentario.texto" :respuestas="comentario.respuestas" />
@@ -33,7 +33,7 @@ const props = defineProps({
 
 
 const page = usePage()
-const user = page.props.auth.user
+const user = page.props.auth?.user
 
 function nuevoComentario(comentario) {
     console.log('comentarios.nuevoComentario', comentario)
