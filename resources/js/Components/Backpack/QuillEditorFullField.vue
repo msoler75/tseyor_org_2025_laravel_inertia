@@ -228,7 +228,7 @@ const modules = ref([
                     formData.append("image", file);
                     formData.append("destinationPath", `/imagenes`)
                     // console.log('upload')
-                    axios.post('/api/files/upload/image', formData)
+                    axios.post('/files/upload/image', formData)
                         .then(res => {
                             // console.log('upload result', res)
                             resolve(res.data.data.filePath);
@@ -301,7 +301,7 @@ function onInsertImage(src) {
     // console.log({ quill })
     // quill.insertText(0, `![](${src})`);
     var range = quill.getSelection();
-    quill.insertEmbed(range.index, 'image', src);
+    quill.insertEmbed(range.index, 'image', src.replace(/\s/g, '%20'));
 
     showMediaManager.value = false
 }

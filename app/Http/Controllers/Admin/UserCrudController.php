@@ -139,6 +139,8 @@ class UserCrudController extends CrudController
                 $entry->password = Hash::make(request('password'));
             }
         });*/
+
+
     }
 
     /**
@@ -246,6 +248,7 @@ class UserCrudController extends CrudController
                 'name'  => 'profile_photo_path',
                 'label' => 'Imagen',
                 'type'  => 'image_cover',
+                'attributes'=>['folder'=>'profile-photos'],
             ],
             [
                 'name'  => 'frase',
@@ -260,6 +263,17 @@ class UserCrudController extends CrudController
                 'model' => 'grupo',
                 'options' => null,
                 'multiple' => true
+            ],
+            [
+                'name' => 'contacto',
+                'label' => 'Contacto',
+                'allows_null' => true,
+                'type' => 'select',
+                'attribute'    => 'nombre',
+                'model'       => 'App\Models\Contacto',
+                'wrapper'   => [
+                    'class'      => 'form-group col-md-4'
+                 ]
             ],
             [
                 // two interconnected entities
@@ -289,7 +303,7 @@ class UserCrudController extends CrudController
                         'number_columns' => 3, //can be 1,2,3,4,6
                     ],
                 ],
-            ],
+            ]
         ]);
     }
 

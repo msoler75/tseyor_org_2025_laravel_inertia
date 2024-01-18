@@ -789,8 +789,6 @@ class ArchivosController extends Controller
                 abort(403, 'No tienes permisos.');
         }
 
-
-
         $path = Storage::disk($disk)->path($ruta);
         $mime = Storage::disk($disk)->mimeType($ruta);
 
@@ -808,6 +806,7 @@ class ArchivosController extends Controller
 
     /**
      * Procesa la subida de archivos
+     * Se exige una carpeta (folder) destino, el archivo quedará en storage/app/public/$folder
      */
     public function processUpload(Request $request, UploadedFile $file, string $folder)
     {
@@ -839,9 +838,12 @@ class ArchivosController extends Controller
             ], 413);
         }
 
-        list($disk, $folder) = $this->diskRuta($folder);
+        //list($disk, $folder) = $this->diskRuta($folder);
+        //dd($disk, $folder);
+        $disk = 'public';
 
         $path = Storage::disk($disk)->path($folder);
+        // dd($path);
 
         // Crear la carpeta si no existe
         // $path = storage_path("app/" . $folder);
@@ -870,11 +872,14 @@ class ArchivosController extends Controller
         Nodo::crear($folder . '/' . $filename, false, auth()->user());
 
         // Obtener la URL pública del archivo
-        $url = Storage::url($storedPath);
+        $baseUrl = Storage::disk($disk)->url('');
+        $url = Storage::disk($disk)->url($storedPath);
+        $url = str_replace($baseUrl, '', $url);
+
 
         return response()->json([
             'data' => [
-                'filePath' => "/" . substr($url, 1)
+                'filePath' => $url
             ]
         ], 200);
     }

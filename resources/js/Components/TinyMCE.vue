@@ -44,6 +44,7 @@
         <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
             <div class="flex flex-col">
                 <FileManager :ruta="mediaFolder" class="max-h-[90vh] flex-grow" @image="insertImage"
+                :modo-insertar="true"
                     content-class="max-h-[calc(100vh-240px)] overflow-y-auto" />
                 <div class="p-3 flex justify-end">
                     <button @click.prevent="showMediaManager = false" class="btn btn-neutral">Cerrar</button>
@@ -53,7 +54,7 @@
 
         <!-- Modal Upload Image -->
         <ModalDropZone v-model="modalSubirArchivos" @uploaded="uploadedImage($event)" :mediaFolder="mediaFolder"
-            placeholder="Arrastra la imagen aquí o haz clic" url="/api/files/upload/image" :options="{
+            placeholder="Arrastra la imagen aquí o haz clic" url="/files/upload/image" :options="{
                 maxFiles: 1,
                 acceptedFiles: 'image/*'
             }" />
@@ -107,7 +108,7 @@ const modalSubirArchivos = ref(false)
 
 function uploadedImage(src) {
     // console.log('uploadedImage', src)
-    insertImage(src)
+    // insertImage(src)
     modalSubirArchivos.value = false
 }
 
@@ -139,7 +140,8 @@ const showMediaManager = ref(false)
 
 function insertImage(src) {
     console.log('insertImage', src)
-    tinymce.activeEditor.insertContent(`<img src=${src}>`)
+    tinymce.activeEditor.insertContent(`<img src=${src.replace(/\s/g, '%20')}>`)
+    showMediaManager.value = false
 }
 
 

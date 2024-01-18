@@ -183,7 +183,7 @@ const modules = ref([
                     formData.append("image", file);
                     formData.append("destinationPath", `/imagenes`)
                     console.log('upload')
-                    axios.post('/api/files/upload/image', formData)
+                    axios.post('/files/upload/image', formData)
                         .then(res => {
                             console.log('upload result', res)
                             resolve(res.data.data.filePath);

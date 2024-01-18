@@ -69,6 +69,12 @@ class EntradaCrudController extends CrudController
         ]);
 
         $this->crud->addColumn([
+            'name'  => 'imagen',
+            'label' => 'Imagen',
+            'type'  => 'image',
+        ]);
+
+        $this->crud->addColumn([
             'name'  => 'visibilidad',
             'label' => 'Estado',
             'type'  => 'text',
