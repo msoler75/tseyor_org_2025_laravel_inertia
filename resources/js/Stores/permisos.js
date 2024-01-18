@@ -7,7 +7,7 @@ export const usePermisos = defineStore("permisos", () => {
     const permisos = ref([]); // permisos de usuario
 
     function cargarPermisos() {
-        axios.get(route('usuario.permisos'))
+        axios.get('/usuarios/_permisos')
         .then(response=>{
             console.log('permisos response', response)
             permisos.value = response.data

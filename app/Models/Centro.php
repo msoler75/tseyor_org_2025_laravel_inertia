@@ -5,10 +5,12 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
 use App\Pigmalion\Countries;
+use App\Traits\TieneImagen;
 
 class Centro extends ContenidoBaseModel
 {
     use CrudTrait;
+    use TieneImagen;
 
     protected $fillable = [
         'nombre',

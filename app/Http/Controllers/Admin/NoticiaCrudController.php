@@ -61,6 +61,12 @@ class NoticiaCrudController extends CrudController
             'type' => 'datetime'
         ]);
 
+        $this->crud->addColumn([
+            'name'  => 'imagenUrl',
+            'label' => 'Imagen',
+            'type'  => 'image',
+        ]);
+
 
         /* $this->crud->addColumn([
             'name'  => 'categoria',

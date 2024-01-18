@@ -1729,6 +1729,7 @@ function eliminarArchivo(item) {
 
 // TIPO DE ITEM: ES IMAGEN?
 function isImage(fileName) {
+    if(!fileName||(typeof fileName != 'string')) return false
     const ext = fileName.split('.').pop().toLowerCase();
 
     switch (ext) {

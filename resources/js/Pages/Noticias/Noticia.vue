@@ -1,21 +1,21 @@
 <template>
-    <div class="container mx-auto py-12">
+    <div class="py-8">
 
-        <div class="flex justify-between items-center mb-20">
+        <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Noticias</Back>
             <AdminPanel modelo="noticia" necesita="administrar contenidos" :contenido="noticia"/>
         </div>
 
-        <div class="container mx-auto px-4 py-8">
-            <h1>{{ noticia.titulo }}</h1>
-            <p class="text-neutral text-sm mb-2">
-                <TimeAgo :date="noticia.published_at" />
-            </p>
-            <div class="mb-4">
-                <Image :src="noticia.imagen" :alt="noticia.titulo" class="w-full h-64 object-cover" />
+        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0">
+
+            <div class="prose mx-auto">
+                <h1>{{ noticia.titulo }}</h1>
+                <p class="text-neutral text-sm mb-2">
+                    <TimeAgo :date="noticia.published_at" />
+                </p>
             </div>
 
-            <Prose :content="noticia.texto"/>
+            <Content :content="noticia.texto" class="pb-12 mx-auto" />
 
         </div>
 

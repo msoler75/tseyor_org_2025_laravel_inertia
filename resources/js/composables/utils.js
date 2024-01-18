@@ -8,6 +8,6 @@ export const getImageUrl = (src, defaultUrl) => {
   }
   if (!src) return defaultUrl;
   if (src.match(/^https?:\/\//)) return src;
-  //const prefix = src.match(/^\/archivos/) ? '' : "/almacen"
-  return src // prefix  + src
+  const prefix = src.match(/^\/?archivos/) ? '' : src.match(/^\/?almacen/) ? '':'/almacen/'
+  return (prefix  + src).replace(/\/\//g, '/')
 };
