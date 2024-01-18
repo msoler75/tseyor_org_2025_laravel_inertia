@@ -7,7 +7,7 @@
                     <!-- body -->
                     <div class="card bg-base-100 shadow p-3 gap-3 w-full">
                         <div class="w-full flex justify-between">
-                            <strong>autor.nombre: {{ autor?.nombre }}</strong>
+                            <strong>{{ autor?.nombre }}</strong>
                             <TimeAgo :fecha="fecha" class="text-xs" />
                         </div>
                         <div>{{ texto }}</div>
@@ -62,7 +62,7 @@ function nuevaRespuesta(respuesta) {
         respondiendo.value = false
     respuestasList.value.unshift({
         id: Math.random(),
-        nuevoAutor,
+        autor: nuevoAutor,
         texto: respuesta.texto,
         respuesta_a: props.comentarioId,
         fecha: new Date()
@@ -71,7 +71,7 @@ function nuevaRespuesta(respuesta) {
 
 const page = usePage()
 const user = page.props.auth.user
-const nuevoAutor = computed(() => user ?
+const nuevoAutor = /*computed(() => user */ user ?
     {
         id: user.id,
         nombre: user.name,
@@ -81,7 +81,7 @@ const nuevoAutor = computed(() => user ?
         nombre: "",
         imagen: ""
     }
-)
+// )
 
 </script>
 

@@ -1,6 +1,6 @@
 <template>
     <div class="w-full space-y-1 flex-grow flex gap-3">
-        <img :src="autor.imagen" class="w-16 h-16 rounded-full">
+        <Avatar :user="autor" class="w-16 h-16 rounded-full"/>
         <div class="w-full flex flex-col gap-3 mb-3">
             <!-- body -->
             <form @submit.prevent="responder">
@@ -48,13 +48,11 @@ const emit = defineEmits(['respondido'])
 
 const texto = ref("")
 const error = ref(null)
-const autor = computed(() => (
-    {
+const autor = {
         id: user.id,
         nombre: user.name,
         imagen: user.profile_photo_url
     }
-))
 
 function responder() {
     // limpiamos el mensaje de error
