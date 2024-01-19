@@ -14,7 +14,7 @@ class ImagenesController extends Controller
 
 
 
-       /**
+    /**
      * Quita la primera barra si es necesario
      */
     private function normalizarRuta($ruta)
@@ -49,46 +49,64 @@ class ImagenesController extends Controller
     public function size(Request $request)
     {
         $url = $request->input('url');
-        if(!$url)
+        if (!$url)
             abort(400, 'Debe especificar la URL de la imagen');
 
-            // obtenemos las dimensiones de la imagen
+        // obtenemos las dimensiones de la imagen
 
-            list($disk, $ruta) = $this->diskRuta($url);
+        list($disk, $ruta) = $this->diskRuta($url);
 
-            $fullpath = Storage::disk($disk)->path($ruta);
+        $fullpath = Storage::disk($disk)->path($ruta);
 
-            // obtenemos las dimensiones de la imagen en la ubicación $fullpath, hemos de comprobar si es un PNG, o JPG...
-            $info = getimagesize($fullpath);
-            return response()->json(['width'=>$info[0], 'height'=>$info[1]], 200);
+        // obtenemos las dimensiones de la imagen en la ubicación $fullpath, hemos de comprobar si es un PNG, o JPG...
+        $info = getimagesize($fullpath);
+        return response()->json(['width' => $info[0], 'height' => $info[1]], 200);
     }
 
 
-    public function descargar(Request $request, $path) {
-        $mime = File::mimeType($path);
+    public function descargar(Request $request, $imageFullPath)
+    {
+        $mime = File::mimeType($imageFullPath);
 
         $params = $request->input();
 
-        if(empty($params)) {
-            return response()->file($path, ['Content-Type' => $mime]);
+        if (empty($params)) {
+            return response()->file($imageFullPath, ['Content-Type' => $mime]);
         }
 
         // create image manager with desired driver
         $manager = new ImageManager(new Driver());
 
         // read image from file system
-        $image = $manager->read($path);
+        $image = $manager->read($imageFullPath);
 
         $format = "webp";
         $quality = 70;
 
-        foreach($params as $p=>$value) {
-            switch($p) {
-                case "w" :
+        // create cache path
+        $cachePath = 'images/cache/';
+        $cacheFilename = md5($imageFullPath . serialize($params)) . '.' . $format;
+        $cacheFilePath = $cachePath . $cacheFilename;
+        $cacheFullPath = Storage::disk('local')->path($cacheFilePath);
+
+        // check if image exists in cache
+        if (Storage::disk('local')->exists($cacheFilePath)) {
+            $originalModifiedTime = filemtime($imageFullPath);
+            $cacheModifiedTime = filemtime($cacheFullPath);
+
+            if ($originalModifiedTime <= $cacheModifiedTime) {
+                return response()->file(storage_path('app/' . $cacheFilePath), ['Content-Type' => $mime]);
+            }
+        }
+
+        // Apply image transformations
+        foreach ($params as $p => $value) {
+            switch ($p) {
+                case "w":
                     $image->scale(width: $value);
                     break;
 
-                case "h" :
+                case "h":
                     $image->scale(height: $value);
                     break;
 
@@ -98,22 +116,23 @@ class ImagenesController extends Controller
             }
         }
 
-        // create temp random name
-        $tmppath = tempnam(sys_get_temp_dir(), 'img');
-
         // browser accept webp format?
-        if($format=="webp")
-        {
+        if ($format == "webp") {
             $mime = "image/webp";
             $image->toWebp($quality);
-        }
-        else {
+        } else {
             $mime = "image/jpeg";
             $image->toJpeg($quality);
         }
 
-        $image->save($tmppath);
+        // create the cache folder if it doesn't exist
+        $folder = dirname($cacheFullPath);
+        if (!File::exists($folder)) {
+            File::makeDirectory($folder, 0777, true, true);
+        }
 
-        return response()->file($tmppath, ['Content-Type' => $mime]);
+        $image->save($cacheFullPath);
+
+        return response()->file(storage_path('app/' . $cacheFilePath), ['Content-Type' => $mime]);
     }
 }
