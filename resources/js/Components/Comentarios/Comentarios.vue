@@ -34,10 +34,26 @@ const props = defineProps({
 
 const page = usePage()
 const user = page.props.auth?.user
+const nuevoAutor = /*computed(() => user */ user ?
+    {
+        id: user.id,
+        nombre: user.name,
+        imagen: user.profile_photo_url
+    } : {
+        id: 0,
+        nombre: "",
+        imagen: ""
+    }
+// )
 
 function nuevoComentario(comentario) {
     console.log('comentarios.nuevoComentario', comentario)
-    comentarios.value.unshift(comentario)
+    comentarios.value.unshift({
+        id: comentario.id,
+        autor: nuevoAutor,
+        texto: comentario.texto,
+        fecha: new Date()
+    })
 }
 
 const comentarios = ref([])
