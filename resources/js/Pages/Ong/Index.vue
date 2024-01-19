@@ -55,7 +55,7 @@
                 </ol>
 
                 <p class="flex justify-end">
-                    <a href="1.pdf" class="btn btn-primary" download>Descargar Estatutos de la ONG</a>
+                    <a href="1.pdf" class="btn btn-primary" download><Icon icon="ph:download-duotone" /> Descargar Estatutos de la ONG</a>
                 </p>
             </Text>
         </Section>

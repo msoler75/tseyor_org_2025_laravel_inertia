@@ -52,6 +52,7 @@ export function MarkdownToHtml(raw_markdown) {
     return md.render(raw_markdown)
     */
 
+    console.log('MarkdownToHtml', raw_markdown)
     const converter = new showdown.Converter()
     converter.setFlavor('github')
     return converter.makeHtml(raw_markdown)

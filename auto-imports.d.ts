@@ -12,7 +12,7 @@ declare global {
   const currentTheme: typeof import('./resources/js/composables/themeAdapter.js')['currentTheme']
   const defineEmits: typeof import('vue')['defineEmits']
   const detectFormat: typeof import('./resources/js/composables/markdown.js')['detectFormat']
-  const getImageUrl: typeof import('./resources/js/composables/utils.js')['getImageUrl']
+  const getImageUrl: typeof import('./resources/js/composables/imageutils.js')['getImageUrl']
   const nextTick: typeof import('vue')['nextTick']
   const onBeforeUnmount: typeof import('vue')['onBeforeUnmount']
   const onMounted: typeof import('vue')['onMounted']

@@ -10,7 +10,7 @@
 
 
             <div class=" card bg-base-100 shadow-2xl w-fit h-fit flex justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0">
-                <ImageShadow :src="libro.imagen" :alt="libro.titulo" class="object-contain rounded-[2px]"/>
+                <ImageShadow :src="libro.imagen+'?w=300'" :alt="libro.titulo" class="object-contain rounded-[2px]"/>
             </div>
 
             <div class="p-6 card bg-base-100 shadow">
@@ -42,7 +42,7 @@
                         :description="contenido.descripcion" :date="contenido.published_at"
                         :tag="contenido.categoria"
                         image-left
-                        class="h-[300px]"
+                        class="w-[200px] h-[300px]"
                         imageClass="w-[200px] h-[300px]"/>
         </div>
 

@@ -3,16 +3,24 @@
         <!--
             <Markdown v-if="isMarkdown" :source="content" :html="true" :linkify="true" />
         -->
-        <VueShowdown v-if="isMarkdown" :markdown="content" flavor="github" :options="{ emoji: true }"/>
-        <div v-else v-html="content" />
+        <pre>
+            {{parts}}
+        </pre>
+        <template v-if="1" v-for="part of parts">
+            <!--<VueShowdown v-else-if="isMarkdown" :markdown="part.text" flavor="github" :options="{ emoji: true }"/> -->
+            <Image v-if="part.type == 'image'" :src="part.attributes.src" :alt="part.attributes.alt" :title="part.attributes.title"
+            :width="part.attributes.width" :height="part.attributes.height" :style="part.attributes.style"
+            @click="handlePreview(part.index)" class="cursor-pointer"/>
+            <div v-else v-html="part.text" />
+        </template>
     </Prose>
 </template>
 
 <script setup>
 // import { v3ImgPreviewFn } from 'v3-img-preview'
 // import Markdown from 'vue3-markdown-it';
-import { detectFormat } from '@/composables/markdown.js'
-import { VueShowdown } from 'vue-showdown';
+import { detectFormat, MarkdownToHtml } from '@/composables/markdown.js'
+// import { VueShowdown } from 'vue-showdown';
 
 const props = defineProps({
     content: {
@@ -27,9 +35,70 @@ const props = defineProps({
 
 const isMarkdown = computed(() => props.format == 'md' ? true : ['md', 'ambiguous'].includes(detectFormat(props.content).format))
 const container = ref(null)
-const images = ref([])
+const images = ref([]) // imagenes del contenido
 
 var  v3ImgPreviewFn = null
+
+const contentPreProcessed = computed(()=> isMarkdown.value? MarkdownToHtml(props.content) : props.content)
+
+// hay que hacer todo esto para reemplazar las etiquetas IMG por componentes Image
+const parts = computed(()=>{
+    const r = []
+    // hace un bucle recorriendo el string contentPreProcessed y buscando la posición del proximo '<img...>'
+    // extrae esa etiqueta y divide lo que había antes y después de img
+    // todo eso va guardando y así combinando en un array compuesto de partes de texto, e imagenes, intercalándose
+    let i = 0
+    let contentLeft = contentPreProcessed.value
+    console.log('*******PARSE parts begin', contentLeft)
+    images.value = []
+    while (contentLeft.length) {
+        console.log('*parsing', contentLeft)
+        // busca <img[^>]+\/?> y necesitamos tanto la posicion inicial como la final
+        const m = contentLeft.match(/<img[^>]+\/?>/)
+        let beginOfImg = m ? m.index: -1
+        var text = ""
+        console.log('beginOfImg', beginOfImg)
+        if(beginOfImg==-1)   // no hay más imagenes
+        {
+            // extrae el texto restante
+            text = contentLeft
+            contentLeft = ''
+
+            r.push({type: 'text', text})
+        }
+        else {
+            // extrae el texto restante
+            text = contentLeft.substring(0, beginOfImg)
+
+            r.push({type: 'text', text})
+
+            // extrae la imagen
+            const imgTag = contentLeft.substring(beginOfImg, m.index + m[0].length)
+            const exp = /(\w+)=("[^"]+"|'[^']+')/g;
+
+            let match;
+            const attributes = {};
+
+            while ((match = exp.exec(imgTag)) !== null) {
+                console.log('attribute found', match)
+                const name = match[1]
+                const value = match[2].slice(1, -1) // valor sin comillas
+                attributes[name] = value
+            }
+
+            // index es para indexar la imagen en la posición dentro de images
+            r.push({type: 'image', attributes, index: images.value.length})
+
+            // agregamos la imagen para la vista previa
+            images.value.push(attributes.src.replace(/\?.*/, ''))
+
+            // recortamos el texto original a partir de aquí para seguir buscando partes
+            contentLeft = contentLeft.substring(m.index + m[0].length)
+        }
+    }
+
+    return r
+})
 
 onMounted(async () => {
 
@@ -38,18 +107,13 @@ onMounted(async () => {
         v3ImgPreviewFn = module.v3ImgPreviewFn;
 
         nextTick(() => {
-            console.log('container:', container.value.$el)
-            const imgElements = container.value.$el.querySelectorAll('img');
 
-            // añadimos la clase especial para contenedor de imagenes
-            for (const img of imgElements)
-                img.parentNode.className = 'images-wrapper'
 
-            // guardamos el array de imagenes del contenido
-            images.value = Array.from(imgElements)
-            for (const index in images.value)
-                images.value[index].addEventListener('click', () => handlePreview(index))
+            // AÑADIR ENLACES A NOTAS AL PIE, Y VICEVERSA
 
+            // ESTO SOLO FUNCIONA PARA UN PARSE DE MARKDOWN DE OTRA LIBRERIA
+
+            // ACTUALMENTE NO HACE NADA
 
             // Obtener todos los enlaces de desplazamiento
             var scrollLinks = document.querySelectorAll('.footnote-ref a, a.footnote-backref');
@@ -87,7 +151,7 @@ onMounted(async () => {
 function handlePreview(index) {
     console.log('clicked ', index, images.value[index])
     if(v3ImgPreviewFn)
-    v3ImgPreviewFn({ images: images.value.map(img => img.src), index })
+     v3ImgPreviewFn({ images: images.value, index })
 }
 
 

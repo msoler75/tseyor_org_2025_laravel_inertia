@@ -15,6 +15,15 @@ const nav = useNav()
 const sideBarShow = ref(false)
 
 
+// Use the router's navigation guard to track route changes
+router.on('start', (event) => {
+  console.log(`Starting a visit to ${event.detail.visit.url}`)
+})
+
+router.on('finish', (event) => {
+  console.log(`Page loaded ${event.detail.visit.url}`)
+})
+
 console.log({page})
 
 defineProps({

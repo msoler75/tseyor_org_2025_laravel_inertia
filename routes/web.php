@@ -30,6 +30,7 @@ use App\Http\Controllers\InformesController;
 use App\Http\Controllers\MeditacionesController;
 use App\Http\Controllers\NormativasController;
 use App\Http\Controllers\WorkerController;
+use App\Http\Controllers\ImagenesController;
 use App\Http\Controllers\DevController;
 use App\Http\Controllers\Api\ComentariosController;
 use App\Pigmalion\SEO;
@@ -273,6 +274,8 @@ Route::get('phpinfo', function () {
     return phpinfo();
 });
 
+Route::get('image_s
+ize', [ImagenesController::class, 'size'])->name('imagen.tamaño');
 
 Route::get('asociacion', 'App\Http\Controllers\PaginasController@show')->name('asociacion');
 

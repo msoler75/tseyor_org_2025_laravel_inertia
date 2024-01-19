@@ -10,7 +10,7 @@
         'background-image': `url(${srcImage})`,
         'background-size': 'cover'
     } : {}">
-                <img v-if="!cover" :src="srcImage" :alt="title" class="image-h" :class="imageClass">
+                <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h bg-red-100" :class="imageClass"/>
                 <small v-if="caption" class="container">{{ caption }}</small>
             </div>
             <div class="flex flex-col items-center gap-7 container mx-auto"

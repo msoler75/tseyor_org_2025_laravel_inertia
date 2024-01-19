@@ -4,6 +4,7 @@ use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 // use App\T;
 
+// sleep(2);
 //xdebug_info();
 // phpinfo();
 //die;
