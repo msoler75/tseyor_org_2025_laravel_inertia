@@ -1,13 +1,6 @@
 <template>
     <Prose ref="container" class="text-container">
-        <!--
-            <Markdown v-if="isMarkdown" :source="content" :html="true" :linkify="true" />
-        -->
-        <pre>
-            {{parts}}
-        </pre>
-        <template v-if="1" v-for="part of parts">
-            <!--<VueShowdown v-else-if="isMarkdown" :markdown="part.text" flavor="github" :options="{ emoji: true }"/> -->
+        <template v-for="part of parts">
             <Image v-if="part.type == 'image'" :src="part.attributes.src" :alt="part.attributes.alt" :title="part.attributes.title"
             :width="part.attributes.width" :height="part.attributes.height" :style="part.attributes.style"
             @click="handlePreview(part.index)" class="cursor-pointer"/>
