@@ -401,12 +401,12 @@ axios.get(route('setting', 'navigation'))
                                                 {{$page.props.auth.user.name}}
                                             </div>
 
-                                            <DropdownLink :href="route('usuario', $page.props.auth.user.id)">
-                                                Mi Perfil
-                                            </DropdownLink>
-
                                             <DropdownLink :href="route('mis_archivos', $page.props.auth.user.id)">
                                                 Mis Archivos
+                                            </DropdownLink>
+
+                                            <DropdownLink :href="route('usuario', $page.props.auth.user.id)">
+                                                Mi Perfil
                                             </DropdownLink>
 
                                             <DropdownLink :href="route('profile.show')">

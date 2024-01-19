@@ -26,9 +26,9 @@
                     class="my-2 btn btn-primary flex gap-3" download>
                     <Icon icon="ph:download-duotone" /> {{ buttonLabel }}
                 </a>
-                <Link v-else-if="buttonLabel && href" :href="href" class="my-2 btn btn-primary">
+                <ActionButton v-else-if="buttonLabel && href" :href="href" class="my-2">
                 {{ buttonLabel }}
-                </Link>
+                </ActionButton>
                 <span v-if="buttonLabel && href" class="md:hidden"></span>
             </div>
         </div>

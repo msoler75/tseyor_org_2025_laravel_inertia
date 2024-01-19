@@ -12,6 +12,10 @@
             <Section class="mx-auto flex flex-col items-center py-20">
                 <Avatar big :link="false" :user="usuario" />
 
+                <div v-if="soyYo" class="flex justify-center my-2">
+                    <Link class="btn btn-xs btn-primary" href="/user/profile">cambiar imagen</Link>
+                </div>
+
                 <h1 class="text-center my-2">
                     {{ usuario.name || usuario.slug }}
                 </h1>
@@ -22,11 +26,11 @@
                         <blockquote v-else>
                             <p>{{ usuario.frase }}</p>
                         </blockquote>
-                        <div v-if="user?.id==usuario.id"  class="w-full flex justify-center gap-4">
-                            <button v-if="!editandoFrase" class="btn btn-primary btn-sm" @click="editarFrase">Editar frase</button>
-                            <button v-if="!editandoFrase" class="btn btn-primary btn-sm" @click="generarFrase">Generar frase</button>
-                            <button type="submit" v-if="editandoFrase" class="btn btn-primary btn-sm" @click="guardarFrase">Guardar</button>
-                            <button v-if="editandoFrase" class="btn btn-error btn-sm" @click="cancelarFrase">Cancelar</button>
+                        <div v-if="soyYo"  class="w-full flex justify-center gap-4">
+                            <button v-if="!editandoFrase" class="btn btn-primary btn-xs" @click="editarFrase">Editar frase</button>
+                            <button v-if="!editandoFrase" class="btn btn-primary btn-xs" @click="generarFrase">Generar frase</button>
+                            <button type="submit" v-if="editandoFrase" class="btn btn-primary btn-xs" @click="guardarFrase">Guardar</button>
+                            <button v-if="editandoFrase" class="btn btn-error btn-xs" @click="cancelarFrase">Cancelar</button>
                         </div>
                     </form>
                 </div>
@@ -53,7 +57,7 @@
             </Section>
 
             <Section class="py-20">
-                <div class="mx-auto">
+                <div class="mx-auto xl:max-w-xl px-4">
                     <h2 class="text-center">Últimos comentarios</h2>
                     <ul class="list-none space-y-5">
                         <li v-for="comentario of comentarios"
@@ -106,7 +110,6 @@ import { usePage } from '@inertiajs/vue3';
 const page = usePage()
 const user = page.props.auth.user
 
-
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
@@ -131,9 +134,11 @@ const props = defineProps({
 // todos los equipos, excepto los que el usuario ya es miembro
 const equiposFiltrados = computed(() => props.equipos.filter(e => !props.usuario.equipos.find(ue => ue.id == e.id)))
 
-const image = computed(() => props.usuario.avatar || props.usuario.profile_ptoho_path || props.usuario.imagen)
+const soyYo = computed(()=>user?.id==props.usuario.id)
+
+const image = computed(() => props.usuario.avatar || props.usuario.profile_photo_url || props.usuario.imagen)
 const urlImage = computed(() => {
-    if (!image.value) return '/storage/profile-photos/user.png'
+    if (!image.value) return '/almacen/profile-photos/user.png'
     if (image.value.match(/^https?:\/\//)) return image.value
     return '/storage/' + image.value
 })

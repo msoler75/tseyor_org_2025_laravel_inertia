@@ -19,7 +19,7 @@ class ContenidosController extends Controller
         $buscar = $request->input('buscar');
 
         // estos tipos de datos no aparecen en Novedades
-        $coleccionesExcluidas = ['paginas', 'informes', 'audios', 'meditaciones', 'terminos', 'lugares', 'guias'];
+        $coleccionesExcluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', 'lugares', 'guias'];
 
         $resultados = $buscar ? Contenido::search($buscar)
             //->whereNotIn('coleccion', $coleccionesExcluidas)
