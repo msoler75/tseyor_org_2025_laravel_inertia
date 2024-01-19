@@ -257,8 +257,7 @@ class Comunicado extends ContenidoConAudios
 
     // SCOUT
 
-
-    /**
+      /**
      * Solo se indexa si acaso está publicado
      */
     public function shouldBeSearchable(): bool

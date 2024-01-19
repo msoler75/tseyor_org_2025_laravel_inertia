@@ -44,15 +44,8 @@ class Noticia extends ContenidoBaseModel
 
 
 
-    /**
-     * Get the engine used to index the model.
-     */
-    public function searchableUsing(): Engine
-    {
-        return app(EngineManager::class)->engine('database');
-    }
 
-    /**
+  /**
      * Solo se indexa si acaso está publicado
      */
     public function shouldBeSearchable(): bool

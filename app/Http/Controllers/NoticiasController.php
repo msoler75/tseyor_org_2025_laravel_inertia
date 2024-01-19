@@ -15,18 +15,10 @@ class NoticiasController extends Controller
     {
         $buscar = $request->input('buscar');
 
-        $resultados = $buscar ? /*Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])
-            ->where('visibilidad', 'P')
-            ->where(function ($query) use ($buscar) {
-                $query->where('titulo', 'like', '%' . $buscar . '%')
-                    ->orWhere('descripcion', 'like', '%' . $buscar . '%')
-                    ->orWhere('texto', 'like', '%' . $buscar . '%');
-            })
-            ->paginate(10)->appends(['buscar' => $buscar])
-            */
+        $resultados = $buscar ?
             Noticia::search($buscar)->where('visibilidad', 'P')->paginate(10)
             :
-            Noticia::select(['slug', 'titulo', 'descripcion', 'published_at'])->where('visibilidad', 'P')->latest()->paginate(10);
+            Noticia::select(['slug', 'titulo', 'descripcion', 'published_at', 'imagen'])->where('visibilidad', 'P')->latest()->paginate(10);
 
         $recientes = Noticia::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->latest()->take(24)->get();
 
