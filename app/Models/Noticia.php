@@ -5,8 +5,6 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
-use Laravel\Scout\Engines\Engine;
-use Laravel\Scout\EngineManager;
 use App\Traits\TieneImagen;
 
 class Noticia extends ContenidoBaseModel
