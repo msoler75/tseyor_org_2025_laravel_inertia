@@ -179,6 +179,8 @@ const clearPhotoFileInput = () => {
         </template>
 
         <template #actions>
+            <Link class="btn mr-auto" :href="route('usuario', user.id)">→ Ir al Perfil</Link>
+
             <ActionMessage :on="form.recentlySuccessful" class="mr-3">
                 Guardado.
             </ActionMessage>
