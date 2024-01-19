@@ -15,6 +15,7 @@ use App\Models\Nodo;
 use App\Models\Acl;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use App\Http\Controllers\ImagenesController;;
 
 // use App\Pigmalion\TiempoEjecucion as T;
 // use App\Pigmalion\Profiler;
@@ -54,7 +55,7 @@ class ArchivosController extends Controller
      */
     public function archivos(Request $request)
     {
-        return $this->list($request->path(), false);
+        return $this->list($request, $request->path(), false);
     }
 
 
@@ -63,13 +64,13 @@ class ArchivosController extends Controller
      */
     public function filemanager(Request $request, $ruta = "/")
     {
-        return $this->list($ruta, true);
+        return $this->list($request, $ruta, true);
     }
 
     /**
      * Listado de una carpeta. Comprueba todos los permisos de acceso
      */
-    public function list($ruta, $json)
+    public function list(Request $request, $ruta, $json)
     {
         // new T("ArchivosController.list($ruta)");
 
@@ -164,7 +165,7 @@ class ArchivosController extends Controller
             // si es un archivo, procedemos a la descarga
             if (!Storage::disk($disk)->directoryExists($rutaBase)) {
                 // no es una carpeta, así que derivamos a la descarga
-                return $this->descargar('/' . /* '/archivos/' . */$rutaBase);
+                return $this->descargar($request, '/' . /* '/archivos/' . */$rutaBase);
             }
 
             // unset($p1);
@@ -495,7 +496,7 @@ class ArchivosController extends Controller
     public function info(Request $request)
     {
         $ruta = $request->ruta;
-        $resp = $this->list($ruta, true); // es un objeto JsonResponse
+        $resp = $this->list($request, $ruta, true); // es un objeto JsonResponse
 
         //obtenemos los items de la respuesta json
         $items = $resp->original['items'];
@@ -762,7 +763,7 @@ class ArchivosController extends Controller
     /**
      * Controla el acceso a las descargas
      */
-    public function descargar(string $ruta)
+    public function descargar(Request $request, string $ruta)
     {
         if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
@@ -789,8 +790,15 @@ class ArchivosController extends Controller
                 abort(403, 'No tienes permisos.');
         }
 
-        $path = Storage::disk($disk)->path($ruta);
         $mime = Storage::disk($disk)->mimeType($ruta);
+        $path = Storage::disk($disk)->path($ruta);
+
+        // si es una imagen
+        if($mime == 'image/jpeg' || $mime == 'image/png' || $mime == 'image/gif') {
+            $controller =new ImagenesController();
+            return $controller->descargar($request, $path);
+        }
+
 
         return response()->file($path, ['Content-Type' => $mime]);
         // return response()->download($path);
