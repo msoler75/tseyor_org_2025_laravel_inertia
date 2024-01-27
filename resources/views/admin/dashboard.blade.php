@@ -2,15 +2,26 @@
 
 @section('content')
 
-    <div class="flex flex-wrap gap-6 my-12">
+    <div class="flex flex-wrap justify-between gap-6 my-12">
 
-        <div class="card p-4 w-[32rem]">
+        <div class="card p-4 w-[37rem]">
             <div class="font-bold mb-3 text-lg">Últimos usuarios registrados:</div>
             <div class="grid grid-cols-3">
-                @foreach($users as $user)
-                    <a href="/usuarios/{{$user['slug']? $user['slug']: $user['id']}}">{{$user['name']}} slug:{{$user['slug']}}</a>
-                    <span><TimeAgo date="{{$user['created_at']}}"/></span>
-                    <a class="btn btn-xs" href="/admin/user/{{ $user['id'] }}/edit">Editar</a>
+                @foreach($users_creados as $user)
+                    <a href="/usuarios/{{$user->slug? $user->slug: $user->id}}">{{$user->name}}</a>
+                    <span><TimeAgo date="{{$user->created_at}}"/></span>
+                    <a class="btn btn-xs" href="/admin/user/{{ $user->id }}/edit">Editar</a>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="card p-4 w-[37rem]">
+            <div class="font-bold mb-3 text-lg">Usuarios activos:</div>
+            <div class="grid grid-cols-3">
+                @foreach($users_activos as $user)
+                    <a href="/usuarios/{{$user->slug? $user->slug: $user->user_id}}">{{$user->name}}</a>
+                    <span><TimeAgo date="{{date("Y-m-d H:i:s", $user->last_activity)}}"/></span>
+                    <a class="btn btn-xs" href="/admin/user/{{ $user->user_id }}/edit">Editar</a>
                 @endforeach
             </div>
         </div>
