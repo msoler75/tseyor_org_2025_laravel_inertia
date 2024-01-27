@@ -65,6 +65,7 @@ class AclCrudController extends CrudController
                 return $query->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
                     ->orderBy('nodos.ruta', $columnDirection)->select('nodos_acl.*');
             },
+            'limit'=>200
         ]);
 
 

@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 
-class DashboardController {
+class AdminController {
 
-    public function index() {
+    public function dashboard() {
         $users = User::select()->latest()->take(5)->get();
-        return view('admin-dashboard', ['users'=>$users]);
+        return view('admin.dashboard', ['users'=>$users]);
     }
+
 }

@@ -110,11 +110,22 @@ class ImagenesController extends Controller
                     $image->scale(height: $value);
                     break;
 
+                case "mw": // max width
+                        if($image->width() > $value)
+                        $image->scale(width: $value);
+                        break;
+
+                case "mh": // max height
+                    if($image->height() > $value)
+                    $image->scale(height: $value);
+                    break;
+
                 case "fmt":
                     $format = $value;
                     break;
             }
         }
+
 
         // browser accept webp format?
         if ($format == "webp") {

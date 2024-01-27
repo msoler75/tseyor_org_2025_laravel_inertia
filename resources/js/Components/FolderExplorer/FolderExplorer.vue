@@ -3,6 +3,7 @@
         <div class="w-full sticky border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
             :class="embed ? 'pt-[2rem] top-0' : ' pt-[4rem] top-[1.5rem]'">
 
+
             <div :class="embed ? '' : 'lg:container mx-auto'">
                 <Breadcrumb  :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
                     title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5"
@@ -167,7 +168,7 @@
         </div>
 
 
-        <div class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14 min-h-[300px]" :class="contentClass">
+        <div class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14 h-full" :class="contentClass">
 
             <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
                 <Spinner />
@@ -458,7 +459,7 @@
                 </div>
             </div>
 
-            <div class="w-full text-center h-[3rem] mt-3">
+            <div v-if="buscando||mostrandoResultados" class="w-full text-center h-[3rem] mt-3">
                 <div v-if="buscando">Buscando...</div>
                 <div v-else-if="mostrandoResultados && !resultadosBusqueda.length">No hay resultados</div>
             </div>
@@ -974,6 +975,8 @@
             </template>
         </ConfirmationModal>
 
+        <slot/>
+
     </div>
 </template>
 
@@ -1000,7 +1003,8 @@ const props = defineProps({
     contentClass: String,
     rootLabel: { type: String, require: false },
     rootUrl: { type: String, require: false },
-    mostrarRutas: {type: Boolean, default: false}
+    mostrarRutas: {type: Boolean, default: false},
+    mostrarMisArchivos: {type: Boolean, default: true}
 });
 
 const emit = defineEmits(['updated', 'disk', 'folder', 'file']);
@@ -1320,7 +1324,9 @@ const ordenarPor = ref("normal")
 
 const itemsOrdenados = computed(() => {
     // Separar las carpetas y los archivos en dos grupos
-    const items = itemsCopy.value.filter(item => !item.padre && !item.actual && !item.eliminado)
+    var items = itemsCopy.value.filter(item => !item.padre && !item.actual && !item.eliminado)
+    if(!props.mostrarMisArchivos)
+    items = items.filter(item => item.tipo!='disco' || item.nombre!='mis_archivos')
     const carpetas = items.filter(item => item.tipo === 'carpeta')
     const archivos = items.filter(item => item.tipo !== 'carpeta');
 

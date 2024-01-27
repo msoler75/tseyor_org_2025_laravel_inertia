@@ -68,22 +68,23 @@
 
 @can('administrar archivos')
 <x-backpack::menu-dropdown title="Archivos" icon="la la-folder">
+    <x-backpack::menu-dropdown-item title="Ver/Subir archivos" icon="la la-cloud-upload" link="/admin/archivos" />
     <x-backpack::menu-dropdown-item title="Nodos" icon="la la-cube" :link="backpack_url('nodo')" />
     <x-backpack::menu-dropdown-item title="Lista de acceso" icon="la la-list" :link="backpack_url('acl')" />
-    <x-backpack::menu-dropdown-item title="Grupos" icon="la la-user-friends" :link="backpack_url('grupo')" />
 </x-backpack::menu-dropdown>
 @endcan
 
 @can('administrar usuarios')
 <x-backpack::menu-dropdown title="Usuarios y permisos" icon="la la-user-lock">
     <x-backpack::menu-dropdown-item title="Usuarios" icon="la la-user" :link="backpack_url('user')" />
+    <x-backpack::menu-dropdown-item title="Grupos" icon="la la-user-friends" :link="backpack_url('grupo')" />
     <x-backpack::menu-dropdown-item title="Roles" icon="la la-group" :link="backpack_url('role')" />
     <x-backpack::menu-dropdown-item title="Permisos" icon="la la-key" :link="backpack_url('permission')" />
 </x-backpack::menu-dropdown>
 @endcan
 
 @can('avanzado')
-<x-backpack::menu-dropdown title="avanzado" icon="la la-cog">
+<x-backpack::menu-dropdown title="Avanzado" icon="la la-cog">
     <x-backpack::menu-dropdown-item title="Ajustes" icon="la la-sliders-h" :link="backpack_url('setting')" />
 </x-backpack::menu-dropdown>
 @endcan

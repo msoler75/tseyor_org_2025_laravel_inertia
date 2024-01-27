@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\AdminController;
 // --------------------------
 // Custom Backpack Routes
 // --------------------------
@@ -81,7 +81,10 @@ Route::group([
     Route::get('search/{model}', 'SearchModelController@index');
 
 
-    Route::get('dashboard', [DashboardController::class, 'index'] );
+    Route::get('dashboard', [AdminController::class, 'dashboard'] );
+    Route::get('archivos', function () {
+        return view('admin.archivos');
+    } );
 
 
 

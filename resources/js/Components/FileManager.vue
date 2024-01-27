@@ -1,56 +1,54 @@
 <template>
-    <div>
         <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario" @updated="reloadFolder"
             @disk="onDisk" @folder="onFolder" @file="onFile" :embed="true" :ruta="ruta" rutaBase="" :cargando="cargando"
-            class="max-h-[calc(100vh-160px)]"
-            :contentClass="contentClass"
             rootLabel="web:"
             rootUrl=""
-            />
+            :mostrarMisArchivos="(mostrarMisArchivos !== false && mostrarMisArchivos !== 'false' && mostrarMisArchivos !== '0' && mostrarMisArchivos !== 'no') || ['true', '1', 'si'].includes(mostrarMisArchivos) || mostrarMisArchivos===true"
+            >
+            <Modal :show="mostrandoArchivo" @close="mostrandoArchivo = null" maxWidth="xl">
 
-        <Modal :show="mostrandoArchivo" @close="mostrandoArchivo = null" maxWidth="xl">
+<div class="bg-base-100 p-3">
+    <div class="p-8">{{ mostrandoArchivo.nombre }}</div>
 
-            <div class="bg-base-100 p-3">
-                <div class="p-8">{{ mostrandoArchivo.nombre }}</div>
+    <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
 
-                <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
+        <button @click.prevent="descargarArchivo" type="button" class="btn btn-secondary">
+            Descargar
+        </button>
 
-                    <button @click.prevent="descargarArchivo" type="button" class="btn btn-secondary">
-                        Descargar
-                    </button>
-
-                    <button @click.prevent="mostrandoArchivo = null" type="button" class="btn btn-neutral">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-
-        </Modal>
-
-
-
-        <Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
-
-            <div class="bg-base-100 p-3">
-                <Image :src="mostrandoImagen.url" class="w-full max-h-[calc(100vh-170px)] object-contain" />
-
-                <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
-                    <button v-if="modoInsertar" @click.prevent="insertarImagen" type="button" class="btn btn-primary">
-                        Insertar
-                    </button>
-
-                    <button @click.prevent="descargarImagen" type="button" class="btn btn-secondary flex gap-2 items-center">
-                        <Icon icon="ph:arrow-square-out-duotone" class="text-xl"/> Abrir
-                    </button>
-
-                    <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
-                        {{modoInsertar?'Cancelar':'Cerrar'}}
-                    </button>
-                </div>
-            </div>
-
-        </Modal>
+        <button @click.prevent="mostrandoArchivo = null" type="button" class="btn btn-neutral">
+            Cancelar
+        </button>
     </div>
+</div>
+
+</Modal>
+
+
+
+<Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
+
+<div class="bg-base-100 p-3">
+    <img :src="mostrandoImagen.url+'?mw=700&mh=600'" class="w-full max-h-[calc(100vh-170px)] object-contain" />
+
+    <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
+        <button v-if="modoInsertar" @click.prevent="insertarImagen" type="button" class="btn btn-primary">
+            Insertar
+        </button>
+
+        <button @click.prevent="descargarImagen" type="button" class="btn btn-secondary flex gap-2 items-center">
+            <Icon icon="ph:arrow-square-out-duotone" class="text-xl"/> Abrir
+        </button>
+
+        <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
+            {{modoInsertar?'Cancelar':'Cerrar'}}
+        </button>
+    </div>
+</div>
+
+</Modal>
+</FolderExplorer>
+
 </template>
 
 
@@ -60,7 +58,8 @@ import { usePlayer } from '@/Stores/player'
 const props = defineProps({
     ruta: { type: String, required: false, default: "" },
     modoInsertar : { type: Boolean, default: false},
-    contentClass: String
+    contentClass: String,
+    mostrarMisArchivos : {type: String, default: true}
 });
 
 const player = usePlayer()

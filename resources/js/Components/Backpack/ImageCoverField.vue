@@ -8,10 +8,7 @@
                 acceptedFiles: 'image/*'
             }" />
 
-            folder:{{ folder }}
-
         <div class="flex overflow-x-auto">
-            images:{{images}}
             <div v-for="url of images" :key="url" class="border-4 border-transparent flex-shrink-0 cursor-pointer"
                 :title="url" :class="url == selected ? '!border-orange-500' : ''" @click="selected = url">
                 <Image :src="url" style="height:150px" />
