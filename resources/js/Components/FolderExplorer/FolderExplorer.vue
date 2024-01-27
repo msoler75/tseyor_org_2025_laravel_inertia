@@ -240,7 +240,7 @@
                                         :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
                                         :is-link="!embed" />
 
-                                    <small class="w-full flex justify-between items-center">
+                                    <small class="w-full flex justify-between gap-2 items-center">
                                         <span v-if="item.tipo==='disco'">****</span>
                                         <span v-else-if="item.tipo === 'carpeta'">
                                             {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
@@ -390,7 +390,7 @@
                                         item.subcarpetas + ' subcarpetas' }}
                                     </template>
                                     <template v-else>
-                                        <FileSize :size="item.tamano" />
+                                        <FileSize :size="item.tamano" />&nbsp;
                                         <TimeAgo :date="item.fecha_modificacion" />
                                     </template>
                                 </div>

@@ -846,12 +846,14 @@ class ArchivosController extends Controller
             ], 413);
         }
 
-        //list($disk, $folder) = $this->diskRuta($folder);
+        $ofolder = $folder;
+        list($disk, $folder) = $this->diskRuta($folder);
         //dd($disk, $folder);
-        $disk = 'public';
+        // $disk = 'public';
 
         $path = Storage::disk($disk)->path($folder);
         // dd($path);
+        Log::info("uploading file '$path' in disk $disk, original folder: $ofolder, current folder: $folder");
 
         // Crear la carpeta si no existe
         // $path = storage_path("app/" . $folder);
