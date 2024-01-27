@@ -38,11 +38,19 @@ class ComentarioCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+         CRUD::column('autor')->type('text');
+
+         CRUD::column('shortUrl')->type('text');
+
+         // CRUD::column('tituloContenido')->type('string');
+
+         CRUD::column('created_at')->type('date');
     }
 
     /**
@@ -60,6 +68,10 @@ class ComentarioCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+         CRUD::field('user_id')->type("text")->label("user_id")->attributes(['readonly' => 'readonly']);
+
+         CRUD::field('autor')->type("text")->attributes(['readonly' => 'readonly'])->before('user_id');
     }
 
     /**
