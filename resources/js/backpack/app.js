@@ -21,9 +21,10 @@ import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
 // import JSONEditorField from "../Components/Backpack/JSONEditorField.vue";
 import SelectField from "../Components/Backpack/SelectField.vue";
 import TimeAgo from "../Components/TimeAgo.vue";
+import FileManager from "../Components/FileManager.vue";
 
 // only in forms
-const elem = document.querySelector(".page");
+const elem = document.querySelector(".page-body");
 if (elem) {
   console.log("loading vue 3 fields...");
   window.app = createApp({})
@@ -35,6 +36,7 @@ if (elem) {
    // .component("jsoneditorfield", JSONEditorField)
     .component("selectfield", SelectField)
     .component("timeago", TimeAgo)
+    .component("filemanager", FileManager)
     .mixin({
       components: { Icon, Link },
     })

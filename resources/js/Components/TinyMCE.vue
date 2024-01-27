@@ -43,10 +43,11 @@
 
         <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
             <div class="flex flex-col">
-                <FileManager :ruta="mediaFolder" class="max-h-[90vh] flex-grow" @image="insertImage"
+                <FileManager :ruta="mediaFolder" @image="insertImage"
                 :modo-insertar="true"
-                    content-class="max-h-[calc(100vh-240px)] overflow-y-auto" />
-                <div class="p-3 flex justify-end">
+                class="min-h-[calc(100vh-160px)] max-h-[calc(100vh-160px)] h-[calc(100vh-160px)] overflow-y-auto" />
+
+                <div class="p-3 flex justify-end border-t border-gray-500 border-opacity-25">
                     <button @click.prevent="showMediaManager = false" class="btn btn-neutral">Cerrar</button>
                 </div>
             </div>
