@@ -9,6 +9,7 @@
         "backpack/crud": "^6.1",
         "backpack/permissionmanager": "^7.0",
         "backpack/theme-tabler": "^1.0",
+        "druidfi/mysqldump-php": "^1.0",
         "guzzlehttp/guzzle": "^7.7",
         "inertiajs/inertia-laravel": "^0.6.8",
         "intervention/image": "^3.2",
