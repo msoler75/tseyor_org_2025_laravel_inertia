@@ -20,9 +20,10 @@ import QuillEditorSimpleField from "../Components/Backpack/QuillEditorSimpleFiel
 import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
 // import JSONEditorField from "../Components/Backpack/JSONEditorField.vue";
 import SelectField from "../Components/Backpack/SelectField.vue";
+import TimeAgo from "../Components/TimeAgo.vue";
 
 // only in forms
-const elem = document.querySelector(".page form[method='post']");
+const elem = document.querySelector(".page");
 if (elem) {
   console.log("loading vue 3 fields...");
   window.app = createApp({})
@@ -33,6 +34,7 @@ if (elem) {
     .component("imagecoverfield", ImageCoverField)
    // .component("jsoneditorfield", JSONEditorField)
     .component("selectfield", SelectField)
+    .component("timeago", TimeAgo)
     .mixin({
       components: { Icon, Link },
     })

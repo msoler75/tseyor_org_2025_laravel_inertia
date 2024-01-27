@@ -96,6 +96,7 @@ return [
     'styles' => [
         // 'styles/example.css',
         // 'https://some-cdn.com/example.css',
+        // 'backpack.css'
     ],
 
     // CSS files that are loaded in all pages, using Laravel's mix() helper
@@ -116,6 +117,7 @@ return [
 
     // JS files that are loaded in all pages, using Laravel's asset() helper
     'scripts' => [
+        // 'packages/backpack/base/js/bundle.js'
         // 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.3/vue.global.min.js'
         // https://unpkg.com/vue@3.3/dist/vue.esm-browser.js
         // 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.runtime.esm-bundler.min.js'

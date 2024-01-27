@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Admin\DashboardController;
 // --------------------------
 // Custom Backpack Routes
 // --------------------------
@@ -16,6 +17,7 @@ Route::group([
     ),
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
+    // Route::get('dashboard', 'Backpack\dashboard')->name('dashboard');
     Route::crud('user', 'UserCrudController');
     Route::crud('comunicado', 'ComunicadoCrudController');
     Route::crud('guia', 'GuiaCrudController');
@@ -78,6 +80,8 @@ Route::group([
 
     Route::get('search/{model}', 'SearchModelController@index');
 
+
+    Route::get('dashboard', [DashboardController::class, 'index'] );
 
 
 
