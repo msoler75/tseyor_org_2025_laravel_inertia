@@ -82,8 +82,8 @@
 </x-backpack::menu-dropdown>
 @endcan
 
-@can('administrar configuración')
-<x-backpack::menu-dropdown title="Configuración" icon="la la-cog">
+@can('avanzado')
+<x-backpack::menu-dropdown title="avanzado" icon="la la-cog">
     <x-backpack::menu-dropdown-item title="Ajustes" icon="la la-sliders-h" :link="backpack_url('setting')" />
 </x-backpack::menu-dropdown>
 @endcan

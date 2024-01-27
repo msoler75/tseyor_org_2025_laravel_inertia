@@ -1,3 +1,7 @@
+custom dashboard Backpack
+old: https://github.com/Laravel-Backpack/Docs/blob/master/3.4/base-how-to.md
+new: https://backpackforlaravel.com/docs/6.x/getting-started-videos#4-dashboard
+
 Falta: sección Muul - Divulgación - tarjeta de visita
 
 Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
@@ -37,7 +41,8 @@ Eventos:
 -grupo de usuarios social pueden crear eventos
 
 
-https://github.com/Laravel-Backpack/BackupManager
+https://github.com/Laravel-Backpack/BackupManager // requiere acceso a archivo ejecutabe mysqldump
+https://laravel-auditing.com/
 https://github.com/Laravel-Backpack/revise-operation
 
 

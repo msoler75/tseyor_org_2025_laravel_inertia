@@ -52,13 +52,13 @@ return [
 
     // Set this to false if you would like to skip adding "my account" routes
     // (you then need to manually define the routes in your web.php)
-    'setup_my_account_routes' => false,
+    'setup_my_account_routes' => true,
 
     // Set this to false if you would like to skip adding the password recovery routes
     // (you then need to manually define the routes in your web.php)
     'setup_password_recovery_routes' => false,
 
-    /*
+    /*d
     |--------------------------------------------------------------------------
     | Security
     |--------------------------------------------------------------------------
