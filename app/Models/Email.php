@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Email extends Model
 {
-    use \Illuminate\Database\Eloquent\SoftDeletes;
+    use CrudTrait;
 
     protected $fillable = [
-        'from',
+        /*'from',
         'to',
         'subject',
-        'body'
+        'body'*/
     ];
 
 

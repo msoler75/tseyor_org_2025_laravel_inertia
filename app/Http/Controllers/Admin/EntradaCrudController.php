@@ -172,7 +172,8 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     protected function show($id)
     {
-        return redirect("/entradas/$id?borrador");
+        $entrada = Entrada::find($id);
+        return $entrada->visibilidad == 'P' ? redirect("/entradas/$id") : redirect("/entradas/$id?borrador");
     }
 
 

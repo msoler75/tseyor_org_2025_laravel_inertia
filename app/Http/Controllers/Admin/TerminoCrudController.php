@@ -225,4 +225,11 @@ vuestro planeta, que se denomina *Cocoon*. Ahí podréis observar cómo son mis 
             echo $e->getMessage();
         }
     }
+
+
+    protected function show($id)
+    {
+        $termino = \App\Models\Termino::find($id);
+        return $termino->visibilidad == 'P' ? redirect("/glosario/$id") : redirect("/glosario/$id?borrador");
+    }
 }

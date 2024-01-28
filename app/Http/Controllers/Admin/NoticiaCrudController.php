@@ -157,7 +157,8 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     protected function show($id)
     {
-        return redirect("/noticias/$id?borrador");
+        $noticia = \App\Models\Noticia::find($id);
+        return $noticia->visibilidad == 'P' ? redirect("/noticias/$id") : redirect("/noticias/$id?borrador");
     }
 
 

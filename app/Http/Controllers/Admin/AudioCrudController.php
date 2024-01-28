@@ -129,6 +129,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     protected function show($id)
     {
-        return redirect("/audios/$id?borrador");
+        $audio = \App\Models\Audio::find($id);
+        return $audio->visibilidad == 'P' ? redirect("/audios/$id") : redirect("/audios/$id?borrador");
     }
 }

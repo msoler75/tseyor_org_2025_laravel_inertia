@@ -154,7 +154,8 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     protected function show($id)
     {
-        return redirect("/publicaciones/$id?borrador");
+        $publicacion = \App\Models\Publicacion::find($id);
+        return $publicacion->visibilidad == 'P' ? redirect("/publicaciones/$id") : redirect("/publicaciones/$id?borrador");
     }
 
     public function importCreate()

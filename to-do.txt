@@ -9,6 +9,10 @@ Creación de eventos por los usuarios autorizados
 
 -emails: ver registro de emails en el dashboard
 
+-archivos subidos: en dashboard
+
+-audio id vue
+
 tailwindcss  -> after:content-['_↗']
 Ejemplo:
 <p>Higher resolution means more than just a better-quality image. With a Retina
