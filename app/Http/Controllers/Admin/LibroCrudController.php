@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Libro;
 
 /**
  * Class LibroCrudController
@@ -18,7 +19,7 @@ class LibroCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -41,9 +42,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
     protected function setupListOperation()
     {
         $this->crud->addColumn([
-            'name'  => 'titulo',
+            'name' => 'titulo',
             'label' => 'Título',
-            'type'  => 'text'
+            'type' => 'text'
         ]);
 
 
@@ -55,17 +56,17 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
 
         $this->crud->addColumn([
-            'name'  => 'categoria',
+            'name' => 'categoria',
             'label' => 'Categoría',
-            'type'  => 'text',
+            'type' => 'text',
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
-            'value' => function($entry) {
-                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            'type' => 'text',
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
     }
@@ -80,7 +81,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'descripcion' => 'required|max:2048'
+            'descripcion' => 'required|max:2048',
+            'imagen' => 'required',
+            'pdf' => 'required|mimes:pdf',
         ]);
         // CRUD::setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
@@ -90,7 +93,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
          * - CRUD::field('price')->type('number');
          */
 
-        $folderImages = "/medios/libros";
+        $folderImages = "/medios/libros/portadas";
 
         $folderPDF = "/medios/libros/pdf";
 
@@ -114,27 +117,23 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
 
         CRUD::field('edicion')->wrapper([
-            'class'      => 'form-group col-md-3'
+            'class' => 'form-group col-md-3'
         ]);
 
         CRUD::field('paginas')->wrapper([
-            'class'      => 'form-group col-md-3'
+            'class' => 'form-group col-md-3'
         ]);
 
         CRUD::field('visibilidad')->type('visibilidad');
 
-        CRUD::field(
-            [
-                'name' => 'pdf',
-                'label' => 'Archivo PDF',
-                'type' => 'upload',
-                'upload' => true,
-                'upload_folder' => $folderPDF,
-                'attributes' => [
+        CRUD::field('pdf')->label('Archivo PDF')
+            ->type('upload')
+            ->withFiles([
+                'disk' => 'public', // the disk where file will be stored
+                'path' => $folderPDF, // the path inside the disk where file will be stored
+            ])->attributes([
                     'accept' => '.pdf',
-                ],
-            ]
-        );
+                ]);
     }
 
 
@@ -152,6 +151,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     protected function show($id)
     {
-        return redirect("/libros/$id?borrador");
+        $libro = Libro::find($id);
+        return $libro->visibilidad == 'P' ? redirect("/libros/$id") : redirect("/libros/$id?borrador");
     }
 }
