@@ -2,12 +2,12 @@
 
 @section('content')
 
-    <div class="flex flex-wrap justify-between gap-6 my-12 max-h-[calc(100vh-200px)] overflow-y-auto">
+    <div class="flex flex-wrap justify-between gap-5 my-12">
 
         @can('administrar usuarios')
-            <div class="card p-4 w-[37rem]">
+            <div class="card p-4 w-[27rem]">
                 <div class="font-bold mb-3 text-lg">Últimos usuarios registrados:</div>
-                <div class="grid grid-cols-[1fr_1fr_100px]">
+                <div class="grid grid-cols-[1fr_1fr_60px]">
                     @foreach ($users_creados as $user)
                         <a title="Ver página del usuario"
                             href="/usuarios/{{ $user->slug ? $user->slug : $user->id }}">{{ $user->name }}</a>
@@ -19,9 +19,9 @@
                 </div>
             </div>
 
-            <div class="card p-4 w-[37rem]">
+            <div class="card p-4 w-[27rem]">
                 <div class="font-bold mb-3 text-lg">Usuarios activos:</div>
-                <div class="grid grid-cols-[1fr_1fr_100px]">
+                <div class="grid grid-cols-[1fr_1fr_60px]">
                     @foreach ($users_activos as $user)
                         <a title="Ver página del usuario"
                             href="/usuarios/{{ $user->slug ? $user->slug : $user->user_id }}">{{ $user->name }}</a>
@@ -34,10 +34,20 @@
             </div>
         @endcan
 
+        <div class="card p-4 w-[20rem]">
+            <div class="font-bold mb-3 text-lg">Búsquedas recientes:</div>
+            <div class="grid grid-cols-[2fr_1fr]">
+                @foreach ($busquedas as $busqueda)
+                    <span>{{$busqueda['query']}}</span>
+                    <span><TimeAgo date="{{ $busqueda['created_at'] }}" /></span>
+                @endforeach
+            </div>
+        </div>
+
         @can('administrar social')
             <div class="card p-4 w-full">
                 <div class="font-bold mb-3 text-lg">Últimos comentarios:</div>
-                <div class="grid grid-cols-[1fr_4fr_2fr_1fr_100px] gap-3">
+                <div class="grid grid-cols-[1fr_4fr_2fr_1fr_60px] gap-3">
                     @foreach ($comentarios as $comentario)
                         <a title="Ver página del usuario"
                             href="/usuarios/{{ $comentario['user']['slug'] ? $comentario['user']['slug'] : $comentario['user']['id'] }}">{{ $comentario['user']['name'] }}</a>
@@ -59,7 +69,7 @@
         @can('administrar contenidos')
             <div class="card p-4 w-[37rem]">
                 <div class="font-bold mb-3 text-lg">Contenidos creados:</div>
-                <div class="grid grid-cols-[2fr_1fr_1fr_100px]">
+                <div class="grid grid-cols-[2fr_1fr_1fr_60px]">
                     @foreach ($contenidos_creados as $contenido)
                         <a title="Ver contenido" href="{{ $contenido->url }}">{{ $contenido->titulo }}</a>
                         <span>{{ $contenido->coleccion }}</span>
@@ -77,7 +87,7 @@
         @can('administrar contenidos')
             <div class="card p-4 w-[37rem]">
                 <div class="font-bold mb-3 text-lg">Contenidos modificados:</div>
-                <div class="grid grid-cols-[2fr_1fr_1fr_100px]">
+                <div class="grid grid-cols-[2fr_1fr_1fr_60px]">
                     @foreach ($contenidos_modificados as $contenido)
                         <a title="Ver contenido" href="{{ $contenido->url }}">{{ $contenido->titulo }}</a>
                         <span>{{ $contenido->coleccion }}</span>
@@ -94,7 +104,7 @@
         @can('avanzado')
             <div class="card p-4 w-full">
                 <div class="font-bold mb-3 text-lg">Actividad de los administradores:</div>
-                <div class="grid grid-cols-[3fr_1fr_1fr_1fr_1fr_100px]">
+                <div class="grid grid-cols-[3fr_1fr_1fr_1fr_1fr_60px]">
                     @foreach ($revisiones as $revision)
                         <a title="Ver contenido" href="{{ $revision->contenidoUrl }}">{{ $revision->tituloContenido }}</a>
                         <span>{{ $revision->coleccion }}</span>

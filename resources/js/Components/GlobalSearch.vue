@@ -36,7 +36,7 @@
 
                     <div class="mt-14">
                         <span class="font-bold">Prueba a buscar:</span>
-                        <div v-for="q of queries" :key="q" @click="query = q"
+                        <div v-for="q of predefinedQueries" :key="q" @click="query = q"
                             class="bg-base-200 bg-opacity-50 flex items-center justify-between w-full py-3 px-4 my-2 cursor-pointer rounded-lg">
                             <span>
                                 {{ q }}
@@ -54,8 +54,8 @@
                     <Link v-for="item of grupo.items" :key="item.id" :id="item.idDom"
                         class="w-full py-3 px-4 bg-base-200 bg-opacity-50 rounded-lg m-2 flex gap-3 justify-between items-center"
                         role="option" @mouseover="seleccionarItem(item, true)"
-                        :href="item.coleccion != 'paginas' ? (route(item.coleccion) + '/' + (item.slug_ref || item.id_ref)) : '/' + item.slug_ref"
-                        @click="mostrarModal = false" :aria-selected="itemSeleccionado && itemSeleccionado.id == item.id"
+                        :href="calcularUrl(item)"
+                        @click="clickHandle(calcularUrl(item))" :aria-selected="itemSeleccionado && itemSeleccionado.id == item.id"
                         :class="itemSeleccionado && itemSeleccionado.id == item.id ? 'seleccionado bg-primary' : ''">
                     <div v-html="item.titulo" />
                     <span class="text-lg">›</span>
@@ -77,7 +77,7 @@ const query = ref("")
 
 const lastQuery = ref("")
 
-const queries = ref(['Contacta con nosotros', '¿Dónde estamos?', 'Libros para comenzar', '¿Dónde puedo inscribirme?', 'Ayuda humanitaria'])
+const predefinedQueries = ref(['Contacta con nosotros', '¿Dónde estamos?', 'Libros para comenzar', '¿Dónde puedo inscribirme?', 'Ayuda humanitaria'])
 
 const results = ref({ data: [] })
 
@@ -159,22 +159,33 @@ onMounted(() => {
 })
 
 watch(mostrarModal, (value) => {
-    if (value)
+    if (value) {
+        currentUrl = window.location.pathname
         nextTick(() => {
             input.value.focus()
         })
+    }
 })
 
+function calcularUrl(item) {
+    return item.coleccion != 'paginas' ? (route(item.coleccion) + '/' + (item.slug_ref || item.id_ref)) : '/' + item.slug_ref
+}
+
+// para buscar
 const loading = ref(false)
 const queryLoading = ref("")
-var timer = null
+var timerBuscar = null
+
+// para guardar estadísticas de búsqueda
+var currentUrl = window.location.pathname
+var timerGuardarBusqueda = null
+var busquedaId = null
 
 function buscar() {
-    if(loading.value)
-    {
+    if (loading.value) {
         console.log('esperando carga de anterior busqueda', queryLoading.value, query.value)
-        // clearTimeout(timer)
-        timer = setTimeout(buscar, 250)
+        // clearTimeout(timerBuscar)
+        timerBuscar = setTimeout(buscar, 250)
         return
     }
     if (query.value) {
@@ -185,26 +196,52 @@ function buscar() {
             .then(response => {
                 results.value = response.data
                 loading.value = false
+                timerGuardarBusqueda = setTimeout(guardarBusqueda, 2000)
             })
             .catch(error => {
                 loading.value = false
             })
-            .finally(()=>{
+            .finally(() => {
                 lastQuery.value = currentQuery
             })
     }
 
 }
 
+function guardarBusqueda(url) {
+    clearTimeout(timerGuardarBusqueda)
+    console.log('guardarBusqueda', url)
+    const data = new FormData();
+    data.append('query', query.value);
+    data.append('origen', currentUrl);
+    if (busquedaId)
+        data.append('id', busquedaId);
+    if (url)
+        data.append('click_url', url);
+
+    axios.post(route('busqueda.guardar'), data)
+        .then(response => {
+            busquedaId = response.data.id
+        })
+}
+
 watch(query, (value) => {
-    clearTimeout(timer)
+    busquedaId = null // borramos id de la busqueda actual
+    clearTimeout(timerGuardarBusqueda) // borramos contador de tiempo para guardar los datos de la busqueda actual, seguramente el usuario está escribiendo aún
+    clearTimeout(timerBuscar) // borramos contador de tiempo para ejecutar la busqueda
     if (value)
-        timer = setTimeout(buscar, 250)
+        timerBuscar = setTimeout(buscar, 250)
     else {
         lastQuery.value = null
         results.value = { data: [] }
     }
 })
+
+function clickHandle(url) {
+    console.log('clickHandle', url)
+    mostrarModal.value = false
+    guardarBusqueda(url)
+}
 
 const traducciones = {
     paginas: 'páginas',

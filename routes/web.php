@@ -71,6 +71,7 @@ Route::get('', [PortadaController::class, 'index'])->name('portada');
 
 Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades');
 Route::get('buscar', [ContenidosController::class, 'search'])->name('buscar');
+Route::post('buscar', [ContenidosController::class, 'searchStore'])->name('busqueda.guardar');
 
 Route::get('archivos', [ArchivosController::class, 'archivos'])->name('archivos0');
 Route::get('archivos_info', [ArchivosController::class, 'info'])->name('archivos.info');
