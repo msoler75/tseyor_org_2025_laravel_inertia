@@ -40,6 +40,19 @@
         </div>
 
 
+        <div class="card p-4 w-[37rem]">
+            <div class="font-bold mb-3 text-lg">Últimos contenidos:</div>
+            <div class="grid grid-cols-4">
+                @foreach($contenidos as $contenido)
+                    <a href="{{$contenido->url}}">{{$contenido->titulo}}</a>
+                    <span>{{$contenido->coleccion}}</span>
+                    <span><TimeAgo date="{{$contenido->updated_at}}"/></span>
+                    <a class="btn btn-xs" href="/admin/{{rtrim($contenido->coleccion, "s")}}/{{ $contenido->id_ref }}/edit">Editar</a>
+                @endforeach
+            </div>
+        </div>
+
+
 
     </div>
 
