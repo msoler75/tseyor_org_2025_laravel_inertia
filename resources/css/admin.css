@@ -42,3 +42,8 @@ form [bp-field-name='permissions'] .checkbox
     @apply bg-gray-600;
 }
 
+
+
+[data-bs-theme=dark] .alert-danger {
+    --tblr-alert-color: var(--tblr-danger);
+}

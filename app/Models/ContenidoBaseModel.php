@@ -18,6 +18,20 @@ class ContenidoBaseModel extends Model
 {
     use HasSEO;
     use EsContenido;
+    use \Venturecraft\Revisionable\RevisionableTrait;
+
+    // revisionable identifier
+    public function identifiableName()
+    {
+        return $this->titulo ?? $this->nombre ?? $this->name;
+    }
+
+    // If you are using another bootable trait
+    // be sure to override the boot method in your model
+    public static function boot()
+    {
+        parent::boot();
+    }
 
     // https://github.com/ralphjsmit/laravel-seo
     public function getDynamicSEOData(): SEOData
