@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class Grupo extends Model
 {
     use CrudTrait;
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    use \Illuminate\Database\Eloquent\SoftDeletes;
+
     protected $fillable = [
         'nombre',
         'slug',

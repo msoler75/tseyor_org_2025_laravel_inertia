@@ -9,7 +9,6 @@ use App\Traits\EsCategorizable;
 
 class Libro extends ContenidoBaseModel
 {
-
     use CrudTrait;
     use Searchable;
     use EsCategorizable;

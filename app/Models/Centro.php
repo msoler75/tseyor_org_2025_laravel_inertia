@@ -10,6 +10,7 @@ use App\Traits\TieneImagen;
 class Centro extends ContenidoBaseModel
 {
     use CrudTrait;
+    use \Illuminate\Database\Eloquent\SoftDeletes;
     use TieneImagen;
 
     protected $fillable = [

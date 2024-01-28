@@ -13,7 +13,8 @@ class Nodo extends Model
 {
     use CrudTrait;
     use Searchable;
-
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    use \Illuminate\Database\Eloquent\SoftDeletes;
 
     protected $fillable = ['ruta', 'permisos', 'user_id', 'group_id', 'es_carpeta'];
 

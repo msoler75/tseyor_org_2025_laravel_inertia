@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class RadioItem extends Model
 {
     use CrudTrait;
+    use \Illuminate\Database\Eloquent\SoftDeletes;
+
     protected $table = "radio";
 
     protected $fillable = [

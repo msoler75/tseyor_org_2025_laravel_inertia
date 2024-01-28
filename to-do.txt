@@ -5,6 +5,10 @@ Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar admi
 Creación de eventos por los usuarios autorizados
 
 
+-estadísticas de busqueda: tabla 'busquedas', donde se registra el click cuando se ha hecho una búsqueda
+
+-emails: ver registro de emails en el dashboard
+
 tailwindcss  -> after:content-['_↗']
 Ejemplo:
 <p>Higher resolution means more than just a better-quality image. With a Retina

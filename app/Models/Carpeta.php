@@ -5,8 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
+
+/**
+ * No tiene tabla propia, es un wrapper para acceder a los nodos de tipo carpeta
+ */
 class Carpeta extends Model
 {
+
     protected $table = 'nodos';
 
     protected $esCarpeta = true;

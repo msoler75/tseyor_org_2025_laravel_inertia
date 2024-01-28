@@ -19,6 +19,7 @@ class ContenidoBaseModel extends Model
     use HasSEO;
     use EsContenido;
     use \Venturecraft\Revisionable\RevisionableTrait;
+    use \Illuminate\Database\Eloquent\SoftDeletes;
 
     // revisionable identifier
     public function identifiableName()
