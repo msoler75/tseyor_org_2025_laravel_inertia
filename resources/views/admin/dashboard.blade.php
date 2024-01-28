@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div class="flex flex-wrap justify-between gap-6 my-12">
+    <div class="flex flex-wrap justify-between gap-6 my-12 max-h-[calc(100vh-200px)] overflow-y-auto">
 
         @can('administrar usuarios')
             <div class="card p-4 w-[37rem]">
@@ -110,9 +110,6 @@
             </div>
         @endcan
 
-
-
     </div>
 
-    <h1 class="text-3xl">En construcción... 🏗️</h1>
 @endsection

@@ -268,7 +268,8 @@ class ComunicadoCrudController extends CrudController
 
     protected function show($id)
     {
-        return redirect("/comunicados/$id?borrador");
+        $comunicado = Comunicado::find($id);
+        return $comunicado->visibilidad == 'P' ? redirect("/comunicados/$id") : redirect("/comunicados/$id?borrador");
     }
 
     // show whatever you want

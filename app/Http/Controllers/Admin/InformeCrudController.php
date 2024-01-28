@@ -223,7 +223,8 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     protected function show($id)
     {
-        return redirect("/informes/$id?borrador");
+        $informe = \App\Models\Informe::find($id);
+        return $informe->visibilidad == 'P' ? redirect("/informes/$id") : redirect("/informes/$id?borrador");
     }
 
 

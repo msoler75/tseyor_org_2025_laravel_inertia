@@ -132,6 +132,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     protected function show($id)
     {
-        return redirect("/contactos/$id?borrador");
+        $contacto = \App\Models\Contacto::find($id);
+        return $contacto->visibilidad == 'P' ? redirect("/contactos/$id") : redirect("/contactos/$id?borrador");
     }
 }

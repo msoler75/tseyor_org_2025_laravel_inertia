@@ -144,6 +144,7 @@ class CentroCrudController extends CrudController
 
     protected function show($id)
     {
-        return redirect("/centros/$id");
+        $centro = \App\Models\Centro::find($id);
+        return $centro->visibilidad == 'P' ? redirect("/centros/$id") : redirect("/centrods/$id?borrador");
     }
 }

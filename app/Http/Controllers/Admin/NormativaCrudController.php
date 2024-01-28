@@ -142,7 +142,8 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     protected function show($id)
     {
-        return redirect("/normativas/$id?borrador");
+        $normativa = \App\Models\Normativa::find($id);
+        return $normativa->visibilidad == 'P' ? redirect("/normativas/$id") : redirect("/normativas/$id?borrador");
     }
 
 

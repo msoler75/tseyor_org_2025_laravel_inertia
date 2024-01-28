@@ -146,7 +146,8 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     protected function show($id)
     {
-        return redirect("/meditaciones/$id?borrador");
+        $meditacion = \App\Models\Meditacion::find($id);
+        return $meditacion->visibilidad == 'P' ? redirect("/meditaciones/$id") : redirect("/meditaciones/$id?borrador");
     }
 
     public function importCreate()

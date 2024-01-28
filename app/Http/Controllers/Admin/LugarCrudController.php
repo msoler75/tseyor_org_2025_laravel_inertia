@@ -78,6 +78,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     protected function show($id)
     {
-        return redirect("/lugares/$id");
+        $lugar = \App\Models\Lugar::find($id);
+        return $lugar->visibilidad == 'P' ? redirect("/lugares/$id") : redirect("/lugares/$id?borrador");
     }
 }

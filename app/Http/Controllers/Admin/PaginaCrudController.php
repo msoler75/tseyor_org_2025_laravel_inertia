@@ -137,6 +137,6 @@ use \Backpack\ReviseOperation\ReviseOperation;
     {
         $pagina = Pagina::findOrFail($id);
 
-        return redirect("/{$pagina->ruta}?borrador");
+        return $pagina->visibilidad != 'P'? redirect("/{$pagina->ruta}?borrador") : redirect("/{$pagina->ruta}");
     }
 }
