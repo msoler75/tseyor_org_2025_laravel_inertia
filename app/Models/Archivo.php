@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * No tiene tabla propia, es para acceder a la información de nodos de archivo
+ */
 class Archivo extends Model
 {
     protected $table = 'nodos';

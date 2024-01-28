@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Cache;
 class Acl extends Model
 {
     use CrudTrait;
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    use \Illuminate\Database\Eloquent\SoftDeletes;
 
     protected $table = 'nodos_acl';
 

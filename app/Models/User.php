@@ -24,6 +24,8 @@ use Laravel\Scout\Searchable;
 class User extends Authenticatable
 {
     use CrudTrait;
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    use \Illuminate\Database\Eloquent\SoftDeletes;
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;

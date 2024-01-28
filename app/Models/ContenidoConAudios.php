@@ -42,7 +42,7 @@ class ContenidoConAudios extends ContenidoBaseModel
      * En qué carpeta se guardarán los audios
      **/
     public function generarRutaAudios()
-    {
+{
         $modelName = $this->getMorphClass();
         $año = $this->created_at->year;
         return "medios/$modelName/$año";
