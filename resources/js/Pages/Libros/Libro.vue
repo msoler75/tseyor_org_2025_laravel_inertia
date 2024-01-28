@@ -25,7 +25,7 @@
                 <div class="prose" v-html="libro.descripcion"></div>
                 <div class="w-full flex mt-auto justify-end pt-7">
 
-                    <a class="btn btn-primary w-fit flex gap-3" :href="libro.pdf" download>
+                    <a class="btn btn-primary w-fit flex gap-3" :href="'/almacen'+libro.pdf" download>
                         <Icon icon="ph:download-duotone" /> Descargar en PDF
                     </a>
                 </div>

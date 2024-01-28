@@ -21,6 +21,10 @@ const props = defineProps({
     },
     title: {
         type: String
+    },
+    optimize: {
+        type: Boolean,
+        default: true
     }
 });
 
@@ -40,6 +44,9 @@ const displaySrc = ref("")
 
 // effect active or not necessary
 var justDontTouch = computed(() =>
+    // si no queremos optimización
+    !props.optimize
+    ||
     // si es una url absoluta y corresponde a otro servidor...
     props.src.match(/https?:\/\/[^/]+/)?.[0] == window.location.origin
     ||
