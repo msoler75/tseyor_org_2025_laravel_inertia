@@ -31,6 +31,7 @@ Route::group([
     Route::crud('contacto', 'ContactoCrudController');
     Route::crud('centro', 'CentroCrudController');
     Route::crud('comentario', 'ComentarioCrudController');
+    Route::crud('email', 'EmailCrudController');
     Route::crud('evento', 'EventoCrudController');
     Route::crud('inscripcion', 'InscripcionCrudController');
     Route::crud('meditacion', 'MeditacionCrudController');
