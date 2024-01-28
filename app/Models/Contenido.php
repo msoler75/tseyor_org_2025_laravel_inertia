@@ -62,4 +62,11 @@ class Contenido extends Model
             'texto_busqueda' => $this->texto_busqueda,
         ];
     }
+
+
+    public function getUrlAttribute() {
+        if($this->coleccion=='paginas')
+        return "/". $this->slug_ref;
+    return "/" . $this->coleccion . "/" . ($this->slug_ref ?  $this->slug_ref: $this->id_ref);
+    }
 }

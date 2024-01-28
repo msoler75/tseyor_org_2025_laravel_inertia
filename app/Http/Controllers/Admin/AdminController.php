@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\Comentario;
+use App\Models\Contenido;
 use Illuminate\Support\Facades\DB;
 
 class AdminController {
@@ -20,8 +21,10 @@ class AdminController {
 
         $comentarios = Comentario::select()->with('user')->latest()->take(10)->get();
 
+        $contenidos = Contenido::select()->latest()->take(10)->get();
+
         // dd($comentarios);
-        return view('admin.dashboard', ['users_creados'=>$users_creados, 'users_activos' =>$users_activos, 'comentarios'=>$comentarios]);
+        return view('admin.dashboard', ['users_creados'=>$users_creados, 'users_activos' =>$users_activos, 'comentarios'=>$comentarios, 'contenidos'=>$contenidos]);
     }
 
 }
