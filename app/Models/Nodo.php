@@ -16,6 +16,8 @@ class Nodo extends Model
     use \Venturecraft\Revisionable\RevisionableTrait;
     use \Illuminate\Database\Eloquent\SoftDeletes;
 
+    protected $revisionCreationsEnabled = true;
+
     protected $fillable = ['ruta', 'permisos', 'user_id', 'group_id', 'es_carpeta'];
 
     protected $attributes = [

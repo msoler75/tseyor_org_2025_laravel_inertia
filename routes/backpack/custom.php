@@ -42,6 +42,7 @@ Route::group([
     Route::crud('libro', 'LibroCrudController');
     Route::crud('sala', 'SalaCrudController');
     Route::crud('setting', 'SettingCrudController');
+    Route::crud('revision', 'RevisionCrudController');
     Route::crud('radio-item', 'RadioItemCrudController');
     Route::crud('pagina', 'PaginaCrudController');
     Route::crud('termino', 'TerminoCrudController');

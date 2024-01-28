@@ -69,6 +69,28 @@
             </div>
         @endcan
 
+        @can('avanzado')
+
+        <div class="card p-4 w-full">
+            <div class="font-bold mb-3 text-lg">Actividad de los administradores:</div>
+            <div class="grid grid-cols-[3fr_1fr_1fr_1fr_1fr_100px]">
+                @foreach ($revisiones as $revision)
+                    <a title="Ver contenido" href="{{ $revision->contenidoUrl }}">{{ $revision->tituloContenido }}</a>
+                    <span>{{ $revision->coleccion }}</span>
+                    <span>{{ $revision->operacion }}</span>
+                    <span>{{ $revision->autor }}</span>
+                    <span>
+                        <TimeAgo date="{{ $revision->created_at }}" />
+                    </span>
+                    <a title="Ver revisión" class="btn btn-xs"
+                        href="{{ $revision->revisionUrl }}">Ver revisión</a>
+                @endforeach
+            </div>
+            <div class="mt-4 text-xs text-right"><a href="/admin/revision">Ver todas las revisiones</a></div>
+        </div>
+
+        @endcan
+
 
 
     </div>

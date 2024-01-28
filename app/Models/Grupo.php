@@ -12,6 +12,8 @@ class Grupo extends Model
     use \Venturecraft\Revisionable\RevisionableTrait;
     use \Illuminate\Database\Eloquent\SoftDeletes;
 
+    protected $revisionCreationsEnabled = true;
+
     protected $fillable = [
         'nombre',
         'slug',
