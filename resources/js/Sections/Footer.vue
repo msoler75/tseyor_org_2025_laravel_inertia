@@ -28,6 +28,9 @@
 </template>
 
 <script setup>
+import {usePermisos} from '@/Stores/permisos'
+
+const permisos = usePermisos()
 
 const props = defineProps({
     sections: Array,

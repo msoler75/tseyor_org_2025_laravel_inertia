@@ -422,6 +422,10 @@ axios.get(route('setting', 'navigation'))
                                                 Mi Cuenta
                                             </DropdownLink>
 
+                                            <DropdownLink v-if="permisos.permisos.length" href="/admin/dashboard" as="a">
+                                                Panel de administrador
+                                            </DropdownLink>
+
                                             <DropdownLink v-if="$page.props.jetstream.hasApiFeatures"
                                                 :href="route('api-tokens.index')">
                                                 API Tokens
