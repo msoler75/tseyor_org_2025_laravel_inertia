@@ -5,6 +5,8 @@ namespace App\Traits;
 // use Illuminate\Support\Facades\Storage;
 use App\Pigmalion\ContenidoHelper;
 
+
+// EL CODIGO DE ESTE TRAIT SE HA LLEVADO AL MODELO CONTENIDOBASEMODEL
 trait EsContenido
 {
     public static function boot()

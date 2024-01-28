@@ -24,7 +24,9 @@ class AdminController
 
         $comentarios = Comentario::select()->with('user')->latest()->take(10)->get();
 
-        $contenidos = Contenido::select()->latest()->take(10)->get();
+        $contenidos_creados = Contenido::select()->orderBy('created_at', 'desc')->take(10)->get();
+
+        $contenidos_modificados = Contenido::select()->orderBy('updated_at', 'desc')->take(10)->get();
 
         $revisiones = Revision::select()->latest()->take(10)->get();
 
@@ -35,7 +37,8 @@ class AdminController
             'users_creados' => $users_creados,
             'users_activos' => $users_activos,
             'comentarios' => $comentarios,
-            'contenidos' => $contenidos,
+            'contenidos_creados' => $contenidos_creados,
+            'contenidos_modificados' => $contenidos_modificados,
             'revisiones' => $revisiones
         ]);
     }

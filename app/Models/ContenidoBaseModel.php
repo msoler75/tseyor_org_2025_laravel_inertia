@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Carbon\Carbon;
-use App\Traits\EsContenido;
+// use App\Traits\EsContenido;
+use App\Pigmalion\ContenidoHelper;
+
 
 /*
  ContenidoBaseModel es un modelo básico que sirve para:
@@ -17,9 +19,38 @@ use App\Traits\EsContenido;
 class ContenidoBaseModel extends Model
 {
     use HasSEO;
-    use EsContenido;
+    // use EsContenido;
     use \Venturecraft\Revisionable\RevisionableTrait;
     use \Illuminate\Database\Eloquent\SoftDeletes;
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+            // Acciones antes de guardar el modelo
+            ContenidoHelper::rellenarSlugImagenYDescripcion($model);
+        });
+
+        static::saved(function ($model) {
+            // Acciones después de que el modelo se haya guardado
+            ContenidoHelper::guardarContenido($model->table, $model);
+        });
+
+        static::deleting(function ($model) {
+            // dd("deleting");
+            //ContenidoHelper::removerContenido($model);
+            // Acciones antes de borrar el modelo
+            // ...
+        });
+
+        static::deleted(function ($model) {
+            //dd("deleted", $model);
+            ContenidoHelper::removerContenido($model);
+            // Acciones después de que el modelo se haya borrado
+            // ...
+        });
+    }
 
     protected $revisionCreationsEnabled = true;
 
@@ -31,10 +62,6 @@ class ContenidoBaseModel extends Model
 
     // If you are using another bootable trait
     // be sure to override the boot method in your model
-    public static function boot()
-    {
-        parent::boot();
-    }
 
     // https://github.com/ralphjsmit/laravel-seo
     public function getDynamicSEOData(): SEOData
