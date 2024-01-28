@@ -35,7 +35,7 @@ class Revision extends Model
 
     public function getContenidoUrlAttribute()
     {
-        return $this->coleccion . "/" . $this->revisionable_id;
+        return '/' . $this->coleccion . "/" . $this->revisionable_id;
     }
 
 
