@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Comentario;
 use App\Models\Contenido;
 use App\Models\Revision;
+use App\Models\Busqueda;
 use Illuminate\Support\Facades\DB;
 
 class AdminController
@@ -30,6 +31,8 @@ class AdminController
 
         $revisiones = Revision::select()->latest()->take(10)->get();
 
+        $busquedas = Busqueda::select(['query', 'created_at'])->latest()->take(10)->get();
+
         // dd($revisiones);
 
         // dd($comentarios);
@@ -39,7 +42,8 @@ class AdminController
             'comentarios' => $comentarios,
             'contenidos_creados' => $contenidos_creados,
             'contenidos_modificados' => $contenidos_modificados,
-            'revisiones' => $revisiones
+            'revisiones' => $revisiones,
+            'busquedas' => $busquedas
         ]);
     }
 

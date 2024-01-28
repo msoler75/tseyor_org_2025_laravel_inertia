@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Contenido;
+use App\Models\Busqueda;
 use App\Pigmalion\SEO;
 use App\Pigmalion\Busquedas;
 
@@ -59,5 +60,28 @@ class ContenidosController extends Controller
             Busquedas::formatearResultados($resultados, $buscarFiltrado, true);
 
         return response()->json($resultados, 200);
+    }
+
+    /**
+     * Guarda para uso informativo las búsquedas que hacen los usuarios
+     */
+    public function searchStore(Request $request)
+    {
+        // si nos pasan el click_url es que en esa búsqueda se ha realizado un click
+        $data = $request->input();
+
+        $base = url("");
+        // limpia la url
+        if(isset($data['click_url']))
+            $data['click_url'] = str_replace($base, "", $data['click_url']);
+
+        if ($data['id'] ?? null) {
+            $busqueda = Busqueda::findOrFail($data['id']);
+            $busqueda->update($data);
+            return response()->json(['id' => $busqueda->id], 200);
+        } else {
+            $busqueda = Busqueda::create($data);
+            return response()->json(['id' => $busqueda->id], 200);
+        }
     }
 }

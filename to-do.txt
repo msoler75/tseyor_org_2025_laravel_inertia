@@ -1,3 +1,8 @@
+-estadísticas de busqueda: tabla 'busquedas', donde se registra el click cuando se ha hecho una búsqueda
+
+-archivos: disco -> no se debe poder renombrar, ni eliminar, ni seleccionar, ni propiedades, o sea, ningun submenu
+
+
 Falta: sección Muul - Divulgación - tarjeta de visita
 
 Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
@@ -5,7 +10,6 @@ Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar admi
 Creación de eventos por los usuarios autorizados
 
 
--estadísticas de busqueda: tabla 'busquedas', donde se registra el click cuando se ha hecho una búsqueda
 
 -emails: ver registro de emails en el dashboard
 
@@ -21,13 +25,6 @@ apple.com/pro-display-xdr/" target="_blank">Pro Display XDR</a> gives you
 nearly 40 percent more screen real estate than a 5K display.</p>
 
 
-
-Registro de acciones de los editores:
--Para cada acción del CRUD, se debe registrar en una tabla, para seguimiento
--Se debe guardar una copia con toda la información (puede ser en json) del registro actualizado  (https://github.com/Laravel-Backpack/revise-operation)
--Se debe guardar el autor de la acción
-
-
 Equipos:
 -informes de equipo
 -revisar permisos coordinadores (publicaciones, archivos)
@@ -35,11 +32,6 @@ Equipos:
 
 Eventos:
 -grupo de usuarios social pueden crear eventos
-
-
-https://laravel-auditing.com/
-https://github.com/Laravel-Backpack/revise-operation
-
 
 
 TNTSearch
