@@ -54,7 +54,7 @@ class Revision extends Model
         $contenido = $modelClass::withTrashed()->find($this->revisionable_id);
 
         if ($contenido)
-            return $contenido->titulo ?? $contenido->nombre ?? "";
+            return $contenido->titulo ?? $contenido->nombre ?? $contenido->ruta ?? "";
         return "";
     }
 
