@@ -20,14 +20,6 @@ Registro de acciones de los editores:
 -Se debe guardar el autor de la acción
 
 
-Widgets Admin Dashboard:
--Ultimos registros de acciones
--Ultimos usuarios ingresados en la web
--Ultimos usuarios registrados (creados)
--Últimos Comentarios
--Actividad reciente (últimos contenidos)
--Estadísticas de uso
-
 Equipos:
 -informes de equipo
 -revisar permisos coordinadores (publicaciones, archivos)
