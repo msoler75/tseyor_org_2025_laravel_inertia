@@ -32,7 +32,7 @@
                 @foreach($comentarios as $comentario)
                 <a href="/usuarios/{{ $comentario['user']['slug']? $comentario['user']['slug']:$comentario['user']['id'] }}">{{$comentario['user']['name']}}</a>
                 <a class="flex-grow" href="{{$comentario['url']}}#comentario_{{$comentario['id']}}">{{substr($comentario['texto'], 0, 64) . (strlen($comentario['texto']) > 64 ? "..." :"")}}</a>
-                <span class="flex-grow">{{$comentario->tituloContenido}}</span>
+                <a class="flex-grow" href="{{$comentario['url']}}">{{$comentario->tituloContenido}}</a>
                 <span><TimeAgo date="{{$comentario['created_at']}}"/></span>
                 <a class="btn btn-xs" href="/admin/comentario/{{ $comentario['id'] }}/edit">Editar</a>
                 @endforeach
