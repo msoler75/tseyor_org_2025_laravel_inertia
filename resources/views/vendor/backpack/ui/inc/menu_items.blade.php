@@ -86,6 +86,7 @@
 @can('avanzado')
 <x-backpack::menu-dropdown title="Avanzado" icon="la la-cog">
     <x-backpack::menu-dropdown-item title="Ajustes" icon="la la-sliders-h" :link="backpack_url('setting')" />
+    <x-backpack::menu-dropdown-item title="Revisiones" icon="la la-eye" :link="backpack_url('revision')" />
 </x-backpack::menu-dropdown>
 @endcan
 

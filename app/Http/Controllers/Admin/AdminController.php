@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Models\Comentario;
 use App\Models\Contenido;
+use App\Models\Revision;
 use Illuminate\Support\Facades\DB;
 
-class AdminController {
+class AdminController
+{
 
-    public function dashboard() {
+    public function dashboard()
+    {
         $users_creados = User::select()->latest()->take(10)->get();
 
         $users_activos = DB::table('sessions')
@@ -23,8 +26,18 @@ class AdminController {
 
         $contenidos = Contenido::select()->latest()->take(10)->get();
 
+        $revisiones = Revision::select()->latest()->take(10)->get();
+
+        // dd($revisiones);
+
         // dd($comentarios);
-        return view('admin.dashboard', ['users_creados'=>$users_creados, 'users_activos' =>$users_activos, 'comentarios'=>$comentarios, 'contenidos'=>$contenidos]);
+        return view('admin.dashboard', [
+            'users_creados' => $users_creados,
+            'users_activos' => $users_activos,
+            'comentarios' => $comentarios,
+            'contenidos' => $contenidos,
+            'revisiones' => $revisiones
+        ]);
     }
 
 }

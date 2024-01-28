@@ -21,6 +21,8 @@ class ContenidoBaseModel extends Model
     use \Venturecraft\Revisionable\RevisionableTrait;
     use \Illuminate\Database\Eloquent\SoftDeletes;
 
+    protected $revisionCreationsEnabled = true;
+
     // revisionable identifier
     public function identifiableName()
     {

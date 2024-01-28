@@ -35,6 +35,8 @@ class User extends Authenticatable
     use HasRoles;
     use Searchable;
 
+    protected $revisionCreationsEnabled = true;
+
     // cuando se crea un usuario, llenaremos el campo "frase" con una frase aleatoria desde un archivo de texto
     public static function boot() {
         parent::boot();
