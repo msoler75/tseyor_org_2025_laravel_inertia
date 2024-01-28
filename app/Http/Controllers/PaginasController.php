@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\Pagina;
 use Inertia\Inertia;
 use App\Pigmalion\SEO;
-use PDOException;
 
 class PaginasController extends Controller
 {

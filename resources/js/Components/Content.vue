@@ -23,6 +23,10 @@ const props = defineProps({
     format: {
         type: String,
         default: ''
+    },
+    optimizeImages: {
+        type: Boolean,
+        default: true
     }
 });
 
@@ -37,6 +41,10 @@ const contentPreProcessed = computed(()=> isMarkdown.value? MarkdownToHtml(props
 // hay que hacer todo esto para reemplazar las etiquetas IMG por componentes Image
 const parts = computed(()=>{
     const r = []
+    if(!props.optimizeImages) {
+        r.push({type: 'text', text: contentPreProcessed.value})
+        return r
+    }
     // hace un bucle recorriendo el string contentPreProcessed y buscando la posición del proximo '<img...>'
     // extrae esa etiqueta y divide lo que había antes y después de img
     // todo eso va guardando y así combinando en un array compuesto de partes de texto, e imagenes, intercalándose

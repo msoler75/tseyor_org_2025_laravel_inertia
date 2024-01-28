@@ -36,43 +36,7 @@ class EmailCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        // CRUD::setFromDb(); // set columns from db columns.
-
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
-
-         $this->crud->addColumn([
-            'name'  => 'tituloContenido',
-            'label' => 'Contenido',
-            'type'  => 'text'
-        ]);
-
-
-        $this->crud->addColumn([
-            'name' => 'coleccion',
-            'label' => 'Colección',
-            'type' => 'text',
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'operacion',
-            'label' => 'Operación',
-            'type' => 'text',
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'autor',
-            'label' => 'Autor',
-            'type' => 'text',
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'created_at',
-            'label' => 'Fecha',
-            'type' => 'datetime',
-        ]);
+        CRUD::setFromDb(); // set columns from db columns.
 
     }
 

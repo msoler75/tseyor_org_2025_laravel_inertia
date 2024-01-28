@@ -31,6 +31,7 @@ use App\Http\Controllers\MeditacionesController;
 use App\Http\Controllers\NormativasController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\ImagenesController;
+use App\Http\Controllers\EmailsController;
 use App\Http\Controllers\DevController;
 use App\Http\Controllers\Api\ComentariosController;
 use App\Pigmalion\SEO;
@@ -274,8 +275,13 @@ Route::get('phpinfo', function () {
     return phpinfo();
 });
 
-Route::get('image_s
-ize', [ImagenesController::class, 'size'])->name('imagen.tamaño');
+// imagenes
+Route::get('image_size', [ImagenesController::class, 'size'])->name('imagen.tamaño');
+
+// administración
+Route::get('emails', [EmailsController::class, 'index'])->name('emails');
+Route::get('emails/{id}', [EmailsController::class, 'index'])->name('email');
+
 
 Route::get('asociacion', 'App\Http\Controllers\PaginasController@show')->name('asociacion');
 

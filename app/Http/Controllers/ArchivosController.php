@@ -15,7 +15,7 @@ use App\Models\Nodo;
 use App\Models\Acl;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
-use App\Http\Controllers\ImagenesController;;
+use App\Http\Controllers\ImagenesController;
 
 // use App\Pigmalion\TiempoEjecucion as T;
 // use App\Pigmalion\Profiler;
