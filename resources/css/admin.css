@@ -32,15 +32,27 @@ form [bp-field-name='permissions'] .checkbox
     @apply bg-gray-800;
 }
 
-
 [data-bs-theme=dark] .bg-base-200 {
     @apply bg-gray-700;
 }
 
-
 [data-bs-theme=dark] .bg-base-300 {
     @apply bg-gray-600;
 }
+
+
+[data-bs-theme=dark] .\!bg-base-100 {
+    @apply !bg-gray-800;
+}
+
+[data-bs-theme=dark] .\!bg-base-200 {
+    @apply !bg-gray-700;
+}
+
+[data-bs-theme=dark] .\!bg-base-300 {
+    @apply !bg-gray-600;
+}
+
 
 
 
