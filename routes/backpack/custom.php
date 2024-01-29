@@ -82,7 +82,7 @@ Route::group([
 
     Route::get('search/{model}', 'SearchModelController@index');
 
-
+    Route::get('', [AdminController::class, 'dashboard'] );
     Route::get('dashboard', [AdminController::class, 'dashboard'] );
     Route::get('archivos', function () {
         return view('admin.archivos');
