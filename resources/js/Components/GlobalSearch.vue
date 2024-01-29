@@ -137,6 +137,7 @@ onMounted(() => {
             mostrarModal.value = true
         }
         if (mostrarModal.value) {
+            console.log(event.key)
             switch (event.key) {
                 case 'Enter':
                     if (itemSeleccionado.value) {
@@ -152,6 +153,14 @@ onMounted(() => {
                 case 'ArrowUp':
                     event.preventDefault()
                     anteriorItem()
+                    break;
+                case 'Home':
+                    event.preventDefault()
+                    primerItem()
+                    break;
+                case 'End':
+                    event.preventDefault()
+                    ultimoItem()
                     break;
             }
         }
@@ -302,5 +311,14 @@ function anteriorItem() {
     seleccionarItem(itemsArray.value[idx])
 }
 
+function primerItem() {
+    if(itemsArray.value.length)
+    seleccionarItem(itemsArray.value[0])
+}
+
+function ultimoItem() {
+    if(itemsArray.value.length)
+    seleccionarItem(itemsArray.value[itemsArray.value.length-1])
+}
 </script>
 
