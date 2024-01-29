@@ -5,30 +5,28 @@
     <div class="flex flex-wrap justify-between gap-5 my-12">
 
         @can('administrar usuarios')
-            <div class="card p-4 w-[27rem]">
+            <div class="card p-4 w-[24rem]">
                 <div class="font-bold mb-3 text-lg">Últimos usuarios registrados:</div>
-                <div class="grid grid-cols-[1fr_1fr_60px]">
+                <div class="w-full grid grid-cols-[1fr_1fr]">
                     @foreach ($users_creados as $user)
                         <a title="Ver página del usuario"
                             href="/usuarios/{{ $user->slug ? $user->slug : $user->id }}">{{ $user->name }}</a>
                         <span>
                             <TimeAgo date="{{ $user->created_at }}" />
                         </span>
-                        <a title="Editar usuario" class="btn btn-xs" href="/admin/user/{{ $user->id }}/edit">Editar</a>
                     @endforeach
                 </div>
             </div>
 
-            <div class="card p-4 w-[27rem]">
+            <div class="card p-4 w-[24rem]">
                 <div class="font-bold mb-3 text-lg">Usuarios activos:</div>
-                <div class="grid grid-cols-[1fr_1fr_60px]">
+                <div class="w-full grid grid-cols-[1fr_1fr]">
                     @foreach ($users_activos as $user)
                         <a title="Ver página del usuario"
                             href="/usuarios/{{ $user->slug ? $user->slug : $user->user_id }}">{{ $user->name }}</a>
                         <span>
                             <TimeAgo date="{{ date('Y-m-d H:i:s', $user->last_activity) }}" />
                         </span>
-                        <a title="Editar usuario" class="btn btn-xs" href="/admin/user/{{ $user->user_id }}/edit">Editar</a>
                     @endforeach
                 </div>
             </div>
@@ -104,7 +102,7 @@
         @can('avanzado')
             <div class="card p-4 w-full">
                 <div class="font-bold mb-3 text-lg">Actividad de los administradores:</div>
-                <div class="grid grid-cols-[3fr_1fr_1fr_1fr_1fr_60px]">
+                <div class="grid grid-cols-[3fr_1fr_1fr_1fr_1fr_100px]">
                     @foreach ($revisiones as $revision)
                         <a title="Ver contenido" href="{{ $revision->contenidoUrl }}">{{ $revision->tituloContenido }}</a>
                         <span>{{ $revision->coleccion }}</span>
