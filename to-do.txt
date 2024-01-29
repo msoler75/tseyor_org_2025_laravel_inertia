@@ -1,8 +1,3 @@
--estadísticas de busqueda: tabla 'busquedas', donde se registra el click cuando se ha hecho una búsqueda
-
--archivos: disco -> no se debe poder renombrar, ni eliminar, ni seleccionar, ni propiedades, o sea, ningun submenu
-
-
 Falta: sección Muul - Divulgación - tarjeta de visita
 
 Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas

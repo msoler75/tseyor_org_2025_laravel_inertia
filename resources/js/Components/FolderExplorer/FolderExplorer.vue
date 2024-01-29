@@ -119,7 +119,7 @@
                                         <span>Subir archivos</span>
                                     </div>
 
-                                    <div v-if="puedeEscribir && !seleccionando"
+                                    <div v-if="puedeEscribir && !seleccionando && itemsCopy[0].ruta != 'archivos' && itemsCopy[0].ruta != 'medios'"
                                         class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="abrirModalRenombrar(itemsCopy[0])">
                                         <Icon icon="ph:cursor-text-duotone" />
@@ -620,11 +620,11 @@
                         </tr>
                         <tr>
                             <th>Carpeta</th>
-                            <td>{{ item.carpeta }}</td>
+                            <td>{{ item.carpeta=='.'?'':item.carpeta }}</td>
                         </tr>
                         <tr>
                             <th>Ruta completa</th>
-                            <td>{{ item.carpeta }}/{{ item.nombre }}</td>
+                            <td>/{{item.ruta}}</td>
                         </tr>
                         <tr>
                             <th>Propietario</th>
@@ -1646,6 +1646,7 @@ function renombrarItem() {
             parts[parts.length - 1] = parts[parts.length - 1].replace(item.nombre, nuevoNombre.value)
             item.url = parts.join('/')
             item.nombre = nuevoNombre.value
+            if(!props.embed)
             if (item.actual) {
                 // reemplazar la URL actual en el historial del navegador
                 router.replace(item.url);

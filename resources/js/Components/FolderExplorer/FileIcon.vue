@@ -49,7 +49,7 @@ const iconType = computed(() => {
     case 'zip':
     case 'rar':
     case '7z':
-        return 'file-icons:archive';
+        return 'ci:file-archive'
 
     // Documentos de Microsoft Office
     case 'doc':
