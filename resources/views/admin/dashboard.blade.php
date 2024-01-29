@@ -5,62 +5,126 @@
     <div class="flex flex-wrap justify-between gap-5 my-12">
 
         @can('administrar usuarios')
-            <div class="card p-4 w-[24rem]">
-                <div class="font-bold mb-3 text-lg">Últimos usuarios registrados:</div>
-                <div class="w-full grid grid-cols-[1fr_1fr]">
-                    @foreach ($users_creados as $user)
-                        <a title="Ver página del usuario"
-                            href="/usuarios/{{ $user->slug ? $user->slug : $user->id }}">{{ $user->name }}</a>
-                        <span>
-                            <TimeAgo date="{{ $user->created_at }}" />
-                        </span>
-                    @endforeach
-                </div>
+            <div class="flex-grow  rounded overflow-y-auto border border-gray-500 bg-base-100">
+                <table class="w-full divide-y divide-gray-500">
+                    <thead class="!bg-base-100">
+                        <tr>
+                            <th colspan=2 class="font-bold mb-3 text-lg px-3 py-4">Últimos usuarios registrados:</th>
+                        </tr>
+                    </thead>
+                    <tbody class="!bg-base-100 divide-y divide-gray-500">
+                        @foreach ($users_creados as $user)
+                            <tr>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <a title="Ver página del usuario"
+                                        href="/usuarios/{{ $user->slug ? $user->slug : $user->id }}">{{ $user->name }}</a>
+                                </td>
+                                <td class="px-3 py-2 whitespace-nowrap text-center">
+                                    <TimeAgo date="{{ $user->created_at }}" />
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
 
-            <div class="card p-4 w-[24rem]">
-                <div class="font-bold mb-3 text-lg">Usuarios activos:</div>
-                <div class="w-full grid grid-cols-[1fr_1fr]">
-                    @foreach ($users_activos as $user)
-                        <a title="Ver página del usuario"
-                            href="/usuarios/{{ $user->slug ? $user->slug : $user->user_id }}">{{ $user->name }}</a>
-                        <span>
-                            <TimeAgo date="{{ date('Y-m-d H:i:s', $user->last_activity) }}" />
-                        </span>
-                    @endforeach
-                </div>
+            <div class="flex-grow rounded overflow-y-auto border border-gray-500 bg-base-100">
+                <table class="w-full divide-y divide-gray-500">
+                    <thead class="!bg-base-100">
+                        <tr>
+                            <th colspan=2 class="font-bold mb-3 text-lg px-3 py-4">Usuarios activos:</th>
+                        </tr>
+                    </thead>
+                    <tbody class="!bg-base-100 divide-y divide-gray-500">
+                        @foreach ($users_activos as $user)
+                            <tr>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <a title="Ver página del usuario"
+                                        href="/usuarios/{{ $user->slug ? $user->slug : $user->user_id }}">{{ $user->name }}</a>
+                                </td>
+                                <td class="px-3 py-2 whitespace-nowrap text-center">
+                                    <span>
+                                        <TimeAgo date="{{ date('Y-m-d H:i:s', $user->last_activity) }}" />
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         @endcan
 
-        <div class="card p-4 w-[20rem]">
-            <div class="font-bold mb-3 text-lg">Búsquedas recientes:</div>
-            <div class="grid grid-cols-[2fr_1fr]">
-                @foreach ($busquedas as $busqueda)
-                    <span>{{$busqueda['query']}}</span>
-                    <span><TimeAgo date="{{ $busqueda['created_at'] }}" /></span>
-                @endforeach
-            </div>
+        <div class="flex-grow  rounded overflow-y-auto border border-gray-500 bg-base-100">
+            <table class="w-full divide-y divide-gray-500">
+                <thead class="!bg-base-100">
+                    <tr>
+                        <th colspan=2 class="font-bold mb-3 text-lg px-3 py-4">Búsquedas recientes:</th>
+                    </tr>
+                </thead>
+                <tbody class="!bg-base-100 divide-y divide-gray-500">
+                    @foreach ($busquedas as $busqueda)
+                        <tr>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <span>{{ $busqueda['query'] }}</span>
+                            </td>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <span>
+                                    <TimeAgo date="{{ $busqueda['created_at'] }}" />
+                                </span>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
 
         @can('administrar social')
-            <div class="card p-4 w-full">
-                <div class="font-bold mb-3 text-lg">Últimos comentarios:</div>
-                <div class="grid grid-cols-[1fr_4fr_2fr_1fr_60px] gap-3">
+        <div class="flex-grow rounded overflow-y-auto border border-gray-500 bg-base-100">
+            <table class="w-full divide-y divide-gray-500">
+                <thead class="!bg-base-100">
+                    <tr>
+                        <th colspan=5 class="mb-3 px-3 py-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold">Últimos comentarios:</span>
+                                <a class="text-xs text-right font-normal" href="/admin/comentario">Ver todos</a></div>
+                            </th>
+                    </tr>
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario
+                        </th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Comentario
+                        </th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Contenido
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="!bg-base-100 divide-y divide-gray-500">
                     @foreach ($comentarios as $comentario)
+                    <tr>
+                        <td class="px-3 py-2 whitespace-nowrap">
                         <a title="Ver página del usuario"
                             href="/usuarios/{{ $comentario['user']['slug'] ? $comentario['user']['slug'] : $comentario['user']['id'] }}">{{ $comentario['user']['name'] }}</a>
+                        </td>
+                        <td class="px-3 py-2 whitespace-wrap">
                         <a title="Ver comentario en el contenido" class="flex-grow"
                             href="{{ $comentario['url'] }}#comentario_{{ $comentario['id'] }}">{{ substr($comentario['texto'], 0, 64) . (strlen($comentario['texto']) > 64 ? '...' : '') }}</a>
+                        </td>
+                        <td class="px-3 py-2 whitespace-wrap">
                         <a title="Ver contenido" class="flex-grow"
                             href="{{ $comentario['url'] }}">{{ $comentario->tituloContenido }}</a>
-                        <span>
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap text-center">                        
                             <TimeAgo date="{{ $comentario['created_at'] }}" />
-                        </span>
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
                         <a title="Editar comentario" class="btn btn-xs"
                             href="/admin/comentario/{{ $comentario['id'] }}/edit">Editar</a>
+                        </td>
+                    </tr>
                     @endforeach
-                </div>
-            </div>
+                </tbody>
+            </table>            
+        </div>
         @endcan
 
 

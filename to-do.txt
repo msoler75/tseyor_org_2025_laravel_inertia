@@ -34,6 +34,10 @@ Eventos:
 -grupo de usuarios social pueden crear eventos
 
 
+images slider
+https://backpackforlaravel.com/articles/tutorials/how-to-build-an-image-slider-crud-backpack-basics
+
+
 TNTSearch
 https://tnt.studio/searching-for-users-with-laravel-scout-and-tntsearch
 
