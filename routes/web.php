@@ -279,6 +279,14 @@ Route::get('phpinfo', function () {
 // imagenes
 Route::get('image_size', [ImagenesController::class, 'size'])->name('imagen.tamaño');
 
+// herramientas muul
+
+Route::get('muul/tarjetavisita', function () {
+    return Inertia::render('Muul/TarjetaVisita', []);
+})->name('tarjeta.visita');
+
+
+
 // administración
 Route::get('emails', [EmailsController::class, 'index'])->name('emails');
 Route::get('emails/{id}', [EmailsController::class, 'index'])->name('email');
