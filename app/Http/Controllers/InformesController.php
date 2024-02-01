@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Informe;
 use App\Models\Equipo;
 use App\Pigmalion\SEO;
-use App\Pigmalion\Busquedas;
+use App\Pigmalion\BusquedasHelper;
 
 class InformesController extends Controller
 {
@@ -72,7 +72,7 @@ class InformesController extends Controller
             ->appends(['buscar' => $buscar,  'categoria' => $categoria, 'equipo' => $equipo_id_slug]);
 
         if ($buscar)
-            Busquedas::formatearResultados($resultados, $buscar);
+            BusquedasHelper::formatearResultados($resultados, $buscar);
 
         return Inertia::render('Informes/Index', [
             'categoriaActiva' => $categoria,

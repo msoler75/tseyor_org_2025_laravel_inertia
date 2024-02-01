@@ -7,7 +7,7 @@ use Inertia\Inertia;
 use App\Models\Contenido;
 use App\Models\Busqueda;
 use App\Pigmalion\SEO;
-use App\Pigmalion\Busquedas;
+use App\Pigmalion\BusquedasHelper;
 
 class ContenidosController extends Controller
 {
@@ -50,14 +50,14 @@ class ContenidosController extends Controller
     {
         $buscar = $request->input('query');
 
-        $buscarFiltrado = Busquedas::descartarPalabrasComunes($buscar);
+        $buscarFiltrado = BusquedasHelper::descartarPalabrasComunes($buscar);
 
         $resultados = Contenido::search($buscarFiltrado)->paginate(64); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
 
         if (strlen($buscarFiltrado) < 3)
-            Busquedas::limpiarResultados($resultados, $buscarFiltrado, true);
+            BusquedasHelper::limpiarResultados($resultados, $buscarFiltrado, true);
         else
-            Busquedas::formatearResultados($resultados, $buscarFiltrado, true);
+            BusquedasHelper::formatearResultados($resultados, $buscarFiltrado, true);
 
         return response()->json($resultados, 200);
     }

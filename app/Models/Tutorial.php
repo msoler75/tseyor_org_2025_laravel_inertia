@@ -8,16 +8,16 @@ use Laravel\Scout\Searchable;
 use App\Traits\EsCategorizable;
 
 
-class Meditacion extends ContenidoBaseModel
+class Tutorial extends ContenidoBaseModel
 {
     use CrudTrait;
     use Searchable;
     use EsCategorizable;
 
-    // incluye la categoría 'todas'
-    public $incluyeCategoriaTodos = "Todas";
+    // incluye la categoría 'todos'
+    public $incluyeCategoriaTodos = "Todos";
 
-    protected $table = 'meditaciones';
+    protected $table = 'tutoriales';
 
     protected $fillable = [
         'titulo',
@@ -28,6 +28,8 @@ class Meditacion extends ContenidoBaseModel
         'audios',
         'visibilidad',
     ];
+
+
 
 
       // SCOUT

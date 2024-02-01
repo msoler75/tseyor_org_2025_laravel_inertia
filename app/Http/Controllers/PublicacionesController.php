@@ -6,7 +6,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Publicacion;
 use App\Pigmalion\SEO;
-use App\Pigmalion\Busquedas;
+use App\Pigmalion\BusquedasHelper;
 
 class PublicacionesController extends Controller
 {
@@ -34,7 +34,7 @@ class PublicacionesController extends Controller
             ->appends(['buscar' => $buscar, 'categoria' => $categoria]);
 
         if ($buscar)
-            Busquedas::formatearResultados($resultados, $buscar);
+            BusquedasHelper::formatearResultados($resultados, $buscar);
 
         $categorias = (new Publicacion())->getCategorias();
 

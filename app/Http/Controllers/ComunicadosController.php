@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Comunicado;
 use App\Pigmalion\SEO;
-use App\Pigmalion\Busquedas;
+use App\Pigmalion\BusquedasHelper;
 use Illuminate\Support\Facades\Auth;
 
 class ComunicadosController extends Controller
@@ -62,7 +62,7 @@ class ComunicadosController extends Controller
             ->appends(['buscar' => $buscar,  'categoria' => $categoria, 'ano' => $año, 'orden' => $orden]);
 
         if ($buscar)
-            Busquedas::formatearResultados($resultados, $buscar);
+            BusquedasHelper::formatearResultados($resultados, $buscar);
 
         return Inertia::render('Comunicados/Index', [
             'categoria' => $categoria,

@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use App\Models\Normativa;
+use App\Models\Tutorial;
 use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
 
-class NormativasController extends Controller
+class TutorialesController extends Controller
 {
     //
     public function index(Request $request)
@@ -18,20 +18,19 @@ class NormativasController extends Controller
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
-            $resultados = Normativa::search($buscar);
+            $resultados = Tutorial::search($buscar);
         } else {
             // obtiene los items sin busqueda
-            $resultados = Normativa::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
-                ->where('visibilidad', 'P');
+            $resultados = Tutorial::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
+                ->where('visibilidad', 'P')
+                ->when($categoria === '_', function ($query) {
+                    $query->orderByRaw('LOWER(titulo)');
+                });
         }
 
         // parámetros
-        if ($categoria)
-            $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%")
-            ->when($categoria === '_', function ($query) {
-                $query->orderByRaw('LOWER(titulo)');
-            });
-
+        if ($categoria && $categoria!='_')
+            $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%");
 
         $resultados = $resultados
             ->paginate(12)
@@ -40,15 +39,15 @@ class NormativasController extends Controller
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);
 
-        $categorias = (new Normativa())->getCategorias();
+        $categorias = (new Tutorial())->getCategorias();
 
-        return Inertia::render('Normativas/Index', [
+        return Inertia::render('Tutoriales/Index', [
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
             'categorias'=>$categorias
         ])
-            ->withViewData(SEO::get('normativas'));
+            ->withViewData(SEO::get('Tutoriales'));
     }
 
 
@@ -56,21 +55,21 @@ class NormativasController extends Controller
     public function show($id)
     {
         if (is_numeric($id)) {
-            $normativa = Normativa::findOrFail($id);
+            $Tutorial = Tutorial::findOrFail($id);
         } else {
-            $normativa = Normativa::where('slug', $id)->firstOrFail();
+            $Tutorial = Tutorial::where('slug', $id)->firstOrFail();
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $normativa->visibilidad == 'P';
+        $publicado =  $Tutorial->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$normativa || (!$publicado && !$borrador && !$editor)) {
+        if (!$Tutorial || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
-        return Inertia::render('Normativas/Normativa', [
-            'normativa' => $normativa,
+        return Inertia::render('Tutoriales/Tutorial', [
+            'Tutorial' => $Tutorial,
         ])
-            ->withViewData(SEO::from($normativa));
+            ->withViewData(SEO::from($Tutorial));
     }
 }

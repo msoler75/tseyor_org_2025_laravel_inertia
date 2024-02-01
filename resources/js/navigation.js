@@ -146,6 +146,12 @@ export default [
               description: "Dónde comenzar en la lectura de Tseyor",
               icon: "ph:list-magnifying-glass-duotone",
             },
+            {
+                title: "Tutoriales",
+                route: "tutoriales",
+                description: "Tutoriales de uso de las herramientas",
+                icon: "ph:steps-duotone",
+              },
           ],
         },
       ],

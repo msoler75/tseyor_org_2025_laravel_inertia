@@ -6,7 +6,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Meditacion;
 use App\Pigmalion\SEO;
-use App\Pigmalion\Busquedas;
+use App\Pigmalion\BusquedasHelper;
 
 class MeditacionesController extends Controller
 {
@@ -37,7 +37,7 @@ class MeditacionesController extends Controller
             ->appends(['buscar' => $buscar,  'categoria' => $categoria]);
 
         if ($buscar)
-            Busquedas::formatearResultados($resultados, $buscar);
+            BusquedasHelper::formatearResultados($resultados, $buscar);
 
         $categorias = (new Meditacion())->getCategorias();
 

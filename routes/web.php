@@ -28,9 +28,11 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\PublicacionesController;
 use App\Http\Controllers\InformesController;
 use App\Http\Controllers\MeditacionesController;
+use App\Http\Controllers\TutorialesController;
 use App\Http\Controllers\NormativasController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\ImagenesController;
+use App\Http\Controllers\TarjetaVisitaController;
 use App\Http\Controllers\EmailsController;
 use App\Http\Controllers\DevController;
 use App\Http\Controllers\Api\ComentariosController;
@@ -199,9 +201,12 @@ Route::get('utg/departamentos/{slug}', [EquiposController::class, 'show'])->wher
 Route::get('publicaciones', [PublicacionesController::class, 'index'])->name('publicaciones');
 Route::get('publicaciones/{slug}', [PublicacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('publicacion');
 
-
 Route::get('meditaciones', [MeditacionesController::class, 'index'])->name('meditaciones');
 Route::get('meditaciones/{slug}', [MeditacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('meditacion');
+
+Route::get('tutoriales', [TutorialesController::class, 'index'])->name('tutoriales');
+Route::get('tutoriales/{slug}', [TutorialesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('tutorial');
+
 
 Route::get('normativas', [NormativasController::class, 'index'])->name('normativas');
 Route::get('normativas/{slug}', [NormativasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('normativa');
@@ -227,7 +232,7 @@ Route::middleware([
     })->name('dashboard');
 });
 
-
+// queue  batch
 Route::get('__process_jobs', [WorkerController::class, 'process'])->name('process.jobs');
 
 
@@ -266,6 +271,7 @@ Route::put('equipos/{idEquipo}/{idUsuario}/remover', [EquiposController::class, 
 Route::put('equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
 
 
+
 // comentarios
 
 
@@ -281,10 +287,8 @@ Route::get('image_size', [ImagenesController::class, 'size'])->name('imagen.tama
 
 // herramientas muul
 
-Route::get('muul/tarjetavisita', function () {
-    return Inertia::render('Muul/TarjetaVisita', []);
-})->name('tarjeta.visita');
-
+Route::get('muul/tarjetavisita', [TarjetaVisitaController::class, 'index'])->name('tarjeta.visita');
+Route::post('muul/tarjetavisita', [TarjetaVisitaController::class, 'send'])->name('tarjeta.visita.enviar');
 
 
 // administración

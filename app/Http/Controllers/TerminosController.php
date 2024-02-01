@@ -9,7 +9,7 @@ use App\Models\Libro;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
-use App\Pigmalion\Busquedas;
+use App\Pigmalion\BusquedasHelper;
 
 
 class TerminosController extends Controller
@@ -35,7 +35,7 @@ class TerminosController extends Controller
                     ->paginate(60));
 
         if ($buscar)
-            Busquedas::formatearResultados($listado, $buscar);
+            BusquedasHelper::formatearResultados($listado, $buscar);
 
         return Inertia::render('Terminos/Index', [
             'listado' => $listado,

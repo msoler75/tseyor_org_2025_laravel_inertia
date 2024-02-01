@@ -10,10 +10,10 @@ class Email extends Model
     use CrudTrait;
 
     protected $fillable = [
-        /*'from',
+        'from',
         'to',
         'subject',
-        'body'*/
+        'body'
     ];
 
 

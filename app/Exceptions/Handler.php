@@ -3,6 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Database\QueryException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
@@ -47,12 +50,38 @@ class Handler extends ExceptionHandler
         // Guardar la excepción en el log con información detallada
         Log::error($exception->getMessage(), ['exception' => $exception]);
 
+        if ($exception instanceof NotFoundHttpException) {
+            return Inertia::render('Error', [
+                'codigo' => $exception->getStatusCode(),
+                'titulo' => 'Contenido no encontrado',
+                'mensaje' => 'No se encuentra el recurso solicitado.',
+            ])->toResponse($request);
+            }
+
+        if($exception instanceof UnauthorizedHttpException) {
+            return Inertia::render('Error', [
+                'codigo' => $exception->getStatusCode(),
+                'titulo' => 'Acceso denegado',
+                'mensaje' => $exception->getMessage(),
+            ])->toResponse($request);
+        }
+
+        if($exception instanceof AccessDeniedHttpException ||  $exception->getStatusCode() == 403) {
+            return Inertia::render('Error', [
+                'codigo' => $exception->getStatusCode(),
+                'titulo' => 'Acceso no permitido',
+                'mensaje' => $exception->getMessage(),
+            ])->toResponse($request);
+        }
+
         // Verificar si estamos en modo desarrollo
         if (config('app.debug')) {
             // Devolver la renderización de la excepción por defecto
             return parent::render($request, $exception);
             //return $this->prepareJsonResponse($request, $exception);
         }
+
+
 
         // si no, mostrarmos vista de error al usaurio
         if ($exception instanceof QueryException) {

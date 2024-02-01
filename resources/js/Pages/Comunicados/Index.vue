@@ -83,7 +83,7 @@
                             <td class="table-cell">{{ comunicado.fecha_comunicado }}</td>
                             <!-- <td class="table-cell">{{ comunicado.categoria }}</td>
                             <td class="table-cell">{{ comunicado.numero }}</td> -->
-                            <td class="table-cell"><Link :href="route('comunicado', comunicado.slug)" class="hover:underline py-2">{{ comunicado.titulo}}</Link></td>
+                            <td class="table-cell"><Link :href="route('comunicado', comunicado.slug)" class="hover:underline py-2" v-html="comunicado.titulo"/></td>
                         </tr>
                     </tbody>
                 </table>
