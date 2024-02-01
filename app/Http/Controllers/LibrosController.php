@@ -7,7 +7,7 @@ use Inertia\Inertia;
 use App\Models\Libro;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Cache;
-use App\Pigmalion\Busquedas;
+use App\Pigmalion\BusquedasHelper;
 
 class LibrosController extends Controller
 {
@@ -36,7 +36,7 @@ class LibrosController extends Controller
             );
 
             if($buscar)
-            Busquedas::formatearResultados($resultados, $buscar);
+            BusquedasHelper::formatearResultados($resultados, $buscar);
 
         // obtiene el listado de categorías de los Libros
         $categorias = (new Libro())->getCategorias();

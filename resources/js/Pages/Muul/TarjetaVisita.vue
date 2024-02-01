@@ -8,7 +8,12 @@
 
         <div class="w-full max-w-screen-md mx-auto flex flex-wrap justify-between gap-12 my-12">
 
-            <form class="flex flex-col bg-base-300 px-12 py-5 rounded-xl" @submit.prevent="generarEnviar">
+            <div v-if="enviado">
+                <p>Se ha enviado la tarjeta a tu correo. Revisa tu bandeja de entrada y si no lo ves, verifica el correo
+                    "spam" o "buzon de correos no deseados".</p>
+            </div>
+
+            <form v-else class="flex flex-col bg-base-300 px-12 py-5 rounded-xl" @submit.prevent="generarEnviar">
 
                 <label>Nombre Simbólico TSEYOR<input name="nombre" type="text" v-model="datos.nombre"
                         placeholder="Nombre Simbólico de Tseyor"></label>
@@ -41,7 +46,10 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
-import {ucFirstAllWords, removeAccents, ucFirst} from '@/composables/textutils.js'
+import { ucFirstAllWords, removeAccents, ucFirst } from '@/composables/textutils.js'
+
+const carpeta = '/almacen/medios/muul/tarjeta'
+
 defineOptions({ layout: AppLayout })
 
 
@@ -60,21 +68,17 @@ const datos = ref({
 
 const diseno = ref(1)
 
+const nombre_simbolico = computed(() => ucFirstAllWords(datos.value.nombre.replace(/^\s+|\s+$/g, '').toLowerCase()).replace(/\s+/g, ' '))
+const email_tseyor = computed(() => removeAccents(nombre_simbolico.value.toLowerCase(), true).replace(/\bpm\s*$/, '.pm').replace(/la\s+\.pm/, '.la.pm').replace(/\s+/g, '') + '@tseyor.org')
 
-function draw_data(cb) {
-    console.log('draw_data', preview.value)
+
+function generarPreview(cb) {
+    console.log('generarPreview', preview.value)
 
     const canvas = preview.value
 
     if (!canvas.getContext)
         return;
-
-    // limpiamos el nombre y lo formateamos
-    const nombre = ucFirstAllWords(datos.value.nombre.replace(/^\s+|\s+$/g, '').toLowerCase()).replace(/\s+/g, ' ');
-
-    // generamos el correo tseyor
-    const email_tseyor = removeAccents(nombre.toLowerCase(), true).replace(/\bpm\s*$/, '.pm').replace(/la\s+\.pm/, '.la.pm').replace(/\s+/g, '') + '@tseyor.org';
-
 
     if (typeof cb != "function")
         cb = null;
@@ -94,7 +98,7 @@ function draw_data(cb) {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    fondo.src = '/almacen/medios/muul/tarjeta/tarjeta_2019_plantilla' + diseno.value + '.' + (cb ? 'png' : 'thumb.jpg');
+    fondo.src = carpeta + '/tarjeta_2019_plantilla' + diseno.value + '.' + (cb ? 'png' : 'thumb.jpg');
 
     // Use the identity matrix while clearing the canvas
     //context.setTransform(1, 0, 0, 1, 0, 0);
@@ -110,6 +114,8 @@ function draw_data(cb) {
 
         ctx.fillStyle = 'rgb(0, 0, 0)';
         ctx.textAlign = 'center';
+
+        var nombre = nombre_simbolico.value
 
         if (nombre) {
             ctx.font = 'bold ' + Math.round(2.5 * f) + 'pt Palatino, Georgia, Arial, serif';
@@ -128,13 +134,13 @@ function draw_data(cb) {
 
         const contact_data = [];
         var loc = [];
-        if (datos.value.ciudad) loc.push(datos.value.ciudad);
-        if (datos.value.pais) loc.push(datos.value.pais);
+        if (datos.value.ciudad) loc.push(ucFirst(datos.value.ciudad));
+        if (datos.value.pais) loc.push(ucFirst(datos.value.pais));
         loc = loc.join(' - ');
         if (loc)
             contact_data.push(loc);
         if (datos.value.correo)
-            contact_data.push(email_tseyor);
+            contact_data.push(email_tseyor.value);
         if (datos.value.telefono)
             contact_data.push(datos.value.telefono);
 
@@ -151,29 +157,36 @@ function draw_data(cb) {
 }
 
 onMounted(() => {
-    draw_data();
-    watch(() => datos, draw_data, { deep: true })
-    watch(diseno, draw_data)
+    generarPreview();
+    watch(() => datos, generarPreview, { deep: true })
+    watch(diseno, generarPreview)
 })
 
 
+const enviado = ref(false)
+const enviando = ref(false)
 
 function generarEnviar() {
-    canvas.toBlob(function (blob) {
+    enviando.value = true
+    const canvas = preview.value
 
-        formData = new FormData();
-        formdatos.append('blob', blob, 'tarjeta.jpg');
-        formdatos.append('nombre', nombre);
-        formdatos.append('cargo', cargo);
-        formdatos.append('email', email);
-        formdatos.append('telefono', telefono);
-        formdatos.append('ciudad', ciudad);
-        formdatos.append('pais', pais);
-        formdatos.append('email_tseyor', email_tseyor);
+    // se genera la preview con imagenes de alta resolución, y se envia con un callback
+    generarPreview(() => {
 
-        uploading_file = true;
+        canvas.toBlob(function (blob) {
 
-        xhr.send(formData);
+            const formData = new FormData();
+            formData.append('nombre_tseyor', nombre_simbolico.value);
+            formData.append('email_tseyor', email_tseyor.value);
+            formData.append('imagen', blob, 'tarjeta.jpg');
+
+            axios.post(route('tarjeta.visita.enviar'), formData)
+                .then(response => {
+                    console.log(response)
+                    enviado.value = true
+                    enviando.value = false
+                })
+        })
     })
 }
 
@@ -183,6 +196,7 @@ function generarEnviar() {
 form label {
     @apply text-xs;
 }
+
 form input[type="text"] {
     @apply text-base w-64;
 }

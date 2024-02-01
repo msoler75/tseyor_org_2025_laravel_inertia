@@ -40,7 +40,7 @@ https://tnt.studio/searching-for-users-with-laravel-scout-and-tntsearch
 https://airports.tnt.studio/tnt-analytics
 
 
-
+-Boletines (es como un novedades, pero por correo)
 
 
 
@@ -112,3 +112,6 @@ Con estos pasos, cada vez que realices un push a la rama main de tu repositorio,
 Recuerda que Git-ftp solo transferirá los archivos modificados desde la última implementación, lo que optimiza el proceso de implementación.
 
 Espero que esto te ayude a utilizar Git-ftp con GitHub Actions en tu proyecto Laravel + Inertia + Backpack. Si tienes más preguntas, no dudes en preguntar.
+
+
+

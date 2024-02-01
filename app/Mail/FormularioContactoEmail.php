@@ -30,8 +30,8 @@ class FormularioContactoEmail extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->markdown('emails.formulario-contacto')
-            ->subject('Mensaje desde el formulario de contacto de ' . $this->nombre)
-            ->replyTo($this->email)
+            // ->subject('Mensaje desde el formulario de contacto de ' . $this->nombre)
+            // ->replyTo($this->email)
             ->with([
                 'nombre' => $this->nombre,
                 'pais' => $this->pais,

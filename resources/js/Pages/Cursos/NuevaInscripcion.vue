@@ -1,9 +1,5 @@
 <template>
-    <div class="w-full relative py-12"  id="myform" :style="{
-        'background-size': 'cover',
-        'background-attachment': 'fixed',
-        background: 'black url(/almacen/medios/fondos/space.jpg) repeat'
-    }">
+    <FondoEstrellado class="w-full h-full relative py-12"  id="myform">
         <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative">
             <h1>Inscripción al Curso Holístico Tseyor<small>&nbsp;(gratuito)</small></h1>
             <div v-if="error">
@@ -41,7 +37,7 @@
                 </p>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="nombre">Nombre y apellidos:</label>
-                    <input class="form-input w-full" id="nombre" type="text" v-model="form.nombre">
+                    <input class="form-input w-full" id="nombre" type="text" v-model="form.nombre" required>
                     <span v-if="form.errors.nombre" class="error">{{ form.errors.nombre }}</span>
                 </div>
                 <div class="mb-4">
@@ -105,7 +101,7 @@
                 </button>
             </form>
         </div>
-    </div>
+    </FondoEstrellado>
 </template>
 
 
@@ -182,3 +178,9 @@ function submit() {
     });
 }
 </script>
+
+<style>
+label {
+    @apply text-sm;
+}
+</style>

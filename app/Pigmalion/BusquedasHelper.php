@@ -5,7 +5,7 @@ namespace App\Pigmalion;
 use TeamTNT\TNTSearch\Support\Highlighter;
 use Illuminate\Support\Facades\Log;
 
-class Busquedas
+class BusquedasHelper
 {
 
     public static function descartarPalabrasComunes($buscar)

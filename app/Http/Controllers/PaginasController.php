@@ -16,12 +16,15 @@ class PaginasController extends Controller
     {
         $path = $request->path();
 
-        $pagina = Pagina::where('ruta', $path)->firstOrFail();
+        $pagina = Pagina::where('ruta', $path)->first();
+
+        if(!$pagina)
+            abort(404);
 
         $borrador = request()->has('borrador');
         $publicado = $pagina->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$pagina || (!$publicado && !$borrador && !$editor)) {
+        if (!$publicado && !$borrador && !$editor) {
             abort(404); // Item no encontrado o no autorizado
         }
 

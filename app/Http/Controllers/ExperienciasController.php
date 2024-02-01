@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Experiencia;
-use App\Pigmalion\Busquedas;
+use App\Pigmalion\BusquedasHelper;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -39,7 +39,7 @@ class ExperienciasController extends Controller
             ->appends(['buscar' => $buscar, 'categoria' => $categoria]);
 
         if ($buscar)
-            Busquedas::formatearResultados($resultados, $buscar);
+            BusquedasHelper::formatearResultados($resultados, $buscar);
 
         $categorias = (new Experiencia())->getCategorias();
 
