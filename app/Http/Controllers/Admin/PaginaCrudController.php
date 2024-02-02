@@ -104,6 +104,10 @@ use \Backpack\ReviseOperation\ReviseOperation;
         CRUD::setValidation([
             'titulo' => 'required|min:3',
             'descripcion' => 'max:400',
+            'texto' => 'required',
+            'ruta' => 'max:255',
+            'ruta_regreso' => 'max:255',
+            'regreso_nombre' => 'max:64'
         ]);
 
         CRUD::setFromDb(); // set fields from db columns.
@@ -119,6 +123,10 @@ use \Backpack\ReviseOperation\ReviseOperation;
         CRUD::field('palabras_clave')->type('textarea')->hint('Poner solo el texto o palabras clave para indexar esta página en el buscador global.');
 
         CRUD::field('visibilidad')->type('visibilidad');
+
+        CRUD::field('atras_ruta')->type('text')->after('ruta')->hint('url de regreso');
+
+        CRUD::field('atras_texto')->type('text')->after('atras_ruta')->hint('texto en la url de regreso');
     }
 
     /**

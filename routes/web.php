@@ -287,8 +287,8 @@ Route::get('image_size', [ImagenesController::class, 'size'])->name('imagen.tama
 
 // herramientas muul
 
-Route::get('muul/tarjetavisita', [TarjetaVisitaController::class, 'index'])->name('tarjeta.visita');
-Route::post('muul/tarjetavisita', [TarjetaVisitaController::class, 'send'])->name('tarjeta.visita.enviar');
+Route::get('muul/tarjeta.visita', [TarjetaVisitaController::class, 'index'])->name('tarjeta.visita');
+Route::post('muul/tarjeta.visita', [TarjetaVisitaController::class, 'send'])->name('tarjeta.visita.enviar');
 
 
 // administración
@@ -298,7 +298,7 @@ Route::get('emails/{id}', [EmailsController::class, 'index'])->name('email');
 
 Route::get('asociacion', 'App\Http\Controllers\PaginasController@show')->name('asociacion');
 
-Route::get('{ruta}', 'App\Http\Controllers\PaginasController@show')->where('ruta', '[a-z0-9\-]+')->name('pagina');
+Route::get('{ruta}', 'App\Http\Controllers\PaginasController@show')->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
 
 
 /* Route::fallback(function () {

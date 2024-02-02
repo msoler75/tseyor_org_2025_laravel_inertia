@@ -1,6 +1,11 @@
 <template>
     <div class="container mx-auto py-12">
 
+        <div class="container mx-auto flex justify-between items-center mb-20">
+            <Back href="/muul">Espacio Muul</Back>
+        </div>
+
+
         <h1 class="text-center">Diseñador de Tarjeta de Visita</h1>
 
         <p class="text-center">Rellena tus datos y se generará una tarjeta en formato imagen, que se enviará a tu correo
@@ -8,9 +13,23 @@
 
         <div class="w-full max-w-screen-md mx-auto flex flex-wrap justify-between gap-12 my-12">
 
-            <div v-if="enviado">
-                <p>Se ha enviado la tarjeta a tu correo. Revisa tu bandeja de entrada y si no lo ves, verifica el correo
-                    "spam" o "buzon de correos no deseados".</p>
+            <div v-if="enviado" class="w-1/2 flex flex-col gap-5">
+                <div class="alert alert-success">
+                    <Icon icon="ph:check-circle-bold" class="text-2xl" />
+                    <span>Se ha generado la tarjeta y se ha enviado a tu correo.</span>
+                </div>
+
+                <div class="alert alert-warning">
+                    <Icon icon="ph:info-bold" class="text-2xl text-neutral" />
+                    <span>Revisa tu bandeja de correo. Si no ves ningún mensaje, verifica el correo
+                    "spam" o carpeta de "correos no deseados".</span>
+                </div>
+
+                <div class="alert">
+                    <Icon icon="ph:info-bold" class="text-2xl text-neutral" />
+                        <span>Ahora puedes consultar acerca de los correos @tseyor.org</span>
+                </div>
+                <Link class="btn btn-secondary" href="/muul/correos.tseyor">Correos @tseyor.org</Link>
             </div>
 
             <form v-else class="flex flex-col bg-base-300 px-12 py-5 rounded-xl" @submit.prevent="generarEnviar">
@@ -31,7 +50,12 @@
                 </div>
 
                 <div class="flex justify-center pt-5">
-                    <input class="btn btn-primary" type="submit" value='Generar y Enviar'>
+                    <button class="btn btn-primary flex gap-2 items-center" type="submit" value='Generar y Enviar'
+                    :disabled="enviando">
+                        <Spinner v-if="enviando" />
+                        <span v-if="enviando">Enviando</span>
+                        <span v-else>Generar y Enviar</span>
+                        </button>
                 </div>
             </form>
 
@@ -40,6 +64,7 @@
                 <canvas class="shadow-xl" ref="preview" width="300" height="450" />
             </div>
         </div>
+        <canvas class="hidden" ref="render" />
     </div>
 </template>
 
@@ -56,6 +81,7 @@ defineOptions({ layout: AppLayout })
 const page = usePage()
 const user = page.props.auth?.user
 const preview = ref(null)
+const render = ref(null)
 
 const datos = ref({
     nombre: user?.name,
@@ -72,16 +98,20 @@ const nombre_simbolico = computed(() => ucFirstAllWords(datos.value.nombre.repla
 const email_tseyor = computed(() => removeAccents(nombre_simbolico.value.toLowerCase(), true).replace(/\bpm\s*$/, '.pm').replace(/la\s+\.pm/, '.la.pm').replace(/\s+/g, '') + '@tseyor.org')
 
 
-function generarPreview(cb) {
-    console.log('generarPreview', preview.value)
-
-    const canvas = preview.value
-
-    if (!canvas.getContext)
-        return;
+/**
+ * Generar diseño
+ * Si le pasamos cb (callback) es que estamos renderizando la tarjeta final
+ */
+function generarDiseño(cb) {
+    console.log('generarDiseño', preview.value)
 
     if (typeof cb != "function")
         cb = null;
+
+    const canvas = cb ? render.value :preview.value
+
+    if (!canvas.getContext)
+        return;
 
     if (cb) {
         canvas.width = 1441;
@@ -157,9 +187,9 @@ function generarPreview(cb) {
 }
 
 onMounted(() => {
-    generarPreview();
-    watch(() => datos, generarPreview, { deep: true })
-    watch(diseno, generarPreview)
+    generarDiseño();
+    watch(() => datos, generarDiseño, { deep: true })
+    watch(diseno, generarDiseño)
 })
 
 
@@ -171,7 +201,7 @@ function generarEnviar() {
     const canvas = preview.value
 
     // se genera la preview con imagenes de alta resolución, y se envia con un callback
-    generarPreview(() => {
+    generarDiseño(() => {
 
         canvas.toBlob(function (blob) {
 

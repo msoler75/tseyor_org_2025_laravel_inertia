@@ -5,7 +5,6 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
 
-
 defineProps({
     canResetPassword: Boolean,
     status: String,
@@ -28,7 +27,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head title="Iniciar Sesión" />
 
     <AuthenticationCard>
         <template #logo>
