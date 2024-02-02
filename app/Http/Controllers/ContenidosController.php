@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Contenido;
+use App\Pigmalion\BusquedasHelper;
 use App\Models\Busqueda;
 use App\Pigmalion\SEO;
-use App\Pigmalion\BusquedasHelper;
 
 class ContenidosController extends Controller
 {

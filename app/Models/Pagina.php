@@ -14,6 +14,8 @@ class Pagina extends ContenidoBaseModel
     protected $fillable = [
         'titulo',
         'ruta',
+        'atras_ruta',
+        'atras_texto',
         'descripcion',
         'texto',
         'palabras_clave',

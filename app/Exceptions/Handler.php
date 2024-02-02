@@ -10,6 +10,8 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use App\Pigmalion\BusquedasHelper;
+use App\Models\Contenido;
 
 class Handler extends ExceptionHandler
 {
@@ -50,11 +52,28 @@ class Handler extends ExceptionHandler
         // Guardar la excepción en el log con información detallada
         Log::error($exception->getMessage(), ['exception' => $exception]);
 
+
         if ($exception instanceof NotFoundHttpException) {
+
+            // to-do: obtener path de la ruta actual y redirigir a la vista de error
+            $path = $request->path();
+            $buscar = preg_replace("/[\?\/\.]/", " ", $path); // quitar caracteres no permitidos en $path
+
+            $buscarFiltrado = BusquedasHelper::descartarPalabrasComunes($buscar);
+
+            $resultados = Contenido::search($buscarFiltrado)->paginate(7); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
+
+            if (strlen($buscarFiltrado) < 3)
+                BusquedasHelper::limpiarResultados($resultados, $buscarFiltrado, true);
+            else
+                BusquedasHelper::formatearResultados($resultados, $buscarFiltrado, true);
+
+
             return Inertia::render('Error', [
                 'codigo' => $exception->getStatusCode(),
                 'titulo' => 'Contenido no encontrado',
                 'mensaje' => 'No se encuentra el recurso solicitado.',
+                'alternativas' => $resultados
             ])->toResponse($request);
             }
 
@@ -66,21 +85,22 @@ class Handler extends ExceptionHandler
             ])->toResponse($request);
         }
 
-        if($exception instanceof AccessDeniedHttpException ||  $exception->getStatusCode() == 403) {
+        if($exception instanceof AccessDeniedHttpException ||  (method_exists($exception, 'getStatusCode') && $exception->getStatusCode() == 403)) {
             return Inertia::render('Error', [
                 'codigo' => $exception->getStatusCode(),
                 'titulo' => 'Acceso no permitido',
                 'mensaje' => $exception->getMessage(),
-            ])->toResponse($request);
-        }
+                ])->toResponse($request);
+            }
 
-        // Verificar si estamos en modo desarrollo
-        if (config('app.debug')) {
-            // Devolver la renderización de la excepción por defecto
-            return parent::render($request, $exception);
-            //return $this->prepareJsonResponse($request, $exception);
-        }
+            // Verificar si estamos en modo desarrollo
+            if (config('app.debug')) {
+                // Devolver la renderización de la excepción por defecto
+                return parent::render($request, $exception);
+                //return $this->prepareJsonResponse($request, $exception);
+            }
 
+            // dd($exception);
 
 
         // si no, mostrarmos vista de error al usaurio

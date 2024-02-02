@@ -59,3 +59,9 @@ form [bp-field-name='permissions'] .checkbox
 [data-bs-theme=dark] .alert-danger {
     --tblr-alert-color: var(--tblr-danger);
 }
+
+
+/* para que al hacer tinymce full screen se vea en toda la pantalla */
+.page-wrapper {
+    z-index: 1031;
+}

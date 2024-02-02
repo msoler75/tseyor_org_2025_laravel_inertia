@@ -6,14 +6,16 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Email;
 
 /**
- * IMPORTANTE: No acepta archivos adjuntos
+ * Sirve para enviar un mensaje sin posibilidad de encolarlo (queue)
+ * Acepta archivos adjuntos
  */
 
-class GenericEmail extends Mailable implements ShouldQueue
+class InstantEmail extends Mailable  // implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    // use Queueable, SerializesModels;
 
     public $data;
     public $view;
@@ -42,7 +44,7 @@ class GenericEmail extends Mailable implements ShouldQueue
      */
     public function attachments(): array
     {
-        return [];
+        return $this->data['attachments'] ?? [];
     }
 
 }

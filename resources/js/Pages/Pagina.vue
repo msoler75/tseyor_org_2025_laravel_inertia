@@ -1,7 +1,8 @@
 <template>
     <div class="container mx-auto py-12">
         <div class="container mx-auto flex justify-between items-center mb-20">
-            <span></span>
+            <Back v-if="pagina.atras_ruta" :href="pagina.atras_ruta">{{pagina.atras_texto}}</Back>
+            <span v-else></span>
             <AdminPanel modelo="pagina" necesita="administrar contenidos" :contenido="pagina" />
         </div>
         <div class="py-14 px-5 md:px-14 card bg-base-100 shadow mx-auto w-fit">
