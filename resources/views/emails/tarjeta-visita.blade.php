@@ -1,4 +1,16 @@
-@component('mail::message')
+@extends('emails.master')
+
+@section('titulo')
+Tarjeta de Visita generada
+@endsection
+
+@section('subtitulo')
+{{ $nombre }}
+@endsection
+
+@section('contenido')
+
+
 @if ($nombre)
 # ¡Hola, {{ $nombre }}!
 
@@ -7,8 +19,17 @@
 
 @endif
 
-Aquí tienes tu tarjeta de visita.
+Te adjuntamos tu tarjeta de visita.
 
 
-[tseyor.org](https://tseyor.org)
+Tu dirección de correo público de Tseyor es: {{$correo_tseyor}}
+
+Esto significa que cualquier mensaje enviado a esta dirección llegará a tu buzón personal de correo.
+
+Más información:
+
+@component('mail::button', ['url' => 'https://tseyor.org/muul/correos.tseyor'])
+Correos @tseyor.org
 @endcomponent
+
+@endsection

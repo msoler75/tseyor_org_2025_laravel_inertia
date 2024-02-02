@@ -18,7 +18,7 @@ class TarjetaVisitaController extends Controller
         $user = auth()->user();
 
         if (!$user)
-        return redirect('/login');
+            return redirect('/login');
         // abort(401, 'Acceso no autorizado');
 
         //mirar si pertenece al grupo "muul"
@@ -26,7 +26,8 @@ class TarjetaVisitaController extends Controller
             abort(403, 'Debes ser Muul para ver esta página');
 
         return Inertia::render('Muul/TarjetaVisita', [])
-    ->withViewData(SEO::get('muul/tarjetavisita'));    }
+            ->withViewData(SEO::get('muul/tarjetavisita'));
+    }
 
     // enviar mensaje de contacto
     public function send(Request $request)
@@ -61,6 +62,7 @@ class TarjetaVisitaController extends Controller
                     [
                         'subject' => 'Tu tarjeta de visita TSEYOR',
                         'nombre' => $data['nombre_tseyor'],
+                        'correo_tseyor' => $data['email_tseyor'],
                         'attachments' => [
                             Attachment::fromPath($imagenPath)
                                 ->as($nombreImagenNuevo)

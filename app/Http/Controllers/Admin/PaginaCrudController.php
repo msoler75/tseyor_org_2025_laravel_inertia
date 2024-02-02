@@ -104,7 +104,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
         CRUD::setValidation([
             'titulo' => 'required|min:3',
             'descripcion' => 'max:400',
-            'texto' => 'required',
+            // 'texto' => 'required',
             'ruta' => 'max:255',
             'ruta_regreso' => 'max:255',
             'regreso_nombre' => 'max:64'
