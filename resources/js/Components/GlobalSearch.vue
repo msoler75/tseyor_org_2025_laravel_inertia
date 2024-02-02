@@ -129,6 +129,7 @@ const itemsArray = computed(() => {
     return items
 })
 
+var usoTeclas = false
 
 onMounted(() => {
     window.addEventListener('keydown', function (event) {
@@ -136,7 +137,7 @@ onMounted(() => {
             event.preventDefault()
             mostrarModal.value = true
         }
-        if (mostrarModal.value) {
+        else if (mostrarModal.value) {
             console.log(event.key)
             switch (event.key) {
                 case 'Enter':
@@ -149,18 +150,24 @@ onMounted(() => {
                 case 'ArrowDown':
                     event.preventDefault()
                     siguienteItem()
+                    usoTeclas = true
                     break;
                 case 'ArrowUp':
                     event.preventDefault()
                     anteriorItem()
+                    usoTeclas = true
                     break;
                 case 'Home':
-                    event.preventDefault()
-                    primerItem()
+                    if(usoTeclas) {
+                        event.preventDefault()
+                        primerItem()
+                    }
                     break;
                 case 'End':
+                if(usoTeclas) {
                     event.preventDefault()
                     ultimoItem()
+                }
                     break;
             }
         }
@@ -168,6 +175,7 @@ onMounted(() => {
 })
 
 watch(mostrarModal, (value) => {
+    usoTeclas = false
     if (value) {
         currentUrl = window.location.pathname
         nextTick(() => {

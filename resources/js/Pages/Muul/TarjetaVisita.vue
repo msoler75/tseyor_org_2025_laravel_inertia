@@ -1,7 +1,7 @@
 <template>
     <div class="container mx-auto py-12">
 
-        <div class="container mx-auto flex justify-between items-center mb-20">
+        <div class="container mx-auto flex justify-between items-center mb-7">
             <Back href="/muul">Espacio Muul</Back>
         </div>
 
@@ -29,7 +29,7 @@
                     <Icon icon="ph:info-bold" class="text-2xl text-neutral" />
                         <span>Ahora puedes consultar acerca de los correos @tseyor.org</span>
                 </div>
-                <Link class="btn btn-secondary" href="/muul/correos.tseyor">Correos @tseyor.org</Link>
+                <ActionButton href="/muul/correos.tseyor">Correos @tseyor.org</ActionButton>
             </div>
 
             <form v-else class="flex flex-col bg-base-300 px-12 py-5 rounded-xl" @submit.prevent="generarEnviar">
