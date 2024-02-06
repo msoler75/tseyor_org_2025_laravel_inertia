@@ -2,7 +2,9 @@
     <component :is="href?Link:'div'" :href="href" class="card bg-base-100 shadow overflow-hidden group
                 transition duration-300 hover:shadow-lg
                 outline-gray-300 dark:outline-transparent outline-[0.4px] hover:outline
-               relative" :class="imageLeft ? 'flex-row' : ''">
+               relative" :class="(imageLeft ? 'flex-row' : '')
+               +(draft?' bg-base-300':'')
+               ">
         <div class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
                 'background-image': 'url(\'' + getImageUrl(image) + '?w=300\')'
@@ -36,6 +38,7 @@ const props = defineProps({
     title: String,
     href: String,
     image: String,
+    draft: {type: Boolean, default: false},
     tag: String,
     tagLink: String,
     description: String,

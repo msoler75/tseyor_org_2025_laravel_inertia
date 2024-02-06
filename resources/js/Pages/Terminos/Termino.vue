@@ -57,6 +57,7 @@
                     <div class="flex gap-6 flex-wrap">
                         <Link v-for="contenido in referencias.terminos" :key="contenido.id"
                             :href="route('termino', contenido.slug)"
+
                             class="capitalize lowercase hover:text-primary transition-color duration-200 w-fit h-fit font-bold text-lg card shadow hover:shadow-lg px-5 py-2 bg-base-100">
                         {{ contenido.nombre }}
                         </Link>

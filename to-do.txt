@@ -1,4 +1,7 @@
-Falta: sección Muul - Divulgación - tarjeta de visita
+NovedadesHelper: si es un administrador de contenidos (permisos) entonces no usa la cache
+
+-Boletines (es como un novedades, pero por correo)
+
 
 Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
 
@@ -40,7 +43,7 @@ https://tnt.studio/searching-for-users-with-laravel-scout-and-tntsearch
 https://airports.tnt.studio/tnt-analytics
 
 
--Boletines (es como un novedades, pero por correo)
+
 
 
 
