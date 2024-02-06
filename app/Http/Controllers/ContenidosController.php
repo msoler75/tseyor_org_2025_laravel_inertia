@@ -8,7 +8,6 @@ use App\Models\Contenido;
 use App\Pigmalion\BusquedasHelper;
 use App\Models\Busqueda;
 use App\Pigmalion\SEO;
-use App\Pigmalion\NovedadesHelper;
 
 
 class ContenidosController extends Controller
@@ -21,16 +20,30 @@ class ContenidosController extends Controller
 {
     $buscar = $request->input('buscar');
 
+    $user = auth()->user();
+
+    $esAdministrador = $user && $user->hasPermissionTo('administrar contenidos');
+
+    // no aparecen en novedades
+    $colecciones_excluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', 'lugares', 'guias'];
+
+    // atención para administradores: la búsqueda no incluye los contenidos no publicados
+
     $resultados = $buscar ?
     Contenido::search($buscar)
-            ->query(function ($query) use ($coleccionesExcluidas) {
-                return $query->whereNotIn('coleccion', $coleccionesExcluidas);
+            ->query(function ($query) use ($colecciones_excluidas) {
+                return $query->whereNotIn('coleccion', $colecciones_excluidas);
             })
             ->paginate(10)->appends(['buscar' => $buscar])
             :
-        NovedadesHelper::getNovedades($request->input('page', 1));
-
-
+       // los administradores ven todos los contenidos, y si están en modo publicado o borrador
+       Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion', 'visibilidad'])
+       ->when(!$esAdministrador, function ($query) {
+           $query->where('visibilidad', 'P');
+       })
+       ->whereNotIn('coleccion', $colecciones_excluidas)
+       ->latest('updated_at') // Ordenar por updated_at
+       ->paginate(10);
 
     return Inertia::render('Novedades', [
         'filtrado' => $buscar,

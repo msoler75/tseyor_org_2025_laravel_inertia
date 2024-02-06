@@ -67,11 +67,13 @@ class Acl extends Model
     public static function from(?User $user, array $verbos = null)
     {
         $user_id = $user ? $user->id : -1;
-        $grupos_ids = $user ? $user->grupos()->pluck('grupos.id') : [];
-
         $cacheKey = 'acl_' . $user_id . '_' . $verbos; // Clave para identificar la cache
         $cacheTime = 60; // Tiempo en segundos para mantener la cache
-        return Cache::remember($cacheKey, $cacheTime, function () use ($grupos_ids, $user_id, $verbos) {
+
+        return Cache::remember($cacheKey, $cacheTime, function () use ($user, $user_id, $verbos) {
+
+            $grupos_ids = $user ? $user->grupos()->pluck('grupos.id') : [];
+
             return Acl::select('nodos_acl.*', 'nodos.ruta')
                 ->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
                 ->where(function ($query) use ($grupos_ids, $user_id) {

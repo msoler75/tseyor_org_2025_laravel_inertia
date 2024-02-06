@@ -26,13 +26,8 @@ class LibrosController extends Controller
             : ($buscar ?
                 Libro::search($buscar)->paginate(10)
                 ->appends(['buscar' => $buscar])
-                /*Libro::where('titulo', 'like', '%' . $buscar . '%')
-                ->orWhere('descripcion', 'like', '%' . $buscar . '%')
-                ->paginate(10)->appends(['buscar' => $buscar])
-                */
-
                 :
-                Libro::latest()->paginate(20)
+                Libro::orderBy('updated_at', 'desc')->paginate(20) // novedades
             );
 
             if($buscar)
