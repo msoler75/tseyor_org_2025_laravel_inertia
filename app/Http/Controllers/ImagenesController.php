@@ -60,7 +60,12 @@ class ImagenesController extends Controller
 
         // obtenemos las dimensiones de la imagen en la ubicación $fullpath, hemos de comprobar si es un PNG, o JPG...
         $info = getimagesize($fullpath);
-        return response()->json(['width' => $info[0], 'height' => $info[1]], 200);
+
+        // retorna respuesta json
+        return response()->json(['width' => $info[0], 'height' => $info[1]], 200)
+            ->withHeaders([          // Establecer el encabezado de caché
+            'Cache-Control' => 'public, max-age=2592000', // 30 días en segundos
+        ]);
     }
 
 

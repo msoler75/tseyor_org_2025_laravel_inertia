@@ -1,4 +1,6 @@
-NovedadesHelper: si es un administrador de contenidos (permisos) entonces no usa la cache
+top nav menu: hacer tab items linkables (biblioteca)
+
+NovedadesHelper: quitar cache
 
 -Boletines (es como un novedades, pero por correo)
 
