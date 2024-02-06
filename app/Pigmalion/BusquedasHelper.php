@@ -15,7 +15,7 @@ class BusquedasHelper
 
         // 2. Descartar las palabras habituales, pronombres y artículos
         $palabrasDescartadas = [
-            'a', 'al', 'ante', 'bajo', 'cabe', 'con', 'contra', 'de', 'desde', 'durante', 'en', 'entre', 'hacia', 'que',
+            'a', 'al', 'ante', 'bajo', 'cabe', 'con', 'contra', 'de', 'del', 'desde', 'durante', 'en', 'entre', 'hacia', 'que',
             'hasta', 'mediante', 'para', 'por', 'sin', 'sobre', 'tras', 'el', 'la', 'los',
             'las', 'un', 'una', 'unos', 'unas', 'lo', 'alguno', 'alguna', 'algunos', 'algunas', 'ningún', 'ningun', 'ninguna',
             'ellos', 'ellas', 'me', 'te', 'se', 'nos', 'os', 'le', 'les',

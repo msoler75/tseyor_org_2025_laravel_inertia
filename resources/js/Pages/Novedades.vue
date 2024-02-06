@@ -17,7 +17,8 @@
             :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
             <CardContent v-for="contenido in listado.data" :key="contenido.slug"
             image-left
-            :title="contenido.titulo"
+            :title="contenido.titulo+(contenido.visibilidad!='P'?' (borrador)':'')"
+            :draft="contenido.visibilidad!='P'"
             :image="contenido.imagen"
             :href="route(contenido.coleccion)+'/'+contenido.slug_ref"
             :tag="traducir(contenido.coleccion)"

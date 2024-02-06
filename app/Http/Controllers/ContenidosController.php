@@ -8,6 +8,8 @@ use App\Models\Contenido;
 use App\Pigmalion\BusquedasHelper;
 use App\Models\Busqueda;
 use App\Pigmalion\SEO;
+use App\Pigmalion\NovedadesHelper;
+
 
 class ContenidosController extends Controller
 {
@@ -16,31 +18,25 @@ class ContenidosController extends Controller
      * Novedades
      */
     public function index(Request $request)
-    {
-        $buscar = $request->input('buscar');
+{
+    $buscar = $request->input('buscar');
 
-        // estos tipos de datos no aparecen en Novedades
-        $coleccionesExcluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', 'lugares', 'guias'];
-
-        $resultados = $buscar ? Contenido::search($buscar)
-            //->whereNotIn('coleccion', $coleccionesExcluidas)
+    $resultados = $buscar ?
+    Contenido::search($buscar)
             ->query(function ($query) use ($coleccionesExcluidas) {
                 return $query->whereNotIn('coleccion', $coleccionesExcluidas);
             })
             ->paginate(10)->appends(['buscar' => $buscar])
             :
-            Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion'])
-                ->where('visibilidad', 'P')
-                ->whereNotIn('coleccion', $coleccionesExcluidas)
-                ->latest('updated_at') // Ordenar por updated_at
-                ->paginate(10);
+        NovedadesHelper::getNovedades($request->input('page', 1));
 
-        return Inertia::render('Novedades', [
-            'filtrado' => $buscar,
-            'listado' => $resultados
-        ])
-            ->withViewData(SEO::get('novedades'));
-    }
+
+
+    return Inertia::render('Novedades', [
+        'filtrado' => $buscar,
+        'listado' => $resultados
+    ])->withViewData(SEO::get('novedades'));
+}
 
 
     /**

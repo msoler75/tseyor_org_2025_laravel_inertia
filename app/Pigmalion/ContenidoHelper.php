@@ -2,12 +2,14 @@
 
 
 namespace App\Pigmalion;
+
 use Illuminate\Support\Str;
 use App\Models\Contenido;
 use App\Models\ContenidoBaseModel;
 
 
-class ContenidoHelper {
+class ContenidoHelper
+{
 
     public static function rellenarSlugImagenYDescripcion($objeto)
     {
@@ -26,10 +28,12 @@ class ContenidoHelper {
                 }
             }
         }
-        if (!in_array('texto', $fillable)) return;
+        if (!in_array('texto', $fillable))
+            return;
 
         $html = "";
-        if ((in_array('imagen', $fillable) && empty($objeto->imagen))
+        if (
+            (in_array('imagen', $fillable) && empty($objeto->imagen))
             || (in_array('descripcion', $fillable) && empty($objeto->descripcion))
         ) {
             //$parsedown = new Parsedown();
@@ -102,7 +106,7 @@ class ContenidoHelper {
         $contenido->fecha = $model->published_at ?? $model->updated_at ?? null;
         $contenido->visibilidad = $model->visibilidad ?? 'P';
 
-        if(strlen($contenido->descripcion)>400)
+        if (strlen($contenido->descripcion) > 400)
             $contenido->descripcion = mb_substr($contenido->descripcion, 0, 399);
 
         // obtiene el texto que servirá para indexar el buscador
@@ -110,6 +114,9 @@ class ContenidoHelper {
 
         // Guardar el modelo en la base de datos
         $contenido->save();
+
+        // borra la cache de novedades
+        NovedadesHelper::clearCache();
     }
 
 
@@ -124,4 +131,5 @@ class ContenidoHelper {
             $contenido->delete();
         }
     }
+
 }
