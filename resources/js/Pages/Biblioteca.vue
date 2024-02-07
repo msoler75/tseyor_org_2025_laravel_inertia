@@ -59,6 +59,11 @@ const secciones = ref([
         url: route('audios')
     },
     {
+        title: 'Blogs',
+        url: route('entradas'),
+        descripcion: 'Artículos acerca de nuestra comunidad.'
+    },
+    {
         title: 'Vídeos',
         url: route('videos'),
         descripcion: 'Vídeos de nuestro canal Youtube.'
