@@ -1,20 +1,20 @@
 <template>
     <button type="button"
-        class="w-42 lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700"
-        @click="mostrarModal = true">
+        class="w-42 lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700 select-none"
+        @click="search.opened = true">
         <Icon icon="ph:magnifying-glass-bold" class="mr-2" />
 
         Buscar...<span class="ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
     </button>
 
 
-    <Modal :show="mostrarModal" @close="mostrarModal = false" maxWidth="lg">
+    <Modal :show="search.opened" @close="search.opened = false" maxWidth="lg">
         <div class="modal-search bg-base-100 flex flex-col text-sm pb-7">
             <div class="flex gap-2 items-center  p-3">
                 <Icon v-show="!loading" icon="ph:magnifying-glass-bold" class="text-lg" />
                 <Spinner v-show="loading" class="text-lg" />
                 <div class="flex-grow relative">
-                    <input id="global-search-input" ref="input" class="search-input w-full" v-model="query"
+                    <input id="global-search-input" ref="input" class="search-input w-full" v-model="search.query"
                         aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off" enterkeyhint="go"
                         spellcheck="false" placeholder="Buscar en el sitio web..." maxlength="64" type="search"
                         aria-owns="search-input-list"
@@ -22,7 +22,7 @@
                         aria-controls="search-input-list" aria-haspopup="true">
                 </div>
 
-                <kbd class="kbd cursor-pointer select-none text-xs font-semibold" @click="mostrarModal = false">ESC</kbd>
+                <kbd class="kbd cursor-pointer select-none text-xs font-semibold" @click="search.opened = false">ESC</kbd>
 
             </div>
 
@@ -36,7 +36,7 @@
 
                     <div class="mt-14">
                         <span class="font-bold">Prueba a buscar:</span>
-                        <div v-for="q of predefinedQueries" :key="q" @click="query = q"
+                        <div v-for="q of predefinedQueries" :key="q" @click="search.query = q"
                             class="bg-base-200 bg-opacity-50 flex items-center justify-between w-full py-3 px-4 my-2 cursor-pointer rounded-lg">
                             <span>
                                 {{ q }}
@@ -68,12 +68,11 @@
 </template>
 
 <script setup>
+import {useGlobalSearch} from "@/Stores/globalSearch.js"
 
-const mostrarModal = ref(false)
+const search = useGlobalSearch()
 
 const input = ref(null)
-
-const query = ref("")
 
 const lastQuery = ref("")
 
@@ -135,9 +134,9 @@ onMounted(() => {
     window.addEventListener('keydown', function (event) {
         if (event.ctrlKey && event.key === 'k') {
             event.preventDefault()
-            mostrarModal.value = true
+            search.opened = true
         }
-        else if (mostrarModal.value) {
+        else if (search.opened) {
             console.log(event.key)
             switch (event.key) {
                 case 'Enter':
@@ -174,7 +173,7 @@ onMounted(() => {
     });
 })
 
-watch(mostrarModal, (value) => {
+watch(()=>search.opened, (value) => {
     usoTeclas = false
     if (value) {
         currentUrl = window.location.pathname
@@ -200,16 +199,16 @@ var busquedaId = null
 
 function buscar() {
     if (loading.value) {
-        console.log('esperando carga de anterior busqueda', queryLoading.value, query.value)
+        console.log('esperando carga de anterior busqueda', queryLoading.value, search.query)
         // clearTimeout(timerBuscar)
         timerBuscar = setTimeout(buscar, 250)
         return
     }
-    if (query.value) {
-        var currentQuery = query.value
+    if (search.query) {
+        var currentQuery = search.query
         queryLoading.value = currentQuery
         loading.value = true
-        axios.get(route('buscar') + '?query=' + query.value)
+        axios.get(route('buscar') + '?query=' + search.query)
             .then(response => {
                 results.value = response.data
                 loading.value = false
@@ -229,7 +228,7 @@ function guardarBusqueda(url) {
     clearTimeout(timerGuardarBusqueda)
     console.log('guardarBusqueda', url)
     const data = new FormData();
-    data.append('query', query.value);
+    data.append('query', search.query);
     data.append('origen', currentUrl);
     if (busquedaId)
         data.append('id', busquedaId);
@@ -242,7 +241,7 @@ function guardarBusqueda(url) {
         })
 }
 
-watch(query, (value) => {
+watch(()=>search.query, (value) => {
     busquedaId = null // borramos id de la busqueda actual
     clearTimeout(timerGuardarBusqueda) // borramos contador de tiempo para guardar los datos de la busqueda actual, seguramente el usuario está escribiendo aún
     clearTimeout(timerBuscar) // borramos contador de tiempo para ejecutar la busqueda
@@ -256,7 +255,8 @@ watch(query, (value) => {
 
 function clickHandle(url) {
     console.log('clickHandle', url)
-    mostrarModal.value = false
+    search.opened = false
+    search.query = ""
     guardarBusqueda(url)
 }
 

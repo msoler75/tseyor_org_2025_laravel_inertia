@@ -115,8 +115,6 @@ class ContenidoHelper
         // Guardar el modelo en la base de datos
         $contenido->save();
 
-        // borra la cache de novedades
-        NovedadesHelper::clearCache();
     }
 
 

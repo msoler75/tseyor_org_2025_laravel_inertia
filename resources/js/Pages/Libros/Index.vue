@@ -5,13 +5,13 @@
         <AdminPanel modelo="libro" necesita="administrar contenidos" class="mb-3" />
 
         <h1>Libros</h1>
-        <p>Libros que recogen toda la información de las conversaciones interdimensionales mantenidas con nuestros Guías
-            Estelares.</p>
+        <p>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales</Referencia> mantenidas con nuestros
+            <Referencia>Guías Estelares</Referencia>.</p>
 
         <div class="flex w-full justify-between mb-5">
             <SearchInput class="flex-grow">
                 <div class="flex items-baseline gap-3 w-full pl-1"><input id="titulos" type="checkbox"
-                        v-model="selectors.soloTitulosLibros"> <label for="titulos" class="mb-0">Solo títulos</label></div>
+                    v-model="selectors.soloTitulosLibros"> <label for="titulos" class="mb-0">Solo títulos</label></div>
             </SearchInput>
         </div>
 

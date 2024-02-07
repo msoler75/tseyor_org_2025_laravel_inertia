@@ -85,6 +85,7 @@ declare module 'vue' {
     QuillEditor: typeof import('./resources/js/Components/QuillEditor.vue')['default']
     QuillEditorFullField: typeof import('./resources/js/Components/Backpack/QuillEditorFullField.vue')['default']
     QuillEditorSimpleField: typeof import('./resources/js/Components/Backpack/QuillEditorSimpleField.vue')['default']
+    Referencia: typeof import('./resources/js/Components/Referencia.vue')['default']
     ResponderComentario: typeof import('./resources/js/Components/Comentarios/ResponderComentario.vue')['default']
     ResponsiveNavLink: typeof import('./resources/js/Components/ResponsiveNavLink.vue')['default']
     RichText: typeof import('./resources/js/Sections/RichText.vue')['default']

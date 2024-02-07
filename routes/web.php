@@ -69,6 +69,8 @@ Route::get('test', function () {
     return Inertia::render('Test', []);
 })->name('test');
 
+Route::get('biblioteca', function () { return Inertia::render('Biblioteca', []) ->withViewData(SEO::get('novedades')); })->name('biblioteca');
+
 Route::get('', [PortadaController::class, 'index'])->name('portada');
 
 Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades');

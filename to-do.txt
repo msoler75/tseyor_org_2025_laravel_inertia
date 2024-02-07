@@ -1,6 +1,6 @@
-top nav menu: hacer tab items linkables (biblioteca)
+-share buttons social clipboard (vue useClipboard)
 
-NovedadesHelper: quitar cache
+-top nav menu: hacer tab items linkables (biblioteca)
 
 -Boletines (es como un novedades, pero por correo)
 
