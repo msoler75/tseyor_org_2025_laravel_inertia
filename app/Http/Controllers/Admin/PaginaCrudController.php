@@ -124,9 +124,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
         CRUD::field('visibilidad')->type('visibilidad');
 
-        CRUD::field('atras_ruta')->type('text')->after('ruta')->hint('url de regreso');
+        CRUD::field('atras_ruta')->label('Atrás Ruta')->type('text')->after('ruta')->hint('url de regreso');
 
-        CRUD::field('atras_texto')->type('text')->after('atras_ruta')->hint('texto en la url de regreso');
+        CRUD::field('atras_texto')->label('Atrás Texto')->type('text')->after('atras_ruta')->hint('texto en la url de regreso');
     }
 
     /**

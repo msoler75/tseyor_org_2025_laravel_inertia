@@ -37,6 +37,7 @@ export default {
       {
         summer: {
           primary: "#38bdf8",
+          link: "#24a9e4",
           secondary: "#cc5c2c",
           accent: "#eefc80",
           neutral: "#1b1826",
@@ -51,6 +52,7 @@ export default {
         },
         winter: {
           primary: "#90cdf4",
+          link: "#90cdf4",
           secondary: "#f6ad55",
           accent: "#fefcbf",
           neutral: "#f7fafc",

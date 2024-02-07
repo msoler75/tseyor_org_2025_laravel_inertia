@@ -1,4 +1,4 @@
-<script setup>
+F<script setup>
 import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount } from 'vue';
 import { useNav } from '@/Stores/nav'
@@ -282,8 +282,6 @@ axios.get(route('setting', 'navigation'))
                             <button @click="login2">L2</button>
                         </div>
 
-
-
                         <GlobalSearch />
 
                         <transition class="hidden lg:flex" enter-active-class="transition ease-out duration-200"
@@ -554,6 +552,8 @@ axios.get(route('setting', 'navigation'))
                     <slot name="header" />
                 </div>
             </header>
+
+
 
             <!-- Page Content -->
             <main @mouseover="nav.closeTabs()" class="flex-grow relative">

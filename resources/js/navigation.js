@@ -4,16 +4,82 @@ export default [
     icon: "ph:clock-counter-clockwise-duotone",
     description: "Novedades",
     route: "novedades",
+    open: false,
+    submenu: {
+      sections: [
+        {
+          title: "Novedades",
+          items: [
+            {
+              title: "Novedades",
+              route: "novedades",
+              description: "Listado de los contenidos más recientes",
+              icon: "ph:flying-saucer-duotone",
+            },
+          ],
+        },
+        {
+          title: "Noticias y Eventos",
+          items: [
+            {
+              title: "Noticias",
+              route: "noticias",
+              description: "Noticias y anuncios de la comunidad Tseyor",
+              icon: "ph:megaphone-simple-duotone",
+              class: "border-b",
+            },
+            {
+              title: "Eventos",
+              route: "eventos",
+              description: "Cursos, convivencias y encuentros",
+              icon: "ph:calendar-duotone",
+            },
+          ],
+        },
+        {
+            title: "Redes",
+            items: [
+                {
+                    title: "Facebook",
+                    url: "http://facebook.com/tseyor",
+                    external: true,
+                    description: "Nuestra página en Facebook",
+                    icon: "ph:megaphone-simple-duotone",
+                    class: "border-b",
+                  },
+            ]
+        }
+      ],
+    },
   },
 
   {
     title: "Biblioteca",
     description: "Comunicados, libros, artículos, noticias...",
     icon: "ph:article-duotone",
+    route: "biblioteca",
     open: false,
     submenu: {
       // header: "Novedades",
       sections: [
+        {
+          title: "Biblioteca",
+          items: [
+            {
+              title: "Biblioteca Tseyor",
+              route: "biblioteca",
+              description: "Información sobre la Biblioteca Tseyor",
+              icon: "ph:flying-saucer-duotone",
+            },
+
+            {
+                title: "Meditaciones",
+                route: "meditaciones",
+                description: "Meditaciones para el trabajo interior",
+                icon: "ph:file-text-duotone",
+              },
+          ],
+        },
         {
           title: "Documentos",
           items: [
@@ -37,30 +103,7 @@ export default [
             },
           ],
         },
-        {
-          title: "Noticias y Eventos",
-          items: [
-            {
-              title: "Noticias",
-              route: "noticias",
-              description: "Noticias y anuncios de la comunidad Tseyor",
-              icon: "ph:megaphone-simple-duotone",
-              class: "border-b",
-            },
-            {
-              title: "Eventos",
-              route: "eventos",
-              description: "Cursos, convivencias y encuentros",
-              icon: "ph:calendar-duotone",
-            },
-            {
-                title: "Publicaciones",
-                route: "publicaciones",
-                description: "Publicaciones de los miembros de la comunidad",
-                icon: "ph:flower-duotone",
-              },
-          ],
-        },
+
         {
           title: "Media",
           items: [
@@ -147,11 +190,11 @@ export default [
               icon: "ph:list-magnifying-glass-duotone",
             },
             {
-                title: "Tutoriales",
-                route: "tutoriales",
-                description: "Tutoriales de uso de las herramientas",
-                icon: "ph:steps-duotone",
-              },
+              title: "Tutoriales",
+              route: "tutoriales",
+              description: "Tutoriales de uso de las herramientas",
+              icon: "ph:steps-duotone",
+            },
           ],
         },
       ],
@@ -260,30 +303,25 @@ export default [
               description: "Listado de Usuarios",
               icon: "ph:users-duotone",
             },
-             {
+            {
               title: "Informes",
               route: "informes",
               description: "Informes de los equipos",
               icon: "ph:files-duotone",
             },
-             {
-              title: "Experiencias",
-              description: "Experiencias interdimensionales",
-              route: "experiencias",
-              icon: "ph:butterfly-duotone",
-            },
+            {
+                title: "Publicaciones",
+                route: "publicaciones",
+                description: "Publicaciones de los miembros de la comunidad",
+                icon: "ph:flower-duotone",
+              },
           ],
         },
 
         {
           title: "Documentos y archivos",
           items: [
-            {
-              title: "Meditaciones",
-              route: "meditaciones",
-              description: "Meditaciones para el trabajo interior",
-              icon: "ph:file-text-duotone",
-            },
+
             {
               title: "Normativas",
               route: "normativas",
@@ -296,6 +334,14 @@ export default [
               description: "Todos los archivos y documentos en carpetas",
               icon: "ph:archive-box-duotone",
             },
+
+              {
+                title: "Experiencias",
+                description: "Experiencias interdimensionales",
+                route: "experiencias",
+                icon: "ph:butterfly-duotone",
+              },
+
           ],
         },
 

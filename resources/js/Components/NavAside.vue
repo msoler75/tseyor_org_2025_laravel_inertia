@@ -51,7 +51,7 @@ const close = () => {
                 </div>
                 <div class="flex flex-col justify-start items-center   px-6  border-gray-600 w-[310px]">
                     <template v-for="tab, index in nav.items" :key="index">
-                        <button v-if="tab.submenu" @click="nav.toggleTab(tab)"
+                        <button v-if="tab.hasItems" @click="nav.toggleTab(tab)"
                             class="flex justify-between items-center w-full py-5">
                             <div class="text-sm leading-5  uppercase">{{ tab.title }}</div>
                             <Icon v-if="tab.open" icon="ion:chevron-up-outline" />

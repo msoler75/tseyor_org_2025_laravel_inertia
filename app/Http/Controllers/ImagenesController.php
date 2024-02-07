@@ -63,9 +63,7 @@ class ImagenesController extends Controller
 
         // retorna respuesta json
         return response()->json(['width' => $info[0], 'height' => $info[1]], 200)
-            ->withHeaders([          // Establecer el encabezado de caché
-            'Cache-Control' => 'public, max-age=2592000', // 30 días en segundos
-        ]);
+            ->header('Cache-Control', 'public, max-age=2592000');
     }
 
 

@@ -1,15 +1,23 @@
 import { defineStore } from "pinia";
 import navigationItems from "../navigation.js";
 
+const mapRoute = (item) => {
+  if (item.route) return { ...item, url: route(item.route) };
+  else return item;
+};
+
 const mapItem = (item) => {
-  if (item.route) {
-    return { ...item, url: route(item.route) };
-  } else {
+  if (item.submenu)
     return {
-      ...item,
+      ...mapRoute(item),
+      hasItems: true,
       submenu: mapSubmenu(item.submenu),
     };
-  }
+  else
+    return {
+      ...mapRoute(item),
+      hasItems: false,
+    };
 };
 
 const mapSection = (section) => ({
@@ -28,7 +36,7 @@ export const useNav = defineStore("nav", {
   state: () => ({
     //items: [],
     items: navigationItems.map(mapItem),
-    ghostTab: null,
+    ghostTab: null, //?
     timer: null,
     announce: false,
     defaultClass: "",
@@ -54,7 +62,7 @@ export const useNav = defineStore("nav", {
     activateTab(tab) {
       tab.activating = true;
       // console.log("activateTab", tab.title);
-      if (!tab.open || !tab.submenu) this.closeTabs();
+      if (!tab.open || !tab.hasItems) this.closeTabs();
       setTimeout(() => {
         tab.open = true;
         this.activeTabChange(tab);
@@ -63,7 +71,7 @@ export const useNav = defineStore("nav", {
     toggleTab(tab) {
       // console.log("toggleTab", tab, tab.title, tab.open);
       let oldState = !!tab.open;
-      if (!oldState || !tab.submenu) this.closeTabs();
+      if (!oldState || !tab.hasItems) this.closeTabs();
       tab.open = !oldState;
       if (tab.open) this.activeTabChange(tab);
       // console.log("tab is now", tab.open);

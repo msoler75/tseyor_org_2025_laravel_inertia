@@ -1,11 +1,13 @@
 <template>
     <div>
         <template v-for="tab of nav.items" :key="tab.url">
-            <NavLink v-if="tab.url" :href="tab.url" @mouseover="nav.closeTabs()"
+            <NavLink v-if="tab.url" :href="tab.url" @mouseover="handleHover(tab)"
+            class="relative"
                 :active="!nav.activeTab && route().current(tab.route)">
                 {{ tab.title }}
+                <div v-if="tab.hasItems" v-show="tab.open" class="hover-helper absolute z-40 -left-[7rem] -right-[7rem] top-[88%]  h-8" />
             </NavLink>
-            <NavLink v-else @click="nav.toggleTab(tab)" @mouseover="nav.activateTab(tab)"
+            <NavLink v-else @click="nav.toggleTab(tab)" @mouseover="handleHover(tab)"
                 :active="tab.open || (!nav.activeTab && nav.in(tab, route().current()))" class="relative navigation-tab">
                 {{ tab.title }}
                 <div v-show="tab.open" class="hover-helper absolute z-40 -left-[7rem] -right-[7rem] top-[88%]  h-8" />
@@ -18,10 +20,18 @@
 <script setup>
 import { useNav } from '@/Stores/nav'
 const nav = useNav()
+
+function handleHover(tab) {
+    if(tab.hasItems)
+        nav.activateTab(tab)
+    else
+        nav.closeTabs()
+}
 </script>
 
 
 <style scoped>
+
 /*
 .hover-helper {
     @apply bg-yellow-300;
