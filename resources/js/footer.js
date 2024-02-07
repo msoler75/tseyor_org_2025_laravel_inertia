@@ -25,9 +25,9 @@ export const sections = [
 
 
 export const socialLinks = [
-    { icon: 'ph:facebook-logo-duotone', link: 'https://facebook.com/TSEYOR' },
-    { icon: 'ph:twitter-logo-duotone', link: 'https://twitter.com/TSEYOR' },
-    { icon: 'ph:youtube-logo-duotone', link: 'https://youtube.com/@TSEYOR' },
+    { icon: 'streamline:facebook-1-solid', link: 'https://facebook.com/TSEYOR' },
+    { icon: 'bi:twitter-x', link: 'https://twitter.com/TSEYOR' },
+    { icon: 'logos:youtube-icon', link: 'https://youtube.com/@TSEYOR' },
 ];
 
 

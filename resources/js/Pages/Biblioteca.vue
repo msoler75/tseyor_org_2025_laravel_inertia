@@ -27,7 +27,7 @@
                 <h2 class="text-2xl font-semibold mb-2">{{seccion.title}}</h2>
                 <p class="text-neutral opacity-70 mb-4">{{ seccion.descripcion }}</p>
                 <div class="mt-auto flex justify-end">
-                    <ActionButton :href="seccion.url">Ver {{seccion.title.toLowerCase()}}</ActionButton>
+                    <ActionButton :href="seccion.url" class="w-[220px]">Ver {{seccion.title.toLowerCase()}}</ActionButton>
                 </div>
             </div>
 
@@ -62,6 +62,11 @@ const secciones = ref([
         title: 'Vídeos',
         url: route('videos'),
         descripcion: 'Vídeos de nuestro canal Youtube.'
+    },
+    {
+        title: 'Meditaciones',
+        url: route('meditaciones'),
+        descripcion: 'Meditaciones y talleres en texto y audio.'
     }
 ])
 </script>

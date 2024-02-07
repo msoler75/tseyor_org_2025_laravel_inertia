@@ -1,6 +1,6 @@
 <template>
     <Link :href="href" class="pushable relative inline  group btn px-0">
-    <div class="front inline-flex items-center gap-3 transition-all duration-300 btn btn-primary">
+    <div class="w-full front inline-flex items-center gap-3 transition-all duration-300 btn btn-primary">
         <div class="px-2 absolute transition-all left-0 group-hover:left-full group-hover:-translate-x-full">
             <Icon icon="ph:arrow-right-duotone" class="transform scale-150" />
         </div>
