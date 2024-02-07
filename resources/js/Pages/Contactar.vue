@@ -1,9 +1,5 @@
 <template>
-    <div class="w-full relative py-12"  id="myform" :style="{
-        'background-size': 'cover',
-        'background-attachment': 'fixed',
-        background: 'black url(/almacen/medios/fondos/space.jpg) repeat'
-    }">
+    <FondoEstrellado class="w-full relative py-12"  id="myform">
         <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative">
             <h1>Contactar con Tseyor</h1>
             <div v-if="error">
@@ -74,7 +70,7 @@
                 </button>
             </form>
         </div>
-    </div>
+    </FondoEstrellado>
 </template>
 
 

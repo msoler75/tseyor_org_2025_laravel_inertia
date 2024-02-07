@@ -1,9 +1,17 @@
 import { defineStore } from "pinia";
 import navigationItems from "../navigation.js";
 
+const relativeUrl = (url) => {
+  if (!url.match(/https?:\/\/.*/)) return url;
+  return url.replace(/https?:\/\/[^\/]+/, "");
+};
+
 const mapRoute = (item) => {
-  if (item.route) return { ...item, url: route(item.route) };
-  else return item;
+  const nitem = item.route
+    ? { ...item, url: relativeUrl(route(item.route)) }
+    : item;
+  if (nitem.url) nitem.url = relativeUrl(nitem.url);
+  return nitem;
 };
 
 const mapItem = (item) => {
@@ -23,7 +31,7 @@ const mapItem = (item) => {
 const mapSection = (section) => ({
   ...section,
   items: section.items.map((item) =>
-    item.route ? { ...item, url: route(item.route) } : item
+    item.route ? { ...item, url:  relativeUrl(route(item.route)) } : item
   ),
 });
 
@@ -47,10 +55,14 @@ export const useNav = defineStore("nav", {
   }),
   getters: {
     activeTab: (state) => state.items.find((tab) => tab.open),
-    in: (state) => (tab, url) => {
+    in: () => (tab, url) => {
       // comprueba si la ruta está en alguno de los items del tab
+      const rutaRelativa = relativeUrl(url);
+      if(tab.url && rutaRelativa.indexOf(tab.url) >= 0) return true
       return !!tab.submenu.sections.find((section) =>
-        section.items.find((item) => item.url.indexOf(url) >= 0)
+        section.items.find((item) => {
+          return rutaRelativa.indexOf(item.url) >= 0;
+        })
       );
     },
   },

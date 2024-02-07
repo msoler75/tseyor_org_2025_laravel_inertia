@@ -7,16 +7,16 @@
                     <div class="text-gray-500 my-5 uppercase tracking-widest text-xs">{{
                         section.title }}
                     </div>
-                    <div class="flex flex-col gap-7 mb-7">
+                    <div  :class="section.class?section.class:'flex flex-col gap-7 mb-7'">
                         <component :is="item.external?'a':Link" :target="item.external ? '_blank' : ''" :href="item.url"
                             v-for="item of section.items" :key="item.url" @click="nav.closeTabs"
-                            class="flex gap-3 p-3 rounded-lg hover:bg-base-200 transition duration-100 cursor-pointer"
+                            class="group flex gap-3 p-3 rounded-lg hover:bg-base-200 transition duration-100 cursor-pointer relative"
                             :class="item.class">
                             <div class="flex justify-start" style="min-width:2.2rem">
-                                <Icon :icon="item.icon" class="text-3xl text-blue-400 flex-shrink-0" />
+                                <Icon :icon="item.icon" class="text-3xl text-primary flex-shrink-0" />
                             </div>
-                            <div class="flex flex-col self-center">
-                                <strong class="item-lg">{{ item.title }}</strong>
+                            <div class="flex flex-col self-center w-full">
+                                <strong class="item-lg group-hover:text-primary flex items-center justify-between w-full">{{ item.title }} <Icon icon="ph:arrow-right" class="opacity-0 group-hover:opacity-100"/></strong>
                                 <span v-if="item.description" class="text-gray-500 text-sm">{{ item.description }}</span>
                             </div>
                         </component>

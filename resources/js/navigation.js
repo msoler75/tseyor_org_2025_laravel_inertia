@@ -37,6 +37,7 @@ export default [
         },
         {
             title: "Redes",
+            class: "flex flex-col gap-3",
             items: [
                 {
                     title: "Facebook",
