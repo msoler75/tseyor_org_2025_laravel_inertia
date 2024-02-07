@@ -26,7 +26,6 @@ export default [
               route: "noticias",
               description: "Noticias y anuncios de la comunidad Tseyor",
               icon: "ph:megaphone-simple-duotone",
-              class: "border-b",
             },
             {
               title: "Eventos",
@@ -43,15 +42,22 @@ export default [
                     title: "Facebook",
                     url: "http://facebook.com/tseyor",
                     external: true,
-                    description: "Nuestra página en Facebook",
                     icon: "ph:facebook-logo-duotone",
+                    class:'text-xs'
                   },
                   {
                     title: "X",
                     url: "http://twitter.com/tseyor",
                     external: true,
-                    description: "Nuestra página en X/twitter",
                     icon: "bi:twitter-x",
+                    class:'text-xs'
+                  },
+                  {
+                    title: "Youtube",
+                    url: "http://youtube.com/@tseyor",
+                    external: true,
+                    icon: "bi:youtube",
+                    class:'text-xs'
                   },
             ]
         }
