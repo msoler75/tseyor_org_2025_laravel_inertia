@@ -1,20 +1,22 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <div class="py-8">
 
-        <div class="flex justify-between items-center mb-20">
-            <Back href="/comunidad">Comunidad</Back>
+        <div class="container mx-auto flex justify-between items-center mb-20">
+            <Back :href="route('biblioteca')">Biblioteca</Back>
             <AdminPanel modelo="meditacion" necesita="administrar contenidos" />
         </div>
 
-        <h1>Meditaciones</h1>
-        <p>Talleres, meditaciones y otros documentos para uso de la comunidad Tseyor.</p>
+        <div class="container mx-auto">
+            <h1>Meditaciones</h1>
+            <p>Talleres, meditaciones y otros documentos para uso de la comunidad Tseyor.</p>
 
-        <div class="flex justify-end mb-5">
-            <SearchInput />
+            <div class="flex justify-end mb-5">
+                <SearchInput />
+            </div>
         </div>
 
 
-        <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
+        <div class="container mx-auto w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
 
              <div
                 class="gap-3 xl:gap-0 w-full md:w-[21ch] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline md:sticky md:top-20">

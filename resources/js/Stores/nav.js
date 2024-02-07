@@ -47,10 +47,10 @@ export const useNav = defineStore("nav", {
   }),
   getters: {
     activeTab: (state) => state.items.find((tab) => tab.open),
-    in: (state) => (tab, ruta) => {
+    in: (state) => (tab, url) => {
       // comprueba si la ruta está en alguno de los items del tab
       return !!tab.submenu.sections.find((section) =>
-        section.items.find((item) => item.url == ruta)
+        section.items.find((item) => item.url.indexOf(url) >= 0)
       );
     },
   },

@@ -2,7 +2,10 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="audio" necesita="administrar contenidos" class="mb-3"/>
+        <div class="flex justify-between items-center mb-20">
+            <Back :href="route('biblioteca')">Biblioteca</Back>
+            <AdminPanel modelo="audio" necesita="administrar contenidos" class="mb-3"/>
+        </div>
 
         <h1>Audios</h1>
         <p>Relájate y disfruta de los talleres, meditaciones, cuentos y otros materiales de la filosofía de Tseyor.</p>

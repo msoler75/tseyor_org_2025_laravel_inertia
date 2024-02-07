@@ -8,7 +8,7 @@
                         section.title }}
                     </div>
                     <div class="flex flex-col gap-7 mb-7">
-                        <Link :href="item.url" v-for="item of section.items" :key="item.url" @click="nav.closeTabs"
+                        <component :is="item.external?'a':Link" :target="item.external?'_blank':''" :href="item.url" v-for="item of section.items" :key="item.url" @click="nav.closeTabs"
                             class="flex gap-3 p-3 rounded-lg hover:bg-base-200 transition duration-100 cursor-pointer">
                         <div class="flex justify-start" style="min-width:2.2rem">
                             <Icon :icon="item.icon" class="text-3xl text-blue-400 flex-shrink-0" />
@@ -17,7 +17,7 @@
                             <strong class="item-lg">{{ item.title }}</strong>
                             <span class="text-gray-500 text-sm">{{ item.description }}</span>
                         </div>
-                        </Link>
+                        </component>
                     </div>
                 </div>
             </div>
@@ -28,6 +28,7 @@
 
 
 <script setup>
+import { Link } from '@inertiajs/vue3';
 import { useNav } from '@/Stores/nav'
 const nav = useNav()
 </script>

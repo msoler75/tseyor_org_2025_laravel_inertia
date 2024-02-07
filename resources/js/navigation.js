@@ -14,7 +14,7 @@ export default [
               title: "Novedades",
               route: "novedades",
               description: "Listado de los contenidos más recientes",
-              icon: "ph:flying-saucer-duotone",
+              icon: "ph:clock-counter-clockwise-duotone",
             },
           ],
         },
@@ -44,8 +44,14 @@ export default [
                     url: "http://facebook.com/tseyor",
                     external: true,
                     description: "Nuestra página en Facebook",
-                    icon: "ph:megaphone-simple-duotone",
-                    class: "border-b",
+                    icon: "ph:facebook-logo-duotone",
+                  },
+                  {
+                    title: "X",
+                    url: "http://twitter.com/tseyor",
+                    external: true,
+                    description: "Nuestra página en X/twitter",
+                    icon: "bi:twitter-x",
                   },
             ]
         }
@@ -69,7 +75,7 @@ export default [
               title: "Biblioteca Tseyor",
               route: "biblioteca",
               description: "Información sobre la Biblioteca Tseyor",
-              icon: "ph:flying-saucer-duotone",
+              icon: "ph:books-duotone",
             },
 
             {
