@@ -36,7 +36,7 @@ export default {
     themes: [
       {
         summer: {
-          primary: "#38bdf8",
+          primary: "#60a5fa",
           link: "#24a9e4",
           secondary: "#cc5c2c",
           accent: "#eefc80",
