@@ -10,7 +10,7 @@
 
     <Modal :show="search.opened" @close="search.opened = false" maxWidth="lg">
         <div class="modal-search bg-base-100 flex flex-col text-sm pb-7">
-            <div class="flex gap-2 items-center  p-3">
+            <div class="flex gap-2 items-center p-3">
                 <Icon v-show="!loading" icon="ph:magnifying-glass-bold" class="text-lg" />
                 <Spinner v-show="loading" class="text-lg" />
                 <div class="flex-grow relative">
@@ -29,34 +29,33 @@
             <div class="overflow-y-auto max-h-[calc(100vh-170px)] border-t border-gray-500 border-opacity-20"
                 id="search-input-list">
 
-                <div v-if="!resultadosAgrupados.length" class="p-7">
-                    <div v-if="lastQuery" class="text-center text-lg text-gray-500">
-                        No hay resultados para "<span class="text-primary">{{ lastQuery }}</span>"
+                  <div v-if="!resultadosAgrupados.length" class="p-7">
+                    <div v-if="search.lastQuery" class="text-center text-lg text-gray-500">
+                        No hay resultados para "<span class="text-primary">{{ search.lastQuery }}</span>"
                     </div>
 
-                    <div class="mt-14">
-                        <span class="font-bold">Prueba a buscar:</span>
+                    <div v-if="search.showSuggestions" class="mt-7">
+                        <div class="font-bold mb-4">Sugerencias:</div>
                         <div v-for="q of predefinedQueries" :key="q" @click="search.query = q"
-                            class="bg-base-200 bg-opacity-50 flex items-center justify-between w-full py-3 px-4 my-2 cursor-pointer rounded-lg">
-                            <span>
+                            class="bg-base-200 bg-opacity-50 flex items-center justify-between w-full py-3 px-4 my-1 cursor-pointer rounded-lg text-primary hover:underline">
+                            <span class="after:content-['_↗']">
                                 {{ q }}
                             </span>
-                            <span class="text-lg">›</span>
                         </div>
                     </div>
                 </div>
 
                 <div v-else v-for="grupo of resultadosAgrupados" :key="grupo"
                     class="busqueda-resultados flex flex-wrap p-3">
-                    <div class="w-full flex justify-between px-2 mt-3 mb-2 font-bold capitalize">{{
+                    <div class="w-full flex justify-between px-1 mt-3 mb-2 text-neutral font-bold capitalize opacity-50">{{
                         traducir(grupo.coleccion) }}
                     </div>
                     <Link v-for="item of grupo.items" :key="item.id" :id="item.idDom"
-                        class="w-full py-3 px-4 bg-base-200 bg-opacity-50 rounded-lg m-2 flex gap-3 justify-between items-center"
-                        role="option" @mouseover="seleccionarItem(item, true)"
-                        :href="calcularUrl(item)"
-                        @click="clickHandle(calcularUrl(item))" :aria-selected="itemSeleccionado && itemSeleccionado.id == item.id"
-                        :class="itemSeleccionado && itemSeleccionado.id == item.id ? 'seleccionado bg-primary' : ''">
+                        class="w-full py-3 px-4 bg-base-200 rounded-lg my-1 flex gap-3 justify-between items-center"
+                        role="option" @mouseover="seleccionarItem(item, true)" :href="calcularUrl(item)"
+                        @click="clickHandle(calcularUrl(item))"
+                        :aria-selected="itemSeleccionado && itemSeleccionado.id == item.id"
+                        :class="itemSeleccionado && itemSeleccionado.id == item.id ? 'seleccionado' : ''">
                     <div v-html="item.titulo" />
                     <span class="text-lg">›</span>
                     </Link>
@@ -68,23 +67,20 @@
 </template>
 
 <script setup>
-import {useGlobalSearch} from "@/Stores/globalSearch.js"
+import { useGlobalSearch } from "@/Stores/globalSearch.js"
 
 const search = useGlobalSearch()
 
 const input = ref(null)
 
-const lastQuery = ref("")
-
 const predefinedQueries = ref(['Contacta con nosotros', '¿Dónde estamos?', 'Libros para comenzar', '¿Dónde puedo inscribirme?', 'Ayuda humanitaria'])
 
-const results = ref({ data: [] })
-
 const resultadosAgrupados = computed(() => {
-    const agrupados = {}
+    if (search.results === null) return []
 
-    for (var key in results.value.data) {
-        const item = results.value.data[key]
+    const agrupados = {}
+    console.log('search.results', search.results)
+    for (const item of search.results.data) {
 
         if (!item.idDom)
             item.idDom = 'result-' + item.slug_ref + '-' + Math.floor(Math.random() * 1000)
@@ -157,23 +153,23 @@ onMounted(() => {
                     usoTeclas = true
                     break;
                 case 'Home':
-                    if(usoTeclas) {
+                    if (usoTeclas) {
                         event.preventDefault()
                         primerItem()
                     }
                     break;
                 case 'End':
-                if(usoTeclas) {
-                    event.preventDefault()
-                    ultimoItem()
-                }
+                    if (usoTeclas) {
+                        event.preventDefault()
+                        ultimoItem()
+                    }
                     break;
             }
         }
     });
 })
 
-watch(()=>search.opened, (value) => {
+watch(() => search.opened, (value) => {
     usoTeclas = false
     if (value) {
         currentUrl = window.location.pathname
@@ -210,7 +206,8 @@ function buscar() {
         loading.value = true
         axios.get(route('buscar') + '?query=' + search.query)
             .then(response => {
-                results.value = response.data
+                console.log('response-data', response.data)
+                search.results = response.data
                 loading.value = false
                 timerGuardarBusqueda = setTimeout(guardarBusqueda, 2000)
             })
@@ -218,46 +215,52 @@ function buscar() {
                 loading.value = false
             })
             .finally(() => {
-                lastQuery.value = currentQuery
+                search.lastQuery = currentQuery
             })
     }
 
 }
 
-function guardarBusqueda(url) {
+
+
+async function guardarBusqueda(url) {
     clearTimeout(timerGuardarBusqueda)
     console.log('guardarBusqueda', url)
     const data = new FormData();
-    data.append('query', search.query);
+    data.append('query', search.query ? search.query : search.lastQuery);
     data.append('origen', currentUrl);
     if (busquedaId)
         data.append('id', busquedaId);
     if (url)
         data.append('click_url', url);
 
-    axios.post(route('busqueda.guardar'), data)
+    return axios.post(route('busqueda.guardar'), data)
         .then(response => {
             busquedaId = response.data.id
         })
 }
 
-watch(()=>search.query, (value) => {
+watch(() => search.query, (value) => {
     busquedaId = null // borramos id de la busqueda actual
     clearTimeout(timerGuardarBusqueda) // borramos contador de tiempo para guardar los datos de la busqueda actual, seguramente el usuario está escribiendo aún
     clearTimeout(timerBuscar) // borramos contador de tiempo para ejecutar la busqueda
     if (value)
         timerBuscar = setTimeout(buscar, 250)
     else {
-        lastQuery.value = null
-        results.value = { data: [] }
+        search.results = null
+        search.lastQuery = null
     }
 })
 
 function clickHandle(url) {
     console.log('clickHandle', url)
-    search.opened = false
-    search.query = ""
-    guardarBusqueda(url)
+    nextTick(async () => {
+        search.opened = false
+        await guardarBusqueda(url)
+        // busquedaId = null
+        // search.query = ""
+        search.showSuggestions = true
+    })
 }
 
 const traducciones = {
@@ -320,13 +323,21 @@ function anteriorItem() {
 }
 
 function primerItem() {
-    if(itemsArray.value.length)
-    seleccionarItem(itemsArray.value[0])
+    if (itemsArray.value.length)
+        seleccionarItem(itemsArray.value[0])
 }
 
 function ultimoItem() {
-    if(itemsArray.value.length)
-    seleccionarItem(itemsArray.value[itemsArray.value.length-1])
+    if (itemsArray.value.length)
+        seleccionarItem(itemsArray.value[itemsArray.value.length - 1])
 }
 </script>
 
+<style scoped>
+a.seleccionado {
+    @apply bg-primary text-white;
+}
+a.seleccionado :deep(em.search-term) {
+    @apply text-white;
+}
+</style>

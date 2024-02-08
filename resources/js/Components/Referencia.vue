@@ -1,5 +1,5 @@
 <template>
-    <div class="inline text-primary cursor-pointer after:content-['↗']"  ref="referencia"
+    <div class="inline text-primary cursor-pointer after:content-['↗'] hover:underline"  ref="referencia"
     @click="buscar">
         <slot></slot>
     </div>
@@ -22,5 +22,8 @@ function buscar(){
     search.open()
     console.log(referencia.value)
     search.query = props.r? props.r: referencia.value.innerText
+    search.lastQuery = null
+    search.showSuggestions = false
+    search.results = null
 }
 </script>
