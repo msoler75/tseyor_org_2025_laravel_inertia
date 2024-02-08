@@ -10,7 +10,7 @@
         'background-image': `url(${srcImage})`,
         'background-size': 'cover'
     } : {}">
-                <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h bg-red-100" :class="imageClass"/>
+                <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :class="imageClass" />
                 <small v-if="caption" class="container">{{ caption }}</small>
             </div>
             <div class="flex flex-col items-center gap-7 container mx-auto"
@@ -19,15 +19,15 @@
                 <div v-if="subtitle" class="text-lg text-center my-0">
                     {{ subtitle }}
                 </div>
-                <div v-show="textPresent" class="prose md:my-5 text-justify hyphens-auto" ref="textdiv">
-                    <slot class="text-lg text-justify"></slot>
+                <div v-show="textPresent" class="md:my-5 text-justify hyphens-auto" ref="textdiv">
+                   <slot class="text-lg text-justify"></slot>
                 </div>
                 <a v-if="buttonLabel && href && href.match(/\.(pdf|mp3|mp4|docx|jp?eg|png|webp|ppt|pps)$/i)" :href="href"
                     class="my-2 btn btn-primary flex gap-3" download>
                     <Icon icon="ph:download-duotone" /> {{ buttonLabel }}
                 </a>
                 <ActionButton v-else-if="buttonLabel && href" :href="href" class="my-2 min-w-[10rem]">
-                {{ buttonLabel }}
+                    {{ buttonLabel }}
                 </ActionButton>
                 <span v-if="buttonLabel && href" class="md:hidden"></span>
             </div>
@@ -101,7 +101,7 @@ const textPresent = computed(() => textdiv.value && textdiv.value.children.lengt
 }
 
 .with-image {
-grid-template-rows: min(60fr, var(--sectionHeight)) 40fr;
+    grid-template-rows: min(60fr, var(--sectionHeight)) 40fr;
 }
 
 @screen md {
@@ -113,5 +113,4 @@ grid-template-rows: min(60fr, var(--sectionHeight)) 40fr;
         grid-template-rows: 1fr;
     }
 }
-
 </style>
