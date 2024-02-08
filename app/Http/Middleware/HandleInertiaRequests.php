@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
 use App\T;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Log;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -80,13 +82,16 @@ class HandleInertiaRequests extends Middleware
 
         // dd($ziggy_arr);
 
+        $setting = Setting::where('name', 'anuncio')->first();
+        $anuncio = optional($setting)->value;
+        Log::info("HandleIntertiaRqeuests: $anuncio");
 
         // llamada normal
         return array_merge(parent::share($request), [
             'flash' => [
                 'message' => fn() => $request->session()->get('message')
             ],
-            'anuncio' => config('app.anuncio'),
+            'anuncio' => $anuncio,
             'meta_image_default' => config('seo.image.fallback'),
             'csrf_token' => csrf_token(),
             /*'ziggy' => function () use (ç$request, $ziggy_arr) {
