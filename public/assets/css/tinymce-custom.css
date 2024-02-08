@@ -1,0 +1,11 @@
+.referencia:after {
+    content: "↗"
+}
+
+.referencia {
+    color: #60a5fa
+}
+
+.dark .referencia {
+    color: #90cdf4
+}

@@ -65,3 +65,16 @@ form [bp-field-name='permissions'] .checkbox
 .page-wrapper {
     z-index: 1031;
 }
+
+
+.referencia:after {
+    content: "↗"
+}
+
+.referencia {
+    color: #60a5fa
+}
+
+.dark .referencia {
+    color: #90cdf4
+}
