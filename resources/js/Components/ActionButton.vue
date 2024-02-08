@@ -21,14 +21,29 @@ const props = defineProps({
 
 <style scoped>
 .pushable {
-    @apply rounded-xl;
+    @apply rounded-xl bg-primary;
     border: none;
     cursor: pointer;
-    background: #189dd8;
+}
+
+/** sombra */
+.pushable:after {
+    content: "";
+    position: absolute;
+    @apply rounded-xl;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: rgb(0,0,0,.25);
+    background: linear-gradient(90deg, rgba(0,0,0,.1) 0%, rgba(0,0,0,.6) 100%);
 }
 
 .pushable .front {
     transform: translateY(-6px);
+    z-index: 2;
+    position: relative;
 }
 
 .pushable:hover .front {
