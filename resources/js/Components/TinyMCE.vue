@@ -182,7 +182,7 @@ function editorSetup(editor) {
         onAction: (_) =>{
         const selectedNode = editor.selection.getNode();
 
-        if (selectedNode.nodeName === 'SPAN' && selectedNode.classList.contains('referencia')) {
+        if (selectedNode.nodeName === 'SPAN' && selectedNode.classList.contains('es-referencia')) {
             // Si el nodo seleccionado es un SPAN con la clase 'referencia', eliminamos el SPAN y dejamos el texto sin formato adicional
             editor.dom.remove(selectedNode, true);
         } else {
@@ -190,7 +190,7 @@ function editorSetup(editor) {
             const selectedText = editor.selection.getContent({ format: 'text' });
 
             if (selectedText) {
-                const newContent = `<span class="referencia">${selectedText}</span>`;
+                const newContent = `<span class="es-referencia">${selectedText}</span>`;
                 editor.selection.setContent(newContent);
             }
         }

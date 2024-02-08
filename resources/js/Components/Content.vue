@@ -34,7 +34,7 @@ var v3ImgPreviewFn = null
 
 const contentPreProcessed = computed(() => isMarkdown.value ? MarkdownToHtml(props.content) : props.content)
 
-const contentProcessed = computed(() => contentPreProcessed.value.replace(/<span class="referencia"(.*?)<\/span>/g, '<referencia$1</referencia>'))
+const contentProcessed = computed(() => contentPreProcessed.value.replace(/<span class="es-referencia"(.*?)<\/span>/g, '<referencia$1</referencia>'))
 
 function parseHTML(textoHTML) {
     images.value = []

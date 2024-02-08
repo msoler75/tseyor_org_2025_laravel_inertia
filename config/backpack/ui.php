@@ -109,6 +109,7 @@ return [
     'vite_styles' => [ // resource file_path
         'resources/css/admin.css',
         'resources/css/app.css',
+        'public/assets/css/tinymce-custom.css'
     ],
 
     // --------------
