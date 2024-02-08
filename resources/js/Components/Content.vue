@@ -100,7 +100,7 @@ onMounted(async () => {
         v3ImgPreviewFn = module.v3ImgPreviewFn;
 
         // buscamos todas las imagenes
-        const elems = container.value.$el.querySelectorAll('img')
+        const elems = container.value.$el.querySelectorAll('.is-image')
         for (const img of elems)
             img.onclick = (event) => handlePreview(event.target)
 

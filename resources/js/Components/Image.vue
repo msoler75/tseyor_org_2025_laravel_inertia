@@ -1,5 +1,5 @@
 <template>
-    <img ref="img" class="is-image" :src="displaySrc" :alt="alt" />
+    <component :is="displaySrc?'img':'div'" ref="img" class="is-image" :src="displaySrc" :alt="alt" />
 </template>
 
 
