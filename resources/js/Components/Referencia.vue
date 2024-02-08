@@ -8,13 +8,17 @@
 
 <script setup>
 
+
 const props = defineProps({
-    r: { type: String, required: false }
+    r: { type: String, required: false },
+    colecciones: {default: null}
 })
 
 import {useGlobalSearch} from "@/Stores/globalSearch.js"
 
 const search = useGlobalSearch()
+
+
 
 const referencia = ref(null)
 
@@ -25,5 +29,8 @@ function buscar(){
     search.lastQuery = null
     search.showSuggestions = false
     search.results = null
+    search.restrictToCollections = props.colecciones
 }
 </script>
+
+

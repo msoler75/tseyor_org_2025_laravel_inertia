@@ -15,6 +15,7 @@
                 height: height,
                 language_url: '/assets/js/tiny.es.js',
                 language: 'es',
+                content_css: '/assets/css/tinymce-custom.css',
                 menubar: false,
                 statusbar: false,
                 setup: editorSetup,
@@ -29,10 +30,10 @@
                 toolbar: toolbarButtons,
                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }" :initial-value="contenidoHtml" @change="onChange" />
-            <div v-else >
+            <div v-else>
                 <template v-if="contenidoHtml">
                     <span class="text-xs opacity-70">Vista previa:</span>
-                    <Content :content="contenidoHtml" class="max-h-[30ch] overflow-y-scroll border p-3" :format="format"/>
+                    <Content :content="contenidoHtml" class="max-h-[30ch] overflow-y-scroll border p-3" :format="format" />
                 </template>
                 <div v-else class="text-sm opacity-70">(no hay texto)</div>
                 <div class="btn btn-primary btn-sm mt-2" @click="editando = true">Editar</div>
@@ -43,9 +44,8 @@
 
         <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
             <div class="flex flex-col">
-                <FileManager :ruta="mediaFolder" @image="insertImage"
-                :modo-insertar="true"
-                class="min-h-[calc(100vh-160px)] max-h-[calc(100vh-160px)] h-[calc(100vh-160px)] overflow-y-auto" />
+                <FileManager :ruta="mediaFolder" @image="insertImage" :modo-insertar="true"
+                    class="min-h-[calc(100vh-160px)] max-h-[calc(100vh-160px)] h-[calc(100vh-160px)] overflow-y-auto" />
 
                 <div class="p-3 flex justify-end border-t border-gray-500 border-opacity-25">
                     <button @click.prevent="showMediaManager = false" class="btn btn-neutral">Cerrar</button>
@@ -97,7 +97,7 @@ const toolbarButtons = computed(() => {
     if (props.toolbar)
         return props.toolbar
     if (props.fullEditor)
-        return 'undo redo | bold italic underline strikethrough | styles | alignleft aligncenter alignright alignjustify | blockquote numlist bullist | fontsizes fonts | forecolor backcolor | insertimage mediamanager | codesample table emoticons | code markdown customDateButton | fullscreen'
+        return 'undo redo | bold italic underline strikethrough referencia | styles | alignleft aligncenter alignright alignjustify | blockquote numlist bullist | fontsizes fonts | forecolor backcolor | insertimage mediamanager | codesample table emoticons | code markdown customDateButton | fullscreen'
     return 'undo redo | blocks | bold italic | forecolor backcolor | emoticons'
 })
 
@@ -156,6 +156,7 @@ function editorSetup(editor) {
     editor.ui.registry.addIcon('markdown', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M7 15V9l2 2l2-2v6m3-2l2 2l2-2m-2 2V9"/></g></svg>')
     editor.ui.registry.addIcon('insertimage', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2v9zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4h-3z"/></svg>')
     editor.ui.registry.addIcon('mediamanager', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M18 13v7H4V6h5.02c.05-.71.22-1.38.48-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5l-2-2zm-1.5 5h-11l2.75-3.53l1.96 2.36l2.75-3.54zm2.8-9.11c.44-.7.7-1.51.7-2.39C20 4.01 17.99 2 15.5 2S11 4.01 11 6.5s2.01 4.5 4.49 4.5c.88 0 1.7-.26 2.39-.7L21 13.42L22.42 12L19.3 8.89zM15.5 9a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5z"/></svg>')
+    editor.ui.registry.addIcon('referencia', '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up-right"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>')
 
     editor.ui.registry.addButton('insertimage', {
         icon: 'insertimage',
@@ -173,6 +174,27 @@ function editorSetup(editor) {
         icon: 'markdown',
         tooltip: 'Editar en markdown',
         onAction: (_) => editingMarkdown.value = true
+    });
+
+    editor.ui.registry.addButton('referencia', {
+        icon: 'referencia',
+        tooltip: 'Establece una referencia',
+        onAction: (_) =>{
+        const selectedNode = editor.selection.getNode();
+
+        if (selectedNode.nodeName === 'SPAN' && selectedNode.classList.contains('referencia')) {
+            // Si el nodo seleccionado es un SPAN con la clase 'referencia', eliminamos el SPAN y dejamos el texto sin formato adicional
+            editor.dom.remove(selectedNode, true);
+        } else {
+            // Si no es un SPAN con la clase 'referencia', envolvemos el texto seleccionado en un SPAN con la clase 'referencia'
+            const selectedText = editor.selection.getContent({ format: 'text' });
+
+            if (selectedText) {
+                const newContent = `<span class="referencia">${selectedText}</span>`;
+                editor.selection.setContent(newContent);
+            }
+        }
+    }
     });
 }
 
