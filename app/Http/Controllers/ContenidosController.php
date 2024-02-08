@@ -59,9 +59,21 @@ class ContenidosController extends Controller
     {
         $buscar = $request->input('query');
 
+        $collections = $request->input('collections');
+
         $buscarFiltrado = BusquedasHelper::descartarPalabrasComunes($buscar);
 
-        $resultados = Contenido::search($buscarFiltrado)->paginate(64); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
+        // https://github.com/teamtnt/laravel-scout-tntsearch-driver?tab=readme-ov-file#constraints
+        $contenido = new Contenido;
+
+        // podemos restringir a un conjunto de colecciones
+        if($collections) {
+            $colecciones = explode(',', $collections);
+            $contenido = $contenido->whereIn('coleccion', $colecciones);
+        }
+
+        // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
+        $resultados = Contenido::search($buscarFiltrado)->constrain($contenido)->paginate(64);
 
         if (strlen($buscarFiltrado) < 3)
             BusquedasHelper::limpiarResultados($resultados, $buscarFiltrado, true);

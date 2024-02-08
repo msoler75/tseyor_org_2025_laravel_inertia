@@ -6,7 +6,8 @@ export const useGlobalSearch = defineStore("globalSearch", {
     showSuggestions: true,
     query: "",
     lastQuery: "",
-    results: null
+    results: null,
+    restrictToCollections: null
   }),
   actions: {
     clear () {

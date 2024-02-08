@@ -36,10 +36,10 @@
 
                     <div v-if="search.showSuggestions" class="mt-7">
                         <div class="font-bold mb-4">Sugerencias:</div>
-                        <div v-for="q of predefinedQueries" :key="q" @click="search.query = q"
+                        <div v-for="q of predefinedQueries" :key="q" @click="clickPredefined(q)"
                             class="bg-base-200 bg-opacity-50 flex items-center justify-between w-full py-3 px-4 my-1 cursor-pointer rounded-lg text-primary hover:underline">
                             <span class="after:content-['_↗']">
-                                {{ q }}
+                                {{ q.query }}
                             </span>
                         </div>
                     </div>
@@ -73,7 +73,13 @@ const search = useGlobalSearch()
 
 const input = ref(null)
 
-const predefinedQueries = ref(['Contacta con nosotros', '¿Dónde estamos?', 'Libros para comenzar', '¿Dónde puedo inscribirme?', 'Ayuda humanitaria'])
+const predefinedQueries = ref([
+{query: 'Contacta con nosotros', collections: 'paginas'},
+{query: '¿Dónde estamos?', collections: 'paginas'},
+{query: 'Libros para comenzar', collections: 'paginas'},
+{query: '¿Dónde puedo inscribirme?', collections: 'paginas' },
+{query: 'Ayuda humanitaria'}
+])
 
 const resultadosAgrupados = computed(() => {
     if (search.results === null) return []
@@ -204,7 +210,9 @@ function buscar() {
         var currentQuery = search.query
         queryLoading.value = currentQuery
         loading.value = true
-        axios.get(route('buscar') + '?query=' + search.query)
+        axios.get(route('buscar') + '?query=' + search.query
+        + (search.restrictToCollections ? '&collections='+search.restrictToCollections : '')
+        )
             .then(response => {
                 console.log('response-data', response.data)
                 search.results = response.data
@@ -249,8 +257,15 @@ watch(() => search.query, (value) => {
     else {
         search.results = null
         search.lastQuery = null
+        search.restrictToCollections = null
     }
 })
+
+
+function clickPredefined(q) {
+    search.query = q.query
+    search.restrictToCollections = q.collections
+}
 
 function clickHandle(url) {
     console.log('clickHandle', url)
