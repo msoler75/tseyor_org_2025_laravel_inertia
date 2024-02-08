@@ -1,9 +1,17 @@
+-que cuando importe un comunicado en word, cambie:
+####### ... CONVERSACIONES INTERDIMENSIONALES por algo como negrita
+
+-que cuando importe un comunicado o se guarde como contenido, la imagen elegida del comunicado cumpla un tamaño minimo
+
+-cuando se activa una busqueda por programación, la sección de "prueba a buscar" no se ha de ver
+
 -share buttons social clipboard (vue useClipboard)
 
 -top nav menu: hacer tab items linkables (biblioteca)
 
 -Boletines (es como un novedades, pero por correo)
 
+-formulario suscripción (en footer y en portada)
 
 Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
 
@@ -17,12 +25,8 @@ Creación de eventos por los usuarios autorizados
 
 -audio id vue
 
-tailwindcss  -> after:content-['_↗']
-Ejemplo:
-<p>Higher resolution means more than just a better-quality image. With a Retina
-6K display, <a class="text-blue-600 after:content-['_↗'] ..." href="https://www.
-apple.com/pro-display-xdr/" target="_blank">Pro Display XDR</a> gives you
-nearly 40 percent more screen real estate than a 5K display.</p>
+
+
 
 
 Equipos:

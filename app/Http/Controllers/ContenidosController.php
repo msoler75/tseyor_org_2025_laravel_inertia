@@ -84,6 +84,9 @@ class ContenidosController extends Controller
         if(isset($data['click_url']))
             $data['click_url'] = str_replace($base, "", $data['click_url']);
 
+        // almacenamos el session id
+        $data['session_id'] = session()->getId();
+
         if ($data['id'] ?? null) {
             $busqueda = Busqueda::findOrFail($data['id']);
             $busqueda->update($data);

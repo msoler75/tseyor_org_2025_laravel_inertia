@@ -11,6 +11,7 @@ class Busqueda extends Model
         'query',
         'origen',
         'click_url',
+        'session_id'
     ];
 
 }

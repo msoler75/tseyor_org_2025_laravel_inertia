@@ -84,13 +84,13 @@ export default [
               description: "Información sobre la Biblioteca Tseyor",
               icon: "ph:books-duotone",
             },
-
             {
-                title: "Meditaciones",
-                route: "meditaciones",
-                description: "Meditaciones para el trabajo interior",
-                icon: "ph:file-text-duotone",
+                title: "Blog",
+                route: "entradas",
+                description: "Artículos de nuestros blog",
+                icon: "ph:pencil-line-duotone",
               },
+
           ],
         },
         {
@@ -109,11 +109,11 @@ export default [
               icon: "ph:book-bookmark-duotone",
             },
             {
-              title: "Blog",
-              route: "entradas",
-              description: "Artículos de nuestros blog",
-              icon: "ph:pencil-line-duotone",
-            },
+                title: "Meditaciones",
+                route: "meditaciones",
+                description: "Meditaciones para el trabajo interior",
+                icon: "ph:file-text-duotone",
+              },
           ],
         },
 
