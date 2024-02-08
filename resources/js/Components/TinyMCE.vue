@@ -156,7 +156,7 @@ function editorSetup(editor) {
     editor.ui.registry.addIcon('markdown', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M7 15V9l2 2l2-2v6m3-2l2 2l2-2m-2 2V9"/></g></svg>')
     editor.ui.registry.addIcon('insertimage', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M18 20H4V6h9V4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9h-2v9zm-7.79-3.17l-1.96-2.36L5.5 18h11l-3.54-4.71zM20 4V1h-2v3h-3c.01.01 0 2 0 2h3v2.99c.01.01 2 0 2 0V6h3V4h-3z"/></svg>')
     editor.ui.registry.addIcon('mediamanager', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M18 13v7H4V6h5.02c.05-.71.22-1.38.48-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5l-2-2zm-1.5 5h-11l2.75-3.53l1.96 2.36l2.75-3.54zm2.8-9.11c.44-.7.7-1.51.7-2.39C20 4.01 17.99 2 15.5 2S11 4.01 11 6.5s2.01 4.5 4.49 4.5c.88 0 1.7-.26 2.39-.7L21 13.42L22.42 12L19.3 8.89zM15.5 9a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5z"/></svg>')
-    editor.ui.registry.addIcon('referencia', '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up-right"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>')
+    editor.ui.registry.addIcon('referencia', '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up-right"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>')
 
     editor.ui.registry.addButton('insertimage', {
         icon: 'insertimage',
@@ -176,26 +176,53 @@ function editorSetup(editor) {
         onAction: (_) => editingMarkdown.value = true
     });
 
-    editor.ui.registry.addButton('referencia', {
+    editor.ui.registry.addToggleButton('referencia', {
         icon: 'referencia',
         tooltip: 'Establece una referencia',
-        onAction: (_) =>{
-        const selectedNode = editor.selection.getNode();
 
-        if (selectedNode.nodeName === 'SPAN' && selectedNode.classList.contains('es-referencia')) {
-            // Si el nodo seleccionado es un SPAN con la clase 'referencia', eliminamos el SPAN y dejamos el texto sin formato adicional
-            editor.dom.remove(selectedNode, true);
-        } else {
-            // Si no es un SPAN con la clase 'referencia', envolvemos el texto seleccionado en un SPAN con la clase 'referencia'
-            const selectedText = editor.selection.getContent({ format: 'text' });
-
-            if (selectedText) {
-                const newContent = `<span class="es-referencia">${selectedText}</span>`;
-                editor.selection.setContent(newContent);
+        onAction: (api) => {
+            const selectedNode = editor.selection.getNode()
+            if (selectedNode.nodeName === 'SPAN' && selectedNode.classList.contains('es-referencia')) {
+                // Si el nodo seleccionado es un SPAN con la clase 'referencia', eliminamos el SPAN y dejamos el texto sin formato adicional
+                editor.dom.remove(selectedNode, true);
+                api.setActive(!api.isActive());
+            } else {
+                // Si no es un SPAN con la clase 'referencia', envolvemos el texto seleccionado en un SPAN con la clase 'referencia'
+                const selectedText = editor.selection.getContent({ format: 'text' });
+                if (selectedText.trim()) {
+                    const newContent = `<span class="es-referencia">${selectedText}</span>`;
+                    editor.selection.setContent(newContent);
+                    api.setActive(!api.isActive());
+                }
             }
+        },
+        onSetup: (api) => {
+            editor.on('SelectionChange', (e) => {
+                const selectedNode = editor.selection.getNode()
+            if (selectedNode.nodeName === 'SPAN' && selectedNode.classList.contains('es-referencia')) {
+                // Si el nodo seleccionado es un SPAN con la clase 'referencia', eliminamos el SPAN y dejamos el texto sin formato adicional
+                api.setActive(true)
+            } else {
+                api.setActive(false)
+            }
+            })
+            const selectedNode = editor.selection.getNode()
+            if (selectedNode.nodeName === 'SPAN' && selectedNode.classList.contains('es-referencia')) {
+                // Si el nodo seleccionado es un SPAN con la clase 'referencia', eliminamos el SPAN y dejamos el texto sin formato adicional
+                api.setActive(true)
+            } else {
+                api.setActive(false)
+            }
+            //const changed = editor.formatter.formatChanged('strikethrough', (state) => api.setActive(state));
+            //return () => changed.unbind();
         }
-    }
+
+
     });
+
+
+
+
 }
 
 function onChange() {
