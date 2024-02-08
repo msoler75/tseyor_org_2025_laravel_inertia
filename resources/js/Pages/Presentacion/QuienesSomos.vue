@@ -78,7 +78,7 @@
                         Galaxia.</p>
                     <p> Estas y otras muchas preguntas ordenadas por temática puedes consultarlas en el libro-documento.</p>
                     <p class="flex justify-center mt-12">
-                        <Link href="/libro-documento" class="btn btn-primary">Ver Preguntas</Link>
+                        <ActionButton href="/libro-documento" class="btn btn-primary">Ver Preguntas</ActionButton>
                     </p>
                 </template>
             </TextText>
