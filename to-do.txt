@@ -1,3 +1,6 @@
+-usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
+    - y si no, al menos poder mandar fácilmente los datos de contacto a un administrador
+
 -que cuando importe un comunicado en word, cambie:
 ####### ... CONVERSACIONES INTERDIMENSIONALES por algo como negrita
 
