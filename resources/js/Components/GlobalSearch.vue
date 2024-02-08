@@ -335,9 +335,14 @@ function ultimoItem() {
 
 <style scoped>
 a.seleccionado {
-    @apply bg-primary text-white;
+    @apply bg-primary text-white dark:text-black;
 }
 a.seleccionado :deep(em.search-term) {
-    @apply text-white;
+    @apply text-white ;
 }
+
+.dark  a.seleccionado :deep(em.search-term) {
+    @apply text-black;
+}
+
 </style>
