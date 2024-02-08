@@ -202,10 +202,4 @@ return [
     'umask' => "0022",
 
 
-    /*
-    Anuncio HTML de texto en el top del sitio web
-    */
-    'anuncio' => env('ANUNCIO_GLOBAL_HTML'),
-
-
 ];
