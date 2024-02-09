@@ -14,6 +14,7 @@ const page = usePage()
 const nav = useNav()
 const sideBarShow = ref(false)
 
+// console.log({page})
 
 // Use the router's navigation guard to track route changes
 router.on('start', (event) => {

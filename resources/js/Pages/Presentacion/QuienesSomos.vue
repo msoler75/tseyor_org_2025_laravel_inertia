@@ -1,5 +1,5 @@
 <template>
-    <Sections>
+    <FullPage>
 
         <Hero title="¿Quiénes Somos?" subtitle="TSEYOR es un grupo de contacto extraterrestre que mantiene conversaciones regulares con seres
                         humanos del cosmos pertenecientes a la Confederación de Mundos Habitados de la Galaxia."
@@ -110,7 +110,7 @@
             :href="route('cursos.inscripcion.nueva')" textClass="space-y-8" />
 
 
-    </Sections>
+    </FullPage>
 </template>
 
 

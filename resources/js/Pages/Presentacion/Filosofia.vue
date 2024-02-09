@@ -10,13 +10,18 @@
         <Hero title="La Filosofía Tseyor" subtitle="No habremos de creer nada, en lugar de eso comprobaremos mediante la experimentación."
             srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=no-creer-nada" image-right
             labelButton="Leer libro"
+            image-width="600"
+            image-height="400"
             href="/libros/filosofia"
             ></Hero>
 
 
         <Section>
             <TextImage title="Los tiempos que corren"
-                srcImage="https://via.placeholder.com/563x269.png/5000dd?text=tiempos-que-corren">
+                srcImage="https://via.placeholder.com/563x269.png/5000dd?text=tiempos-que-corren"
+                image-width="600"
+                image-height="400"
+                >
                 <p>Estamos en unos momentos de transformación y transmutación en los que debemos trabajar en
                     nuestro desarrollo personal, equilibrio, armonía y conexión con nuestra realidad objetiva.</p>
                 <p> Nuestra vibración energética se elevará para acoger la energía proveniente del cosmos y
@@ -27,7 +32,10 @@
 
         <Section>
             <TextImage title="Una puerta abierta al infinito"
-                srcImage="https://via.placeholder.com/963x569.png/f00fdd?text=groupMeeting" image-right>
+                srcImage="https://via.placeholder.com/963x569.png/f00fdd?text=groupMeeting" image-right
+                image-width="600"
+                image-height="400"
+                >
                 <p>El grupo Tseyor participa en una aventura que consiste en acceder a nuestra realidad objetiva,
                     espiritual e interdimensional a través de la puerta abierta al infinito desde nuestro corazón y
                     nuestro pensamiento inspirado en los valores y las energías cósmicas.</p>
@@ -36,8 +44,14 @@
 
         <Section>
             <TextImage title="Las sociedades armónicas"
-                srcImage="https://via.placeholder.com/700x600.png/0000ff?text=ONG.jpg" buttonLabel="Descargar Libro"
-                href="/sociedades">
+                srcImage="https://via.placeholder.com/500x700.png/0000ff?text=ONG.jpg" buttonLabel="Descargar Libro"
+                href="/sociedades"
+                image-width="500"
+                image-height="700"
+                :style="{
+        '--sectionHeight': '94vh'
+    }"
+                >
                 <p>
                     A este tipo de sociedades pertenecen las civilizaciones que forman parte de la citada
                     Confederación de Mundos Habitados. Son sociedades que han superado todas nuestras lacras, en
@@ -56,7 +70,10 @@
 
                     <!-- Sección: Qué significa TSEYOR -->
                     <Section>
-            <Hero title="¿Qué significa TSEYOR?" buttonLabel="Más información" href="/tseyor-significado">
+            <Hero title="¿Qué significa TSEYOR?" buttonLabel="Más información" href="/tseyor-significado"
+            image-width="600"
+            image-height="400"
+            >
                 <p class="text-center">
                     Tseyor es un acrónimo que corresponde a:
                 </p>
@@ -73,7 +90,11 @@
             <TextImage title="Glosario"
                 srcImage="https://via.placeholder.com/700x400.png/00ffff?text=Glosario" buttonLabel="Ir al Glosario"
                 image-right
-                href="/glosario">
+                image-width="600"
+                image-height="400"
+                href="/glosario"
+
+                >
                 <p>
                    Consulta todos los términos de la filosofía Tseyor en nuestro glosario de términos. También podrás ver los Guías Estelares y los Lugares de la Galaxia.
                 </p>

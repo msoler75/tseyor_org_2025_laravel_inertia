@@ -10,7 +10,7 @@
         'background-image': `url(${srcImage})`,
         'background-size': 'cover'
     } : {}">
-                <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :class="imageClass" />
+                <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h"  :width="imageWidth" :height="imageHeight" :class="imageClass" />
                 <small v-if="caption" class="container">{{ caption }}</small>
             </div>
             <div class="flex flex-col items-center gap-7 container mx-auto"
@@ -59,6 +59,16 @@ defineProps({
         type: String,
         required: false
     },
+    imageWidth: {
+        type: [Number, String],
+        required: false,
+        default: null
+    },
+    imageHeight: {
+        type: [Number, String],
+        required: false,
+        default: null
+    },
     imageRight: {
         type: Boolean,
         required: false,
@@ -92,7 +102,7 @@ defineProps({
 })
 
 const textdiv = ref(null)
-const textPresent = computed(() => textdiv.value && textdiv.value.children.length)
+const textPresent = computed(() => textdiv.value && (textdiv.value.children.length || textdiv.value.innerText))
 </script>
 
 <style scoped>

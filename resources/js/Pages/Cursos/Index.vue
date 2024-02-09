@@ -8,12 +8,10 @@
                 buttonLabel="Inscríbete" :href="route('cursos.inscripcion.nueva')"></Hero>
         </Section>
 
-        <Section :style="{
-            'background-size': 'cover',
-            'background-attachment': 'fixed',
-            background: 'black url(/almacen/medios/fondos/space.jpg) repeat'
-        }">
+        <Section>
+        <FondoEstrellado class="w-full h-full flex justify-center items-center">
             <VideoPlayer class="" videoUrl="https://www.youtube.com/embed/AkOZbfGdXbU" />
+        </FondoEstrellado>
         </Section>
 
 
@@ -42,9 +40,6 @@
 
             ]" />
         </Section>
-
-
-
 
         <Section>
             <TextImage title="Libro del Curso Holístico"
