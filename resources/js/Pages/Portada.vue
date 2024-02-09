@@ -5,8 +5,8 @@
             background: 'black url(/almacen/medios/portada/earth-1756274.jpg) center',
             backgroundSize: 'cover'
             }" data-theme="winter">
-            <Hero title="Contacto Extraterrestre" xsrcImage="/almacen/portada/unidad.jpg" :href="route('cursos')"
-                buttonLabel="Curso gratuito" textClass="bg-black bg-opacity-70 p-5 rounded-xl justify-center" image-right>
+            <Hero title="Contacto Extraterrestre"  :href="route('cursos')"
+                buttonLabel="Curso gratuito" textClass="md:max-w-screen-md bg-black bg-opacity-70 p-5 rounded-xl justify-center" image-right>
                 <em>En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
                     Nosotros aquí en este nivel estamos reforzados particularmente por la Confederación de Mundos Habitados
                     de la Galaxia.</em>

@@ -1,6 +1,7 @@
 <template>
     <Prose ref="container" class="text-container">
-        <ContentNode :node="arbol" :use-image="optimizeImages" />
+        <ContentNode :node="arbol" :use-image="optimizeImages"
+        @click="handleClick"/>
     </Prose>
 </template>
 
@@ -100,9 +101,9 @@ onMounted(async () => {
         v3ImgPreviewFn = module.v3ImgPreviewFn;
 
         // buscamos todas las imagenes
-        const elems = container.value.$el.querySelectorAll('.is-image')
-        for (const img of elems)
-            img.onclick = (event) => handlePreview(event.target)
+        //const elems = container.value.$el.querySelectorAll('.is-image')
+        //for (const img of elems)
+            //img.onclick = (event) => handlePreview(event.target)
 
 
         nextTick(() => {
@@ -147,6 +148,13 @@ onMounted(async () => {
     });
 });
 
+function handleClick(event) {
+    console.log('clicked', event.target)
+    if(event.target.tagName=='IMG') {
+        handlePreview(event.target)
+    }
+}
+
 function handlePreview(img) {
     const index = img.getAttribute("image-index")
     console.log('clicked ', index, images.value[index])
@@ -160,8 +168,8 @@ function handlePreview(img) {
 
 
 <style scoped>
-:deep(img) {
-    @apply max-w-full mx-auto mb-3;
+:deep(.is-image) {
+    @apply max-w-full mx-auto mb-3 mt-[2em];
 }
 
 

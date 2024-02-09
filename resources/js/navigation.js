@@ -13,13 +13,13 @@ export default [
             {
               title: "Novedades",
               route: "novedades",
-              description: "Listado de los contenidos más recientes",
+              description: "Los contenidos de Tseyor más recientes",
               icon: "ph:clock-counter-clockwise-duotone",
             },
           ],
         },
         {
-          title: "Noticias y Eventos",
+          title: "Noticias, Eventos y Blogs",
           items: [
             {
               title: "Noticias",
@@ -33,6 +33,12 @@ export default [
               description: "Cursos, convivencias y encuentros",
               icon: "ph:calendar-duotone",
             },
+            {
+                title: "Blog",
+                route: "entradas",
+                description: "Artículos de nuestros blog",
+                icon: "ph:pencil-line-duotone",
+              },
           ],
         },
         {
@@ -84,13 +90,6 @@ export default [
               description: "Información sobre la Biblioteca Tseyor",
               icon: "ph:books-duotone",
             },
-            {
-                title: "Blog",
-                route: "entradas",
-                description: "Artículos de nuestros blog",
-                icon: "ph:pencil-line-duotone",
-              },
-
           ],
         },
         {

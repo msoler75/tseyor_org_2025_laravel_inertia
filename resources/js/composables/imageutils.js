@@ -16,52 +16,54 @@ export const getImageUrl = (src, defaultUrl) => {
   return (prefix + src).replace(/\/\//g, "/");
 };
 
-// para saber las dimensiones originales de las imagenes
-var imagenes_pendientes = [];
+// guardamos los datos de las imagenes
+const imagenes_cache = {};
 
 export const getImageSize = async function (url) {
   console.log("getImageSize", url);
-  const hasHost = url.match(/^https?:\/\//);
-  // queremos la url relativa al sitio
-  if (hasHost) url = url.replace(/^https?:\/\/[^/]+/, "");
+  url = url.replace(/^https?:\/\/[^/]+/, "");
   return new Promise(async (resolve, reject) => {
-    var data = null;
-    var idx = imagenes_pendientes.findIndex((x) => x.url == url);
-    if (idx == -1) {
-      // no existe en la lista de pendientes, eso significa que es la primera vez que se preguntan sus dimensiones
-      imagenes_pendientes.push({ url, esperando: [] });
-      await fetch(route("imagen.tamaño") + "?url=" + url).then(async (r) => {
-        data = await r.text();
-        idx = imagenes_pendientes.findIndex((x) => x == url);
-        if (idx > -1) {
-          for (const callback of imagenes_pendientes[idx].esperando)
-            callback(data); // avisa a los que esperan por la misma imagen
-          imagenes_pendientes.splice(idx, 1);
-        }
-      });
-    } else {
-      // quedamos esperando por que ya hay un proceso pendiente de obtener las dimensiones de la imagen
-      data = await new Promise((resolve, reject) => {
-        // agregamos una función de callback
-        imagenes_pendientes[idx].esperando.push((d) => {
-          resolve(d);
-        });
-      });
-    }
-
-    if (data) {
-      try {
-        const size = JSON.parse(data);
-        resolve(size);
-      } catch (err) {
-        reject(err);
-      }
-    }
-    reject();
+    if (imagenes_cache[url])
+        return resolve(imagenes_cache[url]);
+    console.log("fetch image.tamaño", url);
+    return await fetch(route("imagen.tamaño") + "?url=" + url).then(async (r) => {
+      console.log("fetch respuesta", url, r);
+      const data = await r.json();
+      console.log({ data });
+      imagenes_cache[url] = data;
+      return resolve(data);
+    })
+    .catch(() => reject());
   });
 };
-export const clearImagesPending = function () {
-  imagenes_pendientes = [];
+
+export const isFromMyDomain = function (url) {
+
+    console.log('isFromMyDomain', url)
+    const hasHost = url.match(/^https?:\/\//);
+
+  // si es una url relativa, entonces está en mi dominio
+  if (!hasHost) {
+   console.log('yes')
+    return true;
+  }
+
+  try {
+    const urlObject = new URL(url);
+    // Obtener el host de la URL
+    const imageUrlHost = urlObject.hostname;
+
+    // Obtener el host de tu sitio
+    const yourSiteUrl = window?.location?.hostname;
+
+    // Comprobar si la URL de la imagen apunta a tu host
+    return imageUrlHost === yourSiteUrl;
+  } catch (error) {
+    console.error("Error al analizar la URL:", error);
+  }
+
+  console.log('truez')
+  return true; // indeterminado
 };
 
 function canUseWebP() {
