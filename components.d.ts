@@ -56,6 +56,7 @@ declare module 'vue' {
     FileSize: typeof import('./resources/js/Components/FolderExplorer/FileSize.vue')['default']
     FolderExplorer: typeof import('./resources/js/Components/FolderExplorer/FolderExplorer.vue')['default']
     FolderIcon: typeof import('./resources/js/Components/FolderExplorer/FolderIcon.vue')['default']
+    FondoEspacio: typeof import('./resources/js/Components/FondoEspacio.vue')['default']
     FondoEstrellado: typeof import('./resources/js/Components/FondoEstrellado.vue')['default']
     Footer: typeof import('./resources/js/Sections/Footer.vue')['default']
     FormSection: typeof import('./resources/js/Components/FormSection.vue')['default']

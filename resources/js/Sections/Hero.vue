@@ -2,7 +2,7 @@
     <TextImage :title="title" :subtitle="subtitle" :srcImage="srcImage" :buttonLabel="buttonLabel" :href="href"
         :image-width="imageWidth" :image-height="imageHeight" :imageRight="imageRight" :imageClass="imageClass"
         :imageSideClass="imageSideClass" :textClass="textClass" :full="full" :cover="cover"
-        class="bg-hero bg-cover bg-center py-20">
+        class="hero bg-hero bg-cover bg-center py-20">
         <slot></slot>
     </TextImage>
 </template>
