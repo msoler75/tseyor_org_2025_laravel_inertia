@@ -11,7 +11,7 @@
                     <p>Estas denominadas <q>conversaciones interdimensionales</q> o comunicados se han transcrito en textos que inspiran libros, monografías, vídeos y audios.</p>
                 </div>
                 <div class="flex gap-5">
-                    <p class="">Todos los materiales han sido publicados y están preservados por la <Referencia>Universidad Tseyor de Granada</Referencia> para mantener la integridad del mensaje original y sus obras literarias están registradas bajo la asociación <Referencia>TSEYOR Centro de Estudios Socioculturales</Referencia>.</p>
+                    <p class="">Todos los materiales han sido publicados y están preservados por la <Referencia>Universidad Tseyor de Granada</Referencia> para mantener la integridad del mensaje original y sus obras impresas están registradas por la asociación <Referencia>TSEYOR Centro de Estudios Socioculturales</Referencia>.</p>
                     <img class="mt-[1.5rem] h-[200px]" src="https://tseyor.org/images/sello-utg.webp?ts=1433235750&thumb=299x435&quality=87&fe=jpg">
                 </div>
             </div>

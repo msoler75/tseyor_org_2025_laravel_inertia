@@ -27,12 +27,12 @@ const props = defineProps({
     },
     srcWidth: {
         type: [Number, String],
-        required: true,
+        required: false,
         default: null
     },
     srcHeight: {
         type: [Number, String],
-        required: true,
+        required: false,
         default: null
     },
     alt: {
@@ -164,7 +164,7 @@ onMounted(() => {
     // doImageSize()
     isMounted.value = true
     if (justPutResized.value)
-        replaceWithSizedImage()
+       replaceWithSizedImage()
 })
 
 // watch(imageSrc, init)

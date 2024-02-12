@@ -48,7 +48,7 @@ function parseHTML(textoHTML) {
         const textNode = !node.tagName
         const obj = {
             tagName: textNode ? null : node.tagName.toLowerCase(),
-            textContent: node.textContent.trim(),
+            textContent: node.textContent,
         };
 
         if (!textNode) {
@@ -76,11 +76,11 @@ function parseHTML(textoHTML) {
             const child = node.childNodes[i];
             if (child.nodeType === 1) {
                 obj.children.push(parseNode(child));
-            } else if (child.nodeType === 3 && child.textContent.trim()) {
+            } else if (child.nodeType === 3 && child.textContent) {
                 // Agrega el texto del nodo de texto
                 obj.children.push({
                     tagName: null,
-                    textContent: child.textContent.trim(),
+                    textContent: child.textContent,
                 });
             }
         }
