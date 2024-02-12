@@ -108,7 +108,7 @@ function init() {
 // const estado = ref("inicial")
 
 function prepareEffect() {
-    console.log('prepareEffect')
+    console.log('prepareEffect', props.srcWidth ,props.srcHeight)
     if (props.srcWidth && props.srcHeight) {
         const originalSize = {
             width: getPixels(props.srcWidth),
@@ -136,7 +136,7 @@ function applyImageOriginalSize(originalSize) {
             console.log('aun no está montada, esperamos...', imageSrc.value)
             justPutResized.value = true
         }
-    }, 500)
+    }, 200)
 }
 
 async function replaceWithSizedImage() {
