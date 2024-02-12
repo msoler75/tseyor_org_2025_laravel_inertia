@@ -12,12 +12,11 @@ const permisos = usePermisos()
 const player = usePlayer()
 const page = usePage()
 const nav = useNav()
-const sideBarShow = ref(false)
 
 // si el mouse sale de la ventana de la aplicación, cerramos el menú
 document.addEventListener("mouseleave", function (event) {
-    if (screen.width >= 1024)
-        nav.closeTabs()
+  //  if (screen.width >= 1024)
+    //    nav.closeTabs()
 })
 
 // console.log({page})
@@ -244,7 +243,7 @@ axios.get(route('setting', 'navigation'))
 
         <Announcement :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'" />
 
-        <NavAside :show="sideBarShow" @close="sideBarShow = false" class="lg:hidden" />
+        <NavAside :show="nav.sideBarShow" @close="nav.sideBarShow = false" class="lg:hidden" />
 
         <Head :title="title" />
 
@@ -268,7 +267,7 @@ axios.get(route('setting', 'navigation'))
                         <div class="-mr-2 flex items-center lg:hidden">
                             <button
                                 class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
-                                @click="sideBarShow = !sideBarShow">
+                                @click="nav.sideBarShow = !nav.sideBarShow">
                                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
                                         :class="{ 'hidden': showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }"
@@ -286,7 +285,7 @@ axios.get(route('setting', 'navigation'))
 
                         <div class="hidden lg:flex">
                             <!-- Logo -->
-                            <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
+                            <div class="shrink-0 flex items-center" @mouseover="screen.width>1024?nav.closeTabs():{}">
                                 <Link :href="route('portada')">
                                 <ApplicationMark />
                                 </Link>

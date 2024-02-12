@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-for="tab, index of nav.items" :key="tab.url">
-            <NavLink class="relative" :class="tab.hasItems && !tab.url ? 'navigation-tab' : ''" :href="tab.url"
+            <NavLink v-if="!tab.onlyAside" class="relative" :class="tab.hasItems && !tab.url ? 'navigation-tab' : ''" :href="tab.url"
                 @click="nav.toggleTab(tab)" @mouseover="handleHover(tab)"
                 :active="tab.open || (!nav.activeTab && nav.in(tab, $page.url))">
                 {{ tab.title }}

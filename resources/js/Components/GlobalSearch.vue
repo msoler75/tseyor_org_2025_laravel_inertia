@@ -1,10 +1,9 @@
 <template>
     <button type="button"
-        class="w-42 lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700 select-none"
+        class="w-42 flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700 select-none flex-nowrap flex-shrink-0"
         @click="search.opened = true">
         <Icon icon="ph:magnifying-glass-bold" class="mr-2" />
-
-        Buscar...<span class="ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
+        Buscar...<span class="hidden lg:inline ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
     </button>
 
 
@@ -184,6 +183,7 @@ onMounted(() => {
 watch(() => search.opened, (value) => {
     usoTeclas = false
     if (value) {
+        nav.sideBarShow = false // cerramos la sidebar
         currentUrl = window.location.pathname
         nextTick(() => {
             input.value.focus()
