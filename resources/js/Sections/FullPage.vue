@@ -18,7 +18,8 @@
 
         <TransitionFade>
             <div v-show="showScrollIcons"
-                class="transition duration-300 fixed top-[90px] left-0 w-full flex justify-center z-30 text-white mix-blend-exclusion">
+                class="transition duration-300 fixed left-0 w-full flex justify-center z-30 text-white mix-blend-exclusion"
+                :class="nav.announce?'top-[7rem]':'top-[5rem]'">
                 <Icon v-if="!isFirstSection" icon="ph:caret-double-up-duotone" @click="scrollToPreviousMandatory" class="text-lg lg:text-2xl cursor-pointer animate-bounce" />
             </div>
         </TransitionFade>
@@ -26,9 +27,12 @@
     </Sections>
 </template>
 
+
+
 <script setup>
 import { useNav } from '@/Stores/nav';
 
+// Definición de props y variables reactivas
 defineProps({
     sectionHeight: {
         type: String,
@@ -44,10 +48,11 @@ nav.scrollY = 0;
 const isLastSection = ref(false)
 const isFirstSection = ref(false)
 
+// Función para manejar el evento de scroll
 const handleScroll = () => {
     nav.scrollY = container.value.$el.scrollTop;
 
-    // is Last Section?
+    // Verificar si es la última sección
     const cont = container.value.$el;
     const mandatoryElems = cont.querySelectorAll('.sections > .section');
     const firstElem = mandatoryElems[0];
@@ -70,16 +75,14 @@ onMounted(() => {
     }, 3000);
 });
 
-
 onBeforeUnmount(() => {
     container.value.$el.removeEventListener('scroll', handleScroll);
     nav.fullPage = false;
     clearTimeout(scrollTimer);
 });
 
-
-
-function scrollToNextMandatory() {
+// Función genérica para hacer scroll hacia arriba o abajo
+function scrollToMandatory(scrollDown) {
     const cont = container.value.$el;
     const containerHeight = cont.clientHeight;
     const halfContainerHeight = containerHeight / 2;
@@ -89,7 +92,9 @@ function scrollToNextMandatory() {
     for (let i = 0; i < mandatoryElems.length; i++) {
         const mandatoryElem = mandatoryElems[i];
         const rect = mandatoryElem.getBoundingClientRect();
-        if (rect.top <= halfContainerHeight && rect.bottom >= halfContainerHeight) {
+        // Verifica si la sección actual está en la mitad del contenedor
+        if (scrollDown ? (rect.top <= halfContainerHeight && rect.bottom >= halfContainerHeight) :
+            (rect.bottom >= halfContainerHeight && rect.top <= halfContainerHeight)) {
             currentElem = mandatoryElem;
             break;
         }
@@ -100,7 +105,9 @@ function scrollToNextMandatory() {
         for (let i = 0; i < mandatoryElems.length; i++) {
             const mandatoryElem = mandatoryElems[i];
             const rect = mandatoryElem.getBoundingClientRect();
-            if (rect.top >= currentElem.getBoundingClientRect().bottom) {
+            // Verifica si la parte inferior o superior de la siguiente sección es visible en el contenedor
+            if (scrollDown ? (rect.top >= currentElem.getBoundingClientRect().bottom) :
+                (rect.bottom >= currentElem.getBoundingClientRect().top)) {
                 nextMandatoryElem = mandatoryElem;
                 break;
             }
@@ -115,45 +122,17 @@ function scrollToNextMandatory() {
     }
 }
 
-
-
+// Funciones específicas para hacer scroll hacia arriba o hacia abajo
+function scrollToNextMandatory() {
+    scrollToMandatory(true);
+}
 
 function scrollToPreviousMandatory() {
-    const cont = container.value.$el;
-    const containerHeight = cont.clientHeight;
-    const halfContainerHeight = containerHeight / 2;
-    const mandatoryElems = document.querySelectorAll('.sections > .section');
-    let currentElem = null;
-
-    for (let i = 0; i < mandatoryElems.length; i++) {
-        const mandatoryElem = mandatoryElems[i];
-        const rect = mandatoryElem.getBoundingClientRect();
-        if (rect.top <= halfContainerHeight && rect.bottom >= halfContainerHeight) {
-            currentElem = mandatoryElem;
-            break;
-        }
-    }
-
-    if (currentElem) {
-        let nextMandatoryElem = null;
-        for (let i = 0; i < mandatoryElems.length; i++) {
-            const mandatoryElem = mandatoryElems[i];
-            const rect = mandatoryElem.getBoundingClientRect();
-            if (rect.bottom >= currentElem.getBoundingClientRect().top) {
-                nextMandatoryElem = mandatoryElem;
-                break;
-            }
-        }
-
-        if (nextMandatoryElem) {
-            nextMandatoryElem.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    }
+    scrollToMandatory(false);
 }
 </script>
+
+
 
 
 <style scoped>
