@@ -157,7 +157,7 @@ function move(event) {
     height: 100vh;
     background: url(/almacen/medios/portada/space-nebula.jpg) center no-repeat;
     background-size: cover;
-    transform: scale(var(--nebula-scale)) translate(calc(var(--move-x) * .5), calc(var(--move-y) * .5));
+    transform: scale(var(--nebula-scale)) translate(calc(var(--move-x) * .15), calc(var(--move-y) * .15));
 }
 
 

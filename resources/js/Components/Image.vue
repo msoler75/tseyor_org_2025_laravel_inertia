@@ -150,10 +150,12 @@ async function replaceWithSizedImage() {
 
 function putSrcImage(src) {
     displaySrc.value = src
-    img.value.setAttribute('loading', 'lazy')
-    img.value.onload = ()=> {
-        imageLoaded.value = true
-    }
+    nextTick(()=>{
+        img.value.setAttribute('loading', 'lazy')
+        img.value.onload = ()=> {
+            imageLoaded.value = true
+        }
+    })
 }
 
 
