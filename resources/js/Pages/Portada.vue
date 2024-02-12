@@ -1,16 +1,17 @@
 <template>
     <FullPage>
 
-        <Section :style="{
-            background: 'black url(/almacen/medios/portada/earth-1756274.jpg) center',
-            backgroundSize: 'cover'
-            }" data-theme="winter">
-            <Hero title="Contacto Extraterrestre"  :href="route('cursos')"
-                buttonLabel="Curso gratuito" textClass="md:max-w-screen-md bg-black bg-opacity-70 p-5 rounded-xl justify-center" image-right>
-                <em>En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
-                    Nosotros aquí en este nivel estamos reforzados particularmente por la Confederación de Mundos Habitados
-                    de la Galaxia.</em>
-            </Hero>
+        <Section data-theme="winter">
+            <FondoEspacio class="w-full h-full">
+                <Hero title="Contacto Extraterrestre" :href="route('cursos')" buttonLabel="Curso gratuito"
+                    textClass="md:max-w-screen-md justify-center" image-right
+                    class="h-[95vh] w-[96vw] absolute">
+                    <div class="bg-black bg-opacity-50 p-10 rounded-xl">En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
+                        Nosotros aquí en este nivel estamos reforzados particularmente por la 
+                        <Referencia>Confederación de Mundos
+                        Habitados de la Galaxia</Referencia>.</div>
+                </Hero>
+            </FondoEspacio>
         </Section>
 
         <Section>
@@ -46,7 +47,7 @@
         </Section>
 
 
-        <Section ref="contadoresEl" >
+        <Section ref="contadoresEl">
             <div class="grid grid-cols-2 md:px-5 md:grid-cols-4 gap-x-7 gap-y-20 text-lg mt-20 md:mt-0" v-if="stats">
                 <Link class="btn flex-col h-auto p-4" :href="route('comunicados')">
                 <Counter :to="stats.comunicados" :count="contando" :delay="0" class="text-2xl" />
@@ -85,9 +86,9 @@
 
 
 
-        <Section >
+        <Section>
             <h2 class="mt-[8rem] text-2xl font-bold mb-0">Miembros de Tseyor</h2>
-            <TestimonialSlider :testimonials="testimonials" class="h-full"/>
+            <TestimonialSlider :testimonials="testimonials" class="h-full" />
         </Section>
 
 

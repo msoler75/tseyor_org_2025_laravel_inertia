@@ -25,11 +25,14 @@ const referencia = ref(null)
 function buscar(){
     search.open()
     console.log(referencia.value)
-    search.query = props.r? props.r: referencia.value.innerText
-    search.lastQuery = null
-    search.showSuggestions = false
-    search.results = null
-    search.restrictToCollections = props.colecciones
+    const nuevoQuery = props.r? props.r: referencia.value.innerText
+    if(search.query!=nuevoQuery) {
+        search.query=nuevoQuery
+        search.lastQuery = null
+        search.showSuggestions = false
+        search.results = null
+        search.restrictToCollections = props.colecciones
+    }
 }
 </script>
 

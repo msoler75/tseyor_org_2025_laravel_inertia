@@ -9,7 +9,8 @@
 
 
     <Modal :show="search.opened" @close="search.opened = false" maxWidth="lg">
-        <div class="modal-search bg-base-100 flex flex-col text-sm pb-7">
+    <div class="modal-search bg-base-100 flex flex-col text-sm pb-7"
+    >
             <div class="flex gap-2 items-center p-3">
                 <Icon v-show="!loading" icon="ph:magnifying-glass-bold" class="text-lg" />
                 <Spinner v-show="loading" class="text-lg" />
@@ -68,7 +69,12 @@
 
 <script setup>
 import { useGlobalSearch } from "@/Stores/globalSearch.js"
+import { usePage } from '@inertiajs/vue3';
+import { useNav } from '@/Stores/nav'
 
+const portada = computed(() => page.url == '/')
+const page = usePage()
+const nav = useNav()
 const search = useGlobalSearch()
 
 const input = ref(null)
@@ -356,6 +362,7 @@ a.seleccionado :deep(em.search-term) {
     @apply text-white ;
 }
 
+[data-theme='winter'] a.seleccionado :deep(em.search-term) , 
 .dark  a.seleccionado :deep(em.search-term) {
     @apply text-black;
 }

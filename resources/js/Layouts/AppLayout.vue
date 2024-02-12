@@ -67,6 +67,19 @@ watch(isDark, value => {
 
 console.log('app.update dark state')
 updateDarkState()
+
+// esto lo hacemos para que globalsearch pueda tambien ponerse en dark mode en la portada
+function updateBodyTheme() {
+    const themePortada = portada.value && nav.scrollY < 300 ? 'winter' : ''
+    document.querySelector("body").setAttribute('data-theme', themePortada)
+}
+
+watch(()=>`${nav.scrollY}+${portada.value}`, ()=> {
+    updateBodyTheme()
+} )
+
+updateBodyTheme()
+
 /*
 // On page load or when changing themes, best to add inline in `head` to avoid FOUC
 if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
