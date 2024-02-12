@@ -10,9 +10,16 @@
         </Section>
 
         <TransitionFade>
-            <div v-show="showScrollDown"
+            <div v-show="showScrollIcons"
                 class="transition duration-300 fixed bottom-3 left-0 w-full flex justify-center z-30 text-white mix-blend-exclusion">
                 <Icon v-if="!isLastSection" icon="ph:caret-double-down-duotone" @click="scrollToNextMandatory" class="text-lg lg:text-2xl cursor-pointer animate-bounce" />
+            </div>
+        </TransitionFade>
+
+        <TransitionFade>
+            <div v-show="showScrollIcons"
+                class="transition duration-300 fixed top-[90px] left-0 w-full flex justify-center z-30 text-white mix-blend-exclusion">
+                <Icon v-if="!isFirstSection" icon="ph:caret-double-up-duotone" @click="scrollToPreviousMandatory" class="text-lg lg:text-2xl cursor-pointer animate-bounce" />
             </div>
         </TransitionFade>
 
@@ -35,6 +42,7 @@ const nav = useNav();
 nav.scrollY = 0;
 
 const isLastSection = ref(false)
+const isFirstSection = ref(false)
 
 const handleScroll = () => {
     nav.scrollY = container.value.$el.scrollTop;
@@ -42,20 +50,23 @@ const handleScroll = () => {
     // is Last Section?
     const cont = container.value.$el;
     const mandatoryElems = cont.querySelectorAll('.sections > .section');
+    const firstElem = mandatoryElems[0];
     const lastElem = mandatoryElems[mandatoryElems.length - 1];
-    const rect = lastElem.getBoundingClientRect();
-    isLastSection.value = rect.top <= screen.height * .7;
+    const rectFirst = firstElem.getBoundingClientRect();
+    const rectLast = lastElem.getBoundingClientRect();
+    isLastSection.value = rectLast.top <= screen.height * .7;
+    isFirstSection.value = rectFirst.top >=0 && rectFirst.top < screen.height * 1.1;
 };
 
 let scrollTimer = null;
-const showScrollDown = ref(false);
+const showScrollIcons = ref(false);
 
 onMounted(() => {
     handleScroll();
     container.value.$el.addEventListener('scroll', handleScroll, { passive: true });
     nav.fullPage = true;
     scrollTimer = setTimeout(() => {
-        showScrollDown.value = true;
+        showScrollIcons.value = true;
     }, 3000);
 });
 
@@ -90,6 +101,45 @@ function scrollToNextMandatory() {
             const mandatoryElem = mandatoryElems[i];
             const rect = mandatoryElem.getBoundingClientRect();
             if (rect.top >= currentElem.getBoundingClientRect().bottom) {
+                nextMandatoryElem = mandatoryElem;
+                break;
+            }
+        }
+
+        if (nextMandatoryElem) {
+            nextMandatoryElem.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }
+}
+
+
+
+
+function scrollToPreviousMandatory() {
+    const cont = container.value.$el;
+    const containerHeight = cont.clientHeight;
+    const halfContainerHeight = containerHeight / 2;
+    const mandatoryElems = document.querySelectorAll('.sections > .section');
+    let currentElem = null;
+
+    for (let i = 0; i < mandatoryElems.length; i++) {
+        const mandatoryElem = mandatoryElems[i];
+        const rect = mandatoryElem.getBoundingClientRect();
+        if (rect.top <= halfContainerHeight && rect.bottom >= halfContainerHeight) {
+            currentElem = mandatoryElem;
+            break;
+        }
+    }
+
+    if (currentElem) {
+        let nextMandatoryElem = null;
+        for (let i = 0; i < mandatoryElems.length; i++) {
+            const mandatoryElem = mandatoryElems[i];
+            const rect = mandatoryElem.getBoundingClientRect();
+            if (rect.bottom >= currentElem.getBoundingClientRect().top) {
                 nextMandatoryElem = mandatoryElem;
                 break;
             }

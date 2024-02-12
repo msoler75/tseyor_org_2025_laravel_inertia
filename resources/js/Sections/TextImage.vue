@@ -59,12 +59,12 @@ defineProps({
         type: String,
         required: false
     },
-    imageWidth: {
+    srcWidth: {
         type: [Number, String],
         required: false,
         default: null
     },
-    imageHeight: {
+    srcHeight: {
         type: [Number, String],
         required: false,
         default: null

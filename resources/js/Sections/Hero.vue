@@ -1,8 +1,8 @@
 <template>
     <TextImage :title="title" :subtitle="subtitle" :srcImage="srcImage" :buttonLabel="buttonLabel" :href="href"
-        :image-width="imageWidth" :image-height="imageHeight" :imageRight="imageRight" :imageClass="imageClass"
+        :src-width="srcWidth" :src-height="srcHeight" :imageRight="imageRight" :imageClass="imageClass"
         :imageSideClass="imageSideClass" :textClass="textClass" :full="full" :cover="cover"
-        class="hero bg-hero bg-cover bg-center py-20">
+        class="hero section bg-hero bg-cover bg-center py-20">
         <slot></slot>
     </TextImage>
 </template>
@@ -30,12 +30,12 @@ defineProps({
         type: String,
         required: false
     },
-    imageWidth: {
+    srcWidth: {
         type: [Number, String],
         required: true,
         default: null
     },
-    imageHeight: {
+    srcHeight: {
         type: [Number, String],
         required: true,
         default: null
