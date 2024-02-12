@@ -1,4 +1,4 @@
-F<script setup>
+<script setup>
 import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount } from 'vue';
 import { useNav } from '@/Stores/nav'
@@ -15,20 +15,23 @@ const nav = useNav()
 const sideBarShow = ref(false)
 
 // si el mouse sale de la ventana de la aplicación, cerramos el menú
-document.addEventListener("mouseleave", function(event){nav.closeTabs() })
+document.addEventListener("mouseleave", function (event) {
+    if (screen.width >= 1024)
+        nav.closeTabs()
+})
 
 // console.log({page})
 
 // Use the router's navigation guard to track route changes
 router.on('start', (event) => {
-  console.log(`Starting a visit to ${event.detail.visit.url}`)
+    console.log(`Starting a visit to ${event.detail.visit.url}`)
 })
 
 router.on('finish', (event) => {
-  console.log(`Page loaded ${event.detail.visit.url}`)
+    console.log(`Page loaded ${event.detail.visit.url}`)
 })
 
-console.log({page})
+console.log({ page })
 
 defineProps({
     title: String,
@@ -77,9 +80,9 @@ function updateBodyTheme() {
     document.querySelector("body").setAttribute('data-theme', themePortada)
 }
 
-watch(()=>`${nav.scrollY}+${portada.value}`, ()=> {
+watch(() => `${nav.scrollY}+${portada.value}`, () => {
     updateBodyTheme()
-} )
+})
 
 updateBodyTheme()
 
@@ -263,21 +266,21 @@ axios.get(route('setting', 'navigation'))
 
                         <!-- Hamburger -->
                         <div class="-mr-2 flex items-center lg:hidden">
-                                <button
-                                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
-                                    @click="sideBarShow = !sideBarShow">
-                                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                        <path
-                                            :class="{ 'hidden': showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }"
-                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 6h16M4 12h16M4 18h16" />
-                                        <path
-                                            :class="{ 'hidden': !showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }"
-                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
+                            <button
+                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
+                                @click="sideBarShow = !sideBarShow">
+                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path
+                                        :class="{ 'hidden': showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }"
+                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6h16M4 12h16M4 18h16" />
+                                    <path
+                                        :class="{ 'hidden': !showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }"
+                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
 
 
 
@@ -401,7 +404,8 @@ axios.get(route('setting', 'navigation'))
                                         <template #trigger>
                                             <button v-if="$page.props.jetstream.managesProfilePhotos"
                                                 class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                                <Avatar imageClass="w-12 h-12" :user="$page.props.auth.user" :link="false" />
+                                                <Avatar imageClass="w-12 h-12" :user="$page.props.auth.user"
+                                                    :link="false" />
                                             </button>
 
                                             <span v-else class="inline-flex rounded-md">
@@ -422,7 +426,7 @@ axios.get(route('setting', 'navigation'))
                                         <template #content>
                                             <!-- Account Management -->
                                             <div class="font-bold px-4 py-2">
-                                                {{$page.props.auth.user.name}}
+                                                {{ $page.props.auth.user.name }}
                                             </div>
 
                                             <DropdownLink :href="route('mis_archivos', $page.props.auth.user.id)">

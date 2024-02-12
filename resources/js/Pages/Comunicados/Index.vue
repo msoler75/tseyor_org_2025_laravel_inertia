@@ -7,7 +7,7 @@
         <div class="flex gap-12">
             <div>
                 <h1>Comunicados de Tseyor</h1>
-                <p>Aquí puedes encontrar todos los comunicados de Tseyor.</p>
+                <p>Aquí puedes encontrar todos los comunicados de Tseyor. Son transcripciones de las conversaciones interdimensionales mantenidas con los hermanos de las estrellas con la <Referencia>telepatía externa</Referencia> a través de nuestro <Referencia>Chac-Mool Puente</Referencia>.</p>
             </div>
 
             <!-- <Planets /> -->

@@ -6,7 +6,7 @@
             </template>
         </component>
         <template v-else>
-            {{ node.textContent + ' '}}
+            {{ node.textContent}}
         </template>
 </template>
 
