@@ -25,6 +25,16 @@ const props = defineProps({
         type: [Number, String],
         required: false
     },
+    srcWidth: {
+        type: [Number, String],
+        required: true,
+        default: null
+    },
+    srcHeight: {
+        type: [Number, String],
+        required: true,
+        default: null
+    },
     alt: {
         type: String,
     },
@@ -97,12 +107,12 @@ function init() {
 
 function prepareEffect() {
     console.log('prepareEffect')
-    if(props.width && props.height) {
-        const fixedSize = {
-            width: getPixels(props.width),
-            height: getPixels(props.height)
+    if(props.srcWidth && props.srcHeight) {
+        const originalSize = {
+            width: getPixels(props.srcWidth),
+            height: getPixels(props.srcHeight)
         }
-        applyImageOriginalSize(fixedSize)
+        applyImageOriginalSize(originalSize)
     }
     else
     getImageSize(imageSrc.value)
