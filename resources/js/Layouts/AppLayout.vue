@@ -14,6 +14,9 @@ const page = usePage()
 const nav = useNav()
 const sideBarShow = ref(false)
 
+// si el mouse sale de la ventana de la aplicación, cerramos el menú
+document.addEventListener("mouseleave", function(event){nav.closeTabs() })
+
 // console.log({page})
 
 // Use the router's navigation guard to track route changes

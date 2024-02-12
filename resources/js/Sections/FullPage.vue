@@ -12,7 +12,7 @@
         <TransitionFade>
             <div v-show="showScrollDown"
                 class="transition duration-300 fixed bottom-3 left-0 w-full flex justify-center z-30 text-white mix-blend-exclusion">
-                <Icon v-if="!isLastSection" icon="ph:caret-double-down-duotone" @click="scrollToNextMandatory" class="" />
+                <Icon v-if="!isLastSection" icon="ph:caret-double-down-duotone" @click="scrollToNextMandatory" class="text-lg lg:text-2xl cursor-pointer animate-bounce" />
             </div>
         </TransitionFade>
 

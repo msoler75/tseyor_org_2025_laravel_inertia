@@ -1,6 +1,6 @@
 <template>
     <div ref="fondo" class="fondo-espacio relative" @mousemove="move">
-        <div id='nebula'></div>
+        <div id='nebula' class="nebula"></div>
         <div ref="stars1" id='stars1' class="stars"></div>
         <div ref="stars2" id='stars2' class="stars"></div>
         <div ref="stars3" id='stars3' class="stars"></div>
@@ -30,18 +30,18 @@ const stars1 = ref(null)
 const stars2 = ref(null)
 const stars3 = ref(null)
 const stars4 = ref(null)
-const z1 = .4
+const z1 = .25
 const z2 = .5
 const z3 = 1
 const z4 = 2
 
 onMounted(() => {
     console.time('stars');
-    const density = screen.width / 198
+    const density = 3 * screen.width / 198
     let bg1 = generateStars(40 * density, z1, '#fff')
     let bg2 = generateStars(30 * density, z2, '#fff')
     let bg3 = generateStars(20* density, z3, '#fff')
-    let bg4 = generateStars(4* density, z4, '#fff')
+    let bg4 = generateStars(4 * density, z4, '#fff')
     stars1.value.style.boxShadow = bg1
     stars2.value.style.boxShadow = bg2
     stars3.value.style.boxShadow = bg3
@@ -57,8 +57,8 @@ function move(event) {
     // get mouse position in screen:
     const x = event.clientX
     const y = event.clientY
-    const dx = (screen.width - x) / 20
-    const dy = (screen.height - y) / 10
+    const dx = (screen.width - x) / 25
+    const dy = (screen.height - y) / 15
     fondo.value.style.setProperty('--move-x', dx + 'px');
     fondo.value.style.setProperty('--move-y', dy + 'px');
 }
@@ -104,13 +104,14 @@ function move(event) {
 
 .stars,
 #tierra,
-#nebula {
+.nebula{
     z-index: 0;
 }
 
 
 #tierra,
-#nebula {
+.nebula
+{
     position: absolute; 
     width: 1px;
     height: 1px;
@@ -119,6 +120,13 @@ function move(event) {
     left: 0;
     top: 0;
     z-index: 0;
+    mix-blend-mode: plus-lighter;
+}
+
+.stars,
+#tierra:after,
+.nebula:after {
+    transition: transform 0.4s ease-out;
 }
 
 #tierra:after {
@@ -138,23 +146,19 @@ function move(event) {
 }
 
 
-#nebula:after {
+.nebula:after {
     content: "";
-    opacity: .5;
+    opacity: 1;
     display: block;
     position: absolute;
-    left: -5vw;
-    right: 0;
+    top: 0;
+    left: 0 ;
     width: 100vw;
     height: 100vh;
     background: url(/almacen/medios/portada/space-nebula.jpg) center no-repeat;
     background-size: cover;
-    transform: scale(var(--nebula-scale)) translate(calc(var(--move-x) * 0.1), calc(var(--move-y) * 0.1));
+    transform: scale(var(--nebula-scale)) translate(calc(var(--move-x) * .5), calc(var(--move-y) * .5));
 }
 
-.stars,
-#tierra:after,
-#nebula:after {
-    transition: transform 0.4s ease-out;
-}
+
 </style>
