@@ -1,6 +1,6 @@
 <template>
-    <component :is="displaySrc?'img':'div'" ref="img" class="is-image" :src="displaySrc" :alt="alt" :title="title"
-        :style="styles" />
+    <component :is="displaySrc?'img':'div'" ref="img" class="is-image transition-opacity duration-200" :src="displaySrc"
+        :alt="alt" :title="title" :class="imageLoaded ? 'opacity-100' : 'opacity-0'" :style="styles" />
 </template>
 
 
@@ -60,9 +60,11 @@ const isMounted = ref(false)
 // ya disponemos de la información del tamaño original de la imagen? y está pendiente de poner?
 const justPutResized = ref(false)
 
+const imageLoaded = ref(false)
+
 function fillUnits(value) {
     let units = 'px'
-    if(typeof value === 'string' && value.match(/\d+\D+/))
+    if (typeof value === 'string' && value.match(/\d+\D+/))
         units = ''
     return value + units
 }
@@ -75,7 +77,7 @@ const styles = computed(() => {
 })
 
 function getPixels(value) {
-    if(typeof value === 'number') return value
+    if (typeof value === 'number') return value
     return parseInt(value)
 }
 
@@ -99,7 +101,7 @@ function init() {
     console.log('image.init. justdonttouch=', justDontTouch.value)
     console.log('window', window)
     if (justDontTouch.value)
-        displaySrc.value = imageSrc.value
+        putSrcImage()
     else
         prepareEffect()
 }
@@ -107,7 +109,7 @@ function init() {
 
 function prepareEffect() {
     console.log('prepareEffect')
-    if(props.srcWidth && props.srcHeight) {
+    if (props.srcWidth && props.srcHeight) {
         const originalSize = {
             width: getPixels(props.srcWidth),
             height: getPixels(props.srcHeight)
@@ -115,12 +117,12 @@ function prepareEffect() {
         applyImageOriginalSize(originalSize)
     }
     else
-    getImageSize(imageSrc.value)
-        .then(originalSize => {
-            applyImageOriginalSize(originalSize)
-        }).catch(err => {
-            displaySrc.value = imageSrc.value
-        })
+        getImageSize(imageSrc.value)
+            .then(originalSize => {
+                applyImageOriginalSize(originalSize)
+            }).catch(err => {
+                putSrcImage(imageSrc.value)
+            })
 }
 
 function applyImageOriginalSize(originalSize) {
@@ -140,12 +142,19 @@ function applyImageOriginalSize(originalSize) {
 async function replaceWithSizedImage() {
     console.log('replaceWithSizedImage', imageSrc.value, img.value.offsetWidth, img.value.offsetHeight)
     const webp = await isWebPSupported()
-    displaySrc.value = imageSrc.value + '?w=' + img.value.offsetWidth + '&h=' + img.value.offsetHeight
+    var src = imageSrc.value + '?w=' + img.value.offsetWidth + '&h=' + img.value.offsetHeight
     if (!webp)
-        displaySrc.value += '&fmt=jpg'
-    img.value.setAttribute('loading', 'lazy')
+        src += '&fmt=jpg'
+    putSrcImage(src)
 }
 
+function putSrcImage(src) {
+    displaySrc.value = src
+    img.value.setAttribute('loading', 'lazy')
+    img.value.onload = ()=> {
+        imageLoaded.value = true
+    }
+}
 
 
 onMounted(() => {
