@@ -21,9 +21,9 @@
             <TextImage title="¿Con quiénes contactamos?"
                 srcImage="https://via.placeholder.com/363x569.png/028f0d?text=contacto-estelar"
                 buttonLabel="Conoce a los guías Estelares" href="/guias" image-right>
-                <p>Nuestros tutores proceden de distintos planetas y todos son miembros de la Confederación.</p>
-                <p>Actualmente nos comunicamos con Shilcars (un ser humano del planeta Agguniom en la Constelación de
-                    Áuriga) y otros hermanos como Melcor, Aumnor y Noiwanak.</p>
+                <p>Nuestros tutores proceden de distintos planetas y todos son miembros de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>.</p>
+                <p>Actualmente nos comunicamos con <Referencia colecciones="guias">Shilcars</Referencia> (un ser humano del <Referencia colecciones="lugares">planeta Agguniom</Referencia> en la <Referencia>Constelación de
+                    Áuriga</Referencia>) y otros hermanos como <Referencia>Melcor</Referencia>, <Referencia>Aumnor</Referencia> y <Referencia>Noiwanak</Referencia>.</p>
             </TextImage>
         </Section>
 
@@ -31,7 +31,7 @@
         <Section>
             <TextImage title="Nuestra filosofía" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía"
             buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')">
-                <p>Seguimos la filosofía nos ha patrocinado la Confederación de Mundos Habitados de la Galaxia.</p>
+                <p>Seguimos la filosofía que nos ha patrocinado la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>, basada en la unión, la hermandad y el <Referencia>Conocimiento Trascendente</Referencia>.</p>
             </TextImage>
         </Section>
 
@@ -42,13 +42,13 @@
                 srcImage="https://via.placeholder.com/700x600.png/0000ff?text=Puente.jpg" buttonLabel="Ver Comunicados"
                 href="/comunicados"
                 image-right >
-                <p>Los comunicados son las conversaciones interdimensionales realizadas telepáticamente por nuestro hermano
-                    Chac-Mool Puente, quien ha recibido una preparación desde
+                <p>Los comunicados son las <Referencia>conversaciones interdimensionales</Referencia> realizadas <Referencia r="telepatía">telepáticamente</Referencia> por nuestro hermano
+                    <Referencia>Chac-Mool Puente</Referencia>, quien ha recibido una preparación desde
                     hace más de 40 años para asumir dicha labor, como intermediario entre los dos mundos.</p>
                 <p>
-                    En nuestra biblioteca web podéis encontrar todos los comunicados o conversaciones
-                    telepáticas interdimensionales mantenidas con los hermanos de la Confederación de Mundos Habitados de la
-                    Galaxia.</p>
+                    En nuestra <Referencia>biblioteca web</Referencia> podéis encontrar todos los comunicados o conversaciones
+                    telepáticas interdimensionales mantenidas con los hermanos de la <Referencia>Confederación de Mundos Habitados de la
+                    Galaxia</Referencia>.</p>
             </TextImage>
         </Section>
 
