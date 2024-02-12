@@ -49,6 +49,7 @@ export const useNav = defineStore("nav", {
     announce: false,
     defaultClass: "",
     class: "",
+    sideBarShow: false,
     // position: 'sticky',
     fullPage: false,
     scrollY: 0,
@@ -59,7 +60,8 @@ export const useNav = defineStore("nav", {
       // comprueba si la ruta está en alguno de los items del tab
       const rutaRelativa = relativeUrl(url);
       if(tab.url && rutaRelativa.indexOf(tab.url) >= 0) return true
-      return !!tab.submenu.sections.find((section) =>
+      if(!tab.hasItems) return false
+      return !!tab.submenu?.sections?.find((section) =>
         section.items.find((item) => {
           return rutaRelativa.indexOf(item.url) >= 0;
         })

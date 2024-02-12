@@ -1,4 +1,13 @@
 export default [
+    {
+      title: "Inicio",
+      icon: "ph:house-simple-duotone",
+      description: "Portada de la web",
+      route: "portada",
+      onlyAside: true,
+      open: false,
+      submenu: null,
+    },
   {
     title: "Novedades",
     icon: "ph:clock-counter-clockwise-duotone",
