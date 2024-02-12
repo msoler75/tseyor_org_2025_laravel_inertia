@@ -8,23 +8,25 @@ use Illuminate\Support\Facades\Log;
 class BusquedasHelper
 {
 
+    public static $palabrasComunes = [
+        'a', 'al', 'ante', 'bajo', 'cabe', 'con', 'contra', 'de', 'del', 'desde', 'durante', 'en', 'entre', 'hacia', 'que',
+        'hasta', 'mediante', 'para', 'por', 'sin', 'sobre', 'tras', 'el', 'la', 'los',
+        'las', 'un', 'una', 'unos', 'unas', 'lo', 'alguno', 'alguna', 'algunos', 'algunas', 'ningún', 'ningun', 'ninguna',
+        'ellos', 'ellas', 'me', 'te', 'se', 'nos', 'os', 'le', 'les',
+        'lo', 'la', 'los', 'las', 'y', 'e', 'o', 'u', 'pero', 'sin', 'aunque', 'porque', 'pues', 'así', 'asi', 'entonces',
+        'entonces', 'bien', 'además', 'ademas',
+        'tampoco', 'sino', 'también', 'tambien', 'etcétera', 'etcétera', 'etc.', 'etc', 'etc...',
+    ];
+
     public static function descartarPalabrasComunes($buscar)
     {
         // 1. Separar la frase $buscar en palabras, utilizando espacios y otros símbolos de puntuación como separadores
-        $palabras = preg_split('/[\s\p{P}]+/', $buscar, -1, PREG_SPLIT_NO_EMPTY);
+        $palabras = preg_split('/[\s\p{P}]+/', strtolower($buscar), -1, PREG_SPLIT_NO_EMPTY);
 
         // 2. Descartar las palabras habituales, pronombres y artículos
-        $palabrasDescartadas = [
-            'a', 'al', 'ante', 'bajo', 'cabe', 'con', 'contra', 'de', 'del', 'desde', 'durante', 'en', 'entre', 'hacia', 'que',
-            'hasta', 'mediante', 'para', 'por', 'sin', 'sobre', 'tras', 'el', 'la', 'los',
-            'las', 'un', 'una', 'unos', 'unas', 'lo', 'alguno', 'alguna', 'algunos', 'algunas', 'ningún', 'ningun', 'ninguna',
-            'ellos', 'ellas', 'me', 'te', 'se', 'nos', 'os', 'le', 'les',
-            'lo', 'la', 'los', 'las', 'y', 'e', 'o', 'u', 'pero', 'sin', 'aunque', 'porque', 'pues', 'así', 'asi', 'entonces',
-            'entonces', 'bien', 'además', 'ademas',
-            'tampoco', 'sino', 'también', 'tambien', 'etcétera', 'etcétera', 'etc.', 'etc', 'etc...',
-        ];
-        $palabrasFiltradas = array_filter($palabras, function ($palabra) use ($palabrasDescartadas) {
-            return !in_array(strtolower($palabra), $palabrasDescartadas);
+       
+        $palabrasFiltradas = array_filter($palabras, function ($palabra) {
+            return !in_array(strtolower($palabra), BusquedasHelper::$palabrasComunes);
         });
 
         // 3. Devolver el string con las palabras no descartadas. Si queda vacío, se devuelve el mismo string original
