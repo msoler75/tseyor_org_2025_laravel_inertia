@@ -3,10 +3,10 @@
 
         <Section data-theme="winter">
             <FondoEspacio class="w-full h-full">
-                <Hero title="Contacto Extraterrestre" :href="route('cursos')" buttonLabel="Curso gratuito"
+                <Hero title="Contacto Extraterrestre" :href="route('quienes-somos')" buttonLabel="Quiénes somos"
                     textClass="md:max-w-screen-md justify-center" image-right
                     class="h-[95vh] w-[96vw] absolute">
-                    <div class="bg-black bg-opacity-50 p-10 rounded-xl">En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
+                    <div class="bg-black bg-opacity-70 p-7 rounded-xl">En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
                         Nosotros aquí en este nivel estamos reforzados particularmente por la 
                         <Referencia>Confederación de Mundos
                         Habitados de la Galaxia</Referencia>.</div>
