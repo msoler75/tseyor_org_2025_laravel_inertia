@@ -59,7 +59,7 @@ const props = defineProps({
     ruta: { type: String, required: false, default: "" },
     modoInsertar : { type: Boolean, default: false},
     contentClass: String,
-    mostrarMisArchivos : {type: String, default: true}
+    mostrarMisArchivos : {type: [Boolean, String], default: true}
 });
 
 const player = usePlayer()

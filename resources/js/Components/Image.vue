@@ -84,65 +84,77 @@ function getPixels(value) {
 // la imagen que se muestra en el componente
 const displaySrc = ref("")
 
-// effect active or not necessary
-var justDontTouch = computed(() =>
-    // si no queremos optimización
-    !props.optimize
-    ||
-    // si es una url absoluta y corresponde a otro servidor...
-    props.src.match(/https?:\/\/[^/]+/)?.[0] === myDomain.value
-    // isFromMyDomain(props.src)
-    ||
-    // o si ya está la imagen redimensionada...
-    props.src.match(/\?[wh]=/)
-)
+
+
+/*
+
+Hay varios tipos de situaciones:
+
+(1) la imagen es externa o no se desea optimizacion de ningun tipo (optimize=0),
+    así que se carga directamente (putSrcImage)
+
+(2) El src ya tiene parámetros w ó h, por ejemplo imagen.jpg?w=400, 
+    así que se carga la imagen directamente (putSrcImage)
+
+(3) Se ha establecido el tamaño mediante props (width y height), 
+    así que se carga directamente con ?w=width y ?h=height (putSrcImage)
+
+(4) Se conoce el tamaño original de la imagen (srcWidth y srcHeight), 
+    así que se visualiza una imagen en blanco para obtener las dimensiones optimizadas (widthOp y HeightOp) 
+    y después se carga la imagen con ?w=widthOp&h=heightOp (putImageWithSize)
+
+(5) Se debe recalcular sus dimensiones óptimas de visualización, 
+    así que primero se debe solicitar sus dimensiones originales al servidor,
+    para establecer una imagen en blanco svg (putFakeImage) de las mismas dimensiones originales y, al rato,
+    saber las dimensiones de visualización, con las que cargaremos ya la imagen original aplicando esas dimensiones (putImageWithSize)
+
+*/
 
 function init() {
-    console.log('image.init. justdonttouch=', justDontTouch.value)
-    console.log('window', window)
-    if (justDontTouch.value)
-        putSrcImage()
-    else
-        prepareEffect()
-}
-// const estado = ref("inicial")
+    // si es una url absoluta y corresponde a otro servidor o no queremos optimización (1)
+    if (props.src.match(/https?:\/\/[^/]+/)?.[0] === myDomain.value || !props.optimize)
+        return putSrcImage(imageSrc.value)
 
-function prepareEffect() {
-    console.log('prepareEffect', props.srcWidth ,props.srcHeight)
-    if (props.srcWidth && props.srcHeight) {
-        const originalSize = {
-            width: getPixels(props.srcWidth),
-            height: getPixels(props.srcHeight)
-        }
-        applyImageOriginalSize(originalSize)
-    }
-    else
-        getImageSize(imageSrc.value)
-            .then(originalSize => {
-                applyImageOriginalSize(originalSize)
-            }).catch(err => {
-                putSrcImage(imageSrc.value)
-            })
+    // si ya está la imagen redimensionada (2)
+    if (props.src.match(/\?[wh]=/))
+        return putSrcImage(imageSrc.value)
+
+    // Se ha establecido el tamaño mediante props (width y height) (3)
+    if (props.width && props.height)
+        return putImageWithSize(imageSrc.value, props.width, props.height)
+
+    // Se conoce el tamaño original de la imagen (4)
+    if (props.srcWidth && props.srcHeight) 
+        return putFakeImage(getPixels(props.srcWidth),getPixels(props.srcHeight))
+
+    // Se debe recalcular sus dimensiones óptimas de visualización (5)
+    // así que primero se debe solicitar sus dimensiones originales al servidor
+    getImageSize(imageSrc.value)
+        .then(originalSize => {
+            putFakeImage(originalSize.width, originalSize.height)
+        }).catch(err => {
+            console.error(err)
+            putSrcImage(imageSrc.value)
+        })
 }
 
-function applyImageOriginalSize(originalSize) {
-    console.log('originalSize of', imageSrc.value, 'is', originalSize)
+function putFakeImage(width, height) {
     // generar una imagen transparent SVG con formato URI, debe tener ancho igual a size.width y alto igual a size.height
-    displaySrc.value = `data:image/svg+xml,%3Csvg width="${originalSize.width}" height="${originalSize.height}" xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E`
+    displaySrc.value = `data:image/svg+xml,%3Csvg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E`
     setTimeout(() => {
+        // obtenemos las dimensiones reales de visualización (img.value.offsetWidth y offsetHeight)
         if (isMounted.value)
-            replaceWithSizedImage()
+            putImageWithSize(img.value.offsetWidth, img.value.offsetHeight)
         else {
-            console.log('aun no está montada, esperamos...', imageSrc.value)
-            justPutResized.value = true
+            putFakeImage(width, height) // esperamos un poco más
         }
-    }, 200)
+    }, 50) // a los 50 milisegundos ya podemos saber la dimensiones de visualización de la imagen
 }
 
-async function replaceWithSizedImage() {
-    console.log('replaceWithSizedImage', imageSrc.value, img.value.offsetWidth, img.value.offsetHeight)
+async function putImageWithSize(widthOp, heightOp) {
+    console.log('putImageWithSize', imageSrc.value, widthOp, heightOp)
     const webp = await isWebPSupported()
-    var src = imageSrc.value + '?w=' + img.value.offsetWidth + '&h=' + img.value.offsetHeight
+    var src = imageSrc.value + '?w=' + widthOp + '&h=' + heightOp
     if (!webp)
         src += '&fmt=jpg'
     putSrcImage(src)
@@ -150,9 +162,9 @@ async function replaceWithSizedImage() {
 
 function putSrcImage(src) {
     displaySrc.value = src
-    nextTick(()=>{
+    nextTick(() => {
         img.value.setAttribute('loading', 'lazy')
-        img.value.onload = ()=> {
+        img.value.onload = () => {
             imageLoaded.value = true
         }
     })
@@ -163,13 +175,14 @@ onMounted(() => {
     console.log(`image mounted: ${props.src}`)
     // doImageSize()
     isMounted.value = true
-    if (justPutResized.value)
-       replaceWithSizedImage()
+    //if (justPutResized.value)
+    // putImageWithSize()
+    init()
 })
 
 // watch(imageSrc, init)
 
-init()
+// init()
 
 onBeforeUnmount(() => {
 
