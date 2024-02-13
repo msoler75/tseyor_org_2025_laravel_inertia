@@ -5,8 +5,7 @@
         <div ref="stars2" id='stars2' class="stars"></div>
         <div ref="stars3" id='stars3' class="stars"></div>
         <div ref="stars4" id='stars4' class="stars"></div>
-        <div id='tierra'></div>
-        <slot />
+        <slot/>
     </div>
 </template>
 
@@ -72,7 +71,6 @@ function move(event) {
     --move-x: 0;
     --move-y: 0;
     --stars-scale: 1;
-    --tierra-scale: 3.0;
     --nebula-scale: 1.1;
     overflow: hidden;
 }
@@ -103,13 +101,11 @@ function move(event) {
 
 
 .stars,
-#tierra,
 .nebula{
     z-index: 0;
 }
 
 
-#tierra,
 .nebula
 {
     position: absolute; 
@@ -124,26 +120,10 @@ function move(event) {
 }
 
 .stars,
-#tierra:after,
 .nebula:after {
     transition: transform 0.4s ease-out;
 }
 
-#tierra:after {
-    content: "";
-    display: none;
-    position: absolute;
-    left: calc(var(--tierra-scale) * -0.0vw);
-    bottom: calc(var(--tierra-scale) * -55vw);
-    width: 100vw;
-    height: 100vw;
-    background: white;
-    background: url(/almacen/medios/portada/earth-1365995.jpg) center no-repeat;
-    background-size: cover;
-    border-radius: 100%;
-    box-shadow: 0 0 30px rgba(200, 215, 255, .5);
-    transform: scale(var(--tierra-scale)) translate(0, var(--move-y));
-}
 
 
 .nebula:after {
@@ -155,7 +135,7 @@ function move(event) {
     left: 0 ;
     width: 100vw;
     height: 100vh;
-    background: url(/almacen/medios/portada/space-nebula.jpg) center no-repeat;
+    background: url(/almacen/medios/portada/nebula-space.webp) center no-repeat;
     background-size: cover;
     transform: scale(var(--nebula-scale)) translate(calc(var(--move-x) * .15), calc(var(--move-y) * .15));
 }
