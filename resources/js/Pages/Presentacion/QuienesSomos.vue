@@ -20,7 +20,7 @@
         <Section>
             <TextImage title="¿Con quiénes contactamos?"
                 srcImage="https://via.placeholder.com/363x569.png/028f0d?text=contacto-estelar"
-                buttonLabel="Conoce a los guías Estelares" href="/guias" image-right>
+                buttonLabel="Conoce a los guías Estelares" href="/guias" image-right full cover>
                 <p>Nuestros tutores proceden de distintos planetas y todos son miembros de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>.</p>
                 <p>Actualmente nos comunicamos con <Referencia colecciones="guias">Shilcars</Referencia> (un ser humano del <Referencia colecciones="lugares">planeta Agguniom</Referencia> en la <Referencia>Constelación de
                     Áuriga</Referencia>) y otros hermanos como <Referencia>Melcor</Referencia>, <Referencia>Aumnor</Referencia> y <Referencia>Noiwanak</Referencia>.</p>

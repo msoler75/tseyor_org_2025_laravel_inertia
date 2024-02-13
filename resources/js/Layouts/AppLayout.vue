@@ -15,7 +15,7 @@ const nav = useNav()
 
 // si el mouse sale de la ventana de la aplicación, cerramos el menú
 document.addEventListener("mouseleave", function (event) {
-    if (window.width >= 1024)
+    if (screen.width >= 1024)
         nav.closeTabs()
 })
 
@@ -264,9 +264,12 @@ axios.get(route('setting', 'navigation'))
 
 
                         <!-- Hamburger -->
-                        <div class="-mr-2 flex items-center lg:hidden">
+                        <div class="-mr-2 flex items-center lg:hidden"
+                        
+                        >
                             <button
                                 class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
+                                :class="portada?'bg-base-300':''"
                                 @click="nav.sideBarShow = !nav.sideBarShow">
                                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
@@ -285,7 +288,7 @@ axios.get(route('setting', 'navigation'))
 
                         <div class="hidden lg:flex">
                             <!-- Logo -->
-                            <div class="shrink-0 flex items-center" @mouseover="screen.width>1024?nav.closeTabs():{}">
+                            <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
                                 <Link :href="route('portada')">
                                 <ApplicationMark />
                                 </Link>
@@ -301,7 +304,7 @@ axios.get(route('setting', 'navigation'))
                             <button @click="login2">L2</button>
                         </div>
 
-                        <GlobalSearch />
+                        <GlobalSearch @mouseover="nav.closeTabs()"/>
 
                         <transition class="hidden lg:flex" enter-active-class="transition ease-out duration-200"
                             enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
@@ -314,9 +317,8 @@ axios.get(route('setting', 'navigation'))
 
                         <div class="ml-auto flex items-center gap-3">
 
-
-
                             <button @click="toggleDark()"
+                                @mouseover="nav.closeTabs()"
                                 class="my-auto p-1 w-10 h-10 flex justify-center items-center rounded-full bg-base-300 shadow text-xl sm:ml-6">
                                 <Icon v-show="isDark" icon="ph:sun-dim-duotone" />
                                 <Icon v-show="!isDark" icon="ph:moon-duotone" />
@@ -461,7 +463,8 @@ axios.get(route('setting', 'navigation'))
                                     </Dropdown>
                                 </div>
                             </div>
-                            <Link v-else :href="route('login')" class="text-2xl bg-base-300 rounded-full p-2 shadow">
+                            <Link v-else :href="route('login')" class="text-2xl bg-base-300 rounded-full p-2 shadow"
+                            @mouseover="nav.closeTabs()">
                             <Icon icon="ph:sign-in-duotone" title="Iniciar sesión" />
                             </Link>
 

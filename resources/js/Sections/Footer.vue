@@ -1,22 +1,22 @@
 <template>
     <footer class="w-full bg-gray-900 text-white border-t border-gray-300">
-        <div class="container mx-auto py-8">
+        <div class="container mx-auto py-14 lg:py-8">
             <GridFill>
-                <div v-for="(section, index) in sections" :key="index" class="space-y-2">
+                <div v-for="(section, index) in sections" :key="index" class="space-y-5 lg:space-y-2 mb-7">
                     <h3 class="text-lg font-bold">{{ section.title }}</h3>
-                    <ul class="list-none">
+                    <ul class="list-none space-y-5 lg:space-y-2">
                         <li v-for="(item, i) in section.items" :key="i">
                             <a :href="item.route?route(item.route):item.url" class="text-white">{{ item.label }}</a>
                         </li>
                     </ul>
                 </div>
-                <div class="space-y-2">
+                <div class="space-y-5 lg:space-y-2">
                     <h3 class="text-lg font-bold">Formulario de suscripción</h3>
                     <!-- Aquí iría tu formulario de suscripción -->
                 </div>
-                <div class="space-y-2">
+                <div class="space-y-5 lg:space-y-2">
                     <h3 class="text-lg font-bold text-center">Redes Sociales</h3>
-                    <div class="flex justify-center gap-4">
+                    <div class="flex justify-center gap-7 lg:gap-4">
                         <a v-for="(social, i) in socialLinks" :key="i" :href="social.link" target="_blank" class="text-white">
                             <Icon :icon="social.icon" class="text-xl"></Icon>
                         </a>
