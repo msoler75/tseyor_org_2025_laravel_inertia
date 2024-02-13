@@ -15,8 +15,8 @@ const nav = useNav()
 
 // si el mouse sale de la ventana de la aplicación, cerramos el menú
 document.addEventListener("mouseleave", function (event) {
-  //  if (screen.width >= 1024)
-    //    nav.closeTabs()
+    if (window.width >= 1024)
+        nav.closeTabs()
 })
 
 // console.log({page})
