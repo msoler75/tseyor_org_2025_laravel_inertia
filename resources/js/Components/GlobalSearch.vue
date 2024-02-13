@@ -4,66 +4,68 @@
         @click="search.opened = true">
         <Icon icon="ph:magnifying-glass-bold" class="mr-2" />
         Buscar...<span class="hidden lg:inline ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
-    </button>
-
-
-    <Modal :show="search.opened" @close="search.opened = false" maxWidth="lg">
-    <div class="modal-search bg-base-100 flex flex-col text-sm pb-7"
-    >
-            <div class="flex gap-2 items-center p-3">
-                <Icon v-show="!loading" icon="ph:magnifying-glass-bold" class="text-lg" />
-                <Spinner v-show="loading" class="text-lg" />
-                <div class="flex-grow relative">
-                    <input id="global-search-input" ref="input" class="search-input w-full" v-model="search.query"
-                        aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off" enterkeyhint="go"
-                        spellcheck="false" placeholder="Buscar en el sitio web..." maxlength="64" type="search"
-                        aria-owns="search-input-list"
-                        :aria-activedescendant="itemSeleccionado ? itemSeleccionado.idDom : ''"
-                        aria-controls="search-input-list" aria-haspopup="true">
-                </div>
-
-                <kbd class="hidden lg:block kbd cursor-pointer select-none text-xs font-semibold" @click="search.opened = false">ESC</kbd>
-                <Icon icon="material-symbols-light:close-rounded" class="lg:hidden text-3xl" @click="search.opened = false"/>
-            </div>
-
-            <div class="overflow-y-auto max-h-[calc(100vh-170px)] border-t border-gray-500 border-opacity-20"
-                id="search-input-list">
-
-                  <div v-if="!resultadosAgrupados.length" class="p-7">
-                    <div v-if="search.lastQuery" class="text-center text-lg text-gray-500">
-                        No hay resultados para "<span class="text-primary">{{ search.lastQuery }}</span>"
+        
+        <Modal :show="search.opened" @close="search.opened = false" maxWidth="lg">
+            <div class="modal-search bg-base-100 flex flex-col text-sm pb-7">
+                <div class="flex gap-2 items-center p-3">
+                    <Icon v-show="!loading" icon="ph:magnifying-glass-bold" class="text-lg" />
+                    <Spinner v-show="loading" class="text-lg" />
+                    <div class="flex-grow relative">
+                        <input id="global-search-input" ref="input" class="search-input w-full" v-model="search.query"
+                            aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off"
+                            enterkeyhint="go" spellcheck="false" placeholder="Buscar en el sitio web..." maxlength="64"
+                            type="search" aria-owns="search-input-list"
+                            :aria-activedescendant="itemSeleccionado ? itemSeleccionado.idDom : ''"
+                            aria-controls="search-input-list" aria-haspopup="true">
                     </div>
 
-                    <div v-if="search.showSuggestions" class="mt-7">
-                        <div class="font-bold mb-4">Sugerencias:</div>
-                        <div v-for="q of predefinedQueries" :key="q" @click="clickPredefined(q)"
-                            class="bg-base-200 bg-opacity-50 flex items-center justify-between w-full py-3 px-4 my-1 cursor-pointer rounded-lg text-primary hover:underline">
-                            <span class="after:content-['_↗']">
-                                {{ q.query }}
-                            </span>
+                    <kbd class="hidden lg:block kbd cursor-pointer select-none text-xs font-semibold"
+                        @click="search.opened = false">ESC</kbd>
+                    <Icon icon="material-symbols-light:close-rounded" class="lg:hidden text-3xl"
+                        @click="search.opened = false" />
+                </div>
+
+                <div class="overflow-y-auto max-h-[calc(100vh-170px)] border-t border-gray-500 border-opacity-20"
+                    id="search-input-list">
+
+                    <div v-if="!resultadosAgrupados.length" class="p-7">
+                        <div v-if="search.lastQuery" class="text-center text-lg text-gray-500">
+                            No hay resultados para "<span class="text-primary">{{ search.lastQuery }}</span>"
+                        </div>
+
+                        <div v-if="search.showSuggestions" class="mt-7">
+                            <div class="font-bold mb-4">Sugerencias:</div>
+                            <div v-for="q of predefinedQueries" :key="q" @click="clickPredefined(q)"
+                                class="bg-base-200 bg-opacity-50 flex items-center justify-between w-full py-3 px-4 my-1 cursor-pointer rounded-lg text-primary hover:underline">
+                                <span class="after:content-['_↗']">
+                                    {{ q.query }}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div v-else v-for="grupo of resultadosAgrupados" :key="grupo"
-                    class="busqueda-resultados flex flex-wrap p-3">
-                    <div class="w-full flex justify-between px-1 mt-3 mb-2 text-neutral font-bold capitalize opacity-50">{{
-                        traducir(grupo.coleccion) }}
+                    <div v-else v-for="grupo of resultadosAgrupados" :key="grupo"
+                        class="busqueda-resultados flex flex-wrap p-3">
+                        <div
+                            class="w-full flex justify-between px-1 mt-3 mb-2 text-neutral font-bold capitalize opacity-50">
+                            {{
+                                traducir(grupo.coleccion) }}
+                        </div>
+                        <Link v-for="item of grupo.items" :key="item.id" :id="item.idDom"
+                            class="w-full py-3 px-4 bg-base-200 rounded-lg my-1 flex gap-3 justify-between items-center"
+                            role="option" @mouseover="seleccionarItem(item, true)" :href="calcularUrl(item)"
+                            @click="clickHandle(calcularUrl(item))"
+                            :aria-selected="itemSeleccionado && itemSeleccionado.id == item.id"
+                            :class="itemSeleccionado && itemSeleccionado.id == item.id ? 'seleccionado' : ''">
+                        <div v-html="item.titulo" />
+                        <span class="text-lg">›</span>
+                        </Link>
                     </div>
-                    <Link v-for="item of grupo.items" :key="item.id" :id="item.idDom"
-                        class="w-full py-3 px-4 bg-base-200 rounded-lg my-1 flex gap-3 justify-between items-center"
-                        role="option" @mouseover="seleccionarItem(item, true)" :href="calcularUrl(item)"
-                        @click="clickHandle(calcularUrl(item))"
-                        :aria-selected="itemSeleccionado && itemSeleccionado.id == item.id"
-                        :class="itemSeleccionado && itemSeleccionado.id == item.id ? 'seleccionado' : ''">
-                    <div v-html="item.titulo" />
-                    <span class="text-lg">›</span>
-                    </Link>
                 </div>
-            </div>
 
-        </div>
-    </Modal>
+            </div>
+        </Modal>
+    </button>
 </template>
 
 <script setup>
@@ -79,11 +81,11 @@ const search = useGlobalSearch()
 const input = ref(null)
 
 const predefinedQueries = ref([
-{query: 'Contacta con nosotros', collections: 'paginas'},
-{query: '¿Dónde estamos?', collections: 'paginas'},
-{query: 'Libros para comenzar', collections: 'paginas'},
-{query: '¿Dónde puedo inscribirme?', collections: 'paginas' },
-{query: 'Ayuda humanitaria'}
+    { query: 'Contacta con nosotros', collections: 'paginas' },
+    { query: '¿Dónde estamos?', collections: 'paginas' },
+    { query: 'Libros para comenzar', collections: 'paginas' },
+    { query: '¿Dónde puedo inscribirme?', collections: 'paginas' },
+    { query: 'Ayuda humanitaria' }
 ])
 
 const resultadosAgrupados = computed(() => {
@@ -217,7 +219,7 @@ function buscar() {
         queryLoading.value = currentQuery
         loading.value = true
         axios.get(route('buscar') + '?query=' + search.query
-        + (search.restrictToCollections ? '&collections='+search.restrictToCollections : '')
+            + (search.restrictToCollections ? '&collections=' + search.restrictToCollections : '')
         )
             .then(response => {
                 console.log('response-data', response.data)
@@ -358,13 +360,13 @@ function ultimoItem() {
 a.seleccionado {
     @apply bg-primary text-white dark:text-black;
 }
+
 a.seleccionado :deep(em.search-term) {
-    @apply text-white ;
+    @apply text-white;
 }
 
-[data-theme='winter'] a.seleccionado :deep(em.search-term) , 
-.dark  a.seleccionado :deep(em.search-term) {
+[data-theme='winter'] a.seleccionado :deep(em.search-term),
+.dark a.seleccionado :deep(em.search-term) {
     @apply text-black;
 }
-
 </style>
