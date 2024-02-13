@@ -57,9 +57,6 @@ const imageSrc = computed(() => getImageUrl(props.src, props.fallback))
 // este componente ya está montado?
 const isMounted = ref(false)
 
-// ya disponemos de la información del tamaño original de la imagen? y está pendiente de poner?
-const justPutResized = ref(false)
-
 const imageLoaded = ref(false)
 
 function fillUnits(value) {
@@ -162,6 +159,7 @@ async function putImageWithSize(widthOp, heightOp) {
 
 function putSrcImage(src) {
     displaySrc.value = src
+    // esperamos que cambie el componente :is
     nextTick(() => {
         img.value.setAttribute('loading', 'lazy')
         img.value.onload = () => {
@@ -177,12 +175,12 @@ onMounted(() => {
     isMounted.value = true
     //if (justPutResized.value)
     // putImageWithSize()
-    init()
+    // init()
 })
 
 // watch(imageSrc, init)
 
-// init()
+init()
 
 onBeforeUnmount(() => {
 
