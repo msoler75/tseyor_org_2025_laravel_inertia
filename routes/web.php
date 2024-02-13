@@ -300,6 +300,14 @@ Route::get('emails/{id}', [EmailsController::class, 'index'])->name('email');
 
 Route::get('asociacion', 'App\Http\Controllers\PaginasController@show')->name('asociacion');
 
+
+
+
+Route::get('test/image', function () {
+    return Inertia::render('test/imageTest');
+});
+
+
 Route::get('{ruta}', 'App\Http\Controllers\PaginasController@show')->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
 
 

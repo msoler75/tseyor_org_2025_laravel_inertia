@@ -22,8 +22,8 @@
                         aria-controls="search-input-list" aria-haspopup="true">
                 </div>
 
-                <kbd class="kbd cursor-pointer select-none text-xs font-semibold" @click="search.opened = false">ESC</kbd>
-
+                <kbd class="hidden lg:block kbd cursor-pointer select-none text-xs font-semibold" @click="search.opened = false">ESC</kbd>
+                <Icon icon="material-symbols-light:close-rounded" class="lg:hidden text-3xl" @click="search.opened = false"/>
             </div>
 
             <div class="overflow-y-auto max-h-[calc(100vh-170px)] border-t border-gray-500 border-opacity-20"

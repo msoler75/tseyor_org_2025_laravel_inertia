@@ -6,7 +6,7 @@
                 <Hero title="Contacto Extraterrestre" :href="route('quienes-somos')" buttonLabel="Quiénes somos"
                     textClass="md:max-w-screen-md justify-center" image-right
                     class="h-[95vh] w-[96vw] absolute">
-                    <div class="bg-black bg-opacity-70 p-7 rounded-xl">En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
+                    <div class="bg-black bg-opacity-70 hover:bg-opacity-90 transition duration-500 p-7 rounded-xl">En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
                         Nosotros aquí en este nivel estamos reforzados particularmente por la 
                         <Referencia>Confederación de Mundos
                         Habitados de la Galaxia</Referencia>.</div>
@@ -48,7 +48,7 @@
 
 
         <Section ref="contadoresEl">
-            <div class="grid grid-cols-2 md:px-5 md:grid-cols-4 gap-x-7 gap-y-20 text-lg mt-20 md:mt-0" v-if="stats">
+            <div class="grid grid-cols-2 md:px-5 md:grid-cols-4 gap-x-7 gap-y-10 text-lg mt-20 md:mt-0" v-if="stats">
                 <Link class="btn flex-col h-auto p-4" :href="route('comunicados')">
                 <Counter :to="stats.comunicados" :count="contando" :delay="0" class="text-2xl" />
                 <span>Comunicados</span>
