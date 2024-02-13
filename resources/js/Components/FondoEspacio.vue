@@ -1,5 +1,6 @@
 <template>
     <div ref="fondo" class="fondo-espacio relative" @mousemove="move">
+        <div id='galaxy' class="galaxy"></div>
         <div id='nebula' class="nebula"></div>
         <div ref="stars1" id='stars1' class="stars"></div>
         <div ref="stars2" id='stars2' class="stars"></div>
@@ -32,7 +33,7 @@ const stars4 = ref(null)
 const z1 = .25
 const z2 = .5
 const z3 = 1
-const z4 = 2
+const z4 = 2.7
 
 onMounted(() => {
     console.time('stars');
@@ -100,11 +101,39 @@ function move(event) {
 }
 
 
+.galaxy,
 .stars,
 .nebula{
     z-index: 0;
 }
 
+
+.galaxy
+{
+    position: absolute; 
+    width: 1px;
+    height: 1px;
+    background: transparent;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 0;
+    mix-blend-mode: plus-lighter;
+}
+
+
+.galaxy:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url(/almacen/medios/portada/galaxy.webp) 12% 13% no-repeat;
+    opacity: .7;
+    
+}
 
 .nebula
 {
@@ -119,13 +148,6 @@ function move(event) {
     mix-blend-mode: plus-lighter;
 }
 
-.stars,
-.nebula:after {
-    transition: transform 0.4s ease-out;
-}
-
-
-
 .nebula:after {
     content: "";
     opacity: 1;
@@ -139,6 +161,13 @@ function move(event) {
     background-size: cover;
     transform: scale(var(--nebula-scale)) translate(calc(var(--move-x) * .15), calc(var(--move-y) * .15));
 }
+
+
+.stars,
+.nebula:after {
+    transition: transform 0.4s ease-out;
+}
+
 
 
 </style>
