@@ -126,7 +126,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
         // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
-        CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
 
         CRUD::field('audios')->type('text')->hint('Ruta a los audios separados por coma');
 

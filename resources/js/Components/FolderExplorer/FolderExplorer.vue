@@ -5,9 +5,9 @@
 
 
             <div :class="embed ? '' : 'lg:container mx-auto'">
-                <Breadcrumb  :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
-                    title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5"
-                    :rootLabel="rootLabel" :rootUrl="rootUrl"/>
+                <Breadcrumb :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
+                    title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5" :rootLabel="rootLabel"
+                    :rootUrl="rootUrl" />
             </div>
 
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
@@ -33,15 +33,15 @@
 
                 <div v-if="!mostrandoResultados" class="flex gap-3 w-full max-w-full">
 
-                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer" :href=" '/' + rutaBase"
-                    :tag="embed?'span':'a'"
-                        @click="clickFolder({ ruta: '/' + rutaBase }, $event)" :is-link="!embed" title="Ir a la carpeta base"
+                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer"
+                        :href="'/' + rutaBase" :tag="embed ? 'span' : 'a'"
+                        @click="clickFolder({ ruta: '/' + rutaBase }, $event)" :is-link="!embed"
+                        title="Ir a la carpeta base"
                         :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
                     </ConditionalLink>
 
-                    <ConditionalLink v-if="items.length > 1 && !seleccionando" :href="items[1].url"
-                        :tag="embed?'span':'a'"
+                    <ConditionalLink v-if="items.length > 1 && !seleccionando" :href="items[1].url" :tag="embed ? 'span' : 'a'"
                         class="btn btn-neutral btn-sm w-fit" title="Ir a una carpeta superior"
                         @click="clickFolder(items[1], $event)" :is-link="!embed"
                         :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
@@ -102,7 +102,8 @@
                         </Link>
 
 
-                        <Dropdown v-if="!enRaiz && !seleccionando" align="right" width="48" :class="!info_cargada?'opacity-50 pointer-events-none':''">
+                        <Dropdown v-if="!enRaiz && !seleccionando" align="right" width="48"
+                            :class="!info_cargada ? 'opacity-50 pointer-events-none' : ''">
                             <template #trigger>
                                 <div class="btn btn-neutral btn-sm cursor-pointer">
                                     <Icon icon="mdi:dots-vertical" class="text-xl" />
@@ -168,7 +169,8 @@
         </div>
 
 
-        <div class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14 h-full" :class="contentClass">
+        <div class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14 h-full"
+            :class="contentClass">
 
             <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
                 <Spinner />
@@ -179,35 +181,33 @@
                 <div>No hay archivos</div>
             </div>
             <div v-else-if="selectors.archivosVista === 'lista'" :class="itemsOrdenados.length ? 'mr-2' : ''">
-                <table class="w-full lg:w-auto mx-auto"
-                :class="transitionActive?'animating':''"
-                >
+                <table class="w-full lg:w-auto mx-auto" :class="transitionActive ? 'animating' : ''">
                     <thead class="hidden sm:table-header-group" :class="itemsOrdenados.length ? '' : 'opacity-0'">
                         <tr v-if="itemsMostrar.length">
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
                             <th></th>
                             <th class="min-w-[16rem] text-left cursor-pointer"
-                            @click="ordenarPor=ordenarPor=='nombreAsc'?'nombreDesc':'nombreAsc'"
-                            >Nombre <span v-if="ordenarPor=='nombreDesc'">↑</span><span v-if="ordenarPor=='nombreAsc'">↓</span></th>
+                                @click="ordenarPor = ordenarPor == 'nombreAsc' ? 'nombreDesc' : 'nombreAsc'">Nombre <span
+                                    v-if="ordenarPor == 'nombreDesc'">↑</span><span v-if="ordenarPor == 'nombreAsc'">↓</span>
+                            </th>
                             <th class="min-w-[8rem] cursor-pointer"
-                            @click="ordenarPor=ordenarPor=='tamañoDesc'?'tamañoAsc':'tamañoDesc'"
-                            >Tamaño <span v-if="ordenarPor=='tamañoDesc'">↑</span><span v-if="ordenarPor=='tamañoAsc'">↓</span></th>
+                                @click="ordenarPor = ordenarPor == 'tamañoDesc' ? 'tamañoAsc' : 'tamañoDesc'">Tamaño <span
+                                    v-if="ordenarPor == 'tamañoDesc'">↑</span><span v-if="ordenarPor == 'tamañoAsc'">↓</span>
+                            </th>
                             <th class="min-w-[12rem] cursor-pointer"
-                            @click="ordenarPor=ordenarPor=='fechaDesc'?'fechaAsc':'fechaDesc'"
-                            >Fecha <span v-if="ordenarPor=='fechaDesc'">↑</span><span v-if="ordenarPor=='fechaAsc'">↓</span></th>
+                                @click="ordenarPor = ordenarPor == 'fechaDesc' ? 'fechaAsc' : 'fechaDesc'">Fecha <span
+                                    v-if="ordenarPor == 'fechaDesc'">↑</span><span v-if="ordenarPor == 'fechaAsc'">↓</span></th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Permisos</th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Propietario</th>
-                            <th v-if="mostrandoResultados||mostrarRutas||rutaActual=='mis_archivos'">Ubicación</th>
+                            <th v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'">Ubicación</th>
                             <th class="hidden md:table-cell"></th>
                         </tr>
                     </thead>
                     <TransitionGroup tag="tbody" name="files">
-                        <tr v-for="item in itemsMostrar"
-                            :key="item.ruta"
-                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '') + (!seleccionando || esAdministrador || item.puedeLeer ? '' : 'opacity-50 pointer-events-none')"
-                            >
+                        <tr v-for="item in itemsMostrar" :key="item.ruta"
+                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '') + (!seleccionando || esAdministrador || item.puedeLeer ? '' : 'opacity-50 pointer-events-none')">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
@@ -215,9 +215,10 @@
                             </td>
                             <td class="relative w-4" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
-                                <DiskIcon v-if="item.tipo==='disco'" :url="item.url" class="cursor-pointer"
-                                    @click="clickDisk(item, $event)" :is-link="!embed"/>
-                                <FolderIcon v-else-if="item.tipo === 'carpeta'" class="cursor-pointer text-4xl sm:text-xl" :private="item.privada"
+                                <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer"
+                                    @click="clickDisk(item, $event)" :is-link="!embed" />
+                                <FolderIcon v-else-if="item.tipo === 'carpeta'" class="cursor-pointer text-4xl sm:text-xl"
+                                    :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id" :url="item.url"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
                                     :is-link="!embed" />
@@ -228,9 +229,8 @@
                             <td class="sm:hidden py-3" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
                                 <div class="flex flex-col">
-                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
-                                        v-html="nombreItem(item)" class="cursor-pointer"
-                                        @click="clickDisk(item, $event)" :is-link="!embed" />
+                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
+                                        class="cursor-pointer" @click="clickDisk(item, $event)" :is-link="!embed" />
                                     <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
                                         :class="seleccionando ? 'pointer-events-none' : ''"
@@ -241,7 +241,7 @@
                                         :is-link="!embed" />
 
                                     <small class="w-full flex justify-between gap-2 items-center">
-                                        <span v-if="item.tipo==='disco'">****</span>
+                                        <span v-if="item.tipo === 'disco'">****</span>
                                         <span v-else-if="item.tipo === 'carpeta'">
                                             {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
                                         <FileSize v-else :size="item.tamano" />
@@ -252,10 +252,10 @@
                             <td class="hidden sm:table-cell py-3 max-w-[24rem]" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
                                 <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
-                                    class="cursor-pointer py-3 hover:underline"
-                                    @click="clickDisk(item, $event)" :is-link="!embed" />
-                                <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url" v-html="nombreItem(item)"
-                                    class="cursor-pointer py-3 hover:underline"
+                                    class="cursor-pointer py-3 hover:underline" @click="clickDisk(item, $event)"
+                                    :is-link="!embed" />
+                                <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
+                                    v-html="nombreItem(item)" class="cursor-pointer py-3 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
                                     :is-link="!embed" />
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
@@ -264,14 +264,15 @@
                             </td>
                             <td class="hidden sm:table-cell text-center" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
-                                <span v-if="item.tipo==='disco'">-</span>
+                                <span v-if="item.tipo === 'disco'">-</span>
                                 <span v-else-if="item.tipo === 'carpeta'" class="text-sm">
                                     {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
                             </td>
                             <td class="hidden sm:table-cell text-center" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
-                                <TimeAgo v-if="item.fecha_modificacion" :date="item.fecha_modificacion" class="block text-center text-sm" />
+                                <TimeAgo v-if="item.fecha_modificacion" :date="item.fecha_modificacion"
+                                    class="block text-center text-sm" />
                                 <span v-else>-</span>
                             </td>
                             <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
@@ -285,11 +286,12 @@
                                 {{ item.propietario?.usuario.nombre || '...' }}/{{ item.propietario?.grupo.nombre || '...'
                                 }}
                             </td>
-                            <td v-if="mostrandoResultados||mostrarRutas||rutaActual=='mis_archivos'">
+                            <td v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'">
                                 /{{ item.carpeta }}
                             </td>
                             <td class="hidden md:table-cell">
-                                <Dropdown align="right" width="48" v-if="item.tipo!=='disco'" :class="!info_cargada?'opacity-80 pointer-events-none':''">
+                                <Dropdown align="right" width="48" v-if="item.tipo !== 'disco'"
+                                    :class="!info_cargada ? 'opacity-80 pointer-events-none' : ''">
                                     <template #trigger>
                                         <span class="cursor-pointer">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
@@ -356,16 +358,17 @@
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')">
                             <div v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100"
-                                :class="esAdministrador || item.puedeLeer  ? '' : 'opacity-40 pointer-events-none'">
+                                :class="esAdministrador || item.puedeLeer ? '' : 'opacity-40 pointer-events-none'">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </div>
                             <div class="flex flex-col items-center justify-center relative">
-                                <DiskIcon v-if="item.tipo==='disco'" :url="item.url" class="cursor-pointer text-8xl mb-4"
-                                    @click="clickDisk(item, $event)"  :is-link="!embed"/>
+                                <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer text-8xl mb-4"
+                                    @click="clickDisk(item, $event)" :is-link="!embed" />
                                 <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
-                                    :owner="item.propietario && item.propietario?.usuario.id === user?.id" class="cursor-pointer text-8xl mb-4"
-                                    :disabled="seleccionando" @click="clickFolder(item, $event)" :is-link="!embed" />
+                                    :owner="item.propietario && item.propietario?.usuario.id === user?.id"
+                                    class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
+                                    @click="clickFolder(item, $event)" :is-link="!embed" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
                                     @click="clickFile(item, $event)">
                                     <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain" />
@@ -374,9 +377,8 @@
                                     @click="clickFile(item, $event)" :is-link="!embed" />
 
                                 <div class="text-sm text-center">
-                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
-                                        v-html="nombreItem(item)" class="py-1 hover:underline"
-                                        @click="clickDisk(item, $event)" :is-link="!embed" />
+                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
+                                        class="py-1 hover:underline" @click="clickDisk(item, $event)" :is-link="!embed" />
                                     <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="py-1 hover:underline"
                                         @click="clickFolder(item, $event)" :is-link="!embed" />
@@ -385,7 +387,7 @@
                                         @click="clickFile(item, $event)" :is-link="!embed" class="py-1 hover:underline" />
                                 </div>
                                 <div class="text-gray-500 text-xs">
-                                    <span v-if="item.tipo==='disco'"/>
+                                    <span v-if="item.tipo === 'disco'" />
                                     <template v-else-if="item.tipo === 'carpeta'">{{ item.archivos + ' archivos, ' +
                                         item.subcarpetas + ' subcarpetas' }}
                                     </template>
@@ -397,7 +399,8 @@
 
 
                                 <div class="w-full flex justify-end">
-                                    <Dropdown align="right" width="48" :class="!info_cargada?'opacity-80 pointer-events-none':''">
+                                    <Dropdown align="right" width="48"
+                                        :class="!info_cargada ? 'opacity-80 pointer-events-none' : ''">
                                         <template #trigger>
                                             <span class="btn p-1">
                                                 <Icon icon="mdi:dots-horizontal" class="text-xl z-20" />
@@ -421,7 +424,7 @@
                                                     <span>Eliminar</span>
                                                 </div>
 
-                                                <div v-if="(esAdministrador ||  item.puedeLeer) && !buscandoCarpetaDestino && !item.padre"
+                                                <div v-if="(esAdministrador || item.puedeLeer) && !buscandoCarpetaDestino && !item.padre"
                                                     class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                     @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                     <template v-if="!item.seleccionado">
@@ -459,15 +462,15 @@
                 </div>
             </div>
 
-            <div v-if="buscando||mostrandoResultados" class="w-full text-center h-[3rem] mt-3">
+            <div v-if="buscando || mostrandoResultados" class="w-full text-center h-[3rem] mt-3">
                 <div v-if="buscando">Buscando...</div>
                 <div v-else-if="mostrandoResultados && !resultadosBusqueda.length">No hay resultados</div>
             </div>
         </div>
 
 
-         <!--  Botones de Operaciones -->
-         <teleport to="body">
+        <!--  Botones de Operaciones -->
+        <teleport to="body">
             <div class="fixed bottom-0 left-0 right-0 z-50 bg-base-200 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
                 v-if="itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles"
                 :seleccionando="seleccionando"
@@ -620,11 +623,11 @@
                         </tr>
                         <tr>
                             <th>Carpeta</th>
-                            <td>{{ item.carpeta=='.'?'':item.carpeta }}</td>
+                            <td>{{ item.carpeta == '.' ? '' : item.carpeta }}</td>
                         </tr>
                         <tr>
                             <th>Ruta completa</th>
-                            <td>/{{item.ruta}}</td>
+                            <td>/{{ item.ruta }}</td>
                         </tr>
                         <tr>
                             <th>Propietario</th>
@@ -975,7 +978,7 @@
             </template>
         </ConfirmationModal>
 
-        <slot/>
+        <slot />
 
     </div>
 </template>
@@ -987,15 +990,15 @@ import { useFilesOperation } from '@/Stores/files';
 import { useSelectors } from '@/Stores/selectors'
 import { useDebounce } from '@vueuse/core';
 import { usePlayer } from '@/Stores/player'
-import {usePermisos} from '@/Stores/permisos'
+import { usePermisos } from '@/Stores/permisos'
 
 const permisos = usePermisos()
 
-const esAdministrador = computed(()=>!!permisos.permisos.filter(p=>p=='administrar archivos'))
+const esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos'))
 
 const props = defineProps({
     ruta: { type: String, required: true },
-    rutaBase: { type: String, required: false, default: ''},
+    rutaBase: { type: String, required: false, default: '' },
     items: Array,
     propietarioRef: Object,
     cargando: Boolean,
@@ -1003,8 +1006,8 @@ const props = defineProps({
     contentClass: String,
     rootLabel: { type: String, require: false },
     rootUrl: { type: String, require: false },
-    mostrarRutas: {type: Boolean, default: false},
-    mostrarMisArchivos: {type: Boolean, default: true}
+    mostrarRutas: { type: Boolean, default: false },
+    mostrarMisArchivos: { type: [Boolean, String], default: true }
 });
 
 const emit = defineEmits(['updated', 'disk', 'folder', 'file']);
@@ -1015,7 +1018,7 @@ const transitionActive = ref(false)
 // https://github.com/inertiajs/inertia/issues/854#issuecomment-896089483
 const itemsCopy = ref(JSON.parse(JSON.stringify(props.items)))
 
-watch(()=>props.items, ()=>{
+watch(() => props.items, () => {
     console.log('watch items')
     itemsCopy.value = JSON.parse(JSON.stringify(props.items))
     cargarInfo()
@@ -1033,18 +1036,18 @@ onMounted(() => {
     document.addEventListener('keydown', onKeyDown);
 })
 
-onUnmounted(()=> {
+onUnmounted(() => {
     document.removeEventListener('keydown', onKeyDown);
 })
 
 function onKeyDown(event) {
     //Si es Ctrl+I
-    if(event.ctrlKey && event.key === 'i')
+    if (event.ctrlKey && event.key === 'i')
         selectors.mostrarPermisos = !selectors.mostrarPermisos
 }
 
 // estamos en la raíz?
-const enRaiz = computed(()=>props.items[1]?.tipo==='disco'||props.items[0].ruta=='mis_archivos')
+const enRaiz = computed(() => props.items[1]?.tipo === 'disco' || props.items[0].ruta == 'mis_archivos')
 
 // puede editar la carpeta actual?
 const puedeEscribir = computed(() => esAdministrador.value || (itemsCopy.value.length ? itemsCopy.value[0].puedeEscribir : false))
@@ -1121,7 +1124,7 @@ function onSearch() {
 
 function buscarMasResultados() {
     if (!mostrandoResultados.value) return
-    axios('/archivos_buscar?id_busqueda='+id_busqueda.value )
+    axios('/archivos_buscar?id_busqueda=' + id_busqueda.value)
         .then(response => {
             const data = response.data
             console.log({ data })
@@ -1325,15 +1328,19 @@ const ordenarPor = ref("normal")
 const itemsOrdenados = computed(() => {
     // Separar las carpetas y los archivos en dos grupos
     var items = itemsCopy.value.filter(item => !item.padre && !item.actual && !item.eliminado)
-    if(!props.mostrarMisArchivos)
-    items = items.filter(item => item.tipo!='disco' || item.nombre!='mis_archivos')
+
+    // Mostramos "mis archivos" ?
+    if (!props.mostrarMisArchivos)
+        items = items.filter(item => item.tipo != 'disco' || item.nombre != 'mis_archivos')
+
+    // carpetas y archivos
     const carpetas = items.filter(item => item.tipo === 'carpeta')
     const archivos = items.filter(item => item.tipo !== 'carpeta');
 
     switch (ordenarPor.value) {
 
         case 'normal':
-              // Ordenar los archivos por fecha de modificación descendente
+            // Ordenar los archivos por fecha de modificación descendente
             carpetas.sort((a, b) => b.nombre.toUpperCase() - a.nombre.toUpperCase());
             archivos.sort((a, b) => b.fecha_modificacion - a.fecha_modificacion);
             return [...carpetas, ...archivos];
@@ -1646,16 +1653,16 @@ function renombrarItem() {
             parts[parts.length - 1] = parts[parts.length - 1].replace(item.nombre, nuevoNombre.value)
             item.url = parts.join('/')
             item.nombre = nuevoNombre.value
-            if(!props.embed)
-            if (item.actual) {
-                // reemplazar la URL actual en el historial del navegador
-                router.replace(item.url);
+            if (!props.embed)
+                if (item.actual) {
+                    // reemplazar la URL actual en el historial del navegador
+                    router.replace(item.url);
 
-                // reemplazar el título de la página
-                document.title = item.ruta
-            }
+                    // reemplazar el título de la página
+                    document.title = item.ruta
+                }
             // else
-                // reloadPage()
+            // reloadPage()
         })
         .catch(err => {
             const errorMessage = err.response.data.error || 'Ocurrió un error al renombrar el elemento'
@@ -1721,8 +1728,8 @@ function eliminarArchivos() {
 
 function eliminarArchivo(item) {
     console.log('eloiminar¡', item)
-    const url = '/files'+ ('/' +item.ruta).replace(/\/\//g, '/').replace(/%2F/g, '/')
-    console.log({url})
+    const url = '/files' + ('/' + item.ruta).replace(/\/\//g, '/').replace(/%2F/g, '/')
+    console.log({ url })
     return axios.delete(url)
         .then(response => {
             item.eliminado = true
@@ -1736,7 +1743,7 @@ function eliminarArchivo(item) {
 
 // TIPO DE ITEM: ES IMAGEN?
 function isImage(fileName) {
-    if(!fileName||(typeof fileName != 'string')) return false
+    if (!fileName || (typeof fileName != 'string')) return false
     const ext = fileName.split('.').pop().toLowerCase();
 
     switch (ext) {
@@ -1824,41 +1831,41 @@ function clickDisk(item, event) {
 }
 function clickFolder(item, event) {
     console.log('clickFolder', item)
-    if(seleccionando.value) {
+    if (seleccionando.value) {
         item.seleccionado = !item.seleccionado
         event.preventDefault()
     }
-else
-    if (props.embed) {
-        emit('folder', item)
-        event.preventDefault()
-    }
+    else
+        if (props.embed) {
+            emit('folder', item)
+            event.preventDefault()
+        }
 }
 
 function clickFile(item, event) {
     console.log('clickFile', item)
-    if(seleccionando.value)  {
+    if (seleccionando.value) {
         item.seleccionado = !item.seleccionado
         event.preventDefault()
     }
-else
-    if (props.embed) {
-        emit('file', item)
-        event.preventDefault()
-    }
-    else {
-        // si es un audio:
-        if(player.isPlayable(item.url)) {
-            player.play(item.url, item.nombre)
+    else
+        if (props.embed) {
+            emit('file', item)
             event.preventDefault()
         }
-    }
+        else {
+            // si es un audio:
+            if (player.isPlayable(item.url)) {
+                player.play(item.url, item.nombre)
+                event.preventDefault()
+            }
+        }
 }
 
 function clickBreadcrumb(item) {
-    console.log('clickBreadcrumb', {item})
+    console.log('clickBreadcrumb', { item })
     if (props.embed) {
-        emit('folder', {...item, ruta: item.url})
+        emit('folder', { ...item, ruta: item.url })
     }
 }
 </script>

@@ -62,8 +62,11 @@ form [bp-field-name='permissions'] .checkbox
 
 
 /* para que al hacer tinymce full screen se vea en toda la pantalla */
-.page-wrapper {
+.tox-fullscreen .page-wrapper {
     z-index: 1031;
 }
 
-
+/* por la regla anterior, hay que subir de nivel z el componente modal */
+.tox-fullscreen .component-modal {
+    z-index: 1032 !important;
+}

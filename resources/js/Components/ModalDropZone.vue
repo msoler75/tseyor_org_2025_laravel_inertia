@@ -2,7 +2,6 @@
     <!-- Modal Upload -->
     <div class="inline">
         <Modal :show="localValue" @close="localValue = false">
-            folder:: {{mediaFolder}}
             <div class="p-5 flex flex-col gap-5 items-center">
 
                 <!--
