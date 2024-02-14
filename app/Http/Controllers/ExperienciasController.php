@@ -52,6 +52,17 @@ class ExperienciasController extends Controller
             ->withViewData(SEO::get('experiencias'));
     }
 
+    /**
+     * Muestra el formulario de nueva experiencia
+     */
+
+    public function nueva()
+    {
+        $categorias = Experiencia::$categorias;
+        
+        return Inertia::render('Experiencias/NuevaExperiencia', ['categorias' => $categorias])
+            ->withViewData(SEO::get('experiencia.nueva'));
+    }
 
 
     public function show($id)
@@ -84,10 +95,21 @@ class ExperienciasController extends Controller
             'user_id' => 'nullable',
             'categoria' => 'required',
             'texto' => 'required|max:65000',
+            // solo archivos aceptables: pdf, word, doc, docx:
+            'archivo' => 'nullable|mimes:txt,pdf,doc,docx'
         ]);
 
         if ($data['fecha'] == null)
             $data['fecha'] = date("Y-m-d");
+
+        // se tiene que guardar el archivo, si lo hay, en la carpeta medios/experiencias/{año} del disco public de storage 
+        if ($request->hasFile('archivo')) {
+            $archivo = $request->file('archivo');
+            // se ha de poner en la carpeta según el año actual
+            $carpeta = "medios/experiencias/" . date("Y");
+            $rutaArchivo = $archivo->store($carpeta, 'public');
+            $data['archivo'] = $rutaArchivo;
+        }
 
         // Crear una nueva instancia de Inscripcion y guardarla en la base de datos
         $experiencia = Experiencia::create($data);

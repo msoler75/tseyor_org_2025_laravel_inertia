@@ -169,10 +169,7 @@ Route::post('inscripcion/store', [InscripcionController::class, 'store'])->name(
 
 Route::post('experiencia/store', [ExperienciasController::class, 'store']);
 Route::get('experiencias', [ExperienciasController::class, 'index'])->name('experiencias');
-Route::get('experiencias/nueva', function () {
-    return Inertia::render('Experiencias/NuevaExperiencia', [])
-        ->withViewData(SEO::get('experiencia.nueva'));
-})->name('experiencia.nueva');
+Route::get('experiencias/nueva', [ExperienciasController::class, 'nueva'])->name('experiencia.nueva');
 Route::get('experiencias/{id}', [ExperienciasController::class, 'show'])->name('experiencia');
 
 Route::get('contactar', function () {

@@ -4,7 +4,7 @@
         @click="search.opened = true">
         <Icon icon="ph:magnifying-glass-bold" class="mr-2" />
         Buscar...<span class="hidden lg:inline ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
-        
+
         <Modal :show="search.opened" @close="search.opened = false" maxWidth="lg">
             <div class="modal-search bg-base-100 flex flex-col text-sm pb-7">
                 <div class="flex gap-2 items-center p-3">
@@ -19,7 +19,7 @@
                             aria-controls="search-input-list" aria-haspopup="true">
                     </div>
 
-                    <kbd class="hidden lg:block kbd cursor-pointer select-none text-xs font-semibold"
+                    <kbd class="hidden lg:flex kbd cursor-pointer select-none text-xs font-semibold"
                         @click="search.opened = false">ESC</kbd>
                     <Icon icon="material-symbols-light:close-rounded" class="lg:hidden text-3xl"
                         @click="search.opened = false" />

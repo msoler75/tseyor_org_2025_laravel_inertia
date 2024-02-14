@@ -29,12 +29,12 @@ class TutorialesController extends Controller
         }
 
         // parámetros
-        if ($categoria && $categoria!='_')
+        if ($categoria && $categoria != '_')
             $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%");
 
         $resultados = $resultados
             ->paginate(12)
-            ->appends(['buscar' => $buscar,  'categoria' => $categoria]);
+            ->appends(['buscar' => $buscar, 'categoria' => $categoria]);
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);
@@ -45,7 +45,7 @@ class TutorialesController extends Controller
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'categorias'=>$categorias
+            'categorias' => $categorias
         ])
             ->withViewData(SEO::get('Tutoriales'));
     }
@@ -61,7 +61,7 @@ class TutorialesController extends Controller
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $Tutorial->visibilidad == 'P';
+        $publicado = $Tutorial->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
         if (!$Tutorial || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Item no encontrado o no autorizado

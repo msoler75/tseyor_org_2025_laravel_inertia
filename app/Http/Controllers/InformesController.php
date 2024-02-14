@@ -58,7 +58,7 @@ class InformesController extends Controller
             $resultados = $resultados->where('equipo_id', $equipo->id);
 
         // obtiene las categorías según los resultados de búsqueda
-        $categorias = (new Informe())->getCategorias("_{$buscar}__" . ($equipo ? $equipo->id : ""), $resultados->get());
+        $categorias = (new Informe())->getCategorias($resultados->get());
 
         // parámetros
         if ($categoria)
