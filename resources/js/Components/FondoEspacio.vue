@@ -130,7 +130,7 @@ function move(event) {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: url(/almacen/medios/portada/galaxy.webp) 12% 13% no-repeat;
+    background: url(/almacen/medios/portada/galaxy.webp) 9% 73% no-repeat;
     opacity: .7;
     
 }

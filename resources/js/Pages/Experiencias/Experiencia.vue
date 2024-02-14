@@ -18,6 +18,10 @@
 
             <Content :content="experiencia.texto" class="pb-12 mx-auto" />
 
+            <div v-if="experiencia.archivo" class="flex justify-end">
+                <a class="btn btn-xs mr-5 flex gap-3 items-center w-fit" download :href="getSrcUrl(experiencia.archivo)" title="nombreArchivo">Descargar archivo adjunto</a>
+            </div>
+
         </div>
 
         <Comentarios :url="route('experiencia', experiencia.id)" />
@@ -27,6 +31,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
+import {getSrcUrl} from '@/composables/srcutils.js'
 
 defineOptions({ layout: AppLayout })
 
@@ -36,6 +41,13 @@ const props = defineProps({
         required: true,
     }
 });
+
+const nombreArchivo = computed(()=>{
+    if(!props.experiencia.archivo) return null
+    const idx = props.experiencia.archivo.lastIndexOf("/");
+    if(idx==-1) return props.experiencia.archivo
+    return props.experiencia.archivo.substring(idx+1)
+})
 
 </script>
 

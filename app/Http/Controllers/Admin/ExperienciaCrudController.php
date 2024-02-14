@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use App\Models\Experiencia;
+use Illuminate\Support\Facades\Storage;
+
 
 /**
  * Class ExperienciaCrudController
@@ -101,13 +103,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
             'name' => 'categoria',
             'label' => "Tipo de experiencia",
             'type' => 'select_from_array',
-            'options' => [
-                'Sueños' => 'Sueños',
-                'Extrapolaciones' => 'Extrapolaciones',
-                'Seiph' => 'Seiph',
-                'Experiencia de campo (Grupal)' => 'Experiencia de campo (Grupal)',
-                'Rescate adimensional (Grupal)' => 'Rescate adimensional (Grupal)'
-            ],
+            'options' =>  array_combine(array_keys(Experiencia::$categorias), array_keys(Experiencia::$categorias)),
             'allows_null' => false,
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
@@ -155,6 +151,29 @@ use \Backpack\ReviseOperation\ReviseOperation;
             'hint'=>'Déjalo en blanco si no es un trabajo de grupo'
         ]);
 
+        $carpeta = "medios/experiencias/" . date("Y");
+
+         // Verificar si la carpeta existe en el disco 'public'
+         if (!Storage::disk('public')->exists($carpeta)) {
+            // Crear la carpeta en el disco 'public'
+            Storage::disk('public')->makeDirectory($carpeta);
+        }
+
+        CRUD::field([
+            'label' => "Archivo adjunto",
+            'type' => 'upload',
+            'name' => 'archivo',
+            'attributes' => [
+                'accept' => "text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            ],
+            'withFiles' => [
+                'disk' => 'public',
+                // the disk where file will be stored
+                'path' => $carpeta,
+                // the path inside the disk where file will be stored
+            ]
+        ]);
+
     }
 
     /**
@@ -171,6 +190,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
      protected function show($id)
     {
-        return redirect("/experiencias/$id?borrador");
+        $experiencia = Experiencia::find($id);
+        return $experiencia->visibilidad == 'P' ? redirect("/experiencias/$id") : redirect("/experiencias/$id?borrador");
     }
 }

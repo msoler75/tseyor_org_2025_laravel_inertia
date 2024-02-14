@@ -198,6 +198,7 @@ class ComunicadoCrudController extends CrudController
             ] */
         ]);
 
+        if(false)
         CRUD::field([
             'name' => 'pdf',
             'label' => 'Pdf',
@@ -209,7 +210,7 @@ class ComunicadoCrudController extends CrudController
             'withFiles' => [
                 'disk' => 'public',
                 // the disk where file will be stored
-                'path' => 'uploads/pdf',
+                'path' => "$folder/pdf",
                 // the path inside the disk where file will be stored
             ]
         ]);

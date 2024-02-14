@@ -4,7 +4,7 @@
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Support\Facades\Log;
 
 /**
  *  Para los modelos que tienen el campo 'categoria'
@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Cache;
  */
 trait EsCategorizable
 {
+
+    // si queremos que el modelo sea de tipo simple en las categorías, hay que poner
+    // protected $categoriaSimple = true;
+
+    // si queremos agregar una categoría 'todos' o 'todas' en el modelo, hay que poner
+    // protected $incluyeCategoriaTodos = "Todos";
+
 
     /**
      * Elimina la cache de categorias cuando hay cambios en algun item
@@ -32,39 +39,60 @@ trait EsCategorizable
     /**
      * Obtiene un listado de categorías con sus contadores para este modelo
      */
-    public function getCategorias($key = "", $items = null)
+    public function getCategorias($items = null)
     {
-        if($items) return $this->obtenerCategorias($items);
+        $startTime = microtime(true);
 
-        $cache_label = $this->getTable() . "_categorias" . $key;
+        if ($items)
+            return $this->obtenerContadoresCategoriasMultiples($items);
+
+        $cache_label = $this->getTable() . "_categorias";
 
         $un_año = 60 * 24 * 365; // tiempo de cache: 1 año
 
-        return Cache::remember($cache_label, $un_año, function () use ($items) {
+        // return Cache::remember($cache_label, $un_año, function () {
 
-            $items = $this->select('categoria')->get();
+            if (!$this->categoriaSimple) {
+                $items = $this->select('categoria')->get();
+                $c = $this->obtenerContadoresCategoriasMultiples($items);
+            } else {
+                $c = $this->obtenerContadoresCategoriasSimples();
+            }
 
-            return $this->obtenerCategorias($items);
-        });
+            if ($this->incluyeCategoriaTodos)
+                array_unshift($c, ['nombre' => $this->incluyeCategoriaTodos, 'valor' => '_', 'total' => count($items)]);
+
+//            return $c;
+        // });
+
+        $endTime = microtime(true);
+        $duration = $endTime - $startTime;
+
+        Log::info("Experiencia::getCategorias: ". $duration. " ms");
+
+
+        return $c;
     }
 
 
-    public function obtenerCategorias($items)
+    public function obtenerContadoresCategoriasSimples()
     {
-        /*      Una forma sencilla sería esta:
+        return $this->selectRaw('categoria as nombre, count(*) as total')
+            ->groupBy('categoria')
+            ->get()->toArray();
+    }
 
-                   return $this->selectRaw('categoria as nombre, count(*) as total')
-                   ->groupBy('categoria')
-                   ->get();
+    public function obtenerContadoresCategoriasMultiples($items)
+    {
+        /*
+            Cuando las categorías son o pueden ser múltiples aplicaremos el siguiente algoritmo:
 
-                   Pero no sirve cuando las categorías son múltiples. Por eso aplicaremos el siguiente algoritmo:
+            1.- Recorrer todos los items, para cada uno separar las categorias por coma, y esas son contadas en $categorias
+            Ejemplo: si la columna categoria es 'Monografías, cuentos', pues tiene 2 categorías.
+            2.-  entonces hay que agregar en $categorias la clave 'Monografías' y el contador a 1, y la clave 'Cuentos' y el contador a 1
+            3.- si en siguienteitem es también una monografía, aumenta el contador de $categorias['Monografías']
 
-                   1.- Recorrer todos los items, para cada uno separar las categorias por coma, y esas son contadas en $categorias
-                   Ejemplo: si la columna categoria es 'Monografías, cuentos', pues tiene 2 categorías.
-                   2.-  entonces hay que agregar en $categorias la clave 'Monografías' y el contador a 1, y la clave 'Cuentos' y el contador a 1
-                   3.- si en siguienteitem es también una monografía, aumenta el contador de $categorias['Monografías']
-
-               */
+        */
 
         $c = [];
         foreach ($items as $item) {
@@ -87,9 +115,6 @@ trait EsCategorizable
             return (object) ['nombre' => $nombre, 'total' => $total];
         }, array_keys($c), $c);
 
-        if($this->incluyeCategoriaTodos)
-            array_unshift($c, ['nombre' => $this->incluyeCategoriaTodos, 'valor'=>'_', 'total' => count($items)]);
-
         return $c;
     }
 
@@ -98,7 +123,6 @@ trait EsCategorizable
      */
     public function clearCategories()
     {
-
         $cache_label = $this->getTable() . "_categorias";
 
         Cache::forget($cache_label);
