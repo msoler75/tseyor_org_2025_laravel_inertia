@@ -12,7 +12,7 @@
             <div class="prose mx-auto">
                 <h1>{{ comunicado.titulo }}</h1>
 
-                <div class="text-neutral text-sm mb-4 flex justify-between">
+                <div class="text-neutral text-sm mb-20 flex justify-between">
                     <Audios :audios="parseFiles(comunicado.audios)" :numerados="true" :titulo="comunicado.titulo"/>
                     <TimeAgo :date="comunicado.fecha_comunicado" :includeTime="false" />
                 </div>
