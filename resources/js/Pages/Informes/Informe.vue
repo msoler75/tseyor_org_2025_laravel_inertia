@@ -4,9 +4,10 @@
 
         <div class="container py-12 mx-auto flex justify-between items-center">
             <Back class="hover:underline" :href="route('equipo.informes', equipo.slug)">Informes del equipo</Back>
-            <Link v-if="equipo && equipo.slug && equipo.nombre" :href="route('equipo', equipo.slug)" class="flex h-fit gap-2 text-sm items-center hover:underline">
-                {{ equipo.nombre }}
-                <Icon icon="ph:arrow-right" />
+            <Link v-if="equipo && equipo.slug && equipo.nombre" :href="route('equipo', equipo.slug)"
+                class="flex h-fit gap-2 text-sm items-center hover:underline">
+            {{ equipo.nombre }}
+            <Icon icon="ph:arrow-right" />
             </Link>
             <span v-else></span>
             <AdminPanel modelo="informe" necesita="administrar contenidos" :contenido="informe" />
@@ -15,17 +16,33 @@
 
         <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0">
 
-            <div class="prose mx-auto">
+            <div class="prose mx-auto mb-12">
                 <h1>{{ informe.titulo }}</h1>
 
-                <p v-if="equipo && equipo.nombre" class="text-neutral opacity-50">{{ equipo.nombre }}</p>
-                <div class="text-neutral text-sm mb-2 flex justify-between">
-                    <Audios :audios="parseAudios(informe.audios, informe.titulo)"/>
+                <div class="text-neutral text-sm mb-5 flex justify-between">
+                    <Link v-if="equipo && equipo.nombre" :href="route('equipo', equipo.slug || equipo.id)"
+                        class="block w-full text-neutral opacity-50">
+                    {{ equipo.nombre }}
+                    </Link>
+
                     <TimeAgo :date="informe.updated_at" :includeTime="false" />
                 </div>
+
+                <Audios :audios="parseFiles(informe.audios)" :titulo="informe.titulo" :numerados="false" />
             </div>
 
             <Content :content="informe.texto" class="pb-12 mx-auto" />
+
+            <div v-if="informe.archivos" class="max-w-[65ch] mx-auto">
+                <div class="font-bold text-neutral text-sm mb-4">Archivos adjuntos:</div>
+                <div class="flex flex-wrap gap-4">
+                    <a download v-for="archivo, index of parseFiles(informe.archivos)" :key="index"
+                        class="btn btn-xs btn-primary text-xs gap-3" title="archivo.title" :href="archivo.src">
+                        <Icon icon="ph:download-duotone" />
+                        {{ archivo.filename }}
+                    </a>
+                </div>
+            </div>
 
         </div>
 
@@ -36,7 +53,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { parseAudios } from '@/composables/parseAudios'
+import { parseFiles } from '@/composables/parseFiles'
 
 defineOptions({ layout: AppLayout })
 
@@ -50,5 +67,6 @@ const props = defineProps({
         required: true
     }
 });
+
 
 </script>
