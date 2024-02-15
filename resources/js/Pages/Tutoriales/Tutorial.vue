@@ -11,7 +11,7 @@
             <div class="prose mx-auto">
                 <h1>{{ tutorial.titulo }}</h1>
 
-                <div class="text-neutral text-sm mb-2 flex justify-between">
+                <div class="text-neutral text-sm mb-20 flex justify-between">
                     <Audios :audios="parseFiles(tutorial.audios)" :numerados="true" :titulo="tutorial.titulo"/>
                     <TimeAgo :date="tutorial.updated_at" :includeTime="false" />
                 </div>
