@@ -6,13 +6,14 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoConAudios;
 use Laravel\Scout\Searchable;
 use App\Traits\EsCategorizable;
-
+use App\Traits\TieneArchivos;
 
 class Informe extends ContenidoConAudios
 {
     use CrudTrait;
     use Searchable;
     use EsCategorizable;
+    use TieneArchivos;
 
     protected $table = 'informes';
 

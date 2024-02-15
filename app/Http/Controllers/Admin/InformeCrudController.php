@@ -5,13 +5,12 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use App\Services\WordImport;
 use App\Models\Informe;
 use App\Jobs\ProcesarAudios;
 
 // esto permite testar la conversión de audio al guardar el comunicado
-define('TESTAR_CONVERTIDOR_AUDIO', false);
+define('TESTAR_CONVERTIDOR_AUDIO3', false);
 
 /**
  * Class InformeCrudController
@@ -210,35 +209,27 @@ class InformeCrudController extends CrudController
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un informe.
 
-            if(!$informe->archivos) return;
+
+            // AUDIOS
+            if($informe->audios) {
+                if(TESTAR_CONVERTIDOR_AUDIO3) {
+                    $p = new ProcesarAudios($informe);
+                    $p->handle();
+                }
+                else{
+                    dispatch( new ProcesarAudios($informe));
+                }
+            }
+
+
+            // ARCHIVOS
 
             $month = $informe->created_at->month;
             $month = $month < 10 ? "0{$month}" : $month;
             $carpetaArchivos = "medios/informes/{$informe->created_at->year}/$month/{$informe->id}/archivos";
 
-            $pathDestino = Storage::disk('public')->path($carpetaArchivos);
+            $informe->guardarArchivos($carpetaArchivos);
 
-            $archivosNuevo = [];
-
-            $cambiado = false;
-            foreach ($informe->archivos as $idx => $archivoActual) {
-                if (strpos($archivoActual, $carpetaArchivos) === FALSE) {
-                    // hay que copiar el archivo a la nueva ubicación
-                    if (!Storage::disk('public')->exists($pathDestino)) {
-                        Storage::disk('public')->makeDirectory($pathDestino, 0755, true, true);
-                    }
-                    $archivoDestino = $carpetaArchivos . '/' . basename($archivoActual);
-                    Storage::disk('public')->move($archivoActual, $archivoDestino);
-                    $archivosNuevo[] = $archivoDestino;
-                    $cambiado = true;
-                }
-                else {
-                    $archivosNuevo[] = $archivoActual;
-                }
-            }
-
-            if ($cambiado)
-                $informe->update(['archivos'=>$archivosNuevo]);
         });
     }
 
@@ -276,7 +267,7 @@ class InformeCrudController extends CrudController
 
     protected function show($id)
     {
-        $informe = \App\Models\Informe::find($id);
+        $informe = Informe::find($id);
         return $informe->visibilidad == 'P' ? redirect("/informes/$id") : redirect("/informes/$id?borrador");
     }
 
