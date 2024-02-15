@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use App\Services\WordImport;
 use App\Models\Informe;
 use App\Jobs\ProcesarAudios;
@@ -24,7 +25,7 @@ class InformeCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -151,8 +152,41 @@ use \Backpack\ReviseOperation\ReviseOperation;
                 // for 2 MB
                 'chunking' => true,
                 'acceptedFiles' => '.mp3,.mpeg,.mpg,.mp4,.m4a,.wav,.opus,.flac,.wma,.aac,.ogg,.au',
-                'addRemoveLinks'=> true,
-                'dictRemoveFileConfirmation'=> '¿Quieres eliminar este archivo?',
+                'addRemoveLinks' => true,
+                'dictRemoveFileConfirmation' => '¿Quieres eliminar este archivo?',
+                'dictRemoveFile' => 'Eliminar'
+            ],
+            // 'disk' => 'public',
+            /*'type' => 'upload_multple',
+            'attributes' => [
+                'accept' => ".mp4,audio/*"
+            ],
+            'withFiles' => [
+                'disk' => 'public',
+                // the disk where file will be stored
+                'path' => 'medios/comunicados/temp',
+                // the path inside the disk where file will be stored
+            ] */
+        ]);
+
+
+        CRUD::field([
+            'name' => 'archivos',
+            'label' => 'Archivos adjuntos',
+            'type' => 'dropzone',
+            'view_namespace' => 'dropzone::fields',
+            'allow_multiple' => true,
+            // https://github.com/jargoud/laravel-backpack-dropzone
+
+            'config' => [
+                // any option from the Javascript library
+                // https://github.com/dropzone/dropzone/blob/main/src/options.js
+                'chunkSize' => 1024 * 1024 * 2,
+                // for 2 MB
+                'chunking' => true,
+                'acceptedFiles' => '.mp4,.pdf,.doc,.docx,.odt,.rtf,.txt,.xls,.xlsx,.ods,.csv',
+                'addRemoveLinks' => true,
+                'dictRemoveFileConfirmation' => '¿Quieres eliminar este archivo?',
                 'dictRemoveFile' => 'Eliminar'
             ],
             // 'disk' => 'public',
@@ -176,16 +210,35 @@ use \Backpack\ReviseOperation\ReviseOperation;
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un informe.
 
-            if ($informe->audios) {
-                // dd($comunicado);
-                if (TESTAR_CONVERTIDOR_AUDIO) {
-                    $p = new ProcesarAudios($informe);
-                    $p->handle();
-                } else {
-                    dispatch(new ProcesarAudios($informe));
-                }
+            if(!$informe->archivos) return;
 
+            $month = $informe->created_at->month;
+            $month = $month < 10 ? "0{$month}" : $month;
+            $carpetaArchivos = "medios/informes/{$informe->created_at->year}/$month/{$informe->id}/archivos";
+
+            $pathDestino = Storage::disk('public')->path($carpetaArchivos);
+
+            $archivosNuevo = [];
+
+            $cambiado = false;
+            foreach ($informe->archivos as $idx => $archivoActual) {
+                if (strpos($archivoActual, $carpetaArchivos) === FALSE) {
+                    // hay que copiar el archivo a la nueva ubicación
+                    if (!Storage::disk('public')->exists($pathDestino)) {
+                        Storage::disk('public')->makeDirectory($pathDestino, 0755, true, true);
+                    }
+                    $archivoDestino = $carpetaArchivos . '/' . basename($archivoActual);
+                    Storage::disk('public')->move($archivoActual, $archivoDestino);
+                    $archivosNuevo[] = $archivoDestino;
+                    $cambiado = true;
+                }
+                else {
+                    $archivosNuevo[] = $archivoActual;
+                }
             }
+
+            if ($cambiado)
+                $informe->update(['archivos'=>$archivosNuevo]);
         });
     }
 

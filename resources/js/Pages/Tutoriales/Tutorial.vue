@@ -12,7 +12,7 @@
                 <h1>{{ tutorial.titulo }}</h1>
 
                 <div class="text-neutral text-sm mb-2 flex justify-between">
-                    <Audios :audios="parseAudios(tutorial.audios, tutorial.titulo)"/>
+                    <Audios :audios="parseFiles(tutorial.audios)" :numerados="true" :titulo="tutorial.titulo"/>
                     <TimeAgo :date="tutorial.updated_at" :includeTime="false" />
                 </div>
             </div>
@@ -28,7 +28,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { parseAudios } from '@/composables/parseAudios'
+import { parseFiles } from '@/composables/parseFiles'
 
 defineOptions({ layout: AppLayout })
 

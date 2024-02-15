@@ -1,17 +1,20 @@
 <template>
-    <div class="flex gap-2">
-        <span v-for="audio of audios" :key="audio" class="badge cursor-pointer gap-1 select-none"
-            :class="player.music && player.music.src == audio.src?'badge-secondary':'badge-primary'"
+    <div class="flex flex-wrap gap-3">
+        <span v-for="audio of audios" :key="audio" class="btn btn-xs text-xs"
+            :class="player.music?.src == audio.src?'btn-secondary':'btn-primary'"
             @click="clickPlay(audio)">
-            <Icon icon="material-symbols:volume-up-outline-rounded" class="mr-2" />
-            <template v-if="player.music && player.music.src == audio.src">
-                <span v-if="player.state == 'playing'">Escuchando</span>
-                <span v-else-if="player.state == 'paused'">En pausa</span>
-                <span v-else-if="player.state == 'error'">Error en</span>
-                <span v-else="player.state == 'paused'">Escuchaste</span>{{ audio.label }}
+            <Icon :icon="player.music?.src == audio.src?'ph:speaker-simple-high-duotone':'ph:speaker-simple-low-duotone'" />
+            <template v-if="player.music?.src == audio.src">
+                <span v-if="numerados">
+                    <span v-if="player.state == 'playing'">Escuchando</span>
+                    <span v-else-if="player.state == 'paused'">En pausa</span>
+                    <span v-else-if="player.state == 'error'">Error en</span>
+                    <span v-else="player.state == 'paused'">Escuchaste</span> 
+                </span>
+                {{ numerados?'Audio '+audio.index:audio.filename }}
             </template>
             <template v-else>
-                Escuchar {{ audio.label }}
+                {{ numerados?'Escuchar Audio '+audio.index:audio.filename }}
             </template>
         </span>
     </div>
@@ -24,6 +27,16 @@ const props = defineProps({
     audios: {
         type: Object,
         required: true,
+    },
+    numerados: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    titulo: {
+        type: String, 
+        required: false,
+        default: ""
     }
 });
 
@@ -40,11 +53,11 @@ function clickPlay(audio) {
                 player.playPause()
                 break
             default:
-                player.play(audio.src, audio.title)
+                player.play(audio.src, props.titulo + (props.numerados?` (${audio.index})`:'') )
         }
     }
     // nuevo audio
-    else player.play(audio.src, audio.title)
+    else player.play(audio.src, props.titulo + (props.numerados?` (${audio.index})`:''))
 }
 
 </script>

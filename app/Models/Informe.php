@@ -23,6 +23,7 @@ class Informe extends ContenidoConAudios
         'descripcion',
         'texto',
         'audios',
+        'archivos',
         'visibilidad',
     ];
 

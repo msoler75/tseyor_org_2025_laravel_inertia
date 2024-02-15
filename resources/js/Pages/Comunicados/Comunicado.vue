@@ -12,10 +12,11 @@
             <div class="prose mx-auto">
                 <h1>{{ comunicado.titulo }}</h1>
 
-                <div class="text-neutral text-sm mb-2 flex justify-between">
-                    <Audios :audios="parseAudios(comunicado.audios, comunicado.titulo)"/>
+                <div class="text-neutral text-sm mb-4 flex justify-between">
+                    <Audios :audios="parseFiles(comunicado.audios)" :numerados="true" :titulo="comunicado.titulo"/>
                     <TimeAgo :date="comunicado.fecha_comunicado" :includeTime="false" />
                 </div>
+                
             </div>
 
             <Content :content="comunicado.texto" class="pb-12 mx-auto" />
@@ -29,8 +30,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { parseAudios } from '@/composables/parseAudios'
-
+import { parseFiles } from '@/composables/parseFiles'
 
 defineOptions({ layout: AppLayout })
 
@@ -40,8 +40,5 @@ const props = defineProps({
         required: true,
     }
 });
-
-
-
 
 </script>

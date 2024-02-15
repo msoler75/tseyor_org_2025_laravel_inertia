@@ -21,7 +21,7 @@ class ContenidoConAudios extends ContenidoBaseModel
         if(gettype($this->audios) === "string") {
             // primero probamos si es un json
             $r = json_decode($this->audios, true);
-            if($r) return $r;
+            if($r) return [$r];
             // es una ruta
         }
         return $this->audios;
@@ -34,6 +34,7 @@ class ContenidoConAudios extends ContenidoBaseModel
     {
         $fecha = $this->created_at->format('ymd');
         $audios = $this->obtenerAudiosArray();
+        dd($audios);
         $multiple = count($audios) > 1;
         return "$fecha ". ($multiple ? " " . ('a' + $index) : "") . ".mp3";
     }
