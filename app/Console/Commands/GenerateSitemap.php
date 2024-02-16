@@ -32,7 +32,7 @@ class GenerateSitemap extends Command
     {
         $contenidosMap = Sitemap::create();
 
-        Contenido::get()->each(function(Contenido $contenido) use($contenidosMap) {
+        Contenido::all()->each(function(Contenido $contenido) use($contenidosMap) {
             $noindexar = ['informes', 'paginas', 'experiencias'];
             if(!in_array ($contenido->coleccion,  $noindexar))
             $contenidosMap->add(
@@ -42,7 +42,7 @@ class GenerateSitemap extends Command
             );
         });
 
-        Pagina::get()->each(function(Pagina $pagina) use($contenidosMap) {
+        Pagina::all()->each(function(Pagina $pagina) use($contenidosMap) {
             $contenidosMap->add(
                 Url::create($pagina->ruta)
                 ->setPriority(0.9)
