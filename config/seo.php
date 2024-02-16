@@ -59,7 +59,7 @@ return [
      *
      * You can use the following filetypes: ico, png, gif, jpeg, svg.
      */
-    'favicon' => '/storage/favicon.ico',
+    'favicon' => '/favicon.ico',
 
     'title' => [
         /**
