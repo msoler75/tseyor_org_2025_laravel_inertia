@@ -20,6 +20,8 @@ class WorkerLock extends Worker
 
     public function runNextJob($connectionName, $queue, WorkerOptions $options)
     {
+        Log::channel('jobs')->info("WorkerLock.runNextJob");
+        
         $lockName = 'worker_emails_lock';
         $lockTimeout = 1; // Tiempo de expiración del bloqueo en segundos
 
@@ -62,7 +64,7 @@ class WorkerLock extends Worker
 
             } catch (\Exception $e) {
 
-                Log::error($e->getMessage());
+                Log::channel('jobs')->error($e->getMessage());
 
             } finally {
                 //$lock->release();

@@ -6,20 +6,22 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Importa el contenido de un documento Microsoft Word
+ * Convierte el audio a un formato mp3 de menos peso
  */
 class AudioConverter
 {
     public string $source;
     public string $destination;
+    public string $disk;
 
     /**
      * Esta es la función principal a la que podemos llamar desde un controlador CRUD de backpack
      */
-    public function __construct(string $audioFilePath = null, string $destinationFilePath)
+    public function __construct(string $audioFilePath, string $destinationFilePath, string $disk = 'public')
     {
         $this->source = $audioFilePath;
         $this->destination = $destinationFilePath;
+        $this->disk = $disk;
         // dd($this->source, $this->destination);
     }
 
@@ -33,7 +35,7 @@ class AudioConverter
             if (!$converterUrl)
                 throw new \Exception("Servidor de conversión de audio no configurado");
 
-            Log::info("Inicia la conversión del archivo '{$this->source}' a '{$this->destination}'");
+            Log::channel('jobs')->info("Inicia la conversión del archivo '{$this->source}' a '{$this->destination}'");
 
             $frecuencia = config('services.audio_converter.frecuencia');
             $kbps = config('services.audio_converter.kbps');
@@ -41,8 +43,11 @@ class AudioConverter
             // Realizar la petición al servidor para convertir el archivo .docx a markdown
             $curl = curl_init();
 
-            $sourcePath = Storage::disk('public')->path($this->source);
-            $destinationPath = Storage::disk('public')->path($this->destination);
+            $sourcePath = realpath(Storage::disk($this->disk)->path($this->source));
+            $destinationPath = Storage::disk($this->disk)->path($this->destination);
+
+            Log::channel('jobs')->info("archivo fuente: ".$sourcePath);
+            Log::channel('jobs')->info("archivo destino: ".$destinationPath);
 
             // Verificar si el archivo existe
             if (!Storage::disk('public')->exists($this->source))
@@ -79,7 +84,7 @@ class AudioConverter
 
                 // Guardar la respuesta en el destino
                 file_put_contents($destinationPath, $response);
-                Log::info('La conversión del archivo se realizó exitosamente.');
+                Log::channel('jobs')->info('La conversión del archivo se realizó exitosamente.');
 
             } else {
                 // Mostrar información sobre el error
@@ -87,7 +92,7 @@ class AudioConverter
                 throw new \Exception($error . " " . $response);
             }
         } catch (\Exception $exception) {
-            Log::error('Error al convertir el archivo: ' . $exception->getMessage());
+            Log::channel('jobs')->error('Error al convertir el archivo: ' . $exception->getMessage());
             throw $exception;
         }
     }

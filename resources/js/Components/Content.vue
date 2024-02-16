@@ -33,7 +33,7 @@ const images = ref([]) // imagenes del contenido
 
 var v3ImgPreviewFn = null
 
-const contentPreProcessed = computed(() => isMarkdown.value ? MarkdownToHtml(props.content) : props.content)
+const contentPreProcessed = computed(() => isMarkdown.value ? MarkdownToHtml(props.content) : props.content ?props.content : "")
 
 const contentProcessed = computed(() => contentPreProcessed.value.replace(/<span class="es-referencia"(.*?)<\/span>/g, '<referencia$1</referencia>'))
 

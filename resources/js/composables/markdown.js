@@ -80,6 +80,8 @@ export function MarkdownToHtml(raw_markdown) {
 
 
 export function detectFormat(text) {
+    if(!text) return { format: "html", probability: 1 };
+    
     // Contamos la cantidad de etiquetas HTML
     const htmlTagsCount = (text.match(/<\/?[a-z][a-z0-9]*\b[^>]*>/gi) || []).length;
 

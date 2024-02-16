@@ -28,6 +28,11 @@ class Informe extends ContenidoConAudios
         'visibilidad',
     ];
 
+    protected $casts = [
+        'audios' => 'array',
+        'archivos' => 'array'
+    ];
+
 
     public function equipo()
     {
@@ -44,20 +49,15 @@ class Informe extends ContenidoConAudios
     {
         $tipo = $this->categoria;
         $fecha = $this->created_at->format('ymd');
-        $audios = $this->obtenerAudiosArray();
-        $multiple = count($audios) > 1;
         $equipo = $this->equipo;
-        return "{$equipo->nombre} - $fecha $tipo" . ($multiple ? " " . ('a' + $index) : "") . ".mp3";
+        $multiple = count($this->audios) > 1;
+        $original = $this->audios[$index];
+        $orig_filename = pathinfo($original, PATHINFO_FILENAME);
+        // return "{$equipo->nombre} - $fecha $tipo " . ($multiple ? "($index) " : "") . $orig_filename . ".mp3";
+        return $orig_filename . ".mp3";
     }
 
-    /**
-     * En qué carpeta se guardarán los audios
-     **/
-    public function generarRutaAudios()
-    {
-        $año = $this->created_at->year;
-        return "medios/informes/{$this->equipo->slug}/$año";
-    }
+    
 
 
 

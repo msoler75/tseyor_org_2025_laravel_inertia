@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\WordImport;
 use App\Models\Informe;
 use App\Jobs\ProcesarAudios;
+use Illuminate\Support\Facades\Log;
+
 
 // esto permite testar la conversión de audio al guardar el comunicado
 define('TESTAR_CONVERTIDOR_AUDIO3', false);
@@ -134,7 +136,7 @@ class InformeCrudController extends CrudController
 
         CRUD::field('descripcion')->type('textarea');
 
-        CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
 
         CRUD::field([
             'name' => 'audios',
@@ -143,6 +145,7 @@ class InformeCrudController extends CrudController
             'view_namespace' => 'dropzone::fields',
             'allow_multiple' => true,
             // https://github.com/jargoud/laravel-backpack-dropzone
+            'hint'=>'Audios de voz (se va a reducir su calidad para ahorrar espacio)',
 
             'config' => [
                 // any option from the Javascript library
@@ -176,14 +179,14 @@ class InformeCrudController extends CrudController
             'view_namespace' => 'dropzone::fields',
             'allow_multiple' => true,
             // https://github.com/jargoud/laravel-backpack-dropzone
-
+            'hint'=>'Documentos, pdf, word, powerpoint, openoffice, vídeos cortos. Se pueden poner audios mp3 aquí si se quiere conservar su calidad ',
             'config' => [
                 // any option from the Javascript library
                 // https://github.com/dropzone/dropzone/blob/main/src/options.js
                 'chunkSize' => 1024 * 1024 * 2,
                 // for 2 MB
                 'chunking' => true,
-                'acceptedFiles' => '.mp4,.pdf,.doc,.docx,.odt,.rtf,.txt,.xls,.xlsx,.ods,.csv',
+                'acceptedFiles' => '.pdf,.doc,.docx,.odt,.rtf,.txt,.xls,.xlsx,.ods,.csv,.mp3,.mp4', // mp4 para vídeo
                 'addRemoveLinks' => true,
                 'dictRemoveFileConfirmation' => '¿Quieres eliminar este archivo?',
                 'dictRemoveFile' => 'Eliminar'
@@ -199,36 +202,48 @@ class InformeCrudController extends CrudController
                 'path' => 'medios/comunicados/temp',
                 // the path inside the disk where file will be stored
             ] */
-        ]);
+        ])->after('audios');
 
         // CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
         CRUD::field('visibilidad')->type('visibilidad');
 
-        Informe::saved(function ($informe) {
+
+        Informe::saving(function ($informe) {
+            Log::info("informe::saving ". var_export($informe, true));
+            /*if(is_array($informe->audios))
+            $informe->audios = json_encode($informe->audios);
+            if(is_array($informe->archivos))
+            $informe->archivos = json_encode($informe->archivos);
+        */
+        });
+
+        Informe::saved(function ($informe) use ($folder) {
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un informe.
 
+            Log::info("informe::saved");
 
             // AUDIOS
             if($informe->audios) {
+                $año = $informe->created_at->year;
+                $carpetaAudios = "medios/informes/audios/{$informe->equipo->slug}/$año/{$informe->id}";
+                Log::info("informe::saved - audios carpeta " . $carpetaAudios);
                 if(TESTAR_CONVERTIDOR_AUDIO3) {
-                    $p = new ProcesarAudios($informe);
+                    $p = new ProcesarAudios($informe, $carpetaAudios);
                     $p->handle();
                 }
                 else{
-                    dispatch( new ProcesarAudios($informe));
+                    dispatch( new ProcesarAudios($informe, $carpetaAudios));
                 }
             }
 
-
             // ARCHIVOS
-
-            $month = $informe->created_at->month;
-            $month = $month < 10 ? "0{$month}" : $month;
-            $carpetaArchivos = "medios/informes/{$informe->created_at->year}/$month/{$informe->id}/archivos";
-
-            $informe->guardarArchivos($carpetaArchivos);
+                if($informe->archivos) {
+                    $carpetaArchivos = "$folder/{$informe->id}/archivos";
+                    Log::info("informe::saved - archivos carpeta " . $carpetaArchivos);
+                    $informe->guardarArchivos($carpetaArchivos);
+                }
 
         });
     }
@@ -240,6 +255,14 @@ class InformeCrudController extends CrudController
     {
         $anioActual = date('Y');
         $mesActual = date('m');
+        $data = $this->crud->getCurrentEntry();
+
+        if($data) {
+            $anioActual = $data->created_at->year;
+            $mesActual = $data->created_at->month;
+            if($mesActual<10)
+                $mesActual = "0".$mesActual;
+        }
 
         $folder = "/medios/informes/$anioActual/$mesActual";
 
