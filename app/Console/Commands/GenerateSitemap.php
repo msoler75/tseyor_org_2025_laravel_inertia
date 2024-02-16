@@ -23,7 +23,7 @@ class GenerateSitemap extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Generate sitemap.xml';
 
     /**
      * Execute the console command.
@@ -32,21 +32,27 @@ class GenerateSitemap extends Command
     {
         $contenidosMap = Sitemap::create();
 
-        Contenido::all()->each(function(Contenido $contenido) use($contenidosMap) {
+        Contenido::all()->each(function (Contenido $contenido) use ($contenidosMap) {
+
             $noindexar = ['informes', 'paginas', 'experiencias'];
-            if(!in_array ($contenido->coleccion,  $noindexar))
-            $contenidosMap->add(
-                Url::create("/{$contenido->coleccion}/".($contenido->slug_ref?$contenido->slug_ref:$contenido->id_ref))
-                ->setPriority(0.8)
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
-            );
+
+            if (!in_array($contenido->coleccion, $noindexar)) {
+
+                $contenidosMap->add(
+                    Url::create("/{$contenido->coleccion}/" . ($contenido->slug_ref ? $contenido->slug_ref : $contenido->id_ref))
+                        ->setPriority(0.8)
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
+                );
+            
+            }
         });
 
-        Pagina::all()->each(function(Pagina $pagina) use($contenidosMap) {
+        // agregamos todas las páginas, con algo más de prioridad
+        Pagina::all()->each(function (Pagina $pagina) use ($contenidosMap) {
             $contenidosMap->add(
                 Url::create($pagina->ruta)
-                ->setPriority(0.9)
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
+                    ->setPriority(0.9)
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
             );
         });
 
