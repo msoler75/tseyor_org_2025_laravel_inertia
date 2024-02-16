@@ -28,6 +28,7 @@ class Equipo extends ContenidoBaseModel
         'ocultarCarpetas',
         'ocultarArchivos',
         'ocultarMiembros',
+        'ocultarSolicitudes'
     ];
 
     public function miembros()
