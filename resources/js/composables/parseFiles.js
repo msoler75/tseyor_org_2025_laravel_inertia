@@ -1,16 +1,20 @@
 import { getSrcUrl } from "./srcutils";
 
-export const parseFiles = (json) => {
+export const parseFiles = (data) => {
   var archivos = [];
-  try {
-    archivos = JSON.parse(json);
-  } catch (err) {
-    console.log("parseFiles1", err);
-    archivos = json.split(",").map((x) => x.trim());
-  }
+  if (Array.isArray(data)) archivos = data;
+  else if (typeof data === "string")
+    try {
+      archivos = JSON.parse(json);
+    } catch (err) {
+      console.log("parseFiles1", err);
+      archivos = json.split(",").map((x) => x.trim());
+    }
+  else return data;
+
   try {
     const r = [];
-    var index = 1
+    var index = 1;
     for (var archivo of archivos) {
       const idx = archivo.lastIndexOf("/");
       var filename = archivo.substring(idx + 1);
@@ -33,7 +37,7 @@ export const parseFiles = (json) => {
       const label = filename;
       const title = filename;
       r.push({ index, title, filename, label, src: getSrcUrl(archivo) });
-      index++
+      index++;
     }
     return r;
   } catch (err) {

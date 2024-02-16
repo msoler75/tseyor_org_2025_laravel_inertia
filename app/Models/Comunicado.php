@@ -78,18 +78,9 @@ class Comunicado extends ContenidoConAudios
         }
 
         $fecha = date('ymd', strtotime($this->fecha_comunicado));
-        $audios = $this->obtenerAudiosArray();
+        $audios = $this->audios;
         $multiple = count($audios) > 1;
         return "TSEYOR $fecha ({$this->numero})" . $tipo . ($multiple ? " " . ('a' + $index) : "") . ".mp3";
-    }
-
-    /**
-     * En qué carpeta se guardarán los audios
-     **/
-    public function generarRutaAudios()
-    {
-        $año = date('Y', strtotime($this->fecha_comunicado));
-        return "medios/comunicados/audios/$año";
     }
 
 

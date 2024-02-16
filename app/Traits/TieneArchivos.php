@@ -10,7 +10,7 @@ trait TieneArchivos
 
     public function guardarArchivos($carpeta)
     {
-        if (!$this->archivos)
+        if (!is_array($this->archivos)||!count($this->archivos))
             return;
 
         $pathDestino = Storage::disk('public')->path($carpeta);

@@ -13,19 +13,11 @@ class ContenidoConAudios extends ContenidoBaseModel
         'audios'
     ];
 
+    protected $casts = [
+        'audios' => 'array',
+    ];
 
-    /**
-     * Obtiene un array con strings que indican los archivos de audio
-     */
-    public function obtenerAudiosArray() {
-        if(gettype($this->audios) === "string") {
-            // primero probamos si es un json
-            $r = json_decode($this->audios, true);
-            if($r) return [$r];
-            // es una ruta
-        }
-        return $this->audios;
-    }
+  
 
     /**
      * Nombre de los archivos de audio, por defecto
@@ -33,20 +25,11 @@ class ContenidoConAudios extends ContenidoBaseModel
     public function generarNombreAudio($index)
     {
         $fecha = $this->created_at->format('ymd');
-        $audios = $this->obtenerAudiosArray();
-        dd($audios);
+        $audios = $this->audios;
         $multiple = count($audios) > 1;
         return "$fecha ". ($multiple ? " " . ('a' + $index) : "") . ".mp3";
     }
 
-    /**
-     * En qué carpeta se guardarán los audios
-     **/
-    public function generarRutaAudios()
-{
-        $modelName = $this->getMorphClass();
-        $año = $this->created_at->year;
-        return "medios/$modelName/$año";
-    }
+    
 
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Queue\WorkerOptions;
+use Illuminate\Support\Facades\Log;
 use App\Workers\WorkerLock;
 
 class WorkerController extends Controller
@@ -14,6 +15,8 @@ class WorkerController extends Controller
      */
     public function process()
     {
+        Log::channel('jobs')->info("WorkerController.process");
+
         $start = time(); // Tiempo de inicio de la ejecución
         $maxExecutionTime = config("queue.max_time_processing_queue", 60); // Tiempo máximo de ejecución en segundos
 

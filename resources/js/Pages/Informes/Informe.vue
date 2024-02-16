@@ -19,16 +19,16 @@
             <div class="prose mx-auto mb-12">
                 <h1>{{ informe.titulo }}</h1>
 
-                <div class="text-neutral text-sm mb-20 flex justify-between">
+                <div class="text-neutral text-sm mb-12 flex justify-between">
                     <Audios class="mb-20" :audios="parseFiles(informe.audios)" :titulo="informe.titulo" :numerados="false" />
                     <TimeAgo :date="informe.updated_at" :includeTime="false" />
                 </div>
 
             </div>
 
-            <Content :content="informe.texto" class="pb-12 mx-auto" />
+            <Content v-if="informe.texto" :content="informe.texto" class="mb-12 mx-auto" />
 
-            <div v-if="informe.archivos" class="mt-12 max-w-[65ch] mx-auto">
+            <div v-if="informe.archivos" class="max-w-[65ch] mx-auto">
                 <div class="font-bold text-neutral text-sm mb-4">Archivos adjuntos:</div>
                 <div class="flex flex-wrap gap-4">
                     <a download v-for="archivo, index of parseFiles(informe.archivos)" :key="index"
