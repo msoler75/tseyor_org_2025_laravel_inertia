@@ -15,7 +15,7 @@
     <div v-else-if="solicitud && !solicitud.fecha_denegacion" class="uppercase py-3 text-center">
         Solicitud enviada
     </div>
-    <button v-else-if="$page.props.user" class="btn btn-primary w-fit" @click="solicitarIngreso">
+    <button v-else-if="$page.props.auth.user && permitirSolicitudes" class="btn btn-primary w-fit" @click="solicitarIngreso">
         <span v-if="solicitando" class="flex gap-2 items-center">
             <Spinner /> Solicitando...
         </span>
@@ -30,7 +30,8 @@ const props = defineProps({
     modelValue: { required: true },
     equipoId: Number,
     soyMiembro: Boolean,
-    soyCoordinador: Boolean
+    soyCoordinador: Boolean,
+    permitirSolicitudes: Boolean
 })
 
 const emit = defineEmits(['update:modelValue'])

@@ -146,6 +146,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
             'hint' => 'Opcionalmente puedes poner aquí también a los coordinadores, aunque no es necesario.'
         ]);
 
+        CRUD::field('ocultarMiembros')->type('checkbox')->label('Ocultar solicitudes de ingreso');
         CRUD::field('ocultarCarpetas')->type('checkbox')->label('Ocultar carpetas');
         CRUD::field('ocultarArchivos')->type('checkbox')->label('Ocultar archivos');
         CRUD::field('ocultarMiembros')->type('checkbox')->label('Ocultar miembros');
