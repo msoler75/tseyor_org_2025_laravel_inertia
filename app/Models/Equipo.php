@@ -24,7 +24,10 @@ class Equipo extends ContenidoBaseModel
         'group_id',
         'anuncio',
         'reuniones',
-        'informacion'
+        'informacion',
+        'ocultarCarpetas',
+        'ocultarArchivos',
+        'ocultarMiembros',
     ];
 
     public function miembros()
