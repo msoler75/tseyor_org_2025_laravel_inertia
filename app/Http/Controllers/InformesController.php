@@ -99,9 +99,12 @@ class InformesController extends Controller
             abort(404); // Item no encontrado o no autorizado
         }
 
+        $soyCoordinador = $informe->equipo->esCoordinador(optional($user)->id);
+
         return Inertia::render('Informes/Informe', [
             'informe' => $informe,
-            'equipo' => $informe->equipo
+            'equipo' => $informe->equipo,
+            'soyCoordinador' => $soyCoordinador
         ])
             ->withViewData(SEO::from($informe));
     }

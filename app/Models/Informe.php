@@ -57,8 +57,12 @@ class Informe extends ContenidoConAudios
         return $orig_filename . ".mp3";
     }
 
-    
 
+// ACCESSORS
+
+public function getEquipoNombreAttribute() {
+    return $this->equipo->nombre;
+}
 
 
     // SCOUT

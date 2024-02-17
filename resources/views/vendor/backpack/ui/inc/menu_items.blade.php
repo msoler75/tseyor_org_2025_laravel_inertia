@@ -66,6 +66,13 @@
     <x-backpack::menu-dropdown-item title="Solicitudes" icon="la la-hand-paper" :link="backpack_url('solicitud')" />
     <x-backpack::menu-dropdown-item title="Informes" icon="la la-file-invoice" :link="backpack_url('informe')" />
 </x-backpack::menu-dropdown>
+@else
+    @php
+        $user = Auth::user();
+    @endphp
+    @if ($user && $user->equiposQueCoordina->count() > 0)
+        <x-backpack::menu-item title="Informes de equipo" icon="la la-file-invoice" :link="backpack_url('informe')" />
+    @endif
 @endcan
 
 @can('administrar archivos')

@@ -9,7 +9,7 @@ use App\Services\WordImport;
 use App\Models\Informe;
 use App\Jobs\ProcesarAudios;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\Equipo;
 
 // esto permite testar la conversión de audio al guardar el comunicado
 define('TESTAR_CONVERTIDOR_AUDIO3', false);
@@ -48,6 +48,14 @@ class InformeCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        // si no tiene permisos de "administrar equipos" entonces es un simple coordinador de un equipo (o varios tal vez)
+        // añadimos un filtro para mostrar solo los informes del equipo del coordinador
+
+        if (!backpack_user()->can('administrar equipos')) {
+            CRUD::addClause("whereIn", "equipo_id", backpack_user()->equiposQueCoordina->pluck('id')->toArray());
+        }
+
+
         // CRUD::setFromDb(); // set columns from db columns.
 
         /**
@@ -55,10 +63,18 @@ class InformeCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
+
         $this->crud->addColumn([
             'name' => 'id',
             'label' => 'id',
             'type' => 'number'
+        ]);
+
+
+        $this->crud->addColumn([
+            'name' => 'equipoNombre',
+            'label' => 'Equipo',
+            'type' => 'text'
         ]);
 
         $this->crud->addColumn([
@@ -119,7 +135,7 @@ class InformeCrudController extends CrudController
             'name' => 'categoria',
             'label' => "Categoría",
             'type' => 'select_from_array',
-            'options' => ['General' => 'General', 'OD' => 'Orden del día', 'Acta' => 'Acta', 'Anexo' => 'Anexo', 'Acuerdo' => 'Acuerdo'],
+            'options' => ['Informe' => 'Informe', 'Orden del día' => 'Orden del día', 'Acta' => 'Acta', 'Anexo' => 'Anexo', 'Acuerdo' => 'Acuerdo', 'Otros'=>'Otros'],
             'allows_null' => false,
             'default' => 'General',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
@@ -130,11 +146,40 @@ class InformeCrudController extends CrudController
         ])->after('titulo');
 
 
+        if (backpack_user()->can('administrar equipos'))
         CRUD::field('equipo_id')->type('select')->after('titulo')->wrapper(['class' => 'form-group col-md-3']);
+        else {
+            // obtenemos de la URL si existe el parametro equipo_id
+            $equipo_id = request()->get('equipo_id');
+            if ($equipo_id) {
+                $equipo = Equipo::findOrFail($equipo_id);
+                // comprobamos si el usuario actual es coordinador de este equipo
+                if(!backpack_user()->equiposQueCoordina->pluck('id')->contains($equipo_id)){
+                    // denegamos el acceso
+                    abort(403);
+                }
+                CRUD::field('equipo_nombre_mostrar')->type('text')->label('Equipo')->value($equipo->nombre)->after('titulo')->attributes(['readonly' => 'readonly']);
+                CRUD::field('equipo_id')->type('hidden')->value($equipo_id);
+            }
+            else{
+                $equipos = backpack_user()->equiposQueCoordina;
+                CRUD::field([
+                    // select_from_array
+                    'name' => 'equipo_id',
+                    'label' => "Equipo",
+                    'type' => 'select_from_array',
+                    'options' => array_combine($equipos->pluck( 'id')->toArray(),$equipos->pluck('nombre')->toArray()),
+                    'allows_null' => false,
+                    'wrapper' => [
+                        'class' => 'form-group col-md-3'
+                    ],
+                ])->after('titulo');
+            }
+    }
 
         $folder = $this->mediaFolder();
 
-        CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->label("Descripción corta (opcional)");
 
         CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
 
@@ -284,6 +329,17 @@ class InformeCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
+        // si no tiene permisos de "administrar equipos" entonces es un simple coordinador de un equipo (o varios tal vez)
+        // añadimos un control para asegurarnos que no puede editar un informe que de alguno de sus equipos
+
+        if (!backpack_user()->can('administrar equipos')) {
+            $informe = $this->crud->getCurrentEntry();
+            if($informe && !backpack_user()->equiposQueCoordina->contains('id', $informe->equipo_id)) {
+                $this->crud->denyAccess(['update']);
+            }
+        }
+
+
         $this->setupCreateOperation();
     }
 

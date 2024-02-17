@@ -123,6 +123,16 @@ class User extends Authenticatable
             ->withPivot(['user_id', 'rol']);
     }
 
+    public function equiposQueCoordina()
+    {
+        // segun la tabla pivot, el rol es 'coordinador'
+        // Retrieve the teams that this user coordinates based on the pivot table where the role is 'coordinador'
+        return $this->belongsToMany(Equipo::class, 'equipo_user')
+            ->using(Membresia::class)
+            ->wherePivot('rol', 'coordinador')
+            ->withPivot(['user_id', 'rol']);
+    }
+
     /*public function grupos()
     {
         return Cache::remember("user_grupos_" . $this->id, 30, function () {
