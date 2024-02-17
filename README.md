@@ -91,7 +91,7 @@ Para mejorar el rendimiento:
 
 Para evitar procesar innecesariamente estos datos, y salvar unos 400 ms, añadiremos estas lineas:
 
-vendor\inertiajs\inertia-laravel\src\Response.php (ahorro de hasta 85 ms):
+vendor\inertiajs\inertia-laravel\src\Response.php (ahorro de hasta 5 ms):
 ```
  public function resolvePropertyInstances(array $props, Request $request, bool $unpackDotProps = true): array
     {
@@ -101,7 +101,7 @@ vendor\inertiajs\inertia-laravel\src\Response.php (ahorro de hasta 85 ms):
             if($key=='methods')continue; // añadimos esta línea
 ```
 
-vendor\tightenco\ziggy\src\Ziggy.php en el método _constructor, se coloca este código (ahorro de hasta 400 ms):
+vendor\tightenco\ziggy\src\Ziggy.php en el método _constructor, se coloca este código (ahorro de hasta 15 ms):
 ```
 if (!static::$cache) {
             // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
@@ -125,7 +125,7 @@ if (!static::$cache) {
         }
 ```
 
-vendor\laravel\framework\src\Illuminate\Foundation\Application.php en el método registerConfiguredProviders (ahorro de hasta 30 ms):
+vendor\laravel\framework\src\Illuminate\Foundation\Application.php en el método registerConfiguredProviders (ahorro de hasta 1 ms):
 ```
  $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 // añadir este bloque:
