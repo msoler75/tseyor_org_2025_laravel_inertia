@@ -3,7 +3,7 @@
         <div class="container mx-auto py-12 flex justify-between items-center">
             <Back>Equipos</Back>
             <EquipoMembresia class="hidden sm:flex mx-auto badge badge-info" :equipo-id="equipo.id" v-model="solicitud"
-                :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador" 
+                :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"
                 :permitirSolicitudes="!equipo.ocultarSolicitudes"/>
             <AdminPanel modelo="equipo" necesita="administrar equipos" :contenido="equipo" />
         </div>
@@ -72,7 +72,7 @@
                     </div>
                 </Card>
 
-                
+
 
                 <Card v-if="!equipo.ocultarMiembros">
                     <h3>Miembros</h3>

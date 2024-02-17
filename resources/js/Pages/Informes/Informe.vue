@@ -10,7 +10,7 @@
             <Icon icon="ph:arrow-right" />
             </Link>
             <span v-else></span>
-            <AdminPanel modelo="informe" necesita="administrar contenidos" :contenido="informe" />
+            <AdminPanel modelo="informe" necesita="administrar contenidos" :contenido="informe" :es-autor="soyCoordinador"/>
         </div>
 
 
@@ -60,8 +60,10 @@ const props = defineProps({
     equipo: {
         type: Object,
         required: true
-    }
+    },
+    soyCoordinador: Boolean
 });
+
 
 
 </script>

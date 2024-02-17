@@ -84,7 +84,7 @@ class HandleInertiaRequests extends Middleware
 
         $setting = Setting::where('name', 'anuncio')->first();
         $anuncio = optional($setting)->value;
-        Log::info("HandleInertiaRequests anuncio: $anuncio");
+        // Log::info("HandleInertiaRequests anuncio: $anuncio");
 
         // llamada normal
         return array_merge(parent::share($request), [

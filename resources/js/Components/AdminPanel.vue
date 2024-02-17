@@ -37,12 +37,14 @@ const props = defineProps({
     necesita: { type: [String, Array], required: true },
     modelo: String,
     contenido: Object,
-    soloInforma: Boolean
+    soloInforma: Boolean,
+    esAutor: {type: Boolean, default: false}
 })
 
 const editor = computed(()=>
+props.esAutor || (
     typeof props.necesita == 'string' ? permisos.permisos.includes(props.necesita) :
-    permisos.permisos.filter(permiso => props.necesita.includes(permiso)).length
+    permisos.permisos.filter(permiso => props.necesita.includes(permiso)).length )
 )
 
 const isDraft = ref(props.contenido && ('visibilidad' in props.contenido) && props.contenido.visibilidad != 'P')
