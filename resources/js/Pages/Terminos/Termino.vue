@@ -3,9 +3,12 @@
 
         <div class="flex justify-between items-center mb-20">
             <Back>Índice</Back>
-            <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center" title='Descarga todo el glosario en pdf'><Icon icon="ph:download-duotone" />Descargar</Link>
+            <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center"
+                title='Descarga todo el glosario en pdf'>
+            <Icon icon="ph:download-duotone" />Descargar</Link>
             <AdminPanel modelo="termino" necesita="administrar contenidos" :contenido="termino" />
         </div>
+
 
         <div class="mx-auto flex flex-col justify-center items-center">
             <h1>Glosario</h1>
@@ -16,25 +19,38 @@
             <SearchInput :doSearch="false" @search="buscarClick" />
         </div>
 
+
+        <TransitionFade>
+            <div v-if="nav.scrollY > 300" class="fixed top-[4rem] left-0 right-0 p-3 bg-base-300 shadow z-10 cursor-pointer"
+                @click="scrollToTop">
+                <div class="container mx-auto flex justify-center gap-5 items-center ">
+                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150 opacity-0" />
+                    <span class="font-bold">Glosario</span>
+                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
+                </div>
+            </div>
+        </TransitionFade>
+
         <div class="w-full flex justify-between gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 
             <div class="w-full md:w-[7rem] flex-shrink-0 card bg-base-100 shadow p-5 h-fit md:sticky md:top-20">
                 <div class="flex flex-wrap md:hidden  gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :href="route('terminos') + '?letra=' + letraItem">
+                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToWord(el)">
                     {{ letraItem }}
                     </Link>
                 </div>
 
                 <div class="hidden md:grid grid-flow-dense grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :style="{'grid-column': Math.floor(index / (letras.length/2))+1 }" :href="route('terminos') + '?letra=' + letraItem">
+                        :style="{ 'grid-column': Math.floor(index / (letras.length / 2)) + 1 }"
+                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToWord(el)">
                     {{ letraItem }}
                     </Link>
                 </div>
             </div>
 
-            <div>
+            <div ref="el" >
                 <div class="py-[5ch] bg-base-100 md:max-w-[80ch] mx-auto shadow-xl mb-20 px-7 rounded-xl">
 
                     <div class="prose mx-auto">
@@ -57,8 +73,8 @@
                     <div class="flex gap-6 flex-wrap">
                         <Link v-for="contenido in referencias.terminos" :key="contenido.id"
                             :href="route('termino', contenido.slug)"
-
-                            class="capitalize lowercase hover:text-primary transition-color duration-200 w-fit h-fit font-bold text-lg card shadow hover:shadow-lg px-5 py-2 bg-base-100">
+                            class="capitalize lowercase hover:text-primary transition-color duration-200 w-fit h-fit font-bold text-lg card shadow hover:shadow-lg px-5 py-2 bg-base-100"
+                            preserve-scroll @click="scrollToWord(el)">
                         {{ contenido.nombre }}
                         </Link>
                     </div>
@@ -78,7 +94,7 @@
             <div class="w-[7rem] card bg-base-100 shadow p-5 h-fit sticky top-20 opacity-0 hidden lg:flex">
                 <div class="letras grid grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                       :href="route('terminos') + '?letra=' + letraItem">
+                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToWord(el)">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -90,9 +106,11 @@
 
 
         <div class="flex justify-between my-12">
-            <Link v-if="anterior" :href="anterior.slug" class="hover:underline">‹&nbsp;&nbsp; {{ anterior.nombre }}</Link>
+            <Link v-if="anterior" :href="anterior.slug" class="hover:underline" preserve-scroll @click="scrollToWord(el)">
+            ‹&nbsp;&nbsp; {{ anterior.nombre }}</Link>
             <span v-else />
-            <Link v-if="siguiente" :href="siguiente.slug" class="hover:underline">{{ siguiente.nombre }} &nbsp;&nbsp;›
+            <Link v-if="siguiente" :href="siguiente.slug" class="hover:underline" preserve-scroll @click="scrollToWord(el)">{{
+                siguiente.nombre }} &nbsp;&nbsp;›
             </Link>
             <span v-else />
         </div>
@@ -104,6 +122,9 @@
 
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';
+import { useNav } from '@/Stores/nav'
+import { scrollToWord, scrollToTop } from '@/composables/glosarioscroll.js'
+
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
@@ -125,6 +146,10 @@ const props = defineProps({
         required: true,
     },
 });
+
+const el = ref(null)
+
+const nav = useNav()
 
 function buscarClick(query) {
     router.visit(route('terminos') + '?buscar=' + query)
