@@ -21,7 +21,7 @@
 
                 <div class="text-neutral text-sm mb-12 flex justify-between">
                     <Audios class="mb-20" :audios="parseFiles(informe.audios)" :titulo="informe.titulo" :numerados="false" />
-                    <TimeAgo :date="informe.updated_at" :includeTime="false" />
+                    <TimeAgo :date="informe.updated_at" :includeTime="false" class="whitespace-nowrap"/>
                 </div>
 
             </div>
