@@ -89,19 +89,9 @@ Para mejorar el rendimiento:
 
 ## Cambios en Response de Inertia
 
-Para evitar procesar innecesariamente estos datos, y salvar unos 400 ms, añadiremos estas lineas:
+Mejoras en el código.
 
-vendor\inertiajs\inertia-laravel\src\Response.php (ahorro de hasta 5 ms):
-```
- public function resolvePropertyInstances(array $props, Request $request, bool $unpackDotProps = true): array
-    {
-        foreach ($props as $key => $value) {
-            if($key=='ziggy')continue; // añadimos esta línea
-            if($key=='routes')continue; // añadimos esta línea
-            if($key=='methods')continue; // añadimos esta línea
-```
-
-vendor\tightenco\ziggy\src\Ziggy.php en el método _constructor, se coloca este código (ahorro de hasta 15 ms):
+vendor\tightenco\ziggy\src\Ziggy.php en el método _constructor, se coloca este código (ahorro de 10 a 56 ms):
 ```
 if (!static::$cache) {
             // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
@@ -124,24 +114,3 @@ if (!static::$cache) {
             }
         }
 ```
-
-vendor\laravel\framework\src\Illuminate\Foundation\Application.php en el método registerConfiguredProviders (ahorro de hasta 1 ms):
-```
- $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
-// añadir este bloque:
-        $is_admin = str_starts_with($_SERVER['REQUEST_URI']??"/admin", "/admin"); // si no hay request puede ser un comando artisan
-        $providers[1] = array_filter(
-            $providers->toArray()[1],
-            function ($item) use ($is_admin) {
-                return $is_admin || !str_starts_with($item, "Backpack");
-            }
-        );
-```
-
-## Contribuciones
-
-Si deseas contribuir a este proyecto, puedes hacerlo siguiendo estas pautas: [CONTRIBUTING.md](link-to-contributing-md).
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT. Puedes consultar los detalles en el archivo [LICENSE.md](link-to-license-md).

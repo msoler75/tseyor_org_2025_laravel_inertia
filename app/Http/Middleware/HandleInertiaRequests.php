@@ -33,6 +33,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $_ = new T(__CLASS__, "share");
         // si no muestra algun dato de .env, hay que borrar la cache
         /*$ajaxWords = ['buscar', 'buscar_recientes', 'buscar_archivo'];
 
@@ -51,8 +52,8 @@ class HandleInertiaRequests extends Middleware
                 ]
             ]);*/
 
-        /*
-                 $_ = new T(__CLASS__, "share:ziggy_create_Array");
+            /*
+            $_ = new T(__CLASS__, "share:ziggy_create_Array");
 
                 // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
                 $cache_routes = base_path("bootstrap/cache/routes-v7.php");
