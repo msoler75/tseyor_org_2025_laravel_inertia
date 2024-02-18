@@ -20,7 +20,7 @@
                 <h1>{{ informe.titulo }}</h1>
 
                 <div class="text-neutral text-sm mb-12 flex justify-between">
-                    <Audios class="mb-20" :audios="parseFiles(informe.audios)" :titulo="informe.titulo" :numerados="false" />
+                    <Audios class="mb-20" :audios="parseFiles(informe.audios)" :numerados="false" />
                     <TimeAgo :date="informe.updated_at" :includeTime="false" class="whitespace-nowrap"/>
                 </div>
 

@@ -1,20 +1,16 @@
 <template>
     <div class="flex flex-wrap gap-3">
         <span v-for="audio of audios" :key="audio" class="btn btn-xs text-xs"
-            :class="player.music?.src == audio.src?'btn-secondary':'btn-primary'"
-            @click="clickPlay(audio)">
-            <Icon :icon="player.music?.src == audio.src?'ph:speaker-simple-high-duotone':'ph:speaker-simple-low-duotone'" />
+            :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlay(audio)"
+            :title="player.music?.src == audio.src ? frase : 'Escuchar'">
+            <Icon
+                :icon="player.music?.src == audio.src ? 'ph:speaker-simple-high-duotone' : 'ph:speaker-simple-low-duotone'" />
             <template v-if="player.music?.src == audio.src">
-                <span v-if="numerados">
-                    <span v-if="player.state == 'playing'">Escuchando</span>
-                    <span v-else-if="player.state == 'paused'">En pausa</span>
-                    <span v-else-if="player.state == 'error'">Error en</span>
-                    <span v-else="player.state == 'paused'">Escuchaste</span> 
-                </span>
-                {{ numerados?'Audio '+audio.index:audio.filename }}
+                <span v-if="numerados">{{ frase }}</span>
+                {{ numerados ? 'Audio ' + audio.index : audio.filename }}
             </template>
             <template v-else>
-                {{ numerados?'Escuchar Audio '+audio.index:audio.filename }}
+                {{ numerados ? 'Escuchar Audio ' + audio.index : audio.filename }}
             </template>
         </span>
     </div>
@@ -34,7 +30,7 @@ const props = defineProps({
         default: false
     },
     titulo: {
-        type: String, 
+        type: String,
         required: false,
         default: ""
     }
@@ -43,6 +39,9 @@ const props = defineProps({
 const player = usePlayer()
 
 function clickPlay(audio) {
+
+    const titulo = !props.titulo ? audio.label : props.titulo + (props.numerados ? ` (${audio.index})` : '')
+
     if (player.music && player.music.src == audio.src) {
         switch (player.state) {
             /*case 'error':
@@ -53,11 +52,19 @@ function clickPlay(audio) {
                 player.playPause()
                 break
             default:
-                player.play(audio.src, props.titulo + (props.numerados?` (${audio.index})`:'') )
+                player.play(audio.src, titulo)
         }
     }
     // nuevo audio
-    else player.play(audio.src, props.titulo + (props.numerados?` (${audio.index})`:''))
+    else player.play(audio.src, titulo)
 }
+
+const frase = computed(() => {
+    if (player.state == 'playing') return 'Escuchando'
+    if (player.state == 'paused') return 'En pausa'
+    if (player.state == 'error') return 'Error en el audio'
+    return 'Escuchaste'
+})
+
 
 </script>
