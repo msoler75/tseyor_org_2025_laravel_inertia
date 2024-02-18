@@ -4,7 +4,7 @@
         <div v-show="player.mini" @mouseleave="collapsePlayer">
             <div class="mx-auto flex justify-between items-center" :class="expanded ? 'w-full max-w-lg gap-3' : 'pr-4'">
                 <button type="button"
-                    class="btn btn-primary rounded-full w-12 h-12 flex justify-center items-center transform scale-75 text-3xl"
+                    class="btn btn-secondary rounded-full w-12 h-12 flex justify-center items-center transform scale-75 text-3xl"
                     @click="player.playPause">
                     <Icon v-show="player.state == 'stopped'" icon="ph:play-duotone" class="transform scale-[2]" />
                     <Icon v-show="player.state == 'paused'" icon="ph:play-pause-duotone" class="transform scale-[2]" />
