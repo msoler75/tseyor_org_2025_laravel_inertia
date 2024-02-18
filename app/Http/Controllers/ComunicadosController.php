@@ -8,6 +8,8 @@ use App\Models\Comunicado;
 use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
 use Illuminate\Support\Facades\Auth;
+use App\Jobs\ProcesarAudios;
+
 
 class ComunicadosController extends Controller
 {
@@ -52,14 +54,14 @@ class ComunicadosController extends Controller
         if (is_numeric($categoria))
             $resultados = $resultados->where('categoria', $categoria);
 
-         if (!$orden || $orden == 'recientes')
+        if (!$orden || $orden == 'recientes')
             $resultados = $resultados->orderBy('fecha_comunicado', 'DESC');
         else if ($orden == 'cronologico')
             $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
 
         $resultados = $resultados
             ->paginate(15)
-            ->appends(['buscar' => $buscar,  'categoria' => $categoria, 'ano' => $año, 'orden' => $orden]);
+            ->appends(['buscar' => $buscar, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden]);
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);
@@ -85,7 +87,7 @@ class ComunicadosController extends Controller
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $comunicado->visibilidad == 'P';
+        $publicado = $comunicado->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
         if (!$comunicado || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Item no encontrado o no autorizado
@@ -113,8 +115,20 @@ class ComunicadosController extends Controller
     }
 
 
-    public function procesar() {
+    public function procesar()
+    {
         // comprueba en los comunicados si hay audios que aun no se han convertido, o si hay pdf que no se han preparado con sus metadatos
-        $audiosPendientes = Comunicado::where('audios', 'LIKE', '%upload%');
+        $comunicados = Comunicado::where('audios', 'LIKE', '%upload%');
+
+        foreach ($comunicados->get() as $comunicado) {
+            if ($comunicado->audios) {
+                // dd($comunicado);
+
+                $año = date('Y', strtotime($comunicado->fecha_comunicado));
+                $folder = "medios/comunicados/audios/$año";
+
+                dispatch(new ProcesarAudios($comunicado, $folder));
+            }
+        }
     }
 }
