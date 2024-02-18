@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff787e55dea26197125c6036d4b05b29",
+    "content-hash": "d52f83191a6ad40830860817f93b5dc3",
     "packages": [
         {
             "name": "backpack/basset",
@@ -4060,68 +4060,6 @@
                 "source": "https://github.com/paragonie/constant_time_encoding"
             },
             "time": "2022-06-14T06:56:20+00:00"
-        },
-        {
-            "name": "perftools/php-profiler",
-            "version": "1.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/perftools/php-profiler.git",
-                "reference": "40edd32f8ac471dd4d0f6e7057ed0acab4eb1c36"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/perftools/php-profiler/zipball/40edd32f8ac471dd4d0f6e7057ed0acab4eb1c36",
-                "reference": "40edd32f8ac471dd4d0f6e7057ed0acab4eb1c36",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^5.3.0 || ^7.0 || ^8.0"
-            },
-            "conflict": {
-                "perftools/xhgui-collector": "<1.8"
-            },
-            "require-dev": {
-                "alcaeus/mongo-php-adapter": "^1.1",
-                "perftools/xhgui-collector": "^1.8"
-            },
-            "suggest": {
-                "alcaeus/mongo-php-adapter": "Adapter to provide ext-mongo interface on top of mongo-php-library (PHP>=5.6)",
-                "ext-curl": "cURL extension for upload saver",
-                "ext-mongo": "mongo extension (PHP>=5.3,<7.0)",
-                "ext-mongodb": "mongodb extension (PHP>=5.4)",
-                "ext-tideways": "Use tideways to profile",
-                "ext-uprofiler": "Use uprofiler to profile",
-                "ext-xhprof": "Use xhprof to profile",
-                "perftools/xhgui-collector": "For mongodb or pdo savers"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Xhgui\\Profiler\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Lauri Piisang",
-                    "email": "lauri.piisang@eesti.ee"
-                },
-                {
-                    "name": "Elan Ruusamäe",
-                    "email": "glen@pld-linux.org"
-                }
-            ],
-            "description": "PHP Profiling based on XHGui",
-            "support": {
-                "issues": "https://github.com/perftools/php-profiler/issues",
-                "source": "https://github.com/perftools/php-profiler/tree/1.1.1"
-            },
-            "time": "2022-06-09T14:39:38+00:00"
         },
         {
             "name": "phpoption/phpoption",
