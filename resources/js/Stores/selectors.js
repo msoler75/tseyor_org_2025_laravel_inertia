@@ -5,7 +5,7 @@ export const useSelectors = defineStore("selectors", {
   state: () => ({
     soloTitulosLibros: false,
     archivosVista: "normal",
-    vistaComunicados: "tarjetas",
+    vistaComunicados: "",
     mostrarPermisos: false // muestra permisos en el listado de archivos. útil para administradores
   }),
 });

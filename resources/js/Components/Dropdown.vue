@@ -1,7 +1,7 @@
 <template>
     <div class="relative">
       <div @click="handleToggle">
-        <slot name="trigger" />
+        <slot name="trigger" :open="open"/>
       </div>
   
       <!-- Full Screen Dropdown Overlay -->

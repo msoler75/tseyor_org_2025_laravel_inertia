@@ -114,7 +114,7 @@ Route::get('noticias/{slug}', [NoticiasController::class, 'show'])->where('slug'
 
 Route::get('comunicados', [ComunicadosController::class, 'index'])->name('comunicados');
 Route::get('comunicados/{slug}', [ComunicadosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('comunicado');
-Route::get('archivo/comunicados', [ComunicadosController::class, 'archive'])->name('archivo.comunicados');
+// Route::get('archivo/comunicados', [ComunicadosController::class, 'archive'])->name('archivo.comunicados');
 
 Route::get('libros', [LibrosController::class, 'index'])->name('libros');
 Route::get('libros/{slug}', [LibrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('libro');

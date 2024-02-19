@@ -7,7 +7,7 @@
         </button>
 
 
-        <button v-if="query" type="submit" @click.prevent="submit" class="btn btn-primary" :disabled="query == savedQuery && !cambiado">
+        <button v-if="query" type="submit" @click.prevent="submit" class="btn btn-primary" :disabled="submitting || (query == savedQuery && !cambiado)">
             Buscar
         </button>
 
@@ -46,7 +46,7 @@ const props = defineProps({
 })
 
 const maxWidth = ref(200);
-const query = ref('');
+const query = ref(props.modelValue);
 const currentUrl = ref('');
 const savedQuery = ref('');
 let reloadTimeout = null;
@@ -57,20 +57,31 @@ onMounted(() => {
     currentUrl.value = window.location.href.replace(/\?.*/, '');
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    savedQuery.value = urlParams.get(props.keyword);
-    query.value = savedQuery.value;
+    if(urlParams.has(props.keyword)) {
+        savedQuery.value = urlParams.get(props.keyword);
+        query.value = savedQuery.value;
+        console.log('from URL search', savedQuery.value)
+    }
     emit('update:modelValue', query.value);
     document.addEventListener('keydown', handleKeyDown);
 });
 
 const cambiado = ref(false)
 
+
+watch(()=>props.modelValue, (v)=>{
+    query.value = v
+})
+
 // si hay algun cambio en los argumentos de búsqueda
 watch(()=>props.arguments, (value) => cambiado.value = true, { deep: true })
 
 watch(query, (value) => emit('update:modelValue', value))
 
+const submitting = ref(false)
+
 const submit = () => {
+    submitting.value = true
     var args = {}
     args[props.keyword] = query.value
     if (typeof props.arguments === 'object')
@@ -99,4 +110,6 @@ const handleKeyDown = (event) => {
         clearInput();
     }
 };
+
+
 </script>

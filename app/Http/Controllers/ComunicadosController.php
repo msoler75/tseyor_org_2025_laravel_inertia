@@ -37,6 +37,8 @@ class ComunicadosController extends Controller
         $categoria = $request->input('categoria');
         $año = $request->input('ano');
         $orden = $request->input('orden');
+        $completo = $request->input('completo');
+        if($completo=="0") $completo = false;
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
@@ -46,6 +48,9 @@ class ComunicadosController extends Controller
             $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano', 'imagen'])
                 ->where('visibilidad', 'P');
         }
+
+
+        // $resultados->where("titulo", "511. Un nuevo enfoque hacia los demas");
 
         // parámetros
         if (is_numeric($año))
@@ -61,17 +66,18 @@ class ComunicadosController extends Controller
 
         $resultados = $resultados
             ->paginate(15)
-            ->appends(['buscar' => $buscar, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden]);
+            ->appends(['buscar' => $buscar, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden, 'completo'=>$completo?1:0]);
 
         if ($buscar)
-            BusquedasHelper::formatearResultados($resultados, $buscar);
+            BusquedasHelper::formatearResultados($resultados, $buscar, false, $completo);
 
         return Inertia::render('Comunicados/Index', [
             'categoria' => $categoria,
             'ano' => $año,
             'orden' => $orden,
             'filtrado' => $buscar,
-            'listado' => $resultados
+            'listado' => $resultados,
+            'completo' => $completo
         ])
             ->withViewData(SEO::get('comunicados'));
     }
@@ -100,7 +106,7 @@ class ComunicadosController extends Controller
     }
 
 
-
+/*
     public function archive(Request $request)
     {
         $buscar = $request->input('buscar');
@@ -112,7 +118,7 @@ class ComunicadosController extends Controller
         return Inertia::render('Comunicados/Archivo', [
             'listado' => $comunicados
         ]);
-    }
+    }*/
 
 
     public function procesar()
@@ -131,4 +137,7 @@ class ComunicadosController extends Controller
             }
         }
     }
+
+
+
 }
