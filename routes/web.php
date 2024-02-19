@@ -31,6 +31,7 @@ use App\Http\Controllers\MeditacionesController;
 use App\Http\Controllers\TutorialesController;
 use App\Http\Controllers\NormativasController;
 use App\Http\Controllers\WorkerController;
+use App\Http\Controllers\ChatGPTController;
 use App\Http\Controllers\ImagenesController;
 use App\Http\Controllers\TarjetaVisitaController;
 use App\Http\Controllers\EmailsController;
@@ -270,6 +271,9 @@ Route::put('equipos/{idEquipo}/{idUsuario}/remover', [EquiposController::class, 
 Route::put('equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
 
 
+// chat gpt
+
+Route::get('/chatgpt', [ChatGPTController::class, 'chat'])->name('chatgpt');
 
 // comentarios
 

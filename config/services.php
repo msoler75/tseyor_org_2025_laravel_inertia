@@ -44,6 +44,8 @@ return [
         'url' => env('AUDIO_CONVERTER_URL'),
         'frecuencia'=> env('AUDIO_CONVERTER_FRECUENCIA', 22050),
         'kbps' => env('AUDIO_CONVERTER_KBPS', '24k')
-    ]
+    ],
+
+    'openai_key' => env('OPEN_AI_KEY', NULL)
 
 ];
