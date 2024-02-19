@@ -2,7 +2,6 @@
 
 namespace App\Pigmalion;
 
-use TeamTNT\TNTSearch\Support\Highlighter;
 use Illuminate\Support\Facades\Log;
 
 class BusquedasHelper
@@ -24,7 +23,7 @@ class BusquedasHelper
         $palabras = preg_split('/[\s\p{P}]+/', strtolower($buscar), -1, PREG_SPLIT_NO_EMPTY);
 
         // 2. Descartar las palabras habituales, pronombres y artículos
-       
+
         $palabrasFiltradas = array_filter($palabras, function ($palabra) {
             return !in_array(strtolower($palabra), BusquedasHelper::$palabrasComunes);
         });
@@ -34,13 +33,15 @@ class BusquedasHelper
         return empty($resultado) ? $buscar : $resultado;
     }
 
-    public static function formatearResultados($resultados, $busqueda, $soloTitulo = false)
+
+
+    public static function formatearResultados($resultados, $busqueda, $soloTitulo = false, $extraeTodos = false)
     {
         $options  = ['tagOptions' => ['class' => 'search-term']];
-        $h = new Highlighter();
+        $h = new ExtendedHighlighter();
 
         $resultados
-            ->transform(function ($item) use ($h, $options, $busqueda, $soloTitulo) {
+            ->transform(function ($item) use ($h, $options, $busqueda, $soloTitulo, $extraeTodos) {
 
                 // Log::info('formatearResultados ' . $item->id);
 
@@ -48,19 +49,28 @@ class BusquedasHelper
                     unset($item['descripcion']);
                 else {
                     // Limpiar el texto y eliminar elementos no deseados
-                    if ($item->texto && strlen($item->texto) > 256) {
+                    if ($item->texto && strlen($item->texto) > 50) {
 
                         $textoLimpio = strip_tags($item->texto); // Eliminar etiquetas HTML
                         $textoLimpio = preg_replace('/\bimg\b/', '', $textoLimpio); // Eliminar la palabra "img"
                         // eliminamos caracters de markdown
-                        $textoLimpio = preg_replace("/[#*]/", "", $textoLimpio);
+                        $textoLimpio = preg_replace("/[#*_]/", "", $textoLimpio);
                         $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
                     } else $textoLimpio = $item->descripcion;
 
+                    
                     // extraemos la parte más relevante
                     $parteRelevante = $h->extractRelevant($busqueda, $textoLimpio, 400);
-
                     $item->descripcion = $h->highlight($parteRelevante, $busqueda, "em", $options);
+                    
+                    if($extraeTodos)
+                    {
+                        // extraemos todos los extractos que contienen algo del texto buscado
+                        $extractos = $h->extractRelevantAll($busqueda, $textoLimpio, 500);
+                        foreach($extractos as $idx=>$extracto)
+                            $extractos[$idx]= $h->highlight($extracto, $busqueda, "em", $options);
+                        $item->extractos = $extractos;
+                    }
                 }
 
                 // Realizar el mismo proceso para el campo 'titulo'
@@ -75,6 +85,10 @@ class BusquedasHelper
                 return $item;
             });
     }
+
+
+
+
 
 
     public static function limpiarResultados($resultados, $busqueda, $soloTitulo = false)
