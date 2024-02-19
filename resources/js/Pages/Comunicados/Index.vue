@@ -215,11 +215,11 @@ const modes = ref([
         label: VISTA_TARJETAS
     },
     {
-        icon: 'ph:grid-four-duotone',
+        icon: 'ph:list-dashes-bold',
         label: VISTA_LISTADO
     },
     {
-        icon: 'ph:list-magnifying-glass-duotone',
+        icon: 'tabler:list-search',
         label: VISTA_BUSQUEDA_COMPLETA
     }])
 
