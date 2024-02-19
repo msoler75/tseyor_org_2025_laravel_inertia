@@ -184,7 +184,7 @@ export default [
               title: "Glosario de términos",
               route: "terminos",
               description: "Índice de términos del conocimiento de Tseyor",
-              icon: "ph:list-magnifying-glass-duotone",
+              icon: "ph:text-a-underline-duotone",
             },
             {
               title: "Guías Estelares",
@@ -208,7 +208,7 @@ export default [
               title: "Libros para comenzar",
               url: "comenzar",
               description: "Dónde comenzar en la lectura de Tseyor",
-              icon: "ph:list-magnifying-glass-duotone",
+              icon: "ph:list-numbers-duotone",
             },
             {
               title: "Tutoriales",
