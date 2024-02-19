@@ -53,7 +53,7 @@ const props = defineProps({
         type: String,
         default: ''
     },
-    preserveScroll: {type: Boolean, default: none}
+    preserveScroll: {type: Boolean, default: false}
 })
 
 const descriptionFinal = computed(() => {
