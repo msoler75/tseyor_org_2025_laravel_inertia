@@ -4,7 +4,8 @@
                 outline-gray-300 dark:outline-transparent outline-[0.4px] hover:outline
                relative" :class="(imageLeft ? 'flex-row' : '')
                +(draft?' bg-base-300':'')
-               ">
+               "
+               :preserve-scroll="preserveScroll">
         <div class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
                 'background-image': 'url(\'' + getImageUrl(image) + '?w=300\')'
@@ -51,7 +52,8 @@ const props = defineProps({
     descriptionClass: {
         type: String,
         default: ''
-    }
+    },
+    preserveScroll: {type: Boolean, default: none}
 })
 
 const descriptionFinal = computed(() => {

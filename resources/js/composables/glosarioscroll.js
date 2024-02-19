@@ -1,4 +1,8 @@
-export function scrollToWord(el) {
+export function scrollToTerm() {
+
+    const el = document.querySelector('.glosario-term')
+    if(!el) return
+
     // altura del menu top nav
     const navH = document.querySelector("nav").getBoundingClientRect().height
     const posY0 = document.querySelector("body").getBoundingClientRect().top
