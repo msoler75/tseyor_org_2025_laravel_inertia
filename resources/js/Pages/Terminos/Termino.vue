@@ -20,23 +20,14 @@
         </div>
 
 
-        <TransitionFade>
-            <div v-if="nav.scrollY > 300" class="fixed top-[4rem] left-0 right-0 p-3 bg-base-300 shadow z-10 cursor-pointer"
-                @click="scrollToTop">
-                <div class="container mx-auto flex justify-center gap-5 items-center ">
-                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150 opacity-0" />
-                    <span class="font-bold">Glosario</span>
-                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
-                </div>
-            </div>
-        </TransitionFade>
+        <GlosarioBar/>
 
         <div class="w-full flex justify-between gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 
             <div class="w-full md:w-[7rem] flex-shrink-0 card bg-base-100 shadow p-5 h-fit md:sticky md:top-20">
                 <div class="flex flex-wrap md:hidden  gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToWord(el)">
+                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToTerm">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -44,13 +35,14 @@
                 <div class="hidden md:grid grid-flow-dense grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
                         :style="{ 'grid-column': Math.floor(index / (letras.length / 2)) + 1 }"
-                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToWord(el)">
+                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToTerm">
                     {{ letraItem }}
                     </Link>
                 </div>
             </div>
 
-            <div ref="el" >
+            <!-- scroll aqui -->
+            <div class="glosario-term">
                 <div class="py-[5ch] bg-base-100 md:max-w-[80ch] mx-auto shadow-xl mb-20 px-7 rounded-xl">
 
                     <div class="prose mx-auto">
@@ -74,7 +66,7 @@
                         <Link v-for="contenido in referencias.terminos" :key="contenido.id"
                             :href="route('termino', contenido.slug)"
                             class="capitalize lowercase hover:text-primary transition-color duration-200 w-fit h-fit font-bold text-lg card shadow hover:shadow-lg px-5 py-2 bg-base-100"
-                            preserve-scroll @click="scrollToWord(el)">
+                            preserve-scroll @click="scrollToTerm">
                         {{ contenido.nombre }}
                         </Link>
                     </div>
@@ -94,7 +86,7 @@
             <div class="w-[7rem] card bg-base-100 shadow p-5 h-fit sticky top-20 opacity-0 hidden lg:flex">
                 <div class="letras grid grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToWord(el)">
+                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToTerm">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -106,10 +98,10 @@
 
 
         <div class="flex justify-between my-12">
-            <Link v-if="anterior" :href="anterior.slug" class="hover:underline" preserve-scroll @click="scrollToWord(el)">
+            <Link v-if="anterior" :href="anterior.slug" class="hover:underline" preserve-scroll @click="scrollToTerm">
             ‹&nbsp;&nbsp; {{ anterior.nombre }}</Link>
             <span v-else />
-            <Link v-if="siguiente" :href="siguiente.slug" class="hover:underline" preserve-scroll @click="scrollToWord(el)">{{
+            <Link v-if="siguiente" :href="siguiente.slug" class="hover:underline" preserve-scroll @click="scrollToTerm">{{
                 siguiente.nombre }} &nbsp;&nbsp;›
             </Link>
             <span v-else />
@@ -123,7 +115,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';
 import { useNav } from '@/Stores/nav'
-import { scrollToWord, scrollToTop } from '@/composables/glosarioscroll.js'
+import { scrollToTerm } from '@/composables/glosarioscroll.js'
 
 defineOptions({ layout: AppLayout })
 
