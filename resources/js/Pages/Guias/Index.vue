@@ -33,7 +33,7 @@
 
             <div class="w-full flex-grow">
 
-                <div class="grid gap-8" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(12rem, 1fr))` }">
+                <GridAppear class="gap-8" col-width="12rem">
                     <CardContent v-for="contenido in guias.data" :key="contenido.id" :image="contenido.imagen"
                         :href="route('guia', contenido.slug)" imageClass="h-60"
                         preserve-scroll @click="scrollToTerm">
@@ -41,7 +41,7 @@
                             class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
                             {{ contenido.nombre }}</div>
                     </CardContent>
-                </div>
+                </GridAppear>
 
 
             </div>

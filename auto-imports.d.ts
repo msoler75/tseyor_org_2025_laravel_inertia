@@ -27,6 +27,7 @@ declare global {
   const ref: typeof import('vue')['ref']
   const removeAccents: typeof import('./resources/js/composables/textutils.js')['removeAccents']
   const router: typeof import('@inertiajs/vue3')['router']
+  const scrollToTerm: typeof import('./resources/js/composables/glosarioscroll.js')['scrollToTerm']
   const scrollToTop: typeof import('./resources/js/composables/glosarioscroll.js')['scrollToTop']
   const scrollToWord: typeof import('./resources/js/composables/glosarioscroll.js')['scrollToWord']
   const ucFirst: typeof import('./resources/js/composables/textutils.js')['ucFirst']

@@ -65,6 +65,7 @@ declare module 'vue' {
     GlosarioBar: typeof import('./resources/js/Components/GlosarioBar.vue')['default']
     GlosarioNav: typeof import('./resources/js/Components/GlosarioNav.vue')['default']
     GlosarioTabs: typeof import('./resources/js/Components/GlosarioTabs.vue')['default']
+    GridAppear: typeof import('./resources/js/Components/GridAppear.vue')['default']
     GridFill: typeof import('./resources/js/Components/GridFill.vue')['default']
     Hero: typeof import('./resources/js/Sections/Hero.vue')['default']
     Image: typeof import('./resources/js/Components/Image.vue')['default']

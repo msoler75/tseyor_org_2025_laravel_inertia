@@ -264,13 +264,10 @@ axios.get(route('setting', 'navigation'))
 
 
                         <!-- Hamburger -->
-                        <div class="-mr-2 flex items-center lg:hidden"
-                        
-                        >
+                        <div class="-mr-2 flex items-center lg:hidden">
                             <button
                                 class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
-                                :class="portada?'bg-base-300':''"
-                                @click="nav.sideBarShow = !nav.sideBarShow">
+                                :class="portada ? 'bg-base-300' : ''" @click="nav.sideBarShow = !nav.sideBarShow">
                                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
                                         :class="{ 'hidden': showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }"
@@ -304,21 +301,20 @@ axios.get(route('setting', 'navigation'))
                             <button @click="login2">L2</button>
                         </div>
 
-                        <GlobalSearch @mouseover="nav.closeTabs()"/>
+                        <GlobalSearch @mouseover="nav.closeTabs()" />
 
                         <transition class="hidden lg:flex" enter-active-class="transition ease-out duration-200"
                             enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
                             leave-active-class="transition ease-in duration-75"
                             leave-from-class="transform opacity-100 scale-100"
                             leave-to-class="transform opacity-0 scale-95">
-                            <NavSubmenu class="absolute top-[120%]  mx-[5rem] z-40" style="width:calc(100% - 10rem)" />
+                            <NavSubmenu class="absolute top-[120%]  mx-[5rem] z-40 w-[calc(100%-10rem)]" />
                         </transition>
 
 
                         <div class="ml-auto flex items-center gap-3">
 
-                            <button @click="toggleDark()"
-                                @mouseover="nav.closeTabs()"
+                            <button @click="toggleDark()" @mouseover="nav.closeTabs()"
                                 class="my-auto p-1 w-10 h-10 flex justify-center items-center rounded-full bg-base-300 shadow text-xl sm:ml-6">
                                 <Icon v-show="isDark" icon="ph:sun-dim-duotone" />
                                 <Icon v-show="!isDark" icon="ph:moon-duotone" />
@@ -464,7 +460,7 @@ axios.get(route('setting', 'navigation'))
                                 </div>
                             </div>
                             <Link v-else :href="route('login')" class="text-2xl bg-base-300 rounded-full p-2 shadow"
-                            @mouseover="nav.closeTabs()">
+                                @mouseover="nav.closeTabs()">
                             <Icon icon="ph:sign-in-duotone" title="Iniciar sesión" />
                             </Link>
 
@@ -572,7 +568,11 @@ axios.get(route('setting', 'navigation'))
             <!-- Page Heading -->
             <header v-if="$slots.header" class="bg-base-100 dark:bg-gray-800 shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
+                    <transition name="slide-fade">
+                        <div :key="$page.url">
+                            <slot name="header" />
+                        </div>
+                    </transition>
                 </div>
             </header>
 
@@ -587,8 +587,9 @@ axios.get(route('setting', 'navigation'))
                     </div>
                 </transition>
 
-
-                <slot />
+               <!--  <transition name="slide-fade">-->
+                    <slot />
+                <!-- </transition> -->
             </main>
 
             <!--  queremos que si la ruta actual es /archivos, no se muestre el footer: -->
@@ -598,3 +599,23 @@ axios.get(route('setting', 'navigation'))
 </template>
 
 
+
+<style scoped>
+/* durations and timing functions.*/
+.slide-fade-enter-active {
+    transition: all .2s ease;
+}
+
+.slide-fade-leave-active {
+    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-enter,
+.slide-fade-leave-to
+
+/* .slide-fade-leave-active below version 2.1.8 */
+    {
+    transform: translateX(10px);
+    opacity: 0;
+}
+</style>
