@@ -1,5 +1,5 @@
 <template>
-    <div ref="el" class="grid justify-center"
+    <div ref="el" class="grid grid-appear justify-center"
         :style="colWidth?{ 'grid-template-columns': `repeat(auto-fill, minmax(${colWidth}, 1fr))` }:{}">
         <slot></slot>
 </div>
@@ -29,16 +29,16 @@ onMounted(()=>{
 </script>
 
 
-<style scoped>
-.grid:not(class*=[gap-]) {
+<style>
+.grid-appear:not(class*=[gap-]) {
     @apply gap-4;
 }
-.grid>>>*
+.grid-appear> *
 {
     opacity: 0;
 }
 
-.grid.appear >>> * {
+.grid-appear.appear > * {
     --a-delay : 0;
     animation: appear .2s;
     animation-delay: var(--a-delay);
