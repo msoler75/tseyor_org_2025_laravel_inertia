@@ -13,8 +13,7 @@
 
         <SearchResultsHeader :results="listado" />
 
-        <div v-if="listado.data.length > 0" class="grid gap-4"
-            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
+        <GridAppear col-width="28rem" class="gap-4">
             <CardContent v-for="contenido in listado.data" :key="contenido.slug"
             image-left
             :title="contenido.titulo+(contenido.visibilidad!='P'?' (borrador)':'')"
@@ -24,7 +23,7 @@
             :tag="traducir(contenido.coleccion)"
             :description="contenido.descripcion"
             :date="contenido.fecha"/>
-        </div>
+        </GridAppear>
 
         <pagination class="mt-6" :links="listado.links" />
 

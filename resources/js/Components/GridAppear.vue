@@ -43,10 +43,11 @@ onMounted(()=>{
     animation: appear .2s;
     animation-delay: var(--a-delay);
     animation-fill-mode: forwards;
+    animation-timing-function: ease_out;
 }
 
 @keyframes appear {
-    0% {opacity: 0}
-    100% {opacity: 1}
+    0% {opacity: 0; transform: translateY(10rem)}
+    100% {opacity: 1; tranform: none}
 }
 </style>
