@@ -76,23 +76,23 @@
                     class="flex justify-between items-center my-5">
 
                     <SearchResultsHeader :results="listado" :arguments="busqueda"
-                        v-show="!vistaBusquedaCompleta || (vistaBusquedaCompleta && !buscando && (filtrado || (listado.data?.length && listado.data[0].extractos)))" 
+                        v-show="!vistaBusquedaCompleta || (vistaBusquedaCompleta && !buscando && (filtrado || (listado.data?.length && listado.data[0].extractos)))"
                         :class="listado.data?.length==0?'mb-64':''"
                         />
 
                 </div>
 
 
-                <div v-if="(selectors.vistaComunicados == VISTA_TARJETAS) && listado.data && listado.data?.length > 0"
-                    class="grid gap-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+                <GridAppear v-if="(selectors.vistaComunicados == VISTA_TARJETAS) && listado.data && listado.data?.length > 0"
+                    class="gap-4" col-width="24rem">
 
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
                         :image="contenido.imagen" image-class="h-80" :href="route('comunicado', contenido.slug)"
-                        :description="contenido.descripcion" :date="contenido.published_at" 
+                        :description="contenido.descripcion" :date="contenido.published_at"
                         imageLeft
                         />
 
-                </div>
+                </GridAppear>
 
 
                 <table v-else-if="selectors.vistaComunicados == VISTA_LISTADO && listado.data && listado.data?.length > 0"
@@ -129,7 +129,7 @@
                             </h2>
                             <p>Ahora puedes realizar una búsqueda completa en los comunicados.</p>
                             <p>Para ello ve a la <div class="inline text-primary cursor-pointer after:content-['↗'] hover:underline" @click.native="focusBuscar">casilla de búsqueda</div>, pon el texto a buscar y pulsa en el botón "BUSCAR".</p>
-                       
+
                     </div>
                     <div v-else class="flex flex-col gap-5">
                         <div v-for="(comunicado, index) of listado.data" :key="comunicado.slug"
@@ -253,7 +253,7 @@ onMounted(() => {
         // console.log('query', query.value)
         if(!query.value&&!vistaBusquedaCompleta.value)
             busqueda.value.orden = 'recientes'
-        
+
     })
 })
 
