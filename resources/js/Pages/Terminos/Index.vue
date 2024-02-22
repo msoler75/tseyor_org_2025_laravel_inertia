@@ -3,7 +3,7 @@
     <div class="container py-12 mx-auto">
 
 
-        <div class="flex justify-between items-center mb-20">
+        <div class="flex justify-between items-center mb-7">
             <Back class="opacity-0 pointer-events-none">Glosario</Back>
             <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center" title='Descarga todo el glosario en pdf'><Icon icon="ph:download-duotone" />Descargar</Link>
             <AdminPanel modelo="termino" necesita="administrar contenidos" />
@@ -47,14 +47,14 @@
 
                 <SearchResultsHeader v-if="!letra" :results="listado" />
 
-                <div class="grid gap-8 mb-14" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
+                <GridAppear class="gap-8 mb-14" col-width="16rem">
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('termino', contenido.slug)"
                         class="hover:text-primary transition-color duration-200 w-fit card shadow hover:shadow-lg px-5 py-2 bg-base-100 h-fit"
                         preserve-scroll @click="scrollToTerm">
                         <div v-html="contenido.nombre" class="capitalize lowercase font-bold text-lg"/>
                         <div v-if="filtrado" v-html="contenido.descripcion" class="mt-3"/>
                 </Link>
-                </div>
+                </GridAppear>
 
                 <pagination class="mt-6" :links="listado.links" />
 

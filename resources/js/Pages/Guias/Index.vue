@@ -3,7 +3,7 @@
     <div class="container py-12 mx-auto">
 
 
-        <div class="flex justify-between items-center mb-20">
+        <div class="flex justify-between items-center mb-7">
             <Back class="opacity-0 pointer-events-none">Glosario</Back>
             <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center" title='Descarga todo el glosario en pdf'><Icon icon="ph:download-duotone" />Descargar</Link>
             <AdminPanel modelo="guia" necesita="administrar contenidos" />
@@ -19,6 +19,8 @@
         <div class="flex justify-end mb-5">
             <SearchInput />
         </div>
+
+        <GlosarioBar/>
 
         <div class="glosario-term w-full flex gap-5 flex-wrap md:flex-nowrap">
 
