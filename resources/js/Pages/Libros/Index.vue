@@ -38,7 +38,7 @@
 
                 <SearchResultsHeader :results="listado" />
 
-                <div class="grid gap-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
+                <GridAppear class="grid gap-4" col-width="28rem">
                     <div v-show="selectors.soloTitulosLibros" v-for="libro in listado.data" :key="libro.id"
                         class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
                         <Link :href="route('libro', libro.slug)" class="flex items-center gap-3">
@@ -52,7 +52,7 @@
                         class="h-[355px]"
                         imageClass="w-[250px] h-[355px]" />
 
-                </div>
+                </GridAppear>
 
 
                 <pagination class="mt-6" :links="listado.links" />
