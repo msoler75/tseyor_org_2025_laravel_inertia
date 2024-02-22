@@ -47,7 +47,7 @@
 
                 <SearchResultsHeader v-if="!letra" :results="listado" />
 
-                <GridAppear class="gap-8 mb-14" col-width="16rem">
+                <GridAppear class="gap-8 mb-14" :time-lapse="0.01" col-width="16rem">
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('termino', contenido.slug)"
                         class="hover:text-primary transition-color duration-200 w-fit card shadow hover:shadow-lg px-5 py-2 bg-base-100 h-fit"
                         preserve-scroll @click="scrollToTerm">
