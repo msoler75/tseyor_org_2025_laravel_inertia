@@ -3,7 +3,7 @@
     <div class="container py-12 mx-auto">
 
 
-        <div class="flex justify-between items-center mb-20">
+        <div class="flex justify-between items-center mb-7">
             <Back class="opacity-0 pointer-events-none">Glosario</Back>
             <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center" title='Descarga todo el glosario en pdf'><Icon icon="ph:download-duotone" />Descargar</Link>
             <AdminPanel modelo="lugar" necesita="administrar contenidos" />
@@ -20,20 +20,21 @@
             <SearchInput />
         </div>
 
+        <GlosarioBar/>
 
-
-        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <div class="glosario-term w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="w-full flex-grow">
 
-                <div class="grid gap-8" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(16rem, 1fr))` }">
+                <GridAppear class="gap-8" col-width="16rem">
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
-                        :href="route('lugar', contenido.slug)" imageClass="h-60">
+                        :href="route('lugar', contenido.slug)" imageClass="h-60"
+                        preserve-scroll @click="scrollToTerm">
                         <div
                             class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
                             {{ contenido.nombre }}</div>
                     </CardContent>
-                </div>
+                </GridAppear>
 
 
                 <pagination class="mt-6" :links="listado.links" />
@@ -46,7 +47,8 @@
                     <ul class="list-disc">
                         <li v-for="lugar in todos" :key="lugar.id">
                             <Link :href="route('lugar', lugar.slug)"
-                                class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
+                                class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800"
+                                preserve-scroll @click="scrollToTerm">
                             {{ lugar.nombre }}
                             </Link>
                         </li>
@@ -58,6 +60,7 @@
 </template>
 
 <script setup>
+import { scrollToTerm } from '@/composables/glosarioscroll.js'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
