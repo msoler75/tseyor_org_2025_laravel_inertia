@@ -2,6 +2,8 @@
     <Sections white-first>
         <Section>
             <Text>
+                <Prose>
+
                 <Image src="https://tseyor.org/images/ong-logo.webp?ts=1386336254&thumb=709x278&quality=87&fe=JPG"/>
                 <blockquote>
                     <p>Se está preparando un gran cambio y ello comportará también grandes dificultades. Nuestro grupo, el
@@ -18,6 +20,8 @@
                         Ahí también está una parte importante de la ayuda humanitaria.
                     </p>
                 </blockquote>
+
+            </Prose>
             </Text>
         </Section>
 

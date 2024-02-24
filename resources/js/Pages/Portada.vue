@@ -49,35 +49,35 @@
 
         <Section ref="contadoresEl">
             <div class="grid grid-cols-2 md:px-5 md:grid-cols-4 gap-x-7 gap-y-10 text-lg mt-20 md:mt-0" v-if="stats">
-                <Link class="btn flex-col h-auto p-4" :href="route('comunicados')">
+                <Link class="btn flex-col h-auto p-4 border border-gray-500" :href="route('comunicados')">
                 <Counter :to="stats.comunicados" :count="contando" :delay="0" class="text-2xl" />
                 <span>Comunicados</span>
                 </Link>
-                <Link class="btn flex-col h-auto p-4" :href="route('comunicados')">
+                <Link class="btn flex-col h-auto p-4 border border-gray-500" :href="route('comunicados')">
                 <Counter :to="stats.paginas" :count="contando" :delay="200" class="text-2xl" />
                 <span>Páginas transcritas</span>
                 </Link>
-                <Link class="btn flex-col h-auto p-4" :href="route('libros')">
+                <Link class="btn flex-col h-auto p-4 border border-gray-500" :href="route('libros')">
                 <Counter :to="stats.libros" :count="contando" :delay="400" class="text-2xl" />
                 <span>Libros</span>
                 </Link>
-                <Link class="btn flex-col h-auto p-4" :href="route('audios')">
+                <Link class="btn flex-col h-auto p-4 border border-gray-500" :href="route('audios')">
                 <Counter :to="stats.audios" :count="contando" :delay="600" class="text-2xl" />
                 <span>Audios</span>
                 </Link>
-                <Link class="btn flex-col h-auto p-4" :href="route('videos')">
+                <Link class="btn flex-col h-auto p-4 border border-gray-500" :href="route('videos')">
                 <Counter :to="stats.videos" :count="contando" :delay="800" class="text-2xl" />
                 <span>Vídeos</span>
                 </Link>
-                <Link class="btn flex-col h-auto p-4" :href="route('libros')">
+                <Link class="btn flex-col h-auto p-4 border border-gray-500" :href="route('usuarios')">
                 <Counter :to="stats.usuarios" :count="contando" :delay="1000" class="text-2xl" />
                 <span>Voluntarios</span>
                 </Link>
-                <Link class="btn flex-col h-auto p-4" :href="route('centros')">
+                <Link class="btn flex-col h-auto p-4 border border-gray-500" :href="route('centros')">
                 <Counter :to="stats.centros" :count="contando" :delay="1200" class="text-2xl" />
                 <span>Centros Tseyor</span>
                 </Link>
-                <Link class="btn flex-col h-auto p-4" :href="route('entradas')">
+                <Link class="btn flex-col h-auto p-4 border border-gray-500" :href="route('entradas')">
                 <Counter :to="stats.entradas" :count="contando" :delay="1400" class="text-2xl" />
                 <span>Entradas de Blog</span>
                 </Link>
@@ -95,8 +95,8 @@
 
 
         <Section>
-            <TextText title="Suscríbete" subtitle="Recibe nuestro boletín con los últimos comunicados, noticias, eventos..."
-                buttonLabel="RECIBIR BOLEtín" :href="route('filosofia')" textClass="container" full cover />
+            <TextText title="Suscríbete"
+                :href="route('filosofia')"  full cover />
 
                 <Suscribe/>
         </Section>
