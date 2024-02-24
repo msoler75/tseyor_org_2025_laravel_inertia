@@ -19,7 +19,7 @@
         </div>
 
         <!-- Contenedor de Categorías -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <GridAppear class="grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Categoría: Libros -->
             <div v-for="seccion of secciones" :key="seccion.title" class="card bg-base-100 p-6 rounded-lg shadow-md relative group
             transition duration-300  hover:shadow-lg antialiased
@@ -34,7 +34,7 @@
             </div>
 
 
-        </div>
+        </GridAppear>
     </div>
 
 

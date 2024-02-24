@@ -23,7 +23,7 @@ const el = ref(null)
 
 onMounted(() => {
     var d = 0.0;
-    console.log('EL', { el })
+    console.log('EL', { el }, props.timeLapse)
     for (let i = 0; i < el.value.children.length; i++) {
         el.value.children[i].style.setProperty('--a-delay', d + 's')
         d += props.timeLapse
