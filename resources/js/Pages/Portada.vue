@@ -7,7 +7,7 @@
                     textClass="md:max-w-screen-md justify-center" image-right
                     class="h-[95vh] w-[96vw] absolute">
                     <div class="bg-black bg-opacity-70 hover:bg-opacity-90 transition duration-500 p-7 rounded-xl">En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
-                        Nosotros aquí en este nivel estamos reforzados particularmente por la 
+                        Nosotros aquí en este nivel estamos reforzados particularmente por la
                         <Referencia>Confederación de Mundos
                         Habitados de la Galaxia</Referencia>.</div>
                 </Hero>
@@ -97,10 +97,8 @@
         <Section>
             <TextText title="Suscríbete" subtitle="Recibe nuestro boletín con los últimos comunicados, noticias, eventos..."
                 buttonLabel="RECIBIR BOLEtín" :href="route('filosofia')" textClass="container" full cover />
-            <div class="flex gap-5">
-                <input type="email" class="max-w-[300px] mx-auto" placeholder="correo@..." /> <button
-                    class="btn btn-primary">Suscribirse</button>
-            </div>
+
+                <Suscribe/>
         </Section>
 
     </FullPage>

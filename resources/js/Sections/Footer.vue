@@ -10,9 +10,10 @@
                         </li>
                     </ul>
                 </div>
-                <div class="space-y-5 lg:space-y-2">
+                <div class="space-y-5 lg:space-y-2 w-56">
                     <h3 class="text-lg font-bold">Formulario de suscripción</h3>
                     <!-- Aquí iría tu formulario de suscripción -->
+                    <Suscribe/>
                 </div>
                 <div class="space-y-5 lg:space-y-2">
                     <h3 class="text-lg font-bold text-center">Redes Sociales</h3>
