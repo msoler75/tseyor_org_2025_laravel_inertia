@@ -43,7 +43,7 @@
 
                 <SearchResultsHeader :results="listado" />
 
-                <div v-if="listado.data.length > 0" class="grid gap-4 max-w-full"
+                <GridAppear v-if="listado.data.length > 0" class="gap-4 max-w-full"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(32rem, 1fr))` }">
                     <div v-for="audio in listado.data" :key="audio.id"
                         class="card flex-row shadow bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
@@ -65,7 +65,7 @@
                             <Icon icon="ph:share-network-duotone" class="text-xl" />
                         </div>
                     </div>
-                </div>
+                </GridAppear>
 
 
                 <pagination class="mt-6" :links="listado.links" />
