@@ -2,6 +2,9 @@ import { defineStore } from "pinia";
 import navigationItems from "../navigation.js";
 
 const relativeUrl = (url) => {
+    console.log('relativeUrl', url)
+    if(!url) return ""
+    if(url=="undefined") return ""
   if (!url.match(/https?:\/\/.*/)) return url;
   return url.replace(/https?:\/\/[^\/]+/, "");
 };
