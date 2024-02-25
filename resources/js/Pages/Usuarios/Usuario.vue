@@ -20,6 +20,11 @@
                     {{ usuario.name || usuario.slug }}
                 </h1>
 
+                <div class="my-2 flex flex-wrap gap-3">
+                    <div class="badge" v-for="grupo of gruposNoEquipos" :key="grupo.id">{{ grupo.nombre }}</div>
+                </div>
+
+
                 <div class="prose my-7">
                     <form @submit.prevent="onSubmit">
                         <textarea class="w-full max-w-full" cols=160 v-if="editandoFrase" v-model="nuevaFrase"></textarea>
@@ -35,13 +40,14 @@
                     </form>
                 </div>
 
+
+
                 <div class="flex flex-wrap justify-center gap-5">
                     <Link class="badge badge-neutral gap-2" v-for="equipo of usuario.equipos" :key="equipo.id"
                         :href="route('equipo', equipo.slug || equipo.id)">
                     <span v-if="administrar" @click.prevent="abrirModalEliminarEquipo(equipo)">x</span>
                     {{ equipo.nombre }}
                     </Link>
-
                 </div>
 
                 <div v-if="administrar && equiposFiltrados.length" class="mt-7">
@@ -133,6 +139,8 @@ const props = defineProps({
 
 // todos los equipos, excepto los que el usuario ya es miembro
 const equiposFiltrados = computed(() => props.equipos.filter(e => !props.usuario.equipos.find(ue => ue.id == e.id)))
+
+const gruposNoEquipos = computed(()=> props.usuario.grupos.filter(g=>!props.usuario.equipos.find(e=>e.group_id==g.id)))
 
 const soyYo = computed(()=>user?.id==props.usuario.id)
 

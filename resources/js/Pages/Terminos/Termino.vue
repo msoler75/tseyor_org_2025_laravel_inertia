@@ -42,7 +42,7 @@
             </div>
 
             <!-- scroll aqui -->
-            <div class="glosario-term">
+            <div class="glosario-term animate-fade-in">
                 <div class="py-[5ch] bg-base-100 md:max-w-[80ch] mx-auto shadow-xl mb-20 px-7 rounded-xl">
 
                     <div class="prose mx-auto">

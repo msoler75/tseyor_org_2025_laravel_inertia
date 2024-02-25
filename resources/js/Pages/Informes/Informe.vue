@@ -14,7 +14,7 @@
         </div>
 
 
-        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0">
+        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
 
             <div class="prose mx-auto mb-12">
                 <h1>{{ informe.titulo }}</h1>

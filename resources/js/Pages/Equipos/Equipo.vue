@@ -12,7 +12,7 @@
 
         <div class="container mx-auto pb-20">
 
-            <GridFill class="gap-7" w="20rem">
+            <GridAppear class="gap-7" col-width="20rem">
 
                 <EquipoInformacion :equipo="equipo" />
 
@@ -86,7 +86,7 @@
 
                 <EquipoAdmin v-if="soyCoordinador" :equipo="equipo" />
 
-            </GridFill>
+            </GridAppear>
         </div>
 
 

@@ -6,7 +6,7 @@
             <AdminPanel modelo="normativa" necesita="administrar contenidos" :contenido="normativa" />
         </div>
 
-        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0">
+        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
 
             <div class="prose mx-auto">
                 <h1>{{ normativa.titulo }}</h1>

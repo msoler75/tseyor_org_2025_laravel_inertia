@@ -4,10 +4,10 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use Tightenco\Ziggy\Ziggy;
-use App\T;
+// use Tightenco\Ziggy\Ziggy;
+// use App\T;
 use App\Models\Setting;
-use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\Log;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -33,7 +33,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $_ = new T(__CLASS__, "share");
+        // $_ = new T(__CLASS__, "share");
         // si no muestra algun dato de .env, hay que borrar la cache
         /*$ajaxWords = ['buscar', 'buscar_recientes', 'buscar_archivo'];
 
@@ -95,7 +95,7 @@ class HandleInertiaRequests extends Middleware
             'anuncio' => $anuncio,
             'meta_image_default' => config('seo.image.fallback'),
             'csrf_token' => csrf_token(),
-            /*'ziggy' => function () use (ç$request, $ziggy_arr) {
+            /*'ziggy' => function () use ($request, $ziggy_arr) {
                 return array_merge($ziggy_arr, [
                     'location' => $request->url(),
                 ]);

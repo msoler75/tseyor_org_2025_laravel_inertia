@@ -13,7 +13,7 @@
                 <ImageShadow :src="libro.imagen+'?w=300'" :alt="libro.titulo" class="object-contain rounded-[2px]"/>
             </div>
 
-            <div class="p-6 card bg-base-100 shadow">
+            <div class="p-6 card bg-base-100 shadow animate-fade-in">
 
                 <h1 class="text-2xl font-bold mb-4">{{ libro.titulo }}</h1>
                 <p class="text-gray-600 text-sm mb-2 flex justify-between">

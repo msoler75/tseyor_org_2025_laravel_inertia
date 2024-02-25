@@ -6,7 +6,7 @@ import { useDark, useToggle } from "@vueuse/core";
 import { usePermisos } from '@/Stores/permisos'
 import { usePlayer } from '@/Stores/player'
 
-console.log('app initiating...')
+// console.log('app initiating...')
 
 const permisos = usePermisos()
 const player = usePlayer()
@@ -30,7 +30,7 @@ router.on('finish', (event) => {
     console.log(`Page loaded ${event.detail.visit.url}`)
 })
 
-console.log({ page })
+// console.log({ page })
 
 defineProps({
     title: String,
@@ -73,7 +73,7 @@ watch(isDark, value => {
 console.log('app.update dark state')
 updateDarkState()
 
-// esto lo hacemos para que globalsearch pueda tambien ponerse en dark mode en la portada
+// esto lo hacemos únicamente para el caso muy particular de que globalsearch pueda tambien ponerse en dark mode en la portada
 function updateBodyTheme() {
     const themePortada = portada.value && nav.scrollY < 300 ? 'winter' : ''
     document.querySelector("body").setAttribute('data-theme', themePortada)
@@ -84,91 +84,6 @@ watch(() => `${nav.scrollY}+${portada.value}`, () => {
 })
 
 updateBodyTheme()
-
-/*
-// On page load or when changing themes, best to add inline in `head` to avoid FOUC
-if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-  document.documentElement.classList.add('dark')
-} else {
-  document.documentElement.classList.remove('dark')
-}
-
-// Whenever the user explicitly chooses light mode
-localStorage.theme = 'light'
-
-// Whenever the user explicitly chooses dark mode
-localStorage.theme = 'dark'
-
-// Whenever the user explicitly chooses to respect the OS preference
-localStorage.removeItem('theme')
-*/
-
-
-/*
-
-tri-estado:
-
-
-<template>
-  <div :class="theme">
-    <!-- Contenido de la aplicación aquí -->
-  </div>
-</template>
-
-<script setup>
-import { useDark, useColorScheme } from 'vue-use';
-
-    const isDark = useDark();
-    const colorScheme = useColorScheme();
-
-    // Variable de estado que controla el tema actual
-    const currentTheme = Vue.ref('system');
-
-    // Función para actualizar el tema actual
-    const updateTheme = () => {
-      if (currentTheme.value === 'system') {
-        currentTheme.value = colorScheme.value;
-      }
-    };
-
-    // Actualiza el tema cuando cambia el color esquema
-    Vue.watch(colorScheme, updateTheme);
-
-    // Función para cambiar el tema manualmente
-    const setTheme = (theme) => {
-      currentTheme.value = theme;
-    };
-
-    // Vigila los cambios en la variable de estado currentTheme
-    Vue.watch(currentTheme, (theme) => {
-      if (theme === 'light') {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-      } else if (theme === 'dark') {
-        document.documentElement.classList.remove('light');
-        document.documentElement.classList.add('dark');
-      } else if (theme === 'system') {
-        updateTheme();
-
-        if (currentTheme.value === 'light') {
-          document.documentElement.classList.remove('dark');
-          document.documentElement.classList.add('light');
-        } else if (currentTheme.value === 'dark') {
-          document.documentElement.classList.remove('light');
-          document.documentElement.classList.add('dark');
-        }
-      }
-    });
-
-    // Retorna la variable de estado currentTheme y la función setTheme
-    return {
-      currentTheme,
-      setTheme,
-    };
-  },
-};
-
-*/
 
 
 // AUDIO PLAYER
@@ -432,6 +347,10 @@ axios.get(route('setting', 'navigation'))
 
                                             <DropdownLink :href="route('usuario', $page.props.auth.user.id)">
                                                 Mi Perfil
+                                            </DropdownLink>
+
+                                            <DropdownLink href="/muul">
+                                                Espacio Muul
                                             </DropdownLink>
 
                                             <DropdownLink :href="route('profile.show')">

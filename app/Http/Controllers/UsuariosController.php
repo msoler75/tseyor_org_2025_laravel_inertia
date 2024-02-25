@@ -35,9 +35,9 @@ class UsuariosController extends Controller
     public function show($id)
     {
         if (is_numeric($id)) {
-            $usuario = User::with('equipos')->findOrFail($id);
+            $usuario = User::with('equipos')->with('grupos')->findOrFail($id);
         } else {
-            $usuario = User::with('equipos')->where('slug', $id)->firstOrFail();
+            $usuario = User::with('equipos')->with('grupos')->where('slug', $id)->firstOrFail();
         }
 
         if (!$usuario) {

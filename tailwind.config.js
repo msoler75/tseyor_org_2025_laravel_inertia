@@ -29,9 +29,22 @@ export default {
       fontFamily: {
         sans: ["Figtree", ...defaultTheme.fontFamily.sans],
       },
+      animation: {
+        'fade-in': 'fadein .6s ease-out',
+        'slide-up': 'slideup .6s ease-out',
+      },
+      keyframes: {
+        fadein: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
+        },
+        slideup: {
+          '0%': { transform: 'translateY(7rem)' },
+          '100%': { transform: 'translateY(0)' },
+        }
+      }
     },
   },
-
   daisyui: {
     themes: [
       {

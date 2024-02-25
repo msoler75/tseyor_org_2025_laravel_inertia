@@ -30,8 +30,7 @@
 
                 <SearchResultsHeader :results="listado" />
 
-                <div v-if="listado.data.length > 0" class="grid gap-4"
-                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+                <GridAppear v-if="listado.data.length > 0" class="gap-4" col-width="24rem">
 
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
                         :title="contenido.nombre" :href="route('equipo', contenido.slug)" image-left
@@ -42,7 +41,7 @@
                         </div>
                     </CardContent>
 
-                </div>
+                </GridAppear>
 
                 <pagination class="mt-6" :links="listado.links" />
 

@@ -1,6 +1,6 @@
 <template>
     <FondoEstrellado class="w-full h-full relative py-12"  id="myform">
-        <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative">
+        <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative animate-fade-in">
             <h1>Inscripción al Curso Holístico Tseyor<small>&nbsp;(gratuito)</small></h1>
             <div v-if="error">
                 <div class="alert alert-error">
