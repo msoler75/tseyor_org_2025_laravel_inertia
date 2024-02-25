@@ -5,13 +5,15 @@
         <AdminPanel modelo="libro" necesita="administrar contenidos" class="mb-3" />
 
         <h1>Libros</h1>
-        <p>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales</Referencia> mantenidas con nuestros
-            <Referencia>Guías Estelares</Referencia>.</p>
+        <p>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales
+            </Referencia> mantenidas con nuestros
+            <Referencia>Guías Estelares</Referencia>.
+        </p>
 
         <div class="flex w-full justify-between mb-5">
             <SearchInput class="flex-grow">
                 <div class="flex items-baseline gap-3 w-full pl-1"><input id="titulos" type="checkbox"
-                    v-model="selectors.soloTitulosLibros"> <label for="titulos" class="mb-0">Solo títulos</label></div>
+                        v-model="selectors.soloTitulosLibros"> <label for="titulos" class="mb-0">Solo títulos</label></div>
             </SearchInput>
         </div>
 
@@ -38,20 +40,23 @@
 
                 <SearchResultsHeader :results="listado" />
 
-                <GridAppear class="grid gap-4" col-width="28rem">
-                    <div v-if="selectors.soloTitulosLibros" v-for="libro in listado.data" :key="libro.id"
+                <GridAppear v-if="selectors.soloTitulosLibros" class="grid gap-4" col-width="28rem">
+                    <div v-for="libro in listado.data" :key="libro.id"
                         class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
                         <Link :href="route('libro', libro.slug)" class="flex items-center gap-3">
                         <Icon icon="ph:book-duotone" class="flex-shrink-0" /> <span v-html="libro.titulo" /></Link>
                     </div>
-                    <CardContent v-else v-for="contenido in listado.data" :key="contenido.id"
-                        :title="contenido.titulo" :image="contenido.imagen" :href="route('libro', contenido.slug)"
+                </GridAppear>
+
+                <GridAppear v-else class="grid gap-4" col-width="28rem">
+                    <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
+                        :image="contenido.imagen" :href="route('libro', contenido.slug)"
                         :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
-                        image-left
-                        class="h-[355px]"
-                        imageClass="w-[250px] h-[355px]" />
+                        image-left class="h-[355px]" imageClass="w-[250px] h-[355px]" />
 
                 </GridAppear>
+
+
 
 
                 <pagination class="mt-6" :links="listado.links" />
