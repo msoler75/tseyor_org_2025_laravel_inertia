@@ -90,17 +90,17 @@ Hay varios tipos de situaciones:
 (1) la imagen es externa o no se desea optimizacion de ningun tipo (optimize=0),
     así que se carga directamente (putSrcImage)
 
-(2) El src ya tiene parámetros w ó h, por ejemplo imagen.jpg?w=400, 
+(2) El src ya tiene parámetros w ó h, por ejemplo imagen.jpg?w=400,
     así que se carga la imagen directamente (putSrcImage)
 
-(3) Se ha establecido el tamaño mediante props (width y height), 
+(3) Se ha establecido el tamaño mediante props (width y height),
     así que se carga directamente con ?w=width y ?h=height (putSrcImage)
 
-(4) Se conoce el tamaño original de la imagen (srcWidth y srcHeight), 
-    así que se visualiza una imagen en blanco para obtener las dimensiones optimizadas (widthOp y HeightOp) 
+(4) Se conoce el tamaño original de la imagen (srcWidth y srcHeight),
+    así que se visualiza una imagen en blanco para obtener las dimensiones optimizadas (widthOp y HeightOp)
     y después se carga la imagen con ?w=widthOp&h=heightOp (putImageWithSize)
 
-(5) Se debe recalcular sus dimensiones óptimas de visualización, 
+(5) Se debe recalcular sus dimensiones óptimas de visualización,
     así que primero se debe solicitar sus dimensiones originales al servidor,
     para establecer una imagen en blanco svg (putFakeImage) de las mismas dimensiones originales y, al rato,
     saber las dimensiones de visualización, con las que cargaremos ya la imagen original aplicando esas dimensiones (putImageWithSize)
@@ -121,7 +121,7 @@ function init() {
         return putImageWithSize(imageSrc.value, props.width, props.height)
 
     // Se conoce el tamaño original de la imagen (4)
-    if (props.srcWidth && props.srcHeight) 
+    if (props.srcWidth && props.srcHeight)
         return putFakeImage(getPixels(props.srcWidth),getPixels(props.srcHeight))
 
     // Se debe recalcular sus dimensiones óptimas de visualización (5)
@@ -135,7 +135,11 @@ function init() {
         })
 }
 
+var originalSize =  {width: 0, height: 0}
+
 function putFakeImage(width, height) {
+    originalSize.width = width
+    originalSize.height = height
     // generar una imagen transparent SVG con formato URI, debe tener ancho igual a size.width y alto igual a size.height
     displaySrc.value = `data:image/svg+xml,%3Csvg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E`
     setTimeout(() => {
@@ -150,6 +154,8 @@ function putFakeImage(width, height) {
 
 async function putImageWithSize(widthOp, heightOp) {
     console.log('putImageWithSize', imageSrc.value, widthOp, heightOp)
+    if(widthOp==originalSize.width&&heightOp==originalSize.height)
+        return putSrcImage(imageSrc.value)
     const webp = await isWebPSupported()
     var src = imageSrc.value + '?w=' + widthOp + '&h=' + heightOp
     if (!webp)
