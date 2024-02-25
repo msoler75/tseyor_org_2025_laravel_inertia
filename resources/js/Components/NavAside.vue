@@ -29,19 +29,20 @@ const close = () => {
         <div class="fixed top-0 left-0 h-full bg-base-100 shadow-lg transition duration-200 z-50 overflow-y-auto"
             :class="!show ? '-translate-x-full' : ''">
             <div class="rounded-r xl:hidden flex justify-between w-full p-6 items-center">
-                
+
                 <div class="flex justify-between  items-center space-x-3">
-                    <Link :href="route('portada')">
+                    <Link :href="route('portada')"
+                    @click="close">
                                 <ApplicationMark />
                                 </Link>
                     <div class="text-2xl leading-6 font-bold font-serif">TSEYOR</div>
                 </div>
             </div>
-            <div class="xl:rounded-r transform xl:translate-x-0 ease-in-out transition duration-500 
+            <div class="xl:rounded-r transform xl:translate-x-0 ease-in-out transition duration-500
                     flex justify-start items-start h-full w-full sm:w-64 flex-col">
                 <div class="flex flex-col justify-start items-center  w-full
                 divide-y divide-gray-300 border-b border-gray-300
-                bg-base-200 
+                bg-base-200
                 ">
                     <template v-for="tab, index in nav.items" :key="index">
                         <button v-if="tab.hasItems" @click="nav.toggleTab(tab)"
@@ -54,7 +55,7 @@ const close = () => {
                         </button>
                         <Link v-else-if="tab.url||tab.route"
                         class="px-5 font-bold flex justify-start items-center space-x-6   rounded py-5  w-full "
-                         :href="tab.url  || route(tab.route)">
+                         :href="tab.url  || route(tab.route)" @click="close">
                             <Icon :icon="tab.icon" />
                             <div class="text-sm  uppercase leading-4 ">{{ tab.title }}</div>
                         </Link>
@@ -66,7 +67,8 @@ const close = () => {
                                 <button v-for="item of section.items" :key="item.url"
                                     class="px-5 flex justify-start items-center space-x-6   rounded  py-5  w-full ">
                                     <Icon :icon="item.icon" />
-                                    <Link :href="item.url" class="text-left text-base leading-4">{{ item.title }}</Link>
+                                    <Link :href="item.url" class="text-left text-base leading-4"
+                                    @click="close">{{ item.title }}</Link>
                                 </button>
                             </template>
                         </Collapse>
