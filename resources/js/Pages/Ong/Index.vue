@@ -4,7 +4,8 @@
             <Text>
                 <Prose>
 
-                <Image src="https://tseyor.org/images/ong-logo.webp?ts=1386336254&thumb=709x278&quality=87&fe=JPG"/>
+                <img src="https://tseyor.org/images/ong-logo.webp?ts=1386336254&thumb=709x278&quality=87&fe=JPG"
+                class="w-full h-auto max-w-[709px] aspect-[709/278]"/>
                 <blockquote>
                     <p>Se está preparando un gran cambio y ello comportará también grandes dificultades. Nuestro grupo, el
                         grupo Tseyor, pondrá su granito de arena para paliarlas.
