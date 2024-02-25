@@ -2,7 +2,8 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-20">
-            <Back href="/formacion">Formación</Back>
+            <span></span>
+            <Back v-if="false" href="/formacion">Formación</Back>
             <AdminPanel modelo="tutorial" necesita="administrar contenidos" />
         </div>
 
@@ -36,7 +37,7 @@
 
                 <SearchResultsHeader :results="listado" :category="categoriaActiva" />
 
-                <div class="grid gap-2 py-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+                <GridAppear class="gap-2 py-4" col-width="24rem" :time-lapse="0.01">
 
 
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('tutorial', contenido.slug)"
@@ -51,7 +52,7 @@
                         </div>
                     </div>
                 </Link>
-                </div>
+                </GridAppear>
 
 
                 <pagination class="mt-6" :links="listado.links" />

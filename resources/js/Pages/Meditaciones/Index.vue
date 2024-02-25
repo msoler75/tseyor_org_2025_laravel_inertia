@@ -39,9 +39,7 @@
 
                 <SearchResultsHeader :results="listado" :category="categoriaActiva" />
 
-                <div class="grid gap-2 py-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
-
-
+                <GridAppear class="grid gap-2 py-4" col-width="24rem" :time-lapse="0.01">
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('meditacion', contenido.slug)"
                         class="hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
                         <Icon icon="ph:dot-fill" class="flex-shrink-0"/>
@@ -54,7 +52,7 @@
                         </div>
                     </div>
                 </Link>
-                </div>
+                </GridAppear>
 
 
                 <pagination class="mt-6" :links="listado.links" />

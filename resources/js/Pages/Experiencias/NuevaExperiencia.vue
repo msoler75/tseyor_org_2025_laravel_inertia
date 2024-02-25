@@ -1,9 +1,5 @@
 <template>
-    <div class="w-full relative py-12" id="myform" :style="{
-        'background-size': 'cover',
-        'background-attachment': 'fixed',
-        background: 'black url(/almacen/medios/fondos/space.jpg) repeat'
-    }">
+    <FondoEstrellado class="w-full relative py-12" id="myform">
 
         <div class="container mx-auto flex justify-between items-center mb-20 text-white">
             <Back>Experiencias</Back>
@@ -11,7 +7,7 @@
         </div>
 
 
-        <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative">
+        <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative animate-fade-in">
             <h1>Comparte tus experiencias interdimensionales</h1>
             <div v-if="error">
                 <div class="alert alert-error">
@@ -19,7 +15,7 @@
                     <span> {{ error }}</span>
                 </div>
             </div>
-           
+
             <div v-if="submitted" class="space-y-7">
                 <div class="alert alert-success">
                     <Icon icon="ph:check-circle-bold" class="text-2xl" />
@@ -74,7 +70,7 @@
                 </button>
             </form>
         </div>
-    </div>
+    </FondoEstrellado>
 </template>
 
 

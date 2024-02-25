@@ -21,7 +21,7 @@
         <div class="glosario-term flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
                 <div class="w-full h-auto mx-auto"
-                :class="imagenes.length>1?'':'md:sticky md:top-20'">
+                :class="imagenes.length>1?'':'md:sticky md:top-32'">
                     <Image v-for="imagen, index of imagenes" :key="index" :src="imagen" :alt="guia.nombre" class="w-full h-auto mb-4" />
                 </div>
             </div>
@@ -33,7 +33,7 @@
                     <TimeAgo :date="guia.updated_at" />
                 </p>
                 <div class="mb-4"></div>
-                <tabs  :options="{ disableScrollBehavior: true }">
+                <tabs  :options="{ disableScrollBehavior: true }" class="animate-fade-in">
                     <tab v-for="seccion, index of secciones" :key="index" :name="seccion.titulo">
                         <div class="prose" v-html="MarkdownToHtml(seccion.texto)"></div>
                     </tab>
