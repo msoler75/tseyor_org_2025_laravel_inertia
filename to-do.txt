@@ -1,5 +1,3 @@
--formulario suscripción (en footer y en portada)
-
 -usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
     - y si no, al menos poder mandar fácilmente los datos de contacto a un administrador
 

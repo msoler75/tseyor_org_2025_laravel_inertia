@@ -21,7 +21,7 @@
                 <div class="optionalParent">
                     <div class="clear foot">
                         <input type="submit" value="Suscribirme" name="subscribe" id="mc-embedded-subscribe"
-                            class="btn btn-sm w-full btn-primary">
+                            class="btn btn-sm dark:text-gray-100 w-full">
                     </div>
                 </div>
             </div>
