@@ -39,8 +39,7 @@
 
                     <tab name="Listado">
 
-                        <div class="grid gap-8"
-                            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(12rem, 1fr))` }">
+                        <GridAppear class="gap-8" col-width="12rem">
                             <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen_url"
                                 :href="route('contacto', contenido.slug)" imageClass="h-60"
                                 :tag="paisActivo ? '' : contenido.pais">
@@ -48,7 +47,7 @@
                                     class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
                                     {{ contenido.nombre }}</div>
                             </CardContent>
-                        </div>
+                        </GridAppear>
 
                         <pagination class="mt-6" :links="listado.links" />
 

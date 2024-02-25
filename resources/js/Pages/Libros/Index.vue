@@ -39,13 +39,12 @@
                 <SearchResultsHeader :results="listado" />
 
                 <GridAppear class="grid gap-4" col-width="28rem">
-                    <div v-show="selectors.soloTitulosLibros" v-for="libro in listado.data" :key="libro.id"
+                    <div v-if="selectors.soloTitulosLibros" v-for="libro in listado.data" :key="libro.id"
                         class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
                         <Link :href="route('libro', libro.slug)" class="flex items-center gap-3">
                         <Icon icon="ph:book-duotone" class="flex-shrink-0" /> <span v-html="libro.titulo" /></Link>
                     </div>
-
-                    <CardContent v-show="!selectors.soloTitulosLibros" v-for="contenido in listado.data" :key="contenido.id"
+                    <CardContent v-else v-for="contenido in listado.data" :key="contenido.id"
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('libro', contenido.slug)"
                         :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
                         image-left

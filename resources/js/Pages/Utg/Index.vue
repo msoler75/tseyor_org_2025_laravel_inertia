@@ -6,6 +6,7 @@
                 srcImage="https://tseyor.org/images/sello-utg.webp?ts=1433235750&thumb=299x435&quality=87&fe=jpg"
                 image-right buttonLabel="Ver Estatutos" href="/estatutos"
                 >
+                <Prose>
                     <blockquote>
                         <p>
                             La Universidad Tseyor de Granada mantendrá comunicación, información e interrelación con los
@@ -13,6 +14,7 @@
                             fuente en la que todo Muul podrá acceder de pleno derecho.
                         </p>
                     </blockquote>
+                </Prose>
             </TextImage>
         </Section>
 
