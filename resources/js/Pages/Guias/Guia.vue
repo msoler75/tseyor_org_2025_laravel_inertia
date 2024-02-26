@@ -42,8 +42,7 @@
                         <Prose v-if="libros.texto" class="mb-12" v-html="libros.texto"/>
                         <div class="flex flex-wrap gap-5">
                             <Link :href="route('libro', libro.slug)" v-if="libros" v-for="libro, index of libros.items"
-                                :key="index" class="flex"
-                                preserve-scroll @click="scrollToContent">
+                                :key="index" class="flex">
                             <Image :src="libro.imagen" :alt="libro.titulo" class="object-contain rounded-[2px] w-48 shadow-xl"  />
                             </Link>
                         </div>
@@ -59,8 +58,7 @@
 
         <div class="card bg-base-100 shadow flex-wrap flex-row p-5 lg:p-10 gap-4">
             <div v-for="item of guias" :key="item.slug" class="flex gap-2">
-                <Link v-show="item.slug != guia.slug" :href="route('guia', item.slug)"
-                preserve-scroll @click="scrollToContent">
+                <Link v-show="item.slug != guia.slug" :href="route('guia', item.slug)">
                 <span class="capitalize">{{ item.nombre }}</span>
                 </Link>
             </div>
@@ -70,7 +68,6 @@
 </template>
 
 <script setup>
-import { scrollToContent } from '@/composables/contentbar.js'
 import { Tabs, Tab } from 'vue3-tabs-component';
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';

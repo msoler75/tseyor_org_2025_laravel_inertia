@@ -46,7 +46,7 @@
                         image-left
                         class="h-[300px]"
                         imageClass="w-[200px] h-[300px]"
-                        @click="nav.fadeoutPage()"/>
+                        @click="nav.fadeoutPage"/>
         </div>
 
 

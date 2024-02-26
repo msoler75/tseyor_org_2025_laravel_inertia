@@ -5,7 +5,7 @@
                relative" :class="(imageLeft ? 'flex-row' : '')
                +(draft?' bg-base-300':'')
                "
-               :preserve-scroll="preserveScroll">
+               :preserve-page="preservePage">
         <div class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
                 'background-image': 'url(\'' + getImageUrl(image) + '?w=300\')',
@@ -30,7 +30,7 @@
 
 <script setup>
 import { getImageUrl } from '@/composables/imageutils.js'
-import { Link } from '@inertiajs/vue3'
+import  Link  from '@/Components/Link.vue'
 
 const props = defineProps({
     imageLeft: {
@@ -58,7 +58,7 @@ const props = defineProps({
         type: String,
         default: ''
     },
-    preserveScroll: {type: Boolean, default: false}
+    preservePage: {type: Boolean, default: false}
 })
 
 const descriptionFinal = computed(() => {

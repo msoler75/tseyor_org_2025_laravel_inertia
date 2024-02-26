@@ -7,7 +7,7 @@ import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "ziggy";
 import { Icon } from "@iconify/vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head } from "@inertiajs/vue3";
 //import FloatingVue from 'floating-vue'
 
 
@@ -30,7 +30,7 @@ createInertiaApp({
       createApp({ render: () => h(App, props) })
         // https://chriswray.dev/posts/how-to-add-components-globally-in-an-inertiajs-application
         .mixin({
-          components: { Icon, Head, Link },
+          components: { Icon, Head },
         })
         .use(plugin)
         .use(ZiggyVue, Ziggy)
