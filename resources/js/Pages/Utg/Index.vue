@@ -4,8 +4,7 @@
         <Section :height="screen && screen.width < 768 ? '400px' : '550px'">
             <TextImage title="Universidad Tseyor de Granada"
                 srcImage="https://tseyor.org/images/sello-utg.webp?ts=1433235750&thumb=299x435&quality=87&fe=jpg"
-                image-right buttonLabel="Ver Estatutos" href="/estatutos"
-                >
+                image-right buttonLabel="Ver Estatutos" href="/estatutos/utg">
                 <Prose>
                     <blockquote>
                         <p>
