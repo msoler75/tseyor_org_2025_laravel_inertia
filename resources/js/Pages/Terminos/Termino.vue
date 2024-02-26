@@ -27,8 +27,7 @@
             <div class="w-full md:w-[7rem] flex-shrink-0 card bg-base-100 shadow p-5 h-fit md:sticky md:top-20">
                 <div class="flex flex-wrap md:hidden  gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :href="route('terminos') + '?letra=' + letraItem"
-                        preserve-page>
+                        :href="route('terminos') + '?letra=' + letraItem">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -36,8 +35,7 @@
                 <div class="hidden md:grid grid-flow-dense grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
                         :style="{ 'grid-column': Math.floor(index / (letras.length / 2)) + 1 }"
-                        :href="route('terminos') + '?letra=' + letraItem"
-                        preserve-page>
+                        :href="route('terminos') + '?letra=' + letraItem">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -84,7 +82,7 @@
             <div class="w-[7rem] card bg-base-100 shadow p-5 h-fit sticky top-20 opacity-0 hidden lg:flex">
                 <div class="letras grid grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :href="route('terminos') + '?letra=' + letraItem" preserve-page>
+                        :href="route('terminos') + '?letra=' + letraItem">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -134,10 +132,6 @@ const props = defineProps({
         required: true,
     },
 });
-
-const el = ref(null)
-
-const nav = useNav()
 
 function buscarClick(query) {
     router.visit(route('terminos') + '?buscar=' + query)

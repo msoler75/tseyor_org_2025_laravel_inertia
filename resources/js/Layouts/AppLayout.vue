@@ -35,15 +35,15 @@ router.on('start', (event) => {
 
     const nuevaRuta = event.detail.visit.url
     const rutaActual = new URL(window.location)
-    var cambiaId = false
-    // to-do: si tenemos dos rutas: rutaActual = /glosario/1 y nuevaRuta = /glosario/2 entonces cambiaId ha de cambiar a true. Lo mismo si son dos rutas /libros/1 y /libros/juan
+    let mismaSeccion = false
+    // to-do: si tenemos dos rutas: rutaActual = /glosario/1 y nuevaRuta = /glosario/2 entonces mismaSeccion ha de cambiar a true. Lo mismo si son dos rutas /libros/1 y /libros/juan
     // por lo tanto hemos de splitear las rutas y ver si coinciden en la primera palabra
     const p1 = rutaActual.pathname.split('/')
     const p2 = nuevaRuta.pathname.split('/')
-    cambiaId = rutaActual.origin == nuevaRuta.origin && p1[1] == p2[1] && p1.length == p2.length
+    mismaSeccion = rutaActual.origin == nuevaRuta.origin && p1[1] == p2[1]
     // si, quitando la parte de query, son la misma ruta...
     console.log('comparing', nuevaRuta.origin + nuevaRuta.pathname, 'vs', rutaActual.origin + rutaActual.pathname)
-    let scrolling = nuevaRuta.origin + nuevaRuta.pathname == rutaActual.origin + rutaActual.pathname || cambiaId
+    let scrolling = nuevaRuta.origin + nuevaRuta.pathname == rutaActual.origin + rutaActual.pathname || mismaSeccion
     if (nav.dontScroll) {
         if (!nav.dontFadeout)
             nav.fadeoutPage()
