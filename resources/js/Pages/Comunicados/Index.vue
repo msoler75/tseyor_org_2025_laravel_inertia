@@ -90,6 +90,7 @@
                         :image="contenido.imagen" image-class="h-80" :href="route('comunicado', contenido.slug)"
                         :description="contenido.descripcion" :date="contenido.published_at"
                         imageLeft
+                        @click="useNav().fadeoutPage"
                         />
 
                 </GridAppear>
@@ -171,7 +172,7 @@
 </template>
 
 <script setup>
-
+import { useNav } from '@/Stores/nav.js'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { useSelectors } from '@/Stores/selectors'
 

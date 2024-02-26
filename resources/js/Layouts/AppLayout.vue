@@ -5,7 +5,6 @@ import { useNav } from '@/Stores/nav'
 import { useDark, useToggle } from "@vueuse/core";
 import { usePermisos } from '@/Stores/permisos'
 import { usePlayer } from '@/Stores/player'
-
 // console.log('app initiating...')
 
 const permisos = usePermisos()
@@ -25,42 +24,78 @@ document.addEventListener("mouseleave", function (event) {
 
 // Use the router's navigation guard to track route changes
 router.on('start', (event) => {
-    console.log(`router: start. Starting a visit to ${event.detail.visit.url}`)
+    console.log(`router: start. Starting a visit to ${event.detail.visit.url}`, event.detail.visit.url)
+
+    /*if(nav.ignoreScroll) {
+        scrollToCurrentPosition()
+        return
+    }*/
+
     nav.navigating = true
+
+    const nuevaRuta = event.detail.visit.url
+    const rutaActual = new URL(window.location)
+    var cambiaId = false
+    // to-do: si tenemos dos rutas: rutaActual = /glosario/1 y nuevaRuta = /glosario/2 entonces cambiaId ha de cambiar a true. Lo mismo si son dos rutas /libros/1 y /libros/juan
+    // por lo tanto hemos de splitear las rutas y ver si coinciden en la primera palabra
+    const p1 = rutaActual.pathname.split('/')
+    const p2 = nuevaRuta.pathname.split('/')
+    cambiaId = rutaActual.origin == nuevaRuta.origin && p1[1] == p2[1] && p1.length == p2.length
+    // si, quitando la parte de query, son la misma ruta...
+    console.log('comparing', nuevaRuta.origin + nuevaRuta.pathname, 'vs', rutaActual.origin + rutaActual.pathname)
+    let scrolling = nuevaRuta.origin + nuevaRuta.pathname == rutaActual.origin + rutaActual.pathname || cambiaId
+    if (nav.dontScroll) {
+        if (!nav.dontFadeout)
+            nav.fadeoutPage()
+    } else {
+        if (scrolling)
+            nav.scrollToContent()
+        else if (!nav.dontFadeout)
+            nav.fadeoutPage()
+        else
+            nav.scrollToContent()
+    }
+
+    nav.dontScroll=false
+
+
 })
 
 router.on('navigate', (event) => {
-  console.log(`router: navigate. Navigated to ${event.detail.page.url}`)
-  nav.navigating = false
+    console.log(`router: navigate. Navigated to ${event.detail.page.url}`)
+    nav.navigating = false
+    // reset state
+    nav.dontFadeout = false
+    // nav.ignoreScroll = false
 
-  if(nav.fadingOutPage) {
-    window.scrollTo({
-        top: 0,
-        behavior: 'instant'
-    });
-    setTimeout(() => {
-        nav.fadingOutPage = false
-    }, animationPageTransitionDuration)
+    if (nav.fadingOutPage) {
+        window.scrollTo({
+            top: 0,
+            behavior: 'instant'
+        });
+        setTimeout(() => {
+            nav.fadingOutPage = false
+        }, animationPageTransitionDuration)
 
-}
+    }
 })
 
 router.on('exception', (event) => {
-  console.log(`router: exception. An unexpected error occurred during an Inertia visit.`)
-  console.log(event.detail.error)
+    console.log(`router: exception. An unexpected error occurred during an Inertia visit.`)
+    console.log(event.detail.error)
 })
 
 router.on('invalid', (event) => {
-  console.log(`router: invalid. An invalid Inertia response was received.`)
-  console.log(event.detail.response)
+    console.log(`router: invalid. An invalid Inertia response was received.`)
+    console.log(event.detail.response)
 })
 
 router.on('error', (errors) => {
-  console.log(errors)
+    console.log(errors)
 })
 
 router.on('success', (event) => {
-  console.log(`router: success. Successfully made a visit to ${event.detail.page.url}`)
+    console.log(`router: success. Successfully made a visit to ${event.detail.page.url}`)
 })
 
 router.on('finish', (event) => {
@@ -533,11 +568,9 @@ axios.get(route('setting', 'navigation'))
             </header>
 
 
-            navingating: {{nav.navigating}}
-
             <!-- Page Content -->
             <div @mouseover="nav.closeTabs()" class="flex-grow relative transition-opacity duration-200"
-            :class="nav.fadingOutPage?'opacity-0 pointer-events-none':''">
+                :class="nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''">
 
                 <transition enter-active-class="transition-opacity duration-100"
                     leave-active-class="transition-opacity duration-100" enter-class="opacity-0" leave-to-class="opacity-0">
@@ -546,7 +579,7 @@ axios.get(route('setting', 'navigation'))
                     </div>
                 </transition>
 
-               <!-- <transition name="slide-fade">
+                <!-- <transition name="slide-fade">
                     <slot  />
                 </transition>
                 -->

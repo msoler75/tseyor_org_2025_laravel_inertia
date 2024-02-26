@@ -73,6 +73,7 @@ declare module 'vue' {
     InputError: typeof import('./resources/js/Components/InputError.vue')['default']
     InputLabel: typeof import('./resources/js/Components/InputLabel.vue')['default']
     JSONEditorField: typeof import('./resources/js/Components/Backpack/JSONEditorField.vue')['default']
+    Link: typeof import('./resources/js/Components/Link.vue')['default']
     Loader: typeof import('./resources/js/Components/Loader.vue')['default']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     ModalDropZone: typeof import('./resources/js/Components/ModalDropZone.vue')['default']

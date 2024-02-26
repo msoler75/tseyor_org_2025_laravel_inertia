@@ -3,12 +3,13 @@
         <component v-for="tab, index of tabs" :key="index" :href="tab.link" :is="IAmHere(tab.link)?'span': Link" class="tab"
             :class="IAmHere(tab.link) ? 'tab-active cursor-default' : ''"
             :title="tab.title" v-html="tab.label"
-            @click="selected=tab.link"></component>
+            @click="selected=tab.link"
+            preserve-page :auto-scroll="false"></component>
     </div>
 </template>
 
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import Link  from '@/Components/Link.vue';
 
 const tabs = [
     {

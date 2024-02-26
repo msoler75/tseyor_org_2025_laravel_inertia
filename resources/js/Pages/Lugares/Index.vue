@@ -29,7 +29,7 @@
                 <GridAppear class="gap-8" col-width="16rem">
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
                         :href="route('lugar', contenido.slug)" imageClass="h-60"
-                        preserve-scroll @click="scrollToContent">
+                        preserve-page>
                         <div
                             class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
                             {{ contenido.nombre }}</div>
@@ -47,8 +47,7 @@
                     <ul class="list-disc">
                         <li v-for="lugar in todos" :key="lugar.id">
                             <Link :href="route('lugar', lugar.slug)"
-                                class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800"
-                                preserve-scroll @click="scrollToContent">
+                                class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
                             {{ lugar.nombre }}
                             </Link>
                         </li>
@@ -60,7 +59,6 @@
 </template>
 
 <script setup>
-import { scrollToContent } from '@/composables/contentbar.js'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })

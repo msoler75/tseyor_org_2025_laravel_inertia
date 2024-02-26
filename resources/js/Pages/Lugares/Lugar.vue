@@ -55,8 +55,7 @@
 
         <div class="card bg-base-100 shadow flex-wrap flex-row p-5 lg:p-10 gap-4">
             <div v-for="item of lugares" :key="item.slug" class="flex gap-2">
-                <Link v-show="item.slug != lugar.slug" :href="route('lugar', item.slug)"
-                preserve-scroll @click="scrollToContent">
+                <Link v-show="item.slug != lugar.slug" :href="route('lugar', item.slug)">
                 <span class="capitalize">{{ item.nombre }}</span>
                 </Link>
             </div>
@@ -65,7 +64,6 @@
 </template>
 
 <script setup>
-import { scrollToContent } from '@/composables/contentbar.js'
 import { Tabs, Tab } from 'vue3-tabs-component';
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';
