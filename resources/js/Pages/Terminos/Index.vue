@@ -20,7 +20,7 @@
             <SearchInput/>
         </div>
 
-       <GlosarioBar/>
+        <ContentBar>Glosario</ContentBar>
 
         <div class="w-full flex gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 
@@ -28,7 +28,7 @@
                 <div class="flex flex-wrap md:hidden  gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
                         :href="route('terminos') + '?letra=' + letraItem"
-                        preserve-scroll @click="scrollToTerm">
+                        preserve-scroll @click="scrollToContent">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -36,21 +36,21 @@
                 <div class="hidden md:grid grid-flow-dense grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
                         :style="{'grid-column': Math.floor(index / (letras.length/2))+1 }" :href="route('terminos') + '?letra=' + letraItem"
-                        preserve-scroll @click="scrollToTerm">
+                        preserve-scroll @click="scrollToContent">
                     {{ letraItem }}
                     </Link>
                 </div>
             </div>
 
 
-            <div class="glosario-term w-full flex-grow">
+            <ContentMain class="w-full flex-grow">
 
                 <SearchResultsHeader v-if="!letra" :results="listado" />
 
                 <GridAppear class="gap-8 mb-14" :time-lapse="0.01" col-width="16rem">
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('termino', contenido.slug)"
                         class="hover:text-primary transition-color duration-200 w-fit card shadow hover:shadow-lg px-5 py-2 bg-base-100 h-fit"
-                        preserve-scroll @click="scrollToTerm">
+                        preserve-scroll @click="scrollToContent">
                         <div v-html="contenido.nombre" class="capitalize lowercase font-bold text-lg"/>
                         <div v-if="filtrado" v-html="contenido.descripcion" class="mt-3"/>
                 </Link>
@@ -58,7 +58,7 @@
 
                 <pagination class="mt-6" :links="listado.links" />
 
-            </div>
+            </ContentMain>
 
 
         </div>
@@ -67,7 +67,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { scrollToTerm } from '@/composables/glosarioscroll.js'
+import { scrollToContent } from '@/composables/contentbar.js'
 
 defineOptions({ layout: AppLayout })
 

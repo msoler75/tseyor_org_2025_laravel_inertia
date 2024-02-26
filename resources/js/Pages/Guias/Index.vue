@@ -20,15 +20,15 @@
             <SearchInput />
         </div>
 
-        <GlosarioBar/>
+        <ContentBar>Glosario</ContentBar>
 
-        <div class="glosario-term w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap animate-fade-in">
 
             <div
                 class="w-full h-fit md:w-auto min-w-[150px] lg:min-w-[240px] card bg-base-100 shadow p-10 md:sticky md:top-20 flex-row md:flex-col flex-wrap md:gap-1">
                 <Link v-for="guia in guias.data" :key="guia.slug" :href="route('guia', guia.slug)"
                     class="inline font-semibold p-3 md:px-0 md:py-1 w-fit"
-                    preserve-scroll @click="scrollToTerm">
+                    preserve-scroll @click="scrollToContent">
                 {{ guia.nombre }}
                 </Link>
             </div>
@@ -38,7 +38,7 @@
                 <GridAppear class="gap-8" col-width="12rem">
                     <CardContent v-for="contenido in guias.data" :key="contenido.id" :image="contenido.imagen"
                         :href="route('guia', contenido.slug)" imageClass="h-60"
-                        preserve-scroll @click="scrollToTerm">
+                        preserve-scroll @click="scrollToContent">
                         <div
                             class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
                             {{ contenido.nombre }}</div>
@@ -49,12 +49,12 @@
             </div>
 
 
-        </div>
+        </ContentMain>
     </div>
 </template>
 
 <script setup>
-import { scrollToTerm } from '@/composables/glosarioscroll.js'
+import { scrollToContent } from '@/composables/contentbar.js'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })

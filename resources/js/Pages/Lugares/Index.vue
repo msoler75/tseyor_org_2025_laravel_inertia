@@ -20,16 +20,16 @@
             <SearchInput />
         </div>
 
-        <GlosarioBar/>
+        <ContentBar>Glosario</ContentBar>
 
-        <div class="glosario-term w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="w-full flex-grow">
 
                 <GridAppear class="gap-8" col-width="16rem">
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
                         :href="route('lugar', contenido.slug)" imageClass="h-60"
-                        preserve-scroll @click="scrollToTerm">
+                        preserve-scroll @click="scrollToContent">
                         <div
                             class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
                             {{ contenido.nombre }}</div>
@@ -48,19 +48,19 @@
                         <li v-for="lugar in todos" :key="lugar.id">
                             <Link :href="route('lugar', lugar.slug)"
                                 class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800"
-                                preserve-scroll @click="scrollToTerm">
+                                preserve-scroll @click="scrollToContent">
                             {{ lugar.nombre }}
                             </Link>
                         </li>
                     </ul>
                 </div>
             </div>
-        </div>
+        </ContentMain>
     </div>
 </template>
 
 <script setup>
-import { scrollToTerm } from '@/composables/glosarioscroll.js'
+import { scrollToContent } from '@/composables/contentbar.js'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })

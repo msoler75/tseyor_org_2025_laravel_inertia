@@ -94,11 +94,12 @@ class LibrosController extends Controller
         // si no ha encontrado ninguno buscamos de la misma categoría
         if ($relacionados->count() == 0) {
             $categorias = preg_split("/,/", $libro->categoria, -1, PREG_SPLIT_NO_EMPTY);
-            $relacionados = Libro::where(function ($query) use ($categorias) {
+            $relacionados = Libro::where('id', '!=', $libro->id)
+            ->where(function ($query) use ($categorias) {
                 foreach ($categorias as $categoria) $query->orWhere('categoria', 'like', '%' . $categoria . '%');
             })
                 // descartamos el mismo libro que estamos mostrando
-                ->orderByRaw('(CASE WHEN titulo LIKE ? THEN 2 WHEN descripcion LIKE ? THEN 1 ELSE 0 END) DESC', [$libro->titulo . '%', '%' . $libro->titulo . '%'])
+                // ->orderByRaw('(CASE WHEN titulo LIKE ? THEN 2 WHEN descripcion LIKE ? THEN 1 ELSE 0 END) DESC', [$libro->titulo . '%', '%' . $libro->titulo . '%'])
                 ->take(8)
                 ->get();
         }

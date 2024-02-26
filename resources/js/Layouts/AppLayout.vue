@@ -13,6 +13,8 @@ const player = usePlayer()
 const page = usePage()
 const nav = useNav()
 
+const animationPageTransitionDuration = 0
+
 // si el mouse sale de la ventana de la aplicación, cerramos el menú
 document.addEventListener("mouseleave", function (event) {
     if (screen.width >= 1024)
@@ -23,11 +25,46 @@ document.addEventListener("mouseleave", function (event) {
 
 // Use the router's navigation guard to track route changes
 router.on('start', (event) => {
-    console.log(`Starting a visit to ${event.detail.visit.url}`)
+    console.log(`router: start. Starting a visit to ${event.detail.visit.url}`)
+    nav.navigating = true
+})
+
+router.on('navigate', (event) => {
+  console.log(`router: navigate. Navigated to ${event.detail.page.url}`)
+  nav.navigating = false
+
+  if(nav.fadingOutPage) {
+    window.scrollTo({
+        top: 0,
+        behavior: 'instant'
+    });
+    setTimeout(() => {
+        nav.fadingOutPage = false
+    }, animationPageTransitionDuration)
+
+}
+})
+
+router.on('exception', (event) => {
+  console.log(`router: exception. An unexpected error occurred during an Inertia visit.`)
+  console.log(event.detail.error)
+})
+
+router.on('invalid', (event) => {
+  console.log(`router: invalid. An invalid Inertia response was received.`)
+  console.log(event.detail.response)
+})
+
+router.on('error', (errors) => {
+  console.log(errors)
+})
+
+router.on('success', (event) => {
+  console.log(`router: success. Successfully made a visit to ${event.detail.page.url}`)
 })
 
 router.on('finish', (event) => {
-    console.log(`Page loaded ${event.detail.visit.url}`)
+    console.log(`router: finish. Page loaded ${event.detail.visit.url}`)
 })
 
 // console.log({ page })
@@ -496,9 +533,12 @@ axios.get(route('setting', 'navigation'))
             </header>
 
 
+            navingating: {{nav.navigating}}
 
             <!-- Page Content -->
-            <main @mouseover="nav.closeTabs()" class="flex-grow relative">
+            <div @mouseover="nav.closeTabs()" class="flex-grow relative transition-opacity duration-200"
+            :class="nav.fadingOutPage?'opacity-0 pointer-events-none':''">
+
                 <transition enter-active-class="transition-opacity duration-100"
                     leave-active-class="transition-opacity duration-100" enter-class="opacity-0" leave-to-class="opacity-0">
                     <div v-if="nav.activeTab" class="hidden lg:block z-30 absolute w-full h-full bg-black bg-opacity-10">
@@ -506,10 +546,13 @@ axios.get(route('setting', 'navigation'))
                     </div>
                 </transition>
 
-               <!--  <transition name="slide-fade">-->
-                    <slot />
-                <!-- </transition> -->
-            </main>
+               <!-- <transition name="slide-fade">
+                    <slot  />
+                </transition>
+                -->
+
+                <slot />
+            </div>
 
             <!--  queremos que si la ruta actual es /archivos, no se muestre el footer: -->
             <AppFooter v-if="!nav.fullPage && !page.url.match(/^\/archivos/)" />
@@ -522,7 +565,7 @@ axios.get(route('setting', 'navigation'))
 <style scoped>
 /* durations and timing functions.*/
 .slide-fade-enter-active {
-    transition: all .2s ease;
+    transition: all .9s ease;
 }
 
 .slide-fade-leave-active {
@@ -534,7 +577,7 @@ axios.get(route('setting', 'navigation'))
 
 /* .slide-fade-leave-active below version 2.1.8 */
     {
-    transform: translateX(10px);
+    transform: translateX(50px);
     opacity: 0;
 }
 </style>

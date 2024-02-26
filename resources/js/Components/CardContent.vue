@@ -8,7 +8,8 @@
                :preserve-scroll="preserveScroll">
         <div class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
-                'background-image': 'url(\'' + getImageUrl(image) + '?w=300\')'
+                'background-image': 'url(\'' + getImageUrl(image) + '?w=300\')',
+                'view-transition-name': imageViewTransitionName
             }" />
         </div>
         <div v-if="title || tag || description || date" class="p-4 flex flex-col w-full">
@@ -35,6 +36,10 @@ const props = defineProps({
     imageLeft: {
         type: Boolean,
         default: false
+    },
+    imageViewTransitionName: {
+        type: String,
+        default: ''
     },
     title: String,
     href: String,
