@@ -20,14 +20,14 @@
         </div>
 
 
-        <GlosarioBar/>
+        <ContentBar>Glosario</ContentBar>
 
         <div class="w-full flex justify-between gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 
             <div class="w-full md:w-[7rem] flex-shrink-0 card bg-base-100 shadow p-5 h-fit md:sticky md:top-20">
                 <div class="flex flex-wrap md:hidden  gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToTerm">
+                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToContent">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -35,14 +35,14 @@
                 <div class="hidden md:grid grid-flow-dense grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
                         :style="{ 'grid-column': Math.floor(index / (letras.length / 2)) + 1 }"
-                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToTerm">
+                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToContent">
                     {{ letraItem }}
                     </Link>
                 </div>
             </div>
 
             <!-- scroll aqui -->
-            <div class="glosario-term animate-fade-in">
+            <ContentMain class="animate-fade-in">
                 <div class="py-[5ch] bg-base-100 md:max-w-[80ch] mx-auto shadow-xl mb-20 px-7 rounded-xl">
 
                     <div class="prose mx-auto">
@@ -54,10 +54,7 @@
                         <div class="mb-4"></div>
                         <Content :content="termino.texto" format="md" />
                     </div>
-
                 </div>
-
-
 
                 <div v-if="referencias.terminos.length"
                     class="flex flex-wrap sm:flex-nowrap gap-6 items-baseline mb-12 max-w-[80ch] mx-auto">
@@ -66,7 +63,7 @@
                         <Link v-for="contenido in referencias.terminos" :key="contenido.id"
                             :href="route('termino', contenido.slug)"
                             class="capitalize lowercase hover:text-primary transition-color duration-200 w-fit h-fit font-bold text-lg card shadow hover:shadow-lg px-5 py-2 bg-base-100"
-                            preserve-scroll @click="scrollToTerm">
+                            preserve-scroll @click="scrollToContent">
                         {{ contenido.nombre }}
                         </Link>
                     </div>
@@ -80,13 +77,13 @@
                         :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
                         image-left class="h-[300px]" imageClass="w-[200px] h-[300px]" />
                 </div>
-            </div>
+            </ContentMain>
 
 
             <div class="w-[7rem] card bg-base-100 shadow p-5 h-fit sticky top-20 opacity-0 hidden lg:flex">
                 <div class="letras grid grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
-                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToTerm">
+                        :href="route('terminos') + '?letra=' + letraItem" preserve-scroll @click="scrollToContent">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -98,10 +95,10 @@
 
 
         <div class="flex justify-between my-12">
-            <Link v-if="anterior" :href="anterior.slug" class="hover:underline" preserve-scroll @click="scrollToTerm">
+            <Link v-if="anterior" :href="anterior.slug" class="hover:underline" preserve-scroll @click="scrollToContent">
             ‹&nbsp;&nbsp; {{ anterior.nombre }}</Link>
             <span v-else />
-            <Link v-if="siguiente" :href="siguiente.slug" class="hover:underline" preserve-scroll @click="scrollToTerm">{{
+            <Link v-if="siguiente" :href="siguiente.slug" class="hover:underline" preserve-scroll @click="scrollToContent">{{
                 siguiente.nombre }} &nbsp;&nbsp;›
             </Link>
             <span v-else />
@@ -115,7 +112,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';
 import { useNav } from '@/Stores/nav'
-import { scrollToTerm } from '@/composables/glosarioscroll.js'
+import { scrollToContent } from '@/composables/contentbar.js'
 
 defineOptions({ layout: AppLayout })
 

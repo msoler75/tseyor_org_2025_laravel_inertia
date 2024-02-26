@@ -56,6 +56,8 @@ export const useNav = defineStore("nav", {
     // position: 'sticky',
     fullPage: false,
     scrollY: 0,
+    fadingOutPage: false,
+    navigating: false
   }),
   getters: {
     activeTab: (state) => state.items.find((tab) => tab.open),
@@ -111,5 +113,8 @@ export const useNav = defineStore("nav", {
         tab.open = false;
       }
     },
+    fadeoutPage() {
+        this.fadingOutPage = true
+    }
   },
 });

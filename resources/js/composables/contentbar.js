@@ -1,7 +1,9 @@
-export function scrollToTerm() {
+export function scrollToContent(behavior) {
 
-    const el = document.querySelector('.glosario-term')
-    if(!el) return
+    const el = document.querySelector('#content-main')
+    if(!el) return false
+
+    if(!behavior||typeof behaviour != 'string') behavior = 'smooth'
 
     // altura del menu top nav
     const navH = document.querySelector("nav").getBoundingClientRect().height
@@ -14,14 +16,16 @@ export function scrollToTerm() {
     // nos movemos a la posición posY
     window.scrollTo({
         top: posY,
-        behavior: 'smooth'
+        behavior
     })
+    return true
 }
 
 
-export function scrollToTop() {
+export function scrollToTopPage(behavior) {
+    if(!behavior||typeof behaviour != 'string') behavior = 'smooth'
         window.scrollTo({
             top: 0,
-            behavior: 'smooth'
+            behavior
         });
     }

@@ -10,6 +10,8 @@
             <Referencia>Guías Estelares</Referencia>.
         </p>
 
+        <p>El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</p>
+
         <div class="flex w-full justify-between mb-5">
             <SearchInput class="flex-grow">
                 <div class="flex items-baseline gap-3 w-full pl-1"><input id="titulos" type="checkbox"
@@ -17,54 +19,58 @@
             </SearchInput>
         </div>
 
-        <div class="w-full flex gap-5 flex-wrap xl:flex-nowrap">
+        <ContentMain class="w-full flex gap-5 flex-wrap xl:flex-nowrap">
 
             <div
                 class="gap-3 xl:gap-0 xl:max-w-[260px] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline xl:sticky xl:top-20">
                 <Link :href="`${route('libros')}`" class="py-2 hover:text-primary transition-colors duration-250"
-                    :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
+                    :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''" preserve-scroll
+                    @click="scrollToContent">
                 <span class="capitalize">Novedades</span>
                 </Link>
 
                 <div v-for="categoria of categorias" :key="categoria.nombre" class="flex"
                     :class="categoriaActiva == (categoria.valor || categoria.nombre) ? 'text-primary font-bold' : ''">
                     <Link :href="`${route('libros')}?categoria=${categoria.valor || categoria.nombre}`"
-                        class="py-2 hover:text-primary transition-colors duration-250">
+                        class="py-2 hover:text-primary transition-colors duration-250" preserve-scroll
+                        @click="scrollToContent">
                     <span class="capitalize">{{ categoria.nombre }}</span>
                     <small v-if="categoria.total > 0"> ({{ categoria.total }})</small>
                     </Link>
                 </div>
             </div>
 
-            <div class="w-full flex-grow">
+            <ContentBar>Libros</ContentBar>
+
+            <FadeOnNavigate class="w-full flex-grow">
 
                 <SearchResultsHeader :results="listado" />
 
-                <GridAppear v-if="selectors.soloTitulosLibros" class="grid gap-4" col-width="28rem">
-                    <div v-for="libro in listado.data" :key="libro.id"
-                        class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
-                        <Link :href="route('libro', libro.slug)" class="flex items-center gap-3">
-                        <Icon icon="ph:book-duotone" class="flex-shrink-0" /> <span v-html="libro.titulo" /></Link>
-                    </div>
-                </GridAppear>
+                    <GridAppear v-if="selectors.soloTitulosLibros" class="grid gap-4" col-width="28rem">
+                        <div v-for="libro in listado.data" :key="libro.id"
+                            class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
+                            <Link :href="route('libro', libro.slug)" class="flex items-center gap-3" preserve-scroll
+                                @click="nav.fadeoutPage()">
+                            <Icon icon="ph:book-duotone" class="flex-shrink-0" /> <span v-html="libro.titulo" /></Link>
+                        </div>
+                    </GridAppear>
 
-                <GridAppear v-else class="grid gap-4" col-width="28rem">
-                    <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
-                        :image="contenido.imagen" :href="route('libro', contenido.slug)"
-                        :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
-                        image-left class="h-[355px]" imageClass="w-[250px] h-[355px]" />
+                    <GridAppear v-else class="grid gap-4" col-width="28rem">
+                        <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
+                            :image="contenido.imagen" :href="route('libro', contenido.slug)"
+                            :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
+                            image-left class="h-[355px]" imageClass="w-[250px] h-[355px]" preserve-scroll
+                            @click="nav.fadeoutPage()" :image-view-transition-name="`imagen-libro-${contenido.id}`" />
 
-                </GridAppear>
-
-
+                    </GridAppear>
 
 
                 <pagination class="mt-6" :links="listado.links" />
 
-            </div>
+            </FadeOnNavigate>
 
 
-        </div>
+        </ContentMain>
     </div>
 </template>
 
@@ -72,7 +78,12 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
+import { scrollToContent } from '@/composables/contentbar.js'
 import { useSelectors } from '@/Stores/selectors'
+import { useNav } from '@/Stores/nav.js'
+
+const nav = useNav()
+
 defineOptions({ layout: AppLayout })
 const selectors = useSelectors()
 

@@ -10,7 +10,9 @@
 
 
             <div class=" card bg-base-100 shadow-2xl w-fit h-fit flex justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0">
-                <ImageShadow :src="libro.imagen+'?w=300'" :alt="libro.titulo" class="object-contain rounded-[2px]"/>
+                <ImageShadow :src="libro.imagen+'?w=300'" :alt="libro.titulo" class="object-contain rounded-[2px]"
+                style="{'view-transition-name': `imagen-libro-${libro.id}`}"
+                />
             </div>
 
             <div class="p-6 card bg-base-100 shadow animate-fade-in">
@@ -43,7 +45,8 @@
                         :tag="contenido.categoria"
                         image-left
                         class="h-[300px]"
-                        imageClass="w-[200px] h-[300px]"/>
+                        imageClass="w-[200px] h-[300px]"
+                        @click="nav.fadeoutPage()"/>
         </div>
 
 
@@ -52,6 +55,9 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
+import { useNav } from '@/Stores/nav'
+
+const nav = useNav()
 
 defineOptions({ layout: AppLayout })
 

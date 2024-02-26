@@ -230,3 +230,12 @@ main a.hover\:right-arrow:hover::after {
     justify-content: center;
     align-items: center;
 }
+
+
+
+
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 1s;
+}

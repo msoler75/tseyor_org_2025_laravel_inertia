@@ -16,9 +16,9 @@
             <SearchInput :doSearch="false" @search="buscarClick" />
         </div>
 
-        <GlosarioBar/>
+        <ContentBar>Glosario</ContentBar>
 
-        <div class="glosario-term flex flex-wrap lg:flex-nowrap gap-10">
+        <ContentMain class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
                 <div class="w-full h-auto mx-auto">
                     <Image :src="lugar.imagen" :alt="lugar.nombre" class="w-full h-auto" />
@@ -49,14 +49,14 @@
                 </tabs>
             </div>
 
-        </div>
+        </ContentMain>
 
         <hr class="my-12" />
 
         <div class="card bg-base-100 shadow flex-wrap flex-row p-5 lg:p-10 gap-4">
             <div v-for="item of lugares" :key="item.slug" class="flex gap-2">
                 <Link v-show="item.slug != lugar.slug" :href="route('lugar', item.slug)"
-                preserve-scroll @click="scrollToTerm">
+                preserve-scroll @click="scrollToContent">
                 <span class="capitalize">{{ item.nombre }}</span>
                 </Link>
             </div>
@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { scrollToTerm } from '@/composables/glosarioscroll.js'
+import { scrollToContent } from '@/composables/contentbar.js'
 import { Tabs, Tab } from 'vue3-tabs-component';
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';
