@@ -1,6 +1,8 @@
 -Boletines
-
--usar mail relay para envío de Boletines  https://mailrelay.com/
+-mail relay
+https://mailrelay.com/
+-usar mail relay API para envío de Boletines
+https://apidocs.mailrelay.com/#post-/campaigns
 
 
 -usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
