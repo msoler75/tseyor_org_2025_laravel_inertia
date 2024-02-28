@@ -105,7 +105,7 @@
 </template>
 
 <script setup>
-import { useNav } from '@/Stores/nav'
+
 import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
 defineOptions({ layout: AppLayout })

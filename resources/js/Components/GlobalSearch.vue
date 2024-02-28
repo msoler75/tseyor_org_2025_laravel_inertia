@@ -71,7 +71,7 @@
 <script setup>
 import { useGlobalSearch } from "@/Stores/globalSearch.js"
 import { usePage } from '@inertiajs/vue3';
-import { useNav } from '@/Stores/nav'
+
 
 const portada = computed(() => page.url == '/')
 const page = usePage()

@@ -1,7 +1,6 @@
 <script setup>
 import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount } from 'vue';
-import { useNav } from '@/Stores/nav'
 import { useDark, useToggle } from "@vueuse/core";
 import { usePermisos } from '@/Stores/permisos'
 import { usePlayer } from '@/Stores/player'
@@ -36,6 +35,11 @@ router.on('start', (event) => {
     const nuevaRuta = event.detail.visit.url
     const rutaActual = new URL(window.location)
     let mismaSeccion = false
+
+    const fadeoutWhenNavigateTo = /^\/(audios|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|normativas|noticias|publicaciones|usuarios)\/.+/
+    if(fadeoutWhenNavigateTo.exec(nuevaRuta.pathname))
+        nav.fadeoutPage()
+
     // to-do: si tenemos dos rutas: rutaActual = /glosario/1 y nuevaRuta = /glosario/2 entonces mismaSeccion ha de cambiar a true. Lo mismo si son dos rutas /libros/1 y /libros/juan
     // por lo tanto hemos de splitear las rutas y ver si coinciden en la primera palabra
     const p1 = rutaActual.pathname.split('/')

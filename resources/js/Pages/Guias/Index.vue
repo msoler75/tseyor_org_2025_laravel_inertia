@@ -36,8 +36,7 @@
 
                 <GridAppear class="gap-8" col-width="12rem">
                     <CardContent v-for="contenido in guias.data" :key="contenido.id" :image="contenido.imagen"
-                        :href="route('guia', contenido.slug)" imageClass="h-60"
-                        preserve-page>
+                        :href="route('guia', contenido.slug)" imageClass="h-60">
                         <div
                             class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
                             {{ contenido.nombre }}</div>
@@ -56,6 +55,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
+
 
 const props = defineProps({
     guias: {

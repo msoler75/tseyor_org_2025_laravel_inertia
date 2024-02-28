@@ -15,9 +15,7 @@
 
             <div class="w-full flex-grow">
 
-
                 <SearchResultsHeader :results="listado" />
-
 
                 <div class="grid gap-8"
                 :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">

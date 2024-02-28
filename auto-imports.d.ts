@@ -31,6 +31,7 @@ declare global {
   const ucFirstAllWords: typeof import('./resources/js/composables/textutils.js')['ucFirstAllWords']
   const updateTheme: typeof import('./resources/js/composables/themeAdapter.js')['updateTheme']
   const useForm: typeof import('@inertiajs/vue3')['useForm']
+  const useNav: typeof import('@/Stores/nav.js')['useNav']
   const usePage: typeof import('@inertiajs/vue3')['usePage']
   const useSlots: typeof import('vue')['useSlots']
   const watch: typeof import('vue')['watch']
