@@ -9,6 +9,6 @@
 </template>
 
 <script setup>
-import { useNav } from '@/Stores/nav'
+
 const nav = useNav()
 </script>

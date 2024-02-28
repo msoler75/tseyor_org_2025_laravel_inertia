@@ -117,6 +117,7 @@ export const useNav = defineStore("nav", {
     },
     fadeoutPage() {
       this.fadingOutPage = true
+      this.dontScroll = true
     },
 
     scrollToContent(behavior) {

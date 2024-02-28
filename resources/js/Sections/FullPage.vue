@@ -30,7 +30,6 @@
 
 
 <script setup>
-import { useNav } from '@/Stores/nav';
 
 // Definición de props y variables reactivas
 defineProps({

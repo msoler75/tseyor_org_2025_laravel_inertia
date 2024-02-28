@@ -66,7 +66,8 @@ export default defineConfig({
             "defineEmits",
             "useSlots",
           ],
-          "@inertiajs/vue3": ["Link", "router", "usePage", "useForm"],
+          "@inertiajs/vue3": ["router", "usePage", "useForm"],
+          "@/Stores/nav.js": ["useNav"]
         },
       ],
     }),

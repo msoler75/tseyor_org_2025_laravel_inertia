@@ -15,9 +15,9 @@
 </template>
 
 <script setup>
-import { useNav } from '@/Stores/nav.js'
 
-const nav = useNav()
+
+// const nav = useNav()
 
 defineProps({
     links: Array,

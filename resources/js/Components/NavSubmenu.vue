@@ -31,6 +31,6 @@
 
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import { useNav } from '@/Stores/nav'
+
 const nav = useNav()
 </script>

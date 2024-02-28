@@ -10,10 +10,11 @@ import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
 //import FloatingVue from 'floating-vue'
 
-
 // https://github.com/John-Weeks-Dev/facebook-clone/blob/master/resources/js/app.js
 import { createPinia } from "pinia";
 const pinia = createPinia();
+
+import {useNav} from "@/Stores/nav"
 
 const appName =
   window.document.getElementsByTagName("title")[0]?.innerText || "TSEYOR";
@@ -26,19 +27,25 @@ createInertiaApp({
       import.meta.glob("./Pages/**/*.vue")
     ),
   setup({ el, App, props, plugin }) {
-    return (
-      createApp({ render: () => h(App, props) })
+    const app = createApp({ render: () => h(App, props) })
         // https://chriswray.dev/posts/how-to-add-components-globally-in-an-inertiajs-application
         .mixin({
           components: { Icon, Head },
+          methods: {useNav}
         })
         .use(plugin)
         .use(ZiggyVue, Ziggy)
         .use(pinia)
+        .mount(el)
         // .use(FloatingVue)
         // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs
-        .mount(el)
-    );
+
+
+        // app.config.globalProperties.$nav = useNav()
+
+
+
+        return app
   },
   progress: {
     color: "#4B5563",

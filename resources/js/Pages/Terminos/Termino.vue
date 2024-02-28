@@ -109,7 +109,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';
-import { useNav } from '@/Stores/nav'
+
 
 defineOptions({ layout: AppLayout })
 

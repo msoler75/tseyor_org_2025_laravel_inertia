@@ -45,8 +45,7 @@
                         :tag="contenido.categoria"
                         image-left
                         class="h-[300px]"
-                        imageClass="w-[200px] h-[300px]"
-                        @click="nav.fadeoutPage"/>
+                        imageClass="w-[200px] h-[300px]"/>
         </div>
 
 
@@ -55,9 +54,6 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { useNav } from '@/Stores/nav'
-
-const nav = useNav()
 
 defineOptions({ layout: AppLayout })
 
