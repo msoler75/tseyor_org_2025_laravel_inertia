@@ -5,6 +5,8 @@ https://mailrelay.com/
 https://apidocs.mailrelay.com/#post-/campaigns
 
 
+-archivos. usuario sin loguear, le aparece la opción de renombrar carpeta y crear carpeta. No debería tener esas opciones
+
 -usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
     - y si no, al menos poder mandar fácilmente los datos de contacto a un administrador
 
