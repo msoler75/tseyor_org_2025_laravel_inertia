@@ -1,7 +1,7 @@
 <script setup>
 import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount } from 'vue';
-import { useDark, useToggle } from "@vueuse/core";
+import { useDark, useToggle, useMouse } from "@vueuse/core";
 import { usePermisos } from '@/Stores/permisos'
 import { usePlayer } from '@/Stores/player'
 // console.log('app initiating...')
@@ -11,12 +11,31 @@ const player = usePlayer()
 const page = usePage()
 const nav = useNav()
 
+const deactivateNav = ref(false)
+const TIME_NAV_INACTIVE = 1000
+var timerActivateNav = null
+
 const animationPageTransitionDuration = 0
 
 // si el mouse sale de la ventana de la aplicación, cerramos el menú
 document.addEventListener("mouseleave", function (event) {
     if (screen.width >= 1024)
+    {
+        clearTimeout(timerActivateNav)
+        deactivateNav.value = true
+        // cerramos los submenús
         nav.closeTabs()
+    }
+})
+
+// si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante 2 segundos
+document.addEventListener("mouseenter", function (event) {
+    if (screen.width >= 1024) {
+            clearTimeout(timerActivateNav)
+            timerActivateNav = setTimeout(()=>{
+                deactivateNav.value = false
+            }, TIME_NAV_INACTIVE)
+    }
 })
 
 // console.log({page})
@@ -288,7 +307,9 @@ axios.get(route('setting', 'navigation'))
                             </div>
 
                             <!-- Main Navigation Tabs -->
-                            <NavTabs class="hidden top-navigation space-x-8 sm:-my-px sm:ml-10 sm:flex" />
+                            <NavTabs class="hidden top-navigation space-x-8 sm:-my-px sm:ml-10 sm:flex"
+                            :class="deactivateNav?'pointer-events-none':''"
+                            />
 
                         </div>
 
