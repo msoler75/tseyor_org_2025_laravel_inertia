@@ -5,7 +5,8 @@
                relative" :class="(imageLeft ? 'flex-row' : '')
                +(draft?' bg-base-300':'')
                "
-               :preserve-page="preservePage">
+               :preserve-page="preservePage"
+               :auto-scroll="autoScroll">
         <div class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
                 'background-image': 'url(\'' + getImageUrl(image) + '?w=300\')',
@@ -58,7 +59,8 @@ const props = defineProps({
         type: String,
         default: ''
     },
-    preservePage: {type: Boolean, default: false}
+    preservePage: {type: Boolean, default: false},
+    autoScroll:  {type: Boolean, default: true}
 })
 
 const descriptionFinal = computed(() => {

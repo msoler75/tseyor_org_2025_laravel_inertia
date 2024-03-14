@@ -15,6 +15,7 @@
                 <div class="text-neutral text-sm mb-20 flex justify-between">
                     <Audios :audios="parseFiles(comunicado.audios)" :numerados="true" :titulo="comunicado.titulo"/>
                     <TimeAgo :date="comunicado.fecha_comunicado" :includeTime="false" />
+                    <Link :href="route('comunicado.pdf', comunicado.slug)">PDF</Link>
                 </div>
 
             </div>

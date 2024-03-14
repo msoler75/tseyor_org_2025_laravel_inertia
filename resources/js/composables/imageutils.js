@@ -22,7 +22,7 @@ export const getImageSize = async function (url) {
     if (imagenes_cache[url])
         return resolve(imagenes_cache[url]);
     console.log("fetch image.tamaño", url);
-    return await fetch(route("imagen.tamaño") + "?url=" + url).then(async (r) => {
+    return await fetch("/image_size" + "?url=" + url).then(async (r) => {
       console.log("fetch respuesta", url, r);
       const data = await r.json();
       console.log({ data });

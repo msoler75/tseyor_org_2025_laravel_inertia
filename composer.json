@@ -10,6 +10,8 @@
         "backpack/permissionmanager": "^7.0",
         "backpack/revise-operation": "^2.0",
         "backpack/theme-tabler": "^1.0",
+        "barryvdh/laravel-dompdf": "^2.1",
+        "carlos-meneses/laravel-mpdf": "^1.1",
         "druidfi/mysqldump-php": "^1.0",
         "guzzlehttp/guzzle": "^7.7",
         "inertiajs/inertia-laravel": "^0.6.8",

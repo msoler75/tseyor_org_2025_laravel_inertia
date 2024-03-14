@@ -9,7 +9,9 @@ use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\ProcesarAudios;
-
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
+use App\Pigmalion\DiskUtil;
 
 class ComunicadosController extends Controller
 {
@@ -38,7 +40,8 @@ class ComunicadosController extends Controller
         $año = $request->input('ano');
         $orden = $request->input('orden');
         $completo = $request->input('completo');
-        if($completo=="0") $completo = false;
+        if ($completo == "0")
+            $completo = false;
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
@@ -66,7 +69,7 @@ class ComunicadosController extends Controller
 
         $resultados = $resultados
             ->paginate(15)
-            ->appends(['buscar' => $buscar, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden, 'completo'=>$completo?1:0]);
+            ->appends(['buscar' => $buscar, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden, 'completo' => $completo ? 1 : 0]);
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar, false, $completo);
@@ -106,19 +109,79 @@ class ComunicadosController extends Controller
     }
 
 
-/*
-    public function archive(Request $request)
+    public function pdf($id)
     {
-        $buscar = $request->input('buscar');
+        if (is_numeric($id)) {
+            $comunicado = Comunicado::findOrFail($id);
+        } else {
+            $comunicado = Comunicado::where('slug', $id)->firstOrFail();
+        }
 
-        $comunicados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
-            ->where('visibilidad', 'P')
-            ->latest()->paginate(10)->appends(['buscar' => $buscar]);
+        $borrador = request()->has('borrador');
+        $publicado = $comunicado->visibilidad == 'P';
+        $editor = optional(auth()->user())->can('administrar contenidos');
+        if (!$comunicado || (!$publicado && !$borrador && !$editor)) {
+            abort(404); // Item no encontrado o no autorizado
+        }
 
-        return Inertia::render('Comunicados/Archivo', [
-            'listado' => $comunicados
+
+        $nombreArchivo = $comunicado->titulo . ' - TSEYOR.pdf';
+
+
+
+        $html = \App\Pigmalion\Markdown::toHtml($comunicado->texto);
+
+        // envolver cada img (que está solo en una linea) en un div con style="text-align: center"
+        $html = preg_replace_callback('/<img.*?>/', function ($matches) {
+           return '<div style="text-align: center">' . $matches[0] . '</div>';
+        }, $html);
+
+
+
+            // reemplazar todas las imagenes sus rutas relativas con rutas absolutas de disco
+            $html = preg_replace_callback('/<img([^>]+)src="([^"]+)"/', function ($matches) {
+                list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($matches[2]);
+                return '<img' . $matches[1] . 'src="file://' . str_replace("\\", "/", Storage::disk($disk)->path($ruta)). '"';
+            }, $html);
+
+/*
+         return view("comunicado-pdf", [
+            'titulo' => $comunicado->titulo,
+            'texto' => $html
         ]);
-    }*/
+*/
+        // Incluir la librería TCPDF
+        // Establecer metadatos del PDF
+
+
+
+
+        // Contenido HTML completo con etiquetas <html>, <head> y <body>
+        $pdf = Pdf::loadView('comunicado-pdf',  [
+            'titulo' => $comunicado->titulo,
+            'texto' =>$html,
+        ]);
+
+        return $pdf->download($nombreArchivo);
+
+    }
+
+
+
+
+    /*
+        public function archive(Request $request)
+        {
+            $buscar = $request->input('buscar');
+
+            $comunicados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
+                ->where('visibilidad', 'P')
+                ->latest()->paginate(10)->appends(['buscar' => $buscar]);
+
+            return Inertia::render('Comunicados/Archivo', [
+                'listado' => $comunicados
+            ]);
+        }*/
 
 
     public function procesar()
