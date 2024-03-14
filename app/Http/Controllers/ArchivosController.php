@@ -16,6 +16,7 @@ use App\Models\Acl;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use App\Http\Controllers\ImagenesController;
+use App\Pigmalion\DiskUtil;
 
 // use App\Pigmalion\TiempoEjecucion as T;
 // use App\Pigmalion\Profiler;
@@ -32,23 +33,6 @@ use App\Http\Controllers\ImagenesController;
 class ArchivosController extends Controller
 {
 
-    private function diskRuta(string $ruta): array
-    {
-        // si la ruta comienza por "archivos", el disco es "archivos"
-        // sino, es "public"
-        $ruta = $this->normalizarRuta($ruta);
-        if ($ruta == '')
-            return ['raiz', '']; // raiz
-
-        if (strpos($ruta, 'archivos') === 0) {
-            // $ruta = preg_replace("#^archivos\/?#", "", $ruta);
-            return ['archivos', $ruta];
-        } else if ($ruta == 'mis_archivos') {
-            return ['archivos', $ruta];
-        } else {
-            return ['public', $ruta];
-        }
-    }
 
     /**
      * Método por defecto para listar archivos
@@ -92,7 +76,7 @@ class ArchivosController extends Controller
             abort(400, 'No se permiten rutas relativas');
         }
 
-        list($disk, $ruta) = $this->diskRuta($ruta);
+        list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($ruta);
 
         if ($disk == 'raiz' || $ruta == 'archivos_raiz') {
 
@@ -326,7 +310,7 @@ class ArchivosController extends Controller
         // $nodos->shift();
         foreach ($nodos as $nodo) {
             $ruta = $nodo->ruta;
-            list($disk, $ruta) = $this->diskRuta($ruta);
+            list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($ruta);
             if (!Storage::disk($disk)->exists($ruta)) {
                 $nodo->delete();
                 continue;
@@ -566,7 +550,7 @@ class ArchivosController extends Controller
                 return response()->json(['error' => 'Ruta relativa no permitida'], 400);
             }
 
-            list($disk, $ruta) = $this->diskRuta($ruta);
+            list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($ruta);
 
             // la ruta inicial es la primera carpeta donde buscaremos después en disco
             $carpetas_pendientes = [$ruta];
@@ -637,7 +621,7 @@ class ArchivosController extends Controller
             Log::info("recuperamos nombre: $nombre, ruta: $ruta");
             Log::info("recuperamos carpetas_pendientes", $carpetas_pendientes);
 
-            list($disk, $ruta) = $this->diskRuta($ruta);
+            list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($ruta);
 
             // realizamos una busqueda real en disco
 
@@ -746,7 +730,7 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
         }
 
-        list($disk, $ruta) = $this->diskRuta($ruta);
+        list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($ruta);
 
         if ($disk != 'public')
             abort(403, 'No tienes permisos.');
@@ -769,7 +753,7 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
         }
 
-        list($disk, $ruta) = $this->diskRuta($ruta);
+        list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($ruta);
 
         // no se puede descargar una carpeta
         if (Storage::disk($disk)->directoryExists($ruta))
@@ -847,7 +831,7 @@ class ArchivosController extends Controller
         }
 
         $ofolder = $folder;
-        list($disk, $folder) = $this->diskRuta($folder);
+        list($disk, $folder) = DiskUtil::obtenerDiscoRuta($folder);
         //dd($disk, $folder);
         // $disk = 'public';
 
@@ -898,7 +882,7 @@ class ArchivosController extends Controller
     public function uploadFile(Request $request)
     {
         $file = $request->file('file');
-        $folder = $this->normalizarRuta($request->destinationPath);
+        $folder = DiskUtil::normalizarRuta($request->destinationPath);
 
 
         return $this->processUpload($request, $file, $folder);
@@ -925,7 +909,7 @@ class ArchivosController extends Controller
             ], 415);
         }
 
-        $folder = $this->normalizarRuta($request->destinationPath);
+        $folder = DiskUtil::normalizarRuta($request->destinationPath);
         // detecta si estamos editando un tipo de datos y lo extrae, para asignarle después una carpeta
         /* $url = $request->headers->get('referer');
     if ($url && preg_match('/admin\/(.*?)\/\d+\/edit/', $url, $matches)) {
@@ -967,7 +951,7 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No autorizado'], 401);
         }
 
-        $folder = $this->normalizarRuta($request->folder);
+        $folder = DiskUtil::normalizarRuta($request->folder);
         $name = $request->name;
 
         if (!$folder) {
@@ -988,7 +972,7 @@ class ArchivosController extends Controller
             ], 400);
         }
 
-        list($disk, $folder) = $this->diskRuta($folder);
+        list($disk, $folder) = DiskUtil::obtenerDiscoRuta($folder);
 
         $folderPath = Storage::disk($disk)->path($folder);
 
@@ -1062,7 +1046,7 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
         }
 
-        list($disk, $ruta) = $this->diskRuta($ruta);
+        list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($ruta);
 
         // Verificar que el archivo exista
         if (!Storage::disk($disk)->exists($archivo)) {
@@ -1132,7 +1116,7 @@ class ArchivosController extends Controller
         $permisos = $request->permisos;
 
         $ruta = $request->ruta;
-        list($disk, $ruta) = $this->diskRuta($ruta);
+        list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($ruta);
 
         if (!Storage::disk($disk)->exists($ruta)) {
             return response()->json(['error' => "La ruta '$ruta' no existe"], 404);
@@ -1336,7 +1320,7 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No autorizado'], 401);
         }
 
-        $ruta = $this->normalizarRuta($request->folder);
+        $ruta = DiskUtil::normalizarRuta($request->folder);
         $oldName = $request->oldName;
         $newName = $request->newName;
         //  dd("folder=$folder  oldName=$oldName  newName=$newName");
@@ -1350,7 +1334,7 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
         }
 
-        list($disk, $ruta) = $this->diskRuta($ruta);
+        list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($ruta);
 
         $rutaAntes = $ruta . '/' . $oldName;
         $rutaDespues = $ruta . '/' . $newName;
@@ -1445,8 +1429,8 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
         }
 
-        list($diskSource, $sourceFolder) = $this->diskRuta($sourceFolder);
-        list($diskDest, $destinationFolder) = $this->diskRuta($destinationFolder);
+        list($diskSource, $sourceFolder) = DiskUtil::obtenerDiscoRuta($sourceFolder);
+        list($diskDest, $destinationFolder) = DiskUtil::obtenerDiscoRuta($destinationFolder);
 
         /*if ($disk1 != $disk2) {
             return response()->json(['error' => 'No se permite mover entre discos'], 403);
@@ -1615,8 +1599,8 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
         }
 
-        list($diskSource, $sourceFolder) = $this->diskRuta($sourceFolder);
-        list($diskDest, $destinationFolder) = $this->diskRuta($destinationFolder);
+        list($diskSource, $sourceFolder) = DiskUtil::obtenerDiscoRuta($sourceFolder);
+        list($diskDest, $destinationFolder) = DiskUtil::obtenerDiscoRuta($destinationFolder);
 
         /* if ($disk1 != $disk2) {
             return response()->json(['error' => 'No se permite mover entre discos'], 403);
@@ -1732,20 +1716,7 @@ class ArchivosController extends Controller
         return response()->json($response, $successCount > 0 ? 200 : 500);
     }
 
-    /**
-     * Quita la primera barra si es necesario
-     */
-    private function normalizarRuta($ruta)
-    {
-        if (strpos($ruta, '/') === 0) {
-            $ruta = substr($ruta, 1);
-        }
 
-        /* if (strpos($ruta, 'almacen') === 0) {
-            $ruta = substr($ruta, 8);
-        } */
-        return $ruta;
-    }
 
 
 

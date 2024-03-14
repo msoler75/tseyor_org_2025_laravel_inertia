@@ -1,3 +1,7 @@
+-hacer que cuando se descargue un pdf de comunicado, se genere y se use pdftk , tal vez un servicio docker en google cloud run?
+-intentar no usar pdftk
+
+
 -Boletines
 -mail relay
 https://mailrelay.com/

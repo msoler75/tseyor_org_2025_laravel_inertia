@@ -68,7 +68,8 @@ router.on('start', (event) => {
     mismaSeccion = rutaActual.origin == nuevaRuta.origin && p1[1] == p2[1]
     // si, quitando la parte de query, son la misma ruta...
     console.log('comparing', nuevaRuta.origin + nuevaRuta.pathname, 'vs', rutaActual.origin + rutaActual.pathname)
-    let scrolling = nuevaRuta.origin + nuevaRuta.pathname == rutaActual.origin + rutaActual.pathname || mismaSeccion
+    const mismapagina = nuevaRuta.origin + nuevaRuta.pathname == rutaActual.origin + rutaActual.pathname
+    let scrolling = mismapagina || mismaSeccion
     if(nav.fadingOutPage) {
 
     }
