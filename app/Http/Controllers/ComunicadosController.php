@@ -133,23 +133,23 @@ class ComunicadosController extends Controller
 
         // envolver cada img (que está solo en una linea) en un div con style="text-align: center"
         $html = preg_replace_callback('/<img.*?>/', function ($matches) {
-           return '<div style="text-align: center">' . $matches[0] . '</div>';
+            return '<div style="text-align: center">' . $matches[0] . '</div>';
         }, $html);
 
 
 
-            // reemplazar todas las imagenes sus rutas relativas con rutas absolutas de disco
-            $html = preg_replace_callback('/<img([^>]+)src="([^"]+)"/', function ($matches) {
-                list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($matches[2]);
-                return '<img' . $matches[1] . 'src="file://' . str_replace("\\", "/", Storage::disk($disk)->path($ruta)). '"';
-            }, $html);
+        // reemplazar todas las imagenes sus rutas relativas con rutas absolutas de disco
+        $html = preg_replace_callback('/<img([^>]+)src="([^"]+)"/', function ($matches) {
+            list ($disk, $ruta) = DiskUtil::obtenerDiscoRuta($matches[2]);
+            return '<img' . $matches[1] . 'src="file://' . str_replace("\\", "/", Storage::disk($disk)->path($ruta)) . '"';
+        }, $html);
 
-/*
-         return view("comunicado-pdf", [
-            'titulo' => $comunicado->titulo,
-            'texto' => $html
-        ]);
-*/
+        /*
+                 return view("comunicado-pdf", [
+                    'titulo' => $comunicado->titulo,
+                    'texto' => $html
+                ]);
+        */
         // Incluir la librería TCPDF
         // Establecer metadatos del PDF
 
@@ -157,9 +157,9 @@ class ComunicadosController extends Controller
 
 
         // Contenido HTML completo con etiquetas <html>, <head> y <body>
-        $pdf = Pdf::loadView('comunicado-pdf',  [
+        $pdf = Pdf::loadView('comunicado-pdf', [
             'titulo' => $comunicado->titulo,
-            'texto' =>$html,
+            'texto' => $html,
         ]);
 
         return $pdf->download($nombreArchivo);

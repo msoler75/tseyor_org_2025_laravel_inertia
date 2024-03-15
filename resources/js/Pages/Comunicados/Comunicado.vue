@@ -13,9 +13,16 @@
                 <h1>{{ comunicado.titulo }}</h1>
 
                 <div class="text-neutral text-sm mb-20 flex justify-between">
-                    <Audios :audios="parseFiles(comunicado.audios)" :numerados="true" :titulo="comunicado.titulo"/>
+                    <Audios :audios="parseFiles(comunicado.audios)" :numerados="true" :titulo="comunicado.titulo" />
+                    <a class="btn btn-xs btn-error w-fit flex gap-3" :href="route('comunicado.pdf', comunicado.slug)"
+                        target="_blank" title="Descargar PDF">
+                        <Icon icon="ph:download-duotone" /> Generar PDF
+                    </a>
+                    <a target="_blank" class="btn btn-xs btn-error w-fit flex gap-3" :href="comunicado.pdf"
+                        title="Ver en formato PDF">
+                        <Icon icon="ph:file-pdf" />
+                    </a>
                     <TimeAgo :date="comunicado.fecha_comunicado" :includeTime="false" />
-                    <Link :href="route('comunicado.pdf', comunicado.slug)">PDF</Link>
                 </div>
 
             </div>

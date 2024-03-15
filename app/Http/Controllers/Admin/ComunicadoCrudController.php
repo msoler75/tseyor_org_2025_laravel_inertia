@@ -198,7 +198,7 @@ class ComunicadoCrudController extends CrudController
             ] */
         ]);
 
-        if(false)
+        // if(false)
         CRUD::field([
             'name' => 'pdf',
             'label' => 'Pdf',

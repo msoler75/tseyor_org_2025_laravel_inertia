@@ -24,31 +24,27 @@ class Markdown
             return str_replace('<img', '<img ' . implode(' ', $values), $img);
         }, $html);
 
+
         // Reemplazar párrafos con estilos
         $html = preg_replace('/<p>{style=([^}]*)}/', "<p style='$1'>", $html);
 
-
-
-        // formatea los enlaces:
-
         // Expresión regular para encontrar URLs con dominios específicos
-        $patron = '/(?<!\!)\b(?:https?:\/\/)?(?:www\.)?(tseyor\.(org|com))\b/i';
+        $patron = '/(<a[^>]+>)?\b(https?:\/\/)?(www\.)?(tseyor\.(?:org|com))\b(\/[\?&A-Za-z\-\=\/0-9\.]*)?(<\/a>)?/i';
 
-        // Reemplazar las URLs encontradas por enlaces clicables si no están en formato Markdown
+        // Reemplazar las URLs encontradas por enlaces clicables si no están en formato html
         $html = preg_replace_callback($patron, function ($match) {
-            // Verificar si la URL no está ya en formato Markdown
-            if (!preg_match('/\[(.*?)\]\((.*?)\)/', $match[0])) {
-                $url = (strpos($match[0], 'http') === 0) ? $match[0] : 'http://' . $match[0];
-                return '<a target="_blank" href="' . $url . '">' . $match[0] . '</a>';
-            } else {
-                return $match[0]; // Mantener la URL en formato Markdown
-            }
+            $path = $match[5] ?? "";
+            if ($path == "/")
+                $path = "";
+            return '<a target="_blank" href="https://tseyor.org' . $path . '">tseyor.org' . $path . '</a>';
         }, $html);
-
 
         // Eliminar espacios sobrantes y saltos de línea
         // $html = preg_replace('/<p>\s+<\/p>\n?/', '', $html);
         // $html = str_replace("\n", '', $html);
+
+        // notas al pie
+        $html = preg_replace('/\[\^(\d+)\]/', '<sup>$1</sup>', $html); //[^1]
 
         return $html;
 
