@@ -309,6 +309,8 @@ Route::get('test/image', function () {
     return Inertia::render('test/imageTest');
 });
 
+Route::get('test/word',  'App\Http\Controllers\TestController@word');
+
 
 Route::get('{ruta}', 'App\Http\Controllers\PaginasController@show')->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
 

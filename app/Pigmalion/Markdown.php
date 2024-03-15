@@ -4,6 +4,8 @@
 namespace App\Pigmalion;
 
 use Illuminate\Support\Str;
+use PhpOffice\PhpWord\IOFactory;
+use Illuminate\Support\Facades\Storage;
 
 class Markdown
 {
@@ -48,5 +50,56 @@ class Markdown
 
         return $html;
 
+    }
+
+
+    /**
+     * Carga un archivo word y extrae el  en formato markdown
+     * @param string $docx es el archivo .docx que queremos convertir a markdown
+     **/
+    public static function fromDocx($docx, $carpetaImagenes = null)
+    {
+
+        // generar una carpeta aleatoria
+        if(!$carpetaImagenes)
+            $carpetaImagenes = 'temp/' . Str::random(16);
+
+        // Settings::setZipClass(Settings::PCLZIP);
+
+        // Cargar el documento Word
+        $phpWord = IOFactory::load($docx);
+
+        // Inicializar variables para almacenar texto y rutas de imágenes
+        $texto = '';
+        $imagenes = [];
+
+        foreach ($phpWord->getSections() as $section) {
+            foreach ($section->getElements() as $elementBase) {
+                foreach ($elementBase->getElements() as $element) {
+                    // dd($element);
+                    if (method_exists($element, 'getText')) {
+                        $texto .= $element->getText();
+                    }
+                    if (method_exists($element, 'getMediaId')) {
+                        // Guardar la imagen en el disco público de Laravel
+                        $imagenPath = $carpetaImagenes . '/' . $element->getTarget(); // Ruta en el disco público
+                        Storage::disk('public')->put($imagenPath, $element->getImageString());
+
+                        // Obtener la URL pública de la imagen
+                        $imagenUrl = Storage::disk('public')->url($imagenPath);
+
+                        $imagenes[] = $imagenPath;
+                        // Insertar la imagen en formato Markdown en el texto
+                        $texto .= "\n![](" . $imagenUrl . ")\n";
+                    }
+                }
+            }
+        }
+
+        // Convertir el texto a Markdown
+        $markdown = strip_tags($texto, "span"); // Eliminar etiquetas HTML
+        $markdown = str_replace("\n", "  \n", $markdown); // Agregar doble espacio al final de cada línea
+
+        return $markdown;
     }
 }
