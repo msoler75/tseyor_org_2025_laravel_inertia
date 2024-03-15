@@ -11,7 +11,7 @@
             font-family: 'Calibri', Helvetica, serif;
             text-align: justify;
         }
-        html { margin: 3em 5em }
+        html { margin: 3em 5.5em }
         table {
             border-collapse: collapse;
             margin: .4em 0;
@@ -27,6 +27,7 @@
         p {
             overflow-wrap: break-word;
             hyphens: auto; /* Cambiado a 'auto' en lugar de 'manual' */
+            text-wrap: pretty;
         }
         .footer {
             width: 100%;

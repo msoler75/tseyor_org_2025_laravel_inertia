@@ -56,7 +56,6 @@ class StoreComunicadoRequest extends FormRequest
         return [
             function (Validator $validator) use ($comunicado) {
                 if ($this->input('visibilidad') == 'P') {
-
                     if ((!$comunicado || !$comunicado->pdf) && !$this->file('pdf')) {
                         $validator->errors()->add(
                             'pdf',
