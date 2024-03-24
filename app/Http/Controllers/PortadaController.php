@@ -9,6 +9,7 @@ use App\Models\Audio;
 use App\Models\User;
 use App\Models\Entrada;
 use App\Models\Centro;
+use App\Models\Video;
 
 class PortadaController extends Controller
 {
@@ -28,7 +29,7 @@ class PortadaController extends Controller
                             'usuarios' => User::count(),
                             'audios' => Audio::count(),
                             'entradas' => Entrada::count(),
-                            'videos' => 20,
+                            'videos' => Video::count(),
                             'centros' => Centro::count()
                         ];
                 })
