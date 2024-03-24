@@ -7,10 +7,15 @@ use Illuminate\Support\Str;
 use PhpOffice\PhpWord\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use League\HTMLToMarkdown\HtmlConverter;
+use Illuminate\Support\Facades\Log;
 
 
 class Markdown
 {
+    public static $notasEncontradas = 0;
+    public static $imagenesExtraidas = [];
+    public static $carpetaCreada = null;
+
 
     public static function toHtml($md)
     {
@@ -60,8 +65,9 @@ class Markdown
 
 
     /**
-     * Carga un archivo word y extrae el  en formato markdown
+     * Carga un archivo word y extrae el contenido y lo transforma en formato markdown
      * @param string $docx es el archivo .docx que queremos convertir a markdown
+     * @param string $carpetaImagenes es la carpeta donde se guardan las imagenes
      **/
     public static function fromDocx($docx, $carpetaImagenes = null)
     {
@@ -72,19 +78,152 @@ class Markdown
 
         // Settings::setZipClass(Settings::PCLZIP);
 
-        // Cargar el documento Word
+        // Cargamos el documento Word
         $phpWord = IOFactory::load($docx);
 
-        $htmlWriter = new \PhpOffice\PhpWord\Writer\HTML($phpWord);
-        // Generate the HTML content
+        // Convertimos el documento a HTML
         $htmlWriter = new \PhpOffice\PhpWord\Writer\HTML($phpWord);
         $htmlContent = $htmlWriter->getContent();
 
-        // Parse the HTML content using DOMDocument
+        // removemos span de texto por defecto
+        //$htmlContent = preg_replace('&<span style="(?:font-family:\s*[^;]*;\s?|font-size:\s?1\dpt;\s?)+">([^<]*)</span>&', '$1', $htmlContent);
+        $htmlContent = self::limpiarHtml($htmlContent);
+
+
+        Log::info("Html from docx: " . $htmlContent);
+
+        // Arreglamos notas al pie
+        // buscamos manualmente las foot notes
+        $footNotes = $phpWord->getFootnotes()->getItems();
+        echo "foot notes";
+        // dd($footNotes);
+
+        Log::info("footnotes: " . count($footNotes));
+        echo "notas al pie de $docx:";
+        $numNote = 0;
+        // dd($footNotes);
+        if ($footNotes && count($footNotes)) {
+            $relationsDone = [];
+            foreach ($footNotes as $note) {
+                $numNote++;
+                $id = $note->getRelationId();
+                // para evitar repeticiones
+                if (isset ($relationsDone[$id]))
+                    continue;
+                $relationsDone[$id] = 1;
+
+                $primerTexto = "";
+                $idx = 0;
+                // buscamos el primer texto relevante
+                $elements = $note->getElements();
+                while ($idx < count($elements) && (!$primerTexto || strlen($primerTexto) < 7)) {
+                    $str = $elements[$idx++]->getText();
+                    if (trim($str))
+                        $primerTexto = $str;
+                }
+
+                if ($primerTexto) {
+                    var_dump($primerTexto, true);
+                    echo "primer texto: " . print_r($primerTexto, true) . "<br>";
+                    // buscamos el texto
+                    preg_match_all("#>\s*" . str_replace(["#", "(", ")", "[", "]"], ["\\#", "\\(", "\\)", "\\[", "\\]"], $primerTexto) . "#", $htmlContent, $matches, PREG_OFFSET_CAPTURE);
+
+                    if (count($matches[0])) {
+                        // nos interesa el ultimo match (las notas están al final)
+                        $pos = $matches[0][count($matches[0]) - 1][1];
+                    } else
+                        // si no encuentra el patrón, buscamos la posición de ese texto desde el final del documento
+                        $pos = strrpos($htmlContent, $primerTexto);
+
+                    if ($pos === FALSE) {
+                        // nota no encontrada. La añadiremos manualmente al final del documento
+                        $string = "";
+                        for ($idx = 0; $idx < count($elements); $idx++) {
+                            $string .= $elements[$idx]->getText();
+                        }
+                        $string = '<sup id="note-' . $numNote . '" style="font-size: 75%">' . $numNote . '</sup> ' . $string;
+                        $htmlContent = preg_replace("#<" . "/body>#", "<p>$string</p><" . "/body>", $htmlContent);
+                        Log::info("Nota $numNote no encontrada: '$primerTexto...' La añadimos manualmente al final del documento");
+                    } else {
+                        // buscamos desde esa posición hacia atrás, el párrafo "<p"
+                        // para ello truncamos el string
+                        $htmlTruncated = substr($htmlContent, 0, $pos);
+                        $pos = strrpos($htmlTruncated, '<p');
+                        // añadimos un id al párrafo p
+                        // $htmlContent = substr($htmlContent, 0, $pos) . '<p id="note-' . $id . '" ' . substr($htmlContent, $pos + 2);
+                        // buscamos el final de etiqueta
+                        $pos = strpos($htmlContent, '>', $pos);
+                        // insertamos el número de nota
+                        $htmlContent = substr($htmlContent, 0, $pos) . '><sup id="note-' . $numNote . '" style="font-size: 75%">' . $id . '</sup> ' . substr($htmlContent, $pos + 1);
+                        // echo $id . ' ' . $primerTexto . ' ' . $pos . '<br>';
+                    }
+                }
+            }
+
+            /* Reordenamos las notas al pie
+              El patron de nota es <p id="note-\d
+              Por ejemplo pueden estar así:
+
+              <p>...</p>
+              <p><sup id="note-3">3</sup> texto de nota al pie 3</p>
+              <p><sup id="note-1">1</sup> texto de nota al pie 1</p>
+              <p><sup id="note-2">2</sup> texto de nota al pie 2</p>
+
+              Y hemos de conseguir:
+
+              <p>...</p>
+              <p><sup id="note-1">1</sup> texto de nota al pie 1</p>
+              <p><sup id="note-2">2</sup> texto de nota al pie 2</p>
+              <p><sup id="note-3">3</sup> texto de nota al pie 3</p>
+            */
+
+            $regex = "/<p.*? id=['\"]note-(\d+)['\"].*?<\/p>/";
+            // buscamos en $htmlContent cada nota, obteniendo las posiciones
+            preg_match_all($regex, $htmlContent, $matches, PREG_OFFSET_CAPTURE);
+            if (count($matches[0])) {
+                // para cada match extraemos el bloque de texto y lo metemos en un array
+                $minOffset = strlen($htmlContent);
+                $maxEnd = 0;
+                $notas = [];
+                foreach ($matches[0] as $idx => $m) {
+                    $offset = $m[1];
+                    $id = $matches[1][$idx][0];
+                    $html = $m[0];
+                    $notas[] = ["id" => $id, "offset" => $offset, "html" => $html];
+                    $minOffset = min($minOffset, $offset);
+                    $maxEnd = max($maxEnd, $offset + strlen($html));
+                }
+
+                // Ordenar el array segun id
+                usort($notas, function ($a, $b) {
+                    return $a['id'] - $b['id'];
+                });
+
+                // recortamos el documento
+                $tail = substr($htmlContent, $maxEnd);
+                $htmlContent = substr($htmlContent, 0, $minOffset);
+
+                // añadimos las notas en orden
+                foreach ($notas as $nota) {
+                    $htmlContent .= $nota['html'];
+                }
+
+                $htmlContent .= $tail;
+
+            }
+
+        }
+
+        self::$notasEncontradas = $numNote;
+
+        // die($htmlContent);
+        Log::info("Html final from docx after Foot notes rework: " . $htmlContent);
+
+        // Convertimos el HTML a DOM
         $dom = new \DOMDocument();
         $dom->loadHTML($htmlContent, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
-        // Get the body content without the HTML, HEAD, and BODY tags
+        // Extraemos el body
         $bodyContent = '';
         $bodyNodes = $dom->getElementsByTagName('body')->item(0)->childNodes;
         foreach ($bodyNodes as $node) {
@@ -99,6 +238,7 @@ class Markdown
                 $bodyContent .= $dom->saveHTML($node);
         }
 
+        // convertimos a formato desde HTML a markdown
         $converter = new HtmlConverter();
         $markdown = $converter->convert($bodyContent);
 
@@ -111,6 +251,9 @@ class Markdown
         // Obtener todas las coincidencias de imágenes codificadas en base64
         preg_match_all($pattern, $markdown, $matches);
 
+        // array de archivos de imagen
+        $imagenes = [];
+
         foreach ($matches[0] as $key => $match) {
             // Obtener el tipo de imagen y los datos base64
             $type = $matches[1][$key];
@@ -120,6 +263,7 @@ class Markdown
             $imageData = base64_decode($data);
             $imageName = 'image_' . $key . '.' . $type;
             $imagePath = $carpetaImagenes . '/' . $imageName;
+            $imagenes[] = Storage::disk('public')->path($imagePath);
 
             // Guardar la imagen en disco público
             Storage::disk('public')->put($imagePath, $imageData);
@@ -131,46 +275,61 @@ class Markdown
             $markdown = str_replace($match, "![](" . $imageUrl . ")", $markdown);
         }
 
+        self::$carpetaCreada = $carpetaImagenes;
+        self::$imagenesExtraidas = $imagenes;
 
         return $markdown;
+    }
 
-        // Inicializar variables para almacenar texto y rutas de imágenes
-        $texto = '';
-        function processElement($element, &$texto, $carpetaImagenes)
-        {
-            if (method_exists($element, 'getElements')) {
-                foreach ($element->getElements() as $element2) {
-                    processElement($element2, $texto, $carpetaImagenes);
+
+    public static function limpiarHtml($html)
+    {
+        $html = preg_replace("/<td style=[^>]+>/", "<td>", $html);
+
+        return  preg_replace_callback(
+            '&<span (?:lang=[^>\s]+ )?style="([^"]+)">([^<]*)</span>&',
+            function ($matches) {
+                
+                if(!$matches[2]) return "";
+
+                $styles = $matches[1];
+                $tmp = preg_split("/;\s?/", $styles, -1, PREG_SPLIT_NO_EMPTY);
+                $bold = false;
+                $italic = false;
+                $finalStyles = [];
+                foreach ($tmp as $s) {
+                    $p = preg_split("/\:\s?/", $s);
+                    $key = $p[0];
+                    $v = $p[1];
+                    if ($key == "font-style" && $v == "italic")
+                        $italic = true;
+                    else if ($key == "font-weight" && $v == "bold")
+                        $bold = true;
+                    else if($key=="color" && $v=="#000000")
+                    { ; }
+                    else if (!in_array($key, ['font-family', 'font-size']))
+                        $finalStyles[] = "$key=$v";
                 }
-            } else {
-                if (method_exists($element, 'getText')) {
-                    $texto .= $element->getText();
+
+                $pre = "";
+                $tail = "";
+                if (count($finalStyles)) {
+                    $pre = '<span style="' . implode('; ', $finalStyles) . '">';
+                    $tail = '</span>';
                 }
-                if (method_exists($element, 'getMediaId')) {
-                    // Guardar la imagen en el disco público de Laravel
-                    $imagenPath = $carpetaImagenes . '/' . $element->getTarget(); // Ruta en el disco público
-                    Storage::disk('public')->put($imagenPath, $element->getImageString());
-
-                    // Obtener la URL pública de la imagen
-                    $imagenUrl = Storage::disk('public')->url($imagenPath);
-
-                    $imagenes[] = $imagenPath;
-                    // Insertar la imagen en formato Markdown en el texto
-                    $texto .= "\n![](" . $imagenUrl . ")\n";
+                if ($italic) {
+                    $pre .= "<i>";
+                    $tail = "</i>" . $tail;
                 }
-            }
-        }
+                if ($bold) {
+                    $pre .= "<b>";
+                    $tail = "</b>" . $tail;
+                }
 
-        foreach ($phpWord->getSections() as $section) {
-            foreach ($section->getElements() as $element) {
-                processElement($element, $texto, $carpetaImagenes);
-            }
-        }
+                return $pre . $matches[2] . $tail;
+            },
+            $html
+        );
 
-        // Convertir el texto a Markdown
-        $markdown = strip_tags($texto, "span"); // Eliminar etiquetas HTML
-        $markdown = str_replace("\n", "  \n", $markdown); // Agregar doble espacio al final de cada línea
-
-        return $markdown;
     }
 }
