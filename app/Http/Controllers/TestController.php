@@ -35,7 +35,7 @@ class TestController extends Controller
             ->orderBy('id')
             ->paginate();
 
-        $carpeta = 'D:\tseyor.org\biblioteca\comunicados\nuevos\doc';
+        $carpeta = 'D:\documentos\TSEYOR\comunicados';
         // buscar en $carpeta algun archivo que tenga este patrón de nombre : ($num) *.docx
         $archivo = glob("$carpeta/($num) *.docx");
         // si ha encontrado un archivo
