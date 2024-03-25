@@ -22,9 +22,9 @@ class Markdown
         $html = Str::markdown($md);
 
         // Reemplazar imágenes con atributos
-        $html = preg_replace_callback('/(<img[^>]*>){(\w+=[^}]+)}/', function ($matches) {
-            $img = $matches[1];
-            $attributes = $matches[2];
+        $html = preg_replace_callback('/(<img[^>]*>){(\w+=[^}]+)}/', function ($match) {
+            $img = $match[1];
+            $attributes = $match[2];
             preg_match_all('/(\w+)=([^,]+)/', $attributes, $attr_matches, PREG_SET_ORDER);
             $values = [];
             foreach ($attr_matches as $attr_match) {
@@ -37,13 +37,13 @@ class Markdown
         $regex = "/<p>(<img[^>]+>)<\/p>/";
         $html = preg_replace($regex, "<p style='text-align: center'>$1</p>", $html);
 
-
         // Reemplazar párrafos con estilos
         $html = preg_replace('/<p>{style=([^}]*)}/', "<p style='$1'>", $html);
 
+        
+        // Arreglar enlaces
         // Expresión regular para encontrar URLs con dominios específicos
         $patron = '/(<a[^>]+>)?\b(https?:\/\/)?(www\.)?(tseyor\.(?:org|com))\b(\/[\?&A-Za-z\-\=\/0-9\.]*)?(<\/a>)?/i';
-
         // Reemplazar las URLs encontradas por enlaces clicables si no están en formato html
         $html = preg_replace_callback($patron, function ($match) {
             $path = $match[5] ?? "";
@@ -51,12 +51,14 @@ class Markdown
                 $path = "";
             return '<a target="_blank" href="https://tseyor.org' . $path . '">tseyor.org' . $path . '</a>';
         }, $html);
+        // si enlace está partido:
+        // $html = preg_replace("$<a href=.*tseyor.</[^>]+>.*(org|com)</.*>$", '<a target="_blank" href="https://tseyor.org">tseyor.org</a>', $html);
 
         // Eliminar espacios sobrantes y saltos de línea
         // $html = preg_replace('/<p>\s+<\/p>\n?/', '', $html);
         // $html = str_replace("\n", '', $html);
 
-        // notas al pie
+        // dar formato html a notas al pie
         $html = preg_replace('/\[\^(\d+)\]/', '<sup>$1</sup>', $html); //[^1]
 
         return $html;
@@ -71,11 +73,6 @@ class Markdown
      **/
     public static function fromDocx($docx, $carpetaImagenes = null)
     {
-
-        // generar una carpeta aleatoria
-        if (!$carpetaImagenes)
-            $carpetaImagenes = 'temp/' . Str::random(16);
-
         // Settings::setZipClass(Settings::PCLZIP);
 
         // Cargamos el documento Word
@@ -87,19 +84,129 @@ class Markdown
 
         // removemos span de texto por defecto
         //$htmlContent = preg_replace('&<span style="(?:font-family:\s*[^;]*;\s?|font-size:\s?1\dpt;\s?)+">([^<]*)</span>&', '$1', $htmlContent);
+        $htmlContent = self::arreglarNotas($phpWord, $htmlContent);
+
         $htmlContent = self::limpiarHtml($htmlContent);
+        // dd($htmlContent);
 
 
-        Log::info("Html from docx: " . $htmlContent);
+        // die($htmlContent);
+        Log::info("Html final from docx after Foot notes rework: " . $htmlContent);
 
-        // Arreglamos notas al pie
+        $htmlContent = self::extraerBody($htmlContent); 
+
+        // convertimos a formato desde HTML a markdown
+        $converter = new HtmlConverter();
+        $markdown = $converter->convert($htmlContent);
+
+        // generar una carpeta aleatoria
+        if (!$carpetaImagenes)
+           $carpetaImagenes = 'temp/' . Str::random(16);
+
+        $markdown = self::extraerImagenes($markdown, $carpetaImagenes);
+
+        // arreglar enlace roto de algunos documentos
+        $markdown = str_replace('[tseyor.](http://www.tseyor.com/)<span style="text-decoration:underline ">**org** </span>', '[tseyor.org](https://tseyor.org/)', $markdown);
+
+        // limpiamos formato
+        $markdown = str_replace('<span style="text-decoration:underline ">**tseyor.org**</span>', '[tseyor.org](https://tseyor.org/)', $markdown);
+
+        return $markdown;
+    }
+
+
+    public static function limpiarHtml($html)
+    {
+        $html = preg_replace("/<td style=[^>]+>/", "<td>", $html);
+
+        $html = preg_replace_callback(
+            '&<span (?:lang=[^>\s]+ )?style=([^>]+)>([^<]*)</span>&',
+            function ($match) {
+
+                if (!$match[2])
+                    return "";
+
+                $styles = $match[1];
+                //remove first and last char
+                $styles = substr($styles, 1, strlen($styles) - 2);
+                $tmp = preg_split("/;\s?/", $styles, -1, PREG_SPLIT_NO_EMPTY);
+                $bold = false;
+                $italic = false;
+                $finalStyles = [];
+                foreach ($tmp as $s) {
+                    $p = preg_split("/\:\s?/", $s);
+                    $key = trim($p[0]);
+                    $v = $p[1];
+                    if ($key == "font-style" && $v == "italic")
+                        $italic = true;
+                    else if ($key == "font-weight" && $v == "bold")
+                        $bold = true;
+                    else if (!in_array($key, ['font-family', 'font-size', 'color', 'margin-bottom', 'margin-top']))
+                        $finalStyles[] = "$key=$v";
+                }
+
+                $pre = "";
+                $tail = "";
+                if (count($finalStyles)) {
+                    $pre = '<span style="' . implode('; ', $finalStyles) . '">';
+                    $tail = '</span>';
+                }
+                if ($italic) {
+                    $pre .= "<i>";
+                    $tail = "</i>" . $tail;
+                }
+                if ($bold) {
+                    $pre .= "<b>";
+                    $tail = "</b>" . $tail;
+                }
+
+                // echo $match[2] . " - " . $styles . " - ". $match[0]. "<br>";
+    
+                return $pre . $match[2] . $tail;
+            },
+            $html
+        );
+
+
+        // eliminar span con lang
+        $html = preg_replace("&<span lang=[^>]+>(.*?)</span>&", "<span>$1</span>", $html);
+
+        // eliminar titulos
+        $html = preg_replace("&<h\d>(.*?)</h\d>&", "<p><b>$1</b></p>", $html);
+
+
+        // errores extraños:
+        $html = preg_replace("&text-decoration=underline&", "text-decoration:underline", $html);
+
+        // unir estilos repetidos
+        for ($i = 0; $i < 3; $i++) {
+            $html = preg_replace("&<i>([^<]+)</i><i>([^<]+)</i>&", "<i>$1$2</i>", $html);
+            $html = preg_replace("&<b>([^<]+)</b><b>([^<]+)</b>&", "<b>$1$2</b>", $html);
+            $html = preg_replace(
+                "&<span style=.text-decoration:underline[^>]{1,3}>(.*?)</span><span style=.text-decoration:underline[^>]{1,3}>(.*?)</span>&",
+                "<span style='text-decoration:underline'>$1$2</span>",
+                $html
+            );
+            $html = preg_replace_callback("&<a href=([^>]+)>(.*?)</a><a href=([^>]+)>(.*?)</a>&", function($match) {
+                    if($match[1]==$match[3])
+                        return "<a href={$match[3]}>{$match[2]}{$match[4]}</a>";
+                    return $match[0];
+            }, $html);
+        }
+
+        return $html;
+
+    }
+
+
+    public static function arreglarNotas($phpWord, $htmlContent) {
+         // Arreglamos notas al pie
         // buscamos manualmente las foot notes
         $footNotes = $phpWord->getFootnotes()->getItems();
         echo "foot notes";
         // dd($footNotes);
 
         Log::info("footnotes: " . count($footNotes));
-        echo "notas al pie de $docx:";
         $numNote = 0;
         // dd($footNotes);
         if ($footNotes && count($footNotes)) {
@@ -141,7 +248,7 @@ class Markdown
                         for ($idx = 0; $idx < count($elements); $idx++) {
                             $string .= $elements[$idx]->getText();
                         }
-                        $string = '<sup id="note-' . $numNote . '" style="font-size: 75%">' . $numNote . '</sup> ' . $string;
+                        $string = '<sup id="note-' . $numNote . '">' . $numNote . '</sup> ' . $string;
                         $htmlContent = preg_replace("#<" . "/body>#", "<p>$string</p><" . "/body>", $htmlContent);
                         Log::info("Nota $numNote no encontrada: '$primerTexto...' La añadimos manualmente al final del documento");
                     } else {
@@ -154,7 +261,7 @@ class Markdown
                         // buscamos el final de etiqueta
                         $pos = strpos($htmlContent, '>', $pos);
                         // insertamos el número de nota
-                        $htmlContent = substr($htmlContent, 0, $pos) . '><sup id="note-' . $numNote . '" style="font-size: 75%">' . $id . '</sup> ' . substr($htmlContent, $pos + 1);
+                        $htmlContent = substr($htmlContent, 0, $pos) . '><sup id="note-' . $numNote . '">' . $id . '</sup> ' . substr($htmlContent, $pos + 1);
                         // echo $id . ' ' . $primerTexto . ' ' . $pos . '<br>';
                     }
                 }
@@ -216,32 +323,11 @@ class Markdown
 
         self::$notasEncontradas = $numNote;
 
-        // die($htmlContent);
-        Log::info("Html final from docx after Foot notes rework: " . $htmlContent);
+        return $htmlContent;
+    }
 
-        // Convertimos el HTML a DOM
-        $dom = new \DOMDocument();
-        $dom->loadHTML($htmlContent, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
-        // Extraemos el body
-        $bodyContent = '';
-        $bodyNodes = $dom->getElementsByTagName('body')->item(0)->childNodes;
-        foreach ($bodyNodes as $node) {
-            // extraemos los div de pagina en el primer nivel del body:
-            // <div style="page: page1">
-            if ($node->nodeName == 'div' && preg_match('/page\d+/', $node->getAttribute('style'))) {
-                $nodes = $node->childNodes;
-                foreach ($nodes as $node2) {
-                    $bodyContent .= $dom->saveHTML($node2);
-                }
-            } else
-                $bodyContent .= $dom->saveHTML($node);
-        }
-
-        // convertimos a formato desde HTML a markdown
-        $converter = new HtmlConverter();
-        $markdown = $converter->convert($bodyContent);
-
+    public static function extraerImagenes($markdown, $carpetaImagenes) {
         $markdown = preg_replace('/<div style="page: page\d+">/', '', $markdown);
         // extraemos las imagenes (codificadas en base64) y las guardamos en disco
 
@@ -282,54 +368,26 @@ class Markdown
     }
 
 
-    public static function limpiarHtml($html)
-    {
-        $html = preg_replace("/<td style=[^>]+>/", "<td>", $html);
+    public static function extraerBody($html) {
+        
+        // Convertimos el HTML a DOM
+        $dom = new \DOMDocument();
+        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
-        return  preg_replace_callback(
-            '&<span (?:lang=[^>\s]+ )?style="([^"]+)">([^<]*)</span>&',
-            function ($matches) {
-                
-                if(!$matches[2]) return "";
-
-                $styles = $matches[1];
-                $tmp = preg_split("/;\s?/", $styles, -1, PREG_SPLIT_NO_EMPTY);
-                $bold = false;
-                $italic = false;
-                $finalStyles = [];
-                foreach ($tmp as $s) {
-                    $p = preg_split("/\:\s?/", $s);
-                    $key = $p[0];
-                    $v = $p[1];
-                    if ($key == "font-style" && $v == "italic")
-                        $italic = true;
-                    else if ($key == "font-weight" && $v == "bold")
-                        $bold = true;
-                    else if($key=="color" && $v=="#000000")
-                    { ; }
-                    else if (!in_array($key, ['font-family', 'font-size']))
-                        $finalStyles[] = "$key=$v";
+        // Extraemos el body
+        $bodyContent = '';
+        $bodyNodes = $dom->getElementsByTagName('body')->item(0)->childNodes;
+        foreach ($bodyNodes as $node) {
+            // extraemos los div de pagina en el primer nivel del body:
+            // <div style="page: page1">
+            if ($node->nodeName == 'div' && preg_match('/page\d+/', $node->getAttribute('style'))) {
+                $nodes = $node->childNodes;
+                foreach ($nodes as $node2) {
+                    $bodyContent .= $dom->saveHTML($node2);
                 }
-
-                $pre = "";
-                $tail = "";
-                if (count($finalStyles)) {
-                    $pre = '<span style="' . implode('; ', $finalStyles) . '">';
-                    $tail = '</span>';
-                }
-                if ($italic) {
-                    $pre .= "<i>";
-                    $tail = "</i>" . $tail;
-                }
-                if ($bold) {
-                    $pre .= "<b>";
-                    $tail = "</b>" . $tail;
-                }
-
-                return $pre . $matches[2] . $tail;
-            },
-            $html
-        );
-
+            } else
+                $bodyContent .= $dom->saveHTML($node);
+        }
+        return $bodyContent;
     }
 }

@@ -1,6 +1,7 @@
 <style>
     .w-5 {width: 14px}
     .h-5 {height: 14px}
+    img {max-width: 50vw}
 </style>
 <ul>
 @foreach($comunicados as $item)
@@ -10,10 +11,9 @@
 
 {{ $comunicados->links() }}
 
-
 @if ($md ?? '')
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap:20px; width: 100%; padding: 20px">
     <div> {!! $html !!}</div>
-    <div> {{$md}}</div>
+    <textarea> {{ str_replace("\n", "\n", $md)}}</textarea>
 </div>
 @endif
