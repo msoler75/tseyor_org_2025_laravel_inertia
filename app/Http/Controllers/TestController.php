@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Comunicado;
 use App\Pigmalion\Markdown;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Settings;
 
 class TestController extends Controller
 {
@@ -41,10 +43,33 @@ class TestController extends Controller
         // si ha encontrado un archivo
         if ($archivo && count($archivo))
             $md = Markdown::fromDocx($archivo[0]);
-         else
-        $md = "<no encontrado>";
+        else
+            $md = "<no encontrado>";
 
-        return view("tests.docx", ['page'=>$page, 'comunicados' => $comunicados, 'md' => $md, 'html'=>Markdown::toHtml($md), 'archivo' => $archivo[0] ?? "<no encontrado>", 'notas' => Markdown::$notasEncontradas]);
+        return view("tests.docx", ['page' => $page, 'comunicados' => $comunicados, 'md' => $md, 'html' => Markdown::toHtml($md), 'archivo' => $archivo[0] ?? "<no encontrado>", 'notas' => Markdown::$notasEncontradas]);
+
+    }
+
+    public function word2pdf()
+    {
+        $carpeta = 'D:\documentos\TSEYOR\comunicados';
+
+        $archivo = $carpeta . "/(47) 051014.docx";
+
+        // Cargar el archivo de Word
+        $dompath = realpath(base_path() . "/vendor/dompdf/dompdf");
+
+        Settings::setPdfRenderer("DomPDF", $dompath);
+
+        $phpWord = IOFactory::load($archivo);
+
+        // Guardar el archivo en formato PDF
+        $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
+        $pdfPath = $carpeta . "/(47) 051014.pdf";
+        $pdfWriter->save($pdfPath);
+
+        // Descargar el archivo PDF convertido
+        return response()->download($pdfPath)->deleteFileAfterSend(true);
 
     }
 

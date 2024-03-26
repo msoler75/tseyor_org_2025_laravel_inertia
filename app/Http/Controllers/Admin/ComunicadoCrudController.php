@@ -114,12 +114,22 @@ class ComunicadoCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(StoreComunicadoRequest::class);
-        /*CRUD::setValidation([
-            'titulo' => 'required|min:8',
-            'texto'=>'required',
+        // CRUD::setValidation(StoreComunicadoRequest::class);
+        CRUD::setValidation([
+            'titulo' => 'required|min:7|max:255',
+            'texto' => 'required',
+            'numero' => 'required|numeric|min:1|max:9999',
+            'categoria' => 'required',
+            'fecha_comunicado' => 'required',
             'descripcion' => 'max:400',
-        ]);*/
+            'audios' => [
+                'array',
+            ],
+            /* 'audios.*' => [
+                new DropzoneRule("audios", ['audio']),
+            ], */
+            // 'pdf' => 'max:20000|mimes:pdf',
+        ]);
 
         CRUD::setFromDb(); // set fields from db columns.
 
@@ -199,7 +209,7 @@ class ComunicadoCrudController extends CrudController
         ]);
 
         // if(false)
-        CRUD::field([
+        /*CRUD::field([
             'name' => 'pdf',
             'label' => 'Pdf',
             'type' => 'upload',
@@ -213,7 +223,7 @@ class ComunicadoCrudController extends CrudController
                 'path' => "$folder/pdf",
                 // the path inside the disk where file will be stored
             ]
-        ]);
+        ]);*/
 
         CRUD::field('visibilidad')->type('visibilidad');
 
@@ -332,14 +342,14 @@ class ComunicadoCrudController extends CrudController
             $contenido = Comunicado::create([
                 "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
                 "texto" => "",
-                "ano" => 0
+                "ano" => date('Y')
             ]);
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/comunicados/_{$contenido->id}";
+            $mediaFolder = "medios/comunicados/_{$contenido->id}";
 
             // copia las imágenes desde la carpeta temporal al directorio destino
-            $imported->copyImagesTo($imagesFolder);
+            $imported->copyImagesTo($mediaFolder);
 
             // ahora las imagenes están con la nueva ubicación
             $contenido->texto = $imported->content;

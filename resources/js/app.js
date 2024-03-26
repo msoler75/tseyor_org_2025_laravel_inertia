@@ -39,12 +39,7 @@ createInertiaApp({
         .mount(el)
         // .use(FloatingVue)
         // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs
-
-
         // app.config.globalProperties.$nav = useNav()
-
-
-
         return app
   },
   progress: {

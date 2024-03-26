@@ -21,7 +21,7 @@ class Comunicado extends ContenidoConAudios
         'fecha_comunicado',
         'ano',
         'visibilidad',
-        'pdf',
+        // 'pdf',
         'audios',
         'slug',
     ];

@@ -309,8 +309,12 @@ Route::get('test/image', function () {
     return Inertia::render('test/imageTest');
 });
 
+// test para convertir archivos .docx a markdown
 Route::get('test/docx',  'App\Http\Controllers\TestController@docx');
 Route::get('test/docx/{num}',  'App\Http\Controllers\TestController@docxShow');
+
+// test para ver la conversión de archivos .docx a pdf
+Route::get('test/word2pdf',  'App\Http\Controllers\TestController@word2pdf');
 
 
 Route::get('{ruta}', 'App\Http\Controllers\PaginasController@show')->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
