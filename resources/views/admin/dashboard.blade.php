@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div class="flex flex-wrap justify-between gap-5 my-12">
+    <div class="admin-dashboard flex flex-wrap justify-between gap-5 my-12">
 
         @can('administrar usuarios')
             <div class="flex-grow  rounded overflow-y-auto border border-gray-500 bg-base-100">
@@ -113,7 +113,7 @@
                         <a title="Ver contenido" class="flex-grow"
                             href="{{ $comentario['url'] }}">{{ $comentario->tituloContenido }}</a>
                         </td>
-                        <td class="px-3 py-2 whitespace-nowrap text-center">                        
+                        <td class="px-3 py-2 whitespace-nowrap text-center">
                             <TimeAgo date="{{ $comentario['created_at'] }}" />
                         </td>
                         <td class="px-3 py-2 whitespace-nowrap">
@@ -123,7 +123,7 @@
                     </tr>
                     @endforeach
                 </tbody>
-            </table>            
+            </table>
         </div>
         @endcan
 

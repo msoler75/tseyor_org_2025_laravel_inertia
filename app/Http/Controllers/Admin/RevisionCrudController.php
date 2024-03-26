@@ -82,6 +82,6 @@ class RevisionCrudController extends CrudController
     protected function show($id)
     {
         $revision = Revision::findOrFail($id);
-        return redirect($revision->revision);
+        return redirect($revision->revisionUrl);
     }
 }
