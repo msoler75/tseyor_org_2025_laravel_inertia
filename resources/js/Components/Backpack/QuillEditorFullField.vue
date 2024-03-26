@@ -321,7 +321,12 @@ function prepareHtmlButton() {
 
     var quillCustomDiv = quill.addContainer('ql-custom');
     quillCustomDiv.appendChild(quillEd_txtArea_1);
+
+    // Update the Quill editor text with the textarea value
+    quillEd_txtArea_1.addEventListener('input', () => { quill.root.innerHTML = quillEd_txtArea_1.value.replace(/>\n/g, '>') })
 }
+
+
 
 const editingHtml = ref(false)
 const editingMarkdown = ref(false)
@@ -361,6 +366,8 @@ function onHtml(evt) {
 
     quillEd_txtArea_1.setAttribute('quill__html', wasActiveTxtArea_1 ? '' : '-active-');
 }
+
+
 
 
 
