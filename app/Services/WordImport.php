@@ -53,7 +53,7 @@ class WordImport
         Log::info("File imported: " . $docxFilePath);
         Log::info("Images extracted " . print_r($this->images, true));
         Log::info("Temp dir: " . $this->tempDir);
-        Log::info("Markdown converted: " . $this->content);
+        // Log::info("Markdown converted: " . $this->content);
     }
 
     /**
@@ -176,6 +176,14 @@ class WordImport
             foreach ($this->images as $imagePath) {
                 @unlink($imagePath);
             }
+        if ($this->tempDir) {
+            Log::info("to do: delete folder " . $this->tempDir);
+            // we must delete files in folder first
+            //WordImport::deleteFilesFromFolder($this->tempDir);
+
+            // then we delete folder
+            //@rmdir($this->tempDir);
+        }
         // @unlink($tempDir . '/output.md');
     }
 
@@ -218,6 +226,9 @@ class WordImport
      */
     public function copyImagesTo(string $publicStorageRelativeFolder, bool $deletePrevious = false)
     {
+
+        Log::info("copyImagesTo ".$publicStorageRelativeFolder);
+
         if (!count($this->images))
             return 0;
 
@@ -237,14 +248,18 @@ class WordImport
             Storage::disk('public')->makeDirectory($publicStorageRelativeFolder);
         }
 
+        Log::info("images: ".print_r($this->images, true));
+
         // Copiamos las imágenes a la carpeta de destino
         foreach ($this->images as $imagePath) {
             $imageFilename = basename($imagePath);
             // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("almacen/".$destinationFolder . "/" .  $imageFilename));
+            Log::info("copy $imagePath -> $destinationFolderPath/$imageFilename");
             copy($imagePath, $destinationFolderPath . "/" . $imageFilename);
         }
 
         if (USE_PHPWORD) {
+            Log::info("preg_replace(almacen/{$this->tempDir}/   ->   almacen/$publicStorageRelativeFolder/");
             $this->content = preg_replace("#\balmacen/{$this->tempDir}/#", "almacen/$publicStorageRelativeFolder/", $this->content);
         } else {
             $this->content = preg_replace("/\bmedios\//", "$publicStorageRelativeFolder/", $this->content);
@@ -254,4 +269,5 @@ class WordImport
 
         return count($this->images);
     }
+
 }

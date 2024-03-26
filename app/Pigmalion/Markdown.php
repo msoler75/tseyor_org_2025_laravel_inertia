@@ -33,14 +33,13 @@ class Markdown
             return str_replace('<img', '<img ' . implode(' ', $values), $img);
         }, $html);
 
+        // Reemplazar párrafos con estilos
+        $html = preg_replace('/<p>{\s*style=([^}]*)\s*}/', "<p style='$1'>", $html);
+
         // centramos las imágenes solitarias
         $regex = "/<p>(<img[^>]+>)<\/p>/";
         $html = preg_replace($regex, "<p style='text-align: center'>$1</p>", $html);
 
-        // Reemplazar párrafos con estilos
-        $html = preg_replace('/<p>{style=([^}]*)}/', "<p style='$1'>", $html);
-
-        
         // Arreglar enlaces
         // Expresión regular para encontrar URLs con dominios específicos
         $patron = '/(<a[^>]+>)?\b(https?:\/\/)?(www\.)?(tseyor\.(?:org|com))\b(\/[\?&A-Za-z\-\=\/0-9\.]*)?(<\/a>)?/i';
@@ -87,13 +86,13 @@ class Markdown
         $htmlContent = self::arreglarNotas($phpWord, $htmlContent);
 
         $htmlContent = self::limpiarHtml($htmlContent);
-        // dd($htmlContent);
 
 
         // die($htmlContent);
         Log::info("Html final from docx after Foot notes rework: " . $htmlContent);
 
-        $htmlContent = self::extraerBody($htmlContent); 
+
+        $htmlContent = self::extraerBody($htmlContent);
 
         // convertimos a formato desde HTML a markdown
         $converter = new HtmlConverter();
@@ -101,15 +100,14 @@ class Markdown
 
         // generar una carpeta aleatoria
         if (!$carpetaImagenes)
-           $carpetaImagenes = 'temp/' . Str::random(16);
+            $carpetaImagenes = 'temp/' . Str::random(16);
 
         $markdown = self::extraerImagenes($markdown, $carpetaImagenes);
 
         // arreglar enlace roto de algunos documentos
-        $markdown = str_replace('[tseyor.](http://www.tseyor.com/)<span style="text-decoration:underline ">**org** </span>', '[tseyor.org](https://tseyor.org/)', $markdown);
-
-        // limpiamos formato
+        $markdown = preg_replace('&\[tseyor.\]\(http://www.tseyor.com/\)<span style="text-decoration:\s?underline\s?">\*\*org\*\*\s?</span>&', '[tseyor.org](https://tseyor.org/)', $markdown);
         $markdown = str_replace('<span style="text-decoration:underline ">**tseyor.org**</span>', '[tseyor.org](https://tseyor.org/)', $markdown);
+        $markdown = str_replace('[tseyor.](http://www.tseyor.com/)<u>org</u>', '[tseyor.org](https://tseyor.org/)', $markdown);
 
         return $markdown;
     }
@@ -117,10 +115,23 @@ class Markdown
 
     public static function limpiarHtml($html)
     {
+        // removemos caracteres extraños
+        $html = preg_replace('/[\xA0\x0C]/u', ' ', $html);
+        // Mantener saltos de línea, retorno de carro y tabulaciones al eliminar caracteres no imprimibles
+        $html = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]|[\x0D]/u', '', $html);
+
+
+        // removemos estilos de celda de tabla
         $html = preg_replace("/<td style=[^>]+>/", "<td>", $html);
 
+        // eliminar atributo lang
+        $html = preg_replace("&\slang=[^\s>]+&", "$1", $html);
+
+        // se ha observado este error en documentos word:
+        $html = preg_replace("&text-decoration=underline\s?&", "text-decoration:underline", $html);
+
         $html = preg_replace_callback(
-            '&<span (?:lang=[^>\s]+ )?style=([^>]+)>([^<]*)</span>&',
+            '&<span\s+style=([^>]+)>([^<]*)</span>&',
             function ($match) {
 
                 if (!$match[2])
@@ -132,15 +143,18 @@ class Markdown
                 $tmp = preg_split("/;\s?/", $styles, -1, PREG_SPLIT_NO_EMPTY);
                 $bold = false;
                 $italic = false;
+                $underline = false;
                 $finalStyles = [];
                 foreach ($tmp as $s) {
                     $p = preg_split("/\:\s?/", $s);
                     $key = trim($p[0]);
-                    $v = $p[1];
+                    $v = trim($p[1]);
                     if ($key == "font-style" && $v == "italic")
                         $italic = true;
                     else if ($key == "font-weight" && $v == "bold")
                         $bold = true;
+                    else if ($key == "text-decoration" && $v == "underline")
+                        $underline = true;
                     else if (!in_array($key, ['font-family', 'font-size', 'color', 'margin-bottom', 'margin-top']))
                         $finalStyles[] = "$key=$v";
                 }
@@ -159,51 +173,117 @@ class Markdown
                     $pre .= "<b>";
                     $tail = "</b>" . $tail;
                 }
+                if ($underline) {
+                    $pre .= "<u>";
+                    $tail = "</u>" . $tail;
+                }
 
                 // echo $match[2] . " - " . $styles . " - ". $match[0]. "<br>";
-    
+
+                return $pre . $match[2] . $tail;
+            },
+            $html
+        );
+
+        // dd(substr($html, 0, 2500));
+
+        // limpiamos párrafos p
+        $html = preg_replace_callback(
+            '&<p\s+style=([^>]+)>(.*)</p>&',
+            function ($match) {
+                $styles = $match[1];
+
+                //remove first and last char
+                $styles = substr($styles, 1, strlen($styles) - 2);
+                $tmp = preg_split("/;\s?/", $styles, -1, PREG_SPLIT_NO_EMPTY);
+                $bold = false;
+                $italic = false;
+                $underline = false;
+                $center = false;
+                $finalStyles = [];
+                foreach ($tmp as $s) {
+                    $p = preg_split("/\:\s?/", $s);
+                    $key = trim($p[0]);
+                    $v = trim($p[1]);
+                    if ($key == "font-style" && $v == "italic")
+                        $italic = true;
+                    else if ($key == "font-weight" && $v == "bold")
+                        $bold = true;
+                    else if ($key == "text-decoration" && $v == "underline")
+                        $underline = true;
+                    else if ($key == "text-align" && $v == "center")
+                        $center = true;
+                    else if (!in_array($key, ['font-family', 'font-size', 'color', 'margin-bottom', 'margin-top', 'text-align']))
+                        $finalStyles[] = "$key=$v";
+                }
+
+                $pre = "<p>";
+                $tail = "</p>";
+                if (count($finalStyles)) {
+                    $pre = '<p style="' . implode('; ', $finalStyles) . '">';
+                }
+                if ($center) {
+                    $pre .= "{style=text-align:center}";
+                }
+                if ($italic) {
+                    $pre .= "<i>";
+                    $tail = "</i>" . $tail;
+                    dd("DONT!");
+                }
+                if ($bold) {
+                    $pre .= "<b>";
+                    $tail = "</b>" . $tail;
+                    dd("DONT!");
+                }
+                if ($underline) {
+                    $pre .= "<u>";
+                    $tail = "</u>" . $tail;
+                    dd("DONT!");
+                }
+                //if($center)
+                //dd($pre . $match[2] . $tail);
+
+                // echo $match[2] . " - " . $styles . " - ". $match[0]. "<br>";
+
                 return $pre . $match[2] . $tail;
             },
             $html
         );
 
 
-        // eliminar span con lang
-        $html = preg_replace("&<span lang=[^>]+>(.*?)</span>&", "<span>$1</span>", $html);
 
         // eliminar titulos
         $html = preg_replace("&<h\d>(.*?)</h\d>&", "<p><b>$1</b></p>", $html);
 
-
-        // errores extraños:
-        $html = preg_replace("&text-decoration=underline&", "text-decoration:underline", $html);
-
         // unir estilos repetidos
         for ($i = 0; $i < 3; $i++) {
-            $html = preg_replace("&<i>([^<]+)</i><i>([^<]+)</i>&", "<i>$1$2</i>", $html);
-            $html = preg_replace("&<b>([^<]+)</b><b>([^<]+)</b>&", "<b>$1$2</b>", $html);
+            $html = preg_replace("&<i>(.*?)</i><i>(.*?)</i>&", "<i>$1$2</i>", $html);
+            $html = preg_replace("&<b>(.*?)</b><b>(.*?)</b>&", "<b>$1$2</b>", $html);
+            $html = preg_replace("&<u>(.*?)</u><u>(.*?)</u>&", "<u>$1$2</u>", $html);
             $html = preg_replace(
                 "&<span style=.text-decoration:underline[^>]{1,3}>(.*?)</span><span style=.text-decoration:underline[^>]{1,3}>(.*?)</span>&",
                 "<span style='text-decoration:underline'>$1$2</span>",
                 $html
             );
-            $html = preg_replace_callback("&<a href=([^>]+)>(.*?)</a><a href=([^>]+)>(.*?)</a>&", function($match) {
-                    if($match[1]==$match[3])
-                        return "<a href={$match[3]}>{$match[2]}{$match[4]}</a>";
-                    return $match[0];
+            $html = preg_replace_callback("&<a href=([^>]+)>(.*?)</a><a href=([^>]+)>(.*?)</a>&", function ($match) {
+                if ($match[1] == $match[3])
+                    return "<a href={$match[3]}>{$match[2]}{$match[4]}</a>";
+                return $match[0];
             }, $html);
         }
+
+
 
         return $html;
 
     }
 
 
-    public static function arreglarNotas($phpWord, $htmlContent) {
-         // Arreglamos notas al pie
+    public static function arreglarNotas($phpWord, $htmlContent)
+    {
+        // Arreglamos notas al pie
         // buscamos manualmente las foot notes
         $footNotes = $phpWord->getFootnotes()->getItems();
-        echo "foot notes";
         // dd($footNotes);
 
         Log::info("footnotes: " . count($footNotes));
@@ -230,8 +310,6 @@ class Markdown
                 }
 
                 if ($primerTexto) {
-                    var_dump($primerTexto, true);
-                    echo "primer texto: " . print_r($primerTexto, true) . "<br>";
                     // buscamos el texto
                     preg_match_all("#>\s*" . str_replace(["#", "(", ")", "[", "]"], ["\\#", "\\(", "\\)", "\\[", "\\]"], $primerTexto) . "#", $htmlContent, $matches, PREG_OFFSET_CAPTURE);
 
@@ -327,7 +405,8 @@ class Markdown
     }
 
 
-    public static function extraerImagenes($markdown, $carpetaImagenes) {
+    public static function extraerImagenes($markdown, $carpetaImagenes)
+    {
         $markdown = preg_replace('/<div style="page: page\d+">/', '', $markdown);
         // extraemos las imagenes (codificadas en base64) y las guardamos en disco
 
@@ -368,26 +447,51 @@ class Markdown
     }
 
 
-    public static function extraerBody($html) {
-        
-        // Convertimos el HTML a DOM
-        $dom = new \DOMDocument();
-        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    public static function extraerBody($html)
+    {
+        try {
+            $dom = new \DOMDocument();
+            $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
-        // Extraemos el body
-        $bodyContent = '';
-        $bodyNodes = $dom->getElementsByTagName('body')->item(0)->childNodes;
-        foreach ($bodyNodes as $node) {
-            // extraemos los div de pagina en el primer nivel del body:
-            // <div style="page: page1">
-            if ($node->nodeName == 'div' && preg_match('/page\d+/', $node->getAttribute('style'))) {
-                $nodes = $node->childNodes;
-                foreach ($nodes as $node2) {
-                    $bodyContent .= $dom->saveHTML($node2);
-                }
-            } else
-                $bodyContent .= $dom->saveHTML($node);
+            // Extraemos el body
+            $bodyContent = '';
+            $bodyNodes = $dom->getElementsByTagName('body')->item(0)->childNodes;
+            foreach ($bodyNodes as $node) {
+                // extraemos los div de pagina en el primer nivel del body:
+                // <div style="page: page1">
+                if ($node->nodeName == 'div' && preg_match('/page\d+/', $node->getAttribute('style'))) {
+                    $nodes = $node->childNodes;
+                    foreach ($nodes as $node2) {
+                        $bodyContent .= $dom->saveHTML($node2);
+                    }
+                } else
+                    $bodyContent .= $dom->saveHTML($node);
+            }
+            return $bodyContent;
+        } catch (\Exception $e) {
+            Log::error($e);
         }
+
+
+        // Encuentra el inicio del body
+        $startBody = strpos($html, '<body>');
+        // Encuentra el final del body
+        $endBody = strpos($html, '</body>');
+
+        // Extrae el contenido del body
+        $bodyContent = substr($html, $startBody + 6, $endBody - $startBody - 6);
+
+        $matches = [];
+        // remueve div de seccion si lo hubiera
+        if(preg_match_all("/<div style=.page:\s?page[^>]+>/", $bodyContent, $matches, PREG_OFFSET_CAPTURE))
+        {
+            $divHtml = $matches[0][0][0];
+            $pos = $matches[0][0][1];
+            $bodyContent = substr($bodyContent, 0, $pos) . substr($bodyContent, $pos+strlen($divHtml));
+            $pos = strrpos($bodyContent, "</div>");
+            $bodyContent = substr($bodyContent, 0, $pos) . substr($bodyContent, $pos+strlen("</div>"));
+        }
+
         return $bodyContent;
     }
 }

@@ -109,6 +109,9 @@ class ComunicadosController extends Controller
     }
 
 
+    /**
+     * Genera un PDF desde los datos de un comunicado
+     */
     public function pdf($id)
     {
         if (is_numeric($id)) {
