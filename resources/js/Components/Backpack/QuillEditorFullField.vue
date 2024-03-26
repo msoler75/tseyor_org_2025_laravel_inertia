@@ -4,8 +4,7 @@
 
         <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
             <div class="flex flex-col">
-                <FileManager :ruta="mediaFolder" @image="onInsertImage"
-                    :modo-insertar="true"
+                <FileManager :ruta="mediaFolder" @image="onInsertImage" :modo-insertar="true"
                     class="min-h-[calc(100vh-160px)] max-h-[calc(100vh-160px)] h-[calc(100vh-160px)] overflow-y-auto" />
                 <div class="p-3 flex justify-end border-t border-gray-500 border-opacity-25">
                     <button @click.prevent="showMediaManager = false" class="btn btn-neutral">Cerrar</button>
@@ -14,9 +13,9 @@
         </Modal>
 
         <div v-show="!editingMarkdown" ref="quillwrapper" class="bg-base-100 text-base-content"
-            :class="inFullScreen ? 'fullscreen' : ''" >
-            <QuillEditor ref="qeditor" theme="snow" v-model:content="contenidoHtml" contentType="html" :modules="modules"
-                :toolbar="`#toolbar_quill_${name}`" @ready="onQuillReady">
+            :class="inFullScreen ? 'fullscreen' : ''">
+            <QuillEditor ref="qeditor" theme="snow" v-model:content="contenidoHtml" contentType="html"
+                :modules="modules" :toolbar="`#toolbar_quill_${name}`" @ready="onQuillReady">
                 <template #toolbar>
                     <div :id="`toolbar_quill_${name}`" quill__toolbar>
                         <span class="ql-formats">
@@ -50,13 +49,14 @@
 
                         <span class="ql-formats">
                             <!-- Add font size dropdown -->
-                            <select class="ql-size">
+                            <!-- Note a missing, thus falsy value, is used to reset to default -->
+                            <!-- <select class="ql-size">
                                 <option value="small"></option>
-                                <!-- Note a missing, thus falsy value, is used to reset to default -->
                                 <option selected></option>
                                 <option value="large"></option>
                                 <option value="huge"></option>
                             </select>
+                            -->
 
                             <select class="ql-header">
                                 <option value="1"></option>
@@ -179,7 +179,7 @@ import 'floating-vue/dist/style.css'
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 
-import {HtmlToMarkdown, MarkdownToHtml, detectFormat} from '@/composables/markdown.js'
+import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
 
 import screenfull from 'screenfull'
 
@@ -244,7 +244,7 @@ const modules = ref([
 ])
 
 function onQuillReady() {
-    // console.log('Quill Ready!')
+    console.log('Quill Ready!')
     // Obtener los atajos de teclado actuales
     const quill = qeditor.value.getQuill()
     bindings = quill.getModule('keyboard').options.bindings;
@@ -257,6 +257,8 @@ const format = ['md', 'ambiguous'].includes(detectFormat(props.content).format) 
 
 const contenidoMD = ref(format == 'md' ? props.content : HtmlToMarkdown(props.content))
 const contenidoHtml = ref(format == 'html' ? props.content : MarkdownToHtml(props.content))
+
+
 
 watch(contenidoHtml, (value) => {
     contenidoMD.value = HtmlToMarkdown(value)
@@ -479,7 +481,7 @@ function installToolTips() {
         let classes = e.parentNode.className
         // console.log('classes', classes)
 
-        if(classes.match('tooltip')) continue
+        if (classes.match('tooltip')) continue
 
         let button = classes
             .replace('ql-color-picker', '')
@@ -524,7 +526,7 @@ function installToolTips() {
         let classes = e.getAttribute("class")
         if (classes.match(/ql-formats|ql-picker-label/)) continue
 
-        if(classes.match('tooltip')) continue
+        if (classes.match('tooltip')) continue
 
         // console.log('adding tooltip for ', classes)
         let button = classes.replace('ql-active', '')
