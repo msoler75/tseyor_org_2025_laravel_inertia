@@ -138,8 +138,6 @@ use \Backpack\ReviseOperation\ReviseOperation;
     public function importando2()
     {
         try {
-
-
             $terminado = GlosarioImport::procesar();
             if ($terminado) {
                 Cache::forget('letras_glosario');

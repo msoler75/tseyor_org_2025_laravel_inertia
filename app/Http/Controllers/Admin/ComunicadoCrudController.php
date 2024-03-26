@@ -346,10 +346,10 @@ class ComunicadoCrudController extends CrudController
             ]);
 
             // Copiaremos las imágenes a la carpeta de destino
-            $mediaFolder = "medios/comunicados/_{$contenido->id}";
+            $imagesFolder = "medios/comunicados/_{$contenido->id}";
 
             // copia las imágenes desde la carpeta temporal al directorio destino
-            $imported->copyImagesTo($mediaFolder);
+            $imported->copyImagesTo($imagesFolder);
 
             // ahora las imagenes están con la nueva ubicación
             $contenido->texto = $imported->content;
