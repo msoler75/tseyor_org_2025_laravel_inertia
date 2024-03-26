@@ -15,9 +15,47 @@ turndownService.keep(["span"]);
 Nuestras conversiones perosnalizadas de markdown <-> HTML
 */
 
+function replaceQuillEditorClasses(html) {
+    return html.replace(/<(\w+)\s(?:[^>]*\s)?((class|style)="[^"]*")/g, function (element, tag) {
+        const styles = [];
+        // Verificar si es 'style' o 'class' y añadir al array 'styles'
+        element.replace(/(?:class|style)="([^"]*)"/g, function (match, attribute) {
+            if (match.includes('style=')) {
+                // Desglosar estilos y añadir al array 'styles'
+                attribute.split(';').forEach(style => {
+                    if (style.trim() !== '') {
+                        styles.push(style.trim());
+                    }
+                });
+            } else if (match.includes('class=')) {
+                // Añadir estilos correspondientes a cada clase al array 'styles'
+                attribute.split(' ').forEach(cls => {
+                    if (cls.startsWith('ql-')) {
+                        // Lógica para mapear clases a estilos
+                        // Aquí puedes definir la lógica para mapear clases a estilos
+                        if (cls === 'ql-align-left') styles.push('text-align: left');
+                        if (cls === 'ql-align-justify') styles.push('text-align: justify');
+                        if (cls === 'ql-align-center') styles.push('text-align: center');
+                        if (cls === 'ql-align-right') styles.push('text-align: right');
+                        if (cls === 'ql-size-small') styles.push('font-size: .75em');
+                        if (cls === 'ql-size-larger') styles.push('font-size: 1.75em');
+                        if (cls === 'ql-size-huge') styles.push('font-size: 2.25em');
+                    }
+                });
+            }
+        });
+        if(styles.length == 0) return '<' + tag;
+        return '<' + tag + ' style="' + styles.join('; ') + '"';
+    })
+}
+
 export function HtmlToMarkdown(html) {
   // convertimos cualquier clase dentro de párrafo p en un marcaje especial
   // console.log('HtmlToMarkdown', html)
+
+  // checamos si tiene alguna classe de Quill Editor
+  if(html.match(/class="ql-/))
+    html = replaceQuillEditorClasses(html)
 
   // quitamos estilo de centro en imagenes solitarias (no es necesario)
   html = html.replace(
@@ -62,7 +100,7 @@ export function MarkdownToHtml(raw_markdown) {
     return md.render(raw_markdown)
     */
 
-  console.log("MarkdownToHtml", raw_markdown);
+  // console.log("MarkdownToHtml", raw_markdown);
   const converter = new showdown.Converter();
   converter.setFlavor("github");
   return (
