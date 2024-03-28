@@ -9,10 +9,10 @@ class BusquedasHelper
 
     public static $palabrasComunes = [
         'a', 'al', 'ante', 'bajo', 'cabe', 'con', 'contra', 'de', 'del', 'desde', 'durante', 'en', 'entre', 'hacia', 'que',
-        'hasta', 'mediante', 'para', 'por', 'sin', 'sobre', 'tras', 'el', 'la', 'los',
-        'las', 'un', 'una', 'unos', 'unas', 'lo', 'alguno', 'alguna', 'algunos', 'algunas', 'ningún', 'ningun', 'ninguna',
+        'hasta', 'mediante', 'para', 'por', 'sin', 'sobre', 'tras', 'el', 'lo', 'los', 'las',// 'la',
+        'las', 'un', 'una', 'unos', 'unas', 'lo', // 'alguno', 'alguna', 'algunos', 'algunas', 'ningún', 'ningun', 'ninguna',
         'ellos', 'ellas', 'me', 'te', 'se', 'nos', 'os', 'le', 'les',
-        'lo', 'la', 'los', 'las', 'y', 'e', 'o', 'u', 'pero', 'sin', 'aunque', 'porque', 'pues', 'así', 'asi', 'entonces',
+        'y', 'e', 'o', 'u', 'pero', 'sin', 'aunque', 'porque', 'pues', 'así', 'asi', 'entonces',
         'entonces', 'bien', 'además', 'ademas',
         'tampoco', 'sino', 'también', 'tambien', 'etcétera', 'etcétera', 'etc.', 'etc', 'etc...',
     ];
@@ -58,11 +58,11 @@ class BusquedasHelper
                         $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
                     } else $textoLimpio = $item->descripcion;
 
-                    
+
                     // extraemos la parte más relevante
                     $parteRelevante = $h->extractRelevant($busqueda, $textoLimpio, 400);
                     $item->descripcion = $h->highlight($parteRelevante, $busqueda, "em", $options);
-                    
+
                     if($extraeTodos)
                     {
                         // extraemos todos los extractos que contienen algo del texto buscado

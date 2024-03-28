@@ -60,6 +60,7 @@ onMounted(() => {
                 <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required autofocus
                     autocomplete="name" />
                 <InputError class="mt-2" :message="form.errors.name" />
+                <small>Si no dispones de nombre simbólico, necesitas el <Referencia>curso holístico</Referencia></small>
             </div>
 
             <div class="mt-4">
