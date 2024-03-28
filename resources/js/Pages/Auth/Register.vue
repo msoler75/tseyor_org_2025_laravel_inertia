@@ -75,6 +75,7 @@ onMounted(() => {
                 <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full" required
                     autocomplete="new-password" />
                 <InputError class="mt-2" :message="form.errors.password" />
+                <small>Crea una contraseña para tu cuenta en tseyor.org</small>
             </div>
 
             <div class="mt-4">
