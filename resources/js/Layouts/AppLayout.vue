@@ -49,6 +49,9 @@ router.on('start', (event) => {
         return
     }*/
 
+    if(event.detail.visit.url==route('logout'))
+    nav.dontFadeout = true
+
     nav.navigating = true
 
     const nuevaRuta = event.detail.visit.url
