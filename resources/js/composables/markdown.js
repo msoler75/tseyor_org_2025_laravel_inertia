@@ -4,18 +4,19 @@ import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 
 const turndownService = new TurndownService({
-  bulletListMarker: "-",
-  headingStyle: "atx",
+  bulletListMarker: '-',
+  headingStyle: 'atx',
+  hr: '---'
 });
 turndownService.use(gfm);
-turndownService.keep(["span"]);
+turndownService.keep(['span', 'sup', 'u']);
 
 /*
 
-Nuestras conversiones perosnalizadas de markdown <-> HTML
+Nuestras conversiones personalizados de markdown <-> HTML
 */
 
-function replaceQuillEditorClasses(html) {
+export function replaceQuillEditorClasses(html) {
     return html.replace(/<(\w+)\s(?:[^>]*\s)?((class|style)="[^"]*")/g, function (element, tag) {
         const styles = [];
         // Verificar si es 'style' o 'class' y añadir al array 'styles'
@@ -51,11 +52,12 @@ function replaceQuillEditorClasses(html) {
 
 export function HtmlToMarkdown(html) {
   // convertimos cualquier clase dentro de párrafo p en un marcaje especial
-  // console.log('HtmlToMarkdown', html)
+  console.log('HtmlToMarkdown', {html})
 
   // checamos si tiene alguna classe de Quill Editor
-  if(html.match(/class="ql-/))
-    html = replaceQuillEditorClasses(html)
+  //if(html.match(/class="ql-/))
+    //html = replaceQuillEditorClasses(html)
+
 
   // quitamos estilo de centro en imagenes solitarias (no es necesario)
   html = html.replace(
@@ -63,7 +65,7 @@ export function HtmlToMarkdown(html) {
     "<p>$1</p>"
   )
 
-  return turndownService.turndown(
+  const md =  turndownService.turndown(
     html
       // reemplazamos los atributos de imagen
       .replace(/<img\s+([^>]+)>/g, (match, atributos) => {
@@ -74,6 +76,13 @@ export function HtmlToMarkdown(html) {
           if (atributo === "width" || atributo === "height") {
             values.push(`${atributo}=${valor}`);
           }
+          if(atributo=='style') {
+            valor.split(/\s*;\s*/).forEach(style => {
+              const [key, value] = style.split(/\s*:\s*/)
+              if(key==='width' || key==='height')
+                values.push(`${key}=${value}`);
+            })
+          }
           return match;
         });
         // console.log('values', values)
@@ -83,7 +92,11 @@ export function HtmlToMarkdown(html) {
       .replace(/<p style=["']([^>]*)["'][^>]*>/g, "$&{style=$1}")
       // eliminamos estilos innecesarios
       .replace(/{style=text-align: left;}/g, "")
+      .replace('{width=auto, height=auto}', '') // removemos estilos innecesarios
   );
+
+  console.log({md})
+  return md
 }
 
 // cambia los caracteres codificados de < y > a su valor real
@@ -100,10 +113,11 @@ export function MarkdownToHtml(raw_markdown) {
     return md.render(raw_markdown)
     */
 
-  // console.log("MarkdownToHtml", raw_markdown);
+   console.log("MarkdownToHtml", {raw_markdown});
+   // raw_markdown = raw_markdown.replace(/\n\s*---\s*\n/mg, '<hr/>')
   const converter = new showdown.Converter();
   converter.setFlavor("github");
-  return (
+  const html=  (
     converter
       .makeHtml(raw_markdown)
 
@@ -127,6 +141,8 @@ export function MarkdownToHtml(raw_markdown) {
       // centramos las imágenes solitarias
       .replace(/<p>(<img[^>]+>)<\/p>/g, "<p style='text-align: center'>$1</p>")
   );
+  console.log({html})
+  return html
 }
 
 export function detectFormat(text) {
