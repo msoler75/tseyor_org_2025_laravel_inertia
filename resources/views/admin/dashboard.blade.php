@@ -168,7 +168,7 @@
                 <div class="font-bold mb-3 text-lg">Actividad de los administradores:</div>
                 <div class="grid grid-cols-[3fr_1fr_1fr_1fr_1fr_100px]">
                     @foreach ($revisiones as $revision)
-                        <a title="Ver contenido" href="{{ $revision->contenidoUrl }}">{{ $revision->tituloContenido }}</a>
+                        <a title="Ver contenido" href="{{ $revision->contenidoUrl }}">{{ $revision->tituloContenido ? $revision->tituloContenido : '<sin título>' }}</a>
                         <span>{{ $revision->coleccion }}</span>
                         <span>{{ $revision->operacion }}</span>
                         <span>{{ $revision->autor }}</span>

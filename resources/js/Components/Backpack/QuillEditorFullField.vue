@@ -261,7 +261,7 @@ const contenidoHtml = ref(format == 'html' ? props.content : MarkdownToHtml(prop
 
 
 watch(contenidoHtml, (value) => {
-    contenidoMD.value = HtmlToMarkdown(value)
+    contenidoMD.value = HtmlToMarkdown(replaceQuillEditorClasses(value))
     if (props.format == 'md') {
         emit('change', contenidoMD.value)
         emit('update:modelValue', contenidoMD.value)
@@ -339,9 +339,9 @@ watch(editingMarkdown, (value) => {
 })
 
 
-watch(contenidoHtml, (value) => {
+/*watch(contenidoHtml, (value) => {
     contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
-})
+})*/
 
 
 

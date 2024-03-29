@@ -305,6 +305,14 @@ Route::get('asociacion', 'App\Http\Controllers\PaginasController@show')->name('a
 
 
 
+Route::get('test/tiptap', function () {
+    return Inertia::render('test/TipTapTest');
+});
+
+Route::get('test/editor', function () {
+    return Inertia::render('test/EditorJsTest');
+});
+
 Route::get('test/image', function () {
     return Inertia::render('test/imageTest');
 });
