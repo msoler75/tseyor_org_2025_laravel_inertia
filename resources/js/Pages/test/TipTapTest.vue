@@ -26,6 +26,10 @@ import Underline from '@tiptap/extension-underline'
 import Image from '@tiptap/extension-image'
 import { Color } from '@tiptap/extension-color'
 import Superscript from '@tiptap/extension-superscript'
+import Table from "@tiptap/extension-table";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import TableRow from "@tiptap/extension-table-row";
 // import ImageResize from 'tiptap-extension-resize-image';
 import Link from '@tiptap/extension-link'
 import FullMenuBar from "./FullMenuBar.vue";
@@ -39,9 +43,9 @@ import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/mark
 import screenfull from 'screenfull'
 
 // insertHTml
-import { Node } from '@tiptap/core'
+// import { Node } from '@tiptap/core'
 
-import { DOMParser } from 'prosemirror-model'
+// import { DOMParser } from 'prosemirror-model'
 
 const props = defineProps({
     name: String,
@@ -220,8 +224,8 @@ const ImageResize = Image.extend({
             $img.setAttribute('src', src);
             $img.setAttribute('alt', alt);
             $img.setAttribute('style', style);
-            if(width!==null)$img.setAttribute('width', width);
-            if(height!==null)$img.setAttribute('height', height);
+            if (width !== null) $img.setAttribute('width', width);
+            if (height !== null) $img.setAttribute('height', height);
             $img.setAttribute('draggable', 'true');
 
             if (!editable) return { dom: $img };
@@ -355,13 +359,19 @@ const editor = useEditor({
              allowBase64: true,
          }),
          */
+        Table.configure({
+            resizable: true
+        }),
+        TableRow,
+        TableHeader,
+        TableCell,
         ImageResize
-        .configure({
+            .configure({
                 inline: true,
                 allowBase64: true,
             })
 
-            ,
+        ,
         /*ImagePaste.configure({
             fileMatchRegex: /^image\/(gif|jpe?g|a?png|svg|webp|bmp)/i,
             disableImagePaste: false,
@@ -436,12 +446,12 @@ pre {
 
 }
 
-pre  >code {
-        color: inherit;
-        padding: 0;
-        background: none;
-        font-size: 0.8rem;
-    }
+pre>code {
+    color: inherit;
+    padding: 0;
+    background: none;
+    font-size: 0.8rem;
+}
 
 img {
     max-width: 100%;
@@ -466,4 +476,64 @@ hr {
 .tiptap-editor:deep(img) {
     display: inline-block
 }
+
+
+.tiptap-editor:deep(table) {
+    border-collapse: collapse;
+    margin: 0;
+    overflow: hidden;
+    table-layout: fixed;
+}
+
+.tiptap-editor:deep(td, th) {
+    border: 2px solid #ced4da;
+    box-sizing: border-box;
+    min-width: 1em;
+    padding: 3px 5px;
+    position: relative;
+}
+
+.tiptap-editor:deep(th) {
+    background-color: #f1f3f5;
+    font-weight: bold;
+    text-align: left;
+}
+
+.tiptap-editor:deep(.selectedCell:after) {
+    background: rgba(200, 200, 255, 0.4);
+    content: "";
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
+}
+
+.tiptap-editor:deep(.column-resize-handle) {
+    background-color: #adf;
+    bottom: -2px;
+    position: absolute;
+    right: -2px;
+    pointer-events: none;
+    top: 0;
+    width: 4px;
+}
+
+
+.tiptap-editor:deep(.tableWrapper) {
+    padding: 1rem 0;
+    overflow-x: auto;
+}
+
+.tiptap-editor:deep(.resize-cursor) {
+    cursor: ew-resize;
+    cursor: col-resize;
+}
+
+.tiptap-editor:deep(table) p {
+    margin: .1rem 0;
+}
+
 </style>

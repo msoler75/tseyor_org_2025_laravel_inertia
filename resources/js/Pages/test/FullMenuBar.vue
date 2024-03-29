@@ -204,6 +204,70 @@ const items = ref([
         title: "Rehacer",
         action: () => props.editor.chain().focus().redo().run(),
     },
+    {
+        type: "divider"
+    },
+
+    {
+        icon: "mdi:table",
+        title: "Insertar tabla",
+        action: () => props.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false }).run(),
+    },
+    {
+        icon: "mdi:table-column-plus-before",
+        title: "Añadir columna antes",
+        action: () => props.editor.chain().focus().addColumnBefore().run(),
+    },
+    {
+        icon: "mdi:table-column-plus-after",
+        title: "Añadir columna después",
+        action: () => props.editor.chain().focus().addColumnAfter().run(),
+    },
+    {
+        icon: "mdi:table-column-remove",
+        title: "Eliminar columna",
+        action: () => props.editor.chain().focus().deleteColumn().run(),
+    },
+    {
+        icon: "mdi:table-row-plus-before",
+        title: "Añadir fila antes",
+        action: () => props.editor.chain().focus().addRowBefore().run(),
+    },
+    {
+        icon: "mdi:table-row-plus-after",
+        title: "Añadir fila después",
+        action: () => props.editor.chain().focus().addRowAfter().run(),
+    },
+    {
+        icon: "mdi:table-row-remove",
+        title: "Eliminar fila",
+        action: () => props.editor.chain().focus().deleteRow().run(),
+    },
+    {
+        icon: "mdi:table-remove",
+        title: "Eliminar tabla",
+        action: () => props.editor.chain().focus().deleteTable().run(),
+    },
+    {
+        icon: "mdi:table-merge-cells",
+        title: "Unir celdas",
+        action: () => props.editor.chain().focus().mergeCells().run(),
+    },
+    {
+        icon: "mdi:table-split-cell",
+        title: "Dividir celdas",
+        action: () => props.editor.chain().focus().splitCell().run(),
+    },
+    {
+        icon: "mdi:table-row",
+        title: "Cabecera de tabla",
+        action: () => props.editor.chain().focus().toggleHeaderRow().run(),
+    },
+    {
+        icon: "mdi:table-refresh",
+        title: "Arreglar tabla",
+        action: () => props.editor.chain().focus().fixTables().run(),
+    }
 ]);
 
 
