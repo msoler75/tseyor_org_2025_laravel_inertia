@@ -191,6 +191,7 @@ const props = defineProps({
     name: String,
     content: { type: String, default: '' },
     mediaFolder: { type: String, default: 'medios' },
+    full: {type: Boolean, default: true}
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])

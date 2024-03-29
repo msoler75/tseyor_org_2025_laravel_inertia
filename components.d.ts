@@ -40,6 +40,7 @@ declare module 'vue' {
     ContentBar: typeof import('./resources/js/Components/ContentBar.vue')['default']
     ContentMain: typeof import('./resources/js/Components/ContentMain.vue')['default']
     ContentNode: typeof import('./resources/js/Components/ContentNode.vue')['default']
+    copy: typeof import('./resources/js/Components/Backpack/QuillEditorFullField copy.vue')['default']
     Counter: typeof import('./resources/js/Components/Counter.vue')['default']
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     DialogModal: typeof import('./resources/js/Components/DialogModal.vue')['default']
@@ -53,7 +54,29 @@ declare module 'vue' {
     FeaturedPosts: typeof import('./resources/js/Sections/FeaturedPosts.vue')['default']
     FeatureRows: typeof import('./resources/js/Sections/FeatureRows.vue')['default']
     FileIcon: typeof import('./resources/js/Components/FolderExplorer/FileIcon.vue')['default']
-    FileManager: typeof import('./resources/js/Components/FileManager.vue')['default']
+    <template>
+    <div>
+        <input type="hidden" id="xxx" :name="name" v-model="contenido" />
+        <TinyMCE v-model="contenido" full-editor :format="format" :mediaFolder="folder"/>
+        <!-- <div v-html="contenido.replace(/\n/g, '<br>')"></div> -->
+    </div>
+</template>
+
+
+<script setup>
+
+const props = defineProps({
+    name: String,
+    content: { type: String, default: '' },
+    format: { type: String, default: 'detect' }, // 'md', 'html'
+    folder: String
+})
+
+const contenido = ref(props.content)
+
+</script>
+
+FileManager: typeof import('./resources/js/Components/FileManager.vue')['default']
     FileSize: typeof import('./resources/js/Components/FolderExplorer/FileSize.vue')['default']
     FolderExplorer: typeof import('./resources/js/Components/FolderExplorer/FolderExplorer.vue')['default']
     FolderIcon: typeof import('./resources/js/Components/FolderExplorer/FolderIcon.vue')['default']
@@ -124,6 +147,9 @@ declare module 'vue' {
     TinyMCE: typeof import('./resources/js/Components/TinyMCE.vue')['default']
     TinyMCEFullField: typeof import('./resources/js/Components/Backpack/TinyMCEFullField.vue')['default']
     TinyMCESimpleField: typeof import('./resources/js/Components/Backpack/TinyMCESimpleField.vue')['default']
+    TipTapEditor: typeof import('./resources/js/Components/TipTapEditor.vue')['default']
+    TipTapEditorFullField: typeof import('./resources/js/Components/Backpack/TipTapEditorFullField.vue')['default']
+    TipTapFullMenuBar: typeof import('./resources/js/Components/TipTapFullMenuBar.vue')['default']
     TransitionFade: typeof import('./resources/js/Sections/TransitionFade.vue')['default']
     Uploader: typeof import('./resources/js/Components/Uploader.vue')['default']
     User: typeof import('./resources/js/Components/User.vue')['default']
