@@ -45,8 +45,10 @@ import { DOMParser } from 'prosemirror-model'
 
 const props = defineProps({
     name: String,
-    content: { type: String, default: // '<p><span style="color: red"><u>Describe</u> </span> aquí...</p> <p><img src="/almacen/medios/fruto%20castano.jpg" style="width:155px; height:235.87px"></p> Aleph<a href="#note-1"><sup>1</sup></a></p> <hr/> <p><sup id="note-1">1</sup> Aleph</p>'
-    `<img src="/almacen/medios/fruto%20castano.jpg" style="width:103px; height:156.766px">  <p>1</p>`
+    content: {
+        type: String, default: // '<p><span style="color: red"><u>Describe</u> </span> aquí...</p> <p><img src="/almacen/medios/fruto%20castano.jpg" style="width:155px; height:235.87px"></p> Aleph<a href="#note-1"><sup>1</sup></a></p> <hr/> <p><sup id="note-1">1</sup> Aleph</p>'
+            `<p style="text-align: center">antes: <img src="/almacen/medios/fruto%20castano.jpg" width='103px' height="156.766px"> después</p>  <p><sup id='pepe'>1</sup >con ID</p>
+            `
     },
     mediaFolder: { type: String, default: 'medios' },
 })
@@ -94,8 +96,7 @@ watch(editingMarkdown, (value) => {
 function toggleMarkdown() {
     console.log('toggleMarkdown')
     editingMarkdown.value = !editingMarkdown.value
-    if(!editingMarkdown.value)
-    {
+    if (!editingMarkdown.value) {
 
     }
 }
@@ -185,122 +186,134 @@ const ImagePaste = Extension.create({
 
 
 const ImageResize = Image.extend({
-  addAttributes() {
-    return {
-      src: {
-        default: null,
-      },
-      alt: {
-        default: null,
-      },
-      style: {
-        default: 'cursor: pointer;',
-      },
-    };
-  },
-  addNodeView() {
-    return ({ node, editor, getPos }) => {
-      const {
-        view,
-        options: { editable },
-      } = editor;
-      const { src, alt, style } = node.attrs;
-      const $container = document.createElement('span');
-      const $img = document.createElement('img');
-
-      $container.appendChild($img);
-      $img.setAttribute('src', src);
-      $img.setAttribute('alt', alt);
-      $img.setAttribute('style', style);
-      $img.setAttribute('draggable', 'true');
-
-      if (!editable) return { dom: $img };
-
-      const dotsPosition = [
-        'top: -4px; left: -4px; cursor: nwse-resize;',
-        'top: -4px; right: -4px; cursor: nesw-resize;',
-        'bottom: -4px; left: -4px; cursor: nesw-resize;',
-        'bottom: -4px; right: -4px; cursor: nwse-resize;',
-      ];
-
-      let isResizing = false;
-      let startX, startWidth, startHeight;
-
-      $container.addEventListener('click', () => {
-        $container.setAttribute(
-          'style',
-          `display:inline-block; position: relative; outline: 2px dashed #6C6C6C; ${style} cursor: pointer; width:fit-content`,
-        );
-
-        Array.from({ length: 4 }, (_, index) => {
-          const $dot = document.createElement('div');
-          $dot.setAttribute(
-            'style',
-            `padding: 0; position: absolute; width: 9px; height: 9px; border: 1.5px solid #6C6C6C; border-radius: 50%; ${dotsPosition[index]}`,
-          );
-
-          $dot.addEventListener('mousedown', e => {
-            e.preventDefault();
-            isResizing = true;
-            startX = e.clientX;
-            startWidth = $container.offsetWidth;
-            startHeight = $container.offsetHeight;
-
-            const onMouseMove = (e) => {
-              if (!isResizing) return;
-
-              const deltaX = e.clientX - startX;
-
-              const aspectRatio = startWidth / startHeight;
-              const newWidth = startWidth + deltaX;
-              const newHeight = newWidth / aspectRatio;
-
-              $container.style.width = newWidth + 'px';
-              $container.style.height = newHeight + 'px';
-
-              $img.style.width = newWidth + 'px';
-              $img.style.height = newHeight + 'px';
-            };
-
-            const onMouseUp = () => {
-              if (isResizing) {
-                isResizing = false;
-              }
-              if (typeof getPos === 'function') {
-                const newAttrs = {
-                  ...node.attrs,
-                  style: `${$img.style.cssText}`,
-                };
-                view.dispatch(view.state.tr.setNodeMarkup(getPos(), null, newAttrs));
-              }
-
-              document.removeEventListener('mousemove', onMouseMove);
-              document.removeEventListener('mouseup', onMouseUp);
-            };
-
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-          });
-          $container.appendChild($dot);
-        });
-      });
-
-      document.addEventListener('click', (e) => {
-        if (!$container.contains(e.target )) {
-          $container.removeAttribute('style');
-          if ($container.childElementCount > 2) {
-            for (let i = 0; i < 4; i++) {
-              $container.removeChild($container.lastChild);
+    addAttributes() {
+        return {
+            ...this.parent?.(),
+            src: {
+                default: null,
+            },
+            alt: {
+                default: null,
+            },
+            style: {
+                default: 'cursor: pointer;',
+            },
+            width: {
+                default: null,
+            },
+            height: {
+                default: null
             }
-          }
-        }
-      });
+        };
+    },
+    addNodeView() {
+        return ({ node, editor, getPos }) => {
+            const {
+                view,
+                options: { editable },
+            } = editor;
+            const { src, alt, style, width, height } = node.attrs;
+            const $container = document.createElement('span');
+            const $img = document.createElement('img');
 
-      return {
-        dom: $container,
-      };
-    };
-  },
+            $container.appendChild($img);
+            $img.setAttribute('src', src);
+            $img.setAttribute('alt', alt);
+            $img.setAttribute('style', style);
+            if(width!==null)$img.setAttribute('width', width);
+            if(height!==null)$img.setAttribute('height', height);
+            $img.setAttribute('draggable', 'true');
+
+            if (!editable) return { dom: $img };
+
+            const dotsPosition = [
+                'top: -4px; left: -4px; cursor: nwse-resize;',
+                'top: -4px; right: -4px; cursor: nesw-resize;',
+                'bottom: -4px; left: -4px; cursor: nesw-resize;',
+                'bottom: -4px; right: -4px; cursor: nwse-resize;',
+            ];
+
+            let isResizing = false;
+            let startX, startWidth, startHeight;
+
+            $container.addEventListener('click', () => {
+                const align = 'center' // $container.style.textAlign
+                console.log('align: ', align)
+                $container.setAttribute(
+                    'style',
+                    `display: inline-block; position: relative; outline: 2px dashed #6C6C6C; ${style}; cursor: pointer; width:fit-content` +
+                    (align ? '; text-align: ' + align : ''),
+                );
+
+                Array.from({ length: 4 }, (_, index) => {
+                    const $dot = document.createElement('div');
+                    $dot.setAttribute(
+                        'style',
+                        `padding: 0; position: absolute; width: 9px; height: 9px; border: 1.5px solid #6C6C6C; border-radius: 50%; ${dotsPosition[index]}`,
+                    );
+
+                    $dot.addEventListener('mousedown', e => {
+                        e.preventDefault();
+                        isResizing = true;
+                        startX = e.clientX;
+                        startWidth = $container.offsetWidth;
+                        startHeight = $container.offsetHeight;
+
+                        const onMouseMove = (e) => {
+                            if (!isResizing) return;
+
+                            const deltaX = e.clientX - startX;
+
+                            const aspectRatio = startWidth / startHeight;
+                            const newWidth = startWidth + deltaX;
+                            const newHeight = newWidth / aspectRatio;
+
+                            $container.style.width = newWidth + 'px';
+                            $container.style.height = newHeight + 'px';
+
+                            $img.style.width = newWidth + 'px';
+                            $img.style.height = newHeight + 'px';
+                        };
+
+                        const onMouseUp = () => {
+                            if (isResizing) {
+                                isResizing = false;
+                            }
+                            if (typeof getPos === 'function') {
+                                const newAttrs = {
+                                    ...node.attrs,
+                                    style: `${$img.style.cssText}`,
+                                };
+                                view.dispatch(view.state.tr.setNodeMarkup(getPos(), null, newAttrs));
+                            }
+
+                            document.removeEventListener('mousemove', onMouseMove);
+                            document.removeEventListener('mouseup', onMouseUp);
+                        };
+
+                        document.addEventListener('mousemove', onMouseMove);
+                        document.addEventListener('mouseup', onMouseUp);
+                    });
+                    $container.appendChild($dot);
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!$container.contains(e.target)) {
+                    $container.removeAttribute('style');
+                    if ($container.childElementCount > 2) {
+                        for (let i = 0; i < 4; i++) {
+                            $container.removeChild($container.lastChild);
+                        }
+                    }
+                }
+            });
+
+            return {
+                dom: $container,
+            };
+        };
+    },
 });
 
 
@@ -317,7 +330,15 @@ const editor = useEditor({
         Document,
         TextStyle,
         Color,
-        Superscript,
+        Superscript.extend({
+            addAttributes() {
+                return {
+                    id: { // permitimos el atributo id, para las notas al pie
+                        default: null,
+                    }
+                };
+            }
+        }),
         Underline,
         TextAlign.configure({
             types: ['heading', 'paragraph'],
@@ -329,12 +350,19 @@ const editor = useEditor({
         /*Image.configure({
             allowBase64: true,
         }),*/
-        Image.configure( {
-            inline: true,
-            allowBase64: true,
-        }),
-        ImageResize,
-        ImagePaste.configure({
+        /* Image.configure({
+             inline: true,
+             allowBase64: true,
+         }),
+         */
+        ImageResize
+        .configure({
+                inline: true,
+                allowBase64: true,
+            })
+
+            ,
+        /*ImagePaste.configure({
             fileMatchRegex: /^image\/(gif|jpe?g|a?png|svg|webp|bmp)/i,
             disableImagePaste: false,
             render: () => {
@@ -355,7 +383,7 @@ const editor = useEditor({
                     }
                 };
             },
-        })
+        })*/
     ],
     onUpdate: ({ editor }) => {
         contenidoHtml.value = editor.getHTML()
@@ -405,13 +433,15 @@ pre {
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
 
-    code {
+
+}
+
+pre  >code {
         color: inherit;
         padding: 0;
         background: none;
         font-size: 0.8rem;
     }
-}
 
 img {
     max-width: 100%;
@@ -431,5 +461,9 @@ hr {
 
 .tiptap-editor:deep(.ProseMirror) {
     padding: .5rem;
+}
+
+.tiptap-editor:deep(img) {
+    display: inline-block
 }
 </style>

@@ -71,8 +71,10 @@ export function HtmlToMarkdown(html) {
       .replace(/<img\s+([^>]+)>/g, (match, atributos) => {
         // console.log('r1', { match, atributos })
         var values = [];
-        atributos.replace(/(\w+)=['"](.*?)['"]/g, (match, atributo, valor) => {
+        atributos.replace(/(\w+)=['"]?([^'"\s]+)['"]?/g, (match, atributo, valor) => {
           // console.log('r2', { atributo, valor })
+          //if(atributo==="src")
+          //return ""
           if (atributo === "width" || atributo === "height") {
             values.push(`${atributo}=${valor}`);
           }
@@ -85,7 +87,7 @@ export function HtmlToMarkdown(html) {
           }
           return match;
         });
-        // console.log('values', values)
+        console.log('values', values)
         return match + (values.length ? `{${values.join(", ")}}` : "");
       })
       // reemplazamos los estilos de párrafo
@@ -123,14 +125,11 @@ export function MarkdownToHtml(raw_markdown) {
 
       // primero reemplazamos las imágenes con atributos
       .replace(/(<img[^>]*>){(\w+=[^}]+)}/g, (match, img, attributes) => {
-        console.log("r1", { match, attributes });
         var values = [];
         attributes.replace(/(\w+)=([^,]+)/g, (match, atributo, valor) => {
-          console.log("r2", { match, atributo, valor });
           values.push(`${atributo}=${valor}`);
           return match;
         });
-        console.log({ values });
         return img.replace("<img", "<img " + values.join(" "));
       })
       // reemplazamos los párrafos con estilos
@@ -139,7 +138,7 @@ export function MarkdownToHtml(raw_markdown) {
       .replace(/<p>\s+<\/p>\n?/g, "")
       .replace(/\n/g, "")
       // centramos las imágenes solitarias
-      .replace(/<p>(<img[^>]+>)<\/p>/g, "<p style='text-align: center'>$1</p>")
+      //.replace(/<p>(<img[^>]+>)<\/p>/g, "<p style='text-align: center'>$1</p>")
   );
   console.log({html})
   return html
