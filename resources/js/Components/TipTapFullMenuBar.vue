@@ -1,22 +1,25 @@
 <script setup>
-const props = defineProps({ editor: Object });
+const props = defineProps({
+    editor: Object,
+    mediaFolder: { type: String, default: 'medios' }
+});
 const emit = defineEmits(['toggle-markdown'])
 const items = ref([
     {
         icon: "mdi-format-bold",
-        title: "Negrita",
+        title: "Negrita (Ctrl+B)",
         action: () => props.editor.chain().focus().toggleBold().run(),
         isActive: () => props.editor.isActive("bold"),
     },
     {
         icon: "mdi-format-italic",
-        title: "Cursiva",
+        title: "Cursiva (Ctrl+I)",
         action: () => props.editor.chain().focus().toggleItalic().run(),
         isActive: () => props.editor.isActive("italic"),
     },
     {
         icon: "mdi:format-underline",
-        title: "Subrayado",
+        title: "Subrayado (Ctrl+U)",
         action: () => props.editor.chain().focus().toggleUnderline().run(),
         isActive: () => props.editor.isActive("underline"),
     },
@@ -314,24 +317,22 @@ function setLink() {
 </script>
 
 <template>
-    <div class="!h-fit flex flex-wrap justify-left gap-0.5 p-1 bg-base-100">
+    <div class="flex flex-wrap items-start justify-left gap-0.5 p-1 bg-gray-700">
         <div v-for="item in items">
             <div class="mx-2 flex align-center h-full" v-if="item.type === 'divider'"></div>
-            <div v-else-if="item.type == 'color'" class="tooltip tooltip-bottom relative" :data-tip="item.title">
-                <input  type="color" class="opacity-0 absolute mt-0.5"
-                @input="editor.chain().focus().setColor($event.target.value).run()"
-                :value="editor.getAttributes('textStyle').color">
-                    <button class="btn btn-neutral btn-xs pointer-events-none z-10 left-0 top-0"
-                    :style="{color: editor.getAttributes('textStyle').color}">
-                    <Icon :icon="item.icon" class="text-lg" />
-                </button>
+            <div v-else-if="item.type == 'color'" class="relative" :title="item.title">
+                <input type="color" class="opacity-0 absolute mt-0.5"
+                    @input="editor.chain().focus().setColor($event.target.value).run()"
+                    :value="editor.getAttributes('textStyle').color">
+                <span class="but pointer-events-none z-10 left-0 top-0"
+                    :style="{ color: editor.getAttributes('textStyle').color }">
+                    <Icon :icon="item.icon"  />
+                </span>
             </div>
-            <div v-else class="tooltip tooltip-bottom" :data-tip="item.title">
-                <button class="btn btn-neutral btn-xs" :class="item.isActive && item.isActive() ? 'btn-active' : ''"
+                <span v-else class="but" :title="item.title" :class="item.isActive && item.isActive() ? 'btn-active' : ''"
                     @click="item.action" :disabled="item.isDisabled">
-                    <Icon :icon="item.icon" class="text-lg" />
-                </button>
-            </div>
+                    <Icon :icon="item.icon" />
+                </span>
         </div>
     </div>
 
@@ -349,5 +350,11 @@ function setLink() {
 <style scoped>
 .btn-active {
     @apply text-primary;
+}
+span.but {
+    @apply inline-block m-0.5 text-xl;
+}
+span.but:hover {
+    @apply bg-gray-400;
 }
 </style>

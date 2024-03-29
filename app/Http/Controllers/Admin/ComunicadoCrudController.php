@@ -161,7 +161,7 @@ class ComunicadoCrudController extends CrudController
 
         // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
-        CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder]);
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 

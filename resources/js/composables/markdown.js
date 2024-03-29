@@ -138,7 +138,7 @@ export function MarkdownToHtml(raw_markdown) {
       .replace(/<p>\s+<\/p>\n?/g, "")
       .replace(/\n/g, "")
       // centramos las imágenes solitarias
-      //.replace(/<p>(<img[^>]+>)<\/p>/g, "<p style='text-align: center'>$1</p>")
+      .replace(/<p>(<img[^>]+>)<\/p>/g, "<p style='text-align: center'>$1</p>")
   );
   console.log({html})
   return html
@@ -148,7 +148,7 @@ export function detectFormat(text) {
   if (!text) return { format: "html", probability: 1 };
 
   // Contamos la cantidad de etiquetas HTML
-  const htmlTagsCount = (text.match(/<\/?[a-z][a-z0-9]*\b[^>]*>/gi) || [])
+  const htmlTagsCount = (text.match(/<(p|img|div|strong|b|i|em|a)/gi) || [])
     .length;
 
   // Contamos la cantidad de marcadores Markdown

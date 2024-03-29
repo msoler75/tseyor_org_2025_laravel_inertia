@@ -26,6 +26,7 @@ declare global {
   const reactive: typeof import('vue')['reactive']
   const ref: typeof import('vue')['ref']
   const removeAccents: typeof import('./resources/js/composables/textutils.js')['removeAccents']
+  const replaceQuillEditorClasses: typeof import('./resources/js/composables/markdown.js')['replaceQuillEditorClasses']
   const router: typeof import('@inertiajs/vue3')['router']
   const ucFirst: typeof import('./resources/js/composables/textutils.js')['ucFirst']
   const ucFirstAllWords: typeof import('./resources/js/composables/textutils.js')['ucFirstAllWords']
