@@ -14,10 +14,10 @@ import { Icon } from "@iconify/vue";
 import { Link } from "@inertiajs/vue3";
 
 import TipTapEditorFullField from "../Components/Backpack/TipTapEditorFullField.vue";
-import TinyMCEFullField from "../Components/Backpack/TinyMCEFullField.vue";
-import TinyMCESimpleField from "../Components/Backpack/TinyMCESimpleField.vue";
-import QuillEditorFullField from "../Components/Backpack/QuillEditorFullField.vue";
-import QuillEditorSimpleField from "../Components/Backpack/QuillEditorSimpleField.vue";
+// import TinyMCEFullField from "../Components/Backpack/TinyMCEFullField.vue";
+// import TinyMCESimpleField from "../Components/Backpack/TinyMCESimpleField.vue";
+// import QuillEditorFullField from "../Components/Backpack/QuillEditorFullField.vue";
+// import QuillEditorSimpleField from "../Components/Backpack/QuillEditorSimpleField.vue";
 import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
 // import JSONEditorField from "../Components/Backpack/JSONEditorField.vue";
 import SelectField from "../Components/Backpack/SelectField.vue";
@@ -30,10 +30,10 @@ if (elem) {
   console.log("loading vue 3 fields...");
   window.app = createApp({})
   .component("tiptapeditorfullfield", TipTapEditorFullField)
-    .component("quilleditorfullfield", QuillEditorFullField)
-    .component("quilleditorsimplefield", QuillEditorSimpleField)
-    .component("tinymcefullfield", TinyMCEFullField)
-    .component("tinymcesimplefield", TinyMCESimpleField)
+    //.component("quilleditorfullfield", QuillEditorFullField)
+    //.component("quilleditorsimplefield", QuillEditorSimpleField)
+    //.component("tinymcefullfield", TinyMCEFullField)
+    //.component("tinymcesimplefield", TinyMCESimpleField)
     .component("imagecoverfield", ImageCoverField)
    // .component("jsoneditorfield", JSONEditorField)
     .component("selectfield", SelectField)

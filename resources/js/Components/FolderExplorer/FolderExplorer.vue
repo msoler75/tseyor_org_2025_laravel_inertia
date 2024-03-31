@@ -985,7 +985,7 @@
 
 <script setup>
 import Dropzone from 'vue2-dropzone-vue3'
-import { usePage } from '@inertiajs/vue3';
+import { usePage, Link } from '@inertiajs/vue3';
 import { useFilesOperation } from '@/Stores/files';
 import { useSelectors } from '@/Stores/selectors'
 import { useDebounce } from '@vueuse/core';

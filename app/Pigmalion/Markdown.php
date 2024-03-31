@@ -89,14 +89,18 @@ class Markdown
 
 
         // die($htmlContent);
-        Log::info("Html final from docx after Foot notes rework: " . $htmlContent);
+        // Log::info("Html final from docx after Foot notes rework: " . $htmlContent);
 
 
         $htmlContent = self::extraerBody($htmlContent);
 
+
         // convertimos a formato desde HTML a markdown
         $converter = new HtmlConverter();
         $markdown = $converter->convert($htmlContent);
+
+        // por si quedó algun div de página lo quitamos
+        $markdown = preg_replace('/<div style="page:\s*page\d+">/', '', $markdown);
 
         // generar una carpeta aleatoria
         if (!$carpetaImagenes)
@@ -295,7 +299,7 @@ class Markdown
                 $numNote++;
                 $id = $note->getRelationId();
                 // para evitar repeticiones
-                if (isset ($relationsDone[$id]))
+                if (isset($relationsDone[$id]))
                     continue;
                 $relationsDone[$id] = 1;
 
@@ -405,11 +409,9 @@ class Markdown
     }
 
 
-    public static function extraerImagenes($markdown, $carpetaImagenes)
+    // Extrae las imagenes (codificadas en base64) y las guardamos en la carpeta $carpetaImagenes
+    public static function extraerImagenes($markdown, $storagePathImagenes)
     {
-        $markdown = preg_replace('/<div style="page: page\d+">/', '', $markdown);
-        // extraemos las imagenes (codificadas en base64) y las guardamos en disco
-
         // Expresión regular para encontrar imágenes codificadas en base64 en el texto Markdown
         $pattern = '/!\[\]\(data:image\/([a-zA-Z]*);base64,([^)]*)\)/';
 
@@ -427,7 +429,7 @@ class Markdown
             // Decodificar los datos base64 y guardar la imagen en disco
             $imageData = base64_decode($data);
             $imageName = 'image_' . $key . '.' . $type;
-            $imagePath = $carpetaImagenes . '/' . $imageName;
+            $imagePath = $storagePathImagenes . '/' . $imageName;
             $imagenes[] = Storage::disk('public')->path($imagePath);
 
             // Guardar la imagen en disco público
@@ -440,7 +442,7 @@ class Markdown
             $markdown = str_replace($match, "![](" . $imageUrl . ")", $markdown);
         }
 
-        self::$carpetaCreada = $carpetaImagenes;
+        self::$carpetaCreada = $storagePathImagenes;
         self::$imagenesExtraidas = $imagenes;
 
         return $markdown;
@@ -483,15 +485,53 @@ class Markdown
 
         $matches = [];
         // remueve div de seccion si lo hubiera
-        if(preg_match_all("/<div style=.page:\s?page[^>]+>/", $bodyContent, $matches, PREG_OFFSET_CAPTURE))
-        {
+        if (preg_match_all("/<div style=.page:\s?page[^>]+>/", $bodyContent, $matches, PREG_OFFSET_CAPTURE)) {
             $divHtml = $matches[0][0][0];
             $pos = $matches[0][0][1];
-            $bodyContent = substr($bodyContent, 0, $pos) . substr($bodyContent, $pos+strlen($divHtml));
+            $bodyContent = substr($bodyContent, 0, $pos) . substr($bodyContent, $pos + strlen($divHtml));
             $pos = strrpos($bodyContent, "</div>");
-            $bodyContent = substr($bodyContent, 0, $pos) . substr($bodyContent, $pos+strlen("</div>"));
+            $bodyContent = substr($bodyContent, 0, $pos) . substr($bodyContent, $pos + strlen("</div>"));
         }
 
         return $bodyContent;
+    }
+
+
+
+
+    /**
+     * Mueve las imagenes de $carpetaOrigen a $carpetaDestino
+     * Modifica el texto en formato markdown
+     * @param string $md Texto en formato markdown
+     * @param string $carpetaOrigen Ruta de la carpeta de origen
+     * @param string $carpetaDestino Ruta de la carpeta de destino
+     * @return array Arreglo de imagenes movidas
+     */
+    public static function moverImagenes(&$md, $carpetaOrigen, $carpetaDestino): array
+    {
+        $imagenes_movidas = [];
+
+        // busca todas las imagenes en $md que estén en carpetaOrigen
+        $md = preg_replace_callback("&!\[(.*)\]\(($carpetaOrigen/.*)\)&", function ($matches) use ($carpetaDestino, &$imagenes_movidas) {
+
+            // extraemos el nombre de la imagen
+            $imagen = $matches[2];
+
+            // renombramos la imagen
+            $nuevoNombre = $carpetaDestino . "/" . basename($imagen);
+
+            // guardamos el movimiento de archivo
+            $imagenes_movidas[] = ['desde' => $imagen, 'a' => $nuevoNombre];
+
+            // movemos la imagen a la nueva carpeta
+            Storage::disk('public')->move($imagen, $nuevoNombre);
+
+            // reemplazamos el enlace con el nuevo nombre
+            return "![" . $matches[1] . "](" . $nuevoNombre . ")";
+
+        }, $md);
+
+        Log::info("moverImagenes: " . print_r($imagenes_movidas, true));
+        return $imagenes_movidas;
     }
 }

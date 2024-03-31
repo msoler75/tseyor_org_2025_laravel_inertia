@@ -138,15 +138,21 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
         CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step'=>1]);
+
+
+        Entrada::saving(function ($contenido) {
+            // Se ejecutará aquí antes de crear o actualizar un comunicado.
+            \App\Pigmalion\Markdown::extraerImagenes($contenido->texto, $this->mediaFolder($contenido));
+        });
     }
 
 
-    private function mediaFolder()
+    private function mediaFolder($contenido = null)
     {
         $anioActual = date('Y');
         $mesActual = date('m');
 
-        $folder = "/medios/entradas/$anioActual/$mesActual";
+        $folder = $contenido && $contenido->id ?  "medios/entradas/_{$contenido->id}" : "/medios/entradas/$anioActual/$mesActual";
 
         // Verificar si la carpeta existe en el disco 'public'
         if (!Storage::disk('public')->exists($folder)) {
@@ -191,7 +197,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
             ]);
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/entradas/_{$contenido->id}";
+            $imagesFolder = $this->mediaFolder($contenido);
 
             // copia las imágenes desde la carpeta temporal al directorio destino
             $imported->copyImagesTo($imagesFolder);

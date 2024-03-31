@@ -130,4 +130,30 @@ class ContenidoHelper
         }
     }
 
+
+
+    /**
+    * Analiza el texto y mueve las imagenes de la carpeta temporal a la carpeta de medios
+    * este método modifica el texto del modelo (si existe el campo texto)
+    * Importante: Se asume que el campo 'texto' está en MARKDOWN
+    * @return true si ha habido cambios
+    **/
+    public static function moverImagenesContenido($objeto)
+    {
+        if ($objeto->texto ?? '') {
+            $imagenes_movidas = \App\Pigmalion\Markdown::moverImagenes($objeto->texto, ContenidoBaseModel::getCarpetaMediosTemp(), $objeto->getCarpetaMedios());
+            if (count($imagenes_movidas)) {
+                if ($objeto->imagen ?? '') {
+                    foreach ($imagenes_movidas as $mov) {
+                        // cambia la referencia de la imagen del contenido de carpeta temporal a la de la carpeta de medios
+                        $objeto->imagen = str_replace($mov['desde'], $mov['a'], $objeto->imagen);
+                    }
+                }
+
+                // si ha habido cambios retornamos true
+                return true;
+            }
+        }
+        return false;
+    }
 }

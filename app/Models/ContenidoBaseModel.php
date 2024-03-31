@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Carbon\Carbon;
 // use App\Traits\EsContenido;
 use App\Pigmalion\ContenidoHelper;
+use Illuminate\Support\Facades\Storage;
 
 
 /*
@@ -32,26 +34,28 @@ class ContenidoBaseModel extends Model
             ContenidoHelper::rellenarSlugImagenYDescripcion($model);
         });
 
+
         static::saved(function ($model) {
+
+            Log::info("model saved", $model->texto);
+            // si mueve alguna imagen, guardamos los cambios y salimos
+            if(ContenidoHelper::moverImagenesContenido($model)) {
+                $model->save();
+                Log::info("se han movido imagenes de carpeta temp a destino");
+                return;
+            }
+
             // Acciones después de que el modelo se haya guardado
             ContenidoHelper::guardarContenido($model->table, $model);
         });
 
-        static::deleting(function ($model) {
-            // dd("deleting");
-            //ContenidoHelper::removerContenido($model);
-            // Acciones antes de borrar el modelo
-            // ...
-        });
 
         static::deleted(function ($model) {
-            //dd("deleted", $model);
             ContenidoHelper::removerContenido($model);
-            // Acciones después de que el modelo se haya borrado
-            // ...
         });
     }
 
+    // revisionable se aplica a nuevos contenidos
     protected $revisionCreationsEnabled = true;
 
     // revisionable identifier
@@ -60,10 +64,10 @@ class ContenidoBaseModel extends Model
         return $this->titulo ?? $this->nombre ?? $this->name;
     }
 
-    // If you are using another bootable trait
-    // be sure to override the boot method in your model
-
-    // https://github.com/ralphjsmit/laravel-seo
+    /**
+     * Obtiene los datos del SEO
+     * https://github.com/ralphjsmit/laravel-seo
+     */
     public function getDynamicSEOData(): SEOData
     {
         $image = $this->imagen ? url($this->imagen) : config('seo.image.fallback');
@@ -81,11 +85,37 @@ class ContenidoBaseModel extends Model
 
 
     /**
+     * TNTSearch
      * Función heredable para cada modelo, sirve para indicarle al buscador global qué texto o palabras clave indexan este contenido
      * (además de los campos de título o nombre)
      */
     public function getTextoContenidoBuscador()
     {
         return null;
+    }
+
+    /**
+     * Carpeta temporal para medios (imágenes)
+     */
+    public static function getCarpetaMediosTemp() {
+        $folder = 'medios/temp';
+         // Crea la carpeta si no existe
+         if (!Storage::disk('public')->exists($folder)) {
+            Storage::disk('public')->makeDirectory($folder);
+        }
+        return $folder;
+    }
+
+    /**
+     * Carpeta para los medios del contenido (imágenes)
+     */
+    public function getCarpetaMedios() {
+        $coleccion = $this->getTable();
+        $folder = $this->id ? "medios/$coleccion/$this->id": self::getCarpetaTemp();
+        // Crea la carpeta si no existe
+         if (!Storage::disk('public')->exists($folder)) {
+            Storage::disk('public')->makeDirectory($folder);
+        }
+        return $folder;
     }
 }
