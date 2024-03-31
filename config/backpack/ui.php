@@ -108,8 +108,8 @@ return [
     // Please note that support for Vite was added in Laravel 9.19. Earlier versions are not able to use this feature.
     'vite_styles' => [ // resource file_path
         'resources/css/admin.css',
-        'resources/css/app.css',
-        'public/assets/css/tinymce-custom.css'
+        // 'resources/css/app.css',
+        // 'public/assets/css/tinymce-custom.css'
     ],
 
     // --------------

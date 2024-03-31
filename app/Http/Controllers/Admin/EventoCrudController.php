@@ -20,7 +20,7 @@ class EventoCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -43,15 +43,15 @@ use \Backpack\ReviseOperation\ReviseOperation;
     protected function setupListOperation()
     {
         $this->crud->addColumn([
-            'name'  => 'id',
+            'name' => 'id',
             'label' => 'id',
-            'type'  => 'number'
+            'type' => 'number'
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'titulo',
+            'name' => 'titulo',
             'label' => 'Título',
-            'type'  => 'text'
+            'type' => 'text'
         ]);
 
 
@@ -63,17 +63,17 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
 
         $this->crud->addColumn([
-            'name'  => 'categoria',
+            'name' => 'categoria',
             'label' => 'Categoría',
-            'type'  => 'text',
+            'type' => 'text',
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
-            'value' => function($entry) {
-                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            'type' => 'text',
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
 
@@ -116,16 +116,16 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
 
         CRUD::field([   // select_from_array
-            'name'        => 'categoria',
-            'label'       => "Categoría",
-            'type'        => 'select_from_array',
-            'options' => ['Curso'=>'Curso' , 'Convivencias'=>'Convivencias' , 'Encuentro'=>'Encuentro' , 'Presentación'=>'Presentación'],
+            'name' => 'categoria',
+            'label' => "Categoría",
+            'type' => 'select_from_array',
+            'options' => ['Curso' => 'Curso', 'Convivencias' => 'Convivencias', 'Encuentro' => 'Encuentro', 'Presentación' => 'Presentación'],
             'allows_null' => false,
-            'default'     => 'Encuentro',
+            'default' => 'Encuentro',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
-            'wrapper'   => [
-                'class'      => 'form-group col-md-3'
+            'wrapper' => [
+                'class' => 'form-group col-md-3'
             ],
         ]);
 
@@ -134,10 +134,10 @@ use \Backpack\ReviseOperation\ReviseOperation;
             'label' => 'Centro',
             'allows_null' => true,
             'type' => 'select',
-            'attribute'    => 'nombre',
-            'model'       => 'App\Models\Centro',
-            'wrapper'   => [
-                'class'      => 'form-group col-md-4'
+            'attribute' => 'nombre',
+            'model' => 'App\Models\Centro',
+            'wrapper' => [
+                'class' => 'form-group col-md-4'
             ]
         ]);
 
@@ -146,8 +146,8 @@ use \Backpack\ReviseOperation\ReviseOperation;
             'label' => 'Sala virtual',
             'allows_null' => true,
             'type' => 'select',
-            'wrapper'   => [
-                'class'      => 'form-group col-md-4'
+            'wrapper' => [
+                'class' => 'form-group col-md-4'
             ]
         ]);
 
@@ -156,24 +156,30 @@ use \Backpack\ReviseOperation\ReviseOperation;
             'label' => 'Equipo organizador',
             'allows_null' => true,
             'type' => 'select',
-            'wrapper'   => [
-                'class'      => 'form-group col-md-4'
+            'wrapper' => [
+                'class' => 'form-group col-md-4'
             ]
         ]);
 
         CRUD::field('visibilidad')->type('visibilidad');
 
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
-        CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step'=>1]);
+        CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1]);
+
+
+        Evento::saving(function ($contenido) {
+            // Se ejecutará aquí antes de crear o actualizar un comunicado.
+            \App\Pigmalion\Markdown::extraerImagenes($contenido->texto, $this->mediaFolder($contenido));
+        });
     }
 
 
-    private function mediaFolder()
+    private function mediaFolder($contenido = null)
     {
         $anioActual = date('Y');
         $mesActual = date('m');
 
-        $folder = "/medios/eventos/$anioActual/$mesActual";
+        $folder = $contenido && $contenido->id ? "medios/eventos/_{$contenido->id}" : "/medios/eventos/$anioActual/$mesActual";
 
         // Verificar si la carpeta existe en el disco 'public'
         if (!Storage::disk('public')->exists($folder)) {
@@ -212,13 +218,13 @@ use \Backpack\ReviseOperation\ReviseOperation;
             $imported = new WordImport();
 
             $contenido = Evento::create([
-                "titulo" => "Importado de ". $_FILES['file']['name'] . "_". substr(str_shuffle('0123456789'), 0, 5),
+                "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
                 "texto" => "",
                 "categoria" => 'Encuentro'
             ]);
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/eventos/_{$contenido->id}";
+            $imagesFolder = $this->mediaFolder($contenido);
 
             // copia las imágenes desde la carpeta temporal al directorio destino
             $imported->copyImagesTo($imagesFolder);

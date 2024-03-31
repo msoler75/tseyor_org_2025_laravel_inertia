@@ -6,6 +6,7 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoConAudios;
 use Laravel\Scout\Searchable;
 
+
 class Comunicado extends ContenidoConAudios
 {
     use CrudTrait;
@@ -34,6 +35,8 @@ class Comunicado extends ContenidoConAudios
     public $sortable = [
         'fechaComunicado'
     ];
+
+
 
     // hooks del modelo
     /*

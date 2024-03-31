@@ -21,7 +21,7 @@ class NoticiaCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -44,15 +44,15 @@ use \Backpack\ReviseOperation\ReviseOperation;
     protected function setupListOperation()
     {
         $this->crud->addColumn([
-            'name'  => 'id',
+            'name' => 'id',
             'label' => 'id',
-            'type'  => 'number'
+            'type' => 'number'
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'titulo',
+            'name' => 'titulo',
             'label' => 'Título',
-            'type'  => 'text'
+            'type' => 'text'
         ]);
 
 
@@ -63,9 +63,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'imagenUrl',
+            'name' => 'imagenUrl',
             'label' => 'Imagen',
-            'type'  => 'image',
+            'type' => 'image',
         ]);
 
 
@@ -77,11 +77,11 @@ use \Backpack\ReviseOperation\ReviseOperation;
         */
 
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
-            'value' => function($entry) {
-                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            'type' => 'text',
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
 
@@ -112,30 +112,37 @@ use \Backpack\ReviseOperation\ReviseOperation;
          * - CRUD::field('price')->type('number');
          */
 
-         $folder = $this->mediaFolder();
+        $folder = $this->mediaFolder();
 
-         CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea');
 
-         CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
 
-         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
+        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
-         CRUD::field('visibilidad')->type('visibilidad');
+        CRUD::field('visibilidad')->type('visibilidad');
 
-         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
-         CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step'=>1])
-         ->wrapper([
-            'class' => 'form-group col-md-3'
-        ]);
+        // se tiene que poner el atributo step para que no dé error el input al definir los segundos
+        CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1])
+            ->wrapper([
+                'class' => 'form-group col-md-3'
+            ]);
+
+
+        Noticia::saving(function ($contenido) {
+            // Aquí puedes escribir tu lógica personalizada
+            // que se ejecutará aquí antes de crear o actualizar un comunicado.
+            \App\Pigmalion\Markdown::extraerImagenes($contenido->texto, $this->mediaFolder($contenido));
+        });
     }
 
 
-    private function mediaFolder()
+    private function mediaFolder($contenido = null)
     {
         $anioActual = date('Y');
         $mesActual = date('m');
 
-        $folder = "/medios/noticias/$anioActual/$mesActual";
+        $folder = $contenido && $contenido->id ? "medios/noticias/_{$contenido->id}" : "/medios/noticias/$anioActual/$mesActual";
 
         // Verificar si la carpeta existe en el disco 'public'
         if (!Storage::disk('public')->exists($folder)) {
@@ -158,9 +165,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
-        $noticia = \App\Models\Noticia::find($id);
+        $noticia = Noticia::find($id);
         return $noticia->visibilidad == 'P' ? redirect("/noticias/$id") : redirect("/noticias/$id?borrador");
     }
 
@@ -173,12 +180,12 @@ use \Backpack\ReviseOperation\ReviseOperation;
             $imported = new WordImport();
 
             $contenido = Noticia::create([
-                "titulo" => "Importado de ". $_FILES['file']['name'] . "_". substr(str_shuffle('0123456789'), 0, 5),
+                "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
                 "texto" => ""
             ]);
 
             // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/noticias/_{$contenido->id}";
+            $imagesFolder = $this->mediaFolder($contenido);
 
             // copia las imágenes desde la carpeta temporal al directorio destino
             $imported->copyImagesTo($imagesFolder);

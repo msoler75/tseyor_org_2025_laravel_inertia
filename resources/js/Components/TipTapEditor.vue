@@ -1,7 +1,8 @@
 <template>
     <div>
         <div v-show="!editingMarkdown">
-            <TipTapFullMenuBar v-if="editor" :editor="editor" :media-folder="mediaFolder" @toggle-markdown="toggleMarkdown" />
+            <TipTapFullMenuBar v-if="editor" :editor="editor" :media-folder="mediaFolder"
+                @toggle-markdown="toggleMarkdown" />
             <EditorContent :editor="editor" class="tiptap-editor border border-gray-700 p-1" />
         </div>
         <span v-show="editingMarkdown" @click="toggleMarkdown" class="btn btn-neutral btn-xs mb-2">
@@ -22,7 +23,7 @@ import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import Underline from '@tiptap/extension-underline'
-import Image from '@tiptap/extension-image'
+import ImageExtension from '@tiptap/extension-image'
 import { Color } from '@tiptap/extension-color'
 import Superscript from '@tiptap/extension-superscript'
 import Table from "@tiptap/extension-table";
@@ -43,7 +44,7 @@ import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/mark
 const props = defineProps({
     //name: String,
     //content: {
-      //  type: String, default: ''
+    //  type: String, default: ''
     //},
     modelValue: { type: String },
     format: { type: String, default: 'detect' },
@@ -56,7 +57,7 @@ const emit = defineEmits(['update:modelValue', 'change'])
 
 // CONVERT MD <-> HTML
 
-const format = computed(() => props.format != 'detect' ? props.format: ['md', 'ambiguous'].includes(detectFormat(props.modelValue).format) ? 'md' : 'html')
+const format = computed(() => props.format != 'detect' ? props.format : ['md', 'ambiguous'].includes(detectFormat(props.modelValue).format) ? 'md' : 'html')
 
 
 const contenidoMD = ref(format.value.toLowerCase() == 'md' ? props.modelValue : HtmlToMarkdown(props.modelValue))
@@ -133,6 +134,7 @@ const ImagePaste = Extension.create({
                 key: new PluginKey('imagePasteHandler'),
                 props: {
                     handlePaste(_view, event) {
+                        console.log('handlePaste', event)
                         if (options.disableImagePaste && renderer?.onDisabledImagePaste) {
                             mapTextItems(event.clipboardData.items).then(value => {
                                 if (value) {
@@ -147,7 +149,7 @@ const ImagePaste = Extension.create({
                             const files = mapDataItems(event.clipboardData.items, options.fileMatchRegex);
 
                             if (files.length) {
-                                renderer.onImagePaste(files);
+                                renderer.onImagePaste(files, _view);
 
                                 return true;
                             }
@@ -155,12 +157,18 @@ const ImagePaste = Extension.create({
                         return false;
                     },
 
-                    handleDrop(_view, event) {
+                    handleDrop(_view, event, slice, moved) {
+                        console.log('handleDrop', { moved }, event)
+                        if (moved) {
+
+                            // setTimeou
+                            return false
+                        }
                         if (!options.disableImagePaste && event.dataTransfer?.files?.length && renderer?.onImageDrop) {
                             const files = mapDataItems(event.dataTransfer.items, options.fileMatchRegex);
 
                             if (files.length) {
-                                renderer.onImageDrop(files);
+                                renderer.onImageDrop(files, _view);
 
                                 return true;
                             }
@@ -175,7 +183,7 @@ const ImagePaste = Extension.create({
 })
 
 
-const ImageResize = Image.extend({
+const ImageResize = ImageExtension.extend({
     addAttributes() {
         return {
             ...this.parent?.(),
@@ -206,7 +214,38 @@ const ImageResize = Image.extend({
             const $container = document.createElement('span');
             const $img = document.createElement('img');
 
+            $container.style.position = "relative"
+            $container.style.display = "inline-block"
             $container.appendChild($img);
+            // debugger
+            const item = uploaded_files.find(f => f.blobUrl == src)
+            if (item && !item.finished) {
+                const $progress = document.createElement('div');
+                $progress.style.position = "absolute";
+                $progress.style.top = "0";
+                $progress.style.left = "0";
+                $progress.style.right = "0";
+                $progress.style.bottom = "0";
+                $progress.style.backgroundColor = "rgba(200,200,200,0.75)";
+                $progress.style.zIndex = "10";
+                $progress.style.mixBlendMode = "saturation"
+                $container.appendChild($progress);
+
+                const $label = document.createElement('span');
+                $label.style.position = "absolute";
+                $label.style.top = "5px";
+                $label.style.left = "5px";
+                $label.style.fontWeight = "bold";
+                $label.style.mixBlendMode = "difference"
+                $container.appendChild($label)
+
+                item.node = node
+                //item.img = $img
+                item.progress = $progress
+                item.label = $label
+            }
+            //const graySrc = await grayImage(src)
+            //$img.setAttribute('src', graySrc);
             $img.setAttribute('src', src);
             $img.setAttribute('alt', alt);
             $img.setAttribute('style', style);
@@ -339,26 +378,27 @@ const editor = useEditor({
         TableRow,
         TableHeader,
         TableCell,
+        //ImageExtension,
         ImageResize
             .configure({
                 inline: true,
                 allowBase64: true,
-            })
-
-        ,
+            }),
         ImagePaste.configure({
             fileMatchRegex: /^image\/(gif|jpe?g|a?png|svg|webp|bmp)/i,
             disableImagePaste: false,
             render: () => {
                 return {
-                    onImagePaste: files => {
+                    onImagePaste: (files, _view) => {
+                        console.log('onImagePaste')
                         files.forEach(file => {
-                            onInsertImage(file)
+                            onInsertImage(file, _view)
                         });
                     },
-                    onImageDrop: files => {
+                    onImageDrop: (files, _view) => {
+                        console.log('onImageDrop')
                         files.forEach(file => {
-                            onInsertImage(file)
+                            onInsertImage(file, _view)
                         });
                     },
                     onDisabledImagePaste: text => {
@@ -375,12 +415,131 @@ const editor = useEditor({
     },
 })
 
+async function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+    });
+}
+
+const uploaded_files = []
+
+// Función para encontrar la posición de un nodo de imagen en el documento
+function findImageNodePos(src) {
+    const { doc } = editor.value.state;
+    let node = null
+    let pos = null
+    doc.descendants((nodeFound, posFound) => {
+        if (nodeFound.type.name === "image" && nodeFound.attrs.src === src) {
+            pos = posFound;
+            node = nodeFound
+            return false; // detener la búsqueda
+        }
+    });
+    return { node, pos };
+}
+
+// cambiamos el src del nodo
+function replaceImage(fromSrc, toSrc, _view) {
+    // 1. Obtén una referencia al nodo de imagen y su posición
+    const { node, pos } = findImageNodePos(fromSrc)
+    // 2. Crea una nueva transacción
+    const transaction = editor.value.state.tr;
+    // 3. Reemplaza el nodo de imagen original
+    transaction.replaceWith(
+        pos,
+        pos + node.nodeSize,
+        editor.value.schema.nodes.image.create({ src: toSrc })
+    );
+
+    // 4. Aplica la transacción
+    _view.dispatch(transaction);
+}
+
+function uploadImage(file, blobUrl, _view) {
+    // guardamos los archivos uploading
+    uploaded_files.push({ blobUrl, file, url: null, img: null, error: null })
+    const item = uploaded_files[uploaded_files.length - 1]
+    const startTime = new Date()
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('destinationPath', props.mediaFolder);
+
+    const req = new XMLHttpRequest(); // Initialize request
+    req.open('POST', '/files/upload/image');
+    req.upload.addEventListener('progress', function (event) {
+        if (event.lengthComputable) {
+            const progress = Math.floor((event.loaded / event.total) * 100 / 2)
+            // console.log(`Progreso: ${progress}%`);
+            item.progress.style.left = progress  + '%'
+            item.label.innerText = progress  + '%'
+            console.log('uploading', item.progress.style.left)
+        }
+    })
+
+    // añadir header:
+    req.setRequestHeader('X-CSRF-Token', document.querySelector('meta[name="csrf-token"]').content)
+
+    // cuando termine el request:
+    req.addEventListener('load', async function () {
+        const data = JSON.parse(req.response)
+        if (data.error) {
+            // si hay algun error, aplica la codificacion base64 en la imagen
+            console.error(data.error)
+            item.url = await fileToBase64(file)
+            item.finished = true
+        }
+        else {
+            item.url = '/almacen/' + data.data.filePath
+        }
+
+        const img = new Image()
+        img.src = item.url
+
+        const endUploadTime = new Date()
+        const time = endUploadTime - startTime
+        console.log('time elapsed in ms', time)
+
+        let progress = 50.0
+        const lapso = 200
+        const avance = progress / time * lapso * 1.4 // la descarga es más rápida que la subida
+
+        // simulamos el progreso de descarga, durará más o menos igual que la subida
+        const downloadInterval = setInterval(() => {
+            progress += avance
+            progress = Math.min(progress, 99.9)
+            const p = Math.round(progress)
+            item.progress.style.left = p + '%'
+            item.label.innerText = p + '%'
+            console.log('downloading', item.progress.style.left)
+        }, lapso)
+
+        img.onload = () => {
+            item.progress.remove()
+            item.label.remove()
+            replaceImage(item.blobUrl, item.url, _view)
+            clearInterval(downloadInterval)
+        }
+    })
+
+    req.send(formData)
+}
 
 
 
-function onInsertImage(file) {
-    // console.log('onInsertImage', file)
-    const url = 'https://tseyor.org/images/biblioteca-tseyor3.jpg'
+async function onInsertImage(file, _view) {
+    console.log('onInsertImage', file)
+    // const url = 'https://tseyor.org/images/biblioteca-tseyor3.jpg'
+    // generar imagen en URI de base64:
+    // const url = await grayImage(URL.createObjectURL(file))
+    const url = URL.createObjectURL(file)
+
+    uploadImage(file, url, _view)
+
+    //await fileToBase64(file);
     // // editor.value.chain().focus().insertContent(`<img src="${url}"/>`).run()
     //editor.value.chain().focus().insertContent (`<span>hola</span>`).run()
 
@@ -448,7 +607,12 @@ hr {
 
 .tiptap-editor:deep(.ProseMirror) {
     padding: .5rem;
-    @apply    max-h-[calc(100vh-250px)] overflow-auto;
+    @apply min-h-[300px] max-h-[calc(100vh-250px)] overflow-auto;
+    background-color: var(--tblr-bg-forms);
+}
+
+.tiptap-editor:deep(.ProseMirror:focus) {
+    box-shadow: 0 0 transparent, 0 0 0 0.25rem rgba(var(--tblr-primary-rgb), .25);
 }
 
 .tiptap-editor:deep(img) {
@@ -512,5 +676,33 @@ hr {
 
 .tiptap-editor:deep(table) p {
     margin: .1rem 0;
+}
+
+.tiptap-editor:deep(h1) {
+    @apply text-4xl mb-9 font-bold leading-tight;
+}
+
+.tiptap-editor:deep(h2) {
+    @apply text-3xl mb-7 font-semibold;
+}
+
+.tiptap-editor:deep(h3) {
+    @apply text-2xl mb-5 font-semibold;
+}
+
+.tiptap-editor:deep(p) {
+    @apply my-6 text-base;
+}
+
+.tiptap-editor:deep(ul) {
+    @apply list-disc pl-8;
+}
+
+.tiptap-editor:deep(p) a {
+    @apply text-blue-500 underline;
+}
+
+.tiptap-editor:deep(p) a:hover {
+    @apply text-blue-600;
 }
 </style>

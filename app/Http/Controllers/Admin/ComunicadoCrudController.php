@@ -27,6 +27,7 @@ class ComunicadoCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -155,7 +156,7 @@ class ComunicadoCrudController extends CrudController
             ],
         ]);
 
-        $folder = $this->mediaFolder();
+        $folder = $this->getMediaFolder();
 
         CRUD::field('descripcion')->type('textarea');
 
@@ -191,8 +192,8 @@ class ComunicadoCrudController extends CrudController
                 // for 2 MB
                 'chunking' => true,
                 'acceptedFiles' => '.mp3,.mpeg,.mpg,.mp4,.m4a,.wav,.opus,.flac,.wma,.aac,.ogg,.au',
-                'addRemoveLinks'=> true,
-                'dictRemoveFileConfirmation'=> '¿Quieres eliminar este archivo?',
+                'addRemoveLinks' => true,
+                'dictRemoveFileConfirmation' => '¿Quieres eliminar este archivo?',
                 'dictRemoveFile' => 'Eliminar'
             ],
             // 'disk' => 'public',
@@ -227,47 +228,28 @@ class ComunicadoCrudController extends CrudController
 
         CRUD::field('visibilidad')->type('visibilidad');
 
-
-
         Comunicado::saved(function ($comunicado) {
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un comunicado.
 
-            if($comunicado->audios) {
+            if ($comunicado->audios) {
                 // dd($comunicado);
 
                 $año = date('Y', strtotime($comunicado->fecha_comunicado));
                 $folder = "medios/comunicados/audios/$año";
 
-                if(TESTAR_CONVERTIDOR_AUDIO2) {
+                if (TESTAR_CONVERTIDOR_AUDIO2) {
                     $p = new ProcesarAudios($comunicado, $folder);
                     $p->handle();
-                }
-                else{
-                    dispatch( new ProcesarAudios($comunicado, $folder));
+                } else {
+                    dispatch(new ProcesarAudios($comunicado, $folder));
                 }
 
             }
         });
 
-
     }
 
-    private function mediaFolder()
-    {
-        $anioActual = date('Y');
-        $mesActual = date('m');
-
-        $folder = "/medios/comunicados/$anioActual/$mesActual";
-
-        // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk('public')->exists($folder)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($folder);
-        }
-
-        return $folder;
-    }
 
     /**
      * Define what happens when the Update operation is loaded.
@@ -281,7 +263,22 @@ class ComunicadoCrudController extends CrudController
     }
 
 
-    protected function show($id)
+    /*
+    private function mediaFolder($id = null)
+    {
+        $folder = $id ? "medios/comunicados/$id" : "medios/comunicados/temp";
+
+        // Verificar si la carpeta existe en el disco 'public'
+        if (!Storage::disk('public')->exists($folder)) {
+            // Crear la carpeta en el disco 'public'
+            Storage::disk('public')->makeDirectory($folder);
+        }
+
+        return $folder;
+    }*/
+
+
+    public function show($id)
     {
         $comunicado = Comunicado::find($id);
         return $comunicado->visibilidad == 'P' ? redirect("/comunicados/$id") : redirect("/comunicados/$id?borrador");
@@ -300,6 +297,7 @@ class ComunicadoCrudController extends CrudController
             $id = $match[1];
 
         // https://backpackforlaravel.com/docs/6.x/crud-columns#custom_html-1
+
         if ($id)
             $this->crud->addColumn(
                 [
@@ -309,6 +307,7 @@ class ComunicadoCrudController extends CrudController
                     'value' => "<a href='/comunicados/$id?borrador' target='_blank'>➡️ Ver Comunicado en el Sitio Web</a>"
                 ]
             );
+
 
         CRUD::column('titulo')->type('text');
         CRUD::column('numero')->type('number');
@@ -327,29 +326,32 @@ class ComunicadoCrudController extends CrudController
         ]);
 
         // MAYBE: do stuff after the autosetup
-
-
         // or maybe remove a column
         // CRUD::column('text')->remove();
     }
 
     public function importCreate()
     {
-        try {
+        $contenido = Comunicado::create([
+            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
+            "texto" => "",
+            "ano" => date('Y')
+        ]);
 
+        return $this->importUpdate($contenido->id);
+    }
+
+
+    public function importUpdate($id)
+    {
+        $contenido = Comunicado::findOrFail($id);
+
+        try {
+            // inicializa el importador en base a $_FILES
             $imported = new WordImport();
 
-            $contenido = Comunicado::create([
-                "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-                "texto" => "",
-                "ano" => date('Y')
-            ]);
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/comunicados/_{$contenido->id}";
-
-            // copia las imágenes desde la carpeta temporal al directorio destino
-            $imported->copyImagesTo($imagesFolder);
+            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
+            $imported->copyImagesTo($this->getMediaFolder($contenido), true);
 
             // ahora las imagenes están con la nueva ubicación
             $contenido->texto = $imported->content;
@@ -359,40 +361,6 @@ class ComunicadoCrudController extends CrudController
             return response()->json([
                 "id" => $contenido->id
             ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
-
-    public function importUpdate($id)
-    {
-        try {
-            $imported = new WordImport();
-
-            $contenido = Comunicado::findOrFail($id);
-
-            $contenido->texto = $imported->content;
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/comunicados/_{$contenido->id}";
-
-            // reemplazar la ubicación de las imágenes en el texto del comunicado
-            $contenido->texto = preg_replace("/\bmedios\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
-
-            $contenido->descripcion = null; // para que se regenere
-
-            $contenido->imagen = null; // para que se elija otra nueva, si la hay
-            $contenido->save();
-
-            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
-            $imported->copyImagesTo($imagesFolder, true);
-
-            return response()->json([], 200);
         } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()

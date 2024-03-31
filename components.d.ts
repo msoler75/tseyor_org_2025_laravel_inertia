@@ -36,6 +36,7 @@ declare module 'vue' {
     ConfirmationModal: typeof import('./resources/js/Components/ConfirmationModal.vue')['default']
     ConfirmsPassword: typeof import('./resources/js/Components/ConfirmsPassword.vue')['default']
     Contact: typeof import('./resources/js/Sections/Contact.vue')['default']
+    content: { type: String
     Content: typeof import('./resources/js/Components/Content.vue')['default']
     ContentBar: typeof import('./resources/js/Components/ContentBar.vue')['default']
     ContentMain: typeof import('./resources/js/Components/ContentMain.vue')['default']
@@ -54,29 +55,7 @@ declare module 'vue' {
     FeaturedPosts: typeof import('./resources/js/Sections/FeaturedPosts.vue')['default']
     FeatureRows: typeof import('./resources/js/Sections/FeatureRows.vue')['default']
     FileIcon: typeof import('./resources/js/Components/FolderExplorer/FileIcon.vue')['default']
-    <template>
-    <div>
-        <input type="hidden" id="xxx" :name="name" v-model="contenido" />
-        <TinyMCE v-model="contenido" full-editor :format="format" :mediaFolder="folder"/>
-        <!-- <div v-html="contenido.replace(/\n/g, '<br>')"></div> -->
-    </div>
-</template>
-
-
-<script setup>
-
-const props = defineProps({
-    name: String,
-    content: { type: String, default: '' },
-    format: { type: String, default: 'detect' }, // 'md', 'html'
-    folder: String
-})
-
-const contenido = ref(props.content)
-
-</script>
-
-FileManager: typeof import('./resources/js/Components/FileManager.vue')['default']
+    FileManager: typeof import('./resources/js/Components/FileManager.vue')['default']
     FileSize: typeof import('./resources/js/Components/FolderExplorer/FileSize.vue')['default']
     FolderExplorer: typeof import('./resources/js/Components/FolderExplorer/FolderExplorer.vue')['default']
     FolderIcon: typeof import('./resources/js/Components/FolderExplorer/FolderIcon.vue')['default']
@@ -84,6 +63,7 @@ FileManager: typeof import('./resources/js/Components/FileManager.vue')['default
     FondoEstrellado: typeof import('./resources/js/Components/FondoEstrellado.vue')['default']
     Footer: typeof import('./resources/js/Sections/Footer.vue')['default']
     FormSection: typeof import('./resources/js/Components/FormSection.vue')['default']
+    'full-editor': format="format" :mediaFolder="folder"/>
     FullPage: typeof import('./resources/js/Sections/FullPage.vue')['default']
     GlobalSearch: typeof import('./resources/js/Components/GlobalSearch.vue')['default']
     GlosarioTabs: typeof import('./resources/js/Components/GlosarioTabs.vue')['default']
@@ -101,6 +81,7 @@ FileManager: typeof import('./resources/js/Components/FileManager.vue')['default
     Loader: typeof import('./resources/js/Components/Loader.vue')['default']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     ModalDropZone: typeof import('./resources/js/Components/ModalDropZone.vue')['default']
+    name: String
     NavAside: typeof import('./resources/js/Components/NavAside.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     NavSubmenu: typeof import('./resources/js/Components/NavSubmenu.vue')['default']
@@ -156,5 +137,6 @@ FileManager: typeof import('./resources/js/Components/FileManager.vue')['default
     Users: typeof import('./resources/js/Components/Users.vue')['default']
     VideoPlayer: typeof import('./resources/js/Sections/VideoPlayer.vue')['default']
     Welcome: typeof import('./resources/js/Components/Welcome.vue')['default']
+    xxx: name="name" v-model="contenido" />
   }
 }

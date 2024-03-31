@@ -6,7 +6,8 @@
 </template>
 
 <script setup>
-import Link from '@/Components/Link.vue'
+// import Link from '@/Components/Link.vue'
+import { Link } from "@inertiajs/vue3";
 
 defineProps({
     isLink: { type: Boolean, required: true },
