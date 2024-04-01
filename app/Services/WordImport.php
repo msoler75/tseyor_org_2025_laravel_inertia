@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Pigmalion\Markdown;
+use App\Pigmalion\DiskUtil;
 
 define('USE_PHPWORD', true);
 
@@ -177,23 +178,25 @@ class WordImport
                 @unlink($imagePath);
             }
         if ($this->tempDir) {
-            Log::info("to do: delete folder " . $this->tempDir);
+            Log::info("go to delete folder " . $this->tempDir);
             // we must delete files in folder first
-            //WordImport::deleteFilesFromFolder($this->tempDir);
+            WordImport::deleteFilesFromFolder($this->tempDir);
+
+            $path = Storage::disk('public')->path($this->tempDir);
 
             // then we delete folder
-            //@rmdir($this->tempDir);
+            rmdir($path);
         }
         // @unlink($tempDir . '/output.md');
     }
 
 
     /**
-     * Borra los archivos de una carpeta
+     * Borra los archivos de una carpeta en el disco 'public'
      */
     public static function deleteFilesFromFolder($folder)
     {
-        // Verificar si la carpeta existe en el disco 'public' y crearla si hace falta
+        // Verificar si la carpeta existe en el disco 'public'
         if (Storage::disk('public')->exists($folder)) {
 
             // por seguridad, no se permiten rutas relativas extrañas
@@ -205,7 +208,7 @@ class WordImport
                 return;
 
             // Obtener la ruta completa de la carpeta de destino en el disco 'public'
-            $destinationFolderPath = storage_path('app/public/' . $folder);
+            $destinationFolderPath = Storage::disk('public')->path($folder);
 
             // eliminamos todas las imagenes de esta carpeta:
             // Obtener la lista de archivos en la carpeta
@@ -224,28 +227,35 @@ class WordImport
     /**
      * @param deletePrevious = true: borramos los archivos previos en la carpeta de destino
      */
-    public function copyImagesTo(string $publicStorageRelativeFolder, bool $deletePrevious = false)
+    public function copyImagesTo(string $folderDest, bool $deletePrevious = false)
     {
 
-        Log::info("copyImagesTo ".$publicStorageRelativeFolder);
+        Log::info("copyImagesTo ".$folderDest);
 
         if (!count($this->images))
             return 0;
 
-        $this->mediaFolder = $publicStorageRelativeFolder;
+        list($disk, $folder) = DiskUtil::obtenerDiscoRuta($folderDest);
+
+        Log::info("copyImagesTo disk: $disk, folder: $folder");
+
+        $this->mediaFolder = $folder;
 
         if ($deletePrevious) {
             // Borramos las imágenes que pudiera haber, previas
-            WordImport::deleteFilesFromFolder($publicStorageRelativeFolder);
+            WordImport::deleteFilesFromFolder($folder);
         }
 
         // Obtener la ruta completa de la carpeta de destino en el disco 'public'
-        $destinationFolderPath = storage_path('app/public/' . $publicStorageRelativeFolder);
+        // $destinationFolderPath = storage_path('app/public/' . $folder);
+        $destinationFolderPath = Storage::disk($disk)->path($folder);
+
+        Log::info("destinationFolderPath: $destinationFolderPath");
 
         // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk('public')->exists($publicStorageRelativeFolder)) {
+        if (!Storage::disk($disk)->exists($folder)) {
             // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($publicStorageRelativeFolder);
+            Storage::disk($disk)->makeDirectory($folder);
         }
 
         Log::info("images: ".print_r($this->images, true));
@@ -258,14 +268,24 @@ class WordImport
             copy($imagePath, $destinationFolderPath . "/" . $imageFilename);
         }
 
+        Log::info("temp dir: $this->tempDir");
+
+        Log::info("content: ". print_r($this->content, true));
+
         if (USE_PHPWORD) {
-            Log::info("preg_replace(almacen/{$this->tempDir}/   ->   almacen/$publicStorageRelativeFolder/");
-            $this->content = preg_replace("#\balmacen/{$this->tempDir}/#", "almacen/$publicStorageRelativeFolder/", $this->content);
+            Log::info("preg_replace(almacen/{$this->tempDir}/   ->   almacen/$folder/");
+            $this->content = preg_replace("#\balmacen/{$this->tempDir}/#", "almacen/$folder/", $this->content);
+
+            Log::info("content after: ". print_r($this->content, true));
         } else {
-            $this->content = preg_replace("/\bmedios\//", "$publicStorageRelativeFolder/", $this->content);
+            $this->content = preg_replace("/\bmedios\//", "$folder/", $this->content);
             $this->content = preg_replace("/\.\/medios\//", "/almacen/medios/", $this->content);
         }
 
+        // hacemos los enlaces locales
+        $baseHost = config('app.url');
+        $this->content = preg_replace("#$baseHost/almacen/#", "/almacen/", $this->content);
+        Log::info("content final: ". print_r($this->content, true));
 
         return count($this->images);
     }

@@ -22,7 +22,7 @@ class EquipoCrudController extends CrudController
     }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -31,7 +31,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Equipo::class);
+        CRUD::setModel(Equipo::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/equipo');
         CRUD::setEntityNameStrings('equipo', 'equipos');
     }
@@ -113,17 +113,17 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
         CRUD::field('slug')->type('text');
 
-        CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
         CRUD::field('imagen')->type('image_cover');
 
         CRUD::field('categoria')->type('text');
 
-        CRUD::field('anuncio')->type('markdown_quill_simple');
+        CRUD::field('anuncio')->type('tiptap_editor_simple');
 
-        CRUD::field('reuniones')->type('markdown_quill_simple');
+        CRUD::field('reuniones')->type('tiptap_editor_simple');
 
-        CRUD::field('informacion')->type('markdown_quill_simple');
+        CRUD::field('informacion')->type('tiptap_editor_simple');
 
         CRUD::field('grupo')->type('hidden');
 
@@ -164,7 +164,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
         return redirect("/equipos/$id");
     }

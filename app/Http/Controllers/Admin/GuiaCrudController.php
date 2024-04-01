@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use App\Models\Guia;
 
 /**
  * Class GuiaCrudController
@@ -17,7 +18,8 @@ class GuiaCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -26,7 +28,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Guia::class);
+        CRUD::setModel(Guia::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/guia');
         CRUD::setEntityNameStrings('guia', 'guias');
     }
@@ -112,8 +114,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
-        return redirect("/guias/$id");
+        $guia = Guia::findOrFail($id);
+        return $guia->visibilidad == 'P' ? redirect("/guias/$id") : redirect("/guias/$id?borrador");
     }
 }

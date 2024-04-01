@@ -11,6 +11,12 @@ class ExtendedHighlighter extends Highlighter
 
     public function extractRelevantAll($words, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
     {
+        // descartamos palabras comunes y masivas
+        $words = BusquedasHelper::descartarPalabrasComunes($words);
+
+        // quitamos la palabra "LA"
+        $words = preg_replace("/\bla\b/", "", $words);
+
         $words = preg_split($this->tokenizer->getPattern(), $words, -1, PREG_SPLIT_NO_EMPTY);
         $textlength = mb_strlen($fulltext);
         if ($textlength <= $rellength) {
@@ -19,7 +25,7 @@ class ExtendedHighlighter extends Highlighter
 
 
         $locations = $this->_extractLocations($words, $fulltext);
-        
+
         $extracts = [];
 
         $prevStart = -9999;
@@ -29,7 +35,7 @@ class ExtendedHighlighter extends Highlighter
 
             // we jump if we are too close to previous position
             if($startpos < $prevStart + $rellength ) continue;
-            
+
             // if we are going to snip too much...
             if ($textlength - $startpos < $rellength) {
                 $startpos = $startpos - ($textlength - $startpos) / 2;
@@ -100,7 +106,7 @@ class ExtendedHighlighter extends Highlighter
         $str = mb_ereg_replace('[íÍ]', 'i', $str);
         $str = mb_ereg_replace('[óÓ]', 'o', $str);
         $str = mb_ereg_replace('[úÚ]', 'u', $str);
-    
+
         return mb_strtolower($str);
     }
 
@@ -123,11 +129,11 @@ class ExtendedHighlighter extends Highlighter
 
         $highlight = '<' . $tag . $tagAttributes .'>\1</' . $tag . '>';
 
-       
+
 
         $needle    = preg_split($this->tokenizer->getPattern(), $needle, -1, PREG_SPLIT_NO_EMPTY);
-       
-        
+
+
 
         // Select pattern to use
         if ($this->options['simple']) {

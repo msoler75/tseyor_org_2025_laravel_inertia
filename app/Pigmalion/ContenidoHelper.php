@@ -6,6 +6,9 @@ namespace App\Pigmalion;
 use Illuminate\Support\Str;
 use App\Models\Contenido;
 use App\Models\ContenidoBaseModel;
+use Illuminate\Support\Facades\Log;
+use App\Pigmalion\DiskUtil;
+use Illuminate\Support\Facades\Storage;
 
 
 class ContenidoHelper
@@ -42,16 +45,26 @@ class ContenidoHelper
         }
         // Rellenamos imagen (si está vacía) con el contenido del texto (si existe)
         if (in_array('imagen', $fillable) && empty($objeto->imagen)) {
+
+            Log::info("ContenidoHelper::rellenarSlugImagenYDescripcion: buscamos imagen del contenido");
+
             $matches = [];
             preg_match_all('/<img [^>]*src=["\']([^"\']+)/i', $html, $matches);
 
             // busca la primera imagen que tenga unas dimensiones minimas
             foreach ($matches[1] as $imageUrl) {
 
+                Log::info("imageUrl: $imageUrl");
+
                 if (!preg_match("/^https?:/", $imageUrl)) {
 
-                    $imagePath = str_replace(url('/'), '', $imageUrl); // Obtener la ruta relativa de la imagen
-                    $absolutePath = public_path($imagePath); // Obtener la ruta absoluta de la imagen
+                    //$imagePath = str_replace(url('/'), '', $imageUrl); // Obtener la ruta relativa de la imagen
+                    //$absolutePath = DiskUtil::getAbsolutePath($imagePath); // Obtener la ruta absoluta de la imagen
+                    list ($disk, $folder) = DiskUtil::obtenerDiscoRuta($imageUrl);
+                    Log::info("disk: $disk, folder: $folder");
+
+                    $absolutePath = Storage::disk($disk)->path($folder);
+                    Log::info("path: $absolutePath");
 
                     // Obtener las dimensiones de la imagen
                     $imageSize = getimagesize($absolutePath);
@@ -63,7 +76,7 @@ class ContenidoHelper
                     $minHeight = 250; // Alto mínimo deseado
 
                     if ($imageWidth >= $minWidth && $imageHeight >= $minHeight) {
-                        $objeto->imagen = $imagePath;
+                        $objeto->imagen = $imageUrl;
                         break; // Salir del bucle después de encontrar la primera imagen adecuada
                     }
                 }
@@ -133,20 +146,29 @@ class ContenidoHelper
 
 
     /**
-    * Analiza el texto y mueve las imagenes de la carpeta temporal a la carpeta de medios
-    * este método modifica el texto del modelo (si existe el campo texto)
-    * Importante: Se asume que el campo 'texto' está en MARKDOWN
-    * @return true si ha habido cambios
-    **/
+     * Analiza el texto y mueve las imagenes de la carpeta temporal a la carpeta de medios
+     * este método modifica el texto del modelo (si existe el campo texto)
+     * Importante: Se asume que el campo 'texto' está en MARKDOWN
+     * @return true si ha habido cambios
+     **/
     public static function moverImagenesContenido($objeto)
     {
+        Log::info("moverImagenesContenido " . ($objeto->texto ?? ''));
         if ($objeto->texto ?? '') {
-            $imagenes_movidas = \App\Pigmalion\Markdown::moverImagenes($objeto->texto, ContenidoBaseModel::getCarpetaMediosTemp(), $objeto->getCarpetaMedios());
+            $texto = $objeto->texto;
+
+            $desde = ContenidoBaseModel::getCarpetaMediosTemp();
+            $hacia = $objeto->getCarpetaMedios();
+
+            $imagenes_movidas = \App\Pigmalion\Markdown::moverImagenes($texto, $desde, $hacia);
             if (count($imagenes_movidas)) {
+                $objeto->texto = $texto;
                 if ($objeto->imagen ?? '') {
+                    Log::info("imagen del objeto: ".$objeto->imagen);
                     foreach ($imagenes_movidas as $mov) {
                         // cambia la referencia de la imagen del contenido de carpeta temporal a la de la carpeta de medios
-                        $objeto->imagen = str_replace($mov['desde'], $mov['a'], $objeto->imagen);
+                        if ($objeto->imagen == $mov['desde'])
+                            $objeto->imagen = $mov['a'];
                     }
                 }
 

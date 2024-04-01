@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use App\Models\Audio;
 
 /**
  * Class AudioCrudController
@@ -17,7 +18,7 @@ class AudioCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -26,7 +27,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Audio::class);
+        CRUD::setModel(Audio::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/audio');
         CRUD::setEntityNameStrings('audio', 'audio');
     }
@@ -88,7 +89,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
         // donde se guardan los archivos de audio
         $folder = "medios/audios";
 
-        CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
         CRUD::field('enlace')->type('text')->hint('Solo si es un audio externo, poner la url aquí. En tal caso no debe subirse el archivo audio.');
 
@@ -127,9 +128,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
-        $audio = \App\Models\Audio::find($id);
+        $audio = Audio::find($id);
         return $audio->visibilidad == 'P' ? redirect("/audios/$id") : redirect("/audios/$id?borrador");
     }
 }

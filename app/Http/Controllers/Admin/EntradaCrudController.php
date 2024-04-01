@@ -21,7 +21,8 @@ class EntradaCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -30,7 +31,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Entrada::class);
+        CRUD::setModel(Entrada::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/entrada');
         CRUD::setEntityNameStrings('entrada', 'entradas');
     }
@@ -44,15 +45,15 @@ use \Backpack\ReviseOperation\ReviseOperation;
     protected function setupListOperation()
     {
         $this->crud->addColumn([
-            'name'  => 'id',
+            'name' => 'id',
             'label' => 'id',
-            'type'  => 'number'
+            'type' => 'number'
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'titulo',
+            'name' => 'titulo',
             'label' => 'Título',
-            'type'  => 'text'
+            'type' => 'text'
         ]);
 
         $this->crud->addColumn([
@@ -63,24 +64,24 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
 
         $this->crud->addColumn([
-            'name'  => 'categoria',
+            'name' => 'categoria',
             'label' => 'Categoría',
-            'type'  => 'enum',
-            'options'     => ['Pueblo Tseyor', 'Otros']
+            'type' => 'enum',
+            'options' => ['Pueblo Tseyor', 'Otros']
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'imagen',
+            'name' => 'imagen',
             'label' => 'Imagen',
-            'type'  => 'image',
+            'type' => 'image',
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
-            'value' => function($entry) {
-                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            'type' => 'text',
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
 
@@ -112,56 +113,35 @@ use \Backpack\ReviseOperation\ReviseOperation;
          * - CRUD::field('price')->type('number');
          */
 
-         $folder = $this->mediaFolder();
+        $folder = $this->getMediaFolder();
 
-         CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
 
-         CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder]);
 
-         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
+        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
-         CRUD::field('visibilidad')->type('visibilidad');
+        CRUD::field('visibilidad')->type('visibilidad');
 
-         CRUD::field([   // select_from_array
-            'name'        => 'categoria',
-            'label'       => "Categoría",
-            'type'        => 'select_from_array',
-            'options'     => ['Pueblo Tseyor', 'Otros'],
+        CRUD::field([   // select_from_array
+            'name' => 'categoria',
+            'label' => "Categoría",
+            'type' => 'select_from_array',
+            'options' => ['Pueblo Tseyor', 'Otros'],
             'allows_null' => false,
-            'default'     => 'Pueblo Tseyor',
+            'default' => 'Pueblo Tseyor',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
-            'wrapper'   => [
-                'class'      => 'form-group col-md-3'
+            'wrapper' => [
+                'class' => 'form-group col-md-3'
             ],
         ])->after("slug");
 
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
-        CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step'=>1]);
+        CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1]);
 
-
-        Entrada::saving(function ($contenido) {
-            // Se ejecutará aquí antes de crear o actualizar un comunicado.
-            \App\Pigmalion\Markdown::extraerImagenes($contenido->texto, $this->mediaFolder($contenido));
-        });
     }
 
-
-    private function mediaFolder($contenido = null)
-    {
-        $anioActual = date('Y');
-        $mesActual = date('m');
-
-        $folder = $contenido && $contenido->id ?  "medios/entradas/_{$contenido->id}" : "/medios/entradas/$anioActual/$mesActual";
-
-        // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk('public')->exists($folder)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($folder);
-        }
-
-        return $folder;
-    }
 
     /**
      * Define what happens when the Update operation is loaded.
@@ -176,7 +156,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
 
 
-    protected function show($id)
+    public function show($id)
     {
         $entrada = Entrada::find($id);
         return $entrada->visibilidad == 'P' ? redirect("/entradas/$id") : redirect("/entradas/$id?borrador");
@@ -186,21 +166,26 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     public function importCreate()
     {
-        try {
+        $contenido = Entrada::create([
+            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
+            "texto" => "",
+            "categoria" => 'Pueblo Tseyor'
+        ]);
 
+        return $this->importUpdate($contenido->id);
+    }
+
+
+    public function importUpdate($id)
+    {
+        $contenido = Entrada::findOrFail($id);
+
+        try {
+            // inicializa el importador en base a $_FILES
             $imported = new WordImport();
 
-            $contenido = Entrada::create([
-                "titulo" => "Importado de ". $_FILES['file']['name'] . "_". substr(str_shuffle('0123456789'), 0, 5),
-                "texto" => "",
-                "categoria" => 'Pueblo Tseyor'
-            ]);
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = $this->mediaFolder($contenido);
-
-            // copia las imágenes desde la carpeta temporal al directorio destino
-            $imported->copyImagesTo($imagesFolder);
+            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
+            $imported->copyImagesTo($this->getMediaFolder($contenido), true);
 
             // ahora las imagenes están con la nueva ubicación
             $contenido->texto = $imported->content;
@@ -210,40 +195,6 @@ use \Backpack\ReviseOperation\ReviseOperation;
             return response()->json([
                 "id" => $contenido->id
             ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
-
-    public function importUpdate($id)
-    {
-        try {
-            $imported = new WordImport();
-
-            $contenido = Entrada::findOrFail($id);
-
-            $contenido->texto = $imported->content;
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/entradas/_{$contenido->id}";
-
-            // reemplazar la ubicación de las imágenes en el texto del comunicado
-            $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
-
-            $contenido->descripcion = null; // para que se regenere
-
-            $contenido->imagen = null; // para que se elija otra nueva, si la hay
-            $contenido->save();
-
-            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
-            $imported->copyImagesTo($imagesFolder, true);
-
-            return response()->json([], 200);
         } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()

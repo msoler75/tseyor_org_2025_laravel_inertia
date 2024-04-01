@@ -19,7 +19,8 @@ class PublicacionCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -125,7 +126,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
         CRUD::field('equipo_id')->type('select')->after('titulo')->wrapper(['class' => 'form-group col-md-3']);
 
-        CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
         CRUD::field('slug')->type('text')->after('titulo');
 
@@ -152,7 +153,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
         $this->setupCreateOperation();
     }
 
-    protected function show($id)
+    public function show($id)
     {
         $publicacion = \App\Models\Publicacion::find($id);
         return $publicacion->visibilidad == 'P' ? redirect("/publicaciones/$id") : redirect("/publicaciones/$id?borrador");
@@ -160,20 +161,24 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
     public function importCreate()
     {
-        try {
+        $contenido = Publicacion::create([
+            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
+            "texto" => ""
+        ]);
+        return $this->importUpdate($contenido->id);
+    }
 
+
+    public function importUpdate($id)
+    {
+        $contenido = Publicacion::findOrFail($id);
+
+        try {
+            // inicializa el importador en base a $_FILES
             $imported = new WordImport();
 
-            $contenido = Publicacion::create([
-                "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-                "texto" => ""
-            ]);
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/publicaciones/_{$contenido->id}";
-
-            // copia las imágenes desde la carpeta temporal al directorio destino
-            $imported->copyImagesTo($imagesFolder);
+            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
+            $imported->copyImagesTo($this->getMediaFolder($contenido), true);
 
             // ahora las imagenes están con la nueva ubicación
             $contenido->texto = $imported->content;
@@ -183,40 +188,6 @@ use \Backpack\ReviseOperation\ReviseOperation;
             return response()->json([
                 "id" => $contenido->id
             ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
-
-    public function importUpdate($id)
-    {
-        try {
-            $imported = new WordImport();
-
-            $contenido = Publicacion::findOrFail($id);
-
-            $contenido->texto = $imported->content;
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/publicaciones/_{$contenido->id}";
-
-            // reemplazar la ubicación de las imágenes en el texto del comunicado
-            $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
-
-            $contenido->descripcion = null; // para que se regenere
-
-            $contenido->imagen = null; // para que se elija otra nueva, si la hay
-            $contenido->save();
-
-            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
-            $imported->copyImagesTo($imagesFolder, true);
-
-            return response()->json([], 200);
         } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()

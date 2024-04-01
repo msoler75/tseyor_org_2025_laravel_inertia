@@ -20,7 +20,8 @@ class TerminoCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -90,9 +91,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
         $folder = "/medios/terminos";
 
-        CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
-        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder])->after('descripcion');
+        CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder])->after('descripcion');
 
         CRUD::field('visibilidad')->type('visibilidad');
     }
@@ -225,7 +226,7 @@ vuestro planeta, que se denomina *Cocoon*. Ahí podréis observar cómo son mis 
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
         $termino = \App\Models\Termino::find($id);
         return $termino->visibilidad == 'P' ? redirect("/glosario/$id") : redirect("/glosario/$id?borrador");

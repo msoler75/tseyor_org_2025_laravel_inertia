@@ -59,18 +59,23 @@ const emit = defineEmits(['update:modelValue', 'change'])
 
 const format = computed(() => props.format != 'detect' ? props.format : ['md', 'ambiguous'].includes(detectFormat(props.modelValue).format) ? 'md' : 'html')
 
-
 const contenidoMD = ref(format.value.toLowerCase() == 'md' ? props.modelValue : HtmlToMarkdown(props.modelValue))
 const contenidoHtml = ref(format.value.toLowerCase() == 'html' ? props.modelValue : MarkdownToHtml(props.modelValue))
 
+console.log('props.format', props.format)
+console.log('format', format.value)
 
 watch(contenidoHtml, (value) => {
+    console.log('watch contenidoHtml', value)
     contenidoMD.value = HtmlToMarkdown(value)
-    if (props.format == 'md') {
+    console.log('format', format.value)
+    if (format.value == 'md') {
+        console.log('emit change', contenidoMD.value)
         emit('change', contenidoMD.value)
         emit('update:modelValue', contenidoMD.value)
     }
     else {
+        console.log('emit change', contenidoHtml.value)
         emit('change', contenidoHtml.value)
         emit('update:modelValue', contenidoHtml.value)
     }
@@ -236,10 +241,12 @@ const ImageResize = ImageExtension.extend({
                 $label.style.top = "5px";
                 $label.style.left = "5px";
                 $label.style.fontWeight = "bold";
+                $label.style.color = "white"
                 $label.style.mixBlendMode = "difference"
                 $container.appendChild($label)
 
                 item.node = node
+                item.getPos = getPos
                 //item.img = $img
                 item.progress = $progress
                 item.label = $label
@@ -305,14 +312,13 @@ const ImageResize = ImageExtension.extend({
                         };
 
                         const onMouseUp = () => {
-                            if (isResizing) {
-                                isResizing = false;
-                            }
+                            isResizing = false;
                             if (typeof getPos === 'function') {
                                 const newAttrs = {
                                     ...node.attrs,
                                     style: `${$img.style.cssText}`,
                                 };
+                                console.log('resize ', {newAttrs})
                                 view.dispatch(view.state.tr.setNodeMarkup(getPos(), null, newAttrs));
                             }
 
@@ -410,7 +416,9 @@ const editor = useEditor({
         })
     ],
     onUpdate: ({ editor }) => {
+        console.log('onUpdate')
         contenidoHtml.value = editor.getHTML()
+        // contenidoMD.value = HtmlToMarkdown(editor.getHTML())
         // send the content to an API here
     },
 })
@@ -444,18 +452,21 @@ function findImageNodePos(src) {
 // cambiamos el src del nodo
 function replaceImage(fromSrc, toSrc, _view) {
     // 1. Obtén una referencia al nodo de imagen y su posición
-    const { node, pos } = findImageNodePos(fromSrc)
+    // const { node, pos } = findImageNodePos(fromSrc)
+
     // 2. Crea una nueva transacción
-    const transaction = editor.value.state.tr;
+    /*const transaction = editor.value.state.tr;
     // 3. Reemplaza el nodo de imagen original
     transaction.replaceWith(
         pos,
         pos + node.nodeSize,
         editor.value.schema.nodes.image.create({ src: toSrc })
-    );
+    );*/
 
     // 4. Aplica la transacción
-    _view.dispatch(transaction);
+    // _view.dispatch(transaction);
+
+    //_view.dispatch(_view.state.tr.setNodeMarkup(pos, null, { src: toSrc }));
 }
 
 function uploadImage(file, blobUrl, _view) {
@@ -486,6 +497,7 @@ function uploadImage(file, blobUrl, _view) {
     // cuando termine el request:
     req.addEventListener('load', async function () {
         const data = JSON.parse(req.response)
+        console.log({data})
         if (data.error) {
             // si hay algun error, aplica la codificacion base64 en la imagen
             console.error(data.error)
@@ -493,7 +505,7 @@ function uploadImage(file, blobUrl, _view) {
             item.finished = true
         }
         else {
-            item.url = '/almacen/' + data.data.filePath
+            item.url = data.data.filePath
         }
 
         const img = new Image()
@@ -503,24 +515,33 @@ function uploadImage(file, blobUrl, _view) {
         const time = endUploadTime - startTime
         console.log('time elapsed in ms', time)
 
-        let progress = 50.0
         const lapso = 200
-        const avance = progress / time * lapso * 1.4 // la descarga es más rápida que la subida
+        const avance = 50 / time * lapso * 1.4 // la descarga es más rápida que la subida
+        let progress = 50.0
 
-        // simulamos el progreso de descarga, durará más o menos igual que la subida
-        const downloadInterval = setInterval(() => {
+        function muestraProgreso() {
             progress += avance
             progress = Math.min(progress, 99.9)
             const p = Math.round(progress)
             item.progress.style.left = p + '%'
             item.label.innerText = p + '%'
             console.log('downloading', item.progress.style.left)
-        }, lapso)
+        }
+
+        // ya da un paso antes
+        muestraProgreso()
+
+        // simulamos el progreso de descarga, durará más o menos igual que la subida
+        const downloadInterval = setInterval(muestraProgreso, lapso)
 
         img.onload = () => {
             item.progress.remove()
             item.label.remove()
-            replaceImage(item.blobUrl, item.url, _view)
+            // replaceImage(item.blobUrl, item.url, _view)
+
+            // reemplaza el src de la imagen
+            _view.dispatch(_view.state.tr.setNodeMarkup(item.getPos(), null, { src: item.url }));
+
             clearInterval(downloadInterval)
         }
     })

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use App\Models\Contacto;
 use App\Pigmalion\Countries;
-
 
 
 
@@ -21,7 +21,7 @@ class ContactoCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -30,7 +30,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Contacto::class);
+        CRUD::setModel(Contacto::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/contacto');
         CRUD::setEntityNameStrings('contacto', 'contactos');
     }
@@ -46,9 +46,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
         // CRUD::setFromDb(); // set columns from db columns.
 
         $this->crud->addColumn([
-            'name'  => 'nombre',
+            'name' => 'nombre',
             'label' => 'Nombre',
-            'type'  => 'text'
+            'type' => 'text'
         ]);
 
 
@@ -59,24 +59,24 @@ use \Backpack\ReviseOperation\ReviseOperation;
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'imagen',
+            'name' => 'imagen',
             'label' => 'Imagen',
-            'type'  => 'image'
+            'type' => 'image'
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'nombrePais',
+            'name' => 'nombrePais',
             'label' => 'País',
-            'type'  => 'text',
+            'type' => 'text',
         ]);
 
 
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
-            'value' => function($entry) {
-                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
+            'type' => 'text',
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
     }
@@ -105,14 +105,14 @@ use \Backpack\ReviseOperation\ReviseOperation;
         CRUD::field('slug')->hint('Nombre corto para los enlaces. No lo rellenes si no sabes como funciona');
 
         CRUD::field([   // select_from_array
-            'name'        => 'pais',
-            'label'       => "País",
-            'type'        => 'select_from_array',
-            'options'     => Countries::$list,
+            'name' => 'pais',
+            'label' => "País",
+            'type' => 'select_from_array',
+            'options' => Countries::$list,
             'allows_null' => false,
-            'default'     => 'ES',
-            'wrapper'   => [
-                'class'      => 'form-group col-md-4'
+            'default' => 'ES',
+            'wrapper' => [
+                'class' => 'form-group col-md-4'
             ],
         ]);
 
@@ -130,9 +130,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
         $this->setupCreateOperation();
     }
 
-    protected function show($id)
+    public function show($id)
     {
-        $contacto = \App\Models\Contacto::find($id);
+        $contacto = Contacto::find($id);
         return $contacto->visibilidad == 'P' ? redirect("/contactos/$id") : redirect("/contactos/$id?borrador");
     }
 }

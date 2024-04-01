@@ -58,11 +58,12 @@ class Informe extends ContenidoConAudios
     }
 
 
-// ACCESSORS
+    // ACCESSORS
 
-public function getEquipoNombreAttribute() {
-    return $this->equipo->nombre;
-}
+    public function getEquipoNombreAttribute()
+    {
+        return $this->equipo->nombre;
+    }
 
 
     // SCOUT

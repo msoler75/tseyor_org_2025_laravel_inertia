@@ -158,7 +158,7 @@ class ComunicadoCrudController extends CrudController
 
         $folder = $this->getMediaFolder();
 
-        CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
         // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
@@ -262,20 +262,6 @@ class ComunicadoCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
-    /*
-    private function mediaFolder($id = null)
-    {
-        $folder = $id ? "medios/comunicados/$id" : "medios/comunicados/temp";
-
-        // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk('public')->exists($folder)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($folder);
-        }
-
-        return $folder;
-    }*/
 
 
     public function show($id)

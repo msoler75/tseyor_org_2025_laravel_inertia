@@ -12,7 +12,7 @@
         var elem = button.parentNode
         while(elem.tagName!="TR")
             elem = elem.parentNode
-        const id = elem.firstChild.firstChild.innerText
+        const id = elem.firstChild.firstChild.innerText.replace(/,/g, '')
         // console.log('id', id)
         var fileInput = document.getElementById('word_file');
         fileInput.onchange = function() {

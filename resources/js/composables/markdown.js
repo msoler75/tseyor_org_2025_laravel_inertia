@@ -4,12 +4,12 @@ import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 
 const turndownService = new TurndownService({
-  bulletListMarker: '-',
-  headingStyle: 'atx',
-  hr: '---'
+  bulletListMarker: "-",
+  headingStyle: "atx",
+  hr: "---",
 });
 turndownService.use(gfm);
-turndownService.keep(['span', 'sup', 'u']);
+turndownService.keep(["span", "sup", "u"]);
 
 /*
 
@@ -17,88 +17,116 @@ Nuestras conversiones personalizados de markdown <-> HTML
 */
 
 export function replaceQuillEditorClasses(html) {
-    return html.replace(/<(\w+)\s(?:[^>]*\s)?((class|style)="[^"]*")/g, function (element, tag) {
-        const styles = [];
-        // Verificar si es 'style' o 'class' y añadir al array 'styles'
-        element.replace(/(?:class|style)="([^"]*)"/g, function (match, attribute) {
-            if (match.includes('style=')) {
-                // Desglosar estilos y añadir al array 'styles'
-                attribute.split(';').forEach(style => {
-                    if (style.trim() !== '') {
-                        styles.push(style.trim());
-                    }
-                });
-            } else if (match.includes('class=')) {
-                // Añadir estilos correspondientes a cada clase al array 'styles'
-                attribute.split(' ').forEach(cls => {
-                    if (cls.startsWith('ql-')) {
-                        // Lógica para mapear clases a estilos
-                        // Aquí puedes definir la lógica para mapear clases a estilos
-                        if (cls === 'ql-align-left') styles.push('text-align: left');
-                        if (cls === 'ql-align-justify') styles.push('text-align: justify');
-                        if (cls === 'ql-align-center') styles.push('text-align: center');
-                        if (cls === 'ql-align-right') styles.push('text-align: right');
-                        if (cls === 'ql-size-small') styles.push('font-size: .75em');
-                        if (cls === 'ql-size-larger') styles.push('font-size: 1.75em');
-                        if (cls === 'ql-size-huge') styles.push('font-size: 2.25em');
-                    }
-                });
-            }
-        });
-        if(styles.length == 0) return '<' + tag;
-        return '<' + tag + ' style="' + styles.join('; ') + '"';
-    })
+  return html.replace(
+    /<(\w+)\s(?:[^>]*\s)?((class|style)="[^"]*")/g,
+    function (element, tag) {
+      const styles = [];
+      // Verificar si es 'style' o 'class' y añadir al array 'styles'
+      element.replace(
+        /(?:class|style)="([^"]*)"/g,
+        function (match, attribute) {
+          if (match.includes("style=")) {
+            // Desglosar estilos y añadir al array 'styles'
+            attribute.split(";").forEach((style) => {
+              if (style.trim() !== "") {
+                styles.push(style.trim());
+              }
+            });
+          } else if (match.includes("class=")) {
+            // Añadir estilos correspondientes a cada clase al array 'styles'
+            attribute.split(" ").forEach((cls) => {
+              if (cls.startsWith("ql-")) {
+                // Lógica para mapear clases a estilos
+                // Aquí puedes definir la lógica para mapear clases a estilos
+                if (cls === "ql-align-left") styles.push("text-align: left");
+                if (cls === "ql-align-justify")
+                  styles.push("text-align: justify");
+                if (cls === "ql-align-center")
+                  styles.push("text-align: center");
+                if (cls === "ql-align-right") styles.push("text-align: right");
+                if (cls === "ql-size-small") styles.push("font-size: .75em");
+                if (cls === "ql-size-larger") styles.push("font-size: 1.75em");
+                if (cls === "ql-size-huge") styles.push("font-size: 2.25em");
+              }
+            });
+          }
+        }
+      );
+      if (styles.length == 0) return "<" + tag;
+      return "<" + tag + ' style="' + styles.join("; ") + '"';
+    }
+  );
 }
 
 export function HtmlToMarkdown(html) {
   // convertimos cualquier clase dentro de párrafo p en un marcaje especial
-  console.log('HtmlToMarkdown', {html})
+  console.log("HtmlToMarkdown", { html });
 
   // checamos si tiene alguna classe de Quill Editor
   //if(html.match(/class="ql-/))
-    //html = replaceQuillEditorClasses(html)
-
+  //html = replaceQuillEditorClasses(html)
 
   // quitamos estilo de centro en imagenes solitarias (no es necesario)
   html = html.replace(
     /<p style=.text-align:\s*center\s*;?\s*.>(<img[^>]+>)<\/p>/g,
     "<p>$1</p>"
-  )
+  );
 
-  const md =  turndownService.turndown(
+  const md = turndownService.turndown(
     html
       // reemplazamos los atributos de imagen
-      .replace(/<img\s+([^>]+)>/g, (match, atributos) => {
-        // console.log('r1', { match, atributos })
-        var values = [];
-        atributos.replace(/(\w+)=['"]?([^'"\s]+)['"]?/g, (match, atributo, valor) => {
-          // console.log('r2', { atributo, valor })
-          //if(atributo==="src")
-          //return ""
-          if (atributo === "width" || atributo === "height") {
-            values.push(`${atributo}=${valor}`);
+      .replace(/<img\s+[^>]+\/?>/g, (imgHtml) => {
+        console.log({imgHtml})
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(imgHtml, "application/xml");
+        const img = doc.querySelector("img");
+
+        const attributes = Array.from(img.attributes).reduce((acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        }, {});
+
+        console.log({ attributes });
+
+        var values = {};
+        var style = ""
+        for (const attr in attributes) {
+          if (attr == "alt" || attr == "src") continue;
+          if (attr == "width" || attr == "height") {
+            values[attr] = attr + "=" + attributes[attr]
           }
-          if(atributo=='style') {
-            valor.split(/\s*;\s*/).forEach(style => {
-              const [key, value] = style.split(/\s*:\s*/)
-              if(key==='width' || key==='height')
-                values.push(`${key}=${value}`);
-            })
+          if (attr == "style") {
+            style = attributes[attr]
           }
-          return match;
-        });
-        console.log('values', values)
-        return match + (values.length ? `{${values.join(", ")}}` : "");
+        }
+
+        if(style) { // así sobreescribimos  width height
+            const pairs = style.split(/\s*;\s*/);
+            console.log({pairs})
+            for (const pair of pairs) {
+                const [attr, value] = pair.split(/\s*:\s*/);
+                if (attr == "width" || attr == "height") {
+                    values[attr]= attr  + "=" + value;
+                }
+            }
+        }
+
+        console.log({values})
+
+        return (
+          "<img src='"+attributes.src+"' alt='"+attributes.alt+"'>"+
+          (Object.keys(values).length ? "{" + Object.values(values).join(",") + "}" : "")
+        );
       })
       // reemplazamos los estilos de párrafo
       .replace(/<p style=["']([^>]*)["'][^>]*>/g, "$&{style=$1}")
       // eliminamos estilos innecesarios
-      .replace(/{style=text-align: left;}/g, "")
-      .replace('{width=auto, height=auto}', '') // removemos estilos innecesarios
+      .replace(/{style=text-align:\s*left;?}/g, "")
+      .replace(/{width=auto,\s*height=auto/g, "") // removemos estilos innecesarios
   );
 
-  console.log({md})
-  return md
+  console.log({ md });
+  return md;
 }
 
 // cambia los caracteres codificados de < y > a su valor real
@@ -115,33 +143,35 @@ export function MarkdownToHtml(raw_markdown) {
     return md.render(raw_markdown)
     */
 
-   console.log("MarkdownToHtml", {raw_markdown});
-   // raw_markdown = raw_markdown.replace(/\n\s*---\s*\n/mg, '<hr/>')
+  console.log("MarkdownToHtml", { raw_markdown });
+  // raw_markdown = raw_markdown.replace(/\n\s*---\s*\n/mg, '<hr/>')
   const converter = new showdown.Converter();
   converter.setFlavor("github");
-  const html=  (
-    converter
-      .makeHtml(raw_markdown)
+  raw_markdown = raw_markdown.replace(/!\[(.*)\]\(([^\)]+)\)/g, function(match, alt, url) {
+    // console.log({match, alt, url})
+    return '![' + alt + '](' + url.replace(/\s/g, '%20') + ')';
+  })
+  const html = converter
+    .makeHtml(raw_markdown)
 
-      // primero reemplazamos las imágenes con atributos
-      .replace(/(<img[^>]*>){(\w+=[^}]+)}/g, (match, img, attributes) => {
-        var values = [];
-        attributes.replace(/(\w+)=([^,]+)/g, (match, atributo, valor) => {
-          values.push(`${atributo}=${valor}`);
-          return match;
-        });
-        return img.replace("<img", "<img " + values.join(" "));
-      })
-      // reemplazamos los párrafos con estilos
-      .replace(/<p>{style=([^}]*)}/g, "<p style='$1'>")
-      // quitamos los espacios sobrantes
-      .replace(/<p>\s+<\/p>\n?/g, "")
-      .replace(/\n/g, "")
-      // centramos las imágenes solitarias
-      .replace(/<p>(<img[^>]+>)<\/p>/g, "<p style='text-align: center'>$1</p>")
-  );
-  console.log({html})
-  return html
+    // primero reemplazamos las imágenes con atributos
+    .replace(/(<img[^>]*>){(\w+=[^}]+)}/g, (match, img, attributes) => {
+      var values = [];
+      attributes.replace(/(\w+)=([^,]+)/g, (match, atributo, valor) => {
+        values.push(`${atributo}="${valor}"`);
+        return match;
+      });
+      return img.replace("<img", "<img " + values.join(" "));
+    })
+    // reemplazamos los párrafos con estilos
+    .replace(/<p>{style=([^}]*)}/g, "<p style='$1'>")
+    // quitamos los espacios sobrantes
+    .replace(/<p>\s+<\/p>\n?/g, "")
+    .replace(/\n/g, "")
+    // centramos las imágenes solitarias
+    .replace(/<p>(<img[^>]+>)<\/p>/g, "<p style='text-align: center'>$1</p>");
+  console.log({ html });
+  return html;
 }
 
 export function detectFormat(text) {

@@ -1,8 +1,16 @@
--https://github.com/PHPOffice/PHPWord
-    -integrar generación de documentos word, o upload de los mismos, en los equipos
+eliminar private function mediaFolder de CRUDs
+eliminar extraerImagenes de CRUDs
 
--hacer que cuando se descargue un pdf de comunicado, se genere y se use pdftk , tal vez un servicio docker en google cloud run?
--intentar no usar pdftk
+BUSQUEDAS:
+-verificar rendimiento de buscador. Ejemplo, buscar: "cortinas de humo".
+-en resultados de busquedas, quitar los formatos extra {width=45px;height=60px}  {text-align=center} ... [^1] <sup></sup> <u></u>
+
+
+
+EQUIPOS:
+-integrar generación de documentos word, o upload de los mismos, en los equipos
+
+
 
 
 -Boletines
@@ -20,10 +28,6 @@ https://apidocs.mailrelay.com/#post-/campaigns
 -que cuando importe un comunicado en word, cambie:
 ####### ... CONVERSACIONES INTERDIMENSIONALES por algo como negrita
 
--que cuando importe un comunicado o se guarde como contenido, la imagen elegida del comunicado cumpla un tamaño minimo
-
--cuando se activa una busqueda por programación, la sección de "prueba a buscar" no se ha de ver
-
 -share buttons social clipboard (vue useClipboard)
 
 -Boletines (es como un novedades, pero por correo)
@@ -31,8 +35,6 @@ https://apidocs.mailrelay.com/#post-/campaigns
 Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
 
 Creación de eventos por los usuarios autorizados
-
-
 
 -emails: ver registro de emails en el dashboard
 

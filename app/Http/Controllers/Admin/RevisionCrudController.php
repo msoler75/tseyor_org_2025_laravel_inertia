@@ -23,7 +23,7 @@ class RevisionCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Revision::class);
+        CRUD::setModel(Revision::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/revision');
         CRUD::setEntityNameStrings('revision', 'revisiones');
     }
@@ -79,7 +79,7 @@ class RevisionCrudController extends CrudController
 
 
 
-    protected function show($id)
+    public function show($id)
     {
         $revision = Revision::findOrFail($id);
         return redirect($revision->revisionUrl);

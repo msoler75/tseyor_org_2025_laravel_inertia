@@ -17,7 +17,7 @@ class AclCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -30,8 +30,6 @@ use \Backpack\ReviseOperation\ReviseOperation;
         CRUD::setRoute(config('backpack.base.route_prefix') . '/acl');
         CRUD::setEntityNameStrings('Lista de acceso', 'Listas de acceso');
     }
-
-
 
 
 
@@ -55,18 +53,18 @@ use \Backpack\ReviseOperation\ReviseOperation;
         $this->crud->addColumn([
             'name' => 'RutaNodo',
             'label' => 'Ruta',
-            'model'       => 'App\Models\Nodo',
+            'model' => 'App\Models\Nodo',
             'searchLogic' => function ($query, $column, $searchTerm) {
                 $query->orWhereHas('nodo', function ($q) use ($searchTerm) {
                     $q->where('ruta', 'like', '%' . $searchTerm . '%');
                 });
             },
-            'orderable'   => true,
-            'orderLogic'  => function ($query, $column, $columnDirection) {
+            'orderable' => true,
+            'orderLogic' => function ($query, $column, $columnDirection) {
                 return $query->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
                     ->orderBy('nodos.ruta', $columnDirection)->select('nodos_acl.*');
             },
-            'limit'=>200
+            'limit' => 200
         ]);
 
 
@@ -79,13 +77,13 @@ use \Backpack\ReviseOperation\ReviseOperation;
         $this->crud->addColumn([
             'name' => 'NombreUsuario',
             'label' => 'Usuario',
-            'orderable'   => true,
+            'orderable' => true,
         ]);
 
         $this->crud->addColumn([
             'name' => 'NombreGrupo',
             'label' => 'Grupo',
-            'orderable'   => true,
+            'orderable' => true,
         ]);
 
 
@@ -111,11 +109,11 @@ use \Backpack\ReviseOperation\ReviseOperation;
          * - CRUD::field('price')->type('number');
          */
 
-         CRUD::field('nodo_id')->type('select')->attribute('ruta');
-         CRUD::field('user_id')->type('select');
-         CRUD::field('group_id')->type('select');
+        CRUD::field('nodo_id')->type('select')->attribute('ruta');
+        CRUD::field('user_id')->type('select');
+        CRUD::field('group_id')->type('select');
 
-                 CRUD::field('verbos')->makeLast();
+        CRUD::field('verbos')->makeLast();
 
     }
 
@@ -135,28 +133,28 @@ use \Backpack\ReviseOperation\ReviseOperation;
          * - CRUD::field('price')->type('number');
          */
 
-         CRUD::field('nodo_id')->type('hidden');//->attributes(['readonly'=>'1']);
-         CRUD::field('user_id')->type('hidden');//->attributes(['readonly'=>'1']);
-         CRUD::field('group_id')->type('hidden');//->attributes(['readonly'=>'1']);
+        CRUD::field('nodo_id')->type('hidden');//->attributes(['readonly'=>'1']);
+        CRUD::field('user_id')->type('hidden');//->attributes(['readonly'=>'1']);
+        CRUD::field('group_id')->type('hidden');//->attributes(['readonly'=>'1']);
 
-         CRUD::field([
+        CRUD::field([
             'name' => 'RutaNodo',
             'label' => 'Ruta',
-            'attributes'=>['disabled'=>'disabled']
-         ]);
+            'attributes' => ['disabled' => 'disabled']
+        ]);
 
-         CRUD::field([
+        CRUD::field([
             'name' => 'NombreUsuario',
             'label' => 'Usuario',
-            'attributes'=>['disabled'=>'disabled']
-         ]);
+            'attributes' => ['disabled' => 'disabled']
+        ]);
 
-         CRUD::field([
+        CRUD::field([
             'name' => 'NombreGrupo',
             'label' => 'Grupo',
-            'attributes'=>['disabled'=>'disabled']
-         ]);
+            'attributes' => ['disabled' => 'disabled']
+        ]);
 
-         CRUD::field('verbos')->makeLast();
+        CRUD::field('verbos')->makeLast();
     }
 }

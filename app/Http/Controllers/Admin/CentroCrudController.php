@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use App\Models\Centro;
 use App\Pigmalion\Countries;
 
 /**
@@ -27,7 +28,7 @@ class CentroCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Centro::class);
+        CRUD::setModel(Centro::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/centro');
         CRUD::setEntityNameStrings('centro', 'centros');
     }
@@ -142,9 +143,9 @@ class CentroCrudController extends CrudController
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
-        $centro = \App\Models\Centro::find($id);
+        $centro = Centro::find($id);
         return $centro->visibilidad == 'P' ? redirect("/centros/$id") : redirect("/centrods/$id?borrador");
     }
 }

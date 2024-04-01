@@ -1,6 +1,6 @@
 <template>
     <div>
-        <input type="text" :name="name" v-model="selectedClean">
+        <input type="text" :name="name" v-model="selected" class="w-[600px]">
 
         <ModalDropZone v-model="modalSubirImage" @uploaded="uploadedImage($event)"
             placeholder="Arrastra la imagen aquí o haz clic" url="/files/upload/image" :mediaFolder="folder" :options="{
@@ -11,7 +11,7 @@
         <div class="flex overflow-x-auto">
             <div v-for="url of images" :key="url" class="border-4 border-transparent flex-shrink-0 cursor-pointer"
                 :title="url" :class="url == selected ? '!border-orange-500' : ''" @click="selected = url">
-                <img :src="'/almacen/'+url+'?mh=150'" style="height:150px"/>
+                <img :src="url+'?mh=150'" style="height:150px"/>
             </div>
             <div @click="modalSubirImage = true" title="Añadir una imagen"
                 class="flex justify-center items-center w-[150px] h-[150px] border-gray-700 dark:border-gray-300  border opacity-80 hover:opacity-100 bg-gray-500 cursor-pointer flex-shrink-0">
@@ -36,12 +36,7 @@ const images = ref([])
 const imagesUploaded = ref([])
 const imagesFrom = ref([])
 const selected = ref(props.value)
-const selectedClean = computed(()=>selected.value.replace(/^\/?almacen\/?/, ''))
-const imagesUrl = computed(()=>images.value.map(src=>{
-    if(!src.match(/almacen/))
-        return ('/almacen/'+ src).replace(/\/+/g, '/')
-    return src
-}))
+const imagesUrl = computed(()=>images.value.map(src=>src))
 // watch(() => props.value, (value) => selected.value = value)
 
 var fromValue = null
@@ -76,9 +71,6 @@ function updateImages() {
 
     if (selected.value)
         images.value.push(selected.value)
-
-    images.value = images.value.map(src=>src.replace(/.*\/?almacen\/?/, ''))
-
 
     // elimina repetidos
     images.value = [...new Set(images.value)];

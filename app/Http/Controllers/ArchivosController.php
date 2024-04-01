@@ -749,6 +749,8 @@ class ArchivosController extends Controller
      */
     public function descargar(Request $request, string $ruta)
     {
+        Log::info("Descargar $ruta");
+
         if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
         }
@@ -866,10 +868,14 @@ class ArchivosController extends Controller
         Nodo::crear($folder . '/' . $filename, false, auth()->user());
 
         // Obtener la URL pública del archivo
-        $baseUrl = Storage::disk($disk)->url('');
+        //$baseUrl = Storage::disk($disk)->url('');
         $url = Storage::disk($disk)->url($storedPath);
-        $url = str_replace($baseUrl, '', $url);
+        // Log::info("baseUrl = $baseUrl");
+        // removemos el protocolo y host de la url
+        $url = preg_replace('#^https?://[^/]+#', '', $url);
+        //$url = str_replace($baseUrl, '', $url);
 
+        Log::info("FIle uploaded: $url");
 
         return response()->json([
             'data' => [
