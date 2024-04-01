@@ -5,11 +5,12 @@
             <div class="mx-auto flex justify-between items-center" :class="expanded ? 'w-full max-w-lg gap-3' : 'pr-4'">
                 <button type="button"
                     class="btn btn-secondary rounded-full w-12 h-12 flex justify-center items-center transform scale-75 text-3xl"
-                    @click="player.playPause">
+                    @click="player.playPause"
+                    :title="player.state == 'error'?'Error al cargar el audio':''">
                     <Icon v-show="player.state == 'stopped'" icon="ph:play-duotone" class="transform scale-[2]" />
                     <Icon v-show="player.state == 'paused'" icon="ph:play-pause-duotone" class="transform scale-[2]" />
                     <Icon v-show="player.state == 'playing'" icon="ph:pause-duotone" class="transform scale-[2]" />
-                    <Icon v-show="player.state == 'error'" icon="ph:warning-circle-duotone" class="transform scale-[2]" />
+                    <Icon v-show="player.state == 'error'" icon="ph:warning-circle-duotone" class="transform scale-[2]"/>
                 </button>
 
                 <TextAnimation :text="player.title + (player.artist ? ' ' + player.artist : '')" class="transform duration-300"
