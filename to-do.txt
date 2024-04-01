@@ -1,5 +1,3 @@
-eliminar private function mediaFolder de CRUDs
-eliminar extraerImagenes de CRUDs
 
 BUSQUEDAS:
 -verificar rendimiento de buscador. Ejemplo, buscar: "cortinas de humo".
@@ -9,6 +7,7 @@ BUSQUEDAS:
 
 EQUIPOS:
 -integrar generación de documentos word, o upload de los mismos, en los equipos
+-coordinador ->configurar->editores->tiptap simple
 
 
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <input type="hidden" :name="name" v-model="contenido" />
-        <TipTapEditor :full="true" v-model="contenido" full-editor :format="format" :mediaFolder="folder"/>
+        <TipTapEditor :full="false" v-model="contenido" full-editor :format="format" :mediaFolder="folder"/>
         <!-- <div v-html="contenido.replace(/\n/g, '<br>')"></div> -->
     </div>
 </template>

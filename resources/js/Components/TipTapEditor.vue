@@ -1,8 +1,11 @@
 <template>
     <div>
         <div v-show="!editingMarkdown">
-            <TipTapFullMenuBar v-if="editor" :editor="editor" :media-folder="mediaFolder"
-                @toggle-markdown="toggleMarkdown" />
+            <template v-if="editor">
+                <TipTapFullMenuBar v-if="full" :editor="editor" :media-folder="mediaFolder"
+                    @toggle-markdown="toggleMarkdown" />
+                <TipTapSimpleMenuBar v-else :editor="editor" :media-folder="mediaFolder" />
+            </template>
             <EditorContent :editor="editor" class="tiptap-editor border border-gray-700 p-1" />
         </div>
         <span v-show="editingMarkdown" @click="toggleMarkdown" class="btn btn-neutral btn-xs mb-2">
@@ -49,6 +52,7 @@ const props = defineProps({
     modelValue: { type: String },
     format: { type: String, default: 'detect' },
     mediaFolder: { type: String, default: 'medios' },
+    full: { type: Boolean, default: false }
 })
 
 
@@ -318,7 +322,7 @@ const ImageResize = ImageExtension.extend({
                                     ...node.attrs,
                                     style: `${$img.style.cssText}`,
                                 };
-                                console.log('resize ', {newAttrs})
+                                console.log('resize ', { newAttrs })
                                 view.dispatch(view.state.tr.setNodeMarkup(getPos(), null, newAttrs));
                             }
 
@@ -485,8 +489,8 @@ function uploadImage(file, blobUrl, _view) {
         if (event.lengthComputable) {
             const progress = Math.floor((event.loaded / event.total) * 100 / 2)
             // console.log(`Progreso: ${progress}%`);
-            item.progress.style.left = progress  + '%'
-            item.label.innerText = progress  + '%'
+            item.progress.style.left = progress + '%'
+            item.label.innerText = progress + '%'
             console.log('uploading', item.progress.style.left)
         }
     })
@@ -497,7 +501,7 @@ function uploadImage(file, blobUrl, _view) {
     // cuando termine el request:
     req.addEventListener('load', async function () {
         const data = JSON.parse(req.response)
-        console.log({data})
+        console.log({ data })
         if (data.error) {
             // si hay algun error, aplica la codificacion base64 en la imagen
             console.error(data.error)
