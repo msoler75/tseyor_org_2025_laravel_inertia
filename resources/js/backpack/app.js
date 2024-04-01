@@ -14,6 +14,7 @@ import { Icon } from "@iconify/vue";
 import { Link } from "@inertiajs/vue3";
 
 import TipTapEditorFullField from "../Components/Backpack/TipTapEditorFullField.vue";
+import TipTapEditorSimpleField from "../Components/Backpack/TipTapEditorSimpleField.vue";
 // import TinyMCEFullField from "../Components/Backpack/TinyMCEFullField.vue";
 // import TinyMCESimpleField from "../Components/Backpack/TinyMCESimpleField.vue";
 // import QuillEditorFullField from "../Components/Backpack/QuillEditorFullField.vue";
@@ -30,6 +31,7 @@ if (elem) {
   console.log("loading vue 3 fields...");
   window.app = createApp({})
   .component("tiptapeditorfullfield", TipTapEditorFullField)
+  .component("tiptapeditorsimplefield", TipTapEditorSimpleField)
     //.component("quilleditorfullfield", QuillEditorFullField)
     //.component("quilleditorsimplefield", QuillEditorSimpleField)
     //.component("tinymcefullfield", TinyMCEFullField)

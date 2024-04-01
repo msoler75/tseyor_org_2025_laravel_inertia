@@ -73,6 +73,14 @@ const items = ref([
         isActive: () => props.editor.isActive("heading", { level: 2 }),
     },
     {
+        icon: "mdi-format-header-3",
+        title: "Título 3",
+        action: () =>
+            props.editor.chain().focus().toggleHeading({ level: 3 }).run(),
+
+        isActive: () => props.editor.isActive("heading", { level: 3 }),
+    },
+    {
         icon: "mdi-format-paragraph",
         title: "Párrafo",
         action: () => props.editor.chain().focus().setParagraph().run(),

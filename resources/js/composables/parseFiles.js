@@ -5,10 +5,10 @@ export const parseFiles = (data) => {
   if (Array.isArray(data)) archivos = data;
   else if (typeof data === "string")
     try {
-      archivos = JSON.parse(json);
+      archivos = JSON.parse(data);
     } catch (err) {
       console.log("parseFiles1", err);
-      archivos = json.split(",").map((x) => x.trim());
+      archivos = data.split(",").map((x) => x.trim());
     }
   else return data;
 
