@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use App\Models\Comentario;
 
 /**
  * Class ComentarioCrudController
@@ -17,7 +18,7 @@ class ComentarioCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -26,7 +27,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Comentario::class);
+        CRUD::setModel(Comentario::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/comentario');
         CRUD::setEntityNameStrings('comentario', 'comentarios');
     }
@@ -45,13 +46,13 @@ use \Backpack\ReviseOperation\ReviseOperation;
          * - CRUD::column('price')->type('number');
          */
 
-         CRUD::column('autor')->type('text');
+        CRUD::column('autor')->type('text');
 
-         CRUD::column('shortUrl')->type('text');
+        CRUD::column('shortUrl')->type('text');
 
-         // CRUD::column('tituloContenido')->type('string');
+        // CRUD::column('tituloContenido')->type('string');
 
-         CRUD::column('created_at')->type('date');
+        CRUD::column('created_at')->type('date');
     }
 
     /**
@@ -70,9 +71,9 @@ use \Backpack\ReviseOperation\ReviseOperation;
          * - CRUD::field('price')->type('number');
          */
 
-         CRUD::field('user_id')->type("text")->label("user_id")->attributes(['readonly' => 'readonly']);
+        CRUD::field('user_id')->type("text")->label("user_id")->attributes(['readonly' => 'readonly']);
 
-         CRUD::field('autor')->type("text")->attributes(['readonly' => 'readonly'])->before('user_id');
+        CRUD::field('autor')->type("text")->attributes(['readonly' => 'readonly'])->before('user_id');
     }
 
     /**

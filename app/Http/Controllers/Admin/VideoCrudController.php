@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\VideoRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -18,7 +17,7 @@ class VideoCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -86,7 +85,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
          CRUD::field('slug')->type('text');
 
-         CRUD::field('descripcion')->type('textarea');
+         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
          CRUD::field('enlace')->type('text')->hint('Enlace al vídeo de youtube.');
 

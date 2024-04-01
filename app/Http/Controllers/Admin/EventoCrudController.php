@@ -21,6 +21,7 @@ class EventoCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -29,7 +30,7 @@ class EventoCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Evento::class);
+        CRUD::setModel(Evento::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/evento');
         CRUD::setEntityNameStrings('evento', 'eventos');
     }
@@ -104,11 +105,11 @@ class EventoCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-        $folder = $this->mediaFolder();
+        $folder = $this->getMediaFolder();
 
-        CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
 
-        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder]);
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
@@ -166,29 +167,9 @@ class EventoCrudController extends CrudController
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
         CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1]);
 
-
-        Evento::saving(function ($contenido) {
-            // Se ejecutará aquí antes de crear o actualizar un comunicado.
-            \App\Pigmalion\Markdown::extraerImagenes($contenido->texto, $this->mediaFolder($contenido));
-        });
     }
 
 
-    private function mediaFolder($contenido = null)
-    {
-        $anioActual = date('Y');
-        $mesActual = date('m');
-
-        $folder = $contenido && $contenido->id ? "medios/eventos/_{$contenido->id}" : "/medios/eventos/$anioActual/$mesActual";
-
-        // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk('public')->exists($folder)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($folder);
-        }
-
-        return $folder;
-    }
 
     /**
      * Define what happens when the Update operation is loaded.
@@ -203,31 +184,35 @@ class EventoCrudController extends CrudController
 
 
 
-    protected function show($id)
+    public function show($id)
     {
-        return redirect("/eventos/$id?borrador");
+        $evento = Evento::find($id);
+        return $evento->visibilidad == 'P' ? redirect("/eventos/$id") : redirect("/eventos/$id?borrador");
     }
-
-
 
 
     public function importCreate()
     {
-        try {
+        $contenido = Evento::create([
+            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
+            "texto" => "",
+            "categoria" => 'Encuentro'
+        ]);
 
+        return $this->importUpdate($contenido->id);
+    }
+
+
+    public function importUpdate($id)
+    {
+        $contenido = Evento::findOrFail($id);
+
+        try {
+            // inicializa el importador en base a $_FILES
             $imported = new WordImport();
 
-            $contenido = Evento::create([
-                "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-                "texto" => "",
-                "categoria" => 'Encuentro'
-            ]);
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = $this->mediaFolder($contenido);
-
-            // copia las imágenes desde la carpeta temporal al directorio destino
-            $imported->copyImagesTo($imagesFolder);
+            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
+            $imported->copyImagesTo($this->getMediaFolder($contenido), true);
 
             // ahora las imagenes están con la nueva ubicación
             $contenido->texto = $imported->content;
@@ -244,37 +229,4 @@ class EventoCrudController extends CrudController
         }
     }
 
-
-
-    public function importUpdate($id)
-    {
-        try {
-            $imported = new WordImport();
-
-            $contenido = Evento::findOrFail($id);
-
-            $contenido->texto = $imported->content;
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/eventos/_{$contenido->id}";
-
-            // reemplazar la ubicación de las imágenes en el texto del comunicado
-            $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
-
-            $contenido->descripcion = null; // para que se regenere
-
-            $contenido->imagen = null; // para que se elija otra nueva, si la hay
-            $contenido->save();
-
-            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
-            $imported->copyImagesTo($imagesFolder, true);
-
-            return response()->json([], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
-        }
-    }
 }

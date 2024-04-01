@@ -18,7 +18,7 @@
     $decodedHtml = str_replace(['&lt;', '&gt;'], ['<', '>'], $htmlCode);
 @endphp
 
-<TipTapEditorFullField name="{{$field['name']}}" folder="{{ $field['attributes']['folder'] ?? 'medios'}}" content="{{$decodedHtml}}"/>
+<TipTapEditorFullField name="{{$field['name']}}" format="{{$field['attributes']['format'] ?? 'md'}}" folder="{{ $field['attributes']['folder'] ?? 'medios'}}" content="{{$decodedHtml}}"/>
 
 {{-- HINT --}}
 @if (isset($field['hint']))

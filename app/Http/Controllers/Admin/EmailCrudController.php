@@ -23,7 +23,7 @@ class EmailCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Email::class);
+        CRUD::setModel(Email::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/email');
         CRUD::setEntityNameStrings('email', 'emails');
     }
@@ -41,7 +41,7 @@ class EmailCrudController extends CrudController
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
         return redirect("/emails/$id");
     }

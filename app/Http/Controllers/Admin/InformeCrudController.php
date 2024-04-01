@@ -27,6 +27,7 @@ class InformeCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -177,11 +178,11 @@ class InformeCrudController extends CrudController
             }
     }
 
-        $folder = $this->mediaFolder();
+         $folder = $this->getMediaFolder();
 
         CRUD::field('descripcion')->type('textarea')->label("Descripción corta (opcional)");
 
-        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder]);
 
         CRUD::field([
             'name' => 'audios',
@@ -296,29 +297,7 @@ class InformeCrudController extends CrudController
 
 
 
-    private function mediaFolder()
-    {
-        $anioActual = date('Y');
-        $mesActual = date('m');
-        $data = $this->crud->getCurrentEntry();
 
-        if($data) {
-            $anioActual = $data->created_at->year;
-            $mesActual = $data->created_at->month;
-            if($mesActual<10)
-                $mesActual = "0".$mesActual;
-        }
-
-        $folder = "/medios/informes/$anioActual/$mesActual";
-
-        // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk('public')->exists($folder)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($folder);
-        }
-
-        return $folder;
-    }
 
 
     /**
@@ -344,7 +323,7 @@ class InformeCrudController extends CrudController
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
         $informe = Informe::find($id);
         return $informe->visibilidad == 'P' ? redirect("/informes/$id") : redirect("/informes/$id?borrador");
@@ -353,20 +332,25 @@ class InformeCrudController extends CrudController
 
     public function importCreate()
     {
-        try {
+        $contenido = Informe::create([
+            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
+            "texto" => ""
+        ]);
 
+        return $this->importUpdate($contenido->id);
+    }
+
+
+    public function importUpdate($id)
+    {
+        $contenido = Informe::findOrFail($id);
+
+        try {
+            // inicializa el importador en base a $_FILES
             $imported = new WordImport();
 
-            $contenido = Informe::create([
-                "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-                "texto" => ""
-            ]);
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/informe/_{$contenido->id}";
-
-            // copia las imágenes desde la carpeta temporal al directorio destino
-            $imported->copyImagesTo($imagesFolder);
+            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
+            $imported->copyImagesTo($this->getMediaFolder($contenido), true);
 
             // ahora las imagenes están con la nueva ubicación
             $contenido->texto = $imported->content;
@@ -376,40 +360,6 @@ class InformeCrudController extends CrudController
             return response()->json([
                 "id" => $contenido->id
             ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
-
-    public function importUpdate($id)
-    {
-        try {
-            $imported = new WordImport();
-
-            $contenido = Informe::findOrFail($id);
-
-            $contenido->texto = $imported->content;
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/informes/_{$contenido->id}";
-
-            // reemplazar la ubicación de las imágenes en el texto del comunicado
-            $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
-
-            $contenido->descripcion = null; // para que se regenere
-
-            // $contenido->imagen = null; // para que se elija otra nueva, si la hay
-            $contenido->save();
-
-            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
-            $imported->copyImagesTo($imagesFolder, true);
-
-            return response()->json([], 200);
         } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()

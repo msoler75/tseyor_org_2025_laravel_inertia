@@ -20,7 +20,8 @@ class ExperienciaCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -112,7 +113,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
             ],
         ]);
 
-        CRUD::field('texto')->type('markdown_quill_simple');
+        CRUD::field('texto')->type('tiptap_editor_simple');
 
         CRUD::field('visibilidad')->type('visibilidad');
 
@@ -188,7 +189,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
     }
 
 
-     protected function show($id)
+     public function show($id)
     {
         $experiencia = Experiencia::find($id);
         return $experiencia->visibilidad == 'P' ? redirect("/experiencias/$id") : redirect("/experiencias/$id?borrador");

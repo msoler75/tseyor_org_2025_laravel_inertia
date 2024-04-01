@@ -22,6 +22,7 @@ class NoticiaCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -112,11 +113,11 @@ class NoticiaCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-        $folder = $this->mediaFolder();
+        $folder = $this->getMediaFolder();
 
-        CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
-        CRUD::field('texto')->type('markdown_quill')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder]);
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
@@ -128,29 +129,6 @@ class NoticiaCrudController extends CrudController
                 'class' => 'form-group col-md-3'
             ]);
 
-
-        Noticia::saving(function ($contenido) {
-            // Aquí puedes escribir tu lógica personalizada
-            // que se ejecutará aquí antes de crear o actualizar un comunicado.
-            \App\Pigmalion\Markdown::extraerImagenes($contenido->texto, $this->mediaFolder($contenido));
-        });
-    }
-
-
-    private function mediaFolder($contenido = null)
-    {
-        $anioActual = date('Y');
-        $mesActual = date('m');
-
-        $folder = $contenido && $contenido->id ? "medios/noticias/_{$contenido->id}" : "/medios/noticias/$anioActual/$mesActual";
-
-        // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk('public')->exists($folder)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($folder);
-        }
-
-        return $folder;
     }
 
     /**
@@ -175,63 +153,33 @@ class NoticiaCrudController extends CrudController
 
     public function importCreate()
     {
-        try {
+        $contenido = Noticia::create([
+            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
+            "texto" => ""
+        ]);
 
-            $imported = new WordImport();
-
-            $contenido = Noticia::create([
-                "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-                "texto" => ""
-            ]);
-
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = $this->mediaFolder($contenido);
-
-            // copia las imágenes desde la carpeta temporal al directorio destino
-            $imported->copyImagesTo($imagesFolder);
-
-            // ahora las imagenes están con la nueva ubicación
-            $contenido->texto = $imported->content;
-
-            $contenido->save();
-
-            return response()->json([
-                "id" => $contenido->id
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                "error" => $e->getMessage()
-            ], 500);
-        }
+        return $this->importUpdate($contenido->id);
     }
-
-
 
     public function importUpdate($id)
     {
+        $contenido = Noticia::findOrFail($id);
+
         try {
-            $imported = new WordImport();
+          // inicializa el importador en base a $_FILES
+          $imported = new WordImport();
 
-            $contenido = Noticia::findOrFail($id);
+          // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
+          $imported->copyImagesTo($this->getMediaFolder($contenido), true);
 
-            $contenido->texto = $imported->content;
+          // ahora las imagenes están con la nueva ubicación
+          $contenido->texto = $imported->content;
 
-            // Copiaremos las imágenes a la carpeta de destino
-            $imagesFolder = "medios/noticias/_{$contenido->id}";
+          $contenido->save();
 
-            // reemplazar la ubicación de las imágenes en el texto del comunicado
-            $contenido->texto = preg_replace("/\bmedia\//", "$imagesFolder/", $contenido->texto);
-            $contenido->texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $contenido->texto);
-
-            $contenido->descripcion = null; // para que se regenere
-
-            $contenido->imagen = null; // para que se elija otra nueva, si la hay
-            $contenido->save();
-
-            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
-            $imported->copyImagesTo($imagesFolder, true);
-
-            return response()->json([], 200);
+          return response()->json([
+              "id" => $contenido->id
+          ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()

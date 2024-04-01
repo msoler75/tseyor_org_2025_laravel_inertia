@@ -28,7 +28,7 @@ class LibroCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Libro::class);
+        CRUD::setModel(Libro::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/libro');
         CRUD::setEntityNameStrings('libro', 'libros');
     }
@@ -111,7 +111,7 @@ class LibroCrudController extends CrudController
 
         CRUD::field('categoria')->hint('Monografías, Obras de referencia, Cuentos, Talleres... Se pueden poner varias categorías separadas por coma.');
 
-        CRUD::field('descripcion')->type('textarea');
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folderImages]);
 
@@ -149,7 +149,7 @@ class LibroCrudController extends CrudController
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
         $libro = Libro::find($id);
         return $libro->visibilidad == 'P' ? redirect("/libros/$id") : redirect("/libros/$id?borrador");

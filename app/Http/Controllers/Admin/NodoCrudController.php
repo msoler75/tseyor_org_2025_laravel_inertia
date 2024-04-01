@@ -18,7 +18,7 @@ class NodoCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -27,7 +27,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Nodo::class);
+        CRUD::setModel(Nodo::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/nodo');
         CRUD::setEntityNameStrings('nodo', 'nodos');
     }
@@ -48,13 +48,13 @@ use \Backpack\ReviseOperation\ReviseOperation;
          */
 
 
-         //CRUD::field('user')->remove();
-         //CRUD::field('group')->remove();
+        //CRUD::field('user')->remove();
+        //CRUD::field('group')->remove();
 
-         $this->crud->addColumn([
+        $this->crud->addColumn([
             'name' => 'ruta',
             'label' => 'Ruta',
-            'limit'=>200
+            'limit' => 200
         ]);
 
         /*$this->crud->addColumn([
@@ -106,7 +106,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
      */
     protected function setupCreateOperation()
     {
-         CRUD::setValidation([
+        CRUD::setValidation([
             'ruta' => 'required|min:2',
             'permisos' => 'required',
         ]);
@@ -117,8 +117,8 @@ use \Backpack\ReviseOperation\ReviseOperation;
          * - CRUD::field('price')->type('number');
          */
 
-         CRUD::field('user_id')->type('select')->wrapper(['class' => 'form-group col-md-3']);
-         CRUD::field('group_id')->type('select')->wrapper(['class' => 'form-group col-md-3']);
+        CRUD::field('user_id')->type('select')->wrapper(['class' => 'form-group col-md-3']);
+        CRUD::field('group_id')->type('select')->wrapper(['class' => 'form-group col-md-3']);
     }
 
     /**
@@ -133,10 +133,10 @@ use \Backpack\ReviseOperation\ReviseOperation;
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
         $nodo = Nodo::findOrFail($id);
 
-        return redirect("/". $nodo->ruta);
+        return redirect("/" . $nodo->ruta);
     }
 }

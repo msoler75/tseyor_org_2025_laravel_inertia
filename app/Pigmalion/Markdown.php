@@ -507,27 +507,49 @@ class Markdown
      * @param string $carpetaDestino Ruta de la carpeta de destino
      * @return array Arreglo de imagenes movidas
      */
-    public static function moverImagenes(&$md, $carpetaOrigen, $carpetaDestino): array
+    public static function moverImagenes(&$md, $carpetaOrigen, $carpetaDestino, $disk = 'public'): array
     {
         $imagenes_movidas = [];
 
-        // busca todas las imagenes en $md que estén en carpetaOrigen
-        $md = preg_replace_callback("&!\[(.*)\]\(($carpetaOrigen/.*)\)&", function ($matches) use ($carpetaDestino, &$imagenes_movidas) {
+        Log::info("Markdown::moverImagenes $disk: $carpetaOrigen -> $carpetaDestino  --- $md");
 
+        // list($disk, $carpetaOrigen) = DiskUtil::obtenerDiscoRuta($carpetaOrigen);
+        // list($disk, $carpetaDestino) = DiskUtil::obtenerDiscoRuta($carpetaDestino);
+
+         // Log::info("Markdown::moverImagenes $disk: $carpetaOrigen -> $carpetaDestino");
+
+        // busca todas las imagenes en $md que estén en carpetaOrigen
+        $expCarpetaOrigen = str_replace(["/"], ["\\/"], $carpetaOrigen);
+        Log::info("/!\[(.*)\]\(($expCarpetaOrigen\/[^\)]*)\)/");
+        $md = preg_replace_callback("&!\[(.*)\]\(($expCarpetaOrigen\/[^\)]*)\)&", function ($matches) use ($carpetaOrigen, $carpetaDestino, &$imagenes_movidas, $disk) {
+
+            Log::info("match: " . print_r($matches, true));
             // extraemos el nombre de la imagen
             $imagen = $matches[2];
 
             // renombramos la imagen
             $nuevoNombre = $carpetaDestino . "/" . basename($imagen);
 
-            // guardamos el movimiento de archivo
-            $imagenes_movidas[] = ['desde' => $imagen, 'a' => $nuevoNombre];
+            Log::info("move1: $disk: $imagen -> $nuevoNombre");
+
+             list($disk, $origen) = DiskUtil::obtenerDiscoRuta($imagen);
+             list($disk, $destino) = DiskUtil::obtenerDiscoRuta($nuevoNombre);
+
+             Log::info("move2: $disk: $origen -> $destino");
 
             // movemos la imagen a la nueva carpeta
-            Storage::disk('public')->move($imagen, $nuevoNombre);
+            if(Storage::disk($disk)->copy($origen,  $destino)) {
 
-            // reemplazamos el enlace con el nuevo nombre
-            return "![" . $matches[1] . "](" . $nuevoNombre . ")";
+                Storage::disk($disk)->delete($origen);
+
+                // guardamos el movimiento de archivo
+                $imagenes_movidas[] = ['desde' => $imagen, 'a' => $nuevoNombre];
+                // reemplazamos el enlace con el nuevo nombre
+                return "![" . $matches[1] . "](" . $nuevoNombre . ")";
+            }
+
+            // o lo dejamos como estaba
+            return $matches[0];
 
         }, $md);
 

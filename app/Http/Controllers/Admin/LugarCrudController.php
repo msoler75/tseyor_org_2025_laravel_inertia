@@ -17,7 +17,7 @@ class LugarCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -76,7 +76,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
         $lugar = \App\Models\Lugar::find($id);
         return $lugar->visibilidad == 'P' ? redirect("/lugares/$id") : redirect("/lugares/$id?borrador");

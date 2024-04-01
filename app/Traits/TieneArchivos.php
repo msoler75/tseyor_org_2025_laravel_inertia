@@ -3,7 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Log;
 
 trait TieneArchivos
 {
@@ -22,6 +22,7 @@ trait TieneArchivos
             if (strpos($archivoActual, $carpeta) === FALSE) {
                 // hay que copiar el archivo a la nueva ubicación
                 if (!Storage::disk('public')->exists($pathDestino)) {
+                    Log::info("mkdir public:$pathDestino");
                     Storage::disk('public')->makeDirectory($pathDestino, 0755, true, true);
                 }
                 $archivoDestino = $carpeta . '/' . basename($archivoActual);

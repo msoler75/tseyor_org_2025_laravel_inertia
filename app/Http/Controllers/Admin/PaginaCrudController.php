@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\PaginaRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Widget;
+use App\Services\WordImport;
 use App\Models\Pagina;
 
 /**
@@ -20,7 +20,8 @@ class PaginaCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use \Backpack\ReviseOperation\ReviseOperation;
+    use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -29,7 +30,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Pagina::class);
+        CRUD::setModel(Pagina::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/pagina');
         CRUD::setEntityNameStrings('página', 'páginas');
     }
@@ -42,32 +43,31 @@ use \Backpack\ReviseOperation\ReviseOperation;
      */
     protected function setupListOperation()
     {
-         // CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
 
+        //add div row using 'div' widget and make other widgets inside it to be in a row
+        Widget::add()->to('before_content')->type('div')->class('row')->content([
 
-   //add div row using 'div' widget and make other widgets inside it to be in a row
-   Widget::add()->to('before_content')->type('div')->class('row')->content([
-
-    //widget made using fluent syntax
-    Widget::make()
-        ->type('card')
-        ->class('card bg-dark text-white mb-1') // optional
-        ->content([
-            'body'=>'Estas páginas solo se cargan si no están ya predefinidas, y en cualquier sirven para el SEO y para indexar el buscador.'
-        ])
+            //widget made using fluent syntax
+            Widget::make()
+                ->type('card')
+                ->class('card bg-dark text-white mb-1') // optional
+                ->content([
+                    'body' => 'Estas páginas solo se cargan si no están ya predefinidas, y en cualquier sirven para el SEO y para indexar el buscador.'
+                ])
 
 
-]);
+        ]);
 
         $this->crud->addColumn([
-            'name'  => 'titulo',
+            'name' => 'titulo',
             'label' => 'Título',
-            'type'  => 'text'
+            'type' => 'text'
         ]);
 
         $this->crud->addColumn([
@@ -84,13 +84,19 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
 
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
+            'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
+
+        CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
+
+        CRUD::addButtonFromView('line', 'import_update', 'import_update', 'beginning');
+
+        CRUD::setOperationSetting('lineButtonsAsDropdown', true);
     }
 
     /**
@@ -114,7 +120,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
 
         CRUD::field('descripcion')->type('textarea')->hint('Descripción corta para el SEO.');
 
-        $folder = "/medios/paginas";
+        $folder = $this->getMediaFolder();
 
         // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
@@ -141,10 +147,48 @@ use \Backpack\ReviseOperation\ReviseOperation;
     }
 
 
-    protected function show($id)
+    public function show($id)
     {
         $pagina = Pagina::findOrFail($id);
 
-        return $pagina->visibilidad != 'P'? redirect("/{$pagina->ruta}?borrador") : redirect("/{$pagina->ruta}");
+        return $pagina->visibilidad != 'P' ? redirect("/{$pagina->ruta}?borrador") : redirect("/{$pagina->ruta}");
+    }
+
+
+    public function importCreate()
+    {
+        $contenido = Pagina::create([
+            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
+            "texto" => ""
+        ]);
+
+        return $this->importUpdate($contenido->id);
+    }
+
+
+    public function importUpdate($id)
+    {
+        $contenido = Pagina::findOrFail($id);
+
+        try {
+            // inicializa el importador en base a $_FILES
+            $imported = new WordImport();
+
+            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
+            $imported->copyImagesTo($this->getMediaFolder($contenido), true);
+
+            // ahora las imagenes están con la nueva ubicación
+            $contenido->texto = $imported->content;
+
+            $contenido->save();
+
+            return response()->json([
+                "id" => $contenido->id
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 }

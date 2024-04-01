@@ -10,6 +10,7 @@ use Carbon\Carbon;
 // use App\Traits\EsContenido;
 use App\Pigmalion\ContenidoHelper;
 use Illuminate\Support\Facades\Storage;
+use App\Pigmalion\DiskUtil;
 
 
 /*
@@ -37,7 +38,7 @@ class ContenidoBaseModel extends Model
 
         static::saved(function ($model) {
 
-            Log::info("model saved", $model->texto);
+            Log::info("model saved: ". ($model->texto ?? '<sin texto>'));
             // si mueve alguna imagen, guardamos los cambios y salimos
             if(ContenidoHelper::moverImagenesContenido($model)) {
                 $model->save();
@@ -98,12 +99,18 @@ class ContenidoBaseModel extends Model
      * Carpeta temporal para medios (imágenes)
      */
     public static function getCarpetaMediosTemp() {
-        $folder = 'medios/temp';
+        $folderCompleto = '/almacen/temp';
+        Log::info("folderCompleto: ". $folderCompleto);
+        list($disk, $folder) = DiskUtil::obtenerDiscoRuta($folderCompleto);
+
+        Log::info("exists? disk: $disk folder: $folder");
+
          // Crea la carpeta si no existe
-         if (!Storage::disk('public')->exists($folder)) {
-            Storage::disk('public')->makeDirectory($folder);
+         if (!Storage::disk($disk)->exists($folder)) {
+             Log::info("mkdir disk: $disk folder: $folder");
+            Storage::disk($disk)->makeDirectory($folder);
         }
-        return $folder;
+        return $folderCompleto;
     }
 
     /**
@@ -111,11 +118,16 @@ class ContenidoBaseModel extends Model
      */
     public function getCarpetaMedios() {
         $coleccion = $this->getTable();
-        $folder = $this->id ? "medios/$coleccion/$this->id": self::getCarpetaTemp();
+        $folderCompleto = $this->id ? "/almacen/medios/$coleccion/$this->id": self::getCarpetaTemp();
+
+        list($disk, $folder) = DiskUtil::obtenerDiscoRuta($folderCompleto);
+        Log::info("exists? disk: $disk folder: $folder");
+
         // Crea la carpeta si no existe
-         if (!Storage::disk('public')->exists($folder)) {
-            Storage::disk('public')->makeDirectory($folder);
+         if (!Storage::disk($disk)->exists($folder)) {
+            Log::info("mkdir disk: $disk folder: $folder");
+            Storage::disk($disk)->makeDirectory($folder);
         }
-        return $folder;
+        return $folderCompleto;
     }
 }

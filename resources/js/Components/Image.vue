@@ -108,6 +108,8 @@ Hay varios tipos de situaciones:
 */
 
 function init() {
+    console.log('Image.init', props.src, 'props.width:', props.width, 'props.height:', props.height)
+
     // si es una url absoluta y corresponde a otro servidor o no queremos optimización (1)
     if (props.src.match(/https?:\/\/[^/]+/)?.[0] === myDomain.value || !props.optimize)
         return putSrcImage(imageSrc.value)
@@ -118,7 +120,7 @@ function init() {
 
     // Se ha establecido el tamaño mediante props (width y height) (3)
     if (props.width && props.height)
-        return putImageWithSize(imageSrc.value, props.width, props.height)
+        return putImageWithSize(props.width, props.height)
 
     // Se conoce el tamaño original de la imagen (4)
     if (props.srcWidth && props.srcHeight)
@@ -157,7 +159,7 @@ async function putImageWithSize(widthOp, heightOp) {
     if(widthOp==originalSize.width&&heightOp==originalSize.height)
         return putSrcImage(imageSrc.value)
     const webp = await isWebPSupported()
-    var src = imageSrc.value + '?w=' + widthOp + '&h=' + heightOp
+    var src = imageSrc.value + '?w=' + Math.round(parseFloat(widthOp)) + '&h=' + Math.round(parseFloat(heightOp))
     if (!webp)
         src += '&fmt=jpg'
     putSrcImage(src)

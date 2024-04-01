@@ -318,7 +318,7 @@ use \Backpack\ReviseOperation\ReviseOperation;
     } */
 
 
-    protected function show($id)
+    public function show($id)
     {
         return redirect("/usuarios/$id");
     }
