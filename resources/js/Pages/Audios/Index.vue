@@ -45,7 +45,7 @@
 
                 <GridAppear v-if="listado.data.length > 0" class="gap-4 max-w-full"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(32rem, 1fr))` }">
-                    <div v-for="audio in listado.data.map(a=>({...a, src: '/almacen/'+a.audio}))" :key="audio.id"
+                    <div v-for="audio in listado.data.map(a=>({...a, src: a.audio.match(/^http/)?a.audio: '/almacen/'+a.audio}))" :key="audio.id"
                         class="card flex-row shadow bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
                         style="max-width: calc(100vw - 30px)">
 
@@ -59,8 +59,6 @@
                             <Icon v-show="player.state == 'playing'" icon="ph:pause-duotone" />
                             <Icon v-show="player.state == 'error'" icon="ph:warning-circle-duotone"/>
                         </div>
-
-
                         <div class="flex flex-col gap-2 mr-auto ">
                             <h2 class="ml-2 text-lg font-bold my-0 leading-5">{{ audio.titulo }}</h2>
                             <Link v-if="!categoriaActiva" :href="`${route('audios')}?categoria=${audio.categoria}`"
@@ -116,11 +114,8 @@ const player = usePlayer()
 function clickPlay(audio) {
 
     const titulo = audio.titulo
-    const src = '/almacen/'+audio.audio
-    console.log({audio})
-    console.log({src})
 
-    if (player.music && player.music.src == src) {
+    if (player.music && player.music.src == audio.src) {
         switch (player.state) {
             /*case 'error':
                 player.play()
@@ -130,10 +125,10 @@ function clickPlay(audio) {
                 player.playPause()
                 break
             default:
-                player.play(src, titulo, { artist: audio.categoria })
+                player.play(audio.src, titulo, { artist: audio.categoria })
         }
     }
     // nuevo audio
-    else player.play(src, titulo)
+    else player.play(audio.src, titulo)
 }
 </script>
