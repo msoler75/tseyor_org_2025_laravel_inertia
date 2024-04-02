@@ -1,10 +1,11 @@
 <template>
     <div class="flex flex-wrap gap-3">
         <span v-for="audio of audios" :key="audio" class="btn btn-xs text-xs"
-            :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlay(audio)"
+            :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlayPause(audio)"
             :title="player.music?.src == audio.src ? frase : 'Escuchar'">
-            <Icon
-                :icon="player.music?.src == audio.src ? 'ph:speaker-simple-high-duotone' : 'ph:speaker-simple-low-duotone'" />
+
+            <AudioStateIcon :src="audio.src" />
+
             <template v-if="player.music?.src == audio.src">
                 <span v-if="numerados">{{ frase }}</span>
                 {{ numerados ? 'Audio ' + audio.index : audio.filename }}
@@ -38,7 +39,7 @@ const props = defineProps({
 
 const player = usePlayer()
 
-function clickPlay(audio) {
+function clickPlayPause(audio) {
 
     const titulo = !props.titulo ? audio.label : props.titulo + (props.numerados ? ` (${audio.index})` : '')
 
