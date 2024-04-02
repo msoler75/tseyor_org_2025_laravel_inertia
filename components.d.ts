@@ -20,6 +20,7 @@ declare module 'vue' {
     ApplicationMark: typeof import('./resources/js/Components/ApplicationMark.vue')['default']
     AudioPlayer: typeof import('./resources/js/Components/AudioPlayer.vue')['default']
     Audios: typeof import('./resources/js/Components/Audios.vue')['default']
+    AudioStateIcon: typeof import('./resources/js/Components/AudioStateIcon.vue')['default']
     AuthenticationCard: typeof import('./resources/js/Components/AuthenticationCard.vue')['default']
     AuthenticationCardLogo: typeof import('./resources/js/Components/AuthenticationCardLogo.vue')['default']
     Avatar: typeof import('./resources/js/Components/Avatar.vue')['default']
@@ -36,12 +37,10 @@ declare module 'vue' {
     ConfirmationModal: typeof import('./resources/js/Components/ConfirmationModal.vue')['default']
     ConfirmsPassword: typeof import('./resources/js/Components/ConfirmsPassword.vue')['default']
     Contact: typeof import('./resources/js/Sections/Contact.vue')['default']
-    content: { type: String
     Content: typeof import('./resources/js/Components/Content.vue')['default']
     ContentBar: typeof import('./resources/js/Components/ContentBar.vue')['default']
     ContentMain: typeof import('./resources/js/Components/ContentMain.vue')['default']
     ContentNode: typeof import('./resources/js/Components/ContentNode.vue')['default']
-    copy: typeof import('./resources/js/Components/TipTapFullMenuBar copy.vue')['default']
     Counter: typeof import('./resources/js/Components/Counter.vue')['default']
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     DialogModal: typeof import('./resources/js/Components/DialogModal.vue')['default']
@@ -63,7 +62,6 @@ declare module 'vue' {
     FondoEstrellado: typeof import('./resources/js/Components/FondoEstrellado.vue')['default']
     Footer: typeof import('./resources/js/Sections/Footer.vue')['default']
     FormSection: typeof import('./resources/js/Components/FormSection.vue')['default']
-    'full-editor': format="format" :mediaFolder="folder"/>
     FullPage: typeof import('./resources/js/Sections/FullPage.vue')['default']
     GlobalSearch: typeof import('./resources/js/Components/GlobalSearch.vue')['default']
     GlosarioTabs: typeof import('./resources/js/Components/GlosarioTabs.vue')['default']
@@ -81,7 +79,6 @@ declare module 'vue' {
     Loader: typeof import('./resources/js/Components/Loader.vue')['default']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     ModalDropZone: typeof import('./resources/js/Components/ModalDropZone.vue')['default']
-    name: String
     NavAside: typeof import('./resources/js/Components/NavAside.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     NavSubmenu: typeof import('./resources/js/Components/NavSubmenu.vue')['default']
@@ -139,6 +136,5 @@ declare module 'vue' {
     Users: typeof import('./resources/js/Components/Users.vue')['default']
     VideoPlayer: typeof import('./resources/js/Sections/VideoPlayer.vue')['default']
     Welcome: typeof import('./resources/js/Components/Welcome.vue')['default']
-    xxx: name="name" v-model="contenido" />
   }
 }

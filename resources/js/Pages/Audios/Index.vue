@@ -50,21 +50,15 @@
                         class="card flex-row shadow bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
                         style="max-width: calc(100vw - 30px)">
 
-                        <div v-if="player.music?.src != audio.src" @click="clickPlay(audio)"
-                            class="btn btn-primary p-0 w-12 h-5 min-h-auto text-lg">
-                            <Icon icon="ph:play-duotone" />
-                        </div>
-                        <div v-else @click="player.playPause()"
-                            class="btn btn-secondary p-0 w-12 h-5 min-h-auto text-2xl"
-                            :title="player.state == 'error' ? 'Error al cargar el audio' : ''">
-                            <Icon v-show="player.state == 'stopped'" icon="ph:play-duotone" />
-                            <Icon v-show="player.state == 'paused'" icon="ph:play-pause-duotone" />
-                            <Icon v-show="player.state == 'playing'" icon="ph:pause-duotone" />
-                            <Icon v-show="player.state == 'error'" icon="ph:warning-circle-duotone" />
+                        <div class="btn p-0 w-12 h-5 min-h-auto text-3xl"
+                            :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'"
+                            @click="clickPlayPause(audio)">
+                            <AudioStateIcon :src="audio.src"  />
                         </div>
 
                         <div class="flex flex-col gap-2 mr-auto w-full">
-                            <Link :href="route('audio', audio.slug)" class="text-base font-bold my-0 leading-5 hover:underline">{{ audio.titulo }}
+                            <Link :href="route('audio', audio.slug)"
+                                class="text-base font-bold my-0 leading-5 hover:underline">{{ audio.titulo }}
                             </Link>
                             <Link v-if="!categoriaActiva" :href="`${route('audios')}?categoria=${audio.categoria}`"
                                 class="text-xs">{{ audio.categoria }}
@@ -109,11 +103,11 @@ const categorias = ref(props.categorias)
 const player = usePlayer()
 
 
-function clickPlay(audio) {
+function clickPlayPause(audio) {
 
     const titulo = audio.titulo
 
-    if (player.music && player.music.src == audio.src) {
+    if (player.music?.src == audio.src) {
         switch (player.state) {
             /*case 'error':
                 player.play()

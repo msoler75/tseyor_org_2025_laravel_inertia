@@ -4,17 +4,13 @@
         <div v-show="player.mini" @mouseleave="collapsePlayer">
             <div class="mx-auto flex justify-between items-center" :class="expanded ? 'w-full max-w-lg gap-3' : 'pr-4'">
                 <button type="button"
-                    class="btn btn-secondary rounded-full w-12 h-12 flex justify-center items-center transform scale-75 text-3xl"
-                    @click="player.playPause"
-                    :title="player.state == 'error'?'Error al cargar el audio':''">
-                    <Icon v-show="player.state == 'stopped'" icon="ph:play-duotone" class="transform scale-[2]" />
-                    <Icon v-show="player.state == 'paused'" icon="ph:play-pause-duotone" class="transform scale-[2]" />
-                    <Icon v-show="player.state == 'playing'" icon="ph:pause-duotone" class="transform scale-[2]" />
-                    <Icon v-show="player.state == 'error'" icon="ph:warning-circle-duotone" class="transform scale-[2]"/>
+                    class="btn btn-secondary rounded-full flex justify-center items-center p-1 text-4xl transform scale-75"
+                    @click="player.playPause" :title="player.state == 'error' ? 'Error al cargar el audio' : ''">
+                    <AudioStateIcon :src="player.music?.src" />
                 </button>
 
-                <TextAnimation :text="player.title + (player.artist ? ' ' + player.artist : '')" class="transform duration-300"
-                    :class="expanded ? 'w-100' : 'w-0'" @mousemove="activatePlayer" />
+                <TextAnimation :text="player.title + (player.artist ? ' ' + player.artist : '')"
+                    class="transform duration-300" :class="expanded ? 'w-100' : 'w-0'" @mousemove="activatePlayer" />
 
                 <div class="flex justify-end gap-1 w-32 font-mono transform scale-y-150" @mousemove="activatePlayer">
                     <span>{{ formatTime(player.currentTime) }}</span>
@@ -50,13 +46,14 @@
                 </button>
 
                 <a download target="_blank" :href="player.music.src" title="Descargar audio"
-                    class="text-2xl transform duration-300" :class="expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'"
-                    @mousemove="activatePlayer">
+                    class="text-2xl transform duration-300"
+                    :class="expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer">
                     <Icon icon="ph:download-duotone" />
                 </a>
 
                 <span title="Cerrar">
-                    <Icon icon="ph:x-bold" v-if="expanded"  class="text-3xl cursor-pointer pr-2" @click="player.close()" />
+                    <Icon icon="ph:x-bold" v-if="expanded" class="text-3xl cursor-pointer pr-2"
+                        @click="player.close()" />
                 </span>
 
             </div>
@@ -136,8 +133,8 @@
                         <path d="M17 0l8 6-8 6V0z" fill="currentColor" />
                     </svg>
                 </button>
-                <a download target="_blank" :href="player.music.src" class="mx-auto flex justify-center items-center text-3xl"
-                    title="Descargar audio">
+                <a download target="_blank" :href="player.music.src"
+                    class="mx-auto flex justify-center items-center text-3xl" title="Descargar audio">
                     <Icon icon="ph:download-duotone" />
                 </a>
             </div>
