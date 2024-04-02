@@ -33,8 +33,8 @@
                 <div v-for="categoria of categorias" :key="categoria.nombre" class="flex gap-2"
                     :class="categoriaActiva == categoria.nombre ? 'text-primary font-bold' : ''">
                     <Link :href="`${route('audios')}?categoria=${categoria.nombre}`">
-                        <span class="capitalize">{{ categoria.nombre }}</span>
-                        <small v-if="categoria.total > 0">({{ categoria.total }})</small>
+                    <span class="capitalize">{{ categoria.nombre }}</span>
+                    <small v-if="categoria.total > 0">({{ categoria.total }})</small>
                     </Link>
                 </div>
             </div>
@@ -44,33 +44,31 @@
                 <SearchResultsHeader :results="listado" />
 
                 <GridAppear v-if="listado.data.length > 0" class="gap-4 max-w-full"
-                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(32rem, 1fr))` }">
-                    <div v-for="audio in listado.data.map(a=>({...a, src: a.audio.match(/^http/)?a.audio: '/almacen/'+a.audio}))" :key="audio.id"
+                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+                    <div v-for="audio in listado.data.map(a => ({ ...a, src: a.audio.match(/^http/) ? a.audio : '/almacen/' + a.audio }))"
+                        :key="audio.id"
                         class="card flex-row shadow bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
                         style="max-width: calc(100vw - 30px)">
 
-                        <div v-if="player.music?.src != audio.src" @click="clickPlay(audio)" class="btn btn-primary p-0 w-12 h-5 min-h-auto text-lg">
-                            <Icon icon="ph:play-duotone"/>
+                        <div v-if="player.music?.src != audio.src" @click="clickPlay(audio)"
+                            class="btn btn-primary p-0 w-12 h-5 min-h-auto text-lg">
+                            <Icon icon="ph:play-duotone" />
                         </div>
-                        <div v-else @click="player.playPause()" class="btn btn-secondary p-0 w-12 h-5 min-h-auto text-2xl"
-                        :title="player.state == 'error'?'Error al cargar el audio':''">
-                            <Icon v-show="player.state == 'stopped'" icon="ph:play-duotone"  />
+                        <div v-else @click="player.playPause()"
+                            class="btn btn-secondary p-0 w-12 h-5 min-h-auto text-2xl"
+                            :title="player.state == 'error' ? 'Error al cargar el audio' : ''">
+                            <Icon v-show="player.state == 'stopped'" icon="ph:play-duotone" />
                             <Icon v-show="player.state == 'paused'" icon="ph:play-pause-duotone" />
                             <Icon v-show="player.state == 'playing'" icon="ph:pause-duotone" />
-                            <Icon v-show="player.state == 'error'" icon="ph:warning-circle-duotone"/>
+                            <Icon v-show="player.state == 'error'" icon="ph:warning-circle-duotone" />
                         </div>
-                        <div class="flex flex-col gap-2 mr-auto ">
-                            <h2 class="ml-2 text-lg font-bold my-0 leading-5">{{ audio.titulo }}</h2>
+
+                        <div class="flex flex-col gap-2 mr-auto w-full">
+                            <Link :href="route('audio', audio.slug)" class="text-base font-bold my-0 leading-5 hover:underline">{{ audio.titulo }}
+                            </Link>
                             <Link v-if="!categoriaActiva" :href="`${route('audios')}?categoria=${audio.categoria}`"
-                                class="sm:hidden badge badge-primary badge-outline">{{ audio.categoria }}</Link>
-                        </div>
-                        <Link v-if="!categoriaActiva" :href="`${route('audios')}?categoria=${audio.categoria}`"
-                            class="hidden sm:block badge badge-primary badge-outline">{{ audio.categoria }}</Link>
-                        <div class="btn p-2 w-12 h-9 min-h-auto shadow">
-                            <Icon icon="ph:info-duotone" class="text-2xl" />
-                        </div>
-                        <div class="btn p-2 w-12 h-9 min-h-auto shadow">
-                            <Icon icon="ph:share-network-duotone" class="text-xl" />
+                                class="badge badge-primary badge-outline text-xs self-end">{{ audio.categoria }}
+                            </Link>
                         </div>
                     </div>
                 </GridAppear>
