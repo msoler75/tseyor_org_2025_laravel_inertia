@@ -67,7 +67,7 @@
                             <Link :href="route('audio', audio.slug)" class="text-base font-bold my-0 leading-5 hover:underline">{{ audio.titulo }}
                             </Link>
                             <Link v-if="!categoriaActiva" :href="`${route('audios')}?categoria=${audio.categoria}`"
-                                class="badge badge-primary badge-outline text-xs self-end">{{ audio.categoria }}
+                                class="text-xs">{{ audio.categoria }}
                             </Link>
                         </div>
                     </div>
