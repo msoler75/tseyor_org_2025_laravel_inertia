@@ -1,26 +1,31 @@
 <script setup>
 import { Head, usePage, router } from '@inertiajs/vue3';
-import { onBeforeUnmount } from 'vue';
+import { onBeforeUnmount, markRaw } from 'vue';
 import { useDark, useToggle } from "@vueuse/core";
 import usePermisos from '@/Stores/permisos'
-import usePlayer from '@/Stores/player'
+// import usePlayer from '@/Stores/player'
+import * as trp from '@/composables/transitionPages.js'
+
 // console.log('app initiating...')
 
+// const player = usePlayer()
+
 const permisos = usePermisos()
-const player = usePlayer()
 const page = usePage()
 const nav = useNav()
+
+if (page.props.auth?.user) {
+    permisos.cargarPermisos()
+}
 
 const deactivateNav = ref(false)
 const TIME_NAV_INACTIVE = 1000
 var timerActivateNav = null
 
-const animationPageTransitionDuration = 0
 
 // si el mouse sale de la ventana de la aplicación, cerramos el menú
 document.addEventListener("mouseleave", function (event) {
-    if (screen.width >= 1024)
-    {
+    if (screen.width >= 1024) {
         clearTimeout(timerActivateNav)
         deactivateNav.value = true
         // cerramos los submenús
@@ -31,108 +36,14 @@ document.addEventListener("mouseleave", function (event) {
 // si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante 2 segundos
 document.addEventListener("mouseenter", function (event) {
     if (screen.width >= 1024) {
-            clearTimeout(timerActivateNav)
-            timerActivateNav = setTimeout(()=>{
-                deactivateNav.value = false
-            }, TIME_NAV_INACTIVE)
+        clearTimeout(timerActivateNav)
+        timerActivateNav = setTimeout(() => {
+            deactivateNav.value = false
+        }, TIME_NAV_INACTIVE)
     }
 })
 
-// console.log({page})
 
-// Use the router's navigation guard to track route changes
-router.on('start', (event) => {
-    console.log(`router: start. Starting a visit to ${event.detail.visit.url}`, event.detail.visit.url)
-
-    /*if(nav.ignoreScroll) {
-        scrollToCurrentPosition()
-        return
-    }*/
-
-    if(event.detail.visit.url==route('logout'))
-    nav.dontFadeout = true
-
-    nav.navigating = true
-
-    const nuevaRuta = event.detail.visit.url
-    const rutaActual = new URL(window.location)
-    let mismaSeccion = false
-
-    const fadeoutWhenNavigateTo = /^\/(audios|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|normativas|noticias|publicaciones|usuarios)\/.+/
-    if(fadeoutWhenNavigateTo.exec(nuevaRuta.pathname)) {
-        console.log('auto fadeOut')
-        nav.fadeoutPage()
-    }
-
-    // to-do: si tenemos dos rutas: rutaActual = /glosario/1 y nuevaRuta = /glosario/2 entonces mismaSeccion ha de cambiar a true. Lo mismo si son dos rutas /libros/1 y /libros/juan
-    // por lo tanto hemos de splitear las rutas y ver si coinciden en la primera palabra
-    const p1 = rutaActual.pathname.split('/')
-    const p2 = nuevaRuta.pathname.split('/')
-    mismaSeccion = rutaActual.origin == nuevaRuta.origin && p1[1] == p2[1]
-    // si, quitando la parte de query, son la misma ruta...
-    console.log('comparing', nuevaRuta.origin + nuevaRuta.pathname, 'vs', rutaActual.origin + rutaActual.pathname)
-    const mismapagina = nuevaRuta.origin + nuevaRuta.pathname == rutaActual.origin + rutaActual.pathname
-    let scrolling = mismapagina || mismaSeccion
-    if(nav.fadingOutPage) {
-
-    }
-    else if (nav.dontScroll) {
-        if (!nav.dontFadeout)
-            nav.fadeoutPage()
-    } else {
-        if (scrolling)
-            nav.scrollToContent()
-        else if (!nav.dontFadeout)
-            nav.fadeoutPage()
-        else
-            nav.scrollToContent()
-    }
-
-    nav.dontScroll=false
-
-
-})
-
-router.on('navigate', (event) => {
-    console.log(`router: navigate. Navigated to ${event.detail.page.url}`)
-    nav.navigating = false
-    // reset state
-    nav.dontFadeout = false
-    // nav.ignoreScroll = false
-
-    if (nav.fadingOutPage) {
-        window.scrollTo({
-            top: 0,
-            behavior: 'instant'
-        });
-        setTimeout(() => {
-            nav.fadingOutPage = false
-        }, animationPageTransitionDuration)
-
-    }
-})
-
-router.on('exception', (event) => {
-    console.log(`router: exception. An unexpected error occurred during an Inertia visit.`)
-    console.log(event.detail.error)
-})
-
-router.on('invalid', (event) => {
-    console.log(`router: invalid. An invalid Inertia response was received.`)
-    console.log(event.detail.response)
-})
-
-router.on('error', (errors) => {
-    console.log(errors)
-})
-
-router.on('success', (event) => {
-    console.log(`router: success. Successfully made a visit to ${event.detail.page.url}`)
-})
-
-router.on('finish', (event) => {
-    console.log(`router: finish. Page loaded ${event.detail.visit.url}`)
-})
 
 // console.log({ page })
 
@@ -190,9 +101,7 @@ watch(() => `${nav.scrollY}+${portada.value}`, () => {
 updateBodyTheme()
 
 
-// AUDIO PLAYER
-console.log('player.init ...')
-player.init()
+
 
 
 // DEV LOGINS
@@ -218,13 +127,22 @@ function login2() {
 }
 
 
+
 const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset
-};
+}
+
+const dynamicAudioPlayer = ref(null);
 
 onMounted(() => {
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
+
+    setTimeout(() => {
+        import('@/Components/AudioPlayer.vue').then(module => {
+            dynamicAudioPlayer.value = markRaw(module.default);
+        });
+    }, 5000)
 });
 
 
@@ -268,14 +186,13 @@ axios.get(route('setting', 'navigation'))
 
         <Banner />
 
-        <AudioPlayer v-if="!player.closed"
-            class="rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l" />
+        <component :is="dynamicAudioPlayer" v-if="dynamicAudioPlayer" />
 
         <div class="bg-base-200 flex-grow flex flex-col">
             <nav class="w-full border-gray-300  bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "
                 :data-theme="portada && nav.scrollY < 300 ? 'winter' : ''" :class="(portada && nav.scrollY < 300 ? 'dark bg-transparent ' : portada ? 'bg-opacity-20 hover:bg-opacity-100 transition duration-200 ' : 'border-b ') +
-                    (nav.defaultClass + ' ' + (nav.fullPage ? 'fixed border-gray-300 ' : 'sticky ')) +
-                    (nav.fullPage && nav.announce ? 'top-[2rem] ' : 'top-0 ')">
+            (nav.defaultClass + ' ' + (nav.fullPage ? 'fixed border-gray-300 ' : 'sticky ')) +
+            (nav.fullPage && nav.announce ? 'top-[2rem] ' : 'top-0 ')">
                 <!-- Primary Navigation Menu -->
 
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -312,8 +229,7 @@ axios.get(route('setting', 'navigation'))
 
                             <!-- Main Navigation Tabs -->
                             <NavTabs class="hidden top-navigation space-x-8 sm:-my-px sm:ml-10 sm:flex"
-                            :class="deactivateNav?'pointer-events-none':''"
-                            />
+                                :class="deactivateNav ? 'pointer-events-none' : ''" />
 
                         </div>
 
@@ -325,7 +241,8 @@ axios.get(route('setting', 'navigation'))
                         <GlobalSearch @mouseover="nav.closeTabs()" />
 
                         <transition class="hidden lg:flex" enter-active-class="transition ease-out duration-200"
-                            enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
+                            enter-from-class="transform opacity-0 scale-95"
+                            enter-to-class="transform opacity-100 scale-100"
                             leave-active-class="transition ease-in duration-75"
                             leave-from-class="transform opacity-100 scale-100"
                             leave-to-class="transform opacity-0 scale-95">
@@ -343,81 +260,10 @@ axios.get(route('setting', 'navigation'))
 
                             <div v-if="$page.props.auth?.user" class="hidden sm:flex sm:items-center"
                                 @mouseover="nav.closeTabs()">
+
+
                                 <div class="ml-3 relative">
-                                    <!-- Teams Dropdown -->
-                                    <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
-                                        <template #trigger>
-                                            <span class="inline-flex rounded-md">
-                                                <button type="button"
-                                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-base-100 dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
-                                                    {{ $page.props.auth.user.current_team.name }}
-
-                                                    <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                        stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                                    </svg>
-                                                </button>
-                                            </span>
-                                        </template>
-
-                                        <template #content>
-                                            <div class="w-60">
-                                                <!-- Team Management -->
-                                                <template v-if="$page.props.jetstream.hasTeamFeatures">
-                                                    <div class="block px-4 py-2 text-xs text-gray-400">
-                                                        Manage Team
-                                                    </div>
-
-                                                    <!-- Team Settings -->
-                                                    <DropdownLink
-                                                        :href="route('teams.show', $page.props.auth.user.current_team)">
-                                                        Team Settings
-                                                    </DropdownLink>
-
-                                                    <DropdownLink v-if="$page.props.jetstream.canCreateTeams"
-                                                        :href="route('teams.create')">
-                                                        Create New Team
-                                                    </DropdownLink>
-
-                                                    <!-- Team Switcher -->
-                                                    <template v-if="$page.props.auth.user.all_teams.length > 1">
-                                                        <div class="border-t border-gray-200 dark:border-gray-600" />
-
-                                                        <div class="block px-4 py-2 text-xs text-gray-400">
-                                                            Switch Teams
-                                                        </div>
-
-                                                        <template v-for="team in $page.props.auth.user.all_teams"
-                                                            :key="team.id">
-                                                            <form @submit.prevent="switchToTeam(team)">
-                                                                <DropdownLink as="button">
-                                                                    <div class="flex items-center">
-                                                                        <svg v-if="team.id == $page.props.auth.user.current_team_id"
-                                                                            class="mr-2 h-5 w-5 text-green-400"
-                                                                            xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                                            viewBox="0 0 24 24" stroke-width="1.5"
-                                                                            stroke="currentColor">
-                                                                            <path stroke-linecap="round"
-                                                                                stroke-linejoin="round"
-                                                                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                                        </svg>
-
-                                                                        <div>{{ team.name }}</div>
-                                                                    </div>
-                                                                </DropdownLink>
-                                                            </form>
-                                                        </template>
-                                                    </template>
-                                                </template>
-                                            </div>
-                                        </template>
-                                    </Dropdown>
-                                </div>
-
-                                <!-- Settings Dropdown -->
-                                <div class="ml-3 relative">
+                                    <!-- Profile Dropdown -->
                                     <Dropdown align="right" width="48">
                                         <template #trigger>
                                             <button v-if="$page.props.jetstream.managesProfilePhotos"
@@ -463,7 +309,8 @@ axios.get(route('setting', 'navigation'))
                                                 Mi Cuenta
                                             </DropdownLink>
 
-                                            <DropdownLink v-if="permisos.permisos.length" href="/admin/dashboard" as="a">
+                                            <DropdownLink v-if="permisos.permisos.length" href="/admin/dashboard"
+                                                as="a">
                                                 Panel de administrador
                                             </DropdownLink>
 
@@ -494,98 +341,7 @@ axios.get(route('setting', 'navigation'))
                     </div>
                 </div>
 
-                <!-- Responsive Navigation Menu -->
-                <div v-if="false" :class="{ 'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown }"
-                    class="sm:hidden">
-                    <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
 
-                    <!-- Responsive Settings Options -->
-                    <div v-if="$page.props.auth.user" class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                        <div class="flex items-center px-4">
-                            <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 mr-3">
-                                <img class="h-10 w-10 rounded-full object-cover"
-                                    :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
-                            </div>
-
-                            <div>
-                                <div class="font-medium text-base text-gray-800 dark:text-gray-200">
-                                    {{ $page.props.auth.user.name }}
-                                </div>
-                                <div class="font-medium text-sm text-gray-500">
-                                    {{ $page.props.auth.user.email }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-if="$page.props.auth.user" class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.show')" :active="route().current('profile.show')">
-                                Profile
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')"
-                                :active="route().current('api-tokens.index')">
-                                API Tokens
-                            </ResponsiveNavLink>
-
-                            <!-- Authentication -->
-                            <form method="POST" @submit.prevent="logout">
-                                <ResponsiveNavLink as="button">
-                                    Log Out
-                                </ResponsiveNavLink>
-                            </form>
-
-                            <!-- Team Management -->
-                            <template v-if="$page.props.jetstream.hasTeamFeatures">
-                                <div class="border-t border-gray-200 dark:border-gray-600" />
-
-                                <div class="block px-4 py-2 text-xs text-gray-400">
-                                    Manage Team
-                                </div>
-
-                                <!-- Team Settings -->
-                                <ResponsiveNavLink :href="route('teams.show', $page.props.auth.user.current_team)"
-                                    :active="route().current('teams.show')">
-                                    Team Settings
-                                </ResponsiveNavLink>
-
-                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')"
-                                    :active="route().current('teams.create')">
-                                    Create New Team
-                                </ResponsiveNavLink>
-
-                                <!-- Team Switcher -->
-                                <template v-if="$page.props.auth.user.all_teams.length > 1">
-                                    <div class="border-t border-gray-200 dark:border-gray-600" />
-
-                                    <div class="block px-4 py-2 text-xs text-gray-400">
-                                        Switch Teams
-                                    </div>
-
-                                    <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
-                                        <form @submit.prevent="switchToTeam(team)">
-                                            <ResponsiveNavLink as="button">
-                                                <div v-if="$page.props.auth.user" class="flex items-center">
-                                                    <svg v-if="team.id == $page.props.auth.user.current_team_id"
-                                                        class="mr-2 h-5 w-5 text-green-400"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                        stroke-width="1.5" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    <div>{{ team.name }}</div>
-                                                </div>
-                                            </ResponsiveNavLink>
-                                        </form>
-                                    </template>
-                                </template>
-                            </template>
-                        </div>
-                    </div>
-                </div>
             </nav>
 
 
@@ -606,8 +362,10 @@ axios.get(route('setting', 'navigation'))
                 :class="nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''">
 
                 <transition enter-active-class="transition-opacity duration-100"
-                    leave-active-class="transition-opacity duration-100" enter-class="opacity-0" leave-to-class="opacity-0">
-                    <div v-if="nav.activeTab" class="hidden lg:block z-30 absolute w-full h-full bg-black bg-opacity-10">
+                    leave-active-class="transition-opacity duration-100" enter-class="opacity-0"
+                    leave-to-class="opacity-0">
+                    <div v-if="nav.activeTab"
+                        class="hidden lg:block z-30 absolute w-full h-full bg-black bg-opacity-10">
                         <!-- Contenido del elemento -->
                     </div>
                 </transition>

@@ -17,7 +17,7 @@ const state = reactive({
 });
 
 // carga inicial
-state.cargarPermisos();
+// state.cargarPermisos();
 
 export default function usePermisos() {
   return state;
