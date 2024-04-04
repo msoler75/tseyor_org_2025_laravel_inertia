@@ -1,7 +1,6 @@
 <template>
     <div class="select-none">
-
-        <div v-show="player.mini" @mouseleave="collapsePlayer">
+        <div v-if="player.mini" v-show="!player.closed"  @mouseleave="collapsePlayer"  class="rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l" >
             <div class="mx-auto flex justify-between items-center" :class="expanded ? 'w-full max-w-lg gap-3' : 'pr-4'">
                 <button type="button"
                     class="btn btn-secondary rounded-full flex justify-center items-center p-1 text-4xl transform scale-75"
@@ -45,7 +44,7 @@
                     </svg>
                 </button>
 
-                <a download target="_blank" :href="player.music.src" title="Descargar audio"
+                <a download target="_blank" :href="player.music?.src" title="Descargar audio"
                     class="text-2xl transform duration-300"
                     :class="expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer">
                     <Icon icon="ph:download-duotone" />
@@ -133,7 +132,7 @@
                         <path d="M17 0l8 6-8 6V0z" fill="currentColor" />
                     </svg>
                 </button>
-                <a download target="_blank" :href="player.music.src"
+                <a download target="_blank" :href="player.music?.src"
                     class="mx-auto flex justify-center items-center text-3xl" title="Descargar audio">
                     <Icon icon="ph:download-duotone" />
                 </a>
@@ -147,6 +146,10 @@
 import usePlayer from '@/Stores/player'
 
 const player = usePlayer()
+
+// console.log('player init')
+// player.init()
+
 
 // expansión de audioplayer
 

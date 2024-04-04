@@ -132,3 +132,6 @@ function onWaiting(ev) {
 export default function usePlayer() {
   return state;
 }
+
+console.log('player.state.init')
+state.init()
