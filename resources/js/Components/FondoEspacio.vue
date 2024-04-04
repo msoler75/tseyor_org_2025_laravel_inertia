@@ -110,7 +110,7 @@ function move(event) {
 
 .galaxy
 {
-    position: absolute; 
+    position: absolute;
     width: 1px;
     height: 1px;
     background: transparent;
@@ -132,12 +132,12 @@ function move(event) {
     height: 100vh;
     background: url(/almacen/medios/portada/galaxy.webp) 9% 73% no-repeat;
     opacity: .7;
-    
+
 }
 
 .nebula
 {
-    position: absolute; 
+    position: absolute;
     width: 1px;
     height: 1px;
     background: transparent;

@@ -21,7 +21,7 @@
 import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
 
-import { usePlayer } from '@/Stores/player'
+import usePlayer from '@/Stores/player'
 
 const player = usePlayer()
 

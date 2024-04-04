@@ -1,199 +1,134 @@
-import { ref } from "vue";
-//import { createGlobalState } from "@vueuse/core";
-import { defineStore } from "pinia";
-
-//export const usePlayer = createGlobalState(() => {
-export const usePlayer = defineStore("player", () => {
-  // elemento HTML 5 de audio
-  var audio = null;
-
-  // variables reactivas
-
-  const music = ref(null);
-  const state = ref("stopped");
-  const radioMode = ref(false);
-  const closed = ref(true);
-  const mini = ref(true);
-  const autoplay = ref(true);
-  const duration = ref(0);
-  const currentTime = ref(0);
-
-  // variables computadas
-
-  //const src = computed(() => audio.src);
-  const title = computed(() => (music.value ? music.value.title : null));
-  const artist = computed(() => (music.value ? music.value.artist : null));
-  const audioElem = computed(() => audio);
-
-  /**
-   * Métodos
-   */
-
-  // crea un objeto de audio HTML5
-  function init() {
-
-    console.log('player.init()...')
+const state = reactive({
+  audio: null,
+  music: null,
+  state: "stopped",
+  radioMode: false,
+  closed: true,
+  mini: true,
+  autoplay: true,
+  duration: 0,
+  currentTime: 0,
+  init() {
+    console.log("player.init()...");
     if (!document) return;
 
-    audio = new Audio();
-    audio.autoplay = autoplay.value; // Suponiendo que `autoplay` es una variable definida previamente
-    audio.className = "hidden";
+    this.audio = new Audio();
+    this.audio.autoplay = this.autoplay;
+    this.audio.className = "hidden";
 
-    audio.addEventListener("loadedmetadata", loadedmetadata);
-    audio.addEventListener("canplay", canplay);
-    audio.addEventListener("error", error);
-    // audio.addEventListener("progress", progress);
-    audio.addEventListener("timeupdate", timeupdate);
-    audio.addEventListener("ended", ended);
-    audio.addEventListener("play", onPlay);
-    audio.addEventListener("paused", paused);
-    audio.addEventListener("waiting", waiting);
-    audio.addEventListener("abort", abort);
+    this.audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    this.audio.addEventListener("canplay", onCanplay);
+    this.audio.addEventListener("error", onError);
+    this.audio.addEventListener("timeupdate", onTimeupdate);
+    this.audio.addEventListener("ended", onEnded);
+    this.audio.addEventListener("play", onPlay);
+    this.audio.addEventListener("paused", onPaused);
+    this.audio.addEventListener("waiting", onWaiting);
+    this.audio.addEventListener("abort", onAbort);
 
-    audio.preload = "auto";
-    // audio.currentTime = startTime; // Suponiendo que `startTime` es una variable definida previamente
+    this.audio.preload = "auto";
 
-    // Agregar el elemento audio al DOM
-    // document.body.appendChild(audio);
-
-    console.log('player.init() ended!')
-  }
-
-  function isPlayable(src) {
-    console.log('isPlayable?', src)
-    return src.match(/\.(mp3|mp4|ogg|wav|flac|aac|wma|aiff|amr|opus)$/i)
-  }
-
-  function play(src, title, options ={}) {
-    if(!audio) {
-        console.error('audio no inicializado')
-        return
+    console.log("player.init() ended!");
+  },
+  isPlayable(src) {
+    console.log("isPlayable?", src);
+    return src.match(/\.(mp3|mp4|ogg|wav|flac|aac|wma|aiff|amr|opus)$/i);
+  },
+  play(src, title, options = {}) {
+    if (!this.audio) {
+      console.error("audio no inicializado");
+      return;
     }
-    const {artist, isRadio} = options
+    const { artist, isRadio } = options;
     if (process.env.NODE_ENV === "development") console.log("player.play");
-    music.value = {src, title, artist};
-    radioMode.value = !!isRadio;
-    closed.value = false;
+    this.music = { src, title, artist };
+    this.radioMode = !!isRadio;
+    this.closed = false;
 
-    audio.src = src;
-    audio.play();
-  }
-
-  function pause() {
-    audio.pause();
-    state.value = "paused";
-  }
-
-  // alterna entre play y pausa
-  function playPause() {
+    this.audio.src = src;
+    this.audio.play();
+  },
+  pause() {
+    this.audio.pause();
+    this.state = "paused";
+  },
+  playPause() {
     try {
-      if (audio.paused) {
-        audio.play();
-        state.value = "playing";
+      if (this.audio.paused) {
+        this.audio.play();
+        this.state = "playing";
       } else {
-        audio.pause();
-        state.value = "paused";
+        this.audio.pause();
+        this.state = "paused";
       }
     } catch (e) {
       console.error("playPause interrupted", e);
-      state.value = "error";
+      this.state = "error";
     }
-  }
-
-  function close() {
-    audio.pause();
-    audio.src = null
-    music.value = null
-    state.value = "stopped"
-    closed.value = true;
-  }
-
-  const stepForward = () => {
-    if (!audio.paused && !audio.ended) {
-      // audio.pause()
-      audio.currentTime += 30;
-      // audio.play()
+  },
+  close() {
+    this.audio.pause();
+    this.audio.src = null;
+    this.music = null;
+    this.state = "stopped";
+    this.closed = true;
+  },
+  stepForward() {
+    if (!this.audio.paused && !this.audio.ended) {
+      this.audio.currentTime += 30;
     } else {
-      audio.currentTime += 30;
+      this.audio.currentTime += 30;
     }
-  };
-
-  const stepBackward = () => {
-    audio.currentTime -= 30;
-  };
-
-  /**
-   * Eventos
-   */
-  const abort = (ev) => {
-    if (process.env.NODE_ENV === "development") console.log("abort", ev);
-  };
-
-  const error = (ev) => {
-    if (process.env.NODE_ENV === "development") console.log("error", ev);
-    state.value = "error";
-  };
-
-  const loadedmetadata = (ev) => {
-    if (process.env.NODE_ENV === "development") console.log("loadedmetadata", ev);
-  };
-
-  const canplay = (ev) => {
-    if (process.env.NODE_ENV === "development") console.log("canplay", ev);
-
-    duration.value = audio.duration;
-    currentTime.value = audio.currentTime;
-    if (autoplay.value) audio.play();
-  };
-
-  const onPlay = (ev) => {
-    if (process.env.NODE_ENV === "development") console.log("play", ev);
-    state.value = "playing";
-  };
-
-  const paused = (ev) => {
-    if (process.env.NODE_ENV === "development") console.log("paused", ev);
-    state.value = "paused";
-  };
-
-  const ended = (ev) => {
-    if (process.env.NODE_ENV === "development") console.log("ended", ev);
-    state.value = "stopped";
-  };
-
-  /* const progress = (ev) => {
-    if (process.env.NODE_ENV === 'development') console.log("progress", ev);
-    // duration.value = audio.value ? audio.value.duration : 0;
-}; */
-
-  const timeupdate = (ev) => {
-    // if (process.env.NODE_ENV === 'development') console.log("timeupdate", ev);
-    currentTime.value = audio.currentTime;
-  };
-
-  const waiting = (ev) => {
-    if (process.env.NODE_ENV === "development") console.log("waiting", ev);
-  };
-
-  return {
-    music,
-    audioElem,
-    state,
-    radioMode,
-    closed,
-    mini,
-    duration,
-    currentTime,
-    // src,
-    title,
-    artist,
-    init,
-    isPlayable,
-    play,
-    pause,
-    playPause,
-    close,
-    stepForward,
-    stepBackward,
-  };
+  },
+  stepBackward() {
+    this.audio.currentTime -= 30;
+  },
 });
+
+function onError(ev) {
+  if (process.env.NODE_ENV === "development") console.log("error", ev);
+  state.state = "error";
+}
+
+function onLoadedMetadata(ev) {
+  if (process.env.NODE_ENV === "development") console.log("loadedmetadata", ev);
+}
+
+function onAbort(ev) {
+  if (process.env.NODE_ENV === "development") console.log("abort", ev);
+}
+
+function onCanplay(ev) {
+  if (process.env.NODE_ENV === "development") console.log("canplay", ev);
+
+  state.duration = state.audio.duration;
+  state.currentTime = state.audio.currentTime;
+  if (state.autoplay) state.audio.play();
+}
+
+function onPlay(ev) {
+  if (process.env.NODE_ENV === "development") console.log("play", ev);
+  state.state = "playing";
+}
+
+function onPaused(ev) {
+  if (process.env.NODE_ENV === "development") console.log("paused", ev);
+  state.state = "paused";
+}
+
+function onEnded(ev) {
+  if (process.env.NODE_ENV === "development") console.log("ended", ev);
+  state.state = "stopped";
+}
+
+function onTimeupdate(ev) {
+  state.currentTime = state.audio.currentTime;
+}
+
+function onWaiting(ev) {
+  if (process.env.NODE_ENV === "development") console.log("waiting", ev);
+}
+
+export default function usePlayer() {
+  return state;
+}

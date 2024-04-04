@@ -81,7 +81,7 @@
 
 import AppLayout from '@/Layouts/AppLayout.vue'
 
-import { usePlayer } from '@/Stores/player'
+import usePlayer from '@/Stores/player'
 
 defineOptions({ layout: AppLayout })
 

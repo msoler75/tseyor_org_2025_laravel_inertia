@@ -8,10 +8,10 @@
             </template>
             <EditorContent :editor="editor" class="tiptap-editor border border-gray-700 p-1" />
         </div>
-        <span v-show="editingMarkdown" @click="toggleMarkdown" class="btn btn-neutral btn-xs mb-2">
+        <span v-if="full" v-show="editingMarkdown" @click="toggleMarkdown" class="btn btn-neutral btn-xs mb-2">
             <Icon icon="mdi-close" /> Cerrar editor Markdown
         </span>
-        <MdEditor v-model="contenidoMD" v-show="editingMarkdown"
+        <MdEditor v-if="full" v-model="contenidoMD" v-show="editingMarkdown"
             :toolbarsExclude="['save', 'sub', 'sup', 'katex', 'mermaid', 'htmlPreview', 'catalog', 'github', 'revoke', 'next', 'image']"
             :footers="[]" :preview="false" />
     </div>
@@ -20,6 +20,11 @@
 <script setup>
 import { Extension } from '@tiptap/core';
 import { Plugin, PluginKey } from 'prosemirror-state';
+//import {defineAsyncComponent } from 'vue'
+
+// Definimos un componente asíncrono usando defineAsyncComponent
+//const MdEditor = defineAsyncComponent(() => import('md-editor-v3'))
+import { MdEditor } from 'md-editor-v3';
 
 import Highlight from '@tiptap/extension-highlight'
 import StarterKit from '@tiptap/starter-kit'
@@ -37,7 +42,7 @@ import Link from '@tiptap/extension-link'
 import TipTapFullMenuBar from "./TipTapFullMenuBar.vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 
-import { MdEditor } from 'md-editor-v3';
+//import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 
 import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
@@ -50,7 +55,7 @@ const props = defineProps({
     //  type: String, default: ''
     //},
     modelValue: { type: String },
-    format: { type: String, default: 'detect' },
+    format: { type: String, default: 'md' },
     mediaFolder: { type: String, default: 'medios' },
     full: { type: Boolean, default: false }
 })

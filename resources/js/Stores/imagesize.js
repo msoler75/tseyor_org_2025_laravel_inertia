@@ -1,10 +1,6 @@
-import { defineStore } from "pinia";
+const imagenes_pendientes = [];
 
-//export const usePlayer = createGlobalState(() => {
-export const useImageCache = defineStore("imagesize", () => {
-  var imagenes_pendientes = [];
-
-  async function getSize(url) {
+export const getSize = async function (url) {
     return new Promise(async (resolve, reject) => {
       // primero miramos en localstorage si ya existe
       var data = localStorage.getItem("image_" + url);
@@ -35,12 +31,7 @@ export const useImageCache = defineStore("imagesize", () => {
       reject();
     });
   }
-  function clear() {
+
+  export const clear = function() {
     imagenes_pendientes = [];
   }
-
-  return {
-    getSize,
-    clear,
-  };
-});

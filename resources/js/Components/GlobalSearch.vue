@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { useGlobalSearch } from "@/Stores/globalSearch.js"
+import useGlobalSearch from "@/Stores/globalSearch.js"
 import { usePage } from '@inertiajs/vue3';
 
 

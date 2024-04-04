@@ -10,12 +10,6 @@ import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
 //import FloatingVue from 'floating-vue'
 
-// https://github.com/John-Weeks-Dev/facebook-clone/blob/master/resources/js/app.js
-import { createPinia } from "pinia";
-const pinia = createPinia();
-
-import {useNav} from "@/Stores/nav"
-
 const appName =
   window.document.getElementsByTagName("title")[0]?.innerText || "TSEYOR";
 
@@ -35,7 +29,6 @@ createInertiaApp({
         })
         .use(plugin)
         .use(ZiggyVue, Ziggy)
-        .use(pinia)
         .mount(el)
         // .use(FloatingVue)
         // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs

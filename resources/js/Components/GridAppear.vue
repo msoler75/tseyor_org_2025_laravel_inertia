@@ -58,6 +58,6 @@ onMounted(() => {
 
     100% {
         opacity: 1;
-        tranform: none
+        transform: none
     }
 }</style>

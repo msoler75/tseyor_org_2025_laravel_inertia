@@ -2,8 +2,8 @@
 import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount } from 'vue';
 import { useDark, useToggle, useMouse } from "@vueuse/core";
-import { usePermisos } from '@/Stores/permisos'
-import { usePlayer } from '@/Stores/player'
+import usePermisos from '@/Stores/permisos'
+import usePlayer from '@/Stores/player'
 // console.log('app initiating...')
 
 const permisos = usePermisos()
@@ -155,7 +155,7 @@ const showingNavigationDropdown = ref(false);
 }; */
 
 const logout = () => {
-    permisos.permisos.value = []
+    permisos.permisos = []
     router.post(route('logout'));
 };
 
@@ -233,7 +233,7 @@ onBeforeUnmount(() => {
 });
 
 
-const loader = ref(true)
+const loader = ref(false)
 loader.value = false
 /*
 axios.get(route('setting', 'navigation'))
@@ -600,7 +600,6 @@ axios.get(route('setting', 'navigation'))
                     </transition>
                 </div>
             </header>
-
 
             <!-- Page Content -->
             <div @mouseover="nav.closeTabs()" class="flex-grow relative transition-opacity duration-200"

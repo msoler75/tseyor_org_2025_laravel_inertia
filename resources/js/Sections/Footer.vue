@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import {usePermisos} from '@/Stores/permisos'
+import usePermisos from '@/Stores/permisos'
 
 const permisos = usePermisos()
 

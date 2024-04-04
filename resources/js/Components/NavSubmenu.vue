@@ -9,7 +9,7 @@
                     </div>
                     <div  :class="section.class?section.class:'flex flex-col gap-7 mb-7'">
                         <component :is="item.external?'a':Link" :target="item.external ? '_blank' : ''" :href="item.url"
-                            v-for="item of section.items" :key="item.url" @click="nav.closeTabs"
+                            v-for="item of section.items" :key="item.url" @click="nav.closeTabs()"
                             class="group flex gap-3 p-3 rounded-lg hover:bg-base-200 transition duration-100 cursor-pointer relative"
                             :class="item.class">
                             <div class="flex justify-start" style="min-width:2.2rem">
