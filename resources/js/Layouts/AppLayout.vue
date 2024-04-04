@@ -1,7 +1,7 @@
 <script setup>
 import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount } from 'vue';
-import { useDark, useToggle, useMouse } from "@vueuse/core";
+import { useDark, useToggle } from "@vueuse/core";
 import usePermisos from '@/Stores/permisos'
 import usePlayer from '@/Stores/player'
 // console.log('app initiating...')
