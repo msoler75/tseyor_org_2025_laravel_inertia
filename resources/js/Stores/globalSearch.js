@@ -1,20 +1,18 @@
-import { defineStore } from "pinia";
-
-export const useGlobalSearch = defineStore("globalSearch", {
-  state: () => ({
-    opened: false,
-    showSuggestions: true,
-    query: "",
-    lastQuery: "",
-    results: null,
-    restrictToCollections: null
-  }),
-  actions: {
-    clear () {
-      this.query = "";
-    },
-    open () {
-      this.opened = true;
-    },
+const state = reactive({
+  opened: false,
+  showSuggestions: true,
+  query: "",
+  lastQuery: "",
+  results: null,
+  restrictToCollections: null,
+  clear() {
+    this.query = "";
+  },
+  open() {
+    this.opened = true;
   },
 });
+
+export default function useGlobalSearch() {
+  return state;
+}

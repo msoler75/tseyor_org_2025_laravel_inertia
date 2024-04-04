@@ -1,4 +1,3 @@
-import { defineStore } from "pinia";
 import navigationItems from "../navigation.js";
 
 const relativeUrl = (url) => {
@@ -43,8 +42,7 @@ const mapSubmenu = (submenu) => ({
   sections: submenu.sections.map(mapSection),
 });
 
-export const useNav = defineStore("nav", {
-  state: () => ({
+const state = reactive({
     //items: [],
     items: navigationItems.map(mapItem),
     ghostTab: null, //?
@@ -59,11 +57,8 @@ export const useNav = defineStore("nav", {
     fadingOutPage: false,
     dontFadeout: false,
     navigating: false,
-    dontScroll: false
-  }),
-  getters: {
-    activeTab: (state) => state.items.find((tab) => tab.open),
-    in: () => (tab, url) => {
+    dontScroll: false,
+    in (tab, url) {
       // comprueba si la ruta está en alguno de los items del tab
       const rutaRelativa = relativeUrl(url);
       if(tab.url && rutaRelativa.indexOf(tab.url) >= 0) return true
@@ -72,10 +67,8 @@ export const useNav = defineStore("nav", {
         section.items.find((item) => {
           return rutaRelativa.indexOf(item.url) >= 0;
         })
-      );
+      )
     },
-  },
-  actions: {
     setItems(items) {
       const tabs = items.map(mapItem);
       for (const tab of tabs) this.items.push(tab);
@@ -103,7 +96,7 @@ export const useNav = defineStore("nav", {
       if (newTab) this.ghostTab = newTab;
       else
         this.timer = setTimeout(() => {
-          this.ghostTab = this.activeTab;
+          this.ghostTab = activeTab.value;
         }, 75);
     },
     closeTab(tab) {
@@ -148,7 +141,12 @@ export const useNav = defineStore("nav", {
                 behavior
             });
         }
+  })
 
+state.activeTab = computed(() => {
+    return state.items.find(tab => tab.open)
+})
 
-  },
-});
+export function useNav() {
+    return state
+}

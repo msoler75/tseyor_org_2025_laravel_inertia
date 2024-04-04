@@ -26,7 +26,11 @@ export default defineConfig({
 },
   plugins: [
     laravel({
-      input: ["resources/js/app.js", "resources/js/backpack/app.js"/*, "resources.js/backpack/components.js"*/],
+        input: [
+            "resources/js/app.js",
+            "resources/js/backpack/app.js",
+            "resources/css/admin.css",
+          ],
       // ssr: "resources/js/ssr.js",
       refresh: true,
     }),
@@ -67,7 +71,7 @@ export default defineConfig({
             "useSlots",
           ],
           "@inertiajs/vue3": ["router", "usePage", "useForm"],
-          "@/Stores/nav.js": ["useNav"]
+          "@/Stores/nav.js":  ["useNav"]
         },
       ],
     }),

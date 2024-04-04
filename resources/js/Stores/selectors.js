@@ -1,11 +1,10 @@
-import { defineStore } from "pinia";
-
-//export const usePlayer = createGlobalState(() => {
-export const useSelectors = defineStore("selectors", {
-  state: () => ({
-    soloTitulosLibros: false,
-    archivosVista: "normal",
-    vistaComunicados: "",
-    mostrarPermisos: false // muestra permisos en el listado de archivos. útil para administradores
-  }),
+const state = reactive({
+  soloTitulosLibros: false,
+  archivosVista: "normal",
+  vistaComunicados: "",
+  mostrarPermisos: false,
 });
+
+export default function useSelectors() {
+  return state;
+}

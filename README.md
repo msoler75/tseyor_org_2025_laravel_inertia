@@ -85,6 +85,12 @@ Este comando recrea todos los contenidos "espejo" de las noticias.
 
 # Deploy
 
+Recordar ejecutar:
+
+```bash
+php artisan ziggy:generate
+```
+
 Para mejorar el rendimiento:
 
 ## Cambios en Response de Inertia

@@ -1,24 +1,24 @@
-import {ref} from "vue";
-//import {createGlobalState} from  "@vueuse/core"
-import { defineStore } from "pinia";
-
-//export const useGlobalState = createGlobalState(() => {
-export const usePermisos = defineStore("permisos", () => {
-    const permisos = ref([]); // permisos de usuario
-
-    function cargarPermisos() {
-        axios.get('/usuarios/_permisos')
-        .then(response=>{
-            console.log('permisos response', response)
-            permisos.value = response.data
-        })
-    }
-
-    cargarPermisos()
-
-    function tienePermiso(permiso) {
-        return permisos.value.includes(permiso)
-    }
-
-    return { permisos, cargarPermisos, tienePermiso };
+const state = reactive({
+  permisos: [],
+  cargarPermisos() {
+    fetch("/usuarios/_permisos")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("permisos response", data);
+        this.permisos = data;
+      })
+      .catch((error) => {
+        console.error("Error al cargar los permisos:", error);
+      });
+  },
+  tienePermiso(permiso) {
+    return this.permisos.includes(permiso);
+  },
 });
+
+// carga inicial
+state.cargarPermisos();
+
+export default function usePermisos() {
+  return state;
+}

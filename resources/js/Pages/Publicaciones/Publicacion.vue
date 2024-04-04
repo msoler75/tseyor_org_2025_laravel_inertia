@@ -29,9 +29,9 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { usePlayer } from '@/Stores/player'
+// import usePlayer from '@/Stores/player'
 
-const player = usePlayer()
+// const player = usePlayer()
 
 defineOptions({ layout: AppLayout })
 

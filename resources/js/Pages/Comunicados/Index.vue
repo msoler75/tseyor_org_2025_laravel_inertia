@@ -172,7 +172,7 @@
 <script setup>
 
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { useSelectors } from '@/Stores/selectors'
+import useSelectors  from '@/Stores/selectors'
 
 const VISTA_TARJETAS = 'Vista normal'
 const VISTA_LISTADO = 'Listado'

@@ -13,7 +13,7 @@
 
 
 <script setup>
-import { usePlayer } from '@/Stores/player'
+import usePlayer from '@/Stores/player'
 
 const player = usePlayer();
 

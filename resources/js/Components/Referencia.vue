@@ -14,7 +14,7 @@ const props = defineProps({
     colecciones: {default: null}
 })
 
-import {useGlobalSearch} from "@/Stores/globalSearch.js"
+import useGlobalSearch from "@/Stores/globalSearch.js"
 
 const search = useGlobalSearch()
 

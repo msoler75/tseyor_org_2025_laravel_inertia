@@ -1,11 +1,11 @@
-import { defineStore } from "pinia";
+const state = reactive({
+  isMovingFiles: false,
+  isCopyingFiles: false,
+  filesToMove: [],
+  filesToCopy: [],
+});
 
 //export const usePlayer = createGlobalState(() => {
-export const useFilesOperation = defineStore("files", {
-  state: () => ({
-    isMovingFiles: false,
-    isCopyingFiles: false,
-    filesToMove: [],
-    filesToCopy: [],
-  }),
-});
+export default function useFilesOperation() {
+  return state;
+}

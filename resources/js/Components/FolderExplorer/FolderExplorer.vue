@@ -986,11 +986,11 @@
 <script setup>
 import Dropzone from 'vue2-dropzone-vue3'
 import { usePage, Link } from '@inertiajs/vue3';
-import { useFilesOperation } from '@/Stores/files';
-import { useSelectors } from '@/Stores/selectors'
+import useFilesOperation from '@/Stores/files';
+import useSelectors from '@/Stores/selectors'
 import { useDebounce } from '@vueuse/core';
-import { usePlayer } from '@/Stores/player'
-import { usePermisos } from '@/Stores/permisos'
+import usePlayer from '@/Stores/player'
+import usePermisos from '@/Stores/permisos'
 
 const permisos = usePermisos()
 
