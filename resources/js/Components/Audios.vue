@@ -1,10 +1,10 @@
 <template>
     <div class="flex flex-wrap gap-3">
-        <span v-for="audio of audios" :key="audio" class="btn btn-xs text-xs"
+        <span v-for="audio of audios" :key="audio" class="btn btn-xs flex-nowrap text-xs"
             :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlayPause(audio)"
             :title="player.music?.src == audio.src ? frase : 'Escuchar'">
 
-            <AudioStateIcon :src="audio.src" />
+            <AudioStateIcon :src="audio.src" />xx
 
             <template v-if="player.music?.src == audio.src">
                 <span v-if="numerados">{{ frase }}</span>
