@@ -8,10 +8,14 @@
             </template>
             <EditorContent :editor="editor" class="tiptap-editor border border-gray-700 p-1" />
         </div>
-        <span v-if="full" v-show="editingMarkdown" @click="toggleMarkdown" class="btn btn-neutral btn-xs mb-2">
+        <div v-if="editingMarkdown && !dynamicComponent" class="flex gap-4 text-xl justify-center items-start w-full h-[532px]">
+            <Spinner /> Cargando...
+        </div>
+        <span v-else-if="editingMarkdown && dynamicComponent" @click="toggleMarkdown"
+            class="btn btn-neutral btn-xs mb-2">
             <Icon icon="mdi-close" /> Cerrar editor Markdown
         </span>
-        <MdEditor v-if="full" v-model="contenidoMD" v-show="editingMarkdown"
+        <component :is="dynamicComponent" v-if="full && editingMarkdown" v-model="contenidoMD"
             :toolbarsExclude="['save', 'sub', 'sup', 'katex', 'mermaid', 'htmlPreview', 'catalog', 'github', 'revoke', 'next', 'image']"
             :footers="[]" :preview="false" />
     </div>
@@ -24,7 +28,7 @@ import { Plugin, PluginKey } from 'prosemirror-state';
 
 // Definimos un componente asíncrono usando defineAsyncComponent
 //const MdEditor = defineAsyncComponent(() => import('md-editor-v3'))
-import { MdEditor } from 'md-editor-v3';
+// import { MdEditor } from 'md-editor-v3';
 
 import Highlight from '@tiptap/extension-highlight'
 import StarterKit from '@tiptap/starter-kit'
@@ -61,7 +65,6 @@ const props = defineProps({
 })
 
 
-
 const emit = defineEmits(['update:modelValue', 'change'])
 
 // CONVERT MD <-> HTML
@@ -96,7 +99,20 @@ watch(contenidoHtml, (value) => {
 // const editingHtml = ref(false)
 const editingMarkdown = ref(false)
 
+// MDEDITOR
+const dynamicComponent = ref(null)
+
+const loadMdEditor = () => {
+    import('md-editor-v3').then(module => {
+        dynamicComponent.value = module.MdEditor;
+    });
+};
+
+
 watch(editingMarkdown, (value) => {
+    if (value && dynamicComponent.value == null) {
+        loadMdEditor()
+    }
     if (value)
         contenidoMD.value = HtmlToMarkdown(contenidoHtml.value)
     else {
