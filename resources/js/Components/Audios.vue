@@ -4,7 +4,7 @@
             :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlayPause(audio)"
             :title="player.music?.src == audio.src ? frase : 'Escuchar'">
 
-            <AudioStateIcon :src="audio.src" />xx
+            <AudioStateIcon :src="audio.src" />
 
             <template v-if="player.music?.src == audio.src">
                 <span v-if="numerados">{{ frase }}</span>
@@ -41,7 +41,12 @@ const player = usePlayer()
 
 function clickPlayPause(audio) {
 
-    const titulo = !props.titulo ? audio.label : props.titulo + (props.numerados ? ` (${audio.index})` : '')
+    //let titulo =  audio.title || audio.filename || audio.label
+    //if(!titulo)
+    let titulo = !props.titulo ? audio.label : props.titulo + (props.numerados ? ` (${audio.index})` : '')
+
+    if(!titulo )
+    titulo = audio.filename
 
     if (player.music && player.music.src == audio.src) {
         switch (player.state) {

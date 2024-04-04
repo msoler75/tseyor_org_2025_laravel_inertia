@@ -8,7 +8,7 @@
                     <AudioStateIcon :src="player.music?.src" class="rounded-full overflow-hidden"/>
                 </button>
 
-                <TextAnimation :text="player.title + (player.artist ? ' ' + player.artist : '')"
+                <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
                     class="transform duration-300" :class="expanded ? 'w-100' : 'w-0'" @mousemove="activatePlayer" />
 
                 <div class="flex justify-end gap-1 w-32 font-mono transform scale-y-150" @mousemove="activatePlayer">
