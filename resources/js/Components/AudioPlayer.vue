@@ -5,7 +5,7 @@
                 <button type="button"
                     class="btn btn-secondary rounded-full flex justify-center items-center p-1 text-4xl transform scale-75"
                     @click="player.playPause" :title="player.state == 'error' ? 'Error al cargar el audio' : ''">
-                    <AudioStateIcon :src="player.music?.src" />
+                    <AudioStateIcon :src="player.music?.src" class="rounded-full overflow-hidden"/>
                 </button>
 
                 <TextAnimation :text="player.title + (player.artist ? ' ' + player.artist : '')"
