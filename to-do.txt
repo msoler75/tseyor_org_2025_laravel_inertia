@@ -10,6 +10,8 @@ EQUIPOS:
 -coordinador ->configurar->editores->tiptap simple
 
 
+look webdav:
+https://help.dreamhost.com/hc/en-us/articles/216660108-WebDAV-overview
 
 
 -Boletines

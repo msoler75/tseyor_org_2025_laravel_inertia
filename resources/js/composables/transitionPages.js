@@ -1,5 +1,6 @@
 import {useNav} from "../Stores/nav.js"
 
+export default function setTransitionPages(router) {
 const nav = useNav()
 
 // console.log({page})
@@ -98,3 +99,5 @@ router.on('success', (event) => {
 router.on('finish', (event) => {
     console.log(`router: finish. Page loaded ${event.detail.visit.url}`)
 })
+
+}

@@ -1,5 +1,5 @@
 <template>
-    <Link :as="as" :data="data" :href="href" :method="method" :headers="headers" @click.capture="handleClick"
+    <Link :as="asIF" :data="data" :href="href" :method="method" :headers="headers" @click.capture="handleClick"
         :preserve-scroll="preserveScroll" :preserve-state="preserveState" :replace="replace" :only="only"
         :on-before="onBefore" :on-start="onStart" :on-progress="onProgress" :on-finish="onFinish"
         :on-cancel-token="onCancelToken" :on-cancel="onCancel" :on-success="onSuccess"
@@ -15,10 +15,6 @@ const nav = useNav()
 
 const props = defineProps(
     {
-        as: {
-            type: String,
-            default: undefined
-        },
         data: {
             type: Object,
             default: undefined
@@ -28,6 +24,10 @@ const props = defineProps(
             required: true
         },
         method: {
+            type: String,
+            default: undefined
+        },
+        as: {
             type: String,
             default: undefined
         },
@@ -97,6 +97,14 @@ const props = defineProps(
         }
     }
 )
+
+const asIF = computed( () => {
+                if (props.method) {
+                    return 'button'
+                }
+                return undefined
+            }
+        )
 
 function handleClick() {
     if (props.preservePage)
