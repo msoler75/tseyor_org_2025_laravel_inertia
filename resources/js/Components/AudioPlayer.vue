@@ -147,10 +147,6 @@ import usePlayer from '@/Stores/player'
 
 const player = usePlayer()
 
-// console.log('player init')
-// player.init()
-
-
 // expansión de audioplayer
 
 const expanded = ref(false)
@@ -233,7 +229,6 @@ const formatTime = (ts) => {
         seconds.toString().padStart(2, "0")
         : minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
 };
-
 
 
 </script>

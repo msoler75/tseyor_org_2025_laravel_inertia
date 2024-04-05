@@ -3,8 +3,11 @@ import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount, markRaw } from 'vue';
 import { useDark, useToggle } from "@vueuse/core";
 import usePermisos from '@/Stores/permisos'
+import usePlayer from '@/Stores/player'
 // import usePlayer from '@/Stores/player'
-import * as trp from '@/composables/transitionPages.js'
+import setTransitionPages  from '@/composables/transitionPages.js'
+
+
 
 // console.log('app initiating...')
 
@@ -13,6 +16,7 @@ import * as trp from '@/composables/transitionPages.js'
 const permisos = usePermisos()
 const page = usePage()
 const nav = useNav()
+
 
 if (page.props.auth?.user) {
     permisos.cargarPermisos()
@@ -23,25 +27,8 @@ const TIME_NAV_INACTIVE = 1000
 var timerActivateNav = null
 
 
-// si el mouse sale de la ventana de la aplicación, cerramos el menú
-document.addEventListener("mouseleave", function (event) {
-    if (screen.width >= 1024) {
-        clearTimeout(timerActivateNav)
-        deactivateNav.value = true
-        // cerramos los submenús
-        nav.closeTabs()
-    }
-})
 
-// si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante 2 segundos
-document.addEventListener("mouseenter", function (event) {
-    if (screen.width >= 1024) {
-        clearTimeout(timerActivateNav)
-        timerActivateNav = setTimeout(() => {
-            deactivateNav.value = false
-        }, TIME_NAV_INACTIVE)
-    }
-})
+
 
 
 
@@ -81,24 +68,9 @@ function updateDarkState() {
         document.documentElement.removeAttribute('data-theme')
 }
 
-watch(isDark, value => {
-    updateDarkState()
-})
 
-console.log('app.update dark state')
-updateDarkState()
 
-// esto lo hacemos únicamente para el caso muy particular de que globalsearch pueda tambien ponerse en dark mode en la portada
-function updateBodyTheme() {
-    const themePortada = portada.value && nav.scrollY < 300 ? 'winter' : ''
-    document.querySelector("body").setAttribute('data-theme', themePortada)
-}
 
-watch(() => `${nav.scrollY}+${portada.value}`, () => {
-    updateBodyTheme()
-})
-
-updateBodyTheme()
 
 
 
@@ -132,17 +104,70 @@ const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset
 }
 
-const dynamicAudioPlayer = ref(null);
+// const dynamicAudioPlayer = ref(null);
 
 onMounted(() => {
+    // inicializamos la navegación pasando la función "route" del componente, en el cliente
+    nav.init(route)
+
+    handleMouse()
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    setTimeout(() => {
+    // cargamos el componente AudioPlayer más tarde
+    /* setTimeout(() => {
         import('@/Components/AudioPlayer.vue').then(module => {
             dynamicAudioPlayer.value = markRaw(module.default);
         });
-    }, 5000)
+    }, 5000)*/
+
+    // aplicamos configuración de transiciones de pagina (fadeout y scroll)
+    setTransitionPages(router)
+
+    // modo Dark
+    watch(isDark, value => {
+        updateDarkState()
+    })
+
+    updateDarkState()
+
+
+    // para globalSearch
+    // esto lo hacemos únicamente para el caso muy particular de que globalsearch pueda tambien ponerse en dark mode en la portada
+    function updateBodyTheme() {
+        const themePortada = portada.value && nav.scrollY < 300 ? 'winter' : ''
+        document.querySelector("body").setAttribute('data-theme', themePortada)
+    }
+
+    watch(() => `${nav.scrollY}+${portada.value}`, () => {
+        updateBodyTheme()
+    })
+
+    updateBodyTheme()
+
+
+    // cuando el mouse sale de pantalla
+    function handleMouse() {
+        // si el mouse sale de la ventana de la aplicación, cerramos el menú
+        document.addEventListener("mouseleave", function (event) {
+            if (screen.width >= 1024) {
+                clearTimeout(timerActivateNav)
+                deactivateNav.value = true
+                // cerramos los submenús
+                nav.closeTabs()
+            }
+        })
+
+        // si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante 2 segundos
+        document.addEventListener("mouseenter", function (event) {
+            if (screen.width >= 1024) {
+                clearTimeout(timerActivateNav)
+                timerActivateNav = setTimeout(() => {
+                    deactivateNav.value = false
+                }, TIME_NAV_INACTIVE)
+            }
+        })
+    }
 });
 
 
@@ -150,7 +175,7 @@ onBeforeUnmount(() => {
     window.removeEventListener('scroll', handleScroll);
 });
 
-
+// no se utiliza (no es necesario, la página carga muy rápido)
 const loader = ref(false)
 loader.value = false
 /*
@@ -163,6 +188,7 @@ axios.get(route('setting', 'navigation'))
 */
 
 // const route = useRoute();
+
 
 </script>
 
@@ -186,7 +212,8 @@ axios.get(route('setting', 'navigation'))
 
         <Banner />
 
-        <component :is="dynamicAudioPlayer" v-if="dynamicAudioPlayer" />
+        <!-- <component :is="dynamicAudioPlayer" v-if="dynamicAudioPlayer" /> -->
+        <AudioPlayer />
 
         <div class="bg-base-200 flex-grow flex flex-col">
             <nav class="w-full border-gray-300  bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "

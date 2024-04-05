@@ -33,6 +33,7 @@ declare global {
   const replaceQuillEditorClasses: typeof import('./resources/js/composables/markdown.js')['replaceQuillEditorClasses']
   const router: typeof import('@inertiajs/vue3')['router']
   const s: typeof import('@/Stores/nav.js')['s']
+  const transitionPages: typeof import('./resources/js/composables/transitionPages.js')['default']
   const u: typeof import('@/Stores/nav.js')['u']
   const ucFirst: typeof import('./resources/js/composables/textutils.js')['ucFirst']
   const ucFirstAllWords: typeof import('./resources/js/composables/textutils.js')['ucFirstAllWords']

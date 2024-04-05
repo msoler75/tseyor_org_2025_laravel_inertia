@@ -23,17 +23,30 @@ export default defineConfig({
     alias: {
         ziggy: 'vendor/tightenco/ziggy/dist/vue.es.js'
     },
-},
+  },
   plugins: [
     laravel({
-        input: [
-            "resources/js/app.js",
-            "resources/js/backpack/app.js",
-            "resources/css/admin.css",
-          ],
+      input: [
+        "resources/js/app.js",
+        "resources/js/backpack/app.js",
+        "resources/css/admin.css",
+      ],
       // ssr: "resources/js/ssr.js",
       refresh: true,
     }),
+    {
+      name: "ziggy",
+      enforce: "post",
+      handleHotUpdate({ server, file }) {
+        if (file.includes("/routes/") && file.endsWith(".php")) {
+          exec(
+            "php artisan ziggy:generate",
+            (error, stdout) =>
+              error === null && console.log(`  > Ziggy routes generated!`)
+          );
+        }
+      },
+    },
     vue({
       template: {
         transformAssetUrls: {

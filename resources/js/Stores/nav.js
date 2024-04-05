@@ -1,5 +1,8 @@
 import navigationItems from "../navigation.js";
 
+var route = null
+
+
 const relativeUrl = (url) => {
     console.log('relativeUrl', url)
     if(!url) return ""
@@ -44,7 +47,7 @@ const mapSubmenu = (submenu) => ({
 
 const state = reactive({
     //items: [],
-    items: navigationItems.map(mapItem),
+    items: [],
     ghostTab: null, //?
     timer: null,
     announce: false,
@@ -58,6 +61,10 @@ const state = reactive({
     dontFadeout: false,
     navigating: false,
     dontScroll: false,
+    init(_routeFunc) {
+        route = _routeFunc
+        this.items = navigationItems.map(mapItem)
+    },    
     in (tab, url) {
       // comprueba si la ruta está en alguno de los items del tab
       const rutaRelativa = relativeUrl(url);
@@ -150,3 +157,4 @@ state.activeTab = computed(() => {
 export function useNav() {
     return state
 }
+
