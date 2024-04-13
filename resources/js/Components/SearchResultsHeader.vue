@@ -3,6 +3,7 @@
         <div v-if="queryString && results.total > 0" :class="classes">
             {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}<span v-html="stringArguments"/> :
         </div>
+        <div v-else-if="queryString && !validSearch">Demasiados resultados<span v-html="stringArguments"/></div>
         <div v-else-if="queryString && results.total == 0">No hay resultados<span v-html="stringArguments"/></div>
     </div>
 </template>
@@ -19,7 +20,8 @@ const props = defineProps({
     },
     classes: {default: 'mb-5'},
     category: {},
-    arguments: {}
+    arguments: {},
+    validSearch: {type: Boolean, default: true}
 })
 
 const queryString = window.location.search.replace(/[\?&]page=\d+/, '').replace('?categoria=_', '')

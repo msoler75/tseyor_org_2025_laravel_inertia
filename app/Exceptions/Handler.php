@@ -12,7 +12,6 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use App\Pigmalion\BusquedasHelper;
-use App\Models\Contenido;
 
 class Handler extends ExceptionHandler
 {
@@ -66,14 +65,9 @@ class Handler extends ExceptionHandler
             $path = $request->path();
             $buscar = preg_replace("/[\?\/\.]/", " ", $path); // quitar caracteres no permitidos en $path
 
-            $buscarFiltrado = BusquedasHelper::descartarPalabrasComunes($buscar);
 
-            $resultados = Contenido::search($buscarFiltrado)->paginate(7); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
+            $resultados = BusquedasHelper::buscarContenidos($buscar);
 
-            if (strlen($buscarFiltrado) < 3)
-                BusquedasHelper::limpiarResultados($resultados, $buscarFiltrado, true);
-            else
-                BusquedasHelper::formatearResultados($resultados, $buscarFiltrado, true);
 
 
             return Inertia::render('Error', [
@@ -108,6 +102,15 @@ class Handler extends ExceptionHandler
             }
 
             // dd($exception);
+
+
+       /* Log::error('An exception occurred', [
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTraceAsString(),
+        ]);
+        */
 
 
         // si no, mostrarmos vista de error al usaurio
