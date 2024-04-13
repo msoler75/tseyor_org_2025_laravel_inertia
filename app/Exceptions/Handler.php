@@ -6,6 +6,7 @@ use Illuminate\Database\QueryException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
@@ -51,6 +52,12 @@ class Handler extends ExceptionHandler
     {
         // Guardar la excepción en el log con información detallada
         Log::error($exception->getMessage(), ['exception' => $exception]);
+
+        // en algunos casos hemos de pasar "arriba" la excepción para que sea gestionada como corresponde
+        // ValidationException: login
+        if($exception instanceof ValidationException) {
+            return parent::render($request, $exception);
+        }
 
 
         if ($exception instanceof NotFoundHttpException) {
