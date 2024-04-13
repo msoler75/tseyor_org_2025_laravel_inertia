@@ -2,51 +2,138 @@
 
 namespace App\Pigmalion;
 
+use App\Models\Contenido;
 use Illuminate\Support\Facades\Log;
 
 class BusquedasHelper
 {
 
     public static $palabrasComunes = [
-        'a', 'al', 'ante', 'bajo', 'cabe', 'con', 'contra', 'de', 'del', 'desde', 'durante', 'en', 'entre', 'hacia', 'que',
-        'hasta', 'mediante', 'para', 'por', 'sin', 'sobre', 'tras', 'el', 'lo', 'los', 'las',// 'la',
-        'las', 'un', 'una', 'unos', 'unas', 'lo', // 'alguno', 'alguna', 'algunos', 'algunas', 'ningún', 'ningun', 'ninguna',
-        'ellos', 'ellas', 'me', 'te', 'se', 'nos', 'os', 'le', 'les',
-        'y', 'e', 'o', 'u', 'pero', 'sin', 'aunque', 'porque', 'pues', 'así', 'asi', 'entonces',
-        'entonces', 'bien', 'además', 'ademas',
-        'tampoco', 'sino', 'también', 'tambien', 'etcétera', 'etcétera', 'etc.', 'etc', 'etc...',
+        'a',
+        'al',
+        'ante',
+        'bajo',
+        'cabe',
+        'con',
+        'contra',
+        'de',
+        'del',
+        'desde',
+        'durante',
+        'en',
+        'entre',
+        'hacia',
+        'que',
+        'hasta',
+        'mediante',
+        'para',
+        'por',
+        'sin',
+        'sobre',
+        'tras',
+        'el',
+        'lo',
+        'los',
+        'las',// 'la',
+        'las',
+        'un',
+        'una',
+        'unos',
+        'unas',
+        'lo', // 'alguno', 'alguna', 'algunos', 'algunas', 'ningún', 'ningun', 'ninguna',
+        'ellos',
+        'ellas',
+        'me',
+        'te',
+        'se',
+        'nos',
+        'os',
+        'le',
+        'les',
+        'y',
+        'e',
+        'o',
+        'u',
+        'pero',
+        'sin',
+        'aunque',
+        'porque',
+        'pues',
+        'así',
+        'asi',
+        'entonces',
+        'entonces',
+        'bien',
+        'además',
+        'ademas',
+        'tampoco',
+        'sino',
+        'también',
+        'tambien',
+        'etcétera',
+        'etcétera',
+        'etc.',
+        'etc',
+        'etc...',
     ];
 
-    public static function descartarPalabrasComunes($buscar)
+
+    public static function descartarPalabrasComunes($busqueda)
     {
-        // 1. Separar la frase $buscar en palabras, utilizando espacios y otros símbolos de puntuación como separadores
-        $palabras = preg_split('/[\s\p{P}]+/', strtolower($buscar), -1, PREG_SPLIT_NO_EMPTY);
+        // 1. Separar la frase $busqueda en palabras, utilizando espacios y otros símbolos de puntuación como separadores
+        $palabras = preg_split('/[\s\p{P}]+/', strtolower($busqueda), -1, PREG_SPLIT_NO_EMPTY);
 
         // 2. Descartar las palabras habituales, pronombres y artículos
+        $removidas = [];
+        $filtradas = [];
 
-        $palabrasFiltradas = array_filter($palabras, function ($palabra) {
-            return !in_array(strtolower($palabra), BusquedasHelper::$palabrasComunes);
-        });
+        foreach ($palabras as $palabra) {
+            $descartar = in_array(strtolower($palabra), BusquedasHelper::$palabrasComunes);
+            if ($descartar)
+                $removidas[] = $palabra;
+            else
+                $filtradas[] = $palabra;
+        }
 
-        // 3. Devolver el string con las palabras no descartadas. Si queda vacío, se devuelve el mismo string original
-        $resultado = implode(' ', $palabrasFiltradas);
-        return empty($resultado) ? $buscar : $resultado;
+        // 3. Devolver el string con las palabras no descartadas, y un string con palabras descartadas. Si queda vacío, se devuelve el mismo string original
+        $filtradas = implode(' ', $filtradas);
+        $removidas = implode(' ', $removidas);
+
+       return [$filtradas, $removidas];
+    }
+
+    public static function separarPalabrasComunes($busqueda) {
+        list($filtradas, $removidas) = self::descartarPalabrasComunes($busqueda);
+        return empty($filtradas) ? [$busqueda, ""] : [$filtradas, $removidas];
     }
 
 
+    /**
+     * Valida que la búsqueda tenga palabras relevantes y no sea vacía
+     */
+    public static function validarBusqueda($busqueda)
+    {
+        list($relevante, $comunes) = self::descartarPalabrasComunes($busqueda);
+        return trim($busqueda) && $relevante;
+    }
 
     public static function formatearResultados($resultados, $busqueda, $soloTitulo = false, $extraeTodos = false)
     {
-        $options  = ['tagOptions' => ['class' => 'search-term']];
+        $options = ['tagOptions' => ['class' => 'search-term']];
         $h = new ExtendedHighlighter();
 
+
+        list($words_primary, $words_secondary) = self::separarPalabrasComunes($busqueda);
+
         $resultados
-            ->transform(function ($item) use ($h, $options, $busqueda, $soloTitulo, $extraeTodos) {
+            ->transform(function ($item) use ($h, $options, $busqueda, $words_primary, $words_secondary, $soloTitulo, $extraeTodos) {
 
                 // Log::info('formatearResultados ' . $item->id);
 
+                // $_x = new \App\T("BusquedasHelper", "formatearResultados_item");
+
                 if ($soloTitulo)
-                    unset($item['descripcion']);
+                    unset ($item['descripcion']);
                 else {
                     // Limpiar el texto y eliminar elementos no deseados
                     if ($item->texto && strlen($item->texto) > 50) {
@@ -56,32 +143,33 @@ class BusquedasHelper
                         // eliminamos caracters de markdown
                         $textoLimpio = preg_replace("/[#*_]/", "", $textoLimpio);
                         $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
-                    } else $textoLimpio = $item->descripcion;
+                    } else
+                        $textoLimpio = $item->descripcion;
 
 
                     // extraemos la parte más relevante
-                    $parteRelevante = $h->extractRelevant($busqueda, $textoLimpio, 400);
-                    $item->descripcion = $h->highlight($parteRelevante, $busqueda, "em", $options);
+                    $parteRelevante = $h->extractRelevant($words_primary, $textoLimpio, 400);
+                    $item->descripcion = $h->highlightPonderated($parteRelevante, $words_primary, $words_secondary, "em", $options);
 
-                    if($extraeTodos)
-                    {
+                    if ($extraeTodos) {
                         // extraemos todos los extractos que contienen algo del texto buscado
-                        $extractos = $h->extractRelevantAll($busqueda, $textoLimpio, 500);
-                        foreach($extractos as $idx=>$extracto)
-                            $extractos[$idx]= $h->highlight($extracto, $busqueda, "em", $options);
+                        $extractos = $h->extractRelevantAll($words_primary, $textoLimpio, 500);
+                        foreach ($extractos as $idx => $extracto) {
+                            $extractos[$idx] = $h->highlightPonderated($extracto, $words_primary,$words_secondary, "em", $options);
+                        }
                         $item->extractos = $extractos;
                     }
                 }
 
                 // Realizar el mismo proceso para el campo 'titulo'
-                if($item->titulo)
-                $item->titulo = $h->highlight($item->titulo, $busqueda, "em", $options);
-                if($item->nombre)
-                $item->nombre = $h->highlight($item->nombre, $busqueda, "em", $options);
+                if ($item->titulo)
+                    $item->titulo = $h->highlightPonderated($item->titulo, $words_primary,$words_secondary, "em", $options);
+                if ($item->nombre)
+                    $item->nombre = $h->highlightPonderated($item->nombre, $words_primary,$words_secondary, "em", $options);
 
-                unset($item['texto']);
-                unset($item['texto_busqueda']);
-                unset($item['visibilidad']);
+                unset ($item['texto']);
+                unset ($item['texto_busqueda']);
+                unset ($item['visibilidad']);
                 return $item;
             });
     }
@@ -93,24 +181,43 @@ class BusquedasHelper
 
     public static function limpiarResultados($resultados, $busqueda, $soloTitulo = false)
     {
-        $options  = ['tagOptions' => ['class' => 'search-term']];
+        $options = ['tagOptions' => ['class' => 'search-term']];
         $h = new Highlighter();
+        
+        list($words_primary, $words_secondary) = self::separarPalabrasComunes($busqueda);
 
         $resultados
-            ->transform(function ($item) use ($h, $options, $busqueda, $soloTitulo) {
+            ->transform(function ($item) use ($h, $options, $busqueda, $words_primary, $words_secondary, $soloTitulo) {
 
-                if($soloTitulo)
-                    unset($item['descripcion']);
-                else
-                $item->descripcion = $h->highlight($item->descripcion, $busqueda, "em", $options);
+                if ($soloTitulo)
+                    unset ($item['descripcion']);
+                else 
+                    $item->descripcion = $h->highlightPonderated($item->descripcion, $words_primary,$words_secondary, "em", $options);
 
                 // Realizar el mismo proceso para el campo 'titulo'
-                $item->titulo = $h->highlight($item->titulo, $busqueda, "em", $options);
+                $item->titulo = $h->highlightPonderated($item->titulo, $words_primary,$words_secondary, "em", $options);
 
-                unset($item['texto']);
-                unset($item['texto_busqueda']);
-                unset($item['visibilidad']);
+                unset ($item['texto']);
+                unset ($item['texto_busqueda']);
+                unset ($item['visibilidad']);
                 return $item;
             });
     }
+
+    public static function buscarContenidos($buscar)
+    {
+        list($buscarRelevante, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
+
+        $resultados = Contenido::search($buscarRelevante)->paginate(7); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
+
+        if (strlen($buscarRelevante) < 3)
+            BusquedasHelper::limpiarResultados($resultados, $buscar, true);
+        else
+            BusquedasHelper::formatearResultados($resultados, $buscar, true);
+
+
+        return $resultados;
+    }
+
+
 }

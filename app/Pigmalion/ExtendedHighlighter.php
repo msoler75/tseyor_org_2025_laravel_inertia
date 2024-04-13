@@ -5,14 +5,34 @@ namespace App\Pigmalion;
 
 use TeamTNT\TNTSearch\Support\Highlighter;
 
+define("NEAR_OFFSET", 12);
+
+
+
 class ExtendedHighlighter extends Highlighter
 {
 
 
+    /* public function extractRelevant($words, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
+    {
+
+        $_x = new \App\T("ExtendedHighlighter", "extractRelevant");
+        // dd($words);
+
+        return parent::extractRelevant($words, $fulltext, $rellength, $prevcount, $indicator);
+
+    } */
+
+
     public function extractRelevantAll($words, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
     {
+
+
+        // $_x = new \App\T("ExtendedHighlighter", "extractRelevantAll");
+
         // descartamos palabras comunes y masivas
-        $words = BusquedasHelper::descartarPalabrasComunes($words);
+        //list ($words, $secundarias) = BusquedasHelper::descartarPalabrasComunes($words);
+
 
         // quitamos la palabra "LA"
         $words = preg_replace("/\bla\b/", "", $words);
@@ -34,7 +54,8 @@ class ExtendedHighlighter extends Highlighter
             $startpos = $this->_determineSnipLocation([$location], $prevcount);
 
             // we jump if we are too close to previous position
-            if($startpos < $prevStart + $rellength ) continue;
+            if ($startpos < $prevStart + $rellength)
+                continue;
 
             // if we are going to snip too much...
             if ($textlength - $startpos < $rellength) {
@@ -75,9 +96,9 @@ class ExtendedHighlighter extends Highlighter
     }
 
 
-      /**
-       * Override
-       */
+    /**
+     * Override
+     */
     public function _extractLocations($words, $fulltext)
     {
         $fulltext = $this->_normalizeText($fulltext);
@@ -85,10 +106,10 @@ class ExtendedHighlighter extends Highlighter
         foreach ($words as $word) {
             $word = $this->_normalizeText($word);
             $wordlen = mb_strlen($word);
-            $loc     = mb_stripos($fulltext, $word);
+            $loc = mb_stripos($fulltext, $word);
             while ($loc !== false) {
                 $locations[] = $loc;
-                $loc         = mb_stripos($fulltext, $word, $loc + $wordlen);
+                $loc = mb_stripos($fulltext, $word, $loc + $wordlen);
             }
         }
         $locations = array_unique($locations);
@@ -98,7 +119,7 @@ class ExtendedHighlighter extends Highlighter
         return $locations;
     }
 
-    private function _normalizeText(string $str) : string
+    private function _normalizeText(string $str): string
     {
         // Quitamos los acentos y pasamos a minúsculas
         $str = mb_ereg_replace('[áÁ]', 'a', $str);
@@ -113,8 +134,8 @@ class ExtendedHighlighter extends Highlighter
 
 
     /**
-       * Override to accept accents
-       */
+     * Override to accept accents
+     */
     public function highlight($text, $needle, $tag = 'em', $options = [])
     {
         $this->options = array_merge($this->options, $options);
@@ -127,25 +148,25 @@ class ExtendedHighlighter extends Highlighter
             $tagAttributes = ' ' . trim($tagAttributes);
         }
 
-        $highlight = '<' . $tag . $tagAttributes .'>\1</' . $tag . '>';
+        $highlight = '<' . $tag . $tagAttributes . '>\1</' . $tag . '>';
 
 
 
-        $needle    = preg_split($this->tokenizer->getPattern(), $needle, -1, PREG_SPLIT_NO_EMPTY);
+        $needle = preg_split($this->tokenizer->getPattern(), $needle, -1, PREG_SPLIT_NO_EMPTY);
 
 
 
         // Select pattern to use
         if ($this->options['simple']) {
-            $pattern    = '#(%s)#';
+            $pattern = '#(%s)#';
             $sl_pattern = '#(%s)#';
         } else {
-            $pattern    = '#(?!<.*?)(%s)(?![^<>]*?>)#';
+            $pattern = '#(?!<.*?)(%s)(?![^<>]*?>)#';
             $sl_pattern = '#<a\s(?:.*?)>(%s)</a>#';
         }
 
-	    // Add Forgotten Unicode
-	    $pattern .= 'u';
+        // Add Forgotten Unicode
+        $pattern .= 'u';
 
         // Case sensitivity
         if (!($this->options['caseSensitive'])) {
@@ -172,13 +193,101 @@ class ExtendedHighlighter extends Highlighter
             // Strip links
             if ($this->options['stripLinks']) {
                 $sl_regex = sprintf($sl_pattern, $needle_s);
-                $text     = preg_replace($sl_regex, '\1', $text);
+                $text = preg_replace($sl_regex, '\1', $text);
             }
 
             $regex = sprintf($pattern, $needle_s);
-            $text  = preg_replace($regex, $highlight, $text);
+            $text = preg_replace($regex, $highlight, $text);
         }
 
         return $text;
+    }
+
+
+
+
+    /**
+     * Only if words are near to other highlighted words
+     */
+    public function highlightNear($text, $needle, $tag = 'em', $options = [])
+    {
+        $this->options = array_merge($this->options, $options);
+
+        $tagAttributes = '';
+        if (count($this->options['tagOptions'])) {
+            foreach ($this->options['tagOptions'] as $attr => $value) {
+                $tagAttributes .= $attr . '="' . $value . '" ';
+            }
+            $tagAttributes = ' ' . trim($tagAttributes);
+        }
+
+        $highlight = '<' . $tag . $tagAttributes . '>\1</' . $tag . '>';
+
+        $needle = preg_split($this->tokenizer->getPattern(), $needle, -1, PREG_SPLIT_NO_EMPTY);
+
+
+
+        // Select pattern to use
+        if ($this->options['simple']) {
+            $pattern = '#(%s)#';
+            $sl_pattern = '#(%s)#';
+        } else {
+            $pattern = '#(?!<.*?)(%s)(?![^<>]*?>)#';
+            $sl_pattern = '#<a\s(?:.*?)>(%s)</a>#';
+        }
+
+        // Add Forgotten Unicode
+        $pattern .= 'u';
+
+        // Case sensitivity
+        if (!($this->options['caseSensitive'])) {
+            $pattern .= 'i';
+            $sl_pattern .= 'i';
+        }
+
+        $needle = (array) $needle;
+        foreach ($needle as $needle_s) {
+            $needle_s = preg_quote($needle_s);
+
+            $needle_s = mb_ereg_replace('[aáÁ]', '[aáÁ]', $needle_s);
+            $needle_s = mb_ereg_replace('[eéÉ]', '[eéÉ]', $needle_s);
+            $needle_s = mb_ereg_replace('[iíÍ]', '[iíÍ]', $needle_s);
+            $needle_s = mb_ereg_replace('[oóÓ]', '[oóÓ]', $needle_s);
+            $needle_s = mb_ereg_replace('[uúÚ]', '[uúÚ]', $needle_s);
+
+
+            // Escape needle with optional whole word check
+            if ($this->options['wholeWord']) {
+                $needle_s = '\b' . $needle_s . '\b';
+            }
+
+            // Strip links
+            if ($this->options['stripLinks']) {
+                $sl_regex = sprintf($sl_pattern, $needle_s);
+                $text = preg_replace($sl_regex, '\1', $text);
+            }
+
+            $regex = sprintf($pattern, $needle_s);
+            $text = preg_replace_callback($regex, function($match) use ($text, $tag, $highlight) {
+                $word = $match[0][0];
+                $pos = $match[0][1];
+                // miramos si desde la posición $pos, 12 unidades hacia delante o 12 hacia atrás hay alguna etiqueta <em
+                // si la hay, es válida la coincidencia
+                $frag = substr($text, max(0,$pos - NEAR_OFFSET), strlen($word) + NEAR_OFFSET*2);
+                if(preg_match("#</?$tag#i", $frag)) 
+                    return preg_replace("#(.*)#", $highlight, $word);
+                return $match[0][0];
+            }, $text, -1, $count, PREG_OFFSET_CAPTURE);
+        }
+
+        return $text;
+    }
+
+
+    public function highlightPonderated($text, $words_relevant, $words_irrelevant, $tag = 'em', $options = []) {
+        $result = $this->highlight($text, $words_relevant, $tag, $options);
+        if($words_irrelevant)
+            $result = $this->highlightNear($result, $words_irrelevant, $tag, $options);
+        return $result;
     }
 }

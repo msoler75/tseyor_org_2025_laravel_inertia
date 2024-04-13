@@ -54,6 +54,7 @@ class ContenidosController extends Controller
 
     /**
      * Buscador global
+     * to-do: unificar tal vez con BusquedasHelper::buscarContenidos
      * */
     public function search(Request $request)
     {
@@ -61,7 +62,11 @@ class ContenidosController extends Controller
 
         $collections = $request->input('collections');
 
-        $buscarFiltrado = BusquedasHelper::descartarPalabrasComunes($buscar);
+        if(!BusquedasHelper::validarBusqueda($buscar)) {
+            return response()->json([], 200);
+        }
+
+        list($buscarFiltrado, $comunes) = BusquedasHelper::descartarPalabrasComunes($buscar);
 
         // https://github.com/teamtnt/laravel-scout-tntsearch-driver?tab=readme-ov-file#constraints
         $contenido = new Contenido;
@@ -75,10 +80,10 @@ class ContenidosController extends Controller
         // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
         $resultados = Contenido::search($buscarFiltrado)->constrain($contenido)->paginate(64);
 
-        if (strlen($buscarFiltrado) < 3)
-            BusquedasHelper::limpiarResultados($resultados, $buscarFiltrado, true);
-        else
-            BusquedasHelper::formatearResultados($resultados, $buscarFiltrado, true);
+        //if (strlen($buscarFiltrado) < 3)
+          //  BusquedasHelper::limpiarResultados($resultados, $buscarFiltrado, true);
+        //else
+            BusquedasHelper::formatearResultados($resultados, $buscar, true);
 
         return response()->json($resultados, 200);
     }

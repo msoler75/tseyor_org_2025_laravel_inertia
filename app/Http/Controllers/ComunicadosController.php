@@ -45,7 +45,7 @@ class ComunicadosController extends Controller
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
-            $resultados = Comunicado::search($buscar);
+            $resultados = BusquedasHelper::validarBusqueda($buscar) ? Comunicado::search($buscar) : Comunicado::whereRaw("1=0");
         } else {
             // obtiene los items sin busqueda
             $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano', 'imagen'])
@@ -80,7 +80,8 @@ class ComunicadosController extends Controller
             'orden' => $orden,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'completo' => $completo
+            'completo' => $completo,
+            'busquedaValida' => $buscar && BusquedasHelper::validarBusqueda($buscar)
         ])
             ->withViewData(SEO::get('comunicados'));
     }

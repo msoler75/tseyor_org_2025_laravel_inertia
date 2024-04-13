@@ -78,9 +78,10 @@
                     <SearchResultsHeader :results="listado" :arguments="busqueda"
                         v-show="!vistaBusquedaCompleta || (vistaBusquedaCompleta && !buscando && (filtrado || (listado.data?.length && listado.data[0].extractos)))"
                         :class="listado.data?.length==0?'mb-64':''"
+                        :valid-search="busquedaValida"
                         />
-
-                </div>
+                        
+                    </div>
 
 
                 <GridAppear v-if="(selectors.vistaComunicados == VISTA_TARJETAS) && listado.data && listado.data?.length > 0"
@@ -193,7 +194,8 @@ const props = defineProps({
     buscar: {},
     filtrado: {},
     listado: {},
-    completo: {}
+    completo: {},
+    busquedaValida: Boolean
 });
 
 // Obtener la fecha actual

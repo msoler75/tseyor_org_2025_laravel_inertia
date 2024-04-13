@@ -66,8 +66,8 @@ $response = $kernel->handle(
     $request = Request::capture()
 );
 
- //T::xprint();
- //die;
+// App\T::xprint();
+// die;
 
 $response->send();
 
