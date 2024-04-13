@@ -137,8 +137,9 @@
         @apply block w-full px-4 py-2 leading-tight bg-base-100 border border-gray-400 rounded shadow appearance-none focus:outline-none;
     }
 
+    textarea,
     select {
-        @apply border-gray-400;
+        @apply dark:text-gray-100 dark:bg-base-100;
     }
 
     form .error {
