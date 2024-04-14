@@ -50,11 +50,19 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         // Guardar la excepción en el log con información detallada
-        Log::error($exception->getMessage(), ['exception' => $exception]);
+        // Log::error($exception->getMessage(), ['exception' => $exception]);
+
+        Log::error('An exception occurred', [
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTraceAsString(),
+        ]);
+
 
         // en algunos casos hemos de pasar "arriba" la excepción para que sea gestionada como corresponde
         // ValidationException: login
-        if($exception instanceof ValidationException) {
+        if ($exception instanceof ValidationException) {
             return parent::render($request, $exception);
         }
 
@@ -65,10 +73,7 @@ class Handler extends ExceptionHandler
             $path = $request->path();
             $buscar = preg_replace("/[\?\/\.]/", " ", $path); // quitar caracteres no permitidos en $path
 
-
             $resultados = BusquedasHelper::buscarContenidos($buscar);
-
-
 
             return Inertia::render('Error', [
                 'codigo' => $exception->getStatusCode(),
@@ -76,9 +81,9 @@ class Handler extends ExceptionHandler
                 'mensaje' => 'No se encuentra el recurso solicitado.',
                 'alternativas' => $resultados
             ])->toResponse($request);
-            }
+        }
 
-        if($exception instanceof UnauthorizedHttpException) {
+        if ($exception instanceof UnauthorizedHttpException) {
             return Inertia::render('Error', [
                 'codigo' => $exception->getStatusCode(),
                 'titulo' => 'Acceso denegado',
@@ -86,32 +91,20 @@ class Handler extends ExceptionHandler
             ])->toResponse($request);
         }
 
-        if($exception instanceof AccessDeniedHttpException ||  (method_exists($exception, 'getStatusCode') && $exception->getStatusCode() == 403)) {
+        if ($exception instanceof AccessDeniedHttpException || (method_exists($exception, 'getStatusCode') && $exception->getStatusCode() == 403)) {
             return Inertia::render('Error', [
                 'codigo' => $exception->getStatusCode(),
                 'titulo' => 'Acceso no permitido',
                 'mensaje' => $exception->getMessage(),
-                ])->toResponse($request);
-            }
+            ])->toResponse($request);
+        }
 
-            // Verificar si estamos en modo desarrollo
-            if (config('app.debug')) {
-                // Devolver la renderización de la excepción por defecto
-                return parent::render($request, $exception);
-                //return $this->prepareJsonResponse($request, $exception);
-            }
-
-            // dd($exception);
-
-
-       /* Log::error('An exception occurred', [
-            'message' => $exception->getMessage(),
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'trace' => $exception->getTraceAsString(),
-        ]);
-        */
-
+        // Verificar si estamos en modo desarrollo
+        if (config('app.debug')) {
+            // Devolver la renderización de la excepción por defecto
+            return parent::render($request, $exception);
+            //return $this->prepareJsonResponse($request, $exception);
+        }
 
         // si no, mostrarmos vista de error al usaurio
         if ($exception instanceof QueryException) {
@@ -130,7 +123,6 @@ class Handler extends ExceptionHandler
                     'mensaje' => 'Ocurrió un error. Por favor, intente nuevamente más tarde.',
                 ])->toResponse($request);
             }
-
         }
 
         return Inertia::render('Error', [

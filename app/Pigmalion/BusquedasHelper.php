@@ -113,6 +113,7 @@ class BusquedasHelper
      */
     public static function validarBusqueda($busqueda)
     {
+        if(!$busqueda) return false;
         list($relevante, $comunes) = self::descartarPalabrasComunes($busqueda);
         return trim($busqueda) && $relevante;
     }
@@ -182,7 +183,7 @@ class BusquedasHelper
     public static function limpiarResultados($resultados, $busqueda, $soloTitulo = false)
     {
         $options = ['tagOptions' => ['class' => 'search-term']];
-        $h = new Highlighter();
+        $h = new ExtendedHighlighter();
         
         list($words_primary, $words_secondary) = self::separarPalabrasComunes($busqueda);
 
@@ -215,9 +216,16 @@ class BusquedasHelper
         else
             BusquedasHelper::formatearResultados($resultados, $buscar, true);
 
-
         return $resultados;
     }
 
 
+
+
+    /**
+     * Reliza una búsqueda en el modelo, después de verificar si es una búsqueda válida
+     */
+    public static function buscar($model, $queryCheck, $querySearch = null) {
+        return  BusquedasHelper::validarBusqueda($queryCheck) ? $model::search($querySearch ?? $queryCheck) : $model::whereRaw("1=0");
+    }
 }

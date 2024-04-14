@@ -17,39 +17,39 @@ class ContenidosController extends Controller
      * Novedades
      */
     public function index(Request $request)
-{
-    $buscar = $request->input('buscar');
+    {
+        $buscar = $request->input('buscar');
 
-    $user = auth()->user();
+        $user = auth()->user();
 
-    $esAdministrador = $user && $user->hasPermissionTo('administrar contenidos');
+        $esAdministrador = $user && $user->hasPermissionTo('administrar contenidos');
 
-    // no aparecen en novedades
-    $colecciones_excluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', 'lugares', 'guias'];
+        // no aparecen en novedades
+        $colecciones_excluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', 'lugares', 'guias'];
 
-    // atención para administradores: la búsqueda no incluye los contenidos no publicados
+        // atención para administradores: la búsqueda no incluye los contenidos no publicados
 
-    $resultados = $buscar ?
-    Contenido::search($buscar)
-            ->query(function ($query) use ($colecciones_excluidas) {
-                return $query->whereNotIn('coleccion', $colecciones_excluidas);
-            })
-            ->paginate(10)->appends(['buscar' => $buscar])
+        $resultados = $buscar ?
+            Contenido::search($buscar)
+                ->query(function ($query) use ($colecciones_excluidas) {
+                    return $query->whereNotIn('coleccion', $colecciones_excluidas);
+                })
+                ->paginate(10)->appends(['buscar' => $buscar])
             :
-       // los administradores ven todos los contenidos, y si están en modo publicado o borrador
-       Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion', 'visibilidad'])
-       ->when(!$esAdministrador, function ($query) {
-           $query->where('visibilidad', 'P');
-       })
-       ->whereNotIn('coleccion', $colecciones_excluidas)
-       ->latest('updated_at') // Ordenar por updated_at
-       ->paginate(10);
+            // los administradores ven todos los contenidos, y si están en modo publicado o borrador
+            Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion', 'visibilidad'])
+                ->when(!$esAdministrador, function ($query) {
+                    $query->where('visibilidad', 'P');
+                })
+                ->whereNotIn('coleccion', $colecciones_excluidas)
+                ->latest('updated_at') // Ordenar por updated_at
+                ->paginate(10);
 
-    return Inertia::render('Novedades', [
-        'filtrado' => $buscar,
-        'listado' => $resultados
-    ])->withViewData(SEO::get('novedades'));
-}
+        return Inertia::render('Novedades', [
+            'filtrado' => $buscar,
+            'listado' => $resultados
+        ])->withViewData(SEO::get('novedades'));
+    }
 
 
     /**
@@ -62,30 +62,35 @@ class ContenidosController extends Controller
 
         $collections = $request->input('collections');
 
-        if(!BusquedasHelper::validarBusqueda($buscar)) {
+        /* if(!BusquedasHelper::validarBusqueda($buscar)) {
             return response()->json([], 200);
-        }
+        } */
 
-        list($buscarFiltrado, $comunes) = BusquedasHelper::descartarPalabrasComunes($buscar);
+        list($buscarFiltrado, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
 
         // https://github.com/teamtnt/laravel-scout-tntsearch-driver?tab=readme-ov-file#constraints
         $contenido = new Contenido;
 
         // podemos restringir a un conjunto de colecciones
-        if($collections) {
+        if ($collections) {
             $colecciones = explode(',', $collections);
             $contenido = $contenido->whereIn('coleccion', $colecciones);
         }
 
         // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
-        $resultados = Contenido::search($buscarFiltrado)->constrain($contenido)->paginate(64);
+        $resultados = (BusquedasHelper::validarBusqueda($buscar) ? Contenido::search($buscarFiltrado)->constrain($contenido) :
+            Contenido::where('id', '-1')
+        )->paginate(64);
 
-        //if (strlen($buscarFiltrado) < 3)
-          //  BusquedasHelper::limpiarResultados($resultados, $buscarFiltrado, true);
-        //else
+        if (strlen($buscarFiltrado) < 3)
+            BusquedasHelper::limpiarResultados($resultados, $buscar, true);
+        else
             BusquedasHelper::formatearResultados($resultados, $buscar, true);
 
-        return response()->json($resultados, 200);
+        return response()->json([
+            'listado' => $resultados,
+            'busquedaValida' => BusquedasHelper::validarBusqueda($buscar)
+        ], 200);
     }
 
     /**
@@ -98,7 +103,7 @@ class ContenidosController extends Controller
 
         $base = url("");
         // limpia la url
-        if(isset($data['click_url']))
+        if (isset($data['click_url']))
             $data['click_url'] = str_replace($base, "", $data['click_url']);
 
         // almacenamos el session id
