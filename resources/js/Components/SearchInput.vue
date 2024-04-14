@@ -12,8 +12,10 @@
         </button>
 
         <div class="flex items-center relative" :style="{ 'max-width': maxWidth + 'px' }">
-            <Icon icon="ph:magnifying-glass-bold"
-                class="absolute z-10 right-2 transform scale-110 -translate-y-[.1rem] text-gray-600" />
+            <div class="absolute z-10 right-2 transform scale-110 -translate-y-[.1rem] text-gray-600">
+                <Spinner v-show="submitting" />
+                <Icon v-show="!submitting" icon="ph:magnifying-glass-bold"/>
+            </div>
             <form @submit.prevent="submit">
                 <input class="search-input pr-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
                     text-right w-full focus:rounded-md"
