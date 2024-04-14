@@ -81,7 +81,7 @@ class BusquedasHelper
     public static function descartarPalabrasComunes($busqueda)
     {
         // 1. Separar la frase $busqueda en palabras, utilizando espacios y otros símbolos de puntuación como separadores
-        $palabras = preg_split('/[\s\p{P}]+/', strtolower($busqueda), -1, PREG_SPLIT_NO_EMPTY);
+        $palabras = preg_split('/[\s\p{P}]+/u', strtolower($busqueda), -1, PREG_SPLIT_NO_EMPTY);
 
         // 2. Descartar las palabras habituales, pronombres y artículos
         $removidas = [];
@@ -90,19 +90,20 @@ class BusquedasHelper
         foreach ($palabras as $palabra) {
             $descartar = in_array(strtolower($palabra), BusquedasHelper::$palabrasComunes);
             if ($descartar)
-                $removidas[] = $palabra;
+                $removidas[$palabra] = 1;
             else
-                $filtradas[] = $palabra;
+                $filtradas[$palabra] = 1;
         }
 
         // 3. Devolver el string con las palabras no descartadas, y un string con palabras descartadas. Si queda vacío, se devuelve el mismo string original
-        $filtradas = implode(' ', $filtradas);
-        $removidas = implode(' ', $removidas);
+        $filtradas = implode(' ', array_keys($filtradas));
+        $removidas = implode(' ', array_keys($removidas));
 
-       return [$filtradas, $removidas];
+        return [$filtradas, $removidas];
     }
 
-    public static function separarPalabrasComunes($busqueda) {
+    public static function separarPalabrasComunes($busqueda)
+    {
         list($filtradas, $removidas) = self::descartarPalabrasComunes($busqueda);
         return empty($filtradas) ? [$busqueda, ""] : [$filtradas, $removidas];
     }
@@ -113,7 +114,8 @@ class BusquedasHelper
      */
     public static function validarBusqueda($busqueda)
     {
-        if(!$busqueda) return false;
+        if (!$busqueda)
+            return false;
         list($relevante, $comunes) = self::descartarPalabrasComunes($busqueda);
         return trim($busqueda) && $relevante;
     }
@@ -124,7 +126,11 @@ class BusquedasHelper
         $h = new ExtendedHighlighter();
 
 
+        $busqueda = \App\Pigmalion\AccentRemover::removeNonAscii($busqueda);
+
         list($words_primary, $words_secondary) = self::separarPalabrasComunes($busqueda);
+        // if($words_primary===FALSE)
+        // dd($words_primary, $words_secondary);
 
         $resultados
             ->transform(function ($item) use ($h, $options, $busqueda, $words_primary, $words_secondary, $soloTitulo, $extraeTodos) {
@@ -159,7 +165,7 @@ class BusquedasHelper
                         // extraemos todos los extractos que contienen algo del texto buscado
                         $extractos = $h->extractRelevantAll($words_primary, $textoLimpio, 500);
                         foreach ($extractos as $idx => $extracto) {
-                            $extractos[$idx] = $h->highlightPonderated($extracto, $words_primary,$words_secondary, "em", $options);
+                            $extractos[$idx] = $h->highlightPonderated($extracto, $words_primary, $words_secondary, "em", $options);
                         }
                         $item->extractos = $extractos;
                     }
@@ -167,9 +173,9 @@ class BusquedasHelper
 
                 // Realizar el mismo proceso para el campo 'titulo'
                 if ($item->titulo)
-                    $item->titulo = $h->highlightPonderated($item->titulo, $words_primary,$words_secondary, "em", $options);
+                    $item->titulo = $h->highlightPonderated($item->titulo, $words_primary, $words_secondary, "em", $options);
                 if ($item->nombre)
-                    $item->nombre = $h->highlightPonderated($item->nombre, $words_primary,$words_secondary, "em", $options);
+                    $item->nombre = $h->highlightPonderated($item->nombre, $words_primary, $words_secondary, "em", $options);
 
                 unset ($item['texto']);
                 unset ($item['texto_busqueda']);
@@ -187,7 +193,7 @@ class BusquedasHelper
     {
         $options = ['tagOptions' => ['class' => 'search-term']];
         $h = new ExtendedHighlighter();
-        
+
         list($words_primary, $words_secondary) = self::separarPalabrasComunes($busqueda);
 
         $resultados
@@ -195,11 +201,11 @@ class BusquedasHelper
 
                 if ($soloTitulo)
                     unset ($item['descripcion']);
-                else 
-                    $item->descripcion = $h->highlightPonderated($item->descripcion, $words_primary,$words_secondary, "em", $options);
+                else
+                    $item->descripcion = $h->highlightPonderated($item->descripcion, $words_primary, $words_secondary, "em", $options);
 
                 // Realizar el mismo proceso para el campo 'titulo'
-                $item->titulo = $h->highlightPonderated($item->titulo, $words_primary,$words_secondary, "em", $options);
+                $item->titulo = $h->highlightPonderated($item->titulo, $words_primary, $words_secondary, "em", $options);
 
                 unset ($item['texto']);
                 unset ($item['texto_busqueda']);
@@ -210,6 +216,8 @@ class BusquedasHelper
 
     public static function buscarContenidos($buscar)
     {
+        $buscar = \App\Pigmalion\AccentRemover::removeNonAscii($buscar);
+
         list($buscarRelevante, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
 
         $resultados = Contenido::search($buscarRelevante)->paginate(7); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
@@ -228,7 +236,8 @@ class BusquedasHelper
     /**
      * Reliza una búsqueda en el modelo, después de verificar si es una búsqueda válida
      */
-    public static function buscar($model, $queryCheck, $querySearch = null) {
-        return  BusquedasHelper::validarBusqueda($queryCheck) ? $model::search($querySearch ?? $queryCheck) : $model::whereRaw("1=0");
+    public static function buscar($model, $queryCheck, $querySearch = null)
+    {
+        return BusquedasHelper::validarBusqueda($queryCheck) ? $model::search($querySearch ?? $queryCheck) : $model::whereRaw("1=0");
     }
 }

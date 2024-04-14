@@ -33,6 +33,7 @@ class ExtendedHighlighter extends Highlighter
         $words = preg_replace("/\bla\b/", "", $words);
 
         $words = preg_split($this->tokenizer->getPattern(), $words, -1, PREG_SPLIT_NO_EMPTY);
+        // dd($secundarias, $words);
 
         $locations = $this->_extractLocations($words, $fulltext);
 
@@ -59,11 +60,18 @@ class ExtendedHighlighter extends Highlighter
 
             $prevStart = $startpos;
 
+            $_x1 = new \App\T("ExtendedHighlighter", "extractRelevantAll.1");
             $reltext = mb_substr($fulltext, $startpos, $rellength);
+            unset($_x1);
+            $_x1 = new \App\T("ExtendedHighlighter", "extractRelevantAll.2");
             preg_match_all($this->tokenizer->getPattern(), $reltext, $offset, PREG_OFFSET_CAPTURE);
+            unset($_x1);
             // since PREG_OFFSET_CAPTURE returns offset in bytes we have to use mb_strlen(substr()) hack here
+
+            $_x1 = new \App\T("ExtendedHighlighter", "extractRelevantAll.3");
             $last = mb_strlen(substr($reltext, 0, end($offset[0])[1]));
             $first = mb_strlen(substr($reltext, 0, $offset[0][0][1]));
+            unset($_x1);
 
             // if no match is found, just return first $rellength characters without the last word
             if (empty($locations)) {
@@ -96,7 +104,7 @@ class ExtendedHighlighter extends Highlighter
          $fulltext = \App\Pigmalion\AccentRemover::removeNonAscii($fulltext);
          // die($fulltext);
         $locations = array();
-        $max_length = mb_strlen($fulltext);
+        // $max_length = mb_strlen($fulltext);
         if (0) {
             foreach ($words as $word) {
                 $word = $this->_normalizeText($word);
@@ -107,7 +115,7 @@ class ExtendedHighlighter extends Highlighter
                     $loc = mb_stripos($fulltext, $word, $loc + $wordlen);
                 }
             }
-        } else { 
+        } else {
             $pattern = '/\b(' . implode('|', $words) . ')\b';
             // $pattern = $word = $this->_normalizeText($pattern);
             /*$pattern = mb_ereg_replace('[aAáÁ]', '[aáÁ]', $pattern);
@@ -120,16 +128,17 @@ class ExtendedHighlighter extends Highlighter
             $pattern .= "/i";
             if (preg_match_all($pattern, $fulltext, $matches, PREG_OFFSET_CAPTURE)) {
                 foreach ($matches[0] as $match) {
-                    $locations[] = min($max_length, $match[1]);
+                    $locations[] =  $match[1];
                 }
             }
         }
 
-        $d = [];
+        /*$d = [];
         foreach($locations as $l) {
             $d[]=[$l, mb_substr($fulltext, $l, 50)];
         }
-        // dd($d);
+         dd($d);
+        */
 
         $_x2 = new \App\T("ExtendedHighlighter", "_extractLocations_2");
 
@@ -154,7 +163,7 @@ class ExtendedHighlighter extends Highlighter
 
         // hacer todos los reemplazos anteriores en uno solo:
         // $str = str_replace(['á', 'Á']);
-        
+
 
         return $str;//mb_strtolower($str);
     }
@@ -208,11 +217,13 @@ class ExtendedHighlighter extends Highlighter
         foreach ($needle as $needle_s) {
             $needle_s = preg_quote($needle_s);
 
-            $needle_s = mb_ereg_replace('[aáÁ]', '[aáÁ]', $needle_s);
+            /*$needle_s = mb_ereg_replace('[aáÁ]', '[aáÁ]', $needle_s);
             $needle_s = mb_ereg_replace('[eéÉ]', '[eéÉ]', $needle_s);
             $needle_s = mb_ereg_replace('[iíÍ]', '[iíÍ]', $needle_s);
             $needle_s = mb_ereg_replace('[oóÓ]', '[oóÓ]', $needle_s);
-            $needle_s = mb_ereg_replace('[uúÚ]', '[uúÚ]', $needle_s);
+            $needle_s = mb_ereg_replace('[uúÚ]', '[uúÚ]', $needle_s);*/
+
+            $needle_s = preg_replace(['/[aáÁ]/u', '/[eéÉ]/u', '/[iíÍ]/u', '/[oóÓ]/u', '/[uúÚ]/u'], ['[aáá]', '[eéé]', '[iíí]', '[oóó]', '[uúú]'], $needle_s);
 
 
             // Escape needle with optional whole word check
@@ -279,14 +290,19 @@ class ExtendedHighlighter extends Highlighter
         }
 
         $needle = (array) $needle;
-        foreach ($needle as $needle_s) {
-            $needle_s = preg_quote($needle_s);
 
-            $needle_s = mb_ereg_replace('[aáÁ]', '[aáÁ]', $needle_s);
+        foreach ($needle as $needle_s) {
+            //$needle_s = preg_quote($needle_s);
+
+            $_x2 = new \App\T("ExtendedHighlighter", "highlightNear.regex_needle");
+            /*$needle_s = mb_ereg_replace('[aáÁ]', '[aáÁ]', $needle_s);
             $needle_s = mb_ereg_replace('[eéÉ]', '[eéÉ]', $needle_s);
             $needle_s = mb_ereg_replace('[iíÍ]', '[iíÍ]', $needle_s);
             $needle_s = mb_ereg_replace('[oóÓ]', '[oóÓ]', $needle_s);
-            $needle_s = mb_ereg_replace('[uúÚ]', '[uúÚ]', $needle_s);
+            $needle_s = mb_ereg_replace('[uúÚ]', '[uúÚ]', $needle_s);*/
+
+            $needle_s = preg_replace(['/[aáÁ]/u', '/[eéÉ]/u', '/[iíÍ]/u', '/[oóÓ]/u', '/[uúÚ]/u'], ['[aáá]', '[eéé]', '[iíí]', '[oóó]', '[uúú]'], $needle_s);
+            unset($_x2);
 
 
             // Escape needle with optional whole word check
@@ -301,6 +317,7 @@ class ExtendedHighlighter extends Highlighter
             }
 
             $regex = sprintf($pattern, $needle_s);
+            // dd($regex);
             $text = preg_replace_callback($regex, function ($match) use ($text, $tag, $highlight) {
                 $word = $match[0][0];
                 $pos = $match[0][1];
