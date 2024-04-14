@@ -24,7 +24,9 @@ function removerAcentosStrtr($texto)
         'É' => 'E',
         'Í' => 'I',
         'Ó' => 'O',
-        'Ú' => 'U'
+        'Ú' => 'U',
+        //'Ñ'=>'N',
+        //'ñ'=> 'n'
         // Agrega más caracteres acentuados y sus correspondientes sin acento si es necesario
     );
     $texto = strtr($texto, $acentos);
@@ -93,7 +95,7 @@ class AccentRemover
         $str = mb_ereg_replace('[úÚ]', 'u', $str);*/
 
         $str = removerAcentosStrtr($str);
-        $str = preg_replace('/[^A-Za-z0-9]/u', ' ', $str);
+        $str = preg_replace('/[^A-Za-z0-9ñÑçÇ]/u', ' ', $str);
         return $str;
     }
 
