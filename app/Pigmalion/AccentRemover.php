@@ -13,6 +13,7 @@ function removerAcentosIconv($texto)
 
 function removerAcentosStrtr($texto)
 {
+    $_x = new \App\T("AccentRemover", "removerAcentosStrtr");
     $acentos = array(
         'á' => 'a',
         'é' => 'e',
@@ -84,6 +85,7 @@ class AccentRemover
 
     public static function removeNonAscii($str)
     {
+        $_x = new \App\T("AccentRemover", "removeNonAscii");
         /*$str = mb_ereg_replace('[áÁ]', 'a', $str);
         $str = mb_ereg_replace('[éÉ]', 'e', $str);
         $str = mb_ereg_replace('[íÍ]', 'i', $str);
@@ -91,7 +93,7 @@ class AccentRemover
         $str = mb_ereg_replace('[úÚ]', 'u', $str);*/
 
         $str = removerAcentosStrtr($str);
-        $str = mb_ereg_replace('[^A-Za-z0-9]', ' ', $str);
+        $str = preg_replace('/[^A-Za-z0-9]/u', ' ', $str);
         return $str;
     }
 
