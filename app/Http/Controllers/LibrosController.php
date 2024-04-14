@@ -24,7 +24,7 @@ class LibrosController extends Controller
                 })
                 ->paginate(20)->appends(['categoria' => $categoria])
             : ($buscar ?
-                Libro::search($buscar)->paginate(10)
+                BusquedasHelper::buscar(Libro::class, $buscar)->paginate(10)
                     ->appends(['buscar' => $buscar])
                 :
                 Libro::orderBy('updated_at', 'desc')->paginate(20) // novedades
@@ -40,7 +40,8 @@ class LibrosController extends Controller
             'filtrado' => $buscar,
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
-            'categorias' => $categorias
+            'categorias' => $categorias,
+            'busquedaValida' => BusquedasHelper::validarBusqueda($buscar)
         ])
             ->withViewData(SEO::get('libros'));
     }
@@ -76,7 +77,7 @@ class LibrosController extends Controller
                     }
                 }
 
-                if (!empty($palabrasClave)) {
+                if (!empty ($palabrasClave)) {
                     $query->where(function ($query) use ($palabrasClave) {
                         foreach ($palabrasClave as $clave) {
                             $query->orWhere('descripcion', 'like', '%' . $clave . '%')
@@ -95,9 +96,9 @@ class LibrosController extends Controller
         if ($relacionados->count() == 0) {
             $categorias = preg_split("/,/", $libro->categoria, -1, PREG_SPLIT_NO_EMPTY);
             $relacionados = Libro::where('id', '!=', $libro->id)
-            ->where(function ($query) use ($categorias) {
-                foreach ($categorias as $categoria) $query->orWhere('categoria', 'like', '%' . $categoria . '%');
-            })
+                ->where(function ($query) use ($categorias) {
+                    foreach ($categorias as $categoria) $query->orWhere('categoria', 'like', '%' . $categoria . '%');
+                })
                 // descartamos el mismo libro que estamos mostrando
                 // ->orderByRaw('(CASE WHEN titulo LIKE ? THEN 2 WHEN descripcion LIKE ? THEN 1 ELSE 0 END) DESC', [$libro->titulo . '%', '%' . $libro->titulo . '%'])
                 ->take(8)
@@ -107,13 +108,13 @@ class LibrosController extends Controller
         // $palabras = implode(" ", $palabrasClave);
 
         // if (!$palabras)
-           // $palabras = BusquedasHelper::descartarPalabrasComunes($libro->titulo);
+        // $palabras = BusquedasHelper::descartarPalabrasComunes($libro->titulo);
 
         // BusquedasHelper::formatearResultados($relacionados, preg_split("/\s+/", $palabras));
 
         return Inertia::render('Libros/Libro', [
             'libro' => $libro,
-            'relacionados' => $relacionados
+            'relacionados' => $relacionados,
         ])
             ->withViewData(SEO::from($libro));
     }

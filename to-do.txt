@@ -1,6 +1,7 @@
 
+
 BUSQUEDAS:
--verificar rendimiento de buscador. Ejemplo, buscar: "cortinas de humo".
+-añadir busquedaValida prop (como en comunicados) en el resto de contenidos
 -en resultados de busquedas, quitar los formatos extra {width=45px;height=60px}  {text-align=center} ... [^1] <sup></sup> <u></u>
 
 

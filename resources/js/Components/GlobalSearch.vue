@@ -30,7 +30,8 @@
 
                     <div v-if="!resultadosAgrupados.length" class="p-7">
                         <div v-if="search.lastQuery" class="text-center text-lg text-gray-500">
-                            No hay resultados para "<span class="text-primary">{{ search.lastQuery }}</span>"
+                            <span v-if="search.valid">No hay resultados para</span>
+                            <span v-else>Demasiados resultados para</span> "<span class="text-primary">{{ search.lastQuery }}</span>"
                         </div>
 
                         <div v-if="search.showSuggestions" class="mt-7">
@@ -223,7 +224,8 @@ function buscar() {
         )
             .then(response => {
                 console.log('response-data', response.data)
-                search.results = response.data
+                search.results = response.data.listado
+                search.valid = response.data.busquedaValida
                 loading.value = false
                 timerGuardarBusqueda = setTimeout(guardarBusqueda, 2000)
             })

@@ -44,7 +44,7 @@
 
             <FadeOnNavigate class="w-full flex-grow">
 
-                <SearchResultsHeader :results="listado" />
+                <SearchResultsHeader :results="listado" :valid-search="busquedaValida" />
 
                     <GridAppear v-if="selectors.soloTitulosLibros" class="grid gap-4" col-width="28rem">
                         <div v-for="libro in listado.data" :key="libro.id"
@@ -93,7 +93,8 @@ const props = defineProps({
     },
     categorias: {
         default: () => []
-    }
+    },
+    busquedaValida: Boolean
 });
 
 const listado = ref(props.listado);
