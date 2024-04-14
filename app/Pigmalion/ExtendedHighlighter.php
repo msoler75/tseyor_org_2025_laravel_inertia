@@ -4,6 +4,8 @@ namespace App\Pigmalion;
 
 
 use TeamTNT\TNTSearch\Support\Highlighter;
+use Illuminate\Support\Facades\Log;
+
 
 define("NEAR_OFFSET", 12);
 
@@ -12,37 +14,25 @@ define("NEAR_OFFSET", 12);
 class ExtendedHighlighter extends Highlighter
 {
 
-
-    /* public function extractRelevant($words, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
-    {
-
-        $_x = new \App\T("ExtendedHighlighter", "extractRelevant");
-        // dd($words);
-
-        return parent::extractRelevant($words, $fulltext, $rellength, $prevcount, $indicator);
-
-    } */
-
-
-    public function extractRelevantAll($words, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
+    public function extractRelevantAll($buscar, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
     {
 
 
-        // $_x = new \App\T("ExtendedHighlighter", "extractRelevantAll");
+        $_x = new \App\T("ExtendedHighlighter", "extractRelevantAll");
+
+        $textlength = mb_strlen($fulltext);
+        if ($textlength <= $rellength) {
+            return $fulltext;
+        }
 
         // descartamos palabras comunes y masivas
-        //list ($words, $secundarias) = BusquedasHelper::descartarPalabrasComunes($words);
+        list($words, $secundarias) = BusquedasHelper::separarPalabrasComunes($buscar);
 
 
         // quitamos la palabra "LA"
         $words = preg_replace("/\bla\b/", "", $words);
 
         $words = preg_split($this->tokenizer->getPattern(), $words, -1, PREG_SPLIT_NO_EMPTY);
-        $textlength = mb_strlen($fulltext);
-        if ($textlength <= $rellength) {
-            return $fulltext;
-        }
-
 
         $locations = $this->_extractLocations($words, $fulltext);
 
@@ -101,17 +91,48 @@ class ExtendedHighlighter extends Highlighter
      */
     public function _extractLocations($words, $fulltext)
     {
-        $fulltext = $this->_normalizeText($fulltext);
+        Log::info("extractLocations: " . implode(" ", $words));
+        $_x = new \App\T("ExtendedHighlighter", "_extractLocations");
+         $fulltext = \App\Pigmalion\AccentRemover::removeNonAscii($fulltext);
+         // die($fulltext);
         $locations = array();
-        foreach ($words as $word) {
-            $word = $this->_normalizeText($word);
-            $wordlen = mb_strlen($word);
-            $loc = mb_stripos($fulltext, $word);
-            while ($loc !== false) {
-                $locations[] = $loc;
-                $loc = mb_stripos($fulltext, $word, $loc + $wordlen);
+        $max_length = mb_strlen($fulltext);
+        if (0) {
+            foreach ($words as $word) {
+                $word = $this->_normalizeText($word);
+                $wordlen = mb_strlen($word);
+                $loc = mb_stripos($fulltext, $word);
+                while ($loc !== false) {
+                    $locations[] = $loc;
+                    $loc = mb_stripos($fulltext, $word, $loc + $wordlen);
+                }
+            }
+        } else { 
+            $pattern = '/\b(' . implode('|', $words) . ')\b';
+            // $pattern = $word = $this->_normalizeText($pattern);
+            /*$pattern = mb_ereg_replace('[aAáÁ]', '[aáÁ]', $pattern);
+             $pattern = mb_ereg_replace('[eEéÉ]', '[eéÉ]', $pattern);
+             $pattern = mb_ereg_replace('[iIíÍ]', '[iíÍ]', $pattern);
+             $pattern = mb_ereg_replace('[oOóÓ]', '[oóÓ]', $pattern);
+             $pattern = mb_ereg_replace('[uUúÚ]', '[uúÚ]', $pattern);
+             */
+            // dd($pattern);
+            $pattern .= "/i";
+            if (preg_match_all($pattern, $fulltext, $matches, PREG_OFFSET_CAPTURE)) {
+                foreach ($matches[0] as $match) {
+                    $locations[] = min($max_length, $match[1]);
+                }
             }
         }
+
+        $d = [];
+        foreach($locations as $l) {
+            $d[]=[$l, mb_substr($fulltext, $l, 50)];
+        }
+        // dd($d);
+
+        $_x2 = new \App\T("ExtendedHighlighter", "_extractLocations_2");
+
         $locations = array_unique($locations);
         sort($locations);
         // dd($locations);
@@ -119,16 +140,23 @@ class ExtendedHighlighter extends Highlighter
         return $locations;
     }
 
+
     private function _normalizeText(string $str): string
     {
+        $_x = new \App\T("ExtendedHighlighter", "_normalizeText");
         // Quitamos los acentos y pasamos a minúsculas
         $str = mb_ereg_replace('[áÁ]', 'a', $str);
         $str = mb_ereg_replace('[éÉ]', 'e', $str);
         $str = mb_ereg_replace('[íÍ]', 'i', $str);
         $str = mb_ereg_replace('[óÓ]', 'o', $str);
         $str = mb_ereg_replace('[úÚ]', 'u', $str);
+        $str = mb_ereg_replace('[^A-Za-z0-9]', ' ', $str);
 
-        return mb_strtolower($str);
+        // hacer todos los reemplazos anteriores en uno solo:
+        // $str = str_replace(['á', 'Á']);
+        
+
+        return $str;//mb_strtolower($str);
     }
 
 
@@ -138,6 +166,8 @@ class ExtendedHighlighter extends Highlighter
      */
     public function highlight($text, $needle, $tag = 'em', $options = [])
     {
+        $_x = new \App\T("ExtendedHighlighter", "highlight");
+
         $this->options = array_merge($this->options, $options);
 
         $tagAttributes = '';
@@ -211,6 +241,9 @@ class ExtendedHighlighter extends Highlighter
      */
     public function highlightNear($text, $needle, $tag = 'em', $options = [])
     {
+
+        $_x = new \App\T("ExtendedHighlighter", "highlightNear");
+
         $this->options = array_merge($this->options, $options);
 
         $tagAttributes = '';
@@ -268,13 +301,13 @@ class ExtendedHighlighter extends Highlighter
             }
 
             $regex = sprintf($pattern, $needle_s);
-            $text = preg_replace_callback($regex, function($match) use ($text, $tag, $highlight) {
+            $text = preg_replace_callback($regex, function ($match) use ($text, $tag, $highlight) {
                 $word = $match[0][0];
                 $pos = $match[0][1];
                 // miramos si desde la posición $pos, 12 unidades hacia delante o 12 hacia atrás hay alguna etiqueta <em
                 // si la hay, es válida la coincidencia
-                $frag = substr($text, max(0,$pos - NEAR_OFFSET), strlen($word) + NEAR_OFFSET*2);
-                if(preg_match("#</?$tag#i", $frag)) 
+                $frag = substr($text, max(0, $pos - NEAR_OFFSET), strlen($word) + NEAR_OFFSET * 2);
+                if (preg_match("#</?$tag#i", $frag))
                     return preg_replace("#(.*)#", $highlight, $word);
                 return $match[0][0];
             }, $text, -1, $count, PREG_OFFSET_CAPTURE);
@@ -284,9 +317,12 @@ class ExtendedHighlighter extends Highlighter
     }
 
 
-    public function highlightPonderated($text, $words_relevant, $words_irrelevant, $tag = 'em', $options = []) {
+    public function highlightPonderated($text, $words_relevant, $words_irrelevant, $tag = 'em', $options = [])
+    {
+
+        $_x = new \App\T("ExtendedHighlighter", "highlightPonderated");
         $result = $this->highlight($text, $words_relevant, $tag, $options);
-        if($words_irrelevant)
+        if ($words_irrelevant)
             $result = $this->highlightNear($result, $words_irrelevant, $tag, $options);
         return $result;
     }

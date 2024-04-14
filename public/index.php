@@ -2,6 +2,8 @@
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
 // use App\T;
 
 // sleep(2);
@@ -62,12 +64,14 @@ error_reporting(-1);
 ini_set('error_reporting', E_ALL);
 
 
+
+
 $response = $kernel->handle(
     $request = Request::capture()
 );
 
-// App\T::xprint();
-// die;
+Log::info(App\T::stats());
+ //die;
 
 $response->send();
 
