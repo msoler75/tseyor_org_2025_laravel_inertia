@@ -1,5 +1,5 @@
 <template>
-    <Link :href="enlace" class="flex h-fit gap-2 text-sm items-center hover:underline">
+    <Link :href="enlace" class="flex h-fit gap-2 text-sm items-center hover:underline select-none">
     <Icon icon="ph:arrow-left" />
     <slot />
     </Link>
