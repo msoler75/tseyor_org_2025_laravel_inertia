@@ -29,11 +29,11 @@ class T
         ];
     }
 
-    public static function xprint() {
+    public static function stats() {
 
         $methodStats = [];
 
-        echo "<pre>";
+        $out = "";
 
         foreach (self::$stats as $stat) {
             $methodName = $stat['str'];
@@ -57,15 +57,13 @@ class T
     });
 
         foreach ($methodStats as $methodName => $stats) {
-            echo "Method: ".$stats['str'] . PHP_EOL;
-            echo "Call count: " . $stats['count'] . PHP_EOL;
-            echo "Total time: " . $stats['totalTime'] . " milliseconds" . PHP_EOL;
-            echo PHP_EOL;
+            $out .= "Method: ".$stats['str'] . PHP_EOL;
+            $out .="Call count: " . $stats['count'] . PHP_EOL;
+            $out .="Total time: " . $stats['totalTime'] . " milliseconds" . PHP_EOL;
+            $out .=PHP_EOL;
         }
 
-        echo "</pre>";
-
-        die;
+        return $out;
 
     }
 }
