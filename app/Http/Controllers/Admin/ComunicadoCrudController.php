@@ -236,7 +236,7 @@ class ComunicadoCrudController extends CrudController
                 // dd($comunicado);
 
                 $año = date('Y', strtotime($comunicado->fecha_comunicado));
-                $folder = "medios/comunicados/audios/$año";
+                $folder = "/almacen/medios/comunicados/audios/$año";
 
                 if (TESTAR_CONVERTIDOR_AUDIO2) {
                     $p = new ProcesarAudios($comunicado, $folder);

@@ -2,6 +2,9 @@
 
 namespace App\Pigmalion;
 
+use Illuminate\Support\Facades\Storage;
+
+
 class DiskUtil {
 
     /**
@@ -23,7 +26,7 @@ class DiskUtil {
             return ['archivos', $ruta];
         } else {
             if(strpos($ruta, 'almacen')===0)
-                $ruta = preg_replace("#^almacen\/?#", "", $ruta);
+               $ruta = preg_replace("#^almacen\/?#", "", $ruta);
             return ['public', $ruta];
         }
     }
@@ -42,6 +45,20 @@ class DiskUtil {
             $ruta = substr($ruta, 8);
         } */
         return $ruta;
+    }
+
+    public static function getRealPath($rutaOrig) {
+        list($disk, $ruta) = self::obtenerDiscoRuta($rutaOrig);
+        return Storage::disk($disk)->path($ruta);
+    }
+
+    public static function ensureDirExists($rutaOrig) { 
+        list($disk, $ruta) = self::obtenerDiscoRuta($rutaOrig);
+        // Verificar si la carpeta existe en el disco 'public'
+        if (!Storage::disk($disk)->exists(dirname($ruta))) {
+            // Crear la carpeta en el disco 'public'
+            Storage::disk($disk)->makeDirectory(dirname($ruta));
+        }
     }
 
 }
