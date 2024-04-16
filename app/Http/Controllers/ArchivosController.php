@@ -54,13 +54,13 @@ class ArchivosController extends Controller
     /**
      * Listado de una carpeta. Comprueba todos los permisos de acceso
      */
-    public function list(Request $request, $ruta, $json)
+    public function list(Request $request, $rutaReq, $json)
     {
         // new T("ArchivosController.list($ruta)");
 
         // $p1 = new T("ArchivosController.list($ruta) P1");
 
-        $ruta = urldecode(ltrim($ruta, '/'));
+        $ruta = urldecode(ltrim($rutaReq, '/'));
 
         if (strpos($ruta, ':') !== false) {
             if ($json) {
@@ -139,17 +139,20 @@ class ArchivosController extends Controller
         } else {
 
             // $rutaBase = str_replace($baseUrl, '', Storage::disk($disk)->url($ruta));
-            $rutaBase = $ruta;
+            // $rutaBase = $ruta;
+
+            // dd($rutaReq, $disk, $ruta);
+            // dd(Storage::disk($disk)->path($ruta));
 
             // Comprobar si la carpeta existe
-            if (!Storage::disk($disk)->exists($rutaBase)) {
+            if (!Storage::disk($disk)->exists($ruta)) {
                 abort(404, 'Ruta no encontrada');
             }
 
             // si es un archivo, procedemos a la descarga
-            if (!Storage::disk($disk)->directoryExists($rutaBase)) {
+            if (!Storage::disk($disk)->directoryExists($ruta)) {
                 // no es una carpeta, así que derivamos a la descarga
-                return $this->descargar($request, '/' . /* '/archivos/' . */$rutaBase);
+                return $this->descargar($request, '/' . /* '/archivos/' . */$ruta);
             }
 
             // unset($p1);
@@ -761,6 +764,7 @@ class ArchivosController extends Controller
         if (Storage::disk($disk)->directoryExists($ruta))
             abort(403, 'Acceso no permitido.');
 
+
         if (!Storage::disk($disk)->exists($ruta))
             abort(404);
 
@@ -781,8 +785,9 @@ class ArchivosController extends Controller
 
         // si es una imagen
         if($mime == 'image/jpeg' || $mime == 'image/png' || $mime == 'image/gif') {
+            // dd("Aqui es", $path, $ruta);
             $controller =new ImagenesController();
-            return $controller->descargar($request, $path);
+            return $controller->descargar($request, $ruta);
         }
 
 

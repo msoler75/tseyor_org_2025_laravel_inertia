@@ -8,6 +8,12 @@
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    
+    # Redirect imagenes con parámetros, para que pase por el controller
+    RewriteCond %{REQUEST_URI} !^/imagen [NC]
+    RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|webp)$ [NC]
+    RewriteCond %{QUERY_STRING} ^(.*)$ [NC]
+    RewriteRule ^(.*)$ /imagen%{REQUEST_URI} [QSA,L]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d

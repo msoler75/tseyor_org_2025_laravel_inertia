@@ -1,0 +1,1 @@
+import{_ as o}from"./_plugin-vue_export-helper-c27b6911.js";import{aa as e,K as c,U as r}from"./iconify-4eda29ca.js";const s={};function _(t,a){const n=e("Icon");return c(),r(n,{icon:"svg-spinners:ring-resize"})}const m=o(s,[["render",_]]);export{m as _};

@@ -10,6 +10,7 @@ BUSQUEDAS:
 
 ARCHIVOS
 -a un usuario sin loguear, le aparece la opción de renombrar carpeta y crear carpeta. No debería tener esas opciones
+-en vista archivos, si pulsamos encima de una imagen, debería mostrarse, agrandarse, y dar opciones para descargar
 
 CONTACTO
 -un usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente

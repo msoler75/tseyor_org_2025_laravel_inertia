@@ -1,0 +1,1 @@
+import{_ as o}from"./_plugin-vue_export-helper-c27b6911.js";import{K as s,B as r,G as e}from"./iconify-4eda29ca.js";const c={},t={class:"hidden sm:block"},_=e("div",{class:"py-8"},[e("div",{class:"border-t border-gray-200 dark:border-gray-700"})],-1),n=[_];function a(d,i){return s(),r("div",t,n)}const p=o(c,[["render",a]]);export{p as _};

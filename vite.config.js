@@ -7,6 +7,11 @@ import AutoImport from "unplugin-auto-import/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
+  build : {
+    rollupOptions: {
+      // maxParallelFileOps: 2 // un intento de que funcione en dreamhost
+    }
+  },
   /* build: {
     outDir: 'dist',
     rollupOptions: {

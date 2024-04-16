@@ -1,0 +1,1 @@
+import{K as r,B as s,M as n}from"./iconify-4eda29ca.js";const o=["type"],c={__name:"PrimaryButton",props:{type:{type:String,default:"submit"}},setup(t){return(e,a)=>(r(),s("button",{type:t.type,class:"btn btn-primary"},[n(e.$slots,"default")],8,o))}};export{c as _};

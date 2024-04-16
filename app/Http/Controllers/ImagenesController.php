@@ -7,12 +7,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use App\Pigmalion\DiskUtil;
 use Illuminate\Support\Facades\Cache;
 
 class ImagenesController extends Controller
 {
-
-
 
     /**
      * Quita la primera barra si es necesario
@@ -67,8 +66,12 @@ class ImagenesController extends Controller
     }
 
 
-    public function descargar(Request $request, $imageFullPath)
+    public function descargar(Request $request, $rutaImagen)
     {
+        list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($rutaImagen);
+        $imageFullPath = Storage::disk($disk)->path($ruta);
+         // dd($rutaImagen, $disk, $ruta, $imageFullPath);
+
         $mime = File::mimeType($imageFullPath);
 
         $params = $request->input();

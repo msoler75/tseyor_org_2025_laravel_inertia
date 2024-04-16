@@ -1,0 +1,1 @@
+import{_ as s}from"./_plugin-vue_export-helper-c27b6911.js";import{K as t,B as n,M as o}from"./iconify-4eda29ca.js";const _={},c={class:"sections",style:{"--sectionHeight":"calc(80vh - 4rem)"}};function r(e,a){return t(),n("div",c,[o(e.$slots,"default")])}const m=s(_,[["render",r]]);export{m as _};
