@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Storage;
+// use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use App\Pigmalion\DiskUtil;
 
 /**
  * Convierte el audio a un formato mp3 de menos peso
@@ -40,25 +41,33 @@ class AudioConverter
             $frecuencia = config('services.audio_converter.frecuencia');
             $kbps = config('services.audio_converter.kbps');
 
-            // Realizar la petición al servidor para convertir el archivo .docx a markdown
-            $curl = curl_init();
-
-            $sourcePath = realpath(Storage::disk($this->disk)->path($this->source));
-            $destinationPath = Storage::disk($this->disk)->path($this->destination);
+            $sourcePath = realpath(DiskUtil::getRealPath($this->source));
+            $destinationPath = DiskUtil::getRealPath($this->destination);
 
             Log::channel('jobs')->info("archivo fuente: ".$sourcePath);
             Log::channel('jobs')->info("archivo destino: ".$destinationPath);
 
             // Verificar si el archivo existe
-            if (!Storage::disk('public')->exists($this->source))
-                throw new \Exception("El archivo {$this->source} no existe en el disco de almacenamiento");
+            if (!file_exists($sourcePath))
+                throw new \Exception("El archivo {$sourcePath} no existe en el disco de almacenamiento");
 
             // Realizar la petición al servidor para convertir el archivo .docx a markdown
             $curl = curl_init();
 
-            $postData = [
+            Log::channel('jobs')->info("File_exists? $sourcePath ? ".   file_exists($sourcePath));
+
+            /*$postData = [
                 'file' => curl_file_create($sourcePath)
-            ];
+            ];*/
+
+
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $finfo = finfo_file($finfo, $sourcePath);
+
+            $cFile = new \CURLFile($sourcePath, $finfo, basename($sourcePath));
+            $postData = array( "file" => $cFile, "filename" => $cFile->postname);
+            
+            Log::channel('jobs')->info("Se ha creado postData");
 
             curl_setopt_array($curl, [
                 CURLOPT_URL => $converterUrl . "?frecuencia={$frecuencia}&kbps={$kbps}",
@@ -76,11 +85,8 @@ class AudioConverter
             // Verificar el código de respuesta HTTP
             if ($httpCode === 200) {
 
-                // Verificar si la carpeta existe en el disco 'public'
-                if (!Storage::disk('public')->exists(dirname($this->destination))) {
-                    // Crear la carpeta en el disco 'public'
-                    Storage::disk('public')->makeDirectory(dirname($this->destination));
-                }
+                // Verificar si la carpeta existe en el destino
+                DiskUtil::ensureDirExists($this->destination);
 
                 // Guardar la respuesta en el destino
                 file_put_contents($destinationPath, $response);
