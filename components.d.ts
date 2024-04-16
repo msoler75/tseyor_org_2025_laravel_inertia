@@ -41,7 +41,6 @@ declare module 'vue' {
     ContentBar: typeof import('./resources/js/Components/ContentBar.vue')['default']
     ContentMain: typeof import('./resources/js/Components/ContentMain.vue')['default']
     ContentNode: typeof import('./resources/js/Components/ContentNode.vue')['default']
-    copy: typeof import('./resources/js/Components/PasswordInput.vue')['default']
     Counter: typeof import('./resources/js/Components/Counter.vue')['default']
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     DialogModal: typeof import('./resources/js/Components/DialogModal.vue')['default']

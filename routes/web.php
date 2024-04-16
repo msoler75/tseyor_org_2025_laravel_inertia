@@ -287,6 +287,7 @@ Route::get('phpinfo', function () {
 });
 
 // imagenes
+Route::get('imagen{ruta}', [ImagenesController::class, 'descargar'])->where(['ruta' => '(\/.+)?'])->name('imagen');
 Route::get('image_size', [ImagenesController::class, 'size'])->name('imagen.tamaño');
 
 // herramientas muul

@@ -75,9 +75,10 @@ class Handler extends ExceptionHandler
 
             $resultados = BusquedasHelper::buscarContenidos($buscar);
 
+            $message = $exception->getMessage();
             return Inertia::render('Error', [
                 'codigo' => $exception->getStatusCode(),
-                'titulo' => 'Contenido no encontrado',
+                'titulo' => $message ? $message : 'Contenido no encontrado',
                 'mensaje' => 'No se encuentra el recurso solicitado.',
                 'alternativas' => $resultados
             ])->toResponse($request);

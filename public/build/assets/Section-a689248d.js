@@ -1,0 +1,1 @@
+import{c as o,K as r,B as a,M as c,a9 as l,F as i}from"./iconify-4eda29ca.js";const h={__name:"Section",props:{height:{}},setup(t){const e=t,s=o(()=>e.height?{"--sectionHeight":e.height}:null);return(n,p)=>(r(),a("div",{class:"section",style:l(i(s))},[c(n.$slots,"default")],4))}};export{h as _};
