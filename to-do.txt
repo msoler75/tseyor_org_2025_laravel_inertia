@@ -1,14 +1,28 @@
+revisar:
+
+https://github.com/lorisleiva/laravel-deployer/blob/main/deploy.php
+https://lorisleiva.com/deploy-your-laravel-app-from-scratch
 
 
 BUSQUEDAS:
--añadir busquedaValida prop (como en comunicados) en el resto de contenidos
 -en resultados de busquedas, quitar los formatos extra {width=45px;height=60px}  {text-align=center} ... [^1] <sup></sup> <u></u>
+-en una busqueda, al abrir un comunicado, que muestre highlight en las palabras marcadas. este highlight se puede quitars
 
+ARCHIVOS
+-a un usuario sin loguear, le aparece la opción de renombrar carpeta y crear carpeta. No debería tener esas opciones
 
+CONTACTO
+-un usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
+    - y si no, al menos poder mandar fácilmente los datos de contacto a un administrador
 
 EQUIPOS:
 -integrar generación de documentos word, o upload de los mismos, en los equipos
 -coordinador ->configurar->editores->tiptap simple
+-Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
+
+ADMIN
+-dashboard: añadir: archivos subidos
+-emails: ver registro de emails en el dashboard
 
 
 look webdav:
@@ -22,10 +36,6 @@ https://mailrelay.com/
 https://apidocs.mailrelay.com/#post-/campaigns
 
 
--archivos. usuario sin loguear, le aparece la opción de renombrar carpeta y crear carpeta. No debería tener esas opciones
-
--usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
-    - y si no, al menos poder mandar fácilmente los datos de contacto a un administrador
 
 -que cuando importe un comunicado en word, cambie:
 ####### ... CONVERSACIONES INTERDIMENSIONALES por algo como negrita
@@ -34,15 +44,9 @@ https://apidocs.mailrelay.com/#post-/campaigns
 
 -Boletines (es como un novedades, pero por correo)
 
-Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
+
 
 Creación de eventos por los usuarios autorizados
-
--emails: ver registro de emails en el dashboard
-
--archivos subidos: en dashboard
-
--audio id vue
 
 
 
@@ -59,14 +63,7 @@ Eventos:
 
 images slider
 https://backpackforlaravel.com/articles/tutorials/how-to-build-an-image-slider-crud-backpack-basics
-
-
-TNTSearch
-https://tnt.studio/searching-for-users-with-laravel-scout-and-tntsearch
-
-
-https://airports.tnt.studio/tnt-analytics
-
+(fields repeteable)
 
 
 
