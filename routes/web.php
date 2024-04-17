@@ -20,6 +20,7 @@ use App\Http\Controllers\AudiosController;
 use App\Http\Controllers\ContenidosController;
 use App\Http\Controllers\PortadaController;
 use App\Http\Controllers\CursosController;
+use App\Http\Controllers\SalasController;
 use App\Http\Controllers\RadioController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\ExperienciasController;
@@ -86,6 +87,7 @@ Route::get('archivos{ruta}', [ArchivosController::class, 'archivos'])->where(['r
 Route::get('filemanager{ruta}', [ArchivosController::class, 'filemanager'])->where(['ruta' => '(\/.*)?'])->name('filemanager');
 
 Route::get('almacen{ruta}', [ArchivosController::class, 'descargar'])->where(['ruta' => '(\/.+)?'])->name('storage');
+Route::get('storage{ruta}', [ArchivosController::class, 'descargar'])->where(['ruta' => '(\/.+)?'])->name('storage.classic');
 Route::get('mis_archivos', [ArchivosController::class, 'archivos'])->name('mis_archivos');
 Route::get('archivos_raiz', [ArchivosController::class, 'archivos'])->name('archivos_raiz');
 
@@ -135,6 +137,10 @@ Route::get('lugares/{slug}', [LugaresController::class, 'show'])->where('slug', 
 
 Route::get('eventos', [EventosController::class, 'index'])->name('eventos');
 Route::get('eventos/{slug}', [EventosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('evento');
+
+
+Route::get('salas', [SalasController::class, 'index'])->name('salas');
+Route::get('salas/{slug}', [SalasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('sala');
 
 
 Route::get('donde-estamos', [ContactosController::class, 'index'])->name('contactos');

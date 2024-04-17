@@ -69,6 +69,13 @@ class Handler extends ExceptionHandler
 
         if ($exception instanceof NotFoundHttpException) {
 
+            // si se carga desde otra página (por ejemplo, una imagen) entonces simplemente devolvemos el error
+            $referer = $_SERVER['HTTP_REFERER'] ?? '';
+            $uri = $_SERVER['REQUEST_URI'] ?? '';
+
+            if($referer && strpos($referer, $uri)===FALSE) // comprueba si referer es la misma url de la request
+                return parent::render($request, $exception);
+
             // to-do: obtener path de la ruta actual y redirigir a la vista de error
             $path = $request->path();
             $buscar = preg_replace("/[\?\/\.]/", " ", $path); // quitar caracteres no permitidos en $path

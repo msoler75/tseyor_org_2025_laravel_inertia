@@ -3,10 +3,12 @@ import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount, markRaw } from 'vue';
 import { useDark, useToggle } from "@vueuse/core";
 import usePermisos from '@/Stores/permisos'
-import usePlayer from '@/Stores/player'
 // import usePlayer from '@/Stores/player'
 import setTransitionPages  from '@/composables/transitionPages.js'
 
+import useSelectors from '@/Stores/selectors'
+
+const selectors = useSelectors()
 
 
 // console.log('app initiating...')
@@ -79,6 +81,14 @@ function updateDarkState() {
 // DEV LOGINS
 
 
+function handleKey(event) {
+        if (event.ctrlKey && event.key === 'i') {
+            // event.preventDefault()
+            selectors.developerMode = !selectors.developerMode
+        }
+    }
+
+
 function login1() {
     console.log('login1')
     axios.get(route('login1'))
@@ -113,6 +123,8 @@ onMounted(() => {
     handleMouse()
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
+
+    window.addEventListener('keydown', handleKey);
 
     // cargamos el componente AudioPlayer más tarde
     /* setTimeout(() => {
@@ -260,12 +272,12 @@ axios.get(route('setting', 'navigation'))
 
                         </div>
 
-                        <div class="mx-auto flex gap-2">
+                        <div v-if="selectors.developerMode" class="mx-auto flex gap-2">
                             <button @click="login1" class="btn">L1</button>
                             <button @click="login2">L2</button>
                         </div>
 
-                        <GlobalSearch @mouseover="nav.closeTabs()" />
+                        <GlobalSearch @mouseover="nav.closeTabs()" class="ml-auto" />
 
                         <transition class="hidden lg:flex" enter-active-class="transition ease-out duration-200"
                             enter-from-class="transform opacity-0 scale-95"

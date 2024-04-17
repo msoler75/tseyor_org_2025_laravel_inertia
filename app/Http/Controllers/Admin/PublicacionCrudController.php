@@ -128,7 +128,7 @@ class PublicacionCrudController extends CrudController
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
-        CRUD::field('slug')->type('text')->after('titulo');
+        CRUD::field('slug')->type('text')->after('titulo')->hint('Puedes dejarlo en blanco');
 
         CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 

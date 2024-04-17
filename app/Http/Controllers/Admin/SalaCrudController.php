@@ -53,15 +53,6 @@ class SalaCrudController extends CrudController
 
         CRUD::column('enlace')->type('url');
 
-        $this->crud->addColumn([
-            'name'  => 'visibilidad',
-            'label' => 'Estado',
-            'type'  => 'text',
-            'value' => function($entry) {
-                return $entry->visibilidad == 'P'?'✔️ Publicado':'⚠️ Borrador';
-            }
-        ]);
-
     }
 
     /**
@@ -84,6 +75,8 @@ class SalaCrudController extends CrudController
          */
 
          CRUD::field('enlace')->type('url');
+
+         CRUD::field('slug')->hint('Puedes dejarlo en blanco');
     }
 
     /**

@@ -70,7 +70,7 @@ $response = $kernel->handle(
     $request = Request::capture()
 );
 
-Log::info(App\T::stats());
+// Log::info(App\T::stats());
  //die;
 
 $response->send();

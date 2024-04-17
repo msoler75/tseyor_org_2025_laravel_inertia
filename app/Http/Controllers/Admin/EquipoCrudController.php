@@ -111,7 +111,7 @@ class EquipoCrudController extends CrudController
 
         CRUD::field('nombre')->type('text');
 
-        CRUD::field('slug')->type('text');
+        CRUD::field('slug')->type('text')->hint('Puedes dejarlo en blanco');
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 

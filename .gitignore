@@ -3,7 +3,9 @@
 /node_modules
 /public/hot
 /public/storage
+/public/almacen
 /storage/indexes
+/storage/app
 /vendor
 .env
 .env.backup

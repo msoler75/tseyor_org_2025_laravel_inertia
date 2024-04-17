@@ -41,6 +41,7 @@
                 </div>
 
 
+                
 
                 <div class="flex flex-wrap justify-center gap-5">
                     <Link class="badge badge-neutral gap-2" v-for="equipo of usuario.equipos" :key="equipo.id"
@@ -50,13 +51,14 @@
                     </Link>
                 </div>
 
-                <div v-if="administrar && equiposFiltrados.length" class="mt-7">
-                    <form @submit.prevent="agregarEquipo" class="flex gap-3">
+                <div  v-if="administrar && equiposFiltrados.length" class="mt-7">
+                    <form @submit.prevent="agregarEquipo" class="space-y-3">
+                        <label>Agregarlo al equipo:</label>
                         <select v-model="equipoSeleccionado" placeholder="Elige un equipo..." class="text-gray-900">
                             <option v-for="equipo of equiposFiltrados" :key="equipo.id" :value="equipo.id">{{ equipo.nombre
                             }}</option>
                         </select>
-                        <input type="submit" class="btn btn-primary" value="Agregar Equipo" :disabled="!equipoSeleccionado">
+                        <input type="submit" class="btn btn-primary max-w-5" value="Agregar al Equipo" :disabled="!equipoSeleccionado">
                     </form>
                 </div>
 
@@ -88,7 +90,7 @@
                     Confirmación de eliminación
                 </template>
                 <template #content>
-                    ¿Quieres eliminar {{ equipoAEliminar.nombre }} de este usuario?
+                    ¿Quieres removerlo del equipo '{{ equipoAEliminar.nombre }}'?
                 </template>
                 <template #footer>
                     <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
@@ -112,6 +114,10 @@
 import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { usePage } from '@inertiajs/vue3';
+import useSelectors from '@/Stores/selectors'
+
+const selectors = useSelectors()
+
 
 const page = usePage()
 const user = page.props.auth.user

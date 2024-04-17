@@ -12,6 +12,7 @@ class DiskUtil {
      */
     public static function obtenerDiscoRuta(string $ruta): array
     {
+        // dd($ruta);
         // si la ruta comienza por "archivos", el disco es "archivos"
         // sino, es "public"
         $ruta = self::normalizarRuta($ruta);

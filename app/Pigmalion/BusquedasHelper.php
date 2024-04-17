@@ -151,8 +151,9 @@ class BusquedasHelper
                         $textoLimpio = strip_tags($item->texto); // Eliminar etiquetas HTML
                         $textoLimpio = preg_replace('/\bimg\b/', '', $textoLimpio); // Eliminar la palabra "img"
                         // eliminamos caracters de markdown
-                        $textoLimpio = preg_replace("/[#*_]/", "", $textoLimpio);
-                        $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
+                        $textoLimpio = \App\Pigmalion\Markdown::removeMarkdown($textoLimpio);
+                        // $textoLimpio = preg_replace("/[#*_]/", "", $textoLimpio);
+                        // $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
                     } else
                         $textoLimpio = $item->descripcion;
 
