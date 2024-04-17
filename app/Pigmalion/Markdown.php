@@ -556,4 +556,13 @@ class Markdown
         Log::info("moverImagenes: " . print_r($imagenes_movidas, true));
         return $imagenes_movidas;
     }
+
+    public static function removeMarkdown($content) {
+        // $content = preg_replace('/\bimg\b/', '', $content); // Eliminar la palabra "img" (??)
+        // eliminamos caracters de markdown
+        $content = preg_replace("/[#*_]/", "", $content);
+        $content = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $content);
+        $content = preg_replace("/\{.*?\}/", "", $content); // eliminamos marcas de estilo especiales
+        return $content;
+    }
 }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <input type="text" :name="name" v-model="selected" class="w-[600px]">
+        <input type="text" :name="name" v-model="selected" class="w-[600px] form-control">
 
         <ModalDropZone v-model="modalSubirImage" @uploaded="uploadedImage($event)"
             placeholder="Arrastra la imagen aquí o haz clic" url="/files/upload/image" :mediaFolder="folder" :options="{

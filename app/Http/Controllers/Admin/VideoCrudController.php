@@ -83,7 +83,7 @@ class VideoCrudController extends CrudController
 
          CRUD::field('titulo')->type('text');
 
-         CRUD::field('slug')->type('text');
+         CRUD::field('slug')->type('text')->hint('Puedes dejarlo en blanco');;
 
          CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 

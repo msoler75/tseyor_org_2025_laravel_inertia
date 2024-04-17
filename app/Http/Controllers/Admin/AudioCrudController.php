@@ -100,11 +100,19 @@ class AudioCrudController extends CrudController
             ])
             ->attributes(['accept' => "audio/*"]);
 
-        CRUD::field([   // select_from_array
+        CRUD::addField([   // select_from_array
             'name'        => 'categoria',
             'label'       => "Categoría",
             'type'        => 'select_from_array',
-            'options'     => ['Meditaciones'=>'Meditaciones', 'Talleres'=>'Talleres', 'Cuentos'=>'Cuentos', 'Reflexiones'=>'Reflexiones', 'Música clásica'=>'Música clásica', 'Otros'=>'Otros'],
+            'options'     => ['Meditaciones'=>'Meditaciones', 
+                              'Talleres'=>'Talleres', 
+                              'Cuentos'=>'Cuentos', 
+                              'Reflexiones'=>'Reflexiones', 
+                              'Música clásica'=>'Música clásica', 
+                              'Rayos de luz'=>'Rayos de luz', 
+                              'Minicápsulas de Aium Om'=>'Minicápsulas de Aium Om', 
+                              'Canciones'=>'Canciones',
+                              'Otros'=>'Otros'],
             'allows_null' => false,
             'default'     => 'Meditaciones',
             'wrapper'   => [

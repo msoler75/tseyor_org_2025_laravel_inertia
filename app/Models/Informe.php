@@ -62,7 +62,7 @@ class Informe extends ContenidoConAudios
 
     public function getEquipoNombreAttribute()
     {
-        return $this->equipo->nombre;
+        return $this->equipo ? $this->equipo->nombre : '<no definido>';
     }
 
 

@@ -232,7 +232,7 @@ class InformeCrudController extends CrudController
                 'chunkSize' => 1024 * 1024 * 2,
                 // for 2 MB
                 'chunking' => true,
-                'acceptedFiles' => '.pdf,.doc,.docx,.odt,.rtf,.txt,.xls,.xlsx,.ods,.csv,.mp3,.mp4', // mp4 para vídeo
+                'acceptedFiles' => '.pdf,.doc,.docx,.odt,.rtf,.txt,.xls,.xlsx,.ods,.csv,.mp3,.mp4,.zip', // mp4 para vídeo
                 'addRemoveLinks' => true,
                 'dictRemoveFileConfirmation' => '¿Quieres eliminar este archivo?',
                 'dictRemoveFile' => 'Eliminar'
@@ -273,7 +273,7 @@ class InformeCrudController extends CrudController
             // AUDIOS
             if($informe->audios) {
                 $año = $informe->created_at->year;
-                $carpetaAudios = "medios/informes/audios/{$informe->equipo->slug}/$año/{$informe->id}";
+                $carpetaAudios = "/almacen/medios/informes/audios/{$informe->equipo->slug}/$año/{$informe->id}";
                 Log::info("informe::saved - audios carpeta " . $carpetaAudios);
                 if(TESTAR_CONVERTIDOR_AUDIO3) {
                     $p = new ProcesarAudios($informe, $carpetaAudios);
@@ -285,8 +285,9 @@ class InformeCrudController extends CrudController
             }
 
             // ARCHIVOS
+            throw new Exception("hola esto es un error");
                 if($informe->archivos) {
-                    $carpetaArchivos = "$folder/{$informe->id}/archivos";
+                    $carpetaArchivos = "$folder/archivos";
                     Log::info("informe::saved - archivos carpeta " . $carpetaArchivos);
                     $informe->guardarArchivos($carpetaArchivos);
                 }
