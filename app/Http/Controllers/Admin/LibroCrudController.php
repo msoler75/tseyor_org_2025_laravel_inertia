@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
+use Backpack\CRUD\app\Library\Validation\Rules\ValidUpload;
 use App\Models\Libro;
 
 /**
@@ -62,6 +63,15 @@ class LibroCrudController extends CrudController
         ]);
 
         $this->crud->addColumn([
+            'name' => 'imagen',
+            'label' => 'portada',
+            'type' => 'image',
+            'value' => function ($entry) {
+                return $entry->imagen . '?mh=25';
+            }
+        ]);
+
+        $this->crud->addColumn([
             'name' => 'visibilidad',
             'label' => 'Estado',
             'type' => 'text',
@@ -79,11 +89,13 @@ class LibroCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
+
         CRUD::setValidation([
             'titulo' => 'required|min:8',
             'descripcion' => 'required|max:2048',
             'imagen' => 'required',
-            'pdf' => 'required|mimes:pdf',
+            // 'pdf' => 'required|mimes:pdf',
+            'pdf' => ValidUpload::field('required')->file('mimes:pdf'),
         ]);
         // CRUD::setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
@@ -93,9 +105,9 @@ class LibroCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-        $folderImages = "/medios/libros/portadas";
+        $folderImages = "/almacen/medios/libros/portadas";
 
-        $folderPDF = "/medios/libros/pdf";
+        $folderPDF = "medios/libros/pdf"; // para upload no se pone 'almacen' porque es el disco 'public'
 
         // Verificar si la carpeta existe en el disco 'public'
         if (!Storage::disk('public')->exists($folderImages)) {
@@ -145,6 +157,7 @@ class LibroCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
+        // $this->is_update = true;
         $this->setupCreateOperation();
     }
 

@@ -61,7 +61,10 @@ class ContactoCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'imagen',
             'label' => 'Imagen',
-            'type' => 'image'
+            'type' => 'image',
+            'value' => function ($entry) {
+                return $entry->imagen . '?mh=25';
+            }
         ]);
 
         $this->crud->addColumn([

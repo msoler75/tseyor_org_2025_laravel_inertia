@@ -17,6 +17,7 @@ use App\Http\Controllers\LibrosController;
 use App\Http\Controllers\CentrosController;
 use App\Http\Controllers\ContactosController;
 use App\Http\Controllers\AudiosController;
+use App\Http\Controllers\VideosController;
 use App\Http\Controllers\ContenidosController;
 use App\Http\Controllers\PortadaController;
 use App\Http\Controllers\CursosController;
@@ -105,10 +106,7 @@ Route::get('archivos_raiz', [ArchivosController::class, 'archivos'])->name('arch
 Route::get('audios', [AudiosController::class, 'index'])->name('audios');
 Route::get('audios/{slug}', [AudiosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('audio');
 
-Route::get('videos', function () {
-    return Inertia::render('Videos', [])
-        ->withViewData(SEO::get('videos'));
-})->name('videos');
+Route::get('videos', [VideosController::class, 'index'])->name('videos');
 
 
 

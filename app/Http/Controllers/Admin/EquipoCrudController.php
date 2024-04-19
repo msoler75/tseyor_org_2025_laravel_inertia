@@ -70,6 +70,9 @@ class EquipoCrudController extends CrudController
             'name' => 'imagen',
             'label' => 'Imagen',
             'type' => 'image',
+            'value' => function ($entry) {
+                return $entry->imagen . '?mh=25';
+            }
         ]);
 
 

@@ -8,6 +8,8 @@
 
         <div class="max-w-[900px] mx-auto flex flex-col md:flex-row gap-10 mt-12">
 
+            <h1>Salas virtuales</h1>
+
             <div class="bg-base-100 shadow-xl p-5 rounded-lg">
 
                 <h2>{{ sala.nombre }}</h2>

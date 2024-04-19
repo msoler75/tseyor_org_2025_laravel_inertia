@@ -4,13 +4,11 @@
         <AdminPanel modelo="sala" necesita="administrar directorio" class="mb-3" />
 
         <h1>Salas virtuales</h1>
-        <p>Listado de salas habituales para reunión virtual de los distintos equipos de la comunidad Tseyor.</p>
+        <p>Listado de salas para reuniones virtuales de los distintos equipos de la comunidad Tseyor.</p>
 
         <div class="flex w-full justify-end mb-5">
             <SearchInput />
         </div>
-
-        <h2>Salas</h2>
 
         <div class="w-full flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
 

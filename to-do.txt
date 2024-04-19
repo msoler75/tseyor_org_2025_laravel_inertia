@@ -1,7 +1,4 @@
-revisar:
-
-https://github.com/lorisleiva/laravel-deployer/blob/main/deploy.php
-https://lorisleiva.com/deploy-your-laravel-app-from-scratch
+Falta: TutorialesCrudController, VideosController
 
 
 BUSQUEDAS:
@@ -17,50 +14,47 @@ CONTACTO
 -un usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
     - y si no, al menos poder mandar fácilmente los datos de contacto a un administrador
 
+PLAYER
+-cuando cierra el player, carga un audio con url /audios/null
+
 EQUIPOS:
 -integrar generación de documentos word, o upload de los mismos, en los equipos
 -coordinador ->configurar->editores->tiptap simple
 -Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
+-revisar permisos coordinadores (informes, archivos)
 
 ADMIN
 -dashboard: añadir: archivos subidos
 -emails: ver registro de emails en el dashboard
 
+EVENTOS
+-que grupo de usuarios con rol "comunicador" puedan crear eventos
 
-look webdav:
-https://help.dreamhost.com/hc/en-us/articles/216660108-WebDAV-overview
 
-
+CORREO:
+-Instalar PHP Mailer: https://help.dreamhost.com/hc/es/articles/360031174411-PHPMailer-Instalaci%C3%B3n-en-un-servidor-compartido
+-Límites de cuota DreamHost: https://help.dreamhost.com/hc/es/articles/215730437-L%C3%ADmites-de-cuota-SMTP
+-Política anti-spam en dreamhost: https://www.dreamhost.com/es/legal/politica-anti-spam/
 -Boletines
 -mail relay
 https://mailrelay.com/
 -usar mail relay API para envío de Boletines
 https://apidocs.mailrelay.com/#post-/campaigns
-
-
-
--que cuando importe un comunicado en word, cambie:
-####### ... CONVERSACIONES INTERDIMENSIONALES por algo como negrita
-
--share buttons social clipboard (vue useClipboard)
-
 -Boletines (es como un novedades, pero por correo)
 
 
 
-Creación de eventos por los usuarios autorizados
+COMUNICADOS
+-que cuando importe un comunicado en word, cambie:
+####### ... CONVERSACIONES INTERDIMENSIONALES por algo como negrita
 
 
+WEBDAV:
+https://help.dreamhost.com/hc/en-us/articles/216660108-WebDAV-overview
 
 
-
-Equipos:
--informes de equipo
--revisar permisos coordinadores (publicaciones, archivos)
-
-
-Eventos:
--grupo de usuarios social pueden crear eventos
+FUNCIONALIDADES UI
+-share buttons social clipboard (vue useClipboard)
 
 
 images slider
@@ -69,7 +63,10 @@ https://backpackforlaravel.com/articles/tutorials/how-to-build-an-image-slider-c
 
 
 
-
+DEPLOY:
+-información:
+https://github.com/lorisleiva/laravel-deployer/blob/main/deploy.php
+https://lorisleiva.com/deploy-your-laravel-app-from-scratch
 
 
 DEPLOY AUTOMATIZADO

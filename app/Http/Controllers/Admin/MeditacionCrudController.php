@@ -120,7 +120,7 @@ class MeditacionCrudController extends CrudController
             ],
         ])->after('titulo');
 
-        $folder = "medios/meditaciones";
+        $folder = $this->getMediaFolder();
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
 

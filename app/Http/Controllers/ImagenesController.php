@@ -58,10 +58,10 @@ class ImagenesController extends Controller
         $fullpath = Storage::disk($disk)->path($ruta);
 
         // obtenemos las dimensiones de la imagen en la ubicación $fullpath, hemos de comprobar si es un PNG, o JPG...
-        $info = getimagesize($fullpath);
+        $info = @getimagesize($fullpath);
 
         // retorna respuesta json
-        return response()->json(['width' => $info[0], 'height' => $info[1]], 200)
+        return response()->json(['width' => $info[0] ?? 0, 'height' => $info[1] ?? 0], 200)
             ->header('Cache-Control', 'public, max-age=2592000');
     }
 

@@ -38,7 +38,7 @@
 
 @can('administrar directorio')
 <x-backpack::menu-dropdown title="Directorio" icon="la la-map-marked-alt">
-    <x-backpack::menu-dropdownitem title="Centros" icon="la la-map-marker" :link="backpack_url('centro')" />
+    <x-backpack::menu-dropdown-item title="Centros" icon="la la-map-marker" :link="backpack_url('centro')" />
     <x-backpack::menu-dropdown-item title="Contactos" icon="la la-address-book" :link="backpack_url('contacto')" />
     <x-backpack::menu-dropdown-item title="Salas virtuales" icon="la la-hospital-alt" :link="backpack_url('sala')" />
 </x-backpack::menu-dropdown>
