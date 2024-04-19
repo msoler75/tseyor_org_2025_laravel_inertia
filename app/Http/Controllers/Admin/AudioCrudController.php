@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\CRUD\app\Library\Validation\Rules\ValidUpload;
 use App\Models\Audio;
 
 /**
@@ -81,17 +82,22 @@ class AudioCrudController extends CrudController
         // CRUD::setValidation(AudioRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
+        CRUD::setValidation([
+            'titulo' => 'required|min:8',
+            'audio' => ValidUpload::field('required')->file('mimes:audio/*'),
+        ]);
+
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
 
         // donde se guardan los archivos de audio
-        $folder = "medios/audios";
+        $folder = "medios/audios"; // así funciona con upload y disco 'public'
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
-        CRUD::field('enlace')->type('text')->hint('Solo si es un audio externo, poner la url aquí. En tal caso no debe subirse el archivo audio.');
+        CRUD::field('enlace')->type('text')->hint('Solo si es un audio externo, poner la url aquí. En tal caso no debe subirse el archivo audio en el campo anterior.');
 
         CRUD::field('audio')->type('upload')
             ->withFiles([
@@ -104,13 +110,13 @@ class AudioCrudController extends CrudController
             'name'        => 'categoria',
             'label'       => "Categoría",
             'type'        => 'select_from_array',
-            'options'     => ['Meditaciones'=>'Meditaciones', 
-                              'Talleres'=>'Talleres', 
-                              'Cuentos'=>'Cuentos', 
-                              'Reflexiones'=>'Reflexiones', 
-                              'Música clásica'=>'Música clásica', 
-                              'Rayos de luz'=>'Rayos de luz', 
-                              'Minicápsulas de Aium Om'=>'Minicápsulas de Aium Om', 
+            'options'     => ['Meditaciones'=>'Meditaciones',
+                              'Talleres'=>'Talleres',
+                              'Cuentos'=>'Cuentos',
+                              'Reflexiones'=>'Reflexiones',
+                              'Música clásica'=>'Música clásica',
+                              'Rayos de luz'=>'Rayos de luz',
+                              'Minicápsulas de Aium Om'=>'Minicápsulas de Aium Om',
                               'Canciones'=>'Canciones',
                               'Otros'=>'Otros'],
             'allows_null' => false,

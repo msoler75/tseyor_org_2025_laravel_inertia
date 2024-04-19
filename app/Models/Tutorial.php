@@ -30,8 +30,6 @@ class Tutorial extends ContenidoBaseModel
     ];
 
 
-
-
       // SCOUT
 
 

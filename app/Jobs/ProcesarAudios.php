@@ -51,7 +51,7 @@ class ProcesarAudios implements ShouldQueue
         else {
             $modelName = $this->contenido->getMorphClass();
             $año = $this->contenido->created_at->year;
-            $carpeta = "medios/$modelName/$año";
+            $carpeta = "/almacen/medios/$modelName/$año";
             $folder = $carpeta;
         }
 

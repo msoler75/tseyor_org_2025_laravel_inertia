@@ -38,12 +38,14 @@ class ContenidoBaseModel extends Model
 
         static::saved(function ($model) {
 
-            Log::info("model saved: ". ($model->texto ?? '<sin texto>'));
-            // si mueve alguna imagen, guardamos los cambios y salimos
-            if(ContenidoHelper::moverImagenesContenido($model)) {
-                $model->save();
-                Log::info("se han movido imagenes de carpeta temp a destino");
-                return;
+            if($model->texto ?? '') {
+                // Log::info("ContenidoBaseModel saved: ". substr($model->texto, 0, 1024));
+                // si mueve alguna imagen, guardamos los cambios y salimos
+                if(ContenidoHelper::moverImagenesContenido($model)) {
+                    $model->save();
+                    Log::info("Se han movido imagenes de carpeta temp a destino para ".$model->getMorphClass()."/".$model->id);
+                    return;
+                }
             }
 
             // Acciones después de que el modelo se haya guardado

@@ -67,6 +67,9 @@ class NoticiaCrudController extends CrudController
             'name' => 'imagenUrl',
             'label' => 'Imagen',
             'type' => 'image',
+            'value' => function ($entry) {
+                return $entry->imagen . '?mh=25';
+            }
         ]);
 
 

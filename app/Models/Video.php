@@ -18,7 +18,7 @@ class Video extends ContenidoBaseModel
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
-    protected $fillable = ['nombre', 'slug', 'descripcion', 'enlace'];
+    protected $fillable = ['titulo', 'slug', 'descripcion', 'enlace'];
     // protected $hidden = [];
 
     /*

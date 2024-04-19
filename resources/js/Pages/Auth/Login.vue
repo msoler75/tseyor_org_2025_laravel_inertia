@@ -1,7 +1,9 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
-
+import usePermisos from '@/Stores/permisos'
 import AppLayout from '@/Layouts/AppLayout.vue'
+
+const permisos = usePermisos()
 
 defineOptions({ layout: AppLayout })
 
@@ -21,7 +23,10 @@ const submit = () => {
         ...data,
         remember: form.remember ? 'on' : '',
     })).post(route('login'), {
-        onFinish: () => form.reset('password'),
+        onFinish: () => {
+            form.reset('password'),
+            permisos.cargarPermisos()
+        }
     });
 };
 </script>

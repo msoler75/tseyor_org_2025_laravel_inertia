@@ -14,7 +14,7 @@
             <p>
                 {{ audio.descripcion }}
             </p>
-
+{{audio}}
             <Audios :audios="parseFiles(audio.audio)" :titulo="audio.titulo" />
         </div>
     </div>

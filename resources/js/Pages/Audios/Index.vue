@@ -58,10 +58,10 @@
 
                         <div class="flex flex-col gap-2 mr-auto w-full">
                             <Link :href="route('audio', audio.slug)"
-                                class="text-base font-bold my-0 leading-5 hover:underline">{{ audio.titulo }}
+                                class="text-base font-bold my-0 leading-5 hover:underline w-fit">{{ audio.titulo }}
                             </Link>
                             <Link v-if="!categoriaActiva" :href="`${route('audios')}?categoria=${audio.categoria}`"
-                                class="text-xs">{{ audio.categoria }}
+                                class="text-xs w-fit hover:underline">{{ audio.categoria }}
                             </Link>
                         </div>
                     </div>
