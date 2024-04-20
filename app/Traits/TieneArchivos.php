@@ -4,37 +4,46 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use App\Pigmalion\DiskUtil;
 
 trait TieneArchivos
 {
 
     public function guardarArchivos($carpeta)
     {
-        if (!is_array($this->archivos)||!count($this->archivos))
-            return;
+        if (!is_array($this->archivos) || !count($this->archivos))
+            return false;
 
-        $pathDestino = Storage::disk('public')->path($carpeta);
+        DiskUtil::ensureDirExists($carpeta);
+
+        list($disk, $dest) = DiskUtil::obtenerDiscoRuta($carpeta);
+
+        if ($disk != 'public') {
+            Log::error("TieneArchivos::guardarArchivos ($carpeta): No se puede guardar en un disco distinto de public");
+            return;
+        }
 
         $archivosNuevo = [];
-
         $cambiado = false;
         foreach ($this->archivos as $archivoActual) {
+            $pathFileTarget = $dest . '/' . basename($archivoActual);
             if (strpos($archivoActual, $carpeta) === FALSE) {
                 // hay que copiar el archivo a la nueva ubicación
-                if (!Storage::disk('public')->exists($pathDestino)) {
-                    Log::info("mkdir public:$pathDestino");
-                    Storage::disk('public')->makeDirectory($pathDestino, 0755, true, true);
-                }
-                $archivoDestino = $carpeta . '/' . basename($archivoActual);
-                Storage::disk('public')->move($archivoActual, $archivoDestino);
-                $archivosNuevo[] = $archivoDestino;
+                Storage::disk('public')->move($archivoActual, $pathFileTarget);
+                $archivosNuevo[] = $pathFileTarget;
                 $cambiado = true;
             } else {
                 $archivosNuevo[] = $archivoActual;
             }
         }
 
+
         if ($cambiado)
-            $this->update(['archivos' => $archivosNuevo]);
+        {
+            $this->archivos=$archivosNuevo;
+            // $this->saveQuietly();
+        }
+        
+        return $cambiado;
     }
 }

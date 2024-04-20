@@ -10,6 +10,7 @@ use App\Models\Informe;
 use App\Jobs\ProcesarAudios;
 use Illuminate\Support\Facades\Log;
 use App\Models\Equipo;
+// use Backpack\CRUD\app\Library\Validation\Rules\ValidUploadMultiple;
 
 // esto permite testar la conversión de audio al guardar el comunicado
 define('TESTAR_CONVERTIDOR_AUDIO3', false);
@@ -126,6 +127,7 @@ class InformeCrudController extends CrudController
         CRUD::setValidation([
             'titulo' => 'required|min:8',
             'descripcion' => 'max:400',
+            // 'audios' => ValidUploadMultiple::field()->file('max:20000'),
         ]);
 
         CRUD::setFromDb(); // set fields from db columns.
@@ -199,7 +201,7 @@ class InformeCrudController extends CrudController
                 'chunkSize' => 1024 * 1024 * 2,
                 // for 2 MB
                 'chunking' => true,
-                'acceptedFiles' => '.mp3,.mpeg,.mpg,.mp4,.m4a,.wav,.opus,.flac,.wma,.aac,.ogg,.au',
+                'acceptedFiles' => 'audio/*',
                 'addRemoveLinks' => true,
                 'dictRemoveFileConfirmation' => '¿Quieres eliminar este archivo?',
                 'dictRemoveFile' => 'Eliminar'
@@ -218,7 +220,17 @@ class InformeCrudController extends CrudController
         ]);
 
 
-        CRUD::field([
+        /* CRUD::field('audios')->type('upload_multiple')->attributes(['accept'=>'audio/*'])->withFiles([
+            'disk' => 'public', 
+            'path' => 'uploads'
+        ]);
+        CRUD::field('archivos')->type('upload_multiple')->withFiles([
+            'disk' => 'public', 
+            'path' => 'uploads',
+    ]); */
+
+        
+            CRUD::field([
             'name' => 'archivos',
             'label' => 'Archivos adjuntos',
             'type' => 'dropzone',
@@ -255,15 +267,6 @@ class InformeCrudController extends CrudController
         CRUD::field('visibilidad')->type('visibilidad');
 
 
-        Informe::saving(function ($informe) {
-            Log::info("informe::saving ". var_export($informe, true));
-            /*if(is_array($informe->audios))
-            $informe->audios = json_encode($informe->audios);
-            if(is_array($informe->archivos))
-            $informe->archivos = json_encode($informe->archivos);
-        */
-        });
-
         Informe::saved(function ($informe) use ($folder) {
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un informe.
@@ -285,11 +288,12 @@ class InformeCrudController extends CrudController
             }
 
             // ARCHIVOS
-            throw new Exception("hola esto es un error");
+            // throw new \Exception("hola esto es un error");
                 if($informe->archivos) {
                     $carpetaArchivos = "$folder/archivos";
                     Log::info("informe::saved - archivos carpeta " . $carpetaArchivos);
-                    $informe->guardarArchivos($carpetaArchivos);
+                    if($informe->guardarArchivos($carpetaArchivos)) 
+                        $informe->saveQuietly();
                 }
 
         });

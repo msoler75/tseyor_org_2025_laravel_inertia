@@ -24,7 +24,7 @@ import TimeAgo from "../Components/TimeAgo.vue";
 import FileManager from "../Components/FileManager.vue";
 
 // only in forms
-const elem = document.querySelector(".page-body form, .admin-dashboard");
+const elem = document.querySelector(".page-body form, .admin-dashboard, .vue-component");
 if (elem) {
   console.log("loading vue 3 fields...");
   window.app = createApp({})
