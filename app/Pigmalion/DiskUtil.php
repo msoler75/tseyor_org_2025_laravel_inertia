@@ -53,13 +53,23 @@ class DiskUtil {
         return Storage::disk($disk)->path($ruta);
     }
 
-    public static function ensureDirExists($rutaOrig) { 
-        list($disk, $ruta) = self::obtenerDiscoRuta($rutaOrig);
+    public static function ensureDirExists($dir) { 
+        list($disk, $ruta) = self::obtenerDiscoRuta($dir);
         // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk($disk)->exists(dirname($ruta))) {
+        if (!Storage::disk($disk)->exists($ruta)) {
             // Crear la carpeta en el disco 'public'
-            Storage::disk($disk)->makeDirectory(dirname($ruta));
+            Storage::disk($disk)->makeDirectory($ruta);
         }
+    }
+
+    public static function normalizePath($ruta) {
+        if (!$ruta) return $ruta;
+        if (preg_match("/^https?:\/\//", $ruta)) return $ruta;
+        // list($disk, $ruta) = self::obtenerDiscoRuta($ruta);
+        if(preg_match("/^\/archivos\//", $ruta)) return $ruta;
+        if(preg_match("/^\/storage\//", $ruta)) return preg_replace("#^\/storage\/?#", "/almacen/", $ruta);
+        if(preg_match("/^\/almacen\//", $ruta)) return $ruta;
+        return "/almacen/$ruta";
     }
 
 }

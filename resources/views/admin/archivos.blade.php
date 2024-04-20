@@ -3,7 +3,7 @@
 @section('content')
 
 
-<div class=" min-h-full flex-grow h-full relative ">
+<div class="vue-component min-h-full flex-grow h-full relative ">
 
 <FileManager class="min-h-[calc(100vh-110px)] max-h-[calc(100vh-110px)] h-[calc(100vh-110px)] overflow-y-auto" mostrar-mis-archivos="no"/>
 

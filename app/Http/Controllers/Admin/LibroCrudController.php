@@ -6,6 +6,7 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
 use Backpack\CRUD\app\Library\Validation\Rules\ValidUpload;
+use App\Pigmalion\DiskUtil;
 use App\Models\Libro;
 
 /**
@@ -94,7 +95,6 @@ class LibroCrudController extends CrudController
             'titulo' => 'required|min:8',
             'descripcion' => 'required|max:2048',
             'imagen' => 'required',
-            // 'pdf' => 'required|mimes:pdf',
             'pdf' => ValidUpload::field('required')->file('mimes:pdf'),
         ]);
         // CRUD::setValidation(EntradaRequest::class);
@@ -109,17 +109,9 @@ class LibroCrudController extends CrudController
 
         $folderPDF = "medios/libros/pdf"; // para upload no se pone 'almacen' porque es el disco 'public'
 
-        // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk('public')->exists($folderImages)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($folderImages);
-        }
+        DiskUtil::ensureDirExists($folderImages);
 
-        if (!Storage::disk('public')->exists($folderPDF)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk('public')->makeDirectory($folderPDF);
-        }
-
+        DiskUtil::ensureDirExists("/almacen/$folderImages");
 
         CRUD::field('categoria')->hint('Monografías, Obras de referencia, Cuentos, Talleres... Se pueden poner varias categorías separadas por coma.');
 

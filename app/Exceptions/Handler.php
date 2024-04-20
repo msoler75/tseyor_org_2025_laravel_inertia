@@ -52,6 +52,8 @@ class Handler extends ExceptionHandler
         // Guardar la excepción en el log con información detallada
         // Log::error($exception->getMessage(), ['exception' => $exception]);
 
+       $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 512;
+
         Log::error('An exception occurred', [
             'message' => $exception->getMessage(),
             'file' => $exception->getFile(),
@@ -84,7 +86,7 @@ class Handler extends ExceptionHandler
 
             $message = $exception->getMessage();
             return Inertia::render('Error', [
-                'codigo' => $exception->getStatusCode(),
+                'codigo' => $statusCode,
                 'titulo' => $message ? $message : 'Contenido no encontrado',
                 'mensaje' => 'No se encuentra el recurso solicitado.',
                 'alternativas' => $resultados
@@ -93,15 +95,15 @@ class Handler extends ExceptionHandler
 
         if ($exception instanceof UnauthorizedHttpException) {
             return Inertia::render('Error', [
-                'codigo' => $exception->getStatusCode(),
+                'codigo' => $statusCode,
                 'titulo' => 'Acceso denegado',
                 'mensaje' => $exception->getMessage(),
             ])->toResponse($request);
         }
 
-        if ($exception instanceof AccessDeniedHttpException || (method_exists($exception, 'getStatusCode') && $exception->getStatusCode() == 403)) {
+        if ($exception instanceof AccessDeniedHttpException) {
             return Inertia::render('Error', [
-                'codigo' => $exception->getStatusCode(),
+                'codigo' => $statusCode,
                 'titulo' => 'Acceso no permitido',
                 'mensaje' => $exception->getMessage(),
             ])->toResponse($request);
@@ -134,7 +136,7 @@ class Handler extends ExceptionHandler
         }
 
         return Inertia::render('Error', [
-            'codigo' => 500,
+            'codigo' => $statusCode,
             'titulo' => 'Error inesperado',
             'mensaje' => $exception->getMessage(),
         ])->toResponse($request);
