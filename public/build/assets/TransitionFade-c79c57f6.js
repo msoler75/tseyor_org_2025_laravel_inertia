@@ -1,1 +1,0 @@
-import{K as _,U as a,a0 as n,M as t,a3 as o}from"./iconify-4eda29ca.js";import{_ as s}from"./_plugin-vue_export-helper-c27b6911.js";const r={};function c(e,d){return _(),a(o,{name:"fade"},{default:n(()=>[t(e.$slots,"default",{},void 0,!0)]),_:3})}const p=s(r,[["render",c],["__scopeId","data-v-eba59fc4"]]);export{p as _};
