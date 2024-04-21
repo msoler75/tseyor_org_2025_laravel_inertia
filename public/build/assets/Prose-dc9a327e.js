@@ -1,1 +1,0 @@
-import{_ as e}from"./_plugin-vue_export-helper-c27b6911.js";import{K as o,B as s,M as n}from"./iconify-4eda29ca.js";const r={},c={class:"prose p-content text-justify text-pretty"};function _(t,a){return o(),s("div",c,[n(t.$slots,"default")])}const i=e(r,[["render",_]]);export{i as _};

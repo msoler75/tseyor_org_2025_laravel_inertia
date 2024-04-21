@@ -45,16 +45,20 @@
 
                 <GridAppear v-if="listado.data.length > 0" class="gap-4 max-w-full"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
-                    <div v-for="audio in listado.data.map(a => ({ ...a, src: a.audio.match(/^http/) ? a.audio : '/almacen/' + a.audio }))"
+                    <div v-for="audio in listado.data.map(a => ({ ...a, src: srcAudio(a) }))"
                         :key="audio.id"
                         class="card flex-row shadow bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
                         style="max-width: calc(100vw - 30px)">
-
-                        <div class="btn p-0 w-12 h-5 min-h-auto text-3xl"
+             
+                        <div v-if="audio.audio" class="btn p-0 w-12 h-5 min-h-auto text-3xl"
                             :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'"
-                            @click="clickPlayPause(audio)">
+                            @click="clickPlayPause(audio)"
+                            :title="audio.src">
                             <AudioStateIcon :src="audio.src"  />
                         </div>
+                        <a target="_blank" v-else :href="audio.enlace" class="btn p-0 w-12 h-5 min-h-auto text-3xl" title="abrir enlace">
+                            <Icon icon="ph:arrow-up-right-duotone" />
+                        </a>
 
                         <div class="flex flex-col gap-2 mr-auto w-full">
                             <Link :href="route('audio', audio.slug)"
@@ -80,8 +84,8 @@
 <script setup>
 
 import AppLayout from '@/Layouts/AppLayout.vue'
-
 import usePlayer from '@/Stores/player'
+import {getSrcUrl} from '@/composables/srcutils.js'
 
 defineOptions({ layout: AppLayout })
 
@@ -122,5 +126,10 @@ function clickPlayPause(audio) {
     }
     // nuevo audio
     else player.play(audio.src, titulo)
+}
+
+function srcAudio(a) {
+    if(!a.audio) return a.enlace
+    return getSrcUrl(a.audio)
 }
 </script>

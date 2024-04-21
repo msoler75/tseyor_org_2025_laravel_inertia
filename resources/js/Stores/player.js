@@ -68,7 +68,7 @@ const state = reactive({
   },
   close() {
     this.audio.pause();
-    this.audio.src = null;
+    // this.audio.src = null;
     this.music = null;
     this.state = "stopped";
     this.closed = true;
