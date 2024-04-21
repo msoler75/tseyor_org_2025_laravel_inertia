@@ -24,7 +24,7 @@
                 <div v-for="contenido in listado.data" :key="contenido.id" :href="route('normativa', contenido.slug)"
                     class="card hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-col items-center gap-3 hover:bg-base-200/40 rounded-xl w-full">
                     <div class="aspect-w-16 aspect-h-9">
-                        <iframe :src="videoUrl(contenido.enlace)" frameborder="0" allowfullscreen></iframe>
+                        <iframe :src="getEmbedYoutube(contenido.enlace)" frameborder="0" allowfullscreen></iframe>
                     </div>
                     <div class="text-xl font-bold">{{ contenido.titulo }}</div>
                     <div class="text-sm">{{ contenido.descripcion }}</div>
@@ -39,6 +39,8 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
+import {getEmbedYoutube} from '@/composables/srcutils.js'
+
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
@@ -53,14 +55,5 @@ const props = defineProps({
 });
 
 
-function videoUrl(url) {
-    const u = url.match(/(?:https:\/\/)?(?:www.)?youtube.com\/watch\?v=([^&]+)/);
-    if (u && u[1]) {
-        const videoId = u[1];
-        return 'https://www.youtube.com/embed/' + videoId
-    }
-    else {
-        return url
-    }
-}
+
 </script>

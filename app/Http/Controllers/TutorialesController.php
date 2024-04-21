@@ -55,21 +55,21 @@ class TutorialesController extends Controller
     public function show($id)
     {
         if (is_numeric($id)) {
-            $Tutorial = Tutorial::findOrFail($id);
+            $tutorial = Tutorial::findOrFail($id);
         } else {
-            $Tutorial = Tutorial::where('slug', $id)->firstOrFail();
+            $tutorial = Tutorial::where('slug', $id)->firstOrFail();
         }
 
         $borrador = request()->has('borrador');
-        $publicado = $Tutorial->visibilidad == 'P';
+        $publicado = $tutorial->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$Tutorial || (!$publicado && !$borrador && !$editor)) {
+        if (!$tutorial || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
         return Inertia::render('Tutoriales/Tutorial', [
-            'Tutorial' => $Tutorial,
+            'tutorial' => $tutorial,
         ])
-            ->withViewData(SEO::from($Tutorial));
+            ->withViewData(SEO::from($tutorial));
     }
 }

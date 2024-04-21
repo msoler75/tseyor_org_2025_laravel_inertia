@@ -84,7 +84,8 @@ class AudioCrudController extends CrudController
 
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'audio' => ValidUpload::field('required')->file('mimes:audio/*'),
+            'audio' => ValidUpload::field('nullable')->file('mimes:mp3'),
+            'enlace' => 'required_without:audio|nullable|url'
         ]);
 
         /**
@@ -95,6 +96,8 @@ class AudioCrudController extends CrudController
         // donde se guardan los archivos de audio
         $folder = "medios/audios"; // así funciona con upload y disco 'public'
 
+        CRUD::field('slug')->type('text')->hint('Puedes dejarlo en blanco');
+
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
         CRUD::field('enlace')->type('text')->hint('Solo si es un audio externo, poner la url aquí. En tal caso no debe subirse el archivo audio en el campo anterior.');
@@ -104,11 +107,11 @@ class AudioCrudController extends CrudController
                 'disk' => 'public', // the disk where file will be stored
                 'path' => $folder, // the path inside the disk where file will be stored
             ])
-            ->attributes(['accept' => "audio/*"]);
+            ->attributes(['accept' => ".mp3"]);
 
         CRUD::addField([   // select_from_array
             'name'        => 'categoria',
-            'label'       => "Categoría",
+            'label'       => 'Categoría',
             'type'        => 'select_from_array',
             'options'     => ['Meditaciones'=>'Meditaciones',
                               'Talleres'=>'Talleres',

@@ -11,6 +11,7 @@ declare global {
   const currentTheme: typeof import('./resources/js/composables/themeAdapter.js')['currentTheme']
   const defineEmits: typeof import('vue')['defineEmits']
   const detectFormat: typeof import('./resources/js/composables/markdown.js')['detectFormat']
+  const getEmbedYoutube: typeof import('./resources/js/composables/srcutils.js')['getEmbedYoutube']
   const getImageSize: typeof import('./resources/js/composables/imageutils.js')['getImageSize']
   const getImageUrl: typeof import('./resources/js/composables/imageutils.js')['getImageUrl']
   const getSrcUrl: typeof import('./resources/js/composables/srcutils.js')['getSrcUrl']

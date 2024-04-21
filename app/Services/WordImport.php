@@ -178,14 +178,15 @@ class WordImport
                 @unlink($imagePath);
             }
         if ($this->tempDir) {
-            Log::info("go to delete folder " . $this->tempDir);
-            // we must delete files in folder first
-            WordImport::deleteFilesFromFolder($this->tempDir);
-
-            $path = Storage::disk('public')->path($this->tempDir);
-
-            // then we delete folder
-            rmdir($path);
+            if(Storage::disk('public')->exists($this->tempDir)) {
+                Log::info("go to delete folder " . $this->tempDir);
+                // we must delete files in folder first
+                WordImport::deleteFilesFromFolder($this->tempDir);
+                
+                $path = Storage::disk('public')->path($this->tempDir);
+                // then we delete folder
+                @rmdir($path);
+            }
         }
         // @unlink($tempDir . '/output.md');
     }

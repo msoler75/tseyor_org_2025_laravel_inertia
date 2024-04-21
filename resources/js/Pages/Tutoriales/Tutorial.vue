@@ -12,12 +12,15 @@
                 <h1>{{ tutorial.titulo }}</h1>
 
                 <div class="text-neutral text-sm mb-20 flex justify-between">
-                    <Audios :audios="parseFiles(tutorial.audios)" :numerados="true" :titulo="tutorial.titulo"/>
                     <TimeAgo :date="tutorial.updated_at" :includeTime="false" />
                 </div>
             </div>
+            
+            <div v-if="tutorial.video" class="flex justify-center aspect-w-16 aspect-h-9 mb-12">
+                <iframe :src="getEmbedYoutube(tutorial.video)" frameborder="0" allowfullscreen></iframe>
+            </div>
 
-            <Content :content="tutorial.texto" class="pb-12 mx-auto" />
+            <Content :content="tutorial.texto" format="md" class="pb-12 mx-auto" />
 
         </div>
 
@@ -28,7 +31,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { parseFiles } from '@/composables/parseFiles'
+import {getEmbedYoutube} from '@/composables/srcutils.js'
 
 defineOptions({ layout: AppLayout })
 

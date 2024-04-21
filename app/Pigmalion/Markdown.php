@@ -80,24 +80,37 @@ class Markdown
         // Convertimos el documento a HTML
         $htmlWriter = new \PhpOffice\PhpWord\Writer\HTML($phpWord);
         $htmlContent = $htmlWriter->getContent();
+        Log::info("Html from docx: " . $htmlContent);
 
         // removemos span de texto por defecto
         //$htmlContent = preg_replace('&<span style="(?:font-family:\s*[^;]*;\s?|font-size:\s?1\dpt;\s?)+">([^<]*)</span>&', '$1', $htmlContent);
         $htmlContent = self::arreglarNotas($phpWord, $htmlContent);
 
-        $htmlContent = self::limpiarHtml($htmlContent);
+        Log::info("Html final from docx after Foot notes rework: " . $htmlContent);
 
+        $spanLimpio = true;
+
+        // a veces devuelve un valor "", no sé porqué, por limpiar los "span"
+        $htmlContent1 = self::limpiarHtml($htmlContent);
+        if(!$htmlContent1 && $htmlContent) {
+            $htmlContent1 = self::limpiarHtml($htmlContent, false);
+            $spanLimpio = false;
+        }
+        $htmlContent = $htmlContent1;
 
         // die($htmlContent);
-        // Log::info("Html final from docx after Foot notes rework: " . $htmlContent);
+        Log::info("Html final from docx limpiarHtml: " . $htmlContent);
 
 
+        if(trim($htmlContent))
         $htmlContent = self::extraerBody($htmlContent);
 
 
         // convertimos a formato desde HTML a markdown
         $converter = new HtmlConverter();
         $markdown = $converter->convert($htmlContent);
+
+      
 
         // por si quedó algun div de página lo quitamos
         $markdown = preg_replace('/<div style="page:\s*page\d+">/', '', $markdown);
@@ -108,6 +121,10 @@ class Markdown
 
         $markdown = self::extraerImagenes($markdown, $carpetaImagenes);
 
+        // si no se limpió en su momento, se hace ahora
+        if(!$spanLimpio)
+        $markdown = self::limpiarHtml($markdown);
+
         // arreglar enlace roto de algunos documentos
         $markdown = preg_replace('&\[tseyor.\]\(http://www.tseyor.com/\)<span style="text-decoration:\s?underline\s?">\*\*org\*\*\s?</span>&', '[tseyor.org](https://tseyor.org/)', $markdown);
         $markdown = str_replace('<span style="text-decoration:underline ">**tseyor.org**</span>', '[tseyor.org](https://tseyor.org/)', $markdown);
@@ -117,8 +134,9 @@ class Markdown
     }
 
 
-    public static function limpiarHtml($html)
+    public static function limpiarHtml($html, $limpiarSpan = true)
     {
+        
         // removemos caracteres extraños
         $html = preg_replace('/[\xA0\x0C]/u', ' ', $html);
         // Mantener saltos de línea, retorno de carro y tabulaciones al eliminar caracteres no imprimibles
@@ -134,10 +152,11 @@ class Markdown
         // se ha observado este error en documentos word:
         $html = preg_replace("&text-decoration=underline\s?&", "text-decoration:underline", $html);
 
+        if($limpiarSpan)
         $html = preg_replace_callback(
             '&<span\s+style=([^>]+)>([^<]*)</span>&',
             function ($match) {
-
+                // var_dump($match);
                 if (!$match[2])
                     return "";
 
