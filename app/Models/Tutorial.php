@@ -25,7 +25,7 @@ class Tutorial extends ContenidoBaseModel
         'categoria',
         'descripcion',
         'texto',
-        'audios',
+        'video',
         'visibilidad',
     ];
 

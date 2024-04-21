@@ -48,6 +48,7 @@ Route::group([
     Route::crud('pagina', 'PaginaCrudController');
     Route::crud('termino', 'TerminoCrudController');
     Route::crud('video', 'VideoCrudController');
+    Route::crud('tutorial', 'TutorialCrudController');
     Route::crud('experiencia', 'ExperienciaCrudController');
 
     Route::post('comunicado/importar/crear', 'ComunicadoCrudController@importCreate');
@@ -70,6 +71,9 @@ Route::group([
 
     Route::post('informe/importar/crear', 'InformeCrudController@importCreate');
     Route::post('informe/importar/actualizar/{id}', 'InformeCrudController@importUpdate');
+
+    Route::post('tutorial/importar/crear', 'TutorialCrudController@importCreate');
+    Route::post('tutorial/importar/actualizar/{id}', 'TutorialCrudController@importUpdate');
 
     Route::post('meditacion/importar/crear', 'MeditacionCrudController@importCreate');
     Route::post('meditacion/importar/actualizar/{id}', 'MeditacionCrudController@importUpdate');

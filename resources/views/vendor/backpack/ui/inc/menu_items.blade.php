@@ -14,6 +14,7 @@
     <x-backpack::menu-dropdown-item title="Meditaciones" icon="la la-smile-beam" :link="backpack_url('meditacion')" />
     <x-backpack::menu-dropdown-item title="Páginas/SEO" icon="la la-pager" :link="backpack_url('pagina')" />
     <x-backpack::menu-dropdown-item title="Radio Tseyor" icon="la la-broadcast-tower" :link="backpack_url('radio-item')" />
+    <x-backpack::menu-dropdown-item title="Tutoriales" icon="la la-chalkboard" :link="backpack_url('tutorial')" />
     <x-backpack::menu-dropdown-item title="Videos" icon="la la-youtube" :link="backpack_url('video')" />
 </x-backpack::menu-dropdown>
 @endcan
@@ -31,7 +32,7 @@
     <x-backpack::menu-dropdown-item title="Noticias" icon="la la-volume-up" :link="backpack_url('noticia')" />
     <x-backpack::menu-dropdown-item title="Eventos" icon="la la-calendar-check" :link="backpack_url('evento')" />
     <x-backpack::menu-dropdown-item title="Inscripciones" icon="la la-edit" :link="backpack_url('inscripcion')" />
-    <x-backpack::menu-dropdown-item title="Comentarios" icon="la la-comments" :link="backpack_url('comentario')" />
+    <x-backpack::menu-dropdown-item title="Comentarios" icon="la la-comments" :link="backpack_rl('comentario')" />
     <x-backpack::menu-dropdown-item title="Correos" icon="la la-envelope" :link="backpack_url('email')" />
 </x-backpack::menu-dropdown>
 @endcan

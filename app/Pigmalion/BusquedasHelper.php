@@ -149,7 +149,7 @@ class BusquedasHelper
                     if ($item->texto && strlen($item->texto) > 50) {
 
                         $textoLimpio = strip_tags($item->texto); // Eliminar etiquetas HTML
-                        $textoLimpio = preg_replace('/\bimg\b/', '', $textoLimpio); // Eliminar la palabra "img"
+                        $textoLimpio = preg_replace('/\bimg\b/', '', $textoLimpio); // Eliminar la palabra "img" ?
                         // eliminamos caracters de markdown
                         $textoLimpio = \App\Pigmalion\Markdown::removeMarkdown($textoLimpio);
                         // $textoLimpio = preg_replace("/[#*_]/", "", $textoLimpio);
