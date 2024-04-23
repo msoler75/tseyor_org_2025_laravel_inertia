@@ -1,5 +1,5 @@
 <template>
-    <div class="sections" style="--sectionHeight:calc(80vh - 4rem)">
+    <div class="sections">
         <slot></slot>
     </div>
 </template>

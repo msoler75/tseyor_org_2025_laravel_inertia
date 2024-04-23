@@ -22,8 +22,10 @@ ADMIN
 -emails: ver registro de emails en el dashboard
 
 EVENTOS
--que grupo de usuarios con rol "comunicador" puedan crear eventos
+-que grup1o de usuarios con rol "comunicador" puedan crear eventos
 
+COMENTARIOS
+-cambiar las rutas desde api.php a web.php, y en los componentes
 
 CORREO:
 -Instalar PHP Mailer: https://help.dreamhost.com/hc/es/articles/360031174411-PHPMailer-Instalaci%C3%B3n-en-un-servidor-compartido

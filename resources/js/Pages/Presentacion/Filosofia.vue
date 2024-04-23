@@ -48,9 +48,6 @@
                 href="/sociedades"
                 src-width="500"
                 src-height="700"
-                :style="{
-        '--sectionHeight': '94vh'
-    }"
                 >
                 <p>
                     A este tipo de sociedades pertenecen las civilizaciones que forman parte de la citada

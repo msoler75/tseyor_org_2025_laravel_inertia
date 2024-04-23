@@ -1,7 +1,5 @@
 <template>
-    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen" ref="container" :style="{
-        '--sectionHeight': sectionHeight
-    }" scroll-region>
+    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen" ref="container" scroll-region>
         <slot></slot>
 
         <!-- Footer como una sección más -->
@@ -30,15 +28,6 @@
 
 
 <script setup>
-
-// Definición de props y variables reactivas
-defineProps({
-    sectionHeight: {
-        type: String,
-        required: false,
-        default: '100vh'
-    }
-});
 
 const container = ref(null);
 const nav = useNav();
@@ -136,12 +125,10 @@ function scrollToPreviousMandatory() {
 
 <style scoped>
 :slotted(.section) {
-    height: var(--sectionHeight);
-    @apply snap-center flex flex-col justify-center;
+    @apply snap-center flex flex-col justify-center h-screen;
 }
 
 :deep(.section) {
-    height: var(--sectionHeight);
-    @apply snap-center flex flex-col justify-center;
+    @apply snap-center flex flex-col justify-center h-screen;
 }
 </style>
