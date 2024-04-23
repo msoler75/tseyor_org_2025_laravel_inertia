@@ -49,10 +49,9 @@
                         :key="audio.id"
                         class="card flex-row shadow bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
                         style="max-width: calc(100vw - 30px)">
-             
+
                         <div v-if="audio.audio" class="btn p-0 w-12 h-5 min-h-auto text-3xl"
-                            :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'"
-                            @click="clickPlayPause(audio)"
+                            :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlayPause(audio)"
                             :title="audio.src">
                             <AudioStateIcon :src="audio.src"  />
                         </div>

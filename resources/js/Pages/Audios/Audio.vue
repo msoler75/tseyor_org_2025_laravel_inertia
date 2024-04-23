@@ -20,28 +20,52 @@
                 :title="audio.src">
                 <AudioStateIcon :src="audio.src" />
             </div>
-            <a target="_blank" v-else :href="audio.enlace" class="btn p-0 w-12 h-5 min-h-auto text-3xl"
-                title="abrir enlace">
+            <a target="_blank" v-else :href="audio.enlace" class="btn p-0 w-12 h-5 min-h-auto text-3xl" title="abrir enlace">
                 <Icon icon="ph:arrow-up-right-duotone" />
             </a>
-
-
         </div>
     </div>
 </template>
 
 <script setup>
-
-import { parseFiles } from '@/composables/parseFiles'
-
+import usePlayer from '@/Stores/player'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
+
+const player = usePlayer()
 
 const props = defineProps({
     audio: {
         type: Object,
         required: true,
     },
-});
+})
+
+const audio = computed(() => ({ ...props.audio, src: srcAudio(props.audio) }))
+
+function clickPlayPause(audio) {
+    const titulo = audio.titulo
+
+    if (player.music?.src == audio.src) {
+        switch (player.state) {
+            /*case 'error':
+                player.play()
+                break*/
+            case 'playing':
+            case 'paused':
+                player.playPause()
+                break
+            default:
+                player.play(audio.src, titulo, { artist: audio.categoria })
+        }
+    }
+    // nuevo audio
+    else player.play(audio.src, titulo)
+}
+
+function srcAudio(a) {
+    if (!a.audio) return a.enlace
+    return getSrcUrl(a.audio)
+}
 </script>
