@@ -1,12 +1,9 @@
 <template>
-    <div class="relative">
+    <div ref="target" class="relative">
       <div @click="handleToggle">
         <slot name="trigger" :open="open"/>
       </div>
-  
-      <!-- Full Screen Dropdown Overlay -->
-      <div v-show="open" class="fixed inset-0 z-20" @click="open = false" />
-  
+
       <transition
         enter-active-class="transition ease-out duration-200"
         enter-from-class="transform opacity-0 scale-95"
@@ -30,10 +27,10 @@
       </transition>
     </div>
   </template>
-  
+
   <script setup>
-  import { computed, onMounted, onUnmounted, ref } from 'vue';
-  
+  import { onClickOutside } from '@vueuse/core'
+
   const props = defineProps({
     align: {
       type: String,
@@ -48,38 +45,42 @@
       default: () => ['py-1', 'bg-base-100 dark:bg-gray-700'],
     },
   });
-  
+
   let open = ref(false);
-  
+
+  const target=ref(null)
+
+  onClickOutside(target, event => open.value = false)
+
   const closeOnEscape = (e) => {
     if (open.value && e.key === 'Escape') {
       open.value = false;
     }
   };
-  
+
   onMounted(() => document.addEventListener('keydown', closeOnEscape));
   onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
-  
+
   const widthClass = computed(() => {
     return {
       '48': 'w-48',
     }[props.width.toString()];
   });
-  
+
   const alignmentClasses = computed(() => {
     if (props.align === 'left') {
       return 'origin-top-left left-0';
     }
-  
+
     if (props.align === 'right') {
       return 'origin-top-right right-0';
     }
-  
+
     return 'origin-top';
   });
 
   const dropdownMenu = ref(null)
-  
+
   const setPosition = () => {
   const dropdown = dropdownMenu.value;
 
@@ -116,7 +117,7 @@
   });
 };
 
-  
+
   const handleToggle = () => {
     open.value = !open.value;
     if (open.value) {
@@ -124,8 +125,7 @@
     }
   };
   </script>
-  
+
   <style scoped>
   /* Add your custom styles here */
   </style>
-  

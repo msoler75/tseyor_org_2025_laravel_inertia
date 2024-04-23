@@ -1,11 +1,11 @@
 <template>
     <div ref="fondo" class="fondo-espacio relative" @mousemove="move">
-        <div id='galaxy' class="galaxy"></div>
+        <div id='galaxy' class="galaxy  hidden lg:block"></div>
         <div id='nebula' class="nebula"></div>
-        <div ref="stars1" id='stars1' class="stars"></div>
-        <div ref="stars2" id='stars2' class="stars"></div>
-        <div ref="stars3" id='stars3' class="stars"></div>
-        <div ref="stars4" id='stars4' class="stars"></div>
+        <div ref="stars1" id='stars1' class="stars hidden lg:block"></div>
+        <div ref="stars2" id='stars2' class="stars hidden lg:block"></div>
+        <div ref="stars3" id='stars3' class="stars hidden lg:block"></div>
+        <div ref="stars4" id='stars4' class="stars hidden lg:block"></div>
         <slot/>
     </div>
 </template>
@@ -130,9 +130,10 @@ function move(event) {
     left: 0;
     width: 100vw;
     height: 100vh;
+    width: 100dvw;
+    height: 100dvh;
     background: url(/almacen/medios/portada/galaxy.webp) 9% 73% no-repeat;
     opacity: .7;
-
 }
 
 .nebula
@@ -157,6 +158,8 @@ function move(event) {
     left: 0 ;
     width: 100vw;
     height: 100vh;
+    width: 100dvw;
+    height: 100dvh;
     background: url(/almacen/medios/portada/nebula-space.webp) center no-repeat;
     background-size: cover;
     transform: scale(var(--nebula-scale)) translate(calc(var(--move-x) * .15), calc(var(--move-y) * .15));

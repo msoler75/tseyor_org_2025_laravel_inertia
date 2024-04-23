@@ -4,7 +4,7 @@ import { onBeforeUnmount, markRaw } from 'vue';
 import { useDark, useToggle } from "@vueuse/core";
 import usePermisos from '@/Stores/permisos'
 // import usePlayer from '@/Stores/player'
-import setTransitionPages  from '@/composables/transitionPages.js'
+import setTransitionPages from '@/composables/transitionPages.js'
 
 import useSelectors from '@/Stores/selectors'
 
@@ -20,21 +20,13 @@ const page = usePage()
 const nav = useNav()
 
 
-if (page.props.auth?.user) {
+if (page.props.auth?.user)
     permisos.cargarPermisos()
-}
 
 const deactivateNav = ref(false)
-const TIME_NAV_INACTIVE = 1000
+const TIME_NAV_INACTIVE = 700
 var timerActivateNav = null
 
-
-
-
-
-
-
-// console.log({ page })
 
 defineProps({
     title: String,
@@ -46,13 +38,6 @@ const portada = computed(() => page.url == '/')
 
 const showingNavigationDropdown = ref(false);
 
-/*const switchToTeam = (team) => {
-    router.put(route('current-team.update'), {
-        team_id: team.id,
-    }, {
-        preserveState: false,
-    });
-}; */
 
 const logout = () => {
     permisos.permisos = []
@@ -71,22 +56,15 @@ function updateDarkState() {
 }
 
 
-
-
-
-
-
-
-
 // DEV LOGINS
 
 
 function handleKey(event) {
-        if (event.ctrlKey && event.key === 'i') {
-            // event.preventDefault()
-            selectors.developerMode = !selectors.developerMode
-        }
+    if (event.ctrlKey && event.key === 'i') {
+        // event.preventDefault()
+        selectors.developerMode = !selectors.developerMode
     }
+}
 
 
 function login1() {
@@ -108,7 +86,7 @@ function login2() {
         })
 }
 
-
+////////////////////////////////////////////////////////////////
 
 const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset
@@ -170,7 +148,7 @@ onMounted(() => {
             }
         })
 
-        // si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante 2 segundos
+        // si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante un tiempo
         document.addEventListener("mouseenter", function (event) {
             if (screen.width >= 1024) {
                 clearTimeout(timerActivateNav)
@@ -228,18 +206,17 @@ axios.get(route('setting', 'navigation'))
         <AudioPlayer />
 
         <div class="bg-base-200 flex-grow flex flex-col">
-            <nav class="w-full border-gray-300  bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 "
+            <nav class="w-full border-gray-300  bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 select-none"
                 :data-theme="portada && nav.scrollY < 300 ? 'winter' : ''" :class="(portada && nav.scrollY < 300 ? 'dark bg-transparent ' : portada ? 'bg-opacity-20 hover:bg-opacity-100 transition duration-200 ' : 'border-b ') +
-            (nav.defaultClass + ' ' + (nav.fullPage ? 'fixed border-gray-300 ' : 'sticky ')) +
-            (nav.fullPage && nav.announce ? 'top-[2rem] ' : 'top-0 ')">
+                    (nav.defaultClass + ' ' + (nav.fullPage ? 'fixed border-gray-300 ' : 'sticky ')) +
+                    (nav.fullPage && nav.announce ? 'top-[2rem] ' : 'top-0 ')">
                 <!-- Primary Navigation Menu -->
 
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16 relative items-center">
 
-
                         <!-- Hamburger -->
-                        <div class="-mr-2 flex items-center lg:hidden">
+                        <div class="flex items-center lg:hidden">
                             <button
                                 class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
                                 :class="portada ? 'bg-base-300' : ''" @click="nav.sideBarShow = !nav.sideBarShow">
@@ -257,27 +234,24 @@ axios.get(route('setting', 'navigation'))
                         </div>
 
 
-
-                        <div class="hidden lg:flex">
-                            <!-- Logo -->
-                            <div class="shrink-0 flex items-center" @mouseover="nav.closeTabs()">
-                                <Link :href="route('portada')">
-                                <ApplicationMark />
-                                </Link>
-                            </div>
-
-                            <!-- Main Navigation Tabs -->
-                            <NavTabs class="hidden top-navigation space-x-8 sm:-my-px sm:ml-10 sm:flex"
-                                :class="deactivateNav ? 'pointer-events-none' : ''" />
-
+                        <!-- Logo -->
+                        <div class="hidden lg:flex shrink-0 items-center" @mouseover="nav.closeTabs()">
+                            <Link :href="route('portada')">
+                            <ApplicationMark />
+                            </Link>
                         </div>
+
+
+                        <!-- Main Navigation Tabs -->
+                        <NavTabs class="hidden lg:flex top-navigation space-x-8 flex-grow justify-center"
+                            :class="deactivateNav ? 'pointer-events-none' : ''" />
 
                         <div v-if="selectors.developerMode" class="mx-auto flex gap-2">
                             <button @click="login1" class="btn">L1</button>
                             <button @click="login2">L2</button>
                         </div>
 
-                        <GlobalSearch @mouseover="nav.closeTabs()" class="ml-auto" />
+
 
                         <transition class="hidden lg:flex" enter-active-class="transition ease-out duration-200"
                             enter-from-class="transform opacity-0 scale-95"
@@ -291,15 +265,16 @@ axios.get(route('setting', 'navigation'))
 
                         <div class="ml-auto flex items-center gap-3">
 
+                            <GlobalSearch @mouseover="nav.closeTabs()"  />
+
                             <button @click="toggleDark()" @mouseover="nav.closeTabs()"
                                 class="my-auto p-1 w-10 h-10 flex justify-center items-center rounded-full bg-base-300 shadow text-xl sm:ml-6">
                                 <Icon v-show="isDark" icon="ph:sun-dim-duotone" />
                                 <Icon v-show="!isDark" icon="ph:moon-duotone" />
                             </button>
 
-                            <div v-if="$page.props.auth?.user" class="hidden sm:flex sm:items-center"
+                            <div v-if="$page.props.auth?.user" class="flex sm:items-center"
                                 @mouseover="nav.closeTabs()">
-
 
                                 <div class="ml-3 relative">
                                     <!-- Profile Dropdown -->

@@ -171,6 +171,6 @@ const testimonials = ref([
 
 <style scoped>
 .section {
-    @apply h-screen snap-center flex flex-col justify-center;
+    @apply h-dvh snap-center flex flex-col justify-center;
 }
 </style>

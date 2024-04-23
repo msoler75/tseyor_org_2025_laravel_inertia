@@ -1,5 +1,5 @@
 <template>
-    <div class="select-none">
+    <div>
         <template v-for="tab, index of nav.items" :key="tab.url">
             <NavLink v-if="!tab.onlyAside" class="relative" :class="tab.hasItems && !tab.url ? 'navigation-tab' : ''" :href="tab.url"
                 @click="clickedTab(tab)" @mouseover="handleHover(tab)"
