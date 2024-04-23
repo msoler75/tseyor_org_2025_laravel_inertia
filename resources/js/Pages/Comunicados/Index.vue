@@ -80,7 +80,7 @@
                         :class="listado.data?.length==0?'mb-64':''"
                         :valid-search="busquedaValida"
                         />
-                        
+
                     </div>
 
 
@@ -111,7 +111,7 @@
                             <!-- <td class="table-cell">{{ comunicado.categoria }}</td>
                             <td class="table-cell">{{ comunicado.numero }}</td> -->
                             <td class="table-cell">
-                                <Link :href="route('comunicado', comunicado.slug)" class="hover:underline py-2"
+                                <Link :href="route('comunicado', comunicado.slug) + resultadoQueryBusqueda" class="hover:underline py-2"
                                     v-html="comunicado.titulo" />
                             </td>
                         </tr>
@@ -137,7 +137,7 @@
                             <!-- <td class="table-cell">{{ comunicado.categoria }}</td>
                                 <td class="table-cell">{{ comunicado.numero }}</td> -->
                             <div class="px-3 pt-1 text-lg font-bold flex items-center gap-5 justify-between">
-                                <Link :href="route('comunicado', comunicado.slug)" class="hover:underline py-2"
+                                <Link :href="route('comunicado', comunicado.slug) + resultadoQueryBusqueda" class="hover:underline py-2"
                                     v-html="comunicado.titulo" />
                                 <div class="ml-auto text-sm px-3">{{ comunicado.fecha_comunicado }}</div>
                                 <Icon v-show="!extractos_colapsado[index]" icon="ph:caret-up-duotone"
@@ -229,6 +229,13 @@ for (var i = 2004; i <= añoActual; i++)
     añosBusqueda.push(i)
 
 const query = ref("")
+const resultadoQueryBusqueda = computed(()=>{
+    /*if(props.filtrado) {
+        return `?busqueda=${props.filtrado}`
+    }
+    */
+   return ''
+})
 
 const extractos_colapsado = ref({})
 
@@ -317,6 +324,8 @@ function focusBuscar() {
             behavior: 'smooth'
         });
 }
+
+
 
 </script>
 

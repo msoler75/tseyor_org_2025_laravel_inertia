@@ -11,9 +11,6 @@ CONTACTO
 -un usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
     - y si no, al menos poder mandar fácilmente los datos de contacto a un administrador
 
-PLAYER
--cuando cierra el player, carga un audio con url /audios/null
-
 EQUIPOS:
 -integrar generación de documentos word, o upload de los mismos, en los equipos
 -coordinador ->configurar->editores->tiptap simple
