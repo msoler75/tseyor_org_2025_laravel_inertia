@@ -1,6 +1,9 @@
+PAGINAS
+-página con la explicación de correos @tseyor, para la tarjeta de visita
+
 BUSQUEDAS:
 -en resultados de busquedas, quitar los formatos extra {width=45px;height=60px}  {text-align=center} ... [^1] <sup></sup> <u></u>
--en una busqueda, al abrir un comunicado, que muestre highlight en las palabras marcadas. este highlight se puede quitars
+-en una busqueda, al abrir un comunicado, que muestre highlight en las palabras marcadas. este highlight se puede quitar
 
 ARCHIVOS
 -a un usuario sin loguear, le aparece la opción de renombrar carpeta y crear carpeta. No debería tener esas opciones
@@ -11,7 +14,8 @@ CONTACTO
 -un usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
     - y si no, al menos poder mandar fácilmente los datos de contacto a un administrador
 
-EQUIPOS:
+EQUIPOS
+-crear equipos
 -integrar generación de documentos word, o upload de los mismos, en los equipos
 -coordinador ->configurar->editores->tiptap simple
 -Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
@@ -22,7 +26,7 @@ ADMIN
 -emails: ver registro de emails en el dashboard
 
 EVENTOS
--que grup1o de usuarios con rol "comunicador" puedan crear eventos
+-que grupo de usuarios con rol "comunicador" puedan crear eventos
 
 COMENTARIOS
 -cambiar las rutas desde api.php a web.php, y en los componentes
