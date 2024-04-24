@@ -16,6 +16,10 @@ export default {
   plugins: [forms, typography, daisyui],
 
   theme: {
+    screens: {
+        'xs': '475px',
+        ...defaultTheme.screens,
+    },
     container: {
       padding: {
         DEFAULT: "1rem",

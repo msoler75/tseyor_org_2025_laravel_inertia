@@ -1,6 +1,10 @@
 <template>
     <div class="select-none">
-        <div v-if="player.mini" v-show="!player.closed"  @mouseleave="collapsePlayer"  class="rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l" >
+        <div v-if="player.mini" v-show="!player.closed"  @mouseleave="collapsePlayer"  class="rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden" >
+            <div v-if="expanded" class="p-2 xs:hidden">
+                <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
+                    class="ml-1 transform duration-300" @mousemove="activatePlayer" />
+            </div>
             <div class="mx-auto flex justify-between items-center" :class="expanded ? 'w-full max-w-lg gap-3' : 'pr-4'">
                 <button type="button"
                     class="btn btn-secondary rounded-full flex justify-center items-center p-1 text-4xl transform scale-75"
@@ -9,7 +13,7 @@
                 </button>
 
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
-                    class="transform duration-300" :class="expanded ? 'w-100' : 'w-0'" @mousemove="activatePlayer" />
+                    class="hidden xs:block transform duration-300" :class="expanded ? '' : 'w-0'" @mousemove="activatePlayer" />
 
                 <div class="flex justify-end gap-1 w-32 font-mono transform scale-y-150" @mousemove="activatePlayer">
                     <span>{{ formatTime(player.currentTime) }}</span>
@@ -245,5 +249,9 @@ progress[value]::-webkit-progress-value {
 
     border-radius: 3px;
     background-size: 70px 40px, 100% 100%, 100% 100%;
+}
+
+@media screen and (max-width: 470px) {
+
 }
 </style>
