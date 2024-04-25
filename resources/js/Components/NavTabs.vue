@@ -6,7 +6,7 @@
                 :active="tab.open || (!nav.activeTab && nav.in(tab, $page.url))">
                 {{ tab.title }}
                 <div v-if="tab.open"
-                    class="hover-helper absolute z-40 -left-[7rem] -right-[7rem] top-[96%] h-8 transform"
+                    class="hover-helper absolute z-40 -left-[7rem] -right-[7rem] top-[115%] h-8 transform"
                      :style="{transform: `translateX(${(5-index)*20}px)`}"/>
             </NavLink>
         </template>
@@ -41,6 +41,7 @@ function clickedTab(tab) {
     @apply bg-yellow-300;
 }
 */
+
 
 .top-navigation>.navigation-tab:nth-child(2)>.hover-helper {
     transform: translateX(4rem);

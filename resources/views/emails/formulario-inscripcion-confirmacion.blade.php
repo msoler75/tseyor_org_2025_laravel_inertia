@@ -1,4 +1,4 @@
-@extends('emails.master')
+@extends('emails.master-usuario')
 
 @section('titulo')
 Curso Holístico Tseyor
@@ -36,4 +36,8 @@ Comentario: {{$comentario}}
 
 @endcomponent
 
+@endsection
+
+@section('footerText')
+<span>Se te ha enviado este correo por petición tuya.</span>
 @endsection

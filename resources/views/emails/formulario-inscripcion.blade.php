@@ -1,4 +1,4 @@
-@extends('emails.master')
+@extends('emails.master-secretaria')
 
 @section('titulo')
 Inscripción al Curso Holístico

@@ -1,4 +1,4 @@
-@extends('emails.master')
+@extends('emails.master-usuario')
 
 @section('titulo')
 Tu mensaje fue enviado
@@ -7,7 +7,7 @@ Tu mensaje fue enviado
 @section('subtitulo')
 @endsection
 
-@section('contenido'    )
+@section('contenido')
 
 {{ ucfirst(explode(' ', $nombre)[0]) }}, te informamos que tu mensaje ha sido enviado.
 
@@ -28,5 +28,9 @@ Teléfono:  {{$telefono}}
 Comentario: {{$comentario}}
 
 @endcomponent
+
+@slot('footerText')
+Recibes este correo porque has solicitado la inscripción al Curso Holístico de Tseyor.
+@endslot
 
 @endsection

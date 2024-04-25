@@ -12,7 +12,7 @@
             <Spinner /> Cargando...
         </div>
         <span v-else-if="editingMarkdown && dynamicComponent" @click="toggleMarkdown"
-            class="btn btn-neutral btn-xs mb-2">
+            class="btn btn-neutral btn-xs mb-2 text-uppercase">
             <Icon icon="mdi-close" /> Cerrar editor Markdown
         </span>
         <component :is="dynamicComponent" v-if="full && editingMarkdown" v-model="contenidoMD"
@@ -50,8 +50,6 @@ import { useEditor, EditorContent } from "@tiptap/vue-3";
 import 'md-editor-v3/lib/style.css';
 
 import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
-
-// import screenfull from 'screenfull'
 
 const props = defineProps({
     //name: String,

@@ -59,7 +59,7 @@
         "floating-vue": "^2.0.0-beta.24",
         "json-editor-vue": "^0.10.6",
         "markdown-it-footnote": "^3.0.3",
-        "md-editor-v3": "^4.2.2",
+        "md-editor-v3": "^4.13.3",
         "screenfull": "^6.0.2",
         "tiptap-extension-resize-image": "^1.0.3",
         "turndown": "^7.1.2",

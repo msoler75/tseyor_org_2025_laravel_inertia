@@ -1,54 +1,51 @@
 <template>
-        <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario" @updated="reloadFolder"
-            @disk="onDisk" @folder="onFolder" @file="onFile" :embed="true" :ruta="ruta" rutaBase="" :cargando="cargando"
-            rootLabel="web:"
-            rootUrl=""
-            :mostrarMisArchivos="(mostrarMisArchivos !== false && mostrarMisArchivos !== 'false' && mostrarMisArchivos !== '0' && mostrarMisArchivos !== 'no') || ['true', '1', 'si'].includes(mostrarMisArchivos) || mostrarMisArchivos===true"
-            >
-            <Modal :show="mostrandoArchivo" @close="mostrandoArchivo = null" maxWidth="xl">
+    <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario" @updated="reloadFolder"
+        @disk="onDisk" @folder="onFolder" @file="onFile" :embed="true" :ruta="ruta" rutaBase="" :cargando="cargando"
+        rootLabel="web:" rootUrl=""
+        :mostrarMisArchivos="(mostrarMisArchivos !== false && mostrarMisArchivos !== 'false' && mostrarMisArchivos !== '0' && mostrarMisArchivos !== 'no') || ['true', '1', 'si'].includes(mostrarMisArchivos) || mostrarMisArchivos === true">
 
-<div class="bg-base-100 p-3">
-    <div class="p-8">{{ mostrandoArchivo.nombre }}</div>
+        <Modal :show="mostrandoArchivo" @close="mostrandoArchivo = null" maxWidth="xl">
 
-    <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
+            <div class="bg-base-100 p-3">
+                <div class="p-8">{{ mostrandoArchivo.nombre }}</div>
 
-        <button @click.prevent="descargarArchivo" type="button" class="btn btn-secondary">
-            Descargar
-        </button>
+                <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
 
-        <button @click.prevent="mostrandoArchivo = null" type="button" class="btn btn-neutral">
-            Cancelar
-        </button>
-    </div>
-</div>
+                    <button @click.prevent="descargarArchivo" type="button" class="btn btn-secondary">
+                        Descargar
+                    </button>
 
-</Modal>
+                    <button @click.prevent="mostrandoArchivo = null" type="button" class="btn btn-neutral">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
 
+        </Modal>
 
+        <Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
+            <div class="bg-base-100 p-3">
+                <img :src="mostrandoImagen.url + '?mw=700&mh=600'"
+                    class="w-full max-h-[calc(100vh-170px)] object-contain" />
 
-<Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
+                <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
+                    <button v-if="modoInsertar" @click.prevent="insertarImagen" type="button" class="btn btn-primary">
+                        Insertar
+                    </button>
 
-<div class="bg-base-100 p-3">
-    <img :src="mostrandoImagen.url+'?mw=700&mh=600'" class="w-full max-h-[calc(100vh-170px)] object-contain" />
+                    <button @click.prevent="descargarImagen" type="button"
+                        class="btn btn-secondary flex gap-2 items-center">
+                        <Icon icon="ph:arrow-square-out-duotone" class="text-xl" /> Abrir
+                    </button>
 
-    <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
-        <button v-if="modoInsertar" @click.prevent="insertarImagen" type="button" class="btn btn-primary">
-            Insertar
-        </button>
+                    <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
+                        {{ modoInsertar ? 'Cancelar' : 'Cerrar' }}
+                    </button>
+                </div>
+            </div>
+        </Modal>
 
-        <button @click.prevent="descargarImagen" type="button" class="btn btn-secondary flex gap-2 items-center">
-            <Icon icon="ph:arrow-square-out-duotone" class="text-xl"/> Abrir
-        </button>
-
-        <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
-            {{modoInsertar?'Cancelar':'Cerrar'}}
-        </button>
-    </div>
-</div>
-
-</Modal>
-</FolderExplorer>
-
+    </FolderExplorer>
 </template>
 
 
@@ -57,9 +54,9 @@ import usePlayer from '@/Stores/player'
 
 const props = defineProps({
     ruta: { type: String, required: false, default: "" },
-    modoInsertar : { type: Boolean, default: false},
+    modoInsertar: { type: Boolean, default: false },
     contentClass: String,
-    mostrarMisArchivos : {type: [Boolean, String], default: true}
+    mostrarMisArchivos: { type: [Boolean, String], default: true }
 });
 
 const player = usePlayer()
@@ -129,7 +126,7 @@ function onFile(item) {
     console.log('file clicked', item)
     if (item.url.match(/\.(gif|png|webp|svg|jpe?g)$/i))
         mostrandoImagen.value = item
-    else if(player.isPlayable(item.url))
+    else if (player.isPlayable(item.url))
         player.play(item.url, item.nombre)
     else
         mostrandoArchivo.value = item
@@ -153,4 +150,3 @@ function descargarArchivo() {
     mostrandoArchivo.value = false
 }
 </script>
-

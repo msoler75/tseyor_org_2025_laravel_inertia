@@ -1,4 +1,4 @@
-@extends('emails.master')
+@extends('emails.master-usuario')
 
 @section('titulo')
 Tarjeta de Visita generada
