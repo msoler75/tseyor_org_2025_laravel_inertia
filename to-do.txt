@@ -1,3 +1,9 @@
+ADMIN
+-ver laravel.log/jo bs.log en panel
+
+QUEUE
+-Ver si se puede poner un queueworker en dreamhost
+
 PAGINAS
 -página con la explicación de correos @tseyor, para la tarjeta de visita
 
@@ -7,7 +13,6 @@ BUSQUEDAS:
 
 ARCHIVOS
 -a un usuario sin loguear, le aparece la opción de renombrar carpeta y crear carpeta. No debería tener esas opciones
--en vista archivos, si pulsamos encima de una imagen, debería mostrarse, agrandarse, y dar opciones para descargar
 -en archivos adjuntos, por ejemplo, de un informe, si intentas desccargarlos y no existe (404) descarga un archivo .html. No debiera ser
 
 CONTACTO

@@ -980,6 +980,24 @@
 
         <slot />
 
+        <Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
+            <div class="bg-base-100 p-3">
+                <img :src="mostrandoImagen.url + '?mw=700&mh=600'"
+                    class="w-full max-h-[calc(100vh-170px)] object-contain" />
+
+                <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
+                    <a download :href="mostrandoImagen.url" @click="mostrandoImagen = null" type="button"
+                        class="btn btn-secondary flex gap-2 items-center">
+                        <Icon icon="ph:download-duotone" class="text-xl" /> Descargar
+                    </a>
+
+                    <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
+                        {{ modoInsertar ? 'Cancelar' : 'Cerrar' }}
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
     </div>
 </template>
 
@@ -1821,6 +1839,12 @@ function copyData(dest, src, key) {
         dest[key] = src[key]
 }
 
+
+
+// MOSTRANDO IMAGEN
+
+const mostrandoImagen = ref(null)
+
 // EMBED
 
 
@@ -1853,6 +1877,10 @@ function clickFile(item, event) {
             emit('file', item)
             event.preventDefault()
         }
+        else if (item.url.match(/\.(gif|png|webp|svg|jpe?g)$/i)) {
+            mostrandoImagen.value = item
+            event.preventDefault()
+        }
         else {
             // si es un audio:
             if (player.isPlayable(item.url)) {
@@ -1868,6 +1896,8 @@ function clickBreadcrumb(item) {
         emit('folder', { ...item, ruta: item.url })
     }
 }
+
+
 </script>
 
 
