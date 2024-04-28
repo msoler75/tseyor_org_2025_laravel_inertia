@@ -172,7 +172,7 @@ function reloadEquipo() {
 // va actualizando la página del equipo
 var timer = null
 onMounted(() => {
-    timer = setInterval(doReload, 1000)
+    timer = setInterval(doReload, 60000)
 })
 
 onBeforeUnmount(() => {
