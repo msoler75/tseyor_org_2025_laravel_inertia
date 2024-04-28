@@ -2,7 +2,7 @@
     <div class="sm:card sm:bg-base-100 sm:shadow sm:p-5 flex gap-5 sm:col-span-2">
         <div class="w-full flex flex-wrap sm:flex-nowrap gap-5 justify-center items-center">
             <Image :src="equipo.imagen" alt="Imagen del equipo"
-                class="w-[200px] sm:h-full sm:w-40 object-cover rounded-lg" />
+                class="w-[150px] h-[150px] object-cover rounded-lg" />
             <div
                 class="flex flex-col gap-5 justify-center items-center sm:justify-start sm:items-start text-center sm:text-left">
                 <h3 class="my-0">

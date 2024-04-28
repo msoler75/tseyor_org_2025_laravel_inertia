@@ -4,7 +4,7 @@ var route = null
 
 
 const relativeUrl = (url) => {
-    console.log('relativeUrl', url)
+    // console.log('relativeUrl', url)
     if(!url) return ""
     if(url=="undefined") return ""
   if (!url.match(/https?:\/\/.*/)) return url;
@@ -64,7 +64,7 @@ const state = reactive({
     init(_routeFunc) {
         route = _routeFunc
         this.items = navigationItems.map(mapItem)
-    },    
+    },
     in (tab, url) {
       // comprueba si la ruta está en alguno de los items del tab
       const rutaRelativa = relativeUrl(url);
@@ -116,6 +116,7 @@ const state = reactive({
       }
     },
     fadeoutPage() {
+        console.log('nav.fadeoutPage()')
       this.fadingOutPage = true
       this.dontScroll = true
     },

@@ -9,6 +9,13 @@ class EquipoPolicy
 {
     public function esCoordinador(?User $user, Equipo $equipo) :bool
     {
-        return $equipo->esCoordinador(optional($user)->id);
+        if(!$user) return false;
+        return $equipo->esCoordinador($user->id);
+    }
+
+    public function esMiembro(?User $user, Equipo $equipo) :bool
+    {
+        if(!$user) return false;
+        return $equipo->esMiembro($user->id);
     }
 }

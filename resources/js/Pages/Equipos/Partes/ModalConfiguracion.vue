@@ -33,7 +33,7 @@
                     <div>
 
                         <div class="flex justify-center">
-                            <Image v-if="equipo.imagen" :src="equipo.imagen" class="h-32 mb-8" />
+                            <Image v-if="equipo.imagen&&!edicion.imagen" :src="equipo.imagen" class="w-32 h-32 mb-8" />
                         </div>
 
                         <label for="imagen">Imagen</label>
@@ -108,11 +108,13 @@ defineExpose({
 
 const props = defineProps({ equipo: { type: Object, required: true } })
 
+const emit = defineEmits(['updated'])
+
 const tabsElem = ref(null)
 
 // Diálogo Modal de Configuracion DEL EQUIPO
 
-const edicion = reactive({ id: props.equipo.id, imagen: null, nombre: null, descripcion: null, anuncio: null, reuniones: null, errors: {}, processing: false })
+const edicion = reactive({ id: props.equipo.id, imagen: null, nombre: '', descripcion: '', anuncio: '', reuniones: '', informacion:'', errors: {}, processing: false })
 const campos = ['nombre', 'descripcion', 'imagen', 'anuncio', 'reuniones', 'informacion']
 const modalConfiguracion = ref(false)
 
@@ -120,9 +122,11 @@ const modalConfiguracion = ref(false)
 
 // mostrar modal
 function mostrar() {
+    limpiarErrores()
     for (const campo of campos)
         edicion[campo] = props.equipo[campo]
     edicion.imagen = null
+    console.log('modalConfiguracion.mostrar:', edicion)
     modalConfiguracion.value = true
 }
 
@@ -138,20 +142,26 @@ function limpiarErrores() {
 }
 
 function cerrarConfiguracion() {
-    limpiarErrores()
     modalConfiguracion.value = false
+}
+
+
+function limpiarNull(v) {
+    if(v===null||v=='null') return ''
+    return v
 }
 
 function guardarConfiguracion() {
 
+    console.log('guardar Configuracion', edicion)
     const data = new FormData();
     data.append('nombre', edicion.nombre);
-    data.append('descripcion', edicion.descripcion);
+    data.append('descripcion', limpiarNull(edicion.descripcion));
     if (edicion.imagen)
         data.append('imagen', edicion.imagen);
-    data.append('anuncio', edicion.anuncio);
-    data.append('reuniones', edicion.reuniones);
-    data.append('informacion', edicion.informacion);
+    data.append('anuncio', limpiarNull(edicion.anuncio))
+    data.append('reuniones', limpiarNull(edicion.reuniones))
+    data.append('informacion', limpiarNull(edicion.informacion))
 
     // actualizamos en el servidor
     console.log(edicion)
@@ -159,16 +169,18 @@ function guardarConfiguracion() {
     axios.post(route('equipo.modificar', props.equipo.id), data).then((response) => {
         edicion.processing = false;
 
-        console.log('guardado!', response)
+        // console.log('guardado!', response)
         // actualizamos en la página
-        for (const campo of campos)
-            props.equipo[campo] = edicion[campo]
-        props.equipo.imagen = response.data.imagen
+        //for (const campo of campos)
+          //  props.equipo[campo] = edicion[campo]
+        //props.equipo.imagen = response.data.imagen
 
         limpiarErrores();
 
         // cerramos el modal
         modalConfiguracion.value = false
+
+        emit('updated')
 
     }).catch(error => {
         edicion.processing = false;

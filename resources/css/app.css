@@ -74,8 +74,9 @@
         }
     }
 
-
-
+    .btn {
+        text-transform: uppercase
+    }
 
     blockquote {
         position: relative;

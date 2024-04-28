@@ -1,5 +1,5 @@
 <template>
-    <ConditionalLink :href="href" class="flex gap-3 items-baseline" :link="link">
+    <ConditionalLink :href="href" class="flex gap-3 items-baseline" :is-link="link">
     <Icon :icon="owner?'ph:folder-user-duotone':private ? 'ph:folder-lock-duotone' : 'ph:folder-simple-duotone'" class="text-yellow-500 transform scale-125" />
     {{ name ? url.substring(url.lastIndexOf('/') + 1) : '' }}</ConditionalLink>
 </template>

@@ -24,6 +24,7 @@ class SpanishTokenizer extends AbstractTokenizer implements TokenizerInterface
             }
             die;
         } */
+        if(is_array($text)) return $text;
         $text = mb_strtolower($text);
         $text = $this->removeAccents($text); // Eliminar acentos, ñ y ç
         $split = preg_split($this->getPattern(), $text, -1, PREG_SPLIT_NO_EMPTY);

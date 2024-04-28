@@ -269,6 +269,7 @@ Route::get('equipos/{id}/solicitudes', [EquiposController::class, 'solicitudes']
 Route::get('equipos/{id}/solicitar', [EquiposController::class, 'solicitar'])->name('equipo.solicitar');
 Route::get('solicitud/{id}/aceptar', [EquiposController::class, 'aceptarSolicitud'])->name('solicitud.aceptar');
 Route::get('solicitud/{id}/denegar', [EquiposController::class, 'denegarSolicitud'])->name('solicitud.denegar');
+Route::post('equipos/{id}/abandonar', [EquiposController::class, 'abandonar'])->name('equipo.abandonar');
 
 // administración de miembros
 Route::put('equipos/{idEquipo}/{idUsuario}/agregar', [EquiposController::class, 'addMember'])->name('equipo.agregar');

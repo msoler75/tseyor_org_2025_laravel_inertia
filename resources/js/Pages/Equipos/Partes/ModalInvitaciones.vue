@@ -201,7 +201,7 @@ const usuariosParaInvitar = computed(() => {
 })
 
 const invitaciones=ref([])
-function recargarInvitaciones() {
+function cargarInvitaciones() {
     axios.get(route('equipo.invitaciones', props.equipo.id))
     .then(
         response=>
@@ -212,9 +212,7 @@ function recargarInvitaciones() {
     )
 }
 
-recargarInvitaciones()
-
-
+cargarInvitaciones()
 
 
 function agregarInvitado(user) {
@@ -274,7 +272,7 @@ function invitar() {
             correosInvitados.value = []
             usuariosInvitados.value = []
 
-            recargarInvitaciones()
+            cargarInvitaciones()
             invitando.value = false
             console.log(response.data);
         })

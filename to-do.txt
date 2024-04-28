@@ -1,5 +1,5 @@
 ADMIN
--ver laravel.log/jo bs.log en panel
+-ver laravel.log/jobs.log en panel
 
 QUEUE
 -Ver si se puede poner un queueworker en dreamhost
@@ -14,6 +14,7 @@ BUSQUEDAS:
 ARCHIVOS
 -a un usuario sin loguear, le aparece la opción de renombrar carpeta y crear carpeta. No debería tener esas opciones
 -en archivos adjuntos, por ejemplo, de un informe, si intentas desccargarlos y no existe (404) descarga un archivo .html. No debiera ser
+-mejorar vista mobil
 
 CONTACTO
 -un usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
