@@ -1,7 +1,7 @@
 <template>
     <AdminPanel soloInforma modelo="nodo" necesita="administrar archivos" class="mt-5 container mb-3" />
     <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietarioRef="propietarioRef" @updated="reloadPage"
-        :ruta="ruta" :rutaBase="$page.props.auth.user?.id?'archivos_raiz':''" />
+        :ruta="ruta" :rutaBase="$page.props.auth.user?.id?'archivos_raiz':ruta" />
 </template>
 
 <script setup>

@@ -12,18 +12,18 @@
 
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
 
-                <div class="flex gap-3 items-center w-full" v-if="!seleccionando && mostrandoResultados">
+                <div class="flex gap-x items-center w-full" v-if="!seleccionando && mostrandoResultados">
 
                     <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ buscar }}'</span>:</span>
 
-                    <button class="ml-auto  btn btn-neutral btn-sm" @click.prevent="toggleVista" title="Cambiar vista">
+                    <button class="ml-auto  btn btn-neutral btn-sm btn-icon" @click.prevent="toggleVista" title="Cambiar vista">
                         <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
                             class="transform scale-150" />
                         <Icon v-show="selectors.archivosVista == 'grid'" icon="ph:grid-nine-fill"
                             class="transform scale-150" />
                     </button>
 
-                    <button class="btn btn-neutral btn-sm" title="Cerrar búsqueda" @click="mostrandoResultados = false">
+                    <button class="btn btn-neutral btn-sm btn-icon" title="Cerrar búsqueda" @click="mostrandoResultados = false">
                         <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                         <Icon icon="ph:x-bold" />
                     </button>
@@ -31,9 +31,8 @@
                 </div>
 
 
-                <div v-if="!mostrandoResultados" class="flex gap-3 w-full max-w-full">
-
-                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm cursor-pointer"
+                <div v-if="!mostrandoResultados" class="flex gap-x w-full max-w-full">
+                    <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm btn-icon cursor-pointer"
                         :href="'/' + rutaBase" :tag="embed ? 'span' : 'a'"
                         @click="clickFolder({ ruta: '/' + rutaBase }, $event)" :is-link="!embed"
                         title="Ir a la carpeta base"
@@ -42,19 +41,19 @@
                     </ConditionalLink>
 
                     <ConditionalLink v-if="items.length > 1 && !seleccionando" :href="items[1].url" :tag="embed ? 'span' : 'a'"
-                        class="btn btn-neutral btn-sm w-fit" title="Ir a una carpeta superior"
+                        class="btn btn-neutral btn-sm btn-icon w-fit" title="Ir a una carpeta superior"
                         @click="clickFolder(items[1], $event)" :is-link="!embed"
                         :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:arrow-bend-left-up-duotone" class="text-2xl" />
                     </ConditionalLink>
 
-                    <button v-if="seleccionando" class="btn btn-neutral btn-sm flex gap-3 items-center"
+                    <button v-if="seleccionando" class="btn btn-neutral btn-sm flex gap-x items-center"
                         @click.prevent="cancelarSeleccion" title="Cancelar selección">
                         <Icon icon="material-symbols:close-rounded" />
                         <span>{{ itemsSeleccionados.length }}</span>
                     </button>
 
-                    <div class="ml-auto flex gap-3">
+                    <div class="ml-auto flex gap-x">
 
                         <button class="btn btn-neutral btn-sm" @click.prevent="toggleVista" title="Cambiar vista">
                             <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
@@ -63,12 +62,12 @@
                                 class="transform scale-150" />
                         </button>
 
-                        <button v-if="seleccionando" class="btn btn-neutral btn-sm mr-auto"
+                        <button v-if="seleccionando" class="btn btn-neutral btn-sm btn-icon mr-auto"
                             @click.prevent="seleccionarTodos" title="Seleccionar todos">
                             <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                         </button>
 
-                        <button v-if="!seleccionando && !mostrandoResultados" class="btn btn-neutral btn-sm"
+                        <button v-if="!seleccionando && !mostrandoResultados" class="btn btn-neutral btn-sm btn-icon"
                             title="Buscar archivos" @click="showSearch">
                             <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                         </button>
@@ -76,14 +75,14 @@
 
                         <Dropdown>
                             <template #trigger>
-                                <span class="btn btn-neutral btn-sm" title="Ordenar los elementos">
+                                <span class="btn btn-neutral btn-sm btn-icon" title="Ordenar los elementos">
                                     <Icon icon="lucide:arrow-down-wide-narrow" class="text-2xl" />
                                 </span>
                             </template>
                             <template #content>
                                 <div class="bg-base-100 select-none">
                                     <div v-for="label, value in ordenaciones" :key="value"
-                                        class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                        class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="ordenarPor = value">
                                         <div class="w-3">
                                             <Icon icon="ph:check" v-if="ordenarPor == value" />
@@ -95,7 +94,7 @@
                         </Dropdown>
 
 
-                        <Link v-if="!embed && propietarioRef && !seleccionando" class="btn btn-neutral btn-sm"
+                        <Link v-if="!embed && propietarioRef && !seleccionando" class="btn btn-neutral btn-sm btn-icon"
                             :href="propietarioRef.url" :title="tituloPropietario">
                         <Icon :icon="propietarioRef.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'"
                             class="transform scale-150" />
@@ -105,7 +104,7 @@
                         <Dropdown v-if="!enRaiz && !seleccionando" align="right" width="48"
                             :class="!info_cargada ? 'opacity-50 pointer-events-none' : ''">
                             <template #trigger>
-                                <div class="btn btn-neutral btn-sm cursor-pointer">
+                                <div class="btn btn-neutral btn-sm btn-icon cursor-pointer">
                                     <Icon icon="mdi:dots-vertical" class="text-xl" />
                                 </div>
                             </template>
@@ -114,21 +113,21 @@
                                 <div class="bg-base-100">
                                     <!-- Account Management -->
                                     <div v-if="puedeEscribir && !seleccionando"
-                                        class="flex gap-3 items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
+                                        class="flex gap-x items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                         @click="modalSubirArchivos = true">
                                         <Icon icon="ph:upload-duotone" />
                                         <span>Subir archivos</span>
                                     </div>
 
                                     <div v-if="puedeEscribir && !seleccionando && itemsCopy[0].ruta != 'archivos' && itemsCopy[0].ruta != 'medios'"
-                                        class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                        class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="abrirModalRenombrar(itemsCopy[0])">
                                         <Icon icon="ph:cursor-text-duotone" />
                                         <span>Renombrar</span>
                                     </div>
 
                                     <div v-if="puedeEscribir && !seleccionando"
-                                        class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                        class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="abrirModalCrearCarpeta">
                                         <Icon icon="ph:folder-plus-duotone" />
                                         <span>Crear carpeta</span>
@@ -136,21 +135,21 @@
 
 
                                     <div v-if="!enRaiz && puedeLeer && !seleccionando && itemsCopy.filter(x => !x.padre).length > 1"
-                                        class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                        class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="seleccionando = true">
                                         <Icon icon="ph:check-duotone" />
                                         <span>Abrir Selección</span>
                                     </div>
 
                                     <div v-else-if="seleccionando"
-                                        class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                        class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                         @click="cancelarSeleccion">
                                         <Icon icon="ph:x-square-duotone" />
                                         <span>Cancelar selección</span>
                                     </div>
 
 
-                                    <div class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                    <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                         @click.prevent="abrirModalPropiedades(itemsCopy[0])">
                                         <Icon icon="ph:info-duotone" />
                                         <span>Propiedades</span>
@@ -302,21 +301,21 @@
                                         <div class="bg-base-100">
 
                                             <div v-if="(esAdministrador || item.puedeEscribir) && !seleccionando"
-                                                class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                                class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                                 @click="abrirModalRenombrar(item)">
                                                 <Icon icon="ph:cursor-text-duotone" />
                                                 <span>Renombrar</span>
                                             </div>
 
                                             <div v-if="(esAdministrador || item.puedeEscribir) && !seleccionando && !item.padre"
-                                                class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
+                                                class="flex gap-x  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                 @click="abrirEliminarModal(item)">
                                                 <Icon icon="ph:trash-duotone" />
                                                 <span>Eliminar</span>
                                             </div>
 
                                             <div v-if="(esAdministrador || item.puedeLeer) && !buscandoCarpetaDestino && !item.padre"
-                                                class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
+                                                class="flex gap-x  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                 @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                 <template v-if="!item.seleccionado">
                                                     <Icon icon="ph:check-fat-duotone" />
@@ -329,14 +328,14 @@
                                             </div>
 
                                             <div v-if="seleccionando"
-                                                class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                                class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                 @click="cancelarSeleccion">
                                                 <Icon icon="ph:x-square-duotone" />
                                                 <span>Cancelar selección</span>
                                             </div>
 
 
-                                            <div class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                            <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                 @click.prevent="abrirModalPropiedades(item)">
                                                 <Icon icon="ph:info-duotone" />
                                                 <span>Propiedades</span>
@@ -362,7 +361,7 @@
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </div>
-                            <div class="flex flex-col items-center justify-center relative">
+                            <div class="flex flex-col items-center justify-center relative bg-base-200 h-full pt-2">
                                 <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer text-8xl mb-4"
                                     @click="clickDisk(item, $event)" :is-link="!embed" />
                                 <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
@@ -398,11 +397,11 @@
                                 </div>
 
 
-                                <div class="w-full flex justify-end">
+                                <div class="w-full flex justify-center mt-auto">
                                     <Dropdown align="right" width="48"
                                         :class="!info_cargada ? 'opacity-80 pointer-events-none' : ''">
                                         <template #trigger>
-                                            <span class="btn p-1">
+                                            <span class="my-3 btn btn-sm btn-icon bg-base-100 p-0.5">
                                                 <Icon icon="mdi:dots-horizontal" class="text-xl z-20" />
                                             </span>
                                         </template>
@@ -411,21 +410,21 @@
                                             <div class="bg-base-100">
 
                                                 <div v-if="!seleccionando"
-                                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                                    class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                                     @click="abrirModalRenombrar(item)">
                                                     <Icon icon="ph:cursor-text-duotone" />
                                                     <span>Renombrar</span>
                                                 </div>
 
                                                 <div v-if="!seleccionando && !item.padre"
-                                                    class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
+                                                    class="flex gap-x  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                     @click="abrirEliminarModal(item)">
                                                     <Icon icon="ph:trash-duotone" />
                                                     <span>Eliminar</span>
                                                 </div>
 
                                                 <div v-if="(esAdministrador || item.puedeLeer) && !buscandoCarpetaDestino && !item.padre"
-                                                    class="flex gap-3  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
+                                                    class="flex gap-x  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                                     @click="seleccionando = true; item.seleccionado = !item.seleccionado">
                                                     <template v-if="!item.seleccionado">
                                                         <Icon icon="ph:check-fat-duotone" />
@@ -438,13 +437,13 @@
                                                 </div>
 
                                                 <div v-if="seleccionando"
-                                                    class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                                    class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                     @click="cancelarSeleccion">
                                                     <Icon icon="ph:x-square-duotone" />
                                                     <span>Cancelar selección</span>
                                                 </div>
 
-                                                <div class="flex gap-3 items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                                <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                     @click.prevent="abrirModalPropiedades(item)">
                                                     <Icon icon="ph:info-duotone" />
                                                     <span>Propiedades</span>
@@ -476,13 +475,13 @@
                 :seleccionando="seleccionando"
                 :class="seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
 
-                <button v-if="store.isMovingFiles || store.isCopyingFiles" class="btn btn-secondary flex gap-3 items-center"
+                <button v-if="store.isMovingFiles || store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
                     @click.prevent="cancelarOperacion">
                     <Icon icon="material-symbols:close-rounded" />
                     <span>Cancelar</span>
                 </button>
 
-                <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-3 items-center"
+                <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-x items-center"
                     :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click.prevent="moverItems"
                     title="Mover los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
@@ -490,7 +489,7 @@
                     <span v-else>No tienes permisos aquí</span>
                 </button>
 
-                <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-3 items-center"
+                <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
                     :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click.prevent="copiarItems"
                     title="Copiar los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
@@ -501,23 +500,23 @@
                 <template v-else>
 
                     <button v-if="itemsSeleccionados.length && puedeMoverSeleccionados"
-                        class="btn btn-secondary flex gap-3 items-center" @click.prevent="prepararMoverItems">
+                        class="btn btn-secondary flex gap-x items-center" @click.prevent="prepararMoverItems">
                         <Icon icon="ph:scissors-duotone" /><span>Mover</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-3 items-center"
+                    <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-x items-center"
                         @click.prevent="prepararCopiarItems">
                         <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-3 items-center"
+                    <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-x items-center"
                         @click.prevent="abrirEliminarModal(null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
 
                     <button v-if="itemsSeleccionados.length == 1"
-                        class="md:hidden btn btn-secondary flex gap-3 items-center"
+                        class="md:hidden btn btn-secondary flex gap-x items-center"
                         @click.prevent="abrirModalRenombrar(itemsSeleccionados[0])">
                         <Icon icon="ph:cursor-text-duotone" />
                         <span>Renombrar</span>
@@ -593,7 +592,7 @@
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
                     <button @click.prevent="crearCarpeta" type="button" class="btn btn-primary btn-sm"
                         :disabled="creandoCarpeta">
-                        <div v-if="creandoCarpeta" class="flex items-center gap-3">
+                        <div v-if="creandoCarpeta" class="flex items-center gap-x">
                             <Spinner />
                             Creando...
                         </div>
@@ -631,12 +630,12 @@
                         </tr>
                         <tr>
                             <th>Propietario</th>
-                            <td class="flex gap-3 items-center">
-                                <span class="flex items-center gap-3" title="usuario">
+                            <td class="flex gap-x items-center">
+                                <span class="flex items-center gap-x" title="usuario">
                                     <Icon icon="ph:user-duotone" /> {{ item.propietario?.usuario.nombre }}
                                 </span>
                                 <span class="opacity-30">|</span>
-                                <span class="flex items-center gap-3" title="grupo">
+                                <span class="flex items-center gap-x" title="grupo">
                                     <Icon icon="ph:users-three-duotone" /> {{ item.propietario?.grupo.nombre }}
                                 </span>
 
@@ -759,7 +758,7 @@
 
                     <button @click.prevent="cambiarPermisos" type="button" class="btn btn-primary btn-sm"
                         :disabled="guardandoPermisos">
-                        <div v-if="guardandoPermisos" class="flex items-center gap-3">
+                        <div v-if="guardandoPermisos" class="flex items-center gap-x">
                             <Spinner />
                             Guardando...
                         </div>
@@ -815,7 +814,7 @@
                         No hay accesos adicionales
                     </div>
 
-                    <div class="flex gap-3 my-4">
+                    <div class="flex gap-x my-4">
                         <button class="btn btn-xs text-xs btn-secondary" @click.prevent="abrirModalBuscarUsuario">+
                             Usuario</button>
                         <button class="btn btn-xs text-xs btn-secondary" @click.prevent="abrirModalBuscarGrupo">+
@@ -829,7 +828,7 @@
 
                     <button @click.prevent="cambiarAcl" type="button" class="btn btn-primary btn-sm"
                         :disabled="guardandoAcl">
-                        <div v-if="guardandoAcl" class="flex items-center gap-3">
+                        <div v-if="guardandoAcl" class="flex items-center gap-x">
                             <Spinner />
                             Guardando...
                         </div>
@@ -931,7 +930,7 @@
 
                     <button @click.prevent="renombrarItem" type="button" class="btn btn-primary btn-sm"
                         :disabled="renombrandoItem">
-                        <div v-if="renombrandoItem" class="flex items-center gap-3">
+                        <div v-if="renombrandoItem" class="flex items-center gap-x">
                             <Spinner />
                             Renombrando...
                         </div>
@@ -965,13 +964,13 @@
             </template>
             <template #footer>
                 <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
-                    @submit.prevent="crearCarpeta">
+                    @submit.prevent="eliminarArchivos">
 
                     <button @click.prevent="modalEliminarItem = false" type="button" class="btn btn-neutral btn-sm">
                         Cancelar
                     </button>
 
-                    <button @click.prevent="eliminarArchivos" type="button" class="btn btn-primary btn-sm">
+                    <button  type="button" class="btn btn-primary btn-sm">
                         Eliminar
                     </button>
                 </form>
@@ -985,7 +984,7 @@
                 <img :src="mostrandoImagen.url + '?mw=700&mh=600'"
                     class="w-full max-h-[calc(100vh-170px)] object-contain" />
 
-                <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
+                <div class="flex pt-3 justify-between sm:justify-end gap-x flex-shrink-0">
                     <a download :href="mostrandoImagen.url" @click="mostrandoImagen = null" type="button"
                         class="btn btn-secondary flex gap-2 items-center">
                         <Icon icon="ph:download-duotone" class="text-xl" /> Descargar
@@ -1994,4 +1993,10 @@ table th {
 .propiedades th {
     text-align: left
 }
+.gap-x {
+    @apply gap-1 xs:gap-2 sm:gap-3;
+}
+.btn-icon {
+    @apply w-[40px] sm:w-[46px];
+    }
 </style>

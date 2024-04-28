@@ -24,11 +24,7 @@ router.on('start', (event) => {
     const rutaActual = new URL(window.location)
     let mismaSeccion = false
 
-    const fadeoutWhenNavigateTo = /^\/(audios|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|normativas|noticias|publicaciones|usuarios)\/.+/
-    if(fadeoutWhenNavigateTo.exec(nuevaRuta.pathname)) {
-        console.log('auto fadeOut')
-        nav.fadeoutPage()
-    }
+
 
     // to-do: si tenemos dos rutas: rutaActual = /glosario/1 y nuevaRuta = /glosario/2 entonces mismaSeccion ha de cambiar a true. Lo mismo si son dos rutas /libros/1 y /libros/juan
     // por lo tanto hemos de splitear las rutas y ver si coinciden en la primera palabra
@@ -38,7 +34,18 @@ router.on('start', (event) => {
     // si, quitando la parte de query, son la misma ruta...
     console.log('comparing', nuevaRuta.origin + nuevaRuta.pathname, 'vs', rutaActual.origin + rutaActual.pathname)
     const mismapagina = nuevaRuta.origin + nuevaRuta.pathname == rutaActual.origin + rutaActual.pathname
+    console.log({p1, p2, mismapagina, mismaSeccion, nav})
     let scrolling = mismapagina || mismaSeccion
+
+
+    if(!mismapagina || !mismaSeccion ){
+        const fadeoutWhenNavigateTo = /^\/(audios|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|normativas|noticias|publicaciones|usuarios)\/.+/
+        if(fadeoutWhenNavigateTo.exec(nuevaRuta.pathname)) {
+            console.log('auto fadeOut')
+            nav.fadeoutPage()
+        }
+    }
+
     if(nav.fadingOutPage) {
 
     }

@@ -10,6 +10,7 @@ use App\Models\Invitacion;
 use App\Models\Solicitud;
 use App\Models\User;
 use App\Models\Nodo;
+use Illuminate\Support\Facades\Log;
 use App\Models\Acl;
 use App\Models\Informe;
 use App\Pigmalion\SEO;
@@ -21,6 +22,9 @@ use App\Mail\InvitacionEquipoEmail;
 use App\Mail\IncorporacionEquipoEmail;
 use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
+use App\Notifications\SolicitudEquipo;
+use App\Notifications\AbandonoEquipo;
+use Illuminate\Support\Facades\Notification;
 
 class EquiposController extends Controller
 {
@@ -113,7 +117,7 @@ class EquiposController extends Controller
             if ($soyMiembro) {
 
                 // verificar si es coordinador del equipo
-                if ($equipo->esCoordinador($user->id)) {
+                if (Gate::allows('EsCoordinador', $equipo)) {
                     // soy coordinador de este equipo
                     $soyCoordinador = true;
 
@@ -129,8 +133,8 @@ class EquiposController extends Controller
                 // obtenemos la solicitud más reciente (si es que la hay)
                 $solicitud = Solicitud::where('user_id', $user->id)
                     ->where('equipo_id', $equipo->id)
-                    ->whereNull('fecha_aceptacion')
-                    ->whereNull('fecha_denegacion')
+                    // ->whereNull('fecha_aceptacion')
+                    // ->whereNull('fecha_denegacion')
                     ->orderBy('created_at', 'desc') // recientes primero
                     ->first();
             }
@@ -221,6 +225,8 @@ class EquiposController extends Controller
      */
     public function update(Request $request, $idEquipo)
     {
+        Log::info("Equipo.update");
+
         $equipo = Equipo::findOrFail($idEquipo);
 
         // Verificar si el usuario es un coordinador del equipo
@@ -232,12 +238,13 @@ class EquiposController extends Controller
         $validatedData = $request->validate([
             'nombre' => 'required|max:32',
             'descripcion' => 'required|max:400',
+            'imagen' => 'image|mimes:jpeg,png,jpg,gif|max:64000', // Ajustar las reglas de validación según tus necesidades
             'anuncio' => 'max:400',
             'reuniones' => 'max:255',
-            'imagen' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Ajustar las reglas de validación según tus necesidades
             'informacion' => 'max:65000'
         ]);
 
+        Log::info(var_export($validatedData, true));
 
         // Actualizar los datos del equipo
         $equipo->nombre = trim($validatedData['nombre']);
@@ -250,8 +257,9 @@ class EquiposController extends Controller
         // Subir la nueva imagen (si se proporciona)
         $newImage = $request->file('imagen');
         if ($newImage) {
-            $path = $newImage->store('public/imagenes/equipos');
-            $equipo->imagen = Storage::url($path);
+            $path = $newImage->store('medios/equipos', ['disk'=>'public']);
+            $equipo->imagen = str_replace(url(''), "", Storage::disk('public')->url($path));
+            Log::info("path Imagen: ".$path." -> Equipo.imagen=".$equipo->imagen);
         }
 
         $equipo->save();
@@ -293,11 +301,8 @@ class EquiposController extends Controller
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
-        // removemos el usuario del equipo
-        $equipo->miembros()->detach($idUsuario);
-
-        // por si tuviera permisos, se los removemos
-        $equipo->removerPermisosCarpetas($idUsuario);
+        // lo quitamos del equipo
+        $this->bajaUsuario($usuario, $equipo);
 
         // por si hubiera asignación de nuevo coordinador
         $idNuevoCoordinador = $this->asignarNuevoCoordinador($equipo, $idUsuario);
@@ -314,7 +319,7 @@ class EquiposController extends Controller
 
 
     /**
-     * Elimina un usuario de un equipo
+     * Modificamos el estado o rol de un usuario en un equipo
      */
     public function updateMember($idEquipo, $idUsuario, $rol)
     {
@@ -667,6 +672,8 @@ class EquiposController extends Controller
         if (!$user)
             return response()->json(['error' => 'Debe iniciar sesión'], 401);
 
+        $equipo = Equipo::findOrFail($idEquipo);
+
         // comprueba si no tenía ya una solicitud previa
         if (
             Solicitud::where('user_id', $user->id)
@@ -683,8 +690,18 @@ class EquiposController extends Controller
             'equipo_id' => $idEquipo
         ]);
 
+
+        // notificamos a los coordinadores del equipo
+        Notification::send($equipo->coordinadores, new SolicitudEquipo($equipo));
+
+        /* $equipo->coordinadores->forEach(function($coordinador) use ($equipo)  {
+            $coordinador->notify(new SolicitudEquipo($equipo));
+        }); */
+
+
         return response()->json(['message' => 'Solicitud enviada', 'solicitud' => $solicitud], 200);
     }
+
 
 
     /**
@@ -758,5 +775,46 @@ class EquiposController extends Controller
         // Mail::to($solicitante->email)->send(new IncorporacionEquipoEmail($solicitud->equipo, $solicitante, false, true));
 
         return response()->json(['message' => 'Solicitud denegada'], 200);
+    }
+
+
+
+    /**
+     * El usuario abandona un equipo
+     */
+    public function abandonar($idEquipo)
+    {
+        $user = auth()->user();
+
+        // debe ser un usuario registrado e iniciada su sesión
+        if (!$user)
+            return response()->json(['error' => 'Debe iniciar sesión'], 401);
+
+        $equipo = Equipo::findOrFail($idEquipo);
+
+       $this->bajaUsuario($user, $equipo);
+
+        // notificamos a los coordinadores del equipo
+        Notification::send($equipo->coordinadores, new AbandonoEquipo($equipo, $user));
+
+        return response()->json(['message' => 'Has abandonado el equipo'], 200);
+    }
+
+    private function bajaUsuario(User $user, Equipo $equipo) {
+         // Verificar si el usuario ya es miembro del equipo
+         if (!$equipo->esMiembro($user->id)) {
+            return response()->json(['error' => 'No eres del equipo'], 400);
+        }
+
+        // removemos el usuario del equipo
+        $equipo->miembros()->detach($user->id);
+
+        // por si tuviera permisos, se los removemos
+        $equipo->removerPermisosCarpetas($user->id);
+
+        // eliminamos todas las solicitudes del usuario
+        Solicitud::where('user_id', $user->id)
+        ->where('equipo_id', $equipo->id)
+        ->delete();
     }
 }

@@ -9,7 +9,7 @@
                 <table class="table w-full">
                     <tbody class="divide-y">
                         <tr v-for="user of miembrosListado" :key="user.id" class="cursor-pointer"
-                            :class="user.pivot.rol == 'coordinador' ? 'bg-blue-50' : ''">
+                            :class="user.pivot.rol == 'coordinador' ? 'bg-blue-50 dark:bg-blue-800' : ''">
                             <td>{{ user.nombre }}</td>
                             <td>
                                 <select v-model="user.pivot.rol" class="select" @change="cambiarRol(user)">
@@ -99,6 +99,9 @@ defineExpose({
 });
 
 const props = defineProps({ equipo: { type: Object, required: true } })
+
+const emit = defineEmits(['updated'])
+
 const page = usePage()
 const prevState = ref({}) // para guardar el estado previo de cada usuario en el select
 const confirmarEliminar = ref(null)
@@ -171,6 +174,7 @@ function modificarRol(user) {
                     coordinador.pivot.rol = 'coordinador'
                     alert((coordinador.name || coordinador.nombre) + ' ha adoptado el rol de coordinación del equipo')
                 }
+                emit('updated')
             }
         })
         .catch(err => {
@@ -189,6 +193,8 @@ function degradarCoordinador() {
     modificarRol(confirmarDegradacion.value)
     // anulamos el modal de confirmación
     confirmarDegradacion.value = null
+    // si ya no somos coordinadores, cerramos el modal
+    modalMiembros.value = false
 }
 
 
@@ -211,6 +217,7 @@ function eliminarMiembro() {
             if (idx > -1)
                 props.equipo.miembros.splice(idx, 1)
             //reload()
+            emit('updated')
             console.log(respuesta.data)
         })
         .catch(err => {

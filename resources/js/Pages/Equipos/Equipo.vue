@@ -2,9 +2,9 @@
     <div>
         <div class="container mx-auto py-12 flex justify-between items-center">
             <Back>Equipos</Back>
-            <EquipoMembresia class="hidden sm:flex mx-auto badge badge-info" :equipo-id="equipo.id" v-model="solicitud"
+            <EquipoMembresia class="hidden sm:flex mx-auto" :equipo-id="equipo.id" v-model="solicitud"
                 :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"
-                :permitirSolicitudes="!equipo.ocultarSolicitudes"/>
+                :permitirSolicitudes="!equipo.ocultarSolicitudes" @updated="reloadEquipo" />
             <AdminPanel modelo="equipo" necesita="administrar equipos" :contenido="equipo" />
         </div>
 
@@ -16,8 +16,9 @@
 
                 <EquipoInformacion :equipo="equipo" />
 
-                <EquipoMembresia class="sm:hidden mx-auto badge badge-info" :equipo-id="equipo.id" v-model="solicitud"
-                    :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"  :permitirSolicitudes="!equipo.ocultarSolicitudes"/>
+                <EquipoMembresia class="sm:hidden mx-auto" :equipo-id="equipo.id" v-model="solicitud"
+                    :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"
+                    :permitirSolicitudes="!equipo.ocultarSolicitudes" @updated="reloadEquipo" />
 
                 <Card v-if="equipo.anuncio" class="border border-orange-400 justify-center items-center">
                     <div class="prose" v-html="equipo.anuncio" />
@@ -31,11 +32,13 @@
                 <Card v-if="ultimosInformes.length" class="gap-3">
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="mb-0">Últimos Informes</h3>
-                        <Link :href="route('equipo.informes', equipo.slug)" class="text-xs ml-auto flex items-center gap-2 hover:underline">Ver todos</Link>
+                        <Link :href="route('equipo.informes', equipo.slug)"
+                            class="text-xs ml-auto flex items-center gap-2 hover:underline">Ver todos</Link>
                     </div>
                     <div class="w-full">
                         <Link v-for="item, index of ultimosInformes" :key="index"
-                            class="flex gap-3 py-2 w-full items-baseline hover:bg-base-200/40 rounded-xl p-2" :href="route('informe', item.id)">
+                            class="flex gap-3 py-2 w-full items-baseline hover:bg-base-200/40 rounded-xl p-2"
+                            :href="route('informe', item.id)">
                         <Icon icon="ph:file-duotone" />
                         <div class="w-full">
                             <div class="mb-2">{{ item.titulo }}</div>
@@ -75,7 +78,13 @@
 
 
                 <Card v-if="!equipo.ocultarMiembros">
-                    <h3>Miembros</h3>
+                    <h3 class="flex justify-between items-center">
+                        <span>Miembros</span>
+                        <div v-if="equipo.miembros" class="text-base flex gap-2 items-center self-end justify-center">
+                            <Icon icon="ph:user-duotone" />
+                            {{ equipo.miembros.length }}
+                        </div>
+                    </h3>
                     <Users v-if="equipo" :users="equipo.miembros.slice(0, 17)" :count="equipo.miembros.length" />
                 </Card>
 
@@ -84,7 +93,7 @@
                     <div class="prose" v-html="equipo.informacion" />
                 </Card>
 
-                <EquipoAdmin v-if="soyCoordinador" :equipo="equipo" />
+                <EquipoAdmin v-if="soyCoordinador" :equipo="equipo" @updated="reloadEquipo" />
 
             </GridAppear>
         </div>
@@ -133,6 +142,42 @@ const mostrarMensaje = ref(page.props.flash.message)
 
 // solicitud
 const solicitud = ref(props.miSolicitud)
+
+function doReload() {
+    console.log('Equipo.doReload')
+
+    const modalElements = document.querySelectorAll('div.component-modal');
+
+    // Filtrar los elementos que están visibles (no tienen "display:none")
+    const visibleModalElements = Array.from(modalElements).filter(element => {
+        const style = window.getComputedStyle(element);
+        return style.getPropertyValue('display') !== 'none';
+    });
+
+    // si hay algun modal abierto, no hace un reload
+    if (visibleModalElements.length) return
+
+    router.reload({
+        only: ['equipo', 'ultimosArchivos', 'ultimosInformes', 'carpetas', 'miSolicitud', 'soyMiembro', 'soyCoordinador']
+    })
+}
+
+function reloadEquipo() {
+    console.log('Equipo.reloadEquipo')
+    router.reload({
+        only: ['equipo', 'miSolicitud', 'soyMiembro', 'soyCoordinador']
+    })
+}
+
+// va actualizando la página del equipo
+var timer = null
+onMounted(() => {
+    timer = setInterval(doReload, 1000)
+})
+
+onBeforeUnmount(() => {
+    clearInterval(timer)
+})
 
 </script>
 

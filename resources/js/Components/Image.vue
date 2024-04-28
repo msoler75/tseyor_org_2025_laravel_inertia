@@ -110,6 +110,9 @@ Hay varios tipos de situaciones:
 function init() {
     console.log('Image.init', props.src, 'props.width:', props.width, 'props.height:', props.height)
 
+    if(!props.src)
+        return
+
     // si es una url absoluta y corresponde a otro servidor o no queremos optimización (1)
     if (props.src.match(/https?:\/\/[^/]+/)?.[0] === myDomain.value || !props.optimize)
         return putSrcImage(imageSrc.value)

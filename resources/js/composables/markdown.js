@@ -142,8 +142,8 @@ export function MarkdownToHtml(raw_markdown) {
     });
     return md.render(raw_markdown)
     */
-
-  console.log("MarkdownToHtml", { raw_markdown });
+   console.log("MarkdownToHtml", { raw_markdown });
+   if(!raw_markdown) return "";
   // raw_markdown = raw_markdown.replace(/\n\s*---\s*\n/mg, '<hr/>')
   const converter = new showdown.Converter();
   converter.setFlavor("github");

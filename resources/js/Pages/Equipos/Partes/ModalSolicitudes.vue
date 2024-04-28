@@ -1,7 +1,7 @@
 <template>
-    <Modal :show="modalSolicitudes" @close="modalSolicitudes = false">
+    <Modal :show="modalSolicitudes" @close="cerrarModal">
         <div class="bg-base-200 p-5 flex flex-col gap-5 select-none">
-            <h3>Solicitudes de ingreso</h3>
+            <h3>Solicitudes de ingreso <small>- {{ equipo.nombre }}</small></h3>
 
             <tabs  :options="{ disableScrollBehavior: true,  useUrlFragment: false }">
                 <tab :name="`Solicitudes pendientes (${numPendientes})`">
@@ -88,7 +88,7 @@
 
 
             <div class="py-3 flex justify-between sm:justify-end gap-5">
-                <button @click.prevent="modalSolicitudes = false" type="button" class="btn btn-neutral">
+                <button @click.prevent="cerrarModal" type="button" class="btn btn-neutral">
                     cerrar
                 </button>
             </div>
@@ -103,6 +103,8 @@ import { Tabs, Tab } from 'vue3-tabs-component';
 defineExpose({
     mostrar
 });
+
+const emit = defineEmits(['updated'])
 
 const solicitudesHistorial = ref([])
 
@@ -121,15 +123,21 @@ function mostrar() {
     modalSolicitudes.value = true
 }
 
-onMounted(() => {
+
+function cargarSolicitudes() {
+
     axios.get(route('equipo.solicitudes', props.equipo.id))
-        .then(response => {
-            solicitudesHistorial.value = response.data
-        })
-        .catch(error => {
-            console.log(error)
-        })
-})
+    .then(response => {
+        solicitudesHistorial.value = response.data
+    })
+    .catch(error => {
+        console.log(error)
+    })
+}
+
+cargarSolicitudes()
+
+const modificado = ref(false)
 
 function aceptar(solicitud) {
     solicitud.fecha_aceptacion = new Date().toISOString()
@@ -137,7 +145,8 @@ function aceptar(solicitud) {
     axios.get(route('solicitud.aceptar', solicitud.id))
         .then(response => {
             solicitudesHistorial.value.unshift(solicitud)
-            props.equipo.usuarios.unshift(solicitud.usuario)
+            cargarSolicitudes()
+            modificado.value = true
         })
         .catch(error => {
             console.log('error', error)
@@ -151,10 +160,18 @@ function denegar(solicitud) {
     axios.get(route('solicitud.denegar', solicitud.id))
         .then(response => {
             solicitudesHistorial.value.unshift(solicitud)
+            cargarSolicitudes()
+            modificado.value = true
         })
         .catch(error => {
             console.log('error', error)
             alert("Hubo algún error")
         })
+}
+
+function cerrarModal() {
+    modalSolicitudes.value = false
+    if(modificado.value)
+        emit('updated')
 }
 </script>

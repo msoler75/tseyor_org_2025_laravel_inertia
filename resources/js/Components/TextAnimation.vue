@@ -44,7 +44,7 @@ const calculateDuration = () => {
     const animationDuration = (textWidth / containerWidth.value) * props.animationDuration / 1.2 * repetitions
     textEl.value.style.setProperty('--animation-duration', `${animationDuration}s`)
     textCloneEl.value.style.setProperty('--animation-duration', `${animationDuration}s`)
-    console.log('animate-duration:', animationDuration, { textWidth, containerWidth, container })
+    // console.log('animate-duration:', animationDuration, { textWidth, containerWidth, container })
 }
 
 watch(() => props.text, () => { calculateDuration() })
