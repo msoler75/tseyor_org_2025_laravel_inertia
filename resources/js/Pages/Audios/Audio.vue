@@ -52,6 +52,7 @@ function clickPlayPause(audio) {
             /*case 'error':
                 player.play()
                 break*/
+            case 'waiting':
             case 'playing':
             case 'paused':
                 player.playPause()

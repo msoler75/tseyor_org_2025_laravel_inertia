@@ -28,12 +28,15 @@ const props = defineProps({
     }
 })
 
-const repetitions = 77
+const repetitions = 33
+const numspaces = 77
 
 const textRep = computed(() => {
     var t = props.text
     for (var i = 0; i < repetitions; i++) {
-        t += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + props.text
+        for(var j = 0; j<numspaces; j++)
+            t+='&nbsp;'
+        t += props.text
     }
     return t
 })
