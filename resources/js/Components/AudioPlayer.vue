@@ -1,14 +1,14 @@
 <template>
     <div class="select-none">
-        <div v-if="player.mini" v-show="!player.closed"  @mouseleave="collapsePlayer"  class="rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden" >
+        <div v-if="player.mini" v-show="!player.closed"  @mouseleave="collapsePlayer"  class="max-w-[22rem] xs:max-w-[32rem] sm:max-w-[42rem] rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden" >
             <div v-if="expanded" class="p-2 xs:hidden">
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
                     class="ml-1 transform duration-300" @mousemove="activatePlayer" />
             </div>
-            <div class="mx-auto flex justify-between items-center" :class="expanded ? 'w-full max-w-lg gap-3' : 'pr-4'">
+            <div class="mx-auto flex justify-between items-center" :class="expanded ? 'w-full gap-3' : 'pr-4'">
                 <button type="button"
                     class="btn btn-secondary rounded-full flex justify-center items-center p-1 text-4xl transform scale-75"
-                    @click="player.playPause" :title="player.state == 'error' ? 'Error al cargar el audio' : ''">
+                    @click="player.playPause"  :title="player.state == 'error' ? 'Error al cargar el audio' : ''">
                     <AudioStateIcon :src="player.music?.src" class="rounded-full overflow-hidden"/>
                 </button>
 
@@ -162,14 +162,14 @@ function activatePlayer() {
     clearTimeout(timerToCollapse)
     timerToCollapse = setTimeout(() => {
         expanded.value = false
-    }, 7000)
+    }, 27000)
 }
 
 function collapsePlayer() {
     clearTimeout(timerToCollapse)
     timerToCollapse = setTimeout(() => {
         expanded.value = false
-    }, 3500)
+    }, 23500)
 }
 
 

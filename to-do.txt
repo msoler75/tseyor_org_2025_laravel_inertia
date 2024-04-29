@@ -1,3 +1,6 @@
+PLAYER
+-Audioplayer - Spinner: animation
+
 ADMIN
 -ver laravel.log/jobs.log en panel
 
@@ -12,6 +15,7 @@ BUSQUEDAS:
 -en una busqueda, al abrir un comunicado, que muestre highlight en las palabras marcadas. este highlight se puede quitar
 
 ARCHIVOS
+-icono "home" lleva a una url que no está bien
 -a un usuario sin loguear, le aparece la opción de renombrar carpeta y crear carpeta. No debería tener esas opciones
 -en archivos adjuntos, por ejemplo, de un informe, si intentas desccargarlos y no existe (404) descarga un archivo .html. No debiera ser
 -mejorar vista mobil
@@ -19,6 +23,10 @@ ARCHIVOS
 CONTACTO
 -un usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
     - y si no, al menos poder mandar fácilmente los datos de contacto a un administrador
+
+USER
+-vista perfil de usuario, la frase necesita padding en vista movil
+-ultimos comentarios: falta agregar: no hay comentarios
 
 EQUIPOS
 -crear equipos
