@@ -39,7 +39,7 @@ router.on('start', (event) => {
 
 
     if(!mismapagina || !mismaSeccion ){
-        const fadeoutWhenNavigateTo = /^\/(audios|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|normativas|noticias|publicaciones|usuarios)\/.+/
+        const fadeoutWhenNavigateTo = /^\/(audios|videos|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|normativas|noticias|publicaciones|usuarios)\/.+/
         if(fadeoutWhenNavigateTo.exec(nuevaRuta.pathname)) {
             console.log('auto fadeOut')
             nav.fadeoutPage()

@@ -2,6 +2,7 @@ import defaultTheme from "tailwindcss/defaultTheme";
 import forms from "@tailwindcss/forms";
 import typography from "@tailwindcss/typography";
 import daisyui from "daisyui";
+// import aspectRatio from "@tailwindcss/aspect-ratio";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -13,7 +14,7 @@ export default {
     "./resources/js/**/*.vue",
   ],
 
-  plugins: [forms, typography, daisyui],
+  plugins: [forms, typography, daisyui /*, aspectRatio*/],
 
   theme: {
     screens: {
