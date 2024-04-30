@@ -91,7 +91,9 @@ Route::group([
     Route::get('archivos', function () {
         return view('admin.archivos');
     } );
-
+    Route::get('logs', function () {
+        return view('admin.logs');
+    } );
 
 
 }); // this should be the absolute last line of this file

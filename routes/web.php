@@ -103,11 +103,12 @@ Route::get('archivos_raiz', [ArchivosController::class, 'archivos'])->name('arch
  Route::delete('files{ruta}', [ArchivosController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
 
 
+
 Route::get('audios', [AudiosController::class, 'index'])->name('audios');
 Route::get('audios/{slug}', [AudiosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('audio');
 
 Route::get('videos', [VideosController::class, 'index'])->name('videos');
-
+Route::get('videos/{slug}', [VideosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('video');
 
 
 Route::get('noticias', [NoticiasController::class, 'index'])->name('noticias');

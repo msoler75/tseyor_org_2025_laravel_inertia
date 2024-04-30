@@ -1,8 +1,9 @@
-PLAYER
--Audioplayer - Spinner: animation
-
 ADMIN
 -ver laravel.log/jobs.log en panel
+
+LOGS
+https://betterstack.com/docs/logs/php/
+https://medium.com/@pd.philip/laravel-error-logging-via-better-stack-logtail-fa80eafd4d36
 
 QUEUE
 -Ver si se puede poner un queueworker en dreamhost
@@ -13,6 +14,7 @@ PAGINAS
 BUSQUEDAS:
 -en resultados de busquedas, quitar los formatos extra {width=45px;height=60px}  {text-align=center} ... [^1] <sup></sup> <u></u>
 -en una busqueda, al abrir un comunicado, que muestre highlight en las palabras marcadas. este highlight se puede quitar
+-en el panel de administración, ver todas las búsquedas y estadísticas
 
 ARCHIVOS
 -icono "home" lleva a una url que no está bien

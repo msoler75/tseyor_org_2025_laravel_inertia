@@ -25,6 +25,8 @@ class VideosController extends Controller
             $resultados = Video::whereRaw("1=1");
         }
 
+        $resultados=$resultados->where('visibilidad', 'P');
+
         // parámetros
        /* if ($categoria)
             $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%")
@@ -42,7 +44,7 @@ class VideosController extends Controller
 
         // $categorias = (new Normativa())->getCategorias();
 
-        return Inertia::render('Videos', [
+        return Inertia::render('Videos/Index', [
             // 'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
@@ -56,21 +58,21 @@ class VideosController extends Controller
     public function show($id)
     {
         if (is_numeric($id)) {
-            $normativa = Normativa::findOrFail($id);
+            $video = Video::findOrFail($id);
         } else {
-            $normativa = Normativa::where('slug', $id)->firstOrFail();
+            $video = Video::where('slug', $id)->firstOrFail();
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $normativa->visibilidad == 'P';
+        $publicado =  $video->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$normativa || (!$publicado && !$borrador && !$editor)) {
+        if (!$video || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
-        return Inertia::render('Normativas/Normativa', [
-            'normativa' => $normativa,
+        return Inertia::render('Videos/Video', [
+            'video' => $video,
         ])
-            ->withViewData(SEO::from($normativa));
+            ->withViewData(SEO::from($video));
     }
 }
