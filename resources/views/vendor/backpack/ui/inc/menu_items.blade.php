@@ -2,7 +2,7 @@
 <li class="nav-item"><a class="nav-link" href="{{ backpack_url('dashboard') }}"><i class="la la-home nav-icon"></i>
         {{ trans('backpack::base.dashboard') }} de administración</a></li>
 
-@canany(['administrar contenidos', 'administrar social', 'administrar directorio', 'administrar equipos', 'administrar archivos', 'administrar usuarios'])
+@canany(['administrar contenidos', 'administrar social', 'administrar directorio', 'administrar legal', 'administrar experiencias', 'administrar equipos', 'administrar archivos', 'administrar usuarios'])
 
 
 @can('administrar contenidos')
@@ -45,27 +45,20 @@
 </x-backpack::menu-dropdown>
 @endcan
 
+@can('administrar experiencias')
+<x-backpack::menu-item title="Experiencias" icon="lab la-fly" :link="backpack_url('experiencia')" />
+@endcan
 
-@canany(['administrar contenidos', 'administrar experiencias'])
-<x-backpack::menu-dropdown title="Comunidad" icon="la la-globe">
-    @canany(['administrar contenidos', 'administrar experiencias'])
-    <x-backpack::menu-dropdown-item title="Meditaciones" icon="la la-smile-beam" :link="backpack_url('meditacion')" />
-    @endcanany
-    @can('administrar contenidos')
-    <x-backpack::menu-dropdown-item title="Normativas" icon="la la-balance-scale" :link="backpack_url('normativa')" />
-    <x-backpack::menu-dropdown-item title="Publicaciones" icon="la la-pencil-alt" :link="backpack_url('publicacion')" />
-    @endcan
-    @can('administrar experiencias')
-    <x-backpack::menu-dropdown-item title="Experiencias" icon="lab la-fly" :link="backpack_url('experiencia')" />
-    @endcan
-</x-backpack::menu-dropdown>
-@endcanany
+@can('administrar legal')
+    <x-backpack::menu-item title="Normativas" icon="la la-balance-scale" :link="backpack_url('normativa')" />
+@endcan
 
 @can('administrar equipos')
 <x-backpack::menu-dropdown title="Gestión de Equipos" icon="la la-users">
     <x-backpack::menu-dropdown-item title="Equipos" icon="la la-users" :link="backpack_url('equipo')" />
     <x-backpack::menu-dropdown-item title="Solicitudes" icon="la la-hand-paper" :link="backpack_url('solicitud')" />
     <x-backpack::menu-dropdown-item title="Informes" icon="la la-file-invoice" :link="backpack_url('informe')" />
+
 </x-backpack::menu-dropdown>
 @else
     @php
