@@ -3,7 +3,7 @@
 
         <div class="flex justify-between items-center mb-20">
             <Back href="/comunidad">Comunidad</Back>
-            <AdminPanel modelo="normativa" necesita="administrar contenidos" />
+            <AdminPanel modelo="normativa" necesita="administrar legal" />
         </div>
 
         <h1>Normativas</h1>
