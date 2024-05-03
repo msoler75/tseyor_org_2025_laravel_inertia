@@ -1,5 +1,7 @@
-ADMIN
--ver laravel.log/jobs.log en panel
+COMUNICADOS
+-que cuando importe un comunicado en word, cambie:
+####### ... CONVERSACIONES INTERDIMENSIONALES por algo como negrita
+-imagenes habituales de guias estelares y logo de tseyor las cambie por otras ubicadas en medios
 
 LOGS
 https://betterstack.com/docs/logs/php/
@@ -39,6 +41,7 @@ EQUIPOS
 
 ADMIN
 -dashboard: añadir: archivos subidos
+-dashboard: los ultimos comentarios solo lo ve el rol "comunicador"
 -emails: ver registro de emails en el dashboard
 
 EVENTOS
@@ -59,10 +62,6 @@ https://apidocs.mailrelay.com/#post-/campaigns
 -Boletines (es como un novedades, pero por correo)
 
 
-
-COMUNICADOS
--que cuando importe un comunicado en word, cambie:
-####### ... CONVERSACIONES INTERDIMENSIONALES por algo como negrita
 
 
 WEBDAV:

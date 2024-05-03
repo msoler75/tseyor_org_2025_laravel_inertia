@@ -23,13 +23,82 @@ class WordImport
     public string $mediaFolder = "";
     public bool $deleteTempAtEnd = true;
 
+    public $images_unique = [
+        [
+            "size" => 20085,
+            "hash" => "630c99e306ce94dd99d173beadad247f",
+            "url" => "/almacen/medios/logos/sello_tseyor_64.png",
+        ],
+        [
+            "size" => 20204,
+            "hash" => "036c30ea7e25656a87a05db130258d7a",
+            "url" => "/almacen/medios/logos/sello_tseyor_64.png",
+        ],
+        [
+            "size" => 37029,
+            "hash" => "127a9ca4f3e3cd45dd7f7d9b9bd48f0d",
+            "url" => "/almacen/medios/guias/con_nombre/Noiwanak.jpg",
+            "width" => "282",
+            "height" => "400",
+        ],
+        [
+            "size" =>  38835,
+            "hash" => "1947db3302b21d527cbd12caba54f8ee",
+            "url" => "/almacen/medios/guias/con_nombre/Shilcars.jpg",
+            "width" => "281",
+            "height" => "400",
+        ],
+        [
+            "size" =>  31293,
+            "hash" => "2dee106d62d588a8e3b7738f2afe1d21",
+            "url" => "/almacen/medios/guias/con_nombre/Rasbek.jpg",
+            "width" => "286",
+            "height" => "400",
+        ],
+        [
+            "size" =>  39461,
+            "hash" => "18482a21b08b7f7147b729ff8751d2f2",
+            "url" => "/almacen/medios/guias/con_nombre/Aumnor.jpg",
+            "width" => "281",
+            "height" => "400",
+        ],
+        [
+            "size" =>  50714,
+            "hash" => "ce2287014bd81e0aac800f9b9a492007",
+            "url" => "/almacen/medios/guias/con_nombre/AiumOm.jpg",
+            "width" => "276",
+            "height" => "400",
+        ],
+        [
+            "size" =>  53321,
+            "hash" => "de68d7c10eeac75cc251afaec6456aad",
+            "url" => "/almacen/medios/guias/con_nombre/AiumOm.jpg",
+            "width" => "276",
+            "height" => "400",
+        ],
+        [
+            "size" =>  34548,
+            "hash" => "66c945fd1b313520ae243741ef58e7b4",
+            "url" => "/almacen/medios/guias/con_nombre/Jalied.jpg",
+            "width" => "276",
+            "height" => "400",
+        ],
+        [
+            "size" =>  36589,
+            "hash" => "919b1aef38a94ff59ed2470b211d4101",
+            "url" => "/almacen/medios/guias/con_nombre/Orjain.jpg",
+            "width" => "282",
+            "height" => "400",
+        ]
+    ];
+
 
     /**
      * Esta es la función principal a la que podemos llamar desde un controlador CRUD de backpack
      */
     public function __construct(string $docxFilePath = null)
     {
-        if (!isset ($_FILES['file']))
+        if (!isset($_FILES['file']))
             throw new \Exception("Uploaded file not found");
 
         $word_file = $_FILES['file'];
@@ -178,11 +247,11 @@ class WordImport
                 @unlink($imagePath);
             }
         if ($this->tempDir) {
-            if(Storage::disk('public')->exists($this->tempDir)) {
+            if (Storage::disk('public')->exists($this->tempDir)) {
                 Log::info("go to delete folder " . $this->tempDir);
                 // we must delete files in folder first
                 WordImport::deleteFilesFromFolder($this->tempDir);
-                
+
                 $path = Storage::disk('public')->path($this->tempDir);
                 // then we delete folder
                 @rmdir($path);
@@ -231,7 +300,7 @@ class WordImport
     public function copyImagesTo(string $folderDest, bool $deletePrevious = false)
     {
 
-        Log::info("copyImagesTo ".$folderDest);
+        Log::info("copyImagesTo " . $folderDest);
 
         if (!count($this->images))
             return 0;
@@ -259,25 +328,42 @@ class WordImport
             Storage::disk($disk)->makeDirectory($folder);
         }
 
-        Log::info("images: ".print_r($this->images, true));
+        Log::info("images: " . print_r($this->images, true));
 
         // Copiamos las imágenes a la carpeta de destino
         foreach ($this->images as $imagePath) {
             $imageFilename = basename($imagePath);
             // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("almacen/".$destinationFolder . "/" .  $imageFilename));
-            Log::info("copy $imagePath -> $destinationFolderPath/$imageFilename");
-            copy($imagePath, $destinationFolderPath . "/" . $imageFilename);
+
+
+            // aquí busca imagenes que sean habituales en muchos documentos, de los guías o el sello de tseyor
+            // y las reemplaza por una versión única de cada imagen
+            $img = $this->equivalent_image($imagePath);
+            if ($img != null) {
+                Log::info("encontrada imagen equivalente en " . $img['url']);
+                $params = [];
+                if (isset($img["width"]))
+                    $params[] = "width=" . $img["width"];
+                if (isset($img["height"]))
+                    $params[] = "height=" . $img["height"];
+                $extra = count($params) ? "{" . implode(",", $params) . "}" : "";
+
+                $this->content = preg_replace("#\/?almacen/{$this->tempDir}/$imageFilename\)#", $img['url'] . ")" . $extra, $this->content);
+            } else {
+                Log::info("copy $imagePath -> $destinationFolderPath/$imageFilename");
+                copy($imagePath, $destinationFolderPath . "/" . $imageFilename);
+            }
         }
 
         Log::info("temp dir: $this->tempDir");
 
-        Log::info("content: ". print_r($this->content, true));
+        Log::info("content: " . print_r($this->content, true));
 
         if (USE_PHPWORD) {
             Log::info("preg_replace(almacen/{$this->tempDir}/   ->   almacen/$folder/");
             $this->content = preg_replace("#\balmacen/{$this->tempDir}/#", "almacen/$folder/", $this->content);
 
-            Log::info("content after: ". print_r($this->content, true));
+            Log::info("content after: " . print_r($this->content, true));
         } else {
             $this->content = preg_replace("/\bmedios\//", "$folder/", $this->content);
             $this->content = preg_replace("/\.\/medios\//", "/almacen/medios/", $this->content);
@@ -286,9 +372,25 @@ class WordImport
         // hacemos los enlaces locales
         $baseHost = config('app.url');
         $this->content = preg_replace("#$baseHost/almacen/#", "/almacen/", $this->content);
-        Log::info("content final: ". print_r($this->content, true));
+
+        Log::info("content final: " . print_r($this->content, true));
 
         return count($this->images);
+    }
+
+    /**
+     * Busca una imagen equivalente
+     * Si la encuentra, retorna la url de su ubicación
+     */
+
+    private function equivalent_image($imagePath)
+    {
+        $size = filesize($imagePath);
+        foreach ($this->images_unique as $img)
+            if ($size == $img['size'] && md5_file($imagePath) == $img['hash'])
+                return $img;
+
+        return null;
     }
 
 }

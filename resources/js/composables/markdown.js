@@ -76,10 +76,16 @@ export function HtmlToMarkdown(html) {
     html
       // reemplazamos los atributos de imagen
       .replace(/<img\s+[^>]+\/?>/g, (imgHtml) => {
-        console.log({imgHtml})
+        console.log({ imgHtml });
         const parser = new DOMParser();
-        const doc = parser.parseFromString(imgHtml, "application/xml");
+        //removemos parámetros de la url que contenga &, porque rompe el parseo
+        //por ejemplo imagen1.jpg?w=200&h=100
+        const doc = parser.parseFromString(
+          imgHtml.replace(/\?[^\"\']+&[^\"\']*/, ""),
+          "application/xml"
+        );
         const img = doc.querySelector("img");
+        if(!img) return imgHtml
 
         const attributes = Array.from(img.attributes).reduce((acc, attr) => {
           acc[attr.name] = attr.value;
@@ -89,33 +95,40 @@ export function HtmlToMarkdown(html) {
         console.log({ attributes });
 
         var values = {};
-        var style = ""
+        var style = "";
         for (const attr in attributes) {
           if (attr == "alt" || attr == "src") continue;
           if (attr == "width" || attr == "height") {
-            values[attr] = attr + "=" + attributes[attr]
+            values[attr] = attr + "=" + attributes[attr];
           }
           if (attr == "style") {
-            style = attributes[attr]
+            style = attributes[attr];
           }
         }
 
-        if(style) { // así sobreescribimos  width height
-            const pairs = style.split(/\s*;\s*/);
-            console.log({pairs})
-            for (const pair of pairs) {
-                const [attr, value] = pair.split(/\s*:\s*/);
-                if (attr == "width" || attr == "height") {
-                    values[attr]= attr  + "=" + value;
-                }
+        if (style) {
+          // así sobreescribimos  width height
+          const pairs = style.split(/\s*;\s*/);
+          console.log({ pairs });
+          for (const pair of pairs) {
+            const [attr, value] = pair.split(/\s*:\s*/);
+            if (attr == "width" || attr == "height") {
+              values[attr] = attr + "=" + value;
             }
+          }
         }
 
-        console.log({values})
+        console.log({ values });
 
         return (
-          "<img src='"+attributes.src+"' alt='"+attributes.alt+"'>"+
-          (Object.keys(values).length ? "{" + Object.values(values).join(",") + "}" : "")
+          "<img src='" +
+          attributes.src +
+          "' alt='" +
+          attributes.alt +
+          "'>" +
+          (Object.keys(values).length
+            ? "{" + Object.values(values).join(",") + "}"
+            : "")
         );
       })
       // reemplazamos los estilos de párrafo
@@ -142,15 +155,18 @@ export function MarkdownToHtml(raw_markdown) {
     });
     return md.render(raw_markdown)
     */
-   console.log("MarkdownToHtml", { raw_markdown });
-   if(!raw_markdown) return "";
+  console.log("MarkdownToHtml", { raw_markdown });
+  if (!raw_markdown) return "";
   // raw_markdown = raw_markdown.replace(/\n\s*---\s*\n/mg, '<hr/>')
   const converter = new showdown.Converter();
   converter.setFlavor("github");
-  raw_markdown = raw_markdown.replace(/!\[(.*)\]\(([^\)]+)\)/g, function(match, alt, url) {
-    // console.log({match, alt, url})
-    return '![' + alt + '](' + url.replace(/\s/g, '%20') + ')';
-  })
+  raw_markdown = raw_markdown.replace(
+    /!\[(.*)\]\(([^\)]+)\)/g,
+    function (match, alt, url) {
+      // console.log({match, alt, url})
+      return "![" + alt + "](" + url.replace(/\s/g, "%20") + ")";
+    }
+  );
   const html = converter
     .makeHtml(raw_markdown)
 
