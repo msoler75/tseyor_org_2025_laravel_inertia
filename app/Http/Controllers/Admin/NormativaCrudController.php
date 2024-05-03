@@ -109,7 +109,7 @@ class NormativaCrudController extends CrudController
             'name' => 'categoria',
             'label' => "Categoría",
             'type' => 'select_from_array',
-            'options' => ['General', 'Muulasterios', 'Otros'],
+            'options' => ['General'=>'General', 'Muulasterios'=>'Muulasterios', 'Elecciones'=>'Elecciones', 'Otros'=>'Otros'],
             'allows_null' => false,
             'default' => 'General',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;

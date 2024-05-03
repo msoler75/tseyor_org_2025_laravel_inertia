@@ -82,6 +82,12 @@ class ContenidoHelper
                 }
             }
         }
+
+        // cambiamos las imagenes de portada del contenido en el caso de los guías, poniendo la imagen sin texto
+        if (in_array('imagen', $fillable)) {
+            $objeto->imagen = strtolower(preg_replace("#/medios/guias/con_nombre/(.*)\.jpg#", "/medios/guias/$1.jpg", $objeto->imagen));
+        }
+
         // generamos una descripción a partir del texto si es necesario
         if (in_array('descripcion', $fillable) && empty($objeto->descripcion)) {
             $descripcion = mb_substr(strip_tags($html), 0, 400 - 3);

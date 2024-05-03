@@ -120,6 +120,7 @@ class AudioCrudController extends CrudController
                               'Música clásica'=>'Música clásica',
                               'Rayos de luz'=>'Rayos de luz',
                               'Minicápsulas de Aium Om'=>'Minicápsulas de Aium Om',
+                              'Guías Estelares'=>'Guías Estelares',
                               'Canciones'=>'Canciones',
                               'Otros'=>'Otros'],
             'allows_null' => false,
