@@ -89,6 +89,13 @@ class WordImport
             "url" => "/almacen/medios/guias/con_nombre/Orjain.jpg",
             "width" => "282",
             "height" => "400",
+        ],
+        [
+            "size" =>  49021,
+            "hash" => "7f072a52970bf73b7c17fa8b68349aaf",
+            "url" => "/almacen/medios/guias/con_nombre/Melcor.jpg",
+            "width" => "282",
+            "height" => "400",
         ]
     ];
 
