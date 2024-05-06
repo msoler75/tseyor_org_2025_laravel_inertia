@@ -9,7 +9,7 @@ use App\Services\WordImport;
 use App\Models\Comunicado;
 use App\Http\Requests\StoreComunicadoRequest;
 use App\Jobs\ProcesarAudios;
-
+use Illuminate\Support\Facades\Log;
 
 // esto permite testar la conversión de audio al guardar el comunicado
 define('TESTAR_CONVERTIDOR_AUDIO2', false);
@@ -158,7 +158,7 @@ class ComunicadoCrudController extends CrudController
 
         $folder = $this->getMediaFolder();
 
-        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
 
         // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
@@ -346,6 +346,16 @@ class ComunicadoCrudController extends CrudController
 
             // ahora las imagenes están con la nueva ubicación
             $contenido->texto = $imported->content;
+
+            if (!$contenido->imagen || $contenido->imagen == "/almacen/medios/logos/sello_tseyor_64.png") {
+                $guias = ['Shilcars', 'Rasbek', 'Melcor', 'Noiwanak', 'Aumnor', 'Aium Om', 'Orjaín', 'Mo', 'Rhaum', 'Jalied'];
+                $regex = "/\b(" . implode("|", $guias) . ")\b/i";
+                if (preg_match($regex, $contenido->texto, $matches)) {
+                    // Log::info("guia encontrado:" . print_r($matches, true));
+                    $guia =  strtolower(str_replace(["í", " "], ["i", ""], $matches[0]));
+                    $contenido->imagen = "/almacen/medios/guias/$guia.jpg";
+                }
+            }
 
             $contenido->texto = preg_replace("#(.*\!\[\]\(/almacen/medios/logos/sello_tseyor_64[^)]+\))(\**Universidad Tseyor de Granada)#", "$1\n\n$2", $contenido->texto);
 
