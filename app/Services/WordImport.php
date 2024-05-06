@@ -35,6 +35,16 @@ class WordImport
             "url" => "/almacen/medios/logos/sello_tseyor_64.png",
         ],
         [
+            "size" => 20107,
+            "hash" => "975cd4e67547113f5be9ebdef8e36bb4",
+            "url" => "/almacen/medios/logos/sello_tseyor_64.png",
+        ],
+        [
+            "size" => 20107,
+            "hash" => "8881f1a43469a98601e1208bd053e45c",
+            "url" => "/almacen/medios/logos/sello_tseyor_64.png",
+        ],
+        [
             "size" => 37029,
             "hash" => "127a9ca4f3e3cd45dd7f7d9b9bd48f0d",
             "url" => "/almacen/medios/guias/con_nombre/Noiwanak.jpg",
@@ -44,6 +54,13 @@ class WordImport
         [
             "size" =>  38835,
             "hash" => "1947db3302b21d527cbd12caba54f8ee",
+            "url" => "/almacen/medios/guias/con_nombre/Shilcars.jpg",
+            "width" => "281",
+            "height" => "400",
+        ],
+        [
+            "size" =>  42202,
+            "hash" => "d52cb83b3617df4af24387ec2f566298",
             "url" => "/almacen/medios/guias/con_nombre/Shilcars.jpg",
             "width" => "281",
             "height" => "400",
@@ -392,6 +409,7 @@ class WordImport
 
     private function equivalent_image($imagePath)
     {
+        return null;
         $size = filesize($imagePath);
         foreach ($this->images_unique as $img)
             if ($size == $img['size'] && md5_file($imagePath) == $img['hash'])

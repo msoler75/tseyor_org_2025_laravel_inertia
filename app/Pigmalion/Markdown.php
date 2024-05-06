@@ -17,6 +17,9 @@ class Markdown
     public static $carpetaCreada = null;
 
 
+    /**
+     * Convierte a formato Markdown desde HTML
+     */
     public static function toHtml($md)
     {
         $html = Str::markdown($md);
@@ -105,30 +108,39 @@ class Markdown
         if(trim($htmlContent))
         $htmlContent = self::extraerBody($htmlContent);
 
+        return self::toMarkdown($htmlContent, $carpetaImagenes, $spanLimpio);
+    }
 
-        // convertimos a formato desde HTML a markdown
-        $converter = new HtmlConverter();
-        $markdown = $converter->convert($htmlContent);
 
-      
-
-        // por si quedó algun div de página lo quitamos
-        $markdown = preg_replace('/<div style="page:\s*page\d+">/', '', $markdown);
+    /**
+     * Convierte a formato Markdown desde Html
+     */
+    public static function toMarkdown($html, $carpetaImagenes = null, $spanLimpio = true) {
 
         // generar una carpeta aleatoria
         if (!$carpetaImagenes)
             $carpetaImagenes = 'temp/' . Str::random(16);
 
+        //$html = self::extraerImagenes($html, $carpetaImagenes);
+
+        // convertimos a formato desde HTML a markdown
+        $converter = new HtmlConverter();
+        $markdown = $converter->convert($html);
+
         $markdown = self::extraerImagenes($markdown, $carpetaImagenes);
 
+        // por si quedó algun div de página lo quitamos
+        $markdown = preg_replace('/<div style="page:\s*page\d+">/', '', $markdown);
+
+
         // si no se limpió en su momento, se hace ahora
-        if(!$spanLimpio)
-        $markdown = self::limpiarHtml($markdown);
+        // if(!$spanLimpio)
+        // $markdown = self::limpiarHtml($markdown);
 
         // arreglar enlace roto de algunos documentos
-        $markdown = preg_replace('&\[tseyor.\]\(http://www.tseyor.com/\)<span style="text-decoration:\s?underline\s?">\*\*org\*\*\s?</span>&', '[tseyor.org](https://tseyor.org/)', $markdown);
-        $markdown = str_replace('<span style="text-decoration:underline ">**tseyor.org**</span>', '[tseyor.org](https://tseyor.org/)', $markdown);
-        $markdown = str_replace('[tseyor.](http://www.tseyor.com/)<u>org</u>', '[tseyor.org](https://tseyor.org/)', $markdown);
+       // $markdown = preg_replace('&\[tseyor.\]\(http://www.tseyor.com/\)<span style="text-decoration:\s?underline\s?">\*\*org\*\*\s?</span>&', '[tseyor.org](https://tseyor.org/)', $markdown);
+       // $markdown = str_replace('<span style="text-decoration:underline ">**tseyor.org**</span>', '[tseyor.org](https://tseyor.org/)', $markdown);
+       // $markdown = str_replace('[tseyor.](http://www.tseyor.com/)<u>org</u>', '[tseyor.org](https://tseyor.org/)', $markdown);
 
         return $markdown;
     }
@@ -136,7 +148,7 @@ class Markdown
 
     public static function limpiarHtml($html, $limpiarSpan = true)
     {
-        
+
         // removemos caracteres extraños
         $html = preg_replace('/[\xA0\x0C]/u', ' ', $html);
         // Mantener saltos de línea, retorno de carro y tabulaciones al eliminar caracteres no imprimibles
@@ -428,20 +440,24 @@ class Markdown
     }
 
 
-    // Extrae las imagenes (codificadas en base64) y las guardamos en la carpeta $carpetaImagenes
-    public static function extraerImagenes($markdown, $storagePathImagenes)
+    /**
+     * Extrae las imagenes (codificadas en base64) y las guardamos en la carpeta $carpetaImagenes
+     * Admite markdown y HTML de entrada
+     * */
+    public static function extraerImagenes($source, $storagePathImagenes)
     {
         // Expresión regular para encontrar imágenes codificadas en base64 en el texto Markdown
-        $pattern = '/!\[\]\(data:image\/([a-zA-Z]*);base64,([^)]*)\)/';
+        $pattern = '/(?:!\[\]\(|src=[\'\"])data:image\/([a-zA-Z]*);base64,([a-zA-Z0-9+\/]+={0,2})[)\'\"]/';
 
         // Obtener todas las coincidencias de imágenes codificadas en base64
-        preg_match_all($pattern, $markdown, $matches);
+        preg_match_all($pattern, $source, $matches);
 
         // array de archivos de imagen
         $imagenes = [];
 
         foreach ($matches[0] as $key => $match) {
             // Obtener el tipo de imagen y los datos base64
+            $orig = $matches[0][$key];
             $type = $matches[1][$key];
             $data = $matches[2][$key];
 
@@ -458,13 +474,16 @@ class Markdown
             $imageUrl = Storage::disk('public')->url($imagePath);
 
             // Reemplazar el enlace de la imagen codificada por la URL pública de la imagen guardada
-            $markdown = str_replace($match, "![](" . $imageUrl . ")", $markdown);
+            if(str_starts_with($orig, "![")) // era markdown
+                $source = str_replace($match, "![](" . $imageUrl . ")", $source);
+            else
+                $source = str_replace($match, "src='$imageUrl'", $source);
         }
 
         self::$carpetaCreada = $storagePathImagenes;
         self::$imagenesExtraidas = $imagenes;
 
-        return $markdown;
+        return $source;
     }
 
 

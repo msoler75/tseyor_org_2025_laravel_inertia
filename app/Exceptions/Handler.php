@@ -55,6 +55,8 @@ class Handler extends ExceptionHandler
        $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 512;
 
         Log::error('An exception occurred', [
+            'statusCode' => $statusCode,
+            'type' => get_class($exception),
             'message' => $exception->getMessage(),
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),

@@ -157,7 +157,7 @@
                             <TimeAgo date="{{ $contenido->updated_at }}" />
                         </span>
                         <a title="Editar contenido" class="btn btn-xs"
-                            href="/admin/{{ rtrim($contenido->coleccion, 's') }}/{{ $contenido->id_ref }}/revise">Revisar</a>
+                            href="/admin/{{ preg_replace("/e?s$/", "", $contenido->coleccion) }}/{{ $contenido->id_ref }}/revise">Revisar</a>
                     @endforeach
                 </div>
             </div>

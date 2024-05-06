@@ -1,7 +1,9 @@
 COMUNICADOS
 -que cuando importe un comunicado en word, cambie:
 ####### ... CONVERSACIONES INTERDIMENSIONALES por algo como negrita
--imagenes habituales de guias estelares y logo de tseyor las cambie por otras ubicadas en medios
+-que en StoreComunicadoRequest valide si no existe un comunicado con el mismo numero y categoria, y de error
+-verificar importación de 1188 (desaparece la primera parte y imagen de shilcars)
+-en el método Markdown::toMarkdown da resultados distintos si llamo a extraerImagenes en la fase HTML o la fase Markdown
 
 LOGS
 https://betterstack.com/docs/logs/php/

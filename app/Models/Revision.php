@@ -29,7 +29,9 @@ class Revision extends Model
     public function getColeccionAttribute()
     {
         $coleccion = str_replace("App\\Models\\", "", $this->revisionable_type);
-        $coleccion = strtolower($coleccion) . "s";
+        $coleccion = strtolower($coleccion);
+        // si $coleccion termina en "n", añadimos "es", y si no, añadimos "s":
+        $coleccion .= substr($coleccion, -1) == 'n' ? 'es':'s';
         return $coleccion;
     }
 
@@ -68,7 +70,9 @@ class Revision extends Model
     }
 
     public function getRevisionUrlAttribute() {
-        return "/admin/".rtrim($this->coleccion, "s")."/{$this->revisionable_id}/revise";
+        $coleccion = str_replace("App\\Models\\", "", $this->revisionable_type);
+        $coleccion = strtolower($coleccion);
+        return "/admin/".$coleccion."/{$this->revisionable_id}/revise";
     }
 
 }
