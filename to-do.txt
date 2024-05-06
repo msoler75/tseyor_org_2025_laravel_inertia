@@ -40,6 +40,7 @@ EQUIPOS
 -coordinador ->configurar->editores->tiptap simple
 -Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
 -revisar permisos coordinadores (informes, archivos)
+-que en los equipos exista un panel/campo "solo para miembros" que es un texto que solo pueden ver los miembros inscritos del equipo
 
 ADMIN
 -dashboard: añadir: archivos subidos

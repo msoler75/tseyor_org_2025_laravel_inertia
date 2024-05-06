@@ -598,8 +598,8 @@ class Markdown
     public static function removeMarkdown($content) {
         // $content = preg_replace('/\bimg\b/', '', $content); // Eliminar la palabra "img" (??)
         // eliminamos caracters de markdown
-        $content = preg_replace("/[#*_]/", "", $content);
-        $content = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $content);
+        $content = preg_replace("/[#*_]/", "", $content); // elimina caracteres de formato
+        $content = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $content); // elimina urls
         $content = preg_replace("/\{.*?\}/", "", $content); // eliminamos marcas de estilo especiales
         return $content;
     }

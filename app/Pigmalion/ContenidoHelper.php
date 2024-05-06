@@ -14,6 +14,19 @@ use Illuminate\Support\Facades\Storage;
 class ContenidoHelper
 {
 
+    public static function generarTeaser($texto, $longitudMaxima = 400) {
+        // Verificar si la longitud del texto es mayor que la longitud máxima permitida
+        if (strlen($texto) > $longitudMaxima) {
+            // Recortar el texto a la longitud máxima y agregar puntos suspensivos al final
+            $teaser = substr($texto, 0, $longitudMaxima - 3) . '...';
+        } else {
+            // Si el texto es menor o igual a la longitud máxima, no es necesario recortarlo
+            $teaser = $texto;
+        }
+
+        return $teaser;
+    }
+
     public static function rellenarSlugImagenYDescripcion($objeto)
     {
         $fillable = $objeto->getFillable();
@@ -34,14 +47,14 @@ class ContenidoHelper
         if (!in_array('texto', $fillable))
             return;
 
-        $html = "";
+        $texto = "";
         if (
             (in_array('imagen', $fillable) && empty($objeto->imagen))
             || (in_array('descripcion', $fillable) && empty($objeto->descripcion))
         ) {
             //$parsedown = new Parsedown();
-            //$html = $parsedown->text($objeto->texto);
-            $html = Str::markdown($objeto->texto ?? "");
+            //$texto = $parsedown->text($objeto->texto);
+            $texto = Str::markdown($objeto->texto ?? "");
         }
         // Rellenamos imagen (si está vacía) con el contenido del texto (si existe)
         if (in_array('imagen', $fillable) && empty($objeto->imagen)) {
@@ -49,7 +62,7 @@ class ContenidoHelper
             Log::info("ContenidoHelper::rellenarSlugImagenYDescripcion: buscamos imagen del contenido");
 
             $matches = [];
-            preg_match_all('/<img [^>]*src=["\']([^"\']+)/i', $html, $matches);
+            preg_match_all('/<img [^>]*src=["\']([^"\']+)/i', $texto, $matches);
 
             // busca la primera imagen que tenga unas dimensiones minimas
             foreach ($matches[1] as $imageUrl) {
@@ -90,11 +103,11 @@ class ContenidoHelper
 
         // generamos una descripción a partir del texto si es necesario
         if (in_array('descripcion', $fillable) && empty($objeto->descripcion)) {
-            $descripcion = mb_substr(strip_tags($html), 0, 400 - 3);
+            $descripcion = strip_tags($texto);
             $descripcion = \App\Pigmalion\Markdown::removeMarkdown($descripcion);
             $descripcion = str_replace("\n", ' ', $descripcion); // Agregar espacio entre líneas
-            $descripcion = rtrim($descripcion, "!,.-");
-            $descripcion = substr($descripcion, 0, strrpos($descripcion, ' ')) . '...';
+            $descripcion = self::generarTeaser($descripcion);
+            //$descripcion = rtrim($descripcion, "!,.-");
             $objeto->descripcion = $descripcion;
         }
 
