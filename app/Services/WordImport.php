@@ -324,7 +324,6 @@ class WordImport
     public function copyImagesTo(string $folderDest, bool $deletePrevious = false)
     {
 
-        Log::info("copyImagesTo " . $folderDest);
 
         if (!count($this->images))
             return 0;
@@ -409,7 +408,6 @@ class WordImport
 
     private function equivalent_image($imagePath)
     {
-        return null;
         $size = filesize($imagePath);
         foreach ($this->images_unique as $img)
             if ($size == $img['size'] && md5_file($imagePath) == $img['hash'])
