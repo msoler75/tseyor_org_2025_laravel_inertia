@@ -130,7 +130,7 @@ class PublicacionCrudController extends CrudController
 
         CRUD::field('slug')->type('text')->after('titulo')->hint('Puedes dejarlo en blanco');
 
-        CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
+        CRUD::field('texto')->type('tiptap_editor_simple')->attributes(['folder' => $folder]);
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 

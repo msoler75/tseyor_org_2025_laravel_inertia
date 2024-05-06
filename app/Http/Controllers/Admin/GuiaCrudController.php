@@ -67,7 +67,7 @@ class GuiaCrudController extends CrudController
     {
          CRUD::setValidation([
             'nombre' => 'required|min:2',
-            // 'descripcion' => 'required|min:16',
+            'descripcion' => 'required|max:65000',
             'imagen' =>'required'
         ]);
         CRUD::setFromDb(); // set fields from db columns.
@@ -93,7 +93,7 @@ class GuiaCrudController extends CrudController
             ],
         ]);
 
-        CRUD::field('texto')->type('text_tinymce');
+        CRUD::field('texto')->type('tiptap_editor');
 
         CRUD::field('libros')->type('json')->hint('Libros de consulta de este Guía Estelar');
 

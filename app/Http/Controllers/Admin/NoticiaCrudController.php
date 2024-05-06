@@ -106,7 +106,8 @@ class NoticiaCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'descripcion' => 'required|max:400'
+            'descripcion' => 'max:400',
+            'texto' => 'required|max:65000',
         ]);
         // CRUD::setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.

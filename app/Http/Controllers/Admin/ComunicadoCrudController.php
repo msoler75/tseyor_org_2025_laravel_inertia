@@ -228,6 +228,7 @@ class ComunicadoCrudController extends CrudController
 
         CRUD::field('visibilidad')->type('visibilidad');
 
+
         Comunicado::saved(function ($comunicado) {
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un comunicado.

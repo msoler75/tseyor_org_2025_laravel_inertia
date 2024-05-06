@@ -96,6 +96,7 @@ class ExperienciaCrudController extends CrudController
     {
         CRUD::setValidation([
             // 'name' => 'required|min:2',
+            'texto' => 'required|max:65000'
         ]);
         CRUD::setFromDb(); // set fields from db columns.
 
