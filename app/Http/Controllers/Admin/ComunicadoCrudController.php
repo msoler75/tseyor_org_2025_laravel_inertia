@@ -166,10 +166,7 @@ class ComunicadoCrudController extends CrudController
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
 
-
-        CRUD::field('ano')->type('number')->attributes(['min' => 2001, 'max' => 2054])->wrapper([
-            'class' => 'form-group col-md-3'
-        ]);
+        CRUD::field('ano')->type('hidden');
 
         CRUD::field('fecha_comunicado')->wrapper([
             'class' => 'form-group col-md-3'
@@ -229,6 +226,12 @@ class ComunicadoCrudController extends CrudController
         CRUD::field('visibilidad')->type('visibilidad');
 
 
+        Comunicado::saving(function ($comunicado) {
+            $año = date('Y', strtotime($comunicado->fecha_comunicado));
+            $comunicado->ano = $año;
+        });
+
+
         Comunicado::saved(function ($comunicado) {
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un comunicado.
@@ -272,7 +275,7 @@ class ComunicadoCrudController extends CrudController
     }
 
     // show whatever you want
-    protected function setupShowOperation2()
+    /* protected function setupShowOperation2()
     {
         // MAYBE: do stuff before the autosetup
 
@@ -316,6 +319,7 @@ class ComunicadoCrudController extends CrudController
         // or maybe remove a column
         // CRUD::column('text')->remove();
     }
+    */
 
     public function importCreate()
     {
@@ -342,6 +346,8 @@ class ComunicadoCrudController extends CrudController
 
             // ahora las imagenes están con la nueva ubicación
             $contenido->texto = $imported->content;
+
+            $contenido->texto = preg_replace("#(.*\!\[\]\(/almacen/medios/logos/sello_tseyor_64[^)]+\))(\**Universidad Tseyor de Granada)#", "$1\n\n$2", $contenido->texto);
 
             $contenido->save();
 
