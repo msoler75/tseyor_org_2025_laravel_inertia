@@ -115,8 +115,8 @@ class ComunicadoCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(StoreComunicadoRequest::class);
-        CRUD::setValidation([
+        CRUD::setValidation(StoreComunicadoRequest::class);
+        /*CRUD::setValidation([
             'titulo' => 'required|min:7|max:255',
             'texto' => 'required',
             'numero' => 'required|numeric|min:1|max:9999',
@@ -126,11 +126,10 @@ class ComunicadoCrudController extends CrudController
             'audios' => [
                 'array',
             ],
-            /* 'audios.*' => [
-                new DropzoneRule("audios", ['audio']),
-            ], */
+             // 'audios.*' => [                new DropzoneRule("audios", ['audio']), ],
             // 'pdf' => 'max:20000|mimes:pdf',
         ]);
+        */
 
         CRUD::setFromDb(); // set fields from db columns.
 

@@ -66,7 +66,7 @@ class AudioConverter
 
             $cFile = new \CURLFile($sourcePath, $finfo, basename($sourcePath));
             $postData = array( "file" => $cFile, "filename" => $cFile->postname);
-            
+
             Log::channel('jobs')->info("Se ha creado postData");
 
             curl_setopt_array($curl, [
@@ -86,7 +86,7 @@ class AudioConverter
             if ($httpCode === 200) {
 
                 // Verificar si la carpeta existe en el destino
-                DiskUtil::ensureDirExists($this->destination);
+                DiskUtil::ensureDirExists(dirname($this->destination));
 
                 // Guardar la respuesta en el destino
                 file_put_contents($destinationPath, $response);
