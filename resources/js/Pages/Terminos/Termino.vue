@@ -52,7 +52,7 @@
                             <TimeAgo :date="termino.updated_at" />
                         </p>
                         <div class="mb-4"></div>
-                        <Content :content="termino.texto" format="md" />
+                        <Content :content="termino.texto" />
                     </div>
                 </div>
 

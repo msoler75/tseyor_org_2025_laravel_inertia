@@ -19,7 +19,7 @@ const props = defineProps({
     },
     format: {
         type: String,
-        default: ''
+        default: 'md'
     },
     optimizeImages: {
         type: Boolean,
