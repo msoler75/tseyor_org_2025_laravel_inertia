@@ -30,7 +30,7 @@ class StoreComunicadoRequest extends FormRequest
         return [
             'titulo' => 'required|min:7|max:255',
             'texto' => 'required',
-            'numero' => 'required|numeric|min:1|max:9999',
+            'numero' => 'required|numeric|min:1|max:99999',
             'categoria' => 'required',
             'fecha_comunicado' => 'required',
             'descripcion' => 'max:400',
@@ -40,30 +40,30 @@ class StoreComunicadoRequest extends FormRequest
             /* 'audios.*' => [
                 new DropzoneRule("audios", ['audio']),
             ], */
-            'pdf' => 'max:20000|mimes:pdf',
+            // 'pdf' => 'max:20000|mimes:pdf',
         ];
     }
 
 
-    public function after(): array
+
+    public function withValidator($validator)
     {
-        // dd($this->input('visibilidad'), $this->input('categoria'), !$this->input('numero'), $this->input('fecha_comunicado'));
-        // dd($this->file('audios'));
-        $comunicado = null;
-        if ($this->input('id')) {
-            $comunicado = Comunicado::find($this->input('id'));
-        }
-        return [
-            function (Validator $validator) use ($comunicado) {
-                if ($this->input('visibilidad') == 'P') {
-                    if ((!$comunicado || !$comunicado->pdf) && !$this->file('pdf')) {
-                        $validator->errors()->add(
-                            'pdf',
-                            'Pdf es requerido para publicar el comunicado'
-                        );
-                    }
-                }
-            }
-        ];
+        $validator->after(function ($validator) {
+
+            $num = $this->input('numero');
+            $categoria = $this->input('categoria');
+            $comunicadoId = $this->route('id');
+
+            $existingComunicado = Comunicado::where('numero', $num)
+                ->where('categoria', $categoria);
+
+            if (!empty ($comunicadoId))
+                $existingComunicado->where('id', '!=', $comunicadoId); // Excluir el comunicado actual en caso de actualización
+
+            $existingComunicado = $existingComunicado->exists();
+
+            if ($existingComunicado)
+                $validator->errors()->add('numero', 'Ya existe otro comunicado con este número y categoría');
+        });
     }
 }
