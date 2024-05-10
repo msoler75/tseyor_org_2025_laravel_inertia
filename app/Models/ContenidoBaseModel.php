@@ -101,16 +101,7 @@ class ContenidoBaseModel extends Model
      */
     public static function getCarpetaMediosTemp() {
         $folderCompleto = '/almacen/temp';
-        Log::info("folderCompleto: ". $folderCompleto);
-        list($disk, $folder) = DiskUtil::obtenerDiscoRuta($folderCompleto);
-
-        Log::info("exists? disk: $disk folder: $folder");
-
-         // Crea la carpeta si no existe
-         if (!Storage::disk($disk)->exists($folder)) {
-             Log::info("mkdir disk: $disk folder: $folder");
-            Storage::disk($disk)->makeDirectory($folder);
-        }
+        DiskUtil::ensureDirExists($folderCompleto);
         return $folderCompleto;
     }
 
@@ -119,16 +110,8 @@ class ContenidoBaseModel extends Model
      */
     public function getCarpetaMedios() {
         $coleccion = $this->getTable();
-        $folderCompleto = $this->id ? "/almacen/medios/$coleccion/$this->id": self::getCarpetaTemp();
-
-        list($disk, $folder) = DiskUtil::obtenerDiscoRuta($folderCompleto);
-        Log::info("exists? disk: $disk folder: $folder");
-
-        // Crea la carpeta si no existe
-         if (!Storage::disk($disk)->exists($folder)) {
-            Log::info("mkdir disk: $disk folder: $folder");
-            Storage::disk($disk)->makeDirectory($folder);
-        }
+        $folderCompleto = $this->id ? "/almacen/medios/$coleccion/$this->id": self::getCarpetaMediosTemp();
+        DiskUtil::ensureDirExists($folderCompleto);
         return $folderCompleto;
     }
 }

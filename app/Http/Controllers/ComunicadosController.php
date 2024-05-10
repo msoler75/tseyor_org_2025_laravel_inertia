@@ -68,7 +68,7 @@ class ComunicadosController extends Controller
             $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
 
         $resultados = $resultados
-            ->paginate(15)
+            ->paginate(16)
             ->appends(['buscar' => $buscar, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden, 'completo' => $completo ? 1 : 0]);
 
         if ($buscar)
@@ -128,12 +128,24 @@ class ComunicadosController extends Controller
             abort(404); // Item no encontrado o no autorizado
         }
 
-
         $nombreArchivo = $comunicado->titulo . ' - TSEYOR.pdf';
 
+        $texto = $comunicado->texto;
+
+        // reducimos las imagenes de los guías para que no sean tan grandes
+        $texto = preg_replace_callback("#\!\[\]\(\/almacen\/medios\/guias\/con_nombre\/.+?\.jpg\)\{width=(\d+),height=(\d+)\}#", function($match) {
+            $w= intval($match[1]);
+            $h= intval($match[2]);
+            $r = $w/$h;
+            $h = 250;
+            $w = $h*$r;
+            return str_replace("width=".$match[1].",height=".$match[2], "width=$w,height=$h", $match[0]);
+        }, $texto);
 
 
-        $html = \App\Pigmalion\Markdown::toHtml($comunicado->texto);
+        $html = \App\Pigmalion\Markdown::toHtml($texto);
+
+        $html = "<style>img{max-width: 100%} p{font-family: Calibri, sans-serif;}</style>" . $html;
 
         // envolver cada img (que está solo en una linea) en un div con style="text-align: center"
         $html = preg_replace_callback('/<img.*?>/', function ($matches) {

@@ -18,13 +18,13 @@ class ContenidoHelper
         // Verificar si la longitud del texto es mayor que la longitud máxima permitida
         if (strlen($texto) > $longitudMaxima) {
             // Recortar el texto a la longitud máxima y agregar puntos suspensivos al final
-            $teaser = substr($texto, 0, $longitudMaxima - 3) . '...';
+            $teaser = mb_substr($texto, 0, $longitudMaxima - 3) . '...';
         } else {
             // Si el texto es menor o igual a la longitud máxima, no es necesario recortarlo
             $teaser = $texto;
         }
 
-        return $teaser;
+        return trim($teaser);
     }
 
     public static function rellenarSlugImagenYDescripcion($objeto)
