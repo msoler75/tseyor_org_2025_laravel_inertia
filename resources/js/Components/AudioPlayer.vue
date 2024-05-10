@@ -8,6 +8,7 @@
             <div class="mx-auto flex justify-between items-center" :class="expanded ? 'w-full gap-3' : 'pr-4'">
                 <button type="button"
                     class="btn btn-secondary rounded-full flex justify-center items-center p-1 text-4xl transform scale-75"
+                    :class="expanded?'':'mr-1'"
                     @click="player.playPause"  :title="player.state == 'error' ? 'Error al cargar el audio' : ''">
                     <AudioStateIcon :src="player.music?.src" class="rounded-full overflow-hidden"/>
                 </button>

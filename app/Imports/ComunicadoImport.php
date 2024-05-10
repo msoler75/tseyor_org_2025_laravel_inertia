@@ -4,9 +4,17 @@ namespace App\Imports;
 
 use \DateTime;
 use \Exception;
-use App\Models\Comunicado;
 use App\Services\WordImport;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use App\Pigmalion\DiskUtil;
+
+
+class Comunicado extends \App\Models\Comunicado {
+    protected $revisionEnabled = false;
+}
+
 
 class ComunicadoImport
 {
@@ -16,6 +24,9 @@ class ComunicadoImport
 
         // Ruta del archivo "comunicados.lst"
         $lista_comunicados = base_path('resources/data/comunicados.lst');
+
+        // Ruta a la carpeta donde están los audios originales
+        $carpeta_audios_originales = "D:\\tseyor.org\\biblioteca\\comunicados\\audios";
 
         // Leer el archivo línea por línea
         $lineas = file($lista_comunicados, FILE_IGNORE_NEW_LINES);
@@ -30,8 +41,23 @@ class ComunicadoImport
             $categoria = $campos[1];
             $fecha = $campos[2];
             $titulo = $campos[3];
-            $nombrePdf = $campos[4] . '.pdf';
+            // $nombrePdf = $campos[4] . '.pdf';
             $nombresMp3 = isset($campos[5]) ? explode(',', $campos[5]) : [];
+            $categoriaIdx = 0;
+            switch ($categoria) {
+                case "GEN":
+                    $categoriaIdx = 0;
+                    break;
+                case "TAP":
+                    $categoriaIdx = 1;
+                    break;
+                case "DDM":
+                    $categoriaIdx = 2;
+                    break;
+                case "MUUL":
+                    $categoriaIdx = 3;
+                    break;
+            }
 
             $tituloFormato = ($categoria == 'GEN' ? '' : $categoria . " ") . $numero . ". " . $titulo;
 
@@ -45,72 +71,107 @@ class ComunicadoImport
             if ($existeComunicado) {
                 echo "ya existe\n";
             } else {
-                echo "procesando... ";
+                echo "procesando...\n";
 
                 $archivoWord = self::searchDocx($numero, $categoria, $fecha);
+
+                if (!$archivoWord) {
+                    die("Importación detenida. No encontramos archivo word para este comunicado: $numero $categoria $fecha $titulo\n");
+                }
+
+
+                $dateObj = DateTime::createFromFormat('y/m/d', $fecha);
+
+                if (!$dateObj) {
+                    echo "Error en formato de Fecha para $fecha\n";
+                    die;
+                }
+
+                $año = $dateObj->format('Y');
+
+                // verificamos audios
+                $prefijo = "TSEYOR ";
+                foreach ($nombresMp3 as $nombreMp3) {
+                    if ($nombreMp3) {
+                        $origMp3 = realpath($carpeta_audios_originales . "/" . $prefijo . $nombreMp3 . '.mp3');
+                        if(!$origMp3)
+                        die("No se ha encontrado ".$carpeta_audios_originales . "/" . $prefijo . $nombreMp3 . '.mp3');
+                    }
+                }
+
+                // echo "Creamos la entrada de comunicado.\n";
+
+                $contenido = Comunicado::create([
+                    "titulo" => $tituloFormato,
+                    "texto" => "",
+                    "numero" => $numero,
+                    "categoria" => $categoriaIdx,
+                    "fecha_comunicado" => $dateObj->format('Y-m-d'),
+                    "ano" => $año,
+                    "visibilidad" => 'B',
+                ]);
+
+
                 $imported = null;
+
+                // continue; // descomentar para hacer solo la verificación de archivos de audios
 
                 try {
 
+                    // echo "Archivo word encontrado: ". basename($archivoWord)."\n";
                     $imported = new WordImport($archivoWord);
 
-                    $dateObj = DateTime::createFromFormat('y/m/d', $fecha);
+                    // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
+                    $imported->copyImagesTo($contenido->getCarpetaMedios(), true);
 
-                    if (!$dateObj) {
-                        echo "Error en formato de Fecha para $fecha";
-                        die;
+                    // Rutas de las carpetas
+                    $rutaMp3 = "/almacen/medios/comunicados/audios/$año";//$contenido->getCarpetaMedios();
+                    DiskUtil::ensureDirExists($rutaMp3);
+
+                    // Asignar los nombres de los archivos MP3
+                    $mp3 = [];
+                    foreach ($nombresMp3 as $nombreMp3) {
+                        if ($nombreMp3) {
+                            $origMp3 = realpath($carpeta_audios_originales . "/" . $prefijo . $nombreMp3 . '.mp3');
+                            $destNombreMp3 = preg_replace("# (PAB|TRI|JUN)#", "", $nombreMp3);
+                            $destMp3 = $rutaMp3 . "/" . $prefijo . $destNombreMp3 . '.mp3';
+                            $pathDest = DiskUtil::getRealPath($destMp3);
+                            echo "$origMp3 -> $pathDest [$destMp3]\n";
+                            copy($origMp3, $pathDest);
+                            $mp3[] = $destMp3;
+                        }
                     }
 
                     $texto = $imported->content;
 
+                    // cambiamos urls
                     $texto = preg_replace("/(www\.)?tseyor\.com/", "tseyor.org", $texto);
 
-                    $texto = preg_replace("/#{4,99}\s*/", "", $texto);
+                    // $texto = preg_replace("/#{4,99}\s*/", "", $texto);
 
-                    $año = $dateObj->format('Y');
-
-
-                    // Copiaremos las imágenes a la carpeta de destino
-                    $imagesFolder = "medios/comunicados/$año/" . ($categoria == 'GEN' ? '' : $categoria . "_") . $numero;
-
-                    // copia las imágenes desde la carpeta temporal al directorio destino
-                    if ($imported->copyImagesTo($imagesFolder)) {
-                        // reemplazar la ubicación de las imágenes en el texto del comunicado
-                        $texto = preg_replace("/\bmedia\//", "$imagesFolder/", $texto);
-                        $texto = preg_replace("/\.\/medios\//", "/almacen/medios/", $texto);
-                    }
-
-                    // Rutas de las carpetas
-                    $rutaPdf = 'medios/comunicados/pdf/' .  $año . '/';
-                    $rutaMp3 = 'medios/comunicados/mp3/' .  $año . '/';
-
-                    // Asignar los nombres de los archivos MP3
-                    $mp3 = [];
-                    $prefijo = "TSEYOR ";
-                    foreach ($nombresMp3 as $nombreMp3) {
-                        if ($nombreMp3)
-                            $mp3[] = $rutaMp3 . $prefijo . $nombreMp3 . '.mp3';
-                    }
+                    // reparamos error de posición en logo inicial
+                    $texto = preg_replace("#(.*\!\[\]\(/almacen/medios/logos/sello_tseyor_64[^)]+\))(\**Universidad Tseyor de Granada)#", "$1\n\n$2", $texto);
 
                     // Crear una nueva instancia de Comunicado
-                    $comunicado = Comunicado::create([
-                        "titulo" => $tituloFormato,
-                        "slug" => null,
-                        "fecha_comunicado"  => $dateObj->format('Y-m-d'),
-                        "ano" => $año,
+                    $contenido->update([
                         "texto" => $texto,
-                        "numero" => $numero,
-                        "categoria" => $categoria,
-                        "pdf" => $rutaPdf . $nombrePdf,
-                        "audios" => json_encode($mp3),
-                        "visibilidad" => 'P'
+                        "audios" => $mp3,
                     ]);
 
-                    echo "guardado con id {$comunicado->id}\n";
+                    if (!$contenido->imagen || $contenido->imagen == "/almacen/medios/logos/sello_tseyor_64.png") {
+                        $guias = ['Shilcars', 'Rasbek', 'Melcor', 'Noiwanak', 'Aumnor', 'Aium Om', 'Orjaín', 'Mo', 'Rhaum', 'Jalied'];
+                        $regex = "/\b(" . implode("|", $guias) . ")\b/i";
+                        if (preg_match($regex, $contenido->texto, $matches)) {
+                            // Log::info("guia encontrado:" . print_r($matches, true));
+                            $guia = strtolower(str_replace(["í", " "], ["i", ""], $matches[0]));
+                            $contenido->update(['imagen' => "/almacen/medios/guias/$guia.jpg"]);
+                        }
+                    }
+
+                    echo "guardado con id {$contenido->id}\n";
                 } catch (Exception $e) {
                     echo "!!!! Exception\n";
-                    if($imported)
-                    {
+                    if ($imported) {
                         $imported->deleteTempAtEnd = false;
                         echo "zip File: {$imported->zipFile}\n";
                     }
@@ -168,11 +229,23 @@ class ComunicadoImport
             preg_match($patronFecha, $nombreArchivo, $coincidencias);
 
             if (!empty($coincidencias) && $coincidencias[1] === $fechaArchivo) {
-                return  $carpeta . "/" . $nombreArchivo;
+                return $carpeta . "/" . $nombreArchivo;
             }
         }
 
         // Si no se encontró ningún archivo con la fecha especificada
         throw new Exception("No se encontró ningún archivo .docx con número=$numero, categoria=$categoria, fecha=$fecha");
+    }
+
+
+    public static function publicarComunicados() {
+        $comunicados = Comunicado::where('visibilidad','B')->take(200)->get();
+        $n = 1;
+        foreach($comunicados as $comunicado) {
+            echo $n++ . ". " .$comunicado->titulo."\n";
+            $comunicado->update(['visibilidad' => 'P']);
+        }
+
+        echo "Se han publicado " . $comunicados->count(). " comunicados";
     }
 }

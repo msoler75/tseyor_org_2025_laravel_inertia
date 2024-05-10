@@ -4,6 +4,10 @@
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Comunicados</Back>
             <AdminPanel modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado" />
+            <a class="btn btn-xs btn-error w-fit flex gap-3" :href="route('comunicado.pdf', comunicado.slug)"
+                target="_blank" title="Descargar PDF">
+                <Icon icon="ph:download-duotone" />PDF
+            </a>
         </div>
 
 
@@ -14,14 +18,11 @@
 
                 <div class="text-neutral text-sm mb-20 flex justify-between">
                     <Audios :audios="parseFiles(comunicado.audios)" :numerados="true" :titulo="comunicado.titulo" />
-                    <a class="btn btn-xs btn-error w-fit flex gap-3" :href="route('comunicado.pdf', comunicado.slug)"
-                        target="_blank" title="Descargar PDF">
-                        <Icon icon="ph:download-duotone" /> Generar PDF
-                    </a>
-                    <a target="_blank" class="btn btn-xs btn-error w-fit flex gap-3" :href="comunicado.pdf"
+
+                    <!-- <a target="_blank" class="btn btn-xs btn-error w-fit flex gap-3" :href="comunicado.pdf"
                         title="Ver en formato PDF">
                         <Icon icon="ph:file-pdf" />
-                    </a>
+                    </a> -->
                     <TimeAgo :date="comunicado.fecha_comunicado" :includeTime="false" />
                 </div>
 

@@ -12,7 +12,7 @@ class ImportComunicados extends Command
      *
      * @var string
      */
-    protected $signature = 'import:comunicados';
+    protected $signature = 'import:comunicados {publicar?}';
 
     /**
      * The console command description.
@@ -26,13 +26,19 @@ class ImportComunicados extends Command
      */
     public function handle()
     {
-        $this->info("$this->description");
-        if ($this->confirm('¿Está seguro de que desea importar los comunicados? Esto borrará los registros actuales.')) {
-            ComunicadoImport::importar();
-            $this->info('¡Los comunicados se importaron correctamente!');
-        } else {
-            $this->info('La importación de comunicados fue cancelada.');
-        }
 
+        $publicar = $this->argument('publicar');
+
+        if ($publicar == "publicar") {
+            ComunicadoImport::publicarComunicados();
+        } else {
+            $this->info("$this->description");
+            if ($this->confirm('¿Está seguro de que desea importar los comunicados? Esto borrará los registros actuales.')) {
+                ComunicadoImport::importar();
+                $this->info('¡Los comunicados se importaron correctamente!');
+            } else {
+                $this->info('La importación de comunicados fue cancelada.');
+            }
+        }
     }
 }

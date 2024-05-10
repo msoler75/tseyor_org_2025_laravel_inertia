@@ -1,3 +1,10 @@
+MARKDOWN
+-cuando es un estilo de párrafo dentro de una celda de tabla, no funciona (ejemplo: com. 777 en anexos)
+-en tablas, cuando hay negritas, no funciona bien: Ejemplo: 772 en anexos
+
+COMUNICADOS
+-reducir las imagenes de guias estelares en los comunicados
+
 LOGS
 https://betterstack.com/docs/logs/php/
 https://medium.com/@pd.philip/laravel-error-logging-via-better-stack-logtail-fa80eafd4d36

@@ -33,10 +33,7 @@ class AdminController
 
         $busquedas = Busqueda::select(['query', 'created_at'])->latest()->take(10)->get();
 
-        // dd($revisiones);
-
-        // dd($comentarios);
-        return view('admin.dashboard', [
+        $data = [
             'users_creados' => $users_creados,
             'users_activos' => $users_activos,
             'comentarios' => $comentarios,
@@ -44,7 +41,11 @@ class AdminController
             'contenidos_modificados' => $contenidos_modificados,
             'revisiones' => $revisiones,
             'busquedas' => $busquedas
-        ]);
+        ];
+        // dd($revisiones);
+
+        // dd($comentarios);
+        return view('admin.dashboard', $data);
     }
 
 }

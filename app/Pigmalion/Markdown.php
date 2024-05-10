@@ -64,7 +64,6 @@ class Markdown
         $html = preg_replace('/\[\^(\d+)\]/', '<sup>$1</sup>', $html); //[^1]
 
         return $html;
-
     }
 
 
@@ -95,7 +94,7 @@ class Markdown
 
         // a veces devuelve un valor "", no sé porqué, por limpiar los "span"
         $htmlContent1 = self::limpiarHtml($htmlContent);
-        if(!$htmlContent1 && $htmlContent) {
+        if (!$htmlContent1 && $htmlContent) {
             $htmlContent1 = self::limpiarHtml($htmlContent, false);
             $spanLimpio = false;
         }
@@ -105,8 +104,8 @@ class Markdown
         Log::info("Html final from docx limpiarHtml: " . $htmlContent);
 
 
-        if(trim($htmlContent))
-        $htmlContent = self::extraerBody($htmlContent);
+        if (trim($htmlContent))
+            $htmlContent = self::extraerBody($htmlContent);
 
         return self::toMarkdown($htmlContent, $carpetaImagenes, $spanLimpio);
     }
@@ -115,7 +114,8 @@ class Markdown
     /**
      * Convierte a formato Markdown desde Html
      */
-    public static function toMarkdown($html, $carpetaImagenes = null, $spanLimpio = true) {
+    public static function toMarkdown($html, $carpetaImagenes = null, $spanLimpio = true)
+    {
 
         // generar una carpeta aleatoria
         if (!$carpetaImagenes)
@@ -138,9 +138,9 @@ class Markdown
         // $markdown = self::limpiarHtml($markdown);
 
         // arreglar enlace roto de algunos documentos
-       // $markdown = preg_replace('&\[tseyor.\]\(http://www.tseyor.com/\)<span style="text-decoration:\s?underline\s?">\*\*org\*\*\s?</span>&', '[tseyor.org](https://tseyor.org/)', $markdown);
-       // $markdown = str_replace('<span style="text-decoration:underline ">**tseyor.org**</span>', '[tseyor.org](https://tseyor.org/)', $markdown);
-       // $markdown = str_replace('[tseyor.](http://www.tseyor.com/)<u>org</u>', '[tseyor.org](https://tseyor.org/)', $markdown);
+        // $markdown = preg_replace('&\[tseyor.\]\(http://www.tseyor.com/\)<span style="text-decoration:\s?underline\s?">\*\*org\*\*\s?</span>&', '[tseyor.org](https://tseyor.org/)', $markdown);
+        // $markdown = str_replace('<span style="text-decoration:underline ">**tseyor.org**</span>', '[tseyor.org](https://tseyor.org/)', $markdown);
+        // $markdown = str_replace('[tseyor.](http://www.tseyor.com/)<u>org</u>', '[tseyor.org](https://tseyor.org/)', $markdown);
 
         return $markdown;
     }
@@ -164,61 +164,61 @@ class Markdown
         // se ha observado este error en documentos word:
         $html = preg_replace("&text-decoration=underline\s?&", "text-decoration:underline", $html);
 
-        if($limpiarSpan)
-        $html = preg_replace_callback(
-            '&<span\s+style=([^>]+)>([^<]*)</span>&',
-            function ($match) {
-                // var_dump($match);
-                if (!$match[2])
-                    return "";
+        if ($limpiarSpan)
+            $html = preg_replace_callback(
+                '&<span\s+style=([^>]+)>([^<]*)</span>&',
+                function ($match) {
+                    // var_dump($match);
+                    if (!$match[2])
+                        return "";
 
-                $styles = $match[1];
-                //remove first and last char
-                $styles = substr($styles, 1, strlen($styles) - 2);
-                $tmp = preg_split("/;\s?/", $styles, -1, PREG_SPLIT_NO_EMPTY);
-                $bold = false;
-                $italic = false;
-                $underline = false;
-                $finalStyles = [];
-                foreach ($tmp as $s) {
-                    $p = preg_split("/\:\s?/", $s);
-                    $key = trim($p[0]);
-                    $v = trim($p[1]);
-                    if ($key == "font-style" && $v == "italic")
-                        $italic = true;
-                    else if ($key == "font-weight" && $v == "bold")
-                        $bold = true;
-                    else if ($key == "text-decoration" && $v == "underline")
-                        $underline = true;
-                    else if (!in_array($key, ['font-family', 'font-size', 'color', 'margin-bottom', 'margin-top']))
-                        $finalStyles[] = "$key=$v";
-                }
+                    $styles = $match[1];
+                    //remove first and last char
+                    $styles = substr($styles, 1, strlen($styles) - 2);
+                    $tmp = preg_split("/;\s?/", $styles, -1, PREG_SPLIT_NO_EMPTY);
+                    $bold = false;
+                    $italic = false;
+                    $underline = false;
+                    $finalStyles = [];
+                    foreach ($tmp as $s) {
+                        $p = preg_split("/\:\s?/", $s);
+                        $key = trim($p[0]);
+                        $v = trim($p[1]);
+                        if ($key == "font-style" && $v == "italic")
+                            $italic = true;
+                        else if ($key == "font-weight" && $v == "bold")
+                            $bold = true;
+                        else if ($key == "text-decoration" && $v == "underline")
+                            $underline = true;
+                        else if (!in_array($key, ['font-family', 'font-size', 'color', 'margin-bottom', 'margin-top']))
+                            $finalStyles[] = "$key=$v";
+                    }
 
-                $pre = "";
-                $tail = "";
-                if (count($finalStyles)) {
-                    $pre = '<span style="' . implode('; ', $finalStyles) . '">';
-                    $tail = '</span>';
-                }
-                if ($italic) {
-                    $pre .= "<i>";
-                    $tail = "</i>" . $tail;
-                }
-                if ($bold) {
-                    $pre .= "<b>";
-                    $tail = "</b>" . $tail;
-                }
-                if ($underline) {
-                    $pre .= "<u>";
-                    $tail = "</u>" . $tail;
-                }
+                    $pre = "";
+                    $tail = "";
+                    if (count($finalStyles)) {
+                        $pre = '<span style="' . implode('; ', $finalStyles) . '">';
+                        $tail = '</span>';
+                    }
+                    if ($italic) {
+                        $pre .= "<i>";
+                        $tail = "</i>" . $tail;
+                    }
+                    if ($bold) {
+                        $pre .= "<b>";
+                        $tail = "</b>" . $tail;
+                    }
+                    if ($underline) {
+                        $pre .= "<u>";
+                        $tail = "</u>" . $tail;
+                    }
 
-                // echo $match[2] . " - " . $styles . " - ". $match[0]. "<br>";
+                    // echo $match[2] . " - " . $styles . " - ". $match[0]. "<br>";
 
-                return $pre . $match[2] . $tail;
-            },
-            $html
-        );
+                    return $pre . $match[2] . $tail;
+                },
+                $html
+            );
 
         // dd(substr($html, 0, 2500));
 
@@ -310,7 +310,6 @@ class Markdown
 
 
         return $html;
-
     }
 
 
@@ -339,9 +338,12 @@ class Markdown
                 // buscamos el primer texto relevante
                 $elements = $note->getElements();
                 while ($idx < count($elements) && (!$primerTexto || strlen($primerTexto) < 7)) {
-                    $str = $elements[$idx++]->getText();
-                    if (trim($str))
-                        $primerTexto = $str;
+                    if (method_exists($elements[$idx], "getText")) {
+                        $str = $elements[$idx]->getText();
+                        if (trim($str))
+                            $primerTexto = $str;
+                    }
+                    $idx++;
                 }
 
                 if ($primerTexto) {
@@ -429,9 +431,7 @@ class Markdown
                 }
 
                 $htmlContent .= $tail;
-
             }
-
         }
 
         self::$notasEncontradas = $numNote;
@@ -474,7 +474,7 @@ class Markdown
             $imageUrl = Storage::disk('public')->url($imagePath);
 
             // Reemplazar el enlace de la imagen codificada por la URL pública de la imagen guardada
-            if(str_starts_with($orig, "![")) // era markdown
+            if (str_starts_with($orig, "![")) // era markdown
                 $source = str_replace($match, "![](" . $imageUrl . ")", $source);
             else
                 $source = str_replace($match, "src='$imageUrl'", $source);
@@ -554,7 +554,7 @@ class Markdown
         // list($disk, $carpetaOrigen) = DiskUtil::obtenerDiscoRuta($carpetaOrigen);
         // list($disk, $carpetaDestino) = DiskUtil::obtenerDiscoRuta($carpetaDestino);
 
-         // Log::info("Markdown::moverImagenes $disk: $carpetaOrigen -> $carpetaDestino");
+        // Log::info("Markdown::moverImagenes $disk: $carpetaOrigen -> $carpetaDestino");
 
         // busca todas las imagenes en $md que estén en carpetaOrigen
         $expCarpetaOrigen = str_replace(["/"], ["\\/"], $carpetaOrigen);
@@ -570,13 +570,13 @@ class Markdown
 
             Log::info("move1: $disk: $imagen -> $nuevoNombre");
 
-             list($disk, $origen) = DiskUtil::obtenerDiscoRuta($imagen);
-             list($disk, $destino) = DiskUtil::obtenerDiscoRuta($nuevoNombre);
+            list($disk, $origen) = DiskUtil::obtenerDiscoRuta($imagen);
+            list($disk, $destino) = DiskUtil::obtenerDiscoRuta($nuevoNombre);
 
-             Log::info("move2: $disk: $origen -> $destino");
+            Log::info("move2: $disk: $origen -> $destino");
 
             // movemos la imagen a la nueva carpeta
-            if(Storage::disk($disk)->copy($origen,  $destino)) {
+            if (Storage::disk($disk)->copy($origen,  $destino)) {
 
                 Storage::disk($disk)->delete($origen);
 
@@ -588,14 +588,14 @@ class Markdown
 
             // o lo dejamos como estaba
             return $matches[0];
-
         }, $md);
 
         Log::info("moverImagenes: " . print_r($imagenes_movidas, true));
         return $imagenes_movidas;
     }
 
-    public static function removeMarkdown($content) {
+    public static function removeMarkdown($content)
+    {
         // $content = preg_replace('/\bimg\b/', '', $content); // Eliminar la palabra "img" (??)
         // eliminamos caracters de markdown
         $content = preg_replace("/[#*_]/", "", $content); // elimina caracteres de formato

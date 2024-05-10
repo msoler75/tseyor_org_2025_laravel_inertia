@@ -5,6 +5,10 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoConAudios;
 use Laravel\Scout\Searchable;
+use App\Pigmalion\DiskUtil;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+
 
 
 class Comunicado extends ContenidoConAudios
@@ -248,6 +252,18 @@ class Comunicado extends ContenidoConAudios
         // return $this->attributes[{$attribute_name}]; // uncomment if this is a translatable field
     }
     */
+
+    // CONTENIDO
+
+     /**
+     * Carpeta para los medios del contenido (imágenes)
+     */
+    public function getCarpetaMedios() {
+        $coleccion = $this->getTable();
+        $folderCompleto = $this->id ? "/almacen/medios/$coleccion/{$this->ano}/{$this->id}": self::getCarpetaMediosTemp();        
+        DiskUtil::ensureDirExists($folderCompleto);
+        return $folderCompleto;
+    }
 
     // SCOUT
 

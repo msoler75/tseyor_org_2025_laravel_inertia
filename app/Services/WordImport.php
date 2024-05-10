@@ -52,63 +52,63 @@ class WordImport
             "height" => "400",
         ],
         [
-            "size" =>  38835,
+            "size" => 38835,
             "hash" => "1947db3302b21d527cbd12caba54f8ee",
             "url" => "/almacen/medios/guias/con_nombre/Shilcars.jpg",
             "width" => "281",
             "height" => "400",
         ],
         [
-            "size" =>  42202,
+            "size" => 42202,
             "hash" => "d52cb83b3617df4af24387ec2f566298",
             "url" => "/almacen/medios/guias/con_nombre/Shilcars.jpg",
             "width" => "281",
             "height" => "400",
         ],
         [
-            "size" =>  31293,
+            "size" => 31293,
             "hash" => "2dee106d62d588a8e3b7738f2afe1d21",
             "url" => "/almacen/medios/guias/con_nombre/Rasbek.jpg",
             "width" => "286",
             "height" => "400",
         ],
         [
-            "size" =>  39461,
+            "size" => 39461,
             "hash" => "18482a21b08b7f7147b729ff8751d2f2",
             "url" => "/almacen/medios/guias/con_nombre/Aumnor.jpg",
             "width" => "281",
             "height" => "400",
         ],
         [
-            "size" =>  50714,
+            "size" => 50714,
             "hash" => "ce2287014bd81e0aac800f9b9a492007",
             "url" => "/almacen/medios/guias/con_nombre/AiumOm.jpg",
             "width" => "276",
             "height" => "400",
         ],
         [
-            "size" =>  53321,
+            "size" => 53321,
             "hash" => "de68d7c10eeac75cc251afaec6456aad",
             "url" => "/almacen/medios/guias/con_nombre/AiumOm.jpg",
             "width" => "276",
             "height" => "400",
         ],
         [
-            "size" =>  34548,
+            "size" => 34548,
             "hash" => "66c945fd1b313520ae243741ef58e7b4",
             "url" => "/almacen/medios/guias/con_nombre/Jalied.jpg",
             "width" => "276",
             "height" => "400",
         ],
         [
-            "size" =>  36589,
+            "size" => 36589,
             "hash" => "919b1aef38a94ff59ed2470b211d4101",
             "url" => "/almacen/medios/guias/con_nombre/Orjain.jpg",
             "width" => "282",
             "height" => "400",
         ],
         [
-            "size" =>  49021,
+            "size" => 49021,
             "hash" => "7f072a52970bf73b7c17fa8b68349aaf",
             "url" => "/almacen/medios/guias/con_nombre/Melcor.jpg",
             "width" => "282",
@@ -122,17 +122,20 @@ class WordImport
      */
     public function __construct(string $docxFilePath = null)
     {
-        if (!isset($_FILES['file']))
-            throw new \Exception("Uploaded file not found");
+        if (!$docxFilePath) {
 
-        $word_file = $_FILES['file'];
+            if (!isset($_FILES['file']))
+                throw new \Exception("Uploaded file not found");
 
-        if (!$docxFilePath)
+            $word_file = $_FILES['file'];
+
+            // if (!$docxFilePath)
             $docxFilePath = $this->generateUniqueFilename();
 
-        // Copiar el archivo temporal a la nueva ubicación con la extensión correcta
-        if (!copy($word_file['tmp_name'], $docxFilePath)) {
-            throw new \Exception("Error al copiar nuevo archivo");
+            // Copiar el archivo temporal a la nueva ubicación con la extensión correcta
+            if (!copy($word_file['tmp_name'], $docxFilePath)) {
+                throw new \Exception("Error al copiar nuevo archivo");
+            }
         }
 
         if (USE_PHPWORD) {
