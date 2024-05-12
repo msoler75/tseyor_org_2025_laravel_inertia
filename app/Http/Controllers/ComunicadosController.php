@@ -145,7 +145,7 @@ class ComunicadosController extends Controller
 
         $html = \App\Pigmalion\Markdown::toHtml($texto);
 
-        $html = "<style>img{max-width: 100%} p{font-family: Calibri, sans-serif;}</style>" . $html;
+        $html = "<style>img{max-width: 100%} p{font-family: Calibri, sans-serif;}table,tr,td,th{border: 0}</style>" . $html;
 
         // envolver cada img (que está solo en una linea) en un div con style="text-align: center"
         $html = preg_replace_callback('/<img.*?>/', function ($matches) {
@@ -156,8 +156,10 @@ class ComunicadosController extends Controller
 
         // reemplazar todas las imagenes sus rutas relativas con rutas absolutas de disco
         $html = preg_replace_callback('/<img([^>]+)src="([^"]+)"/', function ($matches) {
-            list ($disk, $ruta) = DiskUtil::obtenerDiscoRuta($matches[2]);
-            return '<img' . $matches[1] . 'src="file://' . str_replace("\\", "/", Storage::disk($disk)->path($ruta)) . '"';
+            $path = DiskUtil::getRealPath($matches[2]);
+            $r = '<img' . $matches[1] . 'src="file://' . str_replace("\\", "/", $path) . '"';
+            // dd($matches, $path, $r);
+            return $r;
         }, $html);
 
         /*
