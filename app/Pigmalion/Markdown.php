@@ -8,7 +8,7 @@ use PhpOffice\PhpWord\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use League\HTMLToMarkdown\HtmlConverter;
 use Illuminate\Support\Facades\Log;
-
+use App\Pigmalion\DOMHelper;
 
 class Markdown
 {
@@ -63,9 +63,56 @@ class Markdown
         // dar formato html a notas al pie
         $html = preg_replace('/\[\^(\d+)\]/', '<sup>$1</sup>', $html); //[^1]
 
+        if (preg_match("/<table/", $html))
+            $html = self::_toHtmlTables($html);
+
         return $html;
     }
 
+    /**
+     * Transforma un documento html a DOM, para poder convertir desde markdown a HTML el contenido de las celdas de tablas
+     */
+    private static function _toHtmlTables($html)
+    {
+        $dom = new \DOMDocument();
+
+        // dd(mb_detect_encoding($html, 'UTF-8', true));
+
+        // Cargar el HTML en el objeto DomDocument, suprimiendo los errores de carga
+        @$dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+
+        // Establecer la codificación del documento a UTF-8
+        $dom->encoding = 'UTF-8';
+
+        // Obtener todas las tablas del documento
+        $tds = $dom->getElementsByTagName('td');
+
+        // Recorrer cada tabla y procesarla
+        foreach ($tds as $td) {
+            self::_convertHtmlTd($td);
+        }
+
+        // Devolver el HTML modificado
+        return mb_convert_encoding($dom->saveHTML(), 'UTF-8', 'HTML-ENTITIES');
+    }
+
+    /*
+     * Convertir todas las celdas de la tabla desde Markdown a HTML
+     */
+    private static function _convertHtmlTd($td)
+    {
+        // Obtener el contenido HTML de la td
+        $contenidoHTML = '';
+        foreach ($td->childNodes as $nodo) {
+            $contenidoHTML .= $td->ownerDocument->saveHTML($nodo);
+        }
+
+        // procesamos el interior de la celda
+        $contenidoHTML = self::toHtml($contenidoHTML);
+
+        // establecemos el nuevo contenido de la celda
+        DOMHelper::setInnerHTML($td, $contenidoHTML);
+    }
 
     /**
      * Carga un archivo word y extrae el contenido y lo transforma en formato markdown

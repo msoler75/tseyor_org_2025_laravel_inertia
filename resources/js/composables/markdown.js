@@ -85,7 +85,7 @@ export function HtmlToMarkdown(html) {
           "application/xml"
         );
         const img = doc.querySelector("img");
-        if(!img) return imgHtml
+        if (!img) return imgHtml;
 
         const attributes = Array.from(img.attributes).reduce((acc, attr) => {
           acc[attr.name] = attr.value;
@@ -167,7 +167,7 @@ export function MarkdownToHtml(raw_markdown) {
       return "![" + alt + "](" + url.replace(/\s/g, "%20") + ")";
     }
   );
-  const html = converter
+  var html = converter
     .makeHtml(raw_markdown)
 
     // primero reemplazamos las imágenes con atributos
@@ -186,8 +186,27 @@ export function MarkdownToHtml(raw_markdown) {
     .replace(/\n/g, "")
     // centramos las imágenes solitarias
     .replace(/<p>(<img[^>]+>)<\/p>/g, "<p style='text-align: center'>$1</p>");
-  console.log({ html });
+  // console.log({ html });
+
+  html = _toHtmlTables(html); // el interior de las tablas no es correctamente parseado desde markdown
+
   return html;
+}
+
+function _toHtmlTables(html) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+
+  // Obtener todas las celdas de las tablas del documento
+  const tds = doc.querySelectorAll("td");
+
+  // Recorrer cada celda y convertir su contenido de Markdown a HTML
+  tds.forEach((td) => {
+    td.innerHTML = MarkdownToHtml(td.innerHTML);
+  });
+
+  // Devolver el HTML modificado
+  return doc.documentElement.outerHTML;
 }
 
 export function detectFormat(text) {

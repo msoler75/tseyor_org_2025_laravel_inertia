@@ -53,7 +53,7 @@ class DiskUtil {
         return Storage::disk($disk)->path($ruta);
     }
 
-    public static function ensureDirExists($dir) { 
+    public static function ensureDirExists($dir) {
         list($disk, $ruta) = self::obtenerDiscoRuta($dir);
         // Verificar si la carpeta existe en el disco 'public'
         if (!Storage::disk($disk)->exists($ruta)) {
