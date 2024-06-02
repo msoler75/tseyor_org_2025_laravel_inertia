@@ -189,7 +189,10 @@ class ComunicadosController extends Controller
         $pdf->save($pdf_full_path);
 
         // descargamos el archivo pdf
-        return $pdf->download($nombreArchivo);
+        // return $pdf->download($nombreArchivo);
+
+        // mostramos el contenido del pdf en la página
+        return $pdf->stream($nombreArchivo);
     }
 
 
