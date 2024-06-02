@@ -50,11 +50,12 @@ class DiskUtil {
 
     public static function getRealPath($rutaOrig) {
         list($disk, $ruta) = self::obtenerDiscoRuta($rutaOrig);
-        return Storage::disk($disk)->path($ruta);
+        return realpath(Storage::disk($disk)->path($ruta));
     }
 
     public static function ensureDirExists($dir) {
         list($disk, $ruta) = self::obtenerDiscoRuta($dir);
+        // dd($dir, $disk, $ruta);
         // Verificar si la carpeta existe en el disco 'public'
         if (!Storage::disk($disk)->exists($ruta)) {
             // Crear la carpeta en el disco 'public'

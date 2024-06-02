@@ -14,14 +14,15 @@ class EntradasController extends Controller
     {
         $buscar = $request->input('buscar');
 
-        $resultados = $buscar ? Entrada::where('titulo', 'like', '%' . $buscar . '%')
-            ->orWhere('descripcion', 'like', '%' . $buscar . '%')
-            ->orWhere('texto', 'like', '%' . $buscar . '%')
+        $resultados = $buscar ? Entrada::where('visibilidad', 'P')
+            ->whereRaw('CONCAT(titulo," ", descripcion, " ", texto) LIKE \'%' . $buscar . '%\'')
+            // ordenar por published_at
+            ->orderBy('published_at', 'desc')
             ->paginate(12)->appends(['buscar' => $buscar])
             :
-            Entrada::latest()->paginate(10);
+            Entrada::where('visibilidad', 'P')->orderBy('published_at', 'desc')->paginate(10);
 
-        $recientes = Entrada::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->latest()->take(24)->get();
+        $recientes = Entrada::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->orderBy('published_at', 'desc')->take(32)->get();
 
         return Inertia::render('Entradas/Index', [
             'filtrado' => $buscar,
@@ -46,8 +47,18 @@ class EntradasController extends Controller
             abort(404);
         }
 
+        $siguiente = Entrada::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
+            ->where('visibilidad', 'P')
+            ->where('published_at', '>', $entrada->published_at)->orderBy('published_at', 'asc')->first();
+
+        $anterior = Entrada::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
+            ->where('visibilidad', 'P')
+            ->where('published_at', '<', $entrada->published_at)->orderBy('published_at', 'desc')->first();
+
         return Inertia::render('Entradas/Entrada', [
-            'entrada' => $entrada
+            'entrada' => $entrada,
+            'siguiente' => $siguiente,
+            'anterior' => $anterior
         ])
             ->withViewData(SEO::from($entrada));;
     }

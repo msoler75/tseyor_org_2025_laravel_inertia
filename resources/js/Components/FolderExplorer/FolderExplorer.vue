@@ -14,16 +14,19 @@
 
                 <div class="flex gap-x items-center w-full" v-if="!seleccionando && mostrandoResultados">
 
-                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ buscar }}'</span>:</span>
+                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ buscar
+                            }}'</span>:</span>
 
-                    <button class="ml-auto  btn btn-neutral btn-sm btn-icon" @click.prevent="toggleVista" title="Cambiar vista">
+                    <button class="ml-auto  btn btn-neutral btn-sm btn-icon" @click.prevent="toggleVista"
+                        title="Cambiar vista">
                         <Icon v-show="selectors.archivosVista == 'lista'" icon="ph:list-dashes-bold"
                             class="transform scale-150" />
                         <Icon v-show="selectors.archivosVista == 'grid'" icon="ph:grid-nine-fill"
                             class="transform scale-150" />
                     </button>
 
-                    <button class="btn btn-neutral btn-sm btn-icon" title="Cerrar búsqueda" @click="mostrandoResultados = false">
+                    <button class="btn btn-neutral btn-sm btn-icon" title="Cerrar búsqueda"
+                        @click="mostrandoResultados = false">
                         <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                         <Icon icon="ph:x-bold" />
                     </button>
@@ -40,9 +43,9 @@
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
                     </ConditionalLink>
 
-                    <ConditionalLink v-if="items.length > 1 && !seleccionando" :href="items[1].url" :tag="embed ? 'span' : 'a'"
-                        class="btn btn-neutral btn-sm btn-icon w-fit" title="Ir a una carpeta superior"
-                        @click="clickFolder(items[1], $event)" :is-link="!embed"
+                    <ConditionalLink v-if="items.length > 1 && !seleccionando" :href="items[1].url"
+                        :tag="embed ? 'span' : 'a'" class="btn btn-neutral btn-sm btn-icon w-fit"
+                        title="Ir a una carpeta superior" @click="clickFolder(items[1], $event)" :is-link="!embed"
                         :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:arrow-bend-left-up-duotone" class="text-2xl" />
                     </ConditionalLink>
@@ -165,7 +168,88 @@
 
             </div>
 
+
+
+
+            <!--  Botones de Operaciones (embed) -->
+
+            <div class="mb-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
+                v-if="embed && (itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
+                :seleccionando="seleccionando"
+                :class="seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
+
+                <button
+                v-if="modoInsertar && imagenesSeleccionadas.length"  
+                    class="btn btn-secondary flex gap-x items-center" @click.prevent="insertarImagenes">
+                    <Icon icon="material-symbols:close-rounded" />
+                    <span>Insertar</span>
+                </button>
+
+
+                <button v-if="store.isMovingFiles || store.isCopyingFiles"
+                    class="btn btn-secondary flex gap-x items-center" @click.prevent="cancelarOperacion">
+                    <Icon icon="material-symbols:close-rounded" />
+                    <span>Cancelar</span>
+                </button>
+
+                <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-x items-center"
+                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click.prevent="moverItems"
+                    title="Mover los elementos seleccionados a esta carpeta">
+                    <Icon icon="ph:clipboard-duotone" />
+                    <span v-if="puedeEscribir">Mover aquí</span>
+                    <span v-else>No tienes permisos aquí</span>
+                </button>
+
+                <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
+                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click.prevent="copiarItems"
+                    title="Copiar los elementos seleccionados a esta carpeta">
+                    <Icon icon="ph:clipboard-duotone" />
+                    <span v-if="puedeEscribir">Pegar aquí</span>
+                    <span v-else>No tienes permisos aquí</span>
+                </button>
+
+                <template v-else>
+
+                    <button v-if="itemsSeleccionados.length && puedeMoverSeleccionados"
+                        class="btn btn-secondary flex gap-x items-center" @click.prevent="prepararMoverItems">
+                        <Icon icon="ph:scissors-duotone" /><span>Mover</span>
+                    </button>
+
+                    <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-x items-center"
+                        @click.prevent="prepararCopiarItems">
+                        <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
+                    </button>
+
+                    <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-x items-center"
+                        @click.prevent="abrirEliminarModal(null)">
+                        <Icon icon="ph:trash-duotone" />
+                        <span>Eliminar</span>
+                    </button>
+
+                    <button v-if="itemsSeleccionados.length == 1"
+                        class="md:hidden btn btn-secondary flex gap-x items-center"
+                        @click.prevent="abrirModalRenombrar(itemsSeleccionados[0])">
+                        <Icon icon="ph:cursor-text-duotone" />
+                        <span>Renombrar</span>
+                    </button>
+
+                    <button v-if="seleccionando && itemsSeleccionados.length > 0" class="btn btn-secondary"
+                        @click.prevent="abrirModalPropiedades()">
+                        <Icon icon="ph:info-duotone" />
+                        <span>Propiedades</span>
+                    </button>
+
+                </template>
+            </div>
+
+            <!--  ---    -->
+
         </div>
+
+
+
+
+
 
 
         <div class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14 h-full"
@@ -186,21 +270,25 @@
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
                             <th></th>
                             <th class="min-w-[16rem] text-left cursor-pointer"
-                                @click="ordenarPor = ordenarPor == 'nombreAsc' ? 'nombreDesc' : 'nombreAsc'">Nombre <span
-                                    v-if="ordenarPor == 'nombreDesc'">↑</span><span v-if="ordenarPor == 'nombreAsc'">↓</span>
+                                @click="ordenarPor = ordenarPor == 'nombreAsc' ? 'nombreDesc' : 'nombreAsc'">Nombre
+                                <span v-if="ordenarPor == 'nombreDesc'">↑</span><span
+                                    v-if="ordenarPor == 'nombreAsc'">↓</span>
                             </th>
                             <th class="min-w-[8rem] cursor-pointer"
-                                @click="ordenarPor = ordenarPor == 'tamañoDesc' ? 'tamañoAsc' : 'tamañoDesc'">Tamaño <span
-                                    v-if="ordenarPor == 'tamañoDesc'">↑</span><span v-if="ordenarPor == 'tamañoAsc'">↓</span>
+                                @click="ordenarPor = ordenarPor == 'tamañoDesc' ? 'tamañoAsc' : 'tamañoDesc'">Tamaño
+                                <span v-if="ordenarPor == 'tamañoDesc'">↑</span><span
+                                    v-if="ordenarPor == 'tamañoAsc'">↓</span>
                             </th>
                             <th class="min-w-[12rem] cursor-pointer"
                                 @click="ordenarPor = ordenarPor == 'fechaDesc' ? 'fechaAsc' : 'fechaDesc'">Fecha <span
-                                    v-if="ordenarPor == 'fechaDesc'">↑</span><span v-if="ordenarPor == 'fechaAsc'">↓</span></th>
+                                    v-if="ordenarPor == 'fechaDesc'">↑</span><span
+                                    v-if="ordenarPor == 'fechaAsc'">↓</span></th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Permisos</th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Propietario</th>
-                            <th v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'">Ubicación</th>
+                            <th v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'">Ubicación
+                            </th>
                             <th class="hidden md:table-cell"></th>
                         </tr>
                     </thead>
@@ -216,11 +304,11 @@
                                 v-on:touchend.passive="ontouchend(item)">
                                 <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer"
                                     @click="clickDisk(item, $event)" :is-link="!embed" />
-                                <FolderIcon v-else-if="item.tipo === 'carpeta'" class="cursor-pointer text-4xl sm:text-xl"
-                                    :private="item.privada"
-                                    :owner="item.propietario && item.propietario?.usuario.id === user?.id" :url="item.url"
-                                    :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
-                                    :is-link="!embed" />
+                                <FolderIcon v-else-if="item.tipo === 'carpeta'"
+                                    class="cursor-pointer text-4xl sm:text-xl" :private="item.privada"
+                                    :owner="item.propietario && item.propietario?.usuario.id === user?.id"
+                                    :url="item.url" :class="seleccionando ? 'pointer-events-none' : ''"
+                                    @click="clickFolder(item, $event)" :is-link="!embed" />
                                 <FileIcon v-else :url="item.url" class="cursor-pointer text-4xl sm:text-xl"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
                                     :is-link="!embed" />
@@ -228,16 +316,17 @@
                             <td class="sm:hidden py-3" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
                                 <div class="flex flex-col">
-                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
-                                        class="cursor-pointer" @click="clickDisk(item, $event)" :is-link="!embed" />
+                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
+                                        v-html="nombreItem(item)" class="cursor-pointer"
+                                        @click="clickDisk(item, $event)" :is-link="!embed" />
                                     <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
                                         :class="seleccionando ? 'pointer-events-none' : ''"
                                         @click="clickFolder(item, $event)" :is-link="!embed" />
                                     <div v-else-if="seleccionando" :title="item.nombre" v-html="nombreItem(item)" />
                                     <a v-else :href="item.url" download v-html="nombreItem(item)"
-                                        :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
-                                        :is-link="!embed" />
+                                        :class="seleccionando ? 'pointer-events-none' : ''"
+                                        @click="clickFile(item, $event)" :is-link="!embed" />
 
                                     <small class="w-full flex justify-between gap-2 items-center">
                                         <span v-if="item.tipo === 'disco'">****</span>
@@ -248,18 +337,19 @@
                                     </small>
                                 </div>
                             </td>
-                            <td class="hidden sm:table-cell py-3 max-w-[24rem]" v-on:touchstart.passive="ontouchstart(item)"
-                                v-on:touchend.passive="ontouchend(item)">
+                            <td class="hidden sm:table-cell py-3 max-w-[24rem]"
+                                v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">
                                 <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
                                     class="cursor-pointer py-3 hover:underline" @click="clickDisk(item, $event)"
                                     :is-link="!embed" />
                                 <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                     v-html="nombreItem(item)" class="cursor-pointer py-3 hover:underline"
-                                    :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFolder(item, $event)"
-                                    :is-link="!embed" />
+                                    :class="seleccionando ? 'pointer-events-none' : ''"
+                                    @click="clickFolder(item, $event)" :is-link="!embed" />
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
-                                <a v-else :href="item.url" download v-html="nombreItem(item)" class="py-3 hover:underline"
-                                    :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)" />
+                                <a v-else :href="item.url" download v-html="nombreItem(item)"
+                                    class="py-3 hover:underline" :class="seleccionando ? 'pointer-events-none' : ''"
+                                    @click="clickFile(item, $event)" />
                             </td>
                             <td class="hidden sm:table-cell text-center" v-on:touchstart.passive="ontouchstart(item)"
                                 v-on:touchend.passive="ontouchend(item)">
@@ -282,7 +372,8 @@
                             <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
                                 class="hidden sm:table-cell text-center min-w-[10rem]"
                                 v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">
-                                {{ item.propietario?.usuario.nombre || '...' }}/{{ item.propietario?.grupo.nombre || '...'
+                                {{ item.propietario?.usuario.nombre || '...' }}/{{ item.propietario?.grupo.nombre ||
+                                    '...'
                                 }}
                             </td>
                             <td v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'">
@@ -353,7 +444,7 @@
             <div v-else-if="selectors.archivosVista === 'grid'">
                 <div class="grid grid-cols-3 gap-4 pt-6">
                     <TransitionGroup name="files">
-                        <div v-for="item in  itemsMostrar" :key="item.ruta"
+                        <div v-for="item in itemsMostrar" :key="item.ruta"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')">
                             <div v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100"
@@ -362,8 +453,9 @@
                                 <Icon v-else icon="ph:square" />
                             </div>
                             <div class="flex flex-col items-center justify-center relative bg-base-200 h-full pt-2">
-                                <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer text-8xl mb-4"
-                                    @click="clickDisk(item, $event)" :is-link="!embed" />
+                                <DiskIcon v-if="item.tipo === 'disco'" :url="item.url"
+                                    class="cursor-pointer text-8xl mb-4" @click="clickDisk(item, $event)"
+                                    :is-link="!embed" />
                                 <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id"
                                     class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
@@ -376,14 +468,16 @@
                                     @click="clickFile(item, $event)" :is-link="!embed" />
 
                                 <div class="text-sm text-center">
-                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
-                                        class="py-1 hover:underline" @click="clickDisk(item, $event)" :is-link="!embed" />
+                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
+                                        v-html="nombreItem(item)" class="py-1 hover:underline"
+                                        @click="clickDisk(item, $event)" :is-link="!embed" />
                                     <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="py-1 hover:underline"
                                         @click="clickFolder(item, $event)" :is-link="!embed" />
                                     <span v-else-if="seleccionando" v-html="nombreItem(item)" />
                                     <a v-else :href="item.url" download v-html="nombreItem(item)"
-                                        @click="clickFile(item, $event)" :is-link="!embed" class="py-1 hover:underline" />
+                                        @click="clickFile(item, $event)" :is-link="!embed"
+                                        class="py-1 hover:underline" />
                                 </div>
                                 <div class="text-gray-500 text-xs">
                                     <span v-if="item.tipo === 'disco'" />
@@ -471,12 +565,12 @@
         <!--  Botones de Operaciones -->
         <teleport to="body">
             <div class="fixed bottom-0 left-0 right-0 z-50 bg-base-200 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
-                v-if="itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles"
+                v-if="!embed && (itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
                 :seleccionando="seleccionando"
                 :class="seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
 
-                <button v-if="store.isMovingFiles || store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
-                    @click.prevent="cancelarOperacion">
+                <button v-if="store.isMovingFiles || store.isCopyingFiles"
+                    class="btn btn-secondary flex gap-x items-center" @click.prevent="cancelarOperacion">
                     <Icon icon="material-symbols:close-rounded" />
                     <span>Cancelar</span>
                 </button>
@@ -639,7 +733,8 @@
                                     <Icon icon="ph:users-three-duotone" /> {{ item.propietario?.grupo.nombre }}
                                 </span>
 
-                                <div v-if="item.propietario?.usuario.id == user?.id" class="badge badge-warning text-xs">
+                                <div v-if="item.propietario?.usuario.id == user?.id"
+                                    class="badge badge-warning text-xs">
                                     Eres
                                     el propietario</div>
                             </td>
@@ -676,7 +771,8 @@
                                 </div>
                                 <button v-if="esAdministrador || item.propietario?.usuario.id == user?.id"
                                     class="my-2 btn btn-xs btn-secondary text-xs"
-                                    @click="abrirModalCambiarAcl(item)">Cambiar acceso</button>
+                                    @click="abrirModalCambiarAcl(item)">Cambiar
+                                    acceso</button>
                             </td>
                         </tr>
                     </table>
@@ -851,8 +947,8 @@
             <div class="p-5">
                 <div class="font-bold text-lg">Buscar usuario</div>
                 <input type="search" id="buscar_usuario"
-                    class="input shadow flex-shrink-0 rounded-none border-b border-gray-500" placeholder="Buscar usuario..."
-                    v-model="usuarioBuscar">
+                    class="input shadow flex-shrink-0 rounded-none border-b border-gray-500"
+                    placeholder="Buscar usuario..." v-model="usuarioBuscar">
 
                 <div class="overflow-y-auto max-h-[200px] shadow">
                     <table v-if="usuariosParaAgregar.length" class="table w-full bg-base-100 rounded-none">
@@ -893,7 +989,8 @@
             <div class="p-5">
                 <div class="font-bold text-lg">Buscar grupo</div>
                 <select v-model="grupoElegido" class="select w-full border border-primary" placeholder="Elige un grupo">
-                    <option v-for="grupo of gruposElegibles" :key="grupo.id" :value="grupo.id">{{ grupo.nombre }} </option>
+                    <option v-for="grupo of gruposElegibles" :key="grupo.id" :value="grupo.id">{{ grupo.nombre }}
+                    </option>
                 </select>
 
 
@@ -970,7 +1067,7 @@
                         Cancelar
                     </button>
 
-                    <button  type="button" class="btn btn-primary btn-sm">
+                    <button type="button" class="btn btn-primary btn-sm">
                         Eliminar
                     </button>
                 </form>
@@ -991,7 +1088,7 @@
                     </a>
 
                     <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
-                        {{ modoInsertar ? 'Cancelar' : 'Cerrar' }}
+                        Cerrar
                     </button>
                 </div>
             </div>
@@ -1024,10 +1121,11 @@ const props = defineProps({
     rootLabel: { type: String, require: false },
     rootUrl: { type: String, require: false },
     mostrarRutas: { type: Boolean, default: false },
-    mostrarMisArchivos: { type: [Boolean, String], default: true }
+    mostrarMisArchivos: { type: [Boolean, String], default: true },
+    modoInsertar: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['updated', 'disk', 'folder', 'file']);
+const emit = defineEmits(['updated', 'disk', 'folder', 'file', 'insert']);
 
 const transitionActive = ref(false)
 
@@ -1897,6 +1995,17 @@ function clickBreadcrumb(item) {
 }
 
 
+// EMBED
+
+const imagenesSeleccionadas = computed(()=> itemsSeleccionados.value.filter(item=>item.nombre.match(/.*\.(jpe?g|webp|svg|png|gif|pcx|bmp)$/i)))
+
+// embed
+function insertarImagenes() {
+    console.log('insertarImagenes', imagenesSeleccionadas.value)
+    emit('images', imagenesSeleccionadas.value)
+}
+
+
 </script>
 
 
@@ -1993,10 +2102,12 @@ table th {
 .propiedades th {
     text-align: left
 }
+
 .gap-x {
     @apply gap-1 xs:gap-2 sm:gap-3;
 }
+
 .btn-icon {
     @apply w-[40px] sm:w-[46px];
-    }
+}
 </style>

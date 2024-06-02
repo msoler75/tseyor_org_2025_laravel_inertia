@@ -21,6 +21,7 @@
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
 
                     <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data" :key="contenido.id"
+                        :imageLeft="true"
                         :title="contenido.titulo"
                         :image="contenido.imagen"
                         :href="route('noticia', contenido.slug)"

@@ -147,13 +147,23 @@ class Nodo extends Model
         // aplicamos el umask, con el sticky bit 1
         $permisos = 01777 & ~$umask;
 
-        Nodo::create([
+        /*Nodo::create([
             'ruta' => $ruta,
             'user_id' => optional($user)->id ?? 1,
             'group_id' => 1,
             'permisos' => decoct($permisos),
             'es_carpeta' => $es_carpeta
-        ]);
+        ]);*/
+
+        Nodo::updateOrCreate(
+            ['ruta' => $ruta],
+            [
+                'user_id' => optional($user)->id ?? 1,
+                'group_id' => 1,
+                'permisos' => decoct($permisos),
+                'es_carpeta' => $es_carpeta
+            ]
+        );
     }
 
 

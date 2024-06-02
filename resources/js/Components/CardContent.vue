@@ -9,7 +9,7 @@
                :auto-scroll="autoScroll">
         <div class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
-                'background-image': 'url(\'' + getImageUrl(image) + '?w=300\')',
+                'background-image': `url('${getImageUrl(image)}?w=${imageWidth}${imageHeight!='auto'?'&h='+imageHeight:''}')`,
                 'view-transition-name': imageViewTransitionName
             }" />
         </div>
@@ -41,6 +41,14 @@ const props = defineProps({
     imageViewTransitionName: {
         type: String,
         default: ''
+    },
+    imageWidth: {
+        type: Number,
+        default: 300
+    },
+    imageHeight: {
+        type: [Number, String],
+        default: 'auto'
     },
     title: String,
     href: String,

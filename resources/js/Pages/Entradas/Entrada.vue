@@ -1,7 +1,7 @@
 <template>
     <div class="container py-12 mx-auto">
         <div class="flex justify-between items-center mb-20">
-            <Back>Entradas</Back>
+            <Back>Blog</Back>
             <AdminPanel modelo="entrada" necesita="administrar contenidos" :contenido="entrada" />
         </div>
 
@@ -11,13 +11,27 @@
                 <h1>{{ entrada.titulo }}</h1>
 
                 <div class="text-neutral text-sm mb-2 flex justify-between">
-                    <TimeAgo :date="entrada.fecha_entrada" :includeTime="false" />
+                    <span />
+                    <TimeAgo :date="entrada.published_at" :includeTime="false" />
                 </div>
             </div>
 
-            <Content :content="entrada.texto" class="pb-12 mx-auto" />
+            <Content :content="entrada.texto" class="pb-6 mx-auto" format="md" />
 
         </div>
+
+
+        <div class="mt-12 grid gap-8 mb-12"
+            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(32rem, 1fr))` }">
+            <CardContent v-if="anterior" :imageLeft="true" :key="anterior.id" :title="'Anterior: ' + anterior.titulo"
+                :image="anterior.imagen" :href="route('entrada', anterior.slug)" :description="anterior.descripcion"
+                :date="anterior.published_at" imageClass="h-80" />
+            <CardContent v-if="siguiente" :imageLeft="true" :key="siguiente.id" :title="'Siguiente: ' + siguiente.titulo"
+                :image="siguiente.imagen" :href="route('entrada', siguiente.slug)" :description="siguiente.descripcion"
+                :date="siguiente.published_at" imageClass="h-80" />
+        </div>
+
+
 
         <Comentarios :url="route('entrada', entrada.id)" />
     </div>
@@ -31,6 +45,14 @@ defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     entrada: {
+        type: Object,
+        required: true,
+    },
+    siguiente: {
+        type: Object,
+        required: true,
+    },
+    anterior: {
         type: Object,
         required: true,
     },

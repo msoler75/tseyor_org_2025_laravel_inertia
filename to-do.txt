@@ -1,9 +1,37 @@
-COMUNICADOS
--los pdf generados fallan al cargar las imagenes
+ENTRADAS/BLOG
+-Hacer las entradas searchables con SCOUT
+-mostrar resultados de busqueda con subrayado
+-Crear articulo de creación de casa tseyor puerto rico
+-crear artículo de convivencias en puerto rico (base underkraft)
 
-MARKDOWN
--cuando es un estilo de párrafo dentro de una celda de tabla, no funciona (ejemplo: com. 777 en anexos)
--en tablas, cuando hay negritas, no funciona bien: Ejemplo: 772 en anexos
+
+EDITOR-ARCHIVOS
+-cuando eliges archivos dentro del explorador de archivos del editor, si quieres copiar o eliminar no se ven las opciones (quedan por debajo)
+
+MUULAR ELECTRÓNICO
+-integrar app de muular electrónico
+
+CONTENIDOS
+-importar artículos de blog
+-importar libros
+
+LISTA DE DISTRIBUCION
+-poner/testar el formulario de suscripción de dreamhost para boletines
+
+PDF
+-Al generar un PDF de un comunicado queda el enlace roto en el pdf:
+   Núm. 1214, domingo 27 de agosto 2023
+   tseyor.org">tseyor.org
+
+EDITOR
+-Cuando se usa editor markdown, creo que no se almacenan los cambios del texto hasta que pulsamos "Cerrar editor markdown".
+ -Eso hace que si estás editando en markdown, y guardas, no se guardan los cambios.
+
+CRON
+-hacer un cron con php artisan db:backup para que genere un backup diario
+
+DB BACKUP
+-Ya se usa php artisan db:backup con la libreria druidfi/mysqldump-php , pero esta genera archivos .sql. Sería mejor que lo comprimiera .zip
 
 LOGS
 https://betterstack.com/docs/logs/php/
@@ -44,7 +72,7 @@ EQUIPOS
 
 ADMIN
 -dashboard: añadir: archivos subidos
--dashboard: los ultimos comentarios solo lo ve el rol "comunicador"
+-dashboard: los ultimos comentarios solo lo ha de ver el rol "comunicador"
 -emails: ver registro de emails en el dashboard
 
 EVENTOS
@@ -63,7 +91,6 @@ https://mailrelay.com/
 -usar mail relay API para envío de Boletines
 https://apidocs.mailrelay.com/#post-/campaigns
 -Boletines (es como un novedades, pero por correo)
-
 
 
 
