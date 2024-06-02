@@ -73,11 +73,16 @@ class ContenidoHelper
 
                     //$imagePath = str_replace(url('/'), '', $imageUrl); // Obtener la ruta relativa de la imagen
                     //$absolutePath = DiskUtil::getAbsolutePath($imagePath); // Obtener la ruta absoluta de la imagen
-                    list ($disk, $folder) = DiskUtil::obtenerDiscoRuta($imageUrl);
+                    list ($disk, $folder) = DiskUtil::obtenerDiscoRuta(urldecode($imageUrl));
                     Log::info("disk: $disk, folder: $folder");
 
                     $absolutePath = Storage::disk($disk)->path($folder);
                     Log::info("path: $absolutePath");
+
+                    if (!file_exists($absolutePath)) {
+                        Log::info("file not found: $absolutePath");
+                        continue;
+                    }
 
                     // Obtener las dimensiones de la imagen
                     $imageSize = getimagesize($absolutePath);

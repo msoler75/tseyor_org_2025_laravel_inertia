@@ -34,7 +34,6 @@ class ContenidoBaseModel extends Model
             ContenidoHelper::rellenarSlugImagenYDescripcion($model);
         });
 
-
         static::saved(function ($model) {
 
             if($model->texto ?? '') {
@@ -48,7 +47,7 @@ class ContenidoBaseModel extends Model
             }
 
             // Acciones después de que el modelo se haya guardado
-            ContenidoHelper::guardarContenido($model->table, $model);
+            ContenidoHelper::guardarContenido($model->getTable(), $model);
         });
 
 

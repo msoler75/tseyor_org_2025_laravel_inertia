@@ -8,7 +8,8 @@
             </template>
             <EditorContent :editor="editor" class="tiptap-editor border border-gray-700 p-1" />
         </div>
-        <div v-if="editingMarkdown && !dynamicComponent" class="flex gap-4 text-xl justify-center items-start w-full h-[532px]">
+        <div v-if="editingMarkdown && !dynamicComponent"
+            class="flex gap-4 text-xl justify-center items-start w-full h-[532px]">
             <Spinner /> Cargando...
         </div>
         <span v-else-if="editingMarkdown && dynamicComponent" @click="toggleMarkdown"
@@ -188,8 +189,6 @@ const ImagePaste = Extension.create({
                     handleDrop(_view, event, slice, moved) {
                         console.log('handleDrop', { moved }, event)
                         if (moved) {
-
-                            // setTimeou
                             return false
                         }
                         if (!options.disableImagePaste && event.dataTransfer?.files?.length && renderer?.onImageDrop) {
@@ -360,8 +359,13 @@ const ImageResize = ImageExtension.extend({
                 if (!$container.contains(e.target)) {
                     $container.removeAttribute('style');
                     if ($container.childElementCount > 2) {
-                        for (let i = 0; i < 4; i++) {
-                            $container.removeChild($container.lastChild);
+                        try {
+                            for (let i = 0; i < 4; i++) {
+                                $container.removeChild($container.lastChild);
+                            }
+                        }
+                        catch (err) {
+                            console.warn(err)
                         }
                     }
                 }
@@ -493,6 +497,7 @@ function replaceImage(fromSrc, toSrc, _view) {
 }
 
 function uploadImage(file, blobUrl, _view) {
+    console.log('uploadImage', file, blobUrl)
     // guardamos los archivos uploading
     uploaded_files.push({ blobUrl, file, url: null, img: null, error: null })
     const item = uploaded_files[uploaded_files.length - 1]
@@ -519,8 +524,8 @@ function uploadImage(file, blobUrl, _view) {
 
     // cuando termine el request:
     req.addEventListener('load', async function () {
+        console.log('response:', req.response)
         const data = JSON.parse(req.response)
-        console.log({ data })
         if (data.error) {
             // si hay algun error, aplica la codificacion base64 en la imagen
             console.error(data.error)

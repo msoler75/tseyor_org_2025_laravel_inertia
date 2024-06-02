@@ -9,6 +9,8 @@
 
     function sendWordFileToUpdate(button) {
         var modelo = location.href.split('/').pop()
+        console.log({modelo, split: location.href.split('/')})
+
         var elem = button.parentNode
         while(elem.tagName!="TR")
             elem = elem.parentNode

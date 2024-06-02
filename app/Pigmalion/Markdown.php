@@ -40,12 +40,12 @@ class Markdown
         $html = preg_replace('/<p>{\s*style=([^}]*)\s*}/', "<p style='$1'>", $html);
 
         // centramos las imágenes solitarias
-        $regex = "/<p>(<img[^>]+>)<\/p>/";
+        $regex = "/<p>(<img[^>]+>)<\/p>/ui";
         $html = preg_replace($regex, "<p style='text-align: center'>$1</p>", $html);
 
         // Arreglar enlaces
         // Expresión regular para encontrar URLs con dominios específicos
-        $patron = '/(<a[^>]+>)?\b(https?:\/\/)?(www\.)?(tseyor\.(?:org|com))\b(\/[\?&A-Za-z\-\=\/0-9\.]*)?(<\/a>)?/i';
+        $patron = '/(<a[^>]+>)?\b(https?:\/\/)?(www\.)?(tseyor\.(?:org|com))\b(\/[\?&A-Za-z\-\=\/0-9\.]*)?(<\/a>)?/ui';
         // Reemplazar las URLs encontradas por enlaces clicables si no están en formato html
         $html = preg_replace_callback($patron, function ($match) {
             $path = $match[5] ?? "";
@@ -61,9 +61,9 @@ class Markdown
         // $html = str_replace("\n", '', $html);
 
         // dar formato html a notas al pie
-        $html = preg_replace('/\[\^(\d+)\]/', '<sup>$1</sup>', $html); //[^1]
+        $html = preg_replace('/\[\^(\d+)\]/ui', '<sup>$1</sup>', $html); //[^1]
 
-        if (preg_match("/<table/", $html))
+        if (preg_match("/<table/ui", $html))
             $html = self::_toHtmlTables($html);
 
         return $html;
@@ -177,7 +177,7 @@ class Markdown
         $markdown = self::extraerImagenes($markdown, $carpetaImagenes);
 
         // por si quedó algun div de página lo quitamos
-        $markdown = preg_replace('/<div style="page:\s*page\d+">/', '', $markdown);
+        $markdown = preg_replace('/<div style="page:\s*page\d+">/ui', '', $markdown);
 
 
         // si no se limpió en su momento, se hace ahora
@@ -203,7 +203,7 @@ class Markdown
 
 
         // removemos estilos de celda de tabla
-        $html = preg_replace("/<td style=[^>]+>/", "<td>", $html);
+        $html = preg_replace("/<td style=[^>]+>/ui", "<td>", $html);
 
         // eliminar atributo lang
         $html = preg_replace("&\slang=[^\s>]+&", "$1", $html);
@@ -353,7 +353,6 @@ class Markdown
                 return $match[0];
             }, $html);
         }
-
 
 
         return $html;
@@ -512,6 +511,8 @@ class Markdown
             $imageData = base64_decode($data);
             $imageName = 'image_' . $key . '.' . $type;
             $imagePath = $storagePathImagenes . '/' . $imageName;
+
+            // añadimos la imagen copiada a la lista de imagenes
             $imagenes[] = Storage::disk('public')->path($imagePath);
 
             // Guardar la imagen en disco público
@@ -527,6 +528,48 @@ class Markdown
                 $source = str_replace($match, "src='$imageUrl'", $source);
         }
 
+        // ahora verificamos si hay imagenes que son de rutas URL absolutas, las descargamos y las copiamos a la ruta $carpetaImagenes
+
+
+        $pattern = '/\]\((http.*?)\)/';
+
+        preg_match_all($pattern, $source, $matches);
+        foreach ($matches[1] as $key => $match) {
+            if (preg_match("/^https?:.*\.(jpe?g|gif|webp|svg)(\?.*)?/iu", $match)) {
+
+                $url = $match;
+                // echo "Descargando imagen: $url\n";
+
+                // descargamos la imagen usando curl
+                $tries = 3;
+                while($tries-->0) {
+                    $ch = curl_init($url);
+                    curl_setopt($ch, CURLOPT_HEADER, 0);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    // curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+                    // seguir redirecciones:
+                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+                    $raw = curl_exec($ch);
+                    curl_close($ch);
+                    // si hay error descargando la imagen, reintentamos
+                    if($raw === false) {
+                        sleep(2);
+                    } else break;
+                }
+
+                // copiamos la imagen descargada a la carpeta $carpetaImagenes, con el mismo nombre
+                $imageName = preg_replace("/\?.*/ui", "", basename(urldecode($url)));
+                $imagePath = $storagePathImagenes . '/' . $imageName;
+                Storage::disk('public')->put($imagePath, $raw);
+
+                // añadimos la imagen copiada a la lista de imagenes
+                $imagenes[] = Storage::disk('public')->path($imagePath);
+
+                // Reemplazar el enlace de la imagen codificada por la URL aquí guardada
+                $source = str_replace($match, str_replace(["(", ")"], [urlencode("("), urlencode(")")], $imagePath), $source);
+            }
+        }
+
         self::$carpetaCreada = $storagePathImagenes;
         self::$imagenesExtraidas = $imagenes;
 
@@ -538,7 +581,8 @@ class Markdown
     {
         try {
             $dom = new \DOMDocument();
-            $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            $dom->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
 
             // Extraemos el body
             $bodyContent = '';
@@ -570,7 +614,7 @@ class Markdown
 
         $matches = [];
         // remueve div de seccion si lo hubiera
-        if (preg_match_all("/<div style=.page:\s?page[^>]+>/", $bodyContent, $matches, PREG_OFFSET_CAPTURE)) {
+        if (preg_match_all("/<div style=.page:\s?page[^>]+>/u", $bodyContent, $matches, PREG_OFFSET_CAPTURE)) {
             $divHtml = $matches[0][0][0];
             $pos = $matches[0][0][1];
             $bodyContent = substr($bodyContent, 0, $pos) . substr($bodyContent, $pos + strlen($divHtml));
@@ -645,9 +689,10 @@ class Markdown
     {
         // $content = preg_replace('/\bimg\b/', '', $content); // Eliminar la palabra "img" (??)
         // eliminamos caracters de markdown
-        $content = preg_replace("/[#*_]/", "", $content); // elimina caracteres de formato
-        $content = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $content); // elimina urls
-        $content = preg_replace("/\{.*?\}/", "", $content); // eliminamos marcas de estilo especiales
+        $content = preg_replace("/[#*_]/u", "", $content); // elimina caracteres de formato
+        $content = preg_replace("/!?\[([^]]*)\]\(.+\)/u", "$1", $content); // elimina urls
+        $content = preg_replace("/--+\n/u", "", $content); // elimina titulos
+        $content = preg_replace("/\{.*?\}/u", "", $content); // eliminamos marcas de estilo especiales
         return $content;
     }
 }

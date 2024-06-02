@@ -120,3 +120,19 @@ if (!static::$cache) {
             }
         }
 ```
+
+
+# Base de datos
+
+# Crear un backup de la base de datos
+
+```bash
+php artisan db:backup
+```
+
+
+# Sitemap
+
+```bash
+php artisan sitemap:generate
+```

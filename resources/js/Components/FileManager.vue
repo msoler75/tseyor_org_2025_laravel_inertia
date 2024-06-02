@@ -1,7 +1,9 @@
 <template>
     <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario" @updated="reloadFolder"
         @disk="onDisk" @folder="onFolder" @file="onFile" :embed="true" :ruta="ruta" rutaBase="" :cargando="cargando"
+        @images="insertarImagenes($event)"
         rootLabel="web:" rootUrl=""
+        :modoInsertar="modoInsertar"
         :mostrarMisArchivos="(mostrarMisArchivos !== false && mostrarMisArchivos !== 'false' && mostrarMisArchivos !== '0' && mostrarMisArchivos !== 'no') || ['true', '1', 'si'].includes(mostrarMisArchivos) || mostrarMisArchivos === true">
 
         <Modal :show="mostrandoArchivo" @close="mostrandoArchivo = null" maxWidth="xl">
@@ -137,6 +139,13 @@ function insertarImagen() {
     console.log('insertarImagen', mostrandoImagen.value)
     emit('image', mostrandoImagen.value.url)
     mostrandoImagen.value = null
+}
+
+function insertarImagenes(imagenes) {
+    console.log('insertarImagenes', imagenes)
+    for(const img of imagenes) {
+        emit('image', img.url)
+    }
 }
 
 function descargarImagen() {

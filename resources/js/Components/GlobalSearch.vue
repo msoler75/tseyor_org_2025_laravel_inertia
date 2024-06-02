@@ -113,7 +113,7 @@ const resultadosAgrupados = computed(() => {
 
     // Ordenar el array de items
     items.sort((a, b) => {
-        const prioridad = ['libros', 'centros', 'lugares', 'guias', 'terminos', 'paginas'] // paginas es el más prioritario
+        const prioridad = ['libros', 'entradas', 'centros', 'lugares', 'guias', 'terminos', 'paginas'] // paginas es el más prioritario
 
         const indexA = prioridad.indexOf(a.coleccion)
         const indexB = prioridad.indexOf(b.coleccion)
@@ -292,6 +292,7 @@ const traducciones = {
     paginas: 'páginas',
     guias: 'guías estelares',
     terminos: 'glosario',
+    entradas: 'blog',
     lugares: 'lugares de la galaxia'
 }
 

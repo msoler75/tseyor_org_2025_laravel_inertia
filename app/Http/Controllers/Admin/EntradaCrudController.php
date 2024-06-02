@@ -66,8 +66,7 @@ class EntradaCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'categoria',
             'label' => 'Categoría',
-            'type' => 'enum',
-            'options' => ['Pueblo Tseyor', 'Otros']
+            'type' => 'text',
         ]);
 
         $this->crud->addColumn([
@@ -128,7 +127,7 @@ class EntradaCrudController extends CrudController
             'name' => 'categoria',
             'label' => "Categoría",
             'type' => 'select_from_array',
-            'options' => ['Pueblo Tseyor', 'Otros'],
+            'options' => ['Pueblo Tseyor'=>'Pueblo Tseyor', 'ONG'=>'ONG', 'Otros'=>'Otros'],
             'allows_null' => false,
             'default' => 'Pueblo Tseyor',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;

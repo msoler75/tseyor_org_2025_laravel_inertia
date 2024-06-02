@@ -62,7 +62,9 @@ class RadioItemCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            // 'name' => 'required|min:2',
+            'audio' => 'required',
+            'duracion' => 'required',
+            'categoria' => 'required'
         ]);
         CRUD::setFromDb(); // set fields from db columns.
 
@@ -70,6 +72,26 @@ class RadioItemCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+         CRUD::field('audio')->type('text')->hint('URL del archivo de audio');
+
+        CRUD::field('duracion')->type('text')->wrapper([
+            'class' => 'form-group col-md-3'
+        ])->hint('Se puede poner la duración en formato HH:MM:SS ó MM:SS ó el tiempo total en segundos');
+
+         CRUD::field([
+            // select_from_array
+            'name' => 'categoria',
+            'label' => "Categoría",
+            'type' => 'select_from_array',
+            'options' => ['Comunicados' => 'Comunicados', 'Talleres y meditaciones'=>'Talleres y meditaciones', 'Entrevistas y mesas redondas'=>'Entrevistas y mesas redondas'],
+            'allows_null' => false,
+            'default' => '0',
+            // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
+            'wrapper' => [
+                'class' => 'form-group col-md-3'
+            ],
+        ]);
     }
 
     /**

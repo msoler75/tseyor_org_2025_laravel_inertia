@@ -11,9 +11,8 @@
                 Última actualización:
                 <TimeAgo :date="audio.updated_at" />
             </p>
-            <p>
-                {{ audio.descripcion }}
-            </p>
+            <p class="badge">{{ audio.categoria }}</p>
+            <p>{{ audio.descripcion }}</p>
 
             <div v-if="audio.audio" class="btn p-0 w-12 h-5 min-h-auto text-3xl"
                 :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlayPause(audio)"

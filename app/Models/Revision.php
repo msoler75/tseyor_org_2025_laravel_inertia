@@ -44,7 +44,9 @@ class Revision extends Model
     public function getAutorAttribute()
     {
         $user = $this->user;
-        return $user->name;
+        if($user)
+            return $user->name;
+        return "<sistema>";
     }
 
     public function getTituloContenidoAttribute()

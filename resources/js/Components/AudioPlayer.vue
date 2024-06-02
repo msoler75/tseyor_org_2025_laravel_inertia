@@ -163,14 +163,14 @@ function activatePlayer() {
     clearTimeout(timerToCollapse)
     timerToCollapse = setTimeout(() => {
         expanded.value = false
-    }, 27000)
+    }, 10000)
 }
 
 function collapsePlayer() {
     clearTimeout(timerToCollapse)
     timerToCollapse = setTimeout(() => {
         expanded.value = false
-    }, 23500)
+    }, 7000)
 }
 
 

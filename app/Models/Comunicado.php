@@ -42,6 +42,28 @@ class Comunicado extends ContenidoConAudios
 
 
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::updated(function ($comunicado) {
+            $pdf_path = storage_path('app/public/comunicados/' . $comunicado->id . '.pdf');
+            if (file_exists($pdf_path)) {
+                unlink($pdf_path);
+            }
+        });
+    }
+
+
+    public function getPdfFilenameAttribute() {
+        return $this->titulo . ' - TSEYOR.pdf';
+    }
+
+    public function getPdfPathAttribute() {
+        return 'medios/comunicados/pdf/' . $this->ano . '/' . $this->pdf_filename;
+    }
+
+
     // hooks del modelo
     /*
     protected static function booted()
@@ -260,7 +282,7 @@ class Comunicado extends ContenidoConAudios
      */
     public function getCarpetaMedios() {
         $coleccion = $this->getTable();
-        $folderCompleto = $this->id ? "/almacen/medios/$coleccion/{$this->ano}/{$this->id}": self::getCarpetaMediosTemp();        
+        $folderCompleto = $this->id ? "/almacen/medios/$coleccion/{$this->ano}/{$this->id}": self::getCarpetaMediosTemp();
         DiskUtil::ensureDirExists($folderCompleto);
         return $folderCompleto;
     }

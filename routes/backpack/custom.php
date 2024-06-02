@@ -52,7 +52,7 @@ Route::group([
     Route::crud('experiencia', 'ExperienciaCrudController');
 
     Route::post('comunicado/importar/crear', 'ComunicadoCrudController@importCreate');
-    Route::post('comunicado/importar/actualizar/{id}', 'ComunicadoCrudController@importUpdate');
+    Route::post('comunicado/c/{id}', 'ComunicadoCrudController@importUpdate');
 
     Route::post('noticia/importar/crear', 'NoticiaCrudController@importCreate');
     Route::post('noticia/importar/actualizar/{id}', 'NoticiaCrudController@importUpdate');
