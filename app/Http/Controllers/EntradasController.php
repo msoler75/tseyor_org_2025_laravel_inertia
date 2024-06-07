@@ -60,6 +60,35 @@ class EntradasController extends Controller
             'siguiente' => $siguiente,
             'anterior' => $anterior
         ])
-            ->withViewData(SEO::from($entrada));;
+            ->withViewData(SEO::from($entrada));
+    }
+
+    /**
+     * Genera un PDF desde los datos de un artículo de blog
+     */
+    public function pdf($id)
+    {
+        if (is_numeric($id)) {
+            $contenido = Entrada::findOrFail($id);
+        } else {
+            $contenido = Entrada::where('slug', $id)->firstOrFail();
+        }
+
+        $borrador = request()->has('borrador');
+        $publicado = $contenido->visibilidad == 'P';
+        $editor = optional(auth()->user())->can('administrar contenidos');
+        if (!$contenido || (!$publicado && !$borrador && !$editor)) {
+            abort(404); // Item no encontrado o no autorizado
+        }
+
+        // Agregar los encabezados para evitar el caché
+    $headers = [
+        'Content-Type' => 'application/pdf',
+        'Cache-Control' => 'no-cache, no-store, must-revalidate',
+        'Pragma' => 'no-cache',
+        'Expires' => '0',
+    ];
+
+        return $contenido->generatePdf();
     }
 }

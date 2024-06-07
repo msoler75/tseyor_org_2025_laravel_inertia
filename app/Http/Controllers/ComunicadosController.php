@@ -9,9 +9,6 @@ use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\ProcesarAudios;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
-use App\Pigmalion\DiskUtil;
 
 class ComunicadosController extends Controller
 {
@@ -103,8 +100,18 @@ class ComunicadosController extends Controller
             abort(404); // Item no encontrado o no autorizado
         }
 
+        $siguiente = Comunicado::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'fecha_comunicado'])
+            ->where('visibilidad', 'P')
+            ->where('fecha_comunicado', '>', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'asc')->first();
+
+        $anterior = Comunicado::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'fecha_comunicado'])
+            ->where('visibilidad', 'P')
+            ->where('fecha_comunicado', '<', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'desc')->first();
+
         return Inertia::render('Comunicados/Comunicado', [
             'comunicado' => $comunicado,
+            'siguiente' => $siguiente,
+            'anterior' => $anterior
         ])
             ->withViewData(SEO::from($comunicado));
     }
@@ -116,83 +123,19 @@ class ComunicadosController extends Controller
     public function pdf($id)
     {
         if (is_numeric($id)) {
-            $comunicado = Comunicado::findOrFail($id);
+            $contenido = Comunicado::findOrFail($id);
         } else {
-            $comunicado = Comunicado::where('slug', $id)->firstOrFail();
+            $contenido = Comunicado::where('slug', $id)->firstOrFail();
         }
 
         $borrador = request()->has('borrador');
-        $publicado = $comunicado->visibilidad == 'P';
+        $publicado = $contenido->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$comunicado || (!$publicado && !$borrador && !$editor)) {
+        if (!$contenido || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
-        $nombreArchivo = $comunicado->titulo . ' - TSEYOR.pdf';
-
-
-        // comprobaremos si existe ya el archivo pdf generado
-
-
-
-        $pdf_path = $comunicado->pdfPath; // attribute with accesor
-
-
-        $pdf_full_path = Storage::disk('public')->path($pdf_path);
-
-        if (file_exists($pdf_full_path) && filemtime($pdf_full_path) > $comunicado->modified_at) {
-            return response()->file($pdf_full_path);
-        }
-
-        $texto = $comunicado->texto;
-
-        // reducimos las imagenes de los guías para que no sean tan grandes
-        $texto = preg_replace_callback("#\!\[\]\(\/almacen\/medios\/guias\/con_nombre\/.+?\.jpg\)\{width=(\d+),height=(\d+)\}#", function ($match) {
-            $w = intval($match[1]);
-            $h = intval($match[2]);
-            $r = $w / $h;
-            $h = 250;
-            $w = $h * $r;
-            return str_replace("width=" . $match[1] . ",height=" . $match[2], "width=$w,height=$h", $match[0]);
-        }, $texto);
-
-
-        $html = \App\Pigmalion\Markdown::toHtml($texto);
-
-        $html = "<style>img{max-width: 100%} p{font-family: Calibri, sans-serif;}table,tr,td,th{border: 0}</style>" . $html;
-
-        // envolver cada img (que está solo en una linea) en un div con style="text-align: center"
-        $html = preg_replace_callback('/<img.*?>/', function ($matches) {
-            return '<div style="text-align: center">' . $matches[0] . '</div>';
-        }, $html);
-
-
-
-        // reemplazar todas las imagenes sus rutas relativas con rutas absolutas de disco
-        $html = preg_replace_callback('/<img([^>]+)src="([^"]+)"/', function ($matches) {
-
-            $fullpath = DiskUtil::getRealPath($matches[2]);
-            $prefix = ""; // "file://";
-            // $r = '<img' . $matches[1] . 'src="' . $prefix.$fullpath .'"';
-            $r = '<img' . $matches[1] . 'src="data:image/png;base64,' . base64_encode(file_get_contents($fullpath)) . '"';
-            return $r;
-        }, $html);
-
-        // Contenido HTML completo con etiquetas <html>, <head> y <body>
-        $pdf = Pdf::loadView('comunicado-pdf', [
-            'titulo' => $comunicado->titulo,
-            'texto' => $html,
-        ]);
-
-        // guardamos el pdf generado
-        DiskUtil::ensureDirExists(dirname($pdf_full_path));
-        $pdf->save($pdf_full_path);
-
-        // descargamos el archivo pdf
-        // return $pdf->download($nombreArchivo);
-
-        // mostramos el contenido del pdf en la página
-        return $pdf->stream($nombreArchivo);
+        return $contenido->generatePdf();
     }
 
 

@@ -55,7 +55,7 @@ class DiskUtil {
 
     public static function ensureDirExists($dir) {
         // removemos la parte de ruta de la app de $dir
-        $home = base_path();
+        /*$home = base_path();
         $rutaOrig = str_replace($home, '', $dir);
         $rutaOrig = str_replace("/storage/app/public/", "/almacen/", $rutaOrig);
         list($disk, $ruta) = self::obtenerDiscoRuta($rutaOrig);
@@ -64,7 +64,9 @@ class DiskUtil {
         if (!Storage::disk($disk)->exists($ruta)) {
             // Crear la carpeta en el disco 'public'
             Storage::disk($disk)->makeDirectory($ruta);
-        }
+        }*/
+        if(!file_exists($dir))
+            mkdir($dir, 0777, true);
     }
 
     public static function normalizePath($ruta) {

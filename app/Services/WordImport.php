@@ -326,8 +326,6 @@ class WordImport
      */
     public function copyImagesTo(string $folderDest, bool $deletePrevious = false)
     {
-
-
         if (!count($this->images))
             return 0;
 
@@ -360,7 +358,6 @@ class WordImport
         foreach ($this->images as $imagePath) {
             $imageFilename = basename($imagePath);
             // die("c.id={$comunicado->id};tempDir=$tempDir; image=$image; imageFileName=$imageFilename; dest=".public_path("almacen/".$destinationFolder . "/" .  $imageFilename));
-
 
             // aquí busca imagenes que sean habituales en muchos documentos, de los guías o el sello de tseyor
             // y las reemplaza por una versión única de cada imagen

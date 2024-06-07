@@ -124,6 +124,7 @@ Route::get('libros/{slug}', [LibrosController::class, 'show'])->where('slug', '[
 
 Route::get('entradas', [EntradasController::class, 'index'])->name('entradas');
 Route::get('entradas/{slug}', [EntradasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('entrada');
+Route::get('entradas/{slug}/pdf', [EntradasController::class, 'pdf'])->where('slug', '[a-z0-9\-]+')->name('entrada.pdf');
 
 Route::get('glosario', [TerminosController::class, 'index'])->name('terminos');
 Route::get('glosario/{slug}', [TerminosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('termino');
