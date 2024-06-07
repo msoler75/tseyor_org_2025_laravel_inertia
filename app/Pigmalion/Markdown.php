@@ -492,7 +492,9 @@ class Markdown
      * */
     public static function extraerImagenes($source, $storagePathImagenes)
     {
-        // Expresión regular para encontrar imágenes codificadas en base64 en el texto Markdown
+        Log::info("Markdown.extraerImagenes, storagePath=$storagePathImagenes");
+
+        // Expresión regular para encontrar imágenes codificadas en base64
         $pattern = '/(?:!\[\]\(|src=[\'\"])data:image\/([a-zA-Z]*);base64,([a-zA-Z0-9+\/]+={0,2})[)\'\"]/';
 
         // Obtener todas las coincidencias de imágenes codificadas en base64
@@ -521,6 +523,12 @@ class Markdown
             // Obtener la URL pública de la imagen guardada
             $imageUrl = Storage::disk('public')->url($imagePath);
 
+            $baseUrl = config('app.url');
+            // dd($baseUrl, $imageUrl);
+            $imageUrl = str_replace($baseUrl, "", $imageUrl);
+
+            Log::info("orig=".substr($orig, 0, 80)."..., type=$type, imagePath=$imagePath, imageUrl=$imageUrl");
+
             // Reemplazar el enlace de la imagen codificada por la URL pública de la imagen guardada
             if (str_starts_with($orig, "![")) // era markdown
                 $source = str_replace($match, "![](" . $imageUrl . ")", $source);
@@ -536,8 +544,8 @@ class Markdown
         preg_match_all($pattern, $source, $matches);
         foreach ($matches[1] as $key => $match) {
             if (preg_match("/^https?:.*\.(jpe?g|gif|webp|svg)(\?.*)?/iu", $match)) {
-
                 $url = $match;
+                Log::info("Descargando imagen: $url");
                 // echo "Descargando imagen: $url\n";
 
                 // descargamos la imagen usando curl
@@ -572,6 +580,8 @@ class Markdown
 
         self::$carpetaCreada = $storagePathImagenes;
         self::$imagenesExtraidas = $imagenes;
+
+        Log::info("source=$source");
 
         return $source;
     }
@@ -650,7 +660,7 @@ class Markdown
         // busca todas las imagenes en $md que estén en carpetaOrigen
         $expCarpetaOrigen = str_replace(["/"], ["\\/"], $carpetaOrigen);
         Log::info("/!\[(.*)\]\(($expCarpetaOrigen\/[^\)]*)\)/");
-        $md = preg_replace_callback("&!\[(.*)\]\(($expCarpetaOrigen\/[^\)]*)\)&", function ($matches) use ($carpetaOrigen, $carpetaDestino, &$imagenes_movidas, $disk) {
+        $md = preg_replace_callback("&!\[(.*)\]\(($expCarpetaOrigen\/[^\)]*)\)&", function ($matches) use ($carpetaDestino, &$imagenes_movidas, $disk) {
 
             Log::info("match: " . print_r($matches, true));
             // extraemos el nombre de la imagen

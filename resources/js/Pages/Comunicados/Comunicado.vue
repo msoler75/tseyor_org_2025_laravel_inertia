@@ -1,5 +1,5 @@
 <template>
-    <div class="py-8">
+    <div class="container py-12 mx-auto">
 
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Comunicados</Back>
@@ -32,6 +32,18 @@
 
         </div>
 
+
+        <div class="mt-12 grid gap-8 mb-12"
+            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(32rem, 1fr))` }">
+            <CardContent v-if="anterior" :imageLeft="true" :key="anterior.id" :title="'Anterior: ' + anterior.titulo"
+                :image="anterior.imagen" :href="route('comunicado', anterior.slug)" :description="anterior.descripcion"
+                :date="anterior.published_at" imageClass="h-80" />
+            <CardContent v-if="siguiente" :imageLeft="true" :key="siguiente.id" :title="'Siguiente: ' + siguiente.titulo"
+                :image="siguiente.imagen" :href="route('comunicado', siguiente.slug)" :description="siguiente.descripcion"
+                :date="siguiente.published_at" imageClass="h-80" />
+        </div>
+
+
         <Comentarios :url="route('comunicado', comunicado.id)" />
 
     </div>
@@ -47,7 +59,15 @@ const props = defineProps({
     comunicado: {
         type: Object,
         required: true,
-    }
+    },
+    siguiente: {
+        type: Object,
+        required: true,
+    },
+    anterior: {
+        type: Object,
+        required: true,
+    },
 });
 
 </script>

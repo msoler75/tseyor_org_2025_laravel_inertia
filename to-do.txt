@@ -1,3 +1,8 @@
+PDF
+-hacer que el método de crear PDF sea del ContenidoBaseModel  (o un trait)
+-para que se pueda descargar el pdf desde artículos de blog, meditaciones, normativas, etc.
+
+
 ENTRADAS/BLOG
 -Hacer las entradas searchables con SCOUT
 -mostrar resultados de busqueda con subrayado

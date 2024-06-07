@@ -348,7 +348,7 @@ class ComunicadoCrudController extends CrudController
 
             if (!$contenido->imagen || $contenido->imagen == "/almacen/medios/logos/sello_tseyor_64.png") {
                 $guias = ['Shilcars', 'Rasbek', 'Melcor', 'Noiwanak', 'Aumnor', 'Aium Om', 'Orjaín', 'Mo', 'Rhaum', 'Jalied'];
-                $regex = "/\b(" . implode("|", $guias) . ")\b/i";
+                $regex = "/\b(" . implode("|", $guias) . ")\b/";
                 if (preg_match($regex, $contenido->texto, $matches)) {
                     // Log::info("guia encontrado:" . print_r($matches, true));
                     $guia =  strtolower(str_replace(["í", " "], ["i", ""], $matches[0]));
@@ -356,6 +356,7 @@ class ComunicadoCrudController extends CrudController
                 }
             }
 
+            // corregimos un caso particular de formato del logo de Tseyor
             $contenido->texto = preg_replace("#(.*\!\[\]\(/almacen/medios/logos/sello_tseyor_64[^)]+\))(\**Universidad Tseyor de Granada)#", "$1\n\n$2", $contenido->texto);
 
             $contenido->save();

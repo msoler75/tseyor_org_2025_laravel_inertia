@@ -55,9 +55,7 @@ class Comunicado extends ContenidoConAudios
     }
 
 
-    public function getPdfFilenameAttribute() {
-        return $this->titulo . ' - TSEYOR.pdf';
-    }
+
 
     public function getPdfPathAttribute() {
         return 'medios/comunicados/pdf/' . $this->ano . '/' . $this->pdf_filename;

@@ -168,8 +168,10 @@ function handlePreview(img) {
 
 
 <style scoped>
+
 :deep(.is-image) {
     @apply max-w-full mx-auto mb-3 mt-[2em];
+    cursor: pointer;
 }
 
 

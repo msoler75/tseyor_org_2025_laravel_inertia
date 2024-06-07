@@ -36,12 +36,12 @@ class ContenidoBaseModel extends Model
 
         static::saved(function ($model) {
 
-            if($model->texto ?? '') {
+            if ($model->texto ?? '') {
                 // Log::info("ContenidoBaseModel saved: ". substr($model->texto, 0, 1024));
                 // si mueve alguna imagen, guardamos los cambios y salimos
-                if(ContenidoHelper::moverImagenesContenido($model)) {
+                if (ContenidoHelper::moverImagenesContenido($model)) {
                     $model->save();
-                    Log::info("Se han movido imagenes de carpeta temp a destino para ".$model->getMorphClass()."/".$model->id);
+                    Log::info("Se han movido imagenes de carpeta temp a destino para " . $model->getMorphClass() . "/" . $model->id);
                     return;
                 }
             }
@@ -98,7 +98,8 @@ class ContenidoBaseModel extends Model
     /**
      * Carpeta temporal para medios (imágenes)
      */
-    public static function getCarpetaMediosTemp() {
+    public static function getCarpetaMediosTemp()
+    {
         $folderCompleto = '/almacen/temp';
         DiskUtil::ensureDirExists($folderCompleto);
         return $folderCompleto;
@@ -107,10 +108,30 @@ class ContenidoBaseModel extends Model
     /**
      * Carpeta para los medios del contenido (imágenes)
      */
-    public function getCarpetaMedios() {
+    public function getCarpetaMedios()
+    {
         $coleccion = $this->getTable();
-        $folderCompleto = $this->id ? "/almacen/medios/$coleccion/$this->id": self::getCarpetaMediosTemp();
+        $folderCompleto = $this->id ? "/almacen/medios/$coleccion/$this->id" : self::getCarpetaMediosTemp();
         DiskUtil::ensureDirExists($folderCompleto);
         return $folderCompleto;
+    }
+
+
+    /**
+    * Para PDF
+    */
+
+    public function getPdfFilenameAttribute()
+    {
+        return $this->titulo . ' - TSEYOR.pdf';
+    }
+
+    public function getPdfPathAttribute()
+    {
+        return 'medios/' . $this->getTable() . '/pdf/' . $this->pdf_filename;
+    }
+
+    public function generatePdf() {
+        return ContenidoHelper::generatePdf($this);
     }
 }
