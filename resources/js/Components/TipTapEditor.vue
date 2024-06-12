@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="tiptap-editor-wrapper">
         <div v-show="!editingMarkdown">
             <template v-if="editor">
                 <TipTapFullMenuBar v-if="full" :editor="editor" :media-folder="mediaFolder"
@@ -656,7 +656,7 @@ hr {
 
 .tiptap-editor:deep(.ProseMirror) {
     padding: .5rem;
-    @apply min-h-[300px] max-h-[calc(100vh-250px)] overflow-auto;
+    @apply min-h-[300px] overflow-auto;
     background-color: var(--tblr-bg-forms);
 }
 

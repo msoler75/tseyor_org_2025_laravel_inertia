@@ -245,24 +245,23 @@ class ContenidoHelper
 
         $html = \App\Pigmalion\Markdown::toHtml($texto);
 
-        // $html = "<style></style>" . $html;
-
-        // envolver cada img (que está solo en una linea) en un div con style="text-align: center"
-        $html = preg_replace_callback('/<img.*?>/', function ($matches) {
-            return '<div style="text-align: center">' . $matches[0] . '</div>';
-        }, $html);
-
-
         // para que procese las imagenes en el pdf:
         // método 1: reemplazar todas las imagenes sus rutas relativas con rutas absolutas de disco (NO FUNCIONA)
         // método 2: codificarlas en base64 (ACTUAL MÉTODO)
         $html = preg_replace_callback('/<img([^>]+)src="([^"]+)"/', function ($matches) {
             $fullpath = DiskUtil::getRealPath($matches[2]);
-            $prefix = ""; // "file://";
+            //dd($matches);
+            // $prefix = ""; // "file://";
             // $r = '<img' . $matches[1] . 'src="' . $prefix.$fullpath .'"'; // método 1
+            // dd($fullpath);
+            if(!$fullpath) {
+                return $matches[0];
+            }
             $r = '<img' . $matches[1] . 'src="data:image/png;base64,' . base64_encode(file_get_contents($fullpath)) . '"'; // método 2
             return $r;
         }, $html);
+
+        // dd($html);
 
         // Contenido HTML completo con etiquetas <html>, <head> y <body>
         $pdf = Pdf::loadView('contenido-pdf', [

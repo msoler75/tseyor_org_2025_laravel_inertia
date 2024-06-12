@@ -128,7 +128,7 @@ class ContenidoBaseModel extends Model
 
     public function getPdfPathAttribute()
     {
-        return 'medios/' . $this->getTable() . '/pdf/' . $this->pdf_filename;
+        return 'pdf/' . $this->getTable() . '/' . $this->pdf_filename;
     }
 
     public function generatePdf() {

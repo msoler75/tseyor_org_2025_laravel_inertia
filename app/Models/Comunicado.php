@@ -41,7 +41,6 @@ class Comunicado extends ContenidoConAudios
     ];
 
 
-
     public static function boot()
     {
         parent::boot();
@@ -58,7 +57,7 @@ class Comunicado extends ContenidoConAudios
 
 
     public function getPdfPathAttribute() {
-        return 'medios/comunicados/pdf/' . $this->ano . '/' . $this->pdf_filename;
+        return 'pdf/comunicados/' . $this->ano . '/' . $this->pdf_filename;
     }
 
 

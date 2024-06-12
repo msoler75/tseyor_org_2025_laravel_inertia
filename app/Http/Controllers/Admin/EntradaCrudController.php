@@ -103,7 +103,7 @@ class EntradaCrudController extends CrudController
         CRUD::setValidation([
             'titulo' => 'required|min:8',
             'descripcion' => 'max:400',
-            'texto' => 'required|max:65000',
+            'texto' => 'required',
         ]);
         // CRUD::setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
@@ -140,6 +140,13 @@ class EntradaCrudController extends CrudController
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
         CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1]);
 
+
+        Entrada::saving(function ($entrada) {
+            // dd($entrada);
+            // Acciones antes de guardar el modelo
+            $entrada->texto = \App\Pigmalion\Markdown::extraerImagenes($entrada->texto, $entrada->getCarpetaMedios());
+            // if(count(\App\Pigmalion\Markdown::$imagenesExtraidas))
+        });
     }
 
 

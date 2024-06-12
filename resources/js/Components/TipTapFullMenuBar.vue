@@ -215,6 +215,12 @@ const items = ref([
         title: "Rehacer",
         action: () => props.editor.chain().focus().redo().run(),
     },
+    
+    {
+        icon: computed(()=>pantallaCompleta.value?"mdi:fullscreen-exit":"mdi:fullscreen"),
+        title: computed(()=>pantallaCompleta.value?"Salir de pantalla completa":"Ver en pantalla completa"),
+        action: () => toggleFullScreen()
+    },
     {
         type: "divider"
     },
@@ -322,6 +328,32 @@ function setLink() {
         .setLink({ href: url })
         .run()
 }
+
+
+const pantallaCompleta = ref(false)
+
+function enterFullScreen() {
+    // props.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false }).run()
+    const div = document.querySelector('.tiptap-editor-wrapper')
+    console.log({div})
+    div.classList.add('fullscreen')
+    pantallaCompleta.value = true
+}
+
+function exitFullScreen() {
+    // props.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false }).run()
+    const div = document.querySelector('.tiptap-editor-wrapper')
+    div.classList.remove('fullscreen')
+    pantallaCompleta.value = false
+}
+
+function toggleFullScreen() {
+    if(pantallaCompleta.value)
+        exitFullScreen() 
+    else 
+        enterFullScreen()
+}
+
 </script>
 
 <template>
