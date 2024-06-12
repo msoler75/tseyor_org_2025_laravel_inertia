@@ -73,6 +73,37 @@ form [bp-field-name='permissions'] .checkbox
 }
 
 
-.md-editor-fullscreen {
-    left: 240px !important
+
+
+
+.tiptap-editor-wrapper.fullscreen {
+    display: block;
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: white;
+}
+
+
+.tiptap-editor-wrapper
+.tiptap-editor .ProseMirror {
+    @apply max-h-[calc(100vh-250px)];
+}
+
+.tiptap-editor-wrapper.fullscreen
+.tiptap-editor .ProseMirror{
+    @apply max-h-[calc(100vh-80px)];
+}
+
+@media (min-width:992px) {
+    .tiptap-editor-wrapper.fullscreen {
+        left: 240px;
+    }
+
+    .md-editor-fullscreen {
+        left: 240px !important
+    }
 }
