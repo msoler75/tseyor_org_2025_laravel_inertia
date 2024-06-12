@@ -23,6 +23,7 @@
 </template>
 
 <script setup>
+import {shallowRef} from 'vue'
 import { Extension } from '@tiptap/core';
 import { Plugin, PluginKey } from 'prosemirror-state';
 //import {defineAsyncComponent } from 'vue'
@@ -77,9 +78,14 @@ console.log('props.format', props.format)
 console.log('format', format.value)
 
 watch(contenidoHtml, (value) => {
+    if(editingMarkdown.value) return // venimos de watch contenidoMD
     console.log('watch contenidoHtml', value)
     contenidoMD.value = HtmlToMarkdown(value)
     console.log('format', format.value)
+    emitChange()
+})
+
+function emitChange() {
     if (format.value == 'md') {
         console.log('emit change', contenidoMD.value)
         emit('change', contenidoMD.value)
@@ -90,22 +96,12 @@ watch(contenidoHtml, (value) => {
         emit('change', contenidoHtml.value)
         emit('update:modelValue', contenidoHtml.value)
     }
-})
-
+}
 
 // MARKDOWN EDIT
 
 // const editingHtml = ref(false)
 const editingMarkdown = ref(false)
-
-// MDEDITOR
-const dynamicComponent = ref(null)
-
-const loadMdEditor = () => {
-    import('md-editor-v3').then(module => {
-        dynamicComponent.value = module.MdEditor;
-    });
-};
 
 
 watch(editingMarkdown, (value) => {
@@ -119,6 +115,23 @@ watch(editingMarkdown, (value) => {
         editor.value.commands.setContent(contenidoHtml.value)
     }
 })
+
+watch(contenidoMD, (value) => {
+    if(!editingMarkdown.value) return
+    contenidoHtml.value = MarkdownToHtml(value)
+    emitChange()
+})
+
+
+// MDEDITOR
+const dynamicComponent = shallowRef (null)
+
+const loadMdEditor = () => {
+    import('md-editor-v3').then(module => {
+        dynamicComponent.value = module.MdEditor;
+    });
+};
+
 
 function toggleMarkdown() {
     editingMarkdown.value = !editingMarkdown.value
