@@ -179,7 +179,7 @@
                 :class="seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
 
                 <button
-                v-if="modoInsertar && imagenesSeleccionadas.length"  
+                v-if="modoInsertar && imagenesSeleccionadas.length"
                     class="btn btn-secondary flex gap-x items-center" @click.prevent="insertarImagenes">
                     <Icon icon="material-symbols:close-rounded" />
                     <span>Insertar</span>
@@ -1067,7 +1067,7 @@
                         Cancelar
                     </button>
 
-                    <button type="button" class="btn btn-primary btn-sm">
+                    <button type="submit" class="btn btn-primary btn-sm">
                         Eliminar
                     </button>
                 </form>
@@ -1832,6 +1832,7 @@ function abrirEliminarModal(item) {
 }
 
 function eliminarArchivos() {
+    console.log('eliminarArchivos')
     if (itemAEliminar.value)
         eliminarArchivo(itemAEliminar.value)
     else {
