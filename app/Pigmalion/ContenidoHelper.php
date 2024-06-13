@@ -74,7 +74,7 @@ class ContenidoHelper
 
                     //$imagePath = str_replace(url('/'), '', $imageUrl); // Obtener la ruta relativa de la imagen
                     //$absolutePath = DiskUtil::getAbsolutePath($imagePath); // Obtener la ruta absoluta de la imagen
-                    list ($disk, $folder) = DiskUtil::obtenerDiscoRuta(urldecode($imageUrl));
+                    list($disk, $folder) = DiskUtil::obtenerDiscoRuta(urldecode($imageUrl));
                     Log::info("disk: $disk, folder: $folder");
 
                     $absolutePath = Storage::disk($disk)->path($folder);
@@ -153,7 +153,6 @@ class ContenidoHelper
 
         // Guardar el modelo en la base de datos
         $contenido->save();
-
     }
 
 
@@ -190,7 +189,7 @@ class ContenidoHelper
             if (count($imagenes_movidas)) {
                 $objeto->texto = $texto;
                 if ($objeto->imagen ?? '') {
-                    Log::info("imagen del objeto: ".$objeto->imagen);
+                    Log::info("imagen del objeto: " . $objeto->imagen);
                     foreach ($imagenes_movidas as $mov) {
                         // cambia la referencia de la imagen del contenido de carpeta temporal a la de la carpeta de medios
                         if ($objeto->imagen == $mov['desde'])
@@ -206,7 +205,8 @@ class ContenidoHelper
     }
 
 
-    public static function generatePdf(ContenidoBaseModel $contenido) {
+    public static function generatePdf(ContenidoBaseModel $contenido)
+    {
 
         $nombreArchivo = ($contenido->titulo ?? $contenido->nombre) . ' - TSEYOR.pdf';
 
@@ -248,8 +248,25 @@ class ContenidoHelper
         // para que procese las imagenes en el pdf:
         // método 1: reemplazar todas las imagenes sus rutas relativas con rutas absolutas de disco (NO FUNCIONA)
         // método 2: codificarlas en base64 (ACTUAL MÉTODO)
-        $html = preg_replace_callback('/<img([^>]+)src="([^"]+)"/', function ($matches) {
-            $fullpath = DiskUtil::getRealPath($matches[2]);
+        $html = preg_replace_callback('/<img([^>]+)src="([^">]+)"/', function ($matches) {
+
+            if (preg_match("/^https?:\/\//", $matches[2])) {
+                $url = $matches[2];
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                // curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+                // seguir redirecciones:
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+                $raw = curl_exec($ch);
+                curl_close($ch);
+                // si hay error descargando la imagen, reintentamos
+
+                //   codificamos el contenido de la imagen en base64
+                return '<img' . $matches[1] . 'src="data:image/png;base64,' . base64_encode($raw) . '"';
+            }
+
+            $fullpath = DiskUtil::getRealPath(urldecode($matches[2]));
             //dd($matches);
             // $prefix = ""; // "file://";
             // $r = '<img' . $matches[1] . 'src="' . $prefix.$fullpath .'"'; // método 1

@@ -24,6 +24,7 @@ class Markdown
     {
         $html = Str::markdown($md);
 
+
         // Reemplazar imágenes con atributos
         $html = preg_replace_callback('/(<img[^>]*>){(\w+=[^}]+)}/', function ($match) {
             $img = $match[1];
@@ -36,6 +37,8 @@ class Markdown
             return str_replace('<img', '<img ' . implode(' ', $values), $img);
         }, $html);
 
+
+
         // Reemplazar párrafos con estilos
         $html = preg_replace('/<p>{\s*style=([^}]*)\s*}/', "<p style='$1'>", $html);
 
@@ -47,12 +50,15 @@ class Markdown
         // Expresión regular para encontrar URLs con dominios específicos
         $patron = '/(<a[^>]+>)?\b(https?:\/\/)?(www\.)?(tseyor\.(?:org|com))\b(\/[\?&A-Za-z\-\=\/0-9\.]*)?(<\/a>)?/ui';
         // Reemplazar las URLs encontradas por enlaces clicables si no están en formato html
+        if(false)
         $html = preg_replace_callback($patron, function ($match) {
+            dd($match);
             $path = $match[5] ?? "";
             if ($path == "/")
                 $path = "";
             return '<a target="_blank" href="https://tseyor.org' . $path . '">tseyor.org' . $path . '</a>';
         }, $html);
+
         // si enlace está partido:
         // $html = preg_replace("$<a href=.*tseyor.</[^>]+>.*(org|com)</.*>$", '<a target="_blank" href="https://tseyor.org">tseyor.org</a>', $html);
 

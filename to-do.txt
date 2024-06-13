@@ -1,3 +1,12 @@
+HACIENDA
+
+
+MARKDOWN
+-¿como es las notas al pie? arreglar el formato en entradas:
+    -40 años de contactismo
+    -id 35
+
+
 ENTRADAS/BLOG
 -Hacer las entradas searchables con SCOUT
 -mostrar resultados de busqueda con subrayado
