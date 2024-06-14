@@ -92,7 +92,7 @@ class ImagenesController extends Controller
         $cacheFullPath = Storage::disk('local')->path($cacheFilePath);
 
         // check if image exists in cache
-        if (false&&Storage::disk('local')->exists($cacheFilePath)) {
+        if (Storage::disk('local')->exists($cacheFilePath)) {
             $originalModifiedTime = filemtime($imageFullPath);
             $cacheModifiedTime = filemtime($cacheFullPath);
 
