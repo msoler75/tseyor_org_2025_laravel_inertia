@@ -10,6 +10,8 @@ use Intervention\Image\Drivers\Gd\Driver;
 use App\Pigmalion\DiskUtil;
 use Illuminate\Support\Facades\Cache;
 
+
+
 class ImagenesController extends Controller
 {
 
@@ -70,7 +72,7 @@ class ImagenesController extends Controller
     {
         list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($rutaImagen);
         $imageFullPath = Storage::disk($disk)->path($ruta);
-         // dd($rutaImagen, $disk, $ruta, $imageFullPath);
+        // dd($rutaImagen, $disk, $ruta, $imageFullPath);
 
         $mime = File::mimeType($imageFullPath);
 
@@ -79,12 +81,6 @@ class ImagenesController extends Controller
         if (empty($params)) {
             return response()->file($imageFullPath, ['Content-Type' => $mime]);
         }
-
-        // create image manager with desired driver
-        $manager = new ImageManager(new Driver());
-
-        // read image from file system
-        $image = $manager->read($imageFullPath);
 
         $format = "webp";
         $quality = 70;
@@ -105,32 +101,16 @@ class ImagenesController extends Controller
             }
         }
 
+        // create image manager with desired driver
+        $manager = new ImageManager(new Driver());
+
+        // read image from file system
+        $image = $manager->read($imageFullPath);
+
         // Apply image transformations
-        foreach ($params as $p => $value) {
-            switch ($p) {
-                case "w":
-                    $image->scale(width: $value);
-                    break;
+        $this->transformarImagen($image, $params);
 
-                case "h":
-                    $image->scale(height: $value);
-                    break;
-
-                case "mw": // max width
-                        if($image->width() > $value)
-                        $image->scale(width: $value);
-                        break;
-
-                case "mh": // max height
-                    if($image->height() > $value)
-                    $image->scale(height: $value);
-                    break;
-
-                case "fmt":
-                    $format = $value;
-                    break;
-            }
-        }
+        $format = $params["fmt"] ?? "webp";
 
 
         // browser accept webp format?
@@ -151,5 +131,67 @@ class ImagenesController extends Controller
         $image->save($cacheFullPath);
 
         return response()->file(storage_path('app/' . $cacheFilePath), ['Content-Type' => $mime]);
+    }
+
+
+
+
+
+
+    private function transformarImagen($image, array $params)
+    {
+        // Obtener dimensiones actuales de la imagen
+        $currentWidth = $image->width();
+        $currentHeight = $image->height();
+
+
+        // Variables para almacenar las dimensiones deseadas
+        $width = $params['w'] ?? null;
+        $height = $params['h'] ?? null;
+        $maxWidth = $params['mw'] ?? null;
+        $maxHeight = $params['mh'] ?? null;
+
+        $cover = array_key_exists('cover', $params);
+        $crop = array_key_exists('crop', $params);
+        $contain = array_key_exists('contain', $params);
+
+
+        // Si se especifica 'cover' y dimensiones están definidas
+        if ($cover && ($width || $height)) {
+            if ($width == null) $width = $currentWidth;
+            if ($height == null) $height = $currentHeight;
+            $image->cover($width, $height);
+        } else if ($crop && ($width || $height)) {
+            if ($width == null) $width = $currentWidth;
+            if ($height == null) $height = $currentHeight;
+            $image->crop($width, $height);
+        } else   if ($contain && ($width || $height)) {
+            if ($width == null) $width = $currentWidth;
+            if ($height == null) $height = $currentHeight;
+            $image->contain($width, $height);
+        } else {
+            // Redimensionar manteniendo el aspect ratio sin 'cover'
+            if ($width || $height) {
+                $image = $image->resize($width, $height, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+            }
+
+            // Aplicar redimensionado máximo si es necesario
+            if ($maxWidth || $maxHeight) {
+                if ($maxWidth && $image->width() > $maxWidth) {
+                    $image = $image->resize($maxWidth, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                }
+
+                if ($maxHeight && $image->height() > $maxHeight) {
+                    $image = $image->resize(null, $maxHeight, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                }
+            }
+        }
     }
 }
