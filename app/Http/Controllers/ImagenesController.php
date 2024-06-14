@@ -92,7 +92,7 @@ class ImagenesController extends Controller
         $cacheFullPath = Storage::disk('local')->path($cacheFilePath);
 
         // check if image exists in cache
-        if (Storage::disk('local')->exists($cacheFilePath)) {
+        if (false&&Storage::disk('local')->exists($cacheFilePath)) {
             $originalModifiedTime = filemtime($imageFullPath);
             $cacheModifiedTime = filemtime($cacheFullPath);
 
@@ -175,24 +175,17 @@ class ImagenesController extends Controller
         } else {
             // Redimensionar manteniendo el aspect ratio sin 'cover'
             if ($width || $height) {
-                $image = $image->resize($width, $height, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
+                $image = $image->scale($width, $height);
             }
 
             // Aplicar redimensionado máximo si es necesario
             if ($maxWidth || $maxHeight) {
                 if ($maxWidth && $image->width() > $maxWidth) {
-                    $image = $image->resize($maxWidth, null, function ($constraint) {
-                        $constraint->aspectRatio();
-                    });
+                    $image = $image->scale($maxWidth, null);
                 }
 
                 if ($maxHeight && $image->height() > $maxHeight) {
-                    $image = $image->resize(null, $maxHeight, function ($constraint) {
-                        $constraint->aspectRatio();
-                    });
+                    $image = $image->scale(null, $maxHeight);
                 }
             }
         }
