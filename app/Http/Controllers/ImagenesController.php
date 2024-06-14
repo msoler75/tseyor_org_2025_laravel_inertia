@@ -151,6 +151,9 @@ class ImagenesController extends Controller
         $maxWidth = $params['mw'] ?? null;
         $maxHeight = $params['mh'] ?? null;
 
+        if($width=="auto") $width = null;
+        if($height=="auto") $height = null;
+
         $cover = array_key_exists('cover', $params);
         $crop = array_key_exists('crop', $params);
         $contain = array_key_exists('contain', $params);
