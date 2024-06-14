@@ -11,7 +11,7 @@
         <div class="flex overflow-x-auto">
             <div v-for="url of images" :key="url" class="border-4 border-transparent flex-shrink-0 cursor-pointer"
                 :title="url" :class="url == selected ? '!border-orange-500' : ''" @click="selected = url">
-                <img :src="url.startsWith('/')?url+'?mh=150':url" style="height:150px"/>
+                <img :src="url.startsWith('/')?url+'?h=150':url" style="height:150px"/>
             </div>
             <div @click="modalSubirImage = true" title="Añadir una imagen"
                 class="flex justify-center items-center w-[150px] h-[150px] border-gray-700 dark:border-gray-300  border opacity-80 hover:opacity-100 bg-gray-500 cursor-pointer flex-shrink-0">
