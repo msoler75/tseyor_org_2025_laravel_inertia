@@ -43,12 +43,12 @@ const props = defineProps({
         default: ''
     },
     imageWidth: {
-        type: Number,
+        type: [Number, String],
         default: 300
     },
     imageHeight: {
         type: [Number, String],
-        default: 'auto'
+        default: 300
     },
     title: String,
     href: String,
