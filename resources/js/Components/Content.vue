@@ -49,7 +49,8 @@ function parseHTML(textoHTML) {
         const obj = {
             tagName: textNode ? null : node.tagName.toLowerCase(),
             textContent: node.textContent,
-        };
+            node
+        }
 
         if (!textNode) {
 
@@ -72,21 +73,19 @@ function parseHTML(textoHTML) {
         }
 
         // Parsea los hijos recursivamente
-        let previousHasImage = false
         for (let i = 0; i < node.childNodes.length; i++) {
             const child = node.childNodes[i];
             if (child.nodeType === 1) {
                 const objchild = parseNode(child)
                 obj.children.push(objchild);
-                previousHasImage = objchild.tagName=="img"
-                if(previousHasImage) obj.attributes['has-image'] = ''
+                if(objchild.tagName=="img"&&!objchild.node.src.match(/guias/)) // si es una imagen de los guias, no cuenta
+                    obj.attributes['has-image'] = ''
             } else if (child.nodeType === 3 && child.textContent) {
                 // Agrega el texto del nodo de texto
                 obj.children.push({
                     tagName: null,
                     textContent: child.textContent,
                 });
-                previousHasImage = false
             }
         }
 
@@ -173,6 +172,10 @@ function handlePreview(img) {
 
 
 <style scoped>
+
+:deep(table) p {
+    @apply my-0;
+}
 
 :deep(.is-image) {
     @apply max-w-full mx-auto mb-3 mt-[2em];
