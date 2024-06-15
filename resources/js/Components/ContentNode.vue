@@ -1,6 +1,5 @@
 <template>
         <component v-if="node.tagName" :is="tag" v-bind="node.attributes">
-            <!-- Renderiza los hijos recursivamente -->
             <template v-for="element of node.children">
                 <ContentNode :node="element" :use-image="useImage" />
             </template>

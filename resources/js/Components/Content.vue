@@ -72,16 +72,21 @@ function parseHTML(textoHTML) {
         }
 
         // Parsea los hijos recursivamente
+        let previousHasImage = false
         for (let i = 0; i < node.childNodes.length; i++) {
             const child = node.childNodes[i];
             if (child.nodeType === 1) {
-                obj.children.push(parseNode(child));
+                const objchild = parseNode(child)
+                obj.children.push(objchild);
+                previousHasImage = objchild.tagName=="img"
+                if(previousHasImage) obj.attributes['has-image'] = ''
             } else if (child.nodeType === 3 && child.textContent) {
                 // Agrega el texto del nodo de texto
                 obj.children.push({
                     tagName: null,
                     textContent: child.textContent,
                 });
+                previousHasImage = false
             }
         }
 
@@ -172,6 +177,25 @@ function handlePreview(img) {
 :deep(.is-image) {
     @apply max-w-full mx-auto mb-3 mt-[2em];
     cursor: pointer;
+}
+
+:deep(.is-image) + br {
+    display: none;
+}
+
+
+
+:deep(p[has-image]) + p[style*=center]:not([has-image]),
+:deep(.is-image) + br + em,
+:deep(.is-image) + em{
+    font-size:90%;
+    transform: translateY(-.6rem);
+    display: inline-block;
+}
+
+:deep(p[has-image]) + p[style*=center]:not([has-image]) {
+    transform: translateY(-1rem);
+    display: block;
 }
 
 
