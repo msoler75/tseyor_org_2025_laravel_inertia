@@ -167,6 +167,7 @@ Route::get('filosofia', function () {
 Route::get('cursos', [CursosController::class, 'index'])->name('cursos');
 
 Route::get('radio', [RadioController::class, 'index'])->name('radio');
+Route::get('radio/{emisora}', [RadioController::class, 'emisora'])->name('radio.emisora');
 
 Route::get('inscripcion', function () {
     return Inertia::render('Cursos/NuevaInscripcion', [])

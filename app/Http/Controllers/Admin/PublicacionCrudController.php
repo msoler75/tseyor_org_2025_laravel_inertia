@@ -101,6 +101,7 @@ class PublicacionCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
+            'slug' => 'unique:publicaciones,slug',
             'descripcion' => 'max:400',
         ]);
 

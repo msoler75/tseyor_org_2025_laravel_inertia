@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => env('LOG_CHANNEL', 'daily'),
 
     /*
     |--------------------------------------------------------------------------
@@ -58,7 +58,7 @@ return [
             'path' => storage_path('logs/jobs.log'),
             'level' => 'info',
         ],
-        
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

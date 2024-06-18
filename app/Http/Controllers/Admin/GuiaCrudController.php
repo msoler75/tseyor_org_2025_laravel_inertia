@@ -67,6 +67,7 @@ class GuiaCrudController extends CrudController
     {
          CRUD::setValidation([
             'nombre' => 'required|min:2',
+            'slug' => 'unique:guias,slug',
             'descripcion' => 'required|max:65000',
             'imagen' =>'required'
         ]);

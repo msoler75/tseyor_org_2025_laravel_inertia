@@ -102,6 +102,7 @@ class EntradaCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
+            'slug' => 'unique:entradas,slug',
             'descripcion' => 'max:400',
             'texto' => 'required',
         ]);

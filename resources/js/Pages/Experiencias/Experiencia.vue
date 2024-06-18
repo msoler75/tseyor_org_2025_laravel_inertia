@@ -16,7 +16,7 @@
                 </div>
             </div>
 
-            <Content :content="experiencia.texto" class="pb-12 mx-auto" />
+            <Content :content="experiencia.texto" class="mx-auto" />
 
             <div v-if="experiencia.archivo" class="flex justify-end">
                 <a class="btn btn-xs mr-5 flex gap-3 items-center w-fit" download :href="getSrcUrl(experiencia.archivo)" title="nombreArchivo">Descargar archivo adjunto</a>

@@ -29,6 +29,7 @@ class StoreComunicadoRequest extends FormRequest
     {
         return [
             'titulo' => 'required|min:7|max:255',
+            'slug' => 'unique:comunicados,slug',
             'texto' => 'required',
             'numero' => 'required|numeric|min:1|max:99999',
             'categoria' => 'required',

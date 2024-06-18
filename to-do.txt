@@ -1,4 +1,19 @@
+RADIO TSEYOR
+-importador de audios desde comunicados y biblioteca
+-radio play
+
+PDF
+-lo que he hecho para visualizar los pies de foto en <Content> no se ve igual en la generación de pdf
+
+DISKUTIL
+-EnsureDirExists a veces nos pasan un dir relativo (/almacen) y a veces una ruta física /home/...
+
+
+
 HACIENDA
+
+UI/UX
+-Barra top con <Back> que sea float al scrolldown
 
 
 MARKDOWN

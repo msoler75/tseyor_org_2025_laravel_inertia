@@ -5,15 +5,15 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class RadioItem extends Model
+class RadioItem extends ContenidoBaseModel
 {
     use CrudTrait;
-    use \Illuminate\Database\Eloquent\SoftDeletes;
 
     protected $table = "radio";
 
     protected $fillable = [
-        'audio',
+        'titulo',
+        'url',
         'duracion',
         'categoria',
         'desactivado'

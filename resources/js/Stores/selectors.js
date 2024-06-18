@@ -3,7 +3,8 @@ const state = reactive({
   archivosVista: "normal",
   vistaComunicados: "",
   mostrarPermisos: false,
-  developerMode: false
+  developerMode: false,
+  emisoraRadio: null
 });
 
 export default function useSelectors() {

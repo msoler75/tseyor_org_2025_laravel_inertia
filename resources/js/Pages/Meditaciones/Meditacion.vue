@@ -17,7 +17,7 @@
                 </div>
             </div>
 
-            <Content :content="meditacion.texto" class="pb-12 mx-auto" />
+            <Content :content="meditacion.texto" class="mx-auto" />
 
         </div>
 

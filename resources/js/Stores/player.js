@@ -98,6 +98,7 @@ const player = reactive({
   stepBackward() {
     this.audio.currentTime -= 30;
   },
+
 });
 
 function onError(ev) {

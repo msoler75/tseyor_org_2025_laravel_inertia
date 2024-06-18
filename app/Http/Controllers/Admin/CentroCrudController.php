@@ -88,6 +88,7 @@ class CentroCrudController extends CrudController
     {
         CRUD::setValidation([
             'nombre' => 'required|min:8',
+            'slug' => 'unique:centros,slug',
             'descripcion' => 'required|max:400',
             'imagen' => 'required'
         ]);

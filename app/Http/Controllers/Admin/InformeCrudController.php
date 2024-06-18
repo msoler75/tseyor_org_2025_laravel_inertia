@@ -126,6 +126,7 @@ class InformeCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
+            'slug' => 'unique:informes,slug',
             'descripcion' => 'max:400',
             // 'audios' => ValidUploadMultiple::field()->file('max:20000'),
         ]);
@@ -221,15 +222,15 @@ class InformeCrudController extends CrudController
 
 
         /* CRUD::field('audios')->type('upload_multiple')->attributes(['accept'=>'audio/*'])->withFiles([
-            'disk' => 'public', 
+            'disk' => 'public',
             'path' => 'uploads'
         ]);
         CRUD::field('archivos')->type('upload_multiple')->withFiles([
-            'disk' => 'public', 
+            'disk' => 'public',
             'path' => 'uploads',
     ]); */
 
-        
+
             CRUD::field([
             'name' => 'archivos',
             'label' => 'Archivos adjuntos',
@@ -292,7 +293,7 @@ class InformeCrudController extends CrudController
                 if($informe->archivos) {
                     $carpetaArchivos = "$folder/archivos";
                     Log::info("informe::saved - archivos carpeta " . $carpetaArchivos);
-                    if($informe->guardarArchivos($carpetaArchivos)) 
+                    if($informe->guardarArchivos($carpetaArchivos))
                         $informe->saveQuietly();
                 }
 

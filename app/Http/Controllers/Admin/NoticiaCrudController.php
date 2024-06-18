@@ -106,6 +106,7 @@ class NoticiaCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
+            'slug' => 'unique:noticias,slug',
             'descripcion' => 'max:400',
             'texto' => 'required|max:65000',
         ]);
