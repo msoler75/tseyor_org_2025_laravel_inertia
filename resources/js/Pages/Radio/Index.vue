@@ -1,10 +1,15 @@
 <template>
-    <div class="container mx-auto py-20 text-center">
-        <Hero title="Radio Tseyor">
+     <div class="mx-auto pb-20 text-center">
+        <Hero title="" :srcImage="isDark?'/almacen/medios/logos/radio_tseyor_dark.png':'/almacen/medios/logos/radio_tseyor.png'"
+        class="!py-8 lg:!py-20"
+        textClass="p-7 gap-4">
 
-            <div class="flex flex-wrap gap-3 justify-center items-center">
-                <Link class="btn btn-primary" v-for="emisora of emisoras" :key="emisora"
-                    :href="route('radio.emisora', emisora)">{{ emisora }}</Link>
+        <h3 class="text-center">Elige una emisora:</h3>
+
+        <div class="flex flex-wrap gap-3 justify-center w-full flex-shrink-0">
+                <div v-for="emisora of emisoras" :key="emisora" class="bg-base-100 rounded-lg shadow hover:bg-primary transition duration-200">
+                    <Link class="p-4 block" :href="route('radio.emisora', emisora)">{{ emisora }}</Link>
+                </div>
             </div>
 
         </Hero>
@@ -19,7 +24,9 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import useSelectors from '@/Stores/selectors'
+import { useDark } from "@vueuse/core"
 
+const isDark = useDark();
 const selectors = useSelectors()
 
 defineOptions({ layout: AppLayout })
