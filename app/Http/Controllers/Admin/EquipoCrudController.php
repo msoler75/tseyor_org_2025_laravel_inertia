@@ -96,6 +96,7 @@ class EquipoCrudController extends CrudController
     {
         CRUD::setValidation([
             'nombre' => 'required|min:8',
+            'slug' => 'unique:equipos,slug',
             'descripcion' => 'required|max:400',
             'anuncio' => 'max:400',
             'informacion' => 'max:400',

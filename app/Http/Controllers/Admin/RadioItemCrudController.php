@@ -28,7 +28,7 @@ class RadioItemCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\RadioItem::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/radio-item');
-        CRUD::setEntityNameStrings('audio', 'Listado Radio Tseyor');
+        CRUD::setEntityNameStrings('Radio item', 'Listado Radio Tseyor');
     }
 
     /**
@@ -46,11 +46,13 @@ class RadioItemCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
-        CRUD::column('Archivo');
+        CRUD::column('titulo');
+
+        CRUD::column('categoria');
 
         CRUD::column('duracion');
 
-        CRUD::column('desactivado')->type("check");
+        CRUD::column('anulado')->type("check");
     }
 
     /**
@@ -62,7 +64,8 @@ class RadioItemCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            'audio' => 'required',
+            'titulo' => 'required',
+            'url' => 'required',
             'duracion' => 'required',
             'categoria' => 'required'
         ]);
@@ -73,7 +76,9 @@ class RadioItemCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-         CRUD::field('audio')->type('text')->hint('URL del archivo de audio');
+         CRUD::field('titulo')->type('text');
+
+         CRUD::field('url')->type('text')->hint('URL del archivo de audio');
 
         CRUD::field('duracion')->type('text')->wrapper([
             'class' => 'form-group col-md-3'
@@ -84,7 +89,7 @@ class RadioItemCrudController extends CrudController
             'name' => 'categoria',
             'label' => "Categoría",
             'type' => 'select_from_array',
-            'options' => ['Comunicados' => 'Comunicados', 'Talleres y meditaciones'=>'Talleres y meditaciones', 'Entrevistas y mesas redondas'=>'Entrevistas y mesas redondas'],
+            'options' => ['Comunicados' => 'Comunicados', 'Talleres y meditaciones'=>'Talleres y meditaciones', 'Entrevistas y mesas redondas'=>'Entrevistas y mesas redondas', 'Jingles'=>'Jingles'],
             'allows_null' => false,
             'default' => '0',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;

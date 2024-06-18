@@ -101,6 +101,7 @@ class MeditacionCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
+            'slug' => 'unique:meditaciones,slug',
             'descripcion' => 'max:400',
         ]);
 

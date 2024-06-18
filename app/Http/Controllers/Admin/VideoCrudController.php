@@ -73,6 +73,7 @@ class VideoCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:2',
+            'slug' => 'unique:videos,slug',
         ]);
         // CRUD::setFromDb(); // set fields from db columns.
 

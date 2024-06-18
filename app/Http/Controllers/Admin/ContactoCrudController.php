@@ -94,6 +94,7 @@ class ContactoCrudController extends CrudController
     {
         CRUD::setValidation([
             'nombre' => 'required',
+            'slug' => 'unique:contactos,slug',
             'imagen' => 'required',
             'pais' => 'required',
             'provincia' => 'required',

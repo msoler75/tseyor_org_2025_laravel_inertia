@@ -111,7 +111,7 @@ class PaginaCrudController extends CrudController
             'titulo' => 'required|min:3',
             'descripcion' => 'max:400',
             // 'texto' => 'required',
-            'ruta' => 'max:255',
+            'ruta' => 'max:255|unique:paginas,ruta',
             'ruta_regreso' => 'max:255',
             'regreso_nombre' => 'max:64'
         ]);

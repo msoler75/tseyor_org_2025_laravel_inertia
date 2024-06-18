@@ -65,6 +65,7 @@ class SalaCrudController extends CrudController
     {
         CRUD::setValidation([
             'nombre' => 'required',
+            'slug' => 'unique:salas,slug',
             'enlace' => 'required',
         ]);
         CRUD::setFromDb(); // set fields from db columns.

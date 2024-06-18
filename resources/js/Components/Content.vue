@@ -78,7 +78,7 @@ function parseHTML(textoHTML) {
             if (child.nodeType === 1) {
                 const objchild = parseNode(child)
                 obj.children.push(objchild);
-                if(objchild.tagName=="img"&&!objchild.node.src.match(/guias/)) // si es una imagen de los guias, no cuenta
+                if(objchild.tagName=="img"&&!objchild.node.src.match(/guias|sello_tseyor/)) // si es una imagen de los guias, no cuenta
                     obj.attributes['has-image'] = ''
             } else if (child.nodeType === 3 && child.textContent) {
                 // Agrega el texto del nodo de texto

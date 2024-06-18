@@ -15,12 +15,12 @@
                     <TimeAgo :date="tutorial.updated_at" :includeTime="false" />
                 </div>
             </div>
-            
+
             <div v-if="tutorial.video" class="flex justify-center aspect-w-16 aspect-h-9 mb-12">
                 <iframe :src="getEmbedYoutube(tutorial.video)" frameborder="0" allowfullscreen></iframe>
             </div>
 
-            <Content :content="tutorial.texto" format="md" class="pb-12 mx-auto" />
+            <Content :content="tutorial.texto" format="md" class="mx-auto" />
 
         </div>
 
