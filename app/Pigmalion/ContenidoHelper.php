@@ -178,12 +178,13 @@ class ContenidoHelper
      **/
     public static function moverImagenesContenido($objeto)
     {
+        $cambio = false;
+        $desde = ContenidoBaseModel::getCarpetaMediosTemp();
+        $hacia = $objeto->getCarpetaMedios();
+
         Log::info("moverImagenesContenido " . ($objeto->texto ?? ''));
         if ($objeto->texto ?? '') {
             $texto = $objeto->texto;
-
-            $desde = ContenidoBaseModel::getCarpetaMediosTemp();
-            $hacia = $objeto->getCarpetaMedios();
 
             $imagenes_movidas = \App\Pigmalion\Markdown::moverImagenes($texto, $desde, $hacia);
             if (count($imagenes_movidas)) {
@@ -197,11 +198,37 @@ class ContenidoHelper
                     }
                 }
 
-                // si ha habido cambios retornamos true
-                return true;
+                $cambio = true;
             }
         }
-        return false;
+
+        $imagen = $objeto->imagen;
+        if ($imagen && strpos($imagen, '/temp/') !== false) {
+
+            // renombramos la imagen
+            $nuevoNombre = $hacia . "/" . basename($imagen);
+
+            $disk = 'public';
+            Log::info("move1: $disk: $imagen -> $nuevoNombre");
+
+            list($disk, $origen) = DiskUtil::obtenerDiscoRuta($imagen);
+            list($disk, $destino) = DiskUtil::obtenerDiscoRuta($nuevoNombre);
+
+            Log::info("move2: $disk: $origen -> $destino");
+
+            // movemos la imagen a la nueva carpeta
+            if (Storage::disk($disk)->copy($origen,  $destino)) {
+                Storage::disk($disk)->delete($origen);
+            }
+
+            $objeto->imagen = $nuevoNombre;
+
+            $cambio = true;
+
+        }
+
+        // si ha habido cambios retornamos true
+        return $cambio;
     }
 
 
