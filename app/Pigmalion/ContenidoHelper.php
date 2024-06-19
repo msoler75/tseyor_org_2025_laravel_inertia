@@ -15,7 +15,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class ContenidoHelper
 {
 
-    public static function generarTeaser($texto, $longitudMaxima = 400) {
+    public static function generarTeaser($texto, $longitudMaxima = 400)
+    {
         // Verificar si la longitud del texto es mayor que la longitud máxima permitida
         if (strlen($texto) > $longitudMaxima) {
             // Recortar el texto a la longitud máxima y agregar puntos suspensivos al final
@@ -224,7 +225,6 @@ class ContenidoHelper
             $objeto->imagen = $nuevoNombre;
 
             $cambio = true;
-
         }
 
         // si ha habido cambios retornamos true
@@ -253,7 +253,7 @@ class ContenidoHelper
         // dd(dirname($pdf_full_path));
         DiskUtil::ensureDirExists(dirname($pdf_full_path));
 
-        if (file_exists($pdf_full_path) && filemtime($pdf_full_path) > $contenido->updated_at->getTimestamp()) {
+        if (false && file_exists($pdf_full_path) && filemtime($pdf_full_path) > $contenido->updated_at->getTimestamp()) {
             return response()->file($pdf_full_path, $headers);
         }
 
@@ -271,6 +271,56 @@ class ContenidoHelper
 
 
         $html = \App\Pigmalion\Markdown::toHtml($texto);
+
+        $startP = strpos($html, "<p");
+        $previousHasImage = false;
+        $previousStartP = 0;
+        while ($startP !== false) {
+            $endP = strpos($html, "</p>", $startP);
+            $part = substr($html, $startP, $endP - $startP + 4);
+            // echo "($startP, $endP) ".str_replace("<", "&lt;", $part)."<hr>";
+            if (strpos($part, "<img") !== false) {
+                $partReplace = "<p has-image " . substr($part, 2);
+                $html = str_replace($part, $partReplace, $html);
+                $part = $partReplace;
+                $thisHasImage = true;
+            } else
+                $thisHasImage = false;
+
+
+            // aquí comprobamos si este párrafo p, además de tener una imagen, tiene texto <em>
+            if($thisHasImage && preg_match("/<em>(.*)<\/em>/", $part, $matches)) {
+                $nota = $matches[1];
+                preg_match("/<img [^>]+>/", $part, $matches);
+                $img = $matches[0];
+                $html = str_replace($part, "<p has-image>$img</p><p image-note>$nota</p>", $html);
+                $thisHasImage = false; // borramos el flag
+            }
+
+            // genera un element figure con la imagen y el pie de foto
+            else if ($previousHasImage && !$thisHasImage) {
+                $endTag = strpos($part, ">");
+                $ppart = substr($part, 0, $endTag);
+                if (preg_match('/style=.+text-align:\s*center/', $ppart)) {
+                    $bothParts = substr($html, $previousStartP, $endP - $previousStartP + 4);
+                    // si termina en < lo quitamos
+                    if(substr($bothParts, -1) === "<")
+                        $bothParts = substr($bothParts, 0, -1);
+                    preg_match("/<img [^>]+>/", $bothParts, $matches);
+                    $img = $matches[0];
+                    preg_match("/<p[^>]*>(.*)<\/p>/", $part, $matches);
+                    $nota = $matches[1];
+                    // echo str_replace("<", "&lt;", $bothParts)."<hr>";
+                    $html = str_replace($bothParts, "<p has-image>$img</p><p image-note>$nota</p>", $html);
+                }
+            }
+
+            $previousHasImage = $thisHasImage;
+            $previousStartP = $startP;
+            $startP = strpos($html, "<p", $startP + 1);
+        }
+
+        // dd($html);
 
         // para que procese las imagenes en el pdf:
         // método 1: reemplazar todas las imagenes sus rutas relativas con rutas absolutas de disco (NO FUNCIONA)
@@ -298,7 +348,7 @@ class ContenidoHelper
             // $prefix = ""; // "file://";
             // $r = '<img' . $matches[1] . 'src="' . $prefix.$fullpath .'"'; // método 1
             // dd($fullpath);
-            if(!$fullpath) {
+            if (!$fullpath) {
                 return $matches[0];
             }
             $r = '<img' . $matches[1] . 'src="data:image/png;base64,' . base64_encode(file_get_contents($fullpath)) . '"'; // método 2

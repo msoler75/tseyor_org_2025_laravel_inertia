@@ -63,6 +63,41 @@
             content: counter(page);
         }
 
+
+        /* pie de nota de imagenes */
+
+        img+br+em,
+        img+em,
+        p[image-note] {
+            display: block;
+            font-size: 90%;
+            margin-top: -2.1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        img+br+em,
+        img+em {
+            margin-top: -1.5rem;
+        }
+
+        p[has-image] {
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        p img {
+            display: inline-block;
+            margin: 0 auto;
+            margin-bottom: 25px;
+            max-height: 700px;
+        }
+
+        p[has-note] {
+            text-align: center;
+            font-size: 85%;
+        }
     </style>
 </head>
 
