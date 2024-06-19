@@ -22,6 +22,7 @@ class LibroCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -106,13 +107,9 @@ class LibroCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-        $folderImages = "/almacen/medios/libros/portadas";
+        $folderImages = $this->getMediaFolder();
 
         $folderPDF = "medios/libros/pdf"; // para upload no se pone 'almacen' porque es el disco 'public'
-
-        DiskUtil::ensureDirExists($folderImages);
-
-        DiskUtil::ensureDirExists("/almacen/$folderImages");
 
         CRUD::field('categoria')->hint('Monografías, Obras de referencia, Cuentos, Talleres... Se pueden poner varias categorías separadas por coma.');
 
