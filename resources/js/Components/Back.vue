@@ -1,6 +1,6 @@
 <template>
     <Link :href="enlace" class="flex h-fit gap-2 text-sm items-center hover:underline select-none"
-    :class="nav.scrollY>90?'fixed bg-base-100 w-screen p-2 shadow top-[60px] md:top-[64px] xl:top-[68px] lg:w-fit lg:rounded-br-lg left-0 z-50':''"
+    :class="nav.scrollY>90?'fixed bg-base-100 w-screen p-2 shadow top-[60px] md:top-[64px] xl:top-[68px] md:w-fit md:rounded-br-lg left-0 z-50':''"
     >
     <Icon icon="ph:arrow-left" />
     <slot />
