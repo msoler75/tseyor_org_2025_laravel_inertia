@@ -53,21 +53,25 @@ class DiskUtil {
         return realpath(Storage::disk($disk)->path($ruta));
     }
 
+    /**
+     * $dir A veces es una ruta absoluta, a veces una ruta de '/almacen/...
+     */
     public static function ensureDirExists($dir) {
-        // removemos la parte de ruta de la app de $dir
         $home = base_path();
-        $rutaOrig = str_replace($home, '', $dir);
-        $rutaOrig = str_replace("/storage/app/public/", "/almacen/", $rutaOrig);
-        list($disk, $ruta) = self::obtenerDiscoRuta($rutaOrig);
-        // sdd($dir, $rutaOrig, $disk, $ruta);
+        if(strpos($dir, $home)===0) {
+            // es una ruta física
+            if(!file_exists($dir))
+                mkdir($dir, 0777, true);
+            return;
+        }
+
+        // es una ruta tipo '/almacen'
+        list($disk, $ruta) = self::obtenerDiscoRuta($dir);
         // Verificar si la carpeta existe en el disco 'public'
         if (!Storage::disk($disk)->exists($ruta)) {
             // Crear la carpeta en el disco 'public'
             Storage::disk($disk)->makeDirectory($ruta);
         }
-        /*dd($dir);
-        if(!file_exists($dir))
-            mkdir($dir, 0777, true);*/
     }
 
     public static function normalizePath($ruta) {
