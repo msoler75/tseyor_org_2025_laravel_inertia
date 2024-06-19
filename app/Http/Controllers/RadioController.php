@@ -30,8 +30,8 @@ class RadioController extends Controller
         DB::beginTransaction();
 
         try {
-
             $emisoralwr = strtolower($emisora);
+            $emisoralwr = filter_var($emisoralwr, FILTER_SANITIZE_ADD_SLASHES); // para evitar inyecciones de codigo
             $setting_name = 'radio_' . $emisoralwr;
             $setting = Setting::where('name', $setting_name)->first();
 
