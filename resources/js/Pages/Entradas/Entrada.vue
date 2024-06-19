@@ -25,8 +25,7 @@
         </div>
 
 
-        <div class="mt-12 grid gap-8 mb-12"
-            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(32rem, 1fr))` }">
+        <div class="mt-12 grid gap-8 mb-12 grid-cols-1 lg:grid-cols-2">
             <CardContent v-if="anterior" :imageLeft="true" :key="anterior.id" :title="'Anterior: ' + anterior.titulo"
                 :image="anterior.imagen" :href="route('entrada', anterior.slug)" :description="anterior.descripcion"
                 :date="anterior.published_at" imageClass="h-80" />

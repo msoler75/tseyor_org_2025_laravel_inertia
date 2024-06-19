@@ -4,7 +4,7 @@
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Comunicados</Back>
             <AdminPanel modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado" />
-            <a class="btn btn-xs btn-error w-fit flex gap-3" :href="route('comunicado.pdf', comunicado.slug)"
+            <a class="btn btn-xs btn-error text-white w-fit flex gap-3" :href="route('comunicado.pdf', comunicado.slug)"
                 target="_blank" title="Descargar PDF">
                 <Icon icon="ph:download-duotone" />PDF
             </a>
@@ -33,8 +33,7 @@
         </div>
 
 
-        <div class="mt-12 grid gap-8 mb-12"
-            :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(32rem, 1fr))` }">
+        <div class="mt-12 grid gap-8 mb-12 grid-cols-1 lg:grid-cols-2">
             <CardContent v-if="anterior" :imageLeft="true" :key="anterior.id" :title="'Anterior: ' + anterior.titulo"
                 :image="anterior.imagen" :href="route('comunicado', anterior.slug)" :description="anterior.descripcion"
                 :date="anterior.published_at" imageClass="h-80" />

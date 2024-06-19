@@ -1,5 +1,7 @@
 <template>
-    <Link :href="enlace" class="flex h-fit gap-2 text-sm items-center hover:underline select-none">
+    <Link :href="enlace" class="flex h-fit gap-2 text-sm items-center hover:underline select-none"
+    :class="nav.scrollY>90?'fixed bg-base-100 w-screen p-2 shadow top-[60px] md:top-[64px] xl:top-[68px] lg:w-fit lg:rounded-br-lg left-0 z-50':''"
+    >
     <Icon icon="ph:arrow-left" />
     <slot />
     </Link>
@@ -13,5 +15,7 @@ const props = defineProps({
 const currentUrl = window.location.href;
 const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
 const enlace = ref(props.href || parentUrl)
+
+const nav = useNav()
 
 </script>

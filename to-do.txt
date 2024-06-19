@@ -1,14 +1,12 @@
+TAB
+-título de pestaña no cambia al navegar entre páginas de la web
+
+
 RADIO TSEYOR
 -importador de audios desde comunicados y biblioteca
--radio play
 
 PDF
 -lo que he hecho para visualizar los pies de foto en <Content> no se ve igual en la generación de pdf
-
-DISKUTIL
--EnsureDirExists a veces nos pasan un dir relativo (/almacen) y a veces una ruta física /home/...
-
-
 
 HACIENDA
 
@@ -52,10 +50,6 @@ PDF
 BUSQUEDAS COMUNICADOS
 -el texto de busqueda no debe incluir las imagenes.
  -Por ejemplo, ahora si el texto incluye una imagen que es "tatich.jpg" se considera parte del texto del comunicado.
-
-EDITOR
--Cuando se usa editor markdown, creo que no se almacenan los cambios del texto hasta que pulsamos "Cerrar editor markdown".
- -Eso hace que si estás editando en markdown, y guardas, no se guardan los cambios.
 
 CRON
 -hacer un cron con php artisan db:backup para que genere un backup diario
