@@ -16,9 +16,9 @@ const appName = "TSEYOR.org";
 createInertiaApp({
   title: (title) => {
     setTimeout(()=> {
-        console.log('getTitle callback', {title})
-        if(!title)
-            console.log({ 'gettitle h1,h2':document.body.querySelector('h1')})
+        // console.log('getTitle callback', {title})
+        //if(!title)
+          //  console.log({ 'gettitle h1,h2':document.body.querySelector('h1')})
         if(!title)
             title = document.body.querySelector('h1')?.textContent
         if(!title)
