@@ -24,12 +24,6 @@ LISTA DE DISTRIBUCION
 -poner/testar el formulario de suscripción de dreamhost para boletines
 
 
-PDF
--Al generar un PDF de un comunicado queda el enlace roto en el pdf:
-   Núm. 1214, domingo 27 de agosto 2023
-   tseyor.org">tseyor.org
-
-
 BUSQUEDAS COMUNICADOS
 -el texto de busqueda no debe incluir las imagenes.
  -Por ejemplo, ahora si el texto incluye una imagen que es "tatich.jpg" se considera parte del texto del comunicado.

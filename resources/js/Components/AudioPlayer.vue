@@ -69,10 +69,10 @@
                         <!-- <p class="text-lime-600 dark:text-lime-400 text-sm sm:text-base lg:text-sm xl:text-base font-semibold uppercase">
           <abbr title="Episode">Ep.</abbr> 128
         </p> -->
-                        <h2
+                        <p
                             class="text-black dark:text-white text-base sm:text-xl lg:text-base xl:text-xl font-semibold truncate">
                             {{ player.title }}
-                        </h2>
+                        </p>
                         <p
                             class="text-gray-500 dark:text-gray-400 text-base sm:text-lg lg:text-base xl:text-lg font-medium">
                             {{ player.artist }}
