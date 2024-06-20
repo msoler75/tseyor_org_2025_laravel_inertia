@@ -85,9 +85,10 @@ class RadioController extends Controller
                     unset($radio['audio_siguiente']);
                 } else {
                     // buscamos el siguiente de la lista de esta emisora/categoría
+
                     if ($audio_actual)
-                        $audio_actual = RadioItem::whereRaw("LOWER(categoria) LIKE '%$emisoralwr%'")->where("desactivado", 0)->where('id', '>', $audio_actual['id'])->orderBy('id', 'asc')->first();
-                    if (!$audio_actual) $audio_actual = RadioItem::whereRaw("LOWER(categoria) LIKE '%$emisoralwr%'")->where("desactivado", 0)->orderBy('id', 'asc')->first();
+                        $audio_actual = RadioItem::whereRaw("LOWER(categoria) LIKE '%$emisoralwr%'")->whereNull("desactivado")->where('id', '>', $audio_actual['id'])->orderBy('id', 'asc')->first();
+                    if (!$audio_actual) $audio_actual = RadioItem::whereRaw("LOWER(categoria) LIKE '%$emisoralwr%'")->whereNull("desactivado")->orderBy('id', 'asc')->first();
 
                     if (!$audio_actual) {
                         Log::error("No se pudo obtener un nuevo audio de la radio en emisora $emisora");

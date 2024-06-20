@@ -5,8 +5,9 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class RadioItem extends ContenidoBaseModel
+class RadioItem extends Model
 {
+    use \Illuminate\Database\Eloquent\SoftDeletes;
     use CrudTrait;
 
     protected $table = "radio";
@@ -25,4 +26,5 @@ class RadioItem extends ContenidoBaseModel
     public function getArchivoAttribute() {
         return basename($this->audio);
     }
+
 }

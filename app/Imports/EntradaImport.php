@@ -2,9 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Entrada;
 use App\Pigmalion\Markdown;
-use PhpOffice\Math\Math;
 
 class EntradaImport
 {
@@ -13,9 +11,9 @@ class EntradaImport
     {
 
         // borra todas las entradas
-        // Entrada::whereRaw("true")->forceDelete();
+        // Entrada::all()->forceDelete();
 
-        //Entrada::whereRaw("true")->delete();
+        //Entrada::all()->delete();
 
         // $folder = 'd:\tseyor.org\blogs\pueblotseyor';
         $folder = 'd:\tseyor.org\blogs\ong';
