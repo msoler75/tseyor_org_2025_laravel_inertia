@@ -84,7 +84,7 @@ class AudioCrudController extends CrudController
 
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => 'unique:audios,slug',
+            'slug' => [ \Illuminate\Validation\Rule::unique('audios', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'audio' => ValidUpload::field('nullable')->file('mimes:mp3'),
             'enlace' => 'required_without:audio|nullable|url'
         ]);

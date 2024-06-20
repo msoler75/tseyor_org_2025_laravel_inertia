@@ -95,7 +95,7 @@ class EventoCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => 'unique:eventos,slug',
+            'slug' => [ \Illuminate\Validation\Rule::unique('eventos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'required|max:400',
             'texto' => 'required|max:65000'
         ]);

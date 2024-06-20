@@ -27,9 +27,12 @@ class StoreComunicadoRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Obtener el ID del registro actual si está presente
+        $comunicadoId = $this->input('id');
+
         return [
             'titulo' => 'required|min:7|max:255',
-            'slug' => 'unique:comunicados,slug',
+            'slug' => [ \Illuminate\Validation\Rule::unique('comunicados', 'slug')->ignore($comunicadoId) ],
             'texto' => 'required',
             'numero' => 'required|numeric|min:1|max:99999',
             'categoria' => 'required',

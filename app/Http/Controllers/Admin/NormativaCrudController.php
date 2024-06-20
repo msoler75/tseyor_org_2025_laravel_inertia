@@ -95,7 +95,7 @@ class NormativaCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => 'unique:normativas,slug',
+            'slug' => [ \Illuminate\Validation\Rule::unique('normativas', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'required|max:400'
         ]);
         // CRUD::setValidation(EntradaRequest::class);

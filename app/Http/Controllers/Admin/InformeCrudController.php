@@ -126,7 +126,7 @@ class InformeCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => 'unique:informes,slug',
+            'slug' => [ \Illuminate\Validation\Rule::unique('informes', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'max:400',
             // 'audios' => ValidUploadMultiple::field()->file('max:20000'),
         ]);
