@@ -445,14 +445,14 @@
                 <div class="grid grid-cols-3 gap-4 pt-6">
                     <TransitionGroup name="files">
                         <div v-for="item in itemsMostrar" :key="item.ruta"
-                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '')">
+                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : 'bg-base-200')">
                             <div v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100"
                                 :class="esAdministrador || item.puedeLeer ? '' : 'opacity-40 pointer-events-none'">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </div>
-                            <div class="flex flex-col items-center justify-center relative bg-base-200 h-full pt-2">
+                            <div class="flex flex-col items-center justify-center relative h-full pt-2">
                                 <DiskIcon v-if="item.tipo === 'disco'" :url="item.url"
                                     class="cursor-pointer text-8xl mb-4" @click="clickDisk(item, $event)"
                                     :is-link="!embed" />
