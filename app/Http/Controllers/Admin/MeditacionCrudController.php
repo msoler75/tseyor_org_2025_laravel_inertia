@@ -101,7 +101,7 @@ class MeditacionCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => 'unique:meditaciones,slug',
+            'slug' => [ \Illuminate\Validation\Rule::unique('meditaciones', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'max:400',
         ]);
 

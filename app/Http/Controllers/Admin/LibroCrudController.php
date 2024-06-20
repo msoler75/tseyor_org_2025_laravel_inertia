@@ -94,7 +94,7 @@ class LibroCrudController extends CrudController
 
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => 'unique:libros,slug',
+            'slug' => [ \Illuminate\Validation\Rule::unique('libros', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'required|max:2048',
             'imagen' => 'required',
             'pdf' => ValidUpload::field('required')->file('mimes:pdf'),
