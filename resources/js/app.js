@@ -11,11 +11,18 @@ import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
 //import FloatingVue from 'floating-vue'
 
-const appName =
-  window.document.getElementsByTagName("title")[0]?.innerText || "TSEYOR";
+const appName = "TSEYOR.org";
 
 createInertiaApp({
-  title: (title) => `${title} - ${appName}`,
+  title: (title) => {
+    setTimeout(()=> {
+        const curTitle = document.head.querySelector("title[inertia]")
+        if(curTitle) {
+            document.title = curTitle.textContent
+        }
+    }, 100)
+    return `${title} - ${appName}`
+  },
   resolve: (name) =>
     resolvePageComponent(
       `./Pages/${name}.vue`,

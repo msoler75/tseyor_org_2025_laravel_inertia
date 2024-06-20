@@ -7,7 +7,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
 use App\Services\WordImport;
 use App\Models\Noticia;
-
+use Illuminate\Validation\Rule;
 
 /**
  * Class NoticiaCrudController
@@ -106,7 +106,7 @@ class NoticiaCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => 'unique:noticias,slug',
+            'slug' => [ Rule::unique('noticias', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'max:400',
             'texto' => 'required|max:65000',
         ]);

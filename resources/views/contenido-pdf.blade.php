@@ -66,6 +66,7 @@
 
         /* pie de nota de imagenes */
 
+        /* formato posiblemente obsoleto */
         img+br+em,
         img+em,
         p[image-note] {
@@ -80,6 +81,8 @@
         img+em {
             margin-top: -1.5rem;
         }
+
+        /* formato para pie de nota de texto actualizado */
 
         p[has-image] {
             display: block;
