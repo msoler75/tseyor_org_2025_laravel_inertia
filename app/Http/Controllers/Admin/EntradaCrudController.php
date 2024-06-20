@@ -7,7 +7,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
 use App\Services\WordImport;
 use App\Models\Entrada;
-
+use Illuminate\Validation\Rule;
 
 /**
  * Class EntradaCrudController
@@ -100,9 +100,12 @@ class EntradaCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
+         // Obtén el ID del registro actual (solo disponible en la operación de edición)
+        $id = $this->crud->getCurrentEntryId();
+
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => 'unique:entradas,slug',
+            'slug' => [ Rule::unique('entradas', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'max:400',
             'texto' => 'required',
         ]);

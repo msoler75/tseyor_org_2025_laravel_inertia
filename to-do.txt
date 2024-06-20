@@ -5,8 +5,6 @@ TAB
 RADIO TSEYOR
 -importador de audios desde comunicados y biblioteca
 
-PDF
--lo que he hecho para visualizar los pies de foto en <Content> no se ve igual en la generación de pdf
 
 HACIENDA
 

@@ -14,6 +14,8 @@
             <div class="prose mx-auto">
                 <h1>{{ entrada.titulo }}</h1>
 
+                <Head :title="entrada.titulo" />
+
                 <div class="text-neutral text-sm mb-2 flex justify-between">
                     <span />
                     <TimeAgo :date="entrada.published_at" :includeTime="false" />
@@ -41,7 +43,7 @@
 </template>
 
 <script setup>
-
+import { Head } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })

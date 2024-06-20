@@ -101,6 +101,12 @@ router.on('error', (errors) => {
 
 router.on('success', (event) => {
     console.log(`router: success. Successfully made a visit to ${event.detail.page.url}`)
+    /*nextTick(()=>{
+        const curTitle = document.head.querySelector("title[inertia]")
+        if(curTitle) {
+            document.title = curTitle.textContent
+        }
+    })*/
 })
 
 router.on('finish', (event) => {
