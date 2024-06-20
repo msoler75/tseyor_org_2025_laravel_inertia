@@ -1,16 +1,4 @@
-TAB
--título de pestaña no cambia al navegar entre páginas de la web
-
-
-RADIO TSEYOR
--importador de audios desde comunicados y biblioteca
-
-
 HACIENDA
-
-UI/UX
--Barra top con <Back> que sea float al scrolldown
-
 
 MARKDOWN
 -¿como es las notas al pie? arreglar el formato en entradas:
@@ -24,9 +12,6 @@ ENTRADAS/BLOG
 -Crear articulo de creación de casa tseyor puerto rico
 -crear artículo de convivencias en puerto rico (base underkraft)
 
-
-EDITOR-ARCHIVOS
--cuando eliges archivos dentro del explorador de archivos del editor, si quieres copiar o eliminar no se ven las opciones (quedan por debajo)
 
 MUULAR ELECTRÓNICO
 -integrar app de muular electrónico
