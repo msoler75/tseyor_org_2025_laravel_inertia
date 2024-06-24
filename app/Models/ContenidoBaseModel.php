@@ -130,6 +130,6 @@ class ContenidoBaseModel extends Model
     }
 
     public function generatePdf() {
-        return ContenidoHelper::generatePdf($this);
+        return \App\Services\PDFGenerator::generatePdf($this);
     }
 }
