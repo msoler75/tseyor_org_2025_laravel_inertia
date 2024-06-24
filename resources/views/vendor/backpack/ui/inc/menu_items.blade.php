@@ -90,6 +90,8 @@
 <x-backpack::menu-dropdown title="Avanzado" icon="la la-cog">
     <x-backpack::menu-dropdown-item title="Ajustes" icon="la la-sliders-h" :link="backpack_url('setting')" />
     <x-backpack::menu-dropdown-item title="Revisiones" icon="la la-eye" :link="backpack_url('revision')" />
+    <x-backpack::menu-dropdown-item title="Tareas" icon="la la-tasks" :link="backpack_url('job')"  />
+    <x-backpack::menu-dropdown-item title="Tareas fallidas" icon="la la-skull-crossbones" :link="backpack_url('job-failed')"  />
     <x-backpack::menu-dropdown-item title="Logs" icon="la la-file-alt" link="/admin/logs"  />
 </x-backpack::menu-dropdown>
 @endcan
@@ -106,4 +108,3 @@ exit;
 
 
 @endcanany
-

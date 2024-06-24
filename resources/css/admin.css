@@ -107,3 +107,16 @@ form [bp-field-name='permissions'] .checkbox
         left: 240px !important
     }
 }
+
+
+h1 {
+    @apply text-2xl mb-9 font-bold leading-tight;
+}
+
+h2 {
+    @apply text-xl mb-7 font-semibold;
+}
+
+h3 {
+    @apply text-lg mb-5 font-semibold;
+}

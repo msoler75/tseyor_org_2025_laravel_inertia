@@ -280,11 +280,11 @@ class InformeCrudController extends CrudController
                 $carpetaAudios = "/almacen/medios/informes/audios/{$informe->equipo->slug}/$año/{$informe->id}";
                 Log::info("informe::saved - audios carpeta " . $carpetaAudios);
                 if(TESTAR_CONVERTIDOR_AUDIO3) {
-                    $p = new ProcesarAudios($informe, $carpetaAudios);
+                    $p = new ProcesarAudios(Informe::class, $informe->id, $carpetaAudios);
                     $p->handle();
                 }
                 else{
-                    dispatch( new ProcesarAudios($informe, $carpetaAudios));
+                    dispatch( new ProcesarAudios(Informe::class, $informe->id, $carpetaAudios));
                 }
             }
 

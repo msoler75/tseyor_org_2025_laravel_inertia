@@ -5,6 +5,7 @@ namespace App\Services;
 // use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Pigmalion\DiskUtil;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Convierte el audio a un formato mp3 de menos peso
@@ -42,10 +43,10 @@ class AudioConverter
             $kbps = config('services.audio_converter.kbps');
 
             $sourcePath = realpath(DiskUtil::getRealPath($this->source));
-            $destinationPath = DiskUtil::getRealPath($this->destination);
+            $destinationPath = DiskUtil::getPath($this->destination);
 
-            Log::channel('jobs')->info("archivo fuente: ".$sourcePath);
-            Log::channel('jobs')->info("archivo destino: ".$destinationPath);
+            Log::channel('jobs')->info("archivo fuente: " . $sourcePath);
+            Log::channel('jobs')->info("archivo destino: " . $destinationPath);
 
             // Verificar si el archivo existe
             if (!file_exists($sourcePath))
@@ -54,18 +55,36 @@ class AudioConverter
             // Realizar la petición al servidor para convertir el archivo .docx a markdown
             $curl = curl_init();
 
-            Log::channel('jobs')->info("File_exists? $sourcePath ? ".   file_exists($sourcePath));
+            Log::channel('jobs')->info("File_exists? $sourcePath ? " .   file_exists($sourcePath));
 
             /*$postData = [
                 'file' => curl_file_create($sourcePath)
             ];*/
 
+            if (filesize($sourcePath) < 30000) {
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $finfo = finfo_file($finfo, $sourcePath);
 
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $finfo = finfo_file($finfo, $sourcePath);
+                $cFile = new \CURLFile($sourcePath, $finfo, basename($sourcePath));
+                $postData = array("file" => $cFile, "filename" => $cFile->postname);
+            } else {
 
-            $cFile = new \CURLFile($sourcePath, $finfo, basename($sourcePath));
-            $postData = array( "file" => $cFile, "filename" => $cFile->postname);
+                // Extraer la parte relativa a la ruta de almacenamiento
+                $relativePath = str_replace(realpath(storage_path('app/public')), '', $sourcePath);
+
+                // Asegurarse de que la ruta relativa no tenga una barra inicial
+                $relativePath = ltrim($relativePath, '/');
+
+                // Obtener la URL base de la aplicación
+                $baseUrl = config('app.url');
+
+                // Construir la URL pública
+                $publicUrl = rtrim($baseUrl, '/') . '/almacen' . '/' . ltrim($relativePath, '/');
+
+                Log::channel('jobs')->info("base: " . $relativePath . "  url : " . $publicUrl);
+                $postData = array("url" => $publicUrl);
+                Log::channel('jobs')->info("postData: " . json_encode($postData));
+            }
 
             Log::channel('jobs')->info("Se ha creado postData");
 
@@ -91,12 +110,12 @@ class AudioConverter
                 // Guardar la respuesta en el destino
                 file_put_contents($destinationPath, $response);
                 Log::channel('jobs')->info('La conversión del archivo se realizó exitosamente.');
-
             } else {
                 // Mostrar información sobre el error
                 $error = curl_error($curl);
                 throw new \Exception($error . " " . $response);
             }
+
         } catch (\Exception $exception) {
             Log::channel('jobs')->error('Error al convertir el archivo: ' . $exception->getMessage());
             throw $exception;

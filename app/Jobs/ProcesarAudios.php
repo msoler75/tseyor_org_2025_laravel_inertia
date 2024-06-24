@@ -21,7 +21,8 @@ class ProcesarAudios implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private ContenidoConAudios $contenido; // modelo
+    private int $contenidoId; // ID del modelo
+    private string $contenidoClass; // Clase del modelo
     private string $carpeta; // path donde se guardarn los audios
     private string $disk; // disco donde se guardan los audios
 
@@ -29,9 +30,10 @@ class ProcesarAudios implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct( ContenidoConAudios $contenido,  string $carpeta = null,  string $disk = 'public')
+    public function __construct(string $contenidoClass, int $contenidoId, string $carpeta = null, string $disk = 'public')
     {
-        $this->contenido = $contenido;
+        $this->contenidoClass = $contenidoClass;
+        $this->contenidoId = $contenidoId;
         $this->carpeta = $carpeta;
         $this->disk = $disk;
     }
@@ -41,22 +43,32 @@ class ProcesarAudios implements ShouldQueue
      */
     public function handle(): void
     {
+
+        // Cargar el modelo usando la clase y el ID
+        $contenido = $this->contenidoClass::find($this->contenidoId);
+
+        // Verificar si el modelo existe antes de proceder
+        if (!$contenido) {
+            Log::channel('jobs')->warning("El modelo {$this->contenidoClass} con id {$this->contenidoId} no existe. Se termina la tarea.");
+            return;
+        }
+
         $audios_pendientes = 0;
         $audios_procesados = 0;
         $index = 0;
 
-        $audios = $this->contenido->audios;
-        if($this->carpeta)
+        $audios = $contenido->audios;
+        if ($this->carpeta)
             $folder = $this->carpeta;
         else {
-            $modelName = $this->contenido->getMorphClass();
-            $año = $this->contenido->created_at->year;
+            $modelName = $contenido->getMorphClass();
+            $año = $contenido->created_at->year;
             $carpeta = "/almacen/medios/$modelName/$año";
             $folder = $carpeta;
         }
 
-        Log::channel('jobs')->info("handle audios". var_export($this->contenido->audios, true));
-        Log::channel('jobs')->info("folder: ". $folder);
+        Log::channel('jobs')->info("handle audios" . var_export($contenido->audios, true));
+        Log::channel('jobs')->info("folder: " . $folder);
 
         // $folder = "medios/informes/{$equipo->slug}/$año";
         foreach ($audios as $key => $audio) {
@@ -64,15 +76,17 @@ class ProcesarAudios implements ShouldQueue
                 $audios_pendientes++;
                 if ($audios_procesados == 0) // solo procesa 1 audio cada vez, ya que es muy costoso
                 {
-                    $outputFile = $this->contenido->generarNombreAudio($index);
+                    $outputFile = $contenido->generarNombreAudio($index);
                     $outputFilePath = $folder . "/" . $outputFile;
                     $converter = new AudioConverter($audio, $outputFilePath, $this->disk);
-                    $converter->convert();
-
-                    $audios[$key] = $outputFilePath;
-
-                    $audios_procesados++;
-                    $audios_pendientes--;
+                    try {
+                        $converter->convert();
+                        $audios[$key] = $outputFilePath;
+                        $audios_procesados++;
+                        $audios_pendientes--;
+                    } catch (\Exception $e) {
+                        // no se pudo procesar el audio
+                    }
                 }
             }
 
@@ -81,14 +95,15 @@ class ProcesarAudios implements ShouldQueue
 
         if ($audios_procesados > 0) {
             Log::channel('jobs')->info("audios_procesados: $audios_procesados ");
-            // $this->contenido->audios = json_encode($audios);
-            // $this->contenido->save();
-            $this->contenido->update(['audios'=>$audios]);
+            // $contenido->audios = json_encode($audios);
+            // $contenido->save();
+            $contenido->update(['audios' => $audios]);
         }
 
         if ($audios_pendientes > 0) {
             // Encolar la tarea nuevamente
-            Bus::dispatch(new self($this->contenido));
+            Log::info("Quedan $audios_pendientes audios pendientes de tratar. Reencolamos");
+            Bus::dispatch(new self($contenido::class, $contenido->id, $folder, $this->disk));
         }
     }
 
@@ -98,8 +113,14 @@ class ProcesarAudios implements ShouldQueue
      */
     private function mustBeProcessed($audio)
     {
-        Log::channel('jobs')->info("MustBeProcessed? ". var_export($audio, true));
+        Log::channel('jobs')->info("MustBeProcessed? " . var_export($audio, true) . ' ' . (preg_match("#^upload\/#", $audio) ? "true" : "false"));
         return preg_match("#^upload\/#", $audio);
     }
 
+
+    // Método __toString para evitar el error
+    public function __toString()
+    {
+        return str_replace("App\\Models\\", "", $this->contenidoClass) . " id:" . $this->contenidoId;
+    }
 }

@@ -326,6 +326,10 @@ Route::get('test/image', function () {
     return Inertia::render('test/imageTest');
 });
 
+
+
+
+
 // test para convertir archivos .docx a markdown
 Route::get('test/docx',  'App\Http\Controllers\TestController@docx');
 Route::get('test/docx/{num}',  'App\Http\Controllers\TestController@docxShow');
