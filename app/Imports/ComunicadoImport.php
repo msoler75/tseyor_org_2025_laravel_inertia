@@ -135,7 +135,7 @@ class ComunicadoImport
                             $origMp3 = realpath($carpeta_audios_originales . "/" . $prefijo . $nombreMp3 . '.mp3');
                             $destNombreMp3 = preg_replace("# (PAB|TRI|JUN)#", "", $nombreMp3);
                             $destMp3 = $rutaMp3 . "/" . $prefijo . $destNombreMp3 . '.mp3';
-                            $pathDest = DiskUtil::getRealPath($destMp3);
+                            $pathDest = DiskUtil::getPath($destMp3);
                             echo "$origMp3 -> $pathDest [$destMp3]\n";
                             copy($origMp3, $pathDest);
                             $mp3[] = $destMp3;

@@ -242,10 +242,10 @@ class ComunicadoCrudController extends CrudController
                 $folder = "/almacen/medios/comunicados/audios/$año";
 
                 if (TESTAR_CONVERTIDOR_AUDIO2) {
-                    $p = new ProcesarAudios($comunicado, $folder);
+                    $p = new ProcesarAudios(Comunicado::class, $comunicado->id, $folder);
                     $p->handle();
                 } else {
-                    dispatch(new ProcesarAudios($comunicado, $folder));
+                    dispatch(new ProcesarAudios(Comunicado::class, $comunicado->id, $folder));
                 }
 
             }

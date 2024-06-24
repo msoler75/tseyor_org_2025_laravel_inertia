@@ -49,8 +49,12 @@ class DiskUtil {
     }
 
     public static function getRealPath($rutaOrig) {
+        return realpath(self::getPath($rutaOrig));
+    }
+
+    public static function getPath($rutaOrig) {
         list($disk, $ruta) = self::obtenerDiscoRuta($rutaOrig);
-        return realpath(Storage::disk($disk)->path($ruta));
+        return Storage::disk($disk)->path($ruta);
     }
 
     /**

@@ -168,7 +168,7 @@ class ComunicadosController extends Controller
                 $año = date('Y', strtotime($comunicado->fecha_comunicado));
                 $folder = "medios/comunicados/audios/$año";
 
-                dispatch(new ProcesarAudios($comunicado, $folder));
+                dispatch(new ProcesarAudios(Comunicado::class, $comunicado->id, $folder));
             }
         }
     }
