@@ -35,7 +35,7 @@ class PDFGenerator {
         // dd(dirname($pdf_full_path));
         DiskUtil::ensureDirExists(dirname($pdf_full_path));
 
-        if (false && file_exists($pdf_full_path) && filemtime($pdf_full_path) > $contenido->updated_at->getTimestamp()) {
+        if (file_exists($pdf_full_path) && filemtime($pdf_full_path) > $contenido->updated_at->getTimestamp()) {
             return response()->file($pdf_full_path, $headers);
         }
 

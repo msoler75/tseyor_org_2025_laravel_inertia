@@ -1,3 +1,9 @@
+404
+-alternativas no funciona
+
+JOBS
+-Ver por qué no procesa los audios de los 3 comunicados (id: 1511, id: 1540, id: 1544)
+
 ENTRADAS/BLOG
 -Añadir los dos articulos: granada, barcelona
 
