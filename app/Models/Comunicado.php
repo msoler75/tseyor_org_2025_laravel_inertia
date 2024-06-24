@@ -314,4 +314,11 @@ class Comunicado extends ContenidoConAudios
             'ano' => $this->ano
         ];
     }
+
+
+    // PDF
+
+    public function generatePdf() {
+        return \App\Services\PDFGenerator::generatePdf($this, 'contenido-sin-titulo-pdf');
+    }
 }

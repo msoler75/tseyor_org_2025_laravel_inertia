@@ -8,9 +8,20 @@
     <title>{{ $titulo }} - tseyor.org</title>
     <meta name="author" content="Universidad Tseyor de Granada">
     <style>
+        /*  no funciona
+            https://peterdev.pl/how-to-set-a-font-in-pdf/
+        */
+        @font-face {
+            font-family: 'Calibri';
+            font-style: normal;
+            font-weight: normal;
+            src: url('https://tseyor.xyz/almacen/fonts/calibri.ttf') format('truetype');
+        }
+
+
         html,
         body {
-            font-family: 'Calibri', Helvetica, serif;
+            font-family: 'Calibri', 'Gill Sans', 'Gill Sans MT', Helvetica, serif;
             text-align: justify;
         }
 
@@ -102,7 +113,6 @@
             font-size: 85%;
         }
 
-
         /* chat gpt recommendation */
         h1 {
             page-break-before: always;
@@ -122,8 +132,6 @@
 <body>
 
     <article>
-        <h1>{!! $titulo !!}</h1>
-
         {!! $texto !!}
     </article>
 
