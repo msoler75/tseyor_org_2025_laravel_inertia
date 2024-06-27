@@ -4,7 +4,7 @@
             action="https://tseyor.us18.list-manage.com/subscribe/post?u=f7d1945c81d9734c708828d96&amp;id=fdbfcaca69&amp;f_id=006518e7f0"
             method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank"
             novalidate>
-            <h2 class="hidden">Suscribe</h2>
+            <h2 class="hidden text-primary">Suscribe</h2>
             <div id="mc_embed_signup_scroll" class="space-y-4">
                 <div class="grid grid-cols-1">
                     <input type="email" value="" name="EMAIL" class="required email w-full px-3 py-2 border rounded-lg"

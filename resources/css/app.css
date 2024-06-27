@@ -14,11 +14,11 @@
     }
 
     h2 {
-        @apply text-3xl mb-7 font-semibold;
+        @apply text-3xl mb-7 font-semibold !text-primary ;
     }
 
     h3 {
-        @apply text-2xl mb-5 font-semibold;
+        @apply text-2xl mb-5 font-semibold !text-primary ;
     }
 
     p {
