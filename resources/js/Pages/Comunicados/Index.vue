@@ -10,7 +10,7 @@
             <Dropdown width="60">
 
                 <template #trigger="data">
-                    <div class="btn btn-neutral btn-sm cursor-pointer gap-3" :class="data.open ? 'opacity-50' : ''">
+                    <div class="btn btn-primary btn-sm cursor-pointer gap-3" :class="data.open ? 'opacity-50' : ''">
                         <span>{{ selectors.vistaComunicados }}</span>
                         <Icon v-show="!data.open" icon="ph:caret-down-duotone" class="text-xl" />
                         <Icon v-show="data.open" icon="ph:caret-up-duotone" class="text-xl" />

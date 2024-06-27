@@ -4,7 +4,7 @@
 
 
         <div class="flex justify-between items-center mb-7">
-            <Back class="opacity-0 pointer-events-none">Glosario</Back>
+            <span/>
             <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center"
                 title='Descarga todo el glosario en pdf'>
             <Icon icon="ph:download-duotone" />Descargar</Link>
@@ -22,7 +22,15 @@
             <SearchInput />
         </div>
 
-        <ContentBar>Glosario</ContentBar>
+        <ContentBar>
+            <div class="w-full flex gap-2 items-center justify-between">
+                <span />
+                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
+                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
+                </div>
+                <span />
+            </div>
+        </ContentBar>
 
         <div class="w-full flex gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 

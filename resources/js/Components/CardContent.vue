@@ -15,7 +15,7 @@
         </div>
         <div v-if="title || tag || description || date" class="p-4 flex flex-col w-full">
             <h2 v-if="title"
-                class="text-lg font-bold mb-3 transition duration-300 group-hover:text-primary  group-hover:drop-shadow"
+                class="text-primary text-lg font-bold mb-3 transition duration-300 group-hover:text-secondary  group-hover:drop-shadow"
                 v-html="title" />
             <div v-if="tag" class="flex justify-between mb-3 max-w-full">
                 <div class="badge badge-primary badge-outline h-fit">{{ tag }} </div>

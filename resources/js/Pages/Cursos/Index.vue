@@ -1,17 +1,17 @@
 <template>
-    <FullPage>
+    <Sections>
 
-       <Section>
-            <Hero title="Curso Holístico Tseyor"
-                subtitle="Conoce las enseñanzas de los Guías de las Estrellas con nuestro curso gratuito."
-                srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=curso-holistico.jpg" image-right
-                buttonLabel="Inscríbete" :href="route('cursos.inscripcion.nueva')"></Hero>
+        <Section height="400">
+            <TextImage title="Curso Holístico Tseyor" srcImage="/almacen/medios/paginas/curso.png" image-right
+                srcWidth="373" srcHeight="482" buttonLabel="Inscríbete" :href="route('cursos.inscripcion.nueva')">
+                <p>Conoce las enseñanzas de los <Referencia>Guías Estelares</Referencia> con nuestro curso gratuito.</p>
+            </TextImage>
         </Section>
 
         <Section>
-        <FondoEstrellado class="w-full h-full flex justify-center items-center">
-            <VideoPlayer class="" videoUrl="https://www.youtube.com/embed/AkOZbfGdXbU" />
-        </FondoEstrellado>
+            <FondoEstrellado class="w-full h-full flex justify-center items-center">
+                <VideoPlayer class="" videoUrl="https://www.youtube.com/embed/AkOZbfGdXbU" />
+            </FondoEstrellado>
         </Section>
 
 
@@ -20,31 +20,42 @@
                 {
                     title: 'Exploración Cósmica',
                     icon: 'ph:alien-duotone',
-                    description: 'Explora los vínculos entre la humanidad y otras civilizaciones en el cosmos. Aprende sobre la Confederación de Mundos Habitados y su papel en la evolución de la humanidad.'
+                    description: 'Conoce el papel de la Confederación de Mundos Habitados de la Galaxia.'
                 },
                 {
                     title: 'Desarrollo personal',
                     icon: 'ph:lightbulb-duotone',
-                    description: 'Sumérgete en el camino del crecimiento personal y descubre herramientas prácticas para el desarrollo interior. Aprende a cultivar el equilibrio, fluir y la humildad en tu vida cotidiana.'
+                    description: 'Descubre herramientas prácticas para el desarrollo interior. '
                 },
                 {
-                    title: 'Viaje en la Nave Tseyor',
+                    title: 'Extrapolación mental',
                     icon: 'ph:rocket-duotone',
-                    description: 'Experimenta un fascinante viaje interdimensional a través de la Nave Tseyor. Descubre nuevas realidades y expande tu comprensión de la existencia mientras exploras otros mundos y dimensiones.'
+                    description: 'Expande tu comprensión de la existencia de otros mundos.'
                 },
                 {
                     title: 'Cuántica y Conciencia',
                     icon: 'ph:atom-duotone',
-                    description: 'Descubre los fundamentos de la cuántica y su relación con la evolución de la humanidad. Explora las posibilidades de un próximo salto cuántico en nuestra conciencia y cómo podemos prepararnos para este cambio transformador.'
+                    description: 'Explora las posibilidades de un próximo salto cuántico.'
                 }
 
             ]" />
         </Section>
 
+        <Section height="500">
+            <TextImage title="Filosofía Cósmico-Crística" buttonLabel="conoce nuestra filosofía"
+                :href="route('filosofia')" srcImage="/almacen/medios/paginas/hombre-espacio.jpg" textClass="container"
+                image-right>
+                <p>El curso ha sido desarrollado en base a las enseñanzas de nuestros <Referencia>Guías Estelares
+                    </Referencia>
+                </p>
+                <p>Funciona bajo el mecanismo de la retroalimentación que nos permite el aprendizaje mútuo.</p>
+            </TextImage>
+        </Section>
+
         <Section>
             <TextImage title="Libro del Curso Holístico"
-                srcImage="https://via.placeholder.com/400x600.png/0000ff?text=CURSO HOLISTICO" buttonLabel="Descargar Libro"
-                href="/ong">
+                srcImage="https://via.placeholder.com/400x600.png/0000ff?text=CURSO HOLISTICO"
+                buttonLabel="Descargar Libro" href="/ong">
                 <p>Lee este conjunto de historias para comprender la filosofía de Tseyor.</p>
             </TextImage>
         </Section>
@@ -54,7 +65,7 @@
         </Section>
 
 
-    </FullPage>
+    </Sections>
 </template>
 
 

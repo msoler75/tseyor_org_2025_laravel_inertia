@@ -50,7 +50,7 @@ const traducciones = {
     guias: 'guías estelares',
     terminos: 'glosario',
     lugares: 'lugares de la galaxia',
-    entradas: 'blogs'
+    entradas: 'blog'
 }
 
 function traducir(col) {

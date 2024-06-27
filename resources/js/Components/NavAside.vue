@@ -31,10 +31,9 @@ const close = () => {
             <div class="rounded-r xl:hidden flex justify-between w-full p-6 items-center">
 
                 <div class="flex justify-between  items-center space-x-3">
-                    <Link :href="route('portada')"
-                    @click="close">
-                                <ApplicationMark />
-                                </Link>
+                    <Link :href="route('portada')" @click="close">
+                    <ApplicationMark />
+                    </Link>
                     <div class="text-2xl leading-6 font-bold font-serif">TSEYOR</div>
                 </div>
             </div>
@@ -62,20 +61,20 @@ const close = () => {
                          <div class="text-sm  uppercase leading-4 ">{{ tab.title }}</div>
                         </Link>
                     -->
-                        <label
-                            class="w-full rounded-none mb-0"
-                            :class="tab.hasItems?'collapse collapse-arrow':''">
+                        <label class="w-full rounded-none mb-0" :class="tab.hasItems ? 'collapse collapse-arrow' : ''">
                             <input v-if="tab.hasItems" type="checkbox" :v-model="tab.open" />
                             <div class="collapse-title">{{ tab.title }}</div>
                             <div class="collapse-content bg-base-100 bg-opacity-50" v-if="tab.hasItems">
                                 <template v-for="section of tab.submenu.sections" :key="section.title">
-                                    <div v-if="section.title!=tab.title" class="px-5 mt-4 font-bold text-xs text-neutral opacity-40 uppercase">{{section.title}}</div>
-                                    <div v-else class="mt-2"/>
+                                    <div v-if="section.title != tab.title"
+                                        class="px-5 mt-4 font-bold text-xs text-neutral opacity-40 uppercase">
+                                        {{ section.title }}</div>
+                                    <div v-else class="mt-2" />
                                     <button v-for="item of section.items" :key="item.url"
                                         class="px-3 flex justify-start items-center space-x-6   rounded  py-5  w-full ">
                                         <Icon :icon="item.icon" />
-                                        <Link :href="item.url" class="text-left text-base leading-4"
-                                        @click="close">{{ item.title }}</Link>
+                                        <Link :href="item.url" class="text-left text-base leading-4" @click="close">{{
+                                        item.title }}</Link>
                                     </button>
                                 </template>
                             </div>
@@ -103,5 +102,4 @@ const close = () => {
 .v-collapse {
     transition: height 300ms cubic-bezier(0.33, 1, 0.68, 1);
 }
-
 </style>

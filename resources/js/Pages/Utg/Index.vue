@@ -1,9 +1,10 @@
 <template>
     <Sections white-first>
 
-        <Section :height="screen && screen.width < 768 ? '400px' : '550px'">
+        <Section :height="screen && screen.width < 768 ? '400px' : '550px'" style="--sectionHeight: 500px">
             <TextImage title="Universidad Tseyor de Granada"
-                srcImage="https://tseyor.org/images/sello-utg.webp?ts=1433235750&thumb=299x435&quality=87&fe=jpg"
+                srcImage="/almacen/medios/logos/utg.jpg"
+                srcWidth="819" srcHeight="1191"
                 image-right buttonLabel="Ver Estatutos" href="/estatutos/utg">
                 <Prose>
                     <blockquote>

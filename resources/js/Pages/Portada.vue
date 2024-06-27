@@ -18,7 +18,7 @@
             <Hero title="El proceso de autodescubrimiento"
                 subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad."
                 :href="route('cursos')" buttonLabel="Curso gratuito"
-                srcImage="/almacen/medios/portada/1560780877_017869_1560780990_noticia_normal_recorte1.jpg"
+                srcImage="/almacen/medios/paginas/meditando.jpg"
                 textClass="container" imageSideClass="bg-right" full cover />
         </Section>
 
@@ -26,7 +26,7 @@
             <Hero title="Los Guías Estelares"
                 subtitle="Recibimos las referencias de nuestros tutores de la Confederación de Mundos Habitados de la Galaxia"
                 :href="route('guias')" buttonLabel="Guías Estelares"
-                srcImage="/almacen/medios/portada/todos-los-guias-compressor.jpg" textClass="container" full cover
+                srcImage="/almacen/medios/paginas/todos-los-guias.jpg" textClass="container" full cover
                 image-right />
         </Section>
 
@@ -34,15 +34,15 @@
         <Section>
             <Hero title="Comunidad Tseyor" subtitle="Somos una comunidad de personas normales y corrientes que trabajamos hacia la instauración
                 de las Sociedades Armónicas de la Galaxia." buttonLabel="Únete a la comunidad TSEYOR"
-                :href="route('cursos')" srcImage="/almacen/medios/portada/rueda-mazatlan.jpg"
+                :href="route('cursos')" srcImage="/almacen/medios/paginas/rueda-mazatlan.jpg"
                 textClass="container" full cover />
         </Section>
 
         <Section>
             <Hero title="Filosofía Cósmico-Crística"
-                subtitle="A través de la comunicación con seres de otras civilizaciones avanzadas, hemos aprendido la filosofía cósmico-crística que nos guía hacia la hermandad, la humildad y la retroalimentación."
+                subtitle="A través de la comunicación con seres de otras civilizaciones avanzadas, estamos aprendiendo la filosofía cósmico-crística que nos guía hacia la hermandad, la humildad y la retroalimentación."
                 buttonLabel="conoce nuestra filosofía" :href="route('filosofia')"
-                srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía" textClass="container" full cover
+                srcImage="/almacen/medios/paginas/filosofia.jpg" textClass="container" full cover
                 image-right />
         </Section>
 

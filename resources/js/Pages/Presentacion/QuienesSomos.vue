@@ -1,16 +1,16 @@
 <template>
-    <FullPage>
+    <Sections height="500">
 
-        <Hero title="¿Quiénes Somos?" subtitle="TSEYOR es un grupo de contacto extraterrestre que mantiene conversaciones regulares con seres
+        <Hero title="¿Quiénes Somos?" subtitle="Mundo Armónico Tseyor es una ONG que busca el autodescubrimiento y las nuevas Sociedades Armónicas. Sus principios se basan en el contacto extraterrestre que mantiene conversaciones regulares con seres
                         humanos del cosmos pertenecientes a la Confederación de Mundos Habitados de la Galaxia."
-            srcImage="https://via.placeholder.com/1600x1000.png/00088f?text=quienes-somos.jpg" image-right
+            srcImage="/almacen/medios/paginas/quienes-somos.jpg" image-right
             buttonLabel="Conoce nuestros orígenes"
             :href="route('origenes-de-tseyor')">
         </Hero>
 
         <Section>
-            <TextImage title="¿Donde estamos?" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Mapamundi"
-            buttonLabel="Ver Mapa" :href="route('contactos')">
+            <TextImage title="¿Donde estamos?" srcImage="/almacen/medios/paginas/mapa.jpg"
+            buttonLabel="Ver Mapa" :href="route('contactos')" >
                 <p>Encuentra alguno de nuestros centros o representantes cerca de ti.</p>
             </TextImage>
         </Section>
@@ -19,8 +19,8 @@
 
         <Section>
             <TextImage title="¿Con quiénes contactamos?"
-                srcImage="https://via.placeholder.com/363x569.png/028f0d?text=contacto-estelar"
-                buttonLabel="Conoce a los guías Estelares" href="/guias" image-right full cover>
+                srcImage="/almacen/medios/paginas/todos-los-guias.jpg"
+                buttonLabel="Conoce a los guías Estelares" href="/guias" image-right >
                 <p>Nuestros tutores proceden de distintos planetas y todos son miembros de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>.</p>
                 <p>Actualmente nos comunicamos con <Referencia colecciones="guias">Shilcars</Referencia> (un ser humano del <Referencia colecciones="lugares">planeta Agguniom</Referencia> en la <Referencia>Constelación de
                     Áuriga</Referencia>) y otros hermanos como <Referencia>Melcor</Referencia>, <Referencia>Aumnor</Referencia> y <Referencia>Noiwanak</Referencia>.</p>
@@ -29,8 +29,8 @@
 
 
         <Section>
-            <TextImage title="Nuestra filosofía" srcImage="https://via.placeholder.com/1263x569.png/000fdd?text=Filosofía"
-            buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')">
+            <TextImage title="Nuestra filosofía" srcImage="/almacen/medios/paginas/manos-entre-mundos.jpg"
+            buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')" >
                 <p>Seguimos la filosofía que nos ha patrocinado la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>, basada en la unión, la hermandad y el <Referencia>Conocimiento Trascendente</Referencia>.</p>
             </TextImage>
         </Section>
@@ -39,9 +39,9 @@
         <Section>
             <!-- Sección: Comunicados -->
             <TextImage title="Comunicados recibidos telepáticamente"
-                srcImage="https://via.placeholder.com/700x600.png/0000ff?text=Puente.jpg" buttonLabel="Ver Comunicados"
+                srcImage="/almacen/medios/paginas/Puente.jpg" buttonLabel="Ver Comunicados"
                 href="/comunicados"
-                image-right >
+                image-right>
                 <p>Los comunicados son las <Referencia>conversaciones interdimensionales</Referencia> realizadas <Referencia r="telepatía">telepáticamente</Referencia> por nuestro hermano
                     <Referencia>Chac-Mool Puente</Referencia>, quien ha recibido una preparación desde
                     hace más de 40 años para asumir dicha labor, como intermediario entre los dos mundos.</p>
@@ -49,6 +49,16 @@
                     En nuestra <Referencia>biblioteca web</Referencia> podéis encontrar todos los comunicados o conversaciones
                     telepáticas interdimensionales mantenidas con los hermanos de la <Referencia>Confederación de Mundos Habitados de la
                     Galaxia</Referencia>.</p>
+            </TextImage>
+        </Section>
+
+
+          <!-- Sección: Blogs -->
+          <Section>
+            <TextImage title="Blog"
+                srcImage="/almacen/medios/paginas/blogs.jpg" buttonLabel="Leer Blog"
+                href="/entradas" >
+                <p>Conoce algunas de nuestras aventuras en este camino del autorreconocimiento, podrás vernos en muchas fotografías de eventos que hemos realizado.</p>
             </TextImage>
         </Section>
 
@@ -88,20 +98,27 @@
         <!-- Sección: ONG -->
         <Section>
             <TextImage title="ONG Mundo Armónico Tseyor"
-                srcImage="https://via.placeholder.com/700x600.png/0000ff?text=ONG.jpg" buttonLabel="Conoce la ONG"
+                srcImage="/almacen/medios/logos/ong.jpg" buttonLabel="Conoce la ONG"
                 href="/ong" image-right>
                 <p>Conoce nuestra ONG Mundo Armónico Tseyor, dedicada a la ayuda humanitaria en su vertiente
                     material y espiritual.</p>
             </TextImage>
         </Section>
 
-          <!-- Sección: ONG -->
-          <Section>
-            <TextImage title="Blog"
-                srcImage="https://via.placeholder.com/700x600.png/0000ff?text=ONG.jpg" buttonLabel="Leer Blog"
-                href="/blog">
-                <p>En nuestros blog podrás ver algunas de nuestras actividades que hemos ido realizando todos estos años.</p>
-            </TextImage>
+                <!-- Sección: Qué significa TSEYOR -->
+                <Section>
+            <Hero title="¿Qué significa TSEYOR?" buttonLabel="Más información" href="/tseyor-significado"
+                src-width="600" src-height="400">
+                <p class="text-center">
+                    Tseyor es un acrónimo que corresponde a:
+                </p>
+                <p class="text-center text-xl">
+                    <b>T</b>iempo <b>S</b>imbólico <b>E</b>stelar del <b>YO</b> en <b>R</b>etroalimentación
+                </p>
+                <p class="text-center">
+                    Y en él están incluidas miles de personas que anhelan el perfeccionamiento de su pensamiento.
+                </p>
+            </Hero>
         </Section>
 
 
@@ -110,7 +127,7 @@
             :href="route('cursos.inscripcion.nueva')" textClass="space-y-8" />
 
 
-    </FullPage>
+    </Sections>
 </template>
 
 

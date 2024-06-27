@@ -2,7 +2,7 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-7">
-            <Back>Índice</Back>
+            <Back :href="route('guias')" inline>Guías</Back>
             <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center" title='Descarga todo el glosario en pdf'><Icon icon="ph:download-duotone" />Descargar</Link>
             <AdminPanel modelo="guia" necesita="administrar contenidos" :contenido="guia" />
         </div>
@@ -16,7 +16,15 @@
             <SearchInput :doSearch="false" @search="buscarClick" />
         </div>
 
-        <ContentBar>Glosario</ContentBar>
+        <ContentBar>
+            <div class="w-full flex gap-2 items-center justify-between">
+                <Back :href="route('guias')" inline>Guías</Back>
+                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
+                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
+                </div>
+                <Back :href="route('guias')" inline class="pointer-events-none opacity-0">Guías</Back>
+            </div>
+        </ContentBar>
 
         <ContentMain class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">

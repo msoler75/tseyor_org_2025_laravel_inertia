@@ -1,5 +1,7 @@
 <template>
-    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen" ref="container" scroll-region>
+    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen" ref="container" scroll-region
+    style="--sectionHeight: 100vh"
+    >
         <slot></slot>
 
         <!-- Footer como una sección más -->
@@ -10,7 +12,7 @@
         <TransitionFade>
             <div v-show="showScrollIcons"
                 class="transition duration-300 fixed bottom-3 left-0 w-full flex justify-center z-30 text-white mix-blend-exclusion">
-                <Icon v-if="!isLastSection" icon="ph:caret-double-down-duotone" @click="scrollToNextMandatory" class="text-lg lg:text-2xl cursor-pointer animate-bounce" />
+                <Icon v-if="!isLastSection" icon="ph:caret-double-down-duotone" @click="scrollToNextMandatory" class="text-xl lg:text-3xl cursor-pointer animate-bounce" />
             </div>
         </TransitionFade>
 
@@ -18,7 +20,7 @@
             <div v-show="showScrollIcons"
                 class="transition duration-300 fixed left-0 w-full flex justify-center z-30 text-white mix-blend-exclusion"
                 :class="nav.announce?'top-[7rem]':'top-[5rem]'">
-                <Icon v-if="!isFirstSection" icon="ph:caret-double-up-duotone" @click="scrollToPreviousMandatory" class="text-lg lg:text-2xl cursor-pointer animate-bounce" />
+                <Icon v-if="!isFirstSection" icon="ph:caret-double-up-duotone" @click="scrollToPreviousMandatory" class="text-xl lg:text-3xl cursor-pointer animate-bounce" />
             </div>
         </TransitionFade>
 

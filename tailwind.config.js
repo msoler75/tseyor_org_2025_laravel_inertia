@@ -54,7 +54,8 @@ export default {
     themes: [
       {
         summer: {
-          primary: "#60a5fa",
+          primary: "#18419d",
+          // primary: "#60a5fa",
           link: "#24a9e4",
           secondary: "#cc5c2c",
           accent: "#eefc80",
