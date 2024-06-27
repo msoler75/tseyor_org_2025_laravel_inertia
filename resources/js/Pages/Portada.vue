@@ -95,9 +95,7 @@
 
 
         <Section>
-            <TextText title="Suscríbete"
-                :href="route('filosofia')"  full cover />
-
+            <TextText title="Suscríbete"  />
                 <Suscribe/>
         </Section>
 

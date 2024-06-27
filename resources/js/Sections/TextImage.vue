@@ -16,7 +16,7 @@
             </div>
             <div class="flex flex-col items-center gap-7 mx-auto pb-5 lg:pb-0"
                 :class="(full ? 'justify-center ' : 'justify-evenly ') + textClass">
-                <h2 v-if="title" class="text-2xl font-bold mb-0">{{ title }}</h2>
+                <h2 v-if="title" class="text-2xl text-primary font-bold mb-0">{{ title }}</h2>
                 <div v-if="subtitle" class="text-lg text-center my-0">
                     {{ subtitle }}
                 </div>
