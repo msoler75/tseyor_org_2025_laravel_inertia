@@ -10,7 +10,7 @@
 
 @layer base {
     h1 {
-        @apply text-4xl mb-9 font-bold leading-tight;
+        @apply text-4xl mb-9 font-bold leading-tight !text-primary ;
     }
 
     h2 {

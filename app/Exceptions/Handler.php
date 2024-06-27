@@ -64,6 +64,7 @@ class Handler extends ExceptionHandler
         ]);
 
 
+
         // en algunos casos hemos de pasar "arriba" la excepción para que sea gestionada como corresponde
         // ValidationException: login
         if ($exception instanceof ValidationException) {
@@ -80,16 +81,18 @@ class Handler extends ExceptionHandler
             if($referer && strpos($referer, $uri)===FALSE) // comprueba si referer es la misma url de la request
                 return parent::render($request, $exception);
 
+
+
             // to-do: obtener path de la ruta actual y redirigir a la vista de error
             $path = $request->path();
             $buscar = preg_replace("/[\?\/\.]/", " ", $path); // quitar caracteres no permitidos en $path
 
-            $resultados = BusquedasHelper::buscarContenidos($buscar);
+            $resultados = BusquedasHelper::buscarContenidos(urldecode($buscar));
 
             $message = $exception->getMessage();
             return Inertia::render('Error', [
                 'codigo' => $statusCode,
-                'titulo' => $message ? $message : 'Contenido no encontrado',
+                'titulo' =>  'Contenido no encontrado',
                 'mensaje' => 'No se encuentra el recurso solicitado.',
                 'alternativas' => $resultados
             ])->toResponse($request);

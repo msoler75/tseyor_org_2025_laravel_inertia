@@ -1,5 +1,15 @@
-404
--alternativas no funciona
+IMAGENES
+-buscar imágenes apropiadas para las páginas de la web
+-portada fullpage no se ajusta bien
+
+TESTIMONIOS
+-modelo
+-fotos correo, y frases
+
+UI
+-audios en movil
+-comunicados/blogs siguiente/anterior sobrepasa el width
+
 
 JOBS
 -Ver por qué no procesa los audios de los 3 comunicados (id: 1511, id: 1540, id: 1544)

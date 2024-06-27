@@ -2,7 +2,7 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-7">
-            <Back>Índice</Back>
+            <Back :href="route('terminos')" inline>Términos</Back>
             <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center"
                 title='Descarga todo el glosario en pdf'>
             <Icon icon="ph:download-duotone" />Descargar</Link>
@@ -20,7 +20,15 @@
         </div>
 
 
-        <ContentBar>Glosario</ContentBar>
+        <ContentBar>
+            <div class="w-full flex gap-2 items-center justify-between">
+                <Back :href="route('terminos')" inline>Términos</Back>
+                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
+                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
+                </div>
+                <Back :href="route('terminos')" inline class="pointer-events-none opacity-0">Términos</Back>
+            </div>
+        </ContentBar>
 
         <div class="w-full flex justify-between gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 

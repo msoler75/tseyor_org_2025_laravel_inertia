@@ -2,6 +2,7 @@
     <TextImage :title="title" :subtitle="subtitle" :srcImage="srcImage" :buttonLabel="buttonLabel" :href="href"
         :src-width="srcWidth" :src-height="srcHeight" :imageRight="imageRight" :imageClass="imageClass"
         :imageSideClass="imageSideClass" :textClass="textClass" :full="full" :cover="cover"
+        :caption="caption"
         class="hero section bg-hero bg-cover bg-center py-20">
         <slot></slot>
     </TextImage>
@@ -38,6 +39,11 @@ defineProps({
     srcHeight: {
         type: [Number, String],
         required: true,
+        default: null
+    },
+    caption: {
+        type: String,
+        required: false,
         default: null
     },
     imageRight: {

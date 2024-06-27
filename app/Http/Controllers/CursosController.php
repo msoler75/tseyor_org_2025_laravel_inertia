@@ -13,7 +13,7 @@ class CursosController extends Controller
     {
         // obtiene los próximos eventos de tipo "Cursos"
         $proximosCursos = Evento::select('titulo', 'slug', 'descripcion', 'imagen', 'fecha_inicio')
-            ->where('categoria', 'Cursos')->latest()->take(4)->get();
+            ->where('categoria', 'Cursos')->latest()->take(2)->get();
 
         return Inertia::render('Cursos/Index', [
             'proximosCursos' => $proximosCursos

@@ -90,6 +90,7 @@ function login2() {
 
 const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset
+    console.log('handleScroll', nav.scrollY)
 }
 
 // const dynamicAudioPlayer = ref(null);
@@ -140,6 +141,7 @@ onMounted(() => {
     function handleMouse() {
         // si el mouse sale de la ventana de la aplicación, cerramos el menú
         document.addEventListener("mouseleave", function (event) {
+            console.log('mouseleave')
             if (screen.width >= 1024) {
                 clearTimeout(timerActivateNav)
                 deactivateNav.value = true
@@ -150,6 +152,7 @@ onMounted(() => {
 
         // si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante un tiempo
         document.addEventListener("mouseenter", function (event) {
+            console.log('mouseenter')
             if (screen.width >= 1024) {
                 clearTimeout(timerActivateNav)
                 timerActivateNav = setTimeout(() => {
@@ -206,8 +209,8 @@ axios.get(route('setting', 'navigation'))
         <AudioPlayer />
 
         <div class="bg-base-200 flex-grow flex flex-col">
-            <nav class="w-full border-gray-300  bg-base-100 top-0 z-40 -translate-y-[1px] transition duration-400 select-none"
-                :data-theme="portada && nav.scrollY < 300 ? 'winter' : ''" :class="(portada && nav.scrollY < 300 ? 'dark bg-transparent ' : portada ? 'bg-opacity-20 hover:bg-opacity-100 transition duration-200 ' : 'border-b ') +
+            <nav class="w-full border-gray-300  top-0 z-40 -translate-y-[1px] transition duration-400 select-none"
+            :data-theme="portada && nav.scrollY < 300 ? 'winter' : ''" :class="(portada && nav.scrollY < 300 ? 'dark bg-transparent ' : portada ? 'bg-opacity-20 hover:bg-opacity-100 transition duration-200 ' : 'border-b ') +
                     (nav.defaultClass + ' ' + (nav.fullPage ? 'fixed border-gray-300 ' : 'sticky ')) +
                     (nav.fullPage && nav.announce ? 'top-[2rem] ' : 'top-0 ')">
                 <!-- Primary Navigation Menu -->
@@ -354,10 +357,8 @@ axios.get(route('setting', 'navigation'))
                         </div>
                     </div>
                 </div>
-
-
+                <div id="afterNav" class="absolute top-[calc(100%_+_1px)] "></div>
             </nav>
-
 
 
             <!-- Page Heading -->

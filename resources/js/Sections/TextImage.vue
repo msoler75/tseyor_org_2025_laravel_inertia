@@ -70,6 +70,11 @@ const props = defineProps({
         required: false,
         default: null
     },
+    caption: {
+        type: String,
+        required: false,
+        default: null
+    },
     imageRight: {
         type: Boolean,
         required: false,
@@ -96,9 +101,6 @@ const props = defineProps({
     cover: { // image cover all area
         type: Boolean,
         default: false
-    },
-    caption: {
-        type: String
     }
 })
 

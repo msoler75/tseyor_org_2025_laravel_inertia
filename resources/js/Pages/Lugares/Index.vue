@@ -4,7 +4,7 @@
 
 
         <div class="flex justify-between items-center mb-7">
-            <Back class="opacity-0 pointer-events-none">Glosario</Back>
+            <span/>
             <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center" title='Descarga todo el glosario en pdf'><Icon icon="ph:download-duotone" />Descargar</Link>
             <AdminPanel modelo="lugar" necesita="administrar contenidos" />
         </div>
@@ -20,7 +20,15 @@
             <SearchInput />
         </div>
 
-        <ContentBar>Glosario</ContentBar>
+        <ContentBar>
+            <div class="w-full flex gap-2 items-center justify-between">
+                <span />
+                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
+                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
+                </div>
+                <span />
+            </div>
+        </ContentBar>
 
         <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
@@ -31,7 +39,7 @@
                         :href="route('lugar', contenido.slug)" imageClass="h-60"
                         preserve-page>
                         <div
-                            class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
+                            class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow">
                             {{ contenido.nombre }}</div>
                     </CardContent>
                 </GridAppear>

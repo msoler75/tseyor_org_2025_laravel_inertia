@@ -1,6 +1,11 @@
 <template>
-    <FullPage style="max-height: calc(100vh - 4rem);
-    margin-top: 4rem" sectionHeight="calc(100vh - 4rem)">
+    <FullPage style="--sectionHeight: calc(100vh - 1rem);">
+
+        <Head title="Orígenes de Tseyor" />
+
+        <div class="container mx-auto flex justify-between items-center mb-20 z-40">
+            <Back href="/quienes-somos" floatAtY="-100">Quiénes Somos</Back>
+        </div>
 
         <Section>
             <Hero full srcImage="/almacen/medios/presentaciones/origenes/sello-tseyor.png" image-right
@@ -185,7 +190,7 @@
             <!-- Sección: Los guías estelares -->
             <Hero full title="Libro: Los Guías Estelares" subtitle="Libro que recoge toda la historia del grupo e información detallada de cada guía estelar de
                             TSEYOR." srcImage="https://via.placeholder.com/200x300.png/0000ff?text=guia-estelar.jpg"
-                buttonLabel="Descargar libro" href="/libros/los-guias-estelares" 
+                buttonLabel="Descargar libro" href="/libros/los-guias-estelares"
                 src-width="200"
             src-height="300"
                 />

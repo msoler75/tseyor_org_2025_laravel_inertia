@@ -1,15 +1,28 @@
 <template>
-    <Link :href="enlace" class="flex h-fit gap-2 text-sm items-center hover:underline select-none"
-    :class="nav.scrollY>90?'fixed bg-base-100 w-screen p-2 shadow top-[60px] md:top-[64px] xl:top-[68px] md:w-fit md:rounded-br-lg left-0 z-50':''"
-    >
-    <Icon icon="ph:arrow-left" />
-    <slot />
-    </Link>
+    <Teleport v-if="mounted" to="#afterNav" :disabled="inline || nav.scrollY<props.floatAtY">
+        <Link :href="enlace" class="flex h-fit gap-2 text-sm items-center hover:underline select-none"
+        :class="!inline && nav.scrollY>=props.floatAtY?'p-3 bg-base-100 rounded-br-xl shadow':''"
+        v-bind="$attrs"
+        >
+        <Icon icon="ph:arrow-left" />
+        <slot />
+        </Link>
+    </Teleport>
 </template>
 
 <script setup>
 const props = defineProps({
-    href: String
+    href: String,
+    floatAtY: { // en qué posición de scroll Y aparece flotando a la izquierda
+        type: Number,
+        required: false,
+        default: 90
+    },
+    inline: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
 })
 
 const currentUrl = window.location.href;
@@ -18,4 +31,9 @@ const enlace = ref(props.href || parentUrl)
 
 const nav = useNav()
 
+
+const mounted = ref(false)
+onMounted(()=>{
+    mounted.value = true
+})
 </script>

@@ -132,7 +132,7 @@ function move(event) {
     height: 100vh;
     width: 100dvw;
     height: 100dvh;
-    background: url(/almacen/medios/portada/galaxy.webp) 9% 73% no-repeat;
+    background: url(/almacen/medios/paginas/galaxy.webp) 9% 73% no-repeat;
     opacity: .7;
 }
 
@@ -160,7 +160,7 @@ function move(event) {
     height: 100vh;
     width: 100dvw;
     height: 100dvh;
-    background: url(/almacen/medios/portada/nebula-space.webp) center no-repeat;
+    background: url(/almacen/medios/paginas/nebula-space.webp) center no-repeat;
     background-size: cover;
     transform: scale(var(--nebula-scale)) translate(calc(var(--move-x) * .15), calc(var(--move-y) * .15));
 }

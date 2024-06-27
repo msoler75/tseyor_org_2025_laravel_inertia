@@ -1,9 +1,11 @@
 <template>
-     <div class="container py-12 mx-auto">
+    <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-7">
-            <Back>Lugares de la Galaxia</Back>
-            <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center" title='Descarga todo el glosario en pdf'><Icon icon="ph:download-duotone" />Descargar</Link>
+            <Back :href="route('lugares')" inline>Lugares</Back>
+            <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center"
+                title='Descarga todo el glosario en pdf'>
+            <Icon icon="ph:download-duotone" />Descargar</Link>
             <AdminPanel modelo="lugar" necesita="administrar contenidos" :contenido="lugar" />
         </div>
 
@@ -16,7 +18,15 @@
             <SearchInput :doSearch="false" @search="buscarClick" />
         </div>
 
-        <ContentBar>Glosario</ContentBar>
+        <ContentBar>
+            <div class="w-full flex gap-2 items-center justify-between">
+                <Back :href="route('lugares')" inline>Lugares</Back>
+                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
+                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
+                </div>
+                <Back :href="route('lugares')" inline class="pointer-events-none opacity-0">Lugares</Back>
+            </div>
+        </ContentBar>
 
         <ContentMain class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
@@ -32,7 +42,7 @@
                     <TimeAgo :date="lugar.updated_at" />
                 </p>
                 <div class="mb-4"></div>
-                <tabs  :options="{ disableScrollBehavior: true }">
+                <tabs :options="{ disableScrollBehavior: true }">
                     <tab v-if="lugar.descripcion || lugar.texto" name="Descripción">
                         <div v-if="lugar.texto" class="prose" v-html="lugar.texto"></div>
                         <div v-else class="prose">{{ lugar.descripcion }}</div>
@@ -67,6 +77,8 @@
 import { Tabs, Tab } from 'vue3-tabs-component';
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';
+
+
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({

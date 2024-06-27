@@ -215,6 +215,10 @@ class BusquedasHelper
             });
     }
 
+
+    /**
+     *
+     */
     public static function buscarContenidos($buscar)
     {
         $buscar = \App\Pigmalion\AccentRemover::removeNonAscii($buscar);
