@@ -40,8 +40,6 @@
                 </div>
             </div>
 
-            <ContentBar>Libros</ContentBar>
-
             <FadeOnNavigate class="w-full flex-grow">
 
                 <SearchResultsHeader :results="listado" :valid-search="busquedaValida" />
