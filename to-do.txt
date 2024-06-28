@@ -1,3 +1,15 @@
+ENTRADAS/BLOG
+-Añadir el artículo: barcelona
+
+RUTAS_ARCHIVOS
+-hay un problema interno o confusión con las rutas de archivos o carpetas.
+   Nunca queda queda claro si es:
+   - una ruta relativa (ej: medios/libros/3)  (relative path)
+   - una ruta de tipo URL (/almacen/medios/libros/3) o pública  (url)
+   - una ruta de path o física (d:\tseyor.org\storage/public/almacen/medios/libros/3)  (path)
+-corregir el código para que cada tipo de ruta se defina con esos sufijos: relative path, url, path
+
+
 IMAGENES
 -buscar imágenes apropiadas para las páginas de la web
 -portada fullpage no se ajusta bien
@@ -14,11 +26,14 @@ UI
 -comunicados/blogs siguiente/anterior sobrepasa el width
 
 
+COVER_FIELDS
+-hacer que el componente <ImageCoverField> llame al server para pedir la lista de imagenes en la carpeta y mostrar todas las imagenes
+
+
 JOBS
 -Ver por qué no procesa los audios de los 3 comunicados (id: 1511, id: 1540, id: 1544)
 
-ENTRADAS/BLOG
--Añadir los dos articulos: granada, barcelona
+
 
 HACIENDA
 

@@ -107,16 +107,17 @@ class LibroCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-        $folderImages = $this->getMediaFolder();
+        $folder = $this->getMediaFolder();
 
-        $folderPDF = "medios/libros/pdf"; // para upload no se pone 'almacen' porque es el disco 'public'
+        list($disk, $folderRelative) = DiskUtil::obtenerDiscoRuta($folder); // para upload no se pone 'almacen' porque es el disco 'public'
+
+        // list($disk, $folderPDF) = DiskUtil::obtenerDiscoRuta($this->getMediaTempFolder());
 
         CRUD::field('categoria')->hint('Monografías, Obras de referencia, Cuentos, Talleres... Se pueden poner varias categorías separadas por coma.');
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
-        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folderImages]);
-
+        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder]);
 
         CRUD::field('edicion')->wrapper([
             'class' => 'form-group col-md-3'
@@ -132,10 +133,11 @@ class LibroCrudController extends CrudController
             ->type('upload')
             ->withFiles([
                 'disk' => 'public', // the disk where file will be stored
-                'path' => $folderPDF, // the path inside the disk where file will be stored
+                'path' => $folderRelative, // the path inside the disk where file will be stored
             ])->attributes([
                     'accept' => '.pdf',
                 ]);
+
     }
 
 

@@ -46,6 +46,10 @@ class ContenidoBaseModel extends Model
 
             // Acciones después de que el modelo se haya guardado
             ContenidoHelper::guardarContenido($model->getTable(), $model);
+
+            if(method_exists($model, 'afterSave')) {
+                $model->afterSave();
+            }
         });
 
 
@@ -94,23 +98,32 @@ class ContenidoBaseModel extends Model
     }
 
     /**
+     * @param bool ruta define si queremos el resultado en formato Ruta (relativa)
      * Carpeta temporal para medios (imágenes)
      */
-    public static function getCarpetaMediosTemp()
+    public static function getCarpetaMediosTemp(bool $formatoRuta = false) : string
     {
         $folderCompleto = '/almacen/temp';
         DiskUtil::ensureDirExists($folderCompleto);
+        if( $formatoRuta ) {
+            list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($folderCompleto);
+            return $ruta;
+        }
         return $folderCompleto;
     }
 
     /**
      * Carpeta para los medios del contenido (imágenes)
      */
-    public function getCarpetaMedios()
+    public function getCarpetaMedios(bool $formatoRuta= false) : string
     {
         $coleccion = $this->getTable();
         $folderCompleto = $this->id ? "/almacen/medios/$coleccion/$this->id" : self::getCarpetaMediosTemp();
         DiskUtil::ensureDirExists($folderCompleto);
+        if($formatoRuta ) {
+            list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($folderCompleto);
+            return $ruta;
+        }
         return $folderCompleto;
     }
 

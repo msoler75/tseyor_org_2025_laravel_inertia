@@ -24,15 +24,13 @@ class LibroImport
         $carpeta_web_original = 'd:\tseyor.org';
         $carpeta_libros = $carpeta_web_original . '\biblioteca\libros\*.html';
 
-        $media_folder = "medios/libros";
-
         $palabras_a_capitalizar = [
-            "junantal", "agora", "ágora", "muul", "aumnor", "adonáis", "adonais", "rasbek", "aium", "om", "melcor", "shilcars", "uommo", "atlantis",
+            "junantal", "agora", "ágora", "muul", "aumnor", "adonáis", "adonais", "rasbek", "aium", "om", "melcor", "shilcars", "uommo", "atlantis", "christian",
             "noiwanak", "mo", "rhaum", "beh", "sayab", "tseek", "suut", "oksah", "ich", "kat", "tseyor", "puente", "pueblo", "orsil", "montevives", "tegoyo",
             "agguniom", "albus", "ignus", "puerto", "rico", "tantra", "yoga", "arca", "tara", "grihal", "perú", "méxico", "chile", "barcelona", "granada", "universidad", "neent"
         ];
 
-        $palabras_a_mayusculas = ["ong", "g.a.t.o.", "i", "ii", "iii", "iv", "v", "vi", "vii", "ix", "x", "xi", "xii", "tap"];
+        $palabras_a_mayusculas = ["ong", "g.a.t.o.", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi", "xii", "tap"];
 
         $htmlFiles = glob($carpeta_libros);
 
@@ -73,7 +71,7 @@ class LibroImport
             $titulo = mb_strtolower($data['titulo']);
 
             // formateamos el título
-            $palabras_titulo = preg_split("/[\s.\(\),ºª]+/", $titulo, -1, PREG_SPLIT_NO_EMPTY);
+            $palabras_titulo = preg_split("/[\s\.\(\),ºª\-]+/", $titulo, -1, PREG_SPLIT_NO_EMPTY);
             foreach ($palabras_titulo as $idx => $palabra) {
                 if (in_array(mb_strtolower($palabra), $palabras_a_capitalizar)) {
                     $titulo = preg_replace("/\b$palabra\b/U", mb_ucfirst($palabra), $titulo);
@@ -153,7 +151,7 @@ class LibroImport
 
             // Actualizar los campos de imagen y pdf
             $libro->update([
-                'imagen' => $imagen_destino,
+                'imagen' => '/almacen/' .$imagen_destino,
                 'pdf' => $pdf_destino,
             ]);
         }

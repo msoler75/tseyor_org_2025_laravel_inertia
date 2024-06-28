@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use App\Models\ContenidoBaseModel;
+
 /**
  *  Para CRUD de backpack
  */
@@ -19,8 +21,14 @@ trait CrudContenido
             return $entry->getCarpetaMedios();
         } else {
             // Se está creando un nuevo registro
-            return \App\Models\ContenidoBaseModel::getCarpetaMediosTemp();
+            return ContenidoBaseModel::getCarpetaMediosTemp();
         }
+    }
+
+
+    public function getMediaTempFolder() : string
+    {
+        return ContenidoBaseModel::getCarpetaMediosTemp();
     }
 
 }
