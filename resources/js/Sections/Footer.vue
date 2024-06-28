@@ -1,5 +1,5 @@
 <template>
-    <footer class="w-full bg-gray-900 text-white border-t border-gray-300">
+    <footer class="w-full bg-gray-900 text-white border-t border-gray-300" data-theme="winter">
         <div class="container mx-auto py-14 lg:py-8">
             <GridFill>
                 <div v-for="(section, index) in sections" :key="index" class="space-y-5 lg:space-y-2 mb-7">

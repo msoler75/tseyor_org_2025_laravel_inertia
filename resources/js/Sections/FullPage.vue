@@ -11,16 +11,16 @@
 
         <TransitionFade>
             <div v-show="showScrollIcons"
-                class="transition duration-300 fixed bottom-3 left-0 w-full flex justify-center z-30 text-white mix-blend-exclusion">
-                <Icon v-if="!isLastSection" icon="ph:caret-double-down-duotone" @click="scrollToNextMandatory" class="text-xl lg:text-3xl cursor-pointer animate-bounce" />
+                class="transition duration-300 fixed bottom-3 left-0 w-full flex justify-center z-30 mix-blend-exclusion ">
+                <Icon v-if="!isLastSection" icon="material-symbols:arrow-cool-down" @click="scrollToNextMandatory" class="p-1 bg-orange-500 text-black rounded-full text-2xl lg:text-4xl cursor-pointer animate-bounce" />
             </div>
         </TransitionFade>
 
         <TransitionFade>
             <div v-show="showScrollIcons"
-                class="transition duration-300 fixed left-0 w-full flex justify-center z-30 text-white mix-blend-exclusion"
+                class="transition duration-300 fixed left-0 w-full flex justify-center z-30 mix-blend-exclusion"
                 :class="nav.announce?'top-[7rem]':'top-[5rem]'">
-                <Icon v-if="!isFirstSection" icon="ph:caret-double-up-duotone" @click="scrollToPreviousMandatory" class="text-xl lg:text-3xl cursor-pointer animate-bounce" />
+                <Icon v-if="!isFirstSection" icon="material-symbols:arrow-warm-up" @click="scrollToPreviousMandatory" class="p-1 bg-orange-500 text-black rounded-full text-2xl lg:text-4xl cursor-pointer animate-bounce" />
             </div>
         </TransitionFade>
 

@@ -3,7 +3,7 @@ export default [
       title: "Inicio",
       icon: "ph:house-simple-duotone",
       description: "Portada de la web",
-      route: "portada",
+      url: "/",
       onlyAside: true,
       open: false,
       submenu: null,

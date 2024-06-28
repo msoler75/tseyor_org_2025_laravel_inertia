@@ -20,7 +20,7 @@
                 <div v-if="subtitle" class="text-lg text-center my-0">
                     {{ subtitle }}
                 </div>
-                <div v-show="textPresent" class="md:my-5 text-justify hyphens-auto" ref="textdiv">
+                <div v-show="textPresent" class="md:my-5 text-justify" ref="textdiv">
                     <slot class="text-lg text-justify"></slot>
                 </div>
                 <a v-if="buttonLabel && href && href.match(/\.(pdf|mp3|mp4|docx|jp?eg|png|webp|ppt|pps)$/i)" :href="href"

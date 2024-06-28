@@ -27,8 +27,8 @@
                 <div class="prose" v-html="libro.descripcion"></div>
                 <div class="w-full flex mt-auto justify-end pt-7">
 
-                    <a class="btn btn-primary w-fit flex gap-3" :href="getSrcUrl(libro.pdf)" download>
-                        <Icon icon="ph:download-duotone" /> Descargar en PDF
+                    <a class="btn btn-error w-fit flex gap-3" :href="getSrcUrl(libro.pdf)" download>
+                        <Icon icon="ph:download-duotone" /> Descargar
                     </a>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('libro', contenido.slug)"
                         :description="contenido.descripcion" :date="contenido.published_at"
                         :tag="contenido.categoria"
-                        image-left
+                        image-left image-contained
                         class="h-[300px]"
                         imageClass="w-[200px] h-[300px]"/>
         </div>

@@ -59,6 +59,7 @@
                             :image="contenido.imagen" :href="route('libro', contenido.slug)"
                             :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
                             image-left class="h-[355px]" imageClass="w-[250px] h-[355px]"
+                            image-contained
                              :image-view-transition-name="`imagen-libro-${contenido.id}`"/>
 
                     </GridAppear>
