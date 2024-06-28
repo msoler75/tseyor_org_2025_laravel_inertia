@@ -42,6 +42,7 @@ const close = () => {
                 <div class="flex flex-col justify-start items-center  w-full
                 divide-y divide-gray-300 dark:divide-gray-600 border-b border-gray-300
                 bg-base-200
+                text-left text-base leading-4
                 ">
                     <template v-for="tab, index in nav.items" :key="index">
                         <!--
@@ -62,22 +63,25 @@ const close = () => {
                         </Link>
                     -->
                         <label class="w-full rounded-none mb-0" :class="tab.hasItems ? 'collapse collapse-arrow' : ''">
-                            <input v-if="tab.hasItems" type="checkbox" :v-model="tab.open" />
-                            <div class="collapse-title">{{ tab.title }}</div>
-                            <div class="collapse-content bg-base-100 bg-opacity-50" v-if="tab.hasItems">
-                                <template v-for="section of tab.submenu.sections" :key="section.title">
-                                    <div v-if="section.title != tab.title"
-                                        class="px-5 mt-4 font-bold text-xs text-neutral opacity-40 uppercase">
-                                        {{ section.title }}</div>
-                                    <div v-else class="mt-2" />
-                                    <button v-for="item of section.items" :key="item.url"
-                                        class="px-3 flex justify-start items-center space-x-6   rounded  py-5  w-full ">
-                                        <Icon :icon="item.icon" />
-                                        <Link :href="item.url" class="text-left text-base leading-4" @click="close">{{
-                                        item.title }}</Link>
-                                    </button>
-                                </template>
-                            </div>
+                            <Link v-if="!tab.hasItems && ('url' in tab)" :href="tab.url" class="px-4 py-5 block transition duration-200 hover:bg-base-300" @click="close">{{
+                            tab.title }}</Link>
+                            <template v-else>
+                                <input v-if="tab.hasItems" type="checkbox" :v-model="tab.open" />
+                                <div class="collapse-title">{{ tab.title }}</div>
+                                <div class="collapse-content px-0   bg-base-100 bg-opacity-50" v-if="tab.hasItems">
+                                    <template v-for="section of tab.submenu.sections" :key="section.title">
+                                        <div v-if="section.title != tab.title"
+                                            class="px-5 mt-4 font-bold text-xs text-neutral opacity-40 uppercase">
+                                            {{ section.title }}</div>
+                                        <div v-else class="mt-2" />
+                                        <Link :href="item.url" v-for="item of section.items" :key="item.url" @click="close()"
+                                            class="p-5 flex justify-start items-center space-x-6 w-full transition duration-200 hover:bg-base-300">
+                                            <Icon :icon="item.icon" />
+                                            <span>{{ item.title }}</span>
+                                        </Link>
+                                    </template>
+                                </div>
+                            </template>
                         </label>
                     </template>
                 </div>

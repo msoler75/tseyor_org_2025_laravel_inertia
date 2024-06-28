@@ -8,14 +8,17 @@
                :preserve-page="preservePage"
                :auto-scroll="autoScroll">
         <div class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
-            <div class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
+            <div v-if="imageContained" class="w-full h-full bg-center transition duration-300 group-hover:scale-105">
+                <Image class="w-full h-full" :src="image"/>
+            </div>
+            <div v-else class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
                 'background-image': `url('${getImageUrl(image)}?cover&w=${imageWidth}${imageHeight!='auto'?'&h='+imageHeight:''}')`,
                 'view-transition-name': imageViewTransitionName
             }" />
         </div>
         <div v-if="title || tag || description || date" class="p-4 flex flex-col w-full">
             <h2 v-if="title"
-                class="text-primary text-lg font-bold mb-3 transition duration-300 group-hover:text-secondary  group-hover:drop-shadow"
+                class="text-lg font-bold mb-3 transition duration-300 group-hover:!text-secondary  group-hover:drop-shadow"
                 v-html="title" />
             <div v-if="tag" class="flex justify-between mb-3 max-w-full">
                 <div class="badge badge-primary badge-outline h-fit">{{ tag }} </div>
@@ -50,6 +53,7 @@ const props = defineProps({
         type: [Number, String],
         default: 300
     },
+    imageContained: Boolean,
     title: String,
     href: String,
     image: String,

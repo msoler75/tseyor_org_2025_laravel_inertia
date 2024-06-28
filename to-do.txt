@@ -2,6 +2,9 @@ IMAGENES
 -buscar imágenes apropiadas para las páginas de la web
 -portada fullpage no se ajusta bien
 
+SECCIONES WEB
+-preguntas más frecuentes
+
 TESTIMONIOS
 -modelo
 -fotos correo, y frases

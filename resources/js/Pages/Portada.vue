@@ -8,8 +8,7 @@
                     class="h-[95vh] w-[96vw] absolute">
                     <div class="bg-black bg-opacity-70 hover:bg-opacity-90 transition duration-500 p-7 rounded-xl">En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías vibracionales.
                         Nosotros aquí en este nivel estamos reforzados particularmente por la
-                        <Referencia>Confederación de Mundos
-                        Habitados de la Galaxia</Referencia>.</div>
+                        <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>.</div>
                 </Hero>
             </FondoEspacio>
         </Section>
@@ -84,12 +83,13 @@
             </div>
         </Section>
 
-
+<!--
 
         <Section>
             <h2 class="mt-[8rem] text-2xl font-bold mb-0">Miembros de Tseyor</h2>
             <TestimonialSlider :testimonials="testimonials" class="h-full" />
         </Section>
+        -->
 
 
 
