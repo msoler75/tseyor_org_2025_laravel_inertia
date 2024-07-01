@@ -51,7 +51,7 @@
 
         <Section>
             <TextImage title="Las sociedades armónicas" srcImage="/almacen/medios/paginas/naturaleza.jpg"
-                buttonLabel="Descargar Libro" image-right href="/sociedades" src-width="1920" src-height="1282">
+                buttonLabel="Descargar Libro" image-right href="/libros/las-sociedades-armonicas" src-width="1920" src-height="1282">
                 <p>Son sociedades en las que predomina la hermandad, no hay líderes, no hay enfermedad, y sí la
                     auténtica libertad.</p>
                 <p>A nuestro planeta le ha llegado el momento de transformarse de forma pacífica y con mucho amor y
@@ -63,7 +63,7 @@
 
 
         <Section>
-            <TextImage title="Glosario" buttonLabel="Ir al Glosario" src-width="600" src-height="400" href="/glosario"
+            <TextImage title="Glosario" buttonLabel="Ir al Glosario" src-width="600" src-height="400" href="/terminos"
                 srcImage="/almacen/medios/paginas/glosario.jpg">
                 <p>
                     Consulta todos los términos de la filosofía Tseyor en nuestro glosario de términos. También podrás

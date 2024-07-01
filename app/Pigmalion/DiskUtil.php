@@ -57,6 +57,11 @@ class DiskUtil {
         return Storage::disk($disk)->path($ruta);
     }
 
+    public static function getRutaRelativa($rutaOrig) {
+        list($disk, $ruta) = self::obtenerDiscoRuta($rutaOrig);
+        return $ruta;
+    }
+
     /**
      * $dir A veces es una ruta absoluta, a veces una ruta de '/almacen/...
      */

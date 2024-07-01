@@ -94,7 +94,9 @@ const resultadosAgrupados = computed(() => {
 
     const agrupados = {}
     console.log('search.results', search.results)
-    for (const item of search.results.data) {
+    for (const key in search.results.data) {
+
+        const item = search.results.data[key]
 
         if (!item.idDom)
             item.idDom = 'result-' + item.slug_ref + '-' + Math.floor(Math.random() * 1000)

@@ -1,13 +1,15 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <div class="py-12 w-full">
 
-        <div class="flex justify-between items-center mb-20">
+        <div class="container max-w-full flex justify-between items-center mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
             <AdminPanel modelo="audio" necesita="administrar contenidos" class="mb-3" />
         </div>
 
+        <section class="container mx-auto">
         <h1>Audios</h1>
         <p>Relájate y disfruta de los talleres, meditaciones, cuentos y otros materiales de la filosofía de Tseyor.</p>
+        </section>
 
         <!--
     <AudioPlayer id="player" v-if="playFile" :music="playFile" class="mx-auto max-w-[700px]
@@ -16,15 +18,14 @@
     " />
 -->
 
-        <div class="flex justify-end mb-5">
+        <div class="flex justify-end mb-5 md:container md:mx-auto">
             <SearchInput />
         </div>
 
-        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
-
+        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap md:container md:mx-auto">
 
             <div
-                class="card bg-base-100 shadow self-baseline flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4 sticky top-20">
+                class="card bg-base-100 shadow self-baseline flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4 sticky top-16 pt-14 z-30">
                 <Link :href="`${route('audios')}`"
                     :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
                 <span class="capitalize">Novedades</span>

@@ -19,16 +19,21 @@ class LibrosController extends Controller
 
         $resultados = $categoria ?
             Libro::where('categoria', 'LIKE', "%$categoria%")
-                ->when($categoria === '_', function ($query) {
-                    $query->orderByRaw('LOWER(titulo)');
-                })
-                ->paginate(20)->appends(['categoria' => $categoria])
+            ->when($categoria === '_', function ($query) {
+                $query->orderByRaw('LOWER(titulo)');
+            })
+            ->paginate(20)->appends(['categoria' => $categoria])
             : ($buscar ?
                 BusquedasHelper::buscar(Libro::class, $buscar)->paginate(10)
-                    ->appends(['buscar' => $buscar])
+                ->appends(['buscar' => $buscar])
+                //Libro::where('titulo', 'LIKE', "%$buscar%")
+                  //    ->orWhere('descripcion', 'LIKE', "%$buscar%")->paginate(20)
                 :
                 Libro::orderBy('updated_at', 'desc')->paginate(20) // novedades
             );
+
+        if ($buscar && !$resultados->count()) // por si acaso, por algun motivo algunas busquedas no las encuentra
+            $resultados = Libro::where('titulo', 'LIKE', "%$buscar%")->orWhere('descripcion', 'LIKE', "%$buscar%")->paginate();
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);
@@ -77,7 +82,7 @@ class LibrosController extends Controller
                     }
                 }
 
-                if (!empty ($palabrasClave)) {
+                if (!empty($palabrasClave)) {
                     $query->where(function ($query) use ($palabrasClave) {
                         foreach ($palabrasClave as $clave) {
                             $query->orWhere('descripcion', 'like', '%' . $clave . '%')
