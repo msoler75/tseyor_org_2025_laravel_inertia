@@ -222,4 +222,8 @@ function handlePreview(img) {
         text-align: center;
     }
 }
+
+@media (max-width: 440px) {
+    .text-justify {text-align: left}
+}
 </style>
