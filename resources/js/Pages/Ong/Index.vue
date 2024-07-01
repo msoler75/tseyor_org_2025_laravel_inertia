@@ -37,7 +37,7 @@
 
                 <p>Este fin se concreta en los objetivos específicos:</p>
 
-                <ol>
+                <ol class="list-decimal">
                     <li>Proporcionar ayuda humanitaria a personas, grupos y colectivos que la necesiten: alimentación,
                         medios,
                         equipos, semillas y recursos de salud.</li>
@@ -68,15 +68,15 @@
 
         <Section>
             <TextImage title="Libro: ONG Mundo Armónico Tseyor"
-                srcImage="https://via.placeholder.com/300x400.png/0000ff?text=ONG.jpg" buttonLabel="Descargar libro"
-                href="/ong">
-                <p>Todo el material recopilado de la ONG de Tseyor.</p>
+                srcImage="/almacen/medios/libros/227/La%20ONG%20Mundo%20Armonico%20Tseyor.jpg?h=380" buttonLabel="Descargar libro"
+                href="/libros/la-ong-mundo-armonico-tseyor">
+                <p>Todo el material recopilado de la ONG de Tseyor, desde julio de 2010 que la Confederación nos propuso su creación.</p>
             </TextImage>
         </Section>
 
         <Section>
             <TextImage title="Muular"
-                srcImage="https://via.placeholder.com/1200x400.png/0000ff?text=Muular" buttonLabel="Conoce el Muular"
+                srcImage="/almacen/medios/paginas/muular.png" buttonLabel="Conoce el Muular"
                 :href="route('muular')" image-right>
                 <p>La moneda social y espiritual de Tseyor</p>
             </TextImage>

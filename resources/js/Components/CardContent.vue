@@ -21,7 +21,7 @@
                 class="text-lg font-bold mb-3 transition duration-300 group-hover:!text-secondary  group-hover:drop-shadow"
                 v-html="title" />
             <div v-if="tag" class="flex justify-between mb-3 max-w-full">
-                <div class="badge badge-primary badge-outline h-fit">{{ tag }} </div>
+                <div class="truncate overflow-hidden inline-block badge badge-primary badge-outline max-w-[12rem]">{{ tag }}</div>
             </div>
             <div v-if="description" class="text-gradient lg:opacity-50 transition duration-300 group-hover:opacity-90 text-sm text-ellipsis overflow-hidden "
             :class="descriptionClass"

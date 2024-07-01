@@ -26,7 +26,7 @@
                 <Link :href="`${route('libros')}`" class="py-2 hover:text-primary transition-colors duration-250"
                     :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''"
                     >
-                <span class="capitalize">Novedades</span>
+                <span>Novedades</span>
                 </Link>
 
                 <div v-for="categoria of categorias" :key="categoria.nombre" class="flex"
@@ -34,7 +34,7 @@
                     <Link :href="`${route('libros')}?categoria=${categoria.valor || categoria.nombre}`"
                         class="py-2 hover:text-primary transition-colors duration-250"
                         >
-                    <span class="capitalize">{{ categoria.nombre }}</span>
+                    <span>{{ ucFirst(categoria.nombre) }}</span>
                     <small v-if="categoria.total > 0"> ({{ categoria.total }})</small>
                     </Link>
                 </div>
@@ -77,7 +77,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import useSelectors from '@/Stores/selectors'
-
+import {ucFirst }  from '@/composables/textutils'
 
 defineOptions({ layout: AppLayout })
 

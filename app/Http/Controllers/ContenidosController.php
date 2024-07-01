@@ -77,10 +77,15 @@ class ContenidosController extends Controller
             $contenido = $contenido->whereIn('coleccion', $colecciones);
         }
 
+        $busqueda_valida = BusquedasHelper::validarBusqueda($buscar);
         // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
-        $resultados = (BusquedasHelper::validarBusqueda($buscar) ? Contenido::search($buscarFiltrado)->constrain($contenido) :
+        $resultados = ($busqueda_valida ? Contenido::search($buscarFiltrado)->constrain($contenido) :
             Contenido::where('id', '-1')
         )->paginate(64);
+
+        if ($busqueda_valida && !$resultados->count()) // por algun motivo algunas busquedas no las encuentra
+        $resultados = Contenido::where('titulo', 'LIKE', "%$buscarFiltrado%")->orWhere('descripcion', 'LIKE', "%$buscarFiltrado%")->paginate(64);
+
 
         if (strlen($buscarFiltrado) < 3)
             BusquedasHelper::limpiarResultados($resultados, $buscar, true);

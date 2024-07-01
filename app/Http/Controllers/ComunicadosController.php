@@ -64,6 +64,9 @@ class ComunicadosController extends Controller
         else if ($orden == 'cronologico')
             $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
 
+        if ($buscar && !$resultados->get()->count()) // por algun motivo algunas busquedas no las encuentra
+            $resultados = Comunicado::where('titulo', 'LIKE', "%$buscar%")->orWhere('texto', 'LIKE', "%$buscar%");
+
         $resultados = $resultados
             ->paginate(16)
             ->appends(['buscar' => $buscar, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden, 'completo' => $completo ? 1 : 0]);

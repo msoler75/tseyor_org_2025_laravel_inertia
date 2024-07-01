@@ -4,6 +4,11 @@ namespace App\Imports;
 
 use App\Models\Libro;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use setasign\Fpdi\Fpdi;
 
 class LibroImport
 {
@@ -18,21 +23,84 @@ class LibroImport
             return mb_strtoupper($firstChar, $encoding) . $then;
         }
 
+        /*function convertirFecha($dateString)
+        {
+            $formats = ["Y-m-d H:i:s", "Y-m-d H:i", "Y-m-d"];
+            foreach ($formats as $format) {
+                try {
+                    $date = Carbon::createFromFormat($format, $dateString);
+                    if ($date !== false)
+                        return $dateString;
+                } catch (InvalidFormatException $e) {
+                }
+            }
+            return null;
+        }
+
+        function verificarFecha($fechaString)
+        {
+            try {
+                // Intentar crear una fecha a partir del string
+                $fechaObtenida = Carbon::parse($fechaString);
+
+                // Obtener la fecha actual
+                $fechaActual = Carbon::now();
+
+                // Verificar si la fecha obtenida es posterior a la actual
+                if ($fechaObtenida->gt($fechaActual)) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } catch (InvalidFormatException $e) {
+                // Si el formato del string de fecha es inválido, devolver un mensaje de error
+                return aflse;
+            }
+        } */
+
+        function obtenerNumPaginasSmalot($pdf)
+        {
+            $parser = new \Smalot\PdfParser\Parser();
+            try {
+
+                $pdf = $parser->parseFile($pdf);
+                $details = $pdf->getDetails();
+                $pageCount = $details['Pages'];
+
+                return $pageCount;
+            } catch (\Exception $e) {
+            }
+            return null;
+        }
+
+        function obtenerNumPaginas($pdfPath) {
+            try {
+            $pdf = new FPDI();
+            $pageCount = $pdf->setSourceFile($pdfPath);
+            return $pageCount;
+        } catch (\Exception $e) {
+        }
+        return null;
+        }
+
+
         // borra todos los libros
         Libro::whereRaw("true")->forceDelete();
 
         $carpeta_web_original = 'd:\tseyor.org';
-        $carpeta_libros = $carpeta_web_original . '\biblioteca\libros\*.html';
+        $carpeta_libros = $carpeta_web_original . '\biblioteca\libros';
 
         $palabras_a_capitalizar = [
-            "junantal", "agora", "ágora", "muul", "aumnor", "adonáis", "adonais", "rasbek", "aium", "om", "melcor", "shilcars", "uommo", "atlantis", "christian",
+            "juul", "junantal", "agora", "ágora", "muul", "aumnor", "adonáis", "adonais", "rasbek", "aium", "om", "melcor", "shilcars", "uommo", "atlantis", "christian",
             "noiwanak", "mo", "rhaum", "beh", "sayab", "tseek", "suut", "oksah", "ich", "kat", "tseyor", "puente", "pueblo", "orsil", "montevives", "tegoyo",
             "agguniom", "albus", "ignus", "puerto", "rico", "tantra", "yoga", "arca", "tara", "grihal", "perú", "méxico", "chile", "barcelona", "granada", "universidad", "neent"
         ];
 
         $palabras_a_mayusculas = ["ong", "g.a.t.o.", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi", "xii", "tap"];
 
-        $htmlFiles = glob($carpeta_libros);
+        $htmlFiles = glob($carpeta_libros . '\\*.html');
+
+        $dates = json_decode(@file_get_contents($carpeta_libros . '\.files'), true);
 
         echo "Preparando datos:\n";
         $dataLibros = [];
@@ -97,7 +165,7 @@ class LibroImport
             $data['titulo'] = implode(". ", $frases_titulo);
 
 
-            echo "- " . $data['titulo'] . "\n";
+            // echo "- " . $data['titulo'] . "\n";
 
             $data['pdf_fuente'] = $carpeta_web_original . '\\' . preg_replace("/^pdf\//", "/biblioteca/libros/pdf/", urldecode($data['pdf']));
             $data['imagen_fuente'] = $carpeta_web_original . '\\' . urldecode($data['image']);
@@ -109,6 +177,8 @@ class LibroImport
             if (!file_exists($data['imagen_fuente']))
                 die("Fichero no encontrado: " . $data['imagen_fuente']);
 
+
+            $data['file'] = $file;
             $dataLibros[] = $data;
         }
 
@@ -132,8 +202,12 @@ class LibroImport
                 'categoria' => mb_strtolower($data['categoria']),
                 'visibilidad' => 'P',
                 'edicion' => isset($data['edicion']) && is_numeric($data['edicion']) ? $data['edicion'] : null,
-                'paginas' => isset($data['paginas']) && is_numeric($data['paginas']) ? $data['paginas'] : null
+                // 'paginas' => isset($data['paginas']) && is_numeric($data['paginas']) ? $data['paginas'] : null
             ]);
+
+
+
+
 
             // Guardar el modelo en la base de datos para que se cree el ID
             $libro->save();
@@ -149,11 +223,37 @@ class LibroImport
             copy($data['imagen_fuente'], $imagen_destino_path);
             copy($data['pdf_fuente'], $pdf_destino_path);
 
+
+
+
             // Actualizar los campos de imagen y pdf
-            $libro->update([
-                'imagen' => '/almacen/' .$imagen_destino,
+            $update = [
+                'imagen' => '/almacen/' . $imagen_destino,
                 'pdf' => $pdf_destino,
-            ]);
+            ];
+
+            $paginas = obtenerNumPaginas($data['pdf_fuente']);
+            if($paginas) {
+                $update['paginas'] = $paginas;
+            }
+
+            $libro->update($update);
+            /*
+            $date = $dates[$data['file']]['date'] ?? null; // es la fecha en formato timestamp
+            if ($date) {
+                $format = "Y-m-d H:i:s";
+                if (is_numeric($date))
+                    $date = date($format, $date);
+                else
+                    $date = convertirFecha($date);
+                if ($date) {
+                    if(verificarFecha($date))
+                    DB::statement("UPDATE libros SET updated_at = ? WHERE id = ?", [$date, $libro->id]);
+                }
+            }
+
+            echo $date . "   antes: " . ($dates[$data['file']]['date'] ?? null) . "\n";
+            */
         }
     }
 

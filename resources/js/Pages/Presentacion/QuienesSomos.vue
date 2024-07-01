@@ -107,7 +107,7 @@
 
                 <!-- Sección: Qué significa TSEYOR -->
                 <Section>
-            <Hero title="¿Qué significa TSEYOR?" buttonLabel="Más información" href="/tseyor-significado"
+            <Hero title="¿Qué significa TSEYOR?" buttonLabel="Más información" href="/libros/quienes-somos-en-tseyor"
                 src-width="600" src-height="400">
                 <p class="text-center">
                     Tseyor es un acrónimo que corresponde a:

@@ -81,7 +81,7 @@ class BusquedasHelper
     public static function descartarPalabrasComunes($busqueda)
     {
         // 1. Separar la frase $busqueda en palabras, utilizando espacios y otros símbolos de puntuación como separadores
-        $palabras = preg_split('/[\s\p{P}]+/u', strtolower($busqueda), -1, PREG_SPLIT_NO_EMPTY);
+        $palabras = preg_split('/[\s\p{P}]+/u', \App\Pigmalion\SpanishTokenizer::removeAccents(mb_strtolower($busqueda)), -1, PREG_SPLIT_NO_EMPTY);
 
         // 2. Descartar las palabras habituales, pronombres y artículos
         $removidas = [];

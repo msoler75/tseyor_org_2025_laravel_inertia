@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Pigmalion;
 
 use  TeamTNT\TNTSearch\Support\AbstractTokenizer;
@@ -24,27 +25,18 @@ class SpanishTokenizer extends AbstractTokenizer implements TokenizerInterface
             }
             die;
         } */
-        if(is_array($text)) return $text;
+        if (is_array($text)) return $text;
         $text = mb_strtolower($text);
-        $text = $this->removeAccents($text); // Eliminar acentos, ñ y ç
+        $text = self::removeAccents($text); // Eliminar acentos, ñ y ç
         $split = preg_split($this->getPattern(), $text, -1, PREG_SPLIT_NO_EMPTY);
         return array_diff($split, $stopwords);
     }
 
-    protected function removeAccents($text)
+    public static function removeAccents($text)
     {
-        $replacements = [
-            'á' => 'a',
-            'é' => 'e',
-            'í' => 'i',
-            'ó' => 'o',
-            'ú' => 'u',
-            'ü' => 'u',
-            'ñ' => 'n',
-            'ç' => 'c',
-            // Agrega más caracteres acentuados y sus reemplazos aquí si es necesario
-        ];
+        $from = ['á','é','í','ó','ú','ü','ñ','ç'];
+        $to   = ['a','e','i','o','u','u','n','c'];
 
-        return str_replace(array_keys($replacements), array_values($replacements), $text);
+        return str_replace($from, $to, $text);
     }
 }

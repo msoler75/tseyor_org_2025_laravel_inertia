@@ -277,10 +277,13 @@ class Comunicado extends ContenidoConAudios
      /**
      * Carpeta para los medios del contenido (imágenes)
      */
-    public function getCarpetaMedios() {
+    public function getCarpetaMedios(bool $formatoRutaRelativa= false) : string
+    {
         $coleccion = $this->getTable();
         $folderCompleto = $this->id ? "/almacen/medios/$coleccion/{$this->ano}/{$this->id}": self::getCarpetaMediosTemp();
         DiskUtil::ensureDirExists($folderCompleto);
+        if($formatoRutaRelativa)
+            return DiskUtil::getRutaRelativa($folderCompleto);
         return $folderCompleto;
     }
 

@@ -30,7 +30,7 @@
     }
 
     p a {
-        @apply text-blue-500 underline;
+        @apply text-primary underline;
     }
 
     p a:hover {

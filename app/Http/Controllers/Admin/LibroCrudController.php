@@ -47,7 +47,8 @@ class LibroCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'titulo',
             'label' => 'Título',
-            'type' => 'text'
+            'type' => 'text',
+            'limit' => 78,
         ]);
 
 
@@ -62,15 +63,28 @@ class LibroCrudController extends CrudController
             'name' => 'categoria',
             'label' => 'Categoría',
             'type' => 'text',
+            'limit' => 16,
         ]);
 
-        $this->crud->addColumn([
+        /* $this->crud->addColumn([
             'name' => 'imagen',
             'label' => 'portada',
             'type' => 'image',
             'value' => function ($entry) {
                 return $entry->imagen . '?mh=25';
             }
+        ]); */
+
+        $this->crud->addColumn([
+            'name' => 'paginas',
+            'label' => 'Pág.',
+            'type' => 'number',
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'edicion',
+            'label' => 'Ed.',
+            'type' => 'number',
         ]);
 
         $this->crud->addColumn([
@@ -81,6 +95,8 @@ class LibroCrudController extends CrudController
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
+
+        CRUD::setOperationSetting('lineButtonsAsDropdown', true);
     }
 
     /**
@@ -113,7 +129,33 @@ class LibroCrudController extends CrudController
 
         // list($disk, $folderPDF) = DiskUtil::obtenerDiscoRuta($this->getMediaTempFolder());
 
-        CRUD::field('categoria')->hint('Monografías, Obras de referencia, Cuentos, Talleres... Se pueden poner varias categorías separadas por coma.');
+        // CRUD::field('categoria')->hint('Monografías, Obras de referencia, Cuentos, Talleres... Se pueden poner varias categorías separadas por coma.');
+
+        CRUD::addField([   // select_from_array
+            'name'        => 'categoria',
+            'label'       => 'Categoría',
+            'type'        => 'select_from_array',
+            'options'     => [
+                              'comunicados'=>'comunicados',
+                              'cuadernos para la divulgación'=>'cuadernos para la divulgación',
+                              'cuentos'=>'cuentos',
+                              'cursos y talleres'=>'cursos y talleres',
+                              'experiencias'=>'experiencias',
+                              'memorias'=>'memorias',
+                              'monografías'=>'monografías',
+                              'obras de consulta'=>'obras de consulta',
+                              'organización de Tseyor'=>'organización de tseyor',
+                              'presentaciones gráficas'=>'presentaciones gráficas',
+                              'psicografías'=>'psicografías',
+                              'revistas y boletines'=>'revistas y boletines',
+                              ],
+            'allows_null' => false,
+            'default'     => 'monografías',
+            'wrapper'   => [
+                'class'      => 'form-group col-md-3'
+            ],
+        ]);
+
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
@@ -125,7 +167,7 @@ class LibroCrudController extends CrudController
 
         CRUD::field('paginas')->wrapper([
             'class' => 'form-group col-md-3'
-        ]);
+        ])->hint("Normalmente se puede dejar en blanco. Se obtiene el valor desde el pdf");
 
         CRUD::field('visibilidad')->type('visibilidad');
 
