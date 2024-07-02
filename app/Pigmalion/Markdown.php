@@ -42,6 +42,9 @@ class Markdown
         // Reemplazar párrafos con estilos
         $html = preg_replace('/<p>{\s*style=([^}]*)\s*}/', "<p style='$1'>", $html);
 
+        // remplazar caso de salto de linea y centramiento
+        $html = preg_replace('/<br\s*\/>\n?{style=([^}]*)}(.*?)<\/p>/', "</p><p style='$1'>$2</p>", $html);
+
         // centramos las imágenes solitarias
         $regex = "/<p>(<img[^>]+>)<\/p>/ui";
         $html = preg_replace($regex, "<p style='text-align: center'>$1</p>", $html);

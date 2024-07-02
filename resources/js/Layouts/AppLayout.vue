@@ -90,7 +90,7 @@ function login2() {
 
 const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset
-    console.log('handleScroll', nav.scrollY)
+    // console.log('handleScroll', nav.scrollY)
 }
 
 // const dynamicAudioPlayer = ref(null);

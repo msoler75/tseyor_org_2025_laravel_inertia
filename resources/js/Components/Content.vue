@@ -1,5 +1,5 @@
 <template>
-    <Prose ref="container" class="text-container">
+    <Prose class="text-container">
         <ContentNode :node="arbol" :use-image="optimizeImages"
         @click="handleClick"/>
     </Prose>
@@ -24,11 +24,14 @@ const props = defineProps({
     optimizeImages: {
         type: Boolean,
         default: true
+    },
+    onNode: {
+        type: Function,
+        default: null
     }
 });
 
 const isMarkdown = computed(() => props.format == 'md' ? true : ['md', 'ambiguous'].includes(detectFormat(props.content).format))
-const container = ref(null)
 const images = ref([]) // imagenes del contenido
 
 var v3ImgPreviewFn = null
@@ -80,6 +83,8 @@ function parseHTML(textoHTML) {
                 obj.children.push(objchild);
                 if(objchild.tagName=="img"&&!objchild.node.src.match(/guias|sello_tseyor/)) // si es una imagen de los guias, no cuenta
                     obj.attributes['has-image'] = ''
+                if(props.onNode)
+                    props.onNode(objchild)
             } else if (child.nodeType === 3 && child.textContent) {
                 // Agrega el texto del nodo de texto
                 obj.children.push({

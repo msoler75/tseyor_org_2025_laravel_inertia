@@ -27,9 +27,12 @@ COVER_FIELDS
 JOBS
 -Ver por qué no procesa los audios de los 3 comunicados (id: 1511, id: 1540, id: 1544)
 
-GUIAS
+ADMIN/GUIAS
 -hacer más amigable los campos de libros de admin
 -dejar claro los tabs que se marcan con <h4>, o cambiarlos por h2/h3
+
+ADMIN/GUIAS+LUGARES
+-bibliografía, hacer un input field de backpack para texto y libros, en lugar de json, o slugs separados por comas
 
 HACIENDA
 

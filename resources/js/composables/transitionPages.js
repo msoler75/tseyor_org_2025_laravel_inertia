@@ -34,12 +34,21 @@ router.on('start', (event) => {
     // si, quitando la parte de query, son la misma ruta...
     console.log('comparing', nuevaRuta.origin + nuevaRuta.pathname, 'vs', rutaActual.origin + rutaActual.pathname)
     const mismapagina = nuevaRuta.origin + nuevaRuta.pathname == rutaActual.origin + rutaActual.pathname
-    console.log({p1, p2, mismapagina, mismaSeccion, nav})
     let scrolling = mismapagina || mismaSeccion
 
+    console.log({p1, p2, mismapagina, mismaSeccion,  scrolling , nav})
 
     if(!mismapagina || !mismaSeccion ){
-        const fadeoutWhenNavigateTo = /^\/(audios|videos|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|normativas|noticias|publicaciones|usuarios)\/.+/
+        const fadeoutWhenNavigateTo = /^\/(audios|videos|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|normativas|noticias|publicaciones|usuarios|preguntas-frecuentes)\/.+/
+        if(fadeoutWhenNavigateTo.exec(nuevaRuta.pathname)) {
+            console.log('auto fadeOut')
+            nav.fadeoutPage()
+        }
+    }
+
+    // aunque esté en la misma sección
+    if(!mismapagina){
+    const fadeoutWhenNavigateTo = /^\/(preguntas-frecuentes|comunicados).*/
         if(fadeoutWhenNavigateTo.exec(nuevaRuta.pathname)) {
             console.log('auto fadeOut')
             nav.fadeoutPage()
@@ -73,6 +82,7 @@ router.on('navigate', (event) => {
     nav.dontFadeout = false
     // nav.ignoreScroll = false
 
+    console.log('nav.fadingOutPage', nav.fadingOutPage)
     if (nav.fadingOutPage) {
         window.scrollTo({
             top: 0,

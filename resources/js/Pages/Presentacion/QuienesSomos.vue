@@ -71,14 +71,14 @@
                 <template #text1>
                     <p>
                     <ul>
-                        <li>¿Cómo contactan?</li>
-                        <li>¿Cómo son los seres de otros planetas? </li>
-                        <li>¿Cómo viven? </li>
-                        <li>¿Por qué están aquí?</li>
-                        <li>¿Cómo son sus naves?</li>
-                        <li>¿Cómo puedo comunicarme con ellos?</li>
-                        <li>¿Por qué no arreglan los problemas de nuestro mundo?</li>
-                        <li>¿Por qué no se presentan?</li>
+                        <Li><Link href="/preguntas-frecuentes/1#_Toc301129944">¿Cómo contactan?</Link></li>
+                        <li><Link href="/preguntas-frecuentes/1#_Toc301129901">¿Cómo son los seres de otros planetas?</Link></li>
+                        <li><Link href="/preguntas-frecuentes/1#_Toc301129906">¿Cómo viven? </Link></li>
+                        <li><Link href="/preguntas-frecuentes/1#_Toc301129919">¿Por qué están aquí?</Link></li>
+                        <li><Link href="/preguntas-frecuentes/1#_Toc301129895">¿Cómo son sus naves?</Link></li>
+                        <li><Link href="/preguntas-frecuentes/1#_Toc301129948">¿Cómo puedo comunicarme con ellos?</Link></li>
+                        <li><Link href="/preguntas-frecuentes/1#_Toc301129928">¿Por qué no arreglan los problemas de nuestro mundo?</Link></li>
+                        <li><Link href="/preguntas-frecuentes/1#_Toc301129956">¿Por qué no se presentan?</Link></li>
                     </ul>
                     </p>
                 </template>
@@ -88,7 +88,7 @@
                         Galaxia.</p>
                     <p> Estas y otras muchas preguntas ordenadas por temática puedes consultarlas en el libro-documento.</p>
                     <p class="flex justify-center mt-12">
-                        <ActionButton href="/libro-documento" class="btn btn-primary">Ver Preguntas</ActionButton>
+                        <ActionButton href="/preguntas-frecuentes" class="btn btn-primary">Ver Preguntas</ActionButton>
                     </p>
                 </template>
             </TextText>

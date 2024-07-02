@@ -2,7 +2,7 @@
     <Teleport v-if="mounted" to="#afterNav" :disabled="inline || nav.scrollY<props.floatAtY">
         <Link :href="enlace" class="flex h-fit gap-2 text-sm items-center hover:underline select-none"
         :class="!inline && nav.scrollY>=props.floatAtY?'p-3 bg-base-100 rounded-br-xl shadow':''"
-        v-bind="$attrs"
+        v-bind="$attrs" :fadeOut="fadeOut"
         >
         <Icon icon="ph:arrow-left" />
         <slot />
@@ -19,6 +19,11 @@ const props = defineProps({
         default: 90
     },
     inline: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    fadeOut: {
         type: Boolean,
         required: false,
         default: false

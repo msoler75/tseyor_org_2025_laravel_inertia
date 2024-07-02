@@ -68,7 +68,7 @@
         </div>
 
 
-        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="flex-grow">
 
@@ -179,7 +179,7 @@
             </div>
 
 
-        </div>
+        </ContentMain>
     </div>
 </template>
 
