@@ -94,6 +94,10 @@ const props = defineProps(
         autoScroll: {
             type: Boolean,
             default: true
+        },
+        fadeOut: {
+            type: Boolean,
+            default: false
         }
     }
 )
@@ -107,6 +111,8 @@ const asIF = computed( () => {
         )
 
 function handleClick() {
+    if(props.fadeOut)
+        nav.fadeoutPage()
     if (props.preservePage)
         nav.dontFadeout = true
     if (!props.autoScroll)

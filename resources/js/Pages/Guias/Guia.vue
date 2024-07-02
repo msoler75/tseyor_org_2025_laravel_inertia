@@ -78,7 +78,6 @@
 <script setup>
 import { Tabs, Tab } from 'vue3-tabs-component';
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { router } from '@inertiajs/vue3';
 import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
 
 defineOptions({ layout: AppLayout })

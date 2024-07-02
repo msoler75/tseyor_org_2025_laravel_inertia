@@ -752,6 +752,11 @@ hr {
     @apply text-2xl mb-5 font-semibold;
 }
 
+.tiptap-editor:deep(h4) {
+    @apply text-xl mb-4 font-semibold;
+}
+
+
 .tiptap-editor:deep(p) {
     @apply my-6 text-base;
 }

@@ -205,6 +205,12 @@ export default [
           title: "Referencia",
           items: [
             {
+                title: "Preguntas frecuentes",
+                route: "preguntas",
+                description: "Preguntas más habituales y su respuesta",
+                icon: "ph:question-duotone",
+              },
+            {
               title: "Mis primeros pasos",
               url: "comenzar",
               description: "Dónde comenzar en la comunidad Tseyor",

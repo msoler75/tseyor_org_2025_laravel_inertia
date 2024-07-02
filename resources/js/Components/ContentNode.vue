@@ -26,6 +26,9 @@ const tag = computed(()=>{
     if (props.node.tagName == 'img' && props.useImage)
         return Image
 
+    if (props.node.tagName == 'Link')
+        return Link
+
     return props.node.tagName
 })
 </script>

@@ -160,6 +160,8 @@ export function MarkdownToHtml(raw_markdown) {
   // raw_markdown = raw_markdown.replace(/\n\s*---\s*\n/mg, '<hr/>')
   const converter = new showdown.Converter();
   converter.setFlavor("github");
+
+  // ponemos espacios en las urls
   raw_markdown = raw_markdown.replace(
     /!\[(.*)\]\(([^\)]+)\)/g,
     function (match, alt, url) {
@@ -167,6 +169,8 @@ export function MarkdownToHtml(raw_markdown) {
       return "![" + alt + "](" + url.replace(/\s/g, "%20") + ")";
     }
   );
+
+
   var html = converter
     .makeHtml(raw_markdown)
 
@@ -179,8 +183,20 @@ export function MarkdownToHtml(raw_markdown) {
       });
       return img.replace("<img", "<img " + values.join(" "));
     })
+
+    console.log('step1 html', html)
+
+    html = html
     // reemplazamos los párrafos con estilos
     .replace(/<p>{style=([^}]*)}/g, "<p style='$1'>")
+
+
+    // reemplazamos los estilos tras un salto de linea <br>
+    html = html.replace(/<br\s*\/>\n?{style=([^}]*)}(.*?)<\/p>/gs, "</p><p style='$1'>$2</p>")
+
+
+    console.log('step2 html', html)
+    html = html
     // quitamos los espacios sobrantes
     .replace(/<p>\s+<\/p>\n?/g, "")
     .replace(/\n/g, "")

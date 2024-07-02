@@ -21,6 +21,10 @@
         @apply text-2xl mb-5 font-semibold !text-primary ;
     }
 
+    h4 {
+        @apply text-xl mb-4 font-semibold !text-primary ;
+    }
+
     p {
         @apply my-6 text-base;
     }
