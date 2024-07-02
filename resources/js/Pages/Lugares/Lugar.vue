@@ -49,8 +49,12 @@
                     </tab>
 
                     <tab v-if="lugar.libros" name="Bibliografía">
-                        <div v-if="lugar.libros" v-for="libro, index of JSON.parse(lugar.libros)" :key="index">
-                            {{ libro.titulo }}
+                        <div v-if="lugar.libros" class="flex flex-wrap gap-4 justify-center">
+                            <Link v-for="libro, index of libros" :key="index"
+                                :href="route('libro', libro.slug)" class="w-[180px]">
+                                <Image :src="libro.imagen+'?w=180'"/>
+                                <div class="mt-1 text-sm text-center font-bold">{{libro.titulo}}</div>
+                            </Link>
                         </div>
                     </tab>
 
@@ -78,7 +82,6 @@ import { Tabs, Tab } from 'vue3-tabs-component';
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';
 
-
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
@@ -89,10 +92,15 @@ const props = defineProps({
     lugares: {
         type: Array,
         required: true
+    },
+    libros: {
+        type: Array,
+        required: true
     }
 });
 
 function buscarClick(query) {
     router.visit(route('lugares') + '?buscar=' + query)
 }
+
 </script>

@@ -34,6 +34,8 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
+import traducir from '@/composables/traducciones'
+
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
@@ -45,17 +47,6 @@ const props = defineProps({
 const listado = ref(props.listado);
 
 
-const traducciones = {
-    paginas: 'páginas',
-    guias: 'guías estelares',
-    terminos: 'glosario',
-    lugares: 'lugares de la galaxia',
-    entradas: 'blog'
-}
-
-function traducir(col) {
-    return traducciones[col] || col
-}
 
 
 </script>

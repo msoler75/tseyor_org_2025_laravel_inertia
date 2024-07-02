@@ -8,15 +8,17 @@
                         section.title }}
                     </div>
                     <div  :class="section.class?section.class:'flex flex-col gap-7 mb-7'">
-                        <component :is="item.external?'a':Link" :target="item.external ? '_blank' : ''" :href="item.url"
-                            v-for="item of section.items" :key="item.url" @click="nav.closeTabs()"
-                            class="group flex gap-3 p-3 rounded-lg hover:bg-base-200 transition duration-100 cursor-pointer relative"
-                            :class="item.class">
+                        <component :is="item.disabled?'div':(item.external?'a':Link)" :target="item.external ? '_blank' : ''" :href="item.url"
+                        v-for="item of section.items" :key="item.url" @click="nav.closeTabs()"
+                        class="group flex gap-3 p-3 rounded-lg hover:bg-base-200 transition duration-100 cursor-pointer relative"
+                        :class="item.class+(item.disabled?' pointer-events-none':'')">
                             <div class="flex justify-start" style="min-width:2.2rem">
-                                <Icon :icon="item.icon" class="text-3xl text-primary group-hover:text-secondary flex-shrink-0" />
+                                <Icon :icon="item.icon" class="text-3xl text-primary group-hover:text-secondary flex-shrink-0" 
+                                :class="item.disabled?'!text-gray-500':''"/>
                             </div>
                             <div class="flex flex-col self-center w-full">
-                                <span class="font-semibold item-lg text-primary group-hover:text-secondary flex items-center justify-between w-full">{{ item.title }} <Icon icon="ph:arrow-right" class="opacity-0 group-hover:opacity-100"/></span>
+                                <span class="font-semibold item-lg text-primary group-hover:text-secondary flex items-center justify-between w-full"
+                                :class="item.disabled?'!text-gray-500':''">{{ item.title }} <Icon icon="ph:arrow-right" class="opacity-0 group-hover:opacity-100"/></span>
                                 <span v-if="item.description" class="text-gray-500 text-sm">{{ item.description }}</span>
                             </div>
                         </component>

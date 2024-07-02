@@ -16,6 +16,8 @@
 <script setup>
 
 import AppLayout from '@/Layouts/AppLayout.vue'
+import traducir from '@/composables/traducciones'
+
 defineOptions({ layout: AppLayout })
 
 const props = defineProps({
@@ -34,15 +36,4 @@ function calcularUrl(item) {
     return item.coleccion != 'paginas' ? (route(item.coleccion) + '/' + (item.slug_ref || item.id_ref)) : '/' + item.slug_ref
 }
 
-const traducciones = {
-    paginas: 'páginas',
-    guias: 'guías estelares',
-    terminos: 'glosario',
-    entradas: 'blog',
-    lugares: 'lugares de la galaxia'
-}
-
-function traducir(col) {
-    return traducciones[col] || col
-}
 </script>

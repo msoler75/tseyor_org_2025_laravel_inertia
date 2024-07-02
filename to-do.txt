@@ -1,7 +1,7 @@
 ENTRADAS/BLOG
 -Añadir el artículo: barcelona
 
-RUTAS_ARCHIVOS
+RUTAS_ARCHIVOS_INTERNO_DEV
 -hay un problema interno o confusión con las rutas de archivos o carpetas.
    Nunca queda queda claro si es:
    - una ruta relativa (ej: medios/libros/3)  (relative path)
@@ -21,19 +21,15 @@ TESTIMONIOS
 -modelo
 -fotos correo, y frases
 
-UI
--audios en movil
--comunicados/blogs siguiente/anterior sobrepasa el width
-
-
 COVER_FIELDS
 -hacer que el componente <ImageCoverField> llame al server para pedir la lista de imagenes en la carpeta y mostrar todas las imagenes
-
 
 JOBS
 -Ver por qué no procesa los audios de los 3 comunicados (id: 1511, id: 1540, id: 1544)
 
-
+GUIAS
+-hacer más amigable los campos de libros de admin
+-dejar claro los tabs que se marcan con <h4>, o cambiarlos por h2/h3
 
 HACIENDA
 
