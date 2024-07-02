@@ -2,7 +2,7 @@
     <Sections>
 
         <Hero title="Muular" subtitle="La moneda social y espiritual de Tseyor" buttonLabel="Descarga el libro del muular"
-            href="libro.pdf" />
+            href="/libros/el-muular-el-papel-moneda-tseyoriano" />
 
         <Section>
             <Text>
@@ -18,7 +18,7 @@
 
         <Section>
             <TextImage title="Muular Electrónico" subtitle="Intercambia muulares electrónicos desde tu dispositivo"
-                buttonLabel="Acceso al Muular electrónico" href="muular-electronico">
+                buttonLabel="Acceso al Muular electrónico" href="/muular-electronico">
                 <p>
                     Es la moneda en versión electrónica, que puede ser empleada igualmente en la comunidad Tseyor.
                     Especialmente en las casas Tseyor y Muulasterios, pero también entre tseyorianos que convivan o
@@ -30,16 +30,16 @@
 
         <Section>
             <TextImage title="Libro: El Muular. El Papel Moneda Tseyoriano"
-                srcImage="https://via.placeholder.com/300x400.png/0000ff?text=Muular" buttonLabel="Descargar libro"
-                :href="route('libros')">
+                srcImage="/almacen/medios/libros/145/El%20Muular.%20El%20Papel%20Moneda%20Tseyoriano.jpg?w=280"
+                buttonLabel="Descargar libro" href="/libros/el-muular-el-papel-moneda-tseyoriano">
                 <p>Monografía que recoge todas las informaciones vertidas sobre la ONG Mundo Armónico Tseyor.</p>
             </TextImage>
         </Section>
-
+        
         <Section>
             <TextImage title="Libro-Taller: Mejor con el Muular"
-                srcImage="https://via.placeholder.com/300x400.png/0000ff?text=Mejor con el Muular"
-                buttonLabel="Descargar libro" :href="route('libros')"
+            srcImage="/almacen/medios/libros/349/Taller%20mejor%20con%20el%20muular.jpg?w=280"
+            buttonLabel="Descargar libro" href="/libros/taller-mejor-con-el-muular"
                 image-right>
                 <p>Taller impartido por la hermana Noiwanak acerca del uso del Muular y su comprensión.</p>
             </TextImage>

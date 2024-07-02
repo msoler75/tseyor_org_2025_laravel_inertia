@@ -71,7 +71,7 @@
 
 <script setup>
 import useGlobalSearch from "@/Stores/globalSearch.js"
-import { usePage } from '@inertiajs/vue3';
+import traducir from '@/composables/traducciones'
 
 
 const portada = computed(() => page.url == '/')
@@ -288,18 +288,6 @@ function clickHandle(url) {
         // search.query = ""
         search.showSuggestions = true
     })
-}
-
-const traducciones = {
-    paginas: 'páginas',
-    guias: 'guías estelares',
-    terminos: 'glosario',
-    entradas: 'blog',
-    lugares: 'lugares de la galaxia'
-}
-
-function traducir(col) {
-    return traducciones[col] || col
 }
 
 

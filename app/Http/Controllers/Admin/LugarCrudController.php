@@ -18,6 +18,7 @@ class LugarCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -39,12 +40,47 @@ class LugarCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+         $this->crud->addColumn([
+            'name' => 'id',
+            'label' => 'id',
+            'type' => 'number'
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'nombre',
+            'label' => 'Nombre',
+            'type' => 'text'
+        ]);
+
+
+        $this->crud->addColumn([
+            'name' => 'updated_at',
+            'label' => 'Modificado',
+            'type' => 'datetime',
+            // Puedes usar 'datetime' o 'date' según el formato que desees mostrar
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'categoria',
+            'label' => 'Categoría',
+            'type' => 'text',
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'visibilidad',
+            'label' => 'Estado',
+            'type' => 'text',
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
+            }
+        ]);
     }
 
     /**
@@ -62,6 +98,20 @@ class LugarCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+
+         $folder = $this->getMediaFolder();
+
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
+
+        // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
+
+        CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder]);
+
+        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto'])->after('texto');
+
+
+         CRUD::field('visibilidad')->type('visibilidad');
     }
 
     /**

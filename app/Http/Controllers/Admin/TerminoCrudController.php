@@ -66,7 +66,7 @@ class TerminoCrudController extends CrudController
         ]);
 
 
-        CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
+        CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end ');
     }
 
     /**

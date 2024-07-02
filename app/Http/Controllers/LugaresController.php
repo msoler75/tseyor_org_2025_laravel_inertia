@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Lugar;
 use App\Pigmalion\SEO;
+use App\Models\Libro;
 
 class LugaresController extends Controller
 {
@@ -45,11 +46,20 @@ class LugaresController extends Controller
             abort(404);
         }
 
+        $libros = [];
+
+        // obtiene el campo 'libros' de $lugar, y separa por comas, y obtiene el slug
+        if($lugar->libros) {
+            $slugs = preg_split("/[\s,]+/", $lugar->libros, -1, PREG_SPLIT_NO_EMPTY);
+            $libros = Libro::whereIn('slug', $slugs)->get()->toArray();
+        }
+
         $lugares = Lugar::select(['nombre', 'slug'])->take(50)->get();
 
         return Inertia::render('Lugares/Lugar', [
             'lugares' => $lugares,
-            'lugar' => $lugar
+            'lugar' => $lugar,
+            'libros' => $libros
         ])
             ->withViewData(SEO::from($lugar));
     }

@@ -28,6 +28,7 @@ declare global {
   const removeAccents: typeof import('./resources/js/composables/textutils.js')['removeAccents']
   const replaceQuillEditorClasses: typeof import('./resources/js/composables/markdown.js')['replaceQuillEditorClasses']
   const router: typeof import('@inertiajs/vue3')['router']
+  const traducciones: typeof import('./resources/js/composables/traducciones.js')['default']
   const transitionPages: typeof import('./resources/js/composables/transitionPages.js')['default']
   const ucFirst: typeof import('./resources/js/composables/textutils.js')['ucFirst']
   const ucFirstAllWords: typeof import('./resources/js/composables/textutils.js')['ucFirstAllWords']

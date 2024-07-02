@@ -100,7 +100,11 @@ class GuiaCrudController extends CrudController
 
         $folder = 'medios/guias';
 
-        CRUD::field('imagen')->type('image_cover')->attributes(['from' => 'texto', 'folder' => $folder]);
+        // CRUD::field('imagen')->type('image_cover')->attributes(['from' => 'texto', 'folder' => $folder]);
+
+        CRUD::field('imagen')->type('text')->hint('/almacen/medios/guias/');
+
+        CRUD::field('visibilidad')->type('visibilidad');
     }
 
     /**

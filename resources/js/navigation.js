@@ -205,9 +205,9 @@ export default [
           title: "Referencia",
           items: [
             {
-              title: "Libros para comenzar",
+              title: "Mis primeros pasos",
               url: "comenzar",
-              description: "Dónde comenzar en la lectura de Tseyor",
+              description: "Dónde comenzar en la comunidad Tseyor",
               icon: "ph:list-numbers-duotone",
             },
             {
@@ -335,6 +335,7 @@ export default [
                 route: "publicaciones",
                 description: "Publicaciones de los miembros de la comunidad",
                 icon: "ph:flower-duotone",
+                disabled: true,
               },
           ],
         },
@@ -371,21 +372,24 @@ export default [
           items: [
             {
               title: "Muular Electrónico",
-              route: "equipos",
+              url: "/muular-electronico",
               description: "Meditaciones para el trabajo interior",
               icon: "ph:file-text-duotone",
+              disabled: true,
             },
             {
               title: "Juego del puzle",
               route: "equipos",
               description: "Meditaciones para el trabajo interior",
               icon: "ph:file-text-duotone",
+              disabled: true
             },
             {
               title: "Cartas para el autodescubrimiento",
               route: "equipos",
               description: "Meditaciones para el trabajo interior",
               icon: "ph:file-text-duotone",
+              disabled: true
             },
           ],
         },
