@@ -40,6 +40,8 @@ const props = defineProps({
 const emit = defineEmits('selected')
 
 const images = ref([])
+if(props.value)
+    images.value = [props.value]
 const imagesUploaded = ref([])
 const imagesFrom = ref([])
 const selected = ref(props.value)

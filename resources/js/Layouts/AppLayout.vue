@@ -141,7 +141,7 @@ onMounted(() => {
     function handleMouse() {
         // si el mouse sale de la ventana de la aplicación, cerramos el menú
         document.addEventListener("mouseleave", function (event) {
-            console.log('mouseleave')
+            // console.log('mouseleave')
             if (screen.width >= 1024) {
                 clearTimeout(timerActivateNav)
                 deactivateNav.value = true
@@ -152,7 +152,7 @@ onMounted(() => {
 
         // si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante un tiempo
         document.addEventListener("mouseenter", function (event) {
-            console.log('mouseenter')
+            // console.log('mouseenter')
             if (screen.width >= 1024) {
                 clearTimeout(timerActivateNav)
                 timerActivateNav = setTimeout(() => {

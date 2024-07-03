@@ -1,5 +1,5 @@
 <template>
-    <component :is="!errorLoading&&displaySrc?'img':'div'" ref="img" class="is-image transition-opacity duration-200" :src="displaySrc"
+    <component :is="!errorLoading&&displaySrc?'img':'div'" ref="img" class="is-image transition-opacity duration-200 object-contain" :src="displaySrc"
         :alt="alt" :title="title" :class="(imageLoaded||(errorLoading&&errorIcon)? 'opacity-100' : 'opacity-0')+(errorLoading&&errorIcon?' bg-gray-500 flex justify-center items-center min-w-[80px] min-h-[80px]':'')" :style="styles"
         @error="errorLoading=true">
         <Icon v-show="errorLoading" icon="ph:image-broken-duotone" class="text-4xl text-gray-500"/>
@@ -143,6 +143,7 @@ function init() {
     // así que primero se debe solicitar sus dimensiones originales al servidor
     getImageSize(imageSrc.value)
         .then(originalSize => {
+            console.log('getImageSize', props.src, {originalSize})
             putFakeImage(originalSize.width, originalSize.height)
         }).catch(err => {
             console.error(err)
@@ -159,13 +160,14 @@ function putFakeImage(width, height) {
     // generar una imagen transparent SVG con formato URI, debe tener ancho igual a size.width y alto igual a size.height
     displaySrc.value = `data:image/svg+xml,%3Csvg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E`
     setTimeout(() => {
+        console.log('after put fake image', props.src, 'dimensions are', img.value.offsetWidth, img.value.offsetHeight)
         // obtenemos las dimensiones reales de visualización (img.value.offsetWidth y offsetHeight)
-        if (isMounted.value)
+        if (isMounted.value) {
             putImageWithSize(img.value.offsetWidth, img.value.offsetHeight)
-        else {
+        } else {
             putFakeImage(width, height) // esperamos un poco más
         }
-    }, 50) // a los 50 milisegundos ya podemos saber la dimensiones de visualización de la imagen
+    }, 550) // a los 50 milisegundos ya podemos saber la dimensiones de visualización de la imagen
 }
 
 async function putImageWithSize(widthOp, heightOp) {

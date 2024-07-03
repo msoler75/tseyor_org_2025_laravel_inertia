@@ -105,9 +105,30 @@ class ContactoCrudController extends CrudController
 
         $folder = $this->getMediaFolder();
 
-        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder]);
+        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder])->hint('Imagen que se verá en el mapa')->after('slug')
+        ->hint('Imagen que se muestra en el mapa de contactos');
+
+        CRUD::field('direccion')->hint('Calle y número');
+
+        CRUD::field('codigo')->label('Código postal')->wrapper([
+            'class' => 'form-group col-md-3'
+        ]);
+
+        CRUD::field('social')->label('Enlace a una red social');
 
         CRUD::field('slug')->hint('Nombre corto para los enlaces. No lo rellenes si no sabes como funciona');
+
+        CRUD::field('latitud')->type('number')->attributes(['step' => 'any'])
+        ->wrapper([
+            'class' => 'form-group col-md-3'
+        ]);
+
+        CRUD::field('longitud')->type('number')->attributes(['step' => 'any'])
+        ->wrapper([
+            'class' => 'form-group col-md-3'
+        ]);
+
+        CRUD::field('xxxx')->type('gmaps_coords')->after('longitud');
 
         CRUD::field([   // select_from_array
             'name' => 'pais',
@@ -117,7 +138,7 @@ class ContactoCrudController extends CrudController
             'allows_null' => false,
             'default' => 'ES',
             'wrapper' => [
-                'class' => 'form-group col-md-4'
+                'class' => 'form-group col-md-3'
             ],
         ]);
 

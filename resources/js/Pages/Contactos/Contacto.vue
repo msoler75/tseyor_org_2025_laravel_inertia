@@ -6,13 +6,13 @@
             <AdminPanel modelo="contacto" necesita="administrar directorio" :contenido="contacto" />
         </div>
 
-        <Card class="text-center w-fit space-y-4 p-20 mx-auto">
+        <Card class="text-center w-fit space-y-4 sm:!p-14 mx-auto">
             <h1 class="text-3xl font-bold mb-4">{{ contacto.nombre }}</h1>
 
             <p class="lg:text-right text-gray-600 text-sm mb-2"> Última actualización:
                 <TimeAgo :date="contacto.updated_at" />
             </p>
-            <Image :src="contacto.imagen" class="inline-block mt-2 pb-6"/>
+            <Image :src="contacto.imagen" class="inline-block mt-2 pb-6 max-h-[500px]"/>
 
             <p v-if="contacto.pais" class="text-lg"><strong>País:</strong> {{ contacto.pais }}</p>
             <p v-if="contacto.poblacion" class="text-lg"><strong>Población:</strong> {{ contacto.poblacion }}</p>

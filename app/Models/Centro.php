@@ -29,7 +29,8 @@ class Centro extends ContenidoBaseModel
 
     public function contacto() // contacto relacionado con este centro
     {
-        return $this->belongsTo(Contacto::class, 'contacto_id');
+        return $this->belongsTo(Contacto::class, 'contacto_id')
+            ->where('visibilidad', 'P');
     }
 
 
