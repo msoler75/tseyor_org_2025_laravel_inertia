@@ -14,6 +14,7 @@ declare global {
   const getEmbedYoutube: typeof import('./resources/js/composables/srcutils.js')['getEmbedYoutube']
   const getImageSize: typeof import('./resources/js/composables/imageutils.js')['getImageSize']
   const getImageUrl: typeof import('./resources/js/composables/imageutils.js')['getImageUrl']
+  const getSrcImageUrl: typeof import('./resources/js/composables/imageutils.js')['getSrcImageUrl']
   const getSrcUrl: typeof import('./resources/js/composables/srcutils.js')['getSrcUrl']
   const isFromMyDomain: typeof import('./resources/js/composables/imageutils.js')['isFromMyDomain']
   const isWebPSupported: typeof import('./resources/js/composables/imageutils.js')['isWebPSupported']

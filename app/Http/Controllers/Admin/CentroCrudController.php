@@ -89,24 +89,29 @@ class CentroCrudController extends CrudController
             'nombre' => 'required|min:8',
             'slug' => [\Illuminate\Validation\Rule::unique('centros', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'required|max:400',
-            'imagen' => 'required'
+            'imagen' => 'required',
+            'pais' => 'required',
+            'poblacion'=>'required'
         ]);
 
         // CRUD::setFromDb(); // set fields from db columns.
 
         CRUD::field('nombre')->type('text')->attributes(['maxlength' => 256, 'required' => 'required']);
 
-        CRUD::field('slug')->type('text')->attributes(['maxlength' => 256]);
+        CRUD::field('slug')->type('text')->attributes(['maxlength' => 256])->hint('Nombre corto para los enlaces. No lo rellenes si no sabes como funciona');
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400, 'rows' => 4]);
 
-        CRUD::field('entradas')->type('textarea')->hint('slug de entradas de blog, separados por comas o saltos de linea. Ejemplo: un-retiro-espiritual, unas-jornadas-enriquecedoras, etc.')->attributes(['rows' => 4]);
-
-        CRUD::field('libros')->type('textarea')->hint('slug de libros, separados comas o saltos de linea. Ejemplo: los-guias-estelares, el-rayo-sincronizador, ...')->attributes(['rows' => 4]);
-
         $folder = $this->getMediaFolder();
 
-        CRUD::field('imagen')->type('image_cover')->label('Imágenes del centro')->attributes(['folder' => $folder, 'sublabel'=>'Galería de imágenes', 'can-delete'=>true, 'list-images'=>true]);
+        $galeria = $this->crud->getCurrentEntryId();
+
+        CRUD::field('imagen')->type('image_cover')->label($galeria?'Imágenes del centro':'Imagen principal')->attributes(['folder' => $folder, 'sublabel'=>$galeria?'Galería de imágenes':'', 'can-delete'=>$galeria, 'list-images'=>$galeria]);
+
+
+        CRUD::field('poblacion')->type('text')->attributes(['maxlength' => 256, 'required' => 'required'])->wrapper([
+                'class'      => 'form-group col-md-4'
+        ]);
 
         CRUD::field([   // select_from_array
             'name'        => 'pais',
@@ -130,8 +135,14 @@ class CentroCrudController extends CrudController
             'model'       => 'App\Models\Contacto',
             'wrapper'   => [
                 'class'      => 'form-group col-md-4'
-            ]
+            ],
+            'hint' => 'Seleccionar ficha de contacto (si la hay)'
         ]);
+
+        CRUD::field('entradas')->type('textarea')->hint('slug de entradas de blog, separados por comas o saltos de linea. Ejemplo: un-retiro-espiritual, unas-jornadas-enriquecedoras, etc.')->attributes(['rows' => 4]);
+
+        CRUD::field('libros')->type('textarea')->hint('slug de libros, separados comas o saltos de linea. Ejemplo: los-guias-estelares, el-rayo-sincronizador, ...')->attributes(['rows' => 4]);
+
     }
 
     /**
