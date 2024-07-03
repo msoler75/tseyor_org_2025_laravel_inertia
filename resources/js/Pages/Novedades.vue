@@ -20,7 +20,7 @@
             :draft="contenido.visibilidad!='P'"
             :image="contenido.imagen"
             :href="route(contenido.coleccion)+'/'+contenido.slug_ref"
-            :tag="traducir(contenido.coleccion)"
+            :tag="null"
             :description="contenido.descripcion"
             :date="contenido.fecha"/>
         </GridAppear>

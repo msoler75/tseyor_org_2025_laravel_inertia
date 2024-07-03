@@ -9,12 +9,17 @@
             }" />
 
         <div class="flex overflow-x-auto">
-            <div v-for="url of images" :key="url" class="border-4 border-transparent flex-shrink-0 cursor-pointer"
-                :title="url" :class="url == selected ? '!border-orange-500' : ''" @click="selected = url">
-                <img :src="url.startsWith('/')?url+'?h=150':url" style="height:150px"/>
+            <div v-for="url of images" :key="url"
+                class="relative border-4 border-transparent flex-shrink-0 cursor-pointer group" :title="url"
+                :class="url == selected ? '!border-orange-500' : ''" @click="selected = url">
+                <Image :src="url.startsWith('/') ? url + '?h=150' : url" style="height:150px" error-icon/>
+                <div v-if="canDelete" @click.stop="borrarImagen(url)" title="Borrar imagen"
+                    class="absolute bottom-1 right-1 bg-red-600 text-white hidden group-hover:block opacity-50 hover:!opacity-100 p-1 rounded">
+                    <Icon icon="ph:trash" />
+                </div>
             </div>
             <div @click="modalSubirImage = true" title="Añadir una imagen"
-                class="flex justify-center items-center w-[150px] h-[150px] border-gray-700 dark:border-gray-300  border opacity-80 hover:opacity-100 bg-gray-500 cursor-pointer flex-shrink-0">
+                class="flex justify-center items-center w-[150px] h-[150px] border-gray-700 dark:border-gray-300  border opacity-80 hover:!opacity-100 bg-gray-500 cursor-pointer flex-shrink-0">
                 <Icon icon="ic:outline-add-photo-alternate" class="text-4xl" />
             </div>
         </div>
@@ -24,10 +29,12 @@
 <script setup>
 
 const props = defineProps({
-    from: String,
-    name: String,
+    from: String, // campo input de texto con formato html or markdown de donde extrae las imagenes
+    name: String, // name of the field
     folder: String, // carpeta de destino
-    value: String
+    value: String,
+    canDelete: { type: Boolean, default: false }, // se puede borrar una imagen (requiere permisos de escritura en carpeta folder)
+    listImages: { type: Boolean, default: false }, // carga todas las imagenes de la carpeta folder
 })
 
 const emit = defineEmits('selected')
@@ -36,7 +43,9 @@ const images = ref([])
 const imagesUploaded = ref([])
 const imagesFrom = ref([])
 const selected = ref(props.value)
-const imagesUrl = computed(()=>images.value.map(src=>src))
+// const imagesUrl = computed(()=>images.value.map(src=>src))
+
+// Route::delete('files{ruta}', [ArchivosController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
 // watch(() => props.value, (value) => selected.value = value)
 
 var fromValue = null
@@ -79,15 +88,44 @@ function updateImages() {
         selected.value = images.value[0]
 }
 
+function loadAllImages() {
+    axios.get('/admin/list-images' + props.folder)
+        .then(response => {
+            images.value = response.data
+            // incluimos, si acaso no está, la imagen seleccionada
+            if (!images.value.includes(props.value))
+                images.value.unshift(props.value)
+
+        })
+}
+
+function borrarImagen(url) {
+    const idx = images.value.indexOf(url)
+    if (idx == -1) return false
+    axios.delete('/files' + url)
+        .then(response => {
+            console.log('delete', {response})
+            images.value.splice(idx, 1)
+            if (url == selected.value)
+                selected.value = images.value.length ? images.value[0] : null
+        })
+}
 
 var inputField = null
 var interval = null
 onMounted(() => {
     inputField = document.querySelector("[name='" + props.from + "']")
 
-    interval = setInterval(updateImages, 1000)
+    if (props.from) {
+        inputField = document.querySelector("[name='" + props.from + "']")
+        if (inputField) {
+            interval = setInterval(updateImages, 1000)
+            updateImages()
+        }
+    }
 
-    updateImages()
+    if (props.listImages)
+        loadAllImages()
 })
 
 onUnmounted(() => {
@@ -106,4 +144,3 @@ function uploadedImage(url) {
 }
 
 </script>
-

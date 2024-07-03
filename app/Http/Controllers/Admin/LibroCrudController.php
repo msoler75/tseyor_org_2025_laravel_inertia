@@ -157,7 +157,7 @@ class LibroCrudController extends CrudController
         ]);
 
 
-        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400, 'rows' => 6]);
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder]);
 

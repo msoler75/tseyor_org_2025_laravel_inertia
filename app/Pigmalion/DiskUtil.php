@@ -93,4 +93,19 @@ class DiskUtil {
         return "/almacen/$ruta";
     }
 
+    public static function obtenerImagenes($rutaOriginal) : array {
+        list($disk, $ruta) = self::obtenerDiscoRuta($rutaOriginal);
+        $imagenes = Storage::disk($disk)->files($ruta);
+        //filtrar los archivos que son imagenes
+        $imagenes = array_filter($imagenes, function ($image) use ($disk) {
+            $mime = Storage::disk($disk)->mimeType($image);
+            return strpos($mime, 'image') !== false;
+        });
+
+        $imagenes = array_map(function ($image) {
+            return self::normalizePath($image);
+        }, $imagenes);
+
+        return $imagenes;
+    }
 }

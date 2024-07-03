@@ -22,6 +22,7 @@ class ContactoCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -102,7 +103,7 @@ class ContactoCrudController extends CrudController
 
         CRUD::setFromDb(); // set columns from db columns.
 
-        $folder = "/medios/contactos";
+        $folder = $this->getMediaFolder();
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder]);
 

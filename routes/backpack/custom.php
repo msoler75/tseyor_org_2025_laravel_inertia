@@ -88,8 +88,7 @@ Route::group([
 
     Route::get('search/{model}', 'SearchModelController@index');
 
-    Route::get('', [AdminController::class, 'dashboard'] );
-    Route::get('dashboard', [AdminController::class, 'dashboard'] );
+
     Route::get('archivos', function () {
         return view('admin.archivos');
     } );
@@ -97,6 +96,9 @@ Route::group([
         return view('admin.logs');
     } );
 
+    Route::get('list-images{ruta}', [AdminController::class, 'listImages'] )->where(['ruta' => '(\/.+)?'])->name('admin.list-images');
+    Route::get('dashboard', [AdminController::class, 'dashboard'] );
+    Route::get('', [AdminController::class, 'dashboard'] );
 
     // administración de tareas
     Route::get('jobs/retry-failed-jobs', 'JobsController@retryFailedJobs');

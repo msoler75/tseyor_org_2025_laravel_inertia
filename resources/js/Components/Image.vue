@@ -1,6 +1,9 @@
 <template>
-    <component :is="displaySrc?'img':'div'" ref="img" class="is-image transition-opacity duration-200" :src="displaySrc"
-        :alt="alt" :title="title" :class="imageLoaded ? 'opacity-100' : 'opacity-0'" :style="styles" />
+    <component :is="!errorLoading&&displaySrc?'img':'div'" ref="img" class="is-image transition-opacity duration-200" :src="displaySrc"
+        :alt="alt" :title="title" :class="(imageLoaded||(errorLoading&&errorIcon)? 'opacity-100' : 'opacity-0')+(errorLoading&&errorIcon?' bg-gray-500 flex justify-center items-center min-w-[80px] min-h-[80px]':'')" :style="styles"
+        @error="errorLoading=true">
+        <Icon v-show="errorLoading" icon="ph:image-broken-duotone" class="text-4xl text-gray-500"/>
+        </component>
 </template>
 
 
@@ -44,6 +47,10 @@ const props = defineProps({
     optimize: {
         type: Boolean,
         default: true
+    },
+    errorIcon: {
+        type: Boolean,
+        default: true
     }
 });
 
@@ -51,8 +58,11 @@ const img = ref()
 
 const myDomain = computed(() => window?.location.origin)
 
+
 // la imagen que se cargará del servidor
 const imageSrc = computed(() => getImageUrl(props.src, props.fallback))
+
+const errorLoading = ref(false)
 
 // este componente ya está montado?
 const isMounted = ref(false)
@@ -108,7 +118,7 @@ Hay varios tipos de situaciones:
 */
 
 function init() {
-    console.log('Image.init', props.src, 'props.width:', props.width, 'props.height:', props.height)
+    console.log('image:init()', props.src, 'props.width:', props.width, 'props.height:', props.height)
 
     if(!props.src)
         return
@@ -136,6 +146,7 @@ function init() {
             putFakeImage(originalSize.width, originalSize.height)
         }).catch(err => {
             console.error(err)
+            errorLoading.value = true
             putSrcImage(imageSrc.value)
         })
 }
@@ -158,7 +169,7 @@ function putFakeImage(width, height) {
 }
 
 async function putImageWithSize(widthOp, heightOp) {
-    console.log('putImageWithSize', imageSrc.value, widthOp, heightOp)
+    console.log('image:putImageWithSize', imageSrc.value, widthOp, heightOp)
     if(widthOp==originalSize.width&&heightOp==originalSize.height)
         return putSrcImage(imageSrc.value)
     const webp = await isWebPSupported()
@@ -181,7 +192,7 @@ function putSrcImage(src) {
 
 
 onMounted(() => {
-    console.log(`image mounted: ${props.src}`)
+    console.log(`image:image mounted: ${props.src}`)
     // doImageSize()
     isMounted.value = true
     //if (justPutResized.value)
