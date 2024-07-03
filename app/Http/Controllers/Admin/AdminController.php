@@ -8,6 +8,8 @@ use App\Models\Contenido;
 use App\Models\Revision;
 use App\Models\Busqueda;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Pigmalion\DiskUtil;
 
 class AdminController
 {
@@ -46,6 +48,15 @@ class AdminController
 
         // dd($comentarios);
         return view('admin.dashboard', $data);
+    }
+
+
+    public function listImages($ruta) {
+
+        $imagenes = DiskUtil::obtenerImagenes($ruta);
+
+        // return json response
+        return response()->json($imagenes);
     }
 
 }

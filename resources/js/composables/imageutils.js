@@ -8,8 +8,10 @@ export const getImageUrl = (src, defaultUrl) => {
     const randomIndex = Math.floor(Math.random() * fallback_images.length);
     defaultUrl = fallback_folder + "/" + fallback_images[randomIndex];
   }
-  if(!src) return defaultUrl
-  return getSrcUrl(src)
+  if(!src) return getSrcImageUrl(defaultUrl)
+  var r = getSrcImageUrl(getSrcUrl(src))
+console.log('getImageUrl', {src, r})
+return r
 };
 
 // guardamos los datos de las imagenes
@@ -91,3 +93,10 @@ D:\projects\tseyor\laravel_inertia\storage\app/public\almacen/profile-photos/fXf
 
 
 */
+
+export const getSrcImageUrl = (url) => {
+    const parts = url.split('?')
+    url = parts[0]
+    url =  encodeURIComponent(url)
+    return url.replace(/%2F/g, '/').replace(/\(/g, '%28').replace(/\)/g, '%29') + (parts.length > 1 ? '?' + parts[1] : '')
+  }

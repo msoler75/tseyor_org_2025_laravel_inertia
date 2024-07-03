@@ -20,6 +20,7 @@ class CentroCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -48,7 +49,7 @@ class CentroCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
-         $this->crud->addColumn([
+        $this->crud->addColumn([
             'name'  => 'nombre',
             'label' => 'Nombre',
             'type'  => 'text'
@@ -74,8 +75,6 @@ class CentroCrudController extends CrudController
             'label' => 'País',
             'type'  => 'text',
         ]);
-
-
     }
 
     /**
@@ -88,21 +87,26 @@ class CentroCrudController extends CrudController
     {
         CRUD::setValidation([
             'nombre' => 'required|min:8',
-            'slug' => [ \Illuminate\Validation\Rule::unique('centros', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [\Illuminate\Validation\Rule::unique('centros', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'required|max:400',
             'imagen' => 'required'
         ]);
 
-        CRUD::setFromDb(); // set fields from db columns.
+        // CRUD::setFromDb(); // set fields from db columns.
 
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
+        CRUD::field('nombre')->type('text')->attributes(['maxlength' => 256, 'required' => 'required']);
 
-        $folder = "/medios/centros";
+        CRUD::field('slug')->type('text')->attributes(['maxlength' => 256]);
 
-        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder]);
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400, 'rows' => 4]);
+
+        CRUD::field('entradas')->type('textarea')->hint('slug de entradas de blog, separados por comas o saltos de linea. Ejemplo: un-retiro-espiritual, unas-jornadas-enriquecedoras, etc.')->attributes(['rows' => 4]);
+
+        CRUD::field('libros')->type('textarea')->hint('slug de libros, separados comas o saltos de linea. Ejemplo: los-guias-estelares, el-rayo-sincronizador, ...')->attributes(['rows' => 4]);
+
+        $folder = $this->getMediaFolder();
+
+        CRUD::field('imagen')->type('image_cover')->label('Imágenes del centro')->attributes(['folder' => $folder, 'sublabel'=>'Galería de imágenes', 'can-delete'=>true, 'list-images'=>true]);
 
         CRUD::field([   // select_from_array
             'name'        => 'pais',
@@ -128,8 +132,6 @@ class CentroCrudController extends CrudController
                 'class'      => 'form-group col-md-4'
             ]
         ]);
-
-
     }
 
     /**
@@ -146,7 +148,6 @@ class CentroCrudController extends CrudController
 
     public function show($id)
     {
-        $centro = Centro::find($id);
-        return $centro->visibilidad == 'P' ? redirect("/centros/$id") : redirect("/centrods/$id?borrador");
+        return redirect("/centros/$id");
     }
 }

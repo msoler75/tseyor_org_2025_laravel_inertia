@@ -112,7 +112,7 @@ const srcImageBackground = computed(() => {
     // mejor no:
     //if (props.srcImage.match(/[\?&]w=\d+/)) return props.srcImage
     //return props.srcImage + '?mw=' + screen.width*1.6
-    return props.srcImage
+    return props.srcImage.replace(/ /g, '%20')
 })
 </script>
 

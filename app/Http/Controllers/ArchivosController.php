@@ -1049,26 +1049,26 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No autorizado'], 401);
         }
 
-        // Concatenar la ruta completa al archivo
-        $archivo = $ruta; // str_replace('/almacen', '', $ruta);
-
         // Verificar si la ruta contiene saltos de carpeta
         if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
         }
 
+        // $rutaOriginal = $ruta;
         list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($ruta);
 
+
         // Verificar que el archivo exista
-        if (!Storage::disk($disk)->exists($archivo)) {
+        if (!Storage::disk($disk)->exists($ruta)) {
             return response()->json(['error' => 'El archivo no existe'], 404);
         }
 
         $esAdministrador = $user->hasPermissionTo('administrar archivos');
 
+        $nodoItem = Nodo::desde($ruta);
+
         // comprobamos los permisos de escritura
         if (!$esAdministrador) {
-            $nodoItem = Nodo::desde($ruta);
             if (!$nodoItem || Gate::denies('escribir', $nodoItem)) {
                 return response()->json([
                     'error' => 'No tienes permisos'
@@ -1085,15 +1085,17 @@ class ArchivosController extends Controller
                 ], 403);
         }
 
+
+
         // Verificar si la ruta es una carpeta
-        if (Storage::disk($disk)->directoryExists($archivo)) {
-            // Verificar si la carpeta está vacía antes de eliminarla
-            if (count(Storage::allFiles($archivo)) > 0) {
+        if (Storage::disk($disk)->directoryExists($ruta)) {
+                        // Verificar si la carpeta está vacía antes de eliminarla
+            if (count(Storage::disk($disk)->allFiles($ruta)) > 0) {
                 return response()->json(['error' => 'No se puede eliminar la carpeta porque no está vacía'], 400);
             }
 
             // Eliminar la carpeta vacía
-            if (Storage::deleteDirectory($archivo)) {
+            if (Storage::disk($disk)->deleteDirectory($ruta)) {
                 return response()->json(['message' => 'Carpeta eliminada correctamente'], 200);
             } else {
                 return response()->json(['error' => 'No se pudo eliminar la carpeta'], 500);
@@ -1101,7 +1103,7 @@ class ArchivosController extends Controller
         }
 
         // Intentar eliminar el archivo
-        else if (Storage::disk($disk)->delete($archivo)) {
+        else if (Storage::disk($disk)->delete($ruta)) {
             return response()->json(['message' => 'Archivo eliminado correctamente'], 200);
         } else {
             return response()->json(['error' => 'No se pudo eliminar el archivo'], 500);
@@ -1135,9 +1137,10 @@ class ArchivosController extends Controller
 
         $esAdministrador = $user->hasPermissionTo('administrar archivos');
 
+        $nodoItem = Nodo::desde($ruta);
+
         // se requiere permisos de escritura en el nodo
         if (!$esAdministrador) {
-            $nodoItem = Nodo::desde($ruta);
             if (!$nodoItem || $nodoItem->user_id != $user->id) {
                 // El usuario tiene el permiso "administrar archivos/*Gate::denies('escribir', $nodoItem)*/) {
                 return response()->json([

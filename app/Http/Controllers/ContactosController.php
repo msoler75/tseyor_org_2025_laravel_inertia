@@ -57,9 +57,9 @@ class ContactosController extends Controller
     public function show($id)
     {
         if (is_numeric($id)) {
-            $contacto = Contacto::findOrFail($id);
+            $contacto = Contacto::with(['centro', 'usuario'])->findOrFail($id);
         } else {
-            $contacto = Contacto::where('slug', $id)->firstOrFail();
+            $contacto = Contacto::with(['centro', 'usuario'])->where('slug', $id)->firstOrFail();
         }
 
         $borrador = request()->has('borrador');

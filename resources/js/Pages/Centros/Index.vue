@@ -25,8 +25,8 @@
                         <!-- Imágenes de los Muulasterios -->
                         <Carousel :per-page="1">
                             <Slide v-for="centro in muulasterios" :key="centro.id">
-                                <div :style="`background-image: url(${centro.imagen}); background-size: cover; background-position: center center;`"
-                                    class="w-full h-[60vh]"></div>
+                                <Link :href="route('centro', centro.id)" :style="`background-image: url(${centro.imagen}); background-size: cover; background-position: center center;`"
+                                    class="block w-full h-[60vh]"></Link>
                             </Slide>
                         </Carousel>
                     </div>

@@ -9,10 +9,10 @@ export const getSrcUrl = (src) => {
       : "/almacen/";
     return (prefix + src).replace(/\/\//g, "/");
   };
-  
+
 
   export const getEmbedYoutube = (url) => {
-    if(url.match(/^https:\/\/www.youtube.com\/embed\//)) 
+    if(url.match(/^https:\/\/www.youtube.com\/embed\//))
         return url
     const u = url.match(/(?:https:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube-nocookie\.com\/embed\/)([^&]+)/);
     if (u && u[1]) {
@@ -23,3 +23,7 @@ export const getSrcUrl = (src) => {
         return url
     }
   }
+
+
+
+

@@ -17,8 +17,12 @@ class Centro extends ContenidoBaseModel
         'nombre',
         'slug',
         'imagen',
+        'descripcion',
+        'entradas',
+        'libros',
+        'poblacion',
         'pais',
-        'poblacion'
+        'contacto_id'
     ];
 
 

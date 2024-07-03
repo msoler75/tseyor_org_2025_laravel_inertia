@@ -42,7 +42,6 @@ class Contacto extends ContenidoBaseModel
 
     }
 
-
      // ACCESOR
      public function getNombrePaisAttribute()
      {
@@ -56,5 +55,13 @@ class Contacto extends ContenidoBaseModel
      }
 
 
+     public function centro() // centro relacionado con este contacto (si lo hay)
+     {
+         return $this->hasOne(Centro::class, 'contacto_id');
+     }
 
+     public function usuario() // usuario relacionado con este contacto (si lo hay)
+     {
+         return $this->hasOne(User::class, 'contacto_id');
+     }
 }
