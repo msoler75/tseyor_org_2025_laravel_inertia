@@ -7,32 +7,28 @@
 
             <h1>Preguntas frecuentes y sus respuestas</h1>
 
-    <p>Aquí puedes encontrar respuesta a las preguntas más habituales. Accede a las siguientes secciones para ampliar la información.</p>
+            <p>Aquí puedes encontrar respuesta a las preguntas más habituales. Accede a las siguientes secciones para
+                ampliar la información.</p>
 
-<GridAppear col-width="16rem" class="gap-8">
-    <CardContent v-for="section of sections"
-    :key="section.title"
-    :title="section.title"
-    :description="section.description"
-    :href="route(section.route)"
-    :gradient="false"
-    />
-</GridAppear>
+            <GridAppear col-width="14rem" class="gap-5">
+                <CardContent v-for="section of sections" :key="section.title" :title="section.title"
+                    :description="section.description" :href="route(section.route)" :gradient="false" />
+            </GridAppear>
 
-</Section>
+        </Section>
 
-<Section class="w-full mt-12 pt-14 pb-20">
+        <Section class="w-full mt-12 pt-14 pb-20">
 
-    <TextImage title="Descargar libro" class="lg:max-w-[1024px]" full
-    srcImage="/almacen/medios/libros/313/Preguntas%20y%20respuestas%20Tseyor.th.jpg?h=300" buttonLabel="descargar"
-    href="/libros/preguntas-y-respuestas-tseyor">
-    <p>Aquí puedes descargar el libro de preguntas y respuestas.</p>
-</TextImage>
+            <TextImage title="Descargar libro" class="md:max-w-[768px]" full
+                srcImage="/almacen/medios/libros/313/Preguntas%20y%20respuestas%20Tseyor.th.jpg?h=300"
+                buttonLabel="descargar" href="/libros/preguntas-y-respuestas-tseyor">
+                <p>Aquí puedes descargar el libro de preguntas y respuestas.</p>
+            </TextImage>
 
 
-</Section>
+        </Section>
 
-</Sections>
+    </Sections>
 </template>
 
 

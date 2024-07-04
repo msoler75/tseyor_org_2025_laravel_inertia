@@ -6,7 +6,7 @@
 
         <!-- Footer como una sección más -->
         <Section>
-            <AppFooter class="h-full flex items-center" />
+            <AppFooter class="h-full flex flex-wrap items-center pt-12" />
         </Section>
 
         <TransitionFade>

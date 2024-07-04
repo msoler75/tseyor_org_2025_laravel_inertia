@@ -10,8 +10,11 @@ const props = defineProps({
 })
 
 const computedStyle = computed(() => {
+    if(props.height)
     return {
         '--sectionHeight': props.height ? `${props.height}px` : ''
     }
+    else
+    return {}
 })
 </script>
