@@ -21,17 +21,15 @@
         <!-- Contenedor de Categorías -->
         <GridAppear class="grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Categoría: Libros -->
-            <div v-for="seccion of secciones" :key="seccion.title" class="card bg-base-100 p-6 rounded-lg shadow-md relative group
+            <Link :href="seccion.url" v-for="seccion of secciones" :key="seccion.title" class="card bg-base-100 p-6 rounded-lg shadow-md relative group
             transition duration-300  hover:shadow-lg antialiased
             lg:opacity-80 hover:opacity-100
             ">
                 <Icon :icon="seccion.icon" class="text-secondary absolute right-3 top-3 text-8xl z-0 transition antialiased  duration-300 opacity-5 group-hover:opacity-20"/>
-                <h2 class="text-2xl font-semibold mb-2">{{seccion.title}}</h2>
-                <p class="text-neutral opacity-70 mb-4">{{ seccion.descripcion }}</p>
-                <div class="mt-auto flex justify-end">
-                    <ActionButton :href="seccion.url" class="w-[220px]">Ver {{seccion.title.toLowerCase()}}</ActionButton>
-                </div>
-            </div>
+                <h2 class="text-2xl font-semibold mb-2 group-hover:!text-secondary">{{seccion.title}}</h2>
+                <p class="text-neutral opacity-70 group-hover:opacity-100 mb-4">{{ seccion.descripcion }}</p>
+               <div class="flex justify-end opacity-50 group-hover:opacity-100 mt-auto"><Icon icon="ph-arrow-right"/></div>
+            </Link>
 
 
         </GridAppear>

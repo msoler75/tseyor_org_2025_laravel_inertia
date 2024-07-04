@@ -80,18 +80,21 @@ class TerminosController extends Controller
         if ($termino->ref_terminos) {
             $tmp = preg_split("/[,;]\s*/", $termino->ref_terminos);
             foreach ($tmp as $t) {
-                $x = Termino::where('nombre', $t)->first();
+                $x = BusquedasHelper::buscar(Termino::class, $t)->first();
                 if ($x)
                     $ref_terminos[] = ['nombre' => $t, 'slug' => $x->slug];
             }
         }
 
-        if ($termino->ref_terminos) {
+        if ($termino->ref_libros) {
             $tmp = preg_split("/[,;]/", $termino->ref_libros);
             foreach ($tmp as $t) {
-                $x = Libro::where('titulo', $t)->first();
-                if ($x)
+                $t = preg_replace("/ed\.|edici.n/i", "", $t);
+                if(strlen($t)<6) continue;
+                $x = BusquedasHelper::buscar(Libro::class, $t)->first();
+                if ($x) {
                     $ref_libros[] = ['titulo' => $t, 'slug' => $x->slug, 'descripcion' => $x->descripcion, 'imagen' => $x->imagen];
+                }
             }
         }
 
