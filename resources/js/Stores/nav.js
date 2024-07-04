@@ -135,7 +135,6 @@ const state = reactive({
     },
     // cuando se recupera la activación de hover
     activateHoveredTab(){
-        console.log('ACTIVATE HOVERED TAB', this.tabHovering)
         if(this.tabHovering)
             this.hoverTab(this.tabHovering)
     },

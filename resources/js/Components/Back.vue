@@ -16,7 +16,7 @@ const props = defineProps({
     floatAtY: { // en qué posición de scroll Y aparece flotando a la izquierda
         type: Number,
         required: false,
-        default: 90
+        default: 130
     },
     inline: {
         type: Boolean,

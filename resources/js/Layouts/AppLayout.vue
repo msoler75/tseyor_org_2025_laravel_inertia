@@ -23,10 +23,8 @@ const nav = useNav()
 if (page.props.auth?.user)
     permisos.cargarPermisos()
 
-const deactivateNav = ref(false)
-const TIME_NAV_INACTIVE = 500
+const TIME_NAV_INACTIVE = 600
 var timerActivateNav = null
-
 
 defineProps({
     title: String,
@@ -156,7 +154,6 @@ onMounted(() => {
             if (screen.width >= 1024) {
                 clearTimeout(timerActivateNav)
                 timerActivateNav = setTimeout(() => {
-                    console.log("TIMEOUT ENTER");
                     nav.hoverDeactivated = false
                     nav.activateHoveredTab()
                 }, TIME_NAV_INACTIVE)

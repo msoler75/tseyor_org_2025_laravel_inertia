@@ -7,7 +7,7 @@
                "
                :preserve-page="preservePage"
                :auto-scroll="autoScroll">
-        <div class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
+        <div v-if="image" class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div v-if="imageContained" class="w-full h-full bg-center transition duration-300 group-hover:scale-105">
                 <Image class="w-full h-full" :src="image"/>
             </div>
@@ -18,13 +18,13 @@
         </div>
         <div v-if="title || tag || description || date" class="p-4 flex flex-col w-full">
             <h2 v-if="title"
-                class="text-lg font-bold mb-3 transition duration-300 group-hover:!text-secondary  group-hover:drop-shadow"
+                class="text-lg text-left font-bold mb-3 transition duration-300 group-hover:!text-secondary  group-hover:drop-shadow leading-5"
                 v-html="title" />
             <div v-if="tag" class="flex justify-between mb-3 max-w-full">
                 <div class="truncate overflow-hidden inline-block badge badge-primary badge-outline max-w-[12rem]">{{ tag }}</div>
             </div>
-            <div v-if="description" class="text-gradient lg:opacity-50 transition duration-300 group-hover:opacity-90 text-sm text-ellipsis overflow-hidden "
-            :class="descriptionClass"
+            <div v-if="description" class="lg:opacity-50 transition duration-300 group-hover:opacity-90 text-sm text-ellipsis overflow-hidden "
+            :class="(gradient?' text-gradient':'')+' '+descriptionClass"
                 v-html="descriptionFinal" />
             <TimeAgo v-if="date" :date="date" class="text-right mt-auto opacity-50" style="font-size: 60%" />
         </div>
@@ -72,7 +72,8 @@ const props = defineProps({
         default: ''
     },
     preservePage: {type: Boolean, default: false},
-    autoScroll:  {type: Boolean, default: true}
+    autoScroll:  {type: Boolean, default: true},
+    gradient: {type: Boolean, default: true}
 })
 
 const descriptionFinal = computed(() => {
