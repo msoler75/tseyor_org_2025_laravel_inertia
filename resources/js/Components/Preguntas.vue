@@ -1,6 +1,6 @@
 <template>
 
-    <div class="preguntas md:container mx-auto my-12" :class="titulo?'min-h-[60vh]':''">
+    <div class="preguntas md:container mx-auto my-12" :class="titulo ? 'min-h-[60vh]' : ''">
 
         <div class="flex container justify-between items-center mb-7">
             <Back :href="backUrl">{{ backText }}</Back>
@@ -9,7 +9,8 @@
             <Icon icon="ph:download-duotone" />Descargar libro</Link>
         </div>
 
-        <div v-if="titulo" class="py-10 sm:px-10 lg:p-20 max-w-[960px] container mx-auto my-12 bg-base-100 shadow hyphens-auto md:rounded-3xl md:text-justify">
+        <div v-if="titulo"
+            class="py-10 sm:px-10 lg:p-20 max-w-[960px] container mx-auto my-12 bg-base-100 shadow hyphens-auto md:rounded-3xl md:text-justify">
 
             <h1>{{ titulo }}</h1>
 
@@ -27,6 +28,40 @@ const props = defineProps({
     backText: { type: String, default: 'Preguntas frecuentes' },
     fadeOut: { type: Boolean, default: false }
 });
+
+
+const bibliografia = {
+    "SLR": "Conversaciones Interdimensionales. Etapa Sili-Nur",
+    "SHR": "Conversaciones Interdimensionales. Etapa Shilcars",
+    "AUR": "Desde la Constelación de Auriga en Resumen",
+    "BRV": "Breviario. Pensamiento desde las estrellas",
+    "TRE": "Conversaciones Interdimensionales. Tres primeras conferencias en Internet",
+    "OBS": "La autoobservación",
+    "PUZ": "Símbolos del puzle holográfico cuántico",
+    "FLC": "Filosofía cuántica. La micropartícula como pensamiento trascendente",
+    "DSP": "Despertar",
+    "RAY": "El rayo sincronizador. Una nueva posición psicológica y mental",
+    "TAD": "El traspaso adimensional",
+    "HRM": "El hermanamiento",
+    "EAR": "Entregando Amor a Raudales",
+    "NAV": "La nave Tseyor",
+    "TRM": "La transmutación. La prioridad en nuestra vida",
+    "DSC": "El descubrimiento del hombre por el propio hombre",
+    "MDS": "Más allá del descubrimiento",
+    "QUI": "¿Quiénes somos en Tseyor?",
+    "PDR": "Todo sobre la piedra",
+    "MN1": "Monografías I: Trilogía sobre el perfeccionamiento del pensamiento",
+    "MN2": "Monografías II: Trilogía sobre el universo cuántico",
+    "MN3": "Monografías III: Trilogía sobre la hermandad",
+    "MN4": "Monografias IV",
+    "TRI": "Curso Taller de Relaciones Interdimensionales",
+    "NVD": "Cuento de Navidad: El Pequeño Christian",
+    "LPC": "La Piedra Cósmica",
+    "GLO": "Glosario Terminológico",
+    "CNT": "Los Cuentos de Tseyor",
+    "PLN": "Cuento Cósmico: El Planeta Negro",
+    "PUL": "Púlsar Sanador de Tseyor",
+};
 
 
 
@@ -55,21 +90,25 @@ onMounted(() => {
     referencias.forEach(span => {
         const parts = span.textContent.split(/[()]/).filter(x => x.trim()).map(x => x.trim())
         var titles = []
-        parts.forEach(ref => {
-            if (ref.includes('SLR'))
-                titles.push('Ver libro: Conversaciones interdimensionales etapa Sili-Nur')
-            else if (ref.includes('DSC'))
-                titles.push('Ver libro: El descubrimiento del hombre por el propio hombre')
-            else if (ref.includes('RAY'))
-                titles.push('Ver libro: El Rayo Sincronizador. Una nueva posición psicológica y mental')
-            else if (ref.includes('GLO'))
-                titles.push('Ver glosario')
-            else if (ref.match(/^Ver \d.*/i))
-                titles.push('Ver pregunta ' + ref.replace(/^Ver /, ''));
-            else if (ref.match(/^Ver.*/i))
-                titles.push(ref);
+        const pattern = /^([A-Z]{3})$/;
+        parts.forEach(referencia => {
+            const match = referencia.match(pattern);
+            if (referencia == "WEB")
+                titles.push("Web de Tseyor")
+            else if (match) {
+                const abreviacion = match[1];
+                const titulo = bibliografia[abreviacion];
+                if (titulo)
+                    titles.push('Ver libro: ' + titulo)
+                else
+                    titles.push('Ver libro: ' + referencia)
+            }
+            else if (referencia.match(/^Ver \d.*/i))
+                titles.push('Ver pregunta ' + referencia.replace(/^Ver /, ''));
+            else if (referencia.match(/^Ver.*/i))
+                titles.push(referencia);
             else
-                titles.push('Ver comunicado ' + ref.replace(/[()]/g, ''));
+                titles.push('Ver comunicado ' + referencia.replace(/[()]/g, ''));
         })
         span.title = titles.join(' | ')
     })
@@ -135,7 +174,7 @@ function scrollToId(id, offset) {
     @apply !text-left;
 }
 
-:deep(h1,h2,h3,h4) {
+:deep(h1, h2, h3, h4) {
     @apply sm:hyphens-none;
 }
 </style>

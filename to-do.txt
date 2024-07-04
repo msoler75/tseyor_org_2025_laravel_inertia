@@ -1,6 +1,3 @@
-Preguntas
-referencias acronimos SHR y otros, ver pdf
-
 ENTRADAS/BLOG
 -Añadir el artículo: barcelona
 
@@ -11,14 +8,6 @@ RUTAS_ARCHIVOS_INTERNO_DEV
    - una ruta de tipo URL (/almacen/medios/libros/3) o pública  (url)
    - una ruta de path o física (d:\tseyor.org\storage/public/almacen/medios/libros/3)  (path)
 -corregir el código para que cada tipo de ruta se defina con esos sufijos: relative path, url, path
-
-
-IMAGENES
--buscar imágenes apropiadas para las páginas de la web
--portada fullpage no se ajusta bien
-
-SECCIONES WEB
--preguntas más frecuentes
 
 TESTIMONIOS
 -modelo
