@@ -65,7 +65,7 @@
 
         <Section>
             <!-- Sección: Preguntas más frecuentes -->
-            <TextText title="Preguntas más frecuentes"
+            <TextText title="Preguntas más frecuentes" class="container lg:max-w-[1024px]"
                 srcImage="https://via.placeholder.com/700x600.png/0000ff?text=Puente.jpg" buttonLabel="Ver Comunicados"
                 href="/comunicados">
                 <template #text1>

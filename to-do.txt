@@ -52,9 +52,13 @@ ENTRADAS/BLOG
 
 
 BUSQUEDAS
-ExtendedHighlighter::_normalizeText() : ver de cambiar [áÁ] a [áÁA]  // pasar a minúsculas
+estudiar: ExtendedHighlighter::_normalizeText() : ver de cambiar [áÁ] a [áÁA]  // pasar a minúsculas
     $str = mb_ereg_replace('[áÁ]', 'a', $str);
 
+GUIAS ESTELARES(ADMIN)
+mejorar la entrada de datos en admin:
+-h4 pasar a h1
+-añadir campo textoBibliografía y cambiar el campo libros a slugs separados por comas/lineas
 
 MUULAR ELECTRÓNICO
 -integrar app de muular electrónico

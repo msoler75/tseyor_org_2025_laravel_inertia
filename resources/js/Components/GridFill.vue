@@ -1,6 +1,6 @@
 <template>
     <div class="grid justify-center"
-        :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(${w}, 1fr))` }">
+        :style="colWidth ? { 'grid-template-columns': `repeat(auto-fill, minmax(${colWidth}, 1fr))` } : {}">
         <slot></slot>
     </div>
 </template>
@@ -8,7 +8,7 @@
 <script>
 export default {
     props: {
-        w: {
+        colWidth: {
             type: [String, Number],
             default: '16rem'
         }

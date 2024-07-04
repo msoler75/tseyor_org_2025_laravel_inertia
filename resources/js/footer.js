@@ -2,12 +2,11 @@ export const sections = [
     {
         title: "Grupo Tseyor",
         items: [
+            { label: "Quiénes Somos", route: 'quienes-somos' },
+            { label: "Curso Holístico", route: 'cursos' },
             { label: "Radio Tseyor", route: 'radio' },
-            { label: "Eventos", route: 'eventos' },
-            { label: "Blogs", route: 'entradas' },
-            { label: "Uso de la web", route: 'novedades' },
-            { label: "Aviso Legal", route: 'novedades' },
-            { label: "Contacto", route: 'novedades' },
+            { label: "Contactar", url: 'contactarr' },
+            { label: "Donar", url: 'donar' },
         ],
     },
     {
@@ -15,10 +14,17 @@ export const sections = [
         items: [
             { label: "Comunicados", route: 'comunicados' },
             { label: "Libros", route: 'libros' },
-            { label: "Donar", url: 'donar' },
             { label: "Noticias", route: 'noticias' },
-            { label: "Curso Holístico", route: 'cursos' },
-            { label: "Quiénes Somos", route: 'quienes-somos' },
+            { label: "Eventos", route: 'eventos' },
+            { label: "Blog", route: 'entradas' },
+        ],
+    },
+    {
+        title: "Información legal",
+        items: [
+            { label: "Aviso legal", url: '/informacion-legal' },
+            { label: "Política de privacidad", url: '/informacion-legal' },
+            { label: "Política de cookies", url: '/informacion-legal' },
         ],
     },
 ];
@@ -26,7 +32,7 @@ export const sections = [
 
 export const socialLinks = [
     { icon: 'streamline:facebook-1-solid', link: 'https://facebook.com/TSEYOR' },
-    { icon: 'bi:twitter-x', link: 'https://twitter.com/TSEYOR' },
+    { icon: 'bi:twitter-x', link: 'https://x.com/TSEYOR' },
     { icon: 'logos:youtube-icon', link: 'https://youtube.com/@TSEYOR' },
 ];
 

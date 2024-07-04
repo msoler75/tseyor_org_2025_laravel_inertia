@@ -91,7 +91,7 @@ const props = defineProps({
     textClass: {
         type: String,
         required: false,
-        default: "container gap-5"
+        default: "gap-5"
     },
     full: { // full screen
         type: Boolean,
