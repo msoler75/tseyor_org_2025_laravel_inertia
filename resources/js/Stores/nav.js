@@ -61,6 +61,8 @@ const state = reactive({
     dontFadeout: false,
     navigating: false,
     dontScroll: false,
+    hoverDeactivated: false, // para evitar que se active el hover en la reentrada del mouse a la ventana
+    tabHovering: null, // tab en el que el mouse se encuentra durante la desactivación del hover
     init(_routeFunc) {
         route = _routeFunc
         this.items = navigationItems.map(mapItem)
@@ -114,6 +116,28 @@ const state = reactive({
       for (const tab of this.items) {
         tab.open = false;
       }
+    },
+    // cuando pasa el mouse por encima
+    hoverTab(tab) {
+        if(this.hoverDeactivated) {
+            this.tabHovering = tab
+            return
+        }
+        if (tab.hasItems)
+            this.activateTab(tab)
+        else
+            this.closeTabs()
+    },
+    // cuando el mouse deja el tab
+    unhoverTab(tab) {
+        if(this.tabHovering==tab)
+        this.tabHovering = null
+    },
+    // cuando se recupera la activación de hover
+    activateHoveredTab(){
+        console.log('ACTIVATE HOVERED TAB', this.tabHovering)
+        if(this.tabHovering)
+            this.hoverTab(this.tabHovering)
     },
     fadeoutPage() {
         console.log('nav.fadeoutPage()')

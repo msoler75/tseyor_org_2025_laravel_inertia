@@ -97,6 +97,6 @@ D:\projects\tseyor\laravel_inertia\storage\app/public\almacen/profile-photos/fXf
 export const getSrcImageUrl = (url) => {
     const parts = url.split('?')
     url = parts[0]
-    //url =  encodeURIComponent(url)
+    url = decodeURIComponent(url)
     return url.replace(/ /g, '%20').replace(/\(/g, '%28').replace(/\)/g, '%29') + (parts.length > 1 ? '?' + parts[1] : '')
   }

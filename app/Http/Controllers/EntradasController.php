@@ -14,13 +14,14 @@ class EntradasController extends Controller
     {
         $buscar = $request->input('buscar');
 
-        $resultados = $buscar ? Entrada::where('visibilidad', 'P')
+        $resultados = $buscar ? Entrada::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
+            ->where('visibilidad', 'P')
             ->whereRaw('CONCAT(titulo," ", descripcion, " ", texto) LIKE \'%' . $buscar . '%\'')
             // ordenar por published_at
             ->orderBy('published_at', 'desc')
             ->paginate(12)->appends(['buscar' => $buscar])
             :
-            Entrada::where('visibilidad', 'P')->orderBy('published_at', 'desc')->paginate(10);
+            Entrada::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'published_at'])->where('visibilidad', 'P')->orderBy('published_at', 'desc')->paginate(10);
 
         $recientes = Entrada::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->orderBy('published_at', 'desc')->take(32)->get();
 

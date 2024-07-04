@@ -2,7 +2,7 @@
     <div>
         <template v-for="tab, index of nav.items" :key="tab.url">
             <NavLink v-if="!tab.onlyAside" class="relative" :class="tab.hasItems && !tab.url ? 'navigation-tab' : ''" :href="tab.url"
-                @click="clickedTab(tab)" @mouseover="handleHover(tab)"
+                @click="clickedTab(tab)" @mouseover="nav.hoverTab(tab)" @mouseout="nav.unhoverTab(tab)"
                 :active="tab.open || (!nav.activeTab && nav.in(tab, $page.url))">
                 {{ tab.title }}
                 <div v-if="tab.open"
@@ -17,13 +17,6 @@
 <script setup>
 
 const nav = useNav()
-
-function handleHover(tab) {
-    if (tab.hasItems)
-        nav.activateTab(tab)
-    else
-        nav.closeTabs()
-}
 
 function clickedTab(tab) {
     nav.toggleTab(tab);

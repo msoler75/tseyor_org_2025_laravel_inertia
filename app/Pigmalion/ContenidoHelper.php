@@ -29,6 +29,10 @@ class ContenidoHelper
         return trim($teaser);
     }
 
+    public static function removerTitulo($descripcion, $titulo) {
+        return trim(preg_replace('/' . preg_quote($titulo) . '/i', '', $descripcion));
+    }
+
     public static function rellenarSlugImagenYDescripcion($objeto)
     {
         $fillable = $objeto->getFillable();
@@ -105,17 +109,27 @@ class ContenidoHelper
 
         // cambiamos las imagenes de portada del contenido en el caso de los guías, poniendo la imagen sin texto
         if (in_array('imagen', $fillable)) {
-            $objeto->imagen = strtolower(preg_replace("#/medios/guias/con_nombre/(.*)\.jpg#", "/medios/guias/$1.jpg", $objeto->imagen));
+            $objeto->imagen = preg_replace("#/medios/guias/con_nombre/(.*)\.jpg#", "/medios/guias/$1.jpg", $objeto->imagen);
+            if(strpos($objeto->imagen, '/medios/guias/') !== false)
+                $objeto->imagen = strtolower($objeto->imagen);
         }
+
+        $titulo = $objeto->titulo ?? $objeto->nombre ?? "";
 
         // generamos una descripción a partir del texto si es necesario
         if (in_array('descripcion', $fillable) && empty($objeto->descripcion)) {
             $descripcion = strip_tags($texto);
             $descripcion = \App\Pigmalion\Markdown::removeMarkdown($descripcion);
             $descripcion = str_replace("\n", ' ', $descripcion); // Agregar espacio entre líneas
+            if($titulo) $descripcion = self::removerTitulo($descripcion, $titulo);
             $descripcion = self::generarTeaser($descripcion);
             //$descripcion = rtrim($descripcion, "!,.-");
             $objeto->descripcion = $descripcion;
+        }
+
+        // removemos el título de la descrpcion
+        if ($titulo && in_array('descripcion', $fillable)) {
+            $objeto->descripcion = self::removerTitulo($objeto->descripcion, $titulo);
         }
 
         // revisa si el campo de "visibilidad" de la publicación tiene la fecha a NULL
