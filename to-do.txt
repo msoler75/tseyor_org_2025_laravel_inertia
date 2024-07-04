@@ -51,6 +51,11 @@ ENTRADAS/BLOG
 -crear artículo de convivencias en puerto rico (base underkraft)
 
 
+BUSQUEDAS
+ExtendedHighlighter::_normalizeText() : ver de cambiar [áÁ] a [áÁA]  // pasar a minúsculas
+    $str = mb_ereg_replace('[áÁ]', 'a', $str);
+
+
 MUULAR ELECTRÓNICO
 -integrar app de muular electrónico
 

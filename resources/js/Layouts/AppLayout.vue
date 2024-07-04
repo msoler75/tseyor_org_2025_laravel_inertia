@@ -24,7 +24,7 @@ if (page.props.auth?.user)
     permisos.cargarPermisos()
 
 const deactivateNav = ref(false)
-const TIME_NAV_INACTIVE = 700
+const TIME_NAV_INACTIVE = 500
 var timerActivateNav = null
 
 
@@ -144,7 +144,7 @@ onMounted(() => {
             // console.log('mouseleave')
             if (screen.width >= 1024) {
                 clearTimeout(timerActivateNav)
-                deactivateNav.value = true
+                nav.hoverDeactivated = true
                 // cerramos los submenús
                 nav.closeTabs()
             }
@@ -156,7 +156,9 @@ onMounted(() => {
             if (screen.width >= 1024) {
                 clearTimeout(timerActivateNav)
                 timerActivateNav = setTimeout(() => {
-                    deactivateNav.value = false
+                    console.log("TIMEOUT ENTER");
+                    nav.hoverDeactivated = false
+                    nav.activateHoveredTab()
                 }, TIME_NAV_INACTIVE)
             }
         })
@@ -246,8 +248,7 @@ axios.get(route('setting', 'navigation'))
 
 
                         <!-- Main Navigation Tabs -->
-                        <NavTabs class="hidden lg:flex top-navigation space-x-8 flex-grow justify-center"
-                            :class="deactivateNav ? 'pointer-events-none' : ''" />
+                        <NavTabs class="hidden lg:flex top-navigation space-x-8 flex-grow justify-center" />
 
                         <div v-if="selectors.developerMode" class="mx-auto flex gap-2">
                             <button @click="login1" class="btn">L1</button>
