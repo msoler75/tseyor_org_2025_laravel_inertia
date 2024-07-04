@@ -76,14 +76,9 @@
                     </div>
                 </div>
 
-                <div v-if="referencias.libros.length" class="grid gap-4 mt-4 max-w-[80ch] mx-auto"
-                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
-
-                    <CardContent v-for="contenido in referencias.libros" :key="contenido.id" :title="contenido.titulo"
-                        :image="contenido.imagen" :href="route('libro', contenido.slug)"
-                        :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
-                        image-left class="h-[300px]" imageClass="w-[200px] h-[300px]" />
-                </div>
+                <GridAppear v-if="referencias.libros.length" col-width="200px" class="gap-5">
+                    <Libro v-for="libro of referencias.libros" :key="libro.slug" :libro="libro"/>
+                </GridAppear>
             </ContentMain>
 
 
