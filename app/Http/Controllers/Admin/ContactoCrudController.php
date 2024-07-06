@@ -96,9 +96,14 @@ class ContactoCrudController extends CrudController
         CRUD::setValidation([
             'nombre' => 'required',
             'slug' => [ \Illuminate\Validation\Rule::unique('contactos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
-            'imagen' => 'required',
+            'imagen' => 'required|max:255',
             'pais' => 'required',
-            'provincia' => 'required',
+            'provincia' => 'required|max:64',
+            'direccion' => 'max:255',
+            'codigo' => 'max:16',
+            'telefono' => 'max:64',
+            'poblacion'=>'required|max:128',
+            'social' => 'max:255'
         ]);
 
         CRUD::setFromDb(); // set columns from db columns.

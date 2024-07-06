@@ -19,14 +19,14 @@ class DevController extends Controller
      */
     public function loginUser1(): JsonResponse
     {
-        $user = User::find(3);
+        $user = User::find(2);
         Auth::login($user); // Autenticar al usuario 3
         return response()->json(['message' => 'usuario cambiado'], 200);
     }
 
     public function loginUser2()
     {
-        $user = User::find(2); // Obtener usuario 2 de la base de datos
+        $user = User::find(3); // Obtener usuario 2 de la base de datos
         Auth::login($user); // Autenticar al usuario 2
         return response()->json(['message' => 'usuario cambiado'], 200);
     }

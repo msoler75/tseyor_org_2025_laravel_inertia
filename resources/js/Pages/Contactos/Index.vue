@@ -33,7 +33,7 @@
 
                 <tabs :options="{ disableScrollBehavior: true }">
                     <tab name="Mapa">
-                        <div ref="map" id="map" class="map-container w-full h-[400px]"></div>
+                        <div ref="mapRef" id="map" class="map-container w-full h-[400px]"></div>
                     </tab>
 
 
@@ -65,6 +65,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { getImageUrl } from '@/composables/imageutils.js'
 import { Tabs, Tab } from 'vue3-tabs-component';
+import { loadGoogleMaps } from '@/composables/google'
 
 defineOptions({ layout: AppLayout })
 
@@ -77,94 +78,45 @@ const props = defineProps({
     paises: {
         default: () => []
     },
-    apiKey: { default: () => '' }
+    apiKey: {type: String, required: true}
 });
 
 const listado = ref(props.listado);
 const paises = ref(props.paises)
 
 
-
-
 // GOOGLE MAPS
 
 
 
+const mapRef = ref(null);
 const map = ref(null);
-const markers = [];
+// const markers = [];
 
 const contactos = ref(props.listado.data)
 
-
-
-
-
-function createMapScript(options) {
-                const googleMapScript = document.createElement('SCRIPT')
-                if (typeof options !== 'object') {
-                    throw new Error('options should  be an object')
-                }
-
-                // libraries
-                /* eslint-disable no-prototype-builtins */
-                if (Array.prototype.isPrototypeOf(options.libraries)) {
-                    options.libraries = options.libraries.join(',')
-                }
-                let baseUrl = 'https://maps.googleapis.com/maps/api/js?'
-
-                let url =
-                    baseUrl +
-                    Object.keys(options)
-                    .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(options[key])).join('&')
-
-                googleMapScript.setAttribute('src', url)
-                googleMapScript.setAttribute('async', '')
-                googleMapScript.setAttribute('defer', '')
-
-                return googleMapScript;
-            }
-
-
-            function loadGoogleMaps() {
-                const lib = createMapScript({
-                    key: props.apiKey,
-                    libraries: 'maps,marker',
-                    v: 'weekly',
-                    callback: 'initMap'
-                });
-                document.body.appendChild(lib);
-            }
-
-
-
-
-
 onMounted(() => {
-
     // Carga dinámica de la biblioteca de Google Maps con el parámetro de callback
-    if (!window.google || !window.google.maps) {
-        loadGoogleMaps()
-    }
-    else
-        initMap()
+    loadGoogleMaps(props.apiKey, 'initMap')
 });
 
 window.initMap = () => {
+    console.log('initMap', contactos.value)
     // Inicializar el mapa
-    map.value = new google.maps.Map(map.value, {
+    map.value = new google.maps.Map(mapRef.value, {
         center: { lat: 0, lng: 0 },
         zoom: 2,
     });
 
     // Agregar marcadores para cada contacto
     contactos.value.forEach((contacto) => {
-        if(contacto.latitud!=null&&contacto.longitud!=null)
+        if (contacto.latitud != null && contacto.longitud != null)
             addMarker(contacto);
     });
 }
 
 function addMarker(contacto) {
-    console.log({contacto})
+    console.log({ contacto })
     // Crear el marcador en el mapa
     const marker = new google.maps.Marker({
         position: { lat: contacto.latitud, lng: contacto.longitud },
@@ -193,7 +145,7 @@ function addMarker(contacto) {
     });
 
     // Agregar marcador a la lista
-    markers.push(marker);
+    // markers.push(marker);
 }
 
 

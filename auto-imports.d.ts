@@ -18,6 +18,7 @@ declare global {
   const getSrcUrl: typeof import('./resources/js/composables/srcutils.js')['getSrcUrl']
   const isFromMyDomain: typeof import('./resources/js/composables/imageutils.js')['isFromMyDomain']
   const isWebPSupported: typeof import('./resources/js/composables/imageutils.js')['isWebPSupported']
+  const loadGoogleMaps: typeof import('./resources/js/composables/google.js')['loadGoogleMaps']
   const nextTick: typeof import('vue')['nextTick']
   const onBeforeUnmount: typeof import('vue')['onBeforeUnmount']
   const onMounted: typeof import('vue')['onMounted']

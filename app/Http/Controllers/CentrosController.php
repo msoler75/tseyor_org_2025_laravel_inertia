@@ -45,6 +45,8 @@ class CentrosController extends Controller
             $centro->pais = Countries::getCountry($centro->pais);
         }
 
+        dd($muulasterios);
+
         return Inertia::render('Centros/Index', [
             'muulasterios' => $muulasterios,
             'casas' => $casas,
