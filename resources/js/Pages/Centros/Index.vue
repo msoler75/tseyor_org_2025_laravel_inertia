@@ -25,7 +25,7 @@
                         <!-- Imágenes de los Muulasterios -->
                         <Carousel :per-page="1">
                             <Slide v-for="centro in muulasterios" :key="centro.id">
-                                <Link :href="route('centro', centro.id)" :style="`background-image: url(${centro.imagen}); background-size: cover; background-position: center center;`"
+                                <Link :href="route('centro', centro.id)" :style="`background-image: url(${getImageUrl(centro.imagen)}); background-size: cover; background-position: center center;`"
                                     class="block w-full h-[60vh]"></Link>
                             </Slide>
                         </Carousel>
@@ -42,7 +42,7 @@
                         <!-- Imágenes de las Casas -->
                         <Carousel :per-page="1">
                             <Slide v-for="centro in casas" :key="centro.id">
-                                <div :style="`background-image: url(${centro.imagen}); background-size: cover; background-position: center center;`"
+                                <div :style="`background-image: url(${getImageUrl(centro.imagen)}); background-size: cover; background-position: center center;`"
                                     class="w-full h-[60vh]"></div>
                             </Slide>
                         </Carousel>
@@ -99,6 +99,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { Carousel, Slide } from '@jambonn/vue-concise-carousel';
 import '@jambonn/vue-concise-carousel/lib/vue-concise-carousel.css'
+import { getImageUrl } from '@/composables/imageutils';
 
 
 defineOptions({ layout: AppLayout })

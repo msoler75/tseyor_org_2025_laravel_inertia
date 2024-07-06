@@ -1,3 +1,33 @@
+CORREO:
+-Instalar PHP Mailer: https://help.dreamhost.com/hc/es/articles/360031174411-PHPMailer-Instalaci%C3%B3n-en-un-servidor-compartido
+-Límites de cuota DreamHost: https://help.dreamhost.com/hc/es/articles/215730437-L%C3%ADmites-de-cuota-SMTP
+-Política anti-spam en dreamhost: https://www.dreamhost.com/es/legal/politica-anti-spam/
+-Boletines
+-mail relay
+https://mailrelay.com/
+-usar mail relay API para envío de Boletines
+https://apidocs.mailrelay.com/#post-/campaigns
+-Boletines (es como un novedades, pero por correo)
+
+
+CORREOS
+-testar envio de correos
+    -crear un controlador y una ruta para test de enviar correos
+    -testar job de correo y verificar que se queda en la base de datos registrado
+
+MAPA
+-Cuando hace click en el pais, no recargar toda la página, solo los contactos y actualizar el mapa con los marker sin tener que recargar todo el maps
+
+ADMIN
+-cerrar sesion desde admin no funciona
+
+EQUIPOS
+-crear un equipo
+    -testar funcionamiento
+    -testar permisos de acceso
+    -testar creación de un informe del equipo
+
+
 ENTRADAS/BLOG
 -Añadir el artículo: barcelona
 
@@ -13,9 +43,6 @@ TESTIMONIOS
 -modelo
 -fotos correo, y frases
 
-COVER_FIELDS
--hacer que el componente <ImageCoverField> llame al server para pedir la lista de imagenes en la carpeta y mostrar todas las imagenes
-
 JOBS
 -Ver por qué no procesa los audios de los 3 comunicados (id: 1511, id: 1540, id: 1544)
 
@@ -24,7 +51,9 @@ ADMIN/GUIAS
 -dejar claro los tabs que se marcan con <h4>, o cambiarlos por h2/h3
 
 ADMIN/GUIAS+LUGARES
--bibliografía, hacer un input field de backpack para texto y libros, en lugar de json, o slugs separados por comas
+mejorar la entrada de datos en admin:
+-h4 pasar a h1
+-añadir campo textoBibliografía y cambiar el campo libros a slugs separados por comas/lineas
 
 HACIENDA
 
@@ -44,21 +73,12 @@ BUSQUEDAS
 estudiar: ExtendedHighlighter::_normalizeText() : ver de cambiar [áÁ] a [áÁA]  // pasar a minúsculas
     $str = mb_ereg_replace('[áÁ]', 'a', $str);
 
-GUIAS ESTELARES(ADMIN)
-mejorar la entrada de datos en admin:
--h4 pasar a h1
--añadir campo textoBibliografía y cambiar el campo libros a slugs separados por comas/lineas
 
 MUULAR ELECTRÓNICO
 -integrar app de muular electrónico
 
-CONTENIDOS
--importar artículos de blog
--importar libros
-
 LISTA DE DISTRIBUCION
 -poner/testar el formulario de suscripción de dreamhost para boletines
-
 
 BUSQUEDAS COMUNICADOS
 -el texto de busqueda no debe incluir las imagenes.
@@ -117,17 +137,6 @@ EVENTOS
 
 COMENTARIOS
 -cambiar las rutas desde api.php a web.php, y en los componentes
-
-CORREO:
--Instalar PHP Mailer: https://help.dreamhost.com/hc/es/articles/360031174411-PHPMailer-Instalaci%C3%B3n-en-un-servidor-compartido
--Límites de cuota DreamHost: https://help.dreamhost.com/hc/es/articles/215730437-L%C3%ADmites-de-cuota-SMTP
--Política anti-spam en dreamhost: https://www.dreamhost.com/es/legal/politica-anti-spam/
--Boletines
--mail relay
-https://mailrelay.com/
--usar mail relay API para envío de Boletines
-https://apidocs.mailrelay.com/#post-/campaigns
--Boletines (es como un novedades, pero por correo)
 
 
 

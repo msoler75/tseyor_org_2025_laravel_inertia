@@ -20,8 +20,8 @@
             :draft="contenido.visibilidad!='P'"
             :image="contenido.imagen"
             :href="route(contenido.coleccion)+'/'+contenido.slug_ref"
-            :tag="null"
-            :description="contenido.descripcion"
+            :tag="traducir(contenido.coleccion)"
+            :description="contenido.descripcion+(contenido.coleccion='contactos'?'\nNuevo Contacto\n\n':'')"
             :date="contenido.fecha"/>
         </GridAppear>
 

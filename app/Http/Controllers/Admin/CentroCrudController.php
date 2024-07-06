@@ -89,9 +89,10 @@ class CentroCrudController extends CrudController
             'nombre' => 'required|min:8',
             'slug' => [\Illuminate\Validation\Rule::unique('centros', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'required|max:400',
-            'imagen' => 'required',
+            'imagen' => 'required|max:255',
             'pais' => 'required',
-            'poblacion'=>'required'
+            'provincia' => 'max:64',
+            'poblacion'=>'required|max:128',
         ]);
 
         // CRUD::setFromDb(); // set fields from db columns.
