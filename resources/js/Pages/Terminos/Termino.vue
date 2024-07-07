@@ -3,9 +3,9 @@
 
         <div class="flex justify-between items-center mb-7">
             <Back :href="route('terminos')" inline>Términos</Back>
-            <Link href="/libros/glosario-terminologico" class="flex gap-2 items-center"
-                title='Descarga todo el glosario en pdf'>
-            <Icon icon="ph:download-duotone" />Descargar</Link>
+            <Link href="/libros/glosario-terminologico" class="btn btn-sm btn-primary flex gap-2 items-center"
+            title='Descarga todo el glosario en pdf'>
+            <Icon icon="ph:download-duotone" />Descargar libro</Link>
             <AdminPanel modelo="termino" necesita="administrar contenidos" :contenido="termino" />
         </div>
 
