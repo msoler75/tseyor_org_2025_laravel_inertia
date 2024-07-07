@@ -1,7 +1,7 @@
 <template>
     <Sections>
 
-        <Section height="400">
+        <Section height="400" class="py-12 container">
             <TextImage title="Curso Holístico Tseyor" srcImage="/almacen/medios/paginas/curso.png" image-right
                 srcWidth="373" srcHeight="482" buttonLabel="Inscríbete" :href="route('cursos.inscripcion.nueva')">
                 <p>Conoce las enseñanzas de los <Referencia>Guías Estelares</Referencia> con nuestro curso gratuito.</p>
@@ -9,13 +9,13 @@
         </Section>
 
         <Section>
-            <FondoEstrellado class="w-full h-full flex justify-center items-center">
+            <FondoEstrellado class="w-full h-full flex justify-center items-center py-12">
                 <VideoPlayer class="" videoUrl="https://www.youtube.com/embed/AkOZbfGdXbU" />
             </FondoEstrellado>
         </Section>
 
 
-        <Section>
+        <Section class="py-12">
             <FeatureColumns :features="[
                 {
                     title: 'Exploración Cósmica',
@@ -41,7 +41,7 @@
             ]" />
         </Section>
 
-        <Section height="500">
+        <Section height="500" class="py-12">
             <TextImage title="Filosofía Cósmico-Crística" buttonLabel="conoce nuestra filosofía"
                 :href="route('filosofia')" srcImage="/almacen/medios/paginas/hombre-espacio.jpg" textClass="container"
                 image-right>
@@ -52,16 +52,32 @@
             </TextImage>
         </Section>
 
-        <Section>
-            <TextImage title="Libro del Curso Holístico"
-                srcImage="https://via.placeholder.com/400x600.png/0000ff?text=CURSO HOLISTICO"
-                buttonLabel="Descargar Libro" href="/ong">
+        <Section class="py-12 container">
+            <TextImage title="Libro del Curso"
+                srcImage="/almacen/medios/libros/302/Curso%20Holistico%20Tseyor.jpg?w=233&h=350" textClass="container"
+                buttonLabel="Descargar Libro" href="/libros/cuso-holistico-tseyor">
                 <p>Lee este conjunto de historias para comprender la filosofía de Tseyor.</p>
             </TextImage>
         </Section>
 
-        <Section>
-            <FeaturedPosts title="Próximos cursos" :posts="cursos" />
+        <Section class="py-12 space-y-12">
+            <FeaturedPosts v-if="cursos.length" title="Próximos cursos" :posts="cursos" />
+            <div v-else class="container">
+                <h2>Próximos Cursos</h2>
+                <p>No hay cursos programados.</p>
+            </div>
+            <div class="container">
+                <p>Consulta regularmente los
+                    <Link :href="route('eventos')">Eventos</Link> para estar informado de los próximos eventos de la
+                    comunidad Tseyor.
+                </p>
+            </div>
+            <div class="container">
+                <p>También puedes acercarte al centro Tseyor más cercano y solicitar un curso para ti. Busca en
+                    <Link href="donde-estamos">
+                    el mapa</Link>
+                </p>.
+            </div>
         </Section>
 
 
