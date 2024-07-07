@@ -19,7 +19,7 @@
         </Section>
 
         <Section class="pb-10">
-            <TextText>
+            <TextText class="container">
                 <template #text1>
                     <blockquote>
                         <p>
@@ -51,7 +51,7 @@
 
 
         <Section class="py-14">
-            <div class="container mx-auto space-y-12">
+            <div class="container mx-auto space-y-12 py-12">
                 <h2>Departamentos</h2>
                 <GridFill w="24rem">
                     <div v-for="departamento of departamentos" :key="departamento.nombre" class="flex gap-3 items-start">
@@ -72,10 +72,10 @@
         </Section>
 
 
-        <Section>
+        <Section class="py-14">
             <TextImage title="Libro: UTG Universidad Tseyor de Granada"
-                srcImage="https://via.placeholder.com/300x400.png/0000ff?text=UTG.jpg" buttonLabel="Descargar libro"
-                href="/ong">
+                srcImage="http://localhost/almacen/medios/libros/249/La%20Universidad%20Tseyor%20de%20Granada.jpg?w=200" buttonLabel="Descargar libro"
+                href="/libros/la-universidad-tseyor-de-granada">
                 <p>Todo el material recopilado de la UTG desde su creación.</p>
             </TextImage>
         </Section>

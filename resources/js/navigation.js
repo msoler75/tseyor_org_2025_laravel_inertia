@@ -212,7 +212,7 @@ export default [
               },
             {
               title: "Mis primeros pasos",
-              url: "comenzar",
+              url: "/mis-primeros-pasos",
               description: "Dónde comenzar en la comunidad Tseyor",
               icon: "ph:list-numbers-duotone",
             },

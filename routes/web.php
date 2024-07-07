@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\PaginasController;
 use App\Http\Controllers\ArchivosController;
 use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ComunicadosController;
@@ -19,7 +20,6 @@ use App\Http\Controllers\ContactosController;
 use App\Http\Controllers\AudiosController;
 use App\Http\Controllers\VideosController;
 use App\Http\Controllers\ContenidosController;
-use App\Http\Controllers\PortadaController;
 use App\Http\Controllers\CursosController;
 use App\Http\Controllers\SalasController;
 use App\Http\Controllers\RadioController;
@@ -72,9 +72,9 @@ Route::get('test', function () {
     return Inertia::render('Test', []);
 })->name('test');
 
-Route::get('biblioteca', function () { return Inertia::render('Biblioteca', []) ->withViewData(SEO::get('novedades')); })->name('biblioteca');
+Route::get('biblioteca', [PaginasController::class, 'biblioteca'])->name('biblioteca');
 
-Route::get('', [PortadaController::class, 'index'])->name('portada');
+Route::get('', [PaginasController::class, 'portada'])->name('portada');
 
 Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades');
 Route::get('buscar', [ContenidosController::class, 'search'])->name('buscar');
@@ -329,7 +329,7 @@ Route::get('emails', [EmailsController::class, 'index'])->name('emails');
 Route::get('emails/{id}', [EmailsController::class, 'index'])->name('email');
 
 
-Route::get('asociacion', 'App\Http\Controllers\PaginasController@show')->name('asociacion');
+Route::get('asociacion', [PaginasController::class, 'show'])->name('asociacion');
 
 
 
@@ -358,7 +358,7 @@ Route::get('test/docx/{num}',  'App\Http\Controllers\TestController@docxShow');
 Route::get('test/word2pdf',  'App\Http\Controllers\TestController@word2pdf');
 
 
-Route::get('{ruta}', 'App\Http\Controllers\PaginasController@show')->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
+Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
 
 
 /* Route::fallback(function () {
