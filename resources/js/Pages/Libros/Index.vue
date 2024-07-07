@@ -48,7 +48,7 @@
                         <div v-for="libro in listado.data" :key="libro.id"
                             class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
                             <Link :href="route('libro', libro.slug)" class="flex items-center gap-3" >
-                            <Icon icon="ph:book-duotone" class="flex-shrink-0" /> <span v-html="libro.titulo"/></Link>
+                            <span v-html="libro.titulo"/></Link>
                         </div>
                     </GridAppear>
 

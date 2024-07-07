@@ -21,7 +21,7 @@ onMounted(() => {
 function clickHandle() {
     showPassword.value=!showPassword.value
     const currentInput =  showPassword.value?inputShow.value:inputHidden.value
-    nextTick(()=>{       
+    nextTick(()=>{
         currentInput.focus()
     })
 }
@@ -51,8 +51,8 @@ defineExpose({ focus: () => currentInput.value.focus() });
             :autocomplete="autocomplete"
     />
         <div class="absolute right-3 top-0 flex justify-center items-center h-full dark:mix-blend-difference cursor-pointer" title="Mostrar/Ocultar contraseña" @click="clickHandle">
-            <Icon v-show="!showPassword" icon="ph:eye-duotone"/>
-            <Icon v-show="showPassword" icon="ph:eye-closed-duotone"/>
+            <Icon v-show="showPassword" icon="ph:eye-duotone"/>
+            <Icon v-show="!showPassword" icon="ph:eye-closed-duotone"/>
         </div>
     </div>
 </template>

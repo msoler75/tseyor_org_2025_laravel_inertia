@@ -26,7 +26,7 @@
             </div>
         </div>
         <!-- frase final de "todos los derechos reservados" -->
-        <div class="w-full flex-shrink text-center text-sm pb-8 opacity-80">© {{new Date().getFullYear()}} TSEYOR Centro de Estudios Socioculturales. Todos los derechos reservados.</div>
+        <div class="w-full flex-shrink text-center text-sm pb-8 opacity-80">© {{new Date().getFullYear()}} TSEYOR. Todos los derechos reservados.</div>
     </footer>
 </template>
 

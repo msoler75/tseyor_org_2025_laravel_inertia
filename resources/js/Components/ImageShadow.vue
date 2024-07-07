@@ -1,8 +1,7 @@
 <template>
     <div class="vue-image-shadow" :class="shadowClass" :style="shadowStyle">
-        <Image class="vue-image-shadow-img" :src="finalSrc" :alt="alt" :width="width" :style="imgStyle" />
-        <div class="vue-image-shadow-card" :style="cardStyle">
-        </div>
+        <Image class="vue-image-shadow-img" :src="finalSrc" :alt="alt" :width="width" :height="height" :style="imgStyle" />
+        <div class="vue-image-shadow-card" :style="cardStyle"/>
     </div>
 </template>
 
@@ -35,6 +34,10 @@ const props = defineProps({
     width: {
         type: Number,
         default: 300
+    },
+    height: {
+        type: Number,
+        default: 'auto'
     },
 });
 

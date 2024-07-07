@@ -78,6 +78,7 @@ class ImagenesController extends Controller
 
         $params = $request->input();
 
+
         if (empty($params)) {
             return response()->file($imageFullPath, ['Content-Type' => $mime]);
         }
