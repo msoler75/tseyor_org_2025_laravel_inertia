@@ -1,7 +1,5 @@
-
 <template>
     <div class="container py-12 mx-auto">
-
 
         <div class="flex justify-between items-center mb-7">
             <span/>
