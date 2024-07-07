@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Inscripcion extends Model
 {
     use CrudTrait;
+    use \Venturecraft\Revisionable\RevisionableTrait;
+
 
     protected $table = 'inscripciones';
 

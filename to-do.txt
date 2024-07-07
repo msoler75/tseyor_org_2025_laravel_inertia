@@ -1,6 +1,3 @@
--mis primeros pasos
-
-
 CORREO:
 -Instalar PHP Mailer: https://help.dreamhost.com/hc/es/articles/360031174411-PHPMailer-Instalaci%C3%B3n-en-un-servidor-compartido
 -Límites de cuota DreamHost: https://help.dreamhost.com/hc/es/articles/215730437-L%C3%ADmites-de-cuota-SMTP
