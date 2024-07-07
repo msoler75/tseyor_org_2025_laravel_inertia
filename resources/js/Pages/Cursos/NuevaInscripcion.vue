@@ -19,17 +19,10 @@
                     <span>Revisa tu bandeja de correo.</span>
                 </div>
 
-                <div class="pt-7">
-                    <h2>¿Y ahora qué?</h2>
-                    <p>Puedes disfrutar de alguno de nuestros
-                        <Link :href="route('audios')">audios</Link> o leer alguno de los
-                        <Link :href="route('comunicados')">comunicados</Link> de nuestros guías estelares.
-                    </p>
-                    <p>También puedes escuchar nuestra
-                        <Link :href="route('radio')">Radio TSEYOR</Link>.
-                    </p>
-                </div>
+
             </div>
+
+
             <!-- Formulario empieza aquí -->
             <form v-else @submit.prevent="submit">
                 <p>Rellena este formulario para poder ofrecerte un curso adaptado a tus necesidades.
@@ -100,7 +93,20 @@
                     Enviar
                 </button>
             </form>
+
+
         </div>
+
+        <Section v-if="submitted" class="py-7">
+                    <TextImage title="¿Y ahora qué?" srcImage="/almacen/medios/paginas/camino-infinito.jpg"
+                    href="/mis-primeros-pasos"
+                    buttonLabel ="Mis primeros pasos"
+                    class="container mx-auto"
+                    textClass="bg-base-100 p-5 rounded-2xl"
+                    >
+                    Te recomendamos la lectura de esta sección
+                </TextImage>
+                </Section>
     </FondoEstrellado>
 </template>
 
@@ -157,7 +163,12 @@ const form = useForm('inscripcion', {
 })
 
 function scrollTop() {
-    document.getElementById("myform").scrollIntoView(true)
+    //
+    // console.log('scrollTop')
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 }
 
 function submit() {

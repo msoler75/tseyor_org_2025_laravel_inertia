@@ -32,7 +32,7 @@ const tabs = [
 const selected = ref(null);
 
 function IAmHere(url) {
-    return selected.value?url==selected.value: location.pathname.includes(url.replace(/https?:\/\/[^\/]+/, ''))
+    return selected.value?url==selected.value: location.pathname.startsWith(url.replace(/https?:\/\/[^\/]+/, ''))
 }
 
 </script>
