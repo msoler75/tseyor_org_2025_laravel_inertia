@@ -132,6 +132,7 @@ function calculaHCounter() {
 // https://www.danmatthews.me/posts/lazy-loading-inertia-js
 // cargamos las estadísticas un poco más tarde para que la portada cargue más rápido
 onMounted(() => {
+    console.log('on mounted')
     setTimeout(() => {
         router.reload({
             only: ['stats']

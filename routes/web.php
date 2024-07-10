@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\PaginasController;
 use App\Http\Controllers\ArchivosController;
+use App\Http\Controllers\NodosController;
 use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ComunicadosController;
 use App\Http\Controllers\EntradasController;
@@ -91,6 +92,8 @@ Route::get('almacen{ruta}', [ArchivosController::class, 'descargar'])->where(['r
 Route::get('storage{ruta}', [ArchivosController::class, 'descargar'])->where(['ruta' => '(\/.+)?'])->name('storage.classic');
 Route::get('mis_archivos', [ArchivosController::class, 'archivos'])->name('mis_archivos');
 Route::get('archivos_raiz', [ArchivosController::class, 'archivos'])->name('archivos_raiz');
+
+Route::get('nodos/{id}', [NodosController::class, 'show'])->name('nodo');
 
  // manejo de archivos
  Route::post('files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');
@@ -248,6 +251,7 @@ Route::get('usuarios/{slug}', [UsuariosController::class, 'show'])->where('slug'
 
 Route::get('login/1', [DevController::class, 'loginUser1'])->name('login1');
 Route::get('login/2', [DevController::class, 'loginUser2'])->name('login2');
+Route::get('/_email', [DevController::class, 'testMail']);
 
 
 Route::middleware([

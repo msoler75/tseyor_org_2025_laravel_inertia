@@ -54,9 +54,10 @@ return [
     'channels' => [
 
         'jobs' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/jobs.log'),
             'level' => 'info',
+            'days' => 1,
         ],
 
         'stack' => [
@@ -76,8 +77,15 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'days' => 14,
+            'days' => 1,
             'replace_placeholders' => true,
+        ],
+
+        'smtp' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/smtp.log'),
+            'level' => 'debug',
+            'days' => 1,
         ],
 
         'slack' => [

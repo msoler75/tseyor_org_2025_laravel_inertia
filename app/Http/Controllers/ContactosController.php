@@ -17,17 +17,19 @@ class ContactosController extends Controller
         $buscar = $request->input('buscar');
         $pais = $request->input('pais');
 
+        $num_per_page = 12;
+
         $resultados = $pais ?
             Contacto::where('pais', '=', $pais)
             ->where('visibilidad', 'P')
-            ->paginate(50)->appends(['pais' => $pais])
+            ->paginate($num_per_page)->appends(['pais' => $pais])
             : ($buscar ? Contacto::where('nombre', 'like', '%' . $buscar . '%')
                 ->where('visibilidad', 'P')
                 ->orWhere('pais', 'like', '%' . $buscar . '%')
                 ->orWhere('poblacion', 'like', '%' . $buscar . '%')
-                ->paginate(50)->appends(['buscar' => $buscar])
+                ->paginate($num_per_page)->appends(['buscar' => $buscar])
                 :
-                Contacto::latest()->where('visibilidad', 'P')->paginate(50)
+                Contacto::latest()->where('visibilidad', 'P')->paginate($num_per_page)
             );
 
         $paises = Contacto::selectRaw('pais as codigo, count(*) as total')

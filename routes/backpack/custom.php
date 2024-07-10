@@ -96,6 +96,7 @@ Route::group([
         return view('admin.logs');
     } );
 
+    Route::get('getlog/{log}', [AdminController::class, 'getLog'] );
     Route::get('list-images{ruta}', [AdminController::class, 'listImages'] )->where(['ruta' => '(\/.+)?'])->name('admin.list-images');
     Route::get('dashboard', [AdminController::class, 'dashboard'] );
     Route::get('', [AdminController::class, 'dashboard'] );

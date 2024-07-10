@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Experiencia;
+use App\Models\Contacto;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         for ($i = 1; $i <= 120; $i++) {
             $data = $this->generateRandomData();
-            Experiencia::create($data);
+            Contacto::create($data);
         }
     }
 
@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
         'Experiencia de campo (Grupal)',
         'Rescate adimensional (Grupal)'];
         // $categorias = ['Meditaciones', 'Cuentos', 'Clásica', 'Canciones', 'Reflexiones', 'Talleres'];
-        //$codigos_pais = ['ES', 'MX', 'AR', 'CO', 'PE', 'CL', 'VE', 'EC', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'UY', 'PA'];
+        $codigos_pais = ['ES', 'MX', 'AR', 'CO', 'PE', 'CL', 'VE', 'EC', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'UY', 'PA'];
         /*
         $files = ['https://cdn.pixabay.com/audio/2023/04/03/audio_047543feac.mp3',
         'https://cdn.pixabay.com/audio/2023/01/01/audio_816821e627.mp3',
@@ -52,19 +52,20 @@ class DatabaseSeeder extends Seeder
 
         return [
             'nombre' => $faker->text(60),
-            'categoria' => $faker->randomElement($categorias),
+            // 'categoria' => $faker->randomElement($categorias),
             // 'descripcion' => $faker->paragraph(1),
             //'name' => $faker->userName(),
             // 'slug' => $faker->slug(),
             //'email' =>$faker->email(),
             //'password'=>$faker->password(),
-            'fecha' => $faker->dateTime(),
-            'lugar' => $faker->text(30),
+            //'fecha' => $faker->dateTime(),
+            //'lugar' => $faker->text(30),
             //'audio' => $faker->randomElement($files),
+            'pais' => $faker->randomElement($codigos_pais),
             // 'equipo_id' => $faker->randomElement($equipos),
-            'texto' => $faker->paragraph(20),
-            'visibilidad' => 'P'
-            //'imagen' => $faker->getImageUrl(800, 600)
+            // 'texto' => $faker->paragraph(20),
+            'visibilidad' => 'P',
+            'imagen' => $faker->imageUrl(800, 600),
             //'profile_photo_path' =>$faker->getImageUrl(600, 600),
             /* 'provincia' => $faker->state(),
             'direccion' => $faker->address(),

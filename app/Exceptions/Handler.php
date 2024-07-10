@@ -37,6 +37,45 @@ class Handler extends ExceptionHandler
     }
 
 
+
+
+    /**
+     * Determine if the exception is related to mail sending.
+     *
+     * @param  \Throwable  $exception
+     * @return bool
+     */
+    protected function isMailException(Throwable $exception)
+    {
+        // Aquí puedes personalizar la lógica para identificar excepciones de correo
+        return strpos($exception->getMessage(), 'SMTP') !== false
+            || strpos($exception->getMessage(), 'mail') !== false
+            || strpos(get_class($exception), 'Mail') !== false;
+    }
+
+
+    /**
+     * Report or log an exception.
+     *
+     * @param  \Throwable  $exception
+     * @return void
+     */
+    public function report(Throwable $exception)
+    {
+          // Verificar si la excepción está relacionada con el envío de correos
+          if ($this->isMailException($exception)) {
+            Log::channel('smtp')->error('Mail Exception: ' . $exception->getMessage());
+        }
+
+        // Verificar si la excepción está relacionada con la ejecución de jobs
+        if ($this->isJobException($exception)) {
+            Log::channel('jobs')->error('Job Exception: ' . $exception->getMessage(), ['exception' => $exception]);
+        }
+
+        parent::report($exception);
+    }
+
+
     /**
      * Render an exception into an HTTP response.
      *
@@ -49,6 +88,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+
         // Guardar la excepción en el log con información detallada
         // Log::error($exception->getMessage(), ['exception' => $exception]);
 
@@ -62,8 +102,6 @@ class Handler extends ExceptionHandler
             'line' => $exception->getLine(),
             'trace' => $exception->getTraceAsString(),
         ]);
-
-
 
         // en algunos casos hemos de pasar "arriba" la excepción para que sea gestionada como corresponde
         // ValidationException: login

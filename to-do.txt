@@ -1,3 +1,10 @@
+MAPA contactos
+-cada vez que se crean los marcadores, que se centre/zoom 3 el mapa
+-no se actualizan las tarjetas cuando cambio de pais
+
+URL
+-En movil, al compartir una página solo comparte tseyor.xyz
+
 CORREO:
 -Instalar PHP Mailer: https://help.dreamhost.com/hc/es/articles/360031174411-PHPMailer-Instalaci%C3%B3n-en-un-servidor-compartido
 -Límites de cuota DreamHost: https://help.dreamhost.com/hc/es/articles/215730437-L%C3%ADmites-de-cuota-SMTP
@@ -9,11 +16,8 @@ https://mailrelay.com/
 https://apidocs.mailrelay.com/#post-/campaigns
 -Boletines (es como un novedades, pero por correo)
 
-
 CORREOS
--testar envio de correos
-    -crear un controlador y una ruta para test de enviar correos
-    -testar job de correo y verificar que se queda en la base de datos registrado
+-queueworker   ó    /__processjobs
 
 MAPA
 -Cuando hace click en el pais, no recargar toda la página, solo los contactos y actualizar el mapa con los marker sin tener que recargar todo el maps

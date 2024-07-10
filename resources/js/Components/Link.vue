@@ -3,7 +3,9 @@
         :preserve-scroll="preserveScroll" :preserve-state="preserveState" :replace="replace" :only="only"
         :on-before="onBefore" :on-start="onStart" :on-progress="onProgress" :on-finish="onFinish"
         :on-cancel-token="onCancelToken" :on-cancel="onCancel" :on-success="onSuccess"
-        :queryStringArrayFormat="queryStringArrayFormat">
+        :queryStringArrayFormat="queryStringArrayFormat"
+        @finish="onFinish"
+        >
     <slot />
     </Link>
 </template>
@@ -87,7 +89,7 @@ const props = defineProps(
             type: String,
             default: 'brackets'
         },
-        preservePage: {
+        preservePage: { // my navigation things
             type: Boolean,
             default: false
         },
@@ -110,6 +112,7 @@ const asIF = computed( () => {
             }
         )
 
+
 function handleClick() {
     if(props.fadeOut)
         nav.fadeoutPage()
@@ -120,5 +123,12 @@ function handleClick() {
     if (props.onClick) {
         props.onClick()
     }
+}
+
+const emit = defineEmits(['finish'])
+
+function onFinish() {
+    console.log('finished Loading')
+    emit('finish')
 }
 </script>
