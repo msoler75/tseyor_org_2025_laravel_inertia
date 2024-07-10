@@ -176,4 +176,46 @@ const logout = () => {
 };
 
 
+
+
+
+////////////////////////
+// DEV LOGINS
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKey);
+})
+
+
+
+function handleKey(event) {
+    if (event.ctrlKey && event.key === 'i') {
+        // event.preventDefault()
+        selectors.developerMode = !selectors.developerMode
+    }
+}
+
+
+function login1() {
+    console.log('login1')
+    axios.get(route('login1'))
+        .then((response) => {
+            permisos.cargarPermisos()
+            console.log('response', response)
+            router.reload()
+        }
+        )
+}
+
+function login2() {
+    axios.get(route('login2'))
+        .then(() => {
+            permisos.cargarPermisos()
+            router.reload()
+        })
+}
+
+////////////////////////////////////////////////////////////////
+
+
 </script>

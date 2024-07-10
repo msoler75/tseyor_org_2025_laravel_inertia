@@ -124,12 +124,14 @@ window.initMap = () => {
     });
 
     colocarMarcadores()
+    encuadrarMarcadores()
 
     // si cambian los contactos, recolocamos los marcadores
     watch(contactos, () => {
         console.log('watch contactos')
         borrarMarcadores()
         colocarMarcadores()
+        encuadrarMarcadores()
     })
 
 }
@@ -144,6 +146,27 @@ function colocarMarcadores() {
         if (contacto.latitud != null && contacto.longitud != null)
             addMarker(contacto);
     });
+}
+
+function encuadrarMarcadores() {
+
+    // comprobar límites del mapa usando los marcadores
+    const bounds = new google.maps.LatLngBounds();
+    for (let i = 0; i < markers.length; i++) {
+        bounds.extend(markers[i].getPosition());
+    }
+
+    //if too close...
+    if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+        var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + 0.3, bounds.getNorthEast().lng() + 0.3);
+        var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - 0.3, bounds.getNorthEast().lng() - 0.3);
+        bounds.extend(extendPoint1);
+        bounds.extend(extendPoint2);
+    }
+
+    //map.setCenter(bounds.getCenter());
+    map.value.fitBounds(bounds);
+
 }
 
 function borrarMarcadores() {

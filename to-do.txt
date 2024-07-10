@@ -1,6 +1,5 @@
 MAPA contactos
 -cada vez que se crean los marcadores, que se centre/zoom 3 el mapa
--no se actualizan las tarjetas cuando cambio de pais
 
 URL
 -En movil, al compartir una página solo comparte tseyor.xyz

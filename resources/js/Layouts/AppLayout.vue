@@ -6,11 +6,6 @@ import usePermisos from '@/Stores/permisos'
 // import usePlayer from '@/Stores/player'
 import setTransitionPages from '@/composables/transitionPages.js'
 
-import useSelectors from '@/Stores/selectors'
-
-const selectors = useSelectors()
-
-
 // console.log('app initiating...')
 
 // const player = usePlayer()
@@ -45,37 +40,6 @@ function updateDarkState() {
 }
 
 
-// DEV LOGINS
-
-
-function handleKey(event) {
-    if (event.ctrlKey && event.key === 'i') {
-        // event.preventDefault()
-        selectors.developerMode = !selectors.developerMode
-    }
-}
-
-
-function login1() {
-    console.log('login1')
-    axios.get(route('login1'))
-        .then((response) => {
-            permisos.cargarPermisos()
-            console.log('response', response)
-            router.reload()
-        }
-        )
-}
-
-function login2() {
-    axios.get(route('login2'))
-        .then(() => {
-            permisos.cargarPermisos()
-            router.reload()
-        })
-}
-
-////////////////////////////////////////////////////////////////
 
 const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset
@@ -91,8 +55,6 @@ onMounted(() => {
     handleMouse()
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-
-    window.addEventListener('keydown', handleKey);
 
     // cargamos el componente AudioPlayer más tarde
     /* setTimeout(() => {
