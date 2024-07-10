@@ -102,7 +102,7 @@ class LugarCrudController extends CrudController
 
          $folder = $this->getMediaFolder();
 
-        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400])->hint('descripción corta');
 
         // CRUD::field('texto')->type('text_tinymce')->attributes(['folder' => $folder]);
 
@@ -110,6 +110,9 @@ class LugarCrudController extends CrudController
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto'])->after('texto');
 
+        CRUD::field('relacionados')->type('textarea')->hint('slug de otros lugares de la galaxia, separados por comas o saltos de linea. Ejemplo: planeta-agguniom, planeta-albus, etc.')->attributes(['rows' => 4]);
+
+        CRUD::field('libros')->type('textarea')->hint('slug de libros, separados comas o saltos de linea. Ejemplo: los-guias-estelares, el-rayo-sincronizador, ...')->attributes(['rows' => 4]);
 
          CRUD::field('visibilidad')->type('visibilidad');
     }

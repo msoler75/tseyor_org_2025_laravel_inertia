@@ -1,5 +1,5 @@
 MAPA contactos
--cada vez que se crean los marcadores, que se centre/zoom 3 el mapa
+-buscar "chile" no devuelve ningun resultado, y hay contactos que son de chile (debe ser porqué está con el codigo de pais CL)
 
 URL
 -En movil, al compartir una página solo comparte tseyor.xyz
