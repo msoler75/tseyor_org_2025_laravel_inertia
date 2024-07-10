@@ -53,6 +53,20 @@ class Handler extends ExceptionHandler
             || strpos(get_class($exception), 'Mail') !== false;
     }
 
+    /**
+     * Determine if the exception is related to job execution.
+     *
+     * @param  \Throwable  $exception
+     * @return bool
+     */
+    protected function isJobException(Throwable $exception)
+    {
+        // Aquí puedes personalizar la lógica para identificar excepciones relacionadas con jobs
+        return strpos($exception->getMessage(), 'Job') !== false
+            || strpos($exception->getMessage(), 'Queue') !== false
+            || strpos(get_class($exception), 'Job') !== false
+            || strpos(get_class($exception), 'Queue') !== false;
+    }
 
     /**
      * Report or log an exception.
@@ -62,9 +76,9 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
-          // Verificar si la excepción está relacionada con el envío de correos
-          if ($this->isMailException($exception)) {
-            Log::channel('smtp')->error('Mail Exception: ' . $exception->getMessage());
+        // Verificar si la excepción está relacionada con el envío de correos
+        if ($this->isMailException($exception)) {
+            Log::channel('smtp')->error('Mail Exception: ' . $exception->getMessage(), ['exception' => $exception]);
         }
 
         // Verificar si la excepción está relacionada con la ejecución de jobs
@@ -92,7 +106,7 @@ class Handler extends ExceptionHandler
         // Guardar la excepción en el log con información detallada
         // Log::error($exception->getMessage(), ['exception' => $exception]);
 
-       $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 512;
+        $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 512;
 
         Log::error('An exception occurred', [
             'statusCode' => $statusCode,
@@ -116,7 +130,7 @@ class Handler extends ExceptionHandler
             $referer = $_SERVER['HTTP_REFERER'] ?? '';
             $uri = $_SERVER['REQUEST_URI'] ?? '';
 
-            if($referer && strpos($referer, $uri)===FALSE) // comprueba si referer es la misma url de la request
+            if ($referer && strpos($referer, $uri) === FALSE) // comprueba si referer es la misma url de la request
                 return parent::render($request, $exception);
 
 

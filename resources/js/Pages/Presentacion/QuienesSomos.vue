@@ -41,6 +41,7 @@
             <TextImage title="Comunicados recibidos telepáticamente"
                 srcImage="/almacen/medios/paginas/Puente.jpg" buttonLabel="Ver Comunicados"
                 href="/comunicados"
+                gridClass="md:grid-cols-[2fr_1fr]"
                 image-right>
                 <p>Los comunicados son las <Referencia>conversaciones interdimensionales</Referencia> realizadas <Referencia r="telepatía">telepáticamente</Referencia> por nuestro hermano
                     <Referencia>Chac-Mool Puente</Referencia>, quien ha recibido una preparación desde

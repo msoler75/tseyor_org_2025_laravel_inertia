@@ -80,6 +80,7 @@ declare module 'vue' {
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     ModalDropZone: typeof import('./resources/js/Components/ModalDropZone.vue')['default']
     NavAside: typeof import('./resources/js/Components/NavAside.vue')['default']
+    NavBar: typeof import('./resources/js/Components/NavBar.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     NavSubmenu: typeof import('./resources/js/Components/NavSubmenu.vue')['default']
     NavTabs: typeof import('./resources/js/Components/NavTabs.vue')['default']

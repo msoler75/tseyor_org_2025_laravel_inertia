@@ -25,7 +25,7 @@ class ContenidosController extends Controller
         $esAdministrador = $user && $user->hasPermissionTo('administrar contenidos');
 
         // no aparecen en novedades
-        $colecciones_excluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', 'lugares', 'guias'];
+        $colecciones_excluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', /*'lugares',*/ 'guias'];
 
         // atención para administradores: la búsqueda no incluye los contenidos no publicados
 
