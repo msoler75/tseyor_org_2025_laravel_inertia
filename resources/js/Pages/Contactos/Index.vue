@@ -6,20 +6,25 @@
         <h1 class="text-center mb-0">Dónde estamos</h1>
 
         <div class="flex justify-end mb-5 transform lg:translate-y-[3.5rem]">
-            <SearchInput />
+            <SearchInput class="py-1" />
         </div>
 
         <div class="w-full flex gap-5 flex-wrap lg:flex-nowrap">
 
             <div
                 class="card bg-base-100 min-w-48 flex-wrap lg:flex-nowrap flex-row lg:flex-col p-5 lg:p-10 gap-7 self-baseline lg:sticky lg:top-20 overflow-y-auto lg:max-h-[calc(100vh-10rem)] select-none">
-                <Link :href="`${route('contactos')}`" :class="!filtrado && !paisActivo ? 'text-primary font-bold' : ''">
+                <Link :href="`${route('contactos')}`"
+                    :class="!filtrado && !paisActivo && !paisClick ? 'text-primary font-bold' : ''"
+                    :only="['paisActivo', 'filtrado', 'listado']" replace preserve-state @click="clickPais('')"
+                    @finish="cargando = false">
                 <span class="capitalize">Novedades</span>
                 </Link>
 
                 <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
-                    :class="paisActivo == pais.nombre ? 'text-primary font-bold' : ''">
-                    <Link :href="`${route('contactos')}?pais=${pais.codigo}`">
+                    :class="paisActivo == pais.nombre || paisClick == pais.nombre ? 'text-primary font-bold' : ''">
+                    <Link :href="`${route('contactos')}?pais=${pais.codigo}`"
+                        :only="['paisActivo', 'filtrado', 'listado']" replace preserve-state
+                        @click="clickPais(pais.nombre)" @finish="cargando = false">
                     <span class="capitalize" :class="pais.codigo == paisActivo ? 'font-bold' : ''">{{ pais.nombre
                         }}</span>
                     <small v-if="pais.total > 0"> ({{ pais.total }})</small>
@@ -27,33 +32,39 @@
                 </div>
             </div>
 
-            <div class="w-full">
+            <div id="main-content" class="w-full">
 
                 <SearchResultsHeader v-if="!paisActivo" :results="listado" />
 
-                <tabs :options="{ disableScrollBehavior: true }">
-                    <tab name="Mapa">
-                        <div ref="mapRef" id="map" class="map-container w-full h-[400px]"></div>
-                    </tab>
+                <!-- md -->
+                <div role="tablist" class="tabs tabs-lifted">
+                    <a @click="vista = 'mapa'" role="tab" class="tab font-bold uppercase"
+                        :class="vista == 'mapa' ? 'tab-active' : ''">Mapa</a>
+                    <a @click="vista = 'listado'" role="tab" class="tab font-bold uppercase"
+                        :class="vista == 'listado' ? 'tab-active' : ''">Listado</a>
+                    <a role="tab" class="tab pointer-events-none"></a>
+                </div>
 
+                <div class="w-full bg-base-100 py-8 px-4 border-l border-r border-b border-base-300 p-6">
+                    <div v-show="vista == 'mapa'" ref="mapRef" id="map" class="map-container w-full h-[400px]"></div>
 
-                    <tab name="Listado">
-
-                        <GridAppear class="gap-8" col-width="12rem">
+                    <div v-show="vista == 'listado'">
+                        <GridAppear class="gap-8" col-width="16rem">
                             <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
                                 :href="route('contacto', contenido.slug)" imageClass="h-48"
-                                :tag="paisActivo ? '' : contenido.pais">
-                                <div
-                                    class="text-center p-2 text-xl font-bold transition duration-300 group-hover:text-primary  group-hover:drop-shadow">
+                                :tag="paisActivo ? '' : contenido.pais" :skeleton="cargando">
+                                <div v-if="cargando" class="m-3 mx-auto skeleton w-[13rem] h-[2.5rem]"></div>
+                                <div v-else
+                                    class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow">
                                     {{ contenido.nombre }}</div>
                             </CardContent>
                         </GridAppear>
 
-                        <pagination class="mt-6" :links="listado.links" />
-
-                    </tab>
-                </tabs>
-
+                        <pagination @click="cargando = true" @finish="cargando = false" scroll-to="#main-content"
+                            class="mt-6" :links="listado.links" replace preserve-state
+                            :only="['paisActivo', 'filtrado', 'listado']" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -64,7 +75,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { getImageUrl } from '@/composables/imageutils.js'
-import { Tabs, Tab } from 'vue3-tabs-component';
 import { loadGoogleMaps } from '@/composables/google'
 
 defineOptions({ layout: AppLayout })
@@ -78,13 +88,12 @@ const props = defineProps({
     paises: {
         default: () => []
     },
-    apiKey: {type: String, required: true}
+    apiKey: { type: String, required: true }
 });
 
-const listado = ref(props.listado);
-const paises = ref(props.paises)
-
-
+const vista = ref('mapa')
+const cargando = ref(false)
+const paisClick = ref('')
 // GOOGLE MAPS
 
 
@@ -93,11 +102,17 @@ const mapRef = ref(null);
 const map = ref(null);
 // const markers = [];
 
-const contactos = ref(props.listado.data)
+const contactos = computed(() => props.listado.data)
+
+const justLoaded = ref(false)
+
 
 onMounted(() => {
+    console.log('onMounted')
     // Carga dinámica de la biblioteca de Google Maps con el parámetro de callback
-    loadGoogleMaps(props.apiKey, 'initMap')
+    if (!justLoaded.value)
+        loadGoogleMaps(props.apiKey, 'initMap')
+    justLoaded.value = true
 });
 
 window.initMap = () => {
@@ -108,12 +123,40 @@ window.initMap = () => {
         zoom: 2,
     });
 
+    colocarMarcadores()
+
+    // si cambian los contactos, recolocamos los marcadores
+    watch(contactos, () => {
+        console.log('watch contactos')
+        borrarMarcadores()
+        colocarMarcadores()
+    })
+
+}
+
+
+const markers = []
+
+function colocarMarcadores() {
+    console.log('colocarMarcadores', contactos.value)
     // Agregar marcadores para cada contacto
     contactos.value.forEach((contacto) => {
         if (contacto.latitud != null && contacto.longitud != null)
             addMarker(contacto);
     });
 }
+
+function borrarMarcadores() {
+    console.log('borrarMarcadores', markers)
+    // removemos los markers
+    for (let i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    // delete all items of array markers
+    markers.splice(0, markers.length);
+}
+
+
 
 function addMarker(contacto) {
     console.log({ contacto })
@@ -123,6 +166,9 @@ function addMarker(contacto) {
         map: map.value,
         title: contacto.nombre,
     });
+
+    // guardamos el marker en el array
+    markers.push(marker)
 
     // Crear contenido para la ventana de información
     const content = `
@@ -148,6 +194,10 @@ function addMarker(contacto) {
     // markers.push(marker);
 }
 
+function clickPais(pais) {
+    paisClick.value = pais
+    cargando.value = true
+}
 
 
 </script>

@@ -13,7 +13,7 @@ function removerAcentosIconv($texto)
 
 function removerAcentosStrtr($texto)
 {
-    $_x = new \App\T("AccentRemover", "removerAcentosStrtr");
+    // $_x = new \App\T("AccentRemover", "removerAcentosStrtr");
     $acentos = array(
         'á' => 'a',
         'é' => 'e',
@@ -87,7 +87,7 @@ class AccentRemover
 
     public static function removeNonAscii($str)
     {
-        $_x = new \App\T("AccentRemover", "removeNonAscii");
+        // $_x = new \App\T("AccentRemover", "removeNonAscii");
         /*$str = mb_ereg_replace('[áÁ]', 'a', $str);
         $str = mb_ereg_replace('[éÉ]', 'e', $str);
         $str = mb_ereg_replace('[íÍ]', 'i', $str);
@@ -99,12 +99,13 @@ class AccentRemover
         return $str;
     }
 
+
+    /**
+     * Para ver cual es más rápido
+     */
+
     public static function benchmark($texto)
     {
-
-
-
-
         $reps = 100;
 
 

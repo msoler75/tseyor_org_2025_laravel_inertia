@@ -10,23 +10,25 @@
             <SearchInput />
         </div>
 
-        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <div id="main-content" class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="w-full flex-grow">
 
                 <SearchResultsHeader :results="listado" />
 
-                <div class="grid gap-8" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+                <div class="grid gap-8" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }"
+                >
                     <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data"
                         :imageLeft="true"
                         :imageHeight="300"
                         :key="contenido.id" :title="contenido.titulo" :image="contenido.imagen"
                         :href="route('entrada', contenido.slug)" :description="contenido.descripcion"
-                        :date="contenido.published_at" imageClass="h-80"/>
+                        :date="contenido.published_at" imageClass="h-80"
+                        :skeleton="cargando"
+                        />
                 </div>
 
-
-                <pagination class="mt-6" :links="listado.links" />
+                <pagination @click="cargando=true" @finish="cargando=false" scroll-to="#main-content" class="mt-6" :links="listado.links" />
 
             </div>
 
@@ -62,8 +64,6 @@ const props = defineProps({
     }
 });
 
-const listado = ref(props.listado);
-const recientes = ref(props.recientes)
-
+const cargando = ref(false);
 
 </script>

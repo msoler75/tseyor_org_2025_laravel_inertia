@@ -752,7 +752,7 @@ class ArchivosController extends Controller
      */
     public function descargar(Request $request, string $ruta)
     {
-        Log::info("Descargar $ruta");
+        // Log::info("Descargar $ruta");
 
         if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);

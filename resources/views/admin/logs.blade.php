@@ -3,55 +3,62 @@
 @section('content')
     @php
         $logsFolder = storage_path('logs');
-        $archivos = ['laravel', 'jobs']; // se pone sin extensión .log
-        $logs = [];
-        foreach ($archivos as $archivo) {
-            $logs[$archivo] = @file_get_contents($logsFolder . '/' . $archivo . '.log');
+        // list files in folder
+        $archivos = [];
+        foreach (glob($logsFolder . '/*.log') as $archivo) {
+            $archivo = basename($archivo);
+            $archivos[] = $archivo;
         }
-        $first = true;
+        usort($archivos, function($a, $b){
+            if($a==$b) return 0;
+            $weightA = 0;
+            $weightB = 0;
+            if(preg_match("/laravel.*/", $a))
+            $weightA = $a=='laravel.log' ? -2 : -1;
+            if(preg_match("/laravel.*/", $b))
+            $weightB = $b=='laravel.log' ? -2 : -1;
+            return $weightA - $weightB;
+        })
     @endphp
 
     <div style="user-select: none; margin-bottom: 10px; display: flex; gap: 10px">
         @foreach ($archivos as $archivo)
-            <label><input type="radio" value="{{ $archivo }}-log" name="tipo-log"
-                    @php if($first) echo 'checked'; $first = false; @endphp> {{ $archivo }}.log</label>&nbsp;
+            <label><input type="radio" value="{{ $archivo }}" name="archivo-log"> {{ $archivo }}</label>&nbsp;
         @endforeach
     </div>
     <div id="my-logs">
-        @foreach ($archivos as $archivo)
-            <textarea id="{{ $archivo }}-log"
-                style="font-size: .7rem; width: 100%; height: calc(100vh - 120px);  min-height: 100%; display: none">
-            {{ $logs[$archivo] }}
+        <textarea id="log-view" style="font-size: .7rem; width: 100%; height: calc(100vh - 120px);  min-height: 100%">
         </textarea>
-        @endforeach
     </div>
 
     <script>
-        function ocultarTextArea() {
-            var t = document.querySelectorAll("#my-logs textarea")
-            for (var i = 0; i < t.length; i++) {
-                t[i].style.display = 'none'
-            }
-        }
-
-        function showLog(log) {
+        function showLog(archivo) {
             // obtenemos el valor del radio seleccionado
-            var radio = document.querySelector('input[name="tipo-log"]:checked').value;
-            ocultarTextArea()
-            // mostramos el textarea seleccionado
-            var textarea = document.getElementById(log);
-            textarea.style.display = 'block'
-            textarea.scrollTop = textarea.scrollHeight;
+            var radio = document.querySelector('input[name="archivo-log"]');
+            radio.click()
         }
 
         // creamos un event listener para cuando cambie el valor del radio
-        var radios = document.querySelectorAll('input[name="tipo-log"]')
+        var radios = document.querySelectorAll('input[name="archivo-log"]')
         for (var i = 0; i < radios.length; i++) {
-            radios[i].addEventListener('change', function() {
-                showLog(this.value);
+            radios[i].addEventListener('click', function(event) {
+                const archivo = event.target.value
+                console.log('click en archivo ' + archivo)
+                // mostramos el textarea seleccionado
+                var textarea = document.getElementById('log-view');
+                fetch('/admin/getlog/' + archivo)
+                    .then(resp => resp.json())
+                    .then(response => {
+                        console.log({response})
+                        textarea.textContent = response.content
+                        textarea.scrollTop = textarea.scrollHeight;
+                    })
+                    .catch(error => {
+                        alert("Error al cargar el archivo: " + error);
+                    })
             });
         }
 
-        showLog('laravel-log')
+        showLog('laravel.log')
     </script>
 @endsection

@@ -8,15 +8,28 @@
                :preserve-page="preservePage"
                :auto-scroll="autoScroll">
         <div v-if="image" class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
-            <div v-if="imageContained" class="w-full h-full bg-center transition duration-300 group-hover:scale-105">
+            <div v-if="skeleton" class="skeleton w-full h-full rounded-none"></div>
+            <div v-else-if="imageContained" class="w-full h-full bg-center transition duration-300 group-hover:scale-105"
+            :class="skeleton?'skeleton':''">
                 <Image class="w-full h-full" :src="image"/>
             </div>
             <div v-else class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
                 'background-image': `url('${getImageUrl(image)}?cover&w=${imageWidth}${imageHeight!='auto'?'&h='+imageHeight:''}')`,
                 'view-transition-name': imageViewTransitionName
-            }" />
+            }"/>
         </div>
-        <div v-if="title || tag || description || date" class="p-4 flex flex-col w-full">
+        <div v-if="skeleton && (title || tag || description || date)" class="space-y-2 p-4 flex flex-col w-full">
+            <div v-if="title" class="skeleton w-[40ch] h-[1.5rem] mb-3" />
+            <div v-if="tag" class="skeleton w-[12ch] h-[1.25rem]"/>
+            <template v-if="description">
+            <div  class="skeleton w-full h-[1rem]"/>
+            <div  class="skeleton w-full h-[1rem]"/>
+            <div  class="skeleton w-full h-[1rem]"/>
+            <div  class="skeleton w-full h-[1rem]"/>
+            </template>
+            <div v-if="date" class="skeleton inline ml-auto mt-auto w-[4rem] h-[.8rem]" />
+        </div>
+        <div v-else-if="title || tag || description || date" class="p-4 flex flex-col w-full">
             <h2 v-if="title"
                 class="text-lg text-left font-bold mb-3 transition duration-300 group-hover:!text-secondary  group-hover:drop-shadow leading-5"
                 v-html="title" />
@@ -73,7 +86,8 @@ const props = defineProps({
     },
     preservePage: {type: Boolean, default: false},
     autoScroll:  {type: Boolean, default: true},
-    gradient: {type: Boolean, default: true}
+    gradient: {type: Boolean, default: true},
+    skeleton: {type: Boolean, default: false}
 })
 
 const descriptionFinal = computed(() => {

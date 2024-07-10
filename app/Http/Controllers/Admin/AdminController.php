@@ -51,6 +51,27 @@ class AdminController
     }
 
 
+    /**
+     * Devuelve el contenido de un archivo de log
+     */
+    public function getLog($log) { // retorna json
+        $logsFolder = storage_path('logs');
+
+        // evitar hacker
+        if(strpos($log, "..")!==false||strpos($log, "/")!==false||strpos($log, "\\")!==false)
+        return response()->json(['content'=>'']);
+
+        $file = "$logsFolder/$log";
+
+        // si no existe
+        if(!file_exists($file)) 
+            return response()->json(['content'=>'']);
+        
+        $content = file_get_contents($file);
+        return response()->json(['content'=>$content]);
+    }
+
+
     public function listImages($ruta) {
 
         $imagenes = DiskUtil::obtenerImagenes($ruta);
