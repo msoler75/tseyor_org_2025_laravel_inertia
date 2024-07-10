@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use App\Pigmalion\DiskUtil;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Pigmalion\Countries;
 
 
 class ContenidoHelper
@@ -29,7 +30,8 @@ class ContenidoHelper
         return trim($teaser);
     }
 
-    public static function removerTitulo($descripcion, $titulo) {
+    public static function removerTitulo($descripcion, $titulo)
+    {
         return trim(preg_replace('/' . preg_quote($titulo) . '/i', '', $descripcion));
     }
 
@@ -110,7 +112,7 @@ class ContenidoHelper
         // cambiamos las imagenes de portada del contenido en el caso de los guías, poniendo la imagen sin texto
         if (in_array('imagen', $fillable)) {
             $objeto->imagen = preg_replace("#/medios/guias/con_nombre/(.*)\.jpg#", "/medios/guias/$1.jpg", $objeto->imagen);
-            if(strpos($objeto->imagen, '/medios/guias/') !== false)
+            if (strpos($objeto->imagen, '/medios/guias/') !== false)
                 $objeto->imagen = strtolower($objeto->imagen);
         }
 
@@ -121,7 +123,7 @@ class ContenidoHelper
             $descripcion = strip_tags($texto);
             $descripcion = \App\Pigmalion\Markdown::removeMarkdown($descripcion);
             $descripcion = str_replace("\n", ' ', $descripcion); // Agregar espacio entre líneas
-            if($titulo) $descripcion = self::removerTitulo($descripcion, $titulo);
+            if ($titulo) $descripcion = self::removerTitulo($descripcion, $titulo);
             $descripcion = self::generarTeaser($descripcion);
             //$descripcion = rtrim($descripcion, "!,.-");
             $objeto->descripcion = $descripcion;
@@ -153,9 +155,20 @@ class ContenidoHelper
         }
 
         // Asignar las propiedades del modelo con los datos recibidos
+        $descripcion = $model->descripcion ?? '';
+        // si existe atributo pais, lo convertimos
+        if (isset($model->pais))
+        {
+            $values = [Countries::getCountry($model->pais)];
+            if(isset($model->provincia)) $values[] = $model->provincia;
+            if(isset($model->poblacion)) $values[] = $model->poblacion;
+            if(isset($model->descripcion)) $values[] = $model->descripcion;
+            $descripcion = implode(" ", $values);
+        }
+
         $contenido->titulo = $model->titulo ?? $model->nombre;
         $contenido->slug_ref = $model->slug ?? $model->ruta ?? null;
-        $contenido->descripcion = $model->descripcion ?? ($model->pais . " " . $model->poblacion);
+        $contenido->descripcion = $descripcion;
         $contenido->imagen = $model->imagen ?? null;
         $contenido->fecha = $model->published_at ?? $model->updated_at ?? null;
         $contenido->visibilidad = $model->visibilidad ?? 'P';

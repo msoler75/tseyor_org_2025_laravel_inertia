@@ -1,4 +1,3 @@
-
 <template>
     <div class="container py-12 mx-auto">
 
@@ -14,15 +13,11 @@
         <SearchResultsHeader :results="listado" />
 
         <GridAppear col-width="28rem" class="gap-4">
-            <CardContent v-for="contenido in listado.data" :key="contenido.slug"
-            image-left
-            :title="contenido.titulo+(contenido.visibilidad!='P'?' (borrador)':'')"
-            :draft="contenido.visibilidad!='P'"
-            :image="contenido.imagen"
-            :href="route(contenido.coleccion)+'/'+contenido.slug_ref"
-            :tag="traducir(contenido.coleccion)"
-            :description="contenido.descripcion+(contenido.coleccion='contactos'?'\nNuevo Contacto\n\n':'')"
-            :date="contenido.fecha"/>
+            <CardContent v-for="contenido in listado.data" :key="contenido.slug" image-left
+                :title="contenido.titulo + (contenido.visibilidad != 'P' ? ' (borrador)' : '')"
+                :draft="contenido.visibilidad != 'P'" :image="contenido.imagen"
+                :href="'/'+contenido.coleccion+'/'+contenido.slug_ref" :tag="traducir(contenido.coleccion)"
+                :description="contenido.descripcion" :date="contenido.fecha" />
         </GridAppear>
 
         <pagination class="mt-6" :links="listado.links" />

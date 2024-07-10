@@ -63,7 +63,7 @@
 
 
         <Section>
-            <TextImage title="Glosario" buttonLabel="Ir al Glosario" src-width="600" src-height="400" href="/terminos"
+            <TextImage title="Glosario" buttonLabel="Ir al Glosario" src-width="600" src-height="400" href="/glosario"
                 srcImage="/almacen/medios/paginas/glosario.jpg">
                 <p>
                     Consulta todos los términos de la filosofía Tseyor en nuestro glosario de términos. También podrás

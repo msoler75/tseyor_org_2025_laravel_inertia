@@ -1,7 +1,7 @@
 <template>
     <div :class="full ? '!py-0 w-full h-full flex flex-col justify-center' : 'py-12'">
         <div class="mx-auto text-center" :class="(srcImage ? 'with-image flex flex-col md:grid md:grid-cols-2 gap-7 lg:gap-12 ' : '') +
-            (full ? 'w-full h-full p-0' : 'container')
+            (full ? 'w-full h-full p-0' : 'container') + ' '+gridClass
             ">
             <div v-if="srcImage" class="flex flex-col justify-center items-center gap-1 max-h-full bg-center" :class="(imageRight ? 'md:order-last ' : '') +
                 (full ? 'justify-center flex-grow ' : '') +
@@ -87,6 +87,11 @@ const props = defineProps({
     imageSideClass: {
         type: String,
         required: false
+    },
+    gridClass: {
+        type: String,
+        required: false,
+        default: "gap-5"
     },
     textClass: {
         type: String,

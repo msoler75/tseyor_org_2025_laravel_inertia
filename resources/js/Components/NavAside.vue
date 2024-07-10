@@ -1,6 +1,6 @@
 <script setup>
 import { Collapse } from 'vue-collapsed'
-
+import Link from './Link.vue';
 
 const nav = useNav()
 
@@ -70,15 +70,17 @@ const close = () => {
                                 <div class="collapse-title">{{ tab.title }}</div>
                                 <div class="collapse-content px-0   bg-base-100 bg-opacity-50" v-if="tab.hasItems">
                                     <template v-for="section of tab.submenu.sections" :key="section.title">
-                                        <div v-if="section.title != tab.title"
+                                        <div @click.prevent.stop="null" v-if="section.title != tab.title"
                                             class="px-5 mt-4 font-bold text-xs text-neutral opacity-40 uppercase">
-                                            {{ section.title }}</div>
+                                          {{ section.title }}</div>
                                         <div v-else class="mt-2" />
-                                        <Link :href="item.url" v-for="item of section.items" :key="item.url" @click="close()"
-                                            class="p-5 flex justify-start items-center space-x-6 w-full transition duration-200 hover:bg-base-300">
+                                        <component :is="!item.disabled?Link:'div'" :href="item.url" v-for="item of section.items" :key="item.url" @click.prevent.stop="()=>item.disabled?null:close()"
+                                            class="p-5 flex justify-start items-center space-x-6 w-full transition duration-200 hover:bg-base-300"
+                                            :class="item.disabled?'opacity-50':''"
+                                            >
                                             <Icon :icon="item.icon" />
                                             <span>{{ item.title }}</span>
-                                        </Link>
+                                        </component>
                                     </template>
                                 </div>
                             </template>
