@@ -50,7 +50,7 @@
 
 
         <Section>
-            <TextImage title="Las sociedades armónicas" srcImage="/almacen/medios/paginas/naturaleza.jpg"
+            <TextImage title="Las sociedades armónicas" srcImage="/almacen/medios/paginas/SociedadesArmonicas.jpg"
                 buttonLabel="Descargar Libro" image-right href="/libros/las-sociedades-armonicas" src-width="1920" src-height="1282">
                 <p>Son sociedades en las que predomina la hermandad, no hay líderes, no hay enfermedad, y sí la
                     auténtica libertad.</p>

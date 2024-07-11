@@ -1,5 +1,4 @@
 <script setup>
-import { Collapse } from 'vue-collapsed'
 import Link from './Link.vue';
 
 const nav = useNav()
@@ -14,9 +13,10 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 
 const close = () => {
-    // console.log('close!')
+     console.log('sidenav close!')
     emit('close');
 };
+
 </script>
 
 <template>
@@ -74,9 +74,10 @@ const close = () => {
                                             class="px-5 mt-4 font-bold text-xs text-neutral opacity-40 uppercase">
                                           {{ section.title }}</div>
                                         <div v-else class="mt-2" />
-                                        <component :is="!item.disabled?Link:'div'" :href="item.url" v-for="item of section.items" :key="item.url" @click.prevent.stop="()=>item.disabled?null:close()"
+                                        <component :is="!item.disabled?Link:'div'" :href="item.url" v-for="item of section.items" :key="item.url"
+                                        @click="close"
                                             class="p-5 flex justify-start items-center space-x-6 w-full transition duration-200 hover:bg-base-300"
-                                            :class="item.disabled?'opacity-50':''"
+                                            :class="item.disabled?'opacity-50 pointer-events-none':''"
                                             >
                                             <Icon :icon="item.icon" />
                                             <span>{{ item.title }}</span>

@@ -191,7 +191,7 @@ class Countries
         "UK" => "Reino Unido",
         "CF" => "República Centroafricana",
         "CZ" => "República Checa",
-        "CG" => "República del Congo",
+        // "CG" => "República del Congo",
         "DO" => "República Dominicana",
         "RE" => "Reunión",
         "RW" => "Ruanda",
@@ -256,5 +256,18 @@ class Countries
     public static function getCountry($code)
     {
         return self::$list[$code];
+    }
+
+
+    public static function getFuzzyCountries($string, int $minValue = 70): array
+    {
+
+        $codes = [];
+        foreach (self::$list as $code => $country) {
+            $similarity = StrEx::compareFuzzy($string, $country);
+            if ($similarity >= $minValue)
+                $codes[] = ["code" => $code, "country"=>$country, "similarity" => $similarity];
+        }
+        return $codes;
     }
 }

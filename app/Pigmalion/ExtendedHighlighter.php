@@ -101,7 +101,7 @@ class ExtendedHighlighter extends Highlighter
     {
         Log::info("extractLocations: " . implode(" ", $words));
         $_x = new \App\T("ExtendedHighlighter", "_extractLocations");
-         $fulltext = \App\Pigmalion\AccentRemover::removeNonAscii($fulltext);
+         $fulltext = \App\Pigmalion\StrEx::sanitizeAndDeaccent($fulltext);
          // die($fulltext);
         $locations = array();
         // $max_length = mb_strlen($fulltext);

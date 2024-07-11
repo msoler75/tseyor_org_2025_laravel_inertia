@@ -34,7 +34,7 @@
 
             <div id="main-content" class="w-full">
 
-                <SearchResultsHeader v-if="!paisActivo" :results="listado" />
+                <SearchResultsHeader v-if="!paisActivo" :results="listado" class="mb-2"/>
 
                 <!-- md -->
                 <div role="tablist" class="tabs tabs-lifted">
@@ -149,6 +149,8 @@ function colocarMarcadores() {
 }
 
 function encuadrarMarcadores() {
+
+    if(!markers.length) return
 
     // comprobar límites del mapa usando los marcadores
     const bounds = new google.maps.LatLngBounds();
