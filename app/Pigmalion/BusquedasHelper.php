@@ -126,7 +126,7 @@ class BusquedasHelper
         $h = new ExtendedHighlighter();
 
 
-        $busqueda = \App\Pigmalion\AccentRemover::removeNonAscii($busqueda);
+        $busqueda = \App\Pigmalion\StrEx::sanitizeAndDeaccent($busqueda);
 
         list($words_primary, $words_secondary) = self::separarPalabrasComunes($busqueda);
         // if($words_primary===FALSE)
@@ -221,7 +221,7 @@ class BusquedasHelper
      */
     public static function buscarContenidos($buscar)
     {
-        $buscar = \App\Pigmalion\AccentRemover::removeNonAscii($buscar);
+        $buscar = \App\Pigmalion\StrEx::sanitizeAndDeaccent($buscar);
 
         list($buscarRelevante, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
 

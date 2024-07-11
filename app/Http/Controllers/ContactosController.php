@@ -19,13 +19,28 @@ class ContactosController extends Controller
 
         $num_per_page = 12;
 
+        ///
+        /*
+        $test = ["xfaganistna", "chile", "cngo", "bóliVia", "polna", "luxmebog"];
+
+        $results = [];
+        foreach($test as $p) {
+            $results[$p] = Countries::getFuzzyCountryCodes($p);
+        }
+
+        dd($results);
+        */
+        ///
+
         $resultados = $pais ?
             Contacto::where('pais', '=', $pais)
             ->where('visibilidad', 'P')
             ->paginate($num_per_page)->appends(['pais' => $pais])
             : ($buscar ? Contacto::where('nombre', 'like', '%' . $buscar . '%')
                 ->where('visibilidad', 'P')
-                ->orWhere('pais', 'like', '%' . $buscar . '%')
+                ->orWhereIn('pais', array_map(function ($data) {
+                    return $data['code'];
+                }, Countries::getFuzzyCountriesCodes($buscar)))
                 ->orWhere('poblacion', 'like', '%' . $buscar . '%')
                 ->paginate($num_per_page)->appends(['buscar' => $buscar])
                 :

@@ -1,5 +1,11 @@
+404
+Desde cursos (en localhost), si hago click a un libro que no existe debería salir 404, y sin embargo sale 512, error inesperado, No query results for model [App\Models\Libro].
+
 MAPA contactos
 -buscar "chile" no devuelve ningun resultado, y hay contactos que son de chile (debe ser porqué está con el codigo de pais CL)
+
+FADEOUT
+-si clickas a mis_archivos y luego archivos muy rápido (o algo así), se queda todo en fadeout invisible y no se recupera
 
 URL
 -En movil, al compartir una página solo comparte tseyor.xyz

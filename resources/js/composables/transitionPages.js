@@ -13,6 +13,8 @@ export default function setTransitionPages(router) {
       event.detail.visit.url
     );
 
+    nav.closeTabs()
+
     /*if(nav.ignoreScroll) {
         scrollToCurrentPosition()
         return
@@ -78,21 +80,6 @@ export default function setTransitionPages(router) {
 
   router.on("navigate", (event) => {
     console.log(`router: navigate. Navigated to ${event.detail.page.url}`);
-    nav.navigating = false;
-    // reset state
-    nav.dontFadeout = false;
-    // nav.ignoreScroll = false
-
-    console.log("nav.fadingOutPage", nav.fadingOutPage);
-    if (nav.fadingOutPage) {
-      window.scrollTo({
-        top: 0,
-        behavior: "instant",
-      });
-      setTimeout(() => {
-        nav.fadingOutPage = false;
-      }, animationPageTransitionDuration);
-    }
   });
 
   router.on("exception", (event) => {
@@ -109,6 +96,9 @@ export default function setTransitionPages(router) {
 
   router.on("error", (errors) => {
     console.log(errors);
+    nav.navigating = false;
+    // reset state
+    nav.dontFadeout = false;
   });
 
   router.on("success", (event) => {
@@ -125,5 +115,21 @@ export default function setTransitionPages(router) {
 
   router.on("finish", (event) => {
     console.log(`router: finish. Page loaded ${event.detail.visit.url}`);
+
+    nav.navigating = false;
+    // reset state
+    nav.dontFadeout = false;
+    // nav.ignoreScroll = false
+
+    console.log("nav.fadingOutPage", nav.fadingOutPage);
+    if (nav.fadingOutPage) {
+      window.scrollTo({
+        top: 0,
+        behavior: "instant",
+      });
+      setTimeout(() => {
+        nav.fadingOutPage = false;
+      }, animationPageTransitionDuration);
+    }
   });
 }

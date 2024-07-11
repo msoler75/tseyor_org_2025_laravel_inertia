@@ -178,11 +178,13 @@ axios.get(route('setting', 'navigation'))
 
             <!-- Page Content -->
             <div @mouseover="nav.closeTabs()" class="flex-grow relative transition-opacity duration-200"
-                :class="nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''">
+            :class="nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''">
 
-                <transition enter-active-class="transition-opacity duration-100"
-                    leave-active-class="transition-opacity duration-100" enter-class="opacity-0"
-                    leave-to-class="opacity-0">
+
+            <transition enter-active-class="transition-opacity duration-100"
+            leave-active-class="transition-opacity duration-100" enter-class="opacity-0"
+            leave-to-class="opacity-0">
+
                     <div v-if="nav.activeTab"
                         class="hidden lg:block z-30 absolute w-full h-full bg-black bg-opacity-10">
                         <!-- Contenido del elemento -->
