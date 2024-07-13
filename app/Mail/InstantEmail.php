@@ -47,4 +47,5 @@ class InstantEmail extends Mailable  // implements ShouldQueue
         return $this->data['attachments'] ?? [];
     }
 
+
 }

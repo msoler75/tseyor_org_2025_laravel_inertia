@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Mail\SendQueuedMailable;
 
 class Job extends Model
 {
@@ -21,14 +22,17 @@ class Job extends Model
     public function getDisplayAttribute($value)
     {
         $payload = @json_decode($this->getOriginal('payload'), true);
-        return $payload['displayName'];
+        return $payload['displayName'] ?? 'error';
     }
 
     public function getDataAttribute($value)
     {
-        $payload = @json_decode($this->getOriginal('payload'), true);
         try {
-            $command = unserialize($payload['data']['command']);
+            $payload = @json_decode($this->getOriginal('payload'), true);
+            $command = @unserialize($payload['data']['command']);
+            if(is_object($command) && $command instanceof SendQueuedMailable && method_exists($command->mailable, '__toString'))
+                    return $command->mailable->__toString();
+            return "".$command;
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             $command = "No encontrado";
         } catch(\Exception $e) {

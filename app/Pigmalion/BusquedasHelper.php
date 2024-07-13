@@ -34,7 +34,7 @@ class BusquedasHelper
         'el',
         'lo',
         'los',
-        'las',// 'la',
+        'las', // 'la',
         'las',
         'un',
         'una',
@@ -143,7 +143,7 @@ class BusquedasHelper
                 // \App\Pigmalion\AccentRemover::benchmark($item->texto);
 
                 if ($soloTitulo)
-                    unset ($item['descripcion']);
+                    unset($item['descripcion']);
                 else {
                     // Limpiar el texto y eliminar elementos no deseados
                     if ($item->texto && strlen($item->texto) > 50) {
@@ -178,9 +178,9 @@ class BusquedasHelper
                 if ($item->nombre)
                     $item->nombre = $h->highlightPonderated($item->nombre, $words_primary, $words_secondary, "em", $options);
 
-                unset ($item['texto']);
-                unset ($item['texto_busqueda']);
-                unset ($item['visibilidad']);
+                unset($item['texto']);
+                unset($item['texto_busqueda']);
+                unset($item['visibilidad']);
                 return $item;
             });
     }
@@ -201,16 +201,16 @@ class BusquedasHelper
             ->transform(function ($item) use ($h, $options, $busqueda, $words_primary, $words_secondary, $soloTitulo) {
 
                 if ($soloTitulo)
-                    unset ($item['descripcion']);
+                    unset($item['descripcion']);
                 else
                     $item->descripcion = $h->highlightPonderated($item->descripcion, $words_primary, $words_secondary, "em", $options);
 
                 // Realizar el mismo proceso para el campo 'titulo'
                 $item->titulo = $h->highlightPonderated($item->titulo, $words_primary, $words_secondary, "em", $options);
 
-                unset ($item['texto']);
-                unset ($item['texto_busqueda']);
-                unset ($item['visibilidad']);
+                unset($item['texto']);
+                unset($item['texto_busqueda']);
+                unset($item['visibilidad']);
                 return $item;
             });
     }
@@ -219,13 +219,15 @@ class BusquedasHelper
     /**
      *
      */
-    public static function buscarContenidos($buscar)
+    public static function buscarContenidos($buscar, $coleccion = null)
     {
         $buscar = \App\Pigmalion\StrEx::sanitizeAndDeaccent($buscar);
 
         list($buscarRelevante, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
 
-        $resultados = Contenido::search($buscarRelevante)->paginate(7); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
+        $resultados =
+            $coleccion ? Contenido::search($buscarRelevante)->where('coleccion', $coleccion)->paginate(7)
+            : Contenido::search($buscarRelevante)->paginate(7); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
 
         if (strlen($buscarRelevante) < 3)
             BusquedasHelper::limpiarResultados($resultados, $buscar, true);

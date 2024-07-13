@@ -38,4 +38,10 @@ class FormularioContactoConfirmacionEmail extends Mailable implements ShouldQueu
                 'comentario' => $this->comentario,
             ]);
     }
+
+
+    public function __toString(): string
+    {
+        return "ContactoConfirmacion {$this->email}";
+    }
 }

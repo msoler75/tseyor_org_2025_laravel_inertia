@@ -37,4 +37,11 @@ class IncorporacionEquipoEmail extends Mailable
                 'fuePorSolicitud'=>  $this->fuePorSolicitud
             ]);
     }
+
+
+    public function __toString(): string
+    {
+        $nombreUsuario = $this->usuario->name ?? '';
+        return "IncorporaciónEquipo {$this->equipo->slug} de {$nombreUsuario}";
+    }
 }

@@ -17,9 +17,7 @@
             <div class="flex flex-col items-center gap-7 mx-auto pb-5 lg:pb-0"
                 :class="(full ? 'justify-center ' : 'justify-evenly ') + textClass">
                 <h2 v-if="title" class="text-2xl text-primary font-bold mb-0">{{ title }}</h2>
-                <div v-if="subtitle" class="text-lg text-center my-0">
-                    {{ subtitle }}
-                </div>
+                <div v-if="subtitle" class="text-lg text-center my-0" v-html="subtitle.replace(/\\n/g, '<br /><br />')"/>
                 <div v-show="textPresent" class="md:my-5 text-justify" ref="textdiv">
                     <slot class="text-lg text-justify"></slot>
                 </div>

@@ -64,7 +64,7 @@ const loadStyle = () => {
     };
     // cardStyle
     cardStyle.value = {
-        "background-image": `url('${finalSrc.value}')`,
+        "background-image": `url('${finalSrc.value}?w=${props.width}&h=${props.height}')`,
         "border-radius": `${props.shadowRadius}px`,
         "filter": `blur(${props.shadowBlur}px)`
     };

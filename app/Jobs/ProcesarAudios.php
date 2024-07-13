@@ -118,7 +118,7 @@ class ProcesarAudios implements ShouldQueue
     }
 
 
-    // Método __toString para evitar el error
+    // Método __toString para mostrar un resumen del proceso
     public function __toString()
     {
         return str_replace("App\\Models\\", "", $this->contenidoClass) . " id:" . $this->contenidoId;
