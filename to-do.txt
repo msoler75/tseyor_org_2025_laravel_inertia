@@ -1,3 +1,28 @@
+CORREO tseyor.xyz
+verificar envío de correos:
+-formulario contacto
+-Inscripcion equipos
+
+ADMIN
+Hacer un botón para users en el admin para generar nueva contraseña
+
+
+VARIOS
+[10:26, 10/7/2024] Pigmalion Tseyor: Formulario aceptar aviso legal link
+[16:01, 10/7/2024] Pigmalion Tseyor: 1170 referencias pueblo Tseyor
+[19:36, 11/7/2024] Pigmalion Tseyor: Libros relacionado en vista móvil se sale
+[19:37, 11/7/2024] Pigmalion Tseyor: Scrollto Hash en enlaces. Aviso legal
+
+CONTACTAR
+-después del formulario, revisar si interesa la misma pantalla de formulario de cursos
+
+
+Normativas
+-back to comunidad no funciona
+
+BLOG
+-Usar categoria no funciona en la paginación
+
 404
 Desde cursos (en localhost), si hago click a un libro que no existe debería salir 404, y sin embargo sale 512, error inesperado, No query results for model [App\Models\Libro].
 

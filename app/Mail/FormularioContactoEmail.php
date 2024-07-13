@@ -40,4 +40,9 @@ class FormularioContactoEmail extends Mailable implements ShouldQueue
                 'comentario' => $this->comentario,
             ]);
     }
+
+    public function __toString(): string
+    {
+        return "Contacto {$this->email}";
+    }
 }

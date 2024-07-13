@@ -45,4 +45,10 @@ class GenericEmail extends Mailable implements ShouldQueue
         return [];
     }
 
+
+    public function __toString(): string
+    {
+        return "ContactoGenérico";
+    }
+
 }

@@ -12,6 +12,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use App\Pigmalion\BusquedasHelper;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -91,6 +92,38 @@ class Handler extends ExceptionHandler
 
 
     /**
+     * Muestra una página 404 con resultados relevantes
+     */
+
+    public function mostrar404($request, Throwable $exception)
+    {
+
+        // to-do: obtener path de la ruta actual y redirigir a la vista de error
+        $path = $request->path();
+        $parts = explode("/", $path);
+
+        $coleccion = null;
+        if (count($parts) > 1)
+            $coleccion = $parts[0];
+
+        $buscar = preg_replace("/[\?\/\.\-]/", " ", urldecode($parts[count($parts) - 1])); // quitar caracteres no permitidos en $path
+
+        $resultados = BusquedasHelper::buscarContenidos($buscar, $coleccion);
+        if ($resultados->count() == 0)
+            $resultados = BusquedasHelper::buscarContenidos($buscar);
+
+        // $message = $exception->getMessage();
+        return Inertia::render('Error', [
+            'codigo' => 404, //$statusCode,
+            'titulo' =>  'Contenido no encontrado',
+            'mensaje' => 'No se encuentra el recurso solicitado. \nBuscando: ' . $buscar,
+            'alternativas' => $resultados
+        ])->toResponse($request);
+    }
+
+
+
+    /**
      * Render an exception into an HTTP response.
      *
      * @param \Illuminate\Http\Request $request
@@ -124,7 +157,8 @@ class Handler extends ExceptionHandler
         }
 
 
-        if ($exception instanceof NotFoundHttpException) {
+
+        if ($exception instanceof ModelNotFoundException || $exception instanceof NotFoundHttpException) {
 
             // si se carga desde otra página (por ejemplo, una imagen) entonces simplemente devolvemos el error
             $referer = $_SERVER['HTTP_REFERER'] ?? '';
@@ -133,21 +167,7 @@ class Handler extends ExceptionHandler
             if ($referer && strpos($referer, $uri) === FALSE) // comprueba si referer es la misma url de la request
                 return parent::render($request, $exception);
 
-
-
-            // to-do: obtener path de la ruta actual y redirigir a la vista de error
-            $path = $request->path();
-            $buscar = preg_replace("/[\?\/\.]/", " ", $path); // quitar caracteres no permitidos en $path
-
-            $resultados = BusquedasHelper::buscarContenidos(urldecode($buscar));
-
-            $message = $exception->getMessage();
-            return Inertia::render('Error', [
-                'codigo' => $statusCode,
-                'titulo' =>  'Contenido no encontrado',
-                'mensaje' => 'No se encuentra el recurso solicitado.',
-                'alternativas' => $resultados
-            ])->toResponse($request);
+            return $this->mostrar404($request, $exception);
         }
 
         if ($exception instanceof UnauthorizedHttpException) {

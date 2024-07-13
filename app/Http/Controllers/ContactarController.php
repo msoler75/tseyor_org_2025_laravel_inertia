@@ -34,7 +34,7 @@ class ContactarController extends Controller
                     $data['nombre'],
                     $data['pais'],
                     $data['email'],
-                    $data['telefono'],
+                    $data['telefono'] ?? '',
                     $data['comentario'],
                 )
             );
@@ -47,7 +47,7 @@ class ContactarController extends Controller
                     $data['nombre'],
                     $data['pais'],
                     $data['email'],
-                    $data['telefono'],
+                    $data['telefono'] ?? '',
                     $data['comentario'],
                 )
             );

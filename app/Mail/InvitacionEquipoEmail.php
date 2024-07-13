@@ -37,4 +37,10 @@ class InvitacionEquipoEmail extends Mailable
                 'declinarUrl' => $this->declinarUrl
             ]);
     }
+
+
+    public function __toString(): string
+    {
+        return "InvitaciónEquipo {$this->equipo->slug}";
+    }
 }

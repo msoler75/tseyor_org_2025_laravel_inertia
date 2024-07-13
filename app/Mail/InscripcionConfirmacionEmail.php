@@ -50,4 +50,8 @@ class InscripcionConfirmacionEmail extends Mailable implements ShouldQueue
     }
 
 
+    public function __toString(): string
+    {
+        return "InscripcionConfirmacion {$this->email}";
+    }
 }

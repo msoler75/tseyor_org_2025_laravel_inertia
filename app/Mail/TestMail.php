@@ -64,4 +64,10 @@ class TestMail extends Mailable
             Attachment::fromPath($this->attachment),
         ];
     }
+
+
+    public function __toString(): string
+    {
+        return "TestMail";
+    }
 }
