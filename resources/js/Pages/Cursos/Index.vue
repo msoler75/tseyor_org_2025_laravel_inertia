@@ -55,7 +55,7 @@
         <Section class="py-12 container">
             <TextImage title="Libro del Curso"
                 srcImage="/almacen/medios/libros/302/Curso%20Holistico%20Tseyor.jpg?w=233&h=350" textClass="container"
-                buttonLabel="Descargar Libro" href="/libros/cuso-holistico-tseyor">
+                buttonLabel="Descargar Libro" href="/libros/curso-holistico-tseyor">
                 <p>Lee este conjunto de historias para comprender la filosofía de Tseyor.</p>
             </TextImage>
         </Section>

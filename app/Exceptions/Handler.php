@@ -116,7 +116,7 @@ class Handler extends ExceptionHandler
         return Inertia::render('Error', [
             'codigo' => 404, //$statusCode,
             'titulo' =>  'Contenido no encontrado',
-            'mensaje' => 'No se encuentra el recurso solicitado. \nBuscando: ' . $buscar,
+            'mensaje' => 'No se encuentra el recurso solicitado.',
             'alternativas' => $resultados
         ])->toResponse($request);
     }
@@ -164,8 +164,14 @@ class Handler extends ExceptionHandler
             $referer = $_SERVER['HTTP_REFERER'] ?? '';
             $uri = $_SERVER['REQUEST_URI'] ?? '';
 
-            if ($referer && strpos($referer, $uri) === FALSE) // comprueba si referer es la misma url de la request
+            // si es una imagen cargada desde una página, devuelve 404 normalmente
+            if (
+                preg_match("/\.(png|svg|jpg|jpeg|gif|webp|svg)(\?.*)?/", $uri)
+                && $referer
+                && strpos($referer, $uri) === FALSE
+            ) // comprueba si referer es la misma url de la request
                 return parent::render($request, $exception);
+
 
             return $this->mostrar404($request, $exception);
         }
