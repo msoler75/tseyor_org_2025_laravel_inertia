@@ -42,7 +42,13 @@ class ComunicadosController extends Controller
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
-            $resultados = BusquedasHelper::buscar(Comunicado::class, $buscar);
+            $numero = preg_replace("/TAP|\s+/i","", $buscar);
+            if(is_numeric($numero))
+                $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano', 'imagen'])
+            ->where('numero', $numero)
+            ->where('visibilidad', 'P');
+            else
+                $resultados = BusquedasHelper::buscar(Comunicado::class, $buscar);
         } else {
             // obtiene los items sin busqueda
             $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano', 'imagen'])

@@ -23,8 +23,8 @@ export const sections = [
         title: "Información legal",
         items: [
             { label: "Aviso legal", url: '/informacion-legal' },
-            { label: "Política de privacidad", url: '/informacion-legal' },
-            { label: "Política de cookies", url: '/informacion-legal' },
+            { label: "Política de privacidad", url: '/informacion-legal#Política de privacidad' },
+            { label: "Política de cookies", url: '/informacion-legal#Política de Cookies' },
         ],
     },
 ];

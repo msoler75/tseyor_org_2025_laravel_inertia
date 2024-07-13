@@ -9,8 +9,6 @@ Hacer un botón para users en el admin para generar nueva contraseña
 
 VARIOS
 [10:26, 10/7/2024] Pigmalion Tseyor: Formulario aceptar aviso legal link
-[16:01, 10/7/2024] Pigmalion Tseyor: 1170 referencias pueblo Tseyor
-[19:36, 11/7/2024] Pigmalion Tseyor: Libros relacionado en vista móvil se sale
 [19:37, 11/7/2024] Pigmalion Tseyor: Scrollto Hash en enlaces. Aviso legal
 
 CONTACTAR

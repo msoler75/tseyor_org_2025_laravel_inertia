@@ -97,7 +97,6 @@ class Handler extends ExceptionHandler
 
     public function mostrar404($request, Throwable $exception)
     {
-
         // to-do: obtener path de la ruta actual y redirigir a la vista de error
         $path = $request->path();
         $parts = explode("/", $path);
@@ -105,6 +104,10 @@ class Handler extends ExceptionHandler
         $coleccion = null;
         if (count($parts) > 1)
             $coleccion = $parts[0];
+
+        $colecciones_404 = ['nodos', 'archivos', 'almacen'];
+        if(in_array($coleccion, $colecciones_404))
+            return parent::render($request, $exception);
 
         $buscar = preg_replace("/[\?\/\.\-]/", " ", urldecode($parts[count($parts) - 1])); // quitar caracteres no permitidos en $path
 

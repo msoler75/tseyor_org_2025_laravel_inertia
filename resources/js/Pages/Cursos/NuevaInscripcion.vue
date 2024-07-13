@@ -1,5 +1,5 @@
 <template>
-    <FondoEstrellado class="w-full h-full relative py-12"  id="myform">
+    <FondoEstrellado class="w-full h-full relative py-12" id="myform">
         <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative animate-fade-in">
             <h1>Inscripción al Curso Holístico Tseyor<small>&nbsp;(gratuito)</small></h1>
             <div v-if="error">
@@ -79,14 +79,14 @@
                     <span v-if="form.errors.telefono" class="error">{{ form.errors.telefono }}</span>
                 </div>
                 <div class="mb-4">
-                    <label class="block font-bold mb-2" for="comentario">Otras formas de contacto (o comentario):</label>
+                    <label class="block font-bold mb-2" for="comentario">Otras formas de contacto (o
+                        comentario):</label>
                     <textarea class="form-textarea w-full" id="comentario" v-model="form.comentario"></textarea>
                     <span v-if="form.errors.comentario" class="error">{{ form.errors.comentario }}</span>
                 </div>
                 <div class="mb-4">
                     <label class="inline-flex items-center">
-                        <input type="checkbox" class="form-checkbox" v-model="form.acepto" required>
-                        <span class="ml-2">Estoy de acuerdo y he leído la Política de Privacidad</span>
+                        <AceptaCondiciones v-model="form.acepto"/>
                     </label>
                 </div>
                 <button type="submit" class="btn btn-primary" :disabled="form.processing">
@@ -97,16 +97,13 @@
 
         </div>
 
-        <Section v-if="submitted" class="py-7">
-                    <TextImage title="¿Y ahora qué?" srcImage="/almacen/medios/paginas/camino-infinito.jpg"
-                    href="/mis-primeros-pasos"
-                    buttonLabel ="Mis primeros pasos"
-                    class="container mx-auto"
-                    textClass="bg-base-100 p-5 rounded-2xl"
-                    >
-                    Te recomendamos la lectura de esta sección
-                </TextImage>
-                </Section>
+        <Section v-show="submitted" class="py-7">
+            <TextImage title="¿Y ahora qué?" srcImage="/almacen/medios/paginas/camino-infinito.jpg"
+                href="/mis-primeros-pasos" buttonLabel="Mis primeros pasos" class="container mx-auto"
+                textClass="bg-base-100 p-5 rounded-2xl">
+                Te recomendamos la lectura de esta sección
+            </TextImage>
+        </Section>
     </FondoEstrellado>
 </template>
 

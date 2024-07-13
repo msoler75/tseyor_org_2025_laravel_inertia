@@ -6,7 +6,7 @@
                     <h3 class="text-lg font-bold">{{ section.title }}</h3>
                     <ul class="list-none space-y-5 lg:space-y-2 pl-0">
                         <li v-for="(item, i) in section.items" :key="i">
-                            <a :href="item.route?route(item.route):item.url" class="text-white">{{ item.label }}</a>
+                            <a :href="item.route?route(item.route):encodeUrlAccents(item.url)" class="text-white">{{ item.label }}</a>
                         </li>
                     </ul>
                 </div>
@@ -42,4 +42,11 @@ const props = defineProps({
 })
 const columns = 3
 
+
+function encodeUrlAccents(str) {
+    return encodeURIComponent(str)
+    .replace(/%2F/g, '/')
+    .replace(/%2D/g, '-')
+    .replace(/%23/g, '#');
+}
 </script>

@@ -19,17 +19,6 @@
                     <span>Revisa tu bandeja de correo.</span>
                 </div>
 
-                <div class="pt-7">
-                    <h2>¿Y ahora qué?</h2>
-                    <p>Puedes disfrutar de alguno de nuestros
-                        <Link :href="route('audios')">audios</Link> o leer alguno de los
-                        <Link :href="route('comunicados')">comunicados</Link> de nuestros guías estelares.
-                    </p>
-                    <p>También puedes escuchar nuestra
-                        <Link :href="route('radio')">Radio TSEYOR</Link>.
-                    </p>
-                </div>
-
             </div>
              <!-- Formulario empieza aquí -->
             <form v-else @submit.prevent="submit">
@@ -56,13 +45,12 @@
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="comentario">Tu comentario o petición</label>
-                    <textarea class="form-textarea w-full" id="comentario" v-model="form.comentario"></textarea>
+                    <textarea class="form-textarea w-full" id="comentario" v-model="form.comentario" required></textarea>
                     <span v-if="form.errors.comentario" class="error">{{ form.errors.comentario }}</span>
                 </div>
                 <div class="mb-4">
                     <label class="inline-flex items-center">
-                        <input type="checkbox" class="form-checkbox" v-model="form.acepto" required>
-                        <span class="ml-2">Estoy de acuerdo y he leído la Política de Privacidad</span>
+                        <AceptaCondiciones v-model="form.acepto"/>
                     </label>
                 </div>
                 <button type="submit" class="btn btn-primary" :disabled="form.processing">
@@ -70,6 +58,19 @@
                 </button>
             </form>
         </div>
+
+
+        <Section v-show="submitted" class="py-7">
+                    <TextImage title="¿Y ahora qué?" srcImage="/almacen/medios/paginas/camino-infinito.jpg"
+                    href="/mis-primeros-pasos"
+                    buttonLabel ="Mis primeros pasos"
+                    class="container mx-auto"
+                    textClass="bg-base-100 p-5 rounded-2xl"
+                    >
+                    Te recomendamos la lectura de esta sección
+                </TextImage>
+                </Section>
+
     </FondoEstrellado>
 </template>
 
