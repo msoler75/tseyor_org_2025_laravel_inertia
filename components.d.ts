@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AboutUs: typeof import('./resources/js/Sections/AboutUs.vue')['default']
     Accordion: typeof import('./resources/js/Components/Accordion.vue')['default']
+    AceptaCondiciones: typeof import('./resources/js/Components/AceptaCondiciones.vue')['default']
     ActionButton: typeof import('./resources/js/Components/ActionButton.vue')['default']
     ActionMessage: typeof import('./resources/js/Components/ActionMessage.vue')['default']
     ActionSection: typeof import('./resources/js/Components/ActionSection.vue')['default']

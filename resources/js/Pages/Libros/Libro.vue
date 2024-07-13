@@ -37,7 +37,7 @@
         <hr class="my-14" />
 
         <h2 v-if="relacionados?.length" class="text-xl font-bold mt-8">Libros relacionados</h2>
-        <div class="grid gap-4 mt-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
+        <GridAppear class="gap-4 mt-4 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(26rem,1fr))]">
 
             <CardContent v-for="contenido in relacionados" :key="contenido.id"
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('libro', contenido.slug)"
@@ -45,8 +45,8 @@
                         :tag="contenido.categoria"
                         image-left image-contained
                         class="h-[300px]"
-                        imageClass="w-[200px] h-[300px]"/>
-        </div>
+                        imageClass="w-1/3 h-full sm:w-[200px] sm:h-[300px]"/>
+        </GridAppear>
 
 
     </div>

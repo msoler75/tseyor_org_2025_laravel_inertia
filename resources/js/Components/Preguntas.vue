@@ -22,13 +22,13 @@
 </template>
 
 <script setup>
+
 const props = defineProps({
     titulo: String,
     backUrl: { type: String, default: '/preguntas-frecuentes' },
     backText: { type: String, default: 'Preguntas frecuentes' },
     fadeOut: { type: Boolean, default: false }
 });
-
 
 const bibliografia = {
     "SLR": "Conversaciones Interdimensionales. Etapa Sili-Nur",
@@ -64,6 +64,7 @@ const bibliografia = {
 };
 
 
+const nav = useNav()
 
 onMounted(() => {
     // Obtén todos los enlaces de tipo "#"
@@ -78,8 +79,7 @@ onMounted(() => {
 
             // Obtén el ID del elemento objetivo
             const id = this.getAttribute('href').substring(1);
-
-            scrollToId(id)
+            nav.scrollToId(id)
         });
     });
 
@@ -113,43 +113,10 @@ onMounted(() => {
         span.title = titles.join(' | ')
     })
 
-    // enlace inicial
-    if (window.location.hash) {
-        setTimeout(() => {
-            scrollToId(window.location.hash.substring(1), -60)
-        }, 500)
-    }
 }
 )
 
-function scrollToId(id, offset) {
-    if (!offset) offset = 0
-    console.log('scrolling to', id)
-    // Obtén el elemento objetivo
-    const objetivo = document.querySelector("a[name='" + id + "']") || document.querySelector(id);
 
-    if (objetivo) {
-        // Calcula la posición del elemento objetivo
-        const targetY = objetivo.getBoundingClientRect().top;
-
-        const container = document.querySelector('.preguntas')
-
-        const topContainer = container.getBoundingClientRect().top
-
-        // Calcula la altura de la barra de navegación
-        const nav = document.querySelector('nav.sticky')
-        const alturaNavegacion = nav.offsetHeight;
-
-        const pos = alturaNavegacion - topContainer + targetY
-
-        console.log({ alturaNavegacion, topContainer, targetY, pos })
-        // Ajusta la posición del elemento objetivo
-        window.scrollTo({
-            top: pos - 20 + offset,
-            behavior: 'smooth'
-        });
-    }
-}
 
 </script>
 

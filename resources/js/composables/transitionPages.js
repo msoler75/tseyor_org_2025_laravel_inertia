@@ -131,5 +131,16 @@ export default function setTransitionPages(router) {
         nav.fadingOutPage = false;
       }, animationPageTransitionDuration);
     }
+
+
+    // hacemos el scroll al elemento del hash
+
+     // enlace inicial
+     if (window.location.hash) {
+        setTimeout(() => {
+            nav.scrollToId(window.location.hash.substring(1), 0)
+        }, 500)
+    }
+
   });
 }
