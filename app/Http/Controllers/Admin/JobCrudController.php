@@ -40,6 +40,14 @@ class JobCrudController extends CrudController
     {
 
         // Define the columns for the list view
+
+          // Define the columns for the list view
+          CRUD::addColumn([
+            'name' => 'id',
+            'type' => 'text',
+            'label' => 'Id',
+        ]);
+
         CRUD::addColumn([
             'name' => 'queue',
             'type' => 'text',

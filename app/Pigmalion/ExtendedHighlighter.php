@@ -16,13 +16,11 @@ class ExtendedHighlighter extends Highlighter
 
     public function extractRelevantAll($buscar, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
     {
-
-
         $_x = new \App\T("ExtendedHighlighter", "extractRelevantAll");
 
         $textlength = mb_strlen($fulltext);
         if ($textlength <= $rellength) {
-            return $fulltext;
+            return [$fulltext];
         }
 
         // descartamos palabras comunes y masivas
@@ -36,6 +34,11 @@ class ExtendedHighlighter extends Highlighter
         // dd($secundarias, $words);
 
         $locations = $this->_extractLocations($words, $fulltext);
+
+        // to-do: if no match is found
+        if (empty($locations)) {
+              return [];
+        }
 
         $extracts = [];
 
@@ -72,11 +75,6 @@ class ExtendedHighlighter extends Highlighter
             $last = mb_strlen(substr($reltext, 0, end($offset[0])[1]));
             $first = mb_strlen(substr($reltext, 0, $offset[0][0][1]));
             unset($_x1);
-
-            // if no match is found, just return first $rellength characters without the last word
-            if (empty($locations)) {
-                return mb_substr($reltext, 0, $last) . $indicator;
-            }
 
             // check to ensure we dont snip the last word if thats the match
             if ($startpos + $rellength < $textlength) {

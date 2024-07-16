@@ -126,7 +126,10 @@ class NormativaCrudController extends CrudController
         CRUD::field('visibilidad')->type('visibilidad');
 
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
-        CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1]);
+        CRUD::field('published_at')->label('Fecha de aprobación')->type('datetime')->attributes(['step' => 1])->hint('Cuando fue aprobado el documento por primera vez o en la última actualización aprobada')
+        ->wrapper([
+                'class' => 'form-group col-md-3'
+        ]);
     }
 
     /**

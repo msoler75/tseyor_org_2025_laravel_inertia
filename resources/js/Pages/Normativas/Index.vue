@@ -2,7 +2,7 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-20">
-            <Back href="/comunidad">Comunidad</Back>
+            <span/>
             <AdminPanel modelo="normativa" necesita="administrar legal" />
         </div>
 

@@ -30,95 +30,92 @@ class AudioConverter
 
     public function convert()
     {
-        try {
-            // Obtener la URL de la variable de entorno
-            $converterUrl = config('services.audio_converter.url');
+        // Obtener la URL de la variable de entorno
+        $converterUrl = config('services.audio_converter.url');
 
-            if (!$converterUrl)
-                throw new \Exception("Servidor de conversión de audio no configurado");
+        if (!$converterUrl)
+            throw new \Exception("Servidor de conversión de audio no configurado");
 
-            Log::channel('jobs')->info("Inicia la conversión del archivo '{$this->source}' a '{$this->destination}'");
+        Log::channel('jobs')->info("Inicia la conversión del archivo '{$this->source}' a '{$this->destination}'");
 
-            $frecuencia = config('services.audio_converter.frecuencia');
-            $kbps = config('services.audio_converter.kbps');
+        $frecuencia = config('services.audio_converter.frecuencia');
+        $kbps = config('services.audio_converter.kbps');
 
-            $sourcePath = realpath(DiskUtil::getRealPath($this->source));
-            $destinationPath = DiskUtil::getPath($this->destination);
+        $sourcePath = realpath(DiskUtil::getRealPath($this->source));
+        $destinationPath = DiskUtil::getPath($this->destination);
 
-            Log::channel('jobs')->info("archivo fuente: " . $sourcePath);
-            Log::channel('jobs')->info("archivo destino: " . $destinationPath);
+        Log::channel('jobs')->info("archivo fuente: " . $sourcePath);
+        Log::channel('jobs')->info("archivo destino: " . $destinationPath);
 
-            // Verificar si el archivo existe
-            if (!file_exists($sourcePath))
-                throw new \Exception("El archivo {$sourcePath} no existe en el disco de almacenamiento");
+        // Verificar si el archivo existe
+        if (!file_exists($sourcePath))
+            throw new \Exception("El archivo {$sourcePath} no existe en el disco de almacenamiento");
 
-            // Realizar la petición al servidor para convertir el archivo .docx a markdown
-            $curl = curl_init();
+        // Realizar la petición al servidor para convertir el archivo .docx a markdown
+        $curl = curl_init();
 
-            Log::channel('jobs')->info("File_exists? $sourcePath ? " .   file_exists($sourcePath));
+        if (filesize($sourcePath) < 30000) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $finfo = finfo_file($finfo, $sourcePath);
 
-            /*$postData = [
-                'file' => curl_file_create($sourcePath)
-            ];*/
+            $cFile = new \CURLFile($sourcePath, $finfo, basename($sourcePath));
+            $postData = array("file" => $cFile, "filename" => $cFile->postname);
+        } else {
 
-            if (filesize($sourcePath) < 30000) {
-                $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                $finfo = finfo_file($finfo, $sourcePath);
+            // Extraer la parte relativa a la ruta de almacenamiento
+            $relativePath = str_replace(realpath(storage_path('app/public')), '', $sourcePath);
 
-                $cFile = new \CURLFile($sourcePath, $finfo, basename($sourcePath));
-                $postData = array("file" => $cFile, "filename" => $cFile->postname);
-            } else {
+            // Asegurarse de que la ruta relativa no tenga una barra inicial
+            $relativePath = ltrim($relativePath, '/');
 
-                // Extraer la parte relativa a la ruta de almacenamiento
-                $relativePath = str_replace(realpath(storage_path('app/public')), '', $sourcePath);
+            // Obtener la URL base de la aplicación
+            $baseUrl = config('app.url');
 
-                // Asegurarse de que la ruta relativa no tenga una barra inicial
-                $relativePath = ltrim($relativePath, '/');
+            // Construir la URL pública
+            $publicUrl = rtrim($baseUrl, '/') . '/almacen' . '/' . ltrim($relativePath, '/');
 
-                // Obtener la URL base de la aplicación
-                $baseUrl = config('app.url');
+            Log::channel('jobs')->info("base: " . $relativePath . "  url : " . $publicUrl);
+            $postData = array("url" => $publicUrl);
+            Log::channel('jobs')->info("postData: " . json_encode($postData));
+        }
 
-                // Construir la URL pública
-                $publicUrl = rtrim($baseUrl, '/') . '/almacen' . '/' . ltrim($relativePath, '/');
+        Log::channel('jobs')->info("Llamando a $converterUrl?frecuencia={$frecuencia}&kbps={$kbps}");
 
-                Log::channel('jobs')->info("base: " . $relativePath . "  url : " . $publicUrl);
-                $postData = array("url" => $publicUrl);
-                Log::channel('jobs')->info("postData: " . json_encode($postData));
-            }
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $converterUrl . "?frecuencia={$frecuencia}&kbps={$kbps}",
+            CURLOPT_RETURNTRANSFER => true,
+            // CURLOPT_VERBOSE => true,
+            CURLOPT_TIMEOUT => 180, // 3 minutos
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $postData
+        ]);
 
-            Log::channel('jobs')->info("Se ha creado postData");
+        $start_time = time();
 
-            curl_setopt_array($curl, [
-                CURLOPT_URL => $converterUrl . "?frecuencia={$frecuencia}&kbps={$kbps}",
-                CURLOPT_RETURNTRANSFER => true,
-                // CURLOPT_VERBOSE => true,
-                CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => $postData
-            ]);
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-            $response = curl_exec($curl);
-            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
 
-            curl_close($curl);
+        $segundos = time() - $start_time;
 
-            // Verificar el código de respuesta HTTP
-            if ($httpCode === 200) {
+        Log::channel('jobs')->info("Llamada finalizada en $segundos segundos");
 
-                // Verificar si la carpeta existe en el destino
-                DiskUtil::ensureDirExists(dirname($this->destination));
+        // Verificar el código de respuesta HTTP
+        if ($httpCode === 200) {
 
-                // Guardar la respuesta en el destino
-                file_put_contents($destinationPath, $response);
-                Log::channel('jobs')->info('La conversión del archivo se realizó exitosamente.');
-            } else {
-                // Mostrar información sobre el error
-                $error = curl_error($curl);
-                throw new \Exception($error . " " . $response);
-            }
+            // Verificar si la carpeta existe en el destino
+            DiskUtil::ensureDirExists(dirname($this->destination));
 
-        } catch (\Exception $exception) {
-            Log::channel('jobs')->error('Error al convertir el archivo: ' . $exception->getMessage());
-            throw $exception;
+            // Guardar la respuesta en el destino
+            file_put_contents($destinationPath, $response);
+            Log::channel('jobs')->info("La conversión del archivo se realizó exitosamente.");
+        } else {
+            // Mostrar información sobre el error
+            $error = curl_error($curl);
+            $info = curl_getinfo($curl);
+            Log::channel('jobs')->error("Error al convertir el archivo: $error httpCode: {$info['http_code']} " . $response);
+            throw new \Exception($error . " httpCode: $httpCode " . $response);
         }
     }
 }

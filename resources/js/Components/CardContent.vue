@@ -19,13 +19,13 @@
             }"/>
         </div>
         <div v-if="skeleton && (title || tag || description || date)" class="space-y-2 p-4 flex flex-col w-full">
-            <div v-if="title" class="skeleton w-[40ch] h-[1.5rem] mb-3" />
-            <div v-if="tag" class="skeleton w-[12ch] h-[1.25rem]"/>
+            <div v-if="title" class="skeleton max-w-full w-[40ch] h-[1.5rem] mb-3" />
+            <div v-if="tag" class="skeleton max-w-full w-[12ch] h-[1.25rem]"/>
             <template v-if="description">
-            <div  class="skeleton w-full h-[1rem]"/>
-            <div  class="skeleton w-full h-[1rem]"/>
-            <div  class="skeleton w-full h-[1rem]"/>
-            <div  class="skeleton w-full h-[1rem]"/>
+            <div class="skeleton w-full h-[1rem]"/>
+            <div class="skeleton w-full h-[1rem]"/>
+            <div class="skeleton w-full h-[1rem]"/>
+            <div class="skeleton w-full h-[1rem]"/>
             </template>
             <div v-if="date" class="skeleton inline ml-auto mt-auto w-[4rem] h-[.8rem]" />
         </div>

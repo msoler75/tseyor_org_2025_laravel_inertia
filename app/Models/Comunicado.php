@@ -56,7 +56,8 @@ class Comunicado extends ContenidoConAudios
 
 
 
-    public function getPdfPathAttribute() {
+    public function getPdfPathAttribute()
+    {
         return 'pdf/comunicados/' . $this->ano . '/' . $this->pdf_filename;
     }
 
@@ -106,7 +107,14 @@ class Comunicado extends ContenidoConAudios
         $fecha = date('ymd', strtotime($this->fecha_comunicado));
         $audios = $this->audios;
         $multiple = count($audios) > 1;
-        return "TSEYOR $fecha ({$this->numero})" . $tipo . ($multiple ? " " . ('a' + $index) : "") . ".mp3";
+
+        $name1 = "TSEYOR $fecha ({$this->numero})";
+        $name2 =  $tipo;
+        $letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        $suffix = $letters[$index];
+        $name3 = $multiple ? " " . $suffix : "";
+        $name = $name1 . $name2 . $name3 . ".mp3";
+        return $name;
     }
 
 
@@ -274,27 +282,27 @@ class Comunicado extends ContenidoConAudios
 
     // CONTENIDO
 
-     /**
+    /**
      * Carpeta para los medios del contenido (imágenes)
      */
-    public function getCarpetaMedios(bool $formatoRutaRelativa= false) : string
+    public function getCarpetaMedios(bool $formatoRutaRelativa = false): string
     {
         $coleccion = $this->getTable();
-        $folderCompleto = $this->id ? "/almacen/medios/$coleccion/{$this->ano}/{$this->id}": self::getCarpetaMediosTemp();
+        $folderCompleto = $this->id ? "/almacen/medios/$coleccion/{$this->ano}/{$this->id}" : self::getCarpetaMediosTemp();
         DiskUtil::ensureDirExists($folderCompleto);
-        if($formatoRutaRelativa)
+        if ($formatoRutaRelativa)
             return DiskUtil::getRutaRelativa($folderCompleto);
         return $folderCompleto;
     }
 
     // SCOUT
 
-      /**
+    /**
      * Solo se indexa si acaso está publicado
      */
     public function shouldBeSearchable(): bool
     {
-        return $this->visibilidad == 'P';
+        return $this->visibilidad == 'P' && !$this->deleted_at;
     }
 
 
@@ -321,7 +329,8 @@ class Comunicado extends ContenidoConAudios
 
     // PDF
 
-    public function generatePdf() {
+    public function generatePdf()
+    {
         return \App\Services\PDFGenerator::generatePdf($this, 'contenido-sin-titulo-pdf');
     }
 }

@@ -29,6 +29,7 @@ class Job extends Model
     {
         try {
             $payload = @json_decode($this->getOriginal('payload'), true);
+            $payloadData = @json_decode($payload, true);
             $command = @unserialize($payload['data']['command']);
             if(is_object($command) && $command instanceof SendQueuedMailable && method_exists($command->mailable, '__toString'))
                     return $command->mailable->__toString();

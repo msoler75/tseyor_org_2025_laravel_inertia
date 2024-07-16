@@ -53,6 +53,8 @@ class ProcesarAudios implements ShouldQueue
             return;
         }
 
+        Log::channel('jobs')->warning("Procesando {$this->contenidoClass} con id {$this->contenidoId}");
+
         $audios_pendientes = 0;
         $audios_procesados = 0;
         $index = 0;
@@ -74,19 +76,16 @@ class ProcesarAudios implements ShouldQueue
         foreach ($audios as $key => $audio) {
             if ($this->mustBeProcessed($audio)) {
                 $audios_pendientes++;
+                Log::channel('jobs')->info("audios_pendientes: $audios_pendientes, audios_procesados: $audios_procesados");
                 if ($audios_procesados == 0) // solo procesa 1 audio cada vez, ya que es muy costoso
                 {
-                    $outputFile = $contenido->generarNombreAudio($index);
-                    $outputFilePath = $folder . "/" . $outputFile;
-                    $converter = new AudioConverter($audio, $outputFilePath, $this->disk);
-                    try {
+                        $outputFile = $contenido->generarNombreAudio($index);
+                        $outputFilePath = $folder . "/" . $outputFile;
+                        $converter = new AudioConverter($audio, $outputFilePath, $this->disk);
                         $converter->convert();
                         $audios[$key] = $outputFilePath;
                         $audios_procesados++;
                         $audios_pendientes--;
-                    } catch (\Exception $e) {
-                        // no se pudo procesar el audio
-                    }
                 }
             }
 
@@ -94,7 +93,7 @@ class ProcesarAudios implements ShouldQueue
         }
 
         if ($audios_procesados > 0) {
-            Log::channel('jobs')->info("audios_procesados: $audios_procesados ");
+            Log::channel('jobs')->info("audios_pendientes: $audios_pendientes, audios_procesados: $audios_procesados");
             // $contenido->audios = json_encode($audios);
             // $contenido->save();
             $contenido->update(['audios' => $audios]);
@@ -102,7 +101,7 @@ class ProcesarAudios implements ShouldQueue
 
         if ($audios_pendientes > 0) {
             // Encolar la tarea nuevamente
-            Log::info("Quedan $audios_pendientes audios pendientes de tratar. Reencolamos");
+            Log::channel('jobs')->info("Quedan $audios_pendientes audios pendientes de tratar. Reencolamos");
             Bus::dispatch(new self($contenido::class, $contenido->id, $folder, $this->disk));
         }
     }
@@ -113,8 +112,9 @@ class ProcesarAudios implements ShouldQueue
      */
     private function mustBeProcessed($audio)
     {
-        Log::channel('jobs')->info("MustBeProcessed? " . var_export($audio, true) . ' ' . (preg_match("#^upload\/#", $audio) ? "true" : "false"));
-        return preg_match("#^upload\/#", $audio);
+        $must = !!preg_match("#^upload\/#", $audio);
+        Log::channel('jobs')->info("MustBeProcessed? " . var_export($audio, true) . ' ' . ($must ? "true" : "false"));
+        return $must;
     }
 
 

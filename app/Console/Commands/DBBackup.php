@@ -31,7 +31,7 @@ class DBBackup extends Command
         $this->info("$this->description");
 
         // donde se guardarán los backups
-        $carpeta = "storage/backups";
+        $carpeta = storage_path() ."/backups";
 
         echo "Creando copia...\n";
 
@@ -40,17 +40,36 @@ class DBBackup extends Command
         // Obtiene todos los nombres de las tablas de la base de datos
         $config = DB::getConfig();
         $backupFileName = $carpeta . "/" . $databaseName . '_backup_' . Carbon::now()->timestamp . '.sql';
+        $zipFileName  = $backupFileName . ".zip";
 
         $url = "mysql:host={$config['host']}:{$config['port']};dbname={$config['database']}";
-        //dd($config);
-        // dd($url);
+
         try {
             $dump = new Mysqldump\Mysqldump($url, $config['username'], $config['password']);
-            $dump->start( $backupFileName);
-            echo "Backup creado correctamente en el archivo: $backupFileName";
+            $dump->start($backupFileName);
+
+            // comprimir en zip:
+            echo "Comprimiendo...\n";
+
+            $zip = new \ZipArchive();
+            if ($zip->open($zipFileName, \ZipArchive::CREATE) !== true) {
+                echo "Backup creado correctamente en el archivo: $backupFileName";
+                echo "\nError al crear el archivo ZIP.";
+                exit;
+            }
+
+            // agregar el archivo
+            $zip->addFile($backupFileName, basename($backupFileName));
+
+            // Cerrar el archivo ZIP
+            $zip->close();
+
+            // echo "Borramos $backupFileName\n";
+            unlink($backupFileName);
+
+            echo "Backup creado correctamente en el archivo: $zipFileName";
         } catch (\Exception $e) {
             echo "Error al crear el backup: " . $e->getMessage();
         }
-
     }
 }

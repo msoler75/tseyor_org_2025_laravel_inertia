@@ -1,3 +1,13 @@
+FORMULARIO REGISTRO
+-campo Aceptar condiciones
+-contraseña con ojo
+
+BUSCADOR GLOBAL
+-si buscas "com 1145" solo buscará en comunicados, o si buscas "comunicado 1145"
+
+NORMATIVAS
+-añadir campo de: fecha de aprobación, que será el que se mostrará en las tarjetas
+
 CORREO tseyor.xyz
 verificar envío de correos:
 -formulario contacto
@@ -5,30 +15,6 @@ verificar envío de correos:
 
 ADMIN
 Hacer un botón para users en el admin para generar nueva contraseña
-
-
-VARIOS
-[10:26, 10/7/2024] Pigmalion Tseyor: Formulario aceptar aviso legal link
-[19:37, 11/7/2024] Pigmalion Tseyor: Scrollto Hash en enlaces. Aviso legal
-
-CONTACTAR
--después del formulario, revisar si interesa la misma pantalla de formulario de cursos
-
-
-Normativas
--back to comunidad no funciona
-
-BLOG
--Usar categoria no funciona en la paginación
-
-404
-Desde cursos (en localhost), si hago click a un libro que no existe debería salir 404, y sin embargo sale 512, error inesperado, No query results for model [App\Models\Libro].
-
-MAPA contactos
--buscar "chile" no devuelve ningun resultado, y hay contactos que son de chile (debe ser porqué está con el codigo de pais CL)
-
-FADEOUT
--si clickas a mis_archivos y luego archivos muy rápido (o algo así), se queda todo en fadeout invisible y no se recupera
 
 URL
 -En movil, al compartir una página solo comparte tseyor.xyz
@@ -47,9 +33,6 @@ https://apidocs.mailrelay.com/#post-/campaigns
 CORREOS
 -queueworker   ó    /__processjobs
 
-MAPA
--Cuando hace click en el pais, no recargar toda la página, solo los contactos y actualizar el mapa con los marker sin tener que recargar todo el maps
-
 ADMIN
 -cerrar sesion desde admin no funciona
 
@@ -60,8 +43,17 @@ EQUIPOS
     -testar creación de un informe del equipo
 
 
+
+BLOG
+-Usar categoria no funciona en la paginación
+
+JOBS
+revisar https://github.com/romanzipp/Laravel-Queue-Monitor
+
+
 ENTRADAS/BLOG
 -Añadir el artículo: barcelona
+
 
 RUTAS_ARCHIVOS_INTERNO_DEV
 -hay un problema interno o confusión con las rutas de archivos o carpetas.
@@ -115,12 +107,6 @@ LISTA DE DISTRIBUCION
 BUSQUEDAS COMUNICADOS
 -el texto de busqueda no debe incluir las imagenes.
  -Por ejemplo, ahora si el texto incluye una imagen que es "tatich.jpg" se considera parte del texto del comunicado.
-
-CRON
--hacer un cron con php artisan db:backup para que genere un backup diario
-
-DB BACKUP
--Ya se usa php artisan db:backup con la libreria druidfi/mysqldump-php , pero esta genera archivos .sql. Sería mejor que lo comprimiera .zip
 
 LOGS
 https://betterstack.com/docs/logs/php/

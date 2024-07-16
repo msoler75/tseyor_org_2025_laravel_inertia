@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Contenido extends Model
 {
     use Searchable;
+    use \Illuminate\Database\Eloquent\SoftDeletes;
 
     protected $fillable = [
         'coleccion',
@@ -44,7 +45,7 @@ class Contenido extends Model
      */
     public function shouldBeSearchable(): bool
     {
-        return $this->visibilidad == 'P';
+        return $this->visibilidad == 'P' && !$this->deleted_at;
     }
 
 
