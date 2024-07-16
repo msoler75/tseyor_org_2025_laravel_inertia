@@ -75,7 +75,7 @@ onMounted(() => {
 
                 <div>
                     <InputLabel for="password" value="Contraseña" />
-                    <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full" required
+                    <PasswordInput id="password" v-model="form.password"     required
                         autocomplete="new-password" />
                     <InputError class="mt-2" :message="form.errors.password" />
                     <small>Crea una contraseña para tu cuenta en tseyor.org</small>
@@ -83,7 +83,7 @@ onMounted(() => {
 
                 <div>
                     <InputLabel for="password_confirmation" value="Confirmar Contraseña" />
-                    <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password"
+                    <PasswordInput id="password_confirmation" v-model="form.password_confirmation"
                         class="mt-1 block w-full" required autocomplete="new-password" />
                     <InputError class="mt-2" :message="form.errors.password_confirmation" />
                 </div>
@@ -108,8 +108,9 @@ onMounted(() => {
                 <div class="mt-7 text-sm">
                     Los datos introducidos son de uso exclusivo de TSEYOR y no se compartirán a terceros ni se
                     publicarán.
-                    <label class="mt-3 flex align-center gap-2"><input type="checkbox" required>Acepto las
-                        condiciones</label>
+                    <label class="mt-8 inline-flex items-center">
+                        <AceptaCondiciones/>
+                    </label>
                 </div>
 
                 <div class="mt-4 flex justify-end">
