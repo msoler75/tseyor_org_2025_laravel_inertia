@@ -1,5 +1,5 @@
 <template>
-    <component :is="!errorLoading&&displaySrc?'img':'div'" ref="img" class="is-image transition-opacity duration-200 object-contain" :src="displaySrc"
+    <component :is="!errorLoading&&displaySrc?'img':'div'" ref="img" class="is-image transition-opacity duration-200" :src="displaySrc"
         :alt="alt" :title="title" :class="(imageLoaded||(errorLoading&&errorIcon)? 'opacity-100' : 'opacity-0')+(errorLoading&&errorIcon?' bg-opacity-25 bg-gray-500 flex justify-center items-center min-w-[80px] min-h-[80px]':'')" :style="styles"
         @error="errorLoading=true">
         <Icon v-show="errorLoading" icon="ph:image-broken-duotone" class="min-w-8 text-4xl text-gray-500 opacity-75"/>

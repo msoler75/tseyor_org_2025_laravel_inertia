@@ -12,7 +12,7 @@ use App\Models\Email;
 /**
  * - Crea un lock
  * - Detecta y registra los correos (emails)
-*/
+ */
 class WorkerLock extends Worker
 {
 
@@ -20,55 +20,71 @@ class WorkerLock extends Worker
 
     public function runNextJob($connectionName, $queue, WorkerOptions $options)
     {
-        Log::channel('jobs')->info("WorkerLock.runNextJob");
+        Log::channel('jobs')->info("WorkerLock.runNextJob ====================================================");
 
         $lockName = 'worker_lock';
-        $lockTimeout = 1; // Tiempo de expiración del bloqueo en segundos
+        $lockTimeout = 20; // Tiempo de expiración del bloqueo en segundos
 
-        //$lock = Cache::lock($lockName, $lockTimeout);
+        $lock = Cache::lock($lockName, $lockTimeout);
 
         // adquiere el lock
-        //if ($lock->get())
-        {
-
+        if ($lock->get()) {
             try {
 
                 $job = $this->getNextJob($this->manager->connection($connectionName), $queue);
 
                 if ($job) {
 
-                    $payload = $job->getRawBody();
-                    $payloadData = json_decode($payload, true);
+                    $jobId = $job->getJobId();
+                    $payload = $job->payload();
 
-                    if ($payloadData && isset($payloadData['data']['commandName']) && $payloadData['data']['commandName'] === 'Illuminate\Mail\SendQueuedMailable') {
+                    Log::channel('jobs')->info("Job $jobId " . $payload['displayName']);
+
+                    if ($payload && isset($payload['data']['commandName']) && $payload['data']['commandName'] === 'Illuminate\Mail\SendQueuedMailable') {
                         // Es una instancia de SendQueuedMailable
-                        $mailableData = $payloadData['data']['command'];
+                        $mailableData = $payload['data']['command'];
                         $mailable = unserialize($mailableData);
                         $object = $mailable->mailable;
-                        $data = [
-                            "body" => $object->render(),
-                            "subject" => $object->subject,
-                            "from" => $object->from,
-                            "to" => $object->to
-                        ];
+                        if ($object) {
 
-                        $data["from"] = $this->toAddressList($data["from"]);
-                        $data["to"] = $this->toAddressList($data["to"]);
+                            if (method_exists($object, '__toString')) {
+                                Log::channel('jobs')->info($object->__toString());
+                            }
 
-                        // Guarda los datos en el modelo Email
-                        Email::create($data);
+                            $data = [
+                                "body" => $object->render(),
+                                "subject" => $object->subject ?? 'Sin asunto',
+                                "from" => $object->from,
+                                "to" => $object->to
+                            ];
+
+                            $data["from"] = $this->toAddressList($data["from"]);
+                            $data["to"] = $this->toAddressList($data["to"]);
+
+                            // Guarda los datos en el modelo Email
+                            Email::create($data);
+                        }
                     }
 
-                    return $this->runJob($job, $connectionName, $options);
+                    $result = $this->runJob($job, $connectionName, $options);
+
+                    Log::channel('jobs')->info("job finished");
+
+                    return $result;
                 }
+            } catch (\Throwable $e) {
 
-            } catch (\Exception $e) {
-
-                Log::channel('jobs')->error($e->getMessage());
-
+                Log::channel('jobs')->error("Exception: ",
+                [
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
             } finally {
-                //$lock->release();
-                $this->sleep($options->sleep);
+                $lock->release();
+                $this->sleep(max(1, $options->sleep));
             }
         }
     }
@@ -87,5 +103,4 @@ class WorkerLock extends Worker
         }
         return implode(', ', $toEmails);
     }
-
 }

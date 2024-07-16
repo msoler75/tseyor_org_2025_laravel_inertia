@@ -52,11 +52,12 @@
                         </div>
                     </GridAppear>
 
-                    <GridAppear v-else class="grid gap-4" col-width="28rem">
+                    <GridAppear v-else class="grid gap-4 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(22rem,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(24rem,1fr))]" col-width="">
                         <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
                             :image="contenido.imagen" :href="route('libro', contenido.slug)"
                             :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
-                            image-left class="h-[355px]" imageClass="w-[250px] h-[355px]"
+                            image-left class="h-[43vw] xs:h-[200px] lg:h-[300px] 2xl:h-[355px]"
+                            imageClass="w-1/3 xs:h-full sm:w-[150px]  lg:w-[200px] lg:h-[300px] 2xl:w-[250px] 2xl:h-[355px]"
                             image-contained
                              :image-view-transition-name="`imagen-libro-${contenido.id}`"/>
 

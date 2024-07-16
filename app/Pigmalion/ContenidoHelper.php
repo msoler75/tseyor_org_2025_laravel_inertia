@@ -145,7 +145,11 @@ class ContenidoHelper
     public static function guardarContenido(string $coleccion, ContenidoBaseModel $model)
     {
         $contenido = Contenido::where('coleccion', $coleccion)
-            ->where('id_ref', $model->id)->first();
+            ->where('id_ref', $model->id)
+            ->withTrashed() // incluimos los marcados como borrados
+            ->first();
+
+        Log::info('ContenidoHelper::guardarContenido', ['coleccion'=>$coleccion, 'id'=>$model->id,'contenido'=>$contenido]);
 
         if ($contenido == null) {
             // Crear un nuevo modelo Contenido
@@ -172,6 +176,7 @@ class ContenidoHelper
         $contenido->imagen = $model->imagen ?? null;
         $contenido->fecha = $model->published_at ?? $model->updated_at ?? null;
         $contenido->visibilidad = $model->visibilidad ?? 'P';
+        $contenido->deleted_at = $model->deleted_at ?? null;
 
         if (strlen($contenido->descripcion) > 400)
             $contenido->descripcion = mb_substr($contenido->descripcion, 0, 399);
@@ -186,9 +191,11 @@ class ContenidoHelper
 
     public static function removerContenido($objeto)
     {
-        $coleccion = $objeto->table;
+        $coleccion = $objeto->getTable();
         $contenido = Contenido::where('coleccion', $coleccion)
-            ->where('id_ref', $objeto->id);
+            ->where('id_ref', $objeto->id)->first();
+
+        Log::info("ContenidoHelper::removerContenido, ", ['coleccion'=>$coleccion, 'id'=> $objeto->id, 'contenido'=>$contenido]);
 
         if ($contenido) {
             // elimina el contenido asociado

@@ -109,18 +109,20 @@ class ComunicadosController extends Controller
             abort(404); // Item no encontrado o no autorizado
         }
 
-        $siguiente = Comunicado::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'fecha_comunicado'])
+        if($comunicado->fecha_comunicado) {
+            $siguiente = Comunicado::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'fecha_comunicado'])
             ->where('visibilidad', 'P')
             ->where('fecha_comunicado', '>', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'asc')->first();
 
-        $anterior = Comunicado::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'fecha_comunicado'])
+            $anterior = Comunicado::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'fecha_comunicado'])
             ->where('visibilidad', 'P')
             ->where('fecha_comunicado', '<', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'desc')->first();
+        }
 
         return Inertia::render('Comunicados/Comunicado', [
             'comunicado' => $comunicado,
-            'siguiente' => $siguiente,
-            'anterior' => $anterior
+            'siguiente' => $siguiente ?? null,
+            'anterior' => $anterior ?? null
         ])
             ->withViewData(SEO::from($comunicado));
     }
