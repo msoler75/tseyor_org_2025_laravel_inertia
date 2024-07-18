@@ -44,12 +44,10 @@ class AbandonoEquipo extends Notification implements ShouldQueue
         $texto = $this->user->name . ' ha abandonado el equipo '.$this->equipo->nombre;
 
         return (new MailMessage)
-                    // ->line($this->user->name. ' ha abandonado el equipo ' . $this->equipo->nombre)
-                    // ->action('Ver Equipo', $url)
-                    // ->line('Thank you for using our application!')
                     ->subject($texto)
-                    ->markdown('emails.notificacion', ['texto'=>'Te informamos que '.$texto, 'action'=>'Ver Equipo', 'url'=>$url]);
-                    ;
+                    ->line('Te informamos que '.$texto)
+                    ->action('Ver Equipo', $url);
+                    //->markdown('emails.notification');
     }
 
     /**

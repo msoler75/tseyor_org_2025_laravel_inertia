@@ -20,8 +20,9 @@ use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Laravel\Scout\Searchable;
+use App\Notifications\ValidacionCorreo;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use CrudTrait;
     use \Venturecraft\Revisionable\RevisionableTrait;
@@ -187,4 +188,56 @@ class User extends Authenticatable
             'nombre' => $this->name,
         ];
     }
+
+
+
+
+
+
+
+
+
+ /**
+     * Determine if the user has verified their email address.
+     *
+     * @return bool
+     */
+    public function hasVerifiedEmail() {
+        return $this->email_verified_at != null;
+    }
+
+    /**
+     * Mark the given user's email as verified.
+     *
+     * @return bool
+     */
+    public function markEmailAsVerified() {
+        $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+        ]);
+        // must save
+        return $this->save();
+    }
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification(){
+        $this->notify(new ValidacionCorreo($this));
+    }
+
+    /**
+     * Get the email address that should be used for verification.
+     *
+     * @return string
+     */
+    public function getEmailForVerification() {
+        return $this->email;
+    }
+
+
+
+
 }

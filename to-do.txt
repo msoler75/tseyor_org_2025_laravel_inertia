@@ -1,6 +1,8 @@
-FORMULARIO REGISTRO
--campo Aceptar condiciones
--contraseña con ojo
+VALIDACION CORREO USUARIO
+-usuario que se registra debe recibir un mensaje a su correo de validación de dirección electrónica
+
+MENU usuario nav
+-NO DEBE aparecer la opción ESPACIO MUUL si no eres del grupo muul
 
 BUSCADOR GLOBAL
 -si buscas "com 1145" solo buscará en comunicados, o si buscas "comunicado 1145"

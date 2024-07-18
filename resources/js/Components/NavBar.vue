@@ -107,7 +107,7 @@
                                                 Mi Perfil
                                             </DropdownLink>
 
-                                            <DropdownLink href="/muul">
+                                            <DropdownLink v-if="false" href="/muul">
                                                 Espacio Muul
                                             </DropdownLink>
 

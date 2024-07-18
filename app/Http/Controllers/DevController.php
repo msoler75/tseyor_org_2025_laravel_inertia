@@ -30,4 +30,20 @@ class DevController extends Controller
         Auth::login($user); // Autenticar al usuario 2
         return response()->json(['message' => 'usuario cambiado'], 200);
     }
+
+
+    public function dev1(Request $request)
+    {
+        $user = User::find(1);
+        echo "Enviando notificacion a user {$user->name} ";
+        $user->sendEmailVerificationNotification();
+    }
+
+
+    public function dev2(Request $request)
+    {
+        $user = User::find(1);
+        $user->sendEmailVerificationNotification();
+    }
+
 }
