@@ -1,9 +1,11 @@
 @component('mail::message')
 
-{{$texto}}
+{{$nombre}}
+
+Debes validar tu dirección de correo electrónico {{$email}}.
 
 @component('mail::button', ['url' => $url])
-{{$action}}
+Validar Correo
 @endcomponent
 
 @endcomponent

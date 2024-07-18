@@ -2,7 +2,7 @@
     {{-- Header --}}
     <x-slot:header>
         <x-mail::header :url="config('app.url')">
-            <img src="{{ config('app.url') }}/almacen/medios/logos/sello_64.svg" width=40 height=40
+            <img src="{{ config('app.url') }}/almacen/medios/logos/sello_tseyor_64.svg" width=40 height=40
                 style="transform: translateY(2px)"> <span
                 style="color:#18419d; font-style:italic; font-family: 'Times New Roman', Times, serif; font-size: 54px; letter-spacing: -1pt">{{ config('app.name') }}</span>
             <span style="font-style:italic">.org</span>

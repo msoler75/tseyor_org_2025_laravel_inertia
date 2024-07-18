@@ -8,6 +8,8 @@ use App\Pigmalion\Markdown;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
 use App\Models\Contenido;
+use App\Models\User;
+
 
 class TestController extends Controller
 {
@@ -75,20 +77,5 @@ class TestController extends Controller
 
 
 
-    public function dev(Request $request)
-    {
-        // no aparecen en novedades
-        $colecciones_excluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', /*'lugares',*/ 'guias'];
 
-        // atención para administradores: la búsqueda no incluye los contenidos no publicados
-
-        $resultados =
-            // los administradores ven todos los contenidos, y si están en modo publicado o borrador
-            Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion', 'visibilidad'])
-            ->whereNotIn('coleccion', $colecciones_excluidas)
-            ->latest('updated_at') // Ordenar por updated_at
-            ->paginate(10);
-
-        dd($resultados);
-    }
 }

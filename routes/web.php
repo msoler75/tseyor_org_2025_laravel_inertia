@@ -362,8 +362,8 @@ Route::get('test/docx/{num}',  'App\Http\Controllers\TestController@docxShow');
 Route::get('test/word2pdf',  'App\Http\Controllers\TestController@word2pdf');
 
 // developing
-Route::get('test/dev',  'App\Http\Controllers\TestController@dev');
-
+Route::get('dev/1',  'App\Http\Controllers\DevController@dev1');
+Route::get('dev/2',  'App\Http\Controllers\DevController@dev2');
 
 Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
 
