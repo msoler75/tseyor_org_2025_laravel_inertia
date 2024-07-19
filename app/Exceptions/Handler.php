@@ -6,6 +6,7 @@ use Illuminate\Database\QueryException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Inertia\Inertia;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 use App\Pigmalion\BusquedasHelper;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
 
 class Handler extends ExceptionHandler
 {
@@ -106,7 +108,7 @@ class Handler extends ExceptionHandler
             $coleccion = $parts[0];
 
         $colecciones_404 = ['nodos', 'archivos', 'almacen'];
-        if(in_array($coleccion, $colecciones_404))
+        if (in_array($coleccion, $colecciones_404))
             return parent::render($request, $exception);
 
         $buscar = preg_replace("/[\?\/\.\-]/", " ", urldecode($parts[count($parts) - 1])); // quitar caracteres no permitidos en $path
@@ -157,6 +159,21 @@ class Handler extends ExceptionHandler
         // ValidationException: login
         if ($exception instanceof ValidationException) {
             return parent::render($request, $exception);
+        }
+
+        if ($exception instanceof AuthenticationException) {
+
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Debes iniciar sesión.'], 401)
+                : redirect()->guest(route('login'));
+        }
+
+        if($exception instanceof InvalidSignatureException) {
+            return Inertia::render('Error', [
+                'codigo' => $statusCode,
+                'titulo' => 'Enlace no válido o caducado',
+                'mensaje' => '',
+            ])->toResponse($request);
         }
 
 
