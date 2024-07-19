@@ -11,9 +11,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Pigmalion\DiskUtil;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 
-class AdminController
+class AdminController extends Controller
 {
 
     public function dashboard()
@@ -96,7 +97,9 @@ class AdminController
         if (!$user)
             return response()->json(['message' => 'usuario no encontrado'], 404);
 
-        Auth::login($user); // Autenticar al usuario
+        Auth::login($user, true); // Autenticar al usuario
+
+        session()->regenerate(); // Regenerar la sesión
 
         return response()->json(['message' => 'usuario cambiado'], 200);
     }

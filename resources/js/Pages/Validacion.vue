@@ -26,6 +26,13 @@ const submit = () => {
         disabledResend.value = false
     }, 1000*15)
 };
+
+
+const logout = () => {
+    permisos.permisos = []
+    router.post(route('logout'));
+};
+
 </script>
 
 <template>
@@ -51,7 +58,7 @@ const submit = () => {
                 <input :disabled="disabledResend" type="submit" class="btn btn-small flex-shrink" value="Reenviar verificación">
                 <div class="flex items-center gap-3 text-sm">
                     <Link :href="route('profile.show')" class="underline">Mi cuenta</Link>
-                    <Link :href="route('logout')" class="underline">Cerrar sesión</Link>
+                    <div @click="logout" class="underline cursor-pointer">Cerrar sesión</div>
                 </div>
             </div>
         </form>

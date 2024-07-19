@@ -1,4 +1,5 @@
 <template>
+    <AppLayout title="Dashboard">
     <div class="container mx-auto py-12 flex flex-col justify-center h-full">
         <div v-if="codigo" class="text-7xl opacity-60 font-bold pt-12 text-center">{{ codigo }}</div>
         <Hero :title="titulo" :subtitle="mensaje"></Hero>
@@ -10,6 +11,7 @@
             </div>
         </div>
     </div>
+</AppLayout>
 </template>
 
 

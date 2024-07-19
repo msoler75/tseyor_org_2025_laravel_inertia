@@ -114,8 +114,9 @@ onMounted(() => {
                 </div>
 
                 <div class="mt-4 flex justify-end">
-                    <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                        Crear Cuenta
+                    <PrimaryButton class="ml-4" :disabled="form.processing">
+                        <Spinner v-if="form.processing" />
+                        {{ form.processing ? 'Enviando' : 'Crear cuenta' }}
                     </PrimaryButton>
                 </div>
 

@@ -49,6 +49,7 @@ const handleScroll = () => {
 // const dynamicAudioPlayer = ref(null);
 
 onMounted(() => {
+
     // inicializamos la navegación pasando la función "route" del componente, en el cliente
     nav.init(route)
 
@@ -120,6 +121,12 @@ onMounted(() => {
             nav.scrollToId(window.location.hash.substring(1), 0)
         }, 500)
     }
+
+
+    // si en la url hay un parámetro ?verified=1
+    if (location. search.includes('verified=1'))
+    // redirigimos a dashboard
+        router.get(route('dashboard'))
 
 });
 

@@ -38,9 +38,8 @@
                         <!-- Main Navigation Tabs -->
                         <NavTabs class="hidden lg:flex top-navigation space-x-8 flex-grow justify-center" />
 
-                        <div v-if="selectors.developerMode" class="mx-auto flex gap-2">
-                            <button @click="login1" class="btn">L1</button>
-                            <button @click="login2">L2</button>
+                        <div v-if="false && selectors.developerMode" class="mx-auto flex gap-2">
+                            <!-- Area for dev tools -->
                         </div>
 
 
@@ -104,7 +103,7 @@
                                             </DropdownLink>
 
                                             <DropdownLink :href="route('usuario', $page.props.auth.user.id)">
-                                                Mi Perfil
+                                                Mi perfil público
                                             </DropdownLink>
 
                                             <DropdownLink v-if="false" href="/muul">
@@ -193,26 +192,6 @@ function handleKey(event) {
         // event.preventDefault()
         selectors.developerMode = !selectors.developerMode
     }
-}
-
-
-function login1() {
-    console.log('login1')
-    axios.get(route('login1'))
-        .then((response) => {
-            permisos.cargarPermisos()
-            console.log('response', response)
-            router.reload()
-        }
-        )
-}
-
-function login2() {
-    axios.get(route('login2'))
-        .then(() => {
-            permisos.cargarPermisos()
-            router.reload()
-        })
 }
 
 ////////////////////////////////////////////////////////////////
