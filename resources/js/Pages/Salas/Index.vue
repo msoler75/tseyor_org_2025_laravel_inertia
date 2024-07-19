@@ -1,7 +1,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="sala" necesita="administrar directorio" class="mb-3" />
+        <AdminLinks modelo="sala" necesita="administrar directorio" class="mb-3" />
 
         <h1>Salas virtuales</h1>
         <p>Listado de salas para reuniones virtuales de los distintos equipos de la comunidad Tseyor.</p>

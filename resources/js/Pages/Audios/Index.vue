@@ -3,7 +3,7 @@
 
         <div class="container max-w-full flex justify-between items-center mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
-            <AdminPanel modelo="audio" necesita="administrar contenidos" class="mb-3" />
+            <AdminLinks modelo="audio" necesita="administrar contenidos" class="mb-3" />
         </div>
 
         <section class="container mx-auto">

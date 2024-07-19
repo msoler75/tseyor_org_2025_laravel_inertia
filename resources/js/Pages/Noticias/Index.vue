@@ -2,7 +2,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="noticia" necesita="administrar contenidos" class="mb-3"/>
+        <AdminLinks modelo="noticia" necesita="administrar contenidos" class="mb-3"/>
 
         <h1>Noticias</h1>
         <p>Aquí puedes ver las últimas noticias de Tseyor.</p>

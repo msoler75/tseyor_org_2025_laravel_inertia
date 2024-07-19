@@ -6,7 +6,7 @@
             <Link href="/libros/glosario-terminologico" class="btn btn-sm btn-primary flex gap-2 items-center"
             title='Descarga todo el glosario en pdf'>
             <Icon icon="ph:download-duotone" />Descargar libro</Link>
-            <AdminPanel modelo="lugar" necesita="administrar contenidos" :contenido="lugar" />
+            <AdminLinks modelo="lugar" necesita="administrar contenidos" :contenido="lugar" />
         </div>
 
         <div class="mx-auto flex flex-col justify-center items-center">

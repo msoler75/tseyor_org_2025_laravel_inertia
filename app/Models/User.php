@@ -15,12 +15,8 @@ use App\Models\Permiso;
 use App\Models\Equipo;
 use App\Models\Grupo;
 use App\Models\Membresia;
-use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Traits\HasRoles;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Laravel\Scout\Searchable;
-use App\Notifications\ValidacionCorreo;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -39,12 +35,13 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $revisionCreationsEnabled = true;
 
     // cuando se crea un usuario, llenaremos el campo "frase" con una frase aleatoria desde un archivo de texto
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
 
         static::saved(function ($user) {
             // rellena la frase, si está está vacía
-            if(trim($user->frase)!="") return;
+            if (trim($user->frase) != "") return;
 
             // archivo está en @/resources/txt/frases_cortas.txt
             $file = base_path('resources/txt/frases_cortas.txt');
@@ -56,9 +53,9 @@ class User extends Authenticatable implements MustVerifyEmail
             do {
                 $frase = array_pop($frases);
                 // comprobamos que la frase no la tiene otro usuario
-            } while($loops-- > 0 && User::where('frase', $frase)->count() > 0);
+            } while ($loops-- > 0 && User::where('frase', $frase)->count() > 0);
             $user->frase = $frase;
-            $user->save();
+            $user->saveQuietly();
         });
     }
 
@@ -188,56 +185,6 @@ class User extends Authenticatable implements MustVerifyEmail
             'nombre' => $this->name,
         ];
     }
-
-
-
-
-
-
-
-
-
- /**
-     * Determine if the user has verified their email address.
-     *
-     * @return bool
-     */
-    public function hasVerifiedEmail() {
-        return $this->email_verified_at != null;
-    }
-
-    /**
-     * Mark the given user's email as verified.
-     *
-     * @return bool
-     */
-    public function markEmailAsVerified() {
-        $this->forceFill([
-            'email_verified_at' => $this->freshTimestamp(),
-        ]);
-        // must save
-        return $this->save();
-    }
-
-    /**
-     * Send the email verification notification.
-     *
-     * @return void
-     */
-    public function sendEmailVerificationNotification(){
-        $this->notify(new ValidacionCorreo($this));
-    }
-
-    /**
-     * Get the email address that should be used for verification.
-     *
-     * @return string
-     */
-    public function getEmailForVerification() {
-        return $this->email;
-    }
-
-
 
 
 }

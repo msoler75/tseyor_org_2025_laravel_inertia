@@ -1,5 +1,5 @@
 <template>
-    <AdminPanel modelo="nodo" necesita="administrar archivos" class="mb-3" />
+    <AdminLinks modelo="nodo" necesita="administrar archivos" class="mb-3" />
 
     <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietarioRef="propietarioRef" @updated="reloadPage"
         ruta="" rutaBase=""

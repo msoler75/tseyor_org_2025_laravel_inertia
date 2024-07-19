@@ -3,7 +3,7 @@
 
         <div class="flex justify-between items-center mb-20">
             <Back>Libros</Back>
-            <AdminPanel modelo="libro" necesita="administrar contenidos" :contenido="libro"/>
+            <AdminLinks modelo="libro" necesita="administrar contenidos" :contenido="libro"/>
         </div>
 
         <div class="max-w-[900px] mx-auto flex flex-col md:flex-row gap-10 mt-12">

@@ -2,7 +2,7 @@
     <div class="container mx-auto px-4 py-8 mb-32">
         <div class="flex justify-between items-center mb-20">
             <Back>Videos</Back>
-            <AdminPanel modelo="video" necesita="administrar contenidos" :contenido="video" />
+            <AdminLinks modelo="video" necesita="administrar contenidos" :contenido="video" />
         </div>
 
         <div class="max-w-full lg:max-w-[640px] mx-auto">

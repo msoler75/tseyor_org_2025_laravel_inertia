@@ -1,7 +1,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="entrada" necesita="administrar contenidos" class="mb-3" />
+        <AdminLinks modelo="entrada" necesita="administrar contenidos" class="mb-3" />
 
         <h1>Blog</h1>
         <p>Aquí puedes conocer sobre la vida de la comunidad Tseyor.</p>

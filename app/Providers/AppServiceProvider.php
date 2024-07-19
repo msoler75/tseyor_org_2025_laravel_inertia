@@ -23,7 +23,6 @@ class AppServiceProvider extends ServiceProvider
             // \Backpack\PermissionManager\app\Http\Controllers\UserCrudController::class, //this is package controller
             \App\Http\Controllers\Admin\UserCrudController::class //this should be your own controller
         );
-
     }
 
 
@@ -42,5 +41,5 @@ class AppServiceProvider extends ServiceProvider
 
         // observamos los cambios en membresías de equipos
         Membresia::observe(MembresiaObserver::class);
-
+    }
 }

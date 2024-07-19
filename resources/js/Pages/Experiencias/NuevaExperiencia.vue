@@ -3,7 +3,7 @@
 
         <div class="container mx-auto flex justify-between items-center mb-20 text-white">
             <Back>Experiencias</Back>
-            <AdminPanel modelo="experiencia" necesita="administrar experiencias" />
+            <AdminLinks modelo="experiencia" necesita="administrar experiencias" />
         </div>
 
 

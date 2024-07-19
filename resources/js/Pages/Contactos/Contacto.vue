@@ -3,7 +3,7 @@
 
         <div class="flex justify-between items-center mb-20">
             <Back href="/donde-estamos">Dónde estamos</Back>
-            <AdminPanel modelo="contacto" necesita="administrar directorio" :contenido="contacto" />
+            <AdminLinks modelo="contacto" necesita="administrar directorio" :contenido="contacto" />
         </div>
 
         <Card class="text-center w-fit space-y-4 sm:!p-14 mx-auto">

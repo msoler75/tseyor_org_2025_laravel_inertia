@@ -3,7 +3,7 @@
 
         <div class="flex justify-between items-center mb-20">
             <span/>
-            <AdminPanel modelo="normativa" necesita="administrar legal" />
+            <AdminLinks modelo="normativa" necesita="administrar legal" />
         </div>
 
         <h1>Normativas</h1>

@@ -2,7 +2,7 @@
     <div class="container mx-auto px-4 py-8 mb-32">
         <div class="flex justify-between items-center mb-20">
             <Back>Audios</Back>
-            <AdminPanel modelo="audio" necesita="administrar contenidos" :contenido="audio" />
+            <AdminLinks modelo="audio" necesita="administrar contenidos" :contenido="audio" />
         </div>
 
         <div class="flex flex-col items-center">
