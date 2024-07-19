@@ -13,6 +13,7 @@ declare module 'vue' {
     ActionButton: typeof import('./resources/js/Components/ActionButton.vue')['default']
     ActionMessage: typeof import('./resources/js/Components/ActionMessage.vue')['default']
     ActionSection: typeof import('./resources/js/Components/ActionSection.vue')['default']
+    AdminLinks: typeof import('./resources/js/Components/AdminLinks.vue')['default']
     AdminPanel: typeof import('./resources/js/Components/AdminPanel.vue')['default']
     Announcement: typeof import('./resources/js/Components/Announcement.vue')['default']
     AppFooter: typeof import('./resources/js/Components/AppFooter.vue')['default']

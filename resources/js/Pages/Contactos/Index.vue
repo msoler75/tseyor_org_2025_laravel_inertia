@@ -1,7 +1,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="contacto" necesita="administrar directorio" class="mb-3" />
+        <AdminLinks modelo="contacto" necesita="administrar directorio" class="mb-3" />
 
         <h1 class="text-center mb-0">Dónde estamos</h1>
 

@@ -4,7 +4,7 @@
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Usuarios</Back>
             <span></span>
-            <AdminPanel modelo="user" necesita="administrar usuarios" :contenido="usuario" />
+            <AdminLinks modelo="user" necesita="administrar usuarios" :contenido="usuario" />
         </div>
 
         <Sections>
@@ -20,10 +20,15 @@
                     {{ usuario.name || usuario.slug }}
                 </h1>
 
+                <div v-if="!soyYo && user && user.id===1">
+                    <form @submit.prevent="cambiarUsuario">
+                        <button type="submit" class="btn btn-xs btn-primary">Cambiar a este usuario</button>
+                    </form>
+                </div>
+
                 <div class="my-2 flex flex-wrap gap-3">
                     <div class="badge" v-for="grupo of gruposNoEquipos" :key="grupo.id">{{ grupo.nombre }}</div>
                 </div>
-
 
                 <div class="prose my-7">
                     <form @submit.prevent="onSubmit">
@@ -41,7 +46,7 @@
                 </div>
 
 
-                
+
 
                 <div class="flex flex-wrap justify-center gap-5">
                     <Link class="badge badge-neutral gap-2" v-for="equipo of usuario.equipos" :key="equipo.id"
@@ -115,9 +120,7 @@ import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { usePage } from '@inertiajs/vue3';
 import useSelectors from '@/Stores/selectors'
-
-const selectors = useSelectors()
-
+import usePermisos from '@/Stores/permisos'
 
 const page = usePage()
 const user = page.props.auth.user
@@ -235,4 +238,15 @@ function onSubmit() {
     if(editandoFrase.value)
         guardarFrase()
 }
+
+
+
+function cambiarUsuario() {
+    console.log('cambiarUsuario')
+    axios.post(route('admin.loginAs', props.usuario.id))
+    .then((response) => {
+        location.reload()
+    })
+}
+
 </script>

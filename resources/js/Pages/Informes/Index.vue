@@ -8,7 +8,7 @@
                 Todos los informes
                 <Icon icon="ph:arrow-right" />
             </Link>
-            <AdminPanel modelo="informe" necesita="administrar contenidos" />
+            <AdminLinks modelo="informe" necesita="administrar contenidos" />
         </div>
 
         <template v-if="equipo">

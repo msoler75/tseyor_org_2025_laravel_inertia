@@ -244,14 +244,14 @@ Route::get('normativas/{slug}', [NormativasController::class, 'show'])->where('s
 
 Route::get('usuarios', [UsuariosController::class, 'index'])->name('usuarios');
 Route::get('usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->name('usuarios.buscar');
-Route::get('usuarios/_permisos', [UsuariosController::class, 'permissions'])->name('usuario.permisos');
 Route::get('usuarios/_grupos', [UsuariosController::class, 'grupos'])->name('grupos');
 Route::put('usuarios/{slug}', [UsuariosController::class, 'store'])->where('slug', '[a-z0-9\-]+')->name('usuario.guardar');
 Route::get('usuarios/{slug}', [UsuariosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('usuario');
+Route::get('usuario/_permisos', [UsuariosController::class, 'permissions'])->name('usuario.permisos');
 
-Route::get('login/1', [DevController::class, 'loginUser1'])->name('login1');
-Route::get('login/2', [DevController::class, 'loginUser2'])->name('login2');
-Route::get('/_email', [DevController::class, 'testMail']);
+// Route::get('login/1', [DevController::class, 'loginUser1'])->name('login1');
+// Route::get('login/2', [DevController::class, 'loginUser2'])->name('login2');
+// Route::get('/_email', [DevController::class, 'testMail']);
 
 
 Route::middleware([
@@ -259,10 +259,12 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
     Route::get('dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
 
 // queue  batch
 Route::get('__process_jobs', [WorkerController::class, 'process'])->name('process.jobs');

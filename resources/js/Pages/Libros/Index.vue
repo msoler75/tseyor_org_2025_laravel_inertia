@@ -2,7 +2,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="libro" necesita="administrar contenidos" class="mb-3" />
+        <AdminLinks modelo="libro" necesita="administrar contenidos" class="mb-3" />
 
         <h1>Libros</h1>
         <p>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales

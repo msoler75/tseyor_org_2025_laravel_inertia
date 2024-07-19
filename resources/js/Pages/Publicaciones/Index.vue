@@ -3,7 +3,7 @@
 
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Comunidad</Back>
-            <AdminPanel modelo="publicacion" necesita="administrar contenidos" />
+            <AdminLinks modelo="publicacion" necesita="administrar contenidos" />
         </div>
 
         <h1>Publicaciones</h1>

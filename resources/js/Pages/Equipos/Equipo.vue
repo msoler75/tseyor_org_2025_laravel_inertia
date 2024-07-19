@@ -5,7 +5,7 @@
             <EquipoMembresia class="hidden sm:flex mx-auto" :equipo-id="equipo.id" v-model="solicitud"
                 :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"
                 :permitirSolicitudes="!equipo.ocultarSolicitudes" @updated="reloadEquipo" />
-            <AdminPanel modelo="equipo" necesita="administrar equipos" :contenido="equipo" />
+            <AdminLinks modelo="equipo" necesita="administrar equipos" :contenido="equipo" />
         </div>
 
         <EquipoCabecera :equipo="equipo" />

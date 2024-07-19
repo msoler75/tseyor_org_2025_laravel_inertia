@@ -3,7 +3,7 @@
         <div class="sticky top-8 pt-10 bg-base-100 pb-4 border-b border-base-300 z-30">
             <div class="container mx-auto px-4 flex justify-between items-center mb-3">
                 <Back>Eventos</Back>
-                <AdminPanel modelo="evento" necesita="administrar social" :contenido="evento" />
+                <AdminLinks modelo="evento" necesita="administrar social" :contenido="evento" />
             </div>
 
             <h1 class="container mx-auto my-2">

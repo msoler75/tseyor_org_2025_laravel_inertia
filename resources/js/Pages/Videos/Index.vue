@@ -1,7 +1,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="video" necesita="administrar contenidos" class="mb-3" />
+        <AdminLinks modelo="video" necesita="administrar contenidos" class="mb-3" />
 
 
         <section class="py-10 space-y-10 mx-auto">

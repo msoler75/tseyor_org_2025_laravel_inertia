@@ -1,7 +1,7 @@
 const state = reactive({
   permisos: [],
   cargarPermisos() {
-    fetch("/usuarios/_permisos")
+    fetch("/usuario/_permisos")
       .then((response) => response.json())
       .then((data) => {
         console.log("permisos response", data);

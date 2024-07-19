@@ -3,7 +3,7 @@
 
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Publicaciones</Back>
-            <AdminPanel modelo="publicacion" necesita="administrar contenidos" :contenido="publicacion" />
+            <AdminLinks modelo="publicacion" necesita="administrar contenidos" :contenido="publicacion" />
         </div>
 
 

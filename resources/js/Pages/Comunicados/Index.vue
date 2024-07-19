@@ -1,7 +1,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="comunicado" necesita="administrar contenidos" class="mb-3" />
+        <AdminLinks modelo="comunicado" necesita="administrar contenidos" class="mb-3" />
 
         <div class="w-full flex gap-7 items-center justify-between">
 

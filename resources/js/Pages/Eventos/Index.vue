@@ -2,7 +2,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="evento" necesita="administrar social" class="mb-3"/>
+        <AdminLinks modelo="evento" necesita="administrar social" class="mb-3"/>
 
         <h1>Eventos</h1>
         <p>Cursos y encuentros de la comunidad Tseyor a los que puedes acudir.</p>

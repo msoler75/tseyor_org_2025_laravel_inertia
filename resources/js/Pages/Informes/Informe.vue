@@ -10,7 +10,7 @@
             <Icon icon="ph:arrow-right" />
             </Link>
             <span v-else></span>
-            <AdminPanel modelo="informe" necesita="administrar contenidos" :contenido="informe" :es-autor="soyCoordinador"/>
+            <AdminLinks modelo="informe" necesita="administrar contenidos" :contenido="informe" :es-autor="soyCoordinador"/>
         </div>
 
 

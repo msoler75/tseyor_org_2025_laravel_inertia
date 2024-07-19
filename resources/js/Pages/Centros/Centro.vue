@@ -3,7 +3,7 @@
 
         <div class="flex justify-between items-center mb-20">
             <Back>Centros Tseyor</Back>
-            <AdminPanel modelo="centro" necesita="administrar directorio" :contenido="centro" />
+            <AdminLinks modelo="centro" necesita="administrar directorio" :contenido="centro" />
         </div>
 
         <TextText :srcImage="centro.imagen" cover full>

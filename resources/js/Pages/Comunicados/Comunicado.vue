@@ -3,7 +3,7 @@
 
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Comunicados</Back>
-            <AdminPanel modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado" />
+            <AdminLinks modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado" />
             <a class="btn btn-xs btn-error text-white w-fit flex gap-3" :href="route('comunicado.pdf', comunicado.slug)"
                 target="_blank" title="Descargar PDF">
                 <Icon icon="ph:download-duotone" />PDF

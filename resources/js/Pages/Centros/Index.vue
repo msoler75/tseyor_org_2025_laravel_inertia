@@ -1,7 +1,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminPanel modelo="centro" necesita="administrar directorio" class="mb-3"/>
+        <AdminLinks modelo="centro" necesita="administrar directorio" class="mb-3"/>
 
         <!-- Encabezado de la página -->
         <header v-if="false" class="my-12">

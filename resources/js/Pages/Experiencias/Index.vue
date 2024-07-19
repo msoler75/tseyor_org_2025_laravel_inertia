@@ -4,7 +4,7 @@
         <div class="flex justify-between items-center mb-20">
             <span></span>
             <Back v-if="false" href="/comunidad">Comunidad</Back>
-            <AdminPanel modelo="experiencia" necesita="administrar experiencias" />
+            <AdminLinks modelo="experiencia" necesita="administrar experiencias" />
         </div>
 
         <h1>Experiencias Interdimensionales</h1>

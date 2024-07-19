@@ -10,6 +10,8 @@ use App\Models\Busqueda;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Pigmalion\DiskUtil;
+use Illuminate\Support\Facades\Auth;
+
 
 class AdminController
 {
@@ -54,25 +56,27 @@ class AdminController
     /**
      * Devuelve el contenido de un archivo de log
      */
-    public function getLog($log) { // retorna json
+    public function getLog($log)
+    { // retorna json
         $logsFolder = storage_path('logs');
 
         // evitar hacker
-        if(strpos($log, "..")!==false||strpos($log, "/")!==false||strpos($log, "\\")!==false)
-        return response()->json(['content'=>'']);
+        if (strpos($log, "..") !== false || strpos($log, "/") !== false || strpos($log, "\\") !== false)
+            return response()->json(['content' => '']);
 
         $file = "$logsFolder/$log";
 
         // si no existe
-        if(!file_exists($file)) 
-            return response()->json(['content'=>'']);
-        
+        if (!file_exists($file))
+            return response()->json(['content' => '']);
+
         $content = file_get_contents($file);
-        return response()->json(['content'=>$content]);
+        return response()->json(['content' => $content]);
     }
 
 
-    public function listImages($ruta) {
+    public function listImages($ruta)
+    {
 
         $imagenes = DiskUtil::obtenerImagenes($ruta);
 
@@ -80,4 +84,20 @@ class AdminController
         return response()->json($imagenes);
     }
 
+
+    public function loginAs($idUser)
+    {
+        $user = Auth::user();
+        if (!$user || $user->id !== 1)
+            return response()->json(['message' => 'Acceso no permitido'], 403);
+
+        // cambiamos a nuevo usuario
+        $user = User::find($idUser);
+        if (!$user)
+            return response()->json(['message' => 'usuario no encontrado'], 404);
+
+        Auth::login($user); // Autenticar al usuario
+
+        return response()->json(['message' => 'usuario cambiado'], 200);
+    }
 }
