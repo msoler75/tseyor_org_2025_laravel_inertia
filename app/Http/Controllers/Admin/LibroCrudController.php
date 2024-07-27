@@ -109,7 +109,7 @@ class LibroCrudController extends CrudController
     {
 
         CRUD::setValidation([
-            'titulo' => 'required|min:8',
+            'titulo' => 'required|min:4',
             'slug' => [ \Illuminate\Validation\Rule::unique('libros', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'required|max:2048',
             'imagen' => 'required',
@@ -144,10 +144,11 @@ class LibroCrudController extends CrudController
                               'memorias'=>'memorias',
                               'monografías'=>'monografías',
                               'obras de consulta'=>'obras de consulta',
-                              'organización de Tseyor'=>'organización de tseyor',
+                              'organización de tseyor'=>'organización de tseyor',
                               'presentaciones gráficas'=>'presentaciones gráficas',
                               'psicografías'=>'psicografías',
                               'revistas y boletines'=>'revistas y boletines',
+                              'traducciones'=>'traducciones',
                               ],
             'allows_null' => false,
             'default'     => 'monografías',

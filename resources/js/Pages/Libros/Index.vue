@@ -59,7 +59,13 @@
                             image-left class="h-[43vw] xs:h-[200px] lg:h-[300px] 2xl:h-[355px]"
                             imageClass="w-1/3 xs:h-full sm:w-[150px]  lg:w-[200px] lg:h-[300px] 2xl:w-[250px] 2xl:h-[355px]"
                             image-contained
-                             :image-view-transition-name="`imagen-libro-${contenido.id}`"/>
+                             :image-view-transition-name="`imagen-libro-${contenido.id}`">
+                             <template #imagex>
+                            <div class="flex  w-full h-full items-center justify-center">
+                                <Libro3d :libro="contenido" imageClass="w-[120px] lg:w-[180px] 2xl:w-[213px]"/>
+                            </div>
+                        </template>
+                             </CardContent>
 
                     </GridAppear>
 

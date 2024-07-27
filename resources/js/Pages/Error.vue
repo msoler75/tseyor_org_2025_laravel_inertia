@@ -1,29 +1,27 @@
 <template>
-    <AppLayout title="Dashboard">
-    <div class="container mx-auto py-12 flex flex-col justify-center h-full">
-        <div v-if="codigo" class="text-7xl opacity-60 font-bold pt-12 text-center">{{ codigo }}</div>
-        <Hero :title="titulo" :subtitle="mensaje"></Hero>
+    <AppLayout title="Error">
+        <div class="container mx-auto py-12 flex flex-col justify-center h-full">
+            <div v-if="codigo" class="text-7xl opacity-60 font-bold pt-12 text-center">{{ codigo }}</div>
+            <Hero :title="titulo" :subtitle="mensaje"></Hero>
 
-        <div v-if="alternativas?.data?.length" class="flex flex-col gap-4">
-            <span>Tal vez quieras visitar:</span>
-            <div v-for="a of alternativas.data" :key="a.id" class="flex gap-3 items-center card shadow bg-base-100  w-fit flex-row p-3" >
-                <Link :href="calcularUrl(a)" v-html="a.titulo"/> <div class="badge badge-neutral">{{ traducir(a.coleccion) }}</div>
+            <div v-if="alternativas?.data?.length" class="flex flex-col gap-4">
+                <span>Tal vez quieras visitar:</span>
+                <div v-for="a of alternativas.data" :key="a.id"
+                    class="flex gap-3 items-center card shadow bg-base-100  w-fit flex-row p-3">
+                    <Link :href="calcularUrl(a)" v-html="a.titulo" />
+                    <div class="badge badge-neutral">{{ traducir(a.coleccion) }}</div>
+                </div>
             </div>
         </div>
-    </div>
-</AppLayout>
+    </AppLayout>
 </template>
 
 
 <script setup>
-
-import AppLayout from '@/Layouts/AppLayout.vue'
 import traducir from '@/composables/traducciones'
 
-defineOptions({ layout: AppLayout })
-
 const props = defineProps({
-    codigo: {type: Number, required: false},
+    codigo: { type: Number, required: false },
     titulo: { type: String, required: true },
     mensaje: {
         type: String,

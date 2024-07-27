@@ -76,6 +76,8 @@ declare module 'vue' {
     InputLabel: typeof import('./resources/js/Components/InputLabel.vue')['default']
     JSONEditorField: typeof import('./resources/js/Components/Backpack/JSONEditorField.vue')['default']
     Libro: typeof import('./resources/js/Components/Libro.vue')['default']
+    Libro3d: typeof import('./resources/js/Components/Libro3d.vue')['default']
+    Libro3dStatic: typeof import('./resources/js/Components/Libro3dStatic.vue')['default']
     Link: typeof import('./resources/js/Components/Link.vue')['default']
     Loader: typeof import('./resources/js/Components/Loader.vue')['default']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']

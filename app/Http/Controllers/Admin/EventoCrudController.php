@@ -95,9 +95,10 @@ class EventoCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => [ \Illuminate\Validation\Rule::unique('eventos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [\Illuminate\Validation\Rule::unique('eventos', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'required|max:400',
-            'texto' => 'required|max:65000'
+            'texto' => 'required|max:65000',
+            'fecha_inicio' => 'required',
         ]);
         // CRUD::setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
@@ -114,6 +115,13 @@ class EventoCrudController extends CrudController
         CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder]);
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
+
+
+        CRUD::field('fecha_inicio')->type('date')->wrapper(['style' => 'width: 200px']);
+        CRUD::field('fecha_fin')->type('date')->wrapper(['style' => 'width: 200px']);
+        CRUD::field('hora_inicio')->type('time')->wrapper(['style' => 'width: 200px']);
+        CRUD::field('published_at')->type('datetime')->wrapper(['style' => 'width: 260px']);
+
 
         CRUD::field('visibilidad')->type('visibilidad');
 
@@ -133,7 +141,7 @@ class EventoCrudController extends CrudController
         ]);
 
         CRUD::field([
-            'name' => 'centro',
+            'name' => 'centro_id',
             'label' => 'Centro',
             'allows_null' => true,
             'type' => 'select',
@@ -142,33 +150,36 @@ class EventoCrudController extends CrudController
             'wrapper' => [
                 'class' => 'form-group col-md-4'
             ]
-        ]);
+        ])->after('visibilidad');
 
         CRUD::field([
-            'name' => 'sala',
+            'name' => 'sala_id',
             'label' => 'Sala virtual',
             'allows_null' => true,
             'type' => 'select',
+            'attribute' => 'nombre',
+            'model' => 'App\Models\Sala',
             'wrapper' => [
                 'class' => 'form-group col-md-4'
             ]
-        ]);
+        ])->after('centro_id');
 
         CRUD::field([
-            'name' => 'equipo',
+            'name' => 'equipo_id',
             'label' => 'Equipo organizador',
             'allows_null' => true,
             'type' => 'select',
+            'attribute' => 'nombre',
+            'model' => 'App\Models\Equipo',
             'wrapper' => [
                 'class' => 'form-group col-md-4'
             ]
-        ]);
+        ])->after('sala_id');
 
         CRUD::field('visibilidad')->type('visibilidad');
 
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
         CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1]);
-
     }
 
 
@@ -230,5 +241,4 @@ class EventoCrudController extends CrudController
             ], 500);
         }
     }
-
 }

@@ -48,3 +48,19 @@ export const  ucFirstAllWords =function(str) {
 export const ucFirst = function(str)  {
     return  str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+
+
+export const fechaEs = function(fecha, options) {
+    // Crear un objeto Date a partir de la fecha
+    const fechaObj = new Date(fecha)
+    // Opciones para el formato de la fecha
+    const defaultOptions = { day: 'numeric', month: 'short', year: 'numeric' }
+
+    var opciones = {...defaultOptions, ...options}
+
+    console.log({options, opciones})
+
+    // Formatear la fecha usando toLocaleDateString
+    return fechaObj.toLocaleDateString('es-ES', opciones).replace(/\sde\s/g, '/')
+}
