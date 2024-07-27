@@ -1,4 +1,5 @@
 <template>
+    <AppLayout title="Contactar con Tseyor">
     <FondoEstrellado class="w-full relative py-12"  id="myform">
         <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative animate-fade-in">
             <h1>Contactar con Tseyor</h1>
@@ -72,17 +73,14 @@
                 </Section>
 
     </FondoEstrellado>
+    </AppLayout>
 </template>
 
 
 
 
 <script setup>
-
 import { useForm } from '@inertiajs/vue3'
-import AppLayout from '@/Layouts/AppLayout.vue'
-defineOptions({ layout: AppLayout })
-
 
 const submitted = ref(false)
 const error = ref(false)

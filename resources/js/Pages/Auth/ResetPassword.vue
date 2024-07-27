@@ -1,12 +1,6 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
 
-
-
-
-
-
-
 const props = defineProps({
     email: String,
     token: String,
@@ -27,7 +21,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Reset Password" />
+    <Head title="Restablecer contraseña" />
 
     <AuthenticationCard>
         <template #logo>
@@ -36,7 +30,7 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" value="Dirección de Correo" />
                 <TextInput
                     id="email"
                     v-model="form.email"
@@ -50,11 +44,10 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
+                <InputLabel for="password" value="Contraseña" />
+                <PasswordInput
                     id="password"
                     v-model="form.password"
-                    type="password"
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
@@ -63,11 +56,10 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
+                <InputLabel for="password_confirmation" value="Repetir Contraseña" />
+                <PasswordInput
                     id="password_confirmation"
                     v-model="form.password_confirmation"
-                    type="password"
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
@@ -77,7 +69,7 @@ const submit = () => {
 
             <div class="flex items-center justify-end mt-4">
                 <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Reset Password
+                    Cambiar contraseña
                 </PrimaryButton>
             </div>
         </form>

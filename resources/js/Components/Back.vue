@@ -8,6 +8,7 @@
         <slot />
         </Link>
     </Teleport>
+    <span v-if="!(inline || nav.scrollY<props.floatAtY)"></span>
 </template>
 
 <script setup>

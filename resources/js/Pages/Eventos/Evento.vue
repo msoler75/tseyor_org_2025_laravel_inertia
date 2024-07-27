@@ -1,54 +1,65 @@
 <template>
-    <div>
-        <div class="sticky top-8 pt-10 bg-base-100 pb-4 border-b border-base-300 z-30">
+    <AppLayout :title="evento.titulo">
+        <div class="sticky top-0 pt-10 bg-base-100 pb-4 border-b border-base-300 z-30">
             <div class="container mx-auto px-4 flex justify-between items-center mb-3">
-                <Back>Eventos</Back>
+                <Back inline>Eventos</Back>
                 <AdminLinks modelo="evento" necesita="administrar social" :contenido="evento" />
             </div>
 
-            <h1 class="container mx-auto my-2">
+            <h1 class="container mx-auto my-4 md:my-8">
                 {{ evento.titulo }}
             </h1>
-            <small class="container mx-auto text-right block">{{ evento.categoria }}</small>
+            <small class="container mx-auto text-right block mt-5"><span class="badge badge-info badge-sm">{{
+                evento.categoria }}</span></small>
         </div>
         <div class="container py-7 mx-auto space-y-12">
-            <div class="mx-auto flex flex-wrap md:flex-nowrap gap-7">
+            <div class="mx-auto flex flex-wrap md:flex-nowrap gap-12">
                 <div class="w-full md:w-1/2 md:order-last">
-                    <div class="card bg-base-100 md:max-w-[300px] shadow p-4">
-                        <p class="mb-2 flex gap-3 items-center">
-                            <Icon icon="ph:calendar-check-duotone" class="text-xl" /> Inicio: {{ evento.fecha_inicio }}
-                        </p>
-                        <p v-if="evento.fecha_fin" class="mb-2 flex gap-3 items-center">
-                            <Icon icon="ph:calendar-x-duotone" class="text-xl" /> Fin: {{ evento.fecha_fin }}
-                        </p>
-                        <p v-if="evento.hora_inicio" class="mb-2 flex gap-3">
-                            <Icon icon="ph:alarm-duotone" class="text-xl" /> Hora de inicio: {{ evento.hora_inicio }}
-                        </p>
-                        <p v-if="evento.hora_fin" class="mb-2">
-                            <Icon icon="ph:clock-countdown-duotone" class="text-xl" /> Hora de fin: {{ evento.hora_fin }}
-                        </p>
-                        <p v-if="evento.lugar" class="mb-2 flex gap-3">
-                            <Icon icon="ph:map-pin-duotone" class="text-xl" /> Lugar: {{ evento.lugar }}
-                        </p>
+                    <div class="card bg-base-100 md:max-w-[400px] shadow p-4 grid grid-cols-2 py-7 gap-y-3">
+                        <span class="mb-2 flex gap-3 items-center">
+                            <Icon icon="ph:calendar-check-duotone" class="text-xl" /> Inicia:
+                        </span>
+                        <span>{{ fechaEs(evento.fecha_inicio, {month: 'long'}) }}</span>
+                        <template v-if="evento.fecha_fin">
+                            <span class="mb-2 flex gap-3 items-center">
+                                <Icon icon="ph:calendar-x-duotone" class="text-xl" /> Finaliza:
+                            </span>
+                            <span>{{ fechaEs(evento.fecha_fin, {month: 'long'}) }}</span>
+                        </template>
+                        <template v-if="evento.hora_inicio">
+                            <span class="mb-2 flex gap-3">
+                                <Icon icon="ph:alarm-duotone" class="text-xl" /> Hora de inicio:
+                            </span>
+                            <span> {{ evento.hora_inicio.substr(0, 5) }}</span>
+                        </template>
+                        <template v-if="evento.hora_fin">
+                            <span class="mb-2">
+                                <Icon icon="ph:clock-countdown-duotone" class="text-xl" /> Hora de fin:
+                            </span>
+                            <span>{{ evento.hora_fin }}</span>
+                        </template>
+                        <template v-if="evento.lugar" class="mb-2 flex gap-3">
+                            <Icon icon="ph:map-pin-duotone" class="text-xl" /> Lugar:
+                            <span>{{ evento.lugar }}</span>
+                        </template>
                     </div>
-                    <hr class="my-7" />
-                    <p class="mt-4">{{ evento.descripcion }}</p>
+                    <p class="mt-12">{{ evento.descripcion }}</p>
+                    <hr class="my-12 hidden md:block" />
+                    <Content :content="evento.texto" class="mt-12 hidden md:block" />
                 </div>
-                <div class="w-full md:w-1/2">
+                <div class="w-full md:w-1/2 ">
                     <div class="lg:max-w-[500px]">
                         <Image :src="evento.imagen" alt="Imagen del evento" class="w-full mb-4" />
-                        <Content :content="evento.texto" class="mb-4"/>
+                        <Content :content="evento.texto" class="my-12 md:hidden" />
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </AppLayout>
 </template>
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
-
-defineOptions({ layout: AppLayout })
+import { fechaEs } from '@/composables/textutils.js'
 
 const props = defineProps({
     evento: {
@@ -56,5 +67,6 @@ const props = defineProps({
         required: true,
     },
 })
+
 
 </script>

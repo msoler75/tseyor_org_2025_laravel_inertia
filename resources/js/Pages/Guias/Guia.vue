@@ -50,11 +50,8 @@
 
                     <tab v-if="libros" name="Bibliografía">
                         <Prose v-if="libros.texto" class="mb-12" v-html="libros.texto"/>
-                        <div class="flex flex-wrap gap-5">
-                            <Link :href="route('libro', libro.slug)" v-if="libros" v-for="libro, index of libros.items"
-                                :key="index" class="flex">
-                            <Image :src="libro.imagen" :alt="libro.titulo" class="object-contain rounded-[2px] w-48 shadow-xl"  />
-                            </Link>
+                        <div class="flex flex-wrap gap-10">
+                            <Libro3d v-for="libro, index of libros.items" :key="index" :libro="libro" imageClass="w-[150px]"/>
                         </div>
                     </tab>
 

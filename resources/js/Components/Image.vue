@@ -1,9 +1,10 @@
 <template>
-    <component :is="!errorLoading&&displaySrc?'img':'div'" ref="img" class="is-image transition-opacity duration-200" :src="displaySrc"
-        :alt="alt" :title="title" :class="(imageLoaded||(errorLoading&&errorIcon)? 'opacity-100' : 'opacity-0')+(errorLoading&&errorIcon?' bg-opacity-25 bg-gray-500 flex justify-center items-center min-w-[80px] min-h-[80px]':'')" :style="styles"
-        @error="errorLoading=true">
-        <Icon v-show="errorLoading" icon="ph:image-broken-duotone" class="min-w-8 text-4xl text-gray-500 opacity-75"/>
-        </component>
+    <component :is="!errorLoading && displaySrc ? 'img' : 'div'" ref="img" class="is-image transition-opacity duration-200"
+        :src="displaySrc" :alt="alt" :title="title"
+        :class="(imageLoaded || (errorLoading && errorIcon) ? 'opacity-100' : 'opacity-0') + (errorLoading && errorIcon ? ' bg-opacity-25 bg-gray-500 flex justify-center items-center min-w-[80px] min-h-[80px]' : '')"
+        :style="styles" @error="errorLoading = true">
+        <Icon v-show="errorLoading" icon="ph:image-broken-duotone" class="min-w-8 text-4xl text-gray-500 opacity-75" />
+    </component>
 </template>
 
 
@@ -53,6 +54,9 @@ const props = defineProps({
         default: true
     }
 });
+
+
+const emit = defineEmits(['loaded'])
 
 const img = ref()
 
@@ -120,7 +124,7 @@ Hay varios tipos de situaciones:
 function init() {
     console.log('image:init()', props.src, 'props.width:', props.width, 'props.height:', props.height)
 
-    if(!props.src)
+    if (!props.src)
         return
 
     // si es una url absoluta y corresponde a otro servidor o no queremos optimización (1)
@@ -137,13 +141,13 @@ function init() {
 
     // Se conoce el tamaño original de la imagen (4)
     if (props.srcWidth && props.srcHeight)
-        return putFakeImage(getPixels(props.srcWidth),getPixels(props.srcHeight))
+        return putFakeImage(getPixels(props.srcWidth), getPixels(props.srcHeight))
 
     // Se debe recalcular sus dimensiones óptimas de visualización (5)
     // así que primero se debe solicitar sus dimensiones originales al servidor
     getImageSize(imageSrc.value)
         .then(originalSize => {
-            console.log('getImageSize', props.src, {originalSize})
+            console.log('getImageSize', props.src, { originalSize })
             putFakeImage(originalSize.width, originalSize.height)
         }).catch(err => {
             console.error(err)
@@ -152,7 +156,7 @@ function init() {
         })
 }
 
-var originalSize =  {width: 0, height: 0}
+var originalSize = { width: 0, height: 0 }
 
 function putFakeImage(width, height) {
     originalSize.width = width
@@ -172,7 +176,7 @@ function putFakeImage(width, height) {
 
 async function putImageWithSize(widthOp, heightOp) {
     console.log('image:putImageWithSize', imageSrc.value, widthOp, heightOp)
-    if(widthOp==originalSize.width&&heightOp==originalSize.height)
+    if (widthOp == originalSize.width && heightOp == originalSize.height)
         return putSrcImage(imageSrc.value)
     const webp = await isWebPSupported()
     var src = imageSrc.value + '?w=' + Math.round(parseFloat(widthOp)) + '&h=' + Math.round(parseFloat(heightOp))
@@ -188,6 +192,7 @@ function putSrcImage(src) {
         img.value.setAttribute('loading', 'lazy')
         img.value.onload = () => {
             imageLoaded.value = true
+            emit('loaded')
         }
     })
 }
@@ -211,5 +216,5 @@ onBeforeUnmount(() => {
 })
 
 // si cambia la imagen, reiniciamos el componente y la carga
-watch(()=>props.src, ()=>init())
+watch(() => props.src, () => init())
 </script>

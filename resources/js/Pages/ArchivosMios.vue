@@ -1,18 +1,17 @@
 <template>
-    <AdminLinks modelo="nodo" necesita="administrar archivos" class="mb-3" />
+    <AppLayout :title="ruta">
+        <AdminLinks modelo="nodo" necesita="administrar archivos" class="mb-3" />
 
-    <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietarioRef="propietarioRef" @updated="reloadPage"
+        <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietarioRef="propietarioRef" @updated="reloadPage"
         ruta="" rutaBase=""
         rootLabel="mis_archivos:"
         rootUrl=""
         :mostrarRutas="true"
         />
+    </AppLayout>
 </template>
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
-
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     ruta: {},

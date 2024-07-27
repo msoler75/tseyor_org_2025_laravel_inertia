@@ -74,9 +74,15 @@
 
         <Section class="py-14">
             <TextImage title="Libro: UTG Universidad Tseyor de Granada"
-                srcImage="http://localhost/almacen/medios/libros/249/La%20Universidad%20Tseyor%20de%20Granada.jpg?w=200" buttonLabel="Descargar libro"
+                 buttonLabel="Descargar libro"
+                 class="container"
                 href="/libros/la-universidad-tseyor-de-granada">
                 <p>Todo el material recopilado de la UTG desde su creación.</p>
+
+                <template #image>
+                    <Libro3d :libro="{slug: 'la-universidad-tseyor-de-granada', imagen: '/almacen/medios/libros/249/La%20Universidad%20Tseyor%20de%20Granada.jpg'}"
+                    imageClass="w-[200px]"/>
+                </template>
             </TextImage>
         </Section>
 

@@ -1,18 +1,21 @@
 <template>
     <div :class="full ? '!py-0 w-full h-full flex flex-col justify-center' : 'py-12'">
-        <div class="mx-auto text-center" :class="(srcImage ? 'with-image flex flex-col md:grid md:grid-cols-2 gap-7 lg:gap-12 ' : '') +
+        <div class="mx-auto text-center" :class="(srcImage || $slots.image? 'with-image flex flex-col md:grid md:grid-cols-2 gap-7 lg:gap-12 ' : '') +
             (full ? 'w-full h-full p-0' : 'container') + ' '+gridClass
             ">
-            <div v-if="srcImage" class="flex flex-col justify-center items-center gap-1 max-h-full bg-center" :class="(imageRight ? 'md:order-last ' : '') +
+            <div v-if="srcImage || $slots.image" class="flex flex-col justify-center items-center gap-1 max-h-full bg-center" :class="(imageRight ? 'md:order-last ' : '') +
                 (full ? 'justify-center flex-grow ' : '') +
                 (full && !cover ? 'relative ' : '')
                 + imageSideClass" :style="cover ? {
         'background-image': `url(${srcImageBackground})`,
         'background-size': 'cover'
     } : {}">
-                <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :width="imageWidth" :height="imageHeight"
+                <slot v-if="$slots.image" name="image" :class="imageClass"/>
+                <template v-else>
+                    <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :width="imageWidth" :height="imageHeight"
                     :src-width="srcWidth" :src-height="srcHeight" :class="imageClass" />
-                <small v-if="caption" class="container">{{ caption }}</small>
+                    <small v-if="caption" class="container">{{ caption }}</small>
+                </template>
             </div>
             <div class="flex flex-col items-center gap-7 mx-auto pb-5 lg:pb-0"
                 :class="(full ? 'justify-center ' : 'justify-evenly ') + textClass">

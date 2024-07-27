@@ -1,5 +1,6 @@
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Bienvenid@">
+
         <template #header>
             <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200 leading-tight mb-4">
                 Bienvenid@ {{ $page.props.auth.user.name }}
@@ -19,9 +20,9 @@
 
                     <div class="space-y-4">
                         <Link class="btn btn-primary w-full" :href="route('usuario', $page.props.auth.user.id)">Completar tu perfil</Link>
-                        <Link class="btn btn-primary w-full" href="/novedades">Ver novedades de la web</Link>
+                        <Link class="btn btn-primary w-full" href="/novedades">Novedades de la web</Link>
                         <Link class="btn btn-primary w-full" href="/audios">Audios de Tseyor</Link>
-                        <Link class="btn btn-primary w-full" href="/glosario">Ver Glosario terminológico</Link>
+                        <Link class="btn btn-primary w-full" href="/glosario">Glosario de Tseyor</Link>
                     </div>
                 </div>
             </div>

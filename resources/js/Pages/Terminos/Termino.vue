@@ -77,7 +77,7 @@
                 </div>
 
                 <GridAppear v-if="referencias.libros.length" col-width="200px" class="gap-5">
-                    <Libro v-for="libro of referencias.libros" :key="libro.slug" :libro="libro"/>
+                    <Libro3d v-for="libro of referencias.libros" :key="libro.slug" :libro="libro" imageClass="w-[150px]"/>
                 </GridAppear>
             </ContentMain>
 

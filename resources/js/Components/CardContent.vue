@@ -8,7 +8,10 @@
                :preserve-page="preservePage"
                :auto-scroll="autoScroll">
         <div v-if="image" class="flex-shrink-0 overflow-hidden" :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
-            <div v-if="skeleton" class="skeleton w-full h-full rounded-none"></div>
+            <div v-if="$slots.image" class="w-full h-full">
+                <slot name="image"/>
+            </div>
+            <div v-else-if="skeleton" class="skeleton w-full h-full rounded-none"></div>
             <div v-else-if="imageContained" class="w-full h-full bg-center transition duration-300 group-hover:scale-105"
             :class="skeleton?'skeleton':''">
                 <Image class="w-full h-full" :src="image"/>

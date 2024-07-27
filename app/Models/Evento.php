@@ -21,7 +21,10 @@ class Evento extends ContenidoBaseModel
         'fecha_inicio',
         'fecha_fin',
         'hora_inicio',
-        'visibilidad'
+        'visibilidad',
+        'centro_id',
+        'sala_id',
+        'equipo_id'
     ];
 
     protected $dates = [

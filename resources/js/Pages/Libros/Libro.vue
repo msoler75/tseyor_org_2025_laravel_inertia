@@ -9,11 +9,13 @@
         <div class="max-w-[900px] mx-auto flex flex-col md:flex-row gap-10 mt-12">
 
 
-            <div class=" card bg-base-100 shadow-2xl w-fit h-fit flex justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0">
+            <div v-if="true" class=" card bg-base-100 shadow-2xl w-fit h-fit flex justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0">
                 <ImageShadow :src="libro.imagen" width="300" height="450" :alt="libro.titulo" class="object-contain rounded-[2px]"
                 :style="{'view-transition-name': `imagen-libro-${libro.id}`}"
                 />
             </div>
+
+            <Libro3d v-else :libro="libro" imageClass="w-[200px] md:w-[300px]"/>
 
             <div class="p-6 card bg-base-100 shadow animate-fade-in">
 
@@ -45,7 +47,13 @@
                         :tag="contenido.categoria"
                         image-left image-contained
                         class="h-[300px]"
-                        imageClass="w-1/3 h-full sm:w-[200px] sm:h-[300px]"/>
+                        imageClass="w-1/3 h-full sm:w-[200px] sm:h-[300px]">
+                        <template #imagex>
+                            <div class="flex  w-full h-full items-center justify-center">
+                                <Libro3d :libro="contenido" imageClass="w-[180px]"/>
+                            </div>
+                        </template>
+                        </CardContent>
         </GridAppear>
 
 

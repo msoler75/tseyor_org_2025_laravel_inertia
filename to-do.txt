@@ -15,6 +15,9 @@ verificar envío de correos:
 -formulario contacto
 -Inscripcion equipos
 
+IP ABUSER MIDDLEWARE
+https://github.com/rahulalam31/Laravel-Abuse-IP
+
 ADMIN
 Hacer un botón para users en el admin para generar nueva contraseña
 

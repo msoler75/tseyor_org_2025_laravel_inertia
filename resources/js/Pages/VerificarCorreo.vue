@@ -1,11 +1,8 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
 import usePermisos from '@/Stores/permisos'
-import AppLayout from '@/Layouts/AppLayout.vue'
 
 const permisos = usePermisos()
-
-// defineOptions({ layout: AppLayout })
 
 defineProps({
     canResetPassword: Boolean,
@@ -22,9 +19,9 @@ const disabledResend = ref(false)
 const submit = () => {
     disabledResend.value = true
     axios.post(route('verification.send'))
-    setTimeout(()=>{
+    setTimeout(() => {
         disabledResend.value = false
-    }, 1000*15)
+    }, 1000 * 15)
 };
 
 
@@ -37,7 +34,7 @@ const logout = () => {
 
 <template>
 
-    <Head title="Validar correo" />
+    <Head title="Verificar correo" />
 
     <AuthenticationCard>
         <template #logo>
@@ -50,14 +47,20 @@ const logout = () => {
 
         <form @submit.prevent="submit" class="space-y-4">
             <div class="text-sm">
-                Antes de continuar, <b>revisa por favor tu buzón de correo</b> para que podamos verificar tu dirección de
-                correo electrónico.
+                Antes de continuar, <b>revisa por favor tu buzón de correo</b> para que podamos verificar tu dirección
+                de correo:
+            </div>
+                <div class="text-sm">
+                <b class="break-keep">{{ $page.props.auth.user.email }}</b>
+            </div>
+            <div class="text-sm">
                 Si no has recibido el mensaje, puedes solicitar nuevamente la verificación.
             </div>
             <div class="flex justify-between items-center gap-4">
-                <input :disabled="disabledResend" type="submit" class="btn btn-small flex-shrink" value="Reenviar verificación">
+                <input :disabled="disabledResend" type="submit" class="btn btn-small flex-shrink"
+                    value="Reenviar verificación">
                 <div class="flex items-center gap-3 text-sm">
-                    <Link :href="route('profile.show')" class="underline">Mi cuenta</Link>
+                    <Link :href="route('profile.show')" class="underline">Cambiar correo</Link>
                     <div @click="logout" class="underline cursor-pointer">Cerrar sesión</div>
                 </div>
             </div>
@@ -66,5 +69,7 @@ const logout = () => {
 </template>
 
 <style scoped>
-form input {width: fit-content !important}
+form input {
+    width: fit-content !important
+}
 </style>
