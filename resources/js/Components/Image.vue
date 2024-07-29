@@ -15,7 +15,7 @@ import { getImageSize, getImageUrl, isWebPSupported } from '@/composables/imageu
 const props = defineProps({
     src: {
         type: String,
-        required: true
+        required: false
     },
     fallback: {
         type: String,
@@ -122,17 +122,17 @@ Hay varios tipos de situaciones:
 */
 
 function init() {
-    console.log('image:init()', props.src, 'props.width:', props.width, 'props.height:', props.height)
+    console.log('image:init()', props.src, 'fallback:', props.fallback, 'props.width:', props.width, 'props.height:', props.height)
 
-    if (!props.src)
+    if (!imageSrc.value)
         return
 
     // si es una url absoluta y corresponde a otro servidor o no queremos optimización (1)
-    if (props.src.match(/https?:\/\/[^/]+/)?.[0] === myDomain.value || !props.optimize)
+    if (imageSrc.value.match(/https?:\/\/[^/]+/)?.[0] === myDomain.value || !props.optimize)
         return putSrcImage(imageSrc.value)
 
     // si ya está la imagen redimensionada (2)
-    if (props.src.match(/\?[wh]=/))
+    if (imageSrc.value.match(/\?[wh]=/))
         return putSrcImage(imageSrc.value)
 
     // Se ha establecido el tamaño mediante props (width y height) (3)
@@ -147,7 +147,7 @@ function init() {
     // así que primero se debe solicitar sus dimensiones originales al servidor
     getImageSize(imageSrc.value)
         .then(originalSize => {
-            console.log('getImageSize', props.src, { originalSize })
+            console.log('getImageSize', imageSrc.value, { originalSize })
             putFakeImage(originalSize.width, originalSize.height)
         }).catch(err => {
             console.error(err)
@@ -164,7 +164,7 @@ function putFakeImage(width, height) {
     // generar una imagen transparent SVG con formato URI, debe tener ancho igual a size.width y alto igual a size.height
     displaySrc.value = `data:image/svg+xml,%3Csvg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E`
     setTimeout(() => {
-        console.log('after put fake image', props.src, 'dimensions are', img.value.offsetWidth, img.value.offsetHeight)
+        console.log('after put fake image', imageSrc.value, 'dimensions are', img.value.offsetWidth, img.value.offsetHeight)
         // obtenemos las dimensiones reales de visualización (img.value.offsetWidth y offsetHeight)
         if (isMounted.value) {
             putImageWithSize(img.value.offsetWidth, img.value.offsetHeight)
@@ -199,7 +199,7 @@ function putSrcImage(src) {
 
 
 onMounted(() => {
-    console.log(`image:image mounted: ${props.src}`)
+    console.log(`image:image mounted: ${imageSrc.value}`)
     // doImageSize()
     isMounted.value = true
     //if (justPutResized.value)

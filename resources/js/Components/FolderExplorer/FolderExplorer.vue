@@ -3,7 +3,6 @@
         <div class="w-full sticky border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
             :class="embed ? 'pt-[2rem] top-0' : ' pt-[4rem] top-[1.5rem]'">
 
-
             <div :class="embed ? '' : 'lg:container mx-auto'">
                 <Breadcrumb :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
                     title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5" :rootLabel="rootLabel"
@@ -25,14 +24,13 @@
                             class="transform scale-150" />
                     </button>
 
-                    <button class="btn btn-neutral btn-sm btn-icon" title="Cerrar búsqueda"
+                    <button class="btn btn-neutral btn-sm btn-icon !w-fit whitespace-nowrap" title="Cerrar búsqueda"
                         @click="mostrandoResultados = false">
                         <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                         <Icon icon="ph:x-bold" />
                     </button>
 
                 </div>
-
 
                 <div v-if="!mostrandoResultados" class="flex gap-x w-full max-w-full">
                     <ConditionalLink v-if="!seleccionando" class="btn btn-neutral btn-sm btn-icon cursor-pointer"
@@ -43,8 +41,8 @@
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
                     </ConditionalLink>
 
-                    <ConditionalLink v-if="items.length > 1 && !seleccionando" :href="items[1].url"
-                        :tag="embed ? 'span' : 'a'" class="btn btn-neutral btn-sm btn-icon w-fit"
+                    <ConditionalLink v-if="items.length > 1 && !seleccionando && items[1].tipo == 'carpeta'"
+                        :href="items[1].url" :tag="embed ? 'span' : 'a'" class="btn btn-neutral btn-sm btn-icon w-fit"
                         title="Ir a una carpeta superior" @click="clickFolder(items[1], $event)" :is-link="!embed"
                         :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:arrow-bend-left-up-duotone" class="text-2xl" />
@@ -178,8 +176,7 @@
                 :seleccionando="seleccionando"
                 :class="seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
 
-                <button
-                v-if="modoInsertar && imagenesSeleccionadas.length"
+                <button v-if="modoInsertar && imagenesSeleccionadas.length"
                     class="btn btn-secondary flex gap-x items-center" @click.prevent="insertarImagenes">
                     <Icon icon="material-symbols:close-rounded" />
                     <span>Insertar</span>
@@ -258,15 +255,15 @@
             <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
                 <Spinner />
             </div>
-            <div v-else-if="!itemsOrdenados.length"
+            <div v-else-if="!mostrandoResultados&&!itemsOrdenados.length"
                 class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
                 <div>No hay archivos</div>
             </div>
-            <div v-else-if="selectors.archivosVista === 'lista'" :class="itemsOrdenados.length ? 'mr-2' : ''">
+            <div v-else-if="itemsMostrar.length && selectors.archivosVista === 'lista'" :class="itemsMostrar.length ? 'mr-2' : ''">
                 <table class="w-full lg:w-auto mx-auto" :class="transitionActive ? 'animating' : ''">
-                    <thead class="hidden sm:table-header-group" :class="itemsOrdenados.length ? '' : 'opacity-0'">
-                        <tr v-if="itemsMostrar.length">
+                    <thead class="hidden sm:table-header-group" :class="itemsMostrar.length ? '' : 'opacity-0'">
+                        <tr>
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
                             <th></th>
                             <th class="min-w-[16rem] text-left cursor-pointer"
@@ -287,11 +284,14 @@
                                 Permisos</th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Propietario</th>
-                            <th v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'">Ubicación
+                            <th v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'"
+                            class="hidden lg:table-cell text-sm"
+                            >Ubicación
                             </th>
                             <th class="hidden md:table-cell"></th>
                         </tr>
                     </thead>
+
                     <TransitionGroup tag="tbody" name="files">
                         <tr v-for="item in itemsMostrar" :key="item.ruta"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '') + (!seleccionando || esAdministrador || item.puedeLeer ? '' : 'opacity-50 pointer-events-none')">
@@ -308,7 +308,7 @@
                                     class="cursor-pointer text-4xl sm:text-xl" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id"
                                     :url="item.url" :class="seleccionando ? 'pointer-events-none' : ''"
-                                    @click="clickFolder(item, $event)" :is-link="!embed" />
+                                    @click="clickFolder(item, $event)" :is-link="!embed" :arrow="item.acceso_directo" />
                                 <FileIcon v-else :url="item.url" class="cursor-pointer text-4xl sm:text-xl"
                                     :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
                                     :is-link="!embed" />
@@ -365,19 +365,23 @@
                                 <span v-else>-</span>
                             </td>
                             <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
-                                class="hidden sm:table-cell text-center" v-on:touchstart.passive="ontouchstart(item)"
-                                v-on:touchend.passive="ontouchend(item)">{{
+                                class="hidden sm:table-cell text-center text-sm"
+                                v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">{{
                                     item.permisos || '...' }}
                             </td>
                             <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
-                                class="hidden sm:table-cell text-center min-w-[10rem]"
+                                class="hidden sm:table-cell text-center text-sm min-w-[10rem]"
                                 v-on:touchstart.passive="ontouchstart(item)" v-on:touchend.passive="ontouchend(item)">
                                 {{ item.propietario?.usuario.nombre || '...' }}/{{ item.propietario?.grupo.nombre ||
                                     '...'
                                 }}
                             </td>
-                            <td v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'">
-                                /{{ item.carpeta }}
+                            <td v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'"
+                                class="hidden lg:table-cell text-sm">
+                                <div class="flex items-center gap-2 lg:min-w-64 xl:min-w-[500px] 2xl:min-w-[700px]">
+                                    <FolderIcon :arrow="true" :url="item.carpeta" />
+                                    <Link :href="item.carpeta" class="break-all">/{{ item.carpeta }}</Link>
+                                </div>
                             </td>
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48" v-if="item.tipo !== 'disco'"
@@ -441,7 +445,7 @@
                     </TransitionGroup>
                 </table>
             </div>
-            <div v-else-if="selectors.archivosVista === 'grid'">
+            <div v-else-if="itemsMostrar.length && selectors.archivosVista === 'grid'">
                 <div class="grid grid-cols-3 gap-4 pt-6">
                     <TransitionGroup name="files">
                         <div v-for="item in itemsMostrar" :key="item.ruta"
@@ -459,7 +463,7 @@
                                 <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id"
                                     class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
-                                    @click="clickFolder(item, $event)" :is-link="!embed" />
+                                    @click="clickFolder(item, $event)" :is-link="!embed" :arrow="item.acceso_directo" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
                                     @click="clickFile(item, $event)">
                                     <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain" />
@@ -724,7 +728,7 @@
                         </tr>
                         <tr>
                             <th>Propietario</th>
-                            <td class="flex gap-x items-center">
+                            <td class="flex flex-wrap gap-x items-center">
                                 <span class="flex items-center gap-x" title="usuario">
                                     <Icon icon="ph:user-duotone" /> {{ item.propietario?.usuario.nombre }}
                                 </span>
@@ -734,9 +738,8 @@
                                 </span>
 
                                 <div v-if="item.propietario?.usuario.id == user?.id"
-                                    class="badge badge-warning text-xs">
-                                    Eres
-                                    el propietario</div>
+                                    class="badge badge-warning text-xs whitespace-nowrap">
+                                    Eres el propietario</div>
                             </td>
                         </tr>
                         <tr>
@@ -1222,6 +1225,7 @@ function onSearch() {
     showSearchInput.value = false
     buscando.value = true
     mostrandoResultados.value = true
+    resultadosBusqueda.value = []
     axios('/archivos_buscar', {
         params: {
             ruta: rutaActual.value,
@@ -1998,7 +2002,7 @@ function clickBreadcrumb(item) {
 
 // EMBED
 
-const imagenesSeleccionadas = computed(()=> itemsSeleccionados.value.filter(item=>item.nombre.match(/.*\.(jpe?g|webp|svg|png|gif|pcx|bmp)$/i)))
+const imagenesSeleccionadas = computed(() => itemsSeleccionados.value.filter(item => item.nombre.match(/.*\.(jpe?g|webp|svg|png|gif|pcx|bmp)$/i)))
 
 // embed
 function insertarImagenes() {

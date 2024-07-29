@@ -98,7 +98,7 @@
                                                 {{ $page.props.auth.user.name }}
                                             </div>
 
-                                            <DropdownLink :href="route('mis_archivos', $page.props.auth.user.id)">
+                                            <DropdownLink :href="route('mis_archivos')">
                                                 Mis Archivos
                                             </DropdownLink>
 

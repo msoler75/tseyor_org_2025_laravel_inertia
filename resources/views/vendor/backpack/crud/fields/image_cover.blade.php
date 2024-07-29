@@ -17,6 +17,7 @@
     value="{{$field['value']}}"
     {{$listImages?'list-images':''}}
     {{$canDelete?'can-delete':''}}
+    initial-images="{{$field['attributes']['initial-images'] ?? ''}}"
     />
 
     {{-- HINT --}}

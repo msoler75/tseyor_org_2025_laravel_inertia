@@ -9,7 +9,7 @@ use App\Models\Revision;
 use App\Models\Busqueda;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Pigmalion\DiskUtil;
+use App\Pigmalion\StorageItem;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
@@ -78,9 +78,12 @@ class AdminController // extends Controller
 
     public function listImages($ruta)
     {
+        $loc = new StorageItem($ruta);
 
-        $imagenes = DiskUtil::obtenerImagenes($ruta);
+        if(!$loc->directoryExists())
+            return response()->json([], 400);
 
+        $imagenes = $loc->listImages();
         // return json response
         return response()->json($imagenes);
     }

@@ -41,9 +41,9 @@ class EventosController extends Controller
     public function show($id)
     {
         if (is_numeric($id)) {
-            $evento = Evento::findOrFail($id);
+            $evento = Evento::with(['centro', 'sala', 'equipo'])->findOrFail($id);
         } else {
-            $evento = Evento::where('slug', $id)->firstOrFail();
+            $evento = Evento::with(['centro', 'sala', 'equipo'])->where('slug', $id)->firstOrFail();
         }
 
         $borrador = request()->has('borrador');

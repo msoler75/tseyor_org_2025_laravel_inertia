@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Equipo;
-use App\Models\Carpeta;
+use App\Models\NodoCarpeta;
 use App\Models\Invitacion;
 use App\Models\Solicitud;
 use App\Models\User;
@@ -25,6 +25,7 @@ use Carbon\Carbon;
 use App\Notifications\SolicitudEquipo;
 use App\Notifications\AbandonoEquipo;
 use Illuminate\Support\Facades\Notification;
+use App\Pigmalion\StorageItem;
 
 class EquiposController extends Controller
 {
@@ -42,8 +43,8 @@ class EquiposController extends Controller
 
         $resultados = $categoria ?
             Equipo::withCount('miembros')
-                ->where('categoria', '=', $categoria)
-                ->paginate(10)->appends(['categoria' => $categoria])
+            ->where('categoria', '=', $categoria)
+            ->paginate(10)->appends(['categoria' => $categoria])
             : ($buscar ? Equipo::withCount('miembros')
                 ->where('nombre', 'like', '%' . $buscar . '%')
                 ->orWhere('descripcion', 'like', '%' . $buscar . '%')
@@ -78,6 +79,7 @@ class EquiposController extends Controller
             ;
         }]);
 
+
         if (is_numeric($id)) {
             $equipo = $equipo->findOrFail($id);
         } else {
@@ -90,9 +92,10 @@ class EquiposController extends Controller
 
         $user = auth()->user();
         foreach ($carpetas as $carpeta) {
-            $nodo = Nodo::desde($carpeta->ruta);
+            $nodo = Nodo::desde($carpeta->ubicacion);
             if ($nodo && Gate::allows('ejecutar', $nodo)) {
-                $archivos = $carpeta->ultimosArchivos();
+                $loc = new StorageItem($carpeta->ubicacion);
+                $archivos = $loc->lastFiles();
                 $ultimosArchivos = array_merge($ultimosArchivos, $archivos);
             }
         }
@@ -145,6 +148,7 @@ class EquiposController extends Controller
         // informes
 
         $informes = Informe::where('equipo_id', $equipo->id)->where('visibilidad', 'P')->latest('updated_at')->take(3)->get()->toArray();
+
 
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
@@ -257,9 +261,9 @@ class EquiposController extends Controller
         // Subir la nueva imagen (si se proporciona)
         $newImage = $request->file('imagen');
         if ($newImage) {
-            $path = $newImage->store('medios/equipos', ['disk'=>'public']);
+            $path = $newImage->store('medios/equipos', ['disk' => 'public']);
             $equipo->imagen = str_replace(url(''), "", Storage::disk('public')->url($path));
-            Log::info("path Imagen: ".$path." -> Equipo.imagen=".$equipo->imagen);
+            Log::info("path Imagen: " . $path . " -> Equipo.imagen=" . $equipo->imagen);
         }
 
         $equipo->save();
@@ -441,8 +445,8 @@ class EquiposController extends Controller
             // Verificar si ya se envió una invitación a ese correo recientemente (ultimos dos días)
             if (
                 Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)
-                    ->whereDate('created_at', '>=', Carbon::now()->subDays(2))
-                    ->first()
+                ->whereDate('created_at', '>=', Carbon::now()->subDays(2))
+                ->first()
             ) {
                 $invitacionReciente[] = $correo;
                 continue;
@@ -477,7 +481,6 @@ class EquiposController extends Controller
             } catch (\Exception $e) {
                 return response()->json(['error' => 'Error del servidor. No se ha podido enviar la invitación: ' . $e->getMessage()], 500);
             }
-
         }
 
         // mandamos invitaciones a los usuarios registrados
@@ -507,7 +510,8 @@ class EquiposController extends Controller
             // Verificar si ya se envió una invitación a ese correo
             if (Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)
                 ->whereDate('created_at', '>=', Carbon::now()->subDays(2))
-                ->first()) {
+                ->first()
+            ) {
                 $invitacionReciente[] = $id;
                 continue;
             }
@@ -517,7 +521,8 @@ class EquiposController extends Controller
             // Verificar si ya se envió una invitación a ese usuario
             if (Invitacion::where('equipo_id', $idEquipo)
                 ->whereDate('created_at', '>=', Carbon::now()->subDays(2))
-                ->where('user_id', $id)->first()) {
+                ->where('user_id', $id)->first()
+            ) {
                 $invitacionReciente[] = $id;
                 continue;
             }
@@ -677,10 +682,10 @@ class EquiposController extends Controller
         // comprueba si no tenía ya una solicitud previa
         if (
             Solicitud::where('user_id', $user->id)
-                ->where('equipo_id', $idEquipo)
-                ->whereNull('fecha_aceptacion')
-                ->whereNull('fecha_denegacion')
-                ->exists()
+            ->where('equipo_id', $idEquipo)
+            ->whereNull('fecha_aceptacion')
+            ->whereNull('fecha_denegacion')
+            ->exists()
         )
             return response()->json(['error' => 'Ya tiene una solicitud previa'], 400);
 
@@ -792,7 +797,9 @@ class EquiposController extends Controller
 
         $equipo = Equipo::findOrFail($idEquipo);
 
-       $this->bajaUsuario($user, $equipo);
+        $this->bajaUsuario($user, $equipo);
+
+        $this->asignarNuevoCoordinador($equipo);
 
         // notificamos a los coordinadores del equipo
         Notification::send($equipo->coordinadores, new AbandonoEquipo($equipo, $user));
@@ -800,9 +807,14 @@ class EquiposController extends Controller
         return response()->json(['message' => 'Has abandonado el equipo'], 200);
     }
 
-    private function bajaUsuario(User $user, Equipo $equipo) {
-         // Verificar si el usuario ya es miembro del equipo
-         if (!$equipo->esMiembro($user->id)) {
+
+    /**
+     * Da de baja al usuario del equipo y remueve sus permisos
+     */
+    private function bajaUsuario(User $user, Equipo $equipo)
+    {
+        // Verificar si el usuario ya es miembro del equipo
+        if (!$equipo->esMiembro($user->id)) {
             return response()->json(['error' => 'No eres del equipo'], 400);
         }
 
@@ -814,7 +826,16 @@ class EquiposController extends Controller
 
         // eliminamos todas las solicitudes del usuario
         Solicitud::where('user_id', $user->id)
-        ->where('equipo_id', $equipo->id)
-        ->delete();
+            ->where('equipo_id', $equipo->id)
+            ->delete();
+    }
+
+
+
+    /**
+     * Verifica si hay coordinadores, o le asigna uno
+     */
+    private function verificarExistenciaCoordinador($equipo) {
+
     }
 }

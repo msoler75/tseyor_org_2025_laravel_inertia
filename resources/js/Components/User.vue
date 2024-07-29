@@ -11,10 +11,8 @@
             <Avatar :user="user" :link="false" :big="true" />
             <h3>{{ name }}</h3>
             <div class="prose">
-                <blockquote>
-                    <p>
-                        {{ user.frase }}
-                    </p>
+                <blockquote v-if="user.frase">
+                    <p>{{ user.frase }}</p>
                 </blockquote>
             </div>
             <div class="flex justify-between sm:justify-end gap-3">

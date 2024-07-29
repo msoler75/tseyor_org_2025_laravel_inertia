@@ -62,7 +62,7 @@ class AclCrudController extends CrudController
             'orderable' => true,
             'orderLogic' => function ($query, $column, $columnDirection) {
                 return $query->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
-                    ->orderBy('nodos.ruta', $columnDirection)->select('nodos_acl.*');
+                    ->orderBy('nodos.ubicacion', $columnDirection)->select('nodos_acl.*');
             },
             'limit' => 200
         ]);

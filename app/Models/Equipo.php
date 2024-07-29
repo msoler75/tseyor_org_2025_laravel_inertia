@@ -20,7 +20,6 @@ class Equipo extends ContenidoBaseModel
         'descripcion',
         'imagen',
         'categoria',
-        'user_id',
         'group_id',
         'anuncio',
         'reuniones',
@@ -47,10 +46,10 @@ class Equipo extends ContenidoBaseModel
             ->where('rol', 'coordinador');
     }
 
-    public function creador() // creador del equipo
+    /* public function creador() // creador del equipo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
-    }
+    }*/
 
     public function grupo()
     {
@@ -60,7 +59,7 @@ class Equipo extends ContenidoBaseModel
     // carpetas del equipo
     public function carpetas()
     {
-        return $this->hasMany(Carpeta::class, 'group_id', 'id');
+        return $this->hasMany(NodoCarpeta::class, 'group_id', 'group_id');
     }
 
 

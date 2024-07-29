@@ -10,7 +10,7 @@ use App\Models\Libro;
 use App\Pigmalion\Countries;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Storage;
-use App\Pigmalion\DiskUtil;
+use App\Pigmalion\StorageItem;
 
 
 class CentrosController extends Controller
@@ -65,7 +65,8 @@ class CentrosController extends Controller
             abort(404); // Manejo de Centro no encontrada
         }
 
-        $imagenes = DiskUtil::obtenerImagenes($centro->getCarpetaMedios());
+        $loc = new StorageItem($centro->getCarpetaMedios());
+        $imagenes = $loc->listImages();
 
         if(!in_array($centro->imagen, $imagenes))
             array_unshift($imagenes, $centro->imagen);

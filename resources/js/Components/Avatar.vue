@@ -1,5 +1,14 @@
 <template>
-    <div class="avatar" :title="user.name || user.nombre || user.slug">
+
+<component :is="link?User:'div'" v-if="!image || image.match(/^https:\/\/ui-avatars.com\/api\/\?name=/)" :user="user" class="font-normal">
+    <div class="avatar placeholder">
+        <div class="bg-neutral text-neutral-content rounded-full" :class="big?'w-32':'w-12'">
+            <span :class="big?'text-4xl':''">{{ initials(name) }}</span>
+        </div>
+    </div>
+</component>
+
+    <div v-else class="avatar" :title="name">
         <div class="rounded-full" :class="imageClass">
             <User :user="user" :popupCard="popupCard" v-if="link" class="w-full h-full">
                 <Image :src="image" :alt="name" :title="name" :fallback="fallbackImage" />
@@ -10,6 +19,10 @@
 </template>
 
 <script setup>
+import User from '@/Components/User.vue'
+
+import { initials } from '@/composables/textutils.js'
+
 const fallbackImage = ref('/almacen/profile-photos/user.png')
 
 const props = defineProps({
@@ -22,13 +35,13 @@ const props = defineProps({
 
 console.log('preparing avatar. user=', props.user)
 
-const name = computed(() => props.user.name || props.user.nombre)
+const name = computed(() => props.user.name || props.user.nombre || props.user.slug?.replace(/-/g, ' '))
 const image = computed(() => props.user.avatar || props.user.profile_photo_url || props.user.imagen)
 
 const imageClass = computed(() => {
-    if(props.imageClass) return props.imageClass
+    if (props.imageClass) return props.imageClass
     if (props.big) return 'w-32 h-32'
-    return 'w-14 h-14'
+    return 'w-12 h-12'
 })
 </script>
 

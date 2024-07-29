@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use League\HTMLToMarkdown\HtmlConverter;
 use Illuminate\Support\Facades\Log;
 use App\Pigmalion\DOMHelper;
+use App\Pigmalion\StorageItem;
 
 class Markdown
 {
@@ -661,9 +662,6 @@ class Markdown
 
         Log::info("Markdown::moverImagenes $disk: $carpetaOrigen -> $carpetaDestino  --- $md");
 
-        // list($disk, $carpetaOrigen) = DiskUtil::obtenerDiscoRuta($carpetaOrigen);
-        // list($disk, $carpetaDestino) = DiskUtil::obtenerDiscoRuta($carpetaDestino);
-
         // Log::info("Markdown::moverImagenes $disk: $carpetaOrigen -> $carpetaDestino");
 
         // busca todas las imagenes en $md que estén en carpetaOrigen
@@ -680,15 +678,15 @@ class Markdown
 
             Log::info("move1: $disk: $imagen -> $nuevoNombre");
 
-            list($disk, $origen) = DiskUtil::obtenerDiscoRuta($imagen);
-            list($disk, $destino) = DiskUtil::obtenerDiscoRuta($nuevoNombre);
+            $origen = new StorageItem($imagen);
+            $destino = new StorageItem($nuevoNombre);
 
-            Log::info("move2: $disk: $origen -> $destino");
+            Log::info("move2: $imagen -> $nuevoNombre");
 
             // movemos la imagen a la nueva carpeta
-            if (Storage::disk($disk)->copy($origen,  $destino)) {
+            if (copy($origen->path, $destino->path)) {
 
-                Storage::disk($disk)->delete($origen);
+                @unlink($origen->path);
 
                 // guardamos el movimiento de archivo
                 $imagenes_movidas[] = ['desde' => $imagen, 'a' => $nuevoNombre];
