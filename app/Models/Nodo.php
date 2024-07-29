@@ -18,10 +18,10 @@ class Nodo extends Model
 
     protected $revisionCreationsEnabled = true;
 
-    protected $fillable = ['ruta', 'permisos', 'user_id', 'group_id', 'es_carpeta'];
+    protected $fillable = ['ubicacion', 'permisos', 'user_id', 'group_id', 'es_carpeta'];
 
     protected $attributes = [
-        'ruta' => '',
+        'ubicacion' => '',
         'permisos' => '1755',
         'user_id' => 1,
         // Por ejemplo, puedes usar 0 como valor predeterminado para el user_id
@@ -65,23 +65,23 @@ class Nodo extends Model
 
 
     /**
-     * Obtiene el nodo más cercano siendo el mismo o antecesor de la ruta
+     * Obtiene el nodo más cercano siendo el mismo o antecesor de la ubicacion
      */
-    public static function desde($ruta)
+    public static function desde($ubicacion)
     {
-        if($ruta=='mis_archivos') return null;
+        if($ubicacion=='mis_archivos') return null;
 
         $nodo = Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             ->leftJoin('users', 'users.id', '=', 'user_id')
             ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
-            ->whereRaw("'$ruta' LIKE CONCAT(nodos.ruta, '%')")
-            ->orderByRaw('LENGTH(nodos.ruta) DESC')
+            ->whereRaw("'$ubicacion' LIKE CONCAT(nodos.ubicacion, '%')")
+            ->orderByRaw('LENGTH(nodos.ubicacion) DESC')
             ->first();
 
         if (!$nodo) {
             // crea un nodo por con los permisos por defecto
             $nodo = new Nodo();
-            $nodo->ruta = ltrim($ruta, '/');
+            $nodo->ubicacion = $ubicacion;
             $nodo->propietario_usuario = "admin"; // valores por defecto
             $nodo->propietario_grupo = "admin";
         }
@@ -98,7 +98,7 @@ class Nodo extends Model
             ->leftJoin('users', 'users.id', '=', 'user_id')
             ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
             ->where('nodos.user_id', '=', $idUser)
-            ->orderByRaw('LENGTH(nodos.ruta) DESC')
+            ->orderByRaw('LENGTH(nodos.ubicacion) DESC')
             ->get();
     }
 
@@ -106,14 +106,14 @@ class Nodo extends Model
     /**
      * Obtiene todos los nodos de la carpeta, sin incluir el nodo de la carpeta
      */
-    public static function hijos($ruta)
+    public static function hijos($ubicacion)
     {
         return Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             ->leftJoin('users', 'users.id', '=', 'user_id')
             ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
-            ->where('nodos.ruta', 'LIKE', $ruta . '/%')
-            ->whereRaw("LENGTH(nodos.ruta) - LENGTH(REPLACE(nodos.ruta, '/', '')) = " . (substr_count($ruta, '/') + 1))
-            ->orderByRaw('LENGTH(nodos.ruta) ASC')
+            ->where('nodos.ubicacion', 'LIKE', $ubicacion . '/%')
+            ->whereRaw("LENGTH(nodos.ubicacion) - LENGTH(REPLACE(nodos.ubicacion, '/', '')) = " . (substr_count($ubicacion, '/') + 1))
+            ->orderByRaw('LENGTH(nodos.ubicacion) ASC')
             ->get();
     }
 
@@ -121,22 +121,22 @@ class Nodo extends Model
 
 
     /**
-     * Renombra los nodos afectados por cambios en la ruta
+     * Renombra los nodos afectados por cambios en la ubicacion
      * Ejemplo: renombrar un archivo, o mover un archivo de una carpeta a otra
      */
     public static function mover($from, $to)
     {
-        Nodo::where('ruta', 'like', "$from/%")
-            ->orWhere('ruta', $from)
+        Nodo::where('ubicacion', 'like', "$from/%")
+            ->orWhere('ubicacion', $from)
             ->update([
-                'ruta' => DB::raw("CONCAT('$to', SUBSTRING(ruta, LENGTH('$from') + 1))")
+                'ubicacion' => DB::raw("CONCAT('$to', SUBSTRING(ubicacion, LENGTH('$from') + 1))")
             ]);
     }
 
     /**
-     * Crea un nuevo nodo, indicando la ruta y opcionalmente el usuario propietario
+     * Crea un nuevo nodo, indicando la ubicacion y opcionalmente el usuario propietario
      */
-    public static function crear(string $ruta, bool $es_carpeta = false, ?User $user = null)
+    public static function crear(string $ubicacion, bool $es_carpeta = false, ?User $user = null)
     {
         // Obtén el valor de umask desde el archivo de configuración
         $umask = Config::get('app.umask');
@@ -148,7 +148,7 @@ class Nodo extends Model
         $permisos = 01777 & ~$umask;
 
         /*Nodo::create([
-            'ruta' => $ruta,
+            'ruta' => $ubicacion,
             'user_id' => optional($user)->id ?? 1,
             'group_id' => 1,
             'permisos' => decoct($permisos),
@@ -156,7 +156,7 @@ class Nodo extends Model
         ]);*/
 
         Nodo::updateOrCreate(
-            ['ruta' => $ruta],
+            ['ubicacion' => $ubicacion],
             [
                 'user_id' => optional($user)->id ?? 1,
                 'group_id' => 1,
@@ -218,11 +218,11 @@ class Nodo extends Model
         // tiene acceso a una carpeta padre?
 
         // parece que los LIKE no funcionan aquí:
-        //if ($aclist->where("'$nodo->ruta'", 'LIKE', "CONCAT(ruta, '%')")->count() > 0)
+        //if ($aclist->where("'$nodo->ubicacion'", 'LIKE', "CONCAT(ubicacion, '%')")->count() > 0)
         //  return true;
 
         foreach ($aclListArray as $registro) {
-            if (strpos($this->ruta, $registro['ruta']) === 0) {
+            if (strpos($this->ubicacion, $registro['ubicacion']) === 0) {
                 return true;
             }
         }
@@ -240,8 +240,8 @@ class Nodo extends Model
         return [
             'id' => $this->id,
             // <- Always include the primary key
-            'title' => basename($this->ruta),
-            'ruta' => $this->ruta
+            'title' => basename($this->ubicacion),
+            'ubicacion' => $this->ubicacion
         ];
     }
 

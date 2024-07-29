@@ -14,6 +14,7 @@ class MembresiaObserver
      */
     public function created(Membresia $membresia): void
     {
+        \Log::info("MembresiaObserver: created");
         // obtenemos el usuario y nuevo miembro del equipo
         $usuario = User::findOrFail($membresia->user_id);
         // obtenemos el equipo
@@ -38,6 +39,7 @@ class MembresiaObserver
      */
     public function deleted(Membresia $membresia): void
     {
+        \Log::info("MembresiaObserver: deleted");
          // obtenemos el usuario y el miembro del equipo que se ha retirado del equipo
          $usuario = User::findOrFail($membresia->user_id);
          // obtenemos el equipo

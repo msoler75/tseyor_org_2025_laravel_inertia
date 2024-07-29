@@ -4,6 +4,8 @@ namespace App\Pigmalion;
 
 use Illuminate\Support\Facades\Storage;
 
+use App\Pigmalion\StorageItem;
+
 
 class DiskUtil {
 
@@ -94,11 +96,12 @@ class DiskUtil {
     }
 
     public static function obtenerImagenes($rutaOriginal) : array {
-        list($disk, $ruta) = self::obtenerDiscoRuta($rutaOriginal);
-        $imagenes = Storage::disk($disk)->files($ruta);
+        $loc = new StorageItem($rutaOriginal);
+        $imagenes = $loc->files();
         //filtrar los archivos que son imagenes
-        $imagenes = array_filter($imagenes, function ($image) use ($disk) {
-            $mime = Storage::disk($disk)->mimeType($image);
+        $imagenes = array_filter($imagenes, function ($image) {
+            $sti = new StorageItem($image);
+            $mime = $sti->mimeType();
             return strpos($mime, 'image') !== false;
         });
 

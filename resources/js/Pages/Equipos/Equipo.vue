@@ -52,16 +52,17 @@
                         </div>
                     </Card>
 
-                    <Card v-if="!equipo.ocultarArchivos && ultimosArchivos.length">
+                    <Card v-if="!equipo.ocultarArchivos && ultimosArchivos.length" class="overflow-y-auto max-h-96 row-span-2">
                         <h3>Últimos Archivos</h3>
-                        <div class="w-full">
-                            <div v-for="item, index of ultimosArchivos" :key="index"
-                                class="flex gap-3 items-center py-2 w-full">
-                                <FileIcon :url="item.url" :name="item.archivo" />
-                                <a download :href="item.url" class="py-1 hover:underline">{{
+                        <div class="w-full text-sm grid grid-cols-[1.5rem,auto,1.5rem,3rem] gap-1 gap-y-3">
+                            <template v-for="item, index of ultimosArchivos" :key="index">
+                                <FileIcon :url="item.url" :name="item.archivo" class="mt-1"/>
+                                <a download :href="item.url" class="hover:underline">{{
                                     item.url.substring(item.url.lastIndexOf('/') + 1) }}</a>
-                                <TimeAgo class="ml-auto" :date="item.fecha_modificacion" />
-                            </div>
+                                <FolderIcon arrow="1" v-if="item.carpeta" :url="item.carpeta" class="mt-1"
+                                title="Ir a la carpeta"/>
+                                <TimeAgo class="ml-auto text-xs" :date="item.fecha_modificacion" />
+                            </template>
                         </div>
                     </Card>
 
@@ -69,9 +70,9 @@
                         <h3>Carpetas</h3>
                         <div>
                             <div v-for="item, index of carpetas" :key="index" class="flex gap-3 items-baseline py-2">
-                                <FolderIcon :url="item.ruta" />
-                                <Link :href="'/' + item.ruta" class="py-1 hover:underline">{{
-                                    item.ruta.substring(item.ruta.lastIndexOf('/') + 1) }}</Link>
+                                <FolderIcon :url="item.ubicacion" />
+                                <Link :href="item.ubicacion" class="py-1 hover:underline">{{
+                                    item.ubicacion?.substring(item.ubicacion?.lastIndexOf('/') + 1) }}</Link>
                             </div>
                         </div>
                     </Card>
@@ -87,6 +88,7 @@
                                 {{ equipo.miembros.length }}
                             </div>
                         </h3>
+
                         <Users v-if="equipo" :users="equipo.miembros.slice(0, 17)" :count="equipo.miembros.length" />
                     </Card>
 

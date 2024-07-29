@@ -4,10 +4,10 @@ namespace App\Observers;
 
 use App\Models\Equipo;
 use App\Models\Grupo;
-use App\Models\Carpeta;
-use Illuminate\Support\Facades\Storage;
+use App\Models\NodoCarpeta;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
+use App\Pigmalion\StorageItem;
 
 /**
  * Cada equipo tiene un grupo-espejo que tiene el mismo nombre.
@@ -23,6 +23,8 @@ class EquipoObserver
      */
     public function created(Equipo $equipo)
     {
+        \Log::info("EquipoObserver.created");
+
         $slug = $equipo->slug ?? Str::slug($equipo->nombre);
         if (!$equipo->slug)
             $equipo->slug = $slug;
@@ -34,10 +36,10 @@ class EquipoObserver
         $equipo->save();
 
         // Ruta de la carpeta en el sistema de archivos
-        $carpetaEquipo = 'archivos/equipos/' . $slug;
+        $carpetaEquipo = '/archivos/equipos/' . $slug;
 
         // obtenemos el id del usuario propietario, debería ser el propietario del equipo
-        $id_user = $equipo->user_id ?? auth()->id() ?? 1;
+        $id_user = 1; // admin   //$equipo->user_id ?? auth()->id() ?? 1;
 
         // Obtén el valor de umask desde el archivo de configuración
         $umask = Config::get('app.umask');
@@ -49,15 +51,17 @@ class EquipoObserver
         $permisos = 01777 & ~$umask;
 
         // especifica los permisos de la carpeta
-        Carpeta::create([
-            'ruta' => $carpetaEquipo,
+        NodoCarpeta::create([
+            'ubicacion' => $carpetaEquipo,
             'user_id' => $id_user,
             'group_id' => $grupo->id,
             'permisos' => decoct($permisos) // convertimos a representación decimal
         ]);
 
          // Crea la carpeta en el disco público utilizando la clase Storage
-         Storage::disk('public')->makeDirectory($carpetaEquipo);
+         // Storage::disk('archivos')->makeDirectory($carpetaEquipo);
+         $loc = new StorageItem($carpetaEquipo);
+         $loc->makeDirectory();
     }
 
 

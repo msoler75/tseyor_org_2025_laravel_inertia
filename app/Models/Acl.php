@@ -74,7 +74,7 @@ class Acl extends Model
 
             $grupos_ids = $user ? $user->grupos()->pluck('grupos.id') : [];
 
-            return Acl::select('nodos_acl.*', 'nodos.ruta')
+            return Acl::select('nodos_acl.*', 'nodos.ubicacion')
                 ->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
                 ->where(function ($query) use ($grupos_ids, $user_id) {
                     $query

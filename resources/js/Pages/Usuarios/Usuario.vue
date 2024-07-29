@@ -33,7 +33,7 @@
                 <div class="prose my-7">
                     <form @submit.prevent="onSubmit">
                         <textarea class="w-full max-w-full" cols=160 v-if="editandoFrase" v-model="nuevaFrase"></textarea>
-                        <blockquote v-else>
+                        <blockquote v-else-if="usuario.frase">
                             <p>{{ usuario.frase }}</p>
                         </blockquote>
                         <div v-if="soyYo"  class="w-full flex justify-center gap-4">
@@ -63,7 +63,7 @@
                             <option v-for="equipo of equiposFiltrados" :key="equipo.id" :value="equipo.id">{{ equipo.nombre
                             }}</option>
                         </select>
-                        <input type="submit" class="btn btn-primary max-w-5" value="Agregar al Equipo" :disabled="!equipoSeleccionado">
+                        <input type="submit" class="btn btn-primary" value="Agregar al Equipo" :disabled="!equipoSeleccionado">
                     </form>
                 </div>
 

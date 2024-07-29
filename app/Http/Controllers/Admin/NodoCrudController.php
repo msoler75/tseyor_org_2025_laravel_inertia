@@ -137,6 +137,6 @@ class NodoCrudController extends CrudController
     {
         $nodo = Nodo::findOrFail($id);
 
-        return redirect("/" . $nodo->ruta);
+        return redirect("/" . $nodo->ubicacion);
     }
 }

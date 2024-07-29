@@ -33,14 +33,34 @@
                             <span> {{ evento.hora_inicio.substr(0, 5) }}</span>
                         </template>
                         <template v-if="evento.hora_fin">
-                            <span class="mb-2">
+                            <span class="mb-2 flex gap-3">
                                 <Icon icon="ph:clock-countdown-duotone" class="text-xl" /> Hora de fin:
                             </span>
                             <span>{{ evento.hora_fin }}</span>
                         </template>
                         <template v-if="evento.lugar" class="mb-2 flex gap-3">
-                            <Icon icon="ph:map-pin-duotone" class="text-xl" /> Lugar:
+                            <span class="mb-2 flex gap-3">
+                                <Icon icon="ph:map-pin-duotone" class="text-xl" /> Lugar:
+                            </span>
                             <span>{{ evento.lugar }}</span>
+                        </template>
+                        <template v-if="evento.centro" class="mb-2 flex gap-3">
+                            <span class="mb-2 flex gap-3">
+                                <Icon icon="ph:map-pin-duotone" class="text-xl" /> Lugar:
+                            </span>
+                            <Link :href="route('centro', evento.centro.slug)" class="text-primary">{{ evento.centro.nombre }}</Link>
+                        </template>
+                        <template v-if="evento.sala" class="mb-2 flex gap-3">
+                            <span class="mb-2 flex gap-3">
+                                <Icon icon="ph:map-pin-duotone" class="text-xl" /> Sala virtual:
+                            </span>
+                            <Link :href="route('sala', evento.sala.slug)" class="text-primary">{{ evento.sala.nombre }}</Link>
+                        </template>
+                        <template v-if="evento.equipo" class="mb-2 flex gap-3">
+                            <span class="mb-2 flex gap-3">
+                                <Icon icon="ph:hand-duotone" class="text-xl" /> Organiza:
+                            </span>
+                            <Link :href="route('equipo', evento.equipo.slug)" class="text-primary">{{ evento.equipo.nombre }}</Link>
                         </template>
                     </div>
                     <p class="mt-12">{{ evento.descripcion }}</p>

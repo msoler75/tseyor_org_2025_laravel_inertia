@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * No tiene tabla propia, es para acceder a la información de nodos de archivo
  */
-class Archivo extends Model
+class NodoArchivo extends Model
 {
     protected $table = 'nodos';
 
     protected $esCarpeta = false;
 
-    protected $fillable = ['ruta', 'permisos', 'user_id', 'group_id'];
+    protected $fillable = ['ubicacion', 'permisos', 'user_id', 'group_id'];
 
     protected static function boot()
     {

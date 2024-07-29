@@ -24,6 +24,8 @@ class EquipoCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
 
+    use \App\Traits\CrudContenido;
+
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
      *
@@ -83,7 +85,7 @@ class EquipoCrudController extends CrudController
             }
         ]);
 
-        CRUD::column('CreadorNombre')->type('text')->label("Creado por");
+        // CRUD::column('CreadorNombre')->type('text')->label("Creado por");
     }
 
     /**
@@ -119,7 +121,9 @@ class EquipoCrudController extends CrudController
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
-        CRUD::field('imagen')->type('image_cover');
+        $folder = $this->getMediaFolder();
+
+        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'initial-images'=> '/almacen/medios/equipos/equipo1.jpg,/almacen/medios/equipos/equipo2.jpg,/almacen/medios/equipos/equipo3.jpg,/almacen/medios/equipos/equipo4.jpg,/almacen/medios/equipos/equipo5.jpg']);
 
         CRUD::field('categoria')->type('text');
 

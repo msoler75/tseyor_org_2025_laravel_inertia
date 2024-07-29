@@ -1,3 +1,12 @@
+BD:
+-eliminar campo user_id de tabla equipos
+-tabla nodos, cambiar columna'ruta' por 'ubicacion'
+
+TEST: CARPETA
+-ultimosArchivos (para ruta de /archivos y para ruta de /almacen)
+-listarArchivosRecursivo (para ruta de /archivos y para ruta de /almacen)
+
+
 VALIDACION CORREO USUARIO
 -usuario que se registra debe recibir un mensaje a su correo de validación de dirección electrónica
 

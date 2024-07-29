@@ -6,7 +6,7 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
 use Backpack\CRUD\app\Library\Validation\Rules\ValidUpload;
-use App\Pigmalion\DiskUtil;
+use App\Pigmalion\StorageItem;
 use App\Models\Libro;
 
 /**
@@ -125,9 +125,7 @@ class LibroCrudController extends CrudController
 
         $folder = $this->getMediaFolder();
 
-        list($disk, $folderRelative) = DiskUtil::obtenerDiscoRuta($folder); // para upload no se pone 'almacen' porque es el disco 'public'
-
-        // list($disk, $folderPDF) = DiskUtil::obtenerDiscoRuta($this->getMediaTempFolder());
+        $loc = new StorageItem($folder);
 
         // CRUD::field('categoria')->hint('Monografías, Obras de referencia, Cuentos, Talleres... Se pueden poner varias categorías separadas por coma.');
 
@@ -175,8 +173,8 @@ class LibroCrudController extends CrudController
         CRUD::field('pdf')->label('Archivo PDF')
             ->type('upload')
             ->withFiles([
-                'disk' => 'public', // the disk where file will be stored
-                'path' => $folderRelative, // the path inside the disk where file will be stored
+                'disk' => $loc->disk, // the disk where file will be stored
+                'path' => $loc->relativeLocation, // the path inside the disk where file will be stored
             ])->attributes([
                     'accept' => '.pdf',
                 ]);

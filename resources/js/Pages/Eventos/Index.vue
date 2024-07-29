@@ -52,7 +52,6 @@
                                 </div>
                         </CardContent>
 
-                        {{fechas}}
                     </div>
 
 

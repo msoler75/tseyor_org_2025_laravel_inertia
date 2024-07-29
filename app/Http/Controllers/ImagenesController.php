@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
-use App\Pigmalion\DiskUtil;
+use App\Pigmalion\StorageItem;
 use Illuminate\Support\Facades\Cache;
 
 
@@ -70,8 +70,8 @@ class ImagenesController extends Controller
 
     public function descargar(Request $request, $rutaImagen)
     {
-        list($disk, $ruta) = DiskUtil::obtenerDiscoRuta($rutaImagen);
-        $imageFullPath = Storage::disk($disk)->path($ruta);
+        $sti = new StorageItem($rutaImagen);
+        $imageFullPath = $sti->path;
         // dd($rutaImagen, $disk, $ruta, $imageFullPath);
 
         $mime = File::mimeType($imageFullPath);
