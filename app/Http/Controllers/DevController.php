@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 /**
  *
@@ -42,8 +43,17 @@ class DevController extends Controller
 
     public function dev2(Request $request)
     {
-        $user = User::find(1);
-        $user->sendEmailVerificationNotification();
+       $user =  $this->getUser("pepitito");
+       dd($user->toArray());
     }
 
+
+    protected function getUser($nombre)
+    {
+        // $faker = \Faker\Factory::create();
+        $user = User::where('name', $nombre)->first();
+        if (!$user)
+            $user = User::create(['name' => $nombre, 'email'=>$nombre.'@gmaix.co', 'slug'=> Str::slug($nombre), 'password' => '123456678']);
+        return $user;
+    }
 }

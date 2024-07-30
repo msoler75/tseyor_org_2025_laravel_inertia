@@ -15,7 +15,7 @@ class Acl extends Model
 {
     use CrudTrait;
     use \Venturecraft\Revisionable\RevisionableTrait;
-    use \Illuminate\Database\Eloquent\SoftDeletes;
+//     use \Illuminate\Database\Eloquent\SoftDeletes;
 
     protected $revisionCreationsEnabled = true;
 
@@ -44,7 +44,7 @@ class Acl extends Model
     // accesors
     public function getRutaNodoAttribute()
     {
-        return $this->nodo->ruta;
+        return $this->nodo->ubicacion;
     }
 
 
@@ -67,14 +67,14 @@ class Acl extends Model
     public static function from(?User $user, array $verbos = null)
     {
         $user_id = $user ? $user->id : -1;
-        $cacheKey = 'acl_' . $user_id . '_' . $verbos; // Clave para identificar la cache
+        $cacheKey = 'acl_' . $user_id . ($verbos? '_' . implode('_', $verbos) : ''); // Clave para identificar la cache
         $cacheTime = 60; // Tiempo en segundos para mantener la cache
 
         return Cache::remember($cacheKey, $cacheTime, function () use ($user, $user_id, $verbos) {
 
             $grupos_ids = $user ? $user->grupos()->pluck('grupos.id') : [];
 
-            return Acl::select('nodos_acl.*', 'nodos.ubicacion')
+            $query = Acl::select('nodos_acl.*', 'nodos.ubicacion')
                 ->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
                 ->where(function ($query) use ($grupos_ids, $user_id) {
                     $query
@@ -82,12 +82,20 @@ class Acl extends Model
                         ->orWhereIn('nodos_acl.group_id', $grupos_ids);
                 })
                 ->where(function ($query) use ($verbos) {
-                    if ($verbos)
-                        foreach ($verbos as $verbo) {
-                            $query->orWhere('nodos_acl.verbos', 'LIKE', '%' . $verbo . '%');
+                    if ($verbos) {
+                        //foreach ($verbos as $verbo) {
+                            //  $query->orWhere('nodos_acl.verbos', 'LIKE', '%' . $verbo . '%');
+                            //}
+                            $query->where('nodos_acl.verbos', 'LIKE', '%'.$verbos[0].'%');
+                            if(count($verbos)>1)
+                                $query->orWhere('nodos_acl.verbos', 'LIKE', '%'.$verbos[1].'%');
+                            if(count($verbos)>2)
+                                $query->orWhere('nodos_acl.verbos', 'LIKE', '%'.$verbos[2].'%');
                         }
-                })
-                ->get();
+                });
+                \Log::info("query: ".$query->toSql());
+                
+                return $query->get();
         });
     }
 

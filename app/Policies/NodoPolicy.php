@@ -7,7 +7,7 @@ use App\Models\Nodo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
+//use Illuminate\Support\Facades\Cache;
 
 /**
  * Esta clase simula los permisos de linux con usuarios y grupos.
@@ -61,23 +61,22 @@ class NodoPolicy
 {
 
     /**
-     * funciones básicas para comprobar permisos. Consulta la ACL
+     * funciones básicas para comprobar permisos.
      */
-    public function leer(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
+    public function leer(?User $user, Nodo $nodo): bool
     {
         return $this->permisoNodo($user, $nodo, 0b100) ? true : $nodo->tieneAcceso($user, 'leer');
     }
 
-    public function escribir(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
+    public function escribir(?User $user, Nodo $nodo): bool
     {
         return $this->permisoNodo($user, $nodo, 0b010) ? true : $nodo->tieneAcceso($user, 'escribir');
     }
 
-    public function ejecutar(?User $user, Nodo $nodo /*, ?Acl $acl = null*/): bool
+    public function ejecutar(?User $user, Nodo $nodo): bool
     {
         return $this->permisoNodo($user, $nodo, 0b001) ? true : $nodo->tieneAcceso($user, 'ejecutar');
     }
-
 
 
     /**
@@ -91,29 +90,33 @@ class NodoPolicy
     {
         try {
             //if (!$nodo)
-              //  return false;
+            //  return false;
+
+            \Log::info("permisosNodo($bits) : $nodo->permisos");
 
             // elimino el sticky bit
-            $permisos = octdec(strlen($nodo->permisos)>3?substr($nodo->permisos, 1):$nodo->permisos);
+            $permisos = octdec(strlen($nodo->permisos) > 3 ? substr($nodo->permisos, 1) : $nodo->permisos);
+
+            \Log::info("permisos2 : $permisos");
 
             if ($user) {
+
                 // Verificar el permiso del propietario (owner)
                 if ($nodo->user_id && $nodo->user_id === $user->id && ($permisos & ($bits << 6)) !== 0)
                     return true;
 
                 // Verificar el permiso del grupo
-                if($user && $nodo->group_id) {
-                    $cacheKey = 'user_grupos_exists_' . $user->id . '_group_' . $nodo->group_id;
-                    $cacheTime = 30;
-                    $exists = Cache::remember($cacheKey, $cacheTime, function () use ($user, $nodo) {
-                        return $user->grupos()->where('grupos.id', $nodo->group_id)->exists();
-                    });
-                    if ($exists && ($permisos & ($bits << 3)) !== 0)
-                    return true;
+                if ($user && $nodo->group_id) {
+
+                    // verificar si el permiso está concedido para el grupo
+                    if (($permisos & ($bits << 3)) !== 0 && $user->enGrupo($nodo->group_id))
+                        return true;
                 }
             }
+
+            \Log::info("$permisos & $bits: ".($permisos & $bits)." " . (($permisos & $bits) !== 0));
             // Verificar el permiso de otros (others)
-            return $permisos & $bits !== 0;
+            return ($permisos & $bits) !== 0;
 
         } catch (\Exception $e) {
             Log::error($e->getMessage(), ['exception' => $e]);
@@ -121,8 +124,4 @@ class NodoPolicy
             return false;
         }
     }
-
-
-
-
 }
