@@ -17,6 +17,7 @@ use App\Models\Grupo;
 use App\Models\Membresia;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Scout\Searchable;
+use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -131,21 +132,29 @@ class User extends Authenticatable implements MustVerifyEmail
             ->withPivot(['user_id', 'rol']);
     }
 
-    /*public function grupos()
-    {
-        return Cache::remember("user_grupos_" . $this->id, 30, function () {
-            return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'group_id')
-                ->using(Pertenencia::class)
-                ->withPivot(['user_id'])
-                ->get();
-        });
-    }*/
-
     public function grupos()
     {
         return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'group_id')
             ->using(Pertenencia::class)
             ->withPivot(['user_id']);
+    }
+
+    // retorna true si este usuario está en el grupo con grupo_id
+    public function enGrupo($grupo_id)
+    {
+        $user = $this;
+
+        // sin cache
+        $r =  $user->grupos()->where('grupos.id', $grupo_id)->count();
+        \Log::info("user {$user->id} in grupo {$grupo_id} = {$r}");
+        return $r;
+
+        // con cache
+        $cacheKey = 'user_grupos_in_' . $this->id . '_group_' . $grupo_id;
+        $cacheTime = 30;
+        return Cache::remember($cacheKey, $cacheTime, function () use ($user, $grupo_id) {
+            return $user->grupos()->where('grupos.id', $grupo_id)->exists();
+        });
     }
 
     /**
@@ -185,6 +194,4 @@ class User extends Authenticatable implements MustVerifyEmail
             'nombre' => $this->name,
         ];
     }
-
-
 }
