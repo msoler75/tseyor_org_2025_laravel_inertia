@@ -309,7 +309,7 @@ class EquiposController extends Controller
         $this->bajaUsuario($usuario, $equipo);
 
         // por si hubiera asignación de nuevo coordinador
-        $idNuevoCoordinador = $this->asignarNuevoCoordinador($equipo, $idUsuario);
+        $idNuevoCoordinador = $equipo->asignarCoordinador($idUsuario);
 
         $message = 'El usuario fue removido del equipo';
         if ($idNuevoCoordinador)
@@ -336,8 +336,8 @@ class EquiposController extends Controller
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
-        if ($rol == 'miembro')
-            $rol = NULL;
+        //if ($rol == 'miembro')
+          //  $rol = NULL;
 
         // Actualizamos el rol del usuario en el equipo
         $equipo->miembros()->updateExistingPivot($idUsuario, ['rol' => $rol]);
@@ -348,7 +348,7 @@ class EquiposController extends Controller
             $equipo->removerPermisosCarpetas($idUsuario);
         }
 
-        $idNuevoCoordinador = $this->asignarNuevoCoordinador($equipo, $idUsuario);
+        $idNuevoCoordinador = $equipo->asignarCoordinador($idUsuario);
 
         $message = 'El usuario fue actualizado dentro del equipo';
         if ($idNuevoCoordinador)
@@ -361,27 +361,7 @@ class EquiposController extends Controller
     }
 
 
-    /**
-     * Comprueba si el equipo no dispone de coordinadores, en tal caso asigna el miembro más antiguo como tal
-     */
-    private function asignarNuevoCoordinador($equipo, $idUsuarioExcluir = 0)
-    {
-        // si no quedan coordinadores, hemos de asignar alguno de entre los miembros del equipo, siendo los candidatos los más antiguos
-        if (!$equipo->coordinadores()->count()) {
-            $miembroAntiguo = $equipo->miembros()
-                ->where('users.id', '!=', $idUsuarioExcluir) // filtramos los miembros con id distinto al usuario que se acaba de modificar
-                ->oldest('created_at') // ordenamos los miembros por fecha de creación ascendente
-                ->first(); // obtenemos el primer miembro de la lista, que será el más antiguo
 
-            if ($miembroAntiguo) {
-                // Actualizamos el rol del usuario en el equipo
-                $equipo->miembros()->updateExistingPivot($miembroAntiguo->id, ['rol' => 'coordinador']);
-                // le damos permisos
-                $equipo->otorgarPermisosCarpetas($miembroAntiguo->id);
-                return $miembroAntiguo->id;
-            }
-        }
-    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // INVITACIONES
@@ -799,7 +779,7 @@ class EquiposController extends Controller
 
         $this->bajaUsuario($user, $equipo);
 
-        $this->asignarNuevoCoordinador($equipo);
+        $equipo->asignarCoordinador();
 
         // notificamos a los coordinadores del equipo
         Notification::send($equipo->coordinadores, new AbandonoEquipo($equipo, $user));

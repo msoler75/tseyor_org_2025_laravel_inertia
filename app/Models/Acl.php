@@ -68,7 +68,7 @@ class Acl extends Model
     {
         $user_id = $user ? $user->id : -1;
         $cacheKey = 'acl_' . $user_id . ($verbos? '_' . implode('_', $verbos) : ''); // Clave para identificar la cache
-        $cacheTime = 60; // Tiempo en segundos para mantener la cache
+        $cacheTime = 10; // Tiempo en segundos para mantener la cache
 
         return Cache::remember($cacheKey, $cacheTime, function () use ($user, $user_id, $verbos) {
 
@@ -94,9 +94,14 @@ class Acl extends Model
                         }
                 });
                 \Log::info("query: ".$query->toSql());
-                
+
                 return $query->get();
         });
+    }
+
+    public static function clearCache($user) {
+        $cacheKey ='acl_' . $user->id;
+        Cache::forget($cacheKey);
     }
 
 

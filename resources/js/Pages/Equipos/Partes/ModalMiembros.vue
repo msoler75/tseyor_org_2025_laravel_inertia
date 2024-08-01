@@ -14,7 +14,7 @@
                             <td>
                                 <select v-model="user.pivot.rol" class="select" @change="cambiarRol(user)">
                                     <option value="coordinador">coordinador</option>
-                                    <option value="">miembro</option>
+                                    <option value="miembro">miembro</option>
                                     <option v-if="user.pivot.rol != 'coordinador'" value="eliminar">eliminar</option>
                                 </select>
                             </td>

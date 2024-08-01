@@ -5,8 +5,10 @@ namespace Tests\Unit;
 
 use App\Models\Acl;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
 
-class AclTest extends NodoTest {
+class AclTest extends BaseTest {
 
 
     protected function getAcl($nodo_id, $verbos, $values = [])
@@ -144,7 +146,7 @@ class AclTest extends NodoTest {
             'verbos' => 'leer'
         ]);
 
-        \Log::info('acl', ['nodo'=>$nodo->toArray(), 'acl'=>$acl->toArray()]);
+        Log::info('acl', ['nodo'=>$nodo->toArray(), 'acl'=>$acl->toArray()]);
 
         $this->assertEquals($nodo->ubicacion, $acl->ruta_nodo);
         $this->assertEquals($user->name, $acl->nombre_usuario);
@@ -203,7 +205,7 @@ class AclTest extends NodoTest {
     }
 
     /**
-     * Prueba la obtención de ACLs a través de verbos 
+     * Prueba la obtención de ACLs a través de verbos
      */
     public function test_acl_user_verbos()
     {
@@ -298,7 +300,7 @@ class AclTest extends NodoTest {
     {
         $user = $this->getUser("UpdateUser");
         $nodo = $this->getNodo('/archivos/update_test');
-        
+
         Acl::where('user_id', $user->id)->delete();
 
         $acl = Acl::create([
@@ -316,4 +318,31 @@ class AclTest extends NodoTest {
 
 
 
+    /**
+     * Prueba el acceso a una ruta hija desde un ACL padre
+     */
+    public function test_acl_acceso_ruta_hija() {
+
+        $coordinador = $this->getUser("Coordinador");
+        $user = $this->getUser("OtroUsuario");
+        $nodoPadre = $this->getNodo('/archivos/equipoX');
+        $nodoHijo =  $this->getNodo('/archivos/equipoX/carpeta1');
+
+        $acl = Acl::create([
+            'nodo_id' => $nodoPadre->id,
+            'group_id' => null,
+            'user_id' => $coordinador->id,
+            'verbos' => 'escribir'
+        ]);
+
+        $this->assertNotNull($acl);
+
+        $this->actingAs($user);
+        $this->assertFalse(Gate::allows('escribir', $nodoHijo));
+
+
+        $this->actingAs($coordinador);
+        $this->assertTrue(Gate::allows('escribir', $nodoHijo));
+
+    }
 }

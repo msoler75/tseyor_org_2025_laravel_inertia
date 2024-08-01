@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 use App\Traits\EsCategorizable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use App\Pigmalion\StorageItem;
+
 
 class Equipo extends ContenidoBaseModel
 {
@@ -29,6 +33,27 @@ class Equipo extends ContenidoBaseModel
         'ocultarMiembros',
         'ocultarSolicitudes'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        Membresia::observe(MembresiaObserver::class); // observamos cambios en la membresía
+
+        static::created(function ($equipo) {
+            $slug = $equipo->slug ?? Str::slug($equipo->nombre);
+            if (!$equipo->slug)
+                $equipo->slug = $slug;
+
+            // Crea un nuevo grupo con el mismo nombre del equipo
+            $grupo = Grupo::create(['nombre' => $equipo->nombre, 'slug' => $slug]);
+
+            $equipo->group_id = $grupo->id;
+            $equipo->save();
+
+            $equipo->crearCarpeta();
+        });
+    }
 
     public function miembros()
     {
@@ -88,7 +113,8 @@ class Equipo extends ContenidoBaseModel
 
 
 
-    public function otorgarPermisosCarpetas($idUsuario) {
+    public function otorgarPermisosCarpetas($idUsuario)
+    {
         // otorgamos permisos al usuario para administrar las carpetas del equipo
         foreach ($this->carpetas as $carpeta) {
             Acl::updateOrCreate(
@@ -99,9 +125,11 @@ class Equipo extends ContenidoBaseModel
                 ]
             );
         }
+        Acl::clearCache(User::find($idUsuario));
     }
 
-    public function removerPermisosCarpetas($idUsuario) {
+    public function removerPermisosCarpetas($idUsuario)
+    {
         foreach ($this->carpetas as $carpeta) {
             $permiso = Acl::where([
                 'user_id' => $idUsuario,
@@ -112,6 +140,70 @@ class Equipo extends ContenidoBaseModel
                 $permiso->delete();
             }
         }
+        Acl::clearCache(User::find($idUsuario));
+    }
+
+
+    /**
+     * Comprueba si el equipo no dispone de coordinadores, en tal caso asigna el miembro más antiguo como tal
+     */
+    public function asignarCoordinador($idUsuarioExcluir = 0)
+    {
+        // si no quedan coordinadores, hemos de asignar alguno de entre los miembros del equipo, siendo los candidatos los más antiguos
+        if (!$this->coordinadores()->count()) {
+            $miembroMasAntiguo = $this->miembros()
+                ->where('users.id', '!=', $idUsuarioExcluir) // filtramos los miembros con id distinto al usuario que se acaba de modificar
+                ->oldest('equipo_user.created_at') // ordenamos los miembros por fecha de membresia
+                ->first(); // obtenemos el primer miembro de la lista, que será el más antiguo
+
+            if ($miembroMasAntiguo) {
+                $nuevoCoordinador = $miembroMasAntiguo;
+                // Actualizamos el rol del usuario en el equipo
+                $this->miembros()->updateExistingPivot($nuevoCoordinador->id, ['rol' => 'coordinador']);
+                // le damos permisos
+                $this->otorgarPermisosCarpetas($nuevoCoordinador->id);
+                return $nuevoCoordinador->id;
+            }
+        }
+    }
+
+    /**
+     * Crea la carpeta del equipo
+     * @throws \Error
+     * @return void
+     */
+    public function crearCarpeta()
+    {
+
+        if (!$this->slug) throw new \Error("Falta slug del equipo");
+
+        // Ruta de la carpeta en el sistema de archivos
+        $carpetaEquipo = '/archivos/equipos/' . $this->slug;
+
+        // obtenemos el id del usuario propietario, debería ser el propietario del equipo
+        $id_user = 1; // admin   //$equipo->user_id ?? auth()->id() ?? 1;
+
+        // Obtén el valor de umask desde el archivo de configuración
+        $umask = config('app.umask');
+
+        // Convertir umask y permisos a octal
+        $umask = octdec($umask);
+
+        // aplicamos el umask, con el sticky bit 1
+        $permisos = 01777 & ~$umask;
+
+        // especifica los permisos de la carpeta
+        NodoCarpeta::create([
+            'ubicacion' => $carpetaEquipo,
+            'user_id' => $id_user,
+            'group_id' => $this->group_id,
+            'permisos' => decoct($permisos) // convertimos a representación decimal
+        ]);
+
+        // Crea la carpeta en el disco público utilizando la clase Storage
+        // Storage::disk('archivos')->makeDirectory($carpetaEquipo);
+        $loc = new StorageItem($carpetaEquipo);
+        $loc->makeDirectory();
     }
 
 
@@ -141,7 +233,6 @@ class Equipo extends ContenidoBaseModel
         });
         return $usersWithoutPivot->toJson();
     }
-
 }
 
 
@@ -153,4 +244,49 @@ class Membresia extends Pivot
         'user_id' => 'integer',
         'equipo_id' => 'integer',
     ];
+}
+
+
+
+class MembresiaObserver
+{
+    public function created(Membresia $membresia): void
+    {
+        Log::info("MembresiaObserver: created", $membresia->toArray());
+        // obtenemos el equipo
+        $equipo = Equipo::findOrFail($membresia->equipo_id);
+
+        // lo agregamos al grupo
+        $grupo=Grupo::findOrFail($equipo->group_id);
+        $grupo->usuarios()->attach($membresia->user_id);
+
+        if ($membresia->rol == 'coordinador')
+            $equipo->otorgarPermisosCarpetas($membresia->user_id);
+    }
+
+    public function updated(Membresia $membresia): void
+    {
+        Log::info("MembresiaObserver: updated", $membresia->toArray());
+        // habrá cambiado el rol u otros atributos de la relación.
+        // obtenemos el equipo
+        $equipo = Equipo::findOrFail($membresia->equipo_id);
+        if ($membresia->rol == 'coordinador') {
+            $equipo->otorgarPermisosCarpetas($membresia->user_id);
+        } else {
+            $equipo->removerPermisosCarpetas($membresia->user_id);
+        }
+    }
+
+    public function deleted(Membresia $membresia): void
+    {
+        Log::info("MembresiaObserver: deleted", $membresia->toArray());
+        // obtenemos el equipo
+        $equipo = Equipo::findOrFail($membresia->equipo_id);
+
+        // lo removemos del grupo
+        $grupo=Grupo::findOrFail($equipo->group_id);
+        $grupo->usuarios()->detach($membresia->user_id);
+
+        $equipo->removerPermisosCarpetas($membresia->user_id);
+    }
 }

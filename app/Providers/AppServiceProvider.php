@@ -37,9 +37,9 @@ class AppServiceProvider extends ServiceProvider
         // Equipos y grupos
 
         // Lógica que se ejecutará cuando se cree o cambie algún equipo
-        Equipo::observe(EquipoObserver::class);
+        // Equipo::observe(EquipoObserver::class);
 
         // observamos los cambios en membresías de equipos
-        Membresia::observe(MembresiaObserver::class);
+        // Membresia::observe(MembresiaObserver::class);
     }
 }
