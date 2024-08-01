@@ -11,6 +11,8 @@ use App\Traits\EsCategorizable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Pigmalion\StorageItem;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\BienvenidaEquipo;
 
 class Equipo extends ContenidoBaseModel
 {
@@ -287,6 +289,9 @@ class MembresiaObserver
 
         if ($membresia->rol == 'coordinador')
             $equipo->otorgarPermisosCarpetas($membresia->user_id);
+
+        $miembro = User::find($membresia->user_id);
+        $miembro->notify(new BienvenidaEquipo($equipo, $miembro, true));
     }
 
     public function updated(Membresia $membresia): void

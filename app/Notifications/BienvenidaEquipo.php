@@ -45,19 +45,18 @@ class BienvenidaEquipo extends Notification implements ShouldQueue
         $equipoUrl = url('/equipos/' . $this->equipo->slug);
 
         $esCoordinador = $this->equipo->coordinadores->contains('id', $this->usuario->id);
+        $subject = $this->incorporacion ?
+            ($esCoordinador ? 'Ahora coordinas el equipo "' . $this->equipo->nombre . '"' :
+                '¡Eres miembro del equipo "' . $this->equipo->nombre . '"!')
+            : 'Tu solicitud a "' . $this->equipo->nombre . '" ha sido denegada';
+
+        $linea1 = $subject;
 
         return (new MailMessage)
-            ->markdown('emails.incorporacion-equipo', [
-                'equipo' => $this->equipo,
-                'nombreUsuario' => $this->usuario->name ?? '',
-                'incorporacion' => $this->incorporacion,
-                'esCoordinador' => $esCoordinador,
-                'equipoUrl' => $equipoUrl,
-            ])
-            ->subject($this->incorporacion ?
-                ($esCoordinador ? 'Eres coordinador@ de ' . $this->equipo->nombre :
-                    '¡Has sido incorporad@ a "' . $this->equipo->nombre . '"!')
-                : 'Tu solicitud a "' . $this->equipo->nombre . '" ha sido denegada');
+            ->subject($subject)
+            ->greeting('¡Hola ' . $this->usuario->name . '!')
+            ->line($linea1)
+            ->action('Ver equipo', $equipoUrl);
     }
     /**
      * Get the array representation of the notification.
