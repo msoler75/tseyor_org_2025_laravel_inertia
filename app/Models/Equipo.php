@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Pigmalion\StorageItem;
 
-
 class Equipo extends ContenidoBaseModel
 {
     use CrudTrait;

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
 use App\Notifications\SolicitudEquipo;
 use App\Notifications\AbandonoEquipo;
+use App\Notifications\BienvenidaEquipo;
 use Illuminate\Support\Facades\Notification;
 use App\Pigmalion\StorageItem;
 
@@ -679,11 +680,6 @@ class EquiposController extends Controller
         // notificamos a los coordinadores del equipo
         Notification::send($equipo->coordinadores, new SolicitudEquipo($equipo));
 
-        /* $equipo->coordinadores->forEach(function($coordinador) use ($equipo)  {
-            $coordinador->notify(new SolicitudEquipo($equipo));
-        }); */
-
-
         return response()->json(['message' => 'Solicitud enviada', 'solicitud' => $solicitud], 200);
     }
 
@@ -692,7 +688,7 @@ class EquiposController extends Controller
     /**
      * método auxiliar
      */
-    private function validarSolicitud($idSolicitud)
+    private function validarSolicitud($idSolicitud) : Solicitud
     {
         // carga la solicitud
         $solicitud = Solicitud::findOrFail($idSolicitud);
@@ -735,7 +731,7 @@ class EquiposController extends Controller
         $solicitud->equipo->miembros()->syncWithoutDetaching([$solicitante->id]);
 
         // Enviar el correo informativo
-        // Mail::to($solicitante->email)->send(new IncorporacionEquipoEmail($solicitud->equipo, $solicitante, true, true));
+        Notification::send($solicitante, new BienvenidaEquipo($solicitud->equipo, $solicitante, true));
 
         return response()->json(['message' => 'Solicitud aceptada'], 200);
     }
@@ -754,10 +750,10 @@ class EquiposController extends Controller
             'por_user_id' => auth()->user()->id
         ]);
 
-        $solicitante = $solicitud->usuario();
+        $solicitante = $solicitud->usuario;
 
         // Enviar el correo informativo
-        // Mail::to($solicitante->email)->send(new IncorporacionEquipoEmail($solicitud->equipo, $solicitante, false, true));
+        Notification::send($solicitante, new BienvenidaEquipo($solicitud->equipo, $solicitante, false));
 
         return response()->json(['message' => 'Solicitud denegada'], 200);
     }
@@ -812,10 +808,4 @@ class EquiposController extends Controller
 
 
 
-    /**
-     * Verifica si hay coordinadores, o le asigna uno
-     */
-    private function verificarExistenciaCoordinador($equipo) {
-
-    }
 }

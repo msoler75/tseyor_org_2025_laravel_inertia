@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Equipo;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\BienvenidaEquipo;
+
 
 /**
  * Class EquipoCrudController
@@ -192,6 +195,25 @@ class EquipoCrudController extends CrudController
         $r = $this->traitStore();
 
         $this->actualizarMiembros($this->crud->entry->id, $this->crud->getRequest()->CoordinadoresJSON,  $this->crud->getRequest()->MiembrosJSON);
+
+        $equipo = Equipo::find($this->crud->entry->id);
+
+        $miembros = $equipo->miembros()->get();
+        \Log::info("Miembros: ", $miembros->toArray());
+        // Enviar el correo informativo
+        /*foreach($miembros as $usuario) {
+            Notification::send($usuario, new BienvenidaEquipo($equipo, $usuario, true));
+            }*/
+            foreach ($equipo->miembros as $miembro) {
+                $miembro->notify(new BienvenidaEquipo($equipo, $miembro, true));
+
+                // Loguea la información correctamente
+                \Log::info('Enviamos notificación a miembro del equipo', [
+                    'equipo_id' => $equipo->id,
+                    'miembro_id' => $miembro->id,
+                    'miembro_email' => $miembro->email
+                ]);
+            }
 
         return $r;
     }

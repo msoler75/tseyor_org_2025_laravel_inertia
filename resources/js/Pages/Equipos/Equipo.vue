@@ -52,7 +52,7 @@
                         </div>
                     </Card>
 
-                    <Card v-if="!equipo.ocultarArchivos && ultimosArchivos.length" class="overflow-y-auto max-h-96 row-span-2">
+                    <Card v-if="!equipo.ocultarArchivos && ultimosArchivos.length" class="overflow-y-auto max-h-112 row-span-2">
                         <h3>Últimos Archivos</h3>
                         <div class="w-full text-sm grid grid-cols-[1.5rem,auto,1.5rem,3rem] gap-1 gap-y-3">
                             <template v-for="item, index of ultimosArchivos" :key="index">

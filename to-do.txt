@@ -4,12 +4,6 @@ BD:
 -tabla nodos_acl, la llave foránea group_id está referenciando a tabla 'equipos'. cambiar por 'grupos'
 -tabla nodos_acl quitar columna 'deleted_at'
 
-
-TEST: CARPETA
--ultimosArchivos (para ruta de /archivos y para ruta de /almacen)
--listarArchivosRecursivo (para ruta de /archivos y para ruta de /almacen)
-
-
 VALIDACION CORREO USUARIO
 -usuario que se registra debe recibir un mensaje a su correo de validación de dirección electrónica
 
@@ -18,9 +12,6 @@ MENU usuario nav
 
 BUSCADOR GLOBAL
 -si buscas "com 1145" solo buscará en comunicados, o si buscas "comunicado 1145"
-
-NORMATIVAS
--añadir campo de: fecha de aprobación, que será el que se mostrará en las tarjetas
 
 CORREO tseyor.xyz
 verificar envío de correos:
