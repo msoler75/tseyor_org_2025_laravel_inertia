@@ -31,7 +31,7 @@ class Revision extends Model
         $coleccion = str_replace("App\\Models\\", "", $this->revisionable_type);
         $coleccion = strtolower($coleccion);
         // si $coleccion termina en "n", añadimos "es", y si no, añadimos "s":
-        $coleccion .= substr($coleccion, -1) == 'n' ? 'es':'s';
+        $coleccion .= substr($coleccion, -1) == 'n' ? 'es' : 's';
         return $coleccion;
     }
 
@@ -44,7 +44,7 @@ class Revision extends Model
     public function getAutorAttribute()
     {
         $user = $this->user;
-        if($user)
+        if ($user)
             return $user->name;
         return "<sistema>";
     }
@@ -54,8 +54,13 @@ class Revision extends Model
         // Carga dinámica de la clase del modelo
         $modelClass = app()->make($this->revisionable_type);
 
-        // Carga del registro específico con el ID dado
-        $contenido = $modelClass::withTrashed()->find($this->revisionable_id);
+        // si el modelo tiene softdelete
+        if (method_exists($modelClass, 'withTrashed'))
+            // Carga del registro específico con el ID dado
+            $contenido = $modelClass::withTrashed()->find($this->revisionable_id);
+        else
+            // Carga del registro específico con el ID dado
+            $contenido = $modelClass::find($this->revisionable_id);
 
         if ($contenido)
             return $contenido->titulo ?? $contenido->nombre ?? $contenido->ruta ?? "";
@@ -71,10 +76,10 @@ class Revision extends Model
         return "Modificado";
     }
 
-    public function getRevisionUrlAttribute() {
+    public function getRevisionUrlAttribute()
+    {
         $coleccion = str_replace("App\\Models\\", "", $this->revisionable_type);
         $coleccion = strtolower($coleccion);
-        return "/admin/".$coleccion."/{$this->revisionable_id}/revise";
+        return "/admin/" . $coleccion . "/{$this->revisionable_id}/revise";
     }
-
 }
