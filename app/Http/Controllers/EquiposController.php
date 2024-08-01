@@ -336,8 +336,8 @@ class EquiposController extends Controller
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
-        //if ($rol == 'miembro')
-          //  $rol = NULL;
+        if ($rol == 'miembro')
+           $rol = NULL;
 
         // Actualizamos el rol del usuario en el equipo
         $equipo->miembros()->updateExistingPivot($idUsuario, ['rol' => $rol]);
