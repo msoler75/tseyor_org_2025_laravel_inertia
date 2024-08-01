@@ -92,12 +92,12 @@ class NodoPolicy
             //if (!$nodo)
             //  return false;
 
-            \Log::info("permisosNodo($bits) : $nodo->permisos");
+            // Log::info("permisosNodo($bits) : $nodo->permisos");
 
             // elimino el sticky bit
             $permisos = octdec(strlen($nodo->permisos) > 3 ? substr($nodo->permisos, 1) : $nodo->permisos);
 
-            \Log::info("permisos2 : $permisos");
+            // Log::info("permisos2 : $permisos");
 
             if ($user) {
 
@@ -114,7 +114,7 @@ class NodoPolicy
                 }
             }
 
-            \Log::info("$permisos & $bits: ".($permisos & $bits)." " . (($permisos & $bits) !== 0));
+            // Log::info("$permisos & $bits: ".($permisos & $bits)." " . (($permisos & $bits) !== 0));
             // Verificar el permiso de otros (others)
             return ($permisos & $bits) !== 0;
 

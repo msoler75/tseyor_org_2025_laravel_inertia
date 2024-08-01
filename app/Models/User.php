@@ -147,7 +147,7 @@ class User extends Authenticatable implements MustVerifyEmail
         // sin cache
         $r =  $user->grupos()->where('grupos.id', $grupo_id)->count();
         \Log::info("user {$user->id} in grupo {$grupo_id} = {$r}");
-        return $r;
+        return $r>=1;
 
         // con cache
         $cacheKey = 'user_grupos_in_' . $this->id . '_group_' . $grupo_id;

@@ -301,9 +301,9 @@ Route::get('solicitud/{id}/denegar', [EquiposController::class, 'denegarSolicitu
 Route::post('equipos/{id}/abandonar', [EquiposController::class, 'abandonar'])->name('equipo.abandonar');
 
 // administración de miembros
-Route::put('equipos/{idEquipo}/{idUsuario}/agregar', [EquiposController::class, 'addMember'])->name('equipo.agregar');
-Route::put('equipos/{idEquipo}/{idUsuario}/remover', [EquiposController::class, 'removeMember'])->name('equipo.remover');
-Route::put('equipos/{idEquipo}/update/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
+Route::put('equipos/{idEquipo}/rol/{idUsuario}/{rol}', [EquiposController::class, 'updateMember'])->name('equipo.modificarRol');
+Route::put('equipos/{idEquipo}/agregar/{idUsuario}', [EquiposController::class, 'addMember'])->name('equipo.agregar');
+Route::put('equipos/{idEquipo}/remover/{idUsuario}', [EquiposController::class, 'removeMember'])->name('equipo.remover');
 
 
 // chat gpt
