@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 use App\Traits\EsCategorizable;
@@ -60,7 +61,8 @@ class Equipo extends ContenidoBaseModel
         return $this->belongsToMany(User::class, 'equipo_user')
             ->using(Membresia::class)
             ->withPivot('rol')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->withCasts(['rol' => 'string']);
     }
 
     public function coordinadores()
@@ -244,6 +246,30 @@ class Membresia extends Pivot
         'user_id' => 'integer',
         'equipo_id' => 'integer',
     ];
+
+    protected function rol(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ?? 'miembro',
+        );
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($membresia) {
+            if (is_null($membresia->rol)) {
+                $membresia->rol = 'miembro';
+            }
+        });
+
+        static::updating(function ($membresia) {
+            if (is_null($membresia->rol)) {
+                $membresia->rol = 'miembro';
+            }
+        });
+    }
 }
 
 
