@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Collection;
 
 class Nodo extends Model
@@ -67,13 +68,13 @@ class Nodo extends Model
     /**
      * Obtiene el nodo más cercano siendo el mismo o antecesor de la ubicacion
      */
-    public static function desde($ubicacion)
+    public static function desde($ubicacion) : ?Nodo
     {
         if($ubicacion=='mis_archivos') return null;
 
-        $nodo = Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
-            ->leftJoin('users', 'users.id', '=', 'user_id')
-            ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
+        $nodo = Nodo::select(['nodos.*'])//, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+            //->leftJoin('users', 'users.id', '=', 'user_id')
+            //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
             ->whereRaw("'$ubicacion' LIKE CONCAT(nodos.ubicacion, '%')")
             ->orderByRaw('LENGTH(nodos.ubicacion) DESC')
             ->first();
@@ -82,8 +83,9 @@ class Nodo extends Model
             // crea un nodo por con los permisos por defecto
             $nodo = new Nodo();
             $nodo->ubicacion = $ubicacion;
-            $nodo->propietario_usuario = "admin"; // valores por defecto
-            $nodo->propietario_grupo = "admin";
+            //$nodo->propietario_usuario = "admin"; // valores por defecto
+            //$nodo->propietario_grupo = "admin";
+            // $nodo->save();
         }
         return $nodo;
     }
@@ -94,9 +96,9 @@ class Nodo extends Model
      */
     public static function de($idUser)
     {
-        return Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
-            ->leftJoin('users', 'users.id', '=', 'user_id')
-            ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
+        return Nodo::select(['nodos.*'])//, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+            //->leftJoin('users', 'users.id', '=', 'user_id')
+            //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
             ->where('nodos.user_id', '=', $idUser)
             ->orderByRaw('LENGTH(nodos.ubicacion) DESC')
             ->get();
@@ -108,9 +110,9 @@ class Nodo extends Model
      */
     public static function hijos($ubicacion)
     {
-        return Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
-            ->leftJoin('users', 'users.id', '=', 'user_id')
-            ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
+        return Nodo::select(['nodos.*'])//, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+            //->leftJoin('users', 'users.id', '=', 'user_id')
+            //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
             ->where('nodos.ubicacion', 'LIKE', $ubicacion . '/%')
             ->whereRaw("LENGTH(nodos.ubicacion) - LENGTH(REPLACE(nodos.ubicacion, '/', '')) = " . (substr_count($ubicacion, '/') + 1))
             ->orderByRaw('LENGTH(nodos.ubicacion) ASC')
@@ -178,15 +180,21 @@ class Nodo extends Model
         if (!$aclist)
             return false;
 
-        $aclListArray = $aclist->toArray();
+        Log::info("Nodo::tieneAcceso ". $user->name.", verbo: $verbo");
 
-        // filtramos por verbo
-        if ($verbo)
-            $aclist = $aclist->filter(function ($nodo) use ($verbo) {
-                return strpos($this->verbos, $verbo) !== false;
+         // filtramos por verbo
+         if ($verbo) {
+             Log::info("filtramos por verbo: $verbo");
+            $aclist = $aclist->filter(function ($acl) use ($verbo) {
+                return strpos($acl->verbos, $verbo) !== false;
             });
+        }
+        $aclListArray = $aclist->toArray();
+        Log::info("AclList de ".optional($user)->name.":", $aclListArray);
+
 
         // tiene acceso global para todos los nodos?
+        /*
         if (1) { // probamos diferentes implementaciones
             if ($aclist->whereNull('nodo_id')->count() > 0)
                 return true;
@@ -213,7 +221,7 @@ class Nodo extends Model
             if ($nodoIdIsNull) {
                 return true;
             }
-        }
+        }*/
 
         // tiene acceso a una carpeta padre?
 
@@ -221,8 +229,12 @@ class Nodo extends Model
         //if ($aclist->where("'$nodo->ubicacion'", 'LIKE', "CONCAT(ubicacion, '%')")->count() > 0)
         //  return true;
 
-        foreach ($aclListArray as $registro) {
-            if (strpos($this->ubicacion, $registro['ubicacion']) === 0) {
+        Log::info("Estamos mirando el nodo:",$this->toArray());
+
+        foreach ($aclListArray as $acl) {
+            Log::info("Checando acceso para ".$acl['ubicacion']);
+            if (strpos($this->ubicacion, $acl['ubicacion']) === 0) {
+                Log::info("Acceso concedido para ".$acl['ubicacion']);
                 return true;
             }
         }
