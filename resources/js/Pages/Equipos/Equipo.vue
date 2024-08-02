@@ -70,7 +70,7 @@
                         <h3>Carpetas</h3>
                         <div>
                             <div v-for="item, index of carpetas" :key="index" class="flex gap-3 items-baseline py-2">
-                                <FolderIcon :url="item.ubicacion" />
+                                <FolderIcon :url="item.ubicacion" arrow="true" />
                                 <Link :href="item.ubicacion" class="py-1 hover:underline">{{
                                     item.ubicacion?.substring(item.ubicacion?.lastIndexOf('/') + 1) }}</Link>
                             </div>

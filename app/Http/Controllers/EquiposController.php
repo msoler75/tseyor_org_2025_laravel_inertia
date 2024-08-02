@@ -158,7 +158,7 @@ class EquiposController extends Controller
             'ultimosInformes' => $informes,
             'miSolicitud' => $solicitud,
             'soyMiembro' => $soyMiembro,
-            'soyCoordinador' => $soyCoordinador
+            'soyCoordinador' => $soyCoordinador,
             /*
             'usuarios' => Inertia::lazy(function () use ($id) {
                 return Equipo::where('slug', $id)
@@ -753,7 +753,7 @@ class EquiposController extends Controller
         $solicitante = $solicitud->usuario;
 
         // Enviar el correo informativo
-        Notification::send($solicitante, new DenegadoEquipo($solicitud->equipo, $solicitante));
+        $solicitante->notify(new DenegadoEquipo($solicitud->equipo, $solicitante));
 
         return response()->json(['message' => 'Solicitud denegada'], 200);
     }

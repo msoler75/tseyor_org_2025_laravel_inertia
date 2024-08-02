@@ -95,11 +95,6 @@
                         </Dropdown>
 
 
-                        <Link v-if="!embed && propietarioRef && !seleccionando" class="btn btn-neutral btn-sm btn-icon"
-                            :href="propietarioRef.url" :title="tituloPropietario">
-                        <Icon :icon="propietarioRef.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'"
-                            class="transform scale-150" />
-                        </Link>
 
 
                         <Dropdown v-if="!enRaiz && !seleccionando" align="right" width="48"
@@ -148,6 +143,15 @@
                                         <Icon icon="ph:x-square-duotone" />
                                         <span>Cancelar selección</span>
                                     </div>
+
+                                    <Link v-if="!embed && propietarioRef && !seleccionando"
+                                        class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                        :href="propietarioRef.url" :title="tituloPropietario">
+                                    <Icon
+                                        :icon="propietarioRef.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'" />
+                                    <span v-if="propietarioRef.tipo == 'equipo'">Ver equipo</span>
+                                    <span v-else>Ver usuario</span>
+                                    </Link>
 
 
                                     <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
@@ -255,12 +259,13 @@
             <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
                 <Spinner />
             </div>
-            <div v-else-if="!mostrandoResultados&&!itemsOrdenados.length"
+            <div v-else-if="!mostrandoResultados && !itemsOrdenados.length"
                 class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
                 <div>No hay archivos</div>
             </div>
-            <div v-else-if="itemsMostrar.length && selectors.archivosVista === 'lista'" :class="itemsMostrar.length ? 'mr-2' : ''">
+            <div v-else-if="itemsMostrar.length && selectors.archivosVista === 'lista'"
+                :class="itemsMostrar.length ? 'mr-2' : ''">
                 <table class="w-full lg:w-auto mx-auto" :class="transitionActive ? 'animating' : ''">
                     <thead class="hidden sm:table-header-group" :class="itemsMostrar.length ? '' : 'opacity-0'">
                         <tr>
@@ -285,8 +290,7 @@
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Propietario</th>
                             <th v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'"
-                            class="hidden lg:table-cell text-sm"
-                            >Ubicación
+                                class="hidden lg:table-cell text-sm">Ubicación
                             </th>
                             <th class="hidden md:table-cell"></th>
                         </tr>
@@ -713,7 +717,7 @@
             <div class="p-5">
                 <div v-for="item, index of itemsPropiedades" :key="item.url" class="pb-4"
                     :class="index > 0 ? 'pt-4 border-t border-base-200' : ''">
-                    <table class="propiedades">
+                    <table class="propiedades border-separate border-spacing-y-3">
                         <tr>
                             <th>Archivo </th>
                             <td>{{ item.nombre }}</td>
@@ -740,6 +744,22 @@
                                 <div v-if="item.propietario?.usuario.id == user?.id"
                                     class="badge badge-warning text-xs whitespace-nowrap">
                                     Eres el propietario</div>
+                            </td>
+                        </tr>
+                        <tr v-if="!embed && propietarioRef">
+                            <th><span v-if="propietarioRef.tipo == 'equipo'">Equipo propietario</span>
+                                <span v-else>Usuario propietario</span>
+                            </th>
+                            <td class="flex flex-wrap gap-x items-center">
+                                <Icon
+                                    :icon="propietarioRef.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'" />
+                                <span>{{ propietarioRef.nombre }}</span>
+                                <Link
+                                    class="flex gap-x items-center btn btn-xs text-xs btn-neutral whitespace-nowrap"
+                                    :href="propietarioRef.url" :title="tituloPropietario">
+                                <span v-if="propietarioRef.tipo == 'equipo'">Ver equipo</span>
+                                <span v-else>Ver usuario</span>
+                                </Link>
                             </td>
                         </tr>
                         <tr>
