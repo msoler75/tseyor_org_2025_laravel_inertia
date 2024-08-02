@@ -37,6 +37,7 @@ class ContenidoHelper
 
     public static function rellenarSlugImagenYDescripcion($objeto)
     {
+        Log::info("ContenidoBaseModel::rellenarSlugImagenYDescripcion");
         $fillable = $objeto->getFillable();
 
         // rellenamos slug si existe y está vacío
