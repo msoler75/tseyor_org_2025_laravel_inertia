@@ -13,8 +13,7 @@
 
                 <div class="flex gap-x items-center w-full" v-if="!seleccionando && mostrandoResultados">
 
-                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ buscar
-                            }}'</span>:</span>
+                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ buscar }}'</span>:</span>
 
                     <button class="ml-auto  btn btn-neutral btn-sm btn-icon" @click.prevent="toggleVista"
                         title="Cambiar vista">
@@ -115,9 +114,9 @@
                                         <span>Subir archivos</span>
                                     </div>
 
-                                    <div v-if="puedeEscribir && !seleccionando && itemsCopy[0].ruta != 'archivos' && itemsCopy[0].ruta != 'medios'"
+                                    <div v-if="puedeEscribir && !seleccionando && itemsShow[0].ruta != 'archivos' && itemsShow[0].ruta != 'medios'"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                        @click="abrirModalRenombrar(itemsCopy[0])">
+                                        @click="abrirModalRenombrar(itemsShow[0])">
                                         <Icon icon="ph:cursor-text-duotone" />
                                         <span>Renombrar</span>
                                     </div>
@@ -130,7 +129,7 @@
                                     </div>
 
 
-                                    <div v-if="!enRaiz && puedeLeer && !seleccionando && itemsCopy.filter(x => !x.padre).length > 1"
+                                    <div v-if="!enRaiz && puedeLeer && !seleccionando && itemsShow.filter(x => !x.padre).length > 1"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="seleccionando = true">
                                         <Icon icon="ph:check-duotone" />
@@ -155,7 +154,7 @@
 
 
                                     <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                                        @click.prevent="abrirModalPropiedades(itemsCopy[0])">
+                                        @click.prevent="abrirModalPropiedades(itemsShow[0])">
                                         <Icon icon="ph:info-duotone" />
                                         <span>Propiedades</span>
                                     </div>
@@ -1131,7 +1130,7 @@ import usePermisos from '@/Stores/permisos'
 
 const permisos = usePermisos()
 
-const esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos'))
+const esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos').length)
 
 const props = defineProps({
     ruta: { type: String, required: true },
@@ -1152,14 +1151,58 @@ const emit = defineEmits(['updated', 'disk', 'folder', 'file', 'insert']);
 
 const transitionActive = ref(false)
 
-// para evitar modificación de la prop
-// https://github.com/inertiajs/inertia/issues/854#issuecomment-896089483
-const itemsCopy = ref(JSON.parse(JSON.stringify(props.items)))
+
+// información más detallada de cada archivo (se carga después de mostrar el contenido de la carpeta)
+const info_cargada = ref(false)
+const info_archivos = ref({})
+
+// Carga la información adicional de los contenidos de la carpeta actual
+function cargarInfo() {
+    info_cargada.value = false
+    axios.get('/archivos_info' + '?ruta=' + rutaActual.value)
+        .then(response => {
+            // info.value = response.data
+            info_archivos.value = response.data
+            info_cargada.value = true
+        })
+}
+
+// lista de items (archivos y carpetas) que se va a mostrar
+const itemsShow = ref([])
+
+// genera la lista de items final
+function calcularItems() {
+
+    // para evitar modificación de la prop
+    // https://github.com/inertiajs/inertia/issues/854#issuecomment-896089483
+    const items = JSON.parse(JSON.stringify(props.items))
+
+    const fields = ['nodo_id', 'puedeEscribir', 'puedeLeer', 'permisos', 'propietario', 'privada', 'acl']
+    console.log('info', info_archivos.value)
+    for (const item of items) {
+        const inf = info_archivos.value[item.nombre]
+        if (inf) {
+            for (const field of fields)
+                item[field] = inf[field]
+        }
+    }
+    console.log({items})
+
+    itemsShow.value = items
+}
+
+calcularItems()
 
 watch(() => props.items, () => {
-    console.log('watch items')
-    itemsCopy.value = JSON.parse(JSON.stringify(props.items))
+    console.log('watch props.items')
+    calcularItems()
+    // itemsShow.value = JSON.parse(JSON.stringify(props.items))
     cargarInfo()
+})
+
+watch(info_archivos, () => {
+    console.log('watch info_archivos')
+    calcularItems()
 })
 
 // para reproducir audios
@@ -1167,9 +1210,9 @@ const player = usePlayer()
 
 onMounted(() => {
     console.log('onmounted')
-    nextTick(() => {
+    // nextTick(() => {
         cargarInfo()
-    })
+    // })
 
     document.addEventListener('keydown', onKeyDown);
 })
@@ -1188,11 +1231,11 @@ function onKeyDown(event) {
 const enRaiz = computed(() => props.items[1]?.tipo === 'disco' || props.items[0].ruta == 'mis_archivos')
 
 // puede editar la carpeta actual?
-const puedeEscribir = computed(() => esAdministrador.value || (itemsCopy.value.length ? itemsCopy.value[0].puedeEscribir : false))
-const puedeLeer = computed(() => esAdministrador.value || (itemsCopy.value.length ? itemsCopy.value[0].puedeLeer : false))
+const puedeEscribir = computed(() => esAdministrador.value || (itemsShow.value.length ? itemsShow.value[0].puedeEscribir : false))
+const puedeLeer = computed(() => esAdministrador.value || (itemsShow.value.length ? itemsShow.value[0].puedeLeer : false))
 const puedeMoverSeleccionados = computed(() => esAdministrador.value || itemsSeleccionados.value.find(item => item.puedeEscribir))
 // ruta actual
-const rutaActual = computed(() => itemsCopy.value.length ? itemsCopy.value[0].ruta : '')
+const rutaActual = computed(() => itemsShow.value.length ? itemsShow.value[0].ruta : '')
 
 // otros datos
 const page = usePage()
@@ -1290,24 +1333,24 @@ const seleccionando = ref(false)
 
 function cancelarSeleccion() {
     seleccionando.value = false
-    itemsCopy.value.forEach(item => item.seleccionado = false)
+    itemsShow.value.forEach(item => item.seleccionado = false)
 }
 
 function seleccionarTodos() {
-    itemsCopy.value.forEach(item => item.seleccionado = true)
+    itemsShow.value.forEach(item => item.seleccionado = true)
 }
 
 // verifica que cuando no hay ningun item seleccionado, se termina el modo de selección
 function verificarFinSeleccion() {
     if (!seleccionando.value) return
     if (screen.width >= 1024) return
-    const alguno = itemsCopy.value.find(item => item.seleccionado)
+    const alguno = itemsShow.value.find(item => item.seleccionado)
     if (!alguno)
         seleccionando.value = false
 }
 
 // si hay algun cambio en los items
-watch(() => itemsCopy, verificarFinSeleccion, { deep: true })
+watch(() => itemsShow, verificarFinSeleccion, { deep: true })
 
 // EVENTOS TOUCH
 
@@ -1340,7 +1383,7 @@ function toggleItem(item) {
     item.touching = false
 }
 
-const itemsSeleccionados = computed(() => itemsCopy.value.filter(item => !['.', '..'].includes(item.nombre) && item.seleccionado && !item.eliminado))
+const itemsSeleccionados = computed(() => itemsShow.value.filter(item => !['.', '..'].includes(item.nombre) && item.seleccionado && !item.eliminado))
 
 
 watch(() => itemsSeleccionados.value.length, (value) => {
@@ -1409,7 +1452,7 @@ function cancelarOperacion() {
     store.isCopyingFiles = false
     store.filesToMove = []
     store.filesToCopy = []
-    itemsCopy.value.forEach(item => { item.seleccionado = false })
+    itemsShow.value.forEach(item => { item.seleccionado = false })
 }
 
 
@@ -1466,7 +1509,7 @@ const ordenarPor = ref("normal")
 
 const itemsOrdenados = computed(() => {
     // Separar las carpetas y los archivos en dos grupos
-    var items = itemsCopy.value.filter(item => !item.padre && !item.actual && !item.eliminado)
+    var items = itemsShow.value.filter(item => !item.padre && !item.actual && !item.eliminado)
 
     // Mostramos "mis archivos" ?
     if (!props.mostrarMisArchivos)
@@ -1915,28 +1958,6 @@ function reloadPage() {
 }
 
 
-const info_cargada = ref(false)
-
-// Carga la información adicional de los contenidos de la carpeta actual
-function cargarInfo() {
-    info_cargada.value = false
-    axios.get('/archivos_info' + '?ruta=' + rutaActual.value)
-        .then(response => {
-            // info.value = response.data
-            const info = response.data
-            const fields = ['nodo_id', 'puedeEscribir', 'puedeLeer', 'permisos', 'propietario', 'privada', 'acl']
-            console.log('cargadaInfo', info)
-            for (const item of itemsCopy.value) {
-                const inf = info[item.nombre]
-                if (inf) {
-                    for (const field of fields)
-                        item[field] = inf[field]
-                }
-            }
-
-            info_cargada.value = true
-        })
-}
 
 // copia datos de una fuente (de tipo objeto o de tipo array) a un destino, concretamente la clave k
 // de forma que mantiene la reactividad

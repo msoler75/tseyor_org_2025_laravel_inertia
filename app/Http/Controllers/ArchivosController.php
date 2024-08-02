@@ -170,7 +170,7 @@ class ArchivosController extends Controller
             // $acl = Acl::from($user, ['ejecutar', 'escribir']);
 
             // comprobamos el permiso de ejecución (listar) en la carpeta
-            $nodo = Nodo::desde($loc->location);
+            $nodo = $this->nodoDesde($loc->location);
             $nodoCarpeta = $nodo;
 
 
@@ -199,7 +199,7 @@ class ArchivosController extends Controller
             // $p3 = new T("ArchivosController.list($ruta) P3");
 
             // agregamos la carpeta actual
-            $items[] = $this->prepareItemList($disk, $ruta, $nodo, ['tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
+            $items[] = $this->prepareItemList($disk, $ruta, ['tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
 
             // agregamos carpeta padre
             $padre = dirname($ruta);
@@ -213,8 +213,8 @@ class ArchivosController extends Controller
                         $items[] = $this->prepareItemRoot();
                     }
                 } else {
-                    $nodoPadre = Nodo::desde(dirname($loc->location));
-                    $items[] = $this->prepareItemList($disk, $padre, $nodoPadre, ['tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
+                    $nodoPadre = $this->nodoDesde(dirname($loc->location));
+                    $items[] = $this->prepareItemList($disk, $padre, ['tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
                 }
             }
 
@@ -236,7 +236,6 @@ class ArchivosController extends Controller
                 $items[] = $this->prepareItemList(
                     $disk,
                     $carpeta,
-                    $nodo,
                     [
                         'tipo' => 'carpeta',
                         'archivos' => count($dir->files()),
@@ -252,7 +251,7 @@ class ArchivosController extends Controller
             foreach ($archivos as $archivo) {
                 $file = StorageItem::build($disk, $archivo);
                 $nodo = null; // $nodosHijos->where('ruta', $archivo)->first();
-                $items[] = $this->prepareItemList($disk, $archivo, $nodo, [
+                $items[] = $this->prepareItemList($disk, $archivo, [
                     'tipo' => 'archivo',
                     'tamano' => $file->size(),
                 ]);
@@ -305,6 +304,64 @@ class ArchivosController extends Controller
 
 
     /**
+     * Obtiene el nodo más cercano siendo el mismo o antecesor de la ubicacion. Agrega la información de propietario
+     */
+    public static function nodoDesde($ubicacion): ?Nodo
+    {
+        if ($ubicacion == 'mis_archivos') return null;
+
+        $nodo = Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+            ->leftJoin('users', 'users.id', '=', 'user_id')
+            ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
+            ->whereRaw("'$ubicacion' LIKE CONCAT(nodos.ubicacion, '%')")
+            ->orderByRaw('LENGTH(nodos.ubicacion) DESC')
+            ->first();
+
+        if (!$nodo) {
+            // crea un nodo por con los permisos por defecto
+            $nodo = new Nodo();
+            $nodo->ubicacion = $ubicacion;
+            $nodo->propietario_usuario = "admin"; // valores por defecto
+            $nodo->propietario_grupo = "admin";
+            // $nodo->save();
+        }
+        if (!$nodo->propietario_grupo)
+            $nodo->propietario_grupo = 'admin';
+        if (!$nodo->propietario_usuario)
+            $nodo->propietario_usuario = 'admin';
+        return $nodo;
+    }
+
+    /**
+     * Obtiene todos los nodos de un usuario. Agrega la información de propietario (user,grupo)
+     */
+    private function nodosDeUsuario($idUser)
+    {
+        return Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+            ->leftJoin('users', 'users.id', '=', 'user_id')
+            ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
+            ->where('nodos.user_id', '=', $idUser)
+            ->orderByRaw('LENGTH(nodos.ubicacion) DESC')
+            ->get();
+    }
+
+
+    /**
+     * Obtiene todos los nodos de la ruta o ubicación, sin incluir el nodo de la carpeta. Agrega la información de propietario
+     */
+    private function nodosHijos(string $ubicacion)
+    {
+        return Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+            ->leftJoin('users', 'users.id', '=', 'user_id')
+            ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
+            ->where('nodos.ubicacion', 'LIKE', $ubicacion . '/%')
+            ->whereRaw("LENGTH(nodos.ubicacion) - LENGTH(REPLACE(nodos.ubicacion, '/', '')) = " . (substr_count($ubicacion, '/') + 1))
+            ->orderByRaw('LENGTH(nodos.ubicacion) ASC')
+            ->get();
+    }
+
+
+    /**
      * Devuelve la lista de carpetas del usuario
      */
     public function listMyFiles()
@@ -315,7 +372,7 @@ class ArchivosController extends Controller
             abort(401); // usuario no encontrado
         }
 
-        $nodos = Nodo::de($user->id);
+        $nodos = $this->nodosDeUsuario($user->id);
 
         $items = [
             [
@@ -341,14 +398,14 @@ class ArchivosController extends Controller
             }
 
             if ($nodo->es_carpeta)
-                $item = $this->prepareItemList($sti->disk, $sti->relativeLocation, $nodo, [
+                $item = $this->prepareItemList($sti->disk, $sti->relativeLocation,  [
                     'tipo' => 'carpeta',
                     'archivos' => count($sti->files()),
                     'subcarpetas' => count($sti->directories()),
                     'acceso_directo' => true,
                 ]);
             else
-                $item = $this->prepareItemList($sti->disk, $sti->relativeLocation, $nodo, [
+                $item = $this->prepareItemList($sti->disk, $sti->relativeLocation,  [
                     'tipo' => 'archivo',
                     'tamano' => $sti->size(),
                 ]);
@@ -391,11 +448,12 @@ class ArchivosController extends Controller
     /**
      * Obtiene para cada item de items la información de permisos, acl
      */
-    private function calc_info($ruta, $items): array
+    private function calcularInfoArchivos($ruta, $items): array
     {
         // comprobamos el permiso de ejecución (listar) en la carpeta
-        $nodo = Nodo::desde($ruta);
+        $nodo = $this->nodoDesde("/" . ltrim($ruta, '/'));
         $nodoCarpeta = $nodo;
+        Log::info("calcularInfoArchivos $ruta", ['nodo' => $nodo->toArray(), 'items' => $items]);
 
         // agregamos carpeta padre
         $padre = dirname($ruta);
@@ -407,15 +465,15 @@ class ArchivosController extends Controller
         }
 
         // obtenemos todos los nodos de la carpeta
-        $nodosHijos = $ruta == 'mis_archivos' ? Nodo::whereRaw("false")->get() : Nodo::hijos($ruta);
+        $nodosHijos = $ruta == 'mis_archivos' ? Nodo::whereRaw("false")->get() : $this->nodosHijos($ruta);
 
         $info = [];
 
         foreach ($items as $item) {
 
-            $nodo = $item['ruta'] == 'mis_archivos' ? null : $nodosHijos->where('ruta', $item['ruta'])->first();
+            $nodo = $item['ruta'] == 'mis_archivos' ? null : $nodosHijos->where('ubicacion', $item['ruta'])->first();
             if (!$nodo)
-                $nodo = Nodo::desde($item['ruta']);
+                $nodo = $this->nodoDesde("/" . $item['ruta']);
 
             // dd($nodo);
             $info_item = $this->prepareItemInfo($item['ruta'], $item['nombre'], $item['tipo'] ?? 'archivo', $nodo);
@@ -440,6 +498,7 @@ class ArchivosController extends Controller
         $user = auth()->user();
         $aclUser = optional($user)->accessControlList();
 
+        Log::info("calcularInfoArchivos.Paso2:", $info);
 
         // Agregamos la información de Access Control List para cada item
         foreach ($info as $idx => $item) {
@@ -461,7 +520,9 @@ class ArchivosController extends Controller
             // omitimos el item padre
             if (!($item['padre'] ?? 0)) {
                 $nodoItem = $item['nodo'];
+                Log::info("calcularInfoArchivos para item", $item);
                 $info[$idx]['puedeEscribir'] = $nodoItem ? Gate::allows('escribir', $nodoItem) : false;
+                Log::info("puedeEscribir: " . $info[$idx]['puedeEscribir']);
 
                 $info[$idx]['puedeLeer'] = $nodoItem ? Gate::allows('leer', $nodoItem) : false;
                 $nodoContenedor = $idx === 0 ? $nodoPadre : $nodoCarpeta;
@@ -510,12 +571,13 @@ class ArchivosController extends Controller
         //obtenemos los items de la respuesta json
         $items = $resp->original['items'];
 
-        $info = $this->calc_info($ruta, $items);
+        $info = $this->calcularInfoArchivos($ruta, $items);
 
         return response()->json($info, 200);
     }
 
-    private function prepareItemRoot() {
+    private function prepareItemRoot()
+    {
         return [
             'nombre' => 'raiz',
             'ruta' => '',
@@ -532,7 +594,7 @@ class ArchivosController extends Controller
     /**
      * Prepara el item de un listado de una carpeta
      */
-    private function prepareItemList(string $disk, string $ruta, ?Nodo $nodo, array $options): array
+    private function prepareItemList(string $disk, string $ruta, array $options): array
     {
         $ruta = rtrim($ruta, '/');
         // $baseUrl = url('');
@@ -625,13 +687,13 @@ class ArchivosController extends Controller
                 }
 
                 if ($nodo->es_carpeta)
-                    $resultados[] = $this->prepareItemList($sti->disk, $sti->relativeLocation, $nodo, [
+                    $resultados[] = $this->prepareItemList($sti->disk, $sti->relativeLocation, [
                         'tipo' => 'carpeta',
                         'archivos' => count($sti->files()),
                         'subcarpetas' => count($sti->directories())
                     ]);
                 else
-                    $resultados[] = $this->prepareItemList($sti->disk, $sti->relativeLocation, $nodo, [
+                    $resultados[] = $this->prepareItemList($sti->disk, $sti->relativeLocation, [
                         'tipo' => 'archivo',
                         'tamano' => $sti->size(),
                     ]);
@@ -689,7 +751,7 @@ class ArchivosController extends Controller
                 foreach ($archivos as $archivo) {
                     Log::info("archivo $archivo");
                     if ($this->matchSearch(basename($archivo), $nombre))
-                        $resultados[] = $this->prepareItemList($loc->disk, $archivo, null, [
+                        $resultados[] = $this->prepareItemList($loc->disk, $archivo, [
                             'tipo' => 'archivo',
                             'tamano' => Storage::disk($loc->disk)->size($archivo)
                         ]);
@@ -702,7 +764,7 @@ class ArchivosController extends Controller
                     Log::info("carpeta $subcarpeta");
 
                     if ($this->matchSearch(basename($subcarpeta), $nombre)) {
-                        $item = $this->prepareItemList($loc->disk, $subcarpeta, null, [
+                        $item = $this->prepareItemList($loc->disk, $subcarpeta, [
                             'tipo' => 'carpeta',
                             'archivos' => count($dir->files()),
                             'subcarpetas' => count($dir->directories())
@@ -740,7 +802,7 @@ class ArchivosController extends Controller
         ];
 
         if ($id_busqueda_actual)
-          $response['id_busqueda'] = $id_busqueda_actual;
+            $response['id_busqueda'] = $id_busqueda_actual;
 
         return response()->json($response, 200);
     }
@@ -1229,7 +1291,7 @@ class ArchivosController extends Controller
                 $nodo->update($update);
         }
 
-        $item = $this->prepareItemList($sti->disk, $sti->relativeLocation, $nodo, ['tipo' => $sti->directoryExists() ? 'carpeta' : 'archivo']);
+        $item = $this->prepareItemList($sti->disk, $sti->relativeLocation, ['tipo' => $sti->directoryExists() ? 'carpeta' : 'archivo']);
 
         $newAcls = $request->acl;
         if ($newAcls) {
@@ -1274,7 +1336,7 @@ class ArchivosController extends Controller
         }
 
 
-        $info = $this->calc_info($ruta, [$item]);
+        $info = $this->calcularInfoArchivos($ruta, [$item]);
         if (count($info) == 1)
             // obtener el primer valor del array
             $info = array_shift($info);
@@ -1785,4 +1847,9 @@ class ArchivosController extends Controller
 
         return response()->json($response, $successCount > 0 ? 200 : 500);
     }
+}
+
+
+class NodoPropietario
+{
 }
