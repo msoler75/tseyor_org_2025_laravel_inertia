@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
 use App\Notifications\SolicitudEquipo;
 use App\Notifications\AbandonoEquipo;
-use App\Notifications\BienvenidaEquipo;
+use App\Notifications\DenegadoEquipo;
 use Illuminate\Support\Facades\Notification;
 use App\Pigmalion\StorageItem;
 
@@ -730,8 +730,8 @@ class EquiposController extends Controller
         // agregamos el usuario al equipo
         $solicitud->equipo->miembros()->syncWithoutDetaching([$solicitante->id]);
 
-        // Enviar el correo informativo
-        Notification::send($solicitante, new BienvenidaEquipo($solicitud->equipo, $solicitante, true));
+        // el correo se envía en MembresiaObserver
+        // ..
 
         return response()->json(['message' => 'Solicitud aceptada'], 200);
     }
@@ -753,7 +753,7 @@ class EquiposController extends Controller
         $solicitante = $solicitud->usuario;
 
         // Enviar el correo informativo
-        Notification::send($solicitante, new BienvenidaEquipo($solicitud->equipo, $solicitante, false));
+        Notification::send($solicitante, new DenegadoEquipo($solicitud->equipo, $solicitante));
 
         return response()->json(['message' => 'Solicitud denegada'], 200);
     }

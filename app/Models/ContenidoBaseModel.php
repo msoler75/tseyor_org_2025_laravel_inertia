@@ -30,12 +30,13 @@ class ContenidoBaseModel extends Model
         parent::boot();
 
         static::saving(function ($model) {
+            Log::info("ContenidoBaseModel::saving");
             // Acciones antes de guardar el modelo
             ContenidoHelper::rellenarSlugImagenYDescripcion($model);
         });
 
         static::saved(function ($model) {
-
+            Log::info("ContenidoBaseModel::saved");
             // Log::info("ContenidoBaseModel saved: ". substr($model->texto, 0, 1024));
             // si mueve alguna imagen, guardamos los cambios y salimos
             if (ContenidoHelper::moverImagenesContenido($model)) {
@@ -54,8 +55,11 @@ class ContenidoBaseModel extends Model
 
 
         static::deleted(function ($model) {
+            Log::info("ContenidoBaseModel::deleted");
             ContenidoHelper::removerContenido($model);
         });
+
+
     }
 
     // revisionable se aplica a nuevos contenidos

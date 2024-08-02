@@ -9,22 +9,20 @@ use Illuminate\Notifications\Notification;
 use App\Models\User;
 use App\Models\Equipo;
 
-class BienvenidaEquipo extends Notification implements ShouldQueue
+class DenegadoEquipo extends Notification implements ShouldQueue
 {
     use Queueable;
 
     private Equipo $equipo;
     private User $usuario;
-    private bool $incorporacion;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Equipo $equipo, User $usuario, bool $incorporacion)
+    public function __construct(Equipo $equipo, User $usuario)
     {
         $this->equipo = $equipo;
         $this->usuario = $usuario;
-        $this->incorporacion = $incorporacion;
     }
 
     /**
@@ -44,20 +42,15 @@ class BienvenidaEquipo extends Notification implements ShouldQueue
     {
         $equipoUrl = url('/equipos/' . $this->equipo->slug);
 
-        $esCoordinador = $this->equipo->coordinadores->contains('id', $this->usuario->id);
-        $subject = $this->incorporacion ?
-            ($esCoordinador ? 'Ahora coordinas el equipo "' . $this->equipo->nombre . '"' :
-                '¡Eres miembro del equipo "' . $this->equipo->nombre . '"!')
-            : 'Tu solicitud a "' . $this->equipo->nombre . '" ha sido denegada';
+        $subject = 'Tu solicitud a "' . $this->equipo->nombre . '" ha sido denegada';
 
         $linea1 = $subject;
 
         return (new MailMessage)
             ->subject($subject)
             ->greeting('¡Hola ' . $this->usuario->name . '!')
-            ->line($linea1)
-            ->action('Ver equipo', $equipoUrl)
-            ->line("Si has recibido este mensaje por error o no deseas estar en el equipo, puedes darte de baja en cualquier momento.");
+            ->line($linea1 . '. Puedes volver a solicitarlo más adelante.')
+            ->action('Ver equipo', $equipoUrl);
     }
     /**
      * Get the array representation of the notification.
