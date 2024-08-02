@@ -258,18 +258,20 @@ class ArchivosController extends Controller
                 ]);
             }
 
+            // dd($nodoCarpeta->toArray());
+
             // obtenemos el propietario de la ruta actual, que puede ser un usuario o un grupo/equipo
-            $equipo = Equipo::where('group_id', $nodoCarpeta->group_id)->first();
+            $equipo = $nodoCarpeta->group_id ? Equipo::where('group_id', $nodoCarpeta->group_id)->first() : null;
             if ($equipo)
                 $propietario = [
-                    'url' => route('equipo', $equipo->slug || $equipo->id),
+                    'url' => route('equipo', $equipo->slug ?? $equipo->id),
                     'nombre' => $equipo->nombre,
                     'tipo' => 'equipo'
                 ];
             else {
                 $usuario = User::find($nodoCarpeta->user_id);
                 $propietario = [
-                    'url' => route('usuario', $usuario->slug || $usuario->id),
+                    'url' => route('usuario', $usuario->slug ?? $usuario->id),
                     'nombre' => $usuario->name,
                     'tipo' => 'usuario'
                 ];
@@ -365,7 +367,7 @@ class ArchivosController extends Controller
         // $ruta = '';
 
         /* $propietario = [
-             'url' => route('usuario', $user->slug || $user->id),
+             'url' => route('usuario', $user->slug ?? $user->id),
              'nombre' => $user->name,
              'tipo' => 'usuario'
          ]; */
