@@ -30,6 +30,7 @@ declare module 'vue' {
     Breadcrumb: typeof import('./resources/js/Components/FolderExplorer/Breadcrumb.vue')['default']
     Card: typeof import('./resources/js/Components/Card.vue')['default']
     CardContent: typeof import('./resources/js/Components/CardContent.vue')['default']
+    Categorias: typeof import('./resources/js/Components/Categorias.vue')['default']
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']
     ClientsOrPartners: typeof import('./resources/js/Sections/ClientsOrPartners.vue')['default']
     Comentario: typeof import('./resources/js/Components/Comentarios/Comentario.vue')['default']

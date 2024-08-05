@@ -46,8 +46,8 @@
                         :description="contenido.descripcion" :date="contenido.published_at"
                         :tag="contenido.categoria"
                         image-left image-contained
-                        class="h-[300px]"
-                        imageClass="w-1/3 h-full sm:w-[200px] sm:h-[300px]">
+                        class="h-[44vw] xs:h-[200px] lg:h-[300px]"
+                        imageClass="w-1/3 h-full sm:w-[150px] sm:h-[250px] lg:w-[200px] lg:h-[300px]">
                         <template #imagex>
                             <div class="flex  w-full h-full items-center justify-center">
                                 <Libro3d :libro="contenido" imageClass="w-[180px]"/>
