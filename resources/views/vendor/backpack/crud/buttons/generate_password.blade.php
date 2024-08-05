@@ -22,8 +22,11 @@
 
                     } else {
 
-                        swal("¡Contraseña generada para " + response.data.user + "!",
-                            response.data.password, "success");
+                        swal("Nueva contraseña para " + response.data.user + ':',
+                                response.data.password, "success")
+                            .then((value) => {
+                                swal(`Se ha notificado al usuario`);
+                            })
                     }
                 })
         }
