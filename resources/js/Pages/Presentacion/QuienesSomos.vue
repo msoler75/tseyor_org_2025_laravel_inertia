@@ -1,8 +1,7 @@
 <template>
     <Sections height="500">
 
-        <Hero title="¿Quiénes Somos?" subtitle="Mundo Armónico Tseyor es una ONG que busca el autodescubrimiento y las nuevas Sociedades Armónicas. Sus principios se basan en el contacto extraterrestre que mantiene conversaciones regulares con seres
-                        humanos del cosmos pertenecientes a la Confederación de Mundos Habitados de la Galaxia."
+        <Hero title="¿Quiénes Somos?" subtitle="Mundo Armónico Tseyor es una ONG dedicada al autodescubrimiento y a la formación de las Sociedades Armónicas. Sus principios se basan en el contacto extraterrestre, manteniendo conversaciones regulares con la Confederación de Mundos Habitados de la Galaxia."
             srcImage="/almacen/medios/paginas/quienes-somos.jpg" image-right
             buttonLabel="Conoce nuestros orígenes"
             :href="route('origenes-de-tseyor')">
