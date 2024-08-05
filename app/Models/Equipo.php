@@ -284,14 +284,14 @@ class MembresiaObserver
         $equipo = Equipo::findOrFail($membresia->equipo_id);
 
         // lo agregamos al grupo
-        $grupo=Grupo::findOrFail($equipo->group_id);
+        $grupo = Grupo::findOrFail($equipo->group_id);
         $grupo->usuarios()->attach($membresia->user_id);
 
         if ($membresia->rol == 'coordinador')
             $equipo->otorgarPermisosCarpetas($membresia->user_id);
 
         $miembro = User::find($membresia->user_id);
-        $miembro->notify(new BienvenidaEquipo($equipo, $miembro, true));
+        $miembro->notify(new BienvenidaEquipo($equipo, $miembro));
     }
 
     public function updated(Membresia $membresia): void
@@ -314,7 +314,7 @@ class MembresiaObserver
         $equipo = Equipo::findOrFail($membresia->equipo_id);
 
         // lo removemos del grupo
-        $grupo=Grupo::findOrFail($equipo->group_id);
+        $grupo = Grupo::findOrFail($equipo->group_id);
         $grupo->usuarios()->detach($membresia->user_id);
 
         $equipo->removerPermisosCarpetas($membresia->user_id);

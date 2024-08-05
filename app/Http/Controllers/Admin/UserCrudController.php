@@ -8,6 +8,7 @@ use Backpack\PermissionManager\app\Http\Requests\UserStoreCrudRequest as StoreRe
 use Backpack\PermissionManager\app\Http\Requests\UserUpdateCrudRequest as UpdateRequest;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Notifications\CambioPassword;
 
 /**
  * Class UserCrudController
@@ -77,7 +78,47 @@ class UserCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+         CRUD::addButtonFromView('line', 'generate_password', 'generate_password', 'end');
+
+        CRUD::setOperationSetting('lineButtonsAsDropdown', true);
     }
+
+
+
+    public function password($user_id)
+    {
+        CRUD::hasAccessOrFail('user');
+
+        $user = User::finrOrFail($user_id);
+
+        $words = array(
+            "amor", "mente", "observar", "trascendente", "unidad", "cambio", "divulgar", "armonizar", "equilibrio", "muul", "baksaj", "diversidad", "celeste", "kundalini", "grupal", "cielo",
+            "ritmo", "equidad", "infinito", "trinidad", "estrella", "plasma", "salud", "ong", "mundo", "utg", "universidad", "sandalia", "baston", "protege", "manto",
+            "movimiento", "claridad", "humildad", "hermandad", "confianza", "camino", "predica", "corazon", "estelar", "cayado", "baculo", "ancestral", "libertad", "libre",
+            "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce", "trece", "intruso", "dispersion", "cyborg", "crea", "crear", "voluntario", "forzado",
+            "auto", "autoctono", "oriundo", "primigenio", "aguila", "holograma", "ilusion", "fantasia", "apego", "desapego", "sombra", "sombras", "piensa",
+            "pancreas", "pan",  "vino", "sangre", "tierra", "linfatico", "reconocer", "cristo", "cosmico", "interior", "proteccion", "alcanzar", "tutelar", "replica", "replicas", "realidad", "mundos",
+            "h1", "h2", "h3", "aium", "rasbek", "shilcars", "melcor", "orjain", "noiwanak", "jalied", "melinus", "mo", "rhaum", "seiph", "orsil", "aumnor", "leer", "asumir", "vaciar",
+            "odres", "fractales", "mezclar", "lodo", "agua", "limpiar", "ejemplo", "peques", "sanar", "agregado", "transformar", "transformarse", "cambiar",
+            "monje", "pensamiento", "espejo", "testo", "transmutar", "luz", "rompui", "om", "pedir", "neent", "aum", "retro", "retroalimenta", "sinhio", "paraguas", "protector", "cafe",
+            "prometeo", "fractal", "xendra", "orbe", "esfera", "arte", "ciencia", "espiritual", "espiritualidad", "ondulatorio", "terapia", "retiro", "guerrero", "prior",
+            "norte", "este", "oeste", "sur", "",
+            "trascendente", "abiotica", "norte", "oscuridad", "entropia", "feliz", "romper", "beh", "sayab", "tseek", "suut", "kat", "oksah", "ich", "grihal"
+        );
+
+        $index = mt_rand(0, count($words) - 1);
+
+        $password = $words[$index] . '.' . mt_rand(1000, 9999);
+        \Log::info("nueva contraseña para {$user->name}: $password");
+
+        $user->update(['password' => bcrypt($password)]);
+
+        $user->notify(new CambioPassword($user, $password));
+
+        return response()->json(['user' => $user->name, 'password' => $password]);
+    }
+
 
     /**
      * Define what happens when the Create operation is loaded.
@@ -140,8 +181,6 @@ class UserCrudController extends CrudController
                 $entry->password = Hash::make(request('password'));
             }
         });*/
-
-
     }
 
     /**
@@ -180,7 +219,8 @@ class UserCrudController extends CrudController
         return $r;
     }
 
-    protected function actualizarGrupos($user_id, $grupos) {
+    protected function actualizarGrupos($user_id, $grupos)
+    {
         // dd($grupos);
 
         $user = User::findOrFail($user_id);
@@ -249,7 +289,7 @@ class UserCrudController extends CrudController
                 'name'  => 'profile_photo_path',
                 'label' => 'Imagen',
                 'type'  => 'image_cover',
-                'attributes'=>['folder'=>'profile-photos'],
+                'attributes' => ['folder' => 'profile-photos'],
             ],
             [
                 'name'  => 'frase',
@@ -274,7 +314,7 @@ class UserCrudController extends CrudController
                 'model'       => 'App\Models\Contacto',
                 'wrapper'   => [
                     'class'      => 'form-group col-md-4'
-                 ]
+                ]
             ],
             [
                 // two interconnected entities

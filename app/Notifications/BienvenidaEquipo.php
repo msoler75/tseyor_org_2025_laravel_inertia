@@ -15,16 +15,14 @@ class BienvenidaEquipo extends Notification implements ShouldQueue
 
     private Equipo $equipo;
     private User $usuario;
-    private bool $incorporacion;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Equipo $equipo, User $usuario, bool $incorporacion)
+    public function __construct(Equipo $equipo, User $usuario)
     {
         $this->equipo = $equipo;
         $this->usuario = $usuario;
-        $this->incorporacion = $incorporacion;
     }
 
     /**
@@ -45,10 +43,9 @@ class BienvenidaEquipo extends Notification implements ShouldQueue
         $equipoUrl = url('/equipos/' . $this->equipo->slug);
 
         $esCoordinador = $this->equipo->coordinadores->contains('id', $this->usuario->id);
-        $subject = $this->incorporacion ?
-            ($esCoordinador ? 'Ahora coordinas el equipo "' . $this->equipo->nombre . '"' :
-                '¡Eres miembro del equipo "' . $this->equipo->nombre . '"!')
-            : 'Tu solicitud a "' . $this->equipo->nombre . '" ha sido denegada';
+        $subject = 
+            $esCoordinador ? 'Ahora coordinas el equipo "' . $this->equipo->nombre . '"' :
+                '¡Eres miembro del equipo "' . $this->equipo->nombre . '"!';
 
         $linea1 = $subject;
 
