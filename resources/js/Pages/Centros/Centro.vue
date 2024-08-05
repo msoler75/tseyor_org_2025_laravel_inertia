@@ -52,9 +52,7 @@
             <div v-if="libros.length" class="my-20">
                 <h2 class="text-center md:text-left">Libros relacionados</h2>
                 <GridAppear col-width="200px" class="gap-6  place-items-center md:place-items-start">
-                    <Link v-for="libro in libros" :key="libro.slug" :href="route('libro', libro.slug)">
-                    <Image :src="libro.imagen" class="w-[200px] h-[300px]" />
-                    </Link>
+                    <Libro3d v-for="libro in libros" :key="libro.slug" :href="route('libro', libro.slug)" :libro="libro"/>
                 </GridAppear>
             </div>
 

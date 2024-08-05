@@ -19,7 +19,8 @@ use App\Http\Controllers\ImagenesController;
 use App\Pigmalion\StorageItem;
 
 // use App\Pigmalion\TiempoEjecucion as T;
-// use App\Pigmalion\Profiler;
+//use App\T;
+ //use App\Pigmalion\Profiler;
 
 /*
     En sistemas operativos basados en UNIX, como Linux, el sticky bit es un atributo de permisos especial que se puede aplicar a directorios. Este bit tiene un propósito específico y afecta la forma en que los usuarios pueden acceder y manipular archivos dentro de ese directorio.
@@ -57,10 +58,6 @@ class ArchivosController extends Controller
     public function list(Request $request, $rutaReq, $json)
     {
 
-        // new T("ArchivosController.list($ruta)");
-
-        // $p1 = new T("ArchivosController.list($ruta) P1");
-
         if (strpos($rutaReq, ':') !== false) {
             if ($json) {
                 return response()->json(['error' => 'Acceso denegado'], 403);
@@ -75,13 +72,10 @@ class ArchivosController extends Controller
             abort(400, 'No se permiten rutas relativas');
         }
 
-        //$ruta = urldecode(ltrim($rutaReq, '/'));
+        $dir = new StorageItem($rutaReq);
 
-
-        $loc = new StorageItem($rutaReq);
-
-        $ruta = $loc->relativeLocation;
-        $disk = $loc->disk;
+        $ruta = $dir->relativeLocation;
+        $disk = $dir->disk;
 
         $user = auth()->user();
 
@@ -130,7 +124,7 @@ class ArchivosController extends Controller
 
             $respuesta = [
                 'items' => $items,
-                'ruta' => $loc->location,
+                'ruta' => $dir->location,
                 'propietarioRef' => null
             ];
         } else if ($disk == 'archivos' && $ruta == 'mis_archivos') {
@@ -142,41 +136,25 @@ class ArchivosController extends Controller
 
             $respuesta = [
                 'items' => $items,
-                'ruta' => $loc->location,
+                'ruta' => $dir->location,
                 'propietarioRef' => null
             ];
         } else {
 
-            // $rutaBase = str_replace($baseUrl, '', Storage::disk($disk)->url($ruta));
-            // $rutaBase = $ruta;
-
-            // dd($rutaReq, $disk, $ruta);
-            // dd(Storage::disk($disk)->path($ruta));
-
             // Comprobar si la carpeta existe
-            if (!$loc->exists()) {
+            if (!$dir->exists()) {
                 abort(404, 'Ruta no encontrada');
             }
 
             // si es un archivo, procedemos a la descarga
-            if (!$loc->directoryExists()) {
+            if (!$dir->directoryExists()) {
                 // no es una carpeta, así que derivamos a la descarga
-                return $this->descargar($request, '/' . /* '/archivos/' . */ $ruta); //!!
+                return $this->descargar($request, '/' . /* '/archivos/' . */ $ruta);
             }
 
-            // unset($p1);
-            // $p1b = new T("ArchivosController.list($ruta) P1B");
-
-            // $acl = Acl::from($user, ['ejecutar', 'escribir']);
-
             // comprobamos el permiso de ejecución (listar) en la carpeta
-            $nodo = $this->nodoDesde($loc->location);
+            $nodo = $this->nodoDesde($dir->location);
             $nodoCarpeta = $nodo;
-
-
-            // unset($p1b);
-            // $p1c = new T("ArchivosController.list($ruta) P1C");
-
 
             $esAdministrador = optional($user)->hasPermissionTo('administrar archivos');
 
@@ -187,16 +165,9 @@ class ArchivosController extends Controller
             // creamos la lista de items que retornaremos
             $items = [];
 
-
-            // unset($p1c);
-            // $p2 = new T("ArchivosController.list($ruta) P2");
-
             // elementos de la ruta
-            $archivos = $loc->files(true);
-            $carpetas = $loc->directories(true);
-
-            // unset($p2);
-            // $p3 = new T("ArchivosController.list($ruta) P3");
+            $archivos = $dir->files(true);
+            $carpetas = $dir->directories(true);
 
             // agregamos la carpeta actual
             $items[] = $this->prepareItemList($disk, $ruta, ['tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
@@ -205,7 +176,6 @@ class ArchivosController extends Controller
             $padre = dirname($ruta);
             if ($padre == '.')
                 $padre = "";
-            $nodoPadre = null;
             if ($ruta) {
                 if ($ruta == 'archivos') {
                     // $items[] = $items[0];
@@ -213,21 +183,10 @@ class ArchivosController extends Controller
                         $items[] = $this->prepareItemRoot();
                     }
                 } else {
-                    $nodoPadre = $this->nodoDesde(dirname($loc->location));
+                    $nodoPadre = $this->nodoDesde(dirname($dir->location));
                     $items[] = $this->prepareItemList($disk, $padre, ['tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
                 }
             }
-
-            // dd($ruta, $padre, $items);
-
-            // obtenemos todos los nodos de la carpeta
-            // $nodosHijos = Nodo::hijos($ruta);
-
-
-            // unset($p3);
-            // $p4 = new T("ArchivosController.list($ruta) P4 (carpetas)");
-            // dd($carpetas);
-
 
             // Agregar carpetas a la colección de elementos
             foreach ($carpetas as $carpeta) {
@@ -238,14 +197,11 @@ class ArchivosController extends Controller
                     $carpeta,
                     [
                         'tipo' => 'carpeta',
-                        'archivos' => count($dir->files()),
-                        'subcarpetas' => count($dir->directories())
+                        // 'archivos' => count($dir->files()),
+                        // 'subcarpetas' => count($dir->directories())
                     ]
                 );
             }
-
-            // unset($p4);
-            // $p4b = new T("ArchivosController.list($ruta) P4B (archivos)");
 
             // Agregar archivos a la colección de elementos
             foreach ($archivos as $archivo) {
@@ -256,8 +212,6 @@ class ArchivosController extends Controller
                     'tamano' => $file->size(),
                 ]);
             }
-
-            // dd($nodoCarpeta->toArray());
 
             // obtenemos el propietario de la ruta actual, que puede ser un usuario o un grupo/equipo
             $equipo = $nodoCarpeta->group_id ? Equipo::where('group_id', $nodoCarpeta->group_id)->first() : null;
@@ -276,14 +230,9 @@ class ArchivosController extends Controller
                 ];
             }
 
-            // unset($p4b);
-            //dd($items);
-
-            // dd(Profiler::results());
-
             $respuesta = [
                 'items' => $items,
-                'ruta' => $loc->location,
+                'ruta' => $dir->location,
                 // 'rutaBase' => '',
                 'propietarioRef' => $propietario
             ];
@@ -461,6 +410,7 @@ class ArchivosController extends Controller
             $padre = "";
         $nodoPadre = null;
         if ($padre) {
+
             $nodoPadre = Nodo::desde($padre);
         }
 
@@ -556,6 +506,11 @@ class ArchivosController extends Controller
                 'usuario' => ['id' => $nodo->user_id, 'nombre' => $nodo->propietario_usuario],
                 'grupo' => ['id' => $nodo->group_id, 'nombre' => $nodo->propietario_grupo]
             ];
+        if($tipo=='carpeta'){
+            $dir = new StorageItem($ruta);
+            $info_item['archivos'] = count($dir->files());
+            $info_item['subcarpetas'] = count($dir->directories());
+        }
         return $info_item;
     }
 
@@ -628,7 +583,7 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
         }
 
-        $loc = new StorageItem($ruta);
+        $dir = new StorageItem($ruta);
 
         // nombre a buscar
         $nombre = $request->nombre;
@@ -653,14 +608,14 @@ class ArchivosController extends Controller
         if (!$id_busqueda || $id_busqueda != $id_busqueda_actual) {
 
             // la ruta inicial es la primera carpeta donde buscaremos después en disco
-            $carpetas_pendientes = [$loc->location];
+            $carpetas_pendientes = [$dir->location];
 
             Log::info("Nueva busqueda en $ruta. Buscando $nombre ...");
             Log::info("carpetas_pendientes", $carpetas_pendientes);
 
             // realizamos una rápida búsqueda inicial, usando nodos
-            $nodos = Nodo::search($nombre)->query(function ($query) use ($loc) {
-                return $query->whereRaw("ubicacion LIKE '{$loc->location}%'");
+            $nodos = Nodo::search($nombre)->query(function ($query) use ($dir) {
+                return $query->whereRaw("ubicacion LIKE '{$dir->location}%'");
             })->take(50)->get();
 
             $resultados = [];
@@ -708,7 +663,7 @@ class ArchivosController extends Controller
             $id_busqueda_actual = uniqid();
 
             $request->session()->put('id_busqueda', $id_busqueda_actual);
-            $request->session()->put('buscar_ruta', $loc->location);
+            $request->session()->put('buscar_ruta', $dir->location);
             $request->session()->put('buscar_nombre', $nombre);
         } else {
 
@@ -743,28 +698,28 @@ class ArchivosController extends Controller
 
                 // Buscar archivos y subcarpetas dentro de la carpeta actual
                 Log::info("Buscando en carpeta $carpeta");
-                $loc = new StorageItem($carpeta);
-                $archivos = $loc->files(true);
-                $subcarpetas = $loc->directories(true);
+                $dir = new StorageItem($carpeta);
+                $archivos = $dir->files(true);
+                $subcarpetas = $dir->directories(true);
 
                 // Comprobar si algún archivo tiene un nombre similar a la cadena de búsqueda
                 foreach ($archivos as $archivo) {
                     Log::info("archivo $archivo");
                     if ($this->matchSearch(basename($archivo), $nombre))
-                        $resultados[] = $this->prepareItemList($loc->disk, $archivo, [
+                        $resultados[] = $this->prepareItemList($dir->disk, $archivo, [
                             'tipo' => 'archivo',
-                            'tamano' => Storage::disk($loc->disk)->size($archivo)
+                            'tamano' => Storage::disk($dir->disk)->size($archivo)
                         ]);
                 }
 
                 // Comprobar si alguna subcarpeta tiene un nombre similar a la cadena de búsqueda
                 foreach ($subcarpetas as $subcarpeta) {
                     $item = null;
-                    $dir = StorageItem::build($loc->disk, $subcarpeta);
+                    $dir = StorageItem::build($dir->disk, $subcarpeta);
                     Log::info("carpeta $subcarpeta");
 
                     if ($this->matchSearch(basename($subcarpeta), $nombre)) {
-                        $item = $this->prepareItemList($loc->disk, $subcarpeta, [
+                        $item = $this->prepareItemList($dir->disk, $subcarpeta, [
                             'tipo' => 'carpeta',
                             'archivos' => count($dir->files()),
                             'subcarpetas' => count($dir->directories())
@@ -936,13 +891,13 @@ class ArchivosController extends Controller
 
         $ofolder = $folder;
 
-        $loc = new StorageItem($folder);
+        $dir = new StorageItem($folder);
 
-        $folder = $loc->relativeLocation;
+        $folder = $dir->relativeLocation;
 
-        $path = $loc->path;
+        $path = $dir->path;
         // dd($path);
-        Log::info("uploading file '$path', original location: $ofolder, in disk {$loc->disk}, relative folder: $folder");
+        Log::info("uploading file '$path', original location: $ofolder, in disk {$dir->disk}, relative folder: $folder");
 
         // Crear la carpeta si no existe
         // $path = storage_path("app/" . $folder);
@@ -965,16 +920,16 @@ class ArchivosController extends Controller
         }
 
         $filename = $newFilename;
-        $storedPath = $file->storeAs($folder, $filename, $loc->disk);
+        $storedPath = $file->storeAs($folder, $filename, $dir->disk);
 
         Log::info("storedPath: $storedPath");
 
         // creamos su nodo
-        Nodo::crear($loc->location . '/' . $filename, false, auth()->user());
+        Nodo::crear($dir->location . '/' . $filename, false, auth()->user());
 
         // Obtener la URL pública del archivo
         //$baseUrl = Storage::disk($disk)->url('');
-        $upItem = StorageItem::build($loc->disk, $storedPath);
+        $upItem = StorageItem::build($dir->disk, $storedPath);
         $url = $upItem->url;
         // Log::info("baseUrl = $baseUrl");
         // removemos el protocolo y host de la url
@@ -1081,9 +1036,9 @@ class ArchivosController extends Controller
             ], 400);
         }
 
-        $loc = new StorageItem($folder);
+        $dir = new StorageItem($folder);
 
-        if ($loc->disk == 'raiz') {
+        if ($dir->disk == 'raiz') {
             return response()->json([
                 'error' => 'notAllowed'
             ], 403);
@@ -1091,13 +1046,13 @@ class ArchivosController extends Controller
 
         // $folderPath = Storage::disk($disk)->path($folder);
 
-        if (!$loc->directoryExists()) {
+        if (!$dir->directoryExists()) {
             return response()->json([
                 'error' => 'folderNotFound'
             ], 404);
         }
 
-        $newFolderPath = $loc->path . '/' . $name;
+        $newFolderPath = $dir->path . '/' . $name;
 
         Log::info("newFolderPath: $newFolderPath");
 
@@ -1112,7 +1067,7 @@ class ArchivosController extends Controller
         // comprobamos los permisos de escritura
         //$acl = Acl::from($user);
         if (!$esAdministrador) {
-            $nodo = Nodo::desde($loc->location);
+            $nodo = Nodo::desde($dir->location);
             if (!$nodo || Gate::denies('escribir', $nodo)) {
                 return response()->json([
                     'error' => 'No tienes permisos'
@@ -1134,7 +1089,7 @@ class ArchivosController extends Controller
         }
 
         // Creamos el nodo de la carpeta
-        Nodo::crear($loc->location . '/' . $name, true, $user);
+        Nodo::crear($dir->location . '/' . $name, true, $user);
 
         return response()->json([
             'message' => 'folderCreated'
@@ -1448,7 +1403,7 @@ class ArchivosController extends Controller
             return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
         }
 
-        $loc = new StorageItem($request->folder);
+        $dir = new StorageItem($request->folder);
 
 
         //  dd("folder=$folder  oldName=$oldName  newName=$newName");
@@ -1461,9 +1416,9 @@ class ArchivosController extends Controller
         $oldName = $request->oldName;
         $newName = $request->newName;
 
-        //$ruta = $loc->relativeLocation;
-        $rutaAntes = $loc->location . '/' . $oldName;
-        $rutaDespues = $loc->location . '/' . $newName;
+        //$ruta = $dir->relativeLocation;
+        $rutaAntes = $dir->location . '/' . $oldName;
+        $rutaDespues = $dir->location . '/' . $newName;
         $itemAntes = new StorageItem($rutaAntes);
         $itemDespues = new StorageItem($rutaDespues);
 
@@ -1482,7 +1437,7 @@ class ArchivosController extends Controller
 
         if (!$esAdministrador) {
             // se requiere: permisos de escritura en la carpeta contenedora del item, y permisos de escritura en el item
-            $nodoContenedor = Nodo::desde($loc->location);
+            $nodoContenedor = Nodo::desde($dir->location);
             $nodoItem = Nodo::desde($rutaAntes);
             if (!$nodoContenedor || !$nodoItem || Gate::denies('escribir', $nodoContenedor) || Gate::denies('escribir', $nodoItem)) {
                 return response()->json([

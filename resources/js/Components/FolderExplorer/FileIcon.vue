@@ -72,7 +72,7 @@ const iconType = computed(() => {
         return 'file-icons:database';
 
     case 'js':
-        return 'file-icons:javascript';
+        return 'teenyicons:javascript-outline';
 
     case 'ts':
         return 'file-icons:typescript';
