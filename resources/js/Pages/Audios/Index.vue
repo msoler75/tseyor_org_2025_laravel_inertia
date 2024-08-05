@@ -20,27 +20,13 @@
     " />
 -->
 
-            <div class="flex justify-end mb-5 md:container md:mx-auto">
+            <div class="flex justify-end mb-5 md:container md:mx-auto px-2">
                 <SearchInput />
             </div>
 
-            <div class="w-full flex gap-5 flex-wrap md:flex-nowrap md:container md:mx-auto">
+            <div class="w-full flex gap-5 flex-wrap md:flex-nowrap md:container md:mx-auto px-2">
 
-                <div
-                    class="card bg-base-100 shadow self-baseline flex-wrap flex-row md:flex-col p-5 lg:p-10 gap-4 sticky top-16 pt-14 z-30">
-                    <Link :href="`${route('audios')}`"
-                        :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
-                    <span class="capitalize">Novedades</span>
-                    </Link>
-
-                    <div v-for="categoria of categorias" :key="categoria.nombre" class="flex gap-2"
-                        :class="categoriaActiva == categoria.nombre ? 'text-primary font-bold' : ''">
-                        <Link :href="`${route('audios')}?categoria=${categoria.nombre}`">
-                        <span class="capitalize">{{ categoria.nombre }}</span>
-                        <small v-if="categoria.total > 0">({{ categoria.total }})</small>
-                        </Link>
-                    </div>
-                </div>
+                <Categorias :categorias="categorias" />
 
                 <div class="w-full flex-grow">
 
@@ -50,7 +36,7 @@
                         :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
                         <div v-for="audio in listado.data.map(a => ({ ...a, src: srcAudio(a) }))" :key="audio.id"
                             class="card flex-row shadow bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
-                            style="max-width: calc(100vw - 30px)">
+                            style="max-width: calc(100vw - 14px)">
 
                             <div v-if="audio.audio" class="btn p-0 w-12 h-5 min-h-auto text-3xl"
                                 :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'"
@@ -100,7 +86,25 @@ const props = defineProps({
 });
 
 const listado = ref(props.listado);
-const categorias = ref(props.categorias)
+const categorias = computed(() => {
+
+    const items = [{
+        nombre: 'Novedades', href: route('audios')
+        , seleccionada: !props.filtrado && !props.categoriaActiva
+    }] // :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
+
+    for (const categoria of props.categorias) {
+        items.push({
+            nombre: categoria.nombre, href: route('audios') + '?categoria=' + categoria.nombre,
+            total: categoria.total,
+            seleccionada: props.categoriaActiva == categoria.nombre
+        })
+    }
+
+    return items
+})
+
+
 
 const player = usePlayer()
 
