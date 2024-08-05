@@ -12,7 +12,7 @@ class T
 
     public static $stats = [];
 
-    public function __construct($classname, $str)
+    public function __construct( $str, $classname = null)
     {
         $this->startTime = microtime(true);
         $this->str = $classname."::".$str;

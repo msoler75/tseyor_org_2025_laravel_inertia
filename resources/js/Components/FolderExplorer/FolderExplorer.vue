@@ -270,7 +270,7 @@
                         <tr>
                             <th v-if="seleccionando" class="hidden md:table-cell"></th>
                             <th></th>
-                            <th class="min-w-[16rem] text-left cursor-pointer"
+                            <th class="min-w-[16rem] lg:min-w-[32rem] text-left cursor-pointer"
                                 @click="ordenarPor = ordenarPor == 'nombreAsc' ? 'nombreDesc' : 'nombreAsc'">Nombre
                                 <span v-if="ordenarPor == 'nombreDesc'">↑</span><span
                                     v-if="ordenarPor == 'nombreAsc'">↓</span>
@@ -295,7 +295,7 @@
                         </tr>
                     </thead>
 
-                    <TransitionGroup tag="tbody" name="files">
+                    <component :is="transitionActive?TransitionGroup:'tbody'" tag="tbody" name="files">
                         <tr v-for="item in itemsMostrar" :key="item.ruta"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '') + (!seleccionando || esAdministrador || item.puedeLeer ? '' : 'opacity-50 pointer-events-none')">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
@@ -331,10 +331,10 @@
                                         :class="seleccionando ? 'pointer-events-none' : ''"
                                         @click="clickFile(item, $event)" :is-link="!embed" />
 
-                                    <small class="w-full flex justify-between gap-2 items-center">
+                                    <small class="w-full flex justify-between gap-2 items-center opacity-50">
                                         <span v-if="item.tipo === 'disco'">****</span>
                                         <span v-else-if="item.tipo === 'carpeta'">
-                                            {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
+                                            {{ 'archivos' in item ? plural(item.archivos + item.subcarpetas, 'elemento' ) : '' }}</span>
                                         <FileSize v-else :size="item.tamano" />
                                         <TimeAgo v-if="item.fecha_modificacion" :date="item.fecha_modificacion" />
                                     </small>
@@ -358,7 +358,8 @@
                                 v-on:touchend.passive="ontouchend(item)">
                                 <span v-if="item.tipo === 'disco'">-</span>
                                 <span v-else-if="item.tipo === 'carpeta'" class="text-sm">
-                                    {{ plural(item.archivos + item.subcarpetas, 'elemento') }}</span>
+                                    {{ 'archivos' in item ? plural(item.archivos + item.subcarpetas, 'elemento' ) : '' }}
+                                </span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
                             </td>
                             <td class="hidden sm:table-cell text-center" v-on:touchstart.passive="ontouchstart(item)"
@@ -445,12 +446,12 @@
                                 </Dropdown>
                             </td>
                         </tr>
-                    </TransitionGroup>
+                    </component>
                 </table>
             </div>
             <div v-else-if="itemsMostrar.length && selectors.archivosVista === 'grid'">
-                <div class="grid grid-cols-3 gap-4 pt-6">
-                    <TransitionGroup name="files">
+                <GridFill colWidth="14rem" class="gap-4 pt-6">
+
                         <div v-for="item in itemsMostrar" :key="item.ruta"
                             :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : 'bg-base-200')">
                             <div v-if="seleccionando" @click.prevent="toggleItem(item)"
@@ -488,8 +489,8 @@
                                 </div>
                                 <div class="text-gray-500 text-xs">
                                     <span v-if="item.tipo === 'disco'" />
-                                    <template v-else-if="item.tipo === 'carpeta'">{{ item.archivos + ' archivos, ' +
-                                        item.subcarpetas + ' subcarpetas' }}
+                                    <template v-else-if="item.tipo === 'carpeta'">{{ 'archivos' in item?(plural(item.archivos, 'archivo')+ ', ' +
+                                        plural(item.subcarpetas,'carpeta')):'&nbsp;' }}
                                     </template>
                                     <template v-else>
                                         <FileSize :size="item.tamano" />&nbsp;
@@ -558,8 +559,7 @@
                                 </div>
                             </div>
                         </div>
-                    </TransitionGroup>
-                </div>
+                </GridFill>
             </div>
 
             <div v-if="buscando || mostrandoResultados" class="w-full text-center h-[3rem] mt-3">
@@ -1127,6 +1127,7 @@ import useSelectors from '@/Stores/selectors'
 import { useDebounce } from '@vueuse/core';
 import usePlayer from '@/Stores/player'
 import usePermisos from '@/Stores/permisos'
+import { TransitionGroup} from 'vue'
 
 const permisos = usePermisos()
 
@@ -1177,7 +1178,7 @@ function calcularItems() {
     // https://github.com/inertiajs/inertia/issues/854#issuecomment-896089483
     const items = JSON.parse(JSON.stringify(props.items))
 
-    const fields = ['nodo_id', 'puedeEscribir', 'puedeLeer', 'permisos', 'propietario', 'privada', 'acl']
+    const fields = ['nodo_id', 'puedeEscribir', 'puedeLeer', 'permisos', 'propietario', 'privada', 'acl', 'archivos', 'subcarpetas']
     console.log('info', info_archivos.value)
     for (const item of items) {
         const inf = info_archivos.value[item.nombre]

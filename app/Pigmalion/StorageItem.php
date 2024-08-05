@@ -215,6 +215,8 @@ class StorageItem
 
     public function files($relativeLocation = false)
     {
+        if($this->disk=='raiz') return [];
+
         $files = Storage::disk($this->disk)->files($this->relativeLocation);
         if ($relativeLocation)
             return $files;
@@ -227,6 +229,7 @@ class StorageItem
 
     public function allFiles($relativeLocation = false)
     {
+        if($this->disk=='raiz') return [];
         $files = Storage::disk($this->disk)->allFiles($this->relativeLocation);
         if ($relativeLocation)
             return $files;
@@ -239,6 +242,7 @@ class StorageItem
 
     public function directories($relativeLocation = false)
     {
+        if($this->disk=='raiz') return [];
         $dirs = Storage::disk($this->disk)->directories($this->relativeLocation);
         if ($relativeLocation)
             return $dirs;
