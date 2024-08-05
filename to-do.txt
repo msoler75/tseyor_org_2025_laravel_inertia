@@ -1,9 +1,3 @@
-BD:
--eliminar campo user_id de tabla equipos
--tabla nodos, cambiar columna'ruta' por 'ubicacion'
--tabla nodos_acl, la llave foránea group_id está referenciando a tabla 'equipos'. cambiar por 'grupos'
--tabla nodos_acl quitar columna 'deleted_at'
-
 VALIDACION CORREO USUARIO
 -usuario que se registra debe recibir un mensaje a su correo de validación de dirección electrónica
 
