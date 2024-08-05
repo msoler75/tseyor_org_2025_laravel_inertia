@@ -73,7 +73,8 @@
                 <div class="mx-auto xl:max-w-xl px-4">
                     <h2 class="text-center">Últimos comentarios</h2>
                     <ul class="list-none space-y-5">
-                        <li v-for="comentario of comentarios"
+                        <div v-if="!comentarios.length" class="my-16 text-center">No hay comentarios todavía</div>
+                        <li v-else v-for="comentario of comentarios"
                             class="w-full flex flex-col gap-3 md:flex-row justify-between items-baseline">
                             <Link :href="comentario.url" class="prose">
                             <blockquote>

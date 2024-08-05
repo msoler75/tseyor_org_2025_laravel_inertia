@@ -18,6 +18,10 @@ Route::group([
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
     // Route::get('dashboard', 'Backpack\dashboard')->name('dashboard');
+    Route::get('logout', function() {
+        auth()->logout();
+        return redirect('/');
+    });
     Route::post('user/new-password', [AdminController::class, 'newPassword']);
     Route::crud('user', 'UserCrudController');
     Route::crud('comunicado', 'ComunicadoCrudController');

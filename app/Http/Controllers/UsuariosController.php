@@ -51,7 +51,7 @@ class UsuariosController extends Controller
             ->take(7)
             ->get();
 
-        $administrar = true;
+        $administrar = false;
 
         $equipos = $administrar ? Equipo::select('id', 'slug', 'nombre')->get() : [];
 
