@@ -1,5 +1,4 @@
 <script setup>
-import { Head, usePage, router } from '@inertiajs/vue3';
 import { onBeforeUnmount/*, markRaw*/ } from 'vue';
 import { useDark, useToggle } from "@vueuse/core";
 import usePermisos from '@/Stores/permisos'
