@@ -31,7 +31,7 @@ const props = defineProps({
     url: String,
     novedades: { type: Boolean, default: true },
     selectBreakpoint: { type: String, default: 'sm' }, // en qué punto o breakpoint se muestra el select
-    columnaBreakpoint: { type: String, default: 'lg' }, // en qué punto o breakpoint se muestra en modo columna
+    columnaBreakpoint: { type: String, default: 'md' }, // en qué punto o breakpoint se muestra en modo columna
     selectClass: String
 })
 
@@ -64,9 +64,9 @@ const categorias = computed(() => {
 
     for (const categoria of props.categorias) {
         items.push({
-            nombre: categoria.nombre, href: props.url + '?categoria=' + (categoria.nombre == 'Todos' ? '_' : categoria.nombre),
+            nombre: categoria.nombre, href: props.url + '?categoria=' + (categoria.nombre.match(/Tod.s/i) ? '_' : categoria.nombre),
             total: categoria.total,
-            valor: categoria.nombre == 'Todos' ? '_' : categoria.nombre
+            valor: categoria.nombre.match(/Tod.s/i) ? '_' : categoria.nombre
             // seleccionada: props.actual == categoria.nombre
         })
     }

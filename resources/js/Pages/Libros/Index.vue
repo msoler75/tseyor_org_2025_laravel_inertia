@@ -1,4 +1,3 @@
-
 <template>
     <div class="container py-12 mx-auto">
 
@@ -15,7 +14,8 @@
         <div class="flex w-full justify-between mb-5">
             <SearchInput class="flex-grow">
                 <div class="flex items-baseline gap-3 w-full pl-1"><input id="titulos" type="checkbox"
-                        v-model="selectors.soloTitulosLibros"> <label for="titulos" class="mb-0">Solo títulos</label></div>
+                        v-model="selectors.soloTitulosLibros"> <label for="titulos" class="mb-0">Solo títulos</label>
+                </div>
             </SearchInput>
         </div>
 
@@ -24,52 +24,52 @@
             <div v-if="false"
                 class="gap-3 xl:gap-0 xl:max-w-[260px] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline xl:sticky xl:top-20">
                 <Link :href="`${route('libros')}`" class="py-2 hover:text-primary transition-colors duration-250"
-                    :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''"
-                    >
+                    :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
                 <span>Novedades</span>
                 </Link>
 
                 <div v-for="categoria of categorias" :key="categoria.nombre" class="flex"
                     :class="categoriaActiva == (categoria.valor || categoria.nombre) ? 'text-primary font-bold' : ''">
                     <Link :href="`${route('libros')}?categoria=${categoria.valor || categoria.nombre}`"
-                        class="py-2 hover:text-primary transition-colors duration-250"
-                        >
+                        class="py-2 hover:text-primary transition-colors duration-250">
                     <span>{{ ucFirst(categoria.nombre) }}</span>
                     <small v-if="categoria.total > 0"> ({{ categoria.total }})</small>
                     </Link>
                 </div>
             </div>
 
-            <Categorias :categorias="categorias" :url="route('libros')"  columna-breakpoint="xl" select-breakpoint="md" select-class="w-full"/>
+            <Categorias :categorias="categorias" :url="route('libros')" columna-breakpoint="xl" select-breakpoint="md"
+                select-class="w-full" />
 
             <FadeOnNavigate class="w-full flex-grow">
 
                 <SearchResultsHeader :results="listado" :valid-search="busquedaValida" />
 
-                    <GridAppear v-if="selectors.soloTitulosLibros" class="grid gap-4" col-width="28rem">
-                        <div v-for="libro in listado.data" :key="libro.id"
-                            class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
-                            <Link :href="route('libro', libro.slug)" class="flex items-center gap-3" >
-                            <span v-html="libro.titulo"/></Link>
-                        </div>
-                    </GridAppear>
+                <GridAppear v-if="selectors.soloTitulosLibros" class="grid gap-4" col-width="28rem">
+                    <div v-for="libro in listado.data" :key="libro.id"
+                        class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
+                        <Link :href="route('libro', libro.slug)" class="flex items-center gap-3">
+                        <span v-html="libro.titulo" /></Link>
+                    </div>
+                </GridAppear>
 
-                    <GridAppear v-else class="grid gap-4 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(22rem,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(24rem,1fr))]" col-width="">
-                        <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
-                            :image="contenido.imagen" :href="route('libro', contenido.slug)"
-                            :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
-                            image-left class="h-[43vw] xs:h-[200px] lg:h-[300px] 2xl:h-[355px]"
-                            imageClass="w-1/3 xs:h-full sm:w-[150px]  lg:w-[200px] lg:h-[300px] 2xl:w-[250px] 2xl:h-[355px]"
-                            image-contained
-                             :image-view-transition-name="`imagen-libro-${contenido.id}`">
-                             <template #imagex>
+                <GridAppear v-else
+                    class="grid gap-4 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(22rem,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(24rem,1fr))]"
+                    col-width="">
+                    <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
+                        :image="contenido.imagen" :href="route('libro', contenido.slug)"
+                        :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
+                        image-left class="h-[43vw] xs:h-[200px] lg:h-[300px] 2xl:h-[355px]"
+                        imageClass="w-1/3 xs:h-full sm:w-[150px]  lg:w-[200px] lg:h-[300px] 2xl:w-[250px] 2xl:h-[355px]"
+                        image-contained :image-view-transition-name="`imagen-libro-${contenido.id}`">
+                        <template #imagex>
                             <div class="flex  w-full h-full items-center justify-center">
-                                <Libro3d :libro="contenido" imageClass="w-[120px] lg:w-[180px] 2xl:w-[213px]"/>
+                                <Libro3d :libro="contenido" imageClass="w-[120px] lg:w-[180px] 2xl:w-[213px]" />
                             </div>
                         </template>
-                             </CardContent>
+                    </CardContent>
 
-                    </GridAppear>
+                </GridAppear>
 
 
                 <pagination class="mt-6" :links="listado.links" />
@@ -86,7 +86,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import useSelectors from '@/Stores/selectors'
-import {ucFirst }  from '@/composables/textutils'
+import { ucFirst } from '@/composables/textutils'
 
 defineOptions({ layout: AppLayout })
 
