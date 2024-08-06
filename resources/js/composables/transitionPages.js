@@ -1,5 +1,6 @@
 import { useNav } from "../Stores/nav.js";
 
+
 export default function setTransitionPages(router) {
   const nav = useNav();
 
@@ -13,7 +14,7 @@ export default function setTransitionPages(router) {
       event.detail.visit.url
     );
 
-    nav.closeTabs()
+    nav.closeTabs();
 
     /*if(nav.ignoreScroll) {
         scrollToCurrentPosition()
@@ -132,15 +133,13 @@ export default function setTransitionPages(router) {
       }, animationPageTransitionDuration);
     }
 
-
     // hacemos el scroll al elemento del hash
 
-     // enlace inicial
-     if (window.location.hash) {
-        setTimeout(() => {
-            nav.scrollToId(window.location.hash.substring(1), 0)
-        }, 500)
+    // enlace inicial
+    if (window.location.hash) {
+      setTimeout(() => {
+        nav.scrollToId(window.location.hash.substring(1), 0);
+      }, 500);
     }
-
   });
 }

@@ -21,23 +21,6 @@
 
         <ContentMain class="w-full flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
 
-            <div v-if="false"
-                class="gap-3 xl:gap-0 xl:max-w-[260px] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline xl:sticky xl:top-20">
-                <Link :href="`${route('libros')}`" class="py-2 hover:text-primary transition-colors duration-250"
-                    :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
-                <span>Novedades</span>
-                </Link>
-
-                <div v-for="categoria of categorias" :key="categoria.nombre" class="flex"
-                    :class="categoriaActiva == (categoria.valor || categoria.nombre) ? 'text-primary font-bold' : ''">
-                    <Link :href="`${route('libros')}?categoria=${categoria.valor || categoria.nombre}`"
-                        class="py-2 hover:text-primary transition-colors duration-250">
-                    <span>{{ ucFirst(categoria.nombre) }}</span>
-                    <small v-if="categoria.total > 0"> ({{ categoria.total }})</small>
-                    </Link>
-                </div>
-            </div>
-
             <Categorias :categorias="categorias" :url="route('libros')" columna-breakpoint="xl" select-breakpoint="md"
                 select-class="w-full" />
 

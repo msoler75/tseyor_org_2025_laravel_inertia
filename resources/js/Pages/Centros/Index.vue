@@ -29,7 +29,7 @@
                                 <Slide v-for="centro in muulasterios" :key="centro.id">
                                     <Link :href="route('centro', centro.id)"
                                         :style="`background-image: url(${getImageUrl(centro.imagen)}); background-size: cover; background-position: center center;`"
-                                        class="block w-full h-[60vh]">
+                                        class="block w-full h-[260px] md:h-[45vh]">
                                     </Link>
                                 </Slide>
                             </Carousel>
@@ -48,7 +48,7 @@
                             <Carousel :per-page="1">
                                 <Slide v-for="centro in casas" :key="centro.id">
                                     <div :style="`background-image: url(${getImageUrl(centro.imagen)}); background-size: cover; background-position: center center;`"
-                                        class="w-full h-[60vh]"></div>
+                                        class="w-full h-[260px] md:h-[45vh]"></div>
                                 </Slide>
                             </Carousel>
                         </div>
