@@ -26,7 +26,7 @@
 
             <div class="w-full flex gap-5 flex-wrap md:flex-nowrap md:container md:mx-auto px-2">
 
-                <Categorias :categorias="categorias" />
+                <Categorias :categorias="categorias" :url="route('audios')" />
 
                 <div class="w-full flex-grow">
 
@@ -86,25 +86,6 @@ const props = defineProps({
 });
 
 const listado = ref(props.listado);
-const categorias = computed(() => {
-
-    const items = [{
-        nombre: 'Novedades', href: route('audios')
-        , seleccionada: !props.filtrado && !props.categoriaActiva
-    }] // :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
-
-    for (const categoria of props.categorias) {
-        items.push({
-            nombre: categoria.nombre, href: route('audios') + '?categoria=' + categoria.nombre,
-            total: categoria.total,
-            seleccionada: props.categoriaActiva == categoria.nombre
-        })
-    }
-
-    return items
-})
-
-
 
 const player = usePlayer()
 

@@ -21,7 +21,7 @@
 
         <ContentMain class="w-full flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
 
-            <div
+            <div v-if="false"
                 class="gap-3 xl:gap-0 xl:max-w-[260px] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline xl:sticky xl:top-20">
                 <Link :href="`${route('libros')}`" class="py-2 hover:text-primary transition-colors duration-250"
                     :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''"
@@ -39,6 +39,8 @@
                     </Link>
                 </div>
             </div>
+
+            <Categorias :categorias="categorias" :url="route('libros')"  columna-breakpoint="xl" select-breakpoint="md" select-class="w-full"/>
 
             <FadeOnNavigate class="w-full flex-grow">
 
