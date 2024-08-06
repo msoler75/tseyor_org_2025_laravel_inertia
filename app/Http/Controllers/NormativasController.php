@@ -26,7 +26,7 @@ class NormativasController extends Controller
         }
 
         // parámetros
-        if ($categoria)
+        if ($categoria && $categoria!='_')
             $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%")
             ->when($categoria === '_', function ($query) {
                 $query->orderByRaw('LOWER(titulo)');
