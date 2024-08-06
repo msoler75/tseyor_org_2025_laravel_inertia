@@ -18,22 +18,7 @@
 
         <div class="container mx-auto w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
 
-             <div
-                class="gap-3 xl:gap-0 w-full md:w-[21ch] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline md:sticky md:top-20">
-                <Link :href="`${route('meditaciones')}`" class="py-2 hover:text-primary transition-colors duration-250"
-                    :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
-                <span class="capitalize">Novedades</span>
-                </Link>
-
-                <div v-for="categoria of categorias" :key="categoria.nombre" class="flex"
-                    :class="categoriaActiva == (categoria.valor ||categoria.nombre) ? 'text-primary font-bold' : ''">
-                    <Link :href="`${route('meditaciones')}?categoria=${categoria.valor || categoria.nombre}`"
-                        class="py-2 hover:text-primary transition-colors duration-250">
-                    <span class="capitalize">{{ categoria.nombre }}</span>
-                    <small v-if="categoria.total > 0"> ({{ categoria.total }})</small>
-                    </Link>
-                </div>
-            </div>
+            <Categorias :categorias="categorias" :url="route('meditaciones')" />
 
             <div class="w-full flex-grow card shadow bg-base-100 px-5 py-7">
 
