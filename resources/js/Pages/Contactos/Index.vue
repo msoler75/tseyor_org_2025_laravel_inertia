@@ -11,30 +11,14 @@
 
         <div class="w-full flex gap-5 flex-wrap lg:flex-nowrap">
 
-            <div
-                class="card bg-base-100 min-w-48 flex-wrap lg:flex-nowrap flex-row lg:flex-col p-5 lg:p-10 gap-7 self-baseline lg:sticky lg:top-20 overflow-y-auto lg:max-h-[calc(100vh-10rem)] select-none">
-                <Link :href="`${route('contactos')}`"
-                    :class="!filtrado && !paisActivo && !paisClick ? 'text-primary font-bold' : ''"
-                    :only="['paisActivo', 'filtrado', 'listado']" replace preserve-state @click="clickPais('')"
-                    @finish="cargando = false">
-                <span class="capitalize">Novedades</span>
-                </Link>
-
-                <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2"
-                    :class="paisActivo == pais.nombre || paisClick == pais.nombre ? 'text-primary font-bold' : ''">
-                    <Link :href="`${route('contactos')}?pais=${pais.codigo}`"
-                        :only="['paisActivo', 'filtrado', 'listado']" replace preserve-state
-                        @click="clickPais(pais.nombre)" @finish="cargando = false">
-                    <span class="capitalize" :class="pais.codigo == paisActivo ? 'font-bold' : ''">{{ pais.nombre
-                        }}</span>
-                    <small v-if="pais.total > 0"> ({{ pais.total }})</small>
-                    </Link>
-                </div>
-            </div>
+            <Categorias :categorias="paises" :url="route('contactos')" columna-breakpoint="lg" select-class="w-full"
+            valor="codigo"
+                div-class="min-w-[200px] sm:justify-between sm:w-full lg:w-auto" parametro="pais" @click="clickPais"
+                @finish="cargando = false" :only="['paisActivo', 'filtrado', 'listado']" replace preserve-state />
 
             <div id="main-content" class="w-full">
 
-                <SearchResultsHeader v-if="!paisActivo" :results="listado" class="mb-2"/>
+                <SearchResultsHeader v-if="!paisActivo" :results="listado" class="mb-2" />
 
                 <!-- md -->
                 <div role="tablist" class="tabs tabs-lifted">
@@ -150,7 +134,7 @@ function colocarMarcadores() {
 
 function encuadrarMarcadores() {
 
-    if(!markers.length) return
+    if (!markers.length) return
 
     // comprobar límites del mapa usando los marcadores
     const bounds = new google.maps.LatLngBounds();
@@ -159,9 +143,10 @@ function encuadrarMarcadores() {
     }
 
     //if too close...
-    if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
-        var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + 0.3, bounds.getNorthEast().lng() + 0.3);
-        var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - 0.3, bounds.getNorthEast().lng() - 0.3);
+    var NE = bounds.getNorthEast()
+    if (NE && NE.equals(bounds.getSouthWest())) {
+        var extendPoint1 = new google.maps.LatLng(NE.lat() + 0.3, NE.lng() + 0.3);
+        var extendPoint2 = new google.maps.LatLng(NE.lat() - 0.3, NE.lng() - 0.3);
         bounds.extend(extendPoint1);
         bounds.extend(extendPoint2);
     }
@@ -220,6 +205,7 @@ function addMarker(contacto) {
 }
 
 function clickPais(pais) {
+    console.log('clickPais', pais)
     paisClick.value = pais
     cargando.value = true
 }

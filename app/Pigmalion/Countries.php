@@ -261,10 +261,10 @@ class Countries
 
     public static function getFuzzyCountries($string, int $minValue = 70): array
     {
-
         $codes = [];
         foreach (self::$list as $code => $country) {
             $similarity = StrEx::compareFuzzy($string, $country);
+            \Log::info("$string - $country -> similarity: $similarity");
             if ($similarity >= $minValue)
                 $codes[] = ["code" => $code, "country"=>$country, "similarity" => $similarity];
         }

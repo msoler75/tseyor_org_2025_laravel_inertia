@@ -32,6 +32,9 @@ class ContactosController extends Controller
         */
         ///
 
+        //dd($buscar);
+
+        // dd(Countries::getFuzzyCountries($buscar));
         $resultados = $pais ?
             Contacto::where('pais', '=', $pais)
             ->where('visibilidad', 'P')
@@ -40,12 +43,14 @@ class ContactosController extends Controller
                 ->where('visibilidad', 'P')
                 ->orWhereIn('pais', array_map(function ($data) {
                     return $data['code'];
-                }, Countries::getFuzzyCountriesCodes($buscar)))
+                }, Countries::getFuzzyCountries($buscar)))
                 ->orWhere('poblacion', 'like', '%' . $buscar . '%')
                 ->paginate($num_per_page)->appends(['buscar' => $buscar])
                 :
                 Contacto::latest()->where('visibilidad', 'P')->paginate($num_per_page)
             );
+
+            // dd($resultados);
 
         $paises = Contacto::selectRaw('pais as codigo, count(*) as total')
             ->where('visibilidad', 'P')
