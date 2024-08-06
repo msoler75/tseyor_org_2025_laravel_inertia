@@ -12,9 +12,9 @@
         <div class="w-full flex gap-5 flex-wrap lg:flex-nowrap">
 
             <Categorias :categorias="paises" :url="route('contactos')" columna-breakpoint="lg" select-class="w-full"
-            valor="codigo"
-                div-class="min-w-[200px] sm:justify-between sm:w-full lg:w-auto" parametro="pais" @click="clickPais"
-                @finish="cargando = false" :only="['paisActivo', 'filtrado', 'listado']" replace preserve-state />
+                valor="codigo" div-class="min-w-[200px] sm:justify-between sm:w-full lg:w-auto" parametro="pais"
+                @click="clickPais" @finish="cargando = false" :only="['paisActivo', 'filtrado', 'listado']" replace
+                preserve-state />
 
             <div id="main-content" class="w-full">
 

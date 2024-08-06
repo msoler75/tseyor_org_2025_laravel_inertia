@@ -12,21 +12,8 @@
 
             <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-                <div
-                    class="card bg-base-100 shadow flex-wrap flex-row mb-3 md:flex-col p-5 lg:p-10 gap-4 mx-auto self-baseline w-full justify-evenly md:w-auto md:sticky md:top-20">
-                    <Link :href="`${route('equipos')}`"
-                        :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
-                    <span class="capitalize">Todos</span>
-                    </Link>
-
-                    <div v-for="categoria of categorias" :key="categoria.nombre" class="flex gap-2"
-                        :class="categoriaActiva == categoria.nombre ? 'text-primary font-bold' : ''">
-                        <Link :href="`${route('equipos')}?categoria=${categoria.nombre}`">
-                        <span class="capitalize">{{ categoria.nombre }}</span>
-                        <small v-if="categoria.total > 0">({{ categoria.total }})</small>
-                        </Link>
-                    </div>
-                </div>
+                <Categorias :categorias="categorias" :url="route('equipos')" columna-breakpoint="md"
+                    select-breakpoint="sm" div-class="w-full md:w-fit "/>
 
                 <div class="w-full flex-grow">
 
@@ -34,9 +21,10 @@
 
                     <GridAppear v-if="listado.data.length > 0" class="gap-4" col-width="24rem">
 
-                        <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen || equipo_fallback"
-                            :title="contenido.nombre" :href="route('equipo', contenido.slug)" image-left
-                            image-class="min-h-[150px]" class="min-h-16" :description="contenido.descripcion">
+                        <CardContent v-for="contenido in listado.data" :key="contenido.id"
+                            :image="contenido.imagen || equipo_fallback" :title="contenido.nombre"
+                            :href="route('equipo', contenido.slug)" image-left image-class="min-h-[150px]"
+                            class="min-h-16" :description="contenido.descripcion">
                             <div class="mb-2 mr-6 flex sm:ml-auto gap-3 text-2xl items-center self-end justify-center">
                                 <Icon icon="ph:user-duotone" />
                                 {{ contenido.miembros_count }}

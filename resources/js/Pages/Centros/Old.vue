@@ -29,6 +29,9 @@
                 </div>
             </div>
 
+            <Categorias :categorias="categorias" :url="route('normativas')" columna-breakpoint="md"
+            select-breakpoint="sm" div-class="w-full md:w-fit "/>
+
             <div class="w-full flex-grow">
 
 
