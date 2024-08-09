@@ -70,7 +70,10 @@ class JobCrudController extends CrudController
         ]);
 
         // Optionally, you can define filters, buttons, etc.
-        CRUD::addButtonFromView('top', 'detect_audios_to_process', 'detect_audios_to_process', 'end');
+        
+        CRUD::addButtonFromView('top', 'detect_audios_to_process', 'detect_audios_to_process', 'start');
+        
+        CRUD::addButtonFromView('top', 'worker_buttons', 'worker_buttons', 'end');
     }
 
 

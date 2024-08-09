@@ -28,11 +28,12 @@
 
                 <SearchResultsHeader :results="listado" :valid-search="busquedaValida" />
 
-                <GridAppear v-if="selectors.soloTitulosLibros" class="grid gap-4" col-width="28rem">
+                <GridAppear v-if="selectors.soloTitulosLibros" class="max-w-full grid gap-4" col-width="100%">
                     <div v-for="libro in listado.data" :key="libro.id"
                         class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
-                        <Link :href="route('libro', libro.slug)" class="flex items-center gap-3">
-                        <span v-html="libro.titulo" /></Link>
+                        
+                        <Link :href="route('libro', libro.slug)" class="flex items-center gap-3 text-primary font-bold">
+                        <span v-html="libro.titulo"/><span class="flex-shrink-0 -order-1">📘</span></Link>
                     </div>
                 </GridAppear>
 

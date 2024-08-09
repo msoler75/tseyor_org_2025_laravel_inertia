@@ -58,7 +58,7 @@ class JobsController extends Controller
         foreach($comunicados as $comunicado) {
             $año = date('Y', strtotime($comunicado->fecha_comunicado));
             $folder = "/almacen/medios/comunicados/audios/$año";
-            dispatch(new ProcesarAudios(Comunicado::class, $comunicado->id, $folder));
+            dispatch(new ProcesarAudios(Comunicado::class, $comunicado->id, $folder))->onQueue('audio_processing');
             $tareas++;
         }
 
@@ -66,7 +66,7 @@ class JobsController extends Controller
         foreach($informes as $informe) {
             $año = $informe->created_at->year;
             $folder = "/almacen/medios/informes/audios/{$informe->equipo->slug}/$año/{$informe->id}";
-            dispatch(new ProcesarAudios(Informe::class, $informe->id, $folder));
+            dispatch(new ProcesarAudios(Informe::class, $informe->id, $folder))->onQueue('audio_processing');
             $tareas++;
         }
 
