@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\WorkerController;
+
 
 // --------------------------
 // Custom Backpack Routes
@@ -92,6 +94,12 @@ Route::group([
 
 
     Route::get('search/{model}', 'SearchModelController@index');
+
+
+    Route::get('worker/check', [WorkerController::class, 'checkWorkerStatus'])->name('worker.check');
+    Route::get('worker/start', [WorkerController::class, 'startWorker'])->name('worker.start');
+    Route::get('worker/stop', [WorkerController::class, 'stopWorker'])->name('worker.stop');
+    Route::get('worker/restart', [WorkerController::class, 'restartWorker'])->name('worker.restart');
 
 
     Route::get('archivos', function () {

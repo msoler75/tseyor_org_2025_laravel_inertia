@@ -245,7 +245,7 @@ class ComunicadoCrudController extends CrudController
                     $p = new ProcesarAudios(Comunicado::class, $comunicado->id, $folder);
                     $p->handle();
                 } else {
-                    dispatch(new ProcesarAudios(Comunicado::class, $comunicado->id, $folder));
+                    dispatch(new ProcesarAudios(Comunicado::class, $comunicado->id, $folder))->onQueue('audio_processing');
                 }
 
             }

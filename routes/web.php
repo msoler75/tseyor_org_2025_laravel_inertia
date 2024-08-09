@@ -33,13 +33,13 @@ use App\Http\Controllers\InformesController;
 use App\Http\Controllers\MeditacionesController;
 use App\Http\Controllers\TutorialesController;
 use App\Http\Controllers\NormativasController;
-use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\ChatGPTController;
 use App\Http\Controllers\ImagenesController;
 use App\Http\Controllers\TarjetaVisitaController;
 use App\Http\Controllers\EmailsController;
 use App\Http\Controllers\DevController;
 use App\Http\Controllers\Api\ComentariosController;
+use App\Http\Controllers\Admin\WorkerController;
 use App\Pigmalion\SEO;
 
 

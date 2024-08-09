@@ -284,7 +284,7 @@ class InformeCrudController extends CrudController
                     $p->handle();
                 }
                 else{
-                    dispatch( new ProcesarAudios(Informe::class, $informe->id, $carpetaAudios));
+                    dispatch( new ProcesarAudios(Informe::class, $informe->id, $carpetaAudios))->onQueue('audio_processing');
                 }
             }
 

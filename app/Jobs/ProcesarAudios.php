@@ -102,7 +102,7 @@ class ProcesarAudios implements ShouldQueue
         if ($audios_pendientes > 0) {
             // Encolar la tarea nuevamente
             Log::channel('jobs')->info("Quedan $audios_pendientes audios pendientes de tratar. Reencolamos");
-            Bus::dispatch(new self($contenido::class, $contenido->id, $folder, $this->disk));
+            Bus::dispatch(new self($contenido::class, $contenido->id, $folder, $this->disk))->onQueue('audio_processing');
         }
     }
 

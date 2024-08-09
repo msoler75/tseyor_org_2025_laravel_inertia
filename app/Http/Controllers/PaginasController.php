@@ -23,6 +23,8 @@ class PaginasController extends Controller
     {
         $path = $request->path();
 
+        \Log::info("PaginasController::show $path");
+
         $pagina = Pagina::where('ruta', $path)->first();
 
         if (!$pagina)

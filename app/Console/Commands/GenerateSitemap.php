@@ -36,10 +36,13 @@ class GenerateSitemap extends Command
 
             $noindexar = ['informes', 'paginas', 'experiencias'];
 
+            $traducir = ['terminos' => 'glosario'];
+
             if (!in_array($contenido->coleccion, $noindexar)) {
 
+                $palabra = $traducir[$contenido->coleccion] ?? $contenido->coleccion; 
                 $contenidosMap->add(
-                    Url::create("/{$contenido->coleccion}/" . ($contenido->slug_ref ? $contenido->slug_ref : $contenido->id_ref))
+                    Url::create("/{$palabra}/" . ($contenido->slug_ref ? $contenido->slug_ref : $contenido->id_ref))
                         ->setPriority(0.8)
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
                 );
