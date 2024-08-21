@@ -177,7 +177,6 @@ class Equipo extends ContenidoBaseModel
      */
     public function crearCarpeta()
     {
-
         if (!$this->slug) throw new \Error("Falta slug del equipo");
 
         // Ruta de la carpeta en el sistema de archivos
@@ -203,10 +202,10 @@ class Equipo extends ContenidoBaseModel
             'permisos' => decoct($permisos) // convertimos a representación decimal
         ]);
 
-        // Crea la carpeta en el disco público utilizando la clase Storage
-        // Storage::disk('archivos')->makeDirectory($carpetaEquipo);
+        // Crea la carpeta
         $loc = new StorageItem($carpetaEquipo);
-        $loc->makeDirectory();
+        if(!$loc->directoryExists())
+            $loc->makeDirectory();
     }
 
 

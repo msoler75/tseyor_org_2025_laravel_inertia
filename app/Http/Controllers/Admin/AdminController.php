@@ -77,6 +77,11 @@ class AdminController // extends Controller
     }
 
 
+    /**
+     * Lista las imagenes de una carpeta
+     * @param mixed $ruta
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function listImages($ruta)
     {
         $loc = new StorageItem($ruta);
@@ -90,6 +95,12 @@ class AdminController // extends Controller
     }
 
 
+    /**
+     * Se inicia sesión con el usuario deseado.
+     * Para desarrollo y administración
+     * @param mixed $idUser
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function loginAs($idUser)
     {
         $user = Auth::user();
@@ -106,8 +117,14 @@ class AdminController // extends Controller
         session()->regenerate(); // Regenerar la sesión
 
         return response()->json(['message' => 'usuario cambiado'], 200);
-    }  
+    }
 
+
+    /**
+     * Genera una nueva contraseña para el usuario
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function newPassword(Request $request) {
 
         $user_id = $request->user_id;
@@ -117,18 +134,18 @@ class AdminController // extends Controller
         $user = User::findOrFail($user_id);
 
         $words = array("amor","mente","observar","trascendente","unidad","cambio","divulgar","armonizar","equilibrio","muul","baksaj","diversidad","celeste","kundalini","grupal","cielo",
-				   "ritmo","equidad","infinito","trinidad","estrella","plasma","salud","ong","mundo","utg","universidad","sandalia", "baston", "protege", "manto", 
-				   "movimiento", "claridad", "humildad", "hermandad", "confianza", "camino", "predica", "corazon", "estelar", "cayado", "baculo", "ancestral", "libertad", "libre", 
-				   "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce", "trece", "intruso", "dispersion", "cyborg", "crea", "crear", "voluntario", "forzado", 
-				   "auto", "autoctono", "oriundo", "primigenio", "aguila", "holograma", "ilusion", "fantasia", "apego", "desapego", "sombra", "sombras", "piensa", 
-				   "pancreas", "pan",  "vino", "sangre", "tierra", "linfatico", "reconocer", "cristo", "cosmico", "interior", "proteccion", "alcanzar", "tutelar", "replica", "replicas", "realidad", "mundos",          
+				   "ritmo","equidad","infinito","trinidad","estrella","plasma","salud","ong","mundo","utg","universidad","sandalia", "baston", "protege", "manto",
+				   "movimiento", "claridad", "humildad", "hermandad", "confianza", "camino", "predica", "corazon", "estelar", "cayado", "baculo", "ancestral", "libertad", "libre",
+				   "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce", "trece", "intruso", "dispersion", "cyborg", "crea", "crear", "voluntario", "forzado",
+				   "auto", "autoctono", "oriundo", "primigenio", "aguila", "holograma", "ilusion", "fantasia", "apego", "desapego", "sombra", "sombras", "piensa",
+				   "pancreas", "pan",  "vino", "sangre", "tierra", "linfatico", "reconocer", "cristo", "cosmico", "interior", "proteccion", "alcanzar", "tutelar", "replica", "replicas", "realidad", "mundos",
 				   "h1", "h2", "h3", "aium", "rasbek", "shilcars", "melcor", "orjain", "noiwanak", "jalied", "melinus", "mo", "rhaum", "seiph", "orsil", "aumnor", "leer", "asumir", "vaciar",
-				   "odres", "fractales", "mezclar", "lodo", "agua", "limpiar", "ejemplo", "peques", "sanar", "agregado", "transformar", "transformarse", "cambiar",    
+				   "odres", "fractales", "mezclar", "lodo", "agua", "limpiar", "ejemplo", "peques", "sanar", "agregado", "transformar", "transformarse", "cambiar",
 				   "monje","pensamiento","espejo","testo","transmutar","luz", "rompui", "om", "pedir", "neent", "aum", "retro", "retroalimenta", "sinhio", "paraguas", "protector", "cafe",
 				   "prometeo", "fractal", "xendra", "orbe", "esfera", "arte", "ciencia", "espiritual", "espiritualidad", "ondulatorio", "terapia", "retiro", "guerrero", "prior",
 				   "norte", "este", "oeste", "sur", "",
 				   "trascendente", "abiotica", "norte", "oscuridad", "entropia", "feliz", "romper", "beh", "sayab", "tseek", "suut", "kat", "oksah", "ich", "grihal");
-	
+
 	    $index = mt_rand(0,count($words)-1);
 
         $password = $words[$index] . '.' . mt_rand(1000, 9999);
@@ -136,6 +153,7 @@ class AdminController // extends Controller
 
         $user->update(['password' => bcrypt($password)]);
 
+        // notificamos al usuario
         $user->notify(new CambioPassword($password));
 
         return response()->json(['user'=>$user->name, 'password'=>$password]);

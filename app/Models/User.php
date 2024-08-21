@@ -18,6 +18,7 @@ use App\Models\Membresia;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Scout\Searchable;
 use Illuminate\Support\Facades\Cache;
+use App\Notifications\CambioNombreUsuario;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -41,6 +42,13 @@ class User extends Authenticatable implements MustVerifyEmail
         parent::boot();
 
         static::saved(function ($user) {
+
+            if ($user->wasChanged('name')) {
+                // El campo 'name' ha cambiado
+                // Aquí puedes realizar las acciones que necesites
+                $user->notify(new CambioNombreUsuario());
+            }
+
             // rellena la frase, si está está vacía
             if (trim($user->frase) != "") return;
 
