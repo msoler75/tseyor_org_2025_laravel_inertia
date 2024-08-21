@@ -15,7 +15,6 @@ class DropzoneRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        dd($value);
         // to-do: check disk
         $disk = Storage::disk(
             config('dropzone.storage.destination_disk')

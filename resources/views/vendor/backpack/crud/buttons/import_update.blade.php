@@ -5,7 +5,6 @@
     </a>
 @endif
 
-@push('after_scripts')
     <script>
         function sendWordFileToUpdate(button) {
             var modelo = location.href.split('/').pop()
@@ -60,4 +59,3 @@
             fileInput.click();
         }
     </script>
-@endpush

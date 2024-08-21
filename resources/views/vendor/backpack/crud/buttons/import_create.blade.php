@@ -7,7 +7,6 @@
     </a>
 @endif
 
-@push('after_scripts')
     <script>
         function sendWordFileToCreate(button) {
             var modelo = location.href.split('/').pop()
@@ -55,7 +54,6 @@
             fileInput.click();
         }
     </script>
-@endpush
 
 <style>
     .spin {

@@ -4,7 +4,6 @@
         Generar contraseña</a>
 @endif
 
-@push('after_scripts')
     <script>
         if (!window.generateUserPassword)
             window.generateUserPassword = (user_id) => {
@@ -32,4 +31,3 @@
                     })
             }
     </script>
-@endpush

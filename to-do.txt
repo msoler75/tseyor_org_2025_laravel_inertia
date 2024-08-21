@@ -1,22 +1,13 @@
-VALIDACION CORREO USUARIO
--usuario que se registra debe recibir un mensaje a su correo de validación de dirección electrónica
-
 MENU usuario nav
 -NO DEBE aparecer la opción ESPACIO MUUL si no eres del grupo muul
 
 BUSCADOR GLOBAL
 -si buscas "com 1145" solo buscará en comunicados, o si buscas "comunicado 1145"
 
-CORREO tseyor.xyz
-verificar envío de correos:
--formulario contacto
--Inscripcion equipos
 
 IP ABUSER MIDDLEWARE
 https://github.com/rahulalam31/Laravel-Abuse-IP
 
-ADMIN
-Hacer un botón para users en el admin para generar nueva contraseña
 
 URL
 -En movil, al compartir una página solo comparte tseyor.xyz
@@ -58,12 +49,7 @@ ENTRADAS/BLOG
 
 
 RUTAS_ARCHIVOS_INTERNO_DEV
--hay un problema interno o confusión con las rutas de archivos o carpetas.
-   Nunca queda queda claro si es:
-   - una ruta relativa (ej: medios/libros/3)  (relative path)
-   - una ruta de tipo URL (/almacen/medios/libros/3) o pública  (url)
-   - una ruta de path o física (d:\tseyor.org\storage/public/almacen/medios/libros/3)  (path)
--corregir el código para que cada tipo de ruta se defina con esos sufijos: relative path, url, path
+-remover DiskItem y cambiar a StorageItem
 
 TESTIMONIOS
 -modelo

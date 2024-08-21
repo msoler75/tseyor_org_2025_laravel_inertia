@@ -39,7 +39,7 @@ use App\Http\Controllers\TarjetaVisitaController;
 use App\Http\Controllers\EmailsController;
 use App\Http\Controllers\DevController;
 use App\Http\Controllers\Api\ComentariosController;
-use App\Http\Controllers\Admin\WorkerController;
+use App\Http\Controllers\Admin\JobsController;
 use App\Pigmalion\SEO;
 
 
@@ -267,7 +267,7 @@ Route::middleware([
 
 
 // queue  batch
-Route::get('__process_jobs', [WorkerController::class, 'process'])->name('process.jobs');
+Route::get('__process_audios', [JobsController::class, 'processAudios'])->name('process.audios');
 
 
 
