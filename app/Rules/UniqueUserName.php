@@ -7,13 +7,24 @@ use Illuminate\Support\Facades\DB;
 
 class UniqueUserName implements ValidationRule
 {
+
+    protected $userId;
+
+    public function __construct($userId = null)
+    {
+        $this->userId = $userId;
+    }
+
     public function validate(string $attribute, mixed $value, \Closure $fail): void
     {
         // Normaliza el nombre eliminando acentos y convirtiendo a minúsculas
         $normalizedValue = $this->normalize($value);
 
         // Obtén todos los nombres de usuario de la base de datos
-        $users = DB::table('users')->select('name')->get();
+        $users = DB::table('users')
+        ->where('id', '!=', $this->userId)
+        ->select('name')
+        ->get();
 
         foreach ($users as $user) {
             $normalizedUserName = $this->normalize($user->name);

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use Backpack\PermissionManager\app\Http\Requests\UserStoreCrudRequest as StoreRequest;
-use Backpack\PermissionManager\app\Http\Requests\UserUpdateCrudRequest as UpdateRequest;
+use App\Http\Requests\UserStoreCrudRequest as StoreRequest;
+use App\Http\Requests\UserUpdateCrudRequest as UpdateRequest;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Notifications\CambioPassword;
@@ -134,8 +134,8 @@ class UserCrudController extends CrudController
         ]);*/
         // CRUD::setFromDb(); // set fields from db columns.
 
-        $this->addUserFields();
         $this->crud->setValidation(StoreRequest::class);
+        $this->addUserFields();
 
         /**
          * Fields can be defined using the fluent syntax:
@@ -162,8 +162,8 @@ class UserCrudController extends CrudController
 
         //CRUD::field('password')->hint('Escribe una contraseña solo si deseas cambiarla.');
 
-        $this->addUserFields();
         $this->crud->setValidation(UpdateRequest::class);
+        $this->addUserFields();
         //dd($this->crud->entry);
 
         // CRUD::field('profile_photo_url')->type('text');
