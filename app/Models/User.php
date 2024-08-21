@@ -50,21 +50,7 @@ class User extends Authenticatable implements MustVerifyEmail
             }
 
             // rellena la frase, si está está vacía
-            if (trim($user->frase) != "") return;
-
-            // archivo está en @/resources/txt/frases_cortas.txt
-            $file = base_path('resources/txt/frases_cortas.txt');
-            $content = file_get_contents($file);
-            $frases = preg_split("/\r\n|\n|\r/", $content, -1, PREG_SPLIT_NO_EMPTY);
-            // mezclamos el orden de las frases
-            shuffle($frases);
-            $loops = count($frases);
-            do {
-                $frase = array_pop($frases);
-                // comprobamos que la frase no la tiene otro usuario
-            } while ($loops-- > 0 && User::where('frase', $frase)->count() > 0);
-            $user->frase = $frase;
-            $user->saveQuietly();
+            if (trim($user->frase) == "") $user->generarFrase();
         });
     }
 
@@ -155,7 +141,7 @@ class User extends Authenticatable implements MustVerifyEmail
         // sin cache
         $r =  $user->grupos()->where('grupos.id', $grupo_id)->count();
         \Log::info("user {$user->id} in grupo {$grupo_id} = {$r}");
-        return $r>=1;
+        return $r >= 1;
 
         // con cache
         $cacheKey = 'user_grupos_in_' . $this->id . '_group_' . $grupo_id;
@@ -171,6 +157,26 @@ class User extends Authenticatable implements MustVerifyEmail
     public function accessControlList()
     {
         return Acl::from($this);
+    }
+
+    /**
+     * Genera una frase corta
+     */
+    public function generarFrase()
+    {
+        // archivo está en @/resources/txt/frases_cortas.txt
+        $file = base_path('resources/txt/frases_cortas.txt');
+        $content = file_get_contents($file);
+        $frases = preg_split("/\r\n|\n|\r/", $content, -1, PREG_SPLIT_NO_EMPTY);
+        // mezclamos el orden de las frases
+        shuffle($frases);
+        $loops = count($frases);
+        do {
+            $frase = array_pop($frases);
+            // comprobamos que la frase no la tiene otro usuario
+        } while ($loops-- > 0 && User::where('frase', $frase)->count() > 0);
+        $this->frase = $frase;
+        $this->saveQuietly();
     }
 
 
