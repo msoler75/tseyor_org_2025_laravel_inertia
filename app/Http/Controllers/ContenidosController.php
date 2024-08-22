@@ -62,24 +62,33 @@ class ContenidosController extends Controller
 
         $collections = $request->input('collections');
 
-        /* if(!BusquedasHelper::validarBusqueda($buscar)) {
-            return response()->json([], 200);
-        } */
+        // se puede utilizar un comando al comienzo de la búsqueda para indicar en qué colección buscar
+        // ejemplo: com 33, buscaría comunicados con 33
+        $comandos = ['com|comunicado'=>'comunicados', 'libro'=>'libros', 'blog'=>'entradas', 'evento'=>'eventos', 'noticia'=>'noticias', 'informe'=>'informes', 'normativa'=>'normativas', 'audio'=>'audios', 'meditacion'=>'meditaciones', 'termino'=>'terminos'];
+
+        foreach($comandos as $key=>$value) {
+            // si $buscar empieza por 'blog' entonces solo buscamos en blogs
+            if(preg_match("/^($key)s?.{2,999}/", $buscar)) {
+                $collections = $value;
+                $buscar = preg_replace('/^($key)s?/', '', $buscar);
+            }
+        }
+
 
         list($buscarFiltrado, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
 
         // https://github.com/teamtnt/laravel-scout-tntsearch-driver?tab=readme-ov-file#constraints
-        $contenido = new Contenido;
+        $filtro = new Contenido;
 
         // podemos restringir a un conjunto de colecciones
         if ($collections) {
             $colecciones = explode(',', $collections);
-            $contenido = $contenido->whereIn('coleccion', $colecciones);
+            $filtro = $filtro->whereIn('coleccion', $colecciones);
         }
 
         $busqueda_valida = BusquedasHelper::validarBusqueda($buscar);
         // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
-        $resultados = ($busqueda_valida ? Contenido::search($buscarFiltrado)->constrain($contenido) :
+        $resultados = ($busqueda_valida ? Contenido::search($buscarFiltrado)->constrain($filtro) :
             Contenido::where('id', '-1')
         )->paginate(64);
 
