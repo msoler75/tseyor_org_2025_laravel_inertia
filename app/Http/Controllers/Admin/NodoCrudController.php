@@ -52,9 +52,21 @@ class NodoCrudController extends CrudController
         //CRUD::field('group')->remove();
 
         $this->crud->addColumn([
-            'name' => 'ruta',
-            'label' => 'Ruta',
+            'name' => 'ubicacion',
+            'label' => 'Ubicación',
             'limit' => 200
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'group',
+            'label' => 'Grupo',
+            'limit' => 32
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'permisos',
+            'label' => 'Permisos',
+            'limit' => 5
         ]);
 
         /*$this->crud->addColumn([
@@ -107,7 +119,7 @@ class NodoCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            'ruta' => 'required|min:2',
+            'ubicacion' => 'required|min:2',
             'permisos' => 'required',
         ]);
         CRUD::setFromDb(); // set fields from db columns.
@@ -119,6 +131,8 @@ class NodoCrudController extends CrudController
 
         CRUD::field('user_id')->type('select')->wrapper(['class' => 'form-group col-md-3']);
         CRUD::field('group_id')->type('select')->wrapper(['class' => 'form-group col-md-3']);
+
+        CRUD::field('permisos')->type('permisos_nodo');
     }
 
     /**
@@ -137,6 +151,6 @@ class NodoCrudController extends CrudController
     {
         $nodo = Nodo::findOrFail($id);
 
-        return redirect("/" . $nodo->ubicacion);
+        return redirect($nodo->ubicacion);
     }
 }

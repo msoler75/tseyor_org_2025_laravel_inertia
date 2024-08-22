@@ -113,7 +113,7 @@ class AclCrudController extends CrudController
         CRUD::field('user_id')->type('select');
         CRUD::field('group_id')->type('select');
 
-        CRUD::field('verbos')->makeLast();
+        CRUD::field('verbos')->makeLast()->hint('leer, escribir, ejecutar... separado por comas');
 
     }
 

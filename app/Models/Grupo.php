@@ -5,6 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Str;
 
 class Grupo extends Model
 {
@@ -14,9 +15,22 @@ class Grupo extends Model
 
     protected $revisionCreationsEnabled = true;
 
+
+    // cuando se crea un usuario, llenaremos el campo "frase" con una frase aleatoria desde un archivo de texto
+    public static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($grupo) {
+            if (!$grupo->slug)
+                $grupo->slug = Str::slug($grupo->nombre);
+        });
+    }
+
     protected $fillable = [
         'nombre',
         'slug',
+        'descripcion'
     ];
 
     public function usuarios()
@@ -25,6 +39,20 @@ class Grupo extends Model
             ->using(Pertenencia::class)
             ->withPivot(['user_id'])
             ->withTimestamps();
+    }
+
+    // ACCESOR
+
+    public function getUsuariosJSONAttribute()
+    {
+        $users = $this->usuarios()->select('users.id', 'users.name', 'users.email')->get();
+        $usersWithoutPivot = $users->map(function ($user) {
+            return [
+                'value' => $user->id,
+                'label' => $user->name //"{$user->name} <{$user->email}>"
+            ];
+        });
+        return $usersWithoutPivot->toJson();
     }
 }
 
