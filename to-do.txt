@@ -1,9 +1,14 @@
+HACIENDA
+
+
 MENU usuario nav
 -NO DEBE aparecer la opción ESPACIO MUUL si no eres del grupo muul
 
 BUSCADOR GLOBAL
 -si buscas "com 1145" solo buscará en comunicados, o si buscas "comunicado 1145"
 
+COPIAR
+-archivos de la vieja web a la nueva
 
 IP ABUSER MIDDLEWARE
 https://github.com/rahulalam31/Laravel-Abuse-IP
@@ -12,19 +17,6 @@ https://github.com/rahulalam31/Laravel-Abuse-IP
 URL
 -En movil, al compartir una página solo comparte tseyor.xyz
 
-CORREO:
--Instalar PHP Mailer: https://help.dreamhost.com/hc/es/articles/360031174411-PHPMailer-Instalaci%C3%B3n-en-un-servidor-compartido
--Límites de cuota DreamHost: https://help.dreamhost.com/hc/es/articles/215730437-L%C3%ADmites-de-cuota-SMTP
--Política anti-spam en dreamhost: https://www.dreamhost.com/es/legal/politica-anti-spam/
--Boletines
--mail relay
-https://mailrelay.com/
--usar mail relay API para envío de Boletines
-https://apidocs.mailrelay.com/#post-/campaigns
--Boletines (es como un novedades, pero por correo)
-
-CORREOS
--queueworker   ó    /__processjobs
 
 ADMIN
 -cerrar sesion desde admin no funciona
@@ -36,7 +28,6 @@ EQUIPOS
     -testar creación de un informe del equipo
 
 
-
 BLOG
 -Usar categoria no funciona en la paginación
 
@@ -45,7 +36,7 @@ revisar https://github.com/romanzipp/Laravel-Queue-Monitor
 
 
 ENTRADAS/BLOG
--Añadir el artículo: barcelona
+-Añadir el artículo: barcelona comision pueblo tseyor
 
 
 RUTAS_ARCHIVOS_INTERNO_DEV
@@ -55,9 +46,6 @@ TESTIMONIOS
 -modelo
 -fotos correo, y frases
 
-JOBS
--Ver por qué no procesa los audios de los 3 comunicados (id: 1511, id: 1540, id: 1544)
-
 ADMIN/GUIAS
 -hacer más amigable los campos de libros de admin
 -dejar claro los tabs que se marcan con <h4>, o cambiarlos por h2/h3
@@ -66,8 +54,6 @@ ADMIN/GUIAS+LUGARES
 mejorar la entrada de datos en admin:
 -h4 pasar a h1
 -añadir campo textoBibliografía y cambiar el campo libros a slugs separados por comas/lineas
-
-HACIENDA
 
 MARKDOWN
 -¿como es las notas al pie? arreglar el formato en entradas:
@@ -241,3 +227,17 @@ Espero que esto te ayude a utilizar Git-ftp con GitHub Actions en tu proyecto La
 
 editor markdown con muchas funciones
 https://ld246.com/guide/markdown
+
+
+
+
+CORREO:
+-Instalar PHP Mailer: https://help.dreamhost.com/hc/es/articles/360031174411-PHPMailer-Instalaci%C3%B3n-en-un-servidor-compartido
+-Límites de cuota DreamHost: https://help.dreamhost.com/hc/es/articles/215730437-L%C3%ADmites-de-cuota-SMTP
+-Política anti-spam en dreamhost: https://www.dreamhost.com/es/legal/politica-anti-spam/
+-Boletines
+-mail relay
+https://mailrelay.com/
+-usar mail relay API para envío de Boletines
+https://apidocs.mailrelay.com/#post-/campaigns
+-Boletines (es como un novedades, pero por correo)

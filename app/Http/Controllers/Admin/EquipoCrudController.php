@@ -153,7 +153,7 @@ class EquipoCrudController extends CrudController
             'model' => 'user',
             'options' => null,
             'multiple' => true,
-            'hint' => 'Opcionalmente puedes poner aquí también a los coordinadores, aunque no es necesario.'
+            'hint' => 'Opcionalmente puedes poner aquí también a los coordinadores, aunque no es necesario. Pulsa espacio para cargar todos los usuarios, o escribe para buscar'
         ]);
 
         CRUD::field('ocultarMiembros')->type('checkbox')->label('Ocultar solicitudes de ingreso');
