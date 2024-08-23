@@ -1,17 +1,6 @@
-HACIENDA
-
-AVISOS IMPORTANTES:
-El modelo 036 que acaba de presentar debe acompañarse de la siguiente documentación adicional:
-
-1. Titulo de la representación
-Estos documentos deberán aportarse en el plazo de 10 días, contados desde el de la presentación del modelo, en el registro telemático de la AEAT:
-Sede Electrónica > Inicio > Todas las gestiones > Censos, NIF y domicilio fiscal > Censos > Modelos 036 y 037. Censo de empresarios, profesionales y retenedores - Declaración censal de alta, modificación y baja y declaración censal simplificada. > Todas las gestiones > Modelo 036 y 037.Aportar documentación complementaria.
-
-La no presentación de la documentación solicitada o su presentación de forma incompleta o inexacta puede motivar el archivo de su petición (artículos 88 y 89 Reglamento de aplicación de los tributos, aprobado por el Real Decreto 1065/2007, de 27 de julio.
-
-
-
-
+EQUIPOS
+-en el listado de equipos aparezca la categoria "tus equipos"
+-en las tarjetas que aparezca ERES COORDINADOR | ERES MIEMBRO
 
 MENU usuario nav
 -NO DEBE aparecer la opción ESPACIO MUUL si no eres del grupo muul
@@ -108,7 +97,6 @@ BUSQUEDAS:
 
 ARCHIVOS
 -icono "home" lleva a una url que no está bien
--a un usuario sin loguear, le aparece la opción de renombrar carpeta y crear carpeta. No debería tener esas opciones
 -en archivos adjuntos, por ejemplo, de un informe, si intentas desccargarlos y no existe (404) descarga un archivo .html. No debiera ser
 -mejorar vista mobil
 

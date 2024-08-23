@@ -20,6 +20,7 @@
                 'background-image': `url('${getImageUrl(image)}?cover&w=${imageWidth}${imageHeight!='auto'?'&h='+imageHeight:''}')`,
                 'view-transition-name': imageViewTransitionName
             }"/>
+            <slot />
         </div>
         <div v-if="skeleton && (title || tag || description || date)" class="space-y-2 p-4 flex flex-col w-full">
             <div v-if="title" class="skeleton max-w-full w-[40ch] h-[1.5rem] mb-3" />
@@ -31,6 +32,7 @@
             <div class="skeleton w-full h-[1rem]"/>
             </template>
             <div v-if="date" class="skeleton inline ml-auto mt-auto w-[4rem] h-[.8rem]" />
+            <slot />
         </div>
         <div v-else-if="title || tag || description || date" class="p-4 flex flex-col w-full">
             <h2 v-if="title"
@@ -43,8 +45,8 @@
             :class="(gradient?' text-gradient':'')+' '+descriptionClass"
                 v-html="descriptionFinal" />
             <TimeAgo v-if="date" :date="date" class="text-right mt-auto opacity-50" style="font-size: 60%" />
+            <slot />
         </div>
-        <slot />
     </component>
 </template>
 
@@ -53,6 +55,10 @@ import { getImageUrl } from '@/composables/imageutils.js'
 import  Link  from '@/Components/Link.vue'
 
 const props = defineProps({
+    title: String,
+    href: String,
+    image: String,
+    imageContained: Boolean,
     imageLeft: {
         type: Boolean,
         default: false
@@ -69,13 +75,9 @@ const props = defineProps({
         type: [Number, String],
         default: 300
     },
-    imageContained: Boolean,
-    title: String,
-    href: String,
-    image: String,
-    draft: {type: Boolean, default: false},
     tag: String,
     tagLink: String,
+    draft: {type: Boolean, default: false},
     description: String,
     maxLength: { type: Number, default: 1024 },
     date: String,

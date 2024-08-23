@@ -32,11 +32,11 @@ const props = defineProps({
         type: String,
     },
     width: {
-        type: Number,
+        type: [String,Number],
         default: 300
     },
     height: {
-        type: Number,
+        type: [String,Number],
         default: 'auto'
     },
 });

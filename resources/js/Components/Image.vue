@@ -83,7 +83,7 @@ function fillUnits(value) {
 const styles = computed(() => {
     const s = {}
     if (props.width) s.width = fillUnits(props.width)
-    if (props.height) s.height = fillUnits(props.height)
+    // if (props.height) s.height = fillUnits(props.height)
     return s
 })
 
@@ -137,7 +137,8 @@ function init() {
 
     // Se ha establecido el tamaño mediante props (width y height) (3)
     if (props.width && props.height)
-        return putImageWithSize(props.width, props.height)
+        // return putImageWithSize(props.width, props.height)
+        return putFakeImage(props.width, props.height)
 
     // Se conoce el tamaño original de la imagen (4)
     if (props.srcWidth && props.srcHeight)
@@ -171,7 +172,7 @@ function putFakeImage(width, height) {
         } else {
             putFakeImage(width, height) // esperamos un poco más
         }
-    }, 550) // a los 50 milisegundos ya podemos saber la dimensiones de visualización de la imagen
+    }, 50) // a los 50 milisegundos ya podemos saber la dimensiones de visualización de la imagen
 }
 
 async function putImageWithSize(widthOp, heightOp) {
