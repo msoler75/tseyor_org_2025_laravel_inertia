@@ -41,6 +41,11 @@ class EquiposController extends Controller
 
         // obtenemos el listado de equipos y sus
         $query = Equipo::withCount('miembros')
+            ->with(['miembros' => function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            }, 'coordinadores' => function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            }]);
 
         if ($categoria) {
             $query->where('categoria', '=', $categoria);
