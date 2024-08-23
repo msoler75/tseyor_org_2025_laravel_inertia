@@ -25,6 +25,12 @@
                         <div class="prose" v-html="equipo.anuncio" />
                     </Card>
 
+                    <Card v-if="!equipo.ocultarMiembros">
+                        <h3>Coordinadores</h3>
+
+                        <Users v-if="equipo" :users="coordinadores" :count="coordinadores.length" />
+                    </Card>
+
                     <Card v-if="equipo.reuniones">
                         <h3>Reuniones</h3>
                         <div class="prose" v-html="equipo.reuniones" />
@@ -76,8 +82,6 @@
                             </div>
                         </div>
                     </Card>
-
-
 
                     <Card v-if="!equipo.ocultarMiembros">
                         <h3 class="flex justify-between items-center">
@@ -140,7 +144,7 @@ const props = defineProps({
 // MENSAJE FLASH
 const page = usePage()
 const mostrarMensaje = ref(page.props.flash.message)
-
+const coordinadores = computed(()=>props.equipo.miembros.filter(m=>m.pivot.rol=='coordinador'))
 
 // solicitud
 const solicitud = ref(props.miSolicitud)

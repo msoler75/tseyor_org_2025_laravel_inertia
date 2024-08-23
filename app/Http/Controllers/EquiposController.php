@@ -39,7 +39,7 @@ class EquiposController extends Controller
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        // obtenemos el listado de equipos y sus
+        // obtenemos el listado de equipos y el nº de miembros
         $query = Equipo::withCount('miembros')
             ->with(['miembros' => function ($query) use ($user) {
                 $query->where('users.id', $user->id);
@@ -90,7 +90,6 @@ class EquiposController extends Controller
                 // ->take(30)
             ;
         }]);
-
 
         if (is_numeric($id)) {
             $equipo = $equipo->findOrFail($id);
