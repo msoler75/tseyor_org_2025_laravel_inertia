@@ -35,37 +35,43 @@ class EquiposController extends Controller
      */
     public function index(Request $request)
     {
-        //$urlEquipo = route('equipo', 15);
-        // Verificar si el usuario ya tiene una cuenta
-        //  return redirect($urlEquipo)->with('message', 'Invitación aceptada. Ya eres parte del equipo.');
-
+        $user = auth()->user();
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        $resultados = $categoria ?
-            Equipo::withCount('miembros')
-            ->where('categoria', '=', $categoria)
-            ->paginate(10)->appends(['categoria' => $categoria])
-            : ($buscar ? Equipo::withCount('miembros')
-                ->where('nombre', 'like', '%' . $buscar . '%')
-                ->orWhere('descripcion', 'like', '%' . $buscar . '%')
-                ->paginate(10)->appends(['buscar' => $buscar])
-                :
-                Equipo::withCount('miembros')->latest()->paginate(10)
-            );
+        // obtenemos el listado de equipos y sus
+        $query = Equipo::withCount('miembros')
+
+        if ($categoria) {
+            $query->where('categoria', '=', $categoria);
+        } elseif ($buscar) {
+            $query->where('nombre', 'like', '%' . $buscar . '%')
+                ->orWhere('descripcion', 'like', '%' . $buscar . '%');
+        }
+
+        $resultados = $query->latest()->paginate(12);
+
+        $resultados->getCollection()->transform(function ($equipo) use ($user) {
+            $equipo->soy_miembro = $equipo->miembros->contains('id', optional($user)->id);
+            $equipo->soy_coordinador = $equipo->coordinadores->contains('id', optional($user)->id);
+            unset($equipo->miembros, $equipo->coordinadores);
+            return $equipo;
+        });
+
+        if ($categoria) {
+            $resultados->appends(['categoria' => $categoria]);
+        } elseif ($buscar) {
+            $resultados->appends(['buscar' => $buscar]);
+        }
 
         $categorias = (new Equipo())->getCategorias();
-        /*$categorias = Equipo::selectRaw('categoria as nombre, count(*) as total')
-            ->groupBy('categoria')
-            ->get();*/
 
         return Inertia::render('Equipos/Index', [
             'filtrado' => $buscar,
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias
-        ])
-            ->withViewData(SEO::get('equipos'));
+        ])->withViewData(SEO::get('equipos'));
     }
 
     /**
@@ -338,7 +344,7 @@ class EquiposController extends Controller
         }
 
         if ($rol == 'miembro')
-           $rol = NULL;
+            $rol = NULL;
 
         // Actualizamos el rol del usuario en el equipo
         $equipo->miembros()->updateExistingPivot($idUsuario, ['rol' => $rol]);
@@ -688,7 +694,7 @@ class EquiposController extends Controller
     /**
      * método auxiliar
      */
-    private function validarSolicitud($idSolicitud) : Solicitud
+    private function validarSolicitud($idSolicitud): Solicitud
     {
         // carga la solicitud
         $solicitud = Solicitud::findOrFail($idSolicitud);
@@ -805,7 +811,4 @@ class EquiposController extends Controller
             ->where('equipo_id', $equipo->id)
             ->delete();
     }
-
-
-
 }

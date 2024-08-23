@@ -13,7 +13,7 @@
             <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
                 <Categorias :categorias="categorias" :url="route('equipos')" columna-breakpoint="md"
-                    select-breakpoint="sm" div-class="w-full md:w-fit "/>
+                    select-breakpoint="sm" div-class="w-full md:w-fit " />
 
                 <div class="w-full flex-grow">
 
@@ -24,10 +24,15 @@
                         <CardContent v-for="contenido in listado.data" :key="contenido.id"
                             :image="contenido.imagen || equipo_fallback" :title="contenido.nombre"
                             :href="route('equipo', contenido.slug)" image-left image-class="min-h-[150px]"
-                            class="min-h-16" :description="contenido.descripcion">
-                            <div class="mb-2 mr-6 flex sm:ml-auto gap-3 text-2xl items-center self-end justify-center">
-                                <Icon icon="ph:user-duotone" />
-                                {{ contenido.miembros_count }}
+                            class="min-h-16" :description="contenido.descripcion" :tag="contenido.categoria">
+                            <div class="flex gap-3 items-center justify-between">
+                                <span class="text-xs badge-neutral"
+                                :class="contenido.soy_miembro||contenido.soy_coordinador?'badge':''">
+                                    {{ contenido.soy_coordinador ? 'ERES COORDINADOR' : contenido.soy_miembro ? 'ERES MIEMBRO':''}}
+                                </span>
+                                <div class="text-2xl flex gap-2 items-center">
+                                    <Icon icon="ph:user-duotone" /> {{ contenido.miembros_count }}
+                                </div>
                             </div>
                         </CardContent>
 
