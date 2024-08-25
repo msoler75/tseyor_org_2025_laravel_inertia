@@ -51,7 +51,7 @@ class ContenidosImport extends Command
             // Obtenemos todos los datos de esa colección
             $modelos = app()->make($claseModelo)::all();
             foreach ($modelos as $model) {
-                ContenidoHelper::guardarContenido($coleccion, $model);
+                ContenidoHelper::guardarContenido($model);
             }
 
             $this->info("Importación de contenidos completada para la colección $coleccion.");

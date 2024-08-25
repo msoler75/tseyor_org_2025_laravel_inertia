@@ -25,16 +25,18 @@
                         <div class="prose" v-html="equipo.anuncio" />
                     </Card>
 
+
+                    <Card v-if="equipo.reuniones">
+                        <h3>Reuniones</h3>
+                        <div class="prose" v-html="equipo.reuniones" />
+                    </Card>
+
                     <Card v-if="!equipo.ocultarMiembros">
                         <h3>Coordinadores</h3>
 
                         <Users v-if="equipo" :users="coordinadores" :count="coordinadores.length" />
                     </Card>
 
-                    <Card v-if="equipo.reuniones">
-                        <h3>Reuniones</h3>
-                        <div class="prose" v-html="equipo.reuniones" />
-                    </Card>
 
                     <Card v-if="ultimosInformes.length" class="gap-3">
                         <div class="flex items-center justify-between mb-3">

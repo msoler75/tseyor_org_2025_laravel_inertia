@@ -30,6 +30,7 @@ class Equipo extends ContenidoBaseModel
         'anuncio',
         'reuniones',
         'informacion',
+        'oculto',
         'ocultarCarpetas',
         'ocultarArchivos',
         'ocultarMiembros',
@@ -112,6 +113,16 @@ class Equipo extends ContenidoBaseModel
         return $this->miembros->contains(function ($miembro) use ($user_id) {
             return $miembro->id === $user_id;
         });
+    }
+
+   // SCOUT
+
+    /**
+     * Solo se indexa si acaso está publicado
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return !$this->oculto;
     }
 
 

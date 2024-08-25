@@ -1,7 +1,3 @@
-EQUIPOS
--en el listado de equipos aparezca la categoria "tus equipos"
--en las tarjetas que aparezca ERES COORDINADOR | ERES MIEMBRO
-
 MENU usuario nav
 -NO DEBE aparecer la opción ESPACIO MUUL si no eres del grupo muul
 

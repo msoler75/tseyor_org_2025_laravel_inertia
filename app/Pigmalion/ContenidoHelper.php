@@ -47,7 +47,7 @@ class ContenidoHelper
                 if (in_array($campo, $fillable)) {
                     // $prefijo = $objeto->numero ? $objeto->numero . "-" : "";
                     $prefijo = '';
-                    $objeto->slug = Str::slug($prefijo . $objeto->{$campo});
+                    $objeto->slug = substr(Str::slug($prefijo . $objeto->{$campo}), 0, 32);
                     // dd($objeto->slug);
                     break;
                 }
@@ -143,14 +143,16 @@ class ContenidoHelper
     }
 
 
-    public static function guardarContenido(string $coleccion, ContenidoBaseModel $model)
+    public static function guardarContenido(ContenidoBaseModel $model)
     {
+        $coleccion = $model->getTable();
+
         $contenido = Contenido::where('coleccion', $coleccion)
             ->where('id_ref', $model->id)
             ->withTrashed() // incluimos los marcados como borrados
             ->first();
 
-        Log::info('ContenidoHelper::guardarContenido', ['coleccion'=>$coleccion, 'id'=>$model->id,'contenido'=>$contenido]);
+        Log::info('ContenidoHelper::guardarContenido', ['coleccion' => $coleccion, 'id' => $model->id, 'contenido' => $contenido]);
 
         if ($contenido == null) {
             // Crear un nuevo modelo Contenido
@@ -162,12 +164,11 @@ class ContenidoHelper
         // Asignar las propiedades del modelo con los datos recibidos
         $descripcion = $model->descripcion ?? '';
         // si existe atributo pais, lo convertimos
-        if (isset($model->pais))
-        {
+        if (isset($model->pais)) {
             $values = [Countries::getCountry($model->pais)];
-            if(isset($model->provincia)) $values[] = $model->provincia;
-            if(isset($model->poblacion)) $values[] = $model->poblacion;
-            if(isset($model->descripcion)) $values[] = $model->descripcion;
+            if (isset($model->provincia)) $values[] = $model->provincia;
+            if (isset($model->poblacion)) $values[] = $model->poblacion;
+            if (isset($model->descripcion)) $values[] = $model->descripcion;
             $descripcion = implode(" ", $values);
         }
 
@@ -176,7 +177,8 @@ class ContenidoHelper
         $contenido->descripcion = $descripcion;
         $contenido->imagen = $model->imagen ?? null;
         $contenido->fecha = $model->published_at ?? $model->updated_at ?? null;
-        $contenido->visibilidad = $model->visibilidad ?? 'P';
+        $contenido->visibilidad = $model->visibilidad  ?? 'P';
+        if ($model->oculto) $contenido->visibilidad = 'O';
         $contenido->deleted_at = $model->deleted_at ?? null;
 
         if (strlen($contenido->descripcion) > 400)
@@ -196,15 +198,13 @@ class ContenidoHelper
         $contenido = Contenido::where('coleccion', $coleccion)
             ->where('id_ref', $objeto->id)->first();
 
-        Log::info("ContenidoHelper::removerContenido, ", ['coleccion'=>$coleccion, 'id'=> $objeto->id, 'contenido'=>$contenido]);
+        Log::info("ContenidoHelper::removerContenido, ", ['coleccion' => $coleccion, 'id' => $objeto->id, 'contenido' => $contenido]);
 
         if ($contenido) {
             // elimina el contenido asociado
             $contenido->delete();
         }
     }
-
-
 
     /**
      * Analiza el texto y mueve las imagenes de la carpeta temporal a la carpeta de medios

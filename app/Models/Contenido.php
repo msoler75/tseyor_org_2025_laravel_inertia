@@ -51,7 +51,7 @@ class Contenido extends Model
 
     /**
      * Get the indexable data array for the model.
-     *
+     *a
      * @return array<string, mixed>
      */
     public function toSearchableArray(): array

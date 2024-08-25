@@ -24,7 +24,13 @@
                         <CardContent v-for="contenido in listado.data" :key="contenido.id"
                             :image="contenido.imagen || equipo_fallback" :title="contenido.nombre"
                             :href="route('equipo', contenido.slug)" image-left image-class="min-h-[150px]"
-                            class="min-h-16" :description="contenido.descripcion" :tag="contenido.categoria">
+                            class="relative min-h-16" :description="contenido.descripcion" :tag="contenido.categoria"
+                            descriptionClass="max-h-[4rem]"
+                            >
+                            <div v-if="contenido.oculto" class="badge badge-error flex gap-2 items-center text-xs">
+                                OCULTO
+                                <Icon icon="ph:lock-open-duotone"/>
+                            </div>
                             <div class="flex gap-3 items-center justify-between">
                                 <span class="text-xs badge-neutral"
                                 :class="contenido.soy_miembro||contenido.soy_coordinador?'badge':''">
