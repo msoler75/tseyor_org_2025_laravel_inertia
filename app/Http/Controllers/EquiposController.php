@@ -40,19 +40,33 @@ class EquiposController extends Controller
         $categoria = $request->input('categoria');
 
         // obtenemos el listado de equipos y el nº de miembros
-        $query = Equipo::withCount('miembros')
-            ->with(['miembros' => function ($query) use ($user) {
-                $query->where('users.id', $user->id);
-            }, 'coordinadores' => function ($query) use ($user) {
-                $query->where('users.id', $user->id);
-            }]);
+        $query = Equipo::withCount('miembros');
+
+        // si el usuario tiene permisos de gestionar equipos
+        $ocultarEquipos = $categoria != 'Tus equipos' && Gate::denies('administrar equipos');
 
         if ($categoria) {
-            $query->where('categoria', '=', $categoria);
+            if ($categoria == 'Tus equipos')
+                //obtener los equipos de los que soy miembro
+                $query->whereIn('id', $user->equipos()->pluck('equipo_id'));
+            else
+                $query->where('categoria', '=', $categoria);
         } elseif ($buscar) {
-            $query->where('nombre', 'like', '%' . $buscar . '%')
-                ->orWhere('descripcion', 'like', '%' . $buscar . '%');
+            $query->whereRaw('CONCAT(nombre, " ", descripcion) like \'%' . $buscar . '%\'');
         }
+
+        if ($ocultarEquipos)
+            $query->where(function ($q) use ($user) {
+                $q->whereNull('oculto')
+                    ->orWhere('oculto', 0)
+                    // no ocultar si eres miembro
+                    ->orWhereHas('miembros', function ($subQuery) use ($user) {
+                        $subQuery->where('users.id', optional($user)->id);
+                    });
+            });
+
+        //mostramos la consulta SQL final:
+        // dd($query->toSql());
 
         $resultados = $query->latest()->paginate(12);
 
@@ -71,6 +85,13 @@ class EquiposController extends Controller
 
         $categorias = (new Equipo())->getCategorias();
 
+        if ($user) {
+            // cuenta el nº de equipos de los cuales eres miembro
+            $tus_equipos = $user->equipos()->count();
+            if ($tus_equipos)
+                array_unshift($categorias, ['nombre' => 'Tus equipos', 'total' => $tus_equipos]);
+        }
+
         return Inertia::render('Equipos/Index', [
             'filtrado' => $buscar,
             'categoriaActiva' => $categoria,
@@ -86,10 +107,11 @@ class EquiposController extends Controller
     {
         $equipo = Equipo::with(['miembros' => function ($query) {
             $query->select('users.id', 'users.name as nombre', 'users.slug', 'profile_photo_path as avatar')
-                ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
-                // ->take(30)
+            ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
+            // ->take(30)
             ;
         }]);
+
 
         if (is_numeric($id)) {
             $equipo = $equipo->findOrFail($id);
@@ -153,6 +175,12 @@ class EquiposController extends Controller
                     ->first();
             }
         }
+
+        // si el usuario tiene permisos de gestionar equipos
+        $permisoVerEquipo = $soyMiembro || !$equipo->oculto || Gate::allows('administrar equipos');
+
+        if(!$permisoVerEquipo)
+            abort(404, 'No tienes permisos para ver este equipo');
 
         $equipo->solicitudesPendientes = $solicitudes;
 

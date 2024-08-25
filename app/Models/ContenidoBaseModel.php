@@ -46,7 +46,7 @@ class ContenidoBaseModel extends Model
             }
 
             // Acciones después de que el modelo se haya guardado
-            ContenidoHelper::guardarContenido($model->getTable(), $model);
+            ContenidoHelper::guardarContenido($model);
 
             if(method_exists($model, 'afterSave')) {
                 $model->afterSave();

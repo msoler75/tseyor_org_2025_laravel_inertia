@@ -31,19 +31,19 @@ class ContenidosController extends Controller
 
         $resultados = $buscar ?
             Contenido::search($buscar)
-                ->query(function ($query) use ($colecciones_excluidas) {
-                    return $query->whereNotIn('coleccion', $colecciones_excluidas);
-                })
-                ->paginate(10)->appends(['buscar' => $buscar])
+            ->query(function ($query) use ($colecciones_excluidas) {
+                return $query->whereNotIn('coleccion', $colecciones_excluidas);
+            })
+            ->paginate(10)->appends(['buscar' => $buscar])
             :
             // los administradores ven todos los contenidos, y si están en modo publicado o borrador
             Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion', 'visibilidad'])
-                ->when(!$esAdministrador, function ($query) {
-                    $query->where('visibilidad', 'P');
-                })
-                ->whereNotIn('coleccion', $colecciones_excluidas)
-                ->latest('updated_at') // Ordenar por updated_at
-                ->paginate(10);
+            ->when(!$esAdministrador, function ($query) {
+                $query->where('visibilidad', 'P');
+            })
+            ->whereNotIn('coleccion', $colecciones_excluidas)
+            ->latest('updated_at') // Ordenar por updated_at
+            ->paginate(10);
 
         return Inertia::render('Novedades', [
             'filtrado' => $buscar,
@@ -64,11 +64,11 @@ class ContenidosController extends Controller
 
         // se puede utilizar un comando al comienzo de la búsqueda para indicar en qué colección buscar
         // ejemplo: com 33, buscaría comunicados con 33
-        $comandos = ['com|comunicado'=>'comunicados', 'libro'=>'libros', 'blog'=>'entradas', 'evento'=>'eventos', 'noticia'=>'noticias', 'informe'=>'informes', 'normativa'=>'normativas', 'audio'=>'audios', 'meditacion'=>'meditaciones', 'termino'=>'terminos'];
+        $comandos = ['com|comunicado' => 'comunicados', 'libro' => 'libros', 'blog' => 'entradas', 'evento' => 'eventos', 'noticia' => 'noticias', 'informe' => 'informes', 'normativa' => 'normativas', 'audio' => 'audios', 'meditacion' => 'meditaciones', 'termino' => 'terminos'];
 
-        foreach($comandos as $key=>$value) {
+        foreach ($comandos as $key => $value) {
             // si $buscar empieza por 'blog' entonces solo buscamos en blogs
-            if(preg_match("/^($key)s?.{2,999}/", $buscar)) {
+            if (preg_match("/^($key)s?.{2,999}/", $buscar)) {
                 $collections = $value;
                 $buscar = preg_replace('/^($key)s?/', '', $buscar);
             }
@@ -93,7 +93,7 @@ class ContenidosController extends Controller
         )->paginate(64);
 
         if ($busqueda_valida && !$resultados->count()) // por algun motivo algunas busquedas no las encuentra
-        $resultados = Contenido::where('titulo', 'LIKE', "%$buscarFiltrado%")->orWhere('descripcion', 'LIKE', "%$buscarFiltrado%")->paginate(64);
+            $resultados = Contenido::where('visibilidad', 'P')->where('titulo', 'LIKE', "%$buscarFiltrado%")->orWhere('texto_busqueda', 'LIKE', "%$buscarFiltrado%")->paginate(64);
 
 
         if (strlen($buscarFiltrado) < 3)

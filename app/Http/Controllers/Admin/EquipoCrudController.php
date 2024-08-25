@@ -117,17 +117,28 @@ class EquipoCrudController extends CrudController
         // CRUD::field('user')->type('select');
 
 
-        CRUD::field('nombre')->type('text');
+        CRUD::field('nombre')->type('text')->attributes(['maxlength'=>64]);
 
-        CRUD::field('slug')->type('text')->hint('Puedes dejarlo en blanco');
+        CRUD::field('slug')->type('text')->attributes(['maxlength'=>32])->hint('Puedes dejarlo en blanco');
+
+        CRUD::field([   // select_from_array
+            'name' => 'categoria',
+            'label' => "Categoría",
+            'type' => 'select_from_array',
+            'options' => [''=>'Sin definir', 'UTG'=>'UTG', 'ONG'=>'ONG', 'Casas y Muulasterios'=>'Casas y Muulasterios'],
+            'allows_null' => false,
+            'default' => 'Pueblo Tseyor',
+            // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
+            'wrapper' => [
+                'class' => 'form-group col-md-4'
+            ],
+        ])->after("slug");
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
 
         $folder = $this->getMediaFolder();
 
         CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'initial-images'=> '/almacen/medios/equipos/equipo1.jpg,/almacen/medios/equipos/equipo2.jpg,/almacen/medios/equipos/equipo3.jpg,/almacen/medios/equipos/equipo4.jpg,/almacen/medios/equipos/equipo5.jpg']);
-
-        CRUD::field('categoria')->type('text');
 
         CRUD::field('anuncio')->type('tiptap_editor_simple');
 
@@ -156,6 +167,7 @@ class EquipoCrudController extends CrudController
             'hint' => 'Opcionalmente puedes poner aquí también a los coordinadores, aunque no es necesario. Pulsa espacio para cargar todos los usuarios, o escribe para buscar'
         ]);
 
+        CRUD::field('oculto')->type('checkbox')->label('Ocultar equipo')->hint('Es un equipo privado');
         CRUD::field('ocultarMiembros')->type('checkbox')->label('Ocultar solicitudes de ingreso');
         CRUD::field('ocultarCarpetas')->type('checkbox')->label('Ocultar carpetas');
         CRUD::field('ocultarArchivos')->type('checkbox')->label('Ocultar archivos');
