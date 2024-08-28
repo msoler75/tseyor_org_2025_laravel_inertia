@@ -1,3 +1,10 @@
+LIBROS
+-checkbox choca con busqueda y limpiar, en vista movil
+
+PAGINAS
+-página con la explicación de correos @tseyor, para la tarjeta de visita
+
+
 MENU usuario nav
 -NO DEBE aparecer la opción ESPACIO MUUL si no eres del grupo muul
 
@@ -11,7 +18,6 @@ https://github.com/rahulalam31/Laravel-Abuse-IP
 URL
 -En movil, al compartir una página solo comparte tseyor.xyz
 
-
 ADMIN
 -cerrar sesion desde admin no funciona
 
@@ -20,7 +26,6 @@ EQUIPOS
     -testar funcionamiento
     -testar permisos de acceso
     -testar creación de un informe del equipo
-
 
 BLOG
 -Usar categoria no funciona en la paginación
@@ -65,7 +70,6 @@ BUSQUEDAS
 estudiar: ExtendedHighlighter::_normalizeText() : ver de cambiar [áÁ] a [áÁA]  // pasar a minúsculas
     $str = mb_ereg_replace('[áÁ]', 'a', $str);
 
-
 MUULAR ELECTRÓNICO
 -integrar app de muular electrónico
 
@@ -80,11 +84,6 @@ LOGS
 https://betterstack.com/docs/logs/php/
 https://medium.com/@pd.philip/laravel-error-logging-via-better-stack-logtail-fa80eafd4d36
 
-QUEUE
--Ver si se puede poner un queueworker en dreamhost
-
-PAGINAS
--página con la explicación de correos @tseyor, para la tarjeta de visita
 
 BUSQUEDAS:
 -en resultados de busquedas, quitar los formatos extra {width=45px;height=60px}  {text-align=center} ... [^1] <sup></sup> <u></u>
@@ -92,13 +91,8 @@ BUSQUEDAS:
 -en el panel de administración, ver todas las búsquedas y estadísticas
 
 ARCHIVOS
--icono "home" lleva a una url que no está bien
 -en archivos adjuntos, por ejemplo, de un informe, si intentas desccargarlos y no existe (404) descarga un archivo .html. No debiera ser
 -mejorar vista mobil
-
-CONTACTO
--un usuario "muul" ha de poder publicar, despublicar y rellenar su ficha de contacto libremente
-    - y si no, al menos poder mandar fácilmente los datos de contacto a un administrador
 
 USER
 -vista perfil de usuario, la frase necesita padding en vista movil
@@ -117,12 +111,8 @@ ADMIN
 -dashboard: los ultimos comentarios solo lo ha de ver el rol "comunicador"
 -emails: ver registro de emails en el dashboard
 
-EVENTOS
--que grupo de usuarios con rol "comunicador" puedan crear eventos
-
 COMENTARIOS
 -cambiar las rutas desde api.php a web.php, y en los componentes
-
 
 
 WEBDAV:
@@ -212,10 +202,6 @@ Con estos pasos, cada vez que realices un push a la rama main de tu repositorio,
 Recuerda que Git-ftp solo transferirá los archivos modificados desde la última implementación, lo que optimiza el proceso de implementación.
 
 Espero que esto te ayude a utilizar Git-ftp con GitHub Actions en tu proyecto Laravel + Inertia + Backpack. Si tienes más preguntas, no dudes en preguntar.
-
-
-
-
 
 
 editor markdown con muchas funciones

@@ -93,6 +93,7 @@
     <x-backpack::menu-dropdown-item title="Tareas" icon="la la-tasks" :link="backpack_url('job')"  />
     <x-backpack::menu-dropdown-item title="Tareas fallidas" icon="la la-skull-crossbones" :link="backpack_url('job-failed')"  />
     <x-backpack::menu-dropdown-item title="Logs" icon="la la-file-alt" link="/admin/logs"  />
+    <x-backpack::menu-dropdown-item title="Comandos" icon="la la-terminal" :link="backpack_url('command')"  />
 </x-backpack::menu-dropdown>
 @endcan
 

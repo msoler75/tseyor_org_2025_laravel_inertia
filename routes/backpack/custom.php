@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\WorkerController;
+use App\Http\Controllers\Admin\CommandController;
 
 
 // --------------------------
@@ -100,6 +101,11 @@ Route::group([
     Route::get('worker/start', [WorkerController::class, 'startWorker'])->name('worker.start');
     Route::get('worker/stop', [WorkerController::class, 'stopWorker'])->name('worker.stop');
     Route::get('worker/restart', [WorkerController::class, 'restartWorker'])->name('worker.restart');
+
+    Route::get('command', function () {
+        return view('admin.command');
+    } );
+    Route::get('command/{command}', [CommandController::class, 'runCommand'])->name('command.run');
 
 
     Route::get('archivos', function () {

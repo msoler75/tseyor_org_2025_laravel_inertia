@@ -144,6 +144,10 @@ class Handler extends ExceptionHandler
         // Guardar la excepción en el log con información detallada
         // Log::error($exception->getMessage(), ['exception' => $exception]);
 
+        if($exception->getMessage()=='Service Unavailable') {
+            return response()->view('mantenimiento', [], 503);
+        }
+
         $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 512;
 
         Log::error('An exception occurred', [

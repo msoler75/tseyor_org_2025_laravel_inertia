@@ -146,7 +146,7 @@ class RadioController extends Controller
             ];
 
             if ($radio['reproduciendo_jingle'])
-                $estado['audio_siguiente'] = $radio['audio_siguiente'];
+                $estado['audio_siguiente'] = $radio['audio_siguiente'] ?? null;
 
             $categorias = RadioItem::selectRaw('distinct categoria')->where('categoria', '<>', 'Jingles')->get()->pluck('categoria');
 

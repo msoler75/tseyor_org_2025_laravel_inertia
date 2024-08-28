@@ -1,13 +1,15 @@
+const APP_PUZLE_URL = "https://puzle.tseyor.xyz/";
+
 export default [
-    {
-      title: "Inicio",
-      icon: "ph:house-simple-duotone",
-      description: "Portada de la web",
-      url: "/",
-      onlyAside: true,
-      open: false,
-      submenu: null,
-    },
+  {
+    title: "Inicio",
+    icon: "ph:house-simple-duotone",
+    description: "Portada de la web",
+    url: "/",
+    onlyAside: true,
+    open: false,
+    submenu: null,
+  },
   {
     title: "Novedades",
     icon: "ph:clock-counter-clockwise-duotone",
@@ -43,40 +45,40 @@ export default [
               icon: "ph:calendar-duotone",
             },
             {
-                title: "Blog",
-                route: "entradas",
-                description: "Artículos de nuestros blog",
-                icon: "ph:pencil-line-duotone",
-              },
+              title: "Blog",
+              route: "entradas",
+              description: "Artículos de nuestros blog",
+              icon: "ph:pencil-line-duotone",
+            },
           ],
         },
         {
-            title: "Redes",
-            class: "flex flex-col gap-3",
-            items: [
-                {
-                    title: "Facebook",
-                    url: "http://facebook.com/tseyor",
-                    external: true,
-                    icon: "ph:facebook-logo-duotone",
-                    class:'text-xs'
-                  },
-                  {
-                    title: "X",
-                    url: "http://twitter.com/tseyor",
-                    external: true,
-                    icon: "bi:twitter-x",
-                    class:'text-xs'
-                  },
-                  {
-                    title: "Youtube",
-                    url: "http://youtube.com/@tseyor",
-                    external: true,
-                    icon: "bi:youtube",
-                    class:'text-xs'
-                  },
-            ]
-        }
+          title: "Redes",
+          class: "flex flex-col gap-3",
+          items: [
+            {
+              title: "Facebook",
+              url: "http://facebook.com/tseyor",
+              external: true,
+              icon: "ph:facebook-logo-duotone",
+              class: "text-xs",
+            },
+            {
+              title: "X",
+              url: "http://twitter.com/tseyor",
+              external: true,
+              icon: "bi:twitter-x",
+              class: "text-xs",
+            },
+            {
+              title: "Youtube",
+              url: "http://youtube.com/@tseyor",
+              external: true,
+              icon: "bi:youtube",
+              class: "text-xs",
+            },
+          ],
+        },
       ],
     },
   },
@@ -117,11 +119,11 @@ export default [
               icon: "ph:book-bookmark-duotone",
             },
             {
-                title: "Meditaciones",
-                route: "meditaciones",
-                description: "Meditaciones para el trabajo interior",
-                icon: "ph:file-text-duotone",
-              },
+              title: "Meditaciones",
+              route: "meditaciones",
+              description: "Meditaciones para el trabajo interior",
+              icon: "ph:file-text-duotone",
+            },
           ],
         },
 
@@ -205,11 +207,11 @@ export default [
           title: "Referencia",
           items: [
             {
-                title: "Preguntas frecuentes",
-                route: "preguntas",
-                description: "Preguntas más habituales y su respuesta",
-                icon: "ph:question-duotone",
-              },
+              title: "Preguntas frecuentes",
+              route: "preguntas",
+              description: "Preguntas más habituales y su respuesta",
+              icon: "ph:question-duotone",
+            },
             {
               title: "Mis primeros pasos",
               url: "/mis-primeros-pasos",
@@ -337,19 +339,18 @@ export default [
               icon: "ph:files-duotone",
             },
             {
-                title: "Publicaciones",
-                route: "publicaciones",
-                description: "Publicaciones de los miembros de la comunidad",
-                icon: "ph:flower-duotone",
-                disabled: true,
-              },
+              title: "Publicaciones",
+              route: "publicaciones",
+              description: "Publicaciones de los miembros de la comunidad",
+              icon: "ph:flower-duotone",
+              disabled: true,
+            },
           ],
         },
 
         {
           title: "Documentos y archivos",
           items: [
-
             {
               title: "Normativas",
               route: "normativas",
@@ -363,13 +364,12 @@ export default [
               icon: "ph:archive-box-duotone",
             },
 
-              {
-                title: "Experiencias",
-                description: "Experiencias interdimensionales",
-                route: "experiencias",
-                icon: "ph:butterfly-duotone",
-              },
-
+            {
+              title: "Experiencias",
+              description: "Experiencias interdimensionales",
+              route: "experiencias",
+              icon: "ph:butterfly-duotone",
+            },
           ],
         },
 
@@ -385,17 +385,19 @@ export default [
             },
             {
               title: "Juego del puzle",
-              route: "equipos",
-              description: "Meditaciones para el trabajo interior",
+              //obtiene de la base del dominio de la app, y le agrega el subdominio puzle.
+              url: APP_PUZLE_URL,
+              external: true,
+              description: "Juego del puzle con las láminas de abstacción",
               icon: "ph:file-text-duotone",
-              disabled: true
+              disabled: false,
             },
             {
               title: "Cartas para el autodescubrimiento",
               route: "equipos",
               description: "Meditaciones para el trabajo interior",
               icon: "ph:file-text-duotone",
-              disabled: true
+              disabled: true,
             },
           ],
         },
