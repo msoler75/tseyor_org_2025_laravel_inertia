@@ -1,5 +1,5 @@
 <template>
-    <Prose class="text-container">
+    <Prose class="text-container break-words">
         <ContentNode :node="arbol" :use-image="optimizeImages"
         @click="handleClick"/>
     </Prose>
