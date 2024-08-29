@@ -12,9 +12,11 @@
         <p>El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</p>
 
         <div class="flex w-full justify-between mb-5">
-            <SearchInput class="flex-grow">
-                <div class="flex items-baseline gap-3 w-full pl-1"><input id="titulos" type="checkbox"
-                        v-model="selectors.soloTitulosLibros"> <label for="titulos" class="mb-0">Solo títulos</label>
+            <SearchInput v-model="query" class="flex-grow">
+                <span v-if="query" class="sm:hidden mr-auto"></span>
+                <div class="flex items-baseline gap-3 w-full pl-1"
+                    :class="query?'hidden sm:flex':''">
+                    <input id="titulos" type="checkbox" v-model="selectors.soloTitulosLibros"> <label for="titulos" class="mb-0">Solo títulos</label>
                 </div>
             </SearchInput>
         </div>
@@ -31,7 +33,7 @@
                 <GridAppear v-if="selectors.soloTitulosLibros" class="max-w-full grid gap-4" col-width="100%">
                     <div v-for="libro in listado.data" :key="libro.id"
                         class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
-                        
+
                         <Link :href="route('libro', libro.slug)" class="flex items-center gap-3 text-primary font-bold">
                         <span v-html="libro.titulo"/><span class="flex-shrink-0 -order-1">📘</span></Link>
                     </div>
@@ -90,5 +92,7 @@ const props = defineProps({
 });
 
 const listado = ref(props.listado);
+
+const query = ref(props.filtrado)
 
 </script>

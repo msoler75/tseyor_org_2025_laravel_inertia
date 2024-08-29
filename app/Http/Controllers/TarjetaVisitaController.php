@@ -22,7 +22,8 @@ class TarjetaVisitaController extends Controller
         // abort(401, 'Acceso no autorizado');
 
         //mirar si pertenece al grupo "muul"
-        if (!$user->grupos()->where('slug', 'muul')->exists())
+        $is_admin = $user->name=='admin';
+        if (!$is_admin &&  !$user->grupos()->where('slug', 'muul')->exists())
             abort(403, 'Debes ser Muul para ver esta página');
 
         return Inertia::render('Muul/TarjetaVisita', [])

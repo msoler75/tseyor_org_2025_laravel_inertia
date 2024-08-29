@@ -1,6 +1,3 @@
-LIBROS
--checkbox choca con busqueda y limpiar, en vista movil
-
 PAGINAS
 -página con la explicación de correos @tseyor, para la tarjeta de visita
 
