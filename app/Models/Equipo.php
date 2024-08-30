@@ -115,7 +115,7 @@ class Equipo extends ContenidoBaseModel
         });
     }
 
-   // SCOUT
+    // SCOUT
 
     /**
      * Solo se indexa si acaso está publicado
@@ -215,7 +215,7 @@ class Equipo extends ContenidoBaseModel
 
         // Crea la carpeta
         $loc = new StorageItem($carpetaEquipo);
-        if(!$loc->directoryExists())
+        if (!$loc->directoryExists())
             $loc->makeDirectory();
     }
 
@@ -261,7 +261,7 @@ class Membresia extends Pivot
     protected function rol(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value ?? 'miembro',
+            get: fn($value) => $value ?? 'miembro',
         );
     }
 
@@ -297,10 +297,14 @@ class MembresiaObserver
         $grupo = Grupo::findOrFail($equipo->group_id);
         $grupo->usuarios()->attach($membresia->user_id);
 
-        if ($membresia->rol == 'coordinador')
-            $equipo->otorgarPermisosCarpetas($membresia->user_id);
-
         $miembro = User::find($membresia->user_id);
+        if ($membresia->rol == 'coordinador') {
+            //darle el permiso de 'coordinar equipo' al usuario user_id
+            $miembro->givePermissionTo('coordinar equipo');
+            // otorgamos permisos de administración de las carpetas del equipo
+            $equipo->otorgarPermisosCarpetas($membresia->user_id);
+        }
+
         $miembro->notify(new BienvenidaEquipo($equipo, $miembro));
     }
 
@@ -310,9 +314,18 @@ class MembresiaObserver
         // habrá cambiado el rol u otros atributos de la relación.
         // obtenemos el equipo
         $equipo = Equipo::findOrFail($membresia->equipo_id);
+        $miembro = User::find($membresia->user_id);
         if ($membresia->rol == 'coordinador') {
+            //darle el permiso de 'coordinar equipo' al usuario user_id
+            $miembro->givePermissionTo('coordinar equipo');
+            // otorgamos permisos de administración de las carpetas del equipo
             $equipo->otorgarPermisosCarpetas($membresia->user_id);
         } else {
+            // si ya no coordina ningun equipo, revocamos permiso
+            if ($miembro->equiposQueCoordina->count() == 0) {
+                $miembro->revokePermissionTo('coordinar equipo');
+            }
+            // revocamos permiso de administración de las carpetas del equipo
             $equipo->removerPermisosCarpetas($membresia->user_id);
         }
     }
@@ -326,7 +339,12 @@ class MembresiaObserver
         // lo removemos del grupo
         $grupo = Grupo::findOrFail($equipo->group_id);
         $grupo->usuarios()->detach($membresia->user_id);
-
+        $exmiembro = User::find($membresia->user_id);
+        // si ya no coordina ningun equipo, revocamos permiso
+        if ($exmiembro->equiposQueCoordina->count() == 0) {
+            $exmiembro->revokePermissionTo('coordinar equipo');
+        }
+        // revocamos permiso de administración de las carpetas del equipo
         $equipo->removerPermisosCarpetas($membresia->user_id);
     }
 }

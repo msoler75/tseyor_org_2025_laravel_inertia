@@ -5,10 +5,10 @@
             <Back v-if="equipo&&equipo.slug" :href="route('equipo', equipo.slug)">{{equipo.nombre}}</Back>
             <Back v-else :href="route('equipos')">Equipos</Back>
             <Link v-if="equipo" :href="route('informes')" class="flex h-fit gap-2 text-sm items-center hover:underline">
-                Todos los informes
+                Informes de todos los equipos
                 <Icon icon="ph:arrow-right" />
             </Link>
-            <AdminLinks modelo="informe" necesita="administrar contenidos" />
+            <AdminLinks modelo="informe" :necesita="['administrar equipos', 'coordinar equipo']" />
         </div>
 
         <template v-if="equipo">

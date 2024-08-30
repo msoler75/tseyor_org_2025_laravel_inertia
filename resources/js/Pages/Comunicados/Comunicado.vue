@@ -1,5 +1,5 @@
 <template>
-    <AppLayout title="comunicado.titulo">
+    <AppLayout :title="comunicado.titulo">
         <div class="container py-12 mx-auto">
 
             <div class="container mx-auto flex justify-between items-center mb-20">

@@ -1,6 +1,3 @@
-PAGINAS
--página con la explicación de correos @tseyor, para la tarjeta de visita
-
 
 MENU usuario nav
 -NO DEBE aparecer la opción ESPACIO MUUL si no eres del grupo muul
