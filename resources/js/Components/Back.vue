@@ -1,10 +1,10 @@
 <template>
     <Teleport v-if="mounted" to="#afterNav" :disabled="inline || !floating">
         <Link :href="enlace"
-            class="transition duration-200 flex h-fit gap-2 text-sm items-center hover:underline select-none"
+            class="transition duration-250 flex h-fit gap-2 text-sm items-center hover:underline select-none"
             :class="calcClass" v-bind="$attrs" :fadeOut="fadeOut">
         <Icon icon="ph:arrow-left" />
-        <div :class="floating ? 'hidden sm:block' : ''">
+        <div>
             <slot />
         </div>
         </Link>
@@ -58,7 +58,6 @@ var recorridoUp = 0
 var recorridoDown = 0
 
 watch(() => nav.scrollY, (y) => {
-    console.log('watch scrollY', y)
     if (!floating) return
     if (prevY != 10000) {
         var dy = y - prevY
@@ -70,12 +69,11 @@ watch(() => nav.scrollY, (y) => {
                     recorridoDown = dy
                 } else {
                     recorridoDown += dy
-                    if (recorridoDown >  wrapToHide)
+                    if (recorridoDown > wrapToHide)
                         show.value = false
                 }
                 subiendo = false
                 // bajando
-                console.log("bajando")
             } else {
                 // subiendo
                 if (!subiendo) {
