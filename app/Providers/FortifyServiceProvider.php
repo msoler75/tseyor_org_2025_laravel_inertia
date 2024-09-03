@@ -50,9 +50,9 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
-        Fortify::verifyEmailView(function () {
-            return Inertia::render('VerificarCorreo');
-        });
+        /*Fortify::verifyEmailView(function () {
+            return Inertia::render('Auth/VerificarCorreo');
+        });*/
 
         RateLimiter::for('login', function (Request $request) {
             $email = (string) $request->email;

@@ -29,10 +29,8 @@
 </template>
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 import { getEmbedYoutube } from '@/composables/srcutils.js'
 
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     video: {

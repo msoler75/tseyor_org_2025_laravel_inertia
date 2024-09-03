@@ -3782,6 +3782,4 @@ momento se tuvieren.”</span></cite><span> </span><span class="Referencia"><spa
 
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
-defineOptions({ layout: AppLayout })
 </script>

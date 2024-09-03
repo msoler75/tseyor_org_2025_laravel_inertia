@@ -57,7 +57,6 @@ class ArchivosController extends Controller
      */
     public function list(Request $request, $rutaReq, $json)
     {
-
         if (strpos($rutaReq, ':') !== false) {
             if ($json) {
                 return response()->json(['error' => 'Acceso denegado'], 403);

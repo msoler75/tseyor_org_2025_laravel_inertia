@@ -22,11 +22,11 @@
 
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
-                <Back :href="route('terminos')" inline>Términos</Back>
+                <Back :href="route('terminos')" inline class="!opacity-100">Términos</Back>
                 <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
                     <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
                 </div>
-                <Back :href="route('terminos')" inline class="pointer-events-none opacity-0">Términos</Back>
+                <Back :href="route('terminos')" inline class="pointer-events-none !opacity-0">Términos</Back>
             </div>
         </ContentBar>
 
@@ -110,11 +110,9 @@
 </template>
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';
 
 
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     termino: {

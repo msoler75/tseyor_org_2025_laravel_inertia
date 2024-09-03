@@ -1,7 +1,4 @@
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
-
-defineOptions({ layout: AppLayout })
 
 const form = useForm({
     name: '',

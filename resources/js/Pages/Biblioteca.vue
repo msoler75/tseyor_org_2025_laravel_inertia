@@ -1,64 +1,61 @@
 <template>
-    <AppLayout title="Biblioteca Tseyor">
+    <div class="container py-12 mx-auto">
 
-        <div class="container py-12 mx-auto">
-            <!-- Encabezado -->
-            <h1 class="mb-4">Biblioteca Tseyor</h1>
+        <!-- Encabezado -->
+        <h1 class="mb-4">Biblioteca Tseyor</h1>
 
-            <div class="text-pretty my-12">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-14">
-                    <div>
-                        <p>La Biblioteca Tseyor es el resultado de más de 1500 diálogos <Referencia r="telepatía">
-                                telepáticos</Referencia> con seres de la <Referencia>Confederación de Mundos Habitados
-                                de la
-                                Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool Puente</Referencia>
-                            ,
-                            <Referencia r="canalización">canalizador</Referencia> de Tseyor.
-                        </p>
-                        <p>Estas denominadas <q>conversaciones interdimensionales</q> o comunicados se han transcrito en
-                            textos que inspiran libros, monografías, vídeos y audios.</p>
-                    </div>
-                    <div class="flex gap-5">
-                        <p class="">Todos los materiales han sido publicados y están preservados por la <Referencia>
-                                Universidad Tseyor de Granada</Referencia> para mantener la integridad del mensaje
-                            original
-                            y sus obras impresas están registradas por la asociación <Referencia>TSEYOR Centro de
-                                Estudios
-                                Socioculturales</Referencia>.</p>
-                        <Image class="mt-[1.5rem]" width="137" height="200" src="/almacen/medios/logos/utg.jpg" />
-                    </div>
+        <div class="text-pretty my-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-14">
+                <div>
+                    <p>La Biblioteca Tseyor es el resultado de más de 1500 diálogos <Referencia r="telepatía">
+                            telepáticos</Referencia> con seres de la <Referencia>Confederación de Mundos Habitados
+                            de la
+                            Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool Puente</Referencia>
+                        ,
+                        <Referencia r="canalización">canalizador</Referencia> de Tseyor.
+                    </p>
+                    <p>Estas denominadas <q>conversaciones interdimensionales</q> o comunicados se han transcrito en
+                        textos que inspiran libros, monografías, vídeos y audios.</p>
                 </div>
-
+                <div class="flex gap-5">
+                    <p class="">Todos los materiales han sido publicados y están preservados por la <Referencia>
+                            Universidad Tseyor de Granada</Referencia> para mantener la integridad del mensaje
+                        original
+                        y sus obras impresas están registradas por la asociación <Referencia>TSEYOR Centro de
+                            Estudios
+                            Socioculturales</Referencia>.</p>
+                    <Image class="mt-[1.5rem]" width="137" height="200" src="/almacen/medios/logos/utg.jpg" />
+                </div>
             </div>
 
-            <!-- Contenedor de Categorías -->
-            <GridAppear class="grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Categoría: Libros -->
-                <Link :href="seccion.url" v-for="seccion of secciones" :key="seccion.title" class="card bg-base-100 p-6 rounded-lg shadow-md relative group
+        </div>
+
+        <!-- Contenedor de Categorías -->
+        <GridAppear class="grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Categoría: Libros -->
+            <Link :href="seccion.url" v-for="seccion of secciones" :key="seccion.title" class="card bg-base-100 p-6 rounded-lg shadow-md relative group
             transition duration-300  hover:shadow-lg antialiased
             lg:opacity-80 hover:opacity-100
             ">
 
 
-                <h2 class="flex items-center gap-3 text-2xl font-semibold mb-2 group-hover:!text-secondary">
-                    <Icon :icon="seccion.icon" />
-                    {{ seccion.title }}
-                </h2>
+            <h2 class="flex items-center gap-3 text-2xl font-semibold mb-2 group-hover:!text-secondary">
+                <Icon :icon="seccion.icon" />
+                {{ seccion.title }}
+            </h2>
 
-                <p class="text-neutral opacity-70 group-hover:opacity-100 mb-4">{{ seccion.descripcion }}</p>
-                <div class="flex justify-end gap-4 items-center opacity-50 group-hover:opacity-100 mt-auto">
-                    <span :class="seccion.count ? 'opacity-50' : 'opacity-0'">{{ seccion.count }} {{
-                        seccion.collection ? seccion.collection : seccion.title.toLowerCase() }}</span>
-                    <Icon icon="ph-arrow-right" />
-                </div>
-                </Link>
+            <p class="text-neutral opacity-70 group-hover:opacity-100 mb-4">{{ seccion.descripcion }}</p>
+            <div class="flex justify-end gap-4 items-center opacity-50 group-hover:opacity-100 mt-auto">
+                <span :class="seccion.count ? 'opacity-50' : 'opacity-0'">{{ seccion.count }} {{
+                    seccion.collection ? seccion.collection : seccion.title.toLowerCase() }}</span>
+                <Icon icon="ph-arrow-right" />
+            </div>
+            </Link>
 
 
 
-            </GridAppear>
-        </div>
-    </AppLayout>
-
+        </GridAppear>
+    </div>
 </template>
 
 <script setup>

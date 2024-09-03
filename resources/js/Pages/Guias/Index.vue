@@ -40,8 +40,6 @@
                 </Link>
             </div>
 
-            <Categorias :categorias="categorias" :url="route('guias')"  />
-
             <div class="w-full flex-grow">
 
                 <GridAppear class="gap-8" col-width="12rem">
@@ -62,9 +60,7 @@
 </template>
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 
-defineOptions({ layout: AppLayout })
 
 
 const props = defineProps({

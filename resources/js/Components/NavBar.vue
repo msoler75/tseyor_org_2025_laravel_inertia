@@ -2,7 +2,7 @@
     <nav class="w-full border-gray-300  top-0 z-40 -translate-y-[1px] transition duration-400 select-none"
             :data-theme="portada && nav.scrollY < 300 ? 'winter' : ''" :class="(portada && nav.scrollY < 300 ? 'dark bg-transparent ' : portada ? 'bg-opacity-20 hover:bg-opacity-100 transition duration-200 ' : 'border-b ') +
                     (nav.defaultClass + ' ' + (nav.fullPage ? 'fixed border-gray-300 ' : 'sticky ')) +
-                    (nav.fullPage && nav.announce ? 'top-[2rem] ' : 'top-0 ')">
+                    (nav.fullPage && nav.announce && !nav.announceClosed? 'top-[2rem] ' : 'top-0 ')">
                 <!-- Primary Navigation Menu -->
 
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

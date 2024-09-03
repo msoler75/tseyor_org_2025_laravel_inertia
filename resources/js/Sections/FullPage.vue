@@ -19,7 +19,7 @@
         <TransitionFade>
             <div v-show="showScrollIcons"
                 class="transition duration-300 fixed left-0 w-full flex justify-center z-30 mix-blend-exclusion"
-                :class="nav.announce?'top-[7rem]':'top-[5rem]'">
+                :class="nav.announce&&!nav.announceClosed?'top-[7rem]':'top-[5rem]'">
                 <Icon v-if="!isFirstSection" icon="material-symbols:arrow-warm-up" @click="scrollToPreviousMandatory" class="p-1 bg-orange-500 text-black rounded-full text-2xl lg:text-4xl cursor-pointer animate-bounce" />
             </div>
         </TransitionFade>

@@ -70,12 +70,10 @@
 
 <script setup>
 import { usePage } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue'
 import { ucFirstAllWords, removeAccents, ucFirst } from '@/composables/textutils.js'
 
 const carpeta = '/almacen/medios/muul/tarjeta'
 
-defineOptions({ layout: AppLayout })
 
 
 const page = usePage()

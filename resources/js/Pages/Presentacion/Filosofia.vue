@@ -90,7 +90,5 @@
 
 import { usePage } from "@inertiajs/vue3";
 const page = usePage()
-import AppLayout from '@/Layouts/AppLayout.vue'
-defineOptions({ layout: AppLayout })
 
 </script>

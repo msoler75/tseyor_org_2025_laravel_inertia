@@ -20,8 +20,6 @@
 
 <script setup>
 import { useForm, router } from '@inertiajs/vue3'
-import AppLayout from '@/Layouts/AppLayout.vue'
-defineOptions({ layout: AppLayout })
 
 const form = useForm({
     nombre: '',

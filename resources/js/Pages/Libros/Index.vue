@@ -70,11 +70,9 @@
 
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 import useSelectors from '@/Stores/selectors'
 import { ucFirst } from '@/composables/textutils'
 
-defineOptions({ layout: AppLayout })
 
 const selectors = useSelectors()
 

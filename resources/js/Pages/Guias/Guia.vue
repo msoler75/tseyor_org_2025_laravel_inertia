@@ -20,11 +20,11 @@
 
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
-                <Back :href="route('guias')" inline>Guías</Back>
+                <Back :href="route('guias')" inline class="!opacity-100">Guías</Back>
                 <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
                     <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
                 </div>
-                <Back :href="route('guias')" inline class="pointer-events-none opacity-0">Guías</Back>
+                <Back :href="route('guias')" inline class="pointer-events-none !opacity-0">Guías</Back>
             </div>
         </ContentBar>
 
@@ -76,10 +76,8 @@
 
 <script setup>
 import { Tabs, Tab } from 'vue3-tabs-component';
-import AppLayout from '@/Layouts/AppLayout.vue'
 import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
 
-defineOptions({ layout: AppLayout })
 
 
 const props = defineProps({

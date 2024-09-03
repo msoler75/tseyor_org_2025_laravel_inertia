@@ -71,10 +71,8 @@
 
 <script setup>
 
-import AppLayout from '@/Layouts/AppLayout.vue'
 
 
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     paisActivo: { default: () => '' },

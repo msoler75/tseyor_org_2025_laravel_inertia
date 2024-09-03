@@ -92,9 +92,7 @@
 </template>
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 
-defineOptions({ layout: AppLayout })
 
 defineProps({
     departamentos: {}

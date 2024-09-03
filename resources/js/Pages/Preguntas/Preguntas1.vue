@@ -2600,6 +2600,4 @@ exentos de cuerpo físico con el que manifestarse a un nivel tridimensional.”<
 
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
-defineOptions({ layout: AppLayout })
 </script>

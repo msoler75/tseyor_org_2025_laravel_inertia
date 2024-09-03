@@ -3,6 +3,7 @@ import "../css/app.css";
 import "../css/tabs.css";
 
 import { createApp, h } from "vue";
+import AppLayout from '@/Layouts/AppLayout.vue'
 // import { createSSRApp, h } from 'vue'
 import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
@@ -31,11 +32,24 @@ createInertiaApp({
     }, 100)
     return `${title} - ${appName}`
   },
-  resolve: (name) =>
-    resolvePageComponent(
+  resolve: (name) => {
+    return resolvePageComponent(
       `./Pages/${name}.vue`,
       import.meta.glob("./Pages/**/*.vue")
-    ),
+    ).then((page) => {
+      // Comprueba si el componente está en una carpeta "Partials" o "Partes"
+      const isPartial = name.split('/').some(part =>
+        part.toLowerCase() === 'partials' || part.toLowerCase() === 'partes'
+      );
+
+      // Aplica AppLayout solo si no es un componente parcial y no tiene un layout definido
+      if (!isPartial && page.default.layout === undefined) {
+        page.default.layout = AppLayout
+      }
+
+      return page
+    })
+  },
   setup({ el, App, props, plugin }) {
     const app = createApp({ render: () => h(App, props) })
     // createSSRApp({ render: () => h(App, props) })

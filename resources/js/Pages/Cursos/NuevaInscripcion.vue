@@ -113,8 +113,6 @@
 <script setup>
 
 import { useForm } from '@inertiajs/vue3'
-import AppLayout from '@/Layouts/AppLayout.vue'
-defineOptions({ layout: AppLayout })
 
 
 const days = ref([

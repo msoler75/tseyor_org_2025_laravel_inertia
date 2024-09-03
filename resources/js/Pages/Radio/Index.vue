@@ -22,7 +22,6 @@
 
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 import useSelectors from '@/Stores/selectors'
 import { useDark } from "@vueuse/core"
 
@@ -33,7 +32,6 @@ const darkLogo = base + '_dark.png'
 const isDark = useDark();
 const selectors = useSelectors()
 
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     emisoras: {}
