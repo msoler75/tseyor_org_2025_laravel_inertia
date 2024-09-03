@@ -1,29 +1,30 @@
 <template>
-    <AppLayout title="Contactar con Tseyor">
-    <FondoEstrellado class="w-full relative py-12"  id="myform">
+    <FondoEstrellado class="w-full relative py-12" id="myform">
         <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative animate-fade-in">
             <h1>Contactar con Tseyor</h1>
             <div v-if="error">
                 <div class="alert alert-error">
-                    <Icon icon="ph:warning-circle-duotone" class="text-2xl"/>
+                    <Icon icon="ph:warning-circle-duotone" class="text-2xl" />
                     <span> {{ error }}</span>
                 </div>
             </div>
             <div v-if="submitted" class="space-y-7">
                 <div class="alert alert-success">
-                    <Icon icon="ph:check-circle-bold" class="text-2xl"/>
+                    <Icon icon="ph:check-circle-bold" class="text-2xl" />
                     <span>Se han enviado los datos correctamente.</span>
                 </div>
 
                 <div class="alert">
-                    <Icon icon="ph:info-bold" class="text-2xl text-info"/>
+                    <Icon icon="ph:info-bold" class="text-2xl text-info" />
                     <span>Revisa tu bandeja de correo.</span>
                 </div>
 
             </div>
-             <!-- Formulario empieza aquí -->
+            <!-- Formulario empieza aquí -->
             <form v-else @submit.prevent="submit">
-                <p>Escribenos con el siguiente formulario o si lo prefieres dirígete a alguno de nuestros <Link :href="route('contactos')">representantes</Link></p>
+                <p>Escribenos con el siguiente formulario o si lo prefieres dirígete a alguno de nuestros
+                    <Link :href="route('contactos')">representantes</Link>
+                </p>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="nombre">Nombre y apellidos:</label>
                     <input class="form-input w-full" id="nombre" type="text" v-model="form.nombre" required>
@@ -46,12 +47,13 @@
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="comentario">Tu comentario o petición</label>
-                    <textarea class="form-textarea w-full" id="comentario" v-model="form.comentario" required></textarea>
+                    <textarea class="form-textarea w-full" id="comentario" v-model="form.comentario"
+                        required></textarea>
                     <span v-if="form.errors.comentario" class="error">{{ form.errors.comentario }}</span>
                 </div>
                 <div class="mb-4">
                     <label class="inline-flex items-center">
-                        <AceptaCondiciones v-model="form.acepto"/>
+                        <AceptaCondiciones v-model="form.acepto" />
                     </label>
                 </div>
                 <button type="submit" class="btn btn-primary" :disabled="form.processing">
@@ -62,18 +64,14 @@
 
 
         <Section v-show="submitted" class="py-7">
-                    <TextImage title="¿Y ahora qué?" srcImage="/almacen/medios/paginas/camino-infinito.jpg"
-                    href="/mis-primeros-pasos"
-                    buttonLabel ="Mis primeros pasos"
-                    class="container mx-auto"
-                    textClass="bg-base-100 p-5 rounded-2xl"
-                    >
-                    Te recomendamos la lectura de esta sección
-                </TextImage>
-                </Section>
+            <TextImage title="¿Y ahora qué?" srcImage="/almacen/medios/paginas/camino-infinito.jpg"
+                href="/mis-primeros-pasos" buttonLabel="Mis primeros pasos" class="container mx-auto"
+                textClass="bg-base-100 p-5 rounded-2xl">
+                Te recomendamos la lectura de esta sección
+            </TextImage>
+        </Section>
 
     </FondoEstrellado>
-    </AppLayout>
 </template>
 
 
@@ -103,7 +101,7 @@ function submit() {
     // Clear all errors...
     error.value = false
     form.clearErrors()
-    form.post(route('contactar.send')+'?test=1', {
+    form.post(route('contactar.send') + '?test=1', {
         preserveScroll: true,
         onSuccess: () => {
             submitted.value = true

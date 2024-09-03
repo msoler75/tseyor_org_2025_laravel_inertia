@@ -57,11 +57,9 @@
 
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 import { getImageUrl } from '@/composables/imageutils.js'
 import { loadGoogleMaps } from '@/composables/google'
 
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     paisActivo: { default: () => '' },

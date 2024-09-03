@@ -20,11 +20,11 @@
 
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
-                <Back :href="route('lugares')" inline>Lugares</Back>
+                <Back :href="route('lugares')" inline class="!opacity-100">Lugares</Back>
                 <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
                     <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
                 </div>
-                <Back :href="route('lugares')" inline class="pointer-events-none opacity-0">Lugares</Back>
+                <Back :href="route('lugares')" inline class="pointer-events-none !opacity-0">Lugares</Back>
             </div>
         </ContentBar>
 
@@ -79,10 +79,8 @@
 
 <script setup>
 import { Tabs, Tab } from 'vue3-tabs-component';
-import AppLayout from '@/Layouts/AppLayout.vue'
 import { router } from '@inertiajs/vue3';
 
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     lugar: {

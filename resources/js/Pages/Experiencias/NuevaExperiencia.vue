@@ -79,9 +79,7 @@
 <script setup>
 
 import { useForm } from '@inertiajs/vue3'
-import AppLayout from '@/Layouts/AppLayout.vue'
 import { usePage } from '@inertiajs/vue3';
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     categorias: Object

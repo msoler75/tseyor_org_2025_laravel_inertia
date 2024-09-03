@@ -30,10 +30,8 @@
 </template>
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 import {getSrcUrl} from '@/composables/srcutils.js'
 
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     experiencia: {

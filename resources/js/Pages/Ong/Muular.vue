@@ -35,7 +35,7 @@
                 <p>Monografía que recoge todas las informaciones vertidas sobre la ONG Mundo Armónico Tseyor.</p>
             </TextImage>
         </Section>
-        
+
         <Section>
             <TextImage title="Libro-Taller: Mejor con el Muular"
             srcImage="/almacen/medios/libros/349/Taller%20mejor%20con%20el%20muular.jpg?w=280"
@@ -51,7 +51,5 @@
 
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 
-defineOptions({ layout: AppLayout })
 </script>

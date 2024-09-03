@@ -1,14 +1,9 @@
 <template>
-    <AppLayout :title="ruta">
-        <AdminLinks modelo="nodo" necesita="administrar archivos" class="mb-3" />
+    <Head :title="ruta" />
+    <AdminLinks modelo="nodo" necesita="administrar archivos" class="mb-3" />
 
-        <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietarioRef="propietarioRef" @updated="reloadPage"
-        ruta="" rutaBase=""
-        rootLabel="mis_archivos:"
-        rootUrl=""
-        :mostrarRutas="true"
-        />
-    </AppLayout>
+    <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietarioRef="propietarioRef" @updated="reloadPage"
+        ruta="" rutaBase="" rootLabel="mis_archivos:" rootUrl="" :mostrarRutas="true" />
 </template>
 
 <script setup>

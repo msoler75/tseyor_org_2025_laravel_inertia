@@ -28,12 +28,10 @@
 </template>
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
 // import usePlayer from '@/Stores/player'
 
 // const player = usePlayer()
 
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     publicacion: {

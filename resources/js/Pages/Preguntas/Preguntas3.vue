@@ -4144,6 +4144,4 @@ none">Tecnología: Internet, Foro de Mensajes, Paltalk…</span></a></h2>
 
 
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
-defineOptions({ layout: AppLayout })
 </script>

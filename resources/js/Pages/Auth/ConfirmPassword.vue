@@ -1,13 +1,5 @@
 <script setup>
 
-import { Head, useForm } from '@inertiajs/vue3';
-
-
-
-
-
-
-
 const form = useForm({
     password: '',
 });

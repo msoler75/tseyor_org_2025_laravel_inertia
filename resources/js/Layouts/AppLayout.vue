@@ -14,15 +14,10 @@ const page = usePage()
 const nav = useNav()
 
 
-if (page.props.auth?.user)
-    permisos.cargarPermisos()
 
 const TIME_NAV_INACTIVE = 600
 var timerActivateNav = null
 
-defineProps({
-    title: String,
-});
 
 nav.announce = page.props.anuncio || ''
 
@@ -47,10 +42,47 @@ const handleScroll = () => {
 
 // const dynamicAudioPlayer = ref(null);
 
+// cuando el mouse sale de pantalla
+function handleMouse() {
+    // si el mouse sale de la ventana de la aplicación, cerramos el menú
+    document.addEventListener("mouseleave", function (event) {
+        console.log('mouseleave')
+        if (screen.width >= 1024) {
+            clearTimeout(timerActivateNav)
+            nav.hoverDeactivated = true
+            // cerramos los submenús
+            nav.closeTabs()
+        }
+    })
+
+    // si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante un tiempo
+    document.addEventListener("mouseenter", function (event) {
+        console.log('mouseenter')
+        if (screen.width >= 1024) {
+            clearTimeout(timerActivateNav)
+            timerActivateNav = setTimeout(() => {
+                nav.hoverDeactivated = false
+                nav.activateHoveredTab()
+            }, TIME_NAV_INACTIVE)
+        }
+    })
+}
+
+
+console.log('APP INITIED')
+if (page.props.auth?.user)
+    permisos.cargarPermisos()
+
+// aplicamos configuración de transiciones de pagina (fadeout y scroll)
+setTransitionPages(router)
+
+
+// inicializamos la navegación pasando la función "route" del componente, en el cliente
+nav.init(route)
+
 onMounted(() => {
 
-    // inicializamos la navegación pasando la función "route" del componente, en el cliente
-    nav.init(route)
+    console.log('APP LAYOUT mounted')
 
     handleMouse()
     handleScroll();
@@ -63,8 +95,7 @@ onMounted(() => {
         });
     }, 5000)*/
 
-    // aplicamos configuración de transiciones de pagina (fadeout y scroll)
-    setTransitionPages(router)
+
 
     // modo Dark
     watch(isDark, value => {
@@ -88,31 +119,7 @@ onMounted(() => {
     updateBodyTheme()
 
 
-    // cuando el mouse sale de pantalla
-    function handleMouse() {
-        // si el mouse sale de la ventana de la aplicación, cerramos el menú
-        document.addEventListener("mouseleave", function (event) {
-            // console.log('mouseleave')
-            if (screen.width >= 1024) {
-                clearTimeout(timerActivateNav)
-                nav.hoverDeactivated = true
-                // cerramos los submenús
-                nav.closeTabs()
-            }
-        })
 
-        // si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante un tiempo
-        document.addEventListener("mouseenter", function (event) {
-            // console.log('mouseenter')
-            if (screen.width >= 1024) {
-                clearTimeout(timerActivateNav)
-                timerActivateNav = setTimeout(() => {
-                    nav.hoverDeactivated = false
-                    nav.activateHoveredTab()
-                }, TIME_NAV_INACTIVE)
-            }
-        })
-    }
 
     // mover a la posición indicada
     if (window.location.hash) {
@@ -123,9 +130,11 @@ onMounted(() => {
 
 
     // si en la url hay un parámetro ?verified=1
-    if (location. search.includes('verified=1'))
-    // redirigimos a dashboard
+    if (location.search.includes('verified=1'))
+        // redirigimos a dashboard
         router.get(route('dashboard'))
+
+
 
 });
 
@@ -167,7 +176,6 @@ axios.get(route('setting', 'navigation'))
 
         <NavAside :show="nav.sideBarShow" @close="nav.sideBarShow = false" class="lg:hidden" />
 
-        <Head :title="title" />
 
         <Banner />
 
@@ -177,18 +185,6 @@ axios.get(route('setting', 'navigation'))
         <div class="bg-base-200 flex-grow flex flex-col">
 
             <NavBar />
-
-
-            <!-- Page Heading -->
-            <header v-if="$slots.header" class="bg-base-100 dark:bg-gray-800 shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <transition name="slide-fade">
-                        <div :key="$page.url">
-                            <slot name="header" />
-                        </div>
-                    </transition>
-                </div>
-            </header>
 
             <!-- Page Content -->
             <div @mouseover="nav.closeTabs()" class="flex-grow relative transition-opacity duration-200"
@@ -219,24 +215,3 @@ axios.get(route('setting', 'navigation'))
     </div>
 </template>
 
-
-
-<style scoped>
-/* durations and timing functions.*/
-.slide-fade-enter-active {
-    transition: all .9s ease;
-}
-
-.slide-fade-leave-active {
-    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-
-.slide-fade-enter,
-.slide-fade-leave-to
-
-/* .slide-fade-leave-active below version 2.1.8 */
-    {
-    transform: translateX(50px);
-    opacity: 0;
-}
-</style>

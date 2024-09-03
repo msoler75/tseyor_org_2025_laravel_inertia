@@ -118,7 +118,6 @@
 
 <script setup>
 import { router } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue'
 import { usePage } from '@inertiajs/vue3';
 import useSelectors from '@/Stores/selectors'
 import usePermisos from '@/Stores/permisos'
@@ -126,7 +125,6 @@ import usePermisos from '@/Stores/permisos'
 const page = usePage()
 const user = page.props.auth.user
 
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     usuario: {

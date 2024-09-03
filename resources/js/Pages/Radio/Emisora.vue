@@ -40,7 +40,6 @@
 
 <script setup>
 import { router } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue'
 
 import usePlayer from '@/Stores/player'
 
@@ -53,7 +52,6 @@ const selectors = useSelectors()
 
 const player = usePlayer()
 
-defineOptions({ layout: AppLayout })
 
 const props = defineProps({
     estado: {},

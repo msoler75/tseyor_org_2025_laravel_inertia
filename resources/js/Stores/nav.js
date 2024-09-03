@@ -50,6 +50,7 @@ const state = reactive({
   ghostTab: null, //?
   timer: null,
   announce: false,
+  announceClosed: false,
   defaultClass: "",
   class: "",
   sideBarShow: false,
