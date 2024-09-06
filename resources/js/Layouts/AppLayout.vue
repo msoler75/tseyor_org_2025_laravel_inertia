@@ -164,6 +164,7 @@ axios.get(route('setting', 'navigation'))
     <!-- App layout -->
     <div class="flex flex-col">
 
+        <ScrollToTop class="text-4xl fixed bottom-7 right-7 z-40"/>
 
         <!-- Loader -->
         <div v-if="loader"
