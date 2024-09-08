@@ -13,7 +13,7 @@
                 <slot v-if="$slots.image" name="image" :class="imageClass"/>
                 <template v-else>
                     <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :width="imageWidth" :height="imageHeight"
-                    :src-width="srcWidth" :src-height="srcHeight" :class="imageClass" />
+                    :src-width="srcWidth" :src-height="srcHeight" :class="imageClass" :lazy="imageLazy"/>
                     <small v-if="caption" class="container">{{ caption }}</small>
                 </template>
             </div>
@@ -107,6 +107,10 @@ const props = defineProps({
     cover: { // image cover all area
         type: Boolean,
         default: false
+    },
+    imageLazy: {
+        type: Boolean,
+        default: true
     }
 })
 

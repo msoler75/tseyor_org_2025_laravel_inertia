@@ -52,6 +52,10 @@ const props = defineProps({
     errorIcon: {
         type: Boolean,
         default: true
+    },
+    lazy: {
+        type: Boolean,
+        default: true
     }
 });
 
@@ -190,7 +194,8 @@ function putSrcImage(src) {
     displaySrc.value = src
     // esperamos que cambie el componente :is
     nextTick(() => {
-        img.value.setAttribute('loading', 'lazy')
+        if(props.lazy)
+            img.value.setAttribute('loading', 'lazy')
         img.value.onload = () => {
             imageLoaded.value = true
             emit('loaded')
