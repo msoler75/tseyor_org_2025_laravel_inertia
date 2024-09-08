@@ -217,8 +217,12 @@ class EquiposController extends Controller
     public function index_utg()
     {
         $categoria = 'utg';
+        // toma los 6 primeros equipos, con más miembros
         $departamentos = Equipo::where('categoria', '=', $categoria)
-            ->take(6)->get();
+        ->withCount('miembros')
+        ->orderBy('miembros_count', 'desc')
+        ->take(6)
+        ->get();
 
         return Inertia::render(
             'Utg/Index',
