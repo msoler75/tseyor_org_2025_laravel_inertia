@@ -12,6 +12,21 @@ import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
 //import FloatingVue from 'floating-vue'
 
+
+
+// Función para actualizar las metaetiquetas Open Graph
+function updateOpenGraphTags(title) {
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+
+    if (ogUrl) {
+      ogUrl.setAttribute('content', window.location.href);
+    }
+    if (ogTitle) {
+      ogTitle.setAttribute('content', `${title} - ${appName}`);
+    }
+  }
+
 const appName = "TSEYOR.org";
 createInertiaApp({
   title: (title) => {
