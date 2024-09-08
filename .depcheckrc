@@ -1,0 +1,32 @@
+{
+  "ignorePatterns": [
+    "public/**",
+    "storage/**",
+    "vendor/**",
+    "bootstrap/**",
+    "config/**",
+    "database/**"
+  ],
+  "specials": [
+    "bin",
+    "webpack",
+    "babel",
+    "postcss",
+    "tailwind"
+  ],
+  "parsers": {
+    "**/*.js": "es6",
+    "**/*.vue": "vue"
+  },
+  "detectors": [
+    "requireCallExpression",
+    "importDeclaration"
+  ],
+  "ignoreMatches": [
+    "@inertiajs/*",
+    "@tailwindcss/*",
+    "laravel-mix",
+    "vue",
+    "axios"
+  ]
+}
