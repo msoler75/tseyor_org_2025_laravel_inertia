@@ -142,6 +142,8 @@ class EquiposController extends Controller
         $solicitud = null;
         $solicitudes = [];
 
+        $puedoAdministrar = Gate::allows('administrar equipos');
+        
         $soyMiembro = false;
         $soyCoordinador = false;
 
@@ -177,7 +179,7 @@ class EquiposController extends Controller
         }
 
         // si el usuario tiene permisos de gestionar equipos
-        $permisoVerEquipo = $soyMiembro || !$equipo->oculto || Gate::allows('administrar equipos');
+        $permisoVerEquipo = $soyMiembro || !$equipo->oculto || $puedoAdministrar;
 
         if(!$permisoVerEquipo)
             abort(404, 'No tienes permisos para ver este equipo');
@@ -197,6 +199,7 @@ class EquiposController extends Controller
             'miSolicitud' => $solicitud,
             'soyMiembro' => $soyMiembro,
             'soyCoordinador' => $soyCoordinador,
+            'puedoAdministrar' => $puedoAdministrar,
             /*
             'usuarios' => Inertia::lazy(function () use ($id) {
                 return Equipo::where('slug', $id)
