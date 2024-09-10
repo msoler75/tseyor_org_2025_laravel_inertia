@@ -69,7 +69,6 @@
                 srcImage="https://via.placeholder.com/700x600.png/0000ff?text=Puente.jpg" buttonLabel="Ver Comunicados"
                 href="/comunicados">
                 <template #text1>
-                    <p>
                     <ul>
                         <Li><Link href="/preguntas-frecuentes/1#_Toc301129944">¿Cómo contactan?</Link></li>
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129901">¿Cómo son los seres de otros planetas?</Link></li>
@@ -80,7 +79,6 @@
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129928">¿Por qué no arreglan los problemas de nuestro mundo?</Link></li>
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129956">¿Por qué no se presentan?</Link></li>
                     </ul>
-                    </p>
                 </template>
                 <template #text2>
                     <p> En nuestra biblioteca web podéis encontrar todos los comunicados o conversaciones telepáticas

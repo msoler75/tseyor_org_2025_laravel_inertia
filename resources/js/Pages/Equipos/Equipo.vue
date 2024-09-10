@@ -37,11 +37,15 @@
                 </Card>
 
 
-                <Card v-if="ultimosInformes.length" class="gap-3">
-                    <div class="flex items-center justify-between mb-3">
+                <Card v-if="ultimosInformes.length||soyCoordinador||puedoAdministrar" class="gap-3">
+                    <div class="flex items-center justify-between mb-3 gap-5">
                         <h3 class="mb-0">Últimos Informes</h3>
-                        <Link :href="route('equipo.informes', equipo.slug)"
+                        <Link v-if="ultimosInformes.length" :href="route('equipo.informes', equipo.slug)"
                             class="text-xs ml-auto flex items-center gap-2 hover:underline">Ver todos</Link>
+                            <a v-if="soyCoordinador||puedoAdministrar" href="/admin/informe/create" class="btn btn-sm text-xl flex items-center" title="Crear informe">+</a>
+                    </div>
+                    <div v-if="!ultimosInformes.length">
+                        <p>No hay informes.</p>
                     </div>
                     <div class="w-full">
                         <Link v-for="item, index of ultimosInformes" :key="index"
@@ -102,7 +106,7 @@
                     <div class="prose" v-html="equipo.informacion" />
                 </Card>
 
-                <EquipoAdmin v-if="soyCoordinador" :equipo="equipo" @updated="reloadEquipo" />
+                <EquipoAdmin v-if="soyCoordinador||puedoAdministrar" :equipo="equipo" @updated="reloadEquipo" />
 
             </GridAppear>
         </div>
@@ -138,7 +142,8 @@ const props = defineProps({
     carpetas: {},
     miSolicitud: {},
     soyMiembro: Boolean,
-    soyCoordinador: Boolean
+    soyCoordinador: Boolean,
+    puedoAdministrar: Boolean
 })
 
 // MENSAJE FLASH

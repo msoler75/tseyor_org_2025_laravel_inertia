@@ -1,3 +1,8 @@
+SEO title en /archivos/...
+
+Equipos
+-Hacer tutoriales para coordinadores
+
 
 MENU usuario nav
 -NO DEBE aparecer la opción ESPACIO MUUL si no eres del grupo muul
