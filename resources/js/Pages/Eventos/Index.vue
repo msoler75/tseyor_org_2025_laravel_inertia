@@ -1,8 +1,6 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <Head title="Eventos" />
-
         <AdminLinks modelo="evento" necesita="administrar social" class="mb-3" />
 
         <h1>Eventos</h1>

@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Inicio" />
+    <h1 class="hidden">Inicio</h1>
 
     <FullPage>
 

@@ -43,10 +43,10 @@ class EquiposController extends Controller
         $query = Equipo::withCount('miembros');
 
         // si el usuario tiene permisos de gestionar equipos
-        $ocultarEquipos = $categoria != 'Tus equipos' && Gate::denies('administrar equipos');
+        $ocultarEquipos = $categoria != 'Mis equipos' && Gate::denies('administrar equipos');
 
         if ($categoria) {
-            if ($categoria == 'Tus equipos')
+            if ($categoria == 'Mis equipos')
                 //obtener los equipos de los que soy miembro
                 $query->whereIn('id', $user->equipos()->pluck('equipo_id'));
             else
@@ -87,9 +87,9 @@ class EquiposController extends Controller
 
         if ($user) {
             // cuenta el nº de equipos de los cuales eres miembro
-            $tus_equipos = $user->equipos()->count();
-            if ($tus_equipos)
-                array_unshift($categorias, ['nombre' => 'Tus equipos', 'total' => $tus_equipos]);
+            $mis_equipos = $user->equipos()->count();
+            if ($mis_equipos)
+                array_unshift($categorias, ['nombre' => 'Mis equipos', 'total' => $mis_equipos]);
         }
 
         return Inertia::render('Equipos/Index', [

@@ -1,7 +1,5 @@
 <template>
 
-    <Head title="Novedades de la web" />
-
     <div class="container py-12 mx-auto">
 
         <AdminLinks necesita="administrar contenidos" class="mb-3" />

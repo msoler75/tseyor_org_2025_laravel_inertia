@@ -1,7 +1,6 @@
 <template>
     <div class="sticky top-0 pt-10 bg-base-100 pb-4 border-b border-base-300 z-30">
 
-        <Head :title="evento.titulo" />
         <div class="container mx-auto px-4 flex justify-between items-center mb-3">
             <Back inline>Eventos</Back>
             <AdminLinks modelo="evento" necesita="administrar social" :contenido="evento" />
