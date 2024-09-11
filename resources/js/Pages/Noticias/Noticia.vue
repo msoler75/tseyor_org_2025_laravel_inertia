@@ -16,7 +16,6 @@
             </div>
 
             <Content :content="noticia.texto" class="mx-auto" />
-            {{noticia.texto}}
 
         </div>
 

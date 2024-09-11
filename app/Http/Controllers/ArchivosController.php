@@ -189,7 +189,7 @@ class ArchivosController extends Controller
 
             // Agregar carpetas a la colección de elementos
             foreach ($carpetas as $carpeta) {
-                $dir = StorageItem::build($disk, $carpeta);
+                // $dir = StorageItem::build($disk, $carpeta);
                 $nodo = null; //$nodosHijos->where('ruta', $carpeta /*$ruta . "/" .  basename($carpeta)*/)->first();
                 $items[] = $this->prepareItemList(
                     $disk,

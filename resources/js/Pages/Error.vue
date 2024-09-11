@@ -1,6 +1,6 @@
 <template>
 
-    <Head :title="'Error ' + codigo" />
+    <h1 class="hidden">{{'Error ' + codigo }}</h1>
 
     <div class="container mx-auto py-12 flex flex-col justify-center h-full">
         <div v-if="codigo" class="text-7xl opacity-60 font-bold pt-12 text-center">{{ codigo }}</div>

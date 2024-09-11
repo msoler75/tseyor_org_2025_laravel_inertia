@@ -1,7 +1,7 @@
 <template>
     <Sections height="500">
 
-        <Head title="Filosofía Tseyor" />
+        <h1 class="hidden">Filosofía Tseyor</h1>
 
         <Back href="/quienes-somos" floatAtY="-100">Quiénes Somos</Back>
 

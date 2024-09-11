@@ -97,6 +97,8 @@ function updateTitle(title) {
 
 createInertiaApp({
   title: (title) => {
+    
+    console.log('TITLE:', title)
     // const page = usePage();
     // console.log({ props: page.props, title });
     // if (!title) title = page.props?.seo?.titulo;
@@ -115,11 +117,20 @@ createInertiaApp({
     }
     // console.log("canonical", window.location.href);
     canonicalTag.setAttribute("href", window.location.href);
+    console.log('CANONICAL:', window.location.href)
 
     //updateMetaTags(title, description, image);
 
+    /*if(!title){
+        const inertiaTitle = document.head.querySelector('title[inertia]')
+        if(inertiaTitle)
+            title = inertiaTitle.textContent
+                console.log('TITLE (inertia):', title)
+        }*/
+
     if(title)
         updateTitle(title);
+
 
     // Lógica para obtener el título
     setTimeout(() => {

@@ -34,7 +34,7 @@ const logout = () => {
 
 <template>
 
-    <Head title="Verificar correo" />
+    <h1 class="hidden">Verificar correo</h1>
 
     <AuthenticationCard>
         <template #logo>

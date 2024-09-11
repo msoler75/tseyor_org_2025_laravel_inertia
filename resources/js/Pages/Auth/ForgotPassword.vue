@@ -14,7 +14,7 @@ const submit = () => {
 
 <template>
 
-    <Head title="Restablecimiento de contraseña" />
+    <h1 class="hidden">Restablecimiento de contraseña</h1>
 
     <AuthenticationCard>
         <template #logo>

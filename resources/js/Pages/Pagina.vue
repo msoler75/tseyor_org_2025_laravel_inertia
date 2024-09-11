@@ -1,6 +1,4 @@
 <template>
-    <Head :title="pagina.titulo" />
-
     <div class="container mx-auto py-12">
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back v-if="pagina.atras_ruta" :href="pagina.atras_ruta">{{ pagina.atras_texto }}</Back>

@@ -34,7 +34,7 @@ onMounted(() => {
 
 <template>
 
-    <Head title="Registro de usuario" />
+    <h1 class="hidden">Registro de usuario</h1>
 
     <AuthenticationCard>
         <template #logo>

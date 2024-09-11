@@ -1,5 +1,5 @@
 <template>
-    <Head :title="ruta" />
+    <h1 class="hidden" >{{ ruta }}</h1>
     <AdminLinks modelo="nodo" necesita="administrar archivos" class="mb-3" />
 
     <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietarioRef="propietarioRef" @updated="reloadPage"

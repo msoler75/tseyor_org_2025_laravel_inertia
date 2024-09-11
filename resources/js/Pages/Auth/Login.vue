@@ -29,7 +29,7 @@ const submit = () => {
 
 <template>
 
-    <Head title="Iniciar Sesión" />
+    <h1 class="hidden">Iniciar Sesión</h1>
 
     <AuthenticationCard>
         <template #logo>
