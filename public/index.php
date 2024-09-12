@@ -2,9 +2,9 @@
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\Log;
 
- use App\T;
+//  use App\T;
 
 // sleep(2);
 //xdebug_info();

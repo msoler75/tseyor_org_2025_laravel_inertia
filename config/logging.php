@@ -81,6 +81,18 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'notfound' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/404.log'),
+            'level' => 'info',
+        ],
+
+        'validation' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/validation.log'),
+            'level' => 'info',
+        ],
+
         'smtp' => [
             'driver' => 'daily',
             'path' => storage_path('logs/smtp.log'),

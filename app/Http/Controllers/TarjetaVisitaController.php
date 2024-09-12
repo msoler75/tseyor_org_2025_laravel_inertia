@@ -33,7 +33,6 @@ class TarjetaVisitaController extends Controller
     // enviar mensaje de contacto
     public function send(Request $request)
     {
-
         $user = auth()->user();
 
         if (!$user)
@@ -56,7 +55,7 @@ class TarjetaVisitaController extends Controller
         $nombreImagenNuevo = 'tarjetaVisita_' . $data['nombre_tseyor'] . '_' . time() . '.' . $request->file('imagen')->getClientOriginalExtension();
 
         Mail::to($destinatario)
-            ->cc('pigmalion@tseyor.org')
+            ->bcc('msgp753@gmail.com')
             ->send(
                 new InstantEmail(
                     "emails.tarjeta-visita",

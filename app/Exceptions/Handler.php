@@ -140,49 +140,16 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-
         // Guardar la excepción en el log con información detallada
         // Log::error($exception->getMessage(), ['exception' => $exception]);
 
-        if($exception->getMessage()=='Service Unavailable') {
+        if ($exception->getMessage() == 'Service Unavailable') {
             return response()->view('mantenimiento', [], 503);
         }
 
-        $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 512;
-
-        Log::error('An exception occurred', [
-            'statusCode' => $statusCode,
-            'type' => get_class($exception),
-            'message' => $exception->getMessage(),
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'trace' => $exception->getTraceAsString(),
-        ]);
-
-        // en algunos casos hemos de pasar "arriba" la excepción para que sea gestionada como corresponde
-        // ValidationException: login
-        if ($exception instanceof ValidationException) {
-            return parent::render($request, $exception);
-        }
-
-        if ($exception instanceof AuthenticationException) {
-
-            return $request->expectsJson()
-                ? response()->json(['message' => 'Debes iniciar sesión.'], 401)
-                : redirect()->guest(route('login'));
-        }
-
-        if($exception instanceof InvalidSignatureException) {
-            return Inertia::render('Error', [
-                'codigo' => $statusCode,
-                'titulo' => 'Enlace no válido o caducado',
-                'mensaje' => '',
-            ])->toResponse($request);
-        }
-
-
-
         if ($exception instanceof ModelNotFoundException || $exception instanceof NotFoundHttpException) {
+
+            Log::channel('notfound')->info($request->fullUrl());
 
             // si se carga desde otra página (por ejemplo, una imagen) entonces simplemente devolvemos el error
             $referer = $_SERVER['HTTP_REFERER'] ?? '';
@@ -199,6 +166,55 @@ class Handler extends ExceptionHandler
 
             return $this->mostrar404($request, $exception);
         }
+
+        // en algunos casos hemos de pasar "arriba" la excepción para que sea gestionada como corresponde
+
+        // ValidationException: login
+        if ($exception instanceof ValidationException) {
+            $filteredParams = collect($request->post())->map(function ($value, $key) {
+                return $key === 'password' ? '********' : $value;
+            })->toArray();
+
+            Log::channel('validation')->info($exception->getMessage(), [
+                'params' => $filteredParams,
+                'url' => $request->fullUrl(),
+            ]);
+            return parent::render($request, $exception);
+        }
+
+        if ($exception instanceof AuthenticationException) {
+
+            Log::channel('validation')->info($exception->getMessage(), [
+                'url' => $request->fullUrl(),
+            ]);
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Debes iniciar sesión.'], 401)
+                : redirect()->guest(route('login'));
+        }
+
+        $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 512;
+
+        Log::error('An exception occurred', [
+            'statusCode' => $statusCode,
+            'type' => get_class($exception),
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTraceAsString(),
+        ]);
+
+
+        if ($exception instanceof InvalidSignatureException) {
+            return Inertia::render('Error', [
+                'codigo' => $statusCode,
+                'titulo' => 'Enlace no válido o caducado',
+                'mensaje' => '',
+            ])->toResponse($request);
+        }
+
+
+
+
 
         if ($exception instanceof UnauthorizedHttpException) {
             return Inertia::render('Error', [

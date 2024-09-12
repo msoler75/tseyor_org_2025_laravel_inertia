@@ -28,7 +28,7 @@ class ContactarController extends Controller
 
         // mensaje de confirmación al autor
         Mail::to($data['email'])
-            ->cc('pigmalion@tseyor.org')
+            ->bcc('msgp753@gmail.com')
             ->queue(
                 new FormularioContactoConfirmacionEmail(
                     $data['nombre'],
@@ -41,7 +41,7 @@ class ContactarController extends Controller
 
         // mensaje al destinatario
         Mail::to($destinatario)
-            ->cc('pigmalion@tseyor.org')
+            ->bcc('msgp753@gmail.com')
             ->queue(
                 new FormularioContactoEmail(
                     $data['nombre'],
