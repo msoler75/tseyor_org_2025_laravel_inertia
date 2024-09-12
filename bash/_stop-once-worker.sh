@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASEDIR="/home/REMOVED_USER/tseyor.xyz"
+BASEDIR="/home/REMOVED_USER/tseyor.org"
 LOCKFILE="$BASEDIR/shared/_queue-worker.lock"
 
 if [ -e $LOCKFILE ]; then

@@ -15,7 +15,7 @@
             font-family: 'Calibri';
             font-style: normal;
             font-weight: normal;
-            src: url('https://tseyor.xyz/almacen/fonts/calibri.ttf') format('truetype');
+            src: url('https://tseyor.org/almacen/fonts/calibri.ttf') format('truetype');
         }
 
 

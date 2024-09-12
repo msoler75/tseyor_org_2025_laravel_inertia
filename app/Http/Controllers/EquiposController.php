@@ -143,7 +143,7 @@ class EquiposController extends Controller
         $solicitudes = [];
 
         $puedoAdministrar = Gate::allows('administrar equipos');
-        
+
         $soyMiembro = false;
         $soyCoordinador = false;
 
@@ -158,7 +158,9 @@ class EquiposController extends Controller
                 if (Gate::allows('EsCoordinador', $equipo)) {
                     // soy coordinador de este equipo
                     $soyCoordinador = true;
+                }
 
+                if($puedoAdministrar || $soyCoordinador) {
                     // carga la lista de solicitudes pendientes
                     $solicitudes = Solicitud::with('usuario')
                         ->where('equipo_id', $equipo->id)
@@ -179,7 +181,7 @@ class EquiposController extends Controller
         }
 
         // si el usuario tiene permisos de gestionar equipos
-        $permisoVerEquipo = $soyMiembro || !$equipo->oculto || $puedoAdministrar;
+        $permisoVerEquipo = !$equipo->oculto || $soyMiembro || $puedoAdministrar;
 
         if(!$permisoVerEquipo)
             abort(404, 'No tienes permisos para ver este equipo');
@@ -279,8 +281,10 @@ class EquiposController extends Controller
 
         $equipo = Equipo::findOrFail($idEquipo);
 
+        $puedoAdministrar = Gate::allows('administrar equipos');
+
         // Verificar si el usuario es un coordinador del equipo
-        if (Gate::denies('esCoordinador', $equipo)) {
+        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -327,7 +331,9 @@ class EquiposController extends Controller
         $equipo = Equipo::findOrFail($idEquipo);
         $usuario = User::findOrFail($idUsuario);
 
-        if (Gate::denies('esCoordinador', $equipo)) {
+        $puedoAdministrar = Gate::allows('administrar equipos');
+
+        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -347,7 +353,9 @@ class EquiposController extends Controller
         $equipo = Equipo::findOrFail($idEquipo);
         $usuario = User::findOrFail($idUsuario);
 
-        if (Gate::denies('esCoordinador', $equipo)) {
+        $puedoAdministrar = Gate::allows('administrar equipos');
+
+        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -377,8 +385,10 @@ class EquiposController extends Controller
         $usuario = User::findOrFail($idUsuario);
         $equipo = Equipo::findOrFail($idEquipo);
 
+        $puedoAdministrar = Gate::allows('administrar equipos');
+
         // solo podemos actualizar los miembros si somos coordinadores
-        if (Gate::denies('esCoordinador', $equipo)) {
+        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -450,8 +460,10 @@ class EquiposController extends Controller
 
         $equipo = Equipo::findOrFail($idEquipo);
 
+        $puedoAdministrar = Gate::allows('administrar equipos');
+
         // Verificar si el usuario es un coordinador del equipo
-        if (Gate::denies('esCoordinador', $equipo)) {
+        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -611,10 +623,11 @@ class EquiposController extends Controller
                 ->where('user_id', $usuario->id)
                 ->where('accepted_at', null)
                 ->where('declined_at', null)
+                ->whereNotIn('id', [$invitacion->id])
                 ->orderBy('created_at', 'desc')
                 ->get();
-            foreach ($invitacionesPendientes as $invitacion) {
-                $invitacion->update(['declined_at' => Carbon::now()]);
+            foreach ($invitacionesPendientes as $invitacionOld) {
+                $invitacionOld->update(['declined_at' => Carbon::now()]);
             }
 
             // marcamos la invitación actual como aceptada
@@ -741,8 +754,10 @@ class EquiposController extends Controller
         // carga el equipo
         $equipo = $solicitud->equipo;
 
+        $puedoAdministrar = Gate::allows('administrar equipos');
+
         // verificar si es coordinador del equipo
-        if (Gate::denies('esCoordinador', $equipo)) {
+        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 

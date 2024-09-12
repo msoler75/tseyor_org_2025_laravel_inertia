@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASEDIR="/home/REMOVED_USER/tseyor.xyz"
+BASEDIR="/home/REMOVED_USER/tseyor.org"
 ARTISAN="$BASEDIR/current/artisan"
 LOCKFILE="$BASEDIR/shared/_queue-worker.lock"
 LOGDIR="$BASEDIR/shared/storage/logs"

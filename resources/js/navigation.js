@@ -1,4 +1,4 @@
-const APP_PUZLE_URL = "https://puzle.tseyor.xyz/";
+const APP_PUZLE_URL = "https://puzle.tseyor.org/";
 
 export default [
   {

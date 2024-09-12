@@ -48,7 +48,7 @@ class InscripcionController extends Controller
 
         // mensaje de confirmación al autor
         Mail::to($data['email'])
-            ->cc('pigmalion@tseyor.org')
+            ->bcc('removed@example.com')
             ->queue(
                 new InscripcionConfirmacionEmail(
                     $data['nombre'],
@@ -66,7 +66,7 @@ class InscripcionController extends Controller
 
         // mensaje al destinatario
         Mail::to($destinatario)
-            ->cc('pigmalion@tseyor.org')
+            ->bcc('removed@example.com')
             ->queue(
                 new InscripcionEmail(
                     $data['nombre'],

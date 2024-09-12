@@ -419,7 +419,6 @@ class ArchivosController extends Controller
         $info = [];
 
         foreach ($items as $item) {
-
             $nodo = $item['ruta'] == 'mis_archivos' ? null : $nodosHijos->where('ubicacion', $item['ruta'])->first();
             if (!$nodo)
                 $nodo = $this->nodoDesde("/" . $item['ruta']);
@@ -431,7 +430,6 @@ class ArchivosController extends Controller
             // agregamos el item
             $info[$item['nombre']] = $info_item;
         }
-
 
         // Obtenemos todos los ids de todos los nodos implicados
         $nodosIdsArr = $ruta == 'mis_archivos' ? [] : $nodosHijos->pluck('id')->toArray();
