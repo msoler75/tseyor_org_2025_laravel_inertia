@@ -97,9 +97,9 @@ class CentroCrudController extends CrudController
 
         // CRUD::setFromDb(); // set fields from db columns.
 
-        CRUD::field('nombre')->type('text')->attributes(['maxlength' => 256, 'required' => 'required']);
+        CRUD::field('nombre')->type('text')->attributes(['maxlength' => 255, 'required' => 'required']);
 
-        CRUD::field('slug')->type('text')->attributes(['maxlength' => 256])->hint('Nombre corto para los enlaces. No lo rellenes si no sabes como funciona');
+        CRUD::field('slug')->type('text')->attributes(['maxlength' => 255])->hint('Nombre corto para los enlaces. No lo rellenes si no sabes como funciona');
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400, 'rows' => 4]);
 

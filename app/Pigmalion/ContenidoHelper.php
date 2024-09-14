@@ -47,7 +47,7 @@ class ContenidoHelper
                 if (in_array($campo, $fillable)) {
                     // $prefijo = $objeto->numero ? $objeto->numero . "-" : "";
                     $prefijo = '';
-                    $objeto->slug = substr(Str::slug($prefijo . $objeto->{$campo}), 0, 32);
+                    $objeto->slug = substr(Str::slug($prefijo . $objeto->{$campo}), 0, 255);
                     // dd($objeto->slug);
                     break;
                 }

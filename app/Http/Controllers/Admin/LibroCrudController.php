@@ -109,7 +109,7 @@ class LibroCrudController extends CrudController
     {
 
         CRUD::setValidation([
-            'titulo' => 'required|min:4',
+            'titulo' => 'required|min:4|max:255',
             'slug' => [ \Illuminate\Validation\Rule::unique('libros', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'required|max:2048',
             'imagen' => 'required',

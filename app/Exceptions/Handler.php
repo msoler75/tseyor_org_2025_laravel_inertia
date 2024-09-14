@@ -171,8 +171,9 @@ class Handler extends ExceptionHandler
 
         // ValidationException: login
         if ($exception instanceof ValidationException) {
-            $filteredParams = collect($request->post())->map(function ($value, $key) {
-                return $key === 'password' ? '********' : $value;
+            $reserved_keys = $this->dontFlash;
+            $filteredParams = collect($request->post())->map(function ($value, $key) use ($reserved_keys) {
+                return in_array($key, $reserved_keys) ? '********' : $value;
             })->toArray();
 
             Log::channel('validation')->info($exception->getMessage(), [

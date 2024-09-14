@@ -66,7 +66,7 @@ const iconType = computed(() => {
 
     // Otros documentos
     case 'txt':
-        return 'file-icons:plain-text';
+        return 'ph:file-txt-duotone';
 
     case 'sql':
         return 'file-icons:database';

@@ -20,6 +20,7 @@ Aceptar Invitación
 Si no dispones de una cuenta en el sitio tseyor.org, necesitas seguir los siguientes pasos para unirte al equipo:
 
 Paso 1: Crea una cuenta haciendo clic en el siguiente botón:
+
 @component('mail::button', ['url' => route('register')])
 Crear cuenta
 @endcomponent
