@@ -93,13 +93,13 @@ class GrupoCrudController extends CrudController
          CRUD::addField([
             'name' => 'nombre',
             'type'      => 'text',
-            'wrapper' => ['maxlength ' => '64'],
+            'wrapper' => ['maxlength' => '64'],
         ]);
 
         CRUD::addField([
             'name' => 'slug',
             'type'      => 'text',
-            'wrapper' => ['maxlength ' => '32'],
+            'wrapper' => ['maxlength' => '64'],
         ]);
 
         CRUD::addField([
