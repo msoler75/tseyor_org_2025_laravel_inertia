@@ -323,6 +323,7 @@ Route::get('phpinfo', function () {
 // imagenes
 Route::get('imagen{ruta}', [ImagenesController::class, 'descargar'])->where(['ruta' => '(\/.+)?'])->name('imagen');
 Route::get('image_size', [ImagenesController::class, 'size'])->name('imagen.tamaño');
+Route::get('mockup/libro{ruta}', [ImagenesController::class, 'mockupLibro'])->where(['ruta' => '(\/.+)?'])->name('mockup.libro');
 
 // herramientas muul
 

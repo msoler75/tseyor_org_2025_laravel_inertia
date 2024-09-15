@@ -9,6 +9,8 @@ use App\Traits\EsCategorizable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Pigmalion\DiskUtil;
+use Carbon\Carbon;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 
 class Libro extends ContenidoBaseModel
@@ -93,5 +95,24 @@ class Libro extends ContenidoBaseModel
             $this->saveQuietly();
         }
 
+    }
+
+
+
+    // SEO
+
+    public function getDynamicSEOData(): SEOData
+    {
+        $image = $this->imagen ? url("/mockup/libro". $this->imagen) : config('seo.image.fallback');
+        return new SEOData(
+            title: $this->titulo ?? $this->nombre ?? $this->name && null,
+            description: $this->descripcion ?? mb_substr(strip_tags($this->texto ?? ""), 0, 400 - 3),
+            image: str_replace(" ", "%20", $image),
+            author: $this->autor ?? 'tseyor',
+            published_time: Carbon::createFromFormat('Y-m-d H:i:s', $this->published_at ?? $this->created_at) ?? null,
+            section: $this->categoria ?? ''
+            // tags:
+            // schema:
+        );
     }
 }

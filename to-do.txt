@@ -1,3 +1,8 @@
+INFORME
+-Condicion para guardar el informe: que tenga equipo asociado
+-A un coordonador cuando cree un informe, o lo importe, debe aparecerle el equipo "Agora del Junantal" porque es el unico que coordina
+
+
 BUSCADOR GLOBAL
 -Si buscas "vision interior de nuestro lenguage" aparece el resultado deseado (libros) muy abajo
 
