@@ -340,21 +340,15 @@ Route::get('asociacion', [PaginasController::class, 'show'])->name('asociacion')
 
 
 
-Route::get('test/tiptap', function () {
-    return Inertia::render('test/TipTapTest');
-});
-
-Route::get('test/editor', function () {
-    return Inertia::render('test/EditorJsTest');
-});
-
+////////////////////////////////////////////////////////////////////////////////////////////////
+// DEV:
 Route::get('test/image', function () {
-    return Inertia::render('test/imageTest');
+    return Inertia::render('test/ImageTest');
 });
 
-
-
-
+Route::get('test/tarjetas', function () {
+    return Inertia::render('test/TarjetasTest');
+});
 
 // test para convertir archivos .docx a markdown
 Route::get('test/docx',  'App\Http\Controllers\TestController@docx');
@@ -367,6 +361,11 @@ Route::get('test/word2pdf',  'App\Http\Controllers\TestController@word2pdf');
 Route::get('dev/1',  'App\Http\Controllers\DevController@dev1');
 Route::get('dev/2',  'App\Http\Controllers\DevController@dev2');
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+///// FINAL FALLBACK PAGE
 Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
 
 
