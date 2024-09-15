@@ -1,18 +1,18 @@
+ARCHIVOS
+-Revisar funcionamiento sticky bit. Cada usuario ha de poder borrar o renombrar solo sus archivos
+
 INFORME
 -Condicion para guardar el informe: que tenga equipo asociado
 -A un coordonador cuando cree un informe, o lo importe, debe aparecerle el equipo "Agora del Junantal" porque es el unico que coordina
-
+-Si se crean importando desde word, el coordinador parece que pierde acceso porque no vincula con el equipo?
 
 BUSCADOR GLOBAL
 -Si buscas "vision interior de nuestro lenguage" aparece el resultado deseado (libros) muy abajo
 
 SEO
--preview libro portada image no funciona
 https://socialsharepreview.com/
 -pinterest
 
-INFORMES
--Si se crean importando desde word, el coordinador parece que pierde acceso porque no vincula con el equipo?
 
 CORREOS FORWARD
 Crear correo de redicción para
@@ -30,14 +30,15 @@ INICIADOS
 -Para las invitaciones, revisar buzón de SPAM
 
 
+
 EQUIPOS
 -ultimos archivos, que se cargue lazy inertia, y que cada archivo se verifique su acceso por parte del usuario
 -panel de ultimos archivos, si es audio, que se reproduzca
 -nuevo panel: EVENTOS, relacionados con el equipo
 
+
 EVENTOS
 -Que se vea el equipo relacionado (si no es un equipo oculto)
-
 
 
 Te comunico que tu dirección de correo hegatel@hotmail.com  no es compatible con la nueva web de tseyor. Ningun correo en Microsoft funciona bien. Por favor, cuando puedas, crea una cuenta de correo en gmail por ejemplo, y me lo comunicas, gracias. 🙂🙏🏻

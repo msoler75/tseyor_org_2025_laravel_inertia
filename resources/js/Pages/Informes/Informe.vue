@@ -14,15 +14,20 @@
         </div>
 
 
-        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
+        <div class="py-[5ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
 
             <div class="prose mx-auto mb-12">
+
+                <div class="flex justify-end w-full mb-10"></div>
+
                 <h1>{{ informe.titulo }}</h1>
 
-                <div class="text-neutral text-sm mb-12 flex justify-between">
-                    <Audios class="mb-20" :audios="parseFiles(informe.audios)" :numerados="false" />
+                <div class="text-neutral text-sm mb-12 flex justify-between gap-3">
+                    <span class="badge uppercase text-xs badge-primary">{{ informe.categoria }}</span>
                     <TimeAgo :date="informe.updated_at" :includeTime="false" class="whitespace-nowrap"/>
                 </div>
+
+                <Audios class="mb-20" :audios="parseFiles(informe.audios)" :numerados="false" />
 
             </div>
 

@@ -94,8 +94,6 @@
                         </Dropdown>
 
 
-
-
                         <Dropdown v-if="!enRaiz && !seleccionando" align="right" width="48"
                             :class="!info_cargada ? 'opacity-50 pointer-events-none' : ''">
                             <template #trigger>
@@ -296,7 +294,7 @@
 
                     <component :is="transitionActive?TransitionGroup:'tbody'" tag="tbody" name="files">
                         <tr v-for="item in itemsMostrar" :key="item.ruta"
-                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '') + (!seleccionando || esAdministrador || item.puedeLeer ? '' : 'opacity-50 pointer-events-none')">
+                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '') + (item.puedeLeer && (!seleccionando || esAdministrador)  ? '' : ' opacity-50 pointer-events-none')">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
@@ -309,11 +307,10 @@
                                 <FolderIcon v-else-if="item.tipo === 'carpeta'"
                                     class="cursor-pointer text-4xl sm:text-xl" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id"
-                                    :url="item.url" :class="seleccionando ? 'pointer-events-none' : ''"
-                                    @click="clickFolder(item, $event)" :is-link="!embed" :arrow="item.acceso_directo" />
-                                <FileIcon v-else :url="item.url" class="cursor-pointer text-4xl sm:text-xl"
-                                    :class="seleccionando ? 'pointer-events-none' : ''" @click="clickFile(item, $event)"
-                                    :is-link="!embed" />
+                                    :url="item.url"
+                                    @click="clickFolder(item, $event)" :link="!embed&&item.puedeLeer" :arrow="item.acceso_directo" />
+                                <FileIcon v-else :url="item.url" class="cursor-pointer text-4xl sm:text-xl" @click="clickFile(item, $event)"
+                                    :link="!embed&&item.puedeLeer" />
                             </td>
                             <td class="sm:hidden py-3" v-on:touchstart="ontouchstart(item)"
                                 v-on:touchend="ontouchend(item)">
@@ -388,7 +385,7 @@
                             </td>
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48" v-if="item.tipo !== 'disco'"
-                                    :class="!info_cargada ? 'opacity-80 pointer-events-none' : ''">
+                                    :class="!info_cargada ||!item.puedeLeer? 'opacity-0 pointer-events-none' : ''">
                                     <template #trigger>
                                         <span class="cursor-pointer">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
@@ -451,7 +448,8 @@
                 <GridFill colWidth="14rem" class="gap-4 pt-6">
 
                         <div v-for="item in itemsMostrar" :key="item.ruta"
-                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : 'bg-base-200')">
+                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : 'bg-base-200') +
+                            (item.puedeLeer && (!seleccionando || esAdministrador)  ? '' : ' opacity-50 pointer-events-none')">
                             <div v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100"
                                 :class="esAdministrador || item.puedeLeer ? '' : 'opacity-40 pointer-events-none'">
@@ -498,7 +496,8 @@
 
 
                                 <div class="w-full flex justify-center mt-auto">
-                                    <Dropdown align="right" width="48" :class="!info_cargada ? 'opacity-80 pointer-events-none' : ''">
+                                    <Dropdown align="right" width="48"  v-if="item.tipo !== 'disco'"
+                                     :class="!info_cargada || !item.puedeLeer? 'opacity-0 pointer-events-none' : ''">
                                         <template #trigger>
                                             <span class="my-3 btn btn-sm btn-icon bg-base-100 p-0.5">
                                                 <Icon icon="mdi:dots-horizontal" class="text-xl z-20" />
@@ -1160,7 +1159,7 @@ const info_archivos = ref({})
 // Carga la información adicional de los contenidos de la carpeta actual
 function cargarInfo() {
     info_cargada.value = false
-    axios.get('/archivos_info' + '?ruta=' + rutaActual.value)
+    axios.get('/archivos_info' + '?ruta=/' + rutaActual.value)
         .then(response => {
             // info.value = response.data
             info_archivos.value = response.data

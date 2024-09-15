@@ -27,6 +27,7 @@ use App\Notifications\AbandonoEquipo;
 use App\Notifications\DenegadoEquipo;
 use Illuminate\Support\Facades\Notification;
 use App\Pigmalion\StorageItem;
+use Illuminate\Support\Facades\Cache;
 
 class EquiposController extends Controller
 {
@@ -107,8 +108,8 @@ class EquiposController extends Controller
     {
         $equipo = Equipo::with(['miembros' => function ($query) {
             $query->select('users.id', 'users.name as nombre', 'users.slug', 'profile_photo_path as avatar')
-            ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
-            // ->take(30)
+                ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
+                // ->take(30)
             ;
         }]);
 
@@ -121,23 +122,7 @@ class EquiposController extends Controller
 
         $carpetas = $equipo->carpetas()->get();
 
-        $ultimosArchivos = [];
-
         $user = auth()->user();
-        foreach ($carpetas as $carpeta) {
-            $nodo = Nodo::desde($carpeta->ubicacion);
-            if ($nodo && Gate::allows('ejecutar', $nodo)) {
-                $loc = new StorageItem($carpeta->ubicacion);
-                $archivos = $loc->lastFiles();
-                $ultimosArchivos = array_merge($ultimosArchivos, $archivos);
-            }
-        }
-
-        // ordenamos con recientes primero
-        usort($ultimosArchivos, function ($a, $b) {
-            return $b['fecha_modificacion'] - $a['fecha_modificacion'];
-        });
-
 
         $solicitud = null;
         $solicitudes = [];
@@ -159,15 +144,6 @@ class EquiposController extends Controller
                     // soy coordinador de este equipo
                     $soyCoordinador = true;
                 }
-
-                if($puedoAdministrar || $soyCoordinador) {
-                    // carga la lista de solicitudes pendientes
-                    $solicitudes = Solicitud::with('usuario')
-                        ->where('equipo_id', $equipo->id)
-                        ->whereNull('fecha_aceptacion')
-                        ->whereNull('fecha_denegacion')
-                        ->get();
-                }
             } else {
                 // si no somos miembros, comprobamos la solicitud de ingreso
                 // obtenemos la solicitud más reciente (si es que la hay)
@@ -180,10 +156,21 @@ class EquiposController extends Controller
             }
         }
 
+        // carga las solicitudes que hay pendientes
+
+        if ($puedoAdministrar || $soyCoordinador) {
+            // carga la lista de solicitudes pendientes
+            $solicitudes = Solicitud::with('usuario')
+                ->where('equipo_id', $equipo->id)
+                ->whereNull('fecha_aceptacion')
+                ->whereNull('fecha_denegacion')
+                ->get();
+        }
+
         // si el usuario tiene permisos de gestionar equipos
         $permisoVerEquipo = !$equipo->oculto || $soyMiembro || $puedoAdministrar;
 
-        if(!$permisoVerEquipo)
+        if (!$permisoVerEquipo)
             abort(404, 'No tienes permisos para ver este equipo');
 
         $equipo->solicitudesPendientes = $solicitudes;
@@ -196,7 +183,12 @@ class EquiposController extends Controller
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
             'carpetas' => $carpetas,
-            'ultimosArchivos' => array_slice($ultimosArchivos, 0, 10),
+            'ultimosArchivos' => // Inertia::lazy(function () use ($equipo) {
+            //return
+            $this->ultimosArchivos($equipo)
+            // ;
+            //})
+            ,
             'ultimosInformes' => $informes,
             'miSolicitud' => $solicitud,
             'soyMiembro' => $soyMiembro,
@@ -217,6 +209,50 @@ class EquiposController extends Controller
 
 
     /**
+     * Últimos archivos del equipo
+     */
+    private function ultimosArchivos($equipo)
+    {
+        // el numero de archivos a listar
+        $NUM_ARCHIVOS_ULTIMOS = 10;
+        $DIAS_CACHE = 1;
+
+        $cacheKey = "equipo_ultimos_archivos_" . $equipo->id;
+        $archivos = Cache::remember($cacheKey, now()->addDays($DIAS_CACHE), function () use ($equipo) {
+            $carpetas = $equipo->carpetas()->get();
+            $ultimosArchivosEquipo = [];
+
+            foreach ($carpetas as $carpeta) {
+                $nodo = Nodo::desde($carpeta->ubicacion);
+                if ($nodo && Gate::allows('ejecutar', $nodo)) {
+                    $loc = new StorageItem($carpeta->ubicacion);
+                    $archivos = $loc->lastFiles();
+                    $ultimosArchivosEquipo = array_merge($ultimosArchivosEquipo, $archivos);
+                }
+            }
+
+            // ordenamos con recientes primero
+            usort($ultimosArchivosEquipo, function ($a, $b) {
+                return $b['fecha_modificacion'] - $a['fecha_modificacion'];
+            });
+
+            return $ultimosArchivosEquipo;
+        });
+
+        $archivos_final = [];
+        foreach ($archivos as $archivo) {
+            // miramos si tenemos permisos con este usuario para acceder al archivo
+            $nodo = Nodo::desde($archivo['url']);
+            if (Gate::allows('leer', $nodo)) {
+                $archivos_final[] = $archivo;
+                if (count($archivos_final) >= $NUM_ARCHIVOS_ULTIMOS)
+                    break;
+            }
+        }
+        return $archivos_final;
+    }
+
+    /**
      * Página de la UTG
      */
     public function index_utg()
@@ -224,10 +260,10 @@ class EquiposController extends Controller
         $categoria = 'utg';
         // toma los 6 primeros equipos, con más miembros
         $departamentos = Equipo::where('categoria', '=', $categoria)
-        ->withCount('miembros')
-        ->orderBy('miembros_count', 'desc')
-        ->take(6)
-        ->get();
+            ->withCount('miembros')
+            ->orderBy('miembros_count', 'desc')
+            ->take(6)
+            ->get();
 
         return Inertia::render(
             'Utg/Index',
@@ -690,7 +726,9 @@ class EquiposController extends Controller
         // carga el equipo
         $equipo = Equipo::findOrFail($idEquipo);
 
-        if (Gate::denies('esCoordinador', $equipo)) {
+        $puedoAdministrar = Gate::allows('administrar equipos');
+
+        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
