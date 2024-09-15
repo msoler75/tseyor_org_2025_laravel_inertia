@@ -11,7 +11,6 @@ use App\Pigmalion\StorageItem;
 use Illuminate\Support\Facades\Cache;
 
 
-
 class ImagenesController extends Controller
 {
 
@@ -152,8 +151,8 @@ class ImagenesController extends Controller
         $maxWidth = $params['mw'] ?? null;
         $maxHeight = $params['mh'] ?? null;
 
-        if($width=="auto") $width = null;
-        if($height=="auto") $height = null;
+        if ($width == "auto") $width = null;
+        if ($height == "auto") $height = null;
 
         $cover = array_key_exists('cover', $params);
         $crop = array_key_exists('crop', $params);
@@ -190,5 +189,55 @@ class ImagenesController extends Controller
                 }
             }
         }
+    }
+
+
+    public function mockupLibro($rutaImagen)
+    {
+        $rutaImagen = urldecode($rutaImagen);
+        // Generar una clave única para el caché basada en la ruta de la imagen
+        $cacheKey = 'mockup_libro_' . md5($rutaImagen);
+
+        // Intentar recuperar la imagen del caché
+        $mockupPath = Cache::remember($cacheKey, now()->addDays(365), function () use ($rutaImagen) {
+            $fondoPath = storage_path("app/public/medios/mockups/seo-libros-bg.jpg");
+            $sti = new StorageItem($rutaImagen);
+            $libroImagenPath = $sti->path;
+
+            $manager = new ImageManager(new Driver());
+
+            // Crear las instancias de Image
+            $fondo = $manager->read($fondoPath);
+            $libro =  $manager->read($libroImagenPath);
+
+            // Calcular las dimensiones para la portada del libro
+            $altoPortada = $fondo->height() * 0.9;    // 90% del alto del fondo
+            $anchoPortada = $libro->width() * ($altoPortada / $libro->height());
+
+            // Redimensionar la portada del libro manteniendo la proporción
+            $libro->resize($anchoPortada, $altoPortada);
+
+            // Calcular la posición para centrar la portada
+            $posX = ($fondo->width() - $libro->width()) / 2;
+            $posY = ($fondo->height() - $libro->height()) / 2;
+
+            // Insertar la portada en el fondo
+            $fondo = $fondo->place($libro, 'top-left', $posX, $posY);
+
+            // Generar un nombre único para el archivo de salida
+            $outputPath = storage_path('app/public/mockups/' . md5($rutaImagen) . '.jpg');
+
+            // Asegurar que el directorio existe
+            File::makeDirectory(dirname($outputPath), 0755, true, true);
+
+            // Guardar la imagen resultante
+            $fondo->save($outputPath);
+
+            // Devolver la ruta del archivo generado
+            return $outputPath;
+        });
+
+        // Devolver la imagen resultante como respuesta HTTP de imagen
+        return response()->file($mockupPath);
     }
 }
