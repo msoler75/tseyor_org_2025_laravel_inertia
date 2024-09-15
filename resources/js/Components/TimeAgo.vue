@@ -8,6 +8,7 @@
 const props = defineProps({
     date: String | Number,
     includeTime: { type: Boolean, default: true },
+    short: { type: Boolean, default: false },
 })
 
 const timeAgo = ref('');
@@ -43,21 +44,47 @@ const formattedDate = computed(() => {
         } else {
             const diferencia = Math.floor((fechaActual.getTime() - fechaPublicacion.getTime()) / 1000);
 
+            var textual = ''
             if (diferencia < 60) {
-                timeAgo.value = `hace ${diferencia} ${pluralize('segundo', diferencia)}`;
+                textual = `hace ${diferencia} ${pluralize('segundo', diferencia)}`;
             } else if (diferencia < 3600) {
-                timeAgo.value = `hace ${Math.floor(diferencia / 60)} ${pluralize('minuto', Math.floor(diferencia / 60))}`;
+                textual = `hace ${Math.floor(diferencia / 60)} ${pluralize('minuto', Math.floor(diferencia / 60))}`;
             } else if (diferencia < 86400) {
-                timeAgo.value = `hace ${Math.floor(diferencia / 3600)} ${pluralize('hora', Math.floor(diferencia / 3600))}`;
+                textual = `hace ${Math.floor(diferencia / 3600)} ${pluralize('hora', Math.floor(diferencia / 3600))}`;
             } else if (diferencia < 604800) {
-                timeAgo.value = `hace ${Math.floor(diferencia / 86400)} ${pluralize('día', Math.floor(diferencia / 86400))}`;
+                textual= `hace ${Math.floor(diferencia / 86400)} ${pluralize('día', Math.floor(diferencia / 86400))}`;
             } else if (diferencia < 2592000) {
-                timeAgo.value = `hace ${Math.floor(diferencia / 604800)} ${pluralize('semana', Math.floor(diferencia / 604800))}`;
+                textual = `hace ${Math.floor(diferencia / 604800)} ${pluralize('semana', Math.floor(diferencia / 604800))}`;
             } else if (diferencia < 31536000) {
-                timeAgo.value = `hace ${Math.floor(diferencia / 2592000)} ${pluralize('mes', Math.floor(diferencia / 2592000))}`;
+                textual= `hace ${Math.floor(diferencia / 2592000)} ${pluralize('mes', Math.floor(diferencia / 2592000))}`;
             } else {
-                timeAgo.value = `hace ${Math.floor(diferencia / 31536000)} ${pluralize('año', Math.floor(diferencia / 31536000))}`;
+                textual= `hace ${Math.floor(diferencia / 31536000)} ${pluralize('año', Math.floor(diferencia / 31536000))}`;
             }
+
+            if (props.short) {
+
+                if (diferencia < 60) {
+                    timeAgo.value = `${diferencia}s`;
+                } else if (diferencia < 3600) {
+                    timeAgo.value = `${Math.floor(diferencia / 60)} m`;
+                } else if (diferencia < 86400) {
+                    timeAgo.value = `${Math.floor(diferencia / 3600)} h`;
+                } else if (diferencia < 604800) {
+                    timeAgo.value = `${Math.floor(diferencia / 86400)} d`;
+                } else if (diferencia < 2592000) {
+                    timeAgo.value = `${Math.floor(diferencia / 604800)}sem`;
+                } else if (diferencia < 31536000) {
+                    timeAgo.value = `${Math.floor(diferencia / 2592000)}mes`;
+                } else {
+                    timeAgo.value = `${Math.floor(diferencia / 31536000)} a`;
+                }
+
+                return textual + ' \n' + title
+
+            }
+
+            timeAgo.value = textual
+
         }
 
         return title;

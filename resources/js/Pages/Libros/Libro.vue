@@ -8,14 +8,17 @@
 
         <div class="max-w-[900px] mx-auto flex flex-col md:flex-row gap-10 mt-12">
 
+            <Transition name="book-drop">
+                <div v-show="!cargandoPortada" class="card bg-base-100 shadow-2xl w-fit h-fit flex justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0">
+                    <ImageShadow :src="libro.imagen" width="300" height="450" :alt="libro.titulo" class="object-contain rounded-[2px]"
+                    :style="{'view-transition-name': `imagen-libro-${libro.id}`}"
+                    @loaded="cargandoPortada=false"
+                    />
+                </div>
+            </Transition>
+            <span v-show="cargandoPortada" class="card bg-base-100 shadow-2xl w-fit h-fit flex justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0 opacity-0">
+                <div class="w-[300px]"/></span>
 
-            <div v-if="true" class=" card bg-base-100 shadow-2xl w-fit h-fit flex justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0">
-                <ImageShadow :src="libro.imagen" width="300" height="450" :alt="libro.titulo" class="object-contain rounded-[2px]"
-                :style="{'view-transition-name': `imagen-libro-${libro.id}`}"
-                />
-            </div>
-
-            <Libro3d v-else :libro="libro" imageClass="w-[200px] md:w-[300px]"/>
 
             <div class="p-6 card bg-base-100 shadow animate-fade-in">
 
@@ -86,4 +89,27 @@ const edicionPaginas = computed(()=>{
 
     return str.join(", ")
 })
+
+
+const cargandoPortada = ref(true)
+
 </script>
+
+<style scoped>
+.book-drop-enter-active,
+.book-drop-leave-active {
+  transition: all 0.5s ease;
+}
+
+.book-drop-enter-from,
+.book-drop-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.book-drop-enter-to,
+.book-drop-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>

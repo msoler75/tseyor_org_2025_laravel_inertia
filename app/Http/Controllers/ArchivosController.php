@@ -10,6 +10,7 @@ use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\UploadedFile;
 use App\Models\Equipo;
+use App\Models\Grupo;
 use App\Models\User;
 use App\Models\Nodo;
 use App\Models\Acl;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use App\Http\Controllers\ImagenesController;
 use App\Pigmalion\StorageItem;
+use Illuminate\Support\Facades\Cache;
 
 // use App\Pigmalion\TiempoEjecucion as T;
 //use App\T;
@@ -400,16 +402,17 @@ class ArchivosController extends Controller
     {
         // comprobamos el permiso de ejecución (listar) en la carpeta
         $nodo = $this->nodoDesde("/" . ltrim($ruta, '/'));
+
         $nodoCarpeta = $nodo;
         Log::info("calcularInfoArchivos $ruta", ['nodo' => $nodo->toArray(), 'items' => $items]);
 
         // agregamos carpeta padre
         $padre = dirname($ruta);
-        if ($padre == ".")
+        if ($padre == "." || $padre == "/" || $padre =='\\')
             $padre = "";
         $nodoPadre = null;
         if ($padre) {
-
+            \Log::info("calcularInfoArchivos (padre=$padre)");
             $nodoPadre = Nodo::desde($padre);
         }
 
@@ -430,6 +433,7 @@ class ArchivosController extends Controller
             // agregamos el item
             $info[$item['nombre']] = $info_item;
         }
+
 
         // Obtenemos todos los ids de todos los nodos implicados
         $nodosIdsArr = $ruta == 'mis_archivos' ? [] : $nodosHijos->pluck('id')->toArray();
@@ -465,6 +469,8 @@ class ArchivosController extends Controller
 
             // agregamos información para saber si podemos editar este item
             // omitimos el item padre
+            $primerItem = true;
+
             if (!($item['padre'] ?? 0)) {
                 $nodoItem = $item['nodo'];
                 Log::info("calcularInfoArchivos para item", $item);
@@ -472,19 +478,22 @@ class ArchivosController extends Controller
                 Log::info("puedeEscribir: " . $info[$idx]['puedeEscribir']);
 
                 $info[$idx]['puedeLeer'] = $nodoItem ? Gate::allows('leer', $nodoItem) : false;
-                $nodoContenedor = $idx === 0 ? $nodoPadre : $nodoCarpeta;
+                $nodoContenedor = $primerItem ? $nodoPadre : $nodoCarpeta;
+                $contenedorEsSticky = $nodoContenedor?$nodoContenedor->sticky : false;
+                $esPropietario = optional($nodoItem)->user_id != optional($user)->id;
+
                 // comprobamos el sticky bit de la carpeta padre del item
-                if ((!$nodoContenedor || $nodoContenedor->sticky) && optional($nodoItem)->user_id != optional($user)->id) {
-                    if (!$aclUser || !optional($nodoItem)->tieneAcceso($user, 'escribir'))
+                if ($contenedorEsSticky && !$esPropietario) {
+                    if (!$aclUser && !optional($nodoItem)->tieneAcceso($user, 'escribir'))
                         $info[$idx]['puedeEscribir'] = false;
                 }
+                $primerItem = false;
             }
             // eliminamos la entrada del nodo de los resultados
             unset($info[$idx]['nodo']);
         }
 
         // $info['_esAdministrador_'] = optional($user)->hasPermissionTo('administrar archivos');
-
         return $info;
     }
 
@@ -560,6 +569,7 @@ class ArchivosController extends Controller
             // 'url' => str_replace($baseUrl, '', str_replace('/almacen', '', Storage::disk($disk)->url($ruta))), // Storage::disk($disk)->url(urldecode($ruta)),
             'carpeta' => $carpeta,
             'fecha_modificacion' => Storage::disk($disk)->lastModified($ruta),
+            'puedeLeer' => true
         ];
         $item = array_merge($item, $options);
         $item['url'] = rtrim(($ruta && $disk == 'public' ? '/almacen' : '') . '/' . $prefix . $ruta, '/');
@@ -921,6 +931,9 @@ class ArchivosController extends Controller
 
         Log::info("storedPath: $storedPath");
 
+        // borramos cualquier tipo de cache de carpetas en esta ubicación
+        $this->borrarCacheCarpetas($dir->location);
+
         // creamos su nodo
         Nodo::crear($dir->location . '/' . $filename, false, auth()->user());
 
@@ -1155,6 +1168,8 @@ class ArchivosController extends Controller
 
             // Eliminar la carpeta vacía
             if ($sti->deleteDirectory()) {
+                 // borramos cualquier tipo de cache de carpetas en esta ubicación
+                $this->borrarCacheCarpetas($sti->location);
                 return response()->json(['message' => 'Carpeta eliminada correctamente'], 200);
             } else {
                 return response()->json(['error' => 'No se pudo eliminar la carpeta'], 500);
@@ -1163,6 +1178,10 @@ class ArchivosController extends Controller
 
         // Intentar eliminar el archivo
         else if ($sti->delete()) {
+
+            // borramos cualquier tipo de cache de carpetas en esta ubicación
+            $this->borrarCacheCarpetas($sti->location);
+
             return response()->json(['message' => 'Archivo eliminado correctamente'], 200);
         } else {
             return response()->json(['error' => 'No se pudo eliminar el archivo'], 500);
@@ -1243,6 +1262,11 @@ class ArchivosController extends Controller
                 $nodo->update($update);
         }
 
+
+        // borramos cualquier tipo de cache de carpetas en esta ubicación
+        $this->borrarCacheCarpetas($sti->location);
+
+        // preparamos la respuesta con los archivos actualizados
         $item = $this->prepareItemList($sti->disk, $sti->relativeLocation, ['tipo' => $sti->directoryExists() ? 'carpeta' : 'archivo']);
 
         $newAcls = $request->acl;
@@ -1306,7 +1330,6 @@ class ArchivosController extends Controller
 
     private function safe_rename($source, $destination)
     {
-
         Log::info("safe_rename($source, $destination)");
 
         // Verifica si el origen es un archivo
@@ -1473,6 +1496,11 @@ class ArchivosController extends Controller
     }*/
         if ($this->safe_rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
             //if(File::move(Storage::disk($disk)->path($rutaAntes), Storage::disk($disk)->path($rutaDespues) )){
+
+             // borramos cualquier tipo de cache de carpetas en esta ubicación
+             $this->borrarCacheCarpetas($itemAntes->location);
+             $this->borrarCacheCarpetas($itemDespues->location);
+
             $response = response()->json(['message' => 'Se ha aplicado el nuevo nombre'], 200);
         } else {
             return response()->json(['error' => 'No se pudo renombrar'], 500);
@@ -1640,6 +1668,11 @@ class ArchivosController extends Controller
             $response['errors'] = $errorMessages;
         }
 
+
+        // borramos cualquier tipo de cache de carpetas en esta ubicación
+        $this->borrarCacheCarpetas($source->location);
+        $this->borrarCacheCarpetas($destination->location);
+
         // Agregar registro de resumen a archivo de log
         Log::info("$successCount elementos movidos correctamente y $errorCount elementos fallidos");
 
@@ -1797,11 +1830,37 @@ class ArchivosController extends Controller
         // Agregar registro de resumen a archivo de log
         Log::info("$successCount elementos copiados correctamente y $errorCount elementos fallidos");
 
+        // borramos cache de las carpetas afectasdas
+        $this->borrarCacheCarpetas($source->location);
+        $this->borrarCacheCarpetas($destination->location);
+
         return response()->json($response, $successCount > 0 ? 200 : 500);
+    }
+
+
+    /**
+     * Busca las caches relacionadas con las carpetas y las elimina
+     */
+
+    private function borrarCacheCarpetas($ubicacion) {
+        $nodo = Nodo::desde($ubicacion);
+        if($nodo->group_id) {
+            //miramos si existe un equipo asociado a este grupo
+            $grupo = Grupo::find($nodo->group_id);
+            $equipo = Equipo::where('slug', $grupo->slug)->first();
+
+            if($equipo) {
+                $cacheKey = 'equipo_ultimos_archivos_'.$equipo->id;
+                \Log::info("Olvidamos cache $cacheKey");
+                //borrar cache
+                Cache::forget($cacheKey);
+            }
+        }
+
+        $padre = dirname($ubicacion);
+        if($padre)
+            $this->borrarCacheCarpetas($padre);
     }
 }
 
 
-class NodoPropietario
-{
-}

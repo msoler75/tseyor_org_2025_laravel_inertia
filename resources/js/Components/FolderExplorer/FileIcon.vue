@@ -1,5 +1,5 @@
 <template>
-    <a v-if="link||!link" :href="href" class="flex gap-3 items-baseline" download :class="color">
+    <a v-if="link" :href="href" class="flex gap-3 items-baseline" download :class="color">
         <Icon :icon="iconType" />
     </a>
     <Icon v-else :icon="iconType"  :class="color" />

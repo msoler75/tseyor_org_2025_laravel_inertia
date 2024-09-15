@@ -54,11 +54,13 @@
                         class="overflow-y-auto bg-base-100 shadow max-h-[calc(100vh-470px)]">
                         <table class="table">
                             <thead>
-                                <th>Fecha de solicitud</th>
-                                <th>Usuario</th>
-                                <th>Respuesta</th>
-                                <th></th>
-                                <th>Por</th>
+                                <tr>
+                                    <th>Fecha de solicitud</th>
+                                    <th>Usuario</th>
+                                    <th>Respuesta</th>
+                                    <th></th>
+                                    <th>Por</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="solicitud of solicitudesHistorial" :key="solicitud.id">

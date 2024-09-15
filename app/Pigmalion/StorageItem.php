@@ -303,7 +303,7 @@ class StorageItem
         }
     }
 
-    public function lastFiles($num = 10)
+    public function lastFiles($num = 100)
     {
         $todos = [];
         $this->_listFilesRecursive($this->path, $todos);

@@ -37,12 +37,13 @@
                 </Card>
 
 
-                <Card v-if="ultimosInformes.length||soyCoordinador||puedoAdministrar" class="gap-3">
+                <Card v-if="ultimosInformes.length || soyCoordinador || puedoAdministrar" class="gap-3">
                     <div class="flex items-center justify-between mb-3 gap-5">
                         <h3 class="mb-0">Últimos Informes</h3>
                         <Link v-if="ultimosInformes.length" :href="route('equipo.informes', equipo.slug)"
                             class="text-xs ml-auto flex items-center gap-2 hover:underline">Ver todos</Link>
-                            <a v-if="soyCoordinador||puedoAdministrar" href="/admin/informe/create" class="btn btn-sm text-xl flex items-center" title="Crear informe">+</a>
+                        <a v-if="soyCoordinador || puedoAdministrar" href="/admin/informe/create"
+                            class="btn btn-sm text-xl flex items-center" title="Crear informe">+</a>
                     </div>
                     <div v-if="!ultimosInformes.length">
                         <p>No hay informes.</p>
@@ -63,17 +64,21 @@
                     </div>
                 </Card>
 
-                <Card v-if="!equipo.ocultarArchivos && ultimosArchivos.length"
+                <Card v-if="!equipo.ocultarArchivos && ultimosArchivos?.length"
                     class="overflow-y-auto max-h-112 row-span-2">
                     <h3>Últimos Archivos</h3>
                     <div class="w-full text-sm grid grid-cols-[1.5rem,auto,1.5rem,3rem] gap-1 gap-y-3">
                         <template v-for="item, index of ultimosArchivos" :key="index">
-                            <FileIcon :url="item.url" :name="item.archivo" class="mt-1" />
-                            <a download :href="item.url" class="hover:underline">{{
-                                item.url.substring(item.url.lastIndexOf('/') + 1) }}</a>
+                            <FileIcon :url="item.url" :name="item.archivo" class="mt-1"
+                            @click="clickFile(item, $event)"/>
+                            <a download :href="item.url" class="hover:underline break-all"
+                                @click="clickFile(item, $event)"
+                            >{{ item.url.substring(item.url.lastIndexOf('/') + 1) }}</a>
                             <FolderIcon arrow="1" v-if="item.carpeta" :url="item.carpeta" class="mt-1"
                                 title="Ir a la carpeta" />
-                            <TimeAgo class="ml-auto text-xs" :date="item.fecha_modificacion" />
+                                <div class="text-center">
+                                    <TimeAgo class="text-xs" :date="item.fecha_modificacion"  />
+                                </div>
                         </template>
                     </div>
                 </Card>
@@ -106,7 +111,7 @@
                     <div class="prose" v-html="equipo.informacion" />
                 </Card>
 
-                <EquipoAdmin v-if="soyCoordinador||puedoAdministrar" :equipo="equipo" @updated="reloadEquipo" />
+                <EquipoAdmin v-if="soyCoordinador || puedoAdministrar" :equipo="equipo" @updated="reloadEquipo" />
 
             </GridAppear>
         </div>
@@ -131,6 +136,7 @@ import EquipoAdmin from './Partes/EquipoAdmin.vue'
 import EquipoCabecera from './Partes/EquipoCabecera.vue'
 import EquipoInformacion from './Partes/EquipoInformacion.vue'
 import EquipoMembresia from './Partes/EquipoMembresia.vue'
+import usePlayer from '@/Stores/player'
 
 const props = defineProps({
     equipo: {
@@ -150,6 +156,9 @@ const props = defineProps({
 const page = usePage()
 const mostrarMensaje = ref(page.props.flash.message)
 const coordinadores = computed(() => props.equipo.miembros.filter(m => m.pivot.rol == 'coordinador'))
+
+// para reproducir audios
+const player = usePlayer()
 
 // solicitud
 const solicitud = ref(props.miSolicitud)
@@ -184,11 +193,31 @@ function reloadEquipo() {
 var timer = null
 onMounted(() => {
     timer = setInterval(doReload, 60000)
+/*
+    router.reload({
+        only: ['ultimosArchivos']
+    })
+        */
+
 })
 
 onBeforeUnmount(() => {
     clearInterval(timer)
 })
+
+
+
+
+function clickFile(item, event) {
+    console.log('clickFile', item)
+
+            // si es un audio:
+            if (player.isPlayable(item.url)) {
+                player.play(item.url, item.archivo)
+                event.preventDefault()
+            }
+
+}
 
 </script>
 
