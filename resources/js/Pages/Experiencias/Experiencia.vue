@@ -6,20 +6,31 @@
             <AdminLinks modelo="experiencia" necesita="administrar experiencias" :contenido="experiencia" />
         </div>
 
-        <div class="cloud py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
+        <div class="cloud py-[9ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
 
-            <div class="prose mx-auto">
+            <div class="px-4 sm:px-14 mx-auto">
                 <h1>{{ experiencia.nombre }}</h1>
 
-                <div class="text-neutral text-sm mb-2 flex justify-end">
-                    <TimeAgo :date="experiencia.updated_at" :includeTime="false" />
+                <div class="text-neutral text-sm flex justify-between mb-14">
+                    <Link :href="'/experiencias?categoria=' + experiencia.categoria" title="Sue%C3%B1os"
+                        class="badge badge-primary text-decoration-none">{{ experiencia.categoria }}</Link>
+                    <TimeAgo :date="experiencia.created_at" :includeTime="false" />
                 </div>
-            </div>
 
-            <Content :content="experiencia.texto" class="mx-auto" />
 
-            <div v-if="experiencia.archivo" class="flex justify-end">
-                <a class="btn btn-xs mr-5 flex gap-3 items-center w-fit" download :href="getSrcUrl(experiencia.archivo)" title="nombreArchivo">Descargar archivo adjunto</a>
+                <Content :content="experiencia.texto" />
+
+                <p class="py-5">
+                <ul>
+                    <li><span class="text-primary font-bold">Fecha:</span> {{ experiencia.fecha }}</li>
+                    <li><span class="text-primary font-bold">Lugar:</span> {{ experiencia.lugar }}</li>
+                </ul>
+                </p>
+
+                <div v-if="experiencia.archivo" class="flex justify-end">
+                    <a class="btn btn-xs mr-5 flex gap-3 items-center w-fit" download
+                        :href="getSrcUrl(experiencia.archivo)" title="nombreArchivo">Descargar archivo adjunto</a>
+                </div>
             </div>
 
         </div>
@@ -30,7 +41,7 @@
 </template>
 
 <script setup>
-import {getSrcUrl} from '@/composables/srcutils.js'
+import { getSrcUrl } from '@/composables/srcutils.js'
 
 
 const props = defineProps({
@@ -40,11 +51,11 @@ const props = defineProps({
     }
 });
 
-const nombreArchivo = computed(()=>{
-    if(!props.experiencia.archivo) return null
+const nombreArchivo = computed(() => {
+    if (!props.experiencia.archivo) return null
     const idx = props.experiencia.archivo.lastIndexOf("/");
-    if(idx==-1) return props.experiencia.archivo
-    return props.experiencia.archivo.substring(idx+1)
+    if (idx == -1) return props.experiencia.archivo
+    return props.experiencia.archivo.substring(idx + 1)
 })
 
 </script>
@@ -58,8 +69,8 @@ const nombreArchivo = computed(()=>{
     position: relative;
     z-index: 1;
     --box-size: 100%;
-  --border-thickness: 5%;
-  box-shadow: none;
+    --border-thickness: 5%;
+    box-shadow: none;
 }
 
 .dark .cloud {

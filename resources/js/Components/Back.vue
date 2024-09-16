@@ -46,9 +46,9 @@ onMounted(() => {
 })
 
 
-const heightToHide = 600 // altura de scroll para esta lógica de mostrar/ocultar con scroll
 const wrapToShow = 120 // nº de pixeles de recorrido scroll arriba para mostrar el boton
 const wrapToHide = 70 // nº de pixeles de recorrido scroll abajo para ocultar el boton
+const heightToHide = props.floatAtY - wrapToHide // altura de scroll para esta lógica de mostrar/ocultar con scroll
 
 var show = ref(true)
 

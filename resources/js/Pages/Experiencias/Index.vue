@@ -47,15 +47,19 @@
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('experiencia', contenido.id)"
                         class="hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
                     <Icon icon="ph:dot-fill" class="flex-shrink-0" />
-                    <div class="max-w-[calc(100%-7rem)]">
-                        <div v-html="contenido.nombre" class="capitalize lowercase font-bold" />
-                        <div v-if="filtrado" v-html="contenido.texto" class="mt-3" />
-                        <div class="flex flex-wrap gap-3 mt-4">
+                    <div class="max-w-[calc(100%-7rem)] w-full ">
+                        <div class="flex justify-between">
+                            <div v-html="contenido.nombre" class="capitalize lowercase font-bold" />
                             <span class="badge text-xs">
-                                <TimeAgo :date="contenido.fecha" />
+                                <TimeAgo :date="contenido.created_at" short />
                             </span>
-                            <span v-if="!categoriaActiva" class="badge text-xs badge-neutral">{{ contenido.categoria }}</span>
                         </div>
+                        <div v-if="!categoriaActiva" class="flex flex-wrap w-full justify-between gap-3 mt-4">
+                            <span  class="badge text-xs badge-neutral">{{ contenido.categoria }}</span>
+                        </div>
+                        <div
+                class="mt-5 text-xs lg:opacity-50 transition duration-300 group-hover:opacity-90 max-h-8 text-ellipsis overflow-hidden text-gradient"
+                v-html="contenido.texto" />
                     </div>
                     </Link>
                 </GridAppear>
@@ -121,4 +125,20 @@ const listado = ref(props.listado);
 .dark .cloud::before {
     background-color: rgb(0, 0, 0);
 }
+
+
+
+.text-gradient {
+    height: 100%;
+    background-image: linear-gradient(to bottom, #000 0%, #000 70%, #fff 95%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dark .text-gradient {
+    background-image: linear-gradient(to bottom, #fff 0%, #fff 70%, #0000 95%)
+}
 </style>
+
+
+

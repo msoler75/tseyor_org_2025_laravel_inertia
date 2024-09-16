@@ -11,7 +11,7 @@ export default function setTransitionPages(router) {
   router.on("start", (event) => {
     console.log(
       `router: start. Starting a visit to ${event.detail.visit.url}`,
-      event.detail.visit.url
+      event
     );
 
     nav.closeTabs();

@@ -9,30 +9,37 @@
 
         <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative animate-fade-in">
             <h1>Comparte tus experiencias interdimensionales</h1>
-            <div v-if="error">
-                <div class="alert alert-error">
-                    <Icon icon="ph:warning-circle-duotone" class="text-2xl" />
-                    <span> {{ error }}</span>
+            <!--
+                <div v-if="error">
+                    <div class="alert alert-error">
+                        <Icon icon="ph:warning-circle-duotone" class="text-2xl" />
+                        <span> {{ error }}</span>
+                    </div>
                 </div>
-            </div>
+                -->
 
             <div v-if="submitted" class="space-y-7">
                 <div class="alert alert-success">
                     <Icon icon="ph:check-circle-bold" class="text-2xl" />
                     <span>Se han enviado los datos correctamente.</span>
                 </div>
-                <div>Puedes ver <Link :href="route('experiencias')" class="underline">otras experiencias</Link></div>
-                <div>Puedes escuchar <Link :href="route('radio')" class="underline">Radio Tseyor</Link></div>
+                <div>Puedes ver
+                    <Link :href="route('experiencias')" class="underline">otras experiencias</Link>
+                </div>
+                <div>Puedes escuchar
+                    <Link :href="route('radio')" class="underline">Radio Tseyor</Link>
+                </div>
             </div>
             <!-- Formulario empieza aquí -->
             <form v-else @submit.prevent="submit">
                 <div class="mb-4 bg-base-200 p-2 rounded">
                     <label class="block font-bold mb-2" for="categoria">Categoría de la experiencia:</label>
                     <div class="flex flex-wrap gap-3">
-                        <label v-for="descripcion, categoria of categorias" :key="categoria" class="inline-flex items-center"
-                        :class="categoria.match(/grupal/i) && !page.props.auth?.user?'opacity-50':''"
-                        >
-                            <input type="radio" class="form-radio" name="categoria" :value="categoria" v-model="form.categoria"
+                        <label v-for="descripcion, categoria of categorias" :key="categoria"
+                            class="inline-flex items-center"
+                            :class="categoria.match(/grupal/i) && !page.props.auth?.user ? 'opacity-50' : ''">
+                            <input type="radio" class="form-radio" name="categoria" :value="categoria"
+                                v-model="form.categoria"
                                 :disabled="categoria.match(/grupal/i) && !page.props.auth?.user" required>
                             <span class="ml-2" :title="descripcion">{{ categoria }}</span>
                         </label>
@@ -57,16 +64,17 @@
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="texto">Descripción de la experiencia:</label>
-                    <textarea class="form-textarea w-full" id="texto" v-model="form.texto" required></textarea>
+                    <textarea class="form-textarea w-full" rows="5" id="texto" v-model="form.texto" required></textarea>
                     <span v-if="form.errors.texto" class="error">{{ form.errors.texto }}</span>
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="texto">Archivo adjunto (opcional):</label>
-                    <input type="file" class="form-input w-full" id="texto" v-on:change="form.archivo = $event.target.files[0]">
-                    <span v-if="form.errors.texto" class="error">{{ form.errors.texto }}</span>
+                    <input type="file" class="form-input w-full" id="texto"
+                        v-on:change="form.archivo = $event.target.files[0]">
+                    <span v-if="form.errors.archivo" class="error">{{ form.errors.archivo }}</span>
                 </div>
                 <button type="submit" class="btn btn-primary" :disabled="form.processing">
-                    Enviar
+                    {{ form.processing ? 'Enviando...' : 'Enviar' }}
                 </button>
             </form>
         </div>
@@ -86,11 +94,10 @@ const props = defineProps({
 })
 
 const page = usePage()
-
 const submitted = ref(false)
-const error = ref(false)
+// const error = ref(false)
 
-const form = useForm('inscripcion', {
+const form = useForm({
     nombre: page.props.auth?.user?.name,
     fecha: '',
     lugar: '',
@@ -106,19 +113,31 @@ function scrollTop() {
 
 function submit() {
     // Clear all errors...
-    error.value = false
+    console.log('submit', { form })
+    // error.value = false
     form.clearErrors()
     form.post('/experiencia/store', {
         preserveScroll: true,
         onSuccess: () => {
-            submitted.value = true
-            scrollTop()
+            submitted.value = true;
+            form.reset();
+            scrollTop();
         },
         onError: (response) => {
-            // console.log('onError', response)
-            error.value = response[0]
-            scrollTop()
+            console.log('onError', response)
+            setTimeout(scrollToError, 400)
+            // error.value = response[0]
         }
     });
+}
+
+onMounted(() => {
+    // setTimeout(scrollToError, 800)
+})
+
+function scrollToError() {
+    const firstError = document.querySelector("span.error")
+    console.log('scrollToError', firstError)
+    if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
 }
 </script>

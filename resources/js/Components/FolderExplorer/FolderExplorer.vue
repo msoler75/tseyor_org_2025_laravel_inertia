@@ -308,7 +308,7 @@
                                     class="cursor-pointer text-4xl sm:text-xl" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id"
                                     :url="item.url"
-                                    @click="clickFolder(item, $event)" :link="!embed&&item.puedeLeer" :arrow="item.acceso_directo" />
+                                    @click="clickFolder(item, $event)" :link="!embed&&item.puedeLeer" :arrow="!!item.acceso_directo" />
                                 <FileIcon v-else :url="item.url" class="cursor-pointer text-4xl sm:text-xl" @click="clickFile(item, $event)"
                                     :link="!embed&&item.puedeLeer" />
                             </td>
@@ -463,7 +463,7 @@
                                 <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id"
                                     class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
-                                    @click="clickFolder(item, $event)" :is-link="!embed" :arrow="item.acceso_directo" />
+                                    @click="clickFolder(item, $event)" :is-link="!embed" :arrow="!!item.acceso_directo" />
                                 <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
                                     @click="clickFile(item, $event)">
                                     <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain" />
