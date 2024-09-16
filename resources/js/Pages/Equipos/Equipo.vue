@@ -8,7 +8,7 @@
             <AdminLinks modelo="equipo" necesita="administrar equipos" :contenido="equipo" />
         </div>
 
-        <EquipoCabecera :equipo="equipo" />
+        <EquipoCabecera :equipo="equipo" class="fixed w-full top-14 transition duration-100" :class="useNav().scrollY < 240 ? 'opacity-0 pointer-events-none' : ''"/>
 
         <div class="container mx-auto pb-20">
 
@@ -74,10 +74,10 @@
                             <a download :href="item.url" class="hover:underline break-all"
                                 @click="clickFile(item, $event)"
                             >{{ item.url.substring(item.url.lastIndexOf('/') + 1) }}</a>
-                            <FolderIcon arrow="1" v-if="item.carpeta" :url="item.carpeta" class="mt-1"
+                            <FolderIcon :arrow="true" v-if="item.carpeta" :url="item.carpeta" class="mt-1"
                                 title="Ir a la carpeta" />
                                 <div class="text-center">
-                                    <TimeAgo class="text-xs" :date="item.fecha_modificacion"  />
+                                    <TimeAgo class="text-xs" :date="item.fecha_modificacion" short />
                                 </div>
                         </template>
                     </div>
@@ -87,7 +87,7 @@
                     <h3>Carpetas</h3>
                     <div>
                         <div v-for="item, index of carpetas" :key="index" class="flex gap-3 items-baseline py-2">
-                            <FolderIcon :url="item.ubicacion" arrow="true" />
+                            <FolderIcon :url="item.ubicacion" :arrow="true" />
                             <Link :href="item.ubicacion" class="py-1 hover:underline">{{
                                 item.ubicacion?.substring(item.ubicacion?.lastIndexOf('/') + 1) }}</Link>
                         </div>

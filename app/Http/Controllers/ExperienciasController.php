@@ -9,6 +9,7 @@ use App\Pigmalion\BusquedasHelper;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 // use App\Mail\ExperienciasNuevaEmail;
 
@@ -25,7 +26,7 @@ class ExperienciasController extends Controller
             $resultados = Experiencia::search($buscar);
         } else {
             // obtiene los items sin busqueda
-            $resultados = Experiencia::select(['id', 'nombre', 'fecha', 'lugar', 'texto', 'updated_at', 'categoria'])
+            $resultados = Experiencia::select(['id', 'nombre', 'fecha', 'lugar', 'texto', 'created_at', 'categoria'])
                 ->where('visibilidad', 'P')
                 ->orderBy('updated_at', 'desc');
         }
@@ -59,7 +60,7 @@ class ExperienciasController extends Controller
     public function nueva()
     {
         $categorias = Experiencia::$categorias;
-        
+
         return Inertia::render('Experiencias/NuevaExperiencia', ['categorias' => $categorias])
             ->withViewData(SEO::get('experiencia.nueva'));
     }
@@ -89,20 +90,22 @@ class ExperienciasController extends Controller
     {
         // Validar los datos
         $data = $request->validate([
-            'nombre' => 'required|max:255',
-            'fecha' => 'nullable',
-            'lugar' => 'nullable',
+            'nombre' => 'required|max:256',
+            'fecha' => 'nullable|max:256',
+            'lugar' => 'nullable|max:256',
             'user_id' => 'nullable',
             'categoria' => 'required',
-            'texto' => 'required|max:65000',
+            'texto' => 'required|min:64|max:65000',
             // solo archivos aceptables: pdf, word, doc, docx:
             'archivo' => 'nullable|mimes:txt,pdf,doc,docx'
         ]);
 
-        if ($data['fecha'] == null)
-            $data['fecha'] = date("Y-m-d");
+        if ($data['fecha'] == null) {
+            $data['fecha'] = Carbon::now()->format('d M Y');
+        }
 
-        // se tiene que guardar el archivo, si lo hay, en la carpeta medios/experiencias/{año} del disco public de storage 
+
+        // se tiene que guardar el archivo, si lo hay, en la carpeta medios/experiencias/{año} del disco public de storage
         if ($request->hasFile('archivo')) {
             $archivo = $request->file('archivo');
             // se ha de poner en la carpeta según el año actual

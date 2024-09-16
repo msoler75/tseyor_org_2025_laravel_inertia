@@ -1,6 +1,6 @@
 <template>
 
-    <div class="container py-12 mx-auto">
+    <div class="p-4 lg:px-0 lg:container py-12 mx-auto">
 
         <AdminLinks necesita="administrar contenidos" class="mb-3" />
 
@@ -13,12 +13,18 @@
 
         <SearchResultsHeader :results="listado" />
 
-        <GridAppear col-width="28rem" class="gap-4">
+        <GridAppear class="max-w-[100vw] gap-4
+        grid-cols-[repeat(auto-fill,minmax(20rem,1fr))]
+        sm:grid-cols-[repeat(auto-fill,minmax(24rem,1fr))]
+        xl:grid-cols-[repeat(auto-fill,minmax(28rem,1fr))]
+        ">
             <CardContent v-for="contenido in listado.data" :key="contenido.slug" image-left
                 :title="contenido.titulo + (contenido.visibilidad != 'P' ? ' (borrador)' : '')"
                 :draft="contenido.visibilidad != 'P'" :image="contenido.imagen"
                 :href="'/' + contenido.coleccion + '/' + contenido.slug_ref" :tag="traducir(contenido.coleccion)"
-                :description="contenido.descripcion" :date="contenido.fecha" />
+                :description="contenido.descripcion" :date="contenido.fecha"
+                class="max-w-full"
+                description-class="max-h-[15ch]"/>
         </GridAppear>
 
         <pagination class="mt-6" :links="listado.links" />

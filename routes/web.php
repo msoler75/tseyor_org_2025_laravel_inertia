@@ -351,6 +351,10 @@ Route::get('test/tarjetas', function () {
     return Inertia::render('test/TarjetasTest');
 });
 
+Route::get('test/time', function () {
+    return Inertia::render('test/TimeAgoTest');
+});
+
 // test para convertir archivos .docx a markdown
 Route::get('test/docx',  'App\Http\Controllers\TestController@docx');
 Route::get('test/docx/{num}',  'App\Http\Controllers\TestController@docxShow');
