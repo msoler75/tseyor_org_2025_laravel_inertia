@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Cache;
 
 // use App\Pigmalion\TiempoEjecucion as T;
 //use App\T;
- //use App\Pigmalion\Profiler;
+//use App\Pigmalion\Profiler;
 
 /*
     En sistemas operativos basados en UNIX, como Linux, el sticky bit es un atributo de permisos especial que se puede aplicar a directorios. Este bit tiene un propósito específico y afecta la forma en que los usuarios pueden acceder y manipular archivos dentro de ese directorio.
@@ -408,7 +408,7 @@ class ArchivosController extends Controller
 
         // agregamos carpeta padre
         $padre = dirname($ruta);
-        if ($padre == "." || $padre == "/" || $padre =='\\')
+        if ($padre == "." || $padre == "/" || $padre == '\\')
             $padre = "";
         $nodoPadre = null;
         if ($padre) {
@@ -479,7 +479,7 @@ class ArchivosController extends Controller
 
                 $info[$idx]['puedeLeer'] = $nodoItem ? Gate::allows('leer', $nodoItem) : false;
                 $nodoContenedor = $primerItem ? $nodoPadre : $nodoCarpeta;
-                $contenedorEsSticky = $nodoContenedor?$nodoContenedor->sticky : false;
+                $contenedorEsSticky = $nodoContenedor ? $nodoContenedor->sticky : false;
                 $esPropietario = optional($nodoItem)->user_id != optional($user)->id;
 
                 // comprobamos el sticky bit de la carpeta padre del item
@@ -512,7 +512,7 @@ class ArchivosController extends Controller
                 'usuario' => ['id' => $nodo->user_id, 'nombre' => $nodo->propietario_usuario],
                 'grupo' => ['id' => $nodo->group_id, 'nombre' => $nodo->propietario_grupo]
             ];
-        if($tipo=='carpeta'){
+        if ($tipo == 'carpeta') {
             $dir = new StorageItem($ruta);
             $info_item['archivos'] = count($dir->files());
             $info_item['subcarpetas'] = count($dir->directories());
@@ -1002,7 +1002,7 @@ class ArchivosController extends Controller
         $patronWindows = '/^[a-zA-Z0-9\s_\-().\[\]{}!,@áéíóúÁÉÍÓÚàèòÀÈÒçÇ]*$/';
 
         // Expresión regular para Linux
-        $patronLinux = '/^[a-zA-Z0-9\s_.\-áéíóúÁÉÍÓÚàèòÀÈÒçÇ]*$/';
+        $patronLinux = '/^[a-zA-Z0-9\s_\-()\[\]{}.\-áéíóúÁÉÍÓÚàèòÀÈÒçÇ]*$/';
 
         // $patronAmbos = '^[a-zA-Z0-9\s_\-().\[\]{}!,@áéíóúÁÉÍÓÚàèòÀÈÒüÜñÑçÇ]*$';
 
@@ -1168,7 +1168,7 @@ class ArchivosController extends Controller
 
             // Eliminar la carpeta vacía
             if ($sti->deleteDirectory()) {
-                 // borramos cualquier tipo de cache de carpetas en esta ubicación
+                // borramos cualquier tipo de cache de carpetas en esta ubicación
                 $this->borrarCacheCarpetas($sti->location);
                 return response()->json(['message' => 'Carpeta eliminada correctamente'], 200);
             } else {
@@ -1497,9 +1497,9 @@ class ArchivosController extends Controller
         if ($this->safe_rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
             //if(File::move(Storage::disk($disk)->path($rutaAntes), Storage::disk($disk)->path($rutaDespues) )){
 
-             // borramos cualquier tipo de cache de carpetas en esta ubicación
-             $this->borrarCacheCarpetas($itemAntes->location);
-             $this->borrarCacheCarpetas($itemDespues->location);
+            // borramos cualquier tipo de cache de carpetas en esta ubicación
+            // $this->borrarCacheCarpetas($itemAntes->location);
+            $this->borrarCacheCarpetas($itemDespues->location);
 
             $response = response()->json(['message' => 'Se ha aplicado el nuevo nombre'], 200);
         } else {
@@ -1842,25 +1842,32 @@ class ArchivosController extends Controller
      * Busca las caches relacionadas con las carpetas y las elimina
      */
 
-    private function borrarCacheCarpetas($ubicacion) {
-        $nodo = Nodo::desde($ubicacion);
-        if($nodo->group_id) {
-            //miramos si existe un equipo asociado a este grupo
-            $grupo = Grupo::find($nodo->group_id);
-            $equipo = Equipo::where('slug', $grupo->slug)->first();
+    private function borrarCacheCarpetas($ubicacion)
+    {
+        $nodos_procesados = [];
+        $max_iterations = 24;
+        $dir = $ubicacion;
+        while ($dir && $dir != "/archivos/equipos" && $dir != DIRECTORY_SEPARATOR && $max_iterations > 0) {
+            $nodo = Nodo::desde($dir);
+            if ($nodo && $nodo->es_carpeta && !in_array($nodo->id, $nodos_procesados)) {
+                if ($nodo->group_id) {
+                    //miramos si existe un equipo asociado a este grupo
+                    $grupo = Grupo::find($nodo->group_id);
+                    $equipo = Equipo::where('slug', $grupo->slug)->first();
 
-            if($equipo) {
-                $cacheKey = 'equipo_ultimos_archivos_'.$equipo->id;
-                \Log::info("Olvidamos cache $cacheKey");
-                //borrar cache
-                Cache::forget($cacheKey);
+                    if ($equipo) {
+                        $cacheKey = 'equipo_ultimos_archivos_' . $equipo->id;
+                        \Log::info("Olvidamos cache $cacheKey");
+                        //borrar cache
+                        Cache::forget($cacheKey);
+
+                        $nodos_procesados[] = $nodo->id;
+                    }
+                }
             }
-        }
 
-        $padre = dirname($ubicacion);
-        if($padre)
-            $this->borrarCacheCarpetas($padre);
+            $dir = dirname($dir);
+            $max_iterations--;
+        }
     }
 }
-
-

@@ -12,7 +12,7 @@
         </div>
 
         <template v-if="equipo">
-            <h3>Informes de {{ equipo.nombre }}</h3>
+            <h2>Informes de {{ equipo.nombre }}</h2>
         </template>
         <template v-else>
             <h1>Informes</h1>

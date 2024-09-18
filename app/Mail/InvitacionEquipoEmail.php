@@ -49,7 +49,18 @@ class InvitacionEquipoEmail extends Mailable
 
     public function send($mailer)
     {
+        $info = [
+            'invitacion_id' => $this->invitacion->id,
+            'equipo' => ['id'=>$this->invitacion->equipo_id, 'nombre' => $this->invitacion->equipo->nombre],
+            'email' => $this->invitacion->email,
+            'usuario' => $this->invitacion->user_id ? ['id'=>$this->invitacion->user_id, 'nombre' => $this->invitacion->user->name] : [],
+            // 'stack' => $e->getTraceAsString(),
+        ];
+
         try {
+
+            \Log::channel('smtp')->info("Enviando invitación a equipo: ", $info);
+
             parent::send($mailer);
 
             $this->invitacion->update([
@@ -64,13 +75,7 @@ class InvitacionEquipoEmail extends Mailable
                 'error' => $e->getMessage()
             ]);
 
-            \Log::channel('smtp')->error("Error al enviar invitación: {$e->getMessage()}", [
-                'invitacion_id' => $this->invitacion->id,
-                'equipo' => ['id'=>$this->invitacion->equipo_id, 'nombre' => $this->invitacion->equipo->nombre],
-                'email' => $this->invitacion->email,
-                'usuario' => $this->invitacion->user_id ? ['id'=>$this->invitacion->user_id, 'nombre' => $this->invitacion->user->name] : [],
-                // 'stack' => $e->getTraceAsString(),
-            ]);
+            \Log::channel('smtp')->error("Error al enviar invitación: {$e->getMessage()}", $info);
 
             throw $e; // Re-lanzamos la excepción para que Laravel sepa que el envío falló
         }

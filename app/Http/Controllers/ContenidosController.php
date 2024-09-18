@@ -8,6 +8,7 @@ use App\Models\Contenido;
 use App\Pigmalion\BusquedasHelper;
 use App\Models\Busqueda;
 use App\Pigmalion\SEO;
+use App\Pigmalion\StrEx;
 
 
 class ContenidosController extends Controller
@@ -62,15 +63,20 @@ class ContenidosController extends Controller
 
         $collections = $request->input('collections');
 
+        $buscarSinAcentos = StrEx::removerAcentosStrtr($buscar);
+
         // se puede utilizar un comando al comienzo de la búsqueda para indicar en qué colección buscar
         // ejemplo: com 33, buscaría comunicados con 33
-        $comandos = ['com|comunicado' => 'comunicados', 'libro' => 'libros', 'blog' => 'entradas', 'evento' => 'eventos', 'noticia' => 'noticias', 'informe' => 'informes', 'normativa' => 'normativas', 'audio' => 'audios', 'meditacion' => 'meditaciones', 'termino' => 'terminos'];
+        $comandos = ['com|comunicado' => 'comunicados', 'libro' => 'libros', 'blog' => 'entradas', 'articulo' => 'noticias,entradas', 'evento' => 'eventos', 'noticia' => 'noticias', 'informe' => 'informes', 'normativa' => 'normativas', 'audio' => 'audios', 'meditacion' => 'meditaciones', 'glosario' => 'terminos', 'termino' => 'terminos'];
 
         foreach ($comandos as $key => $value) {
             // si $buscar empieza por 'blog' entonces solo buscamos en blogs
-            if (preg_match("/^($key)s?.{2,999}/", $buscar)) {
+            if (preg_match("/^($key)s?.{2,999}/i", $buscarSinAcentos, $matches)) {
+                $palabras = explode(' ', $buscar);
+                array_shift($palabras);
+                $buscar = implode(' ', $palabras);
                 $collections = $value;
-                $buscar = preg_replace('/^($key)s?/', '', $buscar);
+                break;
             }
         }
 
@@ -82,7 +88,7 @@ class ContenidosController extends Controller
 
         // podemos restringir a un conjunto de colecciones
         if ($collections) {
-            $colecciones = explode(',', $collections);
+            $colecciones = preg_split('/[,\s+]/', $collections, -1, PREG_SPLIT_NO_EMPTY);
             $filtro = $filtro->whereIn('coleccion', $colecciones);
         }
 
@@ -92,7 +98,7 @@ class ContenidosController extends Controller
             Contenido::where('id', '-1')
         )->paginate(64);
 
-        if ($busqueda_valida && !$resultados->count()) // por algun motivo algunas busquedas no las encuentra
+        if ($busqueda_valida && !$resultados->count()) // por algun motivo algunas busquedas no las encuentra. En esos casos, buscamos manualmente
             $resultados = Contenido::where('visibilidad', 'P')->where('titulo', 'LIKE', "%$buscarFiltrado%")->orWhere('texto_busqueda', 'LIKE', "%$buscarFiltrado%")->paginate(64);
 
 

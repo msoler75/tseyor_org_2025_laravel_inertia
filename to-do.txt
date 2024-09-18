@@ -1,5 +1,9 @@
+USUARIO
+-En página de usuarios, la imagen de avatar se carga completa (y pesada)
+-Tal vez procurar un espacio personal de imágenes del usuario
+
+
 PAGINA UTG
--Enlace a estatutos desde controller
 -Info de departamentos
 
 IMAGE/Intervention
@@ -18,6 +22,8 @@ IMAGE/Intervention
 #10 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('descargar', Array)
 #11 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route),
 
+AUDIOS
+-validacion enlace/audio no funciona
 
 
 ARCHIVOS
