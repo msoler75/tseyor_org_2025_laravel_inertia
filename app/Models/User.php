@@ -15,10 +15,12 @@ use App\Models\Permiso;
 use App\Models\Equipo;
 use App\Models\Grupo;
 use App\Models\Membresia;
+use App\Models\Invitacion;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Scout\Searchable;
 use Illuminate\Support\Facades\Cache;
 use App\Notifications\CambioNombreUsuario;
+use Carbon\Carbon;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -36,6 +38,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $revisionCreationsEnabled = true;
 
+    protected static $creatingUser = false;
+
     // cuando se crea un usuario, llenaremos el campo "frase" con una frase aleatoria desde un archivo de texto
     public static function boot()
     {
@@ -43,7 +47,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
         static::saved(function ($user) {
 
-            if ($user->wasChanged('name')) {
+            if (!static::$creatingUser && $user->wasChanged('name')) {
                 // El campo 'name' ha cambiado
                 // Aquí puedes realizar las acciones que necesites
                 $user->notify(new CambioNombreUsuario());
@@ -51,6 +55,26 @@ class User extends Authenticatable implements MustVerifyEmail
 
             // rellena la frase, si está está vacía
             if (trim($user->frase) == "") $user->generarFrase();
+        });
+
+        static::created(function ($user) {
+            static::$creatingUser = true; // para evitar activaciones del evento saved
+
+            // usuario nuevo, hemos de verificar si aceptó alguna invitación a equipo
+            $invitaciones =  Invitacion::where('email', $user->email)
+                ->whereNotNull('accepted_at')->get();
+
+            \Log::info("USUARIO CREADO: invitaciones:", ["invitaciones"=>$invitaciones]);
+
+            // recorrer todas las invitaciones, y para cada una, incluimos al usuario en el equipo
+            foreach ($invitaciones as $invitacion) {
+                // incluimos el usuario al equipo
+                $user->equipos()->attach($invitacion->equipo_id);
+                // marcamos su email como verificado
+                $user->markEmailAsVerified();
+                // actualizamos el estado de la invitación
+                $invitacion->update(['estado' => 'aceptada']);
+            }
         });
     }
 

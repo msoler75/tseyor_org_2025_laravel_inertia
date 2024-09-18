@@ -13,6 +13,8 @@ const permisos = usePermisos()
 const page = usePage()
 const nav = useNav()
 
+// MENSAJE FLASH
+const mostrarMensaje = ref(page.props.flash.message)
 
 
 const TIME_NAV_INACTIVE = 600
@@ -182,6 +184,18 @@ axios.get(route('setting', 'navigation'))
 
         <!-- <component :is="dynamicAudioPlayer" v-if="dynamicAudioPlayer" /> -->
         <AudioPlayer />
+
+
+        <Modal :show="mostrarMensaje" centered max-width="md">
+            <div class="p-5 mt-auto mb-auto">
+                <p class="text-center">{{ $page.props?.flash?.message }}</p>
+                <div class="py-3 flex justify-center">
+                    <button @click.prevent="mostrarMensaje = false" type="button" class="btn btn-neutral">
+                        Gracias
+                    </button>
+                </div>
+            </div>
+        </Modal>
 
         <div class="bg-base-200 flex-grow flex flex-col">
 

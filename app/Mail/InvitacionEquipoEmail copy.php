@@ -53,13 +53,11 @@ class InvitacionEquipoEmail extends Mailable
             parent::send($mailer);
 
             $this->invitacion->update([
-                'sent_at' => now(),
-                'estado' => $this->invitacion->estado == 'registro'? 'registro' : 'enviada',
+                'estado' => 'enviada',
                 'error' => null
             ]);
         } catch (\Throwable $e) {
             $this->invitacion->update([
-                'sent_at' => now(),
                 'estado' => 'fallida',
                 'error' => $e->getMessage()
             ]);

@@ -13,13 +13,17 @@ class Invitacion extends Model
         'user_id',
         'email',
         'token',
+        'estado',
+        'error',
         'accepted_at',
         'declined_at',
+        'sent_at'
     ];
 
     protected $dates = [
         'accepted_at',
         'declined_at',
+        'sent_at',
     ];
 
     // Relación con el equipo

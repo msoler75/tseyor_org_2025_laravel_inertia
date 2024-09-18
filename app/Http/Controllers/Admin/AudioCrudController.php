@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Validation\Rules\ValidUpload;
+use Illuminate\Validation\Rule;
 use App\Models\Audio;
 
 /**
@@ -82,13 +83,36 @@ class AudioCrudController extends CrudController
         // CRUD::setValidation(AudioRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
-        CRUD::setValidation([
+        $rules = [
             'titulo' => 'required|min:8',
-            'slug' => [ \Illuminate\Validation\Rule::unique('audios', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
-            'audio' => ValidUpload::field('nullable')->file('mimes:mp3'),
-            'enlace' => 'required_without:audio|nullable|url'
+            'slug' => [
+                Rule::unique('audios', 'slug')->ignore(request()->id),
+            ],
+            'audio' => 'nullable|file|mimes:mp3',
+            'enlace' => 'nullable|url',
+        ];
+
+        // Añadir regla personalizada para validar que al menos uno de los campos mp3 o enlace esté presente
+        $this->crud->addField([
+            'name' => 'mp3_or_enlace',
+            'type' => 'custom_html',
+            'value' => '<input type="hidden" name="mp3_or_enlace" value="hh">',
         ]);
 
+        $rules['mp3_or_enlace'] = [
+            'required',
+            function ($attribute, $value, $fail) {
+                $mp3 = request()->file('audio');
+                $enlace = request()->input('enlace');
+                $existingMp3 = $this->crud->getCurrentEntry() ? $this->crud->getCurrentEntry()->audio : null;
+                \Log::info("input mp3:", [$mp3, $existingMp3]);
+                if (!$mp3 && !$enlace && !$existingMp3) {
+                    $fail('Se requiere proporcionar un archivo MP3 o un enlace.');
+                }
+            },
+        ];
+
+        CRUD::setValidation($rules);
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');

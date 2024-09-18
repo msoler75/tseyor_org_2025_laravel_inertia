@@ -6,13 +6,14 @@
             <h3>Invitar al equipo</h3>
             <form @submit.prevent="invitar" class="flex flex-col gap-7 select-none">
 
-                <tabs  :options="{ disableScrollBehavior: true, useUrlFragment: false }">
+                <tabs :options="{ disableScrollBehavior: true, useUrlFragment: false }">
 
 
                     <tab name="Buscar usuarios">
 
                         <div class="min-h-[200px]">
-                            <input type="search" class="input shadow flex-shrink-0 rounded-none border-b border-gray-500"
+                            <input type="search"
+                                class="input shadow flex-shrink-0 rounded-none border-b border-gray-500"
                                 placeholder="Buscar usuario..." v-model="usuarioBuscar">
 
                             <div class="overflow-y-auto max-h-[calc(100vh-480px)] md:max-h-[calc(100vh-420px)] shadow">
@@ -27,16 +28,13 @@
                                                     class="btn bg-base-100 border-none pointer-events-none">
                                                     <Icon icon="ph:check-circle-duotone" /> Agregado
                                                 </div>
-                                               <div v-else-if="user.invitacion"  class="btn bg-base-100 border-none pointer-events-none">
+                                                <div v-else-if="user.invitacion"
+                                                    class="btn bg-base-100 border-none pointer-events-none">
                                                     <Icon icon="ph:check-circle-info" /> Ya invitado
                                                 </div>
                                                 <div v-else class="btn" @click="agregarInvitado(user)">
                                                     Agregar
                                                 </div>
-                                                <!-- se puede reenviar solo si la invitacion (usando invitacion.created_at que es un string con la fecha) se hizo hace al menos dos días  -->
-                                                <div v-if="!user.agregado && user.invitacion && (new Date() - new Date(user.invitacion.created_at)) > 202800000 "  class="btn" @click="agregarInvitado(user)">
-                                                        Reenviar
-                                                    </div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -93,25 +91,57 @@
                     </tab>
 
 
-                    <tab :name="`Invitaciones pendientes ${invitaciones.length?'('+invitaciones.length+')':''}`">
+                    <tab
+                        :name="`Invitaciones pendientes ${invitaciones.length ? '(' + invitaciones.length + ')' : ''}`">
+                        <div class="flex justify-end text-xs mb-4">
+                            <div @click="cargarInvitaciones()" class="flex gap-1 flex-nowrap cursor-pointer">
+                                <Icon icon="ph:arrows-counter-clockwise-duotone" /> Actualizar
+                            </div>
+                        </div>
                         <p v-if="!invitaciones.length">
-                        No hay invitaciones pendientes</p>
+                            No hay invitaciones pendientes</p>
                         <table v-else class="table w-full bg-base-100  shadow">
                             <thead>
-                                <th>Fecha</th><th>Usuario/correo</th><th>Estado</th>
+                                <tr>
+                                    <th>Enviada</th>
+                                    <th>Usuario/correo</th>
+                                    <th>Estado</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="inv of invitaciones" :key="inv.id">
                                     <td>
-                                        <TimeAgo :date="inv.created_at"></TimeAgo>
+                                        <TimeAgo :date="inv.sent_at" class="text-xs" />
                                     </td>
                                     <td>
-                                        {{ inv.user?inv.user.name:inv.email  }}
+                                        <div class="break-all text-sm select-text">
+                                            {{ inv.user ? inv.user.name : inv.email }}
+                                        </div>
                                     </td>
                                     <td>
-                                        {{ !inv.accepted_at &&!inv.declined_at ? 'Pendiente':inv.accepted_at?'Aceptada':'Rechazada' }}
+                                        <div v-if="!['reintentando', 'reenviando'].includes(inv.estado)"
+                                            class="flex items-center gap-2 whitespace-nowrap" :title="statusMap[inv.estado].title||statusMap[inv.estado].label"
+                                            :class="statusMap[inv.estado].class">
+                                            <span class="text-xs uppercase">{{ statusMap[inv.estado].label }}</span>
+                                            <Icon v-if="statusMap[inv.estado].icon" :icon="statusMap[inv.estado].icon"/> 
+                                            <span v-else-if="statusMap[inv.estado].emoji">{{statusMap[inv.estado].emoji}}</span>
+                                        </div>
+                                        <div class="text-xs">
+                                            <div v-if="['fallida', 'caducada'].includes(inv.estado)" class="link cursor-pointer'"
+                                                @click="reenviarInvitacion(inv)">Reintentar</div>
+                                            <!-- tienen que haber pasado al menos dos horas para reenviar -->
+                                            <div v-if="['pendiente', 'enviada'].includes(inv.estado) && (new Date() - new Date(inv.sent_at)) > 6291021"
+                                                class="link cursor-pointer'" @click="reenviarInvitacion(inv)">Reenviar
+                                            </div>
+                                            <div v-if="inv.estado == 'registro' && (new Date() - new Date(inv.sent_at)) > 6291021"
+                                                class="link cursor-pointer'" @click="reenviarInvitacion(inv)">Reenviar
+                                            </div>
+                                            <div v-if="['reintentando', 'reenviando'].includes(inv.estado)">
+                                                {{ ucFirst(inv.estado) }}
+                                            </div>
+                                        </div>
                                     </td>
-                                    </tr>
+                                </tr>
                             </tbody>
                         </table>
                     </tab>
@@ -119,8 +149,8 @@
                 </tabs>
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
-                    <button type="submit" class="btn btn-primary" :disabled="invitando||!numeroInvitados">
-                        <Spinner v-show="invitando" class="mr-3"/>
+                    <button type="submit" class="btn btn-primary" :disabled="invitando || !numeroInvitados">
+                        <Spinner v-show="invitando" class="mr-3" />
                         Invitar <span v-if="numeroInvitados">({{ numeroInvitados }})</span>
                     </button>
 
@@ -139,6 +169,7 @@
 <script setup>
 import { Tabs, Tab } from 'vue3-tabs-component';
 import { useDebounce } from '@vueuse/core';
+import { ucFirst } from '@/composables/textutils'
 
 
 defineExpose({
@@ -160,6 +191,18 @@ watch(debouncedBuscar, buscarUsuarios)
 const correosInvitados = computed(() => correos.value.split(/[\s,\n]+/m).map(c => c.trim()).filter(c => !!c).filter(c => c.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)))
 const numeroInvitados = computed(() => usuariosInvitados.value.length + correosInvitados.value.length)
 const invitando = ref(false)
+
+
+const statusMap = {
+    fallida: {label: 'Fallida', emoji: '❌'},
+    pendiente: {label:'Enviando', emoji: '…'},
+    enviada: {label:'Entregada', icon: 'ph:mailbox-duotone',},
+    registro: {label:'Registrándose', icon: 'ph:pencil-simple-line-duotone', class: 'text-green-500', title:'El usuario aceptó y ahora está creando su cuenta'},
+    caducada: {label:'Caducada', icon: 'ph:calendar-x-duotone', class: 'opacity-75'},
+    aceptada: {label: 'Aceptada', emoji: '✅', class: 'text-green-500'},
+    declinada: {label: 'Rechazada', emoji: '🙅‍♂️', class: 'text-red-500'},
+}
+
 
 // abre el diálogo modal
 function mostrar() {
@@ -194,22 +237,21 @@ const usuariosParaInvitar = computed(() => {
             ...u,
             agregado: !!usuariosInvitados.value.find(ui => ui.id == u.id),
             miembro: props.equipo.miembros.find(eu => eu.id == u.id) ? 1 : 0,
-            invitacion: invitaciones.value.find(ui=>ui.user_id==u.id&&!ui.accepted_at&&!ui.declined_at),
+            invitacion: invitaciones.value.find(ui => ui.user_id == u.id && !ui.accepted_at && !ui.declined_at),
         }))
         .sort((a, b) => (a.miembro - b.miembro))
 
 })
 
-const invitaciones=ref([])
+const invitaciones = ref([])
 function cargarInvitaciones() {
     axios.get(route('equipo.invitaciones', props.equipo.id))
-    .then(
-        response=>
-        {
-            invitaciones.value = response.data.invitaciones
-            console.log(response.data)
-        }
-    )
+        .then(
+            response => {
+                invitaciones.value = response.data.invitaciones
+                console.log(response.data)
+            }
+        )
 }
 
 cargarInvitaciones()
@@ -228,27 +270,27 @@ function removerInvitado(user) {
 
 
 function mandado(num) {
-    return num==1?'Se ha mandado':'Se han mandado'
+    return num == 1 ? 'Se ha mandado' : 'Se han mandado'
 }
 
 function invitacionesPlural(num) {
-    return num==1?'invitación':'invitaciones'
+    return num == 1 ? 'invitación' : 'invitaciones'
 }
 
 function usuariosPlural(num) {
-    return num==1?'usuario':'usuarios'
+    return num == 1 ? 'usuario' : 'usuarios'
 }
 
 function yason(num) {
-    return num==1?'ya es miembro':'ya son miembros'
+    return num == 1 ? 'ya es miembro' : 'ya son miembros'
 }
 
 function yatiene(num) {
-    return num==1?'ya tiene':'ya tienen'
+    return num == 1 ? 'ya tiene' : 'ya tienen'
 }
 
 function existe(num) {
-    return num==1?'existe':'existen'
+    return num == 1 ? 'existe' : 'existen'
 }
 
 function invitar() {
@@ -261,11 +303,11 @@ function invitar() {
         .then(response => {
             // Procesar la respuesta del controlador si es necesario
             const data = response.data
-            alert((data.invitados.length?`${mandado(data.invitados.length)} ${data.invitados.length} ${invitacionesPlural(data.invitados.length)}`:`No se han mandado las invitaciones`)+
-            `\n`+
-            (data.yaSonMiembros.length?`${data.yaSonMiembros.length} ${usuariosPlural(data.yaSonMiembros.length)} ${yason(data.yaSonMiembros.length)} del equipo\n`:'')+
-            (data.invitacionReciente.length?`${data.invitacionReciente.length} ${usuariosPlural(data.invitacionReciente.length)} ${yatiene(data.invitacionReciente.length)} una invitación reciente\n`:'')+
-            (data.noEncontrados.length?`${data.noEncontrados.length} ${usuariosPlural(data.noEncontrados.length)} no ${existe(data.noEncontrados.length)}\n`:''));
+            alert((data.invitados.length ? `${mandado(data.invitados.length)} ${data.invitados.length} ${invitacionesPlural(data.invitados.length)}` : `No se han mandado las invitaciones`) +
+                `\n` +
+                (data.yaSonMiembros.length ? `${data.yaSonMiembros.length} ${usuariosPlural(data.yaSonMiembros.length)} ${yason(data.yaSonMiembros.length)} del equipo\n` : '') +
+                (data.invitacionReciente.length ? `${data.invitacionReciente.length} ${usuariosPlural(data.invitacionReciente.length)} ${yatiene(data.invitacionReciente.length)} una invitación reciente\n` : '') +
+                (data.noEncontrados.length ? `${data.noEncontrados.length} ${usuariosPlural(data.noEncontrados.length)} no ${existe(data.noEncontrados.length)}\n` : ''));
 
             // borramos lista de invitados
             correos.value = ""
@@ -277,17 +319,39 @@ function invitar() {
             console.log(response.data);
         })
         .catch(error => {
+            console.error(error)
+            cargarInvitaciones()
             // Manejar cualquier error de la solicitud
-            switch(error.response.status) {
+            switch (error.response?.status) {
                 case 403: alert("No estás autorizado"); break;
                 case 404:
                 case 410: alert("Error interno. El equipo no existe"); break;
                 default: alert("Hubo un error, no se pudo mandar las invitaciones.")
             }
-            console.error(response);
+            // console.error(response);
             invitando.value = false
         });
 };
 
-
+function reenviarInvitacion(invitacion) {
+    const estadoPrevio = invitacion.estado
+    invitacion.estado = invitacion.estado == 'fallida' ? 'reintentando' : 'reenviando'
+    axios.get(route('invitacion.reenviar', invitacion.id))
+        .then(() => {
+            invitacion.estado = estadoPrevio == 'registro' ? 'registro' : 'enviada'
+            invitacion.sent_at = Date()
+        })
+        .catch(error => {
+            console.error(error)
+            // Manejar cualquier error de la solicitud
+            switch (error.response?.status) {
+                case 403: alert("No estás autorizado"); break;
+                case 404:
+                case 410: alert("Error interno. El equipo no existe"); break;
+                default: alert("Hubo un error, no se pudo reenviar la invitación.")
+            }
+            // console.error(response);
+            invitacion.estado = 'fallida'
+        });
+}
 </script>
