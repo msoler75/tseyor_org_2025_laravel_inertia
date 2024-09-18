@@ -22,7 +22,7 @@ class DOMHelper
     {
         if (empty(trim($html))) $html = "<i></i>";
 
-        Log::info("setInnerHTml: " . $html);
+        // Log::info("setInnerHTml: " . $html);
         // Crear un nuevo DOMDocument para procesar el HTML
         $tempDoc = new \DOMDocument();
         // Establecer la codificación del documento a UTF-8

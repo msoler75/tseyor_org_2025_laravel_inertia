@@ -17,17 +17,10 @@ Aceptar Invitación
 @endcomponent
 
 @else
-Si no dispones de una cuenta en el sitio tseyor.org, necesitas seguir los siguientes pasos para unirte al equipo:
+Si deseas aceptar esta invitación haz click en el siguiente botón (se te pedirá registrarte):
 
-Paso 1: Crea una cuenta haciendo clic en el siguiente botón:
-
-@component('mail::button', ['url' => route('register')])
-Crear cuenta
-@endcomponent
-
-Paso 2: Después de crear tu cuenta, puedes hacer clic en el siguiente botón para aceptar la invitación:
 @component('mail::button', ['url' => $aceptarUrl])
-Aceptar Invitación
+Aceptar Invitación y Registrarme
 @endcomponent
 
 @endif

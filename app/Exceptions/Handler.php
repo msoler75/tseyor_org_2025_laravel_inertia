@@ -6,6 +6,7 @@ use Illuminate\Database\QueryException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -53,7 +54,8 @@ class Handler extends ExceptionHandler
         // Aquí puedes personalizar la lógica para identificar excepciones de correo
         return strpos($exception->getMessage(), 'SMTP') !== false
             || strpos($exception->getMessage(), 'mail') !== false
-            || strpos(get_class($exception), 'Mail') !== false;
+            || strpos(get_class($exception), 'Mail') !== false
+            || $exception instanceof TransportException;
     }
 
     /**
@@ -85,10 +87,10 @@ class Handler extends ExceptionHandler
         }
 
         // Verificar si la excepción está relacionada con la ejecución de jobs
-        if ($this->isJobException($exception)) {
+        else if ($this->isJobException($exception)) {
             Log::channel('jobs')->error('Job Exception: ' . $exception->getMessage(), ['exception' => $exception]);
         }
-
+        else
         parent::report($exception);
     }
 
@@ -145,6 +147,11 @@ class Handler extends ExceptionHandler
 
         if ($exception->getMessage() == 'Service Unavailable') {
             return response()->view('mantenimiento', [], 503);
+        }
+
+        if($this->isMailException($exception))
+        {
+            return parent::render($request, $exception);
         }
 
         if ($exception instanceof ModelNotFoundException || $exception instanceof NotFoundHttpException) {

@@ -8,7 +8,7 @@
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-    
+
     # Redirect imagenes con parámetros, para que pase por el controller
     RewriteCond %{REQUEST_URI} !^/imagen [NC]
     RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|webp)$ [NC]
@@ -31,6 +31,7 @@
 ## EXPIRES CACHING ##
 
 ExpiresActive On
+ExpiresByType image/webp "access 1 year"
 ExpiresByType image/jpg "access 1 year"
 ExpiresByType image/jpeg "access 1 year"
 ExpiresByType image/gif "access 1 year"

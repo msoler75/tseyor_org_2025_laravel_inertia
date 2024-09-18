@@ -102,6 +102,10 @@
                                                 Mis Archivos
                                             </DropdownLink>
 
+                                            <DropdownLink href="/equipos?categoria=Mis equipos">
+                                                Mis Equipos
+                                            </DropdownLink>
+
                                             <DropdownLink :href="route('usuario', $page.props.auth.user.id)">
                                                 Mi perfil público
                                             </DropdownLink>

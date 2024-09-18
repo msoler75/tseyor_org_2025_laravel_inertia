@@ -290,6 +290,7 @@ Route::get('equipos/{slug}/informes', [InformesController::class, 'equipo'])->wh
 // invitaciones y respuesta
 Route::get('equipos/{id}/invitaciones', [EquiposController::class, 'invitations'])->name('equipo.invitaciones');
 Route::post('invitar/{idEquipo}', [EquiposController::class, 'invite'])->name('invitar');
+Route::get('invitacion/reenviar/{id}', [EquiposController::class, 'resendInvitation'])->name('invitacion.reenviar');
 Route::get('invitacion/{token}/aceptar', [EquiposController::class, 'acceptInvitation'])->name('invitacion.aceptar');
 Route::get('invitacion/{token}/declinar', [EquiposController::class, 'declineInvitation'])->name('invitacion.declinar');
 

@@ -9,6 +9,7 @@
         <button command="cache:clear" class="btn btn-success">cache:clear</button>
         <button command="view:clear" class="btn btn-success">view:clear</button>
         <button command="migrate" class="btn btn-success">migrate</button>
+        <button command="sitemap:generate" class="btn btn-success">sitemap:generate</button>
         <button command="auth:clear-resets" class="btn btn-success">auth:clear-resets</button>
         <button command="down" class="btn btn-success">Activar modo mantenimiento</button>
         <button command="up" class="btn btn-success">Desactivar modo mantenimiento</button>

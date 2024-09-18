@@ -37,7 +37,7 @@ class ExtendedHighlighter extends Highlighter
 
         // to-do: if no match is found
         if (empty($locations)) {
-              return [];
+            return [];
         }
 
         $extracts = [];
@@ -97,10 +97,10 @@ class ExtendedHighlighter extends Highlighter
      */
     public function _extractLocations($words, $fulltext)
     {
-        Log::info("extractLocations: " . implode(" ", $words));
+        // Log::info("extractLocations: " . implode(" ", $words));
         $_x = new \App\T("ExtendedHighlighter", "_extractLocations");
-         $fulltext = \App\Pigmalion\StrEx::sanitizeAndDeaccent($fulltext);
-         // die($fulltext);
+        $fulltext = \App\Pigmalion\StrEx::sanitizeAndDeaccent($fulltext);
+        // die($fulltext);
         $locations = array();
         // $max_length = mb_strlen($fulltext);
         if (0) {
@@ -163,7 +163,7 @@ class ExtendedHighlighter extends Highlighter
         // $str = str_replace(['á', 'Á']);
 
 
-        return $str;//mb_strtolower($str);
+        return $str; //mb_strtolower($str);
     }
 
 

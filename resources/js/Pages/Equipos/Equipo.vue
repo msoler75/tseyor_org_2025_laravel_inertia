@@ -115,19 +115,6 @@
 
             </GridAppear>
         </div>
-
-
-        <Modal :show="mostrarMensaje" centered>
-            <div class="p-5 mt-auto mb-auto">
-                <p class="text-center">{{ $page.props.flash.message }}</p>
-                <div class="py-3 flex justify-center">
-                    <button @click.prevent="mostrarMensaje = false" type="button" class="btn btn-neutral">
-                        Gracias
-                    </button>
-                </div>
-            </div>
-        </Modal>
-
     </div>
 </template>
 
@@ -152,9 +139,6 @@ const props = defineProps({
     puedoAdministrar: Boolean
 })
 
-// MENSAJE FLASH
-const page = usePage()
-const mostrarMensaje = ref(page.props.flash.message)
 const coordinadores = computed(() => props.equipo.miembros.filter(m => m.pivot.rol == 'coordinador'))
 
 // para reproducir audios

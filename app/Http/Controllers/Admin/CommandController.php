@@ -14,9 +14,10 @@ class CommandController extends Controller
         'cache:clear',
         'view:clear',
         'migrate',
+        'sitemap:generate',
         'auth:clear-resets',
         'down',
-        'up'
+        'up',
     ];
 
     public function runCommand(string $command): JsonResponse

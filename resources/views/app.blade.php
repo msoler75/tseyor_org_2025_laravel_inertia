@@ -10,7 +10,8 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
-
+    <link rel="preload" fetchpriority="high" as="image" href="/almacen/medios/paginas/galaxy.webp" type="image/webp">
+    <link rel="preload" fetchpriority="high" as="image" href="/almacen/medios/paginas/nebula-space.webp" type="image/webp">
 
     <!-- Scripts -->
     @routes

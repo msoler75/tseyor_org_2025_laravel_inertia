@@ -43,11 +43,14 @@ class BienvenidaEquipo extends Notification implements ShouldQueue
         $equipoUrl = url('/equipos/' . $this->equipo->slug);
 
         $esCoordinador = $this->equipo->coordinadores->contains('id', $this->usuario->id);
-        $subject = 
+        $subject =
             $esCoordinador ? 'Ahora coordinas el equipo "' . $this->equipo->nombre . '"' :
                 '¡Eres miembro del equipo "' . $this->equipo->nombre . '"!';
 
         $linea1 = $subject;
+
+        if($this->equipo->oculto)
+        $linea1 .= " Este es un equipo privado, así que recuerda iniciar sesión para poder ir a la página del equipo.";
 
         return (new MailMessage)
             ->subject($subject)

@@ -3,7 +3,7 @@
 
         <Section :height="screen && screen.width < 768 ? '400px' : '550px'" style="--sectionHeight: 500px">
             <TextImage title="Universidad Tseyor de Granada" srcImage="/almacen/medios/logos/utg.jpg" srcWidth="819"
-                srcHeight="1191" image-right buttonLabel="Ver Estatutos" href="/estatutos/utg" :image-lazy="false">
+                srcHeight="1191" image-right buttonLabel="Ver Estatutos" href="/utg/estatutos" :image-lazy="false">
                 <Prose>
                     <blockquote>
                         <p>
