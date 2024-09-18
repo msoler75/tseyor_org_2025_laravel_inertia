@@ -14,7 +14,7 @@ const page = usePage()
 const nav = useNav()
 
 // MENSAJE FLASH
-const mostrarMensaje = ref(page.props.flash.message)
+const mostrarMensaje = ref(page.props?.flash?.message)
 
 
 const TIME_NAV_INACTIVE = 600

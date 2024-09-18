@@ -149,11 +149,6 @@ class Handler extends ExceptionHandler
             return response()->view('mantenimiento', [], 503);
         }
 
-        if($this->isMailException($exception))
-        {
-            return parent::render($request, $exception);
-        }
-
         if ($exception instanceof ModelNotFoundException || $exception instanceof NotFoundHttpException) {
 
             Log::channel('notfound')->info($request->fullUrl());
@@ -198,6 +193,11 @@ class Handler extends ExceptionHandler
             return $request->expectsJson()
                 ? response()->json(['message' => 'Debes iniciar sesión.'], 401)
                 : redirect()->guest(route('login'));
+        }
+
+        if($this->isMailException($exception))
+        {
+            return parent::render($request, $exception);
         }
 
         $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 512;

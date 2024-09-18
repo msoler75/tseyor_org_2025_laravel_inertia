@@ -7,7 +7,7 @@
 
 @endif
 
-Has sido invitado al equipo {{ $equipo->nombre }} de tseyor.org
+Has sido invitado al equipo '{{ $equipo->nombre }}' de tseyor.org
 
 @if ($nombreUsuario)
 Puedes aceptar esta invitación haciendo clic en el siguiente botón:
@@ -30,7 +30,7 @@ Si no deseas aceptar la invitación, puedes declinarla haciendo clic en el sigui
 [Declinar Invitación]({{ $declinarUrl }})
 
 Atentamente,
-Coordinadores de [{{ $equipo->nombre }}]({{ route('equipo', $equipo->slug) }})
+Coordinadores de {{ $equipo->nombre }}
 
 
 [tseyor.org](https://tseyor.org)
