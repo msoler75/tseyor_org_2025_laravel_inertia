@@ -6,18 +6,18 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class SolicitudCrudController
+ * Class InvitacionCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class SolicitudCrudController extends CrudController
+class InvitacionCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
+    // use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -26,9 +26,9 @@ class SolicitudCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Solicitud::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/solicitud');
-        CRUD::setEntityNameStrings('solicitud', 'solicitudes');
+        CRUD::setModel(\App\Models\Invitacion::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/invitacion');
+        CRUD::setEntityNameStrings('invitacion', 'invitaciones');
     }
 
     /**
@@ -39,48 +39,14 @@ class SolicitudCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        // CRUD::setFromDb(); // set columns from db columns.
+        CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
 
-         $this->crud->addColumn([
-            'name' => 'created_at',
-            'label' => 'Realizada',
-            'orderable'   => true,
-        ]);
-
-         $this->crud->addColumn([
-            'name' => 'NombreUsuario',
-            'label' => 'Usuario',
-            'orderable'   => true,
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'NombreEquipo',
-            'label' => 'Equipo',
-            'orderable'   => true,
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'fecha_aceptacion',
-            'label' => 'Aceptado',
-            'type' => 'datetime'
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'fecha_denegacion',
-            'label' => 'Denegado',
-            'type' => 'datetime'
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'NombreCoordinador',
-            'label' => 'Coordinador',
-        ]);
-
+         $this->crud->removeColumn('token');
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
 
@@ -94,7 +60,6 @@ class SolicitudCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(SolicitudRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**
@@ -102,10 +67,10 @@ class SolicitudCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-         CRUD::field('user_id')->attributes(['disabled'=>'disabled']);
+         //CRUD::field('user_id')->attributes(['disabled'=>'disabled']);
 
 
-         CRUD::field('equipo_id')->type('select')->model('App\Models\Equipo');
+         //CRUD::field('equipo_id')->type('select')->model('App\Models\Equipo');
     }
 
     /**

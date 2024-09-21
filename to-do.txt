@@ -1,3 +1,13 @@
+ARCHIVOS
+-renombrar no aparece como opcion?
+
+ADMIN
+-dashboard: añadir un cuadro para mí en el dashboard que incluya:
+    -Aviso si el estado del queue-worker está parado
+    -Aviso si hay tareas fallidas
+    -etc.
+-Pensar en otorgar privilegios de superadmin a alguien más y enseñarle
+
 USUARIO
 -En página de usuarios, la imagen de avatar se carga completa (y pesada)
 -En página de equipos, algunos usuarios no muestran bien su imagen

@@ -48,6 +48,7 @@ Route::group([
     Route::crud('lugar', 'LugarCrudController');
     Route::crud('normativa', 'NormativaCrudController');
     Route::crud('solicitud', 'SolicitudCrudController');
+    Route::crud('invitacion', 'InvitacionCrudController');
     Route::crud('libro', 'LibroCrudController');
     Route::crud('sala', 'SalaCrudController');
     Route::crud('setting', 'SettingCrudController');

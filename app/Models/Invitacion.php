@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Invitacion extends Model
 {
+    use CrudTrait;
+
     protected $table = 'invitaciones';
 
     protected $fillable = [
