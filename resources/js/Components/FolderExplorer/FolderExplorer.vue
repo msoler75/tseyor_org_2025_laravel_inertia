@@ -80,7 +80,7 @@
                                 </span>
                             </template>
                             <template #content>
-                                <div class="bg-base-100 select-none">
+                                <div class="select-none">
                                     <div v-for="label, value in ordenaciones" :key="value"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="ordenarPor = value">
@@ -103,7 +103,7 @@
                             </template>
 
                             <template #content>
-                                <div class="bg-base-100">
+                                <div class="select-none">
                                     <!-- Account Management -->
                                     <div v-if="puedeEscribir && !seleccionando"
                                         class="flex gap-x items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
@@ -294,7 +294,7 @@
 
                     <component :is="transitionActive?TransitionGroup:'tbody'" tag="tbody" name="files">
                         <tr v-for="item in itemsMostrar" :key="item.ruta"
-                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : '') + (item.puedeLeer && (!seleccionando || esAdministrador)  ? '' : ' opacity-50 pointer-events-none')">
+                            :class="item.clase + ' ' + (item.seleccionado ? '' : '') + (item.puedeLeer && (!seleccionando || esAdministrador)  ? '' : ' opacity-50 pointer-events-none')">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
@@ -393,7 +393,7 @@
                                     </template>
 
                                     <template #content>
-                                        <div class="bg-base-100">
+                                        <div class="select-none">
                                             <div v-if="(esAdministrador || item.puedeEscribir) && !seleccionando"
                                                 class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                                 @click="abrirModalRenombrar(item)">
@@ -448,7 +448,7 @@
                 <GridFill colWidth="14rem" class="gap-4 pt-6">
 
                         <div v-for="item in itemsMostrar" :key="item.ruta"
-                            :class="item.clase + ' ' + (item.seleccionado ? 'bg-base-300' : 'bg-base-200') +
+                            :class="item.clase + ' ' + (item.seleccionado ? '' : 'bg-base-200') +
                             (item.puedeLeer && (!seleccionando || esAdministrador)  ? '' : ' opacity-50 pointer-events-none')">
                             <div v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100"
@@ -505,7 +505,7 @@
                                         </template>
 
                                         <template #content>
-                                            <div class="bg-base-100">
+                                            <div class="select-none">
 
                                                 <div v-if="!seleccionando"
                                                     class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"

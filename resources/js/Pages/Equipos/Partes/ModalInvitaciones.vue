@@ -93,57 +93,91 @@
 
                     <tab
                         :name="`Invitaciones pendientes ${invitaciones.length ? '(' + invitaciones.length + ')' : ''}`">
-                        <div class="flex justify-end text-xs mb-4">
-                            <div @click="cargarInvitaciones()" class="flex gap-1 flex-nowrap cursor-pointer">
+                        <div class="flex justify-between items-center text-xs mb-4 gap-3">
+                            <div v-for="stat of estadisticas" :key="stat.estado" :title="stat.total+' '+stat.label+(stat.label.endsWith('da') ? 's' : '')">
+                                {{ stat.emoji }}
+                                {{ stat.total }}
+                            </div>
+                            <div @click="cargarInvitaciones()"
+                                class="flex items-center btn btn-xs btn-primary gap-1 flex-nowrap cursor-pointer">
                                 <Icon icon="ph:arrows-counter-clockwise-duotone" /> Actualizar
                             </div>
                         </div>
                         <p v-if="!invitaciones.length">
                             No hay invitaciones pendientes</p>
-                        <table v-else class="table w-full bg-base-100  shadow">
-                            <thead>
-                                <tr>
-                                    <th>Enviada</th>
-                                    <th>Usuario/correo</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="inv of invitaciones" :key="inv.id">
-                                    <td>
-                                        <TimeAgo :date="inv.sent_at" class="text-xs" />
-                                    </td>
-                                    <td>
-                                        <div class="break-all text-sm select-text">
-                                            {{ inv.user ? inv.user.name : inv.email }}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div v-if="!['reintentando', 'reenviando'].includes(inv.estado)"
-                                            class="flex items-center gap-2 whitespace-nowrap" :title="statusMap[inv.estado].title||statusMap[inv.estado].label"
-                                            :class="statusMap[inv.estado].class">
-                                            <span class="text-xs uppercase">{{ statusMap[inv.estado].label }}</span>
-                                            <Icon v-if="statusMap[inv.estado].icon" :icon="statusMap[inv.estado].icon"/> 
-                                            <span v-else-if="statusMap[inv.estado].emoji">{{statusMap[inv.estado].emoji}}</span>
-                                        </div>
-                                        <div class="text-xs">
-                                            <div v-if="['fallida', 'caducada'].includes(inv.estado)" class="link cursor-pointer'"
-                                                @click="reenviarInvitacion(inv)">Reintentar</div>
-                                            <!-- tienen que haber pasado al menos dos horas para reenviar -->
-                                            <div v-if="['pendiente', 'enviada'].includes(inv.estado) && (new Date() - new Date(inv.sent_at)) > 6291021"
-                                                class="link cursor-pointer'" @click="reenviarInvitacion(inv)">Reenviar
+                        <div v-else>
+                            <table class="table w-full bg-base-100  shadow">
+                                <thead>
+                                    <tr>
+                                        <th>Enviada</th>
+                                        <th>Usuario/correo</th>
+                                        <th>Estado</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="inv of invitaciones.filter(inv => inv.estado!='eliminada')" :key="inv.id">
+                                        <td>
+                                            <TimeAgo :date="new Date(inv.sent_at || inv.created_at)" class="text-xs" />
+                                        </td>
+                                        <td>
+                                            <div class="break-all text-sm select-text">
+                                                {{ inv.user ? inv.user.name : inv.email }}
                                             </div>
-                                            <div v-if="inv.estado == 'registro' && (new Date() - new Date(inv.sent_at)) > 6291021"
-                                                class="link cursor-pointer'" @click="reenviarInvitacion(inv)">Reenviar
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center gap-2 whitespace-nowrap"
+                                                :title="statusMap[inv.estado].title || statusMap[inv.estado].label"
+                                                :class="statusMap[inv.estado].class ?? ''">
+                                                <span class="text-xs uppercase">{{ statusMap[inv.estado].label }}</span>
+                                                <Icon v-if="statusMap[inv.estado].icon"
+                                                    :icon="statusMap[inv.estado].icon" />
+                                                <span v-else-if="statusMap[inv.estado].emoji">{{
+                                                    statusMap[inv.estado].emoji
+                                                    }}</span>
                                             </div>
-                                            <div v-if="['reintentando', 'reenviando'].includes(inv.estado)">
-                                                {{ ucFirst(inv.estado) }}
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                        </td>
+                                        <td>
+                                            <Dropdown align="right" width="32">
+                                                <template #trigger>
+                                                    <span class="my-1 bg-base-100 px-0.5 cursor-pointer">
+                                                        <Icon icon="mdi:dots-vertical" class="text-xs" />
+                                                    </span>
+                                                </template>
+
+                                                <template #content>
+                                                    <div class="select-none">
+
+                                                        <div v-if="['fallida'].includes(inv.estado)"
+                                                            class="px-4 py-2 cursor-pointer hover:bg-base-100"
+                                                            @click="reenviarInvitacion(inv)">
+                                                            Reintentar</div>
+                                                        <!-- tienen que haber pasado al menos dos horas para reenviar -->
+                                                        <div v-else-if="inv.estado=='cancelada' || (['enviada', 'declinada', 'caducada'].includes(inv.estado) && (new Date() - new Date(inv.sent_at||inv.created_at)) > 6291021)"
+                                                            class="px-4 py-2 cursor-pointer hover:bg-base-100"
+                                                            @click="reenviarInvitacion(inv)">
+                                                            Reenviar
+                                                        </div>
+                                                        <div v-else-if="inv.estado == 'registro' && (new Date() - new Date(inv.sent_at||inv.created_at)) > 6291021"
+                                                            class="px-4 py-2 cursor-pointer hover:bg-base-100"
+                                                            @click="reenviarInvitacion(inv)">
+                                                            Reenviar
+                                                        </div>
+                                                        <div v-if="inv.estado != 'cancelada'"
+                                                            class="px-4 py-2 cursor-pointer hover:bg-base-100"
+                                                            @click="cancelarInvitacion(inv)">Cancelar</div>
+                                                        <div v-else="inv.estado=='cancelada'"
+                                                            class="px-4 py-2 cursor-pointer hover:bg-base-100"
+                                                            @click="eliminarInvitacion(inv)">Eliminar</div>
+
+                                                    </div>
+                                                </template>
+                                            </Dropdown>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </tab>
 
                 </tabs>
@@ -194,13 +228,16 @@ const invitando = ref(false)
 
 
 const statusMap = {
-    fallida: {label: 'Fallida', emoji: '❌'},
-    pendiente: {label:'Enviando', emoji: '…'},
-    enviada: {label:'Entregada', icon: 'ph:mailbox-duotone',},
-    registro: {label:'Registrándose', icon: 'ph:pencil-simple-line-duotone', class: 'text-green-500', title:'El usuario aceptó y ahora está creando su cuenta'},
-    caducada: {label:'Caducada', icon: 'ph:calendar-x-duotone', class: 'opacity-75'},
-    aceptada: {label: 'Aceptada', emoji: '✅', class: 'text-green-500'},
-    declinada: {label: 'Rechazada', emoji: '🙅‍♂️', class: 'text-red-500'},
+    fallida: { label: 'Fallida', emoji: '❌' },
+    pendiente: { label: 'En cola', emoji: '🕰️', title: 'El servidor ha encolado el envío' },
+    enviada: { label: 'Entregada', emoji: '📬', },
+    registro: { label: 'Registrándose', emoji: '✍️', class: 'text-green-500', title: 'El usuario aceptó y ahora está creando su cuenta' },
+    caducada: { label: 'Caducada', emoji: '💀', class: 'opacity-75' },
+    aceptada: { label: 'Aceptada', emoji: '✅', class: 'text-green-500' },
+    declinada: { label: 'Rechazada', emoji: '🙅‍♂️', class: 'text-red-500' },
+    cancelada: { label: 'Cancelada', emoji: '🗑️', class: 'opacity-50' },
+    reintentando: { label: 'Reintentando', emoji: '📨' },
+    reenviando: { label: 'Reenviando', emoji: '📨' },
 }
 
 
@@ -244,12 +281,24 @@ const usuariosParaInvitar = computed(() => {
 })
 
 const invitaciones = ref([])
+const estadisticas = computed(() => {
+    const r = []
+    Object.entries(statusMap).forEach(([k, v]) => {
+        if (!['aceptada', 'reintentando', 'reenviando'].includes(k)) {
+            const total = invitaciones.value.filter(i => i.estado == k).length
+            if (total)
+                r.push({ estado: k, total, label: statusMap[k].label, emoji: statusMap[k].emoji })
+        }
+    })
+    return r
+})
+
 function cargarInvitaciones() {
     axios.get(route('equipo.invitaciones', props.equipo.id))
         .then(
             response => {
                 invitaciones.value = response.data.invitaciones
-                console.log(response.data)
+                console.log('invitaciones:', response.data)
             }
         )
 }
@@ -270,7 +319,7 @@ function removerInvitado(user) {
 
 
 function mandado(num) {
-    return num == 1 ? 'Se ha mandado' : 'Se han mandado'
+    return num == 1 ? 'Se ha procesado' : 'Se han procesado'
 }
 
 function invitacionesPlural(num) {
@@ -338,7 +387,7 @@ function reenviarInvitacion(invitacion) {
     invitacion.estado = invitacion.estado == 'fallida' ? 'reintentando' : 'reenviando'
     axios.get(route('invitacion.reenviar', invitacion.id))
         .then(() => {
-            invitacion.estado = estadoPrevio == 'registro' ? 'registro' : 'enviada'
+            invitacion.estado = estadoPrevio == 'registro' ? 'registro' : 'pendiente'
             invitacion.sent_at = Date()
         })
         .catch(error => {
@@ -353,5 +402,47 @@ function reenviarInvitacion(invitacion) {
             // console.error(response);
             invitacion.estado = 'fallida'
         });
+}
+
+function cancelarInvitacion(invitacion) {
+    if (confirm("Esto cancelará la invitación. ¿Deseas continuar?")) {
+        axios.get(route('invitacion.cancelar', invitacion.id))
+            .then(() => {
+                invitacion.estado = 'cancelada'
+            })
+            .catch(error => {
+                console.error(error)
+                // Manejar cualquier error de la solicitud
+                switch (error.response?.status) {
+                    case 403: alert("No estás autorizado"); break;
+                    case 404:
+                    case 410: alert("Error interno. El equipo no existe"); break;
+                    default: alert("Hubo un error, no se pudo cancelar la invitación.")
+                }
+                // console.error(response);
+                invitacion.estado = 'fallida'
+            });
+    }
+}
+
+
+function eliminarInvitacion(invitacion) {
+    if (confirm("Esto eliminará la invitación. ¿Deseas continuar?")) {
+        axios.delete(route('invitacion.eliminar', invitacion.id))
+            .then(() => {
+                invitacion.estado = 'eliminada'
+            })
+            .catch(error => {
+                console.error(error)
+                // Manejar cualquier error de la solicitud
+                switch (error.response?.status) {
+                    case 403: alert("No estás autorizado"); break;
+                    case 404:
+                    case 410: alert("Error interno. El equipo no existe"); break;
+                    default: alert("Hubo un error, no se pudo eliminar la invitación.")
+                }
+                // console.error(response);
+            });
+    }
 }
 </script>

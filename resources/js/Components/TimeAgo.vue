@@ -1,84 +1,101 @@
 <template>
     <span :title="formattedDate" class="timeago" @click="modoAgo = !modoAgo">
-      {{ modoAgo ? timeAgo : formattedDate }}
+        {{ modoAgo ? timeAgo : formattedDate }}
     </span>
-  </template>
+</template>
 
-  <script setup>
-  import { ref, computed } from 'vue';
+<script setup>
+import { ref, computed } from 'vue';
 
-  const props = defineProps({
+const props = defineProps({
     date: [String, Number, Date],
     includeTime: { type: Boolean, default: true },
     short: { type: Boolean, default: false },
-  });
+});
 
-  const timeAgo = ref('');
-  const modoAgo = ref(true);
+const timeAgo = ref('');
+const modoAgo = ref(true);
 
-  const formattedDate = computed(() => {
+const formattedDate = computed(() => {
     if (!props.date) {
-      return '';
+        return '';
     }
 
     let fechaPublicacion;
+    const zonaHorariaMadrid = 'Europe/Madrid';
+    const zonaHorariaLocal = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     if (typeof props.date === 'number') {
-      // Si es un timestamp numérico, asumimos que está en segundos
-      fechaPublicacion = new Date(props.date * 1000);
+        // Si es un timestamp numérico, asumimos que está en segundos y en la zona horaria de Madrid
+        fechaPublicacion = new Date(props.date * 1000);
     } else if (typeof props.date === 'string') {
-      // Si es una cadena, la parseamos directamente
-      fechaPublicacion = new Date(props.date);
+        // Si es una cadena, la parseamos asumiendo que está en la zona horaria de Madrid
+        fechaPublicacion = new Date(props.date);
     } else if (props.date instanceof Date) {
-      // Si ya es un objeto Date, lo usamos directamente
-      fechaPublicacion = props.date;
+        // Si ya es un objeto Date, lo usamos directamente
+        fechaPublicacion = new Date(props.date);
     } else {
-      // Si no es ninguno de los tipos esperados, retornamos una cadena vacía
-      return '';
+        // Si no es ninguno de los tipos esperados, retornamos una cadena vacía
+        return '';
     }
+
+    // Convertir la fecha de publicación a la zona horaria local
+    const offsetMadrid = getTimezoneOffset(zonaHorariaMadrid, fechaPublicacion);
+    const offsetLocal = getTimezoneOffset(zonaHorariaLocal, fechaPublicacion);
+    const diferenciaOffset = offsetLocal - offsetMadrid;
+    const fechaPublicacionLocal = new Date(fechaPublicacion.getTime() - diferenciaOffset * 60000);
 
     const fechaActual = new Date();
 
     // Formatear la fecha según la zona horaria del usuario
     const options = {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: props.includeTime ? 'numeric' : undefined,
-      minute: props.includeTime ? 'numeric' : undefined,
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: props.includeTime ? 'numeric' : undefined,
+        minute: props.includeTime ? 'numeric' : undefined,
+        timeZone: zonaHorariaLocal,
     };
 
-    const title = fechaPublicacion.toLocaleString('es-ES', options);
+    const title = fechaPublicacionLocal.toLocaleString('es-ES', options);
 
-    const diferencia = Math.floor((fechaActual - fechaPublicacion) / 1000);
+    // Calcular la diferencia en segundos
+    const segundos = Math.floor((fechaActual - fechaPublicacionLocal) / 1000);
+
+    // Función auxiliar para obtener el offset de una zona horaria
+    function getTimezoneOffset(timeZone, date = new Date()) {
+        const tz = date.toLocaleString('en', { timeZone, timeStyle: 'long' }).split(' ').slice(-1)[0];
+        const dateInTz = new Date(date.toLocaleString('en', { timeZone }));
+        const offsetInMinutes = (date.getTime() - dateInTz.getTime()) / 60000;
+        return offsetInMinutes;
+    }
 
     const calcularTimeAgo = () => {
-      if (diferencia < 60) return 'ahora mismo';
-      if (diferencia < 3600) return `hace ${Math.floor(diferencia / 60)} ${pluralize('minuto', Math.floor(diferencia / 60))}`;
-      if (diferencia < 86400) return `hace ${Math.floor(diferencia / 3600)} ${pluralize('hora', Math.floor(diferencia / 3600))}`;
-      if (diferencia < 604800) return `hace ${Math.floor(diferencia / 86400)} ${pluralize('día', Math.floor(diferencia / 86400))}`;
-      if (diferencia < 2592000) return `hace ${Math.floor(diferencia / 604800)} ${pluralize('semana', Math.floor(diferencia / 604800))}`;
-      if (diferencia < 31536000) return `hace ${Math.floor(diferencia / 2592000)} ${pluralize('mes', Math.floor(diferencia / 2592000))}`;
-      return `hace ${Math.floor(diferencia / 31536000)} ${pluralize('año', Math.floor(diferencia / 31536000))}`;
+        if (segundos < 60) return 'ahora mismo';
+        if (segundos < 3600) return `hace ${Math.floor(segundos / 60)} ${pluralize('minuto', Math.floor(segundos / 60))}`;
+        if (segundos < 86400) return `hace ${Math.floor(segundos / 3600)} ${pluralize('hora', Math.floor(segundos / 3600))}`;
+        if (segundos < 604800) return `hace ${Math.floor(segundos / 86400)} ${pluralize('día', Math.floor(segundos / 86400))}`;
+        if (segundos < 2592000) return `hace ${Math.floor(segundos / 604800)} ${pluralize('semana', Math.floor(segundos / 604800))}`;
+        if (segundos < 31536000) return `hace ${Math.floor(segundos / 2592000)} ${pluralize('mes', Math.floor(segundos / 2592000))}`;
+        return `hace ${Math.floor(segundos / 31536000)} ${pluralize('año', Math.floor(segundos / 31536000))}`;
     };
 
     const calcularTimeAgoCorto = () => {
-      if (diferencia < 60) return 'ahora';
-      if (diferencia < 3600) return `${Math.floor(diferencia / 60)}m`;
-      if (diferencia < 86400) return `${Math.floor(diferencia / 3600)}h`;
-      if (diferencia < 604800) return `${Math.floor(diferencia / 86400)}d`;
-      if (diferencia < 2592000) return `${Math.floor(diferencia / 604800)}sem`;
-      if (diferencia < 31536000) return `${Math.floor(diferencia / 2592000)}mes`;
-      return `${Math.floor(diferencia / 31536000)}a`;
+        if (segundos < 60) return 'ahora';
+        if (segundos < 3600) return `${Math.floor(segundos / 60)}m`;
+        if (segundos < 86400) return `${Math.floor(segundos / 3600)}h`;
+        if (segundos < 604800) return `${Math.floor(segundos / 86400)}d`;
+        if (segundos < 2592000) return `${Math.floor(segundos / 604800)}sem`;
+        if (segundos < 31536000) return `${Math.floor(segundos / 2592000)}mes`;
+        return `${Math.floor(segundos / 31536000)}a`;
     };
 
     timeAgo.value = props.short ? calcularTimeAgoCorto() : calcularTimeAgo();
 
     return title;
-  });
+});
 
-  function pluralize(word, count) {
+function pluralize(word, count) {
     return count === 1 ? word : word.endsWith('s') ? `${word}es` : `${word}s`;
-  }
-  </script>
+}
+</script>

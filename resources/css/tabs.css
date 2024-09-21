@@ -103,7 +103,7 @@ border-color: #222;
 }
 
 .tabs-component-panels {
-    padding: 4em 0;
+    padding: 2em 0;
     position: relative;
     z-index: 1;
 }
@@ -114,7 +114,7 @@ border-color: #222;
         border: solid 1px #ddd;
         border-radius: 0 6px 6px 6px;
         box-shadow: 0 0 10px rgba(0, 0, 0, .05);
-        padding: 4em 2em;
+        padding: 3em 2em;
     }
 
     .dark .tabs-component-panels {

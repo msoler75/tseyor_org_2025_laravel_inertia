@@ -31,18 +31,23 @@
                 </Card>
 
                 <Card v-if="!equipo.ocultarMiembros">
-                    <h3>Coordinadores</h3>
+                    <h3 class="flex justify-between items-center">
+                        <span>Miembros</span>
+                        <div v-if="equipo.miembros" class="text-base flex gap-2 items-center self-end justify-center">
+                            <Icon icon="ph:user-duotone" />
+                            {{ equipo.miembros.length }}
+                        </div>
+                    </h3>
 
-                    <Users v-if="equipo" :users="coordinadores" :count="coordinadores.length" />
+                    <Users v-if="equipo" :users="equipo.miembros.slice(0, 17)" :count="equipo.miembros.length" />
                 </Card>
-
 
                 <Card v-if="ultimosInformes.length || soyCoordinador || puedoAdministrar" class="gap-3">
                     <div class="flex items-center justify-between mb-3 gap-5">
                         <h3 class="mb-0">Últimos Informes</h3>
                         <Link v-if="ultimosInformes.length" :href="route('equipo.informes', equipo.slug)"
                             class="text-xs ml-auto flex items-center gap-2 hover:underline">Ver todos</Link>
-                        <a v-if="soyCoordinador || puedoAdministrar" href="/admin/informe/create"
+                        <a v-if="soyCoordinador || puedoAdministrar" :href="'/admin/informe/create?equipo_id='+equipo.id"
                             class="btn btn-sm text-xl flex items-center" title="Crear informe">+</a>
                     </div>
                     <div v-if="!ultimosInformes.length">
@@ -95,15 +100,8 @@
                 </Card>
 
                 <Card v-if="!equipo.ocultarMiembros">
-                    <h3 class="flex justify-between items-center">
-                        <span>Miembros</span>
-                        <div v-if="equipo.miembros" class="text-base flex gap-2 items-center self-end justify-center">
-                            <Icon icon="ph:user-duotone" />
-                            {{ equipo.miembros.length }}
-                        </div>
-                    </h3>
-
-                    <Users v-if="equipo" :users="equipo.miembros.slice(0, 17)" :count="equipo.miembros.length" />
+                    <h3>Coordinadores</h3>
+                    <Users v-if="equipo" :users="coordinadores" :count="coordinadores.length" />
                 </Card>
 
                 <Card v-if="equipo.informacion">

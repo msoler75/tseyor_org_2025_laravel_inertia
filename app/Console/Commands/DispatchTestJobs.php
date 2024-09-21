@@ -19,7 +19,7 @@ class DispatchTestJobs extends Command
      *
      * @var string
      */
-    protected $description = 'Encola 5 instancias del trabajo de prueba TestJob';
+    protected $description = 'Encola varias instancias del trabajo de prueba TestJob';
 
     /**
      * Execute the console command.
@@ -28,7 +28,7 @@ class DispatchTestJobs extends Command
      */
     public function handle()
     {
-        for ($i = 0; $i < 15; $i++) {
+        for ($i = 0; $i < 1; $i++) {
             TestJob::dispatch();
             $this->info("Trabajo de prueba $i encolado.");
         }

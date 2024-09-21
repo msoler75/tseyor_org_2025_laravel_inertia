@@ -36,10 +36,12 @@
             <div v-if="informe.archivos" class="max-w-[65ch] mx-auto">
                 <div class="font-bold text-neutral text-sm mb-4">Archivos adjuntos:</div>
                 <div class="flex flex-wrap gap-4">
-                    <a download v-for="archivo, index of parseFiles(informe.archivos)" :key="index"
-                        class="btn btn-xs btn-primary text-xs gap-3" title="archivo.title" :href="archivo.src">
+                    <a download v-for="archivo, index of parseFiles(informe.archivos)" :key="index" class="bg-neutral text-xs flex p-1 rounded btn-primary
+                        max-w-full gap-2 flex-nowrap" title="archivo.title" :href="archivo.src">
                         <Icon icon="ph:download-duotone" />
-                        {{ archivo.filename }}
+                        <div class="break-all">
+                            {{ archivo.filename }}
+                        </div>
                     </a>
                 </div>
             </div>

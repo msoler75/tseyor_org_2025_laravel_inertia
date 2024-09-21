@@ -64,15 +64,15 @@ class JobCrudController extends CrudController
             'label' => 'data',
         ]);
         CRUD::addColumn([
-            'name' => 'created_at',
+            'name' => 'available_at',
             'type' => 'datetime',
-            'label' => 'Created At',
+            'label' => 'Available At',
         ]);
 
         // Optionally, you can define filters, buttons, etc.
-        
+
         CRUD::addButtonFromView('top', 'detect_audios_to_process', 'detect_audios_to_process', 'start');
-        
+
         CRUD::addButtonFromView('top', 'worker_buttons', 'worker_buttons', 'end');
     }
 

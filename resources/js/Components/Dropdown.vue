@@ -42,7 +42,7 @@
     },
     contentClasses: {
       type: Array,
-      default: () => ['py-1', 'bg-base-100 dark:bg-gray-700'],
+      default: () => ['py-1', 'bg-slate-100 dark:bg-slate-700'],
     },
   });
 

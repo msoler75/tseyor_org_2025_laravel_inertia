@@ -62,6 +62,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
             // usuario nuevo, hemos de verificar si aceptó alguna invitación a equipo
             $invitaciones =  Invitacion::where('email', $user->email)
+                ->whereNotIn('estado', ['caducada', 'fallida', 'declinada'])
                 ->whereNotNull('accepted_at')->get();
 
             \Log::info("USUARIO CREADO: invitaciones:", ["invitaciones"=>$invitaciones]);

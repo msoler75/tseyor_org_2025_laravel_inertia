@@ -63,11 +63,11 @@ class ContenidosController extends Controller
 
         $collections = $request->input('collections');
 
-        $buscarSinAcentos = StrEx::removerAcentosStrtr($buscar);
+        $buscarSinAcentos = strtolower(StrEx::removerAcentosStrtr($buscar));
 
         // se puede utilizar un comando al comienzo de la búsqueda para indicar en qué colección buscar
         // ejemplo: com 33, buscaría comunicados con 33
-        $comandos = ['com|comunicado' => 'comunicados', 'libro' => 'libros', 'blog' => 'entradas', 'articulo' => 'noticias,entradas', 'evento' => 'eventos', 'noticia' => 'noticias', 'informe' => 'informes', 'normativa' => 'normativas', 'audio' => 'audios', 'meditacion' => 'meditaciones', 'glosario' => 'terminos', 'termino' => 'terminos'];
+        $comandos = ['com\.?|comunicado' => 'comunicados', 'libro' => 'libros', 'blog' => 'entradas', 'articulo' => 'noticias,entradas', 'evento' => 'eventos', 'noticia' => 'noticias', 'informe' => 'informes', 'normativa' => 'normativas', 'audio' => 'audios', 'meditacion' => 'meditaciones', 'glosario' => 'terminos', 'termino' => 'terminos'];
 
         foreach ($comandos as $key => $value) {
             // si $buscar empieza por 'blog' entonces solo buscamos en blogs

@@ -202,4 +202,17 @@ return [
     'umask' => "0022",
 
 
+
+    /**
+     * Invitaciones a los equipos
+     */
+    'invitaciones' =>  [
+        'max_por_hora' => 50, // Número máximo de invitaciones por hora. Este parámetro es globa, afecta a todos los equipos.
+                          // Por ejemplo, si son 50 invitaciones, y un equipo A hace 40 invitaciones, en el mismo momento el equipo B solo podrá realizar 10.
+        'minutos_espera' => 20, // minutos que espera a reintentar el envío si es que superó el límite
+        'dias_caducidad' => 30, // al pasar ese tiempo, la invitación caduca
+        'mostrar_dias_antiguedad' => 90, // muestras las invitaciones de los últimos 90 días
+    ]
+
+
 ];
