@@ -1,7 +1,12 @@
 USUARIO
 -En página de usuarios, la imagen de avatar se carga completa (y pesada)
+-En página de equipos, algunos usuarios no muestran bien su imagen
 -Tal vez procurar un espacio personal de imágenes del usuario
 
+
+INVITACIONES
+-reenviar invitacion cuando está en cola, ESTÁ OK? verificar que no se reencole innecesariamente y lleguen dos correos
+-cancelar invitacion, y luego reenviarla, está ok?
 
 PAGINA UTG
 -Info de departamentos

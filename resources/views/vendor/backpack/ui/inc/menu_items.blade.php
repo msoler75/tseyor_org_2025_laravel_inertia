@@ -2,11 +2,12 @@
 
 @canany(['administrar contenidos', 'administrar social', 'administrar directorio', 'administrar legal', 'administrar experiencias', 'administrar equipos', 'administrar archivos', 'administrar usuarios'])
 <li class="nav-item"><a class="nav-link" href="{{ backpack_url('dashboard') }}"><i class="la la-home nav-icon"></i>
-        {{ trans('backpack::base.dashboard') }} de administración</a></li>
-@endcanany
+    {{ trans('backpack::base.dashboard') }} de administración</a></li>
+    @endcanany
 
-@canany(['administrar contenidos', 'administrar social', 'administrar directorio', 'administrar legal', 'administrar experiencias', 'administrar equipos', 'administrar archivos', 'administrar usuarios', 'coordinar equipo'])
+    @canany(['administrar contenidos', 'administrar social', 'administrar directorio', 'administrar legal', 'administrar experiencias', 'administrar equipos', 'administrar archivos', 'administrar usuarios', 'coordinar equipo'])
 
+<li class="nav-item" ><a href="/" class="nav-link"><i class="la la-angle-double-left"></i> Ir a la web</a></li>
 
 @can('administrar contenidos')
 <x-backpack::menu-dropdown title="Contenidos" icon="la la-tree">
@@ -60,6 +61,7 @@
 <x-backpack::menu-dropdown title="Gestión de Equipos" icon="la la-users">
     <x-backpack::menu-dropdown-item title="Equipos" icon="la la-users" :link="backpack_url('equipo')" />
     <x-backpack::menu-dropdown-item title="Solicitudes" icon="la la-hand-paper" :link="backpack_url('solicitud')" />
+    <x-backpack::menu-dropdown-item title="Invitaciones" icon="la la-hand-paper" :link="backpack_url('solicitud')" />
     <x-backpack::menu-dropdown-item title="Informes" icon="la la-file-invoice" :link="backpack_url('informe')" />
 
 </x-backpack::menu-dropdown>

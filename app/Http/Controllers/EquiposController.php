@@ -465,33 +465,39 @@ class EquiposController extends Controller
      */
     public function invitations($idEquipo)
     {
-        // Marcar invitaciones caducadas (2 meses)
+        // Marcar invitaciones caducadas (1 mes)
+        $diasCaducidad = config('app.invitaciones.dias_caducidad', 30);
+        $diasAntiguedad = config('app.invitaciones.mostrar_dias_antiguedad', 90);
 
         Invitacion::where('equipo_id', $idEquipo)
             ->whereNull('accepted_at')
             ->whereNull('declined_at')
-            ->where('sent_at', '<=', Carbon::now()->subMonth())
+            ->where(function ($query) use ($diasCaducidad) {
+                $query->whereRaw('COALESCE(sent_at, created_at) <= ?', [Carbon::now()->subDays($diasCaducidad)]);
+            })
+            ->whereNot('estado', 'cancelada')
             ->update(['declined_at' => Carbon::now(), 'estado' => 'caducada']);
 
         Invitacion::where('equipo_id', $idEquipo)
             ->whereIn('estado', ['pendiente', 'registro'])
-            ->where('sent_at', '<=', Carbon::now()->subMonth())
+            ->where(function ($query) use ($diasCaducidad) {
+                $query->whereRaw('COALESCE(sent_at, created_at) <= ?', [Carbon::now()->subDays($diasCaducidad)]);
+            })
             ->update(['declined_at' => Carbon::now(), 'estado' => 'caducada']);
 
         // seleccionamos invitaciones a este equipo que están pendientes
         // 3 meses atrás máximo
         $invitaciones = Invitacion::where('equipo_id', $idEquipo)
-            ->where('sent_at', '>=', Carbon::now()->subMonths(3))
-            ->whereIn('estado', ['pendiente', 'enviada', 'fallida', 'registro', 'declinada', 'caducada'])
-            ->with('user')
-            ->orderBy('sent_at', 'desc')
-            ->take(200)
+        ->where(function ($query) use ($diasAntiguedad) {
+            $query->whereRaw('COALESCE(sent_at, created_at) >= ?', [Carbon::now()->subDays($diasAntiguedad)]);
+        })
+        ->whereNotIn('estado', ['aceptada'])
+        ->with('user')
+        ->orderByRaw('COALESCE(sent_at, created_at) DESC')
+        // ->take(200)
+        ->get();
 
             //
-            //->toSql();
-            //dd($invitaciones);
-
-            ->get(); // máximo 150
         return response()->json(compact('invitaciones'), 200);
     }
 
@@ -522,6 +528,8 @@ class EquiposController extends Controller
         $invitados = [];
         $noEncontrados = [];
 
+        $diasAntiguedad = config('app.invitaciones.mostrar_dias_antiguedad', 90);
+
         // mandamos invitaciones a los correos proporcionados
         foreach ($validatedData['correos'] as $correo) {
             // Verificar si el correo ya está asociado al equipo
@@ -530,10 +538,11 @@ class EquiposController extends Controller
                 continue;
             }
 
-            // Verificar si ya se envió una invitación a ese correo recientemente (ultimos dos días)
+            // Verificar si ya se envió una invitación a ese correo
+            // dentro de los días de antiguedad
             if (
                 Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)
-                ->whereDate('sent_at', '>=', Carbon::now()->subDays(2))
+                ->whereRaw('COALESCE(sent_at, created_at) >= ?', [Carbon::now()->subDays($diasAntiguedad)])
                 ->first()
             ) {
                 $invitacionReciente[] = $correo;
@@ -590,19 +599,19 @@ class EquiposController extends Controller
             }
 
             // Verificar si ya se envió una invitación a ese correo
+            // dentro de los días de antiguedad
             if (Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)
-                ->whereDate('sent_at', '>=', Carbon::now()->subDays(2))
-                ->first()
+            ->whereRaw('COALESCE(sent_at, created_at) >= ?', [Carbon::now()->subDays($diasAntiguedad)])
+            ->first()
             ) {
                 $invitacionReciente[] = $id;
                 continue;
             }
 
 
-
             // Verificar si ya se envió una invitación a ese usuario
             if (Invitacion::where('equipo_id', $idEquipo)
-                ->whereDate('sent_at', '>=', Carbon::now()->subDays(2))
+                ->whereRaw('COALESCE(sent_at, created_at) >= ?', [Carbon::now()->subDays($diasAntiguedad)])
                 ->where('user_id', $id)->first()
             ) {
                 $invitacionReciente[] = $id;
@@ -638,7 +647,14 @@ class EquiposController extends Controller
         // Crear la invitación en la base de datos
         $invitacion = Invitacion::findOrFail($id);
 
-        $invitacion->update(['accepted_at'=>null, 'declined_at'=>null]);
+        $puedoAdministrar = Gate::allows('administrar equipos');
+
+        // Verificar si el usuario es un coordinador del equipo
+        if (!$puedoAdministrar && Gate::denies('esCoordinador', $invitacion->equipo)) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        $invitacion->update(['estado'=>'pendiente', 'accepted_at'=>null, 'declined_at'=>null]);
 
         // $invitacion->update(['pendiente']);
 
@@ -650,6 +666,44 @@ class EquiposController extends Controller
         }
 
         return response()->json(['message' => 'Invitación reenviada.'], 200);
+    }
+
+
+    public function cancelInvitation($id)
+    {
+        // Crear la invitación en la base de datos
+        $invitacion = Invitacion::findOrFail($id);
+
+        $puedoAdministrar = Gate::allows('administrar equipos');
+
+        // Verificar si el usuario es un coordinador del equipo
+        if (!$puedoAdministrar && Gate::denies('esCoordinador', $invitacion->equipo)) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        $invitacion->update(['estado'=>'cancelada']);
+
+        return response()->json(['message' => 'Invitación cancelada.'], 200);
+    }
+
+    /**
+     * BORRA una invitación
+     */
+    public function deleteInvitation($id)
+    {
+        // Crear la invitación en la base de datos
+        $invitacion = Invitacion::findOrFail($id);
+
+        $puedoAdministrar = Gate::allows('administrar equipos');
+
+        // Verificar si el usuario es un coordinador del equipo
+        if (!$puedoAdministrar && Gate::denies('esCoordinador', $invitacion->equipo)) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        $invitacion->delete();
+
+        return response()->json(['message' => 'Invitación eliminada.'], 200);
     }
 
 
@@ -670,30 +724,37 @@ class EquiposController extends Controller
         $urlDestino = $invitacion->equipo->oculto ? "/equipos" : $urlEquipo;
 
         // verificamos si el destinatario tiene su cuenta creada
-        $usuario = User::where('email', $invitacion->email)->first();
+        $usuarioInvitado = User::where('email', $invitacion->email)->first();
 
         // Si el usuario no tiene una cuenta, redirigirlo a la página de registro
         $registroUrl = URL::signedRoute('register', ['email' => $invitacion->email]);
-
 
         // miramos el tiempo trascurrido desde la invitacion->sent_at
         // la invitación caduca a los 30 días
         $daysElapsed = Carbon::now()->diffInDays($invitacion->sent_at);
 
+        $diasValidez = config('app.invitaciones.dias_caducidad', 30);
+
+        // Comprobamos si ha iniciado sesión con otra cuenta
+        $user = auth()->user();
+        if($user && $user->email != $invitacion->email) {
+            return redirect($urlDestino)->with('message', 'Para aceptar la invitación, debe cerrar la sesión actual.');
+        }
+
         // el usuario ya había aceptado y está pulsando otra vez el enlace, pero tal vez aun no ha creado su cuenta
-        if ($daysElapsed <= 30 && $invitacion->accepted_at && !$invitacion->user_id && !$usuario) {
+        if ($daysElapsed <= $diasValidez && $invitacion->accepted_at && !$invitacion->user_id && !$usuarioInvitado) {
             // el usuario invitado aun no ha creado su cuenta
             return redirect($registroUrl)->with('message', 'Regístrese para aceptar la invitación.');
         }
 
-        // Verificar si la invitación ya fue aceptada o declinada previamente
-        if ($invitacion->accepted_at || $invitacion->declined_at) {
+        // Verificar si la invitación ya fue aceptada o declinada previamente, o si ha caducado
+        if ($invitacion->accepted_at || $invitacion->declined_at || $invitacion->estado=='caducada' || $invitacion->estado=='cancelada' || $daysElapsed > $diasValidez) {
             // en cualquier otro caso (ya fue gestionada la invitación, o ha caducado), el enlace está caducado
             return redirect($urlDestino)->with('message', 'La invitación ha caducado o ya ha sido procesada.');
         }
 
         // El usuario ya aceptó la invitación, por tanto ya marcamos la invitación como aceptada
-        $invitacion->update(['estado' => $usuario ? 'aceptada' : 'registro', 'accepted_at' => now()]);
+        $invitacion->update(['estado' => $usuarioInvitado ? 'aceptada' : 'registro', 'accepted_at' => now()]);
 
         // Esto implica que cuando el usuario se registre, habrá que verificar si tiene invitaciones a equipos que haya aceptado
 
@@ -711,11 +772,13 @@ class EquiposController extends Controller
         }
 
 
-        if ($usuario) {
+        if ($usuarioInvitado) {
             // Asociar al usuario al equipo y marcar la invitación como aceptada
-            $usuario->equipos()->attach($invitacion->equipo_id);
+            $usuarioInvitado->equipos()->attach($invitacion->equipo_id);
 
-            $mensaje = "Invitación aceptada. Ya eres parte del equipo '{$invitacion->equipo->nombre}'.";
+            $mensaje = "Invitación aceptada. ¡Ya eres parte del equipo '{$invitacion->equipo->nombre}'!";
+
+            if(!$user) $mensaje.= " Recuerda iniciar sesión con tu cuenta.";
 
             $user = auth()->user();
 

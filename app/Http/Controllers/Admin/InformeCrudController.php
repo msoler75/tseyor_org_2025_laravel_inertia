@@ -126,7 +126,7 @@ class InformeCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => [ \Illuminate\Validation\Rule::unique('informes', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [\Illuminate\Validation\Rule::unique('informes', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'max:400',
             // 'audios' => ValidUploadMultiple::field()->file('max:20000'),
         ]);
@@ -139,7 +139,7 @@ class InformeCrudController extends CrudController
             'name' => 'categoria',
             'label' => "Categoría",
             'type' => 'select_from_array',
-            'options' => ['Informe' => 'Informe', 'Orden del día' => 'Orden del día', 'Acta' => 'Acta', 'Anexo' => 'Anexo', 'Acuerdo' => 'Acuerdo', 'Otros'=>'Otros'],
+            'options' => ['Informe' => 'Informe', 'Orden del día' => 'Orden del día', 'Acta' => 'Acta', 'Anexo' => 'Anexo', 'Acuerdo' => 'Acuerdo', 'Otros' => 'Otros'],
             'allows_null' => false,
             'default' => 'General',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
@@ -149,39 +149,42 @@ class InformeCrudController extends CrudController
             ],
         ])->after('titulo');
 
+        // obtenemos de la URL si existe el parametro equipo_id
+        $equipo_id = request()->query('equipo_id');
 
-        if (backpack_user()->can('administrar equipos'))
-        CRUD::field('equipo_id')->type('select')->after('titulo')->wrapper(['class' => 'form-group col-md-3']);
+        $administra_equipos = backpack_user()->can('administrar equipos');
+
+        if ($equipo_id) {
+            $equipo = Equipo::findOrFail($equipo_id);
+            // comprobamos si el usuario actual es coordinador de este equipo
+            if (!$administra_equipos && !backpack_user()->equiposQueCoordina->pluck('id')->contains($equipo_id)) {
+                // denegamos el acceso
+                abort(403);
+            }
+            CRUD::field('equipo_nombre_mostrar')->type('text')->label('Equipo')->value($equipo->nombre)->after('titulo')->attributes(['readonly' => 'readonly'])
+            ->wrapper([
+                'class' => 'form-group col-md-4'
+            ]);
+            CRUD::field('equipo_id')->type('hidden')->value($equipo_id);
+        } else if ($administra_equipos)
+            CRUD::field('equipo_id')->type('select')->after('titulo')->wrapper(['class' => 'form-group col-md-3']);
         else {
-            // obtenemos de la URL si existe el parametro equipo_id
-            $equipo_id = request()->get('equipo_id');
-            if ($equipo_id) {
-                $equipo = Equipo::findOrFail($equipo_id);
-                // comprobamos si el usuario actual es coordinador de este equipo
-                if(!backpack_user()->equiposQueCoordina->pluck('id')->contains($equipo_id)){
-                    // denegamos el acceso
-                    abort(403);
-                }
-                CRUD::field('equipo_nombre_mostrar')->type('text')->label('Equipo')->value($equipo->nombre)->after('titulo')->attributes(['readonly' => 'readonly']);
-                CRUD::field('equipo_id')->type('hidden')->value($equipo_id);
-            }
-            else{
-                $equipos = backpack_user()->equiposQueCoordina;
-                CRUD::field([
-                    // select_from_array
-                    'name' => 'equipo_id',
-                    'label' => "Equipo",
-                    'type' => 'select_from_array',
-                    'options' => array_combine($equipos->pluck( 'id')->toArray(),$equipos->pluck('nombre')->toArray()),
-                    'allows_null' => false,
-                    'wrapper' => [
-                        'class' => 'form-group col-md-3'
-                    ],
-                ])->after('titulo');
-            }
-    }
+            $equipos = backpack_user()->equiposQueCoordina;
+            CRUD::field([
+                // select_from_array
+                'name' => 'equipo_id',
+                'label' => "Equipo",
+                'type' => 'select_from_array',
+                'options' => array_combine($equipos->pluck('id')->toArray(), $equipos->pluck('nombre')->toArray()),
+                'allows_null' => false,
+                'wrapper' => [
+                    'class' => 'form-group col-md-3'
+                ],
+            ])->after('titulo');
+        }
 
-         $folder = $this->getMediaFolder();
+
+        $folder = $this->getMediaFolder();
 
         CRUD::field('descripcion')->type('textarea')->label("Descripción corta (opcional)");
 
@@ -194,7 +197,7 @@ class InformeCrudController extends CrudController
             'view_namespace' => 'dropzone::fields',
             'allow_multiple' => true,
             // https://github.com/jargoud/laravel-backpack-dropzone
-            'hint'=>'Audios de voz (se va a reducir su calidad para ahorrar espacio)',
+            'hint' => 'Audios de voz (se va a reducir su calidad para ahorrar espacio)',
 
             'config' => [
                 // any option from the Javascript library
@@ -231,14 +234,14 @@ class InformeCrudController extends CrudController
     ]); */
 
 
-            CRUD::field([
+        CRUD::field([
             'name' => 'archivos',
             'label' => 'Archivos adjuntos',
             'type' => 'dropzone',
             'view_namespace' => 'dropzone::fields',
             'allow_multiple' => true,
             // https://github.com/jargoud/laravel-backpack-dropzone
-            'hint'=>'Documentos, pdf, word, powerpoint, openoffice, vídeos cortos. Se pueden poner audios mp3 aquí si se quiere conservar su calidad ',
+            'hint' => 'Documentos, pdf, word, powerpoint, openoffice, vídeos cortos. Se pueden poner audios mp3 aquí si se quiere conservar su calidad ',
             'config' => [
                 // any option from the Javascript library
                 // https://github.com/dropzone/dropzone/blob/main/src/options.js
@@ -275,28 +278,26 @@ class InformeCrudController extends CrudController
             Log::info("informe::saved");
 
             // AUDIOS
-            if($informe->audios) {
+            if ($informe->audios) {
                 $año = $informe->created_at->year;
                 $carpetaAudios = "/almacen/medios/informes/audios/{$informe->equipo->slug}/$año/{$informe->id}";
                 Log::info("informe::saved - audios carpeta " . $carpetaAudios);
-                if(TESTAR_CONVERTIDOR_AUDIO3) {
+                if (TESTAR_CONVERTIDOR_AUDIO3) {
                     $p = new ProcesarAudios(Informe::class, $informe->id, $carpetaAudios);
                     $p->handle();
-                }
-                else{
-                    dispatch( new ProcesarAudios(Informe::class, $informe->id, $carpetaAudios))->onQueue('audio_processing');
+                } else {
+                    dispatch(new ProcesarAudios(Informe::class, $informe->id, $carpetaAudios))->onQueue('audio_processing');
                 }
             }
 
             // ARCHIVOS
             // throw new \Exception("hola esto es un error");
-                if($informe->archivos) {
-                    $carpetaArchivos = "$folder/archivos";
-                    Log::info("informe::saved - archivos carpeta " . $carpetaArchivos);
-                    if($informe->guardarArchivos($carpetaArchivos))
-                        $informe->saveQuietly();
-                }
-
+            if ($informe->archivos) {
+                $carpetaArchivos = "$folder/archivos";
+                Log::info("informe::saved - archivos carpeta " . $carpetaArchivos);
+                if ($informe->guardarArchivos($carpetaArchivos))
+                    $informe->saveQuietly();
+            }
         });
     }
 
@@ -319,7 +320,7 @@ class InformeCrudController extends CrudController
 
         if (!backpack_user()->can('administrar equipos')) {
             $informe = $this->crud->getCurrentEntry();
-            if($informe && !backpack_user()->equiposQueCoordina->contains('id', $informe->equipo_id)) {
+            if ($informe && !backpack_user()->equiposQueCoordina->contains('id', $informe->equipo_id)) {
                 $this->crud->denyAccess(['update']);
             }
         }
