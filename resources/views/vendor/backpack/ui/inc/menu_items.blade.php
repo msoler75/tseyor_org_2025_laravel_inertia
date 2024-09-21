@@ -60,9 +60,9 @@
 @can('administrar equipos')
 <x-backpack::menu-dropdown title="Gestión de Equipos" icon="la la-users">
     <x-backpack::menu-dropdown-item title="Equipos" icon="la la-users" :link="backpack_url('equipo')" />
-    <x-backpack::menu-dropdown-item title="Solicitudes" icon="la la-hand-paper" :link="backpack_url('solicitud')" />
-    <x-backpack::menu-dropdown-item title="Invitaciones" icon="la la-hand-paper" :link="backpack_url('solicitud')" />
     <x-backpack::menu-dropdown-item title="Informes" icon="la la-file-invoice" :link="backpack_url('informe')" />
+    <x-backpack::menu-dropdown-item title="Invitaciones" icon="la la-envelope" :link="backpack_url('invitacion')" />
+    <x-backpack::menu-dropdown-item title="Solicitudes" icon="la la-hand-paper" :link="backpack_url('solicitud')" />
 
 </x-backpack::menu-dropdown>
 @else
