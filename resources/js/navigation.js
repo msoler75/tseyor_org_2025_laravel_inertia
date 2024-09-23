@@ -1,4 +1,5 @@
 const APP_PUZLE_URL = "https://puzle.tseyor.org/";
+const APP_MUULAR_URL = "https://muular.tseyor.org/";
 
 export default [
   {

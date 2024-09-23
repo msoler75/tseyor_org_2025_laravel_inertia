@@ -4,7 +4,7 @@
             <Back>Equipos</Back>
             <EquipoMembresia class="hidden sm:flex mx-auto" :equipo-id="equipo.id" v-model="solicitud"
                 :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"
-                :permitirSolicitudes="!equipo.ocultarSolicitudes" @updated="reloadEquipo" />
+                :permitirSolicitudes="!equipo.oculto" @updated="reloadEquipo" />
             <AdminLinks modelo="equipo" necesita="administrar equipos" :contenido="equipo" />
         </div>
 
@@ -18,7 +18,7 @@
 
                 <EquipoMembresia class="sm:hidden mx-auto" :equipo-id="equipo.id" v-model="solicitud"
                     :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"
-                    :permitirSolicitudes="!equipo.ocultarSolicitudes" @updated="reloadEquipo" />
+                    :permitirSolicitudes="!equipo.oculto" @updated="reloadEquipo" />
 
                 <Card v-if="equipo.anuncio" class="border border-orange-400 justify-center items-center">
                     <div class="prose" v-html="equipo.anuncio" />

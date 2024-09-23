@@ -1,12 +1,13 @@
 <template>
 
-<component :is="link?User:'div'" v-if="!image || image.match(/^https:\/\/ui-avatars.com\/api\/\?name=/)" :user="user" class="font-normal">
-    <div class="avatar placeholder">
-        <div class="bg-neutral text-neutral-content rounded-full" :class="big?'w-32':'w-12'">
-            <span :class="big?'text-4xl':''">{{ initials(name) }}</span>
+    <component :is="link ? User : 'div'" v-if="!image || image.match(/^https:\/\/ui-avatars.com\/api\/\?name=/)"
+        :user="user" class="font-normal">
+        <div class="avatar placeholder">
+            <div class="bg-neutral text-neutral-content rounded-full" :class="big ? 'w-32' : 'w-12'">
+                <span :class="big ? 'text-4xl' : ''">{{ initials(name) }}</span>
+            </div>
         </div>
-    </div>
-</component>
+    </component>
 
     <div v-else class="avatar" :title="name">
         <div class="rounded-full" :class="imageClass">

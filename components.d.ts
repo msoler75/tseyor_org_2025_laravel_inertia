@@ -44,6 +44,7 @@ declare module 'vue' {
     ContentMain: typeof import('./resources/js/Components/ContentMain.vue')['default']
     ContentNode: typeof import('./resources/js/Components/ContentNode.vue')['default']
     Counter: typeof import('./resources/js/Components/Counter.vue')['default']
+    CustomBackgroundWrapper: typeof import('./resources/js/Components/CustomBackgroundWrapper.vue')['default']
     DangerButton: typeof import('./resources/js/Components/DangerButton.vue')['default']
     DialogModal: typeof import('./resources/js/Components/DialogModal.vue')['default']
     DiskIcon: typeof import('./resources/js/Components/FolderExplorer/DiskIcon.vue')['default']
