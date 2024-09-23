@@ -122,7 +122,7 @@ class StorageItem
         $base_public = str_replace('\\', '/', $base_public);
         $base_archivos = str_replace('\\', '/', $base_archivos);
 
-        \Log::info("fromPath: $path", ['base_public' => $base_public, 'base_archivos' => $base_archivos]);
+        // \Log::info("fromPath: $path", ['base_public' => $base_public, 'base_archivos' => $base_archivos]);
 
         if (strpos($path, $base_public) === 0) {
             $dir = substr($path, strlen($base_public));
@@ -202,9 +202,9 @@ class StorageItem
 
     public function exists()
     {
-        \Log::info("StorageItem:exists? disk: {$this->disk} relativeLocation: {$this->relativeLocation} path: {$this->path}");
+        //\Log::info("StorageItem:exists? disk: {$this->disk} relativeLocation: {$this->relativeLocation} path: {$this->path}");
         $r = Storage::disk($this->disk)->exists($this->relativeLocation);
-        \Log::info("StorageItem:exists? result: $r");
+        //\Log::info("StorageItem:exists? result: $r");
         return $r;
     }
 
@@ -271,7 +271,7 @@ class StorageItem
 
     public function makeDirectory()
     {
-        \Log::info("makeDirectory : " . $this->path);
+        // \Log::info("makeDirectory : " . $this->path);
         return Storage::disk($this->disk)->makeDirectory($this->relativeLocation);
     }
 

@@ -13,10 +13,20 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 
 const close = () => {
-     console.log('sidenav close!')
+    console.log('sidenav close!')
     emit('close');
 };
 
+const toggle = (tab, event) => {
+    // nav.toggleTab(tab)
+    const elem = event.target
+    console.log('toggle', tab, elem)
+    if (!tab.open) {
+        setTimeout(() => {
+            elem.scrollIntoView({ behavior: 'smooth' })
+        }, 300)
+    }
+}
 </script>
 
 <template>
@@ -45,40 +55,26 @@ const close = () => {
                 text-left text-base leading-4
                 ">
                     <template v-for="tab, index in nav.items" :key="index">
-                        <!--
-
-                            <button v-if="tab.hasItems" @click="nav.toggleTab(tab)"
-                            class="px-5 font-bold flex justify-between items-center w-full py-5
-                            transition duration-300"
-                            :class="tab.open?'shadow-lg bg-base-300':'shadow'">
-                            <div class="text-sm leading-5  uppercase">{{ tab.title }}</div>
-                            <Icon v-if="tab.open" icon="ion:chevron-up-outline" />
-                            <Icon v-else icon="ion:chevron-down-outline" />
-                        </button>
-                        <Link v-else-if="tab.url||tab.route"
-                        class="px-5 font-bold flex justify-start items-center space-x-6   rounded py-5  w-full "
-                         :href="tab.url  || route(tab.route)" @click="close">
-                         <Icon :icon="tab.icon" />
-                         <div class="text-sm  uppercase leading-4 ">{{ tab.title }}</div>
-                        </Link>
-                    -->
                         <label class="w-full rounded-none mb-0" :class="tab.hasItems ? 'collapse collapse-arrow' : ''">
-                            <Link v-if="!tab.hasItems && ('url' in tab)" :href="tab.url" class="px-4 py-5 block transition duration-200 hover:bg-base-300" @click="close">{{
-                            tab.title }}</Link>
+                            <Link v-if="!tab.hasItems && ('url' in tab)" :href="tab.url"
+                                class="px-4 py-5 block transition duration-200 hover:bg-base-300" @click="close">{{
+                                    tab.title }}</Link>
                             <template v-else>
-                                <input v-if="tab.hasItems" type="checkbox" :v-model="tab.open" />
+                                <input v-if="tab.hasItems" type="checkbox" :v-model="tab.open"
+                                    @change="toggle(tab, $event)" />
                                 <div class="collapse-title">{{ tab.title }}</div>
                                 <div class="collapse-content px-0   bg-base-100 bg-opacity-50" v-if="tab.hasItems">
                                     <template v-for="section of tab.submenu.sections" :key="section.title">
                                         <div @click.prevent.stop="null" v-if="section.title != tab.title"
                                             class="px-5 mt-4 font-bold text-xs text-neutral opacity-40 uppercase">
-                                          {{ section.title }}</div>
+                                            {{ section.title }}</div>
                                         <div v-else class="mt-2" />
-                                        <component :is="!item.disabled?Link:'div'" :href="item.url" v-for="item of section.items" :key="item.url"
-                                        @click="close"
-                                            class="p-5 flex justify-start items-center space-x-6 w-full transition duration-200 hover:bg-base-300"
-                                            :class="item.disabled?'opacity-50 pointer-events-none':''"
-                                            >
+
+                                        <component :is="item.disabled ? 'div' : (item.external ? 'a' : Link)"
+                                            :target="item.external ? '_blank' : ''" :href="item.url"
+                                            v-for="item of section.items" :key="item.url" @click="close"
+                                            class="nav-item p-5 flex justify-start items-center space-x-6 w-full transition duration-200 hover:bg-base-300"
+                                            :class="item.disabled ? 'opacity-50 pointer-events-none' : ''">
                                             <Icon :icon="item.icon" />
                                             <span>{{ item.title }}</span>
                                         </component>
@@ -97,16 +93,7 @@ const close = () => {
 
 
 <style scoped>
-/* Estilos Tailwind CSS */
-.sidebar {
-    /* ... */
-}
-
 .menu-item {
     transition: height 250ms cubic-bezier(0.3, 0, 0.6, 1);
-}
-
-.v-collapse {
-    transition: height 300ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 </style>

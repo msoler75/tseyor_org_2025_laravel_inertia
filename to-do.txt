@@ -1,3 +1,16 @@
+AUDIOS
+-validacion enlace/audio no funciona
+
+
+
+LISTA DE DISTRIBUCION
+-Boletines (es como un "novedades", pero por correo)
+-poner/testar el formulario de suscripción de dreamhost para boletines
+
+EVENTOS
+-evento de asturias. Poder poner varias imagenes que se vean en columna izquierda
+-pensar en cómo poner las imagenes (tal vez un carousel) en vista movil
+
 ARCHIVOS
 -renombrar no aparece como opcion?
 
@@ -14,16 +27,11 @@ USUARIO
 -Tal vez procurar un espacio personal de imágenes del usuario
 
 
-INVITACIONES
--reenviar invitacion cuando está en cola, ESTÁ OK? verificar que no se reencole innecesariamente y lleguen dos correos
--cancelar invitacion, y luego reenviarla, está ok?
-
 PAGINA UTG
 -Info de departamentos
 
-IMAGE/Intervention
 
-
+IMAGE/Intervention:
 [2024-09-17 01:01:43] local.ERROR: An exception occurred {"statusCode":512,"type":"Intervention\\Image\\Exceptions\\GeometryException","message":"The height you specify must be greater than or equal to 1.","file":"/home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Geometry/Tools/RectangleResizer.php","line":22,"trace":"#0 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Geometry/Rectangle.php(285): Intervention\\Image\\Geometry\\Tools\\RectangleResizer->__construct(281, 0)
 #1 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Geometry/Rectangle.php(300): Intervention\\Image\\Geometry\\Rectangle->resizer(281, 0)
 #2 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Drivers/Gd/Modifiers/ScaleModifier.php(16): Intervention\\Image\\Geometry\\Rectangle->scale(281, 0)
@@ -37,8 +45,7 @@ IMAGE/Intervention
 #10 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('descargar', Array)
 #11 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route),
 
-AUDIOS
--validacion enlace/audio no funciona
+
 
 
 ARCHIVOS
@@ -159,8 +166,6 @@ estudiar: ExtendedHighlighter::_normalizeText() : ver de cambiar [áÁ] a [áÁA
 MUULAR ELECTRÓNICO
 -integrar app de muular electrónico
 
-LISTA DE DISTRIBUCION
--poner/testar el formulario de suscripción de dreamhost para boletines
 
 BUSQUEDAS COMUNICADOS
 -el texto de busqueda no debe incluir las imagenes.
@@ -300,9 +305,8 @@ CORREO:
 -Instalar PHP Mailer: https://help.dreamhost.com/hc/es/articles/360031174411-PHPMailer-Instalaci%C3%B3n-en-un-servidor-compartido
 -Límites de cuota DreamHost: https://help.dreamhost.com/hc/es/articles/215730437-L%C3%ADmites-de-cuota-SMTP
 -Política anti-spam en dreamhost: https://www.dreamhost.com/es/legal/politica-anti-spam/
--Boletines
 -mail relay
 https://mailrelay.com/
 -usar mail relay API para envío de Boletines
 https://apidocs.mailrelay.com/#post-/campaigns
--Boletines (es como un novedades, pero por correo)
+
