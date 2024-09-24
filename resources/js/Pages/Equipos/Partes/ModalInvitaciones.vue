@@ -4,19 +4,22 @@
     <Modal :show="mostrarInvitar" @close="mostrarInvitar = false" maxWidth="xl">
         <div class="p-5 bg-base-200 max-h-full">
             <h3>Invitar al equipo</h3>
-            <form @submit.prevent="invitar" class="flex flex-col gap-7 select-none">
+            <form @submit.prevent="invitar" class="flex flex-col gap-3 select-none">
 
                 <tabs :options="{ disableScrollBehavior: true, useUrlFragment: false }">
 
 
                     <tab name="Buscar usuarios">
 
-                        <div class="min-h-[200px]">
-                            <input type="search"
+                        <div class="min-h-[calc(100vh_-_420px)] md:min-h-[calc(100vh_-_340px)]">
+                            <div class="">
+                                <input type="search"
                                 class="input shadow flex-shrink-0 rounded-none border-b border-gray-500"
                                 placeholder="Buscar usuario..." v-model="usuarioBuscar">
+                            </div>
 
-                            <div class="overflow-y-auto max-h-[calc(100vh-480px)] md:max-h-[calc(100vh-420px)] shadow">
+                            <div class="overflow-y-auto max-h-[calc(100vh_-_470px)] shadow"
+                                :class="usuariosParaInvitar.length ? 'min-h-[160px] md:min-h-[120px]' : ''">
                                 <table v-if="usuariosParaInvitar.length" class="table w-full bg-base-100  rounded-none">
                                     <tbody class="divide-y">
                                         <tr v-for="user of usuariosParaInvitar" :key="user.id">
@@ -39,7 +42,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <div v-else-if="usuarioBuscar" class="p-2 bg-base-100">
+                                <div v-else-if="usuarioBuscar" class="py-12 px-4 bg-base-100">
                                     No hay resultados
                                 </div>
                             </div>
@@ -48,11 +51,11 @@
 
 
                     <tab :name="`Invitados ${usuariosInvitados.length ? '(' + usuariosInvitados.length + ')' : ''}`">
-                        <div class="min-h-[200px]">
+                        <div class="min-h-[calc(100vh_-_420px)] md:min-h-[calc(100vh_-_340px)]">
 
-                            <div class="overflow-y-auto max-h-[calc(100vh-480px)] md:max-h-[calc(100vh-420px)]  mt-3">
+                            <div class="overflow-y-auto">
 
-                                <table v-if="usuariosInvitados.length" class="table w-full bg-base-100  shadow">
+                                <table v-if="usuariosInvitados.length" class="table w-full bg-base-100 shadow">
                                     <tbody class="divide-y">
                                         <tr v-for="user of usuariosInvitados" :key="user.id">
                                             <td>{{ user.nombre }}</td>
@@ -78,10 +81,11 @@
                     </tab>
 
                     <tab :name="`Correos ${correosInvitados.length ? '(' + correosInvitados.length + ')' : ''}`">
+                        <div class="min-h-[calc(100vh_-_420px)] md:min-h-[calc(100vh_-_340px)]">
 
-                        <p>A las personas que no disponen de cuenta en tseyor.org puedes invitarlas por correo.</p>
+                            <div class="mb-3">A las personas que no disponen de cuenta en tseyor.org puedes invitarlas
+                                por correo.</div>
 
-                        <div>
                             <textarea class="w-full" v-model="correos"
                                 placeholder="correo1@gmail.com, correo2@yahoo.es, ..."></textarea>
                             <small>Escribe las direcciones de correo separadas por comas, por espacios, o en
@@ -93,96 +97,102 @@
 
                     <tab
                         :name="`Invitaciones pendientes ${invitaciones.length ? '(' + invitaciones.length + ')' : ''}`">
-                        <div class="flex justify-between items-center text-xs mb-4 gap-3">
-                            <div v-for="stat of estadisticas" :key="stat.estado" :title="stat.total+' '+stat.label+(stat.label.endsWith('da') ? 's' : '')">
-                                {{ stat.emoji }}
-                                {{ stat.total }}
+                        <div class="min-h-[calc(100vh_-_420px)] md:min-h-[calc(100vh_-_340px)]">
+                            <div class="flex justify-between items-center text-xs mb-4 gap-3">
+                                <div v-for="stat of estadisticas" :key="stat.estado"
+                                    :title="stat.total + ' ' + stat.label + (stat.label.endsWith('da') ? 's' : '')">
+                                    {{ stat.emoji }}
+                                    {{ stat.total }}
+                                </div>
+                                <div @click="cargarInvitaciones()"
+                                    class="ml-auto flex items-center btn btn-xs btn-primary gap-1 flex-nowrap cursor-pointer">
+                                    <Icon icon="ph:arrows-counter-clockwise-duotone" /> Actualizar
+                                </div>
                             </div>
-                            <div @click="cargarInvitaciones()"
-                                class="flex items-center btn btn-xs btn-primary gap-1 flex-nowrap cursor-pointer">
-                                <Icon icon="ph:arrows-counter-clockwise-duotone" /> Actualizar
-                            </div>
-                        </div>
-                        <p v-if="!invitaciones.length">
-                            No hay invitaciones pendientes</p>
-                        <div v-else>
-                            <table class="table w-full bg-base-100  shadow">
-                                <thead>
-                                    <tr>
-                                        <th>Enviada</th>
-                                        <th>Usuario/correo</th>
-                                        <th>Estado</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="inv of invitaciones.filter(inv => inv.estado!='eliminada')" :key="inv.id">
-                                        <td>
-                                            <TimeAgo :date="new Date(inv.sent_at || inv.created_at)" class="text-xs" />
-                                        </td>
-                                        <td>
-                                            <div class="break-all text-sm select-text">
-                                                {{ inv.user ? inv.user.name : inv.email }}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="flex items-center gap-2 whitespace-nowrap"
-                                                :title="statusMap[inv.estado].title || statusMap[inv.estado].label"
-                                                :class="statusMap[inv.estado].class ?? ''">
-                                                <span class="text-xs uppercase">{{ statusMap[inv.estado].label }}</span>
-                                                <Icon v-if="statusMap[inv.estado].icon"
-                                                    :icon="statusMap[inv.estado].icon" />
-                                                <span v-else-if="statusMap[inv.estado].emoji">{{
-                                                    statusMap[inv.estado].emoji
+                            <div v-if="!invitaciones.length" class="py-4">
+                                No hay invitaciones pendientes</div>
+                            <div v-else class="max-h-[calc(100vh_-_470px)] md:max-h-[calc(100vh_-_380px)] overflow-y-auto">
+                                <table class="table w-full bg-base-100  shadow">
+                                    <thead>
+                                        <tr>
+                                            <th>Enviada</th>
+                                            <th>Usuario/correo</th>
+                                            <th>Estado</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="inv of invitaciones.filter(inv => inv.estado != 'eliminada')"
+                                            :key="inv.id">
+                                            <td>
+                                                <TimeAgo :date="new Date(inv.sent_at || inv.created_at)"
+                                                    class="text-xs" />
+                                            </td>
+                                            <td>
+                                                <div class="break-all text-sm select-text">
+                                                    {{ inv.user ? inv.user.name : inv.email }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="flex items-center gap-2 whitespace-nowrap"
+                                                    :title="statusMap[inv.estado].title || statusMap[inv.estado].label"
+                                                    :class="statusMap[inv.estado].class ?? ''">
+                                                    <span class="text-xs uppercase">{{ statusMap[inv.estado].label
+                                                        }}</span>
+                                                    <Icon v-if="statusMap[inv.estado].icon"
+                                                        :icon="statusMap[inv.estado].icon" />
+                                                    <span v-else-if="statusMap[inv.estado].emoji">{{
+                                                        statusMap[inv.estado].emoji
                                                     }}</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <Dropdown align="right" width="32">
-                                                <template #trigger>
-                                                    <span class="my-1 bg-base-100 px-0.5 cursor-pointer">
-                                                        <Icon icon="mdi:dots-vertical" class="text-xs" />
-                                                    </span>
-                                                </template>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <Dropdown align="right" width="32">
+                                                    <template #trigger>
+                                                        <span class="my-1 bg-base-100 px-0.5 cursor-pointer">
+                                                            <Icon icon="mdi:dots-vertical" class="text-xs" />
+                                                        </span>
+                                                    </template>
 
-                                                <template #content>
-                                                    <div class="select-none">
+                                                    <template #content>
+                                                        <div class="select-none">
 
-                                                        <div v-if="['fallida'].includes(inv.estado)"
-                                                            class="px-4 py-2 cursor-pointer hover:bg-base-100"
-                                                            @click="reenviarInvitacion(inv)">
-                                                            Reintentar</div>
-                                                        <!-- tienen que haber pasado al menos dos horas para reenviar -->
-                                                        <div v-else-if="inv.estado=='cancelada' || (['enviada', 'declinada', 'caducada'].includes(inv.estado) && (new Date() - new Date(inv.sent_at||inv.created_at)) > 6291021)"
-                                                            class="px-4 py-2 cursor-pointer hover:bg-base-100"
-                                                            @click="reenviarInvitacion(inv)">
-                                                            Reenviar
+                                                            <div v-if="['fallida'].includes(inv.estado)"
+                                                                class="px-4 py-2 cursor-pointer hover:bg-base-100"
+                                                                @click="reenviarInvitacion(inv)">
+                                                                Reintentar</div>
+                                                            <!-- tienen que haber pasado al menos dos horas para reenviar -->
+                                                            <div v-else-if="inv.estado == 'cancelada' || (['enviada', 'declinada', 'caducada'].includes(inv.estado) && (new Date() - new Date(inv.sent_at || inv.created_at)) > 6291021)"
+                                                                class="px-4 py-2 cursor-pointer hover:bg-base-100"
+                                                                @click="reenviarInvitacion(inv)">
+                                                                Reenviar
+                                                            </div>
+                                                            <div v-else-if="inv.estado == 'registro' && (new Date() - new Date(inv.sent_at || inv.created_at)) > 6291021"
+                                                                class="px-4 py-2 cursor-pointer hover:bg-base-100"
+                                                                @click="reenviarInvitacion(inv)">
+                                                                Reenviar
+                                                            </div>
+                                                            <div v-if="inv.estado != 'cancelada'"
+                                                                class="px-4 py-2 cursor-pointer hover:bg-base-100"
+                                                                @click="cancelarInvitacion(inv)">Cancelar</div>
+                                                            <div v-else="inv.estado=='cancelada'"
+                                                                class="px-4 py-2 cursor-pointer hover:bg-base-100"
+                                                                @click="eliminarInvitacion(inv)">Eliminar</div>
+
                                                         </div>
-                                                        <div v-else-if="inv.estado == 'registro' && (new Date() - new Date(inv.sent_at||inv.created_at)) > 6291021"
-                                                            class="px-4 py-2 cursor-pointer hover:bg-base-100"
-                                                            @click="reenviarInvitacion(inv)">
-                                                            Reenviar
-                                                        </div>
-                                                        <div v-if="inv.estado != 'cancelada'"
-                                                            class="px-4 py-2 cursor-pointer hover:bg-base-100"
-                                                            @click="cancelarInvitacion(inv)">Cancelar</div>
-                                                        <div v-else="inv.estado=='cancelada'"
-                                                            class="px-4 py-2 cursor-pointer hover:bg-base-100"
-                                                            @click="eliminarInvitacion(inv)">Eliminar</div>
-
-                                                    </div>
-                                                </template>
-                                            </Dropdown>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                                    </template>
+                                                </Dropdown>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </tab>
 
                 </tabs>
 
-                <div class="py-3 flex justify-between sm:justify-end gap-5">
+                <div class="py-3 flex justify-end gap-5">
                     <button type="submit" class="btn btn-primary" :disabled="invitando || !numeroInvitados">
                         <Spinner v-show="invitando" class="mr-3" />
                         Invitar <span v-if="numeroInvitados">({{ numeroInvitados }})</span>
@@ -257,7 +267,7 @@ function buscarUsuarios() {
             .get(route('usuarios.buscar', query))
             .then(response => {
                 console.log('response', response.data)
-                usuariosEncontrados.value = response.data;
+                usuariosEncontrados.value = response.data
             })
             .catch(error => {
                 console.error(error);

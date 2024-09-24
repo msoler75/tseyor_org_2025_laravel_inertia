@@ -90,6 +90,13 @@ class UsuariosController extends Controller
             foreach($resultados as $idx => $u)
                 $resultados[$idx]['nombre'] = $u['name'];
 
+                // repeat values in array
+                $resultados = array_values($resultados);
+                if(count($resultados))
+                for($i=0;$i<12;$i++) {
+                    $resultados[] = $resultados[0];
+                }
+
         return response()->json($resultados, 200);
     }
 
