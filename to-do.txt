@@ -1,7 +1,16 @@
+EQUIPOS
+-Crear video tutorial para coordinadores de equipo
+-falla al "invitar" (Se recarga la página)
+-El coordinador no puede renombrar la carpeta del equipo (eso no sé si es correcto)
+
+TITAP EDITOR
+-lista numerada no se ven los números!
+
 AUDIOS
 -validacion enlace/audio no funciona
 
-
+INICIADOS
+-grupo de iniciados nivel 2, acceso a la carpeta solo para nivel 2
 
 LISTA DE DISTRIBUCION
 -Boletines (es como un "novedades", pero por correo)
@@ -11,8 +20,9 @@ EVENTOS
 -evento de asturias. Poder poner varias imagenes que se vean en columna izquierda
 -pensar en cómo poner las imagenes (tal vez un carousel) en vista movil
 
+
 ARCHIVOS
--renombrar no aparece como opcion?
+-renombrar no aparece como opcion cuando hay un archivo seleccionado?
 
 ADMIN
 -dashboard: añadir un cuadro para mí en el dashboard que incluya:
@@ -22,8 +32,6 @@ ADMIN
 -Pensar en otorgar privilegios de superadmin a alguien más y enseñarle
 
 USUARIO
--En página de usuarios, la imagen de avatar se carga completa (y pesada)
--En página de equipos, algunos usuarios no muestran bien su imagen
 -Tal vez procurar un espacio personal de imágenes del usuario
 
 
@@ -72,30 +80,17 @@ con ganas de vivir la pm
 en si la luz la pm
 si tu cambias, todo cambia la pm
 
-
-INICIADOS
--Crear equipo de INICIADOS
--Hablar con papa. para invitar iniciados al equipo
--Los correos de Microsoft (hotmail, outlook) no van bien con la nueva web. Mejor si se puede crear una nueva cuenta.
--Para las invitaciones, revisar buzón de SPAM
-
-
-
-EQUIPOS
--ultimos archivos, que se cargue lazy inertia, y que cada archivo se verifique su acceso por parte del usuario
--panel de ultimos archivos, si es audio, que se reproduzca
--nuevo panel: EVENTOS, relacionados con el equipo
-
-
-EVENTOS
--Que se vea el equipo relacionado (si no es un equipo oculto)
-
-
 Te comunico que tu dirección de correo hegatel@hotmail.com  no es compatible con la nueva web de tseyor. Ningun correo en Microsoft funciona bien. Por favor, cuando puedas, crea una cuenta de correo en gmail por ejemplo, y me lo comunicas, gracias. 🙂🙏🏻
 
 Si es tu deseo, también lo puedes comunicar a secretaria de tseyor (secretaria@tseyor.org) para que ese correo sirva para asuntos de Tseyor.
 
 
+EQUIPOS
+-nuevo panel: EVENTOS, relacionados con el equipo
+
+
+EVENTOS
+-Que se vea el equipo relacionado (si no es un equipo oculto)
 
 
 MENU usuario nav
@@ -310,3 +305,5 @@ https://mailrelay.com/
 -usar mail relay API para envío de Boletines
 https://apidocs.mailrelay.com/#post-/campaigns
 
+
+https://www.brevo.com/
