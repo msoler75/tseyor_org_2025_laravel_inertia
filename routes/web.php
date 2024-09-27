@@ -252,6 +252,9 @@ Route::get('usuario/_permisos', [UsuariosController::class, 'permissions'])->nam
 // Route::get('login/1', [DevController::class, 'loginUser1'])->name('login1');
 // Route::get('login/2', [DevController::class, 'loginUser2'])->name('login2');
 // Route::get('/_email', [DevController::class, 'testMail']);
+Route::get('/dev/test', function () {
+    return Inertia::render('Test');
+});
 
 
 Route::middleware([

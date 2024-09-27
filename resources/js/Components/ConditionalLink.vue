@@ -20,6 +20,10 @@ defineProps({
     autoScroll: {
         type: Boolean,
         default: true
-    }
+    },
+  /*  disabled: { // permite deshabilitar el enlace
+        type: Boolean,
+        default: false
+    }*/
 })
 </script>

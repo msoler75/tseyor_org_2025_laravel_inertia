@@ -1,5 +1,5 @@
 <template>
-    <ConditionalLink :href="href" class="flex gap-3 items-baseline relative" :is-link="link">
+    <ConditionalLink :href="href" class="flex gap-3 items-baseline relative" :is-link="isLink">
         <Icon
             :icon="arrow ? 'charm:folder-symlink' : owner ? 'ph:folder-user-duotone' : private ? 'ph:folder-lock-duotone' : 'ph:folder-duotone'"
             class="text-yellow-500 transform scale-125" />
@@ -16,7 +16,7 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    link: { type: Boolean, default: true },
+    isLink: { type: Boolean, default: true },
     arrow: { type: Boolean, default: false }
 })
 
