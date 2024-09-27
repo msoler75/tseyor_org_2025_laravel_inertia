@@ -6,6 +6,8 @@
         :modoInsertar="modoInsertar"
         :mostrarMisArchivos="(mostrarMisArchivos !== false && mostrarMisArchivos !== 'false' && mostrarMisArchivos !== '0' && mostrarMisArchivos !== 'no') || ['true', '1', 'si'].includes(mostrarMisArchivos) || mostrarMisArchivos === true">
 
+        <AudioPlayer />
+
         <Modal :show="mostrandoArchivo" @close="mostrandoArchivo = null" maxWidth="xl">
 
             <div class="bg-base-100 p-3">

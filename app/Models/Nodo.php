@@ -75,7 +75,7 @@ class Nodo extends Model
         $nodo = Nodo::select(['nodos.*'])//, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             //->leftJoin('users', 'users.id', '=', 'user_id')
             //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
-            ->whereRaw("'$ubicacion' LIKE CONCAT(nodos.ubicacion, '%')")
+            ->whereRaw("? LIKE CONCAT(nodos.ubicacion, '%')", [$ubicacion])
             ->orderByRaw('LENGTH(nodos.ubicacion) DESC')
             ->first();
 

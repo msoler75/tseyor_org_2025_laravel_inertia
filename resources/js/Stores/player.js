@@ -5,6 +5,7 @@ const player = reactive({
   radioMode: false,
   closed: true,
   mini: true,
+  expanded: false,
   autoplay: true,
   duration: 0,
   currentTime: 0,
