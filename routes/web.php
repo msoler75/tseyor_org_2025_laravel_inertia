@@ -108,7 +108,7 @@ Route::get('nodos/{id}', [NodosController::class, 'show'])->name('nodo');
 
 
 Route::get('audios', [AudiosController::class, 'index'])->name('audios');
-Route::get('audios/{slug}', [AudiosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('audio');
+Route::get('audios/{slug}', [AudiosController::class, 'show'])->where('slug', '[a-z_0-9\-\s]+')->name('audio');
 
 Route::get('videos', [VideosController::class, 'index'])->name('videos');
 Route::get('videos/{slug}', [VideosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('video');

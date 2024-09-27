@@ -1,20 +1,20 @@
 <template>
     <div class="select-none">
         <div v-if="player.mini" v-show="!player.closed"  @mouseleave="collapsePlayer"  class="max-w-[22rem] xs:max-w-[32rem] sm:max-w-[42rem] rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden" >
-            <div v-if="expanded" class="p-2 xs:hidden">
+            <div v-if="player.expanded" class="p-2 xs:hidden">
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
                     class="ml-1 transform duration-300" @mousemove="activatePlayer" />
             </div>
-            <div class="mx-auto flex justify-between items-center" :class="expanded ? 'w-full gap-3' : 'pr-4'">
+            <div class="mx-auto flex justify-between items-center" :class="player.expanded ? 'w-full gap-3' : 'pr-4'">
                 <button type="button"
                     class="btn btn-secondary rounded-full flex justify-center items-center p-1 text-4xl transform scale-75"
-                    :class="expanded?'':'mr-1'"
+                    :class="player.expanded?'':'mr-1'"
                     @click="player.playPause"  :title="player.state == 'error' ? 'Error al cargar el audio' : ''">
                     <AudioStateIcon :src="player.music?.src" class="rounded-full overflow-hidden"/>
                 </button>
 
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
-                    class="hidden xs:block transform duration-300" :class="expanded ? '' : 'w-0'" @mousemove="activatePlayer" />
+                    class="hidden xs:block transform duration-300" :class="player.expanded ? '' : 'w-0'" @mousemove="activatePlayer" />
 
                 <div class="flex justify-end gap-1 w-32 font-mono transform scale-y-150" @mousemove="activatePlayer">
                     <span>{{ formatTime(player.currentTime) }}</span>
@@ -24,7 +24,7 @@
 
 
                 <button type="button" @click="player.stepBackward" class="transform scale-75 duration-300"
-                    :class="expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer"
+                    :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer"
                     title="Retroceder 30 segundos">
                     <svg width="34" height="39" fill="none">
                         <path
@@ -37,7 +37,7 @@
                 </button>
 
                 <button type="button" @click="player.stepForward" class="transform scale-75 duration-300"
-                    :class="expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer"
+                    :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer"
                     title="Avanzar 30 segundos">
                     <svg width="34" height="39" fill="none">
                         <path
@@ -51,12 +51,12 @@
 
                 <a download target="_blank" :href="player.music?.src" title="Descargar audio"
                     class="text-2xl transform duration-300"
-                    :class="expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer">
+                    :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer">
                     <Icon icon="ph:download-duotone" />
                 </a>
 
                 <span title="Cerrar">
-                    <Icon icon="ph:x-bold" v-if="expanded" class="text-3xl cursor-pointer pr-2"
+                    <Icon icon="ph:x-bold" v-if="player.expanded" class="text-3xl cursor-pointer pr-2"
                         @click="player.close()" />
                 </span>
 
@@ -154,22 +154,20 @@ const player = usePlayer()
 
 // expansión de audioplayer
 
-const expanded = ref(false)
-
 var timerToCollapse = null
 
 function activatePlayer() {
-    expanded.value = true
+    player.expanded = true
     clearTimeout(timerToCollapse)
     timerToCollapse = setTimeout(() => {
-        expanded.value = false
+        player.expanded = false
     }, 10000)
 }
 
 function collapsePlayer() {
     clearTimeout(timerToCollapse)
     timerToCollapse = setTimeout(() => {
-        expanded.value = false
+        player.expanded = false
     }, 7000)
 }
 
@@ -235,6 +233,9 @@ const formatTime = (ts) => {
         : minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
 };
 
+onMounted(()=> {
+    console.log('AudioPlayer Mounted')
+})
 
 </script>
 

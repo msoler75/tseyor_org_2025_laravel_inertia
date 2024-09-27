@@ -2,13 +2,12 @@
 import { onBeforeUnmount/*, markRaw*/ } from 'vue';
 import { useDark, useToggle } from "@vueuse/core";
 import usePermisos from '@/Stores/permisos'
-// import usePlayer from '@/Stores/player'
+import usePlayer from '@/Stores/player'
 import setTransitionPages from '@/composables/transitionPages.js'
 
 // console.log('app initiating...')
 
-// const player = usePlayer()
-
+const player = usePlayer()
 const permisos = usePermisos()
 const page = usePage()
 const nav = useNav()
@@ -166,7 +165,8 @@ axios.get(route('setting', 'navigation'))
     <!-- App layout -->
     <div class="flex flex-col">
 
-        <ScrollToTop class="text-4xl fixed bottom-7 right-7 z-40"/>
+        <ScrollToTop class="text-4xl fixed right-7 z-40" :class="player.closed?'bottom-7':player.expanded?'bottom-20':'bottom-14'"/>
+
 
         <!-- Loader -->
         <div v-if="loader"
@@ -223,6 +223,8 @@ axios.get(route('setting', 'navigation'))
 
                 <slot />
             </div>
+
+        {{ player.expanded?'EXPANDED': 'NO EXPANDED' }}
 
             <!--  queremos que si la ruta actual es /archivos, no se muestre el footer: -->
             <AppFooter v-if="!nav.fullPage && !page.url.match(/^\/archivos/)" />

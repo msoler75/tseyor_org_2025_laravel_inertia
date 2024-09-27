@@ -54,7 +54,7 @@ watch(() => nav.scrollY, (y) => {
 function scroll2Top() {
     // si existe un elemento div.sections, hacemos el scroll en ese elemento, si no, en window
     const div = document.querySelector("div.sections.snap-mandatory")
-    if(div) 
+    if(div)
     div.scrollTo({ top: 0, behavior: 'smooth' })
     else
     window.scrollTo({ top: 0, behavior: 'smooth' })

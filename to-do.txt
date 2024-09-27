@@ -1,12 +1,23 @@
+ARCHIVOS
+-renombrar no aparece como opcion cuando hay un archivo seleccionado?
+-comprobar funcionamiento en moviles
+-long touch
+-En vista movil cuando haces scroll y pulsas (touchend) en un item de imagen, esta se muestra. No debería, pues estás haciendo scroll
+
+PDF
+-Muchos de Los libros en PDF tienen mal el titulo en los metadatos, y es necesario para que google muestre los títulos bien
+
+INFORMES
+-Los informes de equipos ocultos no deben ser públicos
+
+CRUD
+-validacion de campo slug [a-z0-9\-] en todos los crud
+
 CORREOS
 -Cuando una invitación manda a un correo que no existe, se recibe un mensaje tipo "<elmartillolapm@gmail.com>: host gmail-smtp-in.l.google.com[74.125.195.26] said: 550-5.1.1 The email account that you tried to reach does not exist."
     -Se podría vincular este mensaje con la invitación
 -Y tener un lugar en el panel de administración para ver mensajes de correo recibidos a notificaciones@tseyor.org
 
-ARCHIVOS
--renombrar no aparece como opcion cuando hay un archivo seleccionado?
--comprobar funcionamiento en moviles
--long touch
 
 EQUIPOS vs CENTROS
 -Relación entre equipos y centros, de forma que tanto en una vista como en otra se vea la relación, otra opción es que sea : equipos vs contacto
