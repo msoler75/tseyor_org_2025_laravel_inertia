@@ -1,5 +1,5 @@
 <template>
-    <a v-if="link" :href="href" class="flex gap-3 items-baseline" download :class="color">
+    <a v-if="isLink" :href="href" class="flex gap-3 items-baseline" download :class="color">
         <Icon :icon="iconType" />
     </a>
     <Icon v-else :icon="iconType"  :class="color" />
@@ -10,7 +10,7 @@ import { Icon } from "@iconify/vue";
 
 const props = defineProps({
     url: String,
-    link: {type: Boolean, default: true}
+    isLink: {type: Boolean, default: true}
 })
 
 const href = computed(() => props.url && !props.url?.startsWith('/') ? '/' + props.url : props.url)

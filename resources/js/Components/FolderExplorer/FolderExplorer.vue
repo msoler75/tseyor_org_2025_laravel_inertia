@@ -1,19 +1,20 @@
 <template>
-    <div class="h-full flex flex-col relative">
+    <div class="h-full flex flex-col relative" :class="touchable ? 'touchable' : ''">
         <div class="w-full sticky border-b border-gray-300 shadow-sm bg-base-100  px-4 pb-0 sm:px-6 lg:px-8 z-30"
             :class="embed ? 'pt-[2rem] top-0' : ' pt-[4rem] top-[1.5rem]'">
 
             <div :class="embed ? '' : 'lg:container mx-auto'">
-                <Breadcrumb :path="rutaActual" :links="true" :intercept-click="embed" @folder="clickBreadcrumb($event)"
-                    title="Ruta actual" class="flex-wrap text-2xl font-bold items-center mb-5" :rootLabel="rootLabel"
-                    :rootUrl="rootUrl" />
+                <Breadcrumb :path="rutaActual" :is-links="true" :intercept-click="embed"
+                    @folder="clickBreadcrumb($event)" title="Ruta actual"
+                    class="flex-wrap text-2xl font-bold items-center mb-5" :rootLabel="rootLabel" :rootUrl="rootUrl" />
             </div>
 
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
 
                 <div class="flex gap-x items-center w-full" v-if="!seleccionando && mostrandoResultados">
 
-                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ buscar }}'</span>:</span>
+                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ buscar
+                            }}'</span>:</span>
 
                     <button class="ml-auto  btn btn-neutral btn-sm btn-icon" @click.prevent="toggleVista"
                         title="Cambiar vista">
@@ -112,7 +113,7 @@
                                         <span>Subir archivos</span>
                                     </div>
 
-                                    <div v-if="puedeEscribir && !seleccionando && itemsShow[0].ruta != 'archivos' && itemsShow[0].ruta != 'medios'"
+                                    <div v-if="items[1]?.padre && items[1]?.puedeEscribir && !seleccionando && itemsShow[0].ruta != 'archivos' && itemsShow[0].ruta != 'medios'"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="abrirModalRenombrar(itemsShow[0])">
                                         <Icon icon="ph:cursor-text-duotone" />
@@ -217,8 +218,8 @@
                         <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length && puedeBorrarSeleccionados" class="btn btn-secondary flex gap-x items-center"
-                        @click.prevent="abrirEliminarModal(null)">
+                    <button v-if="itemsSeleccionados.length && puedeBorrarSeleccionados"
+                        class="btn btn-secondary flex gap-x items-center" @click.prevent="abrirEliminarModal(null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
@@ -292,86 +293,109 @@
                         </tr>
                     </thead>
 
-                    <component :is="transitionActive?TransitionGroup:'tbody'" tag="tbody" name="files">
+                    <!-- Para Test -->
+                    <tbody v-if="false || $page.props?.auth?.user?.name == 'admin'" v-disable-right-click>
                         <tr v-for="item in itemsMostrar" :key="item.ruta"
-                            :class="item.clase + ' ' + (item.seleccionado ? '' : '') + (item.puedeLeer && (!seleccionando || esAdministrador)  ? '' : ' opacity-50 pointer-events-none')">
+                            :class="[item.clase, item.seleccionado ? 'bg-base-300' : '']"
+                            v-on:touchstart="ontouchstart(item, $event)"
+                            v-on:touchend.prevent="ontouchend(item, $event)">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
-                                class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
+                                class="transform scale-100 text-2xl cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                                 <Icon v-else icon="ph:square" />
                             </td>
-                            <td class="relative w-4" v-on:touchstart="ontouchstart(item)"
-                                v-on:touchend="ontouchend(item)">
+                            <td>
+                                <component :is="seleccionando ? 'div' : Link" :href="item.url"
+                                    @click="clickItem(item, $event)" :disabled="seleccionando"
+                                    class="inline-block py-3 bg-red-500 w-full cursor-pointer">{{
+                                    nombreItem(item) }}</component>
+                            </td>
+
+                            ...
+                        </tr>
+                    </tbody>
+
+                    <component v-else :is="transitionActive ? TransitionGroup : 'tbody'" tag="tbody" name="files"
+                        v-disable-right-click>
+                        <tr v-for="item in itemsMostrar" :key="item.ruta"
+                            :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : 'opacity-70 pointer-events-none']"
+                            v-on:touchstart="ontouchstart(item, $event)"
+                            v-on:touchend.prevent="ontouchend(item, $event)">
+                            <td v-if="seleccionando" @click.prevent="toggleItem(item)"
+                                class="hidden md:table-cell transform scale-100 text-2xl cursor-pointer opacity-70 hover:opacity-100">
+                                <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
+                                <Icon v-else icon="ph:square" />
+                            </td>
+                            <td class="relative w-4">
                                 <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer"
-                                    @click="clickDisk(item, $event)" :is-link="!embed" />
+                                    @click="clickItem(item, $event)" :is-link="!seleccionando && !embed" />
                                 <FolderIcon v-else-if="item.tipo === 'carpeta'"
                                     class="cursor-pointer text-4xl sm:text-xl" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id"
-                                    :url="item.url"
-                                    @click="clickFolder(item, $event)" :link="!embed&&item.puedeLeer" :arrow="!!item.acceso_directo" />
-                                <FileIcon v-else :url="item.url" class="cursor-pointer text-4xl sm:text-xl" @click="clickFile(item, $event)"
-                                    :link="!embed&&item.puedeLeer" />
+                                    :url="item.url" @click="clickItem(item, $event)"
+                                    :is-link="!seleccionando && !embed && item.puedeLeer"
+                                    :arrow="!!item.acceso_directo" />
+                                <FileIcon v-else :url="item.url" class="cursor-pointer text-4xl sm:text-xl"
+                                    @click="clickFile(item, $event)"
+                                    :is-link="!seleccionando && !embed && item.puedeLeer" />
                             </td>
-                            <td class="sm:hidden py-3" v-on:touchstart="ontouchstart(item)"
-                                v-on:touchend="ontouchend(item)">
+                            <td class="sm:hidden py-3">
                                 <div class="flex flex-col">
                                     <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
-                                        @click="clickDisk(item, $event)" :is-link="!embed" />
+                                        @click="clickDisk(item, $event)" :is-link="!seleccionando && !embed" />
                                     <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
                                         :class="seleccionando ? 'pointer-events-none' : ''"
-                                        @click="clickFolder(item, $event)" :is-link="!embed" />
+                                        @click="clickFolder(item, $event)" :is-link="!seleccionando && !embed" />
                                     <div v-else-if="seleccionando" :title="item.nombre" v-html="nombreItem(item)" />
                                     <a v-else :href="item.url" download v-html="nombreItem(item)"
                                         :class="seleccionando ? 'pointer-events-none' : ''"
-                                        @click="clickFile(item, $event)" :is-link="!embed" />
+                                        @click="clickFile(item, $event)" :is-link="!seleccionando && !embed" />
 
                                     <small class="w-full flex justify-between gap-2 items-center opacity-50">
                                         <span v-if="item.tipo === 'disco'">****</span>
                                         <span v-else-if="item.tipo === 'carpeta'">
-                                            {{ 'archivos' in item ? plural(item.archivos + item.subcarpetas, 'elemento' ) : '' }}</span>
+                                            {{ 'archivos' in item ? plural(item.archivos + item.subcarpetas, 'elemento'
+                                            ) : ''
+                                            }}</span>
                                         <FileSize v-else :size="item.tamano" />
                                         <TimeAgo v-if="item.fecha_modificacion" :date="item.fecha_modificacion" />
                                     </small>
                                 </div>
                             </td>
-                            <td class="hidden sm:table-cell py-3 max-w-[24rem]"
-                                v-on:touchstart="ontouchstart(item)" v-on:touchend="ontouchend(item)">
+                            <td class="hidden sm:table-cell py-3 max-w-[24rem]">
                                 <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
                                     class="cursor-pointer py-3 hover:underline" @click="clickDisk(item, $event)"
-                                    :is-link="!embed" />
+                                    :is-link="!seleccionando && !embed" />
                                 <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                     v-html="nombreItem(item)" class="cursor-pointer py-3 hover:underline"
                                     :class="seleccionando ? 'pointer-events-none' : ''"
-                                    @click="clickFolder(item, $event)" :is-link="!embed" />
+                                    @click="clickFolder(item, $event)" :is-link="!seleccionando && !embed" />
                                 <span v-else-if="seleccionando" v-html="nombreItem(item)" />
                                 <a v-else :href="item.url" download v-html="nombreItem(item)"
                                     class="py-3 hover:underline" :class="seleccionando ? 'pointer-events-none' : ''"
                                     @click="clickFile(item, $event)" />
                             </td>
-                            <td class="hidden sm:table-cell text-center" v-on:touchstart="ontouchstart(item)"
-                                v-on:touchend="ontouchend(item)">
+                            <td class="hidden sm:table-cell text-center">
                                 <span v-if="item.tipo === 'disco'">-</span>
                                 <span v-else-if="item.tipo === 'carpeta'" class="text-sm">
-                                    {{ 'archivos' in item ? plural(item.archivos + item.subcarpetas, 'elemento' ) : '' }}
+                                    {{ 'archivos' in item ? plural(item.archivos + item.subcarpetas, 'elemento') : ''
+                                    }}
                                 </span>
                                 <FileSize v-else :size="item.tamano" class="block text-right" />
                             </td>
-                            <td class="hidden sm:table-cell text-center" v-on:touchstart="ontouchstart(item)"
-                                v-on:touchend="ontouchend(item)">
+                            <td class="hidden sm:table-cell text-center">
                                 <TimeAgo v-if="item.fecha_modificacion" :date="item.fecha_modificacion"
                                     class="block text-center text-sm" />
                                 <span v-else>-</span>
                             </td>
                             <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
-                                class="hidden sm:table-cell text-center text-sm"
-                                v-on:touchstart="ontouchstart(item)" v-on:touchend="ontouchend(item)">{{
+                                class="hidden sm:table-cell text-center text-sm">{{
                                     item.permisos || '...' }}
                             </td>
                             <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
-                                class="hidden sm:table-cell text-center text-sm min-w-[10rem]"
-                                v-on:touchstart="ontouchstart(item)" v-on:touchend="ontouchend(item)">
+                                class="hidden sm:table-cell text-center text-sm min-w-[10rem]">
                                 {{ item.propietario?.usuario.nombre || '...' }}/{{ item.propietario?.grupo.nombre ||
                                     '...'
                                 }}
@@ -385,7 +409,7 @@
                             </td>
                             <td class="hidden md:table-cell">
                                 <Dropdown align="right" width="48" v-if="item.tipo !== 'disco'"
-                                    :class="!info_cargada ||!item.puedeLeer? 'opacity-0 pointer-events-none' : ''">
+                                    :class="[!info_cargada || !item.puedeLeer ? 'opacity-0 pointer-events-none' : '', seleccionando ? 'hide-if-touchable' : '']">
                                     <template #trigger>
                                         <span class="cursor-pointer">
                                             <Icon icon="mdi:dots-vertical" class="text-xl" />
@@ -445,114 +469,112 @@
                 </table>
             </div>
             <div v-else-if="itemsMostrar.length && selectors.archivosVista === 'grid'">
-                <GridFill colWidth="14rem" class="gap-4 pt-6">
+                <GridFill colWidth="14rem" class="gap-4 pt-6" v-disable-right-click>
 
-                        <div v-for="item in itemsMostrar" :key="item.ruta"
-                            :class="item.clase + ' ' + (item.seleccionado ? '' : 'bg-base-200') +
-                            (item.puedeLeer && (!seleccionando || esAdministrador)  ? '' : ' opacity-50 pointer-events-none')">
-                            <div v-if="seleccionando" @click.prevent="toggleItem(item)"
-                                class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100"
-                                :class="esAdministrador || item.puedeLeer ? '' : 'opacity-40 pointer-events-none'">
-                                <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
-                                <Icon v-else icon="ph:square" />
+                    <div v-for="item in itemsMostrar" :key="item.ruta"
+                        :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : ' opacity-70 pointer-events-none']"
+                       >
+                        <div v-if="seleccionando" @click.prevent="toggleItem(item)"
+                            class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
+                            <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
+                            <Icon v-else icon="ph:square" />
+                        </div>
+                        <div class="flex flex-col items-center justify-center relative h-full pt-2"
+                            :xclass="seleccionando ? 'pointer-events-none' : ''"
+                             v-on:touchstart="ontouchstart(item, $event)" v-on:touchend.prevent="ontouchend(item, $event)"
+                            >
+                            <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer text-8xl mb-4"
+                                @click="clickDisk(item, $event)" :is-link="!seleccionando && !embed" />
+                            <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
+                                :owner="item.propietario && item.propietario?.usuario.id === user?.id"
+                                class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
+                                @click="clickFolder(item, $event)" :is-link="!seleccionando && !embed" :arrow="!!item.acceso_directo" />
+                            <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
+                                @click="clickFile(item, $event)">
+                                <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain" />
+                            </a>
+                            <FileIcon v-else :url="item.url" class="cursor-pointer text-8xl mb-4"
+                                @click="clickFile(item, $event)" :is-link="!seleccionando && !embed" />
+
+                            <div class="text-sm text-center">
+                                <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
+                                    class="py-1 hover:underline" @click="clickDisk(item, $event)" :is-link="!seleccionando && !embed" />
+                                <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
+                                    v-html="nombreItem(item)" class="py-1 hover:underline"
+                                    @click="clickFolder(item, $event)" :is-link="!seleccionando && !embed" />
+                                <span v-else-if="seleccionando" v-html="nombreItem(item)" />
+                                <a v-else :href="item.url" download v-html="nombreItem(item)"
+                                    @click="clickFile(item, $event)" :is-link="!seleccionando && !embed" class="py-1 hover:underline" />
                             </div>
-                            <div class="flex flex-col items-center justify-center relative h-full pt-2">
-                                <DiskIcon v-if="item.tipo === 'disco'" :url="item.url"
-                                    class="cursor-pointer text-8xl mb-4" @click="clickDisk(item, $event)"
-                                    :is-link="!embed" />
-                                <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
-                                    :owner="item.propietario && item.propietario?.usuario.id === user?.id"
-                                    class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
-                                    @click="clickFolder(item, $event)" :is-link="!embed" :arrow="!!item.acceso_directo" />
-                                <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
-                                    @click="clickFile(item, $event)">
-                                    <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain" />
-                                </a>
-                                <FileIcon v-else :url="item.url" class="cursor-pointer text-8xl mb-4"
-                                    @click="clickFile(item, $event)" :is-link="!embed" />
-
-                                <div class="text-sm text-center">
-                                    <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
-                                        v-html="nombreItem(item)" class="py-1 hover:underline"
-                                        @click="clickDisk(item, $event)" :is-link="!embed" />
-                                    <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
-                                        v-html="nombreItem(item)" class="py-1 hover:underline"
-                                        @click="clickFolder(item, $event)" :is-link="!embed" />
-                                    <span v-else-if="seleccionando" v-html="nombreItem(item)" />
-                                    <a v-else :href="item.url" download v-html="nombreItem(item)"
-                                        @click="clickFile(item, $event)" :is-link="!embed"
-                                        class="py-1 hover:underline" />
-                                </div>
-                                <div class="text-gray-500 text-xs">
-                                    <span v-if="item.tipo === 'disco'" />
-                                    <template v-else-if="item.tipo === 'carpeta'">{{ 'archivos' in item?(plural(item.archivos, 'archivo')+ ', ' +
-                                        plural(item.subcarpetas,'carpeta')):'&nbsp;' }}
-                                    </template>
-                                    <template v-else>
-                                        <FileSize :size="item.tamano" />&nbsp;
-                                        <TimeAgo :date="item.fecha_modificacion" />
-                                    </template>
-                                </div>
-
-
-                                <div class="w-full flex justify-center mt-auto">
-                                    <Dropdown align="right" width="48"  v-if="item.tipo !== 'disco'"
-                                     :class="!info_cargada || !item.puedeLeer? 'opacity-0 pointer-events-none' : ''">
-                                        <template #trigger>
-                                            <span class="my-3 btn btn-sm btn-icon bg-base-100 p-0.5">
-                                                <Icon icon="mdi:dots-horizontal" class="text-xl z-20" />
-                                            </span>
-                                        </template>
-
-                                        <template #content>
-                                            <div class="select-none">
-
-                                                <div v-if="!seleccionando"
-                                                    class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                                    @click="abrirModalRenombrar(item)">
-                                                    <Icon icon="ph:cursor-text-duotone" />
-                                                    <span>Renombrar</span>
-                                                </div>
-
-                                                <div v-if="!seleccionando && !item.padre"
-                                                    class="flex gap-x  items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                                    @click="abrirEliminarModal(item)">
-                                                    <Icon icon="ph:trash-duotone" />
-                                                    <span>Eliminar</span>
-                                                </div>
-
-                                                <div v-if="(esAdministrador || item.puedeLeer) && !buscandoCarpetaDestino && !item.padre"
-                                                    class="flex gap-x  items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                                    @click="seleccionando = true; item.seleccionado = !item.seleccionado">
-                                                    <template v-if="!item.seleccionado">
-                                                        <Icon icon="ph:check-fat-duotone" />
-                                                        <span>Seleccionar</span>
-                                                    </template>
-                                                    <template v-else>
-                                                        <Icon icon="ph:square" />
-                                                        <span>Deseleccionar</span>
-                                                    </template>
-                                                </div>
-
-                                                <div v-if="seleccionando"
-                                                    class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                                                    @click="cancelarSeleccion">
-                                                    <Icon icon="ph:x-square-duotone" />
-                                                    <span>Cancelar selección</span>
-                                                </div>
-
-                                                <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                                                    @click.prevent="abrirModalPropiedades(item)">
-                                                    <Icon icon="ph:info-duotone" />
-                                                    <span>Propiedades</span>
-                                                </div>
-                                            </div>
-
-                                        </template>
-                                    </Dropdown>
-                                </div>
+                            <div class="text-gray-500 text-xs">
+                                <span v-if="item.tipo === 'disco'" />
+                                <template v-else-if="item.tipo === 'carpeta'">{{ 'archivos' in
+                                    item ? (plural(item.archivos, 'archivo') + ', ' +
+                                        plural(item.subcarpetas, 'carpeta')) : '&nbsp;' }}
+                                </template>
+                                <template v-else>
+                                    <FileSize :size="item.tamano" />&nbsp;
+                                    <TimeAgo :date="item.fecha_modificacion" />
+                                </template>
                             </div>
                         </div>
+                        <div class="w-full transform -translate-y-7 flex justify-center mt-auto relative z-40">
+                                <Dropdown align="right" width="48" v-if="item.tipo !== 'disco'"
+                                    :class="[!info_cargada || !item.puedeLeer ? 'opacity-0 pointer-events-none' : '', seleccionando ? 'hide-if-touchable' : '']">
+                                    <template #trigger>
+                                        <span class="my-3 btn btn-sm btn-icon bg-base-100 p-0.5 cursor-pointer">
+                                            <Icon icon="mdi:dots-horizontal" class="text-xl z-20" />
+                                        </span>
+                                    </template>
+
+                                    <template #content>
+                                        <div class="select-none">
+
+                                            <div v-if="!seleccionando"
+                                                class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                                @click="abrirModalRenombrar(item)">
+                                                <Icon icon="ph:cursor-text-duotone" />
+                                                <span>Renombrar</span>
+                                            </div>
+
+                                            <div v-if="!seleccionando && !item.padre"
+                                                class="flex gap-x  items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                                @click="abrirEliminarModal(item)">
+                                                <Icon icon="ph:trash-duotone" />
+                                                <span>Eliminar</span>
+                                            </div>
+
+                                            <div v-if="(esAdministrador || item.puedeLeer) && !buscandoCarpetaDestino && !item.padre"
+                                                class="flex gap-x  items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                                                @click="seleccionando = true; item.seleccionado = !item.seleccionado">
+                                                <template v-if="!item.seleccionado">
+                                                    <Icon icon="ph:check-fat-duotone" />
+                                                    <span>Seleccionar</span>
+                                                </template>
+                                                <template v-else>
+                                                    <Icon icon="ph:square" />
+                                                    <span>Deseleccionar</span>
+                                                </template>
+                                            </div>
+
+                                            <div v-if="seleccionando"
+                                                class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                                @click="cancelarSeleccion">
+                                                <Icon icon="ph:x-square-duotone" />
+                                                <span>Cancelar selección</span>
+                                            </div>
+
+                                            <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                                @click.prevent="abrirModalPropiedades(item)">
+                                                <Icon icon="ph:info-duotone" />
+                                                <span>Propiedades</span>
+                                            </div>
+                                        </div>
+
+                                    </template>
+                                </Dropdown>
+                            </div>
+                    </div>
                 </GridFill>
             </div>
 
@@ -604,13 +626,13 @@
                         <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length &&  puedeBorrarSeleccionados" class="btn btn-secondary flex gap-x items-center"
-                        @click.prevent="abrirEliminarModal(null)">
+                    <button v-if="itemsSeleccionados.length && puedeBorrarSeleccionados"
+                        class="btn btn-secondary flex gap-x items-center" @click.prevent="abrirEliminarModal(null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length == 1 && puedeEliminarSeleccionados"
+                    <button v-if="itemsSeleccionados.length == 1 && puedeBorrarSeleccionados"
                         class="md:hidden btn btn-secondary flex gap-x items-center"
                         @click.prevent="abrirModalRenombrar(itemsSeleccionados[0])">
                         <Icon icon="ph:cursor-text-duotone" />
@@ -712,87 +734,87 @@
                     :class="index > 0 ? 'pt-4 border-t border-base-200' : ''">
                     <table class="propiedades border-separate border-spacing-y-3">
                         <tbody>
-                        <tr>
-                            <th>Archivo </th>
-                            <td>{{ item.nombre }}</td>
-                        </tr>
-                        <tr>
-                            <th>Carpeta</th>
-                            <td>{{ item.carpeta == '.' ? '' : item.carpeta }}</td>
-                        </tr>
-                        <tr>
-                            <th>Ruta completa</th>
-                            <td>/{{ item.ruta }}</td>
-                        </tr>
-                        <tr>
-                            <th>Propietario</th>
-                            <td class="flex flex-wrap gap-x items-center">
-                                <span class="flex items-center gap-x" title="usuario">
-                                    <Icon icon="ph:user-duotone" /> {{ item.propietario?.usuario.nombre }}
-                                </span>
-                                <span class="opacity-30">|</span>
-                                <span class="flex items-center gap-x" title="grupo">
-                                    <Icon icon="ph:users-three-duotone" /> {{ item.propietario?.grupo.nombre }}
-                                </span>
+                            <tr>
+                                <th>Archivo </th>
+                                <td>{{ item.nombre }}</td>
+                            </tr>
+                            <tr>
+                                <th>Carpeta</th>
+                                <td>{{ item.carpeta == '.' ? '' : item.carpeta }}</td>
+                            </tr>
+                            <tr>
+                                <th>Ruta completa</th>
+                                <td>/{{ item.ruta }}</td>
+                            </tr>
+                            <tr>
+                                <th>Propietario</th>
+                                <td class="flex flex-wrap gap-x items-center">
+                                    <span class="flex items-center gap-x" title="usuario">
+                                        <Icon icon="ph:user-duotone" /> {{ item.propietario?.usuario.nombre }}
+                                    </span>
+                                    <span class="opacity-30">|</span>
+                                    <span class="flex items-center gap-x" title="grupo">
+                                        <Icon icon="ph:users-three-duotone" /> {{ item.propietario?.grupo.nombre }}
+                                    </span>
 
-                                <div v-if="item.propietario?.usuario.id == user?.id"
-                                    class="badge badge-warning text-xs whitespace-nowrap">
-                                    Eres el propietario</div>
-                            </td>
-                        </tr>
-                        <tr v-if="!embed && propietarioRef">
-                            <th><span v-if="propietarioRef.tipo == 'equipo'">Equipo propietario</span>
-                                <span v-else>Usuario propietario</span>
-                            </th>
-                            <td class="flex flex-wrap gap-x items-center">
-                                <Icon
-                                    :icon="propietarioRef.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'" />
-                                <span>{{ propietarioRef.nombre }}</span>
-                                <Link
-                                    class="flex gap-x items-center btn btn-xs text-xs btn-neutral whitespace-nowrap"
-                                    :href="propietarioRef.url" :title="tituloPropietario">
-                                <span v-if="propietarioRef.tipo == 'equipo'">Ver equipo</span>
-                                <span v-else>Ver usuario</span>
-                                </Link>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Fecha</th>
-                            <td>
-                                <TimeAgo :date="item.fecha_modificacion" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Nodo ID</th>
-                            <td>{{ item.nodo_id }}</td>
-                        </tr>
-                        <tr>
-                            <th class="align-top">Permisos</th>
-                            <td>
-                                <PermisosNodo :es-carpeta="item.tipo != 'archivo'" :permisos="item.permisos" />
-                                <button v-if="esAdministrador || item.propietario?.usuario.id == user?.id"
-                                    class="my-2 btn btn-xs btn-secondary text-xs"
-                                    @click="abrirModalCambiarPermisos(item)">Cambiar permisos</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="align-top">Acceso adicional</th>
-                            <td>
-                                <div v-if="item.acl && item.acl.length">
-                                    <div v-for="acl of item.acl" :key="acl.id" class="flex gap-1 items-center">
-                                        <PermisosAcl :acl="acl" :tipo="item.tipo" />
+                                    <div v-if="item.propietario?.usuario.id == user?.id"
+                                        class="badge badge-warning text-xs whitespace-nowrap">
+                                        Eres el propietario</div>
+                                </td>
+                            </tr>
+                            <tr v-if="!embed && propietarioRef">
+                                <th><span v-if="propietarioRef.tipo == 'equipo'">Equipo propietario</span>
+                                    <span v-else>Usuario propietario</span>
+                                </th>
+                                <td class="flex flex-wrap gap-x items-center">
+                                    <Icon
+                                        :icon="propietarioRef.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'" />
+                                    <span>{{ propietarioRef.nombre }}</span>
+                                    <Link
+                                        class="flex gap-x items-center btn btn-xs text-xs btn-neutral whitespace-nowrap"
+                                        :href="propietarioRef.url" :title="tituloPropietario">
+                                    <span v-if="propietarioRef.tipo == 'equipo'">Ver equipo</span>
+                                    <span v-else>Ver usuario</span>
+                                    </Link>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Fecha</th>
+                                <td>
+                                    <TimeAgo :date="item.fecha_modificacion" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Nodo ID</th>
+                                <td>{{ item.nodo_id }}</td>
+                            </tr>
+                            <tr>
+                                <th class="align-top">Permisos</th>
+                                <td>
+                                    <PermisosNodo :es-carpeta="item.tipo != 'archivo'" :permisos="item.permisos" />
+                                    <button v-if="esAdministrador || item.propietario?.usuario.id == user?.id"
+                                        class="my-2 btn btn-xs btn-secondary text-xs"
+                                        @click="abrirModalCambiarPermisos(item)">Cambiar permisos</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="align-top">Acceso adicional</th>
+                                <td>
+                                    <div v-if="item.acl && item.acl.length">
+                                        <div v-for="acl of item.acl" :key="acl.id" class="flex gap-1 items-center">
+                                            <PermisosAcl :acl="acl" :tipo="item.tipo" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div v-else>
-                                    No hay
-                                </div>
-                                <button v-if="esAdministrador || item.propietario?.usuario.id == user?.id"
-                                    class="my-2 btn btn-xs btn-secondary text-xs"
-                                    @click="abrirModalCambiarAcl(item)">Cambiar
-                                    acceso</button>
-                            </td>
-                        </tr>
-                    </tbody>
+                                    <div v-else>
+                                        No hay
+                                    </div>
+                                    <button v-if="esAdministrador || item.propietario?.usuario.id == user?.id"
+                                        class="my-2 btn btn-xs btn-secondary text-xs"
+                                        @click="abrirModalCambiarAcl(item)">Cambiar
+                                        acceso</button>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
 
@@ -1123,10 +1145,26 @@ import useSelectors from '@/Stores/selectors'
 import { useDebounce } from '@vueuse/core';
 import usePlayer from '@/Stores/player'
 import usePermisos from '@/Stores/permisos'
-import { TransitionGroup} from 'vue'
+import { TransitionGroup } from 'vue'
+
+
+function esPantallaTactil() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
+const vDisableRightClick = {
+    mounted(el) {
+        if (esPantallaTactil())
+            el.addEventListener('contextmenu', (e) => e.preventDefault())
+    },
+    unmounted(el) {
+        if (esPantallaTactil())
+            el.removeEventListener('contextmenu', (e) => e.preventDefault())
+    }
+}
 
 const TIEMPO_ACTIVACION_SELECCION = 1100
-const TIEMPO_SELECCION_SIMPLE = 200
+const TIEMPO_SELECCION_SIMPLE = 250
 
 const permisos = usePermisos()
 
@@ -1186,7 +1224,7 @@ function calcularItems() {
                 item[field] = inf[field]
         }
     }
-    console.log({items})
+    console.log({ items })
 
     itemsShow.value = items
 }
@@ -1208,10 +1246,13 @@ watch(info_archivos, () => {
 // para reproducir audios
 const player = usePlayer()
 
+const touchable = ref(true)
+
 onMounted(() => {
+    touchable.value = esPantallaTactil()
     console.log('onmounted')
     // nextTick(() => {
-        cargarInfo()
+    cargarInfo()
     // })
 
     document.addEventListener('keydown', onKeyDown);
@@ -1234,7 +1275,7 @@ const enRaiz = computed(() => props.items[1]?.tipo === 'disco' || props.items[0]
 const puedeEscribir = computed(() => esAdministrador.value || (itemsShow.value.length ? itemsShow.value[0].puedeEscribir : false))
 const puedeLeer = computed(() => esAdministrador.value || (itemsShow.value.length ? itemsShow.value[0].puedeLeer : false))
 const puedeMoverSeleccionados = computed(() => esAdministrador.value || itemsSeleccionados.value.find(item => item.puedeEscribir))
-const puedeBorrarSeleccionados = computed(()=> puedeMoverSeleccionados.value)
+const puedeBorrarSeleccionados = computed(() => puedeMoverSeleccionados.value)
 
 // ruta actual
 const rutaActual = computed(() => itemsShow.value.length ? itemsShow.value[0].ruta : '')
@@ -1359,35 +1400,58 @@ watch(() => itemsShow, verificarFinSeleccion, { deep: true })
 const nav = useNav()
 var scrollYOnTouch = -1
 
-function ontouchstart(item) {
-    console.log('touchstart')
+function ontouchstart(item, event) {
+    console.log('touchstart', { item, target: event.target })
     scrollYOnTouch = nav.scrollY
     item.touching = true
+    item.touchStartAt = new Date().getTime()
     if (seleccionando.value) {
-        item.shortTouchTimer = setTimeout(() => {
-            if(scrollYOnTouch != nav.scrollY) return
+        /*item.shortTouchTimer = setTimeout(() => {
+            if (scrollYOnTouch != nav.scrollY) return
             item.seleccionado = !item.seleccionado
             console.log('item.seleccionado =', item.seleccionado)
-        }, TIEMPO_SELECCION_SIMPLE);
+        }, TIEMPO_SELECCION_SIMPLE);*/
     }
-    else
+    else if(['carpeta', 'archivo'].includes(item.tipo))
         item.longTouchTimer = setTimeout(() => {
-            if(scrollYOnTouch != nav.scrollY) {
+            if (!item.touching) return
+            if (scrollYOnTouch != nav.scrollY) {
                 item.touching = false
                 return
             }
             item.seleccionado = true;
+            item.touching = false
             seleccionando.value = true;
             console.log('item.seleccionado2 =', item.seleccionado)
 
         }, TIEMPO_ACTIVACION_SELECCION); // tiempo en milisegundos para considerar un "long touch"
 }
 
-function ontouchend(item) {
-    console.log('touchend')
+
+
+function ontouchend(item, event) {
+    console.log('touchend', { item, target: event.target })
     clearTimeout(item.longTouchTimer);
     // clearTimeout(item.shortTouchTimer);
-    item.touching = false
+    // item.touching = false
+    const ellapsed = new Date().getTime() - item.touchStartAt
+    const dy = scrollYOnTouch - nav.scrollY
+    console.log('ellapsed', ellapsed, 'dy:', dy)
+    if (scrollYOnTouch != nav.scrollY) {
+        // si nos hemos movido, no hacemos nada (está haciendo scroll)
+        item.touching = false
+        return
+    }
+    if (seleccionando.value) {
+        if (item.touching)
+            item.seleccionado = !!!item.seleccionado
+        console.log('item.seleccionado =', item.seleccionado)
+        item.touching = false
+    }
+    else if (ellapsed < TIEMPO_ACTIVACION_SELECCION) {
+        router.visit(item.url)
+        item.touching = false
+    }
 }
 
 function toggleItem(item) {
@@ -2004,6 +2068,27 @@ const mostrandoImagen = ref(null)
 
 // EMBED
 
+function handleInnerTouchEnd() {
+    // Este método está vacío, pero es necesario para que .stop funcione
+}
+
+function clickItem(item, event) {
+    console.log('clickItem', item, 'seleccionando:', seleccionando.value)
+    /*if (!event.target.closest('[data-allow-touch]')) {
+        event.preventDefault();
+    }*/
+    if (seleccionando.value) {
+        item.seleccionado = !item.seleccionado
+        event.preventDefault()
+        return
+    }
+    if (item.tipo == 'disco')
+        clickDisk(item, event)
+    else if (item.tipo == 'carpeta')
+        clickFolder(item, event)
+    else
+        clickFile(item, event)
+}
 
 function clickDisk(item, event) {
     console.log('clickDisk', item)
@@ -2011,7 +2096,7 @@ function clickDisk(item, event) {
     event.preventDefault()
 }
 function clickFolder(item, event) {
-    console.log('clickFolder', item)
+    console.log('clickFolder', item, 'seleccionando:', seleccionando.value)
     if (seleccionando.value) {
         item.seleccionado = !item.seleccionado
         event.preventDefault()
@@ -2024,7 +2109,7 @@ function clickFolder(item, event) {
 }
 
 function clickFile(item, event) {
-    console.log('clickFile', item)
+    console.log('clickFile', item, 'seleccionando:', seleccionando.value)
     if (seleccionando.value) {
         item.seleccionado = !item.seleccionado
         event.preventDefault()
@@ -2169,5 +2254,9 @@ table th {
 
 .btn-icon {
     @apply w-[40px] sm:w-[46px];
+}
+
+.touchable .hide-if-touchable {
+    @apply opacity-0 pointer-events-none;
 }
 </style>

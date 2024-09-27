@@ -1,10 +1,15 @@
-EQUIPOS
--Crear video tutorial para coordinadores de equipo
--falla al "invitar" (Se recarga la página)
--El coordinador no puede renombrar la carpeta del equipo (eso no sé si es correcto)
+CORREOS
+-Cuando una invitación manda a un correo que no existe, se recibe un mensaje tipo "<elmartillolapm@gmail.com>: host gmail-smtp-in.l.google.com[74.125.195.26] said: 550-5.1.1 The email account that you tried to reach does not exist."
+    -Se podría vincular este mensaje con la invitación
+-Y tener un lugar en el panel de administración para ver mensajes de correo recibidos a notificaciones@tseyor.org
 
-TITAP EDITOR
--lista numerada no se ven los números!
+ARCHIVOS
+-renombrar no aparece como opcion cuando hay un archivo seleccionado?
+-comprobar funcionamiento en moviles
+-long touch
+
+EQUIPOS vs CENTROS
+-Relación entre equipos y centros, de forma que tanto en una vista como en otra se vea la relación, otra opción es que sea : equipos vs contacto
 
 AUDIOS
 -validacion enlace/audio no funciona
@@ -21,8 +26,6 @@ EVENTOS
 -pensar en cómo poner las imagenes (tal vez un carousel) en vista movil
 
 
-ARCHIVOS
--renombrar no aparece como opcion cuando hay un archivo seleccionado?
 
 ADMIN
 -dashboard: añadir un cuadro para mí en el dashboard que incluya:

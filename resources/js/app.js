@@ -95,9 +95,20 @@ function updateTitle(title) {
   }
 }
 
+
+
+const vDisableRightClick = directive({
+    mounted(el) {
+      el.addEventListener('contextmenu', (e) => e.preventDefault())
+    },
+    unmounted(el) {
+      el.removeEventListener('contextmenu', (e) => e.preventDefault())
+    }
+  })
+
 createInertiaApp({
   title: (title) => {
-    
+
     console.log('TITLE:', title)
     // const page = usePage();
     // console.log({ props: page.props, title });

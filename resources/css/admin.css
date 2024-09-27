@@ -120,3 +120,10 @@ h2 {
 h3 {
     @apply text-lg mb-5 font-semibold;
 }
+
+
+.tiptap-editor > .ProseMirror ol {
+    list-style-type: decimal;
+    @apply list-decimal;
+    padding-left: 1.5rem;
+}

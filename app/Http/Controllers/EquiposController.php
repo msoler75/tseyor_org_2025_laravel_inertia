@@ -738,7 +738,7 @@ class EquiposController extends Controller
         // Comprobamos si ha iniciado sesión con otra cuenta
         $user = auth()->user();
         if($user && $user->email != $invitacion->email) {
-            return redirect($urlDestino)->with('message', 'Para aceptar la invitación, debe cerrar la sesión actual.');
+            return redirect($urlDestino)->with('message', 'Para aceptar la invitación, antes debe cerrar la sesión actual en tseyor.org');
         }
 
         // el usuario ya había aceptado y está pulsando otra vez el enlace, pero tal vez aun no ha creado su cuenta
