@@ -2,7 +2,6 @@ ARCHIVOS
 -renombrar no aparece como opcion cuando hay un archivo seleccionado?
 -comprobar funcionamiento en moviles
 -long touch
--En vista movil cuando haces scroll y pulsas (touchend) en un item de imagen, esta se muestra. No debería, pues estás haciendo scroll
 
 PDF
 -Muchos de Los libros en PDF tienen mal el titulo en los metadatos, y es necesario para que google muestre los títulos bien

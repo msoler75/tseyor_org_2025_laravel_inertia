@@ -39,29 +39,28 @@
             interdimensionales mantenidas con los hermanos de las estrellas con la <Referencia>telepatía externa
             </Referencia> a través de nuestro <Referencia>Chac-Mool Puente</Referencia>.</p>
 
-        <!-- <Planets /> -->
-
-
 
         <div class="flex flex-wrap justify-between items-center my-4 gap-x-9 gap-y-7">
 
-            <select v-model="busqueda.orden" class="sel-trans">
+            <select v-model="busqueda.orden" class="sel-trans" v-show="verFiltros">
                 <option value="relevancia" v-if="vistaBusquedaCompleta || query">Relevancia</option>
                 <option value="recientes">Recientes primero</option>
                 <option value="cronologico">Cronológico</option>
             </select>
 
-            <select v-model="busqueda.categoria" class="sel-trans">
+            <select v-model="busqueda.categoria" class="sel-trans" v-show="verFiltros">
                 <option value="todos">Todos los comunicados</option>
                 <option v-for="etiqueta, categoria of categoriasBusqueda" :key="categoria" :value="categoria">{{
                     etiqueta
                     }}</option>
             </select>
 
-            <select v-model="busqueda.ano" class="sel-trans">
+            <select v-model="busqueda.ano" class="sel-trans" v-show="verFiltros">
                 <option value="todos">Cualquier año</option>
                 <option v-for="año of añosBusqueda" :key="año" :value="año">{{ año }}</option>
             </select>
+
+            <span v-show="!verFiltros" @click="verFiltros=true"class="flex items-center gap-2 cursor-pointer"><Icon icon="material-symbols:filter-list-rounded"></Icon> Filtros</span>
 
             <SearchInput :arguments="busqueda" class="ml-auto sel-trans" v-model="query" @focus="focusQuery"
                 @search="buscando = true" @blur="blurQuery" />
@@ -72,7 +71,7 @@
 
             <div class="flex-grow">
 
-                <div v-if="!vistaBusquedaCompleta || completo" class="flex justify-between items-center my-5">
+                <div v-if="!vistaBusquedaCompleta || completo" class="flex justify-between items-center my-1">
 
                     <SearchResultsHeader :results="listado" :arguments="busqueda"
                         v-show="!vistaBusquedaCompleta || (vistaBusquedaCompleta && !buscando && (filtrado || (listado.data?.length && listado.data[0].extractos)))"
@@ -191,7 +190,7 @@ const VISTA_TARJETAS = 'Vista normal'
 const VISTA_LISTADO = 'Listado'
 const VISTA_BUSQUEDA_COMPLETA = 'Búsqueda completa'
 
-
+const verFiltros = ref(false)
 
 const selectors = useSelectors()
 
