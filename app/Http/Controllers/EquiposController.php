@@ -241,6 +241,7 @@ class EquiposController extends Controller
         });
 
         $archivos_final = [];
+        // dd($archivos);
         foreach ($archivos as $archivo) {
             // miramos si tenemos permisos con este usuario para acceder al archivo
             $nodo = Nodo::desde($archivo['url']);
@@ -488,16 +489,16 @@ class EquiposController extends Controller
         // seleccionamos invitaciones a este equipo que están pendientes
         // 3 meses atrás máximo
         $invitaciones = Invitacion::where('equipo_id', $idEquipo)
-        ->where(function ($query) use ($diasAntiguedad) {
-            $query->whereRaw('COALESCE(sent_at, created_at) >= ?', [Carbon::now()->subDays($diasAntiguedad)]);
-        })
-        ->whereNotIn('estado', ['aceptada'])
-        ->with('user')
-        ->orderByRaw('COALESCE(sent_at, created_at) DESC')
-        // ->take(200)
-        ->get();
+            ->where(function ($query) use ($diasAntiguedad) {
+                $query->whereRaw('COALESCE(sent_at, created_at) >= ?', [Carbon::now()->subDays($diasAntiguedad)]);
+            })
+            ->whereNotIn('estado', ['aceptada'])
+            ->with('user')
+            ->orderByRaw('COALESCE(sent_at, created_at) DESC')
+            // ->take(200)
+            ->get();
 
-            //
+        //
         return response()->json(compact('invitaciones'), 200);
     }
 
@@ -601,8 +602,8 @@ class EquiposController extends Controller
             // Verificar si ya se envió una invitación a ese correo
             // dentro de los días de antiguedad
             if (Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)
-            ->whereRaw('COALESCE(sent_at, created_at) >= ?', [Carbon::now()->subDays($diasAntiguedad)])
-            ->first()
+                ->whereRaw('COALESCE(sent_at, created_at) >= ?', [Carbon::now()->subDays($diasAntiguedad)])
+                ->first()
             ) {
                 $invitacionReciente[] = $id;
                 continue;
@@ -654,7 +655,7 @@ class EquiposController extends Controller
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
-        $invitacion->update(['estado'=>'pendiente', 'accepted_at'=>null, 'declined_at'=>null]);
+        $invitacion->update(['estado' => 'pendiente', 'accepted_at' => null, 'declined_at' => null]);
 
         // $invitacion->update(['pendiente']);
 
@@ -681,7 +682,7 @@ class EquiposController extends Controller
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
-        $invitacion->update(['estado'=>'cancelada']);
+        $invitacion->update(['estado' => 'cancelada']);
 
         return response()->json(['message' => 'Invitación cancelada.'], 200);
     }
@@ -737,7 +738,7 @@ class EquiposController extends Controller
 
         // Comprobamos si ha iniciado sesión con otra cuenta
         $user = auth()->user();
-        if($user && $user->email != $invitacion->email) {
+        if ($user && $user->email != $invitacion->email) {
             return redirect($urlDestino)->with('message', 'Para aceptar la invitación, antes debe cerrar la sesión actual en tseyor.org');
         }
 
@@ -748,7 +749,7 @@ class EquiposController extends Controller
         }
 
         // Verificar si la invitación ya fue aceptada o declinada previamente, o si ha caducado
-        if ($invitacion->accepted_at || $invitacion->declined_at || $invitacion->estado=='caducada' || $invitacion->estado=='cancelada' || $daysElapsed > $diasValidez) {
+        if ($invitacion->accepted_at || $invitacion->declined_at || $invitacion->estado == 'caducada' || $invitacion->estado == 'cancelada' || $daysElapsed > $diasValidez) {
             // en cualquier otro caso (ya fue gestionada la invitación, o ha caducado), el enlace está caducado
             return redirect($urlDestino)->with('message', 'La invitación ha caducado o ya ha sido procesada.');
         }
@@ -778,7 +779,7 @@ class EquiposController extends Controller
 
             $mensaje = "Invitación aceptada. ¡Ya eres parte del equipo '{$invitacion->equipo->nombre}'!";
 
-            if(!$user) $mensaje.= " Recuerda iniciar sesión con tu cuenta.";
+            if (!$user) $mensaje .= " Recuerda iniciar sesión con tu cuenta.";
 
             $user = auth()->user();
 

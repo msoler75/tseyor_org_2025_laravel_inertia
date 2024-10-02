@@ -68,11 +68,11 @@ class Nodo extends Model
     /**
      * Obtiene el nodo más cercano siendo el mismo o antecesor de la ubicacion
      */
-    public static function desde($ubicacion) : ?Nodo
+    public static function desde($ubicacion): ?Nodo
     {
-        if($ubicacion=='mis_archivos') return null;
+        if ($ubicacion == 'mis_archivos') return null;
 
-        $nodo = Nodo::select(['nodos.*'])//, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+        $nodo = Nodo::select(['nodos.*']) //, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             //->leftJoin('users', 'users.id', '=', 'user_id')
             //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
             ->whereRaw("? LIKE CONCAT(nodos.ubicacion, '%')", [$ubicacion])
@@ -91,12 +91,12 @@ class Nodo extends Model
     }
 
 
-     /**
+    /**
      * Obtiene todos los nodos de un usuario
      */
     public static function de($idUser)
     {
-        return Nodo::select(['nodos.*'])//, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+        return Nodo::select(['nodos.*']) //, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             //->leftJoin('users', 'users.id', '=', 'user_id')
             //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
             ->where('nodos.user_id', '=', $idUser)
@@ -110,7 +110,7 @@ class Nodo extends Model
      */
     public static function hijos($ubicacion)
     {
-        return Nodo::select(['nodos.*'])//, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+        return Nodo::select(['nodos.*']) //, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             //->leftJoin('users', 'users.id', '=', 'user_id')
             //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
             ->where('nodos.ubicacion', 'LIKE', $ubicacion . '/%')
@@ -147,7 +147,7 @@ class Nodo extends Model
         $umask = octdec($umask);
 
         // aplicamos el umask, con el sticky bit 1
-        $permisos = 01777 & ~$umask;
+        $permisos_defecto = 01777 & ~$umask;
 
         /*Nodo::create([
             'ruta' => $ubicacion,
@@ -157,12 +157,16 @@ class Nodo extends Model
             'es_carpeta' => $es_carpeta
         ]);*/
 
+        // tomará el mismo grupo que el nodo de la carpeta padre
+
+        $padre = self::desde(dirname($ubicacion));
+
         Nodo::updateOrCreate(
             ['ubicacion' => $ubicacion],
             [
                 'user_id' => optional($user)->id ?? 1,
-                'group_id' => 1,
-                'permisos' => decoct($permisos),
+                'group_id' => $padre ? $padre->group_id : 1,
+                'permisos' => $padre ? $padre->permisos : decoct($permisos_defecto),
                 'es_carpeta' => $es_carpeta
             ]
         );
@@ -180,17 +184,17 @@ class Nodo extends Model
         if (!$aclist)
             return false;
 
-        Log::info("Nodo::tieneAcceso ". $user->name.", verbo: $verbo");
+        Log::info("Nodo::tieneAcceso " . $user->name . ", verbo: $verbo");
 
-         // filtramos por verbo
-         if ($verbo) {
-             Log::info("filtramos por verbo: $verbo");
+        // filtramos por verbo
+        if ($verbo) {
+            Log::info("filtramos por verbo: $verbo");
             $aclist = $aclist->filter(function ($acl) use ($verbo) {
                 return strpos($acl->verbos, $verbo) !== false;
             });
         }
         $aclListArray = $aclist->toArray();
-        Log::info("AclList de ".optional($user)->name.":", $aclListArray);
+        Log::info("AclList de " . optional($user)->name . ":", $aclListArray);
 
 
         // tiene acceso global para todos los nodos?
@@ -229,12 +233,12 @@ class Nodo extends Model
         //if ($aclist->where("'$nodo->ubicacion'", 'LIKE', "CONCAT(ubicacion, '%')")->count() > 0)
         //  return true;
 
-        Log::info("Estamos mirando el nodo:",$this->toArray());
+        Log::info("Estamos mirando el nodo:", $this->toArray());
 
         foreach ($aclListArray as $acl) {
-            Log::info("Checando acceso para ".$acl['ubicacion']);
+            Log::info("Checando acceso para " . $acl['ubicacion']);
             if (strpos($this->ubicacion, $acl['ubicacion']) === 0) {
-                Log::info("Acceso concedido para ".$acl['ubicacion']);
+                Log::info("Acceso concedido para " . $acl['ubicacion']);
                 return true;
             }
         }
@@ -256,5 +260,4 @@ class Nodo extends Model
             'ubicacion' => $this->ubicacion
         ];
     }
-
 }

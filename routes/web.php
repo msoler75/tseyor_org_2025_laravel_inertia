@@ -349,6 +349,9 @@ Route::get('asociacion', [PaginasController::class, 'show'])->name('asociacion')
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // DEV:
+Route::post('_sendbuild', 'App\Http\Controllers\DevController@newBuild');
+
+
 Route::get('test/image', function () {
     return Inertia::render('test/ImageTest');
 });

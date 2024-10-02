@@ -13,6 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'files/upload/image',
-        'files/upload/file'
+        'files/upload/file',
+        '_sendbuild'
     ];
 }

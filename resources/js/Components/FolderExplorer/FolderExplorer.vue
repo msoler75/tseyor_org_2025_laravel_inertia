@@ -298,7 +298,8 @@
                         <tr v-for="item in itemsMostrar" :key="item.ruta"
                             :class="[item.clase, item.seleccionado ? 'bg-base-300' : '']"
                             v-on:touchstart="ontouchstart(item, $event)"
-                            v-on:touchend.prevent="ontouchend(item, $event)">
+                            v-on:touchend.prevent="ontouchend(item, $event)"
+                            v-on:touchmove="ontouchmove($event)">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="transform scale-100 text-2xl cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
@@ -320,7 +321,8 @@
                         <tr v-for="item in itemsMostrar" :key="item.ruta" class="transition-opacity duration-200"
                             :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : 'opacity-70 pointer-events-none', navegando && navegando != item.url ? 'opacity-0 pointer-events-none' : '']"
                             v-on:touchstart="ontouchstart(item, $event)"
-                            v-on:touchend.prevent="ontouchend(item, $event)">
+                            v-on:touchend.prevent="ontouchend(item, $event)"
+                            v-on:touchmove="ontouchmove($event)">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-100 text-2xl cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
@@ -1402,26 +1404,37 @@ watch(() => itemsShow, verificarFinSeleccion, { deep: true })
 // EVENTOS TOUCH
 
 const nav = useNav()
-var scrollYOnTouch = -1
+// posicion inicial del scroll al comienzo del touch
+var scrollPosAtStart = -1
+// registra el movimiento de touch
+var touchPosAtStart = 0
+var lastYTouch = 0
+function ontouchmove(event) {
+    lastYTouch = event.changedTouches[0].clientY // get touch y on screen
+    // console.log('touchmove - lastYTouch:', lastYTouch)
+}
+
 
 function ontouchstart(item, event) {
-    console.log('touchstart', { item, target: event.target })
-    scrollYOnTouch = nav.scrollY
+    scrollPosAtStart = nav.scrollY
     item.touching = true
     // get touch y
-    item.touchY = event.changedTouches[0].clientY
+    lastYTouch =  event.changedTouches[0].clientY
+    touchPosAtStart = lastYTouch
+    console.log('touchstart', 'touchPosAtStart:', touchPosAtStart)
     item.touchStartAt = new Date().getTime()
     if (seleccionando.value) {
         /*item.shortTouchTimer = setTimeout(() => {
-            if (scrollYOnTouch != nav.scrollY) return
+            if (scrollPosAtStart != nav.scrollY) return
             item.seleccionado = !item.seleccionado
             console.log('item.seleccionado =', item.seleccionado)
         }, TIEMPO_SELECCION_SIMPLE);*/
     }
     else if (['carpeta', 'archivo'].includes(item.tipo))
+    {
         item.longTouchTimer = setTimeout(() => {
             if (!item.touching) return
-            if (scrollYOnTouch != nav.scrollY) {
+            if (!isInPlace(item)) {
                 item.touching = false
                 return
             }
@@ -1438,12 +1451,26 @@ function ontouchstart(item, event) {
             console.log('item.seleccionado2 =', item.seleccionado)
 
         }, TIEMPO_ACTIVACION_SELECCION); // tiempo en milisegundos para considerar un "long touch"
+    }
+}
+
+
+// devuelve true si el usuario no ha movido el touch
+function isInPlace(item) {
+    const y = lastYTouch // get touch y on screen
+    const ty = touchPosAtStart - y // touch Y diff
+    const sy = scrollPosAtStart - nav.scrollY // scroll diff
+    const dy = Math.abs(sy) + Math.abs(ty)
+    const r= dy<=7
+    console.log('InPlace?', r, {ty, sy, dy})
+    return r
 }
 
 
 
 function ontouchend(item, event) {
-    console.log('touchend', { item, target: event.target })
+    lastYTouch = event.changedTouches[0].clientY
+    console.log('touchend', { item, target: event.target }, 'lastYTouch:', lastYTouch)
     clearTimeout(item.longTouchTimer);
     // clearTimeout(item.shortTouchTimer);
     // item.touching = false
@@ -1455,12 +1482,7 @@ function ontouchend(item, event) {
     }
 
     const ellapsed = new Date().getTime() - item.touchStartAt
-    const y = event.changedTouches[0].clientY // get touch y on screen
-    const ty = item.touchY - y // touch Y diff
-    const sy = scrollYOnTouch - nav.scrollY // scroll diff
-    const dy = Math.abs(sy) + Math.abs(ty)
-    console.log('ellapsed', ellapsed, 'dy:', dy)
-    if (dy>7) {
+    if (!isInPlace(item)) {
         // si nos hemos movido, no hacemos nada (está haciendo scroll)
         item.touching = false
         return
