@@ -1,3 +1,7 @@
+GALLERY 3d
+-departamento de arte
+https://github.com/theringsofsaturn/3D-art-gallery-threejs
+
 ARCHIVOS
 -renombrar no aparece como opcion cuando hay un archivo seleccionado?
 -comprobar funcionamiento en moviles
@@ -17,6 +21,8 @@ CORREOS
     -Se podría vincular este mensaje con la invitación
 -Y tener un lugar en el panel de administración para ver mensajes de correo recibidos a notificaciones@tseyor.org
 
+EQUIPOS
+-poder ver todos los miembros de un equipo
 
 EQUIPOS vs CENTROS
 -Relación entre equipos y centros, de forma que tanto en una vista como en otra se vea la relación, otra opción es que sea : equipos vs contacto

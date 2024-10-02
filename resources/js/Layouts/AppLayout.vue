@@ -224,8 +224,6 @@ axios.get(route('setting', 'navigation'))
                 <slot />
             </div>
 
-        {{ player.expanded?'EXPANDED': 'NO EXPANDED' }}
-
             <!--  queremos que si la ruta actual es /archivos, no se muestre el footer: -->
             <AppFooter v-if="!nav.fullPage && !page.url.match(/^\/archivos/)" />
         </div>
