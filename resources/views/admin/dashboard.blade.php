@@ -82,6 +82,51 @@
             </div>
         @endcanany
 
+        @can('administrar archivos')
+        <div class="flex-grow rounded overflow-y-auto border border-gray-500 bg-base-100">
+            <table class="w-full divide-y divide-gray-500">
+                <thead class="!bg-base-100">
+                    <tr>
+                        <th colspan=5 class="mb-3 px-3 py-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold">Últimos archivos:</span>
+                                <a class="text-xs text-right font-normal" href="/admin/archivos">Ver todos</a>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Archivo
+                        </th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Ruta
+                        </th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Propietario
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="!bg-base-100 divide-y divide-gray-500">
+                    @foreach ($archivos as $archivo)
+                        <tr>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <a title="Descargar archivo" target="_blank"
+                                    href="{{ $archivo['ubicacion'] }}">{{ basename($archivo['ubicacion']) }}</a>
+                            </td>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <a title="Ir a la carpeta"
+                                    href="{{ dirname($archivo['ubicacion']) }}">{{ dirname($archivo['ubicacion']) }}</a>
+                            </td>
+                            <td class="px-3 py-2 whitespace-nowrap">
+                                <a title="Ver usuario"
+                                    href="/usuarios/{{ $archivo['user']['id'] }}">{{ $archivo['user']['name'] }}</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+                </table>
+        </div>
+        @endcanany
+
         @can('administrar social')
             <div class="flex-grow rounded overflow-y-auto border border-gray-500 bg-base-100">
                 <table class="w-full divide-y divide-gray-500">

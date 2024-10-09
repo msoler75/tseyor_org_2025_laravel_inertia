@@ -22,5 +22,8 @@ class Inscripcion extends Model
         'email',
         'telefono',
         'comentario',
+        'estado',
+        'asignado',
+        'notas'
     ];
 }

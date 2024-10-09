@@ -2070,6 +2070,7 @@ function isImage(fileName) {
         case 'svg':
         case 'jpg':
         case 'jpeg':
+        case 'jfif':
         case 'webp':
         case 'png': return true;
     }
@@ -2180,13 +2181,19 @@ function clickFile(item, event) {
         emit('file', item)
         event.preventDefault()
     }
-    else if (item.url.match(/\.(gif|png|webp|svg|jpe?g)$/i)) {
+    else if (item.url.match(/\.(gif|png|webp|svg|jfif|jpe?g)$/i)) {
         mostrandoImagen.value = item
         event.preventDefault()
     }
     else {
+        // si es un vídeo (mp4, avi):
+        if (item.url.match(/\.(mp4|avi|webm)$/i)) {
+         // lo abre en una nueva pestaña
+            window.open(item.url, '_blank')
+            event.preventDefault()
+        }
         // si es un audio:
-        if (player.isPlayable(item.url)) {
+        else if (player.isPlayable(item.url)) {
             player.play(item.url, item.nombre)
             event.preventDefault()
         }
@@ -2210,7 +2217,7 @@ function clickBreadcrumb(item, event) {
 
 // EMBED
 
-const imagenesSeleccionadas = computed(() => itemsSeleccionados.value.filter(item => item.nombre.match(/.*\.(jpe?g|webp|svg|png|gif|pcx|bmp)$/i)))
+const imagenesSeleccionadas = computed(() => itemsSeleccionados.value.filter(item => item.nombre.match(/.*\.(jfif|jpe?g|webp|svg|png|gif|pcx|bmp)$/i)))
 
 // embed
 function insertarImagenes() {

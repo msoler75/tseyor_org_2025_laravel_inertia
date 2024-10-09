@@ -15,7 +15,7 @@ class InscripcionCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     // use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    // use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
@@ -54,13 +54,16 @@ class InscripcionCrudController extends CrudController
             $humanReadableDateTime = $dateTime->diffForHumans();
             return $humanReadableDateTime;
         });
+        CRUD::column('estado')->type('text');
         CRUD::column('nombre')->type('text');
         CRUD::column('region')->type('text');
         CRUD::column('pais')->type('text');
         CRUD::column('email')->type('email');
-        CRUD::column('telefono')->type('text');
-        CRUD::column('comentario')->type('text');
+        CRUD::column('asignado')->type('text');
+        // CRUD::column('comentario')->type('text');
         // CRUD::column('created_at')->type('datetime');
+
+        CRUD::setOperationSetting('lineButtonsAsDropdown', true);
     }
 
     /**
@@ -78,6 +81,25 @@ class InscripcionCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+
+        // campo estado que es un enum
+        /*
+        ALTER TABLE inscripciones
+        ADD COLUMN estado ENUM('nuevo','asignado','no contesta','en curso') NULL DEFAULT 'nuevo' COLLATE utf8mb4_general_ci,
+        ADD COLUMN asignado VARCHAR(256) NULL DEFAULT NULL COLLATE utf8mb4_general_ci,
+        ADD COLUMN notas TEXT NULL DEFAULT NULL COLLATE utf8mb4_general_ci;
+        */
+
+        CRUD::field('estado')->type('enum')->options(['nuevo'=>'nuevo', 'duplicado'=>'duplicado', 'asignado'=>'asignado', 'no contesta'=>'no contesta', 'contactado'=>'contactado', 'en curso'=>'en curso'])->default('nuevo')
+        ->wrapper([
+            'class' => 'form-group col-md-3'
+        ])->before('nombre');
+
+        // campo asignado, max length 256
+        CRUD::field('asignado')->type('text')->attributes(['maxlength'=>256])->label('Asignado a');
+
+        // campo notas
+        CRUD::field('notas')->type('textarea')->label("Notas para el seguimiento");
     }
 
     /**

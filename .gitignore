@@ -24,3 +24,5 @@ yarn-error.log
 rr
 .rr.yaml
 putty.cmd
+/public/build
+/public/build_old
