@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -73,17 +74,15 @@ class DevController extends Controller
      */
     public function newBuild(Request $request)
     {
-        //omitimos comprobación CRSF
-
         // Verificar si se ha enviado un archivo
         if (!$request->hasFile('file')) {
             return response()->json(['error' => 'No se ha enviado ningún archivo'], 400);
         }
 
+        Log::info("Instalando nueva versión de FrontEnd");
+
         $file = $request->file('file');
         $zipPath = storage_path('app/temp_build.zip');
-
-        // return response()->json(['zip:'=>$zipPath]);
 
         // borramos si hubiera un zip previo
         if (File::exists($zipPath)) {
@@ -98,6 +97,8 @@ class DevController extends Controller
         $buildTempPath = public_path('build_temp');
         $buildOldPath = public_path('build_old');
 
+        Log::info("Paths: ", ['buildPath'=>$buildPath, 'buildTempPath'=>$buildTempPath, 'buildOldPath'=>$buildOldPath]);
+
         // Descomprimir el archivo en build_temp
         $zip = new ZipArchive;
         if ($zip->open($zipPath) === TRUE) {
@@ -106,6 +107,8 @@ class DevController extends Controller
                 File::deleteDirectory($buildTempPath);
             }
 
+            Log::info("Descomprimimos a: ".$buildTempPath);
+
             // Crear build_temp y descomprimir
             File::makeDirectory($buildTempPath);
             $zip->extractTo($buildTempPath);
@@ -113,15 +116,18 @@ class DevController extends Controller
 
             // Borrar la carpeta build_old si existe
             if (File::isDirectory($buildOldPath)) {
+                Log::info("Borramos carpeta ".$buildOldPath);
                 File::deleteDirectory($buildOldPath);
             }
 
             // Renombrar build a build_old
             if (File::isDirectory($buildPath)) {
+                Log::info("Renombramos ".$buildPath." a ".$buildOldPath);
                 File::move($buildPath, $buildOldPath);
             }
 
             // Renombrar build_temp a build
+            Log::info("Renombramos ".$buildTempPath." a ".$buildPath);
             File::move($buildTempPath, $buildPath);
 
             // Eliminar el archivo ZIP temporal

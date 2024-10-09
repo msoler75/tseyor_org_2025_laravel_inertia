@@ -93,7 +93,7 @@
 
                 <table
                     v-else-if="selectors.vistaComunicados == VISTA_LISTADO && listado.data && listado.data?.length > 0"
-                    class="table bg-base-100">
+                    class="table bg-base-100 max-w-full">
                     <thead>
                         <tr class="table-row">
                             <th scope="col" class="table-header">Fecha</th>
@@ -110,7 +110,7 @@
                             <td class="table-cell">{{ comunicado.numero }}</td> -->
                             <td class="table-cell">
                                 <Link :href="route('comunicado', comunicado.slug) + resultadoQueryBusqueda"
-                                    class="hover:underline py-2" v-html="comunicado.titulo" />
+                                    class="whitespace-normal hover:underline py-2" v-html="comunicado.titulo" />
                             </td>
                             <td>
                                 <a class="btn btn-xs btn-error w-fit flex gap-3"

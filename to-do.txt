@@ -1,3 +1,6 @@
+INSCRIPCIONES
+-una casilla para ver el estado (pendiente, remitida (a un tutor), contactado, no-contesta, gestionado) y otra de "notas"
+
 GALLERY 3d
 -departamento de arte
 https://github.com/theringsofsaturn/3D-art-gallery-threejs
@@ -6,8 +9,10 @@ ARCHIVOS
 -renombrar no aparece como opcion cuando hay un archivo seleccionado?
 -comprobar funcionamiento en moviles
 -long touch
+-opciones 3 dots: Descargar
 
 PDF
+-No funciona (error Mejor Esperar: font calibri)
 -Muchos de Los libros en PDF tienen mal el titulo en los metadatos, y es necesario para que google muestre los títulos bien
 
 INFORMES
@@ -30,8 +35,8 @@ EQUIPOS vs CENTROS
 AUDIOS
 -validacion enlace/audio no funciona
 
-INICIADOS
--grupo de iniciados nivel 2, acceso a la carpeta solo para nivel 2
+INVITACIONES
+-comprobar posibles hackeos de invitación
 
 LISTA DE DISTRIBUCION
 -Boletines (es como un "novedades", pero por correo)

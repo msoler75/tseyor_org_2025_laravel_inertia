@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Informe;
 use App\Models\User;
 use App\Models\Comentario;
+use App\Models\Nodo;
 use App\Models\Contenido;
 use App\Models\Revision;
 use App\Models\Busqueda;
@@ -43,6 +44,9 @@ class AdminController // extends Controller
 
         $busquedas = Busqueda::select(['query', 'created_at'])->latest()->take(10)->get();
 
+        $archivos = Nodo::with('user')->latest()->take(12)->get();
+        //dd($archivos->toArray()[0]);
+
         $data = [
             //'ultimos_informes' => $ultimos_informes,
             'users_creados' => $users_creados,
@@ -51,7 +55,8 @@ class AdminController // extends Controller
             'contenidos_creados' => $contenidos_creados,
             'contenidos_modificados' => $contenidos_modificados,
             'revisiones' => $revisiones,
-            'busquedas' => $busquedas
+            'busquedas' => $busquedas,
+            'archivos' => $archivos,
         ];
         // dd($revisiones);
 
