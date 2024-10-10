@@ -22,6 +22,7 @@ import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
 import SelectField from "../Components/Backpack/SelectField.vue";
 import TimeAgo from "../Components/TimeAgo.vue";
 import FileManager from "../Components/FileManager.vue";
+import WorkerStatus from "../Components/Admin/WorkerStatus.vue";
 //import AudioPlayer from "../Components/AudioPlayer.vue";
 
 // only in forms
@@ -40,6 +41,7 @@ if (elem) {
     .component("selectfield", SelectField)
     .component("timeago", TimeAgo)
     .component("filemanager", FileManager)
+    .component("workerstatus", WorkerStatus)
 //    .component("audioplayer", AudioPlayer)
     .mixin({
       components: { Icon, Link },

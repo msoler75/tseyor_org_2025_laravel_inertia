@@ -10,6 +10,8 @@ use App\Models\Nodo;
 use App\Models\Contenido;
 use App\Models\Revision;
 use App\Models\Busqueda;
+use App\Models\Inscripcion;
+use App\Models\JobFailed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Pigmalion\StorageItem;
@@ -47,6 +49,14 @@ class AdminController // extends Controller
         $archivos = Nodo::with('user')->latest()->take(12)->get();
         //dd($archivos->toArray()[0]);
 
+
+        $inscripciones_nuevas = Inscripcion::where('estado', 'nuevo')->count();
+
+        $tareas_fallidas = JobFailed::count();
+
+        // está la app en modo mantenimiento? (down/up)
+        $en_mantenimiento = app()->isDownForMaintenance();
+
         $data = [
             //'ultimos_informes' => $ultimos_informes,
             'users_creados' => $users_creados,
@@ -54,6 +64,9 @@ class AdminController // extends Controller
             'comentarios' => $comentarios,
             'contenidos_creados' => $contenidos_creados,
             'contenidos_modificados' => $contenidos_modificados,
+            'inscripciones_nuevas' => $inscripciones_nuevas,
+            'tareas_fallidas' => $tareas_fallidas,
+            'en_mantenimiento'=>$en_mantenimiento,
             'revisiones' => $revisiones,
             'busquedas' => $busquedas,
             'archivos' => $archivos,
