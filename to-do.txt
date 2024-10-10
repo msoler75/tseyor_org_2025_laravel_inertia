@@ -1,5 +1,5 @@
-INSCRIPCIONES
--una casilla para ver el estado (pendiente, remitida (a un tutor), contactado, no-contesta, gestionado) y otra de "notas"
+WORKER
+-crear un cron para activar el worker cada hora
 
 GALLERY 3d
 -departamento de arte

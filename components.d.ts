@@ -142,5 +142,6 @@ declare module 'vue' {
     Users: typeof import('./resources/js/Components/Users.vue')['default']
     VideoPlayer: typeof import('./resources/js/Sections/VideoPlayer.vue')['default']
     Welcome: typeof import('./resources/js/Components/Welcome.vue')['default']
+    WorkerStatus: typeof import('./resources/js/Components/Admin/WorkerStatus.vue')['default']
   }
 }
