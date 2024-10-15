@@ -317,10 +317,11 @@
 
                     <component v-else :is="transitionActive ? TransitionGroup : 'tbody'" tag="tbody" name="files"
                         v-disable-right-click>
-                        <tr v-for="item in itemsMostrar" :key="item.ruta" class="transition-opacity duration-200"
+                        <tr v-for="item in itemsMostrar.slice(0,mostrandoNItems)" :key="item.ruta" class="transition-opacity duration-200"
                             :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : 'opacity-70 pointer-events-none', navegando && navegando != item.url ? 'opacity-0 pointer-events-none' : '']"
                             v-on:touchstart="ontouchstart(item, $event)"
-                            v-on:touchend.prevent="ontouchend(item, $event)" v-on:touchmove="ontouchmove($event)">
+                            v-on:touchend.prevent="ontouchend(item, $event)" v-on:touchmove="ontouchmove($event)"
+                            >
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-100 text-2xl cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
@@ -330,6 +331,7 @@
                                 <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer"
                                     @click="clickItem(item, $event)" :is-link="!seleccionando && !embed" />
                                 <FolderIcon v-else-if="item.tipo === 'carpeta'"
+                                :loading="navegando==item.url"
                                     class="cursor-pointer text-4xl sm:text-xl" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id"
                                     :url="item.url" @click="clickItem(item, $event)"
@@ -403,7 +405,8 @@
                             <td v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'"
                                 class="hidden lg:table-cell text-sm">
                                 <div class="flex items-center gap-2 lg:min-w-64 xl:min-w-[500px] 2xl:min-w-[700px]">
-                                    <FolderIcon :arrow="true" :url="item.carpeta" />
+                                    <FolderIcon :arrow="true" :url="item.carpeta"
+                                    />
                                     <Link :href="item.carpeta" class="break-all">/{{ item.carpeta }}</Link>
                                 </div>
                             </td>
@@ -493,6 +496,7 @@
                             <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer text-8xl mb-4"
                                 @click="clickDisk(item, $event)" :is-link="!seleccionando && !embed" />
                             <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
+                            :loading="navegando==item.url"
                                 :owner="item.propietario && item.propietario?.usuario.id === user?.id"
                                 class="cursor-pointer text-8xl mb-4" :disabled="seleccionando"
                                 @click="clickFolder(item, $event)" :is-link="!seleccionando && !embed"
@@ -1221,8 +1225,10 @@ async function cargarInfo() {
             // info.value = response.data
             info_archivos.value = response.data
             info_cargada.value = true
+            incrementarItemsMostrados()
         })
 }
+
 
 // lista de items (archivos y carpetas) que se va a mostrar
 const itemsShow = ref([])
@@ -1289,7 +1295,6 @@ watch(info_archivos, () => {
 const player = usePlayer()
 
 const touchable = ref(true)
-
 
 onMounted(() => {
 
@@ -1363,7 +1368,6 @@ function showSearch() {
 }
 
 
-
 function onSearch() {
     if (!buscar.value) {
         // cerramos el modal
@@ -1374,6 +1378,7 @@ function onSearch() {
     buscando.value = true
     mostrandoResultados.value = true
     resultadosBusqueda.value = []
+
     axios('/archivos_buscar', {
         params: {
             ruta: rutaActual.value,
@@ -1410,6 +1415,16 @@ function buscarMasResultados() {
 // ITEMS A MOSTRAR
 
 const itemsMostrar = computed(() => mostrandoResultados.value ? resultadosBusqueda.value : itemsOrdenados.value)
+
+var mostrandoNItems = ref(24)
+
+function incrementarItemsMostrados() {
+    setTimeout(()=> {
+        mostrandoNItems.value += 48
+        if(mostrandoNItems.value < itemsMostrar.value.length + 48)
+            incrementarItemsMostrados()
+    }, 500)
+}
 
 
 // SELECCION
@@ -1500,7 +1515,6 @@ function isInPlace(item) {
     console.log('InPlace?', r, { ty, sy, dy })
     return r
 }
-
 
 
 function ontouchend(item, event) {

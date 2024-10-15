@@ -9,7 +9,6 @@ ARCHIVOS
 -renombrar no aparece como opcion cuando hay un archivo seleccionado?
 -comprobar funcionamiento en moviles
 -long touch
--opciones 3 dots: Descargar
 
 PDF
 -No funciona (error Mejor Esperar: font calibri)
