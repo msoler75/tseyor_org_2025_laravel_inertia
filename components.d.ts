@@ -136,6 +136,7 @@ declare module 'vue' {
     TipTapEditorSimpleField: typeof import('./resources/js/Components/Backpack/TipTapEditorSimpleField.vue')['default']
     TipTapFullMenuBar: typeof import('./resources/js/Components/TipTapFullMenuBar.vue')['default']
     TipTapSimpleMenuBar: typeof import('./resources/js/Components/TipTapSimpleMenuBar.vue')['default']
+    TopButtonsRight: typeof import('./resources/js/Components/FolderExplorer/TopButtonsRight.vue')['default']
     TransitionFade: typeof import('./resources/js/Sections/TransitionFade.vue')['default']
     Uploader: typeof import('./resources/js/Components/Uploader.vue')['default']
     User: typeof import('./resources/js/Components/User.vue')['default']
