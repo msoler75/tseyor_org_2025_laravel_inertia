@@ -1,7 +1,6 @@
 <template>
     <Prose class="text-container break-words">
-        <ContentNode :node="arbol" :use-image="optimizeImages"
-        @click="handleClick"/>
+        <ContentNode :node="arbol" :use-image="optimizeImages" @click="handleClick" />
     </Prose>
 </template>
 
@@ -36,7 +35,7 @@ const images = ref([]) // imagenes del contenido
 
 var v3ImgPreviewFn = null
 
-const contentPreProcessed = computed(() => isMarkdown.value ? MarkdownToHtml(props.content) : props.content ?props.content : "")
+const contentPreProcessed = computed(() => isMarkdown.value ? MarkdownToHtml(props.content) : props.content ? props.content : "")
 
 const contentProcessed = computed(() => contentPreProcessed.value.replace(/<span class="es-referencia"(.*?)<\/span>/g, '<referencia$1</referencia>'))
 
@@ -81,9 +80,9 @@ function parseHTML(textoHTML) {
             if (child.nodeType === 1) {
                 const objchild = parseNode(child)
                 obj.children.push(objchild);
-                if(objchild.tagName=="img"&&!objchild.node.src.match(/guias|sello_tseyor/)) // si es una imagen de los guias, no cuenta
+                if (objchild.tagName == "img" && !objchild.node.src.match(/guias|sello_tseyor/)) // si es una imagen de los guias, no cuenta
                     obj.attributes['has-image'] = ''
-                if(props.onNode)
+                if (props.onNode)
                     props.onNode(objchild)
             } else if (child.nodeType === 3 && child.textContent) {
                 // Agrega el texto del nodo de texto
@@ -108,58 +107,58 @@ onMounted(async () => {
     // importación dinámica:
     await import('v3-img-preview').then((module) => {
         v3ImgPreviewFn = module.v3ImgPreviewFn;
+    })
 
-        // buscamos todas las imagenes
-        //const elems = container.value.$el.querySelectorAll('.is-image')
-        //for (const img of elems)
-            //img.onclick = (event) => handlePreview(event.target)
-
-
-        nextTick(() => {
+    // buscamos todas las imagenes
+    //const elems = container.value.$el.querySelectorAll('.is-image')
+    //for (const img of elems)
+    //img.onclick = (event) => handlePreview(event.target)
 
 
-            // AÑADIR ENLACES A NOTAS AL PIE, Y VICEVERSA
+    nextTick(() => {
 
-            // ESTO SOLO FUNCIONA PARA UN PARSE DE MARKDOWN DE OTRA LIBRERIA
 
-            // ACTUALMENTE NO HACE NADA
+        // AÑADIR ENLACES A NOTAS AL PIE, Y VICEVERSA
 
-            // Obtener todos los enlaces de desplazamiento
-            var scrollLinks = document.querySelectorAll('.footnote-ref a, a.footnote-backref');
+        // ESTO SOLO FUNCIONA PARA UN PARSE DE MARKDOWN DE OTRA LIBRERIA
 
-            console.log({ scrollLinks })
+        // ACTUALMENTE NO HACE NADA
 
-            // Agregar evento de clic a cada enlace
-            scrollLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
+        // Obtener todos los enlaces de desplazamiento
+        var scrollLinks = document.querySelectorAll('.footnote-ref a, a.footnote-backref');
 
-                    console.log('clicked!')
+        console.log({ scrollLinks })
 
-                    var targetId = this.getAttribute('href').substring(1);
-                    var targetElement = document.getElementById(targetId);
+        // Agregar evento de clic a cada enlace
+        scrollLinks.forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
 
-                    if (targetElement) {
-                        console.log('got target')
-                        var offset = 90;
-                        var targetRect = targetElement.getBoundingClientRect();
-                        var targetOffsetTop = window.scrollY + targetRect.top - offset;
+                console.log('clicked!')
 
-                        window.scrollTo({
-                            top: targetOffsetTop,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
+                var targetId = this.getAttribute('href').substring(1);
+                var targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    console.log('got target')
+                    var offset = 90;
+                    var targetRect = targetElement.getBoundingClientRect();
+                    var targetOffsetTop = window.scrollY + targetRect.top - offset;
+
+                    window.scrollTo({
+                        top: targetOffsetTop,
+                        behavior: 'smooth'
+                    });
+                }
             });
-
         });
+
     });
 });
 
 function handleClick(event) {
     console.log('clicked', event.target)
-    if(event.target.tagName=='IMG') {
+    if (event.target.tagName == 'IMG') {
         handlePreview(event.target)
     }
 }
@@ -177,7 +176,6 @@ function handlePreview(img) {
 
 
 <style scoped>
-
 :deep(table) p {
     @apply my-0;
 }
@@ -187,21 +185,21 @@ function handlePreview(img) {
     cursor: pointer;
 }
 
-:deep(.is-image) + br {
+:deep(.is-image)+br {
     display: none;
 }
 
 
 
-:deep(p[has-image]) + p[style*=center]:not([has-image]),
-:deep(.is-image) + br + em,
-:deep(.is-image) + em{
-    font-size:90%;
+:deep(p[has-image])+p[style*=center]:not([has-image]),
+:deep(.is-image)+br+em,
+:deep(.is-image)+em {
+    font-size: 90%;
     transform: translateY(-.6rem);
     display: inline-block;
 }
 
-:deep(p[has-image]) + p[style*=center]:not([has-image]) {
+:deep(p[has-image])+p[style*=center]:not([has-image]) {
     transform: translateY(-1rem);
     display: block;
 }
@@ -229,6 +227,8 @@ function handlePreview(img) {
 }
 
 @media (max-width: 440px) {
-    .text-justify {text-align: left}
+    .text-justify {
+        text-align: left
+    }
 }
 </style>

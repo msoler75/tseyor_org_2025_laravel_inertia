@@ -298,8 +298,7 @@
                         <tr v-for="item in itemsMostrar" :key="item.ruta"
                             :class="[item.clase, item.seleccionado ? 'bg-base-300' : '']"
                             v-on:touchstart="ontouchstart(item, $event)"
-                            v-on:touchend.prevent="ontouchend(item, $event)"
-                            v-on:touchmove="ontouchmove($event)">
+                            v-on:touchend.prevent="ontouchend(item, $event)" v-on:touchmove="ontouchmove($event)">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="transform scale-100 text-2xl cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
@@ -321,8 +320,7 @@
                         <tr v-for="item in itemsMostrar" :key="item.ruta" class="transition-opacity duration-200"
                             :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : 'opacity-70 pointer-events-none', navegando && navegando != item.url ? 'opacity-0 pointer-events-none' : '']"
                             v-on:touchstart="ontouchstart(item, $event)"
-                            v-on:touchend.prevent="ontouchend(item, $event)"
-                            v-on:touchmove="ontouchmove($event)">
+                            v-on:touchend.prevent="ontouchend(item, $event)" v-on:touchmove="ontouchmove($event)">
                             <td v-if="seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-100 text-2xl cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
@@ -455,6 +453,13 @@
                                                 <span>Cancelar selección</span>
                                             </div>
 
+                                            <a :href="item.url"
+                                                class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                                download>
+                                                <Icon icon="ph:download" />
+                                                <span>Descargar</span>
+                                            </a>
+
 
                                             <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                                 @click.prevent="abrirModalPropiedades(item)">
@@ -568,6 +573,13 @@
                                             <Icon icon="ph:x-square-duotone" />
                                             <span>Cancelar selección</span>
                                         </div>
+
+                                        <a :href="item.url"
+                                            class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
+                                            download>
+                                            <Icon icon="ph:download" />
+                                            <span>Descargar</span>
+                                        </a>
 
                                         <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                                             @click.prevent="abrirModalPropiedades(item)">
@@ -1123,8 +1135,10 @@
 
         <Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
             <div class="bg-base-100 p-3">
-                <img :src="mostrandoImagen.url + '?mw=700&mh=600'"
-                    class="w-full max-h-[calc(100vh-170px)] object-contain" />
+                <div class="fondo-transparencia">
+                    <img :src="mostrandoImagen.url + '?mw=700&mh=600'"
+                        class="w-full max-h-[calc(100vh-170px)] object-contain" />
+                </div>
 
                 <div class="flex pt-3 justify-between sm:justify-end gap-x flex-shrink-0">
                     <a download :href="mostrandoImagen.url" @click="mostrandoImagen = null" type="button"
@@ -1200,9 +1214,9 @@ const info_cargada = ref(false)
 const info_archivos = ref({})
 
 // Carga la información adicional de los contenidos de la carpeta actual
-function cargarInfo() {
+async function cargarInfo() {
     info_cargada.value = false
-    axios.get('/archivos_info' + '?ruta=/' + rutaActual.value)
+    return axios.get('/archivos_info' + '?ruta=/' + rutaActual.value)
         .then(response => {
             // info.value = response.data
             info_archivos.value = response.data
@@ -1212,6 +1226,26 @@ function cargarInfo() {
 
 // lista de items (archivos y carpetas) que se va a mostrar
 const itemsShow = ref([])
+
+
+// IMAGES PREVIEW
+const images = ref([])
+var v3ImgPreviewFn = null
+
+async function cargarVisorImagenes() {
+    // importación dinámica:
+    await import('v3-img-preview').then((module) => {
+        v3ImgPreviewFn = module.v3ImgPreviewFn;
+    })
+}
+
+function actualizarListaImagenes() {
+    images.value = props.items.filter(x => isImage(x.url)).map(x => x.url)
+}
+
+// MOSTRANDO IMAGEN
+
+const mostrandoImagen = ref(null)
 
 // genera la lista de items final
 function calcularItems() {
@@ -1232,6 +1266,8 @@ function calcularItems() {
     console.log({ items })
 
     itemsShow.value = items
+
+    actualizarListaImagenes()
 }
 
 calcularItems()
@@ -1254,12 +1290,12 @@ const player = usePlayer()
 
 const touchable = ref(true)
 
+
 onMounted(() => {
+
     touchable.value = esPantallaTactil()
-    console.log('onmounted')
-    // nextTick(() => {
-    cargarInfo()
-    // })
+
+    cargarInfo().then(() => cargarVisorImagenes())
 
     document.addEventListener('keydown', onKeyDown);
 })
@@ -1419,7 +1455,7 @@ function ontouchstart(item, event) {
     scrollPosAtStart = nav.scrollY
     item.touching = true
     // get touch y
-    lastYTouch =  event.changedTouches[0].clientY
+    lastYTouch = event.changedTouches[0].clientY
     touchPosAtStart = lastYTouch
     console.log('touchstart', 'touchPosAtStart:', touchPosAtStart)
     item.touchStartAt = new Date().getTime()
@@ -1430,8 +1466,7 @@ function ontouchstart(item, event) {
             console.log('item.seleccionado =', item.seleccionado)
         }, TIEMPO_SELECCION_SIMPLE);*/
     }
-    else if (['carpeta', 'archivo'].includes(item.tipo))
-    {
+    else if (['carpeta', 'archivo'].includes(item.tipo)) {
         item.longTouchTimer = setTimeout(() => {
             if (!item.touching) return
             if (!isInPlace(item)) {
@@ -1439,7 +1474,7 @@ function ontouchstart(item, event) {
                 return
             }
 
-            if(event.target.closest("[menu]")) {
+            if (event.target.closest("[menu]")) {
                 console.log("ES MENU")
                 item.touching = false
                 return
@@ -1461,8 +1496,8 @@ function isInPlace(item) {
     const ty = touchPosAtStart - y // touch Y diff
     const sy = scrollPosAtStart - nav.scrollY // scroll diff
     const dy = Math.abs(sy) + Math.abs(ty)
-    const r= dy<=7
-    console.log('InPlace?', r, {ty, sy, dy})
+    const r = dy <= 7
+    console.log('InPlace?', r, { ty, sy, dy })
     return r
 }
 
@@ -1474,7 +1509,7 @@ function ontouchend(item, event) {
     clearTimeout(item.longTouchTimer);
     // clearTimeout(item.shortTouchTimer);
     // item.touching = false
-    if(event.target.closest("[menu]")) {
+    if (event.target.closest("[menu]")) {
         console.log("ES MENU")
         item.touching = false
         event.target.closest(".cursor-pointer").click()
@@ -1496,19 +1531,19 @@ function ontouchend(item, event) {
     else if (ellapsed < TIEMPO_ACTIVACION_SELECCION) {
         item.touching = false
         // SIMPLE CLICK
-        if(item.tipo=='carpeta'||item.tipo=='disco') {
+        if (item.tipo == 'carpeta' || item.tipo == 'disco') {
             clickFolder(item, event)
-            if(!props.embed) {
+            if (!props.embed) {
                 console.log('visita2', item.url)
                 router.visit(item.url)
             }
         } else {
             const target = event.target
             console.log('target', target)
-            if(target.hasAttribute('download'))
-            target.click()
+            if (target.hasAttribute('download'))
+                target.click()
             else
-            clickFile(item, event)
+                clickFile(item, event)
         }
     }
 }
@@ -2067,6 +2102,9 @@ function isImage(fileName) {
     const ext = fileName.split('.').pop().toLowerCase();
 
     switch (ext) {
+        case 'gif':
+        case 'pcx':
+        case 'bmp':
         case 'svg':
         case 'jpg':
         case 'jpeg':
@@ -2122,9 +2160,6 @@ function copyData(dest, src, key) {
 
 
 
-// MOSTRANDO IMAGEN
-
-const mostrandoImagen = ref(null)
 
 // EMBED
 
@@ -2181,14 +2216,22 @@ function clickFile(item, event) {
         emit('file', item)
         event.preventDefault()
     }
-    else if (item.url.match(/\.(gif|png|webp|svg|jfif|jpe?g)$/i)) {
-        mostrandoImagen.value = item
+    else if (isImage(item.url)) {
         event.preventDefault()
+
+        if (v3ImgPreviewFn) {
+            const index = images.value.findIndex(x => x == item.url)
+            console.log('VISOR', item.url, index)
+            v3ImgPreviewFn({ images: images.value.map(x => x + '?mw=3000&mh=3000'), index })
+        }
+        else
+            mostrandoImagen.value = item
+
     }
     else {
         // si es un vídeo (mp4, avi):
         if (item.url.match(/\.(mp4|avi|webm)$/i)) {
-         // lo abre en una nueva pestaña
+            // lo abre en una nueva pestaña
             window.open(item.url, '_blank')
             event.preventDefault()
         }
@@ -2207,7 +2250,7 @@ function clickBreadcrumb(item, event) {
         emit('folder', { ...item, ruta: item.url })
     else {
         clickFolder(item, event)
-        if(!props.embed) {
+        if (!props.embed) {
             console.log('visita1', item.url)
             router.visit(item.url)
         }
@@ -2217,13 +2260,14 @@ function clickBreadcrumb(item, event) {
 
 // EMBED
 
-const imagenesSeleccionadas = computed(() => itemsSeleccionados.value.filter(item => item.nombre.match(/.*\.(jfif|jpe?g|webp|svg|png|gif|pcx|bmp)$/i)))
+const imagenesSeleccionadas = computed(() => itemsSeleccionados.value.filter(item => isImage(item.nombre)))
 
 // embed
 function insertarImagenes() {
     console.log('insertarImagenes', imagenesSeleccionadas.value)
     emit('images', imagenesSeleccionadas.value)
 }
+
 
 
 </script>
@@ -2236,6 +2280,29 @@ function insertarImagenes() {
 
 
 <style scoped>
+.btn-icon {
+    @apply w-[40px] sm:w-[46px];
+}
+
+.gap-x {
+    @apply gap-1 xs:gap-2 sm:gap-3;
+}
+
+
+.touchable .hide-if-touchable {
+    @apply opacity-0 pointer-events-none;
+}
+
+.fondo-transparencia {
+    background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
 table td,
 table th {
     @apply px-2;
@@ -2321,17 +2388,5 @@ table th {
 
 .propiedades th {
     text-align: left
-}
-
-.gap-x {
-    @apply gap-1 xs:gap-2 sm:gap-3;
-}
-
-.btn-icon {
-    @apply w-[40px] sm:w-[46px];
-}
-
-.touchable .hide-if-touchable {
-    @apply opacity-0 pointer-events-none;
 }
 </style>

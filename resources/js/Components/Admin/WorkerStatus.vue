@@ -1,5 +1,5 @@
 <template>
-    <component :is="status!='running'?Link:'div'" :href="href" class="worker-controls ml-2" style="min-width: 150px">
+    <component :is="workerState!='running'?Link:'div'" :href="href" class="worker-controls ml-2" style="min-width: 150px">
       <span class="ml-2">
         <span>{{ workerState }}</span>
       </span>
@@ -22,6 +22,7 @@ import Link from '../Link.vue'
       default: '/'
     }
   })
+
 
   const workerState = ref('...');
   const isRunning = ref(false);
