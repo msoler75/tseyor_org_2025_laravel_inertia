@@ -28,6 +28,7 @@ declare module 'vue' {
     Back: typeof import('./resources/js/Components/Back.vue')['default']
     Banner: typeof import('./resources/js/Components/Banner.vue')['default']
     BotonesIzquierda: typeof import('./resources/js/Components/FolderExplorer/BotonesIzquierda.vue')['default']
+    BotonesOperaciones: typeof import('./resources/js/Components/FolderExplorer/BotonesOperaciones.vue')['default']
     Breadcrumb: typeof import('./resources/js/Components/FolderExplorer/Breadcrumb.vue')['default']
     Buscar: typeof import('./resources/js/Components/FolderExplorer/Buscar.vue')['default']
     BuscarArchivos: typeof import('./resources/js/Components/FolderExplorer/BuscarArchivos.vue')['default']

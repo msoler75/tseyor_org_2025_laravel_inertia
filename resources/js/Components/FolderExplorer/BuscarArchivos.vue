@@ -1,9 +1,9 @@
 <template>
 
-<div v-if="buscando || store.mostrandoResultadosBusqueda" class="w-full text-center h-[3rem] mt-3">
-                <div v-if="buscando">Buscando...</div>
-                <div v-else-if="store.mostrandoResultadosBusqueda && !store.resultadosBusqueda.length">No hay resultados</div>
-            </div>
+    <div v-if="buscando || store.mostrandoResultadosBusqueda" class="w-full text-center h-[3rem] mt-3">
+        <div v-if="buscando">Buscando...</div>
+        <div v-else-if="store.mostrandoResultadosBusqueda && !store.resultadosBusqueda.length">No hay resultados</div>
+    </div>
 
     <!-- Modal Search -->
     <Modal :show="modalBuscar" @close="modalBuscar = false" maxWidth="sm">
@@ -12,7 +12,8 @@
             <input ref="inputSearch" type="search" placeholder="Nombre de archivo..." v-model="store.textoBuscar">
 
             <div class="py-3 flex justify-between sm:justify-end gap-5">
-                <button @click.prevent="onSearch" type="button" class="btn btn-primary btn-sm" :disabled="!store.textoBuscar">
+                <button @click.prevent="onSearch" type="button" class="btn btn-primary btn-sm"
+                    :disabled="!store.textoBuscar">
                     Buscar archivos
                 </button>
 

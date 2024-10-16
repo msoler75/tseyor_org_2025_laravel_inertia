@@ -30,6 +30,47 @@ use Illuminate\Support\Facades\Cache;
     El propósito principal del sticky bit es asegurar que los usuarios no eliminen o modifiquen archivos de otros usuarios en directorios compartidos, como /tmp. Este directorio suele tener el sticky bit activado para evitar que los usuarios borren o modifiquen archivos de otros usuarios en un entorno multiusuario.
 */
 
+
+function moveDirectoryRecursively($source, $destination)
+{
+    try {
+
+        Log::info("moveDirectoryRecursively($source, $destination)");
+        // Validar que el directorio fuente exista
+        if (!File::isDirectory($source)) {
+            throw new \Exception("El directorio fuente no existe");
+        }
+
+        // Crear directorio destino si no existe
+        if (!File::isDirectory($destination)) {
+            File::makeDirectory($destination, 0755, true);
+        }
+
+        $items = File::glob($source . '/*');
+
+        foreach ($items as $item) {
+            $relativeItemPath = basename($item);
+            $targetPath = $destination . '/' . $relativeItemPath;
+
+            if (is_dir($item)) {
+                moveDirectoryRecursively($item, $targetPath);
+            } else {
+                File::move($item, $targetPath);
+            }
+        }
+
+        // Opcional: Eliminar directorio fuente vacío
+        File::deleteDirectory($source);
+
+        return true;
+    } catch (\Exception $e) {
+        Log::error('Error moviendo directorio: ' . $e->getMessage());
+        return false;
+    }
+}
+
+
+
 /**
  *
  */
@@ -1598,6 +1639,8 @@ class ArchivosController extends Controller
             $itemSource = new StorageItem($rutaAntes);
             $itemDestination = new StorageItem($rutaDespues);
 
+            Log::info("Moviendo. Item: $item. antes=[$rutaAntes]  despues=[$rutaDespues]");
+
             // Comprobamos sticky bit (si está activado no podemos mover archivos o carpetas que no son nuestros)
             if (!$esAdministrador && $nodoSource->sticky) {
                 $nodoItem = Nodo::desde($rutaAntes);
@@ -1615,10 +1658,15 @@ class ArchivosController extends Controller
                 continue;
             }
 
+
+
+
             // Verificar si el item es una carpeta
             if ($itemSource->directoryExists()) {
+                Log::info("Vamos a mover la carpeta [{$itemSource->path}] a [{$itemDestination->path}]");
                 // Intentar mover la carpeta
-                if (File::moveDirectory($itemSource->path, $itemDestination->path)) {
+                //if (File::moveDirectory($itemSource->path, $itemDestination->path)) {
+                if (moveDirectoryRecursively($itemSource->path, $itemDestination->path)) {
                     // if (Storage::move($itemSource, $itemDestination)) {
                     $successCount++;
                     // Agregar registro de movimiento a archivo de log

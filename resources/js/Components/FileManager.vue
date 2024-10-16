@@ -1,5 +1,5 @@
 <template>
-    <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietario="propietario" @updated="reloadFolder"
+    <FolderExplorer :items="items" :propietario="propietario" @updated="reloadFolder"
         @disk="onDisk" @folder="onFolder" @file="onFile" :embed="true" :ruta="ruta" rutaBase="" :cargando="cargando"
         @images="insertarImagenes($event)"
         rootLabel="web:" rootUrl=""

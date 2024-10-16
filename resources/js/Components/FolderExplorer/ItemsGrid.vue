@@ -3,14 +3,14 @@
 
         <div v-for="item in items" :key="item.ruta" class="transition-opacity duration-200"
             :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : ' opacity-70 pointer-events-none', store.navegando && store.navegando != item.url ? 'opacity-0 pointer-events-none' : '']">
-            <div v-if="store.seleccionando" @click.prevent="toggleItem(item)"
+            <div v-if="store.seleccionando" @click.prevent="store.toggleItem(item)"
                 class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                 <Icon v-else icon="ph:square" />
             </div>
             <div class="flex flex-col items-center justify-center relative h-full pt-2"
-                :xclass="store.seleccionando ? 'pointer-events-none' : ''" v-on:touchstart="store.touchStart(item, $event)"
-                v-on:touchend.prevent="store.touchEnd(item, $event)">
+                :xclass="store.seleccionando ? 'pointer-events-none' : ''"
+                v-on:touchstart="store.touchStart(item, $event)" v-on:touchend.prevent="store.touchEnd(item, $event)">
                 <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer text-8xl mb-4"
                     @click="store.clickDisk(item, $event)" :is-link="!store.seleccionando && !store.embed" />
                 <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
