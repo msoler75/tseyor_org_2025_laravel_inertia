@@ -54,7 +54,7 @@
 
 
                 <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                    @click.prevent="abrirModalPropiedades(item)">
+                    @click.prevent="store.call('propiedades', item)">
                     <Icon icon="ph:info-duotone" />
                     <span>Propiedades</span>
                 </div>

@@ -145,7 +145,7 @@
 
                                     <Link v-if="!embed && propietarioRef && !store.seleccionando"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                                        :href="propietarioRef.url" :title="tituloPropietario">
+                                        :href="propietarioRef.url" :title="store.tituloPropietario">
                                     <Icon
                                         :icon="propietarioRef.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'" />
                                     <span v-if="propietarioRef.tipo == 'equipo'">Ver equipo</span>
@@ -154,7 +154,7 @@
 
 
                                     <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                                        @click.prevent="abrirModalPropiedades(store.itemsShow[0])">
+                                        @click.prevent="store.call('propiedades', store.itemsShow[0])">
                                         <Icon icon="ph:info-duotone" />
                                         <span>Propiedades</span>
                                     </div>
@@ -234,7 +234,7 @@
                     </button>
 
                     <button v-if="store.seleccionando && store.itemsSeleccionados.length > 0" class="btn btn-secondary"
-                        @click.prevent="abrirModalPropiedades()">
+                        @click.prevent="store.call('propiedades')">
                         <Icon icon="ph:info-duotone" />
                         <span>Propiedades</span>
                     </button>
@@ -542,7 +542,7 @@
                     </button>
 
                     <button v-if="store.seleccionando && store.itemsSeleccionados.length > 0" class="btn btn-secondary"
-                        @click.prevent="abrirModalPropiedades()">
+                        @click.prevent="store.call('propiedades')">
                         <Icon icon="ph:info-duotone" />
                         <span>Propiedades</span>
                     </button>
@@ -571,337 +571,6 @@
             </form>
 
         </Modal>
-
-
-
-
-
-
-
-
-
-
-        <!-- Modal Propiedades -->
-        <Modal :show="modalPropiedades" @close="modalPropiedades = false">
-            <div class="p-5">
-                <div v-for="item, index of itemsPropiedades" :key="item.url" class="pb-4"
-                    :class="index > 0 ? 'pt-4 border-t border-base-200' : ''">
-                    <table class="propiedades border-separate border-spacing-y-3">
-                        <tbody>
-                            <tr>
-                                <th>Archivo </th>
-                                <td>{{ item.nombre }}</td>
-                            </tr>
-                            <tr>
-                                <th>Carpeta</th>
-                                <td>{{ item.carpeta == '.' ? '' : item.carpeta }}</td>
-                            </tr>
-                            <tr>
-                                <th>Ruta completa</th>
-                                <td>/{{ item.ruta }}</td>
-                            </tr>
-                            <tr>
-                                <th>Propietario</th>
-                                <td class="flex flex-wrap gap-x items-center">
-                                    <span class="flex items-center gap-x" title="usuario">
-                                        <Icon icon="ph:user-duotone" /> {{ item.propietario?.usuario.nombre }}
-                                    </span>
-                                    <span class="opacity-30">|</span>
-                                    <span class="flex items-center gap-x" title="grupo">
-                                        <Icon icon="ph:users-three-duotone" /> {{ item.propietario?.grupo.nombre }}
-                                    </span>
-
-                                    <div v-if="item.propietario?.usuario.id == user?.id"
-                                        class="badge badge-warning text-xs whitespace-nowrap">
-                                        Eres el propietario</div>
-                                </td>
-                            </tr>
-                            <tr v-if="!embed && propietarioRef">
-                                <th><span v-if="propietarioRef.tipo == 'equipo'">Equipo propietario</span>
-                                    <span v-else>Usuario propietario</span>
-                                </th>
-                                <td class="flex flex-wrap gap-x items-center">
-                                    <Icon
-                                        :icon="propietarioRef.tipo == 'equipo' ? 'ph:users-four-duotone' : 'ph:user-duotone'" />
-                                    <span>{{ propietarioRef.nombre }}</span>
-                                    <Link
-                                        class="flex gap-x items-center btn btn-xs text-xs btn-neutral whitespace-nowrap"
-                                        :href="propietarioRef.url" :title="tituloPropietario">
-                                    <span v-if="propietarioRef.tipo == 'equipo'">Ver equipo</span>
-                                    <span v-else>Ver usuario</span>
-                                    </Link>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Fecha</th>
-                                <td>
-                                    <TimeAgo :date="item.fecha_modificacion" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Nodo ID</th>
-                                <td>{{ item.nodo_id }}</td>
-                            </tr>
-                            <tr>
-                                <th class="align-top">Permisos</th>
-                                <td>
-                                    <PermisosNodo :es-carpeta="item.tipo != 'archivo'" :permisos="item.permisos" />
-                                    <button v-if="store.esAdministrador || item.propietario?.usuario.id == user?.id"
-                                        class="my-2 btn btn-xs btn-secondary text-xs"
-                                        @click="abrirModalCambiarPermisos(item)">Cambiar permisos</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="align-top">Acceso adicional</th>
-                                <td>
-                                    <div v-if="item.acl && item.acl.length">
-                                        <div v-for="acl of item.acl" :key="acl.id" class="flex gap-1 items-center">
-                                            <PermisosAcl :acl="acl" :tipo="item.tipo" />
-                                        </div>
-                                    </div>
-                                    <div v-else>
-                                        No hay
-                                    </div>
-                                    <button v-if="store.esAdministrador || item.propietario?.usuario.id == user?.id"
-                                        class="my-2 btn btn-xs btn-secondary text-xs"
-                                        @click="abrirModalCambiarAcl(item)">Cambiar
-                                        acceso</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="py-3 flex justify-between sm:justify-end gap-5">
-                    <button @click.prevent="modalPropiedades = false" type="button" class="btn btn-neutral btn-sm">
-                        Cerrar
-                    </button>
-                </div>
-            </div>
-        </Modal>
-
-
-
-        <!-- Modal Cambiar Permisos -->
-        <Modal :show="modalCambiarPermisos" @close="modalCambiarPermisos = false" maxWidth="sm">
-            <div class="p-5">
-                <div class="font-bold text-lg">Permisos</div>
-                <form>
-                    <p>/{{ itemCambiandoPermisos.ruta }}</p>
-                    <fieldset class="border border-solid border-neutral p-3 select-none">
-                        <legend>Permisos de propietario:</legend>
-                        <div class="flex gap-5">
-                            <div class="flex gap-1 items-baseline"><input id="bit8" type="checkbox"
-                                    v-model="permisosBits[8]"><label for="bit8">Leer</label></div>
-                            <div class="flex gap-1 items-baseline"><input id="bit7" type="checkbox"
-                                    v-model="permisosBits[7]"><label for="bit7">Escribir</label></div>
-                            <div v-if="itemCambiandoPermisos.tipo == 'carpeta'" class="flex gap-1 items-baseline"><input
-                                    id="bit6" type="checkbox" v-model="permisosBits[6]"><label for="bit4">Listar</label>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <fieldset class="border border-solid border-neutral p-3 select-none">
-                        <legend>Permisos de grupo:</legend>
-                        <div class="flex gap-5">
-                            <div class="flex gap-1 items-baseline"><input id="bit5" type="checkbox"
-                                    v-model="permisosBits[5]"><label for="bit5">Leer</label></div>
-                            <div class="flex gap-1 items-baseline"><input id="bit4" type="checkbox"
-                                    v-model="permisosBits[4]"><label for="bit4">Escribir</label></div>
-                            <div v-if="itemCambiandoPermisos.tipo == 'carpeta'" class="flex gap-1 items-baseline"><input
-                                    id="bit3" type="checkbox" v-model="permisosBits[3]"><label for="bit3">Listar</label>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <fieldset class="border border-solid border-neutral p-3 select-none">
-                        <legend>Permisos públicos:</legend>
-                        <div class="flex gap-5">
-                            <div class="flex gap-1 items-baseline"><input id="bit2" type="checkbox"
-                                    v-model="permisosBits[2]"><label for="bit2">Leer</label></div>
-                            <div class="flex gap-1 items-baseline"><input id="bit1" type="checkbox"
-                                    v-model="permisosBits[1]"><label for="bit1">Escribir</label></div>
-                            <div v-if="itemCambiandoPermisos.tipo == 'carpeta'" class="flex gap-1 items-baseline"><input
-                                    id="bit0" type="checkbox" v-model="permisosBits[0]"><label for="bit0">Listar</label>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <fieldset v-if="itemCambiandoPermisos.tipo == 'carpeta'"
-                        class="border border-solid border-neutral p-3 select-none">
-                        <legend>Proteger contenidos (sticky bit):</legend>
-                        <div class="flex gap-5">
-                            <div class="flex gap-1 items-baseline"><input id="bit9" type="checkbox"
-                                    v-model="permisosBits[9]"><label for="bit9">Proteger contenidos</label></div>
-                        </div>
-                        <small>solo los propietarios pueden modificar o eliminar sus contenidos</small>
-                    </fieldset>
-
-                    <fieldset class="mt-2 flex gap-2">
-                        <label for="permi">Valor numérico:</label><input type="text" v-model="permisosNumerico"
-                            class="max-w-[5rem]" @change="permisosNumericoChange" @keyup="permisosNumericoChange">
-                    </fieldset>
-                </form>
-
-                <div class="py-3 flex justify-between sm:justify-end gap-5">
-
-
-                    <button @click.prevent="cambiarPermisos" type="button" class="btn btn-primary btn-sm"
-                        :disabled="guardandoPermisos">
-                        <div v-if="guardandoPermisos" class="flex items-center gap-x">
-                            <Spinner />
-                            Guardando...
-                        </div>
-                        <span v-else>
-                            Guardar
-                        </span>
-                    </button>
-
-                    <button @click.prevent="modalCambiarPermisos = false" type="button" class="btn btn-neutral btn-sm">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        </Modal>
-
-
-
-        <!-- Modal Cambiar ACL -->
-        <Modal :show="modalCambiarAcl" @close="modalCambiarAcl = false" maxWidth="md">
-            <div class="p-5">
-                <div class="font-bold text-lg">Acceso adicional</div>
-                <form class="overflow-x-auto">
-                    <p>/{{ itemCambiandoAcl.ruta }}</p>
-                    <table v-if="itemCambiandoAcl?.aclEditar?.length">
-                        <thead class="text-sm">
-                            <tr>
-                                <th></th>
-                                <th>Usuario/Grupo</th>
-                                <th>Leer</th>
-                                <th>Escribir</th>
-                                <th v-if="itemCambiandoAcl.tipo == 'carpeta'">Listar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="acl of itemCambiandoAcl.aclEditar" :key="acl.id">
-                                <td :title="acl.usuario ? 'usuario' : 'grupo'">
-                                    <Icon v-if="acl.usuario" icon="ph:user-duotone" />
-                                    <Icon v-else icon="ph:users-three-duotone" />
-                                </td>
-                                <td :title="acl.usuario ? 'usuario' : 'grupo'"><span class="font-bold">{{ acl.usuario ||
-                                    acl.grupo }}</span></td>
-                                <td class="text-center"><input type="checkbox" v-model="acl.leer"></td>
-                                <td class="text-center"><input type="checkbox" v-model="acl.escribir"></td>
-                                <td v-if="itemCambiandoAcl.tipo == 'carpeta'" class="text-center"><input type="checkbox"
-                                        v-model="acl.ejecutar"></td>
-                                <td><button @click="eliminarAcl(acl.id)" title="eliminar acceso" class="flex">
-                                        <Icon icon="ph:trash-duotone" />
-                                    </button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div v-else>
-                        No hay accesos adicionales
-                    </div>
-
-                    <div class="flex gap-x my-4">
-                        <button class="btn btn-xs text-xs btn-secondary" @click.prevent="abrirModalBuscarUsuario">+
-                            Usuario</button>
-                        <button class="btn btn-xs text-xs btn-secondary" @click.prevent="abrirModalBuscarGrupo">+
-                            Grupo</button>
-                    </div>
-
-                </form>
-
-                <div class="py-3 flex justify-between sm:justify-end gap-5">
-
-
-                    <button @click.prevent="cambiarAcl" type="button" class="btn btn-primary btn-sm"
-                        :disabled="guardandoAcl">
-                        <div v-if="guardandoAcl" class="flex items-center gap-x">
-                            <Spinner />
-                            Guardando...
-                        </div>
-                        <span v-else>
-                            Guardar
-                        </span>
-                    </button>
-
-                    <button @click.prevent="modalCambiarAcl = false" type="button" class="btn btn-neutral btn-sm">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        </Modal>
-
-
-
-        <!-- Modal buscar usuario -->
-        <Modal :show="modalBuscarUsuario" @close="modalBuscarUsuario = false" max-width="sm">
-            <div class="p-5">
-                <div class="font-bold text-lg">Buscar usuario</div>
-                <input type="search" id="buscar_usuario"
-                    class="input shadow flex-shrink-0 rounded-none border-b border-gray-500"
-                    placeholder="Buscar usuario..." v-model="usuarioBuscar">
-
-                <div class="overflow-y-auto max-h-[200px] shadow">
-                    <table v-if="usuariosParaAgregar.length" class="table w-full bg-base-100 rounded-none">
-                        <tbody class="divide-y">
-                            <tr v-for="user of usuariosParaAgregar" :key="user.id">
-                                <td>{{ user.nombre }}</td>
-                                <td>
-                                    <div v-if="user.acceso" class="btn bg-base-100 border-none pointer-events-none">
-                                        <Icon icon="ph:check-circle-duotone" /> Ya tiene acceso
-                                    </div>
-                                    <div v-else class="btn" @click="agregarUsuarioAcl(user)">
-                                        Seleccionar
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div v-else-if="usuarioBuscar" class="p-2 bg-base-100">
-                        No hay resultados
-                    </div>
-                </div>
-
-                <div class="py-3 flex justify-between sm:justify-end gap-5">
-
-                    <button @click.prevent="modalBuscarUsuario = false" type="button" class="btn btn-neutral btn-sm">
-                        Cancelar
-                    </button>
-
-                </div>
-            </div>
-
-        </Modal>
-
-
-
-        <!-- Modal elegir grupo -->
-        <Modal :show="modalBuscarGrupo" @close="modalBuscarGrupo = false" max-width="sm">
-            <div class="p-5">
-                <div class="font-bold text-lg">Buscar grupo</div>
-                <select v-model="grupoElegido" class="select w-full border border-primary" placeholder="Elige un grupo">
-                    <option v-for="grupo of gruposElegibles" :key="grupo.id" :value="grupo.id">{{ grupo.nombre }}
-                    </option>
-                </select>
-
-
-                <div class="py-3 flex justify-between sm:justify-end gap-5">
-
-                    <button @click.prevent="agregarGrupoAcl" type="button" class="btn btn-primary btn-sm">
-                        Elegir
-                    </button>
-
-                    <button @click.prevent="modalBuscarGrupo = false" type="button" class="btn btn-neutral btn-sm">
-                        Cancelar
-                    </button>
-
-                </div>
-            </div>
-        </Modal>
-
 
 
         <slot />
@@ -935,6 +604,12 @@
 
         <ModalSubirArchivos />
 
+        <ModalPropiedades/>
+
+        <ModalPermisos/>
+
+        <ModalAcceso/>
+
     </div>
 </template>
 
@@ -942,7 +617,6 @@
 import { usePage, Link } from '@inertiajs/vue3';
 import useFolderExplorerStore from '@/Stores/folderExplorer';
 import useSelectors from '@/Stores/selectors'
-import { useDebounce } from '@vueuse/core';
 import usePlayer from '@/Stores/player'
 import usePermisos from '@/Stores/permisos'
 import { TransitionGroup } from 'vue'
@@ -992,6 +666,7 @@ store.items = props.items
 store.embed = props.embed
 store.esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos').length)
 store.infoCargada = false
+store.propietarioRef = props.propietarioRef
 store.on('update', () => {
     emit('updated')
 })
@@ -1107,12 +782,6 @@ const page = usePage()
 const user = computed(() => page?.props?.auth?.user)
 
 // ALGUNOS HELPERS PARA MOSTRAR DATOS
-
-const tituloPropietario = computed(() => {
-    if (!props.propietarioRef) return ''
-    return 'Propietario: ' + props.propietarioRef.nombre
-})
-
 
 function nombreItem(item) {
     if (item.actual) return `<span class='text-neutral opacity-70'>&lt;${item.nombre}&gt;</span>`
@@ -1461,234 +1130,6 @@ const itemsOrdenados = computed(() => {
     }
 } */
 
-// PROPIEDADES
-
-const modalPropiedades = ref(false)
-const itemsPropiedades = ref(null)
-function abrirModalPropiedades(item) {
-    itemsPropiedades.value = item ? [item] : itemsSeleccionados.value
-    modalPropiedades.value = true
-}
-
-watch(modalPropiedades, (newValue) => {
-    if (!newValue && permisosModificados.value) {
-        // actualizamos vista de la carpeta
-        store.actualizar()
-    }
-})
-
-// PERMISOS
-
-const modalCambiarPermisos = ref(false)
-const itemCambiandoPermisos = ref(null)
-const permisosModificados = ref(false)
-const permisosBits = ref([])
-const permisosNumerico = ref("")
-const permisosNumericoComputed = computed(() => {
-    let p = 0
-    for (let i = 0; i < 10; i++)
-        p = p + permisosBits.value[i] * Math.pow(2, i)
-    return p.toString(8)
-})
-const guardandoPermisos = ref(false)
-
-watch(permisosNumericoComputed, (value) => {
-    console.log('permisosBits change', value)
-    permisosNumerico.value = permisosNumericoComputed.value
-})
-
-function calcularPermisosBits() {
-    const octalPermisos = permisosNumerico.value // Obtener el número en octal como una cadena de texto
-    const decimalPermisos = parseInt(octalPermisos, 8); // Convertir el número octal a decimal
-    permisosBits.value = []; // Limpiar el array de bits
-    for (let i = 0; i < 10; i++) {
-        const bit = (decimalPermisos >> i) & 1; // Extraer el bit en la posición i
-        permisosBits.value.push(!!bit); // Agregar el bit al array de bits
-    }
-}
-
-function abrirModalCambiarPermisos(item) {
-    guardandoPermisos.value = false
-    itemCambiandoPermisos.value = item
-    modalCambiarPermisos.value = true
-    permisosNumerico.value = item.permisos
-    calcularPermisosBits()
-}
-
-function permisosNumericoChange() {
-    if (permisosNumerico.value.length >= 3)
-        calcularPermisosBits()
-}
-
-function cambiarPermisos() {
-    guardandoPermisos.value = true
-    axios.post('/files/update', {
-        ruta: itemCambiandoPermisos.value.ruta,
-        permisos: permisosNumerico.value
-    })
-        .then(response => {
-            console.log(response.data)
-            // cierra el modal y actualiza los permisos
-            itemCambiandoPermisos.value.permisos = permisosNumerico.value
-            permisosModificados.value = true
-            modalCambiarPermisos.value = false
-        })
-        .catch(err => {
-            const errorMessage = err.response.data.error || 'Ocurrió un error al guardar los cambios'
-            alert(errorMessage)
-            guardandoPermisos.value = false
-        })
-}
-
-
-// ACL
-
-const modalCambiarAcl = ref(false)
-const itemCambiandoAcl = ref(null)
-const guardandoAcl = ref(false)
-// agregar usuario:
-const modalBuscarUsuario = ref(false)
-const usuarioBuscar = ref("")
-const debouncedBuscar = useDebounce(usuarioBuscar, 800);
-const usuariosEncontrados = ref([]);
-const usuariosParaAgregar = computed(() => usuariosEncontrados.value
-    .map(u => ({
-        ...u,
-        acceso: itemCambiandoAcl.value.propietario.usuario?.id == u.id  //  no es el propietario,
-            || itemCambiandoAcl.value.aclEditar.find(acl => acl.user_id == u.id) // y no está ya en la lista de acceso
-    })
-    ))
-// agregar grupo
-const modalBuscarGrupo = ref(false)
-const grupoElegido = ref(null)
-const grupos = ref([])
-const gruposElegibles = computed(() => grupos.value.filter(g => !itemCambiandoAcl.value.aclEditar.find(acl => acl.group_id == g.id)))
-
-watch(debouncedBuscar, buscarUsuarios)
-
-function abrirModalCambiarAcl(item) {
-    itemCambiandoAcl.value = item
-    if (!item.acl)
-        item.acl = []
-    // guardamos los valores antes de la edición
-    itemCambiandoAcl.value.aclEditar = [...itemCambiandoAcl.value.acl]
-    itemCambiandoAcl.value.aclEditar.forEach(acl => {
-        ['leer', 'escribir', 'ejecutar'].forEach(verbo => acl[verbo] = !!acl.verbos.match(verbo))
-    })
-    modalCambiarAcl.value = true
-    guardandoAcl.value = false
-}
-
-
-function eliminarAcl(id) {
-    const idx = itemCambiandoAcl.value.aclEditar.findIndex(acl => acl.id == id)
-    if (idx == -1) {
-        alert("Hubo un error. Comunicarlo al administrador")
-        return
-    }
-    itemCambiandoAcl.value.aclEditar.splice(idx, 1)
-}
-
-function abrirModalBuscarUsuario() {
-    modalBuscarUsuario.value = true
-    setTimeout(() => {
-        if (modalBuscarUsuario.value)
-            document.querySelector('#buscar_usuario').focus()
-    }, 500)
-}
-
-function buscarUsuarios() {
-    const query = debouncedBuscar.value.trim();
-
-    if (query.length >= 3) {
-        axios
-            .get(route('usuarios.buscar', query))
-            .then(response => {
-                console.log('response', response.data)
-                usuariosEncontrados.value = response.data;
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }
-    else usuariosEncontrados.value = []
-}
-
-function agregarUsuarioAcl(user) {
-    itemCambiandoAcl.value.aclEditar.push({
-        id: -10000 - user.id,
-        user_id: user.id,
-        leer: false,
-        escribir: false,
-        ejecutar: false,
-        usuario: user.name
-    })
-    modalBuscarUsuario.value = false
-    usuarioBuscar.value = ""
-}
-
-
-function abrirModalBuscarGrupo() {
-    grupoElegido.value = null
-    modalBuscarGrupo.value = true
-    if (!grupos.value.length) {
-        fetch(route('grupos'))
-            .then(response => response.json())
-            .then(response => {
-                console.log({ response })
-                grupos.value = response
-            })
-    }
-}
-
-function agregarGrupoAcl() {
-    const grupo = grupos.value.find(g => g.id == grupoElegido.value)
-    itemCambiandoAcl.value.aclEditar.push({
-        id: -grupo.id,
-        group_id: grupo.id,
-        leer: false,
-        escribir: false,
-        ejecutar: false,
-        grupo: grupo.nombre
-    })
-    modalBuscarGrupo.value = false
-    grupoElegido.value = null
-}
-
-function cambiarAcl() {
-    var newAcl = JSON.parse(JSON.stringify(itemCambiandoAcl.value.aclEditar))
-    newAcl.forEach(acl => {
-        acl.verbos = ['leer', 'escribir', 'ejecutar'].filter(verbo => acl[verbo]).join(',')
-        delete acl.leer
-        delete acl.escribir
-        delete acl.ejecutar
-        delete acl.usuario
-        delete acl.grupo
-        delete acl.updated_at
-        delete acl.created_at
-    })
-    newAcl = newAcl.filter(acl => acl.verbos)
-    guardandoAcl.value = true
-    axios.post('/files/update', {
-        ruta: itemCambiandoAcl.value.ruta,
-        acl: newAcl
-    })
-        .then(response => {
-            console.log({ response })
-            // cierra el modal y actualiza los permisos
-            itemCambiandoAcl.value.acl = response.data.acl
-            permisosModificados.value = true
-            modalCambiarAcl.value = false
-        })
-        .catch(err => {
-            const errorMessage = err.response.data.error || 'Ocurrió un error al guardar los cambios'
-            alert(errorMessage)
-            guardandoAcl.value = false
-        })
-}
-
-
-
 
 
 
@@ -1965,7 +1406,4 @@ table th {
     transform: scale(0);
 }
 
-.propiedades th {
-    text-align: left
-}
 </style>
