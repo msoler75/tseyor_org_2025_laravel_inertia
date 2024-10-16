@@ -1,7 +1,7 @@
 <template>
 
     <Dropdown align="right" width="48" v-if="item.tipo !== 'disco'"
-        :class="[!state.infoCargada || !item.puedeLeer ? 'opacity-0 pointer-events-none' : '', state.seleccionando ? 'hide-if-touchable' : '']"
+        :class="[!store.infoCargada || !item.puedeLeer ? 'opacity-0 pointer-events-none' : '', store.seleccionando ? 'hide-if-touchable' : '']"
         menu>
         <template #trigger>
             <span class="cursor-pointer">
@@ -11,23 +11,23 @@
 
         <template #content>
             <div class="select-none">
-                <div v-if="(state.esAdministrador || item.puedeEscribir) && !state.seleccionando"
+                <div v-if="(store.esAdministrador || item.puedeEscribir) && !store.seleccionando"
                     class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                    @click="state.abrirModalRenombrar(item)">
+                    @click="store.abrirModalRenombrar(item)">
                     <Icon icon="ph:cursor-text-duotone" />
                     <span>Renombrar</span>
                 </div>
 
-                <div v-if="(state.esAdministrador || item.puedeEscribir) && !state.seleccionando && !item.padre"
+                <div v-if="(store.esAdministrador || item.puedeEscribir) && !store.seleccionando && !item.padre"
                     class="flex gap-x  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                     @click="abrirEliminarModal(item)">
                     <Icon icon="ph:trash-duotone" />
                     <span>Eliminar</span>
                 </div>
 
-                <div v-if="(state.esAdministrador || item.puedeLeer) && !state.buscandoCarpetaDestino && !item.padre"
+                <div v-if="(store.esAdministrador || item.puedeLeer) && !store.buscandoCarpetaDestino && !item.padre"
                     class="flex gap-x  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
-                    @click="state.seleccionando = true; item.seleccionado = !item.seleccionado">
+                    @click="store.seleccionando = true; item.seleccionado = !item.seleccionado">
                     <template v-if="!item.seleccionado">
                         <Icon icon="ph:check-fat-duotone" />
                         <span>Seleccionar</span>
@@ -38,7 +38,7 @@
                     </template>
                 </div>
 
-                <div v-if="state.seleccionando"
+                <div v-if="store.seleccionando"
                     class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                     @click="cancelarSeleccion">
                     <Icon icon="ph:x-square-duotone" />
@@ -73,6 +73,6 @@ const props = defineProps({
     vertical: {type: Boolean, default: true}
 })
 
-let state = useFolderExplorerStore()
+let store = useFolderExplorerStore()
 
 </script>
