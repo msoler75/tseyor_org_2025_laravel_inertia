@@ -15,7 +15,8 @@
                 <div class="flex gap-x items-center w-full"
                     v-if="!store.seleccionando && store.mostrandoResultadosBusqueda">
 
-                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ store.textoBuscar }}'</span>:</span>
+                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ store.textoBuscar
+                            }}'</span>:</span>
 
                     <button class="ml-auto  btn btn-neutral btn-sm btn-icon" @click.prevent="toggleVista"
                         title="Cambiar vista">
@@ -90,7 +91,6 @@
 
             <div class="mb-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
                 v-if="embed && (store.itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
-                :store.seleccionando="store.seleccionando"
                 :class="store.seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
 
                 <button v-if="modoInsertar && imagenesSeleccionadas.length"
@@ -178,83 +178,21 @@
             </div>
             <div v-else-if="itemsMostrar.length && selectors.archivosVista === 'lista'"
                 :class="itemsMostrar.length ? 'mr-2' : ''">
-                <ItemsTabla :items="itemsMostrar"/>
+                <ItemsTabla :items="itemsMostrar" />
             </div>
             <div v-else-if="itemsMostrar.length && selectors.archivosVista === 'grid'">
-               <ItemsGrid :items="itemsMostrar"/>
+                <ItemsGrid :items="itemsMostrar" />
             </div>
 
-            <Buscar />
+            <BuscarArchivos />
 
         </div>
 
+        <slot />
 
         <!--  Botones de Operaciones -->
-        <teleport to="body">
-            <div class="fixed bottom-0 left-0 right-0 z-50 bg-base-200 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
-                v-if="!embed && (store.itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
-                :store.seleccionando="store.seleccionando"
-                :class="store.seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
-
-                <button v-if="store.isMovingFiles || store.isCopyingFiles"
-                    class="btn btn-secondary flex gap-x items-center" @click.prevent="cancelarOperacion">
-                    <Icon icon="material-symbols:close-rounded" />
-                    <span>Cancelar</span>
-                </button>
-
-                <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir" @click.prevent="moverItems"
-                    title="Mover los elementos seleccionados a esta carpeta">
-                    <Icon icon="ph:clipboard-duotone" />
-                    <span v-if="store.puedeEscribir">Mover aquí</span>
-                    <span v-else>No tienes permisos aquí</span>
-                </button>
-
-                <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir"
-                    @click.prevent="copiarItems" title="Copiar los elementos seleccionados a esta carpeta">
-                    <Icon icon="ph:clipboard-duotone" />
-                    <span v-if="store.puedeEscribir">Pegar aquí</span>
-                    <span v-else>No tienes permisos aquí</span>
-                </button>
-
-                <template v-else>
-
-                    <button v-if="store.itemsSeleccionados.length && store.puedeMoverSeleccionados"
-                        class="btn btn-secondary flex gap-x items-center" @click.prevent="prepararMoverItems">
-                        <Icon icon="ph:scissors-duotone" /><span>Mover</span>
-                    </button>
-
-                    <button v-if="store.itemsSeleccionados.length" class="btn btn-secondary flex gap-x items-center"
-                        @click.prevent="prepararCopiarItems">
-                        <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
-                    </button>
-
-                    <button v-if="store.itemsSeleccionados.length && store.puedeBorrarSeleccionados"
-                        class="btn btn-secondary flex gap-x items-center" @click.prevent="store.call('eliminar', null)">
-                        <Icon icon="ph:trash-duotone" />
-                        <span>Eliminar</span>
-                    </button>
-
-                    <button v-if="store.itemsSeleccionados.length == 1 && store.puedeBorrarSeleccionados"
-                        class="md:hidden btn btn-secondary flex gap-x items-center"
-                        @click.prevent="store.call('renombrar', store.itemsSeleccionados[0])">
-                        <Icon icon="ph:cursor-text-duotone" />
-                        <span>Renombrar</span>
-                    </button>
-
-                    <button v-if="store.seleccionando && store.itemsSeleccionados.length > 0" class="btn btn-secondary"
-                        @click.prevent="store.call('propiedades')">
-                        <Icon icon="ph:info-duotone" />
-                        <span>Propiedades</span>
-                    </button>
-
-                </template>
-            </div>
-        </teleport>
 
 
-        <slot />
 
         <Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
             <div class="bg-base-100 p-3">
@@ -291,6 +229,16 @@
         <ModalAcceso />
 
 
+
+    </div>
+
+    <div class="sticky bottom-0 left-0 right-0 bg-slate-200 dark:bg-slate-800 bg-opacity-95 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
+        v-if="!store.embed && (store.itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
+        :class="store.seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
+
+        <div class="h-12 font-bold flex items-center px-2 rounded-lg" v-if="store.buscandoCarpetaDestino">Elige Destino</div>
+
+        <BotonesOperaciones />
 
     </div>
 </template>
@@ -372,87 +320,90 @@ function onClickItem(item, event) {
         event.preventDefault();
     }*/
     if (store.seleccionando) {
-      item.seleccionado = !item.seleccionado;
-      event.preventDefault();
-      return;
+        item.seleccionado = !item.seleccionado;
+        event.preventDefault();
+        return;
     }
     if (item.tipo == "disco") store.clickDisk(item, event);
     else if (item.tipo == "carpeta") store.clickFolder(item, event);
     else store.clickFile(item, event);
-  }
+}
 
-  function onClickDisk(item, event) {
+function onClickDisk(item, event) {
     console.log("clickDisk", item);
     emit("disk", item);
     event.preventDefault();
-  }
+}
 
-  function onClickFolder(item, event) {
+function onClickFolder(item, event) {
     console.log(
-      "clickFolder",
-      item,
-      "store.seleccionando:",
-      store.seleccionando
+        "clickFolder",
+        item,
+        "store.seleccionando:",
+        store.seleccionando
     );
     if (store.seleccionando) {
-      item.seleccionado = !item.seleccionado;
-      event.preventDefault();
-    } else {
-      console.log("navegando=", item.url);
-      store.navegando = item.url;
-      if (store.embed) {
-        emit("folder", item);
+        item.seleccionado = !item.seleccionado;
         event.preventDefault();
-      }
+    } else {
+        console.log("navegando=", item.url);
+        store.navegando = item.url;
+        if (store.embed) {
+            emit("folder", item);
+            event.preventDefault();
+        }
     }
-  }
+}
 
-  function onClickFile(item, event) {
+function onClickFile(item, event) {
     console.log("clickFile", item, "store.seleccionando:", store.seleccionando);
     if (store.seleccionando) {
-      item.seleccionado = !item.seleccionado;
-      event.preventDefault();
+        item.seleccionado = !item.seleccionado;
+        event.preventDefault();
     } else if (store.embed) {
-      emit("file", item);
-      event.preventDefault();
+        emit("file", item);
+        event.preventDefault();
     } else if (store.isImage(item.url)) {
-      event.preventDefault();
+        event.preventDefault();
 
-      if (store.v3ImgPreviewFn) {
-        const index = store.images.findIndex((x) => x == item.url);
-        console.log("VISOR", item.url, index);
-        store.v3ImgPreviewFn({
-          images: store.images.map((x) => x + "?mw=3000&mh=3000"),
-          index,
-        });
-      } else store.mostrandoImagen = item;
+        if (store.v3ImgPreviewFn) {
+            const index = store.images.findIndex((x) => x == item.url);
+            console.log("VISOR", item.url, index);
+            store.v3ImgPreviewFn({
+                images: store.images.map((x) => x + "?mw=3000&mh=3000"),
+                index,
+            });
+        } else store.mostrandoImagen = item;
     } else {
-      // si es un vídeo (mp4, avi):
-      if (item.url.match(/\.(mp4|avi|webm)$/i)) {
-        // lo abre en una nueva pestaña
-        window.open(item.url, "_blank");
-        event.preventDefault();
-      }
-      // si es un audio:
-      else if (player.isPlayable(item.url)) {
-        player.play(item.url, item.nombre);
-        event.preventDefault();
-      }
+        // si es un vídeo (mp4, avi):
+        if (item.url.match(/\.(mp4|avi|webm)$/i)) {
+            // lo abre en una nueva pestaña
+            window.open(item.url, "_blank");
+            event.preventDefault();
+        }
+        // si es un audio:
+        else if (player.isPlayable(item.url)) {
+            player.play(item.url, item.nombre);
+            event.preventDefault();
+        }
     }
-  }
+}
 
-  function onClickBreadcrumb(item, event) {
+function onClickBreadcrumb(item, event) {
     console.log("clickBreadcrumb", { item });
+    if (store.seleccionando) {
+        return
+    }
     store.navegando = item.url;
     if (store.embed) emit("folder", { ...item, ruta: item.url });
     else {
-      store.clickFolder(item, event);
-      if (!store.embed) {
-        console.log("visita1", item.url);
-        router.visit(item.url);
-      }
+        store.clickFolder(item, event);
+        if (!store.embed) {
+            console.log("visita1", item.url);
+            router.visit(item.url);
+        }
     }
-  }
+}
 
 
 
@@ -587,18 +538,21 @@ function onTouchStart(item, event) {
     lastYTouch = event.changedTouches[0].clientY
     touchPosAtStart = lastYTouch
     console.log('touchstart', 'touchPosAtStart:', touchPosAtStart)
+    console.log('store.seleccionando', store.seleccionando)
     item.touchStartAt = new Date().getTime()
     if (store.seleccionando) {
+        console.log('modo Seleccionando ON')
         /*item.shortTouchTimer = setTimeout(() => {
             if (scrollPosAtStart != nav.scrollY) return
             item.seleccionado = !item.seleccionado
             console.log('item.seleccionado =', item.seleccionado)
         }, TIEMPO_SELECCION_SIMPLE);*/
+        event.preventDefault()
     }
     else if (['carpeta', 'archivo'].includes(item.tipo)) {
         item.longTouchTimer = setTimeout(() => {
             if (!item.touching) return
-            if (!isInPlace(item)) {
+            if (!isInPlace()) {
                 item.touching = false
                 return
             }
@@ -612,6 +566,7 @@ function onTouchStart(item, event) {
             item.seleccionado = true;
             item.touching = false
             store.seleccionando = true;
+            console.log('TIMEOUT: store.seleccionando', store.seleccionando)
             console.log('item.seleccionado2 =', item.seleccionado)
 
         }, TIEMPO_ACTIVACION_SELECCION); // tiempo en milisegundos para considerar un "long touch"
@@ -620,7 +575,7 @@ function onTouchStart(item, event) {
 
 
 // devuelve true si el usuario no ha movido el touch
-function isInPlace(item) {
+function isInPlace() {
     const y = lastYTouch // get touch y on screen
     const ty = touchPosAtStart - y // touch Y diff
     const sy = scrollPosAtStart - nav.scrollY // scroll diff
@@ -634,6 +589,7 @@ function isInPlace(item) {
 function onTouchEnd(item, event) {
     lastYTouch = event.changedTouches[0].clientY
     console.log('touchend', { item, target: event.target }, 'lastYTouch:', lastYTouch)
+    console.log('store.seleccionando', store.seleccionando)
     clearTimeout(item.longTouchTimer);
     // clearTimeout(item.shortTouchTimer);
     // item.touching = false
@@ -645,12 +601,13 @@ function onTouchEnd(item, event) {
     }
 
     const ellapsed = new Date().getTime() - item.touchStartAt
-    if (!isInPlace(item)) {
+    if (!isInPlace()) {
         // si nos hemos movido, no hacemos nada (está haciendo scroll)
         item.touching = false
         return
     }
     if (store.seleccionando) {
+        console.log('modo seleccionando ONNN')
         if (item.touching)
             item.seleccionado = !item.seleccionado
         console.log('item.seleccionado =', item.seleccionado)
@@ -659,6 +616,7 @@ function onTouchEnd(item, event) {
     else if (ellapsed < TIEMPO_ACTIVACION_SELECCION) {
         item.touching = false
         // SIMPLE CLICK
+        console.log('simulating single click')
         if (item.tipo == 'carpeta' || item.tipo == 'disco') {
             store.clickFolder(item, event)
             if (!props.embed) {
@@ -676,74 +634,6 @@ function onTouchEnd(item, event) {
     }
 }
 
-function toggleItem(item) {
-    console.log('toggleItem')
-    if (!item.touching)
-        item.seleccionado = !item.seleccionado
-    item.touching = false
-}
-
-
-// COPIAR Y MOVER ITEMS
-
-function prepararMoverItems() {
-    store.seleccionando = false
-    store.isMovingFiles = true
-    store.sourcePath = store.rutaActual
-    store.filesToMove = [...store.itemsSeleccionados.value.map(item => item.nombre)]
-}
-
-function prepararCopiarItems() {
-    store.seleccionando = false
-    store.isCopyingFiles = true
-    store.sourcePath = store.rutaActual
-    store.filesToCopy = [...store.itemsSeleccionados.value.map(item => item.nombre)]
-}
-
-function copiarItems() {
-    axios.post('/files/copy', {
-        sourceFolder: store.sourcePath,
-        targetFolder: store.rutaActual,
-        items: store.filesToCopy
-    }).then(response => {
-        console.log({ response })
-        store.actualizar()
-    })
-        .catch(err => {
-            console.warn({err})
-            const errorMessage = err.response.data?.error || 'Ocurrió un error al copiar los elementos'
-            alert(errorMessage)
-        })
-
-    cancelarOperacion()
-}
-
-function moverItems() {
-    axios.post('/files/move', {
-        sourceFolder: store.sourcePath,
-        targetFolder: store.rutaActual,
-        items: store.filesToMove
-    }).then(response => {
-        console.log({ response })
-        store.actualizar()
-    })
-        .catch(err => {
-            console.warn({err})
-            const errorMessage = err.response.data?.error || 'Ocurrió un error al mover los elementos'
-            alert(errorMessage)
-        })
-
-    cancelarOperacion()
-}
-
-function cancelarOperacion() {
-    console.log('cancelarOperacion')
-    store.isMovingFiles = false
-    store.isCopyingFiles = false
-    store.filesToMove = []
-    store.filesToCopy = []
-    store.itemsShow.forEach(item => { item.seleccionado = false })
-}
 
 
 

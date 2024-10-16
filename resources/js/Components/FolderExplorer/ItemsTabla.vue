@@ -34,7 +34,7 @@
             <tr v-for="item in items" :key="item.ruta" :class="[item.clase, item.seleccionado ? 'bg-base-300' : '']"
                 v-on:touchstart="store.touchStart(item, $event)" v-on:touchend.prevent="store.touchEnd(item, $event)"
                 v-on:touchmove="store.touchMove($event)">
-                <td v-if="store.seleccionando" @click.prevent="toggleItem(item)"
+                <td v-if="store.seleccionando" @click.prevent="store.toggleItem(item)"
                     class="transform scale-100 text-2xl cursor-pointer opacity-70 hover:opacity-100">
                     <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                     <Icon v-else icon="ph:square" />
@@ -53,10 +53,10 @@
         <component v-else :is="transitionActive ? TransitionGroup : 'tbody'" tag="tbody" name="files"
             v-disable-right-click>
             <tr v-for="item in items.slice(0, mostrandoNItems)" :key="item.ruta" class="transition-opacity duration-200"
-                :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : 'opacity-70 pointer-events-none', store.navegando && store.navegando != item.url ? 'opacity-0 pointer-events-none' : '']"
+                :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer && (!store.buscandoCarpetaDestino || item.tipo=='carpeta') ? '' : 'opacity-70 pointer-events-none', store.navegando && store.navegando != item.url ? 'opacity-0 pointer-events-none' : '']"
                 v-on:touchstart="store.touchStart(item, $event)" v-on:touchend.prevent="store.touchEnd(item, $event)"
                 v-on:touchmove="store.touchMove($event)">
-                <td v-if="store.seleccionando" @click.prevent="toggleItem(item)"
+                <td v-if="store.seleccionando" @click.prevent="store.toggleItem(item)"
                     class="hidden md:table-cell transform scale-100 text-2xl cursor-pointer opacity-70 hover:opacity-100">
                     <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
                     <Icon v-else icon="ph:square" />

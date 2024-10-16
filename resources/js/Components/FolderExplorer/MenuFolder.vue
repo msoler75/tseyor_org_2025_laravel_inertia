@@ -34,7 +34,7 @@
 
                 <div v-if="!store.enRaiz && store.puedeLeer && !store.seleccionando && store.itemsShow.filter(x => !x.padre).length > 1"
                     class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                    @click="store.seleccionando = true">
+                    @click="store.seleccionando = true; store.seleccionAbierta = true">
                     <Icon icon="ph:check-duotone" />
                     <span>Abrir Selección</span>
                 </div>

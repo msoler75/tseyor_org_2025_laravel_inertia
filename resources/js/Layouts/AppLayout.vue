@@ -1,9 +1,80 @@
+<template>
+    <!-- App layout -->
+    <div class="flex flex-col">
+
+        <ScrollToTop class="text-4xl fixed right-7 z-40" :class="folderExplorer.seleccionando?'bottom-20':player.closed?'bottom-7':player.expanded?'bottom-20':'bottom-14'"/>
+
+        <!-- Loader -->
+        <div v-if="loader"
+            class="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 backdrop-blur-lg">
+            <Loader class="w-[7.77rem]" :running="true" />
+        </div>
+
+        <Announcement :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'" />
+
+        <NavAside :show="nav.sideBarShow" @close="nav.sideBarShow = false" class="lg:hidden" />
+
+        <Banner />
+
+        <!-- <component :is="dynamicAudioPlayer" v-if="dynamicAudioPlayer" /> -->
+        <AudioPlayer />
+
+
+        <Modal :show="mostrarMensaje" centered max-width="md">
+            <div class="p-5 mt-auto mb-auto">
+                <p class="text-center">{{ $page.props?.flash?.message }}</p>
+                <div class="py-3 flex justify-center">
+                    <button @click.prevent="mostrarMensaje = false" type="button" class="btn btn-neutral">
+                        Gracias
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
+        <div class="bg-base-200 flex-grow flex flex-col">
+
+            <NavBar />
+
+            <!-- Page Content -->
+            <div @mouseover="nav.closeTabs()" class="flex-grow relative transition-opacity duration-200"
+                :class="nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''">
+
+
+                <transition enter-active-class="transition-opacity duration-100"
+                    leave-active-class="transition-opacity duration-100" enter-class="opacity-0"
+                    leave-to-class="opacity-0">
+
+                    <div v-if="nav.activeTab"
+                        class="hidden lg:block z-30 absolute w-full h-full bg-black bg-opacity-10">
+                        <!-- Contenido del elemento -->
+                    </div>
+                </transition>
+
+                <!-- <transition name="slide-fade">
+                    <slot  />
+                </transition>
+                -->
+
+                <slot />
+            </div>
+
+            <!--  queremos que si la ruta actual es /archivos, no se muestre el footer: -->
+            <AppFooter v-if="!nav.fullPage && !page.url.match(/^\/archivos/)" />
+        </div>
+    </div>
+</template>
+
+
+
 <script setup>
 import { onBeforeUnmount/*, markRaw*/ } from 'vue';
 import { useDark, useToggle } from "@vueuse/core";
 import usePermisos from '@/Stores/permisos'
 import usePlayer from '@/Stores/player'
 import setTransitionPages from '@/composables/transitionPages.js'
+import useFolderExplorerStore from '@/Stores/folderExplorer';
+
+const folderExplorer = useFolderExplorerStore()
 
 // console.log('app initiating...')
 
@@ -160,73 +231,4 @@ axios.get(route('setting', 'navigation'))
 
 
 </script>
-
-<template>
-    <!-- App layout -->
-    <div class="flex flex-col">
-
-        <ScrollToTop class="text-4xl fixed right-7 z-40" :class="player.closed?'bottom-7':player.expanded?'bottom-20':'bottom-14'"/>
-
-
-        <!-- Loader -->
-        <div v-if="loader"
-            class="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 backdrop-blur-lg">
-            <Loader class="w-[7.77rem]" :running="true" />
-        </div>
-
-
-        <Announcement :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'" />
-
-        <NavAside :show="nav.sideBarShow" @close="nav.sideBarShow = false" class="lg:hidden" />
-
-
-        <Banner />
-
-        <!-- <component :is="dynamicAudioPlayer" v-if="dynamicAudioPlayer" /> -->
-        <AudioPlayer />
-
-
-        <Modal :show="mostrarMensaje" centered max-width="md">
-            <div class="p-5 mt-auto mb-auto">
-                <p class="text-center">{{ $page.props?.flash?.message }}</p>
-                <div class="py-3 flex justify-center">
-                    <button @click.prevent="mostrarMensaje = false" type="button" class="btn btn-neutral">
-                        Gracias
-                    </button>
-                </div>
-            </div>
-        </Modal>
-
-        <div class="bg-base-200 flex-grow flex flex-col">
-
-            <NavBar />
-
-            <!-- Page Content -->
-            <div @mouseover="nav.closeTabs()" class="flex-grow relative transition-opacity duration-200"
-                :class="nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''">
-
-
-                <transition enter-active-class="transition-opacity duration-100"
-                    leave-active-class="transition-opacity duration-100" enter-class="opacity-0"
-                    leave-to-class="opacity-0">
-
-                    <div v-if="nav.activeTab"
-                        class="hidden lg:block z-30 absolute w-full h-full bg-black bg-opacity-10">
-                        <!-- Contenido del elemento -->
-                    </div>
-                </transition>
-
-                <!-- <transition name="slide-fade">
-                    <slot  />
-                </transition>
-                -->
-
-                <slot />
-            </div>
-
-            <!--  queremos que si la ruta actual es /archivos, no se muestre el footer: -->
-            <AppFooter v-if="!nav.fullPage && !page.url.match(/^\/archivos/)" />
-        </div>
-    </div>
-</template>
 

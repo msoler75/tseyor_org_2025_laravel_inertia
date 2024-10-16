@@ -13,7 +13,9 @@ const state = reactive({
   esAdministrador: false, // el usuario actual es administrador?
   infoCargada: false, // la información adicional de cada item (permisos, numero de archivos y carpetas) está cargada?
   seleccionando: false, // estamos en modo de selección de items?
+  seleccionAbierta: false, // un estado para permitir la selección desde cero
   // operaciones de copiar o mover
+  sourcePath: null,
   isMovingFiles: false, // estamos en modo de moviendo items?
   isCopyingFiles: false, // estamos en modo de copiando items?
   filesToMove: [], // items a mover
@@ -31,7 +33,7 @@ const state = reactive({
   // ordenación
   ordenarPor: "normal",
   // admin
-  mostrarRutas: false
+  mostrarRutas: false,
 });
 
 const computados = {
@@ -95,11 +97,6 @@ const computados = {
 };
 
 const metodos = {
-  // Métodos
-  toggleSeleccionando() {
-    state.seleccionando = !state.seleccionando;
-  },
-
   // callbacks
   on(nombre, fn) {
     state.callbacks[nombre] = fn;
@@ -124,6 +121,7 @@ const metodos = {
   // SELECCION
 
   cancelarSeleccion() {
+    console.log('cancelarSeleccion')
     state.seleccionando = false;
     state.itemsShow.forEach((item) => (item.seleccionado = false));
   },
@@ -134,10 +132,11 @@ const metodos = {
 
   // verifica que cuando no hay ningun item seleccionado, se termina el modo de selección
   verificarFinSeleccion() {
+    console.log('verificarFinSeleccion')
     if (!state.seleccionando) return;
     if (screen.width >= 1024) return;
     const alguno = state.itemsShow.find((item) => item.seleccionado);
-    if (!alguno) state.seleccionando = false;
+    if (!alguno && !state.seleccionAbierta) state.seleccionando = false;
   },
 
   // CLICKS
@@ -176,38 +175,43 @@ const metodos = {
 
   // HELPERS
 
-    nombreItem(item) {
-        if (item.actual) return `<span class='text-neutral opacity-70'>&lt;${item.nombre}&gt;</span>`
-        if (item.padre) return `<span class='text-neutral opacity-70'>&lt;arriba&gt;</span>`
-    return item.nombre
-},
+  toggleItem(item) {
+    console.log("toggleItem");
+    if (!item.touching) item.seleccionado = !item.seleccionado;
+    item.touching = false;
+  },
 
+  nombreItem(item) {
+    if (item.actual)
+      return `<span class='text-neutral opacity-70'>&lt;${item.nombre}&gt;</span>`;
+    if (item.padre)
+      return `<span class='text-neutral opacity-70'>&lt;arriba&gt;</span>`;
+    return item.nombre;
+  },
 
-// TIPO DE ITEM: ES IMAGEN?
- isImage(fileName) {
-    if (!fileName || (typeof fileName != 'string')) return false
-    const ext = fileName.split('.').pop().toLowerCase();
+  // TIPO DE ITEM: ES IMAGEN?
+  isImage(fileName) {
+    if (!fileName || typeof fileName != "string") return false;
+    const ext = fileName.split(".").pop().toLowerCase();
 
     switch (ext) {
-        case 'gif':
-        case 'pcx':
-        case 'bmp':
-        case 'svg':
-        case 'jpg':
-        case 'jpeg':
-        case 'jfif':
-        case 'webp':
-        case 'png': return true;
+      case "gif":
+      case "pcx":
+      case "bmp":
+      case "svg":
+      case "jpg":
+      case "jpeg":
+      case "jfif":
+      case "webp":
+      case "png":
+        return true;
     }
-    return false
-},
+    return false;
+  },
 
-
- esPantallaTactil() {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-}
-
-
+  esPantallaTactil() {
+    return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  },
 };
 
 // WATCHERS
@@ -219,7 +223,10 @@ watch(
   () => computados.itemsSeleccionados.value.length,
   (value) => {
     console.log("itemsSeleccionados.length=", value);
-    if (!value) metodos.cancelarSeleccion();
+    if(value)
+        state.seleccionAbierta = false
+    else metodos.verificarFinSeleccion();
+
   }
 );
 
