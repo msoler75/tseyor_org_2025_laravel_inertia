@@ -50,9 +50,9 @@
                     </ConditionalLink>
 
                     <button v-if="store.seleccionando" class="btn btn-neutral btn-sm flex gap-x items-center"
-                        @click.prevent="cancelarSeleccion" title="Cancelar selección">
+                        @click.prevent="store.cancelarSeleccion" title="Cancelar selección">
                         <Icon icon="material-symbols:close-rounded" />
-                        <span>{{ itemsSeleccionados.length }}</span>
+                        <span>{{ store.itemsSeleccionados.length }}</span>
                     </button>
 
                     <div class="ml-auto flex gap-x">
@@ -65,7 +65,7 @@
                         </button>
 
                         <button v-if="store.seleccionando" class="btn btn-neutral btn-sm btn-icon mr-auto"
-                            @click.prevent="seleccionarTodos" title="Seleccionar todos">
+                            @click.prevent="store.seleccionarTodos" title="Seleccionar todos">
                             <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                         </button>
 
@@ -96,7 +96,7 @@
                         </Dropdown>
 
 
-                        <Dropdown v-if="!enRaiz && !store.seleccionando" align="right" width="48"
+                        <Dropdown v-if="!store.enRaiz && !store.seleccionando" align="right" width="48"
                             :class="!store.infoCargada ? 'opacity-50 pointer-events-none' : ''">
                             <template #trigger>
                                 <div class="btn btn-neutral btn-sm btn-icon cursor-pointer">
@@ -107,21 +107,21 @@
                             <template #content>
                                 <div class="select-none">
                                     <!-- Account Management -->
-                                    <div v-if="puedeEscribir && !store.seleccionando"
+                                    <div v-if="store.puedeEscribir && !store.seleccionando"
                                         class="flex gap-x items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
                                         @click="modalSubirArchivos = true">
                                         <Icon icon="ph:upload-duotone" />
                                         <span>Subir archivos</span>
                                     </div>
 
-                                    <div v-if="items[1]?.padre && items[1]?.puedeEscribir && !store.seleccionando && itemsShow[0].ruta != 'archivos' && itemsShow[0].ruta != 'medios'"
+                                    <div v-if="store.items[1]?.padre && store.items[1]?.puedeEscribir && !store.seleccionando && store.itemsShow[0].ruta != 'archivos' && store.itemsShow[0].ruta != 'medios'"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                        @click="abrirModalRenombrar(itemsShow[0])">
+                                        @click="abrirModalRenombrar(store.itemsShow[0])">
                                         <Icon icon="ph:cursor-text-duotone" />
                                         <span>Renombrar</span>
                                     </div>
 
-                                    <div v-if="puedeEscribir && !store.seleccionando"
+                                    <div v-if="store.puedeEscribir && !store.seleccionando"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="abrirModalCrearCarpeta">
                                         <Icon icon="ph:folder-plus-duotone" />
@@ -129,7 +129,7 @@
                                     </div>
 
 
-                                    <div v-if="!enRaiz && puedeLeer && !store.seleccionando && itemsShow.filter(x => !x.padre).length > 1"
+                                    <div v-if="!store.enRaiz && store.puedeLeer && !store.seleccionando && store.itemsShow.filter(x => !x.padre).length > 1"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="store.seleccionando = true">
                                         <Icon icon="ph:check-duotone" />
@@ -138,7 +138,7 @@
 
                                     <div v-else-if="store.seleccionando"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                                        @click="cancelarSeleccion">
+                                        @click="store.cancelarSeleccion">
                                         <Icon icon="ph:x-square-duotone" />
                                         <span>Cancelar selección</span>
                                     </div>
@@ -154,7 +154,7 @@
 
 
                                     <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
-                                        @click.prevent="abrirModalPropiedades(itemsShow[0])">
+                                        @click.prevent="abrirModalPropiedades(store.itemsShow[0])">
                                         <Icon icon="ph:info-duotone" />
                                         <span>Propiedades</span>
                                     </div>
@@ -175,7 +175,7 @@
             <!--  Botones de Operaciones (embed) -->
 
             <div class="mb-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
-                v-if="embed && (itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
+                v-if="embed && (store.itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
                 :store.seleccionando="store.seleccionando"
                 :class="store.seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
 
@@ -193,46 +193,46 @@
                 </button>
 
                 <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click.prevent="moverItems"
+                    :disabled="store.sourcePath == rutaActual || !store.puedeEscribir" @click.prevent="moverItems"
                     title="Mover los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
-                    <span v-if="puedeEscribir">Mover aquí</span>
+                    <span v-if="store.puedeEscribir">Mover aquí</span>
                     <span v-else>No tienes permisos aquí</span>
                 </button>
 
                 <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click.prevent="copiarItems"
+                    :disabled="store.sourcePath == rutaActual || !store.puedeEscribir" @click.prevent="copiarItems"
                     title="Copiar los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
-                    <span v-if="puedeEscribir">Pegar aquí</span>
+                    <span v-if="store.puedeEscribir">Pegar aquí</span>
                     <span v-else>No tienes permisos aquí</span>
                 </button>
 
                 <template v-else>
-                    <button v-if="itemsSeleccionados.length && puedeMoverSeleccionados"
+                    <button v-if="store.itemsSeleccionados.length && store.puedeMoverSeleccionados"
                         class="btn btn-secondary flex gap-x items-center" @click.prevent="prepararMoverItems">
                         <Icon icon="ph:scissors-duotone" /><span>Mover</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-x items-center"
+                    <button v-if="store.itemsSeleccionados.length" class="btn btn-secondary flex gap-x items-center"
                         @click.prevent="prepararCopiarItems">
                         <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length && puedeBorrarSeleccionados"
+                    <button v-if="store.itemsSeleccionados.length && store.puedeBorrarSeleccionados"
                         class="btn btn-secondary flex gap-x items-center" @click.prevent="abrirEliminarModal(null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length == 1"
+                    <button v-if="store.itemsSeleccionados.length == 1"
                         class="md:hidden btn btn-secondary flex gap-x items-center"
-                        @click.prevent="abrirModalRenombrar(itemsSeleccionados[0])">
+                        @click.prevent="abrirModalRenombrar(store.itemsSeleccionados[0])">
                         <Icon icon="ph:cursor-text-duotone" />
                         <span>Renombrar</span>
                     </button>
 
-                    <button v-if="store.seleccionando && itemsSeleccionados.length > 0" class="btn btn-secondary"
+                    <button v-if="store.seleccionando && store.itemsSeleccionados.length > 0" class="btn btn-secondary"
                         @click.prevent="abrirModalPropiedades()">
                         <Icon icon="ph:info-duotone" />
                         <span>Propiedades</span>
@@ -488,7 +488,7 @@
         <!--  Botones de Operaciones -->
         <teleport to="body">
             <div class="fixed bottom-0 left-0 right-0 z-50 bg-base-200 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
-                v-if="!embed && (itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
+                v-if="!embed && (store.itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
                 :store.seleccionando="store.seleccionando"
                 :class="store.seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
 
@@ -499,47 +499,47 @@
                 </button>
 
                 <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click.prevent="moverItems"
+                    :disabled="store.sourcePath == rutaActual || !store.puedeEscribir" @click.prevent="moverItems"
                     title="Mover los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
-                    <span v-if="puedeEscribir">Mover aquí</span>
+                    <span v-if="store.puedeEscribir">Mover aquí</span>
                     <span v-else>No tienes permisos aquí</span>
                 </button>
 
                 <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == rutaActual || !puedeEscribir" @click.prevent="copiarItems"
+                    :disabled="store.sourcePath == rutaActual || !store.puedeEscribir" @click.prevent="copiarItems"
                     title="Copiar los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
-                    <span v-if="puedeEscribir">Pegar aquí</span>
+                    <span v-if="store.puedeEscribir">Pegar aquí</span>
                     <span v-else>No tienes permisos aquí</span>
                 </button>
 
                 <template v-else>
 
-                    <button v-if="itemsSeleccionados.length && puedeMoverSeleccionados"
+                    <button v-if="store.itemsSeleccionados.length && store.puedeMoverSeleccionados"
                         class="btn btn-secondary flex gap-x items-center" @click.prevent="prepararMoverItems">
                         <Icon icon="ph:scissors-duotone" /><span>Mover</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length" class="btn btn-secondary flex gap-x items-center"
+                    <button v-if="store.itemsSeleccionados.length" class="btn btn-secondary flex gap-x items-center"
                         @click.prevent="prepararCopiarItems">
                         <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length && puedeBorrarSeleccionados"
+                    <button v-if="store.itemsSeleccionados.length && store.puedeBorrarSeleccionados"
                         class="btn btn-secondary flex gap-x items-center" @click.prevent="abrirEliminarModal(null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
 
-                    <button v-if="itemsSeleccionados.length == 1 && puedeBorrarSeleccionados"
+                    <button v-if="store.itemsSeleccionados.length == 1 && store.puedeBorrarSeleccionados"
                         class="md:hidden btn btn-secondary flex gap-x items-center"
-                        @click.prevent="abrirModalRenombrar(itemsSeleccionados[0])">
+                        @click.prevent="abrirModalRenombrar(store.itemsSeleccionados[0])">
                         <Icon icon="ph:cursor-text-duotone" />
                         <span>Renombrar</span>
                     </button>
 
-                    <button v-if="store.seleccionando && itemsSeleccionados.length > 0" class="btn btn-secondary"
+                    <button v-if="store.seleccionando && store.itemsSeleccionados.length > 0" class="btn btn-secondary"
                         @click.prevent="abrirModalPropiedades()">
                         <Icon icon="ph:info-duotone" />
                         <span>Propiedades</span>
@@ -950,24 +950,24 @@
 
 
         <!-- Modal Confirmación de eliminar Archivo -->
-        <ConfirmationModal :show="modalEliminarItem" @close="modalEliminarItem = false">
+        <ConfirmationModal :show="store.modalEliminarItem" @close="store.modalEliminarItem = false">
             <template #title>
-                <div v-if="itemAEliminar">Confirmación de eliminación</div>
-                <div v-else>Eliminar {{ plural(itemsSeleccionados.length, 'elemento') }}</div>
+                <div v-if="store.itemAEliminar">Confirmación de eliminación</div>
+                <div v-else>Eliminar {{ plural(store.itemsSeleccionados.length, 'elemento') }}</div>
             </template>
             <template #content>
-                <div v-if="itemAEliminar">
-                    ¿Quieres eliminar {{ itemAEliminar.nombre }}?
+                <div v-if="store.itemAEliminar">
+                    ¿Quieres eliminar {{ store.itemAEliminar.nombre }}?
                 </div>
                 <div v-else>
-                    ¿Quieres eliminar {{ plural(itemsSeleccionados.length, 'elemento') }}?
+                    ¿Quieres eliminar {{ plural(store.itemsSeleccionados.length, 'elemento') }}?
                 </div>
             </template>
             <template #footer>
                 <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
                     @submit.prevent="eliminarArchivos">
 
-                    <button @click.prevent="modalEliminarItem = false" type="button" class="btn btn-neutral btn-sm">
+                    <button @click.prevent="store.modalEliminarItem = false" type="button" class="btn btn-neutral btn-sm">
                         Cancelar
                     </button>
 
@@ -1056,9 +1056,11 @@ const emit = defineEmits(['updated', 'disk', 'folder', 'file', 'insert']);
 
 const store = useFolderExplorerStore()
 
+store.items = props.items
 store.embed = props.embed
 store.esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos').length)
 store.infoCargada = false
+store.seleccionando = false
 
 // USAR EFECTO ANIMACION DE TARNSICION?
 const transitionActive = ref(false)
@@ -1080,10 +1082,6 @@ async function cargarInfo() {
             incrementarItemsMostrados()
         })
 }
-
-
-// lista de items (archivos y carpetas) que se va a mostrar
-const itemsShow = ref([])
 
 
 // IMAGES PREVIEW
@@ -1123,7 +1121,7 @@ function calcularItems() {
     }
     console.log({ items })
 
-    itemsShow.value = items
+    store.itemsShow = items
 
     actualizarListaImagenes()
 }
@@ -1167,17 +1165,9 @@ function onKeyDown(event) {
         selectors.mostrarPermisos = !selectors.mostrarPermisos
 }
 
-// estamos en la raíz?
-const enRaiz = computed(() => props.items[1]?.tipo === 'disco' || props.items[0].ruta == 'mis_archivos')
-
-// puede editar la carpeta actual?
-const puedeEscribir = computed(() => store.esAdministrador || (itemsShow.value.length ? itemsShow.value[0].puedeEscribir : false))
-const puedeLeer = computed(() => store.esAdministrador || (itemsShow.value.length ? itemsShow.value[0].puedeLeer : false))
-const puedeMoverSeleccionados = computed(() => store.esAdministrador || itemsSeleccionados.value.find(item => item.puedeEscribir))
-const puedeBorrarSeleccionados = computed(() => puedeMoverSeleccionados.value)
 
 // ruta actual
-const rutaActual = computed(() => itemsShow.value.length ? itemsShow.value[0].ruta : '')
+const rutaActual = computed(() => store.itemsShow.length ? store.itemsShow[0].ruta : '')
 
 // otros datos
 const page = usePage()
@@ -1279,30 +1269,6 @@ function incrementarItemsMostrados() {
 }
 
 
-// SELECCION
-
-store.seleccionando = false
-
-function cancelarSeleccion() {
-    store.seleccionando = false
-    itemsShow.value.forEach(item => item.seleccionado = false)
-}
-
-function seleccionarTodos() {
-    itemsShow.value.forEach(item => item.seleccionado = true)
-}
-
-// verifica que cuando no hay ningun item seleccionado, se termina el modo de selección
-function verificarFinSeleccion() {
-    if (!store.seleccionando) return
-    if (screen.width >= 1024) return
-    const alguno = itemsShow.value.find(item => item.seleccionado)
-    if (!alguno)
-        store.seleccionando = false
-}
-
-// si hay algun cambio en los items
-watch(() => itemsShow, verificarFinSeleccion, { deep: true })
 
 // EVENTOS TOUCH
 
@@ -1421,14 +1387,7 @@ function toggleItem(item) {
     item.touching = false
 }
 
-const itemsSeleccionados = computed(() => itemsShow.value.filter(item => !['.', '..'].includes(item.nombre) && item.seleccionado && !item.eliminado))
 
-
-watch(() => itemsSeleccionados.value.length, (value) => {
-    console.log('itemsSeleccionados.length=', value)
-    if (!value)
-        cancelarSeleccion()
-})
 
 
 // COPIAR Y MOVER ITEMS
@@ -1487,7 +1446,7 @@ function cancelarOperacion() {
     store.isCopyingFiles = false
     store.filesToMove = []
     store.filesToCopy = []
-    itemsShow.value.forEach(item => { item.seleccionado = false })
+    store.itemsShow.forEach(item => { item.seleccionado = false })
 }
 
 
@@ -1544,7 +1503,7 @@ const ordenarPor = ref("normal")
 
 const itemsOrdenados = computed(() => {
     // Separar las carpetas y los archivos en dos grupos
-    var items = itemsShow.value.filter(item => !item.padre && !item.actual && !item.eliminado)
+    var items = store.itemsShow.filter(item => !item.padre && !item.actual && !item.eliminado)
 
     // Mostramos "mis archivos" ?
     if (!props.mostrarMisArchivos)
@@ -1866,42 +1825,6 @@ function crearCarpeta() {
             console.log({ err })
             alert(err.response.data.error)
             creandoCarpeta.value = false
-        })
-}
-
-
-// ELIMINAR
-
-const itemAEliminar = ref("")
-const modalEliminarItem = ref(false)
-
-function abrirEliminarModal(item) {
-    itemAEliminar.value = item
-    modalEliminarItem.value = true
-}
-
-function eliminarArchivos() {
-    console.log('eliminarArchivos')
-    if (itemAEliminar.value)
-        eliminarArchivo(itemAEliminar.value)
-    else {
-        for (var item of itemsSeleccionados.value)
-            eliminarArchivo(item);
-    }
-    modalEliminarItem.value = false
-}
-
-function eliminarArchivo(item) {
-    console.log('eloiminar¡', item)
-    const url = '/files' + ('/' + item.ruta).replace(/\/\//g, '/').replace(/%2F/g, '/')
-    console.log({ url })
-    return axios.delete(url)
-        .then(response => {
-            item.eliminado = true
-        })
-        .catch(err => {
-            const errorMessage = err.response.data.error || 'Ocurrió un error al eliminar el archivo ' + item.nombre
-            alert(errorMessage)
         })
 }
 
