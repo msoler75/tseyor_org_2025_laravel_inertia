@@ -1253,9 +1253,9 @@ class ArchivosController extends Controller
             $nodo = Nodo::create([
                 'ubicacion' => $sti->location,
                 'es_carpeta' => $esCarpeta,
-                'user_id' => $update['user_id'] ? $update['user_id'] : $nodoItem->user_id,
-                'group_id' => $update['group_id'] ? $update['group_id'] : $nodoItem->group_id,
-                'permisos' => $update['permisos'] ? $update['permisos'] : $nodoItem->permisos,
+                'user_id' => ($update['user_id'] ?? '') ? $update['user_id'] : $nodoItem->user_id,
+                'group_id' => ($update['group_id'] ?? '') ? $update['group_id'] : $nodoItem->group_id,
+                'permisos' => ($update['permisos'] ?? '') ? $update['permisos'] : $nodoItem->permisos,
             ]);
         } else {
             if (count($update))

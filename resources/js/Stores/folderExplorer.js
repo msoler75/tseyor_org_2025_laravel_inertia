@@ -14,8 +14,9 @@ const state = reactive({
   isCopyingFiles: false, // estamos en modo de copiando items?
   filesToMove: [], // items a mover
   filesToCopy: [], // items a copiar
-
-
+  // propiedades y permisos
+  permisosModificados: false,
+  propietarioRef: null,
 });
 
 const computados = {
@@ -70,6 +71,12 @@ const computados = {
   buscandoCarpetaDestino: computed(
     () => state.isMovingFiles || state.isCopyingFiles
   ),
+
+  // propietario
+  tituloPropietario: computed(() => {
+    if (!state.propietarioRef) return "";
+    return "Propietario: " + state.propietarioRef.nombre;
+  }),
 };
 
 const metodos = {
@@ -92,9 +99,8 @@ const metodos = {
   },
 
   actualizar() {
-    metodos.call('update')
+    metodos.call("update");
   },
-
 
   // SELECCION
 
