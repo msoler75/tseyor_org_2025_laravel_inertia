@@ -26,7 +26,13 @@ const state = reactive({
   modalCrearCarpeta: false,
   nombreCarpeta: "",
   creandoCarpeta: false,
+  // subir archivos
+  modalSubirArchivos: false,
 });
+
+
+
+
 
 const computados = {
   // estamos en la raíz?
@@ -240,6 +246,12 @@ const metodos = {
         state.creandoCarpeta = false;
       });
   },
+
+
+  // subir archivos
+
+
+
 };
 
 // WATCHERS
