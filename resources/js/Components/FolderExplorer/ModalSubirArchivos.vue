@@ -1,7 +1,7 @@
 <template>
 
     <!-- Modal Upload -->
-    <Modal :show="store.modalSubirArchivos" @close="store.modalSubirArchivos = false">
+    <Modal :show="modalSubirArchivos" @close="modalSubirArchivos = false">
 
         <div class="p-5 flex flex-col gap-5 items-center">
             <Dropzone class="w-full" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
@@ -13,7 +13,7 @@
             </Dropzone>
 
 
-            <button @click.prevent="store.modalSubirArchivos = false" type="button" class="btn btn-neutral btn-sm">
+            <button @click.prevent="modalSubirArchivos = false" type="button" class="btn btn-neutral btn-sm">
                 Cerrar
             </button>
         </div>
@@ -29,6 +29,10 @@ import useFolderExplorerStore from '@/Stores/folderExplorer';
 import { usePage, Link } from '@inertiajs/vue3';
 
 let store = useFolderExplorerStore()
+
+const modalSubirArchivos = ref(false)
+
+store.on('subirArchivos', ()=>modalSubirArchivos.value = true)
 
 const page = usePage()
 
@@ -55,7 +59,7 @@ function successEvent(file, response) {
     //store.actualizar()
 }
 
-watch(()=>store.modalSubirArchivos, (value) => {
+watch(modalSubirArchivos, (value) => {
     if (value)
         someUploaded.value = false
     else if (someUploaded.value) {

@@ -2,8 +2,8 @@ const state = reactive({
   // items
   items: [], // items raw
   itemsShow: [], // items mostrados
- // callbacks
- onUpdateCallback:null,
+  // callbacks
+  callbacks: {},
   // propiedades y estados
   embed: false, // el navegador de archivos está embebido
   esAdministrador: false, // el usuario actual es administrador?
@@ -14,25 +14,9 @@ const state = reactive({
   isCopyingFiles: false, // estamos en modo de copiando items?
   filesToMove: [], // items a mover
   filesToCopy: [], // items a copiar
-  // renombrar item
-  nuevoNombre: "",
-  itemRenombrando: null,
-  modalRenombrarItem: false,
-  renombrandoItem: false,
-  // eliminar item
-  itemAEliminar: null,
-  modalEliminarItem: false,
-  // crear carpeta
-  modalCrearCarpeta: false,
-  nombreCarpeta: "",
-  creandoCarpeta: false,
-  // subir archivos
-  modalSubirArchivos: false,
+
+
 });
-
-
-
-
 
 const computados = {
   // estamos en la raíz?
@@ -94,103 +78,23 @@ const metodos = {
     state.seleccionando = !state.seleccionando;
   },
 
-  // algo cambió en la carpeta
-  actualizar() {
-    if(state.onUpdateCallback)
-        state.onUpdateCallback()
+  // callbacks
+  on(nombre, fn) {
+    state.callbacks[nombre] = fn;
   },
 
-  // operaciones de renombrar
-  abrirModalRenombrar(item) {
-    // item.seleccionado = false // para el caso de renombrar un item seleccionado
-    state.renombrandoItem = false;
-    state.itemRenombrando = item;
-    state.nuevoNombre = item.nombre;
-    state.modalRenombrarItem = true;
-    // establecemos focus en el input
-    setTimeout(() => {
-      if (state.modalRenombrarItem) {
-        const elem = document.querySelector("#nuevoNombre");
-        if (elem) elem.focus();
-      }
-    }, 500);
-  },
-
-  renombrarItem() {
-    state.itemRenombrando.seleccionado = false;
-    state.renombrandoItem = true;
-    axios
-      .post("/files/rename", {
-        folder: state.itemRenombrando.carpeta,
-        oldName: state.itemRenombrando.nombre,
-        newName: state.nuevoNombre,
-      })
-      .then((response) => {
-        console.log({ response });
-        state.modalRenombrarItem = false;
-        const item = state.itemRenombrando; // itemsComplete.find(it => it.nombre == itemRenombrando.value.nombre)
-        // console.log('renombrar item', item)
-        item.ruta = item.carpeta + "/" + state.nuevoNombre;
-        const parts = item.url.split("/");
-        parts[parts.length - 1] = parts[parts.length - 1].replace(
-          item.nombre,
-          state.nuevoNombre
-        );
-        item.url = parts.join("/");
-        item.nombre = state.nuevoNombre;
-        if (!state.embed)
-          if (item.actual) {
-            // reemplazar la URL actual en el historial del navegador
-            router.replace(item.url);
-
-            // reemplazar el título de la página
-            document.title = item.ruta;
-          }
-        // else
-        // actualizarPage()
-      })
-      .catch((err) => {
-        const errorMessage =
-          err.response.data.error ||
-          "Ocurrió un error al renombrar el elemento";
-        alert(errorMessage);
-        state.renombrandoItem = false;
-      });
-  },
-
-  // eliminar item
-  abrirEliminarModal(item) {
-    state.itemAEliminar = item;
-    state.modalEliminarItem = true;
-  },
-
-  eliminarArchivos() {
-    console.log("eliminarArchivos");
-    if (state.itemAEliminar) metodos.eliminarArchivo(state.itemAEliminar);
-    else {
-      for (var item of computados.itemsSeleccionados.value)
-        metodos.eliminarArchivo(item);
+  call(nombre, arg1) {
+    if (!(nombre in state.callbacks)) {
+      console.error("Callback", nombre, "no encontrado");
+      return;
     }
-    state.modalEliminarItem = false;
+    state.callbacks[nombre](arg1);
   },
 
-  eliminarArchivo(item) {
-    console.log("eloiminar¡", item);
-    const url =
-      "/files" + ("/" + item.ruta).replace(/\/\//g, "/").replace(/%2F/g, "/");
-    console.log({ url });
-    return axios
-      .delete(url)
-      .then((response) => {
-        item.eliminado = true;
-      })
-      .catch((err) => {
-        const errorMessage =
-          err.response.data.error ||
-          "Ocurrió un error al eliminar el archivo " + item.nombre;
-        alert(errorMessage);
-      });
+  actualizar() {
+    metodos.call('update')
   },
+
 
   // SELECCION
 
@@ -213,45 +117,7 @@ const metodos = {
 
   // CREAR CARPETA
 
-  abrirModalCrearCarpeta() {
-    state.creandoCarpeta = false;
-    state.modalCrearCarpeta = true;
-    state.nombreCarpeta = "";
-    setTimeout(() => {
-      if (state.modalCrearCarpeta) {
-        const elem = document.querySelector("#nombreCarpeta");
-        if (elem) elem.focus();
-      }
-    }, 500);
-  },
-
-  crearCarpeta() {
-    console.log('crearCarpeta')
-    state.creandoCarpeta = true;
-    if (!state.nombreCarpeta) return;
-
-    axios
-      .put("/files/mkdir", {
-        folder: computados.rutaActual.value,
-        name: state.nombreCarpeta,
-      })
-      .then((response) => {
-        console.log({ response });
-        state.modalCrearCarpeta = false;
-        metodos.actualizar();
-      })
-      .catch((err) => {
-        console.log({ err });
-        alert(err.response.data.error);
-        state.creandoCarpeta = false;
-      });
-  },
-
-
   // subir archivos
-
-
-
 };
 
 // WATCHERS

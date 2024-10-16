@@ -13,14 +13,14 @@
             <div class="select-none">
                 <div v-if="(store.esAdministrador || item.puedeEscribir) && !store.seleccionando"
                     class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                    @click="store.abrirModalRenombrar(item)">
+                    @click="store.call('renombrar',item)">
                     <Icon icon="ph:cursor-text-duotone" />
                     <span>Renombrar</span>
                 </div>
 
                 <div v-if="(store.esAdministrador || item.puedeEscribir) && !store.seleccionando && !item.padre"
                     class="flex gap-x  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
-                    @click="store.abrirEliminarModal(item)">
+                    @click="store.call('eliminar',item)">
                     <Icon icon="ph:trash-duotone" />
                     <span>Eliminar</span>
                 </div>

@@ -69,8 +69,8 @@
                             <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                         </button>
 
-                        <button v-if="!store.seleccionando && !mostrandoResultados" class="btn btn-neutral btn-sm btn-icon"
-                            title="Buscar archivos" @click="showSearch">
+                        <button v-if="!store.seleccionando && !mostrandoResultados"
+                            class="btn btn-neutral btn-sm btn-icon" title="Buscar archivos" @click="showSearch">
                             <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                         </button>
 
@@ -109,21 +109,21 @@
                                     <!-- Account Management -->
                                     <div v-if="store.puedeEscribir && !store.seleccionando"
                                         class="flex gap-x items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
-                                        @click="store.modalSubirArchivos = true">
+                                        @click="store.call('subirArchivos')">
                                         <Icon icon="ph:upload-duotone" />
                                         <span>Subir archivos</span>
                                     </div>
 
-                                    <div v-if="store.items[1]?.padre && store.items[1]?.puedeEscribir && !store.seleccionando && store.itemsShow[0].ruta != 'archivos' && store.itemsShow[0].ruta != 'medios'"
+                                    <div v-if="store.items[1]?.padre && (store.esAdministrador||store.items[1]?.puedeEscribir) && !store.seleccionando && store.itemsShow[0].ruta != 'archivos' && store.itemsShow[0].ruta != 'medios'"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                        @click="abrirModalRenombrar(store.itemsShow[0])">
+                                        @click="store.call('renombrar', store.itemsShow[0])">
                                         <Icon icon="ph:cursor-text-duotone" />
                                         <span>Renombrar</span>
                                     </div>
 
                                     <div v-if="store.puedeEscribir && !store.seleccionando"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                        @click="store.abrirModalCrearCarpeta">
+                                        @click="store.call('crearCarpeta')">
                                         <Icon icon="ph:folder-plus-duotone" />
                                         <span>Crear carpeta</span>
                                     </div>
@@ -201,8 +201,8 @@
                 </button>
 
                 <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir" @click.prevent="copiarItems"
-                    title="Copiar los elementos seleccionados a esta carpeta">
+                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir"
+                    @click.prevent="copiarItems" title="Copiar los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
                     <span v-if="store.puedeEscribir">Pegar aquí</span>
                     <span v-else>No tienes permisos aquí</span>
@@ -220,14 +220,15 @@
                     </button>
 
                     <button v-if="store.itemsSeleccionados.length && store.puedeBorrarSeleccionados"
-                        class="btn btn-secondary flex gap-x items-center" @click.prevent="store.abrirEliminarModal(null)">
+                        class="btn btn-secondary flex gap-x items-center"
+                        @click.prevent="store.call('eliminar', null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
 
-                    <button v-if="store.itemsSeleccionados.length == 1"
+                    <button v-if="true||store.itemsSeleccionados.length == 1"
                         class="md:hidden btn btn-secondary flex gap-x items-center"
-                        @click.prevent="abrirModalRenombrar(store.itemsSeleccionados[0])">
+                        @click.prevent="store.call('renombrar', store.itemsSeleccionados[0])">
                         <Icon icon="ph:cursor-text-duotone" />
                         <span>Renombrar</span>
                     </button>
@@ -318,11 +319,11 @@
 
                     <component v-else :is="transitionActive ? TransitionGroup : 'tbody'" tag="tbody" name="files"
                         v-disable-right-click>
-                        <tr v-for="item in itemsMostrar.slice(0,mostrandoNItems)" :key="item.ruta" class="transition-opacity duration-200"
+                        <tr v-for="item in itemsMostrar.slice(0, mostrandoNItems)" :key="item.ruta"
+                            class="transition-opacity duration-200"
                             :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : 'opacity-70 pointer-events-none', navegando && navegando != item.url ? 'opacity-0 pointer-events-none' : '']"
                             v-on:touchstart="ontouchstart(item, $event)"
-                            v-on:touchend.prevent="ontouchend(item, $event)" v-on:touchmove="ontouchmove($event)"
-                            >
+                            v-on:touchend.prevent="ontouchend(item, $event)" v-on:touchmove="ontouchmove($event)">
                             <td v-if="store.seleccionando" @click.prevent="toggleItem(item)"
                                 class="hidden md:table-cell transform scale-100 text-2xl cursor-pointer opacity-70 hover:opacity-100">
                                 <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
@@ -331,8 +332,7 @@
                             <td class="relative w-4">
                                 <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer"
                                     @click="clickItem(item, $event)" :is-link="!store.seleccionando && !embed" />
-                                <FolderIcon v-else-if="item.tipo === 'carpeta'"
-                                :loading="navegando==item.url"
+                                <FolderIcon v-else-if="item.tipo === 'carpeta'" :loading="navegando == item.url"
                                     class="cursor-pointer text-4xl sm:text-xl" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id"
                                     :url="item.url" @click="clickItem(item, $event)"
@@ -351,7 +351,8 @@
                                         v-html="nombreItem(item)" class="cursor-pointer"
                                         :class="store.seleccionando ? 'pointer-events-none' : ''"
                                         @click="clickFolder(item, $event)" :is-link="!store.seleccionando && !embed" />
-                                    <div v-else-if="store.seleccionando" :title="item.nombre" v-html="nombreItem(item)" />
+                                    <div v-else-if="store.seleccionando" :title="item.nombre"
+                                        v-html="nombreItem(item)" />
                                     <a v-else :href="item.url" download v-html="nombreItem(item)"
                                         :class="store.seleccionando ? 'pointer-events-none' : ''"
                                         @click="clickFile(item, $event)" :is-link="!store.seleccionando && !embed" />
@@ -377,7 +378,8 @@
                                     @click="clickFolder(item, $event)" :is-link="!store.seleccionando && !embed" />
                                 <span v-else-if="store.seleccionando" v-html="nombreItem(item)" />
                                 <a v-else :href="item.url" download v-html="nombreItem(item)"
-                                    class="py-3 hover:underline" :class="store.seleccionando ? 'pointer-events-none' : ''"
+                                    class="py-3 hover:underline"
+                                    :class="store.seleccionando ? 'pointer-events-none' : ''"
                                     @click="clickFile(item, $event)" />
                             </td>
                             <td class="hidden sm:table-cell text-center">
@@ -406,13 +408,12 @@
                             <td v-if="mostrandoResultados || mostrarRutas || store.rutaActual == 'mis_archivos'"
                                 class="hidden lg:table-cell text-sm">
                                 <div class="flex items-center gap-2 lg:min-w-64 xl:min-w-[500px] 2xl:min-w-[700px]">
-                                    <FolderIcon :arrow="true" :url="item.carpeta"
-                                    />
+                                    <FolderIcon :arrow="true" :url="item.carpeta" />
                                     <Link :href="item.carpeta" class="break-all">/{{ item.carpeta }}</Link>
                                 </div>
                             </td>
                             <td class="hidden md:table-cell">
-                               <MenuItem :item='item'/>
+                                <MenuItem :item='item' />
                             </td>
                         </tr>
                     </component>
@@ -435,7 +436,7 @@
                             <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer text-8xl mb-4"
                                 @click="clickDisk(item, $event)" :is-link="!store.seleccionando && !embed" />
                             <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
-                            :loading="navegando==item.url"
+                                :loading="navegando == item.url"
                                 :owner="item.propietario && item.propietario?.usuario.id === user?.id"
                                 class="cursor-pointer text-8xl mb-4" :disabled="store.seleccionando"
                                 @click="clickFolder(item, $event)" :is-link="!store.seleccionando && !embed"
@@ -472,7 +473,7 @@
                             </div>
                         </div>
                         <div class="w-full transform flex justify-center mt-auto relative z-10">
-                            <MenuItem :item="item" :vertical="false"/>
+                            <MenuItem :item="item" :vertical="false" />
                         </div>
                     </div>
                 </GridFill>
@@ -507,8 +508,8 @@
                 </button>
 
                 <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir" @click.prevent="copiarItems"
-                    title="Copiar los elementos seleccionados a esta carpeta">
+                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir"
+                    @click.prevent="copiarItems" title="Copiar los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
                     <span v-if="store.puedeEscribir">Pegar aquí</span>
                     <span v-else>No tienes permisos aquí</span>
@@ -527,14 +528,15 @@
                     </button>
 
                     <button v-if="store.itemsSeleccionados.length && store.puedeBorrarSeleccionados"
-                        class="btn btn-secondary flex gap-x items-center" @click.prevent="store.abrirEliminarModal(null)">
+                        class="btn btn-secondary flex gap-x items-center"
+                        @click.prevent="store.call('eliminar', null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
 
                     <button v-if="store.itemsSeleccionados.length == 1 && store.puedeBorrarSeleccionados"
                         class="md:hidden btn btn-secondary flex gap-x items-center"
-                        @click.prevent="abrirModalRenombrar(store.itemsSeleccionados[0])">
+                        @click.prevent="store.call('renombrar', store.itemsSeleccionados[0])">
                         <Icon icon="ph:cursor-text-duotone" />
                         <span>Renombrar</span>
                     </button>
@@ -931,7 +933,7 @@
 
         <ModalCrearCarpeta />
 
-        <ModalSubirArchivos/>
+        <ModalSubirArchivos />
 
     </div>
 </template>
@@ -944,7 +946,7 @@ import { useDebounce } from '@vueuse/core';
 import usePlayer from '@/Stores/player'
 import usePermisos from '@/Stores/permisos'
 import { TransitionGroup } from 'vue'
-import {plural} from '@/composables/textutils'
+import { plural } from '@/composables/textutils'
 
 
 function esPantallaTactil() {
@@ -990,10 +992,9 @@ store.items = props.items
 store.embed = props.embed
 store.esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos').length)
 store.infoCargada = false
-store.seleccionando = false
-store.onUpdateCallback = () => {
+store.on('update', () => {
     emit('updated')
-}
+})
 
 
 // USAR EFECTO ANIMACION DE TARNSICION?
@@ -1190,9 +1191,9 @@ const itemsMostrar = computed(() => mostrandoResultados.value ? resultadosBusque
 var mostrandoNItems = ref(24)
 
 function incrementarItemsMostrados() {
-    if(mostrandoNItems.value > itemsMostrar.value.length + 32) return
+    if (mostrandoNItems.value > itemsMostrar.value.length + 32) return
     mostrandoNItems.value += 32
-    setTimeout(()=> {
+    setTimeout(() => {
         incrementarItemsMostrados()
     }, 500)
 }
