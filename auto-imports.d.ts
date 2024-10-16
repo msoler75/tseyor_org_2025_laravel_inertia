@@ -28,6 +28,7 @@ declare global {
   const onThemeChange: typeof import('./resources/js/composables/themeAdapter.js')['onThemeChange']
   const onUnmounted: typeof import('vue')['onUnmounted']
   const parseFiles: typeof import('./resources/js/composables/parseFiles.js')['parseFiles']
+  const plural: typeof import('./resources/js/composables/textutils.js')['plural']
   const reactive: typeof import('vue')['reactive']
   const ref: typeof import('vue')['ref']
   const removeAccents: typeof import('./resources/js/composables/textutils.js')['removeAccents']

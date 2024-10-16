@@ -76,3 +76,8 @@ export const fechaEs = function (fecha, options) {
   // Formatear la fecha usando toLocaleDateString
   return fechaObj.toLocaleDateString("es-ES", opciones).replace(/\sde\s/g, "/");
 };
+
+
+export const plural = function (count, label) {
+    return `${count} ${label + (count != 1 ? 's' : '')}`
+}

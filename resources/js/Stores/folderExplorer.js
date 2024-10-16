@@ -2,7 +2,8 @@ const state = reactive({
   // items
   items: [], // items raw
   itemsShow: [], // items mostrados
-
+ // callbacks
+ onUpdateCallback:null,
   // propiedades y estados
   embed: false, // el navegador de archivos está embebido
   esAdministrador: false, // el usuario actual es administrador?
@@ -21,16 +22,22 @@ const state = reactive({
   // eliminar item
   itemAEliminar: null,
   modalEliminarItem: false,
+  // crear carpeta
+  modalCrearCarpeta: false,
+  nombreCarpeta: "",
+  creandoCarpeta: false,
 });
 
-
-
 const computados = {
-
-    // estamos en la raíz?
+  // estamos en la raíz?
   enRaiz: computed(
     () =>
       state.items[1]?.tipo === "disco" || state.items[0].ruta == "mis_archivos"
+  ),
+
+  // ruta actual
+  rutaActual: computed(() =>
+    state.itemsShow.length ? state.itemsShow[0].ruta : ""
   ),
 
   // puede editar la carpeta actual?
@@ -47,7 +54,6 @@ const computados = {
       (state.itemsShow.length ? state.itemsShow[0].puedeLeer : false)
   ),
 
-
   // items seleccionados
   itemsSeleccionados: computed(() =>
     state.itemsShow.filter(
@@ -58,30 +64,34 @@ const computados = {
     )
   ),
 
-   // puede mover aquí los items seleccionados?
-   puedeMoverSeleccionados: computed(
+  // puede mover aquí los items seleccionados?
+  puedeMoverSeleccionados: computed(
     () =>
       state.esAdministrador ||
       computados.itemsSeleccionados.value.find((item) => item.puedeEscribir)
   ),
 
   // puede borrar los items seleccionados?
-  puedeBorrarSeleccionados: computed(() => computados.puedeMoverSeleccionados.value),
+  puedeBorrarSeleccionados: computed(
+    () => computados.puedeMoverSeleccionados.value
+  ),
 
   // estamos en estado de buscando carpeta destino?
   buscandoCarpetaDestino: computed(
     () => state.isMovingFiles || state.isCopyingFiles
   ),
-
-}
-
+};
 
 const metodos = {
-
-
   // Métodos
   toggleSeleccionando() {
     state.seleccionando = !state.seleccionando;
+  },
+
+  // algo cambió en la carpeta
+  actualizar() {
+    if(state.onUpdateCallback)
+        state.onUpdateCallback()
   },
 
   // operaciones de renombrar
@@ -131,7 +141,7 @@ const metodos = {
             document.title = item.ruta;
           }
         // else
-        // reloadPage()
+        // actualizarPage()
       })
       .catch((err) => {
         const errorMessage =
@@ -150,9 +160,10 @@ const metodos = {
 
   eliminarArchivos() {
     console.log("eliminarArchivos");
-    if (state.itemAEliminar) eliminarArchivo(state.itemAEliminar);
+    if (state.itemAEliminar) metodos.eliminarArchivo(state.itemAEliminar);
     else {
-      for (var item of computados.itemsSeleccionados.value) eliminarArchivo(item);
+      for (var item of computados.itemsSeleccionados.value)
+        metodos.eliminarArchivo(item);
     }
     state.modalEliminarItem = false;
   },
@@ -193,6 +204,42 @@ const metodos = {
     const alguno = state.itemsShow.find((item) => item.seleccionado);
     if (!alguno) state.seleccionando = false;
   },
+
+  // CREAR CARPETA
+
+  abrirModalCrearCarpeta() {
+    state.creandoCarpeta = false;
+    state.modalCrearCarpeta = true;
+    state.nombreCarpeta = "";
+    setTimeout(() => {
+      if (state.modalCrearCarpeta) {
+        const elem = document.querySelector("#nombreCarpeta");
+        if (elem) elem.focus();
+      }
+    }, 500);
+  },
+
+  crearCarpeta() {
+    console.log('crearCarpeta')
+    state.creandoCarpeta = true;
+    if (!state.nombreCarpeta) return;
+
+    axios
+      .put("/files/mkdir", {
+        folder: computados.rutaActual.value,
+        name: state.nombreCarpeta,
+      })
+      .then((response) => {
+        console.log({ response });
+        state.modalCrearCarpeta = false;
+        metodos.actualizar();
+      })
+      .catch((err) => {
+        console.log({ err });
+        alert(err.response.data.error);
+        state.creandoCarpeta = false;
+      });
+  },
 };
 
 // WATCHERS
@@ -208,29 +255,28 @@ watch(
   }
 );
 
-
 const storeProxy = new Proxy(
-    { ...metodos, ...state, ...computados },
-    {
-      get(target, property) {
-        if (property in computados) {
-          return computados[property].value;
-        }
-        if (property in metodos) {
-          return metodos[property];
-        }
-        return state[property];
-      },
-      set(target, property, value) {
-        if (property in state) {
-          state[property] = value;
-        } else {
-          target[property] = value;
-        }
-        return true;
-      },
-    }
-  );
+  { ...metodos, ...state, ...computados },
+  {
+    get(target, property) {
+      if (property in computados) {
+        return computados[property].value;
+      }
+      if (property in metodos) {
+        return metodos[property];
+      }
+      return state[property];
+    },
+    set(target, property, value) {
+      if (property in state) {
+        state[property] = value;
+      } else {
+        target[property] = value;
+      }
+      return true;
+    },
+  }
+);
 
 export function useStore() {
   return storeProxy;
