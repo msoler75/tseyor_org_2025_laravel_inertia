@@ -88,6 +88,7 @@ declare module 'vue' {
     ModalDropZone: typeof import('./resources/js/Components/ModalDropZone.vue')['default']
     ModalEliminar: typeof import('./resources/js/Components/FolderExplorer/ModalEliminar.vue')['default']
     ModalRenombrarItem: typeof import('./resources/js/Components/FolderExplorer/ModalRenombrarItem.vue')['default']
+    ModalSubirArchivos: typeof import('./resources/js/Components/FolderExplorer/ModalSubirArchivos.vue')['default']
     NavAside: typeof import('./resources/js/Components/NavAside.vue')['default']
     NavBar: typeof import('./resources/js/Components/NavBar.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
