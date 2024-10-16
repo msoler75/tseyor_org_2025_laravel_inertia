@@ -85,6 +85,7 @@ declare module 'vue' {
     MenuItem: typeof import('./resources/js/Components/FolderExplorer/MenuItem.vue')['default']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     ModalDropZone: typeof import('./resources/js/Components/ModalDropZone.vue')['default']
+    ModalRenombrarItem: typeof import('./resources/js/Components/FolderExplorer/ModalRenombrarItem.vue')['default']
     NavAside: typeof import('./resources/js/Components/NavAside.vue')['default']
     NavBar: typeof import('./resources/js/Components/NavBar.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
