@@ -73,6 +73,6 @@ const props = defineProps({
     vertical: {type: Boolean, default: true}
 })
 
-let store = useFolderExplorerStore()
+const store = useFolderExplorerStore()
 
 </script>

@@ -36,7 +36,7 @@
 
 <script setup>
 import useFolderExplorerStore from '@/Stores/folderExplorer';
-let store = useFolderExplorerStore()
+const store = useFolderExplorerStore()
 
 store.on('renombrar', abrirModalRenombrar)
 
