@@ -20,7 +20,7 @@
 
                 <div v-if="(store.esAdministrador || item.puedeEscribir) && !store.seleccionando && !item.padre"
                     class="flex gap-x  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
-                    @click="abrirEliminarModal(item)">
+                    @click="store.abrirEliminarModal(item)">
                     <Icon icon="ph:trash-duotone" />
                     <span>Eliminar</span>
                 </div>

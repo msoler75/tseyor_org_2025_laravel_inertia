@@ -5,7 +5,7 @@
 
 
             <div :class="embed ? '' : 'lg:container mx-auto'">
-                <Breadcrumb :path="rutaActual" :is-links="true" :intercept-click="true"
+                <Breadcrumb :path="store.rutaActual" :is-links="true" :intercept-click="true"
                     @folder="clickBreadcrumb($event)" title="Ruta actual"
                     class="flex-wrap text-2xl font-bold items-center mb-5" :rootLabel="rootLabel" :rootUrl="rootUrl" />
             </div>
@@ -38,14 +38,14 @@
                         :href="'/' + rutaBase" :tag="embed ? 'span' : 'a'"
                         @click="clickFolder({ ruta: '/' + rutaBase }, $event)" :is-link="!embed"
                         title="Ir a la carpeta base"
-                        :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
+                        :class="store.rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:house-line-duotone" class="text-2xl" />
                     </ConditionalLink>
 
                     <ConditionalLink v-if="items.length > 1 && !store.seleccionando && items[1].tipo == 'carpeta'"
                         :href="items[1].url" :tag="embed ? 'span' : 'a'" class="btn btn-neutral btn-sm btn-icon w-fit"
                         title="Ir a una carpeta superior" @click="clickFolder(items[1], $event)" :is-link="!embed"
-                        :class="rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
+                        :class="store.rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
                         <Icon icon="ph:arrow-bend-left-up-duotone" class="text-2xl" />
                     </ConditionalLink>
 
@@ -123,7 +123,7 @@
 
                                     <div v-if="store.puedeEscribir && !store.seleccionando"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
-                                        @click="abrirModalCrearCarpeta">
+                                        @click="store.abrirModalCrearCarpeta">
                                         <Icon icon="ph:folder-plus-duotone" />
                                         <span>Crear carpeta</span>
                                     </div>
@@ -193,7 +193,7 @@
                 </button>
 
                 <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == rutaActual || !store.puedeEscribir" @click.prevent="moverItems"
+                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir" @click.prevent="moverItems"
                     title="Mover los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
                     <span v-if="store.puedeEscribir">Mover aquí</span>
@@ -201,7 +201,7 @@
                 </button>
 
                 <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == rutaActual || !store.puedeEscribir" @click.prevent="copiarItems"
+                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir" @click.prevent="copiarItems"
                     title="Copiar los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
                     <span v-if="store.puedeEscribir">Pegar aquí</span>
@@ -220,7 +220,7 @@
                     </button>
 
                     <button v-if="store.itemsSeleccionados.length && store.puedeBorrarSeleccionados"
-                        class="btn btn-secondary flex gap-x items-center" @click.prevent="abrirEliminarModal(null)">
+                        class="btn btn-secondary flex gap-x items-center" @click.prevent="store.abrirEliminarModal(null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
@@ -287,7 +287,7 @@
                                 Permisos</th>
                             <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
                                 Propietario</th>
-                            <th v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'"
+                            <th v-if="mostrandoResultados || mostrarRutas || store.rutaActual == 'mis_archivos'"
                                 class="hidden lg:table-cell text-sm">Ubicación
                             </th>
                             <th class="hidden md:table-cell"></th>
@@ -403,7 +403,7 @@
                                     '...'
                                 }}
                             </td>
-                            <td v-if="mostrandoResultados || mostrarRutas || rutaActual == 'mis_archivos'"
+                            <td v-if="mostrandoResultados || mostrarRutas || store.rutaActual == 'mis_archivos'"
                                 class="hidden lg:table-cell text-sm">
                                 <div class="flex items-center gap-2 lg:min-w-64 xl:min-w-[500px] 2xl:min-w-[700px]">
                                     <FolderIcon :arrow="true" :url="item.carpeta"
@@ -499,7 +499,7 @@
                 </button>
 
                 <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == rutaActual || !store.puedeEscribir" @click.prevent="moverItems"
+                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir" @click.prevent="moverItems"
                     title="Mover los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
                     <span v-if="store.puedeEscribir">Mover aquí</span>
@@ -507,7 +507,7 @@
                 </button>
 
                 <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == rutaActual || !store.puedeEscribir" @click.prevent="copiarItems"
+                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir" @click.prevent="copiarItems"
                     title="Copiar los elementos seleccionados a esta carpeta">
                     <Icon icon="ph:clipboard-duotone" />
                     <span v-if="store.puedeEscribir">Pegar aquí</span>
@@ -527,7 +527,7 @@
                     </button>
 
                     <button v-if="store.itemsSeleccionados.length && store.puedeBorrarSeleccionados"
-                        class="btn btn-secondary flex gap-x items-center" @click.prevent="abrirEliminarModal(null)">
+                        class="btn btn-secondary flex gap-x items-center" @click.prevent="store.abrirEliminarModal(null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
@@ -595,35 +595,6 @@
 
 
 
-        <!-- Modal Crear Carpeta -->
-        <Modal :show="modalCrearCarpeta" @close="modalCrearCarpeta = false" maxWidth="sm">
-
-            <form class="p-7 space-y-7" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
-                @submit.prevent="crearCarpeta">
-
-                <div class="flex flex-col gap-4">
-                    <label for="nombreCarpeta">Nombre de la nueva carpeta:</label>
-                    <input id="nombreCarpeta" v-model="nombreCarpeta" type="text" required>
-                </div>
-
-                <div class="py-3 flex justify-between sm:justify-end gap-5">
-                    <button @click.prevent="crearCarpeta" type="button" class="btn btn-primary btn-sm"
-                        :disabled="creandoCarpeta">
-                        <div v-if="creandoCarpeta" class="flex items-center gap-x">
-                            <Spinner />
-                            Creando...
-                        </div>
-                        <span v-else>
-                            Crear Carpeta
-                        </span>
-                    </button>
-
-                    <button @click.prevent="modalCrearCarpeta = false" type="button" class="btn btn-neutral btn-sm">
-                        Cancelar
-                    </button>
-                </div>
-            </form>
-        </Modal>
 
 
 
@@ -949,34 +920,6 @@
         </Modal>
 
 
-        <!-- Modal Confirmación de eliminar Archivo -->
-        <ConfirmationModal :show="store.modalEliminarItem" @close="store.modalEliminarItem = false">
-            <template #title>
-                <div v-if="store.itemAEliminar">Confirmación de eliminación</div>
-                <div v-else>Eliminar {{ plural(store.itemsSeleccionados.length, 'elemento') }}</div>
-            </template>
-            <template #content>
-                <div v-if="store.itemAEliminar">
-                    ¿Quieres eliminar {{ store.itemAEliminar.nombre }}?
-                </div>
-                <div v-else>
-                    ¿Quieres eliminar {{ plural(store.itemsSeleccionados.length, 'elemento') }}?
-                </div>
-            </template>
-            <template #footer>
-                <form class="w-full space-x-4" role="dialog" aria-modal="true" aria-labelledby="modal-headline"
-                    @submit.prevent="eliminarArchivos">
-
-                    <button @click.prevent="store.modalEliminarItem = false" type="button" class="btn btn-neutral btn-sm">
-                        Cancelar
-                    </button>
-
-                    <button type="submit" class="btn btn-primary btn-sm">
-                        Eliminar
-                    </button>
-                </form>
-            </template>
-        </ConfirmationModal>
 
         <slot />
 
@@ -1003,6 +946,10 @@
 
         <ModalRenombrarItem />
 
+        <ModalEliminar />
+
+        <ModalCrearCarpeta />
+
     </div>
 </template>
 
@@ -1015,6 +962,7 @@ import { useDebounce } from '@vueuse/core';
 import usePlayer from '@/Stores/player'
 import usePermisos from '@/Stores/permisos'
 import { TransitionGroup } from 'vue'
+import {plural} from '@/composables/textutils'
 
 
 function esPantallaTactil() {
@@ -1061,6 +1009,10 @@ store.embed = props.embed
 store.esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos').length)
 store.infoCargada = false
 store.seleccionando = false
+store.onUpdateCallback = () => {
+    emit('updated')
+}
+
 
 // USAR EFECTO ANIMACION DE TARNSICION?
 const transitionActive = ref(false)
@@ -1074,7 +1026,7 @@ const info_archivos = ref({})
 async function cargarInfo() {
     store.infoCargada = false
     setTimeout(incrementarItemsMostrados, 1000)
-    return axios.get('/archivos_info' + '?ruta=/' + rutaActual.value)
+    return axios.get('/archivos_info' + '?ruta=/' + store.rutaActual)
         .then(response => {
             // info.value = response.data
             info_archivos.value = response.data
@@ -1166,8 +1118,6 @@ function onKeyDown(event) {
 }
 
 
-// ruta actual
-const rutaActual = computed(() => store.itemsShow.length ? store.itemsShow[0].ruta : '')
 
 // otros datos
 const page = usePage()
@@ -1187,9 +1137,6 @@ function nombreItem(item) {
     return item.nombre
 }
 
-function plural(count, label) {
-    return `${count} ${label + (count != 1 ? 's' : '')}`
-}
 
 // BUSCAR ARCHIVOS
 
@@ -1223,7 +1170,7 @@ function onSearch() {
 
     axios('/archivos_buscar', {
         params: {
-            ruta: rutaActual.value,
+            ruta: store.rutaActual,
             nombre: buscar.value
         }
     })
@@ -1395,25 +1342,25 @@ function toggleItem(item) {
 function prepararMoverItems() {
     store.seleccionando = false
     store.isMovingFiles = true
-    store.sourcePath = rutaActual.value
+    store.sourcePath = store.rutaActual
     store.filesToMove = [...itemsSeleccionados.value.map(item => item.nombre)]
 }
 
 function prepararCopiarItems() {
     store.seleccionando = false
     store.isCopyingFiles = true
-    store.sourcePath = rutaActual.value
+    store.sourcePath = store.rutaActual
     store.filesToCopy = [...itemsSeleccionados.value.map(item => item.nombre)]
 }
 
 function copiarItems() {
     axios.post('/files/copy', {
         sourceFolder: store.sourcePath,
-        targetFolder: rutaActual.value,
+        targetFolder: store.rutaActual,
         items: store.filesToCopy
     }).then(response => {
         console.log({ response })
-        reloadPage()
+        store.actualizar()
     })
         .catch(err => {
             const errorMessage = err.response.data.error || 'Ocurrió un error al copiar los elementos'
@@ -1426,11 +1373,11 @@ function copiarItems() {
 function moverItems() {
     axios.post('/files/move', {
         sourceFolder: store.sourcePath,
-        targetFolder: rutaActual.value,
+        targetFolder: store.rutaActual,
         items: store.filesToMove
     }).then(response => {
         console.log({ response })
-        reloadPage()
+        store.actualizar()
     })
         .catch(err => {
             const errorMessage = err.response.data.error || 'Ocurrió un error al mover los elementos'
@@ -1464,7 +1411,7 @@ const dropzoneOptions = ref({
 
 
 function sendingEvent(file, xhr, formData) {
-    formData.append('destinationPath', rutaActual.value);
+    formData.append('destinationPath', store.rutaActual);
 }
 
 
@@ -1472,7 +1419,7 @@ var someUploaded = ref(false)
 function successEvent(file, response) {
     someUploaded.value = true
     //console.log('successEvent', props.ruta)
-    //reloadPage()
+    //store.actualizar()
 }
 
 watch(modalSubirArchivos, (value) => {
@@ -1481,7 +1428,7 @@ watch(modalSubirArchivos, (value) => {
     else if (someUploaded.value) {
         someUploaded.value = false
         // recargamos la vista
-        reloadPage()
+        store.actualizar()
     }
 })
 
@@ -1577,7 +1524,7 @@ function abrirModalPropiedades(item) {
 watch(modalPropiedades, (newValue) => {
     if (!newValue && permisosModificados.value) {
         // actualizamos vista de la carpeta
-        reloadPage()
+        store.actualizar()
     }
 })
 
@@ -1794,39 +1741,6 @@ function cambiarAcl() {
 
 
 
-// CREAR CARPETA
-
-const modalCrearCarpeta = ref(false)
-const nombreCarpeta = ref("")
-const creandoCarpeta = ref(false)
-
-function abrirModalCrearCarpeta() {
-    creandoCarpeta.value = false
-    modalCrearCarpeta.value = true
-    nombreCarpeta.value = ""
-    setTimeout(() => {
-        if (modalCrearCarpeta.value)
-            document.querySelector('#nombreCarpeta').focus()
-    }, 500)
-}
-
-function crearCarpeta() {
-    creandoCarpeta.value = true
-    if (!nombreCarpeta.value) return
-
-    axios.put('/files/mkdir', {
-        folder: rutaActual.value, name: nombreCarpeta.value
-    }).then((response) => {
-        console.log({ response })
-        modalCrearCarpeta.value = false
-        reloadPage()
-    })
-        .catch(err => {
-            console.log({ err })
-            alert(err.response.data.error)
-            creandoCarpeta.value = false
-        })
-}
 
 
 // TIPO DE ITEM: ES IMAGEN?
@@ -1862,9 +1776,6 @@ const toggleVista = () => {
     console.log(selectors.value)
 }
 
-function reloadPage() {
-    emit('updated')
-}
 
 
 
