@@ -28,6 +28,10 @@ const state = reactive({
   //visor de imágenes
   v3ImgPreviewFn: null,
   images: [], // lista de imagenes para previsualizar
+  // ordenación
+  ordenarPor: "normal",
+  // admin
+  mostrarRutas: false
 });
 
 const computados = {
@@ -157,6 +161,53 @@ const metodos = {
   clickBreadcrumb(item, event) {
     metodos.call("clickBreadcrumb", item, event);
   },
+
+  touchStart(item, event) {
+    metodos.call("touchStart", item, event);
+  },
+
+  touchEnd(item, event) {
+    metodos.call("touchEnd", item, event);
+  },
+
+  touchMove(item, event) {
+    metodos.call("touchMove", item, event);
+  },
+
+  // HELPERS
+
+    nombreItem(item) {
+        if (item.actual) return `<span class='text-neutral opacity-70'>&lt;${item.nombre}&gt;</span>`
+        if (item.padre) return `<span class='text-neutral opacity-70'>&lt;arriba&gt;</span>`
+    return item.nombre
+},
+
+
+// TIPO DE ITEM: ES IMAGEN?
+ isImage(fileName) {
+    if (!fileName || (typeof fileName != 'string')) return false
+    const ext = fileName.split('.').pop().toLowerCase();
+
+    switch (ext) {
+        case 'gif':
+        case 'pcx':
+        case 'bmp':
+        case 'svg':
+        case 'jpg':
+        case 'jpeg':
+        case 'jfif':
+        case 'webp':
+        case 'png': return true;
+    }
+    return false
+},
+
+
+ esPantallaTactil() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
+
 };
 
 // WATCHERS

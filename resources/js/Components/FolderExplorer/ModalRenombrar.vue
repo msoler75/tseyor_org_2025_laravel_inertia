@@ -95,8 +95,9 @@ function renombrarItem() {
             // actualizarPage()
         })
         .catch((err) => {
+            console.warn({err})
             const errorMessage =
-                err.response.data.error ||
+                err.response.data?.error ||
                 "Ocurrió un error al renombrar el elemento";
             alert(errorMessage);
             renombrandoItem.value = false;
