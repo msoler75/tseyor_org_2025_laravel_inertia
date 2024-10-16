@@ -45,7 +45,7 @@
                     <span>Cancelar selección</span>
                 </div>
 
-                <a :href="item.url"
+                <a v-if="item.tipo=='archivo'" :href="item.url"
                     class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                     download>
                     <Icon icon="ph:download" />
