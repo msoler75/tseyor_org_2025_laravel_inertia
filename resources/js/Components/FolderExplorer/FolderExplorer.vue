@@ -34,26 +34,8 @@
                 </div>
 
                 <div v-if="!store.mostrandoResultadosBusqueda" class="flex gap-x w-full max-w-full">
-                    <ConditionalLink v-if="!store.seleccionando" class="btn btn-neutral btn-sm btn-icon cursor-pointer"
-                        :href="'/' + rutaBase" :tag="embed ? 'span' : 'a'"
-                        @click="clickFolder({ ruta: '/' + rutaBase }, $event)" :is-link="!embed"
-                        title="Ir a la carpeta base"
-                        :class="store.rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
-                        <Icon icon="ph:house-line-duotone" class="text-2xl" />
-                    </ConditionalLink>
 
-                    <ConditionalLink v-if="items.length > 1 && !store.seleccionando && items[1].tipo == 'carpeta'"
-                        :href="items[1].url" :tag="embed ? 'span' : 'a'" class="btn btn-neutral btn-sm btn-icon w-fit"
-                        title="Ir a una carpeta superior" @click="clickFolder(items[1], $event)" :is-link="!embed"
-                        :class="store.rutaActual == rutaBase ? 'opacity-50 pointer-events-none' : ''">
-                        <Icon icon="ph:arrow-bend-left-up-duotone" class="text-2xl" />
-                    </ConditionalLink>
-
-                    <button v-if="store.seleccionando" class="btn btn-neutral btn-sm flex gap-x items-center"
-                        @click.prevent="store.cancelarSeleccion" title="Cancelar selección">
-                        <Icon icon="material-symbols:close-rounded" />
-                        <span>{{ store.itemsSeleccionados.length }}</span>
-                    </button>
+                    <BotonesIzquierda />
 
                     <div class="ml-auto flex gap-x">
 
@@ -310,7 +292,7 @@
                             </td>
                             <td>
                                 <component :is="store.seleccionando ? 'div' : Link" :href="item.url"
-                                    @click="clickItem(item, $event)" :disabled="store.seleccionando"
+                                    @click="store.clickItem(item, $event)" :disabled="store.seleccionando"
                                     class="inline-block py-3 bg-red-500 w-full cursor-pointer">{{
                                         nombreItem(item) }}</component>
                             </td>
@@ -323,7 +305,7 @@
                         v-disable-right-click>
                         <tr v-for="item in itemsMostrar.slice(0, mostrandoNItems)" :key="item.ruta"
                             class="transition-opacity duration-200"
-                            :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : 'opacity-70 pointer-events-none', navegando && navegando != item.url ? 'opacity-0 pointer-events-none' : '']"
+                            :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : 'opacity-70 pointer-events-none', store.navegando && store.navegando != item.url ? 'opacity-0 pointer-events-none' : '']"
                             v-on:touchstart="ontouchstart(item, $event)"
                             v-on:touchend.prevent="ontouchend(item, $event)" v-on:touchmove="ontouchmove($event)">
                             <td v-if="store.seleccionando" @click.prevent="toggleItem(item)"
@@ -333,31 +315,31 @@
                             </td>
                             <td class="relative w-4">
                                 <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer"
-                                    @click="clickItem(item, $event)" :is-link="!store.seleccionando && !embed" />
-                                <FolderIcon v-else-if="item.tipo === 'carpeta'" :loading="navegando == item.url"
+                                    @click="store.clickItem(item, $event)" :is-link="!store.seleccionando && !embed" />
+                                <FolderIcon v-else-if="item.tipo === 'carpeta'" :loading="store.navegando == item.url"
                                     class="cursor-pointer text-4xl sm:text-xl" :private="item.privada"
                                     :owner="item.propietario && item.propietario?.usuario.id === user?.id"
-                                    :url="item.url" @click="clickItem(item, $event)"
+                                    :url="item.url" @click="store.clickItem(item, $event)"
                                     :is-link="!store.seleccionando && !embed && item.puedeLeer"
                                     :arrow="!!item.acceso_directo" />
                                 <FileIcon v-else :url="item.url" class="cursor-pointer text-4xl sm:text-xl"
-                                    @click="clickFile(item, $event)"
+                                    @click="store.clickFile(item, $event)"
                                     :is-link="!store.seleccionando && !embed && item.puedeLeer" />
                             </td>
                             <td class="sm:hidden py-3">
                                 <div class="flex flex-col">
                                     <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
-                                        @click="clickDisk(item, $event)" :is-link="!store.seleccionando && !embed" />
+                                        @click="store.clickDisk(item, $event)" :is-link="!store.seleccionando && !embed" />
                                     <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                         v-html="nombreItem(item)" class="cursor-pointer"
                                         :class="store.seleccionando ? 'pointer-events-none' : ''"
-                                        @click="clickFolder(item, $event)" :is-link="!store.seleccionando && !embed" />
+                                        @click="store.clickFolder(item, $event)" :is-link="!store.seleccionando && !embed" />
                                     <div v-else-if="store.seleccionando" :title="item.nombre"
                                         v-html="nombreItem(item)" />
                                     <a v-else :href="item.url" download v-html="nombreItem(item)"
                                         :class="store.seleccionando ? 'pointer-events-none' : ''"
-                                        @click="clickFile(item, $event)" :is-link="!store.seleccionando && !embed" />
+                                        @click="store.clickFile(item, $event)" :is-link="!store.seleccionando && !embed" />
 
                                     <small class="w-full flex justify-between gap-2 items-center opacity-50">
                                         <span v-if="item.tipo === 'disco'">****</span>
@@ -372,17 +354,17 @@
                             </td>
                             <td class="hidden sm:table-cell py-3 max-w-[24rem]">
                                 <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
-                                    class="cursor-pointer py-3 hover:underline" @click="clickDisk(item, $event)"
+                                    class="cursor-pointer py-3 hover:underline" @click="store.clickDisk(item, $event)"
                                     :is-link="!store.seleccionando && !embed" />
                                 <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                     v-html="nombreItem(item)" class="cursor-pointer py-3 hover:underline"
                                     :class="store.seleccionando ? 'pointer-events-none' : ''"
-                                    @click="clickFolder(item, $event)" :is-link="!store.seleccionando && !embed" />
+                                    @click="store.clickFolder(item, $event)" :is-link="!store.seleccionando && !embed" />
                                 <span v-else-if="store.seleccionando" v-html="nombreItem(item)" />
                                 <a v-else :href="item.url" download v-html="nombreItem(item)"
                                     class="py-3 hover:underline"
                                     :class="store.seleccionando ? 'pointer-events-none' : ''"
-                                    @click="clickFile(item, $event)" />
+                                    @click="store.clickFile(item, $event)" />
                             </td>
                             <td class="hidden sm:table-cell text-center">
                                 <span v-if="item.tipo === 'disco'">-</span>
@@ -425,7 +407,7 @@
                 <GridFill colWidth="14rem" class="gap-4 pt-6" v-disable-right-click>
 
                     <div v-for="item in itemsMostrar" :key="item.ruta" class="transition-opacity duration-200"
-                        :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : ' opacity-70 pointer-events-none', navegando && navegando != item.url ? 'opacity-0 pointer-events-none' : '']">
+                        :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : ' opacity-70 pointer-events-none', store.navegando && store.navegando != item.url ? 'opacity-0 pointer-events-none' : '']">
                         <div v-if="store.seleccionando" @click.prevent="toggleItem(item)"
                             class="hidden md:table-cell transform scale-150 cursor-pointer opacity-70 hover:opacity-100">
                             <Icon v-if="item.seleccionado" icon="ph:check-square-duotone" />
@@ -436,30 +418,30 @@
                             v-on:touchstart="ontouchstart(item, $event)"
                             v-on:touchend.prevent="ontouchend(item, $event)">
                             <DiskIcon v-if="item.tipo === 'disco'" :url="item.url" class="cursor-pointer text-8xl mb-4"
-                                @click="clickDisk(item, $event)" :is-link="!store.seleccionando && !embed" />
+                                @click="store.clickDisk(item, $event)" :is-link="!store.seleccionando && !embed" />
                             <FolderIcon v-else-if="item.tipo === 'carpeta'" :url="item.url" :private="item.privada"
-                                :loading="navegando == item.url"
+                                :loading="store.navegando == item.url"
                                 :owner="item.propietario && item.propietario?.usuario.id === user?.id"
                                 class="cursor-pointer text-8xl mb-4" :disabled="store.seleccionando"
-                                @click="clickFolder(item, $event)" :is-link="!store.seleccionando && !embed"
+                                @click="store.clickFolder(item, $event)" :is-link="!store.seleccionando && !embed"
                                 :arrow="!!item.acceso_directo" />
                             <a v-else-if="isImage(item.nombre)" :href="item.url" class="text-8xl mb-4" download
-                                @click="clickFile(item, $event)">
+                                @click="store.clickFile(item, $event)">
                                 <Image :src="item.url" class="overflow-hidden w-[180px] h-[120px] object-contain" />
                             </a>
                             <FileIcon v-else :url="item.url" class="cursor-pointer text-8xl mb-4"
-                                @click="clickFile(item, $event)" :is-link="!store.seleccionando && !embed" />
+                                @click="store.clickFile(item, $event)" :is-link="!store.seleccionando && !embed" />
 
                             <div class="text-sm text-center">
                                 <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="nombreItem(item)"
-                                    class="py-1 hover:underline" @click="clickDisk(item, $event)"
+                                    class="py-1 hover:underline" @click="store.clickDisk(item, $event)"
                                     :is-link="!store.seleccionando && !embed" />
                                 <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
                                     v-html="nombreItem(item)" class="py-1 hover:underline"
-                                    @click="clickFolder(item, $event)" :is-link="!store.seleccionando && !embed" />
+                                    @click="store.clickFolder(item, $event)" :is-link="!store.seleccionando && !embed" />
                                 <span v-else-if="store.seleccionando" v-html="nombreItem(item)" />
                                 <a v-else :href="item.url" download v-html="nombreItem(item)"
-                                    @click="clickFile(item, $event)" :is-link="!store.seleccionando && !embed"
+                                    @click="store.clickFile(item, $event)" :is-link="!store.seleccionando && !embed"
                                     class="py-1 hover:underline" />
                             </div>
                             <div class="text-gray-500 text-xs">
@@ -549,8 +531,6 @@
                 </template>
             </div>
         </teleport>
-
-
 
 
         <slot />
@@ -643,15 +623,122 @@ const emit = defineEmits(['updated', 'disk', 'folder', 'file', 'insert']);
 
 const store = useFolderExplorerStore()
 
+store.ruta = props.ruta
+store.rutaBase = props.rutaBase
 store.items = props.items
 store.embed = props.embed
 store.esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos').length)
 store.infoCargada = false
 store.propietarioRef = props.propietarioRef
 store.mostrandoResultadosBusqueda = false
+store.navegando = false
 store.on('update', () => {
     emit('updated')
 })
+store.on('clickItem', onClickItem)
+store.on('clickDisk', onClickDisk)
+store.on('clickFolder', onClickFolder)
+store.on('clickFile', onClickFile)
+store.on('clickBreadcrumb', onClickBreadcrumb)
+
+
+
+// CLICK
+
+const player = usePlayer()
+
+
+function onClickItem(item, event) {
+    console.log("clickItem", item, "store.seleccionando:", store.seleccionando);
+    /*if (!event.target.closest('[data-allow-touch]')) {
+        event.preventDefault();
+    }*/
+    if (store.seleccionando) {
+      item.seleccionado = !item.seleccionado;
+      event.preventDefault();
+      return;
+    }
+    if (item.tipo == "disco") metodos.clickDisk(item, event);
+    else if (item.tipo == "carpeta") metodos.clickFolder(item, event);
+    else metodos.clickFile(item, event);
+  }
+
+  function onClickDisk(item, event) {
+    console.log("clickDisk", item);
+    emit("disk", item);
+    event.preventDefault();
+  }
+
+  function onClickFolder(item, event) {
+    console.log(
+      "clickFolder",
+      item,
+      "store.seleccionando:",
+      store.seleccionando
+    );
+    if (store.seleccionando) {
+      item.seleccionado = !item.seleccionado;
+      event.preventDefault();
+    } else {
+      console.log("navegando=", item.url);
+      store.navegando = item.url;
+      if (store.embed) {
+        emit("folder", item);
+        event.preventDefault();
+      }
+    }
+  }
+
+  function onClickFile(item, event) {
+    console.log("clickFile", item, "store.seleccionando:", store.seleccionando);
+    if (store.seleccionando) {
+      item.seleccionado = !item.seleccionado;
+      event.preventDefault();
+    } else if (store.embed) {
+      emit("file", item);
+      event.preventDefault();
+    } else if (isImage(item.url)) {
+      event.preventDefault();
+
+      if (store.v3ImgPreviewFn) {
+        const index = store.images.findIndex((x) => x == item.url);
+        console.log("VISOR", item.url, index);
+        store.v3ImgPreviewFn({
+          images: store.images.map((x) => x + "?mw=3000&mh=3000"),
+          index,
+        });
+      } else store.mostrandoImagen = item;
+    } else {
+      // si es un vídeo (mp4, avi):
+      if (item.url.match(/\.(mp4|avi|webm)$/i)) {
+        // lo abre en una nueva pestaña
+        window.open(item.url, "_blank");
+        event.preventDefault();
+      }
+      // si es un audio:
+      else if (player.isPlayable(item.url)) {
+        player.play(item.url, item.nombre);
+        event.preventDefault();
+      }
+    }
+  }
+
+  function onClickBreadcrumb(item, event) {
+    console.log("clickBreadcrumb", { item });
+    store.navegando = item.url;
+    if (store.embed) emit("folder", { ...item, ruta: item.url });
+    else {
+      metodos.clickFolder(item, event);
+      if (!store.embed) {
+        console.log("visita1", item.url);
+        router.visit(item.url);
+      }
+    }
+  }
+
+
+
+
 
 
 // USAR EFECTO ANIMACION DE TARNSICION?
@@ -677,18 +764,16 @@ async function cargarInfo() {
 
 
 // IMAGES PREVIEW
-const images = ref([])
-var v3ImgPreviewFn = null
 
 async function cargarVisorImagenes() {
     // importación dinámica:
     await import('v3-img-preview').then((module) => {
-        v3ImgPreviewFn = module.v3ImgPreviewFn;
+        store.v3ImgPreviewFn = module.v3ImgPreviewFn;
     })
 }
 
 function actualizarListaImagenes() {
-    images.value = props.items.filter(x => isImage(x.url)).map(x => x.url)
+    store.images = props.items.filter(x => isImage(x.url)).map(x => x.url)
 }
 
 // MOSTRANDO IMAGEN
@@ -722,7 +807,7 @@ calcularItems()
 
 watch(() => props.items, () => {
     console.log('watch props.items')
-    navegando.value = ''
+    store.navegando = ''
     calcularItems()
     // itemsShow.value = JSON.parse(JSON.stringify(props.items))
     cargarInfo()
@@ -732,9 +817,6 @@ watch(info_archivos, () => {
     console.log('watch info_archivos')
     calcularItems()
 })
-
-// para reproducir audios
-const player = usePlayer()
 
 const touchable = ref(true)
 
@@ -882,7 +964,7 @@ function ontouchend(item, event) {
         item.touching = false
         // SIMPLE CLICK
         if (item.tipo == 'carpeta' || item.tipo == 'disco') {
-            clickFolder(item, event)
+            store.clickFolder(item, event)
             if (!props.embed) {
                 console.log('visita2', item.url)
                 router.visit(item.url)
@@ -893,7 +975,7 @@ function ontouchend(item, event) {
             if (target.hasAttribute('download'))
                 target.click()
             else
-                clickFile(item, event)
+                store.clickFile(item, event)
         }
     }
 }
@@ -1111,102 +1193,6 @@ function copyData(dest, src, key) {
 
 
 
-
-// EMBED
-
-function clickItem(item, event) {
-    console.log('clickItem', item, 'store.seleccionando:', store.seleccionando)
-    /*if (!event.target.closest('[data-allow-touch]')) {
-        event.preventDefault();
-    }*/
-    if (store.seleccionando) {
-        item.seleccionado = !item.seleccionado
-        event.preventDefault()
-        return
-    }
-    if (item.tipo == 'disco')
-        clickDisk(item, event)
-    else if (item.tipo == 'carpeta')
-        clickFolder(item, event)
-    else
-        clickFile(item, event)
-}
-
-function clickDisk(item, event) {
-    console.log('clickDisk', item)
-    emit('disk', item)
-    event.preventDefault()
-}
-
-
-const navegando = ref("")
-
-function clickFolder(item, event) {
-    console.log('clickFolder', item, 'store.seleccionando:', store.seleccionando)
-    if (store.seleccionando) {
-        item.seleccionado = !item.seleccionado
-        event.preventDefault()
-    }
-    else {
-        console.log('navegando=', item.url)
-        navegando.value = item.url
-        if (props.embed) {
-            emit('folder', item)
-            event.preventDefault()
-        }
-    }
-}
-
-function clickFile(item, event) {
-    console.log('clickFile', item, 'store.seleccionando:', store.seleccionando)
-    if (store.seleccionando) {
-        item.seleccionado = !item.seleccionado
-        event.preventDefault()
-    }
-    else if (props.embed) {
-        emit('file', item)
-        event.preventDefault()
-    }
-    else if (isImage(item.url)) {
-        event.preventDefault()
-
-        if (v3ImgPreviewFn) {
-            const index = images.value.findIndex(x => x == item.url)
-            console.log('VISOR', item.url, index)
-            v3ImgPreviewFn({ images: images.value.map(x => x + '?mw=3000&mh=3000'), index })
-        }
-        else
-            mostrandoImagen.value = item
-
-    }
-    else {
-        // si es un vídeo (mp4, avi):
-        if (item.url.match(/\.(mp4|avi|webm)$/i)) {
-            // lo abre en una nueva pestaña
-            window.open(item.url, '_blank')
-            event.preventDefault()
-        }
-        // si es un audio:
-        else if (player.isPlayable(item.url)) {
-            player.play(item.url, item.nombre)
-            event.preventDefault()
-        }
-    }
-}
-
-function clickBreadcrumb(item, event) {
-    console.log('clickBreadcrumb', { item })
-    navegando.value = item.url
-    if (props.embed)
-        emit('folder', { ...item, ruta: item.url })
-    else {
-        clickFolder(item, event)
-        if (!props.embed) {
-            console.log('visita1', item.url)
-            router.visit(item.url)
-        }
-    }
-}
 
 
 // EMBED

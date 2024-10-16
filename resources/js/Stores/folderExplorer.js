@@ -1,4 +1,8 @@
 const state = reactive({
+  ruta: "",
+  rutaBase: "",
+  // estado de navegación
+  navegando: null,
   // items
   items: [], // items raw
   itemsShow: [], // items mostrados
@@ -20,7 +24,10 @@ const state = reactive({
   // busquedas
   textoBuscar: "",
   mostrandoResultadosBusqueda: false,
-  resultadosBusqueda: []
+  resultadosBusqueda: [],
+  //visor de imágenes
+  v3ImgPreviewFn: null,
+  images: [], // lista de imagenes para previsualizar
 });
 
 const computados = {
@@ -94,17 +101,21 @@ const metodos = {
     state.callbacks[nombre] = fn;
   },
 
-  call(nombre, arg1) {
+  call(nombre, arg1, arg2) {
     if (!(nombre in state.callbacks)) {
       console.error("Callback", nombre, "no encontrado");
       return;
     }
-    state.callbacks[nombre](arg1);
+    state.callbacks[nombre](arg1, arg2);
   },
 
   actualizar() {
     metodos.call("update");
   },
+
+  // CLICK ITEMS
+
+  // EMBED
 
   // SELECCION
 
@@ -125,9 +136,27 @@ const metodos = {
     if (!alguno) state.seleccionando = false;
   },
 
-  // CREAR CARPETA
+  // CLICKS
 
-  // subir archivos
+  clickItem(item, event) {
+    metodos.call("clickItem", item, event);
+  },
+
+  clickDisk(item, event) {
+    metodos.call("clickDisk", item, event);
+  },
+
+  clickFolder(item, event) {
+    metodos.call("clickFolder", item, event);
+  },
+
+  clickFile(item, event) {
+    metodos.call("clickFile", item, event);
+  },
+
+  clickBreadcrumb(item, event) {
+    metodos.call("clickBreadcrumb", item, event);
+  },
 };
 
 // WATCHERS
