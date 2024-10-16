@@ -86,6 +86,7 @@ declare module 'vue' {
     Libro3dStatic: typeof import('./resources/js/Components/Libro3dStatic.vue')['default']
     Link: typeof import('./resources/js/Components/Link.vue')['default']
     Loader: typeof import('./resources/js/Components/Loader.vue')['default']
+    MenuFolder: typeof import('./resources/js/Components/FolderExplorer/MenuFolder.vue')['default']
     MenuItem: typeof import('./resources/js/Components/FolderExplorer/MenuItem.vue')['default']
     Modal: typeof import('./resources/js/Components/Modal.vue')['default']
     ModalAcceso: typeof import('./resources/js/Components/FolderExplorer/ModalAcceso.vue')['default']
