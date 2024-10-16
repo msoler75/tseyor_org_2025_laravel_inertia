@@ -34,7 +34,7 @@
 import useFolderExplorerStore from '@/Stores/folderExplorer';
 import { plural } from '@/composables/textutils'
 
-let store = useFolderExplorerStore()
+const store = useFolderExplorerStore()
 
 store.on('eliminar', abrirEliminarModal)
 

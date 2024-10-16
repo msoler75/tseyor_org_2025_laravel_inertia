@@ -144,7 +144,7 @@
 import useFolderExplorerStore from '@/Stores/folderExplorer';
 import { useDebounce } from '@vueuse/core';
 
-let store = useFolderExplorerStore()
+const store = useFolderExplorerStore()
 
 store.on('acceso', abrirModalCambiarAcl)
 

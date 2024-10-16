@@ -12,10 +12,10 @@
 
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
 
-                <div class="flex gap-x items-center w-full" v-if="!store.seleccionando && mostrandoResultados">
+                <div class="flex gap-x items-center w-full"
+                    v-if="!store.seleccionando && store.mostrandoResultadosBusqueda">
 
-                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ buscar
-                            }}'</span>:</span>
+                    <span class="text-lg">Resultados de la búsqueda <span class="font-bold">'{{ store.textoBuscar }}'</span>:</span>
 
                     <button class="ml-auto  btn btn-neutral btn-sm btn-icon" @click.prevent="toggleVista"
                         title="Cambiar vista">
@@ -26,14 +26,14 @@
                     </button>
 
                     <button class="btn btn-neutral btn-sm btn-icon !w-fit whitespace-nowrap" title="Cerrar búsqueda"
-                        @click="mostrandoResultados = false">
+                        @click="store.mostrandoResultadosBusqueda = false">
                         <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                         <Icon icon="ph:x-bold" />
                     </button>
 
                 </div>
 
-                <div v-if="!mostrandoResultados" class="flex gap-x w-full max-w-full">
+                <div v-if="!store.mostrandoResultadosBusqueda" class="flex gap-x w-full max-w-full">
                     <ConditionalLink v-if="!store.seleccionando" class="btn btn-neutral btn-sm btn-icon cursor-pointer"
                         :href="'/' + rutaBase" :tag="embed ? 'span' : 'a'"
                         @click="clickFolder({ ruta: '/' + rutaBase }, $event)" :is-link="!embed"
@@ -69,8 +69,9 @@
                             <Icon icon="ph:selection-all-duotone" class="transform scale-150" />
                         </button>
 
-                        <button v-if="!store.seleccionando && !mostrandoResultados"
-                            class="btn btn-neutral btn-sm btn-icon" title="Buscar archivos" @click="showSearch">
+                        <button v-if="!store.seleccionando && !store.mostrandoResultadosBusqueda"
+                            class="btn btn-neutral btn-sm btn-icon" title="Buscar archivos"
+                            @click="store.call('buscar')">
                             <Icon icon="ph:magnifying-glass-duotone" class="transform scale-150" />
                         </button>
 
@@ -114,7 +115,7 @@
                                         <span>Subir archivos</span>
                                     </div>
 
-                                    <div v-if="store.items[1]?.padre && (store.esAdministrador||store.items[1]?.puedeEscribir) && !store.seleccionando && store.itemsShow[0].ruta != 'archivos' && store.itemsShow[0].ruta != 'medios'"
+                                    <div v-if="store.items[1]?.padre && (store.esAdministrador || store.items[1]?.puedeEscribir) && !store.seleccionando && store.itemsShow[0].ruta != 'archivos' && store.itemsShow[0].ruta != 'medios'"
                                         class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                                         @click="store.call('renombrar', store.itemsShow[0])">
                                         <Icon icon="ph:cursor-text-duotone" />
@@ -220,13 +221,12 @@
                     </button>
 
                     <button v-if="store.itemsSeleccionados.length && store.puedeBorrarSeleccionados"
-                        class="btn btn-secondary flex gap-x items-center"
-                        @click.prevent="store.call('eliminar', null)">
+                        class="btn btn-secondary flex gap-x items-center" @click.prevent="store.call('eliminar', null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
 
-                    <button v-if="true||store.itemsSeleccionados.length == 1"
+                    <button v-if="true || store.itemsSeleccionados.length == 1"
                         class="md:hidden btn btn-secondary flex gap-x items-center"
                         @click.prevent="store.call('renombrar', store.itemsSeleccionados[0])">
                         <Icon icon="ph:cursor-text-duotone" />
@@ -258,7 +258,7 @@
             <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
                 <Spinner />
             </div>
-            <div v-else-if="!mostrandoResultados && !itemsOrdenados.length"
+            <div v-else-if="!store.mostrandoResultadosBusqueda && !itemsOrdenados.length"
                 class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14">
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
                 <div>No hay archivos</div>
@@ -284,11 +284,13 @@
                                 @click="ordenarPor = ordenarPor == 'fechaDesc' ? 'fechaAsc' : 'fechaDesc'">Fecha <span
                                     v-if="ordenarPor == 'fechaDesc'">↑</span><span
                                     v-if="ordenarPor == 'fechaAsc'">↓</span></th>
-                            <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
+                            <th v-if="selectors.mostrarPermisos && !store.mostrandoResultadosBusqueda"
+                                class="hidden sm:table-cell">
                                 Permisos</th>
-                            <th v-if="selectors.mostrarPermisos && !mostrandoResultados" class="hidden sm:table-cell">
+                            <th v-if="selectors.mostrarPermisos && !store.mostrandoResultadosBusqueda"
+                                class="hidden sm:table-cell">
                                 Propietario</th>
-                            <th v-if="mostrandoResultados || mostrarRutas || store.rutaActual == 'mis_archivos'"
+                            <th v-if="store.mostrandoResultadosBusqueda || mostrarRutas || store.rutaActual == 'mis_archivos'"
                                 class="hidden lg:table-cell text-sm">Ubicación
                             </th>
                             <th class="hidden md:table-cell"></th>
@@ -395,17 +397,17 @@
                                     class="block text-center text-sm" />
                                 <span v-else>-</span>
                             </td>
-                            <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
+                            <td v-if="selectors.mostrarPermisos && !store.mostrandoResultadosBusqueda"
                                 class="hidden sm:table-cell text-center text-sm">{{
                                     item.permisos || '...' }}
                             </td>
-                            <td v-if="selectors.mostrarPermisos && !mostrandoResultados"
+                            <td v-if="selectors.mostrarPermisos && !store.mostrandoResultadosBusqueda"
                                 class="hidden sm:table-cell text-center text-sm min-w-[10rem]">
                                 {{ item.propietario?.usuario.nombre || '...' }}/{{ item.propietario?.grupo.nombre ||
                                     '...'
                                 }}
                             </td>
-                            <td v-if="mostrandoResultados || mostrarRutas || store.rutaActual == 'mis_archivos'"
+                            <td v-if="store.mostrandoResultadosBusqueda || mostrarRutas || store.rutaActual == 'mis_archivos'"
                                 class="hidden lg:table-cell text-sm">
                                 <div class="flex items-center gap-2 lg:min-w-64 xl:min-w-[500px] 2xl:min-w-[700px]">
                                     <FolderIcon :arrow="true" :url="item.carpeta" />
@@ -479,10 +481,8 @@
                 </GridFill>
             </div>
 
-            <div v-if="buscando || mostrandoResultados" class="w-full text-center h-[3rem] mt-3">
-                <div v-if="buscando">Buscando...</div>
-                <div v-else-if="mostrandoResultados && !resultadosBusqueda.length">No hay resultados</div>
-            </div>
+            <Buscar />
+
         </div>
 
 
@@ -528,8 +528,7 @@
                     </button>
 
                     <button v-if="store.itemsSeleccionados.length && store.puedeBorrarSeleccionados"
-                        class="btn btn-secondary flex gap-x items-center"
-                        @click.prevent="store.call('eliminar', null)">
+                        class="btn btn-secondary flex gap-x items-center" @click.prevent="store.call('eliminar', null)">
                         <Icon icon="ph:trash-duotone" />
                         <span>Eliminar</span>
                     </button>
@@ -552,25 +551,6 @@
         </teleport>
 
 
-
-        <!-- Modal Search -->
-        <Modal :show="showSearchInput" @close="showSearchInput = false" maxWidth="sm">
-
-            <form class="p-5 flex flex-col gap-5 items-center" @submit.prevent="onSearch">
-                <input ref="inputSearch" type="search" placeholder="Nombre de archivo..." v-model="buscar">
-
-                <div class="py-3 flex justify-between sm:justify-end gap-5">
-                    <button @click.prevent="onSearch" type="button" class="btn btn-primary btn-sm" :disabled="!buscar">
-                        Buscar archivos
-                    </button>
-
-                    <button @click.prevent="showSearchInput = false" type="button" class="btn btn-neutral btn-sm">
-                        Cancelar
-                    </button>
-                </div>
-            </form>
-
-        </Modal>
 
 
         <slot />
@@ -595,7 +575,6 @@
             </div>
         </Modal>
 
-
         <ModalRenombrarItem />
 
         <ModalEliminar />
@@ -604,11 +583,13 @@
 
         <ModalSubirArchivos />
 
-        <ModalPropiedades/>
+        <ModalPropiedades />
 
-        <ModalPermisos/>
+        <ModalPermisos />
 
-        <ModalAcceso/>
+        <ModalAcceso />
+
+
 
     </div>
 </template>
@@ -667,6 +648,7 @@ store.embed = props.embed
 store.esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos').length)
 store.infoCargada = false
 store.propietarioRef = props.propietarioRef
+store.mostrandoResultadosBusqueda = false
 store.on('update', () => {
     emit('updated')
 })
@@ -790,72 +772,9 @@ function nombreItem(item) {
 }
 
 
-// BUSCAR ARCHIVOS
-
-const showSearchInput = ref(false)
-const inputSearch = ref(null)
-const buscar = ref(null)
-const mostrandoResultados = ref(false)
-const resultadosBusqueda = ref([])
-const buscando = ref(false)
-const id_busqueda = ref(null)
-
-function showSearch() {
-    showSearchInput.value = true
-    buscar.value = ""
-    nextTick(() => {
-        inputSearch.value.focus()
-    })
-}
-
-
-function onSearch() {
-    if (!buscar.value) {
-        // cerramos el modal
-        // showSearchInput.value = false
-        return
-    }
-    showSearchInput.value = false
-    buscando.value = true
-    mostrandoResultados.value = true
-    resultadosBusqueda.value = []
-
-    axios('/archivos_buscar', {
-        params: {
-            ruta: store.rutaActual,
-            nombre: buscar.value
-        }
-    })
-        .then(response => {
-            const data = response.data
-            console.log({ data })
-            id_busqueda.value = data.id_busqueda
-            resultadosBusqueda.value = data.resultados
-            buscarMasResultados()
-        })
-}
-
-function buscarMasResultados() {
-    if (!mostrandoResultados.value) return
-    axios('/archivos_buscar?id_busqueda=' + id_busqueda.value)
-        .then(response => {
-            const data = response.data
-            console.log({ data })
-            for (const resultado of data.resultados) {
-                // agregamos el resultado si acaso no estaba ya
-                if (!resultadosBusqueda.value.find(item => item.ruta == resultado.ruta))
-                    resultadosBusqueda.value.push(resultado)
-            }
-            if (data.finalizado)
-                buscando.value = false // fin de la busqueda
-            else
-                buscarMasResultados()
-        })
-}
-
 // ITEMS A MOSTRAR
 
-const itemsMostrar = computed(() => mostrandoResultados.value ? resultadosBusqueda.value : itemsOrdenados.value)
+const itemsMostrar = computed(() => store.mostrandoResultadosBusqueda ? store.resultadosBusqueda : itemsOrdenados.value)
 
 var mostrandoNItems = ref(24)
 
@@ -985,8 +904,6 @@ function toggleItem(item) {
         item.seleccionado = !item.seleccionado
     item.touching = false
 }
-
-
 
 
 // COPIAR Y MOVER ITEMS
@@ -1405,5 +1322,4 @@ table th {
     opacity: 0;
     transform: scale(0);
 }
-
 </style>

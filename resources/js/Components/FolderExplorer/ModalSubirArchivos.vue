@@ -28,7 +28,7 @@ import Dropzone from 'vue2-dropzone-vue3'
 import useFolderExplorerStore from '@/Stores/folderExplorer';
 import { usePage, Link } from '@inertiajs/vue3';
 
-let store = useFolderExplorerStore()
+const store = useFolderExplorerStore()
 
 const modalSubirArchivos = ref(false)
 

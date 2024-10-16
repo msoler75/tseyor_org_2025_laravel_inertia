@@ -100,7 +100,7 @@
 
 <script setup>
 import useFolderExplorerStore from '@/Stores/folderExplorer';
-let store = useFolderExplorerStore()
+const store = useFolderExplorerStore()
 
 const page = usePage()
 const user = computed(() => page?.props?.auth?.user)

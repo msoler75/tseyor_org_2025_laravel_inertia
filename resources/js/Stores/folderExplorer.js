@@ -17,6 +17,10 @@ const state = reactive({
   // propiedades y permisos
   permisosModificados: false,
   propietarioRef: null,
+  // busquedas
+  textoBuscar: "",
+  mostrandoResultadosBusqueda: false,
+  resultadosBusqueda: []
 });
 
 const computados = {
