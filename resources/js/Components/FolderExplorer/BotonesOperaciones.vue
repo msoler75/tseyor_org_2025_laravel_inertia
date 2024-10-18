@@ -1,5 +1,12 @@
 <template>
 
+
+    <button v-if="store.modoInsertar && store.imagenesSeleccionadas.length" class="btn btn-secondary flex gap-x items-center"
+        @click.prevent="store.call('insertar')">
+        <Icon icon="material-symbols:close-rounded" />
+        <span>Insertar</span>
+    </button>
+
     <button v-if="store.isMovingFiles || store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
         @click.prevent="cancelarOperacion">
         <Icon icon="material-symbols:close-rounded" />
@@ -93,7 +100,7 @@ function copiarItems() {
         store.actualizar()
     })
         .catch(err => {
-            console.warn({err})
+            console.warn({ err })
             const errorMessage = err.response.data?.error || 'Ocurrió un error al copiar los elementos'
             alert(errorMessage)
         })
@@ -111,7 +118,7 @@ function moverItems() {
         store.actualizar()
     })
         .catch(err => {
-            console.warn({err})
+            console.warn({ err })
             const errorMessage = err.response.data?.error || 'Ocurrió un error al mover los elementos'
             alert(errorMessage)
         })

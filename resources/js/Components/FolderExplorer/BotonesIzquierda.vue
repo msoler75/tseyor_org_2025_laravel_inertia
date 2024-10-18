@@ -14,7 +14,7 @@
         <Icon icon="material-symbols:refresh" class="text-lg" />
     </button>
 
-    <ConditionalLink v-if="store.items.length > 1 && !store.seleccionando && store.items[1].tipo == 'carpeta'" :href="store.items[1].url"
+    <ConditionalLink v-if="store.items[1]?.padre" :href="store.items[1].url"
         :tag="store.embed ? 'span' : 'a'" class="btn btn-neutral btn-sm btn-icon w-fit" title="Ir a una carpeta superior"
         @click="store.clickFolder(store.items[1], $event)" :is-link="!store.embed"
         :class="store.rutaActual == store.rutaBase ? 'opacity-50 pointer-events-none' : ''">

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <input type="text" :name="name" v-model="selected" class="w-[600px] form-control">
+        <input type="text" :name="name" v-model="selected" class="w-full sm:w-[600px] form-control">
         <ModalDropZone v-model="modalSubirImage" @uploaded="uploadedImage($event)"
             placeholder="Arrastra la imagen aquí o haz clic" url="/files/upload/image" :mediaFolder="folder" :options="{
                 maxFiles: 1,
@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div @click="modalSubirImage = true" title="Añadir una imagen"
-                class="flex justify-center items-center w-[150px] h-[158px] border-gray-700 dark:border-gray-300  border opacity-80 hover:!opacity-100 bg-gray-500 cursor-pointer flex-shrink-0">
+                class="flex justify-center items-center w-[80px] h-[158px] border-gray-700 dark:border-gray-300  border opacity-80 hover:!opacity-100 bg-gray-500 cursor-pointer flex-shrink-0">
                 <Icon icon="ic:outline-add-photo-alternate" class="text-4xl" />
             </div>
         </div>
@@ -60,7 +60,7 @@ const initialImages = computed(() => {
 })
 
 function updateImages() {
-    console.log('updateImages')
+    // console.log('updateImages')
     images.value.splice(0, images.value.length)
 
     if (inputField && inputField.value != fromValue) {
