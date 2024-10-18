@@ -125,8 +125,8 @@ class ArchivosController extends Controller
 
             $items = [
                 [
-                    'nombre' => 'raiz',
-                    'ruta' => '',
+                    'nombre' => '.', //raiz
+                     'ruta' => '',
                     'carpeta' => '',
                     'tipo' => 'carpeta',
                     'actual' => true,
@@ -212,7 +212,7 @@ class ArchivosController extends Controller
             $carpetas = $dir->directories(true);
 
             // agregamos la carpeta actual
-            $items[] = $this->prepareItemList($disk, $ruta, ['tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
+            $items[] = $this->prepareItemList($disk, $ruta, ['nombre'=>'.', 'tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
 
             // agregamos carpeta padre
             $padre = dirname($ruta);
@@ -222,11 +222,14 @@ class ArchivosController extends Controller
                 if ($ruta == 'archivos') {
                     // $items[] = $items[0];
                     if ($user) {
-                        $items[] = $this->prepareItemRoot();
+                        $item = $this->prepareItemRoot();
+                        $item['padre'] = true;
+                        $item['nombre'] = '..';
+                        $items[] = $item;
                     }
                 } else {
                     $nodoPadre = $this->nodoDesde(dirname($dir->location));
-                    $items[] = $this->prepareItemList($disk, $padre, ['tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
+                    $items[] = $this->prepareItemList($disk, $padre, ['nombre'=>'..', 'tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
                 }
             }
 
@@ -367,7 +370,7 @@ class ArchivosController extends Controller
 
         $items = [
             [
-                'nombre' => 'mis_archivos',
+                'nombre' => '.',
                 'ruta' => 'mis_archivos',
                 'carpeta' => '',
                 'tipo' => 'carpeta',

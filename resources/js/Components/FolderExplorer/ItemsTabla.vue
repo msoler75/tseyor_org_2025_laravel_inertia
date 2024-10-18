@@ -1,10 +1,11 @@
 <template>
-    <table class="w-full lg:w-auto mx-auto" :class="transitionActive ? 'animating' : ''">
+    <table class="w-full lg:w-auto max-w-full mx-auto" :class="transitionActive ? 'animating' : ''">
         <thead class="hidden sm:table-header-group" :class="items.length ? '' : 'opacity-0'">
             <tr>
                 <th v-if="store.seleccionando" class="hidden md:table-cell"></th>
                 <th></th>
-                <th class="min-w-[16rem] lg:min-w-[32rem] text-left cursor-pointer"
+                <th class="text-left cursor-pointer"
+                :class="[store.embed?'':'min-w-[16rem] lg:min-w-[32rem]']"
                     @click="store.ordenarPor = store.ordenarPor == 'nombreAsc' ? 'nombreDesc' : 'nombreAsc'">Nombre
                     <span v-if="store.ordenarPor == 'nombreDesc'">↑</span><span
                         v-if="store.ordenarPor == 'nombreAsc'">↓</span>

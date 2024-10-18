@@ -7,7 +7,8 @@
             <div :class="embed ? '' : 'lg:container mx-auto'">
                 <Breadcrumb :path="store.rutaActual" :is-links="true" :intercept-click="true"
                     @folder="store.clickBreadcrumb($event)" title="Ruta actual"
-                    class="flex-wrap text-2xl font-bold items-center mb-5" :rootLabel="rootLabel" :rootUrl="rootUrl" />
+                    class="fe-breadcrumb flex-wrap text-2xl font-bold items-center mb-5" :rootLabel="rootLabel"
+                    :rootUrl="rootUrl" />
             </div>
 
             <div class="w-full flex flex-nowrap justify-between mb-4" :class="embed ? '' : 'lg:container mx-auto'">
@@ -86,87 +87,11 @@
 
             </div>
 
-
-            <!--  Botones de Operaciones (embed) -->
-
-            <div class="mb-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
-                v-if="embed && (store.itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
-                :class="store.seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
-
-                <button v-if="modoInsertar && imagenesSeleccionadas.length"
-                    class="btn btn-secondary flex gap-x items-center" @click.prevent="insertarImagenes">
-                    <Icon icon="material-symbols:close-rounded" />
-                    <span>Insertar</span>
-                </button>
-
-
-                <button v-if="store.isMovingFiles || store.isCopyingFiles"
-                    class="btn btn-secondary flex gap-x items-center" @click.prevent="cancelarOperacion">
-                    <Icon icon="material-symbols:close-rounded" />
-                    <span>Cancelar</span>
-                </button>
-
-                <button v-if="store.isMovingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir" @click.prevent="moverItems"
-                    title="Mover los elementos seleccionados a esta carpeta">
-                    <Icon icon="ph:clipboard-duotone" />
-                    <span v-if="store.puedeEscribir">Mover aquí</span>
-                    <span v-else>No tienes permisos aquí</span>
-                </button>
-
-                <button v-else-if="store.isCopyingFiles" class="btn btn-secondary flex gap-x items-center"
-                    :disabled="store.sourcePath == store.rutaActual || !store.puedeEscribir"
-                    @click.prevent="copiarItems" title="Copiar los elementos seleccionados a esta carpeta">
-                    <Icon icon="ph:clipboard-duotone" />
-                    <span v-if="store.puedeEscribir">Pegar aquí</span>
-                    <span v-else>No tienes permisos aquí</span>
-                </button>
-
-                <template v-else>
-                    <button v-if="store.itemsSeleccionados.length && store.puedeMoverSeleccionados"
-                        class="btn btn-secondary flex gap-x items-center" @click.prevent="prepararMoverItems">
-                        <Icon icon="ph:scissors-duotone" /><span>Mover</span>
-                    </button>
-
-                    <button v-if="store.itemsSeleccionados.length" class="btn btn-secondary flex gap-x items-center"
-                        @click.prevent="prepararCopiarItems">
-                        <Icon icon="ph:copy-simple-duotone" /><span>Copiar</span>
-                    </button>
-
-                    <button v-if="store.itemsSeleccionados.length && store.puedeBorrarSeleccionados"
-                        class="btn btn-secondary flex gap-x items-center" @click.prevent="store.call('eliminar', null)">
-                        <Icon icon="ph:trash-duotone" />
-                        <span>Eliminar</span>
-                    </button>
-
-                    <button v-if="true || store.itemsSeleccionados.length == 1"
-                        class="md:hidden btn btn-secondary flex gap-x items-center"
-                        @click.prevent="store.call('renombrar', store.itemsSeleccionados[0])">
-                        <Icon icon="ph:cursor-text-duotone" />
-                        <span>Renombrar</span>
-                    </button>
-
-                    <button v-if="store.seleccionando && store.itemsSeleccionados.length > 0" class="btn btn-secondary"
-                        @click.prevent="store.call('propiedades')">
-                        <Icon icon="ph:info-duotone" />
-                        <span>Propiedades</span>
-                    </button>
-
-                </template>
-            </div>
-
-            <!--  ---    -->
-
         </div>
 
-
-
-
-
-
-
-        <div class="folder-content select-none flex-grow bg-base-100 py-4 px-2 sm:px-6 lg:px-8 pb-14 h-full"
-            :class="contentClass">
+        <div class="folder-content select-none flex-grow bg-base-100 py-4 pb-14 h-full px-2 sm:px-6 lg:px-8"
+            :class="[contentClass, store.embed ? 'h-[calc(100vh-265px-var(--bh))] max-h-[calc(100vh-265px-var(--bh))] min-h-[calc(100vh-265px-var(--bh))] overflow-y-auto' : '']"
+            :style="{ '--bh': breadcrumbHeight + 'px' }">
 
             <div v-if="cargando" class="w-full h-full p-12 flex justify-center items-center text-4xl">
                 <Spinner />
@@ -177,7 +102,7 @@
                 <div>No hay archivos</div>
             </div>
             <div v-else-if="itemsMostrar.length && selectors.archivosVista === 'lista'"
-                :class="itemsMostrar.length ? 'mr-2' : ''">
+                :class="[itemsMostrar.length ? 'mr-2' : '', store.embed ? 'px-0' : '']">
                 <ItemsTabla :items="itemsMostrar" />
             </div>
             <div v-else-if="itemsMostrar.length && selectors.archivosVista === 'grid'">
@@ -189,9 +114,6 @@
         </div>
 
         <slot />
-
-        <!--  Botones de Operaciones -->
-
 
 
         <Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
@@ -232,11 +154,14 @@
 
     </div>
 
+    <!--  Barra de operaciones -->
+
     <div class="sticky bottom-0 left-0 right-0 bg-slate-200 dark:bg-slate-800 bg-opacity-95 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
-        v-if="!store.embed && (store.itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
+        v-if="(store.itemsSeleccionados.length || store.isMovingFiles || store.isCopyingFiles)"
         :class="store.seleccionando || store.isMovingFiles || store.isCopyingFiles ? 'justify-start sm:justify-center' : 'justify-end'">
 
-        <div class="h-12 font-bold flex items-center px-2 rounded-lg" v-if="store.buscandoCarpetaDestino">Elige Destino</div>
+        <div class="h-12 font-bold flex items-center px-2 rounded-lg" v-if="store.buscandoCarpetaDestino">Elige Destino
+        </div>
 
         <BotonesOperaciones />
 
@@ -282,12 +207,13 @@ const props = defineProps({
     modoInsertar: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['updated', 'disk', 'folder', 'file', 'insert']);
+const emit = defineEmits(['updated', 'disk', 'folder', 'file', 'insert', 'images']);
 
 const store = useFolderExplorerStore()
 
 store.ruta = props.ruta
 store.rutaBase = props.rutaBase
+store.modoInsertar = props.modoInsertar
 store.items = props.items
 store.embed = props.embed
 store.esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos').length)
@@ -307,6 +233,7 @@ store.on('clickBreadcrumb', onClickBreadcrumb)
 store.on('touchStart', onTouchStart)
 store.on('touchEnd', onTouchEnd)
 store.on('touchMove', onTouchMove)
+store.on('insertar', onInsertar)
 
 
 // CLICK
@@ -409,6 +336,29 @@ function onClickBreadcrumb(item, event) {
 
 
 
+
+// embed
+const breadcrumbHeight = ref(0)
+
+function calcBreadcrumbHeight() {
+    const elem = document.querySelector(".fe-breadcrumb")
+    if (elem)
+        breadcrumbHeight.value = elem.offsetHeight
+}
+
+watch(() => store.rutaActual, () => nextTick(() => calcBreadcrumbHeight()))
+
+window.addEventListener('resize', calcBreadcrumbHeight)
+
+
+function onInsertar() {
+    console.log('insertarImagenes', store.imagenesSeleccionadas)
+    emit('images', store.imagenesSeleccionadas)
+}
+
+
+
+
 // información más detallada de cada archivo (se carga después de mostrar el contenido de la carpeta)
 // const infoCargada = ref(false)
 const info_archivos = ref({})
@@ -471,6 +421,7 @@ calcularItems()
 watch(() => props.items, () => {
     console.log('watch props.items')
     store.navegando = ''
+    store.items = props.items
     calcularItems()
     // itemsShow.value = JSON.parse(JSON.stringify(props.items))
     cargarInfo()
@@ -490,6 +441,8 @@ onMounted(() => {
     cargarInfo().then(() => cargarVisorImagenes())
 
     document.addEventListener('keydown', onKeyDown);
+
+    calcBreadcrumbHeight()
 })
 
 onUnmounted(() => {
@@ -759,19 +712,6 @@ function copyData(dest, src, key) {
         dest[key] = src[key]
 }
 
-
-
-
-
-// EMBED
-
-const imagenesSeleccionadas = computed(() => itemsSeleccionados.value.filter(item => store.isImage(item.nombre)))
-
-// embed
-function insertarImagenes() {
-    console.log('insertarImagenes', imagenesSeleccionadas.value)
-    emit('images', imagenesSeleccionadas.value)
-}
 
 
 

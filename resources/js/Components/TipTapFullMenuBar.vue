@@ -215,7 +215,7 @@ const items = ref([
         title: "Rehacer",
         action: () => props.editor.chain().focus().redo().run(),
     },
-    
+
     {
         icon: computed(()=>pantallaCompleta.value?"mdi:fullscreen-exit":"mdi:fullscreen"),
         title: computed(()=>pantallaCompleta.value?"Salir de pantalla completa":"Ver en pantalla completa"),
@@ -349,8 +349,8 @@ function exitFullScreen() {
 
 function toggleFullScreen() {
     if(pantallaCompleta.value)
-        exitFullScreen() 
-    else 
+        exitFullScreen()
+    else
         enterFullScreen()
 }
 
@@ -378,8 +378,7 @@ function toggleFullScreen() {
 
     <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
         <div class="flex flex-col">
-            <FileManager :ruta="mediaFolder" @image="onInsertImage" :modo-insertar="true"
-                class="min-h-[calc(100vh-160px)] max-h-[calc(100vh-160px)] h-[calc(100vh-160px)] overflow-y-auto" />
+            <FileManager :ruta="mediaFolder" @image="onInsertImage" :modo-insertar="true"/>
             <div class="p-3 flex justify-end border-t border-gray-500 border-opacity-25">
                 <button @click.prevent="showMediaManager = false" class="btn btn-neutral">Cerrar</button>
             </div>

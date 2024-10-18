@@ -3,6 +3,8 @@ const state = reactive({
   rutaBase: "",
   // estado de navegación
   navegando: null,
+  // modo embed
+  modoInsertar: false,
   // items
   items: [], // items raw
   itemsShow: [], // items mostrados
@@ -72,6 +74,9 @@ const computados = {
     )
   ),
 
+  // EMBED
+  imagenesSeleccionadas: computed(() => computados.itemsSeleccionados.value.filter(item => metodos.isImage(item.nombre))),
+
   // puede mover aquí los items seleccionados?
   puedeMoverSeleccionados: computed(
     () =>
@@ -114,14 +119,9 @@ const metodos = {
     metodos.call("update");
   },
 
-  // CLICK ITEMS
-
-  // EMBED
-
   // SELECCION
 
   cancelarSeleccion() {
-    console.log('cancelarSeleccion')
     state.seleccionando = false;
     state.itemsShow.forEach((item) => (item.seleccionado = false));
   },
@@ -132,7 +132,6 @@ const metodos = {
 
   // verifica que cuando no hay ningun item seleccionado, se termina el modo de selección
   verificarFinSeleccion() {
-    console.log('verificarFinSeleccion')
     if (!state.seleccionando) return;
     if (screen.width >= 1024) return;
     const alguno = state.itemsShow.find((item) => item.seleccionado);
@@ -176,7 +175,6 @@ const metodos = {
   // HELPERS
 
   toggleItem(item) {
-    console.log("toggleItem");
     if (!item.touching) item.seleccionado = !item.seleccionado;
     item.touching = false;
   },
@@ -189,7 +187,6 @@ const metodos = {
     return item.nombre;
   },
 
-  // TIPO DE ITEM: ES IMAGEN?
   isImage(fileName) {
     if (!fileName || typeof fileName != "string") return false;
     const ext = fileName.split(".").pop().toLowerCase();
@@ -222,7 +219,6 @@ watch(() => state.itemsShow, metodos.verificarFinSeleccion, { deep: true });
 watch(
   () => computados.itemsSeleccionados.value.length,
   (value) => {
-    console.log("itemsSeleccionados.length=", value);
     if(value)
         state.seleccionAbierta = false
     else metodos.verificarFinSeleccion();
