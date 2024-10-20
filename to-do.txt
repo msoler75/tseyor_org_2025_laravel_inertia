@@ -1,3 +1,6 @@
+COMUNICADOS
+-Los filtros no funcionan. Ejemplo: "cuento" de 2024. Otro ejemplo: "cuento" y ver por orden: recientes
+
 PDF
 -Se ven asteriscos en el ultimo cuento de navidad
 -Muchos de Los libros en PDF tienen mal el titulo en los metadatos, y es necesario para que google muestre los títulos bien

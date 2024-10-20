@@ -17,20 +17,16 @@ class PDFGenerator {
      */
     public static function generatePdf(ContenidoBaseModel $contenido, string $vista = 'contenido-pdf')
     {
-        $nombreArchivo = ($contenido->titulo ?? $contenido->nombre) . ' - TSEYOR.pdf';
-
         // comprobaremos si existe ya el archivo pdf generado
 
         $pdf_path = $contenido->pdfPath; // attribute with accesor
 
         $pdf_full_path = Storage::disk('public')->path($pdf_path);
 
-        $filename = $contenido->nombre ?? $contenido->titulo ?? "pdf.pdf";
-
         $headers = [
             'Content-Type' => 'application/pdf',
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Content-Disposition' => 'inline; filename="' . $contenido->pdf_filename  . '"',
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ];
@@ -146,6 +142,7 @@ class PDFGenerator {
             'texto' => $html,
         ]);
 
+
         // guardamos el pdf generado
         DiskUtil::ensureDirExists(dirname($pdf_full_path));
         $pdf->save($pdf_full_path);
@@ -155,7 +152,8 @@ class PDFGenerator {
 
         // mostramos el contenido del pdf en la página
         // return $pdf->stream($nombreArchivo);
-        return response($pdf->stream($nombreArchivo), 200, $headers);
+        // return response($pdf->stream($nombreArchivo), 200, $headers);
+        return response()->file($pdf_full_path, $headers);
     }
 
 
