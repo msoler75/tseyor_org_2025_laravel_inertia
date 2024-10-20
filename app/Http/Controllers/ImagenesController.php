@@ -107,8 +107,12 @@ class ImagenesController extends Controller
         // read image from file system
         $image = $manager->read($imageFullPath);
 
-        // Apply image transformations
-        $this->transformarImagen($image, $params);
+        if(count($params))
+        {
+            ini_set('memory_limit', '256M');
+            // Apply image transformations
+            $this->transformarImagen($image, $params);
+        }
 
         $format = $params["fmt"] ?? "webp";
 

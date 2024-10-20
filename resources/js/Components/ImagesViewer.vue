@@ -1,7 +1,7 @@
 <template>
     <TransitionFade>
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-md text-gray-200"
-            v-show="show" ref="vImagesWrap">
+            v-show="show && images?.length" ref="vImagesWrap">
             <!-- Loading -->
             <span class=" loading loading-spinner loading-lg" v-show="state.imgState === 'loading'"
                 aria-hidden="true"></span>

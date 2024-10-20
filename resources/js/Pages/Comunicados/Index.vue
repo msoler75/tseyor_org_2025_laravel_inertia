@@ -82,10 +82,12 @@
 
                 <GridAppear
                     v-if="(selectors.vistaComunicados == VISTA_TARJETAS) && listado.data && listado.data?.length > 0"
-                    class="gap-4" col-width="16rem">
+                    class="gap-4" col-width="20rem">
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
                         :image="contenido.imagen" image-class="h-80" :href="route('comunicado', contenido.slug)"
-                        :description="contenido.descripcion" :date="contenido.published_at" imageLeft />
+                        :description="contenido.descripcion" :date="contenido.published_at" imageLeft
+                        class="max-h-[14rem] overflow-hidden"
+                        />
 
                 </GridAppear>
 
