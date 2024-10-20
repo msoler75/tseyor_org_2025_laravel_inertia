@@ -134,7 +134,7 @@ class ContenidoBaseModel extends Model
 
     public function getPdfFilenameAttribute()
     {
-        return $this->titulo . ' - TSEYOR.pdf';
+        return $this->identifiableName() . ' - TSEYOR.pdf';
     }
 
     public function getPdfPathAttribute()

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ $titulo }} - tseyor.org</title>
-    <meta name="author" content="Universidad Tseyor de Granada">
+    <meta name="author" content="Universidad Tseyor de Granada - tseyor.org">
     <style>
         html,
         body {
