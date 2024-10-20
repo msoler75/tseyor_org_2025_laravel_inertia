@@ -80,6 +80,7 @@ declare module 'vue' {
     ImageCoverField: typeof import('./resources/js/Components/Backpack/ImageCoverField.vue')['default']
     ImageGallery: typeof import('./resources/js/Sections/ImageGallery.vue')['default']
     ImageShadow: typeof import('./resources/js/Components/ImageShadow.vue')['default']
+    ImagesViewer: typeof import('./resources/js/Components/ImagesViewer.vue')['default']
     InputError: typeof import('./resources/js/Components/InputError.vue')['default']
     InputLabel: typeof import('./resources/js/Components/InputLabel.vue')['default']
     ItemsGrid: typeof import('./resources/js/Components/FolderExplorer/ItemsGrid.vue')['default']

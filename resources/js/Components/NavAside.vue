@@ -1,34 +1,3 @@
-<script setup>
-import Link from './Link.vue';
-
-const nav = useNav()
-
-const props = defineProps({
-    show: {
-        type: Boolean,
-        default: false,
-    }
-});
-
-const emit = defineEmits(['close']);
-
-const close = () => {
-    console.log('sidenav close!')
-    emit('close');
-};
-
-const toggle = (tab, event) => {
-    // nav.toggleTab(tab)
-    const elem = event.target
-    console.log('toggle', tab, elem)
-    if (!tab.open) {
-        setTimeout(() => {
-            elem.scrollIntoView({ behavior: 'smooth' })
-        }, 300)
-    }
-}
-</script>
-
 <template>
     <div>
         <transition @click="close" enter-active-class="ease-in-out transition duration-150"
@@ -97,3 +66,36 @@ const toggle = (tab, event) => {
     transition: height 250ms cubic-bezier(0.3, 0, 0.6, 1);
 }
 </style>
+
+
+<script setup>
+import Link from './Link.vue';
+
+const nav = useNav()
+
+const props = defineProps({
+    show: {
+        type: Boolean,
+        default: false,
+    }
+});
+
+const emit = defineEmits(['close']);
+
+const close = () => {
+    console.log('sidenav close!')
+    emit('close');
+};
+
+const toggle = (tab, event) => {
+    // nav.toggleTab(tab)
+    const elem = event.target
+    console.log('toggle', tab, elem)
+    if (!tab.open) {
+        setTimeout(() => {
+            elem.scrollIntoView({ behavior: 'smooth' })
+        }, 300)
+    }
+}
+</script>
+

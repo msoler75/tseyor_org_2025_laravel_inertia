@@ -11,7 +11,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
 
-    @if(request()->route()->uri == '/')
+    @if(request()->path() == '/')
         <link rel="preload" fetchpriority="high" as="image" href="/almacen/medios/paginas/galaxy.webp" type="image/webp">
        <!-- <link rel="preload" fetchpriority="high" as="image" href="/almacen/medios/paginas/nebula-space.webp" type="image/webp"> -->
     @endif

@@ -1,6 +1,10 @@
 <template>
     <Prose class="text-container break-words">
         <ContentNode :node="arbol" :use-image="optimizeImages" @click="handleClick" />
+
+        <ImagesViewer :show="showImagesViewer" @close="showImagesViewer = false"
+        :images="images.map((x) => x + '?mw=3000&mh=3000')"  :index="imageIndex"
+        />
     </Prose>
 </template>
 
@@ -105,9 +109,9 @@ const arbol = computed(() => parseHTML('<div>' + contentProcessed.value + '</div
 onMounted(async () => {
 
     // importación dinámica:
-    await import('v3-img-preview').then((module) => {
+    /*await import('v3-img-preview').then((module) => {
         v3ImgPreviewFn = module.v3ImgPreviewFn;
-    })
+    })*/
 
     // buscamos todas las imagenes
     //const elems = container.value.$el.querySelectorAll('.is-image')
@@ -163,11 +167,14 @@ function handleClick(event) {
     }
 }
 
+const showImagesViewer = ref(false)
+const imageIndex = ref(0)
 function handlePreview(img) {
-    const index = img.getAttribute("image-index")
-    console.log('clicked ', index, images.value[index])
-    if (v3ImgPreviewFn)
-        v3ImgPreviewFn({ images: images.value, index })
+    imageIndex.value = img.getAttribute("image-index")
+    showImagesViewer.value = true
+    // console.log('clicked ', index, images.value[index])
+    //if (v3ImgPreviewFn)
+      //  v3ImgPreviewFn({ images: images.value, index })
 }
 
 

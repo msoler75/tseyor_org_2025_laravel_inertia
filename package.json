@@ -54,7 +54,6 @@
         "showdown": "^2.1.0",
         "turndown": "^7.1.2",
         "turndown-plugin-gfm": "^1.0.2",
-        "v3-img-preview": "^1.1.16",
         "vanilla-jsoneditor": "^0.18.13",
         "vue-advanced-cropper": "^2.8.9",
         "vue-select": "^4.0.0-beta.6",

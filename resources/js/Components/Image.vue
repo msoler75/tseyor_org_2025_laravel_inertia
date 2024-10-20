@@ -217,9 +217,9 @@ onMounted(() => {
 
 init()
 
-onBeforeUnmount(() => {
+/* onBeforeUnmount(() => {
 
-})
+}) */
 
 // si cambia la imagen, reiniciamos el componente y la carga
 watch(() => props.src, () => init())
