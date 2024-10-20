@@ -166,6 +166,13 @@
         <BotonesOperaciones />
 
     </div>
+
+
+    <ImagesViewer :show="showImagesViewer" @close="showImagesViewer = false"
+        :images="store.images.map((x) => x + '?mw=3000&mh=3000')"  :index="imageIndex"
+        :showFilename="true"
+        />
+
 </template>
 
 <script setup>
@@ -282,6 +289,10 @@ function onClickFolder(item, event) {
     }
 }
 
+
+const showImagesViewer = ref(false)
+const imageIndex = ref(0)
+
 function onClickFile(item, event) {
     console.log("clickFile", item, "store.seleccionando:", store.seleccionando);
     if (store.seleccionando) {
@@ -292,15 +303,16 @@ function onClickFile(item, event) {
         event.preventDefault();
     } else if (store.isImage(item.url)) {
         event.preventDefault();
-
-        if (store.v3ImgPreviewFn) {
-            const index = store.images.findIndex((x) => x == item.url);
-            console.log("VISOR", item.url, index);
-            store.v3ImgPreviewFn({
-                images: store.images.map((x) => x + "?mw=3000&mh=3000"),
-                index,
-            });
-        } else store.mostrandoImagen = item;
+        imageIndex.value = store.images.findIndex((x) => x == item.url);
+        showImagesViewer.value = true
+        /* if (store.v3ImgPreviewFn) {
+             console.log("VISOR", item.url, index);
+             store.v3ImgPreviewFn({
+                 images: store.images.map((x) => x + "?mw=3000&mh=3000"),
+                 index,
+             });
+         } else store.mostrandoImagen = item;
+          */
     } else {
         // si es un vídeo (mp4, avi):
         if (item.url.match(/\.(mp4|avi|webm)$/i)) {
@@ -378,12 +390,12 @@ async function cargarInfo() {
 
 // IMAGES PREVIEW
 
-async function cargarVisorImagenes() {
+/*async function cargarVisorImagenes() {
     // importación dinámica:
-    await import('v3-img-preview').then((module) => {
+    await import('@/resources/js/Components/ImagesViewer.vue').then((module) => {
         store.v3ImgPreviewFn = module.v3ImgPreviewFn;
     })
-}
+}*/
 
 function actualizarListaImagenes() {
     store.images = props.items.filter(x => store.isImage(x.url)).map(x => x.url)
@@ -438,7 +450,7 @@ onMounted(() => {
 
     touchable.value = store.esPantallaTactil()
 
-    cargarInfo().then(() => cargarVisorImagenes())
+    cargarInfo() // .then(() => cargarVisorImagenes())
 
     document.addEventListener('keydown', onKeyDown);
 

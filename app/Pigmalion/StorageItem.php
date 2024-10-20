@@ -3,6 +3,7 @@
 namespace App\Pigmalion;
 
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\UnableToRetrieveMetadata;
 
 class StorageItem
 {
@@ -16,7 +17,7 @@ class StorageItem
             if (substr($loc, 0, 1) != '/')
                 $loc = "/" . $loc;
         }
-        $this->_location = urldecode($loc);
+        $this->_location = rawurldecode($loc);
     }
 
     public function isSpecial()
@@ -197,7 +198,11 @@ class StorageItem
      */
     public function size()
     {
-        return Storage::disk($this->disk)->size($this->relativeLocation);
+        try {
+            return Storage::disk($this->disk)->size($this->relativeLocation);
+        } catch (UnableToRetrieveMetadata $e) {
+            return 0;
+        }
     }
 
     public function exists()
@@ -215,7 +220,7 @@ class StorageItem
 
     public function files($relativeLocation = false)
     {
-        if($this->disk=='raiz') return [];
+        if ($this->disk == 'raiz') return [];
 
         $files = Storage::disk($this->disk)->files($this->relativeLocation);
         if ($relativeLocation)
@@ -229,7 +234,7 @@ class StorageItem
 
     public function allFiles($relativeLocation = false)
     {
-        if($this->disk=='raiz') return [];
+        if ($this->disk == 'raiz') return [];
         $files = Storage::disk($this->disk)->allFiles($this->relativeLocation);
         if ($relativeLocation)
             return $files;
@@ -242,7 +247,7 @@ class StorageItem
 
     public function directories($relativeLocation = false)
     {
-        if($this->disk=='raiz') return [];
+        if ($this->disk == 'raiz') return [];
         $dirs = Storage::disk($this->disk)->directories($this->relativeLocation);
         if ($relativeLocation)
             return $dirs;

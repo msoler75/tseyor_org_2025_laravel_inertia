@@ -66,7 +66,7 @@ class AdminController // extends Controller
             'contenidos_modificados' => $contenidos_modificados,
             'inscripciones_nuevas' => $inscripciones_nuevas,
             'tareas_fallidas' => $tareas_fallidas,
-            'en_mantenimiento'=>$en_mantenimiento,
+            'en_mantenimiento' => $en_mantenimiento,
             'revisiones' => $revisiones,
             'busquedas' => $busquedas,
             'archivos' => $archivos,
@@ -95,7 +95,12 @@ class AdminController // extends Controller
         if (!file_exists($file))
             return response()->json(['content' => '']);
 
-        $content = file_get_contents($file);
+        // si el archivo es más grande de 5 mb, solo leemos los ultimos 5 mb del archivo
+        $size = filesize($file);
+        if ($size  > 5 * 1024 * 1024)
+            $content = file_get_contents($file, false, null, $size - 5 * 1024 * 1024);
+        else
+            $content = file_get_contents($file);
         return response()->json(['content' => $content]);
     }
 
