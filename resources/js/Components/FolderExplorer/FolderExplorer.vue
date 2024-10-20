@@ -169,7 +169,7 @@
 
 
     <ImagesViewer :show="showImagesViewer" @close="showImagesViewer = false"
-        :images="store.images.map((x) => x + '?mw=3000&mh=3000')"  :index="imageIndex"
+        :images="store.images.map((x) => x + '?mw=2000&mh=2000')"  :index="imageIndex"
         :showFilename="true"
         />
 

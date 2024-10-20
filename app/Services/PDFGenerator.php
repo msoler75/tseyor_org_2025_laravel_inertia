@@ -25,9 +25,12 @@ class PDFGenerator {
 
         $pdf_full_path = Storage::disk('public')->path($pdf_path);
 
+        $filename = $contenido->nombre ?? $contenido->titulo ?? "pdf.pdf";
+
         $headers = [
             'Content-Type' => 'application/pdf',
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ];

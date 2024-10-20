@@ -1,18 +1,16 @@
-WORKER
--crear un cron para activar el worker cada hora
+PDF
+-Se ven asteriscos en el ultimo cuento de navidad
+-Muchos de Los libros en PDF tienen mal el titulo en los metadatos, y es necesario para que google muestre los títulos bien
+
+
+ARCHIVOS
+-después de elegir uno o varios archivos y eliminarlos (o copiarlos) la seleccion debería desaparecer
+
 
 GALLERY 3d
 -departamento de arte
 https://github.com/theringsofsaturn/3D-art-gallery-threejs
 
-ARCHIVOS
--renombrar no aparece como opcion cuando hay un archivo seleccionado?
--comprobar funcionamiento en moviles
--long touch
-
-PDF
--No funciona (error Mejor Esperar: font calibri)
--Muchos de Los libros en PDF tienen mal el titulo en los metadatos, y es necesario para que google muestre los títulos bien
 
 INFORMES
 -Los informes de equipos ocultos no deben ser públicos

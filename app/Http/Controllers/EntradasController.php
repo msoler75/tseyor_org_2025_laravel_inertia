@@ -82,14 +82,6 @@ class EntradasController extends Controller
             abort(404); // Item no encontrado o no autorizado
         }
 
-        // Agregar los encabezados para evitar el caché
-    $headers = [
-        'Content-Type' => 'application/pdf',
-        'Cache-Control' => 'no-cache, no-store, must-revalidate',
-        'Pragma' => 'no-cache',
-        'Expires' => '0',
-    ];
-
         return $contenido->generatePdf();
     }
 }
