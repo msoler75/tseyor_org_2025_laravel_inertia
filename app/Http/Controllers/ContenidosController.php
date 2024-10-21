@@ -76,6 +76,13 @@ class ContenidosController extends Controller
                 array_shift($palabras);
                 $buscar = implode(' ', $palabras);
                 $collections = $value;
+                // caso especial
+                if ($value == "comunicados") {
+                    if (is_numeric($buscar) && strlen($buscar) < 3) {
+                        $numero = preg_replace("/^0+/", "", $buscar);
+                        $buscar = str_pad($numero, 2, "0", STR_PAD_LEFT) . " " . str_pad($numero, 3, "0", STR_PAD_LEFT) . " " . $buscar;
+                    }
+                }
                 break;
             }
         }

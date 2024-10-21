@@ -121,6 +121,13 @@ if (!static::$cache) {
         }
 ```
 
+# SQLiteEngine
+
+Para superar el límite de 500 en los resultados de busqueda, ir al método loadConfig de TNTSearch -> SQLiteEngine.php y añadir
+
+```
+$this->maxDocs = $config['maxDocs'] ?? 500;
+```
 
 # Base de datos
 
