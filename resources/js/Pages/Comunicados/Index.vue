@@ -138,8 +138,8 @@
                         </h2>
                         <p>Ahora puedes realizar una búsqueda completa en los comunicados.</p>
                         <p>Para ello ve a la
-                        <div class="inline text-primary cursor-pointer after:content-['↗'] hover:underline"
-                            @click.native="focusBuscar">casilla de búsqueda</div>, pon el texto a buscar y pulsa en el
+                        <span class="inline text-primary cursor-pointer after:content-['↗'] hover:underline"
+                            @click.native="focusBuscar">casilla de búsqueda</span>, pon el texto a buscar y pulsa en el
                         botón
                         "BUSCAR".</p>
 
@@ -191,8 +191,6 @@ const VISTA_TARJETAS = 'Vista normal'
 const VISTA_LISTADO = 'Listado'
 const VISTA_BUSQUEDA_COMPLETA = 'Búsqueda completa'
 
-const verFiltros = ref(false)
-
 const selectors = useSelectors()
 
 if (!selectors.vistaComunicados)
@@ -208,6 +206,10 @@ const props = defineProps({
     completo: {},
     busquedaValida: Boolean
 });
+
+console.log('props.orden', props.orden, props.categoria)
+
+const verFiltros = ref((props.ano&&props.ano!="todos")||(props.categoria&&props.categoria!="todos")||(props.orden&&props.orden!="recientes"))
 
 // Obtener la fecha actual
 const añoActual = new Date().getFullYear()

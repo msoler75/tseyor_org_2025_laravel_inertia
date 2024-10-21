@@ -44,7 +44,7 @@
                 </div>
             </ConditionalLink>
             <div v-if="description"
-                class="lg:opacity-50 transition duration-300 group-hover:opacity-90 text-sm text-ellipsis overflow-hidden "
+                class="lg:opacity-75 transition duration-300 group-hover:opacity-90 text-sm text-ellipsis overflow-hidden "
                 :class="(gradient ? ' text-gradient' : '') + ' ' + descriptionClass" v-html="descriptionFinal" />
             <TimeAgo v-if="date" :date="date" class="text-right mt-auto opacity-50" style="font-size: 60%" />
             <slot />
@@ -93,7 +93,7 @@ const props = defineProps({
     },
     preservePage: { type: Boolean, default: false },
     autoScroll: { type: Boolean, default: true },
-    gradient: { type: Boolean, default: true },
+    gradient: { type: Boolean, default: false },
     skeleton: { type: Boolean, default: false }
 })
 
@@ -108,13 +108,17 @@ const descriptionFinal = computed(() => {
 
 <style scoped>
 .text-gradient {
-    height: 100%;
-    background-image: linear-gradient(to bottom, #000 0%, #000 70%, #fff 95%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+    position: relative;
 
-.dark .text-gradient {
-    background-image: linear-gradient(to bottom, #fff 0%, #fff 70%, #0000 95%)
+}
+.text-gradient::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: linear-gradient(to bottom, transparent 70%, #fff 100%);
+    pointer-events: none; /* Permite interactuar con el texto subyacente */
 }
 </style>

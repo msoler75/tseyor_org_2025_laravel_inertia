@@ -116,26 +116,6 @@
         <slot />
 
 
-        <Modal :show="mostrandoImagen" @close="mostrandoImagen = null" maxWidth="xl">
-            <div class="bg-base-100 p-3">
-                <div class="fondo-transparencia">
-                    <img :src="mostrandoImagen.url + '?mw=700&mh=600'"
-                        class="w-full max-h-[calc(100vh-170px)] object-contain" />
-                </div>
-
-                <div class="flex pt-3 justify-between sm:justify-end gap-x flex-shrink-0">
-                    <a download :href="mostrandoImagen.url" @click="mostrandoImagen = null" type="button"
-                        class="btn btn-secondary flex gap-2 items-center">
-                        <Icon icon="ph:download-duotone" class="text-xl" /> Descargar
-                    </a>
-
-                    <button @click.prevent="mostrandoImagen = null" type="button" class="btn btn-neutral">
-                        Cerrar
-                    </button>
-                </div>
-            </div>
-        </Modal>
-
         <ModalRenombrar />
 
         <ModalEliminar />
@@ -400,10 +380,6 @@ async function cargarInfo() {
 function actualizarListaImagenes() {
     store.images = props.items.filter(x => store.isImage(x.url)).map(x => x.url)
 }
-
-// MOSTRANDO IMAGEN
-
-const mostrandoImagen = ref(null)
 
 // genera la lista de items final
 function calcularItems() {

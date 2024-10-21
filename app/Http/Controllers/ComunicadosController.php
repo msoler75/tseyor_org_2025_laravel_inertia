@@ -42,25 +42,27 @@ class ComunicadosController extends Controller
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
-            $numero = preg_replace("/TAP|\s+/i","", $buscar);
-            if(is_numeric($numero))
+            $numero = preg_replace("/TAP|\s+/i", "", $buscar);
+            if (is_numeric($numero))
                 $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano', 'imagen'])
-            ->where('numero', $numero)
-            ->where('visibilidad', 'P');
-            else
+                    ->where(function ($query) use ($numero) {
+                        $query->where('numero', str_pad($numero, 3, "0", STR_PAD_LEFT))
+                            ->orWhere('numero', str_pad($numero, 2, "0", STR_PAD_LEFT))
+                            ->orWhere('numero', $numero);
+                    })
+                    ->where('visibilidad', 'P');
+            else {
                 $resultados = BusquedasHelper::buscar(Comunicado::class, $buscar);
+            }
         } else {
             // obtiene los items sin busqueda
             $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano', 'imagen'])
                 ->where('visibilidad', 'P');
         }
 
-
-        // $resultados->where("titulo", "511. Un nuevo enfoque hacia los demas");
-
-        // parámetros
+        //y ahora filtramos por año, pero claro, ya se han omitido resultados
         if (is_numeric($año))
-            $resultados = $resultados->where("ano", $año);
+            $resultados->where("ano", $año);
 
         if (is_numeric($categoria))
             $resultados = $resultados->where('categoria', $categoria);
@@ -70,8 +72,28 @@ class ComunicadosController extends Controller
         else if ($orden == 'cronologico')
             $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
 
-        if ($buscar && !$resultados->get()->count()) // por algun motivo algunas busquedas no las encuentra
-            $resultados = Comunicado::where('titulo', 'LIKE', "%$buscar%")->orWhere('texto', 'LIKE', "%$buscar%");
+
+
+        // por algun motivo algunas busquedas no las encuentra, entonces usamos un buscador tradicional
+        if (false && $buscar && !$resultados->get()->count()) {
+            $resultados = Comunicado::where(function ($query) use ($buscar) {
+                $query->where('titulo', 'LIKE', "%$buscar%")
+                    ->orWhere('texto', 'LIKE', "%$buscar%");
+            });
+
+            //y ahora filtramos por año, pero claro, ya se han omitido resultados
+            if (is_numeric($año))
+                $resultados->where("ano", $año);
+
+            if (is_numeric($categoria))
+                $resultados = $resultados->where('categoria', $categoria);
+
+            if (!$orden || $orden == 'recientes')
+                $resultados = $resultados->orderBy('fecha_comunicado', 'DESC');
+            else if ($orden == 'cronologico')
+                $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
+        }
+
 
         $resultados = $resultados
             ->paginate(16)
@@ -109,14 +131,14 @@ class ComunicadosController extends Controller
             abort(404); // Item no encontrado o no autorizado
         }
 
-        if($comunicado->fecha_comunicado) {
+        if ($comunicado->fecha_comunicado) {
             $siguiente = Comunicado::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'fecha_comunicado'])
-            ->where('visibilidad', 'P')
-            ->where('fecha_comunicado', '>', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'asc')->first();
+                ->where('visibilidad', 'P')
+                ->where('fecha_comunicado', '>', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'asc')->first();
 
             $anterior = Comunicado::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'fecha_comunicado'])
-            ->where('visibilidad', 'P')
-            ->where('fecha_comunicado', '<', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'desc')->first();
+                ->where('visibilidad', 'P')
+                ->where('fecha_comunicado', '<', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'desc')->first();
         }
 
         return Inertia::render('Comunicados/Comunicado', [
