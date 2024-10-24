@@ -1,5 +1,5 @@
 <template>
-    <Prose class="text-container break-words">
+    <Prose class="text-container break-words overflow-x-auto">
         <ContentNode :node="arbol" :use-image="optimizeImages" @click="handleClick" />
 
         <ImagesViewer :show="showImagesViewer" @close="showImagesViewer = false"
@@ -9,7 +9,6 @@
 </template>
 
 <script setup>
-// import { v3ImgPreviewFn } from 'v3-img-preview'
 // import Markdown from 'vue3-markdown-it';
 import { detectFormat, MarkdownToHtml } from '@/composables/markdown.js'
 // import { VueShowdown } from 'vue-showdown';
@@ -36,8 +35,6 @@ const props = defineProps({
 
 const isMarkdown = computed(() => props.format == 'md' ? true : ['md', 'ambiguous'].includes(detectFormat(props.content).format))
 const images = ref([]) // imagenes del contenido
-
-var v3ImgPreviewFn = null
 
 const contentPreProcessed = computed(() => isMarkdown.value ? MarkdownToHtml(props.content) : props.content ? props.content : "")
 
@@ -108,19 +105,7 @@ const arbol = computed(() => parseHTML('<div>' + contentProcessed.value + '</div
 
 onMounted(async () => {
 
-    // importación dinámica:
-    /*await import('v3-img-preview').then((module) => {
-        v3ImgPreviewFn = module.v3ImgPreviewFn;
-    })*/
-
-    // buscamos todas las imagenes
-    //const elems = container.value.$el.querySelectorAll('.is-image')
-    //for (const img of elems)
-    //img.onclick = (event) => handlePreview(event.target)
-
-
     nextTick(() => {
-
 
         // AÑADIR ENLACES A NOTAS AL PIE, Y VICEVERSA
 
@@ -170,11 +155,9 @@ function handleClick(event) {
 const showImagesViewer = ref(false)
 const imageIndex = ref(0)
 function handlePreview(img) {
-    imageIndex.value = img.getAttribute("image-index")
+    imageIndex.value = parseInt(img.getAttribute("image-index"))
     showImagesViewer.value = true
     // console.log('clicked ', index, images.value[index])
-    //if (v3ImgPreviewFn)
-      //  v3ImgPreviewFn({ images: images.value, index })
 }
 
 

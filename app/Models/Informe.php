@@ -74,7 +74,7 @@ class Informe extends ContenidoConAudios
      */
     public function shouldBeSearchable(): bool
     {
-        return $this->visibilidad == 'P';
+        return true; // incluso los borradores se pueden buscar por los coordinadores
     }
 
 

@@ -180,7 +180,7 @@ class BusquedasHelper
 
                 unset($item['texto']);
                 unset($item['texto_busqueda']);
-                unset($item['visibilidad']);
+                // unset($item['visibilidad']);
                 return $item;
             });
     }

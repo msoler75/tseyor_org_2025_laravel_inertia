@@ -285,7 +285,7 @@ class EquiposController extends Controller
     {
         // Validar los datos
         $validatedData = $request->validate([
-            'nombre' => 'required|max:32',
+            'nombre' => 'required|max:64',
             'descripcion' => 'max:400',
             'imagen' => 'max:255',
         ]);

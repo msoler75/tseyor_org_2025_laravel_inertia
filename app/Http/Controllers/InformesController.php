@@ -8,6 +8,7 @@ use App\Models\Informe;
 use App\Models\Equipo;
 use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
+use Illuminate\Support\Facades\Gate;
 
 class InformesController extends Controller
 {
@@ -22,7 +23,6 @@ class InformesController extends Controller
     }
 
 
-
     //
     public function equipo(Request $request, $equipo_slug)
     {
@@ -35,41 +35,66 @@ class InformesController extends Controller
     //
     private function listar($buscar, $categoria, $equipo_id_slug)
     {
-        $equipo = null;
-        if ($equipo_id_slug)
-            $equipo =  is_numeric($equipo_id_slug) ? Equipo::find($equipo_id_slug) : Equipo::where('slug', $equipo_id_slug)->first();
+        $equipo = $equipo_id_slug ? (is_numeric($equipo_id_slug) ? Equipo::find($equipo_id_slug) : Equipo::where('slug', $equipo_id_slug)->first()) : null;
 
-        // devuelve los items recientes segun la busqueda
+        $campos = ['informes.id', 'informes.titulo', 'informes.descripcion', 'informes.updated_at', 'informes.categoria', 'informes.visibilidad',
+                  'equipos.id as equipo_id', 'equipos.nombre as nombre_equipo', 'equipos.slug as slug_equipo', 'equipos.oculto as equipo_oculto'];
+
+        $resultados = Informe::select($campos)
+            ->join('equipos', 'informes.equipo_id', '=', 'equipos.id');
+
+        // busqueda
         if ($buscar) {
-            $resultados = Informe::search($buscar)
-            // Agregamos la join y el select
-            ->query(function ($query) {
-                return $query->select(['informes.id', 'informes.titulo', 'informes.descripcion', 'informes.updated_at', 'informes.categoria', 'equipos.nombre as nombre_equipo', 'equipos.slug as slug_equipo'])
-                ->join('equipos', 'informes.equipo_id', '=', 'equipos.id');
-            });
-        } else {
-            // obtiene los items sin busqueda
-            $resultados = Informe::select(['informes.id', 'informes.titulo', 'informes.descripcion', 'informes.updated_at', 'informes.categoria', 'equipos.nombre as nombre_equipo', 'equipos.slug as slug_equipo'])
-                ->join('equipos', 'informes.equipo_id', '=', 'equipos.id')
-                ->where('informes.visibilidad', 'P');
+            $resultadosBusqueda = Informe::search($buscar)->get();
+            $ids = $resultadosBusqueda->pluck('id')->toArray();
+            $resultados->whereIn('informes.id', $ids);
         }
 
-        if ($equipo)
-            $resultados = $resultados->where('equipo_id', $equipo->id);
+        if ($equipo) {
+            $resultados->where('equipo_id', $equipo->id);
+        }
 
-        // obtiene las categorías según los resultados de búsqueda
+        if ($categoria) {
+            $resultados->where('informes.categoria', 'LIKE', "%$categoria%");
+        }
+
+        if (Gate::denies('administrar equipos')) {
+            $user = auth()->user();
+
+            if ($user) {
+
+                // solo informes publicados o borradores que puedo ver como coordinador
+                $resultados->where(function ($query) use ($user) {
+                    $query->where('informes.visibilidad', 'P')
+                        ->orWhereIn('informes.equipo_id', function ($subquery) use ($user) {
+                            $subquery->select('equipo_id')
+                                ->from('equipo_user')
+                                ->where('rol', 'coordinador')
+                                ->where('user_id', $user->id);
+                        });
+                });
+
+                // solo informes de equipos no privados o en los que soy miembro
+                $resultados->where(function ($query) use ($user) {
+                    $query->where('equipos.oculto', false)
+                        ->orWhereIn('equipos.id', function ($subquery) use ($user) {
+                            $subquery->select('equipo_id')
+                                ->from('equipo_user')
+                                ->where('user_id', $user->id);
+                        });
+                });
+            } else {
+                // si no tengo cuenta de usuario, solo puedo ver informes publicados, y que son de equipos no privados
+                $resultados->where('visibilidad', 'P')
+                    ->where('equipos.oculto', false);
+            }
+        }
+
         $categorias = (new Informe())->getCategorias($resultados->get());
 
-        // parámetros
-        if ($categoria)
-            $resultados = $resultados->where('informes.categoria', 'LIKE', "%$categoria%");
-
-        if (!$buscar)
-            $resultados = $resultados->orderBy('informes.updated_at', 'desc');
-
-        $resultados = $resultados
+        $resultados = $resultados->orderBy('informes.updated_at', 'desc')
             ->paginate(12)
-            ->appends(['buscar' => $buscar,  'categoria' => $categoria, 'equipo' => $equipo_id_slug]);
+            ->appends(['categoria' => $categoria, 'equipo' => $equipo_id_slug]);
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);
@@ -85,26 +110,27 @@ class InformesController extends Controller
     }
 
 
-
     public function show($id)
     {
-        $informe = Informe::findOrFail($id);
+        $informe = Informe::with('equipo')->findOrFail($id);
 
         $user = auth()->user();
-        $borrador = request()->has('borrador');
+        $preview = request()->has('borrador');
         $publicado =  $informe->visibilidad == 'P';
-        $editor = optional($user)->can('administrar equipos');
-        $coordinador = $user && $informe->equipo->esCoordinador(optional($user)->id);
-        if (!$informe || (!$publicado && !$borrador && !$editor && !$coordinador)) {
+        $administrador = Gate::allows('administrar equipos');
+        $equipo = $informe->equipo;
+        $coordinador = $user && $equipo->esCoordinador(optional($user)->id);
+
+        $miembro = $equipo->esMiembro(optional($user)->id);
+
+        if (!$informe || (!$publicado && !$preview && !$coordinador && !$administrador) || ($equipo->oculto && !$miembro && !$coordinador && !$administrador)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
-        $soyCoordinador = $informe->equipo->esCoordinador(optional($user)->id);
-
         return Inertia::render('Informes/Informe', [
             'informe' => $informe,
-            'equipo' => $informe->equipo,
-            'soyCoordinador' => $soyCoordinador
+            'equipo' => $equipo,
+            'soyCoordinador' => $coordinador
         ])
             ->withViewData(SEO::from($informe));
     }

@@ -67,6 +67,7 @@ function eliminarArchivo(item) {
         .delete(url)
         .then((response) => {
             item.eliminado = true;
+            store.seleccionando = false
         })
         .catch((err) => {
             const errorMessage =

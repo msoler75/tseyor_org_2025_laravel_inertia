@@ -56,7 +56,7 @@ class InscripcionCrudController extends CrudController
         });
         CRUD::column('estado')->type('text');
         CRUD::column('nombre')->type('text');
-        CRUD::column('region')->type('text');
+        // CRUD::column('region')->type('text');
         CRUD::column('pais')->type('text');
         CRUD::column('email')->type('email');
         CRUD::column('asignado')->type('text');

@@ -4,13 +4,13 @@
         <form class="bg-base-200 p-5 select-none" @submit.prevent="guardarConfiguracion">
             <h3>Configuración del Equipo</h3>
 
-            <tabs  :options="{ disableScrollBehavior: true, useUrlFragment: false }" ref="tabsElem">
+            <tabs :options="{ disableScrollBehavior: true, useUrlFragment: false }" ref="tabsElem">
                 <tab name="General" class="space-y-6">
 
                     <div>
                         <label for="nombre">Nombre</label>
                         <input id="nombre" v-model="edicion.nombre" required :readonly="equipo.miembros.length >= 3"
-                            class="input" />
+                            class="input" maxlength="64" />
                         <div v-if="edicion.errors.nombre" class="error">{{ edicion.errors.nombre[0] }}</div>
                         <div v-else class="text-sm">Nombre del equipo. No se puede editar si tiene 3 miembros o
                             más.
@@ -19,7 +19,7 @@
 
                     <div>
                         <label for="descripcion">Descripción</label>
-                        <textarea id="descripcion" v-model="edicion.descripcion" required
+                        <textarea id="descripcion" v-model="edicion.descripcion" required maxlength="400"
                             class="shadow textarea w-full"></textarea>
                         <div v-if="edicion.errors.descripcion" class="error">{{ edicion.errors.descripcion[0] }}
                         </div>
@@ -33,7 +33,7 @@
                     <div>
 
                         <div class="flex justify-center">
-                            <Image v-if="equipo.imagen&&!edicion.imagen" :src="equipo.imagen" class="w-32 h-32 mb-8" />
+                            <Image v-if="equipo.imagen && !edicion.imagen" :src="equipo.imagen" class="w-32 h-32 mb-8" />
                         </div>
 
                         <label for="imagen">Imagen</label>
@@ -60,7 +60,7 @@
 
                     <div>
                         <label for="reuniones">Reuniones</label>
-                        <TipTapEditor id="reuniones" v-model="edicion.reuniones"  />
+                        <TipTapEditor id="reuniones" v-model="edicion.reuniones" />
                         <div v-if="edicion.errors.reuniones" class="error">{{ edicion.errors.reuniones[0] }}
                         </div>
                         <div v-else class="text-sm">Ejemplo: Los lunes a las 13h. Se puede dejar en blanco.
@@ -82,7 +82,7 @@
 
             <div class="py-3 flex justify-between sm:justify-end gap-5">
                 <div v-if="edicion.processing" class="flex gap-3 btn">
-                        <Spinner /> Guardando...
+                    <Spinner /> Guardando...
                 </div>
 
                 <button v-else type="submit" class="btn btn-primary">
@@ -114,7 +114,7 @@ const tabsElem = ref(null)
 
 // Diálogo Modal de Configuracion DEL EQUIPO
 
-const edicion = reactive({ id: props.equipo.id, imagen: null, nombre: '', descripcion: '', anuncio: '', reuniones: '', informacion:'', errors: {}, processing: false })
+const edicion = reactive({ id: props.equipo.id, imagen: null, nombre: '', descripcion: '', anuncio: '', reuniones: '', informacion: '', errors: {}, processing: false })
 const campos = ['nombre', 'descripcion', 'imagen', 'anuncio', 'reuniones', 'informacion']
 const modalConfiguracion = ref(false)
 
@@ -147,7 +147,7 @@ function cerrarConfiguracion() {
 
 
 function limpiarNull(v) {
-    if(v===null||v=='null') return ''
+    if (v === null || v == 'null') return ''
     return v
 }
 
@@ -172,7 +172,7 @@ function guardarConfiguracion() {
         // console.log('guardado!', response)
         // actualizamos en la página
         //for (const campo of campos)
-          //  props.equipo[campo] = edicion[campo]
+        //  props.equipo[campo] = edicion[campo]
         //props.equipo.imagen = response.data.imagen
 
         limpiarErrores();
@@ -209,7 +209,7 @@ function guardarConfiguracion() {
 </script>
 
 <style scoped>
- :deep(.ql-editor) {
-        max-height: calc(100vh - 500px);
-	}
+:deep(.ql-editor) {
+    max-height: calc(100vh - 500px);
+}
 </style>
