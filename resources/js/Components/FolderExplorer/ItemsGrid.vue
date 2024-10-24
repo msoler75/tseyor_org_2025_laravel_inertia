@@ -1,5 +1,5 @@
 <template>
-    <GridFill colWidth="14rem" class="gap-4 pt-6" v-disable-right-click>
+    <GridFill colWidth="10rem" class="gap-2 md:gap-4 pt-6" v-disable-right-click>
 
         <div v-for="item in items" :key="item.ruta" class="transition-opacity duration-200"
             :class="[item.clase, item.seleccionado ? 'bg-base-300' : '', item.puedeLeer ? '' : ' opacity-70 pointer-events-none', store.navegando && store.navegando != item.url ? 'opacity-0 pointer-events-none' : '']">
@@ -28,15 +28,15 @@
 
                 <div class="text-sm text-center">
                     <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="store.nombreItem(item)"
-                        class="py-1 hover:underline" @click="store.clickDisk(item, $event)"
+                        class="py-1 hover:underline break-all" @click="store.clickDisk(item, $event)"
                         :is-link="!store.seleccionando && !store.embed" />
                     <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
-                        v-html="store.nombreItem(item)" class="py-1 hover:underline"
+                        v-html="store.nombreItem(item)" class="py-1 hover:underline break-all"
                         @click="store.clickFolder(item, $event)" :is-link="!store.seleccionando && !store.embed" />
-                    <span v-else-if="store.seleccionando" v-html="store.nombreItem(item)" />
+                    <span v-else-if="store.seleccionando" v-html="store.nombreItem(item)" class="break-all"/>
                     <a v-else :href="item.url" download v-html="store.nombreItem(item)"
                         @click="store.clickFile(item, $event)" :is-link="!store.seleccionando && !store.embed"
-                        class="py-1 hover:underline" />
+                        class="py-1 hover:underline break-all" />
                 </div>
                 <div class="text-gray-500 text-xs">
                     <span v-if="item.tipo === 'disco'" />
