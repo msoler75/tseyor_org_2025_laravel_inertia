@@ -1,22 +1,28 @@
-COMUNICADOS
--Los filtros no funcionan. Ejemplo: "cuento" de 2024. Otro ejemplo: "cuento" y ver por orden: recientes
+MUULAR ELECTRONICO
+
+EQUIPOS
+-Editar quitar limite de nombre a 32
+-Coordinador ha de poder ver informes en borrador en últimos informes
+-Coordinador ha de poder importar informe desde word
+
+CRUD:SLUG
+-validar que los slug no sean numéricos
+
+Trait EsCategorizable
+-Método getCategorias que sean estático
+
+
+INFORMES
+-Los informes de equipos ocultos no deben ser públicos
 
 PDF
 -Se ven asteriscos en el ultimo cuento de navidad
 -Muchos de Los libros en PDF tienen mal el titulo en los metadatos, y es necesario para que google muestre los títulos bien
 
-
-ARCHIVOS
--después de elegir uno o varios archivos y eliminarlos (o copiarlos) la seleccion debería desaparecer
-
-
 GALLERY 3d
 -departamento de arte
 https://github.com/theringsofsaturn/3D-art-gallery-threejs
 
-
-INFORMES
--Los informes de equipos ocultos no deben ser públicos
 
 CRUD
 -validacion de campo slug [a-z0-9\-] en todos los crud

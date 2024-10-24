@@ -20,22 +20,22 @@
 
                 <GridAppear v-if="listado.data.length > 0" class="gap-4" col-width="24rem">
 
-                    <CardContent v-for="contenido in listado.data" :key="contenido.id"
-                        :image="contenido.imagen || equipo_fallback" :title="contenido.nombre"
-                        :href="route('equipo', contenido.slug)" image-left image-class="min-h-[150px]"
-                        class="relative min-h-16" :description="contenido.descripcion" :tag="contenido.categoria"
+                    <CardContent v-for="equipo in listado.data" :key="equipo.id"
+                        :image="equipo.imagen || equipo_fallback" :title="equipo.nombre"
+                        :href="route('equipo', equipo.slug)" image-left image-class="min-h-[150px]"
+                        class="relative min-h-16" :description="equipo.descripcion" :tag="equipo.categoria"
                         descriptionClass="max-h-[4rem]">
-                        <div v-if="contenido.oculto" class="badge badge-error flex gap-2 items-center text-xs">
+                        <div v-if="equipo.oculto" class="badge badge-error flex mt-2 gap-2 items-center text-xs">
                             OCULTO
                             <Icon icon="ph:lock-open-duotone" />
                         </div>
                         <div class="flex gap-3 items-center justify-between">
                             <span class="text-xs badge-neutral"
-                                :class="contenido.soy_miembro || contenido.soy_coordinador ? 'badge' : ''">
-                                {{ contenido.soy_coordinador ? 'ERES COORDINADOR' : contenido.soy_miembro ? 'ERES MIEMBRO':''}}
+                                :class="equipo.soy_miembro || equipo.soy_coordinador ? 'badge' : ''">
+                                {{ equipo.soy_coordinador ? 'ERES COORDINADOR' : equipo.soy_miembro ? 'ERES MIEMBRO':''}}
                             </span>
                             <div class="text-2xl flex gap-2 items-center">
-                                <Icon icon="ph:user-duotone" /> {{ contenido.miembros_count }}
+                                <Icon icon="ph:user-duotone" /> {{ equipo.miembros_count }}
                             </div>
                         </div>
                     </CardContent>

@@ -19,12 +19,11 @@
         xl:grid-cols-[repeat(auto-fill,minmax(28rem,1fr))]
         ">
             <CardContent v-for="contenido in listado.data" :key="contenido.slug" image-left
-                :title="contenido.titulo + (contenido.visibilidad != 'P' ? ' (borrador)' : '')"
+                :title="contenido.titulo + (contenido.visibilidad == 'P' ? ' (borrador)' : contenido.visibilidad == 'O' ? ' (privado)' : '')"
                 :draft="contenido.visibilidad != 'P'" :image="contenido.imagen"
                 :href="'/' + contenido.coleccion + '/' + contenido.slug_ref" :tag="traducir(contenido.coleccion)"
-                :description="contenido.descripcion" :date="contenido.fecha"
-                class="max-w-full"
-                description-class="max-h-[15ch]"/>
+                :description="contenido.descripcion" :date="contenido.fecha" class="max-w-full"
+                description-class="max-h-[15ch]" />
         </GridAppear>
 
         <pagination class="mt-6" :links="listado.links" />
