@@ -1,19 +1,18 @@
+
+HACIENDA
+
 MUULAR ELECTRONICO
 
 EQUIPOS
--Editar quitar limite de nombre a 32
 -Coordinador ha de poder ver informes en borrador en últimos informes
 -Coordinador ha de poder importar informe desde word
+-Informes en vista equipo: poder importar desde word (dropdown)
 
 CRUD:SLUG
 -validar que los slug no sean numéricos
 
 Trait EsCategorizable
 -Método getCategorias que sean estático
-
-
-INFORMES
--Los informes de equipos ocultos no deben ser públicos
 
 PDF
 -Se ven asteriscos en el ultimo cuento de navidad
