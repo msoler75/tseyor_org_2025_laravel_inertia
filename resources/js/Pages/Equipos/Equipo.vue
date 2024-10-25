@@ -3,12 +3,13 @@
         <div class="container mx-auto py-12 flex justify-between items-center">
             <Back>Equipos</Back>
             <EquipoMembresia class="hidden sm:flex mx-auto" :equipo-id="equipo.id" v-model="solicitud"
-                :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"
-                :permitirSolicitudes="!equipo.oculto" @updated="reloadEquipo" />
+                :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador" :permitirSolicitudes="!equipo.oculto"
+                @updated="reloadEquipo" />
             <AdminLinks modelo="equipo" necesita="administrar equipos" :contenido="equipo" />
         </div>
 
-        <EquipoCabecera :equipo="equipo" class="fixed w-full top-14 transition duration-100" :class="useNav().scrollY < 240 ? 'opacity-0 pointer-events-none' : ''"/>
+        <EquipoCabecera :equipo="equipo" class="fixed w-full top-14 transition duration-100"
+            :class="useNav().scrollY < 240 ? 'opacity-0 pointer-events-none' : ''" />
 
         <div class="container mx-auto pb-20">
 
@@ -17,8 +18,8 @@
                 <EquipoInformacion :equipo="equipo" />
 
                 <EquipoMembresia class="sm:hidden mx-auto" :equipo-id="equipo.id" v-model="solicitud"
-                    :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador"
-                    :permitirSolicitudes="!equipo.oculto" @updated="reloadEquipo" />
+                    :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador" :permitirSolicitudes="!equipo.oculto"
+                    @updated="reloadEquipo" />
 
                 <Card v-if="equipo.anuncio" class="border border-orange-400 justify-center items-center">
                     <div class="prose" v-html="equipo.anuncio" />
@@ -47,8 +48,9 @@
                         <h3 class="mb-0">Últimos Informes</h3>
                         <Link v-if="ultimosInformes.length" :href="route('equipo.informes', equipo.slug)"
                             class="text-xs ml-auto flex items-center gap-2 hover:underline">Ver todos</Link>
-                        <a v-if="soyCoordinador || puedoAdministrar" :href="'/admin/informe/create?equipo_id='+equipo.id"
-                            class="btn btn-sm text-xl flex items-center" title="Crear informe">+</a>
+
+                        <CrearInforme v-if="soyCoordinador || puedoAdministrar" :equipo="equipo"/>
+
                     </div>
                     <div v-if="!ultimosInformes.length">
                         <p>No hay informes.</p>
@@ -75,15 +77,15 @@
                     <div class="w-full text-sm grid grid-cols-[1.5rem,auto,1.5rem,3rem] gap-1 gap-y-3">
                         <template v-for="item, index of ultimosArchivos" :key="index">
                             <FileIcon :url="item.url" :name="item.archivo" class="mt-1"
-                            @click="clickFile(item, $event)"/>
+                                @click="clickFile(item, $event)" />
                             <a download :href="item.url" class="hover:underline break-all"
-                                @click="clickFile(item, $event)"
-                            >{{ item.url.substring(item.url.lastIndexOf('/') + 1) }}</a>
+                                @click="clickFile(item, $event)">{{ item.url.substring(item.url.lastIndexOf('/') + 1)
+                                }}</a>
                             <FolderIcon :arrow="true" v-if="item.carpeta" :url="item.carpeta" class="mt-1"
                                 title="Ir a la carpeta" />
-                                <div class="text-center">
-                                    <TimeAgo class="text-xs" :date="item.fecha_modificacion" short />
-                                </div>
+                            <div class="text-center">
+                                <TimeAgo class="text-xs" :date="item.fecha_modificacion" short />
+                            </div>
                         </template>
                     </div>
                 </Card>
@@ -121,6 +123,7 @@ import EquipoAdmin from './Partes/EquipoAdmin.vue'
 import EquipoCabecera from './Partes/EquipoCabecera.vue'
 import EquipoInformacion from './Partes/EquipoInformacion.vue'
 import EquipoMembresia from './Partes/EquipoMembresia.vue'
+import CrearInforme from './Partes/CrearInforme.vue'
 import usePlayer from '@/Stores/player'
 
 const props = defineProps({
@@ -175,11 +178,11 @@ function reloadEquipo() {
 var timer = null
 onMounted(() => {
     timer = setInterval(doReload, 60000)
-/*
-    router.reload({
-        only: ['ultimosArchivos']
-    })
-        */
+    /*
+        router.reload({
+            only: ['ultimosArchivos']
+        })
+            */
 
 })
 
@@ -193,11 +196,11 @@ onBeforeUnmount(() => {
 function clickFile(item, event) {
     console.log('clickFile', item)
 
-            // si es un audio:
-            if (player.isPlayable(item.url)) {
-                player.play(item.url, item.archivo)
-                event.preventDefault()
-            }
+    // si es un audio:
+    if (player.isPlayable(item.url)) {
+        player.play(item.url, item.archivo)
+        event.preventDefault()
+    }
 
 }
 

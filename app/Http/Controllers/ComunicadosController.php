@@ -96,7 +96,7 @@ class ComunicadosController extends Controller
 
 
         $resultados = $resultados
-            ->paginate(16)
+            ->paginate(15)
             ->appends(['buscar' => $buscar, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden, 'completo' => $completo ? 1 : 0]);
 
         if ($buscar)

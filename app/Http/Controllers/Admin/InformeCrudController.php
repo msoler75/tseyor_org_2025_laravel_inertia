@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Storage;
@@ -337,12 +338,16 @@ class InformeCrudController extends CrudController
     }
 
 
-    public function importCreate()
+    public function importCreate(Request $request)
     {
         $contenido = Informe::create([
             "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
             "texto" => ""
         ]);
+
+        // si nos llega el campo 'equipo_id' en post
+        if($request->has('equipo_id'))
+            $contenido->update(['equipo_id' => $request->equipo_id]);
 
         return $this->importUpdate($contenido->id);
     }

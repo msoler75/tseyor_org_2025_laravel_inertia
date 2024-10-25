@@ -65,7 +65,8 @@ class UsuariosController extends Controller
     }
 
     // guardamos cambios en un usuario
-    public function store(Request $request, $id) {
+    public function store(Request $request, $id)
+    {
         $user = User::findOrFail($id);
         $user->update($request->all());
         return response()->json($user, 200);
@@ -86,16 +87,9 @@ class UsuariosController extends Controller
             ->orWhere('email', 'like', '%' . $buscar . '%')
             ->take(10)->get()->toArray();*/
 
-            $resultados = User::search($buscar)->take(10)->get()->toArray();
-            foreach($resultados as $idx => $u)
-                $resultados[$idx]['nombre'] = $u['name'];
-
-                // repeat values in array
-                $resultados = array_values($resultados);
-                /*if(count($resultados))
-                for($i=0;$i<12;$i++) {
-                    $resultados[] = $resultados[0];
-                }*/
+        $resultados = User::search($buscar)->take(10)->get()->toArray();
+        foreach ($resultados as $idx => $u)
+            $resultados[$idx]['nombre'] = $u['name'];
 
         return response()->json($resultados, 200);
     }
@@ -113,7 +107,8 @@ class UsuariosController extends Controller
     /**
      * Retorna la lista de grupos
      */
-    public function grupos() {
+    public function grupos()
+    {
         $grupos = Grupo::get();
         return response()->json($grupos, 200);
     }
