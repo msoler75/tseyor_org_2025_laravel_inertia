@@ -216,7 +216,7 @@ function handlePreview(img) {
     }
 }
 
-@media (max-width: 440px) {
+@media (max-width: 360px) {
     .text-justify {
         text-align: left
     }

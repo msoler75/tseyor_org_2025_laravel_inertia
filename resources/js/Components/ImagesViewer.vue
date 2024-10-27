@@ -1,25 +1,27 @@
 <template>
     <TransitionFade>
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-md text-gray-200"
-            v-show="show && images?.length" ref="vImagesWrap">
+            v-show="show && images?.length" ref="vImagesWrap" style="touch-action: none">
             <!-- Loading -->
             <span class=" loading loading-spinner loading-lg" v-show="state.imgState === 'loading'"
                 aria-hidden="true"></span>
 
-            <div ref="imgContainer" :style="dragStyle"
+            <div ref="imgContainer"
                 class="fixed left-0 top-0 w-full h-full flex items-center justify-center"
-                style="touch-action: none"
-                >
+                @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
+                @mousedown.prevent="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseUp" :style="{
+                    transform: `scale(${style.imgScaleTouch})`,
+                    left: position.x + 'px',
+                    top: position.y + 'px',
+                }">
 
                 <!-- Imagen cargada con éxito -->
-                <img v-show="state.imgState === 'success'"
-                    class="max-w-full max-h-full cursor-move transition-transform duration-200"
-                     :src="state.src"
+                <img v-show="state.imgState === 'success'" class="max-w-full max-h-full cursor-move transition-transform duration-200" :src="state.src"
                     :style="`transform: scale(${style.imgScale}) rotate(${style.imgRotate}deg);`" alt="" />
 
                 <!-- Error de carga de imagen -->
-                <div v-show="state.imgState === 'error'" class="text-gray-700"
-                    aria-hidden="true" :style="`transform: scale(${style.imgScale}) rotate(${style.imgRotate}deg);`">
+                <div v-show="state.imgState === 'error'" class="text-gray-700" aria-hidden="true"
+                    :style="`transform: scale(${style.imgScale}) rotate(${style.imgRotate}deg);`">
                     <Icon icon="ph:image-broken-duotone" class="text-9xl" />
                 </div>
             </div>
@@ -27,8 +29,8 @@
             <!-- Botón de cierre -->
             <button
                 class="z-30 text-2xl absolute flex justify-center items-center top-1 md:top-12 right-4 md:right-12 w-9 h-9 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
-                :class="!showFilename ? 'bg-black bg-opacity-30' : 'md:bg-black md:bg-opacity-30'"
-                aria-hidden="true" @click="handleClose" v-if="showCloseBtn">
+                :class="!showFilename ? 'bg-black bg-opacity-30' : 'md:bg-black md:bg-opacity-30'" aria-hidden="true"
+                @click="handleClose" v-if="showCloseBtn">
                 <Icon icon="material-symbols-light:close" />
             </button>
 
@@ -97,7 +99,7 @@
 </template>
 
 <script setup>
-import { useDraggable, useEventListener } from '@vueuse/core'
+import { useEventListener } from '@vueuse/core'
 
 const props = defineProps({
     show: { type: Boolean, default: false },
@@ -117,11 +119,13 @@ const emit = defineEmits(['close'])
 
 const vImagesWrap = ref(null)
 const imgContainer = ref(null)
-const disabled = ref(false)
-const { x, y, style: dragStyle } = useDraggable(imgContainer, {
-  preventDefault: true,
-  disabled,
-})
+// const disabled = ref(false)
+/*const { x, y, style: dragStyle } = useDraggable(imgContainer, {
+    preventDefault: true,
+    disabled,
+})*/
+
+
 
 const state = reactive({
     imgState: 'loading',
@@ -129,10 +133,18 @@ const state = reactive({
     imgIndex: props.index
 })
 
+const position = reactive({ x: 0, y: 0 });
 const style = reactive({
     imgScale: 1,
+    imgScaleTouch: 1,
     imgRotate: 0
 })
+
+let initialDistance = null;
+let baseScale = 1
+let isDragging = false;
+let lastTouchX = 0;
+let lastTouchY = 0;
 
 const visibleArrowBtn = computed(() => props.images?.length > 1 && props.showArrowBtn)
 const isMultiple = computed(() => props.images?.length > 1)
@@ -156,8 +168,8 @@ const handleKeyStroke = (e) => {
     //e.preventDefault()
 
     const { key } = e
-    if (['s', 'S', 'ArrowDown', '-'].includes(key)) {e.preventDefault(); return handleScale(-0.1, false)}
-    if (['w', 'W', 'ArrowUp', '+'].includes(key)) {e.preventDefault(); return handleScale(0.1, false)}
+    if (['s', 'S', 'ArrowDown', '-'].includes(key)) { e.preventDefault(); return handleScale(-0.1, false) }
+    if (['w', 'W', 'ArrowUp', '+'].includes(key)) { e.preventDefault(); return handleScale(0.1, false) }
     if (key === ' ') return initImgSize()
     if (key === 'Escape' && props.escClose) return handleClose()
     if (['E', 'e'].includes(key)) return handleRotate(true)
@@ -179,15 +191,13 @@ const initImg = () => {
 
 const initImgSize = () => {
     console.log('IV: initImgSize')
-    style.imgScale = 1
-    style.imgRotate = 0
-    x.value = 0
-    y.value = 0
-    if (imgContainer.value) {
-        imgContainer.value.style.top = '0'
-        imgContainer.value.style.left = '0'
-    }
+    style.imgScale = 1;
+    style.imgScaleTouch = 1;
+    style.imgRotate = 0;
+    position.x = 0;
+    position.y = 0;
 }
+
 
 const handleRotate = (flag) => {
     style.imgRotate += 90 * (flag ? 1 : -1)
@@ -262,6 +272,82 @@ watch(() => props.index, (index) => {
         changeUrl(props.images[state.imgIndex])
     }
 })
+
+
+// arrastrar y redimensionar imagen
+
+
+function handleTouchStart(event) {
+    if (event.touches.length === 1) {
+        isDragging = true;
+        const touch = event.touches[0];
+        lastTouchX = touch.clientX;
+        lastTouchY = touch.clientY;
+    } else if (event.touches.length === 2) {
+        isDragging = false;
+        baseScale = style.imgScaleTouch;
+        const [touch1, touch2] = event.touches;
+        initialDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+        );
+    }
+}
+
+function handleTouchMove(event) {
+    event.preventDefault(); // Prevenir el scroll del navegador
+
+    if (isDragging && event.touches.length === 1) {
+        const touch = event.touches[0];
+        const deltaX = touch.clientX - lastTouchX;
+        const deltaY = touch.clientY - lastTouchY;
+
+        position.x += deltaX;
+        position.y += deltaY;
+
+        lastTouchX = touch.clientX;
+        lastTouchY = touch.clientY;
+    } else if (event.touches.length === 2 && initialDistance) {
+        const [touch1, touch2] = event.touches;
+        const currentDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+        );
+        style.imgScaleTouch = baseScale * (currentDistance / initialDistance);
+    }
+}
+
+function handleTouchEnd() {
+    isDragging = false;
+    initialDistance = null;
+}
+
+function handleMouseDown(event) {
+    if (event.button === 0) {
+        isDragging = true;
+        // no es touch:
+        lastTouchX = event.clientX;
+        lastTouchY = event.clientY;
+    }
+}
+
+function handleMouseMove(event) {
+    if (isDragging) {
+        const deltaX = event.clientX - lastTouchX;
+        const deltaY = event.clientY - lastTouchY;
+
+        position.x += deltaX;
+        position.y += deltaY;
+
+        lastTouchX = event.clientX;
+        lastTouchY = event.clientY;
+    }
+}
+
+function handleMouseUp() {
+    isDragging = false;
+}
+
 </script>
 
 <style scoped></style>

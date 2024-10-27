@@ -58,7 +58,7 @@
                     <Icon icon="ph:dot-fill" class="flex-shrink-0" />
                     <div class="w-full">
                         <div v-html="informe.titulo + (informe.visibilidad == 'B' ? ' (borrador)' : '') + (!equipo && informe.equipo_oculto ? ' (privado)' : '')"
-                            class="capitalize lowercase font-bold" />
+                            class="break-all capitalize lowercase font-bold" />
                         <div v-if="filtrado" v-html="informe.descripcion" class="mt-3" />
                         <div class="flex gap-3 items-center mt-4 w-full">
                             <span v-if="!categoriaActiva || categoriaActiva == '_'" class="badge badge-primary text-xs">{{

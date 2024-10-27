@@ -13,7 +13,7 @@
 
         <div class="container mx-auto pb-20">
 
-            <GridAppear class="gap-7" col-width="20rem">
+            <GridAppear class="gap-7" col-width="22rem">
 
                 <EquipoInformacion :equipo="equipo" />
 
