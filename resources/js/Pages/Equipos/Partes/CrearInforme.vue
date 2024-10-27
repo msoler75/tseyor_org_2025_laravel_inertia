@@ -19,7 +19,7 @@
                     <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
                         @click="modalSubirArchivos = true">
                         <Icon icon="ph:microsoft-word-logo-duotone" />
-                        <span>Importar desde word</span>
+                        <span>Crear desde Word</span>
                     </div>
                 </div>
 
@@ -34,7 +34,7 @@
 
 
         <!-- Modal Upload -->
-        <Modal :show="modalSubirArchivos" @close="modalSubirArchivos = false">
+        <Modal :show="modalSubirArchivos" @close="modalSubirArchivos = false" maxWidth="xl">
 
             <div class="p-5 flex flex-col gap-5 items-center">
 
@@ -48,8 +48,8 @@
 
                     <div class="mt-4 flex gap-4 justify-end">
 
-                        <button type="submit" class="btn btn-primary btn-sm" :disabled="importando">
-                            <Spinner v-if="importando"/>
+                        <button type="submit" class="btn btn-primary btn-sm" :disabled="!archivoDoc||importando">
+                            <div v-if="importando" class="flex items-center gap-2"><Spinner />Importando...</div>
                             <span v-else>Importar</span>
                         </button>
 
