@@ -1,166 +1,3 @@
-<script setup>
-
-import { router, useForm } from '@inertiajs/vue3';
-import { CircleStencil, Cropper } from 'vue-advanced-cropper';
-import CustomBackgroundWrapper from '@/Components/CustomBackgroundWrapper.vue';
-
-import 'vue-advanced-cropper/dist/style.css';
-
-
-const props = defineProps({
-    user: Object,
-});
-
-const form = useForm({
-    _method: 'PUT',
-    name: props.user.name,
-    email: props.user.email,
-    frase: props.user.frase,
-    photo: null,
-});
-
-const verificationLinkSent = ref(null);
-const photoPreview = ref(null);
-const photoInput = ref(null);
-const saved = ref(true)
-const cropperElem = ref(null)
-const isCropping = ref(false);
-
-watch(() => form.name + form.email, () => {
-    saved.value = false
-})
-
-function dataURItoFile(dataURI, fileName) {
-    const arr = dataURI.split(',');
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-
-    return new File([u8arr], fileName, { type: mime });
-}
-
-function reduceImageSize(cb) {
-    // verifica que la imagen en photoPreview tenga un tamaño máximo a 1024x1024. si no es así, la reducimos
-    const image = new Image();
-    image.src = photoPreview.value;
-    image.onload = () => {
-        if (image.width > 1024 || image.height > 1024) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1024;
-            canvas.height = 1024;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(image, 0, 0, 1024, 1024);
-            photoPreview.value = canvas.toDataURL();
-            cb()
-            return
-        }
-    };
-
-    cb()
-}
-
-const updateProfileInformation = () => {
-    if (photoInput.value) {
-        // form.photo = photoInput.value.files[0];
-        // hemos de tomar la imagenen formato dataURI de photoPReview y convertirla a archivo de alguna forma para adjuntarla al formulario
-        // para que el servidor nos acepte la imagen, esta debe ser en formato jpg o png. Porque sino, nos da el error: El campo foto debe ser un archivo con formato: jpg, jpeg, png
-        const reader = new FileReader();
-        reader.readAsDataURL(photoInput.value.files[0]);
-        reader.onload = (e) => {
-            // adjuntamos como si fuera un File
-            reduceImageSize(() => {
-                form.photo = dataURItoFile(photoPreview.value, photoInput.value.files[0].name)
-                send()
-            })
-
-        }
-        return
-    }
-
-    send()
-};
-
-const send = () => {
-    form.post(route('user-profile-information.update'), {
-        errorBag: 'updateProfileInformation',
-        preserveScroll: true,
-        onSuccess: () => {
-            clearPhotoFileInput(),
-                saved.value = true
-        }
-    });
-}
-
-const sendEmailVerification = () => {
-    verificationLinkSent.value = true;
-};
-
-const selectNewPhoto = () => {
-    photoInput.value.click();
-};
-
-const updatePhotoPreview = () => {
-    const photo = photoInput.value.files[0];
-
-    if (!photo) return;
-
-
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-        photoPreview.value = e.target.result;
-        console.log(photoPreview.value)
-        isCropping.value = true
-    };
-
-    reader.readAsDataURL(photo);
-};
-
-const deletePhoto = () => {
-    router.delete(route('current-user-photo.destroy'), {
-        preserveScroll: true,
-        onSuccess: () => {
-            photoPreview.value = null;
-            clearPhotoFileInput();
-        },
-    });
-};
-
-const clearPhotoFileInput = () => {
-    if (photoInput.value?.value) {
-        photoInput.value.value = null;
-    }
-};
-
-
-const changePhotoCropper = () => {
-    const result = cropperElem.value.getResult()
-    photoPreview.value = result.canvas.toDataURL()
-    saved.value = false
-    isCropping.value = false
-}
-
-var checkFrase = null
-onMounted(() => {
-    checkFrase = setInterval(() => {
-        const div = document.querySelector(".cropper-event-notification")
-        if (div)
-            div.innerHTML = "Usa dos dedos para mover la imagen"
-    }, 1000)
-})
-
-onBeforeUnmount(() => {
-    console.log('unload checkfrase')
-    clearInterval(checkFrase)
-})
-
-
-</script>
 
 <template>
     <FormSection @submitted="updateProfileInformation">
@@ -279,6 +116,171 @@ onBeforeUnmount(() => {
         </template>
     </FormSection>
 </template>
+
+<script setup>
+
+import { router, useForm } from '@inertiajs/vue3';
+import { CircleStencil, Cropper } from 'vue-advanced-cropper';
+import CustomBackgroundWrapper from '@/Components/CustomBackgroundWrapper.vue';
+
+import 'vue-advanced-cropper/dist/style.css';
+
+
+const props = defineProps({
+    user: Object,
+});
+
+const form = useForm({
+    _method: 'PUT',
+    name: props.user.name,
+    email: props.user.email,
+    frase: props.user.frase,
+    photo: null,
+});
+
+const verificationLinkSent = ref(null);
+const photoPreview = ref(null);
+const photoInput = ref(null);
+const saved = ref(true)
+const cropperElem = ref(null)
+const isCropping = ref(false);
+
+watch(() => form.name + form.email, () => {
+    saved.value = false
+})
+
+function dataURItoFile(dataURI, fileName) {
+    const arr = dataURI.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], fileName, { type: mime });
+}
+
+function reduceImageSize(cb) {
+    // verifica que la imagen en photoPreview tenga un tamaño máximo a 1024x1024. si no es así, la reducimos
+    const image = new Image();
+    image.src = photoPreview.value;
+    image.onload = () => {
+        if (image.width > 1024 || image.height > 1024) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0, 1024, 1024);
+            photoPreview.value = canvas.toDataURL();
+            cb()
+            return
+        }
+    };
+
+    cb()
+}
+
+const updateProfileInformation = () => {
+    if (photoInput.value && photoInput.value.files.length) {
+        // form.photo = photoInput.value.files[0];
+        // hemos de tomar la imagenen formato dataURI de photoPReview y convertirla a archivo de alguna forma para adjuntarla al formulario
+        // para que el servidor nos acepte la imagen, esta debe ser en formato jpg o png. Porque sino, nos da el error: El campo foto debe ser un archivo con formato: jpg, jpeg, png
+        const reader = new FileReader();
+        reader.readAsDataURL(photoInput.value.files[0]);
+        reader.onload = (e) => {
+            // adjuntamos como si fuera un File
+            reduceImageSize(() => {
+                form.photo = dataURItoFile(photoPreview.value, photoInput.value.files[0].name)
+                send()
+            })
+
+        }
+        return
+    }
+
+    send()
+};
+
+const send = () => {
+    form.post(route('user-profile-information.update'), {
+        errorBag: 'updateProfileInformation',
+        preserveScroll: true,
+        onSuccess: () => {
+            clearPhotoFileInput(),
+                saved.value = true
+        }
+    });
+}
+
+const sendEmailVerification = () => {
+    verificationLinkSent.value = true;
+};
+
+const selectNewPhoto = () => {
+    photoInput.value.click();
+};
+
+const updatePhotoPreview = () => {
+    const photo = photoInput.value.files[0];
+
+    if (!photo) return;
+
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+        photoPreview.value = e.target.result;
+        console.log(photoPreview.value)
+        isCropping.value = true
+    };
+
+    reader.readAsDataURL(photo);
+};
+
+const deletePhoto = () => {
+    router.delete(route('current-user-photo.destroy'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            photoPreview.value = null;
+            clearPhotoFileInput();
+        },
+    });
+};
+
+const clearPhotoFileInput = () => {
+    if (photoInput.value?.value) {
+        photoInput.value.value = null;
+    }
+};
+
+
+const changePhotoCropper = () => {
+    const result = cropperElem.value.getResult()
+    photoPreview.value = result.canvas.toDataURL()
+    saved.value = false
+    isCropping.value = false
+}
+
+var checkFrase = null
+onMounted(() => {
+    checkFrase = setInterval(() => {
+        const div = document.querySelector(".cropper-event-notification")
+        if (div)
+            div.innerHTML = "Usa dos dedos para mover la imagen"
+    }, 1000)
+})
+
+onBeforeUnmount(() => {
+    console.log('unload checkfrase')
+    clearInterval(checkFrase)
+})
+
+
+</script>
+
 
 <style>
 .stencil-crop {
