@@ -28,6 +28,7 @@ Route::group([
     Route::post('user/new-password', [AdminController::class, 'newPassword']);
     Route::crud('user', 'UserCrudController');
     Route::crud('comunicado', 'ComunicadoCrudController');
+    Route::crud('contenido', 'ContenidoCrudController');
     Route::crud('guia', 'GuiaCrudController');
     Route::crud('nodo', 'NodoCrudController');
     Route::crud('acl', 'AclCrudController');
