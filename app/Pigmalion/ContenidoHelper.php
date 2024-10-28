@@ -187,6 +187,11 @@ class ContenidoHelper
         // obtiene el texto que servirá para indexar el buscador
         $contenido->texto_busqueda = $model->getTextoContenidoBuscador();
 
+        if (isset($model->numero)) {
+            $contenido->texto_busqueda .= " ".$model->numero;
+        }
+
+
         // Guardar el modelo en la base de datos
         $contenido->save();
     }

@@ -162,9 +162,9 @@ return [
             'max_expansions' => 50,
             'distance' => 2,
         ],
-        'asYouType' => true,
+        'asYouType' => env('TNTSEARCH_ASYOUTYPE', false),
         'searchBoolean' => env('TNTSEARCH_BOOLEAN', false),
-        'maxDocs' => env('TNTSEARCH_MAX_DOCS', 2000),
+        'maxDocs' => env('TNTSEARCH_MAX_DOCS', 500),
         'tokenizer' => App\Pigmalion\SpanishTokenizer::class //read below
     ],
 

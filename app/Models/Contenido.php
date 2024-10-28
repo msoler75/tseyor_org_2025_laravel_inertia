@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
 class Contenido extends Model
 {
+    use CrudTrait;
     use Searchable;
     use \Illuminate\Database\Eloquent\SoftDeletes;
 

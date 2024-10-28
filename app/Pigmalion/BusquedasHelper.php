@@ -80,15 +80,22 @@ class BusquedasHelper
 
     public static function descartarPalabrasComunes($busqueda)
     {
+        $k = "xzzzzzzhhhhhhhx";
+        $busqueda = str_replace("-", $k, $busqueda);
         // 1. Separar la frase $busqueda en palabras, utilizando espacios y otros símbolos de puntuación como separadores
         $palabras = preg_split('/[\s\p{P}]+/u', \App\Pigmalion\SpanishTokenizer::removeAccents(mb_strtolower($busqueda)), -1, PREG_SPLIT_NO_EMPTY);
+
+        $palabras = array_map(function ($x) use ($k) {
+            return str_replace($k, "-", $x);
+        }, $palabras);
 
         // 2. Descartar las palabras habituales, pronombres y artículos
         $removidas = [];
         $filtradas = [];
 
         foreach ($palabras as $palabra) {
-            $descartar = in_array(strtolower($palabra), BusquedasHelper::$palabrasComunes);
+            $palabraLimpia = str_replace("-", "", $palabra);
+            $descartar = in_array($palabraLimpia, BusquedasHelper::$palabrasComunes);
             if ($descartar)
                 $removidas[$palabra] = 1;
             else
