@@ -6,8 +6,7 @@
             <span class=" loading loading-spinner loading-lg" v-show="state.imgState === 'loading'"
                 aria-hidden="true"></span>
 
-            <div ref="imgContainer"
-                class="fixed left-0 top-0 w-full h-full flex items-center justify-center"
+            <div ref="imgContainer" class="fixed left-0 top-0 w-full h-full flex items-center justify-center"
                 @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
                 @mousedown.prevent="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseUp" :style="{
                     transform: `scale(${style.imgScaleTouch})`,
@@ -16,7 +15,8 @@
                 }">
 
                 <!-- Imagen cargada con éxito -->
-                <img v-show="state.imgState === 'success'" class="max-w-full max-h-full cursor-move transition-transform duration-200" :src="state.src"
+                <img v-show="state.imgState === 'success'"
+                    class="max-w-full max-h-full cursor-move transition-transform duration-200" :src="state.src"
                     :style="`transform: scale(${style.imgScale}) rotate(${style.imgRotate}deg);`" alt="" />
 
                 <!-- Error de carga de imagen -->
@@ -64,11 +64,11 @@
         " v-if="showToolbar">
                 <section class="flex gap-6 justify-center items-center px-4">
                     <button class="cursor-pointer transition-transform duration-200 hover:scale-110" aria-hidden="true"
-                        @click="handleScale(-0.1, false)" title="Reducir Zoom">
+                        @click="handleScale(-0.4, false)" title="Reducir Zoom">
                         <Icon icon="ph:magnifying-glass-minus-duotone" />
                     </button>
                     <button class="cursor-pointer transition-transform duration-200 hover:scale-110" aria-hidden="true"
-                        @click="handleScale(0.1, false)" title="Aumentar zoom">
+                        @click="handleScale(0.4, false)" title="Aumentar zoom">
                         <Icon icon="ph:magnifying-glass-plus-duotone" />
                     </button>
                     <button class="cursor-pointer transition-transform duration-200 hover:scale-110" aria-hidden="true"
@@ -141,6 +141,7 @@ const style = reactive({
 })
 
 let initialDistance = null;
+let initialMidpoint = { x: 0, y: 0 };
 let baseScale = 1
 let isDragging = false;
 let lastTouchX = 0;
@@ -196,6 +197,7 @@ const initImgSize = () => {
     style.imgRotate = 0;
     position.x = 0;
     position.y = 0;
+    simulateTouches = []
 }
 
 
@@ -284,15 +286,10 @@ function handleTouchStart(event) {
         lastTouchX = touch.clientX;
         lastTouchY = touch.clientY;
     } else if (event.touches.length === 2) {
-        isDragging = false;
-        baseScale = style.imgScaleTouch;
-        const [touch1, touch2] = event.touches;
-        initialDistance = Math.hypot(
-            touch2.clientX - touch1.clientX,
-            touch2.clientY - touch1.clientY
-        );
+        setInitialZoom(event.touches)
     }
 }
+
 
 function handleTouchMove(event) {
     event.preventDefault(); // Prevenir el scroll del navegador
@@ -308,22 +305,34 @@ function handleTouchMove(event) {
         lastTouchX = touch.clientX;
         lastTouchY = touch.clientY;
     } else if (event.touches.length === 2 && initialDistance) {
-        const [touch1, touch2] = event.touches;
-        const currentDistance = Math.hypot(
-            touch2.clientX - touch1.clientX,
-            touch2.clientY - touch1.clientY
-        );
-        style.imgScaleTouch = baseScale * (currentDistance / initialDistance);
+        setScalingZoom(event.touches)
     }
 }
 
 function handleTouchEnd() {
     isDragging = false;
     initialDistance = null;
+    initialMidpoint = { x: 0, y: 0 };
 }
 
+
+let simulateTouches = []
+
 function handleMouseDown(event) {
+    // si está la tecla Ctrl pulsada:
+    if (event.ctrlKey) {
+        // no es touch:
+        simulateTouches = [{clientX:event.clientX, clientY:event.clientY}]
+        return;
+    }
     if (event.button === 0) {
+
+        if(simulateTouches.length > 0) {
+            simulateTouches.push({clientX:event.clientX, clientY:event.clientY})
+            setInitialZoom(simulateTouches)
+            return;
+        }
+
         isDragging = true;
         // no es touch:
         lastTouchX = event.clientX;
@@ -341,11 +350,76 @@ function handleMouseMove(event) {
 
         lastTouchX = event.clientX;
         lastTouchY = event.clientY;
+    } else if(simulateTouches.length > 1) {
+        simulateTouches[1].clientX = event.clientX
+        simulateTouches[1].clientY = event.clientY
+        setScalingZoom(simulateTouches)
     }
 }
 
 function handleMouseUp() {
     isDragging = false;
+    if(simulateTouches.length==2)
+        simulateTouches = []
+}
+
+
+
+
+
+// operaciones de Zoom
+function setInitialZoom(touches) {
+    isDragging = false;
+    baseScale = style.imgScaleTouch;
+    const [touch1, touch2] = touches;
+    initialDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+    );
+
+    initialMidpoint = {
+        x: (touch1.clientX + touch2.clientX) / 2,
+        y: (touch1.clientY + touch2.clientY) / 2
+    };
+}
+
+function setScalingZoom(touches) {
+
+    const [touch1, touch2] = touches;
+    const currentDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+    );
+
+
+    const currentMidpoint = {
+        x: (touch1.clientX + touch2.clientX) / 2,
+        y: (touch1.clientY + touch2.clientY) / 2
+    };
+
+
+    const newScale = baseScale * (currentDistance / initialDistance);
+
+    style.imgScaleTouch = newScale
+
+
+    // calculo de la posición del centro del movimiento touch
+
+    // const scaleFactor = newScale / style.imgScaleTouch;
+
+    // Calcular el desplazamiento basado en el punto medio
+    // const dx = (initialMidpoint.x - touch2.clientX) / scaleFactor;
+    // const dy = (initialMidpoint.y - touch2.clientY) / scaleFactor;
+
+    // position.x -= 0.01*dx;
+    // position.y -=  0.01*dy;
+
+    // Ajustar la posición basada en el movimiento del punto medio
+    //position.x += currentMidpoint.x - initialMidpoint.x;
+    //position.y += currentMidpoint.y - initialMidpoint.y;
+
+
+    console.log({x: position.x, y: position.y, scale: style.imgScale, scaleTouch: style.imgScaleTouch})
 }
 
 </script>

@@ -212,7 +212,17 @@ return [
         'minutos_espera' => 20, // minutos que espera a reintentar el envío si es que superó el límite
         'dias_caducidad' => 30, // al pasar ese tiempo, la invitación caduca
         'mostrar_dias_antiguedad' => 90, // muestras las invitaciones de los últimos 90 días
-    ]
+    ],
 
+
+    /**
+     * Muular electrónico
+     */
+
+    'muular_electronico' => [
+        'auth_url' => env('MUULAR_ELECTRONICO_URL') . '/api/auth.php',
+        'saldo_url' => env('MUULAR_ELECTRONICO_URL')  . '/api/saldo.php',
+        'jwt_secret' => env('JWT_SECRET', 'codigo_secreto_12344567')
+    ]
 
 ];

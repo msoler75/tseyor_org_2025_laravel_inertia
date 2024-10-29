@@ -43,7 +43,7 @@ class CambioNombreUsuario extends Notification implements ShouldQueue
             ->line('Se ha cambiado tu nombre de usuario. Ahora es:')
             ->line($user->name)
             ->line('A partir de ahora utiliza siempre ese nombre (o tu correo electrónico) para acceder a tu cuenta web.')
-            ->action('Ver tu perfil', $userUrl)
+            ->action('Ir a Mi Cuenta', $userUrl)
             ->line('Si hay un error o no estás de acuerdo con este cambio, por favor contacta con el equipo web.');
     }
 
