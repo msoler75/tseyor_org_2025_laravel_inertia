@@ -40,6 +40,7 @@ use App\Http\Controllers\EmailsController;
 use App\Http\Controllers\DevController;
 use App\Http\Controllers\Api\ComentariosController;
 use App\Http\Controllers\Admin\JobsController;
+use App\Services\MuularElectronico;
 use App\Pigmalion\SEO;
 
 
@@ -219,6 +220,7 @@ Route::get('ong/muular', function () {
     return Inertia::render('Ong/Muular', [])
         ->withViewData(SEO::get('muular'));
 })->name('muular');
+Route::get('muular-electronico', [MuularElectronico::class, 'redirigir']);
 
 Route::get('utg', [EquiposController::class, 'index_utg'])->name('utg');
 Route::get(
@@ -245,9 +247,10 @@ Route::get('normativas/{slug}', [NormativasController::class, 'show'])->where('s
 Route::get('usuarios', [UsuariosController::class, 'index'])->name('usuarios');
 Route::get('usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->name('usuarios.buscar');
 Route::get('usuarios/_grupos', [UsuariosController::class, 'grupos'])->name('grupos');
+Route::get('usuario/_permisos', [UsuariosController::class, 'permissions'])->name('usuario.permisos');
+Route::get('usuario/_saldo_muulares', [MuularElectronico::class, 'saldo'])->name('usuario.saldo');
 Route::put('usuarios/{slug}', [UsuariosController::class, 'store'])->where('slug', '[a-z0-9\-]+')->name('usuario.guardar');
 Route::get('usuarios/{slug}', [UsuariosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('usuario');
-Route::get('usuario/_permisos', [UsuariosController::class, 'permissions'])->name('usuario.permisos');
 
 // Route::get('login/1', [DevController::class, 'loginUser1'])->name('login1');
 // Route::get('login/2', [DevController::class, 'loginUser2'])->name('login2');

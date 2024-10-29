@@ -1,32 +1,3 @@
-<script setup>
-import usePermisos from '@/Stores/permisos'
-
-const permisos = usePermisos()
-
-defineProps({
-    canResetPassword: Boolean,
-    status: String,
-});
-
-const form = useForm({
-    loginName: '',
-    password: '',
-    remember: false,
-});
-
-const submit = () => {
-    form.transform(data => ({
-        ...data,
-        remember: form.remember ? 'on' : '',
-    })).post(route('login'), {
-        onFinish: () => {
-            form.reset('password'),
-                permisos.cargarPermisos()
-        }
-    });
-};
-</script>
-
 <template>
 
     <h1 class="hidden">Iniciar Sesión</h1>
@@ -43,6 +14,8 @@ const submit = () => {
         <form @submit.prevent="submit">
 
             <h3 class="text-center mb-8">Iniciar Sesión</h3>
+
+            <input type="hidden" name="to" :value="to">
 
             <div>
                 <InputLabel for="loginName" value="Usuario o Correo electrónico" />
@@ -89,3 +62,43 @@ const submit = () => {
     </AuthenticationCard>
 
 </template>
+
+
+<script setup>
+import usePermisos from '@/Stores/permisos'
+
+const permisos = usePermisos()
+
+defineProps({
+    canResetPassword: Boolean,
+    status: String,
+});
+
+const to = ref(null)
+
+onMounted(()=> {
+    // obtener parámetro GET "to" de la URL ?
+    const urlParams = new URLSearchParams(window.location.search);
+    to.value = urlParams.get('to') || '';
+})
+
+const form = useForm({
+    loginName: '',
+    password: '',
+    remember: false,
+    to: ''
+});
+
+const submit = () => {
+    form.transform(data => ({
+        ...data,
+        to: to.value,
+        remember: form.remember ? 'on' : '',
+    })).post(route('login'), {
+        onFinish: () => {
+            form.reset('password'),
+                permisos.cargarPermisos()
+        }
+    });
+};
+</script>

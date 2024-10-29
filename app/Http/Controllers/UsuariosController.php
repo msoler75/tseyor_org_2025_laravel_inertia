@@ -112,4 +112,6 @@ class UsuariosController extends Controller
         $grupos = Grupo::get();
         return response()->json($grupos, 200);
     }
+
+
 }

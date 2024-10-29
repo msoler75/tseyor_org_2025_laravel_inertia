@@ -50,7 +50,11 @@ class User extends Authenticatable implements MustVerifyEmail
             if (!static::$creatingUser && $user->wasChanged('name')) {
                 // El campo 'name' ha cambiado
                 // Aquí puedes realizar las acciones que necesites
-                $user->notify(new CambioNombreUsuario());
+                // evitaremos si solo han cambiado mayusculas o minúsculas
+                $originalName = $user->getOriginal('name');
+                $newName = $user->name;
+                if(strtolower($originalName) != strtolower($newName))
+                    $user->notify(new CambioNombreUsuario());
             }
 
             // rellena la frase, si está está vacía
