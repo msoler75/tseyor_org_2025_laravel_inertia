@@ -65,9 +65,9 @@
 
 
 <script setup>
-import usePermisos from '@/Stores/permisos'
+// import useUserStore from '@/Stores/user'
 
-const permisos = usePermisos()
+// const userStore = useUserStore()
 
 defineProps({
     canResetPassword: Boolean,
@@ -96,8 +96,7 @@ const submit = () => {
         remember: form.remember ? 'on' : '',
     })).post(route('login'), {
         onFinish: () => {
-            form.reset('password'),
-                permisos.cargarPermisos()
+            form.reset('password')
         }
     });
 };

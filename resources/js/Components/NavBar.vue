@@ -118,7 +118,7 @@
                                                 Mi Cuenta
                                             </DropdownLink>
 
-                                            <DropdownLink v-if="permisos.permisos.length" href="/admin/dashboard"
+                                            <DropdownLink v-if="userStore.permisos.length" href="/admin/dashboard"
                                                 as="a">
                                                 Panel de administrador
                                             </DropdownLink>
@@ -126,6 +126,13 @@
                                             <DropdownLink v-if="$page.props.jetstream.hasApiFeatures"
                                                 :href="route('api-tokens.index')">
                                                 API Tokens
+                                            </DropdownLink>
+
+                                            <div v-if="userStore.saldo!=''" class="border-t border-gray-200 dark:border-gray-600" />
+
+                                            <DropdownLink as="a" href="/muular-electronico" v-if="userStore.saldo!=''"
+                                                title="Muular electrónico">
+                                                Saldo: <span class="font-bold">{{ userStore.saldo }}</span> <small>muulares</small>
                                             </DropdownLink>
 
                                             <div class="border-t border-gray-200 dark:border-gray-600" />
@@ -158,13 +165,13 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3';
 import useSelectors from '@/Stores/selectors'
-import usePermisos from '@/Stores/permisos'
+import useUserStore from '@/Stores/user'
 import { useDark, useToggle } from "@vueuse/core";
 
 const page = usePage()
 const nav = useNav()
 const selectors = useSelectors()
-const permisos = usePermisos()
+const userStore = useUserStore()
 const portada = computed(() => page.url == '/')
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
@@ -174,7 +181,7 @@ const showingNavigationDropdown = ref(false);
 
 
 const logout = () => {
-    permisos.permisos = []
+    userStore.borrarPermisos()
     router.post(route('logout'));
 };
 

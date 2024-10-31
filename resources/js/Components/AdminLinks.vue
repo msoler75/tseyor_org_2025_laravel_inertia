@@ -31,9 +31,9 @@
 </template>
 
 <script setup>
-import usePermisos from '@/Stores/permisos'
+import useUserStore from '@/Stores/user'
 
-const permisos = usePermisos()
+const userStore = useUserStore()
 
 const props = defineProps({
     necesita: { type: [String, Array], required: true },
@@ -45,8 +45,8 @@ const props = defineProps({
 
 const editor = computed(()=>
 props.esAutor || (
-    typeof props.necesita == 'string' ? permisos.permisos.includes(props.necesita) :
-    permisos.permisos.filter(permiso => props.necesita.includes(permiso)).length )
+    typeof props.necesita == 'string' ? userStore.permisos.includes(props.necesita) :
+    userStore.permisos.filter(permiso => props.necesita.includes(permiso)).length )
 )
 
 const isDraft = ref(props.contenido && ('visibilidad' in props.contenido) && props.contenido.visibilidad != 'P')

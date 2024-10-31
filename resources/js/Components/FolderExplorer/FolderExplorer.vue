@@ -160,7 +160,7 @@ import { usePage, Link } from '@inertiajs/vue3';
 import useFolderExplorerStore from '@/Stores/folderExplorer';
 import useSelectors from '@/Stores/selectors'
 import usePlayer from '@/Stores/player'
-import usePermisos from '@/Stores/permisos'
+import useUserStore from '@/Stores/user'
 
 /*
 const vDisableRightClick = {
@@ -177,7 +177,7 @@ const vDisableRightClick = {
 const TIEMPO_ACTIVACION_SELECCION = 1100
 const TIEMPO_SELECCION_SIMPLE = 250
 
-const permisos = usePermisos()
+const userStore = useUserStore()
 
 const props = defineProps({
     ruta: { type: String, required: true },
@@ -203,7 +203,7 @@ store.rutaBase = props.rutaBase
 store.modoInsertar = props.modoInsertar
 store.items = props.items
 store.embed = props.embed
-store.esAdministrador = computed(() => !!permisos.permisos.filter(p => p == 'administrar archivos').length)
+store.esAdministrador = computed(() => !!userStore.permisos.filter(p => p == 'administrar archivos').length)
 store.infoCargada = false
 store.propietarioRef = props.propietarioRef
 store.mostrandoResultadosBusqueda = false

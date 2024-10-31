@@ -1,8 +1,8 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
-import usePermisos from '@/Stores/permisos'
+import useUserStore from '@/Stores/user'
 
-const permisos = usePermisos()
+const userStore = useUserStore()
 
 defineProps({
     canResetPassword: Boolean,
@@ -26,7 +26,7 @@ const submit = () => {
 
 
 const logout = () => {
-    permisos.permisos = []
+    userStore.permisos = []
     router.post(route('logout'));
 };
 

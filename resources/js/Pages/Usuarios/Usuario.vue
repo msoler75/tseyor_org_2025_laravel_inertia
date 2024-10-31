@@ -119,12 +119,9 @@
 <script setup>
 import { router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
-import useSelectors from '@/Stores/selectors'
-import usePermisos from '@/Stores/permisos'
 
 const page = usePage()
 const user = page.props.auth.user
-
 
 const props = defineProps({
     usuario: {

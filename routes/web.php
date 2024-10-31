@@ -249,6 +249,7 @@ Route::get('usuarios/_buscar/{buscar}', [UsuariosController::class, 'search'])->
 Route::get('usuarios/_grupos', [UsuariosController::class, 'grupos'])->name('grupos');
 Route::get('usuario/_permisos', [UsuariosController::class, 'permissions'])->name('usuario.permisos');
 Route::get('usuario/_saldo_muulares', [MuularElectronico::class, 'saldo'])->name('usuario.saldo');
+Route::post('usuarios/_comprobar_clave', [MuularElectronico::class, 'check_password']);
 Route::put('usuarios/{slug}', [UsuariosController::class, 'store'])->where('slug', '[a-z0-9\-]+')->name('usuario.guardar');
 Route::get('usuarios/{slug}', [UsuariosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('usuario');
 

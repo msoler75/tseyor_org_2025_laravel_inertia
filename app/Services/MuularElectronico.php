@@ -5,13 +5,15 @@ namespace App\Services;
 // use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Convierte el audio a un formato mp3 de menos peso
  */
 class MuularElectronico
 {
-
 
     /**
      * Redirige al portal de Muular Electrónico pasándoles los datos del usuario actual
@@ -61,7 +63,7 @@ class MuularElectronico
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
 
-        \Log::info("Llamada a MuularElectronico:saldo", ['respuesta' => $result]);
+        Log::info("Llamada a MuularElectronico:saldo", ['respuesta' => $result]);
         // decodificamos la respuesta
 
         $json = json_decode($result, true);
@@ -103,5 +105,49 @@ class MuularElectronico
         $jwt = JWT::encode($payload, $key, 'HS256');
 
         return $jwt;
+    }
+
+
+
+    /**
+     * API para verificar la contraseña desde el muular electrónico
+     *
+     * @param \App\Services\Request $request
+     * @return void
+     */
+    public function check_password() {
+        $token = isset($_POST["token"]) ? $_POST["token"] : "";
+        if (!$token)
+            return response()->json(['error'=>'Token no especificado']);
+
+        $key = config('app.muular_electronico.jwt_secret');
+
+        if (!$key)
+            throw new \Error("Error de configuración. JWT key no definido");
+
+        $payload = JWT::decode($token, new Key($key, 'HS256'));
+
+        if (!$payload)
+            return response()->json(['error'=>'Error en los datos']);
+
+        Log::info("Muular electrónico. Comprobación de contraseña", ['payload' => $payload]);
+
+        $username = $payload->user;
+        $email = $payload->email;
+        $passwordIntento = $payload->password;
+
+        $user = User::select('id', 'name', 'email', 'password')->where('name', $username)->orWhere('email', $email)->firstOrFail();
+
+        $user->makeVisible('password');
+
+        $password = $user->getAuthPassword();
+
+        Log::info("user data is", ['password'=>$password, 'user'=>$user->toArray()]);
+        // comprobamos la contraseña para este usuario
+        if(Hash::check($passwordIntento, $password))
+        // if(password_verify($passwordIntento, $user->password))
+            return response()->json(['ok'=>1, 'mensaje'=>'Contraseña válida']);
+
+        return response()->json(['error'=>'Contraseña incorrecta']);
     }
 }
