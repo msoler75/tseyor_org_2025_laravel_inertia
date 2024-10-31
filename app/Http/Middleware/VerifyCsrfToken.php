@@ -14,6 +14,7 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'files/upload/image',
         'files/upload/file',
-        '_sendbuild'
+        '_sendbuild',
+        'usuarios/_comprobar_clave'
     ];
 }

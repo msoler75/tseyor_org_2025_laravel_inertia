@@ -17,7 +17,10 @@
         <input type="hidden" name="token" value="{{ $token }}">
     </form>
     <script>
-        document.getElementById('redirectForm').submit();
+        // when document is ready, submit the form
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('redirectForm').submit();
+        });
     </script>
 </body>
 </html>

@@ -69,7 +69,7 @@
 <script setup>
 import { onBeforeUnmount/*, markRaw*/ } from 'vue';
 import { useDark, useToggle } from "@vueuse/core";
-import usePermisos from '@/Stores/permisos'
+import useUserStore from '@/Stores/user'
 import usePlayer from '@/Stores/player'
 import setTransitionPages from '@/composables/transitionPages.js'
 import useFolderExplorerStore from '@/Stores/folderExplorer';
@@ -79,7 +79,7 @@ const folderExplorer = useFolderExplorerStore()
 // console.log('app initiating...')
 
 const player = usePlayer()
-const permisos = usePermisos()
+const userStore = useUserStore()
 const page = usePage()
 const nav = useNav()
 
@@ -142,8 +142,23 @@ function handleMouse() {
 
 
 console.log('APP INITIED')
-if (page.props.auth?.user)
-    permisos.cargarPermisos()
+
+function cargarDatosUsuario() {
+    if(!page.props.auth?.user) {
+        userStore.saldo = ""
+        userStore.borrarPermisos()
+        return
+    }
+    userStore.cargarPermisos()
+    userStore.cargarSaldo()
+}
+
+cargarDatosUsuario()
+
+// si cambia el usuario
+watch(() => page.props.auth?.user, () => {
+    cargarDatosUsuario()
+})
 
 // aplicamos configuración de transiciones de pagina (fadeout y scroll)
 setTransitionPages(router)

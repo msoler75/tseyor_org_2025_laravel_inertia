@@ -35,10 +35,10 @@ class FortifyServiceProvider extends ServiceProvider
             public function toResponse($request)
             {
                 \Log::info('Ha iniciado sesión   *****');
-                if($request->has('to'))
+                if($request->has('to') && $request->to)
                 {
                     \Log::info('Redirigimos a '. $request->input('to'));
-                    return redirect($request->to);
+                    return Inertia::location($request->to);
                 }
                 return redirect('/dashboard');
             }

@@ -29,7 +29,7 @@ defineProps({
                     <SectionBorder />
                 </div>
 
-                <div v-if="$page.props.jetstream.canUpdatePassword">
+                <div id="cambio-clave" v-if="$page.props.jetstream.canUpdatePassword">
                     <UpdatePasswordForm class="mt-10 sm:mt-0" />
 
                     <SectionBorder />

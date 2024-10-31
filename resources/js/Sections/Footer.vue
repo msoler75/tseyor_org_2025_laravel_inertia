@@ -31,17 +31,11 @@
 </template>
 
 <script setup>
-import usePermisos from '@/Stores/permisos'
-
-const permisos = usePermisos()
-
 const props = defineProps({
     sections: Array,
     socialLinks: Array,
     suscription: {type: Boolean, default: true}
 })
-const columns = 3
-
 
 function encodeUrlAccents(str) {
     return encodeURIComponent(str)
