@@ -23,17 +23,21 @@ class MuularElectronico
      */
     public static function redirigir()
     {
+        $from = $_GET['from'] ?? '';
+
         $jwt = self::jwt();
         // si no ha iniciado sesión, debe redirigir a login
         if (!$jwt)
-            return redirect()->route('login', ['to' => 'muular-electronico']);
+            return redirect()->route('login',  [
+                'to' => 'muular-electronico' . ($from ? '?from=' . $from : '')
+            ]);
 
-        $url = config('app.muular_electronico.auth_url');
+        $auth_url = config('app.muular_electronico.auth_url');
 
-        if (!$url)
+        if (!$auth_url)
             throw new \Error("Error de configuración");
 
-        return view('redirect-to-muular-electronico', ['url' => $url, 'token' => $jwt]);
+        return view('redirect-to-muular-electronico', ['url' => $auth_url. ($from ? '?to=' . $from : ''), 'token' => $jwt]);
     }
 
 
@@ -115,10 +119,11 @@ class MuularElectronico
      * @param \App\Services\Request $request
      * @return void
      */
-    public function check_password() {
+    public function check_password()
+    {
         $token = isset($_POST["token"]) ? $_POST["token"] : "";
         if (!$token)
-            return response()->json(['error'=>'Token no especificado']);
+            return response()->json(['error' => 'Token no especificado']);
 
         $key = config('app.muular_electronico.jwt_secret');
 
@@ -128,7 +133,7 @@ class MuularElectronico
         $payload = JWT::decode($token, new Key($key, 'HS256'));
 
         if (!$payload)
-            return response()->json(['error'=>'Error en los datos']);
+            return response()->json(['error' => 'Error en los datos']);
 
         Log::info("Muular electrónico. Comprobación de contraseña", ['payload' => $payload]);
 
@@ -142,12 +147,12 @@ class MuularElectronico
 
         $password = $user->getAuthPassword();
 
-        Log::info("user data is", ['password'=>$password, 'user'=>$user->toArray()]);
+        Log::info("user data is", ['password' => $password, 'user' => $user->toArray()]);
         // comprobamos la contraseña para este usuario
-        if(Hash::check($passwordIntento, $password))
-        // if(password_verify($passwordIntento, $user->password))
-            return response()->json(['ok'=>1, 'mensaje'=>'Contraseña válida']);
+        if (Hash::check($passwordIntento, $password))
+            // if(password_verify($passwordIntento, $user->password))
+            return response()->json(['ok' => 1, 'mensaje' => 'Contraseña válida']);
 
-        return response()->json(['error'=>'Contraseña incorrecta']);
+        return response()->json(['error' => 'Contraseña incorrecta']);
     }
 }

@@ -4,6 +4,7 @@ HACIENDA
 MUULAR ELECTRONICO
 
 EQUIPOS
+-Formato markdown/html para "reuniones", "informacion"...
 -Coordinador ha de poder ver informes en borrador en últimos informes
 -Coordinador ha de poder importar informe desde word
 -Informes en vista equipo: poder importar desde word (dropdown)
