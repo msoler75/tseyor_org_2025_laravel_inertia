@@ -9,12 +9,12 @@ use Firebase\JWT\Key;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
+
 /**
  * Convierte el audio a un formato mp3 de menos peso
  */
 class MuularElectronico
 {
-
     /**
      * Redirige al portal de Muular Electrónico pasándoles los datos del usuario actual
      *
@@ -58,7 +58,7 @@ class MuularElectronico
         if (!$url)
             throw new \Error("Error de configuración");
 
-        // llamamos a la URL con curl, pasandole mediante POST el parámetro 'token' que es el $jwt y recogemos el resultado en JSON
+        // llamamos a la URL con curl, pasándole mediante POST el parámetro 'token' que es el $jwt y recogemos el resultado en JSON
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -67,7 +67,7 @@ class MuularElectronico
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
 
-        Log::info("Llamada a MuularElectronico:saldo", ['respuesta' => $result]);
+        Log::info("Llamada a MuularElectronico:saldo", ['url'=> $url, 'respuesta' => $result]);
         // decodificamos la respuesta
 
         $json = json_decode($result, true);
@@ -110,7 +110,6 @@ class MuularElectronico
 
         return $jwt;
     }
-
 
 
     /**

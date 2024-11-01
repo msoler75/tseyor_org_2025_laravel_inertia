@@ -4,21 +4,18 @@
             <Text>
                 <Prose>
 
-                    <img src="https://tseyor.org/images/ong-logo.webp?ts=1386336254&thumb=709x278&quality=87&fe=JPG"
+                    <img src="/archivos/logos/logo-ong-mundo-armonico.JPG"
                         class="w-full h-auto max-w-[709px] aspect-[709/278]" />
                     <blockquote>
                         <p>Se está preparando un gran cambio y ello comportará también grandes dificultades. Nuestro
-                            grupo, el
-                            grupo Tseyor, pondrá su granito de arena para paliarlas.
-                        </p>
+                            grupo, el grupo Tseyor, pondrá su granito de arena para paliarlas.</p>
                     </blockquote>
                     <blockquote>
                         <p>
                             Habéis recibido cantidad de información; muchos estómagos necesitan de dicho alimento
                             espiritual.
                             Poneros de acuerdo con ese figurado eje central que es la universidad, para preparar
-                            trabajos, escritos,
-                            monografías...
+                            trabajos, escritos, monografías...
                         </p>
                         <p>
                             Ahí también está una parte importante de la ayuda humanitaria.
@@ -30,20 +27,18 @@
         </Section>
 
 
-        <Section>
+        <Section class="container">
             <Text>
                 <h2>Objetivos de la ONG Mundo Armónico Tseyor</h2>
                 <p>El objeto general de esta Asociación es la cooperación en la consecución de una sociedad
-                    armónica, justa
-                    y
-                    solidaria, partiendo de una verdadera conciencia de la solidaridad, que contribuya a la
-                    participación
-                    social, a la reflexión sobre las causas de la injusticia y a la creación de sociedades
-                    armónicas.</p>
+                    armónica, justa y solidaria, partiendo de una verdadera conciencia de la solidaridad, que contribuya
+                    a la participación
+                    social, a la reflexión sobre las causas de la injusticia y a la creación de sociedades armónicas.
+                </p>
 
                 <p>Este fin se concreta en los objetivos específicos:</p>
 
-                <ol class="list-decimal">
+                <ol class="list-decimal pl-4">
                     <li>Proporcionar ayuda humanitaria a personas, grupos y colectivos que la necesiten:
                         alimentación,
                         medios,
@@ -74,9 +69,9 @@
                 </ol>
 
                 <p class="flex justify-end">
-                    <a href="1.pdf" class="btn btn-primary" download>
-                        <Icon icon="ph:download-duotone" /> Descargar Estatutos de la ONG
-                    </a>
+                    <ActionButton :href="estatutosUrl">
+                        Ver Estatutos completos
+                    </ActionButton>
                 </p>
             </Text>
         </Section>
@@ -105,3 +100,14 @@
 
     </Sections>
 </template>
+
+<script setup>
+
+defineProps({
+    estatutosUrl: {
+        type: String,
+        required: false
+    }
+})
+
+</script>

@@ -31,7 +31,7 @@ const state = reactive({
       .then((data) => {
         console.log("saldo response", data);
         if (data.error) {
-          console.warning("Error al cargar el saldo:", data.error);
+          console.warn("Error al cargar el saldo:", data.error);
           this.saldoError = data.error;
           this.saldo = "Error";
           return;
@@ -39,7 +39,7 @@ const state = reactive({
         this.saldo = data.saldo;
       })
       .catch((error) => {
-        console.warning("Error al cargar el saldo:", error);
+        console.warn("Error al cargar el saldo:", error);
         this.saldoError = error;
         this.saldo = "Error";
       });

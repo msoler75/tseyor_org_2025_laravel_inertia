@@ -1,30 +1,37 @@
 <template>
     <Sections>
 
-        <Hero title="Muular" subtitle="La moneda social y espiritual de Tseyor" buttonLabel="Descarga el libro del muular"
-            href="/libros/el-muular-el-papel-moneda-tseyoriano" />
-
-        <Section>
+        <Section class="container">
             <Text>
                 <h2>¿Qué es el Muular?</h2>
-                <p>El muular es el nombre que recibe el papel moneda tseyoriano. Su denominación deriva de Muul (montículo
+                <p>El muular es el nombre que recibe el papel moneda tseyoriano. Su denominación deriva de Muul
+                    (montículo
                     en maya) y nos ha sido dado por los hermanos mayores del cosmos.</p>
-                <p>Es una moneda social de caracter espiritual que se va a utilizar en el ámbito de Tseyor (Muulasterios,
-                    Casas y Pueblos Tseyor) y en sus zonas de influencia o proximidad, para un intercambio justo de bienes y
+                <p>Es una moneda social de caracter espiritual que se va a utilizar en el ámbito de Tseyor
+                    (Muulasterios,
+                    Casas y Pueblos Tseyor) y en sus zonas de influencia o proximidad, para un intercambio justo de
+                    bienes y
                     servicios que fomente los valores de hermandad, solidaridad y ayuda humanitaria.</p>
             </Text>
         </Section>
 
 
         <Section>
-            <TextImage title="Muular Electrónico" subtitle="Intercambia muulares electrónicos desde tu dispositivo"
-                buttonLabel="Acceso al Muular electrónico" href="/muular-electronico">
+            <div id="muular-electronico" title="Muular Electrónico" class="max-w-lg mt-7 mb-12 container p-5 flex flex-col gap-4 justify-center items-center">
+                <h2>Muular Electrónico</h2>
                 <p>
                     Es la moneda en versión electrónica, que puede ser empleada igualmente en la comunidad Tseyor.
                     Especialmente en las casas Tseyor y Muulasterios, pero también entre tseyorianos que convivan o
                     intercambien de un modo u otro, incluso por internet.
                 </p>
-            </TextImage>
+                <ActionButton href="/muular-electronico" external>
+                    Acceso al Muular electrónico
+                </ActionButton>
+                <div>
+                    <small>No dispongo de muular electrónico. <Link class="text-secondary underline" href="/contactar">Quiero solicitarlo</Link></small>
+                </div>
+
+            </div>
         </Section>
 
 
@@ -38,18 +45,11 @@
 
         <Section>
             <TextImage title="Libro-Taller: Mejor con el Muular"
-            srcImage="/almacen/medios/libros/349/Taller%20mejor%20con%20el%20muular.jpg?w=280"
-            buttonLabel="Descargar libro" href="/libros/taller-mejor-con-el-muular"
-                image-right>
+                srcImage="/almacen/medios/libros/349/Taller%20mejor%20con%20el%20muular.jpg?w=280"
+                buttonLabel="Descargar libro" href="/libros/taller-mejor-con-el-muular" image-right>
                 <p>Taller impartido por la hermana Noiwanak acerca del uso del Muular y su comprensión.</p>
             </TextImage>
         </Section>
 
     </Sections>
 </template>
-
-
-
-<script setup>
-
-</script>

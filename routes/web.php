@@ -213,7 +213,7 @@ Route::post('contactar/enviar', [ContactarController::class, 'send'])->name('con
 Route::get('contactar/test', [ContactarController::class, 'test'])->name('contactar.test');
 
 Route::get('ong', function () {
-    return Inertia::render('Ong/Index', [])
+    return Inertia::render('Ong/Index', ['estatutosUrl'=>'/normativas/estatutos-ong-mundo-armonico-tseyor'])
         ->withViewData(SEO::get('ong'));
 })->name('ong');
 Route::get('ong/muular', function () {

@@ -19,9 +19,7 @@
                             swal("¡Error!",
                                 "No se ha podido generar la contraseña. Por favor informa al administrador", "error"
                             );
-
                         } else {
-
                             swal("Nueva contraseña para " + response.data.user + ':',
                                     response.data.password, "success")
                                 .then((value) => {
