@@ -24,6 +24,9 @@
                     <Link class="btn btn-primary w-full" href="/novedades">Novedades de la web</Link>
                     <Link class="btn btn-primary w-full" href="/audios">Audios de Tseyor</Link>
                     <Link class="btn btn-primary w-full" href="/glosario">Glosario de Tseyor</Link>
+                    <a v-if="userStore.saldo != '' && userStore.saldo != 'Error'" class="btn btn-warning w-full"
+                        href="muular-electronico">Ir al muular electrónico</a>
+                    <Link v-else class="btn btn-warning w-full" href="/contactar">Solicitar mi muular electrónico</Link>
                 </div>
             </div>
         </div>
@@ -31,9 +34,10 @@
 </template>
 
 <script setup>
+import useUserStore from '@/Stores/user'
 const page = usePage()
 const user = computed(() => page.props.auth.user)
 const tiene_imagen = computed(() => user.value.profile_photo_url && !user.value.profile_photo_url.match(/ui-avatars/))
 const perfilCompletado = computed(() => tiene_imagen.value)
-
+const userStore = useUserStore()
 </script>

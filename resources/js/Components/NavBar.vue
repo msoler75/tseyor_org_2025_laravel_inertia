@@ -130,7 +130,7 @@
 
                                             <div v-if="userStore.saldo!=''" class="border-t border-gray-200 dark:border-gray-600" />
 
-                                            <DropdownLink as="a" href="/muular-electronico" v-if="userStore.saldo!=''"
+                                            <DropdownLink as="a" href="/muular-electronico" v-if="userStore.saldo!=''&&userStore.saldo!='Error'"
                                                 title="Muular electrónico">
                                                 Saldo: <span class="font-bold">{{ userStore.saldo }}</span> <small>muulares</small>
                                             </DropdownLink>

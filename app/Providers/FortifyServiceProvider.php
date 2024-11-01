@@ -30,7 +30,6 @@ class FortifyServiceProvider extends ServiceProvider
             }
         });
 
-
         $this->app->instance(LoginResponse::class, new class implements LoginResponse {
             public function toResponse($request)
             {
@@ -44,6 +43,7 @@ class FortifyServiceProvider extends ServiceProvider
             }
         });
     }
+
 
     /**
      * Bootstrap any application services.
@@ -69,4 +69,5 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
     }
+
 }

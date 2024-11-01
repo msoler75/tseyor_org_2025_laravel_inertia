@@ -87,4 +87,6 @@ class PaginasController extends Controller
         )
             ->withViewData(SEO::get('biblioteca'));
     }
+
+
 }
