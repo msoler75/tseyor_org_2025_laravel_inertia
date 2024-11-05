@@ -40,7 +40,7 @@
                                         <div v-else class="mt-2" />
 
                                         <component :is="item.disabled ? 'div' : (item.external ? 'a' : Link)"
-                                            :target="item.external ? '_blank' : ''" :href="item.url"
+                                            :target="item.target" :href="item.url"
                                             v-for="item of section.items" :key="item.url" @click="close"
                                             class="nav-item p-5 flex justify-start items-center space-x-6 w-full transition duration-200 hover:bg-base-300"
                                             :class="item.disabled ? 'opacity-50 pointer-events-none' : ''">

@@ -8,12 +8,12 @@
                         section.title }}
                     </div>
                     <div  :class="section.class?section.class:'flex flex-col gap-7 mb-7'">
-                        <component :is="item.disabled?'div':(item.external?'a':Link)" :target="item.external ? '_blank' : ''" :href="item.url"
+                        <component :is="item.disabled?'div':(item.external?'a':Link)" :target="item.target" :href="item.url"
                         v-for="item of section.items" :key="item.url" @click="nav.closeTabs()"
                         class="group flex gap-3 p-3 rounded-lg hover:bg-base-200 transition duration-100 cursor-pointer relative"
                         :class="item.class+(item.disabled?' pointer-events-none':'')">
                             <div class="flex justify-start" style="min-width:2.2rem">
-                                <Icon :icon="item.icon" class="text-3xl text-primary group-hover:text-secondary flex-shrink-0" 
+                                <Icon :icon="item.icon" class="text-3xl text-primary group-hover:text-secondary flex-shrink-0"
                                 :class="item.disabled?'!text-gray-500':''"/>
                             </div>
                             <div class="flex flex-col self-center w-full">

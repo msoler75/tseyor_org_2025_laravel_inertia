@@ -222,7 +222,7 @@ return [
     'muular_electronico' => [
         'auth_url' => env('MUULAR_ELECTRONICO_URL') . '/api/auth.php',
         'saldo_url' => env('MUULAR_ELECTRONICO_URL')  . '/api/saldo.php',
-        'jwt_secret' => env('JWT_SECRET', 'codigo_secreto_12344567')
+        'jwt_secret' => env('JWT_SECRET', 'cualquier_clave')
     ]
 
 ];
