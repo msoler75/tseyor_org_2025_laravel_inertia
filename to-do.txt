@@ -1,3 +1,27 @@
+AJUSTES DE SEGURIDAD MUULAR ELECTRONICO
+-eliminar usuarios que no están en el muular electrónico: delete from usuario where apellidos IS NULL
+-eliminar registros de "campo" que no tienen usuario vinculado: delete from campo WHERE tabla='usuario' AND id NOT IN (SELECT id FROM usuario)
+-la tabla 'campo' tiene duplicados para varios valores de usuarios que son importantes, para encontrarlos:
+
+SELECT
+    tabla,
+    id,
+    campo,
+    COUNT(*) as num_duplicados,
+    GROUP_CONCAT(valor SEPARATOR ' | ') as valores
+FROM campo
+GROUP BY tabla, id, campo
+HAVING COUNT(*) > 1
+ORDER BY num_duplicados DESC, tabla, id, campo;
+
+=Que todos los users tengan limite de 7 muulares x día:
+REPLACE INTO campo (tabla, id, campo, valor)
+SELECT 'usuario', id, 's_ratio', '7x1d'
+FROM usuario;
+
+-comprobación de cuando se hace un responsable de oficina, le llegue el correo electrónico
+
+
 
 HACIENDA
 

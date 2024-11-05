@@ -1,5 +1,5 @@
 const APP_PUZLE_URL = "https://puzle.tseyor.org/";
-const APP_MUULAR_URL = "https://muular.tseyor.org/";
+const APP_MUULAR_URL = "/muular-electronico";
 
 export default [
   {
@@ -61,6 +61,7 @@ export default [
               title: "Facebook",
               url: "http://facebook.com/tseyor",
               external: true,
+              target: "_blank",
               icon: "ph:facebook-logo-duotone",
               class: "text-xs",
             },
@@ -68,6 +69,7 @@ export default [
               title: "X",
               url: "http://twitter.com/tseyor",
               external: true,
+              target: "_blank",
               icon: "bi:twitter-x",
               class: "text-xs",
             },
@@ -75,6 +77,7 @@ export default [
               title: "Youtube",
               url: "http://youtube.com/@tseyor",
               external: true,
+              target: "_blank",
               icon: "bi:youtube",
               class: "text-xs",
             },
@@ -373,22 +376,24 @@ export default [
             },
           ],
         },
-
         {
           title: "Herramientas",
           items: [
             {
               title: "Muular Electrónico",
-              url: "/muular-electronico",
-              description: "Meditaciones para el trabajo interior",
-              icon: "ph:file-text-duotone",
-              disabled: true,
+              url: APP_MUULAR_URL,
+              external: true,
+              target:'_self',
+              description: "Intercambio de bienes y servicios",
+              icon: "ph:swap-duotone",
+              disabled: false,
             },
             {
               title: "Juego del puzle",
               //obtiene de la base del dominio de la app, y le agrega el subdominio puzle.
               url: APP_PUZLE_URL,
               external: true,
+              target: "_blank",
               description: "Juego del puzle con las láminas de abstacción",
               icon: "ph:file-text-duotone",
               disabled: false,
