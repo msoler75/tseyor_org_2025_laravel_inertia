@@ -28,21 +28,21 @@
 
             <!-- Botón de cierre -->
             <button
-                class="z-30 text-2xl absolute flex justify-center items-center top-1 md:top-12 right-4 md:right-12 w-9 h-9 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
-                :class="!showFilename ? 'bg-black bg-opacity-30' : 'md:bg-black md:bg-opacity-30'" aria-hidden="true"
+                class="z-30 text-2xl absolute flex justify-center items-center top-1 lg:top-12 right-4 lg:right-12 w-9 h-9 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
+                :class="!showFilename ? 'bg-black bg-opacity-30' : 'lg:bg-black lg:bg-opacity-30'" aria-hidden="true"
                 @click="handleClose" v-if="showCloseBtn">
                 <Icon icon="material-symbols-light:close" />
             </button>
 
             <!-- Flechas de navegación -->
             <template v-if="visibleArrowBtn">
-                <div class="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black bg-opacity-30 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
+                <div class="absolute left-4 lg:left-12 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black bg-opacity-30 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
                     title="Anterior" @click="toggleImg(false)">
                     <button class="w-6 h-6 flex justify-center items-center">
                         <Icon icon="ph:caret-left-duotone" class="text-xl" />
                     </button>
                 </div>
-                <div class="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black bg-opacity-30 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
+                <div class="absolute right-4 lg:right-12 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black bg-opacity-30 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
                     title="Siguiente" @click="toggleImg(true)">
                     <button class="w-6 h-6 flex justify-center items-center">
                         <Icon icon="ph:caret-right-duotone" class="text-xl" />
@@ -51,7 +51,7 @@
             </template>
 
             <!-- Barra top -->
-            <div class="md:hidden absolute top-0 left-0 w-full text-4xl bg-black bg-opacity-40 py-2 text-gray-300"
+            <div class="lg:hidden absolute top-0 left-0 w-full text-4xl bg-black bg-opacity-40 py-2 text-gray-300"
                 v-if="showFilename && showToolbar">
                 <section class="text-center text-lg px-3">
                     {{ currentImageName }}
@@ -59,8 +59,8 @@
             </div>
 
             <!-- Barra de herramientas -->
-            <div class="absolute bottom-0 md:bottom-[10%] left-0 w-full md:w-auto md:left-1/2 md:-translate-x-1/2 flex flex-col justify-center text-4xl md:text-2xl
-        bg-black bg-opacity-40 md:rounded-2xl py-2 text-gray-300
+            <div class="absolute bottom-0 lg:bottom-[10%] left-0 w-full lg:w-auto lg:left-1/2 lg:-translate-x-1/2 flex flex-col justify-center text-4xl lg:text-2xl
+        bg-black bg-opacity-40 lg:rounded-2xl py-2 text-gray-300
         " v-if="showToolbar">
                 <section class="flex gap-6 justify-center items-center px-4">
                     <button class="cursor-pointer transition-transform duration-200 hover:scale-110" aria-hidden="true"
@@ -90,7 +90,7 @@
                         <Icon icon="ph:download-duotone" />
                     </a>
                 </section>
-                <section v-if="showFilename" class="hidden md:block text-center text-lg px-3">
+                <section v-if="showFilename" class="hidden lg:block text-center text-lg px-3">
                     {{ currentImageName }}
                 </section>
             </div>
@@ -424,4 +424,3 @@ function setScalingZoom(touches) {
 
 </script>
 
-<style scoped></style>
