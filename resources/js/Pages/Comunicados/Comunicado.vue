@@ -1,7 +1,7 @@
 <template>
     <div class="py-12 mx-auto px-0 sm:p-[1rem] sm:container">
 
-        <div class="container px-2 flex justify-between items-center mb-20">
+        <div class="px-3 xs:px-4 sm:px-0 flex justify-between items-center mb-20">
             <Back>Comunicados</Back>
             <AdminLinks modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado" />
             <a class="btn btn-xs btn-error text-white w-fit flex gap-3" :href="route('comunicado.pdf', comunicado.slug)"
@@ -10,7 +10,7 @@
             </a>
         </div>
 
-        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 animate-fade-in px-2 xs:px-3 sm:px-0">
+        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 animate-fade-in px-3 xs:px-4 sm:px-0">
 
             <div class="prose mx-auto">
                 <h1>{{ comunicado.titulo }}</h1>
