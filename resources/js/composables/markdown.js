@@ -16,7 +16,7 @@ turndownService.keep(["span", "sup", "u"]);
 Nuestras conversiones personalizados de markdown <-> HTML
 */
 
-export function replaceQuillEditorClasses(html) {
+/* export function replaceQuillEditorClasses(html) {
   return html.replace(
     /<(\w+)\s(?:[^>]*\s)?((class|style)="[^"]*")/g,
     function (element, tag) {
@@ -56,6 +56,80 @@ export function replaceQuillEditorClasses(html) {
       return "<" + tag + ' style="' + styles.join("; ") + '"';
     }
   );
+} */
+
+function mdImage(imgHtml) {
+  console.log({ imgHtml });
+  const parser = new DOMParser();
+  //removemos parámetros de la url que contenga &, porque rompe el parseo
+  //por ejemplo imagen1.jpg?w=200&h=100
+  const doc = parser.parseFromString(
+    imgHtml.replace(/\?[^\"\']+&[^\"\']*/, ""),
+    "application/xml"
+  );
+  const img = doc.querySelector("img");
+  if (!img) return imgHtml;
+
+  const attributes = Array.from(img.attributes).reduce((acc, attr) => {
+    acc[attr.name] = attr.value;
+    return acc;
+  }, {});
+
+  console.log({ attributes });
+
+  var values = {};
+  var style = "";
+  for (const attr in attributes) {
+    if (attr == "alt" || attr == "src") continue;
+    if (attr == "width" || attr == "height") {
+      values[attr] = attr + "=" + attributes[attr];
+    }
+    if (attr == "style") {
+      style = attributes[attr];
+    }
+  }
+
+  if (style) {
+    // así sobreescribimos  width height
+    const pairs = style.split(/\s*;\s*/);
+    console.log({ pairs });
+    for (const pair of pairs) {
+      const [attr, value] = pair.split(/\s*:\s*/);
+      if (attr == "width" || attr == "height") {
+        values[attr] = attr + "=" + value;
+      }
+    }
+  }
+
+  console.log("html2Md values:", values);
+
+  return (
+    "<img src='" +
+    attributes.src +
+    "' alt='" +
+    attributes.alt +
+    "'>" +
+    (Object.keys(values).length
+      ? "{" + Object.values(values).join(",") + "}"
+      : "")
+  );
+}
+
+
+
+function mdTableSave(htmlTable) {
+    console.log("mdTable", htmlTable);
+    return htmlTable.replace(/<p/g, '<tdp').replace(/<\/p/g, '</tdp');
+}
+
+function mdTableRestore(htmlTable) {
+    console.log("mdTable", htmlTable);
+    return htmlTable.replace(/<tdp/g, '<p').replace(/<\/tdp/g, '</p');
+}
+
+function mdParagraph(htmlParagraph) {
+    console.log("mdParagraph", htmlParagraph);
+    return htmlParagraph.replace(/<p style=["']([^>]*)["'][^>]*>/g, "$&{style=$1}")
 }
 
 export function HtmlToMarkdown(html) {
@@ -74,68 +148,14 @@ export function HtmlToMarkdown(html) {
 
   const md = turndownService.turndown(
     html
-      // reemplazamos los atributos de imagen
-      .replace(/<img\s+[^>]+\/?>/g, (imgHtml) => {
-        console.log({ imgHtml });
-        const parser = new DOMParser();
-        //removemos parámetros de la url que contenga &, porque rompe el parseo
-        //por ejemplo imagen1.jpg?w=200&h=100
-        const doc = parser.parseFromString(
-          imgHtml.replace(/\?[^\"\']+&[^\"\']*/, ""),
-          "application/xml"
-        );
-        const img = doc.querySelector("img");
-        if (!img) return imgHtml;
+      .replace(/<img\s+[^>]+\/?>/g, mdImage)       // reemplazamos los atributos de imagen
+      .replace(/<table\s+[^>]+\/?>(.*)?<\/table>/mg, mdTableSave)  // reescribimos tablas para que queden igual
+      .replace(/<p.*?<\/p>/mg, mdParagraph)  // reemplazamos estilos de párrafo
+      .replace(/<table\s+[^>]+\/?>(.*)?<\/table>/mg, mdTableRestore) // restauramos tablas
 
-        const attributes = Array.from(img.attributes).reduce((acc, attr) => {
-          acc[attr.name] = attr.value;
-          return acc;
-        }, {});
-
-        console.log({ attributes });
-
-        var values = {};
-        var style = "";
-        for (const attr in attributes) {
-          if (attr == "alt" || attr == "src") continue;
-          if (attr == "width" || attr == "height") {
-            values[attr] = attr + "=" + attributes[attr];
-          }
-          if (attr == "style") {
-            style = attributes[attr];
-          }
-        }
-
-        if (style) {
-          // así sobreescribimos  width height
-          const pairs = style.split(/\s*;\s*/);
-          console.log({ pairs });
-          for (const pair of pairs) {
-            const [attr, value] = pair.split(/\s*:\s*/);
-            if (attr == "width" || attr == "height") {
-              values[attr] = attr + "=" + value;
-            }
-          }
-        }
-
-        console.log({ values });
-
-        return (
-          "<img src='" +
-          attributes.src +
-          "' alt='" +
-          attributes.alt +
-          "'>" +
-          (Object.keys(values).length
-            ? "{" + Object.values(values).join(",") + "}"
-            : "")
-        );
-      })
-      // reemplazamos los estilos de párrafo
-      .replace(/<p style=["']([^>]*)["'][^>]*>/g, "$&{style=$1}")
       // eliminamos estilos innecesarios
       .replace(/{style=text-align:\s*left;?}/g, "")
-      .replace(/{width=auto,\s*height=auto/g, "") // removemos estilos innecesarios
+      .replace(/{width=auto,\s*height=auto/g, "")
   );
 
   console.log({ md });
@@ -170,7 +190,6 @@ export function MarkdownToHtml(raw_markdown) {
     }
   );
 
-
   var html = converter
     .makeHtml(raw_markdown)
 
@@ -182,21 +201,22 @@ export function MarkdownToHtml(raw_markdown) {
         return match;
       });
       return img.replace("<img", "<img " + values.join(" "));
-    })
+    });
 
-    console.log('step1 html', html)
+  console.log("step1 html", html);
 
-    html = html
+  html = html
     // reemplazamos los párrafos con estilos
-    .replace(/<p>{style=([^}]*)}/g, "<p style='$1'>")
+    .replace(/<p>{style=([^}]*)}/g, "<p style='$1'>");
 
+  // reemplazamos los estilos tras un salto de linea <br>
+  html = html.replace(
+    /<br\s*\/>\n?{style=([^}]*)}(.*?)<\/p>/gs,
+    "</p><p style='$1'>$2</p>"
+  );
 
-    // reemplazamos los estilos tras un salto de linea <br>
-    html = html.replace(/<br\s*\/>\n?{style=([^}]*)}(.*?)<\/p>/gs, "</p><p style='$1'>$2</p>")
-
-
-    console.log('step2 html', html)
-    html = html
+  console.log("step2 html", html);
+  html = html
     // quitamos los espacios sobrantes
     .replace(/<p>\s+<\/p>\n?/g, "")
     .replace(/\n/g, "")
@@ -218,7 +238,7 @@ function _toHtmlTables(html) {
 
   // Recorrer cada celda y convertir su contenido de Markdown a HTML
   tds.forEach((td) => {
-    td.innerHTML = MarkdownToHtml(td.innerHTML);
+    td.innerHTML = MarkdownToHtml(td.innerHTML.replace(/{style[^}]+}/g, "")); // limpiamos errores de formato extra {style=...}
   });
 
   // Devolver el HTML modificado

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Pigmalion;
 
 use Illuminate\Support\Str;
@@ -17,14 +16,12 @@ class Markdown
     public static $imagenesExtraidas = [];
     public static $carpetaCreada = null;
 
-
     /**
      * Convierte a formato Markdown desde HTML
      */
     public static function toHtml($md)
     {
         $html = Str::markdown($md);
-
 
         // Reemplazar imágenes con atributos
         $html = preg_replace_callback('/(<img[^>]*>){(\w+=[^}]+)}/', function ($match) {
@@ -37,8 +34,6 @@ class Markdown
             }
             return str_replace('<img', '<img ' . implode(' ', $values), $img);
         }, $html);
-
-
 
         // Reemplazar párrafos con estilos
         $html = preg_replace('/<p>{\s*style=([^}]*)\s*}/', "<p style='$1'>", $html);
@@ -116,6 +111,7 @@ class Markdown
         foreach ($td->childNodes as $nodo) {
             $contenidoHTML .= $td->ownerDocument->saveHTML($nodo);
         }
+
 
         // procesamos el interior de la celda
         $contenidoHTML = self::toHtml($contenidoHTML);
