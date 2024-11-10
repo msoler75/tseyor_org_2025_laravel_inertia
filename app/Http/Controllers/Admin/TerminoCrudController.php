@@ -79,7 +79,7 @@ class TerminoCrudController extends CrudController
     {
         CRUD::setValidation([
             'nombre' => 'required|min:1',
-            'slug' => [ \Illuminate\Validation\Rule::unique('terminos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('terminos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'required|max:400'
         ]);
         // CRUD::setValidation(EntradaRequest::class);

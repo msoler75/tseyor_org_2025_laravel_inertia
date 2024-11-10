@@ -105,7 +105,7 @@ class TutorialCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => [ \Illuminate\Validation\Rule::unique('tutoriales', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('tutoriales', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'max:400',
             // 'audios' => ValidUploadMultiple::field()->file('max:20000'),
         ]);

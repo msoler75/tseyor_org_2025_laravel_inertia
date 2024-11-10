@@ -65,7 +65,7 @@ class SalaCrudController extends CrudController
     {
         CRUD::setValidation([
             'nombre' => 'required',
-            'slug' => [ \Illuminate\Validation\Rule::unique('salas', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('salas', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'enlace' => 'required',
         ]);
         CRUD::setFromDb(); // set fields from db columns.
