@@ -95,7 +95,7 @@ class ContactoCrudController extends CrudController
     {
         CRUD::setValidation([
             'nombre' => 'required',
-            'slug' => [ \Illuminate\Validation\Rule::unique('contactos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('contactos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'imagen' => 'required|max:255',
             'pais' => 'required',
             'provincia' => 'required|max:64',

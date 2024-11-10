@@ -101,7 +101,7 @@ class PublicacionCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|min:8',
-            'slug' => [ \Illuminate\Validation\Rule::unique('publicaciones', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('publicaciones', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'max:400',
         ]);
 

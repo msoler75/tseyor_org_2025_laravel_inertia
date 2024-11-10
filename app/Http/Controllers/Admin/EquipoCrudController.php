@@ -100,7 +100,7 @@ class EquipoCrudController extends CrudController
     {
         CRUD::setValidation([
             'nombre' => 'required|min:8',
-            'slug' => [ \Illuminate\Validation\Rule::unique('equipos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('equipos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'required|max:400',
             'anuncio' => 'max:400',
             'informacion' => 'max:400',
