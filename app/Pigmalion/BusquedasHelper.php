@@ -158,6 +158,9 @@ class BusquedasHelper
                 // Log::info('formatearResultados ' . $item->id);
                 $_x = new \App\T("BusquedasHelper", "formatearResultados_item");
 
+                $busqueda_primaria = $words_primary;
+                $busqueda_secundaria = $words_secondary;
+
                 // \App\Pigmalion\AccentRemover::benchmark($item->texto);
                 if ($soloTitulo)
                     unset($item['descripcion']);
