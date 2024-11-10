@@ -1,7 +1,8 @@
 <template>
     <div class="sticky top-16 flex justify-center w-full z-30"
         :class="selectBreakpoint == 'lg' ? 'lg:hidden' : selectBreakpoint == 'md' ? 'md:hidden' : selectBreakpoint == 'sm' ? 'sm:hidden' : 'xs:hidden'">
-        <select class="mx-auto categorias max-w-full" @change="onCategoria" :class="selectClass">
+        <select class="mx-auto categorias max-w-full" @change="onCategoria" :value="selectHrefActual"
+            :class="selectClass">
             <option v-for="categoria of categorias" :key="categoria.nombre" :value="categoria.href"
                 :selected="actual == categoria.valor">{{ ucFirst(categoria.nombre) }}
                 <small v-if="categoria.total > 0">({{ categoria.total }})</small>
@@ -12,7 +13,7 @@
         :class="divClass + ' ' + (columnaBreakpoint == '2xl' ? '2xl:flex-col' : columnaBreakpoint == 'xl' ? 'xl:flex-col' : columnaBreakpoint == 'lg' ? 'lg:flex-col' : columnaBreakpoint == 'md' ? 'md:flex-col' : '') + ' ' +
             (selectBreakpoint == 'lg' ? 'lg:flex' : selectBreakpoint == 'md' ? 'md:flex' : selectBreakpoint == 'sm' ? 'sm:flex' : 'xs:flex')">
         <Link v-for="categoria of categorias" :key="categoria.nombre" :href="categoria.href"
-            :class="actual == categoria.valor ? 'text-primary font-bold' : ''" @click="clickCategoria(categoria.valor)"
+            :class="actual.toLowerCase() == categoria.valor.toLowerCase() ? 'text-primary font-bold' : ''" @click="clickCategoria(categoria.valor)"
             :only="only" :preserve-state="preserveState" :preserve-scroll="preserveScroll" :replace="replace"
             @finish="emit('finish')">
 
@@ -58,7 +59,7 @@ const props = defineProps({
 
 })
 
-// ha de emitir un evento click, con el valor 
+// ha de emitir un evento click, con el valor
 
 const emit = defineEmits(['click', 'finish'])
 
@@ -112,7 +113,7 @@ function onCategoria(event) {
     // const elem = document.querySelector('select.categorias')
     // console.log(elem.value)
     const url = event.target.value
-    
+
     router.visit(url, {
         preserveScroll: props.preserveScroll,
         preserveState: props.preserveState, replace: props.replace,
@@ -132,4 +133,14 @@ function clickCategoria(valor) {
     emit('click', valor)
 }
 
+
+onMounted(() => {
+    seleccionado.value = obtenerValorDeUrl(page.url)
+    console.log('Categorias. onMounted', seleccionado.value)
+})
+
+const selectHrefActual = computed(() => {
+    const c = categorias.value.find(x => x.valor.toLowerCase() == seleccionado.value.toLowerCase());
+    return c?.href
+})
 </script>

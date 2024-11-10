@@ -3,7 +3,7 @@
 
         <Section :height="screen && screen.width < 768 ? '400px' : '550px'" style="--sectionHeight: 500px">
             <TextImage title="Universidad Tseyor de Granada" srcImage="/almacen/medios/logos/utg.jpg" srcWidth="819"
-                srcHeight="1191" image-right buttonLabel="Ver Estatutos" href="/utg/estatutos" :image-lazy="false">
+                srcHeight="1191" image-right buttonLabel="Ver Estatutos" :href="estatutosUrl" :image-lazy="false">
                 <Prose>
                     <blockquote>
                         <p>
@@ -55,22 +55,25 @@
 
         <Section class="py-14">
             <div class="container mx-auto space-y-12 py-12">
-                <h2>Departamentos</h2>
-                <GridFill w="24rem">
-                    <Link :href="route('utg.departamento', departamento.slug)"
-                        class="group font-bold text-lg flex gap-3 items-start" v-for="departamento of departamentos"
-                        :key="departamento.nombre">
-                    <div class="overflow-hidden flex-shrink-0">
-                        <Image :src="departamento.imagen" width="100" />
-                    </div>
-                    <div class="transition duration-250 text-primary group-hover:text-secondary">
-                        {{ departamento.nombre }}
-                    </div>
-                    </Link>
+                <h2>Espacios de los Equipos y Departamentos</h2>
+                <span>A continuación encontraréis algunos de los equipos y departamentos de la UTG. El listado completo
+                    está en
+                    los
+                    <Link :href="estatutosUrl" class="text-primary hover:underline">estatutos de la UTG</Link> en el
+                    apartado
+                    4.1
+                </span>
+                <GridFill w="36rem" class="gap-4">
+                    <CardContent
+                    v-for="departamento of departamentos"
+                    :key="departamento.nombre"
+                    :href="route('utg.departamento', departamento.slug)"
+                    :image="departamento.imagen"
+                        :title="departamento.nombre"/>
                 </GridFill>
                 <div class="flex justify-end">
                     <Link :href="route('utg.departamentos')" class="flex gap-3 items-center">
-                    <Icon icon="ph:arrow-fat-line-right-duotone" />Ver todos los Departamentos</Link>
+                    <Icon icon="ph:arrow-fat-line-right-duotone" />Ver todos los Equipos</Link>
                 </div>
             </div>
         </Section>
@@ -98,6 +101,7 @@
 
 
 defineProps({
-    departamentos: {}
+    departamentos: {},
+    estatutosUrl: {}
 })
 </script>

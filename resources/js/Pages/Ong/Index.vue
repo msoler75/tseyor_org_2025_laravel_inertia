@@ -5,7 +5,7 @@
                 <Prose>
 
                     <img src="/archivos/logos/logo-ong-mundo-armonico.JPG"
-                        class="w-full h-auto max-w-[709px] aspect-[709/278]" />
+                        class="w-full h-auto max-w-[709px] aspect-[709/278]" alt="ONG Mundo Armónico Tseyor"/>
                     <blockquote>
                         <p>Se está preparando un gran cambio y ello comportará también grandes dificultades. Nuestro
                             grupo, el grupo Tseyor, pondrá su granito de arena para paliarlas.</p>
