@@ -107,7 +107,7 @@ class PaginaCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+        $this->crud->setValidation([
             'titulo' => 'required|min:3',
             'ruta' => [ \Illuminate\Validation\Rule::unique('paginas', 'ruta')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'max:400',

@@ -32,7 +32,7 @@ class StoreComunicadoRequest extends FormRequest
 
         return [
             'titulo' => 'required|min:7|max:255',
-            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('comunicados', 'slug')->ignore($comunicadoId) ],
+            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('comunicados', 'slug')->ignore($comunicadoId) ],
             'texto' => 'required',
             'numero' => 'required|numeric|min:1|max:99999',
             'categoria' => 'required',
@@ -69,5 +69,19 @@ class StoreComunicadoRequest extends FormRequest
             if ($existingComunicado)
                 $validator->errors()->add('numero', 'Ya existe otro comunicado con este número y categoría');
         });
+    }
+
+
+
+       /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'slug.regex' => 'El slug solo puede contener letras minúsculas, números y guiones.',
+        ];
     }
 }

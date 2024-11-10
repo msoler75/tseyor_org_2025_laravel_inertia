@@ -102,13 +102,13 @@ class EntradaCrudController extends CrudController
          // Obtén el ID del registro actual (solo disponible en la operación de edición)
         $id = $this->crud->getCurrentEntryId();
 
-        CRUD::setValidation([
+        $this->crud->setValidation([
             'titulo' => 'required|min:8',
-            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('entradas', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('entradas', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'max:400',
             'texto' => 'required',
         ]);
-        // CRUD::setValidation(EntradaRequest::class);
+        // $this->crud->setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**

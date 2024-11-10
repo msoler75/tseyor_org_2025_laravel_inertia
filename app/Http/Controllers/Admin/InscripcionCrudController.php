@@ -74,7 +74,7 @@ class InscripcionCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(InscripcionRequest::class);
+        // $this->crud->setValidation(InscripcionRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**

@@ -108,14 +108,14 @@ class LibroCrudController extends CrudController
     protected function setupCreateOperation()
     {
 
-        CRUD::setValidation([
+        $this->crud->setValidation([
             'titulo' => 'required|min:4|max:255',
-            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('libros', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('libros', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'required|max:2048',
             'imagen' => 'required',
             'pdf' => ValidUpload::field('required')->file('mimes:pdf'),
         ]);
-        // CRUD::setValidation(EntradaRequest::class);
+        // $this->crud->setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**

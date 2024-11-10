@@ -71,9 +71,9 @@ class VideoCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+        $this->crud->setValidation([
             'titulo' => 'required|min:2',
-            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('videos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('videos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
         ]);
         // CRUD::setFromDb(); // set fields from db columns.
 

@@ -93,9 +93,9 @@ class ContactoCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+        $this->crud->setValidation([
             'nombre' => 'required',
-            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('contactos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('contactos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'imagen' => 'required|max:255',
             'pais' => 'required',
             'provincia' => 'required|max:64',

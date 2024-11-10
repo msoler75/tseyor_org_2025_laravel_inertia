@@ -125,7 +125,7 @@ class InformeCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+        $this->crud->setValidation([
             'titulo' => 'required|min:8',
             'slug' => [\Illuminate\Validation\Rule::unique('informes', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'max:400',

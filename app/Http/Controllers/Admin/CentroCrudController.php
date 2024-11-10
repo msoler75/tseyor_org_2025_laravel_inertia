@@ -85,7 +85,7 @@ class CentroCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+        $this->crud->setValidation([
             'nombre' => 'required|min:8',
             'slug' => [\Illuminate\Validation\Rule::unique('centros', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'required|max:400',

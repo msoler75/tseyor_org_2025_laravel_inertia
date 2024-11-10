@@ -91,7 +91,7 @@ class LugarCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(LugarRequest::class);
+        // $this->crud->setValidation(LugarRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**

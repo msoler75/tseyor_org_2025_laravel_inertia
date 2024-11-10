@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 use App\Models\Comunicado;
 use App\Rules\DropzoneRule;
+use App\Pigmalion\StorageItem;
 
 // https://github.com/jargoud/laravel-backpack-dropzone
 
@@ -32,9 +33,7 @@ class StoreAudioRequest extends FormRequest
 
         $rules = [
             'titulo' => 'required|min:8',
-            'slug' => [
-                \Illuminate\Validation\Rule::unique('audios', 'slug')->ignore($audioId),
-            ],
+            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('audios', 'slug')->ignore($audioId)],
             'audio' => 'nullable|file|mimes:mp3',
             'enlace' => 'nullable|url'
         ];
@@ -42,6 +41,18 @@ class StoreAudioRequest extends FormRequest
         return $rules;
     }
 
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'slug.regex' => 'El slug solo puede contener letras minúsculas, números y guiones.',
+        ];
+    }
 
 
     public function withValidator($validator)
@@ -54,16 +65,40 @@ class StoreAudioRequest extends FormRequest
             if ($audioId) {
                 // Estamos editando un Audio existente
                 $audio = \App\Models\Audio::find($audioId);
-                $mp3Existente = $audio->audio;
+                $mp3Previo = $audio->audio;
+                $newAudio = $_REQUEST['audio'] ?? null;
+                $deletedAudio = isset($_REQUEST['audio']) && $newAudio === "";
+                $enlaceAmbos = isset($_REQUEST['enlace']) ? $enlace : $audio->enlace;
+                $mp3Ambos = isset($_FILES["audio"]["name"]) ? "nuevo" : (isset($_REQUEST['audio']) ? $mp3 : $mp3Previo);
 
-                if (empty($enlace) && empty($mp3) && empty($mp3Existente)) {
-                    $validator->errors()->add('audio', 'Debes proporcionar un enlace o un archivo de audio.');
+                if ($deletedAudio) {
+                    // hemos borrado el audio mp3
+                    if (empty($enlace) && empty($mp3))
+                        $validator->errors()->add('audio', 'Debes proporcionar un enlace o un archivo de audio.');
+                } else {
+
+                    $audioLoc = $mp3Previo;
+
+                    $loc = null;
+                    if ($audioLoc)
+                        $loc = new StorageItem($audioLoc);
+
+                    $mp3Existente = $mp3Previo && $loc->exists();
+
+                    if (empty($enlace) && empty($mp3) && !$mp3Existente)
+                        $validator->errors()->add('audio', 'Debes proporcionar un enlace o un archivo de audio.');
+
+
+                    if ($enlaceAmbos && $mp3Ambos)
+                        $validator->errors()->add('audio', 'Debes proporcionar un enlace O un archivo de audio. Pero no ambos.');
                 }
             } else {
                 // Estamos creando un nuevo Audio
-                if (empty($enlace) && empty($mp3)) {
+                if (empty($enlace) && empty($mp3))
                     $validator->errors()->add('audio', 'Debes proporcionar un enlace o un archivo de audio.');
-                }
+
+                if (!empty($enlace) && !empty($mp3))
+                    $validator->errors()->add('audio', 'Debes proporcionar un enlace O un archivo de audio. Pero no ambos.');
             }
         });
     }
