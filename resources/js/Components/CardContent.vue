@@ -37,7 +37,7 @@
             <h2 v-if="title"
                 class="text-lg text-left font-bold mb-3 transition duration-300 group-hover:!text-secondary  group-hover:drop-shadow leading-5"
                 v-html="title" />
-            <ConditionalLink :tag="div" :is-link="tagLink" :href="tagLink" v-if="tag" class="flex justify-between mb-3 max-w-full">
+            <ConditionalLink tag="div" :is-link="!!tagLink" :href="tagLink" v-if="tag" class="flex justify-between mb-3 max-w-full">
                 <div class="truncate overflow-hidden inline-block badge badge-primary badge-outline max-w-[12rem]"
                 :class="tagLink?'hover:text-secondary hover:drop-shadow':''">{{
                     tag }}
@@ -78,7 +78,7 @@ const props = defineProps({
         default: 300
     },
     tag: String,
-    tagLink: String,
+    tagLink: {type: String, default: 'a'},
     draft: { type: Boolean, default: false },
     description: String,
     maxLength: { type: Number, default: 1024 },
