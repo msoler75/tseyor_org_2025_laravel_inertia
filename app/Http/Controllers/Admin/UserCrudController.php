@@ -128,7 +128,7 @@ class UserCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        /*CRUD::setValidation([
+        /*$this->crud->setValidation([
             'name' => 'required|min:2',
             'password' =>'required|min:6'
         ]);*/
@@ -155,7 +155,7 @@ class UserCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        /*CRUD::setValidation([
+        /*$this->crud->setValidation([
             'name' => 'required|min:2',
         ]);*/
         //CRUD::setFromDb(); // set fields from db columns.

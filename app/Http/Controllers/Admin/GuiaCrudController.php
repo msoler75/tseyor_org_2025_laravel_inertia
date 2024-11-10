@@ -65,9 +65,9 @@ class GuiaCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-         CRUD::setValidation([
+         $this->crud->setValidation([
             'nombre' => 'required|min:2',
-            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('guias', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('guias', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
             'descripcion' => 'required|max:65000',
             'imagen' =>'required'
         ]);

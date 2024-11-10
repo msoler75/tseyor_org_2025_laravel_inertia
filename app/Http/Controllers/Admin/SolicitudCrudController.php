@@ -93,7 +93,7 @@ class SolicitudCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(SolicitudRequest::class);
+        // $this->crud->setValidation(SolicitudRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**

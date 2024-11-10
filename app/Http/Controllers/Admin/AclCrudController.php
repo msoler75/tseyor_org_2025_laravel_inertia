@@ -101,7 +101,7 @@ class AclCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(AclRequest::class);
+        // $this->crud->setValidation(AclRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**
@@ -125,7 +125,7 @@ class AclCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        // CRUD::setValidation(AclRequest::class);
+        // $this->crud->setValidation(AclRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**

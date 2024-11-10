@@ -94,7 +94,7 @@ class ExperienciaCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+        $this->crud->setValidation([
             // 'name' => 'required|min:2',
             'texto' => 'required|max:65000'
         ]);

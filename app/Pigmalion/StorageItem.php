@@ -156,6 +156,8 @@ class StorageItem
      */
     public static function fromUrl($url)
     {
+        if(!preg_match("#^https?:\/\/#", $url))
+            throw new \Exception("StorageItem::fromUrl: URL no válida $url");
         $base_public = Storage::disk('public')->url('');
         $base_archivos = Storage::disk('archivos')->url('');
         if (strpos($url, $base_public) === 0) {

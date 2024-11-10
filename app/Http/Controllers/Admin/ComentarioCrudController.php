@@ -63,7 +63,7 @@ class ComentarioCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        // CRUD::setValidation(ComentarioRequest::class);
+        // $this->crud->setValidation(ComentarioRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**

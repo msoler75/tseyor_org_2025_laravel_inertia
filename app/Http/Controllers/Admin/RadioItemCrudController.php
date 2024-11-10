@@ -63,7 +63,7 @@ class RadioItemCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+        $this->crud->setValidation([
             'titulo' => 'required',
             'url' => 'required',
             'duracion' => 'required',

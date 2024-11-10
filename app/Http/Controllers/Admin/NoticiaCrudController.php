@@ -103,13 +103,20 @@ class NoticiaCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
-            'titulo' => 'required|min:8',
-            'slug' => [ 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('noticias', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
-            'descripcion' => 'max:400',
-            'texto' => 'required|max:65000',
-        ]);
-        // CRUD::setValidation(EntradaRequest::class);
+        $this->crud->setValidation(
+            [
+                'titulo' => 'required|min:8',
+                'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('noticias', 'slug')->ignore($this->crud->getCurrentEntryId())],
+                'descripcion' => 'max:400',
+                'texto' => 'required|max:65000',
+            ],
+            [
+                'slug.regex' => 'El slug solo puede contener letras minúsculas, números y guiones.',
+            ]
+        );
+
+
+        // $this->crud->setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**
@@ -119,7 +126,7 @@ class NoticiaCrudController extends CrudController
 
         $folder = $this->getMediaFolder();
 
-        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
 
         CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder]);
 
@@ -132,7 +139,6 @@ class NoticiaCrudController extends CrudController
             ->wrapper([
                 'class' => 'form-group col-md-3'
             ]);
-
     }
 
     /**
@@ -170,20 +176,20 @@ class NoticiaCrudController extends CrudController
         $contenido = Noticia::findOrFail($id);
 
         try {
-          // inicializa el importador en base a $_FILES
-          $imported = new WordImport();
+            // inicializa el importador en base a $_FILES
+            $imported = new WordImport();
 
-          // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
-          $imported->copyImagesTo($this->getMediaFolder($contenido), true);
+            // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
+            $imported->copyImagesTo($this->getMediaFolder($contenido), true);
 
-          // ahora las imagenes están con la nueva ubicación
-          $contenido->texto = $imported->content;
+            // ahora las imagenes están con la nueva ubicación
+            $contenido->texto = $imported->content;
 
-          $contenido->save();
+            $contenido->save();
 
-          return response()->json([
-              "id" => $contenido->id
-          ], 200);
+            return response()->json([
+                "id" => $contenido->id
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 "error" => $e->getMessage()

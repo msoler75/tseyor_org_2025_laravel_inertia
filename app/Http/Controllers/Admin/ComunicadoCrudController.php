@@ -115,8 +115,8 @@ class ComunicadoCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(StoreComunicadoRequest::class);
-        /*CRUD::setValidation([
+        $this->crud->setValidation(StoreComunicadoRequest::class);
+        /*$this->crud->setValidation([
             'titulo' => 'required|min:7|max:255',
             'texto' => 'required',
             'numero' => 'required|numeric|min:1|max:9999',
@@ -250,7 +250,6 @@ class ComunicadoCrudController extends CrudController
 
             }
         });
-
     }
 
 

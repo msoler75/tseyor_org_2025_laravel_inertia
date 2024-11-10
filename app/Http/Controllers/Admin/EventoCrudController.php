@@ -93,14 +93,14 @@ class EventoCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+        $this->crud->setValidation([
             'titulo' => 'required|min:8',
             'slug' => [\Illuminate\Validation\Rule::unique('eventos', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'required|max:400',
             'texto' => 'required|max:65000',
             'fecha_inicio' => 'required',
         ]);
-        // CRUD::setValidation(EntradaRequest::class);
+        // $this->crud->setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
         /**

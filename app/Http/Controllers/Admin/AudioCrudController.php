@@ -8,6 +8,7 @@ use Backpack\CRUD\app\Library\Validation\Rules\ValidUpload;
 use Illuminate\Validation\Rule;
 use App\Http\Requests\StoreAudioRequest;
 use App\Models\Audio;
+use App\Pigmalion\StorageItem;
 
 /**
  * Class AudioCrudController
@@ -22,6 +23,7 @@ class AudioCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
+    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -49,13 +51,11 @@ class AudioCrudController extends CrudController
             'type'  => 'text'
         ]);
 
-
         $this->crud->addColumn([
             'name' => 'updated_at',
             'label' => 'Modificado',
             'type' => 'datetime',
         ]);
-
 
         $this->crud->addColumn([
             'name'  => 'categoria',
@@ -81,7 +81,7 @@ class AudioCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(StoreAudioRequest::class);
+        $this->crud->setValidation(StoreAudioRequest::class);
 
         CRUD::setFromDb(); // set fields from db columns.
 
@@ -91,7 +91,8 @@ class AudioCrudController extends CrudController
          */
 
         // donde se guardan los archivos de audio
-        $folder = "medios/audios"; // así funciona con upload y disco 'public'
+        // $folder = "medios/audios"; // así funciona con upload y disco 'public'
+        $folder = $this->getMediaFolder();
 
         CRUD::field('slug')->type('text')->hint('Puedes dejarlo en blanco');
 
@@ -99,12 +100,18 @@ class AudioCrudController extends CrudController
 
         CRUD::field('enlace')->type('text')->hint('Solo si es un audio externo, poner la url aquí. En tal caso no debe subirse el archivo audio en el campo anterior.');
 
+
+        // truco para el campo 'upload' de backpack
+        $loc = new StorageItem($folder);
+        $relativeFolder = $loc->relativeLocation;
+
         CRUD::field('audio')->type('upload')
             ->withFiles([
                 'disk' => 'public', // the disk where file will be stored
-                'path' => $folder, // the path inside the disk where file will be stored
+                'path' => $relativeFolder, // the path inside the disk where file will be stored
             ])
-            ->attributes(['accept' => ".mp3"]);
+            ->attributes(['accept' => ".mp3"])
+            ->allowMediaLibraryDeletion(true);
 
         CRUD::addField([   // select_from_array
             'name'        => 'categoria',
@@ -128,6 +135,11 @@ class AudioCrudController extends CrudController
         ]);
 
         CRUD::field('visibilidad')->type('visibilidad');
+
+        Audio::saved(function ($audio) {
+            //dd($audio);
+
+        });
     }
 
 

@@ -118,7 +118,7 @@ class NodoCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation([
+        $this->crud->setValidation([
             'ubicacion' => 'required|min:2',
             'permisos' => 'required',
         ]);
