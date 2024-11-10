@@ -84,7 +84,7 @@
                     v-if="(selectors.vistaComunicados == VISTA_TARJETAS) && listado.data && listado.data?.length > 0"
                     class="gap-4" col-width="20rem">
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
-                        :image="contenido.imagen" image-class="h-80" :href="route('comunicado', contenido.slug)"
+                        :image="contenido.imagen" image-class="h-80" :href="route('comunicado', contenido.slug)+resultadoQueryBusqueda"
                         :description="contenido.descripcion" :date="contenido.published_at" imageLeft
                         class="max-h-[14rem] overflow-hidden"
                         />
@@ -162,7 +162,7 @@
                             <div class="bg-base-100 px-5 py-3 max-h-[300px] overflow-y-auto divide-y divide-dashed"
                                 v-show="!extractos_colapsado[index]">
                                 <div v-if="!comunicado.extractos?.length" class="text-neutral opacity-75">
-                                    <em>No se han podido precisar los resultados.</em>
+                                    <em>No hay resultados relevantes.</em>
                                 </div>
                                 <div v-for="extracto, index of comunicado.extractos" :key="index" class="py-3">
                                     <div v-html="extracto" />
@@ -243,10 +243,9 @@ for (var i = 2004; i <= añoActual; i++)
 
 const query = ref("")
 const resultadoQueryBusqueda = computed(() => {
-    /*if(props.filtrado) {
+    if(props.filtrado) {
         return `?busqueda=${props.filtrado}`
     }
-    */
     return ''
 })
 
@@ -272,8 +271,10 @@ console.log('(setup) ex=', busqueda.value.completo)
 onMounted(() => {
     watch(query, () => {
         // console.log('query', query.value)
-        if (!query.value && !vistaBusquedaCompleta.value)
+        if (!query.value) // && !vistaBusquedaCompleta.value)
             busqueda.value.orden = 'recientes'
+        else
+            busqueda.value.orden = 'relevancia'
 
     })
 })
@@ -281,7 +282,7 @@ onMounted(() => {
 watch(vistaBusquedaCompleta, (v) => {
     console.log('watched vistaBusquedaCompleta', v)
     if (v) {
-        query.value = ""
+        // query.value = ""
         busqueda.value.orden = 'relevancia'
     }
     else if (!query.value)

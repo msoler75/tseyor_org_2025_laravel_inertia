@@ -318,7 +318,7 @@ class Comunicado extends ContenidoConAudios
             // <- Always include the primary key
             'title' => $this->titulo,
             'description' => $this->descripcion,
-            'content' => $this->texto,
+            'content' => \App\Pigmalion\Markdown::removeMarkdown($this->texto),
             'categoria' => $this->categoria,
             'numero' => $this->numero,
             // 'fecha_comunicado' => $this->fecha_comunicado,

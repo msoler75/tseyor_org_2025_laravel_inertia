@@ -90,7 +90,7 @@ class Informe extends ContenidoConAudios
             // <- Always include the primary key
             'title' => $this->titulo,
             'description' => $this->descripcion,
-            'content' => $this->texto,
+            'content' => \App\Pigmalion\Markdown::removeMarkdown($this->texto),
         ];
     }
 }

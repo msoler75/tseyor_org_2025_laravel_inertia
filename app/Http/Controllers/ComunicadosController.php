@@ -40,27 +40,55 @@ class ComunicadosController extends Controller
         if ($completo == "0")
             $completo = false;
 
+        $campos = ['id', 'slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano', 'imagen'];
+        $campos_busqueda = ['id', 'slug', 'titulo', 'descripcion', 'texto', 'fecha_comunicado', 'categoria', 'ano', 'imagen'];
+        $ordenarPorIds = null;
+
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
+            list($frase_exacta, $busqueda_sin_frase_exacta) = BusquedasHelper::obtenerFraseExacta($buscar);
             $numero = preg_replace("/TAP|\s+/i", "", $buscar);
+            // búsqueda por nº de comunicado, también acepta poner "TAP 33" para indicar que es un comunicado TAP
             if (is_numeric($numero))
-                $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano', 'imagen'])
+                $resultados = Comunicado::select($campos)
                     ->where(function ($query) use ($numero) {
                         $query->where('numero', str_pad($numero, 3, "0", STR_PAD_LEFT))
                             ->orWhere('numero', str_pad($numero, 2, "0", STR_PAD_LEFT))
                             ->orWhere('numero', $numero);
-                    })
-                    ->where('visibilidad', 'P');
-            else {
-                $resultados = BusquedasHelper::buscar(Comunicado::class, $buscar);
+                    });
+            // buscamos frase exacta
+            else if ($frase_exacta) {
+                $resultados = Comunicado::select($campos_busqueda)
+                    ->whereRaw("MATCH(texto) AGAINST(? IN NATURAL LANGUAGE MODE)", ["'\"" . $frase_exacta . "\"'"]);
+
+                // debe cumplir que la frase exacta y otras palabras aparecen en el texto
+                if ($busqueda_sin_frase_exacta)
+                    $resultados->whereIn('id', BusquedasHelper::buscar(Comunicado::class, $busqueda_sin_frase_exacta)->get()->pluck('id')->toArray());
+            } else {
+                // busqueda general
+
+                // primero buscamos la frase de búsqueda tal cual, lo cual serán resultados prioritarios
+                $idsPrioritarios = Comunicado::select('id')
+                    ->whereRaw("MATCH(texto) AGAINST(? IN NATURAL LANGUAGE MODE)", ["'\"" . $buscar . "\"'"])->get()->pluck('id');
+
+                $idsSecundarios = BusquedasHelper::buscar(Comunicado::class, $buscar)->get()->pluck('id');
+
+                // Combinamos todos los IDs, y eliminamos duplicados
+                $ordenarPorIds = $idsPrioritarios->concat($idsSecundarios)->unique();
+
+                // Ahora hacemos la consulta final
+                $resultados = Comunicado::select($campos_busqueda)
+                    ->whereIn('id', $ordenarPorIds);
             }
         } else {
             // obtiene los items sin busqueda
-            $resultados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado', 'categoria', 'ano', 'imagen'])
-                ->where('visibilidad', 'P');
+            $resultados = Comunicado::select($campos);
         }
 
-        //y ahora filtramos por año, pero claro, ya se han omitido resultados
+        // solo los comunicados publicados
+        $resultados->where('visibilidad', 'P');
+
+        //y ahora filtramos por año
         if (is_numeric($año))
             $resultados->where("ano", $año);
 
@@ -71,10 +99,11 @@ class ComunicadosController extends Controller
             $resultados = $resultados->orderBy('fecha_comunicado', 'DESC');
         else if ($orden == 'cronologico')
             $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
-
-
+        else if ($orden == 'relevancia' && $ordenarPorIds)
+            $resultados->orderByRaw("FIELD(id, " . $ordenarPorIds->implode(',') . ")");
 
         // por algun motivo algunas busquedas no las encuentra, entonces usamos un buscador tradicional
+        /*
         if (false && $buscar && !$resultados->get()->count()) {
             $resultados = Comunicado::where(function ($query) use ($buscar) {
                 $query->where('titulo', 'LIKE', "%$buscar%")
@@ -93,7 +122,7 @@ class ComunicadosController extends Controller
             else if ($orden == 'cronologico')
                 $resultados = $resultados->orderBy('fecha_comunicado', 'ASC');
         }
-
+        */
 
         $resultados = $resultados
             ->paginate(15)
@@ -115,8 +144,7 @@ class ComunicadosController extends Controller
     }
 
 
-
-    public function show($id)
+    public function show(Request $request, $id)
     {
         if (is_numeric($id)) {
             $comunicado = Comunicado::findOrFail($id);
@@ -140,6 +168,9 @@ class ComunicadosController extends Controller
                 ->where('visibilidad', 'P')
                 ->where('fecha_comunicado', '<', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'desc')->first();
         }
+
+        if($request->has('busqueda'))
+            $comunicado->texto = BusquedasHelper::marcarPalabrasDeBusqueda($comunicado->texto, $request->input('busqueda'));
 
         return Inertia::render('Comunicados/Comunicado', [
             'comunicado' => $comunicado,

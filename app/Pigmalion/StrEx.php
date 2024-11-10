@@ -21,6 +21,7 @@ class StrEx extends Str
             'í' => 'i',
             'ó' => 'o',
             'ú' => 'u',
+            'ü' => 'u',
             'Á' => 'A',
             'É' => 'E',
             'Í' => 'I',
@@ -82,10 +83,14 @@ class StrEx extends Str
         return $str;
     }
 
+    public static function removerAcentos($texto) {
+        return self::removerAcentosStrtr($texto);
+    }
+
     public static function sanitizeAndDeaccent($str)
     {
         $str = self::removerAcentosStrtr($str);
-        $str = preg_replace('/[^A-Za-z0-9ñÑçÇ]/u', ' ', $str);
+        $str = preg_replace('/[^A-Za-z0-9ñÑçÇ"]/u', ' ', $str);
         return $str;
     }
 
