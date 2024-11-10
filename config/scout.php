@@ -165,15 +165,8 @@ return [
         'asYouType' => env('TNTSEARCH_ASYOUTYPE', false),
         'searchBoolean' => env('TNTSEARCH_BOOLEAN', false),
         'maxDocs' => env('TNTSEARCH_MAX_DOCS', 500),
-        'tokenizer' => App\Pigmalion\SpanishTokenizer::class //read below
+        'tokenizer' => App\Pigmalion\SpanishTokenizer::class
     ],
 
-    /* must include this
-
-
-            $tnt->tokenizer = config('scout.tntsearch.maxDocs', 2500);
-
-            in vendor/TeamTNT/laravel-scout-tntsearch-driver/TNTSearchScoutServiceProvider.php:30
-            */
 
 ];

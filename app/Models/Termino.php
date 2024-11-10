@@ -35,7 +35,7 @@ class Termino extends ContenidoBaseModel
         return [
             'id' => $this->id,
             'title' => $this->nombre,
-            'content' => $this->texto,
+            'content' => \App\Pigmalion\Markdown::removeMarkdown($this->texto),
         ];
     }
 

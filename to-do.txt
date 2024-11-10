@@ -1,6 +1,23 @@
+BUSQUEDA
+-si buscas "verdad. aumnor" resulta que el punto no lo tiene en cuenta. Comprobar con comillas y sin comillas
+
+FORMATO {STYLE:} en comunicado 1212
+
+COOKIES
+https://cookie-script.com/
+Ejemplo: https://arrecifebus.com/
+
+
 AJUSTES DE SEGURIDAD MUULAR ELECTRONICO
--eliminar usuarios que no están en el muular electrónico: delete from usuario where apellidos IS NULL
+-eliminar usuarios que no están en el muular electrónico: que no tengan cuenta del muular electrónico asociada ni datos registrados:
+    delete from usuario where apellidos is null and id not IN (SELECT idusuario FROM muular_titular)
 -eliminar registros de "campo" que no tienen usuario vinculado: delete from campo WHERE tabla='usuario' AND id NOT IN (SELECT id FROM usuario)
+-eliminar valores de campo inusables:
+delete from campo WHERE campo IN ('boletin', 'level', 'permissions', 'image', 'contact', 'blog')
+delete from campo WHERE campo LIKE 'news%'
+delete from campo WHERE campo LIKE 'validate%'
+delete from campo WHERE campo LIKE 'email%'
+
 -la tabla 'campo' tiene duplicados para varios valores de usuarios que son importantes, para encontrarlos:
 
 SELECT

@@ -14,7 +14,71 @@ define("NEAR_OFFSET", 12);
 class ExtendedHighlighter extends Highlighter
 {
 
-    public function extractRelevantAll($buscar, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
+    public function getTokenizer() {
+        return $this->tokenizer;
+    }
+
+     /**
+     * 1/6 ratio on prevcount tends to work pretty well and puts the terms
+     * in the middle of the extract
+     *
+     * @param        $words   Puede ser un Array de words o frases, o un string de palabras que se convertirá a array
+     * @param        $fulltext
+     * @param int    $rellength
+     * @param int    $prevcount
+     * @param string $indicator
+     *
+     * @return bool|string
+     */
+    public function extractRelevant($words, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
+    {
+        if(is_string($words))
+            $words = preg_split($this->tokenizer->getPattern(), $words, -1, PREG_SPLIT_NO_EMPTY);
+
+        $textlength = mb_strlen($fulltext);
+        if ($textlength <= $rellength) {
+            return $fulltext;
+        }
+
+        $locations = $this->_extractLocations($words, $fulltext);
+        $startpos  = $this->_determineSnipLocation($locations, $prevcount);
+        // if we are going to snip too much...
+        if ($textlength - $startpos < $rellength) {
+            $startpos = $startpos - ($textlength - $startpos) / 2;
+            $startpos = max($startpos, 0);
+        }
+
+        // in case no match is found, reset position for proper math below
+        if ($startpos == -1) {
+            $startpos = 0;
+        }
+
+        $reltext = mb_substr($fulltext, $startpos, $rellength);
+        preg_match_all($this->tokenizer->getPattern(), $reltext, $offset, PREG_OFFSET_CAPTURE);
+        // since PREG_OFFSET_CAPTURE returns offset in bytes we have to use mb_strlen(substr()) hack here
+        $last = mb_strlen(substr($reltext, 0, end($offset[0])[1]));
+        $first = mb_strlen(substr($reltext, 0, $offset[0][0][1]));
+
+        // if no match is found, just return first $rellength characters without the last word
+        if (empty($locations)) {
+            return mb_substr($reltext, 0, $last) . $indicator;
+        }
+
+        // check to ensure we dont snip the last word if thats the match
+        if ($startpos + $rellength < $textlength) {
+            $reltext = mb_substr($reltext, 0, $last) . $indicator; // remove last word
+        }
+
+        // If we trimmed from the front add ...
+        if ($startpos != 0) {
+            $reltext = $indicator . mb_substr($reltext, $first + 1); // remove first word
+        }
+
+        return $reltext;
+    }
+
+
+    public function extractRelevantAll(/*$buscar*/ $words, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
     {
         $_x = new \App\T("ExtendedHighlighter", "extractRelevantAll");
 
@@ -24,13 +88,15 @@ class ExtendedHighlighter extends Highlighter
         }
 
         // descartamos palabras comunes y masivas
-        list($words, $secundarias) = BusquedasHelper::separarPalabrasComunes($buscar);
-
+        // list($words, $secundarias) = BusquedasHelper::separarPalabrasComunes($buscar);
 
         // quitamos la palabra "LA"
-        $words = preg_replace("/\bla\b/", "", $words);
 
-        $words = preg_split($this->tokenizer->getPattern(), $words, -1, PREG_SPLIT_NO_EMPTY);
+        if(is_string($words))
+        {
+            $words = preg_replace("/\bla\b/", "", $words);
+            $words = preg_split($this->tokenizer->getPattern(), $words, -1, PREG_SPLIT_NO_EMPTY);
+        }
         // dd($secundarias, $words);
 
         $locations = $this->_extractLocations($words, $fulltext);
@@ -99,7 +165,7 @@ class ExtendedHighlighter extends Highlighter
     {
         // Log::info("extractLocations: " . implode(" ", $words));
         $_x = new \App\T("ExtendedHighlighter", "_extractLocations");
-        $fulltext = \App\Pigmalion\StrEx::sanitizeAndDeaccent($fulltext);
+        $fulltext = StrEx::removerAcentos(mb_strtolower($fulltext));
         // die($fulltext);
         $locations = array();
         // $max_length = mb_strlen($fulltext);
@@ -170,6 +236,8 @@ class ExtendedHighlighter extends Highlighter
 
     /**
      * Override to accept accents
+     *
+     * @param $needle puede ser un array o un string
      */
     public function highlight($text, $needle, $tag = 'em', $options = [])
     {
@@ -188,9 +256,8 @@ class ExtendedHighlighter extends Highlighter
         $highlight = '<' . $tag . $tagAttributes . '>\1</' . $tag . '>';
 
 
-
-        $needle = preg_split($this->tokenizer->getPattern(), $needle, -1, PREG_SPLIT_NO_EMPTY);
-
+        if(is_string($needle))
+            $needle = preg_split($this->tokenizer->getPattern(), $needle, -1, PREG_SPLIT_NO_EMPTY);
 
 
         // Select pattern to use
@@ -247,6 +314,8 @@ class ExtendedHighlighter extends Highlighter
 
     /**
      * Only if words are near to other highlighted words
+     *
+     * @param $needle puede ser un array o un string
      */
     public function highlightNear($text, $needle, $tag = 'em', $options = [])
     {
@@ -265,8 +334,8 @@ class ExtendedHighlighter extends Highlighter
 
         $highlight = '<' . $tag . $tagAttributes . '>\1</' . $tag . '>';
 
-        $needle = preg_split($this->tokenizer->getPattern(), $needle, -1, PREG_SPLIT_NO_EMPTY);
-
+        if(is_string($needle))
+            $needle = preg_split($this->tokenizer->getPattern(), $needle, -1, PREG_SPLIT_NO_EMPTY);
 
 
         // Select pattern to use
@@ -334,7 +403,6 @@ class ExtendedHighlighter extends Highlighter
 
     public function highlightPonderated($text, $words_relevant, $words_irrelevant, $tag = 'em', $options = [])
     {
-
         $_x = new \App\T("ExtendedHighlighter", "highlightPonderated");
         $result = $this->highlight($text, $words_relevant, $tag, $options);
         if ($words_irrelevant)
