@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Cache;
 use App\Notifications\CambioNombreUsuario;
 use Carbon\Carbon;
 
+define('EQUIPO_ID_INTERIORIZACION', 2);
+
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use CrudTrait;
@@ -178,6 +181,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return Cache::remember($cacheKey, $cacheTime, function () use ($user, $grupo_id) {
             return $user->grupos()->where('grupos.id', $grupo_id)->exists();
         });
+    }
+
+
+    public function esIniciado() {
+        return $this->equipos()->pluck('equipos.id')->contains(EQUIPO_ID_INTERIORIZACION);
     }
 
     /**

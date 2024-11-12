@@ -10,7 +10,7 @@ use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Gate;
 // use App\Mail\ExperienciasNuevaEmail;
 
 class ExperienciasController extends Controller
@@ -34,6 +34,11 @@ class ExperienciasController extends Controller
         // parámetros
         if ($categoria)
             $resultados = $resultados->where('categoria', $categoria);
+
+        // ver si el usuario es iniciado
+        $user = auth()->user();
+        if (!$user || (!$user->esIniciado() && !$user->can('administrar experiencias')))
+            $resultados->where('categoria', '!=', Experiencia::$CATEGORIA_INTERIORIZACION);
 
         $resultados = $resultados
             ->paginate(12)
@@ -75,6 +80,10 @@ class ExperienciasController extends Controller
         $editor = optional(auth()->user())->can('administrar experiencias');
         if (!$experiencia || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Item no encontrado o no autorizado
+        }
+
+        if (!$editor && Gate::denies('view', $experiencia)) {
+            abort(503, "No puedes ver esta experiencia");
         }
 
         $experiencia['titulo'] = $experiencia['nombre'];

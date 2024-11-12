@@ -270,7 +270,7 @@ class EquiposController extends Controller
         return Inertia::render(
             'Utg/Index',
             [
-                'estatutosUrl' => '/normativas/estatutos-universidad-tseyor-de-granada-utg-agosto-2023',
+                'estatutosUrl' => '/utg/estatutos',
                 'departamentos' => $departamentos
             ]
         )
