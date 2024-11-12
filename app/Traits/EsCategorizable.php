@@ -13,11 +13,14 @@ use Illuminate\Support\Facades\Log;
 trait EsCategorizable
 {
 
-    // si queremos que el modelo sea de tipo simple en las categorías, hay que poner
+    // si queremos que el modelo sea de tipo simple en las categorías, hay que poner true o false en el modelo
     // protected $categoriaSimple = true;
 
     // si queremos agregar una categoría 'todos' o 'todas' en el modelo, hay que poner
     // protected $incluyeCategoriaTodos = "Todos";
+
+    // si queremos filtrar categorias, hemos de definir esta función
+    // private function incluyeCategoria(array $categoria_nombre_total): bool { return true; }
 
 
     /**
@@ -52,24 +55,29 @@ trait EsCategorizable
 
         // return Cache::remember($cache_label, $un_año, function () {
 
-            if (!$this->categoriaSimple) {
-                $items = $this->select('categoria')->get();
-                $c = $this->obtenerContadoresCategoriasMultiples($items);
-            } else {
-                $c = $this->obtenerContadoresCategoriasSimples();
-            }
+        if (!$this->categoriaSimple) {
+            $items = $this->select('categoria')->get();
+            $c = $this->obtenerContadoresCategoriasMultiples($items);
+        } else {
+            $c = $this->obtenerContadoresCategoriasSimples();
+        }
 
-            if ($this->incluyeCategoriaTodos)
-                array_unshift($c, ['nombre' => $this->incluyeCategoriaTodos, 'valor' => '_', 'total' => count($items)]);
+        if ($this->incluyeCategoriaTodos)
+            array_unshift($c, ['nombre' => $this->incluyeCategoriaTodos, 'valor' => '_', 'total' => count($items)]);
 
-//            return $c;
+        //            return $c;
         // });
 
         $endTime = microtime(true);
         $duration = $endTime - $startTime;
 
-        Log::info("Experiencia::getCategorias: ". $duration. " ms");
+        Log::info("Experiencia::getCategorias: " . $duration . " ms");
 
+        if(method_exists($this, 'incluyeCategoria')) {
+            $c = array_filter($c, function ($cat) {
+                return $this->incluyeCategoria($cat);
+            });
+        }
 
         return $c;
     }

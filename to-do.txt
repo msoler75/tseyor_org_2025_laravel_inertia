@@ -1,7 +1,18 @@
+MUULAR ELECTRONICO
+-hacer prueba con corazón
+-preparar tutorial informativo o vídeo para la gente
+
+
+ADMIN
+-algun sistema donde guardar datos como: url de estatutos de ong, etc. Para luego usar eso para las páginas
+
 BUSQUEDA
 -si buscas "verdad. aumnor" resulta que el punto no lo tiene en cuenta. Comprobar con comillas y sin comillas
 
 FORMATO {STYLE:} en comunicado 1212
+
+
+MOVER index_utg desde equiposController a otro lugar más coherente (paginascontroller?)
 
 COOKIES
 https://cookie-script.com/
@@ -42,7 +53,7 @@ FROM usuario;
 
 HACIENDA
 
-MUULAR ELECTRONICO
+
 
 EQUIPOS
 -Formato markdown/html para "reuniones", "informacion"...
