@@ -1,7 +1,17 @@
 MUULAR ELECTRONICO
+-confirmar ultima version de los archivos
+-subir frontend de laravel
+-comprobar conexion tseyor.org con muular-electronico (login usuario)
+-hacer un traspaso de muulares (comprobar envio de correo)
+-verificar log de la base de datos
+-eliminar usuarios dados de baja (pasar sus muulares a las oficinas correspondientes)
 -hacer prueba con corazón
 -preparar tutorial informativo o vídeo para la gente
 
+
+
+EQUIPO
+-verificar cada cierto tiempo si hay solicitudes, mandar un correo a los coordinadores
 
 ADMIN
 -algun sistema donde guardar datos como: url de estatutos de ong, etc. Para luego usar eso para las páginas
