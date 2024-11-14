@@ -32,7 +32,8 @@ class ContenidoHelper
 
     public static function removerTitulo($descripcion, $titulo)
     {
-        return trim(preg_replace('/' . preg_quote($titulo) . '/i', '', $descripcion));
+        $patron = '/' . preg_quote($titulo, '/') . '/i';
+        return trim(preg_replace($patron, '', $descripcion));
     }
 
     public static function rellenarSlugImagenYDescripcion($objeto)
@@ -188,7 +189,7 @@ class ContenidoHelper
         $contenido->texto_busqueda = $model->getTextoContenidoBuscador();
 
         if (isset($model->numero)) {
-            $contenido->texto_busqueda .= " ".$model->numero;
+            $contenido->texto_busqueda .= " " . $model->numero;
         }
 
 
