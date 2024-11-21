@@ -1,5 +1,8 @@
+ARCHIVOS
+Maximo tamaño upload: 50mb
+
+
 MUULAR ELECTRONICO
--confirmar ultima version de los archivos
 -subir frontend de laravel
 -comprobar conexion tseyor.org con muular-electronico (login usuario)
 -hacer un traspaso de muulares (comprobar envio de correo)
@@ -7,7 +10,7 @@ MUULAR ELECTRONICO
 -eliminar usuarios dados de baja (pasar sus muulares a las oficinas correspondientes)
 -hacer prueba con corazón
 -preparar tutorial informativo o vídeo para la gente
-
+-revisar correos de oficinas @tseyor.org
 
 
 EQUIPO

@@ -10,8 +10,6 @@
         <div class="container mx-auto sm:px-6 lg:px-8 max-w-lg">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6 lg:p-12 space-y-6">
                 <div class="text-center">
-                    <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">¡Bienvenido a la web Tseyor!
-                    </h1>
                     <p class="mt-2 text-gray-600 dark:text-gray-400">Nos alegra tenerte aquí. Ahora puedes descubrir
                         un universo lleno de oportunidades.</p>
                 </div>

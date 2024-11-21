@@ -19,7 +19,7 @@
         xl:grid-cols-[repeat(auto-fill,minmax(28rem,1fr))]
         ">
             <CardContent v-for="contenido in listado.data" :key="contenido.slug" image-left
-                :title="contenido.titulo + (contenido.visibilidad == 'P' ? ' (borrador)' : contenido.visibilidad == 'O' ? ' (privado)' : '')"
+                :title="contenido.titulo + (contenido.visibilidad == 'B' ? ' (borrador)' : contenido.visibilidad == 'O' ? ' (privado)' : '')"
                 :draft="contenido.visibilidad != 'P'" :image="contenido.imagen"
                 :href="'/' + contenido.coleccion + '/' + contenido.slug_ref" :tag="traducir(contenido.coleccion)"
                 :description="contenido.descripcion" :date="contenido.fecha" class="max-w-full"
