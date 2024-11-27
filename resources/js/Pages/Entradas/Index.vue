@@ -10,7 +10,7 @@
             <SearchInput />
         </div>
 
-        <div id="main-content" class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="w-full flex-grow">
 
@@ -41,7 +41,7 @@
 
                 </div>
             </div>
-        </div>
+        </ContentMain>
     </div>
 </template>
 

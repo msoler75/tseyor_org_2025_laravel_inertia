@@ -32,7 +32,8 @@ const page = usePage()
 const props = defineProps({
     categorias: Array,
     url: String,
-    novedades: { type: Boolean, default: true },
+    novedades: { type: [Boolean, String], default: true },
+    resultados: {type: [Boolean,String], default: ""},
     selectBreakpoint: { type: String, default: 'sm' }, // en qué punto o breakpoint se muestra el select
     columnaBreakpoint: { type: String, default: 'md' }, // en qué punto o breakpoint se muestra en modo columna
     selectClass: String,
@@ -66,10 +67,13 @@ const emit = defineEmits(['click', 'finish'])
 const seleccionado = ref("")
 
 const actual = computed(() => {
+    if(props.resultados)
+        return 'Resultados';
     if (seleccionado.value)
         return seleccionado.value;
     return obtenerValorDeUrl(page.url)
 })
+
 
 function obtenerValorDeUrl(url) {
     const search = url.split('?')
@@ -84,12 +88,28 @@ function obtenerValorDeUrl(url) {
     return 'Novedades'
 }
 
+
+const novedadesLabel = computed(() => {
+    if (props.novedades === true)
+        return "Novedades"
+    return props.novedades
+})
+
+const resultadosLabel = computed(() => {
+    if (props.resultados === true)
+        return "Resultados"
+    return props.resultados
+})
+
 const categorias = computed(() => {
 
     const items = []
+
+
+
     if (props.novedades)
         items.push({
-            nombre: 'Novedades', href: props.url,
+            nombre: novedadesLabel.value, href: props.url,
             valor: 'Novedades'
         })
 
@@ -104,6 +124,13 @@ const categorias = computed(() => {
             // seleccionada: props.actual == categoria.nombre
         })
     }
+
+    if(props.resultados )
+    items.push({
+            nombre: resultadosLabel.value, href: props.url,
+            valor: 'Resultados'
+        })
+
 
     return items
 })

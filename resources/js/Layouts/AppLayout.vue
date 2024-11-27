@@ -211,6 +211,7 @@ onMounted(() => {
     // mover a la posición indicada
     if (window.location.hash) {
         setTimeout(() => {
+            console.log('scrollto_app')
             nav.scrollToId(window.location.hash.substring(1), 0)
         }, 500)
     }

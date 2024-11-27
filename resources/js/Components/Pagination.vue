@@ -52,6 +52,7 @@ function handleClick() {
             nav.scrollToTopPage()
         */
     emit('click')
+    console.log('scrollto_1_pagination')
     if (props.scrollTo) {
         const elem = document.querySelector(props.scrollTo)
         if (elem) {

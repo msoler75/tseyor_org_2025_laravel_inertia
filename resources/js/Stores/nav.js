@@ -177,6 +177,7 @@ const state = reactive({
   },
 
   scrollToContent(behavior) {
+    console.log('scrollto_content')
     const el = document.querySelector("#content-main");
     if (!el) return false;
 

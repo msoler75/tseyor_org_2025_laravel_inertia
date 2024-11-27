@@ -17,19 +17,19 @@
                 </a>
             </div>
 
-            <div class="flex justify-end mb-5">
+            <ContentMain class="flex justify-end mb-5">
                 <SearchInput />
-            </div>
+            </ContentMain>
 
             <GridAppear class="mt-2 grid-cols-1 lg:grid-cols-2 gap-7">
                 <div v-for="video in listado.data" :key="video.id"
                     class="card px-5 py-2 h-full flex flex-col items-center gap-3 hover:bg-base-200/40 rounded-xl w-full">
                     <div class="relative h-0 overflow-hidden max-w-full w-full" style="padding-bottom: 56.25%">
                         <iframe :src="getEmbedYoutube(video.enlace)" frameborder="0" allowfullscreen
-                            class="absolute top-0 left-0 w-full h-full"></iframe>
+                            class="absolute top-0 left-0 w-full h-full bg-gray-800"></iframe>
                     </div>
                     <Link :href="route('video', video.slug)"
-                        class="hover:text-primary transition-color duration-200  text-xl font-bold">{{ video.titulo }}
+                        class="hover:text-primary transition-color duration-200  text-xl font-bold" v-html="video.titulo">
                     </Link>
                     <div class="text-gradient opacity-75 transition duration-300 group-hover:opacity-90 text-sm text-ellipsis overflow-hidden "
                         v-html="video.descripcion" />

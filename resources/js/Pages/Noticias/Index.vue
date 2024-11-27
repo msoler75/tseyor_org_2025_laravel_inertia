@@ -7,9 +7,9 @@
         <h1>Noticias</h1>
         <p>Aquí puedes ver las últimas noticias de Tseyor.</p>
 
-        <div class="flex justify-end mb-5">
+        <ContentMain class="flex justify-end mb-5">
             <SearchInput />
-        </div>
+        </ContentMain>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 

@@ -71,9 +71,9 @@ export default function setTransitionPages(router) {
     } else if (nav.dontScroll) {
       if (!nav.dontFadeout) nav.fadeoutPage();
     } else {
-      if (scrolling) nav.scrollToContent();
+      if (scrolling) {console.log('scrollTo_content_#1');setTimeout(()=>nav.scrollToContent(), 200);}
       else if (!nav.dontFadeout) nav.fadeoutPage();
-      else nav.scrollToContent();
+      else {console.log('scrollTo_content_#2');nav.scrollToContent();}
     }
 
     nav.dontScroll = false;
@@ -124,6 +124,7 @@ export default function setTransitionPages(router) {
 
     console.log("nav.fadingOutPage", nav.fadingOutPage);
     if (nav.fadingOutPage) {
+        console.log('scrollto_2_instant')
       window.scrollTo({
         top: 0,
         behavior: "instant",
@@ -138,6 +139,7 @@ export default function setTransitionPages(router) {
     // enlace inicial
     if (window.location.hash) {
       setTimeout(() => {
+        console.log('scrollto_3_hash')
         nav.scrollToId(window.location.hash.substring(1), 0);
       }, 500);
     }

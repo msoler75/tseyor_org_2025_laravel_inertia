@@ -7,14 +7,15 @@
         </button>
 
 
-        <button v-if="query" type="submit" @click.prevent="submit" class="btn btn-primary" :disabled="submitting || (query == savedQuery && !cambiado)">
+        <button v-if="query" type="submit" @click.prevent="submit" class="btn btn-primary"
+            :disabled="submitting || (query == savedQuery && !cambiado)">
             Buscar
         </button>
 
         <div class="flex items-center relative" :style="{ 'max-width': maxWidth + 'px' }">
             <div class="absolute z-10 right-2 transform scale-110 -translate-y-[.1rem] text-gray-600">
                 <Spinner v-show="submitting" />
-                <Icon v-show="!submitting" icon="ph:magnifying-glass-bold"/>
+                <Icon v-show="!submitting" icon="ph:magnifying-glass-bold" />
             </div>
             <form @submit.prevent="submit">
                 <input class="search-input pr-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
@@ -44,7 +45,7 @@ const props = defineProps({
         default: "Buscar..."
     },
     arguments: {},
-    doSearch: {type: Boolean, default: true}
+    doSearch: { type: Boolean, default: true }
 })
 
 const maxWidth = ref(200);
@@ -59,7 +60,7 @@ onMounted(() => {
     currentUrl.value = window.location.href.replace(/\?.*/, '');
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    if(urlParams.has(props.keyword)) {
+    if (urlParams.has(props.keyword)) {
         savedQuery.value = urlParams.get(props.keyword);
         query.value = savedQuery.value;
         console.log('from URL search', savedQuery.value)
@@ -71,12 +72,12 @@ onMounted(() => {
 const cambiado = ref(false)
 
 
-watch(()=>props.modelValue, (v)=>{
+watch(() => props.modelValue, (v) => {
     query.value = v
 })
 
 // si hay algun cambio en los argumentos de búsqueda
-watch(()=>props.arguments, (value) => cambiado.value = true, { deep: true })
+watch(() => props.arguments, (value) => cambiado.value = true, { deep: true })
 
 watch(query, (value) => emit('update:modelValue', value))
 
@@ -89,7 +90,8 @@ const submit = () => {
     if (typeof props.arguments === 'object')
         args = { ...props.arguments, ...args }
     cambiado.value = false
-    router.get(currentUrl.value, args);
+    console.log('router.get args', args)
+    router.get(currentUrl.value, args, { preserveScroll: true})
     emit('search', query.value);
 };
 
