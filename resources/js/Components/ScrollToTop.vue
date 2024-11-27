@@ -1,7 +1,7 @@
 <template>
     <Icon icon="ph:arrow-circle-up-duotone" class="cursor-pointer transition duration-250"
     :class="show?'opacity-100':'opacity-0 pointer-events-none'"
-    @click="scroll2Top" />
+    @click="scrollToTop" />
 </template>
 
 
@@ -51,7 +51,8 @@ watch(() => nav.scrollY, (y) => {
     prevY = y
 })
 
-function scroll2Top() {
+function scrollToTop() {
+    console.log('scrollto_top')
     // si existe un elemento div.sections, hacemos el scroll en ese elemento, si no, en window
     const div = document.querySelector("div.sections.snap-mandatory")
     if(div)

@@ -1,6 +1,8 @@
 ARCHIVOS
-Maximo tamaño upload: 50mb
-
+-Maximo tamaño upload: 50mb
+-Poder poner un parámetro en la url para que se vea la carpeta en modo imagenes (y así poder compartir el enlace)
+-Considerar carpetas como álbumes (vista imagenes por defecto)
+-Puede tal vez auto detectarse la carpeta si tiene muchas imagenes, ponerla en modo imagen por defecto
 
 MUULAR ELECTRONICO
 -subir frontend de laravel
@@ -12,6 +14,12 @@ MUULAR ELECTRONICO
 -preparar tutorial informativo o vídeo para la gente
 -revisar correos de oficinas @tseyor.org
 
+LIBROS
+-al buscar, tal vez conviene poner en "categoria" la frase "Resultados de búsqueda"
+
+USUARIO
+-dashboard: mis equipos
+-acceso a dashboard pulsando en el nombre de usuario
 
 EQUIPO
 -verificar cada cierto tiempo si hay solicitudes, mandar un correo a los coordinadores

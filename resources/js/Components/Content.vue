@@ -133,7 +133,7 @@ onMounted(async () => {
                     var offset = 90;
                     var targetRect = targetElement.getBoundingClientRect();
                     var targetOffsetTop = window.scrollY + targetRect.top - offset;
-
+                    console.log('scrollto_0_content')
                     window.scrollTo({
                         top: targetOffsetTop,
                         behavior: 'smooth'

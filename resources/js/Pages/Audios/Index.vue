@@ -6,7 +6,7 @@
             <AdminLinks modelo="audio" necesita="administrar contenidos" class="mb-3" />
         </div>
 
-        <section class="container mx-auto">
+        <section class="container mx-auto mb-20">
             <h1>Audios</h1>
             <p>Relájate y disfruta de los talleres, meditaciones, cuentos y otros materiales de la filosofía de
                 Tseyor.</p>
@@ -19,9 +19,9 @@
     " />
 -->
 
-        <div class="flex justify-end mb-5 md:container md:mx-auto px-2">
+        <ContentMain class="flex justify-end mb-5 md:container md:mx-auto px-2">
             <SearchInput />
-        </div>
+        </ContentMain>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap md:container md:mx-auto px-2">
 

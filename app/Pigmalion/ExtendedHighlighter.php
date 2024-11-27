@@ -14,11 +14,12 @@ define("NEAR_OFFSET", 12);
 class ExtendedHighlighter extends Highlighter
 {
 
-    public function getTokenizer() {
+    public function getTokenizer()
+    {
         return $this->tokenizer;
     }
 
-     /**
+    /**
      * 1/6 ratio on prevcount tends to work pretty well and puts the terms
      * in the middle of the extract
      *
@@ -32,7 +33,7 @@ class ExtendedHighlighter extends Highlighter
      */
     public function extractRelevant($words, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
     {
-        if(is_string($words))
+        if (is_string($words))
             $words = preg_split($this->tokenizer->getPattern(), $words, -1, PREG_SPLIT_NO_EMPTY);
 
         $textlength = mb_strlen($fulltext);
@@ -78,7 +79,7 @@ class ExtendedHighlighter extends Highlighter
     }
 
 
-    public function extractRelevantAll(/*$buscar*/ $words, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
+    public function extractRelevantAll(/*$buscar*/$words, $fulltext, $rellength = 300, $prevcount = 50, $indicator = '...')
     {
         $_x = new \App\T("ExtendedHighlighter", "extractRelevantAll");
 
@@ -92,8 +93,7 @@ class ExtendedHighlighter extends Highlighter
 
         // quitamos la palabra "LA"
 
-        if(is_string($words))
-        {
+        if (is_string($words)) {
             $words = preg_replace("/\bla\b/", "", $words);
             $words = preg_split($this->tokenizer->getPattern(), $words, -1, PREG_SPLIT_NO_EMPTY);
         }
@@ -138,19 +138,23 @@ class ExtendedHighlighter extends Highlighter
             // since PREG_OFFSET_CAPTURE returns offset in bytes we have to use mb_strlen(substr()) hack here
 
             $_x1 = new \App\T("ExtendedHighlighter", "extractRelevantAll.3");
-            $last = mb_strlen(substr($reltext, 0, end($offset[0])[1]));
-            $first = mb_strlen(substr($reltext, 0, $offset[0][0][1]));
+
+            // to-do: ver por qué a veces no se cumple
+            if (is_array($offset[0]) && count($offset[0]) > 0) {
+                $last = mb_strlen(substr($reltext, 0, end($offset[0])[1]));
+                $first = mb_strlen(substr($reltext, 0, $offset[0][0][1]));
+
+                // check to ensure we dont snip the last word if thats the match
+                if ($startpos + $rellength < $textlength) {
+                    $reltext = mb_substr($reltext, 0, $last) . $indicator; // remove last word
+                }
+
+                // If we trimmed from the front add ...
+                if ($startpos != 0) {
+                    $reltext = $indicator . mb_substr($reltext, $first + 1); // remove first word
+                }
+            }
             unset($_x1);
-
-            // check to ensure we dont snip the last word if thats the match
-            if ($startpos + $rellength < $textlength) {
-                $reltext = mb_substr($reltext, 0, $last) . $indicator; // remove last word
-            }
-
-            // If we trimmed from the front add ...
-            if ($startpos != 0) {
-                $reltext = $indicator . mb_substr($reltext, $first + 1); // remove first word
-            }
 
             $extracts[] = $reltext;
         }
@@ -256,7 +260,7 @@ class ExtendedHighlighter extends Highlighter
         $highlight = '<' . $tag . $tagAttributes . '>\1</' . $tag . '>';
 
 
-        if(is_string($needle))
+        if (is_string($needle))
             $needle = preg_split($this->tokenizer->getPattern(), $needle, -1, PREG_SPLIT_NO_EMPTY);
 
 
@@ -334,7 +338,7 @@ class ExtendedHighlighter extends Highlighter
 
         $highlight = '<' . $tag . $tagAttributes . '>\1</' . $tag . '>';
 
-        if(is_string($needle))
+        if (is_string($needle))
             $needle = preg_split($this->tokenizer->getPattern(), $needle, -1, PREG_SPLIT_NO_EMPTY);
 
 
