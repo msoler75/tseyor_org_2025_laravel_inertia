@@ -2,7 +2,8 @@
     <!-- App layout -->
     <div class="flex flex-col">
 
-        <ScrollToTop class="text-4xl fixed right-7 z-40" :class="folderExplorer.seleccionando?'bottom-20':player.closed?'bottom-7':player.expanded?'bottom-20':'bottom-14'"/>
+        <ScrollToTop class="text-4xl fixed right-7 z-40"
+            :class="folderExplorer.seleccionando ? 'bottom-20' : player.closed ? 'bottom-7' : player.expanded ? 'bottom-20' : 'bottom-14'" />
 
         <!-- Loader -->
         <div v-if="loader"
@@ -28,6 +29,14 @@
                         Gracias
                     </button>
                 </div>
+            </div>
+        </Modal>
+
+        <Modal :show="player.requiereInteraccion" centered max-width="md" @click="handleInteraction">
+            <div class="p-5 mt-auto mb-auto">
+                <p class="text-center">
+                    <strong>Pulsa en la pantalla para escuchar el audio</strong>
+                </p>
             </div>
         </Modal>
 
@@ -138,13 +147,15 @@ function handleMouse() {
             }, TIME_NAV_INACTIVE)
         }
     })
+
+     document.addEventListener("click", handleInteraction)
 }
 
 
 console.log('APP INITIED')
 
 function cargarDatosUsuario() {
-    if(!page.props.auth?.user) {
+    if (!page.props.auth?.user) {
         userStore.saldo = ""
         userStore.borrarPermisos()
         return
@@ -246,5 +257,13 @@ axios.get(route('setting', 'navigation'))
 // const route = useRoute();
 
 
-</script>
 
+// INTERACCION AUDIO
+
+function handleInteraction() {
+    if (player.requiereInteraccion)
+        player.playPause()
+}
+
+
+</script>
