@@ -9,6 +9,7 @@ const player = reactive({
     autoplay: true,
     duration: 0,
     currentTime: 0,
+    requiereInteraccion:false,
 
     init() {
       if (!window || !window.Audio) return;
@@ -48,6 +49,7 @@ const player = reactive({
       if (this.audio.seeking) return "seeking";
       if (this.audio.readyState < this.audio.HAVE_FUTURE_DATA) return "loading";
 
+      this.requiereInteraccion = false
       return "playing";
     },
 
@@ -136,11 +138,18 @@ const player = reactive({
       try {
         this.audio.src = src;
         this.audio.play().catch(err => {
-          console.error("Play failed:", err);
-          this.state = "error";
+            if (err.name === "NotAllowedError") {
+                console.warn("Error de reproducción automática: Se requiere interacción del usuario");
+                // Aquí puedes manejar específicamente este error
+                this.state = "error";
+                this.requiereInteraccion = true
+              } else {
+                console.error("Error de reproducción:", err);
+                this.state = "error";
+              }
         });
       } catch (err) {
-        console.error("Play setup failed:", err);
+        console.error("Error en la configuración de reproducción:", err);
         this.state = "error";
       }
     },

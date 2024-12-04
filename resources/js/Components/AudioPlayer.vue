@@ -1,22 +1,28 @@
 <template>
     <div class="select-none">
-        <div v-if="player.mini" v-show="!player.closed"  @mouseleave="collapsePlayer"  class="max-w-[22rem] xs:max-w-[32rem] sm:max-w-[42rem] rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden" >
+
+        <div v-if="player.mini" v-show="!player.closed" @mouseleave="collapsePlayer"
+            class="max-w-[22rem] xs:max-w-[32rem] sm:max-w-[42rem] rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden">
             <div v-if="player.expanded" class="p-2 xs:hidden">
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
                     class="ml-1 transform duration-300" @mousemove="activatePlayer" />
             </div>
-            <div class="mx-auto flex justify-between items-center" :class="player.expanded ? 'w-full gap-3' : 'pr-4'">
+            <div class="mx-auto flex justify-between items-center" :class="[player.expanded ? 'w-full gap-3' : 'pr-4',
+            player.requiereInteraccion ? 'pointer-events-none' : ''
+            ]">
                 <button type="button"
                     class="btn btn-secondary rounded-full flex justify-center items-center p-1 text-4xl transform scale-75"
-                    :class="player.expanded?'':'mr-1'"
-                    @click="player.playPause"  :title="player.state == 'error' ? 'Error al cargar el audio' : ''">
-                    <AudioStateIcon :src="player.music?.src" class="rounded-full overflow-hidden"/>
+                    :class="player.expanded ? '' : 'mr-1'" @click="player.playPause"
+                    :title="player.state == 'error' ? 'Error al cargar el audio' : ''">
+                    <AudioStateIcon :src="player.music?.src" class="rounded-full overflow-hidden" />
                 </button>
 
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
-                    class="hidden xs:block transform duration-300" :class="player.expanded ? '' : 'w-0'" @mousemove="activatePlayer" />
+                    class="hidden xs:block transform duration-300" :class="player.expanded ? '' : 'w-0'"
+                    @mousemove="activatePlayer" />
 
-                <div class="flex justify-end gap-1 min-w-34 font-mono transform scale-y-150" @mousemove="activatePlayer">
+                <div class="flex justify-end gap-1 min-w-34 font-mono transform scale-y-150"
+                    @mousemove="activatePlayer">
                     <span>{{ formatTime(player.currentTime) }}</span>
                     /
                     <span>{{ formatTime(player.duration) }}</span>
@@ -151,7 +157,6 @@
 import usePlayer from '@/Stores/player'
 
 const player = usePlayer()
-
 // expansión de audioplayer
 
 var timerToCollapse = null
@@ -233,7 +238,7 @@ const formatTime = (ts) => {
         : minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
 };
 
-onMounted(()=> {
+onMounted(() => {
     console.log('AudioPlayer Mounted')
 })
 
@@ -253,7 +258,5 @@ progress[value]::-webkit-progress-value {
     background-size: 70px 40px, 100% 100%, 100% 100%;
 }
 
-@media screen and (max-width: 470px) {
-
-}
+@media screen and (max-width: 470px) {}
 </style>
