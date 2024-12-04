@@ -52,7 +52,7 @@ class RadioItemCrudController extends CrudController
 
         CRUD::column('duracion');
 
-        CRUD::column('anulado')->type("check");
+        CRUD::column('desactivado')->label('anulado')->type("check");
     }
 
     /**

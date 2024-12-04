@@ -11,7 +11,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Permiso;
+// use App\Models\Permiso;
 use App\Models\Equipo;
 use App\Models\Grupo;
 use App\Models\Membresia;
@@ -20,7 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Laravel\Scout\Searchable;
 use Illuminate\Support\Facades\Cache;
 use App\Notifications\CambioNombreUsuario;
-use Carbon\Carbon;
+use App\Notifications\VerificarEmail;
 
 define('EQUIPO_ID_INTERIORIZACION', 2);
 
@@ -136,10 +136,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Contacto::class, 'contacto_id');
     }
 
-    public function permisos()
+    /*public function permisos()
     {
         return $this->hasMany(Permiso::class);
-    }
+    }*/
 
     public function equipos()
     {
@@ -244,5 +244,14 @@ class User extends Authenticatable implements MustVerifyEmail
             // <- Always include the primary key
             'nombre' => $this->name,
         ];
+    }
+
+
+    /**
+     * Notificación customizada de verificación de Email
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerificarEmail);
     }
 }

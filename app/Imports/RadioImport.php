@@ -21,7 +21,7 @@ class RadioImport
 
         // comunicados activados en la radio:
         $activados = [
-            0 => [
+            0 => [ // GENERAL
                 172=>[0],
                 201=>[0],
                 210=>[0],
@@ -67,7 +67,7 @@ class RadioImport
                 1239=> [0],
                 1271=> [0]
             ],
-            1 => [
+            1 => [ // TAP
                 96=> [0],
                 131 => [0],
                 177 => [0],
