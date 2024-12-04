@@ -154,6 +154,7 @@ declare module 'vue' {
     TransitionFade: typeof import('./resources/js/Sections/TransitionFade.vue')['default']
     Uploader: typeof import('./resources/js/Components/Uploader.vue')['default']
     User: typeof import('./resources/js/Components/User.vue')['default']
+    UserMenu: typeof import('./resources/js/Components/UserMenu.vue')['default']
     Users: typeof import('./resources/js/Components/Users.vue')['default']
     VideoPlayer: typeof import('./resources/js/Sections/VideoPlayer.vue')['default']
     Welcome: typeof import('./resources/js/Components/Welcome.vue')['default']

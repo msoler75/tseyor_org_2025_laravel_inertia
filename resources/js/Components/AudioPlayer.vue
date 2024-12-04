@@ -16,14 +16,14 @@
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
                     class="hidden xs:block transform duration-300" :class="player.expanded ? '' : 'w-0'" @mousemove="activatePlayer" />
 
-                <div class="flex justify-end gap-1 w-32 font-mono transform scale-y-150" @mousemove="activatePlayer">
+                <div class="flex justify-end gap-1 min-w-34 font-mono transform scale-y-150" @mousemove="activatePlayer">
                     <span>{{ formatTime(player.currentTime) }}</span>
                     /
                     <span>{{ formatTime(player.duration) }}</span>
                 </div>
 
 
-                <button type="button" @click="player.stepBackward" class="transform scale-75 duration-300"
+                <button type="button" @click="player.stepBackward(30)" class="transform scale-75 duration-300"
                     :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer"
                     title="Retroceder 30 segundos">
                     <svg width="34" height="39" fill="none">
@@ -36,7 +36,7 @@
                     </svg>
                 </button>
 
-                <button type="button" @click="player.stepForward" class="transform scale-75 duration-300"
+                <button type="button" @click="player.stepForward(30)" class="transform scale-75 duration-300"
                     :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer"
                     title="Avanzar 30 segundos">
                     <svg width="34" height="39" fill="none">
@@ -110,7 +110,7 @@
       </svg>
     </button>
     -->
-                <button type="button" class="mx-auto" @click="player.stepBackward">
+                <button type="button" class="mx-auto" @click="player.stepBackward(30)">
                     <svg width="34" height="39" fill="none">
                         <path
                             d="M12.878 26.12c1.781 0 3.09-1.066 3.085-2.515.004-1.104-.665-1.896-1.824-2.075v-.068c.912-.235 1.505-.95 1.5-1.93.005-1.283-1.048-2.379-2.727-2.379-1.602 0-2.89.968-2.932 2.387h1.274c.03-.801.784-1.287 1.64-1.287.892 0 1.475.541 1.471 1.346.004.844-.673 1.398-1.64 1.398h-.738v1.074h.737c1.21 0 1.91.614 1.91 1.491 0 .848-.738 1.424-1.765 1.424-.946 0-1.683-.486-1.734-1.262H9.797c.055 1.424 1.317 2.395 3.08 2.395zm7.734.025c2.016 0 3.196-1.645 3.196-4.504 0-2.838-1.197-4.488-3.196-4.488-2.003 0-3.196 1.645-3.2 4.488 0 2.855 1.18 4.5 3.2 4.504zm0-1.138c-1.18 0-1.892-1.185-1.892-3.366.004-2.174.716-3.371 1.892-3.371 1.172 0 1.888 1.197 1.888 3.37 0 2.182-.712 3.367-1.888 3.367z"
@@ -127,7 +127,7 @@
                     <Icon v-show="player.state == 'paused'" icon="ph:play-pause-duotone" class="transform scale-150" />
                     <Icon v-show="player.state == 'playing'" icon="ph:pause-duotone" class="transform scale-150" />
                 </button>
-                <button type="button" class="mx-auto" @click="player.stepForward">
+                <button type="button" class="mx-auto" @click="player.stepForward(30)">
                     <svg width="34" height="39" fill="none">
                         <path
                             d="M12.878 26.12c1.781 0 3.09-1.066 3.085-2.515.004-1.104-.665-1.896-1.824-2.075v-.068c.912-.235 1.505-.95 1.5-1.93.005-1.283-1.048-2.379-2.727-2.379-1.602 0-2.89.968-2.932 2.387h1.274c.03-.801.784-1.287 1.64-1.287.892 0 1.475.541 1.471 1.346.004.844-.673 1.398-1.64 1.398h-.738v1.074h.737c1.21 0 1.91.614 1.91 1.491 0 .848-.738 1.424-1.765 1.424-.946 0-1.683-.486-1.734-1.262H9.797c.055 1.424 1.317 2.395 3.08 2.395zm7.734.025c2.016 0 3.196-1.645 3.196-4.504 0-2.838-1.197-4.488-3.196-4.488-2.003 0-3.196 1.645-3.2 4.488 0 2.855 1.18 4.5 3.2 4.504zm0-1.138c-1.18 0-1.892-1.185-1.892-3.366.004-2.174.716-3.371 1.892-3.371 1.172 0 1.888 1.197 1.888 3.37 0 2.182-.712 3.367-1.888 3.367z"

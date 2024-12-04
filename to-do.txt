@@ -1,8 +1,3 @@
-ARCHIVOS
--Maximo tamaño upload: 50mb
--Poder poner un parámetro en la url para que se vea la carpeta en modo imagenes (y así poder compartir el enlace)
--Considerar carpetas como álbumes (vista imagenes por defecto)
--Puede tal vez auto detectarse la carpeta si tiene muchas imagenes, ponerla en modo imagen por defecto
 
 MUULAR ELECTRONICO
 -subir frontend de laravel
@@ -13,6 +8,28 @@ MUULAR ELECTRONICO
 -hacer prueba con corazón
 -preparar tutorial informativo o vídeo para la gente
 -revisar correos de oficinas @tseyor.org
+
+COMUNICADOS
+-si en slug hay espacios o un punto, genera un error en ziggy routes, y no se muestra ningun comunicado de esa pagina
+
+ADMIN usuarios
+-poder buscar un usuario por su email (actualmente no se puede)
+
+EQUIPOS
+-invitaciones: Junto a Ti La Pm no puede reenviar una invitación caducada del equipo POST. Debería poder.
+
+CORREOS
+-Para el correo de validación, cambiar título "Confirme su correo electrónico" a otro como "Bienvenido, solo falta un paso para continuar".
+-En el correo de confirmación, cambiar texto del botón de "Confirme su correo electrónico" a otro texto que sea en plan "Sí, este es mi correo electrónico".
+
+RADIO
+-Si recargas la página con la emisora, al intentar hacer audio.play no funciona (debería mostrarse eso al usuario de algun modo)
+
+ARCHIVOS
+-Maximo tamaño upload: 50mb
+-Poder poner un parámetro en la url para que se vea la carpeta en modo imagenes (y así poder compartir el enlace)
+-Considerar carpetas como álbumes (vista imagenes por defecto)
+-Puede tal vez auto detectarse la carpeta si tiene muchas imagenes, ponerla en modo imagen por defecto
 
 LIBROS
 -al buscar, tal vez conviene poner en "categoria" la frase "Resultados de búsqueda"
