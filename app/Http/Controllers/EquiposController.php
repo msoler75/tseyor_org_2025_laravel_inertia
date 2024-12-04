@@ -178,7 +178,19 @@ class EquiposController extends Controller
 
         // informes
 
-        $informes = Informe::where('equipo_id', $equipo->id)->where('visibilidad', 'P')->latest('updated_at')->take(3)->get()->toArray();
+        $puedeVerBorradores = $puedoAdministrar || $soyCoordinador;
+
+        $informes = Informe::where('equipo_id', $equipo->id)
+            ->where(function ($query) use ($puedeVerBorradores) {
+                $query->where('visibilidad', 'P')
+                    ->when($puedeVerBorradores, function ($query) {
+                        $query->orWhere('visibilidad', 'B');
+                    });
+            })
+            ->latest('updated_at')
+            ->take(3)
+            ->get()
+            ->toArray();
 
 
         return Inertia::render('Equipos/Equipo', [

@@ -12,7 +12,7 @@ class VerificarEmail extends BaseVerifyEmail
         return (new MailMessage)
             ->subject('Verifica tu dirección de correo electrónico')
             ->line('Por favor, haz clic en el botón de abajo para verificar tu dirección de correo electrónico.')
-            ->action('Verificar', $url)
+            ->action('Sí, este es mi correo electrónico', $url)
             ->line('Si no creaste una cuenta, no es necesario realizar ninguna acción.');
     }
 }
