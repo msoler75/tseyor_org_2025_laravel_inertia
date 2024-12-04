@@ -9,6 +9,9 @@ use Inertia\Inertia;
 use App\Models\Setting;
 use App\Models\RadioItem;
 use App\Pigmalion\SEO;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
+use Exception;
 
 class RadioController extends Controller
 {
@@ -27,18 +30,22 @@ class RadioController extends Controller
     /**
      * Manejar la lógica de reproducción de una emisora
      */
-    public function emisora(Request $request, $emisora)
+    public function emisora(Request $request, string $emisora)
     {
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             $estado = $this->gestionarEstadoRadio($emisora);
 
             DB::commit();
 
             return $this->renderizarVistaEmisora($estado);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
+            Log::error('Error en reproducción de emisora', [
+                'emisora' => $emisora,
+                'error' => $e->getMessage()
+            ]);
             throw $e;
         }
     }
@@ -49,22 +56,22 @@ class RadioController extends Controller
     private function gestionarEstadoRadio(string $emisora): array
     {
         // Preparar información de la emisora
-        $emisoraLwr = $this->sanearNombreEmisora($emisora);
-        $nombreConfiguracion = 'radio_' . $emisoraLwr;
+        $emisoraLimpia = $this->sanearNombreEmisora($emisora);
+        $nombreConfiguracion = 'radio_' . $emisoraLimpia;
 
         // Obtener o inicializar estado de la radio
-        $radio = $this->obtenerConfiguracionRadio($nombreConfiguracion);
+        $estadoRadio = $this->obtenerConfiguracionRadio($nombreConfiguracion);
 
         // Determinar si es necesario cambiar el audio
-        $modificado = $this->verificarCambioAudio($radio, $emisoraLwr);
+        $modificado = $this->verificarCambioAudio($estadoRadio, $emisoraLimpia);
 
         // Guardar configuración si ha cambiado
         if ($modificado) {
-            $this->guardarConfiguracionRadio($nombreConfiguracion, $radio);
+            $this->guardarConfiguracionRadio($nombreConfiguracion, $estadoRadio);
         }
 
         // Preparar estado para respuesta
-        return $this->generarEstadoRadio($radio, $emisora);
+        return $this->generarEstadoRadio($estadoRadio, $emisora);
     }
 
     /**
@@ -72,26 +79,34 @@ class RadioController extends Controller
      */
     private function sanearNombreEmisora(string $emisora): string
     {
-        $emisoraLwr = strtolower($emisora);
-        return filter_var($emisoraLwr, FILTER_SANITIZE_ADD_SLASHES);
+        return filter_var(strtolower($emisora), FILTER_SANITIZE_ADD_SLASHES);
     }
 
     /**
-     * Obtener o inicializar la configuración de radio
+     * Obtener o inicializar la configuración de radio con valores por defecto
      */
     private function obtenerConfiguracionRadio(string $nombreConfiguracion): array
     {
         try {
             $configuracion = Setting::where('name', $nombreConfiguracion)->first();
-            $radio = $configuracion ? json_decode($configuracion->value, true) : null;
-        } catch (\Exception $err) {
-            Log::error('Error al decodificar configuración ' . $nombreConfiguracion);
-            $radio = null;
+            $estadoRadio = $configuracion ? json_decode($configuracion->value, true) : null;
+        } catch (Exception $err) {
+            Log::error('Error al decodificar configuración ' . $nombreConfiguracion, [
+                'error' => $err->getMessage()
+            ]);
+            $estadoRadio = null;
         }
 
-
         // Estado inicial por defecto
-        return $radio ?: [
+        return $estadoRadio ?: $this->crearEstadoRadioInicial();
+    }
+
+    /**
+     * Crear estado inicial por defecto para la radio
+     */
+    private function crearEstadoRadioInicial(): array
+    {
+        return [
             'reproduciendo_jingle' => false,
             'audio_actual' => null,
             'arranco_en' => now()->timestamp,
@@ -100,73 +115,129 @@ class RadioController extends Controller
         ];
     }
 
-    /**
-     * Verificar si es necesario cambiar el audio
+  /**
+     * Verificar si es necesario cambiar el audio con control de concurrencia
      */
-    private function verificarCambioAudio(array &$radio, string $emisoraLwr): bool
+    private function verificarCambioAudio(array &$estadoRadio, string $emisoraLimpia): bool
     {
         $ahora = time();
-        $audio_actual = $radio['audio_actual'] ?? null;
-        $arranco_en = $radio['arranco_en'] ?? 0;
-        $duracion_actual = $this->convertirASegundos($audio_actual['duracion'] ?? 0);
-        $tiempo_transcurrido = $ahora - $arranco_en;
-        $tiempo_faltante = $duracion_actual - $tiempo_transcurrido;
-        // ponemos los datos en el log
-        Log::info("verificarCambioAudio", [
-            'audio_actual' => $audio_actual,
-            'duracion_actual_segundos' => $duracion_actual,
-            'arranco_en' => $arranco_en,
-            'ahora' => $ahora,
-            'transcurrido' => $tiempo_transcurrido,
-            'quedan' => $tiempo_faltante
-        ]);
+        $audioActual = $estadoRadio['audio_actual'] ?? null;
 
-        // Condición para cambiar audio
-        if (!$audio_actual || $tiempo_faltante < 0) {
-            return $this->seleccionarNuevoAudio($radio, $emisoraLwr);
+        // Si no hay audio actual, definitivamente hay que cambiarlo
+        if (!$audioActual) {
+            return $this->seleccionarNuevoAudio($estadoRadio, $emisoraLimpia);
         }
 
+        $arranqueEn = $estadoRadio['arranco_en'] ?? 0;
+        $duracionActual = $this->convertirASegundos($audioActual['duracion'] ?? 0);
+        $tiempoTranscurrido = $ahora - $arranqueEn;
+        $tiempoRestante = $duracionActual - $tiempoTranscurrido;
+
+        // Registro detallado de información
+        $this->registrarDetallesAudio($audioActual, $duracionActual, $arranqueEn, $ahora, $tiempoTranscurrido, $tiempoRestante);
+
+        // Bloqueo de concurrencia para cambio de audio
+        $lockKey = 'radio_cambio_audio_' . $emisoraLimpia;
+
+        // Intentar obtener un bloqueo con tiempo límite
+        if (Cache::add($lockKey, true, Carbon::now()->addSeconds(5))) {
+            try {
+                // Si el tiempo restante es negativo, seleccionar nuevo audio
+                if ($tiempoRestante < 0) {
+                    return $this->seleccionarNuevoAudio($estadoRadio, $emisoraLimpia);
+                }
+                return false;
+            } finally {
+                // Liberar el bloqueo
+                Cache::forget($lockKey);
+            }
+        }
+
+        // Si no se puede obtener el bloqueo, no cambiar el audio
         return false;
     }
 
-    /**
-     * Seleccionar nuevo audio o jingle
+     /**
+     * Registrar detalles del estado del audio para depuración
      */
-    private function seleccionarNuevoAudio(array &$radio, string $emisoraLwr): bool
+    private function registrarDetallesAudio($audioActual, $duracionActual, $arranqueEn, $ahora, $tiempoTranscurrido, $tiempoRestante): void
     {
+        Log::info("Verificación de cambio de audio", [
+            'audio_actual' => $audioActual,
+            'duracion_actual_segundos' => $duracionActual,
+            'arranco_en' => $arranqueEn,
+            'ahora' => $ahora,
+            'transcurrido' => $tiempoTranscurrido,
+            'quedan' => $tiempoRestante
+        ]);
+    }
+
+     /**
+     * Seleccionar nuevo audio con protección de carrera
+     */
+    private function seleccionarNuevoAudio(array &$estadoRadio, string $emisoraLimpia): bool
+    {
+        // Verificar si ya existe un audio actual
+        if ($estadoRadio['audio_actual'] !== null) {
+            // Si el audio actual sigue siendo válido, no cambiarlo
+            $ahora = time();
+            $duracionActual = $this->convertirASegundos($estadoRadio['audio_actual']['duracion'] ?? 0);
+            $tiempoTranscurrido = $ahora - $estadoRadio['arranco_en'];
+
+            if ($tiempoTranscurrido < $duracionActual) {
+                return false;
+            }
+        }
+
         // Si hay audio siguiente (típicamente un jingle)
-        if ($radio['audio_siguiente'] ?? null) {
-            $radio['audio_actual'] = $radio['audio_siguiente'];
-            $radio['reproduciendo_jingle'] = false;
-            unset($radio['audio_siguiente']);
-            $radio['arranco_en'] = time();
+        if ($estadoRadio['audio_siguiente'] ?? null) {
+            $this->transicionarAudioSiguiente($estadoRadio);
             return true;
         }
 
         // Buscar siguiente audio de la emisora
-        $audio_actual = $this->siguienteAudio($emisoraLwr, $radio['audio_actual']['id'] ?? 0);
+        $audioActual = $this->siguienteAudio($emisoraLimpia, $estadoRadio['audio_actual']['id'] ?? 0);
 
-        if (!$audio_actual) {
+        if (!$audioActual) {
             Log::error("No se pudo obtener un nuevo audio de la radio");
             return false;
         }
 
-        $audio_actual = $audio_actual->toArray();
         $jingles = $this->obtenerJingles();
+        $this->insertarJingleSiDisponible($estadoRadio, $audioActual, $jingles);
 
-        // Insertar jingle entre audios
-        if (count($jingles)) {
-            $radio['audio_siguiente'] = $audio_actual;
-            $radio['reproduciendo_jingle'] = true;
-            $j = ($radio['jingle_idx'] ?? -1 + 1) % count($jingles);
-            $radio['audio_actual'] = $jingles[$j];
-            $radio['jingle_idx'] = $j;
-        } else {
-            $radio['audio_actual'] = $audio_actual;
-        }
-
-        $radio['arranco_en'] = time();
+        $estadoRadio['arranco_en'] = time();
         return true;
+    }
+
+    /**
+     * Transicionar al audio siguiente (típicamente después de un jingle)
+     */
+    private function transicionarAudioSiguiente(array &$estadoRadio): void
+    {
+        $estadoRadio['audio_actual'] = $estadoRadio['audio_siguiente'];
+        $estadoRadio['reproduciendo_jingle'] = false;
+        unset($estadoRadio['audio_siguiente']);
+        $estadoRadio['arranco_en'] = time();
+    }
+
+
+    /**
+     * Insertar jingle si está disponible
+     */
+    private function insertarJingleSiDisponible(array &$estadoRadio, $audioActual, array $jingles): void
+    {
+        $audioActual = $audioActual->toArray();
+
+        if (count($jingles)) {
+            $estadoRadio['audio_siguiente'] = $audioActual;
+            $estadoRadio['reproduciendo_jingle'] = true;
+            $j = ($estadoRadio['jingle_idx'] ?? -1 + 1) % count($jingles);
+            $estadoRadio['audio_actual'] = $jingles[$j];
+            $estadoRadio['jingle_idx'] = $j;
+        } else {
+            $estadoRadio['audio_actual'] = $audioActual;
+        }
     }
 
     /**
@@ -264,11 +335,10 @@ class RadioController extends Controller
         if(!$id||!is_numeric($id)) $id = 0;
         $emisora = strtolower($emisora);
 
-        $sql = RadioItem::whereRaw("(LOWER(categoria)='$emisora' AND desactivado!=1)")
+        $audio = RadioItem::whereRaw("(LOWER(categoria)='$emisora' AND desactivado!=1)")
             ->where('id', '>', $id)
-            ->orderBy('id', 'asc');
-
-        $audio =  $sql->first();
+            ->orderBy('id', 'asc')
+            ->first();
 
         if (!$audio && $id) {
             return $this->siguienteAudio($emisora, 0);
