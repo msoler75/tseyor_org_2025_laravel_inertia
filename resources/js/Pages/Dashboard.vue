@@ -16,9 +16,10 @@
 
                 <div class="space-y-4">
                     <Link v-if="perfilCompletado" class="btn btn-primary w-full"
-                        :href="route('usuario', $page.props.auth.user.id)">Ver tu perfil</Link>
+                        :href="route('usuario', $page.props.auth.user.id)">Mi Perfil</Link>
                     <Link v-else class="btn btn-primary w-full" :href="route('usuario', $page.props.auth.user.id)">
                     Completar tu perfil</Link>
+                    <Link class="btn btn-primary w-full" href="/equipos?categoria=Mis equipos">Mis Equipos</Link>
                     <Link class="btn btn-primary w-full" href="/novedades">Novedades de la web</Link>
                     <Link class="btn btn-primary w-full" href="/audios">Audios de Tseyor</Link>
                     <Link class="btn btn-primary w-full" href="/glosario">Glosario de Tseyor</Link>

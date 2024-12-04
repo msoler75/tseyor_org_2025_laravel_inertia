@@ -1,5 +1,6 @@
+HACIENDA
 
-MUULAR ELECTRONICO
+INSTALACION MUULAR ELECTRONICO
 -subir frontend de laravel
 -comprobar conexion tseyor.org con muular-electronico (login usuario)
 -hacer un traspaso de muulares (comprobar envio de correo)
@@ -8,6 +9,7 @@ MUULAR ELECTRONICO
 -hacer prueba con corazón
 -preparar tutorial informativo o vídeo para la gente
 -revisar correos de oficinas @tseyor.org
+-comprobación de cuando se hace un responsable de oficina, le llegue el correo electrónico
 
 COMUNICADOS
 -si en slug hay espacios o un punto, genera un error en ziggy routes, y no se muestra ningun comunicado de esa pagina
@@ -18,25 +20,11 @@ ADMIN usuarios
 EQUIPOS
 -invitaciones: Junto a Ti La Pm no puede reenviar una invitación caducada del equipo POST. Debería poder.
 
-CORREOS
--Para el correo de validación, cambiar título "Confirme su correo electrónico" a otro como "Bienvenido, solo falta un paso para continuar".
--En el correo de confirmación, cambiar texto del botón de "Confirme su correo electrónico" a otro texto que sea en plan "Sí, este es mi correo electrónico".
-
-RADIO
--Si recargas la página con la emisora, al intentar hacer audio.play no funciona (debería mostrarse eso al usuario de algun modo)
-
 ARCHIVOS
 -Maximo tamaño upload: 50mb
 -Poder poner un parámetro en la url para que se vea la carpeta en modo imagenes (y así poder compartir el enlace)
 -Considerar carpetas como álbumes (vista imagenes por defecto)
 -Puede tal vez auto detectarse la carpeta si tiene muchas imagenes, ponerla en modo imagen por defecto
-
-LIBROS
--al buscar, tal vez conviene poner en "categoria" la frase "Resultados de búsqueda"
-
-USUARIO
--dashboard: mis equipos
--acceso a dashboard pulsando en el nombre de usuario
 
 EQUIPO
 -verificar cada cierto tiempo si hay solicitudes, mandar un correo a los coordinadores
@@ -85,19 +73,12 @@ REPLACE INTO campo (tabla, id, campo, valor)
 SELECT 'usuario', id, 's_ratio', '7x1d'
 FROM usuario;
 
--comprobación de cuando se hace un responsable de oficina, le llegue el correo electrónico
 
 
 
-HACIENDA
 
 
 
-EQUIPOS
--Formato markdown/html para "reuniones", "informacion"...
--Coordinador ha de poder ver informes en borrador en últimos informes
--Coordinador ha de poder importar informe desde word
--Informes en vista equipo: poder importar desde word (dropdown)
 
 CRUD:SLUG
 -validar que los slug no sean numéricos

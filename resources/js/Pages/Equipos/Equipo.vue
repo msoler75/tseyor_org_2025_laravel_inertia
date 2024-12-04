@@ -22,13 +22,13 @@
                     @updated="reloadEquipo" />
 
                 <Card v-if="equipo.anuncio" class="border border-orange-400 justify-center items-center">
-                    <div class="prose" v-html="equipo.anuncio" />
+                    <div class="prose" v-html="MarkdownToHtml(equipo.anuncio)" />
                 </Card>
 
 
                 <Card v-if="equipo.reuniones">
                     <h3>Reuniones</h3>
-                    <div class="prose" v-html="equipo.reuniones" />
+                    <div class="prose" v-html="MarkdownToHtml(equipo.reuniones)" />
                 </Card>
 
                 <Card v-if="!equipo.ocultarMiembros">
@@ -61,9 +61,10 @@
                             :href="route('informe', item.id)">
                         <Icon icon="ph:file-duotone" />
                         <div class="w-full">
-                            <div class="mb-2">{{ item.titulo }}</div>
+                            <div class="mb-2" :class="item.visibilidad=='B'?'opacity-50 italic':''">{{ item.titulo }}</div>
                             <div class="flex justify-between w-full">
                                 <span class="badge badge-info">{{ item.categoria }}</span>
+                                <span v-if="item.visibilidad=='B'" class="badge badge-warning ml-2 mr-auto">borrador</span>
                                 <TimeAgo class="text-xs" :date="item.updated_at" />
                             </div>
                         </div>
@@ -108,7 +109,7 @@
 
                 <Card v-if="equipo.informacion">
                     <h3>Información adicional</h3>
-                    <div class="prose" v-html="equipo.informacion" />
+                    <div class="prose" v-html="MarkdownToHtml(equipo.informacion)" />
                 </Card>
 
                 <EquipoAdmin v-if="soyCoordinador || puedoAdministrar" :equipo="equipo" @updated="reloadEquipo" />
@@ -125,6 +126,7 @@ import EquipoInformacion from './Partes/EquipoInformacion.vue'
 import EquipoMembresia from './Partes/EquipoMembresia.vue'
 import CrearInforme from './Partes/CrearInforme.vue'
 import usePlayer from '@/Stores/player'
+import {MarkdownToHtml} from "@/composables/markdown"
 
 const props = defineProps({
     equipo: {
