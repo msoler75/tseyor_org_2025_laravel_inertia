@@ -1,244 +1,378 @@
 const player = reactive({
-    audio: null,
-    music: null,
-    state: "stopped",
-    radioMode: false,
-    closed: true,
-    mini: true,
-    expanded: false,
-    autoplay: true,
-    duration: 0,
-    currentTime: 0,
-    requiereInteraccion:false,
+  url: null,
+  audio: null,
+  video: null,
+  music: null,
+  state: "stopped",
+  radioMode: false,
+  audioClosed: true,
+  videoClosed: true,
+  mini: true,
+  expanded: false,
+  autoplay: true,
+  duration: 0,
+  currentTime: 0,
+  requiereInteraccion: false,
+  isVideo: false,
+  checkingVideo: false,
 
-    init() {
-      if (!window || !window.Audio) return;
+  init() {
+    if (!window || !window.Audio) return;
 
-      this.audio = new Audio();
-      this.audio.preload = "auto";
-      this.audio.autoplay = this.autoplay;
+    this.audio = new Audio();
+    this.audio.preload = "auto";
+    this.audio.autoplay = this.autoplay;
 
-      // Attach event listeners with more comprehensive state management
-      this._attachEventListeners();
-    },
+    // Attach event listeners with more comprehensive state management
+    this._attachEventListeners();
+  },
 
-    _attachEventListeners() {
-      const events = {
-        loadedmetadata: this._handleLoadedMetadata.bind(this),
-        canplay: this._handleCanPlay.bind(this),
-        error: this._handleError.bind(this),
-        timeupdate: this._handleTimeUpdate.bind(this),
-        ended: this._handleEnded.bind(this),
-        play: this._handlePlay.bind(this),
-        pause: this._handlePause.bind(this),
-        waiting: this._handleWaiting.bind(this),
-        stalled: this._handleStalled.bind(this)
+  _attachEventListeners() {
+    const events = {
+      loadedmetadata: this._handleLoadedMetadata.bind(this),
+      canplay: this._handleCanPlay.bind(this),
+      error: this._handleError.bind(this),
+      timeupdate: this._handleTimeUpdate.bind(this),
+      ended: this._handleEnded.bind(this),
+      play: this._handlePlay.bind(this),
+      pause: this._handlePause.bind(this),
+      waiting: this._handleWaiting.bind(this),
+      stalled: this._handleStalled.bind(this),
+    };
+
+    Object.entries(events).forEach(([event, handler]) => {
+      this.audio.addEventListener(event, handler);
+    });
+  },
+
+  _determineState() {
+    if (this.checkingVideo) return "loading";
+    const media = this.isVideo ? this.video : this.audio;
+    if (!media) return "stopped";
+
+    if (media.error) return "error";
+    if (media.ended) return "ended";
+    if (media.paused) return "paused";
+    if (media.seeking) return "seeking";
+    if (media.readyState < media.HAVE_FUTURE_DATA) return "loading";
+
+    this.requiereInteraccion = false;
+    return "playing";
+  },
+
+  _handleLoadedMetadata(event) {
+    this.duration = this.audio.duration || 0;
+    this.currentTime = this.audio.currentTime || 0;
+    this._updateState();
+    this._logDevEvent("loadedmetadata", event);
+  },
+
+  _handleCanPlay(event) {
+    this._updateState();
+
+    // Autoplay logic
+    if(this.isVideo) return
+    if (
+      this.autoplay &&
+      (this.state === "stopped" || this.state === "loading")
+    ) {
+      this.audio.play().catch((err) => {
+        console.error("Autoplay failed:", err);
+        this.state = "error";
+      });
+    }
+
+    this._logDevEvent("canplay", event);
+  },
+
+  _handleError(event) {
+    this.state = "error";
+    this._logDevEvent("error", event);
+  },
+
+  _handleTimeUpdate(event) {
+    this.currentTime = this.audio.currentTime;
+    this._updateState();
+  },
+
+  _handleEnded(event) {
+    this.state = "ended";
+    this._logDevEvent("ended", event);
+  },
+
+  _handlePlay(event) {
+    this._updateState();
+    this._logDevEvent("play", event);
+  },
+
+  _handlePause(event) {
+    this._updateState();
+    this._logDevEvent("pause", event);
+  },
+
+  _handleWaiting(event) {
+    this.state = "loading";
+    this._logDevEvent("waiting", event);
+  },
+
+  _handleStalled(event) {
+    this.state = "error";
+    this._logDevEvent("stalled", event);
+  },
+
+  _updateState() {
+    this.state = this._determineState();
+  },
+
+  _logDevEvent(eventName, event) {
+    if (process.env.NODE_ENV === "development") {
+      console.log(eventName, event);
+    }
+  },
+
+  // verifica si se puede reproducir
+  isPlayable(src) {
+    const audioFormats = "mp3|wav|ogg|oga|flac|aac|m4a|wma|aiff|amr|opus";
+    const videoFormats = "mp4|webm|ogv|mov|avi|wmv|flv|mkv|m4v";
+    const regex = new RegExp(`\\.(${audioFormats}|${videoFormats})$`, "i");
+    return regex.test(src);
+  },
+
+  // Verifica si el archivo es de video
+  async checkVideo(url) {
+    if (!url.match(/\.(mp4|webm|mkv|mov|avi|wmv|flv|m4v)$/i)) return false;
+
+    // Si fetch no está disponible, asumimos que es video
+    if (!window.fetch) {
+      console.warn(
+        "fetch no está disponible, asumiendo que el archivo es de video"
+      );
+      return Promise.resolve(true);
+    }
+
+    const that = this;
+    this.checkingVideo = true;
+    return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
+      let timeoutId;
+
+      const cleanup = () => {
+        clearTimeout(timeoutId);
+        URL.revokeObjectURL(video.src);
       };
 
-      Object.entries(events).forEach(([event, handler]) => {
-        this.audio.addEventListener(event, handler);
-      });
-    },
+      fetch(url)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const videoUrl = URL.createObjectURL(blob);
+          video.src = videoUrl;
 
-    _determineState() {
-      if (!this.audio) return "stopped";
+          video.onloadedmetadata = () => {
+            URL.revokeObjectURL(videoUrl);
+            that.checkingVideo = false;
+            video.pause();
+            resolve(video.videoWidth > 0);
+          };
 
-      if (this.audio.error) return "error";
-      if (this.audio.ended) return "ended";
-      if (this.audio.paused) return "paused";
-      if (this.audio.seeking) return "seeking";
-      if (this.audio.readyState < this.audio.HAVE_FUTURE_DATA) return "loading";
+          video.onerror = () => {
+            URL.revokeObjectURL(videoUrl);
+            console.error("Error al cargar el video");
+            that.checkingVideo = false;
+            resolve(false);
+          };
 
-      this.requiereInteraccion = false
-      return "playing";
-    },
+          // Añadir timeout
+          timeoutId = setTimeout(() => {
+            cleanup();
+            console.warn("Timeout al cargar los metadatos del video");
+            that.checkingVideo = false;
+            video.pause();
+            resolve(true);
+          }, 8000); // 8 segundos de timeout, ajusta según necesidades
+        })
+        .catch((error) => {
+          console.error("Error al obtener el archivo:", error);
+          that.checkingVideo = false;
+          resolve(false);
+        });
+    });
+  },
 
-    _handleLoadedMetadata(event) {
-      this.duration = this.audio.duration || 0;
-      this.currentTime = this.audio.currentTime || 0;
-      this._updateState();
-      this._logDevEvent("loadedmetadata", event);
-    },
+  async play(src, title, options = {}) {
+    if (src.match(/\.(mp4|webm|ogv|mkv|mov|avi|wmv|flv|m4v)$/i)) {
+      this.audio.pause();
+      const hasVideo = await player.checkVideo(src);
+      if (!hasVideo) {
+        player.playAudio(src, title, options);
+      } else {
+        // lo abre en una nueva pestaña
+        player.playVideo(src, title, options);
+      }
+      return;
+    }
+    // si es un audio:
+    else if (player.isPlayable(src)) {
+      player.playAudio(src, title, options);
+    }
+  },
 
-    _handleCanPlay(event) {
-      this._updateState();
+  playVideo(src, title, options = {}) {
+    /*if (!this.video) {
+      console.error("Video no inicializado");
+      return;
+    }*/
+    console.log("playVideo", src);
 
-      // Autoplay logic
-      if (this.autoplay && (this.state === "stopped" || this.state === "loading")) {
-        this.audio.play().catch(err => {
-          console.error("Autoplay failed:", err);
+    if (!this.isVideo) this.close();
+    this.autoplay = false
+    this.isVideo = true;
+    this.videoClosed = false;
+
+    // pausamos el video previo, si lo hubiera
+    if (this.video && !this.video.paused) this.video.pause();
+
+    // try {
+    this.url = src;
+    if (this.video) {
+      this.video.src = src;
+      this.video.play();
+    }
+    this._updateState();
+  },
+
+  playAudio(src, title, options = {}) {
+    if (!this.audio) {
+      console.error("Audio no inicializado");
+      return;
+    }
+
+    console.log("playAudio", src);
+
+    if (this.isVideo) this.close();
+    this.isVideo = false;
+
+    const { artist, isRadio } = options;
+
+    this.music = { src, title, artist };
+    this.radioMode = !!isRadio;
+    this.audioClosed = false;
+
+    try {
+      this.url = src;
+      this.audio.src = src;
+      this.audio.play().catch((err) => {
+        if (err.name === "NotAllowedError") {
+          console.warn(
+            "Error de reproducción automática: Se requiere interacción del usuario"
+          );
+          // Aquí puedes manejar específicamente este error
           this.state = "error";
-        });
-      }
-
-      this._logDevEvent("canplay", event);
-    },
-
-    _handleError(event) {
+          this.requiereInteraccion = true;
+        } else {
+          console.error("Error de reproducción:", err);
+          this.state = "error";
+        }
+      });
+    } catch (err) {
+      console.error("Error en la configuración de reproducción:", err);
       this.state = "error";
-      this._logDevEvent("error", event);
-    },
+    }
+  },
 
-    _handleTimeUpdate(event) {
-      this.currentTime = this.audio.currentTime;
-      this._updateState();
-    },
+  pause() {
+    if (this.audio && !this.audio.paused) {
+      this.audio.pause();
+    }
+  },
 
-    _handleEnded(event) {
-      this.state = "ended";
-      this._logDevEvent("ended", event);
-    },
-
-    _handlePlay(event) {
-      this._updateState();
-      this._logDevEvent("play", event);
-    },
-
-    _handlePause(event) {
-      this._updateState();
-      this._logDevEvent("pause", event);
-    },
-
-    _handleWaiting(event) {
-      this.state = "loading";
-      this._logDevEvent("waiting", event);
-    },
-
-    _handleStalled(event) {
-      this.state = "error";
-      this._logDevEvent("stalled", event);
-    },
-
-    _updateState() {
-      this.state = this._determineState();
-    },
-
-    _logDevEvent(eventName, event) {
-      if (process.env.NODE_ENV === "development") {
-        console.log(eventName, event);
-      }
-    },
-
-    isPlayable(src) {
-      return /\.(mp3|mp4|ogg|wav|flac|aac|wma|aiff|amr|opus)$/i.test(src);
-    },
-
-    play(src, title, options = {}) {
-      if (!this.audio) {
-        console.error("Audio no inicializado");
-        return;
-      }
-
-      const { artist, isRadio } = options;
-
-      this.music = { src, title, artist };
-      this.radioMode = !!isRadio;
-      this.closed = false;
-
-      try {
-        this.audio.src = src;
-        this.audio.play().catch(err => {
-            if (err.name === "NotAllowedError") {
-                console.warn("Error de reproducción automática: Se requiere interacción del usuario");
-                // Aquí puedes manejar específicamente este error
-                this.state = "error";
-                this.requiereInteraccion = true
-              } else {
-                console.error("Error de reproducción:", err);
-                this.state = "error";
-              }
-        });
-      } catch (err) {
-        console.error("Error en la configuración de reproducción:", err);
-        this.state = "error";
-      }
-    },
-
-    pause() {
-      if (this.audio && !this.audio.paused) {
+  playPause() {
+    try {
+      if (this.audio.paused) {
+        this.audio.play();
+      } else {
         this.audio.pause();
       }
-    },
+    } catch (e) {
+      console.error("playPause interrupted", e);
+      this.state = "error";
+    }
+  },
 
-    playPause() {
+  close() {
+    if (this.isVideo) {
+      if (this.video) {
+        this.video.pause();
+        this.video.currentTime = 0;
+      }
+      this.state = "stopped";
+      this.videoClosed = true;
+      this.isVideo = false;
+    }
+    if (this.audio) {
+      this.audio.pause();
+      this.audio.currentTime = 0;
+      this.music = null;
+      this.state = "stopped";
+      this.audioClosed = true;
+    }
+  },
+
+  stepForward(seconds = 30) {
+    if (!this.audio) return;
+
+    // Validaciones de seguridad
+    const currentTime = this.audio.currentTime || 0;
+    const duration = this.audio.duration || 0;
+
+    // Verificar que los valores sean números finitos
+    if (!Number.isFinite(currentTime) || !Number.isFinite(duration)) {
+      console.warn("Invalid audio time values", { currentTime, duration });
+      return;
+    }
+
+    const newTime = Math.min(currentTime + seconds, duration);
+
+    // Otra validación adicional
+    if (Number.isFinite(newTime)) {
       try {
-        if (this.audio.paused) {
-          this.audio.play();
-        } else {
-          this.audio.pause();
-        }
-      } catch (e) {
-        console.error("playPause interrupted", e);
-        this.state = "error";
+        this.audio.currentTime = newTime;
+      } catch (error) {
+        console.error("Error setting currentTime:", error);
       }
-    },
+    } else {
+      console.warn("Calculated new time is not a finite number");
+    }
+  },
 
-    close() {
-      if (this.audio) {
-        this.audio.pause();
-        this.audio.currentTime = 0;
-        this.music = null;
-        this.state = "stopped";
-        this.closed = true;
+  // Mismo enfoque para stepBackward
+  stepBackward(seconds = 30) {
+    if (!this.audio) return;
+
+    const currentTime = this.audio.currentTime || 0;
+    const duration = this.audio.duration || 0;
+
+    if (!Number.isFinite(currentTime) || !Number.isFinite(duration)) {
+      console.warn("Invalid audio time values", { currentTime, duration });
+      return;
+    }
+
+    const newTime = Math.max(currentTime - seconds, 0);
+
+    if (Number.isFinite(newTime)) {
+      try {
+        this.audio.currentTime = newTime;
+      } catch (error) {
+        console.error("Error setting currentTime:", error);
       }
-    },
+    } else {
+      console.warn("Calculated new time is not a finite number");
+    }
+  },
+});
 
-    stepForward(seconds = 30) {
-        if (!this.audio) return;
+export default function usePlayer() {
+  return player;
+}
 
-        // Validaciones de seguridad
-        const currentTime = this.audio.currentTime || 0;
-        const duration = this.audio.duration || 0;
-
-        // Verificar que los valores sean números finitos
-        if (!Number.isFinite(currentTime) || !Number.isFinite(duration)) {
-          console.warn('Invalid audio time values', { currentTime, duration });
-          return;
-        }
-
-        const newTime = Math.min(currentTime + seconds, duration);
-
-        // Otra validación adicional
-        if (Number.isFinite(newTime)) {
-          try {
-            this.audio.currentTime = newTime;
-          } catch (error) {
-            console.error('Error setting currentTime:', error);
-          }
-        } else {
-          console.warn('Calculated new time is not a finite number');
-        }
-      },
-
-      // Mismo enfoque para stepBackward
-      stepBackward(seconds = 30) {
-        if (!this.audio) return;
-
-        const currentTime = this.audio.currentTime || 0;
-        const duration = this.audio.duration || 0;
-
-        if (!Number.isFinite(currentTime) || !Number.isFinite(duration)) {
-          console.warn('Invalid audio time values', { currentTime, duration });
-          return;
-        }
-
-        const newTime = Math.max(currentTime - seconds, 0);
-
-        if (Number.isFinite(newTime)) {
-          try {
-            this.audio.currentTime = newTime;
-          } catch (error) {
-            console.error('Error setting currentTime:', error);
-          }
-        } else {
-          console.warn('Calculated new time is not a finite number');
-        }
-      }
-  });
-
-  export default function usePlayer() {
-    return player;
-  }
-
-  // Initialize player on module load
-  player.init();
+// Initialize player on module load
+player.init();

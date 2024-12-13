@@ -6,7 +6,7 @@ export const sections = [
             { label: "Curso Holístico", route: 'cursos' },
             { label: "Radio Tseyor", route: 'radio' },
             { label: "Contactar", route: 'contactar' },
-            { label: "Donar", url: 'donar' },
+            { label: "Donar", url: '/donar' },
         ],
     },
     {

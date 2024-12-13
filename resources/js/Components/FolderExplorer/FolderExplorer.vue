@@ -149,9 +149,7 @@
 
 
     <ImagesViewer :show="showImagesViewer" @close="showImagesViewer = false"
-        :images="store.images.map((x) => x + '?mw=2000&mh=2000')"  :index="imageIndex"
-        :showFilename="true"
-        />
+        :images="store.images.map((x) => x + '?mw=2000&mh=2000')" :index="imageIndex" :showFilename="true" />
 
 </template>
 
@@ -273,7 +271,7 @@ function onClickFolder(item, event) {
 const showImagesViewer = ref(false)
 const imageIndex = ref(0)
 
-function onClickFile(item, event) {
+async function onClickFile(item, event) {
     console.log("clickFile", item, "store.seleccionando:", store.seleccionando);
     if (store.seleccionando) {
         item.seleccionado = !item.seleccionado;
@@ -293,18 +291,9 @@ function onClickFile(item, event) {
              });
          } else store.mostrandoImagen = item;
           */
-    } else {
-        // si es un vídeo (mp4, avi):
-        if (item.url.match(/\.(mp4|avi|webm)$/i)) {
-            // lo abre en una nueva pestaña
-            window.open(item.url, "_blank");
-            event.preventDefault();
-        }
-        // si es un audio:
-        else if (player.isPlayable(item.url)) {
-            player.play(item.url, item.nombre);
-            event.preventDefault();
-        }
+    } else if(player.isPlayable(item.url)) {
+        player.play(item.url, item.nombre);
+        event.preventDefault()
     }
 }
 

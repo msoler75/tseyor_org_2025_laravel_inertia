@@ -24,6 +24,10 @@
 <script setup>
 import useSelectors from '@/Stores/selectors'
 import { useDark } from "@vueuse/core"
+import usePlayer from '@/Stores/player'
+
+const player = usePlayer()
+player.autoplay = true
 
 const base = '/almacen/medios/logos/radio_tseyor'
 const lightLogo = base + '.png'

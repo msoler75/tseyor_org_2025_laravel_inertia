@@ -1,7 +1,18 @@
 <template>
-    <div class="select-none">
+    <div class="audio-player select-none">
 
-        <div v-if="player.mini" v-show="!player.closed" @mouseleave="collapsePlayer"
+        <Modal class="video-player select-none fixed" :show="!player.videoClosed" centered
+            max-width="3xl">
+            <video ref="myvideo" :width="width" :height="height" autoplay controls>
+                <source :src="player.url">
+            </video>
+            <div class="flex justify-center items-center p-5">
+                <button class="btn btn-sm btn-primary" @click="player.close()">Cerrar</button>
+            </div>
+        </Modal>
+
+
+        <div v-if="player.mini" v-show="!player.audioClosed" @mouseleave="collapsePlayer"
             class="max-w-[22rem] xs:max-w-[32rem] sm:max-w-[42rem] rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden">
             <div v-if="player.expanded" class="p-2 xs:hidden">
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
@@ -157,6 +168,10 @@
 import usePlayer from '@/Stores/player'
 
 const player = usePlayer()
+const myvideo = ref(null)
+const width = ref(Math.min(1080, screen.width))
+const height = ref(Math.min(768, screen.height))
+
 // expansión de audioplayer
 
 var timerToCollapse = null
@@ -240,6 +255,7 @@ const formatTime = (ts) => {
 
 onMounted(() => {
     console.log('AudioPlayer Mounted')
+    player.video = myvideo.value
 })
 
 </script>
