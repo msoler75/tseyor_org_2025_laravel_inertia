@@ -1,6 +1,6 @@
 <template>
     <span v-if="player.music?.src == src">
-        <Icon v-show="player.state == 'stopped'" icon="ph:play-duotone" />
+        <Icon v-show="player.state == 'stopped' || player.state == 'ended' " icon="ph:play-duotone" />
         <Icon v-show="player.state == 'paused'" icon="ph:play-pause-duotone" />
         <!-- <Spinner v-show="player.state == 'loading'" /> -->
         <img v-show="player.state == 'playing'" style="width: 1em" src="/almacen/medios/iconos/wave.gif"
@@ -8,7 +8,7 @@
         <Icon v-show="player.state == 'error'" icon="ph:warning-circle-duotone" />
         <!-- <Icon v-show="!['stopped', 'paused', 'loading', 'playing', 'error'].includes(player.state)"
             icon="ph:question-mark" /> -->
-        <Spinner v-show="!['stopped', 'paused', 'playing', 'error'].includes(player.state)" />
+        <Spinner v-show="!['stopped', 'paused', 'playing', 'error', 'ended'].includes(player.state)" />
     </span>
     <span v-else>
         <Icon icon="ph:play-duotone" />

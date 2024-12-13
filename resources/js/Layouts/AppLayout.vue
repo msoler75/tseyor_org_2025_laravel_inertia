@@ -18,7 +18,7 @@
         <Banner />
 
         <!-- <component :is="dynamicAudioPlayer" v-if="dynamicAudioPlayer" /> -->
-        <AudioPlayer />
+        <AudioVideoPlayer />
 
 
         <Modal :show="mostrarMensaje" centered max-width="md">

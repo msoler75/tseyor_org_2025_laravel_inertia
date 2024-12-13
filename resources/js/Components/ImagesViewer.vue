@@ -185,7 +185,7 @@ const initImg = () => {
         if (Array.isArray(props.images) && props.images.length > 0) {
             return changeUrl(props.images[state.imgIndex])
         } else {
-            console.error('images is not Array or Array length is 0')
+            console.warn('images is not Array or Array length is 0')
         }
     })
 }
