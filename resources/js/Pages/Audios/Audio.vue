@@ -6,7 +6,7 @@
             <AdminLinks modelo="audio" necesita="administrar contenidos" :contenido="audio" />
         </div>
 
-        <div class="flex flex-col items-center">
+        <div class="flex flex-col items-center mb-20">
             <h1>{{ audio.titulo }}</h1>
             <p class="text-gray-600 text-sm mb-2">
                 Última actualización:
@@ -15,16 +15,20 @@
             <p class="badge">{{ audio.categoria }}</p>
             <p>{{ audio.descripcion }}</p>
 
-            <div v-if="audio.audio" class="btn p-0 w-12 h-5 min-h-auto text-3xl"
+            <div v-if="audio.audio" class="btn px-4 h-5 min-h-auto flex gap-2"
                 :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlayPause(audio)"
                 :title="audio.src">
-                <AudioStateIcon :src="audio.src" />
+                <AudioStateIcon :src="audio.src"  class="text-3xl"/>
+                Reproducir
             </div>
-            <a target="_blank" v-else :href="audio.enlace" class="btn p-0 w-12 h-5 min-h-auto text-3xl"
+            <a target="_blank" v-else :href="audio.enlace" class="btn px-4 h-5 min-h-auto btn-primary flex gap-2"
                 title="abrir enlace">
-                <Icon icon="ph:arrow-up-right-duotone" />
+                <Icon icon="ph:arrow-up-right-duotone"  class="text-3xl"/>
+                Abrir enlace
             </a>
         </div>
+
+        <Comentarios :url="route('audio', audio.id)" />
     </div>
 </template>
 
