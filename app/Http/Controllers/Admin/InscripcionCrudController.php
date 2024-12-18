@@ -48,12 +48,12 @@ class InscripcionCrudController extends CrudController
          */
 
         CRUD::column('created_at')->type('closure')->label('Fecha')
-        ->function(function($entry) {
-            // Suponiendo que $record es un modelo que contiene el campo de fecha y hora
-            $dateTime = Carbon::parse($entry->created_at);
-            $humanReadableDateTime = $dateTime->diffForHumans();
-            return $humanReadableDateTime;
-        });
+            ->function(function ($entry) {
+                // Suponiendo que $record es un modelo que contiene el campo de fecha y hora
+                $dateTime = Carbon::parse($entry->created_at);
+                $humanReadableDateTime = $dateTime->diffForHumans();
+                return $humanReadableDateTime;
+            });
         CRUD::column('estado')->type('text');
         CRUD::column('nombre')->type('text');
         // CRUD::column('region')->type('text');
@@ -90,13 +90,13 @@ class InscripcionCrudController extends CrudController
         ADD COLUMN notas TEXT NULL DEFAULT NULL COLLATE utf8mb4_general_ci;
         */
 
-        CRUD::field('estado')->type('enum')->options(['nuevo'=>'nuevo', 'duplicado'=>'duplicado', 'asignado'=>'asignado', 'no contesta'=>'no contesta', 'contactado'=>'contactado', 'en curso'=>'en curso'])->default('nuevo')
-        ->wrapper([
-            'class' => 'form-group col-md-3'
-        ])->before('nombre');
+        CRUD::field('estado')->type('enum')->options(['nuevo' => 'nuevo', 'asignado' => 'asignado', 'no contesta' => 'no contesta', 'contactado' => 'contactado', 'en curso' => 'en curso',  'duplicado' => 'duplicado'])->default('nuevo')
+            ->wrapper([
+                'class' => 'form-group col-md-3'
+            ])->before('nombre');
 
         // campo asignado, max length 256
-        CRUD::field('asignado')->type('text')->attributes(['maxlength'=>256])->label('Asignado a');
+        CRUD::field('asignado')->type('text')->attributes(['maxlength' => 256])->label('Asignado a');
 
         // campo notas
         CRUD::field('notas')->type('textarea')->label("Notas para el seguimiento");

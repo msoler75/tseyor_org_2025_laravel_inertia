@@ -1,5 +1,8 @@
 HACIENDA
 
+RESPONSE CACHE para visitors
+https://github.com/spatie/laravel-responsecache
+
 INSTALACION MUULAR ELECTRONICO
 -subir frontend de laravel
 -comprobar conexion tseyor.org con muular-electronico (login usuario)
