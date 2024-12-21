@@ -113,6 +113,7 @@ class RadioImport
                     $mp3File = $audio;
                     $loc = new StorageItem($mp3File);
                     $mp3File = $loc->getPath();
+                    if(!file_exists($mp3File)) continue;
 
                     $duracion = self::duracion($mp3File);
                     $url = $loc->url;
@@ -120,7 +121,7 @@ class RadioImport
                         echo "Importando comunicado $mp3File - $comunicado->titulo\n";
                         $activado = isset($activados[$comunicado->categoria][$comunicado->numero]) &&
                         array_search($index, $activados[$comunicado->categoria][$comunicado->numero]) !== false;
-                        $desactivado = !$activado;
+                        $desactivado = $activado?'0':'1';
                         RadioItem::create(['titulo' => $comunicado->titulo, 'categoria' => 'Comunicados', 'url' => $url, 'duracion' => $duracion, 'desactivado' => $desactivado]);
                     }
                 }
@@ -170,6 +171,7 @@ class RadioImport
             $porcentajeCategoria[$categoria] = $audiosPorCategoria[$categoria]->count() / $totalAudios;
             $acumuladoCategoria[$categoria] = 0;
         }
+        // dd($categoriasDisponibles, $porcentajeCategoria, $acumuladoCategoria);
 
 
         $agregados = 0;
@@ -187,6 +189,10 @@ class RadioImport
                     $mp3File = $audio->audio;
                     $loc = new StorageItem($mp3File);
                     $mp3File = $loc->getPath();
+                    if(!file_exists($mp3File)) {
+                        $agregados++;
+                        continue;
+                    }
 
                     $duracion = self::duracion($mp3File);
                     $url = $loc->url;
@@ -203,6 +209,8 @@ class RadioImport
                         $agregados++;
                     }
                 }
+                else
+                $agregados++;
             }
 
             // Pasar a la siguiente categoría

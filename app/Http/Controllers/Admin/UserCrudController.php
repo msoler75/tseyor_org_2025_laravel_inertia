@@ -82,6 +82,9 @@ class UserCrudController extends CrudController
          CRUD::addButtonFromView('line', 'generate_password', 'generate_password', 'end');
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
+
+
+
     }
 
 

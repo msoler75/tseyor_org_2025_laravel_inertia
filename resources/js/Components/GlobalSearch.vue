@@ -31,7 +31,8 @@
                     <div v-if="!resultadosAgrupados.length" class="p-7">
                         <div v-if="search.lastQuery" class="text-center text-lg text-gray-500">
                             <span v-if="search.valid">No hay resultados para</span>
-                            <span v-else>Demasiados resultados para</span> "<span class="text-primary">{{ search.lastQuery }}</span>"
+                            <span v-else>Demasiados resultados para</span> "<span class="text-primary">{{
+                                search.lastQuery }}</span>"
                         </div>
 
                         <div v-if="search.showSuggestions" class="mt-7">
@@ -72,7 +73,7 @@
 <script setup>
 import useGlobalSearch from "@/Stores/globalSearch.js"
 import traducir from '@/composables/traducciones'
-
+import { removeAccents, levenshtein } from '@/composables/textutils'
 
 const portada = computed(() => page.url == '/')
 const page = usePage()
@@ -89,6 +90,17 @@ const predefinedQueries = ref([
     { query: 'Ayuda humanitaria' }
 ])
 
+const currentQueryStd = computed(() => removeAccents(search.lastQuery))
+
+function removeGargabe(txt) {
+    return removeAccents(txt.replace(/<em class="search-term">/g, '').replace(/<\/em>/g, ''))
+}
+
+function nearness(t) {
+    return levenshtein(currentQueryStd.value, removeGargabe(t))
+}
+
+// agrupamos por categorias, pero tenemos en cuenta los resultados de la búsqueda
 const resultadosAgrupados = computed(() => {
     if (search.results === null) return []
 
@@ -108,19 +120,34 @@ const resultadosAgrupados = computed(() => {
     }
 
     // Crear el array de objetos agrupados
-    const items = Object.entries(agrupados).map(([coleccion, items]) => ({
+    const grupos = Object.entries(agrupados).map(([coleccion, items]) => ({
         coleccion,
-        items
+        items,
+        // score: el maximo valor de __tntSearchScore__ encontrado en la lista de items
+        score: items.reduce((max, item) => Math.max(max, item.__tntSearchScore__), 0)
     }))
 
+
+    grupos.forEach(grupo => {
+        grupo.items.sort((a, b) => {
+            if (a.__tntSearchScore__ == b.__tntSearchScore__) {
+                const nA = nearness(a.titulo)
+                const nB = nearness(b.titulo)
+                if (nA == nB)
+                    return a.titulo.length - b.titulo.length
+                return nA - nB
+            }
+            return b.__tntSearchScore__ - a.__tntSearchScore__
+        })
+    })
+
+
     // Ordenar el array de items
-    items.sort((a, b) => {
+    grupos.sort((a, b) => {
         const prioridad = ['libros', 'entradas', 'centros', 'lugares', 'guias', 'terminos', 'paginas'] // paginas es el más prioritario
-
-        const indexA = prioridad.indexOf(a.coleccion)
-        const indexB = prioridad.indexOf(b.coleccion)
-
-        return indexB - indexA
+        if (a.score == b.score)
+            return prioridad.indexOf(a.coleccion) - prioridad.indexOf(b.coleccion)
+        return b.score - a.score
     })
 
     nextTick(() => {
@@ -128,7 +155,7 @@ const resultadosAgrupados = computed(() => {
         siguienteItem()
     })
 
-    return items
+    return grupos
 })
 
 const itemsArray = computed(() => {
