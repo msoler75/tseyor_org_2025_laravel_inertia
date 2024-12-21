@@ -656,6 +656,13 @@ const selectors = useSelectors()
 if (!['lista', 'grid'].includes(selectors.archivosVista))
     selectors.archivosVista = 'lista'
 
+// obtenemos parámetro de URL "vista"
+if('URLSearchParams' in window) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const vista = urlParams.get('vista');
+    if (vista && ['lista', 'grid'].includes(vista))
+        selectors.archivosVista = vista
+}
 
 console.log(selectors.value)
 const toggleVista = () => {

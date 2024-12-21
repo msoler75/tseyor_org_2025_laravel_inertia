@@ -1,8 +1,5 @@
 HACIENDA
 
-RESPONSE CACHE para visitors
-https://github.com/spatie/laravel-responsecache
-
 INSTALACION MUULAR ELECTRONICO
 -subir frontend de laravel
 -comprobar conexion tseyor.org con muular-electronico (login usuario)
@@ -25,7 +22,7 @@ EQUIPOS
 
 ARCHIVOS
 -Maximo tamaño upload: 50mb
--Poder psponer un parámetro en la url para que se vea la carpeta en modo imagenes (y así poder compartir el enlace)
+-(HECHO)Poder poner un parámetro en la url para que se vea la carpeta en modo imagenes (y así poder compartir el enlace)
 -Considerar carpetas como álbumes (vista imagenes por defecto)
 -Puede tal vez auto detectarse la carpeta si tiene muchas imagenes, ponerla en modo imagen por defecto
 
