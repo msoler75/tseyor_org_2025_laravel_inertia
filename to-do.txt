@@ -25,7 +25,7 @@ EQUIPOS
 
 ARCHIVOS
 -Maximo tamaño upload: 50mb
--Poder poner un parámetro en la url para que se vea la carpeta en modo imagenes (y así poder compartir el enlace)
+-Poder psponer un parámetro en la url para que se vea la carpeta en modo imagenes (y así poder compartir el enlace)
 -Considerar carpetas como álbumes (vista imagenes por defecto)
 -Puede tal vez auto detectarse la carpeta si tiene muchas imagenes, ponerla en modo imagen por defecto
 
