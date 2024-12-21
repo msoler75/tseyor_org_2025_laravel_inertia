@@ -146,7 +146,7 @@ const resultadosAgrupados = computed(() => {
     grupos.sort((a, b) => {
         const prioridad = ['libros', 'entradas', 'centros', 'lugares', 'guias', 'terminos', 'paginas'] // paginas es el más prioritario
         if (a.score == b.score)
-            return prioridad.indexOf(a.coleccion) - prioridad.indexOf(b.coleccion)
+            return prioridad.indexOf(b.coleccion) - prioridad.indexOf(a.coleccion)
         return b.score - a.score
     })
 
