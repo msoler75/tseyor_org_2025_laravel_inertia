@@ -12,12 +12,14 @@
                 <a :href="editUrl" class="underline">Editar</a>
             </div>
             <div v-else class="w-fit ml-auto">
-                <a :href="editUrl" class="ml-auto no-underline hover:underline">Editar</a>
+                <a :href="editUrl" class="ml-auto btn btn-xs btn-secondary"> <Icon icon="ph:pencil-duotone" /> Editar</a>
             </div>
         </template>
         <div v-else class="w-fit ml-auto">
             <div v-if="soloInforma">ERES ADMINISTRADOR</div>
-            <a v-else :href="adminUrl" class="no-underline hover:underline">Administrar</a>
+            <a v-else :href="adminUrl" class="btn btn-xs btn-secondary">
+                <Icon icon="ph:pencil-duotone" />
+                Administrar</a>
         </div>
     </div>
     <div v-else-if="isDraft" class="alert alert-warning w-fit ml-auto">

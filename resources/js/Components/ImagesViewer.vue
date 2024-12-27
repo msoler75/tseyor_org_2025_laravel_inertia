@@ -182,10 +182,10 @@ const handleKeyStroke = (e) => {
 const initImg = () => {
     nextTick(() => {
         if (props.url !== undefined) return changeUrl(props.url)
-        if (Array.isArray(props.images) && props.images.length > 0) {
+        if (Array.isArray(props.images) && props.images?.length > 0) {
             return changeUrl(props.images[state.imgIndex])
         } else {
-            console.warn('images is not Array or Array length is 0')
+            // console.warn('images is not Array or Array length is 0')
         }
     })
 }
@@ -249,6 +249,7 @@ const handleClose = () => {
 
 const toggleImg = (flag) => {
     if (!isMultiple.value) return
+    if(!props.images||!props.images.length) return
     if (flag) {
         state.imgIndex++
         if (state.imgIndex > props.images.length - 1) state.imgIndex = 0
@@ -269,6 +270,7 @@ onBeforeUnmount(() => {
 })
 
 watch(() => props.index, (index) => {
+    if(!props.images||!props.images.length) return
     if (index >= 0 && index < props.images.length) {
         state.imgIndex = props.index
         changeUrl(props.images[state.imgIndex])

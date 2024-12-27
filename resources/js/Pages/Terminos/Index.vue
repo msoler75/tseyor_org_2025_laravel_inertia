@@ -2,11 +2,14 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-7">
-            <span/>
-            <Link href="/libros/glosario-terminologico" class="btn btn-sm btn-primary flex gap-2 items-center"
-            title='Descarga todo el glosario en pdf'>
-            <Icon icon="ph:download-duotone" />Descargar libro</Link>
-            <AdminLinks modelo="termino" necesita="administrar contenidos" />
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <Link href="/libros/glosario-terminologico" class="btn btn-xs btn-primary flex gap-2 items-center"
+                    title='Descarga todo el glosario en pdf'>
+                <Icon icon="ph:download-duotone" />Descargar libro</Link>
+                <AdminLinks modelo="termino" necesita="administrar contenidos" />
+            </div>
         </div>
 
 
@@ -36,7 +39,7 @@
                 <div class="flex flex-wrap md:hidden  gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
                         :href="route('terminos') + '?letra=' + letraItem"
-                        :class="letraItem==letraActual?'font-bold transform scale-110 text-primary':''">
+                        :class="letraItem == letraActual ? 'font-bold transform scale-110 text-primary' : ''">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -45,7 +48,7 @@
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
                         :style="{ 'grid-column': Math.floor(index / (letras.length / 2)) + 1 }"
                         :href="route('terminos') + '?letra=' + letraItem"
-                        :class="letraItem==letraActual?'font-bold transform scale-110 text-primary':''">
+                        :class="letraItem == letraActual ? 'font-bold transform scale-110 text-primary' : ''">
                     {{ letraItem }}
                     </Link>
                 </div>
@@ -90,4 +93,3 @@ const listado = ref(props.listado);
 
 const letraActual = route().params.letra
 </script>
-

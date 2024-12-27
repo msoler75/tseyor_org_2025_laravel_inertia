@@ -1,8 +1,14 @@
 <template>
 
-    <div class="container py-12 mx-auto">
+    <div class="py-4 md:py-12 w-full container mx-auto">
 
-        <AdminLinks modelo="centro" necesita="administrar directorio" class="mb-3" />
+        <div class="flex justify-between mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="centro" necesita="administrar directorio"  />
+            </div>
+        </div>
 
         <!-- Encabezado de la página -->
         <header v-if="false" class="my-12">

@@ -1,9 +1,12 @@
 <template>
-    <div class="container mx-auto px-4 py-8">
+    <div class="py-4 md:py-12 w-full container mx-auto">
 
         <div class="flex justify-between items-center mb-20">
             <Back>Centros Tseyor</Back>
-            <AdminLinks modelo="centro" necesita="administrar directorio" :contenido="centro" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="centro" necesita="administrar directorio" :contenido="centro" />
+            </div>
         </div>
 
         <TextText :srcImage="centro.imagen" cover full>

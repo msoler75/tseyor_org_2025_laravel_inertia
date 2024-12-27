@@ -1,6 +1,10 @@
 <template>
+
+    <div class="mb-3">
+        <AdminLinks modelo="nodo" necesita="administrar archivos"  />
+    </div>
+
     <h1 class="hidden" >{{ ruta }}</h1>
-    <AdminLinks modelo="nodo" necesita="administrar archivos" class="mb-3" />
 
     <FolderExplorer :items="items" :puedeEscribir="puedeEscribir" :propietarioRef="propietarioRef" @updated="reloadPage"
         ruta="" rutaBase="" rootLabel="mis_archivos:" rootUrl="" :mostrarRutas="true" />

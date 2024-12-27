@@ -54,6 +54,13 @@
                 <span v-else>Ver usuario</span>
                 </Link>
 
+                <Share>
+                    <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap">
+                        <Icon icon="ph:share-network-duotone" />
+                        <span>Compartir</span>
+                    </div>
+                </Share>
+
 
                 <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap"
                     @click.prevent="store.call('propiedades', store.itemsShow[0])">

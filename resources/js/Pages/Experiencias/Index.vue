@@ -3,15 +3,17 @@
 
         <div class="flex justify-between items-center mb-20">
             <span></span>
-            <Back v-if="false" href="/comunidad">Comunidad</Back>
-            <AdminLinks modelo="experiencia" necesita="administrar experiencias" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="experiencia" necesita="administrar experiencias" />
+            </div>
         </div>
 
         <h1>Experiencias Interdimensionales</h1>
         <p>Sueños, meditaciones, extrapolaciones y trabajos grupales.</p>
 
         <Link :href="route('experiencia.nueva')" class="btn btn-primary">
-            <Icon icon="ph:plus-square-duotone"/> Envía tu experiencia
+        <Icon icon="ph:plus-square-duotone" /> Envía tu experiencia
         </Link>
 
         <div class="flex justify-end mb-5">
@@ -44,7 +46,8 @@
 
                 <GridAppear class="gap-2 py-4" :time-lapse="0.01" col-width="24rem">
 
-                    <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('experiencia', contenido.id)"
+                    <Link v-for="contenido in listado.data" :key="contenido.id"
+                        :href="route('experiencia', contenido.id)"
                         class="hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
                     <Icon icon="ph:dot-fill" class="flex-shrink-0" />
                     <div class="max-w-[calc(100%-7rem)] w-full ">
@@ -55,11 +58,10 @@
                             </span>
                         </div>
                         <div v-if="!categoriaActiva" class="flex flex-wrap w-full justify-between gap-3 mt-4">
-                            <span  class="badge text-xs badge-neutral">{{ contenido.categoria }}</span>
+                            <span class="badge text-xs badge-neutral">{{ contenido.categoria }}</span>
                         </div>
-                        <div
-                class="mt-5 text-xs lg:opacity-50 transition duration-300 group-hover:opacity-90 max-h-8 text-ellipsis overflow-hidden text-gradient"
-                v-html="contenido.texto" />
+                        <div class="mt-5 text-xs lg:opacity-50 transition duration-300 group-hover:opacity-90 max-h-8 text-ellipsis overflow-hidden text-gradient"
+                            v-html="contenido.texto" />
                     </div>
                     </Link>
                 </GridAppear>
@@ -102,8 +104,8 @@ const listado = ref(props.listado);
     position: relative;
     z-index: 1;
     --box-size: 100%;
-  --border-thickness: 5%;
-  box-shadow: none;
+    --border-thickness: 5%;
+    box-shadow: none;
 }
 
 .dark .cloud {
@@ -139,6 +141,3 @@ const listado = ref(props.listado);
     background-image: linear-gradient(to bottom, #fff 0%, #fff 70%, #0000 95%)
 }
 </style>
-
-
-

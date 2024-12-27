@@ -3,7 +3,10 @@
 
         <div class="flex justify-between items-center mb-20">
             <Back href="/donde-estamos">Dónde estamos</Back>
-            <AdminLinks modelo="contacto" necesita="administrar directorio" :contenido="contacto" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="contacto" necesita="administrar directorio" :contenido="contacto" />
+            </div>
         </div>
 
         <Card class="text-center w-fit space-y-4 sm:!p-14 mx-auto">

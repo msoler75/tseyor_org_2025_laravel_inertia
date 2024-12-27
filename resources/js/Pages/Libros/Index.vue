@@ -1,7 +1,13 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminLinks modelo="libro" necesita="administrar contenidos" class="mb-3" />
+        <div class="flex justify-between mb-20">
+            <span></span>
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="libro" necesita="administrar contenidos"  />
+            </div>
+        </div>
 
         <h1>Libros</h1>
         <p>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales
@@ -14,9 +20,9 @@
         <div class="flex w-full justify-between mb-5">
             <SearchInput v-model="query" class="flex-grow">
                 <span v-if="query" class="sm:hidden mr-auto"></span>
-                <div class="flex items-baseline gap-3 w-full pl-1"
-                    :class="query?'hidden sm:flex':''">
-                    <input id="titulos" type="checkbox" v-model="selectors.soloTitulosLibros"> <label for="titulos" class="mb-0">Solo títulos</label>
+                <div class="flex items-baseline gap-3 w-full pl-1" :class="query ? 'hidden sm:flex' : ''">
+                    <input id="titulos" type="checkbox" v-model="selectors.soloTitulosLibros"> <label for="titulos"
+                        class="mb-0">Solo títulos</label>
                 </div>
             </SearchInput>
         </div>
@@ -24,8 +30,7 @@
         <ContentMain class="w-full flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
 
             <Categorias :categorias="categorias" :url="route('libros')" columna-breakpoint="xl" select-breakpoint="md"
-            :resultados="!!filtrado"
-                select-class="w-full" />
+                :resultados="!!filtrado" select-class="w-full" />
 
             <FadeOnNavigate class="w-full flex-grow">
 
@@ -36,7 +41,7 @@
                         class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
 
                         <Link :href="route('libro', libro.slug)" class="flex items-center gap-3 text-primary font-bold">
-                        <span v-html="libro.titulo"/><span class="flex-shrink-0 -order-1">📘</span></Link>
+                        <span v-html="libro.titulo" /><span class="flex-shrink-0 -order-1">📘</span></Link>
                     </div>
                 </GridAppear>
 

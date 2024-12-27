@@ -8,7 +8,10 @@
             Informes de todos los equipos
             <Icon icon="ph:arrow-right" />
             </Link>
-            <AdminLinks modelo="informe" :necesita="['administrar equipos', 'coordinar equipo']" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="informe" :necesita="['administrar equipos', 'coordinar equipo']" />
+            </div>
         </div>
 
         <template v-if="equipo">

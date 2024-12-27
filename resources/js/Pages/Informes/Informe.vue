@@ -10,7 +10,10 @@
             <Icon icon="ph:arrow-right" />
             </Link>
             <span v-else></span>
-            <AdminLinks modelo="informe" necesita="administrar equipos" :contenido="informe" :es-autor="soyCoordinador"/>
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="informe" necesita="administrar equipos" :contenido="informe" :es-autor="soyCoordinador"/>
+            </div>
         </div>
 
 

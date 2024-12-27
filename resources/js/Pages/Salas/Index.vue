@@ -1,7 +1,13 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminLinks modelo="sala" necesita="administrar directorio" class="mb-3" />
+        <div class="flex justify-between mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="sala" necesita="administrar directorio"/>
+            </div>
+        </div>
 
         <h1>Salas virtuales</h1>
         <p>Listado de salas para reuniones virtuales de los distintos equipos de la comunidad Tseyor.</p>

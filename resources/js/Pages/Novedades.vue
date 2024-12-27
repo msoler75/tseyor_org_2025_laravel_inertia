@@ -2,7 +2,13 @@
 
     <div class="p-4 lg:px-0 lg:container py-12 mx-auto">
 
-        <AdminLinks necesita="administrar contenidos" class="mb-3" />
+        <div class="flex justify-between mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks necesita="administrar contenidos" />
+            </div>
+        </div>
 
         <h1>Novedades</h1>
         <p>Todas las novedades de los contenidos de Tseyor.</p>

@@ -12,6 +12,7 @@ import { ZiggyVue } from "ziggy";
 import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
 //import FloatingVue from 'floating-vue'
+import VueSocialSharing from 'vue-social-sharing'
 
 const appName = "TSEYOR.org";
 
@@ -99,12 +100,13 @@ createInertiaApp({
   title: (title) => {
 
     console.log('TITLE:', title)
-    // const page = usePage();
+    //const page = usePage();
     // console.log({ props: page.props, title });
     // if (!title) title = page.props?.seo?.titulo;
     // console.log("title:", title);
 
-    // const description = page.props?.seo?.descripcion;
+     // const description = page.props;
+     //console.log('DESCRIPTION', description)
 
     // const image = page.props?.seo?.imagen;
 
@@ -178,6 +180,7 @@ createInertiaApp({
         components: { Icon, Head },
         methods: { useNav },
       })
+      .use(VueSocialSharing)
       .use(plugin)
       .use(ZiggyVue, Ziggy)
       .mount(el);

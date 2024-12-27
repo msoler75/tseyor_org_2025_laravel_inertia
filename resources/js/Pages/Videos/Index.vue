@@ -1,8 +1,13 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminLinks modelo="video" necesita="administrar contenidos" class="mb-3" />
-
+        <div class="flex justify-between mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="video" necesita="administrar contenidos"  />
+            </div>
+        </div>
 
         <section class="py-10 space-y-10 mx-auto">
             <h1 class="text-4xl font-bold text-center mb-10">Vídeos TSEYOR</h1>
@@ -29,7 +34,8 @@
                             class="absolute top-0 left-0 w-full h-full bg-gray-800"></iframe>
                     </div>
                     <Link :href="route('video', video.slug)"
-                        class="hover:text-primary transition-color duration-200  text-xl font-bold" v-html="video.titulo">
+                        class="hover:text-primary transition-color duration-200  text-xl font-bold"
+                        v-html="video.titulo">
                     </Link>
                     <div class="text-gradient opacity-75 transition duration-300 group-hover:opacity-90 text-sm text-ellipsis overflow-hidden "
                         v-html="video.descripcion" />

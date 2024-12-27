@@ -1,6 +1,13 @@
 <template>
     <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
-        <AdminLinks modelo="equipo" necesita="administrar equipos" class="mb-3" />
+
+        <div class="flex justify-between mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="equipo" necesita="administrar equipos" />
+            </div>
+        </div>
 
         <h1>Equipos</h1>
         <p>Equipos de trabajo y departamentos de la UTG.</p>

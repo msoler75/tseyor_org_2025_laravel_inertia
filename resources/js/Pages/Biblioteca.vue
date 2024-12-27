@@ -1,6 +1,11 @@
 <template>
     <div class="container py-12 mx-auto">
 
+        <div class="flex justify-between mb-20">
+            <span/>
+            <Share />
+        </div>
+
         <!-- Encabezado -->
         <h1 class="mb-4">Biblioteca Tseyor</h1>
 

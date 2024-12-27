@@ -3,10 +3,13 @@
 
         <div class="flex justify-between items-center mb-7">
             <Back :href="route('terminos')" inline>Términos</Back>
-            <Link href="/libros/glosario-terminologico" class="btn btn-sm btn-primary flex gap-2 items-center"
-            title='Descarga todo el glosario en pdf'>
-            <Icon icon="ph:download-duotone" />Descargar libro</Link>
-            <AdminLinks modelo="termino" necesita="administrar contenidos" :contenido="termino" />
+            <div class="flex gap-2">
+                <Share />
+                <Link href="/libros/glosario-terminologico" class="btn btn-xs btn-primary flex gap-2 items-center"
+                    title='Descarga todo el glosario en pdf'>
+                <Icon icon="ph:download-duotone" />Descargar libro</Link>
+                <AdminLinks modelo="termino" necesita="administrar contenidos" :contenido="termino" />
+            </div>
         </div>
 
 
@@ -77,7 +80,8 @@
                 </div>
 
                 <GridAppear v-if="referencias.libros.length" col-width="200px" class="gap-5">
-                    <Libro3d v-for="libro of referencias.libros" :key="libro.slug" :libro="libro" imageClass="w-[150px]"/>
+                    <Libro3d v-for="libro of referencias.libros" :key="libro.slug" :libro="libro"
+                        imageClass="w-[150px]" />
                 </GridAppear>
             </ContentMain>
 
