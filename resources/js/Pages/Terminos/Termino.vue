@@ -1,5 +1,5 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
 
         <div class="flex justify-between items-center mb-7">
             <Back :href="route('terminos')" inline>Términos</Back>
@@ -110,7 +110,7 @@
             <span v-else />
         </div>
 
-    </div>
+    </Page>
 </template>
 
 <script setup>

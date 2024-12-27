@@ -1,8 +1,7 @@
 <template>
-    <div>
+    <Page>
 
-
-        <div class="container py-12 mx-auto flex justify-between items-center">
+        <div class="flex justify-between items-center mb-20">
             <Back class="hover:underline" :href="route('equipo.informes', equipo.slug)">Informes del equipo</Back>
             <Link v-if="equipo && equipo.slug && equipo.nombre" :href="route('equipo', equipo.slug)"
                 class="flex h-fit gap-2 text-sm items-center hover:underline">
@@ -53,7 +52,7 @@
 
         <Comentarios :url="route('informe', informe.id)" />
 
-    </div>
+    </Page>
 </template>
 
 <script setup>

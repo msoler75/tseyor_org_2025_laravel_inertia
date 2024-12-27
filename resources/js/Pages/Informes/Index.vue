@@ -1,5 +1,5 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
 
         <div class="flex justify-between items-center mb-20">
             <Back v-if="equipo && equipo.slug" :href="route('equipo', equipo.slug)">{{ equipo.nombre }}</Back>
@@ -80,7 +80,7 @@
 
             </div>
         </div>
-    </div>
+    </Page>
 </template>
 
 

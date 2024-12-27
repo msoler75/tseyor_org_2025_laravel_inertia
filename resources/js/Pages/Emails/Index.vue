@@ -1,6 +1,6 @@
 
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
 
         <div class="flex gap-3 items-center mb-20">
             <Icon icon="ph:arrow-left" /> <a href="/admin/dashboard">Panel de Administración</a>
@@ -43,7 +43,7 @@
             <pagination class="mt-6" :links="listado.links" />
 
         </div>
-    </div>
+    </Page>
 </template>
 
 <script setup>

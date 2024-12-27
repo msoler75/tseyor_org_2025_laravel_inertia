@@ -1,5 +1,5 @@
 <template>
-    <div class="py-4 md:py-12 w-full container mx-auto">
+    <Page>
 
         <div class="flex justify-between mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
@@ -66,7 +66,7 @@
             </div>
 
         </div>
-    </div>
+    </Page>
 </template>
 
 

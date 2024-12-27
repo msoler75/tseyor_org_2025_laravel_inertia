@@ -1,12 +1,11 @@
 <template>
-
-    <div class="py-4 md:py-12 w-full container mx-auto">
+    <Page>
 
         <div class="flex justify-between mb-20">
             <span />
             <div class="flex gap-2">
                 <Share />
-                <AdminLinks modelo="centro" necesita="administrar directorio"  />
+                <AdminLinks modelo="centro" necesita="administrar directorio" />
             </div>
         </div>
 
@@ -101,7 +100,7 @@
 
         </div>
 
-    </div>
+    </Page>
 </template>
 
 

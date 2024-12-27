@@ -1,7 +1,7 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
 
-        <div class="container mx-auto flex justify-between items-center mb-20">
+        <div class="flex justify-between items-center mb-20">
             <Back>Comunidad</Back>
             <div class="flex gap-2">
                 <Share />
@@ -59,7 +59,7 @@
 
             </div>
         </div>
-    </div>
+    </Page>
 </template>
 
 

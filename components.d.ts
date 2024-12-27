@@ -106,6 +106,7 @@ declare module 'vue' {
     NavSubmenu: typeof import('./resources/js/Components/NavSubmenu.vue')['default']
     NavTabs: typeof import('./resources/js/Components/NavTabs.vue')['default']
     NewsLetterSignup: typeof import('./resources/js/Sections/NewsLetterSignup.vue')['default']
+    Page: typeof import('./resources/js/Components/Page.vue')['default']
     Pagination: typeof import('./resources/js/Components/Pagination.vue')['default']
     PasswordInput: typeof import('./resources/js/Components/PasswordInput.vue')['default']
     PermisosAcl: typeof import('./resources/js/Components/FolderExplorer/PermisosAcl.vue')['default']

@@ -1,7 +1,7 @@
 <template>
-    <div class="container mx-auto py-12">
+    <Page>
 
-        <div class="container mx-auto flex justify-between items-center mb-20">
+        <div class="flex justify-between items-center mb-20">
             <Back v-if="pagina.atras_ruta" :href="pagina.atras_ruta">{{ pagina.atras_texto }}</Back>
             <span v-else></span>
             <div class="flex gap-2">
@@ -15,7 +15,7 @@
             <Content :content="pagina.texto" class="mx-auto animate-fade-in" />
         </div>
 
-    </div>
+    </Page>
 </template>
 
 

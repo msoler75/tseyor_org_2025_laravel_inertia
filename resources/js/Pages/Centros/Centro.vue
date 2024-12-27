@@ -1,5 +1,5 @@
 <template>
-    <div class="py-4 md:py-12 w-full container mx-auto">
+    <Page>
 
         <div class="flex justify-between items-center mb-20">
             <Back>Centros Tseyor</Back>
@@ -58,7 +58,7 @@
             </GridAppear>
         </div>
 
-    </div>
+    </Page>
 </template>
 
 <script setup>
