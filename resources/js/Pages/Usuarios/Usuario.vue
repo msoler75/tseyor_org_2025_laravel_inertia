@@ -1,7 +1,7 @@
 <template>
-    <div class="pt-8">
+    <Page>
 
-        <div class="container mx-auto flex justify-between items-center mb-20">
+        <div class="flex justify-between items-center mb-20">
             <Back>Usuarios</Back>
             <span></span>
             <div class="flex gap-2">
@@ -116,7 +116,7 @@
                 </template>
             </ConfirmationModal>
         </Sections>
-    </div>
+    </Page>
 </template>
 
 <script setup>

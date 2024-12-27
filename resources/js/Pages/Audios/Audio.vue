@@ -1,5 +1,5 @@
 <template>
-    <div class="py-4 md:py-12 w-full container mx-auto">
+    <Page>
 
         <div class="flex justify-between items-center mb-20">
             <Back>Audios</Back>
@@ -32,7 +32,7 @@
         </div>
 
         <Comentarios :url="route('audio', audio.id)" />
-    </div>
+    </Page>
 </template>
 
 <script setup>

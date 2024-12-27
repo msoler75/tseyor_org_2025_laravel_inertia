@@ -1,7 +1,7 @@
 <template>
-    <div class="py-12 mx-auto px-0 sm:p-[1rem] sm:container">
+    <Page>
 
-        <div class="px-3 xs:px-4 sm:px-0 flex justify-between items-center mb-20">
+        <div class="flex justify-between items-center mb-20">
             <Back>Blog</Back>
             <div class="flex gap-2">
                 <Share />
@@ -42,7 +42,7 @@
 
 
         <Comentarios :url="route('entrada', entrada.id)" />
-    </div>
+    </Page>
 </template>
 
 <script setup>

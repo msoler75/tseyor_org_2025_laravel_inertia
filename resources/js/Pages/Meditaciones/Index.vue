@@ -1,7 +1,7 @@
 <template>
-    <div class="py-8">
+    <Page>
 
-        <div class="container mx-auto flex justify-between items-center mb-20">
+        <div class="flex justify-between items-center mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
             <div class="flex gap-2">
                 <Share />
@@ -9,16 +9,16 @@
             </div>
         </div>
 
-        <div class="container mx-auto mb-20">
+        <div class="mb-20">
             <h1>Meditaciones</h1>
             <p>Talleres, meditaciones y otros documentos para uso de la comunidad Tseyor.</p>
         </div>
 
-        <ContentMain class="container mx-auto flex justify-end mb-5">
+        <ContentMain class="cflex justify-end mb-5">
             <SearchInput />
         </ContentMain>
 
-        <div class="container mx-auto w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
+        <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
 
             <Categorias :categorias="categorias" :url="route('meditaciones')" />
 
@@ -50,7 +50,7 @@
 
             </div>
         </div>
-    </div>
+    </Page>
 </template>
 
 

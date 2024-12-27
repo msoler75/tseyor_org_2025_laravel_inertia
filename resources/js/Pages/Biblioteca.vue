@@ -1,5 +1,5 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
 
         <div class="flex justify-between mb-20">
             <span/>
@@ -60,7 +60,7 @@
 
 
         </GridAppear>
-    </div>
+    </Page>
 </template>
 
 <script setup>

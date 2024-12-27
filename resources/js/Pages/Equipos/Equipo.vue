@@ -1,6 +1,7 @@
 <template>
-    <div>
-        <div class="container mx-auto py-12 flex justify-between items-center">
+    <Page>
+
+        <div class="flex justify-between items-center mb-20">
             <Back>Equipos</Back>
             <EquipoMembresia class="hidden sm:flex mx-auto" :equipo-id="equipo.id" v-model="solicitud"
                 :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador" :permitirSolicitudes="!equipo.oculto"
@@ -14,7 +15,7 @@
         <EquipoCabecera :equipo="equipo" class="fixed w-full top-14 transition duration-100"
             :class="useNav().scrollY < 240 ? 'opacity-0 pointer-events-none' : ''" />
 
-        <div class="container mx-auto pb-20">
+        <div class="pb-20">
 
             <GridAppear class="gap-7" col-width="22rem">
 
@@ -121,7 +122,7 @@
 
             </GridAppear>
         </div>
-    </div>
+    </Page>
 </template>
 
 <script setup>

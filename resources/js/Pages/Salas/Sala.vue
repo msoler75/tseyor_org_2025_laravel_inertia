@@ -1,5 +1,5 @@
 <template>
-    <div class="container mx-auto py-12">
+    <Page>
 
         <div class="flex justify-between items-center mb-20">
             <Back>Salas</Back>
@@ -27,7 +27,7 @@
         </div>
 
 
-    </div>
+    </Page>
 </template>
 
 <script setup>

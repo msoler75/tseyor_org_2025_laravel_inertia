@@ -1,5 +1,6 @@
 <template>
-    <div class="container mx-auto px-4 py-8 mb-32">
+    <Page>
+
         <div class="flex justify-between items-center mb-20">
             <Back>Videos</Back>
             <div class="flex gap-2">
@@ -28,7 +29,7 @@
             </div>
 
         </div>
-    </div>
+    </Page>
 </template>
 
 <script setup>

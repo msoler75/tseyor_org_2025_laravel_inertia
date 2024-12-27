@@ -1,6 +1,6 @@
 <template>
 
-    <div class="p-4 lg:px-0 lg:container py-12 mx-auto">
+    <Page>
 
         <div class="flex justify-between mb-20">
             <span />
@@ -34,7 +34,7 @@
 
         <pagination class="mt-6" :links="listado.links" />
 
-    </div>
+    </Page>
 </template>
 
 

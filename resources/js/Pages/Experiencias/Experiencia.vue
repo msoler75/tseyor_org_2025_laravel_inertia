@@ -1,7 +1,7 @@
 <template>
-    <div class="py-8">
+    <Page>
 
-        <div class="container mx-auto flex justify-between items-center mb-20">
+        <div class="flex justify-between items-center mb-20">
             <Back>Experiencias</Back>
             <div class="flex gap-2">
                 <Share />
@@ -40,7 +40,7 @@
 
         <Comentarios :url="route('experiencia', experiencia.id)" />
 
-    </div>
+    </Page>
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
 
         <div class="flex justify-between items-center mb-7">
             <span />
@@ -73,7 +73,7 @@
 
 
         </div>
-    </div>
+    </Page>
 </template>
 
 <script setup>

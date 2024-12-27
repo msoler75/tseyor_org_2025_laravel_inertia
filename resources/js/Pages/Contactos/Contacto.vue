@@ -1,5 +1,5 @@
 <template>
-    <div class="container mx-auto px-4 py-8 pb-20">
+    <Page>
 
         <div class="flex justify-between items-center mb-20">
             <Back href="/donde-estamos">Dónde estamos</Back>
@@ -39,7 +39,7 @@
         </Card>
 
 
-    </div>
+    </Page>
 </template>
 
 <script setup>

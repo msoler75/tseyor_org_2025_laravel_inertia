@@ -1,5 +1,13 @@
 <template>
-    <div class="mx-auto pb-20 text-center">
+    <Page class="text-center">
+
+        <div class="flex justify-between items-center mb-20">
+            <span/>
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="radioitem" necesita="administrar contenidos" />
+            </div>
+        </div>
 
         <Hero title="" :srcImage="isDark?'/almacen/medios/logos/radio_tseyor_dark.png':'/almacen/medios/logos/radio_tseyor.png'"
         class="!py-8 lg:!py-20"
@@ -34,7 +42,8 @@
 
 
         <Comentarios :url="radio" />
-    </div>
+
+    </Page>
 </template>
 
 

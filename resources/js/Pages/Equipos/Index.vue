@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
+    <Page>
 
         <div class="flex justify-between mb-20">
             <span />
@@ -9,8 +9,8 @@
             </div>
         </div>
 
-        <h1>Equipos</h1>
-        <p>Equipos de trabajo y departamentos de la UTG.</p>
+        <h1 class="text-center">Equipos</h1>
+        <p class="text-center">Equipos de trabajo y departamentos de la UTG.</p>
 
         <div class="flex justify-end mb-5">
             <SearchInput />
@@ -54,7 +54,7 @@
             </div>
 
         </div>
-    </div>
+    </Page>
 </template>
 
 
