@@ -5,7 +5,10 @@
             <EquipoMembresia class="hidden sm:flex mx-auto" :equipo-id="equipo.id" v-model="solicitud"
                 :soyMiembro="soyMiembro" :soyCoordinador="soyCoordinador" :permitirSolicitudes="!equipo.oculto"
                 @updated="reloadEquipo" />
-            <AdminLinks modelo="equipo" necesita="administrar equipos" :contenido="equipo" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="equipo" necesita="administrar equipos" :contenido="equipo" />
+            </div>
         </div>
 
         <EquipoCabecera :equipo="equipo" class="fixed w-full top-14 transition duration-100"
@@ -49,7 +52,7 @@
                         <Link v-if="ultimosInformes.length" :href="route('equipo.informes', equipo.slug)"
                             class="text-xs ml-auto flex items-center gap-2 hover:underline">Ver todos</Link>
 
-                        <CrearInforme v-if="soyCoordinador || puedoAdministrar" :equipo="equipo"/>
+                        <CrearInforme v-if="soyCoordinador || puedoAdministrar" :equipo="equipo" />
 
                     </div>
                     <div v-if="!ultimosInformes.length">
@@ -61,10 +64,12 @@
                             :href="route('informe', item.id)">
                         <Icon icon="ph:file-duotone" />
                         <div class="w-full">
-                            <div class="mb-2" :class="item.visibilidad=='B'?'opacity-50 italic':''">{{ item.titulo }}</div>
+                            <div class="mb-2" :class="item.visibilidad == 'B' ? 'opacity-50 italic' : ''">{{ item.titulo }}
+                            </div>
                             <div class="flex justify-between w-full">
                                 <span class="badge badge-info">{{ item.categoria }}</span>
-                                <span v-if="item.visibilidad=='B'" class="badge badge-warning ml-2 mr-auto">borrador</span>
+                                <span v-if="item.visibilidad == 'B'"
+                                    class="badge badge-warning ml-2 mr-auto">borrador</span>
                                 <TimeAgo class="text-xs" :date="item.updated_at" />
                             </div>
                         </div>
@@ -126,7 +131,7 @@ import EquipoInformacion from './Partes/EquipoInformacion.vue'
 import EquipoMembresia from './Partes/EquipoMembresia.vue'
 import CrearInforme from './Partes/CrearInforme.vue'
 import usePlayer from '@/Stores/player'
-import {MarkdownToHtml} from "@/composables/markdown"
+import { MarkdownToHtml } from "@/composables/markdown"
 
 const props = defineProps({
     equipo: {

@@ -1,7 +1,13 @@
-
 <template>
     <div class="max-w-screen-xl px-4 py-12 mx-auto sm:px-6 lg:px-8">
-        <AdminLinks modelo="user" necesita="administrar usuarios" class="mb-3"/>
+
+        <div class="flex justify-between mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="user" necesita="administrar usuarios"  />
+            </div>
+        </div>
 
         <h1>Usuarios</h1>
 

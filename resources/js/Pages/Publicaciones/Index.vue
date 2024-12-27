@@ -3,7 +3,10 @@
 
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Comunidad</Back>
-            <AdminLinks modelo="publicacion" necesita="administrar contenidos" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="publicacion" necesita="administrar contenidos" />
+            </div>
         </div>
 
         <h1>Publicaciones</h1>

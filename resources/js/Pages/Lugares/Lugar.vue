@@ -3,10 +3,13 @@
 
         <div class="flex justify-between items-center mb-7">
             <Back :href="route('lugares')" inline>Lugares</Back>
-            <Link href="/libros/glosario-terminologico" class="btn btn-sm btn-primary flex gap-2 items-center"
-            title='Descarga todo el glosario en pdf'>
-            <Icon icon="ph:download-duotone" />Descargar libro</Link>
-            <AdminLinks modelo="lugar" necesita="administrar contenidos" :contenido="lugar" />
+            <div class="flex gap-2">
+                <Share />
+                <Link href="/libros/glosario-terminologico" class="btn btn-xs btn-primary flex gap-2 items-center"
+                    title='Descarga todo el glosario en pdf'>
+                <Icon icon="ph:download-duotone" />Descargar libro</Link>
+                <AdminLinks modelo="lugar" necesita="administrar contenidos" :contenido="lugar" />
+            </div>
         </div>
 
         <div class="mx-auto flex flex-col justify-center items-center">
@@ -50,10 +53,10 @@
 
                     <tab v-if="lugar.libros" name="Bibliografía">
                         <div v-if="lugar.libros" class="flex flex-wrap gap-4 justify-center">
-                            <Link v-for="libro, index of libros" :key="index"
-                                :href="route('libro', libro.slug)" class="w-[180px]">
-                                <Image :src="libro.imagen+'?w=180'"/>
-                                <div class="mt-1 text-sm text-center font-bold">{{libro.titulo}}</div>
+                            <Link v-for="libro, index of libros" :key="index" :href="route('libro', libro.slug)"
+                                class="w-[180px]">
+                            <Image :src="libro.imagen + '?w=180'" />
+                            <div class="mt-1 text-sm text-center font-bold">{{ libro.titulo }}</div>
                             </Link>
                         </div>
                     </tab>

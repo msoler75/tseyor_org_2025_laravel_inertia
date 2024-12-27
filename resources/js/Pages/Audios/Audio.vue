@@ -1,9 +1,12 @@
 <template>
+    <div class="py-4 md:py-12 w-full container mx-auto">
 
-    <div class="container mx-auto px-4 py-8 mb-32">
         <div class="flex justify-between items-center mb-20">
             <Back>Audios</Back>
-            <AdminLinks modelo="audio" necesita="administrar contenidos" :contenido="audio" />
+            <div class="flex gap-2">
+                <Share/>
+                <AdminLinks modelo="audio" necesita="administrar contenidos" :contenido="audio" />
+            </div>
         </div>
 
         <div class="flex flex-col items-center mb-20">

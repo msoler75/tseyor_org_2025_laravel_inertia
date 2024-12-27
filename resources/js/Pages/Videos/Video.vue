@@ -2,7 +2,10 @@
     <div class="container mx-auto px-4 py-8 mb-32">
         <div class="flex justify-between items-center mb-20">
             <Back>Videos</Back>
-            <AdminLinks modelo="video" necesita="administrar contenidos" :contenido="video" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="video" necesita="administrar contenidos" :contenido="video" />
+            </div>
         </div>
 
         <div class="max-w-full lg:max-w-[640px] mx-auto">

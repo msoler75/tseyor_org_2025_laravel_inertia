@@ -3,7 +3,10 @@
 
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Meditaciones</Back>
-            <AdminLinks modelo="meditacion" necesita="administrar contenidos" :contenido="meditacion" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="meditacion" necesita="administrar contenidos" :contenido="meditacion" />
+            </div>
         </div>
 
         <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
@@ -12,7 +15,7 @@
                 <h1>{{ meditacion.titulo }}</h1>
 
                 <div class="text-neutral text-sm mb-20 flex justify-between">
-                    <Audios :audios="parseFiles(meditacion.audios)" :numerados="true" :titulo="meditacion.titulo"/>
+                    <Audios :audios="parseFiles(meditacion.audios)" :numerados="true" :titulo="meditacion.titulo" />
                     <TimeAgo :date="meditacion.updated_at" :includeTime="false" />
                 </div>
             </div>

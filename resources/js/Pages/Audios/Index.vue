@@ -1,9 +1,12 @@
 <template>
-    <div class="py-12 w-full">
+    <div class="py-4 md:py-12 w-full container mx-auto">
 
-        <div class="container max-w-full flex justify-between items-center mb-20">
+        <div class="flex justify-between mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
-            <AdminLinks modelo="audio" necesita="administrar contenidos" class="mb-3" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="audio" necesita="administrar contenidos"/>
+            </div>
         </div>
 
         <section class="container mx-auto mb-20">

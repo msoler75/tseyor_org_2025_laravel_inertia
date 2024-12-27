@@ -1,7 +1,13 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminLinks modelo="contacto" necesita="administrar directorio" class="mb-3" />
+        <div class="flex justify-between mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="contacto" necesita="administrar directorio" />
+            </div>
+        </div>
 
         <h1 class="text-center mb-0">Dónde estamos</h1>
 

@@ -63,7 +63,6 @@
 
                 <div class="py-3 flex justify-between sm:justify-end gap-5">
 
-
                     <button @click.prevent="cambiarPermisos" type="button" class="btn btn-primary btn-sm"
                         :disabled="guardandoPermisos">
                         <div v-if="guardandoPermisos" class="flex items-center gap-x">

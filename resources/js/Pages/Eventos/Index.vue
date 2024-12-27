@@ -1,7 +1,13 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminLinks modelo="evento" necesita="administrar social" class="mb-3" />
+        <div class="flex justify-between mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="evento" necesita="administrar social"  />
+            </div>
+        </div>
 
         <h1>Eventos</h1>
         <p>Cursos y encuentros de la comunidad Tseyor a los que puedes acudir.</p>

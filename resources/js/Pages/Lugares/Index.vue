@@ -2,11 +2,14 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between items-center mb-7">
-            <span/>
-            <Link href="/libros/glosario-terminologico" class="btn btn-sm btn-primary flex gap-2 items-center"
-            title='Descarga todo el glosario en pdf'>
-            <Icon icon="ph:download-duotone" />Descargar libro</Link>
-            <AdminLinks modelo="lugar" necesita="administrar contenidos" />
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <Link href="/libros/glosario-terminologico" class="btn btn-xs btn-primary flex gap-2 items-center"
+                    title='Descarga todo el glosario en pdf'>
+                <Icon icon="ph:download-duotone" />Descargar libro</Link>
+                <AdminLinks modelo="lugar" necesita="administrar contenidos" />
+            </div>
         </div>
 
 
@@ -36,8 +39,7 @@
 
                 <GridAppear class="gap-8" col-width="16rem">
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
-                        :href="route('lugar', contenido.slug)" imageClass="h-60"
-                        preserve-page>
+                        :href="route('lugar', contenido.slug)" imageClass="h-60" preserve-page>
                         <div
                             class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow">
                             {{ contenido.nombre }}</div>

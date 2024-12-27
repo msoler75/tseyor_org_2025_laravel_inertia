@@ -1,7 +1,13 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminLinks modelo="comunicado" necesita="administrar contenidos" class="mb-3" />
+        <div class="flex justify-between mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="comunicado" necesita="administrar contenidos" />
+            </div>
+        </div>
 
         <div class="w-full flex gap-7 items-center justify-between">
 
@@ -52,7 +58,7 @@
                 <option value="todos">Todos los comunicados</option>
                 <option v-for="etiqueta, categoria of categoriasBusqueda" :key="categoria" :value="categoria">{{
                     etiqueta
-                    }}</option>
+                }}</option>
             </select>
 
             <select v-model="busqueda.ano" class="sel-trans" v-show="verFiltros">
@@ -60,7 +66,9 @@
                 <option v-for="año of añosBusqueda" :key="año" :value="año">{{ año }}</option>
             </select>
 
-            <span v-show="!verFiltros" @click="verFiltros=true"class="flex items-center gap-2 cursor-pointer"><Icon icon="material-symbols:filter-list-rounded"></Icon> Filtros</span>
+            <span v-show="!verFiltros" @click="verFiltros = true" class="flex items-center gap-2 cursor-pointer">
+                <Icon icon="material-symbols:filter-list-rounded"></Icon> Filtros
+            </span>
 
             <SearchInput :arguments="busqueda" class="ml-auto sel-trans" v-model="query" @focus="focusQuery"
                 @search="buscando = true" @blur="blurQuery" />
@@ -84,10 +92,10 @@
                     v-if="(selectors.vistaComunicados == VISTA_TARJETAS) && listado.data && listado.data?.length > 0"
                     class="gap-4" col-width="20rem">
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
-                        :image="contenido.imagen" image-class="h-80" :href="route('comunicado', contenido.slug)+resultadoQueryBusqueda"
+                        :image="contenido.imagen" image-class="h-80"
+                        :href="route('comunicado', contenido.slug) + resultadoQueryBusqueda"
                         :description="contenido.descripcion" :date="contenido.published_at" imageLeft
-                        class="max-h-[14rem] overflow-hidden"
-                        />
+                        class="max-h-[14rem] overflow-hidden" />
 
                 </GridAppear>
 
@@ -138,10 +146,12 @@
                         </h2>
                         <p>Ahora puedes realizar una búsqueda completa en los comunicados.</p>
                         <p>Para ello ve a la
-                        <span class="inline text-primary cursor-pointer after:content-['↗'] hover:underline"
-                            @click.native="focusBuscar">casilla de búsqueda</span>, pon el texto a buscar y pulsa en el
-                        botón
-                        "BUSCAR".</p>
+                            <span class="inline text-primary cursor-pointer after:content-['↗'] hover:underline"
+                                @click.native="focusBuscar">casilla de búsqueda</span>, pon el texto a buscar y pulsa en
+                            el
+                            botón
+                            "BUSCAR".
+                        </p>
 
                     </div>
                     <div v-else class="flex flex-col gap-5">
@@ -209,7 +219,7 @@ const props = defineProps({
 
 console.log('props.orden', props.orden, props.categoria)
 
-const verFiltros = ref((props.ano&&props.ano!="todos")||(props.categoria&&props.categoria!="todos")||(props.orden&&props.orden!="recientes"))
+const verFiltros = ref((props.ano && props.ano != "todos") || (props.categoria && props.categoria != "todos") || (props.orden && props.orden != "recientes"))
 
 // Obtener la fecha actual
 const añoActual = new Date().getFullYear()
@@ -243,7 +253,7 @@ for (var i = 2004; i <= añoActual; i++)
 
 const query = ref("")
 const resultadoQueryBusqueda = computed(() => {
-    if(props.filtrado) {
+    if (props.filtrado) {
         return `?busqueda=${props.filtrado}`
     }
     return ''

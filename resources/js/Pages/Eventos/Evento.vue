@@ -3,7 +3,10 @@
 
         <div class="container mx-auto px-4 flex justify-between items-center mb-3">
             <Back inline>Eventos</Back>
-            <AdminLinks modelo="evento" necesita="administrar social" :contenido="evento" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="evento" necesita="administrar social" :contenido="evento" />
+            </div>
         </div>
 
         <h1 class="container mx-auto my-4 md:my-8">

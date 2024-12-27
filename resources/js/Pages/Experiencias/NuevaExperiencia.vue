@@ -3,7 +3,10 @@
 
         <div class="container mx-auto flex justify-between items-center mb-20 text-white">
             <Back>Experiencias</Back>
-            <AdminLinks modelo="experiencia" necesita="administrar experiencias" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="experiencia" necesita="administrar experiencias" />
+            </div>
         </div>
 
 

@@ -165,16 +165,9 @@ INFORME
 -A un coordonador cuando cree un informe, o lo importe, debe aparecerle el equipo "Agora del Junantal" porque es el unico que coordina
 -Si se crean importando desde word, el coordinador parece que pierde acceso porque no vincula con el equipo?
 
-BUSCADOR GLOBAL
--Si buscas "vision interior de nuestro lenguage" aparece el resultado deseado (libros) muy abajo
-
-SEO
-https://socialsharepreview.com/
--pinterest
-
 
 CORREOS FORWARD
-Crear correo de redicción para
+Crear correo de redirección para
 Envuelta nube la pm
 Empieza de nuevo la pm
 con ganas de vivir la pm
@@ -202,7 +195,6 @@ COPIAR
 
 IP ABUSER MIDDLEWARE
 https://github.com/rahulalam31/Laravel-Abuse-IP
-
 
 URL
 -En movil, al compartir una página solo comparte tseyor.xyz
@@ -259,9 +251,6 @@ BUSQUEDAS
 estudiar: ExtendedHighlighter::_normalizeText() : ver de cambiar [áÁ] a [áÁA]  // pasar a minúsculas
     $str = mb_ereg_replace('[áÁ]', 'a', $str);
 
-MUULAR ELECTRÓNICO
--integrar app de muular electrónico
-
 
 BUSQUEDAS COMUNICADOS
 -el texto de busqueda no debe incluir las imagenes.
@@ -287,10 +276,8 @@ USER
 
 EQUIPOS
 -crear equipos
--integrar generación de documentos word, o upload de los mismos, en los equipos
--coordinador ->configurar->editores->tiptap simple
--Revisar: creación de equipo -> comprobar creación de carpeta -> comprobar administradores tengan los permisos de carpetas
--revisar permisos coordinadores (informes, archivos)
+-integrar generación y edición de documentos word, o upload de los mismos, en los equipos
+-coordinador->configurar->editores->tiptap simple
 -que en los equipos exista un panel/campo "solo para miembros" que es un texto que solo pueden ver los miembros inscritos del equipo
 
 ADMIN
@@ -308,87 +295,6 @@ https://help.dreamhost.com/hc/en-us/articles/216660108-WebDAV-overview
 
 FUNCIONALIDADES UI
 -share buttons social clipboard (vue useClipboard)
-
-
-images slider
-https://backpackforlaravel.com/articles/tutorials/how-to-build-an-image-slider-crud-backpack-basics
-(fields repeteable)
-
-
-
-DEPLOY:
--información:
-https://github.com/lorisleiva/laravel-deployer/blob/main/deploy.php
-https://lorisleiva.com/deploy-your-laravel-app-from-scratch
-
-
-DEPLOY AUTOMATIZADO
-
------
-
-
-Para utilizar Git-ftp en conjunto con GitHub Actions en tu proyecto Laravel + Inertia + Backpack, puedes seguir los pasos a continuación:
-
-1. Instalar Git-ftp: Primero, debes asegurarte de tener Git-ftp instalado en tu entorno de desarrollo local. Puedes seguir las instrucciones de instalación proporcionadas en la documentación oficial de Git-ftp para tu sistema operativo específico.
-
-2. Configurar Git-ftp: Una vez que Git-ftp esté instalado, necesitarás configurar los parámetros de conexión FTP en tu entorno local. Desde la línea de comandos, navega hasta la raíz de tu proyecto y ejecuta el siguiente comando para inicializar Git-ftp:
-
-git ftp init --user <FTP_USERNAME> --passwd <FTP_PASSWORD> --syncroot public
-
-Asegúrate de reemplazar `<FTP_USERNAME>` y `<FTP_PASSWORD>` con tus credenciales de FTP y ajusta `--syncroot` según la ubicación de la carpeta pública de tu proyecto Laravel.
-
-3. Crear un flujo de trabajo de GitHub Actions: En tu repositorio de GitHub, crea un archivo llamado .github/workflows/ftp-deploy.yml y agrega el siguiente contenido:
-
-name: FTP Deployment
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-
-      - name: Install Git and Git-ftp
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git git-ftp
-
-      - name: FTP Deploy
-        run: |
-          git ftp init --user ${{ secrets.FTP_USERNAME }} --passwd ${{ secrets.FTP_PASSWORD }} --syncroot public
-          git ftp push -u ${{ secrets.FTP_USERNAME }} -p ${{ secrets.FTP_PASSWORD }} ftp://your-ftp-server.com/path/to/destination-folder
-
-
-Asegúrate de reemplazar `your-ftp-server.com/path/to/destination-folder` con la URL y la ruta de la carpeta de destino correctas en tu servidor FTP.
-
-4. Configurar las variables de entorno: En la configuración de tu repositorio de GitHub, ve a la sección "Secrets" y agrega las siguientes variables de entorno:
-
-FTP_USERNAME: El nombre de usuario de FTP.
-FTP_PASSWORD: La contraseña de FTP.
-Asegúrate de ingresar los valores correctos para tus credenciales de FTP.
-
-Con estos pasos, cada vez que realices un push a la rama main de tu repositorio, GitHub Actions ejecutará el flujo de trabajo configurado. Esto a su vez inicializará Git-ftp y realizará la implementación de los archivos modificados al servidor FTP especificado.
-
-Recuerda que Git-ftp solo transferirá los archivos modificados desde la última implementación, lo que optimiza el proceso de implementación.
-
-Espero que esto te ayude a utilizar Git-ftp con GitHub Actions en tu proyecto Laravel + Inertia + Backpack. Si tienes más preguntas, no dudes en preguntar.
 
 
 editor markdown con muchas funciones

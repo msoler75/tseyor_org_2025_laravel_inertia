@@ -3,11 +3,14 @@
 
         <div class="px-3 xs:px-4 sm:px-0 flex justify-between items-center mb-20">
             <Back>Comunicados</Back>
-            <AdminLinks modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado" />
-            <a class="btn btn-xs btn-error text-white w-fit flex gap-3" :href="route('comunicado.pdf', comunicado.slug)"
-                target="_blank" title="Descargar PDF">
-                <Icon icon="ph:download-duotone" />PDF
-            </a>
+            <div class="flex gap-2">
+                <Share />
+                <a class="btn btn-xs btn-error text-white w-fit flex gap-3"
+                    :href="route('comunicado.pdf', comunicado.slug)" target="_blank" title="Descargar PDF">
+                    <Icon icon="ph:download-duotone" />PDF
+                </a>
+                <AdminLinks modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado" />
+            </div>
         </div>
 
         <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 animate-fade-in px-3 xs:px-4 sm:px-0">

@@ -3,10 +3,13 @@
 
         <div class="flex justify-between items-center mb-7">
             <Back :href="route('guias')" inline>Guías</Back>
-            <Link href="/libros/glosario-terminologico" class="btn btn-sm btn-primary flex gap-2 items-center"
+            <div class="flex gap-2">
+                <Share />
+            <Link href="/libros/glosario-terminologico" class="btn btn-xs btn-primary flex gap-2 items-center"
             title='Descarga todo el glosario en pdf'>
             <Icon icon="ph:download-duotone" />Descargar libro</Link>
             <AdminLinks modelo="guia" necesita="administrar contenidos" :contenido="guia" />
+            </div>
         </div>
 
         <div class="mx-auto flex flex-col justify-center items-center">

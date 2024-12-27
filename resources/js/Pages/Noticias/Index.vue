@@ -1,8 +1,14 @@
-
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminLinks modelo="noticia" necesita="administrar contenidos" class="mb-3"/>
+        <div class="flex justify-between items-center mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="noticia" necesita="administrar contenidos" />
+            </div>
+        </div>
+
 
         <h1>Noticias</h1>
         <p>Aquí puedes ver las últimas noticias de Tseyor.</p>
@@ -21,13 +27,9 @@
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(28rem, 1fr))` }">
 
                     <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data" :key="contenido.id"
-                        :imageLeft="true"
-                        :title="contenido.titulo"
-                        :image="contenido.imagen"
-                        :href="route('noticia', contenido.slug)"
-                        :description="contenido.descripcion"
-                        :date="contenido.published_at"
-                        imageClass="h-60"/>
+                        :imageLeft="true" :title="contenido.titulo" :image="contenido.imagen"
+                        :href="route('noticia', contenido.slug)" :description="contenido.descripcion"
+                        :date="contenido.published_at" imageClass="h-60" />
 
                 </div>
 

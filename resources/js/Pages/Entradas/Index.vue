@@ -1,7 +1,13 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <AdminLinks modelo="entrada" necesita="administrar contenidos" class="mb-3" />
+        <div class="flex justify-between mb-20">
+            <span />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="entrada" necesita="administrar contenidos" />
+            </div>
+        </div>
 
         <h1>Blog</h1>
         <p>Aquí puedes conocer sobre la vida de la comunidad Tseyor.</p>

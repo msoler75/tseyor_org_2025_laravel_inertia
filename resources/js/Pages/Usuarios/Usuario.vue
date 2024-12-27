@@ -4,7 +4,10 @@
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back>Usuarios</Back>
             <span></span>
-            <AdminLinks modelo="user" necesita="administrar usuarios" :contenido="usuario" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="user" necesita="administrar usuarios" :contenido="usuario" />
+           </div>
         </div>
 
         <Sections>

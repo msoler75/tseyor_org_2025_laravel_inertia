@@ -4,7 +4,10 @@
         <div class="flex justify-between items-center mb-20">
             <span></span>
             <Back v-if="false" href="/formacion">Formación</Back>
-            <AdminLinks modelo="tutorial" necesita="administrar contenidos" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="tutorial" necesita="administrar contenidos" />
+            </div>
         </div>
 
         <h1>Tutoriales</h1>

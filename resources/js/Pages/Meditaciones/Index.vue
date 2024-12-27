@@ -3,7 +3,10 @@
 
         <div class="container mx-auto flex justify-between items-center mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
-            <AdminLinks modelo="meditacion" necesita="administrar contenidos" />
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="meditacion" necesita="administrar contenidos" />
+            </div>
         </div>
 
         <div class="container mx-auto mb-20">

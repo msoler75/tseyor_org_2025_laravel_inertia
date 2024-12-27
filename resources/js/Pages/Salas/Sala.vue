@@ -3,7 +3,10 @@
 
         <div class="flex justify-between items-center mb-20">
             <Back>Salas</Back>
-            <AdminLinks modelo="sala" necesita="administrar directorio" :contenido="sala"/>
+            <div class="flex gap-2">
+                <Share />
+                <AdminLinks modelo="sala" necesita="administrar directorio" :contenido="sala"/>
+            </div>
         </div>
 
         <div class="max-w-[900px] mx-auto flex flex-col md:flex-row gap-10 mt-12">
