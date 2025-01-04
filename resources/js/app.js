@@ -139,7 +139,13 @@ createInertiaApp({
       if (title) return;
 
       // no hay un title, le buscamos uno en la propia página actual
-      title = document.body.querySelector("h1")?.textContent;
+      const h1s = document.body.querySelectorAll("h1")
+      if(h1s.length > 0){
+        title = h1s[0].textContent
+        if(h1s.length > 1){
+          title += ' - ' + h1s[1].textContent
+        }
+      }
 
       if (!title) title = document.body.querySelector("h2")?.textContent;
 
