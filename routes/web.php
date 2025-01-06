@@ -76,7 +76,7 @@ Route::get('test', function () {
 
 Route::get('biblioteca', [PaginasController::class, 'biblioteca'])->name('biblioteca');
 
-Route::get('', [PaginasController::class, 'portada'])->name('portada');
+Route::middleware('page-cache')->get('', [PaginasController::class, 'portada'])->name('portada');
 
 Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades');
 Route::get('buscar', [ContenidosController::class, 'search'])->name('buscar');

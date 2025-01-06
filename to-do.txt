@@ -1,4 +1,13 @@
+DevController::newBuild
+-que ejecute los comandos artisan:
+php artisan optimize
+php artisan page-cache:clear
+
+
 HACIENDA
+
+GLOSARIO
+-términos relacionados: http://localhost/glosario/ley-de-la-contemplacion  =>  silencio mental -> la-desconexion  ???
 
 INSTALACION MUULAR ELECTRONICO
 -subir frontend de laravel

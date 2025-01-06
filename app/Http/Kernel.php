@@ -38,7 +38,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-            \App\Http\Middleware\UpgradeToHttpsUnderNgrok::class
+            // \App\Http\Middleware\UpgradeToHttpsUnderNgrok::class
         ],
 
         'api' => [
@@ -46,6 +46,12 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+    ];
+
+
+    protected $routeMiddleware = [
+        'page-cache' => \Silber\PageCache\Middleware\CacheResponse::class,
+        /* ... keep the existing mappings here */
     ];
 
     /**

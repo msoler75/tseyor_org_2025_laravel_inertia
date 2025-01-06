@@ -16,7 +16,8 @@ class RadioImport
     public static function importar()
     {
         // borra todas las entradas
-        RadioItem::whereRaw("1")->forceDelete();
+        // RadioItem::whereRaw("1")->forceDelete();
+        RadioItem::truncate();
 
 
         // comunicados activados en la radio:
@@ -80,6 +81,16 @@ class RadioImport
         ];
 
 
+        // Qué audios de comunicados están desactivados
+        // numero de comunicado => [indice/s de audio]
+        $desactivados=  [
+            0 => [], // GENERAL
+            1 => [],  // TAP,
+            2 => ['01'=>[0,1,2], '02'=>[0,1,2], '03'=>[0,1,2], '04'=>[0,1,2], ] , // DDM
+            3 => [] , // MUUL
+        ];
+
+
 
         // JINGLES
 
@@ -106,7 +117,14 @@ class RadioImport
 
         // el primer audio de cada comunicado
 
-        $comunicados = Comunicado::where('numero', '<', 1100)->get();
+        //$comunicados = Comunicado::where('numero', '<', 1287)->get();
+        $comunicados = Comunicado::where(function($query) {
+            $query->where('categoria', 0)->where('numero', '<', 1287)
+                  ->orWhere(function($query) {
+                      $query->where('categoria', 1)->where('numero', '<', 231);
+                  });
+        })->get();
+
         foreach ($comunicados as $comunicado) {
             if ($comunicado->audios) {
                 foreach ($comunicado->audios as $index=>$audio) {
@@ -118,9 +136,9 @@ class RadioImport
                     $duracion = self::duracion($mp3File);
                     $url = $loc->url;
                     if ($duracion && $url) {
-                        echo "Importando comunicado $mp3File - $comunicado->titulo\n";
-                        $activado = isset($activados[$comunicado->categoria][$comunicado->numero]) &&
-                        array_search($index, $activados[$comunicado->categoria][$comunicado->numero]) !== false;
+                        echo "Importando $mp3File - $comunicado->titulo [cat={$comunicado->categoria}][num={$comunicado->numero}][$index]\n";
+                        $activado = !isset($desactivados[$comunicado->categoria][$comunicado->numero]) ||
+                        array_search($index, $desactivados[$comunicado->categoria][$comunicado->numero])==-1;
                         $desactivado = $activado?'0':'1';
                         RadioItem::create(['titulo' => $comunicado->titulo, 'categoria' => 'Comunicados', 'url' => $url, 'duracion' => $duracion, 'desactivado' => $desactivado]);
                     }
@@ -146,7 +164,7 @@ class RadioImport
         $audiosPorCategoria = $audios->groupBy('categoria');
 
         // Contar audios por categoría
-        $conteoAudios = $audiosPorCategoria->map->count();
+        $conteoAudios = $audiosPorCategoria->map->count(); // retorna un array asociativo
 
         // Mostrar conteo de audios por categoría
         foreach ($conteoAudios as $categoria => $cantidad) {
