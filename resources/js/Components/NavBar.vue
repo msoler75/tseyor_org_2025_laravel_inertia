@@ -57,18 +57,21 @@
                     <GlobalSearch @mouseover="nav.closeTabs()" />
 
                     <button @click="toggleDark()" @mouseover="nav.closeTabs()"
-                        class="my-auto p-1 w-10 h-10 flex justify-center items-center rounded-full bg-base-300 shadow text-xl sm:ml-6">
-                        <Icon v-show="isDark" icon="ph:sun-dim-duotone" />
-                        <Icon v-show="!isDark" icon="ph:moon-duotone" />
+                        class="my-auto p-1 w-10 h-10 flex justify-center items-center rounded-full bg-base-300 shadow text-xl sm:ml-6"
+                        :aria-label="'Cambiar modo ' + (isDark ? 'claro' : 'oscuro')"
+                        :aria-pressed="isDark"
+                        role="switch"
+                        >
+                        <Icon v-show="isDark" icon="ph:sun-dim-duotone"   aria-hidden="true" />
+                        <Icon v-show="!isDark" icon="ph:moon-duotone"  aria-hidden="true" />
                     </button>
 
                     <div v-if="$page.props.auth?.user" class="flex sm:items-center" @mouseover="nav.closeTabs()">
-
                         <div class="ml-3 relative">
                             <UserMenu />
                         </div>
                     </div>
-                    <Link v-else :href="route('login')" class="text-2xl bg-base-300 rounded-full p-2 shadow"
+                    <Link v-else :href="route('login')" class="mx-3 text-2xl bg-base-300 rounded-full p-2 shadow"
                         @mouseover="nav.closeTabs()">
                     <Icon icon="ph:sign-in-duotone" title="Iniciar sesión" />
                     </Link>

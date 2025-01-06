@@ -46,13 +46,17 @@ class RadioItemCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
+        CRUD::column('id');
+
         CRUD::column('titulo');
 
-        CRUD::column('categoria');
+        CRUD::column('categoria')->label('emisora');
 
         CRUD::column('duracion');
 
-        CRUD::column('desactivado')->label('anulado')->type("check");
+        CRUD::column('desactivado')->label('desactivado')->type("check");
+
+        CRUD::setOperationSetting('lineButtonsAsDropdown', true);
     }
 
     /**

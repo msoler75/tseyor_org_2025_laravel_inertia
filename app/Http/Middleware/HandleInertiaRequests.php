@@ -33,73 +33,25 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        // $_ = new T(__CLASS__, "share");
-        // si no muestra algun dato de .env, hay que borrar la cache
-        /*$ajaxWords = ['buscar', 'buscar_recientes', 'buscar_archivo'];
-
-        $isAjax = false;
-        foreach ($ajaxWords as $word)
-            if ($request->has($word)) {
-                $isAjax = true;
-                break;
-            }
-
-        // versión corta
-        if ($isAjax)
-            return array_merge(parent::share($request), [
-                'flash' => [
-                    'message' => fn() => $request->session()->get('message')
-                ]
-            ]);*/
-
-            /*
-            $_ = new T(__CLASS__, "share:ziggy_create_Array");
-
-                // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
-                $cache_routes = base_path("bootstrap/cache/routes-v7.php");
-                $cache_ziggy = base_path("bootstrap/cache/ziggy.json");
-                if (
-                    !file_exists($cache_ziggy) ||
-                    !file_exists($cache_routes) ||
-                    filemtime($cache_routes) > filemtime($cache_ziggy)
-                ) {
-                    $ziggy_arr = (new Ziggy)->toArray();
-                    file_put_contents($cache_ziggy, json_encode($ziggy_arr));
-                } else {
-                    try {
-                        $ziggy_content = file_get_contents($cache_ziggy);
-                        $ziggy_arr = json_decode($ziggy_content, true);
-                    } catch (\Exception $e) {
-                        $ziggy_arr = (new Ziggy)->toArray(); // por si hubiera algun error
-                    }
-                }
-                $_ = null;
-                // dd($ziggy_arr);
-
-
-        */
-        //T::xprint();
-        //die;
-
-        // dd($ziggy_arr);
-
         $setting = Setting::where('name', 'anuncio')->first();
         $anuncio = optional($setting)->value;
-        // Log::info("HandleInertiaRequests anuncio: $anuncio");
 
         // llamada normal
-        return array_merge(parent::share($request), [
+        $r = array_merge(parent::share($request), [
             'flash' => [
                 'message' => fn() => $request->session()->get('message')
             ],
             'anuncio' => $anuncio,
             'meta_image_default' => config('seo.image.fallback'),
-            'csrf_token' => csrf_token(),
-            /*'ziggy' => function () use ($request, $ziggy_arr) {
-                return array_merge($ziggy_arr, [
-                    'location' => $request->url(),
-                ]);
-            },*/
+            'csrf_token' => csrf_token()
         ]);
+
+        // Algunas páginas se van a cachear con page-cache, así que debe estar limpia de sesión
+        // si es la url de portada y no existe cabecera http de X-INERTIA:
+        if ($request->route()->uri() === '/' && !$request->header('X-Inertia')) {
+            $r['auth']['user'] = null;
+        }
+
+        return $r;
     }
 }

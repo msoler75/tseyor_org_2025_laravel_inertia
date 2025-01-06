@@ -18,6 +18,8 @@
             </FondoEspacio>
         </Section>
 
+
+
         <Section>
             <Hero title="El proceso de autodescubrimiento"
                 subtitle="A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad."
@@ -136,9 +138,9 @@ onMounted(() => {
     console.log('on mounted')
     setTimeout(() => {
         router.reload({
-            only: ['stats']
+            only: ['stats', 'auth'],
         })
-    }, 3000
+    }, 1000
     )
     // nav.position = 'fixed'
     // contadoresEl.value.$el.getBoundingClientRect().top

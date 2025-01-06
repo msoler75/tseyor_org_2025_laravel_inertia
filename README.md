@@ -143,3 +143,11 @@ php artisan db:backup
 ```bash
 php artisan sitemap:generate
 ```
+
+# Page-cache
+
+Since the responses are cached to disk as static files, any updates to those pages in your app will not be reflected on your site. To update pages on your site, you should clear the cache with the following command:
+
+```bash
+php artisan page-cache:clear
+```

@@ -23,8 +23,6 @@
     @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
     @inertiaHead
 
-    <link href="https://fonts.bunny.net/css?family=Figtree" rel="stylesheet">
-
     <!-- Matomo -->
     <script>
         var _paq = window._paq = window._paq || [];
@@ -49,6 +47,16 @@
 
 <body class="font-sans antialiased">
     @inertia
+
+    <script>
+        (function() {
+          var css = document.createElement('link');
+          css.href = 'https://fonts.bunny.net/css?family=Figtree';
+          css.rel = 'stylesheet';
+          css.type = 'text/css';
+          document.getElementsByTagName('head')[0].appendChild(css);
+        })();
+      </script>
 </body>
 
 </html>

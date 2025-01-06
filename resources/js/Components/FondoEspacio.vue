@@ -1,7 +1,10 @@
 <template>
     <div ref="fondo" class="fondo-espacio relative" @mousemove="move">
         <div id='galaxy' class="galaxy  hidden lg:block"></div>
-        <div id='nebula' class="nebula"></div>
+        <div id='nebula' class="nebula"
+        :style="{
+            background: `url(${nebulaSrc}) center no-repeat`
+        }"></div>
         <div ref="stars1" id='stars1' class="stars hidden lg:block"></div>
         <div ref="stars2" id='stars2' class="stars hidden lg:block"></div>
         <div ref="stars3" id='stars3' class="stars hidden lg:block"></div>
@@ -11,6 +14,14 @@
 </template>
 
 <script setup>
+
+
+
+// Computed property para manejar la URL de la imagen
+const nebulaSrc = computed(() => {
+    const baseUrl = '/almacen/medios/paginas/nebula-space.webp';
+    return baseUrl // window.innerWidth <= 1080 ? `${baseUrl}?w=1080` : baseUrl;
+})
 
 function generateStars(n, scale, color) {
     const points = []
@@ -37,7 +48,7 @@ const z4 = 2.7
 
 onMounted(() => {
     console.time('stars');
-    const density = 3 * screen.width / 198
+    const density =  window.innerWidth / 100
     let bg1 = generateStars(40 * density, z1, '#fff')
     let bg2 = generateStars(30 * density, z2, '#fff')
     let bg3 = generateStars(20* density, z3, '#fff')
@@ -149,7 +160,7 @@ function move(event) {
     mix-blend-mode: plus-lighter;
 }
 
-.nebula:after {
+.nebula {
     content: "";
     opacity: 1;
     display: block;
@@ -160,14 +171,13 @@ function move(event) {
     height: 100vh;
     width: 100dvw;
     height: 100dvh;
-    background: url(/almacen/medios/paginas/nebula-space.webp) center no-repeat;
     background-size: cover;
     transform: scale(var(--nebula-scale)) translate(calc(var(--move-x) * .15), calc(var(--move-y) * .15));
 }
 
 
 .stars,
-.nebula:after {
+.nebula {
     transition: transform 0.4s ease-out;
 }
 
