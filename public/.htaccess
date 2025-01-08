@@ -20,19 +20,19 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-# Serve Cached Page in HomePage if Available
-RewriteCond %{REQUEST_URI} ^/?$
-RewriteCond %{HTTP:X-Inertia} !.+
-RewriteCond %{DOCUMENT_ROOT}/page-cache/pc__index__pc.html -f
-RewriteRule ^ page-cache/pc__index__pc.html [L]
-
-# Reglas generales para otros tipos de archivos
-RewriteCond %{DOCUMENT_ROOT}/page-cache%{REQUEST_URI}.html -f
-RewriteRule . page-cache%{REQUEST_URI}.html [L]
-RewriteCond %{DOCUMENT_ROOT}/page-cache%{REQUEST_URI}.json -f
-RewriteRule . page-cache%{REQUEST_URI}.json [L]
-RewriteCond %{DOCUMENT_ROOT}/page-cache%{REQUEST_URI}.xml -f
-RewriteRule . page-cache%{REQUEST_URI}.xml [L]
+# # Serve Cached Page in HomePage if Available
+# RewriteCond %{REQUEST_URI} ^/?$
+# RewriteCond %{HTTP:X-Inertia} !.+
+# RewriteCond %{DOCUMENT_ROOT}/page-cache/pc__index__pc.html -f
+# RewriteRule ^ page-cache/pc__index__pc.html [L]
+#
+# # Reglas generales para otros tipos de archivos
+# RewriteCond %{DOCUMENT_ROOT}/page-cache%{REQUEST_URI}.html -f
+# RewriteRule . page-cache%{REQUEST_URI}.html [L]
+# RewriteCond %{DOCUMENT_ROOT}/page-cache%{REQUEST_URI}.json -f
+# RewriteRule . page-cache%{REQUEST_URI}.json [L]
+# RewriteCond %{DOCUMENT_ROOT}/page-cache%{REQUEST_URI}.xml -f
+# RewriteRule . page-cache%{REQUEST_URI}.xml [L]
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
@@ -59,7 +59,7 @@ ExpiresByType audio/ogg "access 1 year"
 ExpiresByType audio/wav "access 1 year"
 ExpiresByType audio/webm "access 1 year"
 ExpiresByType video/mp4 "access 1 year"
-ExpiresByType text/html "access 0 seconds"
+# ExpiresByType text/html "access 0 seconds"
 ExpiresDefault "access 2 days"
 
 
@@ -79,4 +79,4 @@ AddOutputFilterByType DEFLATE application/x-javascript
 
 SetOutputFilter DEFLATE
 
-# GZIP COMPRESSION
+

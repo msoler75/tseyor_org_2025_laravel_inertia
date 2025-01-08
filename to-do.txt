@@ -1,3 +1,6 @@
+ICONOS:
+iconify-prerendered
+
 DevController::newBuild
 -que ejecute los comandos artisan:
 php artisan optimize
