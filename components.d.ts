@@ -53,7 +53,6 @@ declare module 'vue' {
     DiskIcon: typeof import('./resources/js/Components/FolderExplorer/DiskIcon.vue')['default']
     Dropdown: typeof import('./resources/js/Components/Dropdown.vue')['default']
     DropdownLink: typeof import('./resources/js/Components/DropdownLink.vue')['default']
-    Dropzone: typeof import('./resources/js/Components/Dropzone.vue')['default']
     FadeOnNavigate: typeof import('./resources/js/Components/FadeOnNavigate.vue')['default']
     FAQ: typeof import('./resources/js/Sections/FAQ.vue')['default']
     FeatureColumns: typeof import('./resources/js/Sections/FeatureColumns.vue')['default']
