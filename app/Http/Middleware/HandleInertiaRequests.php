@@ -48,9 +48,9 @@ class HandleInertiaRequests extends Middleware
 
         // Algunas páginas se van a cachear con page-cache, así que debe estar limpia de sesión
         // si es la url de portada y no existe cabecera http de X-INERTIA:
-        if ($request->route()->uri() === '/' && !$request->header('X-Inertia')) {
-            $r['auth']['user'] = null;
-        }
+        //if ($request->route()->uri() === '/' && !$request->header('X-Inertia')) {
+          //  $r['auth']['user'] = null;
+        //}
 
         return $r;
     }

@@ -1,22 +1,22 @@
+# Bloquear todos los bots por defecto
+User-agent: *
+Disallow: /
+
+# Permitir acceso solo a bots específicos
 User-agent: Googlebot
 Allow: /
+Disallow: /admin/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin/
 
 User-agent: Yandexbot
 Allow: /
-
-User-agent: *
-Allow: /
-
-Sitemap: https://tseyor.org/sitemap.xml
-
-# Bloquear acceso a áreas privadas o administrativas
 Disallow: /admin/
 
-# Permitir acceso a imágenes y recursos
-# Allow: /content/uploads/
+# Sitemap
+Sitemap: https://tseyor.org/sitemap.xml
 
-# Comentario: Este archivo permite el acceso completo a los principales bots de búsqueda
-# y bloquea solo las áreas administrativas comunes de WordPress.
+# Comentario: Este archivo permite el acceso solo a Googlebot, Bingbot y Yandexbot,
+# bloqueando el acceso a todos los demás bots. La sección /admin/ está bloqueada para todos.

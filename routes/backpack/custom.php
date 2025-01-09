@@ -118,6 +118,9 @@ Route::group([
     } );
 
 
+    // Radio
+    Route::post('radio-item/{id}/toggle', 'RadioItemCrudController@toggle');
+
     Route::post('loginAs/{idUser}', [AdminController::class, 'loginAs'])->name('admin.loginAs');
 
     Route::get('getlog/{log}', [AdminController::class, 'getLog'] );
