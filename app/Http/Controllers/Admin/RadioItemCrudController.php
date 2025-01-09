@@ -74,6 +74,7 @@ class RadioItemCrudController extends CrudController
         ]);
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
+        CRUD::addButtonFromModelFunction('top', 'audio_player', 'audioPlayer', 'beginning');
     }
 
     /**

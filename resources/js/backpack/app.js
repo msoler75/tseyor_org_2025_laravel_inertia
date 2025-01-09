@@ -23,10 +23,11 @@ import SelectField from "../Components/Backpack/SelectField.vue";
 import TimeAgo from "../Components/TimeAgo.vue";
 import FileManager from "../Components/FileManager.vue";
 import WorkerStatus from "../Components/Admin/WorkerStatus.vue";
-//import AudioPlayer from "../Components/AudioPlayer.vue";
+import AudioVideoPlayer from "../Components/AudioVideoPlayer.vue";
+//import AudioStateIcon from "../Components/AudioStateIcon.vue";
 
 // only in forms
-const elem = document.querySelector(".page-body form, .admin-dashboard, .vue-component");
+const elem = document.querySelector(".page-body form, .admin-dashboard, .vue-component, .page[route='admin/radio-item'] .page-body");
 if (elem) {
   console.log("loading vue 3 fields...");
   window.app = createApp({})
@@ -42,7 +43,8 @@ if (elem) {
     .component("timeago", TimeAgo)
     .component("filemanager", FileManager)
     .component("workerstatus", WorkerStatus)
-//    .component("audioplayer", AudioPlayer)
+    .component("audiovideoplayer", AudioVideoPlayer)
+   // .component("audiostateicon", AudioStateIcon)
     .mixin({
       components: { Icon, Link },
     })

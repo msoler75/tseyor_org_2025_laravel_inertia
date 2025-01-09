@@ -71,7 +71,7 @@ const player = reactive({
     this._updateState();
 
     // Autoplay logic
-    if(this.isVideo) return
+    if (this.isVideo) return;
     if (
       this.autoplay &&
       (this.state === "stopped" || this.state === "loading")
@@ -103,11 +103,21 @@ const player = reactive({
   _handlePlay(event) {
     this._updateState();
     this._logDevEvent("play", event);
+    window.dispatchEvent(
+      new CustomEvent("player-playing", {
+        detail: { url: this.url },
+      })
+    );
   },
 
   _handlePause(event) {
     this._updateState();
     this._logDevEvent("pause", event);
+    window.dispatchEvent(
+      new CustomEvent("player-paused", {
+        detail: { url: this.url },
+      })
+    );
   },
 
   _handleWaiting(event) {
@@ -224,7 +234,7 @@ const player = reactive({
     console.log("playVideo", src);
 
     if (!this.isVideo) this.close();
-    this.autoplay = false
+    this.autoplay = false;
     this.isVideo = true;
     this.videoClosed = false;
 
@@ -374,5 +384,24 @@ export default function usePlayer() {
   return player;
 }
 
+function installEvents() {
+  // Escuchamos el evento que emitimos desde Blade
+  window.addEventListener("player-play", (event) => {
+    player.play(event.detail.url);
+  });
+
+  // Escuchamos el evento que emitimos desde Blade
+  window.addEventListener("player-continue", (event) => {
+    player.playPause();
+  });
+
+  // Escuchamos el evento que emitimos desde Blade
+  window.addEventListener("player-pause", (event) => {
+    player.pause();
+  });
+}
+
 // Initialize player on module load
 player.init();
+
+installEvents();
