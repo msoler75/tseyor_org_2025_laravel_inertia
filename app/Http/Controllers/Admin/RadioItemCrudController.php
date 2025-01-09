@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Http\Request;
+
 
 /**
  * Class RadioItemCrudController
@@ -54,7 +56,22 @@ class RadioItemCrudController extends CrudController
 
         CRUD::column('duracion');
 
-        CRUD::column('desactivado')->label('desactivado')->type("check");
+        // CRUD::column('desactivado')->label('desactivado')->type("check");
+
+
+        $this->crud->addColumn([
+            'name' => 'audio_player',
+            'label' => 'Audio',
+            'type' => 'view',
+            'view' => 'vendor.backpack.crud.columns.audio_player'
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'is_active',
+            'label' => 'Activo',
+            'type' => 'view',
+            'view' => 'vendor.backpack.crud.columns.toggle_switch'
+        ]);
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
     }
@@ -80,20 +97,20 @@ class RadioItemCrudController extends CrudController
          * - CRUD::field('price')->type('number');
          */
 
-         CRUD::field('titulo')->type('text');
+        CRUD::field('titulo')->type('text');
 
-         CRUD::field('url')->type('text')->hint('URL del archivo de audio');
+        CRUD::field('url')->type('text')->hint('URL del archivo de audio');
 
         CRUD::field('duracion')->type('text')->wrapper([
             'class' => 'form-group col-md-3'
         ])->hint('Se puede poner la duración en formato HH:MM:SS ó MM:SS ó el tiempo total en segundos');
 
-         CRUD::field([
+        CRUD::field([
             // select_from_array
             'name' => 'categoria',
             'label' => "Categoría",
             'type' => 'select_from_array',
-            'options' => ['Comunicados' => 'Comunicados', 'Talleres y meditaciones'=>'Talleres y meditaciones', 'Entrevistas y mesas redondas'=>'Entrevistas y mesas redondas', 'Jingles'=>'Jingles'],
+            'options' => ['Comunicados' => 'Comunicados', 'Talleres y meditaciones' => 'Talleres y meditaciones', 'Entrevistas y mesas redondas' => 'Entrevistas y mesas redondas', 'Jingles' => 'Jingles'],
             'allows_null' => false,
             'default' => '0',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
@@ -112,5 +129,17 @@ class RadioItemCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    /**
+     * Para activar o desacticar el item desde la lista de administración
+     */
+    public function toggle(Request $request, $id)
+    {
+        $radioItem = $this->crud->model::findOrFail($id);
+        $radioItem->desactivado = !$request->input('active');
+        $radioItem->save();
+
+        return response()->json(['success' => true]);
     }
 }
