@@ -27,7 +27,7 @@ import AudioVideoPlayer from "../Components/AudioVideoPlayer.vue";
 //import AudioStateIcon from "../Components/AudioStateIcon.vue";
 
 // only in forms
-const elem = document.querySelector(".page-body form, .admin-dashboard, .vue-component, .page[route='admin/radio-item'] .page-body");
+const elem = document.querySelector(".page-body form, .admin-dashboard, .vue-component");
 if (elem) {
   console.log("loading vue 3 fields...");
   window.app = createApp({})

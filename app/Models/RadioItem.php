@@ -31,8 +31,4 @@ class RadioItem extends Model
         return basename($this->audio);
     }
 
-    public function audioPlayer($crud = false)
-    {
-        return '<AudioVideoPlayer />';
-    }
 }

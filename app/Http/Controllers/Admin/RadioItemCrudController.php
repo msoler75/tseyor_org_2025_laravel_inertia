@@ -60,10 +60,10 @@ class RadioItemCrudController extends CrudController
 
 
         $this->crud->addColumn([
-            'name' => 'audio_player',
+            'name' => 'audio_play',
             'label' => 'Audio',
             'type' => 'view',
-            'view' => 'vendor.backpack.crud.columns.audio_player'
+            'view' => 'vendor.backpack.crud.columns.audio_play'
         ]);
 
         $this->crud->addColumn([
@@ -74,7 +74,9 @@ class RadioItemCrudController extends CrudController
         ]);
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
-        CRUD::addButtonFromModelFunction('top', 'audio_player', 'audioPlayer', 'beginning');
+
+         // Añadir el botón personalizado en la parte superior
+         CRUD::addButtonFromView('top', 'audio_player_component', 'audio_player_component', 'beginning');
     }
 
     /**

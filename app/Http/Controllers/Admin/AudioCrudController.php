@@ -71,6 +71,18 @@ class AudioCrudController extends CrudController
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
             }
         ]);
+
+        $this->crud->addColumn([
+            'name' => 'audio_play',
+            'label' => 'Audio',
+            'type' => 'view',
+            'view' => 'vendor.backpack.crud.columns.audio_play'
+        ]);
+
+
+        CRUD::setOperationSetting('lineButtonsAsDropdown', true);
+        //CRUD::addButtonFromModelFunction('top', 'audio_player', 'audioPlayer', 'beginning');
+        CRUD::addButtonFromView('top', 'audio_player_component', 'audio_player_component', 'beginning');
     }
 
     /**
