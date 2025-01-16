@@ -12,11 +12,10 @@
                     </span>
                 </template>
                 <template #content>
-
                     <template v-for="(item, index) of items" :key="index">
                         <div
                             v-if="index < firstVisible"
-                            class="flex gap-x items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
+                            class="flex gap-x items-center hover:bg-base-100 cursor-pointer"
                         >
                             <Link
                                 v-if="links && index < items.length - 1"
@@ -24,7 +23,7 @@
                                 @click.native.capture="
                                     handleClick(item, $event)
                                 "
-                                class="whitespace-nowrap max-w-[90vw] truncate hover:underline py-2"
+                                class="whitespace-nowrap max-w-[90vw] truncate hover:underline px-4 py-3"
                                 :title="item.label"
                                 :class="!links ? 'pointer-events-none' : ''"
                                 >{{ item.label }}</Link
