@@ -1,5 +1,5 @@
 <template>
-    <div ref="target" class="relative">
+    <div ref="target" :class="relative ? 'relative' : ''">
       <div @click="handleToggle">
         <slot name="trigger" :open="open"/>
       </div>
@@ -44,6 +44,11 @@
       type: Array,
       default: () => ['py-1', 'bg-slate-100 dark:bg-slate-700'],
     },
+    // propiedad para definir si el wrapper es relative o no:
+    relative: {
+      type: Boolean,
+      default: true,
+    },
   });
 
   let open = ref(false);
@@ -62,6 +67,8 @@
   onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
 
   const widthClass = computed(() => {
+    if(props.width=='auto')
+      return 'w-auto max-w-screen'
     return {
       '48': 'w-48',
       '60': 'w-60',
