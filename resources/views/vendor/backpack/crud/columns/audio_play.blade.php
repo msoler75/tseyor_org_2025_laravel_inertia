@@ -1,18 +1,19 @@
 @php
-    $audio_url = $entry->url;
+    $audio_url = $entry->url ?? $entry->audio;
+    $title = $entry->titulo ?? $entry->nombre ?? $audio_url;
     $unique_id = "audio_player_{$entry->id}";
 @endphp
 
 <div class="audio-player-container" id="{{ $unique_id }}_container">
     <button class="btn btn-sm btn-outline-primary play-btn" data-audio-url="{{ $audio_url }}"
-        onclick="window.playPauseAudioInVue('{{ $audio_url }}', this.parentNode.id)">
+        onclick="window.playPauseAudioInVue('{{ $audio_url }}', '{{ $title }}', this.parentNode.id)">
         <i class="la la-play"></i>
     </button>
 </div>
 
 <script>
     // Esta función será el puente entre Blade y Vue
-    window.playPauseAudioInVue = (url, id) => {
+    window.playPauseAudioInVue = (url, title, id) => {
         const icon = document.querySelector('#' + id + ' i.la')
         if(!icon) return
         const state = icon.getAttribute('class').replace('la la-', '')
@@ -21,7 +22,8 @@
             // Emitimos un evento custom que Vue escuchará
             window.dispatchEvent(new CustomEvent('player-play', {
                 detail: {
-                    url
+                    url,
+                    title
                 }
             }));
         }
@@ -39,7 +41,6 @@
         window.installedAudioEvents = true
         // Escuchamos los eventos desde el componente
         window.addEventListener("player-playing", (event) => {
-            console.log('playing', event.detail)
             // reseteamos iconos
             const playing_url = event.detail.url
             document.querySelectorAll('.audio-player-container i.la')
@@ -54,7 +55,6 @@
 
         // Escuchamos los eventos desde el componente
         window.addEventListener("player-paused", (event) => {
-            console.log('paused', event.detail)
             // reseteamos iconos
             const playing_url = event.detail.url
             document.querySelectorAll('.audio-player-container i.la')

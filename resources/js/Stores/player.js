@@ -1,3 +1,5 @@
+import { webApiAvailable, AudioProcessor } from "./audioProcessor.js";
+
 const player = reactive({
   url: null,
   audio: null,
@@ -15,6 +17,8 @@ const player = reactive({
   requiereInteraccion: false,
   isVideo: false,
   checkingVideo: false,
+  audioProcessor: null,
+  audioProcessingEnabled: true,
 
   init() {
     if (!window || !window.Audio) return;
@@ -22,6 +26,18 @@ const player = reactive({
     this.audio = new Audio();
     this.audio.preload = "auto";
     this.audio.autoplay = this.autoplay;
+
+    if (webApiAvailable()) {
+      // La Web Audio API está disponible
+      this.audioProcessor = new AudioProcessor();
+      this.audioProcessor.setupAudioSource(this.audio);
+      this.audioProcessor.startAGC();
+      //this.audioProcessor.applyFixedGain(5);
+    } else {
+      console.warn(
+        "Web Audio API no está disponible. Usando funcionalidades básicas de audio."
+      );
+    }
 
     // Attach event listeners with more comprehensive state management
     this._attachEventListeners();
@@ -105,7 +121,7 @@ const player = reactive({
     this._logDevEvent("play", event);
     window.dispatchEvent(
       new CustomEvent("player-playing", {
-        detail: { url: this.url },
+        detail: { url: this.url, title: this.music.title },
       })
     );
   },
@@ -270,19 +286,58 @@ const player = reactive({
     try {
       this.url = src;
       this.audio.src = src;
-      this.audio.play().catch((err) => {
-        if (err.name === "NotAllowedError") {
-          console.warn(
-            "Error de reproducción automática: Se requiere interacción del usuario"
-          );
-          // Aquí puedes manejar específicamente este error
-          this.state = "error";
-          this.requiereInteraccion = true;
-        } else {
-          console.error("Error de reproducción:", err);
-          this.state = "error";
-        }
-      });
+      // Iniciar o reanudar el AudioContext aquí
+      if (
+        this.audioProcessor &&
+        this.audioProcessor.audioContext.state === "suspended"
+      ) {
+        this.audioProcessor.audioContext.resume().then(() => {
+          this.audio
+            .play()
+            .then(() => {
+              //activamos el procesamiento de audio solo para la radio
+              if (isRadio && !this.audioProcessingEnabled)
+                this.toggleAudioProcessing();
+              if (!isRadio && this.audioProcessingEnabled)
+                this.toggleAudioProcessing();
+            })
+            .catch((err) => {
+              if (err.name === "NotAllowedError") {
+                console.warn(
+                  "Error de reproducción automática: Se requiere interacción del usuario"
+                );
+                // Aquí puedes manejar específicamente este error
+                this.state = "error";
+                this.requiereInteraccion = true;
+              } else {
+                console.error("Error de reproducción:", err);
+                this.state = "error";
+              }
+            });
+        });
+      } else
+        this.audio
+          .play()
+          .then(() => {
+            //activamos el procesamiento de audio solo para la radio
+            if (isRadio && !this.audioProcessingEnabled)
+              this.toggleAudioProcessing();
+            if (!isRadio && this.audioProcessingEnabled)
+              this.toggleAudioProcessing();
+          })
+          .catch((err) => {
+            if (err.name === "NotAllowedError") {
+              console.warn(
+                "Error de reproducción automática: Se requiere interacción del usuario"
+              );
+              // Aquí puedes manejar específicamente este error
+              this.state = "error";
+              this.requiereInteraccion = true;
+            } else {
+              console.error("Error de reproducción:", err);
+              this.state = "error";
+            }
+          });
     } catch (err) {
       console.error("Error en la configuración de reproducción:", err);
       this.state = "error";
@@ -378,6 +433,24 @@ const player = reactive({
       console.warn("Calculated new time is not a finite number");
     }
   },
+  toggleAudioProcessing() {
+    if (!this.audioProcessor) return;
+
+    try {
+      if (!this.audioProcessingEnabled) {
+        this.audioProcessor.connectSource();
+      } else {
+        this.audioProcessor.disconnectSource();
+      }
+      this.audioProcessingEnabled = !this.audioProcessingEnabled;
+      console.log(
+        "Audio processing:",
+        this.audioProcessingEnabled ? "ON" : "OFF"
+      );
+    } catch (error) {
+      console.error("Error al togglear el procesamiento de audio:", error);
+    }
+  },
 });
 
 export default function usePlayer() {
@@ -387,7 +460,8 @@ export default function usePlayer() {
 function installEvents() {
   // Escuchamos el evento que emitimos desde Blade
   window.addEventListener("player-play", (event) => {
-    player.play(event.detail.url);
+    if (!event.detail) return;
+    player.play(event.detail.url, event.detail.title);
   });
 
   // Escuchamos el evento que emitimos desde Blade
@@ -405,3 +479,14 @@ function installEvents() {
 player.init();
 
 installEvents();
+
+// activación/desactivación de procesamiento de audio por teclado
+document.addEventListener("keydown", _handleKeyPress);
+
+function _handleKeyPress(event) {
+  // Combina Ctrl + Shift + P para alternar el procesamiento de audio
+  if (event.altKey && event.shiftKey && event.key === "P") {
+    player.toggleAudioProcessing();
+    event.preventDefault(); // Evitar que la combinación de teclas haga otra cosa
+  }
+}

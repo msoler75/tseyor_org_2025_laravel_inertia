@@ -11,7 +11,6 @@
         <Spinner v-show="!['stopped', 'paused', 'playing', 'error', 'ended'].includes(player.state)" />
     </span>
     <span v-else>
-        xx
         <Icon icon="ph:play-duotone" />
     </span>
 </template>
