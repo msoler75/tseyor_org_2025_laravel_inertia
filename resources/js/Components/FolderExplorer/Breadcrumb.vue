@@ -95,6 +95,10 @@ const items = computed(() => {
     return r;
 });
 
+watch(items, () => {
+    calculateFirstVisible()
+})
+
 function handleClick(item, event) {
     console.log("breadcrumb.handleClick", { item, event });
     if (props.interceptClick) {
@@ -115,28 +119,28 @@ function calculateFirstVisible() {
     const ww = window.innerWidth
     const w = Math.min(1330, ww);
     const w_gap = 2 * char_width;
-    const anchos = []
     let calculated_width = ww / 8;
-    let n = 0
     for (let i = items.value.length - 1; i >= 0; i--) {
         const item = items.value[i];
         calculated_width += item.label.length * char_width + w_gap;
-        anchos.push({label: item.label,w:item.label.length * char_width})
         if (calculated_width> w*.92  ) {
             firstVisible.value = Math.min(items.value.length-1, (i+1))
             return;
         }
-        n++
     }
     firstVisible.value = 0;
 }
 
 onMounted(() => {
     calculateFirstVisible();
+    nextTick(() => {
+        calculateFirstVisible()
+    })
     window.addEventListener("resize", calculateFirstVisible);
 });
 
 onUnmounted(() => {
     window.removeEventListener("resize", calculateFirstVisible);
 });
+
 </script>
