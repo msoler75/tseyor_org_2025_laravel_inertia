@@ -64,6 +64,7 @@ function abrirModalRenombrar(item) {
     // item.seleccionado = false // para el caso de renombrar un item seleccionado
     renombrandoItem.value = false;
     itemRenombrando.value = item;
+    console.log("abrirModalRenombrar()", item);
     nuevoNombre.value = item.nombre_original
         ? item.nombre_original
         : item.nombre;
@@ -77,44 +78,46 @@ function abrirModalRenombrar(item) {
     }, 500);
 }
 
-function renombrarItem() {
-    const {nombre:_nombre, url:_url, ruta:_ruta} =  itemRenombrando.value
-    console.log('renombrarItem()', _nombre, _url, _ruta);
+async function renombrarItem() {
+    const { nombre, nombre_original, url, carpeta } = itemRenombrando.value;
+
     itemRenombrando.value.seleccionado = false;
     renombrandoItem.value = true;
-    axios
-        .post("/files/rename", {
-            folder: itemRenombrando.value.carpeta,
-            oldName: itemRenombrando.value.nombre,
-            newName: nuevoNombre.value,
-        })
-        .then((response) => {
-            console.log({ response });
-            modalRenombrarItem.value = false;
-            itemRenombrando.value.ruta = itemRenombrando.value.carpeta + "/" + nuevoNombre.value;
-            itemRenombrando.value.url = itemRenombrando.value.url.replace(new RegExp(itemRenombrando.value.nombre + '(?=[^/]*$)'), nuevoNombre.value);
-            itemRenombrando.value.nombre = nuevoNombre.value;
-            const {nombre:_nombre, url:_url, ruta:_ruta} =  itemRenombrando.value
-            console.log('renombrarItem_END()', _nombre, _url, _ruta);
-            const item = itemRenombrando.value
-            if (!store.embed)
-                if (item.actual) {
-                    // reemplazar la URL actual en el historial del navegador
-                    router.replace(item.url);
 
-                    // reemplazar el título de la página
-                    document.title = item.ruta;
-                }
-            // else
-            // actualizarPage()
-        })
-        .catch((err) => {
-            console.warn({ err });
-            const errorMessage =
-                err.response?.data?.error ||
-                "Ocurrió un error al renombrar el elemento";
-            alert(errorMessage);
-            renombrandoItem.value = false;
+    const nombreActual = nombre_original || nombre;
+
+    try {
+        await axios.post("/files/rename", {
+            folder: carpeta,
+            oldName: nombreActual,
+            newName: nuevoNombre.value,
         });
+
+        modalRenombrarItem.value = false;
+
+        const nuevaRuta = `${carpeta}/${nuevoNombre.value}`;
+        const nuevaUrl = url.replace(
+            new RegExp(`/${nombreActual}(?=/|$)`),
+            `/${nuevoNombre.value}`
+        );
+
+        Object.assign(itemRenombrando.value, {
+            ruta: nuevaRuta,
+            url: nuevaUrl,
+            [nombre_original ? "nombre_original" : "nombre"]: nuevoNombre.value,
+        });
+
+        if (!store.embed && itemRenombrando.value.actual) {
+            router.replace(nuevaUrl);
+            document.title = nuevaRuta;
+        }
+    } catch (err) {
+        alert(
+            err.response?.data?.error ||
+                "Ocurrió un error al renombrar el elemento"
+        );
+    } finally {
+        renombrandoItem.value = false;
+    }
 }
 </script>
