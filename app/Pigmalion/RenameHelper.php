@@ -32,7 +32,7 @@ class RenameHelper
         }
 
         // Verifica si el destino es una subcarpeta del origen
-        if (strpos(realpath($destination), realpath($source) . DIRECTORY_SEPARATOR) === 0) {
+        if (strpos($destination, $source . DIRECTORY_SEPARATOR) === 0) {
             Log::error("El destino es una subcarpeta del origen. Operación no permitida.");
             return false;
         }
@@ -95,6 +95,13 @@ class RenameHelper
     private static function copyRecursive($source, $destination, $baseSource)
     {
         Log::info('Copiando ' . $source . ' a ' . $destination);
+
+         // Verifica si el destino es una subcarpeta del origen
+         if (strpos($destination, $source . DIRECTORY_SEPARATOR) === 0) {
+            Log::error("El destino es una subcarpeta del origen. Operación de copiado no permitida.");
+            return false;
+        }
+
         if (!is_dir($destination)) {
             if (!mkdir($destination, 0777, true)) {
                 return false;
