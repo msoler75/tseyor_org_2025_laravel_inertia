@@ -29,22 +29,22 @@ class StorageItem
     public function __get($name)
     {
         if ($name === 'location') {
-            return $this->getLocation();
+            return $this->getLocation();            // /almacen/imagenes/1.png
         }
         if ($name === 'disk') {
-            return $this->getDisk();
+            return $this->getDisk();                // public
         }
         if ($name === 'path') {
-            return $this->getPath();
+            return $this->getPath();                // D:\projects\tseyor\laravel_inertia\storage\app\public\imagenes\1.png
         }
         if ($name === 'url') {
-            return $this->getUrl();
+            return $this->getUrl();                 // http://localhost/almacen/imagenes/1.png
         }
         if ($name === 'urlPath') {
-            return $this->getUrlPath();
+            return $this->getUrlPath();             // /almacen/imagenes/1.png
         }
         if ($name === 'relativeLocation') {
-            return $this->getRelativeLocation();
+            return $this->getRelativeLocation();    // imagenes/1.png
         }
         return null; // O lanzar una excepción si el nombre no es válido
     }
@@ -156,7 +156,7 @@ class StorageItem
      */
     public static function fromUrl($url)
     {
-        if(!preg_match("#^https?:\/\/#", $url))
+        if (!preg_match("#^https?:\/\/#", $url))
             throw new \Exception("StorageItem::fromUrl: URL no válida $url");
         $base_public = Storage::disk('public')->url('');
         $base_archivos = Storage::disk('archivos')->url('');
@@ -280,6 +280,15 @@ class StorageItem
     {
         // \Log::info("makeDirectory : " . $this->path);
         return Storage::disk($this->disk)->makeDirectory($this->relativeLocation);
+    }
+
+    public static function move(string $from, string $to)
+    {
+        $f = new StorageItem($from);
+        $d = new StorageItem($to);
+        if ($f->disk == $d->disk)
+            return Storage::disk($f->disk)->move($f->relativeLocation, $d->relativeLocation);
+        return false;
     }
 
 

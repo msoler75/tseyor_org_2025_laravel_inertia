@@ -3,6 +3,7 @@
         class="h-full flex flex-col relative"
         :class="touchable ? 'touchable' : ''"
     >
+    <h1 class="hidden" >{{ store.rutaActual }}</h1>
         <div
             class="w-full sticky border-b border-gray-300 shadow-sm bg-base-100 px-4 pb-0 sm:px-6 lg:px-8 z-30"
             :class="[embed ? 'pt-[2rem] top-0' : 'pt-[1rem] lg:pt-[4rem] top-[4rem]']"
@@ -20,7 +21,7 @@
                     :intercept-click="true"
                     @folder="store.clickBreadcrumb($event)"
                     title="Ruta actual"
-                    class="fe-breadcrumb text-2xl font-bold"
+                    class="fe-breadcrumb text-xl lg:text-2xl font-bold max-w-full"
                     :rootLabel="rootLabel"
                     :rootUrl="rootUrl"
                 />
@@ -507,7 +508,7 @@ function calcularItems() {
     }
     console.log({ items });
 
-    store.itemsShow = items;
+    store.itemsShow = items.filter(x => !x.oculto);
 
     actualizarListaImagenes();
 }

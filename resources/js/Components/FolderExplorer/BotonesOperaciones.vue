@@ -119,7 +119,7 @@ function moverItems() {
     })
         .catch(err => {
             console.warn({ err })
-            const errorMessage = err.response.data?.error || 'Ocurrió un error al mover los elementos'
+            const errorMessage = err.response?.data?.error || 'Ocurrió un error al mover los elementos'
             alert(errorMessage)
         })
 

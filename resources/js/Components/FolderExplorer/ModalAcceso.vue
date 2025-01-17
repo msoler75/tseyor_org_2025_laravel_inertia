@@ -288,7 +288,7 @@ function cambiarAcl() {
             store.permisosModificados = true
         })
         .catch(err => {
-            const errorMessage = err.response.data.error || 'Ocurrió un error al guardar los cambios'
+            const errorMessage = err.response?.data?.error || 'Ocurrió un error al guardar los cambios'
             alert(errorMessage)
             guardandoAcl.value = false
         })

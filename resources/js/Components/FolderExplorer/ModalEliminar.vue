@@ -71,7 +71,7 @@ function eliminarArchivo(item) {
         })
         .catch((err) => {
             const errorMessage =
-                err.response.data.error ||
+                err.response?.data?.error ||
                 "Ocurrió un error al eliminar el archivo " + item.nombre;
             alert(errorMessage);
         });

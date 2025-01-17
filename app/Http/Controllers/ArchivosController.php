@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use App\Http\Controllers\ImagenesController;
 use App\Pigmalion\StorageItem;
+use App\Pigmalion\RenameHelper;
 use Illuminate\Support\Facades\Cache;
+
 
 // use App\Pigmalion\TiempoEjecucion as T;
 //use App\T;
@@ -126,7 +128,7 @@ class ArchivosController extends Controller
             $items = [
                 [
                     'nombre' => '.', //raiz
-                     'ruta' => '',
+                    'ruta' => '',
                     'carpeta' => '',
                     'tipo' => 'carpeta',
                     'actual' => true,
@@ -212,7 +214,7 @@ class ArchivosController extends Controller
             $carpetas = $dir->directories(true);
 
             // agregamos la carpeta actual
-            $items[] = $this->prepareItemList($disk, $ruta, ['nombre'=>'.', 'tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
+            $items[] = $this->prepareItemList($disk, $ruta, ['nombre' => '.', 'tipo' => 'carpeta', 'actual' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
 
             // agregamos carpeta padre
             $padre = dirname($ruta);
@@ -229,7 +231,7 @@ class ArchivosController extends Controller
                     }
                 } else {
                     $nodoPadre = $this->nodoDesde(dirname($dir->location));
-                    $items[] = $this->prepareItemList($disk, $padre, ['nombre'=>'..', 'tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
+                    $items[] = $this->prepareItemList($disk, $padre, ['nombre' => '..', 'tipo' => 'carpeta', 'padre' => true, 'archivos' => count($archivos), 'subcarpetas' => count($carpetas)]);
                 }
             }
 
@@ -606,8 +608,9 @@ class ArchivosController extends Controller
         $rutaBase = $ruta; //str_replace($baseUrl, '', str_replace('/almacen', '', Storage::disk($disk)->url($ruta)));
         $prefix = ''; //$disk === 'archivos' ? 'archivos/' : '';
         $carpeta = str_replace("\\", "/", dirname($ruta));
+        $nombre = basename($ruta);
         $item = [
-            'nombre' => basename($ruta),
+            'nombre' => $nombre,
             'ruta' => rtrim($prefix . $rutaBase, '/'),
             // 'url' => Storage::disk($disk)->url(str_replace(' ', '%20', $rutaBase)),
             // 'url' => str_replace($baseUrl, '', str_replace('/almacen', '', Storage::disk($disk)->url($ruta))), // Storage::disk($disk)->url(urldecode($ruta)),
@@ -616,6 +619,8 @@ class ArchivosController extends Controller
             'puedeLeer' => true
         ];
         $item = array_merge($item, $options);
+        if (isset($options['nombre']))
+            $item['nombre_original'] = $nombre;
         $item['url'] = rtrim(($ruta && $disk == 'public' ? '/almacen' : '') . '/' . $prefix . $ruta, '/');
         return $item;
     }
@@ -1043,10 +1048,10 @@ class ArchivosController extends Controller
     function validarNombre($nombre)
     {
         // Expresión regular para Windows
-        $patronWindows = '/^[a-zA-Z0-9\s_\-().\[\]{}!,@áéíóúÁÉÍÓÚàèòÀÈÒçÇ]*$/';
+        $patronWindows = '/^[a-zA-Z0-9\s_\-().\[\]{}!,@áéíóúÁÉÍÓÚàèòÀÈÒñÑçÇ]*$/';
 
         // Expresión regular para Linux
-        $patronLinux = '/^[a-zA-Z0-9\s_\-()\[\]{}.\-áéíóúÁÉÍÓÚàèòÀÈÒçÇ]*$/';
+        $patronLinux = '/^[a-zA-Z0-9\s_\-()\[\]{}.\-áéíóúÁÉÍÓÚàèòÀÈÒñÑçÇ]*$/';
 
         // $patronAmbos = '^[a-zA-Z0-9\s_\-().\[\]{}!,@áéíóúÁÉÍÓÚàèòÀÈÒüÜñÑçÇ]*$';
 
@@ -1370,70 +1375,6 @@ class ArchivosController extends Controller
     }
 
 
-
-
-    private function safe_rename($source, $destination)
-    {
-        Log::info("safe_rename($source, $destination)");
-
-        // Verifica si el origen es un archivo
-        if (is_file($source)) {
-            // Renombra el archivo
-            if (@rename($source, $destination)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        // Verifica si el origen es una carpeta
-        if (is_dir($source)) {
-
-            if (@rename($source, $destination)) {
-                return true;
-            } else {
-
-
-                // Crea la carpeta de destino
-                if (!@mkdir($destination)) {
-                    return false;
-                }
-
-                // Abre el directorio de origen
-                $dir = opendir($source);
-
-                // Recorre los elementos del directorio
-                while (($file = readdir($dir)) !== false) {
-                    if ($file != '.' && $file != '..') {
-                        // Construye las rutas completas de origen y destino
-                        $src = $source . '/' . $file;
-                        $dst = $destination . '/' . $file;
-
-                        // Llama a la función de forma recursiva
-                        if (!$this->safe_rename($src, $dst)) {
-                            closedir($dir);
-                            return false;
-                        }
-                    }
-                }
-
-                // Cierra el directorio de origen
-                closedir($dir);
-
-                // Elimina la carpeta de origen
-                if (!@rmdir($source)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        return false; // Si no es ni archivo ni carpeta
-    }
-
-
-
     /**
      * Renombra un archivo o carpeta que está en una carpeta $folder de viejo nombre $oldName a $newName
      * parámetros: folder (carpeta donde está el nodo), oldName (nombre actual del nodo), newName (nuevo nombre del nodo)
@@ -1441,19 +1382,6 @@ class ArchivosController extends Controller
      */
     public function rename(Request $request)
     {
-
-        function rename_win($oldfile, $newfile)
-        {
-            if (!@rename($oldfile, $newfile)) {
-                if (copy($oldfile, $newfile)) {
-                    unlink($oldfile);
-                    return TRUE;
-                }
-                return FALSE;
-            }
-            return TRUE;
-        }
-
 
         $user = auth()->user();
 
@@ -1538,7 +1466,9 @@ class ArchivosController extends Controller
         //if(Storage::disk($disk)->directoryExists($itemAntes))
         return response()->json(['error' => 'No se pudo renombrar'], 500);
     }*/
-        if ($this->safe_rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
+
+
+        if (RenameHelper::safe_rename($rutaAbsolutaAntes, $rutaAbsolutaDespues)) {
             //if(File::move(Storage::disk($disk)->path($rutaAntes), Storage::disk($disk)->path($rutaDespues) )){
 
             // borramos cualquier tipo de cache de carpetas en esta ubicación

@@ -7,23 +7,21 @@
             <Dropdown :relative="false" align="left" width="auto"
             >
                 <template #trigger>
-                    <span class="btn btn-icon rounded-2xl h-1 hover:bg-base-100 cursor-pointer" title="Ordenar los elementos">
-                        ...
+                    <span class="text-xl px-2 btn btn-sm rounded-xl h-1 hover:bg-base-100 cursor-pointer" title="Carpetas anteriores">
+                        ⋯
                     </span>
                 </template>
                 <template #content>
                     <template v-for="(item, index) of items" :key="index">
                         <div
                             v-if="index < firstVisible"
-                            class="flex gap-x items-center hover:bg-base-100 cursor-pointer"
+                            class="flex gap-x items-center hover:bg-base-100 cursor-pointer max-w-[90vw] overflow-hidden text-ellipsis"
                         >
                             <Link
                                 v-if="links && index < items.length - 1"
                                 :href="item.url"
-                                @click.native.capture="
-                                    handleClick(item, $event)
-                                "
-                                class="whitespace-nowrap max-w-[90vw] truncate hover:underline px-4 py-3"
+                                @click.native.capture="handleClick(item, $event)"
+                                class="whitespace-nowrap truncate hover:underline px-4 py-3"
                                 :title="item.label"
                                 :class="!links ? 'pointer-events-none' : ''"
                                 >{{ item.label }}</Link
@@ -39,7 +37,7 @@
         <template v-for="(item, index) of items" :key="index">
             <li
                 v-if="index >= firstVisible"
-                class="flex items-center space-x-1"
+                class="flex items-center space-x-1 max-w-[calc(100%_-_40px)]"
             >
                 <span
                     v-if="!rootLabel || index > 0"
@@ -55,7 +53,7 @@
                     :class="!links ? 'pointer-events-none' : ''"
                     >{{ item.label }}</Link
                 >
-                <span v-else class="opacity-80 py-2">{{ item.label }}</span>
+                <span v-else class="opacity-80 py-2 text-ellipsis max-w-full overflow-hidden">{{ item.label }}</span>
             </li>
         </template>
     </ol>

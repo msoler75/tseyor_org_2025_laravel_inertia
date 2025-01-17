@@ -28,23 +28,7 @@ class ImagenesController extends Controller
         }
         return $ruta;
     }
-    private function diskRuta(string $ruta): array
-    {
-        // si la ruta comienza por "archivos", el disco es "archivos"
-        // sino, es "public"
-        $ruta = $this->normalizarRuta($ruta);
-        if ($ruta == '')
-            return ['raiz', '']; // raiz
 
-        if (strpos($ruta, 'archivos') === 0) {
-            // $ruta = preg_replace("#^archivos\/?#", "", $ruta);
-            return ['archivos', $ruta];
-        } else if ($ruta == 'mis_archivos') {
-            return ['archivos', $ruta];
-        } else {
-            return ['public', $ruta];
-        }
-    }
 
     public function size(Request $request)
     {
@@ -54,9 +38,9 @@ class ImagenesController extends Controller
 
         // obtenemos las dimensiones de la imagen
 
-        list($disk, $ruta) = $this->diskRuta($url);
+        $sti = new StorageItem($url);
 
-        $fullpath = Storage::disk($disk)->path($ruta);
+        $fullpath = $sti->path;
 
         // obtenemos las dimensiones de la imagen en la ubicación $fullpath, hemos de comprobar si es un PNG, o JPG...
         $info = @getimagesize($fullpath);

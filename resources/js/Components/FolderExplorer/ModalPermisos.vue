@@ -150,7 +150,7 @@ function cambiarPermisos() {
         })
         .catch(err => {
             console.warn({err})
-            const errorMessage = err.response.data?.error || 'Ocurrió un error al guardar los cambios'
+            const errorMessage = err.response?.data?.error || 'Ocurrió un error al guardar los cambios'
             alert(errorMessage)
             guardandoPermisos.value = false
         })

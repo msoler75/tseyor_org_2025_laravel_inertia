@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Laravel\Scout\Searchable;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Collection;
 
 class Nodo extends Model
 {
@@ -30,6 +29,7 @@ class Nodo extends Model
         // O null si no tiene grupo por defecto
         'es_carpeta' => 1,
         // Por ejemplo, un valor booleano como valor predeterminado
+        'oculto' => 0 // oculto por el sistema, por defecto no
     ];
 
 
@@ -184,7 +184,7 @@ class Nodo extends Model
         if (!$aclist)
             return false;
 
-        Log::info("Nodo::tieneAcceso " . $user->name . ", verbo: $verbo");
+        // Log::info("Nodo::tieneAcceso " . $user->name . ", verbo: $verbo");
 
         // filtramos por verbo
         if ($verbo) {
@@ -194,7 +194,7 @@ class Nodo extends Model
             });
         }
         $aclListArray = $aclist->toArray();
-        Log::info("AclList de " . optional($user)->name . ":", $aclListArray);
+        // Log::info("AclList de " . optional($user)->name . ":", $aclListArray);
 
 
         // tiene acceso global para todos los nodos?
@@ -233,12 +233,12 @@ class Nodo extends Model
         //if ($aclist->where("'$nodo->ubicacion'", 'LIKE', "CONCAT(ubicacion, '%')")->count() > 0)
         //  return true;
 
-        Log::info("Estamos mirando el nodo:", $this->toArray());
+        // Log::info("Estamos mirando el nodo:", $this->toArray());
 
         foreach ($aclListArray as $acl) {
-            Log::info("Checando acceso para " . $acl['ubicacion']);
+            // Log::info("Checando acceso para " . $acl['ubicacion']);
             if (strpos($this->ubicacion, $acl['ubicacion']) === 0) {
-                Log::info("Acceso concedido para " . $acl['ubicacion']);
+                // Log::info("Acceso concedido para " . $acl['ubicacion']);
                 return true;
             }
         }
