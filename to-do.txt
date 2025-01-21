@@ -1,3 +1,7 @@
+STORAGE IMAGES CACHE
+-poner herramientas para borrar la cache
+-tal vez mover esa cache a otro lugar para el tema de backups de storage
+
 DevController::newBuild
 -que ejecute los comandos artisan:
 php artisan optimize
