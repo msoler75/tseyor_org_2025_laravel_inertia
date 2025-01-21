@@ -38,7 +38,7 @@
         <Section>
             <Hero title="Comunidad Tseyor" subtitle="Somos una comunidad de personas normales y corrientes que trabajamos hacia la instauración
                 de las Sociedades Armónicas de la Galaxia." buttonLabel="Únete a la comunidad TSEYOR"
-                :href="route('cursos')" srcImage="/almacen/medios/paginas/rueda-mazatlan.jpg" textClass="container" full
+                :href="route('quienes-somos')" srcImage="/almacen/medios/portada/quienes-somos8-compressor.jpg" textClass="container" full
                 cover />
         </Section>
 
