@@ -1,9 +1,12 @@
 <script setup>
+import { NodeSelection } from "@tiptap/pm/state";
+
 const props = defineProps({
     editor: Object,
-    mediaFolder: { type: String, default: 'medios' }
+    mediaFolder: { type: String, default: "medios" },
 });
-const emit = defineEmits(['toggle-markdown'])
+const emit = defineEmits(["toggle-markdown"]);
+
 const items = ref([
     {
         icon: "mdi-format-bold",
@@ -51,7 +54,7 @@ const items = ref([
     {
         type: "color",
         title: "Color del texto",
-        icon: 'mdi:format-color'
+        icon: "mdi:format-color",
     },
     {
         type: "divider",
@@ -93,26 +96,27 @@ const items = ref([
     {
         icon: "mdi:format-align-left",
         title: "Alinear a izquierda",
-        action: () => props.editor.chain().focus().setTextAlign('left').run(),
-        isActive: () => props.editor.isActive({ textAlign: 'left' }),
+        action: () => props.editor.chain().focus().setTextAlign("left").run(),
+        isActive: () => props.editor.isActive({ textAlign: "left" }),
     },
     {
         icon: "mdi:format-align-center",
         title: "Alinear a centro",
-        action: () => props.editor.chain().focus().setTextAlign('center').run(),
-        isActive: () => props.editor.isActive({ textAlign: 'center' }),
+        action: () => props.editor.chain().focus().setTextAlign("center").run(),
+        isActive: () => props.editor.isActive({ textAlign: "center" }),
     },
     {
         icon: "mdi:format-align-right",
         title: "Alinear a derecha",
-        action: () => props.editor.chain().focus().setTextAlign('right').run(),
-        isActive: () => props.editor.isActive({ textAlign: 'right' }),
+        action: () => props.editor.chain().focus().setTextAlign("right").run(),
+        isActive: () => props.editor.isActive({ textAlign: "right" }),
     },
     {
         icon: "mdi:format-align-justify",
         title: "Alinear justificado",
-        action: () => props.editor.chain().focus().setTextAlign('justify').run(),
-        isActive: () => props.editor.isActive({ textAlign: 'justify' }),
+        action: () =>
+            props.editor.chain().focus().setTextAlign("justify").run(),
+        isActive: () => props.editor.isActive({ textAlign: "justify" }),
     },
 
     {
@@ -163,12 +167,98 @@ const items = ref([
         action: () => props.editor.chain().focus().setHorizontalRule().run(),
     },
     {
-        icon: computed(() => props.editor.isActive("link") ? "mdi:link-variant-off" : "mdi:link-variant"),
-        title: computed(() => props.editor.isActive("link") ? "Remover enlace" : "Insertar enlace"),
-        action: () => props.editor.isActive("link") ? props.editor.chain().focus().unsetLink().run() : setLink(),
+        icon: computed(() =>
+            props.editor.isActive("link")
+                ? "mdi:link-variant-off"
+                : "mdi:link-variant"
+        ),
+        title: computed(() =>
+            props.editor.isActive("link") ? "Remover enlace" : "Insertar enlace"
+        ),
+        action: () =>
+            props.editor.isActive("link")
+                ? props.editor.chain().focus().unsetLink().run()
+                : setLink(),
         isActive: () => props.editor.isActive("link"),
-        isDisabled: computed(() => props.editor.state.selection.empty)
+        isDisabled: computed(() => props.editor.state.selection.empty),
     },
+    {
+        icon: "mdi:table",
+        title: "Insertar tabla",
+        action: () =>
+            props.editor
+                .chain()
+                .focus()
+                .insertTable({ rows: 3, cols: 3, withHeaderRow: false })
+                .run(),
+    },
+    {
+        icon: "mdi:table-column-plus-before",
+        title: "Añadir columna antes",
+        action: () => props.editor.chain().focus().addColumnBefore().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+    {
+        icon: "mdi:table-column-plus-after",
+        title: "Añadir columna después",
+        action: () => props.editor.chain().focus().addColumnAfter().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+    {
+        icon: "mdi:table-column-remove",
+        title: "Eliminar columna",
+        action: () => props.editor.chain().focus().deleteColumn().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+    {
+        icon: "mdi:table-row-plus-before",
+        title: "Añadir fila antes",
+        action: () => props.editor.chain().focus().addRowBefore().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+    {
+        icon: "mdi:table-row-plus-after",
+        title: "Añadir fila después",
+        action: () => props.editor.chain().focus().addRowAfter().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+    {
+        icon: "mdi:table-row-remove",
+        title: "Eliminar fila",
+        action: () => props.editor.chain().focus().deleteRow().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+    {
+        icon: "mdi:table-remove",
+        title: "Eliminar tabla",
+        action: () => props.editor.chain().focus().deleteTable().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+    {
+        icon: "mdi:table-merge-cells",
+        title: "Unir celdas",
+        action: () => props.editor.chain().focus().mergeCells().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+    {
+        icon: "mdi:table-split-cell",
+        title: "Dividir celdas",
+        action: () => props.editor.chain().focus().splitCell().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+    {
+        icon: "mdi:table-row",
+        title: "Cabecera de tabla",
+        action: () => props.editor.chain().focus().toggleHeaderRow().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+    {
+        icon: "mdi:table-refresh",
+        title: "Arreglar tabla",
+        action: () => props.editor.chain().focus().fixTables().run(),
+        isVisible: () => props.editor.isActive("table"),
+    },
+
     {
         type: "divider",
     },
@@ -186,21 +276,28 @@ const items = ref([
             if (url) {
                 this.editor.chain().focus().setImage({ src: url }).run()
             }*/
-            showMediaManager.value = true
+            showMediaManager.value = true;
         },
+    },
+    {
+        icon: "mdi-head-remove",
+        title: "Reemplazar imagen o eliminar persona/objeto",
+
+        action: () => onProcesarImagen(),
+        // solo está activo si hay una imagen elegida en el editor
+        isDisabled: computed(() => !props.editor.isActive("image")),
     },
     {
         title: "Borrar Formato",
         icon: "mdi-format-clear",
         action: () =>
             props.editor.chain().focus().clearNodes().unsetAllMarks().run(),
-        isDisabled: computed(() => props.editor.state.selection.empty)
+        isDisabled: computed(() => props.editor.state.selection.empty),
     },
     {
         title: "Editor markdown",
         icon: "mdi:language-markdown-outline",
-        action: () =>
-            emit('toggle-markdown')
+        action: () => emit("toggle-markdown"),
     },
     {
         type: "divider",
@@ -217,172 +314,197 @@ const items = ref([
     },
 
     {
-        icon: computed(()=>pantallaCompleta.value?"mdi:fullscreen-exit":"mdi:fullscreen"),
-        title: computed(()=>pantallaCompleta.value?"Salir de pantalla completa":"Ver en pantalla completa"),
-        action: () => toggleFullScreen()
-    },
-    {
-        type: "divider"
-    },
-
-    {
-        icon: "mdi:table",
-        title: "Insertar tabla",
-        action: () => props.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false }).run(),
-    },
-    {
-        icon: "mdi:table-column-plus-before",
-        title: "Añadir columna antes",
-        action: () => props.editor.chain().focus().addColumnBefore().run(),
-    },
-    {
-        icon: "mdi:table-column-plus-after",
-        title: "Añadir columna después",
-        action: () => props.editor.chain().focus().addColumnAfter().run(),
-    },
-    {
-        icon: "mdi:table-column-remove",
-        title: "Eliminar columna",
-        action: () => props.editor.chain().focus().deleteColumn().run(),
-    },
-    {
-        icon: "mdi:table-row-plus-before",
-        title: "Añadir fila antes",
-        action: () => props.editor.chain().focus().addRowBefore().run(),
-    },
-    {
-        icon: "mdi:table-row-plus-after",
-        title: "Añadir fila después",
-        action: () => props.editor.chain().focus().addRowAfter().run(),
-    },
-    {
-        icon: "mdi:table-row-remove",
-        title: "Eliminar fila",
-        action: () => props.editor.chain().focus().deleteRow().run(),
-    },
-    {
-        icon: "mdi:table-remove",
-        title: "Eliminar tabla",
-        action: () => props.editor.chain().focus().deleteTable().run(),
-    },
-    {
-        icon: "mdi:table-merge-cells",
-        title: "Unir celdas",
-        action: () => props.editor.chain().focus().mergeCells().run(),
-    },
-    {
-        icon: "mdi:table-split-cell",
-        title: "Dividir celdas",
-        action: () => props.editor.chain().focus().splitCell().run(),
-    },
-    {
-        icon: "mdi:table-row",
-        title: "Cabecera de tabla",
-        action: () => props.editor.chain().focus().toggleHeaderRow().run(),
-    },
-    {
-        icon: "mdi:table-refresh",
-        title: "Arreglar tabla",
-        action: () => props.editor.chain().focus().fixTables().run(),
+        icon: computed(() =>
+            pantallaCompleta.value ? "mdi:fullscreen-exit" : "mdi:fullscreen"
+        ),
+        title: computed(() =>
+            pantallaCompleta.value
+                ? "Salir de pantalla completa"
+                : "Ver en pantalla completa"
+        ),
+        action: () => toggleFullScreen(),
     }
+
+
 ]);
 
+const showMediaManager = ref(false);
 
-const showMediaManager = ref(false)
+const showProcesarImagen = ref(false);
 
 function onInsertImage(src) {
     // tiptap insert image here
-    console.log('onInsertImage', src)
+    console.log("onInsertImage", src);
     // props.editor.chain().focus().insertContent (`<img src="${src}" style='width: auto; height: auto'/>`).run()
-    props.editor.chain().focus().insertContent(`<img src="${src}" style='width: auto; height: auto'/>`).run()
-    showMediaManager.value = false
+    props.editor
+        .chain()
+        .focus()
+        .insertContent(`<img src="${src}" style='width: auto; height: auto'/>`)
+        .run();
+    showMediaManager.value = false;
 }
 
+const carpetaDestino = ref("");
+const procesarImagenUrl = ref(null);
+
+function onProcesarImagen() {
+    if (!props.editor) return;
+
+    const selection = props.editor.state.selection;
+    if (selection instanceof NodeSelection) {
+        const node = selection.node;
+        if (node.type.name === "image") {
+            procesarImagenUrl.value = node.attrs.src;
+            carpetaDestino.value = node.attrs.src.split('/').slice(0, -1).join('/');
+            showProcesarImagen.value = true;
+        }
+    }
+}
+
+function imagenProcesada(src) {
+    console.log('imagenProcesada', src)
+    // reemplazamos la imagen de la selección actual cambiando su atributo src
+    props.editor.chain().focus().setImage({ src }).run()
+    showProcesarImagen.value = false;
+}
 
 function setLink() {
-    const previousUrl = props.editor.getAttributes('link').href
-    const url = window.prompt('URL', previousUrl)
+    const previousUrl = props.editor.getAttributes("link").href;
+    const url = window.prompt("URL", previousUrl);
 
     // cancelled
     if (url === null) {
-        return
+        return;
     }
 
     // empty
-    if (url === '') {
-        props.editor
-            .chain()
-            .focus()
-            .extendMarkRange('link')
-            .unsetLink()
-            .run()
+    if (url === "") {
+        props.editor.chain().focus().extendMarkRange("link").unsetLink().run();
 
-        return
+        return;
     }
 
     // update link
     props.editor
         .chain()
         .focus()
-        .extendMarkRange('link')
+        .extendMarkRange("link")
         .setLink({ href: url })
-        .run()
+        .run();
 }
 
-
-const pantallaCompleta = ref(false)
+const pantallaCompleta = ref(false);
 
 function enterFullScreen() {
     // props.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false }).run()
-    const div = document.querySelector('.tiptap-editor-wrapper')
-    console.log({div})
-    div.classList.add('fullscreen')
-    pantallaCompleta.value = true
+    const div = document.querySelector(".tiptap-editor-wrapper");
+    console.log({ div });
+    div.classList.add("fullscreen");
+    pantallaCompleta.value = true;
 }
 
 function exitFullScreen() {
     // props.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false }).run()
-    const div = document.querySelector('.tiptap-editor-wrapper')
-    div.classList.remove('fullscreen')
-    pantallaCompleta.value = false
+    const div = document.querySelector(".tiptap-editor-wrapper");
+    div.classList.remove("fullscreen");
+    pantallaCompleta.value = false;
 }
 
 function toggleFullScreen() {
-    if(pantallaCompleta.value)
-        exitFullScreen()
-    else
-        enterFullScreen()
+    if (pantallaCompleta.value) exitFullScreen();
+    else enterFullScreen();
 }
-
 </script>
 
 <template>
-    <div class="flex flex-wrap items-start justify-left gap-0.5 p-1 bg-gray-700">
+    <div
+        class="flex flex-wrap items-start justify-left gap-0.5 p-1 bg-gray-700"
+    >
         <div v-for="item in items">
-            <div class="mx-2 flex align-center h-full" v-if="item.type === 'divider'"></div>
-            <div v-else-if="item.type == 'color'" class="relative" :title="item.title">
-                <input type="color" class="opacity-0 absolute mt-0.5"
-                    @input="editor.chain().focus().setColor($event.target.value).run()"
-                    :value="editor.getAttributes('textStyle').color">
-                <span class="but pointer-events-none z-10 left-0 top-0"
-                    :style="{ color: editor.getAttributes('textStyle').color }">
-                    <Icon :icon="item.icon"  />
-                </span>
-            </div>
-                <span v-else class="but" :title="item.title" :class="item.isActive && item.isActive() ? 'btn-active' : ''"
-                    @click="item.action" :disabled="item.isDisabled">
+            <div
+                class="mx-2 flex align-center h-full"
+                v-if="item.type === 'divider'"
+            ></div>
+            <div
+                v-else-if="item.type == 'color'"
+                class="relative"
+                :title="item.title"
+            >
+                <input
+                    type="color"
+                    class="opacity-0 absolute mt-0.5"
+                    @input="
+                        editor
+                            .chain()
+                            .focus()
+                            .setColor($event.target.value)
+                            .run()
+                    "
+                    :value="editor.getAttributes('textStyle').color"
+                />
+                <span
+                    class="but pointer-events-none z-10 left-0 top-0"
+                    :style="{ color: editor.getAttributes('textStyle').color }"
+                >
                     <Icon :icon="item.icon" />
                 </span>
+            </div>
+            <span
+                v-else-if="!item.isVisible||(item.isVisible&&item.isVisible())"
+                class="but"
+                :title="item.title"
+                :class="[
+                    item.isActive && item.isActive() ? 'btn-active' : '',
+                    item.isDisabled ? 'opacity-50' : '',
+                ]"
+                @click="item.action"
+                :disabled="item.isDisabled"
+            >
+                <Icon :icon="item.icon" />
+            </span>
         </div>
     </div>
 
-    <Modal :show="showMediaManager" @close="showMediaManager = false" maxWidth="4xl">
+    <Modal
+        :show="showMediaManager"
+        @close="showMediaManager = false"
+        maxWidth="4xl"
+    >
         <div class="flex flex-col">
-            <FileManager :ruta="mediaFolder" @image="onInsertImage" :modo-insertar="true"/>
-            <div class="p-3 flex justify-end border-t border-gray-500 border-opacity-25">
-                <button @click.prevent="showMediaManager = false" class="btn btn-neutral">Cerrar</button>
+            <FileManager
+                :ruta="mediaFolder"
+                @image="onInsertImage"
+                :modo-insertar="true"
+            />
+            <div
+                class="p-3 flex justify-end border-t border-gray-500 border-opacity-25"
+            >
+                <button
+                    @click.prevent="showMediaManager = false"
+                    class="btn btn-neutral"
+                >
+                    Cerrar
+                </button>
             </div>
         </div>
+    </Modal>
+
+    <Modal
+        :show="showProcesarImagen"
+        @close="showProcesarImagen = false"
+        maxWidth="4xl"
+    >
+        <ProcesarImagen
+            titulo="Reemplazar o eliminar persona/objeto de una imagen"
+            :src="procesarImagenUrl"
+            nombreAplicacion="PhotoRoom"
+            urlAplicacion="https://www.photoroom.com/es/herramientas/eliminar-objetos-de-fotos"
+            :carpetaDestino="carpetaDestino"
+            class="py-5"
+            class-dropzone="w-[376px]"
+            @procesada="imagenProcesada"
+            @cerrar="showProcesarImagen = false"
+        />
     </Modal>
 </template>
 

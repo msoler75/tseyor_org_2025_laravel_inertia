@@ -61,19 +61,23 @@ const initialImages = computed(() => {
 
 function updateImages() {
     // console.log('updateImages')
-    images.value.splice(0, images.value.length)
+    images.value.splice(0, images.value.length);
 
     if (inputField && inputField.value != fromValue) {
-        fromValue = inputField.value
-        console.log('texto from cambió!')
+        fromValue = inputField.value;
+        console.log('texto from cambió!');
 
-        const regex = /!\[.*?\]\((.*?)\)|<img[^>]+src=["']?([^"']+)["']?/g;
+        // Expresión regular mejorada para manejar múltiples paréntesis
+        const regex = /!\[.*?\]\(((?:[^()]+|\([^()]*\))+)\)|<img[^>]+src=["']?([^"']+)["']?/g;
 
-        imagesFrom.value = []
+        imagesFrom.value = [];
 
         let match;
         while ((match = regex.exec(fromValue)) !== null) {
-            imagesFrom.value.push(match[1] ? match[1] : match[2]);
+            let url = match[1] || match[2];
+            // Limpiamos la URL de posibles espacios al final
+            url = url.trim();
+            imagesFrom.value.push(url);
         }
     }
 
