@@ -113,6 +113,7 @@ declare module 'vue' {
     Planets: typeof import('./resources/js/Icons/Planets.vue')['default']
     Preguntas: typeof import('./resources/js/Components/Preguntas.vue')['default']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
+    ProcesarImagen: typeof import('./resources/js/Components/ProcesarImagen.vue')['default']
     Prose: typeof import('./resources/js/Components/Prose.vue')['default']
     Referencia: typeof import('./resources/js/Components/Referencia.vue')['default']
     ResponderComentario: typeof import('./resources/js/Components/Comentarios/ResponderComentario.vue')['default']
