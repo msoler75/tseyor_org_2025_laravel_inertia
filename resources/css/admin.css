@@ -1,10 +1,5 @@
-@import 'tailwindcss';
+@reference "./app.css";
 
-@config "C:/laravel_inertia/tailwind.config.js";
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 body {
     height: unset !important

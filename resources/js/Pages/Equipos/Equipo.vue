@@ -215,7 +215,9 @@ function clickFile(item, event) {
 </script>
 
 
-<style>
+<style scoped>
+@reference "../../../css/app.css";
+
 .ql-editor {
     @apply bg-base-100;
 }

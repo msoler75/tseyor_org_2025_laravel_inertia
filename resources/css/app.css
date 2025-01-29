@@ -1,10 +1,14 @@
 @import 'tailwindcss';
+@plugin "daisyui" {
+    themes: light --default, winter --prefersdark;
+  }
 
-@config "C:/laravel_inertia/tailwind.config.js";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
+@variant dark (&:where([data-theme=winter], [data-theme=winter] *));
+
+@config "../../tailwind.config.js";
+
 
 @utility error {
   form & {
@@ -196,7 +200,7 @@ main a.hover\:underline::after {
     width: 0%;
     height: .2rem;
     transition: .2s width ease;
-    @apply bg-primary bg-opacity-30;
+    @apply bg-primary/30;
 }
 
 

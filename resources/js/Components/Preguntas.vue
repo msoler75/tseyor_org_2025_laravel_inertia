@@ -121,6 +121,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@reference "../../css/app.css";
+
 :deep(p a) {
     text-decoration: none;
 }

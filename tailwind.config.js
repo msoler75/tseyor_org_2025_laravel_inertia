@@ -12,6 +12,7 @@ export default {
     "./storage/framework/views/*.php",
     "./resources/views/**/*.blade.php",
     "./resources/js/**/*.vue",
+    "./resources/**/*.css",
   ],
 
   plugins: [forms, typography, daisyui /*, aspectRatio*/],
@@ -50,7 +51,7 @@ export default {
       }
     },
   },
-  daisyui: {
+  xdaisyui: {
     themes: [
       {
         summer: {

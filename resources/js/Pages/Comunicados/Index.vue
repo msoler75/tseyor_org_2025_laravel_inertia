@@ -356,6 +356,8 @@ function focusBuscar() {
 
 
 <style scoped>
+@reference "../../../css/app.css";
+
 .table {
     @apply min-w-full divide-y divide-gray-500/50;
 }

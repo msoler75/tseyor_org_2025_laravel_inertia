@@ -300,6 +300,7 @@ function cambiarAcl() {
 
 
 <style scoped>
+@reference "../../../css/app.css";
 
 table td,
 table th {

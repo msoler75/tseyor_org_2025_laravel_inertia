@@ -28,7 +28,7 @@ function clickedTab(tab) {
 
 
 <style scoped>
-
+@reference "../../css/app.css";
 /*
 .hover-helper {
     @apply bg-yellow-300;

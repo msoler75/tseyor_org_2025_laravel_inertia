@@ -71,7 +71,8 @@ watch(modalSubirArchivos, (value) => {
 
 </script>
 
-<style>
+<style scoped>
+@reference "../../../css/app.css";
 
 .vue-dropzone {
     @apply bg-base-100;

@@ -20,7 +20,9 @@ defineProps({
 </script>
 
 
-<style>
+<style scoped>
+@reference "../../css/app.css";
+
 .splide--slide {
     @apply flex py-12 h-[90%] my-auto;
 }

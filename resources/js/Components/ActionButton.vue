@@ -22,6 +22,9 @@ const props = defineProps({
 
 
 <style scoped>
+@reference "../../css/app.css";
+
+
 .pushable {
     @apply rounded-xl bg-primary;
     border: none;

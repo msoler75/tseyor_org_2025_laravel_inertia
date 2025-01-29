@@ -1,7 +1,7 @@
 <template>
     <div v-show="nav.activeTab">
         <div v-if="nav.ghostTab && nav.ghostTab.hasItems"
-            class="w-full h-30 flex flex-col z-40 top-8 bg-base-100 shadow-lg rounded-md border-gray-100 border">
+            class="w-full flex flex-col z-40 top-8 bg-base-100 shadow-lg rounded-md border-gray-100 border">
             <div class="flex justify-between gap-10 p-12">
                 <div v-for="section, index of nav.ghostTab.submenu?.sections" :key="index" class="flex-1">
                     <div class="text-gray-500 my-5 uppercase tracking-widest text-xs">{{
