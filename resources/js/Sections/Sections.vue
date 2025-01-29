@@ -19,6 +19,8 @@ const computedStyle = computed(() => {
 
 
 <style>
+@reference "../../css/app.css";
+
 .sections>* {
     @apply w-full mx-auto;
 }

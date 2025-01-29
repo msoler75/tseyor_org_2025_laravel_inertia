@@ -377,6 +377,8 @@ function ultimoItem() {
 </script>
 
 <style scoped>
+@reference "../../css/app.css";
+
 a.seleccionado {
     @apply bg-primary text-white dark:text-black;
 }

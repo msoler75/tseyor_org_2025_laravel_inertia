@@ -47,6 +47,8 @@ const imageClass = computed(() => {
 </script>
 
 <style scoped>
+@reference "../../css/app.css";
+
 .avatar {
     @apply justify-center flex-shrink-0 flex-grow-0;
 }

@@ -22,6 +22,7 @@ const bgLomoAbajo = 19
 */
 
 </script>
+@reference "../../css/app.css";
 
 <style scoped>
 .book-container {

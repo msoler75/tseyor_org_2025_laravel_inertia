@@ -185,7 +185,9 @@ function submit() {
 }
 </script>
 
-<style>
+<style scoped>
+@reference "../../../css/app.css";
+
 label {
     @apply text-sm;
 }

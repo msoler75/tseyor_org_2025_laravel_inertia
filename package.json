@@ -20,7 +20,7 @@
         "@vitejs/plugin-vue": "^5.2.1",
         "@vue/server-renderer": "^3.5.3",
         "axios": "^1.7.7",
-        "daisyui": "^4.12.10",
+        "daisyui": "^5.0.0-beta.3",
         "laravel-vite-plugin": "^1.2.0",
         "rollup-plugin-visualizer": "^5.12.0",
         "tailwindcss": "^4.0.0",
@@ -33,6 +33,7 @@
     "dependencies": {
         "@jambonn/vue-concise-carousel": "^2.1.31",
         "@splidejs/vue-splide": "^0.6.12",
+        "@tailwindcss/vite": "^4.0.1",
         "@tiptap/extension-color": "^2.6.6",
         "@tiptap/extension-highlight": "^2.6.6",
         "@tiptap/extension-image": "^2.6.6",

@@ -6,6 +6,7 @@ import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 import path from "path";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   build: {
@@ -31,6 +32,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    tailwindcss(),
     laravel({
       input: [
         "resources/js/app.js",

@@ -18,6 +18,8 @@ export default {
 
 
 <style scoped>
+@reference "../../css/app.css";
+
 .grid:not(class*=[gap-]) {
     @apply gap-4;
 }

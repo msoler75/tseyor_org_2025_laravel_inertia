@@ -205,6 +205,8 @@ setTimeout(incrementarItemsMostrados, 500)
 
 
 <style scoped>
+@reference "../../../css/app.css";
+
 table td,
 table th {
     @apply px-2;

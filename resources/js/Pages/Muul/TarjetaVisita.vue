@@ -221,6 +221,8 @@ function generarEnviar() {
 </script>
 
 <style scoped>
+@reference "../../../css/app.css";
+
 form label {
     @apply text-xs;
 }

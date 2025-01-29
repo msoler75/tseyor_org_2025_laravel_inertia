@@ -814,6 +814,8 @@ function copyData(dest, src, key) {
 </script>
 
 <style scoped>
+@reference "../../../css/app.css";
+
 .btn-icon {
     @apply w-[40px] sm:w-[46px];
 }

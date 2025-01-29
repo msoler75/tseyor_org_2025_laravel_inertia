@@ -172,6 +172,8 @@ const testimonials = ref([
 </script>
 
 <style scoped>
+@reference "../../css/app.css";
+
 .section {
     @apply h-dvh snap-center flex flex-col justify-center;
 }
