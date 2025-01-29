@@ -14,7 +14,7 @@
         "druidfi/mysqldump-php": "^1.0",
         "firebase/php-jwt": "^6.10",
         "guzzlehttp/guzzle": "^7.7",
-        "inertiajs/inertia-laravel": "^0.6.8",
+        "inertiajs/inertia-laravel": "2.0",
         "intervention/image": "^3.2",
         "jargoud/laravel-backpack-dropzone": "^3.0",
         "laravel/framework": "^10.10",
