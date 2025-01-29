@@ -5,12 +5,13 @@ import vue from "@vitejs/plugin-vue";
 import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
 import { visualizer } from "rollup-plugin-visualizer";
+import path from "path";
 
 export default defineConfig({
-  build : {
+  build: {
     rollupOptions: {
       // maxParallelFileOps: 2 // un intento de que funcione en dreamhost
-    }
+    },
   },
   /* build: {
     outDir: 'dist',
@@ -26,7 +27,7 @@ export default defineConfig({
   }, */
   resolve: {
     alias: {
-        ziggy: 'vendor/tightenco/ziggy/dist/vue.es.js'
+      ziggy: path.resolve("vendor/tightenco/ziggy/dist/vue.es.js"),
     },
   },
   plugins: [
@@ -89,7 +90,7 @@ export default defineConfig({
             "useSlots",
           ],
           "@inertiajs/vue3": ["router", "usePage", "useForm"],
-          "@/Stores/nav.js":  ["useNav"]
+          "@/Stores/nav.js": ["useNav"],
         },
       ],
     }),
