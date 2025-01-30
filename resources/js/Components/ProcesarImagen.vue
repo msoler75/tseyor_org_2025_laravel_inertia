@@ -162,9 +162,3 @@ const closeModal = () => {
     emit("cerrar");
 };
 </script>
-
-<style>
-body {
-    padding: 20px;
-}
-</style>
