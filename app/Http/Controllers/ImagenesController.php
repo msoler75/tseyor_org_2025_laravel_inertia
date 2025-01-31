@@ -69,19 +69,19 @@ class ImagenesController extends Controller
         $format = "webp";
         $quality = 70;
 
-        // create cache path
-        $cachePath = 'images/cache/';
+       // create cache path
+        $cachePath = 'framework/image_cache/';
         $cacheFilename = md5($imageFullPath . serialize($params)) . '.' . $format;
         $cacheFilePath = $cachePath . $cacheFilename;
-        $cacheFullPath = Storage::disk('local')->path($cacheFilePath);
+        $cacheFullPath = storage_path($cacheFilePath);
 
         // check if image exists in cache
-        if (Storage::disk('local')->exists($cacheFilePath)) {
+        if (file_exists($cacheFullPath)) {
             $originalModifiedTime = filemtime($imageFullPath);
             $cacheModifiedTime = filemtime($cacheFullPath);
 
             if ($originalModifiedTime <= $cacheModifiedTime) {
-                return response()->file(storage_path('app/' . $cacheFilePath), ['Content-Type' => $mime]);
+                return response()->file($cacheFullPath, ['Content-Type' => $mime]);
             }
         }
 
@@ -118,7 +118,7 @@ class ImagenesController extends Controller
 
         $image->save($cacheFullPath);
 
-        return response()->file(storage_path('app/' . $cacheFilePath), ['Content-Type' => $mime]);
+        return response()->file($cacheFullPath, ['Content-Type' => $mime]);
     }
 
 

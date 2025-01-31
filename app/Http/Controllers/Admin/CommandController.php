@@ -13,6 +13,7 @@ class CommandController extends Controller
         'optimize',
         'cache:clear',
         'view:clear',
+        'imagecache:clear',
         'migrate',
         'sitemap:generate',
         'auth:clear-resets',

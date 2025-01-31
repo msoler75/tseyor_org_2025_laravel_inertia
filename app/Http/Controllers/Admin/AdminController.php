@@ -325,7 +325,7 @@ class AdminController // extends Controller
             "este",
             "oeste",
             "sur",
-            "",
+            "sentimiento",
             "trascendente",
             "abiotica",
             "norte",
