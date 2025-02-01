@@ -11,7 +11,7 @@
 
         <div class="mb-20">
             <h1>Psicografias</h1>
-            <p>Dibujos psicografiados (recibidos por telepatía) por el hermano Puente.</p>
+            <p>Dibujos psicografiados (recibidos por telepatía) por el hermano Puente. También puedes consultar las <Link href="/libros?categoria=Psicografías">monografías</Link>.</p>
         </div>
 
         <ContentMain class="flex justify-end mb-5">

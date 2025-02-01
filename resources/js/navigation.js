@@ -54,15 +54,15 @@ export default [
           ],
         },
         {
-            title: "Radio TSEYOR",
-            items: [
-              {
-                title: "Radio",
-                route: "radio",
-                icon: "ph:radio-duotone",
-              },
-            ],
-          },
+          title: "Radio TSEYOR",
+          items: [
+            {
+              title: "Radio",
+              route: "radio",
+              icon: "ph:radio-duotone",
+            },
+          ],
+        },
         {
           title: "Redes",
           class: "flex flex-col gap-1",
@@ -94,7 +94,6 @@ export default [
             },
           ],
         },
-
       ],
     },
   },
@@ -401,6 +400,13 @@ export default [
               disabled: false,
             },
             {
+                title: "Sello de Tseyor",
+                route: "sello",
+                description: "Meditación con el sello de Tseyor",
+                component: ApplicationMark,
+                disabled: false,
+              },
+            {
               title: "Juego del puzle",
               //obtiene de la base del dominio de la app, y le agrega el subdominio puzle.
               url: APP_PUZLE_URL,
@@ -423,3 +429,6 @@ export default [
     },
   },
 ];
+
+
+import ApplicationMark from "@/Components/ApplicationMark.vue";

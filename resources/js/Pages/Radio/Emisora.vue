@@ -41,7 +41,7 @@
         <pre v-if="false">{{ estado }}</pre>
 
 
-        <Comentarios :url="radio" />
+        <Comentarios :url="route('radio.emisora', selectors.emisoraRadio)" />
 
     </Page>
 </template>

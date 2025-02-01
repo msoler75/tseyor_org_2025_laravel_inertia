@@ -23,7 +23,11 @@
 
                 <Content :content="`<img src='${psicografia.imagen}'>`" class="mx-auto" />
 
-            </div>
+
+                    <div class="mt-7 flex justify-end">
+                        <button class="btn btn-primary" @click="abrirEnPuzle(psicografia.slug)">Abrir en puzle <Icon icon="ph:arrow-up-right-duotone" /></button>
+                    </div>
+                </div>
 
         </div>
 
@@ -43,4 +47,7 @@ const props = defineProps({
     }
 });
 
+function abrirEnPuzle(slug) {
+    window.open(`https://puzle.tseyor.org/?psicografia=${slug}`, "_blank");
+}
 </script>
