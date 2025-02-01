@@ -40,9 +40,8 @@ class ContenidoBaseModel extends Model
             // Log::info("ContenidoBaseModel saved: ". substr($model->texto, 0, 1024));
             // si mueve alguna imagen, guardamos los cambios y salimos
             if (ContenidoHelper::moverImagenesContenido($model)) {
-                $model->save();
+                $model->saveQuietly();
                 Log::info("Se han movido imagenes de carpeta temp a destino para " . $model->getMorphClass() . "/" . $model->id);
-                return;
             }
 
             // Acciones después de que el modelo se haya guardado

@@ -44,6 +44,7 @@ Route::group([
     Route::crud('evento', 'EventoCrudController');
     Route::crud('inscripcion', 'InscripcionCrudController');
     Route::crud('meditacion', 'MeditacionCrudController');
+    Route::crud('psicografia', 'PsicografiaCrudController');
     Route::crud('publicacion', 'PublicacionCrudController');
     Route::crud('informe', 'InformeCrudController');
     Route::crud('lugar', 'LugarCrudController');

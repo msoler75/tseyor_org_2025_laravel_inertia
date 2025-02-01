@@ -12,6 +12,7 @@ use App\Models\Audio;
 use App\Models\User;
 use App\Models\Entrada;
 use App\Models\Meditacion;
+use App\Models\Psicografia;
 use App\Models\Video;
 use App\Models\Centro;
 
@@ -80,7 +81,8 @@ class PaginasController extends Controller
                             'audios' => Audio::where('visibilidad', 'P')->count(),
                             'entradas' => Entrada::where('visibilidad', 'P')->count(),
                             'videos' => Video::where('visibilidad', 'P')->count(),
-                            'meditaciones' => Meditacion::where('visibilidad', 'P')->count()
+                            'meditaciones' => Meditacion::where('visibilidad', 'P')->count(),
+                            'psicografias' => Psicografia::count()
                         ];
                 })
             ]

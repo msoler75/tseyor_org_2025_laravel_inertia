@@ -103,6 +103,7 @@ declare module 'vue' {
     NavBar: typeof import('./resources/js/Components/NavBar.vue')['default']
     NavLink: typeof import('./resources/js/Components/NavLink.vue')['default']
     NavSubmenu: typeof import('./resources/js/Components/NavSubmenu.vue')['default']
+    NavSubmenuGroup: typeof import('./resources/js/Components/NavSubmenuGroup.vue')['default']
     NavTabs: typeof import('./resources/js/Components/NavTabs.vue')['default']
     NewsLetterSignup: typeof import('./resources/js/Sections/NewsLetterSignup.vue')['default']
     Page: typeof import('./resources/js/Components/Page.vue')['default']

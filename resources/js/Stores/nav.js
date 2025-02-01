@@ -32,17 +32,27 @@ const mapItem = (item) => {
     };
 };
 
-const mapSection = (section) => ({
-  ...section,
-  items: section.items.map((item) =>
-    item.route ? { ...item, url: relativeUrl(route(item.route)) } : item
-  ),
-});
+const mapGroup = (group) => ({
+    ...group,
+    items: group.items.map((item) =>
+      item.route ? { ...item, url: relativeUrl(route(item.route)) } : item
+    ),
+  });
 
-const mapSubmenu = (submenu) => ({
-  ...submenu,
-  sections: submenu.sections.map(mapSection),
-});
+
+const mapSubmenu = (submenu) => {
+    if(!submenu) return null
+    const sections = []
+    for(const section of submenu.sections) {
+        if(section.index) continue
+        sections.push({groups:[mapGroup(section)]})
+    }
+    for(const section of submenu.sections) {
+        if(section.index)
+            sections[section.index].groups.push(mapGroup(section))
+    }
+    return {sections}
+}
 
 const state = reactive({
   //items: [],
@@ -72,8 +82,8 @@ const state = reactive({
     const rutaRelativa = relativeUrl(url);
     if (tab.url && rutaRelativa.indexOf(tab.url) >= 0) return true;
     if (!tab.hasItems) return false;
-    return !!tab.submenu?.sections?.find((section) =>
-      section.items.find((item) => {
+    return !!tab.submenu?.sections?.groups?.find((group) =>
+        group.items.find((item) => {
         return rutaRelativa.indexOf(item.url) >= 0;
       })
     );

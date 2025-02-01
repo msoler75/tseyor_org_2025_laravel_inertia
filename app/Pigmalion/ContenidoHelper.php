@@ -11,7 +11,7 @@ use App\Pigmalion\DiskUtil;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Pigmalion\Countries;
-
+use App\Pigmalion\StorageItem;
 
 class ContenidoHelper
 {
@@ -224,7 +224,7 @@ class ContenidoHelper
         $desde = ContenidoBaseModel::getCarpetaMediosTemp();
         $hacia = $objeto->getCarpetaMedios();
 
-        Log::info("moverImagenesContenido " . ($objeto->texto ?? ''));
+        Log::info("moverImagenesContenido " . ($objeto->texto ?? ''), ['hacia' => $hacia, 'imagen'=>$objeto->imagen]);
         if ($objeto->texto ?? '') {
             $texto = $objeto->texto;
 
@@ -245,7 +245,7 @@ class ContenidoHelper
         }
 
         $imagen = $objeto->imagen;
-        if ($imagen && strpos($imagen, '/temp/') !== false) {
+        if ($imagen && strpos($imagen, 'temp/') !== false) {
 
             // renombramos la imagen
             $nuevoNombre = $hacia . "/" . basename($imagen);
@@ -253,20 +253,28 @@ class ContenidoHelper
             $disk = 'public';
             Log::info("move1: $disk: $imagen -> $nuevoNombre");
 
-            list($disk, $origen) = DiskUtil::obtenerDiscoRuta($imagen);
-            list($disk, $destino) = DiskUtil::obtenerDiscoRuta($nuevoNombre);
+            //list($disk, $origen) = DiskUtil::obtenerDiscoRuta($imagen);
+            //list($disk, $destino) = DiskUtil::obtenerDiscoRuta($nuevoNombre);
 
-            Log::info("move2: $disk: $origen -> $destino");
+            $origen = $imagen;
+            $destino =(new StorageItem($nuevoNombre))->location;
+
+            Log::info("move2: $disk: ", ['origen'=>$origen, 'nuevoNombre'=>$nuevoNombre, 'destino'=>$destino]);
 
             // movemos la imagen a la nueva carpeta
-            if (Storage::disk($disk)->copy($origen,  $destino)) {
-                Storage::disk($disk)->delete($origen);
+            if (StorageItem::copy($imagen, $destino)) {
+                (new StorageItem( $imagen))->delete();
             }
 
-            $objeto->imagen = $nuevoNombre;
+            $objeto->imagen = $destino;
 
             $cambio = true;
         }
+
+        /*if($objeto->imagen&& strpos($objeto->imagen, 'medios/') === 0) {
+            $objeto->imagen = '/almacen/'.$objeto->imagen;
+            $cambio = true;
+        }*/
 
         // si ha habido cambios retornamos true
         return $cambio;

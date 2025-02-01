@@ -54,8 +54,19 @@ export default [
           ],
         },
         {
+            title: "Radio TSEYOR",
+            items: [
+              {
+                title: "Radio",
+                route: "radio",
+                icon: "ph:radio-duotone",
+              },
+            ],
+          },
+        {
           title: "Redes",
-          class: "flex flex-col gap-3",
+          class: "flex flex-col gap-1",
+          index: 2,
           items: [
             {
               title: "Facebook",
@@ -83,6 +94,7 @@ export default [
             },
           ],
         },
+
       ],
     },
   },
@@ -137,20 +149,20 @@ export default [
             {
               title: "Audios",
               route: "audios",
-              description: "Meditaciones, cuentos, canciones...",
+              description: "Meditaciones, talleres, cuentos, canciones...",
               icon: "ph:music-notes-duotone",
             },
             {
               title: "Vídeos",
               route: "videos",
-              description: "Meditaciones, cuentos, canciones...",
+              description: "Meditaciones, talleres, cuentos, canciones...",
               icon: "ph:youtube-logo-duotone",
             },
             {
-              title: "Radio",
-              route: "radio",
-              description: "Escucha comunicados y entrevistas en Radio Tseyor",
-              icon: "ph:radio-duotone",
+              title: "Psicografías",
+              route: "psicografias",
+              description: "Psicografías para el trabajo de abstracción",
+              icon: "ph:image-duotone",
             },
           ],
         },
@@ -275,7 +287,7 @@ export default [
             {
               title: "Centros Tseyor",
               route: "centros",
-              description: "Centros Tseyor en el mundo",
+              description: "Casas Tseyor y Muulasterios en el mundo",
               icon: "ph:house-line-duotone",
             },
             {
@@ -299,7 +311,7 @@ export default [
             {
               title: "Universidad Tseyor de Granada",
               route: "utg",
-              description: "Conoce nuestra Universidad y sus departamentos",
+              description: "Conoce nuestra Universidad",
               icon: "ph:student-duotone",
             },
             {
@@ -383,7 +395,7 @@ export default [
               title: "Muular Electrónico",
               url: APP_MUULAR_URL,
               external: true,
-              target:'_self',
+              target: "_self",
               description: "Intercambio de bienes y servicios",
               icon: "ph:swap-duotone",
               disabled: false,

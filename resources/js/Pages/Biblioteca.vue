@@ -124,6 +124,13 @@ const secciones = ref([
 
     },
     {
+        title: 'Psicografias',
+        url: route('psicografias'),
+        descripcion: 'Explora nuestra colección de dibujos recibidos telepáticamente y dibujados por nuestro hermano Chac-Mool Puente.',
+        icon: "ph:image-duotone",
+        count: computed(() => props.stats ? props.stats.psicografias : 0)
+    },
+    {
         title: 'Radio Tseyor',
         url: route('radio'),
         descripcion: 'Sintoniza nuestra radio 24/7 y escucha comunicados, entrevistas y talleres que nutren el espíritu.',

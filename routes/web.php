@@ -31,6 +31,7 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\PublicacionesController;
 use App\Http\Controllers\InformesController;
 use App\Http\Controllers\MeditacionesController;
+use App\Http\Controllers\PsicografiasController;
 use App\Http\Controllers\TutorialesController;
 use App\Http\Controllers\NormativasController;
 use App\Http\Controllers\ChatGPTController;
@@ -236,6 +237,9 @@ Route::get('publicaciones/{slug}', [PublicacionesController::class, 'show'])->wh
 
 Route::get('meditaciones', [MeditacionesController::class, 'index'])->name('meditaciones');
 Route::get('meditaciones/{slug}', [MeditacionesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('meditacion');
+
+Route::get('psicografias', [PsicografiasController::class, 'index'])->name('psicografias');
+Route::get('psicografias/{slug}', [PsicografiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('psicografia');
 
 Route::get('tutoriales', [TutorialesController::class, 'index'])->name('tutoriales');
 Route::get('tutoriales/{slug}', [TutorialesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('tutorial');
