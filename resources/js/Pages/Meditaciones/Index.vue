@@ -14,13 +14,13 @@
             <p>Talleres, meditaciones y otros documentos para uso de la comunidad Tseyor.</p>
         </div>
 
-        <ContentMain class="cflex justify-end mb-5">
+        <ContentMain class="flex justify-end mb-5">
             <SearchInput />
         </ContentMain>
 
         <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
 
-            <Categorias :categorias="categorias" :url="route('meditaciones')" />
+            <Categorias :categorias="categorias" :url="route('meditaciones')" :resultados="filtrado?'Resultados':false" />
 
             <div class="w-full flex-grow card shadow bg-base-100 px-5 py-7">
 

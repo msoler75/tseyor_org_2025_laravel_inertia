@@ -291,6 +291,15 @@ class StorageItem
         return false;
     }
 
+    public static function copy(string $from, string $to)
+    {
+        $f = new StorageItem($from);
+        $d = new StorageItem($to);
+        if ($f->disk == $d->disk)
+            return Storage::disk($f->disk)->copy($f->relativeLocation, $d->relativeLocation);
+        return false;
+    }
+
 
 
     /**

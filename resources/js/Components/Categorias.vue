@@ -33,7 +33,7 @@ const props = defineProps({
     categorias: Array,
     url: String,
     novedades: { type: [Boolean, String], default: true },
-    resultados: {type: [Boolean,String], default: ""},
+    resultados: {type: [Boolean,String], default: false},
     selectBreakpoint: { type: String, default: 'sm' }, // en qué punto o breakpoint se muestra el select
     columnaBreakpoint: { type: String, default: 'md' }, // en qué punto o breakpoint se muestra en modo columna
     selectClass: String,
@@ -104,7 +104,6 @@ const resultadosLabel = computed(() => {
 const categorias = computed(() => {
 
     const items = []
-
 
 
     if (props.novedades)

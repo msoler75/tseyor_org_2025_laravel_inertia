@@ -6,6 +6,11 @@ DevController::newBuild
 -que ejecute los comandos artisan:
 php artisan optimize
 
+EQUIPO
+-verificar cada cierto tiempo si hay solicitudes, mandar un correo a los coordinadores
+
+ADMIN
+-algun sistema donde guardar datos como: url de estatutos de ong, etc. Para luego usar eso para las páginas
 
 HACIENDA
 
@@ -13,15 +18,10 @@ GLOSARIO
 -términos relacionados: http://localhost/glosario/ley-de-la-contemplacion  =>  silencio mental -> la-desconexion  ???
 
 INSTALACION MUULAR ELECTRONICO
--subir frontend de laravel
--comprobar conexion tseyor.org con muular-electronico (login usuario)
--hacer un traspaso de muulares (comprobar envio de correo)
 -verificar log de la base de datos
--eliminar usuarios dados de baja (pasar sus muulares a las oficinas correspondientes)
--hacer prueba con corazón
+-eliminar usuarios dados de baja
 -preparar tutorial informativo o vídeo para la gente
 -revisar correos de oficinas @tseyor.org
--comprobación de cuando se hace un responsable de oficina, le llegue el correo electrónico
 
 COMUNICADOS
 -si en slug hay espacios o un punto, genera un error en ziggy routes, y no se muestra ningun comunicado de esa pagina
@@ -34,56 +34,22 @@ EQUIPOS
 
 ARCHIVOS
 -Maximo tamaño upload: 50mb
--(HECHO)Poder poner un parámetro en la url para que se vea la carpeta en modo imagenes (y así poder compartir el enlace)
+-(HECHO ?vista=grid )Poder poner un parámetro en la url para que se vea la carpeta en modo imagenes (y así poder compartir el enlace)
 -Considerar carpetas como álbumes (vista imagenes por defecto)
 -Puede tal vez auto detectarse la carpeta si tiene muchas imagenes, ponerla en modo imagen por defecto
 
-EQUIPO
--verificar cada cierto tiempo si hay solicitudes, mandar un correo a los coordinadores
 
-ADMIN
--algun sistema donde guardar datos como: url de estatutos de ong, etc. Para luego usar eso para las páginas
 
 BUSQUEDA
 -si buscas "verdad. aumnor" resulta que el punto no lo tiene en cuenta. Comprobar con comillas y sin comillas
 
 FORMATO {STYLE:} en comunicado 1212
 
-
 MOVER index_utg desde equiposController a otro lugar más coherente (paginascontroller?)
 
 COOKIES
 https://cookie-script.com/
 Ejemplo: https://arrecifebus.com/
-
-
-AJUSTES DE SEGURIDAD MUULAR ELECTRONICO
--eliminar usuarios que no están en el muular electrónico: que no tengan cuenta del muular electrónico asociada ni datos registrados:
-    delete from usuario where apellidos is null and id not IN (SELECT idusuario FROM muular_titular)
--eliminar registros de "campo" que no tienen usuario vinculado: delete from campo WHERE tabla='usuario' AND id NOT IN (SELECT id FROM usuario)
--eliminar valores de campo inusables:
-delete from campo WHERE campo IN ('boletin', 'level', 'permissions', 'image', 'contact', 'blog')
-delete from campo WHERE campo LIKE 'news%'
-delete from campo WHERE campo LIKE 'validate%'
-delete from campo WHERE campo LIKE 'email%'
-
--la tabla 'campo' tiene duplicados para varios valores de usuarios que son importantes, para encontrarlos:
-
-SELECT
-    tabla,
-    id,
-    campo,
-    COUNT(*) as num_duplicados,
-    GROUP_CONCAT(valor SEPARATOR ' | ') as valores
-FROM campo
-GROUP BY tabla, id, campo
-HAVING COUNT(*) > 1
-ORDER BY num_duplicados DESC, tabla, id, campo;
-
-=Que todos los users tengan limite de 7 muulares x día:
-REPLACE INTO campo (tabla, id, campo, valor)
-SELECT 'usuario', id, 's_ratio', '7x1d'
-FROM usuario;
 
 
 

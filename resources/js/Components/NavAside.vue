@@ -33,20 +33,22 @@
                                     @change="toggle(tab, $event)" />
                                 <div class="collapse-title">{{ tab.title }}</div>
                                 <div class="collapse-content px-0   bg-base-100 bg-opacity-50" v-if="tab.hasItems">
-                                    <template v-for="section of tab.submenu.sections" :key="section.title">
-                                        <div @click.prevent.stop="null" v-if="section.title != tab.title"
+                                    <template v-for="section, index of tab.submenu.sections" :key="index">
+                                        <template v-for="group, index of section.groups" :key="index">
+                                        <div @click.prevent.stop="null" v-if="group.title != tab.title"
                                             class="px-5 mt-4 font-bold text-xs text-neutral opacity-40 uppercase">
-                                            {{ section.title }}</div>
+                                            {{ group.title }}</div>
                                         <div v-else class="mt-2" />
 
                                         <component :is="item.disabled ? 'div' : (item.external ? 'a' : Link)"
                                             :target="item.target" :href="item.url"
-                                            v-for="item of section.items" :key="item.url" @click="close"
+                                            v-for="item of group.items" :key="item.url" @click="close"
                                             class="nav-item p-5 flex justify-start items-center space-x-6 w-full transition duration-200 hover:bg-base-300"
                                             :class="item.disabled ? 'opacity-50 pointer-events-none' : ''">
                                             <Icon :icon="item.icon" />
                                             <span>{{ item.title }}</span>
                                         </component>
+                                    </template>
                                     </template>
                                 </div>
                             </template>
