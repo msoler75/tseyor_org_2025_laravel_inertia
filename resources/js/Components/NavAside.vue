@@ -45,7 +45,8 @@
                                             v-for="item of group.items" :key="item.url" @click="close"
                                             class="nav-item p-5 flex justify-start items-center space-x-6 w-full transition duration-200 hover:bg-base-300"
                                             :class="item.disabled ? 'opacity-50 pointer-events-none' : ''">
-                                            <Icon :icon="item.icon" />
+                                            <Icon v-if="item.icon":icon="item.icon" />
+                                            <component v-else-if="item.component" :is="item.component" class="w-4 h-4 flex-shrink-0"/>
                                             <span>{{ item.title }}</span>
                                         </component>
                                     </template>

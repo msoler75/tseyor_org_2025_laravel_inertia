@@ -27,7 +27,7 @@ const player = reactive({
     this.audio.preload = "auto";
     this.audio.autoplay = this.autoplay;
 
-    if (webApiAvailable()) {
+    if (false && webApiAvailable()) {
       // La Web Audio API está disponible
       this.audioProcessor = new AudioProcessor();
       this.audioProcessor.setupAudioSource(this.audio);

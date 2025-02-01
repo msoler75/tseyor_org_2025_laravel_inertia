@@ -257,6 +257,11 @@ Route::post('usuarios/_comprobar_clave', [MuularElectronico::class, 'check_passw
 Route::put('usuarios/{slug}', [UsuariosController::class, 'store'])->where('slug', '[a-z0-9\-]+')->name('usuario.guardar');
 Route::get('usuarios/{slug}', [UsuariosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('usuario');
 
+Route::get('/sello', function () {
+    return Inertia::render('Sello');
+})->name('sello');
+
+
 // Route::get('login/1', [DevController::class, 'loginUser1'])->name('login1');
 // Route::get('login/2', [DevController::class, 'loginUser2'])->name('login2');
 // Route::get('/_email', [DevController::class, 'testMail']);
