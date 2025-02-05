@@ -26,6 +26,9 @@ class PsicografiasController extends Controller
             $resultados = Psicografia::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria', 'imagen'])
                 ->when($categoria === '_', function ($query) {
                     $query->orderByRaw('LOWER(titulo)');
+                })
+                ->when(!$categoria, function($query) {
+                    $query->orderBy('created_at', 'DESC');
                 });
         }
 
@@ -80,8 +83,16 @@ class PsicografiasController extends Controller
             abort(404); // Item no encontrado o no autorizado
         }
 
+        $siguiente = Psicografia::select(['id', 'slug', 'titulo', 'imagen', 'updated_at'])
+            ->where('titulo', '>', $psicografia->titulo)->orderBy('titulo', 'asc')->first();
+
+        $anterior = Psicografia::select(['id', 'slug', 'titulo', 'imagen', 'updated_at'])
+            ->where('titulo', '<', $psicografia->titulo)->orderBy('titulo', 'desc')->first();
+
         return Inertia::render('Psicografias/Psicografia', [
             'psicografia' => $psicografia,
+            'siguiente' => $siguiente ?? null,
+            'anterior' => $anterior ?? null
         ])
             ->withViewData(SEO::from($psicografia));
     }

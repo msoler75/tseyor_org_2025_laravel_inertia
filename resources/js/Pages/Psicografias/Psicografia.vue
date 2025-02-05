@@ -31,20 +31,36 @@
 
         </div>
 
+        <div class="mt-12 grid gap-8 mb-12 grid-cols-1 lg:grid-cols-2">
+            <CardContent v-if="anterior" :imageLeft="false" :key="anterior.id" :title="'Anterior: ' + anterior.titulo"
+                class="rounded-none sm:rounded-lg" :image="anterior.imagen" :href="route('psicografia', anterior.slug)"
+                imageClass="h-80" imageWidth="500" />
+            <CardContent v-if="siguiente" :imageLeft="false" :key="siguiente.id" class="rounded-none sm:rounded-lg"
+                :title="'Siguiente: ' + siguiente.titulo" :image="siguiente.imagen"
+                :href="route('psicografia', siguiente.slug)"
+                imageClass="h-80" imageWidth="500"/>
+        </div>
+
         <Comentarios :url="route('psicografia', psicografia.id)" />
 
     </Page>
 </template>
 
 <script setup>
-import { parseFiles } from '@/composables/parseFiles'
-
 
 const props = defineProps({
     psicografia: {
         type: Object,
         required: true,
-    }
+    },
+    siguiente: {
+        type: Object,
+        required: true,
+    },
+    anterior: {
+        type: Object,
+        required: true,
+    },
 });
 
 function abrirEnPuzle(slug) {

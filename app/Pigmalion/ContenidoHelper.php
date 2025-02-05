@@ -245,6 +245,8 @@ class ContenidoHelper
         }
 
         $imagen = $objeto->imagen;
+        if($imagen)
+            Log::info("Imagen=$imagen");
         if ($imagen && strpos($imagen, 'temp/') !== false) {
 
             // renombramos la imagen
