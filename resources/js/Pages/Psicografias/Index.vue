@@ -10,8 +10,8 @@
         </div>
 
         <div class="mb-20">
-            <h1>Psicografias</h1>
-            <p>Dibujos psicografiados (recibidos por telepatía) por el hermano Puente. También puedes consultar las <Link href="/libros?categoria=Psicografías">monografías</Link>.</p>
+            <h1>Psicografías</h1>
+            <p>Dibujos psicografiados (recibidos por telepatía) por el hermano Puente, del hermano Aumnor. Ahora puedes consultar las <Link href="/libros?categoria=Psicografías">monografías</Link> correspondientes.</p>
         </div>
 
         <ContentMain class="flex justify-end mb-5">
