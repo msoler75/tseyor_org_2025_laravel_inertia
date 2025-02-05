@@ -78,7 +78,7 @@ const props = defineProps({
         default: 300
     },
     tag: String,
-    tagLink: {type: String, default: 'a'},
+    tagLink: {type: String, default: ''},
     draft: { type: Boolean, default: false },
     description: String,
     maxLength: { type: Number, default: 1024 },
