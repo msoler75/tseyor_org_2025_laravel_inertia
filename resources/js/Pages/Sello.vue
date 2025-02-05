@@ -11,7 +11,7 @@
     <!-- Pantalla completa -->
     <div
       v-else
-      class="fixed top-0 left-0 w-full h-full bg-white flex justify-center items-center z-50"
+      class="fixed top-0 left-0 w-full h-full bg-base-100 flex justify-center items-center z-50"
     >
       <img
         :src="imageSrc"
@@ -22,7 +22,6 @@
   </template>
 
   <script setup>
-  import { ref } from 'vue';
 
   const imageSrc = ref('/almacen/medios/logos/SELLO_TRANSPARENTE_GRANDE.png');
   const isFullscreen = ref(false);
@@ -44,9 +43,3 @@
 }
   </script>
 
-  <style scoped>
-  /* Estilos para el cursor */
-  .cursor-pointer {
-    cursor: pointer;
-  }
-  </style>
