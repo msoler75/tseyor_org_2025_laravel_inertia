@@ -35,7 +35,7 @@ class Experiencia extends ContenidoBaseModel
         'Rescate adimensional' => 'Rescate adimensional',
         'Encuentros vis a vis' => 'Encuentro físico con algún hermano H1',
         'Cartas' => 'Experiencias con las cartas del autodescubrimiento o de Uommo',
-        'Pictografías' => 'Experiencias láminas pictográficas',
+        'Psicografías' => 'Experiencias láminas psicográficas',
         'Interiorización' => 'Experiencias de los talleres de interiorización',
         'Otras experiencias' => 'Cualquier otra experiencia que no sea una de las anteriores',
     ];

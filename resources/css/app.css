@@ -254,3 +254,8 @@ main a.hover\:right-arrow:hover::after {
 ::view-transition-new(root) {
   animation-duration: 1s;
 }
+
+
+.vue-dropzone:hover {
+    @apply !bg-base-200;
+}

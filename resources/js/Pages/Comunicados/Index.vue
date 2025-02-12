@@ -254,7 +254,7 @@ for (var i = 2004; i <= añoActual; i++)
 const query = ref("")
 const resultadoQueryBusqueda = computed(() => {
     if (props.filtrado) {
-        return `?busqueda=${props.filtrado}`
+        return `?resaltar=${props.filtrado}`
     }
     return ''
 })

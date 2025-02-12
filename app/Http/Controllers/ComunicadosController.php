@@ -169,8 +169,8 @@ class ComunicadosController extends Controller
                 ->where('fecha_comunicado', '<', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'desc')->first();
         }
 
-        if($request->has('busqueda'))
-            $comunicado->texto = BusquedasHelper::marcarPalabrasDeBusqueda($comunicado->texto, $request->input('busqueda'));
+        if($request->has('resaltar'))
+            $comunicado->texto = BusquedasHelper::resaltarPalabras($comunicado->texto, $request->input('resaltar'));
 
         return Inertia::render('Comunicados/Comunicado', [
             'comunicado' => $comunicado,

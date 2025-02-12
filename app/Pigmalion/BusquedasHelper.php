@@ -252,16 +252,16 @@ class BusquedasHelper
     }
 
 
-    public static function marcarPalabrasDeBusqueda($texto, $busqueda) {
+    public static function resaltarPalabras($texto, $palabras): mixed {
 
         // hacemos lo mismo que en formatearResultados, pero aplicado solo al texto
         $options = ['tagOptions' => ['class' => 'search-term']];
 
         $h = new ExtendedHighlighter();
 
-        $busqueda_original_limpia = StrEx::sanitizeAndDeaccent(mb_strtolower($busqueda));
+        $busqueda_original_limpia = StrEx::sanitizeAndDeaccent(mb_strtolower($palabras));
 
-        $busqueda = trim(StrEx::sanitizeAndDeaccent(mb_strtolower($busqueda)));
+        $busqueda = trim($busqueda_original_limpia);
 
         list($frase_exacta, $busqueda_sin_frase) = self::obtenerFraseExacta($busqueda);
         if ($frase_exacta)
