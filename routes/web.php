@@ -383,6 +383,7 @@ Route::get('test/docx/{num}',  'App\Http\Controllers\TestController@docxShow');
 
 // test para ver la conversión de archivos .docx a pdf
 Route::get('test/word2pdf',  'App\Http\Controllers\TestController@word2pdf');
+Route::get('test/word2md',  'App\Http\Controllers\TestController@word2md');
 
 // developing
 Route::get('dev/1',  'App\Http\Controllers\DevController@dev1');
