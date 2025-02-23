@@ -32,8 +32,8 @@
             </div>
         </Modal>
 
-        <Modal :show="player.requiereInteraccion" centered max-width="md" @click="handleInteraction">
-            <div class="p-5 mt-auto mb-auto">
+        <Modal :show="player.requiereInteraccion" centered max-width="md">
+            <div class="p-5 mt-auto mb-auto" @click="handleInteraction">
                 <p class="text-center">
                     <strong>Pulsa en la pantalla para escuchar el audio</strong>
                 </p>

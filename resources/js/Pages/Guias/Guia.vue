@@ -1,14 +1,21 @@
 <template>
     <div class="container py-12 mx-auto">
-
         <div class="flex justify-between items-center mb-7">
             <Back :href="route('guias')" inline>Guías</Back>
             <div class="flex gap-2">
                 <Share />
-            <Link href="/libros/glosario-terminologico" class="btn btn-xs btn-primary flex gap-2 items-center"
-            title='Descarga todo el glosario en pdf'>
-            <Icon icon="ph:download-duotone" />Descargar libro</Link>
-            <AdminLinks modelo="guia" necesita="administrar contenidos" :contenido="guia" />
+                <Link
+                    href="/libros/glosario-terminologico"
+                    class="btn btn-xs btn-primary flex gap-2 items-center"
+                    title="Descarga todo el glosario en pdf"
+                >
+                    <Icon icon="ph:download-duotone" />Descargar libro</Link
+                >
+                <AdminLinks
+                    modelo="guia"
+                    necesita="administrar contenidos"
+                    :contenido="guia"
+                />
             </div>
         </div>
 
@@ -23,19 +30,41 @@
 
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
-                <Back :href="route('guias')" inline class="!opacity-100">Guías</Back>
-                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
-                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
+                <Back :href="route('guias')" inline class="!opacity-100"
+                    >Guías</Back
+                >
+                <div
+                    @click="useNav().scrollToTopPage"
+                    class="flex items-center gap-2 font-bold"
+                >
+                    Glosario
+                    <Icon
+                        icon="ph:arrow-circle-up-duotone"
+                        class="transform scale-150"
+                    />
                 </div>
-                <Back :href="route('guias')" inline class="pointer-events-none !opacity-0">Guías</Back>
+                <Back
+                    :href="route('guias')"
+                    inline
+                    class="pointer-events-none !opacity-0"
+                    >Guías</Back
+                >
             </div>
         </ContentBar>
 
         <ContentMain class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
-                <div class="w-full h-auto mx-auto"
-                :class="imagenes.length>1?'':'md:sticky md:top-32'">
-                    <Image v-for="imagen, index of imagenes" :key="index" :src="imagen" :alt="guia.nombre" class="w-full h-auto mb-4" />
+                <div
+                    class="w-full h-auto mx-auto"
+                    :class="imagenes.length > 1 ? '' : 'md:sticky md:top-32'"
+                >
+                    <Image
+                        v-for="(imagen, index) of imagenes"
+                        :key="index"
+                        :src="imagen"
+                        :alt="guia.nombre"
+                        class="w-full h-auto mb-4"
+                    />
                 </div>
             </div>
             <div class="w-full lg:w-2/3 flex-shrink-0 text-left">
@@ -46,64 +75,88 @@
                     <TimeAgo :date="guia.updated_at" />
                 </p>
                 <div class="mb-4"></div>
-                <tabs  :options="{ disableScrollBehavior: true }" class="animate-fade-in">
-                    <tab v-for="seccion, index of secciones" :key="index" :name="seccion.titulo">
-                        <div class="prose" v-html="MarkdownToHtml(seccion.texto)"></div>
+                <tabs
+                    :options="{ disableScrollBehavior: true }"
+                    class="animate-fade-in"
+                >
+                    <tab
+                        v-for="(seccion, index) of secciones"
+                        :key="index"
+                        :name="seccion.titulo"
+                    >
+                        <Prose
+                            v-html="MarkdownToHtml(seccion.texto)"
+                        ></Prose>
                     </tab>
 
                     <tab v-if="libros" name="Bibliografía">
-                        <Prose v-if="libros.texto" class="mb-12" v-html="libros.texto"/>
+                        <Prose
+                            v-if="guia.bibliografia"
+                            class="mb-12"
+                            v-html="bibliografiaHtml"
+                        />
                         <div class="flex flex-wrap gap-10">
-                            <Libro3d v-for="libro, index of libros.items" :key="index" :libro="libro" imageClass="w-[150px]"/>
+                            <Libro3d
+                                v-for="(libro, index) of libros"
+                                :key="index"
+                                :libro="libro"
+                                imageClass="w-[150px]"
+                            />
                         </div>
                     </tab>
 
                     <!-- ... relacionados -->
-
                 </tabs>
             </div>
         </ContentMain>
 
         <hr class="my-12" />
 
-        <div class="card bg-base-100 shadow flex-wrap flex-row p-5 lg:p-10 gap-4">
+        <div
+            class="card bg-base-100 shadow flex-wrap flex-row p-5 lg:p-10 gap-4"
+        >
             <div v-for="item of guias" :key="item.slug" class="flex gap-2">
-                <Link v-show="item.slug != guia.slug" :href="route('guia', item.slug)">
-                <span class="capitalize">{{ item.nombre }}</span>
+                <Link
+                    v-show="item.slug != guia.slug"
+                    :href="route('guia', item.slug)"
+                >
+                    <span class="capitalize">{{ item.nombre }}</span>
                 </Link>
             </div>
         </div>
-
     </div>
 </template>
 
 <script setup>
-import { Tabs, Tab } from 'vue3-tabs-component';
-import { HtmlToMarkdown, MarkdownToHtml, detectFormat } from '@/composables/markdown.js'
-
-
+import { Tabs, Tab } from "vue3-tabs-component";
+import {
+    HtmlToMarkdown,
+    MarkdownToHtml,
+    detectFormat,
+} from "@/composables/markdown.js";
 
 const props = defineProps({
     guia: {
         type: Object,
         required: true,
     },
+    libros: {
+        type: Array,
+        required: false,
+    },
     guias: {
         type: Array,
         required: true,
     },
-    libros: {
-        type: Object,
-        required: false
-    }
 });
 
-const format = detectFormat(props.guia.texto)
+const format = detectFormat(props.guia.texto);
 
-const texto = ref(props.guia.texto)
+const texto = ref(props.guia.texto);
 
-if(format.format=='html')
-    texto.value = HtmlToMarkdown(texto.value)
+if (format.format == "html") texto.value = HtmlToMarkdown(texto.value);
+
+const bibliografiaHtml = computed(() => MarkdownToHtml(props.guia.bibliografia));
 
 // este truco es para tener más de una imagen en un mismo guía estelar (mo y rhaum)
 const imagenes = ref([props.guia.imagen]);
@@ -112,54 +165,53 @@ const regex = /[?&](imagenes|images)=([^&]+)/;
 const matches = props.guia.imagen.match(regex);
 
 if (matches) {
-  const imgs = matches[2];
-  imagenes.value = imgs.split(',');
+    const imgs = matches[2];
+    imagenes.value = imgs.split(",");
 }
-
 
 // divide las secciones segun los títulos en diferentes tabs
 
-const secciones = ref(parseMarkdownToSections(texto.value))
+const secciones = computed(() => parseMarkdownToSections(texto.value));
 
 function parseMarkdownToSections(text) {
-  const lines = text.split('\n');
-  const sections = [];
-  let currentSection = null;
+    const lines = text.split("\n");
+    const sections = [];
+    let currentSection = null;
 
-  lines.forEach((line) => {
-    // Verificar si es un título
-    const matches = line.match(/^(#+)\s+(.*)$/);
-    if (matches) {
-      const level = matches[1].length;
-      const titulo = matches[2];
-      const texto = '';
+    lines.forEach((line) => {
+        // Verificar si es un título
+        const matches = line.match(/^(#{3,6})\s+(.*)$/);
+        if (matches) {
+            const level = matches[1].length;
+            const titulo = matches[2];
+            const texto = "";
 
-      // Si ya hay una sección actual, almacenarla
-      if (currentSection !== null) {
+            // Si ya hay una sección actual, almacenarla
+            if (currentSection !== null) {
+                sections.push(currentSection);
+            }
+
+            // Crear una nueva sección con el título y contenido vacío
+            currentSection = {
+                titulo,
+                texto,
+                level,
+            };
+        } else if (currentSection !== null) {
+            // Agregar el contenido a la sección actual
+            currentSection.texto += line + "\n";
+        }
+    });
+
+    // Añadir la última sección al array de secciones
+    if (currentSection !== null) {
         sections.push(currentSection);
-      }
-
-      // Crear una nueva sección con el título y contenido vacío
-      currentSection = {
-        titulo,
-        texto,
-        level,
-      };
-    } else if (currentSection !== null) {
-      // Agregar el contenido a la sección actual
-      currentSection.texto += line + '\n';
     }
-  });
 
-  // Añadir la última sección al array de secciones
-  if (currentSection !== null) {
-    sections.push(currentSection);
-  }
-
-  return sections;
+    return sections;
 }
 
 function buscarClick(query) {
-    router.visit(route('guias') + '?buscar=' + query)
+    router.visit(route("guias") + "?buscar=" + query);
 }
 </script>

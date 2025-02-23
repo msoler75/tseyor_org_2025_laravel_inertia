@@ -40,30 +40,16 @@ class GuiasController extends Controller
             abort(404); // Guía Estelar no encontrada
         }
 
+        $guias = Guia::select(['nombre', 'slug'])->get();
 
-        $guias = Guia::select(['nombre', 'slug'])->take(50)->get();
+        $libros_slugs = preg_split("/[\n\r\t\s;,]+/", $guia->libros, -1, PREG_SPLIT_NO_EMPTY);
 
-        try {
-
-            $data = json_decode($guia->libros, true);
-
-            $libros_texto = $data['texto'];
-
-            $libros_slug = $data['items'];
-
-            $libros = Libro::whereIn('slug', $libros_slug)->get();
-        } catch (\Exception $e) {
-
-        }
+        $libros = Libro::select(['titulo', 'imagen', 'slug'])->whereIn('slug', $libros_slugs)->get();
 
         return Inertia::render('Guias/Guia', [
             'guia' => $guia,
+            'libros' =>  $libros,
             'guias' => $guias,
-            'libros_texto' => $libros_texto ?? null,
-            'libros' => [
-                'texto' => $data['texto'] ?? null,
-                'items' => $libros ?? []
-            ]
         ])
             ->withViewData(SEO::from($guia));
     }
