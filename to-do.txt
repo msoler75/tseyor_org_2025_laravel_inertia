@@ -1,3 +1,6 @@
+WORD a MARKDOWN
+-comprobar que importar comunicado 1278 desde word se generan saltos de linea entremedio
+
 DISKUTIL
 -reemplazar/quitar DiskUtil por StorageItem
 -tal vez dejar DiskUtil::ensureDirExists
