@@ -74,6 +74,16 @@ class TestController extends Controller
         return response()->download($pdfPath)->deleteFileAfterSend(true);
     }
 
+    public function word2md() {
+
+        $carpeta = 'C:\Users\Marcel\Downloads';
+
+        $archivo = $carpeta . "/(1278) 240908 (1).docx";
+
+        // Cargar el archivo de Word
+        echo "<pre>".Markdown::fromDocx($archivo)."</pre>";
+    }
+
 
 
 

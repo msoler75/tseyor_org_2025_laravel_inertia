@@ -1,24 +1,24 @@
+USUARIOS
+-poder buscar por correo electrónico
+
 WORD a MARKDOWN
 -comprobar que importar comunicado 1278 desde word se generan saltos de linea entremedio
+
+EQUIPOS
+-ver listado de miembros completo al pulsar o ampliar en listado
+-verificar cada cierto tiempo si hay solicitudes, mandar un correo a los coordinadores
 
 DISKUTIL
 -reemplazar/quitar DiskUtil por StorageItem
 -tal vez dejar DiskUtil::ensureDirExists
 
-DevController::newBuild
--que ejecute los comandos artisan:
-php artisan optimize
-
-EQUIPO
--verificar cada cierto tiempo si hay solicitudes, mandar un correo a los coordinadores
-
 ADMIN
--algun sistema donde guardar datos como: url de estatutos de ong, etc. Para luego usar eso para las páginas
+-algun sistema donde guardar datos clave como: url de estatutos de ong, etc. Para luego usar eso para las páginas
 
 HACIENDA
 
 GLOSARIO
--términos relacionados: http://localhost/glosario/ley-de-la-contemplacion  =>  silencio mental -> la-desconexion  ???
+-términos relacionados: http://localhost/glosario/ley-de-la-contemplacion  => silencio mental -> la-desconexion  ???
 
 INSTALACION MUULAR ELECTRONICO
 -verificar log de la base de datos
