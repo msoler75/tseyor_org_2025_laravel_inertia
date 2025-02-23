@@ -1,3 +1,6 @@
+import ApplicationMark from "@/Components/ApplicationMark.vue";
+import { markRaw } from "vue";
+
 const APP_PUZLE_URL = "https://puzle.tseyor.org/";
 const APP_MUULAR_URL = "/muular-electronico";
 
@@ -403,7 +406,7 @@ export default [
                 title: "Sello de Tseyor",
                 route: "sello",
                 description: "Meditación con el sello de Tseyor",
-                component: ApplicationMark,
+                component: markRaw(ApplicationMark),
                 disabled: false,
               },
             {
@@ -430,5 +433,3 @@ export default [
   },
 ];
 
-
-import ApplicationMark from "@/Components/ApplicationMark.vue";

@@ -18,6 +18,7 @@ class Guia extends ContenidoBaseModel
         'descripcion',
         'texto',
         'imagen',
+        'bibliografia',
         'libros',
         'visibilidad'
     ];

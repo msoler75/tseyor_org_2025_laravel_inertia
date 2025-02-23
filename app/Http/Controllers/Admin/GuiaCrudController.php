@@ -96,7 +96,9 @@ class GuiaCrudController extends CrudController
 
         CRUD::field('texto')->type('tiptap_editor');
 
-        CRUD::field('libros')->type('json')->hint('Libros de consulta de este Guía Estelar');
+        CRUD::field('bibliografia')->type('tiptap_editor');
+
+        CRUD::field('libros')->type('text')->hint('URL corta de libros separados por comas, por ejemplo: los-guias-estelares, cuentos-de-tseyor');
 
         $folder = 'medios/guias';
 

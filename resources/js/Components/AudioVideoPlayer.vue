@@ -1,7 +1,7 @@
 <template>
     <div class="audio-player select-none">
 
-        <Modal class="video-player select-none fixed" :show="!player.videoClosed" centered
+        <Modal classes="video-player select-none" :show="!player.videoClosed" centered
             max-width="3xl">
             <video ref="myvideo" :width="width" :height="height" autoplay controls>
                 <source :src="player.url">

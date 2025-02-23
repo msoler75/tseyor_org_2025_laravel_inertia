@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Libro;
+use App\Models\Guia;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Cache;
 use App\Pigmalion\BusquedasHelper;
@@ -110,6 +111,17 @@ class LibrosController extends Controller
                 ->get();
         }
 
+
+        // busca los guías asociados a este libro. Sea por la descripción, o por la bibliografía asociada a cada guía
+        $descripcion_tokens = preg_split("/[,.\(\)\t\s\n\r]/", strtolower(BusquedasHelper::descartarPalabrasComunes($libro->descripcion)[0]), -1, PREG_SPLIT_NO_EMPTY);
+        $descripcion_tokens = array_map(function($m) { return "\\b".$m."\\b";}, $descripcion_tokens);
+        $descripcion_en_or = implode("|", $descripcion_tokens);
+        $guias = Guia::where('libros', 'like', '%' . $libro->slug . '%')
+        ->orWhereRaw('LOWER(nombre) REGEXP ?', [$descripcion_en_or])
+        ->get()
+        ;
+
+
         // $palabras = implode(" ", $palabrasClave);
 
         // if (!$palabras)
@@ -120,6 +132,7 @@ class LibrosController extends Controller
         return Inertia::render('Libros/Libro', [
             'libro' => $libro,
             'relacionados' => $relacionados,
+            'guias' => $guias
         ])
             ->withViewData(SEO::from($libro));
     }
