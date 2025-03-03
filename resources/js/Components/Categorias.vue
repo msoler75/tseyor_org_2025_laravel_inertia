@@ -12,13 +12,14 @@
     <div class="hidden card bg-base-100 shadow self-baseline flex-wrap flex-row p-5 lg:p-10 gap-4 sticky sm:static top-16 z-30 overflow-x-auto"
         :class="divClass + ' ' + (columnaBreakpoint == '2xl' ? '2xl:flex-col' : columnaBreakpoint == 'xl' ? 'xl:flex-col' : columnaBreakpoint == 'lg' ? 'lg:flex-col' : columnaBreakpoint == 'md' ? 'md:flex-col' : '') + ' ' +
             (selectBreakpoint == 'lg' ? 'lg:flex' : selectBreakpoint == 'md' ? 'md:flex' : selectBreakpoint == 'sm' ? 'sm:flex' : 'xs:flex')">
+            <div v-if="title" class="hidden md:inline text-xl font-bold md:mb-4">{{ title }}</div>
         <Link v-for="categoria of categorias" :key="categoria.nombre" :href="categoria.href"
             :class="actual.toLowerCase() == categoria.valor.toLowerCase() ? 'text-primary font-bold' : ''" @click="clickCategoria(categoria.valor)"
             :only="only" :preserve-state="preserveState" :preserve-scroll="preserveScroll" :replace="replace"
             @finish="emit('finish')">
 
         <span>{{ ucFirst(categoria.nombre) }}</span>
-        <small v-if="categoria.total > 0"> ({{ categoria.total }})</small>
+        <small v-if="counters && categoria.total > 0"> ({{ categoria.total }})</small>
         </Link>
     </div>
 </template>
@@ -30,6 +31,7 @@ import { ucFirst } from '@/composables/textutils'
 const page = usePage()
 
 const props = defineProps({
+    title: { type: String, default: '' },
     categorias: Array,
     url: String,
     novedades: { type: [Boolean, String], default: true },
@@ -40,6 +42,7 @@ const props = defineProps({
     divClass: String,
     parametro: { type: String, default: 'categoria' },
     valor: { type: String, default: 'valor' }, // indica el campo donde está el valor
+    counters: {type: Boolean, default: true},
     // parametros de link
     preserveScroll: {
         type: [Boolean, Function],
@@ -78,14 +81,14 @@ const actual = computed(() => {
 function obtenerValorDeUrl(url) {
     const search = url.split('?')
     if (search.length == 1)
-        return 'Novedades'
+        return props.novedades?'Novedades':''
     // descompone los parámetros de la url
     const params = new URLSearchParams(search[1])
     // si existe el parámetro categoria
     if (params.has(props.parametro)) {
         return params.get(props.parametro)
     }
-    return 'Novedades'
+    return props.novedades?'Novedades':'Todos'
 }
 
 
@@ -105,19 +108,17 @@ const categorias = computed(() => {
 
     const items = []
 
-
     if (props.novedades)
         items.push({
             nombre: novedadesLabel.value, href: props.url,
             valor: 'Novedades'
         })
 
-
     for (const categoria of props.categorias) {
-        const cvalor = categoria.nombre.match(/Tod.s/i) ? '_' : categoria[props.valor] ? categoria[props.valor] : categoria.nombre
+        const cvalor = categoria.nombre.match(/Tod.s/i) ? (props.novedades?'_':'') : categoria[props.valor] ? categoria[props.valor] : categoria.nombre
         items.push({
             nombre: categoria.nombre,
-            href: props.url + '?' + props.parametro + '=' + cvalor,
+            href: props.url + (cvalor?'?' + props.parametro + '=' + cvalor : ''),
             total: categoria.total,
             valor: cvalor
             // seleccionada: props.actual == categoria.nombre

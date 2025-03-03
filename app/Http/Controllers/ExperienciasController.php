@@ -83,7 +83,7 @@ class ExperienciasController extends Controller
         }
 
         if (!$editor && Gate::denies('view', $experiencia)) {
-            abort(503, "No puedes ver esta experiencia");
+            abort(403, "No puedes ver esta experiencia");
         }
 
         $experiencia['titulo'] = $experiencia['nombre'];

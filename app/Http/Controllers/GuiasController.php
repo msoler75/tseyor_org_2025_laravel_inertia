@@ -15,14 +15,27 @@ class GuiasController extends Controller
     {
         $buscar = $request->input('buscar');
 
+        $categoria = $request->input('categoria');
+
         $guias = $buscar ? Guia::search($buscar)
             :
-            Guia::select(['nombre', 'slug', 'descripcion', 'imagen']);
+            Guia::select(['nombre', 'slug', 'descripcion', 'imagen'])
+            ->when($categoria, function ($query) use ($categoria) {
+                return $query->where('categoria', $categoria);
+            })
+            ->orderBy('nombre');
 
         $guias = $guias->paginate(24);
 
+        // $categorias = Guia::select(['categoria'])->get(); añadir distinct, extrar como array de categorias
+           // obtiene el listado de categorías de los Libros
+           $categorias = (new Guia())->getCategorias();
+
         return Inertia::render('Guias/Index', [
-            'guias' => $guias
+            'guias' => $guias,
+            'categoriaActiva' => $categoria,
+            'categorias' => $categorias,
+            'filtrado' => $buscar
         ])
             ->withViewData(SEO::get('guias'));
     }
@@ -40,7 +53,16 @@ class GuiasController extends Controller
             abort(404); // Guía Estelar no encontrada
         }
 
-        $guias = Guia::select(['nombre', 'slug'])->get();
+        // $guias = Guia::select(['nombre', 'slug'])->whereNot('id', $guia->id)->orderBy('nombre')->get();
+
+        $siguiente = Guia::select(['id', 'slug', 'nombre', 'imagen'])
+        ->where('visibilidad', 'P')
+        ->where('nombre', '>', $guia->nombre)->orderBy('nombre', 'asc')->first();
+
+        $anterior = Guia::select(['id', 'slug', 'nombre', 'imagen'])
+        ->where('visibilidad', 'P')
+        ->where('nombre', '<', $guia->nombre)->orderBy('nombre', 'desc')->first();
+
 
         $libros_slugs = preg_split("/[\n\r\t\s;,]+/", $guia->libros, -1, PREG_SPLIT_NO_EMPTY);
 
@@ -49,7 +71,8 @@ class GuiasController extends Controller
         return Inertia::render('Guias/Guia', [
             'guia' => $guia,
             'libros' =>  $libros,
-            'guias' => $guias,
+            'siguiente' => $siguiente,
+            'anterior' => $anterior
         ])
             ->withViewData(SEO::from($guia));
     }

@@ -33,17 +33,12 @@
             </div>
         </ContentBar>
 
-        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap animate-fade-in">
+        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap animate-fade-in" :fade-on-navigate="false">
 
-            <div
-                class="w-full h-fit md:w-auto min-w-[150px] lg:min-w-[240px] card bg-base-100 shadow p-10 md:sticky md:top-20 flex-row md:flex-col flex-wrap md:gap-1">
-                <Link v-for="guia in guias.data" :key="guia.slug" :href="route('guia', guia.slug)"
-                    class="inline font-semibold p-3 md:px-0 md:py-1 w-fit">
-                {{ guia.nombre }}
-                </Link>
-            </div>
+            <Categorias title="Vibración" :novedades="false" :categorias="categorias" :counters="false" :url="route('guias')"
+            :resultados="!!filtrado" div-class="min-w-[150px] lg:min-w-[200px]" select-class="w-full" />
 
-            <div class="w-full flex-grow">
+            <FadeOnNavigate class="w-full flex-grow">
 
                 <GridAppear class="gap-8" col-width="12rem">
                     <CardContent v-for="contenido in guias.data" :key="contenido.id" :image="contenido.imagen"
@@ -55,7 +50,7 @@
                 </GridAppear>
 
 
-            </div>
+            </FadeOnNavigate>
 
 
         </ContentMain>
@@ -69,6 +64,13 @@
 const props = defineProps({
     guias: {
         default: () => []
+    },
+    categorias: {
+        type: Array,
+        required: true
+    },
+    filtrado: {type: [String, null],
+        required: true
     }
 });
 

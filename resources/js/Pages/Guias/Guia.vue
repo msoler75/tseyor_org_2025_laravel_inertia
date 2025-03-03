@@ -112,18 +112,19 @@
 
         <hr class="my-12" />
 
-        <div
-            class="card bg-base-100 shadow flex-wrap flex-row p-5 lg:p-10 gap-4"
-        >
-            <div v-for="item of guias" :key="item.slug" class="flex gap-2">
-                <Link
-                    v-show="item.slug != guia.slug"
-                    :href="route('guia', item.slug)"
-                >
-                    <span class="capitalize">{{ item.nombre }}</span>
-                </Link>
-            </div>
+        <div class="mt-12 grid gap-2 mb-12 grid-cols-1 xs:grid-cols-[180px_1fr_180px] sm:grid-cols-[220px_1fr_220px]">
+            <CardContent v-if="anterior" :imageLeft="false" :key="anterior.id" :title="'Anterior: ' + anterior.nombre"
+                class="rounded-none sm:rounded-lg" :image="anterior.imagen" :href="route('guia', anterior.slug)"
+               imageClass="h-60" />
+               <span v-else></span>
+               <div/>
+            <CardContent v-if="siguiente" :imageLeft="false" :key="siguiente.id" class="rounded-none sm:rounded-lg"
+                :title="'Siguiente: ' + siguiente.nombre" :image="siguiente.imagen"
+                :href="route('guia', siguiente.slug)"
+                 imageClass="h-60" />
+                 <span v-else></span>
         </div>
+
     </div>
 </template>
 
@@ -144,10 +145,14 @@ const props = defineProps({
         type: Array,
         required: false,
     },
-    guias: {
-        type: Array,
+    siguiente: {
+        type: Object,
         required: true,
     },
+    anterior: {
+        type: Object,
+        required: true,
+    }
 });
 
 const format = detectFormat(props.guia.texto);
@@ -180,7 +185,7 @@ function parseMarkdownToSections(text) {
 
     lines.forEach((line) => {
         // Verificar si es un título
-        const matches = line.match(/^(#{3,6})\s+(.*)$/);
+        const matches = line.match(/^(#{2,6})\s+(.*)$/m);
         if (matches) {
             const level = matches[1].length;
             const titulo = matches[2];

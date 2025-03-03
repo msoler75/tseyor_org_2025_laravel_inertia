@@ -254,7 +254,7 @@ export function detectFormat(text) {
 
   // Contamos la cantidad de marcadores Markdown
   const markdownMarkersCount = (
-    text.match(/^#\s+\S+|^-|^>\s+\S+|-{4,99}|\||[*\[\]`!]|\!\[|\]\(/gm) || []
+    text.match(/^#{1,9}\s+\S+|^-|^>\s+\S+|-{4,99}|\||[*\[\]`!]|\!\[|\]\(/gm) || []
   ).length;
 
   // Calculamos la probabilidad de que sea Markdown o HTML
@@ -271,7 +271,7 @@ export function detectFormat(text) {
   });
 
   // Establecemos un umbral de probabilidad para determinar el formato
-  const threshold = 0.6;
+  const threshold = 0.2;
 
   // Detectar si el texto está en formato Markdown
   if (
