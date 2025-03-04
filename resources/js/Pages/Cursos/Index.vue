@@ -60,7 +60,7 @@
             </TextImage>
         </Section>
 
-        <Section class="py-12 space-y-12">
+        <Section v-if="false" class="py-12 space-y-12">
             <FeaturedPosts v-if="cursos.length" title="Próximos cursos" :posts="cursos" />
             <div v-else class="container">
                 <h2>Próximos Cursos</h2>
