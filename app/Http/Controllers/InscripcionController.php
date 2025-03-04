@@ -17,16 +17,22 @@ class InscripcionController extends Controller
         // Validar los datos
         $dataValidated = $request->validate([
             'nombre' => 'required|max:255',
-            'dia' => 'required|integer|min:1|max:31',
-            'mes' => 'required|integer|min:1|max:12',
-            'anyo' => 'required|integer|min:1900|max:' . (date('Y') - 17),
+            'dia' => 'nullable|integer|min:1|max:31',
+            'mes' => 'nullable|integer|min:1|max:12',
+            'anyo' => 'required|integer|min:1900|max:' . (date('Y') - 10),
             'ciudad' => 'required|max:255',
             'region' => 'required|max:255',
             'pais' => 'required|max:255',
             'email' => 'required|email|max:255',
-            'telefono' => 'nullable|max:255',
+            'telefono' => 'required|nullable|max:255',
             'comentario' => 'nullable'
         ]);
+
+        if(!$dataValidated['dia'])
+        $dataValidated['dia'] = 1;
+
+        if(!$dataValidated['mes'])
+        $dataValidated['mes'] = 1;
 
         // Construir la fecha
         $fecha_sql = $dataValidated['anyo'] . "-" . $dataValidated['mes'] . "-" . $dataValidated['dia'];

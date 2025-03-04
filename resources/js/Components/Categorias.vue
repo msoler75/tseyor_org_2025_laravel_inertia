@@ -1,6 +1,8 @@
 <template>
     <div class="sticky top-16 flex justify-center w-full z-30"
-        :class="selectBreakpoint == 'lg' ? 'lg:hidden' : selectBreakpoint == 'md' ? 'md:hidden' : selectBreakpoint == 'sm' ? 'sm:hidden' : 'xs:hidden'">
+        :class="[selectBreakpoint == 'lg' ? 'lg:hidden' : selectBreakpoint == 'md' ? 'md:hidden' : selectBreakpoint == 'sm' ? 'sm:hidden' : 'xs:hidden',
+            divSelectClass
+        ]">
         <select class="mx-auto categorias max-w-full" @change="onCategoria" :value="selectHrefActual"
             :class="selectClass">
             <option v-for="categoria of categorias" :key="categoria.nombre" :value="categoria.href"
@@ -9,7 +11,7 @@
             </option>
         </select>
     </div>
-    <div class="hidden card bg-base-100 shadow self-baseline flex-wrap flex-row p-5 lg:p-10 gap-4 sticky sm:static top-16 z-30 overflow-x-auto"
+    <div class="hidden card bg-base-100 shadow self-baseline flex-wrap flex-row p-5 lg:p-10 gap-4 sticky top-16 z-30 overflow-x-auto"
         :class="divClass + ' ' + (columnaBreakpoint == '2xl' ? '2xl:flex-col' : columnaBreakpoint == 'xl' ? 'xl:flex-col' : columnaBreakpoint == 'lg' ? 'lg:flex-col' : columnaBreakpoint == 'md' ? 'md:flex-col' : '') + ' ' +
             (selectBreakpoint == 'lg' ? 'lg:flex' : selectBreakpoint == 'md' ? 'md:flex' : selectBreakpoint == 'sm' ? 'sm:flex' : 'xs:flex')">
             <div v-if="title" class="hidden md:inline text-xl font-bold md:mb-4">{{ title }}</div>
@@ -38,6 +40,7 @@ const props = defineProps({
     resultados: {type: [Boolean,String], default: false},
     selectBreakpoint: { type: String, default: 'sm' }, // en qué punto o breakpoint se muestra el select
     columnaBreakpoint: { type: String, default: 'md' }, // en qué punto o breakpoint se muestra en modo columna
+    divSelectClass: String,
     selectClass: String,
     divClass: String,
     parametro: { type: String, default: 'categoria' },

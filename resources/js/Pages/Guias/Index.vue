@@ -35,8 +35,8 @@
 
         <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap animate-fade-in" :fade-on-navigate="false">
 
-            <Categorias title="Vibración" :novedades="false" :categorias="categorias" :counters="false" :url="route('guias')"
-            :resultados="!!filtrado" div-class="min-w-[150px] lg:min-w-[200px]" select-class="w-full" />
+            <Categorias  title="Vibración" :novedades="false" :categorias="categorias" :counters="false" :url="route('guias')"
+            :resultados="!!filtrado" div-class="!top-32 min-w-[150px] lg:min-w-[200px]" div-select-class="!top-28"  />
 
             <FadeOnNavigate class="w-full flex-grow">
 
