@@ -43,7 +43,7 @@ const dropzoneOptions = ref({
     thumbnailWidth: 150,
     maxFilesize: 50,
     headers: {
-        'X-CSRF-Token': page?.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content,
+        'X-CSRF-Token': null
     },
 })
 
@@ -67,6 +67,11 @@ watch(modalSubirArchivos, (value) => {
         // recargamos la vista
         store.actualizar()
     }
+})
+
+
+onMounted(() => {
+    dropzoneOptions.value.headers['X-CSRF-Token'] = page.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content
 })
 
 </script>

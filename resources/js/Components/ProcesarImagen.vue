@@ -69,21 +69,17 @@ const emit = defineEmits(["cerrar", "procesada"]);
 
 const myDropzone = ref(null);
 
-const token = document
-    .querySelector('meta[name="csrf-token"]')
-    .getAttribute("content");
-
-const dropzoneOptions = {
+const dropzoneOptions = ref({
     url: "/files/upload/image", // Ruta de tu servidor para subir la imagen
     thumbnailWidth: 300,
     maxFilesize: 2, // En MB
     multiple: false,
-    headers: { "X-CSRF-TOKEN": token },
+    headers: { "X-CSRF-TOKEN": null },
     dictDefaultMessage:
         "Arrastra y suelta la imagen aquí o haz clic para seleccionar",
     autoProcessQueue: false, // Desactiva el procesamiento automático
     acceptedFiles: "image/*", // Asegura que solo se acepten imágenes
-};
+})
 
 
 const fileAdded = async (file) => {
@@ -161,4 +157,11 @@ function convertToWebP(file) {
 const closeModal = () => {
     emit("cerrar");
 };
+
+const page = usePage()
+
+onMounted(() => {
+    dropzoneOptions.value.headers['X-CSRF-Token'] = page.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content
+})
+
 </script>

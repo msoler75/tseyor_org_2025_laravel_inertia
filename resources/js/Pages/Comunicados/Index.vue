@@ -261,17 +261,6 @@ const resultadoQueryBusqueda = computed(() => {
 
 const extractos_colapsado = ref({})
 
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-if (urlParams.has('completo')) {
-    const ex = urlParams.get('completo')
-    console.log('(setup) ex from url?', ex)
-    if (ex == 1 || ex == "1") {
-        console.log('vistaComunicados = ' + VISTA_BUSQUEDA_COMPLETA)
-        selectors.vistaComunicados = VISTA_BUSQUEDA_COMPLETA
-        // busqueda.value.completo = 1
-    }
-}
 
 
 const vistaBusquedaCompleta = computed(() => selectors.vistaComunicados == VISTA_BUSQUEDA_COMPLETA)
@@ -279,6 +268,19 @@ const busqueda = ref({ categoria: props.categoria || 'todos', ano: props.ano || 
 console.log('(setup) ex=', busqueda.value.completo)
 
 onMounted(() => {
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if (urlParams.has('completo')) {
+        const ex = urlParams.get('completo')
+        console.log('(setup) ex from url?', ex)
+        if (ex == 1 || ex == "1") {
+            console.log('vistaComunicados = ' + VISTA_BUSQUEDA_COMPLETA)
+            selectors.vistaComunicados = VISTA_BUSQUEDA_COMPLETA
+            // busqueda.value.completo = 1
+        }
+    }
+
     watch(query, () => {
         // console.log('query', query.value)
         if (!query.value) // && !vistaBusquedaCompleta.value)
@@ -304,6 +306,7 @@ watch(vistaBusquedaCompleta, (v) => {
 const buscando = ref(false)
 
 watch(busqueda, (value) => {
+    if(typeof window == 'undefined') return
     if (!inQuery.value) {
         const currentUrl = window.location.href.replace(/\?.*/, '')
 

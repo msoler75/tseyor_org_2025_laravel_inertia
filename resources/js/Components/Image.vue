@@ -64,8 +64,7 @@ const emit = defineEmits(['loaded'])
 
 const img = ref()
 
-const myDomain = computed(() => window?.location.origin)
-
+const myDomain = import.meta.env.VITE_APP_URL
 
 // la imagen que se cargará del servidor
 const imageSrc = computed(() => getImageUrl(props.src, props.fallback))
@@ -132,7 +131,7 @@ function init() {
         return
 
     // si es una url absoluta y corresponde a otro servidor o no queremos optimización (1)
-    if (imageSrc.value.match(/https?:\/\/[^/]+/)?.[0] === myDomain.value || !props.optimize)
+    if (imageSrc.value.match(/https?:\/\/[^/]+/)?.[0] === myDomain || !props.optimize)
         return putSrcImage(imageSrc.value)
 
     // si ya está la imagen redimensionada (2)

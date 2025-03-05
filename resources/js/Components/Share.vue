@@ -56,12 +56,12 @@ const sharing = reactive({
     twitterUser: 'TSEYOR'
 })
 
-const currentUrl = window.location.href.replace(/\?.*/, '')
+const currentUrl = ref()
 
 const { copy, copied, isSupported } = useClipboard()
 
 const copyCurrentUrl = () => {
-    copy(currentUrl)
+    copy(currentUrl.value)
     alert('Se ha copiado el enlace al portapapeles')
 }
 
@@ -79,13 +79,14 @@ function updateMeta() {
 }
 
 onMounted(() => {
+    currentUrl.value = window.location.href.replace(/\?.*/, '')
     updateMeta()
     setTimeout(updateMeta, 250)
-})
 
-watch(() => document.title, () => {
-    console.warn('watch doc.title')
-    setTimeout(updateMeta, 250)
+    watch(() => document.title, () => {
+        console.warn('watch doc.title')
+        setTimeout(updateMeta, 250)
+    })
 })
 
 

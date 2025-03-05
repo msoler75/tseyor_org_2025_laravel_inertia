@@ -24,10 +24,11 @@ const props = defineProps({
     validSearch: {type: Boolean, default: true}
 })
 
-const queryString = window.location.search.replace(/[\?&]page=\d+/, '').replace('?categoria=_', '')
+const queryString = ref()
 
 onMounted(() => {
-    const urlParams = new URLSearchParams(queryString);
+    queryString.value = window.location.search.replace(/[\?&]page=\d+/, '').replace('?categoria=_', '')
+    const urlParams = new URLSearchParams(queryString.value);
     query.value = urlParams.get(props.keyword);
 });
 

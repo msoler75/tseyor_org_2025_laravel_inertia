@@ -130,7 +130,7 @@ const dropzoneOptions = ref({
     maxFilesize: 50,
     multiple: false,
     headers: {
-        'X-CSRF-Token': page.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content,
+        'X-CSRF-Token': null,
     },
     ...props.options
 })
@@ -144,6 +144,10 @@ function successEvent(file, response) {
         emit('uploaded', response.data.filePath)
     }
 }
+
+onMounted(() => {
+    dropzoneOptions.value.headers['X-CSRF-Token'] = page.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content
+})
 
 </script>
 

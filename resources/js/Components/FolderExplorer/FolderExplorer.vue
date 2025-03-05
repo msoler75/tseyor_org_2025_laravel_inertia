@@ -443,7 +443,6 @@ watch(
     () => nextTick(() => calcBreadcrumbHeight())
 );
 
-window.addEventListener("resize", calcBreadcrumbHeight);
 
 function onInsertar() {
     console.log("insertarImagenes", store.imagenesSeleccionadas);
@@ -535,6 +534,18 @@ watch(info_archivos, () => {
 const touchable = ref(true);
 
 onMounted(() => {
+
+    // obtenemos parámetro de URL "vista"
+    if ("URLSearchParams" in window) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const vista = urlParams.get("vista");
+        if (vista && ["lista", "grid"].includes(vista))
+            selectors.archivosVista = vista;
+    }
+
+
+    window.addEventListener("resize", calcBreadcrumbHeight);
+
     touchable.value = store.esPantallaTactil();
 
     cargarInfo(); // .then(() => cargarVisorImagenes())
@@ -778,13 +789,6 @@ const selectors = useSelectors();
 if (!["lista", "grid"].includes(selectors.archivosVista))
     selectors.archivosVista = "lista";
 
-// obtenemos parámetro de URL "vista"
-if ("URLSearchParams" in window) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const vista = urlParams.get("vista");
-    if (vista && ["lista", "grid"].includes(vista))
-        selectors.archivosVista = vista;
-}
 
 console.log(selectors.value);
 const toggleVista = () => {
