@@ -216,7 +216,7 @@ watch(() => search.opened, (value) => {
     usoTeclas = false
     if (value) {
         nav.sideBarShow = false // cerramos la sidebar
-        currentUrl = window.location.pathname
+        currentUrl = usePage().url
         nextTick(() => {
             input.value.focus()
         })
@@ -233,7 +233,7 @@ const queryLoading = ref("")
 var timerBuscar = null
 
 // para guardar estadísticas de búsqueda
-var currentUrl = window.location.pathname
+var currentUrl = usePage().url
 var timerGuardarBusqueda = null
 var busquedaId = null
 

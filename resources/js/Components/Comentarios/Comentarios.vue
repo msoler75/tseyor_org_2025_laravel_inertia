@@ -20,19 +20,16 @@
 
 
 <script setup>
-import { usePage } from '@inertiajs/vue3';
-
+const page = usePage()
 const props = defineProps({
     url: {
         type: String,
         default() {
-            return window.location.pathname;
+            return page.url;
         }
     }
 })
 
-
-const page = usePage()
 const user = page.props.auth?.user
 const nuevoAutor = /*computed(() => user */ user ?
     {

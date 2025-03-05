@@ -75,10 +75,11 @@ const modalSubirArchivos = ref(false)
 const page = usePage()
 const archivoDoc = ref(null)
 const importando = ref(false)
-const csrf = ref(page?.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content)
+const csrf = ref()
 
 function enviarDocumento() {
     if (!archivoDoc.value) return
+    csrf.value = page.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content
     importando.value = true
     const formData = new FormData();
     formData.append('csrf_token', csrf.value);

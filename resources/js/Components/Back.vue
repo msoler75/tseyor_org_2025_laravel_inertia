@@ -33,7 +33,7 @@ const props = defineProps({
 })
 
 const floating = computed(() => nav.scrollY >= props.floatAtY)
-const currentUrl = window.location.href;
+const currentUrl = usePage().url
 const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
 const enlace = ref(props.href || parentUrl)
 

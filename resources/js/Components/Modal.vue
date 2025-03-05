@@ -72,6 +72,7 @@ const closeOnEscape = (e) => {
 
 // creamos un array de diálogos para saber cuales son los modales abiertos
 watch(() => props.show, (newValue) => {
+    if(typeof window === 'undefined') return
     if (!window.modals)
         window.modals = []
     // get a very simple uuid
