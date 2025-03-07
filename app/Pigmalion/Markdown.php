@@ -708,4 +708,20 @@ class Markdown
         $content = preg_replace("/\{.*?\}/u", "", $content); // eliminamos marcas de estilo especiales
         return $content;
     }
+
+
+    // devuelve las primeras $num imágenes de un texto en markdown
+    public static function images($md, $num = 99) {
+        preg_match_all("/!\[(.*)\]\((.*)\)/", $md, $matches);
+        $r = [];
+        // recorremos las url de cada match
+        $i = 0;
+        foreach($matches[2] as $url) {
+            $r[] = $url;
+            $i++; // solo las primeras $num imagenes
+            if($i>=$num)
+                break;
+        }
+        return $r;
+    }
 }

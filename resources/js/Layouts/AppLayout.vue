@@ -18,7 +18,9 @@
         <Banner />
 
         <!-- <component :is="dynamicAudioPlayer" v-if="dynamicAudioPlayer" /> -->
-        <AudioVideoPlayer />
+        <ClientOnly>
+            <AudioVideoPlayer />
+        </ClientOnly>
 
 
         <Modal :show="mostrarMensaje" centered max-width="md">
@@ -77,7 +79,6 @@
 
 <script setup>
 import { onBeforeUnmount/*, markRaw*/ } from 'vue';
-import { useDark, useToggle } from "@vueuse/core";
 import useUserStore from '@/Stores/user'
 import usePlayer from '@/Stores/player'
 import setTransitionPages from '@/composables/transitionPages.js'
@@ -99,22 +100,7 @@ const mostrarMensaje = ref(page.props?.flash?.message)
 const TIME_NAV_INACTIVE = 600
 var timerActivateNav = null
 
-
 nav.announce = page.props.anuncio || ''
-
-const portada = computed(() => page.url == '/')
-// DARK MODE
-const isDark = useDark();
-
-
-function updateDarkState() {
-    if (isDark.value)
-        document.documentElement.setAttribute('data-theme', 'winter')
-    else
-        document.documentElement.removeAttribute('data-theme')
-}
-
-
 
 const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset
@@ -164,23 +150,24 @@ function cargarDatosUsuario() {
     userStore.cargarSaldo()
 }
 
-cargarDatosUsuario()
-
 // si cambia el usuario
 watch(() => page.props.auth?.user, () => {
     cargarDatosUsuario()
 })
 
-// aplicamos configuración de transiciones de pagina (fadeout y scroll)
-setTransitionPages(router)
 
-
-// inicializamos la navegación pasando la función "route" del componente, en el cliente
-nav.init(route)
 
 onMounted(() => {
 
     console.log('APP LAYOUT mounted')
+
+    // inicializamos la navegación pasando la función "route" del componente, en el cliente
+    nav.init(route) // route no está disponible en SSR
+
+    // aplicamos configuración de transiciones de pagina (fadeout y scroll)
+    setTransitionPages(router)
+
+    cargarDatosUsuario()
 
     handleMouse()
     handleScroll();
@@ -193,28 +180,6 @@ onMounted(() => {
         });
     }, 5000)*/
 
-
-
-    // modo Dark
-    watch(isDark, value => {
-        updateDarkState()
-    })
-
-    updateDarkState()
-
-
-    // para globalSearch
-    // esto lo hacemos únicamente para el caso muy particular de que globalsearch pueda tambien ponerse en dark mode en la portada
-    function updateBodyTheme() {
-        const themePortada = portada.value && nav.scrollY < 300 ? 'winter' : ''
-        document.querySelector("body").setAttribute('data-theme', themePortada)
-    }
-
-    watch(() => `${nav.scrollY}+${portada.value}`, () => {
-        updateBodyTheme()
-    })
-
-    updateBodyTheme()
 
 
 

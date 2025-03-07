@@ -147,11 +147,11 @@ const props = defineProps({
     },
     siguiente: {
         type: Object,
-        required: true,
+        required: false,
     },
     anterior: {
         type: Object,
-        required: true,
+        required: false,
     }
 });
 

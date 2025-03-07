@@ -4,13 +4,13 @@
     <Modal :show="modalSubirArchivos" @close="modalSubirArchivos = false">
 
         <div class="p-5 flex flex-col gap-5 items-center">
-            <Dropzone class="w-full" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
+            <component :is="dropzoneComponent" v-if="dropzoneComponent"  class="w-full" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
                 v-on:vdropzone-sending="sendingEvent" v-on:vdropzone-success="successEvent">
                 <div class="flex flex-col items-center">
                     <Icon icon="mdi:cloud-upload-outline" class="text-5xl" />
                     <span>Arrastra los archivos aquí o haz clic para subirlos</span>
                 </div>
-            </Dropzone>
+            </component>
 
 
             <button @click.prevent="modalSubirArchivos = false" type="button" class="btn btn-neutral btn-sm">
@@ -24,9 +24,11 @@
 
 
 <script setup>
-import Dropzone from 'vue2-dropzone-vue3'
+// import Dropzone from 'vue2-dropzone-vue3'
 import useFolderExplorerStore from '@/Stores/folderExplorer';
 import { usePage, Link } from '@inertiajs/vue3';
+
+const dropzoneComponent = ref(null)
 
 const store = useFolderExplorerStore()
 
@@ -70,8 +72,11 @@ watch(modalSubirArchivos, (value) => {
 })
 
 
-onMounted(() => {
+onMounted(async () => {
     dropzoneOptions.value.headers['X-CSRF-Token'] = page.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content
+
+    const module = await import('vue2-dropzone-vue3')
+    dropzoneComponent.value = module.default
 })
 
 </script>

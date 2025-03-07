@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-import { getImageUrl } from "@/composables/imageutils.js";
+import { getImageUrl } from "@/Stores/image.js";
 import { loadGoogleMaps } from "@/composables/google";
 
 const props = defineProps({

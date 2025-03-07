@@ -59,7 +59,7 @@ Nuestras conversiones personalizados de markdown <-> HTML
 } */
 
 function mdImage(imgHtml) {
-  console.log({ imgHtml });
+  // console.log({ imgHtml });
   const parser = new DOMParser();
   //removemos parámetros de la url que contenga &, porque rompe el parseo
   //por ejemplo imagen1.jpg?w=200&h=100
@@ -75,7 +75,7 @@ function mdImage(imgHtml) {
     return acc;
   }, {});
 
-  console.log({ attributes });
+  // console.log({ attributes });
 
   var values = {};
   var style = "";
@@ -92,7 +92,7 @@ function mdImage(imgHtml) {
   if (style) {
     // así sobreescribimos  width height
     const pairs = style.split(/\s*;\s*/);
-    console.log({ pairs });
+    // console.log({ pairs });
     for (const pair of pairs) {
       const [attr, value] = pair.split(/\s*:\s*/);
       if (attr == "width" || attr == "height") {
@@ -101,7 +101,7 @@ function mdImage(imgHtml) {
     }
   }
 
-  console.log("html2Md values:", values);
+  // console.log("html2Md values:", values);
 
   return (
     "<img src='" +
@@ -118,23 +118,23 @@ function mdImage(imgHtml) {
 
 
 function mdTableSave(htmlTable) {
-    console.log("mdTable", htmlTable);
+    // console.log("mdTable", htmlTable);
     return htmlTable.replace(/<p/g, '<tdp').replace(/<\/p/g, '</tdp');
 }
 
 function mdTableRestore(htmlTable) {
-    console.log("mdTable", htmlTable);
+    // console.log("mdTable", htmlTable);
     return htmlTable.replace(/<tdp/g, '<p').replace(/<\/tdp/g, '</p');
 }
 
 function mdParagraph(htmlParagraph) {
-    console.log("mdParagraph", htmlParagraph);
+    // console.log("mdParagraph", htmlParagraph);
     return htmlParagraph.replace(/<p style=["']([^>]*)["'][^>]*>/g, "$&{style=$1}")
 }
 
 export function HtmlToMarkdown(html) {
   // convertimos cualquier clase dentro de párrafo p en un marcaje especial
-  console.log("HtmlToMarkdown", { html });
+  // console.log("HtmlToMarkdown", { html });
 
   // checamos si tiene alguna classe de Quill Editor
   //if(html.match(/class="ql-/))
@@ -158,7 +158,7 @@ export function HtmlToMarkdown(html) {
       .replace(/{width=auto,\s*height=auto/g, "")
   );
 
-  console.log({ md });
+  // console.log({ md });
   return md;
 }
 
@@ -175,7 +175,7 @@ export function MarkdownToHtml(raw_markdown) {
     });
     return md.render(raw_markdown)
     */
-  console.log("MarkdownToHtml", { raw_markdown });
+  // console.log("MarkdownToHtml", { raw_markdown });
   if (!raw_markdown) return "";
   // raw_markdown = raw_markdown.replace(/\n\s*---\s*\n/mg, '<hr/>')
   const converter = new showdown.Converter();
@@ -203,7 +203,7 @@ export function MarkdownToHtml(raw_markdown) {
       return img.replace("<img", "<img " + values.join(" "));
     });
 
-  console.log("step1 html", html);
+  // console.log("step1 html", html);
 
   html = html
     // reemplazamos los párrafos con estilos
@@ -215,7 +215,7 @@ export function MarkdownToHtml(raw_markdown) {
     "</p><p style='$1'>$2</p>"
   );
 
-  console.log("step2 html", html);
+  // console.log("step2 html", html);
   html = html
     // quitamos los espacios sobrantes
     .replace(/<p>\s+<\/p>\n?/g, "")
@@ -278,7 +278,7 @@ export function detectFormat(text) {
     markdownProbability >= threshold &&
     markdownProbability > htmlProbability
   ) {
-    console.log("formato MARKDOWN detectado", markdownProbability);
+    // console.log("formato MARKDOWN detectado", markdownProbability);
     return { format: "md", probability: markdownProbability };
   }
 

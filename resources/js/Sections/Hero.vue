@@ -33,12 +33,12 @@ defineProps({
     },
     srcWidth: {
         type: [Number, String],
-        required: true,
+        required: false,
         default: null
     },
     srcHeight: {
         type: [Number, String],
-        required: true,
+        required: false,
         default: null
     },
     caption: {

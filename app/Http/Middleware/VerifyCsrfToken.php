@@ -15,6 +15,7 @@ class VerifyCsrfToken extends Middleware
         'files/upload/image',
         'files/upload/file',
         '_sendbuild',
-        'usuarios/_comprobar_clave'
+        'usuarios/_comprobar_clave',
+        'update-theme'
     ];
 }

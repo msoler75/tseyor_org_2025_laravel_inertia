@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-
+import {saveImagesInfo} from "@/Stores/image";
 
 const props = defineProps({
     entrada: {
@@ -62,4 +62,6 @@ const props = defineProps({
         required: true,
     },
 });
+
+saveImagesInfo(props.imagenesInfo)
 </script>

@@ -25,7 +25,7 @@ const props = defineProps({
     url: {
         type: String,
         default() {
-            return page.url;
+            return null;
         }
     }
 })
@@ -58,7 +58,8 @@ const cargando = ref(true)
 
 // cargamos los comentarios de este contenido
 onMounted(() => {
-    axios.get(route('comentarios') + '?url=' + props.url).then(response => {
+    const url = props.url ? props.url: page.url
+    axios.get(route('comentarios') + '?url=' + url).then(response => {
         comentarios.value = response.data.comentarios
         cargando.value = false
     })
