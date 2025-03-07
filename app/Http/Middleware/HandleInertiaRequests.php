@@ -8,6 +8,7 @@ use Inertia\Middleware;
 // use App\T;
 use App\Models\Setting;
 // use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cookie;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -43,7 +44,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'anuncio' => $anuncio,
             'meta_image_default' => config('seo.image.fallback'),
-            'csrf_token' => csrf_token()
+            'csrf_token' => csrf_token(),
+            'initialTheme' =>  Cookie::get('theme', 'light')
         ]);
 
         // Algunas páginas se van a cachear con page-cache, así que debe estar limpia de sesión

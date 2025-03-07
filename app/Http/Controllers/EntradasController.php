@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Entrada;
 use App\Pigmalion\SEO;
+use App\Pigmalion\Markdown;
 
 class EntradasController extends Controller
 {
@@ -56,10 +57,15 @@ class EntradasController extends Controller
             ->where('visibilidad', 'P')
             ->where('published_at', '<', $entrada->published_at)->orderBy('published_at', 'desc')->first();
 
+        // toma el texto de la entrada, obtiene las imagenes, y de cada una de ellas, obtiene las dimensiones
+        $imagenes = Markdown::images($entrada->texto);
+        $imagenesInfo = ImagenesController::info($imagenes);
+
         return Inertia::render('Entradas/Entrada', [
             'entrada' => $entrada,
             'siguiente' => $siguiente,
-            'anterior' => $anterior
+            'anterior' => $anterior,
+            'imagenesInfo' => $imagenesInfo
         ])
             ->withViewData(SEO::from($entrada));
     }

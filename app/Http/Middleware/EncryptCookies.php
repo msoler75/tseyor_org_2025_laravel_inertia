@@ -12,6 +12,6 @@ class EncryptCookies extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        'theme' // Añade esta línea para excluir la cookie "theme"
     ];
 }

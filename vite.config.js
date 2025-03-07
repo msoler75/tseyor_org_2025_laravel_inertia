@@ -36,7 +36,7 @@ export default defineConfig({
         "resources/js/backpack/app.js",
         "resources/css/admin.css",
       ],
-      // ssr: "resources/js/ssr.js",
+      ssr: "resources/js/ssr.js",
       refresh: true,
     }),
     {
@@ -70,6 +70,14 @@ export default defineConfig({
         "resources/js/Sections",
         "resources/js/Layouts",
       ],
+      // Añade esta sección para resolver componentes
+      resolvers: [
+        (name) => {
+          if (name === 'ClientOnly') {
+            return { name: 'default', from: '@duannx/vue-client-only' }
+          }
+        }
+      ],
     }),
     AutoImport({
       dts: true,
@@ -89,11 +97,14 @@ export default defineConfig({
             "useSlots",
           ],
           "@inertiajs/vue3": ["router", "usePage", "useForm"],
-          "@/Stores/nav.js":  ["useNav"]
+          "@/Stores/nav.js":  ["useNav"],
         },
       ],
     }),
     viteCompression(),
     visualizer(),
   ],
+  define: {
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: true
+  }
 });

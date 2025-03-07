@@ -47,6 +47,7 @@
 
 <script setup>
 import { useClipboard } from '@vueuse/core'
+import ShareNetwork from 'vue-social-sharing/dist/vue-social-sharing.js'
 
 const sharing = reactive({
     title: '',

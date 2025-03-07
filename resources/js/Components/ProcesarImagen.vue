@@ -1,4 +1,5 @@
 <template>
+    <ClientOnly>
     <div class="w-full">
         <h1 class="text-center">{{ titulo || "Procesar imagen" }}</h1>
         <p class="w-full flex justify-center items-baseline gap-4">
@@ -17,7 +18,7 @@
             <div class="flex flex-col justify-end">
                 <h2>3. Subir nueva imagen</h2>
 
-                <Dropzone
+                <component :is="dropzoneComponent" v-if="dropzoneComponent"
                     ref="myDropzone"
                     class="w-[300px] mb-auto !hover:bg-orange-200 dark:hover:bg-orange-900 hover:border-orange-500 cursor-pointer"
                     :class="classDropzone"
@@ -38,7 +39,7 @@
                             seleccionar</span
                         >
                     </div>
-                </Dropzone>
+                </component>
 
                 <div class="mt-4 flex justify-end">
                     <button
@@ -51,10 +52,13 @@
             </div>
         </div>
     </div>
+</ClientOnly>
 </template>
 
 <script setup>
-import Dropzone from "vue2-dropzone-vue3";
+// import Dropzone from "vue2-dropzone-vue3";
+
+const dropzoneComponent = ref(null)
 
 const props = defineProps({
     titulo: String,
@@ -160,8 +164,11 @@ const closeModal = () => {
 
 const page = usePage()
 
-onMounted(() => {
+onMounted(async () => {
     dropzoneOptions.value.headers['X-CSRF-Token'] = page.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content
+
+    const module = await import('vue2-dropzone-vue3')
+    dropzoneComponent.value = module.default
 })
 
 </script>

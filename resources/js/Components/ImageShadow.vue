@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { getImageUrl } from '@/composables/imageutils.js'
+import { getImageUrl } from '@/Stores/image.js'
 
 const props = defineProps({
     className: {

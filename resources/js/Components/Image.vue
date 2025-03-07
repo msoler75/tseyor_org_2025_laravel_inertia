@@ -10,7 +10,7 @@
 
 
 <script setup>
-import { getImageSize, getImageUrl, isWebPSupported } from '@/composables/imageutils.js'
+import { getImageSize, getImageUrl, isWebPSupported } from '@/Stores/image.js'
 
 const props = defineProps({
     src: {
@@ -98,6 +98,10 @@ function getPixels(value) {
 // la imagen que se muestra en el componente
 const displaySrc = ref("")
 
+// Comprobamos si estamos en el lado del cliente
+const isClient = typeof window !== 'undefined'
+// const isClient = false
+
 
 
 /*
@@ -125,6 +129,9 @@ Hay varios tipos de situaciones:
 */
 
 function init() {
+
+    // if (!isClient) return // No ejecutamos en SSR
+
     console.log('image:init()', props.src, 'fallback:', props.fallback, 'props.width:', props.width, 'props.height:', props.height)
 
     if (!imageSrc.value)
@@ -163,6 +170,8 @@ function init() {
 var originalSize = { width: 0, height: 0 }
 
 function putFakeImage(width, height) {
+    // if (!isClient) return // No ejecutamos en SSR
+
     originalSize.width = width
     originalSize.height = height
     // generar una imagen transparent SVG con formato URI, debe tener ancho igual a size.width y alto igual a size.height
@@ -179,6 +188,7 @@ function putFakeImage(width, height) {
 }
 
 async function putImageWithSize(widthOp, heightOp) {
+    // if (!isClient) return // No ejecutamos en SSR
     console.log('image:putImageWithSize', imageSrc.value, widthOp, heightOp)
     if (widthOp == originalSize.width && heightOp == originalSize.height)
         return putSrcImage(imageSrc.value)
@@ -190,9 +200,11 @@ async function putImageWithSize(widthOp, heightOp) {
 }
 
 function putSrcImage(src) {
+    if (!isClient) return // No ejecutamos en SSR
     displaySrc.value = src
     // esperamos que cambie el componente :is
     nextTick(() => {
+        if(!img.value) return // SSR
         if(props.lazy)
             img.value.setAttribute('loading', 'lazy')
         img.value.onload = () => {

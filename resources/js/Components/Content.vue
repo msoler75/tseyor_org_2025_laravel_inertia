@@ -2,9 +2,11 @@
     <Prose class="text-container break-words overflow-x-auto">
         <ContentNode :node="arbol" :use-image="optimizeImages" @click="handleClick" />
 
-        <ImagesViewer :show="showImagesViewer" @close="showImagesViewer = false"
-        :images="images?.map((x) => x + '?mw=3000&mh=3000')"  :index="imageIndex"
-        />
+        <!--
+            <ImagesViewer :show="showImagesViewer" @close="showImagesViewer = false"
+            :images="images?.map((x) => x + '?mw=3000&mh=3000')"  :index="imageIndex"
+            />
+            -->
     </Prose>
 </template>
 
@@ -23,7 +25,7 @@ const props = defineProps({
         type: String,
         default: 'md'
     },
-    optimizeImages: {
+    optimizeImages: { // determina si usa el componente Imagen
         type: Boolean,
         default: true
     },
@@ -45,6 +47,7 @@ function parseHTML(textoHTML) {
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(textoHTML, 'text/html');
+    var firstImage = true
 
     function parseNode(node) {
 
@@ -61,6 +64,10 @@ function parseHTML(textoHTML) {
             if (node.tagName == 'IMG') {
                 node.setAttribute('image-index', images.value.length)
                 images.value.push(node.src.replace(/\?.*$/, ''))
+                // si es la primera imagen, no será lazy
+                if(firstImage)
+                    node.setAttribute('loading', 'eager')
+                firstImage = false
             }
 
             obj.attributes = {}

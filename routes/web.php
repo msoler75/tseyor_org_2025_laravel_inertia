@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -43,6 +44,7 @@ use App\Http\Controllers\Api\ComentariosController;
 use App\Http\Controllers\Admin\JobsController;
 use App\Services\MuularElectronico;
 use App\Pigmalion\SEO;
+use Illuminate\Support\Facades\Cookie;
 
 
 
@@ -65,8 +67,12 @@ Route::get('glosario/parse', [TerminosController::class, 'parse'])->name('parse'
 
 
 
-
-
+// switch theme dark/light
+Route::post('update-theme', function (Request $request) {
+    $theme = $request->input('theme');
+    Cookie::queue('theme', $theme, 60 * 24 * 30, null, null, true, false); // válida por 30 días
+    return response()->json(['success' => true]);
+});
 
 Route::get('settings', [SettingsController::class, 'index'])->name('settings');
 Route::get('settings/{id}', [SettingsController::class, 'show'])->name('setting');

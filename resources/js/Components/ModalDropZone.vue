@@ -26,13 +26,14 @@
 
 
 
-                <Dropzone class="w-full !hover:bg-orange-200 dark:hover:bg-orange-900 hover:border-orange-500 cursor-pointer" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
+            <component :is="dropzoneComponent" v-if="dropzoneComponent"
+                class="w-full !hover:bg-orange-200 dark:hover:bg-orange-900 hover:border-orange-500 cursor-pointer" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true
                     v-on:vdropzone-sending="sendingEvent" v-on:vdropzone-success="successEvent">
                     <div class="flex flex-col items-center">
                         <Icon icon="mdi:cloud-upload-outline" class="text-5xl" />
                         <span>{{ placeholder }}</span>
                     </div>
-                </Dropzone>
+                </component>
 
 
                 <button @click.prevent="localValue = false" type="button" class="btn btn-neutral">
@@ -47,8 +48,10 @@
 
 <script setup>
 
-import Dropzone from 'vue2-dropzone-vue3'
+// import Dropzone from 'vue2-dropzone-vue3'
 // import { useDropzone } from "vue3-dropzone";
+
+const dropzoneComponent = ref(null)
 
 const props = defineProps({
     url: String, // server api url
@@ -145,8 +148,11 @@ function successEvent(file, response) {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     dropzoneOptions.value.headers['X-CSRF-Token'] = page.props ? page.props.csrf_token : document.querySelector('meta[name="csrf-token"]').content
+
+    const module = await import('vue2-dropzone-vue3')
+    dropzoneComponent.value = module.default
 })
 
 </script>

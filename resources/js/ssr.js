@@ -2,10 +2,21 @@ import { createInertiaApp } from '@inertiajs/vue3'
 import createServer from '@inertiajs/vue3/server'
 import { renderToString } from '@vue/server-renderer'
 import { createSSRApp, h } from 'vue'
+import AppLayout from "@/Layouts/AppLayout.vue";
 import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
 import { ZiggyVue } from "ziggy";
-import   {Ziggy} from './ziggy.js'
+import { Ziggy } from './ziggy.js'
+import { JSDOM } from 'jsdom'
+
+// Crear una instancia de JSDOM
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>')
+
+// Asignar DOMParser al objeto global
+global.DOMParser = dom.window.DOMParser
+
+// Asignar document al objeto global si es necesario
+// global.document = dom.window.document
 
 createServer(page =>
   createInertiaApp({
@@ -13,16 +24,19 @@ createServer(page =>
     render: renderToString,
     resolve: name => {
       const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
-      return pages[`./Pages/${name}.vue`]
+      const page = pages[`./Pages/${name}.vue`]
+      page.default.layout = page.default.layout || AppLayout
+      return page
     },
     setup({ App, props, plugin }) {
       return createSSRApp({
         render: () => h(App, props),
-      }).use(plugin)
+      })
+      .use(plugin)
       .use(ZiggyVue, Ziggy)
       .mixin({
         components: { Icon, Head },
-        methods: {useNav}
+        methods: { useNav }
       })
     },
   }),

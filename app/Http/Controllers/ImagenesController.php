@@ -37,13 +37,9 @@ class ImagenesController extends Controller
             abort(400, 'Debe especificar la URL de la imagen');
 
         // obtenemos las dimensiones de la imagen
+        $r = self::info([$url]);
 
-        $sti = new StorageItem($url);
-
-        $fullpath = $sti->path;
-
-        // obtenemos las dimensiones de la imagen en la ubicación $fullpath, hemos de comprobar si es un PNG, o JPG...
-        $info = @getimagesize($fullpath);
+        $info = $r[$url];
 
         // retorna respuesta json
         return response()->json(['width' => $info[0] ?? 0, 'height' => $info[1] ?? 0], 200)
@@ -227,5 +223,44 @@ class ImagenesController extends Controller
 
         // Devolver la imagen resultante como respuesta HTTP de imagen
         return response()->file($mockupPath);
+    }
+
+
+    // devuelve la información de las dimensiones de un array de imágenes
+    // usaremos doble cache: una cache individual para cada imagen, y una cache para cada grupo de imágenes
+
+    // info para una imagen dada una url
+    private static function info1(string $url)
+    {
+        $cache_key = "imagen_info_".$url;
+
+        return Cache::remember($cache_key, now()->addDays(365), function () use ($url) {
+            $sti = new StorageItem($url);
+            $fullpath = $sti->path;
+            // obtenemos las dimensiones de la imagen en la ubicación $fullpath
+            $info = @getimagesize($fullpath);
+            return $info;
+        });
+    }
+
+    public static function info(array $imagenes)
+    {
+        if (count($imagenes) == 0) return [];
+        if (count($imagenes) == 1) return [$imagenes[0] => self::info1($imagenes[0])];
+
+        $group_id = md5(json_encode($imagenes));
+        $cache_key = "imagenes_info_group_" . $group_id;
+
+        return Cache::remember($cache_key, now()->addDays(365), function () use ($imagenes) {
+
+            $r = [];
+            foreach ($imagenes as $url) {
+                $info = ImagenesController::info1($url);
+                if ($info)
+                    $r[$url] = $info;
+            }
+
+            return $r;
+        });
     }
 }

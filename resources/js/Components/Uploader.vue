@@ -1,4 +1,5 @@
 <template>
+    <ClientOnly>
     <section>
         <h1>DropzoneJS File Upload Demo</h1>
         <div
@@ -55,49 +56,62 @@
             </div>
         </div>
     </section>
+</ClientOnly>
 </template>
 
-
-
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue';
 import Dropzone from 'dropzone';
-import 'dropzone/dist/dropzone.css';
+if (typeof window !== 'undefined') {
+  import('dropzone/dist/dropzone.css');
+}
 
+// Propiedades
+const props = defineProps({
+  targetPath: {
+    type: String,
+    required: true
+  }
+});
 
-export default {
-    props: {
-        targetPath: {}
-    },
-    computed: {
-        endpoint_url: function () {
-            return route('files.upload.file', {ruta: '/' + this.targetPath}).replace(/:\/\//, '@@@').replace(/\/\//g, '/').replace('@@@', '://')
-        },
-    },
-    mounted() {
-        Dropzone.autoDiscover = false;
-        console.log('endpoint:', this.endpoint_url)
-        const myDropzone = new Dropzone(this.$refs.dropzone, {
-            url: this.endpoint_url,
-            previewTemplate: document.getElementById('dropzone-preview-template').innerHTML,
-            parallelUploads: 2,
-            uploadMultiple: false,
-            thumbnailHeight: 120,
-            thumbnailWidth: 120,
-            maxFilesize: 3,
-            filesizeBase: 1000,
-            addRemoveLinks: true,
-            dictRemoveFile: 'Eliminar archivo',
-            dictFileTooBig: 'Archivo demasiado grande ({{filesize}}MiB). Máximo tamaño: {{maxFilesize}}MiB.',
-            init: function () {
-                this.on('success', function (file, response) {
-                    console.log('File uploaded: ', file.name);
-                    console.log('Server response:', response);
-                });
-            },
+// Referencias
+const dropzoneRef = ref(null);
+
+// Computed properties
+const endpointUrl = computed(() => {
+  return route('files.upload.file', { ruta: '/' + props.targetPath })
+    .replace(/:\/\//, '@@@')
+    .replace(/\/\//g, '/')
+    .replace('@@@', '://');
+});
+
+// Montaje del componente
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    Dropzone.autoDiscover = false;
+    console.log('endpoint:', endpointUrl.value);
+
+    const myDropzone = new Dropzone(dropzoneRef.value, {
+      url: endpointUrl.value,
+      previewTemplate: document.getElementById('dropzone-preview-template').innerHTML,
+      parallelUploads: 2,
+      uploadMultiple: false,
+      thumbnailHeight: 120,
+      thumbnailWidth: 120,
+      maxFilesize: 3,
+      filesizeBase: 1000,
+      addRemoveLinks: true,
+      dictRemoveFile: 'Eliminar archivo',
+      dictFileTooBig: 'Archivo demasiado grande ({{filesize}}MiB). Máximo tamaño: {{maxFilesize}}MiB.',
+      init: function () {
+        this.on('success', function (file, response) {
+          console.log('File uploaded: ', file.name);
+          console.log('Server response:', response);
         });
-    },
-};
-
+      },
+    });
+  }
+});
 </script>
 
 

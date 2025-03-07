@@ -8,7 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AboutUs: typeof import('./resources/js/Sections/AboutUs.vue')['default']
-    Accordion: typeof import('./resources/js/Components/Accordion.vue')['default']
+    Accordion: typeof import('./resources/js/Sections/Accordion.vue')['default']
     AceptaCondiciones: typeof import('./resources/js/Components/AceptaCondiciones.vue')['default']
     ActionButton: typeof import('./resources/js/Components/ActionButton.vue')['default']
     ActionMessage: typeof import('./resources/js/Components/ActionMessage.vue')['default']
@@ -35,6 +35,7 @@ declare module 'vue' {
     CardContent: typeof import('./resources/js/Components/CardContent.vue')['default']
     Categorias: typeof import('./resources/js/Components/Categorias.vue')['default']
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']
+    ClientOnly: typeof import('@duannx/vue-client-only')['default']
     ClientsOrPartners: typeof import('./resources/js/Sections/ClientsOrPartners.vue')['default']
     Comentario: typeof import('./resources/js/Components/Comentarios/Comentario.vue')['default']
     Comentarios: typeof import('./resources/js/Components/Comentarios/Comentarios.vue')['default']
@@ -147,9 +148,6 @@ declare module 'vue' {
     TextInput: typeof import('./resources/js/Components/TextInput.vue')['default']
     TextText: typeof import('./resources/js/Sections/TextText.vue')['default']
     TimeAgo: typeof import('./resources/js/Components/TimeAgo.vue')['default']
-    TinyMCE: typeof import('./resources/js/Components/TinyMCE.vue')['default']
-    TinyMCEFullField: typeof import('./resources/js/Components/Backpack/TinyMCEFullField.vue')['default']
-    TinyMCESimpleField: typeof import('./resources/js/Components/Backpack/TinyMCESimpleField.vue')['default']
     TipTapEditor: typeof import('./resources/js/Components/TipTapEditor.vue')['default']
     TipTapEditorFullField: typeof import('./resources/js/Components/Backpack/TipTapEditorFullField.vue')['default']
     TipTapEditorSimpleField: typeof import('./resources/js/Components/Backpack/TipTapEditorSimpleField.vue')['default']

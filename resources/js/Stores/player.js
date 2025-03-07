@@ -21,8 +21,6 @@ const player = reactive({
   audioProcessingEnabled: true,
 
   init() {
-    if (!window || !window.Audio) return;
-
     this.audio = new Audio();
     this.audio.preload = "auto";
     this.audio.autoplay = this.autoplay;
@@ -477,12 +475,15 @@ function installEvents() {
 }
 
 // Initialize player on module load
-player.init();
+if (typeof window !== 'undefined' && window.Audio)
+{
+    player.init();
 
-installEvents();
+    installEvents();
 
-// activación/desactivación de procesamiento de audio por teclado
-document.addEventListener("keydown", _handleKeyPress);
+    // activación/desactivación de procesamiento de audio por teclado
+    document.addEventListener("keydown", _handleKeyPress);
+}
 
 function _handleKeyPress(event) {
   // Combina Ctrl + Shift + P para alternar el procesamiento de audio

@@ -64,7 +64,7 @@
 <script setup>
 import { Carousel, Slide } from '@jambonn/vue-concise-carousel';
 import '@jambonn/vue-concise-carousel/lib/vue-concise-carousel.css'
-import { getImageUrl } from '@/composables/imageutils.js'
+import { getImageUrl } from '@/Stores/image.js'
 
 const props = defineProps({
     centro: {

@@ -3,6 +3,8 @@
 export class AudioProcessor {
 
     constructor() {
+        if(typeof window === 'undefined') return;
+
         if (!webApiAvailable()) {
             console.warn("Web Audio API no está disponible. Usando funcionalidades básicas de audio.");
             return;
@@ -147,5 +149,6 @@ export class AudioProcessor {
 }
 
 export const webApiAvailable = () => {
+  if(typeof window === 'undefined') return false;
   return !!(window.AudioContext || window.webkitAudioContext);
 };

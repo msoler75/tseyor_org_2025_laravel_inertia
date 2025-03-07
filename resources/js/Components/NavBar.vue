@@ -95,22 +95,89 @@ const page = usePage()
 const nav = useNav()
 const selectors = useSelectors()
 const portada = computed(() => page.url == '/')
-const isDark = useDark();
-const toggleDark = useToggle(isDark);
-
 
 const showingNavigationDropdown = ref(false);
 
 
+// 1. Obtener valor inicial del servidor
+const initialTheme = usePage().props.initialTheme // 'dark' o 'light'
+
+// 2. Configurar useDark con override de storage
+const isDark = useDark({
+  storageKey: 'theme',
+  selector: 'html',
+  valueDark: 'winter',
+  initialValue: initialTheme, // <--- Key no documentada pero funcional
+  onChanged(newValue) {
+    // update the dom, call the API or something
+    updateTheme(newValue);
+  },
+});
+
+
+const toggleDark = useToggle(isDark);
+
+/*
+function updateDarkState() {
+    // Evitar ejecución en SSR
+    if (typeof window === 'undefined') return;
+    if (isDark.value)
+        document.documentElement.setAttribute('data-theme', 'winter')
+    else
+        document.documentElement.setAttribute('data-theme', 'summer')
+}
+*/
+
+// Actualizar cookie en servidor y atributo HTML
+function updateTheme(isDarkMode){
+    console.log('updateTheme', isDarkMode)
+  const themeValue = isDarkMode ? 'dark' : 'light';
+
+  // Evitar ejecución en SSR
+  if (typeof window === 'undefined') return;
+
+  // 1. Actualizar localStorage
+  localStorage.setItem('theme', themeValue);
+
+  // 2. Actualizar cookie en servidor
+  fetch('/update-theme', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ theme: themeValue }),
+  });
+
+  // 3. Aplicar cambios visuales
+  document.documentElement.setAttribute('data-theme', isDarkMode ? 'winter' : '');
+};
+
+
+
+// para un caso especial de tema usando globalSearch
+// esto lo hacemos únicamente para el caso muy particular de que globalsearch pueda tambien ponerse en dark mode en la portada
+function updateSpecialCaseTheme() {
+    if(typeof window === 'undefined') return // desactivado en SSR
+    const themePortada = portada.value && nav.scrollY < 300 ? 'winter' : ''
+    document.querySelector("body").setAttribute('data-theme', themePortada)
+}
+
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKey);
+
+    updateTheme(isDark.value)
+
+    watch(() => `${nav.scrollY}+${portada.value}`, () => {
+        updateSpecialCaseTheme()
+    })
+
+    updateSpecialCaseTheme()
+})
 
 
 ////////////////////////
 // DEV LOGINS
-
-onMounted(() => {
-    window.addEventListener('keydown', handleKey);
-})
-
 
 
 function handleKey(event) {
@@ -121,6 +188,7 @@ function handleKey(event) {
 }
 
 ////////////////////////////////////////////////////////////////
+
 
 
 </script>
