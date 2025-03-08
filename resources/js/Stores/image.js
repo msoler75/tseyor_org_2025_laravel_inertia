@@ -39,6 +39,9 @@ export const getImageSize = async function (url) {
       }).then(resolve).catch(reject);
     }
 
+    if(typeof window === 'undefined')
+        return reject(error);
+
     // No hay consulta pendiente, iniciamos una nueva
     imagenes_pendientes.push({ url, esperando: [] });
 
@@ -153,7 +156,7 @@ export const getSrcImageUrl = (url) => {
   var imagesInfo = []
 
   export const saveImagesInfo = function(_imagesInfo) {
-    imagesInfo = _imagesInfo
+    imagesInfo = _imagesInfo ? _imagesInfo : []
   }
 
   export const getImageInfo = function(url) {

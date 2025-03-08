@@ -23,7 +23,7 @@ import SelectField from "../Components/Backpack/SelectField.vue";
 import TimeAgo from "../Components/TimeAgo.vue";
 import FileManager from "../Components/FileManager.vue";
 import WorkerStatus from "../Components/Admin/WorkerStatus.vue";
-import AudioVideoPlayer from "../Components/AudioVideoPlayer.vue";
+import AudioVideoPlayer from "../AsyncComponents/AudioVideoPlayer.vue";
 //import AudioStateIcon from "../Components/AudioStateIcon.vue";
 
 // only in forms

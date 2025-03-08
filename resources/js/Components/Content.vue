@@ -2,11 +2,10 @@
     <Prose class="text-container break-words overflow-x-auto">
         <ContentNode :node="arbol" :use-image="optimizeImages" @click="handleClick" />
 
-        <!--
-            <ImagesViewer :show="showImagesViewer" @close="showImagesViewer = false"
-            :images="images?.map((x) => x + '?mw=3000&mh=3000')"  :index="imageIndex"
-            />
-            -->
+        <ImagesViewer :show="showImagesViewer" @close="showImagesViewer = false"
+        :images="images?.map((x) => x + '?mw=3000&mh=3000')"  :index="imageIndex"
+        />
+
     </Prose>
 </template>
 
@@ -164,7 +163,7 @@ const imageIndex = ref(0)
 function handlePreview(img) {
     imageIndex.value = parseInt(img.getAttribute("image-index"))
     showImagesViewer.value = true
-    // console.log('clicked ', index, images.value[index])
+    console.log('clicked ', imageIndex.value, images.value[imageIndex.value])
 }
 
 

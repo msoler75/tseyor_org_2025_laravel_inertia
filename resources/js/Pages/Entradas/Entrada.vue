@@ -61,6 +61,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    imagenesInfo: {
+        type: Object,
+        required: false,
+    }
 });
 
 saveImagesInfo(props.imagenesInfo)

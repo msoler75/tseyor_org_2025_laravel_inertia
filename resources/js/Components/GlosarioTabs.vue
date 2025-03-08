@@ -1,5 +1,5 @@
 <template>
-    <div class="tabs tabs-boxed mb-12 gap-7 bg-base-300 w-fit uppercase font-bold">
+    <div class="tabs tabs-boxed mb-12 gap-7 bg-base-300 w-fit max-w-full uppercase font-bold">
         <component v-for="tab, index of tabs" :key="index" :href="route(tab.route)" :is="IAmHere(route(tab.route))?'span': Link" class="tab"
             :class="IAmHere(route(tab.route)) ? 'tab-active cursor-default' : ''"
             :title="tab.title" v-html="tab.label"

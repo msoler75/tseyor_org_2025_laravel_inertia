@@ -72,7 +72,7 @@
 
 
 <script setup>
-import Link from './Link.vue';
+import Link from '@/Components/Link.vue';
 
 const nav = useNav()
 
