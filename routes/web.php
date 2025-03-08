@@ -11,6 +11,7 @@ use App\Http\Controllers\NodosController;
 use App\Http\Controllers\NoticiasController;
 use App\Http\Controllers\ComunicadosController;
 use App\Http\Controllers\EntradasController;
+use App\Http\Controllers\PreguntasController;
 use App\Http\Controllers\GuiasController;
 use App\Http\Controllers\LugaresController;
 use App\Http\Controllers\TerminosController;
@@ -150,25 +151,9 @@ Route::get('eventos', [EventosController::class, 'index'])->name('eventos');
 Route::get('eventos/{slug}', [EventosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('evento');
 
 
-Route::get('preguntas-frecuentes', function () {
-    return Inertia::render('Preguntas/Index', [])
-        ->withViewData(SEO::get('preguntas-frecuentes'));
-})->name('preguntas');
+Route::get('preguntas-frecuentes', [PreguntasController::class, 'index'])->name('preguntas');
+Route::get('preguntas-frecuentes/{slug}', [PreguntasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('preguntas.seccion');
 
-Route::get('preguntas-frecuentes/1', function () {
-    return Inertia::render('Preguntas/Preguntas1', [])
-        ->withViewData(SEO::get('preguntas-frecuentes'));
-})->name('preguntas1');
-
-Route::get('preguntas-frecuentes/2', function () {
-    return Inertia::render('Preguntas/Preguntas2', [])
-        ->withViewData(SEO::get('preguntas-frecuentes'));
-})->name('preguntas2');
-
-Route::get('preguntas-frecuentes/3', function () {
-    return Inertia::render('Preguntas/Preguntas3', [])
-        ->withViewData(SEO::get('preguntas-frecuentes'));
-})->name('preguntas3');
 
 Route::get('salas', [SalasController::class, 'index'])->name('salas');
 Route::get('salas/{slug}', [SalasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('sala');

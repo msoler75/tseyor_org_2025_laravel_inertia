@@ -1,13 +1,5 @@
 <template>
 
-    <div class="preguntas md:container mx-auto my-12" :class="titulo ? 'min-h-[60vh]' : ''">
-
-        <div class="flex container justify-between items-center mb-7">
-            <Back :href="backUrl">{{ backText }}</Back>
-            <Link href="/libros/preguntas-y-respuestas-tseyor" class="btn btn-sm btn-primary flex gap-2 items-center"
-                title='Descarga esta sección en pdf'>
-            <Icon icon="ph:download-duotone" />Descargar libro</Link>
-        </div>
 
         <div v-if="titulo"
             class="py-10 sm:px-10 lg:p-20 max-w-[960px] container mx-auto my-12 bg-base-100 shadow hyphens-auto md:rounded-3xl md:text-justify">
@@ -17,7 +9,6 @@
             <slot />
         </div>
 
-    </div>
 
 </template>
 

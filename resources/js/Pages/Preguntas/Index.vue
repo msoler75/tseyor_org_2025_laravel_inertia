@@ -11,8 +11,8 @@
                 ampliar la información.</p>
 
             <GridAppear col-width="14rem" class="gap-5">
-                <CardContent v-for="section of sections" :key="section.title" :title="section.title"
-                    :description="section.description" :href="route(section.route)" :gradient="false" />
+                <CardContent v-for="seccion of secciones" :key="seccion.titulo" :title="seccion.titulo"
+                    :description="seccion.descripcion" :href="route('preguntas.seccion', seccion.slug)" :gradient="false" />
             </GridAppear>
 
         </Section>
@@ -34,27 +34,11 @@
 
 <script setup>
 
-
-
-const sections = [
-    {
-        title: "Extraterrestres o hermanos mayores, y otros seres",
-        description: "Explora la naturaleza de nuestros amigos extraterrestres.",
-        icon: "https://icones.org/icons/extraterrestres.png",
-        route: "preguntas1"
+const props = defineProps({
+    secciones: {
+        type: Array,
+        required: true,
     },
-    {
-        title: "El Salto Cuántico",
-        description: "Descubre el concepto del salto cuántico y su impacto en este planeta.",
-        icon: "https://icones.org/icons/salto_cuantico.png",
-        route: "preguntas2"
-    },
-    {
-        title: "Sobre el grupo TSEYOR",
-        description: "Conoce más sobre el grupo TSEYOR y su misión.",
-        icon: "https://icones.org/icons/tseyor.png",
-        route: "preguntas3"
-    }
-];
+});
 
 </script>

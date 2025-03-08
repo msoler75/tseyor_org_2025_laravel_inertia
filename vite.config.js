@@ -5,6 +5,18 @@ import vue from "@vitejs/plugin-vue";
 import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
 import { visualizer } from "rollup-plugin-visualizer";
+// import ssr from 'vite-plugin-ssr/plugin'
+import asyncComponentsPlugin from './vite-plugin-async-components.js';
+
+
+
+import path from 'path';
+// import { fileURLToPath } from 'url';
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+
 
 export default defineConfig({
   build : {
@@ -26,7 +38,8 @@ export default defineConfig({
   }, */
   resolve: {
     alias: {
-        ziggy: 'vendor/tightenco/ziggy/dist/vue.es.js'
+        ziggy: 'vendor/tightenco/ziggy/dist/vue.es.js',
+        '@': path.resolve(__dirname, './resources/js')
     },
   },
   plugins: [
@@ -95,16 +108,21 @@ export default defineConfig({
             "onUnmounted",
             "defineEmits",
             "useSlots",
+            "defineAsyncComponent"
           ],
-          "@inertiajs/vue3": ["router", "usePage", "useForm"],
+          "@inertiajs/vue3": ["router", "usePage", "useForm",],
           "@/Stores/nav.js":  ["useNav"],
         },
       ],
     }),
+    asyncComponentsPlugin(),
     viteCompression(),
     visualizer(),
   ],
   define: {
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: true
+  },
+  ssr: {
+    external : ['Modal', 'Page', 'Footer', 'NavAside', 'ProcesarImagen','TipTapEditor', 'TipTapFullMenuBar']
   }
 });

@@ -10,6 +10,7 @@ declare global {
   const MarkdownToHtml: typeof import('./resources/js/composables/markdown.js')['MarkdownToHtml']
   const computed: typeof import('vue')['computed']
   const currentTheme: typeof import('./resources/js/composables/themeAdapter.js')['currentTheme']
+  const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
   const defineEmits: typeof import('vue')['defineEmits']
   const detectFormat: typeof import('./resources/js/composables/markdown.js')['detectFormat']
   const fechaEs: typeof import('./resources/js/composables/textutils.js')['fechaEs']

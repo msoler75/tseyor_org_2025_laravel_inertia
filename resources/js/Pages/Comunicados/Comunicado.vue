@@ -52,6 +52,7 @@
 </template>
 
 <script setup>
+import {saveImagesInfo} from "@/Stores/image";
 import { parseFiles } from '@/composables/parseFiles'
 
 const props = defineProps({
@@ -67,6 +68,11 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    imagenesInfo: {
+        type: Object,
+        required: false,
+    }
 });
 
+saveImagesInfo(props.imagenesInfo)
 </script>

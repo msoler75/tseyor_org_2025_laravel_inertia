@@ -9,7 +9,7 @@ use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\ProcesarAudios;
-
+use App\Pigmalion\Markdown;
 class ComunicadosController extends Controller
 {
 
@@ -172,10 +172,15 @@ class ComunicadosController extends Controller
         if($request->has('resaltar'))
             $comunicado->texto = BusquedasHelper::resaltarPalabras($comunicado->texto, $request->input('resaltar'));
 
+             // toma el texto de la entrada, obtiene las imagenes, y de cada una de ellas, obtiene las dimensiones
+        $imagenes = Markdown::images($comunicado->texto);
+        $imagenesInfo = ImagenesController::info($imagenes);
+
         return Inertia::render('Comunicados/Comunicado', [
             'comunicado' => $comunicado,
-            'siguiente' => $siguiente ?? null,
-            'anterior' => $anterior ?? null
+            'siguiente' => $siguiente,
+            'anterior' => $anterior,
+            'imagenesInfo' => $imagenesInfo
         ])
             ->withViewData(SEO::from($comunicado));
     }

@@ -1,5 +1,5 @@
 <template>
-    <Teleport v-if="mounted" to="#afterNav" :disabled="inline || !floating">
+    <div to="#afterNav" :disabled="!mounted || inline || !floating">
         <Link :href="enlace"
             class="transition duration-250 flex h-fit gap-2 text-sm items-center hover:underline select-none"
             :class="calcClass" v-bind="$attrs" :fadeOut="fadeOut">
@@ -8,7 +8,7 @@
             <slot />
         </div>
         </Link>
-    </Teleport>
+    </div>
     <span v-if="!(inline || !floating)"></span>
 </template>
 
@@ -32,12 +32,13 @@ const props = defineProps({
     }
 })
 
+
+const nav = useNav()
 const floating = computed(() => nav.scrollY >= props.floatAtY)
 const currentUrl = usePage().url
 const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
 const enlace = ref(props.href || parentUrl)
 
-const nav = useNav()
 
 
 const mounted = ref(false)

@@ -11,6 +11,7 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "ziggy";
 import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
+import { registerAsyncComponents } from '../../async_components.d.ts';
 //import FloatingVue from 'floating-vue'
 // import VueSocialSharing from 'vue-social-sharing'
 
@@ -94,10 +95,11 @@ createInertiaApp({
       // .use(VueSocialSharing)
       .use(plugin)
       .use(ZiggyVue, Ziggy)
-      .mount(el);
-    // .use(FloatingVue)
-    // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs
-    // app.config.globalProperties.$nav = useNav()
+      // .use(FloatingVue)
+      // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs
+      // app.config.globalProperties.$nav = useNav()
+      registerAsyncComponents(app);
+      app.mount(el);
     return app;
   },
   progress: {

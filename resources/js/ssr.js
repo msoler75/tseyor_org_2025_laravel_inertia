@@ -8,6 +8,11 @@ import { Head } from "@inertiajs/vue3";
 import { ZiggyVue } from "ziggy";
 import { Ziggy } from './ziggy.js'
 import { JSDOM } from 'jsdom'
+import axios from 'axios'
+import { registerAsyncComponents } from '../../async_components.d.ts';
+
+global.axios = axios
+global.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 // Crear una instancia de JSDOM
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>')
@@ -29,7 +34,7 @@ createServer(page =>
       return page
     },
     setup({ App, props, plugin }) {
-      return createSSRApp({
+      const app = createSSRApp({
         render: () => h(App, props),
       })
       .use(plugin)
@@ -38,6 +43,10 @@ createServer(page =>
         components: { Icon, Head },
         methods: { useNav }
       })
+
+      registerAsyncComponents(app);
+
+      return app
     },
   }),
 )

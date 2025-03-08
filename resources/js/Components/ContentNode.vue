@@ -1,44 +1,28 @@
 <template>
-    <LazyHydrationWrapper
-        v-if="useImage && node.tagName && node.tagName.toLowerCase() === 'img'"
-        :when-visible="{ rootMargin: '50px' }"
-        @hydrated="onHydrated"
-    >
-        <component
-            :is="tag"
-            v-bind="node.attributes"
-            :src-width="width"
-            :src-height="height"
-            :lazy="node.attributes.loading != 'eager'"
-        />
-    </LazyHydrationWrapper>
-    <LazyHydrationWrapper
+    <component
+        v-if="node.tagName && node.tagName.toLowerCase() === 'img'"
+        :is="tag"
+        v-bind="node.attributes"
+        :src-width="width"
+        :src-height="height"
+        :lazy="node.attributes.loading != 'eager'"
+    />
+    <component
         v-else-if="node.tagName && node.tagName.toLowerCase() === 'a'"
-        :when-visible="{ rootMargin: '50px' }"
-        @hydrated="onHydrated"
+        :is="tag"
+        v-bind="node.attributes"
     >
-        <component :is="tag" v-bind="node.attributes">
-            <template v-for="element of node.children">
-                <ContentNode :node="element" :use-image="useImage" />
-            </template>
-        </component>
-    </LazyHydrationWrapper>
-    <LazyHydrationWrapper v-else>
-        <component v-if="node.tagName" :is="tag" v-bind="node.attributes">
-            <template v-for="element of node.children">
-                <ContentNode :node="element" :use-image="useImage" />
-            </template>
-        </component>
-        <template v-else>
-            {{ node.textContent }}
-        </template>
-    </LazyHydrationWrapper>
+        <ContentNode v-for="element of node.children" :node="element" :use-image="useImage" />
+    </component>
+    <component v-else-if="node.tagName" :is="tag" v-bind="node.attributes">
+        <ContentNode  v-for="element of node.children" :node="element" :use-image="useImage" />
+    </component>
+    <template v-else>
+        {{ node.textContent }}
+    </template>
 </template>
 
 <script setup>
-// Se hidratan solo los componentes Image y Link
-
-import { LazyHydrationWrapper } from "vue3-lazy-hydration";
 import Image from "./Image.vue";
 import Link from "./Link.vue";
 import { getImageInfo } from "@/Stores/image.js";
@@ -60,7 +44,7 @@ const tag = computed(() => {
         if (!href) return "a";
         if (href.match(/https?:\/\/[^/]+/)?.[0] === myDomain) return Link;
         if (!href.match(/^https?:\/\/[^/]+/))
-            // enlace relativo
+            // ya es un enlace relativo
             return Link;
     }
 
