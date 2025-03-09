@@ -18,7 +18,7 @@
         "@tailwindcss/typography": "^0.5.15",
         "@vitejs/plugin-vue": "^4.6.2",
         "@vue/server-renderer": "^3.5.3",
-        "axios": "^1.7.7",
+        "axios": "^1.8.2",
         "daisyui": "^4.12.10",
         "laravel-vite-plugin": "^0.7.5",
         "rollup-plugin-visualizer": "^5.12.0",

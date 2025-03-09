@@ -1,5 +1,5 @@
 /.phpunit.cache
-/bootstrap/ssr
+/bootstrap
 /node_modules
 /public/hot
 /public/build
@@ -29,4 +29,5 @@ putty.cmd
 /public/build_old
 /public/page-cache
 
+# ignore.log files
 *.log
