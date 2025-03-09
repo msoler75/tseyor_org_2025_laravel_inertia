@@ -116,7 +116,12 @@ export default defineConfig({
       ],
     }),
     asyncComponentsPlugin(),
-    viteCompression(),
+    viteCompression({
+        filter: /bootstrap\/ssr/, // Excluye TODOS los archivos en esta ruta
+        threshold: 1024, // Mínimo 1KB para comprimir
+        algorithm: 'gzip', // Algoritmo principal
+        deleteOriginFile: false // Mantiene los originales
+      }),
     visualizer(),
   ],
   define: {

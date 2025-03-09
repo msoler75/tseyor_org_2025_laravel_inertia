@@ -2,14 +2,14 @@
     <Page>
 
         <div class="flex justify-between items-center mb-20">
-            <Back>Salas</Back>
+            <Back>Todas las Salas</Back>
             <div class="flex gap-2">
                 <Share />
                 <AdminLinks modelo="sala" necesita="administrar directorio" :contenido="sala"/>
             </div>
         </div>
 
-        <div class="max-w-[900px] mx-auto flex flex-col md:flex-row gap-10 mt-12">
+        <div class="md:max-w-[640px] mx-auto flex flex-col gap-10 mt-12">
 
             <h1>Salas virtuales</h1>
 
