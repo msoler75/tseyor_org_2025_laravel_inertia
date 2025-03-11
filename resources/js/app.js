@@ -14,7 +14,6 @@ import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
 import { registerAsyncComponents } from '../../async_components.d.ts';
 //import FloatingVue from 'floating-vue'
-// import VueSocialSharing from 'vue-social-sharing'
 import useRoute from '@/composables/useRoute.js';
 import {useNav} from '@/Stores/nav.js';
 
@@ -98,7 +97,6 @@ createInertiaApp({
         components: { Icon, Head },
         methods: {useNav}
       })
-      // .use(VueSocialSharing)
       .use(plugin)
       .use(ZiggyVue, Ziggy)
       // .use(FloatingVue)

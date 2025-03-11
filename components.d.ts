@@ -122,6 +122,7 @@ declare module 'vue' {
     SelectField: typeof import('./resources/js/Components/Backpack/SelectField.vue')['default']
     Services: typeof import('./resources/js/Sections/Services.vue')['default']
     Share: typeof import('./resources/js/Components/Share.vue')['default']
+    ShareNetwork: typeof import('./resources/js/Components/ShareNetwork.vue')['default']
     SocialMediaFeeds: typeof import('./resources/js/Sections/SocialMediaFeeds.vue')['default']
     Space: typeof import('./resources/js/Components/Space.vue')['default']
     Spinner: typeof import('./resources/js/Components/Spinner.vue')['default']
