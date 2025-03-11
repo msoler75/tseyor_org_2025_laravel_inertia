@@ -97,7 +97,7 @@ onMounted(() => document.addEventListener('keydown', closeOnEscape));
     }
 }); */
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     document.removeEventListener('keydown', closeOnEscape);
     //document.body.style.overflow = null;
 });

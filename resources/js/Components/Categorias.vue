@@ -1,7 +1,8 @@
 <template>
     <div class="sticky top-16 flex justify-center w-full z-30"
-        :class="[selectBreakpoint == 'lg' ? 'lg:hidden' : selectBreakpoint == 'md' ? 'md:hidden' : selectBreakpoint == 'sm' ? 'sm:hidden' : 'xs:hidden',
-            divSelectClass
+        :class="[
+            divSelectClass,
+            selectBreakpoint == 'lg' ? 'lg:hidden' : selectBreakpoint == 'md' ? 'md:hidden' : selectBreakpoint == 'sm' ? 'sm:hidden' : 'xs:hidden',
         ]">
         <select class="mx-auto categorias max-w-full" @change="onCategoria" :value="selectHrefActual"
             :class="selectClass">
@@ -12,8 +13,11 @@
         </select>
     </div>
     <div class="hidden card bg-base-100 shadow self-baseline flex-wrap flex-row p-5 lg:p-10 gap-4 sticky top-16 z-30 overflow-x-auto"
-        :class="divClass + ' ' + (columnaBreakpoint == '2xl' ? '2xl:flex-col' : columnaBreakpoint == 'xl' ? 'xl:flex-col' : columnaBreakpoint == 'lg' ? 'lg:flex-col' : columnaBreakpoint == 'md' ? 'md:flex-col' : '') + ' ' +
-            (selectBreakpoint == 'lg' ? 'lg:flex' : selectBreakpoint == 'md' ? 'md:flex' : selectBreakpoint == 'sm' ? 'sm:flex' : 'xs:flex')">
+        :class="[
+            divClass,
+            columnaBreakpoint == '2xl' ? '2xl:flex-col' : columnaBreakpoint == 'xl' ? 'xl:flex-col' : columnaBreakpoint == 'lg' ? 'lg:flex-col' : columnaBreakpoint == 'md' ? 'md:flex-col' : '',
+            selectBreakpoint == 'lg' ? 'lg:flex' : selectBreakpoint == 'md' ? 'md:flex' : selectBreakpoint == 'sm' ? 'sm:flex' : 'xs:flex'
+            ]"> 
             <div v-if="title" class="hidden md:inline text-xl font-bold md:mb-4">{{ title }}</div>
         <Link v-for="categoria of categorias" :key="categoria.nombre" :href="categoria.href"
             :class="actual.toLowerCase() == categoria.valor.toLowerCase() ? 'text-primary font-bold' : ''" @click="clickCategoria(categoria.valor)"

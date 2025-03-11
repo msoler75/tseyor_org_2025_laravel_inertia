@@ -10,9 +10,12 @@ import { Ziggy } from './ziggy.js'
 import { JSDOM } from 'jsdom'
 import axios from 'axios'
 import { registerAsyncComponents } from '../../async_components.d.ts';
+import useRoute from '@/composables/useRoute.js';
+import {useNav} from '@/Stores/nav.js';
 
 global.axios = axios
 global.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+global.route = useRoute()
 
 // Crear una instancia de JSDOM
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>')

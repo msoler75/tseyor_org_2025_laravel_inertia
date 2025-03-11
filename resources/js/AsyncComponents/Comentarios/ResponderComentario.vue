@@ -24,9 +24,6 @@
 
 
 <script setup>
-import { usePage } from '@inertiajs/vue3';
-import axios from 'axios';
-import { nextTick, onMounted } from 'vue';
 const page = usePage()
 const user = page.props.auth.user
 const props = defineProps({

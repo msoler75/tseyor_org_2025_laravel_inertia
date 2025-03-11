@@ -60,7 +60,6 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
 import Dropzone from 'dropzone';
 if (typeof window !== 'undefined') {
   import('dropzone/dist/dropzone.css');

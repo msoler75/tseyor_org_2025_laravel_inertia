@@ -1,7 +1,4 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { usePage } from '@inertiajs/vue3';
-
 const page = usePage()
 const show = ref(true);
 const style = computed(() => page.props?.jetstream?.flash?.bannerStyle || 'success');

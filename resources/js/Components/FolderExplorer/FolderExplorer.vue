@@ -559,7 +559,7 @@ onMounted(() => {
         breadcrumb.value.scrollTo(breadcrumb.value.scrollWidth, 0);
 });
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     document.removeEventListener("keydown", onKeyDown);
 });
 

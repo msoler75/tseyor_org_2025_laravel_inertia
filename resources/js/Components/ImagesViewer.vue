@@ -22,7 +22,7 @@
                 <!-- Error de carga de imagen -->
                 <div v-show="state.imgState === 'error'" class="text-gray-700" aria-hidden="true"
                     :style="`transform: scale(${style.imgScale}) rotate(${style.imgRotate}deg);`">
-                    <Icon icon="ph:image-broken-duotone" class="text-9xl" />
+                    <Icon icon="ph:image-broken-duotone" class="text-9xl pepet" />
                 </div>
             </div>
 

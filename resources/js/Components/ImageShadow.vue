@@ -1,5 +1,5 @@
 <template>
-    <div class="vue-image-shadow transition duration-200" :class="shadowClass" :style="shadowStyle">
+    <div class="vue-image-shadow" :class="shadowClass" :style="shadowStyle">
         <Image class="vue-image-shadow-img" :src="finalSrc" :alt="alt" :width="width" :height="height" :style="imgStyle"
         @loaded="emit('loaded')"/>
         <div class="vue-image-shadow-card" :style="cardStyle"/>

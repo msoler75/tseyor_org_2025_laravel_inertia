@@ -138,7 +138,7 @@ Hay varios tipos de situaciones:
 function init() {
     // if (!isClient) return // No ejecutamos en SSR
 
-    console.log(
+    /*console.log(
         "image:init()",
         props.src,
         "fallback:",
@@ -147,7 +147,7 @@ function init() {
         props.width,
         "props.height:",
         props.height
-    );
+    );*/
 
     if (!imageSrc.value) return;
 

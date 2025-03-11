@@ -9,11 +9,16 @@ import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 // import { usePage } from "@inertiajs/vue3";
 import { ZiggyVue } from "ziggy";
+import { Ziggy } from './ziggy.js'
 import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
 import { registerAsyncComponents } from '../../async_components.d.ts';
 //import FloatingVue from 'floating-vue'
 // import VueSocialSharing from 'vue-social-sharing'
+import useRoute from '@/composables/useRoute.js';
+import {useNav} from '@/Stores/nav.js';
+
+window.route = useRoute()
 
 const appName = "TSEYOR.org";
 
@@ -85,12 +90,13 @@ createInertiaApp({
     });
   },
   setup({ el, App, props, plugin }) {
+
     // const app = createApp({ render: () => h(App, props) })
       const app = createSSRApp({ render: () => h(App, props) })
       // https://chriswray.dev/posts/how-to-add-components-globally-in-an-inertiajs-application
       .mixin({
         components: { Icon, Head },
-        methods: { useNav },
+        methods: {useNav}
       })
       // .use(VueSocialSharing)
       .use(plugin)

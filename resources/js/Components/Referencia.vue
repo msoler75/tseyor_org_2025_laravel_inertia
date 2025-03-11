@@ -1,8 +1,8 @@
 <template>
-    <div class="inline text-primary cursor-pointer xafter:content-['↗'] hover:underline hyphens-none"  ref="referencia"
+    <span class="inline text-primary cursor-pointer xafter:content-['↗'] hover:underline hyphens-none"  ref="referencia"
     @click="buscar">
         <slot></slot>
-    </div>
+    </span>
 </template>
 
 

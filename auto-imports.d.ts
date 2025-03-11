@@ -8,6 +8,7 @@ declare global {
   const DecodeHtml: typeof import('./resources/js/composables/markdown.js')['DecodeHtml']
   const HtmlToMarkdown: typeof import('./resources/js/composables/markdown.js')['HtmlToMarkdown']
   const MarkdownToHtml: typeof import('./resources/js/composables/markdown.js')['MarkdownToHtml']
+  const TransitionGroup: typeof import('vue')['TransitionGroup']
   const computed: typeof import('vue')['computed']
   const currentTheme: typeof import('./resources/js/composables/themeAdapter.js')['currentTheme']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
@@ -38,6 +39,7 @@ declare global {
   const useForm: typeof import('@inertiajs/vue3')['useForm']
   const useNav: typeof import('@/Stores/nav.js')['useNav']
   const usePage: typeof import('@inertiajs/vue3')['usePage']
+  const useRoute: typeof import('./resources/js/composables/useRoute.js')['default']
   const useSlots: typeof import('vue')['useSlots']
   const watch: typeof import('vue')['watch']
 }

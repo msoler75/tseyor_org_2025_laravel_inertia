@@ -1,6 +1,8 @@
 import navigationItems from "../navigation.js";
-
-var route = null;
+//import "../composables/useRoute.js";
+//import { useRoute } from 'ziggy-js';
+//const _route = route // useRoute();
+let _route = ()=>''
 
 const relativeUrl = (url) => {
   // console.log('relativeUrl', url)
@@ -12,7 +14,7 @@ const relativeUrl = (url) => {
 
 const mapRoute = (item) => {
   const nitem = item.route
-    ? { ...item, url: relativeUrl(route(item.route)) }
+    ? { ...item, url: relativeUrl(_route(item.route)) }
     : item;
   if (nitem.url) nitem.url = relativeUrl(nitem.url);
   return nitem;
@@ -35,7 +37,7 @@ const mapItem = (item) => {
 const mapGroup = (group) => ({
     ...group,
     items: group.items.map((item) =>
-      item.route ? { ...item, url: relativeUrl(route(item.route)) } : item
+      item.route ? { ...item, url: relativeUrl(_route(item.route)) } : item
     ),
   });
 
@@ -73,8 +75,9 @@ const state = reactive({
   dontScroll: false,
   hoverDeactivated: false, // para evitar que se active el hover en la reentrada del mouse a la ventana
   tabHovering: null, // tab en el que el mouse se encuentra durante la desactivación del hover
-  init(_routeFunc) {
-    route = _routeFunc;
+  init(_r){
+    console.log('nav.init!!!!!!')
+    _route = _r
     this.items = navigationItems.map(mapItem);
   },
   in(tab, url) {
@@ -220,6 +223,8 @@ const state = reactive({
 state.activeTab = computed(() => {
   return state.items.find((tab) => tab.open);
 });
+
+state.route = _route
 
 export function useNav() {
   return state;
