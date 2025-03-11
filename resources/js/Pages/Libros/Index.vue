@@ -15,7 +15,7 @@
             <Referencia>Guías Estelares</Referencia>.
         </p>
 
-        <p>El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</p>
+        <p class="my-3">El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</p>
 
         <div class="flex w-full justify-between mb-5">
             <SearchInput v-model="query" class="flex-grow">
@@ -77,7 +77,6 @@
 
 <script setup>
 import useSelectors from '@/Stores/selectors'
-import { ucFirst } from '@/composables/textutils'
 
 
 const selectors = useSelectors()

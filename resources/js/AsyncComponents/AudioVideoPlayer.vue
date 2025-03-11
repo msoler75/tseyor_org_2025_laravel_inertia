@@ -169,8 +169,8 @@ import usePlayer from '@/Stores/player'
 
 const player = usePlayer()
 const myvideo = ref(null)
-const width = ref(Math.min(1080, screen.width))
-const height = ref(Math.min(768, screen.height))
+const width = ref(1080)
+const height = ref(768)
 
 // expansión de audioplayer
 
@@ -256,6 +256,8 @@ const formatTime = (ts) => {
 onMounted(() => {
     console.log('AudioPlayer Mounted')
     player.video = myvideo.value
+    width.value=Math.min(1080, screen.width)
+    height.value=Math.min(768, screen.height)
 })
 
 </script>

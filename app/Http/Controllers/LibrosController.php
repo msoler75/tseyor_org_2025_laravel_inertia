@@ -116,7 +116,7 @@ class LibrosController extends Controller
         $descripcion_tokens = preg_split("/[,.\(\)\t\s\n\r]/", strtolower(BusquedasHelper::descartarPalabrasComunes($libro->descripcion)[0]), -1, PREG_SPLIT_NO_EMPTY);
         $descripcion_tokens = array_map(function($m) { return "\\b".$m."\\b";}, $descripcion_tokens);
         $descripcion_en_or = implode("|", $descripcion_tokens);
-        $guias = Guia::where('libros', 'like', '%' . $libro->slug . '%')
+        $guias = Guia::select('nombre', 'slug', 'imagen')->where('libros', 'like', '%' . $libro->slug . '%')
         ->orWhereRaw('LOWER(nombre) REGEXP ?', [$descripcion_en_or])
         ->get()
         ;

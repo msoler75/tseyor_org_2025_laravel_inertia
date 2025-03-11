@@ -45,8 +45,11 @@ class HandleInertiaRequests extends Middleware
             'anuncio' => $anuncio,
             'meta_image_default' => config('seo.image.fallback'),
             'csrf_token' => csrf_token(),
-            'initialTheme' =>  Cookie::get('theme', 'light')
         ]);
+
+        // si no tiene el header X-INERTIA:
+        if(!$request->header('X-Inertia'))
+        $r['initialTheme'] = Cookie::get('theme', 'light');
 
         // Algunas páginas se van a cachear con page-cache, así que debe estar limpia de sesión
         // si es la url de portada y no existe cabecera http de X-INERTIA:

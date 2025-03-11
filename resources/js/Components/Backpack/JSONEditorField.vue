@@ -14,7 +14,7 @@
 // import JsonEditorVue from 'json-editor-vue'
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
 // npm i json-editor-vue vanilla-jsoneditor
-import {defineAsyncComponent} from 'vue'
+// import {defineAsyncComponent} from 'vue'
 
  // importación dinámica:
 const props = defineProps({

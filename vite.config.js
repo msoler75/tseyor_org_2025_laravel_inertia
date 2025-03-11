@@ -38,7 +38,7 @@ export default defineConfig({
   }, */
   resolve: {
     alias: {
-        ziggy: 'vendor/tightenco/ziggy/dist/vue.es.js',
+        ziggy: path.resolve(__dirname, 'vendor/tightenco/ziggy/dist/vue.es.js'),
         '@': path.resolve(__dirname, './resources/js')
     },
   },
@@ -108,7 +108,8 @@ export default defineConfig({
             "onUnmounted",
             "defineEmits",
             "useSlots",
-            "defineAsyncComponent"
+            "defineAsyncComponent",
+            "TransitionGroup"
           ],
           "@inertiajs/vue3": ["router", "usePage", "useForm",],
           "@/Stores/nav.js":  ["useNav"],
@@ -129,5 +130,5 @@ export default defineConfig({
   },
   ssr: {
     external : ['Modal', 'Page', 'Footer', 'NavAside', 'ProcesarImagen','TipTapEditor', 'TipTapFullMenuBar']
-  }
+  },
 });

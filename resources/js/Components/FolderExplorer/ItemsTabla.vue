@@ -157,7 +157,6 @@
 import useFolderExplorerStore from '@/Stores/folderExplorer';
 import useSelectors from '@/Stores/selectors'
 import { plural } from '@/composables/textutils'
-import { TransitionGroup } from 'vue'
 
 const page = usePage()
 const user = computed(() => page?.props?.auth?.user)
@@ -198,7 +197,8 @@ function incrementarItemsMostrados() {
     }, 500)
 }
 
-setTimeout(incrementarItemsMostrados, 500)
+if(typeof window !== 'undefined')
+    setTimeout(incrementarItemsMostrados, 500)
 
 
 </script>

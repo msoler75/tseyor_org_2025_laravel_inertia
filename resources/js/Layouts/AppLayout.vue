@@ -1,19 +1,36 @@
 <template>
     <!-- App layout -->
     <div class="flex flex-col">
-
-        <ScrollToTop class="text-4xl fixed right-7 z-40"
-            :class="folderExplorer.seleccionando ? 'bottom-20' : player.closed ? 'bottom-7' : player.expanded ? 'bottom-20' : 'bottom-14'" />
+        <ScrollToTop
+            class="text-4xl fixed right-7 z-40"
+            :class="
+                folderExplorer.seleccionando
+                    ? 'bottom-20'
+                    : player.closed
+                    ? 'bottom-7'
+                    : player.expanded
+                    ? 'bottom-20'
+                    : 'bottom-14'
+            "
+        />
 
         <!-- Loader -->
-        <div v-if="loader"
-            class="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 backdrop-blur-lg">
+        <div
+            v-if="loader"
+            class="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 backdrop-blur-lg"
+        >
             <Loader class="w-[7.77rem]" :running="true" />
         </div>
 
-        <Announcement :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'" />
+        <Announcement
+            :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'"
+        />
 
-        <NavAside :show="nav.sideBarShow" @close="nav.sideBarShow = false" class="lg:hidden" />
+        <NavAside
+            :show="nav.sideBarShow"
+            @close="nav.sideBarShow = false"
+            class="lg:hidden"
+        />
 
         <Banner />
 
@@ -22,12 +39,15 @@
             <AudioVideoPlayer />
         </ClientOnly>
 
-
         <Modal :show="mostrarMensaje" centered max-width="md">
             <div class="p-5 mt-auto mb-auto">
                 <p class="text-center">{{ $page.props?.flash?.message }}</p>
                 <div class="py-3 flex justify-center">
-                    <button @click.prevent="mostrarMensaje = false" type="button" class="btn btn-neutral">
+                    <button
+                        @click.prevent="mostrarMensaje = false"
+                        type="button"
+                        class="btn btn-neutral"
+                    >
                         Gracias
                     </button>
                 </div>
@@ -43,20 +63,26 @@
         </Modal>
 
         <div class="bg-base-200 flex-grow flex flex-col">
-
             <NavBar />
 
             <!-- Page Content -->
-            <div @mouseover="nav.closeTabs()" class="flex-grow relative transition-opacity duration-200"
-                :class="nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''">
-
-
-                <transition enter-active-class="transition-opacity duration-100"
-                    leave-active-class="transition-opacity duration-100" enter-class="opacity-0"
-                    leave-to-class="opacity-0">
-
-                    <div v-if="nav.activeTab"
-                        class="hidden lg:block z-30 absolute w-full h-full bg-black bg-opacity-10">
+            <div
+                @mouseover="nav.closeTabs()"
+                class="flex-grow relative transition-opacity duration-200"
+                :class="
+                    nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''
+                "
+            >
+                <transition
+                    enter-active-class="transition-opacity duration-100"
+                    leave-active-class="transition-opacity duration-100"
+                    enter-class="opacity-0"
+                    leave-to-class="opacity-0"
+                >
+                    <div
+                        v-if="nav.activeTab"
+                        class="hidden lg:block z-30 absolute w-full h-full bg-black bg-opacity-10"
+                    >
                         <!-- Contenido del elemento -->
                     </div>
                 </transition>
@@ -75,37 +101,36 @@
     </div>
 </template>
 
-
-
 <script setup>
-import { onBeforeUnmount/*, markRaw*/ } from 'vue';
-import useUserStore from '@/Stores/user'
-import usePlayer from '@/Stores/player'
-import setTransitionPages from '@/composables/transitionPages.js'
-import useFolderExplorerStore from '@/Stores/folderExplorer';
+import useUserStore from "@/Stores/user";
+import usePlayer from "@/Stores/player";
+import setTransitionPages from "@/composables/transitionPages.js";
+import useFolderExplorerStore from "@/Stores/folderExplorer";
+//import useRoute from "@/composables/useRoute.js";
+//useRouteimport { useRoute } from 'ziggy-js';
 
-const folderExplorer = useFolderExplorerStore()
+const folderExplorer = useFolderExplorerStore();
 
 // console.log('app initiating...')
 
-const player = usePlayer()
-const userStore = useUserStore()
-const page = usePage()
-const nav = useNav()
+const player = usePlayer();
+const userStore = useUserStore();
+const page = usePage();
+const nav = useNav();
+//const route = useRoute();
 
 // MENSAJE FLASH
-const mostrarMensaje = ref(page.props?.flash?.message)
+const mostrarMensaje = ref(page.props?.flash?.message);
 
+const TIME_NAV_INACTIVE = 600;
+var timerActivateNav = null;
 
-const TIME_NAV_INACTIVE = 600
-var timerActivateNav = null
-
-nav.announce = page.props.anuncio || ''
+nav.announce = page.props.anuncio || "";
 
 const handleScroll = () => {
-    nav.scrollY = window.scrollY || window.pageYOffset
+    nav.scrollY = window.scrollY || window.pageYOffset;
     // console.log('handleScroll', nav.scrollY)
-}
+};
 
 // const dynamicAudioPlayer = ref(null);
 
@@ -115,63 +140,71 @@ function handleMouse() {
     document.addEventListener("mouseleave", function (event) {
         // console.log('mouseleave')
         if (screen.width >= 1024) {
-            clearTimeout(timerActivateNav)
-            nav.hoverDeactivated = true
+            clearTimeout(timerActivateNav);
+            nav.hoverDeactivated = true;
             // cerramos los submenús
-            nav.closeTabs()
+            nav.closeTabs();
         }
-    })
+    });
 
     // si el mouse entra en la ventana de la aplicación desde "arriba", pondremos el menú de navegación en no activable durante un tiempo
     document.addEventListener("mouseenter", function (event) {
         // console.log('mouseenter')
         if (screen.width >= 1024) {
-            clearTimeout(timerActivateNav)
+            clearTimeout(timerActivateNav);
             timerActivateNav = setTimeout(() => {
-                nav.hoverDeactivated = false
-                nav.activateHoveredTab()
-            }, TIME_NAV_INACTIVE)
+                nav.hoverDeactivated = false;
+                nav.activateHoveredTab();
+            }, TIME_NAV_INACTIVE);
         }
-    })
+    });
 
-     document.addEventListener("click", handleInteraction)
+    document.addEventListener("click", handleInteraction);
 }
 
-
-console.log('APP INITIED')
+console.log("APP INITIED");
 
 function cargarDatosUsuario() {
     if (!page.props.auth?.user) {
-        userStore.saldo = ""
-        userStore.borrarPermisos()
-        return
+        userStore.saldo = "";
+        userStore.borrarPermisos();
+        return;
     }
-    userStore.cargarPermisos()
-    userStore.cargarSaldo()
+    userStore.cargarPermisos();
+    userStore.cargarSaldo();
 }
 
 // si cambia el usuario
-watch(() => page.props.auth?.user, () => {
-    cargarDatosUsuario()
-})
+watch(
+    () => page.props.auth?.user,
+    () => {
+        cargarDatosUsuario();
+    }
+);
 
+// const onlyTabs = typeof window === "undefined"
+//  nav.init(route, nav.onlyTabs()); // en SSR solo las pestañas principales
+//else
+// if (typeof window === "undefined")
 
+nav.init(route);
 
 onMounted(() => {
 
-    console.log('APP LAYOUT mounted')
+    console.log("APP LAYOUT mounted");
+
+    //console.log("route func:", route);
 
     // inicializamos la navegación pasando la función "route" del componente, en el cliente
-    nav.init(route) // route no está disponible en SSR
 
     // aplicamos configuración de transiciones de pagina (fadeout y scroll)
-    setTransitionPages(router)
+    setTransitionPages(router);
 
-    cargarDatosUsuario()
+    cargarDatosUsuario();
 
-    handleMouse()
+    handleMouse();
     handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     // cargamos el componente AudioPlayer más tarde
     /* setTimeout(() => {
@@ -180,36 +213,27 @@ onMounted(() => {
         });
     }, 5000)*/
 
-
-
-
-
     // mover a la posición indicada
     if (window.location.hash) {
         setTimeout(() => {
-            console.log('scrollto_app')
-            nav.scrollToId(window.location.hash.substring(1), 0)
-        }, 500)
+            console.log("scrollto_app");
+            nav.scrollToId(window.location.hash.substring(1), 0);
+        }, 500);
     }
 
-
     // si en la url hay un parámetro ?verified=1
-    if (location.search.includes('verified=1'))
+    if (location.search.includes("verified=1"))
         // redirigimos a dashboard
-        router.get(route('dashboard'))
-
-
-
+        router.get(route("dashboard"));
 });
 
-
 onBeforeUnmount(() => {
-    window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener("scroll", handleScroll);
 });
 
 // no se utiliza (no es necesario, la página carga muy rápido)
-const loader = ref(false)
-loader.value = false
+const loader = ref(false);
+loader.value = false;
 /*
 axios.get(route('setting', 'navigation'))
     .then(response => {
@@ -219,16 +243,9 @@ axios.get(route('setting', 'navigation'))
     })
 */
 
-// const route = useRoute();
-
-
-
 // INTERACCION AUDIO
 
 function handleInteraction() {
-    if (player.requiereInteraccion)
-        player.playPause()
+    if (player.requiereInteraccion) player.playPause();
 }
-
-
 </script>

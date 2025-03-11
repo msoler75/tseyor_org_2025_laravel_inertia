@@ -25,7 +25,8 @@
                         width="300"
                         height="450"
                         :alt="libro.titulo"
-                        class="object-fit rounded-[2px] sm:min-w-[300px]"
+                        class="object-fit rounded-[2px] sm:min-w-[300px]
+                         transition duration-200"
                         :style="{
                             'view-transition-name': `imagen-libro-${libro.id}`,
                         }"

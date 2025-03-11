@@ -1,6 +1,3 @@
-import { useNav } from "../Stores/nav.js";
-
-
 export default function setTransitionPages(router) {
   const nav = useNav();
 
