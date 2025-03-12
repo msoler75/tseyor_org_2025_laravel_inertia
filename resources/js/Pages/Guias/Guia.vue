@@ -146,13 +146,13 @@ const props = defineProps({
         required: false,
     },
     siguiente: {
-        type: Object,
-        required: false,
+        type: [Object, null],
+        required: true,
     },
     anterior: {
-        type: Object,
-        required: false,
-    }
+        type: [Object, null],
+        required: true,
+    },
 });
 
 const format = detectFormat(props.guia.texto);

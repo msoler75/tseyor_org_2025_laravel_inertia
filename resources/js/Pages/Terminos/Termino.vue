@@ -114,21 +114,17 @@
 </template>
 
 <script setup>
-import { router } from '@inertiajs/vue3';
-
-
-
 const props = defineProps({
     termino: {
         type: Object,
         required: true,
     },
-    anterior: {
-        type: Object,
+    siguiente: {
+        type: [Object, null],
         required: true,
     },
-    siguiente: {
-        type: Object,
+    anterior: {
+        type: [Object, null],
         required: true,
     },
     letras: {},

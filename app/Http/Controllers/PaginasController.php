@@ -15,7 +15,7 @@ use App\Models\Meditacion;
 use App\Models\Psicografia;
 use App\Models\Video;
 use App\Models\Centro;
-
+use App\Pigmalion\Markdown;
 
 class PaginasController extends Controller
 {
@@ -38,8 +38,13 @@ class PaginasController extends Controller
             abort(404); // Item no encontrado o no autorizado
         }
 
+        // toma el texto de la entrada, obtiene las imagenes, y de cada una de ellas, obtiene las dimensiones
+        $imagenes = Markdown::images($pagina->texto);
+        $imagenesInfo = ImagenesController::info($imagenes);
+
         return Inertia::render('Pagina', [
             'pagina' => $pagina,
+            'imagenesInfo' => $imagenesInfo
         ])
             ->withViewData(SEO::from($pagina));
     }

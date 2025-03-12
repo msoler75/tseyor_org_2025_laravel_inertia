@@ -26,9 +26,9 @@
             :use-image="useImage"
         />
     </component>
-    <template v-else
-        ><span>{{ node.textContent }}</span></template
-    >
+    <template v-else>
+        {{ node.textContent }}
+    </template>
 </template>
 
 <script setup>
