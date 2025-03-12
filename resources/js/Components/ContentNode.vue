@@ -12,14 +12,23 @@
         :is="tag"
         v-bind="node.attributes"
     >
-        <ContentNode v-for="element of node.children" :node="element" :use-image="useImage" />
+        <ContentNode
+            v-for="element of node.children"
+            :node="element"
+            :use-image="useImage"
+        />
     </component>
+    <component v-else-if="node.tagName && node.tagName.toLowerCase() === 'br'" :is="'br'" />
     <component v-else-if="node.tagName" :is="tag" v-bind="node.attributes">
-        <ContentNode  v-for="element of node.children" :node="element" :use-image="useImage" />
+        <ContentNode
+            v-for="element of node.children"
+            :node="element"
+            :use-image="useImage"
+        />
     </component>
-    <template v-else>
-        {{ node.textContent }}
-    </template>
+    <template v-else
+        ><span>{{ node.textContent }}</span></template
+    >
 </template>
 
 <script setup>
