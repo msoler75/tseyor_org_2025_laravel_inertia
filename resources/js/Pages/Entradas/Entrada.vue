@@ -54,11 +54,11 @@ const props = defineProps({
         required: true,
     },
     siguiente: {
-        type: Object,
+        type: [Object, null],
         required: true,
     },
     anterior: {
-        type: Object,
+        type: [Object, null],
         required: true,
     },
     imagenesInfo: {

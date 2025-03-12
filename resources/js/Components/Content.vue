@@ -2,9 +2,11 @@
     <Prose class="text-container break-words overflow-x-auto">
         <ContentNode :node="arbol" :use-image="optimizeImages" @click="handleClick" />
 
-        <ImagesViewer v-if="images?.length" :show="showImagesViewer" @close="showImagesViewer = false"
-        :images="images?.map((x) => x + '?mw=3000&mh=3000')"  :index="imageIndex"
-        />
+        <ClientOnly>
+            <ImagesViewer v-if="images?.length" :show="showImagesViewer" @close="showImagesViewer = false"
+            :images="images?.map((x) => x + '?mw=3000&mh=3000')"  :index="imageIndex"
+            />
+        </ClientOnly>
 
     </Prose>
 </template>

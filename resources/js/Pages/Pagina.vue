@@ -20,12 +20,19 @@
 
 
 <script setup>
+import {saveImagesInfo} from "@/Stores/image";
 
 const props = defineProps({
     pagina: {
         type: Object,
         required: true,
     },
+    imagenesInfo: {
+        type: Object,
+        required: false,
+    }
 })
+
+saveImagesInfo(props.imagenesInfo)
 
 </script>

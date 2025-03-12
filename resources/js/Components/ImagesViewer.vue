@@ -153,6 +153,7 @@ const currentImageUrl = ref()
 const currentImageName = ref()
 
 const loadImage = (url) => {
+    if(typeof window === 'undefined') return // si es SSR no hacemos nada
     const img = new Image()
     img.src = url
     currentImageUrl.value = url.replace(/\?.*/, '')
