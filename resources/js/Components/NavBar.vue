@@ -68,7 +68,7 @@
 
                 <!-- Main Navigation Tabs -->
                 <NavTabs
-                    class="hidden lg:flex top-navigation space-x-8 flex-grow justify-center"
+                    class="hidden h-full lg:flex top-navigation flex-grow justify-center"
                 />
 
                 <div

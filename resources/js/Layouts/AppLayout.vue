@@ -141,9 +141,7 @@ function handleMouse() {
         // console.log('mouseleave')
         if (screen.width >= 1024) {
             clearTimeout(timerActivateNav);
-            nav.hoverDeactivated = true;
-            // cerramos los submenús
-            nav.closeTabs();
+            nav.deactivateMenu()
         }
     });
 
@@ -153,8 +151,7 @@ function handleMouse() {
         if (screen.width >= 1024) {
             clearTimeout(timerActivateNav);
             timerActivateNav = setTimeout(() => {
-                nav.hoverDeactivated = false;
-                nav.activateHoveredTab();
+                nav.reactivateMenu()
             }, TIME_NAV_INACTIVE);
         }
     });

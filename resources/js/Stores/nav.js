@@ -1,4 +1,6 @@
 import navigationItems from "../navigation.js";
+
+const page = usePage()
 //import "../composables/useRoute.js";
 //import { useRoute } from 'ziggy-js';
 //const _route = route // useRoute();
@@ -59,7 +61,7 @@ const mapSubmenu = (submenu) => {
 const state = reactive({
   //items: [],
   items: [],
-  ghostTab: null, //?
+  //ghostTab: null, //?
   timer: null,
   announce: false,
   announceClosed: false,
@@ -75,73 +77,109 @@ const state = reactive({
   dontScroll: false,
   hoverDeactivated: false, // para evitar que se active el hover en la reentrada del mouse a la ventana
   tabHovering: null, // tab en el que el mouse se encuentra durante la desactivación del hover
+  enteringTimeout: null,
+  activeTab: null,
   init(_r){
-    console.log('nav.init!!!!!!')
     _route = _r
     this.items = navigationItems.map(mapItem);
   },
-  in(tab, url) {
+  _in(tab, url) {
     // comprueba si la ruta está en alguno de los items del tab
-    const rutaRelativa = relativeUrl(url);
-    if (tab.url && rutaRelativa.indexOf(tab.url) >= 0) return true;
+    if (tab.url && url.indexOf(tab.url) >= 0) return true;
     if (!tab.hasItems) return false;
-    return !!tab.submenu?.sections?.groups?.find((group) =>
+    console.log('comparing >> ', tab.submenu.sections)
+    return !!tab.submenu?.sections
+    .find((section)=>section.groups.find((group) =>
         group.items.find((item) => {
-        return rutaRelativa.indexOf(item.url) >= 0;
+            console.log('comparing', item.url, '<=>', url)
+        return url.indexOf(item.url) >= 0;
       })
-    );
+    ))
+  },
+  _updateCurrent() {
+    console.log('_updateCurrent')
+    const url = relativeUrl(page.url)
+    this.items.forEach(tab=>{
+        tab.current = state._in(tab, url)
+    })
+},
+    _updateActive() {
+    this.activeTab = this.items.find((tab) => tab.open);
   },
   setItems(items) {
-    const tabs = items.map(mapItem);
+    const tabs = items.map(mapItem)
     for (const tab of tabs) this.items.push(tab);
+        this._updateCurrent()
   },
   activateTab(tab) {
     tab.activating = true;
     // console.log("activateTab", tab.title);
-    if (!tab.open || !tab.hasItems) this.closeTabs();
-    setTimeout(() => {
-      tab.open = true;
-      this.activeTabChange(tab);
-    }, 1);
+    //if (!tab.open || !tab.hasItems) this.closeTabs();
+    //setTimeout(() => {
+        if(tab.open) return
+        this.closeTabs()
+        if(tab.hasItems) {
+            tab.open = true;
+        }
+        this._updateActive()
+      // this.activeTabChange(tab);
+    //}, 1);
   },
   toggleTab(tab) {
     // console.log("toggleTab", tab, tab.title, tab.open);
-    let oldState = !!tab.open;
-    if (!oldState || !tab.hasItems) this.closeTabs();
-    tab.open = !oldState;
-    if (tab.open) this.activeTabChange(tab);
+    if(!tab.hasItems) return
+    tab.open = !tab.open
+    if(!tab.open) this.closeTabs()
+    this._updateActive()
+    //if (tab.open) this.activeTabChange(tab);
     // console.log("tab is now", tab.open);
-    return false;
+    //return false;
   },
-  activeTabChange(newTab) {
+  /*activeTabChange(newTab) {
     clearTimeout(this.timer);
     if (newTab) this.ghostTab = newTab;
     else
       this.timer = setTimeout(() => {
         this.ghostTab = activeTab.value;
       }, 75);
-  },
+  },*/
   closeTab(tab) {
     // console.log("close tab");
     if (tab) tab.open = false;
+    this._updateActive()
   },
   closeTabs() {
     for (const tab of this.items) {
       tab.open = false;
     }
+    this._updateActive()
+  },
+  deactivateMenu() {
+    // cerramos los submenús
+    this.hoverDeactivated = true;
+    this.closeTabs();
+  },
+  reactivateMenu() {
+    this.hoverDeactivated = false;
+    this.activateHoveredTab()
   },
   // cuando pasa el mouse por encima
   hoverTab(tab) {
-    if (this.hoverDeactivated) {
-      this.tabHovering = tab;
-      return;
-    }
+    console.log('=== hoverTab', tab)
+    this.closeTabs()
+    this.tabHovering = tab;
+    if(this.hoverDeactivated) return
     if (tab.hasItems) this.activateTab(tab);
     else this.closeTabs();
   },
   // cuando el mouse deja el tab
   unhoverTab(tab) {
-    if (this.tabHovering == tab) this.tabHovering = null;
+    console.log('=== unhoverTab', tab)
+    if (this.tabHovering == tab) {
+        this.tabHovering = null;
+        //if(tab.hasItems)
+          //  this.closeTabs()
+    }
   },
   // cuando se recupera la activación de hover
   activateHoveredTab() {
@@ -152,7 +190,6 @@ const state = reactive({
     this.fadingOutPage = true;
     this.dontScroll = true;
   },
-
   scrollToId(id, options) {
     console.log("scrollToId", id, options);
     const defaultOptions = { offset: 0, behavior: "smooth" };
@@ -220,11 +257,13 @@ const state = reactive({
   },
 });
 
-state.activeTab = computed(() => {
-  return state.items.find((tab) => tab.open);
-});
 
 state.route = _route
+
+
+watch(()=>page.url, ()=>{
+    state._updateCurrent()
+})
 
 export function useNav() {
   return state;
