@@ -113,6 +113,8 @@ export default function setTransitionPages(router) {
 
   router.on("finish", (event) => {
     console.log(`router: finish. Page loaded ${event.detail.visit.url}`);
+    // send global event on window
+    window.dispatchEvent(new CustomEvent("page-loaded"))
 
     nav.navigating = false;
     // reset state
