@@ -41,7 +41,7 @@ const props = defineProps({
     useImage: { type: Boolean, default: true }, // use Image component ?
 });
 
-const myDomain = import.meta.env.VITE_APP_URL;
+const myDomain = getMyDomain()
 
 const tag = computed(() => {
     if (props.node.tagName == "img" && props.useImage) return Image;

@@ -15,6 +15,8 @@ class VerifyCsrfToken extends Middleware
         'files/upload/image',
         'files/upload/file',
         '_sendbuild',
+        '_sendssr',
+        '_sendnodemodules',
         'usuarios/_comprobar_clave',
         'update-theme'
     ];

@@ -93,6 +93,12 @@ return [
             'level' => 'info',
         ],
 
+        'deploy' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/deploy.log'),
+            'level' => 'info',
+        ],
+
         'smtp' => [
             'driver' => 'daily',
             'path' => storage_path('logs/smtp.log'),

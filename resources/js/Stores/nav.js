@@ -7,7 +7,6 @@ const page = usePage()
 let _route = ()=>''
 
 const relativeUrl = (url) => {
-  // console.log('relativeUrl', url)
   if (!url) return "";
   if (url == "undefined") return "";
   if (!url.match(/https?:\/\/.*/)) return url;
@@ -87,17 +86,14 @@ const state = reactive({
     // comprueba si la ruta está en alguno de los items del tab
     if (tab.url && url.indexOf(tab.url) >= 0) return true;
     if (!tab.hasItems) return false;
-    console.log('comparing >> ', tab.submenu.sections)
     return !!tab.submenu?.sections
     .find((section)=>section.groups.find((group) =>
         group.items.find((item) => {
-            console.log('comparing', item.url, '<=>', url)
         return url.indexOf(item.url) >= 0;
       })
     ))
   },
   _updateCurrent() {
-    console.log('_updateCurrent')
     const url = relativeUrl(page.url)
     this.items.forEach(tab=>{
         tab.current = state._in(tab, url)
@@ -113,7 +109,6 @@ const state = reactive({
   },
   activateTab(tab) {
     tab.activating = true;
-    // console.log("activateTab", tab.title);
     //if (!tab.open || !tab.hasItems) this.closeTabs();
     //setTimeout(() => {
         if(tab.open) return
@@ -126,13 +121,11 @@ const state = reactive({
     //}, 1);
   },
   toggleTab(tab) {
-    // console.log("toggleTab", tab, tab.title, tab.open);
     if(!tab.hasItems) return
     tab.open = !tab.open
     if(!tab.open) this.closeTabs()
     this._updateActive()
     //if (tab.open) this.activeTabChange(tab);
-    // console.log("tab is now", tab.open);
     //return false;
   },
   /*activeTabChange(newTab) {
@@ -144,7 +137,6 @@ const state = reactive({
       }, 75);
   },*/
   closeTab(tab) {
-    // console.log("close tab");
     if (tab) tab.open = false;
     this._updateActive()
   },
@@ -165,7 +157,6 @@ const state = reactive({
   },
   // cuando pasa el mouse por encima
   hoverTab(tab) {
-    console.log('=== hoverTab', tab)
     this.closeTabs()
     this.tabHovering = tab;
     if(this.hoverDeactivated) return
@@ -174,7 +165,6 @@ const state = reactive({
   },
   // cuando el mouse deja el tab
   unhoverTab(tab) {
-    console.log('=== unhoverTab', tab)
     if (this.tabHovering == tab) {
         this.tabHovering = null;
         //if(tab.hasItems)
@@ -186,22 +176,18 @@ const state = reactive({
     if (this.tabHovering) this.hoverTab(this.tabHovering);
   },
   fadeoutPage() {
-    console.log("nav.fadeoutPage()");
     this.fadingOutPage = true;
     this.dontScroll = true;
   },
   scrollToId(id, options) {
-    console.log("scrollToId", id, options);
     const defaultOptions = { offset: 0, behavior: "smooth" };
     let { offset, behavior } = { ...defaultOptions, ...options };
     if (!offset) offset = 0;
     id = decodeURIComponent(id);
-    console.log("scrolling to", id);
     // Obtén el elemento objetivo
     var objetivo = document.querySelector("#" + id + ",a[name='" + id + "']");
     if (!objetivo) {
         id = id.toLowerCase()
-      console.log("trying to look titles", id);
       // Obtener el elemento H1
       const elems = document.querySelectorAll("h1,h2");
 
@@ -211,7 +197,6 @@ const state = reactive({
       });
     }
     if (objetivo) {
-      console.log("scrolling to elem", objetivo);
 
       const targetY =
         objetivo.offsetTop -
@@ -227,7 +212,6 @@ const state = reactive({
   },
 
   scrollToContent(behavior) {
-    console.log('scrollto_content')
     const el = document.querySelector("#content-main");
     if (!el) return false;
 
@@ -240,7 +224,6 @@ const state = reactive({
     var posY = el.getBoundingClientRect().top; // sale negativo muchas veces por el scroll de página, no queremos eso
     // hemos de restarle el scroll de la página (tiene que quedar un numero positivo. el valor de posY )
     posY = posY - posY0 - navH * 2.1;
-    console.log("posY", posY);
     // nos movemos a la posición posY
     window.scrollTo({
       top: posY,

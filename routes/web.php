@@ -353,7 +353,9 @@ Route::get('asociacion', [PaginasController::class, 'show'])->name('asociacion')
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // DEV:
-Route::post('_sendbuild', 'App\Http\Controllers\DevController@newBuild');
+Route::post('_sendbuild', 'App\Http\Controllers\DeployController@handlePublicBuildUpload');
+Route::post('_sendssr', 'App\Http\Controllers\DeployController@handleSSRUpload');
+Route::post('_sendnodemodules', 'App\Http\Controllers\DeployController@handleNodeModulesUpload');
 
 
 Route::get('test/image', function () {

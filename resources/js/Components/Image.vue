@@ -74,7 +74,7 @@ const emit = defineEmits(["loaded"]);
 
 const img = ref();
 
-const myDomain = import.meta.env.VITE_APP_URL;
+const myDomain = getMyDomain()
 
 // la imagen que se cargará del servidor
 const imageSrc = computed(() => getImageUrl(props.src, props.fallback));

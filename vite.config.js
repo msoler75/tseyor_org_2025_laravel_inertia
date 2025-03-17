@@ -6,22 +6,40 @@ import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 // import ssr from 'vite-plugin-ssr/plugin'
-import asyncComponentsPlugin from './vite-plugin-async-components.js';
+// import commonjs from 'vite-plugin-commonjs';
+import asyncComponentsPlugin from "./vite-plugin-async-components.js";
 
-
-
-import path from 'path';
+import path from "path";
 // import { fileURLToPath } from 'url';
 
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 
-
-
 export default defineConfig({
-  build : {
+  optimizeDeps: {
+    // Evitar bundling de estas dependencias
+    // exclude: ["@tiptap/starter-kit", "vue-advanced-cropper", "md-editor-v3"],
+    include: [
+        // Aquí incluye las dependencias que quieres pre-empaquetar
+        'vue',
+        'vue-router',
+        '@inertiajs/vue3/server',
+        'axios'
+        // ... otras dependencias críticas
+    ],
+  },
+  build: {
+    sourcemap: false,
+    // minify: "terser", // Menos intensivo que 'esbuild'
+    terserOptions: {
+      compress: {
+        drop_console: true, // Reduce tamaño final
+      },
+    },
     rollupOptions: {
-      // maxParallelFileOps: 2 // un intento de que funcione en dreamhost
+      output: {
+        // format: 'cjs'
+      }
     }
   },
   /* build: {
@@ -38,11 +56,12 @@ export default defineConfig({
   }, */
   resolve: {
     alias: {
-        ziggy: path.resolve(__dirname, 'vendor/tightenco/ziggy/dist/vue.es.js'),
-        '@': path.resolve(__dirname, './resources/js')
+      ziggy: path.resolve(__dirname, "vendor/tightenco/ziggy/dist/vue.es.js"),
+      "@": path.resolve(__dirname, "./resources/js"),
     },
   },
   plugins: [
+    // commonjs(),
     laravel({
       input: [
         "resources/js/app.js",
@@ -86,10 +105,10 @@ export default defineConfig({
       // Añade esta sección para resolver componentes
       resolvers: [
         (name) => {
-          if (name === 'ClientOnly') {
-            return { name: 'default', from: '@duannx/vue-client-only' }
+          if (name === "ClientOnly") {
+            return { name: "default", from: "@duannx/vue-client-only" };
           }
-        }
+        },
       ],
     }),
     AutoImport({
@@ -109,26 +128,35 @@ export default defineConfig({
             "defineEmits",
             "useSlots",
             "defineAsyncComponent",
-            "TransitionGroup"
+            "TransitionGroup",
           ],
-          "@inertiajs/vue3": ["router", "usePage", "useForm",],
-          "@/Stores/nav.js":  ["useNav"],
+          "@inertiajs/vue3": ["router", "usePage", "useForm"],
+          "@/Stores/nav.js": ["useNav"],
         },
       ],
     }),
     asyncComponentsPlugin(),
     viteCompression({
-        filter: /bootstrap\/ssr/, // Excluye TODOS los archivos en esta ruta
-        threshold: 1024, // Mínimo 1KB para comprimir
-        algorithm: 'gzip', // Algoritmo principal
-        deleteOriginFile: false // Mantiene los originales
-      }),
+      filter: /bootstrap\/ssr/, // Excluye TODOS los archivos en esta ruta
+      threshold: 1024, // Mínimo 1KB para comprimir
+      algorithm: "gzip", // Algoritmo principal
+      deleteOriginFile: false, // Mantiene los originales
+    }),
     visualizer(),
   ],
   define: {
-    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: true
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: true,
   },
   ssr: {
-    external : ['Modal', 'Page', 'Footer', 'NavAside', 'ProcesarImagen','TipTapEditor', 'TipTapFullMenuBar']
+    // noExternal: true,
+    external: [
+      "Modal",
+      "Page",
+      "Footer",
+      "NavAside",
+      "ProcesarImagen",
+      "TipTapEditor",
+      "TipTapFullMenuBar",
+    ],
   },
 });

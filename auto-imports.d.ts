@@ -16,6 +16,7 @@ declare global {
   const detectFormat: typeof import('./resources/js/composables/markdown.js')['detectFormat']
   const fechaEs: typeof import('./resources/js/composables/textutils.js')['fechaEs']
   const getEmbedYoutube: typeof import('./resources/js/composables/srcutils.js')['getEmbedYoutube']
+  const getMyDomain: typeof import('./resources/js/composables/srcutils.js')['getMyDomain']
   const getSrcUrl: typeof import('./resources/js/composables/srcutils.js')['getSrcUrl']
   const initials: typeof import('./resources/js/composables/textutils.js')['initials']
   const levenshtein: typeof import('./resources/js/composables/textutils.js')['levenshtein']

@@ -2,7 +2,6 @@ import { createInertiaApp } from '@inertiajs/vue3'
 import createServer from '@inertiajs/vue3/server'
 import { renderToString } from '@vue/server-renderer'
 import { createSSRApp, h } from 'vue'
-import AppLayout from "@/Layouts/AppLayout.vue";
 import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
 import { ZiggyVue } from "ziggy";
@@ -10,8 +9,12 @@ import { Ziggy } from './ziggy.js'
 import { JSDOM } from 'jsdom'
 import axios from 'axios'
 import { registerAsyncComponents } from '../../async_components.d.ts';
+import AppLayout from "@/Layouts/AppLayout.vue";
 import useRoute from '@/composables/useRoute.js';
 import {useNav} from '@/Stores/nav.js';
+import dotenv from 'dotenv';
+
+dotenv.config(); // carga valores de .env en process.env
 
 global.axios = axios
 global.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
