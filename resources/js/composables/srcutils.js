@@ -21,3 +21,11 @@ export const getEmbedYoutube = (url) => {
     return url;
   }
 };
+
+export const getMyDomain = function () {
+  const myDomain =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : process.env.APP_URL;
+  return myDomain;
+};

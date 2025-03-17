@@ -1,4 +1,6 @@
+/dist
 /.phpunit.cache
+/.cache
 /bootstrap
 /node_modules
 /public/hot

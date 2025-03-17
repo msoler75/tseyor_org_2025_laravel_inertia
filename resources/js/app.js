@@ -17,6 +17,7 @@ import { registerAsyncComponents } from '../../async_components.d.ts';
 import useRoute from '@/composables/useRoute.js';
 import {useNav} from '@/Stores/nav.js';
 
+
 window.route = useRoute()
 
 const appName = "TSEYOR.org";

@@ -2,21 +2,25 @@
 
 namespace App\Console\Commands;
 
-define('DEPLOY_FRONT_ENDPOINT', 'https://www.tseyor.xyz/_sendbuild');
+define('APP_HOST', 'www.tseyor.xyz');
+
+define('DEPLOY_SSR_ENDPOINT', 'https://'. APP_HOST .'/_sendssr');
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use App\Pigmalion\DeployHelper as Deploy;
 use Exception;
 
-class DeployFront extends Command
+class DeploySSR extends Command
 {
-    protected $signature = 'deploy:front';
-    protected $description = 'Comprime los contenidos de la carpeta public/build y los envía por CURL';
+    protected $signature = 'deploy:ssr';
+    protected $description = 'Comprime los contenidos de la carpeta bootstrap/ssr y los envía por CURL';
 
 
-    private const SOURCE_DIR = 'public/build';
-    private const ZIP_NAME = 'build.zip';
+    private const SOURCE_DIR = 'bootstrap/ssr';
+    private const ZIP_NAME = 'ssr.zip';
+
+
 
     public function handle()
     {
@@ -31,7 +35,7 @@ class DeployFront extends Command
 
                 $result = Deploy::sendZipFile(
                     $zipPath,
-                    DEPLOY_FRONT_ENDPOINT,
+                    DEPLOY_SSR_ENDPOINT,
                     self::ZIP_NAME
                 );
 
@@ -47,6 +51,8 @@ class DeployFront extends Command
             $this->error($e->getMessage());
         }
     }
+
+
 
 
 
