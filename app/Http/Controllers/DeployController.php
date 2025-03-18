@@ -57,10 +57,13 @@ class DeployController extends Controller
             // Descomprimir el archivo en build_temp
             Deploy::extractZip($zipPath, $buildTempPath);
 
+            //obtener el host de la llamada request, por ejemplo https://mihost.com
+            $host = $request->getSchemeAndHttpHost();
+
             // Replacement de localhost a APP_URL
             $files = Deploy::doReplacements( 'public/build_temp/assets/iconify*.js',
                                                 'http://localhost',
-                                                config('app.url'));
+                                                $host);
             if(count($files))
                 Log::channel('deploy')->info("Archivos actualizados: ", $files);
 
@@ -114,10 +117,14 @@ class DeployController extends Controller
             // Extrae el contenido del .zip en bootstrap/ssr
             Deploy::extractZip($zipPath, $extractPath);
 
+
+            //obtener el host de la llamada request, por ejemplo https://mihost.com
+            $host = $request->getSchemeAndHttpHost();
+
             // Replacement de localhost a APP_URL
             $files = Deploy::doReplacements( 'bootstrap/ssr/ssr.js',
                                                 'http://localhost',
-                                                config('app.url'));
+                                                $host);
             if(count($files))
                 Log::channel('deploy')->info("Archivos actualizados: ", $files);
 
