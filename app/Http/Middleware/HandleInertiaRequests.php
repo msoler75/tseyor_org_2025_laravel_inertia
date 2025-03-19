@@ -45,6 +45,8 @@ class HandleInertiaRequests extends Middleware
             'anuncio' => $anuncio,
             'meta_image_default' => config('seo.image.fallback'),
             'csrf_token' => csrf_token(),
+            // obtener fecha y hora del servidor:
+            'timestamp_server' => time()
         ]);
 
         // si no tiene el header X-INERTIA:

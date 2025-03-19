@@ -61,7 +61,7 @@ class DeployController extends Controller
             $host = $request->getSchemeAndHttpHost();
 
             // Replacement de localhost a APP_URL
-            $files = Deploy::doReplacements( 'public/build_temp/assets/iconify*.js',
+            $files = Deploy::doReplacements( 'public/build_temp/assets/*.js',
                                                 'http://localhost',
                                                 $host);
             if(count($files))

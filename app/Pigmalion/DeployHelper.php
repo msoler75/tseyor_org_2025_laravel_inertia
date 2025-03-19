@@ -335,9 +335,12 @@ class DeployHelper
             $files_changed[] = $filePath;
 
             $content = File::get($filePath);
-            $updatedContent = str_replace($from, $to, $content);
 
-            File::put($filePath, $updatedContent);
+            // primero mira si existe la cadena buscada $from  en $content
+            if(str_contains(    $content, $from)) {
+                $updatedContent = str_replace($from, $to, $content);
+                File::put($filePath, $updatedContent);
+            }
         }
 
         return $files_changed;
