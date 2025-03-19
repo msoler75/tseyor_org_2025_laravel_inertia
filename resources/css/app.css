@@ -1,28 +1,33 @@
+@config "../../tailwind.config.js";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 
-[x-cloak] {
-    display: none;
-}
-
-
 @layer base {
+
+
+    [x-cloak] {
+        display: none;
+    }
+
+
+
     h1 {
-        @apply text-4xl mb-9 font-bold leading-tight !text-primary ;
+        @apply text-4xl mb-9 font-bold leading-tight text-primary ;
     }
 
     h2 {
-        @apply text-3xl mb-7 font-semibold !text-primary ;
+        @apply text-3xl mb-7 font-semibold text-primary ;
     }
 
     h3 {
-        @apply text-2xl mb-5 font-semibold !text-primary ;
+        @apply text-2xl mb-5 font-semibold text-primary ;
     }
 
     h4 {
-        @apply text-xl mb-4 font-semibold !text-primary ;
+        @apply text-xl mb-4 font-semibold text-primary ;
     }
 
     p {
@@ -158,7 +163,7 @@
 
 @layer utilities {
     .shadow-outline {
-        box-shadow: 0 0 0 3px rgba(164, 202, 254, 0.45);
+        box-shadow: 0 0 0 3px rgb(164 202 254 / 0.45) !important;
         outline: none;
     }
 
@@ -177,7 +182,7 @@
 
 
 
-
+@layer base {
 html, body, #app, #app>div {
     height: 100%
 }
@@ -258,4 +263,6 @@ main a.hover\:right-arrow:hover::after {
 
 .vue-dropzone:hover {
     @apply !bg-base-200;
+}
+
 }
