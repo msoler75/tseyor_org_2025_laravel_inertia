@@ -12,7 +12,7 @@
     } : {}">
                 <slot v-if="$slots.image" name="image" :class="imageClass"/>
                 <template v-else>
-                    <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :width="imageWidth" :height="imageHeight"
+                    <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :width="srcWidth" :height="srcHeight"
                     :src-width="srcWidth" :src-height="srcHeight" :class="imageClass" :lazy="imageLazy"/>
                     <small v-if="caption" class="container">{{ caption }}</small>
                 </template>

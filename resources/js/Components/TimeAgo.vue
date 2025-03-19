@@ -5,12 +5,55 @@
 </template>
 
 <script setup>
-
 const props = defineProps({
     date: [String, Number, Date],
     includeTime: { type: Boolean, default: true },
     short: { type: Boolean, default: false },
 });
+
+const page = usePage()
+
+// Obtener el timestamp del servidor o usar la hora actual como fallback
+const serverTimestamp = computed(() =>
+    page?.props?.timestamp_server || Math.floor(Date.now() / 1000)
+)
+
+// Calcular la fecha del servidor basándote en la zona horaria de Madrid si no tienes el timestamp
+const fechaServidor = computed(() => {
+    if (page?.props?.timestamp_server) {
+        return new Date(serverTimestamp.value * 1000)
+    } else {
+        const fechaLocal = new Date()
+        const offsetMadrid = getTimezoneOffset('Europe/Madrid', fechaLocal)
+        const offsetLocal = getTimezoneOffset(Intl.DateTimeFormat().resolvedOptions().timeZone, fechaLocal)
+        const diferenciaOffset = offsetMadrid - offsetLocal
+
+        // Cálculo de diferencia
+        return new Date(fechaLocal.getTime() + (offsetMadrid - offsetLocal) * 60000)
+    }
+})
+
+
+
+ // Función auxiliar para obtener el offset de una zona horaria
+ function getTimezoneOffset(timeZone, date = new Date()) {
+    // Corrección del cálculo del offset
+    const formato = new Intl.DateTimeFormat('en', {
+        timeZone,
+        hour12: false,
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+    })
+
+    const partes = formato.formatToParts(date)
+    const horas = parseInt(partes.find(p => p.type === 'hour').value)
+    const minutos = parseInt(partes.find(p => p.type === 'minute').value)
+
+    return (date.getHours() - horas) * 60 + (date.getMinutes() - minutos)
+}
+
+
 
 const timeAgo = ref('');
 const modoAgo = ref(true);
@@ -44,30 +87,21 @@ const formattedDate = computed(() => {
     const diferenciaOffset = offsetLocal - offsetMadrid;
     const fechaPublicacionLocal = new Date(fechaPublicacion.getTime() - diferenciaOffset * 60000);
 
-    const fechaActual = new Date();
-
     // Formatear la fecha según la zona horaria del usuario
     const options = {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
         hour: props.includeTime ? 'numeric' : undefined,
-        minute: props.includeTime ? 'numeric' : undefined,
+        minute: props.includeTime ?     'numeric' : undefined,
         timeZone: zonaHorariaLocal,
     };
 
-    const title = fechaPublicacionLocal.toLocaleString('es-ES', options);
 
-    // Calcular la diferencia en segundos
-    const segundos = Math.floor((fechaActual - fechaPublicacionLocal) / 1000);
 
-    // Función auxiliar para obtener el offset de una zona horaria
-    function getTimezoneOffset(timeZone, date = new Date()) {
-        const tz = date.toLocaleString('en', { timeZone, timeStyle: 'long' }).split(' ').slice(-1)[0];
-        const dateInTz = new Date(date.toLocaleString('en', { timeZone }));
-        const offsetInMinutes = (date.getTime() - dateInTz.getTime()) / 60000;
-        return offsetInMinutes;
-    }
+    // Calcular la diferencia en segundos transcurridos
+    const segundos = Math.floor((fechaServidor.value - fechaPublicacionLocal) / 1000);
+
 
     const calcularTimeAgo = () => {
         if (segundos < 60) return 'ahora mismo';
@@ -91,10 +125,27 @@ const formattedDate = computed(() => {
 
     timeAgo.value = props.short ? calcularTimeAgoCorto() : calcularTimeAgo();
 
-    return title;
+    return fechaPublicacionLocal.toLocaleString('es-ES', options);
 });
 
 function pluralize(word, count) {
     return count === 1 ? word : word.endsWith('s') ? `${word}es` : `${word}s`;
 }
+
+
+
+// Actualizar cada minuto si no hay timestamp del servidor
+/*
+let intervalo
+onMounted(() => {
+    if (!page?.props?.timestamp_server) {
+        intervalo = setInterval(() => {
+            timeAgo.value = calcularTimeAgo()
+        }, 60000)
+    }
+})
+
+onBeforeUnmount(() => clearInterval(intervalo))
+*/
+
 </script>

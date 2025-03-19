@@ -23,14 +23,15 @@ import SelectField from "../Components/Backpack/SelectField.vue";
 import TimeAgo from "../Components/TimeAgo.vue";
 import FileManager from "../Components/FileManager.vue";
 import WorkerStatus from "../Components/Admin/WorkerStatus.vue";
-import AudioVideoPlayer from "../AsyncComponents/AudioVideoPlayer.vue";
+// import AudioVideoPlayer from "../AsyncComponents/AudioVideoPlayer.vue";
 //import AudioStateIcon from "../Components/AudioStateIcon.vue";
+import { registerAsyncComponents } from '../../../async_components.d.ts';
 
 // only in forms
 const elem = document.querySelector(".page-body form, .admin-dashboard, .vue-component");
 if (elem) {
   console.log("loading vue 3 fields...");
-  window.app = createApp({})
+  const app = createApp({})
   .component("tiptapeditorfullfield", TipTapEditorFullField)
   .component("tiptapeditorsimplefield", TipTapEditorSimpleField)
     //.component("quilleditorfullfield", QuillEditorFullField)
@@ -43,11 +44,14 @@ if (elem) {
     .component("timeago", TimeAgo)
     .component("filemanager", FileManager)
     .component("workerstatus", WorkerStatus)
-    .component("audiovideoplayer", AudioVideoPlayer)
+    // .component("audiovideoplayer", AudioVideoPlayer)
    // .component("audiostateicon", AudioStateIcon)
     .mixin({
       components: { Icon, Link },
     })
     .use(ZiggyVue, Ziggy)
-    .mount(elem);
+
+      registerAsyncComponents(app);
+
+    window.app = app.mount(elem)
 }
