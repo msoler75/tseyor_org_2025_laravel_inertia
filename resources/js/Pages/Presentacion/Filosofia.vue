@@ -1,5 +1,5 @@
 <template>
-    <Sections height="500">
+    <Sections height="550">
 
         <h1 class="hidden">Filosofía Tseyor</h1>
 

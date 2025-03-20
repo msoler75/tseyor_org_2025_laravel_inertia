@@ -1,7 +1,7 @@
 import defaultTheme from "tailwindcss/defaultTheme";
 import forms from "@tailwindcss/forms";
 import typography from "@tailwindcss/typography";
-//import daisyui from "daisyui";
+// import daisyui from "daisyui";
 // import aspectRatio from "@tailwindcss/aspect-ratio";
 
 /** @type {import('tailwindcss').Config} */
@@ -15,7 +15,7 @@ export default {
   ],
 
   plugins: [forms, typography,
-    //daisyui
+    // daisyui
     /*, aspectRatio*/],
 
   theme: {
@@ -88,6 +88,7 @@ export default {
         },
       },
     ],
-  },*/
+  },
+  */
   darkMode: ["class", '[data-theme="winter"]'],
 };

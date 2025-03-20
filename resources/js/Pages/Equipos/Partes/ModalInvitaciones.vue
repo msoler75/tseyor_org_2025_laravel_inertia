@@ -14,11 +14,11 @@
                         <div class="min-h-[calc(100vh_-_420px)] md:min-h-[calc(100vh_-_340px)]">
                             <div class="">
                                 <input type="search"
-                                class="input shadow flex-shrink-0 rounded-none border-b border-gray-500"
+                                class="input shadow-2xs shrink-0 rounded-none border-b border-gray-500"
                                 placeholder="Buscar usuario..." v-model="usuarioBuscar">
                             </div>
 
-                            <div class="overflow-y-auto max-h-[calc(100vh_-_470px)] shadow"
+                            <div class="overflow-y-auto max-h-[calc(100vh_-_470px)] shadow-2xs"
                                 :class="usuariosParaInvitar.length ? 'min-h-[160px] md:min-h-[120px]' : ''">
                                 <table v-if="usuariosParaInvitar.length" class="table w-full bg-base-100  rounded-none">
                                     <tbody class="divide-y">
@@ -55,7 +55,7 @@
 
                             <div class="overflow-y-auto">
 
-                                <table v-if="usuariosInvitados.length" class="table w-full bg-base-100 shadow">
+                                <table v-if="usuariosInvitados.length" class="table w-full bg-base-100 shadow-2xs">
                                     <tbody class="divide-y">
                                         <tr v-for="user of usuariosInvitados" :key="user.id">
                                             <td>{{ user.nombre }}</td>
@@ -112,7 +112,7 @@
                             <div v-if="!invitaciones.length" class="py-4">
                                 No hay invitaciones pendientes</div>
                             <div v-else class="max-h-[calc(100vh_-_470px)] md:max-h-[calc(100vh_-_380px)] overflow-y-auto">
-                                <table class="table w-full bg-base-100  shadow">
+                                <table class="table w-full bg-base-100  shadow-2xs">
                                     <thead>
                                         <tr>
                                             <th>Enviada</th>

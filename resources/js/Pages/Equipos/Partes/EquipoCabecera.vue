@@ -1,6 +1,6 @@
 <template>
     <div class="py-5 bg-base-100 border-b border-gray-300 z-30" >
-        <div class="container mx-auto flex gap-5 items-center">
+        <div class="container flex gap-5 items-center">
         <Image :src="equipo.imagen"
           fallback="/almacen/medios/equipos/equipo1.jpg"
         alt="Imagen del equipo" class="w-10 h-10 object-cover rounded-lg" />

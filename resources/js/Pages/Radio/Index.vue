@@ -9,14 +9,14 @@
             </div>
         </div>
 
-        <Hero title="" :srcImage="isDark ? darkLogo : lightLogo" srcWidth="1117" srcHeight="801" class="!py-8 lg:!py-20"
+        <Hero title="" :srcImage="isDark ? darkLogo : lightLogo" srcWidth="1117" srcHeight="801" class="py-8! lg:py-20!"
             textClass="p-7 gap-4">
 
             <h3 class="text-center">Elige una emisora:</h3>
 
-            <div class="flex flex-wrap gap-3 justify-center w-full flex-shrink-0">
+            <div class="flex flex-wrap gap-3 justify-center w-full shrink-0">
                 <div v-for="emisora of emisoras" :key="emisora"
-                    class="bg-base-100 rounded-lg shadow hover:bg-primary transition duration-200">
+                    class="bg-base-100 rounded-lg shadow-2xs hover:bg-primary transition duration-200">
                     <Link class="p-4 block" :href="route('radio.emisora', emisora)">{{ emisora }}</Link>
                 </div>
             </div>

@@ -1,9 +1,101 @@
-@config "../../tailwind.config.js";
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms";
 
+@plugin "daisyui" {
+    themes: light --default, night --prefersdark;
+}
+
+@plugin "daisyui/theme" {
+    name: "light";
+    default: true;
+    --color-primary: #284f9d;
+    --color-secondary: #cc5c2c;
+    --color-info: #90cdf4;
+    --color-base-100: "#fff";
+    --color-base-200: "#F3FAFF";
+    --color-base-300: "#d4e3ff";
+    --color-base-400: "#c1d2f7";
+}
+
+@plugin "daisyui/theme" {
+    name: "night";
+    default: true;
+    --color-primary: #90cdf4;
+    --color-secondary: #f6ad55;
+    --color-info: #b0ddff;
+    --color-neutral: oklch(13.602% 0.031 276.934);
+    --color-base-100: "#1a202c";
+    --color-base-200: "#2d3748";
+    --color-base-300: "#4a5568";
+    --color-base-400: "#718096";
+}
+
+@custom-variant dark (&:where([data-theme=night], [data-theme=night] *));
+
+@theme {
+    --breakpoint-xs: '475px';
+    --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utilitiy to any element that depends on these defaults.
+*/
+@layer base {
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+
+@utility container {
+    padding-inline: 1rem;
+    margin-inline: auto;
+
+
+    @variant sm {
+        max-width: 640px;
+    }
+
+    @variant md {
+        max-width: 768px;
+    }
+
+    @variant lg {
+        max-width: 1024px
+    }
+
+    @variant xl {
+        max-width: 1280px
+    }
+
+    @variant 2xl {
+        max-width: 1440px
+    }
+}
+
+
+@utility error {
+    form & {
+        @apply text-red-500 text-sm ml-1 mt-1;
+    }
+}
+
+@utility shadow-outline {
+    box-shadow: 0 0 0 3px rgb(164 202 254 / 0.45) important;
+    outline: none;
+}
 
 @layer base {
 
@@ -13,21 +105,26 @@
     }
 
 
+    button {
+        @apply cursor-pointer;
+    }
+
+
 
     h1 {
-        @apply text-4xl mb-9 font-bold leading-tight text-primary ;
+        @apply text-4xl mb-9 font-bold leading-tight text-primary;
     }
 
     h2 {
-        @apply text-3xl mb-7 font-semibold text-primary ;
+        @apply text-3xl mb-7 font-semibold text-primary;
     }
 
     h3 {
-        @apply text-2xl mb-5 font-semibold text-primary ;
+        @apply text-2xl mb-5 font-semibold text-primary;
     }
 
     h4 {
-        @apply text-xl mb-4 font-semibold text-primary ;
+        @apply text-xl mb-4 font-semibold text-primary;
     }
 
     p {
@@ -90,8 +187,8 @@
     blockquote {
         position: relative;
         font-style: italic;
-        quotes: none !important;
-        border-left: none !important;
+        quotes: none important;
+        border-left: none important;
     }
 
     blockquote>p:nth-child(1) {
@@ -142,37 +239,13 @@
         @apply block font-semibold mb-2;
     }
 
-    form input:not([type="image"],[type="radio"],[type="checkbox"],.search-input):not(.hidden)
-    {
-        @apply block w-full px-4 py-2 leading-tight bg-base-100 border border-gray-400 rounded shadow appearance-none focus:outline-none;
+    form input:not([type="image"], [type="radio"], [type="checkbox"], .search-input):not(.hidden) {
+        @apply block w-full px-4 py-2 leading-tight bg-base-100 border border-gray-400 rounded-sm shadow-sm appearance-none focus:outline-hidden;
     }
 
     textarea,
     select {
         @apply dark:text-gray-100 dark:bg-base-100;
-    }
-
-    form .error {
-        @apply text-red-500 text-sm ml-1 mt-1;
-    }
-
-
-
-}
-
-
-@layer utilities {
-    .shadow-outline {
-        box-shadow: 0 0 0 3px rgb(164 202 254 / 0.45) !important;
-        outline: none;
-    }
-
-    .inclinado-derecha {
-        clip-path: polygon(0% 0%, 100% 10%, 100% 100%, 0% 90%);
-    }
-
-    .inclinado-izquierda {
-        clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 0% 100%);
     }
 
 
@@ -183,47 +256,52 @@
 
 
 @layer base {
-html, body, #app, #app>div {
-    height: 100%
-}
+
+    html,
+    body,
+    #app,
+    #app>div {
+        height: 100%
+    }
 
 
-main a.hover\:underline{
-    position: relative;
-}
-main a.hover\:underline::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 0%;
-    height: .2rem;
-    transition: .2s width ease;
-    @apply bg-primary bg-opacity-30;
-}
+    main a.hover\:underline {
+        position: relative;
+    }
+
+    main a.hover\:underline::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0%;
+        height: .2rem;
+        transition: .2s width ease;
+        @apply bg-primary/30;
+    }
 
 
-main a.hover\:underline:hover {
-    text-decoration: none;
-}
+    main a.hover\:underline:hover {
+        text-decoration: none;
+    }
 
-main a.hover\:underline:hover::after {
-    width: 100%;
-}
-
-
-em.search-term {
-    /*background: yellow;*/
-    text-decoration: underline;
-    @apply text-primary;
-}
+    main a.hover\:underline:hover::after {
+        width: 100%;
+    }
 
 
-#global-search-input {
-    @apply bg-transparent !border-none hover:!border-none active:!border-none focus:!border-none focus:!outline-none focus:!ring-0;
-}
+    em.search-term {
+        /*background: yellow;*/
+        text-decoration: underline;
+        @apply text-primary;
+    }
 
-/*
+
+    #global-search-input {
+        @apply bg-transparent border-none hover:border-none active:border-none focus:border-none focus:outline-hidden focus:ring-0;
+    }
+
+    /*
 main a.hover\:right-arrow {
     position: relative;
 }
@@ -245,24 +323,190 @@ main a.hover\:right-arrow:hover::after {
 
 
 
-#v3-img-preview-container-id .arrow {
-    display: flex;
-    justify-content: center;
+    #v3-img-preview-container-id .arrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+
+
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 1s;
+    }
+
+
+    .vue-dropzone:hover {
+        @apply bg-base-200;
+    }
+
+}
+
+
+
+
+
+.tabs-component {
+    margin: 0 !important;
+}
+
+.tabs-component-tabs {
+    border: solid 1px #ddd;
+    border-radius: 6px;
+    margin-bottom: 5px;
+}
+
+.dark .tabs-component-tabs {
+border-color: #222;
+}
+
+.tabs-component-tabs {
+    @apply pl-0 md:pl-3;
+}
+
+@media (min-width: 768px) {
+    .tabs-component-tabs {
+        border: 0;
+        align-items: stretch;
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: -1px;
+    }
+}
+
+.tabs-component-tab {
+    color: #999;
+    font-size: 14px;
+    font-weight: 600;
+    margin-right: 0;
+    list-style: none;
+}
+
+.tabs-component-tab:not(:last-child) {
+    border-bottom: dotted 1px #ddd;
+}
+
+.dark .tabs-component-tab:not(:last-child) {
+    border-bottom-color: #222;
+}
+
+.tabs-component-tab:hover {
+    color: #666;
+}
+
+.dark .tabs-component-tab:hover {
+    color: #999;
+}
+
+.tabs-component-tab.is-active {
+    color: #000;
+}
+.dark .tabs-component-tab.is-active {
+    color: #fff;
+}
+
+
+.tabs-component-tab.is-disabled * {
+    color: #cdcdcd;
+    cursor: not-allowed !important;
+}
+
+.dark .tabs-component-tab.is-disabled * {
+    color: #333;
+}
+
+@media (min-width: 768px) {
+    .tabs-component-tab {
+        background-color: #fff;
+        border: solid 1px #ddd;
+        border-radius: 3px 3px 0 0;
+        margin-right: .5em;
+        transform: translateY(2px);
+        transition: transform .3s ease;
+        z-index: 1;
+    }
+
+    .dark .tabs-component-tab {
+        background-color: #222;
+        border-color: #aaa;
+    }
+
+    .tabs-component-tab.is-active {
+        border-bottom: solid 1px #fff;
+        z-index: 2;
+        transform: translateY(0);
+    }
+
+    .dark .tabs-component-tab.is-active {
+        border-bottom-color: solid 1px #111;
+    }
+}
+
+.tabs-component-tab-a {
     align-items: center;
+    color: inherit;
+    display: flex;
+    padding: .75em 1em;
+    text-decoration: none;
 }
 
-
-
-
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 1s;
+.tabs-component-panels {
+    padding: 1em 0;
+    position: relative;
+    z-index: 1;
 }
 
+@media (min-width: 768px) {
+    .tabs-component-panels {
+        background-color: #fff;
+        border: solid 1px #ddd;
+        border-radius: 0 6px 6px 6px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .05);
+        padding: 1.5em;
+    }
 
-.vue-dropzone:hover {
-    @apply !bg-base-200;
+    .dark .tabs-component-panels {
+        background-color: #222;
+        border-color: #777;
+    }
 }
 
+.tabs-component-btn {
+    cursor: pointer;
+    background: #e1ecf4;
+    border-radius: 3px;
+    border: 1px solid #7aa7c7;
+    padding: 4px 8px;
+    color: #39739d;
+}
+
+.tabs-component-btn:hover {
+    background-color: #b3d3ea;
+    color: #2c5777;
+}
+
+.tabs-component-btn:active {
+    background-color: #a0c7e4;
+    box-shadow: none;
+    color: #2c5777;
+}
+/*
+.tabs-component-panels {
+    background: rgb(231, 235, 244);
+    background: linear-gradient(0deg, rgba(231, 235, 244, 1) 85%, rgba(255, 255, 255, 1) 100%);
+}
+
+.dark .tabs-component-panels {
+    background: #222;
+    background: linear-gradient(0deg, #223 85%, #111 100%);
+}
+*/
+
+
+
+.vue-dropzone {
+    @apply bg-base-100;
 }

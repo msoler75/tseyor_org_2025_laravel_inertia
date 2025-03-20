@@ -5,7 +5,7 @@
     >
     <h1 class="hidden" >{{ store.rutaActual }}</h1>
         <div
-            class="w-full sticky border-b border-gray-300 shadow-sm bg-base-100 px-4 pb-0 sm:px-6 lg:px-8 z-30"
+            class="w-full sticky border-b border-gray-300 shadow-2xs bg-base-100 px-4 pb-0 sm:px-6 lg:px-8 z-30"
             :class="[embed ? 'pt-[2rem] top-0' : 'pt-[1rem] lg:pt-[4rem] top-[4rem]']"
         >
             <div
@@ -62,7 +62,7 @@
                     </button>
 
                     <button
-                        class="btn btn-neutral btn-sm btn-icon !w-fit whitespace-nowrap"
+                        class="btn btn-neutral btn-sm btn-icon w-fit! whitespace-nowrap"
                         title="Cerrar búsqueda"
                         @click="store.mostrandoResultadosBusqueda = false"
                     >
@@ -164,7 +164,7 @@
         </div>
 
         <div
-            class="folder-content select-none flex-grow bg-base-100 py-4 pb-14 h-full px-2 sm:px-6 lg:px-8"
+            class="folder-content select-none grow bg-base-100 py-4 pb-14 h-full px-2 sm:px-6 lg:px-8"
             :class="[
                 contentClass,
                 store.embed
@@ -230,7 +230,7 @@
     <!--  Barra de operaciones -->
 
     <div
-        class="sticky bottom-0 left-0 right-0 bg-slate-200 dark:bg-slate-800 bg-opacity-95 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
+        class="sticky bottom-0 left-0 right-0 bg-slate-200 dark:bg-slate-800/95 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
         v-if="
             store.itemsSeleccionados.length ||
             store.isMovingFiles ||
@@ -818,6 +818,8 @@ function copyData(dest, src, key) {
 </script>
 
 <style scoped>
+@reference   "../../../css/app.css";
+
 .btn-icon {
     @apply w-[40px] sm:w-[46px];
 }
@@ -866,6 +868,8 @@ table th {
 </style>
 
 <style>
+@reference "../../../css/app.css";
+
 .gap-x {
     @apply gap-1 xs:gap-2 sm:gap-3;
 }

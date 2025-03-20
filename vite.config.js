@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 import viteCompression from "vite-plugin-compression";
 import laravel from "laravel-vite-plugin";
 import vue from "@vitejs/plugin-vue";
@@ -61,11 +62,13 @@ export default defineConfig({
     },
   },
   plugins: [
+    tailwindcss(),
     // commonjs(),
     laravel({
       input: [
         "resources/js/app.js",
         "resources/js/backpack/app.js",
+        "resources/css/app.css",
         "resources/css/admin.css",
       ],
       ssr: "resources/js/ssr.js",

@@ -1,15 +1,14 @@
 <template>
     <nav
         class="w-full border-gray-300 top-0 z-40 -translate-y-[1px] transition duration-400 select-none"
-        :data-theme="portada && nav.scrollY < 300 ? 'winter' : ''"
+        :data-theme="portada && nav.scrollY < 300 ? 'night' : ''"
         :class="[
             portada && nav.scrollY < 300
-                ? 'dark bg-transparent '
+                ? 'dark bg-transparent'
                 : portada
-                ? 'bg-opacity-20 hover:bg-opacity-100 transition duration-200 '
-                : 'border-b ',
-            nav.defaultClass,
-            nav.fullPage ? 'fixed border-gray-300 ' : 'sticky ',
+                ? 'bg-base-200/20 hover:bg-base-200/100 transition duration-200'
+                : 'border-b',
+            nav.fullPage ? 'fixed border-gray-300' : 'sticky',
             nav.fullPage && nav.announce && !nav.announceClosed
                 ? 'top-[2rem] '
                 : 'top-0 ',
@@ -22,7 +21,7 @@
                 <!-- Hamburger -->
                 <div class="flex items-center lg:hidden">
                     <button
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-hidden focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
                         :class="portada ? 'bg-base-300' : ''"
                         @click="nav.sideBarShow = !nav.sideBarShow"
                     >
@@ -62,13 +61,13 @@
                     @mouseover="nav.closeTabs()"
                 >
                     <Link :href="route('portada')">
-                        <ApplicationMark />
+                        <ApplicationMark class="w-auto"/>
                     </Link>
                 </div>
 
                 <!-- Main Navigation Tabs -->
                 <NavTabs
-                    class="hidden h-full lg:flex top-navigation flex-grow justify-center"
+                    class="hidden h-full lg:flex top-navigation grow justify-center"
                 />
 
                 <div
@@ -94,13 +93,14 @@
                     </transition>
                 </ClientOnly>
 
-                <div class="ml-auto flex items-center gap-3">
-                    <GlobalSearch @mouseover="nav.closeTabs()" />
+                <div class="ml-auto flex items-center gap-3"
+                    @mouseover="nav.closeTabs()"
+                >
+                    <GlobalSearch />
 
                     <button
                         @click="toggleDark()"
-                        @mouseover="nav.closeTabs()"
-                        class="my-auto p-1 w-10 h-10 flex justify-center items-center rounded-full bg-base-300 shadow text-xl sm:ml-6"
+                        class="my-auto p-1 w-10 h-10 flex justify-center items-center rounded-full bg-base-300 shadow-2xs text-xl sm:ml-6 hover:text-secondary"
                         :aria-label="
                             'Cambiar a modo ' + (isDark ? 'claro' : 'oscuro')
                         "
@@ -124,7 +124,6 @@
                     <div
                         v-if="$page.props.auth?.user"
                         class="flex sm:items-center"
-                        @mouseover="nav.closeTabs()"
                     >
                         <div class="ml-3 relative">
                             <UserMenu />
@@ -133,8 +132,7 @@
                     <Link
                         v-else
                         :href="route('login')"
-                        class="mx-3 text-2xl bg-base-300 rounded-full p-2 shadow"
-                        @mouseover="nav.closeTabs()"
+                        class="mx-3 text-2xl bg-base-300 rounded-full p-2 shadow-2xs hover:text-secondary"
                     >
                         <Icon
                             icon="ph:sign-in-duotone"
@@ -168,8 +166,8 @@ console.log('useDark initialTheme:', initialTheme)
 const isDark = useDark({
     storageKey: "theme",
     selector: "html",
-    valueDark: "winter",
-    initialValue: initialTheme !=='dark'?'summer':'winter', // <--- Key no documentada pero funcional
+    valueDark: "night",
+    initialValue: initialTheme !=='dark'?'light':'night', // <--- Key no documentada pero funcional
     onChanged(newValue) {
         console.log("onChanged theme", newValue);
         updateTheme(newValue);
@@ -183,7 +181,7 @@ function updateDarkState() {
     // Evitar ejecución en SSR
     if (typeof window === 'undefined') return;
     if (isDark.value)
-        document.documentElement.setAttribute('data-theme', 'winter')
+        document.documentElement.setAttribute('data-theme', 'night')
     else
         document.documentElement.setAttribute('data-theme', 'summer')
 }
@@ -191,6 +189,7 @@ function updateDarkState() {
 
 // Actualizar cookie en servidor y atributo HTML
 function updateTheme(isDarkMode) {
+
     // Evitar ejecución en SSR
     if (typeof window === "undefined") {
         console.log("estamos en SSR");
@@ -198,7 +197,7 @@ function updateTheme(isDarkMode) {
     }
 
     console.log("updateTheme", isDarkMode);
-    const themeValue = isDarkMode ? "dark" : "light";
+    const themeValue = isDarkMode ? "night" : "light";
 
     // 1. Actualizar localStorage
     localStorage.setItem("theme", themeValue);
@@ -215,7 +214,7 @@ function updateTheme(isDarkMode) {
     // 3. Aplicar cambios visuales
     document.documentElement.setAttribute(
         "data-theme",
-        isDarkMode ? "winter" : ""
+        isDarkMode ? "night" : "light"
     );
 }
 
@@ -223,8 +222,8 @@ function updateTheme(isDarkMode) {
 // esto lo hacemos únicamente para el caso muy particular de que globalsearch pueda tambien ponerse en dark mode en la portada
 function updateSpecialCaseTheme() {
     if (typeof window === "undefined") return; // desactivado en SSR
-    const themePortada = portada.value && nav.scrollY < 300 ? "winter" : "";
-    document.querySelector("body").setAttribute("data-theme", themePortada);
+    const themePortada = portada.value && nav.scrollY < 300 ? "night" : "";
+    //document.querySelector("body").setAttribute("data-theme", themePortada);
 }
 
 onMounted(() => {
@@ -243,6 +242,7 @@ onMounted(() => {
     );
 
     updateSpecialCaseTheme();
+
 });
 
 ////////////////////////

@@ -1,6 +1,6 @@
 <template>
 
-    <div class="container mx-auto mb-3">
+    <div class="container mb-3">
         <AdminLinks modelo="nodo" necesita="administrar archivos"  />
     </div>
 

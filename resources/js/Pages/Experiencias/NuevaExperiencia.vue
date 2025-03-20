@@ -1,7 +1,7 @@
 <template>
     <FondoEstrellado class="w-full relative py-12" id="myform">
 
-        <div class="container mx-auto flex justify-between items-center mb-20 text-white">
+        <div class="container flex justify-between items-center mb-20 text-white">
             <Back>Experiencias</Back>
             <div class="flex gap-2">
                 <Share />
@@ -10,7 +10,7 @@
         </div>
 
 
-        <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative animate-fade-in">
+        <div class="card bg-base-100 shadow-2xs max-w-lg mx-auto p-7 relative animate-fade-in">
             <h1>Comparte tus experiencias interdimensionales</h1>
             <!--
                 <div v-if="error">
@@ -35,7 +35,7 @@
             </div>
             <!-- Formulario empieza aquí -->
             <form v-else @submit.prevent="submit">
-                <div class="mb-4 bg-base-200 p-2 rounded">
+                <div class="mb-4 bg-base-200 p-2 rounded-xs">
                     <label class="block font-bold mb-2" for="categoria">Categoría de la experiencia:</label>
                     <div class="flex flex-wrap gap-3">
                         <label v-for="descripcion, categoria of categorias" :key="categoria"

@@ -5,7 +5,7 @@
                relative" :class="(imageLeft ? 'flex-row' : '')
                 + (draft ? ' bg-base-300' : '')
                 " :preserve-page="preservePage" :auto-scroll="autoScroll">
-        <div v-if="image || $slots.image" class="flex-shrink-0 overflow-hidden"
+        <div v-if="image || $slots.image" class="shrink-0 overflow-hidden"
             :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div v-if="$slots.image" class="w-full h-full">
                 <slot name="image" />
@@ -14,7 +14,7 @@
             <div v-else-if="imageContained"
                 class="w-full h-full bg-center transition duration-300 group-hover:scale-105"
                 :class="skeleton ? 'skeleton' : ''">
-                <Image class="w-full h-full" :src="image" />
+                <Image class="w-full h-full" :src="image" :optimize="false"/>
             </div>
             <div v-else class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
                 'background-image': `url('${getImageUrl(image)}?cover&w=${imageWidth}${imageHeight != 'auto' ? '&h=' + imageHeight : ''}')`,
@@ -35,11 +35,11 @@
         </div>
         <div v-else-if="title || tag || description || date || $slots.default" class="p-4 flex flex-col w-full">
             <h2 v-if="title"
-                class="text-lg text-left font-bold mb-3 transition duration-300 group-hover:!text-secondary  group-hover:drop-shadow leading-5"
+                class="text-lg text-left font-bold mb-3 transition duration-300 group-hover:text-secondary!  group-hover:drop-shadow-xs leading-5"
                 v-html="title" />
             <ConditionalLink tag="div" :is-link="!!tagLink" :href="tagLink" v-if="tag" class="flex justify-between mb-3 max-w-full">
                 <div class="truncate overflow-hidden inline-block badge badge-primary badge-outline max-w-[12rem]"
-                :class="tagLink?'hover:text-secondary hover:drop-shadow':''">{{
+                :class="tagLink?'hover:text-secondary hover:drop-shadow-xs':''">{{
                     tag }}
                 </div>
             </ConditionalLink>

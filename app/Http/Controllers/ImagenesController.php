@@ -41,9 +41,18 @@ class ImagenesController extends Controller
 
         $info = $r[$url];
 
+        if(!$info)
         // retorna respuesta json
-        return response()->json(['width' => $info[0] ?? 0, 'height' => $info[1] ?? 0], 200)
-            ->header('Cache-Control', 'public, max-age=2592000');
+        return response()->json(['error' => 'No se encontró la imagen'], 404)
+        // expira en 1 minuto
+        ->header('Expires', gmdate('D, d M Y H:i:s', time() + 60 ) . ' GMT');
+
+        // retorna respuesta json
+        return response()->json(['width' => $info[0] ?? -1, 'height' => $info[1] ?? -1], 200)
+        // cache de un año que no tenga que revalidarse:
+            ->header('Cache-Control', 'public, max-age=2592000')
+            // expira en 1 año
+            ->header('Expires', gmdate('D, d M Y H:i:s', time() + 31536000) . ' GMT');
     }
 
 

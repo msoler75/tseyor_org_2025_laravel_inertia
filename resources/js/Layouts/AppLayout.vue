@@ -17,7 +17,7 @@
         <!-- Loader -->
         <div
             v-if="loader"
-            class="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 backdrop-blur-lg"
+            class="fixed inset-0 flex justify-center items-center z-50 bg-black/50 backdrop-blur-lg"
         >
             <Loader class="w-[7.77rem]" :running="true" />
         </div>
@@ -62,13 +62,13 @@
             </div>
         </Modal>
 
-        <div class="bg-base-200 flex-grow flex flex-col">
+        <div class="bg-base-200 grow flex flex-col">
             <NavBar />
 
             <!-- Page Content -->
             <div
                 @mouseover="nav.closeTabs()"
-                class="flex-grow relative transition-opacity duration-200"
+                class="grow relative transition-opacity duration-200"
                 :class="
                     nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''
                 "
@@ -81,7 +81,7 @@
                 >
                     <div
                         v-if="nav.activeTab"
-                        class="hidden lg:block z-30 absolute w-full h-full bg-black bg-opacity-10"
+                        class="hidden lg:block z-30 absolute w-full h-full bg-black/10"
                     >
                         <!-- Contenido del elemento -->
                     </div>
@@ -222,6 +222,7 @@ onMounted(() => {
     if (location.search.includes("verified=1"))
         // redirigimos a dashboard
         router.get(route("dashboard"));
+
 });
 
 onBeforeUnmount(() => {

@@ -9,7 +9,7 @@
             </div>
         </div>
 
-        <section class="container mx-auto mb-20">
+        <section class="container mb-20">
             <h1>Audios</h1>
             <p>Relájate y disfruta de los talleres, meditaciones, cuentos y otros materiales de la filosofía de
                 Tseyor.</p>
@@ -30,22 +30,22 @@
 
             <Categorias :categorias="categorias" :url="route('audios')" />
 
-            <div class="w-full flex-grow">
+            <div class="w-full grow">
 
                 <SearchResultsHeader :results="listado" />
 
                 <GridAppear v-if="listado.data.length > 0" class="gap-4 max-w-full"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
                     <div v-for="audio in listado.data.map(a => ({ ...a, src: srcAudio(a) }))" :key="audio.id"
-                        class="card flex-row shadow bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
+                        class="card flex-row shadow-2xs bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
                         style="max-width: calc(100vw - 14px)">
 
-                        <div v-if="audio.audio" class="btn p-0 w-12 h-5 min-h-auto text-3xl"
+                        <div v-if="audio.audio" class="btn p-0 w-12 h-12 min-h-auto text-3xl"
                             :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'"
                             @click="clickPlayPause(audio)" :title="audio.src">
                             <AudioStateIcon :src="audio.src" />
                         </div>
-                        <a target="_blank" v-else :href="audio.enlace" class="btn p-0 w-12 h-5 min-h-auto text-3xl"
+                        <a target="_blank" v-else :href="audio.enlace" class="btn p-0 w-12 h-12 min-h-auto text-3xl"
                             title="abrir enlace">
                             <Icon icon="ph:arrow-up-right-duotone" />
                         </a>

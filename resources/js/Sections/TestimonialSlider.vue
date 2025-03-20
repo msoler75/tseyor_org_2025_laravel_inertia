@@ -21,7 +21,9 @@ defineProps({
 
 
 <style>
+
 .splide--slide {
-    @apply flex py-12 h-[90%] my-auto;
+    /* @apply flex py-12 h-[90%] my-auto;
+    */
 }
 </style>

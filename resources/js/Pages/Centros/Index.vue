@@ -23,7 +23,7 @@
         <div class="flex flex-col lg:flex-row gap-12 justify-center relative">
             <div class="mx-auto max-w-[800px] space-y-12">
                 <!-- Sección de Muulasterios Tseyor -->
-                <section class="card bg-base-100 shadow p-7">
+                <section class="card bg-base-100 shadow-2xs p-7">
                     <div class="mx-auto px-2 sm:px-5">
                         <h2 class="">Muulasterios Tseyor</h2>
                         <p class="text-lg mb-8">Los Muulasterios Tseyor son nuestros centros energéticos más
@@ -42,7 +42,7 @@
                 </section>
 
                 <!-- Sección de Casas Tseyor -->
-                <section class="card bg-base-100 shadow p-7 ">
+                <section class="card bg-base-100 shadow-2xs p-7 ">
                     <div class=" mx-auto px-2 sm:px-5">
                         <h2 class="">Casas Tseyor</h2>
                         <p class="text-lg mb-8">Nuestras Casas Tseyor también forman parte de los Pueblos Tseyor.
@@ -60,7 +60,7 @@
                 </section>
 
                 <!-- Sección de Casas Tseyor -->
-                <section class="card bg-base-100 shadow p-7 ">
+                <section class="card bg-base-100 shadow-2xs p-7 ">
                     <h2 class="">Mapa de Centros</h2>
                     <div class="flex flex-wrap justify-between gap-7 items-center">
                         <p>Consulta si tienes un centro Tseyor cerca de ti.</p>
@@ -70,7 +70,7 @@
 
 
                 <!-- Sección de Blogs -->
-                <section class="card bg-base-100 shadow p-7 ">
+                <section class="card bg-base-100 shadow-2xs p-7 ">
                     <h2>Blog de Pueblo Tseyor</h2>
                     <div class="flex flex-wrap sm:flex-nowrap justify-between gap-7 items-center">
                         <p>En nuestro blog podrás conocer algunas de las experiencias que hemos vivido.</p>
@@ -82,7 +82,7 @@
 
             </div>
 
-            <section class="card bg-base-100 shadow p-7 lg:w-[460px] self-baseline sticky top-20">
+            <section class="card bg-base-100 shadow-2xs p-7 lg:w-[460px] self-baseline sticky top-20">
                 <div class="flex flex-col px-2 sm:px-5">
                     <h2>Nuestros centros</h2>
                     <div class="flex flex-wrap lg:grid grid-cols-2 gap-10">

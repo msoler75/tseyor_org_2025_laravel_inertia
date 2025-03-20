@@ -1,11 +1,11 @@
 <template>
     <div :id="'comentario_'+comentarioId" class="w-full flex gap-3">
         <Avatar :user="autor" />
-        <div class="flex-grow">
+        <div class="grow">
             <div class="flex flex-col gap-3 mb-3">
                 <div class="flex flex-col gap-1">
                     <!-- body -->
-                    <div class="card bg-base-100 shadow p-3 gap-3 w-full">
+                    <div class="card bg-base-100 shadow-2xs p-3 gap-3 w-full">
                         <div class="w-full flex justify-between">
                             <strong>{{ autor?.nombre }}</strong>
                             <TimeAgo :fecha="fecha" class="text-xs" />

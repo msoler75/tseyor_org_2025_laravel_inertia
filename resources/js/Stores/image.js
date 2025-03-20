@@ -1,4 +1,4 @@
-import {getSrcUrl} from '../composables/srcutils'
+import {getSrcUrl, belongsToCurrentDomain} from '../composables/srcutils'
 
 
 const fallback_images = ["f1.jpg", "f2.jpg", "f3.jpg", "f4.jpg"];
@@ -21,7 +21,7 @@ const imagenes_cache = {};
 const imagenes_pendientes = [];
 
 export const getImageSize = async function (url) {
-  console.log("getImageSize", url);
+  // console.log("getImageSize", url);
   url = url.replace(/^https?:\/\/[^/]+/, "");
 
   return new Promise(async (resolve, reject) => {
@@ -51,7 +51,7 @@ export const getImageSize = async function (url) {
       });
 
       const data = response.data;
-      console.log("Respuesta recibida para", url, data);
+      // console.log("Respuesta recibida para", url, data);
 
       // Guardar en caché
       imagenes_cache[url] = data;
@@ -63,57 +63,26 @@ export const getImageSize = async function (url) {
       imagenes_pendientes.splice(pendingIdx, 1);
 
     } catch (error) {
-      console.error("Error al obtener el tamaño de la imagen:", error);
-      reject(error);
-
       // Limpiar las promesas pendientes en caso de error
       const pendingIdx = imagenes_pendientes.findIndex((x) => x.url === url);
       if (pendingIdx !== -1) {
         imagenes_pendientes[pendingIdx].esperando.forEach(callback => callback(null));
         imagenes_pendientes.splice(pendingIdx, 1);
       }
+
+      reject(error);
     }
   });
 };
 
 
-export const isFromMyDomain = function (url) {
-
-    console.log('isFromMyDomain', url)
-    const hasHost = url.match(/^https?:\/\//);
-
-  // si es una url relativa, entonces está en mi dominio
-  if (!hasHost) {
-   console.log('yes')
-    return true;
-  }
-
-  try {
-    const urlObject = new URL(url);
-    // Obtener el host de la URL
-    const imageUrlHost = urlObject.hostname;
-
-    // Obtener el host de tu sitio
-    const yourSiteUrl = window?.location?.hostname;
-
-    // Comprobar si la URL de la imagen apunta a tu host
-    return imageUrlHost === yourSiteUrl;
-  } catch (error) {
-    console.error("Error al analizar la URL:", error);
-  }
-
-  console.log('truez')
-  return true; // indeterminado
-};
-
-
 function canUseWebP() {
-    console.log('canUseWebP')
+    // console.log('canUseWebP')
     var elem = document.createElement("canvas");
   if (!!(elem.getContext && elem.getContext("2d"))) {
     // was able or not to get WebP representation
     const result  = elem.toDataURL("image/webp").indexOf("data:image/webp") == 0;
-    console.log('canUseWebP ended')
+    // console.log('canUseWebP ended')
     return result
   }
   // very old browser like IE 8, canvas not supported
@@ -160,6 +129,6 @@ export const getSrcImageUrl = (url) => {
   }
 
   export const getImageInfo = function(url) {
-    console.log('getImageInfo', url)
+    // console.log('getImageInfo', url)
     return imagesInfo[url]
   }

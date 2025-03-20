@@ -30,7 +30,7 @@
         <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
 
             <div
-                class="gap-3 xl:gap-0 w-full md:w-[21ch] card bg-base-100 shadow flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline md:sticky md:top-20">
+                class="gap-3 xl:gap-0 w-full md:w-[21ch] card bg-base-100 shadow-2xs flex-wrap flex-row xl:flex-col p-5 lg:p-10 xl:p-5 self-baseline md:sticky md:top-20">
 
                 <Link
                     :href="(equipo ? route('equipo.informes', equipo.slug) : route('informes')) + (filtrado ? `?buscar=${filtrado}` : '')"
@@ -51,14 +51,14 @@
                 </div>
             </div>
 
-            <div class="w-full flex-grow card shadow bg-base-100 px-5 py-7">
+            <div class="w-full grow card shadow-2xs bg-base-100 px-5 py-7">
 
                 <SearchResultsHeader :results="listado" :category="categoriaActiva" />
 
                 <GridAppear class="gap-2 py-4" col-width="24rem">
                     <Link v-for="informe in listado.data" :key="informe.id" :href="route('informe', informe.id)"
                         class="group hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
-                    <Icon icon="ph:dot-fill" class="flex-shrink-0" />
+                    <Icon icon="ph:dot-fill" class="shrink-0" />
                     <div class="w-full">
                         <div v-html="informe.titulo + (informe.visibilidad == 'B' ? ' (borrador)' : '') + (!equipo && informe.equipo_oculto ? ' (privado)' : '')"
                             class="break-all capitalize lowercase font-bold" />

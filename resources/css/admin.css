@@ -1,9 +1,24 @@
-@config "../../tailwind.config.js";
+@import 'tailwindcss';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
 
 body {
     height: unset !important
@@ -50,15 +65,15 @@ form [bp-field-name='permissions'] .checkbox
 
 
 [data-bs-theme=dark] .\!bg-base-100 {
-    @apply !bg-gray-800;
+    @apply bg-gray-800!;
 }
 
 [data-bs-theme=dark] .\!bg-base-200 {
-    @apply !bg-gray-700;
+    @apply bg-gray-700!;
 }
 
 [data-bs-theme=dark] .\!bg-base-300 {
-    @apply !bg-gray-600;
+    @apply bg-gray-600!;
 }
 
 
@@ -135,9 +150,9 @@ h3 {
 }
 
 .vue-dropzone {
-    @apply !bg-base-100;
+    @apply bg-base-100!;
 }
 
 .vue-dropzone:hover {
-    @apply !bg-base-200;
+    @apply bg-base-200!;
 }

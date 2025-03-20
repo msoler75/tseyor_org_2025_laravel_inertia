@@ -92,6 +92,6 @@ watch(() => nav.scrollY, (y) => {
 
 const calcClass = computed(() => {
     return (show.value ? 'opacity-100' : 'opacity-0') + ' ' +
-        (!props.inline && floating.value ? 'p-3 bg-base-100 rounded-br-xl shadow' : '')
+        (!props.inline && floating.value ? 'p-3 bg-base-100 rounded-br-xl shadow-2xs' : '')
 })
 </script>

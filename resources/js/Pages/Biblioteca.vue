@@ -44,7 +44,7 @@
             ">
 
 
-            <h2 class="flex items-center gap-3 text-2xl font-semibold mb-2 group-hover:!text-secondary">
+            <h2 class="flex items-center gap-3 text-2xl font-semibold mb-2 group-hover:text-secondary!">
                 <Icon :icon="seccion.icon" />
                 {{ seccion.title }}
             </h2>

@@ -31,7 +31,7 @@
                     :href="route('psicografia', contenido.slug)" imageClass="h-60"
                     imageWidth="600">
                     <div
-                    class="text-center p-2 text-md font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow">
+                    class="text-center p-2 text-md font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow-xs">
                     <span v-html="contenido.titulo"/>
                 </div>
             </CardContent>

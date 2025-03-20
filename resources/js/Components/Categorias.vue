@@ -12,7 +12,7 @@
             </option>
         </select>
     </div>
-    <div class="hidden card bg-base-100 shadow self-baseline flex-wrap flex-row p-5 lg:p-10 gap-4 sticky top-16 z-30 overflow-x-auto"
+    <div class="hidden card bg-base-100 shadow-2xs self-baseline flex-wrap flex-row p-5 lg:p-10 gap-4 sticky top-16 z-30 overflow-x-auto"
         :class="[
             divClass,
             columnaBreakpoint == '2xl' ? '2xl:flex-col' : columnaBreakpoint == 'xl' ? 'xl:flex-col' : columnaBreakpoint == 'lg' ? 'lg:flex-col' : columnaBreakpoint == 'md' ? 'md:flex-col' : '',

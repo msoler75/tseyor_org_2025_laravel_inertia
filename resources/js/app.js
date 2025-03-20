@@ -1,6 +1,6 @@
 import "./bootstrap";
+// import "dropzone/dist/dropzone.css";
 import "../css/app.css";
-import "../css/tabs.css";
 
 //import { createApp, h } from "vue";
 import { createSSRApp, h } from 'vue'

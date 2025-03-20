@@ -22,7 +22,7 @@
                     text-right w-full focus:rounded-md"
                     :class="query ? 'border-0 border-b border-gray-700 focus:border-b' : 'border-transparent'"
                     @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"
-                    @focus="$emit('focus')" @blur="$emit('blur')" v-model="query" />
+                    @focus="$emit('focus')" @blur="$emit('blur-xs')" v-model="query" />
             </form>
         </div>
     </div>
@@ -54,7 +54,7 @@ const currentUrl = ref('');
 const savedQuery = ref('');
 let reloadTimeout = null;
 
-const emit = defineEmits(['update:modelValue', 'search', 'focus', 'blur']);
+const emit = defineEmits(['update:modelValue', 'search', 'focus', 'blur-xs']);
 
 onMounted(() => {
     currentUrl.value = window.location.href.replace(/\?.*/, '');

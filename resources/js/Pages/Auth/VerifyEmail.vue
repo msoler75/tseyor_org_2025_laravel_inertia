@@ -57,7 +57,7 @@ const logout = () => {
                 Si no has recibido el mensaje, puedes solicitar nuevamente la verificación.
             </div>
             <div class="flex justify-between items-center gap-4">
-                <input :disabled="disabledResend" type="submit" class="btn btn-small flex-shrink"
+                <input :disabled="disabledResend" type="submit" class="btn btn-small shrink"
                     value="Reenviar verificación">
                 <div class="flex items-center gap-3 text-sm">
                     <Link :href="route('profile.show')" class="underline">Cambiar correo</Link>

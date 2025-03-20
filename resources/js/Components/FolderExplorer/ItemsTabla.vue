@@ -207,6 +207,6 @@ if(typeof window !== 'undefined')
 <style scoped>
 table td,
 table th {
-    @apply px-2;
+    padding-inline: calc(var(--spacing)* 2);
 }
 </style>

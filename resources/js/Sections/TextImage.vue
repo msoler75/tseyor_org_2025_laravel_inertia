@@ -1,10 +1,10 @@
 <template>
-    <div :class="full ? '!py-0 w-full h-full flex flex-col justify-center' : 'py-12'">
+    <div :class="full ? 'py-0! w-full h-full flex flex-col justify-center' : 'py-12'">
         <div class="mx-auto text-center" :class="(srcImage || $slots.image? 'with-image flex flex-col md:grid md:grid-cols-2 gap-7 lg:gap-12 ' : '') +
             (full ? 'w-full h-full p-0' : 'container') + ' '+gridClass
             ">
             <div v-if="srcImage || $slots.image" class="flex flex-col justify-center items-center gap-1 max-h-full bg-center" :class="(imageRight ? 'md:order-last ' : '') +
-                (full ? 'justify-center flex-grow ' : '') +
+                (full ? 'justify-center grow ' : '') +
                 (full && !cover ? 'relative ' : '')
                 + imageSideClass" :style="cover ? {
         'background-image': `url(${srcImageBackground})`,
@@ -128,14 +128,14 @@ const srcImageBackground = computed(() => {
 
 <style scoped>
 .image-h {
-    max-height: calc(var(--sectionHeight) *.6 - 2rem);
+    max-height: calc(var(--sectionHeight) *.8 - 2rem);
 }
 
 .with-image {
     grid-template-rows: min(60fr, var(--sectionHeight)) 40fr;
 }
 
-@screen md {
+@media (min-width: 768px) {
     .image-h {
         max-height: calc(var(--sectionHeight) - 5rem);
     }

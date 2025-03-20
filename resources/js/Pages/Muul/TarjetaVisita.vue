@@ -1,7 +1,7 @@
 <template>
-    <div class="container mx-auto py-12">
+    <div class="container py-12">
 
-        <div class="container mx-auto flex justify-between items-center mb-7">
+        <div class="container flex justify-between items-center mb-7">
             <Back href="/muul">Espacio Muul</Back>
         </div>
 
@@ -11,7 +11,7 @@
         <p class="text-center">Rellena tus datos y se generará una tarjeta en formato imagen, que se enviará a tu correo
             electrónico.</p>
 
-        <div class="w-full max-w-screen-md mx-auto flex flex-wrap justify-between gap-12 my-12">
+        <div class="w-full max-w-(--breakpoint-md) mx-auto flex flex-wrap justify-between gap-12 my-12">
 
             <div v-if="enviado" class="w-1/2 flex flex-col gap-5">
                 <div class="alert alert-success">
@@ -221,6 +221,8 @@ function generarEnviar() {
 </script>
 
 <style scoped>
+@reference "../../../css/app.css";
+
 form label {
     @apply text-xs;
 }

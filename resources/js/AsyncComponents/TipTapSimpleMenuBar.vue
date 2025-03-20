@@ -149,6 +149,8 @@ function setLink() {
 </template>
 
 <style scoped>
+@reference "../../css/app.css";
+
 .btn-active {
     @apply text-primary;
 }

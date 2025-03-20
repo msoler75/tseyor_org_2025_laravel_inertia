@@ -174,6 +174,8 @@ function handlePreview(img) {
 
 
 <style scoped>
+@reference "../../css/app.css";
+
 :deep(table) p {
     @apply my-0;
 }

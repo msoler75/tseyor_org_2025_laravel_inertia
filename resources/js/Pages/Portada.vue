@@ -4,11 +4,11 @@
 
     <FullPage>
 
-        <Section data-theme="winter">
+        <Section data-theme="night">
             <FondoEspacio class="w-full h-full">
                 <Hero title="Contacto Extraterrestre" :href="route('quienes-somos')" buttonLabel="Quiénes somos"
-                    textClass="md:max-w-screen-md justify-center" image-right class="h-[95vh] w-[96vw] absolute">
-                    <div class="bg-black bg-opacity-70 hover:bg-opacity-90 transition duration-500 p-7 rounded-xl">
+                    textClass="md:max-w-(--breakpoint-md) justify-center" image-right class="h-[95vh] w-[96vw] absolute">
+                    <div class="bg-black/70 hover:bg-black/90 transition duration-500 p-7 rounded-xl">
                         En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías
                         vibracionales.
                         Nosotros aquí en este nivel estamos reforzados particularmente por la
@@ -172,6 +172,8 @@ const testimonials = ref([
 </script>
 
 <style scoped>
+@reference "../../css/app.css";
+
 .section {
     @apply h-dvh snap-center flex flex-col justify-center;
 }

@@ -10,10 +10,10 @@
         </div>
 
         <Hero title="" :srcImage="isDark?'/almacen/medios/logos/radio_tseyor_dark.png':'/almacen/medios/logos/radio_tseyor.png'"
-        class="!py-8 lg:!py-20"
+        class="py-8! lg:py-20!"
         textClass="p-7 gap-4">
-            <div class="flex flex-wrap gap-3 justify-center w-full flex-shrink-0">
-                <div v-for="emisora of emisoras" :key="emisora" class="bg-base-100 rounded-lg shadow">
+            <div class="flex flex-wrap gap-3 justify-center w-full shrink-0">
+                <div v-for="emisora of emisoras" :key="emisora" class="bg-base-100 rounded-lg shadow-2xs">
                     <div v-if="estado.emisora == emisora" class="border-primary border-b-4 p-4 font-bold">{{ emisora }}
                     </div>
                     <Link v-else class="p-4 block" :href="route('radio.emisora', emisora)">{{ emisora }}</Link>

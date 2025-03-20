@@ -1,7 +1,7 @@
 <template>
     <FondoEstrellado class="w-full h-full relative py-12" id="myform">
         <div
-            class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative animate-fade-in"
+            class="card bg-base-100 shadow-2xs max-w-lg mx-auto p-7 relative animate-fade-in"
         >
             <h1>
                 Inscripción al Curso Holístico Tseyor<small
@@ -190,8 +190,9 @@
                         form.errors.comentario
                     }}</span>
                 </div>
-                <div class="mb-4">
-                    <AceptaCondiciones v-model="form.acepto" />
+                <div class="mb-4 inline-flex flex-col gap-2 ">
+                    <AceptaCondiciones v-model="form.acepto"
+                    finalidad="gestionar mi inscripción al curso y mantener las comunicaciones necesarias relacionadas con el mismo"/>
                 </div>
                 <button
                     type="submit"
@@ -209,7 +210,7 @@
                 srcImage="/almacen/medios/paginas/camino-infinito.jpg"
                 href="/mis-primeros-pasos"
                 buttonLabel="Mis primeros pasos"
-                class="container mx-auto"
+                class="container"
                 textClass="bg-base-100 p-5 rounded-2xl"
             >
                 Te recomendamos la lectura de esta sección
@@ -316,8 +317,8 @@ function submit() {
 }
 </script>
 
-<style>
+<style scoped>
 label {
-    @apply text-sm;
+    font-size: var(--text-sm, 0.875rem);
 }
 </style>

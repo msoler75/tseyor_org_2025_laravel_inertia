@@ -18,7 +18,7 @@
         <p class="my-3">El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</p>
 
         <div class="flex w-full justify-between mb-5">
-            <SearchInput v-model="query" class="flex-grow">
+            <SearchInput v-model="query" class="grow">
                 <span v-if="query" class="sm:hidden mr-auto"></span>
                 <div class="flex items-baseline gap-3 w-full pl-1" :class="query ? 'hidden sm:flex' : ''">
                     <input id="titulos" type="checkbox" v-model="selectors.soloTitulosLibros"> <label for="titulos"
@@ -32,16 +32,16 @@
             <Categorias :categorias="categorias" :url="route('libros')" columna-breakpoint="xl" select-breakpoint="md"
                 :resultados="!!filtrado" select-class="w-full" />
 
-            <FadeOnNavigate class="w-full flex-grow">
+            <FadeOnNavigate class="w-full grow">
 
                 <SearchResultsHeader :results="listado" :valid-search="busquedaValida" />
 
                 <GridAppear v-if="selectors.soloTitulosLibros" class="max-w-full grid gap-4" col-width="100%">
                     <div v-for="libro in listado.data" :key="libro.id"
-                        class="card shadow bg-base-100 p-5 hover:text-primary transition-colors duration-250">
+                        class="card shadow-2xs bg-base-100 p-5 hover:text-primary transition-colors duration-250">
 
                         <Link :href="route('libro', libro.slug)" class="flex items-center gap-3 text-primary font-bold">
-                        <span v-html="libro.titulo" /><span class="flex-shrink-0 -order-1">📘</span></Link>
+                        <span v-html="libro.titulo" /><span class="shrink-0 -order-1">📘</span></Link>
                     </div>
                 </GridAppear>
 

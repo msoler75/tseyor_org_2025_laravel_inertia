@@ -35,7 +35,7 @@
 
         <div class="w-full flex gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 
-            <div class="w-full md:w-[7rem] flex-shrink-0 card bg-base-100 shadow p-5 h-fit md:sticky md:top-20">
+            <div class="w-full md:w-[7rem] shrink-0 card bg-base-100 shadow-2xs p-5 h-fit md:sticky md:top-20">
                 <div class="flex flex-wrap md:hidden  gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
                         :href="route('terminos') + '?letra=' + letraItem"
@@ -55,13 +55,13 @@
             </div>
 
 
-            <ContentMain class="w-full flex-grow" fade-on-navigate>
+            <ContentMain class="w-full grow" fade-on-navigate>
 
                 <SearchResultsHeader v-if="!letra" :results="listado" />
 
                 <GridAppear class="gap-8 mb-14" :time-lapse="0.01" col-width="16rem">
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('termino', contenido.slug)"
-                        class="hover:text-primary transition-color duration-200 w-fit card shadow hover:shadow-lg px-5 py-2 bg-base-100 h-fit">
+                        class="hover:text-primary transition-color duration-200 w-fit card shadow-2xs hover:shadow-lg px-5 py-2 bg-base-100 h-fit">
                     <div v-html="contenido.nombre" class="capitalize lowercase font-bold text-lg" />
                     <div v-if="filtrado" v-html="contenido.descripcion" class="mt-3" />
                     </Link>

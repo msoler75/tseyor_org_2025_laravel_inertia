@@ -18,10 +18,10 @@
             <p class="badge">{{ audio.categoria }}</p>
             <p>{{ audio.descripcion }}</p>
 
-            <div v-if="audio.audio" class="btn px-4 h-5 min-h-auto flex gap-2"
+            <div v-if="audio.audio" class="btn pl-2 pr-4 h-12 min-h-auto flex gap-2"
                 :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlayPause(audio)"
                 :title="audio.src">
-                <AudioStateIcon :src="audio.src"  class="text-3xl"/>
+                <AudioStateIcon :src="audio.src" class="text-3xl"/>
                 Reproducir
             </div>
             <a target="_blank" v-else :href="audio.enlace" class="btn px-4 h-5 min-h-auto btn-primary flex gap-2"

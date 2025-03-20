@@ -77,7 +77,7 @@
 
         <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-            <div class="flex-grow">
+            <div class="grow">
 
                 <div v-if="!vistaBusquedaCompleta || completo" class="flex justify-between items-center my-1">
 
@@ -138,7 +138,7 @@
                         <Spinner /> Buscando ...
                     </div>
                     <div v-else-if="vistaBusquedaCompleta && (!completo || !filtrado)"
-                        class="card bg-base-100 shadow p-8 w-fit mt-12">
+                        class="card bg-base-100 shadow-2xs p-8 w-fit mt-12">
                         <h2>
                             <Icon icon="ph:info-duotone" class="inline mr-4 transform -translate-y-1" />Instrucciones
                             para
@@ -156,7 +156,7 @@
                     </div>
                     <div v-else class="flex flex-col gap-5">
                         <div v-for="(comunicado, index) of listado.data" :key="comunicado.slug"
-                            class="card overflow-hidden shadow border border-black border-opacity-[0.1] flex flex-col gap-1 bg-info dark:bg-black bg-opacity-[0.1] dark:bg-opacity-[0.1]">
+                            class="card overflow-hidden shadow-2xs border border-black border-opacity-[0.1] flex flex-col gap-1 bg-info dark:bg-black/10">
                             <!-- <td class="table-cell">{{ comunicado.categoria }}</td>
                                 <td class="table-cell">{{ comunicado.numero }}</td> -->
                             <div class="px-3 pt-1 text-lg font-bold flex items-center gap-5 justify-between">
@@ -359,6 +359,8 @@ function focusBuscar() {
 
 
 <style scoped>
+@reference "../../../css/app.css";
+
 .table {
     @apply min-w-full divide-y divide-gray-500/50;
 }
