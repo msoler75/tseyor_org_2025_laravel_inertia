@@ -4,7 +4,7 @@
       <div class="grid gap-8"
       :style="{
         'grid-template-columns': `repeat(auto-fill, minmax(${postWidth}, 1fr))`}">
-        <div v-for="(post, index) in posts" :key="index" class="card bg-base-100 shadow p-6">
+        <div v-for="(post, index) in posts" :key="index" class="card bg-base-100 shadow-2xs p-6">
           <h3 class="text-xl font-semibold mb-2">{{ post.title }}</h3>
           <small v-if="post.date">{{ post.date }}</small>
           <p v-if="post.description" class="text-gray-600">{{ post.description }}</p>

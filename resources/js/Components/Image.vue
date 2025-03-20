@@ -1,19 +1,21 @@
 <template>
     <component
-        :is="!errorLoading && displaySrc ? 'img' : 'div'"
+        :is="errorLoading && errorIcon?Icon: !errorLoading && displaySrc ? 'img' : 'div'"
         ref="img"
-        class="is-image transition-opacity duration-200"
+        class="is-image transition-opacity duration-200 text-3xl"
         :src="displaySrc"
         :alt="alt"
         :title="title"
-        :class="
-            (imageLoaded || (errorLoading && errorIcon)
+        icon="ph:image-broken-duotone"
+        :class="[
+            errorLoading && errorIcon ? 'opacity-50':
+         imageLoaded
                 ? 'opacity-100'
-                : 'opacity-0') +
-            (errorLoading && errorIcon
-                ? ' bg-opacity-25 bg-gray-500 flex justify-center items-center min-w-[80px] min-h-[80px]'
-                : '')
-        "
+                : 'opacity-0',
+            errorLoading && errorIcon
+                ? 'bg-gray-500/25 flex justify-center items-center min-w-[80px] min-h-[80px]'
+                : ''
+        ]"
         :style="styles"
         @error="errorLoading = true"
     >
@@ -22,6 +24,8 @@
 
 <script setup>
 import { getImageSize, getImageUrl, isWebPSupported } from "@/Stores/image.js";
+import {belongsToCurrentDomain} from '@/composables/srcutils.js'
+import { Icon } from "@iconify/vue";
 
 const props = defineProps({
     src: {
@@ -70,11 +74,11 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["loaded"]);
+const emit = defineEmits(["loaded", "error"]);
 
 const img = ref();
 
-const myDomain = getMyDomain()
+// const myDomain = getMyDomain()
 
 // la imagen que se cargará del servidor
 const imageSrc = computed(() => getImageUrl(props.src, props.fallback));
@@ -93,7 +97,9 @@ function fillUnits(value) {
 }
 
 const styles = computed(() => {
-    const s = {};
+    const s = {
+        backgroundColor: errorLoading.value ? '#eee': 'transparent'
+    };
     if (props.width) s.width = fillUnits(props.width);
     // if (props.height) s.height = fillUnits(props.height)
     return s;
@@ -153,7 +159,8 @@ function init() {
 
     // si es una url absoluta y corresponde a otro servidor o no queremos optimización (1)
     if (
-        imageSrc.value.match(/https?:\/\/[^/]+/)?.[0] === myDomain ||
+        !belongsToCurrentDomain(imageSrc.value) ||
+        //imageSrc.value.match(/https?:\/\/[^/]+/)?.[0] === myDomain ||
         !props.optimize
     )
         return putSrcImage(imageSrc.value);
@@ -180,12 +187,25 @@ function init() {
     getImageSize(imageSrc.value)
         .then((originalSize) => {
             console.log("getImageSize", imageSrc.value, { originalSize });
+            if(originalSize.width==-1) {
+                // no existe la imagen, se usa la imagen fallback
+                emit('error')
+                if(props.fallback)
+                    putSrcImage(props.fallback)
+                else
+                    errorLoading.value = true;
+            }
+            else
             putFakeImage(originalSize.width, originalSize.height);
         })
         .catch((err) => {
-            console.error(err);
+            console.warn('Imagen '+imageSrc.value+' no existe', err);
             errorLoading.value = true;
-            putSrcImage(imageSrc.value);
+            emit('error')
+            if(props.fallback)
+                putSrcImage(props.fallback)
+            else
+                errorLoading.value = true;
         });
 }
 
@@ -253,7 +273,7 @@ const options = {
 let finalSrc = null;
 
 function putSrcImage(src) {
-    if (!isClient) return; // No ejecutamos en SSR
+    // if (!isClient) return; // No ejecutamos en SSR
     console.log("putSrcImage", src);
 
     finalSrc = src;
@@ -276,7 +296,7 @@ function putSrcImage(src) {
 
 let imageElem = null;
 function loadFinalImage() {
-    console.log("loadFinalImage");
+    console.log("loadFinalImage", finalSrc);
     imageElem = new Image();
     imageElem.src = finalSrc;
     imageElem.onload = () => {
@@ -286,6 +306,11 @@ function loadFinalImage() {
         displaySrc.value = imageElem.src;
         imageElem = null;
     };
+    imageElem.onerror = ()=> {
+        errorLoading.value = true;
+        emit('error')
+        console.log('loadFinalImage errorLoading')
+    }
 }
 
 onMounted(() => {

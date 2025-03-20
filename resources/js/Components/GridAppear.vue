@@ -34,8 +34,9 @@ onMounted(() => {
 
 
 <style>
+
 .grid-appear:not(class*=[gap-]) {
-    @apply gap-4;
+    gap:5px;
 }
 
 .grid-appear>* {

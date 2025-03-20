@@ -30,7 +30,7 @@
 
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
-                <Back :href="route('guias')" inline class="!opacity-100"
+                <Back :href="route('guias')" inline class="opacity-100!"
                     >Guías</Back
                 >
                 <div
@@ -46,7 +46,7 @@
                 <Back
                     :href="route('guias')"
                     inline
-                    class="pointer-events-none !opacity-0"
+                    class="pointer-events-none opacity-0!"
                     >Guías</Back
                 >
             </div>
@@ -67,7 +67,7 @@
                     />
                 </div>
             </div>
-            <div class="w-full lg:w-2/3 flex-shrink-0 text-left">
+            <div class="w-full lg:w-2/3 shrink-0 text-left">
                 <h1 class="text-center lg:text-left">{{ guia.nombre }}</h1>
                 <h3 class="text-center lg:text-left">{{ guia.descripcion }}</h3>
                 <p class="text-gray-600 text-xs my-5 text-right">

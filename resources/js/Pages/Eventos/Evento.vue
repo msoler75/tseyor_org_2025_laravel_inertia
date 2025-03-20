@@ -1,7 +1,7 @@
 <template>
     <div class="sticky top-0 pt-10 bg-base-100 pb-4 border-b border-base-300 z-30">
 
-        <div class="container mx-auto px-4 flex justify-between items-center mb-3">
+        <div class="container flex justify-between items-center mb-3">
             <Back inline>Eventos</Back>
             <div class="flex gap-2">
                 <Share />
@@ -9,16 +9,16 @@
             </div>
         </div>
 
-        <h1 class="container mx-auto my-4 md:my-8">
+        <h1 class="container my-4 md:my-8">
             {{ evento.titulo }}
         </h1>
-        <small class="container mx-auto text-right block mt-5"><span class="badge badge-info badge-sm">{{
+        <small class="container text-right block mt-5"><span class="badge badge-info badge-sm">{{
             evento.categoria }}</span></small>
     </div>
     <div class="container py-7 mx-auto space-y-12">
         <div class="mx-auto flex flex-wrap md:flex-nowrap gap-12">
             <div class="w-full md:w-1/2 md:order-last">
-                <div class="card bg-base-100 md:max-w-[400px] shadow p-4 grid grid-cols-2 py-7 gap-y-3">
+                <div class="card bg-base-100 md:max-w-[400px] shadow-2xs p-4 grid grid-cols-2 py-7 gap-y-3">
                     <span class="mb-2 flex gap-3 items-center">
                         <Icon icon="ph:calendar-check-duotone" class="text-xl" /> Inicia:
                     </span>

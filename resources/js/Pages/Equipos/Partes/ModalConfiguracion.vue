@@ -20,7 +20,7 @@
                     <div>
                         <label for="descripcion">Descripción</label>
                         <textarea id="descripcion" v-model="edicion.descripcion" required maxlength="400"
-                            class="shadow textarea w-full"></textarea>
+                            class="shadow-2xs textarea w-full"></textarea>
                         <div v-if="edicion.errors.descripcion" class="error">{{ edicion.errors.descripcion[0] }}
                         </div>
                         <div v-else class="text-sm">Descripción del equipo y sus funciones.</div>

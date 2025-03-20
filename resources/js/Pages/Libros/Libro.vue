@@ -1,5 +1,5 @@
 <template>
-    <div class="container mx-auto py-12">
+    <div class="container py-12">
         <div class="flex justify-between items-center mb-20">
             <Back>Libros</Back>
             <div class="flex gap-2">
@@ -34,7 +34,7 @@
                     />
                 </div>
 
-            <div class="p-6 card bg-base-100 shadow animate-fade-in">
+            <div class="p-6 card bg-base-100 shadow-2xs animate-fade-in">
                 <h1 class="text-2xl font-bold mb-4">{{ libro.titulo }}</h1>
                 <p class="text-gray-600 text-sm mb-2 flex justify-between">
                     <Link
@@ -103,7 +103,7 @@
                     imageClass="h-60"
                 >
                     <div
-                        class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary group-hover:drop-shadow"
+                        class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary group-hover:drop-shadow-xs"
                     >
                         {{ contenido.nombre }}
                     </div>

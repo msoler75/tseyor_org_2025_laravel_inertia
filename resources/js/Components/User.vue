@@ -1,6 +1,7 @@
 <template>
     <component :is="popupCard ? 'div' : Link" :href="route('usuario', { id: user.slug || user.id })"
-        :title="user.name || user.nombre || user.slug" class="inline-block font-bold cursor-pointer" :class="class" @click="onClick">
+        :title="user.name || user.nombre || user.slug" class="inline-block font-bold cursor-pointer"
+        :class="props.class" @click="onClick">
         <template v-slot:default>
             <span v-if="!$slots.default">{{ name }}</span>
             <slot />
@@ -8,7 +9,7 @@
     </component>
     <Modal :show="showCard" @close="showCard = false" maxWidth="sm">
         <div class="flex flex-col gap-2 p-5 items-center">
-            <Avatar :user="user" :link="false" :big="true" />
+            <Avatar :user="user" :link="false" :big="true" imageClass="w-48 h-48" textClass="text-5xl" />
             <h3>{{ name }}</h3>
             <div class="prose">
                 <blockquote v-if="user.frase">

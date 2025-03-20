@@ -1,5 +1,5 @@
 <template>
-    <footer class="footer-component w-full bg-gray-900 text-white border-t border-gray-300" data-theme="winter">
+    <footer class="footer-component w-full bg-gray-900 text-white border-t border-gray-300" data-theme="night">
         <div class="px-4 lg:container mx-auto py-14 lg:py-8">
             <div class="flex flex-wrap gap-8 justify-evenly">
                 <div v-for="(section, index) in sections" :key="index" class="space-y-5 lg:space-y-2 mb-7">
@@ -26,7 +26,7 @@
             </div>
         </div>
         <!-- frase final de "todos los derechos reservados" -->
-        <div class="w-full flex-shrink text-center text-sm pb-8 opacity-80">© {{new Date().getFullYear()}} TSEYOR. Todos los derechos reservados.</div>
+        <div class="w-full shrink text-center text-sm pb-8 opacity-80">© {{new Date().getFullYear()}} TSEYOR. Todos los derechos reservados.</div>
     </footer>
 </template>
 

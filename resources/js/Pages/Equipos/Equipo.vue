@@ -61,10 +61,10 @@
                     </div>
                     <div class="w-full">
                         <Link v-for="item, index of ultimosInformes" :key="index"
-                            class="flex gap-3 py-2 w-full items-baseline hover:bg-base-200/40 rounded-xl p-2"
+                            class="flex gap-3 py-2 w-full items-baseline hover:bg-secondary/5 hover:text-secondary rounded-xl p-2 "
                             :href="route('informe', item.id)">
                         <Icon icon="ph:file-duotone" />
-                        <div class="w-full">
+                        <div class="w-full" >
                             <div class="mb-2" :class="item.visibilidad == 'B' ? 'opacity-50 italic' : ''">{{ item.titulo }}
                             </div>
                             <div class="flex justify-between w-full">
@@ -81,7 +81,7 @@
                 <Card v-if="!equipo.ocultarArchivos && ultimosArchivos?.length"
                     class="overflow-y-auto max-h-112 row-span-2">
                     <h3>Últimos Archivos</h3>
-                    <div class="w-full text-sm grid grid-cols-[1.5rem,auto,1.5rem,3rem] gap-1 gap-y-3">
+                    <div class="w-full text-sm grid grid-cols-[1.5rem_auto_1.5rem_3rem] gap-1 gap-y-3">
                         <template v-for="item, index of ultimosArchivos" :key="index">
                             <FileIcon :url="item.url" :name="item.archivo" class="mt-1"
                                 @click="clickFile(item, $event)" />
@@ -215,8 +215,3 @@ function clickFile(item, event) {
 </script>
 
 
-<style>
-.ql-editor {
-    @apply bg-base-100;
-}
-</style>

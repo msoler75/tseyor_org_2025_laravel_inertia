@@ -21,7 +21,7 @@
             <Categorias :categorias="categorias" :url="route('equipos')" columna-breakpoint="md" select-breakpoint="sm"
                 div-class="w-full md:w-fit " />
 
-            <div class="w-full flex-grow">
+            <div class="w-full grow">
 
                 <SearchResultsHeader :results="listado" />
 

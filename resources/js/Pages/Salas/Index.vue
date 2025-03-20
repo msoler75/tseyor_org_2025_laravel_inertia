@@ -19,7 +19,7 @@
         <div class="w-full flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
 
 
-            <div class="w-full flex-grow">
+            <div class="w-full grow">
 
                 <SearchResultsHeader :results="listado" :valid-search="busquedaValida" />
 

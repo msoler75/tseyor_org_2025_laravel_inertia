@@ -7,7 +7,7 @@
                 <tab :name="`Solicitudes pendientes (${numPendientes})`">
 
                     <div v-if="equipo.solicitudesPendientes.length"
-                        class="overflow-y-auto bg-base-100 shadow max-h-[calc(100vh-470px)]">
+                        class="overflow-y-auto bg-base-100 shadow-2xs max-h-[calc(100vh-470px)]">
                         <table class="table w-full">
                             <tbody class="divide-y">
                                 <tr v-for="solicitud of equipo.solicitudesPendientes" :key="solicitud.id"
@@ -29,7 +29,7 @@
                                         <div v-else-if="solicitud.fecha_denegacion" class="py-3 uppercase text-error">
                                             solicitud denegada
                                         </div>
-                                        <div v-else class="flex gap-3 mr-5 flex-shrink-0">
+                                        <div v-else class="flex gap-3 mr-5 shrink-0">
                                             <button class="btn" @click="aceptar(solicitud)">
                                                 <Icon icon="ph:thumbs-up-duotone" />
                                                 <span class="hidden sm:inline"> aceptar</span>
@@ -51,7 +51,7 @@
 
                 <tab name="Historial">
                     <div v-if="solicitudesHistorial.length"
-                        class="overflow-y-auto bg-base-100 shadow max-h-[calc(100vh-470px)]">
+                        class="overflow-y-auto bg-base-100 shadow-2xs max-h-[calc(100vh-470px)]">
                         <table class="table">
                             <thead>
                                 <tr>

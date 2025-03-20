@@ -1,6 +1,6 @@
 <template>
    <svg fill="none" fill-rule="evenodd" stroke="black" stroke-width="0.501" stroke-linejoin="bevel" stroke-miterlimit="10" font-family="Times New Roman" font-size="16" style="font-variant-ligatures:none" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" overflow="visible" width="48pt" height="48pt" viewBox="0 -600 600 600"
-   class="block h-11 w-auto rounded-full outline outline-white" >
+   class="block h-11 rounded-full outline outline-white" >
  <g id="Layer 1" transform="scale(1 -1)">
   <ellipse cx="300" cy="300" rx="300" ry="300" fill="#18419d" stroke="none" stroke-width="6.012"/>
   <ellipse cx="300" cy="300" rx="213.527" ry="213.527" fill="#aec1ec" stroke="none" stroke-width="6.012"/>

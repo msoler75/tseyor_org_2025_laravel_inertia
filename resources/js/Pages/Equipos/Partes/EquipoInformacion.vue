@@ -1,5 +1,5 @@
 <template>
-    <div class="sm:card sm:bg-base-100 sm:shadow sm:p-5 flex gap-5 sm:col-span-2">
+    <div class="sm:card sm:bg-base-100 sm:shadow-2xs sm:p-5 flex gap-5 sm:col-span-2">
         <div class="w-full flex flex-wrap sm:flex-nowrap gap-5 justify-center items-center">
             <Image :src="equipo.imagen" alt="Imagen del equipo"
             :fallback="equipo_fallback"

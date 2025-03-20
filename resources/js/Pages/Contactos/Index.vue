@@ -41,7 +41,7 @@
                 />
 
                 <!-- md -->
-                <div role="tablist" class="tabs tabs-lifted">
+                <div role="tablist" class="tabs tabs-lift">
                     <a
                         @click="vista = 'mapa'"
                         role="tab"
@@ -86,7 +86,7 @@
                                 ></div>
                                 <div
                                     v-else
-                                    class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary group-hover:drop-shadow"
+                                    class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary group-hover:drop-shadow-xs"
                                 >
                                     {{ contenido.nombre }}
                                 </div>

@@ -36,15 +36,15 @@
         <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap animate-fade-in" :fade-on-navigate="false">
 
             <Categorias  title="Vibración" :novedades="false" :categorias="categorias" :counters="false" :url="route('guias')"
-            :resultados="!!filtrado" div-class="!top-32 min-w-[150px] lg:min-w-[200px]" div-select-class="!top-28"  />
+            :resultados="!!filtrado" div-class="top-32! min-w-[150px] lg:min-w-[200px]" div-select-class="top-28!"  />
 
-            <FadeOnNavigate class="w-full flex-grow">
+            <FadeOnNavigate class="w-full grow">
 
                 <GridAppear class="gap-8" col-width="12rem">
                     <CardContent v-for="contenido in guias.data" :key="contenido.id" :image="contenido.imagen"
                         :href="route('guia', contenido.slug)" imageClass="h-60">
                         <div
-                            class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow">
+                            class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow-xs">
                             {{ contenido.nombre }}</div>
                     </CardContent>
                 </GridAppear>

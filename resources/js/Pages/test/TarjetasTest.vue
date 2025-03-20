@@ -97,7 +97,7 @@
             date="2024-09-15" tag="Imagen Custom">
             <template #image>
                 <div
-                    class="w-full h-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white">
+                    class="w-full h-full bg-linear-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white">
                     Imagen Personalizada
                 </div>
             </template>

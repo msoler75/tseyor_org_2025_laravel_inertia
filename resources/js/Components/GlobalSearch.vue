@@ -1,6 +1,6 @@
 <template>
     <button type="button"
-        class="w-42 flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700 select-none flex-nowrap flex-shrink-0"
+        class="w-42 flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-2xs py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700 select-none flex-nowrap shrink-0"
         @click="search.opened = true">
         <Icon icon="ph:magnifying-glass-bold" class="mr-2" />
         Buscar...<span class="hidden lg:inline ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
@@ -10,7 +10,7 @@
                 <div class="flex gap-2 items-center p-3">
                     <Icon v-show="!loading" icon="ph:magnifying-glass-bold" class="text-lg" />
                     <Spinner v-show="loading" class="text-lg" />
-                    <div class="flex-grow relative">
+                    <div class="grow relative">
                         <input id="global-search-input" ref="input" class="search-input w-full" v-model="search.query"
                             aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off"
                             enterkeyhint="go" spellcheck="false" placeholder="Buscar en el sitio web..." maxlength="64"
@@ -38,7 +38,7 @@
                         <div v-if="search.showSuggestions" class="mt-7">
                             <div class="font-bold mb-4">Sugerencias:</div>
                             <div v-for="q of predefinedQueries" :key="q" @click="clickPredefined(q)"
-                                class="bg-base-200 bg-opacity-50 flex items-center justify-between w-full py-3 px-4 my-1 cursor-pointer rounded-lg text-primary hover:underline">
+                                class="bg-base-200/50 flex items-center justify-between w-full py-3 px-4 my-1 cursor-pointer rounded-lg text-primary hover:underline">
                                 <span class="after:content-['_↗']">
                                     {{ q.query }}
                                 </span>
@@ -49,9 +49,8 @@
                     <div v-else v-for="grupo of resultadosAgrupados" :key="grupo"
                         class="busqueda-resultados flex flex-wrap p-3">
                         <div
-                            class="w-full flex justify-between px-1 mt-3 mb-2 text-neutral font-bold capitalize opacity-50">
-                            {{
-                                traducir(grupo.coleccion) }}
+                            class="w-full flex justify-between px-1 mt-3 mb-2 text-neutral font-bold capitalize opacity-50 text-neutral-content">
+                            {{ traducir(grupo.coleccion) }}
                         </div>
                         <Link v-for="item of grupo.items" :key="item.id" :id="item.idDom"
                             class="w-full py-3 px-4 bg-base-200 rounded-lg my-1 flex gap-3 justify-between items-center"
@@ -377,6 +376,8 @@ function ultimoItem() {
 </script>
 
 <style scoped>
+@reference "../../css/app.css";
+
 a.seleccionado {
     @apply bg-primary text-white dark:text-black;
 }
@@ -385,7 +386,7 @@ a.seleccionado :deep(em.search-term) {
     @apply text-white;
 }
 
-[data-theme='winter'] a.seleccionado :deep(em.search-term),
+[data-theme='night'] a.seleccionado :deep(em.search-term),
 .dark a.seleccionado :deep(em.search-term) {
     @apply text-black;
 }

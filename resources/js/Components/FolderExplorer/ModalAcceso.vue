@@ -74,10 +74,10 @@
         <div class="p-5">
             <div class="font-bold text-lg">Buscar usuario</div>
             <input type="search" id="buscar_usuario"
-                class="input shadow flex-shrink-0 rounded-none border-b border-gray-500" placeholder="Buscar usuario..."
+                class="input shadow-2xs shrink-0 rounded-none border-b border-gray-500" placeholder="Buscar usuario..."
                 v-model="usuarioBuscar">
 
-            <div class="overflow-y-auto max-h-[200px] shadow">
+            <div class="overflow-y-auto max-h-[200px] shadow-2xs">
                 <table v-if="usuariosParaAgregar.length" class="table w-full bg-base-100 rounded-none">
                     <tbody class="divide-y">
                         <tr v-for="user of usuariosParaAgregar" :key="user.id">
@@ -212,7 +212,8 @@ function buscarUsuarios() {
             .get(route('usuarios.buscar', query))
             .then(response => {
                 console.log('response', response.data)
-                usuariosEncontrados.value = response.data;
+                // response.data is an object with keys, we just want only all values as array
+                usuariosEncontrados.value = Object.values(response.data);
             })
             .catch(error => {
                 console.error(error);
@@ -300,9 +301,8 @@ function cambiarAcl() {
 
 
 <style scoped>
-
 table td,
 table th {
-    @apply px-2;
+    padding-inline: calc(var(--spacing)* 2);
 }
 </style>

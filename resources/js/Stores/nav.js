@@ -64,8 +64,6 @@ const state = reactive({
   timer: null,
   announce: false,
   announceClosed: false,
-  defaultClass: "",
-  class: "",
   sideBarShow: false,
   // position: 'sticky',
   fullPage: false,

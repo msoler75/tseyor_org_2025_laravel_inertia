@@ -16,7 +16,7 @@
                      :style="{transform: `translateX(${(5-index)*20}px)`}"/>
             </NavLink>
         </template>
-        <div class="underscore transition-all duration-300 absolute h-2 left-0 bottom-0 pointer-events-none bg-blue-500"
+        <div class="underscore transition-all duration-300 absolute h-1 left-0 bottom-0 pointer-events-none bg-secondary"
         :style="underScoreStyle"/>
     </div>
 </template>
@@ -70,7 +70,6 @@ watch(()=>nav.activeTab, (tab) => {
 })
 
 const underScoreStyle = computed(() => {
-    console.log("===",  underscoreShow.value, underscoreLeft.value, )
     return {
         transform: `translateX(${underscoreLeft.value})`,
         width: underscoreWidth.value,
@@ -96,15 +95,23 @@ onMounted(  ()=>{
 
     // get global event from window
     window.addEventListener("page-loaded", updateUnderscore)
+
+    /*setTimeout(()=>{
+        nav.activateTab(nav.items[5])
+    }, 250)*/
 })
 </script>
 
 
 <style scoped>
+
 .current-tab:focus,
 .current-tab {
-    @apply text-blue-600 dark:text-blue-400;
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--color-primary);
 }
+
+
 /*
 .hover-helper {
     @apply bg-yellow-300;
@@ -130,7 +137,7 @@ onMounted(  ()=>{
 
 <style>
 .nav-tab.active {
-    @apply font-bold;
+    font-style: bold;
 }
 
 .nav-tab.hovering {
@@ -138,10 +145,10 @@ onMounted(  ()=>{
 }
 
 .navigation-tab {
-    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'><path fill='black' d='M12 20.5l-9-9v-2l9 9 9-9v2z'></path></svg>") 16 16, auto;
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'><path fill='orange' d='M12 20.5l-9-9v-2l9 9 9-9v2z'></path></svg>") 16 16, auto;
 }
 
-html[data-theme="winter"] .navigation-tab {
-    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'><path fill='white' d='M12 20.5l-9-9v-2l9 9 9-9v2z'></path></svg>") 16 16, auto;
-}
+/*[data-theme="night"] .navigation-tab {
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'><path fill='orange' d='M12 20.5l-9-9v-2l9 9 9-9v2z'></path></svg>") 16 16, auto;
+}*/
 </style>

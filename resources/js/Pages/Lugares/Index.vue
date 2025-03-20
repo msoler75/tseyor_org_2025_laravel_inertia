@@ -35,13 +35,13 @@
 
         <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-            <div class="w-full flex-grow">
+            <div class="w-full grow">
 
                 <GridAppear class="gap-8" col-width="16rem">
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
                         :href="route('lugar', contenido.slug)" imageClass="h-60" preserve-page>
                         <div
-                            class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow">
+                            class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow-xs">
                             {{ contenido.nombre }}</div>
                     </CardContent>
                 </GridAppear>
@@ -52,7 +52,7 @@
             </div>
 
             <div class="min-w-[250px] lg:min-w-[440px]">
-                <div class="card bg-base-100 shadow p-10 space-y-7">
+                <div class="card bg-base-100 shadow-2xs p-10 space-y-7">
                     <h2 class="mb-5">Lugares</h2>
                     <ul class="list-disc">
                         <li v-for="lugar in todos" :key="lugar.id">

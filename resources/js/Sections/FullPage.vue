@@ -126,6 +126,8 @@ function scrollToPreviousMandatory() {
 
 
 <style scoped>
+@reference "../../css/app.css";
+
 :slotted(.section) {
     @apply snap-center flex flex-col justify-center h-screen;
 }

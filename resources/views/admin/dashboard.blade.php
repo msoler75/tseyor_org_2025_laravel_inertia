@@ -9,14 +9,14 @@
         @can('avanzado')
             <div class="flex flex-wrap gap-5 my-12">
 
-                <div class="rounded overflow-y-auto border border-gray-500 bg-base-100 p-3">
+                <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
                     <div class="font-bold text-lg mb-3">Worker</div>
                     <div style="min-width: 170px">
                         <WorkerStatus class="text-xl" href="/admin/job" />
                     </div>
                 </div>
 
-                <div class="rounded overflow-y-auto border border-gray-500 bg-base-100 p-3">
+                <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
                     <div class="font-bold text-lg mb-3">Inscripciones nuevas</div>
                     <div class="flex text-3xl justify-between items-baseline">
                         <span @if ($inscripciones_nuevas) style="color: orange" @endif>{{ $inscripciones_nuevas }}</span>
@@ -28,7 +28,7 @@
                     </div>
                 </div>
 
-                <div class="rounded overflow-y-auto border border-gray-500 bg-base-100 p-3">
+                <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
                     <div class="font-bold text-lg mb-3">Tareas fallidas</div>
                     <div class="flex text-3xl justify-between items-baseline">
                         <span @if ($tareas_fallidas) style="color: orange" @endif>{{ $tareas_fallidas }}</span>
@@ -40,7 +40,7 @@
                     </div>
                 </div>
 
-                <div class="rounded overflow-y-auto border border-gray-500 bg-base-100 p-3">
+                <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
                     <div class="font-bold text-lg mb-3">Estado web</div>
                     <div class="flex gap-4 text-3xl justify-between items-baseline">
                         <span
@@ -59,14 +59,14 @@
         <div class="flex flex-wrap justify-between gap-5 my-12">
 
             @can('administrar usuarios')
-                <div class="flex-grow  rounded overflow-y-auto border border-gray-500 bg-base-100">
+                <div class="grow  rounded-xs overflow-y-auto border border-gray-500 bg-base-100">
                     <table class="w-full divide-y divide-gray-500">
-                        <thead class="!bg-base-100">
+                        <thead class="bg-base-100!">
                             <tr>
                                 <th colspan=2 class="font-bold mb-3 text-lg px-3 py-4">Últimos usuarios registrados:</th>
                             </tr>
                         </thead>
-                        <tbody class="!bg-base-100 divide-y divide-gray-500">
+                        <tbody class="bg-base-100! divide-y divide-gray-500">
                             @foreach ($users_creados as $user)
                                 <tr>
                                     <td class="px-3 py-2 whitespace-nowrap">
@@ -82,14 +82,14 @@
                     </table>
                 </div>
 
-                <div class="flex-grow rounded overflow-y-auto border border-gray-500 bg-base-100">
+                <div class="grow rounded-xs overflow-y-auto border border-gray-500 bg-base-100">
                     <table class="w-full divide-y divide-gray-500">
-                        <thead class="!bg-base-100">
+                        <thead class="bg-base-100!">
                             <tr>
                                 <th colspan=2 class="font-bold mb-3 text-lg px-3 py-4">Usuarios activos:</th>
                             </tr>
                         </thead>
-                        <tbody class="!bg-base-100 divide-y divide-gray-500">
+                        <tbody class="bg-base-100! divide-y divide-gray-500">
                             @foreach ($users_activos as $user)
                                 <tr>
                                     <td class="px-3 py-2 whitespace-nowrap">
@@ -109,14 +109,14 @@
             @endcan
 
             @canany(['administrar contenidos'])
-                <div class="flex-grow  rounded overflow-y-auto border border-gray-500 bg-base-100">
+                <div class="grow  rounded-xs overflow-y-auto border border-gray-500 bg-base-100">
                     <table class="w-full divide-y divide-gray-500">
-                        <thead class="!bg-base-100">
+                        <thead class="bg-base-100!">
                             <tr>
                                 <th colspan=2 class="font-bold mb-3 text-lg px-3 py-4">Búsquedas recientes:</th>
                             </tr>
                         </thead>
-                        <tbody class="!bg-base-100 divide-y divide-gray-500">
+                        <tbody class="bg-base-100! divide-y divide-gray-500">
                             @foreach ($busquedas as $busqueda)
                                 <tr>
                                     <td class="px-3 py-2 whitespace-nowrap">
@@ -135,9 +135,9 @@
             @endcanany
 
             @can('administrar archivos')
-                <div class="flex-grow rounded overflow-y-auto border border-gray-500 bg-base-100">
+                <div class="grow rounded-xs overflow-y-auto border border-gray-500 bg-base-100">
                     <table class="w-full divide-y divide-gray-500">
-                        <thead class="!bg-base-100">
+                        <thead class="bg-base-100!">
                             <tr>
                                 <th colspan=5 class="mb-3 px-3 py-4">
                                     <div class="flex justify-between items-center">
@@ -158,7 +158,7 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="!bg-base-100 divide-y divide-gray-500">
+                        <tbody class="bg-base-100! divide-y divide-gray-500">
                             @foreach ($archivos as $archivo)
                                 <tr>
                                     <td class="px-3 py-2 whitespace-nowrap">
@@ -181,9 +181,9 @@
             @endcanany
 
             @can('administrar social')
-                <div class="flex-grow rounded overflow-y-auto border border-gray-500 bg-base-100">
+                <div class="grow rounded-xs overflow-y-auto border border-gray-500 bg-base-100">
                     <table class="w-full divide-y divide-gray-500">
-                        <thead class="!bg-base-100">
+                        <thead class="bg-base-100!">
                             <tr>
                                 <th colspan=5 class="mb-3 px-3 py-4">
                                     <div class="flex justify-between items-center">
@@ -204,7 +204,7 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="!bg-base-100 divide-y divide-gray-500">
+                        <tbody class="bg-base-100! divide-y divide-gray-500">
                             @foreach ($comentarios as $comentario)
                                 <tr>
                                     <td class="px-3 py-2 whitespace-nowrap">
@@ -212,11 +212,11 @@
                                             href="/usuarios/{{ $comentario['user']['slug'] ? $comentario['user']['slug'] : $comentario['user']['id'] }}">{{ $comentario['user']['name'] }}</a>
                                     </td>
                                     <td class="px-3 py-2 whitespace-wrap">
-                                        <a title="Ver comentario en el contenido" class="flex-grow"
+                                        <a title="Ver comentario en el contenido" class="grow"
                                             href="{{ $comentario['url'] }}#comentario_{{ $comentario['id'] }}">{{ substr($comentario['texto'], 0, 64) . (strlen($comentario['texto']) > 64 ? '...' : '') }}</a>
                                     </td>
                                     <td class="px-3 py-2 whitespace-wrap">
-                                        <a title="Ver contenido" class="flex-grow"
+                                        <a title="Ver contenido" class="grow"
                                             href="{{ $comentario['url'] }}">{{ $comentario->tituloContenido }}</a>
                                     </td>
                                     <td class="px-3 py-2 whitespace-nowrap text-center">

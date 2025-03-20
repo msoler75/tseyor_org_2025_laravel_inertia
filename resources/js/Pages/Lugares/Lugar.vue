@@ -23,11 +23,11 @@
 
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
-                <Back :href="route('lugares')" inline class="!opacity-100">Lugares</Back>
+                <Back :href="route('lugares')" inline class="opacity-100!">Lugares</Back>
                 <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
                     <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
                 </div>
-                <Back :href="route('lugares')" inline class="pointer-events-none !opacity-0">Lugares</Back>
+                <Back :href="route('lugares')" inline class="pointer-events-none opacity-0!">Lugares</Back>
             </div>
         </ContentBar>
 
@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <div class="w-full lg:w-[60%] flex-shrink-0 text-left">
+            <div class="w-full lg:w-[60%] shrink-0 text-left">
                 <h1 class="text-center lg:text-left">{{ lugar.nombre }}</h1>
                 <p class="text-gray-600 text-xs my-5 text-right">
                     Última actualización:
@@ -70,7 +70,7 @@
 
         <hr class="my-12" />
 
-        <div class="card bg-base-100 shadow flex-wrap flex-row p-5 lg:p-10 gap-4">
+        <div class="card bg-base-100 shadow-2xs flex-wrap flex-row p-5 lg:p-10 gap-4">
             <div v-for="item of lugares" :key="item.slug" class="flex gap-2">
                 <Link v-show="item.slug != lugar.slug" :href="route('lugar', item.slug)">
                 <span class="capitalize">{{ item.nombre }}</span>

@@ -9,13 +9,14 @@ const props = defineProps({
     active: Boolean,
 });
 
-const baseClass = 'inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out';
+const baseClass = 'inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 focus:outline-hidden transition duration-150 ease-in-out';
 
 const classes = computed(() => {
     return [
         baseClass,
-        'text-gray-500 dark:text-gray-100 focus:text-gray-700 dark:focus:text-gray-300',
-        props.active ? 'active' : 'border-transparent'
+        'text-gray-500 dark:text-gray-100',
+        props.active ? 'active' : 'border-transparent',
+        props.href? 'hover:!text-secondary' : ''
     ].join(' ');
 });
 
@@ -25,7 +26,7 @@ function handleClick() {
 </script>
 
 <template>
-    <component :is="href ? Link : 'div'" :href="href" :class="classes" class="text-blue-900 dark:text-blue-50"
+    <component :is="href ? Link : 'div'" :href="href" :class="classes"
         @click="handleClick">
         <slot />
     </component>

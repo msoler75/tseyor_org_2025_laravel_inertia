@@ -18,7 +18,7 @@
 
         <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-            <div class="w-full flex-grow">
+            <div class="w-full grow">
 
                 <SearchResultsHeader :results="listado" />
 
@@ -35,7 +35,7 @@
             </div>
 
             <div class="min-w-[250px] lg:min-w-[440px]" v-if="listado.first_page_url.indexOf('?buscar=') < 0">
-                <div class="card bg-base-100 shadow p-10 space-y-7">
+                <div class="card bg-base-100 shadow-2xs p-10 space-y-7">
                     <h2 class="mb-5">Recientes</h2>
                     <ul class="list-disc">
                         <li v-for="entrada in recientes" :key="entrada.id">

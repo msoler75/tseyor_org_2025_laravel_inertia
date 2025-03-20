@@ -13,7 +13,7 @@
             <div class="bg-base-100 p-3">
                 <div class="p-8">{{ mostrandoArchivo.nombre }}</div>
 
-                <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
+                <div class="flex pt-3 justify-between sm:justify-end gap-3 shrink-0">
 
                     <button @click.prevent="descargarArchivo" type="button" class="btn btn-secondary">
                         Descargar
@@ -32,7 +32,7 @@
                 <img :src="mostrandoImagen.url + '?mw=700&mh=600'"
                     class="w-full max-h-[calc(100vh-170px)] object-contain" />
 
-                <div class="flex pt-3 justify-between sm:justify-end gap-3 flex-shrink-0">
+                <div class="flex pt-3 justify-between sm:justify-end gap-3 shrink-0">
                     <button v-if="modoInsertar" @click.prevent="insertarImagen" type="button" class="btn btn-primary">
                         Insertar
                     </button>

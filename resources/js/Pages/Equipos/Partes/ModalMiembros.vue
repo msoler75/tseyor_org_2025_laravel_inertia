@@ -3,9 +3,9 @@
         <div class="bg-base-200 p-5 flex flex-col gap-5 max-h-[90vh] select-none">
             <h3>Miembros del Equipo</h3>
 
-            <input type="search" class="input shadow flex-shrink-0" placeholder="Buscar..." v-model="miembroBuscar">
+            <input type="search" class="input shadow-2xs shrink-0" placeholder="Buscar..." v-model="miembroBuscar">
 
-            <div class="overflow-y-auto bg-base-100 shadow" v-if="miembrosListado.length">
+            <div class="overflow-y-auto bg-base-100 shadow-2xs" v-if="miembrosListado.length">
                 <table class="table w-full">
                     <tbody class="divide-y">
                         <tr v-for="user of miembrosListado" :key="user.id" class="cursor-pointer"

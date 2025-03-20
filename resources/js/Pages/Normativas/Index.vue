@@ -24,7 +24,7 @@
             <Categorias :categorias="categorias" :url="route('normativas')" columna-breakpoint="md"
                 select-breakpoint="sm" div-class="w-full md:w-fit " />
 
-            <div class="w-full flex-grow card shadow bg-base-100 px-5 py-7">
+            <div class="w-full grow card shadow-2xs bg-base-100 px-5 py-7">
 
                 <SearchResultsHeader :results="listado" :category="categoriaActiva" />
 
@@ -32,7 +32,7 @@
                     <Link v-for="contenido in listado.data" :key="contenido.id"
                         :href="route('normativa', contenido.slug)"
                         class=" hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
-                    <Icon icon="ph:dot-fill" class="flex-shrink-0" />
+                    <Icon icon="ph:dot-fill" class="shrink-0" />
                     <div class="w-full">
                         <div v-html="contenido.titulo" class="capitalize lowercase font-bold" />
                         <div v-if="filtrado" v-html="contenido.descripcion" class="mt-3" />

@@ -1,6 +1,6 @@
 <template>
     <FondoEstrellado class="w-full relative py-12" id="myform">
-        <div class="card bg-base-100 shadow max-w-lg mx-auto p-7 relative animate-fade-in">
+        <div class="card bg-base-100 shadow-2xs max-w-lg mx-auto p-7 relative animate-fade-in">
             <h1>Contactar con Tseyor</h1>
             <div v-if="error">
                 <div class="alert alert-error">
@@ -52,8 +52,9 @@
                     <span v-if="form.errors.comentario" class="error">{{ form.errors.comentario }}</span>
                 </div>
                 <div class="mb-4">
-                    <label class="inline-flex items-center">
-                        <AceptaCondiciones v-model="form.acepto" />
+                    <label class="inline-flex flex-col gap-2 items-center">
+                        <AceptaCondiciones v-model="form.acepto"
+                        finalidad="recibir información"/>
                     </label>
                 </div>
                 <button type="submit" class="btn btn-primary" :disabled="form.processing">
@@ -65,7 +66,7 @@
 
         <Section v-show="submitted" class="py-7">
             <TextImage title="¿Y ahora qué?" srcImage="/almacen/medios/paginas/camino-infinito.jpg"
-                href="/mis-primeros-pasos" buttonLabel="Mis primeros pasos" class="container mx-auto"
+                href="/mis-primeros-pasos" buttonLabel="Mis primeros pasos" class="container"
                 textClass="bg-base-100 p-5 rounded-2xl">
                 Te recomendamos la lectura de esta sección
             </TextImage>

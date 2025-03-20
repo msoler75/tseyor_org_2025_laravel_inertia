@@ -1,6 +1,6 @@
 <template>
     <div
-        class="tabs tabs-boxed mb-12 gap-7 bg-base-300 w-fit max-w-full uppercase font-bold"
+        class="tabs tabs-box mb-12 gap-7 bg-base-300 w-fit max-w-full uppercase font-bold"
     >
         <component
             v-for="(tab, index) of tabsGlosario"
@@ -49,7 +49,7 @@ const tabsGlosario = computed(() =>
             ...tab,
             url: route(tab.route),
             as: h ? "span" : Link,
-            class: h ? "tab-active cursor-default" : "",
+            class: h ? "tab-active !bg-info !text-info-content cursor-default " : "",
         };
     })
 );

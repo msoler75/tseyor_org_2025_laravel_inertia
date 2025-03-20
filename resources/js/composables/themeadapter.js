@@ -58,13 +58,13 @@ export const    currentTheme = ()=> {
 
 
 
-  export const updateTheme = () => {
+  export const updateThemeUnused = () => {
 
     const globalTheme = currentTheme()
 
     const theme =  globalTheme== 'dark' ? 'winter' : ''
 
-    document.querySelector("body").setAttribute("data-theme", theme)
+    // document.querySelector("body").setAttribute("data-theme", theme)
 
 
   }

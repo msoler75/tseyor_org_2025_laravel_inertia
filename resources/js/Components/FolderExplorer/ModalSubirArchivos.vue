@@ -82,9 +82,7 @@ onMounted(async () => {
 </script>
 
 <style>
-
 .vue-dropzone {
-    @apply bg-base-100;
     border-radius: 5px;
     border: 2px dashed rgb(0, 135, 247);
     border-image: none;
@@ -92,8 +90,8 @@ onMounted(async () => {
     margin-right: auto;
 }
 
-.vue-dropzone>.dz-preview .dz-success-mark,
-.vue-dropzone>.dz-preview .dz-error-mark {
+div.vue-dropzone>.dz-preview .dz-success-mark,
+div.vue-dropzone>.dz-preview .dz-error-mark {
     width: unset;
     left: calc(50% - 25px);
 }

@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-md lg:container mx-auto py-12">
+    <div class="max-w-md lg:container py-12">
         <form @submit.prevent="submit" class="">
             <div class="mb-4">
                 <label class="block font-bold mb-2" for="nombre">Nombre del equipo:</label>

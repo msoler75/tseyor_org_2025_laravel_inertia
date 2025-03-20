@@ -61,9 +61,9 @@
 
 <script setup>
 import Dropzone from 'dropzone';
-if (typeof window !== 'undefined') {
+/*if (typeof window !== 'undefined') {
   import('dropzone/dist/dropzone.css');
-}
+}*/
 
 // Propiedades
 const props = defineProps({

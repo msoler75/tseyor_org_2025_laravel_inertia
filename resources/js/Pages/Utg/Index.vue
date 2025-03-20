@@ -47,14 +47,14 @@
                     </blockquote>
                 </template>
             </TextText>
-            <div class="container mx-auto text-right">
+            <div class="container text-right">
                 <div>Shilcars, Comunicado interdimensional 429</div>
             </div>
         </Section>
 
 
         <Section class="py-14">
-            <div class="container mx-auto space-y-12 py-12">
+            <div class="container space-y-12 py-12">
                 <h2>Espacios de los Equipos y Departamentos</h2>
                 <span>A continuación encontraréis algunos de los equipos y departamentos de la UTG. El listado completo
                     está en

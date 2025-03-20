@@ -613,7 +613,7 @@ async function onInsertImage(file, _view) {
 
 <style scoped>
 /* Basic editor styles */
-
+@reference "../../css/app.css";
 
 ul,
 ol {

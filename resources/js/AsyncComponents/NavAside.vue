@@ -32,7 +32,7 @@
                                 <input v-if="tab.hasItems" type="checkbox" :v-model="tab.open"
                                     @change="toggle(tab, $event)" />
                                 <div class="collapse-title">{{ tab.title }}</div>
-                                <div class="collapse-content px-0   bg-base-100 bg-opacity-50" v-if="tab.hasItems">
+                                <div class="collapse-content px-0 bg-base-100/50" v-if="tab.hasItems">
                                     <template v-for="section, index of tab.submenu.sections" :key="index">
                                         <template v-for="group, index of section.groups" :key="index">
                                         <div @click.prevent.stop="null" v-if="group.title != tab.title"
@@ -46,7 +46,7 @@
                                             class="nav-item p-5 flex justify-start items-center space-x-6 w-full transition duration-200 hover:bg-base-300"
                                             :class="item.disabled ? 'opacity-50 pointer-events-none' : ''">
                                             <Icon v-if="item.icon":icon="item.icon" />
-                                            <component v-else-if="item.component" :is="item.component" class="w-4 h-4 flex-shrink-0"/>
+                                            <component v-else-if="item.component" :is="item.component" class="w-4 h-4 shrink-0"/>
                                             <span>{{ item.title }}</span>
                                         </component>
                                     </template>

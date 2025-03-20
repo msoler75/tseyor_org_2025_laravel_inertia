@@ -22,7 +22,7 @@
             <Categorias :categorias="categorias" :url="route('eventos')" select-breakpoint="md"
                 div-class="min-w-[24ch] w-full md:w-fit " />
 
-            <div class="w-full flex-grow">
+            <div class="w-full grow">
 
 
 
@@ -35,7 +35,7 @@
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
                         :description="contenido.descripcion">
                         <div
-                            class="absolute right-2 top-2 rounded shadow-lg bg-base-100 text-xl font-bold overflow-hidden">
+                            class="absolute right-2 top-2 rounded-xs shadow-lg bg-base-100 text-xl font-bold overflow-hidden">
                             <span class="p-2 inline-block">
                                 {{ fechas[contenido.id].substring(0, fechas[contenido.id].lastIndexOf(' ')) }}
                             </span>

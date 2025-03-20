@@ -13,7 +13,7 @@
             <h1 class="text-4xl font-bold text-center mb-10">Vídeos TSEYOR</h1>
             <div class="text-lg text-center">Visita nuestro canal de Youtube @tseyor</div>
             <div
-                class="flex flex-wrap justify-center items-center gap-10 card flex-row bg-base-100 shadow rounded-lg p-12 w-fit mx-auto">
+                class="flex flex-wrap justify-center items-center gap-10 card flex-row bg-base-100 shadow-2xs rounded-lg p-12 w-fit mx-auto">
                 <a href="https://www.youtube.com/@tseyor" target="_blank"
                     class="text-blue-600 hover:text-blue-800 font-bold text-2xl">youtube.com/@tseyor</a>
                 <a href="https://www.youtube.com/@tseyor" target="_blank">

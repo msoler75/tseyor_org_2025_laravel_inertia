@@ -29,3 +29,30 @@ export const getMyDomain = function () {
       : process.env.APP_URL;
   return myDomain;
 };
+
+let URLLib = {
+    URL: typeof window !== 'undefined'
+        ? window.URL
+        : globalThis.URL
+};
+
+function getURLModule() {
+    return URLLib; // Acceso directo sin promesas
+}
+
+export const belongsToCurrentDomain = async function (url) {
+    console.log("belongsToCurrentDomain", url);
+    const hasHost = url.match(/^https?:\/\//);
+    if (!hasHost) return true;
+
+    try {
+        const { URL } = await getURLModule();
+        const urlObj = new URL(url);
+        const currentDomain = getMyDomain();
+        return urlObj.hostname === new URL(currentDomain).hostname;
+    } catch (error) {
+        console.error("Error parsing URL:", error);
+        return false;
+    }
+};
+

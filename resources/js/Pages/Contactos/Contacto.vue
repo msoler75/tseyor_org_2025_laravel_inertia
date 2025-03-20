@@ -9,7 +9,7 @@
             </div>
         </div>
 
-        <Card class="text-center w-fit space-y-4 sm:!p-14 mx-auto">
+        <Card class="text-center w-fit space-y-4 sm:p-14! mx-auto">
             <h1 class="text-3xl font-bold mb-4">{{ contacto.nombre }}</h1>
 
             <p class="lg:text-right text-gray-600 text-sm mb-2"> Última actualización:

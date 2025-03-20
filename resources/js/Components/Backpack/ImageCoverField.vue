@@ -1,6 +1,6 @@
 <template>
     <div>
-        <input type="text" :name="name" v-model="selected" class="w-full sm:w-[600px] form-control">
+        <input type="text" :name="name" v-model="selected" class="w-full sm:w-[600px]">
 
         <ModalDropZone v-model="modalSubirImage" @uploaded="uploadedImage($event)"
         placeholder="Arrastra la imagen aquí o haz clic" url="/files/upload/image" :mediaFolder="folder" :options="{
@@ -11,17 +11,17 @@
         <div class="flex mt-2">
             <div class="flex items-center overflow-x-auto">
                 <div v-for="url of images" :key="url"
-                    class="relative border-4 border-transparent flex-shrink-0 cursor-pointer group" :title="url"
-                    :class="url == selected ? '!border-orange-500' : ''" @click="selected = url">
+                    class="relative border-4 border-transparent shrink-0 cursor-pointer group" :title="url"
+                    :class="url == selected ? 'border-orange-500!' : ''" @click="selected = url">
                     <Image :src="url.startsWith('/') ? url + '?h=150' : url" style="height:150px" error-icon />
                     <div v-if="canDelete" @click.stop="borrarImagen(url)" title="Borrar imagen"
-                        class="absolute bottom-1 right-1 bg-red-600 text-white hidden group-hover:block opacity-50 hover:!opacity-100 p-1 rounded">
+                        class="absolute bottom-1 right-1 bg-red-600 text-white hidden group-hover:block opacity-50 hover:opacity-100! p-1 rounded-xs">
                         <Icon icon="ph:trash" />
                     </div>
                 </div>
             </div>
             <div @click="modalSubirImage = true" title="Añadir una imagen"
-                class="flex justify-center items-center w-[80px] h-[158px] border-gray-700 dark:border-gray-300  border opacity-80 hover:!opacity-100 bg-gray-500 cursor-pointer flex-shrink-0">
+                class="flex justify-center items-center w-[80px] h-[158px] border-gray-700 dark:border-gray-300  border opacity-80 hover:opacity-100! bg-gray-500 cursor-pointer shrink-0">
                 <Icon icon="ic:outline-add-photo-alternate" class="text-4xl" />
             </div>
         </div>

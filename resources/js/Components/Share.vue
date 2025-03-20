@@ -14,7 +14,7 @@
 
         <div class="p-5">
 
-            <p class="font-bold text-neutral">Compartir
+            <p class="font-bold text-base-content">Compartir
                 &ldquo;<i>{{ sharing.title }}</i>&ldquo;
             </p>
             <div class="flex flex-wrap justify-start items-center gap-3"

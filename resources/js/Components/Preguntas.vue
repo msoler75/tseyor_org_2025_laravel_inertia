@@ -2,7 +2,7 @@
 
 
         <div v-if="titulo"
-            class="py-10 sm:px-10 lg:p-20 max-w-[960px] container mx-auto my-12 bg-base-100 shadow hyphens-auto md:rounded-3xl md:text-justify">
+            class="py-10 sm:px-10 lg:p-20 max-w-[960px] container mx-auto my-12 bg-base-100 shadow-2xs hyphens-auto md:rounded-3xl md:text-justify">
 
             <h1>{{ titulo }}</h1>
 
@@ -112,6 +112,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@reference "../../css/app.css";
+
 :deep(p a) {
     text-decoration: none;
 }
