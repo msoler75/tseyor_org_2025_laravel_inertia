@@ -95,10 +95,6 @@ onMounted(  ()=>{
 
     // get global event from window
     window.addEventListener("page-loaded", updateUnderscore)
-
-    /*setTimeout(()=>{
-        nav.activateTab(nav.items[5])
-    }, 250)*/
 })
 </script>
 

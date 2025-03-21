@@ -35,7 +35,7 @@
 @custom-variant dark (&:where([data-theme=night], [data-theme=night] *));
 
 @theme {
-    --breakpoint-xs: '475px';
+    --breakpoint-xs: 475px;
     --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
@@ -48,7 +48,6 @@
   color utilitiy to any element that depends on these defaults.
 */
 @layer base {
-
     *,
     ::after,
     ::before,
@@ -110,7 +109,6 @@
     }
 
 
-
     h1 {
         @apply text-4xl mb-9 font-bold leading-tight text-primary;
     }
@@ -139,9 +137,9 @@
         @apply text-primary underline;
     }
 
-    p a:hover {
+    /*p a:hover {
         @apply text-blue-600;
-    }
+    }*/
 
     code {
         @apply bg-base-200 p-1 font-mono text-sm;
@@ -220,7 +218,6 @@
         color: #666;
     }
 
-
     a.footnote-backref {
         @apply no-underline;
     }
@@ -229,10 +226,7 @@
 
 
 
-
-
 @layer components {
-
 
     /* Estilos para formularios */
     label {
@@ -248,11 +242,7 @@
         @apply dark:text-gray-100 dark:bg-base-100;
     }
 
-
 }
-
-
-
 
 
 @layer base {

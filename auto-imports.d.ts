@@ -45,6 +45,7 @@ declare global {
   const useNav: typeof import('@/Stores/nav.js')['useNav']
   const usePage: typeof import('@inertiajs/vue3')['usePage']
   const useRoute: typeof import('./resources/js/composables/useRoute.js')['default']
+  const useSlotEmpty: typeof import('./resources/js/composables/useSlotEmpty.js')['useSlotEmpty']
   const useSlots: typeof import('vue')['useSlots']
   const watch: typeof import('vue')['watch']
 }
