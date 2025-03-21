@@ -1,10 +1,11 @@
 <template>
-    <Sections>
+    <Sections height="500">
 
-        <Section height="400" class="py-12 container">
+        <Section  class="py-12 container lg:max-w-[1024px]">
             <TextImage title="Curso Holístico Tseyor" srcImage="/almacen/medios/paginas/curso.png" image-right
                 srcWidth="373" srcHeight="482" buttonLabel="Inscríbete" :href="route('cursos.inscripcion.nueva')">
-                <p>Conoce las enseñanzas de los <Referencia>Guías Estelares</Referencia> con nuestro curso gratuito.</p>
+                <p class="text-lg">Aprende con nuestro curso gratuito la base de la filosofía de las estrellas, de parte de nuestros <Referencia>Guías Estelares</Referencia>.</p>
+                <p class="text-lg">Al terminar el curso recibirás tu <Referencia>nombre simbólico</Referencia>.</p>
             </TextImage>
         </Section>
 
@@ -41,22 +42,26 @@
             ]" />
         </Section>
 
-        <Section height="500" class="py-12">
+        <Section  class="py-12">
             <TextImage title="Filosofía Cósmico-Crística" buttonLabel="conoce nuestra filosofía"
-                :href="route('filosofia')" srcImage="/almacen/medios/paginas/hombre-espacio.jpg" textClass="container"
-                image-right>
-                <p>El curso ha sido desarrollado en base a las enseñanzas de nuestros <Referencia>Guías Estelares
+                :href="route('filosofia')" srcImage="/almacen/medios/paginas/hombre-espacio.jpg" textClass=""
+                image-right
+                class="container lg:max-w-[1024px]">
+                <p class="text-lg">El curso ha sido desarrollado en base a las enseñanzas de nuestros <Referencia>Guías Estelares
                     </Referencia>
                 </p>
-                <p>Funciona bajo el mecanismo de la retroalimentación que nos permite el aprendizaje mútuo.</p>
+                <p class="text-lg">Funciona bajo el mecanismo de la retroalimentación que nos permite el aprendizaje mútuo.</p>
             </TextImage>
         </Section>
 
-        <Section class="py-12 container">
+        <Section class="py-12 container lg:max-w-[1024px]">
             <TextImage title="Libro del Curso"
-                srcImage="/almacen/medios/libros/302/Curso%20Holistico%20Tseyor.jpg?w=233&h=350" textClass="container"
+                textClass="container"
                 buttonLabel="Descargar Libro" href="/libros/curso-holistico-tseyor">
-                <p>Lee este conjunto de historias para comprender la filosofía de Tseyor.</p>
+                <template v-slot:image>
+                    <Libro3d :libro="libro" alt="Curso Holístico Tseyor"/>
+                </template>
+                <p class="text-lg">Cuentos de nuestros <Referencia>Guías Estelares</Referencia> con enseñanzas filosóficas que ayudan enormemente a comprender la filosofía de Tseyor.</p>
             </TextImage>
         </Section>
 
@@ -92,6 +97,9 @@
 
 const props = defineProps({
     proximosCursos: {
+        required: true
+    },
+    libro: {type: Object,
         required: true
     }
 })

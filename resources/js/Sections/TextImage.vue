@@ -1,16 +1,16 @@
 <template>
     <div :class="full ? 'py-0! w-full h-full flex flex-col justify-center' : 'py-12'">
-        <div class="mx-auto text-center" :class="(srcImage || $slots.image? 'with-image flex flex-col md:grid md:grid-cols-2 gap-7 lg:gap-12 ' : '') +
+        <div class="mx-auto text-center" :class="(srcImage || imageSlotPresent? 'with-image flex flex-col md:grid md:grid-cols-2 gap-7 lg:gap-12 ' : '') +
             (full ? 'w-full h-full p-0' : 'container') + ' '+gridClass
             ">
-            <div v-if="srcImage || $slots.image" class="flex flex-col justify-center items-center gap-1 max-h-full bg-center" :class="(imageRight ? 'md:order-last ' : '') +
+            <div v-if="srcImage || imageSlotPresent" class="flex flex-col justify-center items-center gap-1 max-h-full bg-center" :class="(imageRight ? 'md:order-last ' : '') +
                 (full ? 'justify-center grow ' : '') +
                 (full && !cover ? 'relative ' : '')
                 + imageSideClass" :style="cover ? {
         'background-image': `url(${srcImageBackground})`,
         'background-size': 'cover'
     } : {}">
-                <slot v-if="$slots.image" name="image" :class="imageClass"/>
+                <slot v-if="imageSlotPresent" name="image" :class="imageClass"/>
                 <template v-else>
                     <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :width="srcWidth" :height="srcHeight"
                     :src-width="srcWidth" :src-height="srcHeight" :class="imageClass" :lazy="imageLazy"/>
@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-
+import  {useSlots} from 'vue'
 
 const props = defineProps({
     title: {
@@ -113,6 +113,10 @@ const props = defineProps({
         default: true
     }
 })
+
+
+const slots = useSlots()
+const imageSlotPresent = computed(() => !!slots.image)
 
 const textdiv = ref(null)
 const textPresent = computed(() => textdiv.value && (textdiv.value.children.length || textdiv.value.innerText))

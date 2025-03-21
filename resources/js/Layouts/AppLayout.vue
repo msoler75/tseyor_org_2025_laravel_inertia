@@ -223,6 +223,14 @@ onMounted(() => {
         // redirigimos a dashboard
         router.get(route("dashboard"));
 
+
+    // TESTING
+    /*
+    setTimeout(()=>{
+        nav.activateTab(nav.items[5])
+    }, 250)
+    */
+
 });
 
 onBeforeUnmount(() => {
