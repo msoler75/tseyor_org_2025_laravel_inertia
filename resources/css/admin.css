@@ -1,5 +1,35 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
+@plugin "daisyui" {
+    themes: light --default, night --prefersdark;
+}
+
+@plugin "daisyui/theme" {
+    name: "light";
+    default: true;
+    --color-primary: #284f9d;
+    --color-secondary: #cc5c2c;
+    --color-info: #90cdf4;
+    --color-base-100: "#fff";
+    --color-base-200: "#F3FAFF";
+    --color-base-300: "#d4e3ff";
+    --color-base-400: "#c1d2f7";
+}
+
+@plugin "daisyui/theme" {
+    name: "dark";
+    default: true;
+    --color-primary: #90cdf4;
+    --color-secondary: #f6ad55;
+    --color-info: #b0ddff;
+    --color-neutral: oklch(13.602% 0.031 276.934);
+    --color-base-100: "#1a202c";
+    --color-base-200: "#2d3748";
+    --color-base-300: "#4a5568";
+    --color-base-400: "#718096";
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 
 /*
@@ -18,15 +48,15 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
-}
+
 
 body {
-    height: unset !important
+    height: auto !important;
 }
 
 .page {
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 100vh !important;
+    height: unset !important;
 }
 
 
@@ -64,18 +94,6 @@ form [bp-field-name='permissions'] .checkbox
 }
 
 
-[data-bs-theme=dark] .\!bg-base-100 {
-    @apply bg-gray-800!;
-}
-
-[data-bs-theme=dark] .\!bg-base-200 {
-    @apply bg-gray-700!;
-}
-
-[data-bs-theme=dark] .\!bg-base-300 {
-    @apply bg-gray-600!;
-}
-
 
 
 
@@ -84,13 +102,10 @@ form [bp-field-name='permissions'] .checkbox
 }
 
 
-/* por la regla anterior, hay que subir de nivel z el componente modal */
+
 .component-modal {
     z-index: 1032 !important;
 }
-
-
-
 
 
 .tiptap-editor-wrapper.fullscreen {
@@ -150,9 +165,12 @@ h3 {
 }
 
 .vue-dropzone {
-    @apply bg-base-100!;
+    @apply bg-base-100;
 }
 
 .vue-dropzone:hover {
-    @apply bg-base-200!;
+    @apply bg-base-200;
 }
+
+}
+

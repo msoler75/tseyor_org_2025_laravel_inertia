@@ -9,7 +9,7 @@
     </component>
     <Modal :show="showCard" @close="showCard = false" maxWidth="sm">
         <div class="flex flex-col gap-2 p-5 items-center">
-            <Avatar :user="user" :link="false" :big="true" imageClass="w-48 h-48" textClass="text-5xl" />
+            <Avatar :user="user" :link="false" image-class="w-64 h-64" text-class="text-5xl"  />
             <h3>{{ name }}</h3>
             <div class="prose">
                 <blockquote v-if="user.frase">
@@ -26,6 +26,7 @@
 
 <script setup>
 import { Link } from '@inertiajs/vue3'
+
 const props = defineProps({
     user: { type: Object, required: true },
     popupCard: { type: Boolean, default: true },

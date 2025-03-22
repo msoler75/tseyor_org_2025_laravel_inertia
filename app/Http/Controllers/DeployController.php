@@ -180,7 +180,7 @@ class DeployController extends Controller
 
 
             // 10. Limpieza de archivos temporales
-            Deploy::cleanTempFiles($zipPath ?? null);
+            //Deploy::cleanTempFiles($zipPath ?? null);
         }
     }
 

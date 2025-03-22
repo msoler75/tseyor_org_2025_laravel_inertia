@@ -30,7 +30,9 @@
 
             </div>
 
-            <Content :content="comunicado.texto" class="mx-auto" />
+            <LazyHydrate>
+                <Content :content="comunicado.texto" class="mx-auto" />
+            </LazyHydrate>
 
         </div>
 

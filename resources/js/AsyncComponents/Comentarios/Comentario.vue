@@ -1,6 +1,6 @@
 <template>
     <div :id="'comentario_'+comentarioId" class="w-full flex gap-3">
-        <Avatar :user="autor" />
+        <Avatar :user="autor" image-class="w-18 h-18"/>
         <div class="grow">
             <div class="flex flex-col gap-3 mb-3">
                 <div class="flex flex-col gap-1">

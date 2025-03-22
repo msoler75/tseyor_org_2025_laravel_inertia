@@ -1,5 +1,5 @@
 <template>
-    <component :is="workerState != 'running' ? Link : 'div'" :href="href" class="worker-controls ml-2"
+    <component :is="status != 'running' ? Link : 'div'" :href="href" class="worker-controls ml-2"
         style="min-width: 150px">
         <span class="ml-2">
             <span>{{ status }}</span>

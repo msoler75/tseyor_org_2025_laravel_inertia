@@ -13,7 +13,7 @@
         <Sections>
 
             <Section class="mx-auto flex flex-col items-center py-20">
-                <Avatar big :link="false" :user="usuario" />
+                <Avatar :link="false" :user="usuario" image-class="w-64 h-64" text-class="text-5xl"/>
 
                 <div v-if="soyYo" class="flex justify-center my-2">
                     <Link class="btn btn-xs btn-primary" href="/user/profile">cambiar imagen</Link>

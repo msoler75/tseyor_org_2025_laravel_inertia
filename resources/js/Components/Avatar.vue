@@ -13,16 +13,15 @@
     <div v-else class="avatar" :title="name">
         <div class="rounded-full" :class="imageClass">
             <User :user="user" :popupCard="popupCard" v-if="link" class="w-full h-full">
-                <Image :src="image" :alt="name" :title="name" fallback-icon="ph:user-circle" :lazy="lazy" @error="errorImage=true" />
+                <Image :src="image" :alt="name" :title="name"  :lazy="lazy" @error="errorImage=true" />
             </User>
-            <Image v-else :src="image" :alt="name" :title="name" fallback-icon="ph:user-circle" :lazy="lazy" @error="errorImage=true"/>
+            <Image v-else :src="image" :alt="name" :title="name" :lazy="lazy" @error="errorImage=true"/>
         </div>
     </div>
 </template>
 
 <script setup>
-import User from '@/Components/User.vue'
-
+import User from './User.vue';
 import { initials } from '@/composables/textutils.js'
 
 const props = defineProps({

@@ -12,6 +12,7 @@ import { registerAsyncComponents } from '../../async_components.d.ts';
 import AppLayout from "@/Layouts/AppLayout.vue";
 import useRoute from '@/composables/useRoute.js';
 import {useNav} from '@/Stores/nav.js';
+import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
 import dotenv from 'dotenv';
 
 dotenv.config(); // carga valores de .env en process.env
@@ -51,6 +52,7 @@ createServer(page =>
       })
 
       registerAsyncComponents(app);
+      app.component('LazyHydrate', LazyHydrationWrapper);
 
       return app
     },

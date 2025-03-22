@@ -16,8 +16,7 @@ import { registerAsyncComponents } from '../../async_components.d.ts';
 //import FloatingVue from 'floating-vue'
 import useRoute from '@/composables/useRoute.js';
 import {useNav} from '@/Stores/nav.js';
-
-
+import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
 window.route = useRoute()
 
 const appName = "TSEYOR.org";
@@ -104,6 +103,7 @@ createInertiaApp({
       // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs
       // app.config.globalProperties.$nav = useNav()
       registerAsyncComponents(app);
+      app.component('LazyHydrate', LazyHydrationWrapper);
       app.mount(el);
     return app;
   },
