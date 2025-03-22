@@ -69,7 +69,7 @@ export default defineConfig({
         "resources/js/app.js",
         "resources/js/backpack/app.js",
         "resources/css/app.css",
-        "resources/css/admin.css",
+        "resources/css/admin.css", // Asegúrate de que admin.css no se importe desde JS
       ],
       ssr: "resources/js/ssr.js",
       refresh: true,

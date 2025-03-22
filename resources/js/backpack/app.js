@@ -1,4 +1,5 @@
 import "../bootstrap";
+// import "../../css/admin.css";
 
 import { ZiggyVue } from "ziggy";
 import { Ziggy } from "../ziggy.js";
@@ -26,6 +27,7 @@ import WorkerStatus from "../Components/Admin/WorkerStatus.vue";
 // import AudioVideoPlayer from "../AsyncComponents/AudioVideoPlayer.vue";
 //import AudioStateIcon from "../Components/AudioStateIcon.vue";
 import { registerAsyncComponents } from '../../../async_components.d.ts';
+import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
 
 // only in forms
 const elem = document.querySelector(".page-body form, .admin-dashboard, .vue-component");
@@ -52,6 +54,7 @@ if (elem) {
     .use(ZiggyVue, Ziggy)
 
       registerAsyncComponents(app);
+      app.component('LazyHydrate', LazyHydrationWrapper);
 
     window.app = app.mount(elem)
 }

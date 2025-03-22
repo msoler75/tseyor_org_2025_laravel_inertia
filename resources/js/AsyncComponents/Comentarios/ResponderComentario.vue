@@ -1,6 +1,6 @@
 <template>
     <div class="w-full space-y-1 grow flex gap-3">
-        <Avatar :user="autor" class="w-16 h-16 rounded-full"/>
+
         <div class="w-full flex flex-col gap-3 mb-3">
             <!-- body -->
             <form @submit.prevent="responder">

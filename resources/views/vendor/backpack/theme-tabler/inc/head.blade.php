@@ -10,6 +10,7 @@
 @yield('before_styles')
 @stack('before_styles')
 
+@vite('resources/css/admin.css')
 @include(backpack_view('inc.theme_styles'))
 @include(backpack_view('inc.styles'))
 

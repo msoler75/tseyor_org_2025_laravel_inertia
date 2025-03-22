@@ -168,7 +168,7 @@ class DeployHelper
             return $backupPath;
         } */
 
-        if (File::renameDirectory($nodeModulesPath, $backupPath)) {
+        if (File::move($nodeModulesPath, $backupPath)) {
             Log::channel('deploy')->info("Backup de node_modules creado en: {$backupPath}");
             return $backupPath;
         }
