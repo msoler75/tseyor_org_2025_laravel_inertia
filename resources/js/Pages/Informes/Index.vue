@@ -34,7 +34,7 @@
 
                 <Link
                     :href="(equipo ? route('equipo.informes', equipo.slug) : route('informes')) + (filtrado ? `?buscar=${filtrado}` : '')"
-                    class="py-2 hover:text-primary transition-colors duration-250"
+                    class="py-2 hover:text-secondary transition-colors duration-250"
                     :class="!filtrado && !categoriaActiva ? 'text-primary font-bold' : ''">
                 <span class="capitalize">Novedades</span>
                 </Link>
@@ -44,7 +44,7 @@
                     :class="categoriaActiva == (categoria.valor || categoria.nombre) ? 'text-primary font-bold' : ''">
                     <Link
                         :href="(equipo ? route('equipo.informes', equipo.slug) : route('informes')) + `?categoria=${categoria.valor || categoria.nombre}` + (filtrado ? `&buscar=${filtrado}` : '')"
-                        class="py-2 hover:text-primary transition-colors duration-250">
+                        class="py-2 hover:text-secondary transition-colors duration-250">
                     <span class="capitalize">{{ categoria.nombre }}</span>
                     <small> ({{ categoria.total }})</small>
                     </Link>
@@ -55,18 +55,18 @@
 
                 <SearchResultsHeader :results="listado" :category="categoriaActiva" />
 
-                <GridAppear class="gap-2 py-4" col-width="24rem">
+                <GridAppear class="gap-4" col-width="24rem">
                     <Link v-for="informe in listado.data" :key="informe.id" :href="route('informe', informe.id)"
-                        class="group hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
+                        class="group hover:bg-secondary/10 transition-color duration-200 px-3 py-2 h-full flex flex-row items-baseline gap-2 hover:bg-base-200/40 rounded-xl w-full">
                     <Icon icon="ph:dot-fill" class="shrink-0" />
                     <div class="w-full">
                         <div v-html="informe.titulo + (informe.visibilidad == 'B' ? ' (borrador)' : '') + (!equipo && informe.equipo_oculto ? ' (privado)' : '')"
-                            class="break-all capitalize lowercase font-bold" />
-                        <div v-if="filtrado" v-html="informe.descripcion" class="mt-3" />
-                        <div class="flex gap-3 items-center mt-4 w-full">
-                            <span v-if="!categoriaActiva || categoriaActiva == '_'" class="badge badge-primary text-xs">{{
+                            class="text-primary group-hover:text-secondary break-all capitalize lowercase font-bold" />
+                        <div v-if="filtrado" v-html="informe.descripcion" class="mt-2" />
+                        <div class="flex gap-3 items-center mt-2 w-full">
+                            <span v-if="!categoriaActiva || categoriaActiva == '_'" class="badge badge-info text-xs">{{
                                 informe.categoria }}</span>
-                            <Link v-if="!equipo" class="badge text-xs" :href="route('equipo', informe.slug_equipo)">{{
+                            <Link v-if="!equipo" class="badge badge-success text-xs" :href="route('equipo', informe.slug_equipo)">{{
                             informe.nombre_equipo }}</Link>
                             <TimeAgo
                                 class="text-xs ml-auto opacity-50 group-hover:opacity-100 transition-opacity duration-200"

@@ -29,7 +29,7 @@
                 <GridAppear class="grid gap-2 py-4" col-width="24rem" :time-lapse="0.01">
                     <Link v-for="contenido in listado.data" :key="contenido.id"
                         :href="route('meditacion', contenido.slug)"
-                        class="hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
+                        class="text-primary hover:text-secondary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">
                     <Icon icon="ph:dot-fill" class="shrink-0" />
                     <div class="w-full">
                         <div v-html="contenido.titulo" class="capitalize lowercase font-bold" />

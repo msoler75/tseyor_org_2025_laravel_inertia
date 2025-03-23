@@ -49,7 +49,7 @@
                     <div v-else v-for="grupo of resultadosAgrupados" :key="grupo"
                         class="busqueda-resultados flex flex-wrap p-3">
                         <div
-                            class="w-full flex justify-between px-1 mt-3 mb-2 text-neutral font-bold capitalize opacity-50 text-neutral-content">
+                            class="w-full flex justify-between px-1 mt-3 mb-2 font-bold capitalize opacity-75">
                             {{ traducir(grupo.coleccion) }}
                         </div>
                         <Link v-for="item of grupo.items" :key="item.id" :id="item.idDom"

@@ -1,7 +1,7 @@
 <template>
     <div to="#afterNav" :disabled="!mounted || inline || !floating">
         <Link :href="enlace"
-            class="transition duration-250 flex h-fit gap-2 text-sm items-center hover:underline select-none"
+            class="transition duration-250 flex h-fit gap-2 text-sm items-center hover:text-secondary select-none"
             :class="calcClass" v-bind="$attrs" :fadeOut="fadeOut">
         <Icon icon="ph:arrow-left" />
         <div>

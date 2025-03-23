@@ -7,7 +7,7 @@
             <Dropdown :relative="false" align="left" width="auto"
             >
                 <template #trigger>
-                    <span class="text-xl px-2 btn btn-sm rounded-xl h-1 hover:bg-base-100 cursor-pointer" title="Carpetas anteriores">
+                    <span class="text-xl px-2 btn btn-sm rounded-xl hover:bg-base-100 cursor-pointer" title="Carpetas anteriores">
                         ⋯
                     </span>
                 </template>
@@ -21,7 +21,7 @@
                                 v-if="links && index < items.length - 1"
                                 :href="item.url"
                                 @click.native.capture="handleClick(item, $event)"
-                                class="whitespace-nowrap truncate hover:underline px-4 py-3"
+                                class="whitespace-nowrap truncate hover:underline px-4 py-3 text-primary"
                                 :title="item.label"
                                 :class="!links ? 'pointer-events-none' : ''"
                                 >{{ item.label }}</Link
@@ -41,14 +41,14 @@
             >
                 <span
                     v-if="!rootLabel || index > 0"
-                    class="mx-2 text-neutral-500 dark:text-neutral-400"
+                    class="mx-2 opacity-50"
                     >/</span
                 >
                 <Link
                     v-if="links && index < items.length - 1"
                     :href="item.url"
                     @click.native.capture="handleClick(item, $event)"
-                    class="whitespace-nowrap max-w-[90vw] truncate hover:underline py-2"
+                    class="whitespace-nowrap max-w-[90vw] truncate hover:text-secondary py-2 text-primary"
                     :title="item.label"
                     :class="!links ? 'pointer-events-none' : ''"
                     >{{ item.label }}</Link
@@ -59,7 +59,7 @@
     </ol>
     <ol v-else>
         <li class="py-1">
-            <span class="mx-2 text-neutral-500 dark:text-neutral-400">/</span>
+            <span class="mx-2 text-primary opacity-50">/</span>
         </li>
     </ol>
 </template>

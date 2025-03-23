@@ -14,7 +14,7 @@
             <div class="prose mx-auto">
                 <h1>{{ meditacion.titulo }}</h1>
 
-                <div class="text-neutral text-sm mb-20 flex justify-between">
+                <div class="text-sm mb-20 flex justify-between">
                     <Audios :audios="parseFiles(meditacion.audios)" :numerados="true" :titulo="meditacion.titulo" />
                     <TimeAgo :date="meditacion.updated_at" :includeTime="false" />
                 </div>

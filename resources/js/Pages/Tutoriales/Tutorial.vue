@@ -14,7 +14,7 @@
             <div class="prose mx-auto">
                 <h1>{{ tutorial.titulo }}</h1>
 
-                <div class="text-neutral text-sm mb-20 flex justify-between">
+                <div class="text-sm mb-20 flex justify-between">
                     <TimeAgo :date="tutorial.updated_at" :includeTime="false" />
                 </div>
             </div>

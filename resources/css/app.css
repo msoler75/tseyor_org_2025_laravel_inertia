@@ -222,6 +222,10 @@
         @apply no-underline;
     }
 
+    .badge.text-sm {
+        @apply leading-none;
+    }
+
 }
 
 

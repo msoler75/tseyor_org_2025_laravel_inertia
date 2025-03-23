@@ -23,7 +23,7 @@
             <p v-if="contacto.direccion" class="text-lg"><strong>Dirección:</strong> {{ contacto.direccion }}</p>
             <template v-if="showGoogleMapsLink">
                 <p class="text-lg">
-                    <a :href="getGoogleMapsLink(contacto)" target="_blank" rel="noopener noreferrer">Ver en Google
+                    <a :href="getGoogleMapsLink(contacto)" target="_blank" class="hover:text-secondary" rel="noopener noreferrer">Ver en Google
                         Maps</a>
                 </p>
             </template>
