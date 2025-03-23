@@ -171,7 +171,7 @@
 
                             <div class="bg-base-100 px-5 py-3 max-h-[300px] overflow-y-auto divide-y divide-dashed"
                                 v-show="!extractos_colapsado[index]">
-                                <div v-if="!comunicado.extractos?.length" class="text-neutral opacity-75">
+                                <div v-if="!comunicado.extractos?.length" class="opacity-75">
                                     <em>No hay resultados relevantes.</em>
                                 </div>
                                 <div v-for="extracto, index of comunicado.extractos" :key="index" class="py-3">

@@ -14,7 +14,7 @@
             <div class="px-4 sm:px-14 mx-auto">
                 <h1>{{ experiencia.nombre }}</h1>
 
-                <div class="text-neutral text-sm flex justify-between mb-14">
+                <div class="text-sm flex justify-between mb-14">
                     <Link :href="'/experiencias?categoria=' + experiencia.categoria" title="Sue%C3%B1os"
                         class="badge badge-primary text-decoration-none">{{ experiencia.categoria }}</Link>
                     <TimeAgo :date="experiencia.created_at" :includeTime="false" />

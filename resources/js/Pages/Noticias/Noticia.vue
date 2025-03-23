@@ -13,7 +13,7 @@
 
             <div class="prose mx-auto">
                 <h1>{{ noticia.titulo }}</h1>
-                <p class="text-neutral text-sm mb-2">
+                <p class="text-sm mb-2">
                     <TimeAgo :date="noticia.published_at" />
                 </p>
             </div>

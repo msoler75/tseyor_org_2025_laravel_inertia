@@ -15,7 +15,7 @@
             <div class="prose mx-auto">
                 <h1>{{ publicacion.titulo }}</h1>
 
-                <div class="text-neutral text-sm mb-2 flex justify-between">
+                <div class="text-sm mb-2 flex justify-between">
                     <div />
                     <TimeAgo :date="publicacion.updated_at" :includeTime="false" />
                 </div>

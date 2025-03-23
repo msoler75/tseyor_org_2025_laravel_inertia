@@ -17,10 +17,10 @@
             divClass,
             columnaBreakpoint == '2xl' ? '2xl:flex-col' : columnaBreakpoint == 'xl' ? 'xl:flex-col' : columnaBreakpoint == 'lg' ? 'lg:flex-col' : columnaBreakpoint == 'md' ? 'md:flex-col' : '',
             selectBreakpoint == 'lg' ? 'lg:flex' : selectBreakpoint == 'md' ? 'md:flex' : selectBreakpoint == 'sm' ? 'sm:flex' : 'xs:flex'
-            ]"> 
+            ]">
             <div v-if="title" class="hidden md:inline text-xl font-bold md:mb-4">{{ title }}</div>
         <Link v-for="categoria of categorias" :key="categoria.nombre" :href="categoria.href"
-            :class="actual.toLowerCase() == categoria.valor.toLowerCase() ? 'text-primary font-bold' : ''" @click="clickCategoria(categoria.valor)"
+            :class="actual.toLowerCase() == categoria.valor.toLowerCase() ? 'text-primary font-bold' : 'hover:text-secondary'" @click="clickCategoria(categoria.valor)"
             :only="only" :preserve-state="preserveState" :preserve-scroll="preserveScroll" :replace="replace"
             @finish="emit('finish')">
 

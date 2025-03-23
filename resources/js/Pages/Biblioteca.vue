@@ -49,7 +49,7 @@
                 {{ seccion.title }}
             </h2>
 
-            <p class="text-neutral opacity-70 group-hover:opacity-100 mb-4">{{ seccion.descripcion }}</p>
+            <p class="opacity-70 group-hover:opacity-100 mb-4">{{ seccion.descripcion }}</p>
             <div class="flex justify-end gap-4 items-center opacity-50 group-hover:opacity-100 mt-auto">
                 <span :class="seccion.count ? 'opacity-50' : 'opacity-0'">{{ seccion.count }} {{
                     seccion.collection ? seccion.collection : seccion.title.toLowerCase() }}</span>

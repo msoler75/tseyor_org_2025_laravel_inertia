@@ -34,7 +34,7 @@
                             class="absolute top-0 left-0 w-full h-full bg-gray-800"></iframe>
                     </div>
                     <Link :href="route('video', video.slug)"
-                        class="hover:text-primary transition-color duration-200  text-xl font-bold"
+                        class="text-primary hover:text-secondary transition-color duration-200  text-xl font-bold"
                         v-html="video.titulo">
                     </Link>
                     <div class="text-gradient opacity-75 transition duration-300 group-hover:opacity-90 text-sm text-ellipsis overflow-hidden "

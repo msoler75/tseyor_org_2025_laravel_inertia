@@ -37,14 +37,14 @@
 
             <div class="w-full md:w-[7rem] shrink-0 card bg-base-100 shadow-2xs p-5 h-fit md:sticky md:top-20">
                 <div class="flex flex-wrap md:hidden  gap-2">
-                    <Link v-for="letraItem, index in letras" :key="index" class="p-2"
+                    <Link v-for="letraItem, index in letras" :key="index" class="p-2 hover:text-secondary"
                         :href="route('terminos') + '?letra=' + letraItem">
                     {{ letraItem }}
                     </Link>
                 </div>
 
                 <div class="hidden md:grid grid-flow-dense grid-cols-2 gap-2">
-                    <Link v-for="letraItem, index in letras" :key="index" class="p-2"
+                    <Link v-for="letraItem, index in letras" :key="index" class="p-2 hover:text-secondary"
                         :style="{ 'grid-column': Math.floor(index / (letras.length / 2)) + 1 }"
                         :href="route('terminos') + '?letra=' + letraItem">
                     {{ letraItem }}
@@ -69,11 +69,11 @@
 
                 <div v-if="referencias.terminos.length"
                     class="flex flex-wrap sm:flex-nowrap gap-6 items-baseline mb-12 max-w-[80ch] mx-auto">
-                    <h3 class="mr-5 whitespace-nowrap">Véase también:</h3>
+                    <div class="text-2xl font-bold mr-5 whitespace-nowrap">Véase también:</div>
                     <div class="flex gap-6 flex-wrap">
                         <Link v-for="contenido in referencias.terminos" :key="contenido.id"
                             :href="route('termino', contenido.slug)"
-                            class="capitalize lowercase hover:text-primary transition-color duration-200 w-fit h-fit font-bold text-lg card shadow-2xs hover:shadow-lg px-5 py-2 bg-base-100">
+                            class="capitalize lowercase text-primary hover:text-secondary transition-color duration-200 w-fit h-fit font-bold text-lg card shadow-2xs hover:shadow-lg px-5 py-2 bg-base-100">
                         {{ contenido.nombre }}
                         </Link>
                     </div>

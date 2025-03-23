@@ -24,7 +24,7 @@
 
                 <h1>{{ informe.titulo }}</h1>
 
-                <div class="text-neutral text-sm mb-12 flex justify-between gap-3">
+                <div class="text-sm mb-12 flex justify-between gap-3">
                     <span class="badge uppercase text-xs badge-primary">{{ informe.categoria }}</span>
                     <TimeAgo :date="informe.updated_at" :includeTime="false" class="whitespace-nowrap"/>
                 </div>
@@ -36,9 +36,9 @@
             <Content v-if="informe.texto" :content="informe.texto" class="mb-12 mx-auto" />
 
             <div v-if="informe.archivos" class="max-w-[65ch] mx-auto">
-                <div class="font-bold text-neutral text-sm mb-4">Archivos adjuntos:</div>
+                <div class="font-bold text-sm mb-4">Archivos adjuntos:</div>
                 <div class="flex flex-wrap gap-4">
-                    <a download v-for="archivo, index of parseFiles(informe.archivos)" :key="index" class="bg-neutral text-xs flex p-1 rounded btn-primary
+                    <a download v-for="archivo, index of parseFiles(informe.archivos)" :key="index" class="bg-neutral text-neutral-content text-xs flex p-1 rounded btn-primary
                         max-w-full gap-2 flex-nowrap" title="archivo.title" :href="archivo.src">
                         <Icon icon="ph:download-duotone" />
                         <div class="break-all">
