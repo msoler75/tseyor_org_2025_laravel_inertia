@@ -60,8 +60,8 @@
                     class="hidden lg:flex shrink-0 items-center"
                     @mouseover="nav.closeTabs()"
                 >
-                    <Link :href="route('portada')">
-                        <ApplicationMark class="w-auto"/>
+                    <Link :href="route('portada')" >
+                        <ApplicationMark class="w-12 h-12 border-2 hover:ring-4 ring-secondary "/>
                     </Link>
                 </div>
 
