@@ -8,7 +8,6 @@ use Laravel\Scout\Searchable;
 use App\Traits\EsCategorizable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use App\Pigmalion\DiskUtil;
 use Carbon\Carbon;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 

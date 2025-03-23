@@ -318,7 +318,6 @@ class StorageItem
                 $ruta_completa = $archivo;
 
                 $sti = StorageItem::fromPath($archivo);
-                // list($disk, $folder) = DiskUtil::obtenerDiscoRuta($this->ruta);
 
                 $ruta_publica = $sti->urlPath;
                 $todos[] = ['archivo' => basename($ruta_publica), 'carpeta' => dirname($ruta_publica), 'url' => $ruta_publica, 'fecha_modificacion' => $fecha_modificacion];
@@ -358,4 +357,25 @@ class StorageItem
 
         return $images;
     }
+
+    public static function ensureDirExists($path_o_location) {
+        $dir = $path_o_location;
+        $home = base_path();
+        if(strpos($dir, $home)===0) {
+            // es una ruta física
+            if(!file_exists($dir))
+                mkdir($dir, 0777, true);
+            return;
+        }
+
+        // es una ruta tipo '/almacen'
+        $sti = new StorageItem($dir);
+        if(!$sti->directoryExists())
+            $sti->makeDirectory();
+    }
+
+    /*public static function getPath($rutaOrig) {
+        return (new StorageItem($rutaOrig))->path;
+    }*/
+
 }

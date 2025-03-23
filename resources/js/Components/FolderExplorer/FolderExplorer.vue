@@ -262,7 +262,6 @@
 </template>
 
 <script setup>
-import { usePage, Link } from "@inertiajs/vue3";
 import useFolderExplorerStore from "@/Stores/folderExplorer";
 import useSelectors from "@/Stores/selectors";
 import usePlayer from "@/Stores/player";

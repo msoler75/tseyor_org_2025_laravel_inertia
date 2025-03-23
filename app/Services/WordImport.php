@@ -5,7 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Pigmalion\Markdown;
-use App\Pigmalion\DiskUtil;
+use App\Pigmalion\StorageItem;
 
 define('USE_PHPWORD', true);
 
@@ -329,28 +329,28 @@ class WordImport
         if (!count($this->images))
             return 0;
 
-        list($disk, $folder) = DiskUtil::obtenerDiscoRuta($folderDest);
+        $sti = new StorageItem($folderDest);
+        $disk = $sti->disk;
+        $folder = $sti->relativeLocation;
 
-        Log::info("copyImagesTo disk: $disk, folder: $folder");
+        Log::info("copyImagesTo disk: {$disk}, folder: {$folder}");
 
         $this->mediaFolder = $folder;
 
         if ($deletePrevious) {
             // Borramos las imágenes que pudiera haber, previas
+            // (Se asume que disk es public siempre!!?)
             WordImport::deleteFilesFromFolder($folder);
         }
 
         // Obtener la ruta completa de la carpeta de destino en el disco 'public'
         // $destinationFolderPath = storage_path('app/public/' . $folder);
-        $destinationFolderPath = Storage::disk($disk)->path($folder);
+        $destinationFolderPath = $sti->path;
 
         Log::info("destinationFolderPath: $destinationFolderPath");
 
         // Verificar si la carpeta existe en el disco 'public'
-        if (!Storage::disk($disk)->exists($folder)) {
-            // Crear la carpeta en el disco 'public'
-            Storage::disk($disk)->makeDirectory($folder);
-        }
+        StorageItem::ensureDirExists($folderDest);
 
         Log::info("images: " . print_r($this->images, true));
 

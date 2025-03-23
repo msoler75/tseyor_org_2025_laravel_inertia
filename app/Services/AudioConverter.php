@@ -4,7 +4,7 @@ namespace App\Services;
 
 // use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use App\Pigmalion\DiskUtil;
+use App\Pigmalion\StorageItem;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -41,8 +41,8 @@ class AudioConverter
         $frecuencia = config('services.audio_converter.frecuencia');
         $kbps = config('services.audio_converter.kbps');
 
-        $sourcePath = realpath(DiskUtil::getRealPath($this->source));
-        $destinationPath = DiskUtil::getPath($this->destination);
+        $sourcePath = realpath((new StorageItem($this->source))->path);
+        $destinationPath = (new StorageItem($this->destination))->path;
 
         Log::channel('jobs')->info("archivo fuente: " . $sourcePath);
         Log::channel('jobs')->info("archivo destino: " . $destinationPath);
@@ -105,7 +105,7 @@ class AudioConverter
         if ($httpCode === 200) {
 
             // Verificar si la carpeta existe en el destino
-            DiskUtil::ensureDirExists(dirname($this->destination));
+            StorageItem::ensureDirExists(dirname($this->destination));
 
             // Guardar la respuesta en el destino
             file_put_contents($destinationPath, $response);

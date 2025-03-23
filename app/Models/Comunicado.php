@@ -5,7 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoConAudios;
 use Laravel\Scout\Searchable;
-use App\Pigmalion\DiskUtil;
+use App\Pigmalion\StorageItem;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
@@ -289,9 +289,9 @@ class Comunicado extends ContenidoConAudios
     {
         $coleccion = $this->getTable();
         $folderCompleto = $this->id ? "/almacen/medios/$coleccion/{$this->ano}/{$this->id}" : self::getCarpetaMediosTemp();
-        DiskUtil::ensureDirExists($folderCompleto);
+        StorageItem::ensureDirExists($folderCompleto);
         if ($formatoRutaRelativa)
-            return DiskUtil::getRutaRelativa($folderCompleto);
+            return (new StorageItem($folderCompleto))->relativeLocation;
         return $folderCompleto;
     }
 

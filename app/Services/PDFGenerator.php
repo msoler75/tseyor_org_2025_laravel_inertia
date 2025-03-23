@@ -4,7 +4,7 @@
 namespace App\Services;
 
 use App\Models\ContenidoBaseModel;
-use App\Pigmalion\DiskUtil;
+use App\Pigmalion\StorageItem;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -32,7 +32,7 @@ class PDFGenerator {
         ];
 
         // dd(dirname($pdf_full_path));
-        DiskUtil::ensureDirExists(dirname($pdf_full_path));
+        StorageItem::ensureDirExists(dirname($pdf_full_path));
 
         if (file_exists($pdf_full_path) && filemtime($pdf_full_path) > $contenido->updated_at->getTimestamp()) {
             return response()->file($pdf_full_path, $headers);
@@ -124,7 +124,7 @@ class PDFGenerator {
                 return '<img' . $matches[1] . 'src="data:image/png;base64,' . base64_encode($raw) . '"';
             }
 
-            $fullpath = DiskUtil::getRealPath(urldecode($matches[2]));
+            $fullpath = realpath((new StorageItem(urldecode($matches[2])))->path);
             //dd($matches);
             // $prefix = ""; // "file://";
             // $r = '<img' . $matches[1] . 'src="' . $prefix.$fullpath .'"'; // método 1
@@ -144,7 +144,7 @@ class PDFGenerator {
 
 
         // guardamos el pdf generado
-        DiskUtil::ensureDirExists(dirname($pdf_full_path));
+        StorageItem::ensureDirExists(dirname($pdf_full_path));
         $pdf->save($pdf_full_path);
 
         // descargamos el archivo pdf
