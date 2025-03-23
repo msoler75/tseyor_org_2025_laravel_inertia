@@ -5,10 +5,10 @@ namespace App\Imports;
 use \DateTime;
 use \Exception;
 use App\Services\WordImport;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use App\Pigmalion\DiskUtil;
+// use Illuminate\Support\Str;
+// use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\Storage;
+use App\Pigmalion\StorageItem;
 
 
 class Comunicado extends \App\Models\Comunicado {
@@ -126,7 +126,7 @@ class ComunicadoImport
 
                     // Rutas de las carpetas
                     $rutaMp3 = "/almacen/medios/comunicados/audios/$año";//$contenido->getCarpetaMedios();
-                    DiskUtil::ensureDirExists($rutaMp3);
+                    StorageItem::ensureDirExists($rutaMp3);
 
                     // Asignar los nombres de los archivos MP3
                     $mp3 = [];
@@ -135,7 +135,7 @@ class ComunicadoImport
                             $origMp3 = realpath($carpeta_audios_originales . "/" . $prefijo . $nombreMp3 . '.mp3');
                             $destNombreMp3 = preg_replace("# (PAB|TRI|JUN)#", "", $nombreMp3);
                             $destMp3 = $rutaMp3 . "/" . $prefijo . $destNombreMp3 . '.mp3';
-                            $pathDest = DiskUtil::getPath($destMp3);
+                            $pathDest = (new StorageItem($destMp3))->path;
                             echo "$origMp3 -> $pathDest [$destMp3]\n";
                             copy($origMp3, $pathDest);
                             $mp3[] = $destMp3;

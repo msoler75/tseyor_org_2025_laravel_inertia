@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use App\Models\Contenido;
 use App\Models\ContenidoBaseModel;
 use Illuminate\Support\Facades\Log;
-use App\Pigmalion\DiskUtil;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Pigmalion\Countries;
@@ -82,11 +81,7 @@ class ContenidoHelper
                 if (!preg_match("/^https?:/", $imageUrl)) {
 
                     //$imagePath = str_replace(url('/'), '', $imageUrl); // Obtener la ruta relativa de la imagen
-                    //$absolutePath = DiskUtil::getAbsolutePath($imagePath); // Obtener la ruta absoluta de la imagen
-                    list($disk, $folder) = DiskUtil::obtenerDiscoRuta(urldecode($imageUrl));
-                    Log::info("disk: $disk, folder: $folder");
-
-                    $absolutePath = Storage::disk($disk)->path($folder);
+                    $absolutePath = (new StorageItem(urldecode($imageUrl)))->path;
                     Log::info("path: $absolutePath");
 
                     if (!file_exists($absolutePath)) {
@@ -254,9 +249,6 @@ class ContenidoHelper
 
             $disk = 'public';
             Log::info("move1: $disk: $imagen -> $nuevoNombre");
-
-            //list($disk, $origen) = DiskUtil::obtenerDiscoRuta($imagen);
-            //list($disk, $destino) = DiskUtil::obtenerDiscoRuta($nuevoNombre);
 
             $origen = $imagen;
             $destino =(new StorageItem($nuevoNombre))->location;

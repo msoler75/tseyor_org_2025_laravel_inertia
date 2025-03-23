@@ -10,7 +10,7 @@ use Carbon\Carbon;
 // use App\Traits\EsContenido;
 use App\Pigmalion\ContenidoHelper;
 use Illuminate\Support\Facades\Storage;
-use App\Pigmalion\DiskUtil;
+use App\Pigmalion\StorageItem;
 
 
 /*
@@ -107,9 +107,9 @@ class ContenidoBaseModel extends Model
     public static function getCarpetaMediosTemp(bool $formatoRutaRelativa = false) : string
     {
         $folderCompleto = '/almacen/temp';
-        DiskUtil::ensureDirExists($folderCompleto);
+        StorageItem::ensureDirExists($folderCompleto);
         if( $formatoRutaRelativa )
-            return DiskUtil::getRutaRelativa($folderCompleto);
+            return (new StorageItem($folderCompleto))->relativeLocation;
         return $folderCompleto;
     }
 
@@ -120,11 +120,12 @@ class ContenidoBaseModel extends Model
     {
         $coleccion = $this->getTable();
         $folderCompleto = $this->id ? "/almacen/medios/$coleccion/$this->id" : self::getCarpetaMediosTemp();
-        DiskUtil::ensureDirExists($folderCompleto);
+        StorageItem::ensureDirExists($folderCompleto);
         if($formatoRutaRelativa)
-            return DiskUtil::getRutaRelativa($folderCompleto);
+            return (new StorageItem($folderCompleto))->relativeLocation;
         return $folderCompleto;
     }
+
 
 
     /**

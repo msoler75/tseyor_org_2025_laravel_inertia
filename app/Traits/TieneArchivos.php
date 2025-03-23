@@ -4,7 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use App\Pigmalion\DiskUtil;
+use App\Pigmalion\StorageItem;
 
 trait TieneArchivos
 {
@@ -14,9 +14,11 @@ trait TieneArchivos
         if (!is_array($this->archivos) || !count($this->archivos))
             return false;
 
-        DiskUtil::ensureDirExists($carpeta);
+        StorageItem::ensureDirExists($carpeta);
 
-        list($disk, $dest) = DiskUtil::obtenerDiscoRuta($carpeta);
+        $sti = new StorageItem($carpeta);
+        $disk = $sti->disk;
+        $dest = $sti->relativeLocation;
 
         if ($disk != 'public') {
             Log::error("TieneArchivos::guardarArchivos ($carpeta): No se puede guardar en un disco distinto de public");
@@ -43,7 +45,7 @@ trait TieneArchivos
             $this->archivos=$archivosNuevo;
             // $this->saveQuietly();
         }
-        
+
         return $cambiado;
     }
 }
