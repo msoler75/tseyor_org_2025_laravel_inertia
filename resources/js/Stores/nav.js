@@ -66,6 +66,7 @@ const state = reactive({
   announceClosed: false,
   sideBarShow: false,
   // position: 'sticky',
+  movingFast: true,
   fullPage: false,
   scrollY: 0,
   fadingOutPage: false,

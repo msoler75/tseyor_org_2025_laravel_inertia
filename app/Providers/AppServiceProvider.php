@@ -34,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Registrar el hint path para las vistas de correo
+        $this->loadViewsFrom(resource_path('views/emails'), 'emails');
+         $this->loadViewsFrom(resource_path('views/vendor/mail'), 'mail');
+
         // Equipos y grupos
 
         // Lógica que se ejecutará cuando se cree o cambie algún equipo

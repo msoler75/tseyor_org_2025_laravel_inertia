@@ -232,6 +232,8 @@ onMounted(() => {
 
     window.addEventListener("keydown", handleKey);
 
+    window.addEventListener("mousemove", handleMouse);
+
     // updateTheme(isDark.value)
 
     watch(
@@ -244,6 +246,19 @@ onMounted(() => {
     updateSpecialCaseTheme();
 
 });
+
+
+function handleMouse(event) {
+    // si el mouse se mueve muy rápido, entenderemos que el usuario no quiere ir al menú
+    // console.log("mousemove", event.movementX, event.movementY);
+    /*if (Math.abs(event.movementX) + Math.abs(event.movementY)>200) {
+        nav.closeTabs();
+        nav.movingFast = true
+    }
+    else {
+        nav.movingFast = false
+    }*/
+}
 
 ////////////////////////
 // DEV LOGINS

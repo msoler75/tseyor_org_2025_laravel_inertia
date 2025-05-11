@@ -49,14 +49,14 @@ class Markdown
         // Expresión regular para encontrar URLs con dominios específicos
         $patron = '/(<a[^>]+>)?\b(https?:\/\/)?(www\.)?(tseyor\.(?:org|com))\b(\/[\?&A-Za-z\-\=\/0-9\.]*)?(<\/a>)?/ui';
         // Reemplazar las URLs encontradas por enlaces clicables si no están en formato html
-        if(false)
-        $html = preg_replace_callback($patron, function ($match) {
-            dd($match);
-            $path = $match[5] ?? "";
-            if ($path == "/")
-                $path = "";
-            return '<a target="_blank" href="https://tseyor.org' . $path . '">tseyor.org' . $path . '</a>';
-        }, $html);
+        if (false)
+            $html = preg_replace_callback($patron, function ($match) {
+                dd($match);
+                $path = $match[5] ?? "";
+                if ($path == "/")
+                    $path = "";
+                return '<a target="_blank" href="https://tseyor.org' . $path . '">tseyor.org' . $path . '</a>';
+            }, $html);
 
         // si enlace está partido:
         // $html = preg_replace("$<a href=.*tseyor.</[^>]+>.*(org|com)</.*>$", '<a target="_blank" href="https://tseyor.org">tseyor.org</a>', $html);
@@ -533,7 +533,7 @@ class Markdown
             // dd($baseUrl, $imageUrl);
             $imageUrl = str_replace($baseUrl, "", $imageUrl);
 
-            Log::info("orig=".substr($orig, 0, 80)."..., type=$type, imagePath=$imagePath, imageUrl=$imageUrl");
+            Log::info("orig=" . substr($orig, 0, 80) . "..., type=$type, imagePath=$imagePath, imageUrl=$imageUrl");
 
             // Reemplazar el enlace de la imagen codificada por la URL pública de la imagen guardada
             if (str_starts_with($orig, "![")) // era markdown
@@ -556,7 +556,7 @@ class Markdown
 
                 // descargamos la imagen usando curl
                 $tries = 3;
-                while($tries-->0) {
+                while ($tries-- > 0) {
                     $ch = curl_init($url);
                     curl_setopt($ch, CURLOPT_HEADER, 0);
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -566,7 +566,7 @@ class Markdown
                     $raw = curl_exec($ch);
                     curl_close($ch);
                     // si hay error descargando la imagen, reintentamos
-                    if($raw === false) {
+                    if ($raw === false) {
                         sleep(2);
                     } else break;
                 }
@@ -711,17 +711,30 @@ class Markdown
 
 
     // devuelve las primeras $num imágenes de un texto en markdown
-    public static function images($md, $num = 99) {
+    public static function images($md, $num = 99)
+    {
         preg_match_all("/!\[(.*)\]\((.*)\)/", $md, $matches);
         $r = [];
         // recorremos las url de cada match
         $i = 0;
-        foreach($matches[2] as $url) {
+        foreach ($matches[2] as $url) {
             $r[] = $url;
             $i++; // solo las primeras $num imagenes
-            if($i>=$num)
+            if ($i >= $num)
                 break;
         }
         return $r;
+    }
+
+    public static function convertAbsoluteURL($texto_md)
+    {
+        return preg_replace_callback('#\]\((.+?)\)#', function ($m) {
+            $url = $m[1];
+            if (preg_match('/^https?:\/\//', $url)) {
+                return '](' . $url . ')';
+            } else {
+                return '](' . url($url) . ')';
+            }
+        }, $texto_md);
     }
 }

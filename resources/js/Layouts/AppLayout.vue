@@ -96,7 +96,11 @@
             </div>
 
             <!--  queremos que si la ruta actual es /archivos, no se muestre el footer: -->
-            <AppFooter v-if="!nav.fullPage && !page.url.match(/^\/archivos/)" />
+            <AppFooter
+                v-if="!nav.fullPage && !page.url.match(/^\/archivos/)"
+                @mouseover="nav.closeTabs()"
+                class="select-none"
+            />
         </div>
     </div>
 </template>
@@ -141,7 +145,7 @@ function handleMouse() {
         // console.log('mouseleave')
         if (screen.width >= 1024) {
             clearTimeout(timerActivateNav);
-            nav.deactivateMenu()
+            nav.deactivateMenu();
         }
     });
 
@@ -151,7 +155,7 @@ function handleMouse() {
         if (screen.width >= 1024) {
             clearTimeout(timerActivateNav);
             timerActivateNav = setTimeout(() => {
-                nav.reactivateMenu()
+                nav.reactivateMenu();
             }, TIME_NAV_INACTIVE);
         }
     });
@@ -187,7 +191,6 @@ watch(
 nav.init(route);
 
 onMounted(() => {
-
     console.log("APP LAYOUT mounted");
 
     //console.log("route func:", route);
@@ -223,14 +226,12 @@ onMounted(() => {
         // redirigimos a dashboard
         router.get(route("dashboard"));
 
-
     // TESTING
     /*
     setTimeout(()=>{
         nav.activateTab(nav.items[5])
     }, 250)
     */
-
 });
 
 onBeforeUnmount(() => {
