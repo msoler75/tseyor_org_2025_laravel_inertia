@@ -124,11 +124,11 @@ return [
 
     'rate_limit' => [
         'max' => [
-            'overall' => env('MAIL_RATE_LIMIT_MAX', 10), // Default max limit
+            'overall' => env('MAIL_RATE_LIMIT_MAX', 3), // Default max limit
             'boletin' => env('MAIL_RATE_LIMIT_MAX_BOLETIN', 5), // Max limit for boletin
         ],
-        'minutes_waiting' => env('MAIL_RATE_LIMIT_MINUTES_WAITING', 3), // in minutes
-        'window' => env('MAIL_RATE_LIMIT_WINDOW', 20), // 20 segundos
+        'minutes_waiting' => env('MAIL_RATE_LIMIT_MINUTES_WAITING', 1), // in minutes
+        'window' => env('MAIL_RATE_LIMIT_WINDOW', 60), // 20 segundos
     ],
 
 ];
