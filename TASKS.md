@@ -22,7 +22,3 @@
 
 ### Tareas pendientes
 
-- Renombrar la clase `CreateBoletinesTable` para evitar conflictos de nombres.
-- Verificar el correcto funcionamiento de las migraciones después de resolver el conflicto.
-- Probar el flujo completo de suscripción, configuración y desuscripción de boletines.
-
