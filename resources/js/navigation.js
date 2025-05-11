@@ -31,6 +31,19 @@ export default [
               description: "Los contenidos de Tseyor más recientes",
               icon: "ph:clock-counter-clockwise-duotone",
             },
+            {
+                class:"pointer-events-none opacity-0",
+             title: "Boletines",
+              route: "boletines",
+              description: "Boletines de la comunidad Tseyor",
+              icon: "ph:newspaper-clipping-duotone",
+            },
+            {
+              title: "Boletines",
+              route: "boletines",
+              description: "Boletines de la comunidad Tseyor",
+              icon: "ph:newspaper-clipping-duotone",
+            },
           ],
         },
         {
