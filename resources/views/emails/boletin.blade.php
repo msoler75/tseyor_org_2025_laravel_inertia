@@ -1,11 +1,11 @@
 @extends('emails.master-usuario')
 
 @section('titulo')
-    {{ $titulo }}
+{{ $titulo }}
 @endsection
 
 @section('contenido')
-    {!! nl2br(e($texto)) !!}
+{{ $texto }}
 @endsection
 
 @section('footerText')
