@@ -77,7 +77,7 @@ const props = defineProps({
 });
 
 const inputEmail = ref(props.email);
-const servicio = ref(props.servicioActual || "boletin:bisemanal");
+const servicio = ref(props.servicioActual || "boletin:mensual");
 const mensajeGuardado = ref("");
 
 function submitConfig() {

@@ -6,6 +6,7 @@ use App\Models\Boletin;
 use Inertia\Inertia;
 use App\Pigmalion\SEO;
 use Illuminate\Http\Request;
+use Intervention\Image\Colors\Rgb\Channels\Red;
 
 class BoletinesController extends Controller
 {
@@ -43,4 +44,5 @@ class BoletinesController extends Controller
         $boletin = Boletin::findOrFail($id);
         return Inertia::render('Boletines/Boletin', ['boletin' => $boletin]);
     }
+
 }

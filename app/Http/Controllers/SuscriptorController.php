@@ -11,7 +11,7 @@ class SuscriptorController extends Controller
 {
     public function suscribir(Request $request)
     {
-        $boletin_por_defecto = config('app.suscripcion', 'boletin:bisemanal');
+        $boletin_por_defecto = config('app.suscripcion', 'boletin:mensual');
 
         \Log::info('Suscribiendo a: ' . $request->email);
         $request->validate([
@@ -87,11 +87,11 @@ class SuscriptorController extends Controller
     public function configurar(Request $request, $token)
     {
         $request->validate([
-            'servicio' => 'string|in:boletin:semanal,boletin:bisemanal,boletin:mensual,boletin:trimestral,darse_baja',
+            'servicio' => 'string|in:boletin:semanal,boletin:bisemanal,boletin:mensual,boletin:bimensual,darse_baja',
             'email' => 'email',
         ]);
 
-        $servicio = $request->servicio ?? 'boletin:bisemanal';
+        $servicio = $request->servicio ?? 'boletin:mensual';
         $suscriptor = Suscriptor::where('token', $token)->first();
         if(!$suscriptor) {
             $suscriptor = Suscriptor::create([

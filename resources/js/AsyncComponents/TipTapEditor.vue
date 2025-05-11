@@ -609,6 +609,13 @@ async function onInsertImage(file, _view) {
 
     // to-do: upload image
 }
+
+if (typeof window !== 'undefined') {
+    window.getTipTapEditorInstance = () => editor.value;
+}
+
+
+
 </script>
 
 <style scoped>

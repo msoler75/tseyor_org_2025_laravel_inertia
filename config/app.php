@@ -232,6 +232,6 @@ return [
      * Boletines
      */
 
-     'suscripcion' => 'boletin:bisemanal',
+     'suscripcion' => 'boletin:mensual',
 
 ];
