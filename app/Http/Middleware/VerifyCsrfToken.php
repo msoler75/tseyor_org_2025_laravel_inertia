@@ -18,6 +18,10 @@ class VerifyCsrfToken extends Middleware
         '_sendssr',
         '_sendnodemodules',
         'usuarios/_comprobar_clave',
-        'update-theme'
+        'update-theme',
+        // boletines
+        'boletines/suscribir',
+        'boletines/configurar/*',
+        'boletines/desuscribir/*'
     ];
 }

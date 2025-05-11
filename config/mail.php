@@ -110,7 +110,7 @@ return [
     |
     | If you are using Markdown based email rendering, you may configure your
     | theme and component paths here, allowing you to customize the design
-    | of the emails. Or, you may simply stick with the Laravel defaults!
+    | of the emails. Or, you may simply stick with the Laravel defaults.
     |
     */
 
@@ -120,6 +120,15 @@ return [
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
+    ],
+
+    'rate_limit' => [
+        'max' => [
+            'overall' => env('MAIL_RATE_LIMIT_MAX', 10), // Default max limit
+            'boletin' => env('MAIL_RATE_LIMIT_MAX_BOLETIN', 5), // Max limit for boletin
+        ],
+        'minutes_waiting' => env('MAIL_RATE_LIMIT_MINUTES_WAITING', 3), // in minutes
+        'window' => env('MAIL_RATE_LIMIT_WINDOW', 20), // 20 segundos
     ],
 
 ];

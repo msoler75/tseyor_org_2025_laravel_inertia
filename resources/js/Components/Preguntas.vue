@@ -127,7 +127,7 @@ onMounted(() => {
 }
 
 :deep(span.Referencia) {
-    @apply text-opacity-75 cursor-vertical-text;
+    @apply cursor-vertical-text;
 }
 
 :deep(a[name^=_Toc]) {

@@ -39,6 +39,11 @@ trait EsCategorizable
         });
     }
 
+    function getCampoCategoria()
+    {
+        return $this->campoCategoria ?? 'categoria';
+    }
+
     /**
      * Obtiene un listado de categorías con sus contadores para este modelo
      */
@@ -54,9 +59,10 @@ trait EsCategorizable
         $un_año = 60 * 24 * 365; // tiempo de cache: 1 año
 
         // return Cache::remember($cache_label, $un_año, function () {
+        // que nombre del campo para categorizar, que use $campoCategoria, y si no existe, usar 'categoria'
 
         if (!$this->categoriaSimple) {
-            $items = $this->select('categoria')->get();
+            $items = $this->select($this->getCampoCategoria())->get();
             $c = $this->obtenerContadoresCategoriasMultiples($items);
         } else {
             $c = $this->obtenerContadoresCategoriasSimples();
@@ -85,8 +91,9 @@ trait EsCategorizable
 
     public function obtenerContadoresCategoriasSimples()
     {
-        return $this->selectRaw('categoria as nombre, count(*) as total')
-            ->groupBy('categoria')
+        $campo = $this->getCampoCategoria();
+        return $this->selectRaw($campo . ' as nombre, count(*) as total')
+            ->groupBy($campo)
             ->get()->toArray();
     }
 
@@ -103,8 +110,10 @@ trait EsCategorizable
         */
 
         $c = [];
+
+        $campo = $this->getCampoCategoria();
         foreach ($items as $item) {
-            $categoriasItem = explode(',', $item->categoria);
+            $categoriasItem = explode(',', /*$item->categoria*/ $item[$campo]);
             foreach ($categoriasItem as $categoria) {
                 $categoria = trim($categoria);
                 if (!empty($categoria)) {
