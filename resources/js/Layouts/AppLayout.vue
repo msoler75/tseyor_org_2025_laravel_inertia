@@ -97,7 +97,7 @@
 
             <!--  queremos que si la ruta actual es /archivos, no se muestre el footer: -->
             <AppFooter
-                v-if="!nav.fullPage && !page.url.match(/^\/archivos/)"
+                v-if="!nav.fullPage && !page.url.match(/^\/(archivos|emails)/)"
                 @mouseover="nav.closeTabs()"
                 class="select-none"
             />
