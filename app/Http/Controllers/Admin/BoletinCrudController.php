@@ -227,33 +227,38 @@ class BoletinCrudController extends CrudController
             ->where('created_at', '<=', $fin)
             ->get();
 
-        $md = ""; //"# $titulo\n\n";
+        $groups = [];
 
         if(count($comunicados) > 0) {
-            $md .= "\n\n## Comunicados\n";
+            $g = "## Comunicados\n";
             foreach ($comunicados as $comunicado) {
                 // tiene que ser una url al comunicado
                 $url = url("/comunicados/{$comunicado->slug}");
-                $md .= "\n\n### [{$comunicado->titulo}]($url)\n\n";
-                $md .= "{$comunicado->descripcion}\n\n";
+                $g .= "\n\n### [{$comunicado->titulo}]($url)\n\n";
+                $g .= "{$comunicado->descripcion}\n\n";
             }
+            $groups[] = $g;
         }
         if(count($libros) > 0) {
-            $md .= "\n\n## Libros\n";
+            $g = "## Libros\n";
             foreach ($libros as $libro) {
                 $url = url("/libros/{$libro->slug}");
-                $md .= "\n\n### [{$libro->titulo}]($url)\n\n";
-                $md .= "{$libro->descripcion}\n\n";
+                $g .= "\n\n### [{$libro->titulo}]($url)\n\n";
+                $g .= "{$libro->descripcion}\n\n";
             }
+            $groups[] = $g;
         }
         if(count($entradas) > 0) {
-            $md .= "\n\n## Blog\n";
+            $g = "## Blog\n";
             foreach ($entradas as $entrada) {
                 $url = url("/entrada/{$entrada->slug}");
-                $md .= "\n\n### [{$entrada->titulo}]($url)\n\n";
-                $md .= "{$entrada->descripcion}\n\n";
+                $g .= "\n\n### [{$entrada->titulo}]($url)\n\n";
+                $g .= "{$entrada->descripcion}\n\n";
             }
+            $groups[] = $g;
         }
+
+        $md = "# \n\n¡Hola! Te presentamos los últimos contenidos de Tseyor.\n\n" . implode("\n\n", $groups);
 
         $html = Markdown::toHtml($md);
 

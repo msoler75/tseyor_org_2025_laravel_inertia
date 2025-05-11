@@ -61,8 +61,8 @@ class Boletin extends Model
         }
 
         // Actualizar el estado del boletín como enviado
-        $this->enviado = 1;
-        $this->save();
+        // $this->enviado = 1;
+        // $this->save();
 
         return true; // El boletín se envió correctamente
     }
