@@ -1,8 +1,8 @@
 <template>
     <div class="flex h-full">
-        <h1 class="hidden">Correos</h1>
         <!-- Sidebar -->
         <aside class="w-1/4 bg-gray-100 dark:bg-gray-900 p-4">
+            <h1>Correos enviados</h1>
             <ul>
                 <li
                     v-for="categoria in categorias"
