@@ -12,7 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\SerializesModels;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
-use App\Jobs\Middleware\RateLimited;
+use App\Jobs\Middleware\EmailRateLimited;
 
 class InvitacionEquipoEmail  extends Mailable implements ShouldQueue
 {
@@ -20,7 +20,7 @@ class InvitacionEquipoEmail  extends Mailable implements ShouldQueue
 
      public function middleware()
     {
-        return [new RateLimited];
+        return [new EmailRateLimited];
     }
 
         public $tries = 5; // Número máximo de intentos

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class RateLimited
+class EmailRateLimited
 {
     private string $rateLimitKey = 'email_rate_limit';
 
@@ -91,6 +91,10 @@ class RateLimited
             $next($job);
         } else {
             Log::channel('smtp')->info("Rate limit exceeded for job type: {$jobType}. Job will be released.");
+
+            // Registrar el fallo en storage/logs/envios_error.log
+            Log::channel('envios_error')->error("Failed to send job of type: {$jobType}. Rate limit exceeded.");
+
             $job->release(config('mail.rate_limit.minutes_waiting', 5)*60); // Reencolar el trabajo después de 5 segundos
         }
     }

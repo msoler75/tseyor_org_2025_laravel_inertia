@@ -106,6 +106,12 @@ return [
             'days' => 1,
         ],
 
+        'envios_error' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/envios_error.log'),
+            'level' => 'error',
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
