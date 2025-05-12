@@ -62,16 +62,24 @@ class BoletinCrudController extends CrudController
             'type' => 'number',
         ]);
 
-        $this->crud->addColumn([
+                $this->crud->addColumn([
             'name' => 'mes',
             'label' => 'Mes',
             'type' => 'number',
         ]);
-
+/*
         $this->crud->addColumn([
             'name' => 'semana',
             'label' => 'Semana',
             'type' => 'number',
+        ]);*/
+
+        $this->crud->addColumns([
+            [
+                'name' => 'numeroSuscriptores',
+                'label' => 'Suscritos',
+                'type' => 'number',
+            ],
         ]);
 
         $this->crud->addColumn([
