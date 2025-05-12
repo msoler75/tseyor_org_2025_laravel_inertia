@@ -58,7 +58,7 @@ class SuscriptorCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            'email' => 'required|email|unique:suscriptores,email',
+            'email' => 'required|email|unique:suscriptores,email,' . request()->id,
             'servicio' => 'required|string',
             'estado' => 'required|string',
         ]);
