@@ -59,7 +59,14 @@
                         Darse de baja
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary mt-5">Guardar</button>
+                <div class="mt-5 flex justify-between">
+                    <button v-if="urlParams.has('desde-profile')" type="button" class="btn btn-secondary" @click="back">
+                        Volver atrás
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar
+                    </button>
+                </div>
             </form>
             <div v-if="mensajeGuardado" class="alert alert-success mt-3">
                 {{ mensajeGuardado }}
@@ -97,12 +104,17 @@ function submitConfig() {
         }
         if (urlParams.has('desde-profile')) {
             setTimeout(() => {
-                history.back();
+                window.history.back();
             }, 2000);
         }
         setTimeout(() => {
             mensajeGuardado.value = "";
         }, 30000); // El mensaje desaparece después de 30 segundos
     });
+}
+
+function back(event) {
+    event.preventDefault
+    window.history.back();
 }
 </script>

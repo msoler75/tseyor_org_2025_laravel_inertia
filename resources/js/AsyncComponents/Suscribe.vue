@@ -72,4 +72,9 @@ function submitForm() {
 watch(email, () => {
     successMessage.value = '';
 });
+
+watch(() => props.email, (newEmail) => {
+    email.value = newEmail;
+    successMessage.value = '';
+}, { immediate: true });
 </script>
