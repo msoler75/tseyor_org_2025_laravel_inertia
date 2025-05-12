@@ -36,10 +36,11 @@
 <x-backpack::menu-dropdown title="Comunicación" icon="la la-facebook">
     <x-backpack::menu-dropdown-item title="Noticias" icon="la la-volume-up" :link="backpack_url('noticia')" />
     <x-backpack::menu-dropdown-item title="Eventos" icon="la la-calendar-check" :link="backpack_url('evento')" />
-    <x-backpack::menu-dropdown-item title="Boletines" icon="la la-newspaper" :link="backpack_url('boletin')" />
     <x-backpack::menu-dropdown-item title="Inscripciones" icon="la la-edit" :link="backpack_url('inscripcion')" />
     <x-backpack::menu-dropdown-item title="Comentarios" icon="la la-comments" :link="backpack_url('comentario')" />
     <x-backpack::menu-dropdown-item title="Correos" icon="la la-envelope" :link="backpack_url('email')" />
+    <x-backpack::menu-dropdown-item title="Boletines" icon="la la-newspaper" :link="backpack_url('boletin')" />
+    <x-backpack::menu-dropdown-item title="Suscriptores" icon="la la-user" :link="backpack_url('suscriptor')" />
 </x-backpack::menu-dropdown>
 @endcan
 
@@ -51,13 +52,16 @@
 </x-backpack::menu-dropdown>
 @endcan
 
-@can('administrar experiencias')
-<x-backpack::menu-item title="Experiencias" icon="lab la-fly" :link="backpack_url('experiencia')" />
-@endcan
-
-@can('administrar legal')
-    <x-backpack::menu-item title="Normativas" icon="la la-balance-scale" :link="backpack_url('normativa')" />
-@endcan
+@canany(['administrar experiencias', 'administrar legal'])
+<x-backpack::menu-dropdown title="Comunidad" icon="la la-users">
+    @can('administrar experiencias')
+    <x-backpack::menu-dropdown-item title="Experiencias" icon="lab la-fly" :link="backpack_url('experiencia')" />
+    @endcan
+    @can('administrar legal')
+    <x-backpack::menu-dropdown-item title="Normativas" icon="la la-balance-scale" :link="backpack_url('normativa')" />
+    @endcan
+</x-backpack::menu-dropdown>
+@endcanany
 
 @can('administrar equipos')
 <x-backpack::menu-dropdown title="Gestión de Equipos" icon="la la-users">

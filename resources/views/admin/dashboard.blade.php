@@ -237,13 +237,11 @@
             @can('administrar contenidos')
                 <div class="card p-4 w-[37rem]">
                     <div class="font-bold mb-3 text-lg">Contenidos creados:</div>
-                    <div class="grid grid-cols-[2fr_1fr_1fr_60px]">
+                    <div class="grid !grid-cols-[2fr_1fr_1fr_60px]">
                         @foreach ($contenidos_creados as $contenido)
                             <a title="Ver contenido" href="{{ $contenido->url }}">{{ $contenido->titulo }}</a>
                             <span>{{ $contenido->coleccion }}</span>
-                            <span>
                                 <TimeAgo date="{{ $contenido->created_at }}" />
-                            </span>
                             <a title="Editar contenido" class="btn btn-xs"
                                 href="/admin/{{ rtrim($contenido->coleccion, 's') }}/{{ $contenido->id_ref }}/edit">Editar</a>
                         @endforeach
@@ -255,7 +253,7 @@
             @can('administrar contenidos')
                 <div class="card p-4 w-[37rem]">
                     <div class="font-bold mb-3 text-lg">Contenidos modificados:</div>
-                    <div class="grid grid-cols-[2fr_1fr_1fr_60px]">
+                    <div class="grid !grid-cols-[2fr_1fr_1fr_60px]">
                         @foreach ($contenidos_modificados as $contenido)
                             <a title="Ver contenido" href="{{ $contenido->url }}">{{ $contenido->titulo }}</a>
                             <span>{{ $contenido->coleccion }}</span>
@@ -272,7 +270,7 @@
             @can('avanzado')
                 <div class="card p-4 w-full">
                     <div class="font-bold mb-3 text-lg">Actividad de los administradores:</div>
-                    <div class="grid grid-cols-[3fr_1fr_1fr_1fr_1fr_100px]">
+                    <div class="grid !grid-cols-[3fr_1fr_1fr_1fr_1fr_100px]">
                         @foreach ($revisiones as $revision)
                             <a title="Ver contenido"
                                 href="{{ $revision->contenidoUrl }}">{{ $revision->tituloContenido ? $revision->tituloContenido : '<sin título>' }}</a>

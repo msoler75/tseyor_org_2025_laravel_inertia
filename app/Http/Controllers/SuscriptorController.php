@@ -13,7 +13,6 @@ class SuscriptorController extends Controller
     {
         $boletin_por_defecto = config('app.suscripcion', 'boletin:mensual');
 
-        \Log::info('Suscribiendo a: ' . $request->email);
         $request->validate([
             'email' => 'required|email',
             'token' => 'string',
@@ -21,7 +20,6 @@ class SuscriptorController extends Controller
             'email.required' => 'El campo de correo electrónico es obligatorio.',
             'email.email' => 'Por favor, introduce un correo electrónico válido.',
         ]);
-        \Log::info('Validación ok: ' . $request->email);
 
         $suscriptor = Suscriptor::where('email', $request->email)->first();
 
@@ -30,7 +28,7 @@ class SuscriptorController extends Controller
                 'servicio' => $boletin_por_defecto,
                 'estado' => 'ok',
             ]);
-            \Log::info('Suscriptor existente actualizado: ' . $request->email);
+            //  Suscriptor existente actualizado
             return response()->json(['message' => 'Suscripción exitosa']);
         }
 
@@ -52,11 +50,11 @@ class SuscriptorController extends Controller
                 'estado' => 'ok',
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error al crear suscriptor: ' . $e->getMessage());
+            Log::error('Error al crear suscriptor: ' . $e->getMessage());
             return response()->json(['message' => 'Error al crear suscriptor'], 500);
         }
 
-        \Log::info('Se ha creado suscriptor');
+        Log::info('Se ha creado suscriptor');
 
         return response()->json(['message' => 'Suscripción exitosa']);
     }

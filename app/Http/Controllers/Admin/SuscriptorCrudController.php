@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\CRUD\app\Library\Widget;
 use App\Models\Suscriptor;
 
 class SuscriptorCrudController extends CrudController
@@ -33,10 +34,20 @@ class SuscriptorCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        // Ajustar el widget para reflejar el contexto del modelo Suscriptor
+        Widget::add()->to('before_content')->type('div')->class('row')->content([
+            Widget::make()
+                ->class('card mb-2')
+                ->content([
+                    'body' => 'Gestión de suscriptores al boletín Tseyor.'
+                ])
+        ]);
+
+        // Configurar columnas existentes en el modelo Suscriptor
         CRUD::column('id')->type('number')->label('ID');
-        CRUD::column('nombre')->type('text')->label('Nombre');
         CRUD::column('email')->type('email')->label('Correo Electrónico');
-        CRUD::column('activo')->type('boolean')->label('Activo');
+        CRUD::column('servicio')->type('text')->label('Servicio');
+        CRUD::column('estado')->type('text')->label('Estado');
     }
 
     /**
@@ -47,14 +58,15 @@ class SuscriptorCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            'nombre' => 'required|string|max:255',
             'email' => 'required|email|unique:suscriptores,email',
-            'activo' => 'boolean',
+            'servicio' => 'required|string',
+            'estado' => 'required|string',
         ]);
 
-        CRUD::field('nombre')->type('text')->label('Nombre');
+        // Configurar campos existentes en el modelo Suscriptor
         CRUD::field('email')->type('email')->label('Correo Electrónico');
-        CRUD::field('activo')->type('boolean')->label('Activo');
+        CRUD::field('servicio')->type('text')->label('Servicio');
+        CRUD::field('estado')->type('text')->label('Estado');
     }
 
     /**
