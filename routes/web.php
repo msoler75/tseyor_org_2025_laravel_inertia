@@ -351,22 +351,25 @@ Route::get('emails/{id}', [EmailsController::class, 'index'])->name('email');
 Route::get('asociacion', [PaginasController::class, 'show'])->name('asociacion');
 
 
+// Ruta para el índice de boletines
+Route::get('boletines', [BoletinesController::class, 'index'])->name('boletines');
+
 // Rutas para suscripción y desuscripción
 Route::post('boletines/suscribir', [SuscriptorController::class, 'suscribir'])->name('boletin.suscribir');
 Route::get('boletines/desuscribir/{token}', [SuscriptorController::class, 'desuscribir'])->name('boletin.desuscribir');
 Route::get('boletines/desuscripcion-confirmada', [SuscriptorController::class, 'desuscripcionConfirmada'])->name('boletin.desuscripcion.confirmada');
-
-// Ruta para visualizar boletines
-Route::get('boletines/{id}', [BoletinesController::class, 'ver'])->name('boletin');
 
 // Ruta para mostrar la configuración de la suscripción al boletín con token
 Route::get('boletines/configurar/{token}', [SuscriptorController::class, 'mostrarConfiguracion'])->name('boletin.configurar.mostrar');
 
 // Ruta para guardar la configuración de la suscripción al boletín con token
 Route::post('boletines/configurar/{token}', [SuscriptorController::class, 'configurar'])->name('boletin.configurar');
+// Ruta para obtener la suscripción al boletín
+Route::get('boletines/suscripcion', [SuscriptorController::class, 'getSuscripcion'])->name('boletin.suscripcion');
 
-// Ruta para el índice de boletines
-Route::get('boletines', [BoletinesController::class, 'index'])->name('boletines');
+// Ruta para visualizar boletines
+Route::get('boletines/{id}', [BoletinesController::class, 'ver'])->name('boletin');
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // DEV:

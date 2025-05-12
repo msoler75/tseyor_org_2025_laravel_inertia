@@ -6,9 +6,13 @@ use App\Models\Suscriptor;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class SuscriptorController extends Controller
 {
+    // Este método permite suscribir un usuario al boletín con un servicio por defecto o actualizar su suscripción existente.
+    // Si no existe un token, se genera uno único.
+    // Devuelve un mensaje de éxito o error según el resultado.
     public function suscribir(Request $request)
     {
         $boletin_por_defecto = config('app.suscripcion', 'boletin:mensual');
@@ -59,6 +63,8 @@ class SuscriptorController extends Controller
         return response()->json(['message' => 'Suscripción exitosa']);
     }
 
+    // Este método permite desuscribir a un usuario del boletín utilizando su token único.
+    // Si el token es válido, elimina al suscriptor y muestra una vista de desuscripción.
     public function desuscribir($token)
     {
         $suscriptor = Suscriptor::where('token', $token)->first();
@@ -67,11 +73,14 @@ class SuscriptorController extends Controller
         return Inertia::render('Boletines/Desuscripcion');
     }
 
+    // Este método muestra una vista de confirmación de desuscripción.
     public function desuscripcionConfirmada()
     {
         return Inertia::render('Boletines/Desuscripcion');
     }
 
+    // Este método muestra la configuración actual del boletín para un suscriptor identificado por su token.
+    // Devuelve una vista con los datos del suscriptor.
     public function mostrarConfiguracion($token)
     {
         $suscriptor = Suscriptor::where('token', $token)->first();
@@ -82,6 +91,9 @@ class SuscriptorController extends Controller
         ]);
     }
 
+    // Este método permite configurar la suscripción de un usuario al boletín.
+    // Valida el servicio y el email, y actualiza o crea un registro de suscripción.
+    // También permite dar de baja al usuario si selecciona "darse_baja".
     public function configurar(Request $request, $token)
     {
         $request->validate([
@@ -109,5 +121,18 @@ class SuscriptorController extends Controller
         $suscriptor->save();
 
         return response()->json(['message' => 'Configuración actualizada correctamente.']);
+    }
+
+    // Este método devuelve la información de suscripción del boletín para el usuario autenticado.
+    // Si el usuario no está autenticado o no tiene suscripción, devuelve un mensaje adecuado.
+    public function getSuscripcion()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no autenticado'], 401);
+        }
+
+        return response()->json($user->boletin_suscripcion);
     }
 }
