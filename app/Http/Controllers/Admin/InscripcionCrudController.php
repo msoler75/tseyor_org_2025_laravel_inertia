@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\CRUD\app\Library\Widget;
 use Carbon\Carbon;
 
 /**
@@ -46,6 +47,18 @@ class InscripcionCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+
+
+           //add div row using 'div' widget and make other widgets inside it to be in a row
+        Widget::add()->to('before_content')->type('div')->class('row')->content([
+
+            //widget made using fluent syntax
+            Widget::make()
+                ->content([
+                    'body' => 'Inscripciones al Curso Holístico.'
+                ])
+        ]);
+
 
         CRUD::column('created_at')->type('closure')->label('Fecha')
             ->function(function ($entry) {

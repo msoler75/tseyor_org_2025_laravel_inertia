@@ -158,7 +158,7 @@ class BoletinCrudController extends CrudController
     public function generarBoletin(Request $request)
     {
         $tipo = $request->input('tipo');
-        $hoy = now();
+        $hoy = \Carbon\Carbon::now();
         $semana = $hoy->weekOfYear;
         $mes = $hoy->month;
         $anyo = $hoy->year;
