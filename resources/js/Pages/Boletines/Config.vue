@@ -6,7 +6,8 @@
                 <p>Correo asociado: <b>{{ email }}</b></p>
             </div>
             <div v-else class="mb-3">
-                <input type="email" v-model="inputEmail" placeholder="Introduce tu correo electrónico" class="input input-bordered w-full max-w-xs" />
+                <input type="email" v-model="inputEmail" placeholder="Introduce tu correo electrónico" class="input input-bordered w-full max-w-xs"
+                :readonly="readonly"/>
             </div>
             <form @submit.prevent="submitConfig">
                 <div>
@@ -117,4 +118,12 @@ function back(event) {
     event.preventDefault
     window.history.back();
 }
+
+const readonly = ref(false);
+const page = usePage()
+if(!inputEmail.value && page.props.auth?.user?.email) {
+    inputEmail.value = page.props.auth.user.email;
+    readonly.value = true;
+}
+
 </script>
