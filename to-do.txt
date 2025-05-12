@@ -1,8 +1,9 @@
+VERIFICAR ENVIO DE BOLETINES
+-probar con varios suscriptores y que los envíos no vayan a job_failed
+-los envíos que fallen, registrarlos en storage/logs/envios_error.log
+
 GLOBAL SEARCH
 -Porqué en buscador global si buscas "com 1281" no aparece el comunicado,  ni "comunicado 1281" ni "1281"
-
-USUARIOS
--poder buscar por correo electrónico
 
 WORD a MARKDOWN
 -comprobar que importar comunicado 1278 desde word se generan saltos de linea entremedio

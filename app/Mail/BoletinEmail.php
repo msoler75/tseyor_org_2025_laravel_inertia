@@ -10,7 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Jobs\Middleware\RateLimited;
+use App\Jobs\Middleware\EmailRateLimited;
 
 class BoletinEmail extends Mailable implements ShouldQueue
 {
@@ -18,7 +18,7 @@ class BoletinEmail extends Mailable implements ShouldQueue
 
      public function middleware()
     {
-        return [new RateLimited];
+        return [new EmailRateLimited];
     }
 
     protected string $jobType = 'boletin';
