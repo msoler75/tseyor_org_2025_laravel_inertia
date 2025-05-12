@@ -54,6 +54,8 @@ class UserCrudController extends CrudController
 
         CRUD::column('name')->label('Nombre');
 
+        CRUD::column('email')->label('email');
+
         $this->crud->addColumn([
             'name' => 'updated_at',
             'label' => 'Modificado',
