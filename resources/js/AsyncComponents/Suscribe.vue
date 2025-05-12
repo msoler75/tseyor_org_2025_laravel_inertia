@@ -1,11 +1,11 @@
 <template>
-    <div id="mc_embed_signup" class="max-w-xs mx-auto">
+    <div id="mc_embed_signup" class="max-w-xs">
         <form @submit.prevent="submitForm">
             <h2 class="hidden text-primary">Suscribe</h2>
             <div id="mc_embed_signup_scroll" class="space-y-4">
                 <div class="grid grid-cols-1">
                     <input
-                    type="email" v-model="email" class="required email w-full px-3 py-2 border rounded-lg"
+                    type="email" v-model="email" :readonly="readonly" class="required email w-full px-3 py-2 border rounded-lg"
                         id="mce-EMAIL" placeholder="Correo electrónico">
                     <span id="mce-EMAIL-HELPERTEXT" class="helper_text"></span>
                 </div>
@@ -33,8 +33,16 @@
 </template>
 
 <script setup>
+import { ref, watch, defineEmits } from 'vue';
 
-const email = ref('');
+const props = defineProps({
+    email: String,
+    readonly: Boolean // Nueva prop para controlar si el campo de email es de solo lectura
+});
+
+const emit = defineEmits(['suscripcion']);
+
+const email = ref(props.email);
 const successMessage = ref('');
 const errorMessage = ref('');
 const suscribiendose = ref(false);
@@ -46,6 +54,7 @@ function submitForm() {
         .then(response => {
             successMessage.value = 'Suscripción exitosa';
             errorMessage.value = '';
+            emit('suscripcion', email.value);
         })
         .catch(error => {
             if (error.response && error.response.data && error.response.data.message) {

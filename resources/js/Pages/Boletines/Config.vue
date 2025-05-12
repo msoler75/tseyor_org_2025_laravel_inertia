@@ -26,7 +26,7 @@
                             v-model="servicio"
                             value="boletin:bisemanal"
                         />
-                        Bisemanal
+                        Quincenal
                     </label>
                 </div>
                 <div>
@@ -44,9 +44,9 @@
                         <input
                             type="radio"
                             v-model="servicio"
-                            value="boletin:trimestral"
+                            value="boletin:bimensual"
                         />
-                        Trimestral
+                        Bi-mensual
                     </label>
                 </div>
                 <div v-if="email">
@@ -69,6 +69,9 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+
 // Definir las props que recibe la vista
 const props = defineProps({
     token: String,
@@ -76,9 +79,11 @@ const props = defineProps({
     email: String,
 });
 
+
 const inputEmail = ref(props.email);
 const servicio = ref(props.servicioActual || "boletin:mensual");
 const mensajeGuardado = ref("");
+const urlParams = new URLSearchParams(window.location.search); // Usar URLSearchParams para obtener parámetros GET
 
 function submitConfig() {
     axios.post(route("boletin.configurar", props.token), {
@@ -90,9 +95,14 @@ function submitConfig() {
         } else {
             mensajeGuardado.value = "Configuración guardada con éxito.";
         }
+        if (urlParams.has('desde-profile')) {
+            setTimeout(() => {
+                history.back();
+            }, 2000);
+        }
         setTimeout(() => {
             mensajeGuardado.value = "";
-        }, 10000); // El mensaje desaparece después de 10 segundos
+        }, 30000); // El mensaje desaparece después de 30 segundos
     });
 }
 </script>

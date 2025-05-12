@@ -231,6 +231,24 @@ class User extends Authenticatable implements MustVerifyEmail
         return $gruposWithoutPivot->toJson();
     }
 
+    public function getBoletinSuscripcionAttribute()
+    {
+        $suscriptor = Suscriptor::where('email', $this->email)
+        ->where('servicio','LIKE', 'boletin:%')->first();
+
+        if ($suscriptor) {
+            $tipoSuscripcion = str_replace('boletin:', '', $suscriptor->servicio);
+            return [
+                'tipo' => $tipoSuscripcion,
+                'token' => $suscriptor->token,
+            ];
+        }
+
+        return [
+            'tipo' => 'No suscrito',
+            'token' => null,
+        ];
+    }
 
     /**
      * Get the indexable data array for the model.

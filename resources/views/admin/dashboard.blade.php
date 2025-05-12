@@ -33,7 +33,7 @@
                     <div class="flex text-3xl justify-between items-baseline">
                         <span @if ($tareas_fallidas) style="color: orange" @endif>{{ $tareas_fallidas }}</span>
                         @if ($tareas_fallidas)
-                            <a class="text-base text-right font-normal" href="/admin/jobfailed">Revisar</a>
+                            <a class="text-base text-right font-normal" href="/admin/job-failed">Revisar</a>
                         @else
                             <i class="la la-check-circle text-green-500"></i>
                         @endif
