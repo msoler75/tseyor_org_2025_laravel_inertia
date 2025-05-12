@@ -23,8 +23,8 @@ class InvitacionEquipoEmail  extends Mailable implements ShouldQueue
         return [new EmailRateLimited];
     }
 
-        public $tries = 5; // Número máximo de intentos
-    public $backoff = 30; // Tiempo en segundos entre intentos
+    public $tries = 25; // Número máximo de intentos
+    public $backoff = 60; // Tiempo en segundos entre intentos
 
     public Equipo $equipo;
     public string $aceptarUrl;

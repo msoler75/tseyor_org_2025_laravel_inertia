@@ -124,7 +124,7 @@ return [
 
     'rate_limit' => [
         'max' => [
-            'overall' => env('MAIL_RATE_LIMIT_MAX', 3), // Default max limit
+            'overall' => env('MAIL_RATE_LIMIT_MAX', 10), // Default max limit
             'boletin' => env('MAIL_RATE_LIMIT_MAX_BOLETIN', 5), // Max limit for boletin
         ],
         'minutes_waiting' => env('MAIL_RATE_LIMIT_MINUTES_WAITING', 1), // in minutes

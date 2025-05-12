@@ -35,35 +35,60 @@ class Boletin extends Model
     public function enviarBoletin(): bool
     {
         if ($this->enviado) {
-            // Verificar si el boletín ya fue enviado a estos destinatarios
             return false; // Ya se envió el boletín a estos destinatarios
         }
 
-        // solo los suscriptores que tienen el servicio de boletín segun su tipo
-        // ejemplo: 'boletin:semanal', 'boletin:bisemanal', 'boletin:mensual', etc.
         $suscriptores = Suscriptor::where('servicio', 'boletin:' . $this->tipo)->get();
 
         $destinatarios = $suscriptores->pluck('email')->toArray();
 
-        // Verificar si ya se envió el boletín
+        $chunkSize = 2048; // Tamaño máximo del campo "to"
+        $currentChunk = [];
+        $currentSize = 0;
 
-        // Crear un único registro en la tabla Email
-        Email::create([
-            'from' => config('mail.from.address'),
-            'to' => json_encode($destinatarios),
-            'subject' => "[Boletin ID: {$this->id}] {$this->titulo}",
-            'body' => $this->texto,
-        ]);
+        foreach ($destinatarios as $email) {
+            $emailSize = strlen($email) + 1; // +1 para la coma separadora
 
-        // Encolar el envío del boletín
+            if ($currentSize + $emailSize > $chunkSize) {
+                // Crear un registro en la tabla Email para el chunk actual
+                Email::create([
+                    'from' => config('mail.from.address'),
+                    'to' => json_encode($currentChunk),
+                    'subject' => "[Boletin ID: {$this->id}] {$this->titulo}",
+                    'body' => $this->texto,
+                ]);
+
+                // Reiniciar el chunk
+                $currentChunk = [];
+                $currentSize = 0;
+            }
+
+            $currentChunk[] = $email;
+            $currentSize += $emailSize;
+        }
+
+        // Crear un registro para el último chunk si no está vacío
+        if (!empty($currentChunk)) {
+            Email::create([
+                'from' => config('mail.from.address'),
+                'to' => json_encode($currentChunk),
+                'subject' => "[Boletin ID: {$this->id}] {$this->titulo}",
+                'body' => $this->texto,
+            ]);
+        }
+
         foreach ($suscriptores as $suscriptor) {
             Mail::to($suscriptor->email)->queue(new BoletinEmail($this->id, $suscriptor->id));
         }
 
-        // Actualizar el estado del boletín como enviado
-        // $this->enviado = 1;
-        // $this->save();
-
         return true; // El boletín se envió correctamente
+    }
+
+
+    public function getNumeroSuscriptoresAttribute()
+    {
+        // Obtener el numero de suscriptores relacionados con este boletín
+        // el servicio de suscriptor es 'boletin:{tipo}'
+        return Suscriptor::where('servicio', 'boletin:' . $this->tipo)->count();
     }
 }
