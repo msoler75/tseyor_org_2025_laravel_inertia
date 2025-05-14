@@ -1,8 +1,10 @@
+import { usePage } from "@inertiajs/vue3";
+
 const state = reactive({
   permisos: [],
   // cargar los permisos
   cargarPermisos() {
-    fetch("/usuario/_permisos")
+    fetch(`${getApiUrl()}/usuario/_permisos`)
       .then((response) => response.json())
       .then((data) => {
         console.log("permisos response", data);
@@ -26,7 +28,7 @@ const state = reactive({
   // cargar saldo
   cargarSaldo() {
     this.saldoError = "";
-    fetch("/usuario/_saldo_muulares")
+    fetch(`${getApiUrl()}/usuario/_saldo_muulares`)
       .then((response) => response.json())
       .then((data) => {
         console.log("saldo response", data);

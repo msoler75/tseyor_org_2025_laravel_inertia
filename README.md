@@ -151,3 +151,25 @@ Since the responses are cached to disk as static files, any updates to those pag
 ```bash
 php artisan page-cache:clear
 ```
+
+
+# Deploy
+
+## Modo SSR
+
+Para instalar en servidor web, se requieren 3 comandos
+
+```bash
+php artisan deploy:ssr
+php artisan deploy:front
+```
+
+Y en caso que se añada o se remueva alguna libreria (cambios en package.json), se debe actualizar en servidor toda la carpeta de node_modules:
+
+```bash
+php artisan deploy:nodemodules
+```
+
+# Desarrollo en dev.tseyor.org
+
+Si en dev.tseyor.org hay fallos de CSRF todo el rato, hay que borrar todas las cookies de .tseyor.org porque chocan.

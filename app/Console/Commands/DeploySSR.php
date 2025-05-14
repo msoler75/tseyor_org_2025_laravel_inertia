@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-define('APP_HOST', 'www.tseyor.xyz');
+define('APP_HOST', 'dev.tseyor.org');
 
 define('DEPLOY_SSR_ENDPOINT', 'https://'. APP_HOST .'/_sendssr');
 

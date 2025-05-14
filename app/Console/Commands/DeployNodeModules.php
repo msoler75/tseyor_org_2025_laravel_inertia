@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-define('NODE_MODULES_ENDPOINT', 'https://www.tseyor.xyz/_sendnodemodules');
+define('NODE_MODULES_ENDPOINT', 'https://dev.tseyor.org/_sendnodemodules');
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;

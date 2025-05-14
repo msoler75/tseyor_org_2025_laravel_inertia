@@ -135,6 +135,7 @@ export default defineConfig({
           ],
           "@inertiajs/vue3": ["router", "usePage", "useForm"],
           "@/Stores/nav.js": ["useNav"],
+          "@/Stores/api.js": ["getApiUrl"],
         },
       ],
     }),

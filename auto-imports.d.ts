@@ -16,6 +16,7 @@ declare global {
   const defineEmits: typeof import('vue')['defineEmits']
   const detectFormat: typeof import('./resources/js/composables/markdown.js')['detectFormat']
   const fechaEs: typeof import('./resources/js/composables/textutils.js')['fechaEs']
+  const getApiUrl: typeof import('@/Stores/api.js')['getApiUrl']
   const getEmbedYoutube: typeof import('./resources/js/composables/srcutils.js')['getEmbedYoutube']
   const getMyDomain: typeof import('./resources/js/composables/srcutils.js')['getMyDomain']
   const getSrcUrl: typeof import('./resources/js/composables/srcutils.js')['getSrcUrl']

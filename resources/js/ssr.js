@@ -41,6 +41,9 @@ createServer(page =>
       return page
     },
     setup({ App, props, plugin }) {
+      const apiUrl = process.env.API_URL || process.env.APP_URL || 'http://localhost';
+      props.initialPage.props.api_url = apiUrl;
+
       const app = createSSRApp({
         render: () => h(App, props),
       })

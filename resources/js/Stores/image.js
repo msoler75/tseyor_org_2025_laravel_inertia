@@ -1,6 +1,5 @@
 import {getSrcUrl, belongsToCurrentDomain} from '../composables/srcutils'
 
-
 const fallback_images = ["f1.jpg", "f2.jpg", "f3.jpg", "f4.jpg"];
 const fallback_folder = "/almacen/medios/imagenes_contenidos_por_defecto";
 
@@ -46,7 +45,7 @@ export const getImageSize = async function (url) {
     imagenes_pendientes.push({ url, esperando: [] });
 
     try {
-      const response = await axios.get("/image_size", {
+      const response = await axios.get(`${getApiUrl()}/image_size`, {
         params: { url }
       });
 
