@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-define('DEPLOY_FRONT_ENDPOINT', 'https://dev.tseyor.org/_sendbuild');
+define('DEPLOY_FRONT_ENDPOINT', 'https://tseyor.org/_sendbuild');
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -37,7 +37,7 @@ class DeployFront extends Command
 
                 Deploy::handleResponse($result, $this);
 
-                File::delete($zipPath);
+                // File::delete($zipPath);
             }
             else {
                 $this->error('Error al crear el ZIP');

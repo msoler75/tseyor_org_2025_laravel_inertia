@@ -35,7 +35,7 @@ class Boletin extends Model
     public function enviarBoletin(): bool
     {
         if ($this->enviado) {
-            return false; // Ya se envió el boletín a estos destinatarios
+            return false; // Ya se envió el boletín
         }
 
         $suscriptores = Suscriptor::where('servicio', 'boletin:' . $this->tipo)->get();
@@ -44,10 +44,10 @@ class Boletin extends Model
 
         $chunkSize = 2048; // Tamaño máximo del campo "to"
         $currentChunk = [];
-        $currentSize = 0;
+        $currentSize = 2; // Inicializamos con 2 para incluir los corchetes de JSON
 
         foreach ($destinatarios as $email) {
-            $emailSize = strlen($email) + 1; // +1 para la coma separadora
+            $emailSize = strlen($email) + 3; // +3 para incluir las comillas y la coma separadora
 
             if ($currentSize + $emailSize > $chunkSize) {
                 // Crear un registro en la tabla Email para el chunk actual
@@ -60,7 +60,7 @@ class Boletin extends Model
 
                 // Reiniciar el chunk
                 $currentChunk = [];
-                $currentSize = 0;
+                $currentSize = 2; // Reiniciar con 2 para los corchetes de JSON
             }
 
             $currentChunk[] = $email;
@@ -80,6 +80,10 @@ class Boletin extends Model
         foreach ($suscriptores as $suscriptor) {
             Mail::to($suscriptor->email)->queue(new BoletinEmail($this->id, $suscriptor->id));
         }
+
+        // actualizar el estado del boletín
+        $this->enviado = true;
+        $this->save();
 
         return true; // El boletín se envió correctamente
     }
