@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-define('DEPLOY_FRONT_ENDPOINT', 'https://www.tseyor.xyz/_sendbuild');
+define('DEPLOY_FRONT_ENDPOINT', 'https://dev.tseyor.org/_sendbuild');
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;

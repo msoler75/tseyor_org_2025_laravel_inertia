@@ -16,6 +16,7 @@
 
 @push('after_scripts')
     <script>
+        var API_URL = @json(config('app.api_url'));
         var workerStatus;
         var workerIcon;
         var workerOk;
@@ -24,11 +25,11 @@
         function check_worker_status() {
             clearTimeout(checkTimeout)
             if (workerStatus) {
-                axios.get("/admin/worker/check")
+                axios.get(`${API_URL}/admin/worker/check`)
                     .then(response => {
                         console.log(response.data.status);
                         updateWorkerUI(response.data.status);
-                        checkTimeout = setTimeout(check_worker_status, 5000)
+                        checkTimeout = setTimeout(check_worker_status, 5000);
                     });
             }
         }
@@ -42,7 +43,7 @@
         }
 
         function startWorker() {
-            axios.get("/admin/worker/start")
+            axios.get(`${API_URL}/admin/worker/start`)
                 .then(response => {
                     console.log(response.data);
                     updateWorkerUI('running');
@@ -51,7 +52,7 @@
 
         function stopWorker() {
             workerStatus.innerText = 'stopping...';
-            axios.get("/admin/worker/stop")
+            axios.get(`${API_URL}/admin/worker/stop`)
                 .then(response => {
                     console.log(response.data);
                     updateWorkerUI('stopped');
@@ -60,7 +61,7 @@
 
         function reiniciarWorker() {
             workerStatus.innerText = 'restarting...';
-            axios.get("/admin/worker/restart")
+            axios.get(`${API_URL}/admin/worker/restart`)
                 .then(response => {
                     console.log(response.data);
                     updateWorkerUI('running');

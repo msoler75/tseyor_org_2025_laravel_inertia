@@ -203,7 +203,7 @@ function updateTheme(isDarkMode) {
     localStorage.setItem("theme", themeValue);
 
     // 2. Actualizar cookie en servidor
-    fetch("/update-theme", {
+    fetch(`${getApiUrl()}/update-theme`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

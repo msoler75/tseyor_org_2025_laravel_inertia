@@ -59,7 +59,7 @@ const cargando = ref(true)
 // cargamos los comentarios de este contenido
 onMounted(() => {
     const url = props.url ? props.url: page.url
-    axios.get(route('comentarios') + '?url=' + url).then(response => {
+    axios.get(`${getApiUrl()}/` + route('comentarios') + '?url=' + url).then(response => {
         comentarios.value = response.data.comentarios
         cargando.value = false
     })

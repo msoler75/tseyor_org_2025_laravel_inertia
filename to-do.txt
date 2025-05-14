@@ -1,3 +1,6 @@
+REMOVER SANCTUM
+-composer remove laravel/sanctum
+
 VERIFICAR ENVIO DE BOLETINES
 -probar con varios suscriptores y que los envíos no vayan a job_failed
 -los envíos que fallen, registrarlos en storage/logs/envios_error.log
