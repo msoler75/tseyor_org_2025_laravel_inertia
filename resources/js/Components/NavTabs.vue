@@ -16,7 +16,7 @@
                      :style="{transform: `translateX(${(5-index)*20}px)`}"/>
             </NavLink>
         </template>
-        <div class="underscore transition-all duration-300 absolute h-1 left-0 bottom-0 pointer-events-none bg-secondary"
+        <div class="underscore transition-all duration-300 absolute h-1 left-0 bottom-0 pointer-events-none bg-primary"
         :style="underScoreStyle"/>
     </div>
 </template>
