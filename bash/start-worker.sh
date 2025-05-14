@@ -5,7 +5,7 @@ ARTISAN="$BASEDIR/current/artisan"
 LOCKFILE="$BASEDIR/shared/_queue-worker.lock"
 LOGDIR="$BASEDIR/shared/storage/logs"
 LOGFILE="$LOGDIR/queue-worker.log"
-COMMAND="php $ARTISAN queue:work --sleep=3 --tries=3 --timeout=60"
+COMMAND="php $ARTISAN queue:work --sleep=3 --tries=10 --timeout=60"
 VERBOSE=true
 
 # Verifica si se pasó el argumento -q o --quietly
