@@ -11,6 +11,7 @@ use App\Models\Contenido;
 use App\Models\Revision;
 use App\Models\Busqueda;
 use App\Models\Inscripcion;
+use App\Models\Job;
 use App\Models\JobFailed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -52,6 +53,8 @@ class AdminController // extends Controller
 
         $inscripciones_nuevas = Inscripcion::where('estado', 'nuevo')->count();
 
+        $tareas_pendientes = Job::count();
+
         $tareas_fallidas = JobFailed::count();
 
         // está la app en modo mantenimiento? (down/up)
@@ -65,6 +68,7 @@ class AdminController // extends Controller
             'contenidos_creados' => $contenidos_creados,
             'contenidos_modificados' => $contenidos_modificados,
             'inscripciones_nuevas' => $inscripciones_nuevas,
+            'tareas_pendientes' => $tareas_pendientes,
             'tareas_fallidas' => $tareas_fallidas,
             'en_mantenimiento' => $en_mantenimiento,
             'revisiones' => $revisiones,
