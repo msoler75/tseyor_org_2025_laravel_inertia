@@ -17,3 +17,13 @@
 - Mantén los archivos por debajo de 500 líneas cuando sea posible
 - Usa nombres descriptivos y consistentes
 
+
+---
+
+## Flujo de trabajo de Git
+
+1.  Crea una rama para tu contribución: `git checkout -b mi-rama`
+2.  Realiza tus cambios y commitea con mensajes descriptivos: `git commit -m "Añade nueva funcionalidad"`
+3.  Sube tu rama al repositorio remoto: `git push origin mi-rama`
+4.  Abre un pull request en GitHub
+5.  Espera la revisión y aprobación de tu pull request

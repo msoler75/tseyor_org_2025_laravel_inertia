@@ -14,41 +14,6 @@ Este archivo contiene información útil para el mantenimiento y la supervisión
 *   Limpiar la configuración: `php artisan config:clear`
 *   Limpiar el page-cache: `php artisan page-cache:clear`
 
-## Despliegue
-
-*   Estructura recomendada de carpetas en producción:
-
-    ```
-    /tseyor.orgyor.org
-    ├── release_crear.sh
-    ├── release_establecer.sh
-    ├── shared
-    │   ├── .env
-    │   └── storage/
-    ├── releases
-    │   ├── 1/
-    │   ├── 2/
-    │   └── ...
-    └── current -> releases/2/
-    ```
-
-*   Proceso de despliegue (nueva release):
-
-    1.  Definir usuario de despliegue: `export DEPLOY_USER=tu_usuario`
-    2.  Ejecutar el script de creación de release: `./release_crear.sh`
-    3.  Actualizar el enlace simbólico 'current': `./release_establecer.sh <número_release>`
-
-*   Notas importantes:
-
-    *   No editar archivos directamente en `releases/`.
-    *   El archivo `.env` y la carpeta `storage` son compartidos.
-    *   Para rollback: ejecutar `./release_establecer.sh <número_release>`.
-    *   Asegurarse de que los scripts y carpetas tengan los permisos adecuados.
-    *   Limpiar cachés de views y rutas tras cada cambio de release.
-    *   Revisar logs y estado de workers tras cada despliegue.
-    *   Añadir instrucciones para mover los scripts `release_crear.sh` y `release_establecer.sh` a la raíz del sitio web tras cada actualización.
-    *   Documentar el proceso de rollback usando `release_establecer.sh`.
-
 ## Seguridad
 
 *   Recomendaciones generales:
@@ -79,3 +44,5 @@ Este archivo contiene información útil para el mantenimiento y la supervisión
 *   Panel para ver mensajes recibidos en `notificaciones@tseyor.org`
 *   Revisar correos de oficinas `@tseyor.org`
 *   Comprobar posibles hackeos de invitación
+
+Para información sobre el proceso de despliegue, consulta el archivo [`_DEPLOYMENT.md`](_DEPLOYMENT.md).

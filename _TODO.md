@@ -104,3 +104,11 @@ Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-d
 
 ## Blog
 - Usar categoría no funciona en la paginación
+
+## Mejoras de documentación
+
+- Añadir diagramas o representaciones visuales a _ARCHITECTURE.md
+- Añadir información sobre herramientas de despliegue automatizado a _DEPLOYMENT.md
+- Añadir detalles sobre cómo implementar las recomendaciones de seguridad en _SECURITY.md
+- Añadir detalles sobre el flujo de trabajo de Git a _CONTRIBUTING.md
+- Añadir información sobre cómo configurar el entorno de desarrollo a README.md

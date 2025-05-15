@@ -72,3 +72,60 @@ Tseyor.org es una plataforma web modular y escalable para la gestión de conteni
 ---
 
 > Para detalles sobre tareas, hitos y mejoras, consulta también `_TODO.md` y `_ROADMAP.md`.
+
+---
+
+## Diagramas y representaciones visuales
+
+Para facilitar la comprensión de la arquitectura, se recomienda incluir diagramas y representaciones visuales. Estos pueden incluir:
+
+- Diagramas de componentes: Muestran los diferentes componentes del sistema y cómo interactúan entre sí.
+- Diagramas de despliegue: Muestran cómo se despliega el sistema en los diferentes entornos.
+A continuación, se proponen algunos diagramas que podrían incluirse:
+
+### Diagrama de componentes
+
+Este diagrama muestra los principales componentes del sistema y cómo interactúan entre sí.
+
+```mermaid
+graph LR
+    A[Usuario] --> B(Frontend Vue 3);
+    B --> C{Inertia.js};
+    C --> D(Backend Laravel);
+    D --> E[Base de datos MySQL];
+    D --> F[Redis (colas)];
+    D --> G[S3 (archivos)];
+```
+
+### Diagrama de despliegue
+
+Este diagrama muestra cómo se despliega el sistema en los diferentes entornos (desarrollo, staging, producción).
+
+```mermaid
+graph LR
+    A[Desarrollo] --> B(Localhost);
+    B --> C(Docker);
+    D[Staging] --> E(Servidor de pruebas);
+    F[Producción] --> G(AWS);
+    G --> H(Servidores EC2);
+    H --> I(Base de datos RDS);
+    H --> J(S3);
+```
+
+### Diagrama de flujo de datos
+
+Este diagrama muestra cómo fluyen los datos a través del sistema.
+
+```mermaid
+graph LR
+    A[Usuario] --> B{Formulario};
+    B --> C[Validación];
+    C --> D{Controlador Laravel};
+    D --> E[Modelo Eloquent];
+    E --> F(Base de datos);
+    F --> E;
+    E --> D;
+    D --> G[Vista Vue];
+    G --> A;
+```
+- Diagramas de flujo de datos: Muestran cómo fluyen los datos a través del sistema.
