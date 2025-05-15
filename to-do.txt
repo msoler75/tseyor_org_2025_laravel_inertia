@@ -129,18 +129,18 @@ PAGINA UTG
 
 
 IMAGE/Intervention:
-[2024-09-17 01:01:43] local.ERROR: An exception occurred {"statusCode":512,"type":"Intervention\\Image\\Exceptions\\GeometryException","message":"The height you specify must be greater than or equal to 1.","file":"/home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Geometry/Tools/RectangleResizer.php","line":22,"trace":"#0 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Geometry/Rectangle.php(285): Intervention\\Image\\Geometry\\Tools\\RectangleResizer->__construct(281, 0)
-#1 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Geometry/Rectangle.php(300): Intervention\\Image\\Geometry\\Rectangle->resizer(281, 0)
-#2 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Drivers/Gd/Modifiers/ScaleModifier.php(16): Intervention\\Image\\Geometry\\Rectangle->scale(281, 0)
-#3 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Drivers/Gd/Modifiers/ResizeModifier.php(18): Intervention\\Image\\Drivers\\Gd\\Modifiers\\ScaleModifier->getAdjustedSize(Object(Intervention\\Image\\Image))
-#4 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Image.php(232): Intervention\\Image\\Drivers\\Gd\\Modifiers\\ResizeModifier->apply(Object(Intervention\\Image\\Image))
-#5 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/intervention/image/src/Image.php(574): Intervention\\Image\\Image->modify(Object(Intervention\\Image\\Modifiers\\ScaleModifier))
-#6 /home/dh_xjtdnz/tseyor.org/releases/1/app/Http/Controllers/ImagenesController.php(178): Intervention\\Image\\Image->scale(281, 0)
-#7 /home/dh_xjtdnz/tseyor.org/releases/1/app/Http/Controllers/ImagenesController.php(111): App\\Http\\Controllers\\ImagenesController->transformarImagen(Object(Intervention\\Image\\Image), Array)
-#8 /home/dh_xjtdnz/tseyor.org/releases/1/app/Http/Controllers/ArchivosController.php(850): App\\Http\\Controllers\\ImagenesController->descargar(Object(Illuminate\\Http\\Request), '/medios/guias/c...')
-#9 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App\\Http\\Controllers\\ArchivosController->descargar(Object(Illuminate\\Http\\Request), '/medios/guias/c...')
-#10 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('descargar', Array)
-#11 /home/dh_xjtdnz/tseyor.org/releases/1/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route),
+[2024-09-17 01:01:43] local.ERROR: An exception occurred {"statusCode":512,"type":"Intervention\\Image\\Exceptions\\GeometryException","message":"The height you specify must be greater than or equal to 1.","file":"/home/{user}/tseyor.org/releases/1/vendor/intervention/image/src/Geometry/Tools/RectangleResizer.php","line":22,"trace":"#0 /home/{user}/tseyor.org/releases/1/vendor/intervention/image/src/Geometry/Rectangle.php(285): Intervention\\Image\\Geometry\\Tools\\RectangleResizer->__construct(281, 0)
+#1 /home/{user}/tseyor.org/releases/1/vendor/intervention/image/src/Geometry/Rectangle.php(300): Intervention\\Image\\Geometry\\Rectangle->resizer(281, 0)
+#2 /home/{user}/tseyor.org/releases/1/vendor/intervention/image/src/Drivers/Gd/Modifiers/ScaleModifier.php(16): Intervention\\Image\\Geometry\\Rectangle->scale(281, 0)
+#3 /home/{user}/tseyor.org/releases/1/vendor/intervention/image/src/Drivers/Gd/Modifiers/ResizeModifier.php(18): Intervention\\Image\\Drivers\\Gd\\Modifiers\\ScaleModifier->getAdjustedSize(Object(Intervention\\Image\\Image))
+#4 /home/{user}/tseyor.org/releases/1/vendor/intervention/image/src/Image.php(232): Intervention\\Image\\Drivers\\Gd\\Modifiers\\ResizeModifier->apply(Object(Intervention\\Image\\Image))
+#5 /home/{user}/tseyor.org/releases/1/vendor/intervention/image/src/Image.php(574): Intervention\\Image\\Image->modify(Object(Intervention\\Image\\Modifiers\\ScaleModifier))
+#6 /home/{user}/tseyor.org/releases/1/app/Http/Controllers/ImagenesController.php(178): Intervention\\Image\\Image->scale(281, 0)
+#7 /home/{user}/tseyor.org/releases/1/app/Http/Controllers/ImagenesController.php(111): App\\Http\\Controllers\\ImagenesController->transformarImagen(Object(Intervention\\Image\\Image), Array)
+#8 /home/{user}/tseyor.org/releases/1/app/Http/Controllers/ArchivosController.php(850): App\\Http\\Controllers\\ImagenesController->descargar(Object(Illuminate\\Http\\Request), '/medios/guias/c...')
+#9 /home/{user}/tseyor.org/releases/1/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(54): App\\Http\\Controllers\\ArchivosController->descargar(Object(Illuminate\\Http\\Request), '/medios/guias/c...')
+#10 /home/{user}/tseyor.org/releases/1/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(43): Illuminate\\Routing\\Controller->callAction('descargar', Array)
+#11 /home/{user}/tseyor.org/releases/1/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route),
 
 
 

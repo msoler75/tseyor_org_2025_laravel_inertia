@@ -33,3 +33,4 @@ putty.cmd
 
 # ignore.log files
 *.log
+replace.txt
