@@ -1,6 +1,12 @@
 #!/bin/bash
 
-BASEDIR="/home/dh_xjtdnz/tseyor.org"
+DEPLOY_USER=${DEPLOY_USER:-}
+if [ -z "$DEPLOY_USER" ]; then
+  echo "ERROR: La variable de entorno DEPLOY_USER no está definida."
+  exit 1
+fi
+
+BASEDIR="/home/$DEPLOY_USER/tseyor.org"
 ARTISAN="$BASEDIR/current/artisan"
 LOCKFILE="$BASEDIR/shared/_queue-worker.lock"
 LOGDIR="$BASEDIR/shared/storage/logs"
