@@ -2,7 +2,11 @@
 
 Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-do.txt`.
 
-## API
+## Limpiar historial de github
+- [] Limpiar historial de Git con BFG Repo-Cleaner (https://rtyley.github.io/bfg-repo-cleaner/)
+- Descripción: Usar BFG Repo-Cleaner para eliminar archivos grandes o información sensible del historial de Git.
+
+ ## API
 - Poner api.tseyor.org como API_URL en tseyor.org
 
 ## Sección Arte de Tseyorianos

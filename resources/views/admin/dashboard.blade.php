@@ -29,6 +29,19 @@
                 </div>
 
                 <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
+                    <div class="font-bold text-lg mb-3">Tareas pendientes</div>
+                    <div class="flex text-3xl justify-between items-baseline">
+                        <span @if ($tareas_pendientes) style="color: orange" @endif>{{ $tareas_pendientes }}</span>
+                        @if ($tareas_pendientes)
+                            <i class="la la-hourglass-half text-orange-500" title="Tareas pendientes"></i>
+                            <a class="text-base text-right font-normal ml-2" href="/admin/job">Revisar</a>
+                        @else
+                            <i class="la la-check-circle text-green-500" title="Sin tareas pendientes"></i>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
                     <div class="font-bold text-lg mb-3">Tareas fallidas</div>
                     <div class="flex text-3xl justify-between items-baseline">
                         <span @if ($tareas_fallidas) style="color: orange" @endif>{{ $tareas_fallidas }}</span>
