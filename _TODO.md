@@ -84,6 +84,7 @@ Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-d
 - Vincular mensajes de error de correo con invitaciones
 - Panel para ver mensajes recibidos en notificaciones@tseyor.org
 - Crear correos de redirección para equipos
+- [ ] Crear comando Laravel para revisar rebotes ("Undelivered Mail Returned to Sender") y marcar suscriptores con error (2024-06-09)
 
 ## Invitaciones
 - Comprobar posibles hackeos de invitación

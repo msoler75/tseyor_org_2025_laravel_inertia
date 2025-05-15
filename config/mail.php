@@ -131,4 +131,6 @@ return [
         'window' => env('MAIL_RATE_LIMIT_WINDOW', 3600), // 20 segundos
     ],
 
+    'webmaster_email' => env('EMAIL_WEBMASTER')
+
 ];
