@@ -17,3 +17,18 @@ Políticas y recomendaciones de seguridad para Tseyor.org 2025.
 
 ## Recursos
 - Middleware de protección: ver ROADMAP.md y TODO.md
+
+---
+
+## Implementación de recomendaciones
+
+- **Rate limiting:** Utilizar middleware para limitar el número de solicitudes que un usuario puede hacer en un período de tiempo determinado.
+- **Validación y saneamiento de entradas de usuario:** Utilizar funciones de validación y saneamiento para asegurarse de que las entradas de usuario son válidas y no contienen código malicioso.
+- **Protección contra ataques CSRF y XSS:** Utilizar tokens CSRF y escapar las salidas para protegerse contra ataques CSRF y XSS.
+
+## Herramientas de análisis de seguridad
+
+Se pueden utilizar herramientas de análisis de seguridad para identificar vulnerabilidades en la aplicación. Algunas herramientas populares son:
+
+- OWASP ZAP
+- SonarQube

@@ -167,3 +167,19 @@ if (!static::$cache) {
 ---
 
 > Si tienes dudas, contacta con el equipo técnico o revisa la documentación interna. ¡Gracias por contribuir a la web de Tseyor! 🌱
+
+---
+
+## Configuración del entorno de desarrollo
+
+Para configurar el entorno de desarrollo, sigue estos pasos:
+
+1.  Asegúrate de tener instalado PHP 8.1 o superior, Node.js 16 o superior y Composer.
+2.  Clona el repositorio: `git clone https://github.com/tseyor-org/tseyor_org_2025_laravel_inertia.git`
+3.  Copia el archivo `.env.example` a `.env`: `cp .env.example .env`
+4.  Genera la clave de la aplicación: `php artisan key:generate`
+5.  Configura la base de datos en el archivo `.env`
+6.  Ejecuta las migraciones: `php artisan migrate`
+7.  Instala las dependencias de PHP: `composer install`
+8.  Instala las dependencias de JavaScript: `npm install`
+9.  Compila los assets: `npm run dev`
