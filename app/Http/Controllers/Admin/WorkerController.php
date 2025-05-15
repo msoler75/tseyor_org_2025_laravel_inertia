@@ -37,7 +37,7 @@ class WorkerController
     public function startWorker()
     {
         // Ejecutar el script en segundo plano
-        $command = "bash {$this->scriptPath}start-worker.sh > /dev/null 2>&1 &";
+        $command = "bash {$this->scriptPath}worker-start.sh > /dev/null 2>&1 &";
         $result = Process::run($command);
 
         if ($result->successful()) {
@@ -61,7 +61,7 @@ class WorkerController
     public function restartWorker()
     {
         // Ejecutar el script en segundo plano
-        $command = "bash {$this->scriptPath}restart-worker.sh > /dev/null 2>&1 &";
+        $command = "bash {$this->scriptPath}worker-restart.sh > /dev/null 2>&1 &";
         $result = Process::run($command);
 
         if ($result->successful()) {

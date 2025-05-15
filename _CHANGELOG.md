@@ -20,5 +20,29 @@
   - Corregido el error de migración duplicada en `CreateBoletinesTable`.
   - Creado el middleware `RateLimited` para limitar la tasa de procesamiento de trabajos en cola utilizando Redis.
 
-### Tareas pendientes
+- **12 de mayo de 2025**:
+  - Mejoras en la suscripción al boletín desde la cuenta de usuario: integración de la vista parcial `BoletinSuscripcion.vue` en el perfil y ajustes en controladores y modelos relacionados.
+  - Ajustes en la relación entre usuario y suscripción al boletín, validaciones y mensajes de éxito/error en la UI.
+  - Refactorización de middlewares y servicios de email: renombrado y mejoras en el control de ratio de envío, registro de errores de envío en logs.
+  - Ampliación del campo email en la base de datos para boletines.
+  - Correcciones menores en la administración de usuarios y suscriptores.
+
+- **13 de mayo de 2025**:
+  - (Sin cambios relevantes registrados en el repositorio)
+
+- **14 de mayo de 2025**:
+  - Mejoras en la gestión de sesiones y configuración para almacenamiento en archivos.
+  - Cambios visuales en componentes de navegación (`NavTabs.vue`, `NavBar.vue`).
+  - Refactorización y limpieza de scripts de SSR y comandos relacionados, creación de `ssr.sh` y adaptación para Windows.
+  - Mejoras en CORS y configuración de la API, creación de store para API y ajustes en stores de usuario e imágenes.
+  - Eliminación de backups antiguos y scripts obsoletos.
+  - Ajustes en vistas y componentes para comentarios y navegación.
+
+- **15 de mayo de 2025**:
+  - Documentación ampliada: creación de archivos de arquitectura, planificación, contribución, despliegue y seguridad.
+  - Refactorización y migración de archivos de tareas y changelog.
+  - Mejoras y correcciones en el modelo `Boletin` y migración de listado de suscriptores desde Mailchimp.
+  - Ajustes en el email de boletín y comandos de despliegue.
+  - Limpieza de archivos y eliminación de scripts y configuraciones obsoletas.
+
 

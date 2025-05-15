@@ -9,9 +9,10 @@ Planificación a medio y largo plazo, objetivos y milestones del proyecto.
 - Mejorar funcionalidad de boletines
 - Vincular mensajes de error de correo con invitaciones
 - Panel para ver mensajes recibidos en notificaciones@tseyor.org
+- Instalar Laravel-Abuse-IP
 
 ## Medio plazo
-- Añadir testimonios
+- Añadir sección de testimonios
 - Crear nuevo contenido: Publicaciones
 - Crear sección de contenidos de la comunidad (puede integrarse con Publicaciones)
 - Crear API para gestionar los contenidos básicos de Tseyor

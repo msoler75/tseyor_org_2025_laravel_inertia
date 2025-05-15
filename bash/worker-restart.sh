@@ -1,6 +1,12 @@
 #!/bin/bash
 
-BASEDIR="/home/REMOVED_USER/tseyor.org"
+DEPLOY_USER=${DEPLOY_USER:-}
+if [ -z "$DEPLOY_USER" ]; then
+  echo "ERROR: La variable de entorno DEPLOY_USER no está definida."
+  exit 1
+fi
+
+BASEDIR="/home/$DEPLOY_USER/tseyor.org"
 ARTISAN="$BASEDIR/current/artisan"
 LOCKFILE="$BASEDIR/shared/_queue-worker.lock"
 LOGDIR="$BASEDIR/shared/storage/logs"
@@ -13,7 +19,7 @@ if [ -e $LOCKFILE ]; then
   echo "Intentando detener el proceso $PID de manera ordenada..."
 
   # Terminar procesarmiento de colas, avisamos a laravel
-  $COMMAND 
+  $COMMAND
 
   # Esperar a que el proceso termine su trabajo actual
   while kill -0 $PID 2>/dev/null; do
@@ -27,5 +33,5 @@ else
   echo "No se encontró el archivo de bloqueo. El daemon puede no estar en ejecución."
 fi
 
-# ejecutar script bash: start-worker.sh
-./start-worker.sh
+# ejecutar script bash: worker-start.sh
+./worker-start.sh

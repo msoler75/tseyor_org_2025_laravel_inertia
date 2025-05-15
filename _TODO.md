@@ -2,7 +2,7 @@
 
 Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-do.txt`.
 
-## General
+## API
 - Poner api.tseyor.org como API_URL en tseyor.org
 
 ## Sección Arte de Tseyorianos
