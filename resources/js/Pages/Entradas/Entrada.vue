@@ -5,7 +5,7 @@
             <Back>Blog</Back>
             <div class="flex gap-2">
                 <Share />
-                <a class="btn btn-xs btn-error w-fit flex gap-3" :href="route('entrada.pdf', entrada.slug)"
+                <a class="btn btn-xs btn-error w-fit flex gap-3" :href="route('blog.entrada.pdf', entrada.slug)"
                     target="_blank" title="Descargar PDF">
                     <Icon icon="ph:download-duotone" />PDF
                 </a>

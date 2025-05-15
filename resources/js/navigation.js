@@ -63,7 +63,7 @@ export default [
             },
             {
               title: "Blog",
-              route: "entradas",
+              route: "blog",
               description: "Artículos de nuestros blog",
               icon: "ph:pencil-line-duotone",
             },

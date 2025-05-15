@@ -136,9 +136,24 @@ Route::get('comunicados/{slug}/pdf', [ComunicadosController::class, 'pdf'])->whe
 Route::get('libros', [LibrosController::class, 'index'])->name('libros');
 Route::get('libros/{slug}', [LibrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('libro');
 
-Route::get('entradas', [EntradasController::class, 'index'])->name('entradas');
-Route::get('entradas/{slug}', [EntradasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('entrada');
-Route::get('entradas/{slug}/pdf', [EntradasController::class, 'pdf'])->where('slug', '[a-z0-9\-]+')->name('entrada.pdf');
+// Rutas principales para el blog
+Route::get('blog', [EntradasController::class, 'index'])->name('blog');
+Route::get('blog/{slug}', [EntradasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('blog.entrada');
+Route::get('blog/{slug}/pdf', [EntradasController::class, 'pdf'])->where('slug', '[a-z0-9\-]+')->name('blog.entrada.pdf');
+
+// Redirigimos la ruta vieja de entradas de blog a blog con redirección permanente
+Route::get('entradas', function () {
+    return redirect()->route('blog', [], 301);
+})->name('entradas');
+
+Route::get('entradas/{slug}', function ($slug) {
+    return redirect()->route('blog.entrada', ['slug' => $slug], 301);
+})->where('slug', '[a-z0-9\-]+')->name('entrada');
+
+Route::get('entradas/{slug}/pdf', function ($slug) {
+    return redirect()->route('blog.entrada.pdf', ['slug' => $slug], 301);
+})->where('slug', '[a-z0-9\-]+')->name('entrada.pdf');
+//
 
 Route::get('glosario', [TerminosController::class, 'index'])->name('terminos');
 Route::get('glosario/{slug}', [TerminosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('termino');
@@ -413,3 +428,4 @@ Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '[a-z0-9
 /* Route::fallback(function () {
     return app()->call('App\Http\Controllers\PaginasController@index');
 }); */
+

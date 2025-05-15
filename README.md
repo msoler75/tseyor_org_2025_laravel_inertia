@@ -1,175 +1,169 @@
-# Comandos básicos con Artisan
+# 🌐 tseyor.org – Plataforma Web de Mundo Armónico Tseyor
 
-Este documento describe los comandos básicos con Artisan, la interfaz de línea de comandos incluida en Laravel, utilizados para configurar y administrar un sitio web.
+¡Bienvenido/a! Este repositorio contiene el código fuente de la web oficial de la ONG Mundo Armónico Tseyor: [https://tseyor.org](https://tseyor.org) ✨
 
-## Actualizar rutas
+## 🤝 ¿Qué es este proyecto?
 
-Si se crean o se cambian las rutas (routes) en web.php o api.php se puede usar estos comandos:
+Este proyecto es el corazón digital de la organización, donde se publican noticias, comunicados, eventos, recursos y mucho más. Está pensado para ser mantenido y evolucionado por cualquier miembro técnico de la ONG, facilitando la continuidad y la colaboración.
 
-```
-php artisan route:clear
-```
+- **ONG:** Mundo Armónico Tseyor
+- **Propósito:** Portal web, gestión de contenidos, buscador global, automatización de publicaciones y recursos.
+- **Tecnologías principales:** Laravel (backend), Inertia.js (puente), Vue 3 (frontend), MySQL/SQLite (base de datos)
+- **Frontend:** Tailwind CSS 4, DaisyUI 5, editor TipTap (rich text)
 
-## Optimizar laravel
+## 🚀 Stack tecnológico
 
-Realiza varias tareas de optimización, como la generación de clases de contenedor optimizadas, la recopilación de rutas en caché y la eliminación de rutas y vistas no utilizadas:
+- **Laravel**: Framework PHP robusto para el backend y la API.
+- **Inertia.js**: Conecta el backend con el frontend sin APIs REST tradicionales.
+- **Vue 3**: Framework progresivo para la interfaz de usuario.
+- **TNTSearch/Scout**: Buscador interno eficiente.
+- **Ziggy**: Rutas de Laravel disponibles en JavaScript.
 
-```
-php artisan optimize
-```
+## 🛠️ Guía rápida para nuevos colaboradores
 
-## Limpiar la caché
+1. **Clona el repositorio y copia `.env.example` a `.env`**
+2. Instala dependencias:
+   - `composer install`
+   - `npm install`
+3. Genera la clave de la app: `php artisan key:generate`
+4. Configura la base de datos en `.env` y ejecuta migraciones:
+   - `php artisan migrate --seed`
+5. Compila los assets:
+   - `npm run dev` (desarrollo) o `npm run build` (producción)
+6. ¡Listo! Accede a la web en tu entorno local.
 
-El siguiente comando se utiliza para eliminar la caché del sitio:
+> **Consejo:** Consulta siempre `PLANNING.md` y `TAREAS.md` para entender la arquitectura, tareas pendientes y convenciones del proyecto.
 
-```
-php artisan cache:clear
-```
+## 📁 Estructura del proyecto (resumen)
 
-## Limpiar la configuración
+- `/app` – Lógica de negocio, modelos, controladores, servicios
+- `/resources` – Vistas, componentes Vue, assets
+- `/routes` – Definición de rutas web y API
+- `/database` – Migraciones, seeders, factories
+- `/public` – Archivos públicos y assets compilados
+- `/config` – Configuración de paquetes y servicios
 
-Si no se detecta el archivo .env o se han realizado cambios en la configuración, puedes utilizar el siguiente comando para limpiar la configuración en caché:
+## 📊 Estadísticas del proyecto (a fecha 15/05/2025)
 
-```
-php artisan config:clear
-```
+- **Modelos:** 49
+- **Controladores:** 88 (incluyendo los de administración CRUD)
 
-## Importar datos
+## ⚙️ Comandos esenciales de administración
 
-Si necesitas importar comunicados u otros datos en tu sitio web, puedes utilizar estos comandos:
+### Artisan (Laravel)
 
-```
-php artisan import:comunicados
-```
+- **Actualizar rutas:**
+  ```bash
+  php artisan route:clear
+  ```
+- **Optimizar Laravel:**
+  ```bash
+  php artisan optimize
+  ```
+- **Limpiar caché:**
+  ```bash
+  php artisan cache:clear
+  ```
+- **Limpiar configuración:**
+  ```bash
+  php artisan config:clear
+  ```
+- **Importar datos:**
+  ```bash
+  php artisan import:comunicados
+  php artisan import:paginas
+  ```
+- **Búsquedas (Scout/TNTSearch):**
+  ```bash
+  php artisan scout:import "App\Models\Comunicado"
+  php artisan scout:status
+  ```
+- **Contenidos espejo:**
+  ```bash
+  php artisan contenidos:import noticias
+  ```
+- **Backup de base de datos:**
+  ```bash
+  php artisan db:backup
+  ```
+- **Generar sitemap:**
+  ```bash
+  php artisan sitemap:generate
+  ```
+- **Limpiar page-cache:**
+  ```bash
+  php artisan page-cache:clear
+  ```
 
-```
-php artisan import:paginas
-```
+### Despliegue y SSR
 
-## Búsquedas
+- **Generar rutas Ziggy:**
+  ```bash
+  php artisan ziggy:generate
+  ```
+- **Despliegue SSR:**
+  ```bash
+  php artisan deploy:ssr
+  php artisan deploy:front
+  php artisan deploy:nodemodules
+  ```
 
-Cuando un modelo utiliza el trait _Searchable_, se crea automáticamente un índice con los nuevos datos o cuando se modifican los existentes.
+### Notas técnicas y optimizaciones
 
-Si ya tienes datos en un modelo antes de agregar el trait o si deseas recrear por completo el índice de un modelo, ejecuta el siguiente comando:
+- **Mejora de rendimiento Ziggy:**
+  En `vendor/tightenco/ziggy/src/Ziggy.php`, en el constructor, se recomienda añadir la caché de rutas como se indica más abajo para ahorrar entre 10 y 56 ms por petición.
+- **Aumentar límite de resultados en búsquedas:**
+  En `TNTSearch -> SQLiteEngine.php`, en el método `loadConfig`, añade:
+  ```php
+  $this->maxDocs = $config['maxDocs'] ?? 500;
+  ```
+- **Problemas de CSRF en dev.tseyor.org:**
+  Si hay errores constantes, borra todas las cookies de `.tseyor.org`.
 
-```bash
-php artisan scout:import "App\Models\Comunicado"
-```
+## 📝 Buenas prácticas y contribución
 
-Puedes ver el estado actual del buscador:
- 
-```bash
-php artisan scout:status
-```
+- Sigue las convenciones de código y estructura descritas en `PLANNING.md`.
+- Consulta y actualiza `TASKS.md` al iniciar o finalizar tareas.
+- Usa ramas descriptivas y pull requests claros.
+- Documenta cualquier cambio relevante en este README.
 
-## Contenidos
+## 🔗 Enlaces útiles
 
-El modelo _Contenido_ es multi-uso. 
+- [Documentación Laravel](https://laravel.com/docs)
+- [Documentación Inertia.js](https://inertiajs.com/)
+- [Documentación Vue 3](https://vuejs.org/)
+- [TNTSearch](https://tntsearch.dev/)
+- [Ziggy](https://github.com/tighten/ziggy)
 
-- Es una copia o "espejo" de los datos básicos de muchos otros modelos (noticias, comunicados, páginas, normativas, eventos, blog...) y sirve para listar las Novedades del sitio.
-- Es un índice global para el buscador general _SearchAll_
+---
 
-Para ello cada vez que se crea o se actualiza un registro de cualquier modelo (que herede de _ContenidoBaseModel_) automáticamente se crea o actualizar un _Contenido_ "espejo" que contiene:
+## 🧩 Código de optimización Ziggy sugerido
 
-- Los datos esenciales (título, descripción, fecha, imagen, colección) para listar las novedades del sitio de una sola vez.
-- Además del título, el texto o palabras clave para el buscador general (SearchAll) con el método _getTextoContenidoBuscador_
+En el constructor de `vendor/tightenco/ziggy/src/Ziggy.php`:
 
-
-Los contenidos se generan y actualizan de forma automática, pero se puede usar este comando para recrear los contenidos de algún modelo en concreto:
-
-```bash
-php artisan contenidos:import noticias
-```
-
-Este comando recrea todos los contenidos "espejo" de las noticias.
-
-# Deploy
-
-Recordar ejecutar:
-
-```bash
-php artisan ziggy:generate
-```
-
-Para mejorar el rendimiento:
-
-## Cambios en Response de Inertia
-
-Mejoras en el código.
-
-vendor\tightenco\ziggy\src\Ziggy.php en el método _constructor, se coloca este código (ahorro de 10 a 56 ms):
-```
+```php
 if (!static::$cache) {
-            // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
-            $cache_routes = base_path("bootstrap/cache/routes-v7.php");
-            $cache_ziggy = base_path("bootstrap/cache/ziggy2.json");
-            if (
-                !file_exists($cache_ziggy) ||
-                !file_exists($cache_routes) ||
-                filemtime($cache_routes) > filemtime($cache_ziggy)
-            ) {
-                static::$cache = $this->nameKeyedRoutes();
-                file_put_contents($cache_ziggy, static::$cache->toJson());
-            } else {
-                try {
-                    $ziggy_content = file_get_contents($cache_ziggy);
-                    static::$cache = collect(json_decode($ziggy_content, true));
-                } catch (\Exception $e) {
-                    static::$cache = $this->nameKeyedRoutes(); // por si hubiera algun error
-                }
-            }
+    // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
+    $cache_routes = base_path("bootstrap/cache/routes-v7.php");
+    $cache_ziggy = base_path("bootstrap/cache/ziggy2.json");
+    if (
+        !file_exists($cache_ziggy) ||
+        !file_exists($cache_routes) ||
+        filemtime($cache_routes) > filemtime($cache_ziggy)
+    ) {
+        static::$cache = $this->nameKeyedRoutes();
+        file_put_contents($cache_ziggy, static::$cache->toJson());
+    } else {
+        try {
+            $ziggy_content = file_get_contents($cache_ziggy);
+            static::$cache = collect(json_decode($ziggy_content, true));
+        } catch (\Exception $e) {
+            static::$cache = $this->nameKeyedRoutes(); // por si hubiera algun error
         }
+    }
+}
 ```
 
-# SQLiteEngine
+---
 
-Para superar el límite de 500 en los resultados de busqueda, ir al método loadConfig de TNTSearch -> SQLiteEngine.php y añadir
-
-```
-$this->maxDocs = $config['maxDocs'] ?? 500;
-```
-
-# Base de datos
-
-# Crear un backup de la base de datos
-
-```bash
-php artisan db:backup
-```
-
-
-# Sitemap
-
-```bash
-php artisan sitemap:generate
-```
-
-# Page-cache
-
-Since the responses are cached to disk as static files, any updates to those pages in your app will not be reflected on your site. To update pages on your site, you should clear the cache with the following command:
-
-```bash
-php artisan page-cache:clear
-```
-
-
-# Deploy
-
-## Modo SSR
-
-Para instalar en servidor web, se requieren 3 comandos
-
-```bash
-php artisan deploy:ssr
-php artisan deploy:front
-```
-
-Y en caso que se añada o se remueva alguna libreria (cambios en package.json), se debe actualizar en servidor toda la carpeta de node_modules:
-
-```bash
-php artisan deploy:nodemodules
-```
-
-# Desarrollo en dev.tseyor.org
-
-Si en dev.tseyor.org hay fallos de CSRF todo el rato, hay que borrar todas las cookies de .tseyor.org porque chocan.
+> Si tienes dudas, contacta con el equipo técnico o revisa la documentación interna. ¡Gracias por contribuir a la web de Tseyor! 🌱

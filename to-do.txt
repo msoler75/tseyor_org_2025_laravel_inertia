@@ -1,3 +1,9 @@
+-Poner api.tseyor.org comno API_URL en tseyor.org
+
+SECCION ARTE DE TSEYORIANOS
+-crear esa sección en la web
+-poner tambien los audios
+
 REMOVER SANCTUM
 -composer remove laravel/sanctum
 
@@ -22,7 +28,6 @@ DISKUTIL
 ADMIN
 -algun sistema donde guardar datos clave como: url de estatutos de ong, etc. Para luego usar eso para las páginas
 
-HACIENDA
 
 GLOSARIO
 -términos relacionados: http://localhost/glosario/ley-de-la-contemplacion  => silencio mental -> la-desconexion  ???
@@ -196,11 +201,6 @@ BLOG
 
 JOBS
 revisar https://github.com/romanzipp/Laravel-Queue-Monitor
-
-
-ENTRADAS/BLOG
--Añadir el artículo: barcelona comision pueblo tseyor
-
 
 RUTAS_ARCHIVOS_INTERNO_DEV
 -remover DiskItem y cambiar a StorageItem
