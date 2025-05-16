@@ -31,7 +31,6 @@ Este archivo contiene información útil para el mantenimiento y la supervisión
     *   Revisar configuración de CORS y cookies
     *   Limitar intentos de login y proteger endpoints sensibles
 
-*   Instalar `Laravel-Abuse-IP`
 *   Integración de middleware de seguridad avanzada
 
 ## Trucos

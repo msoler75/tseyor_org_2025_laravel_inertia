@@ -1,18 +1,60 @@
+# Scripts de creación de versiones (releases) y workers
+
+## ¿Qué hacen estos scripts?
+
+- **release_crear.sh**: Automatiza el despliegue de una nueva versión de la aplicación. Crea una carpeta de release, clona el repositorio, enlaza archivos y carpetas compartidas, instala dependencias y ejecuta migraciones.
+- **worker-start.sh**: Inicia un worker de Laravel para procesar la cola de trabajos en segundo plano, registrando logs y gestionando el proceso con un archivo de bloqueo.
+- **worker-stop.sh**: Detiene de forma ordenada el worker en ejecución, esperando a que termine el trabajo actual antes de finalizar el proceso.
+- **worker-restart.sh**: Reinicia el worker de la cola, notificando a Laravel y asegurando que el proceso se detenga y vuelva a iniciar correctamente.
+- **worker-check.sh**: Verifica si el worker está en ejecución y muestra el PID si está activo, o 0 si no lo está.
+- **_start-once-worker.sh**: Inicia un worker que procesa solo un trabajo de la cola y luego termina. Útil para ejecuciones puntuales o debugging.
+- **_stop-once-worker.sh**: Detiene el worker iniciado en modo "once" enviando una señal de terminación y esperando a que finalice.
+
+Todos estos scripts están preparados para funcionar en entornos de producción y requieren que la variable de entorno `DEPLOY_USER` esté correctamente definida.
+
+
 # Instrucciones para usar los scripts de despliegue y workers
 
-## 1. Definir el usuario de despliegue
-Antes de ejecutar cualquier script, asegúrate de definir la variable de entorno `DEPLOY_USER` con el nombre de usuario correcto del sistema donde se desplegará la aplicación:
+## 0. Permisos de ejecución
+
+Recuerda que para que se puedan ejecutar, deben tener permisos de ejecución. Para ello puedes usar el comando: 
+
+```bash
+chmod u+x bash/*.sh
+```
+
+## 1. Definir el usuario 
+Antes de ejecutar cualquier script, asegúrate de definir la variable de entorno `DEPLOY_USER` con el nombre de usuario correcto del sistema donde se desplegará la aplicación.
+
+Puedes añadir la línea `DEPLOY_USER=tu_usuario` a tu `.bashrc`, `.profile` o ejecutar manualmente antes de cada ejecución de un script:
 
 ```bash
 export DEPLOY_USER=tu_usuario
 ```
-Puedes añadir esta línea a tu `.bashrc`, `.profile` o ejecutarla manualmente antes de cada despliegue.
+
+> **Importante para CRON:**
+> Si ejecutas los scripts desde **cron**, debes definir la variable `DEPLOY_USER` explícitamente en la línea del cron o en el propio archivo crontab, ya que el entorno de cron no carga variables personalizadas automáticamente.
+> 
+> Ejemplo en crontab:
+> ```cron
+> DEPLOY_USER=tu_usuario /ruta/al/script/worker-start.sh
+> ```
+> O bien, añade la variable al principio de tu crontab:
+> ```cron
+> DEPLOY_USER=tu_usuario
+> * * * * * /ruta/al/script/worker-start.sh
+> ```
 
 ## 2. Despliegue de una nueva release
+
+**NOTA**: Se sugiere copiar los script `release*` a la carpeta raiz, por ejemplo a:
+
+`/home/$DEPLOY_USER/tseyor.org`
+
 Ejecuta el script de despliegue:
 
 ```bash
-bash/release_crear.sh
+./release_crear.sh
 ```
 
 Este script:
@@ -34,19 +76,8 @@ bash/worker-check.sh
 - Nunca publiques tu usuario real en el repositorio, usa siempre la variable de entorno.
 - Puedes adaptar estos scripts para otros usuarios o entornos simplemente cambiando el valor de `DEPLOY_USER`.
 
+
 ---
-
-## ¿Qué hacen estos scripts?
-
-- **release_crear.sh**: Automatiza el despliegue de una nueva versión de la aplicación. Crea una carpeta de release, clona el repositorio, enlaza archivos y carpetas compartidas, instala dependencias y ejecuta migraciones.
-- **worker-start.sh**: Inicia un worker de Laravel para procesar la cola de trabajos en segundo plano, registrando logs y gestionando el proceso con un archivo de bloqueo.
-- **worker-stop.sh**: Detiene de forma ordenada el worker en ejecución, esperando a que termine el trabajo actual antes de finalizar el proceso.
-- **worker-restart.sh**: Reinicia el worker de la cola, notificando a Laravel y asegurando que el proceso se detenga y vuelva a iniciar correctamente.
-- **worker-check.sh**: Verifica si el worker está en ejecución y muestra el PID si está activo, o 0 si no lo está.
-- **_start-once-worker.sh**: Inicia un worker que procesa solo un trabajo de la cola y luego termina. Útil para ejecuciones puntuales o debugging.
-- **_stop-once-worker.sh**: Detiene el worker iniciado en modo "once" enviando una señal de terminación y esperando a que finalice.
-
-Todos estos scripts están preparados para funcionar en entornos de producción y requieren que la variable de entorno `DEPLOY_USER` esté correctamente definida.
 
 ## 5. Deployment
 

@@ -3,14 +3,14 @@
 Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-do.txt`.
 
 ## Limpiar historial de github
-- [] Limpiar historial de Git con BFG Repo-Cleaner (https://rtyley.github.io/bfg-repo-cleaner/)
+- [ ] Limpiar historial de Git con BFG Repo-Cleaner (https://rtyley.github.io/bfg-repo-cleaner/)
 - Descripción: Usar BFG Repo-Cleaner para eliminar archivos grandes o información sensible del historial de Git.
 
  ## API
 - Poner api.tseyor.org como API_URL en tseyor.org
 
 ## Sección Arte de Tseyorianos
-- Crear esa sección en la web
+- Crear la sección de arte tseyoriana o publicacioes de la comunidad en la web
 - Poner también los audios
 
 ## Remover Sanctum
@@ -28,21 +28,13 @@ Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-d
 ## Equipos
 - Ver listado de miembros completo al pulsar o ampliar en listado
 - Verificar cada cierto tiempo si hay solicitudes, mandar un correo a los coordinadores
-- Invitaciones: permitir reenviar invitación caducada
 - Poder ver todos los miembros de un equipo
 - Relación entre equipos y centros visible en ambas vistas
 - Nuevo panel: EVENTOS relacionados con el equipo
-- Testar funcionamiento y permisos de acceso al crear un equipo
-- Testar creación de informe del equipo
-
-## DiskUtil
-- Reemplazar/quitar DiskUtil por StorageItem (tal vez dejar DiskUtil::ensureDirExists)
 
 ## Admin
 - Sistema para guardar datos clave (ej: url de estatutos de ONG)
-- Dashboard: añadir cuadro con avisos de estado del queue-worker y tareas fallidas
 - Otorgar privilegios de superadmin a alguien más y enseñarle
-- Buscar usuario por email
 - Cerrar sesión desde admin no funciona
 
 ## Glosario
@@ -101,19 +93,7 @@ Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-d
 ## Image/Intervention
 - Revisar error de GeometryException (ver logs)
 
-## IP Abuser Middleware
+## Instalar IP Abuser Middleware
 - https://github.com/rahulalam31/Laravel-Abuse-IP
+- establecer cron de actualización de IPS
 
-## URL
-- En móvil, compartir página solo comparte tseyor.xyz
-
-## Blog
-- Usar categoría no funciona en la paginación
-
-## Mejoras de documentación
-
-- Añadir diagramas o representaciones visuales a _ARCHITECTURE.md
-- Añadir información sobre herramientas de despliegue automatizado a _DEPLOYMENT.md
-- Añadir detalles sobre cómo implementar las recomendaciones de seguridad en _SECURITY.md
-- Añadir detalles sobre el flujo de trabajo de Git a _CONTRIBUTING.md
-- Añadir información sobre cómo configurar el entorno de desarrollo a README.md
