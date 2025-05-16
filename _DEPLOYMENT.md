@@ -1,11 +1,11 @@
-# DEPLOYMENT.md
+# Despliegue
 
-Manual detallado para el despliegue y gestión de versiones del proyecto Tseyor.org 2025.
+Manual detallado para el despliegue y gestión de versiones del proyecto tseyor.org
 
 ## Estructura recomendada de carpetas en producción
 
 ```
-/tseyor.orgyor.org
+/tseyor.org
 ├── release_crear.sh
 ├── release_establecer.sh
 ├── shared
@@ -15,11 +15,11 @@ Manual detallado para el despliegue y gestión de versiones del proyecto Tseyor.
 │   ├── 1/
 │   ├── 2/
 │   └── ...
-└── current -> releases/2/
+└── current -> releases/2
 ```
 
-- **shared/**: recursos compartidos entre releases (configuración y archivos subidos).
-- **releases/**: cada subcarpeta es una versión desplegada.
+- **shared**: recursos compartidos entre releases (configuración y archivos subidos).
+- **releases**: cada subcarpeta es una versión desplegada.
 - **current**: enlace simbólico a la versión activa.
 - **release_crear.sh** y **release_establecer.sh**: scripts de automatización (deben estar en la raíz del sitio web).
 
@@ -35,6 +35,8 @@ Manual detallado para el despliegue y gestión de versiones del proyecto Tseyor.
      ```bash
      ./release_crear.sh
      ```
+    > **Nota**: el script release_crear.sh debes copiarlo y/o actualizarlo desde la carpeta `bash` del proyecto.
+
    - El script realiza:
      - Crea una nueva carpeta en `releases/` con el siguiente número incremental.
      - Clona el repositorio en esa carpeta.
@@ -45,22 +47,22 @@ Manual detallado para el despliegue y gestión de versiones del proyecto Tseyor.
      - (Opcional) Ejecuta scripts de frontend si están habilitados.
 
 3. **Actualizar el enlace simbólico 'current'**
-   - El script puede actualizar automáticamente el symlink `current` a la nueva release, o puedes hacerlo manualmente con:
+   - Una vez creada la carpeta con la nueva version puedes establecer la nueva versión (cambiará el symlink de `current`):
      ```bash
      ./release_establecer.sh <número_release>
      ```
-   - Esto permite hacer rollback rápido a cualquier versión anterior.
+   - Esto permite también hacer rollback a cualquier versión anterior.
 
 4. **Acceso web**
-   - El directorio público a servir es: `/tseyor.orgyor.org/current/public`
+   - El directorio público a servir es: `/tseyor.org/current/public`
 
 ## Notas importantes
-- **No edites archivos directamente en releases/**: siempre despliega una nueva versión.
-- **El archivo .env y la carpeta storage son compartidos**: cualquier cambio afecta a todas las releases.
+- **Procura No editar archivos directamente en `releases`**: Si hay algún cambio importante despliega una nueva versión.
+- **El archivo `.env` y la carpeta `storage` son compartidos**: cualquier cambio afecta a todas las releases.
 - **Para rollback**: ejecuta `./release_establecer.sh <número_release>` para apuntar el symlink `current` a una versión anterior.
 - **Permisos**: asegúrate de que los scripts y carpetas tengan los permisos adecuados para el usuario de despliegue.
 - **Limpieza de cachés**: tras cada cambio de release, limpia cachés de views y rutas si es necesario.
-- **Logs y workers**: revisa logs y estado de workers tras cada despliegue.
+- **Logs y workers**: revisa logs y estado de workers tras cada despliegue. Están en `shared/storage/logs`
 
 ## Referencias
 - Consulta `_SETUP.md` para la configuración inicial.
