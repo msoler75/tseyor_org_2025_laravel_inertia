@@ -15,6 +15,7 @@
     "devDependencies": {
         "@iconify/vue": "^4.1.2",
         "@inertiajs/vue3": "^2.0.5",
+        "@playwright/test": "^1.52.0",
         "@tailwindcss/forms": "^0.5.9",
         "@tailwindcss/postcss": "^4.0.14",
         "@tailwindcss/typography": "^0.5.15",
