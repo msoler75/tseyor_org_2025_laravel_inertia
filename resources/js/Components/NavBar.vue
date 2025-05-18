@@ -157,6 +157,7 @@ const selectors = useSelectors();
 const portada = computed(() => page.url == "/");
 
 const showingNavigationDropdown = ref(false);
+let isTogglingTheme = false;
 
 // 1. Obtener valor inicial del servidor
 const initialTheme = page.props.initialTheme; // 'dark' o 'light'
@@ -167,14 +168,23 @@ const isDark = useDark({
     storageKey: "theme",
     selector: "html",
     valueDark: "night",
-    initialValue: initialTheme !=='dark'?'light':'night', // <--- Key no documentada pero funcional
+    initialValue: initialTheme !=='dark'?'light':'night',
     onChanged(newValue) {
         console.log("onChanged theme", newValue);
+        if (isTogglingTheme) {
+            isTogglingTheme = false;
+            updateTheme(newValue);
+            return;
+        }
         updateTheme(newValue);
     },
 });
 
-const toggleDark = useToggle(isDark);
+const toggleDark = () => {
+    isTogglingTheme = true;
+    // Llama al toggle real
+    useToggle(isDark)();
+};
 
 /*
 function updateDarkState() {

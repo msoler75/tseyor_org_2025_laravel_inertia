@@ -79,7 +79,6 @@ function move(event) {
 .fondo-espacio {
     background: black;
     background: radial-gradient(ellipse at center, #060f27 0%, #000 100%);
-    overflow: hidden;
     --move-x: 0;
     --move-y: 0;
     --stars-scale: 1;

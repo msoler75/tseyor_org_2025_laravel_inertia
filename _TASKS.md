@@ -3,6 +3,7 @@
 ## Tareas actuales
 - [x] Mejorar y detallar el manual de despliegue en _DEPLOYMENT.md (15/05/2025)
 - [x] Migrar putty.cmd a putty.ps1 usando variables en .env para mayor seguridad (15/05/2025)
+- [ ] Terminar la portada del sitio web (17/05/2025)
 
 ## Discovered During Work
 

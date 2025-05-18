@@ -33,7 +33,6 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits } from 'vue';
 
 const props = defineProps({
     email: String,

@@ -1,5 +1,5 @@
 <template>
-    <Link :as="asIF" :data="data" :href="href" :method="method" :headers="headers" @click.capture="handleClick"
+    <InertiaLink :as="asIF" :data="data" :href="href" :method="method" :headers="headers" @click.capture="handleClick"
         :preserve-scroll="preserveScroll" :preserve-state="preserveState" :replace="replace" :only="only"
         :on-before="onBefore" :on-start="onStart" :on-progress="onProgress" :on-finish="onFinish"
         :on-cancel-token="onCancelToken" :on-cancel="onCancel" :on-success="onSuccess"
@@ -7,11 +7,11 @@
         @finish="onFinish"
         >
     <slot />
-    </Link>
+    </InertiaLink>
 </template>
 
 <script setup>
-import { Link } from "@inertiajs/vue3";
+import { Link as InertiaLink } from "@inertiajs/vue3";
 
 const nav = useNav()
 
