@@ -41,7 +41,7 @@ run_queue_worker() {
   if [ "$VERBOSE" = true ]; then
     $COMMAND 2>&1 | tee -a $LOGFILE
   else
-    $COMMAND >> $LOGFILE 2>&1
+    $COMMAND >> $LOGFILE 2>&1 &
   fi
 }
 

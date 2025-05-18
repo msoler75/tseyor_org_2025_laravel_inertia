@@ -52,14 +52,21 @@
                             class="w-full flex justify-between px-1 mt-3 mb-2 font-bold capitalize opacity-75">
                             {{ traducir(grupo.coleccion) }}
                         </div>
+                        <!-- Usa el componente Link de Inertia y maneja el evento click correctamente -->
                         <Link v-for="item of grupo.items" :key="item.id" :id="item.idDom"
-                            class="w-full py-3 px-4 bg-base-200 rounded-lg my-1 flex gap-3 justify-between items-center"
-                            role="option" @mouseover="seleccionarItem(item, true)" :href="calcularUrl(item)"
-                            @click="clickHandle(calcularUrl(item))"
+                            class="w-full py-3 px-4 bg-base-200 rounded-lg my-1 flex gap-3 items-center"
+                            role="option"
+                            @mouseover="seleccionarItem(item, true)"
+                            :href="calcularUrl(item)"
+                            @click="onLinkClick($event, item)"
                             :aria-selected="itemSeleccionado && itemSeleccionado.id == item.id"
-                            :class="itemSeleccionado && itemSeleccionado.id == item.id ? 'seleccionado' : ''">
-                        <div v-html="item.titulo" />
-                        <span class="text-lg">›</span>
+                            :class="[itemSeleccionado && itemSeleccionado.id == item.id ? 'seleccionado' : '',
+                                item.isLinkAll ? '': 'justify-between'
+                            ]">
+                            <span class="text-lg" v-if="item.isLinkAll">→</span>
+                            <div v-html="item.titulo" :class="item.isLinkAll?'text-xs':'text-sm'"/>
+                            <span v-if="false && item.isLinkAll && grupo.ocultos" class="text-xs font-italic">(al menos {{ grupo.ocultos }} resultados más)</span>
+                            <span class="text-lg" v-if="!item.isLinkAll">›</span>
                         </Link>
                     </div>
                 </div>
@@ -73,6 +80,10 @@
 import useGlobalSearch from "@/Stores/globalSearch.js"
 import traducir from '@/composables/traducciones'
 import { removeAccents, levenshtein } from '@/composables/textutils'
+
+const cambioUrl={
+    entradas: 'blog'
+}
 
 const portada = computed(() => page.url == '/')
 const page = usePage()
@@ -99,36 +110,61 @@ function nearness(t) {
     return levenshtein(currentQueryStd.value, removeGargabe(t))
 }
 
+const MAX_ITEMS_POR_CATEGORIA = 4 // Cambia este valor para ajustar el máximo de items por categoría
+
 // agrupamos por categorias, pero tenemos en cuenta los resultados de la búsqueda
 const resultadosAgrupados = computed(() => {
     if (search.results === null) return []
 
     const agrupados = {}
-    console.log('search.results', search.results)
     for (const key in search.results.data) {
-
         const item = search.results.data[key]
-
         if (!item.idDom)
             item.idDom = 'result-' + item.slug_ref + '-' + Math.floor(Math.random() * 1000)
-
         if (!agrupados[item.coleccion]) {
             agrupados[item.coleccion] = []
         }
         agrupados[item.coleccion].push(item)
     }
 
+    // Mapeo de colecciones a rutas amigables
+    const rutasColeccion = {
+        terminos: 'glosario',
+        // puedes añadir más si necesitas otras traducciones de rutas
+    }
+
     // Crear el array de objetos agrupados
-    const grupos = Object.entries(agrupados).map(([coleccion, items]) => ({
-        coleccion,
-        items,
-        // score: el maximo valor de __tntSearchScore__ encontrado en la lista de items
-        score: items.reduce((max, item) => Math.max(max, item.__tntSearchScore__), 0)
-    }))
+    const grupos = Object.entries(agrupados).map(([coleccion, items]) => {
+        const itemsLimitados = items.slice(0, MAX_ITEMS_POR_CATEGORIA)
+        const ocultos = items.length > MAX_ITEMS_POR_CATEGORIA ? (items.length - MAX_ITEMS_POR_CATEGORIA) : 0
+        if (coleccion !== 'paginas') {
+            const ruta = rutasColeccion[coleccion] || coleccion
+            const linkItem = {
+                id: `ver-todos-${coleccion}`,
+                idDom: `ver-todos-${coleccion}`,
+                coleccion,
+                // Traducción para el texto del enlace especial
+                titulo: `<span class="italic">Buscar en ${traducir(coleccion)}</span>`,
+                isLinkAll: true,
+                rutaColeccion: ruta,
+                __tntSearchScore__: -1
+            }
+            itemsLimitados.push(linkItem)
+        }
+        return {
+            coleccion,
+            items: itemsLimitados,
+            ocultos, // <-- número de items ocultos en esta categoría
+            score: items.reduce((max, item) => Math.max(max, item.__tntSearchScore__), 0)
+        }
+    })
 
 
     grupos.forEach(grupo => {
         grupo.items.sort((a, b) => {
+            // Si alguno es el "link all", siempre va al final
+            if (a.isLinkAll) return 1
+            if (b.isLinkAll) return -1
             if (a.__tntSearchScore__ == b.__tntSearchScore__) {
                 const nA = nearness(a.titulo)
                 const nB = nearness(b.titulo)
@@ -173,6 +209,7 @@ onMounted(() => {
         if (event.ctrlKey && event.key === 'k') {
             event.preventDefault()
             search.opened = true
+            console.log('keydown: ctrl+k, search.opened = true')
         }
         else if (search.opened) {
             console.log(event.key)
@@ -209,21 +246,35 @@ onMounted(() => {
             }
         }
     });
+    console.log('onMounted: event listener keydown añadido')
 })
 
 watch(() => search.opened, (value) => {
+    console.log('watch search.opened', value)
     usoTeclas = false
     if (value) {
         nav.sideBarShow = false // cerramos la sidebar
         currentUrl = usePage().url
         nextTick(() => {
+            console.log('watch search.opened: nextTick focus')
             input.value.focus()
         })
     }
 })
 
 function calcularUrl(item) {
-    return item.coleccion != 'paginas' ? (route(item.coleccion) + '/' + (item.slug_ref || item.id_ref)) : '/' + item.slug_ref
+    // Si es el "item" especial de ver todos
+    if (item.isLinkAll) {
+        // Usa la ruta traducida si existe
+        const coleccion = item.rutaColeccion || item.coleccion
+        let base = '/' + coleccion
+        if(cambioUrl[coleccion])
+            base = '/' + cambioUrl[coleccion]
+        return `${base}?buscar=${encodeURIComponent(search.query || search.lastQuery || '')}`
+    }
+    return item.coleccion != 'paginas'
+        ? (route(item.coleccion) + '/' + (item.slug_ref || item.id_ref))
+        : '/' + item.slug_ref
 }
 
 // para buscar
@@ -305,17 +356,25 @@ function clickPredefined(q) {
     search.restrictToCollections = q.collections
 }
 
-function clickHandle(url) {
-    console.log('clickHandle', url)
-    nextTick(async () => {
-        search.opened = false
-        await guardarBusqueda(url)
-        // busquedaId = null
-        // search.query = ""
-        search.showSuggestions = true
-    })
+function clickHandle(url, item) {
+    console.log('clickHandle: inicio', { url, item, opened: search.opened })
+    // Cierra el modal y fuerza el refresco del estado
+    search.opened = false
+    console.log('clickHandle: search.opened = false')
+    setTimeout(() => {
+        console.log('clickHandle: setTimeout ejecutado', { opened: search.opened })
+        // Si es el "item" especial de ver todos, solo navega, no guarda búsqueda
+        if (item && item.isLinkAll) {
+            console.log('clickHandle: router.visit', url)
+            router.visit(url)
+            return
+        }
+        guardarBusqueda(url).then(() => {
+            console.log('clickHandle: guardarBusqueda done')
+            search.showSuggestions = true
+        })
+    }, 10)
 }
-
 
 // SELECCIONES DE ITEM
 
@@ -372,6 +431,12 @@ function primerItem() {
 function ultimoItem() {
     if (itemsArray.value.length)
         seleccionarItem(itemsArray.value[itemsArray.value.length - 1])
+}
+
+function onLinkClick(e, item) {
+    // Siempre previene el comportamiento por defecto
+    if (e && typeof e.preventDefault === 'function') e.preventDefault()
+    clickHandle(calcularUrl(item), item)
 }
 </script>
 
