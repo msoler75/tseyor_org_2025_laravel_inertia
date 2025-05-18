@@ -54,6 +54,7 @@
         "@vueuse/core": "^10.11.1",
         "@vueuse/integrations": "^10.11.1",
         "dotenv": "^16.4.7",
+        "dropzone": "^6.0.0-beta.2",
         "jsdom": "^26.0.0",
         "md-editor-v3": "^4.20.0",
         "postcss": "^8.4.45",
