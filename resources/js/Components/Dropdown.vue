@@ -104,7 +104,6 @@ const setPosition = () => {
     dropdown.style.opacity = "0";
 
     // Esperar al próximo frame antes de obtener el rect
-
     requestAnimationFrame(() => {
         const rect = dropdown.getBoundingClientRect();
         const windowWidth = window.innerWidth;
@@ -112,10 +111,15 @@ const setPosition = () => {
 
         let transformValue = "";
 
+        // Si se sale por la derecha
         if (rect.right > windowWidth) {
             transformValue += `translateX(-${rect.right - windowWidth}px) `;
         }
-
+        // Si se sale por la izquierda
+        if (rect.left < 0) {
+            transformValue += `translateX(${-rect.left}px) `;
+        }
+        // Si se sale por abajo
         if (rect.bottom > windowHeight) {
             transformValue += `translateY(-${rect.bottom - windowHeight}px) `;
         }
