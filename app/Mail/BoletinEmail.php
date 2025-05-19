@@ -50,9 +50,14 @@ class BoletinEmail extends Mailable implements ShouldQueue
         $boletin = Boletin::find($this->boletin_id);
         $suscriptor = Suscriptor::find($this->suscriptor_id);
 
-        if (!$boletin || !$suscriptor) {
-            Log::channel("smtp")->error("Boletin o Suscriptor no encontrado: boletin_id={$this->boletin_id}, suscriptor_id={$this->suscriptor_id}");
-            throw new \Exception("Boletin o Suscriptor no encontrado: boletin_id={$this->boletin_id}, suscriptor_id={$this->suscriptor_id}");
+        if (!$boletin) {
+            Log::channel("smtp")->error("Boletin no encontrado: boletin_id={$this->boletin_id}");
+            throw new \RuntimeException("Boletin no encontrado: boletin_id={$this->boletin_id}");
+        }
+        if (!$suscriptor) {
+            Log::channel("smtp")->error("Suscriptor no encontrado: suscriptor_id={$this->suscriptor_id}. No se reintentará el envío.");
+            // Lanzar una excepción que NO cause reintentos
+            throw new \RuntimeException("Suscriptor no encontrado: suscriptor_id={$this->suscriptor_id}. No se reintentará el envío.");
         }
 
         Log::channel("smtp")->info("Datos del boletin: ", [

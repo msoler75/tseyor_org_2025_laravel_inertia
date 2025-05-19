@@ -366,6 +366,17 @@ Route::get('emails/{id}', [EmailsController::class, 'index'])->name('email');
 Route::get('asociacion', [PaginasController::class, 'show'])->name('asociacion');
 
 
+// BOLETINES ///////////////////////////////////////
+
+// generar boletín y enviar
+Route::middleware('boletin.token')->group(function () {
+    Route::get('boletines/generar-contenido', [BoletinesController::class, 'generarBoletin'])->name('boletin.generar.contenido');
+    Route::get('boletines/preparar', [BoletinesController::class, 'prepararBoletin'])->name('boletin.preparar');
+    Route::get('boletines/enviar-pendientes', [BoletinesController::class, 'enviarBoletinesPendientes'])->name('boletin.enviar.pendientes');
+    Route::get('boletines/{id}/enviar-boletin', [BoletinesController::class, 'enviarBoletin'])->name('boletin.enviar');
+});
+
+
 // Ruta para el índice de boletines
 Route::get('boletines', [BoletinesController::class, 'index'])->name('boletines');
 
@@ -374,10 +385,10 @@ Route::post('boletines/suscribir', [SuscriptorController::class, 'suscribir'])->
 Route::get('boletines/desuscribir/{token}', [SuscriptorController::class, 'desuscribir'])->name('boletin.desuscribir');
 Route::get('boletines/desuscripcion-confirmada', [SuscriptorController::class, 'desuscripcionConfirmada'])->name('boletin.desuscripcion.confirmada');
 
-// Ruta para mostrar la configuración de la suscripción al boletín con token
+// Ruta para mostrar la configuración de la suscripción al boletín with token
 Route::get('boletines/configurar/{token}', [SuscriptorController::class, 'mostrarConfiguracion'])->name('boletin.configurar.mostrar');
 
-// Ruta para guardar la configuración de la suscripción al boletín con token
+// Ruta para guardar la configuración de la suscripción al boletín with token
 Route::post('boletines/configurar/{token}', [SuscriptorController::class, 'configurar'])->name('boletin.configurar');
 // Ruta para obtener la suscripción al boletín
 Route::get('boletines/suscripcion', [SuscriptorController::class, 'getSuscripcion'])->name('boletin.suscripcion');
@@ -387,10 +398,12 @@ Route::get('boletines/{id}', [BoletinesController::class, 'ver'])->name('boletin
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-// DEV:
-Route::post('_sendbuild', 'App\Http\Controllers\DeployController@handlePublicBuildUpload');
-Route::post('_sendssr', 'App\Http\Controllers\DeployController@handleSSRUpload');
-Route::post('_sendnodemodules', 'App\Http\Controllers\DeployController@handleNodeModulesUpload');
+// DEV/DEPLOY: Agrupadas bajo middleware de seguridad
+Route::middleware('deploy.token')->group(function () {
+    Route::post('_sendbuild', 'App\\Http\\Controllers\\DeployController@handlePublicBuildUpload');
+    Route::post('_sendssr', 'App\\Http\\Controllers\\DeployController@handleSSRUpload');
+    Route::post('_sendnodemodules', 'App\\Http\\Controllers\\DeployController@handleNodeModulesUpload');
+});
 
 
 Route::get('test/image', function () {

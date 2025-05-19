@@ -53,11 +53,7 @@ php artisan ziggy:generate
 # Actualizar el enlace "current" a la nueva release
 # ln -sf "$BASE_DIR/releases/$NEW_RELEASE" "$BASE_DIR/current"
 
-chmod u+x ssr.sh
-chmod u+x bash/worker-start.sh
-chmod u+x bash/worker-stop.sh
-chmod u+x bash/worker-check.sh
-chmod u+x bash/worker-restart.sh
+chmod u+x bash/*.sh
 
 echo "-----------------------------------------"
 echo "Despliegue completado. Nueva release: $NEW_RELEASE"

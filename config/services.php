@@ -1,16 +1,15 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
-    | Third Party Services
+    | Terceros Servicios
     |--------------------------------------------------------------------------
     |
-    | This file is for storing the credentials for third party services such
-    | as Mailgun, Postmark, AWS and more. This file provides the de facto
-    | location for this type of information, allowing packages to have
-    | a conventional file to locate the various service credentials.
+    | Este archivo es para almacenar las credenciales de servicios de terceros
+    | como Mailgun, Postmark, AWS y más. Este archivo proporciona el lugar
+    | de facto para este tipo de información, lo que permite a los paquetes tener
+    | un archivo convencional para localizar las diversas credenciales de servicio.
     |
     */
 
@@ -32,7 +31,7 @@ return [
     ],
 
     'google_maps' => [
-        'apikey'=>env('GOOGLE_MAPS_API_KEY')
+        'apikey' => env('GOOGLE_MAPS_API_KEY')
     ],
 
 
@@ -42,10 +41,10 @@ return [
 
     'audio_converter' => [
         'url' => env('AUDIO_CONVERTER_URL'),
-        'frecuencia'=> env('AUDIO_CONVERTER_FRECUENCIA', 22050),
+        'frecuencia' => env('AUDIO_CONVERTER_FRECUENCIA', 22050),
         'kbps' => env('AUDIO_CONVERTER_KBPS', '24k')
     ],
 
-    'openai_key' => env('OPEN_AI_KEY', NULL)
+    'openai_key' => env('OPEN_AI_KEY', NULL),
 
 ];

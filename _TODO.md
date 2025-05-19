@@ -6,8 +6,11 @@ Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-d
 - [ ] Limpiar historial de Git con BFG Repo-Cleaner (https://rtyley.github.io/bfg-repo-cleaner/)
 - Descripción: Usar BFG Repo-Cleaner para eliminar archivos grandes o información sensible del historial de Git.
 
- ## API
+## API
 - Poner api.tseyor.org como API_URL en tseyor.org
+
+## Vistas Email
+- Unificar diseño de vistas para correos, notificaciones, etc
 
 ## Sección Arte de Tseyorianos
 - Crear la sección de arte tseyoriana o publicacioes de la comunidad en la web
@@ -17,6 +20,8 @@ Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-d
 - composer remove laravel/sanctum
 
 ## Boletines
+- Crear cron para automatizar creación de boletines
+- Ver cuantos suscriptores hay para cada tipo de boletin
 - Plantearse usar https://mailrelay.com/
 
 ## Global Search
@@ -26,6 +31,7 @@ Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-d
 - Comprobar que importar comunicado 1278 desde Word genera saltos de línea correctos
 
 ## Equipos
+- Revisar codigo de notificaciones si podemos obtener el $user mediante $notifiable
 - Ver listado de miembros completo al pulsar o ampliar en listado
 - Verificar cada cierto tiempo si hay solicitudes, mandar un correo a los coordinadores
 - Poder ver todos los miembros de un equipo

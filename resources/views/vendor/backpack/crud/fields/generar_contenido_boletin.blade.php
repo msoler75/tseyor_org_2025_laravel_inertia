@@ -3,6 +3,7 @@
         style="background-color: #4CAF50; color: white; text-transform: uppercase">
         Generar boletín
     </button>
+    <input type="hidden" name="boletin_token" value="{{ old('boletin_token', $field['value'] ?? '') }}">
 </div>
 
 @push('crud_fields_scripts')
@@ -15,8 +16,14 @@
             alert("Por favor, selecciona un tipo de boletín.");
             return;
         }
-        var url = "{{ route('boletin.generar') }}?tipo=" + tipo;
-        fetch(url)
+        var url = "{{ route('boletin.generar.contenido') }}?tipo=" + tipo;
+        // Obtener el token del input oculto
+        var token = document.querySelector('input[name="boletin_token"]').value;
+        var headers = {};
+        if (token) {
+            headers['X-Boletin-Token'] = token;
+        }
+        fetch(url, { headers })
             .then(response => response.json())
             .then(data => {
                 console.log('respuesta generar boletín:', data);
