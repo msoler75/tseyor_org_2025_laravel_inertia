@@ -95,6 +95,15 @@ onMounted(  ()=>{
 
     // get global event from window
     window.addEventListener("page-loaded", updateUnderscore)
+
+
+    window.addEventListener('keydown', function (event) {
+        console.log('keydown', event.key, nav.activeTab)
+        if (nav.activeTab && event.key == 'Escape') {
+            console.log('closing')
+            nav.closeTabs()
+        }
+    })
 })
 </script>
 

@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -235,5 +234,25 @@ return [
      */
 
      'suscripcion' => 'boletin:mensual',
+
+
+
+    /**
+     * Token de seguridad para despliegues
+     */
+    'deploy_token' => env('DEPLOY_TOKEN', null),
+
+    'deploy_user' => env('DEPLOY_USER', null),
+
+    /**
+     * Token de seguridad para boletines
+     */
+    'boletin' => [
+        'token' => env('DEPLOY_TOKEN', null),
+        'horas_autoenviar' => 24, // horas que se espera para autoenviar el boletín
+    ],
+
+    // id o name del usuario revisor de boletines
+    'user_revisor_boletines' => env('USER_REVISOR_BOLETINES', 'admin'),
 
 ];

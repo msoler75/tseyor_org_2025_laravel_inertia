@@ -6,19 +6,23 @@ if [ -z "$DEPLOY_USER" ]; then
   exit 1
 fi
 
+
+HOME="/home/$DEPLOY_USER"
 BASEDIR="/home/$DEPLOY_USER/tseyor.org"
 ARTISAN="$BASEDIR/current/artisan"
 LOCKFILE="$BASEDIR/shared/_queue-worker.lock"
 LOGDIR="$BASEDIR/shared/storage/logs"
 LOGFILE="$LOGDIR/ssr.log"
 COMMAND="php $ARTISAN inertia:start-ssr"
-
+NODE_VERSION="18.20.2"
+NVM_DIR="$HOME/.nvm"
 
 # Mostrar uso del script
 usage() {
     echo "Uso: $0 {start|stop|status}"
     exit 1
 }
+
 
 # Verificar si el proceso SSR está en ejecución
 check_status() {
@@ -36,6 +40,12 @@ start_ssr() {
     if [ -n "$SSR_PROCESS" ]; then
         echo "El servidor SSR ya está en ejecución. PID(s): $SSR_PROCESS"
     else
+
+        # --- Cargar nvm y activar versión Node específica ---
+        . "$NVM_DIR/nvm.sh"
+        nvm use $NODE_VERSION > /dev/null
+        # --------------------------------------------------
+
         echo "Iniciando el servidor SSR..."
         $COMMAND >> "$LOGFILE" 2>&1 &
         echo "Servidor SSR iniciado."

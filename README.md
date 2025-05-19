@@ -122,8 +122,6 @@ Este proyecto es el corazón digital de la organización, donde se publican noti
 
 ## 📝 Buenas prácticas y contribución
 
-- Sigue las convenciones de código y estructura descritas en `PLANNING.md`.
-- Consulta y actualiza `TASKS.md` al iniciar o finalizar tareas.
 - Usa ramas descriptivas y pull requests claros.
 - Documenta cualquier cambio relevante en este README.
 

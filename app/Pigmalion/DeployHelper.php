@@ -101,6 +101,12 @@ class DeployHelper
         ];
 
         $defaultHeaders = ['Content-Type: multipart/form-data'];
+
+        // Añadir token de seguridad a la cabecera
+        $deployToken = config('app.deploy_token');
+        if ($deployToken) {
+            $defaultHeaders[] = 'X-Deploy-Token: ' . $deployToken;
+        }
         $mergedHeaders = array_merge($defaultHeaders, $headers);
 
         curl_setopt_array($ch, [

@@ -27,9 +27,10 @@ class Boletin extends Model
         'bisemanal' => 'Bisemanal',
         'mensual' => 'Mensual',
         'bimensual' => 'Bimensual',
-        'trimestral' => 'Trimestral',
-        'semestral' => 'Semestral',
-        'anual' => 'Anual',
+        // 'trimestral' => 'Trimestral',
+        // 'semestral' => 'Semestral',
+        // 'anual' => 'Anual',
+        'todos' => 'Todos',
     ];
 
     public function enviarBoletin(): bool
@@ -38,7 +39,12 @@ class Boletin extends Model
             return false; // Ya se envió el boletín
         }
 
-        $suscriptores = Suscriptor::where('servicio', 'boletin:' . $this->tipo)->get();
+        // Si el tipo es "todos", selecciona todos los suscriptores
+        if ($this->tipo === 'todos') {
+            $suscriptores = Suscriptor::all();
+        } else {
+            $suscriptores = Suscriptor::where('servicio', 'boletin:' . $this->tipo)->get();
+        }
 
         $destinatarios = $suscriptores->pluck('email')->toArray();
 
@@ -91,6 +97,10 @@ class Boletin extends Model
 
     public function getNumeroSuscriptoresAttribute()
     {
+        // Si el tipo es 'todos', contar todos los suscriptores
+        if ($this->tipo === 'todos') {
+            return Suscriptor::count();
+        }
         // Obtener el numero de suscriptores relacionados con este boletín
         // el servicio de suscriptor es 'boletin:{tipo}'
         return Suscriptor::where('servicio', 'boletin:' . $this->tipo)->count();

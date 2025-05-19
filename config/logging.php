@@ -171,6 +171,12 @@ return [
             'path' => storage_path('logs/mailing.log'),
             'level' => 'info',
         ],
+
+        'boletines' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/boletines.log'),
+            'level' => 'info',
+        ],
     ],
 
 ];

@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\WorkerController;
 use App\Http\Controllers\Admin\CommandController;
-use App\Http\Controllers\Admin\BoletinCrudController;
 
 // --------------------------
 // Custom Backpack Routes
@@ -137,8 +136,5 @@ Route::group([
     Route::get('jobs/flush', 'JobsController@flushJobs');
     Route::get('jobs/detect-audios-to-process', 'JobsController@detectAudiosToProcess');
     // queue  batch
-
-    Route::get('boletin/generar', [BoletinCrudController::class, 'generarBoletin'])->name('boletin.generar');
-    Route::get('boletin/{id}/enviar-boletin', [BoletinCrudController::class, 'enviarBoletin'])->name('boletin.enviar');
 
 }); // this should be the absolute last line of this file

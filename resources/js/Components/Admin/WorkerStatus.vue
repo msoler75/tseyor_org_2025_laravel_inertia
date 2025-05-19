@@ -38,6 +38,7 @@ const checkWorkerStatus = async () => {
         const response = await axios.get("/admin/worker/check");
         updateWorkerUI(response.data.status);
     } catch (error) {
+        console.warn("Error checking worker status:", error);
         updateWorkerUI("error");
     }
 };

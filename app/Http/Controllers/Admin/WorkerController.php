@@ -15,21 +15,36 @@ class WorkerController
         $this->scriptPath = base_path('bash/');
     }
 
+    private function runDeployCommand($command) {
+        $deploy_user = config('app.deploy_user');
+        // Pasar la variable de entorno DEPLOY_USER directamente en el comando
+        $result = Process::run("DEPLOY_USER={$deploy_user} {$command}");
+        return $result;
+    }
 
 
     public function checkWorkerStatus()
     {
-        $result = Process::run("bash {$this->scriptPath}check-worker.sh");
+        try {
 
-        if ($result->successful()) {
-            $output = trim($result->output());
-            if ($output === "0") {
-                return response()->json(['status' => 'stopped']);
+            $result = $this->runDeployCommand("bash {$this->scriptPath}worker-check.sh");
+
+            if ($result->successful()) {
+                $output = trim($result->output());
+                if ($output === "0") {
+                    return response()->json(['status' => 'stopped']);
+                } else {
+                    return response()->json(['status' => 'running', 'pid' => $output]);
+                }
             } else {
-                return response()->json(['status' => 'running', 'pid' => $output]);
+                return response()->json([
+                    'error' => 'error',
+                    'details' => $result->errorOutput(),
+                    'output' => $result->output()
+                ], 500);
             }
-        } else {
-            return response()->json(['error' => 'error'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -38,7 +53,7 @@ class WorkerController
     {
         // Ejecutar el script en segundo plano
         $command = "bash {$this->scriptPath}worker-start.sh > /dev/null 2>&1 &";
-        $result = Process::run($command);
+        $result = $this->runDeployCommand($command);
 
         if ($result->successful()) {
             return response()->json(['status' => 'Worker started']);
@@ -49,7 +64,7 @@ class WorkerController
 
     public function stopWorker()
     {
-        $result = Process::run("bash {$this->scriptPath}stop-worker.sh");
+        $result = $this->runDeployCommand("bash {$this->scriptPath}worker-stop.sh");
 
         if ($result->successful()) {
             return response()->json(['output' => $result->output(), 'status' => 'Worker stopped']);
@@ -62,7 +77,7 @@ class WorkerController
     {
         // Ejecutar el script en segundo plano
         $command = "bash {$this->scriptPath}worker-restart.sh > /dev/null 2>&1 &";
-        $result = Process::run($command);
+        $result = $this->runDeployCommand($command);
 
         if ($result->successful()) {
             return response()->json(['output' => $result->output(), 'status' => 'Worker restarted']);
@@ -70,7 +85,4 @@ class WorkerController
             return response()->json(['error' => $result->errorOutput(), 'status' => 'Failed to restart worker'], 500);
         }
     }
-
-
-
 }

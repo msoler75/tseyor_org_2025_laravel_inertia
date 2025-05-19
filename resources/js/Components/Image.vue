@@ -278,20 +278,24 @@ function putSrcImage(src) {
 
     finalSrc = src;
 
-    if (!props.lazy) loadFinalImage();
-    else {
+    if (!props.lazy) {
+        loadFinalImage();
+    } else {
+        // Solo ejecutar IntersectionObserver en cliente
+        if (!isClient) return;
         // use API Intersecton Observer to simulate activation on scroll and loadFinalImage
         observer = new IntersectionObserver(handleIntersection, options);
         if (!img.value) {
             nextTick(() => {
                 observer.observe(img.value);
             });
-        } else observer.observe(img.value);
+        } else {
+            observer.observe(img.value);
+        }
     }
-    //imageElem = new Image()
-
-    //imageLoaded.value = true
-    //emit('loaded')
+    // imageElem = new Image()
+    // imageLoaded.value = true
+    // emit('loaded')
 }
 
 let imageElem = null;

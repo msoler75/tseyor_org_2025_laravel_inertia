@@ -27,11 +27,6 @@ class DeployController extends Controller
      */
     public function handlePublicBuildUpload(Request $request)
     {
-        // Verificar si se ha enviado un archivo
-        //dd($request->allFiles());
-        //dd($request->file('file'));
-
-
         if (!$request->hasFile('file')) {
             return response()->json(['error' => 'No se ha enviado ningún archivo'], 400);
         }
@@ -97,10 +92,6 @@ class DeployController extends Controller
     public function handleSSRUpload(Request $request)
     {
 
-        if (!$this->validateRequest($request)) {
-            return response('Acceso no autorizado', 403);
-        }
-
         if (!$request->hasFile('file')) {
             return response()->json(['error' => 'No se ha proporcionado un archivo .zip'], 400);
         }
@@ -144,10 +135,6 @@ class DeployController extends Controller
     // handle node_modules uploading
     public function handleNodeModulesUpload(Request $request)
     {
-        if (!$this->validateRequest($request)) {
-            return response('Acceso no autorizado', 403);
-        }
-
         // Verificar si se ha enviado un archivo
         if (!$request->hasFile('file')) {
             return response()->json(['error' => 'No se ha enviado ningún archivo'], 400);
@@ -182,11 +169,5 @@ class DeployController extends Controller
             // 10. Limpieza de archivos temporales
             //Deploy::cleanTempFiles($zipPath ?? null);
         }
-    }
-
-    private function validateRequest(Request $request): bool
-    {
-        return true;
-        // return $request->header('X-Deploy-Token') === config('app.deploy_token');
     }
 }
