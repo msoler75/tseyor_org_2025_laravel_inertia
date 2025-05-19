@@ -22,31 +22,20 @@ for arg in "$@"; do
   fi
 done
 
-# Verifica si el script ya está en ejecución
-if [ -e $LOCKFILE ] && kill -0 $(cat $LOCKFILE); then
-  echo "El proceso ya está en ejecución."
-  exit
-fi
-
 # Crear el archivo de log si no existe
 mkdir -p $LOGDIR
 touch $LOGFILE
 
-# Guarda el PID del script en el archivo de bloqueo
-echo $$ > $LOCKFILE
-
-# Función para manejar las colas
-run_queue_worker() {
-  # Ejecutar el comando para procesar trabajos continuamente
-  if [ "$VERBOSE" = true ]; then
+# Ejecutar el worker con flock para evitar concurrencia
+if [ "$VERBOSE" = true ]; then
+  (
+    flock -n 9 || { echo "El proceso ya está en ejecución."; exit 1; }
     $COMMAND 2>&1 | tee -a $LOGFILE
-  else
-    $COMMAND >> $LOGFILE 2>&1 &
-  fi
-}
-
-# Ejecuta la función
-run_queue_worker
-
-# Elimina el archivo de bloqueo al terminar
-rm -f $LOCKFILE
+  ) 9>$LOCKFILE
+else
+  (
+    flock -n 9 || { echo "El proceso ya está en ejecución."; exit 1; }
+    $COMMAND >> $LOGFILE 2>&1
+  ) 9>$LOCKFILE &
+  disown
+fi
