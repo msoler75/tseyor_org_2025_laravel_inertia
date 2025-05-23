@@ -24,9 +24,9 @@ class Boletin extends Model
 
     const TIPOS = [
         'semanal' => 'Semanal',
-        'bisemanal' => 'Bisemanal',
+        'quincenal' => 'Quincenal',
         'mensual' => 'Mensual',
-        'bimensual' => 'Bimensual',
+        // 'bimensual' => 'Bimensual',
         // 'trimestral' => 'Trimestral',
         // 'semestral' => 'Semestral',
         // 'anual' => 'Anual',

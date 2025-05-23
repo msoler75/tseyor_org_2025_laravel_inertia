@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-class Preguntas extends ContenidoBaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class Preguntas extends Model
 {
 
     protected $fillable = [

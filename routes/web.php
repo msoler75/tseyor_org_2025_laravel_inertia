@@ -87,6 +87,10 @@ Route::get('test', function () {
 Route::get('biblioteca', [PaginasController::class, 'biblioteca'])->name('biblioteca');
 
 Route::/*middleware('page-cache')->*/get('', [PaginasController::class, 'portada'])->name('portada');
+Route::/*middleware('page-cache')->*/get('propuesta',
+function () {
+    return Inertia::render('PortadaNueva', []);
+})->name('portada.propuesta');
 
 Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades');
 Route::get('buscar', [ContenidosController::class, 'search'])->name('buscar');
@@ -371,9 +375,8 @@ Route::get('asociacion', [PaginasController::class, 'show'])->name('asociacion')
 // generar boletín y enviar
 Route::middleware('boletin.token')->group(function () {
     Route::get('boletines/generar-contenido', [BoletinesController::class, 'generarBoletin'])->name('boletin.generar.contenido');
-    Route::get('boletines/preparar', [BoletinesController::class, 'prepararBoletin'])->name('boletin.preparar');
-    Route::get('boletines/enviar-pendientes', [BoletinesController::class, 'enviarBoletinesPendientes'])->name('boletin.enviar.pendientes');
-    Route::get('boletines/{id}/enviar-boletin', [BoletinesController::class, 'enviarBoletin'])->name('boletin.enviar');
+    Route::post('boletines/preparar', [BoletinesController::class, 'prepararBoletin'])->name('boletin.preparar');
+    Route::post('boletines/enviar-pendientes', [BoletinesController::class, 'enviarBoletinesPendientes'])->name('boletin.enviar.pendientes');
 });
 
 

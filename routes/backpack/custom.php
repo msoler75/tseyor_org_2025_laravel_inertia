@@ -137,4 +137,8 @@ Route::group([
     Route::get('jobs/detect-audios-to-process', 'JobsController@detectAudiosToProcess');
     // queue  batch
 
+
+    // enviar boletin
+    Route::post('boletin/{id}/enviar-boletin', 'BoletinCrudController@enviarBoletin')->name('boletin.enviar');
+
 }); // this should be the absolute last line of this file
