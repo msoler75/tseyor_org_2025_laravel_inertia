@@ -10,7 +10,7 @@
       </div>
       <div>
         <label>
-          <input type="radio" v-model="servicio" value="boletin:bisemanal" />
+          <input type="radio" v-model="servicio" value="boletin:quincenal" />
           bisemanal
         </label>
       </div>
@@ -18,12 +18,6 @@
         <label>
           <input type="radio" v-model="servicio" value="boletin:mensual" />
           Mensual
-        </label>
-      </div>
-      <div>
-        <label>
-          <input type="radio" v-model="servicio" value="boletin:trimestral" />
-          Trimestral
         </label>
       </div>
       <div>

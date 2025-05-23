@@ -248,8 +248,8 @@ return [
      * Token de seguridad para boletines
      */
     'boletin' => [
-        'token' => env('DEPLOY_TOKEN', null),
-        'horas_autoenviar' => 24, // horas que se espera para autoenviar el boletín
+        'token' => env('BOLETIN_TOKEN', null),
+        'horas_autoenviar' => 22, // horas que se espera para autoenviar el boletín
     ],
 
     // id o name del usuario revisor de boletines

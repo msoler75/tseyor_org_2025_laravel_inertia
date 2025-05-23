@@ -25,7 +25,7 @@
                         <input
                             type="radio"
                             v-model="servicio"
-                            value="boletin:bisemanal"
+                            value="boletin:quincenal"
                         />
                         Quincenal
                     </label>
@@ -38,16 +38,6 @@
                             value="boletin:mensual"
                         />
                         Mensual
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        <input
-                            type="radio"
-                            v-model="servicio"
-                            value="boletin:bimensual"
-                        />
-                        Bi-mensual
                     </label>
                 </div>
                 <div v-if="email">

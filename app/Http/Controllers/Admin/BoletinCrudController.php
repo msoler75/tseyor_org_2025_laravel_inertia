@@ -149,6 +149,29 @@ class BoletinCrudController extends CrudController
         return redirect("/boletines/$id");
     }
 
+    /**
+     * Envío inmediato del boletín
+     * @param mixed $id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function enviarBoletin($id)
+    {
+        $boletin = Boletin::findOrFail($id);
+        if($boletin->enviado) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede enviar el boletín porque ya estaba marcado como enviado.'
+            ], 400);
+        }
+
+        $boletin->enviarBoletin();
+
+        // return redirect()->back()->with('success', 'Boletín enviado correctamente.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Boletín enviado correctamente.'
+        ], 200);
+    }
 
 
 }

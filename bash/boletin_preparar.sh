@@ -22,12 +22,13 @@ TOKEN="$1"
 PERIODICIDAD="$2"
 
 # --- Ejecutar CURL ---
-URL="$ENDPOINT_URL?periodicidad=$PERIODICIDAD&sendmail=1"
-echo "[ $(date '+%Y-%m-%d %H:%M:%S') ] Ejecutando CURL a $URL" >> "$LOGFILE"
-curl -s -H "X-Boletin-Token: $TOKEN" "$URL" >> "$LOGFILE" 2>&1
+echo "[ $(date '+%Y-%m-%d %H:%M:%S') ] Ejecutando CURL a $ENDPOINT_URL" >> "$LOGFILE"
+curl -s -X POST -H "X-Boletin-Token: $TOKEN" -d "tipo=$PERIODICIDAD&sendmail=1" "$ENDPOINT_URL" >> "$LOGFILE" 2>&1
 RESULT=$?
 if [ $RESULT -eq 0 ]; then
+  echo "[ $(date '+%Y-%m-%d %H:%M:%S') ] Solicitud completada correctamente."
   echo "[ $(date '+%Y-%m-%d %H:%M:%S') ] Solicitud completada correctamente." >> "$LOGFILE"
 else
+  echo "[ $(date '+%Y-%m-%d %H:%M:%S') ] Error en la solicitud CURL (código $RESULT)."
   echo "[ $(date '+%Y-%m-%d %H:%M:%S') ] Error en la solicitud CURL (código $RESULT)." >> "$LOGFILE"
 fi

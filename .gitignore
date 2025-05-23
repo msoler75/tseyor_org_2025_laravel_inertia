@@ -32,8 +32,10 @@ putty.cmd
 /public/page-cache
 
 # ignore.log files
-*.log
+**/*.log
 replace.txt
 replace-*.txt
 info.txt
 test-results
+**/*.sql
+**/desktop.ini
