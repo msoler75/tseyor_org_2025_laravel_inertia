@@ -26,16 +26,14 @@ done
 mkdir -p $LOGDIR
 touch $LOGFILE
 
+
 # Ejecutar el worker con flock para evitar concurrencia
-if [ "$VERBOSE" = true ]; then
-  (
-    flock -n 9 || { echo "El proceso ya está en ejecución."; exit 1; }
-    $COMMAND 2>&1 | tee -a $LOGFILE
-  ) 9>$LOCKFILE
-else
-  (
-    flock -n 9 || { echo "El proceso ya está en ejecución."; exit 1; }
-    $COMMAND >> $LOGFILE 2>&1
-  ) 9>$LOCKFILE &
-  disown
-fi
+(
+  flock -n 9 || { echo "El proceso ya está en ejecución."; exit 1; }
+  if [ "$VERBOSE" = true ]; then
+    nohup $COMMAND 2>&1 | tee -a $LOGFILE &
+  else
+    nohup $COMMAND >> $LOGFILE 2>&1 &
+  fi
+) 9>$LOCKFILE
+

@@ -2,6 +2,19 @@
 
 Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-do.txt`.
 
+
+## Automatización de inscripciones a cursos
+-cuando alguien se inscribe a un curso tseyor el supervisor (configurable en .env) recibe una notificación con enlaces a gestionar esa inscripción
+-al gestionar la inscripción, puede asignar ese alumno a un usuario de Tseyor que se convierte en su tutor
+-ese tutor recibe por correo esa asignación, y puede, o bien aceptarla, o bien rebotarla (no puede asumir su tutoria)
+-las inscripciones tienen un estado (asignado, rebotado, contactado (se le ha contactado con el alumno), en_espera (está esperando el curso), realizando_curso (está realizando el curso), abandonado (el alumno ha abandonado o no quiere hacer el curso), completado (ha completado el curso))
+-si se rebota, el supervisor recibirá una nueva notificación para que asigne a otro tutor/a
+-cada cierto tiempo se activará una tarea (cron) que verifique el estado de cada inscripción, y segun el estado, se le notificará a su tutor, pidiéndole información de cómo está la situación. Esa notificación tendrá un enlace para que el tutor pueda en una página poner el estado o situacion, mediante un selector y un campo de descripción, y opciones de rebote
+-se guardará un historial de revisiones de cada inscripción, para saber el historial de sucesos
+-las inscripciones asignadas que estén pendientes en algun sentido, caducarán automáticamente a los 6 meses (no se volverá a consultar a sus tutores asignados sobre su estado o situación) 
+-el estado 'abandonado' y 'completado' son estados finales
+
+
 ## Limpiar historial de github
 - [ ] Limpiar historial de Git con BFG Repo-Cleaner (https://rtyley.github.io/bfg-repo-cleaner/)
 - Descripción: Usar BFG Repo-Cleaner para eliminar archivos grandes o información sensible del historial de Git.
