@@ -13,7 +13,8 @@ ARTISAN="$BASEDIR/current/artisan"
 LOCKFILE="$BASEDIR/shared/_queue-worker.lock"
 LOGDIR="$BASEDIR/shared/storage/logs"
 LOGFILE="$LOGDIR/ssr.log"
-COMMAND="php $ARTISAN inertia:start-ssr"
+COMMAND_CLASSIC="php $ARTISAN inertia:start-ssr"
+COMMAND="node $BASEDIR/current/bootstrap/ssr/ssr.js"
 NODE_VERSION="18.20.2"
 NVM_DIR="$HOME/.nvm"
 
@@ -47,7 +48,7 @@ start_ssr() {
         # --------------------------------------------------
 
         echo "Iniciando el servidor SSR..."
-        $COMMAND >> "$LOGFILE" 2>&1 &
+        nohup $COMMAND >> "$LOGFILE" 2>&1 &
         echo "Servidor SSR iniciado."
     fi
 }
