@@ -11,7 +11,7 @@ class PreguntasController extends Controller
 {
     public function index()
     {
-        $secciones = Preguntas::select('titulo', 'id', 'slug')->get();
+        $secciones = Preguntas::select('titulo', 'id', 'slug', 'descripcion')->get();
 
         return Inertia::render('Preguntas/Index', [
             'secciones' => $secciones
