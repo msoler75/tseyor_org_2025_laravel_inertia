@@ -226,10 +226,10 @@ function putFakeImage(width, height) {
                 "after put fake image",
                 imageSrc.value,
                 "dimensions are",
-                img.value.offsetWidth,
-                img.value.offsetHeight
+                img.value?.offsetWidth,
+                img.value?.offsetHeight
             );
-            putImageWithSize(img.value.offsetWidth, img.value.offsetHeight);
+            putImageWithSize(img.value?.offsetWidth, img.value?.offsetHeight);
         } else {
             console.log("repeat fake image");
             putFakeImage(width, height); // esperamos un poco más

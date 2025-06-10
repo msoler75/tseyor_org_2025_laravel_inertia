@@ -18,13 +18,23 @@
             <p class="badge">{{ audio.categoria }}</p>
             <p>{{ audio.descripcion }}</p>
 
-            <div v-if="audio.audio" class="btn pl-2 pr-4 h-12 min-h-auto flex gap-2"
+            <div v-if="audio.audio" class="btn pl-2 pr-4 py-2 min-h-auto flex items-center gap-2 w-40"
                 :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlayPause(audio)"
                 :title="audio.src">
-                <AudioStateIcon :src="audio.src" class="text-3xl"/>
-                Reproducir
+                <AudioStateIcon :src="audio.src" class="text-3xl flex-shrink-0"/>
+                <span class="flex-1 text-center">
+                {{
+                    player.music?.src == audio.src
+                        ? player.state == 'playing'
+                            ? 'Pausar'
+                            : player.state == 'error'
+                                ? 'Error'
+                                : 'Reproducir'
+                        : 'Reproducir'
+                }}
+                </span>
             </div>
-            <a target="_blank" v-else :href="audio.enlace" class="btn px-4 h-5 min-h-auto btn-primary flex gap-2"
+            <a target="_blank" v-else :href="audio.enlace" class="btn pl-2 pr-4 py-2 min-h-auto btn-primary flex gap-2"
                 title="abrir enlace">
                 <Icon icon="ph:arrow-up-right-duotone"  class="text-3xl"/>
                 Abrir enlace
