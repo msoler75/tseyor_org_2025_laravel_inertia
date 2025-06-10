@@ -65,7 +65,7 @@ const player = reactive({
     const media = this.isVideo ? this.video : this.audio;
     if (!media) return "stopped";
 
-    if (media.error) return "error";
+    if (media.error) return "playing";
     if (media.ended) return "ended";
     if (media.paused) return "paused";
     if (media.seeking) return "seeking";
@@ -378,6 +378,36 @@ const player = reactive({
       this.music = null;
       this.state = "stopped";
       this.audioClosed = true;
+    }
+  },
+
+  seek(position) {
+    console.log("seek", position);
+    if(!this.audio) return;
+    // Validaciones de seguridad
+    const currentTime = this.audio.currentTime || 0;
+    const duration = this.audio.duration || 0;
+    // Verificar que los valores sean números finitos
+    if (!Number.isFinite(currentTime) || !Number.isFinite(duration)) {
+      console.warn("Invalid audio time values", { currentTime, duration });
+      return;
+    }
+    // Validar que la posición sea un número finito
+    if (!Number.isFinite(position)) {
+      console.warn("Invalid position value:", position);
+      return;
+    }
+    // Calcular la nueva posición asegurando que esté dentro de los límites
+    const newTime = Math.max(0, Math.min(position, duration));
+    // Otra validación adicional
+    if (Number.isFinite(newTime)) {
+      try {
+        this.audio.currentTime = newTime;
+      } catch (error) {
+        console.error("Error setting currentTime:", error);
+      }
+    } else {
+      console.warn("Calculated new time is not a finite number");
     }
   },
 

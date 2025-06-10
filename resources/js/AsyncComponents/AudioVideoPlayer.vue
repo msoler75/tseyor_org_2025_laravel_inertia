@@ -13,10 +13,16 @@
 
 
         <div v-if="player.mini" v-show="!player.audioClosed" @mouseleave="collapsePlayer"
-            class="max-w-[22rem] xs:max-w-[32rem] sm:max-w-[42rem] rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden">
+        @mousemove="activatePlayer"
+            class="max-w-[24rem] xs:max-w-[32rem] sm:max-w-[42rem] rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden">
             <div v-if="player.expanded" class="p-2 xs:hidden">
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
-                    class="ml-1 transform duration-300" @mousemove="activatePlayer" />
+                    class="ml-1 transform duration-300" />
+            </div>
+            <div v-if="player.expanded" class="p-2 pt-0 xs:pt-2">
+                <input type="range" min="0" :max="player.duration"
+                    v-model="player.currentTime" class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    @input="onSeek" ref="progressEl" />
             </div>
             <div class="mx-auto flex justify-between items-center" :class="[player.expanded ? 'w-full gap-3' : 'pr-4',
             player.requiereInteraccion ? 'pointer-events-none' : ''
@@ -30,10 +36,10 @@
 
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
                     class="hidden xs:block transform duration-300" :class="player.expanded ? '' : 'w-0'"
-                    @mousemove="activatePlayer" />
+                     />
 
                 <div class="flex justify-end gap-1 min-w-34 font-mono transform scale-y-150"
-                    @mousemove="activatePlayer">
+                    >
                     <span>{{ formatTime(player.currentTime) }}</span>
                     /
                     <span>{{ formatTime(player.duration) }}</span>
@@ -41,7 +47,7 @@
 
 
                 <button type="button" @click="player.stepBackward(30)" class="transform scale-75 duration-300"
-                    :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer"
+                    :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'"
                     title="Retroceder 30 segundos">
                     <svg width="34" height="39" fill="none">
                         <path
@@ -54,7 +60,7 @@
                 </button>
 
                 <button type="button" @click="player.stepForward(30)" class="transform scale-75 duration-300"
-                    :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer"
+                    :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'"
                     title="Avanzar 30 segundos">
                     <svg width="34" height="39" fill="none">
                         <path
@@ -68,7 +74,7 @@
 
                 <a download target="_blank" :href="player.music?.src" title="Descargar audio"
                     class="text-2xl transform duration-300"
-                    :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" @mousemove="activatePlayer">
+                    :class="player.expanded ? 'w-[34px] ml-auto' : 'w-0 overflow-hidden'" >
                     <Icon icon="ph:download-duotone" />
                 </a>
 
@@ -260,6 +266,22 @@ onMounted(() => {
     height.value=Math.min(768, screen.height)
 })
 
+
+var habilitarRange = false
+watch(()=>player.expanded, (expanded) => {
+    if (expanded) {
+        habilitarRange = false
+        setTimeout(() => { // para evitar misclicks al expandir el reproductor
+            habilitarRange = true
+        }, 1000)
+    }
+})
+
+function onSeek(e) {
+    activatePlayer()
+    if(!habilitarRange) return
+    player.seek(Number(e.target.value))
+}
 </script>
 
 <style scoped>
