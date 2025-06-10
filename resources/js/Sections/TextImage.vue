@@ -133,6 +133,9 @@ const srcImageBackground = computed(() => {
 <style scoped>
 .image-h {
     max-height: calc(var(--sectionHeight) *.8 - 2rem);
+    width: 100%;
+    height: auto;
+    object-fit: contain;
 }
 
 .with-image {
