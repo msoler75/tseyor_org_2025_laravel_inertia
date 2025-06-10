@@ -26,7 +26,7 @@ Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-d
 - Unificar diseño de vistas para correos, notificaciones, etc
 
 ## Sección Arte de Tseyorianos
-- Crear la sección de arte tseyoriana o publicacioes de la comunidad en la web
+- Crear la sección de arte tseyoriana o publicaciones de la comunidad en la web
 - Poner también los audios
 
 ## Remover Sanctum
