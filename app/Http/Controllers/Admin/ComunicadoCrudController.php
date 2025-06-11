@@ -225,12 +225,6 @@ class ComunicadoCrudController extends CrudController
         CRUD::field('visibilidad')->type('visibilidad');
 
 
-        Comunicado::saving(function ($comunicado) {
-            $año = date('Y', strtotime($comunicado->fecha_comunicado));
-            $comunicado->ano = $año;
-        });
-
-
         Comunicado::saved(function ($comunicado) {
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un comunicado.

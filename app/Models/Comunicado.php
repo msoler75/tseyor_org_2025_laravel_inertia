@@ -63,15 +63,15 @@ class Comunicado extends ContenidoConAudios
 
 
     // hooks del modelo
-    /*
     protected static function booted()
     {
-        // cuando se guarda el item
+        parent::booted();
         static::saving(function ($comunicado) {
-            // $comunicado->slug = "heidi2";
+            if (isset($comunicado->fecha_comunicado)) {
+                $comunicado->ano = date('Y', strtotime($comunicado->fecha_comunicado));
+            }
         });
     }
-    */
 
     /* public static function search($term)
     {
