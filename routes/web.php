@@ -436,6 +436,12 @@ Route::get('dev/2',  'App\Http\Controllers\DevController@dev2');
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+// Endpoint para MCP
+Route::post('mcp', [\App\Http\Controllers\MCPController::class, 'handle'])->name('mcp.handle');
+Route::get('mcp', [\App\Http\Controllers\MCPController::class, 'handle']);
+
+
+
 
 ///// FINAL FALLBACK PAGE
 Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
@@ -445,6 +451,4 @@ Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '[a-z0-9
     return app()->call('App\Http\Controllers\PaginasController@index');
 }); */
 
-// Endpoint para MCP
-Route::post('mcp', [\App\Http\Controllers\MCPController::class, 'handle'])->name('mcp.handle');
 

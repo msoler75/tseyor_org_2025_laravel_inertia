@@ -41,4 +41,6 @@ class InfoCamposTool {
     public static function capabilities($params = []) {
         return include base_path('app/MCP/capabilities.php');
     }
+
+
 }
