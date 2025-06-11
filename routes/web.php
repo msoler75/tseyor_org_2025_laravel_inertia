@@ -445,3 +445,6 @@ Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '[a-z0-9
     return app()->call('App\Http\Controllers\PaginasController@index');
 }); */
 
+// Endpoint para MCP
+Route::post('mcp', [\App\Http\Controllers\MCPController::class, 'handle'])->name('mcp.handle');
+
