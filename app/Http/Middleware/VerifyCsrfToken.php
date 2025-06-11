@@ -22,6 +22,8 @@ class VerifyCsrfToken extends Middleware
         // boletines
         'boletines/suscribir',
         'boletines/configurar/*',
-        'boletines/desuscribir/*'
+        'boletines/desuscribir/*',
+        // MCP API
+        'mcp',
     ];
 }
