@@ -10,6 +10,7 @@ use App\Pigmalion\BusquedasHelper;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\ProcesarAudios;
 use App\Pigmalion\Markdown;
+use Illuminate\Support\Facades\Log;
 class ComunicadosController extends Controller
 {
 
@@ -30,8 +31,18 @@ class ComunicadosController extends Controller
     }
     */
 
+    public function __construct()
+    {
+        Log::info('[ComunicadosController] Constructor ejecutado');
+    }
+
     public function index(Request $request)
     {
+        Log::info('[ComunicadosController] Entrando en index', [
+            'params' => $request->all(),
+            'query' => $request->query(),
+        ]);
+
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
         $año = $request->input('ano');

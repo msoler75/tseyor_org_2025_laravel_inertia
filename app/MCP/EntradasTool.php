@@ -5,16 +5,16 @@ namespace App\MCP;
 use App\Http\Controllers\EntradasController;
 use Illuminate\Http\Request;
 use App\Models\Entrada;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class EntradasTool extends BaseTool {
     public function listar($params = []) {
         $request = new Request($params);
         // add header Header::INERTIA to $request
         $response = app(EntradasController::class)->index($request);
-        // dd($response);
+        Log::info('[MCP-EntradasTool] Respuesta de index', ['response' => is_object($response) ? get_class($response) : gettype($response)]);
         $data = self::fromInertiaToArray($response);
+        Log::info('[MCP-EntradasTool] Resultado de fromInertiaToArray', ['data' => $data]);
         return $data;
     }
     public function ver($params) {

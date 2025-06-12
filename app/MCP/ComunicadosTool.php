@@ -4,13 +4,23 @@ namespace App\MCP;
 
 use App\Models\Comunicado;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ComunicadosTool extends BaseTool {
     public function listar($params = []) {
-        $request = new Request($params);
-        $response = app(\App\Http\Controllers\ComunicadosController::class)->index($request);
-        $data = self::fromInertiaToArray($response);
-        return $data;
+        Log::info('[MCP-ComunicadosTool] INICIO listar', ['params' => $params]);
+        try {
+            $request = new Request($params);
+            Log::info('[MCP-ComunicadosTool] Creado Request', ['request' => $request->all()]);
+            $response = app(\App\Http\Controllers\ComunicadosController::class)->index($request);
+            Log::info('[MCP-ComunicadosTool] Respuesta de index', ['response' => is_object($response) ? get_class($response) : gettype($response)]);
+            $data = self::fromInertiaToArray($response);
+            Log::info('[MCP-ComunicadosTool] Resultado de fromInertiaToArray', ['data' => $data]);
+            return $data;
+        } catch (\Throwable $e) {
+            Log::error('[MCP-ComunicadosTool] Error en listar: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return ['error' => $e->getMessage()];
+        }
     }
     public function ver($params) {
         $slug = $params['slug'] ?? null;
