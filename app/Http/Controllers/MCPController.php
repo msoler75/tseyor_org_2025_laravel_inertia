@@ -42,6 +42,7 @@ class MCPController extends Controller
             $params = $request->query('params', []);
         }
 
+        Log::info('[MCPController] request recibido', ['request' => $request->all(), 'Content-Type' => $request->header('Content-Type')]);
         Log::info('[MCPController] tool recibido', ['tool' => $tool, 'params' => $params]);
 
         // Si no se recibe 'tool', asumir 'initialize' por defecto (para compatibilidad MCP)
@@ -83,7 +84,7 @@ class MCPController extends Controller
             'campos_noticia' => ['App\MCP\InfoCamposTool', 'campos_noticia'],
             'capabilities' => ['App\MCP\InfoCamposTool', 'capabilities'],
             // MCP protocol handshake
-            'initialize' => ['App\MCP\McpController', 'mcp_initialize'],
+            'initialize' => ['App\Http\Controllers\MCPController', 'mcp_initialize'],
         ];
 
         if (!isset($toolMap[$tool])) {
@@ -93,6 +94,7 @@ class MCPController extends Controller
         [$class, $method] = $toolMap[$tool];
         // Si la tool es 'initialize', manejar directamente aquí en el controlador
         if ($tool === 'initialize') {
+            Log::info('[MCPController] Inicializando MCP', ['params' => $params]);
             $capabilities = include base_path('app/MCP/capabilities.php');
             $result = [
                 'name' => 'Teyor MCP Server',
@@ -111,12 +113,19 @@ class MCPController extends Controller
         }
 
         try {
-            // Si la tool es 'initialize' y la clase es InfoCamposTool, llamar como función global
-            $result = $class::$method($params);
+            // Instanciar la clase y llamar al método como de instancia
+            $instance = new $class();
+            $result = $instance->$method($params);
             // Respuesta ultra estricta: solo el array plano, status 200, Content-Type exacto
             return response(json_encode($result), 200)
                 ->header('Content-Type', 'application/json');
         } catch (\Throwable $e) {
+            Log::error('[MCPController] Excepción en tool', [
+                'tool' => $tool,
+                'params' => $params,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json([
                 'error' => 'Excepción en tool',
                 'message' => $e->getMessage(),
@@ -127,7 +136,7 @@ class MCPController extends Controller
 
 
 
-    private function mcp_initialize($params = [])
+    public function mcp_initialize($params = [])
     {
         $capabilities = include __DIR__ . '/capabilities.php';
         $response = [
