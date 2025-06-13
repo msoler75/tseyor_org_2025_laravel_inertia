@@ -10,15 +10,16 @@ class CrearComunicadoTool extends BaseTool {
     // Métodos DRY heredados de BaseTool
     public function handle($params) {
         $this->checkMcpToken($params, ['administrar_contenidos']);
+        $data = $params['request'] ?? $params;
         // Validación de permisos y procesamiento de imágenes
-        if (isset($params['texto'])) {
+        if (isset($data['texto'])) {
             $carpeta = (new Comunicado())->getCarpetaMedios();
             if ($carpeta) {
-                $params['texto'] = \App\Pigmalion\Markdown::extraerImagenes($params['texto'], $carpeta);
+                $data['texto'] = \App\Pigmalion\Markdown::extraerImagenes($data['texto'], $carpeta);
             }
         }
         try {
-            $comunicado = Comunicado::create($params);
+            $comunicado = Comunicado::create($data);
             return $comunicado ? ['comunicado_creado'=>$comunicado->toArray()] : [];
         }
         catch (\Exception $e) {

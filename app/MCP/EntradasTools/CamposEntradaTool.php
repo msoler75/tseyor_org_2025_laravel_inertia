@@ -1,15 +1,15 @@
 <?php
 namespace App\MCP\EntradasTools;
 
-use App\MCP\InfoCamposTool;
 use App\MCP\BaseTool;
 
 class CamposEntradaTool extends BaseTool {
     protected string $name = 'campos_entrada';
 
     public function handle($params = []) {
+        $campos = include __DIR__ . '/../campos.php';
         return [
-            'fields' => InfoCamposTool::campos_entrada()
+            'fields' => $campos['entrada']
         ];
     }
 

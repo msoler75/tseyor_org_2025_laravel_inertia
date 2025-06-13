@@ -11,16 +11,18 @@ class CrearNoticiaTool extends BaseTool {
     public function handle($params) {
         Log::channel('mcp')->info('CrearNoticiaTool handle iniciado', ['params' => $params]);
         $this->checkMcpToken($params, ['administrar_contenidos']);
-        if (isset($params['texto'])) {
+        $data = $params['request'] ?? $params;
+        if (isset($data['texto'])) {
             $carpeta = method_exists(Noticia::class, 'getCarpetaMedios') ? (new \App\Models\Noticia)->getCarpetaMedios() : null;
             Log::channel('mcp')->info('Carpeta de medios', ['carpeta' => $carpeta]);
             if ($carpeta) {
-                $params['texto'] = \App\Pigmalion\Markdown::extraerImagenes($params['texto'], $carpeta);
-                Log::channel('mcp')->info('Texto procesado por extraerImagenes', ['texto' => $params['texto']]);
+                $data['texto'] = \App\Pigmalion\Markdown::extraerImagenes($data['texto'], $carpeta);
+                Log::channel('mcp')->info('Texto procesado por extraerImagenes', ['texto' => $data['texto']]);
             }
         }
         try {
-            $noticia = Noticia::create($params);
+            Log::channel('mcp')->info('Creando noticia con datos', ['params' => $data]);
+            $noticia = Noticia::create($data);
             Log::channel('mcp')->info('Noticia creada', ['noticia' => $noticia]);
             return $noticia ? ['noticia_creada'=>$noticia->toArray()] : [];
         }

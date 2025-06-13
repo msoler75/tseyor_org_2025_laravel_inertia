@@ -8,8 +8,39 @@ return [
         'tools' => [
             [
                 'name' => 'listar_comunicados',
-                'description' => 'Lista todos los comunicados.',
-                'parameters' => []
+                'description' => 'Lista todos los comunicados. Permite buscar por texto, filtrar por categoría y año, y ordenar. Soporta paginación.',
+                'parameters' => [
+                    [
+                        'name' => 'buscar',
+                        'type' => 'string',
+                        'required' => false,
+                        'description' => 'Texto a buscar en los comunicados. Ejemplo: "Andrómeda".'
+                    ],
+                    [
+                        'name' => 'categoria',
+                        'type' => 'string',
+                        'required' => false,
+                        'description' => 'Filtrar por categoría numérica. Ejemplo: 2.'
+                    ],
+                    [
+                        'name' => 'ano',
+                        'type' => 'integer',
+                        'required' => false,
+                        'description' => 'Filtrar por año. Ejemplo: 2025.'
+                    ],
+                    [
+                        'name' => 'orden',
+                        'type' => 'string',
+                        'required' => false,
+                        'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
+                    ],
+                    [
+                        'name' => 'page',
+                        'type' => 'integer',
+                        'required' => false,
+                        'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
+                    ]
+                ]
             ],
             [
                 'name' => 'ver_comunicado',
@@ -31,7 +62,7 @@ return [
                         'name' => 'request',
                         'type' => 'object',
                         'required' => true,
-                        'description' => 'Ver tool "campos_comunicado" para detalles de los campos y formatos.'
+                        'description' => 'Ver tool "campos_comunicado" para detalles de los campos y formatos. Todos los datos deben ir dentro de este objeto.'
                     ],
                     [
                         'name' => 'token',
@@ -103,8 +134,21 @@ return [
         'tools' => [
             [
                 'name' => 'listar_entradas',
-                'description' => 'Lista todas las entradas del blog.',
-                'parameters' => []
+                'description' => 'Lista todas las entradas del blog. Permite buscar por texto y soporta paginación.',
+                'parameters' => [
+                    [
+                        'name' => 'buscar',
+                        'type' => 'string',
+                        'required' => false,
+                        'description' => 'Texto a buscar en las entradas. Ejemplo: "sabios".'
+                    ],
+                    [
+                        'name' => 'page',
+                        'type' => 'integer',
+                        'required' => false,
+                        'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
+                    ]
+                ]
             ],
             [
                 'name' => 'ver_entrada',
@@ -126,7 +170,7 @@ return [
                         'name' => 'request',
                         'type' => 'object',
                         'required' => true,
-                        'description' => 'Ver tool "campos_entrada" para detalles de los campos y formatos.'
+                        'description' => 'Ver tool "campos_entrada" para detalles de los campos y formatos. Todos los datos deben ir dentro de este objeto.'
                     ],
                     [
                         'name' => 'token',
@@ -198,8 +242,21 @@ return [
         'tools' => [
             [
                 'name' => 'listar_noticias',
-                'description' => 'Lista todas las noticias.',
-                'parameters' => []
+                'description' => 'Lista todas las noticias. Permite buscar por texto y soporta paginación.',
+                'parameters' => [
+                    [
+                        'name' => 'buscar',
+                        'type' => 'string',
+                        'required' => false,
+                        'description' => 'Texto a buscar en las noticias. Ejemplo: "galaxia".'
+                    ],
+                    [
+                        'name' => 'page',
+                        'type' => 'integer',
+                        'required' => false,
+                        'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
+                    ]
+                ]
             ],
             [
                 'name' => 'ver_noticia',
@@ -221,7 +278,7 @@ return [
                         'name' => 'request',
                         'type' => 'object',
                         'required' => true,
-                        'description' => 'Ver tool "campos_noticia" para detalles de los campos y formatos.'
+                        'description' => 'Ver tool "campos_noticia" para detalles de los campos y formatos. Todos los datos deben ir dentro de este objeto.'
                     ],
                     [
                         'name' => 'token',

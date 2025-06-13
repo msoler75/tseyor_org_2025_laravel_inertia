@@ -24,12 +24,12 @@ class EntradasController extends Controller
             :
             Entrada::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'published_at'])->where('visibilidad', 'P')->orderBy('published_at', 'desc')->paginate(10);
 
-        $recientes = Entrada::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->orderBy('published_at', 'desc')->take(32)->get();
+        // $recientes = Entrada::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->orderBy('published_at', 'desc')->take(32)->get();
 
         return Inertia::render('Entradas/Index', [
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'recientes' => $recientes
+           // 'recientes' => $recientes
         ])
             ->withViewData(SEO::get('entradas'));
     }
