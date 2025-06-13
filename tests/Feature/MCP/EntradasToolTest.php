@@ -6,12 +6,11 @@ use App\MCP\EntradasTool;
 use App\Models\Entrada;
 use Tests\TestCase;
 
-class EntradasToolTest extends TestCase
+class EntradasToolTest extends McpFeatureTestCase
 {
     public function test_listar_entradas()
     {
         Entrada::truncate();
-        // Crear entradas manualmente
         for ($i = 0; $i < 3; $i++) {
             $entrada = new Entrada([
                 'titulo' => 'Titulo ' . $i,
@@ -24,8 +23,15 @@ class EntradasToolTest extends TestCase
             ]);
             $entrada->save();
         }
-        $result = (new EntradasTool())->listar();
-        $this->assertArrayHasKey('listado', $result);
+        $result = $this->callMcpTool('listar_entradas');
+        if (isset($result['content'][0]['text'])) {
+            $json = json_decode($result['content'][0]['text'], true);
+            if (is_array($json) && isset($json['listado'])) {
+                $result = $json;
+            }
+        }
+        $this->assertIsArray($result, 'La respuesta de MCP no es un array');
+        $this->assertArrayHasKey('listado', $result, 'La respuesta de MCP no contiene la clave listado');
         $this->assertArrayHasKey('data', $result['listado']);
         $this->assertGreaterThanOrEqual(3, count($result['listado']['data']));
     }
@@ -42,11 +48,16 @@ class EntradasToolTest extends TestCase
             'published_at' => now(),
         ]);
         $entrada->save();
-        $result = (new EntradasTool())->ver(['slug' => $entrada->slug]);
+        $result = $this->callMcpTool('ver_entrada', ['slug' => $entrada->slug]);
+        if (isset($result['content'][0]['text'])) {
+            $json = json_decode($result['content'][0]['text'], true);
+            if (is_array($json) && isset($json['entrada'])) {
+                $result = $json;
+            }
+        }
         $this->assertArrayHasKey('entrada', $result);
         $this->assertEquals($entrada->slug, $result['entrada']['slug'] ?? $result['entrada']->slug ?? null);
     }
-
 
     public function test_crear_entrada()
     {
@@ -58,15 +69,13 @@ class EntradasToolTest extends TestCase
             'texto' => 'Texto de prueba',
             'visibilidad' => 'P',
             'published_at' => now()->toDateTimeString(),
-            // añadimos el token de MCP para simular la autorización
-            'token' => config('mcp.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
-        $response = (new EntradasTool())->crear($params);
+        $this->callMcpTool('crear_entrada', $params);
         $this->assertDatabaseHas('entradas', ['slug' => 'test-entrada-xxx']);
     }
 
-
-    public function test_actualizar_entrada()
+    public function test_editar_entrada()
     {
         $entrada = new Entrada([
             'titulo' => 'Original',
@@ -87,9 +96,9 @@ class EntradasToolTest extends TestCase
             'texto' => $entrada->texto,
             'visibilidad' => $entrada->visibilidad,
             'published_at' => $entrada->published_at?->toDateTimeString(),
-            'token' => config('mcp.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
-        (new EntradasTool())->actualizar($params);
+        $this->callMcpTool('editar_entrada', $params);
         $this->assertDatabaseHas('entradas', [
             'id' => $entrada->id,
             'titulo' => 'Modificado',
@@ -108,10 +117,10 @@ class EntradasToolTest extends TestCase
             'published_at' => now(),
         ]);
         $entrada->save();
-        (new EntradasTool())->eliminar([
+        $this->callMcpTool('eliminar_entrada', [
             'id' => $entrada->id,
-            'force' => true, // Para eliminar definitivamente
-            'token' => config('mcp.tokens.administrar_todo')
+            'force' => true,
+            'token' => config('mcp-server.tokens.administrar_todo')
         ]);
         $this->assertDatabaseMissing('entradas', ['id' => $entrada->id]);
     }

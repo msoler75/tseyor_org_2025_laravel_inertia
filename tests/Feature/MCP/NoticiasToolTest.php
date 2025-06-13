@@ -6,7 +6,7 @@ use App\MCP\NoticiasTool;
 use App\Models\Noticia;
 use Tests\TestCase;
 
-class NoticiasToolTest extends TestCase
+class NoticiasToolTest extends McpFeatureTestCase
 {
     public function test_listar_noticias()
     {
@@ -22,8 +22,15 @@ class NoticiasToolTest extends TestCase
             ]);
             $noticia->save();
         }
-        $result = (new NoticiasTool())->listar();
-        $this->assertArrayHasKey('listado', $result);
+        $result = $this->callMcpTool('listar_noticias');
+        if (isset($result['content'][0]['text'])) {
+            $json = json_decode($result['content'][0]['text'], true);
+            if (is_array($json) && isset($json['listado'])) {
+                $result = $json;
+            }
+        }
+        $this->assertIsArray($result, 'La respuesta de MCP no es un array');
+        $this->assertArrayHasKey('listado', $result, 'La respuesta de MCP no contiene la clave listado');
         $this->assertArrayHasKey('data', $result['listado']);
         $this->assertGreaterThanOrEqual(3, count($result['listado']['data']));
     }
@@ -39,7 +46,13 @@ class NoticiasToolTest extends TestCase
             'published_at' => now(),
         ]);
         $noticia->save();
-        $result = (new NoticiasTool())->ver(['slug' => $noticia->slug]);
+        $result = $this->callMcpTool('ver_noticia', ['slug' => $noticia->slug]);
+        if (isset($result['content'][0]['text'])) {
+            $json = json_decode($result['content'][0]['text'], true);
+            if (is_array($json) && isset($json['noticia'])) {
+                $result = $json;
+            }
+        }
         $this->assertArrayHasKey('noticia', $result);
         $this->assertEquals($noticia->slug, $result['noticia']['slug'] ?? $result['noticia']->slug ?? null);
     }
@@ -54,17 +67,17 @@ class NoticiasToolTest extends TestCase
             'texto' => 'Texto de prueba',
             'visibilidad' => 'P',
             'published_at' => now()->toDateTimeString(),
-            'token' => config('mcp.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
-        $response = (new NoticiasTool())->crear($params);
+        $this->callMcpTool('crear_noticia', $params);
         $this->assertDatabaseHas('noticias', ['slug' => 'test-noticia']);
     }
 
-    public function test_actualizar_noticia()
+    public function test_editar_noticia()
     {
         $noticia = new Noticia([
             'titulo' => 'Original',
-            'slug' => 'actualizar-noticia-' . uniqid(),
+            'slug' => 'editar-noticia-' . uniqid(),
             'descripcion' => 'Desc',
             'texto' => 'Texto',
             'visibilidad' => 'P',
@@ -79,9 +92,9 @@ class NoticiasToolTest extends TestCase
             'texto' => $noticia->texto,
             'visibilidad' => $noticia->visibilidad,
             'published_at' => $noticia->published_at?->toDateTimeString(),
-            'token' => config('mcp.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
-        (new NoticiasTool())->actualizar($params);
+        $this->callMcpTool('editar_noticia', $params);
         $this->assertDatabaseHas('noticias', [
             'id' => $noticia->id,
             'titulo' => 'Modificado',
@@ -99,10 +112,10 @@ class NoticiasToolTest extends TestCase
             'published_at' => now(),
         ]);
         $noticia->save();
-        (new NoticiasTool())->eliminar([
+        $this->callMcpTool('eliminar_noticia', [
             'id' => $noticia->id,
             'force' => true,
-            'token' => config('mcp.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ]);
         $this->assertDatabaseMissing('noticias', ['id' => $noticia->id]);
     }
