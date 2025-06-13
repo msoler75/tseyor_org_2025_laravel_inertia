@@ -11,7 +11,11 @@ class EliminarNoticiaTool extends BaseTool {
         $this->checkMcpToken($params, ['administrar_contenidos']);
         try {
             $id = $params['id'] ?? $params['slug'] ?? null;
-            $noticia = Noticia::withTrashed()->findOrFail($id);
+            if (is_numeric($id)) {
+                $noticia = Noticia::withTrashed()->findOrFail($id);
+            } else {
+                $noticia = Noticia::withTrashed()->where('slug', $id)->firstOrFail();
+            }
             if (!empty($params['force'])) {
                 $noticia->forceDelete();
                 return ['noticia_borrada' => true, 'id' => $id];

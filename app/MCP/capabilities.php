@@ -36,7 +36,7 @@ return [
                 ]
             ],
             [
-                'name' => 'actualizar_comunicado',
+                'name' => 'editar_comunicado',
                 'description' => 'Actualiza un comunicado existente.',
                 'parameters' => [
                     [
@@ -101,7 +101,7 @@ return [
                 ]
             ],
             [
-                'name' => 'actualizar_entrada',
+                'name' => 'editar_entrada',
                 'description' => 'Actualiza una entrada existente.',
                 'parameters' => [
                     [
@@ -184,7 +184,7 @@ return [
                 ]
             ],
             [
-                'name' => 'actualizar_noticia',
+                'name' => 'editar_noticia',
                 'description' => 'Actualiza una noticia existente.',
                 'parameters' => [
                     [

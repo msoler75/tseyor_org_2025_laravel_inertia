@@ -12,7 +12,11 @@ class EditarComunicadoTool extends BaseTool {
         $this->checkMcpToken($params, ['administrar_contenidos']);
         try {
             $id = $params['id'] ?? $params['slug'] ?? null;
-            $comunicado = Comunicado::findOrFail($id);
+            if (is_numeric($id)) {
+                $comunicado = Comunicado::findOrFail($id);
+            } else {
+                $comunicado = Comunicado::where('slug', $id)->firstOrFail();
+            }
             $data = $params['request'] ?? $params;
             if (isset($data['texto'])) {
                 $carpeta = $comunicado->getCarpetaMedios();

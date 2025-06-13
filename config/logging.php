@@ -6,7 +6,6 @@ use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Log Channel
@@ -52,7 +51,6 @@ return [
     */
 
     'channels' => [
-
         'jobs' => [
             'driver' => 'daily',
             'path' => storage_path('logs/jobs.log'),
@@ -177,6 +175,11 @@ return [
             'path' => storage_path('logs/boletines.log'),
             'level' => 'info',
         ],
-    ],
 
+        'mcp' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/mcp.log'),
+            'level' => 'debug',
+        ],
+    ],
 ];
