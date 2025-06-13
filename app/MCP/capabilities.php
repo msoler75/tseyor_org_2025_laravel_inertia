@@ -25,19 +25,25 @@ return [
             ],
             [
                 'name' => 'crear_comunicado',
-                'description' => 'Crea un nuevo comunicado.',
+                'description' => 'Crea un nuevo comunicado. Requiere token de autorización.',
                 'parameters' => [
                     [
                         'name' => 'request',
                         'type' => 'object',
                         'required' => true,
                         'description' => 'Ver tool "campos_comunicado" para detalles de los campos y formatos.'
+                    ],
+                    [
+                        'name' => 'token',
+                        'type' => 'string',
+                        'required' => true,
+                        'description' => 'Token MCP necesario para autorización.'
                     ]
                 ]
             ],
             [
                 'name' => 'editar_comunicado',
-                'description' => 'Actualiza un comunicado existente.',
+                'description' => 'Actualiza un comunicado existente. Requiere token de autorización.',
                 'parameters' => [
                     [
                         'name' => 'slug',
@@ -50,18 +56,42 @@ return [
                         'type' => 'object',
                         'required' => true,
                         'description' => 'Ver tool "campos_comunicado" para detalles de los campos y formatos.'
+                    ],
+                    [
+                        'name' => 'token',
+                        'type' => 'string',
+                        'required' => true,
+                        'description' => 'Token MCP necesario para autorización.'
                     ]
                 ]
             ],
             [
                 'name' => 'eliminar_comunicado',
-                'description' => 'Elimina un comunicado por su slug.',
+                'description' => 'Elimina un comunicado por su slug o id. Requiere token de autorización.',
                 'parameters' => [
                     [
                         'name' => 'slug',
                         'type' => 'string',
+                        'required' => false,
+                        'description' => 'Slug único del comunicado. Alternativamente se puede usar id.'
+                    ],
+                    [
+                        'name' => 'id',
+                        'type' => 'integer',
+                        'required' => false,
+                        'description' => 'ID del comunicado. Alternativamente se puede usar slug.'
+                    ],
+                    [
+                        'name' => 'force',
+                        'type' => 'boolean',
+                        'required' => false,
+                        'description' => 'Si es true, elimina definitivamente (hard delete). Por defecto es false (soft delete).'
+                    ],
+                    [
+                        'name' => 'token',
+                        'type' => 'string',
                         'required' => true,
-                        'description' => 'Slug único del comunicado.'
+                        'description' => 'Token MCP necesario para autorización.'
                     ]
                 ]
             ],
@@ -90,19 +120,25 @@ return [
             ],
             [
                 'name' => 'crear_entrada',
-                'description' => 'Crea una nueva entrada.',
+                'description' => 'Crea una nueva entrada. Requiere token de autorización.',
                 'parameters' => [
                     [
                         'name' => 'request',
                         'type' => 'object',
                         'required' => true,
                         'description' => 'Ver tool "campos_entrada" para detalles de los campos y formatos.'
+                    ],
+                    [
+                        'name' => 'token',
+                        'type' => 'string',
+                        'required' => true,
+                        'description' => 'Token MCP necesario para autorización.'
                     ]
                 ]
             ],
             [
                 'name' => 'editar_entrada',
-                'description' => 'Actualiza una entrada existente.',
+                'description' => 'Actualiza una entrada existente. Requiere token de autorización.',
                 'parameters' => [
                     [
                         'name' => 'slug',
@@ -115,6 +151,12 @@ return [
                         'type' => 'object',
                         'required' => true,
                         'description' => 'Ver tool "campos_entrada" para detalles de los campos y formatos.'
+                    ],
+                    [
+                        'name' => 'token',
+                        'type' => 'string',
+                        'required' => true,
+                        'description' => 'Token MCP necesario para autorización.'
                     ]
                 ]
             ],
@@ -173,19 +215,25 @@ return [
             ],
             [
                 'name' => 'crear_noticia',
-                'description' => 'Crea una nueva noticia.',
+                'description' => 'Crea una nueva noticia. Requiere token de autorización.',
                 'parameters' => [
                     [
                         'name' => 'request',
                         'type' => 'object',
                         'required' => true,
                         'description' => 'Ver tool "campos_noticia" para detalles de los campos y formatos.'
+                    ],
+                    [
+                        'name' => 'token',
+                        'type' => 'string',
+                        'required' => true,
+                        'description' => 'Token MCP necesario para autorización.'
                     ]
                 ]
             ],
             [
                 'name' => 'editar_noticia',
-                'description' => 'Actualiza una noticia existente.',
+                'description' => 'Actualiza una noticia existente. Requiere token de autorización.',
                 'parameters' => [
                     [
                         'name' => 'slug',
@@ -198,18 +246,42 @@ return [
                         'type' => 'object',
                         'required' => true,
                         'description' => 'Ver tool "campos_noticia" para detalles de los campos y formatos.'
+                    ],
+                    [
+                        'name' => 'token',
+                        'type' => 'string',
+                        'required' => true,
+                        'description' => 'Token MCP necesario para autorización.'
                     ]
                 ]
             ],
             [
                 'name' => 'eliminar_noticia',
-                'description' => 'Elimina una noticia por su slug.',
+                'description' => 'Elimina una noticia por su slug o id. Requiere token de autorización.',
                 'parameters' => [
                     [
                         'name' => 'slug',
                         'type' => 'string',
+                        'required' => false,
+                        'description' => 'Slug único de la noticia. Alternativamente se puede usar id.'
+                    ],
+                    [
+                        'name' => 'id',
+                        'type' => 'integer',
+                        'required' => false,
+                        'description' => 'ID de la noticia. Alternativamente se puede usar slug.'
+                    ],
+                    [
+                        'name' => 'force',
+                        'type' => 'boolean',
+                        'required' => false,
+                        'description' => 'Si es true, elimina definitivamente (hard delete). Por defecto es false (soft delete).'
+                    ],
+                    [
+                        'name' => 'token',
+                        'type' => 'string',
                         'required' => true,
-                        'description' => 'Slug único de la noticia.'
+                        'description' => 'Token MCP necesario para autorización.'
                     ]
                 ]
             ],
@@ -220,23 +292,18 @@ return [
         'description' => 'Devuelve información detallada sobre los campos comunes y su formato en los modelos principales.',
         'tools' => [
             [
-                'name' => 'campos_comunes',
-                'description' => 'Lista los campos comunes (visibilidad, texto, imagen, fecha, etc) y su formato/valores posibles.',
-                'parameters' => []
-            ],
-            [
                 'name' => 'campos_comunicado',
-                'description' => 'Lista los campos y formatos específicos del modelo Comunicado.',
+                'description' => 'Lista los campos y formatos específicos del modelo Comunicado. Útil para saber qué datos enviar al crear o editar un comunicado.',
                 'parameters' => []
             ],
             [
                 'name' => 'campos_entrada',
-                'description' => 'Lista los campos y formatos específicos del modelo Entrada.',
+                'description' => 'Lista los campos y formatos específicos del modelo Entrada. Útil para saber qué datos enviar al crear o editar una entrada.',
                 'parameters' => []
             ],
             [
                 'name' => 'campos_noticia',
-                'description' => 'Lista los campos y formatos específicos del modelo Noticia.',
+                'description' => 'Lista los campos y formatos específicos del modelo Noticia. Útil para saber qué datos enviar al crear o editar una noticia.',
                 'parameters' => []
             ]
         ]
