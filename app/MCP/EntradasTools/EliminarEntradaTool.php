@@ -11,7 +11,11 @@ class EliminarEntradaTool extends BaseTool {
         $this->checkMcpToken($params, ['administrar_contenidos']);
         try {
             $id = $params['id'] ?? $params['slug'] ?? null;
-            $entrada = Entrada::withTrashed()->findOrFail($id);
+            if (is_numeric($id)) {
+                $entrada = Entrada::withTrashed()->findOrFail($id);
+            } else {
+                $entrada = Entrada::withTrashed()->where('slug', $id)->firstOrFail();
+            }
             if (!empty($params['force'])) {
                 $entrada->forceDelete();
                 return ['entrada_borrada' => true, 'id' => $id];

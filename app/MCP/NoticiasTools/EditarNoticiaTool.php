@@ -11,7 +11,11 @@ class EditarNoticiaTool extends BaseTool {
         $this->checkMcpToken($params, ['administrar_contenidos']);
         try {
             $id = $params['id'] ?? $params['slug'] ?? null;
-            $noticia = \App\Models\Noticia::findOrFail($id);
+            if (is_numeric($id)) {
+                $noticia = Noticia::findOrFail($id);
+            } else {
+                $noticia = Noticia::where('slug', $id)->firstOrFail();
+            }
             $data = $params['request'] ?? $params;
             if (isset($data['texto'])) {
                 $carpeta = method_exists($noticia, 'getCarpetaMedios') ? $noticia->getCarpetaMedios() : null;

@@ -11,7 +11,11 @@ class EditarEntradaTool extends BaseTool {
         $this->checkMcpToken($params, ['administrar_contenidos']);
         try {
             $id = $params['id'] ?? $params['slug'] ?? null;
-            $entrada = Entrada::findOrFail($id);
+            if (is_numeric($id)) {
+                $entrada = Entrada::findOrFail($id);
+            } else {
+                $entrada = Entrada::where('slug', $id)->firstOrFail();
+            }
             $data = $params['request'] ?? $params;
             if (isset($data['texto'])) {
                 $carpeta = $entrada->getCarpetaMedios();

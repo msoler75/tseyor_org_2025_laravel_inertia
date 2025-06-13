@@ -248,8 +248,8 @@ return [
     */
     'tools' => [
         // Example tools - Remove these in production and add your own
-        \OPGG\LaravelMcpServer\Services\ToolService\Examples\HelloWorldTool::class,
-        \OPGG\LaravelMcpServer\Services\ToolService\Examples\VersionCheckTool::class,
+        // \OPGG\LaravelMcpServer\Services\ToolService\Examples\HelloWorldTool::class,
+        // \OPGG\LaravelMcpServer\Services\ToolService\Examples\VersionCheckTool::class,
 
         // ===== REGISTER YOUR CUSTOM TOOLS BELOW =====
         // App\MCP\Tools\Database\Your::class,
