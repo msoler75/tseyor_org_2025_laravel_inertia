@@ -1,49 +1,31 @@
 <?php
-// MCP/BaseTool.php
 namespace App\MCP;
+
 use Illuminate\Http\Request;
 use Inertia\Support\Header;
 use Illuminate\Support\Arr;
 use Inertia\Response as InertiaResponse;
+use OPGG\LaravelMcpServer\Services\ToolService\ToolInterface;
 
-abstract class BaseTool {
-
+abstract class BaseTool implements ToolInterface {
     protected $request;
-    // constructor para inicializar el request
+    protected string $name;
+
     public function __construct() {
-        // Aquí podrías inicializar algo si es necesario
         $this->request = new Request();
         $this->request->headers->set(Header::INERTIA, 'true');
     }
 
-
     protected function fromInertiaToArray($response) {
-        // si es un response de Inertia, extraer los datos
         if($response instanceof InertiaResponse) {
             return $response->toResponse($this->request)->getData(true)['props'] ?? [];
         }
         throw new \InvalidArgumentException('Response type not supported for conversion to JSON.');
     }
 
-    /**
-     * Devuelve un cliente HTTP autenticado con la cookie de sesión de Laravel si se proporciona, y con asForm().
-     * @param string|null $sessionCookie
-     * @param string $url
-     * @return \Illuminate\Http\Client\PendingRequest
-     */
-    protected static function withSessionCookie($sessionCookie, $url) {
-        $http = \Illuminate\Support\Facades\Http::asForm();
-        if ($sessionCookie) {
-            $host = parse_url($url, PHP_URL_HOST) ?: 'localhost';
-            return $http->withCookies(['laravel_session' => $sessionCookie], $host);
-        }
-        return $http;
-    }
-
     protected function checkMcpToken($params, $permisos = ['administrar_contenidos']) {
         $token = $params['token'] ?? null;
-        $tokens = config('mcp.tokens', []);
-        // Permitir acceso si el token es el de 'administrar todo'
+        $tokens = config('mcp-server.tokens', []);
         $tokenTodo = Arr::get($tokens, 'administrar_todo');
         if ($token && $tokenTodo && $token === $tokenTodo) {
             return true;
@@ -55,5 +37,45 @@ abstract class BaseTool {
             }
         }
         abort(403, 'Token inválido o insuficiente para el permiso requerido');
+    }
+
+    protected function getCapabilityInfo(string $toolName): ?array {
+        static $capabilities = null;
+        if ($capabilities === null) {
+            $capabilities = include __DIR__ . '/capabilities.php';
+        }
+        foreach ($capabilities as $group) {
+            if (!empty($group['tools'])) {
+                foreach ($group['tools'] as $tool) {
+                    if ($tool['name'] === $toolName) {
+                        return $tool;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public function description(): string {
+        $info = $this->getCapabilityInfo($this->name());
+        return $info['description'] ?? '';
+    }
+
+    public function inputSchema(): array {
+        $info = $this->getCapabilityInfo($this->name());
+        return $info['parameters'] ?? [];
+    }
+
+    public function annotations(): array {
+        $info = $this->getCapabilityInfo($this->name());
+        return $info['annotations'] ?? [];
+    }
+
+    public function name(): string {
+        return $this->name;
+    }
+
+    public function execute(array $arguments): mixed {
+        return $this->handle($arguments);
     }
 }

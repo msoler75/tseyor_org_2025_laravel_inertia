@@ -1,0 +1,440 @@
+<?php
+
+namespace App\MCP\Tools;
+
+use Illuminate\Support\Facades\Validator;
+use OPGG\LaravelMcpServer\Enums\ProcessMessageType;
+use OPGG\LaravelMcpServer\Exceptions\Enums\JsonRpcErrorCode;
+use OPGG\LaravelMcpServer\Exceptions\JsonRpcErrorException;
+use OPGG\LaravelMcpServer\Services\ToolService\ToolInterface;
+
+/**
+ * MyCustomTool2Tool - MCP Tool Implementation
+ *
+ * QUICK START GUIDE:
+ * ==================
+ * 1. Update the name() method with your tool's unique identifier
+ * 2. Write a clear description() explaining what your tool does
+ * 3. Define inputSchema() with your required and optional parameters
+ * 4. Set appropriate annotations() for your tool's behavior
+ * 5. Implement the execute() method with your core logic
+ * 6. Test with: php artisan mcp:test-tool MyCustomTool2Tool
+ *
+ * QUICK START GUIDE:
+ * ==================
+ * 1. Update the name() method with your tool's unique identifier
+ * 2. Write a clear description() explaining what your tool does
+ * 3. Define inputSchema() with your required and optional parameters
+ * 4. Set appropriate annotations() for your tool's behavior
+ * 5. Implement the execute() method with your core logic
+ * 6. Test with: php artisan mcp:test-tool MyCustomTool2Tool
+ *
+ * DEVELOPMENT TIPS:
+ * ================
+ * - Use Laravel's built-in features (Eloquent, HTTP client, Cache, etc.)
+ * - Follow Laravel conventions and patterns
+ * - Add comprehensive error handling
+ * - Include logging for debugging
+ * - Write unit tests for your tool logic
+ * - Document any external dependencies
+ *
+ * @see https://modelcontextprotocol.io/docs/concepts/tools
+ * @see https://laravel.com/docs - Laravel framework documentation
+ */
+class MyCustomTool2Tool implements ToolInterface
+{
+    /**
+     * OPTIONAL: Determines if this tool requires streaming (SSE) instead of standard HTTP.
+     *
+     * This method is optional and only needed if you want to use streaming.
+     * If not implemented, the tool defaults to HTTP transport (recommended).
+     *
+     * Most tools should return false for better performance and compatibility.
+     * Only return true if you specifically need real-time streaming capabilities.
+     *
+     * WHEN TO USE STREAMING (return true):
+     * - Real-time progress updates for long-running operations
+     * - Live data feeds or monitoring tools
+     * - Interactive tools requiring bidirectional communication
+     * - Tools that need to push multiple updates during execution
+     *
+     * WHEN TO USE HTTP (return false - RECOMMENDED):
+     * - Standard CRUD operations
+     * - API calls and data retrieval
+     * - File operations and calculations
+     * - Most business logic tools
+     *
+     * @since v1.3.0
+     * @return bool True if the tool requires streaming, false for standard HTTP
+     */
+    public function isStreaming(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Very important -- The unique, callable name of your tool.
+     *
+     * This identifier is used by MCP clients to request your tool,
+     * also the LLM will see this name to determine if it should use this tool.
+     *
+     * Use descriptive, usually kebab-case names (e.g., 'get-user-details', 'calculate-sum').
+     *
+     * @return string The unique tool identifier
+     */
+    public function name(): string
+    {
+        return 'my-custom-tool2';
+    }
+
+    /**
+     * Very important -- A human-readable description of what your tool does for LLMs.
+     *
+     * This description is shown in MCP client UIs and documentation,
+     * also the LLM will see this description to determine if it should use this tool.
+     *
+     * BEST PRACTICES:
+     * - Start with an action verb ("Retrieves", "Calculates", "Creates", etc.)
+     * - Mention what data is returned and in what format
+     * - Note any side effects or state changes
+     * - Include usage scenarios or examples
+     *
+     * EXAMPLES:
+     * - "Retrieves user profile information including name, email, and preferences"
+     * - "Calculates the total cost of items in a shopping cart with tax and shipping"
+     * - "Creates a new blog post and returns the generated URL and ID"
+     * - "Searches the product database by name or SKU and returns matching items"
+     *
+     * @return string The tool description
+     */
+    public function description(): string
+    {
+        return 'Description of MyCustomTool2Tool - explain what this tool does and its purpose. Replace with specific details about functionality, inputs, outputs, and use cases.';
+    }
+
+    /**
+     * Defines the expected input parameters using JSON Schema-like structure.
+     *
+     * This schema is used by:
+     * - Clients to understand what data to send
+     * - Validation systems to verify input
+     * - Tools like MCP Inspector to generate test forms
+     * - IDE auto-completion and type hints
+     *
+     * SUPPORTED TYPES:
+     * - string: Text values (support for pattern, minLength, maxLength)
+     * - integer: Whole numbers (support for minimum, maximum)
+     * - number: Decimal numbers (support for minimum, maximum)
+     * - boolean: True/false values
+     * - array: Lists of items (support for items schema)
+     * - object: Nested objects (support for properties)
+     *
+     * ADVANCED FEATURES:
+     * - enum: Restrict to specific values
+     * - default: Default value if not provided
+     * - pattern: Regex validation for strings
+     * - format: Built-in formats (email, uri, date-time, etc.)
+     *
+     * EXAMPLES:
+     *
+     * Simple string parameter:
+     * 'username' => [
+     *     'type' => 'string',
+     *     'description' => 'The username to look up',
+     *     'minLength' => 3,
+     *     'maxLength' => 50
+     * ]
+     *
+     * Enum with predefined values:
+     * 'status' => [
+     *     'type' => 'string',
+     *     'description' => 'User status filter',
+     *     'enum' => ['active', 'inactive', 'pending'],
+     *     'default' => 'active'
+     * ]
+     *
+     * Nested object:
+     * 'filters' => [
+     *     'type' => 'object',
+     *     'description' => 'Search filters',
+     *     'properties' => [
+     *         'category' => ['type' => 'string'],
+     *         'price_range' => [
+     *             'type' => 'object',
+     *             'properties' => [
+     *                 'min' => ['type' => 'number', 'minimum' => 0],
+     *                 'max' => ['type' => 'number', 'minimum' => 0]
+     *             ]
+     *         ]
+     *     ]
+     * ]
+     *
+     * @return array The JSON Schema-like input specification
+     */
+    public function inputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'properties' => [
+                'param1' => [
+                    'type' => 'string',
+                    'description' => 'First parameter description - be specific about expected format and purpose',
+                ],
+                'param2' => [
+                    'type' => 'integer',
+                    'description' => 'Optional second parameter',
+                    'minimum' => 1,
+                    'maximum' => 100,
+                ],
+                // Add more parameters as needed
+            ],
+            'required' => ['param1'], // Specify which parameters are mandatory
+        ];
+    }
+
+    /**
+     * Provides metadata about the tool's behavior and characteristics.
+     *
+     * Annotations help clients categorize tools and make informed decisions
+     * about tool approval and usage. These are hints, not guarantees.
+     *
+     * STANDARD MCP ANNOTATIONS:
+     * ========================
+     * These annotations are understood by all MCP clients and should be set accurately:
+     *
+     * @param string title - Human-readable title displayed in client UIs
+     * @param bool readOnlyHint - Tool only reads data, doesn't modify anything (default: false)
+     * @param bool destructiveHint - Tool may delete or irreversibly modify data (default: true)
+     * @param bool idempotentHint - Repeated calls with same args have no additional effect (default: false)
+     * @param bool openWorldHint - Tool interacts with external systems beyond local environment (default: true)
+     *
+     * EXAMPLES BY TOOL TYPE:
+     * =====================
+     *
+     * READ-ONLY TOOLS (database queries, file reading, API fetching):
+     * [
+     *     'title' => 'User Profile Reader',
+     *     'readOnlyHint' => true,
+     *     'destructiveHint' => false,
+     *     'idempotentHint' => true,
+     *     'openWorldHint' => false, // if reading local database
+     * ]
+     *
+     * DATA MODIFICATION TOOLS (creating, updating records):
+     * [
+     *     'title' => 'Create User Account',
+     *     'readOnlyHint' => false,
+     *     'destructiveHint' => false, // creating isn't destructive
+     *     'idempotentHint' => false, // creates new data each time
+     *     'openWorldHint' => false,
+     * ]
+     *
+     * DESTRUCTIVE TOOLS (deleting, irreversible operations):
+     * [
+     *     'title' => 'Delete User Account',
+     *     'readOnlyHint' => false,
+     *     'destructiveHint' => true,
+     *     'idempotentHint' => true, // deleting twice has same effect
+     *     'openWorldHint' => false,
+     * ]
+     *
+     * EXTERNAL API TOOLS (weather, payments, third-party services):
+     * [
+     *     'title' => 'Weather Information',
+     *     'readOnlyHint' => true,
+     *     'destructiveHint' => false,
+     *     'idempotentHint' => true,
+     *     'openWorldHint' => true, // accesses external weather API
+     * ]
+     *
+     * CUSTOM ANNOTATIONS:
+     * ==================
+     * You can add custom annotations for your application's needs:
+     *
+     * [
+     *     // Standard MCP annotations
+     *     'title' => 'Custom Tool',
+     *     'readOnlyHint' => true,
+     *
+     *     // Custom annotations
+     *     'category' => 'analytics',
+     *     'version' => '2.1.0',
+     *     'author' => 'Analytics Team',
+     *     'requires_permission' => 'analytics.read',
+     *     'rate_limit' => '100/hour',
+     *     'cost_per_call' => 0.01,
+     * ]
+     *
+     * @see https://modelcontextprotocol.io/docs/concepts/tools#tool-annotations
+     * @return array Associative array of tool metadata and behavioral hints
+     */
+    public function annotations(): array
+    {
+        return [
+            'title' => 'MyCustomTool2Tool',
+            'readOnlyHint' => false,
+            'destructiveHint' => false,
+            'idempotentHint' => false,
+            'openWorldHint' => false,
+
+            // Custom annotations are also allowed
+        ];
+    }
+
+    /**
+     * The core logic of your tool.
+     *
+     * This method receives validated arguments and should return the tool's result.
+     * Always validate input against your inputSchema and handle errors gracefully.
+     *
+     * BEST PRACTICES:
+     * ==============
+     * 1. Always validate input parameters
+     * 2. Use descriptive error messages
+     * 3. Return structured, consistent data
+     * 4. Handle edge cases and errors gracefully
+     * 5. Log important operations for debugging
+     * 6. Keep operations atomic when possible
+     * 7. Return helpful metadata (timestamps, IDs, etc.)
+     *
+     * ERROR HANDLING:
+     * ==============
+     * Use JsonRpcErrorException with appropriate error codes:
+     * - INVALID_REQUEST: Bad input parameters
+     * - INVALID_PARAMS: Parameter validation failed
+     * - INTERNAL_ERROR: Unexpected server errors
+     * - METHOD_NOT_FOUND: Resource not found
+     *
+     * RETURN VALUE GUIDELINES:
+     * ======================
+     * - Return arrays/objects for structured data
+     * - Include status information when relevant
+     * - Add timestamps for tracking
+     * - Include IDs for created/modified resources
+     * - Provide pagination info for large datasets
+     * - Return meaningful error details in exceptions
+     *
+     * EXAMPLE PATTERNS:
+     * ================
+     *
+     * Simple data retrieval:
+     * return [
+     *     'user' => $user->toArray(),
+     *     'retrieved_at' => now()->toISOString(),
+     * ];
+     *
+     * Resource creation:
+     * return [
+     *     'success' => true,
+     *     'created_id' => $newResource->id,
+     *     'url' => route('resource.show', $newResource),
+     *     'created_at' => $newResource->created_at->toISOString(),
+     * ];
+     *
+     * List with pagination:
+     * return [
+     *     'data' => $items->items(),
+     *     'pagination' => [
+     *         'current_page' => $items->currentPage(),
+     *         'total' => $items->total(),
+     *         'per_page' => $items->perPage(),
+     *     ],
+     * ];
+     *
+     * @param array $arguments Associative array of input parameters from the client
+     * @return mixed The tool's result (will be JSON-encoded in the response)
+     * @throws JsonRpcErrorException When validation fails or execution errors occur
+     */
+    public function execute(array $arguments): mixed
+    {
+        // Validate input arguments against your schema
+        $validator = Validator::make($arguments, [
+            'param1' => ['required', 'string', 'min:1'],
+            'param2' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            // Add more validation rules matching your inputSchema
+        ]);
+
+        if ($validator->fails()) {
+            throw new JsonRpcErrorException(
+                message: 'Validation failed: ' . $validator->errors()->first(),
+                code: JsonRpcErrorCode::INVALID_REQUEST
+            );
+        }
+
+        // Extract validated parameters with defaults
+        $param1 = $arguments['param1'];
+        $param2 = $arguments['param2'] ?? 1;
+
+        try {
+            // TODO: Implement your tool's core logic here
+            //
+            // Examples of common operations:
+            //
+            // Database operations:
+            // $user = User::where('username', $param1)->first();
+            // if (!$user) {
+            //     throw new JsonRpcErrorException(
+            //         message: "User '{$param1}' not found",
+            //         code: JsonRpcErrorCode::METHOD_NOT_FOUND
+            //     );
+            // }
+            //
+            // API calls:
+            // $response = Http::get("https://api.example.com/data/{$param1}");
+            // if (!$response->successful()) {
+            //     throw new JsonRpcErrorException(
+            //         message: 'External API request failed: ' . $response->body(),
+            //         code: JsonRpcErrorCode::INTERNAL_ERROR
+            //     );
+            // }
+            //
+            // File operations:
+            // $filePath = storage_path("app/data/{$param1}.json");
+            // if (!File::exists($filePath)) {
+            //     throw new JsonRpcErrorException(
+            //         message: "File '{$param1}.json' not found",
+            //         code: JsonRpcErrorCode::METHOD_NOT_FOUND
+            //     );
+            // }
+            // $data = json_decode(File::get($filePath), true);
+            //
+            // Cache operations:
+            // $cacheKey = "tool_result_{$param1}";
+            // $result = Cache::remember($cacheKey, 3600, function () use ($param1) {
+            //     return $this->performExpensiveOperation($param1);
+            // });
+
+            $result = [
+                'success' => true,
+                'data' => [
+                    'param1' => $param1,
+                    'param2' => $param2,
+                    'message' => "Tool executed successfully with parameter: {$param1}",
+                    // Add your actual result data here
+                ],
+                'metadata' => [
+                    'executed_at' => now()->toISOString(),
+                    'tool_version' => '1.0.0',
+                    'execution_time_ms' => 0, // Track performance if needed
+                ],
+            ];
+
+            return $result;
+
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Tool execution failed', [
+                'tool' => static::class,
+                'arguments' => $arguments,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Handle any execution errors gracefully
+            throw new JsonRpcErrorException(
+                message: 'Tool execution failed: ' . $e->getMessage(),
+                code: JsonRpcErrorCode::INTERNAL_ERROR
+            );
+        }
+    }
+}

@@ -437,8 +437,11 @@ Route::get('dev/2',  'App\Http\Controllers\DevController@dev2');
 
 
 // Endpoint para MCP
-Route::post('mcp', [\App\Http\Controllers\MCPController::class, 'handle'])->name('mcp.handle');
-Route::get('mcp', [\App\Http\Controllers\MCPController::class, 'handle']);
+// Route::post('mcp', [\App\Http\Controllers\MCPController::class, 'handle'])->name('mcp.handle');
+// Route::get('mcp', [\App\Http\Controllers\MCPController::class, 'handle']);
+
+// Endpoint para MCP (ahora gestionado por opgginc/laravel-mcp-server)
+// Route::match(['get', 'post'], 'mcp', '\Opgginc\LaravelMcpServer\Http\Controllers\McpController');
 
 
 
