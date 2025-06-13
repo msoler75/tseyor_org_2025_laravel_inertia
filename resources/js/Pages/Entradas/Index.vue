@@ -44,9 +44,9 @@ const props = defineProps({
     listado: {
         default: () => { data: [] }
     },
-    recientes: {
+    /*recientes: {
         default: () => []
-    }
+    }*/
 });
 
 const cargando = ref(false);

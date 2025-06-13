@@ -9,13 +9,14 @@ class CrearEntradaTool extends BaseTool {
 
     public function handle($params) {
         $this->checkMcpToken($params, ['administrar_contenidos']);
+        $data = $params['request'] ?? $params;
         // Procesar imágenes en el texto antes de crear
-        if (isset($params['texto'])) {
+        if (isset($data['texto'])) {
             $carpeta = (new Entrada)->getCarpetaMedios();
-            $params['texto'] = \App\Pigmalion\Markdown::extraerImagenes($params['texto'], $carpeta);
+            $data['texto'] = \App\Pigmalion\Markdown::extraerImagenes($data['texto'], $carpeta);
         }
         try {
-            $entrada = Entrada::create($params);
+            $entrada = Entrada::create($data);
             return $entrada ? ['entrada_creada'=>$entrada->toArray()] : [];
         }
         catch (\Exception $e) {

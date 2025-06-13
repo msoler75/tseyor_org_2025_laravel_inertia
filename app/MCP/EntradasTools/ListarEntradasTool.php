@@ -9,14 +9,15 @@ class ListarEntradasTool extends BaseTool {
     protected string $name = 'listar_entradas';
 
     public function handle($params = []) {
-        Log::info('[MCP-ListarEntradasTool] INICIO listar', ['params' => $params]);
+        Log::channel('mcp')->info('[MCP-ListarEntradasTool] INICIO listar', ['params' => $params]);
         try {
-            $request = new Request($params);
-            $response = app(\App\Http\Controllers\EntradasController::class)->index($request);
+            // Limpiar y poblar el request heredado con los parámetros recibidos
+            $this->request->query->replace($params);
+            $response = app(\App\Http\Controllers\EntradasController::class)->index($this->request);
             $data = $this->fromInertiaToArray($response);
             return $data;
         } catch (\Throwable $e) {
-            Log::error('[MCP-ListarEntradasTool] Error en listar: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::channel('mcp')->error('[MCP-ListarEntradasTool] Error en listar: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return ['error' => $e->getMessage()];
         }
     }
