@@ -10,22 +10,48 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 abstract class BaseTool implements ToolInterface {
-    protected $request;
-    protected string $name;
+    private ?string $toolName = null; // Nombre de la tool MCP (ej: 'editar_comunicado')
+    protected $inertiaRequest; // Objeto Request para respuestas Inertia
+    protected ?string $modelClass = null; // Clase del modelo Eloquent (ej: \App\Models\Comunicado)
+    protected ?string $modelNameSingle = null; // Nombre singular del modelo (ej: 'comunicado')
+    protected ?string $modelNamePlural = null; // Nombre plural del modelo (ej: 'comunicados')
 
-    public function __construct() {
-        $this->request = new Request();
-        $this->request->headers->set(Header::INERTIA, 'true');
+    protected ?string $controller = null; // Ejemplo: \App\Http\Controllers\EventosController
+    protected ?string $controllerMethod = null; // Ejemplo: 'index' o 'show'
+    protected array $permisos = []; // Ejemplo: ['administrar_contenidos']
+
+    public function __construct($verb, $plural = false) {
+        if(!$this->modelNamePlural) {
+            $this->modelNamePlural = $this->modelNameSingle ? $this->modelNameSingle . 's' : null;
+        }
+        $this->toolName = $verb . '_' . ($plural ? $this->modelNamePlural : $this->modelNameSingle);
+        $this->inertiaRequest = new Request();
+        $this->inertiaRequest->headers->set(Header::INERTIA, 'true');
+        Log::channel('mcp')->info('[BaseTool] Instanciado ' . static::class, [
+            'toolName' => $this->toolName,
+            'modelClass' => $this->modelClass,
+            'modelNameSingle' => $this->modelNameSingle,
+            'modelNamePlural' => $this->modelNamePlural,
+            'controller' => $this->controller,
+            'controllerMethod' => $this->controllerMethod,
+        ]);
     }
 
     protected function fromInertiaToArray($response) {
+        Log::channel('mcp')->info('[BaseTool] fromInertiaToArray', ['response_class' => is_object($response) ? get_class($response) : gettype($response)]);
         if($response instanceof InertiaResponse) {
-            return $response->toResponse($this->request)->getData(true)['props'] ?? [];
+            $data = $response->toResponse($this->inertiaRequest)->getData(true)['props'] ?? [];
+            Log::channel('mcp')->info('[BaseTool] fromInertiaToArray props', ['props' => $data]);
+            return $data;
         }
+        Log::channel('mcp')->error('[BaseTool] fromInertiaToArray: tipo de respuesta no soportado', ['response' => $response]);
         throw new \InvalidArgumentException('Response type not supported for conversion to JSON.');
     }
 
     protected function checkMcpToken($params, $permisos = ['administrar_contenidos']) {
+        if(empty($permisos)) {
+            return true; // Si no hay permisos, no hacemos nada
+        }
         Log::channel('mcp')->info('[MCP] Verificando token para permisos: ' . implode(', ', $permisos), ['params' => $params]);
         if (empty($params['token'])) {
             abort(403, 'Token no proporcionado');
@@ -111,11 +137,12 @@ abstract class BaseTool implements ToolInterface {
     }
 
     public function name(): string {
-        return $this->name;
+        return $this->toolName;
     }
 
     public function execute(array $arguments): mixed {
         try {
+            $this->checkMcpToken($arguments, $this->permisos);
             return $this->handle($arguments);
         } catch (\Throwable $e) {
             // Si la excepción es 403 (token inválido), devolver evento de error de permisos MCP

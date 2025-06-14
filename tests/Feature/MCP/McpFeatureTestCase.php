@@ -32,8 +32,20 @@ abstract class McpFeatureTestCase extends TestCase
             throw new \Exception('Curl error: ' . curl_error($ch));
         }
         curl_close($ch);
+        \Log::channel('mcp')->debug('[MCP] Respuesta del servidor', [
+            'tool' => $tool,
+            'arguments' => $arguments,
+            'response' => $response,
+        ]);
         $decoded = json_decode($response, true);
-        // Si la respuesta es JSON-RPC, devolver el resultado
-        return $decoded['result'] ?? $decoded;
+        $result = $decoded['result'] ?? $decoded;
+        // Si la respuesta MCP viene en content[0][text] como JSON, decodificar automáticamente
+        if (isset($result['content'][0]['text'])) {
+            $json = json_decode($result['content'][0]['text'], true);
+            if (is_array($json)) {
+                return $json;
+            }
+        }
+        return $result;
     }
 }
