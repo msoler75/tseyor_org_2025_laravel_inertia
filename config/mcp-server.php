@@ -272,13 +272,14 @@ return [
         // App\MCP\Tools\External\PaymentProcessorTool::class,
 
         // === Comunicados Tools ===
+        \App\MCP\ComunicadosTools\VerComunicadoTool::class,
+        \App\MCP\ComunicadosTools\ListarComunicadosTool::class,
         \App\MCP\ComunicadosTools\CrearComunicadoTool::class,
         \App\MCP\ComunicadosTools\EditarComunicadoTool::class,
         \App\MCP\ComunicadosTools\EliminarComunicadoTool::class,
-        \App\MCP\ComunicadosTools\ListarComunicadosTool::class,
-        \App\MCP\ComunicadosTools\VerComunicadoTool::class,
-        \App\MCP\ComunicadosTools\CamposComunicadoTool::class, // Tool para devolver los campos del modelo Comunicado
+        \App\MCP\ComunicadosTools\CamposComunicadoTool::class,
 
+        /*
         // === Entradas Tools ===
         \App\MCP\EntradasTools\CrearEntradaTool::class,
         \App\MCP\EntradasTools\EditarEntradaTool::class,
@@ -294,6 +295,7 @@ return [
         \App\MCP\NoticiasTools\ListarNoticiasTool::class,
         \App\MCP\NoticiasTools\VerNoticiaTool::class,
         \App\MCP\NoticiasTools\CamposNoticiaTool::class,
+        */
     ],
 
     /*

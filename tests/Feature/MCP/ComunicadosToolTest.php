@@ -33,9 +33,6 @@ class ComunicadosToolTest extends McpFeatureTestCase
                 $result = $json;
             }
         }
-        if (!is_array($result) || !array_key_exists('listado', $result)) {
-            fwrite(STDERR, "Respuesta MCP listar_comunicados:\n" . print_r($result, true) . "\n");
-        }
         $this->assertIsArray($result, 'La respuesta de MCP no es un array');
         $this->assertArrayHasKey('listado', $result, 'La respuesta de MCP no contiene la clave listado');
         $this->assertArrayHasKey('data', $result['listado']);
@@ -44,6 +41,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
 
     public function test_ver_comunicado()
     {
+        Comunicado::truncate();
         $comunicado = new Comunicado([
             'titulo' => 'Ver Comunicado',
             'numero' => 99,
@@ -57,29 +55,34 @@ class ComunicadosToolTest extends McpFeatureTestCase
         ]);
         $comunicado->save();
         $result = $this->callMcpTool('ver_comunicado', ['slug' => $comunicado->slug]);
-        if (isset($result['content'][0]['text'])) {
-            $json = json_decode($result['content'][0]['text'], true);
-            if (is_array($json) && isset($json['comunicado'])) {
-                $result = $json;
-            }
-        }
+        $this->assertIsArray($result, 'La respuesta de MCP no es un array');
         $this->assertArrayHasKey('comunicado', $result);
         $this->assertEquals($comunicado->slug, $result['comunicado']['slug'] ?? $result['comunicado']->slug ?? null);
+
+        // comprobar que tambien podemos acceder al comunicado por ID
+        $resultById = $this->callMcpTool('ver_comunicado', ['id' => $comunicado->id]);
+        $this->assertIsArray($resultById, 'La respuesta de MCP por ID no es un array');
+        $this->assertArrayHasKey('comunicado', $resultById);
+        $this->assertEquals($comunicado->slug, $resultById['comunicado']['slug'] ?? $resultById['comunicado']->slug ?? null);
+        // Comprobar que ambos resultados son iguales
+        $this->assertEquals($result['comunicado'], $resultById['comunicado'], 'Los resultados por slug e ID no coinciden');
     }
 
     public function test_crear_comunicado()
     {
         Comunicado::truncate();
         $params = [
-            'titulo' => 'Test Comunicado',
-            'numero' => 123,
-            'categoria' => 1,
-            'descripcion' => 'Descripción de prueba',
-            'texto' => 'Texto de prueba',
-            'visibilidad' => 'P',
-            'fecha_comunicado' => now()->toDateString(),
-            'ano' => date('Y'),
-            'slug' => 'test-comunicado',
+            'data' => [
+                'titulo' => 'Test Comunicado',
+                'numero' => 123,
+                'categoria' => 1,
+                'descripcion' => 'Descripción de prueba',
+                'texto' => 'Texto de prueba',
+                'visibilidad' => 'P',
+                'fecha_comunicado' => now()->toDateString(),
+                'ano' => date('Y'),
+                'slug' => 'test-comunicado'
+            ],
             'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear_comunicado', $params);
@@ -88,6 +91,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
 
     public function test_actualizar_comunicado()
     {
+        Comunicado::truncate();
         $comunicado = new Comunicado([
             'titulo' => 'Original',
             'numero' => 1,
@@ -102,19 +106,20 @@ class ComunicadosToolTest extends McpFeatureTestCase
         $comunicado->save();
         $params = [
             'id' => $comunicado->id,
-            'titulo' => 'Modificado',
-            'numero' => $comunicado->numero,
-            'categoria' => $comunicado->categoria,
-            'descripcion' => $comunicado->descripcion,
-            'texto' => $comunicado->texto,
-            'visibilidad' => $comunicado->visibilidad,
-            'fecha_comunicado' => $comunicado->fecha_comunicado,
-            'ano' => $comunicado->ano,
-            'slug' => $comunicado->slug,
+            'data' => [
+                'titulo' => 'Modificado',
+                'numero' => $comunicado->numero,
+                'categoria' => $comunicado->categoria,
+                'descripcion' => $comunicado->descripcion,
+                'texto' => $comunicado->texto,
+                'visibilidad' => $comunicado->visibilidad,
+                'fecha_comunicado' => $comunicado->fecha_comunicado,
+                'ano' => $comunicado->ano,
+                'slug' => $comunicado->slug,
+            ],
             'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $result = $this->callMcpTool('editar_comunicado', $params);
-        fwrite(STDERR, "Respuesta MCP editar_comunicado:\n" . print_r($result, true) . "\n");
         $this->assertDatabaseHas('comunicados', [
             'id' => $comunicado->id,
             'titulo' => 'Modificado',
@@ -123,6 +128,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
 
     public function test_eliminar_comunicado()
     {
+        Comunicado::truncate();
         $comunicado = new Comunicado([
             'titulo' => 'Eliminar Comunicado',
             'numero' => 9999, // Usar número único para evitar duplicados
@@ -140,6 +146,8 @@ class ComunicadosToolTest extends McpFeatureTestCase
             'force' => true,
             'token' => config('mcp-server.tokens.administrar_todo')
         ]);
+        // Debug: mostrar si el comunicado sigue existiendo
+        $existe = Comunicado::withTrashed()->find($comunicado->id);
         $this->assertDatabaseMissing('comunicados', ['id' => $comunicado->id]);
     }
 }
