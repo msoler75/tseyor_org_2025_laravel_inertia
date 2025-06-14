@@ -150,4 +150,25 @@ class ComunicadosToolTest extends McpFeatureTestCase
         $existe = Comunicado::withTrashed()->find($comunicado->id);
         $this->assertDatabaseMissing('comunicados', ['id' => $comunicado->id]);
     }
+
+
+    // test de campos de comunicado
+    public function test_campos_comunicado()
+    {
+        $result = $this->callMcpTool('campos_comunicado');
+        // fwrite(STDERR, print_r($result, true));
+        $this->assertIsArray($result, 'La respuesta de MCP no es un array');
+        $this->assertArrayHasKey('fields', $result, 'La respuesta de MCP no contiene la clave fields');
+        $this->assertGreaterThan(0, count($result['fields']), 'No se han encontrado campos de comunicado');
+        // Comprobar que existen los campos esperados
+        $campos_esperados = ['titulo', 'descripcion', 'texto', 'fecha_comunicado', 'categoria', 'ano', 'imagen', 'visibilidad'];
+        foreach ($campos_esperados as $campo) {
+            $this->assertArrayHasKey($campo, $result['fields'], "Falta el campo '$campo'");
+        }
+        // Comprobar que cada campo tiene 'type' y 'description'
+        foreach ($result['fields'] as $campo => $definicion) {
+            $this->assertArrayHasKey('type', $definicion, "El campo '$campo' no tiene 'type'");
+            $this->assertArrayHasKey('description', $definicion, "El campo '$campo' no tiene 'description'");
+        }
+    }
 }
