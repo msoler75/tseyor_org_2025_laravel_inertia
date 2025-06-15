@@ -102,10 +102,12 @@ class ContactosController extends Controller
 
     public static function obtenerCoordenadas($direccion)
     {
+        if (app()->environment('local') || app()->environment('testing')) {
+            // En desarrollo o testing, no llamar a la API, devolver coordenadas dummy
+            return ['latitud' => 0, 'longitud' => 0];
+        }
         $apiKey = config('services.google_maps.apikey'); // Reemplaza con tu propia API key de Google Maps
-
         $client = new Client();
-
         // Realizar solicitud a la API de geocodificación de Google Maps
         $response = $client->get('https://maps.googleapis.com/maps/api/geocode/json', [
             'query' => [
@@ -113,20 +115,15 @@ class ContactosController extends Controller
                 'key' => $apiKey,
             ],
         ]);
-
         // Obtener el cuerpo de la respuesta y decodificarlo como JSON
         $data = json_decode($response->getBody(), true);
-
         // Verificar si se obtuvo una respuesta válida
         if ($response->getStatusCode() === 200 && isset($data['results'][0]['geometry']['location'])) {
             $location = $data['results'][0]['geometry']['location'];
-
             $latitud = $location['lat'];
             $longitud = $location['lng'];
-
             return ['latitud' => $latitud, 'longitud' => $longitud];
         }
-
         return null;
     }
 

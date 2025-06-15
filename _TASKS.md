@@ -7,40 +7,23 @@
 - [x] Crear script bash boletin_generar.sh para lanzar boletín vía CURL con token y periodicidad (19/05/2025)
 - [x] Implementar estructura inicial de servidor MCP y tools para comunicados, entradas y noticias (11/06/2025)
 - [x] Refactorizar ComunicadosTool y NoticiasTool siguiendo los principios de EntradasTool (11/06/2025)
-- [ ] Migrar endpoint /mcp para usar opgginc/laravel-mcp-server manteniendo tokens y tools actuales, sin eliminar archivos previos MCP (13/06/2025)
-- [x] Todas las tools MCP usan capabilities.php para description, inputSchema y annotations (13/06/2025)
-- [x] Crear tools MCP para modelo Audio: listar, ver, crear, editar, eliminar y ver campos (13/06/2025)
-- [x] Crear tools MCP para modelo Centro: listar, ver, crear, editar, eliminar y ver campos (13/06/2025)
-- [x] Crear tools MCP para modelo Contacto: listar, ver, crear, editar, eliminar y ver campos (13/06/2025)
-- [x] Crear tools MCP para todos los modelos de App\Models (Audio, Centro, Contacto, Equipo, Evento, Grupos, Guia, Informe, Libro, Lugar, Meditacion, Normativa, Pagina, Psicografia, Sala, Termino, Tutorial, Video): listar, ver, crear, editar, eliminar y ver campos, considerando lógica especial en los CrudControllers correspondientes. (13/06/2025) Se seguirán los preceptos comentados a continuación:
+- [x] Migrar endpoint /mcp para usar opgginc/laravel-mcp-server manteniendo tokens y tools actuales, sin eliminar archivos previos MCP (13/06/2025)
+- [ ] Todas las tools MCP usan capabilities.php para description, inputSchema y annotations (13/06/2025)
+- [x] Crear tools MCP para todos los modelos de App\Models (Audio, Centro, Contacto, Equipo, Entrada, Evento, Grupos, Guia, Informe, Libro, Lugar, Meditacion, Noticia, Normativa, Pagina, Psicografia, Sala, Termino, Tutorial, Video): listar, ver, crear, editar, eliminar y ver campos. (13/06/2025) Se seguirán los preceptos comentados a continuación:
 
 ### Detalles y reglas para la creación de nuevas Tools MCP para modelos
 
-1. **Estructura base:**
-   - Cada Tool debe basarse en la estructura y principios de las Tools existentes en ComunicadosTools (herencia de BaseTool, manejo de errores, logging, etc).
+   - Cada Tool debe basarse en la estructura y principios de las Tools existentes en App\Mcp\ComunicadosTools (herencia de las diferentes clases de Base*Tool).
+   - Cada grupo de Tools de un modelo está en una carpeta, como en App\Mcp\ComunicadosTools
+   - Cada Tool nueva se basa en definir la clase padre y los valores de atributos adecuados para adaptar el funcionamiento de la clase.
+   - Se debe añadir a capabilities.php la información del modelo que falte, si no existe ya.
+   - No se define el atributo $name ni $description en ninguna tool, ya que eso se genera dinámicamente en BaseTool.
+   - Seguir al pie de la letra el mismo esqueleto que en las Tool de App\Mcp\ComunicadosTools
+   - En las Tool de Ver y Listar se especificará la clase Controller asociada al modelo, igual que en VerComunicadosTool. Si no existe controller asociado al modelo, se prescindirá de definirlo.
 
-2. **Operaciones de Listado y Visualización:**
-   - Para listar y ver un modelo, la Tool debe llamar al método correspondiente del Controller público (por ejemplo, `CentrosController::index` o `AudiosController::index` para listar, y `show` para ver).
-   - Se debe procesar la respuesta de Inertia usando `fromInertiaToArray` para devolver los datos en formato array.
-   - En el método `description()` o en capabilities/campos, se deben documentar los parámetros opcionales de búsqueda o filtrado que acepte el listado (por ejemplo, `buscar`, `categoria`, etc). Para ello se puede consultar el controlador correspondiente.
 
-3. **Operaciones de Crear, Editar y Eliminar:**
-   - Para crear, editar o eliminar, la Tool debe usar directamente Eloquent y, si existe lógica especial, debe apoyarse en el CrudController correspondiente en `App\Http\Controllers\Admin` (por ejemplo, `AudioCrudController`).
-   - Si el modelo implementa SoftDelete, la Tool debe usar `withTrashed()` y permitir borrado lógico y definitivo (`forceDelete`). Todas las Tool deben comportase de forma muy similar en este aspecto.
-   - Se debe validar el token MCP y los permisos necesarios antes de realizar la operación.
+- [ ] Crear test para las nuevas tool MCP para todos los modelos de App\Models faltantes (Audio, Centro, Contacto, Equipo, Entrada, Evento, Grupos, Guia, Informe, Libro, Lugar, Meditacion, Noticia, Normativa, Pagina, Psicografia, Sala, Termino, Tutorial, Video): listar, ver, crear, editar, eliminar y ver campos,  (14/06/2025) Se seguirá el mismo esquema que ComunicadosToolTest
 
-4. **Campos y capacidades:**
-   - Cada Tool de campos debe devolver la definición de campos desde `campos.php`.
-   - Si existen opciones adicionales de filtrado o búsqueda en los listados, deben estar documentadas en el método `description()` o capabilities.
-   - Se debe actualizar capabilities.php para que consten todas las nuevas tool o las que falten.
+## Discovered During Work
+- [ ] Eliminar clases específicas de la carpeta AudioTools (CamposAudioTool.php, CrearAudioTool.php, EditarAudioTool.php, EliminarAudioTool.php, ListarAudiosTool.php, VerAudioTool.php) tras refactorización a tool genérica (15/06/2025)
 
-5. **Consistencia y modularidad:**
-   - Seguir la convención de nombres y estructura de carpetas de las Tools existentes.
-   - Usar logging y manejo de errores consistente.
-
-6. **Referencia:**
-   - Tomar como referencia las Tools de `ComunicadosTools` para la estructura, validaciones y manejo de respuestas.
-
-7. **Otros:**
-   - Revisar si el modelo tiene relaciones o lógica especial en el CrudController y reflejarlo en la Tool si es relevante.
-   - Documentar claramente cualquier parámetro especial o comportamiento adicional en la Tool.
