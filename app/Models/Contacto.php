@@ -36,8 +36,10 @@ class Contacto extends ContenidoBaseModel
         parent::boot();
 
         static::saving(function ($model) {
-            // Acciones antes de guardar el modelo
-            ContactosController::rellenarLatitudYLongitud($model);
+            // Solo ejecutar en producción
+            if (app()->environment('production')) {
+                ContactosController::rellenarLatitudYLongitud($model);
+            }
         });
 
     }

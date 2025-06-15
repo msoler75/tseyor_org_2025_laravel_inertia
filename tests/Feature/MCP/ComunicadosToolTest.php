@@ -14,7 +14,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
         for ($i = 0; $i < 3; $i++) {
             $comunicado = new Comunicado([
                 'titulo' => 'Titulo ' . $i,
-                'numero' => $i + 100, // Usar número único para evitar duplicados
+                'numero' => $i + 100,
                 'categoria' => 1,
                 'descripcion' => 'Desc ' . $i,
                 'texto' => 'Texto ' . $i,
@@ -25,7 +25,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
             ]);
             $comunicado->save();
         }
-        $result = $this->callMcpTool('listar_comunicados');
+        $result = $this->callMcpTool('listar', ['entidad' => 'comunicado']);
         // Si la respuesta viene anidada en content[0][text], decodificar el JSON
         if (isset($result['content'][0]['text'])) {
             $json = json_decode($result['content'][0]['text'], true);
@@ -54,13 +54,13 @@ class ComunicadosToolTest extends McpFeatureTestCase
             'slug' => 'ver-comunicado-' . uniqid(),
         ]);
         $comunicado->save();
-        $result = $this->callMcpTool('ver_comunicado', ['slug' => $comunicado->slug]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'comunicado', 'id' => $comunicado->slug]);
         $this->assertIsArray($result, 'La respuesta de MCP no es un array');
         $this->assertArrayHasKey('comunicado', $result);
         $this->assertEquals($comunicado->slug, $result['comunicado']['slug'] ?? $result['comunicado']->slug ?? null);
 
         // comprobar que tambien podemos acceder al comunicado por ID
-        $resultById = $this->callMcpTool('ver_comunicado', ['id' => $comunicado->id]);
+        $resultById = $this->callMcpTool('ver', ['entidad' => 'comunicado', 'id' => $comunicado->id]);
         $this->assertIsArray($resultById, 'La respuesta de MCP por ID no es un array');
         $this->assertArrayHasKey('comunicado', $resultById);
         $this->assertEquals($comunicado->slug, $resultById['comunicado']['slug'] ?? $resultById['comunicado']->slug ?? null);
@@ -72,6 +72,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
     {
         Comunicado::truncate();
         $params = [
+            'entidad' => 'comunicado',
             'data' => [
                 'titulo' => 'Test Comunicado',
                 'numero' => 123,
@@ -85,7 +86,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
             ],
             'token' => config('mcp-server.tokens.administrar_todo')
         ];
-        $this->callMcpTool('crear_comunicado', $params);
+        $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('comunicados', ['slug' => 'test-comunicado']);
     }
 
@@ -105,6 +106,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
         ]);
         $comunicado->save();
         $params = [
+            'entidad' => 'comunicado',
             'id' => $comunicado->id,
             'data' => [
                 'titulo' => 'Modificado',
@@ -119,7 +121,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
             ],
             'token' => config('mcp-server.tokens.administrar_todo')
         ];
-        $result = $this->callMcpTool('editar_comunicado', $params);
+        $result = $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('comunicados', [
             'id' => $comunicado->id,
             'titulo' => 'Modificado',
@@ -131,7 +133,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
         Comunicado::truncate();
         $comunicado = new Comunicado([
             'titulo' => 'Eliminar Comunicado',
-            'numero' => 9999, // Usar número único para evitar duplicados
+            'numero' => 9999,
             'categoria' => 1,
             'descripcion' => 'Desc',
             'texto' => 'Texto',
@@ -141,32 +143,37 @@ class ComunicadosToolTest extends McpFeatureTestCase
             'slug' => 'eliminar-comunicado-' . uniqid(),
         ]);
         $comunicado->save();
-        $this->callMcpTool('eliminar_comunicado', [
+        $this->callMcpTool('eliminar', [
+            'entidad' => 'comunicado',
             'id' => $comunicado->id,
             'force' => true,
             'token' => config('mcp-server.tokens.administrar_todo')
         ]);
-        // Debug: mostrar si el comunicado sigue existiendo
         $existe = Comunicado::withTrashed()->find($comunicado->id);
         $this->assertDatabaseMissing('comunicados', ['id' => $comunicado->id]);
     }
 
 
     // test de campos de comunicado
-    public function test_campos_comunicado()
+    public function test_info_comunicado()
     {
-        $result = $this->callMcpTool('campos_comunicado');
-        // fwrite(STDERR, print_r($result, true));
-        $this->assertIsArray($result, 'La respuesta de MCP no es un array');
-        $this->assertArrayHasKey('fields', $result, 'La respuesta de MCP no contiene la clave fields');
-        $this->assertGreaterThan(0, count($result['fields']), 'No se han encontrado campos de comunicado');
-        // Comprobar que existen los campos esperados
-        $campos_esperados = ['titulo', 'descripcion', 'texto', 'fecha_comunicado', 'categoria', 'ano', 'imagen', 'visibilidad'];
+        $result = $this->callMcpTool('info', ['entidad' => 'comunicado']);
+        $this->assertIsArray($result);
+        $comunicado = $result['comunicado'] ?? null;
+        $this->assertIsArray($comunicado);
+        $this->assertArrayHasKey('descripcion', $comunicado);
+        $this->assertArrayHasKey('parametros_listar', $comunicado);
+        $this->assertArrayHasKey('campos', $comunicado);
+        $this->assertIsString($comunicado['descripcion']);
+        $this->assertIsArray($comunicado['parametros_listar']);
+        $this->assertIsArray($comunicado['campos']);
+        $campos_esperados = [
+            'titulo', 'descripcion', 'texto', 'fecha_comunicado', 'categoria', 'ano', 'imagen', 'visibilidad'
+        ];
         foreach ($campos_esperados as $campo) {
-            $this->assertArrayHasKey($campo, $result['fields'], "Falta el campo '$campo'");
+            $this->assertArrayHasKey($campo, $comunicado['campos'], "Falta el campo '$campo'");
         }
-        // Comprobar que cada campo tiene 'type' y 'description'
-        foreach ($result['fields'] as $campo => $definicion) {
+        foreach ($comunicado['campos'] as $campo => $definicion) {
             $this->assertArrayHasKey('type', $definicion, "El campo '$campo' no tiene 'type'");
             $this->assertArrayHasKey('description', $definicion, "El campo '$campo' no tiene 'description'");
         }

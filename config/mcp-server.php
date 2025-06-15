@@ -271,31 +271,13 @@ return [
         // App\MCP\Tools\Sms\SendMessageTool::class,
         // App\MCP\Tools\External\PaymentProcessorTool::class,
 
-        // === Comunicados Tools ===
-        \App\MCP\ComunicadosTools\VerComunicadoTool::class,
-        \App\MCP\ComunicadosTools\ListarComunicadosTool::class,
-        \App\MCP\ComunicadosTools\CrearComunicadoTool::class,
-        \App\MCP\ComunicadosTools\EditarComunicadoTool::class,
-        \App\MCP\ComunicadosTools\EliminarComunicadoTool::class,
-        \App\MCP\ComunicadosTools\CamposComunicadoTool::class,
+        \App\MCP\Tools\VerTool::class,
+        \App\MCP\Tools\ListarTool::class,
+        \App\MCP\Tools\CrearTool::class,
+        \App\MCP\Tools\EditarTool::class,
+        \App\MCP\Tools\EliminarTool::class,
+        \App\MCP\Tools\InfoTool::class,
 
-        /*
-        // === Entradas Tools ===
-        \App\MCP\EntradasTools\CrearEntradaTool::class,
-        \App\MCP\EntradasTools\EditarEntradaTool::class,
-        \App\MCP\EntradasTools\EliminarEntradaTool::class,
-        \App\MCP\EntradasTools\ListarEntradasTool::class,
-        \App\MCP\EntradasTools\VerEntradaTool::class,
-        \App\MCP\EntradasTools\CamposEntradaTool::class,
-
-        // === Noticias Tools ===
-        \App\MCP\NoticiasTools\CrearNoticiaTool::class,
-        \App\MCP\NoticiasTools\EditarNoticiaTool::class,
-        \App\MCP\NoticiasTools\EliminarNoticiaTool::class,
-        \App\MCP\NoticiasTools\ListarNoticiasTool::class,
-        \App\MCP\NoticiasTools\VerNoticiaTool::class,
-        \App\MCP\NoticiasTools\CamposNoticiaTool::class,
-        */
     ],
 
     /*

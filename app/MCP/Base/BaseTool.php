@@ -1,5 +1,5 @@
 <?php
-namespace App\MCP;
+namespace App\MCP\Base;
 
 use Illuminate\Http\Request;
 use Inertia\Support\Header;
@@ -8,33 +8,16 @@ use Inertia\Response as InertiaResponse;
 use OPGG\LaravelMcpServer\Services\ToolService\ToolInterface;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Support\Str;
 
 abstract class BaseTool implements ToolInterface {
     private ?string $toolName = null; // Nombre de la tool MCP (ej: 'editar_comunicado')
     protected $inertiaRequest; // Objeto Request para respuestas Inertia
-    protected ?string $modelClass = null; // Clase del modelo Eloquent (ej: \App\Models\Comunicado)
-    protected ?string $modelNameSingle = null; // Nombre singular del modelo (ej: 'comunicado')
-    protected ?string $modelNamePlural = null; // Nombre plural del modelo (ej: 'comunicados')
 
-    protected ?string $controller = null; // Ejemplo: \App\Http\Controllers\EventosController
-    protected ?string $controllerMethod = null; // Ejemplo: 'index' o 'show'
-    protected array $permisos = []; // Ejemplo: ['administrar_contenidos']
-
-    public function __construct($verb, $plural = false) {
-        if(!$this->modelNamePlural) {
-            $this->modelNamePlural = $this->modelNameSingle ? $this->modelNameSingle . 's' : null;
-        }
-        $this->toolName = $verb . '_' . ($plural ? $this->modelNamePlural : $this->modelNameSingle);
+    public function __construct($toolName) {
+        $this->toolName = $toolName;
         $this->inertiaRequest = new Request();
         $this->inertiaRequest->headers->set(Header::INERTIA, 'true');
-        Log::channel('mcp')->info('[BaseTool] Instanciado ' . static::class, [
-            'toolName' => $this->toolName,
-            'modelClass' => $this->modelClass,
-            'modelNameSingle' => $this->modelNameSingle,
-            'modelNamePlural' => $this->modelNamePlural,
-            'controller' => $this->controller,
-            'controllerMethod' => $this->controllerMethod,
-        ]);
     }
 
     protected function fromInertiaToArray($response) {
@@ -74,7 +57,7 @@ abstract class BaseTool implements ToolInterface {
     protected function getCapabilityInfo(string $toolName): ?array {
         static $capabilities = null;
         if ($capabilities === null) {
-            $capabilities = include __DIR__ . '/capabilities.php';
+            $capabilities = include __DIR__ . '/../Data/capabilities.php';
         }
         foreach ($capabilities as $group) {
             if (!empty($group['tools'])) {
@@ -141,15 +124,13 @@ abstract class BaseTool implements ToolInterface {
     }
 
     public function execute(array $arguments): mixed {
+        \Log::channel('mcp')->info('[MCP] Ejecutando tool: ' . $this->name(), ['arguments' => $arguments]);
         try {
-            $this->checkMcpToken($arguments, $this->permisos);
             return $this->handle($arguments);
         } catch (\Throwable $e) {
             // Si la excepción es 403 (token inválido), devolver evento de error de permisos MCP
-            if ($e instanceof HttpException && $e->getStatusCode() === 403) {
-
-                Log::channel('mcp')->error(''. $e->getMessage());
-
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $e->getStatusCode() === 403) {
+                \Log::channel('mcp')->error(''. $e->getMessage());
                 // Convención MCP: devolver array con error de permisos
                 return [
                     'error' => 'PERMISSION_DENIED',
@@ -157,11 +138,32 @@ abstract class BaseTool implements ToolInterface {
                     'code' => 403
                 ];
             }
-            Log::channel('mcp')->error('[MCP] Excepción en ' . $this->name() . ': ' . $e->getMessage(), [
+            \Log::channel('mcp')->error('[MCP] Excepción en ' . $this->name() . ': ' . $e->getMessage(), [
                 'exception' => $e,
                 'arguments' => $arguments,
             ]);
-            throw $e;
+            // Para cualquier otra excepción, devolver como error MCP
+            return [
+                'error' => $e->getMessage(),
+                'exception' => get_class($e),
+                'code' => $e->getCode() ?: 500
+            ];
+        }
+    }
+
+
+    /**
+     * $modelo es un nombre de modelo en minusculas (ej: 'comunicado')
+     * @param mixed $modelo
+     * @return string la clase de herramientas asociada al modelo (ej: \App\MCP\Tools\ComunicadosTools)
+     */
+    public function getModelToolsClass($modelo) {
+        if (is_object($modelo)) {
+            return Str::lower(class_basename($modelo));
+        } elseif (is_string($modelo)) {
+            return 'App\\MCP\\'. Str::ucfirst($modelo).'Tools';
+        } else {
+            throw new \InvalidArgumentException('El parámetro $modelo debe ser un objeto o una cadena de texto');
         }
     }
 }
