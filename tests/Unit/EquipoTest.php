@@ -81,7 +81,10 @@ class EquipoTest extends BaseTest
         $slug = Str::slug($nombre);
 
         Nodo::where("ubicacion", 'like', $this->carpetaEquipo . "%")->forceDelete();
-        Equipo::where('nombre', $nombre)->first()->delete(); // para que se active el evento deleted
+        $equipo = Equipo::where('nombre', $nombre)->first();
+        if($equipo) {
+           $equipo->delete(); // para que se active el evento deleted
+        }
         Grupo::where('nombre', $nombre)->forceDelete();
         Grupo::where('slug', $slug)->forceDelete();
         Acl::where('user_id', $this->coordinador->id)->forceDelete();

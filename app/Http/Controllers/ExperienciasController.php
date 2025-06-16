@@ -15,17 +15,23 @@ use Illuminate\Support\Facades\Gate;
 
 class ExperienciasController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 12;
+
     //
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
+        $page = $request->input('page', 1);
 
         // devuelve los items recientes segun la busqueda
-        if ($buscar) {
-            $resultados = Experiencia::search($buscar);
-        } else {
-            // obtiene los items sin busqueda
+        $resultados = $buscar ?
+            Experiencia::search($buscar)->paginate(self::$ITEMS_POR_PAGINA, 'page', $page)
+            :
+            Experiencia::latest()->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
+
+        // obtiene los items sin busqueda
+        if (!$buscar) {
             $resultados = Experiencia::select(['id', 'nombre', 'fecha', 'lugar', 'texto', 'created_at', 'categoria'])
                 ->where('visibilidad', 'P')
                 ->orderBy('updated_at', 'desc');
@@ -41,7 +47,7 @@ class ExperienciasController extends Controller
             $resultados->where('categoria', '!=', Experiencia::$CATEGORIA_INTERIORIZACION);
 
         $resultados = $resultados
-            ->paginate(12)
+            ->paginate(ExperienciasController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends(['buscar' => $buscar, 'categoria' => $categoria]);
 
         if ($buscar)
@@ -145,7 +151,7 @@ class ExperienciasController extends Controller
             */
 
         if ($experiencia) {
-            // Redirigir al usuario a la página anterior con un mensaje de éxito
+            // Redirigir al usuario a la página anterior with a success message
             return redirect()->back()->with('success', 'La experiencia se ha guardado correctamente');
         } else {
             // Devolver un objeto JSON con los errores de validación

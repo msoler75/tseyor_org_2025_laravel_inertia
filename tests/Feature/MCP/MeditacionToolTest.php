@@ -17,7 +17,13 @@ class MeditacionToolTest extends McpFeatureTestCase
         $this->assertIsArray($meditacion['parametros_listar']);
         $this->assertIsArray($meditacion['campos']);
         $campos_esperados = [
-            'titulo', 'slug', 'categoria', 'descripcion', 'texto', 'audios', 'visibilidad'
+            'titulo',
+            'slug',
+            'categoria',
+            'descripcion',
+            'texto',
+            'audios',
+            'visibilidad'
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $meditacion['campos'], "Falta el campo '$campo'");
@@ -31,7 +37,8 @@ class MeditacionToolTest extends McpFeatureTestCase
     public function test_listar_meditaciones()
     {
         \App\Models\Meditacion::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\MeditacionesController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 4; $i++) {
             \App\Models\Meditacion::create([
                 'titulo' => 'Meditacion ' . $i,
                 'slug' => 'meditacion-' . $i . '-' . uniqid(),
@@ -46,6 +53,22 @@ class MeditacionToolTest extends McpFeatureTestCase
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
         $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'meditacion', 'page' => 2]);
+        // fwrite(STDERR, print_r($result, true));
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(4, count($result['listado']['data']));
+        // buscar una meditación específica
+        $result = $this->callMcpTool('listar', ['entidad' => 'meditacion', 'buscar' => 'Meditacion 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar una meditación que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'meditacion', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_meditacion()
@@ -60,7 +83,7 @@ class MeditacionToolTest extends McpFeatureTestCase
             'audios' => json_encode([]),
             'visibilidad' => 'P',
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'meditacion', 'slug' => $meditacion->slug]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'meditacion', 'slug' => $meditacion->slug]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('meditacion', $result);
         $this->assertEquals($meditacion->slug, $result['meditacion']['slug'] ?? $result['meditacion']->slug ?? null);
@@ -80,7 +103,7 @@ class MeditacionToolTest extends McpFeatureTestCase
                 'audios' => json_encode([]),
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('meditaciones', ['slug' => $params['data']['slug']]);
@@ -105,7 +128,7 @@ class MeditacionToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('meditaciones', ['id' => $meditacion->id, 'descripcion' => $nuevaDescripcion]);
@@ -127,7 +150,7 @@ class MeditacionToolTest extends McpFeatureTestCase
             'entidad' => 'meditacion',
             'id' => $meditacion->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('meditaciones', ['id' => $meditacion->id]);

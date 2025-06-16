@@ -22,7 +22,8 @@ class PaginaToolTest extends McpFeatureTestCase
     public function test_listar_paginas()
     {
         \App\Models\Pagina::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\PaginasController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 3; $i++) {
             \App\Models\Pagina::create([
                 'titulo' => 'Pagina ' . $i,
                 'ruta' => '/ruta-' . $i,
@@ -36,8 +37,23 @@ class PaginaToolTest extends McpFeatureTestCase
         }
         $result = $this->callMcpTool('listar', ['entidad' => 'pagina']);
         $this->assertIsArray($result);
-        $this->assertArrayHasKey('paginas', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['paginas']));
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'pagina', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(3, count($result['listado']['data']));
+        // buscar una página específica
+        $result = $this->callMcpTool('listar', ['entidad' => 'pagina', 'buscar' => $pp]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar una página que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'pagina', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_pagina()
@@ -53,7 +69,7 @@ class PaginaToolTest extends McpFeatureTestCase
             'palabras_clave' => 'clave',
             'visibilidad' => 'P',
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'pagina', 'id' => $pagina->id]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'pagina', 'ruta' => $pagina->ruta]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('pagina', $result);
         $this->assertEquals($pagina->id, $result['pagina']['id'] ?? $result['pagina']->id ?? null);
@@ -74,7 +90,7 @@ class PaginaToolTest extends McpFeatureTestCase
                 'palabras_clave' => 'clave',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('paginas', ['ruta' => $params['data']['ruta']]);
@@ -100,7 +116,7 @@ class PaginaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('paginas', ['id' => $pagina->id, 'descripcion' => $nuevaDescripcion]);
@@ -123,7 +139,7 @@ class PaginaToolTest extends McpFeatureTestCase
             'entidad' => 'pagina',
             'id' => $pagina->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('paginas', ['id' => $pagina->id]);

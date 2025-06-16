@@ -22,7 +22,9 @@ class VideoToolTest extends McpFeatureTestCase
     public function test_listar_videos()
     {
         \App\Models\Video::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\VideosController::$ITEMS_POR_PAGINA;
+        // crear algunos videos de prueba
+        for ($i = 0; $i < $pp + 4; $i++) {
             \App\Models\Video::create([
                 'titulo' => 'Video ' . $i,
                 'slug' => 'video-' . $i . '-' . uniqid(),
@@ -33,8 +35,23 @@ class VideoToolTest extends McpFeatureTestCase
         }
         $result = $this->callMcpTool('listar', ['entidad' => 'video']);
         $this->assertIsArray($result);
-        $this->assertArrayHasKey('videos', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['videos']));
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'video', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(4, count($result['listado']['data']));
+        // buscar un video específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'video', 'buscar' => 'Video 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar un video que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'video', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_video()
@@ -65,7 +82,7 @@ class VideoToolTest extends McpFeatureTestCase
                 'enlace' => 'https://nuevo-video.com',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('videos', ['slug' => $params['data']['slug']]);
@@ -88,7 +105,7 @@ class VideoToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('videos', ['id' => $video->id, 'descripcion' => $nuevaDescripcion]);
@@ -108,7 +125,7 @@ class VideoToolTest extends McpFeatureTestCase
             'entidad' => 'video',
             'id' => $video->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('videos', ['id' => $video->id]);

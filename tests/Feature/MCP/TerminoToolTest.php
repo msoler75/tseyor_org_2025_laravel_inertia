@@ -22,7 +22,8 @@ class TerminoToolTest extends McpFeatureTestCase
     public function test_listar_terminos()
     {
         \App\Models\Termino::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\TerminosController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 3; $i++) {
             \App\Models\Termino::create([
                 'nombre' => 'Termino ' . $i,
                 'slug' => 'termino-' . $i . '-' . uniqid(),
@@ -35,8 +36,23 @@ class TerminoToolTest extends McpFeatureTestCase
         }
         $result = $this->callMcpTool('listar', ['entidad' => 'termino']);
         $this->assertIsArray($result);
-        $this->assertArrayHasKey('terminos', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['terminos']));
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'termino', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(3, count($result['listado']['data']));
+        // buscar un término específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'termino', 'buscar' => 'Termino 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar un término que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'termino', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_termino()
@@ -71,7 +87,7 @@ class TerminoToolTest extends McpFeatureTestCase
                 'ref_libros' => '',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('terminos', ['slug' => $params['data']['slug']]);
@@ -96,7 +112,7 @@ class TerminoToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('terminos', ['id' => $termino->id, 'descripcion' => $nuevaDescripcion]);
@@ -118,7 +134,7 @@ class TerminoToolTest extends McpFeatureTestCase
             'entidad' => 'termino',
             'id' => $termino->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('terminos', ['id' => $termino->id]);

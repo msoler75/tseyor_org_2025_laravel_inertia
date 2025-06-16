@@ -9,17 +9,24 @@ use App\Pigmalion\SEO;
 
 class SalasController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 10;
 
     public function index(Request $request)
     {
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
 
-        $resultados = $buscar ? Sala::where('nombre', 'like', '%' . $buscar . '%')
-                ->orWhere('descripcion', 'like', '%' . $buscar . '%')
-                ->paginate(10)->appends(['buscar' => $buscar])
-                :
-                Sala::latest()->paginate(10)
-            ;
+        $query = Sala::query();
+
+        if($buscar) {
+            $ids = Sala::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('salas.id', $ids);
+        }
+        else
+            $query->orderBy('nombre', 'asc');
+
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+                ->appends($request->except('page'));
 
         return Inertia::render('Salas/Index', [
             'filtrado' => $buscar,

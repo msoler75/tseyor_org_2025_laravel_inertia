@@ -5,11 +5,13 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
 use Illuminate\Support\Facades\Log;
+use Laravel\Scout\Searchable;
 use App\Pigmalion\StorageItem;
 
 class Audio extends ContenidoBaseModel
 {
     use CrudTrait;
+    use Searchable;
     /**
      * El nombre de la tabla asociada al modelo.
      *
@@ -53,5 +55,17 @@ class Audio extends ContenidoBaseModel
                 }
             }
         });
+    }
+
+
+
+    // SCOUT
+
+    /**
+     * Solo se indexa si acaso está publicado
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return $this->visibilidad == 'P' && !$this->deleted_at;
     }
 }

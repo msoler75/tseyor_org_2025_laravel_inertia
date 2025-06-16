@@ -10,20 +10,27 @@ use App\Models\Libro;
 
 class LugaresController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 12;
+
     public function index(Request $request)
     {
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
+        $resultados = Lugar::select(['nombre', 'slug', 'descripcion', 'imagen'])
+        ->where('visibilidad', 'P');
 
-        $listado = $buscar ? Lugar::search($buscar)
-            :
-            Lugar::select(['nombre', 'slug', 'descripcion', 'imagen']);
+        if ($buscar) {
+            $ids = Lugar::search($buscar)->get()->pluck('id')->toArray();
+            $resultados->whereIn('lugares.id', $ids);
+        }
 
-        $listado = $listado->paginate(12);
+        $resultados = $resultados->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         $todos = Lugar::select(['slug', 'nombre', 'categoria'])->take(1000)->get();
 
         return Inertia::render('Lugares/Index', [
-            'listado' => $listado,
+            'listado' => $resultados,
             'todos' => $todos
         ])
             ->withViewData(SEO::get('lugares'));

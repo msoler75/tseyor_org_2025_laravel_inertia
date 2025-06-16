@@ -31,9 +31,10 @@ class NoticiaToolTest extends McpFeatureTestCase
     public function test_listar_noticias()
     {
         \App\Models\Noticia::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\NoticiasController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp*2 + 5; $i++) {
             \App\Models\Noticia::create([
-                'titulo' => 'Noticia ' . $i,
+                'titulo' => 'Noticia ' . $i . ($i < $pp + 3 ? '' : ' extra'),
                 'descripcion' => 'Desc ' . $i,
                 'texto' => 'Texto ' . $i,
                 'published_at' => now()->toDateString(),
@@ -44,7 +45,22 @@ class NoticiaToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'noticia']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'noticia', 'page' => 3]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(5, count($result['listado']['data']));
+        // buscar una noticia específica
+        $result = $this->callMcpTool('listar', ['entidad' => 'noticia', 'buscar' => 'Noticia 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar una noticia que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'noticia', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_noticia()
@@ -77,7 +93,7 @@ class NoticiaToolTest extends McpFeatureTestCase
                 'imagen' => '/img/nueva-noticia.jpg',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('noticias', ['titulo' => $params['data']['titulo']]);
@@ -101,7 +117,7 @@ class NoticiaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('noticias', ['id' => $noticia->id, 'descripcion' => $nuevaDescripcion]);
@@ -122,7 +138,7 @@ class NoticiaToolTest extends McpFeatureTestCase
             'entidad' => 'noticia',
             'id' => $noticia->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('noticias', ['id' => $noticia->id]);

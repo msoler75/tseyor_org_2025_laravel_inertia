@@ -11,7 +11,8 @@ class ComunicadosToolTest extends McpFeatureTestCase
     public function test_listar_comunicados()
     {
         Comunicado::truncate();
-        for ($i = 0; $i < 3; $i++) {
+        $pp = \App\Http\Controllers\ComunicadosController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp+2; $i++) {
             $comunicado = new Comunicado([
                 'titulo' => 'Titulo ' . $i,
                 'numero' => $i + 100,
@@ -36,7 +37,26 @@ class ComunicadosToolTest extends McpFeatureTestCase
         $this->assertIsArray($result, 'La respuesta de MCP no es un array');
         $this->assertArrayHasKey('listado', $result, 'La respuesta de MCP no contiene la clave listado');
         $this->assertArrayHasKey('data', $result['listado']);
-        $this->assertGreaterThanOrEqual(3, count($result['listado']['data']));
+        $this->assertGreaterThanOrEqual($pp, count($result['listado']['data']));
+
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'comunicado', 'page' => 2]);
+        // fwrite(STDERR, print_r($result, true));
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        // fwrite(STDERR, print_r($result, true));
+        $this->assertEquals(2, count($result['listado']['data']));
+
+        // buscar un comunicado específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'comunicado', 'buscar' => 'Titulo 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar un comunicado que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'comunicado', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_comunicado()
@@ -90,7 +110,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
         $this->assertDatabaseHas('comunicados', ['slug' => 'test-comunicado']);
     }
 
-    public function test_actualizar_comunicado()
+    public function test_editar_comunicado()
     {
         Comunicado::truncate();
         $comunicado = new Comunicado([

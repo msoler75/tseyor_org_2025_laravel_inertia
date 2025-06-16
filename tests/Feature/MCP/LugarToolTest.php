@@ -31,7 +31,8 @@ class LugarToolTest extends McpFeatureTestCase
     public function test_listar_lugares()
     {
         \App\Models\Lugar::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = 12; // LugaresController usa paginate(12)
+        for ($i = 0; $i < $pp + 2; $i++) {
             \App\Models\Lugar::create([
                 'nombre' => 'Lugar ' . $i,
                 'slug' => 'lugar-' . $i . '-' . uniqid(),
@@ -47,7 +48,22 @@ class LugarToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'lugar']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'lugar', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(2, count($result['listado']['data']));
+        // buscar un lugar específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'lugar', 'buscar' => 'Lugar 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar un lugar que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'lugar', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_lugar()
@@ -86,7 +102,7 @@ class LugarToolTest extends McpFeatureTestCase
                 'relacionados' => '',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('lugares', ['slug' => $params['data']['slug']]);
@@ -113,7 +129,7 @@ class LugarToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('lugares', ['id' => $lugar->id, 'descripcion' => $nuevaDescripcion]);
@@ -137,7 +153,7 @@ class LugarToolTest extends McpFeatureTestCase
             'entidad' => 'lugar',
             'id' => $lugar->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('lugares', ['id' => $lugar->id]);

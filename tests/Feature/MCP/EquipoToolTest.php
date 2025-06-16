@@ -22,9 +22,10 @@ class EquipoToolTest extends McpFeatureTestCase
     public function test_listar_equipos()
     {
         Equipo::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\EquiposController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 3; $i++) {
             Equipo::create([
-                'nombre' => 'Equipo ' . $i,
+                'nombre' => 'Equipo ' . $i . ($i <($pp+2) ? ' extra' : ''),
                 'slug' => 'equipo-' . $i . '-' . uniqid(),
                 'descripcion' => 'Desc ' . $i,
                 'categoria' => 'general',
@@ -34,7 +35,22 @@ class EquipoToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'equipo']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'equipo', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(3, count($result['listado']['data']));
+        // buscar un equipo específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'equipo', 'buscar' => 'Equipo 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar un equipo que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'equipo', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_equipo()
@@ -65,7 +81,7 @@ class EquipoToolTest extends McpFeatureTestCase
                 'categoria' => 'test',
                 'imagen' => '/almacen/nuevo-equipo.jpg',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('equipos', ['slug' => $params['data']['slug']]);
@@ -88,7 +104,7 @@ class EquipoToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('equipos', ['id' => $equipo->id, 'descripcion' => $nuevaDescripcion]);
@@ -110,7 +126,7 @@ class EquipoToolTest extends McpFeatureTestCase
             'entidad' => 'equipo',
             'id' => $equipo->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('equipos', ['id' => $equipo->id]);

@@ -23,7 +23,8 @@ class ContactoToolTest extends McpFeatureTestCase
     public function test_listar_contactos()
     {
         Contacto::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\ContactosController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 5; $i++) {
             Contacto::create([
                 'nombre' => 'Contacto ' . $i,
                 'slug' => 'contacto-' . $i . '-' . uniqid(),
@@ -35,7 +36,23 @@ class ContactoToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'contacto']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'contacto', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(5, count($result['listado']['data']));
+        // buscar un contacto específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'contacto', 'buscar' => 'Contacto 1']);
+        // fwrite(STDERR, print_r($result, true));
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar un contacto que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'contacto', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_contacto()
@@ -67,7 +84,7 @@ class ContactoToolTest extends McpFeatureTestCase
                 'poblacion' => 'Ciudad Nueva',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $crear = $this->callMcpTool('crear', $params);
         $contactoId = $crear['contacto_creado']['id'] ?? null;
@@ -78,7 +95,7 @@ class ContactoToolTest extends McpFeatureTestCase
             'data' => [
                 'nombre' => $nuevoNombre
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $response = $this->callMcpTool('editar', $paramsEditar);
         $this->assertDatabaseHas('contactos', ['id' => $contactoId, 'nombre' => $nuevoNombre]);
@@ -97,7 +114,7 @@ class ContactoToolTest extends McpFeatureTestCase
             'entidad' => 'contacto',
             'id' => $contacto->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('contactos', ['id' => $contacto->id]);

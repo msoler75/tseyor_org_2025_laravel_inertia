@@ -3,8 +3,8 @@
 
 return [
     'comunicado' => [
-        'descripcion'=> 'Comunicados dados por los hermanos mayores o amigos del espacio',
-        'parametros_listar'=> [
+        'descripcion' => 'Comunicados dados por los hermanos mayores o amigos del espacio',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -36,7 +36,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del comunicado'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
             'texto' => ['type' => 'string', 'description' => 'Contenido en markdown'],
@@ -48,8 +48,8 @@ return [
         ]
     ],
     'entrada' => [
-        'descripcion'=> 'Entradas del blog',
-        'parametros_listar'=> [
+        'descripcion' => 'Entradas del blog',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -81,7 +81,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 2.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título de la entrada'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
             'texto' => ['type' => 'string', 'description' => 'Contenido en markdown'],
@@ -91,8 +91,8 @@ return [
         ]
     ],
     'noticia' => [
-        'descripcion'=> 'Últimas noticias y actualizaciones',
-        'parametros_listar'=> [
+        'descripcion' => 'Últimas noticias y actualizaciones',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -124,7 +124,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título de la noticia'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
             'texto' => ['type' => 'string', 'description' => 'Contenido en markdown'],
@@ -134,8 +134,8 @@ return [
         ]
     ],
     'audio' => [
-        'descripcion'=> 'Audios disponibles para escuchar o descargar',
-        'parametros_listar'=> [
+        'descripcion' => 'Audios disponibles para escuchar o descargar',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -167,7 +167,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del audio'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
@@ -179,8 +179,8 @@ return [
         ]
     ],
     'centro' => [
-        'descripcion'=> 'Centros Tseyor: Casas Tseyor, Muulasterios y Pueblos Tseyor',
-        'parametros_listar'=> [
+        'descripcion' => 'Centros Tseyor: Casas Tseyor, Muulasterios y Pueblos Tseyor',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -212,7 +212,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre del centro'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'imagen' => ['type' => 'string', 'description' => 'Ruta o URL de la imagen'],
@@ -225,8 +225,8 @@ return [
         ]
     ],
     'contacto' => [
-        'descripcion'=> 'Información de contacto de los centros',
-        'parametros_listar'=> [
+        'descripcion' => 'Información de contacto de los centros',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -270,7 +270,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre del contacto'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'imagen' => ['type' => 'string', 'description' => 'Ruta o URL de la imagen'],
@@ -290,8 +290,8 @@ return [
         ]
     ],
     'equipo' => [
-        'descripcion'=> 'Equipos de trabajo y colaboración',
-        'parametros_listar'=> [
+        'descripcion' => 'Equipos de trabajo y colaboración',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -323,7 +323,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre del equipo'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
@@ -341,8 +341,8 @@ return [
         ]
     ],
     'evento' => [
-        'descripcion'=> 'Eventos y actividades programadas',
-        'parametros_listar'=> [
+        'descripcion' => 'Eventos y actividades programadas',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -374,7 +374,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del evento'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
@@ -392,8 +392,8 @@ return [
         ]
     ],
     'grupo' => [
-        'descripcion'=> 'Grupos de usuarios para permisos especiales',
-        'parametros_listar'=> [
+        'descripcion' => 'Grupos de usuarios para permisos especiales',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -419,15 +419,15 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre del grupo'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve']
         ]
     ],
     'guia' => [
-        'descripcion'=> 'Guías Estelares de Tseyor. Nuestros tutores del espacio',
-        'parametros_listar'=> [
+        'descripcion' => 'Guías Estelares de Tseyor. Nuestros tutores del espacio',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -459,7 +459,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre de la guía'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'categoria' => ['type' => 'string', 'description' => 'Categoría de la guía'],
@@ -472,13 +472,19 @@ return [
         ]
     ],
     'informe' => [
-        'descripcion'=> 'Informes de los equipos: Actas, orden del día, resumenes, y otros informes y reportes generados',
-        'parametros_listar'=> [
+        'descripcion' => 'Informes de los equipos: Actas, orden del día, resumenes, y otros informes y reportes generados',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Texto a buscar en los informes. Ejemplo: "Finanzas".'
+            ],
+                        [
+                'name' => 'equipo',
+                'type' => 'string',
+                'required' => false,
+                'description' => 'Filtrar informes por ID o slug de equipo. Ejemplo: 2.'
             ],
             [
                 'name' => 'categoria',
@@ -505,7 +511,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del informe'],
             'categoria' => ['type' => 'string', 'description' => 'Categoría del informe'],
             'equipo_id' => ['type' => 'int', 'description' => 'ID del equipo asociado'],
@@ -517,8 +523,8 @@ return [
         ]
     ],
     'libro' => [
-        'descripcion'=> 'Libros y lecturas recomendadas',
-        'parametros_listar'=> [
+        'descripcion' => 'Libros y lecturas recomendadas',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -550,7 +556,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del libro'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
@@ -563,8 +569,8 @@ return [
         ]
     ],
     'lugar' => [
-        'descripcion'=> 'Lugares de interés en la Galaxia',
-        'parametros_listar'=> [
+        'descripcion' => 'Lugares de interés en la Galaxia',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -596,7 +602,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre del lugar'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
@@ -609,8 +615,8 @@ return [
         ]
     ],
     'meditacion' => [
-        'descripcion'=> 'Meditaciones guiadas',
-        'parametros_listar'=> [
+        'descripcion' => 'Meditaciones guiadas',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -642,7 +648,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título de la meditación'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'categoria' => ['type' => 'string', 'description' => 'Categoría de la meditación'],
@@ -653,8 +659,8 @@ return [
         ]
     ],
     'normativa' => [
-        'descripcion'=> 'Normativas y regulaciones aplicables en la comunidad Tseyor',
-        'parametros_listar'=> [
+        'descripcion' => 'Normativas y regulaciones aplicables en la comunidad Tseyor',
+        'parametros_listar' => [
             [
                 'name' => 'buscar',
                 'type' => 'string',
@@ -680,7 +686,7 @@ return [
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
-        'campos'=> [
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título de la normativa'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
@@ -690,14 +696,14 @@ return [
         ]
     ],
     'boletin' => [
-        'descripcion'=> 'Boletines periódicos enviados a los suscriptores',
-        'parametros_listar'=> [
-            [ 'name' => 'tipo', 'type' => 'string', 'required' => false, 'description' => 'Filtrar por tipo de boletín (semanal, mensual, etc.)' ],
-            [ 'name' => 'ano', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por año.' ],
-            [ 'name' => 'mes', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por mes.' ],
-            [ 'name' => 'enviado', 'type' => 'boolean', 'required' => false, 'description' => 'Filtrar por estado de envío.' ],
+        'descripcion' => 'Boletines periódicos enviados a los suscriptores',
+        'parametros_listar' => [
+            ['name' => 'tipo', 'type' => 'string', 'required' => false, 'description' => 'Filtrar por tipo de boletín (semanal, mensual, etc.)'],
+            ['name' => 'ano', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por año.'],
+            ['name' => 'mes', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por mes.'],
+            ['name' => 'enviado', 'type' => 'boolean', 'required' => false, 'description' => 'Filtrar por estado de envío.'],
         ],
-        'campos'=> [
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del boletín'],
             'texto' => ['type' => 'string', 'description' => 'Contenido del boletín'],
             'dia' => ['type' => 'int', 'description' => 'Día'],
@@ -709,9 +715,9 @@ return [
         ]
     ],
     'pagina' => [
-        'descripcion'=> 'Páginas estáticas del sitio',
-        'parametros_listar'=> [],
-        'campos'=> [
+        'descripcion' => 'Páginas estáticas del sitio',
+        'parametros_listar' => [],
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título de la página'],
             'ruta' => ['type' => 'string', 'description' => 'Ruta de la página'],
             'atras_ruta' => ['type' => 'string', 'description' => 'Ruta de retroceso'],
@@ -723,9 +729,9 @@ return [
         ]
     ],
     'psicografia' => [
-        'descripcion'=> 'Psicografías y dibujos canalizados',
-        'parametros_listar'=> [],
-        'campos'=> [
+        'descripcion' => 'Psicografías y dibujos canalizados',
+        'parametros_listar' => [],
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título de la psicografía'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'categoria' => ['type' => 'string', 'description' => 'Categoría'],
@@ -734,9 +740,9 @@ return [
         ]
     ],
     'sala' => [
-        'descripcion'=> 'Salas virtuales y físicas para eventos',
-        'parametros_listar'=> [],
-        'campos'=> [
+        'descripcion' => 'Salas virtuales y físicas para eventos',
+        'parametros_listar' => [],
+        'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre de la sala'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
@@ -744,9 +750,9 @@ return [
         ]
     ],
     'termino' => [
-        'descripcion'=> 'Términos y glosario Tseyor',
-        'parametros_listar'=> [],
-        'campos'=> [
+        'descripcion' => 'Términos y glosario Tseyor',
+        'parametros_listar' => [],
+        'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre del término'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
@@ -757,9 +763,9 @@ return [
         ]
     ],
     'tutorial' => [
-        'descripcion'=> 'Tutoriales y guías prácticas',
-        'parametros_listar'=> [],
-        'campos'=> [
+        'descripcion' => 'Tutoriales y guías prácticas',
+        'parametros_listar' => [],
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del tutorial'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'categoria' => ['type' => 'string', 'description' => 'Categoría'],
@@ -770,9 +776,9 @@ return [
         ]
     ],
     'video' => [
-        'descripcion'=> 'Videos y grabaciones',
-        'parametros_listar'=> [],
-        'campos'=> [
+        'descripcion' => 'Videos y grabaciones',
+        'parametros_listar' => [],
+        'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del video'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
@@ -780,14 +786,14 @@ return [
             'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador']
         ]
     ],
-    'user' => [
-        'descripcion'=> 'Usuarios registrados en la plataforma',
-        'parametros_listar'=> [
-            [ 'name' => 'buscar', 'type' => 'string', 'required' => false, 'description' => 'Buscar por nombre o email.' ],
-            [ 'name' => 'equipo_id', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por equipo.' ],
-            [ 'name' => 'rol', 'type' => 'string', 'required' => false, 'description' => 'Filtrar por rol.' ],
+    'usuario' => [
+        'descripcion' => 'Usuarios registrados en la plataforma',
+        'parametros_listar' => [
+            ['name' => 'buscar', 'type' => 'string', 'required' => false, 'description' => 'Buscar por nombre o email.'],
+            ['name' => 'equipo_id', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por equipo.'],
+            ['name' => 'rol', 'type' => 'string', 'required' => false, 'description' => 'Filtrar por rol.'],
         ],
-        'campos'=> [
+        'campos' => [
             'name' => ['type' => 'string', 'description' => 'Nombre del usuario'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'email' => ['type' => 'string', 'description' => 'Correo electrónico'],

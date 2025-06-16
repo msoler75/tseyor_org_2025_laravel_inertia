@@ -10,31 +10,34 @@ use App\Pigmalion\BusquedasHelper;
 
 class MeditacionesController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 10;
     //
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
+        $page = $request->input('page', 1);
 
-        // devuelve los items recientes segun la busqueda
+        $query = Meditacion::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
+            ->where('visibilidad', 'P')
+            ->when($categoria === '_', function ($query) {
+                $query->orderByRaw('LOWER(titulo)');
+            })
+            ->when($categoria && $categoria !== '_', function ($query) use ($categoria) {
+                $query->where('categoria', 'LIKE', "%$categoria%");
+            });
+
+
         if ($buscar) {
-            $resultados = Meditacion::search($buscar);
-        } else {
-            // obtiene los items sin busqueda
-            $resultados = Meditacion::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
-                ->where('visibilidad', 'P')
-                ->when($categoria === '_', function ($query) {
-                    $query->orderByRaw('LOWER(titulo)');
-                });
+            $ids = Meditacion::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('meditaciones.id', $ids);
         }
+        else if (!$categoria)
+            $query->latest();
 
-        // parámetros
-        if ($categoria)
-            $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%");
-
-        $resultados = $resultados
-            ->paginate(12)
-            ->appends(['buscar' => $buscar,  'categoria' => $categoria]);
+        $resultados = $query
+            ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);
@@ -45,7 +48,7 @@ class MeditacionesController extends Controller
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'categorias'=>$categorias
+            'categorias' => $categorias
         ])
             ->withViewData(SEO::get('meditaciones'));
     }

@@ -23,8 +23,12 @@ class NodoTest extends BaseTest
 
 
         // comprobamos que existe el grupo 1 de administradores
-        $adminGroup =  Grupo::find(1);
-
+        $adminGroup =  \App\Models\Grupo::find(1);
+        if (!$adminGroup) {
+            $adminGroup = \App\Models\Grupo::create(['id' => 1, 'nombre' => 'administradores', 'slug' => 'administradores']);
+        } else {
+            $adminGroup->update(['nombre' => 'administradores', 'slug' => 'administradores']);
+        }
         $this->assertNotNull($adminGroup);
         $this->assertEquals("administradores", $adminGroup->nombre);
 

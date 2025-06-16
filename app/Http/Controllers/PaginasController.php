@@ -19,10 +19,36 @@ use App\Pigmalion\Markdown;
 
 class PaginasController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 10;
 
-    public function show(Request $request)
+    public function index(Request $request)
+    {
+        $page = $request->input("page", 1);
+        $buscar = $request->input('buscar');
+        $query = Pagina::select(['ruta', 'titulo', 'visibilidad', 'updated_at'])
+            ->where('visibilidad', 'P');
+
+        if ($buscar) {
+            $ids = Pagina::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('paginas.id', $ids);
+        } else $query->orderBy('ruta');
+
+        $resultados = $query->paginate(PaginasController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
+
+        // obtener todas las paginas (usamos cualquier vista, esto va para MCP)
+        return Inertia::render('Libros/Index', [
+            'listado' => $resultados,
+        ]);
+    }
+
+    public function show(Request $request, $ruta = null)
     {
         $path = $request->path();
+
+        // se añadió este parámetro opcional para hacer posible los test
+        if ($ruta)
+            $path = $ruta;
 
         // \Log::info("PaginasController::show $path");
 
@@ -70,7 +96,7 @@ class PaginasController extends Controller
                         ];
                 })
             ]
-            );
+        );
     }
 
     public function biblioteca()
@@ -94,6 +120,4 @@ class PaginasController extends Controller
         )
             ->withViewData(SEO::get('biblioteca'));
     }
-
-
 }

@@ -35,29 +35,35 @@ class EquiposController extends Controller
     /**
      * Lista de equipos
      */
+    public static $ITEMS_POR_PAGINA = 12;
+
     public function index(Request $request)
     {
         $user = auth()->user();
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
+        $page = $request->input('page', 1);
+        $campos = ['id', 'slug', 'nombre', 'descripcion', 'categoria', 'imagen', 'created_at', 'updated_at'];
 
-        // obtenemos el listado de equipos y el nº de miembros
-        $query = Equipo::withCount('miembros');
+        if ($buscar) {
+            // Buscar con Scout y luego obtener solo los campos necesarios
+            $ids = Equipo::search($buscar)->get()->pluck('id');
+            $query = Equipo::select($campos)
+                ->withCount('miembros')
+                ->whereIn('id', $ids);
+        } else {
+            $query = Equipo::withCount('miembros');
+            if ($categoria) {
+                if ($categoria == 'Mis equipos')
+                    $query->whereIn('id', $user->equipos()->pluck('equipo_id'));
+                else
+                    $query->where('categoria', '=', $categoria);
+            }
+        }
 
         // si el usuario tiene permisos de gestionar equipos
         $ocultarEquipos = $categoria != 'Mis equipos' && Gate::denies('administrar equipos');
-
-        if ($categoria) {
-            if ($categoria == 'Mis equipos')
-                //obtener los equipos de los que soy miembro
-                $query->whereIn('id', $user->equipos()->pluck('equipo_id'));
-            else
-                $query->where('categoria', '=', $categoria);
-        } elseif ($buscar) {
-            $query->whereRaw('CONCAT(nombre, " ", descripcion) like \'%' . $buscar . '%\'');
-        }
-
-        if ($ocultarEquipos)
+        if (!$buscar && $ocultarEquipos)
             $query->where(function ($q) use ($user) {
                 $q->whereNull('oculto')
                     ->orWhere('oculto', 0)
@@ -67,10 +73,7 @@ class EquiposController extends Controller
                     });
             });
 
-        //mostramos la consulta SQL final:
-        // dd($query->toSql());
-
-        $resultados = $query->latest()->paginate(12);
+        $resultados = $query->latest()->paginate(EquiposController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
 
         $resultados->getCollection()->transform(function ($equipo) use ($user) {
             $equipo->soy_miembro = $equipo->miembros->contains('id', optional($user)->id);
@@ -86,9 +89,7 @@ class EquiposController extends Controller
         }
 
         $categorias = (new Equipo())->getCategorias();
-
         if ($user) {
-            // cuenta el nº de equipos de los cuales eres miembro
             $mis_equipos = $user->equipos()->count();
             if ($mis_equipos)
                 array_unshift($categorias, ['nombre' => 'Mis equipos', 'total' => $mis_equipos]);

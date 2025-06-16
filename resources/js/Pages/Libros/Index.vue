@@ -94,8 +94,6 @@ const props = defineProps({
     busquedaValida: Boolean
 });
 
-const listado = ref(props.listado);
-
 const query = ref(props.filtrado)
 
 </script>

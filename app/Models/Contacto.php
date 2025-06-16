@@ -6,10 +6,12 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
 use App\Pigmalion\Countries;
 use App\Http\Controllers\ContactosController;
+use Laravel\Scout\Searchable;
 
 class Contacto extends ContenidoBaseModel
 {
     use CrudTrait;
+    use Searchable;
 
     protected $fillable = [
         'nombre',
@@ -25,8 +27,6 @@ class Contacto extends ContenidoBaseModel
         'email',
         'latitud',
         'longitud',
-        'centro_id',
-        'user_id',
         'visibilidad'
     ];
 

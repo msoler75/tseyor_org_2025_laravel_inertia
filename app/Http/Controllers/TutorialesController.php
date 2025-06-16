@@ -10,31 +10,31 @@ use App\Pigmalion\BusquedasHelper;
 
 class TutorialesController extends Controller
 {
-    //
+    public static $ITEMS_POR_PAGINA = 12;
+
     public function index(Request $request)
     {
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        // devuelve los items recientes segun la busqueda
+        $query = Tutorial::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
+            ->where('visibilidad', 'P');
+
         if ($buscar) {
-            $resultados = Tutorial::search($buscar);
-        } else {
-            // obtiene los items sin busqueda
-            $resultados = Tutorial::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
-                ->where('visibilidad', 'P')
-                ->when($categoria === '_', function ($query) {
-                    $query->orderByRaw('LOWER(titulo)');
-                });
+            $ids = Tutorial::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('tutoriales.id', $ids);
         }
 
-        // parámetros
-        if ($categoria && $categoria != '_')
-            $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%");
+        if (!$categoria)
+            $query->latest();
+        else if ($categoria == '_')
+            $query->orderBy('titulo', 'asc');
+        else
+            $query->where('categoria', 'like', '%' . $categoria . '%');
 
-        $resultados = $resultados
-            ->paginate(12)
-            ->appends(['buscar' => $buscar, 'categoria' => $categoria]);
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);

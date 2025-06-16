@@ -10,34 +10,26 @@ use App\Pigmalion\BusquedasHelper;
 
 class VideosController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 10;
     //
     public function index(Request $request)
     {
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
-        // $categoria = $request->input('categoria');
 
-        // devuelve los items recientes segun la busqueda
+        $query = Video::select(['slug', 'titulo', 'descripcion', 'updated_at'])
+            ->where('visibilidad', 'P');
+
         if ($buscar) {
-            $resultados = Video::where('titulo', 'like', "%$buscar%")
-                ->orWhere('descripcion', 'like', "%$buscar%");
-        } else {
-            // obtiene los items sin busqueda
-            $resultados = Video::whereRaw("1=1");
+            $ids = Video::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('videos.id', $ids);
         }
+        else
+            $query->latest();
 
-        $resultados=$resultados->where('visibilidad', 'P');
-
-        // parámetros
-       /* if ($categoria)
-            $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%")
-            ->when($categoria === '_', function ($query) {
-                $query->orderByRaw('LOWER(titulo)');
-            });
-*/
-
-        $resultados = $resultados
-            ->paginate(10)
-        ->appends(['buscar' => $buscar/*,  'categoria' => $categoria*/]);
+        $resultados = $query
+            ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends(['buscar' => $buscar/*,  'categoria' => $categoria*/]);
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);

@@ -31,7 +31,8 @@ class GuiaToolTest extends McpFeatureTestCase
     public function test_listar_guias()
     {
         \App\Models\Guia::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\GuiasController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 2; $i++) {
             \App\Models\Guia::create([
                 'nombre' => 'Guia ' . $i,
                 'slug' => 'guia-' . $i . '-' . uniqid(),
@@ -47,7 +48,22 @@ class GuiaToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'guia']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'guia', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(2, count($result['listado']['data']));
+        // buscar una guía específica
+        $result = $this->callMcpTool('listar', ['entidad' => 'guia', 'buscar' => 'Guia 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar una guía que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'guia', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_guia()
@@ -86,7 +102,7 @@ class GuiaToolTest extends McpFeatureTestCase
                 'libros' => '',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('guias', ['slug' => $params['data']['slug']]);
@@ -113,7 +129,7 @@ class GuiaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('guias', ['id' => $guia->id, 'descripcion' => $nuevaDescripcion]);
@@ -137,7 +153,7 @@ class GuiaToolTest extends McpFeatureTestCase
             'entidad' => 'guia',
             'id' => $guia->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('guias', ['id' => $guia->id]);

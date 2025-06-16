@@ -11,28 +11,31 @@ use App\Pigmalion\SEO;
 
 class GuiasController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 24;
+
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
 
         $categoria = $request->input('categoria');
+        $page = $request->input('page', 1);
 
-        $guias = $buscar ? Guia::search($buscar)
+        $guias = $buscar ?
+            Guia::search($buscar)->paginate(self::$ITEMS_POR_PAGINA, 'page', $page)
             :
             Guia::select(['nombre', 'slug', 'descripcion', 'imagen'])
-            ->when($categoria, function ($query) use ($categoria) {
-                return $query->where('categoria', $categoria);
-            })
-            ->orderBy('nombre');
-
-        $guias = $guias->paginate(24);
+                ->when($categoria, function ($query) use ($categoria) {
+                    return $query->where('categoria', $categoria);
+                })
+                ->orderBy('nombre')
+                ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
 
         // $categorias = Guia::select(['categoria'])->get(); añadir distinct, extrar como array de categorias
            // obtiene el listado de categorías de los Libros
            $categorias = (new Guia())->getCategorias();
 
         return Inertia::render('Guias/Index', [
-            'guias' => $guias,
+            'listado' => $guias,
             'categoriaActiva' => $categoria,
             'categorias' => $categorias,
             'filtrado' => $buscar
