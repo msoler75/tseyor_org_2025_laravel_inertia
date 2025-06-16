@@ -111,15 +111,15 @@ import '@jambonn/vue-concise-carousel/lib/vue-concise-carousel.css'
 import { getImageUrl } from '@/Stores/image.js';
 
 const props = defineProps({
-    casas: {
-        default: () => []
-    },
-    muulasterios: {
+    centros: {
         default: () => []
     },
     paises: {
         default: () => []
     }
 });
+
+const muulasterios = props.centros.filter(centro => centro.tipo === 'muulasterio');
+const casas = props.centros.filter(centro => centro.tipo === 'casa');
 
 </script>

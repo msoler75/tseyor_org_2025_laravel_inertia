@@ -31,7 +31,8 @@ class NormativaToolTest extends McpFeatureTestCase
     public function test_listar_normativas()
     {
         \App\Models\Normativa::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = 12; // NormativasController usa paginate(12)
+        for ($i = 0; $i < $pp + 4; $i++) {
             \App\Models\Normativa::create([
                 'titulo' => 'Normativa ' . $i,
                 'slug' => 'normativa-' . $i . '-' . uniqid(),
@@ -44,7 +45,23 @@ class NormativaToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'normativa']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'normativa', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        // fwrite(STDERR,print_r($result, true));
+        $this->assertEquals(4, count($result['listado']['data']));
+        // buscar una normativa específica
+        $result = $this->callMcpTool('listar', ['entidad' => 'normativa', 'buscar' => 'Normativa 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar una normativa que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'normativa', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_normativa()
@@ -77,7 +94,7 @@ class NormativaToolTest extends McpFeatureTestCase
                 'published_at' => now()->toDateString(),
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('normativas', ['slug' => $params['data']['slug']]);
@@ -101,7 +118,7 @@ class NormativaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('normativas', ['id' => $normativa->id, 'descripcion' => $nuevaDescripcion]);
@@ -122,7 +139,7 @@ class NormativaToolTest extends McpFeatureTestCase
             'entidad' => 'normativa',
             'id' => $normativa->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('normativas', ['id' => $normativa->id]);

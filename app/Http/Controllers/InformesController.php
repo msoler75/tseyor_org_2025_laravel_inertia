@@ -12,14 +12,16 @@ use Illuminate\Support\Facades\Gate;
 
 class InformesController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 12;
+
     //
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
         $equipo_id = $request->input('equipo');
-
-        return $this->listar($buscar, $categoria, $equipo_id);
+        $page = $request->input('page', 1);
+        return $this->listar($buscar, $categoria, $equipo_id, $page);
     }
 
 
@@ -33,29 +35,28 @@ class InformesController extends Controller
 
 
     //
-    private function listar($buscar, $categoria, $equipo_id_slug)
+    private function listar($buscar, $categoria, $equipo_id_slug, $page = 1)
     {
         $equipo = $equipo_id_slug ? (is_numeric($equipo_id_slug) ? Equipo::find($equipo_id_slug) : Equipo::where('slug', $equipo_id_slug)->first()) : null;
 
         $campos = ['informes.id', 'informes.titulo', 'informes.descripcion', 'informes.updated_at', 'informes.categoria', 'informes.visibilidad',
                   'equipos.id as equipo_id', 'equipos.nombre as nombre_equipo', 'equipos.slug as slug_equipo', 'equipos.oculto as equipo_oculto'];
 
-        $resultados = Informe::select($campos)
+        $query = Informe::select($campos)
             ->join('equipos', 'informes.equipo_id', '=', 'equipos.id');
 
         // busqueda
         if ($buscar) {
-            $resultadosBusqueda = Informe::search($buscar)->get();
-            $ids = $resultadosBusqueda->pluck('id')->toArray();
-            $resultados->whereIn('informes.id', $ids);
+            $ids = Informe::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('informes.id', $ids);
         }
 
         if ($equipo) {
-            $resultados->where('equipo_id', $equipo->id);
+            $query->where('equipo_id', $equipo->id);
         }
 
         if ($categoria) {
-            $resultados->where('informes.categoria', 'LIKE', "%$categoria%");
+            $query->where('informes.categoria', 'LIKE', "%$categoria%");
         }
 
         if (Gate::denies('administrar equipos')) {
@@ -64,7 +65,7 @@ class InformesController extends Controller
             if ($user) {
 
                 // solo informes publicados o borradores que puedo ver como coordinador
-                $resultados->where(function ($query) use ($user) {
+                $query->where(function ($query) use ($user) {
                     $query->where('informes.visibilidad', 'P')
                         ->orWhereIn('informes.equipo_id', function ($subquery) use ($user) {
                             $subquery->select('equipo_id')
@@ -75,7 +76,7 @@ class InformesController extends Controller
                 });
 
                 // solo informes de equipos no privados o en los que soy miembro
-                $resultados->where(function ($query) use ($user) {
+                $query->where(function ($query) use ($user) {
                     $query->where('equipos.oculto', false)
                         ->orWhereIn('equipos.id', function ($subquery) use ($user) {
                             $subquery->select('equipo_id')
@@ -85,15 +86,15 @@ class InformesController extends Controller
                 });
             } else {
                 // si no tengo cuenta de usuario, solo puedo ver informes publicados, y que son de equipos no privados
-                $resultados->where('visibilidad', 'P')
+                $query->where('visibilidad', 'P')
                     ->where('equipos.oculto', false);
             }
         }
 
-        $categorias = (new Informe())->getCategorias($resultados->get());
+        $categorias = (new Informe())->getCategorias($query->get());
 
-        $resultados = $resultados->orderBy('informes.updated_at', 'desc')
-            ->paginate(12)
+        $resultados = $query->orderBy('informes.updated_at', 'desc')
+            ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends(['categoria' => $categoria, 'equipo' => $equipo_id_slug]);
 
         if ($buscar)

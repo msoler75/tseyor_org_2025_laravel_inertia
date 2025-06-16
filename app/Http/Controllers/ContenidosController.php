@@ -13,6 +13,7 @@ use App\Pigmalion\StrEx;
 
 class ContenidosController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 64;
 
     /**
      * Novedades
@@ -28,23 +29,22 @@ class ContenidosController extends Controller
         // no aparecen en novedades
         $colecciones_excluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', /*'lugares',*/ 'guias', 'experiencias'];
 
-        // atención para administradores: la búsqueda no incluye los contenidos no publicados
-
+        $page = $request->input('page', 1);
         $resultados = $buscar ?
             Contenido::search($buscar)
             ->query(function ($query) use ($colecciones_excluidas) {
                 return $query->whereNotIn('coleccion', $colecciones_excluidas);
             })
-            ->paginate(10)->appends(['buscar' => $buscar])
+            ->paginate(ContenidosController::$ITEMS_POR_PAGINA, 'page', $page)
+            ->appends(['buscar' => $buscar])
             :
-            // los administradores ven todos los contenidos, y si están en modo publicado o borrador
             Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion', 'visibilidad'])
             ->when(!$esAdministrador, function ($query) {
                 $query->where('visibilidad', 'P');
             })
             ->whereNotIn('coleccion', $colecciones_excluidas)
-            ->latest('updated_at') // Ordenar por updated_at
-            ->paginate(10);
+            ->latest('updated_at')
+            ->paginate(ContenidosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
 
         return Inertia::render('Novedades', [
             'filtrado' => $buscar,
@@ -106,7 +106,9 @@ class ContenidosController extends Controller
         )->paginate(64);
 
         if ($busqueda_valida && !$resultados->count()) // por algun motivo algunas busquedas no las encuentra. En esos casos, buscamos manualmente
-            $resultados = Contenido::where('visibilidad', 'P')->where('titulo', 'LIKE', "%$buscarFiltrado%")->orWhere('texto_busqueda', 'LIKE', "%$buscarFiltrado%")->paginate(64);
+            $resultados = Contenido::where('visibilidad', 'P')->where('titulo', 'LIKE', "%$buscarFiltrado%")
+                ->orWhere('texto_busqueda', 'LIKE', "%$buscarFiltrado%")
+                ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
 
 
         if (strlen($buscarFiltrado) < 3)

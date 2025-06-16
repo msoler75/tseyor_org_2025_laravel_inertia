@@ -13,28 +13,31 @@ use App\Pigmalion\BusquedasHelper;
 class LibrosController extends Controller
 {
 
+    public static $ITEMS_POR_PAGINA = 20;
+
     public function index(Request $request)
     {
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        $resultados = $categoria ?
-            Libro::where('categoria', 'LIKE', "%$categoria%")
-            ->when($categoria === '_', function ($query) {
-                $query->orderByRaw('LOWER(titulo)');
-            })
-            ->paginate(20)->appends(['categoria' => $categoria])
-            : ($buscar ?
-                BusquedasHelper::buscar(Libro::class, $buscar)->paginate(10)
-                ->appends(['buscar' => $buscar])
-                //Libro::where('titulo', 'LIKE', "%$buscar%")
-                  //    ->orWhere('descripcion', 'LIKE', "%$buscar%")->paginate(20)
-                :
-                Libro::orderBy('updated_at', 'desc')->paginate(20) // novedades
-            );
+        $query = Libro::select(['slug', 'titulo', 'descripcion', 'updated_at', 'imagen'])
+            ->where('visibilidad', 'P');
 
-        if ($buscar && !$resultados->count()) // por si acaso, por algun motivo algunas busquedas no las encuentra
-            $resultados = Libro::where('titulo', 'LIKE', "%$buscar%")->orWhere('descripcion', 'LIKE', "%$buscar%")->paginate();
+        if ($buscar) {
+            $ids = Libro::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('libros.id', $ids);
+        }
+
+        if (!$categoria)
+            $query->latest();
+        else if ($categoria == '_')
+            $query->orderBy('titulo', 'asc');
+        else
+            $query->where('categoria', 'like', '%' . $categoria . '%');
+
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);
@@ -114,12 +117,13 @@ class LibrosController extends Controller
 
         // busca los guías asociados a este libro. Sea por la descripción, o por la bibliografía asociada a cada guía
         $descripcion_tokens = preg_split("/[,.\(\)\t\s\n\r]/", strtolower(BusquedasHelper::descartarPalabrasComunes($libro->descripcion)[0]), -1, PREG_SPLIT_NO_EMPTY);
-        $descripcion_tokens = array_map(function($m) { return "\\b".$m."\\b";}, $descripcion_tokens);
+        $descripcion_tokens = array_map(function ($m) {
+            return "\\b" . $m . "\\b";
+        }, $descripcion_tokens);
         $descripcion_en_or = implode("|", $descripcion_tokens);
         $guias = Guia::select('nombre', 'slug', 'imagen')->where('libros', 'like', '%' . $libro->slug . '%')
-        ->orWhereRaw('LOWER(nombre) REGEXP ?', [$descripcion_en_or])
-        ->get()
-        ;
+            ->orWhereRaw('LOWER(nombre) REGEXP ?', [$descripcion_en_or])
+            ->get();
 
 
         // $palabras = implode(" ", $palabrasClave);

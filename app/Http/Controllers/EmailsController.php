@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Gate;
 
 class EmailsController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 50;
 
     public function index(Request $request)
     {
@@ -28,7 +29,8 @@ class EmailsController extends Controller
             $email = Email::findOrFail($id);
         }
 
-        $resultados = Email::latest()->paginate(50);
+        $page = $request->input('page', 1);
+        $resultados = Email::latest()->paginate(EmailsController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
 
         return Inertia::render('Emails/Index', [
             'listado' => $resultados,

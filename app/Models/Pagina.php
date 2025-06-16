@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
+use Laravel\Scout\Searchable;
 
 class Pagina extends ContenidoBaseModel
 {
     use CrudTrait;
+    use Searchable;
 
     protected $table = 'paginas';
 

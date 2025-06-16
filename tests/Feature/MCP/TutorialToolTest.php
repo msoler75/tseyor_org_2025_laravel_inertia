@@ -22,7 +22,8 @@ class TutorialToolTest extends McpFeatureTestCase
     public function test_listar_tutoriales()
     {
         \App\Models\Tutorial::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\TutorialesController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 5; $i++) {
             \App\Models\Tutorial::create([
                 'titulo' => 'Tutorial ' . $i,
                 'slug' => 'tutorial-' . $i . '-' . uniqid(),
@@ -35,8 +36,24 @@ class TutorialToolTest extends McpFeatureTestCase
         }
         $result = $this->callMcpTool('listar', ['entidad' => 'tutorial']);
         $this->assertIsArray($result);
-        $this->assertArrayHasKey('tutoriales', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['tutoriales']));
+        // fwrite(STDERR, print_r($result, true));
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'tutorial', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(5, count($result['listado']['data']));
+        // buscar un tutorial específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'tutorial', 'buscar' => 'Tutorial 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar un tutorial que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'tutorial', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_tutorial()
@@ -51,7 +68,7 @@ class TutorialToolTest extends McpFeatureTestCase
             'video' => 'https://video-test.com',
             'visibilidad' => 'P',
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'tutorial', 'slug' => $tutorial->slug]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'tutorial', 'slug' => $tutorial->slug]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('tutorial', $result);
         $this->assertEquals($tutorial->slug, $result['tutorial']['slug'] ?? $result['tutorial']->slug ?? null);
@@ -71,7 +88,7 @@ class TutorialToolTest extends McpFeatureTestCase
                 'video' => 'https://nuevo-tutorial.com',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('tutoriales', ['slug' => $params['data']['slug']]);
@@ -96,7 +113,7 @@ class TutorialToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('tutoriales', ['id' => $tutorial->id, 'descripcion' => $nuevaDescripcion]);
@@ -118,7 +135,7 @@ class TutorialToolTest extends McpFeatureTestCase
             'entidad' => 'tutorial',
             'id' => $tutorial->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('tutoriales', ['id' => $tutorial->id]);

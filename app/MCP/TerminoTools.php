@@ -6,5 +6,5 @@ class TerminoTools extends BaseModelTools
 {
     protected ?string $modelName = 'termino';
     protected ?string $modelClass = 'App\\Models\\Termino';
-    protected ?string $controllerClass = null;
+    protected ?string $controllerClass = 'App\\Http\\Controllers\\TerminosController';
 }

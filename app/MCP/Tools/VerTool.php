@@ -33,13 +33,7 @@ class VerTool extends BaseTool
         Log::channel('mcp')->debug('[BaseVerTool] handle', ['params' => $params, 'modelo' => $modelo, 'controller' => $controller, 'modelClass' => $modelClass]);
         if ($controller && $controllerMethod) {
             if (!class_exists($controller)) return ['error' => 'Clase no encontrada: ' . $controller];
-            $reflection = new \ReflectionMethod($controller, $controllerMethod);
-            $paramsReflection = $reflection->getParameters();
-            if (count($paramsReflection) === 2 && $paramsReflection[0]->getType() && $paramsReflection[0]->getType()->getName() === \Illuminate\Http\Request::class) {
-                $response = app($controller)->{$controllerMethod}($this->inertiaRequest, $id);
-            } else {
-                $response = app($controller)->{$controllerMethod}($id);
-            }
+            $response = $modelTools->callControllerMethod($this->name(), $this->inertiaRequest, $params);
             $data = $this->fromInertiaToArray($response);
             return $data;
         } elseif ($modelClass) {
@@ -52,4 +46,6 @@ class VerTool extends BaseTool
         }
         return ['error' => 'No se ha definido controller ni modelo'];
     }
+
+
 }

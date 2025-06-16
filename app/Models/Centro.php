@@ -6,12 +6,14 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Models\ContenidoBaseModel;
 use App\Pigmalion\Countries;
 use App\Traits\TieneImagen;
+use Laravel\Scout\Searchable;
 
 class Centro extends ContenidoBaseModel
 {
     use CrudTrait;
     use \Illuminate\Database\Eloquent\SoftDeletes;
     use TieneImagen;
+    use Searchable;
 
     protected $fillable = [
         'nombre',

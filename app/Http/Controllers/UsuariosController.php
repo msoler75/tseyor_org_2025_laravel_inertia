@@ -12,18 +12,23 @@ use App\Pigmalion\SEO;
 
 class UsuariosController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 50;
 
     public function index(Request $request)
     {
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
 
-        $resultados = ($buscar ? User::where('slug', 'like', '%' . $buscar . '%')
-            ->orWhere('name', 'like', '%' . $buscar . '%')
-            ->orWhere('email', 'like', '%' . $buscar . '%')
-            ->paginate(10)->appends(['buscar' => $buscar])
-            :
-            User::latest()->paginate(50)
-        );
+        $query = User::select(['id', 'name as nombre', 'slug', 'frase', 'created_at']);
+
+        if ($buscar) {
+            $ids = User::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('users.id', $ids);
+        } else
+            $query->latest();
+
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         return Inertia::render('Usuarios/Index', [
             'filtrado' => $buscar,
@@ -112,6 +117,4 @@ class UsuariosController extends Controller
         $grupos = Grupo::get();
         return response()->json($grupos, 200);
     }
-
-
 }

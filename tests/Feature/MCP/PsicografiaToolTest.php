@@ -22,7 +22,8 @@ class PsicografiaToolTest extends McpFeatureTestCase
     public function test_listar_psicografias()
     {
         \App\Models\Psicografia::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = 14; // PsicografiasController usa paginate(14)
+        for ($i = 0; $i < $pp + 3; $i++) {
             \App\Models\Psicografia::create([
                 'titulo' => 'Psicografia ' . $i,
                 'slug' => 'psicografia-' . $i . '-' . uniqid(),
@@ -33,8 +34,23 @@ class PsicografiaToolTest extends McpFeatureTestCase
         }
         $result = $this->callMcpTool('listar', ['entidad' => 'psicografia']);
         $this->assertIsArray($result);
-        $this->assertArrayHasKey('psicografias', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['psicografias']));
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'psicografia', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(3, count($result['listado']['data']));
+        // buscar una psicografía específica
+        $result = $this->callMcpTool('listar', ['entidad' => 'psicografia', 'buscar' => 'Psicografia 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar una psicografía que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'psicografia', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_psicografia()
@@ -65,7 +81,7 @@ class PsicografiaToolTest extends McpFeatureTestCase
                 'descripcion' => 'Descripción de prueba',
                 'imagen' => '/img/nueva-psicografia.jpg',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('psicografias', ['slug' => $params['data']['slug']]);
@@ -88,7 +104,7 @@ class PsicografiaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('psicografias', ['id' => $psicografia->id, 'descripcion' => $nuevaDescripcion]);
@@ -108,7 +124,7 @@ class PsicografiaToolTest extends McpFeatureTestCase
             'entidad' => 'psicografia',
             'id' => $psicografia->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('psicografias', ['id' => $psicografia->id]);

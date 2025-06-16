@@ -35,21 +35,30 @@ class ListarTool extends BaseTool
 
         if ($controller && $controllerMethod) {
             $this->inertiaRequest->query->replace($params);
-            $response = app($controller)->{$controllerMethod}($this->inertiaRequest);
+            $response = $modelTools->callControllerMethod($this->name(), $this->inertiaRequest, $params);
             $data = $this->fromInertiaToArray($response);
             return $data;
         } elseif ($modelClass) {
             $query = ($modelClass)::query();
-            if (!empty($params['buscar'])) {
-                $buscar = $params['buscar'];
-                $query->where(function ($q) use ($buscar) {
-                    $q->where('titulo', 'like', "%$buscar%")
-                        ->orWhere('descripcion', 'like', "%$buscar%");
-                });
+            $buscar = $params['buscar'] ?? null;
+            $categoria = $params['categoria'] ?? null;
+            $fillable = (new $modelClass())->getFillable();
+            if ($buscar) {
+                // si es "searchable"
+                if (method_exists($modelClass, 'shouldBeSearchable')) {
+                    $ids = $modelClass::search($buscar);
+                    $query->whereIn('id', $ids);
+                } else {
+                    // obtener un array de los campos posibles de busqueda: titulo, nombre, descripcion, slug  desde fillable
+                    $searchableFields = ['titulo', 'nombre', 'descripcion', 'slug'];
+                    $foundFields = array_intersect($searchableFields, $fillable);
+                    //para  cada campo, agregar una condición where
+                    foreach ($foundFields as $field)
+                        $query->orWhere($field, 'LIKE', "%$buscar%");
+                }
             }
-            if (!empty($params['categoria'])) {
-                $query->where('categoria', $params['categoria']);
-            }
+            if ($categoria && in_array('categoria', $fillable))
+                $query->where('categoria', $categoria);
             $result = $query->get();
             return [$modelNamePlural => $result->toArray()];
         }

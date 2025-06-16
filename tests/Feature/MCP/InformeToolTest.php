@@ -2,8 +2,25 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Support\Facades\DB;
+
 class InformeToolTest extends McpFeatureTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Forzar limpieza y evitar duplicados de slug
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        \App\Models\Informe::truncate();
+        \App\Models\Equipo::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // Usar firstOrCreate para evitar duplicados si por alguna razón no se vacía
+        \App\Models\Equipo::firstOrCreate(
+            ['id' => 1],
+            ['nombre' => 'Equipo Test', 'slug' => 'equipo-test', 'oculto' => false]
+        );
+    }
+
     public function test_info_informe()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'informe']);
@@ -31,7 +48,8 @@ class InformeToolTest extends McpFeatureTestCase
     public function test_listar_informes()
     {
         \App\Models\Informe::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\InformesController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 2; $i++) {
             \App\Models\Informe::create([
                 'titulo' => 'Informe ' . $i,
                 'categoria' => 'anual',
@@ -46,7 +64,22 @@ class InformeToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'informe']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'informe', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(2, count($result['listado']['data']));
+        // buscar un informe específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'informe', 'buscar' => 'Informe 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar un informe que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'informe', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_informe()
@@ -83,7 +116,7 @@ class InformeToolTest extends McpFeatureTestCase
                 'archivos' => json_encode([]),
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('informes', ['titulo' => $params['data']['titulo']]);
@@ -109,7 +142,7 @@ class InformeToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('informes', ['id' => $informe->id, 'descripcion' => $nuevaDescripcion]);
@@ -132,7 +165,7 @@ class InformeToolTest extends McpFeatureTestCase
             'entidad' => 'informe',
             'id' => $informe->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('informes', ['id' => $informe->id]);

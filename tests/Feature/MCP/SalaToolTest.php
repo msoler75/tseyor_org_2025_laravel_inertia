@@ -21,8 +21,11 @@ class SalaToolTest extends McpFeatureTestCase
 
     public function test_listar_salas()
     {
+        // remover foreign key constraints to allow truncation
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \App\Models\Sala::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\SalasController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 2; $i++) {
             \App\Models\Sala::create([
                 'nombre' => 'Sala ' . $i,
                 'slug' => 'sala-' . $i . '-' . uniqid(),
@@ -32,12 +35,28 @@ class SalaToolTest extends McpFeatureTestCase
         }
         $result = $this->callMcpTool('listar', ['entidad' => 'sala']);
         $this->assertIsArray($result);
-        $this->assertArrayHasKey('salas', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['salas']));
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'sala', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(2, count($result['listado']['data']));
+        // buscar una sala específica
+        $result = $this->callMcpTool('listar', ['entidad' => 'sala', 'buscar' => 'Sala 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar una sala que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'sala', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_sala()
     {
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \App\Models\Sala::truncate();
         $sala = \App\Models\Sala::create([
             'nombre' => 'Sala Test',
@@ -53,6 +72,7 @@ class SalaToolTest extends McpFeatureTestCase
 
     public function test_crear_sala()
     {
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \App\Models\Sala::truncate();
         $params = [
             'entidad' => 'sala',
@@ -62,7 +82,7 @@ class SalaToolTest extends McpFeatureTestCase
                 'descripcion' => 'Descripción de prueba',
                 'enlace' => 'https://nueva-sala.com',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('salas', ['slug' => $params['data']['slug']]);
@@ -70,6 +90,7 @@ class SalaToolTest extends McpFeatureTestCase
 
     public function test_editar_sala()
     {
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \App\Models\Sala::truncate();
         $sala = \App\Models\Sala::create([
             'nombre' => 'Editar Sala',
@@ -84,7 +105,7 @@ class SalaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('salas', ['id' => $sala->id, 'descripcion' => $nuevaDescripcion]);
@@ -92,6 +113,7 @@ class SalaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_sala()
     {
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         \App\Models\Sala::truncate();
         $sala = \App\Models\Sala::create([
             'nombre' => 'Eliminar Sala',
@@ -103,7 +125,7 @@ class SalaToolTest extends McpFeatureTestCase
             'entidad' => 'sala',
             'id' => $sala->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('salas', ['id' => $sala->id]);

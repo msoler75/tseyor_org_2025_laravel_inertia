@@ -10,26 +10,29 @@ use App\Pigmalion\Markdown;
 
 class EntradasController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 12;
 
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
+        $page = $request->input('page', 1);
 
-        $resultados = $buscar ? Entrada::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
-            ->where('visibilidad', 'P')
-            ->whereRaw('CONCAT(titulo," ", descripcion, " ", texto) LIKE \'%' . $buscar . '%\'')
-            // ordenar por published_at
+        $query = Entrada::select(['slug', 'titulo', 'descripcion', 'updated_at', 'published_at', 'categoria'])
+            ->where('visibilidad', 'P');
+
+        if ($buscar) {
+            $ids = Entrada::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('entradas.id', $ids);
+        }
+
+        $resultados = $query
             ->orderBy('published_at', 'desc')
-            ->paginate(12)->appends(['buscar' => $buscar])
-            :
-            Entrada::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'published_at'])->where('visibilidad', 'P')->orderBy('published_at', 'desc')->paginate(10);
-
-        // $recientes = Entrada::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->orderBy('published_at', 'desc')->take(32)->get();
+            ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         return Inertia::render('Entradas/Index', [
             'filtrado' => $buscar,
             'listado' => $resultados,
-           // 'recientes' => $recientes
         ])
             ->withViewData(SEO::get('entradas'));
     }

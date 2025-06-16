@@ -18,22 +18,16 @@ use App\Notifications\BoletinGenerado;
 
 class BoletinesController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 12;
+
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
+        $page = $request->input('page', 1);
 
         // devuelve los boletines recientes según la búsqueda
-        $resultados = Boletin::select(['id', 'titulo', 'texto as descripcion', 'updated_at', 'tipo'])
-            ->when($buscar, function ($query, $buscar) {
-                $query->where('titulo', 'LIKE', "%$buscar%")
-                    ->orWhere('texto', 'LIKE', "%$buscar%");
-            })
-            ->when($categoria, function ($query, $categoria) {
-                $query->where('tipo', $categoria);
-            })
-            ->orderBy('updated_at', 'desc')
-            ->paginate(12)
+        $resultados = Boletin::latest()->paginate(BoletinesController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends(['buscar' => $buscar, 'categoria' => $categoria]);
 
 

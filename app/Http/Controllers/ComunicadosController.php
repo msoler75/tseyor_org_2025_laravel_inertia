@@ -13,6 +13,7 @@ use App\Pigmalion\Markdown;
 use Illuminate\Support\Facades\Log;
 class ComunicadosController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 15;
 
     /**
      * Display a listing of the resource.
@@ -43,6 +44,7 @@ class ComunicadosController extends Controller
             'query' => $request->query(),
         ]);
 
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
         $año = $request->input('ano');
@@ -136,7 +138,7 @@ class ComunicadosController extends Controller
         */
 
         $resultados = $resultados
-            ->paginate(15)
+            ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends(['buscar' => $buscar, 'categoria' => $categoria, 'ano' => $año, 'orden' => $orden, 'completo' => $completo ? 1 : 0]);
 
         if ($buscar)

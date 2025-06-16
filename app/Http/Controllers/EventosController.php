@@ -9,20 +9,22 @@ use App\Pigmalion\SEO;
 
 class EventosController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 12;
 
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
+        $page = $request->input('page', 1);
 
         $resultados = $categoria ?
             Evento::where('categoria', '=', $categoria)
-            ->paginate(12)->appends(['categoria' => $categoria])
+            ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)->appends(['categoria' => $categoria])
             : ($buscar ? Evento::where('titulo', 'like', '%' . $buscar . '%')
                 ->orWhere('descripcion', 'like', '%' . $buscar . '%')
-                ->paginate(10)->appends(['buscar' => $buscar])
+                ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)->appends(['buscar' => $buscar])
                 :
-                Evento::latest()->paginate(10)
+                Evento::latest()->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             );
 
         $categorias = Evento::selectRaw('categoria as nombre, count(*) as total')

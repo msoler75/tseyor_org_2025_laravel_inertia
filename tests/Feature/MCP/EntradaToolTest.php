@@ -22,7 +22,8 @@ class EntradaToolTest extends McpFeatureTestCase
     public function test_listar_entradas()
     {
         Entrada::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\EntradasController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 2; $i++) {
             Entrada::create([
                 'titulo' => 'Entrada ' . $i,
                 'slug' => 'entrada-' . $i . '-' . uniqid(),
@@ -35,7 +36,24 @@ class EntradaToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'entrada']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'entrada', 'page' => 2]);
+        // fwrite(STDERR, print_r($result, true));
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(2, count($result['listado']['data']));
+        // buscar una entrada específica
+        $result = $this->callMcpTool('listar', ['entidad' => 'entrada', 'buscar' => 'Entrada 1']);
+        // fwrite(STDERR, print_r($result, true));
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar una entrada que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'entrada', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_entrada()
@@ -68,7 +86,7 @@ class EntradaToolTest extends McpFeatureTestCase
                 'categoria' => 'test',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('entradas', ['slug' => $params['data']['slug']]);
@@ -92,7 +110,7 @@ class EntradaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('entradas', ['id' => $entrada->id, 'descripcion' => $nuevaDescripcion]);
@@ -113,7 +131,7 @@ class EntradaToolTest extends McpFeatureTestCase
             'entidad' => 'entrada',
             'id' => $entrada->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('entradas', ['id' => $entrada->id]);

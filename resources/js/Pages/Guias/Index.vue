@@ -41,7 +41,7 @@
             <FadeOnNavigate class="w-full grow">
 
                 <GridAppear class="gap-8" col-width="12rem">
-                    <CardContent v-for="contenido in guias.data" :key="contenido.id" :image="contenido.imagen"
+                    <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
                         :href="route('guia', contenido.slug)" imageClass="h-60">
                         <div
                             class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow-xs">
@@ -62,7 +62,7 @@
 
 
 const props = defineProps({
-    guias: {
+    listado: {
         default: () => []
     },
     categorias: {

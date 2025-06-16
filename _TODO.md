@@ -2,6 +2,7 @@
 
 Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-do.txt`.
 
+## Arreglar vista de Centros Index (aparece carousel con ancho toda la pantalla superpuesto con otros div)
 
 ## Automatización de inscripciones a cursos
 -cuando alguien se inscribe a un curso tseyor el supervisor (configurable en .env) recibe una notificación con enlaces a gestionar esa inscripción
@@ -115,4 +116,6 @@ Lista de tareas pendientes y cosas por hacer. Extraído y organizado desde `to-d
 ## Instalar IP Abuser Middleware
 - https://github.com/rahulalam31/Laravel-Abuse-IP
 - establecer cron de actualización de IPS
+
+
 

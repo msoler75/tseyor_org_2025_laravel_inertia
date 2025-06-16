@@ -14,29 +14,28 @@ use App\Pigmalion\BusquedasHelper;
 
 class TerminosController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 60;
+
     public function index(Request $request)
     {
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
         $letra = $request->input('letra');
-
         $letraLike = strtolower($letra) . "%";
-
         $listado = $letra ?
             Termino::select(['slug', 'nombre'])
                 ->where('slug', 'LIKE', $letraLike)
                 ->orderBy('nombre', 'asc')
-                ->paginate(60)
+                ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
                 ->appends(['letra' => $letra])
             :
-            ($buscar ? Termino::search($buscar)->paginate(60)->appends(['filtrado' => $buscar])
+            ($buscar ? Termino::search($buscar)->paginate(self::$ITEMS_POR_PAGINA, 'page', $page)->appends(['filtrado' => $buscar])
                 :
                 Termino::select(['slug', 'nombre'])
                     ->orderBy('nombre', 'asc')
-                    ->paginate(60));
-
+                    ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page));
         if ($buscar)
             BusquedasHelper::formatearResultados($listado, $buscar);
-
         return Inertia::render('Terminos/Index', [
             'listado' => $listado,
             'letras' => $this->listaLetras(),

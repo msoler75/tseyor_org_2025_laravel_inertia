@@ -11,13 +11,15 @@ use App\Pigmalion\SEO;
 
 class ContactosController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 12;
 
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
         $pais = $request->input('pais');
+        $page = $request->input('page', 1);
+        // $num_per_page = ContactosController::$ITEMS_POR_PAGINA;
 
-        $num_per_page = 12;
 
         ///
         /*
@@ -34,23 +36,23 @@ class ContactosController extends Controller
 
         //dd($buscar);
 
-        // dd(Countries::getFuzzyCountries($buscar));
-        $resultados = $pais ?
-            Contacto::where('pais', '=', $pais)
-            ->where('visibilidad', 'P')
-            ->paginate($num_per_page)->appends(['pais' => $pais])
-            : ($buscar ? Contacto::where('nombre', 'like', '%' . $buscar . '%')
-                ->where('visibilidad', 'P')
-                ->orWhereIn('pais', array_map(function ($data) {
-                    return $data['code'];
-                }, Countries::getFuzzyCountries($buscar)))
-                ->orWhere('poblacion', 'like', '%' . $buscar . '%')
-                ->paginate($num_per_page)->appends(['buscar' => $buscar])
-                :
-                Contacto::latest()->where('visibilidad', 'P')->paginate($num_per_page)
-            );
+        $query = Contacto::select(['id', 'nombre', 'slug', 'imagen', 'pais'])
+            ->where('visibilidad', 'P');
 
-            // dd($resultados);
+        if ($pais)
+            $query->where('pais', $pais);
+
+        if ($buscar) {
+            $ids = Contacto::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('contactos.id', $ids)
+                  ->orderBy('nombre','asc');
+        }
+        else
+            $query->latest();
+
+        // dd(Countries::getFuzzyCountries($buscar));
+        $resultados =$query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         $paises = Contacto::selectRaw('pais as codigo, count(*) as total')
             ->where('visibilidad', 'P')

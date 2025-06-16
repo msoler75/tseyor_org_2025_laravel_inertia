@@ -1,7 +1,8 @@
 <?php
+
 namespace App\MCP\Base;
 
-
+use Illuminate\Http\Request;
 abstract class BaseModelTools
 {
     protected ?string $modelName = null; // Nombre singular del modelo (ej: 'comunicado')
@@ -10,64 +11,71 @@ abstract class BaseModelTools
 
     protected ?string $controllerClass = null; // Ejemplo: \App\Http\Controllers\EventosController
     protected array $methods = [
-        'listar'=> 'index',
+        'listar' => 'index',
         'ver' => 'show'
     ];
 
     protected array $required = [
-        'campos'=> [],
-        'ver'=> [],
-        'listar'=> [],
-        'crear'=> ['administrar_contenidos'],
-        'editar'=> ['administrar_contenidos'],
-        'eliminar'=> ['administrar_contenidos'],
+        'campos' => [],
+        'ver' => [],
+        'listar' => [],
+        'crear' => ['administrar_contenidos'],
+        'editar' => ['administrar_contenidos'],
+        'eliminar' => ['administrar_contenidos'],
     ];
 
 
-    public function __construct() {
-        if(!$this->modelNamePlural)
+    public function __construct()
+    {
+        if (!$this->modelNamePlural)
             $this->modelNamePlural = $this->getModelNameSingle() . 's';
-        if(!$this->modelClass) {
+        if (!$this->modelClass) {
             throw new \InvalidArgumentException("La clase del modelo no está definida. Debes definir la propiedad 'modelClass' en la clase hija.");
         }
-        if(!class_exists($this->modelClass)) {
+        if (!class_exists($this->modelClass)) {
             throw new \InvalidArgumentException("La clase del modelo '{$this->modelClass}' no existe.");
         }
-        if($this->controllerClass && !class_exists($this->controllerClass)) {
+        if ($this->controllerClass && !class_exists($this->controllerClass)) {
             throw new \InvalidArgumentException("La clase del controlador '{$this->controllerClass}' no existe.");
         }
     }
 
-    public function getModelClass(): ?string {
+    public function getModelClass(): ?string
+    {
         return $this->modelClass;
     }
 
-    public function getControllerClass(): ?string {
+    public function getControllerClass(): ?string
+    {
         return $this->controllerClass;
     }
 
-    public function getModelNameSingle(): string {
+    public function getModelNameSingle(): string
+    {
         return $this->modelName;
     }
 
-     public function getModelNamePlural(): string {
+    public function getModelNamePlural(): string
+    {
         return $this->modelNamePlural;
     }
 
-    public function getMethod($verb): string {
-        if(!array_key_exists($verb, $this->methods))
+    public function getMethod($verb): string
+    {
+        if (!array_key_exists($verb, $this->methods))
             throw new \InvalidArgumentException("El verbo '$verb' no está definido en los métodos requeridos.");
         return $this->methods[$verb];
     }
 
-    public function getRequiredPermissions($verb): array {
-        if(!array_key_exists($verb, $this->required))
+    public function getRequiredPermissions($verb): array
+    {
+        if (!array_key_exists($verb, $this->required))
             throw new \InvalidArgumentException("El verbo '$verb' no está definido en los requisitos.");
         return $this->required[$verb];
     }
 
 
-      // Hook para procesamiento previo
+    // Hook para procesamiento previo
     public function onBeforeCreate(array $data, array $params): array
     {
         if (isset($data['texto'])) {
@@ -85,7 +93,7 @@ abstract class BaseModelTools
         return $item;
     }
 
-     // Hook para procesamiento previo
+    // Hook para procesamiento previo
     public function onBeforeEdit(array $data, $item, array $params): array
     {
         if (isset($data['texto'])) {
@@ -114,4 +122,27 @@ abstract class BaseModelTools
     }
 
 
+    // HOOK para llamada al método del controlador
+    public function callControllerMethod(string $toolName, Request $request, array $params)
+    {
+        $id = $params['id'] ?? $params['slug'] ?? null;
+
+        $page = $params['page'] ?? 1;
+        $request->request->add(['page' => $page]);
+
+        $controller = $this->getControllerClass();
+        $controllerMethod = $this->getMethod($toolName);
+
+        $reflection = new \ReflectionMethod($controller, $controllerMethod);
+        $paramsReflection = $reflection->getParameters();
+        if (count($paramsReflection) === 2 && $paramsReflection[0]->getType() && $paramsReflection[0]->getType()->getName() === Request::class) {
+            $response = app($controller)->{$controllerMethod}($request, $id);
+        } else if (count($paramsReflection) === 1 && $paramsReflection[0]->getType() && $paramsReflection[0]->getType()->getName() === Request::class) {
+            // revisar si el parámetro es de tipo Request
+            $response = app($controller)->{$controllerMethod}($request);
+        } else {
+            $response = app($controller)->{$controllerMethod}($id);
+        }
+        return $response;
+    }
 }

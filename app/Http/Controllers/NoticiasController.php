@@ -11,19 +11,25 @@ use App\Pigmalion\BusquedasHelper;
 
 class NoticiasController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 10;
 
     public function index(Request $request)
     {
-        Log::channel('mcp')->info('[NoticiasController] Parámetros recibidos', $request->all());
         $buscar = $request->input('buscar');
-        Log::channel('mcp')->info('[NoticiasController] Valor de $buscar', ['buscar' => $buscar]);
+        $page = $request->input('page', 1);
 
-        $resultados = $buscar ?
-            Noticia::search($buscar)->where('visibilidad', 'P')->paginate(10)
-            :
-            Noticia::select(['slug', 'titulo', 'descripcion', 'published_at', 'imagen'])->where('visibilidad', 'P')->latest()->paginate(10);
+        $query = Noticia::select(['slug', 'titulo', 'descripcion', 'published_at', 'imagen'])
+            ->where('visibilidad', 'P');
 
-        // $recientes = Noticia::select(['slug', 'titulo', 'published_at'])->where('visibilidad', 'P')->latest()->take(24)->get();
+        if ($buscar) {
+            $ids = Noticia::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('noticias.id', $ids);
+        }
+
+        $resultados = $query
+            ->latest()
+            ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar, false);
@@ -31,7 +37,6 @@ class NoticiasController extends Controller
         return Inertia::render('Noticias/Index', [
             'filtrado' => $buscar,
             'listado' => $resultados,
-            // 'recientes' => $recientes
         ])
             ->withViewData(SEO::get('noticias'));
     }

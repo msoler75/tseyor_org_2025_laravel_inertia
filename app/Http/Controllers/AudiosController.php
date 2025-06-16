@@ -9,21 +9,32 @@ use App\Pigmalion\SEO;
 
 class AudiosController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 50;
 
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
+        $page = $request->input('page', 1);
 
-        $resultados = $categoria ?
-            Audio::where('categoria', '=', $categoria)
-            ->paginate(50)->appends(['categoria' => $categoria])
-            : ($buscar ? Audio::where('titulo', 'like', '%' . $buscar . '%')
-                ->orWhere('descripcion', 'like', '%' . $buscar . '%')
-                ->paginate(50)->appends(['buscar' => $buscar])
-                :
-                Audio::latest()->paginate(50)
-            );
+        $query = Audio::select(['id', 'slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
+            ->where('visibilidad', 'P')
+            ->when($categoria === '_', function ($query) {
+                $query->orderByRaw('LOWER(titulo)');
+            })
+            ->when($categoria && $categoria !== '_', function ($query) use ($categoria) {
+                $query->where('categoria', '=', $categoria);
+            });
+
+        if ($buscar) {
+            $ids = Audio::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('audios.id', $ids);
+        }
+        else if (!$categoria)
+            $query->latest();
+
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         $categorias = Audio::selectRaw('categoria as nombre, count(*) as total')
             ->groupBy('categoria')
@@ -35,7 +46,7 @@ class AudiosController extends Controller
             'listado' => $resultados,
             'categorias' => $categorias
         ])
-        ->withViewData(SEO::get('audios'));
+            ->withViewData(SEO::get('audios'));
     }
 
     public function show($id)
@@ -53,6 +64,6 @@ class AudiosController extends Controller
         return Inertia::render('Audios/Audio', [
             'audio' => $audio
         ])
-       ->withViewData(SEO::from($audio));
+            ->withViewData(SEO::from($audio));
     }
 }

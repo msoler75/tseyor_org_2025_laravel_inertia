@@ -10,35 +10,31 @@ use App\Pigmalion\BusquedasHelper;
 
 class PsicografiasController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 14;
+
     public function index(Request $request)
     {
-        if ($request->has('json'))
-            return $this->json();
-
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        // devuelve los items recientes segun la busqueda
+        $query = Psicografia::query();
+
         if ($buscar) {
-            $resultados = Psicografia::search($buscar);
-        } else {
-            // obtiene los items sin busqueda
-            $resultados = Psicografia::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria', 'imagen'])
-                ->when($categoria === '_', function ($query) {
-                    $query->orderByRaw('LOWER(titulo)');
-                })
-                ->when(!$categoria, function($query) {
-                    $query->orderBy('created_at', 'DESC');
-                });
+            $ids = Psicografia::search($buscar)->get()->pluck('id');
+            $query->whereIn('psicografias.id', $ids);
         }
 
-        // parámetros
-        if ($categoria)
-            $resultados = $resultados->where('categoria', 'LIKE', "%$categoria%");
+        if (!$categoria)
+            $query->latest();
+        else if ($categoria == '_')
+            $query->orderBy('titulo', 'asc');
+        else
+            $query->where('categoria', 'like', '%' . $categoria . '%');
 
-        $resultados = $resultados
-            ->paginate(14)
-            ->appends(['buscar' => $buscar,  'categoria' => $categoria]);
+
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);
@@ -49,7 +45,7 @@ class PsicografiasController extends Controller
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'categorias'=>$categorias
+            'categorias' => $categorias
         ])
             ->withViewData(SEO::get('psicografias'));
     }
@@ -70,14 +66,14 @@ class PsicografiasController extends Controller
     {
         if (is_numeric($id)) {
             $psicografia = Psicografia::find($id);
-            if(!$psicografia)
-            $psicografia = Psicografia::where('slug', $id)->firstOrFail();
+            if (!$psicografia)
+                $psicografia = Psicografia::where('slug', $id)->firstOrFail();
         } else {
             $psicografia = Psicografia::where('slug', $id)->firstOrFail();
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  true;//
+        $publicado =  true; //
         $editor = optional(auth()->user())->can('administrar contenidos');
         if (!$psicografia || (!$publicado && !$borrador && !$editor)) {
             abort(404); // Item no encontrado o no autorizado

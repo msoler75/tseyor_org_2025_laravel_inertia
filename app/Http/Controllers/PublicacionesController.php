@@ -10,28 +10,32 @@ use App\Pigmalion\BusquedasHelper;
 
 class PublicacionesController extends Controller
 {
-    //
+    public static $ITEMS_POR_PAGINA = 12;
+
     public function index(Request $request)
     {
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        // devuelve los items recientes segun la busqueda
+        $query = Publicacion::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
+            ->where('visibilidad', 'P');
+
         if ($buscar) {
-            $resultados = Publicacion::search($buscar);
-        } else {
-            // obtiene los items sin busqueda
-            $resultados = Publicacion::select(['titulo', 'slug',  'descripcion', 'updated_at', 'categoria'])
-                ->where('visibilidad', 'P');
+            $ids = Publicacion::search($buscar)->get()->pluck('id');
+            $query->whereIn('publicaciones.id', $ids);
         }
 
-        // parámetros
-        if ($categoria)
-            $resultados = $resultados->where('categoria', $categoria);
+        if (!$categoria)
+            $query->latest();
+        else if ($categoria == '_')
+            $query->orderBy('titulo', 'asc');
+        else
+            $query->where('categoria', 'like', '%' . $categoria . '%');
 
-        $resultados = $resultados
-            ->paginate(12)
-            ->appends(['buscar' => $buscar, 'categoria' => $categoria]);
+        // devuelve los items recientes segun la busqueda
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, $page)
+            ->appends($request->except('page'));
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);

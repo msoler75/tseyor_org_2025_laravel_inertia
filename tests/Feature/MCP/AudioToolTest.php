@@ -9,7 +9,8 @@ class AudioToolTest extends McpFeatureTestCase
     public function test_listar_audios()
     {
         Audio::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\AudiosController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 2; $i++) {
             Audio::create([
                 'titulo' => 'Audio ' . $i,
                 'slug' => 'audio-' . $i . '-' . uniqid(),
@@ -22,7 +23,22 @@ class AudioToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'audio']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'audio', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(2, count($result['listado']['data']));
+        // buscar un audio específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'audio', 'buscar' => 'Audio 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar un audio que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'audio', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_audio()
@@ -56,7 +72,7 @@ class AudioToolTest extends McpFeatureTestCase
                 'audio' => '/almacen/nuevo-audio.mp3',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('audios', ['slug' => $params['data']['slug']]);
@@ -80,7 +96,7 @@ class AudioToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('audios', ['id' => $audio->id, 'descripcion' => $nuevaDescripcion]);
@@ -101,7 +117,7 @@ class AudioToolTest extends McpFeatureTestCase
             'entidad' => 'audio',
             'id' => $audio->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('audios', ['id' => $audio->id]);

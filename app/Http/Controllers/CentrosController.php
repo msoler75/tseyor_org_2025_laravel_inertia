@@ -15,39 +15,34 @@ use App\Pigmalion\StorageItem;
 
 class CentrosController extends Controller
 {
+    public static $ITEMS_POR_PAGINA = 50;
 
     public function index(Request $request)
     {
-        $muulasterios =
-            Centro::select(['id', 'nombre', 'imagen', 'pais'])
-            ->where('nombre', 'like', 'Muulasterio%')
-            ->take(7)->get();
+        $page = $request->input('page', 1);
+        $buscar = $request->input('buscar');
 
-        $casas =
-            Centro::select(['id', 'nombre', 'imagen', 'pais'])
-            ->where('nombre', 'like', 'Casa%')
-            ->take(7)->get();
+        $query = Centro::select(['id', 'nombre', 'imagen', 'pais']);
 
-        $paises = Centro::selectRaw('pais as codigo, count(*) as total')
-            ->groupBy('pais')
-            ->get();
+        if ($buscar) {
+            $ids = Centro::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('centros.id', $ids);
+        } else
+            $query->latest();
+
+        $resultados = $query
+            ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         // Traducir el código ISO del país a su nombre correspondiente
-        foreach ($paises as $idx => $pais) {
-            $paises[$idx]["nombre"] = Countries::getCountry($pais["codigo"]);
-        }
-
-        foreach ($muulasterios as $idx => $centro) {
+        $paises = [];
+        foreach ($resultados as $centro) {
             $centro->pais = Countries::getCountry($centro->pais);
-        }
-
-        foreach ($casas as $idx => $centro) {
-            $centro->pais = Countries::getCountry($centro->pais);
+            $paises[$centro->id] = $centro->pais;
         }
 
         return Inertia::render('Centros/Index', [
-            'muulasterios' => $muulasterios,
-            'casas' => $casas,
+            'listado' => $resultados,
             'paises' => $paises
         ])
             ->withViewData(SEO::get('centros'));
@@ -68,13 +63,13 @@ class CentrosController extends Controller
         $loc = new StorageItem($centro->getCarpetaMedios());
         $imagenes = $loc->listImages();
 
-        if(!in_array($centro->imagen, $imagenes))
+        if (!in_array($centro->imagen, $imagenes))
             array_unshift($imagenes, $centro->imagen);
 
         $entradas = Entrada::select(['id', 'titulo', 'slug', 'descripcion', 'imagen'])->whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->entradas, -1, PREG_SPLIT_NO_EMPTY))->where('visibilidad', 'P')->get();
         $libros = Libro::whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->libros, -1, PREG_SPLIT_NO_EMPTY))->where('visibilidad', 'P')->get();
 
-        $centro->pais = $centro->nombrePais;// Countries::getCountry($centro->pais);
+        $centro->pais = $centro->nombrePais; // Countries::getCountry($centro->pais);
 
         return Inertia::render('Centros/Centro', [
             'centro' => $centro,

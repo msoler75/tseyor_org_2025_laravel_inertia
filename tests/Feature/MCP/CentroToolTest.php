@@ -21,11 +21,12 @@ class CentroToolTest extends McpFeatureTestCase
 
     public function test_listar_centros()
     {
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Centro::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\CentrosController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 2; $i++){
             Centro::create([
                 'nombre' => 'Casa Tseyor ' . $i,
-                'slug' => 'centro-' . $i . '-' . uniqid(),
                 'descripcion' => 'Desc ' . $i,
                 'imagen' => '/almacen/centro' . $i . '.jpg',
                 'pais' => 'ES',
@@ -35,10 +36,23 @@ class CentroToolTest extends McpFeatureTestCase
         }
         $result = $this->callMcpTool('listar', ['entidad' => 'centro']);
         $this->assertIsArray($result);
-        $this->assertArrayHasKey('muulasterios', $result);
-        $this->assertArrayHasKey('casas', $result);
-        $this->assertArrayHasKey('paises', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['casas']));
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals($pp, count($result['listado']['data']));
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'centro', 'page' => 2]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(2, count($result['listado']['data']));
+        // buscar un centro específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'centro', 'buscar' => $pp]);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(1, count($result['listado']['data']));
+        // buscar un centro que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'centro', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
     }
 
     public function test_ver_centro()
@@ -73,7 +87,7 @@ class CentroToolTest extends McpFeatureTestCase
                 'poblacion' => 'Ciudad Nueva',
                 'contacto_id' => null,
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('centros', ['slug' => $params['data']['slug']]);
@@ -98,7 +112,7 @@ class CentroToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('centros', ['id' => $centro->id, 'descripcion' => $nuevaDescripcion]);
@@ -120,7 +134,7 @@ class CentroToolTest extends McpFeatureTestCase
             'entidad' => 'centro',
             'id' => $centro->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('centros', ['id' => $centro->id]);

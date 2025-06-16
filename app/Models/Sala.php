@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Laravel\Scout\Searchable;
 
 class Sala extends ContenidoBaseModel
 {
     use CrudTrait;
+    use Searchable;
 
     /*
     |--------------------------------------------------------------------------

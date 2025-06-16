@@ -21,7 +21,8 @@ class GrupoToolTest extends McpFeatureTestCase
     public function test_listar_grupos()
     {
         \App\Models\Grupo::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = 12; // Valor por defecto para paginación de grupos
+        for ($i = 0; $i < $pp + 4; $i++) {
             \App\Models\Grupo::create([
                 'nombre' => 'Grupo ' . $i,
                 'slug' => 'grupo-' . $i . '-' . uniqid(),
@@ -31,7 +32,17 @@ class GrupoToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'grupo']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('grupos', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['grupos']));
+        $this->assertEquals($pp + 4, count($result['grupos']));
+        // buscar un grupo específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'grupo', 'buscar' => 'Grupo 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('grupos', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['grupos']));
+        // buscar un grupo que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'grupo', 'buscar' => 'Inexistente']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('grupos', $result);
+        $this->assertEquals(0, count($result['grupos']));
     }
 
     public function test_ver_grupo()
@@ -58,7 +69,7 @@ class GrupoToolTest extends McpFeatureTestCase
                 'slug' => 'nuevo-grupo-' . uniqid(),
                 'descripcion' => 'Descripción de prueba',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('grupos', ['slug' => $params['data']['slug']]);
@@ -79,7 +90,7 @@ class GrupoToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('grupos', ['id' => $grupo->id, 'descripcion' => $nuevaDescripcion]);
@@ -99,7 +110,7 @@ class GrupoToolTest extends McpFeatureTestCase
             'entidad' => 'grupo',
             'id' => $grupo->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('grupos', ['id' => $grupo->id]);
@@ -126,7 +137,7 @@ class GrupoToolTest extends McpFeatureTestCase
             'entidad' => 'grupo',
             'id' => $grupo->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $result = $this->callMcpTool('eliminar', $params);
         $this->assertIsArray($result);

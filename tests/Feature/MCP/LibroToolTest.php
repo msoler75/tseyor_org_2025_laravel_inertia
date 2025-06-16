@@ -31,23 +31,45 @@ class LibroToolTest extends McpFeatureTestCase
     public function test_listar_libros()
     {
         \App\Models\Libro::truncate();
-        for ($i = 0; $i < 2; $i++) {
+        $pp = \App\Http\Controllers\LibrosController::$ITEMS_POR_PAGINA;
+        for ($i = 0; $i < $pp + 3; $i++) {
             \App\Models\Libro::create([
-                'titulo' => 'Libro ' . $i,
+                'titulo' => 'Libro ' . $i . ($i < $pp+2?' extra' : ''),
                 'slug' => 'libro-' . $i . '-' . uniqid(),
                 'descripcion' => 'Desc ' . $i,
                 'categoria' => 'novela',
                 'imagen' => '/img/libro' . $i . '.jpg',
-                'edicion' => '1a',
+                'edicion' => 1,
                 'paginas' => 100 + $i,
                 'pdf' => '/pdf/libro' . $i . '.pdf',
                 'visibilidad' => 'P',
             ]);
         }
         $result = $this->callMcpTool('listar', ['entidad' => 'libro']);
+        // fwrite(STDERR, print_r($result, true));
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertGreaterThanOrEqual(2, count($result['listado']['data']));
+        $this->assertGreaterThanOrEqual($pp, count($result['listado']['data']));
+
+        // obtener la página siguiente
+        $result = $this->callMcpTool('listar', ['entidad' => 'libro', 'page' => 2]);
+        // fwrite(STDERR, print_r($result, true));
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(3, count($result['listado']['data']));
+
+        // buscar un libro específico
+        $result = $this->callMcpTool('listar', ['entidad' => 'libro', 'buscar' => 'Libro 1']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertGreaterThanOrEqual(1, count($result['listado']['data']));
+        // buscar un libro que no existe
+        $result = $this->callMcpTool('listar', ['entidad' => 'libro', 'buscar' => 'Inexistente']);
+        // fwrite(STDERR, print_r($result, true));
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('listado', $result);
+        $this->assertEquals(0, count($result['listado']['data']));
+
     }
 
     public function test_ver_libro()
@@ -59,7 +81,7 @@ class LibroToolTest extends McpFeatureTestCase
             'descripcion' => 'Desc',
             'categoria' => 'novela',
             'imagen' => '/img/libro-test.jpg',
-            'edicion' => '1a',
+            'edicion' => 1,
             'paginas' => 123,
             'pdf' => '/pdf/libro-test.pdf',
             'visibilidad' => 'P',
@@ -81,12 +103,12 @@ class LibroToolTest extends McpFeatureTestCase
                 'descripcion' => 'Descripción de prueba',
                 'categoria' => 'novela',
                 'imagen' => '/img/nuevo-libro.jpg',
-                'edicion' => '1a',
+                'edicion' => 1,
                 'paginas' => 222,
                 'pdf' => '/pdf/nuevo-libro.pdf',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('libros', ['slug' => $params['data']['slug']]);
@@ -101,7 +123,7 @@ class LibroToolTest extends McpFeatureTestCase
             'descripcion' => 'Desc',
             'categoria' => 'novela',
             'imagen' => '/img/editar-libro.jpg',
-            'edicion' => '1a',
+            'edicion' => 1,
             'paginas' => 111,
             'pdf' => '/pdf/editar-libro.pdf',
             'visibilidad' => 'P',
@@ -113,7 +135,7 @@ class LibroToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('libros', ['id' => $libro->id, 'descripcion' => $nuevaDescripcion]);
@@ -128,7 +150,7 @@ class LibroToolTest extends McpFeatureTestCase
             'descripcion' => 'Desc',
             'categoria' => 'novela',
             'imagen' => '/img/eliminar-libro.jpg',
-            'edicion' => '1a',
+            'edicion' => 1,
             'paginas' => 333,
             'pdf' => '/pdf/eliminar-libro.pdf',
             'visibilidad' => 'P',
@@ -137,7 +159,7 @@ class LibroToolTest extends McpFeatureTestCase
             'entidad' => 'libro',
             'id' => $libro->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_contenidos')
+            'token' => config('mcp-server.tokens.administrar_todo')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('libros', ['id' => $libro->id]);
