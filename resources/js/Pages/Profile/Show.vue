@@ -52,6 +52,25 @@ defineProps({
 
                 <LogoutOtherBrowserSessionsForm :sessions="sessions" class="mt-10 sm:mt-0" />
 
+                <SectionBorder />
+
+                <ActionSection>
+                    <template #title>
+                        Token MCP para Claude Desktop
+                    </template>
+                    <template #description>
+                        Genera tu token MCP personal para acceder a las herramientas avanzadas de Tseyor.org desde aplicaciones externas como Claude Desktop.
+                    </template>
+                    <template #content>
+                        <Link :href="route('profile.mcp-token')" class="btn btn-outline btn-info">
+                            Solicitar token MCP
+                        </Link>
+                        <p class="mt-2 text-gray-700 text-sm">
+                            Esta sección te permite generar un <b>token MCP</b> personal, necesario para autenticarte y utilizar las herramientas avanzadas de Tseyor.org desde aplicaciones externas como Claude Desktop. El token confirma tu identidad como usuario registrado y te da acceso seguro a las funciones MCP sin compartir tu contraseña.
+                        </p>
+                    </template>
+                </ActionSection>
+
                 <template v-if="$page.props.jetstream.hasAccountDeletionFeatures">
                     <SectionBorder />
 

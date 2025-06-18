@@ -723,6 +723,14 @@ return [
     ],
     'archivo' => [
         'descripcion' => 'Gestión de archivos y carpetas en el sistema de almacenamiento',
+        'parametros_ver' => [
+            [
+                'name' => 'id',
+                'type' => 'string',
+                'description' => 'La ruta del archivo a descargar.',
+                'required' => true,
+            ],
+        ],
         'parametros_listar' => [
             [
                 'name' => 'ruta',
@@ -742,18 +750,61 @@ return [
                 'name' => 'ruta',
                 'type' => 'string',
                 'required' => true,
-                'description' => 'Ruta completa donde se creará el archivo, incluyendo el nombre del archivo. Ejemplo: /archivos/personal/public/conseguido.txt'
+                'description' => 'Ruta completa donde se creará el archivo o carpeta. Ejemplo: /archivos/personal/public/conseguido.txt o /archivos/personal/public/nueva_carpeta/'
             ],
             [
                 'name' => 'contenido',
                 'type' => 'string',
-                'required' => true,
-                'description' => 'Contenido del archivo en texto plano.'
+                'required' => false,
+                'description' => 'Contenido del archivo en texto plano. Si se omite, se creará una carpeta.'
+            ],
+            [
+                'name' => 'es_carpeta',
+                'type' => 'boolean',
+                'required' => false,
+                'description' => 'Si es true, se crea una carpeta aunque se envíe contenido.'
+            ]
+        ],
+        'parametros_editar' => [
+            [
+                'name' => 'nuevo_nombre',
+                'type' => 'string',
+                'required' => false,
+                'description' => 'Nuevo nombre para el archivo o carpeta.'
+            ],
+            [
+                'name' => 'permisos',
+                'type' => 'string',
+                'required' => false,
+                'description' => 'Permisos en formato numérico (ej: 1755).'
+            ],
+            [
+                'name' => 'group_id',
+                'type' => 'integer',
+                'required' => false,
+                'description' => 'ID de grupo propietario.'
+            ],
+            [
+                'name' => 'user_id',
+                'type' => 'integer',
+                'required' => false,
+                'description' => 'ID de usuario propietario.'
+            ],
+            [
+                'name' => 'oculto',
+                'type' => 'boolean',
+                'required' => false,
+                'description' => 'Si es true, el nodo queda oculto.'
             ]
         ],
         'campos' => [
-            'ruta' => ['type' => 'string', 'description' => 'Ruta completa del archivo'],
-            'contenido' => ['type' => 'string', 'description' => 'Contenido del archivo en texto plano']
+            'ruta' => ['type' => 'string', 'description' => 'Ruta completa del archivo o carpeta'],
+            'contenido' => ['type' => 'string', 'description' => 'Contenido del archivo en texto plano (solo archivos)'],
+            'es_carpeta' => ['type' => 'boolean', 'description' => 'Indica si es carpeta (1) o archivo (0)'],
+            'permisos' => ['type' => 'string', 'description' => 'Permisos en formato numérico'],
+            'group_id' => ['type' => 'integer', 'description' => 'ID de grupo propietario'],
+            'user_id' => ['type' => 'integer', 'description' => 'ID de usuario propietario'],
+            'oculto' => ['type' => 'boolean', 'description' => 'Si es true, el nodo queda oculto']
         ]
     ],
 ];

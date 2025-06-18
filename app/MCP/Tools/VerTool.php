@@ -28,26 +28,7 @@ class VerTool extends BaseTool
         // Validar token MCP si corresponde
         $this->checkMcpToken($params, $modelTools->getRequiredPermissions($this->name()));
 
-        $modelClass = $modelTools->getModelClass();
-        $controller = $modelTools->getControllerClass();
-        $controllerMethod = $modelTools->getMethod($this->name());
-        $modelNameSingle = $modelTools->getModelNameSingle();
-        $id = $params['id'] ?? $params['slug'] ?? null;
-        Log::channel('mcp')->debug('[BaseVerTool] handle', ['params' => $params, 'modelo' => $modelo, 'controller' => $controller, 'modelClass' => $modelClass]);
-        if ($controller && $controllerMethod) {
-            if (!class_exists($controller)) return ['error' => 'Clase no encontrada: ' . $controller];
-            $response = $modelTools->callControllerMethod($this->name(), $this->inertiaRequest, $params);
-            $data = $this->fromInertiaToArray($response);
-            return $data;
-        } elseif ($modelClass) {
-            if (is_numeric($id)) {
-                $item = ($modelClass)::findOrFail($id);
-            } else {
-                $item = ($modelClass)::where('slug', $id)->firstOrFail();
-            }
-            return [$modelNameSingle => $item->toArray()];
-        }
-        return ['error' => 'No se ha definido controller ni modelo'];
+        return $modelTools->onVer($params, $this);
     }
 
 

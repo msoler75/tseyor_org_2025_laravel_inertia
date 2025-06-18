@@ -10,6 +10,7 @@
 - [x] Migrar endpoint /mcp para usar opgginc/laravel-mcp-server manteniendo tokens y tools actuales, sin eliminar archivos previos MCP (13/06/2025)
 - [ ] Todas las tools MCP usan capabilities.php para description, inputSchema y annotations (13/06/2025)
 - [x] Crear tools MCP para todos los modelos de App\Models (Audio, Centro, Contacto, Equipo, Entrada, Evento, Grupos, Guia, Informe, Libro, Lugar, Meditacion, Noticia, Normativa, Pagina, Psicografia, Sala, Termino, Tutorial, Video): listar, ver, crear, editar, eliminar y ver campos. (13/06/2025) Se seguirán los preceptos comentados a continuación:
+- [x] Refactorizar hooks de tools MCP: Crear, Editar, Eliminar, Listar, Buscar para usar onCrear, onEditar, onEliminar, onListar, onBuscar en BaseModelTools (18/06/2025)
 
 ### Detalles y reglas para la creación de nuevas Tools MCP para modelos
 
@@ -24,7 +25,7 @@
 
 - [ ] Crear test para las nuevas tool MCP para todos los modelos de App\Models faltantes (Audio, Centro, Contacto, Equipo, Entrada, Evento, Grupos, Guia, Informe, Libro, Lugar, Meditacion, Noticia, Normativa, Pagina, Psicografia, Sala, Termino, Tutorial, Video): listar, ver, crear, editar, eliminar y ver campos,  (14/06/2025) Se seguirá el mismo esquema que ComunicadosToolTest
 - [ ] Unificar paginación en todos los Controllers: usar static $ITEMS_POR_PAGINA y $page de request en index con paginate, como en LibrosController, ComunicadosController y PaginasController (16/06/2025)
-- [ ] Crear sección para que usuarios autenticados puedan generar y ver su token JWT MCP desde el área de perfil (18/06/2025)
+- [x] Crear sección para que usuarios autenticados puedan generar y ver su token JWT MCP desde el área de perfil (18/06/2025)
 
 ## Discovered During Work
 - [ ] Eliminar clases específicas de la carpeta AudioTools (CamposAudioTool.php, CrearAudioTool.php, EditarAudioTool.php, EliminarAudioTool.php, ListarAudiosTool.php, VerAudioTool.php) tras refactorización a tool genérica (15/06/2025)
