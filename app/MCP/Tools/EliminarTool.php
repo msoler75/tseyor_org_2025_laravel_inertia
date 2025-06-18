@@ -28,9 +28,8 @@ class EliminarTool extends BaseTool
         $modelTools = new $toolsClass();
         $modelClass = $modelTools->getModelClass();
         $modelNameSingle = $modelTools->getModelNameSingle();
-        $required = $modelTools->getRequiredPermissions($this->name());
 
-        $this->checkMcpToken($params, $required);
+        $modelTools->checkMcpToken($params, $modelTools->getRequiredPermissions($this->name()));
 
         $id = $params['id'] ?? $params['slug'] ?? null;
         if (! $id) {

@@ -25,6 +25,9 @@ class VerTool extends BaseTool
         if (!class_exists($toolsClass)) return ['error' => 'Clase no encontrada: ' . $toolsClass];
 
         $modelTools = new $toolsClass();
+        // Validar token MCP si corresponde
+        $modelTools->checkMcpToken($params, $modelTools->getRequiredPermissions($this->name()));
+
         $modelClass = $modelTools->getModelClass();
         $controller = $modelTools->getControllerClass();
         $controllerMethod = $modelTools->getMethod($this->name());

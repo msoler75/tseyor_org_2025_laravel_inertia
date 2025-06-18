@@ -37,6 +37,8 @@ class InfoTool extends BaseTool
         $modelTools = new $toolsClass();
         $modelNameSingle = $modelTools->getModelNameSingle();
 
+        // Validar token MCP si corresponde
+        $modelTools->checkMcpToken($params, $modelTools->required['info'] ?? []);
 
 
 
