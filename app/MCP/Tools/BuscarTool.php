@@ -29,7 +29,7 @@ class BuscarTool extends BaseTool
 
         $modelTools = new $toolsClass();
         // Validar token MCP si corresponde
-        $modelTools->checkMcpToken($params, $modelTools->getRequiredPermissions($this->name()));
+        $this->checkMcpToken($params, $modelTools->getRequiredPermissions($this->name()));
 
         $modelClass = $modelTools->getModelClass();
         $controller = $modelTools->getControllerClass();

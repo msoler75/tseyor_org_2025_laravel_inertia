@@ -63,7 +63,7 @@ abstract class BaseTool implements ToolInterface {
         // Si el token parece un JWT (3 partes separadas por punto)
         if (preg_match('/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/', $token)) {
             try {
-                $jwtSecret = config('app.key'); // O usar una clave específica para JWT si la tienes
+                $jwtSecret = config('mcp-server.jwt_secret_prefix') . config('app.key');
                 $decoded = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($jwtSecret, 'HS256'));
                 // Buscar usuario por ID/email en el payload
                 $userId = $decoded->sub ?? $decoded->user_id ?? null;

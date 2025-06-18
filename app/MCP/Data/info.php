@@ -30,12 +30,6 @@ return [
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
             ],
             [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
-            ],
-            [
                 'name' => 'completo',
                 'type' => 'boolean',
                 'required' => false,
@@ -79,12 +73,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 2.'
             ]
         ],
         'campos' => [
@@ -122,12 +110,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -165,12 +147,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -210,12 +186,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -268,12 +238,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -321,12 +285,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -372,12 +330,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -417,12 +369,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -457,12 +403,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -509,12 +449,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -554,12 +488,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -600,12 +528,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -646,12 +568,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -684,12 +600,6 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
-            ],
-            [
-                'name' => 'page',
-                'type' => 'integer',
-                'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
             ]
         ],
         'campos' => [
@@ -809,6 +719,41 @@ return [
             'equipos' => ['type' => 'array', 'description' => 'Equipos a los que pertenece'],
             'created_at' => ['type' => 'string', 'description' => 'Fecha de creación'],
             'updated_at' => ['type' => 'string', 'description' => 'Fecha de última actualización']
+        ]
+    ],
+    'archivo' => [
+        'descripcion' => 'Gestión de archivos y carpetas en el sistema de almacenamiento',
+        'parametros_listar' => [
+            [
+                'name' => 'ruta',
+                'type' => 'string',
+                'required' => false,
+                'description' => 'Ruta de la carpeta a listar. Si se omite, se listará la raíz.'
+            ],
+            [
+                'name' => 'buscar',
+                'type' => 'string',
+                'required' => false,
+                'description' => 'Texto a buscar en los nombres de archivos o carpetas.'
+            ]
+        ],
+        'parametros_crear' => [
+            [
+                'name' => 'ruta',
+                'type' => 'string',
+                'required' => true,
+                'description' => 'Ruta completa donde se creará el archivo, incluyendo el nombre del archivo. Ejemplo: /archivos/personal/public/conseguido.txt'
+            ],
+            [
+                'name' => 'contenido',
+                'type' => 'string',
+                'required' => true,
+                'description' => 'Contenido del archivo en texto plano.'
+            ]
+        ],
+        'campos' => [
+            'ruta' => ['type' => 'string', 'description' => 'Ruta completa del archivo'],
+            'contenido' => ['type' => 'string', 'description' => 'Contenido del archivo en texto plano']
         ]
     ],
 ];

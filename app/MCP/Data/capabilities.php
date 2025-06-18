@@ -37,13 +37,19 @@ return [
     ],
     [
         'name' => 'listar',
-        'description' => 'Listar elementos de una colección (por ejemplo: "libros", "comunicados", "audios", etc.). El resultado estará paginado, incluyendo información como página actual, siguiente página, total de páginas y total de elementos. El parámetro "page" permite solicitar la página deseada de resultados. Permite aplicar filtros para limitar los resultados. Para conocer los filtros disponibles, consulta la tool "info" de la entidad.',
+        'description' => 'Listar elementos de una colección (por ejemplo: "libros", "comunicados", "audios", etc.). El resultado estará paginado, incluyendo información como página actual, siguiente página, total de páginas y total de elementos. El parámetro "page" permite solicitar la página deseada de resultados. Permite aplicar filtros para limitar los resultados. Para conocer los filtros disponibles, consulta la tool "info" indicando la entidad.',
         'parameters' => [
             [
                 'name' => 'entidad',
                 'type' => 'string',
                 'description' => 'El nombre de la entidad a obtener. Por ejemplo: "libro", "comunicado", "audio", "equipo", etc.',
                 'required' => true,
+            ],
+            [
+                'name' => 'num_pagina',
+                'type' => 'integer',
+                'required' => false,
+                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 2.'
             ],
             [
                 'name' => 'token',
@@ -69,6 +75,12 @@ return [
                 'description' => 'Frase o palabra clave a buscar en la colección.',
                 'required' => true,
             ],
+                       [
+                'name' => 'num_pagina',
+                'type' => 'integer',
+                'required' => false,
+                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 2.'
+            ],
             [
                 'name' => 'token',
                 'type' => 'string',
@@ -79,7 +91,7 @@ return [
     ],
     [
         'name' => 'crear',
-        'description' => 'Crear un nuevo elemento (entidad) en una colección. Una colección es un conjunto de entidades del mismo tipo gestionadas por el sistema (por ejemplo: "libro", "comunicado", "audio", "equipo", etc.). Se debe indicar el nombre de la entidad (tipo de colección) y los datos a crear.',
+        'description' => 'Crear un nuevo elemento (entidad) en una colección. Una colección es un conjunto de entidades del mismo tipo gestionadas por el sistema (por ejemplo: "libro", "comunicado", "audio", "equipo", etc.). Se debe indicar el nombre de la entidad (tipo de colección) y los datos a crear. En algunas entidades se requieren campos adicionales, consulta el valor de "parametros_crear" con la tool "info" indicando la entidad.',
         'parameters' => [
             [
                 'name' => 'entidad',
@@ -103,7 +115,7 @@ return [
     ],
     [
         'name' => 'editar',
-        'description' => 'Editar un elemento (entidad) existente en una colección (por ejemplo: "libro", "comunicado", "audio", "equipo", etc.). Debes indicar la entidad, el id o slug del elemento y los datos a modificar. Ejemplo: {"entidad": "libro", "id": "123", "data": {"titulo": "Nuevo título"}}.',
+        'description' => 'Editar un elemento (entidad) existente en una colección (por ejemplo: "libro", "comunicado", "audio", "equipo", etc.). Debes indicar la entidad, el id o slug del elemento y los datos a modificar. Ejemplo: {"entidad": "libro", "id": "123", "data": {"titulo": "Nuevo título"}}. En algunas entidades se requieren campos adicionales, consulta el valor de "parametros_crear" o "parametros_editar" con la tool "info" indicando la entidad.',
         'parameters' => [
             [
                 'name' => 'entidad',

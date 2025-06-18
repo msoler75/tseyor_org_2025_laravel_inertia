@@ -24,6 +24,7 @@
 
 - [ ] Crear test para las nuevas tool MCP para todos los modelos de App\Models faltantes (Audio, Centro, Contacto, Equipo, Entrada, Evento, Grupos, Guia, Informe, Libro, Lugar, Meditacion, Noticia, Normativa, Pagina, Psicografia, Sala, Termino, Tutorial, Video): listar, ver, crear, editar, eliminar y ver campos,  (14/06/2025) Se seguirá el mismo esquema que ComunicadosToolTest
 - [ ] Unificar paginación en todos los Controllers: usar static $ITEMS_POR_PAGINA y $page de request en index con paginate, como en LibrosController, ComunicadosController y PaginasController (16/06/2025)
+- [ ] Crear sección para que usuarios autenticados puedan generar y ver su token JWT MCP desde el área de perfil (18/06/2025)
 
 ## Discovered During Work
 - [ ] Eliminar clases específicas de la carpeta AudioTools (CamposAudioTool.php, CrearAudioTool.php, EditarAudioTool.php, EliminarAudioTool.php, ListarAudiosTool.php, VerAudioTool.php) tras refactorización a tool genérica (15/06/2025)
