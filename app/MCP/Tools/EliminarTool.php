@@ -29,7 +29,7 @@ class EliminarTool extends BaseTool
         $modelClass = $modelTools->getModelClass();
         $modelNameSingle = $modelTools->getModelNameSingle();
 
-        $modelTools->checkMcpToken($params, $modelTools->getRequiredPermissions($this->name()));
+        $this->checkMcpToken($params, $modelTools->getRequiredPermissions($this->name()));
 
         $id = $params['id'] ?? $params['slug'] ?? null;
         if (! $id) {

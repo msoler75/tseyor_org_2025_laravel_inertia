@@ -11,7 +11,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
     public function test_listar_comunicados2()
     {
         $result = $this->callMcpTool('listar', ['entidad' => 'comunicado']);
-        fwrite(STDERR, print_r($result, true));
+        // fwrite(STDERR, print_r($result, true));
         $this->assertIsArray($result, 'La respuesta de MCP no es un array');
     }
 
@@ -186,6 +186,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
     public function test_info_comunicado()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'comunicado']);
+        // fwrite(STDERR, print_r($result, true));
         $this->assertIsArray($result);
         $comunicado = $result['comunicado'] ?? null;
         $this->assertIsArray($comunicado);

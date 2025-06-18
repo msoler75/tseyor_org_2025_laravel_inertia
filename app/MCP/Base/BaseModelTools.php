@@ -3,6 +3,7 @@
 namespace App\MCP\Base;
 
 use Illuminate\Http\Request;
+
 abstract class BaseModelTools
 {
     protected ?string $modelName = null; // Nombre singular del modelo (ej: 'comunicado')
@@ -154,8 +155,10 @@ abstract class BaseModelTools
     {
         $id = $params['id'] ?? $params['slug'] ?? null;
 
-        $page = $params['page'] ?? 1;
-        $request->request->add(['page' => $page]);
+        if ($toolName == 'listar' || $toolName == 'buscar') {
+            $page = $params['num_pagina'] ?? $params['page'] ?? $params['pagina'] ?? 1;
+            $request->request->add(['page' => $page]);
+        }
 
         $controller = $this->getControllerClass();
         $controllerMethod = $this->getMethod($toolName);

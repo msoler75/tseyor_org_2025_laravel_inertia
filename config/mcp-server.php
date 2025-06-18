@@ -455,7 +455,10 @@ return [
         'administrar_contenidos' => env('MCP_TOKEN_ADMINISTRAR_CONTENIDOS', 'token-contenidos-123'),
         'administrar_social' => env('MCP_TOKEN_ADMINISTRAR_SOCIAL', 'token-social-456'),
         'administrar_todo' => env('MCP_TOKEN_ADMINISTRAR_TODO', 'token-todo-789'),
-    ]
+    ],
+
+
+    'jwt_secret_prefix' => env('MCP_JWT_SECRET_PREFIX', '')
 
 
 ];
