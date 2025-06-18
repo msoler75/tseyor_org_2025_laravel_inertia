@@ -273,6 +273,7 @@ return [
 
         \App\MCP\Tools\VerTool::class,
         \App\MCP\Tools\ListarTool::class,
+        \App\MCP\Tools\BuscarTool::class,
         \App\MCP\Tools\CrearTool::class,
         \App\MCP\Tools\EditarTool::class,
         \App\MCP\Tools\EliminarTool::class,

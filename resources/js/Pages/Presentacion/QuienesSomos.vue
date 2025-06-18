@@ -1,23 +1,33 @@
 <template>
     <Sections height="500">
 
-        <Hero title="¿Quiénes Somos?" subtitle="Mundo Armónico Tseyor es una ONG dedicada al autodescubrimiento y a la formación de las Sociedades Armónicas. Sus principios se basan en el contacto extraterrestre, manteniendo conversaciones regulares con la Confederación de Mundos Habitados de la Galaxia."
+        <Hero title="¿Quiénes Somos?"
             srcImage="/almacen/medios/paginas/quienes-somos.jpg" image-right
             buttonLabel="Conoce nuestros orígenes"
             :href="route('origenes-de-tseyor')">
+            <p>
+Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Referencia> y a la creación de las <Referencia>Sociedades Armónicas</Referencia> en este planeta.
+            </p>
+            <p>
+                Sus principios se basan en la experimentación de la <Referencia>filosofía cósmico crística</Referencia> que nos traen nuestros <Referencia>Guías Estelares</Referencia>, con quienes mantenemos conversaciones regulares con la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>.
+            </p>
+            <p>
+                Esta es una <Referencia>filosofía viva</Referencia>, no dogmática, y plena de vigor espiritual y creativo, en estos <Referencia>tiempos de transformación</Referencia>.
+            </p>
         </Hero>
 
         <Section>
             <TextImage title="¿Donde estamos?" srcImage="/almacen/medios/paginas/mapa.jpg"
             buttonLabel="Ver Mapa" :href="route('contactos')" >
-                <p>Encuentra alguno de nuestros centros o representantes cerca de ti.</p>
+           <p>Encuentra un centro o representante de Mundo Armónico TSEYOR cerca de ti.</p>
+           <p>Estamos creciendo. Si aún no hay uno en tu zona, ¡anímate a crear uno! Únete a nuestro proyecto y te acompañaremos en el camino.</p>
             </TextImage>
         </Section>
 
 
 
         <Section>
-            <TextImage title="¿Con quiénes contactamos?"
+            <TextImage title="¿Quiénes son estos amigos del espacio?"
                 srcImage="/almacen/medios/paginas/todos-los-guias.jpg"
                 buttonLabel="Conoce a los guías Estelares" href="/guias" image-right >
                 <p>Nuestros tutores proceden de distintos planetas y todos son miembros de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>.</p>
@@ -30,7 +40,7 @@
         <Section>
             <TextImage title="Nuestra filosofía" srcImage="/almacen/medios/paginas/manos-entre-mundos.jpg"
             buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')" >
-                <p>Seguimos la filosofía que nos ha patrocinado la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>, basada en la unión, la hermandad y el <Referencia>Conocimiento Trascendente</Referencia>.</p>
+                <p>Practicamos la filosofía que nos ha patrocinado la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>, basada en la <Referencia>unidad en la diversidad</Referencia>, el <Referencia>hermanamiento</Referencia> y el <Referencia>Conocimiento Trascendente</Referencia>.</p>
             </TextImage>
         </Section>
 
@@ -49,6 +59,7 @@
                     En nuestra <Referencia>biblioteca web</Referencia> podéis encontrar todos los comunicados o conversaciones
                     telepáticas interdimensionales mantenidas con los hermanos de la <Referencia>Confederación de Mundos Habitados de la
                     Galaxia</Referencia>.</p>
+                    <p>Estos son comunicados grupales para crear sociedades sin <Referencia>líderes</Referencia>, sin piramidalismo vertical, para impulsar la <Referencia>auténtica libertad</Referencia> del invididuo, sabiéndose el mismo participante de una Comunidad Universal.</p>
             </TextImage>
         </Section>
 
@@ -70,8 +81,8 @@
                 href="/comunicados">
                 <template #text1>
                     <ul>
-                        <Li><Link href="/preguntas-frecuentes/1#_Toc301129944">¿Cómo contactan?</Link></li>
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129901">¿Cómo son los seres de otros planetas?</Link></li>
+                        <Li><Link href="/preguntas-frecuentes/1#_Toc301129944">¿Cómo contactan?</Link></li>
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129906">¿Cómo viven? </Link></li>
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129919">¿Por qué están aquí?</Link></li>
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129895">¿Cómo son sus naves?</Link></li>

@@ -34,7 +34,13 @@ return [
                 'type' => 'integer',
                 'required' => false,
                 'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 1.'
-            ]
+            ],
+            [
+                'name' => 'completo',
+                'type' => 'boolean',
+                'required' => false,
+                'description' => 'Si este campo está a 1 se puede utilizar junto al parámetro "buscar" (usando la tool "buscar" o "listar") y devuelve todas las coincidencias de la palabra o frase de búsqueda.'
+            ],
         ],
         'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del comunicado'],

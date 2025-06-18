@@ -12,6 +12,7 @@ abstract class BaseModelTools
     protected ?string $controllerClass = null; // Ejemplo: \App\Http\Controllers\EventosController
     protected array $methods = [
         'listar' => 'index',
+        'buscar' => 'index',
         'ver' => 'show'
     ];
 
@@ -19,6 +20,7 @@ abstract class BaseModelTools
         'campos' => [],
         'ver' => [],
         'listar' => [],
+        'buscar' => [],
         'crear' => ['administrar_contenidos'],
         'editar' => ['administrar_contenidos'],
         'eliminar' => ['administrar_contenidos'],

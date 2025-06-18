@@ -6,15 +6,14 @@
 
         <Section data-theme="night">
             <FondoEspacio class="w-full h-full">
-                <Hero title="Contacto Extraterrestre" :href="route('quienes-somos')" buttonLabel="Quiénes somos"
+                <Hero title="ONG MUNDO ARMÓNICO TSEYOR" :href="route('quienes-somos')" buttonLabel="Quiénes somos"
                     textClass="md:max-w-(--breakpoint-md) justify-center" image-right class="h-[95vh] w-[96vw] absolute">
                     <div class="bg-black/70 hover:bg-black/90 transition duration-500 p-7 rounded-xl">
-                        En el cosmos existen muchas criaturas. Existen seres de muy diversas categorías
-                        vibracionales.
-                        Nosotros aquí en este nivel estamos reforzados particularmente por la
-                        <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>.
+                        Te invitamos a viajar juntos hacia el autodescubrimiento con meditaciones, talleres y libros gratuitos.
+Construyamos juntos Sociedades Armónicas sin líderes, sin enfermedad, donde florezca la paz, la armonía, la creatividad y la auténtica felicidad. Dando sin esperar nada a cambio.
                     </div>
                 </Hero>
+                <Link href="eventos" class="w-fit text-xs btn btn-secondary opacity-80 !absolute bottom-4 right-4 z-40"><Icon icon="ph:arrow-right-duotone" class="transform scale-150" /> PRÓXIMOS EVENTOS</Link>
             </FondoEspacio>
         </Section>
 

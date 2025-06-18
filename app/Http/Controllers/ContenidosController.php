@@ -108,7 +108,8 @@ class ContenidosController extends Controller
         if ($busqueda_valida && !$resultados->count()) // por algun motivo algunas busquedas no las encuentra. En esos casos, buscamos manualmente
             $resultados = Contenido::where('visibilidad', 'P')->where('titulo', 'LIKE', "%$buscarFiltrado%")
                 ->orWhere('texto_busqueda', 'LIKE', "%$buscarFiltrado%")
-                ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
+                ->paginate(40)
+                ->appends($request->except('page'));
 
 
         if (strlen($buscarFiltrado) < 3)

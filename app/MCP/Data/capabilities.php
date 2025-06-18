@@ -1,10 +1,19 @@
 <?php
 // MCP/capabilities.php
 
+/**
+ * Definición de términos clave para el sistema MCP:
+ *
+ * - Colección: Es un conjunto de elementos del mismo tipo gestionados por el sistema, por ejemplo: libros, comunicados, audios, equipos, etc. Cada colección representa una tabla o recurso principal.
+ * - Entidad: Es un tipo de elemento individual dentro de una colección. Por ejemplo, en la colección "libros", cada libro es una entidad. El término "entidad" se usa para referirse tanto al tipo ("libro", "comunicado", etc.) como al identificador concreto de un elemento.
+ *
+ * En los parámetros de las tools, "entidad" suele referirse al nombre de la colección sobre la que se opera (por ejemplo: "libro", "comunicado").
+ */
+
 return [
     [
         'name' => 'ver',
-        'description' => 'Obtener los datos de un elemento específico de una colección (libro, comunicado, audio, equipo, etc.) Se debe indicar la entidad y especificar el id o slug del elemento.',
+        'description' => 'Obtener los datos de un elemento (entidad) específico de una colección (por ejemplo: "libro", "comunicado", "audio", "equipo", etc.). Una colección es un conjunto de entidades del mismo tipo gestionadas por el sistema. Se debe indicar el nombre de la entidad (tipo de colección) y el id o slug del elemento concreto.',
         'parameters' => [
             [
                 'name' => 'entidad',
@@ -22,7 +31,7 @@ return [
     ],
     [
         'name' => 'listar',
-        'description' => 'Obtener una lista de elementos de una colección (libros, comunicados, audios, equipos, etc.) Se debe indicar la entidad. Se puede consultar la tool "info" donde se pueden ver los parámetros opcionales para buscar y filtrar de la entidad cuando se usa la tool "listar"',
+        'description' => 'Listar elementos de una colección (por ejemplo: "libros", "comunicados", "audios", etc.). El resultado estará paginado, incluyendo información como página actual, siguiente página, total de páginas y total de elementos. El parámetro "page" permite solicitar la página deseada de resultados. Permite aplicar filtros para limitar los resultados. Para conocer los filtros disponibles, consulta la tool "info" de la entidad.',
         'parameters' => [
             [
                 'name' => 'entidad',
@@ -33,8 +42,26 @@ return [
         ]
     ],
     [
+        'name' => 'buscar',
+        'description' => 'Buscar cualquier contenido dentro de una colección mediante una frase o palabra clave, usando el parámetro "buscar". Ejemplo: {"entidad": "libro", "buscar": "palabra clave"}. El resultado está paginado igual que en "listar".',
+        'parameters' => [
+            [
+                'name' => 'entidad',
+                'type' => 'string',
+                'description' => 'El nombre de la entidad donde buscar. Por ejemplo: "libro", "comunicado", "audio", "equipo", etc.',
+                'required' => true,
+            ],
+            [
+                'name' => 'buscar',
+                'type' => 'string',
+                'description' => 'Frase o palabra clave a buscar en la colección.',
+                'required' => true,
+            ]
+        ]
+    ],
+    [
         'name' => 'crear',
-        'description' => 'Crear un nuevo elemento en una colección. Se debe indicar la entidad y los datos a crear. Se puede consultar la tool "info" para obtener los campos de la entidad.',
+        'description' => 'Crear un nuevo elemento (entidad) en una colección. Una colección es un conjunto de entidades del mismo tipo gestionadas por el sistema (por ejemplo: "libro", "comunicado", "audio", "equipo", etc.). Se debe indicar el nombre de la entidad (tipo de colección) y los datos a crear.',
         'parameters' => [
             [
                 'name' => 'entidad',
@@ -58,7 +85,7 @@ return [
     ],
     [
         'name' => 'editar',
-        'description' => 'Editar un elemento existente en una colección. Se debe indicar la entidad, el id o slug y los datos a modificar. Se puede consultar la tool "info" para obtener los campos de la entidad.',
+        'description' => 'Editar un elemento (entidad) existente en una colección (por ejemplo: "libro", "comunicado", "audio", "equipo", etc.). Debes indicar la entidad, el id o slug del elemento y los datos a modificar. Ejemplo: {"entidad": "libro", "id": "123", "data": {"titulo": "Nuevo título"}}.',
         'parameters' => [
             [
                 'name' => 'entidad',
@@ -88,7 +115,7 @@ return [
     ],
     [
         'name' => 'eliminar',
-        'description' => 'Eliminar un elemento de una colección. Se debe indicar la entidad y el id o slug. ',
+        'description' => 'Eliminar un elemento (entidad) de una colección (por ejemplo: "libro", "comunicado", "audio", "equipo", etc.). Indica la entidad y el id o slug del elemento. Ejemplo: {"entidad": "libro", "id": "123"}. Usa "force": true para eliminar definitivamente.',
         'parameters' => [
             [
                 'name' => 'entidad',
@@ -118,7 +145,7 @@ return [
     ],
     [
         'name' => 'info',
-        'description' => 'Proporciona información de la entidad, los campos de la entidad, su formato, etc. También detalla parámetros opcionales para buscar y filtrar resultados en la tool "listar". Si no se especifica la entidad, devuelve una lista de entidades disponibles.',
+        'description' => 'Proporciona información sobre una entidad (colección), sus campos y formato. También muestra los filtros disponibles para la tool "listar". Si no se indica entidad, devuelve la lista de colecciones. Ejemplo: {"entidad": "libro"}.',
         'parameters' => [
             [
                 'name' => 'entidad',
