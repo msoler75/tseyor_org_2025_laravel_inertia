@@ -725,9 +725,9 @@ return [
         'descripcion' => 'Gestión de archivos y carpetas en el sistema de almacenamiento',
         'parametros_ver' => [
             [
-                'name' => 'id',
+                'name' => 'ruta',
                 'type' => 'string',
-                'description' => 'La ruta del archivo a descargar.',
+                'description' => 'La ruta del archivo a ver su información.',
                 'required' => true,
             ],
         ],

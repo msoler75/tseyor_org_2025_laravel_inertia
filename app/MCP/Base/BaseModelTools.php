@@ -19,7 +19,7 @@ abstract class BaseModelTools
 
     // Formato sintético recomendado:
     protected array $required = [
-        'editar, eliminar' => 'administrar_todo',
+        'crear, editar, eliminar' => 'administrar_todo'
     ];
     /*
     // También se aceptan estos otros formatos:
@@ -42,6 +42,7 @@ abstract class BaseModelTools
     // ];
     */
 
+    protected $info = []; // Información adicional sobre la herramienta, como descripción
 
     public function __construct()
     {
@@ -57,6 +58,15 @@ abstract class BaseModelTools
             throw new \InvalidArgumentException("La clase del controlador '{$this->controllerClass}' no existe.");
         }
     }
+
+
+
+
+    public function getInfo()
+    {
+        return $this->info;
+    }
+
 
     public function getModelClass(): ?string
     {
@@ -330,4 +340,5 @@ abstract class BaseModelTools
         // DRY: reutiliza la lógica de onListar
         return $this->onListar($params, $baseTool);
     }
+
 }

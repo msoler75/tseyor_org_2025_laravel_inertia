@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 abstract class BaseTool implements ToolInterface {
     private ?string $toolName = null; // Nombre de la tool MCP (ej: 'editar_comunicado')
-    protected $inertiaRequest; // Objeto Request para respuestas Inertia
+    public $inertiaRequest; // Objeto Request para respuestas Inertia
 
     public function __construct($toolName) {
         $this->toolName = $toolName;
