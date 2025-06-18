@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Evento;
 use App\Pigmalion\SEO;
-
+use App\Pigmalion\BusquedasHelper;
 class EventosController extends Controller
 {
     public static $ITEMS_POR_PAGINA = 12;
@@ -30,6 +30,9 @@ class EventosController extends Controller
         $categorias = Evento::selectRaw('categoria as nombre, count(*) as total')
             ->groupBy('categoria')
             ->get();
+
+        if ($buscar)
+            BusquedasHelper::formatearResultados($resultados, $buscar, false);
 
         return Inertia::render('Eventos/Index', [
             'filtrado' => $buscar,

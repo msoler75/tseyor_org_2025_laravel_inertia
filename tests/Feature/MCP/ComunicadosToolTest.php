@@ -8,6 +8,14 @@ use Tests\TestCase;
 
 class ComunicadosToolTest extends McpFeatureTestCase
 {
+    public function test_listar_comunicados2()
+    {
+        $result = $this->callMcpTool('listar', ['entidad' => 'comunicado']);
+        fwrite(STDERR, print_r($result, true));
+        $this->assertIsArray($result, 'La respuesta de MCP no es un array');
+    }
+
+
     public function test_listar_comunicados()
     {
         Comunicado::truncate();

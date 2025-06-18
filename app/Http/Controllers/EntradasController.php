@@ -7,7 +7,7 @@ use Inertia\Inertia;
 use App\Models\Entrada;
 use App\Pigmalion\SEO;
 use App\Pigmalion\Markdown;
-
+use App\Pigmalion\BusquedasHelper;
 class EntradasController extends Controller
 {
     public static $ITEMS_POR_PAGINA = 12;
@@ -29,6 +29,9 @@ class EntradasController extends Controller
             ->orderBy('published_at', 'desc')
             ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
+
+        if ($buscar)
+            BusquedasHelper::formatearResultados($resultados, $buscar, false);
 
         return Inertia::render('Entradas/Index', [
             'filtrado' => $buscar,

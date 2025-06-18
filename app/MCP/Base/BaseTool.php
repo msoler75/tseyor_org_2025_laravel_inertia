@@ -25,6 +25,28 @@ abstract class BaseTool implements ToolInterface {
         if($response instanceof InertiaResponse) {
             $data = $response->toResponse($this->inertiaRequest)->getData(true)['props'] ?? [];
             Log::channel('mcp')->info('[BaseTool] fromInertiaToArray props', ['props' => $data]);
+            // si el objeto tiene 'listado' hacemos un cambio de idioma de las keys de paginación
+            if (isset($data['listado']) && is_array($data['listado'])) {
+                // $data['listado']['pagina_actual'] = $data['listado']['current_page'] ?? 1;
+                $data['listado']['paginacion'] = [
+                    'pagina_actual' => $data['listado']['current_page'] ?? 1,
+                    'numero_paginas' => $data['listado']['last_page'] ?? 1,
+                    'elementos_por_pagina' => $data['listado']['per_page'] ?? 1,
+                    'total_elementos' => $data['listado']['total'] ?? 1,
+                ];
+                unset($data['listado']['current_page']);
+                unset($data['listado']['last_page']);
+                unset($data['listado']['last_page_url']);
+                unset($data['listado']['first_page_url']);
+                unset($data['listado']['from']);
+                unset($data['listado']['to']);
+                unset($data['listado']['path']);
+                unset($data['listado']['per_page']);
+                unset($data['listado']['next_page_url']);
+                unset($data['listado']['prev_page_url']);
+                unset($data['listado']['total']);
+                unset($data['listado']['links']);
+            }
             return $data;
         }
         Log::channel('mcp')->error('[BaseTool] fromInertiaToArray: tipo de respuesta no soportado', ['response' => $response]);
@@ -59,20 +81,19 @@ abstract class BaseTool implements ToolInterface {
         if ($capabilities === null) {
             $capabilities = include __DIR__ . '/../Data/capabilities.php';
         }
-        foreach ($capabilities as $group) {
-            if (!empty($group['tools'])) {
-                foreach ($group['tools'] as $tool) {
-                    if ($tool['name'] === $toolName) {
-                        return $tool;
-                    }
-                }
+        foreach ($capabilities as $tool) {
+            if (isset($tool['name']) && $tool['name'] === $toolName) {
+                return $tool;
             }
         }
         return null;
     }
 
     public function description(): string {
-        $info = $this->getCapabilityInfo($this->name());
+        $toolName = $this->name();
+        Log::channel('mcp')->info('[BaseTool] description() buscando descripción para tool', ['toolName' => $toolName]);
+        $info = $this->getCapabilityInfo($toolName);
+        Log::channel('mcp')->info('[BaseTool] description() info encontrado', ['info' => $info]);
         return $info['description'] ?? '';
     }
 
