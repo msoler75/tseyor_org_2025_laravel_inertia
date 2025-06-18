@@ -37,9 +37,12 @@ class InfoTool extends BaseTool
         $modelTools = new $toolsClass();
         $modelNameSingle = $modelTools->getModelNameSingle();
 
+        $info_entidad = $entidades_info[$modelNameSingle] ?? [];
+
+        $info_entidad = array_merge($info_entidad, $modelTools->getInfo());
 
         return [
-            $modelNameSingle => $entidades_info[$modelNameSingle] ?? []
+            $modelNameSingle => $info_entidad?? []
         ];
     }
 }
