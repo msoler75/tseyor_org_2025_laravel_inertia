@@ -26,6 +26,12 @@ return [
                 'type' => 'string',
                 'description' => 'El ID o slug del elemento a obtener. Si se proporciona un ID numérico, se buscará por ID; si es un slug, se buscará por slug.',
                 'required' => true,
+            ],
+            [
+                'name' => 'token',
+                'type' => 'string',
+                'description' => 'Token MCP para autenticación o autorización. Opcional salvo que la entidad requiera permisos.',
+                'required' => false,
             ]
         ]
     ],
@@ -38,6 +44,12 @@ return [
                 'type' => 'string',
                 'description' => 'El nombre de la entidad a obtener. Por ejemplo: "libro", "comunicado", "audio", "equipo", etc.',
                 'required' => true,
+            ],
+            [
+                'name' => 'token',
+                'type' => 'string',
+                'description' => 'Token MCP para autenticación o autorización. Opcional salvo que la entidad requiera permisos.',
+                'required' => false,
             ]
         ]
     ],
@@ -56,6 +68,12 @@ return [
                 'type' => 'string',
                 'description' => 'Frase o palabra clave a buscar en la colección.',
                 'required' => true,
+            ],
+            [
+                'name' => 'token',
+                'type' => 'string',
+                'description' => 'Token MCP para autenticación o autorización. Opcional salvo que la entidad requiera permisos.',
+                'required' => false,
             ]
         ]
     ],
@@ -78,7 +96,7 @@ return [
             [
                 'name' => 'token',
                 'type' => 'string',
-                'description' => 'Token MCP necesario para autorización.',
+                'description' => 'Token MCP para autenticación o autorización.',
                 'required' => true,
             ]
         ]
@@ -108,7 +126,7 @@ return [
             [
                 'name' => 'token',
                 'type' => 'string',
-                'description' => 'Token MCP necesario para autorización.',
+                'description' => 'Token MCP para autenticación o autorización.',
                 'required' => true,
             ]
         ]
@@ -138,19 +156,19 @@ return [
             [
                 'name' => 'token',
                 'type' => 'string',
-                'description' => 'Token MCP necesario para autorización.',
+                'description' => 'Token MCP para autenticación o autorización.',
                 'required' => true,
             ]
         ]
     ],
     [
         'name' => 'info',
-        'description' => 'Proporciona información sobre una entidad (colección), sus campos y formato. También muestra los filtros disponibles para la tool "listar". Si no se indica entidad, devuelve la lista de colecciones. Ejemplo: {"entidad": "libro"}.',
+        'description' => 'Lista entidades (tipos de contenido) y proporciona información sobre una entidad, sus campos y formato. También muestra los filtros disponibles para la tool "listar" o "buscar". Si no se indica entidad, devuelve la lista de entidades. Ejemplos: {} sin parámetros para devolver la lista de entidades; {"entidad": "libro"} para ver la información de la entidad "libro".',
         'parameters' => [
             [
                 'name' => 'entidad',
                 'type' => 'string',
-                'description' => 'El nombre de la entidad. Por ejemplo: "libro", "comunicado", "audio", "equipo", etc.',
+                'description' => 'El nombre de la entidad de la se solicita información. Por ejemplo: "libro", "comunicado", "audio", "equipo", etc.',
                 'required' => true,
             ]
         ]

@@ -28,9 +28,8 @@ class CrearTool extends BaseTool
         $modelTools = new $toolsClass();
         $modelClass = $modelTools->getModelClass();
         $modelNameSingle = $modelTools->getModelNameSingle();
-        $required = $modelTools->getRequiredPermissions($this->name());
 
-        $this->checkMcpToken($params, $required);
+        $modelTools->checkMcpToken($params, $modelTools->getRequiredPermissions($this->name()));
 
         if (!isset($params['data'])) {
             return ['error' => 'No se han proporcionado datos para actualizar el elemento'];

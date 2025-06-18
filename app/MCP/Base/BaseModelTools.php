@@ -16,15 +16,30 @@ abstract class BaseModelTools
         'ver' => 'show'
     ];
 
+    // Formato sintético recomendado:
     protected array $required = [
-        'campos' => [],
-        'ver' => [],
-        'listar' => [],
-        'buscar' => [],
-        'crear' => ['administrar_contenidos'],
-        'editar' => ['administrar_contenidos'],
-        'eliminar' => ['administrar_contenidos'],
+        'crear, editar, eliminar' => 'administrar_todo',
     ];
+    /*
+    // También se aceptan estos otros formatos:
+    // 1. Arrays de strings:
+    // protected array $required = [
+    //     'crear' => ['administrar_social', 'administrar_contenidos'],
+    //     'editar' => 'administrar_contenidos',
+    //     'eliminar' => 'administrar_contenidos',
+    // ];
+    // 2. Formato clásico (arrays vacíos para acciones públicas):
+    // protected array $required = [
+    //     'crear' => ['administrar_contenidos'],
+    //     'editar' => ['administrar_contenidos'],
+    //     'eliminar' => ['administrar_contenidos'],
+    // ];
+    // 3. Mezcla de sintaxis:
+    // protected array $required = [
+    //     'crear, editar' => 'administrar_contenidos',
+    //     'eliminar' => ['administrar_contenidos', 'administrar_social'],
+    // ];
+    */
 
 
     public function __construct()
@@ -71,9 +86,19 @@ abstract class BaseModelTools
 
     public function getRequiredPermissions($verb): array
     {
-        if (!array_key_exists($verb, $this->required))
-            throw new \InvalidArgumentException("El verbo '$verb' no está definido en los requisitos.");
-        return $this->required[$verb];
+        // Si existe la clave exacta
+        if (array_key_exists($verb, $this->required)) {
+            return is_array($this->required[$verb]) ? $this->required[$verb] : [$this->required[$verb]];
+        }
+        // Buscar en claves combinadas (ej: 'crear, editar, eliminar')
+        foreach ($this->required as $key => $value) {
+            $acciones = array_map('trim', explode(',', $key));
+            if (in_array($verb, $acciones)) {
+                return is_array($value) ? $value : [$value];
+            }
+        }
+        // Si no hay requisitos, devolver array vacío
+        return [];
     }
 
 

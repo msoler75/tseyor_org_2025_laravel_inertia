@@ -53,27 +53,94 @@ abstract class BaseTool implements ToolInterface {
         throw new \InvalidArgumentException('Response type not supported for conversion to JSON.');
     }
 
-    protected function checkMcpToken($params, $permisos = ['administrar_contenidos']) {
-        if(empty($permisos)) {
-            return true; // Si no hay permisos, no hacemos nada
+    /**
+     * Verifica el token MCP contra los permisos requeridos para la acción.
+     * $permisos puede ser string, array, o un array de strings/arrays, o usar claves combinadas ("crear, editar").
+     */
+    protected function checkMcpToken($params, $permisos = 'administrar_todo') {
+        // primero revisa si es un token JWT
+        $token = $params['token'] ?? null;
+        // Si el token parece un JWT (3 partes separadas por punto)
+        if (preg_match('/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/', $token)) {
+            try {
+                $jwtSecret = config('app.key'); // O usar una clave específica para JWT si la tienes
+                $decoded = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($jwtSecret, 'HS256'));
+                // Buscar usuario por ID/email en el payload
+                $userId = $decoded->sub ?? $decoded->user_id ?? null;
+                if ($userId) {
+                    $user = \App\Models\User::find($userId);
+                    if ($user) {
+                        auth()->setUser($user); // Autentica el usuario para la sesión actual
+                        return true;
+                    }
+                }
+                abort(403, 'Token JWT válido pero usuario no encontrado');
+            } catch (\Exception $e) {
+                abort(403, 'Token JWT inválido: ' . $e->getMessage());
+            }
         }
-        Log::channel('mcp')->info('[MCP] Verificando token para permisos: ' . implode(', ', $permisos), ['params' => $params]);
-        if (empty($params['token'])) {
+
+        // es un token general (no JWT)
+        $permisosNorm = $this->normalizePermisos($permisos, $this->toolName ?? null);
+        if(empty($permisosNorm)) {
+            return true; // Si no hay permisos requeridos, no hacemos nada
+        }
+        Log::channel('mcp')->info('[MCP] Verificando token para permisos: ' . implode(', ', $permisosNorm), ['params' => $params]);
+        if (!$token) {
             abort(403, 'Token no proporcionado');
         }
-        $token = $params['token'] ?? null;
         $tokens = config('mcp-server.tokens', []);
         $tokenTodo = Arr::get($tokens, 'administrar_todo');
         if ($token && $tokenTodo && $token === $tokenTodo) {
             return true;
         }
-        foreach ($permisos as $permiso) {
+        foreach ($permisosNorm as $permiso) {
             $permisoToken = Arr::get($tokens, $permiso);
             if ($token && $permisoToken && $token === $permisoToken) {
                 return true;
             }
         }
         abort(403, 'Token inválido o insuficiente para el permiso requerido');
+    }
+
+    /**
+     * Normaliza los formatos de permisos a un array plano de strings.
+     * Soporta string, array, arrays múltiples, y claves combinadas ("crear, editar").
+     * $toolName es el nombre de la acción actual (crear, editar, etc).
+     */
+    protected function normalizePermisos($permisos, $toolName = null) {
+        // Si es null, vacío o []
+        if (empty($permisos)) return [];
+        // Si es string, devolver como array
+        if (is_string($permisos)) return [$permisos];
+        // Si es array plano de strings
+        if (array_is_list($permisos) && count(array_filter($permisos, 'is_string')) === count($permisos)) {
+            return $permisos;
+        }
+        // Si es array asociativo (formato sintético)
+        $result = [];
+        foreach ($permisos as $key => $value) {
+            // Si la clave es numérica, es un array plano
+            if (is_int($key)) {
+                if (is_string($value)) {
+                    $result[] = $value;
+                } elseif (is_array($value)) {
+                    $result = array_merge($result, $this->normalizePermisos($value));
+                }
+            } else {
+                // Clave puede ser "crear, editar, eliminar" o similar
+                $acciones = array_map('trim', explode(',', $key));
+                if ($toolName && in_array($toolName, $acciones)) {
+                    // El valor puede ser string o array
+                    if (is_string($value)) {
+                        $result[] = $value;
+                    } elseif (is_array($value)) {
+                        $result = array_merge($result, $this->normalizePermisos($value));
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     protected function getCapabilityInfo(string $toolName): ?array {
