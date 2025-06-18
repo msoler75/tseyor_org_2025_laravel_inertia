@@ -3,7 +3,7 @@
 namespace App\MCP\Base;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 abstract class BaseModelTools
 {
     protected ?string $modelName = null; // Nombre singular del modelo (ej: 'comunicado')
@@ -19,7 +19,7 @@ abstract class BaseModelTools
 
     // Formato sintético recomendado:
     protected array $required = [
-        'crear, editar, eliminar' => 'administrar_todo',
+        'editar, eliminar' => 'administrar_todo',
     ];
     /*
     // También se aceptan estos otros formatos:
@@ -102,6 +102,154 @@ abstract class BaseModelTools
         return [];
     }
 
+    // HOOKS DE TOOLS ESPECIFICAS
+
+    public function onVer(array $params, object $baseTool) {
+        $modelo = $params['entidad'] ?? null;
+        $modelClass = $this->getModelClass();
+        $controller = $this->getControllerClass();
+        $controllerMethod = $this->getMethod($baseTool->name());
+        $modelNameSingle = $this->getModelNameSingle();
+        $id = $params['id'] ?? $params['slug'] ?? null;
+        Log::channel('mcp')->debug('[BaseVerTool] handle', ['params' => $params, 'modelo' => $modelo, 'controller' => $controller, 'modelClass' => $modelClass]);
+        if ($controller && $controllerMethod) {
+            if (!class_exists($controller)) return ['error' => 'Clase no encontrada: ' . $controller];
+            $response = $this->callControllerMethod($baseTool->name(), $baseTool->inertiaRequest, $params);
+            $data = $baseTool->fromInertiaToArray($response);
+            return $data;
+        } elseif ($modelClass) {
+            if (is_numeric($id)) {
+                $item = ($modelClass)::findOrFail($id);
+            } else {
+                $item = ($modelClass)::where('slug', $id)->firstOrFail();
+            }
+            return [$modelNameSingle => $item->toArray()];
+        }
+        return ['error' => 'No se ha definido controller ni modelo'];
+    }
+
+    public function onListar(array $params, object $baseTool) {
+        $modelo = $params['entidad'] ?? null;
+        $modelClass = $this->getModelClass();
+        $controller = $this->getControllerClass();
+        $controllerMethod = $this->getMethod($baseTool->name());
+        $modelNamePlural = $this->getModelNamePlural();
+        if ($controller && $controllerMethod) {
+            if (!class_exists($controller)) return ['error' => 'Clase no encontrada: ' . $controller];
+            $baseTool->inertiaRequest->query->replace($params);
+            $response = $this->callControllerMethod($baseTool->name(), $baseTool->inertiaRequest, $params);
+            $data = $baseTool->fromInertiaToArray($response);
+            return $data;
+        } elseif ($modelClass) {
+            $query = ($modelClass)::query();
+            $buscar = $params['buscar'] ?? null;
+            $categoria = $params['categoria'] ?? null;
+            $fillable = (new $modelClass())->getFillable();
+            if ($buscar) {
+                if (method_exists($modelClass, 'shouldBeSearchable')) {
+                    $ids = $modelClass::search($buscar);
+                    $query->whereIn('id', $ids);
+                } else {
+                    $searchableFields = ['titulo', 'nombre', 'descripcion', 'slug'];
+                    $foundFields = array_intersect($searchableFields, $fillable);
+                    foreach ($foundFields as $field)
+                        $query->orWhere($field, 'LIKE', "%$buscar%");
+                }
+            }
+            if ($categoria && in_array('categoria', $fillable))
+                $query->where('categoria', $categoria);
+            $result = $query->get();
+            return [$modelNamePlural => $result->toArray()];
+        }
+        return ['error' => 'No se ha definido controller ni modelo'];
+    }
+
+    public function onCrear(array $params, object $baseTool) {
+        $modelClass = $this->getModelClass();
+        $modelNameSingle = $this->getModelNameSingle();
+        $controller = $this->getControllerClass();
+        $controllerMethod = null;
+        try {
+            $controllerMethod = $this->getMethod($baseTool->name());
+        } catch (\Throwable $e) {}
+        if ($controller && $controllerMethod) {
+            $response = $this->callControllerMethod($baseTool->name(), $baseTool->inertiaRequest, $params);
+            $result = $baseTool->fromInertiaToArray($response);
+            return $result;
+        }
+        if (!isset($params['data'])) {
+            return ['error' => 'No se han proporcionado datos para crear el elemento'];
+        }
+        $data = $params['data'];
+        $data = $this->onBeforeCreate($data, $params);
+        $item = ($modelClass)::create($data);
+        $item = $this->onAfterCreate($item, $params);
+        return $item ? [$modelNameSingle . '_creado' => $item->toArray()] : [];
+    }
+
+    public function onEditar(array $params, object $baseTool) {
+        $modelClass = $this->getModelClass();
+        $modelNameSingle = $this->getModelNameSingle();
+        $controller = $this->getControllerClass();
+        $controllerMethod = null;
+        try {
+            $controllerMethod = $this->getMethod($baseTool->name());
+        } catch (\Throwable $e) {}
+        $id = $params['id'] ?? $params['slug'] ?? null;
+        if (!$modelClass) {
+            return ['error' => 'No se ha definido modelo'];
+        }
+        if ($controller && $controllerMethod) {
+            $response = $this->callControllerMethod($baseTool->name(), $baseTool->inertiaRequest, $params);
+            $result = $baseTool->fromInertiaToArray($response);
+            return $result;
+        }
+        if (!isset($params['data'])) {
+            return ['error' => 'No se han proporcionado datos para actualizar el elemento'];
+        }
+        if (is_numeric($id)) {
+            $item = ($modelClass)::findOrFail($id);
+        } else {
+            $item = ($modelClass)::where('slug', $id)->firstOrFail();
+        }
+        $data = $params['data'];
+        $data = $this->onBeforeEdit($data, $item, $params);
+        $item->update($data);
+        $item = $this->onAfterEdit($item, $params);
+        return [$modelNameSingle . '_modificado' => $item->toArray()];
+    }
+
+    public function onEliminar(array $params, object $baseTool) {
+        $modelClass = $this->getModelClass();
+        $modelNameSingle = $this->getModelNameSingle();
+        $id = $params['id'] ?? $params['slug'] ?? null;
+        if (!$id) {
+            return ['error' => 'No se ha proporcionado un ID o slug para eliminar el elemento'];
+        }
+        if (!$modelClass) {
+            return ['error' => 'No se ha definido modelo'];
+        }
+        if (is_numeric($id)) {
+            $item = ($modelClass)::findOrFail($id);
+        } else {
+            $item = ($modelClass)::where('slug', $id)->firstOrFail();
+        }
+        $this->checkDeleteable($item, $params);
+        if (!empty($params['force']) && method_exists($item, 'forceDelete')) {
+            $item->forceDelete();
+            return [$modelNameSingle . '_borrado' => true, 'id' => $id];
+        }
+        $item->delete();
+        return [$modelNameSingle . '_borrado' => true, 'id' => $id];
+    }
+
+    // HOOKS PARA PROCESAMIENTO DE DATOS se invoca el controlador
+
+    public function onPrepareRequest(Request $request, array $params) {
+        // do nothing by default
+    }
+
+    // HOOKS PARA PROCESAMIENTO DE DATOS si no se invoca el controlador
 
     // Hook para procesamiento previo
     public function onBeforeCreate(array $data, array $params): array
@@ -153,6 +301,8 @@ abstract class BaseModelTools
     // HOOK para llamada al método del controlador
     public function callControllerMethod(string $toolName, Request $request, array $params)
     {
+        $this->onPrepareRequest($request, $params);
+
         $id = $params['id'] ?? $params['slug'] ?? null;
 
         if ($toolName == 'listar' || $toolName == 'buscar') {
@@ -174,5 +324,10 @@ abstract class BaseModelTools
             $response = app($controller)->{$controllerMethod}($id);
         }
         return $response;
+    }
+
+    public function onBuscar(array $params, object $baseTool) {
+        // DRY: reutiliza la lógica de onListar
+        return $this->onListar($params, $baseTool);
     }
 }

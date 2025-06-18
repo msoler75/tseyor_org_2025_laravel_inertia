@@ -48,6 +48,7 @@ use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Cookie;
 use App\Http\Controllers\BoletinesController;
 use App\Http\Controllers\SuscriptorController;
+use App\Http\Controllers\McpTokenController;
 
 
 
@@ -66,6 +67,15 @@ Route::get('glosario/parse', [TerminosController::class, 'parse'])->name('parse'
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // ...otras rutas de perfil...
+    Route::get('/user/mcp-token', [McpTokenController::class, 'show'])->name('profile.mcp-token');
+    Route::post('/user/mcp-token', [McpTokenController::class, 'generate'])->name('profile.mcp-token.generate');
+});
+
+
 
 
 
@@ -448,10 +458,5 @@ Route::get('dev/2',  'App\Http\Controllers\DevController@dev2');
 
 ///// FINAL FALLBACK PAGE
 Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
-
-
-/* Route::fallback(function () {
-    return app()->call('App\Http\Controllers\PaginasController@index');
-}); */
 
 

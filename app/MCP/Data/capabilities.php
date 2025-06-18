@@ -109,7 +109,7 @@ return [
                 'name' => 'token',
                 'type' => 'string',
                 'description' => 'Token MCP para autenticación o autorización.',
-                'required' => true,
+                'required' => false,
             ]
         ]
     ],
