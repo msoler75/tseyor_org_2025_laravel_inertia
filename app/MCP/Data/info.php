@@ -745,7 +745,9 @@ return [
                 'description' => 'Texto a buscar en los nombres de archivos o carpetas'
             ]
         ],
-        'ejemplos_crear' => 'Para crear un archivo de texto con permisos 557: {"entidad": "archivo", "ruta": "/archivos/personal/public/conseguido.txt", "data":["contenido": "Texto del archivo", "permisos": "557" ]} o para crear una carpeta: {"entidad": "archivo", "ruta": "/archivos/personal/public/nueva_carpeta/", "data":["es_carpeta": true]}\nPara crear una carpeta con permisos específicos: {"entidad": "archivo", "ruta": "/archivos/personal/public/nueva_carpeta/", "data":["permisos": "1775", "group_id": 10]',
+        'ejemplos_crear' => 'Para crear un archivo de texto con permisos 557: {"entidad": "archivo", "ruta": "/archivos/personal/public/conseguido.txt", "data":["contenido": "Texto del archivo", "permisos": "557" ]} o para crear una carpeta: {"entidad": "archivo", "ruta": "/archivos/personal/public/nueva_carpeta/", "data":["es_carpeta": true]}
+Para crear una carpeta con permisos específicos: {"entidad": "archivo", "ruta": "/archivos/personal/public/nueva_carpeta/", "data":["permisos": "1775", "group_id": 10]}
+Para subir un archivo binario (ejemplo PDF) usando base64: {"entidad": "archivo", "ruta": "/archivos/ejemplo.pdf", "data": {"contenido_base64": "JVBERi0xLjQKJUZha2UgUERG..."}}',
         'parametros_crear' => [
             [
                 'name' => 'ruta',
@@ -758,6 +760,12 @@ return [
                 'type' => 'string',
                 'required' => false,
                 'description' => 'Contenido del archivo en texto plano. Si se omite, se creará una carpeta'
+            ],
+            [
+                'name' => 'contenido_base64',
+                'type' => 'string',
+                'required' => false,
+                'description' => 'Contenido binario COMPLETO del archivo codificado en base64 (para archivos binarios como PDF, imágenes, etc). Obligatorio para subida binaria vía MCP/JSON-RPC.'
             ],
             [
                 'name' => 'es_carpeta',

@@ -16,6 +16,7 @@
 - [x] Crear test para las nuevas tool MCP para todos los modelos de App\Models faltantes (Audio, Centro, Contacto, Equipo, Entrada, Grupos, Guia, Informe, Libro, Lugar, Meditacion, Noticia, Normativa, Pagina, Psicografia, Sala, Termino, Tutorial, Video): listar, ver, crear, editar, eliminar y ver campos,  (14/06/2025) Se seguirá el mismo esquema que ComunicadosToolTest
 - [x] Unificar paginación en todos los Controllers: usar static $ITEMS_POR_PAGINA y $page de request en index con paginate, como en LibrosController, ComunicadosController y PaginasController (16/06/2025)
 - [x] Crear sección para que usuarios autenticados puedan generar y ver su token JWT MCP desde el área de perfil (18/06/2025)
+- [x] Permitir subida de archivos binarios (ejemplo PDF) en la tool MCP 'archivo' (onCrear) (20/06/2025)
 
 
 

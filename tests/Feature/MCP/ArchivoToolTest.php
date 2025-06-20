@@ -379,4 +379,56 @@ class ArchivoToolTest extends McpFeatureTestCase
             'El archivo debería estar protegido y no ser accesible tras cambiar permisos a 750'
         );
     }
+
+
+
+     public function test_crear_archivo_binario_pdf()
+    {
+        $ruta = '/archivos/test_upload_binario.pdf';
+        $this->limpiarArchivosOCarpetas([$ruta]);
+        // Crear un archivo PDF simulado en base64
+        $contenido = '%PDF-1.4\n%Fake PDF\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF';
+        $contenido_base64 = base64_encode($contenido);
+        $crear = $this->callMcpTool('crear', [
+            'entidad' => 'archivo',
+            'ruta' => $ruta,
+            'data' => [ 'contenido_base64' => $contenido_base64 ],
+            'token' => config('mcp-server.tokens.admin')
+        ]);
+        // fwrite(STDERR, print_r($crear, true));
+        $this->assertIsArray($crear);
+        $this->assertTrue(isset($crear['archivo_creado']) || isset($crear['archivo']), 'No se creó el archivo binario');
+        $sti = new StorageItem($ruta);
+        $this->assertTrue($sti->exists(), 'El archivo PDF no existe en storage');
+        // Verificar contenido binario exacto
+        $contenido_storage = file_get_contents($sti->path);
+        $this->assertSame($contenido, $contenido_storage, 'El contenido binario del archivo subido no coincide exactamente');
+        // Limpieza
+        $this->limpiarArchivosOCarpetas([$ruta]);
+    }
+
+    /*public function test_subir_archivo_prueba_pdf_binario()
+    {
+        $ruta = '/archivos/prueba.pdf';
+        $this->limpiarArchivosOCarpetas([$ruta]);
+        // Leer el archivo real prueba.pdf de la raíz del proyecto
+        $contenido = file_get_contents(base_path('prueba.pdf'));
+        $contenido_base64 = base64_encode($contenido);
+        $crear = $this->callMcpTool('crear', [
+            'entidad' => 'archivo',
+            'ruta' => $ruta,
+            'data' => [ 'contenido_base64' => $contenido_base64 ],
+            'token' => config('mcp-server.tokens.admin')
+        ]);
+        // fwrite(STDERR, print_r($crear, true));
+        $this->assertIsArray($crear);
+        $this->assertTrue(isset($crear['archivo_creado']) || isset($crear['archivo']), 'No se creó el archivo binario');
+        $sti = new StorageItem($ruta);
+        $this->assertTrue($sti->exists(), 'El archivo PDF no existe en storage');
+        // Verificar contenido binario exacto
+        $contenido_storage = file_get_contents($sti->path);
+        $this->assertSame($contenido, $contenido_storage, 'El contenido binario del archivo subido no coincide exactamente');
+        // Limpieza
+        $this->limpiarArchivosOCarpetas([$ruta]);
+    }*/
 }
