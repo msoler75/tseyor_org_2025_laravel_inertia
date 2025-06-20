@@ -448,17 +448,11 @@ return [
     ],
 
 
-
     // control de acceso
     'tokens' => [
         // Usa valores seguros y cámbialos en producción
-        'administrar_contenidos' => env('MCP_TOKEN_ADMINISTRAR_CONTENIDOS', 'token-contenidos-123'),
-        'administrar_social' => env('MCP_TOKEN_ADMINISTRAR_SOCIAL', 'token-social-456'),
-        'administrar_todo' => env('MCP_TOKEN_ADMINISTRAR_TODO', 'token-todo-789'),
+        'admin' => env('MCP_TOKEN_ADMIN', 'omitir_en_produccion'), // para los test, omitir en producción
     ],
 
-
     'jwt_secret_prefix' => env('MCP_JWT_SECRET_PREFIX', '')
-
-
 ];

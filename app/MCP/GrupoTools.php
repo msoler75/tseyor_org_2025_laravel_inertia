@@ -7,6 +7,9 @@ class GrupoTools extends BaseModelTools
     protected ?string $modelName = 'grupo';
     protected ?string $modelClass = 'App\\Models\\Grupo';
     protected ?string $controllerClass = null;
+    protected array $required = [
+        'crear, editar, eliminar' => 'administrar usuarios'
+    ];
 
     public function checkDeleteable($item, array $params = [])
     {

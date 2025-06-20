@@ -96,7 +96,7 @@ class UsuarioToolTest extends McpFeatureTestCase
                 'frase' => 'Frase nueva',
                 'profile_photo_path' => '',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         // fwrite(STDERR, print_r($result, true));
@@ -122,7 +122,7 @@ class UsuarioToolTest extends McpFeatureTestCase
             'data' => [
                 'name' => $nuevoNombre
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('users', ['id' => $usuario->id, 'name' => $nuevoNombre]);
@@ -145,7 +145,7 @@ class UsuarioToolTest extends McpFeatureTestCase
             'entidad' => 'usuario',
             'id' => $usuario->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $result = $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('users', ['id' => $usuario->id]);

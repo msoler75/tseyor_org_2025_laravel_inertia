@@ -82,7 +82,7 @@ class SalaToolTest extends McpFeatureTestCase
                 'descripcion' => 'Descripción de prueba',
                 'enlace' => 'https://nueva-sala.com',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('salas', ['slug' => $params['data']['slug']]);
@@ -105,7 +105,7 @@ class SalaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('salas', ['id' => $sala->id, 'descripcion' => $nuevaDescripcion]);
@@ -125,7 +125,7 @@ class SalaToolTest extends McpFeatureTestCase
             'entidad' => 'sala',
             'id' => $sala->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('salas', ['id' => $sala->id]);

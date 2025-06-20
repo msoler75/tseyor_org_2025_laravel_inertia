@@ -108,7 +108,7 @@ class LibroToolTest extends McpFeatureTestCase
                 'pdf' => '/pdf/nuevo-libro.pdf',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('libros', ['slug' => $params['data']['slug']]);
@@ -135,7 +135,7 @@ class LibroToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('libros', ['id' => $libro->id, 'descripcion' => $nuevaDescripcion]);
@@ -159,7 +159,7 @@ class LibroToolTest extends McpFeatureTestCase
             'entidad' => 'libro',
             'id' => $libro->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('libros', ['id' => $libro->id]);

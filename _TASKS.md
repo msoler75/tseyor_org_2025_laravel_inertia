@@ -11,23 +11,11 @@
 - [ ] Todas las tools MCP usan capabilities.php para description, inputSchema y annotations (13/06/2025)
 - [x] Crear tools MCP para todos los modelos de App\Models (Audio, Centro, Contacto, Equipo, Entrada, Evento, Grupos, Guia, Informe, Libro, Lugar, Meditacion, Noticia, Normativa, Pagina, Psicografia, Sala, Termino, Tutorial, Video): listar, ver, crear, editar, eliminar y ver campos. (13/06/2025) Se seguirán los preceptos comentados a continuación:
 - [x] Refactorizar hooks de tools MCP: Crear, Editar, Eliminar, Listar, Buscar para usar onCrear, onEditar, onEliminar, onListar, onBuscar en BaseModelTools (18/06/2025)
-
-### Detalles y reglas para la creación de nuevas Tools MCP para modelos
-
-   - Cada Tool debe basarse en la estructura y principios de las Tools existentes en App\Mcp\ComunicadosTools (herencia de las diferentes clases de Base*Tool).
-   - Cada grupo de Tools de un modelo está en una carpeta, como en App\Mcp\ComunicadosTools
-   - Cada Tool nueva se basa en definir la clase padre y los valores de atributos adecuados para adaptar el funcionamiento de la clase.
-   - Se debe añadir a capabilities.php la información del modelo que falte, si no existe ya.
-   - No se define el atributo $name ni $description en ninguna tool, ya que eso se genera dinámicamente en BaseTool.
-   - Seguir al pie de la letra el mismo esqueleto que en las Tool de App\Mcp\ComunicadosTools
-   - En las Tool de Ver y Listar se especificará la clase Controller asociada al modelo, igual que en VerComunicadosTool. Si no existe controller asociado al modelo, se prescindirá de definirlo.
-
-
-- [ ] Crear test para las nuevas tool MCP para todos los modelos de App\Models faltantes (Audio, Centro, Contacto, Equipo, Entrada, Evento, Grupos, Guia, Informe, Libro, Lugar, Meditacion, Noticia, Normativa, Pagina, Psicografia, Sala, Termino, Tutorial, Video): listar, ver, crear, editar, eliminar y ver campos,  (14/06/2025) Se seguirá el mismo esquema que ComunicadosToolTest
-- [ ] Unificar paginación en todos los Controllers: usar static $ITEMS_POR_PAGINA y $page de request en index con paginate, como en LibrosController, ComunicadosController y PaginasController (16/06/2025)
+- [x] Actualizar la gestión de permisos y la sintaxis de $required en las Tools MCP, simplificar la lógica de permisos, y asegurar que los tests de archivos (crear, editar, eliminar, permisos) pasen correctamente. Ajustar la respuesta de edición de archivos/carpeta para que los tests sean consistentes y no fallen por claves ausentes. (19/06/2025)
+- [x] Añadir tests para tools MCP de Evento: listar, ver, crear, editar, eliminar (16/06/2025)
+- [x] Crear test para las nuevas tool MCP para todos los modelos de App\Models faltantes (Audio, Centro, Contacto, Equipo, Entrada, Grupos, Guia, Informe, Libro, Lugar, Meditacion, Noticia, Normativa, Pagina, Psicografia, Sala, Termino, Tutorial, Video): listar, ver, crear, editar, eliminar y ver campos,  (14/06/2025) Se seguirá el mismo esquema que ComunicadosToolTest
+- [x] Unificar paginación en todos los Controllers: usar static $ITEMS_POR_PAGINA y $page de request en index con paginate, como en LibrosController, ComunicadosController y PaginasController (16/06/2025)
 - [x] Crear sección para que usuarios autenticados puedan generar y ver su token JWT MCP desde el área de perfil (18/06/2025)
 
-## Discovered During Work
-- [ ] Eliminar clases específicas de la carpeta AudioTools (CamposAudioTool.php, CrearAudioTool.php, EditarAudioTool.php, EliminarAudioTool.php, ListarAudiosTool.php, VerAudioTool.php) tras refactorización a tool genérica (15/06/2025)
-- [x] Añadir tests para tools MCP de Evento: listar, ver, crear, editar, eliminar (16/06/2025)
+
 

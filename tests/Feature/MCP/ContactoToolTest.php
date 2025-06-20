@@ -84,7 +84,7 @@ class ContactoToolTest extends McpFeatureTestCase
                 'poblacion' => 'Ciudad Nueva',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $crear = $this->callMcpTool('crear', $params);
         $contactoId = $crear['contacto_creado']['id'] ?? null;
@@ -95,7 +95,7 @@ class ContactoToolTest extends McpFeatureTestCase
             'data' => [
                 'nombre' => $nuevoNombre
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $response = $this->callMcpTool('editar', $paramsEditar);
         $this->assertDatabaseHas('contactos', ['id' => $contactoId, 'nombre' => $nuevoNombre]);
@@ -114,7 +114,7 @@ class ContactoToolTest extends McpFeatureTestCase
             'entidad' => 'contacto',
             'id' => $contacto->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('contactos', ['id' => $contacto->id]);

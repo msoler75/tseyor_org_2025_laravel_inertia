@@ -14,33 +14,22 @@ abstract class BaseModelTools
     protected array $methods = [
         'listar' => 'index',
         'buscar' => 'index',
-        'ver' => 'show'
+        'ver' => 'show',
     ];
 
-    // Formato sintético recomendado:
+    // Formato recomendado:
+    // Para requerir un permiso en varias acciones, usa:
+    // protected array $required = [
+    //     'crear, editar, eliminar' => 'administrar contenidos'
+    // ];
+    // O para una sola acción:
+    // protected array $required = [
+    //     'eliminar' => 'administrar contenidos'
+    // ];
+    // Si no se requiere permiso especial, puedes dejarlo vacío o no definirlo.
     protected array $required = [
-        'crear, editar, eliminar' => 'administrar_todo'
+        'crear, editar, eliminar' => 'administrar contenidos'
     ];
-    /*
-    // También se aceptan estos otros formatos:
-    // 1. Arrays de strings:
-    // protected array $required = [
-    //     'crear' => ['administrar_social', 'administrar_contenidos'],
-    //     'editar' => 'administrar_contenidos',
-    //     'eliminar' => 'administrar_contenidos',
-    // ];
-    // 2. Formato clásico (arrays vacíos para acciones públicas):
-    // protected array $required = [
-    //     'crear' => ['administrar_contenidos'],
-    //     'editar' => ['administrar_contenidos'],
-    //     'eliminar' => ['administrar_contenidos'],
-    // ];
-    // 3. Mezcla de sintaxis:
-    // protected array $required = [
-    //     'crear, editar' => 'administrar_contenidos',
-    //     'eliminar' => ['administrar_contenidos', 'administrar_social'],
-    // ];
-    */
 
     protected $info = []; // Información adicional sobre la herramienta, como descripción
 
@@ -95,21 +84,21 @@ abstract class BaseModelTools
         return $this->methods[$verb];
     }
 
-    public function getRequiredPermissions($verb): array
+    public function getRequiredPermissions($verb): ?string
     {
         // Si existe la clave exacta
         if (array_key_exists($verb, $this->required)) {
-            return is_array($this->required[$verb]) ? $this->required[$verb] : [$this->required[$verb]];
+            return $this->required[$verb] ?: null;
         }
         // Buscar en claves combinadas (ej: 'crear, editar, eliminar')
         foreach ($this->required as $key => $value) {
             $acciones = array_map('trim', explode(',', $key));
             if (in_array($verb, $acciones)) {
-                return is_array($value) ? $value : [$value];
+                return $value ?: null;
             }
         }
-        // Si no hay requisitos, devolver array vacío
-        return [];
+        // Si no hay requisitos, devolver null
+        return null;
     }
 
     // HOOKS DE TOOLS ESPECIFICAS
@@ -124,7 +113,7 @@ abstract class BaseModelTools
         Log::channel('mcp')->debug('[BaseVerTool] handle', ['params' => $params, 'modelo' => $modelo, 'controller' => $controller, 'modelClass' => $modelClass]);
         if ($controller && $controllerMethod) {
             if (!class_exists($controller)) return ['error' => 'Clase no encontrada: ' . $controller];
-            $response = $this->callControllerMethod($baseTool->name(), $baseTool->inertiaRequest, $params);
+            $response = $this->callControllerMethod($baseTool->name(), $baseTool->getRequest(), $params);
             $data = $baseTool->fromInertiaToArray($response);
             return $data;
         } elseif ($modelClass) {
@@ -146,8 +135,9 @@ abstract class BaseModelTools
         $modelNamePlural = $this->getModelNamePlural();
         if ($controller && $controllerMethod) {
             if (!class_exists($controller)) return ['error' => 'Clase no encontrada: ' . $controller];
-            $baseTool->inertiaRequest->query->replace($params);
-            $response = $this->callControllerMethod($baseTool->name(), $baseTool->inertiaRequest, $params);
+            $request = $baseTool->getRequest();
+            $request->query->replace($params);
+            $response = $this->callControllerMethod($baseTool->name(), $request, $params);
             $data = $baseTool->fromInertiaToArray($response);
             return $data;
         } elseif ($modelClass) {
@@ -183,7 +173,7 @@ abstract class BaseModelTools
             $controllerMethod = $this->getMethod($baseTool->name());
         } catch (\Throwable $e) {}
         if ($controller && $controllerMethod) {
-            $response = $this->callControllerMethod($baseTool->name(), $baseTool->inertiaRequest, $params);
+            $response = $this->callControllerMethod($baseTool->name(), $baseTool->getRequest(), $params);
             $result = $baseTool->fromInertiaToArray($response);
             return $result;
         }
@@ -210,7 +200,7 @@ abstract class BaseModelTools
             return ['error' => 'No se ha definido modelo'];
         }
         if ($controller && $controllerMethod) {
-            $response = $this->callControllerMethod($baseTool->name(), $baseTool->inertiaRequest, $params);
+            $response = $this->callControllerMethod($baseTool->name(), $baseTool->getRequest(), $params);
             $result = $baseTool->fromInertiaToArray($response);
             return $result;
         }
@@ -315,7 +305,16 @@ abstract class BaseModelTools
 
         $id = $params['id'] ?? $params['slug'] ?? null;
 
-        if ($toolName == 'listar' || $toolName == 'buscar') {
+        if ($toolName == 'listar') {
+            // Para ArchivosController::list se requieren tres argumentos: Request, ruta, json
+            $ruta = $params['ruta'] ?? '';
+            $json = true;
+            $controller = $this->getControllerClass();
+            $controllerMethod = $this->getMethod($toolName);
+            $response = app($controller)->{$controllerMethod}($request, $ruta, $json);
+            return $response;
+        }
+        if ($toolName == 'buscar') {
             $page = $params['num_pagina'] ?? $params['page'] ?? $params['pagina'] ?? 1;
             $request->request->add(['page' => $page]);
         }

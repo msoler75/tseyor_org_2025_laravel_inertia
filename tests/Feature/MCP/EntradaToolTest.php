@@ -86,7 +86,7 @@ class EntradaToolTest extends McpFeatureTestCase
                 'categoria' => 'test',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('entradas', ['slug' => $params['data']['slug']]);
@@ -110,7 +110,7 @@ class EntradaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('entradas', ['id' => $entrada->id, 'descripcion' => $nuevaDescripcion]);
@@ -131,7 +131,7 @@ class EntradaToolTest extends McpFeatureTestCase
             'entidad' => 'entrada',
             'id' => $entrada->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('entradas', ['id' => $entrada->id]);

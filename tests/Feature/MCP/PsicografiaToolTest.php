@@ -81,7 +81,7 @@ class PsicografiaToolTest extends McpFeatureTestCase
                 'descripcion' => 'Descripción de prueba',
                 'imagen' => '/img/nueva-psicografia.jpg',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('psicografias', ['slug' => $params['data']['slug']]);
@@ -104,7 +104,7 @@ class PsicografiaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('psicografias', ['id' => $psicografia->id, 'descripcion' => $nuevaDescripcion]);
@@ -124,7 +124,7 @@ class PsicografiaToolTest extends McpFeatureTestCase
             'entidad' => 'psicografia',
             'id' => $psicografia->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('psicografias', ['id' => $psicografia->id]);

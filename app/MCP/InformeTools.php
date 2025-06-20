@@ -7,4 +7,7 @@ class InformeTools extends BaseModelTools
     protected ?string $modelName = 'informe';
     protected ?string $modelClass = 'App\\Models\\Informe';
     protected ?string $controllerClass = 'App\\Http\\Controllers\\InformesController';
+    protected array $required = [
+        'crear, editar, eliminar' => 'administrar equipos'
+    ];
 }

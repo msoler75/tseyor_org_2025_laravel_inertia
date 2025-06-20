@@ -87,7 +87,7 @@ class TerminoToolTest extends McpFeatureTestCase
                 'ref_libros' => '',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('terminos', ['slug' => $params['data']['slug']]);
@@ -112,7 +112,7 @@ class TerminoToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('terminos', ['id' => $termino->id, 'descripcion' => $nuevaDescripcion]);
@@ -134,7 +134,7 @@ class TerminoToolTest extends McpFeatureTestCase
             'entidad' => 'termino',
             'id' => $termino->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('terminos', ['id' => $termino->id]);

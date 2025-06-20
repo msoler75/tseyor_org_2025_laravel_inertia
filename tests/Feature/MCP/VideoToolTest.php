@@ -82,7 +82,7 @@ class VideoToolTest extends McpFeatureTestCase
                 'enlace' => 'https://nuevo-video.com',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('videos', ['slug' => $params['data']['slug']]);
@@ -105,7 +105,7 @@ class VideoToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('videos', ['id' => $video->id, 'descripcion' => $nuevaDescripcion]);
@@ -125,7 +125,7 @@ class VideoToolTest extends McpFeatureTestCase
             'entidad' => 'video',
             'id' => $video->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('videos', ['id' => $video->id]);

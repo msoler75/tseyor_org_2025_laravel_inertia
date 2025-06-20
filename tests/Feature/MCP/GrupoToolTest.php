@@ -69,7 +69,7 @@ class GrupoToolTest extends McpFeatureTestCase
                 'slug' => 'nuevo-grupo-' . uniqid(),
                 'descripcion' => 'Descripción de prueba',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('grupos', ['slug' => $params['data']['slug']]);
@@ -90,7 +90,7 @@ class GrupoToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('grupos', ['id' => $grupo->id, 'descripcion' => $nuevaDescripcion]);
@@ -110,7 +110,7 @@ class GrupoToolTest extends McpFeatureTestCase
             'entidad' => 'grupo',
             'id' => $grupo->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('grupos', ['id' => $grupo->id]);
@@ -137,7 +137,7 @@ class GrupoToolTest extends McpFeatureTestCase
             'entidad' => 'grupo',
             'id' => $grupo->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $result = $this->callMcpTool('eliminar', $params);
         $this->assertIsArray($result);

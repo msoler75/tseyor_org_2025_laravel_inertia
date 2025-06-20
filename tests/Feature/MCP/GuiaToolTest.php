@@ -102,7 +102,7 @@ class GuiaToolTest extends McpFeatureTestCase
                 'libros' => '',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('guias', ['slug' => $params['data']['slug']]);
@@ -129,7 +129,7 @@ class GuiaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('guias', ['id' => $guia->id, 'descripcion' => $nuevaDescripcion]);
@@ -153,7 +153,7 @@ class GuiaToolTest extends McpFeatureTestCase
             'entidad' => 'guia',
             'id' => $guia->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('guias', ['id' => $guia->id]);

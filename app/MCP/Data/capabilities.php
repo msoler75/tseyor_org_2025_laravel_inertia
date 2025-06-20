@@ -91,7 +91,7 @@ return [
     ],
     [
         'name' => 'crear',
-        'description' => 'Crear un nuevo elemento (entidad) en una colección. Una colección es un conjunto de entidades del mismo tipo gestionadas por el sistema (por ejemplo: "libro", "comunicado", "audio", "equipo", etc.). Se debe indicar el nombre de la entidad (tipo de colección) y los datos a crear. En algunas entidades se requieren campos adicionales, consulta el valor de "parametros_crear" con la tool "info" indicando la entidad.',
+        'description' => 'Crear un nuevo elemento (entidad) en una colección. Una colección es un conjunto de entidades del mismo tipo gestionadas por el sistema (por ejemplo: "libro", "comunicado", "audio", "equipo", etc.). Se debe indicar el nombre de la entidad (tipo de colección) y los datos a crear. En algunas entidades se requieren campos adicionales de la tool, consulta el valor de "parametros_crear" con la tool "info" indicando la entidad.',
         'parameters' => [
             [
                 'name' => 'entidad',

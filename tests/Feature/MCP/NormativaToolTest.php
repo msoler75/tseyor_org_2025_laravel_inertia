@@ -94,7 +94,7 @@ class NormativaToolTest extends McpFeatureTestCase
                 'published_at' => now()->toDateString(),
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('normativas', ['slug' => $params['data']['slug']]);
@@ -118,7 +118,7 @@ class NormativaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('normativas', ['id' => $normativa->id, 'descripcion' => $nuevaDescripcion]);
@@ -139,7 +139,7 @@ class NormativaToolTest extends McpFeatureTestCase
             'entidad' => 'normativa',
             'id' => $normativa->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('normativas', ['id' => $normativa->id]);
