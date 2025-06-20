@@ -93,7 +93,7 @@ class NoticiaToolTest extends McpFeatureTestCase
                 'imagen' => '/img/nueva-noticia.jpg',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('noticias', ['titulo' => $params['data']['titulo']]);
@@ -117,7 +117,7 @@ class NoticiaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('noticias', ['id' => $noticia->id, 'descripcion' => $nuevaDescripcion]);
@@ -138,7 +138,7 @@ class NoticiaToolTest extends McpFeatureTestCase
             'entidad' => 'noticia',
             'id' => $noticia->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('noticias', ['id' => $noticia->id]);

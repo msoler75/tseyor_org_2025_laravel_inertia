@@ -458,7 +458,7 @@ class ArchivosController extends Controller
             $padre = "";
         $nodoPadre = null;
         if ($padre) {
-            \Log::info("calcularInfoArchivos (padre=$padre)");
+            Log::info("calcularInfoArchivos (padre=$padre)");
             $nodoPadre = Nodo::desde($padre);
         }
 
@@ -904,8 +904,6 @@ class ArchivosController extends Controller
     }
 
 
-
-
     ////////////////////////////////////////////////////////////////////
     ///// API
     ////////////////////////////////////////////////////////////////////
@@ -1219,6 +1217,8 @@ class ArchivosController extends Controller
             if ($sti->deleteDirectory()) {
                 // borramos cualquier tipo de cache de carpetas en esta ubicación
                 $this->borrarCacheCarpetas($sti->location);
+                // eliminamos el nodo asociado
+                Nodo::where('ubicacion', $sti->location)->forceDelete();
                 return response()->json(['message' => 'Carpeta eliminada correctamente'], 200);
             } else {
                 return response()->json(['error' => 'No se pudo eliminar la carpeta'], 500);
@@ -1227,10 +1227,10 @@ class ArchivosController extends Controller
 
         // Intentar eliminar el archivo
         else if ($sti->delete()) {
-
             // borramos cualquier tipo de cache de carpetas en esta ubicación
             $this->borrarCacheCarpetas($sti->location);
-
+            // eliminamos el nodo asociado
+            Nodo::where('ubicacion', $sti->location)->forceDelete();
             return response()->json(['message' => 'Archivo eliminado correctamente'], 200);
         } else {
             return response()->json(['error' => 'No se pudo eliminar el archivo'], 500);
@@ -1838,7 +1838,7 @@ class ArchivosController extends Controller
 
                     if ($equipo) {
                         $cacheKey = 'equipo_ultimos_archivos_' . $equipo->id;
-                        \Log::info("Olvidamos cache $cacheKey");
+                        Log::info("Olvidamos cache $cacheKey");
                         //borrar cache
                         Cache::forget($cacheKey);
 

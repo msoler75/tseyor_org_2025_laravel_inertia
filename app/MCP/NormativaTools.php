@@ -7,4 +7,7 @@ class NormativaTools extends BaseModelTools
     protected ?string $modelName = 'normativa';
     protected ?string $modelClass = 'App\\Models\\Normativa';
     protected ?string $controllerClass = 'App\\Http\\Controllers\\NormativasController';
+    protected array $required = [
+        'crear, editar, eliminar' => 'administrar legal'
+    ];
 }

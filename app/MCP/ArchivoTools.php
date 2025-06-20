@@ -3,8 +3,11 @@
 namespace App\MCP;
 
 use App\MCP\Base\BaseModelTools;
-use Exception;
+use App\Pigmalion\StorageItem;
+use Illuminate\Support\Facades\Log;
+use App\Models\Nodo;
 use InvalidArgumentException;
+use App\Http\Controllers\ArchivosController;
 
 class ArchivoTools extends BaseModelTools
 {
@@ -22,52 +25,10 @@ class ArchivoTools extends BaseModelTools
         'eliminar' => 'delete',
     ];
 
-    protected $info = [
-        'descripcion' => 'Herramientas para gestionar archivos y carpetas. Para indicar un archivo los valores habituales de "id" se cambian a "ruta". Ejemplo: ver: {"entidad": "archivo", "ruta": "/ruta/del/archivo.txt"}.',
+    protected array $required = [
+        //'crear, editar, eliminar' => 'administrar archivos' // Ya se gestiona en el controlador
     ];
 
-
-    public function onBeforeCreate(array $data, array $params): array
-    {
-        // Si se pasa 'es_carpeta' o no hay 'contenido', se crea una carpeta
-        $isFolder = isset($data['es_carpeta']) ? (bool)$data['es_carpeta'] : !isset($data['contenido']);
-        $nodo = [
-            'ubicacion' => $data['ruta'] ?? '',
-            'permisos' => $data['permisos'] ?? '1755',
-            'user_id' => $data['user_id'] ?? 1,
-            'group_id' => $data['group_id'] ?? 1,
-            'es_carpeta' => $isFolder ? 1 : 0,
-            'oculto' => $data['oculto'] ?? 0,
-        ];
-        // Nunca incluir 'contenido' en el array resultante
-        return $nodo;
-    }
-
-    public function onBeforeEdit(array $data, $item, array $params): array
-    {
-        $edit = [];
-        // Ignorar 'contenido' si se recibe
-        if (isset($data['nuevo_nombre'])) {
-            $edit['nuevo_nombre'] = $data['nuevo_nombre'];
-        }
-        if (isset($data['permisos'])) {
-            $edit['permisos'] = $data['permisos'];
-        }
-        if (isset($data['group_id'])) {
-            $edit['group_id'] = $data['group_id'];
-        }
-        if (isset($data['user_id'])) {
-            $edit['user_id'] = $data['user_id'];
-        }
-        if (isset($data['oculto'])) {
-            $edit['oculto'] = $data['oculto'];
-        }
-        return $edit;
-    }
-
-    /*public function onPrepareRequest(Request $request, array $params) {
-
-    }*/
 
 
     public function onVer(array $params, object $baseTool)
@@ -75,16 +36,17 @@ class ArchivoTools extends BaseModelTools
         if (!isset($params['ruta']) && isset($params['id'])) {
             $params['ruta'] = $params['id'];
         }
+
         unset($params['id']);
         if (!isset($params['ruta'])) {
             throw new InvalidArgumentException('El parámetro "ruta" es obligatorio para la acción "ver".');
         }
         $ruta = ltrim($params['ruta'], '/');
         // return ['ruta'=> $ruta];
-        $sti = new \App\Pigmalion\StorageItem($ruta);
-        $nodo = \App\Models\Nodo::desde($ruta);
+        $sti = new StorageItem($ruta);
+        $nodo = Nodo::desde($ruta);
         if (!$sti->exists()) {
-            return ['error' => 'Archivo no encontrado', 'code' => 404, 'sti'=>$sti->getPath()];
+            return ['error' => 'Archivo no encontrado', 'code' => 404, 'sti' => $sti->getPath()];
         }
         $info = [
             'nombre' => basename($sti->location),
@@ -99,4 +61,135 @@ class ArchivoTools extends BaseModelTools
         ];
         return ['archivo' => $info];
     }
+
+    /**
+     * Este método se invoca para crear un archivo o carpeta.
+     */
+    public function onCrear(array $params, object $baseTool)
+    {
+        // Validación básica de parámetros
+        if (!isset($params['ruta'])) {
+            return ['error' => 'El parámetro "ruta" es obligatorio'];
+        }
+        $ruta = $params['ruta'];
+        $data = $params['data'] ?? [];
+        $contenido = $data['contenido'] ?? null;
+        $esCarpeta = isset($data['es_carpeta']) ? (bool)$data['es_carpeta'] : ($contenido === null);
+        //return ['es_carpeta' => $esCarpeta, 'ruta' => $ruta, 'contenido' => $contenido, 'params' => $params];
+        $sti = new StorageItem($ruta);
+
+        if ($sti->exists() || $sti->directoryExists()) {
+            return ['error' => 'Ya existe un archivo o carpeta en esa ruta'];
+        }
+
+        if ($esCarpeta) {
+            // Crear carpeta
+            StorageItem::ensureDirExists($ruta);
+            $nodo = new Nodo([
+                'ubicacion' => $ruta,
+                'es_carpeta' => 1,
+                'permisos' => $data['permisos'] ?? '1755',
+                'user_id' => $data['user_id'] ?? 1,
+                'group_id' => $data['group_id'] ?? 1,
+                'oculto' => $data['oculto'] ?? 0,
+            ]);
+            $nodo->save();
+            return ['carpeta_creada' => $nodo->toArray()];
+        } else {
+            // Crear archivo usando StorageItem::put
+            Log::channel('mcp')->info("Creando archivo en ruta: $ruta, contenido: " . substr($contenido ?? '', 0, 50) . '...');
+            $sti->put($contenido ?? '');
+            $nodo = new Nodo([
+                'ubicacion' => $ruta,
+                'es_carpeta' => 0,
+                'permisos' => $data['permisos'] ?? '1755',
+                'user_id' => $data['user_id'] ?? 1,
+                'group_id' => $data['group_id'] ?? 1,
+                'oculto' => $data['oculto'] ?? 0,
+            ]);
+            $nodo->save();
+            return ['archivo_creado' => $nodo->toArray()];
+        }
+    }
+
+    // onEditar:
+    // 'ejemplos_editar' => 'Para renombrar un archivo: {"entidad": "archivo", "ruta": "/archivos/personal/public/conseguido.txt", "data": {"nuevo_nombre": "nuevo_nombre.txt"}}\nPara cambiar permisos: {"entidad": "archivo", "ruta": "/archivos/personal/public/conseguido.txt", "data": {"permisos": "1775"}}\nPara cambiar propietario: {"entidad": "archivo", "ruta": "/archivos/personal/public/conseguido.txt", "data": {"group_id": 10, "user_id": 5}}',
+
+    public function onEditar(array $params, object $baseTool)
+    {
+        if (!isset($params['ruta'])) {
+            return ['error' => 'El parámetro "ruta" es obligatorio'];
+        }
+        $data = $params['data'] ?? [];
+        $controller = app(ArchivosController::class);
+        $request = request();
+        $request->replace(array_merge($params, $data));
+        if (isset($data['nuevo_nombre']) && $data['nuevo_nombre']) {
+            // Renombrar
+            $request->merge([
+                'folder' => dirname($params['ruta']),
+                'oldName' => basename($params['ruta']),
+                'newName' => $data['nuevo_nombre'],
+            ]);
+            $response = $controller->rename($request);
+        } else {
+            // Cambiar permisos u otros datos
+            $request->merge([
+                'ruta' => $params['ruta'],
+                // otros campos ya están en $data
+            ]);
+            $response = $controller->update($request);
+        }
+        $result = $response instanceof \Illuminate\Http\JsonResponse ? $response->getData(true) : $response;
+        // Si la respuesta es array y no contiene 'archivo_editado', envolverla (excepto si es error)
+        if (is_array($result) && !isset($result['archivo_editado']) && !isset($result['error'])) {
+            // Añadir campos clave desde el nodo si faltan
+            $nodo = Nodo::where('ubicacion', $params['ruta'])->first();
+            if ($nodo) {
+                if (!isset($result['permisos'])) {
+                    $result['permisos'] = $nodo->permisos;
+                }
+                if (!isset($result['user_id'])) {
+                    $result['user_id'] = $nodo->user_id;
+                }
+                if (!isset($result['group_id'])) {
+                    $result['group_id'] = $nodo->group_id;
+                }
+            }
+            return ['archivo_editado' => $result];
+        }
+        return $result;
+    }
+
+    // Adaptar la respuesta de listar para devolver 'archivos' en vez de 'items', con fallback si falla la llamada al controlador
+    public function onListar(array $params, object $baseTool)
+    {
+        $data = parent::onListar($params, $baseTool);
+        if (isset($data['items'])) {
+            return ['archivos' => $data['items']];
+        }
+        return $data;
+    }
+
+    public function onBuscar(array $params, object $baseTool)
+    {
+        $controller = app(ArchivosController::class);
+        $request = $baseTool->getRequest();
+        $request->replace($params);
+        $response = $controller->buscar($request);
+        return $response instanceof \Illuminate\Http\JsonResponse ? $response->getData(true) : $response;
+    }
+
+    public function onEliminar(array $params, object $baseTool)
+    {
+        if (!isset($params['ruta'])) {
+            return ['error' => 'El parámetro "ruta" es obligatorio'];
+        }
+        $ruta = $params['ruta'];
+        $controller = app(ArchivosController::class);
+        $response = $controller->delete($ruta);
+        return $response instanceof \Illuminate\Http\JsonResponse ? $response->getData(true) : $response;
+    }
+
+
 }

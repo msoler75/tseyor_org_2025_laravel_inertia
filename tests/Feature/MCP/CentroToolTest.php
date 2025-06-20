@@ -87,7 +87,7 @@ class CentroToolTest extends McpFeatureTestCase
                 'poblacion' => 'Ciudad Nueva',
                 'contacto_id' => null,
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('centros', ['slug' => $params['data']['slug']]);
@@ -112,7 +112,7 @@ class CentroToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('centros', ['id' => $centro->id, 'descripcion' => $nuevaDescripcion]);
@@ -134,7 +134,7 @@ class CentroToolTest extends McpFeatureTestCase
             'entidad' => 'centro',
             'id' => $centro->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('centros', ['id' => $centro->id]);

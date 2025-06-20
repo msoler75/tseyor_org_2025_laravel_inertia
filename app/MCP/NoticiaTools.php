@@ -7,4 +7,7 @@ class NoticiaTools extends BaseModelTools
     protected ?string $modelName = 'noticia';
     protected ?string $modelClass = 'App\\Models\\Noticia';
     protected ?string $controllerClass = 'App\\Http\\Controllers\\NoticiasController';
+    protected array $required = [
+        'crear, editar, eliminar' => 'administrar social'
+    ];
 }

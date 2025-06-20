@@ -112,7 +112,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
                 'ano' => date('Y'),
                 'slug' => 'test-comunicado'
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('comunicados', ['slug' => 'test-comunicado']);
@@ -147,7 +147,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
                 'ano' => $comunicado->ano,
                 'slug' => $comunicado->slug,
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $result = $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('comunicados', [
@@ -175,7 +175,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
             'entidad' => 'comunicado',
             'id' => $comunicado->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ]);
         $existe = Comunicado::withTrashed()->find($comunicado->id);
         $this->assertDatabaseMissing('comunicados', ['id' => $comunicado->id]);

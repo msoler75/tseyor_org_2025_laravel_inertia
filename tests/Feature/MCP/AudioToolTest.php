@@ -72,7 +72,7 @@ class AudioToolTest extends McpFeatureTestCase
                 'audio' => '/almacen/nuevo-audio.mp3',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('audios', ['slug' => $params['data']['slug']]);
@@ -96,7 +96,7 @@ class AudioToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('audios', ['id' => $audio->id, 'descripcion' => $nuevaDescripcion]);
@@ -117,7 +117,7 @@ class AudioToolTest extends McpFeatureTestCase
             'entidad' => 'audio',
             'id' => $audio->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('audios', ['id' => $audio->id]);

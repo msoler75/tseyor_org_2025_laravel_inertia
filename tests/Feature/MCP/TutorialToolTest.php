@@ -88,7 +88,7 @@ class TutorialToolTest extends McpFeatureTestCase
                 'video' => 'https://nuevo-tutorial.com',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('tutoriales', ['slug' => $params['data']['slug']]);
@@ -113,7 +113,7 @@ class TutorialToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('tutoriales', ['id' => $tutorial->id, 'descripcion' => $nuevaDescripcion]);
@@ -135,7 +135,7 @@ class TutorialToolTest extends McpFeatureTestCase
             'entidad' => 'tutorial',
             'id' => $tutorial->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('tutoriales', ['id' => $tutorial->id]);

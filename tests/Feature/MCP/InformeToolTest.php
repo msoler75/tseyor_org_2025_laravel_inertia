@@ -116,7 +116,7 @@ class InformeToolTest extends McpFeatureTestCase
                 'archivos' => json_encode([]),
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('informes', ['titulo' => $params['data']['titulo']]);
@@ -142,7 +142,7 @@ class InformeToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('informes', ['id' => $informe->id, 'descripcion' => $nuevaDescripcion]);
@@ -165,7 +165,7 @@ class InformeToolTest extends McpFeatureTestCase
             'entidad' => 'informe',
             'id' => $informe->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('informes', ['id' => $informe->id]);

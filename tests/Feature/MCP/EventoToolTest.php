@@ -118,7 +118,7 @@ class EventoToolTest extends McpFeatureTestCase
                 'sala_id' => null,
                 'equipo_id' => null,
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('eventos', ['slug' => $params['data']['slug']]);
@@ -150,7 +150,7 @@ class EventoToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('eventos', ['id' => $evento->id, 'descripcion' => $nuevaDescripcion]);
@@ -179,7 +179,7 @@ class EventoToolTest extends McpFeatureTestCase
             'entidad' => 'evento',
             'id' => $evento->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('eventos', ['id' => $evento->id]);

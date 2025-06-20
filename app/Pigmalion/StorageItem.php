@@ -374,6 +374,18 @@ class StorageItem
             $sti->makeDirectory();
     }
 
+    /**
+     * Guarda contenido en la ubicación de este StorageItem
+     * @param string|resource $contenido
+     * @param array $options Opciones para Storage::put
+     * @return bool
+     */
+    public function put($contenido, array $options = [])
+    {
+        return Storage::disk($this->disk)
+            ->put($this->relativeLocation, $contenido, $options);
+    }
+
     /*public static function getPath($rutaOrig) {
         return (new StorageItem($rutaOrig))->path;
     }*/

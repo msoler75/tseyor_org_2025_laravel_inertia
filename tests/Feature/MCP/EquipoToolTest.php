@@ -81,7 +81,7 @@ class EquipoToolTest extends McpFeatureTestCase
                 'categoria' => 'test',
                 'imagen' => '/almacen/nuevo-equipo.jpg',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('equipos', ['slug' => $params['data']['slug']]);
@@ -104,7 +104,7 @@ class EquipoToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('equipos', ['id' => $equipo->id, 'descripcion' => $nuevaDescripcion]);
@@ -126,7 +126,7 @@ class EquipoToolTest extends McpFeatureTestCase
             'entidad' => 'equipo',
             'id' => $equipo->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('equipos', ['id' => $equipo->id]);

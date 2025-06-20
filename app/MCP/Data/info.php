@@ -9,31 +9,31 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los comunicados. Ejemplo: "Andrómeda".'
+                'description' => 'Texto a buscar en los comunicados. Ejemplo: "Andrómeda"'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría numérica. Ejemplo: 2.'
+                'description' => 'Filtrar por categoría numérica. Ejemplo: 2'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2025.'
+                'description' => 'Filtrar por año. Ejemplo: 2025'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"'
             ],
             [
                 'name' => 'completo',
                 'type' => 'boolean',
                 'required' => false,
-                'description' => 'Si este campo está a 1 se puede utilizar junto al parámetro "buscar" (usando la tool "buscar" o "listar") y devuelve todas las coincidencias de la palabra o frase de búsqueda.'
+                'description' => 'Si este campo está a 1 se puede utilizar junto al parámetro "buscar" (usando la tool "buscar" o "listar") y devuelve todas las coincidencias de la palabra o frase de búsqueda'
             ],
         ],
         'campos' => [
@@ -54,25 +54,25 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en las entradas. Ejemplo: "Salud".'
+                'description' => 'Texto a buscar en las entradas. Ejemplo: "Salud"'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de entrada. Ejemplo: "Salud".'
+                'description' => 'Filtrar por categoría de entrada. Ejemplo: "Salud"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico"'
             ]
         ],
         'campos' => [
@@ -91,25 +91,25 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en las noticias. Ejemplo: "COVID-19".'
+                'description' => 'Texto a buscar en las noticias. Ejemplo: "COVID-19"'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de noticia. Ejemplo: "Salud".'
+                'description' => 'Filtrar por categoría de noticia. Ejemplo: "Salud"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia"'
             ]
         ],
         'campos' => [
@@ -128,25 +128,25 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los audios. Ejemplo: "Meditación".'
+                'description' => 'Texto a buscar en los audios. Ejemplo: "Meditación"'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de audio. Ejemplo: "Relajación".'
+                'description' => 'Filtrar por categoría de audio. Ejemplo: "Relajación"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"'
             ]
         ],
         'campos' => [
@@ -167,25 +167,25 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los centros. Ejemplo: "Andalucía".'
+                'description' => 'Texto a buscar en los centros. Ejemplo: "Andalucía"'
             ],
             [
                 'name' => 'pais',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por país. Ejemplo: "ES".'
+                'description' => 'Filtrar por país. Ejemplo: "ES"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico"'
             ]
         ],
         'campos' => [
@@ -207,37 +207,37 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los contactos. Ejemplo: "Juan".'
+                'description' => 'Texto a buscar en los contactos. Ejemplo: "Juan"'
             ],
             [
                 'name' => 'pais',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por país. Ejemplo: "ES".'
+                'description' => 'Filtrar por país. Ejemplo: "ES"'
             ],
             [
                 'name' => 'poblacion',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por población. Ejemplo: "Madrid".'
+                'description' => 'Filtrar por población. Ejemplo: "Madrid"'
             ],
             [
                 'name' => 'provincia',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por provincia. Ejemplo: "Madrid".'
+                'description' => 'Filtrar por provincia. Ejemplo: "Madrid"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia"'
             ]
         ],
         'campos' => [
@@ -266,25 +266,25 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los equipos. Ejemplo: "Desarrollo".'
+                'description' => 'Texto a buscar en los equipos. Ejemplo: "Desarrollo"'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de equipo. Ejemplo: "Proyectos".'
+                'description' => 'Filtrar por categoría de equipo. Ejemplo: "Proyectos"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico"'
             ]
         ],
         'campos' => [
@@ -311,25 +311,25 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los eventos. Ejemplo: "Concierto".'
+                'description' => 'Texto a buscar en los eventos. Ejemplo: "Concierto"'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de evento. Ejemplo: "Cultura".'
+                'description' => 'Filtrar por categoría de evento. Ejemplo: "Cultura"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"'
             ]
         ],
         'campos' => [
@@ -356,19 +356,19 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los grupos. Ejemplo: "Literatura".'
+                'description' => 'Texto a buscar en los grupos. Ejemplo: "Literatura"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia"'
             ]
         ],
         'campos' => [
@@ -384,25 +384,25 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en las guías. Ejemplo: "Instalación".'
+                'description' => 'Texto a buscar en las guías. Ejemplo: "Instalación"'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de guía. Ejemplo: "Técnica".'
+                'description' => 'Filtrar por categoría de guía. Ejemplo: "Técnica"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"'
             ]
         ],
         'campos' => [
@@ -424,31 +424,31 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los informes. Ejemplo: "Finanzas".'
+                'description' => 'Texto a buscar en los informes. Ejemplo: "Finanzas"'
             ],
-                        [
+            [
                 'name' => 'equipo',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar informes por ID o slug de equipo. Ejemplo: 2.'
+                'description' => 'Filtrar informes por ID o slug de equipo. Ejemplo: 2'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de informe. Ejemplo: "Anual".'
+                'description' => 'Filtrar por categoría de informe. Ejemplo: "Anual"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia"'
             ]
         ],
         'campos' => [
@@ -469,25 +469,25 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los libros. Ejemplo: "Cien años de soledad".'
+                'description' => 'Texto a buscar en los libros. Ejemplo: "Cien años de soledad"'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de libro. Ejemplo: "Novela".'
+                'description' => 'Filtrar por categoría de libro. Ejemplo: "Novela"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"'
             ]
         ],
         'campos' => [
@@ -509,25 +509,25 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los lugares. Ejemplo: "Parque".'
+                'description' => 'Texto a buscar en los lugares. Ejemplo: "Parque"'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de lugar. Ejemplo: "Parques".'
+                'description' => 'Filtrar por categoría de lugar. Ejemplo: "Parques"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia"'
             ]
         ],
         'campos' => [
@@ -549,25 +549,25 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en las meditaciones. Ejemplo: "Estrés".'
+                'description' => 'Texto a buscar en las meditaciones. Ejemplo: "Estrés"'
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de meditación. Ejemplo: "Relajación".'
+                'description' => 'Filtrar por categoría de meditación. Ejemplo: "Relajación"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"'
             ]
         ],
         'campos' => [
@@ -587,19 +587,19 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en las normativas. Ejemplo: "Seguridad".'
+                'description' => 'Texto a buscar en las normativas. Ejemplo: "Seguridad"'
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023.'
+                'description' => 'Filtrar por año. Ejemplo: 2023'
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia".'
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia"'
             ]
         ],
         'campos' => [
@@ -615,9 +615,9 @@ return [
         'descripcion' => 'Boletines periódicos enviados a los suscriptores',
         'parametros_listar' => [
             ['name' => 'tipo', 'type' => 'string', 'required' => false, 'description' => 'Filtrar por tipo de boletín (semanal, mensual, etc.)'],
-            ['name' => 'ano', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por año.'],
-            ['name' => 'mes', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por mes.'],
-            ['name' => 'enviado', 'type' => 'boolean', 'required' => false, 'description' => 'Filtrar por estado de envío.'],
+            ['name' => 'ano', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por año'],
+            ['name' => 'mes', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por mes'],
+            ['name' => 'enviado', 'type' => 'boolean', 'required' => false, 'description' => 'Filtrar por estado de envío'],
         ],
         'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del boletín'],
@@ -705,9 +705,9 @@ return [
     'usuario' => [
         'descripcion' => 'Usuarios registrados en la plataforma',
         'parametros_listar' => [
-            ['name' => 'buscar', 'type' => 'string', 'required' => false, 'description' => 'Buscar por nombre o email.'],
-            ['name' => 'equipo_id', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por equipo.'],
-            ['name' => 'rol', 'type' => 'string', 'required' => false, 'description' => 'Filtrar por rol.'],
+            ['name' => 'buscar', 'type' => 'string', 'required' => false, 'description' => 'Buscar por nombre o email'],
+            ['name' => 'equipo_id', 'type' => 'integer', 'required' => false, 'description' => 'Filtrar por equipo'],
+            ['name' => 'rol', 'type' => 'string', 'required' => false, 'description' => 'Filtrar por rol'],
         ],
         'campos' => [
             'name' => ['type' => 'string', 'description' => 'Nombre del usuario'],
@@ -722,12 +722,12 @@ return [
         ]
     ],
     'archivo' => [
-        'descripcion' => 'Gestión de archivos y carpetas en el sistema de almacenamiento',
+        'descripcion' => 'Gestión de archivos y carpetas en el sistema de almacenamiento. Los archivos y carpetas no se acceden por "id" sino por "ruta". Ejemplo: {ruta: "/archivos/hola.txt"}',
         'parametros_ver' => [
             [
                 'name' => 'ruta',
                 'type' => 'string',
-                'description' => 'La ruta del archivo a ver su información.',
+                'description' => 'La ruta del archivo a ver su información',
                 'required' => true,
             ],
         ],
@@ -736,15 +736,16 @@ return [
                 'name' => 'ruta',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Ruta de la carpeta a listar. Si se omite, se listará la raíz.'
+                'description' => 'Ruta de la carpeta a listar. Si se omite, se listará la raíz'
             ],
             [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los nombres de archivos o carpetas.'
+                'description' => 'Texto a buscar en los nombres de archivos o carpetas'
             ]
         ],
+        'ejemplos_crear' => 'Para crear un archivo de texto con permisos 557: {"entidad": "archivo", "ruta": "/archivos/personal/public/conseguido.txt", "data":["contenido": "Texto del archivo", "permisos": "557" ]} o para crear una carpeta: {"entidad": "archivo", "ruta": "/archivos/personal/public/nueva_carpeta/", "data":["es_carpeta": true]}\nPara crear una carpeta con permisos específicos: {"entidad": "archivo", "ruta": "/archivos/personal/public/nueva_carpeta/", "data":["permisos": "1775", "group_id": 10]',
         'parametros_crear' => [
             [
                 'name' => 'ruta',
@@ -756,55 +757,72 @@ return [
                 'name' => 'contenido',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Contenido del archivo en texto plano. Si se omite, se creará una carpeta.'
+                'description' => 'Contenido del archivo en texto plano. Si se omite, se creará una carpeta'
             ],
             [
                 'name' => 'es_carpeta',
                 'type' => 'boolean',
                 'required' => false,
-                'description' => 'Si es true, se crea una carpeta aunque se envíe contenido.'
+                'description' => 'Si es true, se crea una carpeta aunque se envíe contenido'
             ]
         ],
+        'ejemplos_editar' => 'Para renombrar un archivo: {"entidad": "archivo", "ruta": "/archivos/personal/public/conseguido.txt", "nuevo_nombre": "nuevo_nombre.txt"}\nPara cambiar permisos: {"entidad": "archivo", "ruta": "/archivos/personal/public/conseguido.txt", "data": {"permisos": "1775"}}\nPara cambiar propietario: {"entidad": "archivo", "ruta": "/archivos/personal/public/conseguido.txt", "data": {"group_id": 10, "user_id": 5}}',
         'parametros_editar' => [
+            [
+                'name' => 'ruta',
+                'type' => 'string',
+                'required' => true,
+                'description' => 'Ruta completa del archivo o carpeta. Ejemplo: /archivos/personal/public/conseguido.txt'
+            ],
             [
                 'name' => 'nuevo_nombre',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Nuevo nombre para el archivo o carpeta.'
+                'description' => 'Nuevo nombre para el archivo o carpeta'
+            ]
+        ],
+        'parametros_eliminar' => [
+            [
+                'name' => 'ruta',
+                'type' => 'string',
+                'required' => true,
+                'description' => 'Ruta completa del archivo o carpeta'
+            ]
+        ],
+        'parametros_buscar' => [
+            [
+                'name' => 'nombre',
+                'type' => 'string',
+                'required' => true,
+                'description' => 'Nombre de archivos o carpetas a buscar. Se puede buscar por nombre parcial o completo.'
             ],
             [
-                'name' => 'permisos',
+                'name' => 'ruta',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Permisos en formato numérico (ej: 1755).'
+                'description' => 'Ruta de la carpeta donde empezar la búsqueda. Por defecto es la raíz de archivos.'
             ],
             [
-                'name' => 'group_id',
-                'type' => 'integer',
+                'name' => 'id_busqueda',
+                'type' => 'string',
                 'required' => false,
-                'description' => 'ID de grupo propietario.'
+                'description' => 'Identificador único de la búsqueda. Si se omite, se inicia una nueva búsqueda. Si se envía, se continúa una búsqueda previa que quedó incompleta.'
             ],
             [
-                'name' => 'user_id',
-                'type' => 'integer',
+                'name' => 'token',
+                'type' => 'string',
                 'required' => false,
-                'description' => 'ID de usuario propietario.'
-            ],
-            [
-                'name' => 'oculto',
-                'type' => 'boolean',
-                'required' => false,
-                'description' => 'Si es true, el nodo queda oculto.'
+                'description' => 'Token de autenticación MCP para permisos de usuario.'
             ]
         ],
         'campos' => [
-            'ruta' => ['type' => 'string', 'description' => 'Ruta completa del archivo o carpeta'],
-            'contenido' => ['type' => 'string', 'description' => 'Contenido del archivo en texto plano (solo archivos)'],
+            'ubicacion' => ['type' => 'string', 'description' => 'Ruta completa del archivo o carpeta'],
+            'contenido' => ['type' => 'string', 'description' => 'Contenido del archivo si es de texto plano (solo archivos)'],
             'es_carpeta' => ['type' => 'boolean', 'description' => 'Indica si es carpeta (1) o archivo (0)'],
             'permisos' => ['type' => 'string', 'description' => 'Permisos en formato numérico'],
             'group_id' => ['type' => 'integer', 'description' => 'ID de grupo propietario'],
             'user_id' => ['type' => 'integer', 'description' => 'ID de usuario propietario'],
-            'oculto' => ['type' => 'boolean', 'description' => 'Si es true, el nodo queda oculto']
+            'oculto' => ['type' => 'boolean', 'description' => 'Si está oculto']
         ]
     ],
 ];

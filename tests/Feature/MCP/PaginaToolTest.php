@@ -90,7 +90,7 @@ class PaginaToolTest extends McpFeatureTestCase
                 'palabras_clave' => 'clave',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('paginas', ['ruta' => $params['data']['ruta']]);
@@ -116,7 +116,7 @@ class PaginaToolTest extends McpFeatureTestCase
             'data' => [
                 'descripcion' => $nuevaDescripcion
             ],
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('paginas', ['id' => $pagina->id, 'descripcion' => $nuevaDescripcion]);
@@ -139,7 +139,7 @@ class PaginaToolTest extends McpFeatureTestCase
             'entidad' => 'pagina',
             'id' => $pagina->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.administrar_todo')
+            'token' => config('mcp-server.tokens.admin')
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('paginas', ['id' => $pagina->id]);
