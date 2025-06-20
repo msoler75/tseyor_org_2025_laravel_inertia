@@ -10,4 +10,12 @@ class InformeTools extends BaseModelTools
     protected array $required = [
         'crear, editar, eliminar' => 'administrar equipos'
     ];
+
+    public function checkDeleteable($item, array $params = [])
+    {
+        // Verificar si el informe está asociado a un equipo
+        if ($item->equipo()->exists()) {
+            throw new \Exception('No se puede eliminar el informe porque está asociado a un equipo.');
+        }
+    }
 }

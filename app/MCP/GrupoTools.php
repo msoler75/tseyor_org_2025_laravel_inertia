@@ -18,5 +18,10 @@ class GrupoTools extends BaseModelTools
         if ($nodosCount > 0) {
             throw new \Exception('No se puede eliminar el grupo porque tiene nodos asociados.');
         }
+        // Verificar si existen usuarios asociados a este grupo
+        $usuariosCount = $item->usuarios()->count();
+        if ($usuariosCount > 0) {
+            throw new \Exception('No se puede eliminar el grupo porque tiene usuarios asociados.');
+        }
     }
 }
