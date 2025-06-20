@@ -91,6 +91,11 @@ class Equipo extends ContenidoBaseModel
         return $this->hasMany(NodoCarpeta::class, 'group_id', 'group_id');
     }
 
+    public function informes()
+    {
+        return $this->hasMany(Informe::class, 'equipo_id', 'id');
+    }
+
 
     // accesors
     public function getCreadorNombreAttribute()
