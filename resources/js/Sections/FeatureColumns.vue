@@ -3,10 +3,11 @@
         <div class="grid gap-8 mx-auto place-items-stretch" :class="gridClass">
             <div v-for="feature in features" :key="feature.title"
                 class="p-7 bg-base-100 flex flex-col rounded-xs shadow-2xs justify-start items-center gap-7 max-w-[24rem]">
-                <Icon :icon="feature.icon" class="text-4xl text-blue-400" :class="feature.class" :alt="feature.title" />
+                <Icon :icon="feature.icon" class="text-4xl text-blue-400" :class="feature.iconClass" :alt="feature.title" />
                 <h3 class="text-xl font-bold">{{ feature.title }}</h3>
                 <div v-if="feature.description" class="opacity-80 text-center">{{ feature.description }}</div>
                 <div v-if="feature.text" class="opacity-80" v-html="feature.text" />
+                <Link v-if="feature.link" class="btn btn-primary" :href="feature.link.url" >{{ feature.link.label }}</Link>
             </div>
         </div>
     </div>

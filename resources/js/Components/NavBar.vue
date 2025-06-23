@@ -169,8 +169,13 @@ const isDark = useDark({
     selector: "html",
     valueDark: "night",
     initialValue: initialTheme !=='dark'?'light':'night',
-    onChanged(newValue) {
-        console.log("onChanged theme", newValue);
+    onChanged(newValue, oldValue) {
+        // Si el valor no cambia pero venimos de un toggle, resetea el flag igualmente
+        if (newValue === oldValue) {
+            isTogglingTheme = false;
+            return;
+        }
+        // Evitar doble llamada: solo ejecutar updateTheme si no está en transición
         if (isTogglingTheme) {
             isTogglingTheme = false;
             updateTheme(newValue);
@@ -181,6 +186,7 @@ const isDark = useDark({
 });
 
 const toggleDark = () => {
+    if (isTogglingTheme) return; // Previene doble toggle si el usuario hace doble click muy rápido
     isTogglingTheme = true;
     // Llama al toggle real
     useToggle(isDark)();
