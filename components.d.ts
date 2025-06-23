@@ -50,6 +50,7 @@ declare module 'vue' {
     DropdownLink: typeof import('./resources/js/Components/DropdownLink.vue')['default']
     FadeOnNavigate: typeof import('./resources/js/Components/FadeOnNavigate.vue')['default']
     FAQ: typeof import('./resources/js/Sections/FAQ.vue')['default']
+    FeatureCarousel: typeof import('./resources/js/Components/FeatureCarousel.vue')['default']
     FeatureColumns: typeof import('./resources/js/Sections/FeatureColumns.vue')['default']
     FeaturedPosts: typeof import('./resources/js/Sections/FeaturedPosts.vue')['default']
     FeatureRows: typeof import('./resources/js/Sections/FeatureRows.vue')['default']

@@ -25,10 +25,25 @@
             </Hero>
         </Section>
 
+        <Section>
+            <TextImage
+                title="El proceso de autodescubrimiento"
+                :href="route('cursos')"
+                buttonLabel="Curso gratuito"
+                srcImage="/almacen/medios/portada/meditando.jpg"
+                src-width="1920" src-height="1080"
+                class="py-20"
+            >
+                <p>
+                    A través de meditaciones, talleres y un gran sentimiento de hermanamiento conseguimos transmutar nuestra personalidad hasta lograr la Unidad.
+                </p>
+            </TextImage>
+        </Section>
+
         <!--
             <Section>
         <TextImage title="Interesa la comprobación" srcImage="/almacen/medios/paginas/hombre-con-lupa.jpg"
-                 href="/libros/filosofia" >
+                 href="/libros/filosofia" image-right>
                 <p>No habremos de creer nada, en lugar de eso comprobaremos mediante la experimentación.</p>
                 <p>Solo la propia comprobación nos dará la convicción y la certeza que estamos en una transformación de
                     nuestras impresiones, contemplando las realidades que están aquí y ahora.</p>
@@ -39,7 +54,8 @@
 
         <Section>
             <TextImage title="Filosofía cuántica" srcImage="/almacen/medios/paginas/hombre-comprension.jpg"
-                href="/libros/filosofia">
+                href="/libros/filosofia" image-right
+                class="py-10">
                 <p>La realidad cuántica significa creación a través del pensamiento.</p>
                 <p>Necesitamos claves, referencias, dispositivos, que nos permitan ese lanzamiento hacia las estrellas,
                     que en el fondo no es más que el reencuentro con uno mismo, a través de uno mismo en su universo
@@ -51,7 +67,8 @@
 
         <Section>
             <TextImage title="Las sociedades armónicas" srcImage="/almacen/medios/paginas/SociedadesArmonicas.jpg"
-                buttonLabel="Descargar Libro" image-right href="/libros/las-sociedades-armonicas" src-width="1920" src-height="1282">
+                buttonLabel="Descargar Libro" href="/libros/las-sociedades-armonicas" src-width="1920" src-height="1282"
+                class="py-20">
                 <p>Son sociedades en las que predomina la hermandad, no hay líderes, no hay enfermedad, y sí la
                     auténtica libertad.</p>
                 <p>A nuestro planeta le ha llegado el momento de transformarse de forma pacífica y con mucho amor y
@@ -60,11 +77,10 @@
         </Section>
 
 
-
-
         <Section>
             <TextImage title="Glosario" buttonLabel="Ir al Glosario" src-width="600" src-height="400" href="/glosario"
-                srcImage="/almacen/medios/paginas/glosario.jpg">
+                srcImage="/almacen/medios/paginas/glosario.jpg" image-right
+                class="py-20">
                 <p>
                     Consulta todos los términos de la filosofía Tseyor en nuestro glosario de términos. También podrás
                     ver los Guías Estelares y los lugares interesantes de la Galaxia.
@@ -75,8 +91,9 @@
 
         <!-- Sección: Quiero ser de Tseyor -->
         <Section>
-            <TextImage title="Únete a Tseyor" image-right buttonLabel="Formulario de inscripción" href="/inscripcion"
-                srcWidth="2432" srcHeight="1664" srcImage="/almacen/medios/paginas/inscribirse.jpg">
+            <TextImage title="Únete a Tseyor" buttonLabel="Formulario de inscripción" href="/inscripcion"
+                srcWidth="2432" srcHeight="1664" srcImage="/almacen/medios/paginas/inscribirse.jpg"
+                class="pt-20 pb-40">
                 <p>Te invitamos a recorrer con nosotros el camino del autodescubrimiento con plena libertad.</p>
                 <p>Juntos, exploraremos nuestra esencia y buscaremos trascender las limitaciones de esta realidad
                     ilusoria. </p>

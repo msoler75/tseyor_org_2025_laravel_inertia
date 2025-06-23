@@ -10,7 +10,7 @@
         <h1 class="mb-4">Biblioteca Tseyor</h1>
 
         <div class="text-pretty my-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-14">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                     <p>La Biblioteca Tseyor es el resultado de más de 1500 diálogos <Referencia r="telepatía">
                             telepáticos</Referencia> con seres de la <Referencia>Confederación de Mundos Habitados
@@ -23,13 +23,13 @@
                         textos que inspiran libros, monografías, vídeos y audios.</p>
                 </div>
                 <div class="flex gap-5">
-                    <p class="">Todos los materiales han sido publicados y están preservados por la <Referencia>
+                    <p>Todos los materiales han sido publicados y están preservados por la <Referencia>
                             Universidad Tseyor de Granada</Referencia> para mantener la integridad del mensaje
                         original
                         y sus obras impresas están registradas por la asociación <Referencia>TSEYOR Centro de
                             Estudios
                             Socioculturales</Referencia>.</p>
-                    <Image class="mt-[1.5rem]" width="137" height="200" src="/almacen/medios/logos/utg.jpg" />
+                    <Image class="hidden md:block flex-shrink-0 mt-[1.5rem] object-contain object-top" src-width="819" src-height="1191" width="137" src="/almacen/medios/logos/utg.jpg" />
                 </div>
             </div>
 
