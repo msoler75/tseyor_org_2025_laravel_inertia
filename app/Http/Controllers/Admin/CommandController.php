@@ -17,6 +17,7 @@ class CommandController extends Controller
         'migrate',
         'sitemap:generate',
         'auth:clear-resets',
+        'inertia:stop-ssr',
         'down',
         'up',
     ];
@@ -47,21 +48,38 @@ class CommandController extends Controller
         }
 
         try {
-            Artisan::call($baseCommand, $parameters);
-            $output = Artisan::output();
-
-            Log::info("Comando Artisan ejecutado: {$baseCommand}", ['parameters' => $parameters, 'output' => $output]);
-
-            return response()->json([
-                'status' => 'Comando completado',
-                'output' => $output
-            ]);
+            if ($baseCommand === 'inertia:stop-ssr') {
+                // Usar ruta absoluta al archivo artisan
+                $artisanPath = base_path('artisan');
+                $cmd = 'php ' . escapeshellarg($artisanPath) . ' inertia:stop-ssr';
+                $output = [];
+                $exitCode = 0;
+                exec($cmd . ' 2>&1', $output, $exitCode);
+                $outputText = implode("\n", $output);
+                Log::info("Comando externo ejecutado: {$cmd}", ['output' => $outputText, 'exitCode' => $exitCode]);
+                return response()->json([
+                    'status' => 'Comando completado',
+                    'output' => $outputText,
+                    'exitCode' => $exitCode
+                ]);
+            } else {
+                Artisan::call($baseCommand, $parameters);
+                $output = Artisan::output();
+                $exitCode = Artisan::call($baseCommand, $parameters);
+                $output = Artisan::output();
+                Log::info("Comando Artisan ejecutado: {$baseCommand}", ['parameters' => $parameters, 'output' => $output, 'exitCode' => $exitCode]);
+                return response()->json([
+                    'status' => 'Comando completado',
+                    'output' => $output,
+                    'exitCode' => $exitCode
+                ]);
+            }
         } catch (\Exception $e) {
-            Log::error("Error al ejecutar el comando Artisan: {$baseCommand}", ['parameters' => $parameters, 'error' => $e->getMessage()]);
-
+            Log::error("Error al ejecutar el comando Artisan: {$baseCommand}", ['parameters' => $parameters, 'error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return response()->json([
                 'error' => 'Error al ejecutar el comando',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ], 500);
         }
     }
