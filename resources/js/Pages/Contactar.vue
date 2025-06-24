@@ -27,28 +27,32 @@
                 </p>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="nombre">Nombre y apellidos:</label>
-                    <input class="form-input w-full" id="nombre" type="text" v-model="form.nombre" required>
+                    <input class="form-input w-full" id="nombre" type="text" v-model="form.nombre" required
+                        data-clarity-mask="true">
                     <span v-if="form.errors.nombre" class="error">{{ form.errors.nombre }}</span>
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="pais">País:</label>
-                    <input class="form-input w-full" id="pais" type="text" v-model="form.pais" required>
+                    <input class="form-input w-full" id="pais" type="text" v-model="form.pais" required
+                        data-clarity-mask="true">
                     <span v-if="form.errors.pais" class="error">{{ form.errors.pais }}</span>
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="email">Correo electrónico:</label>
-                    <input class="form-input w-full" id="email" type="email" v-model="form.email" required>
+                    <input class="form-input w-full" id="email" type="email" v-model="form.email" required
+                        data-clarity-mask="true">
                     <span v-if="form.errors.email" class="error">{{ form.errors.email }}</span>
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="telefono">Teléfono/Whatsapp (opcional):</label>
-                    <input class="form-input w-full" id="telefono" type="text" v-model="form.telefono">
+                    <input class="form-input w-full" id="telefono" type="text" v-model="form.telefono"
+                        data-clarity-mask="true">
                     <span v-if="form.errors.telefono" class="error">{{ form.errors.telefono }}</span>
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold mb-2" for="comentario">Tu comentario o petición</label>
-                    <textarea class="form-textarea w-full" id="comentario" v-model="form.comentario"
-                        required></textarea>
+                    <textarea class="form-textarea w-full" id="comentario" v-model="form.comentario" required
+                        data-clarity-mask="true"></textarea>
                     <span v-if="form.errors.comentario" class="error">{{ form.errors.comentario }}</span>
                 </div>
                 <div class="mb-4">

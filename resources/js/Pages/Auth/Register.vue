@@ -57,7 +57,7 @@ onMounted(() => {
                 <div>
                     <InputLabel for="name" value="Nombre simbólico TSEYOR" />
                     <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required autofocus
-                        autocomplete="name" />
+                        autocomplete="name" data-clarity-mask="true" />
                     <InputError class="mt-2" :message="form.errors.name" />
                     <small>Si no dispones de nombre simbólico, necesitas el <Referencia>curso holístico</Referencia>
                         </small>
@@ -66,14 +66,13 @@ onMounted(() => {
                 <div>
                     <InputLabel for="email" value="Correo electrónico" />
                     <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full" required
-                        :disabled="emailGiven" autocomplete="username" />
+                        :disabled="emailGiven" autocomplete="username" data-clarity-mask="true" />
                     <InputError class="mt-2" :message="form.errors.email" />
                 </div>
 
                 <div>
                     <InputLabel for="password" value="Contraseña" />
-                    <PasswordInput id="password" v-model="form.password"     required
-                        autocomplete="new-password" />
+                    <PasswordInput id="password" v-model="form.password" required autocomplete="new-password" />
                     <InputError class="mt-2" :message="form.errors.password" />
                     <small>Crea una contraseña para tu cuenta en tseyor.org</small>
                 </div>

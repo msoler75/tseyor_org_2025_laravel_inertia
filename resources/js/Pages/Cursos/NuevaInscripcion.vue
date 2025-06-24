@@ -43,6 +43,7 @@
                         type="text"
                         v-model="form.nombre"
                         required
+                        data-clarity-mask="true"
                     />
                     <span v-if="form.errors.nombre" class="error">{{
                         form.errors.nombre
@@ -61,6 +62,7 @@
                             class="form-select w-1/3 mr-2"
                             id="dia"
                             v-model="form.dia"
+                            data-clarity-mask="true"
                         >
                             <option disabled value="">Día</option>
                             <option v-for="day in days" :value="parseInt(day)">
@@ -73,6 +75,7 @@
                             id="mes"
                             v-model="form.mes"
                             required
+                            data-clarity-mask="true"
                         >
                             <option disabled value="">Mes</option>
                             <option
@@ -87,6 +90,7 @@
                             id="anyo"
                             v-model="form.anyo"
                             required
+                            data-clarity-mask="true"
                         >
                             <option disabled value="">Año</option>
                             <option v-for="year in years" :value="year">
@@ -114,6 +118,7 @@
                         type="text"
                         v-model="form.ciudad"
                         required
+                        data-clarity-mask="true"
                     />
                     <span v-if="form.errors.ciudad" class="error">{{
                         form.errors.ciudad

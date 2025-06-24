@@ -15,12 +15,9 @@
                     <div
                         class="bg-black/70 hover:bg-black/90 transition duration-500 p-7 rounded-xl"
                     >
-                        Te invitamos a viajar juntos hacia el autodescubrimiento
-                        con meditaciones, talleres y libros gratuitos.
-                        Construyamos juntos Sociedades Armónicas sin líderes,
-                        sin enfermedad, donde florezca la paz, la armonía, la
-                        creatividad y la auténtica felicidad. Dando sin esperar
-                        nada a cambio.
+                        Nuestro proyecto es el despertar a una nueva consciencia
+                        y la creación de las Sociedades Armónicas, a través de
+                        la transmutación de nuestro pensamiento.
                     </div>
                 </Hero>
                 <Link
@@ -35,25 +32,41 @@
             </FondoEspacio>
         </Section>
 
-        <Section class="relative px-[30px] bg-base-200" style="overflow: unset">
+        <Section
+            v-if="lazyOff"
+            class="relative px-[30px] bg-base-200"
+            style="overflow: unset"
+        >
             <Carousel
-                :items-to-show="carouselItemsToShow"
-                :wrap-around="true"
+                :items-to-show="1"
+                :wrap-around="false"
                 :mouse-drag="true"
+                snap-align="start"
                 :breakpoints="{
                     0: { itemsToShow: 1 },
                     640: { itemsToShow: 2 },
                     1024: { itemsToShow: 3 },
-                    1400: { itemsToShow: 4 }
                 }"
                 class="w-full"
             >
-                <Slide v-for="(feature, idx) in features" :key="feature.title">
-                    <div class="rounded-xl bg-base-200 shadow-lg p-6 flex flex-col items-center text-center h-full mx-2">
-                        <Icon :icon="feature.icon" :class="'text-4xl mb-2 ' + (feature.iconClass || '')" />
-                        <h3 class="font-bold text-lg mb-1">{{ feature.title }}</h3>
-                        <p class="mb-2">{{ feature.description }}</p>
-                        <Link v-if="feature.link" :href="feature.link.url" class="btn btn-secondary mt-4">{{ feature.link.label }}</Link>
+                <Slide v-for="(slide, idx) in slides" :key="slide.title">
+                    <div
+                        class="rounded-xl bg-base-200 shadow-lg p-6 flex flex-col items-center text-center h-full mx-2"
+                    >
+                        <Icon
+                            :icon="slide.icon"
+                            :class="'text-4xl mb-2 ' + (slide.iconClass || '')"
+                        />
+                        <h3 class="font-bold text-lg mb-1">
+                            {{ slide.title }}
+                        </h3>
+                        <p class="mb-2">{{ slide.description }}</p>
+                        <Link
+                            v-if="slide.link"
+                            :href="slide.link.url"
+                            class="btn btn-secondary mt-4"
+                            >{{ slide.link.label }}</Link
+                        >
                     </div>
                 </Slide>
                 <template #addons>
@@ -81,7 +94,11 @@
                     sentido incluso en los momentos más desafiantes.
                 </p>
                 <template #image>
-                    <figure class="diff aspect-16/9" tabindex="0" ref="diffFigure">
+                    <figure
+                        class="diff aspect-16/9"
+                        tabindex="0"
+                        ref="diffFigure"
+                    >
                         <div class="diff-item-1" role="img" tabindex="0">
                             <img
                                 alt="alegre"
@@ -96,7 +113,9 @@
                         </div>
                         <div class="diff-resizer" style="width: 50px"></div>
                     </figure>
-                    <button class="btn btn-success mt-4" @click="equilibrar()">Equilibrar</button>
+                    <button class="btn btn-success mt-4" @click="equilibrar()">
+                        Equilibrar
+                    </button>
                 </template>
             </TextImage>
         </Section>
@@ -112,16 +131,15 @@
                 full
                 image-right
             >
-            <Prose class="md:max-w-[24rem]">
-                Ofrecemos gratuitamente cientos de libros, meditaciones, audios,
-                psicografías... todo ello procedente de la Fuente original del
-                Fractal de Tseyor, a través de la transmisión telepática por
-                seres humanos de otros niveles de consciencia.
-            </Prose>
+                <Prose class="md:max-w-[24rem]">
+                    Ofrecemos gratuitamente cientos de libros, meditaciones,
+                    audios, psicografías... todo ello procedente de la Fuente
+                    original del Fractal de Tseyor, a través de la transmisión
+                    telepática por seres humanos de otros niveles de
+                    consciencia.
+                </Prose>
             </Hero>
         </Section>
-
-
 
         <Section>
             <Hero
@@ -164,7 +182,7 @@
             />
         </Section>
 
-        <Section ref="contadoresEl">
+        <Section v-if="lazyOff" ref="contadoresEl">
             <div
                 class="grid grid-cols-2 md:px-5 md:grid-cols-4 gap-x-7 gap-y-10 text-lg mt-20 md:mt-0"
                 v-if="stats"
@@ -285,8 +303,8 @@
 
 <script setup>
 import { router } from "@inertiajs/vue3";
-import { Carousel, Slide, Navigation } from 'vue3-carousel';
-import 'vue3-carousel/dist/carousel.css';
+import { Carousel, Slide, Navigation } from "vue3-carousel";
+import "vue3-carousel/dist/carousel.css";
 
 defineProps({
     stats: {},
@@ -315,64 +333,70 @@ function calculaHCounter() {
             : 99999;
 }
 
+const lazyOff = ref(false);
 // https://www.danmatthews.me/posts/lazy-loading-inertia-js
 // cargamos las estadísticas un poco más tarde para que la portada cargue más rápido
 onMounted(() => {
     console.log("on mounted");
-    setTimeout(() => {
-        router.reload({
-            only: ["stats", "auth"],
-        });
-    }, 1000);
     // nav.position = 'fixed'
     // contadoresEl.value.$el.getBoundingClientRect().top
-    calculaHCounter();
+    setTimeout(() => {
+        lazyOff.value = true;
+        nextTick(() => {
+            calculaHCounter();
+            router.reload({
+                only: ["stats", "auth"],
+            });
+        });
+    }, 1500);
 });
 
-const features = [
+const slides = [
     {
-        title: 'Meditaciones',
-        icon: 'ph:hands-praying-duotone',
-        description: 'Guiadas por nuestros Guías Estelares, te ayudamos a reconectar con tu esencia y encontrar la paz interior.',
+        title: "Meditaciones",
+        icon: "ph:hands-praying-duotone",
+        description:
+            "Talleres y meditaciones entregados por nuestros Guías Estelares, te ayudamos a reconectar con tu esencia y encontrar la paz interior.",
         link: {
-            url: route('meditaciones')+'?categoria=Meditaciones',
-            label: 'Explora las meditaciones',
+            url: route("meditaciones") + "?categoria=Meditaciones",
+            label: "Explora las meditaciones",
         },
-        iconClass: 'text-blue-400',
+        iconClass: "text-blue-400",
     },
     {
-        title: 'Comunicados',
-        icon: 'ph:flying-saucer-duotone',
-        description: 'Recibimos y compartimos los mensajes de nuestros Guías Estelares, que nos guían hacia la creación de Sociedades Armónicas.',
+        title: "Comunicados",
+        icon: "ph:flying-saucer-duotone",
+        description:
+            "Lee las conversaciones mantenidas con nuestros Guías Estelares, que nos guían hacia la creación de Sociedades Armónicas.",
         link: {
-            url: route('comunicados'),
-            label: 'Lee los comunicados',
+            url: route("comunicados"),
+            label: "Lee los comunicados",
         },
-        iconClass: 'text-green-400',
+        iconClass: "text-green-400",
     },
     {
-        title: 'Biblioteca Tseyor',
-        icon: 'ph:book-open-duotone',
-        description: 'Accede a una amplia colección de libros, audios y recursos gratuitos para tu crecimiento espiritual.',
+        title: "Biblioteca Tseyor",
+        icon: "ph:book-open-duotone",
+        description:
+            "Accede a una amplia colección de libros, audios y recursos gratuitos para tu crecimiento espiritual.",
         link: {
-            url: route('biblioteca'),
-            label: 'Visita la biblioteca',
+            url: route("biblioteca"),
+            label: "Visita la biblioteca",
         },
-        iconClass: 'text-yellow-400',
+        iconClass: "text-yellow-400",
     },
     {
-        title: 'Comunidad',
-        icon: 'ph:users-duotone',
-        description: 'Únete a nuestra comunidad de personas comprometidas con la creación de Sociedades Armónicas.',
+        title: "Comunidad",
+        icon: "ph:users-duotone",
+        description:
+            "Únete a nuestra comunidad de personas comprometidas con la creación de Sociedades Armónicas.",
         link: {
-            url: route('quienes-somos'),
-            label: 'Únete a la comunidad',
+            url: route("quienes-somos"),
+            label: "Únete a la comunidad",
         },
-        iconClass: 'text-purple-400',
+        iconClass: "text-purple-400",
     },
 ];
-const carouselItemsToShow = 1; // valor por defecto, se ajusta con breakpoints
-
 const isMobileOrTablet = ref(false);
 
 function checkScreen() {
@@ -380,10 +404,10 @@ function checkScreen() {
 }
 onMounted(() => {
     checkScreen();
-    window.addEventListener('resize', checkScreen);
+    window.addEventListener("resize", checkScreen);
 });
 onBeforeUnmount(() => {
-    window.removeEventListener('resize', checkScreen);
+    window.removeEventListener("resize", checkScreen);
 });
 
 const testimonials = ref([
@@ -412,7 +436,7 @@ const diffFigure = ref(null);
 function equilibrar() {
     const figure = diffFigure.value;
     if (!figure) return;
-    const resizer = figure.querySelector('.diff-resizer');
+    const resizer = figure.querySelector(".diff-resizer");
     if (!resizer) return;
     const targetWidth = figure.offsetWidth;
     const initialWidth = resizer.offsetWidth;
@@ -422,12 +446,13 @@ function equilibrar() {
     function animate(now) {
         const elapsed = now - start;
         const progress = Math.min(elapsed / duration, 1);
-        const currentWidth = initialWidth + (targetWidth - initialWidth) * progress;
-        resizer.style.width = currentWidth + 'px';
+        const currentWidth =
+            initialWidth + (targetWidth - initialWidth) * progress;
+        resizer.style.width = currentWidth + "px";
         if (progress < 1) {
             requestAnimationFrame(animate);
         } else {
-            resizer.style.width = targetWidth + 'px';
+            resizer.style.width = targetWidth + "px";
         }
     }
     requestAnimationFrame(animate);
@@ -449,5 +474,9 @@ function equilibrar() {
 }
 :deep(.carousel) {
     overflow: unset;
+}
+:deep(.carousel__next--disabled),
+:deep(.carousel__prev--disabled) {
+    opacity: 0;
 }
 </style>

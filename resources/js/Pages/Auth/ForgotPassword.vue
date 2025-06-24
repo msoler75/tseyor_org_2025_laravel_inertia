@@ -35,7 +35,7 @@ const submit = () => {
             <div>
                 <InputLabel for="email" value="Correo Electrónico" />
                 <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full" required autofocus
-                    autocomplete="username" />
+                    autocomplete="username" data-clarity-mask="true"/>
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
