@@ -39,6 +39,7 @@ defineExpose({ focus: () => currentInput.value.focus() });
             :value="modelValue"
             @input="$emit('update:modelValue', $event.target.value)"
             :autocomplete="autocomplete"
+            data-clarity-mask="true"
         />
         <input
             v-show="!showPassword"
@@ -49,6 +50,7 @@ defineExpose({ focus: () => currentInput.value.focus() });
             @input="$emit('update:modelValue', $event.target.value)"
             :required="required"
             :autocomplete="autocomplete"
+            data-clarity-mask="true"
     />
         <div class="absolute right-3 top-0 flex justify-center items-center h-full dark:mix-blend-difference cursor-pointer" title="Mostrar/Ocultar contraseña" @click="clickHandle">
             <Icon v-show="showPassword" icon="ph:eye-duotone"/>

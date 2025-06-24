@@ -7,7 +7,7 @@
             </div>
             <div v-else class="mb-3">
                 <input type="email" v-model="inputEmail" placeholder="Introduce tu correo electrónico" class="input input-bordered w-full max-w-xs"
-                :readonly="readonly"/>
+                :readonly="readonly" data-clarity-mask="true"/>
             </div>
             <form @submit.prevent="submitConfig">
                 <div>
