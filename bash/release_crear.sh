@@ -39,7 +39,7 @@ mkdir -p bootstrap/cache
 chmod -R 775 bootstrap/cache
 
 # Instalar dependencias con composer
-composer install
+composer install --no-dev
 
 # Generar el symbolic link public
 # php artisan storage:link

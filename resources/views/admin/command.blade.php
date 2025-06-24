@@ -14,6 +14,7 @@
         <button command="auth:clear-resets" class="btn btn-success">auth:clear-resets</button>
         <button command="down" class="btn btn-success">Activar modo mantenimiento</button>
         <button command="up" class="btn btn-success">Desactivar modo mantenimiento</button>
+        <button command="inertia:stop-ssr" class="btn btn-danger">Detener servidor SSR</button>
     </div>
 
     <script>
