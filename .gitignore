@@ -39,3 +39,4 @@ info.txt
 test-results
 **/*.sql
 **/desktop.ini
+components.d.ts

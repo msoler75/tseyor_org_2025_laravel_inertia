@@ -2,7 +2,7 @@
     <Page>
 
         <div class="flex justify-between mb-20">
-            <span />
+            <Back :href="route('biblioteca')">Biblioteca</Back>
             <div class="flex gap-2">
                 <Share />
                 <AdminLinks modelo="video" necesita="administrar contenidos"  />

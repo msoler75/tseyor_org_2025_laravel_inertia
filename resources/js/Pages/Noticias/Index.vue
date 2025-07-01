@@ -37,19 +37,7 @@
 
             </div>
 
-            <div class="card bg-base-100 shadow-2xs min-w-[250px] lg:min-w-[350px] space-y-7 px-5 py-9 self-baseline"
-                v-if="listado.first_page_url.indexOf('?buscar=') < 0">
-                <h2 class="mb-5">Recientes</h2>
-                <ul class="list-disc">
-                    <li v-for="noticia in recientes" :key="noticia.id">
-                        <Link :href="`/noticias/${noticia.slug}`"
-                            class="mt-2 text-sm font-semibold text-blue-600 hover:text-blue-800">
-                        {{ noticia.titulo }}
-                        </Link>
-                    </li>
-                </ul>
 
-            </div>
         </div>
     </Page>
 </template>

@@ -2,7 +2,7 @@
     <Page class="text-center">
 
         <div class="flex justify-between items-center mb-20">
-            <span />
+            <Back :href="route('biblioteca')">Biblioteca</Back>
             <div class="flex gap-2">
                 <Share />
                 <AdminLinks modelo="radio-item" necesita="administrar contenidos" />

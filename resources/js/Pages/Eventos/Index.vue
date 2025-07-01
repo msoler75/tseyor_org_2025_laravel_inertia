@@ -2,7 +2,7 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between mb-20">
-            <span />
+            <Back :href="route('novedades')">Novedades</Back>
             <div class="flex gap-2">
                 <Share />
                 <AdminLinks modelo="evento" necesita="administrar social"  />
@@ -61,6 +61,7 @@
 
 <script setup>
 import { fechaEs } from '@/composables/textutils.js'
+
 
 const props = defineProps({
     categoriaActiva: { default: () => '' },

@@ -15,6 +15,7 @@ use App\Models\Meditacion;
 use App\Models\Psicografia;
 use App\Models\Video;
 use App\Models\Centro;
+use App\Models\Evento;
 use App\Pigmalion\Markdown;
 
 class PaginasController extends Controller
@@ -78,9 +79,16 @@ class PaginasController extends Controller
 
     public function portada()
     {
+        // Verificar si hay eventos próximos (en los próximos 30 días)
+        $hay_proximos_eventos = Evento::where('visibilidad', 'P')
+            ->where('fecha_inicio', '>=', now())
+            ->where('fecha_inicio', '<=', now()->addDays(30))
+            ->exists();
+
         return Inertia::render(
             'Portada',
             [
+                'hayProximosEventos' => $hay_proximos_eventos,
                 'stats' => Inertia::lazy(function () {
                     $cc = Comunicado::where('visibilidad', 'P')->count();
                     return
@@ -91,6 +99,7 @@ class PaginasController extends Controller
                             'usuarios' => User::count(),
                             'audios' => Audio::where('visibilidad', 'P')->count(),
                             'entradas' => Entrada::where('visibilidad', 'P')->count(),
+                            'meditaciones' => Meditacion::where('visibilidad', 'P')->count(),
                             'videos' => Video::where('visibilidad', 'P')->count(),
                             'centros' => Centro::count()
                         ];

@@ -5,7 +5,7 @@
         <Icon icon="ph:magnifying-glass-bold" class="mr-2" />
         Buscar...<span class="hidden lg:inline ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
 
-        <Modal :show="search.opened" @close="search.opened = false" maxWidth="lg">
+        <Modal :show="search.opened" @close="closeModal" maxWidth="lg">
             <div class="modal-search bg-base-100 flex flex-col text-sm pb-7">
                 <div class="flex gap-2 items-center p-3">
                     <Icon v-show="!loading" icon="ph:magnifying-glass-bold" class="text-lg" />
@@ -19,10 +19,9 @@
                             aria-controls="search-input-list" aria-haspopup="true">
                     </div>
 
-                    <kbd class="hidden lg:flex kbd cursor-pointer select-none text-xs font-semibold"
-                        @click="search.opened = false">ESC</kbd>
-                    <Icon icon="material-symbols-light:close-rounded" class="lg:hidden text-3xl"
-                        @click="search.opened = false" />
+                    <span title="Cerrar búsqueda" class="text-3xl cursor-pointer transition duration-100 transform hover:scale-125 opacity-80 hover:opacity-100" @click="closeModal" >
+                        <Icon icon="material-symbols-light:close-rounded" />
+                    </span>
                 </div>
 
                 <div class="overflow-y-auto max-h-[calc(100vh-170px)] border-t border-gray-500 border-opacity-20"
@@ -203,6 +202,33 @@ const itemsArray = computed(() => {
 })
 
 var usoTeclas = false
+let modalHistoryState = false // Flag para controlar si hemos agregado estado al historial
+let savedScrollPosition = 0 // Posición de scroll guardada
+
+// Función para manejar el evento popstate (botón atrás)
+function handlePopState(event) {
+    console.log('handlePopState: evento popstate detectado', { opened: search.opened, modalHistoryState })
+    if (search.opened && modalHistoryState) {
+        // Cerrar el modal sin navegar
+        search.opened = false
+        modalHistoryState = false
+
+        // Restaurar la posición de scroll después de un pequeño delay
+        nextTick(() => {
+            setTimeout(() => {
+                window.scrollTo(0, savedScrollPosition)
+                console.log('handlePopState: scroll restaurado a', savedScrollPosition)
+            }, 10)
+        })
+
+        // Agregar de nuevo el estado actual para mantener la URL con la posición de scroll
+        window.history.pushState({
+            modalOpen: false,
+            scrollY: savedScrollPosition
+        }, '', window.location.href)
+        console.log('handlePopState: modal cerrado, estado restaurado')
+    }
+}
 
 onMounted(() => {
     window.addEventListener('keydown', function (event) {
@@ -214,6 +240,10 @@ onMounted(() => {
         else if (search.opened) {
             console.log(event.key)
             switch (event.key) {
+                case 'Escape':
+                    event.preventDefault()
+                    closeModal()
+                    break;
                 case 'Enter':
                     if (itemSeleccionado.value) {
                         event.preventDefault()
@@ -246,7 +276,17 @@ onMounted(() => {
             }
         }
     });
-    console.log('onMounted: event listener keydown añadido')
+
+    // Gestión del botón "atrás" para cerrar el modal
+    window.addEventListener('popstate', handlePopState);
+
+    console.log('onMounted: event listeners añadidos')
+})
+
+onBeforeUnmount(() => {
+    // Limpiar event listeners
+    window.removeEventListener('popstate', handlePopState)
+    console.log('onBeforeUnmount: event listeners removidos')
 })
 
 watch(() => search.opened, (value) => {
@@ -255,10 +295,31 @@ watch(() => search.opened, (value) => {
     if (value) {
         nav.sideBarShow = false // cerramos la sidebar
         currentUrl = usePage().url
+
+        // Guardar la posición actual de scroll antes de abrir el modal
+        savedScrollPosition = window.scrollY || window.pageYOffset || document.documentElement.scrollTop
+        console.log('watch search.opened: scroll guardado en', savedScrollPosition)
+
+        // Agregar estado al historial para capturar el botón "atrás"
+        if (!modalHistoryState) {
+            window.history.pushState({
+                modalOpen: true,
+                scrollY: savedScrollPosition
+            }, '', window.location.href)
+            modalHistoryState = true
+            console.log('watch search.opened: estado de historial agregado')
+        }
+
         nextTick(() => {
             console.log('watch search.opened: nextTick focus')
             input.value.focus()
         })
+    } else {
+        // Al cerrar el modal, limpiar el estado del historial si es necesario
+        if (modalHistoryState) {
+            modalHistoryState = false
+            console.log('watch search.opened: modal cerrado, flag de historial limpiado')
+        }
     }
 })
 
@@ -351,6 +412,22 @@ watch(() => search.query, (value) => {
 })
 
 
+// Función para cerrar el modal y restaurar scroll si es necesario
+function closeModal() {
+    if (search.opened) {
+        search.opened = false
+        // Si se cierra manualmente y estamos en la misma página, restaurar scroll
+        if (modalHistoryState && currentUrl === usePage().url) {
+            nextTick(() => {
+                setTimeout(() => {
+                    window.scrollTo(0, savedScrollPosition)
+                    console.log('closeModal: scroll restaurado a', savedScrollPosition)
+                }, 10)
+            })
+        }
+    }
+}
+
 function clickPredefined(q) {
     search.query = q.query
     search.restrictToCollections = q.collections
@@ -361,6 +438,8 @@ function clickHandle(url, item) {
     // Cierra el modal y fuerza el refresco del estado
     search.opened = false
     console.log('clickHandle: search.opened = false')
+
+    // Si el modal se cerró manualmente, no necesitamos restaurar scroll ya que vamos a navegar
     setTimeout(() => {
         console.log('clickHandle: setTimeout ejecutado', { opened: search.opened })
         // Si es el "item" especial de ver todos, solo navega, no guarda búsqueda

@@ -47,11 +47,11 @@ const mapSubmenu = (submenu) => {
     if(!submenu) return null
     const sections = []
     for(const section of submenu.sections) {
-        if(section.index) continue
+        if(typeof section.index !== 'undefined') continue
         sections.push({groups:[mapGroup(section)]})
     }
     for(const section of submenu.sections) {
-        if(section.index)
+        if(typeof section.index !== 'undefined')
             sections[section.index].groups.push(mapGroup(section))
     }
     return {sections}

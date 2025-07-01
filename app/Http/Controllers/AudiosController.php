@@ -17,7 +17,7 @@ class AudiosController extends Controller
         $categoria = $request->input('categoria');
         $page = $request->input('page', 1);
 
-        $query = Audio::select(['id', 'slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
+        $query = Audio::select(['id', 'slug', 'titulo', 'descripcion', 'audio', 'enlace', 'updated_at', 'categoria'])
             ->where('visibilidad', 'P')
             ->when($categoria === '_', function ($query) {
                 $query->orderByRaw('LOWER(titulo)');

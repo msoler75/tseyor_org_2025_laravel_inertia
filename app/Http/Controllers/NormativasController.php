@@ -31,6 +31,8 @@ class NormativasController extends Controller
             $ids = Normativa::search($buscar)->get()->pluck('id')->toArray();
             $query->whereIn('normativas.id', $ids);
         }
+        else
+            $query->latest();
 
         $resultados = $query
             ->paginate(self::$ITEMS_POR_PAGINA, ['*'],'page', $page)
