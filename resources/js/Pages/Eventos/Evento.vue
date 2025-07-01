@@ -1,5 +1,5 @@
 <template>
-    <div class="sticky top-0 pt-10 bg-base-100 pb-4 border-b border-base-300 z-30">
+    <div class="sticky -top-2 pt-10 bg-base-100 pb-4 border-b border-base-300 z-30">
 
         <div class="container flex justify-between items-center mb-3">
             <Back inline>Eventos</Back>
@@ -9,10 +9,10 @@
             </div>
         </div>
 
-        <h1 class="container my-4 md:my-8">
+        <h1 class="container mt-8 mb-2 md:mb-8">
             {{ evento.titulo }}
         </h1>
-        <small class="container text-right block mt-5"><span class="badge badge-info badge-sm">{{
+        <small class="container text-right block md:mt-5"><span class="badge badge-info badge-sm">{{
             evento.categoria }}</span></small>
     </div>
     <div class="container py-7 mx-auto space-y-12">

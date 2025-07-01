@@ -1,10 +1,16 @@
 <template>
     <TextImage :title="title" :subtitle="subtitle" :srcImage="srcImage" :buttonLabel="buttonLabel" :href="href"
         :src-width="srcWidth" :src-height="srcHeight" :imageRight="imageRight" :imageClass="imageClass"
-        :imageSideClass="imageSideClass" :textClass="textClass" :full="full" :cover="cover"
+        :imageSideClass="imageSideClass" :titleClass="titleClass" :textClass="textClass" :full="full" :cover="cover"
         :caption="caption"
         class="hero section bg-hero bg-cover bg-center py-20">
         <slot></slot>
+        <template #action v-if="actionSlotPresent">
+            <slot name="action"></slot>
+        </template>
+        <template #image v-if="imageSlotPresent">
+            <slot name="image"></slot>
+        </template>
     </TextImage>
 </template>
 
@@ -59,6 +65,11 @@ defineProps({
         type: String,
         required: false
     },
+    titleClass: {
+        type: String,
+        required: false,
+        default: ""
+    },
     textClass: {
         type: String,
         required: false,
@@ -74,4 +85,9 @@ defineProps({
         default: false
     }
 })
+
+const slots = useSlots()
+const imageSlotPresent = computed(() => !!slots.image)
+const actionSlotPresent = computed(() => !!slots.action)
+
 </script>

@@ -1,5 +1,7 @@
 <template>
-    <div class="relative" ref="container">
+    <div class="relative bg-base-100/0" ref="container"
+    :data-theme="portada && nav.scrollY < 300 ? 'night' : ''"
+    >
         <template v-for="tab, index of nav.items" :key="tab.url">
             <NavLink v-if="!tab.onlyAside" class="nav-tab relative px-4"
             :class="[
@@ -27,6 +29,8 @@ import { useEventListener } from '@vueuse/core'
 
 const nav = useNav()
 const container = ref(null)
+const page = usePage();
+const portada = computed(() => page.url == "/");
 
 function clickedTab(tab) {
     nav.toggleTab(tab);

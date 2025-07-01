@@ -31,13 +31,13 @@ export default [
               description: "Los contenidos de Tseyor más recientes",
               icon: "ph:clock-counter-clockwise-duotone",
             },
-            {
+            /*{
                 class:"pointer-events-none opacity-0",
              title: "Boletines",
               route: "boletines",
               description: "Boletines de la comunidad Tseyor",
               icon: "ph:newspaper-clipping-duotone",
-            },
+            },*/
             {
               title: "Boletines",
               route: "boletines",
@@ -47,7 +47,7 @@ export default [
           ],
         },
         {
-          title: "Noticias, Eventos y Blogs",
+          title: "Noticias y Eventos",
           items: [
             {
               title: "Noticias",
@@ -60,13 +60,7 @@ export default [
               route: "eventos",
               description: "Cursos, convivencias y encuentros",
               icon: "ph:calendar-duotone",
-            },
-            {
-              title: "Blog",
-              route: "blog",
-              description: "Artículos de nuestros blog",
-              icon: "ph:pencil-line-duotone",
-            },
+            }
           ],
         },
         {
@@ -135,6 +129,19 @@ export default [
           ],
         },
         {
+        title: "Blogs",
+        class: "flex flex-col gap-1",
+        index: 0,
+        items: [
+            {
+                title: "Blog",
+                route: "blog",
+                description: "Artículos de nuestros blog",
+                icon: "ph:pencil-line-duotone"
+            }
+        ]
+        },
+        {
           title: "Documentos",
           items: [
             {
@@ -157,7 +164,6 @@ export default [
             },
           ],
         },
-
         {
           title: "Media",
           items: [
@@ -180,7 +186,7 @@ export default [
               icon: "ph:image-duotone",
             },
           ],
-        },
+        }
       ],
       // footer: "Esto es un footer 1",
     },

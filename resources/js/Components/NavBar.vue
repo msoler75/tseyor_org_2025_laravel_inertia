@@ -1,13 +1,11 @@
 <template>
     <nav
-        class="w-full border-gray-300 top-0 z-40 -translate-y-[1px] transition duration-400 select-none"
-        :data-theme="portada && nav.scrollY < 300 ? 'night' : ''"
+        class="w-full border-gray-300 top-0 z-40 -translate-y-[1px] transition duration-400 select-none pointer-events-none"
         :class="[
-            portada && nav.scrollY < 300
-                ? 'dark bg-transparent'
-                : portada
+            portada ? 'bg-base-100/0' :
+                nav.fullPage
                 ? 'bg-base-200/20 hover:bg-base-200/100 transition duration-200'
-                : 'border-b',
+                : 'bg-base-200 border-b',
             nav.fullPage ? 'fixed border-gray-300' : 'sticky',
             nav.fullPage && nav.announce && !nav.announceClosed
                 ? 'top-[2rem] '
@@ -17,7 +15,7 @@
         <!-- Primary Navigation Menu -->
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 relative items-center">
+            <div class="flex justify-between h-16 relative items-center pointer-events-auto">
                 <!-- Hamburger -->
                 <div class="flex items-center lg:hidden">
                     <button

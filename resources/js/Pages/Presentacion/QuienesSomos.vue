@@ -2,7 +2,7 @@
     <Sections height="500">
 
         <Hero title="¿Quiénes Somos?"
-            srcImage="/almacen/medios/paginas/quienes-somos.jpg" image-right
+            srcImage="/almacen/medios/paginas/quienes-somos.jpg"
             buttonLabel="Conoce nuestros orígenes"
             :href="route('origenes-de-tseyor')">
             <p>
@@ -18,7 +18,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
 
         <Section>
             <TextImage title="¿Donde estamos?" srcImage="/almacen/medios/paginas/mapa.jpg"
-            buttonLabel="Ver Mapa" :href="route('contactos')" >
+            buttonLabel="Ver Mapa" :href="route('contactos')" image-right>
            <p>Encuentra un centro o representante de Mundo Armónico TSEYOR cerca de ti.</p>
            <p>Estamos creciendo. Si aún no hay uno en tu zona, ¡anímate a crear uno! Únete a nuestro proyecto y te acompañaremos en el camino.</p>
             </TextImage>
@@ -27,9 +27,9 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
 
 
         <Section>
-            <TextImage title="¿Quiénes son estos amigos del espacio?"
+            <TextImage title="¿Quiénes son nuestros amigos del espacio?"
                 srcImage="/almacen/medios/paginas/todos-los-guias.jpg"
-                buttonLabel="Conoce a los guías Estelares" href="/guias" image-right >
+                buttonLabel="Conoce a los guías Estelares" href="/guias"  >
                 <p>Nuestros tutores proceden de distintos planetas y todos son miembros de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>.</p>
                 <p>Actualmente nos comunicamos con <Referencia colecciones="guias">Shilcars</Referencia> (un ser humano del <Referencia colecciones="lugares">planeta Agguniom</Referencia> en la <Referencia>Constelación de
                     Áuriga</Referencia>) y otros hermanos como <Referencia>Melcor</Referencia>, <Referencia>Aumnor</Referencia> y <Referencia>Noiwanak</Referencia>.</p>
@@ -39,7 +39,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
 
         <Section>
             <TextImage title="Nuestra filosofía" srcImage="/almacen/medios/paginas/manos-entre-mundos.jpg"
-            buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')" >
+            buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')" image-right>
                 <p>Practicamos la filosofía que nos ha patrocinado la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>, basada en la <Referencia>unidad en la diversidad</Referencia>, el <Referencia>hermanamiento</Referencia> y el <Referencia>Conocimiento Trascendente</Referencia>.</p>
             </TextImage>
         </Section>
@@ -51,7 +51,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
                 srcImage="/almacen/medios/paginas/Puente.jpg" buttonLabel="Ver Comunicados"
                 href="/comunicados"
                 gridClass="md:grid-cols-[2fr_1fr]"
-                image-right>
+                >
                 <p>Los comunicados son las <Referencia>conversaciones interdimensionales</Referencia> realizadas <Referencia r="telepatía">telepáticamente</Referencia> por nuestro hermano
                     <Referencia>Chac-Mool Puente</Referencia>, quien ha recibido una preparación desde
                     hace más de 40 años para asumir dicha labor, como intermediario entre los dos mundos.</p>
@@ -68,7 +68,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
           <Section>
             <TextImage title="Blog"
                 srcImage="/almacen/medios/paginas/blogs.jpg" buttonLabel="Leer Blog"
-                href="/entradas" >
+                href="/entradas" image-right>
                 <p>Conoce algunas de nuestras aventuras en este camino del autorreconocimiento, podrás vernos en muchas fotografías de eventos que hemos realizado.</p>
             </TextImage>
         </Section>
@@ -132,8 +132,10 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
 
 
         <!-- Sección: Quiero ser de Tseyor -->
-        <Hero title="Quiero ser de Tseyor" subtitle="Entra a forma parte del grupo" buttonLabel="Formulario de inscripción"
-            :href="route('cursos.inscripcion.nueva')" textClass="space-y-8" />
+        <Hero title="Quiero ser de Tseyor" buttonLabel="Curso Holístico"
+            :href="route('cursos')" textClass="space-y-8" >
+            <p>Para entrar a formar parte de la comunidad debes realizar nuestro Curso Holístico, de forma totalmente gratuita.</p>
+            </Hero>
 
 
     </Sections>

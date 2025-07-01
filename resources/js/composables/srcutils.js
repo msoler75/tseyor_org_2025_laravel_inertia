@@ -10,6 +10,7 @@ export const getSrcUrl = (src) => {
 };
 
 export const getEmbedYoutube = (url) => {
+    if(!url) return url
   if (url.match(/^https:\/\/www.youtube.com\/embed\//)) return url;
   const u = url.match(
     /(?:https:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube-nocookie\.com\/embed\/)([^&]+)/

@@ -13,9 +13,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                     <p>La Biblioteca Tseyor es el resultado de más de 1500 diálogos <Referencia r="telepatía">
-                            telepáticos</Referencia> con seres de la <Referencia>Confederación de Mundos Habitados
-                            de la
-                            Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool Puente</Referencia>
+                            telepáticos</Referencia> con seres humanos de la <Referencia>Confederación de Mundos Habitados
+                            de la Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool Puente</Referencia>
                         ,
                         <Referencia r="canalización">canalizador</Referencia> de Tseyor.
                     </p>
@@ -81,7 +80,7 @@ onMounted(() => {
 const secciones = ref([
     {
         title: 'Comunicados',
-        descripcion: 'Transcripciones y audios de las conversaciones interdimensionales mantenidas con los hermanos del Cosmos. Descubre los mensajes y enseñanzas compartidos por nuestros guías estelares.',
+        descripcion: 'Transcripciones y audios de las conversaciones interdimensionales mantenidas con los hermanos del cosmos. Descubre los mensajes y enseñanzas compartidos por nuestros guías estelares.',
         url: route('comunicados'),
         icon: "ph:flying-saucer-duotone",
         count: computed(() => props.stats ? props.stats.comunicados : 0)

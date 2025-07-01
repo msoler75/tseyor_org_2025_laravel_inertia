@@ -30,7 +30,7 @@
                             destacados. Son
                             lugares para la meditación, el equilibrio y la paz interior.</p>
                         <!-- Imágenes de los Muulasterios -->
-                        <Carousel :per-page="1">
+                        <Carousel :per-page="1" class="max-w-[300px] mx-auto">
                             <Slide v-for="centro in muulasterios" :key="centro.id">
                                 <Link :href="route('centro', centro.id)"
                                     :style="`background-image: url(${getImageUrl(centro.imagen)}); background-size: cover; background-position: center center;`"
@@ -50,7 +50,7 @@
                             espacios para la hermandad y el autodescubrimiento.</p>
 
                         <!-- Imágenes de las Casas -->
-                        <Carousel :per-page="1">
+                        <Carousel :per-page="1" class="max-w-[300px] mx-auto">
                             <Slide v-for="centro in casas" :key="centro.id">
                                 <div :style="`background-image: url(${getImageUrl(centro.imagen)}); background-size: cover; background-position: center center;`"
                                     class="w-full h-[260px] md:h-[45vh]"></div>
@@ -87,8 +87,8 @@
                     <h2>Nuestros centros</h2>
                     <div class="flex flex-wrap lg:grid grid-cols-2 gap-10">
                         <div v-for="pais of paises" :key="pais.nombre" class="flex gap-2">
-                            <Link :href="`${route('contactos')}?pais=${pais.codigo}`">
-                            <span class="capitalize">{{ pais.nombre }}</span>
+                            <Link :href="`${route('contactos')}?pais=${pais.codigo}`" class="hover:text-secondary">
+                            {{ pais.nombre }}
                             </Link>
                         </div>
                     </div>
@@ -119,7 +119,7 @@ const props = defineProps({
     }
 });
 
-const muulasterios = props.centros.filter(centro => centro.tipo === 'muulasterio');
-const casas = props.centros.filter(centro => centro.tipo === 'casa');
+const muulasterios = props.centros.filter(centro => centro.nombre.toLowerCase().includes('muulasterio'));
+const casas = props.centros.filter(centro => centro.nombre.toLowerCase().includes('casa') && !centro.nombre.toLowerCase().includes('muulasterio'));
 
 </script>

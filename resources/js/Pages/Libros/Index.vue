@@ -2,7 +2,7 @@
     <div class="container py-12 mx-auto">
 
         <div class="flex justify-between mb-20">
-            <span></span>
+            <Back :href="route('biblioteca')">Biblioteca</Back>
             <div class="flex gap-2">
                 <Share />
                 <AdminLinks modelo="libro" necesita="administrar contenidos"  />
