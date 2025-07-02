@@ -112,7 +112,7 @@
 
         <Section>
             <TextImage
-                title="Estamos en Desequilibrio"
+                title="Sentir la verdadera alegría"
                 image-right
                 full
             >
