@@ -67,8 +67,6 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
 
 // Definir las props que recibe la vista
 const props = defineProps({
