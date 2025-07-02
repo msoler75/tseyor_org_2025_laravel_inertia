@@ -61,6 +61,7 @@ declare module 'vue' {
     FolderIcon: typeof import('./resources/js/Components/FolderExplorer/FolderIcon.vue')['default']
     FondoEspacio: typeof import('./resources/js/Components/FondoEspacio.vue')['default']
     FondoEstrellado: typeof import('./resources/js/Components/FondoEstrellado.vue')['default']
+    FondoManos: typeof import('./resources/js/Components/FondoVideoPortada.vue')['default']
     FondoVideoPortada: typeof import('./resources/js/Components/FondoVideoPortada.vue')['default']
     FormSection: typeof import('./resources/js/Components/FormSection.vue')['default']
     FullPage: typeof import('./resources/js/Sections/FullPage.vue')['default']

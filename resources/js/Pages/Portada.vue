@@ -1,7 +1,7 @@
 <template>
     <h1 class="hidden">Inicio</h1>
 
-    <FullPage>
+    <FullPage down-label="Saber más">
         <Section data-theme="night">
             <FondoEspacio class="w-full h-full">
                 <Hero
@@ -21,8 +21,9 @@
                     </div>
                 </Hero>
                 <Link
+                    v-if="hayProximosEventos"
                     href="eventos"
-                    class="w-fit text-xs btn btn-secondary opacity-80 !absolute bottom-4 right-4 z-40"
+                    class="w-fit text-xs btn btn-secondary opacity-80 !absolute bottom-8 right-8 z-40"
                     ><Icon
                         icon="ph:arrow-right-duotone"
                         class="transform scale-150"
@@ -32,67 +33,54 @@
             </FondoEspacio>
         </Section>
 
-        <Section
-            v-if="lazyOff"
-            class="relative px-[30px] bg-base-200"
-            style="overflow: unset"
-        >
-            <Carousel
-                :items-to-show="1"
-                :wrap-around="false"
-                :mouse-drag="true"
-                snap-align="start"
-                :breakpoints="{
-                    0: { itemsToShow: 1 },
-                    640: { itemsToShow: 2 },
-                    1024: { itemsToShow: 3 },
-                }"
-                class="w-full"
+        <Section>
+            <TextImage
+                title="La Revolución de la Consciencia"
+                full
+                cover
+                src-image="/almacen/medios/portada/revolucion_consciencia2.jpg"
             >
-                <Slide v-for="(slide, idx) in slides" :key="slide.title">
-                    <div
-                        class="rounded-xl bg-base-200 shadow-lg p-6 flex flex-col items-center text-center h-full mx-2"
-                    >
-                        <Icon
-                            :icon="slide.icon"
-                            :class="'text-4xl mb-2 ' + (slide.iconClass || '')"
-                        />
-                        <h3 class="font-bold text-lg mb-1">
-                            {{ slide.title }}
-                        </h3>
-                        <p class="mb-2">{{ slide.description }}</p>
-                        <Link
-                            v-if="slide.link"
-                            :href="slide.link.url"
-                            class="btn btn-secondary mt-4"
-                            >{{ slide.link.label }}</Link
-                        >
-                    </div>
-                </Slide>
-                <template #addons>
-                    <Navigation v-if="isMobileOrTablet" />
-                </template>
-            </Carousel>
+                <p>
+                    La verdadera transformación se logra mediante la
+                    autoobservación, el desapego y el sacrificio por la
+                    humanidad.
+                </p>
+                <p>
+                    Con la alquimia de un pensamiento sublimado transmutamos el
+                    plomo de nuestra personalidad por el oro del espíritu.
+                </p>
+                <p>
+                    Te invitamos a compartir este viaje de autodescubrimiento
+                    todos juntos. Ya es hora de despertar del sueño de los
+                    sentidos.
+                </p>
+            </TextImage>
         </Section>
 
         <Section>
-            <TextImage title="La alegría en tiempos difíciles">
+            <TextImage title="Sentir la verdadera alegría" image-right full>
+                <p>Nuestro estado natural es la alegría, sentir la dicha de estar experimentando un universo lleno de posibilidades.</p>
                 <p>
-                    Son tiempos de transformación, debemos afrontar grandes
-                    retos a todos los niveles: sociales, personales, económicos
-                    y espirituales.
+                    Sin embargo, nuestra desconexión con la naturaleza, con nuestro verdadero
+                    Ser... El individualismo exacerbado... El materialismo...
                 </p>
                 <p>
-                    En medio de la incertidumbre, la ansiedad y el cambio
-                    constante, es natural preguntarse: ¿cómo podemos recuperar
-                    la alegría y la paz interior?
+                    Todo ello es un desequilibrio que genera estados de ansiedad,
+                    apego, miedo, desconfianza...
                 </p>
-                <p>
-                    A través de herramientas prácticas, espacios de encuentro y
-                    recursos gratuitos, te acompañamos para que puedas
-                    reconectar con tu esencia, cultivar la serenidad y encontrar
-                    sentido incluso en los momentos más desafiantes.
-                </p>
+                <div class="flex justify-center">
+                    <button
+                        class="btn mt-4 transition-colors duration-300"
+                        :class="isEquilibrado ? 'btn-warning' : 'btn-success'"
+                        @click="toggleEquilibrio()"
+                    >
+                        {{
+                            isEquilibrado
+                                ? "VOLVER AL DESEQUILIBRIO"
+                                : "ENCONTRAR EL EQUILIBRIO"
+                        }}
+                    </button>
+                </div>
                 <template #image>
                     <figure
                         class="diff aspect-16/9"
@@ -111,11 +99,13 @@
                                 src="/almacen/medios/portada/ansioso.jpg"
                             />
                         </div>
-                        <div class="diff-resizer" style="width: 50px"></div>
+                        <div
+                            class="diff-resizer cursor-col-resize"
+                            :style="{ width: resizerWidth + 'px' }"
+                            @mousedown="startDrag"
+                            @touchstart="startDrag"
+                        ></div>
                     </figure>
-                    <button class="btn btn-success mt-4" @click="equilibrar()">
-                        Equilibrar
-                    </button>
                 </template>
             </TextImage>
         </Section>
@@ -183,8 +173,9 @@
         </Section>
 
         <Section v-if="lazyOff" ref="contadoresEl">
+            <h2 class="px-3 mb-12">Tseyor en números</h2>
             <div
-                class="grid grid-cols-2 md:px-5 md:grid-cols-4 gap-x-7 gap-y-10 text-lg mt-20 md:mt-0"
+                class="grid grid-cols-2 md:px-5 md:grid-cols-4 gap-3 md:gap-x-7 md:gap-y-10 text-lg px-2"
                 v-if="stats"
             >
                 <Link
@@ -201,24 +192,12 @@
                 </Link>
                 <Link
                     class="btn flex-col h-auto p-4 border border-gray-500"
-                    :href="route('comunicados')"
-                >
-                    <Counter
-                        :to="stats.paginas"
-                        :count="contando"
-                        :delay="200"
-                        class="text-2xl"
-                    />
-                    <span>Páginas transcritas</span>
-                </Link>
-                <Link
-                    class="btn flex-col h-auto p-4 border border-gray-500"
                     :href="route('libros')"
                 >
                     <Counter
                         :to="stats.libros"
                         :count="contando"
-                        :delay="400"
+                        :delay="200"
                         class="text-2xl"
                     />
                     <span>Libros</span>
@@ -230,10 +209,22 @@
                     <Counter
                         :to="stats.audios"
                         :count="contando"
-                        :delay="600"
+                        :delay="400"
                         class="text-2xl"
                     />
                     <span>Audios</span>
+                </Link>
+                <Link
+                    class="btn flex-col h-auto p-4 border border-gray-500"
+                    :href="route('meditaciones')"
+                >
+                    <Counter
+                        :to="stats.meditaciones"
+                        :count="contando"
+                        :delay="600"
+                        class="text-2xl"
+                    />
+                    <span>Meditaciones</span>
                 </Link>
                 <Link
                     class="btn flex-col h-auto p-4 border border-gray-500"
@@ -303,10 +294,9 @@
 
 <script setup>
 import { router } from "@inertiajs/vue3";
-import { Carousel, Slide, Navigation } from "vue3-carousel";
-import "vue3-carousel/dist/carousel.css";
 
 defineProps({
+    hayProximosEventos: Boolean,
     stats: {},
 });
 
@@ -314,6 +304,74 @@ const nav = useNav();
 const contadoresEl = ref(null);
 const contadoresTop = ref(99999);
 const contando = ref(false);
+
+const diffFigure = ref(null);
+const resizerWidth = ref(15);
+const isDragging = ref(false);
+const figureWidth = ref(400); // Nueva variable reactiva para el ancho de la figura
+
+function startDrag(event) {
+    isDragging.value = true;
+    event.preventDefault();
+
+    const figure = diffFigure.value;
+    if (!figure) return;
+
+    const rect = figure.getBoundingClientRect();
+    figureWidth.value = rect.width; // Actualizar el ancho de la figura
+
+    function handleMove(e) {
+        if (!isDragging.value) return;
+
+        const clientX = e.clientX || e.touches[0].clientX;
+        const newWidth = Math.max(0, Math.min(rect.width, clientX - rect.left));
+        resizerWidth.value = newWidth;
+    }
+
+    function handleEnd() {
+        isDragging.value = false;
+        document.removeEventListener("mousemove", handleMove);
+        document.removeEventListener("mouseup", handleEnd);
+        document.removeEventListener("touchmove", handleMove);
+        document.removeEventListener("touchend", handleEnd);
+    }
+
+    document.addEventListener("mousemove", handleMove);
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("touchmove", handleMove);
+    document.addEventListener("touchend", handleEnd);
+}
+
+function toggleEquilibrio() {
+    const targetWidth = isEquilibrado.value ? 50 : figureWidth.value;
+    const initialWidth = resizerWidth.value;
+    const duration = 1500;
+    const start = performance.now();
+
+    function animate(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Usar una función de easing suave
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+        const currentWidth =
+            initialWidth + (targetWidth - initialWidth) * easeProgress;
+        resizerWidth.value = currentWidth;
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+// Computed simplificado que usa la variable reactiva figureWidth
+const isEquilibrado = computed(() => {
+    // Consideramos equilibrado cuando el resizer está más cerca del final (más de 75% del ancho)
+    return resizerWidth.value > figureWidth.value * 0.75;
+});
 
 watch(
     () => nav.scrollY,
@@ -333,13 +391,36 @@ function calculaHCounter() {
             : 99999;
 }
 
-const lazyOff = ref(false);
+const lazyOff = ref(true);
 // https://www.danmatthews.me/posts/lazy-loading-inertia-js
 // cargamos las estadísticas un poco más tarde para que la portada cargue más rápido
 onMounted(() => {
     console.log("on mounted");
-    // nav.position = 'fixed'
-    // contadoresEl.value.$el.getBoundingClientRect().top
+
+    // Inicializar el ancho de la figura cuando el componente se monta
+    nextTick(() => {
+        if (diffFigure.value) {
+            figureWidth.value = diffFigure.value.offsetWidth || 400;
+        }
+        calculaHCounter();
+        router.reload({
+            only: ["stats", "auth"],
+        });
+    });
+
+    // Listener para actualizar figureWidth cuando cambie el tamaño de ventana
+    function updateFigureWidth() {
+        if (diffFigure.value) {
+            figureWidth.value = diffFigure.value.offsetWidth;
+        }
+    }
+
+    window.addEventListener('resize', updateFigureWidth);
+
+    onBeforeUnmount(() => {
+        window.removeEventListener('resize', updateFigureWidth);
+    });
+
     setTimeout(() => {
         lazyOff.value = true;
         nextTick(() => {
@@ -430,8 +511,6 @@ const testimonials = ref([
         text: "Etiam ornare nulla non ligula posuere, vel bibendum urna pharetra. Proin vestibulum orci sed ex lobortis, ac tincidunt est consectetur.",
     },
 ]);
-
-const diffFigure = ref(null);
 
 function equilibrar() {
     const figure = diffFigure.value;
