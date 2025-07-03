@@ -55,14 +55,25 @@ php artisan ziggy:generate
 
 chmod u+x bash/*.sh
 
-echo "-----------------------------------------"
+# Mostrar la carpeta donde se instaló la nueva release
+
+echo "=========================================="
 echo "Despliegue completado. Nueva release: $NEW_RELEASE"
 echo "La nueva release se encuentra en: $BASE_DIR/releases/$NEW_RELEASE"
-echo "(Falta el front end, ya que no funciona npm run build)"
-echo "-----------------------------------------"
-# Mostrar la carpeta donde se instaló la nueva release
 
 echo "-----------------------------------------"
 echo "En la carpeta 'bash' se encuentran los scripts actualizados para control de releases. Copialos en esta carpeta para mantenerte actualizado. Puedes usar el comando:"
-echo "cp -r $BASE_DIR/releases/$NEW_RELEASE/bash/release* ."
+echo "> cp -r $BASE_DIR/releases/$NEW_RELEASE/bash/release* ."
+
+# Mostrar los siguientes pasos para actualizar a la nueva release
+
+echo "-----------------------------------------"
+echo "- Los siguientes pasos que debes realizar son:"
+echo "./release_establecer.sh $NEW_RELEASE"
+echo "-----------------------------------------"
+echo "- Desde pc de desarrollo, ejecuta:"
+echo "php artisan deploy:nodemodules"
+echo "php artisan deploy:front"
+echo "php artisan deploy:ssr"
+
 

@@ -12,7 +12,15 @@ class EmailRateLimited
 
     public function getMaxLimit($type = "overall"): int
     {
-        $max = config('mail.rate_limit.max.' . $type, 50);
+        // Límites específicos por tipo de trabajo
+        $limits = [
+            'App\Mail\InvitacionEquipoEmail' => 100, // Más permisivo para invitaciones
+            'App\Mail\BoletinEmail' => 15, // Más restrictivo para boletines
+            'overall' => config('mail.rate_limit.max.overall', 50),
+        ];
+
+        $max = $limits[$type] ?? config('mail.rate_limit.max.' . $type, 50);
+
         if ($max <= 0) {
             Log::warning('Invalid max limit for email rate limiter. Defaulting to 50.');
             return 50;
@@ -95,7 +103,20 @@ class EmailRateLimited
             // Registrar el fallo en storage/logs/envios_error.log
             Log::channel('envios_error')->error("Failed to send job of type: {$jobType}. Rate limit exceeded.");
 
-            $job->release(config('mail.rate_limit.minutes_waiting', 5)*60); // Reencolar el trabajo después de 5 segundos
+            // Tiempo de espera diferenciado por tipo de trabajo
+            $waitTime = $this->getWaitTime($jobType);
+
+            $job->release($waitTime); // Reencolar el trabajo después del tiempo específico
         }
+    }
+
+    private function getWaitTime(string $jobType): int
+    {
+        $waitTimes = [
+            'App\Mail\InvitacionEquipoEmail' => 60, // 1 minuto para invitaciones (más prioritario)
+            'App\Mail\BoletinEmail' => 600, // 10 minutos para boletines (menos prioritario)
+        ];
+
+        return $waitTimes[$jobType] ?? (config('mail.rate_limit.minutes_waiting', 5) * 60);
     }
 }

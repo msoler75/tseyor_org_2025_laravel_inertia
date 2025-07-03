@@ -18,13 +18,14 @@ class InvitacionEquipoEmail  extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-     public function middleware()
+    public function middleware()
     {
         return [new EmailRateLimited];
     }
 
-    public $tries = 25; // Número máximo de intentos
-    public $backoff = 60; // Tiempo en segundos entre intentos
+
+    public $tries = 500; // Número máximo de intentos
+    public $backoff = 600; // Tiempo en segundos entre intentos
 
     public Equipo $equipo;
     public string $aceptarUrl;

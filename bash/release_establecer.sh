@@ -38,6 +38,10 @@ if [ ! -d "$RELEASE_PATH" ]; then
     exit 1
 fi
 
+# detenemos los servicios corriendo actuales
+DEPLOY_USER=$DEPLOY_USER "$BASE_DIR/current/bash/ssr.sh" stop
+DEPLOY_USER=$DEPLOY_USER "$BASE_DIR/current/bash/worker-stop.sh"
+
 # Eliminar el enlace simbólico existente
 unlink "$BASE_DIR/current"
 
@@ -50,6 +54,8 @@ php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
+php artisan optimize:clear
+php artisan optimize
 
 # Mensaje final
 echo "El enlace 'current' ahora apunta a releases/$RELEASE_NUM"

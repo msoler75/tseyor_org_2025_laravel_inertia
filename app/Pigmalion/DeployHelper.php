@@ -115,7 +115,11 @@ class DeployHelper
             CURLOPT_POSTFIELDS => $postFields,
             CURLOPT_HTTPHEADER => $mergedHeaders,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 300
+            CURLOPT_TIMEOUT => 300,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 5
         ]);
 
         $response = curl_exec($ch);
