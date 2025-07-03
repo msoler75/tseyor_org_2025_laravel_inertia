@@ -42,6 +42,14 @@ return [
             'after_commit' => false,
         ],
 
+        'low_priority' => [
+            'driver' => 'database',
+            'table' => 'jobs',
+            'queue' => 'low_priority',
+            'retry_after' => 120,
+            'after_commit' => false,
+        ],
+
         'audio_processing' => [
             'driver' => 'database',
             'table' => 'jobs',

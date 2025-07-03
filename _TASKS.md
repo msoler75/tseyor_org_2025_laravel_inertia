@@ -18,6 +18,7 @@
 - [x] Crear sección para que usuarios autenticados puedan generar y ver su token JWT MCP desde el área de perfil (18/06/2025)
 - [x] Permitir subida de archivos binarios (ejemplo PDF) en la tool MCP 'archivo' (onCrear) (20/06/2025)
 - [x] Mejorar lazy loading e IntersectionObserver en Image.vue y TextImage.vue: eliminar lógica redundante de scroll/posición, usar solo IntersectionObserver como mecanismo único, aumentar rootMargin a 3000px para precarga más agresiva, mejorar logs de debug y asegurar que el observer se inicialice correctamente en el montaje del componente (19/01/2025)
+- [x] Crear documentación completa del sistema de colas de email con prioridades y rate limiting (03/07/2025)
 
 ## Discovered During Work
 - [x] Completar to-do en PaginasController::portada() para verificar eventos próximos (29/06/2025)

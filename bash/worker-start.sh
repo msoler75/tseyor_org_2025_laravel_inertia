@@ -11,7 +11,7 @@ ARTISAN="$BASEDIR/current/artisan"
 LOCKFILE="$BASEDIR/shared/_queue-worker.lock"
 LOGDIR="$BASEDIR/shared/storage/logs"
 LOGFILE="$LOGDIR/queue-worker.log"
-COMMAND="php $ARTISAN queue:work --queue=default,audio_processing --sleep=3 --tries=10 --timeout=120"
+COMMAND="php $ARTISAN queue:work --queue=default,low_priority,audio_processing --sleep=3 --tries=10 --timeout=120"
 VERBOSE=true
 
 # Verifica si se pasó el argumento -q o --quietly

@@ -17,6 +17,7 @@ class BoletinEmail extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public $tries = 500; // Número máximo de intentos
+    public $queue = 'low_priority'; // Cola de baja prioridad para boletines
     // public $backoff = 60; // Tiempo en segundos entre intentos
 
      public function middleware()
