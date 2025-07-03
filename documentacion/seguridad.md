@@ -1,4 +1,4 @@
-# SECURITY.md
+# Seguridad
 
 Políticas y recomendaciones de seguridad para Tseyor.org 2025.
 
@@ -16,7 +16,7 @@ Políticas y recomendaciones de seguridad para Tseyor.org 2025.
 - Limitar intentos de login y proteger endpoints sensibles
 
 ## Recursos
-- Middleware de protección: ver ROADMAP.md y TODO.md
+- Middleware de protección: ver hoja_de_ruta.md y TODO.md
 
 ---
 
@@ -32,3 +32,11 @@ Se pueden utilizar herramientas de análisis de seguridad para identificar vulne
 
 - OWASP ZAP
 - SonarQube
+
+## Tareas Pendientes
+
+*   Instalar `Laravel-Abuse-IP`
+*   Integración de middleware de seguridad avanzada
+*   Comprobar posibles hackeos de invitación a equipo
+
+### [Ver índice de documentación](./index.md)

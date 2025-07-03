@@ -1,4 +1,4 @@
-# PLANNING.md
+# Planificación del Proyecto
 
 Planificación general, estrategia y objetivos del proyecto.
 
@@ -16,4 +16,6 @@ Planificación general, estrategia y objetivos del proyecto.
 - Usar archivos de documentación específicos para cada área (ver README.md)
 - Mantener el archivo TODO.md como referencia principal de tareas
 - Registrar cambios en CHANGELOG.md
-- Actualizar ROADMAP.md para hitos y objetivos a medio/largo plazo
+- Actualizar hoja_de_ruta.md para hitos y objetivos a medio/largo plazo
+
+### [Ver índice de documentación](./index.md)

@@ -1,4 +1,4 @@
-# ROADMAP.md
+# Hoja de Ruta (Roadmap)
 
 Planificación a medio y largo plazo, objetivos y milestones del proyecto.
 
@@ -41,3 +41,5 @@ Planificación a medio y largo plazo, objetivos y milestones del proyecto.
 - Integración de middleware de seguridad avanzada
 - Mejoras en la visualización móvil y accesibilidad
 - Automatización de informes y estadísticas
+
+### [Ver índice de documentación](./index.md)

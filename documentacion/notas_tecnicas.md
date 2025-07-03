@@ -1,4 +1,4 @@
-# NOTES.md
+# Notas técnicas y optimizaciones
 
 Notas generales, ideas y recordatorios del proyecto. Extraído de `to-do.txt` y para uso flexible.
 
@@ -19,3 +19,5 @@ Notas generales, ideas y recordatorios del proyecto. Extraído de `to-do.txt` y 
 - Info de departamentos en página UTG
 - Copiar archivos de la vieja web a la nueva
 - Middleware IP Abuser: https://github.com/rahulalam31/Laravel-Abuse-IP
+
+
