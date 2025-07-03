@@ -1,4 +1,4 @@
-# _CONTRIBUTING.md
+# CONTRIBUTING.md
 
 ¡Gracias por tu interés en contribuir al proyecto Tseyor.org 2025!
 
@@ -9,7 +9,7 @@
 3. Abre un issue o discútelo antes de enviar un PR grande
 4. Sigue la estructura de carpetas y convenciones del proyecto
 5. Añade comentarios claros y documentación cuando sea necesario
-6. Actualiza el _CHANGELOG.md y _ROADMAP.md si tu contribución es relevante
+6. Actualiza el _CHANGELOG.md y _hoja_de_ruta.md si tu contribución es relevante
 
 ## Estilo de código
 - Para FrontEnd:

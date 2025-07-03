@@ -19,6 +19,10 @@ Este proyecto es el corazón digital de la organización, donde se publican noti
 - **TNTSearch/Scout**: Buscador interno eficiente.
 - **Ziggy**: Rutas de Laravel disponibles en JavaScript.
 
+## 📚 Documentación técnica
+
+Toda la información técnica, comandos, optimizaciones, buenas prácticas y detalles de desarrollo están centralizados en la carpeta [`documentacion/`](./documentacion/index.md).
+
 ## 🛠️ Guía rápida para nuevos colaboradores
 
 1. **Clona el repositorio y copia `.env.example` a `.env`**
@@ -32,7 +36,7 @@ Este proyecto es el corazón digital de la organización, donde se publican noti
    - `npm run dev` (desarrollo) o `npm run build` (producción)
 6. ¡Listo! Accede a la web en tu entorno local.
 
-> **Consejo:** Consulta siempre `PLANNING.md` y `TAREAS.md` para entender la arquitectura, tareas pendientes y convenciones del proyecto.
+> **Consejo:** Consulta siempre la [documentación técnica](./documentacion/index.md) para entender la arquitectura, tareas pendientes y convenciones del proyecto.
 
 ## 📁 Estructura del proyecto (resumen)
 
@@ -47,78 +51,6 @@ Este proyecto es el corazón digital de la organización, donde se publican noti
 
 - **Modelos:** 49
 - **Controladores:** 88 (incluyendo los de administración CRUD)
-
-## ⚙️ Comandos esenciales de administración
-
-### Artisan (Laravel)
-
-- **Actualizar rutas:**
-  ```bash
-  php artisan route:clear
-  ```
-- **Optimizar Laravel:**
-  ```bash
-  php artisan optimize
-  ```
-- **Limpiar caché:**
-  ```bash
-  php artisan cache:clear
-  ```
-- **Limpiar configuración:**
-  ```bash
-  php artisan config:clear
-  ```
-- **Importar datos:**
-  ```bash
-  php artisan import:comunicados
-  php artisan import:paginas
-  ```
-- **Búsquedas (Scout/TNTSearch):**
-  ```bash
-  php artisan scout:import "App\Models\Comunicado"
-  php artisan scout:status
-  ```
-- **Contenidos espejo:**
-  ```bash
-  php artisan contenidos:import noticias
-  ```
-- **Backup de base de datos:**
-  ```bash
-  php artisan db:backup
-  ```
-- **Generar sitemap:**
-  ```bash
-  php artisan sitemap:generate
-  ```
-- **Limpiar page-cache:**
-  ```bash
-  php artisan page-cache:clear
-  ```
-
-### Despliegue y SSR
-
-- **Generar rutas Ziggy:**
-  ```bash
-  php artisan ziggy:generate
-  ```
-- **Despliegue SSR:**
-  ```bash
-  php artisan deploy:ssr
-  php artisan deploy:front
-  php artisan deploy:nodemodules
-  ```
-
-### Notas técnicas y optimizaciones
-
-- **Mejora de rendimiento Ziggy:**
-  En `vendor/tightenco/ziggy/src/Ziggy.php`, en el constructor, se recomienda añadir la caché de rutas como se indica más abajo para ahorrar entre 10 y 56 ms por petición.
-- **Aumentar límite de resultados en búsquedas:**
-  En `TNTSearch -> SQLiteEngine.php`, en el método `loadConfig`, añade:
-  ```php
-  $this->maxDocs = $config['maxDocs'] ?? 500;
-  ```
-- **Problemas de CSRF en dev.tseyor.org:**
-  Si hay errores constantes, borra todas las cookies de `.tseyor.org`.
 
 ## 📝 Buenas prácticas y contribución
 
@@ -135,49 +67,6 @@ Este proyecto es el corazón digital de la organización, donde se publican noti
 
 ---
 
-## 🧩 Código de optimización Ziggy sugerido
-
-En el constructor de `vendor/tightenco/ziggy/src/Ziggy.php`:
-
-```php
-if (!static::$cache) {
-    // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
-    $cache_routes = base_path("bootstrap/cache/routes-v7.php");
-    $cache_ziggy = base_path("bootstrap/cache/ziggy2.json");
-    if (
-        !file_exists($cache_ziggy) ||
-        !file_exists($cache_routes) ||
-        filemtime($cache_routes) > filemtime($cache_ziggy)
-    ) {
-        static::$cache = $this->nameKeyedRoutes();
-        file_put_contents($cache_ziggy, static::$cache->toJson());
-    } else {
-        try {
-            $ziggy_content = file_get_contents($cache_ziggy);
-            static::$cache = collect(json_decode($ziggy_content, true));
-        } catch (\Exception $e) {
-            static::$cache = $this->nameKeyedRoutes(); // por si hubiera algun error
-        }
-    }
-}
-```
-
----
-
 > Si tienes dudas, contacta con el equipo técnico o revisa la documentación interna. ¡Gracias por contribuir a la web de Tseyor! 🌱
 
 ---
-
-## Configuración del entorno de desarrollo
-
-Para configurar el entorno de desarrollo, sigue estos pasos:
-
-1.  Asegúrate de tener instalado PHP 8.1 o superior, Node.js 16 o superior y Composer.
-2.  Clona el repositorio: `git clone https://github.com/tseyor-org/tseyor_org_2025_laravel_inertia.git`
-3.  Copia el archivo `.env.example` a `.env`: `cp .env.example .env`
-4.  Genera la clave de la aplicación: `php artisan key:generate`
-5.  Configura la base de datos en el archivo `.env`
-6.  Ejecuta las migraciones: `php artisan migrate`
-7.  Instala las dependencias de PHP: `composer install`
-8.  Instala las dependencias de JavaScript: `npm install`
-9.  Compila los assets: `npm run dev`

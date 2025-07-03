@@ -1,6 +1,5 @@
-# ARCHITECTURE.md
+# Arquitectura del Proyecto
 
-## Visión general
 Tseyor.org es una plataforma web modular y escalable para la gestión de contenidos, equipos, boletines y recursos de la ONG Mundo Armónico Tseyor. El sistema está diseñado para facilitar la colaboración, la automatización y la evolución continua, integrando tecnologías modernas tanto en backend como en frontend.
 
 ---
@@ -58,9 +57,9 @@ Tseyor.org es una plataforma web modular y escalable para la gestión de conteni
   - `config/` – Configuración de paquetes y servicios
   - `storage/` – Logs, archivos temporales, backups
 - **Documentación:**
-  - `_PLANNING.md`, `_ROADMAP.md`, `_TODO.md` para planificación y seguimiento
-  - `_CHANGELOG.md` para registro de cambios
-  - `_CONTRIBUTING.md` para guías de colaboración
+  - `planificacion.md`, `hoja_de_ruta.md`, `TODO.md` para planificación y seguimiento
+  - `CHANGELOG.md` para registro de cambios
+  - `CONTRIBUTING.md` para guías de colaboración
 
 ---
 
@@ -71,7 +70,7 @@ Tseyor.org es una plataforma web modular y escalable para la gestión de conteni
 
 ---
 
-> Para detalles sobre tareas, hitos y mejoras, consulta también `_TODO.md` y `_ROADMAP.md`.
+> Para detalles sobre tareas, hitos y mejoras, consulta también `TODO.md` y `hoja_de_ruta.md`.
 
 ---
 
@@ -129,3 +128,5 @@ graph LR
     G --> A;
 ```
 - Diagramas de flujo de datos: Muestran cómo fluyen los datos a través del sistema.
+
+### [Ver índice de documentación](./index.md)

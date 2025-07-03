@@ -1,4 +1,4 @@
-# Sistema de Colas de Tareas/Email
+# Gestión de Colas y Trabajos Asíncronos
 
 ## Resumen
 - Nunca se saturará el límite de Dreamhost
@@ -82,3 +82,5 @@ Estos scripts aseguran que siempre se procesen primero las colas de mayor priori
 > Es importante mantener siempre un worker activo para que las invitaciones y boletines se envíen automáticamente según las prioridades y límites definidos.
 
 > Para ello lo mejor es instalar mediante **cron** un arranque de worker-start.sh
+
+### [Ver índice de documentación](./index.md)

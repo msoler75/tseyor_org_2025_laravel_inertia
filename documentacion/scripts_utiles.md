@@ -1,4 +1,4 @@
-# Documentación de scripts de automatización y despliegue (`/bash`)
+# Scripts y Utilidades
 
 La carpeta `bash/` contiene scripts esenciales para la automatización y operación del proyecto en producción. A continuación se describe el propósito de cada script y las recomendaciones de uso:
 
@@ -26,14 +26,16 @@ La carpeta `bash/` contiene scripts esenciales para la automatización y operaci
 - **Permisos**: Asegúrate de que los scripts tengan permisos de ejecución (`chmod u+x bash/*.sh`).
 - **Automatización recomendada**: Añade una línea en tu crontab para asegurar que el worker esté siempre activo:
   ```cron
-  DEPLOY_USER=tu_usuario /home/tu_usuario/tseyor.org/bash/worker-start.sh
+  DEPLOY_USER=tu_usuario /home/tu_usuario/tseyor.org/current/bash/worker-start.sh
   ```
   O bien, para reiniciar periódicamente:
   ```cron
-  DEPLOY_USER=tu_usuario /home/tu_usuario/tseyor.org/bash/worker-restart.sh
+  DEPLOY_USER=tu_usuario /home/tu_usuario/tseyor.org/current/bash/worker-restart.sh
   ```
 - **Boletines automáticos**: Puedes programar el envío/preparación de boletines con cron, pasando los argumentos requeridos (token, periodicidad).
 
 ## Más información
 - Consulta `bash/instrucciones.md` para detalles y ejemplos de uso.
-- Consulta `_DEPLOYMENT.md` para el flujo completo de despliegue y estructura recomendada.
+- Consulta `despliegue.md` para el flujo completo de despliegue y estructura recomendada.
+
+### [Ver índice de documentación](./index.md)
