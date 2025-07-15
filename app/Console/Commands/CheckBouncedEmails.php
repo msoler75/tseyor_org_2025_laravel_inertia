@@ -204,6 +204,12 @@ class CheckBouncedEmails extends Command
                     '/Message[\s\r\n]+blocked/i',
                     '/false[\s\r\n]+positive/i',
                     '/5\.7\.1[\s\r\n]+\[CS\][\s\r\n]+Message[\s\r\n]+blocked/i',
+                    '/5\.7\.1[\s\r\n]+\[CSR\][\s\r\n]+Account[\s\r\n]+blocked/i',
+                    '/Account[\s\r\n]+blocked/i',
+                    '/\[CSR\][\s\r\n]+Account[\s\r\n]+blocked/i',
+                    '/blocked[\s\r\n]+by[\s\r\n]+security/i',
+                    // '/security[\s\r\n]+policy/i',
+                    // '/mailchannels/i', // MailChannels es el proveedor que genera este error
                 ],
                 'estado' => 'bloqueado',
                 'accion' => 'manual',
