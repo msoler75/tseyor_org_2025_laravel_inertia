@@ -158,35 +158,22 @@ const portada = computed(() => page.url == "/");
 const showingNavigationDropdown = ref(false);
 
 // Variables para control del tema
-let isTogglingTheme = false;
 let lastToggleTime = 0;
-const TOGGLE_DEBOUNCE_MS = 100; // Tiempo de debounce para evitar dobles toggles
+const TOGGLE_DEBOUNCE_MS = 200; // Tiempo de debounce para evitar dobles toggles
 
 // 1. Obtener valor inicial del servidor
 const initialTheme = page.props.initialTheme; // 'dark' o 'light'
 
 console.log('useDark initialTheme:', initialTheme)
 
-// 2. Configurar useDark con override de storage
+// 2. Configurar useDark - Solo para manejo del estado, no para callbacks
 const isDark = useDark({
     storageKey: "theme",
     selector: "html",
     valueDark: "night",
     initialValue: initialTheme !== 'dark' ? 'light' : 'night',
-    onChanged(newValue, oldValue) {
-        console.log('onChanged triggered:', { newValue, oldValue, isTogglingTheme });
-
-        // Si el valor no cambia, no hacer nada
-        if (newValue === oldValue) {
-            return;
-        }
-
-        // Solo actualizar el tema si viene de un toggle manual o es la inicialización
-        if (!isTogglingTheme) {
-            console.log('Updating theme from external change or initialization');
-            updateTheme(newValue);
-        }
-    },
+    // Deshabilitamos el callback automático para controlarlo manualmente
+    onChanged: () => {},
 });
 
 const toggleDark = () => {
@@ -198,27 +185,16 @@ const toggleDark = () => {
         return;
     }
 
-    if (isTogglingTheme) {
-        console.log('Toggle ignored due to ongoing toggle');
-        return;
-    }
-
-    console.log('Starting theme toggle');
-    isTogglingTheme = true;
+    console.log('Starting theme toggle from:', isDark.value);
     lastToggleTime = now;
 
-    // Hacer el toggle y luego actualizar el tema manualmente
-    const newValue = !isDark.value;
-    isDark.value = newValue;
+    // Cambiar el valor
+    isDark.value = !isDark.value;
 
-    // Actualizar el tema inmediatamente
-    updateTheme(newValue);
+    // Aplicar el cambio inmediatamente
+    updateTheme(isDark.value);
 
-    // Reset del flag después de un breve delay
-    setTimeout(() => {
-        isTogglingTheme = false;
-        console.log('Toggle completed');
-    }, 50);
+    console.log('Toggle completed to:', isDark.value);
 };
 
 /*
@@ -243,27 +219,27 @@ function updateTheme(isDarkMode) {
     console.log("updateTheme", isDarkMode);
     const themeValue = isDarkMode ? "night" : "light";
 
-    // 1. Actualizar localStorage
+    // 1. Aplicar cambios visuales inmediatamente
+    document.documentElement.setAttribute("data-theme", themeValue);
+
+    // 2. Actualizar localStorage
     localStorage.setItem("theme", themeValue);
 
-    // 2. Aplicar cambios visuales inmediatamente
-    document.documentElement.setAttribute(
-        "data-theme",
-        themeValue
-    );
-
     // 3. Actualizar cookie en servidor (async, no bloquea la UI)
-    fetch(`${getApiUrl()}/update-theme`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-        },
-        body: JSON.stringify({ theme: themeValue }),
-    }).catch(error => {
-        console.warn('Error updating theme on server:', error);
-        // El tema ya se aplicó localmente, así que no es crítico
-    });
+    try {
+        fetch(`${getApiUrl()}/update-theme`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+            },
+            body: JSON.stringify({ theme: themeValue }),
+        }).catch(error => {
+            console.warn('Error updating theme on server:', error);
+        });
+    } catch (error) {
+        console.warn('Error sending theme update:', error);
+    }
 }
 
 // para un caso especial de tema usando globalSearch
@@ -278,11 +254,12 @@ onMounted(() => {
 
     console.log('navBar mounted')
 
+    // Aplicar tema inicial
+    updateTheme(isDark.value);
+
     window.addEventListener("keydown", handleKey);
 
     window.addEventListener("mousemove", handleMouse);
-
-    // updateTheme(isDark.value)
 
     watch(
         () => `${nav.scrollY}+${portada.value}`,
