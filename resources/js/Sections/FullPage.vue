@@ -1,6 +1,6 @@
 <template>
     <Sections class="snap-mandatory snap-y overflow-y-scroll smooth-snap"
-    style="height: 100vh; height: 100dvh; --sectionHeight: 100dvh;"
+    :style="containerStyle"
     ref="container" scroll-region
     >
         <slot></slot>
@@ -53,8 +53,27 @@ const container = ref(null);
 const nav = useNav();
 nav.scrollY = 0;
 
+// Altura fija del viewport para evitar cambios por la barra de direcciones móvil
+const fixedViewportHeight = ref('100vh');
+const containerStyle = computed(() => ({
+    height: fixedViewportHeight.value,
+    '--sectionHeight': fixedViewportHeight.value
+}));
+
 const inLastSection = ref(false)
 const inFirstSection = ref(true)
+
+// Función para establecer altura fija del viewport
+const setFixedViewportHeight = () => {
+    // Capturar la altura real del viewport sin la barra de direcciones
+    const vh = window.innerHeight;
+    fixedViewportHeight.value = `${vh}px`;
+    
+    // También actualizar el contenedor si ya está montado
+    if (container.value && container.value.$el) {
+        container.value.$el.style.height = `${vh}px`;
+    }
+};
 
 // Función para manejar el evento de scroll
 const handleScroll = () => {
@@ -76,15 +95,22 @@ const handleScroll = () => {
 let scrollTimer = null;
 const showScrollIcons = ref(false);
 
-// Función para ajustar altura en cambios de orientación
+// Función para ajustar altura - ahora solo actualiza si es necesario
 const adjustHeight = () => {
-    // Forzar recálculo de altura dinámica
-    if (container.value && container.value.$el) {
-        container.value.$el.style.height = '100dvh';
+    // Solo actualizar en cambios de orientación significativos
+    const currentHeight = window.innerHeight;
+    const storedHeight = parseInt(fixedViewportHeight.value);
+    
+    // Solo actualizar si hay una diferencia significativa (más de 50px)
+    if (Math.abs(currentHeight - storedHeight) > 50) {
+        setFixedViewportHeight();
     }
 };
 
 onMounted(() => {
+    // Establecer altura fija del viewport ANTES de configurar eventos
+    setFixedViewportHeight();
+    
     handleScroll();
     container.value.$el.addEventListener('scroll', handleScroll, { passive: true });
 
@@ -180,7 +206,7 @@ function scrollToPreviousMandatory() {
 /* Fallback para navegadores que no soporten dvh */
 .sections {
     height: 100vh; /* fallback */
-    height: 100dvh; /* modern browsers */
+    height: var(--sectionHeight, 100vh); /* usar altura fija calculada */
 }
 
 /* Transición suave para las secciones */
@@ -190,7 +216,7 @@ function scrollToPreviousMandatory() {
     flex-direction: column;
     justify-content: center;
     height: 100vh; /* fallback */
-    height: 100dvh; /* modern browsers */
+    height: var(--sectionHeight, 100vh); /* usar altura fija calculada */
     /* Añadir un poco de margen para el snap */
     scroll-margin-top: 0rem;
     scroll-margin-bottom: 0rem;
@@ -202,7 +228,7 @@ function scrollToPreviousMandatory() {
     flex-direction: column;
     justify-content: center;
     height: 100vh; /* fallback */
-    height: 100dvh; /* modern browsers */
+    height: var(--sectionHeight, 100vh); /* usar altura fija calculada */
     /* Reducir el margen para un snap más firme pero no agresivo */
     scroll-margin-top: 0rem;
     scroll-margin-bottom: 0rem;

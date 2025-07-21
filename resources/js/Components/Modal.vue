@@ -2,8 +2,9 @@
     <ClientOnly>
         <teleport to="body">
             <transition leave-active-class="duration-200">
-                <div v-cloak v-show="show" class="component-modal fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-40 select-none" scroll-region
-                    :class="[centered ? 'flex items-center' : '', classes]">
+                <div v-cloak v-show="show" class="component-modal fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 select-none" scroll-region
+                    :class="[centered ? 'flex items-center' : '']"
+                    :style="{ zIndex }">
                     <transition enter-active-class="ease-out" enter-from-class="opacity-0"
                         enter-to-class="opacity-100" leave-active-class="ease-in" leave-from-class="opacity-100"
                         leave-to-class="opacity-0">
@@ -19,7 +20,7 @@
                         leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                         <div v-show="show"
                             class="mb-6 bg-base-100 dark:bg-gray-800 dark:border dark:border-gray-500 overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto"
-                            :class="maxWidthClass">
+                            :class="[maxWidthClass, modalClass]">
                             <slot v-if="show" />
                         </div>
                     </transition>
@@ -49,9 +50,13 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    classes: {
+    modalClass: {
         type: String,
         default: null
+    },
+    zIndex: {
+        type: [String, Number],
+        default: 40
     }
 });
 
@@ -113,4 +118,5 @@ const maxWidthClass = computed(() => {
         '4xl': 'sm:max-w-4xl',
     }[props.maxWidth];
 });
+
 </script>
