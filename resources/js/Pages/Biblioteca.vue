@@ -7,35 +7,31 @@
         </div>
 
         <!-- Encabezado -->
-        <h1 class="mb-4">Biblioteca Tseyor</h1>
-
-        <div class="text-pretty my-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                    <p>La Biblioteca Tseyor es el resultado de más de 1500 diálogos <Referencia r="telepatía">
-                            telepáticos</Referencia> con seres humanos de la <Referencia>Confederación de Mundos Habitados
-                            de la Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool Puente</Referencia>
-                        ,
-                        <Referencia r="canalización">canalizador</Referencia> de Tseyor.
-                    </p>
-                    <p>Estas denominadas <q>conversaciones interdimensionales</q> o comunicados se han transcrito en
-                        textos que inspiran libros, monografías, vídeos y audios.</p>
-                </div>
-                <div class="flex gap-5">
-                    <p>Todos los materiales han sido publicados y están preservados por la <Referencia>
-                            Universidad Tseyor de Granada</Referencia> para mantener la integridad del mensaje
-                        original
-                        y sus obras impresas están registradas por la asociación <Referencia>TSEYOR Centro de
-                            Estudios
-                            Socioculturales</Referencia>.</p>
-                    <Image class="hidden md:block flex-shrink-0 mt-[1.5rem] object-contain object-top" src-width="819" src-height="1191" width="137" src="/almacen/medios/logos/utg.jpg" />
-                </div>
-            </div>
-
+        <div class="flex gap-12 items-center"><h1 class="mb-4">Biblioteca Tseyor</h1>
+            <span class="flex items-center gap-1 text-sm uppercase btn btn-sm" @click="modalInfo = true">
+                ¿Qué es?<Icon icon="ph:info" /></span>
         </div>
 
+        <Modal title="¿Qué es la Biblioteca Tseyor?" class="max-w-3xl" :show="modalInfo" @close="modalInfo = false" :z-index="20"
+        modal-class="mt-20">
+            <div class="p-5 bg-base-200">
+                <p>La Biblioteca Tseyor es el resultado de más de 1800 diálogos <Referencia r="telepatía">
+                telepáticos</Referencia> con seres humanos de la <Referencia>Confederación de Mundos Habitados
+                de la Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool Puente</Referencia>,
+                    <Referencia r="canalización">canalizador</Referencia> de Tseyor.
+                </p>
+                <p>Estas denominadas <q>conversaciones interdimensionales</q> o comunicados se han transcrito en
+                    textos que inspiran libros, monografías, vídeos y audios.</p>
+                <p>Todos los materiales han sido publicados y están preservados por la
+                    <Referencia>Universidad Tseyor de Granada</Referencia> para mantener la integridad del mensaje
+                    original y sus obras impresas están registradas por la asociación <Referencia>TSEYOR Centro de
+                    Estudios Socioculturales</Referencia>.</p>
+                <div class="flex justify-center"><span class="btn btn-primary cursor-pointer" @click="modalInfo = false" >Entendido</span></div>
+                    </div>
+        </Modal>
+
         <!-- Contenedor de Categorías -->
-        <GridAppear class="grid-cols-1 md:grid-cols-2 gap-4">
+        <GridAppear class="mt-12 grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Categoría: Libros -->
             <Link :href="seccion.url" v-for="seccion of secciones" :key="seccion.title" class="card bg-base-100 p-6 rounded-lg shadow-md relative group
             transition duration-300  hover:shadow-lg antialiased
@@ -66,6 +62,8 @@
 const props = defineProps({
     stats: Object
 })
+
+const modalInfo = ref(false)
 
 
 // https://www.danmatthews.me/posts/lazy-loading-inertia-js

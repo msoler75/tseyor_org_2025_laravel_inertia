@@ -35,10 +35,6 @@ onMounted(() => {
 
 <style>
 
-.grid-appear {
-    gap: 5px;
-}
-
 .grid-appear>* {
     opacity: 0;
 }

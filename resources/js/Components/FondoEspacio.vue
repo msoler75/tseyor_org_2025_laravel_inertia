@@ -138,10 +138,10 @@ function move(event) {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    width: 100dvw;
-    height: 100dvh;
+    /*width: 100vw;
+    height: 100vh;*/
+    width: 100vw; /* usar vw en lugar de dvw */
+    height: 100vh; /* usar vh en lugar de dvh */
     background: url(/almacen/medios/paginas/galaxy.webp) 9% 73% no-repeat;
     opacity: .7;
 }
@@ -168,8 +168,8 @@ function move(event) {
     left: 0 ;
     width: 100vw;
     height: 100vh;
-    width: 100dvw;
-    height: 100dvh;
+    width: 100vw; /* usar vw en lugar de dvw */
+    height: 100vh; /* usar vh en lugar de dvh */
     background-size: cover;
     transform: scale(var(--nebula-scale)) translate(calc(var(--move-x) * .15), calc(var(--move-y) * .15));
 }
