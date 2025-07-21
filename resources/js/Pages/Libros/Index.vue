@@ -18,7 +18,8 @@
         <p class="my-3">El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</p>
 
         <div class="flex w-full justify-between mb-5">
-            <SearchInput v-model="query" class="grow">
+            <SearchInput v-model="query" class="grow"
+            placeholder="Buscar libros...">
                 <span v-if="query" class="sm:hidden mr-auto"></span>
                 <div class="flex items-baseline gap-3 w-full pl-1" :class="query ? 'hidden sm:flex' : ''">
                     <input id="titulos" type="checkbox" v-model="selectors.soloTitulosLibros"> <label for="titulos"
