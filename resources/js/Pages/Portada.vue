@@ -102,8 +102,6 @@
                         <div
                             class="diff-resizer cursor-col-resize"
                             :style="{ width: resizerWidth + 'px' }"
-                            @mousedown="startDrag"
-                            @touchstart="startDrag"
                         ></div>
                     </figure>
                 </template>
@@ -307,41 +305,41 @@ const contando = ref(false);
 
 const diffFigure = ref(null);
 const resizerWidth = ref(15);
-const isDragging = ref(false);
 const figureWidth = ref(400); // Nueva variable reactiva para el ancho de la figura
+let resizeMonitor = null;
 
-function startDrag(event) {
-    isDragging.value = true;
-    event.preventDefault();
+// Función para monitorear el tamaño del resizer
+function startResizeMonitoring() {
+    if (resizeMonitor) clearInterval(resizeMonitor);
 
-    const figure = diffFigure.value;
-    if (!figure) return;
+    resizeMonitor = setInterval(() => {
+        if(animating) return
+        const figure = diffFigure.value;
+        if (!figure) return;
 
-    const rect = figure.getBoundingClientRect();
-    figureWidth.value = rect.width; // Actualizar el ancho de la figura
+        const resizer = figure.querySelector('.diff-resizer');
+        if (!resizer) return;
 
-    function handleMove(e) {
-        if (!isDragging.value) return;
+        const rect = figure.getBoundingClientRect();
+        const resizerRect = resizer.getBoundingClientRect();
 
-        const clientX = e.clientX || e.touches[0].clientX;
-        const newWidth = Math.max(0, Math.min(rect.width, clientX - rect.left));
-        resizerWidth.value = newWidth;
-    }
+        // Actualizar el ancho de la figura
+        figureWidth.value = rect.width;
 
-    function handleEnd() {
-        isDragging.value = false;
-        document.removeEventListener("mousemove", handleMove);
-        document.removeEventListener("mouseup", handleEnd);
-        document.removeEventListener("touchmove", handleMove);
-        document.removeEventListener("touchend", handleEnd);
-    }
-
-    document.addEventListener("mousemove", handleMove);
-    document.addEventListener("mouseup", handleEnd);
-    document.addEventListener("touchmove", handleMove);
-    document.addEventListener("touchend", handleEnd);
+        // Calcular la posición actual del resizer
+        const currentResizerWidth = resizerRect.width
+        resizerWidth.value = Math.max(0, Math.min(rect.width, currentResizerWidth));
+    }, 500);
 }
 
+function stopResizeMonitoring() {
+    if (resizeMonitor) {
+        clearInterval(resizeMonitor);
+        resizeMonitor = null;
+    }
+}
+
+let animating = false
 function toggleEquilibrio() {
     const targetWidth = isEquilibrado.value ? 50 : figureWidth.value;
     const initialWidth = resizerWidth.value;
@@ -362,15 +360,17 @@ function toggleEquilibrio() {
         if (progress < 1) {
             requestAnimationFrame(animate);
         }
+        else animating = false
     }
 
+    animating = true
     requestAnimationFrame(animate);
 }
 
 // Computed simplificado que usa la variable reactiva figureWidth
 const isEquilibrado = computed(() => {
-    // Consideramos equilibrado cuando el resizer está más cerca del final (más de 75% del ancho)
-    return resizerWidth.value > figureWidth.value * 0.75;
+    // Consideramos equilibrado cuando el resizer está más cerca del final (más de 5% del ancho)
+    return resizerWidth.value > figureWidth.value * 0.5;
 });
 
 watch(
@@ -395,8 +395,6 @@ const lazyOff = ref(true);
 // https://www.danmatthews.me/posts/lazy-loading-inertia-js
 // cargamos las estadísticas un poco más tarde para que la portada cargue más rápido
 onMounted(() => {
-    console.log("on mounted");
-
     // Inicializar el ancho de la figura cuando el componente se monta
     nextTick(() => {
         if (diffFigure.value) {
@@ -404,8 +402,10 @@ onMounted(() => {
         }
         calculaHCounter();
         router.reload({
-            only: ["stats", "auth"],
+            only: ["auth"],
         });
+
+        startResizeMonitoring()
     });
 
     // Listener para actualizar figureWidth cuando cambie el tamaño de ventana
@@ -426,7 +426,7 @@ onMounted(() => {
         nextTick(() => {
             calculaHCounter();
             router.reload({
-                only: ["stats", "auth"],
+                only: ["stats"],
             });
         });
     }, 1500);
@@ -489,6 +489,7 @@ onMounted(() => {
 });
 onBeforeUnmount(() => {
     window.removeEventListener("resize", checkScreen);
+    stopResizeMonitoring()
 });
 
 const testimonials = ref([
@@ -512,30 +513,6 @@ const testimonials = ref([
     },
 ]);
 
-function equilibrar() {
-    const figure = diffFigure.value;
-    if (!figure) return;
-    const resizer = figure.querySelector(".diff-resizer");
-    if (!resizer) return;
-    const targetWidth = figure.offsetWidth;
-    const initialWidth = resizer.offsetWidth;
-    const duration = 1500; // ms
-    const start = performance.now();
-
-    function animate(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const currentWidth =
-            initialWidth + (targetWidth - initialWidth) * progress;
-        resizer.style.width = currentWidth + "px";
-        if (progress < 1) {
-            requestAnimationFrame(animate);
-        } else {
-            resizer.style.width = targetWidth + "px";
-        }
-    }
-    requestAnimationFrame(animate);
-}
 </script>
 
 <style scoped>

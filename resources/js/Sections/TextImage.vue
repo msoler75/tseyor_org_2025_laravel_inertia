@@ -6,7 +6,7 @@
                 gridClass,
                 hasLongText ? 'long-text' : ''
             ]">
-                <div id="caja-imagen" v-if="srcImage || imageSlotPresent" class="flex flex-col justify-center items-center bg-center" :class="(imageRight ? 'md:order-last ' : '') +
+                <div v-if="srcImage || imageSlotPresent" class="caja-imagen flex flex-col justify-center items-center bg-center" :class="(imageRight ? 'md:order-last ' : '') +
                 (full ? 'justify-center h-full ' : 'py-4 ') +
                 (full && !cover ? 'relative ' : '') +
                 (caption ? 'gap-2 ' : 'gap-1 ') +
@@ -21,7 +21,7 @@
                     <small v-if="caption" class="image-caption text-gray-600 dark:text-gray-200 bg-neutral-500/10">{{ caption }}</small>
                 </template>
             </div>
-            <div id="caja-texto" class="flex flex-col items-center gap-4 mx-auto px-2 xs:px-8 md:px-12 max-w-xl"
+            <div class="caja-texto flex flex-col items-center gap-4 mx-auto px-4 xs:px-8 md:px-12 max-w-xl pb-16 md:pb-6"
                 :class="(full ? 'justify-center py-6 h-full ' : 'justify-evenly py-6 min-h-fit ') + textClass">
                 <h2 v-if="title" class="text-2xl text-primary font-bold mb-0" :class="titleClass">{{ title }}</h2>
                 <div v-if="subtitle" class="text-lg text-center my-0" v-html="subtitle.replace(/\\n/g, '<br /><br />')"/>
@@ -200,6 +200,23 @@ const srcImageBackground = computed(() => {
         gap: 1rem;
     }
 
+    /* Optimización del espacio para párrafos en móvil */
+    .caja-texto {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        padding-bottom: 4rem; /* Espacio extra para evitar solapamiento con flecha */
+    }
+
+    /* Reducir espaciado entre párrafos en móvil */
+    .caja-texto :deep(p) {
+        margin-top: 0.75rem;
+        line-height: 1.5;
+    }
+
+    .caja-texto :deep(p:last-child) {
+        margin-bottom: 0;
+    }
+
     .image-h {
         max-height: min(60vh, 500px);
     }
@@ -212,6 +229,27 @@ const srcImageBackground = computed(() => {
         font-size: 0.8rem;
         padding: 0.25rem 0.5rem;
         max-width: 100%;
+    }
+}
+
+/* Para pantallas muy pequeñas (menos de 400px) */
+@media (max-width: 399px) {
+    .caja-texto {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-bottom: 5rem; /* Más espacio en pantallas muy pequeñas */
+    }
+
+    /* Párrafos aún más compactos en pantallas muy pequeñas */
+    .caja-texto :deep(p) {
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        line-height: 1.45;
+    }
+
+    /* Reducir gap entre elementos */
+    .caja-texto {
+        gap: 0.75rem;
     }
 }
 
@@ -233,13 +271,13 @@ const srcImageBackground = computed(() => {
         align-items: center;
         min-height: min(80vh, var(--sectionHeight, 80vh));
     }    /* Ajustar contenedores para mejor distribución del espacio */
-    #caja-imagen {
+    .caja-imagen {
         height: 100%;
         display: flex;
         align-items: center;
     }
 
-    #caja-texto {
+    .caja-texto {
         height: 100%;
         display: flex;
         flex-direction: column;

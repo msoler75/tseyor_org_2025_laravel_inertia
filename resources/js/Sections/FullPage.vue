@@ -1,6 +1,7 @@
 <template>
-    <Sections class="snap-mandatory snap-y overflow-y-scroll h-screen smooth-snap py-20" ref="container" scroll-region
-    style="--sectionHeight: 100vh"
+    <Sections class="snap-mandatory snap-y overflow-y-scroll smooth-snap"
+    style="height: 100vh; height: 100dvh; --sectionHeight: 100dvh;"
+    ref="container" scroll-region
     >
         <slot></slot>
 
@@ -66,16 +67,31 @@ const handleScroll = () => {
     const lastElem = mandatoryElems[mandatoryElems.length - 1];
     const rectFirst = firstElem.getBoundingClientRect();
     const rectLast = lastElem.getBoundingClientRect();
-    inLastSection.value = rectLast.top <= screen.height * .7;
-    inFirstSection.value = rectFirst.top >=0 && rectFirst.top < screen.height * 1.1;
+    // Usar window.innerHeight en lugar de screen.height para mejor precisión en móviles
+    const viewportHeight = window.innerHeight;
+    inLastSection.value = rectLast.top <= viewportHeight * .7;
+    inFirstSection.value = rectFirst.top >=0 && rectFirst.top < viewportHeight * 1.1;
 };
 
 let scrollTimer = null;
 const showScrollIcons = ref(false);
 
+// Función para ajustar altura en cambios de orientación
+const adjustHeight = () => {
+    // Forzar recálculo de altura dinámica
+    if (container.value && container.value.$el) {
+        container.value.$el.style.height = '100dvh';
+    }
+};
+
 onMounted(() => {
     handleScroll();
     container.value.$el.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Escuchar cambios de orientación en móviles
+    window.addEventListener('orientationchange', adjustHeight);
+    window.addEventListener('resize', adjustHeight);
+
     nav.fullPage = true;
     scrollTimer = setTimeout(() => {
         showScrollIcons.value = true;
@@ -84,6 +100,8 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     container.value.$el.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('orientationchange', adjustHeight);
+    window.removeEventListener('resize', adjustHeight);
     nav.fullPage = false;
     clearTimeout(scrollTimer);
 });
@@ -159,13 +177,20 @@ function scrollToPreviousMandatory() {
     transition: scroll-snap-type 0.3s ease;
 }
 
+/* Fallback para navegadores que no soporten dvh */
+.sections {
+    height: 100vh; /* fallback */
+    height: 100dvh; /* modern browsers */
+}
+
 /* Transición suave para las secciones */
 :slotted(.section) {
     scroll-snap-align: start;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100vh;
+    height: 100vh; /* fallback */
+    height: 100dvh; /* modern browsers */
     /* Añadir un poco de margen para el snap */
     scroll-margin-top: 0rem;
     scroll-margin-bottom: 0rem;
@@ -176,7 +201,8 @@ function scrollToPreviousMandatory() {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100vh;
+    height: 100vh; /* fallback */
+    height: 100dvh; /* modern browsers */
     /* Reducir el margen para un snap más firme pero no agresivo */
     scroll-margin-top: 0rem;
     scroll-margin-bottom: 0rem;
