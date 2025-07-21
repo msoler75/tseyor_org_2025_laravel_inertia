@@ -148,6 +148,7 @@
 import { usePage } from "@inertiajs/vue3";
 import useSelectors from "@/Stores/selectors";
 import { useDark, useToggle } from "@vueuse/core";
+import { getApiUrl } from "@/Stores/api";
 
 const page = usePage();
 const nav = useNav();
@@ -155,39 +156,69 @@ const selectors = useSelectors();
 const portada = computed(() => page.url == "/");
 
 const showingNavigationDropdown = ref(false);
+
+// Variables para control del tema
 let isTogglingTheme = false;
+let lastToggleTime = 0;
+const TOGGLE_DEBOUNCE_MS = 100; // Tiempo de debounce para evitar dobles toggles
 
 // 1. Obtener valor inicial del servidor
 const initialTheme = page.props.initialTheme; // 'dark' o 'light'
 
 console.log('useDark initialTheme:', initialTheme)
+
 // 2. Configurar useDark con override de storage
 const isDark = useDark({
     storageKey: "theme",
     selector: "html",
     valueDark: "night",
-    initialValue: initialTheme !=='dark'?'light':'night',
+    initialValue: initialTheme !== 'dark' ? 'light' : 'night',
     onChanged(newValue, oldValue) {
-        // Si el valor no cambia pero venimos de un toggle, resetea el flag igualmente
+        console.log('onChanged triggered:', { newValue, oldValue, isTogglingTheme });
+
+        // Si el valor no cambia, no hacer nada
         if (newValue === oldValue) {
-            isTogglingTheme = false;
             return;
         }
-        // Evitar doble llamada: solo ejecutar updateTheme si no está en transición
-        if (isTogglingTheme) {
-            isTogglingTheme = false;
+
+        // Solo actualizar el tema si viene de un toggle manual o es la inicialización
+        if (!isTogglingTheme) {
+            console.log('Updating theme from external change or initialization');
             updateTheme(newValue);
-            return;
         }
-        updateTheme(newValue);
     },
 });
 
 const toggleDark = () => {
-    if (isTogglingTheme) return; // Previene doble toggle si el usuario hace doble click muy rápido
+    const now = Date.now();
+
+    // Prevenir dobles clicks muy rápidos
+    if (now - lastToggleTime < TOGGLE_DEBOUNCE_MS) {
+        console.log('Toggle ignored due to debounce');
+        return;
+    }
+
+    if (isTogglingTheme) {
+        console.log('Toggle ignored due to ongoing toggle');
+        return;
+    }
+
+    console.log('Starting theme toggle');
     isTogglingTheme = true;
-    // Llama al toggle real
-    useToggle(isDark)();
+    lastToggleTime = now;
+
+    // Hacer el toggle y luego actualizar el tema manualmente
+    const newValue = !isDark.value;
+    isDark.value = newValue;
+
+    // Actualizar el tema inmediatamente
+    updateTheme(newValue);
+
+    // Reset del flag después de un breve delay
+    setTimeout(() => {
+        isTogglingTheme = false;
+        console.log('Toggle completed');
+    }, 50);
 };
 
 /*
@@ -203,7 +234,6 @@ function updateDarkState() {
 
 // Actualizar cookie en servidor y atributo HTML
 function updateTheme(isDarkMode) {
-
     // Evitar ejecución en SSR
     if (typeof window === "undefined") {
         console.log("estamos en SSR");
@@ -216,20 +246,24 @@ function updateTheme(isDarkMode) {
     // 1. Actualizar localStorage
     localStorage.setItem("theme", themeValue);
 
-    // 2. Actualizar cookie en servidor
+    // 2. Aplicar cambios visuales inmediatamente
+    document.documentElement.setAttribute(
+        "data-theme",
+        themeValue
+    );
+
+    // 3. Actualizar cookie en servidor (async, no bloquea la UI)
     fetch(`${getApiUrl()}/update-theme`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
         },
         body: JSON.stringify({ theme: themeValue }),
+    }).catch(error => {
+        console.warn('Error updating theme on server:', error);
+        // El tema ya se aplicó localmente, así que no es crítico
     });
-
-    // 3. Aplicar cambios visuales
-    document.documentElement.setAttribute(
-        "data-theme",
-        isDarkMode ? "night" : "light"
-    );
 }
 
 // para un caso especial de tema usando globalSearch

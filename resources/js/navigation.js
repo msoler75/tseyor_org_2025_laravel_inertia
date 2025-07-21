@@ -64,19 +64,9 @@ export default [
           ],
         },
         {
-          title: "Radio TSEYOR",
-          items: [
-            {
-              title: "Radio",
-              route: "radio",
-              icon: "ph:radio-duotone",
-            },
-          ],
-        },
-        {
           title: "Redes",
           class: "flex flex-col gap-1",
-          index: 2,
+          // index: 2,
           items: [
             {
               title: "Facebook",
@@ -174,16 +164,24 @@ export default [
               icon: "ph:music-notes-duotone",
             },
             {
+              title: "Radio Tseyor",
+              route: "radio",
+              description: "Escucha nuestra radio online 24/7",
+              icon: "ph:radio-duotone",
+            },
+            {
               title: "Vídeos",
               route: "videos",
               description: "Meditaciones, talleres, cuentos, canciones...",
               icon: "ph:youtube-logo-duotone",
+              // class: "text-xs",
             },
             {
               title: "Psicografías",
               route: "psicografias",
               description: "Psicografías para el trabajo de abstracción",
               icon: "ph:image-duotone",
+              // class: "text-xs",
             },
           ],
         }
