@@ -34,6 +34,7 @@
     },
     "dependencies": {
         "@duannx/vue-client-only": "^1.0.3",
+        "@ffprobe-installer/ffprobe": "^2.1.2",
         "@jambonn/vue-concise-carousel": "^2.1.31",
         "@modelcontextprotocol/sdk": "^1.12.1",
         "@splidejs/vue-splide": "^0.6.12",

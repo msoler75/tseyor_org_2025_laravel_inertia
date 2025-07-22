@@ -7,7 +7,7 @@ use App\Models\Comunicado;
 use App\Models\RadioItem;
 use App\Pigmalion\Markdown;
 use Illuminate\Support\Facades\Storage;
-use wapmorgan\Mp3Info\Mp3Info;
+use Illuminate\Support\Facades\Log;
 use App\Pigmalion\StorageItem;
 
 class RadioImport
@@ -237,17 +237,162 @@ class RadioImport
     }
 
 
-    private static function duracion($mp3File)
+    private static function duracion($url)
     {
-        // To get basic audio information
         try {
+            $mp3File = null;
 
-            $audio = new Mp3Info($mp3File);
-            return intval($audio->duration);
-        } catch (\DivisionByZeroError $e) {
-            return 0;
-        } catch (\ErrorException $e) {
-            return 0;
+            // Manejar diferentes tipos de URLs
+            if (preg_match('/^https?:\/\//', $url)) {
+                $parsedUrl = parse_url($url);
+                $path = $parsedUrl['path'] ?? '';
+
+                if (preg_match('/^\/almacen\//', $path)) {
+                    $localPath = str_replace('/almacen/', '', $path);
+                    $mp3File = public_path('almacen/' . $localPath);
+                    Log::info('RadioImport: URL remota convertida a local', [
+                        'url' => $url,
+                        'local_path' => $mp3File
+                    ]);
+                }
+            } else {
+                $mp3File = $url;
+            }
+
+            if (!$mp3File || !file_exists($mp3File)) {
+                Log::warning('RadioImport: Archivo MP3 no encontrado', [
+                    'url' => $url,
+                    'resolved_path' => $mp3File
+                ]);
+                return 0;
+            }
+
+            Log::info('RadioImport: Calculando duración con ffprobe', [
+                'file' => $mp3File
+            ]);
+
+            // Usar SOLO ffprobe (más preciso y confiable)
+            $duracionFfprobe = self::calcularDuracionConFfprobe($mp3File);
+            if ($duracionFfprobe > 0) {
+                Log::info('RadioImport: Duración calculada exitosamente', [
+                    'file' => basename($mp3File),
+                    'duration' => $duracionFfprobe,
+                    'method' => 'ffprobe'
+                ]);
+                return $duracionFfprobe;
+            }
+
+            // Si ffprobe falla, no hay alternativa confiable
+            Log::warning('RadioImport: ffprobe no pudo calcular la duración', [
+                'file' => basename($mp3File)
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('RadioImport: Error calculando duración', [
+                'url' => $url,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
         }
+
+        Log::warning('RadioImport: No se pudo calcular duración', [
+            'url' => $url
+        ]);
+
+        return 0;
+    }
+
+    /**
+     * Calcular duración usando ffprobe
+     */
+    private static function calcularDuracionConFfprobe($mp3File): int
+    {
+        try {
+            $ffprobePath = base_path('node_modules/.bin/ffprobe');
+
+            if (!file_exists($ffprobePath)) {
+                $ffprobePath = 'ffprobe';
+            }
+
+            $command = "\"{$ffprobePath}\" -v quiet -show_entries format=duration -of csv=p=0 \"" . addslashes($mp3File) . "\"";
+
+            $output = shell_exec($command);
+
+            if ($output && is_numeric(trim($output))) {
+                $duracion = intval(floatval(trim($output)));
+
+                if ($duracion > 0 && $duracion <= 86400) {
+                    return $duracion;
+                }
+            }
+
+        } catch (\Exception $e) {
+            Log::error('RadioImport: Error con ffprobe', [
+                'file' => $mp3File,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Método alternativo para calcular duración usando ffprobe
+     */
+    private static function duracionAlternativa($mp3File)
+    {
+        try {
+            // Intentar usar ffprobe si está disponible
+            $command = "ffprobe -v quiet -show_entries format=duration -of csv=p=0 " . escapeshellarg($mp3File);
+            $output = shell_exec($command);
+
+            if ($output && is_numeric(trim($output))) {
+                $duracion = intval(floatval(trim($output)));
+                if ($duracion > 0 && $duracion <= 86400) {
+                    return $duracion;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning("Método alternativo de duración también falló", [
+                'archivo' => $mp3File,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        // Como último recurso, estimar duración basada en tamaño de archivo
+        return self::estimarDuracionPorTamano($mp3File);
+    }
+
+    /**
+     * Estimar duración basada en el tamaño del archivo (muy aproximado)
+     */
+    private static function estimarDuracionPorTamano($mp3File)
+    {
+        try {
+            $tamanoBytes = filesize($mp3File);
+            if ($tamanoBytes > 0) {
+                // Estimación muy aproximada: 1 MB ≈ 60 segundos para MP3 de calidad media
+                $duracionEstimada = intval($tamanoBytes / (1024 * 1024) * 60);
+
+                // Límites razonables
+                $duracionEstimada = max(30, min($duracionEstimada, 7200)); // Entre 30 segundos y 2 horas
+
+                Log::info("Duración estimada por tamaño de archivo", [
+                    'archivo' => $mp3File,
+                    'tamano_bytes' => $tamanoBytes,
+                    'duracion_estimada' => $duracionEstimada
+                ]);
+
+                return $duracionEstimada;
+            }
+        } catch (\Exception $e) {
+            Log::error("Error al estimar duración por tamaño", [
+                'archivo' => $mp3File,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        // Último recurso: duración por defecto
+        return 180; // 3 minutos por defecto
     }
 }
