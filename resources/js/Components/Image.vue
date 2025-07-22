@@ -531,10 +531,10 @@ function loadFinalImage() {
     console.log("🖼️ loadFinalImage starting with:", finalSrc);
 
     // Evitar cargas duplicadas
-    if (imageLoaded.value || !finalSrc) {
+    /*if (imageLoaded.value || !finalSrc) {
         console.log("⚠️ Evitando carga duplicada:", { imageLoaded: imageLoaded.value, finalSrc: !!finalSrc });
         return;
-    }
+    }*/
 
     imageElem = new Image();
     imageElem.src = finalSrc;

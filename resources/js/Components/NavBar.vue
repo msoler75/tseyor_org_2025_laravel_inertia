@@ -147,8 +147,7 @@
 <script setup>
 import { usePage } from "@inertiajs/vue3";
 import useSelectors from "@/Stores/selectors";
-import { useDark, useToggle } from "@vueuse/core";
-import { getApiUrl } from "@/Stores/api";
+import { useTheme } from "@/Stores/theme";
 
 const page = usePage();
 const nav = useNav();
@@ -157,45 +156,8 @@ const portada = computed(() => page.url == "/");
 
 const showingNavigationDropdown = ref(false);
 
-// Variables para control del tema
-let lastToggleTime = 0;
-const TOGGLE_DEBOUNCE_MS = 200; // Tiempo de debounce para evitar dobles toggles
-
-// 1. Obtener valor inicial del servidor
-const initialTheme = page.props.initialTheme; // 'dark' o 'light'
-
-console.log('useDark initialTheme:', initialTheme)
-
-// 2. Configurar useDark - Solo para manejo del estado, no para callbacks
-const isDark = useDark({
-    storageKey: "theme",
-    selector: "html",
-    valueDark: "night",
-    initialValue: initialTheme !== 'dark' ? 'light' : 'night',
-    // Deshabilitamos el callback automático para controlarlo manualmente
-    onChanged: () => {},
-});
-
-const toggleDark = () => {
-    const now = Date.now();
-
-    // Prevenir dobles clicks muy rápidos
-    if (now - lastToggleTime < TOGGLE_DEBOUNCE_MS) {
-        console.log('Toggle ignored due to debounce');
-        return;
-    }
-
-    console.log('Starting theme toggle from:', isDark.value);
-    lastToggleTime = now;
-
-    // Cambiar el valor
-    isDark.value = !isDark.value;
-
-    // Aplicar el cambio inmediatamente
-    updateTheme(isDark.value);
-
-    console.log('Toggle completed to:', isDark.value);
-};
+// Usar el store compartido del tema
+const { isDark, toggleDark } = useTheme();
 
 /*
 function updateDarkState() {
@@ -207,40 +169,6 @@ function updateDarkState() {
         document.documentElement.setAttribute('data-theme', 'summer')
 }
 */
-
-// Actualizar cookie en servidor y atributo HTML
-function updateTheme(isDarkMode) {
-    // Evitar ejecución en SSR
-    if (typeof window === "undefined") {
-        console.log("estamos en SSR");
-        return;
-    }
-
-    console.log("updateTheme", isDarkMode);
-    const themeValue = isDarkMode ? "night" : "light";
-
-    // 1. Aplicar cambios visuales inmediatamente
-    document.documentElement.setAttribute("data-theme", themeValue);
-
-    // 2. Actualizar localStorage
-    localStorage.setItem("theme", themeValue);
-
-    // 3. Actualizar cookie en servidor (async, no bloquea la UI)
-    try {
-        fetch(`${getApiUrl()}/update-theme`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Requested-With": "XMLHttpRequest",
-            },
-            body: JSON.stringify({ theme: themeValue }),
-        }).catch(error => {
-            console.warn('Error updating theme on server:', error);
-        });
-    } catch (error) {
-        console.warn('Error sending theme update:', error);
-    }
-}
 
 // para un caso especial de tema usando globalSearch
 // esto lo hacemos únicamente para el caso muy particular de que globalsearch pueda tambien ponerse en dark mode en la portada
@@ -254,8 +182,7 @@ onMounted(() => {
 
     console.log('navBar mounted')
 
-    // Aplicar tema inicial
-    updateTheme(isDark.value);
+    // El tema inicial ya se aplica automáticamente en el store
 
     window.addEventListener("keydown", handleKey);
 
