@@ -10,8 +10,16 @@
                             <strong>{{ autor?.nombre }}</strong>
                             <TimeAgo :fecha="fecha" class="text-xs" />
                         </div>
-                        <div>{{ texto }}</div>
+                        <div v-if="puedeAdministrar||publicado" class="text-left"
+                        :class="!publicado ? 'line-through' : ''"
+                        >{{ texto }}</div>
+                        <div v-else class="text-left">-- eliminado --</div>
+                        <div v-if="puedeAdministrar" class="flex justify-end">
+                            <span v-if="!publicado" class="cursor-pointer btn btn-xs" @click="publicarComentario">restablecer</span>
+                            <span v-else class="cursor-pointer btn btn-xs" @click="despublicarComentario">eliminar</span>
+                        </div>
                     </div>
+
                     <!-- actions -->
                     <div class="pl-3 flex gap-5 text-sm" v-if="user && !respondiendo">
                         <!-- <a href="#">Me gusta</a> -->
@@ -27,7 +35,9 @@
                 <TransitionGroup name="comment">
                     <Comentario v-for="respuesta in respuestasList" :key="respuesta.id" :autor="respuesta.autor"
                         :comentario-id="respuesta.id" :url="url" :fecha="respuesta.created_at" :texto="respuesta.texto"
-                        :respuestas="respuesta.respuestas" :profundidad="profundidad + 1" />
+                        :respuestas="respuesta.respuestas" :profundidad="profundidad + 1"
+                        :puedeAdministrar="puedeAdministrar"
+                        :eliminado="respuesta.eliminado"/>
                 </TransitionGroup>
             </div>
         </div>
@@ -43,6 +53,8 @@ const props = defineProps({
     autor: Object,
     texto: String,
     fecha: Number | String,
+    eliminado: Number | Boolean,
+    puedeAdministrar: Boolean,
     respuestas: {
         type: Array,
         default: () => []
@@ -53,6 +65,7 @@ const props = defineProps({
     }
 });
 
+const publicado = ref(props.eliminado ? false : true)
 const respondiendo = ref(false)
 const respuestasList = ref(props.respuestas)
 
@@ -82,6 +95,33 @@ const nuevoAutor = /*computed(() => user */ user ?
         imagen: ""
     }
 // )
+
+function despublicarComentario() {
+    if (!props.puedeAdministrar) return;
+
+    axios.delete(route('comentario.despublicar', props.comentarioId)).then(response => {
+        console.log('Comentario eliminado', response.data)
+        publicado.value = false
+        // Actualizar la lista de respuestas
+        // respuestasList.value = respuestasList.value.filter(respuesta => respuesta.id !== props.comentarioId)
+    }).catch(error => {
+        console.error('Error al eliminar el comentario:', error)
+    })
+}
+
+// restaurar comentario:
+function publicarComentario() {
+    if (!props.puedeAdministrar) return;
+
+    axios.put(route('comentario.publicar', props.comentarioId)).then(response => {
+        console.log('Comentario publicado', response.data)
+        publicado.value = true
+        // Actualizar la lista de respuestas
+        // respuestasList.value = [...respuestasList.value, response.data]
+    }).catch(error => {
+        console.error('Error al restaurar el comentario:', error)
+    })
+}
 
 </script>
 

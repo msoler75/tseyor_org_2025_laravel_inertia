@@ -354,6 +354,8 @@ Route::get('/chatgpt', [ChatGPTController::class, 'chat'])->name('chatgpt');
 // comentarios
 
 
+Route::delete('/comentarios/{id}', [ComentariosController::class, 'unpublish'])->name('comentario.despublicar');
+Route::put('/comentarios/{id}', [ComentariosController::class, 'publish'])->name('comentario.publicar');
 Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comentarios');
 Route::post('/comentarios', [ComentariosController::class, 'create'])->name('comentario.nuevo');
 

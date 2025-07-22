@@ -24,10 +24,15 @@ class ComentariosController extends Controller
                 'error' => 'debe especificar url'
             ], 400);
 
+        $esAdministrador = optional(auth()->user())->can('administrar social');
+
         // obtenemos todos los comentarios de la base de datos
         $comentarios = Comentario::join('users', 'comentarios.user_id', '=', 'users.id')
             ->where('url', $url)
-            ->select('comentarios.*', 'users.name as user_name', 'users.profile_photo_path as user_photo')
+            /*->when(!$esAdministrador, function ($query) {
+                $query->where('eliminado', false);
+            })*/
+            ->select('comentarios.*', 'users.name as user_name', 'users.profile_photo_path as user_photo', 'eliminado')
             ->get()
             ->toArray();
 
@@ -52,6 +57,7 @@ class ComentariosController extends Controller
                 'id' => $comentario['id'],
                 'texto' => $comentario['texto'],
                 'fecha' => $comentario['created_at'],
+                'eliminado' => $comentario['eliminado'],
                 'autor' => [
                     'id' => $comentario['user_id'],
                     'nombre' => $comentario['user_name'],
@@ -78,6 +84,7 @@ class ComentariosController extends Controller
                     'id' => $comment['id'],
                     'texto' => $comment['texto'],
                     'fecha' => $comment['created_at'],
+                    'eliminado' => $comment['eliminado'],
                     'autor' => [
                         'id' => $comment['user_id'],
                         'nombre' => $comment['user_name'],
@@ -98,7 +105,8 @@ class ComentariosController extends Controller
         }
 
         return response()->json([
-            'comentarios' => $arbol_comentarios
+            'comentarios' => $arbol_comentarios,
+            'puedeAdministrar' => $esAdministrador
         ], 200);
     }
 
@@ -139,7 +147,55 @@ class ComentariosController extends Controller
             200
         );
     }
+
+
+    public function unpublish(Request $request, $id)
+    {
+        $comentario = Comentario::findOrFail($id);
+
+        if (!$comentario) {
+            return response()->json(['error' => 'Comentario no encontrado'], 404);
+        }
+
+        $esAdministrador = optional(auth()->user())->can('administrar social');
+
+        if(!$esAdministrador) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        $comentario->eliminado = true;
+        $comentario->save();
+
+        return response()->json(
+            $comentario->toArray(),
+            200
+        );
+    }
+
+    public function publish(Request $request, $id)
+    {
+        $comentario = Comentario::findOrFail($id);
+
+        if (!$comentario) {
+            return response()->json(['error' => 'Comentario no encontrado'], 404);
+        }
+
+        $esAdministrador = optional(auth()->user())->can('administrar social');
+
+        if(!$esAdministrador) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        $comentario->eliminado = null;
+        $comentario->save();
+
+        return response()->json(
+            $comentario->toArray(),
+            200
+        );
+    }
 }
+
 
 /*
 

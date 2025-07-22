@@ -1,5 +1,5 @@
 <template>
-    <div :class="full ? 'pt-20! pb-6! w-full h-full flex flex-col justify-center' : 'py-12'">
+    <div :class="full ? 'pt-20! pb-6! w-full h-full flex flex-col justify-center full' : 'py-12'">
         <div class="mx-auto text-center" :class="
             [   srcImage || imageSlotPresent? 'with-image grid grid-cols-1 md:grid-cols-2' : '',
                 full ? 'w-full h-full' : 'container',
@@ -163,13 +163,13 @@ const srcImageBackground = computed(() => {
     max-width: 100%;
     height: auto;
     object-fit: contain;
-    /* Permitir que la imagen crezca más en móvil */
-    max-height: min(50vh, 400px);
+    /* Para uso normal, altura más moderada */
+    max-height: 400px;
 }
 
 /* Cuando hay caption, reducir la altura de la imagen para hacer espacio */
 .image-h.has-caption {
-    max-height: min(45vh, 350px);
+    max-height: 350px;
 }
 
 .image-caption {
@@ -187,15 +187,28 @@ const srcImageBackground = computed(() => {
 }
 
 .with-image {
+    /* Sin altura mínima para uso normal */
+    align-items: start;
+}
+
+/* Solo cuando full=true, aplicar alturas de pantalla completa */
+.full .with-image {
     min-height: min(70vh, var(--sectionHeight, 70vh));
     /* En móvil, distribución vertical equilibrada */
     grid-template-rows: minmax(300px, 1fr) minmax(200px, auto);
-    align-items: start;
+}
+
+.full .image-h {
+    max-height: min(50vh, 400px);
+}
+
+.full .image-h.has-caption {
+    max-height: min(45vh, 350px);
 }
 
 /* En móvil, ajustamos para dar más espacio a la imagen si es necesario */
 @media (max-width: 767px) {
-    .with-image {
+    .full .with-image {
         grid-template-rows: minmax(250px, 1fr) minmax(150px, auto);
         gap: 1rem;
     }
@@ -217,11 +230,11 @@ const srcImageBackground = computed(() => {
         margin-bottom: 0;
     }
 
-    .image-h {
+    .full .image-h {
         max-height: min(60vh, 500px);
     }
 
-    .image-h.has-caption {
+    .full .image-h.has-caption {
         max-height: min(50vh, 400px);
     }
 
@@ -255,29 +268,40 @@ const srcImageBackground = computed(() => {
 
 @media (min-width: 768px) {
     .image-h {
-        /* En desktop, permitir que la imagen sea más grande */
+        /* En desktop, tamaño más moderado para uso normal */
+        max-height: 500px;
+    }
+
+    .image-h.has-caption {
+        max-height: 450px;
+    }
+
+    /* Solo cuando full=true, usar alturas de pantalla completa */
+    .full .image-h {
         max-height: min(80vh, calc(var(--sectionHeight) - 3rem), 600px);
         height: 100%;
     }
 
-    .image-h.has-caption {
+    .full .image-h.has-caption {
         max-height: min(70vh, calc(var(--sectionHeight) - 5rem), 500px);
         height: auto;
     }
 
-    .with-image {
+    .full .with-image {
         /* En desktop, distribución horizontal */
         grid-template-rows: 1fr;
         align-items: center;
         min-height: min(80vh, var(--sectionHeight, 80vh));
-    }    /* Ajustar contenedores para mejor distribución del espacio */
-    .caja-imagen {
+    }
+
+    /* Ajustar contenedores para mejor distribución del espacio */
+    .full .caja-imagen {
         height: 100%;
         display: flex;
         align-items: center;
     }
 
-    .caja-texto {
+    .full .caja-texto {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -295,11 +319,11 @@ const srcImageBackground = computed(() => {
 
 /* Cuando hay mucho texto, ajustar la imagen */
 @media (min-width: 768px) {
-    .with-image.long-text .image-h {
+    .full .with-image.long-text .image-h {
         max-height: min(60vh, 450px);
     }
 
-    .with-image.long-text {
+    .full .with-image.long-text {
         grid-template-columns: 1fr 1.2fr; /* Dar más espacio al texto */
     }
 }
@@ -307,18 +331,26 @@ const srcImageBackground = computed(() => {
 /* Optimización para pantallas grandes */
 @media (min-width: 1024px) {
     .image-h {
-        max-height: min(85vh, 700px);
+        max-height: 600px;
     }
 
     .image-h.has-caption {
+        max-height: 550px;
+    }
+
+    .full .image-h {
+        max-height: min(85vh, 700px);
+    }
+
+    .full .image-h.has-caption {
         max-height: min(75vh, 600px);
     }
 
-    .with-image.long-text .image-h {
+    .full .with-image.long-text .image-h {
         max-height: min(70vh, 500px);
     }
 
-    .with-image.long-text .image-h.has-caption {
+    .full .with-image.long-text .image-h.has-caption {
         max-height: min(60vh, 450px);
     }
 }

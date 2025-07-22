@@ -1,6 +1,8 @@
 <template>
     <Page class="text-center">
 
+        <h1 class="hidden">Radio Tseyor</h1>
+
         <div class="flex justify-between items-center mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
             <div class="flex gap-2">
@@ -9,8 +11,10 @@
             </div>
         </div>
 
-        <Hero title="" :srcImage="isDark ? darkLogo : lightLogo" srcWidth="1117" srcHeight="801" class="py-8! lg:py-20!"
-            textClass="p-7 gap-4">
+        <Hero title="" :srcImage="isDark ? darkLogo : lightLogo" srcWidth="1117" srcHeight="801"
+
+            textClass="px-7 gap-4"
+            imageSideClass="max-h-[360px]">
 
             <h3 class="text-center">Elige una emisora:</h3>
 
@@ -20,11 +24,10 @@
                     <Link class="p-4 block" :href="route('radio.emisora', emisora)">{{ emisora }}</Link>
                 </div>
             </div>
-
         </Hero>
 
 
-        <Comentarios :url="radio" />
+        <Comentarios url="radio" />
 
     </Page>
 </template>

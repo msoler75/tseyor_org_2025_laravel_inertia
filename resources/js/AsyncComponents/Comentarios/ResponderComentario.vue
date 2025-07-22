@@ -3,6 +3,7 @@
 
         <div class="w-full flex flex-col gap-3 mb-3">
             <!-- body -->
+             url: {{ url }} <br>
             <form @submit.prevent="responder">
                 <textarea class="textarea text-rounded-lg w-full" v-model="texto" placeholder="Escribe tu comentario..."
                     @keydown.ctrl.enter="responder" ref="inputText"></textarea>
