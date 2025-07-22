@@ -37,7 +37,7 @@
             </div>
 
             <div class="py-3 flex justify-between sm:justify-end gap-5 mt-5">
-                <button class="btn btn-primary" @click="socialShow = false">Cancelar</button>
+                <button class="btn btn-primary" @click="socialShow = false">Cerrar</button>
             </div>
 
         </div>

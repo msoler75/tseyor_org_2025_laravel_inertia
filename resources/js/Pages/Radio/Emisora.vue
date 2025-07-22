@@ -9,6 +9,7 @@
             </div>
         </div>
 
+        isDark::{{ isDark }}
         <Hero title="" :srcImage="isDark?'/almacen/medios/logos/radio_tseyor_dark.png':'/almacen/medios/logos/radio_tseyor.png'"
         class="py-8! lg:py-20!"
         textClass="p-7 gap-4">
@@ -20,8 +21,18 @@
                 </div>
             </div>
 
-            <div class="mt-14 text-sm text-center">Escuchando:</div>
-            <div class="mt-5 mb-24 text-center">
+            <!-- Botón "Escuchar" cuando se cierra el reproductor -->
+            <div class="mt-16 mb-8 flex justify-center">
+                <div v-if="mostrarBotonEscuchar" >
+                    <button class="btn btn-primary btn-lg" @click="volverAEscuchar">
+                        <Icon icon="ph:play-circle-duotone" class="mr-2 transform scale-200" />
+                        Escuchar
+                    </button>
+                </div>
+                <div v-else class="btn btn-lg text-lg border-opacity-0 text-center">Escuchando:</div>
+            </div>
+
+            <div class="mb-24 text-center">
                 <h3 class="min-h-[4rem]">{{ music.title }}</h3>
             </div>
 
@@ -36,9 +47,6 @@
             <span>{{ error }}</span>
         </div>
 
-        <button v-if="false" class="btn btn-primary" @click="recargar">Recargar</button>
-
-        <pre v-if="false">{{ estado }}</pre>
 
 
         <Comentarios :url="route('radio.emisora', selectors.emisoraRadio)" />
@@ -53,13 +61,17 @@ import { router } from '@inertiajs/vue3';
 import usePlayer from '@/Stores/player'
 
 import useSelectors from '@/Stores/selectors'
-import { useDark } from "@vueuse/core"
+import { useTheme } from '@/Stores/theme'
 
-const isDark = useDark();
+const { isDark } = useTheme();
 
 const selectors = useSelectors()
 
 const player = usePlayer()
+
+// Estado para controlar cuándo mostrar el botón "Escuchar"
+const mostrarBotonEscuchar = ref(false)
+const audioEstabaPreviamenteAbierto = ref(false)
 
 
 const props = defineProps({
@@ -88,13 +100,33 @@ function recargar() {
     })
 }
 
+function volverAEscuchar() {
+    playItem(music.value)
+    mostrarBotonEscuchar.value = false
+    audioEstabaPreviamenteAbierto.value = true
+}
+
 onMounted(() => {
     player.audio.addEventListener('ended', recargar)
     playItem(music.value)
+    audioEstabaPreviamenteAbierto.value = !player.audioClosed
 })
 
 onBeforeUnmount(() => {
     player.audio.removeEventListener('ended', recargar)
+})
+
+// Watcher para detectar cuándo se cierra el reproductor de audio
+watch(() => player.audioClosed, (nuevoEstado, estadoAnterior) => {
+    // Si el audio se cerró y anteriormente estaba abierto, mostrar el botón "Escuchar"
+    if (nuevoEstado === true && estadoAnterior === false && audioEstabaPreviamenteAbierto.value) {
+        mostrarBotonEscuchar.value = true
+    }
+    // Si el audio se abre, ocultar el botón "Escuchar"
+    else if (nuevoEstado === false) {
+        mostrarBotonEscuchar.value = false
+        audioEstabaPreviamenteAbierto.value = true
+    }
 })
 
 
