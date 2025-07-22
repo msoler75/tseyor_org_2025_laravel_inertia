@@ -8,7 +8,9 @@
                     <TransitionGroup v-if="comentarios.length" name="comment">
                         <Comentario v-for="comentario in comentarios" :key="comentario.id" :autor="comentario.autor"
                             :comentario-id="comentario.id" :url="url" :fecha="comentario.created_at"
-                            :texto="comentario.texto" :respuestas="comentario.respuestas" />
+                            :texto="comentario.texto" :respuestas="comentario.respuestas"
+                            :eliminado="comentario.eliminado"
+                            :puede-administrar="puedeAdministrar"/>
                     </TransitionGroup>
                     <p v-if="!cargando && !comentarios.length">No hay comentarios</p>
                 </div>
@@ -24,11 +26,12 @@ const page = usePage()
 const props = defineProps({
     url: {
         type: String,
-        default() {
-            return null;
-        }
+        required: true
     }
 })
+
+
+const puedeAdministrar = ref(false)
 
 const user = page.props.auth?.user
 const nuevoAutor = /*computed(() => user */ user ?
@@ -60,7 +63,9 @@ const cargando = ref(true)
 onMounted(() => {
     const url = props.url ? props.url: page.url
     axios.get(`${getApiUrl()}/comentarios?url=${url}`).then(response => {
-        comentarios.value = response.data.comentarios
+        puedeAdministrar.value = response.data.puedeAdministrar
+        console.log('RD:', response.data)
+        comentarios.value = response.data.comentarios.filter(c => !c.eliminado||c.respuestas.length||puedeAdministrar.value)
         cargando.value = false
     })
 })
