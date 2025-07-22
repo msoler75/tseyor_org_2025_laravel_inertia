@@ -9,7 +9,6 @@
             </div>
         </div>
 
-        isDark::{{ isDark }}
         <Hero title="" :srcImage="isDark?'/almacen/medios/logos/radio_tseyor_dark.png':'/almacen/medios/logos/radio_tseyor.png'"
         class="py-8! lg:py-20!"
         textClass="p-7 gap-4">

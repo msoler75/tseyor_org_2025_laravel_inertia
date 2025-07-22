@@ -34,7 +34,6 @@
         "teamtnt/laravel-scout-tntsearch-driver": "^13.2",
         "teamtnt/tntsearch": "^4.2",
         "tightenco/ziggy": "^1.0",
-        "wapmorgan/mp3info": "^0.1.0",
         "webklex/laravel-imap": "^6.2"
     },
     "require-dev": {

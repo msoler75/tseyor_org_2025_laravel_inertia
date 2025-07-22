@@ -130,6 +130,17 @@ class RadioController extends Controller
 
         $arranqueEn = $estadoRadio['arranco_en'] ?? 0;
         $duracionActual = $this->convertirASegundos($audioActual['duracion'] ?? 0);
+        
+        // Validación adicional: si la duración es 0 o muy pequeña, cambiar audio
+        if ($duracionActual <= 0) {
+            Log::warning("Audio con duración inválida detectado", [
+                'audio_id' => $audioActual['id'] ?? 'desconocido',
+                'duracion_original' => $audioActual['duracion'] ?? 'no definida',
+                'duracion_convertida' => $duracionActual
+            ]);
+            return $this->seleccionarNuevoAudio($estadoRadio, $emisoraLimpia);
+        }
+        
         $tiempoTranscurrido = $ahora - $arranqueEn;
         $tiempoRestante = $duracionActual - $tiempoTranscurrido;
 
@@ -142,7 +153,7 @@ class RadioController extends Controller
         // Intentar obtener un bloqueo con tiempo límite
         if (Cache::add($lockKey, true, Carbon::now()->addSeconds(5))) {
             try {
-                // Si el tiempo restante es negativo, seleccionar nuevo audio
+                // Si el tiempo restante es negativo o muy pequeño, seleccionar nuevo audio
                 if ($tiempoRestante < 0) {
                     return $this->seleccionarNuevoAudio($estadoRadio, $emisoraLimpia);
                 }
@@ -177,15 +188,18 @@ class RadioController extends Controller
      */
     private function seleccionarNuevoAudio(array &$estadoRadio, string $emisoraLimpia): bool
     {
-        // Verificar si ya existe un audio actual
+        // Verificar si ya existe un audio actual válido
         if ($estadoRadio['audio_actual'] !== null) {
-            // Si el audio actual sigue siendo válido, no cambiarlo
             $ahora = time();
             $duracionActual = $this->convertirASegundos($estadoRadio['audio_actual']['duracion'] ?? 0);
-            $tiempoTranscurrido = $ahora - $estadoRadio['arranco_en'];
-
-            if ($tiempoTranscurrido < $duracionActual) {
-                return false;
+            
+            // Solo validar tiempo si la duración es válida
+            if ($duracionActual > 0) {
+                $tiempoTranscurrido = $ahora - $estadoRadio['arranco_en'];
+                
+                if ($tiempoTranscurrido < $duracionActual) {
+                    return false;
+                }
             }
         }
 
@@ -199,8 +213,24 @@ class RadioController extends Controller
         $audioActual = $this->siguienteAudio($emisoraLimpia, $estadoRadio['audio_actual']['id'] ?? 0);
 
         if (!$audioActual) {
-            Log::error("No se pudo obtener un nuevo audio de la radio");
+            Log::error("No se pudo obtener un nuevo audio de la radio", [
+                'emisora' => $emisoraLimpia,
+                'audio_actual_id' => $estadoRadio['audio_actual']['id'] ?? 'none'
+            ]);
             return false;
+        }
+
+        // Validar que el nuevo audio tenga duración válida
+        $nuevaDuracion = $this->convertirASegundos($audioActual->duracion ?? 0);
+        if ($nuevaDuracion <= 0) {
+            Log::warning("Nuevo audio seleccionado tiene duración inválida", [
+                'audio_id' => $audioActual->id,
+                'duracion_original' => $audioActual->duracion,
+                'duracion_convertida' => $nuevaDuracion
+            ]);
+            
+            // Intentar con el siguiente audio
+            return $this->seleccionarNuevoAudio($estadoRadio, $emisoraLimpia);
         }
 
         $jingles = $this->obtenerJingles();
@@ -232,23 +262,66 @@ class RadioController extends Controller
         if (count($jingles)) {
             $estadoRadio['audio_siguiente'] = $audioActual;
             $estadoRadio['reproduciendo_jingle'] = true;
-            $j = ($estadoRadio['jingle_idx'] ?? -1 + 1) % count($jingles);
+            
+            // Corregir el cálculo del índice del jingle
+            $indiceActual = $estadoRadio['jingle_idx'] ?? -1;
+            $j = ($indiceActual + 1) % count($jingles);
+            
             $estadoRadio['audio_actual'] = $jingles[$j];
             $estadoRadio['jingle_idx'] = $j;
         } else {
             $estadoRadio['audio_actual'] = $audioActual;
+            $estadoRadio['reproduciendo_jingle'] = false;
         }
     }
 
     /**
-     * Convertir tiempo a segundos
+     * Convertir tiempo a segundos con validación mejorada
      */
     private function convertirASegundos($v): int
     {
-        if (is_int($v)) return $v;
-        if (!preg_match("/:/", $v)) return intval($v);
-        $t = explode(':', $v);
-        return intval(end($t)) + intval(prev($t)) * 60 + intval(prev($t)) * 3600;
+        // Si ya es un entero, devolverlo directamente
+        if (is_int($v)) {
+            return max(0, $v); // Asegurar que no sea negativo
+        }
+        
+        // Si es string numérico sin formato de tiempo
+        if (is_string($v) && is_numeric($v)) {
+            return max(0, intval($v));
+        }
+        
+        // Si no es string, convertir a string
+        if (!is_string($v)) {
+            $v = strval($v);
+        }
+        
+        // Si no contiene ':', asumir que son segundos
+        if (!preg_match("/:/", $v)) {
+            return max(0, intval($v));
+        }
+        
+        // Manejar formato de tiempo HH:MM:SS o MM:SS
+        $partes = explode(':', $v);
+        $partes = array_reverse($partes); // Invertir para procesar desde segundos
+        
+        $segundos = 0;
+        $multiplicadores = [1, 60, 3600]; // segundos, minutos, horas
+        
+        for ($i = 0; $i < count($partes) && $i < 3; $i++) {
+            $valor = intval($partes[$i]);
+            $segundos += $valor * $multiplicadores[$i];
+        }
+        
+        // Validar que el resultado sea razonable (máximo 24 horas)
+        if ($segundos > 86400) {
+            Log::warning("Duración convertida excede 24 horas", [
+                'valor_original' => $v,
+                'segundos_calculados' => $segundos
+            ]);
+            return 86400; // Limitar a 24 horas
+        }
+        
+        return max(0, $segundos);
     }
 
     /**
