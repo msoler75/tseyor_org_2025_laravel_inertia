@@ -17,7 +17,7 @@ class EntradasController extends Controller
         $buscar = $request->input('buscar');
         $page = $request->input('page', 1);
 
-        $query = Entrada::select(['slug', 'titulo', 'descripcion', 'updated_at', 'published_at', 'categoria'])
+        $query = Entrada::select(['slug', 'titulo', 'imagen', 'descripcion', 'updated_at', 'published_at', 'categoria'])
             ->where('visibilidad', 'P');
 
         if ($buscar) {

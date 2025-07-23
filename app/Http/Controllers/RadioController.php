@@ -24,7 +24,22 @@ class RadioController extends Controller
 
         return Inertia::render('Radio/Index', [
             'emisoras' => $categorias
-        ]);
+        ])->withViewData(SEO::get('radio'));
+    }
+
+
+
+    /**
+     * Renderizar vista de emisora
+     */
+    private function renderizarVistaEmisora(array $estado)
+    {
+        $categorias = $this->obtenerCategoriasEmisoras();
+
+        return Inertia::render('Radio/Emisora', [
+            'estado' => $estado,
+            'emisoras' => $categorias
+        ])->withViewData(SEO::get('radio'));
     }
 
     /**
@@ -130,7 +145,7 @@ class RadioController extends Controller
 
         $arranqueEn = $estadoRadio['arranco_en'] ?? 0;
         $duracionActual = $this->convertirASegundos($audioActual['duracion'] ?? 0);
-        
+
         // Validación adicional: si la duración es 0 o muy pequeña, cambiar audio
         if ($duracionActual <= 0) {
             Log::warning("Audio con duración inválida detectado", [
@@ -140,7 +155,7 @@ class RadioController extends Controller
             ]);
             return $this->seleccionarNuevoAudio($estadoRadio, $emisoraLimpia);
         }
-        
+
         $tiempoTranscurrido = $ahora - $arranqueEn;
         $tiempoRestante = $duracionActual - $tiempoTranscurrido;
 
@@ -192,11 +207,11 @@ class RadioController extends Controller
         if ($estadoRadio['audio_actual'] !== null) {
             $ahora = time();
             $duracionActual = $this->convertirASegundos($estadoRadio['audio_actual']['duracion'] ?? 0);
-            
+
             // Solo validar tiempo si la duración es válida
             if ($duracionActual > 0) {
                 $tiempoTranscurrido = $ahora - $estadoRadio['arranco_en'];
-                
+
                 if ($tiempoTranscurrido < $duracionActual) {
                     return false;
                 }
@@ -228,7 +243,7 @@ class RadioController extends Controller
                 'duracion_original' => $audioActual->duracion,
                 'duracion_convertida' => $nuevaDuracion
             ]);
-            
+
             // Intentar con el siguiente audio
             return $this->seleccionarNuevoAudio($estadoRadio, $emisoraLimpia);
         }
@@ -262,11 +277,11 @@ class RadioController extends Controller
         if (count($jingles)) {
             $estadoRadio['audio_siguiente'] = $audioActual;
             $estadoRadio['reproduciendo_jingle'] = true;
-            
+
             // Corregir el cálculo del índice del jingle
             $indiceActual = $estadoRadio['jingle_idx'] ?? -1;
             $j = ($indiceActual + 1) % count($jingles);
-            
+
             $estadoRadio['audio_actual'] = $jingles[$j];
             $estadoRadio['jingle_idx'] = $j;
         } else {
@@ -284,34 +299,34 @@ class RadioController extends Controller
         if (is_int($v)) {
             return max(0, $v); // Asegurar que no sea negativo
         }
-        
+
         // Si es string numérico sin formato de tiempo
         if (is_string($v) && is_numeric($v)) {
             return max(0, intval($v));
         }
-        
+
         // Si no es string, convertir a string
         if (!is_string($v)) {
             $v = strval($v);
         }
-        
+
         // Si no contiene ':', asumir que son segundos
         if (!preg_match("/:/", $v)) {
             return max(0, intval($v));
         }
-        
+
         // Manejar formato de tiempo HH:MM:SS o MM:SS
         $partes = explode(':', $v);
         $partes = array_reverse($partes); // Invertir para procesar desde segundos
-        
+
         $segundos = 0;
         $multiplicadores = [1, 60, 3600]; // segundos, minutos, horas
-        
+
         for ($i = 0; $i < count($partes) && $i < 3; $i++) {
             $valor = intval($partes[$i]);
             $segundos += $valor * $multiplicadores[$i];
         }
-        
+
         // Validar que el resultado sea razonable (máximo 24 horas)
         if ($segundos > 86400) {
             Log::warning("Duración convertida excede 24 horas", [
@@ -320,7 +335,7 @@ class RadioController extends Controller
             ]);
             return 86400; // Limitar a 24 horas
         }
-        
+
         return max(0, $segundos);
     }
 
@@ -367,18 +382,6 @@ class RadioController extends Controller
         return $estado;
     }
 
-    /**
-     * Renderizar vista de emisora
-     */
-    private function renderizarVistaEmisora(array $estado)
-    {
-        $categorias = $this->obtenerCategoriasEmisoras();
-
-        return Inertia::render('Radio/Emisora', [
-            'estado' => $estado,
-            'emisoras' => $categorias
-        ])->withViewData(SEO::get('radio'));
-    }
 
     /**
      * Obtener categorías de emisoras

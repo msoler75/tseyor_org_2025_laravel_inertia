@@ -8,6 +8,7 @@ Esta carpeta contiene la documentación técnica organizada del proyecto. A cont
 - [Despliegue y Deploy](./despliegue.md): Instrucciones y consideraciones para el despliegue.
 - [Comandos artisan](./comandos_artisan.md): Lista de comandos artisan básicos.
 - [Guía de Desarrollo](./guia_desarrollo.md): Guía para el entorno y flujo de desarrollo.
+- [Sistema SEO en Inertia.js](./seo.md): Documentación completa del sistema SEO híbrido.
 - [Mantenimiento](./mantenimiento.md): Procedimientos y recomendaciones para el mantenimiento.
 - [Notas Técnicas](./notas_tecnicas.md): Notas técnicas varias y aclaraciones.
 - [Gestión de Colas y Trabajos Asíncronos](./colas_y_trabajos.md): Detalles sobre la gestión de colas y trabajos.

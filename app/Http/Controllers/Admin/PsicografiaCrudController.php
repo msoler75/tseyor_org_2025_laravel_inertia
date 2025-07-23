@@ -58,7 +58,21 @@ class PsicografiaCrudController extends CrudController
 
         CRUD::column('categoria')->type('text');
 
-        CRUD::column('miniatura')->type('image');
+        $this->crud->addColumn([
+            'name' => 'imagen',
+            'label' => 'Miniatura',
+            'type' => 'custom_html',
+            'value' => function($entry) {
+                if(!$entry->imagen)
+                    return '<span class="text-muted">-</span>';
+                $miniatura = $entry->imagen."?mh=50&mw=50"; // miniatura de la imagen
+                $enlace = $entry->imagen;
+                return '<a href="' . $enlace . '" target="_blank">
+                            <img src="' . $miniatura . '" style="object-fit: cover;" alt="Miniatura">
+                        </a>';
+            },
+            'escaped' => false
+        ]);
 
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);

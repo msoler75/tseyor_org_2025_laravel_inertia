@@ -21,6 +21,7 @@ class Pagina extends ContenidoBaseModel
         'descripcion',
         'texto',
         'palabras_clave',
+        'imagen',
         'visibilidad'
     ];
 
@@ -33,5 +34,13 @@ class Pagina extends ContenidoBaseModel
         // incluimos la descripcion breve (SEO) y las palabras clave
         return rtrim($this->descripcion, "\t\n .") . ". " . $this->palabras_clave;
         //html_entity_decode(strip_tags($this->palabras_clave));
+    }
+
+
+
+
+     public function getCarpetaMedios(bool $formatoRutaRelativa= false) : string
+    {
+        return '/almacen/medios/paginas';
     }
 }

@@ -24,10 +24,6 @@ class Psicografia extends ContenidoBaseModel
         'imagen'
     ];
 
-    public function getMiniaturaAttribute() {
-        return '/almacen/'.$this->imagen.'?mw=50&mh=50';
-    }
-
     public function getCarpetaMedios(bool $formatoRutaRelativa= false) : string
     {
         return '/almacen/medios/psicografias';
