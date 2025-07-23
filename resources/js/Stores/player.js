@@ -382,7 +382,7 @@ const player = reactive({
   },
 
   seek(position) {
-    console.log("seek", position);
+    // console.log("seek", position);
     if(!this.audio) return;
     // Validaciones de seguridad
     const currentTime = this.audio.currentTime || 0;

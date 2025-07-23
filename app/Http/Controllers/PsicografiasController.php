@@ -14,6 +14,10 @@ class PsicografiasController extends Controller
 
     public function index(Request $request)
     {
+        // esto es para el puzle
+        if ($request->has('json'))
+            return $this->json();
+
         $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');

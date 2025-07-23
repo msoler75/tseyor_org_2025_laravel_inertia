@@ -58,7 +58,7 @@ class PaginaCrudController extends CrudController
                 ->type('card')
                 ->class('card bg-dark text-white mb-1') // optional
                 ->content([
-                    'body' => 'Estas páginas solo se cargan si no están ya predefinidas, y en cualquier sirven para el SEO y para indexar el buscador.'
+                    'body' => 'Sistema híbrido de páginas que aporta múltiples funciones: <strong>1) Fallback automático</strong> - captura URLs no definidas en rutas y muestra contenido desde base de datos. <strong>2) Proveedor SEO universal</strong> - todas las páginas (con o sin controlador específico) pueden obtener sus metadatos SEO desde aquí. <strong>3) Palabras clave para buscador</strong> - Indexa contenido para el buscador interno y <strong>4) Enlaces de regreso</strong> - gestiona enlaces de navegación a una sección superior.'
                 ])
 
 
@@ -68,6 +68,22 @@ class PaginaCrudController extends CrudController
             'name' => 'titulo',
             'label' => 'Título',
             'type' => 'text'
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'imagen',
+            'label' => 'imagen_seo',
+            'type' => 'custom_html',
+            'value' => function($entry) {
+                if(!$entry->imagen)
+                    return '<span class="text-muted">-</span>';
+                $miniatura = $entry->imagen."?mh=50&mw=50"; // miniatura de la imagen
+                $enlace = $entry->imagen;
+                return '<a href="' . $enlace . '" target="_blank">
+                            <img src="' . $miniatura . '" style="object-fit: cover;" alt="Miniatura">
+                        </a>';
+            },
+            'escaped' => false
         ]);
 
         $this->crud->addColumn([
@@ -119,6 +135,10 @@ class PaginaCrudController extends CrudController
         CRUD::setFromDb(); // set fields from db columns.
 
         CRUD::field('descripcion')->type('textarea')->hint('Descripción corta para el SEO.');
+
+        $folder = $this->getMediaFolder();
+
+        CRUD::field('imagen')->type('image_cover')->label('Imagen SEO')->attributes(['folder' => $folder, 'can-delete'=>true]);
 
         $folder = $this->getMediaFolder();
 

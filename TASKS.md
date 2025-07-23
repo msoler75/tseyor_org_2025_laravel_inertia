@@ -25,6 +25,8 @@
 - [x] Implementar detección del botón "atrás" del móvil para cerrar modal de GlobalSearch (29/06/2025)
 - [x] Mejorar GlobalSearch para preservar posición de scroll cuando se cierra modal con botón "atrás" o teclas (29/06/2025)
 - [x] Implementar divisores diagonales alternados en componente Sections.vue (29/06/2025)
+- [x] Añadir campo imagen al modelo Pagina y crear documentación del sistema SEO en Inertia.js (23/07/2025)
+- [x] Añadir campo imagen al PaginaCrudController de Backpack para gestión completa del SEO (23/07/2025)
 
 
 
