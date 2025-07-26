@@ -99,7 +99,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // switch theme dark/light
 Route::post('update-theme', function (Request $request) {
     $theme = $request->input('theme');
-    Cookie::queue('theme', $theme, 60 * 24 * 30, null, null, true, false); // válida por 30 días
+    // Cookie accesible por JS (httpOnly=false), secure solo si HTTPS, SameSite=Lax, path global
+    Cookie::queue(
+        Cookie::make('theme', $theme, 60 * 24 * 30, '/', null, request()->isSecure(), false, false, 'lax')
+    );
     return response()->json(['success' => true]);
 });
 
