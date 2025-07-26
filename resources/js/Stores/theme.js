@@ -48,19 +48,20 @@ export function useTheme() {
         const page = usePage()
         const initialTheme = page.props.initialTheme // Viene del servidor (cookie o default)
 
-        console.log('Initializing theme store with:', initialTheme)
+        // Robustez: aceptar tanto 'night' como 'dark' para modo oscuro
+        let isDarkInitial = initialTheme === "dark" || initialTheme === "night";
+        let themeValue = isDarkInitial ? "night" : "light";
+        if (typeof window !== "undefined") {
+            document.documentElement.setAttribute("data-theme", themeValue);
+        }
 
         // CONFIGURACIÓN DE VUEUSE/CORE useDark:
-        // - storageKey: clave en localStorage donde se guarda el tema
-        // - selector: elemento HTML donde se aplica el atributo data-theme
-        // - valueDark: valor que se aplica cuando está en modo oscuro
-        // - initialValue: tema inicial (desde servidor para evitar flash)
-        // - onChanged: deshabilitado para controlar manualmente la sincronización
+        // - initialValue: true si night, false si light
         const isDark = useDark({
             storageKey: "theme",
             selector: "html",
             valueDark: "night",
-            initialValue: initialTheme !== 'dark' ? 'light' : 'night',
+            initialValue: isDarkInitial,
             onChanged: () => {}, // Deshabilitado para control manual
         })
 

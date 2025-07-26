@@ -157,7 +157,30 @@ const portada = computed(() => page.url == "/");
 const showingNavigationDropdown = ref(false);
 
 // Usar el store compartido del tema
+
 const { isDark, toggleDark } = useTheme();
+
+
+// Forzar sincronización de isDark tras el primer render y reflejar cualquier cambio inicial
+onMounted(() => {
+    nextTick(() => {
+        // Si el valor inicial no coincide con el data-theme, lo corregimos
+        const htmlTheme = document.documentElement.getAttribute('data-theme');
+        if ((htmlTheme === 'night' && !isDark.value) || (htmlTheme === 'light' && isDark.value)) {
+            isDark.value = htmlTheme === 'night';
+        }
+    });
+});
+
+// Si por alguna razón cambia el data-theme externo, sincronizar el botón
+watch(
+    () => document.documentElement.getAttribute('data-theme'),
+    (newTheme) => {
+        if ((newTheme === 'night' && !isDark.value) || (newTheme === 'light' && isDark.value)) {
+            isDark.value = newTheme === 'night';
+        }
+    }
+);
 
 /*
 function updateDarkState() {
