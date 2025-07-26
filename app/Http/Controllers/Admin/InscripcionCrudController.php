@@ -97,18 +97,18 @@ class InscripcionCrudController extends CrudController
                 $colores = [
                     'nueva' => 'bg-warning',
                     'rebotada' => 'bg-warning',
-                    'asignada' => 'bg-neutral',
+                    'asignada' => 'bg-danger',
                     'contactado' => 'bg-info',
                     'encurso' => 'bg-info',
                     'finalizado' => 'bg-success',
-                    'nocontesta' => 'bg-success',
+                    'nocontesta' => 'bg-secondary',
                     'duplicada' => 'bg-dark',
-                    'nointeresado' => 'bg-success'
+                    'nointeresado' => 'bg-dark'
                 ];
                 $estado = $entry->estado;
                 $colorClass = $colores[$estado] ?? 'bg-secondary';
                 if ($estado === 'nueva') {
-                    $texto = 'nueva';
+                    $texto = 'Nueva';
                 } elseif (isset($estados[$estado]['etiqueta']) && !empty($estados[$estado]['etiqueta'])) {
                     $texto = $estados[$estado]['etiqueta'];
                 } elseif (!empty($estado)) {
