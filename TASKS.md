@@ -27,6 +27,10 @@
 - [x] Implementar divisores diagonales alternados en componente Sections.vue (29/06/2025)
 - [x] Añadir campo imagen al modelo Pagina y crear documentación del sistema SEO en Inertia.js (23/07/2025)
 - [x] Añadir campo imagen al PaginaCrudController de Backpack para gestión completa del SEO (23/07/2025)
+- [x] Sistema automatizado de gestión de inscripciones a cursos: migración de BD, notificaciones automáticas, formularios web de gestión y rebote, comando cron para seguimiento, dashboard administrativo (23/07/2025)
+- [x] Integración completa de Backpack CRUD para sistema de inscripciones con widgets personalizados, filtros avanzados y acciones masivas (24/07/2025)
+- [x] Rediseño completo de interface "Mis Asignaciones" con modales para notas (TipTap), rebote validado y selector de estados directo (24/07/2025)
+- [x] Migración de estados de inscripciones y actualización de enum en base de datos, incluyendo corrección de estados null (24/07/2025)
 
 
 

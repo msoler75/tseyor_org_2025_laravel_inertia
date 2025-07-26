@@ -128,6 +128,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $appends = [
         'profile_photo_url',
+        'tiene_inscripciones_asignadas',
     ];
 
 
@@ -163,6 +164,14 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'group_id')
             ->using(Pertenencia::class)
             ->withPivot(['user_id']);
+    }
+
+    /**
+     * Relación con las inscripciones asignadas a este usuario
+     */
+    public function inscripcionesAsignadas()
+    {
+        return $this->hasMany(\App\Models\Inscripcion::class, 'user_id');
     }
 
     // retorna true si este usuario está en el grupo con grupo_id
@@ -248,6 +257,14 @@ class User extends Authenticatable implements MustVerifyEmail
             'tipo' => 'No suscrito',
             'token' => null,
         ];
+    }
+
+    /**
+     * Determina si el usuario tiene inscripciones asignadas (actuales o pasadas)
+     */
+    public function getTieneInscripcionesAsignadasAttribute()
+    {
+        return \App\Models\Inscripcion::where('user_id', $this->getKey())->exists();
     }
 
     /**

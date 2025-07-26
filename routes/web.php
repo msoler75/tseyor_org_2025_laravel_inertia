@@ -26,7 +26,7 @@ use App\Http\Controllers\ContenidosController;
 use App\Http\Controllers\CursosController;
 use App\Http\Controllers\SalasController;
 use App\Http\Controllers\RadioController;
-use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\InscripcionesController;
 use App\Http\Controllers\ExperienciasController;
 use App\Http\Controllers\ContactarController;
 use App\Http\Controllers\UsuariosController;
@@ -73,6 +73,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ...otras rutas de perfil...
     Route::get('/user/mcp-token', [McpTokenController::class, 'show'])->name('profile.mcp-token');
     Route::post('/user/mcp-token', [McpTokenController::class, 'generate'])->name('profile.mcp-token.generate');
+
+    // Rutas de gestión de inscripciones
+    Route::prefix('inscripciones')->group(function () {
+        Route::get('mis-asignaciones', [InscripcionesController::class, 'misAsignaciones'])->name('inscripciones.mis-asignaciones');
+        Route::post('{inscripcion}/actualizar-estado', [InscripcionesController::class, 'actualizarEstado'])->name('inscripciones.actualizar-estado');
+        Route::put('{inscripcion}/actualizar-notas', [InscripcionesController::class, 'actualizarNotas'])->name('inscripciones.actualizar-notas');
+        Route::delete('{inscripcion}/rebotar', [InscripcionesController::class, 'rebotar'])->name('inscripciones.rebotar');
+
+        // Rutas para administradores
+        Route::middleware('can:admin')->group(function () {
+            Route::post('asignar', [InscripcionesController::class, 'asignar'])->name('inscripciones.asignar');
+            Route::post('asignar-masiva', [InscripcionesController::class, 'asignarMasiva'])->name('inscripciones.asignar-masiva');
+            // Route::get('exportar', [InscripcionesController::class, 'exportar'])->name('inscripciones.exportar');
+            Route::get('buscar-usuarios', [InscripcionesController::class, 'buscarUsuarios'])->name('inscripciones.buscar-usuarios');
+        });
+    });
 });
 
 
@@ -220,7 +236,7 @@ Route::get('inscripcion', function () {
     return Inertia::render('Cursos/NuevaInscripcion', [])
         ->withViewData(SEO::get('inscripcion'));
 })->name('cursos.inscripcion.nueva');
-Route::post('inscripcion/store', [InscripcionController::class, 'store'])->name('cursos.inscripcion.store');
+Route::post('inscripcion/store', [InscripcionesController::class, 'store'])->name('cursos.inscripcion.store');
 
 
 Route::post('experiencia/store', [ExperienciasController::class, 'store']);
