@@ -13,12 +13,12 @@ $stats = [
 <div class="row mb-3">
     {{-- Nuevas --}}
     <div class="col-6 col-md-4 col-lg-2 mb-3">
-        <div class="card text-white bg-primary h-100">
+        <div class="card bg-warning h-100">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center">
                     <i class="la la-user-plus fa-2x me-3"></i>
                     <div>
-                        <div class="text-white-50 small">Nuevas</div>
+                        <div class="small">Nuevas</div>
                         <div class="h4 mb-0">{{ $stats['nuevas'] }}</div>
                     </div>
                 </div>
@@ -28,7 +28,7 @@ $stats = [
 
     {{-- Asignadas --}}
     <div class="col-6 col-md-4 col-lg-2 mb-3">
-        <div class="card text-white bg-warning h-100">
+        <div class="card text-white bg-danger h-100">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center">
                     <i class="la la-user-check fa-2x me-3"></i>
