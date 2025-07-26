@@ -34,6 +34,10 @@
                 Mis Equipos
             </DropdownLink>
 
+            <DropdownLink v-if="$page.props.auth.user?.tiene_inscripciones_asignadas" :href="route('inscripciones.mis-asignaciones')">
+                Gestión de inscritos
+            </DropdownLink>
+
             <DropdownLink :href="route('usuario', $page.props.auth.user.id)">
                 Mi perfil público
             </DropdownLink>

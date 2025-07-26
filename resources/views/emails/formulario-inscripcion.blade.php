@@ -4,27 +4,35 @@
 Inscripción al Curso Holístico
 @endsection
 
+
 @section('subtitulo')
-{{$nombre}}
+{{$inscripcion->nombre}}
 @endsection
 
 @section('contenido')
 
-Nombre: {{$nombre}}
+Nombre: {{$inscripcion->nombre}}
 
-Fecha de nacimiento: {{$fecha}} ({{$edad}} años)
+@if($inscripcion->fecha_nacimiento)
+Fecha de nacimiento: {{ \Carbon\Carbon::parse($inscripcion->fecha_nacimiento)->format('d/m/Y') }} ({{ \Carbon\Carbon::parse($inscripcion->fecha_nacimiento)->age }} años)
+@else
+Fecha de nacimiento: -
+@endif
 
-Ciudad: {{$ciudad}}
+Ciudad: {{$inscripcion->ciudad}}
 
-Región: {{$region}}
+Región: {{$inscripcion->region}}
 
-Pais: {{$pais}}
+Pais: {{$inscripcion->pais}}
 
-Correo: {{$email}}
+Correo: {{$inscripcion->email}}
 
-Teléfono:  {{$telefono}}
+Teléfono:  {{$inscripcion->telefono}}
 
-Comentario: {{$comentario}}
+Comentario: {{$inscripcion->comentario}}
+
+<br><br>
+<a href="{{$enlace_gestion}}" style="color:#fff;background:#007bff;padding:8px 16px;border-radius:4px;text-decoration:none;" target="_blank">Gestionar esta inscripción</a>
 
 @endsection
 

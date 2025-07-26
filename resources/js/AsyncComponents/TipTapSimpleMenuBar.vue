@@ -128,7 +128,7 @@ function setLink() {
 </script>
 
 <template>
-    <div class="flex flex-wrap items-start justify-left gap-0.5 p-1 bg-gray-700">
+    <div class="flex flex-wrap items-start justify-left gap-0.5 p-1 bg-gray-200 dark:bg-gray-700">
         <div v-for="item in items">
             <div class="mx-2 flex align-center h-full" v-if="item.type === 'divider'"></div>
             <div v-else-if="item.type == 'color'" class="relative" :title="item.title">
