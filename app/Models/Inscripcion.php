@@ -6,12 +6,13 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
+use Laravel\Scout\Searchable;
 use Illuminate\Support\Facades\Log;
 
 class Inscripcion extends Model
 {
     use CrudTrait;
+    use Searchable;
     use \Venturecraft\Revisionable\RevisionableTrait;
 
     protected $table = 'inscripciones';

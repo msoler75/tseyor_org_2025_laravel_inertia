@@ -12,7 +12,7 @@
             Buscar
         </button>
 
-        <div class="flex items-center relative" :style="{ 'max-width': maxWidth + 'px' }">
+        <div class="flex items-center relative">
             <div class="absolute z-10 right-2 transform scale-110 -translate-y-[.1rem] text-gray-600">
                 <Spinner v-show="submitting" />
                 <Icon v-show="!submitting" icon="ph:magnifying-glass-bold" />
@@ -20,7 +20,10 @@
             <form @submit.prevent="submit">
                 <input class="search-input pr-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
                     text-right w-full focus:rounded-md"
-                    :class="query ? 'border-0 border-b border-gray-700 focus:border-b' : 'border-transparent'"
+                    :class="[
+                        query ? 'border-0 border-b border-gray-700 focus:border-b' : 'border-transparent',
+                        inputClass
+                    ]"
                     @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"
                     @focus="$emit('focus')" @blur="$emit('blur-xs')" v-model="query" />
             </form>
@@ -44,11 +47,15 @@ const props = defineProps({
         required: false,
         default: "Buscar..."
     },
+    inputClass: {
+        type: String,
+        required: false,
+        default: 'max-w-[200px] lg:max-w-[400px]'
+    },
     arguments: {},
     doSearch: { type: Boolean, default: true }
 })
 
-const maxWidth = ref(200);
 const query = ref(props.modelValue);
 const currentUrl = ref('');
 const savedQuery = ref('');

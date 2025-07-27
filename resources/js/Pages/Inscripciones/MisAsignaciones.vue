@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-6xl mx-auto p-6">
+  <div class="max-w-6xl mx-auto p-6 pb-32">
     <div class="mb-6">
       <h1>
         Gestión de inscripciones
@@ -9,15 +9,15 @@
       </p>
     </div>
 
-    <div v-if="inscripciones.data.length === 0" class="text-center py-12">
+    <div v-if="!filtrado && inscripcionesFiltradas.length === 0" class="text-center py-12">
       <div class="text-gray-400 dark:text-gray-500 text-lg">
-        No tienes inscripciones asignadas actualmente
+        <span class="badge text-xl p-6">No tienes inscripciones asignadas actualmente</span>
       </div>
     </div>
 
-    <div v-else>
+    <div v-else >
       <!-- Encabezados informativos -->
-      <div class="mb-6 flex flex-wrap gap-6">
+      <div class="mb-6 flex flex-wrap justify-between gap-6">
         <!-- Encabezado de inscripciones activas -->
         <div
           v-if="inscripcionesActivas.length > 0"
@@ -45,13 +45,24 @@
             </span>
         </div>
         </div>
+
+    <SearchInput
+    v-if="filtrado || inscripcionesProcesadas.length > 0"
+        v-model="query"
+        placeholder="Buscar inscripción..."
+        class="ml-auto"
+      />
       </div>
+
+     <SearchResultsHeader
+          :results="listado"
+        />
 
       <!-- Lista unificada con TransitionGroup -->
       <TransitionGroup name="inscripciones" tag="div" class="space-y-4">
         <!-- Tarjetas unificadas -->
         <Card
-          v-for="inscripcion in inscripcionesOrdenadas"
+          v-for="inscripcion in inscripcionesFiltradas"
           :key="`inscripcion-${inscripcion.id}`"
           :data-inscripcion-id="inscripcion.id"
           class="inscripcion-card border-l-4"
@@ -284,10 +295,7 @@
       </TransitionGroup>
     </div>
 
-    <!-- Paginación -->
-    <div v-if="inscripciones.links" class="mt-8 flex justify-center">
-      <!-- Aquí iría el componente de paginación -->
-    </div>
+    <pagination class="mt-6" :links="listado.links" />
 
     <!-- Modal de rebote -->
     <Modal :show="mostrarModalRebote" @close="cerrarModalRebote" max-width="md">
@@ -414,15 +422,9 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import Modal from '@/Components/Modal.vue'
-import Card from '@/Components/Card.vue'
-import Dropdown from '@/Components/Dropdown.vue'
-import DropdownLink from '@/Components/DropdownLink.vue'
-import TipTapEditor from '@/AsyncComponents/TipTapEditor.vue'
-
+// Estado para la búsqueda, inicializado desde props
 const props = defineProps({
-  inscripciones: Object,
+  listado: Object,
   estadosDisponibles: Object,
   estadosNoElegibles: Object,
   umbralesdias: {
@@ -432,8 +434,17 @@ const props = defineProps({
       contactado_urgente: 7,
       encurso_seguimiento: 30
     })
+  },
+  filtrado: {
+    type: String,
+    default: ''
   }
 })
+
+const query = ref(props.filtrado || "")
+
+// Las inscripciones ya vienen filtradas del backend
+const inscripcionesFiltradas = computed(() => inscripcionesOrdenadas.value)
 
 const mostrarModalRebote = ref(false)
 const mostrarModalNotas = ref(false)
@@ -448,7 +459,7 @@ onMounted(() => {
   let hayInscripcionesReasignadas = false
   let primeraInscripcionReasignada = null
 
-  props.inscripciones.data.forEach(inscripcion => {
+  props.listado.data.forEach(inscripcion => {
     if (inscripcion.estado === 'asignada') {
       const ahora = new Date()
       const fechaActualizacion = new Date(inscripcion.updated_at)
@@ -493,7 +504,7 @@ onMounted(() => {
 const inscripcionesProcesadas = computed(() => {
   const estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta']
 
-  return props.inscripciones.data.map(inscripcion => {
+  return props.listado.data.map(inscripcion => {
     // Determinar si está cerrada
     const esCerrada = estadosFinalizados.includes(inscripcion.estado)
 
@@ -655,7 +666,7 @@ function guardarNotas() {
     onSuccess: () => {
       cerrarModalNotas()
       // Actualizar las notas en el objeto local para reflejar el cambio
-      const inscripcion = props.inscripciones.data.find(i => i.id === inscripcionSeleccionada.value.id)
+      const inscripcion = props.listado.data.find(i => i.id === inscripcionSeleccionada.value.id)
       if (inscripcion) {
         inscripcion.notas = formNotas.notas
       }
@@ -706,7 +717,7 @@ function rebotarInscripcion() {
 
       // Actualizar el estado de la inscripción en el objeto local
       if (inscripcionId) {
-        const inscripcion = props.inscripciones.data.find(i => i.id === inscripcionId)
+        const inscripcion = props.listado.data.find(i => i.id === inscripcionId)
         if (inscripcion) {
           inscripcion.estado = 'rebotada'
           // Agregar una nota sobre el rebote con el nombre del usuario

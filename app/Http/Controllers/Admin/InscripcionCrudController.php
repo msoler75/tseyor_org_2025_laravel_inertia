@@ -54,11 +54,6 @@ class InscripcionCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        // Widget de navegación
-        Widget::add()
-            ->to('before_content')
-            ->type('view')
-            ->view('custom.widgets.inscripciones_navegacion');
 
         // Widget de estadísticas - usando vista personalizada para mejor control del layout
         Widget::add()

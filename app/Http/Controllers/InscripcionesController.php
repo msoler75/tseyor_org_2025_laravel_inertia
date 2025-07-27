@@ -15,6 +15,9 @@ use Inertia\Inertia;
 
 class InscripcionesController extends Controller
 {
+
+    public static $ITEMS_POR_PAGINA = 20;
+
     // nueva inscripción
     public function store(Request $request)
     {
@@ -192,21 +195,38 @@ class InscripcionesController extends Controller
     /**
      * Lista inscripciones asignadas al usuario actual
      */
-    public function misAsignaciones()
+    public function misAsignaciones(Request $request)
     {
-        $inscripciones = Inscripcion::where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $buscar = $request->input('buscar');
+        $page = $request->input('page', 1);
+
+        $query = Inscripcion::where('user_id', Auth::id());
+
+         if ($buscar) {
+            $ids = Inscripcion::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('inscripciones.id', $ids);
+        }
+
+        // aquí ya aplicamos criterios de ordenación, siendo primeras las inscripciones "abiertas" (no tienen estado finalizado)
+        $estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta'];
+        $query->orderByRaw('CASE WHEN estado IN ("' . implode('","', $estadosFinalizados) . '") THEN 1 ELSE 0 END')
+              ->orderByDesc('fecha_asignacion');
+
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
+
+        //$inscripciones = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
 
         return Inertia::render('Inscripciones/MisAsignaciones', [
-            'inscripciones' => $inscripciones,
+            'listado' => $resultados,
             'estadosDisponibles' => $this->getEstadosDisponiblesParaMisAsignaciones(),
             'estadosNoElegibles' => Inscripcion::getEstadosNoElegibles(),
             'umbralesdias' => [
                 'asignado_urgente' => config('inscripciones.umbrales.asignado_urgente', 3),
                 'contactado_urgente' => config('inscripciones.umbrales.contactado_urgente', 7),
                 'encurso_seguimiento' => config('inscripciones.umbrales.encurso_seguimiento', 30)
-            ]
+            ],
+            'filtrado' => $buscar,
         ]);
     }
 
