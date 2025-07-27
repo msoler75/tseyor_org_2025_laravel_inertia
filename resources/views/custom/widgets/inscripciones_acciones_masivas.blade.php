@@ -45,20 +45,7 @@
                     <i class="la la-info-circle"></i>
                     Selecciona inscripciones usando los checkboxes de la tabla y luego elige un tutor para asignarlas masivamente.
                 </small>
-                <div id="debug_info" class="mt-2" style="display: none;">
-                    <small class="text-info">
-                        <strong>Debug:</strong> <span id="debug_text"></span>
-                    </small>
-                </div>
-                <button type="button" class="btn btn-link btn-sm p-0 mt-1" onclick="toggleDebug()">
-                    <small>Mostrar información de debug</small>
-                </button>
-                <button type="button" class="btn btn-link btn-sm p-0 mt-1 ml-2" onclick="testEndpoint()">
-                    <small>Probar endpoint</small>
-                </button>
-                <button type="button" class="btn btn-link btn-sm p-0 mt-1 ml-2" onclick="verificarCambios()">
-                    <small>Verificar últimos cambios</small>
-                </button>
+
             </div>
         </div>
     </div>
@@ -338,47 +325,21 @@ function asignarMasiva() {
         .then(response => response.json())
         .then(data => {
             console.log('Respuesta del servidor:', data);
-            
+
             if (data.success) {
                 let successMessage = data.message;
-                
-                // Agregar información de debug si está disponible
-                if (data.debug && data.debug.procesadas > 0) {
-                    successMessage += `\n\n✅ Procesadas: ${data.debug.procesadas}`;
-                    if (data.debug.detalles && data.debug.detalles.length > 0) {
-                        successMessage += '\n📋 Detalles:';
-                        data.debug.detalles.forEach(detalle => {
-                            successMessage += `\n- ID ${detalle.id}: ${detalle.tutor_anterior ? `Cambió de tutor ${detalle.tutor_anterior} a ${detalle.nuevo_tutor}` : `Asignado a tutor ${detalle.nuevo_tutor}`}`;
-                        });
-                    }
-                }
-                
                 if (typeof Noty !== 'undefined') {
                     new Noty({
                         text: successMessage.replace(/\n/g, '<br>'),
                         type: 'success',
-                        timeout: 8000 // Más tiempo para leer los detalles
+                        timeout: 8000
                     }).show();
                 } else {
                     alert(successMessage);
                 }
-                
-                // Mostrar información de debug si está disponible
-                if (data.debug) {
-                    console.log('Debug info:', data.debug);
-                }
-                
-                // Forzar recarga completa en lugar de location.reload()
                 window.location.href = window.location.href.split('?')[0];
             } else {
                 let errorMessage = 'Error: ' + data.message;
-                
-                // Agregar información de debug si está disponible
-                if (data.debug) {
-                    errorMessage += '\n\nDebug: ' + JSON.stringify(data.debug, null, 2);
-                    console.error('Error details:', data.debug);
-                }
-                
                 if (typeof Noty !== 'undefined') {
                     new Noty({
                         text: errorMessage,
@@ -394,141 +355,5 @@ function asignarMasiva() {
             alert('Error al asignar inscripciones');
         });
     }
-}
-
-function toggleDebug() {
-    const debugDiv = document.getElementById('debug_info');
-    if (debugDiv.style.display === 'none') {
-        debugDiv.style.display = 'block';
-        updateDebugInfo();
-    } else {
-        debugDiv.style.display = 'none';
-    }
-}
-
-function updateDebugInfo() {
-    const debugText = document.getElementById('debug_text');
-    if (!debugText) return;
-
-    // Buscar todos los checkboxes
-    const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-    const tableCheckboxes = document.querySelectorAll('table input[type="checkbox"]');
-    const tbodyCheckboxes = document.querySelectorAll('table tbody input[type="checkbox"]');
-    const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-
-    // Información adicional sobre los checkboxes seleccionados
-    let detailInfo = '';
-    if (checkedCheckboxes.length > 0) {
-        detailInfo = '<br><strong>Detalles de checkboxes seleccionados:</strong><br>';
-        Array.from(checkedCheckboxes).forEach((cb, index) => {
-            if (!cb.id.includes('bulk_select_all') && !cb.id.includes('select_all') && cb.closest('tbody')) {
-                const row = cb.closest('tr');
-                const firstCell = row ? row.querySelector('td:first-child') : null;
-                const secondCell = row ? row.querySelector('td:nth-child(2)') : null;
-
-                detailInfo += `Checkbox ${index + 1}: `;
-                detailInfo += `value="${cb.value}" `;
-                if (cb.getAttribute('data-pk')) detailInfo += `data-pk="${cb.getAttribute('data-pk')}" `;
-                if (row && row.getAttribute('data-entry-id')) detailInfo += `row-data-entry-id="${row.getAttribute('data-entry-id')}" `;
-                if (row && row.getAttribute('data-id')) detailInfo += `row-data-id="${row.getAttribute('data-id')}" `;
-                if (firstCell) detailInfo += `primera-celda="${firstCell.textContent.trim()}" `;
-                if (secondCell) detailInfo += `segunda-celda="${secondCell.textContent.trim()}" `;
-                detailInfo += '<br>';
-            }
-        });
-    }
-
-    debugText.innerHTML = `
-        Total checkboxes: ${allCheckboxes.length} |
-        En tabla: ${tableCheckboxes.length} |
-        En tbody: ${tbodyCheckboxes.length} |
-        Seleccionados: ${checkedCheckboxes.length}
-        ${detailInfo}
-    `;
-}
-
-function testEndpoint() {
-    console.log('Probando endpoint de asignación masiva...');
-    
-    fetch('{{ route("admin.inscripcion.asignar-masiva") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            inscripcion_ids: [1, 2], // IDs de prueba
-            user_id: 1 // ID de prueba
-        })
-    })
-    .then(response => {
-        console.log('Status:', response.status);
-        return response.json();
-    })
-    .then(data => {
-        console.log('Respuesta del test:', data);
-        alert('Test completado. Ver consola para detalles.');
-    })
-    .catch(error => {
-        console.error('Error en test:', error);
-        alert('Error en test: ' + error.message);
-    });
-}
-
-function verificarCambios() {
-    console.log('Verificando últimos cambios...');
-    
-    // Hacer una petición AJAX para obtener las últimas inscripciones modificadas
-    fetch(window.location.href + '?verificar_cambios=1', {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.text())
-    .then(html => {
-        // Crear un elemento temporal para parsear el HTML
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        
-        // Buscar inscripciones en la tabla
-        const rows = tempDiv.querySelectorAll('table tbody tr');
-        let cambiosRecientes = [];
-        
-        rows.forEach((row, index) => {
-            if (index < 5) { // Solo los primeros 5 registros
-                const cells = row.querySelectorAll('td');
-                if (cells.length > 3) {
-                    const id = cells[1]?.textContent?.trim();
-                    const tutor = cells[cells.length - 3]?.textContent?.trim();
-                    const fecha = cells[2]?.textContent?.trim();
-                    
-                    if (id && tutor) {
-                        cambiosRecientes.push({
-                            id: id,
-                            tutor: tutor,
-                            fecha: fecha
-                        });
-                    }
-                }
-            }
-        });
-        
-        if (cambiosRecientes.length > 0) {
-            let mensaje = 'Últimos cambios verificados:\n\n';
-            cambiosRecientes.forEach(cambio => {
-                mensaje += `ID ${cambio.id}: Tutor "${cambio.tutor}" - ${cambio.fecha}\n`;
-            });
-            alert(mensaje);
-        } else {
-            alert('No se pudieron verificar los cambios. Revisa la consola para más detalles.');
-        }
-        
-        console.log('Cambios recientes encontrados:', cambiosRecientes);
-    })
-    .catch(error => {
-        console.error('Error al verificar cambios:', error);
-        alert('Error al verificar cambios: ' + error.message);
-    });
 }
 </script>

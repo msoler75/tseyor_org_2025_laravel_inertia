@@ -69,7 +69,7 @@ class InscripcionesReporte extends Notification implements ShouldQueue
             }
         }
 
-        return $mensaje->action('Ver Panel de Administración', route('admin.inscripciones.dashboard'))
+        return $mensaje->action('Ver Panel de Administración', '/admin/inscripcion')
             ->salutation('Sistema Tseyor');
     }
 
