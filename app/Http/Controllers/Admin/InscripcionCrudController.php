@@ -132,7 +132,9 @@ class InscripcionCrudController extends CrudController
 
         CRUD::column('ciudad')->type('text')->label('Ciudad');
 
-        CRUD::column('comentario')->type('text')->label('Comentario');
+        CRUD::column('comentario')->type('text')->label('Comentario del inscrito');
+
+        CRUD::column('notas')->type('text')->label('Notas');
 
         CRUD::column('fecha_asignacion')->type('closure')->label('Fecha Asignación')
             ->function(function ($entry) {
@@ -508,6 +510,7 @@ class InscripcionCrudController extends CrudController
     {
         $inscripcion = \App\Models\Inscripcion::findOrFail($id);
         $nuevoEstado = $request->input('estado');
+        $comentario = $request->input('comentario', '');
 
         if (!array_key_exists($nuevoEstado, config('inscripciones.estados'))) {
             return response()->json([
@@ -516,10 +519,7 @@ class InscripcionCrudController extends CrudController
             ]);
         }
 
-        $inscripcion->update([
-            'estado' => $nuevoEstado,
-            'notas' => ($inscripcion->notas ?? '') . "\n" . now()->format('d/m/Y H:i') . " - Estado cambiado a: " . config('inscripciones.estados')[$nuevoEstado]['etiqueta']
-        ]);
+        $inscripcion->actualizarEstado($nuevoEstado, $comentario);
 
         return response()->json([
             'success' => true,

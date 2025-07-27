@@ -242,12 +242,10 @@
               </div>
 
               <!-- Segunda fila: Observaciones (ancho completo) -->
-              <div v-if="inscripcion.notas" class="space-y-2">
-
-                <!-- Notas si existen -->
-                <div v-if="inscripcion.notas" class="text-sm text-gray-600 dark:text-gray-400">
+              <div class="space-y-2">
+                <div class="text-sm text-gray-600 dark:text-gray-400">
                   <div class="font-medium mb-1">Notas de seguimiento:</div>
-                  <div class="bg-base-100 dark:bg-gray-700 p-2 rounded border max-h-32 overflow-y-auto" v-html="inscripcion.notas.replace(/\n/g, '<br>')"></div>
+                  <div class="bg-base-100 dark:bg-gray-700 p-2 rounded border max-h-32 overflow-y-auto" v-html="(inscripcion.notas || 'Sin notas').replace(/\n/g, '<br>')"></div>
                 </div>
               </div>
 
@@ -259,7 +257,7 @@
                     class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors flex items-center gap-2"
                   >
                     <Icon icon="ic:round-edit-note" class="w-4 h-4" />
-                    Editar notas
+                    {{ inscripcion.notas ? 'Editar notas' : 'Añadir notas' }}
                   </button>
 
                   <!-- Botón rebotar solo para activas no rebotadas -->
@@ -270,6 +268,16 @@
                   >
                     <Icon icon="tabler:bounce-left" class="w-4 h-4" />
                     Rebotar
+                  </button>
+
+                  <!-- Botón añadir comentario solo para activas no rebotadas -->
+                  <button
+                    v-if="!inscripcion.esCerrada && inscripcion.estado !== 'rebotada'"
+                    @click="abrirModalComentario(inscripcion)"
+                    class="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors flex items-center gap-2"
+                  >
+                    <Icon icon="ic:round-add-comment" class="w-4 h-4" />
+                    Añadir comentario
                   </button>
 
                   <!-- Botón reabrir solo para cerradas -->
@@ -418,6 +426,27 @@
         </form>
       </div>
     </Modal>
+
+    <!-- Modal añadir comentario simple -->
+    <Modal :show="mostrarModalComentario" @close="cerrarModalComentario" max-width="md">
+      <div class="p-6">
+        <h3 class="text-lg font-medium mb-4">Añadir comentario a notas</h3>
+        <form @submit.prevent="guardarComentario">
+          <textarea
+            v-model="formComentario.comentario"
+            ref="textareaComentario"
+            class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-base-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            rows="4"
+            placeholder="Escribe tu comentario..."
+            required
+          ></textarea>
+          <div class="flex justify-end space-x-3 mt-4">
+            <button type="button" @click="cerrarModalComentario" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-500">Cancelar</button>
+            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700" :disabled="guardandoComentario || !formComentario.comentario.trim()">{{ guardandoComentario ? 'Guardando...' : 'Añadir comentario' }}</button>
+          </div>
+        </form>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -441,15 +470,28 @@ const props = defineProps({
   }
 })
 
+
+const textareaComentario = ref(null)
 const query = ref(props.filtrado || "")
 
-// Las inscripciones ya vienen filtradas del backend
+
+// Copia reactiva local de las inscripciones (evita mutar props directamente)
+const inscripcionesLocal = ref(props.listado.data.map(i => ({ ...i })))
+
+// Sincronizar la copia local si cambian las props (paginación, filtro, etc)
+watch(() => props.listado.data, (nuevas) => {
+  inscripcionesLocal.value = nuevas.map(i => ({ ...i }))
+})
+
+// Computed para procesar la copia local
 const inscripcionesFiltradas = computed(() => inscripcionesOrdenadas.value)
 
 const mostrarModalRebote = ref(false)
 const mostrarModalNotas = ref(false)
+const mostrarModalComentario = ref(false)
 const inscripcionSeleccionada = ref(null)
 const guardandoNotas = ref(false)
+const guardandoComentario = ref(false)
 const tarjetasExpandidas = ref(new Set())
 const inscripcionesRecienReasignadas = ref(new Set())
 const tarjetasConCambios = ref(new Set())
@@ -500,22 +542,14 @@ onMounted(() => {
   }
 })
 
-// Computed principal que añade campos calculados a cada inscripción
+// Computed principal que añade campos calculados a cada inscripción (sobre la copia local)
 const inscripcionesProcesadas = computed(() => {
   const estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta']
-
-  return props.listado.data.map(inscripcion => {
-    // Determinar si está cerrada
+  return inscripcionesLocal.value.map(inscripcion => {
     const esCerrada = estadosFinalizados.includes(inscripcion.estado)
-
-    // Determinar si es recién reasignada
     const esRecienReasignada = inscripcionesRecienReasignadas.value.has(inscripcion.id)
-
-    // Calcular días desde actualización
     const diasDesdeActualizacion = Math.floor((new Date() - new Date(inscripcion.updated_at)) / (1000 * 60 * 60 * 24))
-
-    // Determinar clase de borde según urgencia
-    let borderClass = 'border-blue-400' // Normal por defecto
+    let borderClass = 'border-blue-400'
     if (esRecienReasignada) {
       borderClass = 'border-green-500'
     } else if (!esCerrada) {
@@ -529,17 +563,13 @@ const inscripcionesProcesadas = computed(() => {
         borderClass = 'border-gray-400'
       }
     }
-
-    // Determinar si es urgente
     const diasAsignada = Math.floor((new Date() - new Date(inscripcion.fecha_asignacion)) / (1000 * 60 * 60 * 24))
     const diasUltimaNotificacion = inscripcion.ultima_notificacion
       ? Math.floor((new Date() - new Date(inscripcion.ultima_notificacion)) / (1000 * 60 * 60 * 24))
       : diasAsignada
     const esUrgente = diasAsignada > 10 || diasUltimaNotificacion > 5
-
     return {
       ...inscripcion,
-      // Campos calculados
       esCerrada,
       esRecienReasignada,
       diasDesdeActualizacion,
@@ -615,6 +645,10 @@ const formNotas = reactive({
   notas: ''
 })
 
+const formComentario = reactive({
+  comentario: ''
+})
+
 
 function abrirModalRebote(inscripcion) {
   inscripcionSeleccionada.value = inscripcion
@@ -631,6 +665,66 @@ function abrirModalNotas(inscripcion) {
   inscripcionSeleccionada.value = inscripcion
   formNotas.notas = inscripcion.notas || ''
   mostrarModalNotas.value = true
+}
+
+function abrirModalComentario(inscripcion) {
+  inscripcionSeleccionada.value = inscripcion
+  formComentario.comentario = ''
+  mostrarModalComentario.value = true
+  nextTick(() => {
+    if (textareaComentario.value) {
+      textareaComentario.value.focus()
+    }
+  })
+}
+
+function cerrarModalComentario() {
+  mostrarModalComentario.value = false
+  inscripcionSeleccionada.value = null
+}
+
+function guardarComentario() {
+  if (!inscripcionSeleccionada.value || !formComentario.comentario.trim()) return
+  guardandoComentario.value = true
+  const inscripcionId = inscripcionSeleccionada.value.id
+
+  fetch(route('inscripciones.agregar-comentario', inscripcionId), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': usePage().props.csrf_token || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({
+      comentario: formComentario.comentario.trim()
+    })
+  })
+    .then(async response => {
+      if (!response.ok) {
+        let msg = 'Ha ocurrido un error al guardar el comentario.'
+        if (response.status === 419) msg = 'La sesión ha expirado. Por favor, recarga la página.'
+        if (response.status === 403) msg = 'No tienes permisos para realizar esta acción.'
+        if (response.status === 422) msg = 'El comentario no es válido.'
+        alert(msg)
+        cerrarModalComentario()
+        guardandoComentario.value = false
+        return
+      }
+      // Si la respuesta es exitosa, procesar el JSON
+      const data = await response.json()
+      cerrarModalComentario()
+      // Actualizar las notas en la copia local si vienen en la respuesta
+      const inscripcion = inscripcionesLocal.value.find(i => i.id === inscripcionId)
+      if (inscripcion && (data?.props?.inscripcion || data?.inscripcion)) {
+        inscripcion.notas = data.props?.inscripcion?.notas || data.inscripcion?.notas
+      }
+      guardandoComentario.value = false
+    })
+    .catch((error) => {
+      alert('Error de red o inesperado al guardar el comentario.')
+      cerrarModalComentario()
+      guardandoComentario.value = false
+    })
 }
 
 function cerrarModalNotas() {
@@ -659,30 +753,31 @@ function guardarNotas() {
   if (!inscripcionSeleccionada.value) return
 
   guardandoNotas.value = true
+  const inscripcionId = inscripcionSeleccionada.value.id
 
-  router.put(route('inscripciones.actualizar-notas', inscripcionSeleccionada.value.id), {
+  router.put(route('inscripciones.actualizar-notas', inscripcionId), {
     notas: formNotas.notas
   }, {
     onSuccess: () => {
       cerrarModalNotas()
-      // Actualizar las notas en el objeto local para reflejar el cambio
-      const inscripcion = props.listado.data.find(i => i.id === inscripcionSeleccionada.value.id)
+      // Actualizar las notas en la copia local
+      const inscripcion = inscripcionesLocal.value.find(i => i.id === inscripcionId)
       if (inscripcion) {
         inscripcion.notas = formNotas.notas
       }
     },
     onFinish: () => {
       guardandoNotas.value = false
-    }
+    },
+    preserveScroll: true
   })
 }
 
 function rebotarInscripcion() {
   if (!inscripcionSeleccionada.value || formRebote.motivo.trim().length < 10) return
 
-  // Usar fetch para una petición AJAX directa
   fetch(route('inscripciones.rebotar', inscripcionSeleccionada.value.id), {
-    method: 'DELETE',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-TOKEN': usePage().props.csrf_token || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
@@ -693,34 +788,22 @@ function rebotarInscripcion() {
     })
   })
   .then(response => {
-    // Verificar si la respuesta es exitosa
     if (!response.ok) {
-      if (response.status === 419) {
-        // Token CSRF expirado
-        throw new Error('CSRF_TOKEN_EXPIRED');
-      } else if (response.status === 403) {
-        // Sin permisos
-        throw new Error('PERMISSION_DENIED');
-      } else if (response.status === 422) {
-        // Error de validación
-        throw new Error('VALIDATION_ERROR');
-      }
+      if (response.status === 419) throw new Error('CSRF_TOKEN_EXPIRED');
+      if (response.status === 403) throw new Error('PERMISSION_DENIED');
+      if (response.status === 422) throw new Error('VALIDATION_ERROR');
       throw new Error(`HTTP_ERROR_${response.status}`);
     }
     return response.json();
   })
   .then(data => {
     if (data.message) {
-      // Guardar el ID antes de cerrar el modal
       const inscripcionId = inscripcionSeleccionada.value?.id
       cerrarModalRebote()
-
-      // Actualizar el estado de la inscripción en el objeto local
       if (inscripcionId) {
-        const inscripcion = props.listado.data.find(i => i.id === inscripcionId)
+        const inscripcion = inscripcionesLocal.value.find(i => i.id === inscripcionId)
         if (inscripcion) {
           inscripcion.estado = 'rebotada'
-          // Agregar una nota sobre el rebote con el nombre del usuario
           const fecha = new Date().toLocaleDateString('es-ES')
           const usuario = usePage().props.auth?.user?.name || 'Usuario'
           const nuevaNota = `- ${fecha} - Rebotada por ${usuario}: ${formRebote.motivo.trim()}`
@@ -731,12 +814,8 @@ function rebotarInscripcion() {
   })
   .catch(error => {
     console.error('Error al rebotar inscripción:', error)
-
-    // Manejar diferentes tipos de errores
     if (error.message === 'CSRF_TOKEN_EXPIRED') {
       alert('La sesión ha expirado. Por favor, recarga la página e intenta de nuevo.')
-      // Opcional: recargar la página automáticamente
-      // window.location.reload()
     } else if (error.message === 'PERMISSION_DENIED') {
       alert('No tienes permisos para realizar esta acción.')
     } else if (error.message === 'VALIDATION_ERROR') {
@@ -749,25 +828,15 @@ function rebotarInscripcion() {
 
 function cambiarEstado(inscripcion, nuevoEstado) {
   if (inscripcion.estado === nuevoEstado) return
-
-  // Actualizar el estado inmediatamente para reflejar el cambio en la UI
   const estadoAnterior = inscripcion.estado
   inscripcion.estado = nuevoEstado
-
-  // Colapsar los detalles de la tarjeta cuando cambia de estado
   tarjetasExpandidas.value.delete(inscripcion.id)
-
-  // Destacar la tarjeta por el cambio de estado
   destacarTarjeta(inscripcion.id, 7000)
-
   router.post(route('inscripciones.actualizar-estado', inscripcion.id), {
     estado: nuevoEstado
   }, {
-    onSuccess: () => {
-      // El estado ya está actualizado, no necesitamos hacer nada más
-    },
+    onSuccess: () => {},
     onError: (errors) => {
-      // Si hay error, revertir el estado y quitar el destacado
       inscripcion.estado = estadoAnterior
       tarjetasConCambios.value.delete(inscripcion.id)
       console.error('Error al cambiar estado:', errors)
@@ -778,25 +847,14 @@ function cambiarEstado(inscripcion, nuevoEstado) {
 }
 
 function reasignarInscripcion(inscripcion) {
-  /*if (!confirm(`¿Estás seguro de que quieres reasignar la inscripción de ${inscripcion.nombre}? Esto la devolverá al grupo de inscripciones asignadas.`)) {
-    return
-  }*/
-
-  // Cambiar el estado a 'asignada' para que vuelva al grupo de asignaciones
   const estadoAnterior = inscripcion.estado
   inscripcion.estado = 'asignada'
-
-  // Colapsar los detalles de la tarjeta cuando se reabre
   tarjetasExpandidas.value.delete(inscripcion.id)
-
   router.post(route('inscripciones.actualizar-estado', inscripcion.id), {
     estado: 'asignada'
   }, {
     onSuccess: () => {
-      // Marcar la inscripción como recién reasignada para destacarla visualmente
       inscripcionesRecienReasignadas.value.add(inscripcion.id)
-
-      // Hacer scroll a la tarjeta reasignada después de un pequeño delay para que se renderice
       nextTick(() => {
         setTimeout(() => {
           const tarjetaElement = document.querySelector(`[data-inscripcion-id="${inscripcion.id}"]`)
@@ -809,17 +867,11 @@ function reasignarInscripcion(inscripcion) {
           }
         }, 100)
       })
-
-      // Quitar el efecto después de 10 segundos
       setTimeout(() => {
         inscripcionesRecienReasignadas.value.delete(inscripcion.id)
       }, 10000)
-
-      // La inscripción se reasignó correctamente
-      // Nota: La inscripción desaparecerá de esta vista ya que no estará asignada a este tutor
     },
     onError: (errors) => {
-      // Si hay error, revertir el estado
       inscripcion.estado = estadoAnterior
       console.error('Error al reasignar inscripción:', errors)
       alert('Ha ocurrido un error al reasignar la inscripción. Por favor, intenta de nuevo.')

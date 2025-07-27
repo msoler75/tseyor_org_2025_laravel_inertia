@@ -13,6 +13,7 @@ use App\Mail\InscripcionConfirmacionEmail;
 use App\Notifications\InscripcionAsignada;
 use Inertia\Inertia;
 
+
 class InscripcionesController extends Controller
 {
 
@@ -276,87 +277,30 @@ class InscripcionesController extends Controller
         return redirect()->back()->with('success', "{$asignadas} inscripciones asignadas a {$usuario->name}");
     }
 
-    /**
-     * Exportar inscripciones a Excel/CSV
+     /**
+     * Añade un comentario rápido a la inscripción usando Inscripcion::comentar
      */
-    /*public function exportar(Request $request)
+    public function agregarComentario(Request $request, Inscripcion $inscripcion)
     {
-        $this->authorize('admin');
-
-        $filtros = $request->only(['estado', 'tutor', 'fecha_desde']);
-
-        $query = Inscripcion::with(['usuarioAsignado:id,name']);
-
-        if ($filtros['estado']) {
-            $query->where('estado', $filtros['estado']);
+        // Solo el usuario asignado o admin puede comentar
+        if (!Auth::user()->hasRole('admin') && $inscripcion->user_id !== Auth::id()) {
+            abort(403);
         }
 
-        if ($filtros['tutor']) {
-            if ($filtros['tutor'] === 'sin_asignar') {
-                $query->whereNull('user_id');
-            } else {
-                $query->where('user_id', $filtros['tutor']);
-            }
-        }
+        $request->validate([
+            'comentario' => 'required|string|max:1000',
+        ]);
 
-        if ($filtros['fecha_desde']) {
-            $query->where('created_at', '>=', $filtros['fecha_desde']);
-        }
+        // Centraliza la lógica de nota en el modelo
+        $inscripcion->comentar($request->comentario);
+        $inscripcion->save();
 
-        $inscripciones = $query->orderBy('created_at', 'desc')->get();
-
-        $filename = 'inscripciones_' . date('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-        ];
-
-        $callback = function() use ($inscripciones) {
-            $file = fopen('php://output', 'w');
-
-            // Escribir cabeceras
-            fputcsv($file, [
-                'ID',
-                'Nombre',
-                'Email',
-                'Teléfono',
-                'Ciudad',
-                'Región',
-                'País',
-                'Estado',
-                'Asignado a',
-                'Fecha Inscripción',
-                'Fecha Asignación',
-                'Última Notificación',
-                'Comentario'
-            ]);
-
-            // Escribir datos
-            foreach ($inscripciones as $inscripcion) {
-                fputcsv($file, [
-                    $inscripcion->id,
-                    $inscripcion->nombre,
-                    $inscripcion->email,
-                    $inscripcion->telefono,
-                    $inscripcion->ciudad,
-                    $inscripcion->region,
-                    $inscripcion->pais,
-                    $inscripcion->estado,
-                    $inscripcion->usuarioAsignado?->name ?? $inscripcion->asignado ?? 'Sin asignar',
-                    $inscripcion->created_at?->format('d/m/Y H:i'),
-                    $inscripcion->fecha_asignacion?->format('d/m/Y H:i'),
-                    $inscripcion->ultima_notificacion?->format('d/m/Y H:i'),
-                    $inscripcion->comentario
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        // Opcional: devolver la inscripción actualizada o solo mensaje
+        return response()->json([
+            'message' => 'Comentario añadido correctamente',
+            'inscripcion' => $inscripcion->fresh(),
+        ]);
     }
-    */
 
     /**
      * Actualiza las notas de una inscripción
@@ -389,7 +333,7 @@ class InscripcionesController extends Controller
         if (isset($estados['asignada'])) {
             $estados['asignada'] = [
                 'etiqueta' => 'Asignada a ti',
-                'descripcion' => 'Asignada a ti'
+                'descripcion' => 'Asignada a ti. Pendiente de contactar',
             ];
         }
 

@@ -78,8 +78,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('inscripciones')->group(function () {
         Route::get('mis-asignaciones', [InscripcionesController::class, 'misAsignaciones'])->name('inscripciones.mis-asignaciones');
         Route::post('{inscripcion}/actualizar-estado', [InscripcionesController::class, 'actualizarEstado'])->name('inscripciones.actualizar-estado');
+        Route::post('{inscripcion}/rebotar', [InscripcionesController::class, 'rebotar'])->name('inscripciones.rebotar');
+        Route::post('{inscripcion}/agregar-comentario', [InscripcionesController::class, 'agregarComentario'])->name('inscripciones.agregar-comentario');
         Route::put('{inscripcion}/actualizar-notas', [InscripcionesController::class, 'actualizarNotas'])->name('inscripciones.actualizar-notas');
-        Route::delete('{inscripcion}/rebotar', [InscripcionesController::class, 'rebotar'])->name('inscripciones.rebotar');
 
         // Rutas para administradores
         Route::middleware('can:admin')->group(function () {

@@ -11,6 +11,13 @@ class InscripcionesSeguimiento extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    protected $pendientesDeContacto;
+
+    public function __construct(bool $pendientesDeContacto = false)
+    {
+        $this->pendientesDeContacto = $pendientesDeContacto;
+    }
+
     public function via(object $notifiable): array
     {
         return ['mail'];
@@ -20,12 +27,21 @@ class InscripcionesSeguimiento extends Notification implements ShouldQueue
     {
         $urlGestion = route('inscripciones.mis-asignaciones');
 
+        $mensaje = $this->pendientesDeContacto ?
+            'Por favor, contacta con las personas inscritas lo antes posible y actualiza el estado de cada inscripción.' :
+            'Tienes inscripciones asignadas que requieren tu revisión o actualización de estado.';
+
+        $subject = $this->pendientesDeContacto ?
+            'Atención: tienes inscripciones a Curso de Tseyor pendientes de contactar' :
+            'Recordatorio: tienes inscripciones pendientes de revisar';
+
         return (new MailMessage)
-            ->subject('Recordatorio: tienes inscripciones pendientes de revisar')
+            ->subject($subject)
             ->greeting('¡Hola ' . $notifiable->name . '!')
             ->line('Tienes inscripciones asignadas que requieren tu revisión o actualización de estado.')
             ->action('Gestionar Inscripciones', $urlGestion)
-            ->line('Por favor, revisa y actualiza el estado de las inscripciones para mantener el seguimiento correcto.')
+            ->line($mensaje)
+            ->line('Si no puedes atender alguna inscripción, puedes rebotarla desde el enlace anterior.')
             ->salutation('Web Tseyor');
     }
 

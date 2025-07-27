@@ -65,7 +65,7 @@ return [
     */
     'notificaciones' => [
         // Días desde la asignación para la primera notificación de seguimiento
-        'primer_seguimiento' => 3,
+        'primer_seguimiento' => 7,
 
         // Días entre notificaciones de seguimiento posteriores
         // Cambia este valor a 14 para avisos cada dos semanas

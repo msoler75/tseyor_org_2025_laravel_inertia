@@ -54,94 +54,14 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Script de acciones masivas cargado');
-
-    // Esperar a que la tabla se cargue completamente
-    setTimeout(function() {
-        console.log('Configurando listeners de checkboxes...');
-        setupCheckboxListeners();
-    }, 1000);
-
-    // Observer para cambios dinámicos en la tabla
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length > 0) {
-                setTimeout(setupCheckboxListeners, 100);
-            }
-        });
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.matches('table input[type="checkbox"]')) {
+            setTimeout(updateMassiveActionButton, 100); // timeout por si el checkbox fue el de de/seleccionar todos
+        }
     });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
+    updateMassiveActionButton();
 });
 
-function setupCheckboxListeners() {
-    // Buscar todos los tipos de checkboxes posibles en Backpack
-    const selectors = [
-        'table tbody input[type="checkbox"][name*="bulk_actions"]',
-        'table tbody input[type="checkbox"]',
-        'input[type="checkbox"][data-pk]',
-        '.crud-table input[type="checkbox"]',
-        'td input[type="checkbox"]',
-        '[data-toggle="table"] input[type="checkbox"]'
-    ];
-
-    let checkboxes = [];
-
-    // Probar cada selector hasta encontrar checkboxes
-    for (let selector of selectors) {
-        const found = document.querySelectorAll(selector);
-        if (found.length > 0) {
-            checkboxes = Array.from(found).filter(cb =>
-                !cb.id.includes('bulk_select_all') &&
-                !cb.id.includes('select_all') &&
-                !cb.id.includes('check-all') &&
-                cb.closest('tbody') // Solo checkboxes del cuerpo de la tabla
-            );
-            if (checkboxes.length > 0) {
-                console.log(`Checkboxes encontrados usando selector: ${selector}`);
-                break;
-            }
-        }
-    }
-
-    console.log('Checkboxes encontrados:', checkboxes.length);
-
-    // Remover listeners anteriores y agregar nuevos
-    checkboxes.forEach(checkbox => {
-        checkbox.removeEventListener('change', updateMassiveActionButton);
-        checkbox.addEventListener('change', updateMassiveActionButton);
-    });
-
-    // También observar el checkbox de "seleccionar todo" si existe
-    const selectAllSelectors = [
-        '#bulk_select_all',
-        '#select_all',
-        '[data-toggle="bulk-select-all"]',
-        'th input[type="checkbox"]',
-        '.check-all'
-    ];
-
-    let selectAllCheckbox = null;
-    for (let selector of selectAllSelectors) {
-        selectAllCheckbox = document.querySelector(selector);
-        if (selectAllCheckbox) {
-            console.log(`Checkbox "seleccionar todo" encontrado: ${selector}`);
-            break;
-        }
-    }
-
-    if (selectAllCheckbox) {
-        selectAllCheckbox.removeEventListener('change', updateMassiveActionButton);
-        selectAllCheckbox.addEventListener('change', function() {
-            setTimeout(updateMassiveActionButton, 100); // Pequeño delay para que se actualicen los otros checkboxes
-        });
-    }
-
-    // Actualizar estado inicial del botón
-    updateMassiveActionButton();
-}
 
 function updateMassiveActionButton() {
     // Actualizar debug info si está visible
@@ -153,6 +73,7 @@ function updateMassiveActionButton() {
     let selectedCheckboxes = [];
 
     const selectors = [
+        'input.crud_bulk_actions_line_checkbox:checked', // Backpack bulk checkboxes seleccionados
         'table tbody input[type="checkbox"]:checked[name*="bulk_actions"]',
         'table tbody input[type="checkbox"]:checked',
         'input[type="checkbox"]:checked[data-pk]',
@@ -230,74 +151,51 @@ function asignarMasiva() {
 
     // Obtener IDs de las inscripciones seleccionadas usando múltiples métodos
     const inscripcionIds = Array.from(selectedCheckboxes).map(cb => {
-        console.log('Procesando checkbox:', cb);
-
-        // Método 1: atributo data-pk
-        if (cb.getAttribute('data-pk')) {
-            console.log('ID encontrado via data-pk:', cb.getAttribute('data-pk'));
-            return cb.getAttribute('data-pk');
-        }
-
-        // Método 2: value del checkbox (solo si no es un valor genérico)
-        if (cb.value && cb.value !== 'on' && cb.value !== '1' && cb.value !== '0') {
-            console.log('ID encontrado via value:', cb.value);
+        // 1. Si el value es un número válido, usarlo directamente
+        if (cb.value && cb.value.match(/^\d+$/)) {
             return cb.value;
         }
-
-        // Método 3: buscar en la fila (tr) atributos data-*
+        // 2. data-primary-key-value (Backpack actual)
+        if (cb.getAttribute('data-primary-key-value')) {
+            return cb.getAttribute('data-primary-key-value');
+        }
+        // 3. data-pk
+        if (cb.getAttribute('data-pk')) {
+            return cb.getAttribute('data-pk');
+        }
+        // 4. Buscar en la fila (tr) atributos data-*
         const row = cb.closest('tr');
         if (row) {
-            console.log('Fila encontrada:', row);
-
-            // Buscar data-entry-id
             if (row.getAttribute('data-entry-id')) {
-                console.log('ID encontrado via data-entry-id:', row.getAttribute('data-entry-id'));
                 return row.getAttribute('data-entry-id');
             }
-
-            // Buscar data-id
             if (row.getAttribute('data-id')) {
-                console.log('ID encontrado via data-id:', row.getAttribute('data-id'));
                 return row.getAttribute('data-id');
             }
-
-            // Buscar data-key (usado por algunos CRUDs)
             if (row.getAttribute('data-key')) {
-                console.log('ID encontrado via data-key:', row.getAttribute('data-key'));
                 return row.getAttribute('data-key');
             }
-
-            // Método 4: buscar el ID en diferentes celdas de la fila
+            // Buscar el ID en diferentes celdas de la fila
             const cells = row.querySelectorAll('td');
-            console.log('Celdas en la fila:', cells.length);
-
             for (let i = 0; i < Math.min(3, cells.length); i++) {
                 const cell = cells[i];
                 const text = cell.textContent.trim();
-                console.log(`Texto de celda ${i}:`, text);
-
-                // Buscar número que parezca un ID
                 const idMatch = text.match(/^\d+$/);
                 if (idMatch && parseInt(idMatch[0]) > 0) {
-                    console.log('ID encontrado en celda:', idMatch[0]);
                     return idMatch[0];
                 }
             }
-
-            // Método 5: buscar en elementos con clase o atributos específicos
+            // Buscar en elementos con clase o atributos específicos
             const idElement = row.querySelector('[data-primary-key], [data-id], .entry-id');
             if (idElement) {
                 const id = idElement.getAttribute('data-primary-key') ||
                            idElement.getAttribute('data-id') ||
                            idElement.textContent.trim();
                 if (id && id.match(/^\d+$/)) {
-                    console.log('ID encontrado en elemento específico:', id);
                     return id;
                 }
             }
         }
-
-        console.log('No se pudo obtener ID para este checkbox');
         return null;
     }).filter(id => id && id !== null && id !== 'undefined');
 

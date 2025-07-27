@@ -1,9 +1,12 @@
 # TASKS.md
 
 ## Tareas actuales
+### 27/07/2025
+- [x] Refactorizar MisAsignaciones.vue para evitar mutación directa de props y usar copia reactiva local de inscripciones.
 - [x] Mejorar y detallar el manual de despliegue en _DEPLOYMENT.md (15/05/2025)
 - [x] Migrar putty.cmd a putty.ps1 usando variables en .env para mayor seguridad (15/05/2025)
 - [ ] Terminar la portada del sitio web (17/05/2025)
+- [x] Permitir mostrar y editar notas en todas las tarjetas de inscripciones, incluso cerradas/finalizadas (27/07/2025)
 - [x] Crear script bash boletin_generar.sh para lanzar boletín vía CURL con token y periodicidad (19/05/2025)
 - [x] Implementar estructura inicial de servidor MCP y tools para comunicados, entradas y noticias (11/06/2025)
 - [x] Refactorizar ComunicadosTool y NoticiasTool siguiendo los principios de EntradasTool (11/06/2025)
@@ -21,6 +24,8 @@
 - [x] Crear documentación completa del sistema de colas de email con prioridades y rate limiting (03/07/2025)
 
 ## Discovered During Work
+- Revisar si otros componentes de gestión (por ejemplo, asignaciones, tareas, incidencias) tienen lógica de notas/comentarios y asegurar que siempre sean visibles/editables según el nuevo estándar (27/07/2025)
+- Se recomienda revisar otros componentes similares para asegurar que no mutan props directamente. (27/07/2025)
 - [x] Completar to-do en PaginasController::portada() para verificar eventos próximos (29/06/2025)
 - [x] Implementar detección del botón "atrás" del móvil para cerrar modal de GlobalSearch (29/06/2025)
 - [x] Mejorar GlobalSearch para preservar posición de scroll cuando se cierra modal con botón "atrás" o teclas (29/06/2025)
