@@ -242,10 +242,12 @@
               </div>
 
               <!-- Segunda fila: Observaciones (ancho completo) -->
-              <div class="space-y-2">
-                <div class="text-sm text-gray-600 dark:text-gray-400">
+              <div v-if="inscripcion.notas" class="space-y-2">
+
+                <!-- Notas si existen -->
+                <div v-if="inscripcion.notas" class="text-sm text-gray-600 dark:text-gray-400">
                   <div class="font-medium mb-1">Notas de seguimiento:</div>
-                  <div class="bg-base-100 dark:bg-gray-700 p-2 rounded border max-h-32 overflow-y-auto" v-html="(inscripcion.notas || 'Sin notas').replace(/\n/g, '<br>')"></div>
+                  <div class="bg-base-100 dark:bg-gray-700 p-2 rounded border max-h-32 overflow-y-auto" v-html="inscripcion.notas.replace(/\n/g, '<br>')"></div>
                 </div>
               </div>
 
@@ -257,7 +259,7 @@
                     class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors flex items-center gap-2"
                   >
                     <Icon icon="ic:round-edit-note" class="w-4 h-4" />
-                    {{ inscripcion.notas ? 'Editar notas' : 'Añadir notas' }}
+                    Editar notas
                   </button>
 
                   <!-- Botón rebotar solo para activas no rebotadas -->
@@ -768,8 +770,7 @@ function guardarNotas() {
     },
     onFinish: () => {
       guardandoNotas.value = false
-    },
-    preserveScroll: true
+    }
   })
 }
 
