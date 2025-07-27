@@ -110,7 +110,7 @@ class Inscripcion extends Model
     /**
      * Agrega una entrada a las notas
      */
-    public function agregarNota(string $mensaje): void
+    public function comentar(string $mensaje): void
     {
         $fecha = now()->format('d/m/Y H:i');
         $usuario = auth()->user()?->name ?? 'Sistema';
@@ -135,7 +135,7 @@ class Inscripcion extends Model
 
         $this->save();
 
-        $this->agregarNota("Asignada a {$usuario->name}. {$motivo}");
+        $this->comentar("Asignada a {$usuario->name}. {$motivo}");
 
         // Notificar al tutor asignado con la notificación adecuada
         try {
@@ -162,7 +162,7 @@ class Inscripcion extends Model
         $this->save();
 
         $nombreUsuario = $usuarioAnterior?->name ?? 'Usuario desconocido';
-        $this->agregarNota("Rebotada por {$nombreUsuario}. Motivo: {$motivo}");
+        $this->comentar("Rebotada por {$nombreUsuario}. Motivo: {$motivo}");
     }
 
     /**
@@ -175,12 +175,12 @@ class Inscripcion extends Model
 
         $this->save();
 
-        $mensaje = "Estado cambiado de '{$estadoAnterior}' a '{$nuevoEstado}'";
+        $mensaje = "Cambiado de '{$estadoAnterior}' a '{$nuevoEstado}'";
         if ($comentario) {
             $mensaje .= ": {$comentario}";
         }
 
-        $this->agregarNota($mensaje);
+        $this->comentar($mensaje);
     }
 
     public function getEstadoEtiquetaAttribute(): string

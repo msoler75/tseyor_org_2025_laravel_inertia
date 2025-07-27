@@ -68,13 +68,31 @@ class GestionarInscripciones extends Command
             }
         }
 
+        $config = config('inscripciones.notificaciones');
+
         foreach ($agrupadasPorUsuario as $grupo) {
             $usuario = $grupo['usuario'];
-            $inscripcionesUsuario = $grupo['inscripciones'];
-            if (count($inscripcionesUsuario) > 0) {
-                $this->line("Enviando recordatorio de seguimiento a: {$usuario->name} (" . count($inscripcionesUsuario) . " inscripciones)");
-                $usuario->notify(new InscripcionesSeguimiento());
-                foreach ($inscripcionesUsuario as $inscripcion) {
+            // primero filtramos las inscripciones para evitar enviar notificaciones repetitivas, consultando el campo ultima_notificacion de la inscripcion
+            $inscripcionesNotificables = array_filter($grupo['inscripciones'], function ($inscripcion) use ($config) {
+                // tiene que haber pasado un número de días desde la última notificación
+                if(!$inscripcion->ultima_notificacion) return true;
+                $diasDesdeUltimaNotificacion = now()->diffInDays($inscripcion->ultima_notificacion);
+                return $diasDesdeUltimaNotificacion >= $config[$inscripcion->estado==='asignada'?'primer_seguimiento':'intervalo_seguimiento'];
+            });
+
+            // si hay inscripciones pendientes y no se ha notificado recientemente
+            if (count($inscripcionesNotificables) > 0) {
+                // verificamos si alguna de las inscripciones es recién asignada
+                $pendientesDeContacto = false;
+                foreach ($inscripcionesNotificables as $inscripcion) {
+                    if ($inscripcion->estado === 'asignada') {
+                        $pendientesDeContacto = true;
+                        break;
+                    }
+                }
+                $this->line("Enviando recordatorio de seguimiento a: {$usuario->name} (" . count($inscripcionesNotificables) . " inscripciones)");
+                $usuario->notify(new InscripcionesSeguimiento($pendientesDeContacto));
+                foreach ($inscripcionesNotificables as $inscripcion) {
                     $inscripcion->ultima_notificacion = now();
                     $inscripcion->save();
                     $inscripcion->agregarNota("Notificación de seguimiento enviada automáticamente");
