@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Notifications\InscripcionesAsignadas;
 
 /**
@@ -75,6 +76,14 @@ class InscripcionCrudController extends CrudController
 
         // Aplicar filtros básicos desde parámetros GET
         $this->aplicarFiltrosBasicos();
+        // Log SQL generado por la consulta principal de la lista
+        \DB::listen(function ($query) {
+            \Log::info('[SQL Backpack Inscripciones]', [
+                'sql' => $query->sql,
+                'bindings' => $query->bindings,
+                'time' => $query->time
+            ]);
+        });
 
         // Columnas básicas (sin filtros PRO)
         CRUD::column('id')->type('number')->label('ID')->orderable(true);
@@ -134,7 +143,7 @@ class InscripcionCrudController extends CrudController
 
         CRUD::column('comentario')->type('text')->label('Comentario del inscrito');
 
-        CRUD::column('notas')->type('text')->label('Notas');
+        CRUD::column('notas')->type('textarea')->label('Notas');
 
         CRUD::column('fecha_asignacion')->type('closure')->label('Fecha Asignación')
             ->function(function ($entry) {
@@ -534,17 +543,21 @@ class InscripcionCrudController extends CrudController
     {
         $request = request();
 
-        // Filtro por estado
+        // Filtro por estado (asegurar coincidencia exacta y sin espacios extra)
         if ($request->filled('estado')) {
             $estado = $request->input('estado');
-            $this->crud->addClause('where', 'estado', $estado);
-            // Debugging: descomentar la siguiente línea si necesitas verificar el filtro
-            // \Log::info('Filtrando por estado: ' . $estado);
+            if ($estado !== '') {
+                $this->crud->addClause('where', 'estado', '=', $estado);
+                \Log::info('Filtrando por estado: [' . $estado. ']');
+            }
         }
 
-        // Filtro por tutor
+        // Filtro por tutor: solo si es un valor numérico válido
         if ($request->filled('tutor')) {
-            $this->crud->addClause('where', 'user_id', $request->input('tutor'));
+            $tutor = $request->input('tutor');
+            if (is_numeric($tutor) && intval($tutor) > 0) {
+                $this->crud->addClause('where', 'user_id', intval($tutor));
+            }
         }
 
         // Búsqueda por nombre o email
