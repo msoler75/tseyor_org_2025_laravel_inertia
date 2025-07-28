@@ -44,7 +44,7 @@
                            name="buscar"
                            id="buscar"
                            class="form-control"
-                           placeholder="Nombre o email..."
+                           placeholder="Nombre, email, ciudad..."
                            value="{{ request('buscar') }}"
                            autocomplete="off"
                            onkeydown="if(event.key==='Enter'){reiniciarPaginacionYSubmit(this.form); return false;}" >
