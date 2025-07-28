@@ -560,12 +560,17 @@ class InscripcionCrudController extends CrudController
             }
         }
 
-        // Búsqueda por nombre o email
+        // Búsqueda
         if ($request->filled('buscar')) {
             $buscar = $request->input('buscar');
             $this->crud->addClause('where', function ($query) use ($buscar) {
                 $query->where('nombre', 'like', "%{$buscar}%")
-                      ->orWhere('email', 'like', "%{$buscar}%");
+                      ->orWhere('email', 'like', "%{$buscar}%")
+                      ->orWhere('telefono', 'like', "%{$buscar}%")
+                      ->orWhere('ciudad', 'like', "%{$buscar}%")
+                      ->orWhere('pais', 'like', "%{$buscar}%")
+                      ->orWhere('region', 'like', "%{$buscar}%")
+                      ->orWhere('notas', 'like', "%{$buscar}%");
             });
         }
     }
