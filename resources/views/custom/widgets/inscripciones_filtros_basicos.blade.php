@@ -9,7 +9,7 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="estado_filter">Estado:</label>
-                    <select name="estado" id="estado_filter" class="form-control" onchange="this.form.submit()" autocomplete="off">
+                    <select name="estado" id="estado_filter" class="form-control" onchange="reiniciarPaginacionYSubmit(this.form)" autocomplete="off">
                         <option value="">Todos los estados</option>
                         @foreach(config('inscripciones.estados') as $key => $valores)
                             <option value="{{ $key }}" {{ request('estado') == $key ? 'selected' : '' }}>
@@ -23,7 +23,7 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="tutor_filter">Tutor:</label>
-                    <select name="tutor" id="tutor_filter" class="form-control" onchange="this.form.submit()" autocomplete="off">
+                    <select name="tutor" id="tutor_filter" class="form-control" onchange="reiniciarPaginacionYSubmit(this.form)" autocomplete="off">
                         <option value="">Todos los tutores</option>
                         @php
                             $tutores = \App\Models\User::whereHas('inscripcionesAsignadas')->orderBy('name')->get();
@@ -46,7 +46,8 @@
                            class="form-control"
                            placeholder="Nombre o email..."
                            value="{{ request('buscar') }}"
-                           autocomplete="off">
+                           autocomplete="off"
+                           onkeydown="if(event.key==='Enter'){reiniciarPaginacionYSubmit(this.form); return false;}" >
                 </div>
             </div>
 
@@ -68,7 +69,6 @@
                 <small class="text-info">
                     <i class="la la-info-circle"></i>
                     Mostrando resultados filtrados.
-                    <button type="button" onclick="limpiarTodoYRedirigir()" class="btn btn-link p-0 text-primary" style="text-decoration: underline;">Ver todos</button>
                 </small>
             </div>
         @endif
@@ -81,18 +81,23 @@ function limpiarTodoYRedirigir() {
     document.getElementById('estado_filter').value = '';
     document.getElementById('tutor_filter').value = '';
     document.getElementById('buscar').value = '';
-    
-    // Limpiar solo claves específicas relacionadas con filtros (no todo el storage)
-    localStorage.removeItem('crud_filters');
-    localStorage.removeItem('inscripcion_filters');
-    localStorage.removeItem('backpack_filters');
-    localStorage.removeItem('admin_filters');
-    sessionStorage.removeItem('crud_filters');
-    sessionStorage.removeItem('inscripcion_filters');
-    sessionStorage.removeItem('backpack_filters');
-    sessionStorage.removeItem('admin_filters');
-    
-    // Usar replace para no mantener en el historial
-    window.location.replace('/admin/inscripcion');
+    // Eliminar la clave específica de DataTables/Backpack para la tabla de inscripciones
+    localStorage.removeItem('DataTables_crudTable_/admin/inscripcion');
+    localStorage.removeItem('admininscripcion_list_url');
+    // Redirigir a la URL base sin parámetros
+    let baseUrl = window.location.pathname;
+    window.location.replace(baseUrl);
+}
+
+function reiniciarPaginacionYSubmit(form) {
+    // Elimina el parámetro page si existe
+    let pageInput = form.querySelector('input[name="page"]');
+    if(pageInput) pageInput.value = 1;
+    // También eliminar de la URL si está presente
+    let url = new URL(window.location.href);
+    url.searchParams.set('page', 1);
+    // Cambia la acción temporalmente para forzar page=1
+    form.action = url.pathname + url.search.replace(/([&?])page=\d+/,'$1page=1');
+    form.submit();
 }
 </script>

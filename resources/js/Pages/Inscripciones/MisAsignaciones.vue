@@ -255,6 +255,7 @@
               <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
                 <div class="flex justify-center gap-3">
                   <button
+                    v-if="inscripcion.estado !== 'rebotada'"
                     @click="abrirModalNotas(inscripcion)"
                     class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors flex items-center gap-2"
                   >
@@ -801,7 +802,9 @@ function rebotarInscripcion() {
     if (data.message) {
       const inscripcionId = inscripcionSeleccionada.value?.id
       cerrarModalRebote()
+      // Cerrar detalles de la tarjeta si está abierta
       if (inscripcionId) {
+        tarjetasExpandidas.value.delete(inscripcionId)
         const inscripcion = inscripcionesLocal.value.find(i => i.id === inscripcionId)
         if (inscripcion) {
           inscripcion.estado = 'rebotada'
