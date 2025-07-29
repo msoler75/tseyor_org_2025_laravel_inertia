@@ -27,7 +27,7 @@ return new class extends Migration
 
         // Cambiar el campo estado de ENUM a VARCHAR(16)
         Schema::table('inscripciones', function (Blueprint $table) {
-            $table->string('estado', 16)->default('nuevo')->change();
+            $table->string('estado', 16)->default('nueva')->change();
         });
 
         // Migrar cualquier valor 'desinteresado' existente a 'nointeresado'
@@ -43,13 +43,14 @@ return new class extends Migration
     {
         // Revertir cambios de estado primero
         DB::statement("ALTER TABLE inscripciones MODIFY COLUMN estado ENUM(
-            'nuevo',
-            'asignado',
+            'nueva',
+            'asignada',
             'nocontesta',
             'contactado',
             'encurso',
-            'duplicado'
-        ) NOT NULL DEFAULT 'nuevo'");
+            'rebotada',
+            'duplicada'
+        ) NOT NULL DEFAULT 'a'");
 
         // Migrar estados nuevos a estados válidos en el ENUM original
         DB::table('inscripciones')

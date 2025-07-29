@@ -64,12 +64,11 @@ return [
     |
     */
     'notificaciones' => [
-        // Días desde la asignación para la primera notificación de seguimiento
-        'primer_seguimiento' => 7,
+        // Días entre notificaciones en estado 'asignada'
+        'dias_intervalo_asignada' => 7,
 
-        // Días entre notificaciones de seguimiento posteriores
-        // Cambia este valor a 14 para avisos cada dos semanas
-        'intervalo_seguimiento' => 14,
+        // Días entre notificaciones de seguimiento en general
+        'dias_intervalo' => 14,
 
         // Estados que requieren seguimiento automático
         'estados_seguimiento' => ['asignada', 'contactado', 'encurso'],
