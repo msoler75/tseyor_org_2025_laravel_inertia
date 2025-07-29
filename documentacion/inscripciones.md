@@ -334,8 +334,8 @@ return [
     'estados_no_elegibles' => ['rebotada'],
 
     'notificaciones' => [
-        'primer_seguimiento' => 3,
-        'intervalo_seguimiento' => 7,
+        'dias_intervalo_asignada' => 3,
+        'dias_intervalo' => 7,
         'estados_seguimiento' => ['asignado', 'contactado', 'encurso'],
         'estados_finales' => ['finalizado', 'duplicado', 'nointeresado', 'rebotada', 'abandonado']
     ],

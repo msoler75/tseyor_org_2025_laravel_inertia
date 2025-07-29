@@ -97,14 +97,13 @@ class Inscripcion extends Model
             return null;
         }
 
-        $intervalo = config('inscripciones.notificaciones.primer_seguimiento');
+        $intervalo = $this->estado === 'asignada'
+            ? config('inscripciones.notificaciones.dias_intervalo_asignada')
+            : config('inscripciones.notificaciones.dias_intervalo');
 
-        if ($this->ultima_notificacion) {
-            $intervalo = config('inscripciones.notificaciones.intervalo_seguimiento');
-            return $this->ultima_notificacion->addDays($intervalo);
-        }
-
-        return $this->fecha_asignacion ? $this->fecha_asignacion->addDays($intervalo) : null;
+        $base = $this->ultima_notificacion ?? $this->fecha_asignacion;
+        if (!$base) return null;
+        return Carbon::parse($base)->addDays($intervalo);
     }
 
     /**
