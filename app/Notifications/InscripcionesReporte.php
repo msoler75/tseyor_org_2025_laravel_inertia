@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class InscripcionesReporte extends Notification implements ShouldQueue
 {
@@ -37,6 +37,7 @@ class InscripcionesReporte extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
+        Log::channel('notificaciones')->info('[InscripcionesReporte] Enviando a: ' . $notifiable->email);
         $mensaje = (new MailMessage)
             ->subject('Reporte diario de inscripciones - ' . now()->format('d/m/Y'))
             ->greeting('¡Hola Administrador!')

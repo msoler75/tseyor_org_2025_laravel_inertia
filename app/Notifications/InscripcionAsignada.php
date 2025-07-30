@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\Inscripcion;
-
+use Illuminate\Support\Facades\Log;
 class InscripcionAsignada extends Notification implements ShouldQueue
 {
     use Queueable;
@@ -38,6 +38,8 @@ class InscripcionAsignada extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $urlGestion = route('inscripciones.mis-asignaciones');
+
+        Log::channel('notificaciones')->info('[InscripcionAsignada] Enviando a: ' . ($notifiable->email ?? 'sin email') . ' | Nombre: ' . $notifiable->name . ' | Inscripción: ' . $this->inscripcion->nombre);
 
         return (new MailMessage)
             ->subject('Nueva inscripción asignada - ' . $this->inscripcion->nombre)

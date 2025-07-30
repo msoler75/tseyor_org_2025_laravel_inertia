@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Equipo;
 
@@ -45,6 +46,7 @@ class DenegadoEquipo extends Notification implements ShouldQueue
         $subject = 'Tu solicitud a "' . $this->equipo->nombre . '" ha sido denegada';
 
         $linea1 = $subject;
+        Log::channel('notificaciones')->info('[DenegadoEquipo] Enviando a: ' . ($this->usuario->email ?? 'sin email') . ' | Nombre: ' . $this->usuario->name . ' | Equipo: ' . $this->equipo->nombre . ' | Asunto: ' . $subject);
 
         return (new MailMessage)
             ->subject($subject)

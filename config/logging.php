@@ -97,6 +97,12 @@ return [
             'level' => 'info',
         ],
 
+        'notificaciones' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/notificaciones.log'),
+            'level' => 'info',
+        ],
+
         'smtp' => [
             'driver' => 'daily',
             'path' => storage_path('logs/smtp.log'),

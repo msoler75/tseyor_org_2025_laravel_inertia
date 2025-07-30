@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use Illuminate\Notifications\Notification;
 
@@ -35,6 +36,7 @@ class ValidacionCorreo extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
+        Log::channel('notificaciones')->info('[ValidacionCorreo] Enviando a: ' . ($this->user->email ?? 'sin email') . ' | Nombre: ' . $this->user->name);
         return (new MailMessage)
                     ->subject('Validación de correo')
                     ->greeting('¡Hola '.$this->user->name.'!')

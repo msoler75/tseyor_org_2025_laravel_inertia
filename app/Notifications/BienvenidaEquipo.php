@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Equipo;
 
@@ -50,7 +51,9 @@ class BienvenidaEquipo extends Notification implements ShouldQueue
         $linea1 = $subject;
 
         if($this->equipo->oculto)
-        $linea1 .= " Este es un equipo privado, así que recuerda iniciar sesión para poder ir a la página del equipo.";
+            $linea1 .= " Este es un equipo privado, así que recuerda iniciar sesión para poder ir a la página del equipo.";
+
+        Log::channel('notificaciones')->info('[BienvenidaEquipo] Enviando a: ' . ($this->usuario->email ?? 'sin email') . ' | Nombre: ' . $this->usuario->name . ' | Equipo: ' . $this->equipo->nombre . ' | Asunto: ' . $subject);
 
         return (new MailMessage)
             ->subject($subject)

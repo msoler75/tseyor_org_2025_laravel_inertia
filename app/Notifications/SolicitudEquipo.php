@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use App\Models\Equipo;
 use App\Models\Solicitud;
 
@@ -48,7 +49,7 @@ class SolicitudEquipo extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $url = url('/equipos/'.$this->equipo->slug . '?solicitudes');
-
+        Log::channel('notificaciones')->info('[SolicitudEquipo(Ingreso)] Enviando a: ' . ($notifiable->email ?? 'sin email') . ' | Nombre: ' . $notifiable->name . ' | Equipo: ' . $this->equipo->nombre);
         return (new MailMessage)
                     ->subject('Solicitud de ingreso a '.$this->equipo->nombre)
                     ->line('Hay una nueva solicitud para ingresar al equipo ' . $this->equipo->nombre)

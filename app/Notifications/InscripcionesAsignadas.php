@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class InscripcionesAsignadas extends Notification implements ShouldQueue
 {
@@ -35,6 +36,7 @@ class InscripcionesAsignadas extends Notification implements ShouldQueue
     {
         $urlGestion = route('inscripciones.mis-asignaciones');
         $count = count($this->inscripciones);
+        Log::channel('notificaciones')->info('[InscripcionesAsignadas] Enviando a: ' . ($notifiable->email ?? 'sin email') . ' | Nombre: ' . $notifiable->name . ' Total: ' . $count);
 
         $mail = (new MailMessage)
             ->subject('Nuevas inscripciones asignadas (' . $count . ')')
