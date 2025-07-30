@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class CambioNombreUsuario extends Notification implements ShouldQueue
 {
@@ -36,6 +37,7 @@ class CambioNombreUsuario extends Notification implements ShouldQueue
         $user = $notifiable;
         $userUrl = url('/user/profile');
         $subject = 'Se ha cambiado tu nombre de usuario';
+        Log::channel('notificaciones')->info('[CambioNombreUsuario] Enviando a: ' . $user->email . ' | Nombre: ' . $user->name . ' | Asunto: ' . $subject);
 
         return (new MailMessage)
             ->subject($subject)

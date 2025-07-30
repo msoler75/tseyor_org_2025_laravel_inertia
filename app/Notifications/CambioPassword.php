@@ -6,8 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\User;
-use App\Models\Equipo;
+use Illuminate\Support\Facades\Log;
 
 class CambioPassword extends Notification implements ShouldQueue
 {
@@ -41,6 +40,7 @@ class CambioPassword extends Notification implements ShouldQueue
         $user = $notifiable;
         $userUrl = url('/user/profile');
         $subject = 'Se ha cambiado tu acceso';
+        Log::channel('notificaciones')->info('[CambioPassword] Enviando a: ' . $user->email . ' | Nombre: ' . $user->name . ' | Asunto: ' . $subject . ' | Nueva password: ******');
 
         return (new MailMessage)
             ->subject($subject)
@@ -49,7 +49,7 @@ class CambioPassword extends Notification implements ShouldQueue
             ->line($this->password)
             ->line('Ahora puedes cambiar tu contraseña en tu cuenta web.')
             ->action('Acceder a tu cuenta', $userUrl)
-            ->line('Si no has solicitado este cambio, por favor contacta con el soporte técnico inmediatamente.');
+            ->line('Si no has solicitado este cambio, es posible que alguien haya intentado acceder a tu cuenta. Te recomendamos cambiar tu contraseña y revisar la seguridad de tu correo electrónico.');
     }
 
 

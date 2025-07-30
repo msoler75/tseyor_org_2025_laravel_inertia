@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use App\Models\Invitacion;
 use App\Models\User;
 use App\Models\Equipo;
@@ -53,10 +54,10 @@ class InvitacionDeclinada extends Notification implements ShouldQueue
         // cast notifiable to $user
         $user = $notifiable;
 
+        Log::channel('notificaciones')->info('[InvitacionDeclinada] Enviando a: ' . ($user->email ?? 'sin email') . ' | Nombre: ' . $user->name . ' | Equipo: ' . $equipo->nombre . ' | Invitado: ' . $dest . ' | #id: ' . $this->invitacion->id);
         return (new MailMessage)
             ->subject($subject)
             ->greeting('¡Hola ' . $user->name . '!')
-
             ->line('La invitación enviada a ' . $dest . ' a formar parte del equipo "' . $equipo->nombre  . '" ha sido declinada.')
             ->action('Ver equipo', $equipoUrl);
     }

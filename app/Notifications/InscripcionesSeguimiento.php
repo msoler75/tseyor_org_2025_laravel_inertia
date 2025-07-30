@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class InscripcionesSeguimiento extends Notification implements ShouldQueue
 {
@@ -35,6 +36,7 @@ class InscripcionesSeguimiento extends Notification implements ShouldQueue
             'Atención: tienes inscripciones a Curso de Tseyor pendientes de contactar' :
             'Recordatorio: tienes inscripciones pendientes de revisar';
 
+        Log::channel('notificaciones')->info('[InscripcionesSeguimiento] Enviando a: ' . ($notifiable->email ?? 'sin email') . ' | Nombre: ' . $notifiable->name . ' | Asunto: ' . $subject);
         return (new MailMessage)
             ->subject($subject)
             ->greeting('¡Hola ' . $notifiable->name . '!')
