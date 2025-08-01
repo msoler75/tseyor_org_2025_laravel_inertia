@@ -36,6 +36,6 @@
 - [x] Integración completa de Backpack CRUD para sistema de inscripciones con widgets personalizados, filtros avanzados y acciones masivas (24/07/2025)
 - [x] Rediseño completo de interface "Mis Asignaciones" con modales para notas (TipTap), rebote validado y selector de estados directo (24/07/2025)
 - [x] Migración de estados de inscripciones y actualización de enum en base de datos, incluyendo corrección de estados null (24/07/2025)
-
+- [ ] Alguien puede 'trollear' solicitando masivamente nuevas contraseñas para los usuarios, generando molestia, más que otra cosa.
 
 

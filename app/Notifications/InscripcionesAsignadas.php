@@ -52,6 +52,7 @@ class InscripcionesAsignadas extends Notification implements ShouldQueue
 
         $mail->line('Por favor, contacta con las personas inscritas lo antes posible y actualiza el estado de cada inscripción.')
             ->line('Si no puedes atender alguna inscripción, puedes rebotarla desde el enlace anterior.')
+            ->line('Recuerda que los datos del alumno son confidenciales y solo para uso interno de los tutores responsables.')
             ->salutation('Web Tseyor');
 
         return $mail;

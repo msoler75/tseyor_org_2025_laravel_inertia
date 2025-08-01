@@ -38,11 +38,14 @@
   - Eliminación de backups antiguos y scripts obsoletos.
   - Ajustes en vistas y componentes para comentarios y navegación.
 
-- **15 de mayo de 2025**:
   - Documentación ampliada: creación de archivos de arquitectura, planificación, contribución, despliegue y seguridad.
   - Refactorización y migración de archivos de tareas y changelog.
   - Mejoras y correcciones en el modelo `Boletin` y migración de listado de suscriptores desde Mailchimp.
   - Ajustes en el email de boletín y comandos de despliegue.
   - Limpieza de archivos y eliminación de scripts y configuraciones obsoletas.
+  - Implementado el nuevo sistema de inscripciones a cursos con asignación de alumnos a tutores y seguimiento automatizado.
+  - Creada la lógica y documentación para la gestión de inscripciones y asignaciones (ver `inscripciones.md`).
+  - Notificación automática a tutores sobre nuevas asignaciones y consejos prácticos de uso.
+  - Artículo informativo para tutores sobre el funcionamiento y mejores prácticas del sistema de inscripciones.
 
 
