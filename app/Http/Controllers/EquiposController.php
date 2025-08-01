@@ -235,12 +235,17 @@ class EquiposController extends Controller
         $archivos = Cache::remember($cacheKey, now()->addDays($DIAS_CACHE), function () use ($equipo) {
             $carpetas = $equipo->carpetas()->get();
             $ultimosArchivosEquipo = [];
+            $ubicacionesRecorridas = [];
 
             foreach ($carpetas as $carpeta) {
                 $nodo = Nodo::desde($carpeta->ubicacion);
                 if ($nodo && Gate::allows('ejecutar', $nodo)) {
+                    // Si ya hemos recorrido esta ubicación, la omitimos
+                    if (in_array($carpeta->ubicacion, $ubicacionesRecorridas)) {
+                        continue;
+                    }
                     $loc = new StorageItem($carpeta->ubicacion);
-                    $archivos = $loc->lastFiles();
+                    $archivos = $loc->lastFiles(100, $ubicacionesRecorridas); // Se pasa el array de ubicaciones a omitir
                     $ultimosArchivosEquipo = array_merge($ultimosArchivosEquipo, $archivos);
                 }
             }
@@ -254,9 +259,7 @@ class EquiposController extends Controller
         });
 
         $archivos_final = [];
-        // dd($archivos);
         foreach ($archivos as $archivo) {
-            // miramos si tenemos permisos con este usuario para acceder al archivo
             $nodo = Nodo::desde($archivo['url']);
             if (Gate::allows('leer', $nodo)) {
                 $archivos_final[] = $archivo;
