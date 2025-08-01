@@ -68,7 +68,15 @@
                         <Link :href="route('equipo', evento.equipo.slug)" class="text-primary">{{ evento.equipo.nombre
                         }}</Link>
                     </template>
+
+                    <div class="mt-6 col-span-2 flex justify-center" >
+                        <a :href="googleCalendarUrl" target="_blank" rel="noopener" class="btn btn-sm btn-primary flex items-center gap-2" title="Agregar a Google Calendar">
+                            <Icon icon="material-symbols:calendar-add-on-outline" class="text-lg" />
+                            Añadir a Google Calendar
+                        </a>
+                    </div>
                 </div>
+
                 <p class="mt-12">{{ evento.descripcion }}</p>
                 <hr class="my-12 hidden md:block" />
                 <Content :content="evento.texto" class="mt-12 hidden md:block" />
@@ -91,6 +99,32 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+})
+
+// Construir URL para Google Calendar
+const googleCalendarUrl = computed(() => {
+    const e = props.evento
+    if (!e) return '#'
+    // Formato: YYYYMMDDTHHmmssZ
+    function formatDate(date, time) {
+        if (!date) return ''
+        let d = new Date(date + (time ? 'T' + time : ''))
+        // Si la hora no está, poner 00:00
+        if (!time) d.setHours(0,0,0,0)
+        // Convertir a UTC
+        return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z')
+    }
+    const start = formatDate(e.fecha_inicio, e.hora_inicio)
+    const end = formatDate(e.fecha_fin || e.fecha_inicio, e.hora_fin)
+    const text = encodeURIComponent(e.titulo || 'Evento')
+    const details = encodeURIComponent(e.descripcion || '')
+    const location = encodeURIComponent(e.lugar || (e.centro ? e.centro.nombre : ''))
+    let url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}`
+    if (start) url += `&dates=${start}/${end}`
+    if (details) url += `&details=${details}`
+    if (location) url += `&location=${location}`
+    url += '&sf=true&output=xml'
+    return url
 })
 
 

@@ -307,8 +307,18 @@ class StorageItem
      *
      * retorna un array de archivos
      * */
-    private function _listFilesRecursive($directorio, &$todos)
+    private function _listFilesRecursive($directorio, &$todos, &$rutasRecorridas = [])
     {
+        if (in_array($directorio, $rutasRecorridas)) {
+            return; // Evitar bucles infinitos
+        }
+        $rutasRecorridas[] = $directorio;
+
+        if (!is_dir($directorio)) {
+            return; // Si no es un directorio, salir
+        }
+
+        // Obtener todos los archivos y subdirectorios en el directorio actual
         $patron = $directorio . DIRECTORY_SEPARATOR . '*';
         $archivos = glob($patron);
 
@@ -322,15 +332,15 @@ class StorageItem
                 $ruta_publica = $sti->urlPath;
                 $todos[] = ['archivo' => basename($ruta_publica), 'carpeta' => dirname($ruta_publica), 'url' => $ruta_publica, 'fecha_modificacion' => $fecha_modificacion];
             } else {
-                $this->_listFilesRecursive($archivo, $todos);
+                $this->_listFilesRecursive($archivo, $todos, $rutasRecorridas);
             }
         }
     }
 
-    public function lastFiles($num = 100)
+    public function lastFiles($num = 100, &$rutasRecorridas = [] )
     {
         $todos = [];
-        $this->_listFilesRecursive($this->path, $todos);
+        $this->_listFilesRecursive($this->path, $todos, $rutasRecorridas);
 
         usort($todos, function ($a, $b) {
             return $b['fecha_modificacion'] - $a['fecha_modificacion'];
