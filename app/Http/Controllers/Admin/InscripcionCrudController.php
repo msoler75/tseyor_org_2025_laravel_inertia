@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\InscripcionesAsignadas;
+use App\Notifications\InscripcionReasignada;
 
 /**
  * Class InscripcionCrudController
@@ -215,17 +216,15 @@ class InscripcionCrudController extends CrudController
 
 
         $this->crud->addField([
-            'name'              => 'user_id',
-            'label'             => 'Tutor Asignado',
-            'type'              => 'select_model',
-            'model'             => 'user',
-            'options'           => null,
-            'multiple'          => false,
-            'allows_null'       => true,
-            'placeholder'       => 'Buscar tutor...',
-            'wrapper'           => ['class' => 'form-group col-md-6'],
-            'hint'              => 'Escribe para buscar usuarios por nombre. En esta lista solo aparecen algunos.',
-            'tab'               => 'Gestión de la inscripción',
+            'name' => 'user_id',
+            'label' => 'Tutor Asignado',
+            'type' => 'select_model',
+            'model' => 'user',
+            'attribute' => 'name',
+            'allows_null' => true,
+            'wrapper' => ['class' => 'form-group col-md-6'],
+            'hint' => 'Escribe para buscar usuarios por nombre.',
+            'tab' => 'Gestión de la inscripción',
         ]);
 
              CRUD::field('estado')->type('select_from_array')
@@ -366,12 +365,17 @@ class InscripcionCrudController extends CrudController
         if (!empty($request->user_id) && in_array($request->estado, ['nueva', 'asignada'])) {
             $usuario = User::find($request->user_id);
             if ($usuario && $currentEntry->user_id != $usuario->id) {
+                $usuarioAntiguo = User::find($currentEntry->user_id);
                 $currentEntry->asignarA($usuario, 'Asignación desde Secretaría de Tseyor');
                 // Actualizar otros campos editados
                 $currentEntry->fill($request->except(['user_id', 'estado', 'fecha_asignacion']));
                 $currentEntry->save();
+                // Notificar al usuario antiguo si existe y es distinto al nuevo
+                if ($usuarioAntiguo && $usuarioAntiguo->id !== $usuario->id) {
+                    $usuarioAntiguo->notify(new InscripcionReasignada($currentEntry, $usuario));
+                }
                 $this->crud->unsetValidation();
-                return redirect()->back()->with('success', 'Inscripción actualizada y tutor notificado.');
+                return redirect()->back()->with('success', 'Inscripción actualizada, tutor notificado y antiguo tutor informado de la reasignación.');
             }
         }
 

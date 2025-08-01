@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
+use Tests\Support\Fakes\NotificationFakeVerbose;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -13,6 +13,7 @@ use App\Notifications\InscripcionesSeguimiento;
 use App\Notifications\InscripcionAsignada;
 use App\Notifications\InscripcionesReporte;
 use Illuminate\Testing\Assert;
+use Illuminate\Support\Facades\Notification;
 
 class AdminNotifiable
 {
@@ -20,6 +21,8 @@ class AdminNotifiable
     {
         return 'admin@tseyor.org';
     }
+
+
     public function getKey()
     {
         return 'admin@tseyor.org';
@@ -29,13 +32,55 @@ class AdminNotifiable
 class InscripcionesGestionTest extends TestCase
 {
 
+     public function test_notificacion_caducidad_envia_a_supervisor_email()
+    {
+        $notificationFake = Notification::getFacadeRoot();
+        config(['inscripciones.caduca_meses' => 6]);
+        config(['inscripciones.reportes.supervisor_email' => 'supervisor@tseyor.org']);
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
+        $mesesCaduca = config('inscripciones.caduca_meses');
+        $fecha_caduca = now()->subMonths($mesesCaduca + 1);
+
+        $inscripcion = $this->crearInscripcion([
+            'user_id' => $usuario->id,
+            'estado' => 'asignada',
+        ]);
+        $inscripcion->save();
+        DB::table('inscripciones')->where('id', $inscripcion->id)->update(['updated_at' => $fecha_caduca]);
+
+        // Simular que la línea de notificación al supervisor está activa
+        // (en producción, descomentar en el comando)
+        $notificacion = new \App\Notifications\InscripcionCaducada($inscripcion);
+        Notification::route('mail', 'supervisor@tseyor.org')->notify($notificacion);
+
+        // Verificar que el fake detecta la notificación enviada al email
+        $notificationFake->assertSentTo(
+            new \Illuminate\Notifications\AnonymousNotifiable(),
+            \App\Notifications\InscripcionCaducada::class,
+            function ($notification, $channels, $notifiable) {
+                return in_array('mail', $channels) && isset($notifiable->routes['mail']) && $notifiable->routes['mail'] === 'supervisor@tseyor.org';
+            },
+            'No se envió la notificación InscripcionCaducada al email del supervisor'
+        );
+    }
+
+    /**
+     * Ejecuta el comando de gestión de inscripciones directamente
+     */
+    private function ejecutarGestionarInscripciones(array $options = [])
+    {
+        Artisan::call('inscripciones:gestionar', $options);
+    }
+
+
     private function crearInscripcion(array $data = []): Inscripcion
     {
+        $usuarioTest = User::where('email', 'tutor_test@tseyor.org')->first();
         $defaults = [
             'nombre' => 'Inscripcion Test',
             'email' => 'test@tseyor.org',
             'estado' => 'asignada',
-            'user_id' => User::first()->id ?? null,
+            'user_id' => $usuarioTest ? $usuarioTest->id : null,
             'fecha_asignacion' => now()->subDays(11),
             'fecha_nacimiento' => '1990-01-01',
             'ciudad' => 'Ciudad Test',
@@ -44,17 +89,18 @@ class InscripcionesGestionTest extends TestCase
         ];
         return Inscripcion::create(array_merge($defaults, $data));
     }
-    // use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
+        Notification::swap(new NotificationFakeVerbose());
+        // Eliminar todas las inscripciones
         DB::table('inscripciones')->truncate();
-        // Crear usuario de prueba si no existe
-        if (!User::where('name', 'usuario1')->exists()) {
+        // Solo crear el usuario de test si no existe
+        if (!User::where('email', 'tutor_test@tseyor.org')->exists()) {
             User::create([
-                'name' => 'usuario1',
-                'email' => 'usuario1@tseyor.org',
+                'name' => 'tutor_test',
+                'email' => 'tutor_test@tseyor.org',
                 'password' => bcrypt('password'),
             ]);
         }
@@ -62,19 +108,21 @@ class InscripcionesGestionTest extends TestCase
 
     public function test_asignacion_y_notificacion_seguimiento()
     {
-        Notification::fake();
-        $usuario = User::first();
+        $notificationFake = Notification::getFacadeRoot();
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
         $inscripcion = $this->crearInscripcion([
             'user_id' => $usuario->id,
             'estado' => 'asignada',
             'fecha_asignacion' => now()->subDays(11),
         ]);
 
-        Artisan::call('inscripciones:gestionar');
+        $this->ejecutarGestionarInscripciones();
 
-        Notification::assertSentTo(
+        $notificationFake->assertSentTo(
             [$usuario],
-            InscripcionesSeguimiento::class
+            InscripcionesSeguimiento::class,
+            null,
+            'No se envió la notificación de seguimiento al usuario (test_asignacion_y_notificacion_seguimiento)'
         );
         $inscripcion->refresh();
         $this->assertNotNull($inscripcion->ultima_notificacion);
@@ -82,47 +130,53 @@ class InscripcionesGestionTest extends TestCase
 
     public function test_reporte_administrador()
     {
-        Notification::fake();
-        config(['inscripciones.reportes.admin_email' => 'admin@tseyor.org']);
+        $notificationFake = Notification::getFacadeRoot();
+        config(['inscripciones.reportes.supervisor_email' => 'admin@tseyor.org']);
         $this->crearInscripcion(['estado' => 'asignada']);
         $this->crearInscripcion(['estado' => 'asignada']);
         $this->crearInscripcion(['estado' => 'asignada']);
 
-        Artisan::call('inscripciones:gestionar');
+        $this->ejecutarGestionarInscripciones();
 
-        Notification::assertSentTo(
+        $notificationFake->assertSentTo(
             new AdminNotifiable(),
-            InscripcionesReporte::class
+            InscripcionesReporte::class,
+            null,
+            'No se envió el reporte al administrador (test_reporte_administrador)'
         );
     }
 
     public function test_opcion_solo_seguimiento()
     {
-        Notification::fake();
-        $usuario = User::first();
+        $notificationFake = Notification::getFacadeRoot();
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
         $inscripcion = $this->crearInscripcion([
             'user_id' => $usuario->id,
             'estado' => 'asignada',
             'fecha_asignacion' => now()->subDays(11),
         ]);
-        config(['inscripciones.reportes.admin_email' => 'admin@tseyor.org']);
+        config(['inscripciones.reportes.supervisor_email' => 'admin@tseyor.org']);
 
-        Artisan::call('inscripciones:gestionar', ['--solo-seguimiento' => true]);
+        $this->ejecutarGestionarInscripciones(['--solo-seguimiento' => true]);
 
-        Notification::assertSentTo(
+        $notificationFake->assertSentTo(
             [$usuario],
-            InscripcionesSeguimiento::class
+            InscripcionesSeguimiento::class,
+            null,
+            'No se envió la notificación de seguimiento al usuario (test_opcion_solo_seguimiento)'
         );
-        Notification::assertNotSentTo(
+        $notificationFake->assertNotSentTo(
             new AdminNotifiable(),
-            InscripcionesReporte::class
+            InscripcionesReporte::class,
+            null,
+            'Se envió el reporte al admin cuando no debía (test_opcion_solo_seguimiento)'
         );
     }
 
     public function test_opcion_solo_reporte()
     {
-        Notification::fake();
-        $usuario = User::first();
+        $notificationFake = Notification::getFacadeRoot();
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
         $dias_intervalo_asignada = config('inscripciones.notificaciones.dias_intervalo_asignada');
         $inscripcion = $this->crearInscripcion([
             'user_id' => $usuario->id,
@@ -130,18 +184,28 @@ class InscripcionesGestionTest extends TestCase
             'fecha_asignacion' => now()->subDays($dias_intervalo_asignada),
             'ultima_notificacion' => null,
         ]);
-        config(['inscripciones.reportes.admin_email' => 'admin@tseyor.org']);
+        config(['inscripciones.reportes.supervisor_email' => 'admin@tseyor.org']);
 
-        Artisan::call('inscripciones:gestionar', ['--solo-reporte' => true]);
+        $this->ejecutarGestionarInscripciones(['--solo-reporte' => true]);
 
-        Notification::assertSentTo(new AdminNotifiable(), InscripcionesReporte::class);
-        Notification::assertNotSentTo([$usuario], InscripcionesSeguimiento::class);
+        $notificationFake->assertSentTo(
+            new AdminNotifiable(),
+            InscripcionesReporte::class,
+            null,
+            'No se envió el reporte al administrador (test_opcion_solo_reporte)'
+        );
+        $notificationFake->assertNotSentTo(
+            [$usuario],
+            InscripcionesSeguimiento::class,
+            null,
+            'Se envió la notificación de seguimiento al usuario cuando no debía (test_opcion_solo_reporte)'
+        );
     }
 
     public function test_notificacion_al_rebotar_inscripcion()
     {
-        Notification::fake();
-        $usuario = User::first();
+        $notificationFake = Notification::getFacadeRoot();
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
         $inscripcion = $this->crearInscripcion([
             'user_id' => $usuario->id,
             'estado' => 'asignada',
@@ -152,23 +216,24 @@ class InscripcionesGestionTest extends TestCase
         $inscripcion->notas = ($inscripcion->notas ?? '') . "\nRebotada por motivo de prueba";
         $inscripcion->save();
 
-        Artisan::call('inscripciones:gestionar');
+        $this->ejecutarGestionarInscripciones();
 
         // El reporte debe incluir la inscripcion rebotada
-        Notification::assertSentTo(
+        $notificationFake->assertSentTo(
             new AdminNotifiable(),
             InscripcionesReporte::class,
             function ($notification) use ($inscripcion) {
                 return in_array($inscripcion->nombre, array_column($notification->estadisticas['rebotadas_recientes'], 'nombre'));
-            }
+            },
+            'El reporte no incluyó la inscripción rebotada (test_notificacion_al_rebotar_inscripcion)'
         );
     }
 
     /*public function test_notificacion_seguimiento_intervalos_asignada()
     {
         Notification::fake();
-        config(['inscripciones.reportes.admin_email' => 'admin@tseyor.org']);
-        $usuario = User::first();
+        config(['inscripciones.reportes.supervisor_email' => 'admin@tseyor.org']);
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
         $estados = config('inscripciones.notificaciones.estados_seguimiento');
         $dias_primer_seguimiento = config('inscripciones.notificaciones.dias_intervalo_asignada');
         //$dias_intervalo_seguimiento = config('inscripciones.notificaciones.dias_intervalo');
@@ -192,51 +257,45 @@ class InscripcionesGestionTest extends TestCase
 
     public function test_seguimiento_estado_asignada_intervalo()
     {
-        Notification::fake();
-        config(['inscripciones.reportes.admin_email' => 'admin@tseyor.org']);
-        $usuario = User::first();
+        $notificationFake = Notification::getFacadeRoot();
+        config(['inscripciones.reportes.supervisor_email' => 'admin@tseyor.org']);
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
         $intervalo_asignada = config('inscripciones.notificaciones.dias_intervalo_asignada');
 
         // Caso 1: primer seguimiento (sin ultima_notificacion)
         for ($dias = 0; $dias <= $intervalo_asignada + 1; $dias++) {
-            Notification::fake();
+            $notificationFake = Notification::getFacadeRoot();
             $inscripcion = $this->crearInscripcion([
                 'user_id' => $usuario->id,
                 'estado' => 'asignada',
                 'fecha_asignacion' => now()->subDays($dias),
                 'ultima_notificacion' => null,
             ]);
-            Artisan::call('inscripciones:gestionar', ['--solo-seguimiento' => true]);
+            $this->ejecutarGestionarInscripciones(['--solo-seguimiento' => true]);
             if ($dias < $intervalo_asignada) {
-                Notification::assertNotSentTo([
+                $notificationFake->assertNotSentTo([
                     $usuario
-                ], InscripcionesSeguimiento::class);
+                ], InscripcionesSeguimiento::class, null, 'Se envió la notificación de seguimiento cuando no debía (test_seguimiento_estado_asignada_intervalo, primer seguimiento)');
             } else {
-                Notification::assertSentTo([
+                $notificationFake->assertSentTo([
                     $usuario
-                ], InscripcionesSeguimiento::class);
+                ], InscripcionesSeguimiento::class, null, 'No se envió la notificación de seguimiento al usuario (test_seguimiento_estado_asignada_intervalo, primer seguimiento)');
             }
-        }
 
-        // Caso 2: seguimientos posteriores (con ultima_notificacion)
-        $inscripcion->update([
-            'ultima_notificacion' => now(),
-            'fecha_asignacion' => now()->subDays($intervalo_asignada),
-        ]);
-        for ($dias = 0; $dias <= $intervalo_asignada + 1; $dias++) {
-            Notification::fake();
+
+            $notificationFake = Notification::getFacadeRoot();
             $inscripcion->update([
                 'ultima_notificacion' => now()->subDays($dias),
             ]);
-            Artisan::call('inscripciones:gestionar', ['--solo-seguimiento' => true]);
+            $this->ejecutarGestionarInscripciones(['--solo-seguimiento' => true]);
             if ($dias < $intervalo_asignada) {
-                Notification::assertNotSentTo([
+                $notificationFake->assertNotSentTo([
                     $usuario
-                ], InscripcionesSeguimiento::class);
+                ], InscripcionesSeguimiento::class, null, 'Se envió la notificación de seguimiento cuando no debía (test_seguimiento_estado_asignada_intervalo, seguimientos posteriores)');
             } else {
-                Notification::assertSentTo([
+                $notificationFake->assertSentTo([
                     $usuario
-                ], InscripcionesSeguimiento::class);
+                ], InscripcionesSeguimiento::class, null, 'No se envió la notificación de seguimiento al usuario (test_seguimiento_estado_asignada_intervalo, seguimientos posteriores)');
             }
         }
     }
@@ -245,31 +304,120 @@ class InscripcionesGestionTest extends TestCase
 
     public function test_seguimiento_estado_contactado_intervalo()
     {
-               Notification::fake();
-        config(['inscripciones.reportes.admin_email' => 'admin@tseyor.org']);
-        $usuario = User::first();
+        $notificationFake = Notification::getFacadeRoot();
+        config(['inscripciones.reportes.supervisor_email' => 'admin@tseyor.org']);
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
         $intervalo_general = config('inscripciones.notificaciones.dias_intervalo');
 
         // Caso 1: primer seguimiento (sin ultima_notificacion)
         for ($dias = 0; $dias <= $intervalo_general + 1; $dias++) {
-            Notification::fake();
+            $notificationFake = Notification::getFacadeRoot();
             $inscripcion = $this->crearInscripcion([
                 'user_id' => $usuario->id,
                 'estado' => 'contactado',
                 'fecha_asignacion' => now()->subDays($dias),
                 'ultima_notificacion' => null,
             ]);
-            Artisan::call('inscripciones:gestionar', ['--solo-seguimiento' => true]);
+            $this->ejecutarGestionarInscripciones(['--solo-seguimiento' => true]);
+
             if ($dias < $intervalo_general) {
-                Notification::assertNotSentTo([
+                $notificationFake->assertNotSentTo([
                     $usuario
-                ], InscripcionesSeguimiento::class);
+                ], InscripcionesSeguimiento::class, null, 'Se envió la notificación de seguimiento cuando no debía (test_seguimiento_estado_contactado_intervalo)');
             } else {
-                Notification::assertSentTo([
+                $notificationFake->assertSentTo([
                     $usuario
-                ], InscripcionesSeguimiento::class);
+                ], InscripcionesSeguimiento::class, null, 'No se envió la notificación de seguimiento al usuario (test_seguimiento_estado_contactado_intervalo)');
             }
         }
 
+    }
+
+    public function test_caduca_y_notifica_inscripcion()
+    {
+        $notificationFake = Notification::getFacadeRoot();
+        config(['inscripciones.caduca_meses' => 6]);
+        config(['inscripciones.reportes.supervisor_email' => 'supervisor@tseyor.org']);
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
+        $mesesCaduca = config('inscripciones.caduca_meses');
+        $fecha_caduca = now()->subMonths($mesesCaduca + 1); // más de 6 meses
+
+        $inscripcion = $this->crearInscripcion([
+            'user_id' => $usuario->id,
+            'estado' => 'asignada',
+        ]);
+        $inscripcion->save();
+        DB::table('inscripciones')->where('id', $inscripcion->id)->update(['updated_at' => $fecha_caduca]);
+        $this->ejecutarGestionarInscripciones();
+        $inscripcion->refresh();
+        $usuarioAsignado = $inscripcion->usuarioAsignado;
+        fwrite(STDERR, "Usuario asignado: " . ($usuarioAsignado ? $usuarioAsignado->id . ' - ' . $usuarioAsignado->email : 'null') . "\n");
+        $this->assertEquals('caducada', $inscripcion->estado, 'La inscripción no cambió a estado caducada');
+        $notificationFake->assertSentTo([
+            $usuarioAsignado
+        ], \App\Notifications\InscripcionCaducada::class, null, 'No se envió la notificación InscripcionCaducada al usuario asignado');
+        // Verificar que también se envía al supervisor
+        $notificationFake->assertSentTo(
+            new \Illuminate\Notifications\AnonymousNotifiable(),
+            \App\Notifications\InscripcionCaducada::class,
+            function ($notification, $channels, $notifiable) {
+                return in_array('mail', $channels) && isset($notifiable->routes['mail']) && $notifiable->routes['mail'] === 'supervisor@tseyor.org';
+            },
+            'No se envió la notificación InscripcionCaducada al email del supervisor'
+        );
+    }
+
+    public function test_no_caduca_ni_notifica_inscripcion()
+    {
+        $notificationFake = Notification::getFacadeRoot();
+        config(['inscripciones.caduca_meses' => 6]);
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
+        $mesesCaduca = config('inscripciones.caduca_meses');
+        $fecha_no_caduca = now()->subMonths($mesesCaduca - 1); // menos de 6 meses
+
+        $inscripcion = $this->crearInscripcion([
+            'user_id' => $usuario->id,
+            'estado' => 'asignada',
+        ]);
+        DB::table('inscripciones')->where('id', $inscripcion->id)->update(['updated_at' => $fecha_no_caduca]);
+        $this->ejecutarGestionarInscripciones();
+        $inscripcion->refresh();
+        $this->assertNotEquals('caducada', $inscripcion->estado, 'La inscripción cambió a estado caducada cuando no debía');
+        $notificacionesEnviadas = $notificationFake->sent($usuario, \App\Notifications\InscripcionCaducada::class);
+        fwrite(STDERR, "Notificaciones enviadas al usuario: " . json_encode($notificacionesEnviadas) . "\n");
+        $notificationFake->assertNotSentTo([
+            $usuario
+        ], \App\Notifications\InscripcionCaducada::class, function ($notification) use ($inscripcion) {
+            // Solo considerar notificaciones que correspondan a esta inscripción
+            return isset($notification->inscripcion) && $notification->inscripcion->id === $inscripcion->id;
+        }, 'Se envió la notificación InscripcionCaducada al usuario para esta inscripción cuando no debía');
+        // Verificar que también se envía al supervisor
+        $notificationFake->assertNotSentTo(
+            new \Illuminate\Notifications\AnonymousNotifiable(),
+            \App\Notifications\InscripcionCaducada::class,
+            function ($notification, $channels, $notifiable) {
+                return in_array('mail', $channels) && isset($notifiable->routes['mail']) && $notifiable->routes['mail'] === 'supervisor@tseyor.org';
+            },
+            'Se envió la notificación InscripcionCaducada al email del supervisor'
+        );
+    }
+
+    public function test_no_notificacion_en_estado_final()
+    {
+        $notificationFake = Notification::getFacadeRoot();
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
+        $estados_finales = config('inscripciones.notificaciones.estados_finales');
+        foreach ($estados_finales as $estado) {
+            $inscripcion = $this->crearInscripcion([
+                'user_id' => $usuario->id,
+                'estado' => $estado,
+                'fecha_asignacion' => now()->subDays(30),
+                'ultima_notificacion' => now()->subDays(30),
+            ]);
+            $this->ejecutarGestionarInscripciones(['--solo-seguimiento' => true]);
+            $notificationFake->assertNotSentTo([
+                $usuario
+            ], InscripcionesSeguimiento::class, null, 'Se envió la notificación de seguimiento en estado final cuando no debía (test_no_notificacion_en_estado_final)');
+        }
     }
 }

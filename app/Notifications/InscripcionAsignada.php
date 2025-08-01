@@ -51,9 +51,15 @@ class InscripcionAsignada extends Notification implements ShouldQueue
             ->line('• Teléfono: ' . ($this->inscripcion->telefono ?? 'No especificado'))
             ->line('• Ciudad: ' . ($this->inscripcion->ciudad ?? 'No especificada'))
             ->line('• Comentario: ' . ($this->inscripcion->comentario ?? '--'))
+            ->line('Por favor, por la ley de protección de datos recuerda que los datos del alumno son confidenciales y solo para uso de los tutores responsables.')
+            ->line('Ahora puedes gestionar la inscripción en el siguiente enlace:')
             ->action('Gestionar Inscripciones', $urlGestion)
-            ->line('Por favor, contacta con la persona inscrita lo antes posible y actualiza el estado de la inscripción.')
             ->line('Si no puedes atender esta inscripción en este momento, puedes rebotarla desde el enlace anterior.')
+            ->line('Recomendaciones generales de tutoría:')
+            ->line('• Establecer un primer contacto con la persona inscrita a la mayor brevedad posible.')
+            ->line('• Orientar a la persona inscrita sobre el Curso Holístico de Tseyor y resolver cualquier duda inicial.')
+            ->line('• Respetar los intereses de la persona inscrita y y considerar sus preferencias para el Curso.')
+            ->line('• Apoyarse en una Casa Tseyor o Muulasterio para organizar los Cursos y llevarlos a cabo.')
             ->salutation('Web Tseyor');
     }
 

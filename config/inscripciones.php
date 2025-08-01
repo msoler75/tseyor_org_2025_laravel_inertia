@@ -19,6 +19,10 @@ return [
             'etiqueta' => 'Duplicada',
             'descripcion' => 'Inscripción Duplicada'
         ],
+        'suspendida' => [
+            'etiqueta' => 'Suspendida',
+            'descripcion' => 'Suspensión temporal o espera'
+        ],
         'asignada' => [
             'etiqueta' => 'Asignada',
             'descripcion' => 'Asignada a un tutor o responsable'
@@ -50,10 +54,16 @@ return [
         'nointeresado' => [
             'etiqueta' => 'No Interesado',
             'descripcion' => 'No Interesado/a'
+        ],
+        'caducada' => [
+            'etiqueta' => 'Caducada',
+            'descripcion' => 'Inscripción Caducada'
         ]
     ],
 
-    'estados_no_elegibles' => [ 'nueva', 'rebotada' ],
+    'estados_no_elegibles' => [ 'nueva', 'rebotada', 'caducada'],
+
+    'caduca_meses' => 6, // Número de meses tras los cuales una inscripción se considera caducada
 
     /*
     |--------------------------------------------------------------------------
@@ -74,7 +84,7 @@ return [
         'estados_seguimiento' => ['asignada', 'contactado', 'encurso'],
 
         // Estados que detienen el seguimiento automático
-        'estados_finales' => ['finalizado', 'duplicada', 'nointeresado', 'rebotada', 'abandonado', 'nocontesta']
+        'estados_finales' => ['finalizado', 'duplicada', 'nointeresado', 'rebotada', 'abandonado', 'nocontesta', 'caducada']
     ],
 
     /*
@@ -106,7 +116,7 @@ return [
     */
     'reportes' => [
         // Email del administrador que recibe los reportes
-        'admin_email' => env('ADMIN_EMAIL', 'admin@tseyor.org'),
+        'supervisor_email' => env('INSCRIPCIONES_SUPERVISOR_EMAIL', 'admin@tseyor.org'),
 
         // Frecuencia de reportes (en días)
         'frecuencia_reporte' => 1,
