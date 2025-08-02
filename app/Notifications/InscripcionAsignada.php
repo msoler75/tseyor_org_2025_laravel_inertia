@@ -38,6 +38,7 @@ class InscripcionAsignada extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $urlGestion = route('inscripciones.mis-asignaciones');
+        $urlTutorial = 'https://tseyor.org/tutoriales/sistema-web-de-supervision-de-inscripciones-a-cursos';
 
         Log::channel('notificaciones')->info('[InscripcionAsignada] Enviando a: ' . ($notifiable->email ?? 'sin email') . ' | Nombre: ' . $notifiable->name . ' | Inscripción: ' . $this->inscripcion->nombre);
 
@@ -58,8 +59,10 @@ class InscripcionAsignada extends Notification implements ShouldQueue
             ->line('Recomendaciones generales de tutoría:')
             ->line('• Establecer un primer contacto con la persona inscrita a la mayor brevedad posible.')
             ->line('• Orientar a la persona inscrita sobre el Curso Holístico de Tseyor y resolver cualquier duda inicial.')
-            ->line('• Respetar los intereses de la persona inscrita y y considerar sus preferencias para el Curso.')
+            ->line('• Respetar los intereses de la persona inscrita y considerar sus preferencias para el Curso.')
             ->line('• Apoyarse en una Casa Tseyor o Muulasterio para organizar los Cursos y llevarlos a cabo.')
+            ->line('Para más información, consulta el tutorial:')
+            ->action('Ver tutorial', $urlTutorial)
             ->salutation('Web Tseyor');
     }
 

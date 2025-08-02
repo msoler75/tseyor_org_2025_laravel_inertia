@@ -33,7 +33,8 @@ class InscripcionReasignada extends Notification
             ->greeting('Hola ' . ($notifiable->name ?? ''))
             ->line('La inscripción de ' . $this->inscripcion->nombre . ' ha sido reasignada a otro tutor.')
             ->line('Nuevo tutor: ' . $this->nuevoTutor->name . ' (' . $this->nuevoTutor->email . ')')
-            ->line('En motivo de la ley de protección de datos es necesario que borres toda información que tengas de este alumno, incluidos los correos anteriores con información de este alumno.')
-            ->line('Si tienes alguna duda, contacta con Secretaría.');
+            ->line('En motivo de la ley de protección de datos es necesario que borres toda información que tengas de esta persona ('.
+            $this->inscripcion->nombre .', '. $this->inscripcion->nombre.'), incluidos los correos anteriores con información de este alumno.')
+            ->line('Si tienes alguna duda, contacta con secretaría.');
     }
 }

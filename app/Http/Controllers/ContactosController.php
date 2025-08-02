@@ -36,7 +36,7 @@ class ContactosController extends Controller
 
         //dd($buscar);
 
-        $query = Contacto::select(['id', 'nombre', 'slug', 'imagen', 'pais'])
+        $query = Contacto::select(['id', 'nombre', 'slug', 'imagen', 'poblacion', 'pais', 'latitud', 'longitud'])
             ->where('visibilidad', 'P');
 
         if ($pais)

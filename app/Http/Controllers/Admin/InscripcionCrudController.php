@@ -340,8 +340,8 @@ class InscripcionCrudController extends CrudController
         $this->crud->setRequest($this->crud->validateRequest());
         $request = $this->crud->getRequest();
 
-        // Si se asigna tutor y el estado es 'nueva' o 'asignada', forzar estado 'asignada' y fecha de asignación
-        if (!empty($request->user_id) && in_array($request->estado, ['nueva', 'asignada'])) {
+        // Si se asigna tutor y el estado es 'nueva' o 'asignada', o  forzar estado 'asignada' y fecha de asignación
+        if (!empty($request->user_id) && in_array($request->estado, ['nueva', 'asignada', ''])) {
             $request->merge(['estado' => 'asignada']);
             $request->merge(['fecha_asignacion' => now()]);
         }
@@ -362,7 +362,7 @@ class InscripcionCrudController extends CrudController
         $currentEntry = $this->crud->getCurrentEntry();
 
         // Si se asigna tutor y el estado es 'nueva' o 'asignada', usar asignarA para notificar
-        if (!empty($request->user_id) && in_array($request->estado, ['nueva', 'asignada'])) {
+        if (!empty($request->user_id) && in_array($request->estado, ['', 'nueva', 'asignada'])) {
             $usuario = User::find($request->user_id);
             if ($usuario && $currentEntry->user_id != $usuario->id) {
                 $usuarioAntiguo = User::find($currentEntry->user_id);

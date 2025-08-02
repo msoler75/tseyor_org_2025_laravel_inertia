@@ -253,7 +253,7 @@ axios.get(route('setting', 'navigation'))
 // INTERACCION AUDIO
 
 function handleInteraction() {
-    console.log("handleInteraction", player.requiereInteraccion);
+    // console.log("handleInteraction", player.requiereInteraccion);
     if (player.requiereInteraccion) player.playPause();
 }
 </script>

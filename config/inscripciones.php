@@ -84,7 +84,7 @@ return [
         'estados_seguimiento' => ['asignada', 'contactado', 'encurso'],
 
         // Estados que detienen el seguimiento automático
-        'estados_finales' => ['finalizado', 'duplicada', 'nointeresado', 'rebotada', 'abandonado', 'nocontesta', 'caducada']
+        'estados_finales' => ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada']
     ],
 
     /*
@@ -116,7 +116,7 @@ return [
     */
     'reportes' => [
         // Email del administrador que recibe los reportes
-        'supervisor_email' => env('INSCRIPCIONES_SUPERVISOR_EMAIL', 'admin@tseyor.org'),
+        'supervisor_email' => env('INSCRIPCIONES_SUPERVISOR_EMAIL', 'webmaster@tseyor.com'),
 
         // Frecuencia de reportes (en días)
         'frecuencia_reporte' => 1,
