@@ -21,6 +21,7 @@ NEW_RELEASE=$((LAST_RELEASE + 1))
 
 # Crear la nueva carpeta de release
 mkdir "$NEW_RELEASE"
+echo "Nueva carpeta de release creada: $NEW_RELEASE"
 cd "$NEW_RELEASE" || exit
 
 # Clonar el repositorio
