@@ -7,7 +7,10 @@
         <span v-show="status === 'running'" class="ml-2">
             <i class="la la-check-circle text-green-500" :style="iconStyle"></i>
         </span>
-        <span v-show="status == 'error' || status == 'stoppped'" class="ml-2">
+        <span v-show="status == 'stopped'" class="ml-2">
+            <i class="la la-exclamation-circle text-orange-500" :style="iconStyle"></i>
+        </span>
+        <span v-show="status == 'error'" class="ml-2">
             <i class="la la-exclamation-circle text-red-500" :style="iconStyle"></i>
         </span>
     </component>
