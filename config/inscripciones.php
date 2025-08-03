@@ -58,7 +58,11 @@ return [
         'caducada' => [
             'etiqueta' => 'Caducada',
             'descripcion' => 'Inscripción Caducada'
-        ]
+        ],
+        'cerrada' => [
+            'etiqueta' => 'Cerrada',
+            'descripcion' => 'Inscripción Cerrada'
+        ],
     ],
 
     'estados_no_elegibles' => [ 'nueva', 'rebotada', 'caducada'],
@@ -84,7 +88,7 @@ return [
         'estados_seguimiento' => ['asignada', 'contactado', 'encurso'],
 
         // Estados que detienen el seguimiento automático
-        'estados_finales' => ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada']
+        'estados_finales' => ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada', 'cerrada']
     ],
 
     /*

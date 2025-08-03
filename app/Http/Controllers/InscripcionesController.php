@@ -145,9 +145,6 @@ class InscripcionesController extends Controller
 
         $inscripcion->asignarA($usuario, $request->motivo ?? 'Asignación manual');
 
-        // Enviar notificación al usuario asignado
-        $usuario->notify(new InscripcionAsignada($inscripcion));
-
         return back()->with('success', 'Inscripción asignada correctamente');
     }
 
@@ -268,9 +265,6 @@ class InscripcionesController extends Controller
             if (!$inscripcion->user_id) { // Solo asignar si no está ya asignada
                 $inscripcion->asignarA($usuario, 'Asignación masiva desde dashboard');
                 $asignadas++;
-
-                // Enviar notificación
-                $usuario->notify(new InscripcionAsignada($inscripcion));
             }
         }
 
