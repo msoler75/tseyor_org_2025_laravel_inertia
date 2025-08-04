@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
@@ -21,20 +22,45 @@ class CommandController extends Controller
             'db:backup',
             'down',
             'up',
-            'inertia:stop-ssr',
+            // 'inertia:stop-ssr', // Comando no disponible consistentemente en contexto web
         ],
         'exec' => [
             'pkill -f ssr',
+            'inertia:stop-ssr', // Ejecutar como comando externo
+            // './bash/ssr.sh start', // Ejecutar como comando externo
         ],
     ];
 
+    public function runCommandPost(Request $request): JsonResponse
+    {
+        $command = $request->input('command');
+
+        if (!$command) {
+            return response()->json(['error' => 'Comando requerido'], 400);
+        }
+
+        return $this->runCommand($command);
+    }
+
     public function runCommand(string $command): JsonResponse
     {
+        $command = urldecode($command);
         $parts = preg_split('/\s+/', $command, -1, PREG_SPLIT_NO_EMPTY);
         $baseCommand = $parts[0];
 
+        Log::info("Procesando comando", [
+            'command' => $command,
+            'baseCommand' => $baseCommand,
+            'parts' => $parts
+        ]);
+
         // Verificar si el comando está permitido y determinar su tipo
         $commandType = $this->getCommandType($baseCommand);
+        Log::info("Tipo de comando determinado", [
+            'baseCommand' => $baseCommand,
+            'commandType' => $commandType
+        ]);
+
         if (!$commandType) {
             return response()->json(['error' => 'Comando no permitido'], 403);
         }
@@ -48,6 +74,19 @@ class CommandController extends Controller
                 return $this->executeArtisanCommand($baseCommand, $parameters);
             }
         } catch (\Exception $e) {
+            // Verificar si es un error de comando no encontrado
+            if (strpos($e->getMessage(), 'does not exist') !== false) {
+                Log::warning("Comando Artisan no encontrado: {$baseCommand}", [
+                    'error' => $e->getMessage()
+                ]);
+
+                return response()->json([
+                    'status' => 'Comando no disponible',
+                    'output' => "El comando '{$baseCommand}' no está disponible en el entorno web. Puede estar disponible solo en CLI.",
+                    'exitCode' => 1
+                ]);
+            }
+
             Log::error("Error al ejecutar el comando: {$baseCommand}", [
                 'parameters' => $parameters,
                 'error' => $e->getMessage(),
@@ -72,11 +111,11 @@ class CommandController extends Controller
         }
 
         // Verificar comandos exec complejos como "pkill -f ssr"
-        foreach ($this->allowedCommands['exec'] as $execCommand) {
+        /*foreach ($this->allowedCommands['exec'] as $execCommand) {
             if (strpos($execCommand, $baseCommand) === 0) {
                 return 'exec';
             }
-        }
+        }*/
 
         return null;
     }
@@ -105,11 +144,14 @@ class CommandController extends Controller
     {
         $baseCommand = $parts[0];
 
-        if ($baseCommand === 'inertia:stop-ssr') {
+        if ($baseCommand === 'pkill' && isset($parts[1]) && $parts[1] === '-f' && isset($parts[2]) && $parts[2] === 'ssr') {
+            $cmd = 'pkill -f ssr';
+        } elseif ($baseCommand === 'inertia:stop-ssr') {
             $artisanPath = base_path('artisan');
             $cmd = 'php ' . escapeshellarg($artisanPath) . ' inertia:stop-ssr';
-        } elseif ($baseCommand === 'pkill' && isset($parts[1]) && $parts[1] === '-f' && isset($parts[2]) && $parts[2] === 'ssr') {
-            $cmd = 'pkill -f ssr';
+        } elseif ($baseCommand === 'inertia:start-ssr') {
+            $artisanPath = base_path('artisan');
+            $cmd = 'php ' . escapeshellarg($artisanPath) . ' inertia:start-ssr';
         } else {
             return response()->json(['error' => 'Comando exec no reconocido'], 400);
         }
@@ -142,9 +184,12 @@ class CommandController extends Controller
             'exitCode' => $exitCode
         ]);
 
+        // Algunos comandos pueden retornar códigos diferentes de 0 sin ser errores críticos
+        $status = $exitCode === 0 ? 'Comando completado' : 'Comando completado con advertencias';
+
         return response()->json([
-            'status' => 'Comando completado',
-            'output' => $output,
+            'status' => $status,
+            'output' => $output ?: "Comando {$baseCommand} ejecutado",
             'exitCode' => $exitCode
         ]);
     }
@@ -153,7 +198,8 @@ class CommandController extends Controller
     {
         $messages = [
             'pkill' => 'Procesos SSR terminados correctamente',
-            'inertia:stop-ssr' => 'Servidor SSR detenido'
+            'inertia:stop-ssr' => 'Servidor SSR detenido',
+            'inertia:start-ssr' => 'Servidor SSR iniciado'
         ];
 
         return $messages[$command] ?? 'Comando ejecutado correctamente';

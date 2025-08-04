@@ -113,7 +113,7 @@ Route::group([
     Route::get('command', function () {
         return view('admin.command');
     } );
-    Route::get('command/{command}', [CommandController::class, 'runCommand'])->name('command.run');
+    Route::post('command', [CommandController::class, 'runCommandPost'])->name('command.run');
 
 
     Route::get('archivos', function () {

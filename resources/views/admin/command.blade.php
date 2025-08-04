@@ -25,7 +25,7 @@
             document.querySelectorAll('button[command]').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     let command = encodeURIComponent(this.getAttribute('command'));
-                    axios.get('/admin/command/' + command)
+                    axios.post('/admin/command', { command: command })
                         .then(function(response) {
                             console.log({
                                 response
