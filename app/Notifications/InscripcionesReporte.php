@@ -37,7 +37,12 @@ class InscripcionesReporte extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        Log::channel('notificaciones')->info('[InscripcionesReporte] Enviando a: ' . $notifiable->email);
+        // Obtener el email del notifiable (puede ser AnonymousNotifiable o User)
+        $email = $notifiable instanceof \Illuminate\Notifications\AnonymousNotifiable
+            ? $notifiable->routes['mail']
+            : $notifiable->email;
+
+        Log::channel('notificaciones')->info('[InscripcionesReporte] Enviando a: ' . $email);
         $mensaje = (new MailMessage)
             ->subject('Reporte diario de inscripciones - ' . now()->format('d/m/Y'))
             ->greeting('¡Hola Administrador!')

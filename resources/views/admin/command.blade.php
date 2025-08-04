@@ -12,6 +12,7 @@
         <button command="migrate" class="btn btn-success">migrate</button>
         <button command="sitemap:generate" class="btn btn-success">sitemap:generate</button>
         <button command="auth:clear-resets" class="btn btn-success">auth:clear-resets</button>
+        <button command="db:backup" class="btn btn-success">db:backup</button>
         <button command="down" class="btn btn-success">Activar modo mantenimiento</button>
         <button command="up" class="btn btn-success">Desactivar modo mantenimiento</button>
         <button command="inertia:stop-ssr" class="btn btn-danger">Detener servidor SSR</button>

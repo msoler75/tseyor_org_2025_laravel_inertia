@@ -53,7 +53,8 @@ class InscripcionesController extends Controller
             'pais' => $dataValidated['pais'],
             'email' => $dataValidated['email'],
             'telefono' => $dataValidated['telefono'] ?? "",
-            'comentario' => $dataValidated['comentario'] ?? ""
+            'comentario' => $dataValidated['comentario'] ?? "",
+            'ultima_actividad' => now() // Establecer fecha inicial de actividad
         ];
 
         // Crear una nueva instancia de Inscripcion y guardarla en la base de datos
@@ -286,7 +287,7 @@ class InscripcionesController extends Controller
         ]);
 
         // Centraliza la lógica de nota en el modelo
-        $inscripcion->comentar($request->comentario);
+        $inscripcion->comentar($request->comentario, true); // true indica que es actividad del tutor
         $inscripcion->save();
 
         // Opcional: devolver la inscripción actualizada o solo mensaje
@@ -311,6 +312,7 @@ class InscripcionesController extends Controller
         ]);
 
         $inscripcion->notas = $request->notas;
+        $inscripcion->ultima_actividad = now(); // Marcar actividad del tutor
         $inscripcion->save();
 
         return back()->with('success', 'Notas actualizadas correctamente');

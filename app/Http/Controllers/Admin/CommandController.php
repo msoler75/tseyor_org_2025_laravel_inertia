@@ -18,6 +18,7 @@ class CommandController extends Controller
             'migrate',
             'sitemap:generate',
             'auth:clear-resets',
+            'db:backup',
             'down',
             'up',
             'inertia:stop-ssr',

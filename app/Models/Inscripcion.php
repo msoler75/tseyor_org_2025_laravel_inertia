@@ -31,12 +31,14 @@ class Inscripcion extends Model
         'user_id',
         'fecha_asignacion',
         'ultima_notificacion',
+        'ultima_actividad',
         'notas'
     ];
 
     protected $casts = [
         'fecha_asignacion' => 'datetime',
-        'ultima_notificacion' => 'datetime'
+        'ultima_notificacion' => 'datetime',
+        'ultima_actividad' => 'datetime'
     ];
 
     /**
@@ -109,7 +111,7 @@ class Inscripcion extends Model
     /**
      * Agrega una entrada a las notas
      */
-    public function comentar(string $mensaje): void
+    public function comentar(string $mensaje, bool $esActividadTutor = false): void
     {
         $fecha = now()->format('d/m/Y H:i');
         $usuario = auth()->user()?->name ?? 'Sistema';
@@ -118,6 +120,11 @@ class Inscripcion extends Model
 
         $notasActuales = $this->notas ? $this->notas . "\n" : '';
         $this->notas = $notasActuales . $nuevaNota;
+
+        // Solo actualizar ultima_actividad si es una actividad real del tutor
+        if ($esActividadTutor) {
+            $this->ultima_actividad = now();
+        }
 
         $this->save();
     }
@@ -131,6 +138,8 @@ class Inscripcion extends Model
         $this->estado = 'asignada';
         $this->fecha_asignacion = now();
         $this->ultima_notificacion = null;
+        $this->ultima_actividad = now(); // Actividad del tutor/admin
+        $this->asignado = $usuario->name; // Campo legacy para compatibilidad
 
         $this->save();
 
@@ -157,6 +166,7 @@ class Inscripcion extends Model
         $this->user_id = null;
         $this->fecha_asignacion = null;
         $this->ultima_notificacion = null;
+        $this->ultima_actividad = now(); // Actividad del tutor
 
         $this->save();
 
@@ -171,6 +181,7 @@ class Inscripcion extends Model
     {
         $estadoAnterior = $this->estado;
         $this->estado = $nuevoEstado;
+        $this->ultima_actividad = now(); // Actividad del tutor
 
         $this->save();
 
@@ -182,10 +193,23 @@ class Inscripcion extends Model
         $this->comentar($mensaje);
     }
 
+
+    /**
+     * Marca una actividad real del tutor (comentarios, cambios manuales, etc.)
+     */
+    public function marcarActividad(): void
+    {
+        $this->ultima_actividad = now();
+        $this->save();
+    }
+
+
     public function getEstadoEtiquetaAttribute(): string
     {
         $etiquetas = config('inscripciones.etiquetas_estados', []);
         return $etiquetas[$this->estado] ?? $this->estado;
     }
+
+
 
 }

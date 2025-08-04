@@ -58,15 +58,24 @@ class GestionarInscripciones extends Command
 
         $inscripcionesCaducables = Inscripcion::with('usuarioAsignado')
             ->whereNotIn('estado', $estadosFinales)
-            ->where('updated_at', '<=', $fechaLimite)
+            ->where(function($query) use ($fechaLimite) {
+                $query->where('ultima_actividad', '<=', $fechaLimite)
+                      ->orWhereNull('ultima_actividad'); // Para registros sin actividad registrada
+            })
             ->get();
 
         $adminEmail = config('inscripciones.reportes.supervisor_email');
         foreach ($inscripcionesCaducables as $inscripcion) {
+            // Preservar datos antes del cambio
+            $estadoAnterior = $inscripcion->estado;
+            $fechaUltimaActividad = $inscripcion->ultima_actividad ?? $inscripcion->updated_at;
+
             $inscripcion->estado = 'caducada';
             $inscripcion->save();
             $inscripcion->comentar('Inscripción marcada como caducada automáticamente por inactividad.');
-            $notificacion = new \App\Notifications\InscripcionCaducada($inscripcion);
+
+            // Crear notificación con datos preservados
+            $notificacion = new \App\Notifications\InscripcionCaducada($inscripcion, $estadoAnterior, $fechaUltimaActividad);
             if ($inscripcion->usuarioAsignado) {
                 $inscripcion->usuarioAsignado->notify($notificacion);
             }
