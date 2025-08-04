@@ -10,6 +10,7 @@
 /storage/indexes
 /storage/app
 /storage/framework
+/storage/backups
 /vendor
 .env
 .env.backup

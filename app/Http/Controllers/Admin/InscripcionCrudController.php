@@ -360,6 +360,8 @@ class InscripcionCrudController extends CrudController
         $this->crud->setRequest($this->crud->validateRequest());
         $request = $this->crud->getRequest();
         $currentEntry = $this->crud->getCurrentEntry();
+        // Marcar actividad para cambios desde el CRUD administrativo
+        $currentEntry->marcarActividad();
 
         // Si se asigna tutor y el estado es 'nueva' o 'asignada', usar asignarA para notificar
         if (!empty($request->user_id) && in_array($request->estado, ['', 'nueva', 'asignada'])) {

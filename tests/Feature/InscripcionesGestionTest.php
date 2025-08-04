@@ -46,7 +46,8 @@ class InscripcionesGestionTest extends TestCase
             'estado' => 'asignada',
         ]);
         $inscripcion->save();
-        DB::table('inscripciones')->where('id', $inscripcion->id)->update(['updated_at' => $fecha_caduca]);
+        // Actualizar ultima_actividad en lugar de updated_at
+        DB::table('inscripciones')->where('id', $inscripcion->id)->update(['ultima_actividad' => $fecha_caduca]);
 
         // Simular que la línea de notificación al supervisor está activa
         // (en producción, descomentar en el comando)
@@ -82,6 +83,7 @@ class InscripcionesGestionTest extends TestCase
             'estado' => 'asignada',
             'user_id' => $usuarioTest ? $usuarioTest->id : null,
             'fecha_asignacion' => now()->subDays(11),
+            'ultima_actividad' => now()->subDays(11), // Inicializar ultima_actividad por defecto
             'fecha_nacimiento' => '1990-01-01',
             'ciudad' => 'Ciudad Test',
             'region' => 'Región Test',
@@ -347,11 +349,12 @@ class InscripcionesGestionTest extends TestCase
             'estado' => 'asignada',
         ]);
         $inscripcion->save();
-        DB::table('inscripciones')->where('id', $inscripcion->id)->update(['updated_at' => $fecha_caduca]);
+        // Actualizar ultima_actividad en lugar de updated_at
+        DB::table('inscripciones')->where('id', $inscripcion->id)->update(['ultima_actividad' => $fecha_caduca]);
         $this->ejecutarGestionarInscripciones();
         $inscripcion->refresh();
         $usuarioAsignado = $inscripcion->usuarioAsignado;
-        fwrite(STDERR, "Usuario asignado: " . ($usuarioAsignado ? $usuarioAsignado->id . ' - ' . $usuarioAsignado->email : 'null') . "\n");
+        //fwrite(STDERR, "Usuario asignado: " . ($usuarioAsignado ? $usuarioAsignado->id . ' - ' . $usuarioAsignado->email : 'null') . "\n");
         $this->assertEquals('caducada', $inscripcion->estado, 'La inscripción no cambió a estado caducada');
         $notificationFake->assertSentTo([
             $usuarioAsignado
@@ -379,12 +382,13 @@ class InscripcionesGestionTest extends TestCase
             'user_id' => $usuario->id,
             'estado' => 'asignada',
         ]);
-        DB::table('inscripciones')->where('id', $inscripcion->id)->update(['updated_at' => $fecha_no_caduca]);
+        // Actualizar ultima_actividad en lugar de updated_at
+        DB::table('inscripciones')->where('id', $inscripcion->id)->update(['ultima_actividad' => $fecha_no_caduca]);
         $this->ejecutarGestionarInscripciones();
         $inscripcion->refresh();
         $this->assertNotEquals('caducada', $inscripcion->estado, 'La inscripción cambió a estado caducada cuando no debía');
-        $notificacionesEnviadas = $notificationFake->sent($usuario, \App\Notifications\InscripcionCaducada::class);
-        fwrite(STDERR, "Notificaciones enviadas al usuario: " . json_encode($notificacionesEnviadas) . "\n");
+        // $notificacionesEnviadas = $notificationFake->sent($usuario, \App\Notifications\InscripcionCaducada::class);
+        //fwrite(STDERR, "Notificaciones enviadas al usuario: " . json_encode($notificacionesEnviadas) . "\n");
         $notificationFake->assertNotSentTo([
             $usuario
         ], \App\Notifications\InscripcionCaducada::class, function ($notification) use ($inscripcion) {
@@ -400,6 +404,78 @@ class InscripcionesGestionTest extends TestCase
             },
             'Se envió la notificación InscripcionCaducada al email del supervisor'
         );
+    }
+
+    public function test_caduca_por_ultima_actividad_no_por_updated_at()
+    {
+        $notificationFake = Notification::getFacadeRoot();
+        config(['inscripciones.caduca_meses' => 6]);
+        config(['inscripciones.reportes.supervisor_email' => 'supervisor@tseyor.org']);
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
+        $mesesCaduca = config('inscripciones.caduca_meses');
+
+        // Crear inscripción con actividad antigua pero updated_at reciente
+        $fecha_actividad_antigua = now()->subMonths($mesesCaduca + 1); // Hace 7 meses
+        $fecha_updated_reciente = now()->subDays(1); // Ayer
+
+        $inscripcion = $this->crearInscripcion([
+            'user_id' => $usuario->id,
+            'estado' => 'asignada',
+        ]);
+
+        // Simular que la inscripción tiene ultima_actividad antigua pero updated_at reciente
+        // (como pasaría con notificaciones automáticas)
+        DB::table('inscripciones')->where('id', $inscripcion->id)->update([
+            'ultima_actividad' => $fecha_actividad_antigua,
+            'updated_at' => $fecha_updated_reciente
+        ]);
+
+        $this->ejecutarGestionarInscripciones();
+        $inscripcion->refresh();
+
+        // Debe caducar por ultima_actividad, no por updated_at
+        $this->assertEquals('caducada', $inscripcion->estado, 'La inscripción debería caducar por ultima_actividad antigua, aunque updated_at sea reciente');
+
+        // Verificar notificaciones
+        $notificationFake->assertSentTo([
+            $usuario
+        ], \App\Notifications\InscripcionCaducada::class, null, 'No se envió la notificación InscripcionCaducada al usuario asignado');
+    }
+
+    public function test_no_caduca_por_actividad_reciente_aunque_updated_at_antiguo()
+    {
+        $notificationFake = Notification::getFacadeRoot();
+        config(['inscripciones.caduca_meses' => 6]);
+        $usuario = User::where('email', 'tutor_test@tseyor.org')->first();
+        $mesesCaduca = config('inscripciones.caduca_meses');
+
+        // Crear inscripción con actividad reciente pero updated_at antiguo
+        $fecha_actividad_reciente = now()->subDays(10); // Hace 10 días
+        $fecha_updated_antigua = now()->subMonths($mesesCaduca + 1); // Hace 7 meses
+
+        $inscripcion = $this->crearInscripcion([
+            'user_id' => $usuario->id,
+            'estado' => 'asignada',
+        ]);
+
+        // Simular que la inscripción tiene ultima_actividad reciente pero updated_at antiguo
+        DB::table('inscripciones')->where('id', $inscripcion->id)->update([
+            'ultima_actividad' => $fecha_actividad_reciente,
+            'updated_at' => $fecha_updated_antigua
+        ]);
+
+        $this->ejecutarGestionarInscripciones();
+        $inscripcion->refresh();
+
+        // NO debe caducar por updated_at, si ultima_actividad es reciente
+        $this->assertNotEquals('caducada', $inscripcion->estado, 'La inscripción NO debería caducar si ultima_actividad es reciente, aunque updated_at sea antiguo');
+
+        // No debe enviar notificaciones de caducidad
+        $notificationFake->assertNotSentTo([
+            $usuario
+        ], \App\Notifications\InscripcionCaducada::class, function ($notification) use ($inscripcion) {
+            return isset($notification->inscripcion) && $notification->inscripcion->id === $inscripcion->id;
+        }, 'No debería enviar notificación de caducidad si la actividad es reciente');
     }
 
     public function test_no_notificacion_en_estado_final()
