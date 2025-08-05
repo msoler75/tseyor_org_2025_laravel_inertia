@@ -137,22 +137,21 @@ class Inscripcion extends Model
         $this->user_id = $usuario->id;
         $this->estado = 'asignada';
         $this->fecha_asignacion = now();
-        $this->ultima_notificacion = null;
         $this->ultima_actividad = now(); // Actividad del tutor/admin
         $this->asignado = $usuario->name; // Campo legacy para compatibilidad
-
-        $this->save();
-
-        $this->comentar("Asignada a {$usuario->name}. {$motivo}");
 
         // Notificar al tutor asignado con la notificación adecuada
         try {
             $usuario->notify(new \App\Notifications\InscripcionAsignada($this));
-            $this->ultima_notificacion = now();
-            $this->save();
+            $this->ultima_notificacion = now(); // Solo actualizar si la notificación se envía correctamente
         } catch (\Exception $e) {
             Log::error('Error enviando notificación de asignación a tutor: ' . $e->getMessage());
+            // No establecer ultima_notificacion si falla la notificación
         }
+
+        $this->save(); // Una sola llamada a save() al final
+
+        $this->comentar("Asignada a {$usuario->name}. {$motivo}");
     }
 
     /**
@@ -164,8 +163,8 @@ class Inscripcion extends Model
 
         $this->estado = 'rebotada';
         $this->user_id = null;
-        $this->fecha_asignacion = null;
-        $this->ultima_notificacion = null;
+        $this->setAttribute('fecha_asignacion', null);
+        $this->setAttribute('ultima_notificacion', null);
         $this->ultima_actividad = now(); // Actividad del tutor
 
         $this->save();

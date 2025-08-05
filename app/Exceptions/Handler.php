@@ -6,6 +6,7 @@ use Illuminate\Database\QueryException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
@@ -147,6 +148,26 @@ class Handler extends ExceptionHandler
 
         if ($exception->getMessage() == 'Service Unavailable') {
             return response()->view('mantenimiento', [], 503);
+        }
+
+        // Manejo específico para excepciones de rate limiting (429)
+        if ($exception instanceof TooManyRequestsHttpException) {
+            $retryAfter = $exception->getHeaders()['Retry-After'] ?? 60;
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Demasiadas peticiones. Por favor, espera un momento antes de intentar de nuevo.',
+                    'retry_after' => $retryAfter
+                ], 429);
+            }
+
+            return Inertia::render('Error', [
+                'codigo' => 429,
+                'titulo' => 'Demasiadas peticiones',
+                'mensaje' => 'Has realizado demasiadas peticiones en muy poco tiempo. Por favor, espera un momento antes de continuar.',
+                'retry_after' => $retryAfter,
+                'alternativas' => collect([])
+            ])->toResponse($request);
         }
 
         if ($exception instanceof ModelNotFoundException || $exception instanceof NotFoundHttpException) {

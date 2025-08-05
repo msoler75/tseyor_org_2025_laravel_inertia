@@ -27,9 +27,46 @@ class CheckIfAdmin
      */
     private function checkIfUserIsAdmin($user)
     {
-        // return ($user->id == 1);
-        // return ($user->is_admin == 1);
-        return true;
+        // Verificar si el usuario tiene algún rol administrativo
+        if (!$user) {
+            return false;
+        }
+
+        // Convertir a instancia de User del modelo específico
+        $userModel = \App\Models\User::find($user->getAuthIdentifier());
+
+        if (!$userModel) {
+            return false;
+        }
+
+        // Verificar roles administrativos usando Spatie Permission
+        if($userModel->hasAnyRole([
+            'superadministrador',
+            'administrador',
+            'secretaria',
+            'comunicador',
+            'editor'
+        ])) {
+            return true;
+        }
+
+        // Verificar permisos específicos
+        if($userModel->hasAnyPermission([
+            'administrar usuarios',
+            'administrar contenidos',
+            'administrar equipos',
+            'administrar archivos',
+            'administrar directorio',
+            'administrar social',
+            'avanzado',
+            'administrar experiencias',
+            'administrar legal',
+            'coordinar equipo'
+        ])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

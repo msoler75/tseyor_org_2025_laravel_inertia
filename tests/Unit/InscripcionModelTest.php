@@ -111,6 +111,7 @@ class InscripcionModelTest extends TestCase
         $this->assertEquals($this->usuario->id, $this->inscripcion->user_id);
         $this->assertNotNull($this->inscripcion->fecha_asignacion);
         $this->assertNotNull($this->inscripcion->ultima_actividad);
+        $this->assertNotNull($this->inscripcion->ultima_notificacion, 'ultima_notificacion debe establecerse cuando se envía notificación exitosamente');
         $this->assertEquals($this->usuario->name, $this->inscripcion->asignado);
         $this->assertStringContainsString($motivo, $this->inscripcion->notas);
     }
@@ -197,7 +198,7 @@ class InscripcionModelTest extends TestCase
     {
         $this->inscripcion->estado = 'asignada';
         $this->inscripcion->user_id = $this->usuario->id;
-        $this->inscripcion->ultima_notificacion = null;
+        $this->inscripcion->setAttribute('ultima_notificacion', null);
         $this->inscripcion->fecha_asignacion = now()->subDays(5);
 
         $proximaNotificacion = $this->inscripcion->proximaNotificacion();
@@ -304,5 +305,35 @@ class InscripcionModelTest extends TestCase
         $this->assertEquals('asignada', $this->inscripcion->estado);
         $this->assertEquals($this->usuario->id, $this->inscripcion->user_id);
         $this->assertStringContainsString('Reasignación', $this->inscripcion->notas);
+    }
+
+    /**
+     * Esta prueba verifica que el comportamiento de asignación funciona correctamente
+     * cuando las notificaciones están disponibles (caso normal)
+     */
+    public function test_asignar_a_usuario_establece_ultima_notificacion_correctamente()
+    {
+        $motivoAsignacion = 'Asignación de prueba normal';
+
+        // Verificar estado inicial
+        $this->assertNull($this->inscripcion->ultima_notificacion);
+
+        $this->inscripcion->asignarA($this->usuario, $motivoAsignacion);
+
+        // Verificar que todos los campos se establecen correctamente incluyendo ultima_notificacion
+        $this->assertEquals('asignada', $this->inscripcion->estado);
+        $this->assertEquals($this->usuario->id, $this->inscripcion->user_id);
+        $this->assertNotNull($this->inscripcion->fecha_asignacion);
+        $this->assertNotNull($this->inscripcion->ultima_actividad);
+        $this->assertNotNull($this->inscripcion->ultima_notificacion, 'ultima_notificacion debe establecerse cuando la notificación se procesa exitosamente');
+
+        // Verificar que ultima_notificacion es reciente (dentro del último minuto)
+        $this->assertTrue(
+            $this->inscripcion->ultima_notificacion->greaterThanOrEqualTo(now()->subMinute()),
+            'ultima_notificacion debe ser una fecha reciente'
+        );
+
+        // Verificar que se registra el comentario de asignación
+        $this->assertStringContainsString($motivoAsignacion, $this->inscripcion->notas);
     }
 }
