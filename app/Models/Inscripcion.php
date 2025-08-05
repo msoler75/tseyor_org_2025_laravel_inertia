@@ -99,13 +99,16 @@ class Inscripcion extends Model
             return null;
         }
 
+        // Si nunca se ha enviado notificación, es tiempo de enviar la primera
+        if (!$this->ultima_notificacion) {
+            return now()->subMinute(); // Devolver una fecha en el pasado para que se procese
+        }
+
         $intervalo = $this->estado === 'asignada'
             ? config('inscripciones.notificaciones.dias_intervalo_asignada')
             : config('inscripciones.notificaciones.dias_intervalo');
 
-        $base = $this->ultima_notificacion ?? $this->fecha_asignacion;
-        if (!$base) return null;
-        return Carbon::parse($base)->addDays($intervalo);
+        return Carbon::parse($this->ultima_notificacion)->addDays($intervalo);
     }
 
     /**

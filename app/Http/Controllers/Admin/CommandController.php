@@ -57,9 +57,22 @@ class CommandController extends Controller
 
         // Verificar si el comando está permitido y determinar su tipo
         $commandType = $this->getCommandType($baseCommand);
+
+        // Si no se encontró por comando base, verificar comando completo para casos como "pkill -f ssr"
+        if (!$commandType && count($parts) >= 3) {
+            $fullCommand = implode(' ', $parts);
+            foreach ($this->allowedCommands['exec'] as $allowedCommand) {
+                if ($fullCommand === $allowedCommand) {
+                    $commandType = 'exec';
+                    break;
+                }
+            }
+        }
+
         Log::info("Tipo de comando determinado", [
             'baseCommand' => $baseCommand,
-            'commandType' => $commandType
+            'commandType' => $commandType,
+            'fullCommand' => $command
         ]);
 
         if (!$commandType) {
@@ -112,11 +125,11 @@ class CommandController extends Controller
         }
 
         // Verificar comandos exec complejos como "pkill -f ssr"
-        /*foreach ($this->allowedCommands['exec'] as $execCommand) {
+        foreach ($this->allowedCommands['exec'] as $execCommand) {
             if (strpos($execCommand, $baseCommand) === 0) {
                 return 'exec';
             }
-        }*/
+        }
 
         return null;
     }
@@ -159,17 +172,117 @@ class CommandController extends Controller
 
         $output = [];
         $exitCode = 0;
-        exec($cmd . ' 2>&1', $output, $exitCode);
-        $outputText = implode("\n", $output);
+        $outputText = '';
+
+        try {
+            exec($cmd . ' 2>&1', $output, $exitCode);
+            $outputText = implode("\n", $output);
+        } catch (\Exception $e) {
+            Log::error("Error al ejecutar comando externo: {$cmd}", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'error' => 'Error al ejecutar el comando',
+                'output' => "Error del sistema: {$e->getMessage()}",
+                'exitCode' => 1
+            ], 500);
+        }
+
+        // Verificar errores específicos en la salida
+        if (strpos($outputText, 'cannot fork') !== false ||
+            strpos($outputText, 'Can not fork') !== false ||
+            strpos($outputText, 'fork: retry: Resource temporarily unavailable') !== false ||
+            strpos($outputText, 'Resource temporarily unavailable') !== false ||
+            strpos($outputText, 'fork: Cannot allocate memory') !== false ||
+            strpos($outputText, 'fork: retry: No child processes') !== false) {
+
+            Log::error("Error de recursos del sistema detectado en comando: {$cmd}", [
+                'output' => $outputText,
+                'exitCode' => $exitCode
+            ]);
+
+            return response()->json([
+                'error' => 'Error del sistema',
+                'output' => 'El servidor no tiene recursos suficientes en este momento. Intenta de nuevo en unos segundos.',
+                'exitCode' => $exitCode
+            ], 503); // Service Unavailable
+        }
+
+        // Verificar errores de memoria
+        if (strpos($outputText, 'Cannot allocate memory') !== false ||
+            strpos($outputText, 'Out of memory') !== false ||
+            strpos($outputText, 'Memory allocation failed') !== false) {
+
+            Log::error("Error de memoria detectado en comando: {$cmd}", [
+                'output' => $outputText,
+                'exitCode' => $exitCode
+            ]);
+
+            return response()->json([
+                'error' => 'Error de memoria',
+                'output' => 'El servidor no tiene suficiente memoria disponible. Intenta de nuevo más tarde.',
+                'exitCode' => $exitCode
+            ], 503);
+        }
+
+        // Verificar errores de procesos
+        if (strpos($outputText, 'No child processes') !== false ||
+            strpos($outputText, 'Too many processes') !== false ||
+            strpos($outputText, 'Process limit exceeded') !== false) {
+
+            Log::error("Error de límite de procesos detectado en comando: {$cmd}", [
+                'output' => $outputText,
+                'exitCode' => $exitCode
+            ]);
+
+            return response()->json([
+                'error' => 'Error de procesos',
+                'output' => 'El servidor ha alcanzado el límite de procesos. Intenta de nuevo en unos minutos.',
+                'exitCode' => $exitCode
+            ], 503);
+        }
+
+        // Verificar otros errores comunes
+        if (strpos($outputText, 'Permission denied') !== false) {
+            Log::error("Error de permisos detectado en comando: {$cmd}", [
+                'output' => $outputText,
+                'exitCode' => $exitCode
+            ]);
+
+            return response()->json([
+                'error' => 'Error de permisos',
+                'output' => 'No tienes permisos suficientes para ejecutar este comando.',
+                'exitCode' => $exitCode
+            ], 403);
+        }
+
+        if (strpos($outputText, 'command not found') !== false || strpos($outputText, 'No such file') !== false) {
+            Log::error("Comando no encontrado: {$cmd}", [
+                'output' => $outputText,
+                'exitCode' => $exitCode
+            ]);
+
+            return response()->json([
+                'error' => 'Comando no encontrado',
+                'output' => 'El comando solicitado no está disponible en este servidor.',
+                'exitCode' => $exitCode
+            ], 404);
+        }
 
         Log::info("Comando externo ejecutado: {$cmd}", [
             'output' => $outputText,
             'exitCode' => $exitCode
         ]);
 
+        // Para comandos como pkill, un exitCode mayor que 0 no siempre es un error
+        $isSuccess = ($baseCommand === 'pkill') ? true : ($exitCode === 0);
+        $status = $isSuccess ? 'Comando completado' : 'Comando completado con advertencias';
+
         return response()->json([
-            'status' => 'Comando completado',
-            'output' => $outputText ?: $this->getDefaultMessage($baseCommand),
+            'status' => $status,
+            'output' => $outputText ?: $this->getDefaultMessage($fullCommand),
             'exitCode' => $exitCode
         ]);
     }
@@ -202,6 +315,11 @@ class CommandController extends Controller
             'inertia:stop-ssr' => 'Servidor SSR detenido',
             'inertia:start-ssr' => 'Servidor SSR iniciado'
         ];
+
+        // Para comandos que empiecen con pkill
+        if (strpos($command, 'pkill') === 0) {
+            return 'Procesos terminados correctamente';
+        }
 
         return $messages[$command] ?? 'Comando ejecutado correctamente';
     }

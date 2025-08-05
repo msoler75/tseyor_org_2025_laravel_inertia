@@ -85,7 +85,7 @@ return [
         'dias_intervalo' => 14,
 
         // Estados que requieren seguimiento automático
-        'estados_seguimiento' => ['asignada', 'contactado', 'encurso'],
+        'estados_seguimiento' => ['asignada', 'contactado', 'encurso', 'suspendida'],
 
         // Estados que detienen el seguimiento automático
         'estados_finales' => ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada', 'cerrada']
