@@ -16,7 +16,7 @@ class GestionarInscripciones extends Command
      *
      * @var string
      */
-    protected $signature = 'inscripciones:gestionar {--solo-seguimiento : Solo enviar notificaciones de seguimiento} {--solo-reporte : Solo enviar reporte al administrador}';
+    protected $signature = 'inscripciones:gestionar {--solo-seguimiento : Solo enviar notificaciones de seguimiento} {--solo-reporte : Solo enviar reporte al administrador} {--id= : Procesar solo una inscripción específica por ID}';
 
     /**
      * The console command description.
@@ -32,15 +32,18 @@ class GestionarInscripciones extends Command
     {
         $soloSeguimiento = $this->option('solo-seguimiento');
         $soloReporte = $this->option('solo-reporte');
+        $inscripcionId = $this->option('id');
 
-        // Detectar inscripciones caducadas antes de notificar
-        $this->detectarInscripcionesCaducadas();
-
-        if (!$soloReporte) {
-            $this->enviarNotificacionesSeguimiento();
+        // Detectar inscripciones caducadas antes de notificar (solo si no es ID específico)
+        if (!$inscripcionId) {
+            $this->detectarInscripcionesCaducadas();
         }
 
-        if (!$soloSeguimiento) {
+        if (!$soloReporte) {
+            $this->enviarNotificacionesSeguimiento($inscripcionId);
+        }
+
+        if (!$soloSeguimiento && !$inscripcionId) {
             $this->enviarReporteAdministrador();
         }
 
@@ -89,33 +92,68 @@ class GestionarInscripciones extends Command
     /**
      * Envía notificaciones de seguimiento a usuarios asignados
      */
-    private function enviarNotificacionesSeguimiento(): void
+    private function enviarNotificacionesSeguimiento($inscripcionId = null): void
     {
-        $this->info('Buscando inscripciones que requieren seguimiento...');
+        if ($inscripcionId) {
+            $this->info("Buscando inscripción específica ID: {$inscripcionId}...");
+        } else {
+            $this->info('Buscando inscripciones que requieren seguimiento...');
+        }
 
         $estadosFinales = config('inscripciones.notificaciones.estados_finales') ?? [];
-        $inscripciones = Inscripcion::with('usuarioAsignado')
+        $estadosSeguimiento = config('inscripciones.notificaciones.estados_seguimiento');
+
+        $this->line("Estados finales: " . implode(', ', $estadosFinales));
+        $this->line("Estados seguimiento: " . implode(', ', $estadosSeguimiento));
+
+        $query = Inscripcion::with('usuarioAsignado')
             ->whereNotNull('user_id')
             ->whereNotIn('estado', $estadosFinales)
-            ->whereIn('estado', config('inscripciones.notificaciones.estados_seguimiento'))
-            ->get();
+            ->whereIn('estado', $estadosSeguimiento);
+
+        // Si se especifica un ID, filtrar por ese ID
+        if ($inscripcionId) {
+            $query->where('id', $inscripcionId);
+        }
+
+        $inscripciones = $query->get();
+
+        if ($inscripcionId && $inscripciones->isEmpty()) {
+            $this->error("No se encontró la inscripción con ID: {$inscripcionId} o no cumple los criterios de seguimiento");
+            return;
+        }
+
+        $this->line("Total inscripciones encontradas: " . $inscripciones->count());
 
         $enviadas = 0;
         $agrupadasPorUsuario = [];
 
         foreach ($inscripciones as $inscripcion) {
+            $this->line("Evaluando inscripción #{$inscripcion->id} - Estado: {$inscripcion->estado} - Usuario: " . ($inscripcion->usuarioAsignado?->name ?? 'Sin usuario'));
+
             $proximaNotificacion = $inscripcion->proximaNotificacion();
+            $this->line("  - Próxima notificación: " . ($proximaNotificacion ? $proximaNotificacion->format('Y-m-d H:i') : 'null'));
+            $this->line("  - Es pasado: " . ($proximaNotificacion && $proximaNotificacion->isPast() ? 'SÍ' : 'NO'));
+            $this->line("  - Tiene usuario asignado: " . ($inscripcion->usuarioAsignado ? 'SÍ' : 'NO'));
+
             if ($proximaNotificacion && $proximaNotificacion->isPast() && $inscripcion->usuarioAsignado) {
                 $usuarioId = $inscripcion->usuarioAsignado->id;
                 $agrupadasPorUsuario[$usuarioId]['usuario'] = $inscripcion->usuarioAsignado;
                 $agrupadasPorUsuario[$usuarioId]['inscripciones'][] = $inscripcion;
+                $this->line("  - AÑADIDA al grupo de usuario {$inscripcion->usuarioAsignado->name}");
+            } else {
+                $this->line("  - NO añadida - no cumple criterios");
             }
         }
+
+        $this->line("Usuarios con inscripciones a notificar: " . count($agrupadasPorUsuario));
 
         $config = config('inscripciones.notificaciones');
 
         foreach ($agrupadasPorUsuario as $grupo) {
             $usuario = $grupo['usuario'];
+            $this->line("Procesando usuario: {$usuario->name} con " . count($grupo['inscripciones']) . " inscripciones");
+
             // Usar siempre dias_intervalo_asignada para estado 'asignada'
             $inscripcionesNotificables = array_filter($grupo['inscripciones'], function ($inscripcion) use ($config, $estadosFinales) {
                 if ($inscripcion->estado === 'asignada') {
@@ -128,6 +166,8 @@ class GestionarInscripciones extends Command
                     return $diasDesdeUltimaNotificacion >= $config['dias_intervalo'];
                 }
             });
+
+            $this->line("  - Inscripciones notificables después del filtro: " . count($inscripcionesNotificables));
 
             // si hay inscripciones pendientes y no se ha notificado recientemente
             if (count($inscripcionesNotificables) > 0) {
@@ -147,6 +187,8 @@ class GestionarInscripciones extends Command
                     $inscripcion->comentar("Notificación de seguimiento enviada automáticamente");
                 }
                 $enviadas++;
+            } else {
+                $this->line("  - NO se envía notificación - no hay inscripciones notificables");
             }
         }
 

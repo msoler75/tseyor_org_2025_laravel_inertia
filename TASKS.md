@@ -1,6 +1,10 @@
 # TASKS.md
 
 ## Tareas actuales
+### 05/08/2025
+- [x] Corregir error 403 en comandos admin: agregar token CSRF y mejorar manejo de errores en command.blade.php (05/08/2025)
+- [x] Mejorar manejo de errores del sistema en CommandController: capturar "fork: retry: Resource temporarily unavailable", memoria y límites de procesos con mensajes específicos (05/08/2025)
+
 ### 27/07/2025
 - [x] Refactorizar MisAsignaciones.vue para evitar mutación directa de props y usar copia reactiva local de inscripciones.
 - [x] Mejorar y detallar el manual de despliegue en _DEPLOYMENT.md (15/05/2025)

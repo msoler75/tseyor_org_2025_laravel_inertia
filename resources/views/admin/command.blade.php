@@ -1,5 +1,9 @@
 @extends(backpack_view('blank'))
 
+@section('head')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+@endsection
+
 @section('content')
 
 <h1>Comandos ARTISAN</h1>
@@ -20,22 +24,115 @@
     </div>
 
     <script>
-
         document.addEventListener('DOMContentLoaded', function() {
+            // Obtener el token CSRF
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
             document.querySelectorAll('button[command]').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     let command = encodeURIComponent(this.getAttribute('command'));
-                    axios.post('/admin/command', { command: command })
-                        .then(function(response) {
-                            console.log({
-                                response
-                            })
-                            swal('Command executed', response.data.output, 'success');
-                        })
-                        .catch(function(error) {
-                            console.log(error);
-                            swal('Error', error.response.data.message, 'error');
-                        });
+
+                    // Deshabilitar el botón mientras se ejecuta el comando
+                    this.disabled = true;
+                    let originalText = this.innerHTML;
+                    this.innerHTML = 'Ejecutando...';
+
+                    fetch('/admin/command', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ command: command })
+                    })
+                    .then(response => {
+                        // Manejar respuestas no exitosas
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw { response: { status: response.status, data: data } };
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Respuesta del comando:', data);
+
+                        // Mostrar el resultado
+                        let output = data.output || data.status || 'Comando ejecutado correctamente';
+                        let status = data.exitCode === 0 ? 'success' : 'warning';
+
+                        swal('Comando ejecutado', output, status);
+                    })
+                    .catch(error => {
+                        console.error('Error al ejecutar comando:', error);
+
+                        let errorMessage = 'Error desconocido';
+                        let alertType = 'error';
+
+                        if (error.response) {
+                            // El servidor respondió con un código de error
+                            switch (error.response.status) {
+                                case 403:
+                                    errorMessage = 'Acceso denegado. Verifica que tengas permisos para ejecutar este comando.';
+                                    break;
+                                case 404:
+                                    errorMessage = 'El comando solicitado no está disponible en este servidor.';
+                                    break;
+                                case 429:
+                                    errorMessage = 'Demasiadas peticiones. Espera un momento antes de ejecutar otro comando.';
+                                    alertType = 'warning';
+                                    break;
+                                case 503:
+                                    // Manejar diferentes tipos de errores 503 según el mensaje
+                                    if (error.response.data && error.response.data.output) {
+                                        errorMessage = error.response.data.output;
+
+                                        // Determinar el tipo de error específico
+                                        if (error.response.data.error === 'Error de memoria') {
+                                            alertType = 'warning';
+                                        } else if (error.response.data.error === 'Error de procesos') {
+                                            alertType = 'warning';
+                                        } else {
+                                            alertType = 'warning';
+                                        }
+                                    } else {
+                                        errorMessage = 'El servidor no tiene recursos suficientes en este momento. Intenta de nuevo en unos segundos.';
+                                        alertType = 'warning';
+                                    }
+                                    break;
+                                case 500:
+                                    if (error.response.data) {
+                                        errorMessage = error.response.data.output ||
+                                                     error.response.data.message ||
+                                                     error.response.data.error ||
+                                                     'Error interno del servidor';
+                                    } else {
+                                        errorMessage = 'Error interno del servidor';
+                                    }
+                                    break;
+                                default:
+                                    if (error.response.data) {
+                                        errorMessage = error.response.data.message ||
+                                                     error.response.data.error ||
+                                                     error.response.data.output ||
+                                                     `Error del servidor (${error.response.status})`;
+                                    }
+                            }
+                        } else if (error.message) {
+                            // Error de red o en la configuración de la petición
+                            errorMessage = error.message.includes('fetch') ?
+                                          'No se pudo conectar con el servidor' :
+                                          error.message;
+                        }
+
+                        swal('Error', errorMessage, alertType);
+                    })
+                    .finally(() => {
+                        // Rehabilitar el botón
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    });
                 });
             });
         });

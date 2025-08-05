@@ -547,7 +547,7 @@ onMounted(() => {
 
 // Computed principal que añade campos calculados a cada inscripción (sobre la copia local)
 const inscripcionesProcesadas = computed(() => {
-  const estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta']
+  const estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada']
   return inscripcionesLocal.value.map(inscripcion => {
     const esCerrada = estadosFinalizados.includes(inscripcion.estado)
     const esRecienReasignada = inscripcionesRecienReasignadas.value.has(inscripcion.id)
@@ -900,7 +900,8 @@ function getEstadoClass(estado) {
     'rebotada': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
     'duplicada': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
     'nointeresado': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-    'abandonado': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+    'abandonado': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+    'caducada': 'bg-gray-400 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
   }
   return clases[estado] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
 }
