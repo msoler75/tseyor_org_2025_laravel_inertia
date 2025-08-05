@@ -146,7 +146,7 @@ class InscripcionCrudController extends CrudController
 
         CRUD::column('notas')->type('textarea')->label('Notas');
 
-        CRUD::column('fecha_asignacion')->type('closure')->label('Fecha Asignación')
+        /*CRUD::column('fecha_asignacion')->type('closure')->label('Fecha Asignación')
             ->function(function ($entry) {
                 if ($entry->fecha_asignacion) {
                     $fecha = Carbon::parse($entry->fecha_asignacion);
@@ -154,12 +154,26 @@ class InscripcionCrudController extends CrudController
                            $fecha->diffForHumans() . '</span>';
                 }
                 return '<span class="text-muted">-</span>';
-            })->escaped(false);
+            })->escaped(false);*/
 
-        CRUD::column('ultima_notificacion')->type('closure')->label('Última Notificación')
+        /*CRUD::column('ultima_notificacion')->type('closure')->label('Última Notificación')
             ->function(function ($entry) {
                 if ($entry->ultima_notificacion) {
                     $fecha = Carbon::parse($entry->ultima_notificacion);
+                    $dias = $fecha->diffInDays(now());
+                    $class = $dias > 7 ? 'text-danger' : ($dias > 3 ? 'text-warning' : 'text-success');
+
+                    return '<span class="' . $class . '" title="' . $fecha->format('d/m/Y H:i') . '">' .
+                           $fecha->diffForHumans() . '</span>';
+                }
+                return '<span class="text-muted">-</span>';
+            })->escaped(false);
+            */
+
+         CRUD::column('ultima_actividad')->type('closure')->label('Última Notificación')
+            ->function(function ($entry) {
+                if ($entry->ultima_actividad) {
+                    $fecha = Carbon::parse($entry->ultima_actividad);
                     $dias = $fecha->diffInDays(now());
                     $class = $dias > 7 ? 'text-danger' : ($dias > 3 ? 'text-warning' : 'text-success');
 
@@ -322,6 +336,7 @@ class InscripcionCrudController extends CrudController
 
         CRUD::column('fecha_asignacion')->type('datetime')->label('Fecha de Asignación');
         CRUD::column('ultima_notificacion')->type('datetime')->label('Última Notificación');
+        CRUD::column('ultima_actividad')->type('datetime')->label('Última Actividad');
 
         // Notas de seguimiento
         CRUD::column('notas')->type('textarea')->label('Notas de Seguimiento');

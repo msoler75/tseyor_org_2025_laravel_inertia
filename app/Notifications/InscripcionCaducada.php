@@ -31,6 +31,7 @@ class InscripcionCaducada extends Notification
     {
         $estadoMostrar = $this->estadoAnterior ?? $this->inscripcion->estado;
         $fechaMostrar = $this->fechaUltimaActualizacion ?? $this->inscripcion->updated_at;
+        $enlaceGestion = rtrim(config('app.url'),'/') . '/admin/inscripcion/' . $this->inscripcion->id . '/edit';
 
         return (new MailMessage)
             ->subject('Inscripción caducada')
@@ -39,7 +40,7 @@ class InscripcionCaducada extends Notification
             ->line('Estado anterior: ' . $estadoMostrar)
             ->line('Fecha de última actualización: ' . $fechaMostrar->format('d/m/Y'))
             ->line('Recuerda que los datos del alumno son confidenciales y solo para uso interno de los tutores responsables.')
-            ->action('Ver inscripción', url('/admin/inscripcion/' . $this->inscripcion->id.'/edit'))
+            ->action('Ver inscripción', $enlaceGestion)
             ->line('Si tienes alguna duda, contacta con el equipo web@tseyor.org');
     }
 }

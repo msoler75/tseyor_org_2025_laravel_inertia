@@ -26,7 +26,8 @@ class CommandController extends Controller
         ],
         'exec' => [
             'pkill -f ssr',
-            'inertia:stop-ssr', // Ejecutar como comando externo
+            'inertia:start-ssr',
+            'inertia:stop-ssr',
             // './bash/ssr.sh start', // Ejecutar como comando externo
         ],
     ];

@@ -1,5 +1,10 @@
 -Poner api.tseyor.org comno API_URL en tseyor.org
 
+SEGURIDAD (COMPLETADO 2025-01-04)
+-(HECHO) Analizar vulnerabilidades en CommandController
+-(HECHO) Corregir middleware CheckIfAdmin
+-(HECHO) Implementar rate limiting en todas las rutas admin
+
 SECCION ARTE DE TSEYORIANOS
 -crear esa sección en la web
 -poner tambien los audios

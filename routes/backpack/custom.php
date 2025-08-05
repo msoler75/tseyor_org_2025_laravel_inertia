@@ -15,7 +15,8 @@ Route::group([
     'prefix'     => config('backpack.base.route_prefix', 'admin'),
     'middleware' => array_merge(
         (array) config('backpack.base.web_middleware', 'web'),
-        (array) config('backpack.base.middleware_key', 'admin')
+        (array) config('backpack.base.middleware_key', 'admin'),
+        ['throttle:admin']
     ),
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
@@ -104,16 +105,21 @@ Route::group([
 
     Route::get('search/{model}', 'SearchModelController@index');
 
+    // Worker routes con throttling restrictivo
+    Route::middleware('throttle:worker')->group(function () {
+        Route::get('worker/check', [WorkerController::class, 'checkWorkerStatus'])->name('worker.check');
+        Route::get('worker/start', [WorkerController::class, 'startWorker'])->name('worker.start');
+        Route::get('worker/stop', [WorkerController::class, 'stopWorker'])->name('worker.stop');
+        Route::get('worker/restart', [WorkerController::class, 'restartWorker'])->name('worker.restart');
+    });
 
-    Route::get('worker/check', [WorkerController::class, 'checkWorkerStatus'])->name('worker.check');
-    Route::get('worker/start', [WorkerController::class, 'startWorker'])->name('worker.start');
-    Route::get('worker/stop', [WorkerController::class, 'stopWorker'])->name('worker.stop');
-    Route::get('worker/restart', [WorkerController::class, 'restartWorker'])->name('worker.restart');
-
-    Route::get('command', function () {
-        return view('admin.command');
-    } );
-    Route::post('command', [CommandController::class, 'runCommandPost'])->name('command.run');
+    // Command routes con throttling muy restrictivo
+    Route::middleware('throttle:command')->group(function () {
+        Route::get('command', function () {
+            return view('admin.command');
+        });
+        Route::post('command', [CommandController::class, 'runCommandPost'])->name('command.run');
+    });
 
 
     Route::get('archivos', function () {
