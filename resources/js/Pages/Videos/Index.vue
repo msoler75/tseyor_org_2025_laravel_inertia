@@ -18,6 +18,7 @@
                     class="text-blue-600 hover:text-blue-800 font-bold text-2xl">youtube.com/@tseyor</a>
                 <a href="https://www.youtube.com/@tseyor" target="_blank">
                     <Image src="/almacen/medios/logos/youtube_big_logo.svg" alt="Logo de Youtube"
+                        src-width="1000" src-height="223"
                         class="h-12 mx-auto dark:mix-blend-exclusion" />
                 </a>
             </div>

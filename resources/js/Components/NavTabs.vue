@@ -31,6 +31,7 @@ const nav = useNav()
 const container = ref(null)
 const page = usePage();
 const portada = computed(() => page.url == "/");
+const hoverTimeout = ref(null)
 
 function clickedTab(tab) {
     nav.toggleTab(tab);
@@ -41,11 +42,28 @@ function clickedTab(tab) {
 
 
 function enterTab(tab) {
-    nav.hoverTab(tab)
-    nextTick(updateUnderscore)
+    // Cancelar cualquier timeout previo
+    if (hoverTimeout.value) {
+        clearTimeout(hoverTimeout.value)
+        hoverTimeout.value = null
+    }
+
+    // Activar el hover con un retardo de 200ms
+    hoverTimeout.value = setTimeout(() => {
+        nav.hoverTab(tab)
+        hoverTimeout.value = null
+        nextTick(updateUnderscore)
+    }, 170)
+
 }
 
 function leaveTab(tab) {
+    // Cancelar el timeout si el mouse sale antes de que se active
+    if (hoverTimeout.value) {
+        clearTimeout(hoverTimeout.value)
+        hoverTimeout.value = null
+    }
+
     nav.unhoverTab(tab)
     nextTick(updateUnderscore)
 }
@@ -109,6 +127,14 @@ onMounted(  ()=>{
         }
     })
 })
+
+onBeforeUnmount(() => {
+    // Limpiar el timeout al desmontar el componente
+    if (hoverTimeout.value) {
+        clearTimeout(hoverTimeout.value)
+        hoverTimeout.value = null
+    }
+})
 </script>
 
 
@@ -147,10 +173,6 @@ onMounted(  ()=>{
 <style>
 .nav-tab.active {
     font-style: bold;
-}
-
-.nav-tab.hovering {
-    /* @apply bg-yellow-500; */
 }
 
 .navigation-tab {

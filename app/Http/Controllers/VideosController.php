@@ -17,22 +17,22 @@ class VideosController extends Controller
         $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
 
-        $query = Video::select(['slug', 'titulo', 'descripcion', 'updated_at'])
+        $query = Video::select(['slug', 'titulo', 'descripcion', 'enlace', 'updated_at'])
             ->where('visibilidad', 'P');
 
         if ($buscar) {
             $ids = Video::search($buscar)->get()->pluck('id')->toArray();
             $query->whereIn('videos.id', $ids);
         }
-        else
-            $query->latest();
 
         $resultados = $query
+            ->orderBy('created_at', 'asc')
             ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends(['buscar' => $buscar/*,  'categoria' => $categoria*/]);
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);
+
 
         // $categorias = (new Normativa())->getCategorias();
 

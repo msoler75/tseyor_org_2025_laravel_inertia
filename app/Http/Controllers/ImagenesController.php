@@ -246,10 +246,86 @@ class ImagenesController extends Controller
         return Cache::remember($cache_key, now()->addDays(365), function () use ($url) {
             $sti = new StorageItem($url);
             $fullpath = $sti->path;
-            // obtenemos las dimensiones de la imagen en la ubicación $fullpath
+
+            // Verificar si el archivo existe
+            if (!file_exists($fullpath)) {
+                return false;
+            }
+
+            // Verificar si es un archivo SVG
+            $extension = strtolower(pathinfo($fullpath, PATHINFO_EXTENSION));
+            if ($extension === 'svg') {
+                return self::getSvgDimensions($fullpath);
+            }
+
+            // Para otros formatos, usar getimagesize
             $info = @getimagesize($fullpath);
             return $info;
         });
+    }
+
+    /**
+     * Extrae las dimensiones de un archivo SVG
+     */
+    private static function getSvgDimensions(string $filePath)
+    {
+        $svgContent = file_get_contents($filePath);
+        if (!$svgContent) {
+            return false;
+        }
+
+        // Crear un objeto SimpleXMLElement
+        $xml = simplexml_load_string($svgContent);
+        if (!$xml) {
+            return false;
+        }
+
+        $width = null;
+        $height = null;
+
+        // Intentar obtener width y height de los atributos
+        if (isset($xml['width'])) {
+            $width = self::parseNumericValue((string)$xml['width']);
+        }
+        if (isset($xml['height'])) {
+            $height = self::parseNumericValue((string)$xml['height']);
+        }
+
+        // Si no tenemos dimensiones, intentar obtenerlas del viewBox
+        if (($width === null || $height === null) && isset($xml['viewBox'])) {
+            $viewBox = explode(' ', (string)$xml['viewBox']);
+            if (count($viewBox) >= 4) {
+                $width = $width ?? (float)$viewBox[2];
+                $height = $height ?? (float)$viewBox[3];
+            }
+        }
+
+        // Si aún no tenemos dimensiones, usar valores por defecto
+        if ($width === null || $height === null) {
+            $width = $width ?? 300;  // Valor por defecto para SVG
+            $height = $height ?? 150; // Valor por defecto para SVG
+        }
+
+        // Retornar en el mismo formato que getimagesize
+        return [
+            0 => (int)$width,
+            1 => (int)$height,
+            2 => IMAGETYPE_UNKNOWN, // SVG no tiene un tipo específico en getimagesize
+            3 => "width=\"{$width}\" height=\"{$height}\"",
+            'mime' => 'image/svg+xml',
+            'channels' => null,
+            'bits' => null
+        ];
+    }
+
+    /**
+     * Convierte valores como "100px", "50%", "2em" a valores numéricos
+     */
+    private static function parseNumericValue(string $value)
+    {
+        // Remover unidades comunes y convertir a número
+        $numericValue = preg_replace('/[^0-9.]/', '', $value);
+        return $numericValue !== '' ? (float)$numericValue : null;
     }
 
     public static function info(array $imagenes)
