@@ -207,16 +207,13 @@ class GestionarInscripciones extends Command
         $adminEmail = config('inscripciones.reportes.supervisor_email');
 
         if ($adminEmail) {
+            $this->info("Enviando reporte a: {$adminEmail}");
+
             // Enviar por route mail (real)
             Notification::route('mail', $adminEmail)
                 ->notify(new InscripcionesReporte($estadisticas));
-            // Enviar al objeto notificable para los tests
-            if (class_exists('Tests\\Feature\\AdminNotifiable')) {
-                $adminNotifiable = new \Tests\Feature\AdminNotifiable();
-                Notification::send($adminNotifiable, new InscripcionesReporte($estadisticas));
-            }
 
-            $this->info("Reporte enviado a: {$adminEmail}");
+            $this->info("✅ Reporte enviado exitosamente a: {$adminEmail}");
         } else {
             $this->warn('No se ha configurado email de administrador en config/inscripciones.php');
         }
@@ -227,58 +224,223 @@ class GestionarInscripciones extends Command
      */
     private function generarEstadisticas(): array
     {
+        $this->info('📊 Iniciando generación de estadísticas...');
 
-        $fechaLimite = now()->subMonths(12);
+        $fechaLimite = now()->subMonths(3); // Cambio a 3 meses
 
+        // Estadísticas básicas por estado (últimos 3 meses)
+        $this->info('1️⃣ Generando estadísticas por estado...');
         $porEstado = Inscripcion::selectRaw('estado, COUNT(*) as total')
             ->where('created_at', '>=', $fechaLimite)
             ->groupBy('estado')
             ->pluck('total', 'estado')
             ->toArray();
 
-        $requierenAtencion = Inscripcion::with('usuarioAsignado')
-            ->where('created_at', '>=', $fechaLimite)
-            ->whereIn('estado', config('inscripciones.notificaciones.estados_seguimiento'))
-            ->where('fecha_asignacion', '<=', now()->subDays(10)) // Más de 10 días asignadas
+        // DETECCIÓN DE INCIDENCIAS - PRIORIDAD ALTA
+        $this->info('2️⃣ Detectando inscripciones abandonadas...');
+
+        // 1. Inscripciones asignadas hace más de 14 días sin cambio de estado
+        $inscripcionesAbandonadas = collect(Inscripcion::with('usuarioAsignado')
+            ->where('estado', 'asignada')
+            ->where('fecha_asignacion', '<=', now()->subDays(14))
+            ->where('ultima_actividad', '<=', now()->subDays(14)) // Sin actividad reciente
             ->get()
             ->map(function ($inscripcion) {
                 return [
+                    'id' => $inscripcion->id,
                     'nombre' => $inscripcion->nombre,
-                    'estado' => $inscripcion->estado,
-                    'usuario' => $inscripcion->usuarioAsignado?->name ?? 'Sin asignar',
-                    'dias_asignada' => $inscripcion->fecha_asignacion ? $inscripcion->fecha_asignacion->diffInDays(now()) : 0
+                    'tutor' => $inscripcion->usuarioAsignado?->name ?? 'Sin asignar',
+                    'tutor_id' => $inscripcion->user_id,
+                    'dias_sin_actividad' => $inscripcion->ultima_actividad ?
+                        $inscripcion->ultima_actividad->diffInDays(now()) :
+                        $inscripcion->fecha_asignacion->diffInDays(now()),
+                    'fecha_asignacion' => $inscripcion->fecha_asignacion?->format('d/m/Y'),
+                    'ultima_actividad' => $inscripcion->ultima_actividad?->format('d/m/Y') ?? 'Nunca'
+                ];
+            }));
+
+        $this->info('3️⃣ Analizando tutores problemáticos...');
+        // 2. Tutores con múltiples incidencias (posible ausencia/pérdida de contacto)
+        $tutoresProblematicos = $inscripcionesAbandonadas
+            ->groupBy('tutor_id')
+            ->filter(function ($inscripciones) {
+                return count($inscripciones) >= 2; // 2 o más inscripciones abandonadas
+            })
+            ->map(function ($inscripciones, $tutorId) {
+                $tutor = $inscripciones->first();
+                return [
+                    'tutor_id' => $tutorId,
+                    'tutor_nombre' => $tutor['tutor'],
+                    'total_incidencias' => $inscripciones->count(),
+                    'inscripciones_afectadas' => $inscripciones->pluck('nombre')->toArray(),
+                    'promedio_dias_inactividad' => round($inscripciones->avg('dias_sin_actividad')),
+                    'riesgo' => $inscripciones->count() >= 3 ? 'ALTO' : 'MEDIO'
                 ];
             })
-            ->toArray();
+            ->sortByDesc('total_incidencias')
+            ->values();
 
-        $rebotadasRecientes = Inscripcion::where('created_at', '>=', $fechaLimite)
+        $this->info('4️⃣ Detectando notificaciones fallidas...');
+        // 3. Inscripciones que nunca recibieron notificación (posible fallo técnico)
+        $notificacionesFallidas = collect(Inscripcion::with('usuarioAsignado')
+            ->where('estado', 'asignada')
+            ->whereNull('ultima_notificacion')
+            ->where('fecha_asignacion', '<=', now()->subDays(1)) // Al menos 1 día de antigüedad
+            ->get()
+            ->map(function ($inscripcion) {
+                return [
+                    'id' => $inscripcion->id,
+                    'nombre' => $inscripcion->nombre,
+                    'tutor' => $inscripcion->usuarioAsignado?->name ?? 'Sin asignar',
+                    'dias_desde_asignacion' => $inscripcion->fecha_asignacion?->diffInDays(now()) ?? 0,
+                    'fecha_asignacion' => $inscripcion->fecha_asignacion?->format('d/m/Y H:i')
+                ];
+            }));
+
+        $this->info('5️⃣ Analizando tutores rebotadores...');
+        // 4. Tutores con patrón de rebotes frecuentes (últimos 30 días)
+        $tutoresRebotadores = Inscripcion::with('usuarioAsignado')
             ->where('estado', 'rebotada')
-            ->where('updated_at', '>=', now()->subDay())
+            ->where('updated_at', '>=', now()->subDays(30))
             ->get()
-            ->map(function ($inscripcion) {
-                // Extraer motivo de rebote de las notas (última línea que contenga "rebota")
-                $notas = $inscripcion->notas ?? '';
-                $lineas = explode("\n", $notas);
-                $motivoRebote = 'No especificado';
-
-                foreach (array_reverse($lineas) as $linea) {
-                    if (strpos($linea, 'rebota') !== false || strpos($linea, 'Rebotada') !== false) {
-                        $motivoRebote = trim(str_replace(['- ', ':', 'Rebotada por', 'rebota la inscripción', 'Motivo'], '', $linea));
-                        break;
-                    }
-                }
-
+            ->groupBy('user_id')
+            ->filter(function ($inscripciones) {
+                return count($inscripciones) >= 2; // 2 o más rebotes en 30 días
+            })
+            ->map(function ($inscripciones, $tutorId) {
+                $tutor = $inscripciones->first();
                 return [
-                    'nombre' => $inscripcion->nombre,
-                    'motivo_rebote' => $motivoRebote
+                    'tutor_id' => $tutorId,
+                    'tutor_nombre' => $tutor->usuarioAsignado?->name ?? 'Usuario eliminado',
+                    'total_rebotes' => count($inscripciones),
+                    'rebotes_recientes' => $inscripciones->map(function ($ins) {
+                        return [
+                            'nombre' => $ins->nombre,
+                            'fecha' => $ins->updated_at->format('d/m/Y')
+                        ];
+                    })->toArray()
                 ];
             })
-            ->toArray();
+            ->sortByDesc('total_rebotes')
+            ->values();
+
+        $this->info('6️⃣ Detectando inscripciones estancadas...');
+        // 5. Inscripciones en curso estancadas (más de 45 días sin actividad)
+        $encursoEstancadas = collect(Inscripcion::with('usuarioAsignado')
+            ->where('estado', 'encurso')
+            ->where('ultima_actividad', '<=', now()->subDays(45))
+            ->get()
+            ->map(function ($inscripcion) {
+                return [
+                    'id' => $inscripcion->id,
+                    'nombre' => $inscripcion->nombre,
+                    'tutor' => $inscripcion->usuarioAsignado?->name ?? 'Sin asignar',
+                    'dias_estancada' => $inscripcion->ultima_actividad?->diffInDays(now()) ?? 0,
+                    'ultima_actividad' => $inscripcion->ultima_actividad?->format('d/m/Y') ?? 'Nunca'
+                ];
+            }));
+
+        $this->info('7️⃣ Calculando estadísticas complementarias...');
+        // ESTADÍSTICAS COMPLEMENTARIAS (últimos 3 meses)
+
+        $inscripcionesRecientes = Inscripcion::where('created_at', '>=', now()->subDays(7))->count();
+        $inscripcionesFinalizadas = Inscripcion::where('estado', 'finalizado')
+            ->where('updated_at', '>=', $fechaLimite)->count();
+
+        $tiempoPromedioResolucion = Inscripcion::where('estado', 'finalizado')
+            ->where('updated_at', '>=', $fechaLimite)
+            ->whereNotNull('fecha_asignacion')
+            ->get()
+            ->filter(function ($ins) {
+                return $ins->fecha_asignacion && $ins->updated_at;
+            })
+            ->avg(function ($ins) {
+                return $ins->fecha_asignacion->diffInDays($ins->updated_at);
+            });
+
+        $this->info('8️⃣ Analizando tutores activos...');
+        // Tutores más activos (por comentarios y cambios de estado)
+        $tutoresActivos = Inscripcion::with('usuarioAsignado')
+            ->where('ultima_actividad', '>=', now()->subDays(30))
+            ->whereNotNull('user_id')
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($inscripciones, $tutorId) {
+                $tutor = $inscripciones->first();
+                return [
+                    'tutor_nombre' => $tutor->usuarioAsignado?->name ?? 'Usuario eliminado',
+                    'inscripciones_activas' => count($inscripciones),
+                    'ultima_actividad' => $inscripciones->max('ultima_actividad')?->format('d/m/Y')
+                ];
+            })
+            ->sortByDesc('inscripciones_activas')
+            ->take(5)
+            ->values();
+
+        $this->info('9️⃣ Analizando tutores inactivos...');
+        // Tutores con inscripciones abiertas pero inactivos (poca o ninguna actividad reciente)
+        $estadosAbiertos = ['asignada', 'contactado', 'encurso'];
+        $tutoresInactivos = Inscripcion::with('usuarioAsignado')
+            ->whereIn('estado', $estadosAbiertos)
+            ->whereNotNull('user_id')
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($inscripciones, $tutorId) {
+                $tutor = $inscripciones->first();
+                $ultimaActividad = $inscripciones->max('ultima_actividad');
+                $diasSinActividad = $ultimaActividad ?
+                    $ultimaActividad->diffInDays(now()) :
+                    $inscripciones->min('fecha_asignacion')?->diffInDays(now()) ?? 999;
+
+                return [
+                    'tutor_id' => $tutorId,
+                    'tutor_nombre' => $tutor->usuarioAsignado?->name ?? 'Usuario eliminado',
+                    'inscripciones_abiertas' => count($inscripciones),
+                    'dias_sin_actividad' => $diasSinActividad,
+                    'ultima_actividad' => $ultimaActividad?->format('d/m/Y') ?? 'Nunca',
+                    'estados_inscripciones' => $inscripciones->pluck('estado')->unique()->toArray(),
+                    'inscripciones_nombres' => $inscripciones->pluck('nombre')->toArray()
+                ];
+            })
+            ->filter(function ($tutor) {
+                // Filtrar tutores con más de 7 días sin actividad
+                return $tutor['dias_sin_actividad'] >= 7;
+            })
+            ->sortByDesc('dias_sin_actividad')
+            ->take(10) // Top 10 tutores más inactivos
+            ->values();
+
+        $this->info('🔟 Compilando resultado final...');
 
         return [
-            'por_estado' => $porEstado,
-            'requieren_atencion' => $requierenAtencion,
-            'rebotadas_recientes' => $rebotadasRecientes
+            // INCIDENCIAS (Prioridad alta)
+            'incidencias' => [
+                'inscripciones_abandonadas' => $inscripcionesAbandonadas->toArray(),
+                'tutores_problematicos' => $tutoresProblematicos->toArray(),
+                'notificaciones_fallidas' => $notificacionesFallidas->toArray(),
+                'tutores_rebotadores' => $tutoresRebotadores->toArray(),
+                'encurso_estancadas' => $encursoEstancadas->toArray(),
+            ],
+
+            // RESUMEN DE INCIDENCIAS
+            'resumen_incidencias' => [
+                'total_abandonadas' => $inscripcionesAbandonadas->count(),
+                'total_tutores_problematicos' => $tutoresProblematicos->count(),
+                'total_notificaciones_fallidas' => $notificacionesFallidas->count(),
+                'total_rebotadores' => $tutoresRebotadores->count(),
+                'total_estancadas' => $encursoEstancadas->count(),
+            ],
+
+            // ESTADÍSTICAS GENERALES (últimos 3 meses)
+            'estadisticas_generales' => [
+                'por_estado' => $porEstado,
+                'inscripciones_ultima_semana' => $inscripcionesRecientes,
+                'finalizadas_periodo' => $inscripcionesFinalizadas,
+                'tiempo_promedio_resolucion_dias' => round($tiempoPromedioResolucion ?? 0, 1),
+                'tutores_mas_activos' => $tutoresActivos->toArray(),
+                'tutores_inactivos' => $tutoresInactivos->toArray(),
+                'periodo_analizado' => '3 meses (desde ' . $fechaLimite->format('d/m/Y') . ')'
+            ]
         ];
     }
 }
