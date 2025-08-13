@@ -14,6 +14,7 @@ use Laravel\Fortify\Fortify;
 use Inertia\Inertia;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\RegisterResponse;
+use Illuminate\Support\Facades\Log;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -25,7 +26,7 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->instance(RegisterResponse::class, new class implements RegisterResponse {
             public function toResponse($request)
             {
-                \Log::info('Registrado   *****');
+                // Log::info('Registrado   *****');
                 return redirect('/dashboard');
             }
         });
@@ -33,12 +34,19 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->instance(LoginResponse::class, new class implements LoginResponse {
             public function toResponse($request)
             {
-                \Log::info('Ha iniciado sesión   *****');
-                if($request->has('to') && $request->to)
-                {
-                    \Log::info('Redirigimos a '. $request->input('to'));
+                // Log::info('Ha iniciado sesión   *****');
+                // 1. Redirigir a la intended de Laravel si existe
+                if (session()->has('url.intended')) {
+                    $intended = session('url.intended');
+                    Log::info('Redirigimos a intended: ' . $intended);
+                    return Inertia::location($intended);
+                }
+                // 2. Redirigir a "to" si existe
+                if ($request->has('to') && $request->to) {
+                    // Log::info('Redirigimos a parámetro to: ' . $request->input('to'));
                     return Inertia::location($request->to);
                 }
+                // 3. Redirigir al dashboard por defecto
                 return redirect('/dashboard');
             }
         });

@@ -44,9 +44,9 @@
                 ¿Olvidaste tu contraseña?
                 </Link>
 
-                <PrimaryButton class="ml-4" :disabled="form.processing">
-                    <Spinner v-if="form.processing" />
-                    {{ form.processing ? 'Validando' : 'Iniciar sesión' }}
+                <PrimaryButton class="ml-4" :disabled="form.processing || isLoggingIn">
+                    <Spinner v-if="form.processing || isLoggingIn" />
+                    {{ (form.processing || isLoggingIn) ? 'Validando...' : 'Iniciar sesión' }}
                 </PrimaryButton>
 
             </div>
@@ -75,6 +75,7 @@ defineProps({
 });
 
 const to = ref(null)
+const isLoggingIn = ref(false)
 
 onMounted(()=> {
     // obtener parámetro GET "to" de la URL ?
@@ -90,12 +91,19 @@ const form = useForm({
 });
 
 const submit = () => {
+    isLoggingIn.value = true
     form.transform(data => ({
         ...data,
         to: to.value,
         remember: form.remember ? 'on' : '',
     })).post(route('login'), {
-        onFinish: () => {
+        onSuccess: () => {
+            // No reseteamos el password aquí para evitar el flash
+            // La redirección manejará el cambio de página
+        },
+        onError: () => {
+            // Solo reseteamos el password si hay error
+            isLoggingIn.value = false
             form.reset('password')
         }
     });
