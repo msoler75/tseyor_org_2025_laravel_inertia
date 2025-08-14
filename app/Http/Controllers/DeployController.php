@@ -97,6 +97,16 @@ class DeployController extends Controller
         }
 
         try {
+                // Realizar backup solo del archivo ssr.js si existe
+                $ssrFile = base_path('bootstrap/ssr/ssr.js');
+                $ssrBackupFile = base_path('bootstrap/ssr/ssr.js.bak');
+                if (File::exists($ssrBackupFile)) {
+                    File::delete($ssrBackupFile);
+                }
+                if (File::exists($ssrFile)) {
+                    Log::channel('deploy')->info("Backup de " . $ssrFile . " a " . $ssrBackupFile);
+                    File::copy($ssrFile, $ssrBackupFile);
+                }
 
             $zipPath = Deploy::storeUploadedFile($request, 'ssr');
             $extractPath = base_path('bootstrap/ssr');
