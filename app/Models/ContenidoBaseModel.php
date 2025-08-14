@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Carbon\Carbon;
-// use App\Traits\EsContenido;
 use App\Pigmalion\ContenidoHelper;
 use Illuminate\Support\Facades\Storage;
 use App\Pigmalion\StorageItem;
@@ -16,7 +15,6 @@ use App\Pigmalion\StorageItem;
 /*
  ContenidoBaseModel es un modelo básico que sirve para:
  - SEO
- - Gestionar una base para los contenidos con el trait EsContenido
  */
 
 class ContenidoBaseModel extends Model

@@ -3,7 +3,7 @@
         class="w-42 flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-2xs py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700 select-none flex-nowrap shrink-0"
         @click="search.opened = true">
         <Icon icon="ph:magnifying-glass-bold" class="mr-2" />
-        Buscar...<span class="hidden lg:inline ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
+        Buscar en el sitio...<span class="hidden xlg:inline ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
 
         <Modal :show="search.opened" @close="closeModal" maxWidth="lg">
             <div class="modal-search bg-base-100 flex flex-col text-sm pb-7">
@@ -79,6 +79,22 @@
 import useGlobalSearch from "@/Stores/globalSearch.js"
 import traducir from '@/composables/traducciones'
 import { removeAccents, levenshtein } from '@/composables/textutils'
+
+
+const prioridad_grupos = [
+    'paginas', // el más prioritario
+    'terminos',
+    'guias',
+    'lugares',
+    'audios',
+    'centros',
+    'entradas',
+    'libros',
+    'psicografias',
+    'meditaciones',
+    'videos',
+    ]
+
 
 const cambioUrl={
     entradas: 'blog'
@@ -178,10 +194,14 @@ const resultadosAgrupados = computed(() => {
 
     // Ordenar el array de items
     grupos.sort((a, b) => {
-        const prioridad = ['libros', 'entradas', 'centros', 'lugares', 'guias', 'terminos', 'paginas'] // paginas es el más prioritario
-        if (a.score == b.score)
-            return prioridad.indexOf(b.coleccion) - prioridad.indexOf(a.coleccion)
-        return b.score - a.score
+        const Kp = 0.1
+        const dScore = b.score - a.score
+        const prioridad = prioridad_grupos
+        const pA = prioridad.indexOf(a.coleccion)
+        const pB = prioridad.indexOf(b.coleccion)
+        const dP = (pA<0?40:pA) - (pB<0?40:pB)// reverse order
+        console.log('a', a.coleccion, 'b', b.coleccion, 'dP', dP, 'dScore', dScore)
+        return dP*Kp + dScore*(1-Kp)
     })
 
     nextTick(() => {

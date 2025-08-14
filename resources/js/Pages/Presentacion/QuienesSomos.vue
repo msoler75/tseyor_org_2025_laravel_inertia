@@ -53,7 +53,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
                 gridClass="md:grid-cols-[2fr_1fr]"
                 >
                 <p>Los comunicados son las <Referencia>conversaciones interdimensionales</Referencia> realizadas <Referencia r="telepatía">telepáticamente</Referencia> por nuestro hermano
-                    <Referencia>Chac-Mool Puente</Referencia>, quien ha recibido una preparación desde
+                    <Referencia>Chac-Mool</Referencia> <Referencia>Puente</Referencia>, quien ha recibido una preparación desde
                     hace más de 40 años para asumir dicha labor, como intermediario entre los dos mundos.</p>
                 <p>
                     En nuestra <Referencia>biblioteca web</Referencia> podéis encontrar todos los comunicados o conversaciones

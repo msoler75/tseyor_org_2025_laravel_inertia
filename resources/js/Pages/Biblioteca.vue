@@ -7,17 +7,10 @@
         </div>
 
         <!-- Encabezado -->
-        <div class="flex gap-12 items-center"><h1 class="mb-4">Biblioteca Tseyor</h1>
-            <span class="flex items-center gap-1 text-sm uppercase btn btn-sm" @click="modalInfo = true">
-                ¿Qué es?<Icon icon="ph:info" /></span>
-        </div>
-
-        <Modal title="¿Qué es la Biblioteca Tseyor?" class="max-w-3xl" :show="modalInfo" @close="modalInfo = false" :z-index="20"
-        modal-class="mt-20">
-            <div class="p-5 bg-base-200">
+         <TitleInfo title="Biblioteca Tseyor" label-info="¿qué es?">
                 <p>La Biblioteca Tseyor es el resultado de más de 1800 diálogos <Referencia r="telepatía">
                 telepáticos</Referencia> con seres humanos de la <Referencia>Confederación de Mundos Habitados
-                de la Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool Puente</Referencia>,
+                de la Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool</Referencia> <Referencia>Puente</Referencia>,
                     <Referencia r="canalización">canalizador</Referencia> de Tseyor.
                 </p>
                 <p>Estas denominadas <q>conversaciones interdimensionales</q> o comunicados se han transcrito en
@@ -26,9 +19,8 @@
                     <Referencia>Universidad Tseyor de Granada</Referencia> para mantener la integridad del mensaje
                     original y sus obras impresas están registradas por la asociación <Referencia>TSEYOR Centro de
                     Estudios Socioculturales</Referencia>.</p>
-                <div class="flex justify-center"><span class="btn btn-primary cursor-pointer" @click="modalInfo = false" >Entendido</span></div>
-                    </div>
-        </Modal>
+         </TitleInfo>
+
 
         <!-- Contenedor de Categorías -->
         <GridAppear class="mt-12 grid-cols-1 md:grid-cols-2 gap-4">
@@ -63,7 +55,7 @@ const props = defineProps({
     stats: Object
 })
 
-const modalInfo = ref(false)
+
 
 
 // https://www.danmatthews.me/posts/lazy-loading-inertia-js

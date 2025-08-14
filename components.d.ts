@@ -142,6 +142,7 @@ declare module 'vue' {
     TimeAgo: typeof import('./resources/js/Components/TimeAgo.vue')['default']
     TipTapEditorFullField: typeof import('./resources/js/Components/Backpack/TipTapEditorFullField.vue')['default']
     TipTapEditorSimpleField: typeof import('./resources/js/Components/Backpack/TipTapEditorSimpleField.vue')['default']
+    TitleInfo: typeof import('./resources/js/Components/TitleInfo.vue')['default']
     TransitionFade: typeof import('./resources/js/Sections/TransitionFade.vue')['default']
     Uploader: typeof import('./resources/js/Components/Uploader.vue')['default']
     User: typeof import('./resources/js/Components/User.vue')['default']

@@ -1,5 +1,5 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
 
         <div class="flex justify-between mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
@@ -9,16 +9,18 @@
             </div>
         </div>
 
-        <h1>Libros</h1>
-        <p>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales
-            </Referencia> mantenidas con nuestros
-            <Referencia>Guías Estelares</Referencia>.
-        </p>
+        <TitleInfo title="Libros Tseyor">
+            <p>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales
+                </Referencia> (o comunicados telepáticos) mantenidas con nuestros <Referencia>Guías Estelares</Referencia>.
+            </p>
 
-        <p class="my-3">El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</p>
+            <p>La información se recoge en monografías (recopilación sobre un tema) y volúmenes de comunicados. También podéis encontrar obras vivenciales (memorias de convivencias realizadas por el grupo Tseyor), presentaciones, boletines, y otras obras temáticas.</p>
+
+            <p class="my-3">El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</p>
+        </TitleInfo>
 
         <div class="flex w-full justify-between mb-5">
-            <SearchInput v-model="query" class="grow"
+            <SearchInput v-model="query" class="grow" input-class="min-w-40"
             placeholder="Buscar libros...">
                 <span v-if="query" class="sm:hidden mr-auto"></span>
                 <div class="flex items-baseline gap-3 w-full pl-1" :class="query ? 'hidden sm:flex' : ''">
@@ -71,7 +73,7 @@
 
 
         </ContentMain>
-    </div>
+    </PAge>
 </template>
 
 

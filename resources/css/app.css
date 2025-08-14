@@ -92,7 +92,7 @@
 }
 
 @utility shadow-outline {
-    box-shadow: 0 0 0 3px rgb(164 202 254 / 0.45) important;
+    box-shadow: 0 0 0 3px rgb(164 202 254 / 0.45) !important;
     outline: none;
 }
 
@@ -185,8 +185,8 @@
     blockquote {
         position: relative;
         font-style: italic;
-        quotes: none important;
-        border-left: none important;
+        quotes: none !important;
+        border-left: none !important;
     }
 
     blockquote>p:nth-child(1) {

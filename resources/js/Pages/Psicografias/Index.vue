@@ -9,10 +9,10 @@
             </div>
         </div>
 
-        <div class="mb-20">
-            <h1>Psicografías</h1>
-            <p>Dibujos psicografiados (recibidos por telepatía) por el hermano Puente, del hermano Aumnor. Ahora puedes consultar las <Link href="/libros?categoria=Psicografías">monografías</Link> correspondientes.</p>
-        </div>
+        <TitleInfo title="Psicografías">
+            <p>Dibujos psicografiados (recibidos por <Referencia>telepatía externa</Referencia> e ilustrados) por el hermano <Referencia>Puente</Referencia>, originalmente transmitidos por <Referencia>Aumnor</Referencia>.</p>
+            <p>Ahora puedes consultar las <Link href="/libros?categoria=Psicografías">monografías</Link> correspondientes en nuestra sección de libros.</p>
+        </TitleInfo>
 
         <ContentMain class="flex justify-end mb-5">
             <SearchInput />

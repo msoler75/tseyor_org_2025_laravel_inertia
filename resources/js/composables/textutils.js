@@ -1,5 +1,6 @@
 // remove accents and optionally remove regional characters
 export const removeAccents = function (str, regional) {
+    if(!str) return ""
   var mapAccents = {
     a: "á|à|ã|â",
     e: "é|è|ê",

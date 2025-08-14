@@ -9,10 +9,17 @@
             </div>
         </div>
 
-        <div class="w-full flex gap-7 items-center justify-between">
+        <div class="w-full flex flex-wrap gap-7 items-center justify-between mb-16">
 
-            <h1 class="my-0">Comunicados de Tseyor</h1>
+            <TitleInfo title="Comunicados Tseyor" classes="!mb-0">
+                <p>Los comunicados son transcripciones de las
+                    conversaciones interdimensionales mantenidas con los hermanos de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia> mediante un proceso de <Referencia>telepatía externa
+                    </Referencia> a través de nuestro <Referencia>Chac-Mool</Referencia> <Referencia>Puente</Referencia>.
+                    <p>Estos comunicados son la base principal de la filosofía Tseyor y sirven como referencia para su organización, estructura y funcionamiento.</p>
+                </p>
+            </TitleInfo>
 
+            <div class="flex-grow flex justify-start md:justify-end">
             <Dropdown width="60">
 
                 <template #trigger="data">
@@ -37,13 +44,8 @@
                     </div>
                 </template>
             </Dropdown>
+            </div>
         </div>
-
-
-        <p class="mt-12 mb-16">Aquí puedes encontrar todos los comunicados de Tseyor. Son transcripciones de las
-            conversaciones
-            interdimensionales mantenidas con los hermanos de las estrellas con la <Referencia>telepatía externa
-            </Referencia> a través de nuestro <Referencia>Chac-Mool Puente</Referencia>.</p>
 
 
         <div class="flex flex-wrap justify-between items-center my-4 gap-x-9 gap-y-7">
@@ -70,7 +72,9 @@
                 <Icon icon="material-symbols:filter-list-rounded"></Icon> Filtros
             </span>
 
-            <SearchInput :arguments="busqueda" class="ml-auto sel-trans" v-model="query" @focus="focusQuery"
+            <SearchInput :arguments="busqueda" class="ml-auto sel-trans"
+            input-class="min-w-60"
+            v-model="query" @focus="focusQuery"
                 placeholder="Buscar en comunicados..."
                 @search="buscando = true" @blur="blurQuery" />
         </div>
@@ -139,7 +143,7 @@
                         <Spinner /> Buscando ...
                     </div>
                     <div v-else-if="vistaBusquedaCompleta && (!completo || !filtrado)"
-                        class="card bg-base-100 shadow-2xs p-8 w-fit mt-12">
+                        class="card mb-24 bg-base-100 shadow-2xs p-8 w-fit mt-12">
                         <h2>
                             <Icon icon="ph:info-duotone" class="inline mr-4 transform -translate-y-1" />Instrucciones
                             para
