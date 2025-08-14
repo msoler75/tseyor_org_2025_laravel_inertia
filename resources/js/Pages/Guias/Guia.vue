@@ -70,26 +70,35 @@
             <div class="w-full lg:w-2/3 shrink-0 text-left">
                 <h1 class="text-center lg:text-left">{{ guia.nombre }}</h1>
                 <h3 class="text-center lg:text-left">{{ guia.descripcion }}</h3>
-                <p class="text-gray-600 text-xs my-5 text-right">
-                    Última actualización:
-                    <TimeAgo :date="guia.updated_at" />
+                <p class="prose text-gray-600 my-5 text-right">
+                    <span class="text-xs">
+                        Última actualización:
+                        <TimeAgo :date="guia.updated_at" />
+                    </span>
                 </p>
                 <div class="mb-4"></div>
-                <tabs
+                <div
                     :options="{ disableScrollBehavior: true }"
                     class="animate-fade-in"
                 >
-                    <tab
+                    <div
                         v-for="(seccion, index) of secciones"
                         :key="index"
                         :name="seccion.titulo"
                     >
+                        <p
+                            v-if="seccion.titulo"
+                            :class="`text-${seccion.level-2}xl font-bold mb-4`"
+                        >
+                            {{ seccion.titulo }}
+                        </p>
                         <Prose
                             v-html="MarkdownToHtml(seccion.texto)"
                         ></Prose>
-                    </tab>
+                    </div>
 
-                    <tab v-if="libros" name="Bibliografía">
+                    <div v-if="libros" name="Bibliografía">
+                        <h2 class="text-2xl font-bold mt-8 mb-4">Bibliografía</h2>
                         <Prose
                             v-if="guia.bibliografia"
                             class="mb-12"
@@ -103,10 +112,10 @@
                                 imageClass="w-[150px]"
                             />
                         </div>
-                    </tab>
+                    </div>
 
                     <!-- ... relacionados -->
-                </tabs>
+                </div>
             </div>
         </ContentMain>
 

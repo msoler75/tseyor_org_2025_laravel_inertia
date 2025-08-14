@@ -60,6 +60,7 @@ class ContenidosController extends Controller
     public function search(Request $request)
     {
         $buscar = $request->input('query');
+        $buscar = str_replace("-", " ", $buscar);
 
         $collections = $request->input('collections');
 

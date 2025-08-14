@@ -9,11 +9,12 @@
             </div>
         </div>
 
-        <section class="container mb-20">
-            <h1>Audios</h1>
+
+        <TitleInfo title="Audios Tseyor">
             <p>Relájate y disfruta de los talleres, meditaciones, cuentos y otros materiales de la filosofía de
                 Tseyor.</p>
-        </section>
+                <p>Recuerda que también puedes acceder a la <Link href="/radio">Radio Tseyor</Link> y escuchar nuestra emisora de talleres, meditaciones y talleres cuentos, donde se reproducen estos audios de forma continua.</p>
+            </TitleInfo>
 
         <!--
     <AudioPlayer id="player" v-if="playFile" :music="playFile" class="mx-auto max-w-[700px]
@@ -23,16 +24,16 @@
 -->
 
         <ContentMain class="flex justify-end mb-5 md:container md:mx-auto px-2">
-            <SearchInput />
+            <SearchInput placeholder="Buscar audios..." input-class="max-w-42"/>
         </ContentMain>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap md:container md:mx-auto px-2">
 
-            <Categorias :categorias="categorias" :url="route('audios')" />
+            <Categorias :categorias="categorias" :url="route('audios')" select-class="w-full rounded-sm"/>
 
             <div class="w-full grow">
 
-                <SearchResultsHeader :results="listado" />
+                <SearchResultsHeader :results="listado"/>
 
                 <GridAppear v-if="listado.data.length > 0" class="gap-4 max-w-full"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">

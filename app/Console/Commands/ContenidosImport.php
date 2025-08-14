@@ -21,7 +21,7 @@ class ContenidosImport extends Command
      *
      * @var string
      */
-    protected $description = 'Borra todos los contenidos de la colección indicada, y los rehace desde EsContenido';
+    protected $description = 'Borra todos los contenidos de la colección indicada, y los rehace desde ContenidoHelper::guardarContenido';
 
     /**
      * Execute the console command.
