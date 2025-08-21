@@ -23,7 +23,7 @@ const props = defineProps({
     inline: {
         type: Boolean,
         required: false,
-        default: false
+        default: true
     },
     fadeOut: {
         type: Boolean,
