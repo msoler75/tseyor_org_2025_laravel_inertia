@@ -37,10 +37,27 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
         </Section>
 
 
+         <Section>
+            <TextImage title="El Rayo Sincronizador"
+            src-image="/almacen/medios/portada/rayo_sincronizador.jpg"
+            src-width="1024"
+            src-height="1024"
+            image-right
+            href="/libros/el-rayo-sincronizador-una-nueva-posicion-psicologica-y-mental"
+            button-label="Toda la información"
+            >
+                <p>Nos estamos preparando para el próximo evento cósmico: El Rayo Sincronizador molecular. Una energía que catapultará nuestro universo manifestado a un nuevo nivel vibratorio. </p>
+                <p>Este cambio se verá precedido por un conjunto innumerable de situaciones que deberemos afrontar todos juntos, en <Referencia>unidad</Referencia>, comunidad. </p>
+                <p>Así podremos dar entrada a las futuras <Referencia>Sociedades Armónicas</Referencia>, en un nuevo nivel <Referencia>vibracional</Referencia> y de consciencia.</p>
+            </TextImage>
+        </Section>
+
+
         <Section>
             <TextImage title="Nuestra filosofía" srcImage="/almacen/medios/paginas/manos-entre-mundos.jpg"
-            buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')" image-right>
+            buttonLabel="Conoce nuestra filosofía" :href="route('filosofia')">
                 <p>Practicamos la filosofía que nos ha patrocinado la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>, basada en la <Referencia>unidad en la diversidad</Referencia>, el <Referencia>hermanamiento</Referencia> y el <Referencia>Conocimiento Trascendente</Referencia>.</p>
+                <p>Esta filosofía práctica nos permite conocernos a nosotros mismos, y transmutar lo necesario para lograr un equilibrio y una preparación para dar el <Referencia>Salto Cuántico</Referencia> con la llegada del <Referencia>Rayo Sincronizador</Referencia>.</p>
             </TextImage>
         </Section>
 
@@ -50,6 +67,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
             <TextImage title="Comunicados recibidos telepáticamente"
                 srcImage="/almacen/medios/paginas/Puente.jpg" buttonLabel="Ver Comunicados"
                 href="/comunicados"
+                image-right
                 gridClass="md:grid-cols-[2fr_1fr]"
                 >
                 <p>Los comunicados son las <Referencia>conversaciones interdimensionales</Referencia> realizadas <Referencia r="telepatía">telepáticamente</Referencia> por nuestro hermano
@@ -68,7 +86,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
           <Section>
             <TextImage title="Blog"
                 srcImage="/almacen/medios/paginas/blogs.jpg" buttonLabel="Leer Blog"
-                href="/entradas" image-right>
+                href="/entradas">
                 <p>Conoce algunas de nuestras aventuras en este camino del autorreconocimiento, podrás vernos en muchas fotografías de eventos que hemos realizado.</p>
             </TextImage>
         </Section>
@@ -77,6 +95,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
         <Section>
             <!-- Sección: Preguntas más frecuentes -->
             <TextText title="Preguntas más frecuentes" class="container lg:max-w-[1024px]"
+            image-right
                 srcImage="https://via.placeholder.com/700x600.png/0000ff?text=Puente.jpg" buttonLabel="Ver Comunicados"
                 href="/comunicados">
                 <template #text1>

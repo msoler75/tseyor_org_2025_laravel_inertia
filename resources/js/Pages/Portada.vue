@@ -34,11 +34,15 @@
         </Section>
 
         <Section>
-            <TextImage
+            <Hero
                 title="La Revolución de la Consciencia"
                 full
                 cover
-                src-image="/almacen/medios/portada/revolucion_consciencia2.jpg"
+                src-image="/almacen/medios/portada/revolucion_consciencia.jpg"
+                src-width="1248"
+                src-height="832"
+                href="/libros/la-revolucion-de-la-consciencia"
+                button-label="Más información"
             >
                 <p>
                     La verdadera transformación se logra mediante la
@@ -54,58 +58,20 @@
                     todos juntos. Ya es hora de despertar del sueño de los
                     sentidos.
                 </p>
-            </TextImage>
+            </Hero>
         </Section>
 
         <Section>
-            <TextImage title="Sentir la verdadera alegría" image-right full>
-                <p>Nuestro estado natural es la alegría, sentir la dicha de estar experimentando un universo lleno de posibilidades.</p>
-                <p>
-                    Sin embargo, nuestra desconexión con la naturaleza, con nuestro verdadero
-                    Ser... El individualismo exacerbado... El materialismo...
-                </p>
-                <p>
-                    Todo ello es un desequilibrio que genera estados de ansiedad,
-                    apego, miedo, desconfianza...
-                </p>
-                <div class="flex justify-center">
-                    <button
-                        class="btn mt-4 transition-colors duration-300"
-                        :class="isEquilibrado ? 'btn-warning' : 'btn-success'"
-                        @click="toggleEquilibrio()"
-                    >
-                        {{
-                            isEquilibrado
-                                ? "VOLVER AL DESEQUILIBRIO"
-                                : "ENCONTRAR EL EQUILIBRIO"
-                        }}
-                    </button>
-                </div>
-                <template #image>
-                    <figure
-                        class="diff aspect-16/9"
-                        tabindex="0"
-                        ref="diffFigure"
-                    >
-                        <div class="diff-item-1" role="img" tabindex="0">
-                            <img
-                                alt="alegre"
-                                src="/almacen/medios/portada/alegre.jpg"
-                            />
-                        </div>
-                        <div class="diff-item-2" role="img">
-                            <img
-                                alt="ansioso"
-                                src="/almacen/medios/portada/ansioso.jpg"
-                            />
-                        </div>
-                        <div
-                            class="diff-resizer cursor-col-resize"
-                            :style="{ width: resizerWidth + 'px' }"
-                        ></div>
-                    </figure>
-                </template>
-            </TextImage>
+            <Hero title="El Rayo Sincronizador" image-right full cover
+            src-image="/almacen/medios/portada/rayo_sincronizador.jpg"
+            src-width="1024"
+            src-height="1024"
+            href="/libros/el-rayo-sincronizador-una-nueva-posicion-psicologica-y-mental"
+            button-label="Más información"
+            >
+                <p>Se está preparando un evento cósmico: el Rayo Sincronizador molecular. Una energía potentísima que actuará en todo el universo manifestado impulsándolo a un nuevo nivel. </p>
+                <p>Ahora conviene preparar nuestras mentes y cuerpos para que esta energía pueda actuar en nosotros positivamente. </p>
+        </Hero>
         </Section>
 
         <Section>
@@ -113,11 +79,12 @@
                 title="Biblioteca Tseyor"
                 :href="route('biblioteca')"
                 buttonLabel="Biblioteca Tseyor"
-                srcImage="/almacen/medios/portada/biblioteca_tseyor_libros.jpg"
+                src-image="/almacen/medios/portada/biblioteca_tseyor_libros.jpg"
+                src-width="2004"
+                src-height="1639"
                 textClass="container"
                 imageSideClass="bg-right"
                 full
-                image-right
             >
                 <Prose class="md:max-w-[24rem]">
                     Ofrecemos gratuitamente cientos de libros, meditaciones,
@@ -132,14 +99,17 @@
         <Section>
             <Hero
                 title="Los Guías Estelares"
-                subtitle="Recibimos las referencias de nuestros tutores de la Confederación de Mundos Habitados de la Galaxia"
                 :href="route('guias')"
                 buttonLabel="Guías Estelares"
                 srcImage="/almacen/medios/paginas/todos-los-guias.jpg"
                 textClass="container"
                 full
+                image-right
                 cover
-            />
+            >
+                <p>Recibimos las referencias de nuestros tutores de la Confederación de Mundos Habitados de la Galaxia.</p>
+                <p>Todos nuestros materiales se basan en comunicaciones mantenidas con nuestros tutores, quienes con paciencia, amor, comprensión, nos guían en este proceso de cambio de Era.</p>
+            </Hero>
         </Section>
 
         <Section>
@@ -304,74 +274,6 @@ const contadoresTop = ref(99999);
 const contando = ref(false);
 
 const diffFigure = ref(null);
-const resizerWidth = ref(15);
-const figureWidth = ref(400); // Nueva variable reactiva para el ancho de la figura
-let resizeMonitor = null;
-
-// Función para monitorear el tamaño del resizer
-function startResizeMonitoring() {
-    if (resizeMonitor) clearInterval(resizeMonitor);
-
-    resizeMonitor = setInterval(() => {
-        if(animating) return
-        const figure = diffFigure.value;
-        if (!figure) return;
-
-        const resizer = figure.querySelector('.diff-resizer');
-        if (!resizer) return;
-
-        const rect = figure.getBoundingClientRect();
-        const resizerRect = resizer.getBoundingClientRect();
-
-        // Actualizar el ancho de la figura
-        figureWidth.value = rect.width;
-
-        // Calcular la posición actual del resizer
-        const currentResizerWidth = resizerRect.width
-        resizerWidth.value = Math.max(0, Math.min(rect.width, currentResizerWidth));
-    }, 500);
-}
-
-function stopResizeMonitoring() {
-    if (resizeMonitor) {
-        clearInterval(resizeMonitor);
-        resizeMonitor = null;
-    }
-}
-
-let animating = false
-function toggleEquilibrio() {
-    const targetWidth = isEquilibrado.value ? 50 : figureWidth.value;
-    const initialWidth = resizerWidth.value;
-    const duration = 1500;
-    const start = performance.now();
-
-    function animate(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-
-        // Usar una función de easing suave
-        const easeProgress = 1 - Math.pow(1 - progress, 3);
-
-        const currentWidth =
-            initialWidth + (targetWidth - initialWidth) * easeProgress;
-        resizerWidth.value = currentWidth;
-
-        if (progress < 1) {
-            requestAnimationFrame(animate);
-        }
-        else animating = false
-    }
-
-    animating = true
-    requestAnimationFrame(animate);
-}
-
-// Computed simplificado que usa la variable reactiva figureWidth
-const isEquilibrado = computed(() => {
-    // Consideramos equilibrado cuando el resizer está más cerca del final (más de 5% del ancho)
-    return resizerWidth.value > figureWidth.value * 0.5;
-});
 
 watch(
     () => nav.scrollY,
@@ -478,19 +380,7 @@ const slides = [
         iconClass: "text-purple-400",
     },
 ];
-const isMobileOrTablet = ref(false);
 
-function checkScreen() {
-    isMobileOrTablet.value = window.innerWidth < 1024;
-}
-onMounted(() => {
-    checkScreen();
-    window.addEventListener("resize", checkScreen);
-});
-onBeforeUnmount(() => {
-    window.removeEventListener("resize", checkScreen);
-    stopResizeMonitoring()
-});
 
 const testimonials = ref([
     {
