@@ -52,11 +52,12 @@ class BoletinesController extends Controller
 
     public function generarBoletin(Request $request)
     {
-        $tipo = $request->input('tipo');
-        $hoy = \Carbon\Carbon::now();
-        $semana = $hoy->weekOfYear;
-        $mes = $hoy->month;
-        $anyo = $hoy->year;
+    Log::channel('boletines')->info('Ejecutando generarBoletin', ['request' => $request->all()]);
+    $tipo = $request->input('tipo');
+    $hoy = \Carbon\Carbon::now();
+    $semana = $hoy->weekOfYear;
+    $mes = $hoy->month;
+    $anyo = $hoy->year;
 
         // Determinar rango de fechas y título según el tipo
         if ($tipo == 'semanal') {
@@ -149,6 +150,10 @@ class BoletinesController extends Controller
             $items = $info['model']::where($info['date_field'], '>=', $inicio)
                 ->where($info['date_field'], '<=', $fin)
                 ->get();
+            Log::channel('boletines')->info('generarBoletin: Contenidos encontrados', [
+                'tipo' => $key,
+                'count' => $items->count()
+            ]);
             if ($items->isNotEmpty()) {
                 $hayContenido = true;
                 $g = "## {$info['section_title']}\n";
@@ -163,6 +168,11 @@ class BoletinesController extends Controller
 
         // Verificar si hay al menos un contenido
         if (!$hayContenido) {
+            Log::channel('boletines')->info('generarBoletin: No hay contenidos para el periodo solicitado.', [
+                'inicio' => $inicio,
+                'fin' => $fin,
+                'tipo' => $tipo
+            ]);
             return response()->json([
                 'success' => false,
                 'message' => 'No hay contenidos para el periodo solicitado.'
@@ -171,6 +181,13 @@ class BoletinesController extends Controller
 
         $md = "# \n\n¡Hola! Te presentamos los últimos contenidos de Tseyor.\n\n" . implode("\n\n", $groups);
         $html = Markdown::toHtml($md);
+
+        Log::channel('boletines')->info('generarBoletin: Boletín generado correctamente.', [
+            'titulo' => $titulo,
+            'inicio' => $inicio,
+            'fin' => $fin,
+            'tipo' => $tipo
+        ]);
 
         return [
             "titulo" => $titulo,
