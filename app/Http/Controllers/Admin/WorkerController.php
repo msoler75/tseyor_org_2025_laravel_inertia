@@ -52,7 +52,7 @@ class WorkerController
     public function startWorker()
     {
         // Ejecutar el script en segundo plano
-        $command = "bash {$this->scriptPath}worker-start.sh > /dev/null 2>&1 &";
+        $command = "bash {$this->scriptPath}worker-start.sh -q > /dev/null 2>&1 &";
         $result = $this->runDeployCommand($command);
 
         if ($result->successful()) {

@@ -28,6 +28,7 @@ class CommandController extends Controller
             'pkill -f ssr',
             'inertia:start-ssr',
             'inertia:stop-ssr',
+            'worker:stop',
             // './bash/ssr.sh start', // Ejecutar como comando externo
         ],
     ];
@@ -166,6 +167,10 @@ class CommandController extends Controller
         } elseif ($baseCommand === 'inertia:start-ssr') {
             $artisanPath = base_path('artisan');
             $cmd = 'php ' . escapeshellarg($artisanPath) . ' inertia:start-ssr';
+        } elseif ($baseCommand === 'worker:stop') {
+            $scriptPath = base_path('bash/worker-stop.sh');
+            $deployUser = config('app.deploy_user');
+            $cmd = 'DEPLOY_USER=' . escapeshellarg($deployUser) . ' bash ' . escapeshellarg($scriptPath);
         } else {
             return response()->json(['error' => 'Comando exec no reconocido'], 400);
         }
