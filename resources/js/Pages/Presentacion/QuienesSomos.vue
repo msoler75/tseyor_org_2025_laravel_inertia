@@ -43,8 +43,8 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
             src-width="1024"
             src-height="1024"
             image-right
-            href="/libros/el-rayo-sincronizador-una-nueva-posicion-psicologica-y-mental"
-            button-label="Toda la información"
+            href="/el-rayo-sincronizador"
+            button-label="Más información"
             >
                 <p>Nos estamos preparando para el próximo evento cósmico: El Rayo Sincronizador molecular. Una energía que catapultará nuestro universo manifestado a un nuevo nivel vibratorio. </p>
                 <p>Este cambio se verá precedido por un conjunto innumerable de situaciones que deberemos afrontar todos juntos, en <Referencia>unidad</Referencia>, comunidad. </p>

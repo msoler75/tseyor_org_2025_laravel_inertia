@@ -50,6 +50,8 @@
                         <div
                             class="w-full flex justify-between px-1 mt-3 mb-2 font-bold capitalize opacity-75">
                             {{ traducir(grupo.coleccion) }}
+                            <span class="ml-auto" :class="selectors.developerMode?'':'hidden'">{{ Math.round(grupo.score*10)/10 }}</span>
+                            <span v-if="grupo.coleccion in prioridadBoost" :class="selectors.developerMode?'':'hidden'"> +{{ prioridadBoost[grupo.coleccion] }}</span>
                         </div>
                         <!-- Usa el componente Link de Inertia y maneja el evento click correctamente -->
                         <Link v-for="item of grupo.items" :key="item.id" :id="item.idDom"
@@ -79,7 +81,9 @@
 import useGlobalSearch from "@/Stores/globalSearch.js"
 import traducir from '@/composables/traducciones'
 import { removeAccents, levenshtein } from '@/composables/textutils'
+import useSelectors from "@/Stores/selectors";
 
+const selectors = useSelectors();
 
 const prioridad_grupos = [
     'paginas', // el más prioritario
@@ -95,12 +99,19 @@ const prioridad_grupos = [
     'videos',
     ]
 
-
-const cambioUrl={
-    entradas: 'blog'
+const prioridadBoost = {
+    paginas: 2,
+    libros: 1,
 }
 
-const portada = computed(() => page.url == '/')
+// Mapeo de colecciones a rutas amigables
+const rutasColeccion = {
+    terminos: 'glosario',
+    entradas: 'blog',
+    // puedes añadir más si necesitas otras traducciones de rutas
+};
+
+// const portada = computed(() => page.url == '/')
 const page = usePage()
 const nav = useNav()
 const search = useGlobalSearch()
@@ -142,18 +153,12 @@ const resultadosAgrupados = computed(() => {
         agrupados[item.coleccion].push(item)
     }
 
-    // Mapeo de colecciones a rutas amigables
-    const rutasColeccion = {
-        terminos: 'glosario',
-        // puedes añadir más si necesitas otras traducciones de rutas
-    }
 
     // Crear el array de objetos agrupados
     const grupos = Object.entries(agrupados).map(([coleccion, items]) => {
         const itemsLimitados = items.slice(0, MAX_ITEMS_POR_CATEGORIA)
         const ocultos = items.length > MAX_ITEMS_POR_CATEGORIA ? (items.length - MAX_ITEMS_POR_CATEGORIA) : 0
         if (coleccion !== 'paginas') {
-            const ruta = rutasColeccion[coleccion] || coleccion
             const linkItem = {
                 id: `ver-todos-${coleccion}`,
                 idDom: `ver-todos-${coleccion}`,
@@ -161,7 +166,6 @@ const resultadosAgrupados = computed(() => {
                 // Traducción para el texto del enlace especial
                 titulo: `<span class="italic">Buscar en ${traducir(coleccion)}</span>`,
                 isLinkAll: true,
-                rutaColeccion: ruta,
                 __tntSearchScore__: -1
             }
             itemsLimitados.push(linkItem)
@@ -200,8 +204,11 @@ const resultadosAgrupados = computed(() => {
         const pA = prioridad.indexOf(a.coleccion)
         const pB = prioridad.indexOf(b.coleccion)
         const dP = (pA<0?40:pA) - (pB<0?40:pB)// reverse order
-        console.log('a', a.coleccion, 'b', b.coleccion, 'dP', dP, 'dScore', dScore)
-        return dP*Kp + dScore*(1-Kp)
+        const boostA = prioridadBoost[a.coleccion] || 0
+        const boostB = prioridadBoost[b.coleccion] || 0
+        const dBoost = boostB - boostA
+        console.log('a', a.coleccion, 'b', b.coleccion, 'dP', dP, 'dScore', dScore, 'dBoost', dBoost)
+        return dP*Kp + dScore*(1-Kp) + dBoost
     })
 
     nextTick(() => {
@@ -314,7 +321,7 @@ watch(() => search.opened, (value) => {
     usoTeclas = false
     if (value) {
         nav.sideBarShow = false // cerramos la sidebar
-        currentUrl = usePage().url
+        currentUrl = page.url
 
         // Guardar la posición actual de scroll antes de abrir el modal
         savedScrollPosition = window.scrollY || window.pageYOffset || document.documentElement.scrollTop
@@ -348,9 +355,7 @@ function calcularUrl(item) {
     if (item.isLinkAll) {
         // Usa la ruta traducida si existe
         const coleccion = item.rutaColeccion || item.coleccion
-        let base = '/' + coleccion
-        if(cambioUrl[coleccion])
-            base = '/' + cambioUrl[coleccion]
+        let base = '/' + (rutasColeccion[coleccion] || coleccion)
         return `${base}?buscar=${encodeURIComponent(search.query || search.lastQuery || '')}`
     }
     return item.coleccion != 'paginas'
@@ -364,7 +369,7 @@ const queryLoading = ref("")
 var timerBuscar = null
 
 // para guardar estadísticas de búsqueda
-var currentUrl = usePage().url
+var currentUrl = page.url
 var timerGuardarBusqueda = null
 var busquedaId = null
 
@@ -437,7 +442,7 @@ function closeModal() {
     if (search.opened) {
         search.opened = false
         // Si se cierra manualmente y estamos en la misma página, restaurar scroll
-        if (modalHistoryState && currentUrl === usePage().url) {
+        if (modalHistoryState && currentUrl === page.url) {
             nextTick(() => {
                 setTimeout(() => {
                     window.scrollTo(0, savedScrollPosition)

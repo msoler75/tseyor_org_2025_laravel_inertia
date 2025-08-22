@@ -66,7 +66,7 @@
             src-image="/almacen/medios/portada/rayo_sincronizador.jpg"
             src-width="1024"
             src-height="1024"
-            href="/libros/el-rayo-sincronizador-una-nueva-posicion-psicologica-y-mental"
+            href="/el-rayo-sincronizador"
             button-label="Más información"
             >
                 <p>Se está preparando un evento cósmico: el Rayo Sincronizador molecular. Una energía potentísima que actuará en todo el universo manifestado impulsándolo a un nuevo nivel. </p>
