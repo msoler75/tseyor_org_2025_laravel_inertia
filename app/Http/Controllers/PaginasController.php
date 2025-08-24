@@ -82,7 +82,7 @@ class PaginasController extends Controller
         // Verificar si hay eventos próximos (en los próximos 30 días)
         $hay_proximos_eventos = Evento::where('visibilidad', 'P')
             ->where('fecha_inicio', '>=', now())
-            ->where('fecha_inicio', '<=', now()->addDays(30))
+            // ->where('fecha_inicio', '<=', now()->addDays(30))
             ->exists();
 
         return Inertia::render(
