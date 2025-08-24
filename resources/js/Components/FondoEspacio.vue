@@ -1,6 +1,6 @@
 <template>
     <div ref="fondo" class="fondo-espacio relative" @mousemove="move">
-        <div id='galaxy' class="galaxy  hidden lg:block"></div>
+        <div id='galaxy' class="galaxy  hidden 2xl:block"></div>
         <div id='nebula' class="nebula"
         :style="{
             background: `url(${nebulaSrc}) center no-repeat`

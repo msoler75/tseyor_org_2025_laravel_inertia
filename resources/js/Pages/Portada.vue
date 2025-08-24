@@ -19,11 +19,16 @@
                         y la creación de las Sociedades Armónicas, a través de
                         la transmutación de nuestro pensamiento.
                     </div>
+                    <div class="w-full flex justify-center sm:hidden mx-auto mt-4">
+                        <Link v-if="hayProximosEventos" href="eventos" class="w-fit text-xs btn btn-secondary">
+                            <Icon icon="ph:arrow-right-duotone"
+                            class="transform scale-150"/>PRÓXIMOS EVENTOS</Link>
+                    </div>
                 </Hero>
                 <Link
                     v-if="hayProximosEventos"
                     href="eventos"
-                    class="w-fit text-xs btn btn-secondary opacity-80 !absolute bottom-8 right-8 z-40"
+                    class="w-fit text-xs btn btn-secondary !absolute hidden sm:flex bottom-6 right-8 z-40"
                     ><Icon
                         icon="ph:arrow-right-duotone"
                         class="transform scale-150"
