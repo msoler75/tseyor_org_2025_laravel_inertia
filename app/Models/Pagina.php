@@ -20,6 +20,7 @@ class Pagina extends ContenidoBaseModel
         'atras_texto',
         'descripcion',
         'texto',
+        'descubre',
         'palabras_clave',
         'imagen',
         'visibilidad'

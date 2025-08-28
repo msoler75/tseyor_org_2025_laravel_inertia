@@ -46,7 +46,7 @@ class TerminosController extends Controller
     }
 
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         if (is_numeric($id)) {
             $termino = Termino::findOrFail($id);
@@ -60,6 +60,12 @@ class TerminosController extends Controller
         if (!$termino || (!$publicado && !$borrador && !$editor)) {
             abort(404);
         }
+
+
+        if($request->has('json')) {
+            return response()->json($termino);
+        }
+
 
         // Obtén el término anterior
         $anterior = Termino::where('nombre', '<', $termino->nombre)

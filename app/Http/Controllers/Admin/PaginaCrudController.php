@@ -134,7 +134,8 @@ class PaginaCrudController extends CrudController
 
         CRUD::setFromDb(); // set fields from db columns.
 
-        CRUD::field('descripcion')->type('textarea')->hint('Descripción corta para el SEO.');
+    CRUD::field('descubre')->type('checkbox')->label('¿Descubre?')->hint('Marca si esta página es destacada para la sección especial.');
+    CRUD::field('descripcion')->type('textarea')->hint('Descripción corta para el SEO.');
 
         $folder = $this->getMediaFolder();
 

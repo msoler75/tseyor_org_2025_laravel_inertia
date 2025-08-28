@@ -30,6 +30,13 @@ class ContenidosController extends Controller
         $colecciones_excluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', /*'lugares',*/ 'guias', 'experiencias'];
 
         $page = $request->input('page', 1);
+
+        $campos = ['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion', 'visibilidad'];
+
+        if($request->has('description')) {
+            $campos[] = 'description';
+        }
+
         $resultados = $buscar ?
             Contenido::search($buscar)
             ->query(function ($query) use ($colecciones_excluidas) {
@@ -38,7 +45,7 @@ class ContenidosController extends Controller
             ->paginate(ContenidosController::$ITEMS_POR_PAGINA, 'page', $page)
             ->appends(['buscar' => $buscar])
             :
-            Contenido::select(['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion', 'visibilidad'])
+            Contenido::select($campos)
             ->when(!$esAdministrador, function ($query) {
                 $query->where('visibilidad', 'P');
             })
@@ -88,7 +95,6 @@ class ContenidosController extends Controller
             }
         }
 
-
         list($buscarFiltrado, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
 
         // https://github.com/teamtnt/laravel-scout-tntsearch-driver?tab=readme-ov-file#constraints
@@ -115,10 +121,34 @@ class ContenidosController extends Controller
                 ->appends($request->except('page'));
 
 
+        // detectar cuando el título coincide con la búsqueda, le damos más peso y reordenamos resultados
+
+        $reorder = false;
+        $resultados
+            ->transform(function ($item) use ($buscarFiltrado, &$reorder) {
+                if($buscarFiltrado==strtolower(StrEx::removerAcentosStrtr($item->titulo)))
+                {
+                    $item->__tntSearchScore__+=3.0;
+                    $reorder = true;
+                }
+                return $item;
+            });
+
+            // Reordenar resultados si es necesario
+            /*
+            // NO ES NECESARIO
+        if($reorder) {
+            $resultados = $resultados->sortByDesc('__tntSearchScore__');
+        }
+            */
+
+
         if (strlen($buscarFiltrado) < 3)
             BusquedasHelper::limpiarResultados($resultados, $buscar, true);
         else
             BusquedasHelper::formatearResultados($resultados, $buscar, true);
+
+
 
         return response()->json([
             'listado' => $resultados,

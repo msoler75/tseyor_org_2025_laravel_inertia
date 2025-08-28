@@ -3,7 +3,7 @@
         class="tabs tabs-box mb-12 gap-7 bg-base-300 w-fit max-w-full uppercase font-bold"
     >
         <component
-            v-for="(tab, index) of tabsGlosario"
+            v-for="(tab, index) of tabsComputed"
             :key="index"
             :href="tab.url"
             :is="tab.as"
@@ -25,7 +25,7 @@ import Link from "@/Components/Link.vue";
 
 const tabs = [
     {
-        label: "Términos",
+        label: "Glosario",
         route: "terminos",
         title: "Conoce los conceptos básicos o palabras clave de la filosofía Tseyor",
     },
@@ -35,13 +35,13 @@ const tabs = [
         title: "Tutores de la Confederación y otros hermanos de las estrellas.",
     },
     {
-        label: 'Lugares&nbsp;<span class="hidden sm:inline">de la galaxia</span>',
-        route: "lugares",
-        title: "Lugares de interés",
+        label: 'Preguntas frecuentes',
+        route: "preguntas",
+        title: 'Preguntas frecuentes y sus respuestas',
     },
 ];
 
-const tabsGlosario = computed(() =>
+const tabsComputed = computed(() =>
     tabs.map(tab => {
         const url = route(tab.route)
         const h = IAmHere(url);

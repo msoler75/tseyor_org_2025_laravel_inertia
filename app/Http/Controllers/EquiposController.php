@@ -173,7 +173,7 @@ class EquiposController extends Controller
         $permisoVerEquipo = !$equipo->oculto || $soyMiembro || $puedoAdministrar;
 
         if (!$permisoVerEquipo)
-            abort(404, 'No tienes permisos para ver este equipo');
+            abort(403, 'No tienes permisos para ver este equipo');
 
         $equipo->solicitudesPendientes = $solicitudes;
 

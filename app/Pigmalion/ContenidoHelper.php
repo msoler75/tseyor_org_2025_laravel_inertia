@@ -180,7 +180,7 @@ class ContenidoHelper
         if (strlen($contenido->descripcion) > 400)
             $contenido->descripcion = mb_substr($contenido->descripcion, 0, 399);
 
-        // obtiene el texto que servirá para indexar el buscador
+        // obtiene el texto que también servirá para indexar el buscador
         $contenido->texto_busqueda = $model->getTextoContenidoBuscador();
 
         if (isset($model->numero)) {

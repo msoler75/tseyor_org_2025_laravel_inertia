@@ -20,8 +20,8 @@
         </div>
 
         <div class="mx-auto flex flex-col justify-center items-center">
-            <h1>Glosario</h1>
-            <GlosarioTabs />
+            <h1>Consulta</h1>
+            <ConsultaTabs />
         </div>
 
         <div class="flex justify-end mb-5">
@@ -37,7 +37,7 @@
                     @click="useNav().scrollToTopPage"
                     class="flex items-center gap-2 font-bold"
                 >
-                    Glosario
+                    Consulta
                     <Icon
                         icon="ph:arrow-circle-up-duotone"
                         class="transform scale-150"

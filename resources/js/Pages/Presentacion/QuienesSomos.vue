@@ -48,7 +48,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
             >
                 <p>Nos estamos preparando para el próximo evento cósmico: El Rayo Sincronizador molecular. Una energía que catapultará nuestro universo manifestado a un nuevo nivel vibratorio. </p>
                 <p>Este cambio se verá precedido por un conjunto innumerable de situaciones que deberemos afrontar todos juntos, en <Referencia>unidad</Referencia>, comunidad. </p>
-                <p>Así podremos dar entrada a las futuras <Referencia>Sociedades Armónicas</Referencia>, en un nuevo nivel <Referencia>vibracional</Referencia> y de consciencia.</p>
+                <p>Así podremos dar entrada a las futuras <Referencia>Sociedades Armónicas</Referencia>, en un nuevo nivel <Referencia r="vibración">vibracional</Referencia> y de consciencia.</p>
             </TextImage>
         </Section>
 
@@ -71,10 +71,10 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
                 gridClass="md:grid-cols-[2fr_1fr]"
                 >
                 <p>Los comunicados son las <Referencia>conversaciones interdimensionales</Referencia> realizadas <Referencia r="telepatía">telepáticamente</Referencia> por nuestro hermano
-                    <Referencia>Chac-Mool</Referencia> <Referencia>Puente</Referencia>, quien ha recibido una preparación desde
+                    <Referencia>Chac-Mool Puente</Referencia>, quien ha recibido una preparación desde
                     hace más de 40 años para asumir dicha labor, como intermediario entre los dos mundos.</p>
                 <p>
-                    En nuestra <Referencia>biblioteca web</Referencia> podéis encontrar todos los comunicados o conversaciones
+                    En nuestra <Link href="/biblioteca">biblioteca web</Link> podéis encontrar todos los comunicados o conversaciones
                     telepáticas interdimensionales mantenidas con los hermanos de la <Referencia>Confederación de Mundos Habitados de la
                     Galaxia</Referencia>.</p>
                     <p>Estos son comunicados grupales para crear sociedades sin <Referencia>líderes</Referencia>, sin piramidalismo vertical, para impulsar la <Referencia>auténtica libertad</Referencia> del invididuo, sabiéndose el mismo participante de una Comunidad Universal.</p>
@@ -101,7 +101,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
                 <template #text1>
                     <ul>
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129901">¿Cómo son los seres de otros planetas?</Link></li>
-                        <Li><Link href="/preguntas-frecuentes/1#_Toc301129944">¿Cómo contactan?</Link></li>
+                        <li><Link href="/preguntas-frecuentes/1#_Toc301129944">¿Cómo contactan?</Link></li>
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129906">¿Cómo viven? </Link></li>
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129919">¿Por qué están aquí?</Link></li>
                         <li><Link href="/preguntas-frecuentes/1#_Toc301129895">¿Cómo son sus naves?</Link></li>

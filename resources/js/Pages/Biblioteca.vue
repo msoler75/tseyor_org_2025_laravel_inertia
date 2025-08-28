@@ -10,8 +10,8 @@
          <TitleInfo title="Biblioteca Tseyor" label-info="¿qué es?">
                 <p>La Biblioteca Tseyor es el resultado de más de 1800 diálogos <Referencia r="telepatía">
                 telepáticos</Referencia> con seres humanos de la <Referencia>Confederación de Mundos Habitados
-                de la Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool</Referencia> <Referencia>Puente</Referencia>,
-                    <Referencia r="canalización">canalizador</Referencia> de Tseyor.
+                de la Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool Puente</Referencia>,
+                <Referencia r="canalización">canalizador</Referencia> de Tseyor.
                 </p>
                 <p>Estas denominadas <q>conversaciones interdimensionales</q> o comunicados se han transcrito en
                     textos que inspiran libros, monografías, vídeos y audios.</p>
@@ -118,6 +118,14 @@ const secciones = ref([
         descripcion: 'Explora nuestra colección de dibujos recibidos telepáticamente y dibujados por nuestro hermano Chac-Mool Puente.',
         icon: "ph:image-duotone",
         count: computed(() => props.stats ? props.stats.psicografias : 0)
+    },
+     {
+        title: 'Descubre',
+        url: route('descubre'),
+        descripcion: 'Presentación de algunos conceptos centrales de Tseyor, para ofrecer un primer contacto inspirador y claro.',
+        icon: "ph:lightbulb-duotone",
+        count: computed(() => props.stats ? props.stats.descubre : 0),
+        collection: 'páginas',
     },
     {
         title: 'Radio Tseyor',

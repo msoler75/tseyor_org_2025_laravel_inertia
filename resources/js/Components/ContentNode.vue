@@ -34,6 +34,7 @@
 <script setup>
 import Image from "./Image.vue";
 import Link from "./Link.vue";
+import Referencia from "./Referencia.vue";
 import { getImageInfo } from "@/Stores/image.js";
 
 const props = defineProps({
@@ -47,6 +48,8 @@ const tag = computed(() => {
     if (props.node.tagName == "img" && props.useImage) return Image;
 
     if (props.node.tagName == "Link") return Link;
+
+    if (props.node.tagName == "referencia") return Referencia;
 
     if (props.node.tagName == "a") {
         const href = props.node.attributes.href;

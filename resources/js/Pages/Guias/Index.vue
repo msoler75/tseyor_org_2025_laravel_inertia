@@ -5,7 +5,7 @@
             <span />
             <div class="flex gap-2">
                 <Share />
-                <Link href="/libros/glosario-terminologico" class="btn btn-xs btn-primary flex gap-2 items-center"
+                <Link href="/libros/los-guias-estelares" class="btn btn-xs btn-primary flex gap-2 items-center"
                     title='Descarga todo el glosario en pdf'>
                 <Icon icon="ph:download-duotone" />Descargar libro</Link>
                 <AdminLinks modelo="guia" necesita="administrar contenidos" />
@@ -14,19 +14,25 @@
 
 
         <div class="mx-auto flex flex-col justify-center items-center">
-            <h1>Glosario</h1>
-            <GlosarioTabs />
+            <h1>Consulta</h1>
+            <ConsultaTabs />
         </div>
 
 
-        <div class="flex justify-end mb-5">
+        <div class="flex justify-between mb-5">
+         <TitleInfo title="" classes="!mb-0">
+                <p>Los Guías Estelares son tutores de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia> que mantienen contacto <Referencia r="telepatía">
+                telepático</Referencia> con el <Referencia>grupo TSEYOR</Referencia> a través del canalizador <Referencia>Chac-Mool</Referencia> <Referencia>Puente</Referencia>.
+                </p>
+                <p>El objetivo de este contacto y <Referencia r="Contacto entre ambas civilizaciones">tutelaje entre civilizaciones</Referencia> es servir de referenciación para que la humanidad planetaria de la Tierra pueda prepararse para la llegada del <Referencia>Rayo Sincronizador</Referencia> que resituará la humanidad a su posición real en el <Referencia>Tiempo Real del Universo</Referencia>.</p>
+         </TitleInfo>
             <SearchInput />
         </div>
 
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
                 <span />
-                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
+                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Consulta
                     <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
                 </div>
                 <span />
