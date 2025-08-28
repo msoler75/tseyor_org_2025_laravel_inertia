@@ -3,6 +3,7 @@
 
         <div class="flex justify-between items-center mb-20">
             <Back v-if="pagina.atras_ruta" :href="pagina.atras_ruta">{{ pagina.atras_texto }}</Back>
+            <Back v-else-if="pagina.descubre" :href="route('descubre')">Descubre</Back>
             <span v-else></span>
             <div class="flex gap-2">
                 <Share />

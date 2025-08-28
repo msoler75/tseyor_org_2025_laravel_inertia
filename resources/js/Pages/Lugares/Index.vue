@@ -14,8 +14,8 @@
 
 
         <div class="mx-auto flex flex-col justify-center items-center">
-            <h1>Glosario</h1>
-            <GlosarioTabs />
+            <h1>Consulta</h1>
+            <ConsultaTabs />
         </div>
 
 
@@ -26,7 +26,7 @@
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
                 <span />
-                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Glosario
+                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Consulta
                     <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
                 </div>
                 <span />

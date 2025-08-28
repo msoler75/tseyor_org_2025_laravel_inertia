@@ -60,7 +60,7 @@ export default [
               route: "eventos",
               description: "Cursos, convivencias y encuentros",
               icon: "ph:calendar-duotone",
-            }
+            },
           ],
         },
         {
@@ -119,17 +119,30 @@ export default [
           ],
         },
         {
-        title: "Blogs",
-        class: "flex flex-col gap-1",
-        index: 0,
-        items: [
+          title: "Blogs",
+          class: "flex flex-col gap-1",
+          index: 0,
+          items: [
             {
-                title: "Blog",
-                route: "blog",
-                description: "Artículos de nuestros blog",
-                icon: "ph:pencil-line-duotone"
-            }
-        ]
+              title: "Blog",
+              route: "blog",
+              description: "Artículos de nuestros blog",
+              icon: "ph:pencil-line-duotone",
+            },
+          ],
+        },
+        {
+          title: "Descubre",
+          class: "flex flex-col gap-1",
+          index: 0,
+          items: [
+            {
+              title: "Descubre",
+              route: "descubre",
+              description: "Presentación de algunos temas clave de Tseyor",
+              icon: "ph:lightbulb-duotone",
+            },
+          ],
         },
         {
           title: "Documentos",
@@ -184,7 +197,7 @@ export default [
               // class: "text-xs",
             },
           ],
-        }
+        },
       ],
       // footer: "Esto es un footer 1",
     },
@@ -215,7 +228,7 @@ export default [
         },
 
         {
-          title: "Glosario",
+          title: "Consulta",
           items: [
             {
               title: "Glosario de términos",
@@ -230,23 +243,17 @@ export default [
               icon: "ph:user-gear-duotone",
             },
             {
-              title: "Lugares de la Galaxia",
-              route: "lugares",
-              description: "Planetas, bases intraterrenas y otros lugares",
-              icon: "ph:planet-duotone",
-            },
-          ],
-        },
-
-        {
-          title: "Referencia",
-          items: [
-            {
               title: "Preguntas frecuentes",
               route: "preguntas",
               description: "Preguntas más habituales y su respuesta",
               icon: "ph:question-duotone",
             },
+          ],
+        },
+
+        {
+          title: "Orientación",
+          items: [
             {
               title: "Mis primeros pasos",
               url: "/mis-primeros-pasos",
@@ -420,12 +427,12 @@ export default [
               disabled: false,
             },
             {
-                title: "Sello de Tseyor",
-                route: "sello",
-                description: "Meditación con el sello de Tseyor",
-                component: markRaw(ApplicationMark),
-                disabled: false,
-              },
+              title: "Sello de Tseyor",
+              route: "sello",
+              description: "Meditación con el sello de Tseyor",
+              component: markRaw(ApplicationMark),
+              disabled: false,
+            },
             {
               title: "Juego del puzle",
               //obtiene de la base del dominio de la app, y le agrega el subdominio puzle.
@@ -449,4 +456,3 @@ export default [
     },
   },
 ];
-

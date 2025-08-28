@@ -3,13 +3,13 @@
         class="w-42 flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-2xs py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700 select-none flex-nowrap shrink-0"
         @click="search.opened = true">
         <Icon icon="ph:magnifying-glass-bold" class="mr-2" />
-        Buscar en el sitio...<span class="hidden xlg:inline ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
+        Buscar en el sitio...<span class="hidden ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
 
         <Modal :show="search.opened" @close="closeModal" maxWidth="lg">
             <div class="modal-search bg-base-100 flex flex-col text-sm pb-7">
                 <div class="flex gap-2 items-center p-3">
-                    <Icon v-show="!loading" icon="ph:magnifying-glass-bold" class="text-lg" />
-                    <Spinner v-show="loading" class="text-lg" />
+                    <Icon v-show="!search.searching" icon="ph:magnifying-glass-bold" class="text-2xl" />
+                    <Spinner v-show="search.searching" class="text-2xl" />
                     <div class="grow relative">
                         <input id="global-search-input" ref="input" class="search-input w-full" v-model="search.query"
                             aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off"
@@ -17,10 +17,22 @@
                             type="search" aria-owns="search-input-list"
                             :aria-activedescendant="itemSeleccionado ? itemSeleccionado.idDom : ''"
                             aria-controls="search-input-list" aria-haspopup="true">
+                            <button
+                                v-if="search.query"
+                                type="button"
+                                @click="search.query = ''"
+                                class="text-3xl absolute right-1 top-1/2 -translate-y-1/2 p-0 cursor-pointer"
+                                tabindex="-1"
+                                aria-label="Limpiar búsqueda"
+                                title="Limpiar búsqueda"
+                            >
+                            <Icon icon="jam:rubber" class="opacity-80 hover:opacity-100 transform hover:scale-125 duration-100" />
+                            </button>
+                        </input>
                     </div>
 
                     <span title="Cerrar búsqueda" class="text-3xl cursor-pointer transition duration-100 transform hover:scale-125 opacity-80 hover:opacity-100" @click="closeModal" >
-                        <Icon icon="material-symbols-light:close-rounded" />
+                        <Icon icon="material-symbols:cancel" />
                     </span>
                 </div>
 
@@ -143,8 +155,9 @@ const resultadosAgrupados = computed(() => {
     if (search.results === null) return []
 
     const agrupados = {}
-    for (const key in search.results.data) {
-        const item = search.results.data[key]
+    console.log('search.results:', search.results)
+    for (const key in search.results) {
+        const item = search.results[key]
         if (!item.idDom)
             item.idDom = 'result-' + item.slug_ref + '-' + Math.floor(Math.random() * 1000)
         if (!agrupados[item.coleccion]) {
@@ -364,7 +377,7 @@ function calcularUrl(item) {
 }
 
 // para buscar
-const loading = ref(false)
+
 const queryLoading = ref("")
 var timerBuscar = null
 
@@ -374,7 +387,7 @@ var timerGuardarBusqueda = null
 var busquedaId = null
 
 function buscar() {
-    if (loading.value) {
+    if (search.searching) {
         console.log('esperando carga de anterior busqueda', queryLoading.value, search.query)
         // clearTimeout(timerBuscar)
         timerBuscar = setTimeout(buscar, 250)
@@ -383,23 +396,12 @@ function buscar() {
     if (search.query) {
         var currentQuery = search.query
         queryLoading.value = currentQuery
-        loading.value = true
-        axios.get(route('buscar') + '?query=' + search.query
-            + (search.restrictToCollections ? '&collections=' + search.restrictToCollections : '')
-        )
-            .then(response => {
-                console.log('response-data', response.data)
-                search.results = response.data.listado
-                search.valid = response.data.busquedaValida
-                loading.value = false
-                timerGuardarBusqueda = setTimeout(guardarBusqueda, 2000)
-            })
-            .catch(error => {
-                loading.value = false
-            })
-            .finally(() => {
-                search.lastQuery = currentQuery
-            })
+        search.searching = true
+        search.includeDescription = false
+        search.call()
+        .then(()=>{
+            timerGuardarBusqueda = setTimeout(guardarBusqueda, 2000)
+        })
     }
 
 }
@@ -559,4 +561,6 @@ a.seleccionado :deep(em.search-term) {
 .dark a.seleccionado :deep(em.search-term) {
     @apply text-black;
 }
+
+
 </style>

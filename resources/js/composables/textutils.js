@@ -179,3 +179,23 @@ export function levenshtein(s, t) {
 
     return h;
 }
+
+
+
+export default function truncateText(text, maxLength = 512) {
+  if (!text) return '';
+  const paragraphs = text.split('\n');
+  let result = '';
+  let length = 0;
+  for (const para of paragraphs) {
+    if (length + para.length > maxLength) {
+      if (result === '') {
+        return para.substring(0, maxLength) + '...';
+      }
+      break;
+    }
+    result += para + '\n';
+    length += para.length;
+  }
+  return result.trim();
+}

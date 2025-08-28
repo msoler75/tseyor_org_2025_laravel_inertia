@@ -55,10 +55,10 @@ class RouteServiceProvider extends ServiceProvider
         // Rate limiter para comandos críticos del sistema
         RateLimiter::for('command', function (Request $request) {
             return [
-                // Máximo 6 comandos por minuto por usuario
-                Limit::perMinute(6)->by($request->user()?->id ?: $request->ip()),
-                // Máximo 30 comandos por hora por usuario
-                Limit::perHour(30)->by($request->user()?->id ?: $request->ip()),
+                // Máximo 15 comandos por minuto por usuario
+                Limit::perMinute(15)->by($request->user()?->id ?: $request->ip()),
+                // Máximo 90 comandos por hora por usuario
+                Limit::perHour(90)->by($request->user()?->id ?: $request->ip()),
             ];
         });
 

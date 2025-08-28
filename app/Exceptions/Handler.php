@@ -121,10 +121,10 @@ class Handler extends ExceptionHandler
             $resultados = BusquedasHelper::buscarContenidos($buscar);
 
         // si solo hay un resultado, redirigimos automáticamente
-        if ($resultados->count() == 1) {
+        /*if ($resultados->count() == 1) {
             $primerResultado = $resultados->first();
             return redirect()->to($primerResultado->url);
-        }
+        }*/
 
         // $message = $exception->getMessage();
         return Inertia::render('Error', [

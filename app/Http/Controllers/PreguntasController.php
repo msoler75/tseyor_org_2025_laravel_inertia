@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Preguntas;
+use App\Models\Libro;
 use App\Pigmalion\SEO;
 
 class PreguntasController extends Controller
@@ -12,9 +13,11 @@ class PreguntasController extends Controller
     public function index()
     {
         $secciones = Preguntas::select('titulo', 'id', 'slug', 'descripcion')->get();
+        $libro = Libro::where('slug', 'preguntas-y-respuestas-tseyor')->first();
 
         return Inertia::render('Preguntas/Index', [
-            'secciones' => $secciones
+            'secciones' => $secciones,
+            'libro' => $libro
         ])
             ->withViewData(SEO::get('preguntas-frecuentes'));
     }

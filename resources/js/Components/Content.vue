@@ -41,7 +41,8 @@ const images = ref([]) // imagenes del contenido
 
 const contentPreProcessed = computed(() => isMarkdown.value ? MarkdownToHtml(props.content) : props.content ? props.content : "")
 
-const contentProcessed = computed(() => contentPreProcessed.value.replace(/<span class="es-referencia"(.*?)<\/span>/g, '<referencia$1</referencia>'))
+const contentProcessed = computed(() => contentPreProcessed.value.replace(/<span class="referencia"(.*?)<\/span>/g, '<referencia$1</referencia>')
+    .replace(/<strong><em(.*?)<\/em><\/strong>/g, '<referencia$1</referencia>'))
 
 function parseHTML(textoHTML) {
     images.value = []
@@ -69,6 +70,10 @@ function parseHTML(textoHTML) {
                 if(firstImage)
                     node.setAttribute('loading', 'eager')
                 firstImage = false
+            }
+
+            if(node.tagName == 'REFERENCIA') {
+                console.warn("Referencia encontrada", node.innerHTML);
             }
 
             obj.attributes = {}

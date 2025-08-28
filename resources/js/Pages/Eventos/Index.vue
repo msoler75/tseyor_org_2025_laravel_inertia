@@ -13,7 +13,7 @@
         <p>Cursos y encuentros de la comunidad Tseyor a los que puedes acudir.</p>
 
         <div class="flex justify-end mb-5">
-            <SearchInput />
+            <SearchInput placeholder="Buscar eventos..." />
         </div>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
@@ -31,12 +31,13 @@
 
                 <div v-if="listado.data.length > 0" class="grid gap-4"
                     :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
-                    <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data" :key="contenido.id"
+                    <CardContent v-if="listado.data.length > 0" v-for="contenido in contenidosRevisados" :key="contenido.id"
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
                         :description="contenido.descripcion">
+                        <div v-if="contenido.futuro" class="mt-2 font-bold text-xs text-secondary text-right">PROXIMAMENTE</div>
                         <div
-                            class="absolute right-2 top-2 rounded-xs shadow-lg bg-base-100 text-xl font-bold overflow-hidden">
-                            <span class="p-2 inline-block">
+                        class="absolute right-2 top-2 rounded-xs shadow-lg bg-base-100 text-xl font-bold overflow-hidden">
+                        <span class="p-2 inline-block">
                                 {{ fechas[contenido.id].substring(0, fechas[contenido.id].lastIndexOf(' ')) }}
                             </span>
                             <div class="bg-primary text-primary-content text-sm text-center p-1">
@@ -84,5 +85,10 @@ const fechas = computed(() => {
     return f
 })
 
-
+const contenidosRevisados = computed(() => {
+    return props.listado.data.map(evento => {
+        evento.futuro = evento.fecha_inicio ? new Date(evento.fecha_inicio) >= new Date() : false;
+        return evento;
+    })
+})
 </script>

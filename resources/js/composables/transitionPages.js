@@ -57,7 +57,7 @@ export default function setTransitionPages(router) {
     // aunque esté en la misma sección
     if (!mismapagina) {
       const fadeoutWhenNavigateTo =
-        /^\/(preguntas-frecuentes|comunicados|centros).*/;
+        /^\/(comunicados|centros).*/;
       if (fadeoutWhenNavigateTo.exec(nuevaRuta.pathname)) {
         console.log("auto fadeOut");
         nav.fadeoutPage();

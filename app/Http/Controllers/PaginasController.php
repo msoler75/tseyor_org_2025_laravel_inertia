@@ -20,7 +20,7 @@ use App\Pigmalion\Markdown;
 
 class PaginasController extends Controller
 {
-    public static $ITEMS_POR_PAGINA = 10;
+    public static $ITEMS_POR_PAGINA = 20;
 
     public function index(Request $request)
     {
@@ -39,6 +39,31 @@ class PaginasController extends Controller
 
         // obtener todas las paginas (usamos cualquier vista, esto va para MCP)
         return Inertia::render('Libros/Index', [
+            'listado' => $resultados,
+        ]);
+    }
+
+    public function descubre(Request $request)
+    {
+        $page = $request->input("page", 1);
+        $buscar = $request->input('buscar');
+
+
+        $query = Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion', 'visibilidad', 'updated_at'])
+            ->where('visibilidad', 'P')
+            // debe tener el campo texto
+            ->where('descubre', TRUE);
+
+        if ($buscar) {
+            $ids = Pagina::search($buscar)->get()->pluck('id')->toArray();
+            $query->whereIn('paginas.id', $ids);
+        } else $query->orderBy('ruta');
+
+        $resultados = $query->paginate(PaginasController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
+
+        // obtener todas las paginas (usamos cualquier vista, esto va para MCP)
+        return Inertia::render('Descubre', [
             'listado' => $resultados,
         ]);
     }
@@ -122,7 +147,8 @@ class PaginasController extends Controller
                             'entradas' => Entrada::where('visibilidad', 'P')->count(),
                             'videos' => Video::where('visibilidad', 'P')->count(),
                             'meditaciones' => Meditacion::where('visibilidad', 'P')->count(),
-                            'psicografias' => Psicografia::count()
+                            'psicografias' => Psicografia::count(),
+                            'descubre'=>Pagina::where('visibilidad', 'P')->where('descubre', TRUE)->count()
                         ];
                 })
             ]

@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Models\Evento;
 use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
+use Carbon\Carbon;
 class EventosController extends Controller
 {
     public static $ITEMS_POR_PAGINA = 12;
@@ -17,15 +18,33 @@ class EventosController extends Controller
         $categoria = $request->input('categoria');
         $page = $request->input('page', 1);
 
-        $resultados = $categoria ?
-            Evento::where('categoria', '=', $categoria)
-            ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)->appends(['categoria' => $categoria])
-            : ($buscar ? Evento::where('titulo', 'like', '%' . $buscar . '%')
+    // Fecha de referencia para la comparación (now)
+    $now = Carbon::now()->toDateTimeString();
+
+    // Orden: primeros los eventos futuros más próximos (ASC), luego futuros lejanos,
+    // y al final los eventos pasados en orden inverso (más recientes primero, DESC).
+    // Usamos COALESCE(fecha_inicio, published_at, '1970-01-01') para manejar fechas nulas.
+    // La estrategia es: ordenar por (is_future) DESC, luego por fecha ASC para futuros,
+    // y por fecha DESC para pasados.
+    $orderSql = "(COALESCE(fecha_inicio, published_at, '1970-01-01') >= ?) DESC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') >= ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) ASC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') < ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) DESC";
+
+        if ($categoria) {
+            $resultados = Evento::where('categoria', '=', $categoria)
+                ->orderByRaw($orderSql, [$now, $now, $now])
+                ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+                ->appends(['categoria' => $categoria]);
+        } elseif ($buscar) {
+            $resultados = Evento::where('titulo', 'like', '%' . $buscar . '%')
                 ->orWhere('descripcion', 'like', '%' . $buscar . '%')
-                ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)->appends(['buscar' => $buscar])
-                :
-                Evento::latest()->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
-            );
+                ->orderByRaw($orderSql, [$now, $now, $now])
+                ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+                ->appends(['buscar' => $buscar]);
+        } else {
+            $resultados = Evento::orderByRaw($orderSql, [$now, $now, $now])
+                ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
+        }
+
+
 
         $categorias = Evento::selectRaw('categoria as nombre, count(*) as total')
             ->groupBy('categoria')

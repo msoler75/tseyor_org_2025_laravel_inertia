@@ -14,7 +14,7 @@ class ContenidosImport extends Command
      *
      * @var string
      */
-    protected $signature = 'contenidos:import {coleccion}';
+    protected $signature = 'contenidos:import {coleccion} {--y : Confirmar la operación directamente}';
 
     /**
      * The console command description.
@@ -33,7 +33,8 @@ class ContenidosImport extends Command
 
         $coleccion = $this->argument('coleccion');
 
-        if ($this->confirm('¿Está seguro de que desea recrear los contenidos? Esto borrará los registros actuales.')) {
+    $confirmado = $this->option('y');
+    if ($confirmado || $this->confirm('¿Está seguro de que desea recrear los contenidos? Esto borrará los registros actuales.')) {
 
             // Verificar si la clase del modelo existe
             $inflector = InflectorFactory::create()->build();

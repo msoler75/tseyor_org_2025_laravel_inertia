@@ -195,6 +195,8 @@ Route::get('glosario/{slug}', [TerminosController::class, 'show'])->where('slug'
 Route::get('guias', [GuiasController::class, 'index'])->name('guias');
 Route::get('guias/{slug}', [GuiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('guia');
 
+Route::get('descubre', [PaginasController::class, 'descubre'])->name('descubre');
+
 Route::get('lugares', [LugaresController::class, 'index'])->name('lugares');
 Route::get('lugares/{slug}', [LugaresController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('lugar');
 
