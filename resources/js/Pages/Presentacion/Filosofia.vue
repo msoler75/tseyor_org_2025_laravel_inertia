@@ -1,10 +1,12 @@
 <template>
-    <Sections height="550">
 
+    <div class="container mx-auto py-12">
         <h1 class="hidden">Filosofía Tseyor</h1>
 
         <Back href="/quienes-somos" floatAtY="-100">Quiénes Somos</Back>
+    </div>
 
+    <Sections height="550">
 
         <Hero title="Tiempos de transformación" srcImage="/almacen/medios/paginas/hombre-universo.jpg">
             <p>Nos encontramos en un momento de transformación sin precedentes a nivel cósmico, que nos va a conducir a
@@ -67,7 +69,7 @@
 
         <Section>
             <TextImage title="Las sociedades armónicas" srcImage="/almacen/medios/paginas/SociedadesArmonicas.jpg"
-                buttonLabel="Descargar Libro" href="/libros/las-sociedades-armonicas" src-width="1920" src-height="1282"
+                buttonLabel="Ver en Biblioteca" href="/libros/las-sociedades-armonicas" src-width="1920" src-height="1282"
                 class="py-20">
                 <p>Son sociedades en las que predomina la hermandad, no hay líderes, no hay enfermedad, y sí la
                     auténtica libertad.</p>

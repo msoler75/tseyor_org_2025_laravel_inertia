@@ -11,7 +11,7 @@
                     <Icon v-show="!search.searching" icon="ph:magnifying-glass-bold" class="text-2xl" />
                     <Spinner v-show="search.searching" class="text-2xl" />
                     <div class="grow relative">
-                        <input id="global-search-input" ref="input" class="search-input w-full" v-model="search.query"
+                        <input id="global-search-input" ref="input" class="search-input w-full !pr-8" v-model="search.query"
                             aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off"
                             enterkeyhint="go" spellcheck="false" placeholder="Buscar en el sitio web..." maxlength="64"
                             type="search" aria-owns="search-input-list"

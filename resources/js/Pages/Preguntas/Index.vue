@@ -56,7 +56,7 @@
     <div class="bg-base-100 w-full md:pb-16" style="--sectionHeight: 300px">
         <div class="container mx-auto">
             <TextImage
-                title="Descargar libro"
+                title="Ver en Biblioteca"
                 class="mx-auto md:max-w-[768px]"
                 full
                 buttonLabel="Ver en Biblioteca"

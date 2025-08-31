@@ -506,7 +506,7 @@ border-color: #222;
 
 
 /* Estilos por defecto para el contenido del tooltip */
-.tooltip {
+.xtooltip {
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
   box-shadow: 0 6px 18px rgba(2,6,23,0.2);

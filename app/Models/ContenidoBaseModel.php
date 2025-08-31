@@ -34,7 +34,7 @@ class ContenidoBaseModel extends Model
         });
 
         static::saved(function ($model) {
-            Log::info("ContenidoBaseModel::saved");
+            Log::info("ContenidoBaseModel::saved" . get_class($model));
             // Log::info("ContenidoBaseModel saved: ". substr($model->texto, 0, 1024));
             // si mueve alguna imagen, guardamos los cambios y salimos
             if (ContenidoHelper::moverImagenesContenido($model)) {

@@ -190,6 +190,17 @@ class ContenidoHelper
 
         // Guardar el modelo en la base de datos
         $contenido->save();
+
+        try {
+            // Log::info('ContenidoHelper::toSearchableArray', ['id' => $contenido->id, 'searchable' => $contenido->toSearchableArray(), 'visibilidad' => $contenido->visibilidad]);
+            if (method_exists($contenido, 'searchable')) {
+                // Forzamos el indexado inmediato (no cambia comportamiento si Scout ya lo hizo)
+                $contenido->searchable();
+                // Log::info('ContenidoHelper::searchable_forzado', ['id' => $contenido->id]);
+            }
+        } catch (\Throwable $e) {
+            Log::error('ContenidoHelper::error_indexando', ['error' => $e->getMessage(), 'id' => $contenido->id]);
+        }
     }
 
 

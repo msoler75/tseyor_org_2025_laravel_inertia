@@ -78,7 +78,7 @@
 
 
         <Section>
-            <TextImage title="Libro: ONG Mundo Armónico Tseyor" class="container" buttonLabel="Descargar libro"
+            <TextImage title="Libro: ONG Mundo Armónico Tseyor" class="container" buttonLabel="Ver en Biblioteca"
                 href="/libros/la-ong-mundo-armonico-tseyor">
                 <p>Todo el material recopilado de la ONG de Tseyor, desde julio de 2010 que la Confederación nos
                     propuso su creación.</p>

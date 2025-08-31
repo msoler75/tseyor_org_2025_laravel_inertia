@@ -38,7 +38,7 @@
         <Section>
             <TextImage title="Libro: El Muular. El Papel Moneda Tseyoriano"
                 srcImage="/almacen/medios/libros/145/El%20Muular.%20El%20Papel%20Moneda%20Tseyoriano.jpg?w=280"
-                buttonLabel="Descargar libro" href="/libros/el-muular-el-papel-moneda-tseyoriano">
+                buttonLabel="Ver en Biblioteca" href="/libros/el-muular-el-papel-moneda-tseyoriano">
                 <p>Monografía que recoge todas las informaciones vertidas sobre la ONG Mundo Armónico Tseyor.</p>
             </TextImage>
         </Section>
@@ -46,7 +46,7 @@
         <Section>
             <TextImage title="Libro-Taller: Mejor con el Muular"
                 srcImage="/almacen/medios/libros/349/Taller%20mejor%20con%20el%20muular.jpg?w=280"
-                buttonLabel="Descargar libro" href="/libros/taller-mejor-con-el-muular" image-right>
+                buttonLabel="Ver en Biblioteca" href="/libros/taller-mejor-con-el-muular" image-right>
                 <p>Taller impartido por la hermana Noiwanak acerca del uso del Muular y su comprensión.</p>
             </TextImage>
         </Section>

@@ -80,7 +80,7 @@
 
 
         <Section class="py-14">
-            <TextImage title="Libro: UTG Universidad Tseyor de Granada" buttonLabel="Descargar libro" class="container"
+            <TextImage title="Libro: UTG Universidad Tseyor de Granada" buttonLabel="Ver en Biblioteca" class="container"
                 href="/libros/la-universidad-tseyor-de-granada">
                 <p>Todo el material recopilado de la UTG desde su creación.</p>
 
