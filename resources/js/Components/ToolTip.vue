@@ -2,11 +2,12 @@
     <span
     class="cursor-pointer"
     :class="[isOpen?'text-secondary':'text-primary']"
-        ref="domReference"
-        @mouseenter="show"
-        @mouseleave="hide"
-        @focus="show"
-        @blur="hide"
+    ref="domReference"
+    @pointerenter="onRefPointerEnter"
+    @pointerleave="onRefPointerLeave"
+    @pointerdown="onRefPointerDown"
+    @focus="show"
+    @blur="onRefBlur"
     >
         <slot></slot>
 </span>
@@ -16,49 +17,69 @@
         v-show="isOpen"
         :style="floatingStyles"
         role="tooltip"
-        class="tooltip bg-base-300"
+        class="transition duration-120 z-20"
     >
-        <div ref="arrow" class="tooltip-arrow" data-popper-arrow></div>
-        <slot name="content">Tooltip</slot>
+           <slot name="content"></slot>
     </div>
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted, onBeforeUnmount, watch } from 'vue';
-import { useFloating, autoPlacement } from '@floating-ui/vue';
+import { ref, nextTick, onMounted, onBeforeUnmount, computed } from 'vue';
+import { useFloating, autoPlacement, autoUpdate } from '@floating-ui/vue';
 import { offset, shift, size, arrow as arrowMiddleware } from '@floating-ui/core';
 
 const emit = defineEmits(['activated', 'deactivated']);
+// permitir mantener el tooltip abierto desde fuera
+const props = defineProps({
+    persistent: { type: Boolean, default: false },
+});
 
 const domReference = ref(null);
-// virtual reference that returns the last client rect when the element is wrapped
-// across multiple lines. Floating UI will consume this object's
-// getBoundingClientRect() to place the floating element near the last
-// fragment (last word) instead of between fragments.
-const virtualReference = ref({
-    getBoundingClientRect() {
-        const el = domReference.value;
-        if (!el) return { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0, x: 0, y: 0, toJSON() { } };
-        try {
-            const rects = el.getClientRects ? el.getClientRects() : null;
-            const rect = rects && rects.length ? rects[rects.length - 1] : el.getBoundingClientRect();
-            return rect;
-        } catch (e) {
-            return el.getBoundingClientRect();
-        }
-    },
-    // contextElement can help Floating UI with event handling / offsets
-    contextElement: domReference,
-});
+
 const floating = ref(null);
 const arrow = ref(null);
 const isOpen = ref(false);
 
+// listener global para cerrar al tocar fuera (se añade en capture para ignorar stopPropagation)
+function onPointerDownOutside(e) {
+    try {
+    // si el componente es persistente, ignorar clicks fuera
+    if (props.persistent) return;
+        const refEl = domReference.value;
+        const floatEl = floating.value;
+        const target = e && e.composedPath ? e.composedPath()[0] : e.target;
+        // si el click/touch está dentro de la referencia o del floating, no cerrar
+        if (refEl && (refEl === target || refEl.contains(target))) return;
+        if (floatEl && (floatEl === target || floatEl.contains(target))) return;
+        // fuera: cerrar inmediatamente
+        immediateHide();
+    } catch (err) {
+        // noop
+    }
+}
+
+function addOutsideListener() {
+    // usar capture para que se ejecute antes de handlers que hagan stopPropagation
+    window.addEventListener('pointerdown', onPointerDownOutside, true);
+    // fallback para entornos sin pointer events
+    window.addEventListener('touchstart', onPointerDownOutside, true);
+}
+
+function removeOutsideListener() {
+    window.removeEventListener('pointerdown', onPointerDownOutside, true);
+    window.removeEventListener('touchstart', onPointerDownOutside, true);
+}
+
+// flags para evitar toggles cuando el tooltip y la referencia se solapan
+let isHoveringReference = false;
+let isHoveringFloating = false;
+
 let hideTimer = null;
-const HIDE_DELAY_MS = 50; // retraso al cerrar para permitir clicks dentro del tooltip
+const HIDE_DELAY_MS = 120; // retraso al cerrar para permitir clicks dentro del tooltip y evitar flicker
 
 // usar middleware para evitar overflow del viewport y ajustar tamaño disponible
-const { floatingStyles, middlewareData, placement, update } = useFloating(virtualReference, floating, {
+const { floatingStyles, middlewareData, placement, update } = useFloating(domReference, floating, {
+      whileElementsMounted: autoUpdate,
     middleware: [
     autoPlacement(),
     offset(6),
@@ -75,9 +96,10 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(virtua
             },
         }),
         // arrow middleware — colocará la flecha correctamente
-        // arrowMiddleware({ element: arrow }),
+        //arrowMiddleware({ element: arrow}),
     ],
 });
+
 
 
 function show() {
@@ -88,38 +110,125 @@ function show() {
         // esperar al DOM y forzar recálculo de posición
         nextTick(() => {
             if (update) update();
+            // asegurar que el elemento arrow esté presente para el middleware
+            nextTick(() => { if (update) update(); });
+            // debug: mostrar datos del middleware y estilos del floating para diagnóstico
+            try {
+                console.debug('floatingStyles', floatingStyles);
+                console.debug('middlewareData', middlewareData && middlewareData.value);
+                console.debug('placement', placement && placement.value);
+            } catch (e) {
+                // noop
+            }
             // empezar a observar cambios en el contenido del tooltip
             startObserving();
+            // añadir listener global para cerrar al tocar fuera
+            addOutsideListener();
         });
         emit('activated', { text: domReference.value?.innerText });
     }
 }
 
-function hide() {
-    // iniciar temporizador para cerrar (permite clicks dentro del tooltip)
+// exponer API pública para controlar el tooltip desde el padre
+function hide(force = false) {
+    immediateHide(force);
+}
+
+defineExpose({ show, hide });
+
+
+function scheduleHideIfNeeded() {
+    // si es persistente, no programar cierre
+    if (props.persistent) return;
+    // programa el cierre solo si el puntero no está ni sobre la referencia ni sobre el floating
     clearHideTimer();
     hideTimer = setTimeout(() => {
-        isOpen.value = false;
-        stopObserving();
+        if (!isHoveringReference && !isHoveringFloating) {
+            isOpen.value = false;
+            stopObserving();
+            emit('deactivated', { text: domReference.value?.innerText });
+        }
         hideTimer = null;
-        emit('deactivated', { text: domReference.value?.innerText });
     }, HIDE_DELAY_MS);
 }
 
-function immediateHide() {
+function immediateHide(force = false) {
+    // si es persistente y no se fuerza, ignorar
+    if (props.persistent && !force) return;
     clearHideTimer();
     isOpen.value = false;
     stopObserving();
+    removeOutsideListener();
 }
 
 function clearHideTimer() {
     if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
 }
 
+// handlers para eventos pointer — se usan en la plantilla (referencia) y en el elemento floating
+// mantener tipo de puntero reciente para distinguir touch vs mouse
+let lastPointerType = null;
+
+function onRefPointerEnter(e) {
+    // cuando viene de touch, ignoramos enter/leave para evitar toggles rápidos en móvil
+    lastPointerType = e && e.pointerType ? e.pointerType : lastPointerType;
+    if (lastPointerType === 'touch') return;
+    isHoveringReference = true;
+    clearHideTimer();
+    show();
+}
+
+function onRefPointerLeave(e) {
+    lastPointerType = e && e.pointerType ? e.pointerType : lastPointerType;
+    // si es touch, no programar cierre aquí; el touch usa pointerdown para toggle
+    if (lastPointerType === 'touch') {
+        isHoveringReference = false;
+        return;
+    }
+    isHoveringReference = false;
+    scheduleHideIfNeeded();
+}
+
+function onRefPointerDown(e) {
+    lastPointerType = e && e.pointerType ? e.pointerType : lastPointerType;
+    clearHideTimer();
+    // en dispositivos táctiles, queremos que el toque haga toggle (abrir/cerrar)
+    if (lastPointerType === 'touch') {
+        if (isOpen.value) {
+            immediateHide();
+        } else {
+            show();
+        }
+        // detener propagación para evitar que un click posterior cierre el tooltip
+        // (no usar preventDefault para no romper accesibilidad)
+        e && e.stopPropagation && e.stopPropagation();
+        return;
+    }
+    // para punteros no touch, comportarse igual que pointerenter
+    isHoveringReference = true;
+    show();
+}
+
+function onRefBlur() {
+    // no cerrar inmediatamente en blur; usar la misma lógica con retraso
+    isHoveringReference = false;
+    scheduleHideIfNeeded();
+}
+
+function onFloatingPointerEnter() {
+    isHoveringFloating = true;
+    clearHideTimer();
+}
+
+function onFloatingPointerLeave() {
+    isHoveringFloating = false;
+    scheduleHideIfNeeded();
+}
+
 // observar cambios en el contenido del slot 'content' y recalcular posición
 let mutationObserver = null;
 let mutationTimer = null;
-const DEBOUNCE_MS = 50;
+const DEBOUNCE_MS = 10;
 
 function startObserving() {
     // si no existe MutationObserver en el entorno, no hacemos nada
@@ -160,15 +269,11 @@ onMounted(() => {
     nextTick(() => {
         const el = floating.value;
         if (!el) return;
-        el.addEventListener('pointerenter', clearHideTimer);
-        el.addEventListener('pointerdown', clearHideTimer);
-        el.addEventListener('pointerleave', () => {
-            // iniciar el temporizador de cierre cuando el puntero salga
-            hide();
-        });
+    el.addEventListener('pointerenter', onFloatingPointerEnter);
+    el.addEventListener('pointerdown', clearHideTimer);
+    el.addEventListener('pointerleave', onFloatingPointerLeave);
     });
 });
-
 onBeforeUnmount(() => {
     window.removeEventListener('resize', safeUpdate);
     window.removeEventListener('scroll', safeUpdate, true);
@@ -177,41 +282,10 @@ onBeforeUnmount(() => {
     // remover listeners añadidos al elemento flotante si existe
     const el = floating.value;
     if (el) {
-        el.removeEventListener('pointerenter', clearHideTimer);
+        el.removeEventListener('pointerenter', onFloatingPointerEnter);
         el.removeEventListener('pointerdown', clearHideTimer);
-        el.removeEventListener('pointerleave', hide);
+        el.removeEventListener('pointerleave', onFloatingPointerLeave);
     }
 });
 </script>
 
-<style scoped>
-/* asegurar que no aparezca scrollbar en el tooltip */
-.tooltip {
-    overflow: visible !important;
-    max-height: none !important;
-}
-
-/* estilo de la flecha */
-.tooltip-arrow {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: inherit; /* toma el mismo fondo que el tooltip */
-    transform: rotate(45deg);
-    z-index: -1; /* para que quede detrás del contenido */
-}
-
-/* desplazar la flecha fuera del contenedor según la orientación */
-.tooltip[data-popper-placement^="top"] .tooltip-arrow {
-    bottom: -5px;
-}
-.tooltip[data-popper-placement^="bottom"] .tooltip-arrow {
-    top: -5px;
-}
-.tooltip[data-popper-placement^="left"] .tooltip-arrow {
-    right: -5px;
-}
-.tooltip[data-popper-placement^="right"] .tooltip-arrow {
-    left: -5px;
-}
-</style>

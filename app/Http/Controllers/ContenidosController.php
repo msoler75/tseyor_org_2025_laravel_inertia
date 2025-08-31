@@ -14,6 +14,7 @@ use App\Pigmalion\StrEx;
 class ContenidosController extends Controller
 {
     public static $ITEMS_POR_PAGINA = 64;
+    public static $ITEMS_SEARCH = 64;
 
     /**
      * Novedades
@@ -107,17 +108,19 @@ class ContenidosController extends Controller
         }
 
         $busqueda_valida = BusquedasHelper::validarBusqueda($buscar);
+
         // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
         $resultados = ($busqueda_valida ? Contenido::search($buscarFiltrado)->constrain($filtro) :
             Contenido::where('id', '-1')
-        )->paginate(64);
+        )->paginate(ContenidosController::$ITEMS_SEARCH);
 
         //dd((Contenido::search($buscarFiltrado))->get()->toArray());
 
+        if(false)
         if ($busqueda_valida && !$resultados->count()) // por algun motivo algunas busquedas no las encuentra. En esos casos, buscamos manualmente
             $resultados = Contenido::where('visibilidad', 'P')->where('titulo', 'LIKE', "%$buscarFiltrado%")
                 ->orWhere('texto_busqueda', 'LIKE', "%$buscarFiltrado%")
-                ->paginate(40)
+                ->paginate(ContenidosController::$ITEMS_SEARCH)
                 ->appends($request->except('page'));
 
 

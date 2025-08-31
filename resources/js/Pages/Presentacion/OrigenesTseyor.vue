@@ -196,7 +196,7 @@
         <Section>
             <!-- Sección: Los guías estelares -->
             <Hero full title="Libro: Los Guías Estelares" srcImage="/almacen/medios/libros/274/Los%20Guias%20Estelares.jpg?h=400"
-                class="container" buttonLabel="Descargar libro" href="/libros/los-guias-estelares" src-width="200"
+                class="container" buttonLabel="Ver en Biblioteca" href="/libros/los-guias-estelares" src-width="200"
                 src-height="300" >
                 <div class="text-base lg:text-lg xl:text-xl xl:leading-8 ">
                     <div>

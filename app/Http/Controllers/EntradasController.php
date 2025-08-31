@@ -17,6 +17,7 @@ class EntradasController extends Controller
         $buscar = $request->input('buscar');
         $page = $request->input('page', 1);
 
+
         $query = Entrada::select(['slug', 'titulo', 'imagen', 'descripcion', 'updated_at', 'published_at', 'categoria'])
             ->where('visibilidad', 'P');
 
@@ -32,6 +33,12 @@ class EntradasController extends Controller
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar, false);
+
+
+        return view('entradas.index', [
+            'filtrado' => $buscar,
+            'listado' => $resultados,
+        ]);
 
         return Inertia::render('Entradas/Index', [
             'filtrado' => $buscar,
