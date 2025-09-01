@@ -33,6 +33,9 @@ const props = defineProps({
     onNode: {
         type: Function,
         default: null
+    },
+    imageAppend: {
+
     }
 });
 
@@ -111,7 +114,9 @@ function parseHTML(textoHTML) {
     }
 
     // Comienza el análisis desde el nodo raíz
-    return parseNode(doc.body.firstChild);
+    const r = parseNode(doc.body.firstChild);
+    images.value.push()
+    return r
 }
 
 const arbol = computed(() => parseHTML('<div>' + contentProcessed.value + '</div>'))
@@ -168,12 +173,17 @@ function handleClick(event) {
 const showImagesViewer = ref(false)
 const imageIndex = ref(0)
 function handlePreview(img) {
-    imageIndex.value = parseInt(img.getAttribute("image-index"))
+    showImage(parseInt(img.getAttribute("image-index")))
+}
+
+const showImage = (index) =>{
+    imageIndex.value = index
     showImagesViewer.value = true
     console.log('clicked ', imageIndex.value, images.value[imageIndex.value])
 }
 
-
+// Exponer la API pública para que componentes padre puedan invocar showImage vía ref
+defineExpose({ showImage })
 
 </script>
 
