@@ -79,12 +79,14 @@
 
                 <p class="mt-12">{{ evento.descripcion }}</p>
                 <hr class="my-12 hidden md:block" />
-                <Content :content="evento.texto" class="mt-12 hidden md:block" />
+                <Content :content="textoImagenInsertada" ref="content1" class="mt-12 hidden md:block"
+                :optimizeImages="false"/>
             </div>
-            <div class="w-full md:w-1/2 ">
+            <div class="opacity-0 w-full md:w-1/2 ">
                 <div class="lg:max-w-[500px]">
-                    <Image :src="evento.imagen" alt="Imagen del evento" class="w-full mb-4" />
-                    <Content :content="evento.texto" class="my-12 md:hidden" />
+                    <Image :src="evento.imagen" alt="Imagen del evento" class="w-full mb-4" @click="showImage" />
+                    <Content :content="textoImagenInsertada" class="my-12 md:hidden" ref="content2"
+                    :optimizeImages="false"/>
                 </div>
             </div>
         </div>
@@ -100,6 +102,28 @@ const props = defineProps({
         required: true,
     },
 })
+
+const textoImagenInsertada = computed(()=>{
+    return `<img src='${props.evento.imagen}' class='hidden'>` + props.evento.texto
+})
+
+const content1 = ref(null)
+const content2 = ref(null)
+
+async function showImage() {
+    let contentElegidoNum = 1
+    if(!content1.value?.$el?.querySelector('img')) contentElegidoNum = 2
+    if(!content2.value?.$el?.querySelector('img')) contentElegidoNum = 1
+    const content = contentElegidoNum === 1 ? content1 : content2
+    console.warn('content elegido:', contentElegidoNum)
+    // Llamar de forma segura al método showImage expuesto por el componente Content
+    if (content && content.value && typeof content.value.showImage === 'function') {
+        content.value.showImage(0) // muestra la imagen 0
+        return
+    }
+    // Fallback / debug si no está disponible
+    console.warn('Content component no expone showImage o ref no inicializada', content.value)
+}
 
 // Construir URL para Google Calendar
 const googleCalendarUrl = computed(() => {
