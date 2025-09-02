@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Centro;
+use App\Models\Evento;
 use App\Models\Entrada;
 use App\Models\Libro;
 use App\Pigmalion\Countries;
 use App\Pigmalion\SEO;
-use Illuminate\Support\Facades\Storage;
 use App\Pigmalion\StorageItem;
 
 
@@ -65,14 +65,16 @@ class CentrosController extends Controller
         if (!in_array($centro->imagen, $imagenes))
             array_unshift($imagenes, $centro->imagen);
 
-        $entradas = Entrada::select(['id', 'titulo', 'slug', 'descripcion', 'imagen'])->whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->entradas, -1, PREG_SPLIT_NO_EMPTY))->where('visibilidad', 'P')->get();
-        $libros = Libro::whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->libros, -1, PREG_SPLIT_NO_EMPTY))->where('visibilidad', 'P')->get();
+        $eventos = Evento::select(['id', 'titulo', 'slug', 'descripcion', 'fecha_inicio', 'imagen'])->where('centro_id', $centro->id)->where('visibilidad', 'P')->take(4)->latest()->get();
+        $entradas = Entrada::select(['id', 'titulo', 'slug', 'descripcion', 'imagen'])->whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->entradas, -1, PREG_SPLIT_NO_EMPTY))->where('visibilidad', 'P')->latest()->get();
+        $libros = Libro::whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->libros, -1, PREG_SPLIT_NO_EMPTY))->where('visibilidad', 'P')->latest()->get();
 
         $centro->pais = $centro->nombrePais; // Countries::getCountry($centro->pais);
 
         return Inertia::render('Centros/Centro', [
             'centro' => $centro,
             'imagenes' => $imagenes,
+            'eventos'   => $eventos,
             'entradas' => $entradas,
             'libros'    => $libros
         ])

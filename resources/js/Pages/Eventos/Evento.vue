@@ -16,8 +16,13 @@
             evento.categoria }}</span></small>
     </div>
     <div class="container py-7 mx-auto space-y-12">
-        <div class="mx-auto flex flex-wrap md:flex-nowrap gap-12">
-            <div class="w-full md:w-1/2 md:order-last">
+        <div class="mx-auto grid gap-12 md:grid-cols-2 items-start">
+            <div class="w-full">
+                <div class="lg:max-w-[500px]">
+                    <Image :src="evento.imagen" alt="Imagen del evento" class="w-full mb-4" @click="showImage" />
+                </div>
+            </div>
+            <div class="w-full order-first md:order-last">
                 <div class="card bg-base-100 md:max-w-[400px] shadow-2xs p-4 grid grid-cols-2 py-7 gap-y-3">
                     <span class="mb-2 flex gap-3 items-center">
                         <Icon icon="ph:calendar-check-duotone" class="text-xl" /> Inicia:
@@ -76,18 +81,11 @@
                         </a>
                     </div>
                 </div>
-
-                <p class="mt-12">{{ evento.descripcion }}</p>
-                <hr class="my-12 hidden md:block" />
-                <Content :content="textoImagenInsertada" ref="content1" class="mt-12 hidden md:block"
+                <p class="mt-12 text-xl italic">{{ evento.descripcion }}</p>
+                <hr class="my-12" />
+                <!-- Un solo componente Content, reposicionado por el grid responsivo -->
+                <Content :content="textoImagenInsertada" ref="content" class="mt-12"
                 :optimizeImages="false"/>
-            </div>
-            <div class="opacity-0 w-full md:w-1/2 ">
-                <div class="lg:max-w-[500px]">
-                    <Image :src="evento.imagen" alt="Imagen del evento" class="w-full mb-4" @click="showImage" />
-                    <Content :content="textoImagenInsertada" class="my-12 md:hidden" ref="content2"
-                    :optimizeImages="false"/>
-                </div>
             </div>
         </div>
     </div>
@@ -107,22 +105,15 @@ const textoImagenInsertada = computed(()=>{
     return `<img src='${props.evento.imagen}' class='hidden'>` + props.evento.texto
 })
 
-const content1 = ref(null)
-const content2 = ref(null)
+const content = ref(null)
 
 async function showImage() {
-    let contentElegidoNum = 1
-    if(!content1.value?.$el?.querySelector('img')) contentElegidoNum = 2
-    if(!content2.value?.$el?.querySelector('img')) contentElegidoNum = 1
-    const content = contentElegidoNum === 1 ? content1 : content2
-    console.warn('content elegido:', contentElegidoNum)
-    // Llamar de forma segura al método showImage expuesto por el componente Content
+    // Intentar abrir la imagen desde el único componente Content
     if (content && content.value && typeof content.value.showImage === 'function') {
-        content.value.showImage(0) // muestra la imagen 0
+        content.value.showImage(0)
         return
     }
-    // Fallback / debug si no está disponible
-    console.warn('Content component no expone showImage o ref no inicializada', content.value)
+    console.warn('Content component no expone showImage o ref no inicializada', content && content.value)
 }
 
 // Construir URL para Google Calendar
