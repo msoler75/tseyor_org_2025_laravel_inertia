@@ -29,6 +29,8 @@ declare module 'vue' {
     BuscarArchivos: typeof import('./resources/js/Components/FolderExplorer/BuscarArchivos.vue')['default']
     Card: typeof import('./resources/js/Components/Card.vue')['default']
     CardContent: typeof import('./resources/js/Components/CardContent.vue')['default']
+    CardEvent: typeof import('./resources/js/Components/CardEvent.vue')['default']
+    CardEvento: typeof import('./resources/js/Components/CardEvento.vue')['default']
     Categorias: typeof import('./resources/js/Components/Categorias.vue')['default']
     Checkbox: typeof import('./resources/js/Components/Checkbox.vue')['default']
     ClientOnly: typeof import('@duannx/vue-client-only')['default']

@@ -41,6 +41,15 @@
             </template>
         </TextText>
 
+        <div v-if="eventos.length" class="mt-12 w-full">
+            <h2 class="text-center md:text-left">Eventos</h2>
+            <GridAppear col-width="24rem" class="gap-4">
+                <CardEvent v-for="evento in eventos" :key="evento.slug" :title="evento.titulo"
+                :image="evento.imagen" :href="route('evento', evento.slug)" :description="evento.descripcion"
+                :date="evento.updated_at" :fecha-inicio="evento.fecha_inicio"/>
+            </GridAppear>
+        </div>
+
         <div v-if="entradas.length" class="mt-20">
             <h2 class="text-center md:text-left">Artículos de Blog relacionados</h2>
             <GridAppear col-width="24rem" class="gap-4">
@@ -73,6 +82,8 @@ const props = defineProps({
     },
     imagenes: Array,
     libros: Array,
-    entradas: Array
+    entradas: Array,
+    eventos: Array,
 });
+
 </script>
