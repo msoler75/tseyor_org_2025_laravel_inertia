@@ -1,31 +1,54 @@
 <template>
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3"
+    :class="active?'min-w-full sm:min-w-auto':''">
         <slot></slot>
 
-        <button v-if="query" type="button" @click="clearInput" class="btn border border-gray-500 border-opacity-20">
-            Limpiar
-        </button>
-
-
-        <button v-if="query" type="submit" @click.prevent="submit" class="btn btn-primary"
-            :disabled="submitting || (query == savedQuery && !cambiado)">
-            Buscar
-        </button>
-
-        <div class="flex items-center relative">
-            <div class="absolute z-10 left-2 transform scale-110 -translate-y-[.1rem] text-gray-600">
-                <Spinner v-show="submitting" />
+        <div class="flex items-center"
+        :class="active?'min-w-full sm:min-w-auto':''"
+        >
+            <form @submit.prevent="submit" class="w-full relative flex"
+            :class="active?'min-w-full sm:min-w-auto':''"
+            >
+              <div class="absolute top-1/2 z-20 left-2 transform scale-110 -translate-y-[.6rem] text-gray-600"
+                v-if="!active">
                 <Icon v-show="!submitting" icon="ph:magnifying-glass-bold" />
             </div>
-            <form @submit.prevent="submit">
-                <input class="search-input pl-8 focus:bg-base-100 relative bg-transparent shadow-none px-6 py-3 focus:shadow-outline
-                    text-left w-full rounded-md"
+
+
+            <div class="join w-full sm:w-fit">
+                  <button v-if="active" type="submit" @click.prevent="submit" class="btn btn-md btn-primary
+                  rounded-l-xl h-full" :disabled="submitting || (query == savedQuery && !cambiado)">
+                    <span class="hidden xs:inline">Buscar</span>
+                    <Spinner v-show="submitting" class="text-2xl"/>
+                    <Icon v-show="!submitting" class="text-2xl" icon="ph:magnifying-glass-bold" />
+                </button>
+
+
+                <input class="search-input focus:bg-base-100 bg-transparent shadow-none px-6 py-3 focus:shadow-outline
+                    text-left rounded-none
+                    flex-grow"
                     :class="[
-                        query ? 'border-0 border-b border-gray-500 focus:border-b' : 'border-gray-500/20',
-                        inputClass
+                        active ? 'pl-4' : 'rounded-l-lg border-gray-500/20 pl-8',
+                        query?'':'rounded-r-lg',
+                        inputClass,
                     ]"
                     @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"
-                    @focus="$emit('focus')" @blur="$emit('blur-xs')" v-model="query" />
+                    @focus="onFocus()" @blur="onBlur()" v-model="query" />
+
+                      <button
+                      v-if="query"
+                                type="button"
+                                @click="clearInput()"
+                                class="h-full btn text-orange-500 border-l-0 border-1 border-gray-500 text-3xl rounded-r-xl cursor-pointer hover:opacity-100"
+                                :class="query?'opacity-80':'opacity-20 pointer-events-none'"
+                                tabindex="-1"
+                                aria-label="Limpiar búsqueda"
+                                title="Limpiar búsqueda"
+                            >
+                            <Icon icon="jam:rubber" />
+                </button>
+
+            </div>
             </form>
         </div>
     </div>
@@ -50,15 +73,18 @@ const props = defineProps({
     inputClass: {
         type: String,
         required: false,
-        default: 'max-w-[200px] lg:max-w-[400px]'
+        default: ''
     },
     arguments: {},
-    doSearch: { type: Boolean, default: true }
+    doSearch: { type: Boolean, default: true },
+    cleanReset: {type: Boolean, default: true} // al limpiar, se recarga la página
 })
 
 const query = ref(props.modelValue);
+const active = computed(()=>query.value||focused.value)
 const currentUrl = ref('');
 const savedQuery = ref('');
+const focused = ref(false)
 let reloadTimeout = null;
 
 const emit = defineEmits(['update:modelValue', 'search', 'focus', 'blur-xs']);
@@ -121,6 +147,16 @@ const handleKeyDown = (event) => {
         clearInput();
     }
 };
+
+function onFocus() {
+    emit('focus')
+    focused.value = true
+}
+
+function onBlur() {
+    emit('blur-xs')
+    focused.value = false
+}
 
 
 </script>

@@ -33,6 +33,7 @@
 <script setup>
 import { router } from '@inertiajs/vue3'
 import { ucFirst } from '@/composables/textutils'
+import Prose from './Prose.vue'
 
 const page = usePage()
 
@@ -67,7 +68,10 @@ const props = defineProps({
         type: Array,
         default: () => []
     },
-
+    favoritos: {
+        type: Boolean,
+        default: false
+    }
 })
 
 // ha de emitir un evento click, con el valor
@@ -119,6 +123,12 @@ const categorias = computed(() => {
         items.push({
             nombre: novedadesLabel.value, href: props.url,
             valor: 'Novedades'
+        })
+
+    if(props.favoritos)
+    items.push({
+            nombre: 'Favoritos', href: props.url + '?' + props.parametro + '=Favoritos',
+            valor: 'Favoritos'
         })
 
     for (const categoria of props.categorias) {

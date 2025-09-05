@@ -398,6 +398,15 @@ Route::post('muul/tarjeta.visita', [TarjetaVisitaController::class, 'send'])->na
 
 // administración
 Route::get('emails', [EmailsController::class, 'index'])->name('emails');
+
+// Favoritos: añadir o remover un contenido de favoritos (protegido por auth)
+Route::middleware(['auth'])->group(function () {
+    // Añadir a favoritos: POST /favoritos/{coleccion}/{id_ref}
+    Route::post('favoritos/{coleccion}/{id_ref}', [App\Http\Controllers\FavoritosController::class, 'store'])->name('favoritos.store');
+
+    // Eliminar favorito: DELETE /favoritos/{coleccion}/{id_ref}
+    Route::delete('favoritos/{coleccion}/{id_ref}', [App\Http\Controllers\FavoritosController::class, 'destroy'])->name('favoritos.destroy');
+});
 Route::get('emails/{id}', [EmailsController::class, 'index'])->name('email');
 
 

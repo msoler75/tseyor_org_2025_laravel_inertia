@@ -18,11 +18,17 @@ class AudiosController extends Controller
         $page = $request->input('page', 1);
 
         $query = Audio::select(['id', 'slug', 'titulo', 'descripcion', 'audio', 'enlace', 'updated_at', 'categoria'])
+            ->withFavorito()
             ->where('visibilidad', 'P')
             ->when($categoria === '_', function ($query) {
                 $query->orderByRaw('LOWER(titulo)');
             })
             ->when($categoria && $categoria !== '_', function ($query) use ($categoria) {
+                // Si la categoría solicitada es 'favoritos' (cualquier mayúscula/minúscula)
+                if (strcasecmp($categoria, 'favoritos') === 0)
+                    $query->whereNotNull('favoritos.id');
+                else
+                // Categoría normal
                 $query->where('categoria', '=', $categoria);
             });
 
