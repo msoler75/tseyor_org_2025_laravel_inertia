@@ -22,14 +22,15 @@
     mb-7
     " />
 -->
+<div class="px-2 flex justify-end">
+    <SearchInput placeholder="Buscar audios..." />
+</div>
 
-        <ContentMain class="flex justify-end mb-5 md:container md:mx-auto px-2">
-            <SearchInput placeholder="Buscar audios..." input-class="max-w-42"/>
-        </ContentMain>
 
-        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap md:container md:mx-auto px-2">
 
-            <Categorias :categorias="categorias" :url="route('audios')" select-class="w-full rounded-sm"/>
+        <ContentMain class="mt-6 w-full flex gap-5 flex-wrap md:flex-nowrap md:container md:mx-auto px-2">
+
+            <Categorias :categorias="categorias" :url="route('audios')" :favoritos="authenticated" select-class="w-full rounded-sm"/>
 
             <div class="w-full grow">
 
@@ -55,9 +56,13 @@
                             <Link :href="route('audio', audio.slug)"
                                 class="text-base font-bold my-0 leading-5 text-primary hover:text-secondary w-fit">{{ audio.titulo }}
                             </Link>
-                            <Link v-if="!categoriaActiva" :href="`${route('audios')}?categoria=${audio.categoria}`"
+                            <div class="flex justify-between">
+                                <Link v-if="!categoriaActiva||categoriaActiva=='Favoritos'" :href="`${route('audios')}?categoria=${audio.categoria}`"
                                 class="text-xs w-fit hover:text-secondary">{{ audio.categoria }}
-                            </Link>
+                                </Link>
+                                <span v-else></span>
+                                <Favorito coleccion="audios" :id="audio.id" :inicial="audio.favorito" />
+                            </div>
                         </div>
                     </div>
                 </GridAppear>
@@ -66,7 +71,7 @@
 
             </div>
 
-        </div>
+        </ContentMain>
     </Page>
 </template>
 
@@ -91,6 +96,7 @@ const listado = ref(props.listado);
 
 const player = usePlayer()
 
+const authenticated = computed(() => !!usePage().props.auth?.user)
 
 function clickPlayPause(audio) {
 

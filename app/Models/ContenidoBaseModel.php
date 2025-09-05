@@ -8,8 +8,8 @@ use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Carbon\Carbon;
 use App\Pigmalion\ContenidoHelper;
-use Illuminate\Support\Facades\Storage;
 use App\Pigmalion\StorageItem;
+use App\Models\Favorito;
 
 
 /*
@@ -22,6 +22,14 @@ class ContenidoBaseModel extends Model
     use HasSEO;
     use \Venturecraft\Revisionable\RevisionableTrait;
     use \Illuminate\Database\Eloquent\SoftDeletes;
+
+
+    /**
+     * Casts para atributos virtuales como 'favorito' (0/1 -> boolean)
+     */
+    protected $casts = [
+        'favorito' => 'boolean',
+    ];
 
     public static function boot()
     {
@@ -142,5 +150,79 @@ class ContenidoBaseModel extends Model
 
     public function generatePdf() {
         return \App\Services\PDFGenerator::generatePdf($this);
+    }
+
+    /**
+     * Comprueba si este contenido está marcado como favorito por un usuario.
+     *
+     * @param int|null $userId Id del usuario (por defecto auth()->id())
+     * @return bool
+     */
+    public function isFavorito($userId = null): bool
+    {
+        $userId = $userId ?: auth()->id();
+        if (!$userId) return false;
+
+        // Usar siempre el nombre de la tabla como 'coleccion' y la clave primaria como 'id_ref'
+        $coleccion = $this->getTable();
+        $id_ref = $this->getKey();
+
+        return Favorito::where('user_id', $userId)
+            ->where('coleccion', $coleccion)
+            ->where('id_ref', $id_ref)
+            ->exists();
+    }
+
+    /**
+     * Scope para incluir el campo 'favorito' en la consulta principal para un usuario.
+     * Añade un LEFT JOIN con la tabla favoritos filtrando por coleccion y user_id.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int|null $userId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithFavorito($query)
+    {
+        $userId = auth()->id();
+
+        $table = $query->getModel()->getTable();
+        // Si no hay columnas seleccionadas aún, añadimos <table>.* para mantener comportamiento previo
+        $columns = $query->getQuery()->columns;
+        if ($columns === null) {
+            $query->select("$table.*");
+            $columns = $query->getQuery()->columns;
+        } else {
+            // Si hay una selección explícita, normalizamos columnas ambiguas: 'id' -> 'tabla.id'
+            $normalized = [];
+            foreach ($columns as $col) {
+                if (is_string($col)) {
+                    // si la columna es exactamente 'id' (sin calificar) la reemplazamos
+                    if ($col === 'id') {
+                        $normalized[] = "$table.id";
+                        continue;
+                    }
+                }
+                $normalized[] = $col;
+            }
+            // reasignar columnas normalizadas
+            $query->getQuery()->columns = $normalized;
+            // refrescar variable
+            $columns = $query->getQuery()->columns;
+        }
+
+        if (!$userId) {
+            // Añadimos solo la columna fija 0 como favorito (no sobrescribimos selects existentes)
+            return $query->selectRaw('0 as favorito');
+        }
+
+        // LEFT JOIN favoritos ON favoritos.id_ref = <table>.id AND favoritos.coleccion = '<table>' AND favoritos.user_id = <userId>
+        $query = $query->leftJoin('favoritos', function ($join) use ($table, $userId) {
+                $join->on('favoritos.id_ref', '=', "$table.id")
+                     ->where('favoritos.coleccion', '=', $table)
+                     ->where('favoritos.user_id', '=', $userId);
+            });
+
+        // Añadimos solo la columna calculada favorito, preservando cualquier select previo
+        return $query->selectRaw('CASE WHEN favoritos.id IS NULL THEN 0 ELSE 1 END as favorito');
     }
 }

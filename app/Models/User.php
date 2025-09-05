@@ -11,6 +11,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Log;
 // use App\Models\Permiso;
 use App\Models\Equipo;
 use App\Models\Grupo;
@@ -72,7 +73,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 ->whereNotIn('estado', ['caducada', 'fallida', 'declinada'])
                 ->whereNotNull('accepted_at')->get();
 
-            \Log::info("USUARIO CREADO: invitaciones:", ["invitaciones"=>$invitaciones]);
+            Log::info("USUARIO CREADO: invitaciones:", ["invitaciones"=>$invitaciones]);
 
             // recorrer todas las invitaciones, y para cada una, incluimos al usuario en el equipo
             foreach ($invitaciones as $invitacion) {
@@ -174,14 +175,33 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(\App\Models\Inscripcion::class, 'user_id');
     }
 
+    /**
+     * Relación: favoritos (modelo Favorito)
+     */
+    public function favoritos()
+    {
+        return $this->hasMany(Favorito::class);
+    }
+
+    /**
+     * Comprueba si este usuario tiene marcado como favorito un contenido dado
+     */
+    public function isFavorito($coleccion, $id_ref)
+    {
+        return \App\Models\Favorito::where('user_id', $this->id)
+            ->where('coleccion', $coleccion)
+            ->where('id_ref', $id_ref)
+            ->exists();
+    }
+
     // retorna true si este usuario está en el grupo con grupo_id
     public function enGrupo($grupo_id)
     {
         $user = $this;
 
-        // sin cache
-        $r =  $user->grupos()->where('grupos.id', $grupo_id)->count();
-        \Log::info("user {$user->id} in grupo {$grupo_id} = {$r}");
+    // sin cache
+    $r =  $user->grupos()->where('grupos.id', $grupo_id)->count();
+    Log::info("user {$user->id} in grupo {$grupo_id} = {$r}");
         return $r >= 1;
 
         // con cache
