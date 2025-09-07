@@ -35,11 +35,6 @@ class EntradasController extends Controller
             BusquedasHelper::formatearResultados($resultados, $buscar, false);
 
 
-        return view('entradas.index', [
-            'filtrado' => $buscar,
-            'listado' => $resultados,
-        ]);
-
         return Inertia::render('Entradas/Index', [
             'filtrado' => $buscar,
             'listado' => $resultados,

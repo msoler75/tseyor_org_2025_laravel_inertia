@@ -22,8 +22,7 @@
         <div class="flex w-full justify-between mb-5">
             <SearchInput v-model="query" class="grow" input-class="min-w-40"
             placeholder="Buscar libros...">
-                <span v-if="query" class="sm:hidden mr-auto"></span>
-                <div class="flex items-baseline gap-3 w-full pl-1" :class="query ? 'hidden sm:flex' : ''">
+                <div class="flex items-baseline gap-3 pl-1">
                     <input id="titulos" type="checkbox" v-model="selectors.soloTitulosLibros"> <label for="titulos"
                         class="mb-0">Solo títulos</label>
                 </div>
