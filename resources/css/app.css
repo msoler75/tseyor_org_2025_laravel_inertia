@@ -99,6 +99,7 @@
 
 @layer base {
 
+    * {--radius-field: 0.5rem}
 
     [x-cloak] {
         display: none;
@@ -505,22 +506,6 @@ border-color: #222;
 }
 
 
-
-/* Estilos por defecto para el contenido del tooltip */
-.xtooltip {
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  box-shadow: 0 6px 18px rgba(2,6,23,0.2);
-  font-size: 0.875rem;
-  line-height: 1.25;
-  z-index: 30;
-  max-width: 320px; /* fallback máximo */
-    word-wrap: break-word;
-    white-space: normal;
-    overflow: visible; /* no queremos scrollbar interno */
-    -webkit-overflow-scrolling: touch;
-  transition: opacity .12s ease, transform .12s ease;
-}
 
 
 #global-search-input::-webkit-search-cancel-button {

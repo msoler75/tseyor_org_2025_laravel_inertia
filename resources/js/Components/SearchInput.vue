@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center gap-3"
+    <div class="flex flex-wrap justify-between items-center gap-3"
     :class="active?'min-w-full sm:min-w-auto':''">
         <slot></slot>
 
@@ -25,11 +25,10 @@
 
 
                 <input class="search-input focus:bg-base-100 bg-transparent shadow-none px-6 py-3 focus:shadow-outline
-                    text-left rounded-none
+                    text-left join-item
                     flex-grow"
                     :class="[
-                        active ? 'pl-4' : 'rounded-l-lg border-gray-500/20 pl-8',
-                        query?'':'rounded-r-lg',
+                        active ? 'pl-4' : 'border-gray-500/20 pl-8',
                         inputClass,
                     ]"
                     @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"
@@ -39,7 +38,7 @@
                       v-if="query"
                                 type="button"
                                 @click="clearInput()"
-                                class="h-full btn text-orange-500 border-l-0 border-1 border-gray-500 text-3xl rounded-r-xl cursor-pointer hover:opacity-100"
+                                class="h-full btn join-item text-orange-500 border-l-0 border-1 border-gray-500 text-3xl cursor-pointer hover:opacity-100"
                                 :class="query?'opacity-80':'opacity-20 pointer-events-none'"
                                 tabindex="-1"
                                 aria-label="Limpiar búsqueda"
@@ -77,7 +76,7 @@ const props = defineProps({
     },
     arguments: {},
     doSearch: { type: Boolean, default: true },
-    cleanReset: {type: Boolean, default: true} // al limpiar, se recarga la página
+    reloadOnClear: {type: Boolean, default: true} // al limpiar, se recarga la página
 })
 
 const query = ref(props.modelValue);
@@ -85,7 +84,7 @@ const active = computed(()=>query.value||focused.value)
 const currentUrl = ref('');
 const savedQuery = ref('');
 const focused = ref(false)
-let reloadTimeout = null;
+// let reloadTimeout = null;
 
 const emit = defineEmits(['update:modelValue', 'search', 'focus', 'blur-xs']);
 
@@ -132,14 +131,17 @@ const clearInput = () => {
     query.value = '';
     emit('update:modelValue', query.value);
 
-    if (reloadTimeout) {
+    if(!props.reloadOnClear) return
+
+    router.get(currentUrl.value);
+
+    /*if (reloadTimeout) {
         clearTimeout(reloadTimeout);
     }
 
     if (savedQuery.value)
         reloadTimeout = setTimeout(() => {
-            router.get(currentUrl.value);
-        }, 1000);
+        }, 1);*/
 };
 
 const handleKeyDown = (event) => {

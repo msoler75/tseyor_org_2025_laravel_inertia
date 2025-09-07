@@ -26,7 +26,7 @@
                                 aria-label="Limpiar búsqueda"
                                 title="Limpiar búsqueda"
                             >
-                            <Icon icon="jam:rubber" class="text-orange-500 opacity-80 hover:opacity-100 transform hover:scale-125 duration-100" />
+                            <Icon icon="jam:rubber" class="text-orange-500 opacity-80 hover:opacity-100 transform -translate-y-0.5 hover:scale-125 duration-100" />
                             </button>
                         </input>
                     </div>
