@@ -3,14 +3,17 @@
 /.cache
 /bootstrap
 /node_modules
+/node_modules_backup
 /public/hot
 /public/build
+/public/build_backup
 /public/storage
 /public/almacen
 /storage/indexes
 /storage/app
 /storage/framework
 /storage/backups
+/storage/install
 /vendor
 .env
 .env.backup
