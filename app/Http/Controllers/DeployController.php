@@ -37,49 +37,14 @@ class DeployController extends Controller
 
             $zipPath = Deploy::storeUploadedFile($request, 'public_build');
 
-            // Definir rutas
-            $buildPath = public_path('build');
-            $buildTempPath = public_path('build_temp');
-            $buildOldPath = public_path('build_old');
-
-            Log::channel('deploy')->info("Paths: ", ['buildPath' => $buildPath, 'buildTempPath' => $buildTempPath, 'buildOldPath' => $buildOldPath]);
-
-            // Eliminar build_temp si existe
-            if (File::isDirectory($buildTempPath)) {
-                File::deleteDirectory($buildTempPath);
+            // Si llega el flag 'prepare', simplemente mover el ZIP a storage/install y terminar
+            if ($request->has('prepare')) {
+                $dest = Deploy::moveZipToInstall($zipPath);
+                return response()->json(['message' => 'Archivo guardado en carpeta de instalación', 'path' => $dest], 200);
             }
 
-            // Descomprimir el archivo en build_temp
-            Deploy::extractZip($zipPath, $buildTempPath);
-
-            //obtener el host de la llamada request, por ejemplo https://mihost.com
-            $host = $request->getSchemeAndHttpHost();
-
-            // Replacement de localhost a APP_URL
-            $files = Deploy::doReplacements( 'public/build_temp/assets/*.js',
-                                                'http://localhost',
-                                                $host);
-            if(count($files))
-                Log::channel('deploy')->info("Archivos actualizados: ", $files);
-
-            // Borrar la carpeta build_old si existe
-            if (File::isDirectory($buildOldPath)) {
-                Log::channel('deploy')->info("Borramos carpeta " . $buildOldPath);
-                File::deleteDirectory($buildOldPath);
-            }
-
-            // Renombrar build a build_old
-            if (File::isDirectory($buildPath)) {
-                Log::channel('deploy')->info("Renombramos " . $buildPath . " a " . $buildOldPath);
-                File::move($buildPath, $buildOldPath);
-            }
-
-            // Renombrar build_temp a build
-            Log::channel('deploy')->info("Renombramos " . $buildTempPath . " a " . $buildPath);
-            File::move($buildTempPath, $buildPath);
-
-            // Eliminar el archivo ZIP temporal
-            // File::delete($zipPath);
+            // Delegar la instalación específica al método apropiado
+            Deploy::installPublicBuildFromZip($zipPath);
 
             return response()->json(['message' => 'Build actualizado correctamente'], 200);
         } catch (\Exception $exception) {
@@ -97,44 +62,20 @@ class DeployController extends Controller
         }
 
         try {
-                // Realizar backup solo del archivo ssr.js si existe
-                $ssrFile = base_path('bootstrap/ssr/ssr.js');
-                $ssrBackupFile = base_path('bootstrap/ssr/ssr.js.bak');
-                if (File::exists($ssrBackupFile)) {
-                    File::delete($ssrBackupFile);
-                }
-                if (File::exists($ssrFile)) {
-                    Log::channel('deploy')->info("Backup de " . $ssrFile . " a " . $ssrBackupFile);
-                    File::copy($ssrFile, $ssrBackupFile);
-                }
+
 
             $zipPath = Deploy::storeUploadedFile($request, 'ssr');
-            $extractPath = base_path('bootstrap/ssr');
 
-            // recrea la carpeta bootstrap/ssr
-            File::deleteDirectory($extractPath);
-            File::makeDirectory($extractPath, 0755, true, true);
-
-            // Extrae el contenido del .zip en bootstrap/ssr
-            Deploy::extractZip($zipPath, $extractPath);
-
-
-            //obtener el host de la llamada request, por ejemplo https://mihost.com
-            $host = $request->getSchemeAndHttpHost();
-
-            // Replacement de localhost a APP_URL
-            $files = Deploy::doReplacements( 'bootstrap/ssr/ssr.js',
-                                                'http://localhost',
-                                                $host);
-            if(count($files))
-                Log::channel('deploy')->info("Archivos actualizados: ", $files);
-
-            // Verifica que los archivos necesarios existen
-            if (File::exists($extractPath . '/ssr.js') && File::exists($extractPath . '/ssr-manifest.json')) {
-                return response()->json(['message' => 'Archivos SSR extraídos correctamente'], 200);
-            } else {
-                return response()->json(['error' => 'El archivo .zip no contiene los archivos SSR necesarios'], 400);
+            // Si llega el flag 'prepare', simplemente mover el ZIP a storage/install y terminar
+            if ($request->has('prepare')) {
+                $dest = Deploy::moveZipToInstall($zipPath);
+                return response()->json(['message' => 'Archivo guardado para prepare', 'path' => $dest], 200);
             }
+
+            // Delegar la instalación específica al método apropiado
+            Deploy::installSSRFromZip($zipPath);
+
+            return response()->json(['message' => 'Archivos SSR extraídos correctamente'], 200);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
         }
@@ -151,23 +92,17 @@ class DeployController extends Controller
         }
 
         try {
-            // 1. Crear backup de node_modules existente
-            $backupPath = Deploy::backupNodeModules();
 
-            // 4. Limpiar node_modules existente
-            Deploy::cleanNodeModules();
+             $zipPath = Deploy::storeUploadedFile($request, 'node_modules');
 
-            // 5. Manejar el archivo ZIP
-            $zipPath = Deploy::storeUploadedFile($request, 'node_modules');
+            // Si llega el flag 'prepare', simplemente mover el ZIP a storage/install y terminar
+            if ($request->has('prepare')) {
+                $dest = Deploy::moveZipToInstall($zipPath);
+                return response()->json(['message' => 'Archivo guardado para prepare', 'path' => $dest], 200);
+            }
 
-            // 6. Descomprimir con verificación
-            Deploy::extractZip($zipPath, base_path());
-
-            // 7. Limpieza post-instalación
-            Deploy::postInstallCleanup();
-
-            // 8. Limpiar backups antiguos
-            Deploy::cleanOldBackups();
+            // Ejecutar instalación específica (backup, extracción, limpieza)
+            Deploy::installNodeModulesFromZip($zipPath);
 
             return response()->json(['status' => 'success']);
         } catch (\Exception $e) {
@@ -180,4 +115,9 @@ class DeployController extends Controller
             //Deploy::cleanTempFiles($zipPath ?? null);
         }
     }
+
+
+
+
+
 }

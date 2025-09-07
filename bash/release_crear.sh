@@ -72,10 +72,12 @@ echo "-----------------------------------------"
 echo "- Los siguientes pasos que debes realizar son:"
 echo "./release_establecer.sh $NEW_RELEASE"
 echo "-----------------------------------------"
-echo "- Desde pc de desarrollo, ejecuta:"
-echo "npm run build-all"
-echo "php artisan deploy:nodemodules"
-echo "php artisan deploy:front"
-echo "php artisan deploy:ssr"
+echo "- Flujo de frontend actualizado:"
+echo "  1) Desde entorno de desarrollo ejecutar: php artisan release:prepare"
+echo "  2) En el servidor ejecutar: ./release_crear.sh (este script puede ejecutar release:install automáticamente)"
+
+# Por defecto no ejecutamos release:install automáticamente a menos que se configure RUN_INSTALL=1
+echo "Ejecutando 'php artisan release:install' para aplicar los zips desde storage/install..."
+php artisan release:install || echo "Aviso: 'release:install' devolvió error. Revisa los logs."
 
 

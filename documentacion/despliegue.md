@@ -25,12 +25,32 @@ Manual detallado para el despliegue y gestión de versiones del proyecto tseyor.
 
 ## Proceso de despliegue (nueva release)
 
-1. **Definir usuario de despliegue**
+
+1. **Preparar los archivos de frontend**
+
+Desde el entorno de desarrollo ejecuta el comando `release:prepare`. Este comando crea los tres zips necesarios (node_modules, public/build y ssr.js) y los envía al servidor.
+
+```bash
+  php artisan release:prepare
+```
+
+Esto se hace así por la incapacidad actual en el hosting de ejecutar comandos `npm install` o `npm run build`.
+Entonces se tienen que preparar todos los archivos necesarios en local y enviarlos al servidor.
+
+Puedes ver el código en [DeployHelper](../app/Pigmalion/DeployHelper.php).
+
+Los archivos .zip se almacenan en storage/install que es un recurso compartido (carpeta shared) entre todas las releases. 
+
+*Nota*: Es importante ejecutar `php artisan release:install` desde la carpeta de la última release.
+
+2. **Definir usuario de despliegue**
    - Exporta la variable `DEPLOY_USER` con tu usuario de hosting:
      ```bash
      export DEPLOY_USER=tu_usuario
      ```
-2. **Ejecutar el script de creación de release**
+
+
+3. **Ejecutar el script de creación de release**
    - Desde la raíz del sitio web:
      ```bash
      ./release_crear.sh
@@ -44,21 +64,24 @@ Manual detallado para el despliegue y gestión de versiones del proyecto tseyor.
      - Instala dependencias (`composer install`).
      - Ejecuta migraciones y otros comandos necesarios.
      - Prepara permisos y estructura de caché.
-     - (Opcional) Ejecuta scripts de frontend si están habilitados.
+     - Ejecuta scripts de instalación de frontend.
 
-3. **Actualizar el enlace simbólico 'current'**
+El propio script `release_crear.sh` invocará internamente el comando Artisan `php artisan release:install` para que el servidor instale los .zip de frontend preparados con `release:prepare`.
+
+4. **Actualizar el enlace simbólico 'current'**
    - Una vez creada la carpeta con la nueva version puedes establecer la nueva versión (cambiará el symlink de `current`):
      ```bash
      ./release_establecer.sh <número_release>
      ```
    - Esto permite también hacer rollback a cualquier versión anterior. Este script tambien elimina cache en cada cambio de versión (todas las releases comparten la cache en `shared/storage`)
 
-4. **Acceso web**
+5. **Acceso web**
    - El directorio público a servir es: `/tseyor.org/current/public`
 
-5. **Despliegue de frontend**
 
-   - Desde el entorno de desarrollo hay que ejecutar:
+## Actualizacion del frontend
+
+Si queremos actualizar en la release actual (current) alguna parte del frontend podemos ejecutar estos comandos en local (desarrollo).
 
 ```bash
   php artisan deploy:nodemodules
@@ -66,18 +89,16 @@ Manual detallado para el despliegue y gestión de versiones del proyecto tseyor.
   php artisan deploy:ssr
 ```
 
-- El comando `deploy:nodemodules` subre la carpeta node_modules desde el entorno de desarrollo porque en DreamHost no permite ejecutar `npm install`
+- El comando `deploy:nodemodules` sube la carpeta node_modules desde el entorno de desarrollo porque en DreamHost no permite ejecutar `npm install`
 - El comando `deploy:front` sube el contenido de la carpeta de scripts en `/public/build` ya que en DreamHost no funciona `npm run build`
 - El comando `deploy:ssr` sube el archivo `ssr.js` y le hace algunos reemplazos para que las rutas funcionen.
 
-Puedes ver el código en [DeployController](../app/Http/Controllers/DeployController.php)
 
 ## Notas importantes
 - **Procura No editar archivos directamente en `releases`**: Si hay algún cambio importante despliega una nueva versión.
 - **El archivo `.env` y la carpeta `storage` son compartidos**: cualquier cambio afecta a todas las releases.
-- **Para rollback**: ejecuta `./release_establecer.sh <número_release>` para apuntar el symlink `current` a una versión anterior.
+- **Para rollback**: ejecuta `./release_establecer.sh <número_release>` para apuntar el symlink `current` a una versión anterior. Pero eso no hace rollback de migraciones de base de datos.
 - **Permisos**: asegúrate de que los scripts y carpetas tengan los permisos adecuados para el usuario de despliegue.
-- **Limpieza de cachés**: tras cada cambio de release, limpia cachés de views y rutas si es necesario.
 - **Logs y workers**: revisa logs y estado de workers tras cada despliegue. Están en `shared/storage/logs`
 
 ## Opcional
@@ -129,3 +150,5 @@ if (!static::$cache) {
 Este sistema de despliegue permite cambios de versión rápidos y seguros, manteniendo la configuración y archivos subidos intactos entre releases. Utiliza siempre los scripts automatizados para evitar errores manuales y facilitar el mantenimiento.
 
 ### [Ver índice de documentación](./index.md)
+
+

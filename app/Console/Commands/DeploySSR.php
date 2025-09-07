@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands;
 
-define('APP_HOST', 'tseyor.org');
-
-define('DEPLOY_SSR_ENDPOINT', 'https://'. APP_HOST .'/_sendssr');
+// Endpoints centralizados en config/deploy.php
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -35,7 +33,7 @@ class DeploySSR extends Command
 
                 $result = Deploy::sendZipFile(
                     $zipPath,
-                    DEPLOY_SSR_ENDPOINT,
+                    config('deploy.ssr_endpoint'),
                     self::ZIP_NAME
                 );
 

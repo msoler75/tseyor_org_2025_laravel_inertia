@@ -89,16 +89,19 @@ class DeployHelper
         string $zipPath,
         string $endpoint,
         string $fileName,
-        array $headers = []
+        array $headers = [],
+        array $extraPost = []
     ): array {
         if (!File::exists($zipPath)) {
             throw new Exception("Archivo ZIP no encontrado: $zipPath");
         }
 
         $ch = curl_init();
-        $postFields = [
+
+        // Construir campos POST, permitiendo añadir valores extra (por ejemplo 'prepare')
+        $postFields = array_merge([
             'file' => new \CURLFile($zipPath, 'application/zip', $fileName)
-        ];
+        ], $extraPost);
 
         $defaultHeaders = ['Content-Type: multipart/form-data'];
 
@@ -163,6 +166,37 @@ class DeployHelper
 
         return $zipPath;
     }
+
+    /**
+     * Mueve un archivo ZIP guardado a la carpeta storage/install creando la carpeta si es necesario.
+     * Devuelve la ruta destino completa.
+     */
+    public static function moveZipToInstall(string $zipPath): string
+    {
+        $installDir = storage_path('install');
+        if (!File::isDirectory($installDir)) {
+            File::makeDirectory($installDir, 0755, true, true);
+        }
+
+        $dest = $installDir . DIRECTORY_SEPARATOR . basename($zipPath);
+
+        // Si ya existe, sobrescribir
+        if (File::exists($dest)) {
+            File::delete($dest);
+        }
+
+        // Intentar mover el archivo. Si falla, lanzar excepción para que el controlador la maneje.
+        if (!File::move($zipPath, $dest)) {
+            throw new Exception("No se pudo mover el ZIP a: {$dest}");
+        }
+
+        Log::channel('deploy')->info("Archivo preparado movido a: {$dest}");
+        return $dest;
+    }
+
+
+
+
     public static function backupNodeModules(): string
     {
         $nodeModulesPath = base_path('node_modules');
@@ -315,7 +349,7 @@ class DeployHelper
         return $backupPath;
     }
 
-    public static function cleanOldBackups(int $maxBackups = 3): void
+    public static function cleanOldNodeModulesBackups(int $maxBackups = 3): void
     {
         $backups = File::glob(base_path('_node_modules_backup_*'));
         usort($backups, fn($a, $b) => filemtime($b) <=> filemtime($a));
@@ -369,4 +403,277 @@ class DeployHelper
         // Si es ruta normal
         return [base_path($sourcePattern)];
     }
+
+
+// INSTALACIONES
+
+
+
+     /**
+     * Instala un ZIP de public/build: extrae en build_temp, aplica reemplazos,
+     * mueve build a build_old y build_temp a build.
+     * Lanza excepciones en caso de error.
+     * @param string $zipPath
+     * @return void
+     * @throws \Exception
+     */
+    public static function installPublicBuildFromZip(string $zipPath): void
+    {
+        $buildPath = public_path('build');
+        $buildTempPath = public_path('build_temp');
+        $buildOldPath = public_path('build_old');
+
+        Log::channel('deploy')->info("Paths: ", ['buildPath' => $buildPath, 'buildTempPath' => $buildTempPath, 'buildOldPath' => $buildOldPath]);
+
+        if (File::isDirectory($buildTempPath)) {
+            File::deleteDirectory($buildTempPath);
+        }
+
+        self::extractZip($zipPath, $buildTempPath);
+
+        // obtener host de la llamada
+        $host = request()->getSchemeAndHttpHost();
+
+        $files = self::doReplacements('public/build_temp/assets/*.js', 'http://localhost', $host);
+        if (count($files)) {
+            Log::channel('deploy')->info('Archivos actualizados: ', $files);
+        }
+
+        if (File::isDirectory($buildOldPath)) {
+            Log::channel('deploy')->info('Borramos carpeta ' . $buildOldPath);
+            File::deleteDirectory($buildOldPath);
+        }
+
+        if (File::isDirectory($buildPath)) {
+            Log::channel('deploy')->info('Renombramos ' . $buildPath . ' a ' . $buildOldPath);
+            File::move($buildPath, $buildOldPath);
+        }
+
+        Log::channel('deploy')->info('Renombramos ' . $buildTempPath . ' a ' . $buildPath);
+        File::move($buildTempPath, $buildPath);
+    }
+
+
+    /**
+     * Instala un ZIP de SSR: hace backup de ssr.js, extrae y aplica reemplazos.
+     * @param string $zipPath
+     * @return void
+     * @throws \Exception
+     */
+    public static function installSSRFromZip(string $zipPath): void
+    {
+        // Realizar backup solo del archivo ssr.js si existe
+        $ssrFile = base_path('bootstrap/ssr/ssr.js');
+        $ssrBackupFile = base_path('bootstrap/ssr/ssr.js.bak');
+        if (File::exists($ssrBackupFile)) {
+            File::delete($ssrBackupFile);
+        }
+        if (File::exists($ssrFile)) {
+            Log::channel('deploy')->info('Backup de ' . $ssrFile . ' a ' . $ssrBackupFile);
+            File::copy($ssrFile, $ssrBackupFile);
+        }
+
+        $extractPath = base_path('bootstrap/ssr');
+
+        // recrea la carpeta bootstrap/ssr
+        File::deleteDirectory($extractPath);
+        File::makeDirectory($extractPath, 0755, true, true);
+
+        self::extractZip($zipPath, $extractPath);
+
+        // obtener host
+        $host = request()->getSchemeAndHttpHost();
+
+        $files = self::doReplacements('bootstrap/ssr/ssr.js', 'http://localhost', $host);
+        if (count($files)) {
+            Log::channel('deploy')->info('Archivos actualizados: ', $files);
+        }
+
+        if (!(File::exists($extractPath . '/ssr.js') && File::exists($extractPath . '/ssr-manifest.json'))) {
+            throw new \Exception('El archivo .zip no contiene los archivos SSR necesarios');
+        }
+    }
+
+
+    /**
+     * Instala node_modules desde un ZIP: hace backup, limpia node_modules, extrae y limpia.
+     * @param string $zipPath
+     * @return void
+     * @throws \Exception
+     */
+    public static function installNodeModulesFromZip(string $zipPath): void
+    {
+        // 1. Crear backup de node_modules existente
+        $backupPath = self::backupNodeModules();
+
+        // 2. Limpiar node_modules existente
+        self::cleanNodeModules();
+
+        // 3. Descomprimir con verificación
+        self::extractZip($zipPath, base_path());
+
+        // 4. Limpieza post-instalación
+        self::postInstallCleanup();
+
+        // 5. Limpieza de backups antiguos
+        self::cleanOldNodeModulesBackups();
+    }
+
+
+    // instalación de todo desde los archivos en la carpeta storage/install
+
+    /**
+     * Busca en storage/install los zips más recientes para public_build, ssr y node_modules
+     * y ejecuta las instalaciones llamando a los métodos correspondientes.
+     * Devuelve un array con el resultado por cada elemento.
+     *
+     * @return array
+     */
+    public static function installAllFromStorageInstall(): array
+    {
+        $installDir = storage_path('install');
+        if (!File::isDirectory($installDir)) {
+            throw new Exception("Directorio de instalación no encontrado: {$installDir}");
+        }
+
+        $patterns = [
+            'node_modules' => '*node_modules*.zip',
+            'public_build' => '*public_build*.zip',
+            'ssr' => '*ssr*.zip',
+        ];
+
+        $results = [];
+
+        // Primera pasada: encontrar el archivo más reciente para cada patrón
+        $latestFiles = [];
+        foreach ($patterns as $key => $pattern) {
+            $files = File::glob($installDir . DIRECTORY_SEPARATOR . $pattern) ?: [];
+            if (empty($files)) {
+                $latestFiles[$key] = null;
+            } else {
+                usort($files, function ($a, $b) {
+                    return filemtime($b) <=> filemtime($a);
+                });
+                $latestFiles[$key] = $files[0];
+            }
+        }
+
+    // Si falta alguno, no ejecutar ninguna instalación
+    $missing = array_filter($latestFiles, fn($v) => $v === null);
+        if (!empty($missing)) {
+            foreach ($latestFiles as $k => $v) {
+                if ($v === null) {
+                    Log::channel('deploy')->warning("No se encontró zip para {$k} en {$installDir}");
+                    $results[$k] = ['found' => false, 'file' => null, 'status' => 'skipped', 'message' => 'Missing file - all installations skipped'];
+                } else {
+                    $results[$k] = ['found' => true, 'file' => $v, 'status' => 'skipped', 'message' => 'Present but skipped because another is missing'];
+                }
+            }
+
+            Log::channel('deploy')->warning('Faltan uno o más zips en storage/install; no se ejecutará ninguna instalación.');
+            return $results;
+        }
+
+        // Comprobar que los archivos encontrados sean recientes (últimas 24 horas)
+        foreach ($latestFiles as $k => $filePath) {
+            if (!file_exists($filePath)) {
+                Log::channel('deploy')->error("Archivo no existe al comprobar antigüedad: {$filePath}");
+                throw new Exception("Archivo no existe al comprobar antigüedad: {$filePath}");
+            }
+
+            $mtime = filemtime($filePath);
+            if ($mtime === false) {
+                Log::channel('deploy')->error("No se pudo obtener mtime de: {$filePath}");
+                throw new Exception("No se pudo obtener mtime de: {$filePath}");
+            }
+
+            // Comprobar contra el umbral configurable en config/deploy.php
+            $maxAge = config('deploy.max_age_seconds', 86400);
+            if ((time() - $mtime) > $maxAge) {
+                Log::channel('deploy')->error("El ZIP para {$k} supera el umbral de edad ({$maxAge}s): {$filePath}");
+                throw new Exception("El ZIP para {$k} supera el umbral de edad ({$maxAge}s): {$filePath}");
+            }
+        }
+        // Intentar adquirir lock para evitar concurrencia (archivo simple con timestamp)
+        $lockFile = $installDir . DIRECTORY_SEPARATOR . '.install_lock';
+        $now = time();
+        $lockAcquired = false;
+
+        if (File::exists($lockFile)) {
+            $lockTs = (int) File::get($lockFile);
+            // si el lock es antiguo (>5 minutos) lo consideramos expirado
+            if ($now - $lockTs > 300) {
+                File::delete($lockFile);
+            } else {
+                throw new Exception('Otra instalación está en curso. Intenta más tarde.');
+            }
+        }
+
+        // crear lock
+        File::put($lockFile, (string) $now);
+        $lockAcquired = true;
+
+        // Todos los archivos existen: ejecutar instalaciones en orden
+        $processedFiles = [];
+        foreach ($latestFiles as $key => $latest) {
+            $results[$key] = ['found' => true, 'file' => $latest, 'status' => 'pending'];
+            try {
+                switch ($key) {
+                    case 'public_build':
+                        self::installPublicBuildFromZip($latest);
+                        break;
+                    case 'ssr':
+                        self::installSSRFromZip($latest);
+                        break;
+                    case 'node_modules':
+                        self::installNodeModulesFromZip($latest);
+                        break;
+                }
+                $results[$key]['status'] = 'ok';
+                $results[$key]['message'] = 'Installed successfully';
+                Log::channel('deploy')->info("Instalación exitosa para {$key} desde {$latest}");
+
+                // almacenar lista de archivos que se instalaron correctamente
+                $processedFiles[] = $latest;
+            } catch (Exception $e) {
+                $results[$key]['status'] = 'error';
+                $results[$key]['message'] = $e->getMessage();
+                Log::channel('deploy')->error("Error instalando {$key} desde {$latest}: " . $e->getMessage());
+            }
+        }
+
+        // Si todas las instalaciones fueron exitosas, renombrar los zips procesados a .installed
+        $hadErrors = false;
+        foreach ($results as $r) {
+            if (isset($r['status']) && $r['status'] === 'error') {
+                $hadErrors = true;
+                break;
+            }
+        }
+        if (!$hadErrors) {
+            foreach ($processedFiles as $file) {
+                try {
+                    $installedName = $file . '.installed';
+                    if (File::exists($file)) {
+                        File::move($file, $installedName);
+                        Log::channel('deploy')->info("Archivo procesado renombrado a: {$installedName}");
+                    }
+                } catch (Exception $e) {
+                    Log::channel('deploy')->error("Error renombrando archivo procesado {$file}: " . $e->getMessage());
+                    // No change to results statuses — el instalador ya terminó OK;
+                    // solo informamos del fallo del renombrado.
+                }
+            }
+        } else {
+            Log::channel('deploy')->warning('No se renombraron los zips a .installed porque hubo errores en la instalación.');
+        }
+
+        // liberar lock
+        if ($lockAcquired && File::exists($lockFile)) {
+            File::delete($lockFile);
+        }
+
+        return $results;
+    }
+
 }
