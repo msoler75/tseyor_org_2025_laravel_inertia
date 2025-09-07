@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-define('DEPLOY_FRONT_ENDPOINT', 'https://tseyor.org/_sendbuild');
+// Endpoint centralizado en config/deploy.php
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -31,7 +31,7 @@ class DeployFront extends Command
 
                 $result = Deploy::sendZipFile(
                     $zipPath,
-                    DEPLOY_FRONT_ENDPOINT,
+                    config('deploy.front_endpoint'),
                     self::ZIP_NAME
                 );
 

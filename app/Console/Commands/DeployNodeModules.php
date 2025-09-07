@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-define('NODE_MODULES_ENDPOINT', 'https://tseyor.org/_sendnodemodules');
+// Endpoint centralizado en config/deploy.php
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -17,47 +17,8 @@ class DeployNodeModules extends Command
     private const SOURCE_DIR = 'node_modules';
     private const ZIP_NAME = 'nodemodules.zip';
 
-    // carpetas no necesarias:
-    private const EXCLUSIONS = [
-        '/.cache/',
-        '/.bin/',
-        '/.yarn-integrity',
-        '/esbuild/',
-        '*.ts',
-        '*.md',
-        '*.log',
-        '/darwin-',
-        '/win32-',
-        '/vite',
-        '/.vite',
-        '/.vite-temp',
-        '/jiti',
-        '/@splidejs',
-        '/@lezer',
-        '/prosemirror',
-        '/unplugin',
-        '/dropzone',
-        '/@popperjs',
-        '/tippy.js',
-        '/terser',
-        '/daisyui',
-        '/@tiptap',
-        '/@codemirror',
-        '/@rollup',
-        '/md-editor-v3',
-        '/tailwindcss',
-        '/typescript',
-        '/caniuse-lite',
-        '/@swc',
-        '/autoprefixer',
-        '/@types',
-        '/sucrase',
-        '/culori',
-        '/tldts-core',
-        '/@jridgewell',
-        '/@nodelib',
-        '/postcss',
-    ];
+    // Exclusiones definidas en config/deploy.php
+    // Se leen en tiempo de ejecución para mantener un único origen de verdad
 
     public function handle()
     {
@@ -72,7 +33,7 @@ class DeployNodeModules extends Command
             if (Deploy::createZipFile(
                 $sourcePath,
                 $zipPath,
-                self::EXCLUSIONS,
+                config('deploy.node_modules_exclusions', []),
                 'node_modules'
             )) {
                 $this->info('ZIP creado: ' . basename($zipPath));
@@ -80,7 +41,7 @@ class DeployNodeModules extends Command
                 $this->info('Enviando...');
                 $result = Deploy::sendZipFile(
                     $zipPath,
-                    NODE_MODULES_ENDPOINT,
+                    config('deploy.node_modules_endpoint'),
                     self::ZIP_NAME,
                 );
 
