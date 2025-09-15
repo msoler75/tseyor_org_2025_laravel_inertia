@@ -3,7 +3,6 @@
         ref="tt"
         @activated="onToolTipActivate"
         @deactivated="onToolTipDeactivate"
-        class="z-40"
     >
         <template #content>
             <div v-if="!info || noEncontrado" class="bg-base-300 p-3">
@@ -87,6 +86,8 @@ function onToolTipActivate(payload) {
         const t = search.results.sort(
             (a, b) => b.__tntSearchScore__ - a.__tntSearchScore__
         )[0];
+
+        console.log("search results:", search.results);
         console.log("ok term", t);
         if (!t) return;
         axios.get("/glosario/" + t.slug_ref + "?json").then((res) => {
@@ -105,6 +106,9 @@ function onToolTipDeactivate() {
 }
 
 function buscar() {
+    const currentQuery = search.query
+    search.reset()
+    search.query = currentQuery
     search.includeDescription = false;
     search.restrictToCollections = props.colecciones;
     search.open();

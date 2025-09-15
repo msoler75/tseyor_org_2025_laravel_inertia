@@ -13,6 +13,13 @@ const state = reactive({
   clear() {
     this.query = "";
   },
+  reset() {
+    this.clear()
+    this.restrictToCollections = null
+    this.results = null
+    this.searching = true
+    this.lastQuery = null
+  },
   open() {
     this.opened = true;
   },
