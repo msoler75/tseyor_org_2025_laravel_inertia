@@ -1,7 +1,7 @@
 <template>
     <ToolTip
         ref="tt"
-        @activated="onToolTipActivate"
+        @preload="onToolTipActivate"
         @deactivated="onToolTipDeactivate"
     >
         <template #content>
