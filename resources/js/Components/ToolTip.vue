@@ -29,10 +29,11 @@ import { ref, nextTick, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useFloating, autoPlacement, autoUpdate } from '@floating-ui/vue';
 import { offset, shift, size, arrow as arrowMiddleware } from '@floating-ui/core';
 
-const emit = defineEmits(['activated', 'deactivated']);
+const emit = defineEmits(['activated', 'deactivated', 'preload']);
 // permitir mantener el tooltip abierto desde fuera
 const props = defineProps({
     persistent: { type: Boolean, default: false },
+    activationDelay: { type: Number, default: 500 }, // ms para activar el tooltip
 });
 
 const domReference = ref(null);
@@ -79,6 +80,7 @@ let touchStartY = null;
 let touchStartX = null;
 const TAP_THRESHOLD = 10; // px
 let hideTimer = null;
+let showTimer = null; // Timer para delay de activación
 const HIDE_DELAY_MS = 120; // retraso al cerrar para permitir clicks dentro del tooltip y evitar flicker
 
 // usar middleware para evitar overflow del viewport y ajustar tamaño disponible
@@ -101,7 +103,7 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(domRef
         offset(6),
         // asegurar un margen superior mínimo (p. ej. barra nav con mayor z-index)
         shift({
-            padding: { top: 72 }
+            padding: { top: 82 }
         }),
         size({
             apply({ availableWidth, elements }) {
@@ -123,7 +125,7 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(domRef
 function show() {
     // solo emitir cuando pasamos de cerrado a abierto
     if (!isOpen.value) {
-        clearHideTimer();
+        clearAllTimers();
         isOpen.value = true;
         // esperar al DOM y calcular posición inicial una sola vez
         nextTick(() => {
@@ -139,8 +141,28 @@ function show() {
         emit('activated', { text: domReference.value?.innerText });
     } else {
         // Si ya está abierto, solo limpiar el timer de cierre sin recalcular posición
-        clearHideTimer();
+        clearAllTimers();
     }
+}
+
+// Mostrar tooltip con delay
+function scheduleShow() {
+    if (isOpen.value) return; // Ya está abierto
+
+    clearShowTimer();
+    clearHideTimer();
+
+    // Programar mostrar tooltip con delay
+    showTimer = setTimeout(() => {
+        show();
+        showTimer = null;
+    }, props.activationDelay);
+}
+
+// Precargar datos inmediatamente (sin delay)
+function triggerPreload() {
+    // Emitir preload inmediatamente al pasar el mouse por encima
+    emit('preload', { text: domReference.value?.innerText });
 }
 
 // exponer API pública para controlar el tooltip desde el padre
@@ -155,6 +177,7 @@ function scheduleHideIfNeeded() {
     // si es persistente, no programar cierre
     if (props.persistent) return;
     // programa el cierre solo si el puntero no está ni sobre la referencia ni sobre el floating
+    clearShowTimer(); // Cancelar cualquier show pendiente
     clearHideTimer();
     hideTimer = setTimeout(() => {
         if (!isHoveringReference && !isHoveringFloating) {
@@ -169,7 +192,7 @@ function scheduleHideIfNeeded() {
 function immediateHide(force = false) {
     // si es persistente y no se fuerza, ignorar
     if (props.persistent && !force) return;
-    clearHideTimer();
+    clearAllTimers();
     isOpen.value = false;
     stopObserving();
     removeOutsideListener();
@@ -177,6 +200,15 @@ function immediateHide(force = false) {
 
 function clearHideTimer() {
     if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+}
+
+function clearShowTimer() {
+    if (showTimer) { clearTimeout(showTimer); showTimer = null; }
+}
+
+function clearAllTimers() {
+    clearHideTimer();
+    clearShowTimer();
 }
 
 // handlers para eventos pointer — se usan en la plantilla (referencia) y en el elemento floating
@@ -191,13 +223,12 @@ function onRefPointerEnter(e) {
     isHoveringReference = true;
     clearHideTimer();
 
-    // Solo llamar a show() si el tooltip no está ya abierto
-    if (!isOpen.value) {
-        show();
-    }
-}
+    // Precargar datos inmediatamente al pasar el mouse por encima
+    triggerPreload();
 
-function onRefPointerLeave(e) {
+    // Programar mostrar tooltip con delay
+    scheduleShow();
+}function onRefPointerLeave(e) {
     lastPointerType = e && e.pointerType ? e.pointerType : lastPointerType;
     // si es touch, no programar cierre aquí; el touch usa pointerdown para toggle
     if (lastPointerType === 'touch') {
@@ -223,9 +254,10 @@ function onRefPointerDown(e) {
         // Esperar a touchend para decidir si es tap
         return;
     }
-    // para punteros no touch, comportarse igual que pointerenter
+    // para punteros no touch, precargar inmediatamente y programar show con delay
     isHoveringReference = true;
-    show();
+    triggerPreload();
+    scheduleShow();
 }
 
 function onRefBlur() {
@@ -334,7 +366,7 @@ onBeforeUnmount(() => {
     window.removeEventListener('resize', safeUpdate);
     window.removeEventListener('scroll', safeUpdate, true);
     stopObserving();
-    clearHideTimer();
+    clearAllTimers(); // Limpiar todos los timers
     // remover listeners añadidos al elemento flotante si existe
     const el = floating.value;
     if (el) {
