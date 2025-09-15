@@ -18,7 +18,7 @@
         v-show="isOpen"
         :style="floatingStyles"
         role="tooltip"
-        class=" duration-120 z-20"
+        class="z-20"
     >
            <slot name="content"></slot>
     </div>
@@ -83,12 +83,26 @@ const HIDE_DELAY_MS = 120; // retraso al cerrar para permitir clicks dentro del 
 
 // usar middleware para evitar overflow del viewport y ajustar tamaño disponible
 const { floatingStyles, middlewareData, placement, update } = useFloating(domReference, floating, {
-      whileElementsMounted: autoUpdate,
+    whileElementsMounted: (reference, floating, update) => {
+        return autoUpdate(reference, floating, update, {
+            // Configuraciones más conservadoras para evitar recálculos innecesarios
+            ancestorScroll: true,
+            ancestorResize: true,
+            elementResize: true,
+            layoutShift: false, // Desactivar para evitar recálculos por cambios menores de layout
+            animationFrame: false // Solo usar animationFrame cuando sea estrictamente necesario
+        });
+    },
     middleware: [
-    autoPlacement(),
-    offset(6),
-    // asegurar un margen superior mínimo (p. ej. barra nav con mayor z-index)
-    shift({ padding: { top: 72 } }),
+        autoPlacement({
+            // Mantener el placement preferido cuando sea posible
+            allowedPlacements: ['top', 'bottom', 'left', 'right', 'top-start', 'top-end', 'bottom-start', 'bottom-end'],
+        }),
+        offset(6),
+        // asegurar un margen superior mínimo (p. ej. barra nav con mayor z-index)
+        shift({ 
+            padding: { top: 72 }
+        }),
         size({
             apply({ availableWidth, elements }) {
                 // limitar ancho del tooltip al espacio disponible (alto lo maneja CSS/flujo)
@@ -111,18 +125,11 @@ function show() {
     if (!isOpen.value) {
         clearHideTimer();
         isOpen.value = true;
-        // esperar al DOM y forzar recálculo de posición
+        // esperar al DOM y calcular posición inicial una sola vez
         nextTick(() => {
-            if (update) update();
-            // asegurar que el elemento arrow esté presente para el middleware
-            nextTick(() => { if (update) update(); });
-            // debug: mostrar datos del middleware y estilos del floating para diagnóstico
-            try {
-                console.debug('floatingStyles', floatingStyles);
-                console.debug('middlewareData', middlewareData && middlewareData.value);
-                console.debug('placement', placement && placement.value);
-            } catch (e) {
-                // noop
+            // Solo actualizar la posición si es realmente necesario
+            if (update) {
+                update();
             }
             // empezar a observar cambios en el contenido del tooltip
             startObserving();
@@ -130,6 +137,9 @@ function show() {
             addOutsideListener();
         });
         emit('activated', { text: domReference.value?.innerText });
+    } else {
+        // Si ya está abierto, solo limpiar el timer de cierre sin recalcular posición
+        clearHideTimer();
     }
 }
 
@@ -177,9 +187,14 @@ function onRefPointerEnter(e) {
     // cuando viene de touch, ignoramos enter/leave para evitar toggles rápidos en móvil
     lastPointerType = e && e.pointerType ? e.pointerType : lastPointerType;
     if (lastPointerType === 'touch') return;
+    
     isHoveringReference = true;
     clearHideTimer();
-    show();
+    
+    // Solo llamar a show() si el tooltip no está ya abierto
+    if (!isOpen.value) {
+        show();
+    }
 }
 
 function onRefPointerLeave(e) {
