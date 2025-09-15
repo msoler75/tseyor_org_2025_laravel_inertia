@@ -100,7 +100,7 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(domRef
         }),
         offset(6),
         // asegurar un margen superior mínimo (p. ej. barra nav con mayor z-index)
-        shift({ 
+        shift({
             padding: { top: 72 }
         }),
         size({
@@ -187,10 +187,10 @@ function onRefPointerEnter(e) {
     // cuando viene de touch, ignoramos enter/leave para evitar toggles rápidos en móvil
     lastPointerType = e && e.pointerType ? e.pointerType : lastPointerType;
     if (lastPointerType === 'touch') return;
-    
+
     isHoveringReference = true;
     clearHideTimer();
-    
+
     // Solo llamar a show() si el tooltip no está ya abierto
     if (!isOpen.value) {
         show();
