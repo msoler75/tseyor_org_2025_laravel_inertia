@@ -6,6 +6,7 @@
     @pointerenter="onRefPointerEnter"
     @pointerleave="onRefPointerLeave"
     @pointerdown="onRefPointerDown"
+    @touchend="onRefTouchEnd"
     @focus="show"
     @blur="onRefBlur"
     >
@@ -17,7 +18,7 @@
         v-show="isOpen"
         :style="floatingStyles"
         role="tooltip"
-        class="transition duration-120 z-20"
+        class=" duration-120 z-20"
     >
            <slot name="content"></slot>
     </div>
@@ -74,6 +75,9 @@ function removeOutsideListener() {
 let isHoveringReference = false;
 let isHoveringFloating = false;
 
+let touchStartY = null;
+let touchStartX = null;
+const TAP_THRESHOLD = 10; // px
 let hideTimer = null;
 const HIDE_DELAY_MS = 120; // retraso al cerrar para permitir clicks dentro del tooltip y evitar flicker
 
@@ -192,16 +196,16 @@ function onRefPointerLeave(e) {
 function onRefPointerDown(e) {
     lastPointerType = e && e.pointerType ? e.pointerType : lastPointerType;
     clearHideTimer();
-    // en dispositivos táctiles, queremos que el toque haga toggle (abrir/cerrar)
     if (lastPointerType === 'touch') {
-        if (isOpen.value) {
-            immediateHide();
+        // Guardar posición inicial del touch usando pointerdown
+        if (e && e.clientX !== undefined && e.clientY !== undefined) {
+            touchStartY = e.clientY;
+            touchStartX = e.clientX;
         } else {
-            show();
+            touchStartY = null;
+            touchStartX = null;
         }
-        // detener propagación para evitar que un click posterior cierre el tooltip
-        // (no usar preventDefault para no romper accesibilidad)
-        e && e.stopPropagation && e.stopPropagation();
+        // Esperar a touchend para decidir si es tap
         return;
     }
     // para punteros no touch, comportarse igual que pointerenter
@@ -251,6 +255,43 @@ function startObserving() {
 function stopObserving() {
     if (mutationTimer) { clearTimeout(mutationTimer); mutationTimer = null; }
     if (mutationObserver) { mutationObserver.disconnect(); mutationObserver = null; }
+}
+
+// Nuevo: manejar touchend para decidir si es tap
+function onRefTouchEnd(e) {
+    if (touchStartY === null || touchStartX === null) return;
+
+    let endY, endX;
+    // Obtener coordenadas del touchend
+    if (e.changedTouches && e.changedTouches.length === 1) {
+        endY = e.changedTouches[0].clientY;
+        endX = e.changedTouches[0].clientX;
+    } else if (e.clientX !== undefined && e.clientY !== undefined) {
+        endY = e.clientY;
+        endX = e.clientX;
+    } else {
+        // No podemos obtener coordenadas, resetear y salir
+        touchStartY = null;
+        touchStartX = null;
+        return;
+    }
+
+    const distY = Math.abs(endY - touchStartY);
+    const distX = Math.abs(endX - touchStartX);
+
+    if (distY < TAP_THRESHOLD && distX < TAP_THRESHOLD) {
+        // Es un tap, toggle tooltip
+        if (isOpen.value) {
+            immediateHide();
+        } else {
+            show();
+        }
+        // detener propagación para evitar que un click posterior cierre el tooltip
+        e && e.stopPropagation && e.stopPropagation();
+    }
+    // Si fue scroll, no hacer nada
+    touchStartY = null;
+    touchStartX = null;
 }
 
 // recalcular cuando cambie el viewport (resize / scroll)

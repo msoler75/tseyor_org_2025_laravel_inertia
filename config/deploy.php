@@ -1,8 +1,8 @@
 <?php
 
 // Valores definidos en este archivo (no se usan env() aquí por petición)
-$host = 'localhost';
-$protocol = 'http';
+$host = 'tseyor.org';
+$protocol = 'https';
 
 return [
     'host' => $host,
