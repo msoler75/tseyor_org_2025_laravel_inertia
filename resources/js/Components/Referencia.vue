@@ -6,7 +6,7 @@
         :activationDelay="200"
     >
         <template #content>
-            <div v-if="!info || noEncontrado" class="bg-base-300 p-3">
+            <div v-if="!info || noEncontrado" class="bg-base-300 p-1 rounded-xl shadow">
                 <div v-if="!info" class="p-3 text-lg mb-2">
                     <Spinner class="loader" />
                 </div>
