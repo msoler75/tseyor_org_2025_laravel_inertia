@@ -312,7 +312,6 @@ onMounted(() => {
             only: ["auth"],
         });
 
-        startResizeMonitoring()
     });
 
     // Listener para actualizar figureWidth cuando cambie el tamaño de ventana

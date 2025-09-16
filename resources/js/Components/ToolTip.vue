@@ -224,7 +224,9 @@ function onRefPointerEnter(e) {
 
     // Programar mostrar tooltip con delay
     scheduleShow();
-}function onRefPointerLeave(e) {
+}
+
+function onRefPointerLeave(e) {
     lastPointerType = e && e.pointerType ? e.pointerType : lastPointerType;
     // si es touch, no programar cierre aquí; el touch usa pointerdown para toggle
     if (lastPointerType === 'touch') {
@@ -327,6 +329,8 @@ function onRefTouchEnd(e) {
         if (isOpen.value) {
             immediateHide();
         } else {
+            // Antes de mostrar el tooltip, emitir preload para cargar datos
+            triggerPreload();
             show();
         }
         // detener propagación para evitar que un click posterior cierre el tooltip
