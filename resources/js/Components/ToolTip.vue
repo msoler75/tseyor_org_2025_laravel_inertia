@@ -18,17 +18,16 @@
         v-show="isOpen"
         :style="floatingStyles"
         role="tooltip"
-        class="z-20 bg-gray-800 p-0 rounded shadow-lg text-sm max-w-xs relative"
+        class="z-20"
     >
         <slot name="content"></slot>
-
     </div>
 </template>
 
 <script setup>
 import { ref, nextTick, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useFloating, autoPlacement, autoUpdate } from '@floating-ui/vue';
-import { offset, shift, size, arrow as arrowMiddleware } from '@floating-ui/core';
+import { offset, shift, size } from '@floating-ui/core';
 
 const emit = defineEmits(['activated', 'deactivated', 'preload']);
 // permitir mantener el tooltip abierto desde fuera
@@ -40,7 +39,6 @@ const props = defineProps({
 const domReference = ref(null);
 
 const floating = ref(null);
-const arrow = ref(null);
 const isOpen = ref(false);
 
 // listener global para cerrar al tocar fuera (se añade en capture para ignorar stopPropagation)
@@ -86,7 +84,6 @@ const HIDE_DELAY_MS = 120; // retraso al cerrar para permitir clicks dentro del 
 
 // usar middleware para evitar overflow del viewport y ajustar tamaño disponible
 const { floatingStyles, middlewareData, placement, update } = useFloating(domReference, floating, {
-    placement: 'top', // placement específico en lugar de autoPlacement
     whileElementsMounted: (reference, floating, update) => {
         return autoUpdate(reference, floating, update, {
             // Configuraciones más conservadoras para evitar recálculos innecesarios
@@ -98,16 +95,15 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(domRef
         });
     },
     middleware: [
-        offset(8), // Espacio para la flecha
-        // shift debe ir después del arrow para manejar overflow correctamente
+        autoPlacement({
+            // Mantener el placement preferido cuando sea posible
+            allowedPlacements: ['top', 'bottom', 'left', 'right', 'top-start', 'top-end', 'bottom-start', 'bottom-end'],
+        }),
+        offset(6),
+        // asegurar un margen superior mínimo (p. ej. barra nav con mayor z-index)
         shift({
             padding: { top: 82 }
         }),
-        // arrow middleware
-        /*arrowMiddleware({
-            element: arrow,
-            padding: 4 // padding alrededor de la flecha
-        }),*/
         size({
             apply({ availableWidth, elements }) {
                 // limitar ancho del tooltip al espacio disponible (alto lo maneja CSS/flujo)
@@ -119,30 +115,6 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(domRef
             },
         }),
     ],
-});
-
-// Computed para los estilos de la flecha
-const arrowStyles = computed(() => {
-    const arrowData = middlewareData.value?.arrow;
-    if (!arrowData) return { display: 'none' };
-
-    const { x, y } = arrowData;
-    const side = placement.value.split('-')[0];
-
-    const staticSide = {
-        top: 'bottom',
-        right: 'left',
-        bottom: 'top',
-        left: 'right',
-    }[side];
-
-    return {
-        left: x != null ? `${x}px` : '',
-        top: y != null ? `${y}px` : '',
-        right: '',
-        bottom: '',
-        [staticSide]: '-4px', // La mitad del tamaño de la flecha (8px / 2)
-    };
 });
 
 
