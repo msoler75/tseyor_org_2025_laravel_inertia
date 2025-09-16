@@ -18,7 +18,7 @@
         v-show="isOpen"
         :style="floatingStyles"
         role="tooltip"
-        class="z-20"
+        class="z-20 rounded-xl shadow"
     >
         <slot name="content"></slot>
     </div>
