@@ -31,7 +31,7 @@ Mundo Armónico Tseyor es una ONG dedicada al <Referencia>autodescubrimiento</Re
                 srcImage="/almacen/medios/paginas/todos-los-guias.jpg"
                 buttonLabel="Conoce a los guías Estelares" href="/guias"  >
                 <p>Nuestros tutores proceden de distintos planetas y todos son miembros de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia>.</p>
-                <p>Actualmente nos comunicamos con <Referencia colecciones="guias">Shilcars</Referencia> (un ser humano del <Referencia colecciones="lugares">planeta Agguniom</Referencia> en la <Referencia>Constelación de
+                <p>Actualmente nos comunicamos con <Referencia colecciones="guias">Shilcars</Referencia> (un ser humano del planeta <Referencia colecciones="lugares">Agguniom</Referencia> en la <Referencia>Constelación de
                     Áuriga</Referencia>) y otros hermanos como <Referencia>Melcor</Referencia>, <Referencia>Aumnor</Referencia> y <Referencia>Noiwanak</Referencia>.</p>
             </TextImage>
         </Section>

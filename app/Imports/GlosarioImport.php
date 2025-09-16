@@ -178,8 +178,9 @@ class GlosarioImport
         {
             // $referencias = [];
             // preg_match_all('/\(\s*V[ée]ase\s.*\)/su', $descripcion, $matches);
+            //admite Vease, Véase, V e a s e, V é a s e
 
-            preg_match("/\(\s*V[eé]ase\s/u", $texto, $m, PREG_OFFSET_CAPTURE);
+            preg_match("/\(\s*V\s*[eé]\s*a\s*s\s*e\s/u", $texto, $m, PREG_OFFSET_CAPTURE);
             if (!count($m)) return [];
             $inicio = $m[0][1];
             $r = [];
