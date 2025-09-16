@@ -19,7 +19,12 @@
   php artisan config:clear
   ```
 - **Búsquedas (Scout/TNTSearch):**
+    
+    `flush` borra el indice.
+    `import` añade entradas al índice.
+
   ```bash
+  php artisan scout:flush "App\Models\Comunicado"
   php artisan scout:import "App\Models\Comunicado"
   php artisan scout:status
   ```
@@ -64,6 +69,12 @@
   php artisan hash {file}
   ```
   Calcula el código hash de un archivo.
+
+- **Importar contenidos:** 
+  ```bash
+  php artisan contenidos:import {coleccion} [--y]
+  ```
+  Borra todos los contenidos de la colección indicada y los regenera desde ContenidoHelper::guardarContenido. Útil para reindexar contenidos de búsqueda. La opción `--y` confirma la operación directamente sin solicitar confirmación.
 
 
 ### Despliegue y SSR

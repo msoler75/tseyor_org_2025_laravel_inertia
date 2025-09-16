@@ -13,7 +13,7 @@
                     <div class="grow relative">
                         <input id="global-search-input" ref="input" class="search-input w-full !pr-8" v-model="search.query"
                             aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off"
-                            enterkeyhint="go" spellcheck="false" placeholder="Buscar en el sitio web..." maxlength="64"
+                            enterkeyhint="go" spellcheck="false" placeholder="Buscar en el sitio web..." :maxlength="INPUT_MAX_LENGTH"
                             type="search" aria-owns="search-input-list"
                             :aria-activedescendant="itemSeleccionado ? itemSeleccionado.idDom : ''"
                             aria-controls="search-input-list" aria-haspopup="true">
@@ -62,7 +62,7 @@
                         <div
                             class="w-full flex justify-between px-1 mt-3 mb-2 font-bold capitalize opacity-75">
                             {{ traducir(grupo.coleccion) }}
-                            <span class="ml-auto" :class="selectors.developerMode?'':'hidden'">{{ Math.round(grupo.score*10)/10 }}</span>
+                            <span class="ml-auto" :class="selectors.developerMode?'':'hidden'">{{ Math.round(grupo.score*SCORE_ROUND_DIVISOR)/SCORE_ROUND_DIVISOR }}</span>
                             <span v-if="grupo.coleccion in prioridadBoost" :class="selectors.developerMode?'':'hidden'"> +{{ prioridadBoost[grupo.coleccion] }}</span>
                         </div>
                         <!-- Usa el componente Link de Inertia y maneja el evento click correctamente -->
@@ -95,6 +95,16 @@ import traducir from '@/composables/traducciones'
 import { removeAccents, levenshtein } from '@/composables/textutils'
 import useSelectors from "@/Stores/selectors";
 
+// Constantes para evitar magic numbers
+const SEARCH_DELAY_MS = 350
+const SAVE_SEARCH_DELAY_MS = 2000
+const DOM_OPERATION_DELAY_MS = 10
+const RANDOM_ID_MULTIPLIER = 1000
+const DEFAULT_PRIORITY_VALUE = 40
+const INPUT_MAX_LENGTH = 64
+const PRIORITY_FACTOR = 0.1
+const SCORE_ROUND_DIVISOR = 10
+
 const selectors = useSelectors();
 
 const prioridad_grupos = [
@@ -112,7 +122,7 @@ const prioridad_grupos = [
     ]
 
 const prioridadBoost = {
-    paginas: 2,
+    paginas: 5,
     libros: 1,
 }
 
@@ -159,7 +169,7 @@ const resultadosAgrupados = computed(() => {
     for (const key in search.results) {
         const item = search.results[key]
         if (!item.idDom)
-            item.idDom = 'result-' + item.slug_ref + '-' + Math.floor(Math.random() * 1000)
+            item.idDom = 'result-' + item.slug_ref + '-' + Math.floor(Math.random() * RANDOM_ID_MULTIPLIER)
         if (!agrupados[item.coleccion]) {
             agrupados[item.coleccion] = []
         }
@@ -211,12 +221,12 @@ const resultadosAgrupados = computed(() => {
 
     // Ordenar el array de items
     grupos.sort((a, b) => {
-        const Kp = 0.1
+        const Kp = PRIORITY_FACTOR
         const dScore = b.score - a.score
         const prioridad = prioridad_grupos
         const pA = prioridad.indexOf(a.coleccion)
         const pB = prioridad.indexOf(b.coleccion)
-        const dP = (pA<0?40:pA) - (pB<0?40:pB)// reverse order
+        const dP = (pA<0?DEFAULT_PRIORITY_VALUE:pA) - (pB<0?DEFAULT_PRIORITY_VALUE:pB)// reverse order
         const boostA = prioridadBoost[a.coleccion] || 0
         const boostB = prioridadBoost[b.coleccion] || 0
         const dBoost = boostB - boostA
@@ -390,7 +400,7 @@ function buscar() {
     if (search.searching) {
         console.log('esperando carga de anterior busqueda', queryLoading.value, search.query)
         // clearTimeout(timerBuscar)
-        timerBuscar = setTimeout(buscar, 250)
+        timerBuscar = setTimeout(buscar, SEARCH_DELAY_MS)
         return
     }
     if (search.query) {
@@ -400,7 +410,7 @@ function buscar() {
         search.includeDescription = false
         search.call()
         .then(()=>{
-            timerGuardarBusqueda = setTimeout(guardarBusqueda, 2000)
+            timerGuardarBusqueda = setTimeout(guardarBusqueda, SAVE_SEARCH_DELAY_MS)
         })
     }
 
@@ -430,7 +440,7 @@ watch(() => search.query, (value) => {
     clearTimeout(timerGuardarBusqueda) // borramos contador de tiempo para guardar los datos de la busqueda actual, seguramente el usuario está escribiendo aún
     clearTimeout(timerBuscar) // borramos contador de tiempo para ejecutar la busqueda
     if (value)
-        timerBuscar = setTimeout(buscar, 250)
+        timerBuscar = setTimeout(buscar, SEARCH_DELAY_MS)
     else {
         search.results = null
         search.lastQuery = null
@@ -449,7 +459,7 @@ function closeModal() {
                 setTimeout(() => {
                     window.scrollTo(0, savedScrollPosition)
                     console.log('closeModal: scroll restaurado a', savedScrollPosition)
-                }, 10)
+                }, DOM_OPERATION_DELAY_MS)
             })
         }
     }
@@ -479,7 +489,7 @@ function clickHandle(url, item) {
             console.log('clickHandle: guardarBusqueda done')
             search.showSuggestions = true
         })
-    }, 10)
+    }, DOM_OPERATION_DELAY_MS)
 }
 
 // SELECCIONES DE ITEM

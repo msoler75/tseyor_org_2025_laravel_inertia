@@ -3,6 +3,7 @@
         ref="tt"
         @preload="onToolTipActivate"
         @deactivated="onToolTipDeactivate"
+        :activationDelay="200"
     >
         <template #content>
             <div v-if="!info || noEncontrado" class="bg-base-300 p-3">
@@ -34,12 +35,6 @@
                 </div>
             </div>
         </template>
-        <template #arrow>
-            <div v-if="!info" class="p-3 text-lg mb-2 w-[320px] h-[240px]">
-                <Spinner class="loader" />
-            </div>
-            <span v-else>XX</span>
-        </template>
         <slot></slot>
     </ToolTip>
 </template>
@@ -52,11 +47,10 @@ const props = defineProps({
 });
 
 import useGlobalSearch from "@/Stores/globalSearch.js";
-import truncateText from "@/composables/textutils.js";
 
 const viendoToolTip = ref(false);
 const tt = ref(null);
-const search = useGlobalSearch();
+const search = useGlobalSearch(); // Solo para la función buscar()
 
 const noEncontrado = ref(false);
 const info = ref(null);
@@ -66,38 +60,46 @@ const verGlosario = ref(false);
 function onToolTipActivate(payload) {
     viendoToolTip.value = true;
     console.log("Tooltip activated", payload);
-    const triggerText = props.r ? props.r : payload.text;
+
+    // Obtener el texto de búsqueda: props.r > payload.text > slot text
+    const triggerText = props.r || payload.text || getSlotText();
+
     console.log("triggerText:", triggerText);
+
+    if (!triggerText) {
+        console.warn("No se pudo obtener texto para el tooltip");
+        return;
+    }
+
     if (info.value) return;
 
-    search.query = triggerText;
-    search.lastQuery = null;
-    search.showSuggestions = false;
-    search.results = null;
-    search.restrictToCollections = "terminos";
-    search.includeDescription = false;
-    search.call().then(() => {
-        console.log("search results:", search.results);
-        if (!search.results.length) {
+    // Nueva implementación: una sola llamada que busca y devuelve el texto del término
+    axios.get(route('buscar.termino'), {
+        params: {
+            q: triggerText,
+            limite: props.maxLength
+        }
+    }).then((res) => {
+        console.log("search response:", res.data);
+
+        if (!res.data.encontrado) {
             noEncontrado.value = true;
             info.value = " ";
             return;
         }
-        const t = search.results.sort(
-            (a, b) => b.__tntSearchScore__ - a.__tntSearchScore__
-        )[0];
 
-        console.log("search results:", search.results);
-        console.log("ok term", t);
-        if (!t) return;
-        axios.get("/glosario/" + t.slug_ref + "?json").then((res) => {
-            const fullText = res.data.texto || "";
-            info.value = `<div class='font-bold text-lg mb-2'>${t.titulo.replace(/<[^>]+>/g, '')}</div>` + truncateText(fullText, props.maxLength);
-            verGlosario.value =
-                info.value.length < fullText.length
-                    ? "/glosario/" + t.slug_ref
-                    : null;
-        });
+        const termino = res.data;
+        const tituloLimpio = termino.titulo.replace(/<[^>]+>/g, '');
+
+        info.value = `<div class='font-bold text-lg mb-2'>${tituloLimpio}</div>${termino.texto}`;
+
+        // Mostrar siempre el enlace "Ver en Glosario"
+        verGlosario.value = termino.url_glosario;
+
+    }).catch((error) => {
+        console.error("Error en búsqueda de término:", error);
+        noEncontrado.value = true;
+        info.value = " ";
     });
 }
 
@@ -105,13 +107,36 @@ function onToolTipDeactivate() {
     viendoToolTip.value = false;
 }
 
+const slots = useSlots();
+
 function buscar() {
-    const currentQuery = search.query
-    search.reset()
-    search.query = currentQuery
+    // Obtener el texto de búsqueda desde props.r o del slot
+    const triggerText = props.r || getSlotText();
+
+    if (!triggerText) {
+        console.warn("No se pudo obtener texto para buscar");
+        return;
+    }
+
+    console.log("Searching for:", triggerText);
+
+    search.reset();
+    search.query = triggerText;
     search.includeDescription = false;
     search.restrictToCollections = props.colecciones;
     search.open();
     search.call();
+}
+
+// Función auxiliar simple para obtener texto del slot
+function getSlotText() {
+    if (!slots.default) return '';
+
+    const slotContent = slots.default();
+    if (!slotContent || !slotContent.length) return '';
+
+    // Obtener el texto del primer nodo
+    const firstNode = slotContent[0];
+    return typeof firstNode.children === 'string' ? firstNode.children.trim() : '';
 }
 </script>

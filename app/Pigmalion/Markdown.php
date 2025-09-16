@@ -709,6 +709,28 @@ class Markdown
         return $content;
     }
 
+    /**
+     * Eliminar imágenes del texto para tooltips o resúmenes
+     */
+    public static function removeImages($texto)
+    {
+        if (!$texto) return '';
+
+        // Eliminar imágenes en markdown ![alt](url)
+        $texto = preg_replace('/!\[([^\]]*)\]\([^)]+\)/', '', $texto);
+
+        // Eliminar imágenes en HTML <img>
+        $texto = preg_replace('/<img[^>]*>/i', '', $texto);
+
+        // Eliminar etiquetas de figura <figure> y <figcaption>
+        $texto = preg_replace('/<figure[^>]*>.*?<\/figure>/is', '', $texto);
+
+        // Limpiar espacios en blanco múltiples que puedan quedar
+        $texto = preg_replace('/\s+/', ' ', $texto);
+
+        return trim($texto);
+    }
+
 
     // devuelve las primeras $num imágenes de un texto en markdown
     public static function images($md, $num = 99)

@@ -18,9 +18,10 @@
         v-show="isOpen"
         :style="floatingStyles"
         role="tooltip"
-        class="z-20"
+        class="z-20 bg-gray-800 p-0 rounded shadow-lg text-sm max-w-xs relative"
     >
-           <slot name="content"></slot>
+        <slot name="content"></slot>
+
     </div>
 </template>
 
@@ -85,6 +86,7 @@ const HIDE_DELAY_MS = 120; // retraso al cerrar para permitir clicks dentro del 
 
 // usar middleware para evitar overflow del viewport y ajustar tamaño disponible
 const { floatingStyles, middlewareData, placement, update } = useFloating(domReference, floating, {
+    placement: 'top', // placement específico en lugar de autoPlacement
     whileElementsMounted: (reference, floating, update) => {
         return autoUpdate(reference, floating, update, {
             // Configuraciones más conservadoras para evitar recálculos innecesarios
@@ -96,15 +98,16 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(domRef
         });
     },
     middleware: [
-        autoPlacement({
-            // Mantener el placement preferido cuando sea posible
-            allowedPlacements: ['top', 'bottom', 'left', 'right', 'top-start', 'top-end', 'bottom-start', 'bottom-end'],
-        }),
-        offset(6),
-        // asegurar un margen superior mínimo (p. ej. barra nav con mayor z-index)
+        offset(8), // Espacio para la flecha
+        // shift debe ir después del arrow para manejar overflow correctamente
         shift({
             padding: { top: 82 }
         }),
+        // arrow middleware
+        /*arrowMiddleware({
+            element: arrow,
+            padding: 4 // padding alrededor de la flecha
+        }),*/
         size({
             apply({ availableWidth, elements }) {
                 // limitar ancho del tooltip al espacio disponible (alto lo maneja CSS/flujo)
@@ -115,11 +118,32 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(domRef
                 }
             },
         }),
-        // arrow middleware — colocará la flecha correctamente
-        //arrowMiddleware({ element: arrow}),
     ],
 });
 
+// Computed para los estilos de la flecha
+const arrowStyles = computed(() => {
+    const arrowData = middlewareData.value?.arrow;
+    if (!arrowData) return { display: 'none' };
+
+    const { x, y } = arrowData;
+    const side = placement.value.split('-')[0];
+
+    const staticSide = {
+        top: 'bottom',
+        right: 'left',
+        bottom: 'top',
+        left: 'right',
+    }[side];
+
+    return {
+        left: x != null ? `${x}px` : '',
+        top: y != null ? `${y}px` : '',
+        right: '',
+        bottom: '',
+        [staticSide]: '-4px', // La mitad del tamaño de la flecha (8px / 2)
+    };
+});
 
 
 function show() {

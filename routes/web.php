@@ -191,6 +191,7 @@ Route::get('entradas/{slug}/pdf', function ($slug) {
 
 Route::get('glosario', [TerminosController::class, 'index'])->name('terminos');
 Route::get('glosario/{slug}', [TerminosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('termino');
+Route::get('buscarTermino', [TerminosController::class, 'search'])->name('buscar.termino');
 
 Route::get('guias', [GuiasController::class, 'index'])->name('guias');
 Route::get('guias/{slug}', [GuiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('guia');

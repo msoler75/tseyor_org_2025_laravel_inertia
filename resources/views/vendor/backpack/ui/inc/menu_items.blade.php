@@ -28,7 +28,6 @@
 <x-backpack::menu-dropdown title="Glosario" icon="la la-list-ul">
     <x-backpack::menu-dropdown-item title="Términos" icon="la la-edit" :link="backpack_url('termino')" />
     <x-backpack::menu-dropdown-item title="Guias Estelares" icon="la la-star" :link="backpack_url('guia')" />
-    <x-backpack::menu-dropdown-item title="Lugares de la Galaxia" icon="la la-map-marker" :link="backpack_url('lugar')" />
 </x-backpack::menu-dropdown>
 @endcan
 
