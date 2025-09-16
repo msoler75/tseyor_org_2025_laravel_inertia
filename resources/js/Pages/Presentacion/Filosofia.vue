@@ -85,7 +85,7 @@
                 class="py-20">
                 <p>
                     Consulta todos los términos de la filosofía Tseyor en nuestro glosario de términos. También podrás
-                    ver los Guías Estelares y los lugares interesantes de la Galaxia.
+                    ver los Guías Estelares y las preguntas frecuentes.
                 </p>
             </TextImage>
         </Section>

@@ -143,6 +143,7 @@ class TerminosController extends Controller
 public function search(Request $request)
 {
     $query = $request->input('q');
+    $query = str_replace("-", " ", $query);
     $limite = $request->input('limite', 500); // Límite por defecto de 500 caracteres
 
     if (!$query) {
