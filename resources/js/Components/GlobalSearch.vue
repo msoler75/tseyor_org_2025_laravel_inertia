@@ -404,21 +404,17 @@ var timerGuardarBusqueda = null
 var busquedaId = null
 
 function buscar() {
-    console.warn('[SEARCH DEBUG] GlobalSearch.buscar() iniciado')
     if (search.searching) {
-        console.warn('[SEARCH DEBUG] GlobalSearch.buscar() - búsqueda en curso, programando nueva', queryLoading.value, search.query)
         search.searchWithDelay(buscar)
         return
     }
     if (search.query) {
-        console.warn('[SEARCH DEBUG] GlobalSearch.buscar() - ejecutando búsqueda para:', search.query)
         var currentQuery = search.query
         queryLoading.value = currentQuery
         search.searching = true
         search.includeDescription = false
         search.searchNow()
         .then(()=>{
-            console.warn('[SEARCH DEBUG] GlobalSearch.buscar() - búsqueda completada, programando guardar')
             timerGuardarBusqueda = setTimeout(guardarBusqueda, SAVE_SEARCH_DELAY_MS)
         })
     }
@@ -447,35 +443,27 @@ async function guardarBusqueda(url) {
 // Función para manejar cambios en el input de búsqueda
 function handleQueryInput(event) {
     const newQuery = event.target.value
-    console.warn('[SEARCH DEBUG] handleQueryInput() llamado con:', newQuery)
     search.setQuery(newQuery)
 }
 
 // Función para limpiar la búsqueda
 function clearQuery() {
-    console.warn('[SEARCH DEBUG] clearQuery() llamado')
     search.setQuery('')
 }
 
 // Función que maneja los cambios de query (reemplaza al watcher)
 function handleQueryChange(newQuery, oldQuery) {
-    console.warn('[SEARCH DEBUG] handleQueryChange() activado con valor:', newQuery)
-
     busquedaId = null // borramos id de la busqueda actual
     clearTimeout(timerGuardarBusqueda) // borramos contador de tiempo para guardar los datos de la busqueda actual, seguramente el usuario está escribiendo aún
     if (newQuery) {
-        console.warn('[SEARCH DEBUG] handleQueryChange() - programando búsqueda con timer')
         search.searchWithDelay(buscar)
     } else {
-        console.warn('[SEARCH DEBUG] handleQueryChange() - valor vacío, cancelando timer y limpiando')
         search.cancelTimer()
         search.results = null
         search.lastQuery = null
         search.restrictToCollections = null
     }
 }
-
-
 // Función para cerrar el modal y restaurar scroll si es necesario
 function closeModal() {
     if (search.opened) {
