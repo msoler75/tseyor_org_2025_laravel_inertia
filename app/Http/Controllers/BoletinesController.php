@@ -52,8 +52,8 @@ class BoletinesController extends Controller
 
     public function generarBoletin(Request $request)
     {
-    Log::channel('boletines')->info('Ejecutando generarBoletin', ['request' => $request->all()]);
     $tipo = $request->input('tipo');
+    Log::channel('boletines')->info('Ejecutando generarBoletin', ['tipo' => $tipo]);
     $hoy = \Carbon\Carbon::now();
     $semana = $hoy->weekOfYear;
     $mes = $hoy->month;

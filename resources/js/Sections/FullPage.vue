@@ -22,11 +22,10 @@
 
 
         <TransitionFade>
-            <div v-show="showScrollIcons"
-                class="wrap-flecha">
-                <div @click="scrollToNextMandatory" class="flecha"
+            <div v-show="showScrollIcons" class="wrap-flecha">
+                <div v-if="!inLastSection" @click="scrollToNextMandatory" class="flecha"
                 :class="inFirstSection&&downLabel?'flecha-texto':''" >
-                    <span v-if="inFirstSection && downLabel" class="text-sm">{{ downLabel }}</span><Icon v-if="!inLastSection" icon="material-symbols:arrow-cool-down" />
+                    <span v-if="inFirstSection && downLabel" class="text-sm">{{ downLabel }}</span><Icon icon="material-symbols:arrow-cool-down" />
                 </div>
             </div>
         </TransitionFade>
@@ -68,7 +67,7 @@ const setFixedViewportHeight = () => {
     // Capturar la altura real del viewport sin la barra de direcciones
     const vh = window.innerHeight;
     fixedViewportHeight.value = `${vh}px`;
-    
+
     // También actualizar el contenedor si ya está montado
     if (container.value && container.value.$el) {
         container.value.$el.style.height = `${vh}px`;
@@ -100,7 +99,7 @@ const adjustHeight = () => {
     // Solo actualizar en cambios de orientación significativos
     const currentHeight = window.innerHeight;
     const storedHeight = parseInt(fixedViewportHeight.value);
-    
+
     // Solo actualizar si hay una diferencia significativa (más de 50px)
     if (Math.abs(currentHeight - storedHeight) > 50) {
         setFixedViewportHeight();
@@ -110,7 +109,7 @@ const adjustHeight = () => {
 onMounted(() => {
     // Establecer altura fija del viewport ANTES de configurar eventos
     setFixedViewportHeight();
-    
+
     handleScroll();
     container.value.$el.addEventListener('scroll', handleScroll, { passive: true });
 

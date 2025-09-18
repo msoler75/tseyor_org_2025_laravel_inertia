@@ -123,6 +123,7 @@ declare module 'vue' {
     SearchResultsHeader: typeof import('./resources/js/Components/SearchResultsHeader.vue')['default']
     SecondaryButton: typeof import('./resources/js/Components/SecondaryButton.vue')['default']
     Section: typeof import('./resources/js/Sections/Section.vue')['default']
+    SectionBook: typeof import('./resources/js/Sections/SectionBook.vue')['default']
     SectionBorder: typeof import('./resources/js/Components/SectionBorder.vue')['default']
     Sections: typeof import('./resources/js/Sections/Sections.vue')['default']
     SectionTitle: typeof import('./resources/js/Components/SectionTitle.vue')['default']

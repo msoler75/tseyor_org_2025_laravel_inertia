@@ -17,7 +17,7 @@ export default {
 </script>
 
 <style scoped>
-.grid {
+.grid:not([class*="gap-"]) {
     gap: 4px;
 }
 </style>

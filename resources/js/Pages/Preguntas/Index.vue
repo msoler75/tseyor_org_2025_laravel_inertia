@@ -53,22 +53,17 @@
         </ContentMain>
     </div>
 
-    <div class="bg-base-100 w-full md:pb-16" style="--sectionHeight: 300px">
-        <div class="container mx-auto">
-            <TextImage
-                title="Ver en Biblioteca"
-                class="mx-auto md:max-w-[768px]"
-                full
-                buttonLabel="Ver en Biblioteca"
-                href="/libros/preguntas-y-respuestas-tseyor"
-            >
-            <template #image>
-                <Libro3d :libro="libro"/>
-            </template>
-                <p>Aquí puedes descargar el libro de preguntas y respuestas.</p>
-            </TextImage>
-        </div>
+      <div class="bg-base-100 w-full md:pb-16" style="--sectionHeight: 300px">
+    <SectionBook
+        titulo="Descarga el libro"
+        :slug="libro.slug"
+        :portada="libro.imagen"
+        enlace="/libros/preguntas-y-respuestas-tseyor"
+        buttonLabel="Ver en Biblioteca">
+        <p>Aquí puedes descargar el libro de preguntas y respuestas.</p>
+    </SectionBook>
     </div>
+
 </template>
 
 <script setup>
