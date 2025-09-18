@@ -118,14 +118,16 @@ function buscar() {
         return;
     }
 
-    console.log("Searching for:", triggerText);
+    console.warn('[SEARCH DEBUG] Referencia.buscar() iniciado con texto:', triggerText);
 
     search.reset();
-    search.query = triggerText;
-    search.includeDescription = false;
-    search.restrictToCollections = props.colecciones;
-    search.open();
-    search.call();
+    search.configure({
+        query: triggerText,
+        includeDescription: false,
+        restrictToCollections: props.colecciones,
+        autoFocus: false,
+        opened: true
+    });
 }
 
 // Función auxiliar simple para obtener texto del slot

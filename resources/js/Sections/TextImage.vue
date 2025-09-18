@@ -1,19 +1,19 @@
 <template>
     <div :class="full ? 'pt-20! pb-6! w-full h-full flex flex-col justify-center full' : 'py-12'">
-        <div class="mx-auto text-center" :class="
+        <div class="text-image mx-auto text-center" :class="
             [   srcImage || imageSlotPresent? 'with-image grid grid-cols-1 md:grid-cols-2' : '',
                 full ? 'w-full h-full' : 'container',
                 gridClass,
                 hasLongText ? 'long-text' : ''
             ]">
-                <div v-if="srcImage || imageSlotPresent" class="caja-imagen flex flex-col justify-center items-center bg-center" :class="(imageRight ? 'md:order-last ' : '') +
+            <div v-if="srcImage || imageSlotPresent" class="caja-imagen flex flex-col justify-center items-center bg-center" :class="(imageRight ? 'md:order-last ' : '') +
                 (full ? 'justify-center h-full ' : 'py-4 ') +
                 (full && !cover ? 'relative ' : '') +
                 (caption ? 'gap-2 ' : 'gap-1 ') +
                 imageSideClass" :style="cover ? {
-        'background-image': `url(${srcImageBackground})`,
-        'background-size': 'cover'
-    } : {}">
+                'background-image': `url(${srcImageBackground})`,
+                'background-size': 'cover'
+            } : {}">
                 <slot v-if="imageSlotPresent" name="image" :class="imageClass"/>
                 <template v-else>
                     <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :class="[imageClass, caption ? 'has-caption' : '']" :width="srcWidth" :height="srcHeight"
@@ -331,11 +331,11 @@ const srcImageBackground = computed(() => {
 /* Optimización para pantallas grandes */
 @media (min-width: 1024px) {
     .image-h {
-        max-height: 600px;
+        max-height: 400px;
     }
 
     .image-h.has-caption {
-        max-height: 550px;
+        max-height: 350px;
     }
 
     .full .image-h {

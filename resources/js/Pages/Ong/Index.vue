@@ -27,7 +27,7 @@
         </Section>
 
 
-        <Section class="container">
+        <Section>
             <Text>
                 <h2>Objetivos de la ONG Mundo Armónico Tseyor</h2>
                 <p>El objeto general de esta Asociación es la cooperación en la consecución de una sociedad
@@ -77,18 +77,15 @@
         </Section>
 
 
-        <Section>
-            <TextImage title="Libro: ONG Mundo Armónico Tseyor" class="container" buttonLabel="Ver en Biblioteca"
-                href="/libros/la-ong-mundo-armonico-tseyor">
-                <p>Todo el material recopilado de la ONG de Tseyor, desde julio de 2010 que la Confederación nos
-                    propuso su creación.</p>
-                <template #image>
-                    <Libro3d
-                        :libro="{ slug: 'la-ong-mundo-armonico-tseyor', imagen: '/almacen/medios/libros/227/La%20ONG%20Mundo%20Armonico%20Tseyor.jpg' }"
-                        imageClass="w-[200px]" />
-                </template>
-            </TextImage>
-        </Section>
+        <SectionBook
+            titulo="Libro: ONG Mundo Armónico Tseyor"
+            slug="la-ong-mundo-armonico-tseyor"
+            portada="/almacen/medios/libros/227/La%20ONG%20Mundo%20Armonico%20Tseyor.jpg"
+            enlace="/libros/la-ong-mundo-armonico-tseyor"
+            buttonLabel="Ver en Biblioteca">
+            <p>Todo el material recopilado de la ONG de Tseyor, desde julio de 2010 que la Confederación nos
+                propuso su creación.</p>
+        </SectionBook>
 
         <Section>
             <TextImage title="Muular" srcImage="/almacen/medios/paginas/muular.png" buttonLabel="Conoce el Muular"

@@ -52,10 +52,31 @@ const props = defineProps({
     },
 });
 
-const showGoogleMapsLink = computed(() => props.contacto.pais && props.contacto.poblacion)
+const showGoogleMapsLink = computed(() => {
+    // Mostrar el enlace si tiene coordenadas específicas o al menos país y población
+    return (props.contacto.latitud && props.contacto.longitud) ||
+           (props.contacto.pais && props.contacto.poblacion);
+})
 
 function getGoogleMapsLink(contacto) {
-    const encodedAddress = encodeURIComponent(contacto.direccion);
-    return `https://www.google.com/maps/search/?api=1&query=${encodedAddress} - ${contacto.codigo} ${contacto.poblacion}, ${contacto.provincia}, ${contacto.pais}`;
+    // Si tenemos coordenadas específicas, usarlas directamente
+    if (contacto.latitud && contacto.longitud) {
+        // Usar coordenadas directas sin etiqueta compleja - Google Maps las maneja mejor así
+        return `https://www.google.com/maps?q=${contacto.latitud},${contacto.longitud}&z=17`;
+    }
+
+    // Si no tenemos coordenadas, usar la dirección como fallback
+    const addressParts = [
+        contacto.direccion,
+        contacto.codigo,
+        contacto.poblacion,
+        contacto.provincia,
+        contacto.pais
+    ].filter(Boolean);
+
+    const fullAddress = addressParts.join(', ');
+    const encodedAddress = encodeURIComponent(fullAddress);
+
+    return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}&z=15`;
 }
 </script>

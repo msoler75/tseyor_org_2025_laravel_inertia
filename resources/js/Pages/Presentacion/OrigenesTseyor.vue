@@ -195,10 +195,10 @@
 
         <Section>
             <!-- Sección: Los guías estelares -->
-            <Hero full title="Libro: Los Guías Estelares" srcImage="/almacen/medios/libros/274/Los%20Guias%20Estelares.jpg?h=400"
-                class="container" buttonLabel="Ver en Biblioteca" href="/libros/los-guias-estelares" src-width="200"
-                src-height="300" >
-                <div class="text-base lg:text-lg xl:text-xl xl:leading-8 ">
+            <Hero full title="Libro: Los Guías Estelares" srcImage="/almacen/medios/libros/274/Los%20Guias%20Estelares.jpg"
+                class="container" buttonLabel="Ver en Biblioteca" href="/libros/los-guias-estelares" src-width="394"
+                src-height="591">
+                <div class="text-base lg:text-lg xl:text-xl xl:leading-8">
                     <div>
                         Si quieres saber toda la historia, consulta nuestro libro que recoge toda la historia del grupo e información detallada de cada guía estelar de
                         TSEYOR.

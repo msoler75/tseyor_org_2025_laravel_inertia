@@ -11,7 +11,9 @@
                     <Icon v-show="!search.searching" icon="ph:magnifying-glass-bold" class="text-2xl" />
                     <Spinner v-show="search.searching" class="text-2xl" />
                     <div class="grow relative">
-                        <input id="global-search-input" ref="input" class="search-input w-full !pr-8" v-model="search.query"
+                        <input id="global-search-input" ref="input" class="search-input w-full !pr-8"
+                            :value="search.query"
+                            @input="handleQueryInput"
                             aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off"
                             enterkeyhint="go" spellcheck="false" placeholder="Buscar en el sitio web..." :maxlength="INPUT_MAX_LENGTH"
                             type="search" aria-owns="search-input-list"
@@ -20,7 +22,7 @@
                             <button
                                 v-if="search.query"
                                 type="button"
-                                @click="search.query = ''"
+                                @click="clearQuery"
                                 class="text-3xl absolute right-1 top-1/2 -translate-y-1/2 p-0 cursor-pointer"
                                 tabindex="-1"
                                 aria-label="Limpiar búsqueda"
@@ -96,8 +98,9 @@ import { removeAccents, levenshtein } from '@/composables/textutils'
 import useSelectors from "@/Stores/selectors";
 
 // Constantes para evitar magic numbers
-const SEARCH_DELAY_MS = 350
 const SAVE_SEARCH_DELAY_MS = 2000
+
+// Variables locales del componente
 const DOM_OPERATION_DELAY_MS = 10
 const RANDOM_ID_MULTIPLIER = 1000
 const DEFAULT_PRIORITY_VALUE = 40
@@ -281,6 +284,9 @@ function handlePopState(event) {
 }
 
 onMounted(() => {
+    // Registrar callback para cambios de query
+    search.onQueryChange(handleQueryChange)
+
     window.addEventListener('keydown', function (event) {
         if (event.ctrlKey && event.key === 'k') {
             event.preventDefault()
@@ -362,7 +368,9 @@ watch(() => search.opened, (value) => {
 
         nextTick(() => {
             console.log('watch search.opened: nextTick focus')
-            input.value.focus()
+            if (search.autoFocus) {
+                input.value.focus()
+            }
         })
     } else {
         // Al cerrar el modal, limpiar el estado del historial si es necesario
@@ -389,7 +397,6 @@ function calcularUrl(item) {
 // para buscar
 
 const queryLoading = ref("")
-var timerBuscar = null
 
 // para guardar estadísticas de búsqueda
 var currentUrl = page.url
@@ -397,19 +404,21 @@ var timerGuardarBusqueda = null
 var busquedaId = null
 
 function buscar() {
+    console.warn('[SEARCH DEBUG] GlobalSearch.buscar() iniciado')
     if (search.searching) {
-        console.log('esperando carga de anterior busqueda', queryLoading.value, search.query)
-        // clearTimeout(timerBuscar)
-        timerBuscar = setTimeout(buscar, SEARCH_DELAY_MS)
+        console.warn('[SEARCH DEBUG] GlobalSearch.buscar() - búsqueda en curso, programando nueva', queryLoading.value, search.query)
+        search.searchWithDelay(buscar)
         return
     }
     if (search.query) {
+        console.warn('[SEARCH DEBUG] GlobalSearch.buscar() - ejecutando búsqueda para:', search.query)
         var currentQuery = search.query
         queryLoading.value = currentQuery
         search.searching = true
         search.includeDescription = false
-        search.call()
+        search.searchNow()
         .then(()=>{
+            console.warn('[SEARCH DEBUG] GlobalSearch.buscar() - búsqueda completada, programando guardar')
             timerGuardarBusqueda = setTimeout(guardarBusqueda, SAVE_SEARCH_DELAY_MS)
         })
     }
@@ -435,18 +444,36 @@ async function guardarBusqueda(url) {
         })
 }
 
-watch(() => search.query, (value) => {
+// Función para manejar cambios en el input de búsqueda
+function handleQueryInput(event) {
+    const newQuery = event.target.value
+    console.warn('[SEARCH DEBUG] handleQueryInput() llamado con:', newQuery)
+    search.setQuery(newQuery)
+}
+
+// Función para limpiar la búsqueda
+function clearQuery() {
+    console.warn('[SEARCH DEBUG] clearQuery() llamado')
+    search.setQuery('')
+}
+
+// Función que maneja los cambios de query (reemplaza al watcher)
+function handleQueryChange(newQuery, oldQuery) {
+    console.warn('[SEARCH DEBUG] handleQueryChange() activado con valor:', newQuery)
+
     busquedaId = null // borramos id de la busqueda actual
     clearTimeout(timerGuardarBusqueda) // borramos contador de tiempo para guardar los datos de la busqueda actual, seguramente el usuario está escribiendo aún
-    clearTimeout(timerBuscar) // borramos contador de tiempo para ejecutar la busqueda
-    if (value)
-        timerBuscar = setTimeout(buscar, SEARCH_DELAY_MS)
-    else {
+    if (newQuery) {
+        console.warn('[SEARCH DEBUG] handleQueryChange() - programando búsqueda con timer')
+        search.searchWithDelay(buscar)
+    } else {
+        console.warn('[SEARCH DEBUG] handleQueryChange() - valor vacío, cancelando timer y limpiando')
+        search.cancelTimer()
         search.results = null
         search.lastQuery = null
         search.restrictToCollections = null
     }
-})
+}
 
 
 // Función para cerrar el modal y restaurar scroll si es necesario
@@ -466,7 +493,7 @@ function closeModal() {
 }
 
 function clickPredefined(q) {
-    search.query = q.query
+    search.setQuery(q.query)
     search.restrictToCollections = q.collections
 }
 

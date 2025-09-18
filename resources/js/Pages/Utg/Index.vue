@@ -1,7 +1,7 @@
 <template>
     <Sections white-first>
 
-        <Section height="400" style="--sectionHeight: 500px">
+        <Section>
             <TextImage title="Universidad Tseyor de Granada" srcImage="/almacen/medios/logos/utg.jpg" srcWidth="819"
                 srcHeight="1191" image-right buttonLabel="Ver Estatutos" :href="estatutosUrl" :image-lazy="false">
                 <Prose>
@@ -9,8 +9,7 @@
                         <p>
                             La Universidad Tseyor de Granada mantendrá comunicación, información e interrelación con los
                             distintos Muulasterios en todo el mundo, las casas Tseyor y los pueblos Tseyor también. Y
-                            será una
-                            fuente en la que todo Muul podrá acceder de pleno derecho.
+                            será una fuente en la que todo Muul podrá acceder de pleno derecho.
                         </p>
                     </blockquote>
                 </Prose>
@@ -63,7 +62,7 @@
                     apartado
                     4.1
                 </span>
-                <GridFill w="36rem" class="gap-4">
+                <GridFill colWidth="16rem" class="gap-4 my-8">
                     <CardContent
                     v-for="departamento of departamentos"
                     :key="departamento.nombre"
@@ -79,18 +78,14 @@
         </Section>
 
 
-        <Section class="py-14">
-            <TextImage title="Libro: UTG Universidad Tseyor de Granada" buttonLabel="Ver en Biblioteca" class="container"
-                href="/libros/la-universidad-tseyor-de-granada">
-                <p>Todo el material recopilado de la UTG desde su creación.</p>
-
-                <template #image>
-                    <Libro3d
-                        :libro="{ slug: 'la-universidad-tseyor-de-granada', imagen: '/almacen/medios/libros/249/La%20Universidad%20Tseyor%20de%20Granada.jpg' }"
-                        imageClass="w-[200px]" />
-                </template>
-            </TextImage>
-        </Section>
+        <SectionBook
+            titulo="Libro: UTG Universidad Tseyor de Granada"
+            slug="la-universidad-tseyor-de-granada"
+            portada="/almacen/medios/libros/249/La%20Universidad%20Tseyor%20de%20Granada.jpg"
+            enlace="/libros/la-universidad-tseyor-de-granada"
+            buttonLabel="Ver en Biblioteca">
+            <p>Todo el material recopilado de la UTG desde su creación.</p>
+        </SectionBook>
 
 
 
