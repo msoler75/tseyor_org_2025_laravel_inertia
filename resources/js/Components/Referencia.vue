@@ -118,8 +118,6 @@ function buscar() {
         return;
     }
 
-    console.warn('[SEARCH DEBUG] Referencia.buscar() iniciado con texto:', triggerText);
-
     search.reset();
     search.configure({
         query: triggerText,
