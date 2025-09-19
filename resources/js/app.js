@@ -17,6 +17,7 @@ import { registerAsyncComponents } from '../../async_components.d.ts';
 import useRoute from '@/composables/useRoute.js';
 import {useNav} from '@/Stores/nav.js';
 import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
+import { usePWA } from '@/composables/usePWA.js';
 window.route = useRoute()
 
 const appName = "TSEYOR.org";
@@ -104,6 +105,13 @@ createInertiaApp({
       // app.config.globalProperties.$nav = useNav()
       registerAsyncComponents(app);
       app.component('LazyHydrate', LazyHydrationWrapper);
+
+      // Inicializar PWA
+      if (typeof window !== 'undefined') {
+        const { initializePWA } = usePWA();
+        initializePWA();
+      }
+
       app.mount(el);
     return app;
   },

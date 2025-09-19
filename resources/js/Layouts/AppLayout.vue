@@ -102,6 +102,9 @@
                 class="select-none"
             />
         </div>
+
+        <!-- Notificaciones PWA -->
+        <PWANotifications />
     </div>
 </template>
 
@@ -110,6 +113,7 @@ import useUserStore from "@/Stores/user";
 import usePlayer from "@/Stores/player";
 import setTransitionPages from "@/composables/transitionPages.js";
 import useFolderExplorerStore from "@/Stores/folderExplorer";
+import PWANotifications from "@/Components/PWANotifications.vue";
 //import useRoute from "@/composables/useRoute.js";
 //useRouteimport { useRoute } from 'ziggy-js';
 
