@@ -6,6 +6,7 @@ import vue from "@vitejs/plugin-vue";
 import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
 import { visualizer } from "rollup-plugin-visualizer";
+import { VitePWA } from "vite-plugin-pwa";
 // import ssr from 'vite-plugin-ssr/plugin'
 // import commonjs from 'vite-plugin-commonjs';
 import asyncComponentsPlugin from "./vite-plugin-async-components.js";
@@ -140,6 +141,90 @@ export default defineConfig({
       ],
     }),
     asyncComponentsPlugin(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      filename: 'sw.js',
+      manifestFilename: 'pwa-manifest.json',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2,ttf,eot}']
+      },
+      manifest: {
+        name: 'Tseyor.org',
+        short_name: 'Tseyor',
+        description: 'TSEYOR - Preparándonos para el Salto Cuántico y la creación de las Sociedades Armónicas',
+        theme_color: '#1e40af',
+        background_color: '#ffffff',
+        display: 'standalone',
+        orientation: 'portrait-primary',
+        scope: '/',
+        start_url: '/',
+        icons: [
+          {
+            src: '/ic/android/android-launchericon-48-48.png',
+            sizes: '48x48',
+            type: 'image/png',
+            purpose: 'maskable any'
+          },
+          {
+            src: '/ic/android/android-launchericon-72-72.png',
+            sizes: '72x72',
+            type: 'image/png',
+            purpose: 'maskable any'
+          },
+          {
+            src: '/ic/android/android-launchericon-96-96.png',
+            sizes: '96x96',
+            type: 'image/png',
+            purpose: 'maskable any'
+          },
+          {
+            src: '/ic/ios/128.png',
+            sizes: '128x128',
+            type: 'image/png',
+            purpose: 'maskable any'
+          },
+          {
+            src: '/ic/android/android-launchericon-144-144.png',
+            sizes: '144x144',
+            type: 'image/png',
+            purpose: 'maskable any'
+          },
+          {
+            src: '/ic/ios/152.png',
+            sizes: '152x152',
+            type: 'image/png',
+            purpose: 'maskable any'
+          },
+          {
+            src: '/ic/ios/180.png',
+            sizes: '180x180',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/android/android-launchericon-192-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable any'
+          },
+          {
+            src: '/ic/ios/256.png',
+            sizes: '256x256',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/android/android-launchericon-512-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable any'
+          }
+        ]
+      },
+      devOptions: {
+        enabled: false
+      }
+    }),
     viteCompression({
       filter: /bootstrap\/ssr/, // Excluye TODOS los archivos en esta ruta
       threshold: 1024, // Mínimo 1KB para comprimir

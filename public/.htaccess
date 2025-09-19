@@ -13,6 +13,7 @@ LimitRequestBody 209715200
 
     # Redirect imagenes con parámetros, para que pase por el controller
     RewriteCond %{REQUEST_URI} !^/imagen [NC]
+    RewriteCond %{REQUEST_URI} !^/ic/ [NC]
     RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|webp)$ [NC]
     RewriteCond %{QUERY_STRING} ^(.*)$ [NC]
     RewriteRule ^(.*)$ /imagen%{REQUEST_URI} [QSA,L]

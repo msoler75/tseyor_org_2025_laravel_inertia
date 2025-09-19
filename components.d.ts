@@ -112,6 +112,7 @@ declare module 'vue' {
     Preguntas: typeof import('./resources/js/Components/Preguntas.vue')['default']
     PrimaryButton: typeof import('./resources/js/Components/PrimaryButton.vue')['default']
     Prose: typeof import('./resources/js/Components/Prose.vue')['default']
+    PWANotifications: typeof import('./resources/js/Components/PWANotifications.vue')['default']
     Referencia: typeof import('./resources/js/Components/Referencia.vue')['default']
     ResponsiveNavLink: typeof import('./resources/js/Components/ResponsiveNavLink.vue')['default']
     RichText: typeof import('./resources/js/Sections/RichText.vue')['default']

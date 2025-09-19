@@ -10,6 +10,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="view-transition" content="same-origin">
 
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1e40af">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Tseyor">
+    <link rel="apple-touch-icon" href="/ic/ios/180.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="/ic/ios/57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/ic/ios/60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/ic/ios/72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/ic/ios/76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/ic/ios/114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/ic/ios/120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/ic/ios/144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/ic/ios/152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/ic/ios/180.png">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/ic/ios/16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/ic/ios/32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/ic/android/android-launchericon-192-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/ic/android/android-launchericon-512-512.png">
+    <link rel="manifest" href="/build/pwa-manifest.json">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
 

@@ -71,6 +71,7 @@ $response = $kernel->handle(
     $request = Request::capture()
 );
 
+sleep(1);
 // Log::info(App\T::stats());
 //die;
 
