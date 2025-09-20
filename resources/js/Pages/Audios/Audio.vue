@@ -47,7 +47,9 @@
 
 <script setup>
 import usePlayer from '@/Stores/player'
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 
+const { trackDirectAccess } = useGoogleAnalytics()
 const player = usePlayer()
 
 const props = defineProps({
@@ -84,4 +86,9 @@ function srcAudio(a) {
     if (!a.audio) return a.enlace
     return getSrcUrl(a.audio)
 }
+
+onMounted(() => {
+    // Tracking de acceso directo/externo para audios
+    trackDirectAccess('audio', props.audio.titulo)
+})
 </script>

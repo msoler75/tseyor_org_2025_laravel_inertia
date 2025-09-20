@@ -56,6 +56,9 @@
 <script setup>
 
 import { router } from '@inertiajs/vue3';
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
+
+const { trackSearch } = useGoogleAnalytics()
 
 const props = defineProps({
     modelValue: String,
@@ -122,6 +125,11 @@ const submit = () => {
     if (typeof props.arguments === 'object')
         args = { ...props.arguments, ...args }
     cambiado.value = false
+
+    // Tracking de búsqueda con contexto de página
+    const pageContext = getPageContext()
+    trackSearch(query.value, pageContext)
+
     console.log('router.get args', args)
     router.get(currentUrl.value, args, { preserveScroll: true})
     emit('search', query.value);
@@ -160,5 +168,25 @@ function onBlur() {
     focused.value = false
 }
 
+// Función para determinar el contexto de búsqueda basado en la URL
+const getPageContext = () => {
+    const path = window.location.pathname.toLowerCase()
+
+    if (path.includes('/contactos')) return 'contactos'
+    if (path.includes('/eventos')) return 'eventos'
+    if (path.includes('/comunicados')) return 'comunicados'
+    if (path.includes('/noticias')) return 'noticias'
+    if (path.includes('/audios')) return 'audios'
+    if (path.includes('/videos')) return 'videos'
+    if (path.includes('/psicografias')) return 'psicografias'
+    if (path.includes('/entradas')) return 'entradas'
+    if (path.includes('/boletines')) return 'boletines'
+    if (path.includes('/biblioteca')) return 'biblioteca'
+    if (path === '/' || path === '') return 'inicio'
+
+    // Si no coincide con ninguna sección conocida, usar el primer segmento de la URL
+    const segments = path.split('/').filter(segment => segment !== '')
+    return segments.length > 0 ? segments[0] : 'general'
+}
 
 </script>

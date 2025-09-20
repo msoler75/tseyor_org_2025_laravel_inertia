@@ -56,6 +56,9 @@
 <script setup>
 import {saveImagesInfo} from "@/Stores/image";
 import { parseFiles } from '@/composables/parseFiles'
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
+
+const { trackDirectAccess } = useGoogleAnalytics()
 
 const props = defineProps({
     comunicado: {
@@ -77,4 +80,9 @@ const props = defineProps({
 });
 
 saveImagesInfo(props.imagenesInfo)
+
+onMounted(() => {
+    // Tracking de acceso directo/externo para comunicados
+    trackDirectAccess('comunicado', props.comunicado.titulo)
+})
 </script>

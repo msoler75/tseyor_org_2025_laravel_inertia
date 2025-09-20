@@ -26,6 +26,7 @@
                         :href="verGlosario"
                         class="btn btn-xs font-bold btn-secondary no-underline"
                         v-if="verGlosario"
+                        @click="trackGlosarioClick"
                     >
                         Ver en Glosario
                     </Link>
@@ -40,6 +41,10 @@
 </template>
 
 <script setup>
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
+
+const { trackUserEngagement } = useGoogleAnalytics()
+
 const props = defineProps({
     r: { type: String, required: false },
     colecciones: { default: null },
@@ -70,6 +75,9 @@ function onToolTipActivate(payload) {
         console.warn("No se pudo obtener texto para el tooltip");
         return;
     }
+
+    // Tracking de activación de tooltip
+    trackUserEngagement('tooltip_activate', `referencia: ${triggerText}`)
 
     if (info.value) return;
 
@@ -107,6 +115,11 @@ function onToolTipDeactivate() {
     viendoToolTip.value = false;
 }
 
+const trackGlosarioClick = () => {
+    const triggerText = props.r || getSlotText();
+    trackUserEngagement('glossary_access', `término: ${triggerText}`)
+}
+
 const slots = useSlots();
 
 function buscar() {
@@ -117,6 +130,9 @@ function buscar() {
         console.warn("No se pudo obtener texto para buscar");
         return;
     }
+
+    // Tracking de "saber más"
+    trackUserEngagement('reference_search', `término: ${triggerText}`)
 
     search.reset();
     search.configure({

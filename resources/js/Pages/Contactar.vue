@@ -101,7 +101,6 @@ const form = useForm('inscripcion', {
 
 
 function scrollTop() {
-    console.log('scrollto_5_contactar')
     document.getElementById("myform").scrollIntoView(true)
 }
 

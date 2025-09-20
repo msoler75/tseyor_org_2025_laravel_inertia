@@ -77,9 +77,13 @@ GOOGLE_ANALYTICS_MEASUREMENT_ID=
 - **Archivo:** `resources/js/Stores/player.js`
 - Se trackea automáticamente cuando se reproduce un audio o video
 
-#### Formularios de Contacto
+#### Formularios de Contacto y Suscripciones
 - **Archivo:** `resources/js/Pages/Contactar.vue`
 - Se trackea automáticamente el envío exitoso de formularios de contacto
+- **Archivo:** `resources/js/AsyncComponents/Suscribe.vue`
+- Se trackea automáticamente las suscripciones al boletín desde cualquier página
+- **Archivo:** `resources/js/Pages/Profile/Partials/BoletinSuscripcion.vue`
+- Tracking específico para suscripciones desde el perfil de usuario
 
 ## Tracking Automático de Descargas
 
@@ -127,6 +131,7 @@ No necesitas hacer nada especial. Los siguientes eventos se trackean automática
 - **Descargas de archivos** (PDF, DOC, XLS, ZIP, MP3, MP4, etc.)
 - Reproducción de audio/video
 - Envío de formularios de contacto
+- **Suscripciones al boletín** (desde cualquier página: portada, footer, perfil)
 
 ### Tracking Personalizado
 
@@ -220,10 +225,20 @@ trackDownload('nombre_libro.pdf', 'libro', 'https://tseyor.org/storage/libros/li
 
 ### Para Suscripciones al Boletín
 ```javascript
-const { trackNewsletterSignup } = useGoogleAnalytics();
+// YA NO ES NECESARIO - SE TRACKEA AUTOMÁTICAMENTE
+// El componente Suscribe trackea automáticamente todas las suscripciones
+// Funciona en: Portada, Footer, Perfil de usuario, etc.
 
+// Solo usar si necesitas tracking personalizado:
+const { trackNewsletterSignup } = useGoogleAnalytics();
 trackNewsletterSignup('boletin_tseyor');
 ```
+
+**Métodos de suscripción trackeados:**
+- ✅ Desde la portada: `boletin_tseyor`
+- ✅ Desde el perfil de usuario: `boletin_tseyor_profile`  
+- ✅ Desde el footer: `boletin_tseyor`
+- ✅ Desde cualquier otra página: `boletin_tseyor`
 
 ## Debugging y Verificación SPA
 

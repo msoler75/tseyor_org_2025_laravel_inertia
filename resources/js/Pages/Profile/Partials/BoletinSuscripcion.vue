@@ -34,8 +34,10 @@
 <script setup>
 import axios from 'axios';
 import { ref, onMounted, computed } from 'vue';
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js';
 
 const page = usePage()
+const { trackNewsletterSignup } = useGoogleAnalytics();
 
 const suscripcion = ref(null);
 const loading = ref(true);
@@ -63,6 +65,8 @@ onMounted(() => {
 });
 
 function onSuscrito(email) {
+    // Track newsletter signup from profile page
+    trackNewsletterSignup('boletin_tseyor_profile');
 
     setTimeout(() => {
         // Aquí puedes hacer algo después de que el usuario se haya suscrito

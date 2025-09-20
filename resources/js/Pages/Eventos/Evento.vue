@@ -75,7 +75,9 @@
                     </template>
 
                     <div class="mt-6 col-span-2 flex justify-center" >
-                        <a :href="googleCalendarUrl" target="_blank" rel="noopener" class="btn btn-sm btn-primary flex items-center gap-2" title="Agregar a Google Calendar">
+                        <a :href="googleCalendarUrl" target="_blank" rel="noopener"
+                           @click="trackCalendarAdd"
+                           class="btn btn-sm btn-primary flex items-center gap-2" title="Agregar a Google Calendar">
                             <Icon icon="material-symbols:calendar-add-on-outline" class="text-lg" />
                             Añadir a Google Calendar
                         </a>
@@ -93,6 +95,9 @@
 
 <script setup>
 import { fechaEs } from '@/composables/textutils.js'
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
+
+const { trackUserEngagement, trackDirectAccess } = useGoogleAnalytics()
 
 const props = defineProps({
     evento: {
@@ -192,8 +197,15 @@ const googleCalendarUrl = computed(() => {
 
 const thisUrl = ref(null)
 
+const trackCalendarAdd = () => {
+    trackUserEngagement('calendar_add', `evento: ${props.evento.titulo}`)
+}
+
 onMounted(()=>{
     thisUrl.value = window.location.href
+
+    // Tracking de acceso directo/externo
+    trackDirectAccess('evento', props.evento.titulo)
 })
 
 </script>

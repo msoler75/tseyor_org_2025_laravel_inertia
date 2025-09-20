@@ -23,7 +23,9 @@
             <p v-if="contacto.direccion" class="text-lg"><strong>Dirección:</strong> {{ contacto.direccion }}</p>
             <template v-if="showGoogleMapsLink">
                 <p class="text-lg">
-                    <a :href="getGoogleMapsLink(contacto)" target="_blank" class="hover:text-secondary" rel="noopener noreferrer">Ver en Google
+                    <a :href="getGoogleMapsLink(contacto)" target="_blank"
+                       @click="trackMapsView"
+                       class="hover:text-secondary" rel="noopener noreferrer">Ver en Google
                         Maps</a>
                 </p>
             </template>
@@ -43,7 +45,9 @@
 </template>
 
 <script setup>
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 
+const { trackUserEngagement } = useGoogleAnalytics()
 
 const props = defineProps({
     contacto: {
@@ -51,6 +55,10 @@ const props = defineProps({
         required: true,
     },
 });
+
+const trackMapsView = () => {
+    trackUserEngagement('maps_view', `contacto: ${props.contacto.nombre}`)
+}
 
 const showGoogleMapsLink = computed(() => {
     // Mostrar el enlace si tiene coordenadas específicas o al menos país y población
