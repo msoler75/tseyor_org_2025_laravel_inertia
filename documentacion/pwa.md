@@ -171,27 +171,24 @@ VitePWA({
 
 ### Para puzle.tseyor.org (aplicación puzzle)
 ```javascript
-VitePWA({
-  registerType: 'autoUpdate',
-  filename: 'puzle-sw.js',                     // ✅ Específico
-  manifestFilename: 'puzle-manifest.json',    // ✅ Específico  
-  workbox: {
-    globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2,ttf,eot}']
-  },
-  manifest: {
-    name: 'Puzle Tseyor',
-    short_name: 'Puzle',
-    id: 'org.tseyor.puzle',                   // ✅ ID único DIFERENTE
-    description: 'Juego de Puzzle de Tseyor',
-    theme_color: '#059669',                   // ✅ Color diferente
-    background_color: '#ffffff',
-    display: 'standalone',
-    orientation: 'portrait-primary',
-    scope: '/',                               // ✅ OK (en SU subdominio)
-    start_url: '/',                          // ✅ OK (en SU subdominio)
-    // ... iconos específicos del puzzle
-  }
-})
+// ❌ NO aplicar - El puzzle usa configuración nativa PHP
+// Archivos del puzzle:
+// - manifest-puzle.json (configuración PWA)
+// - sw-puzle.js (service worker) 
+// - index.php (registro automático del SW)
+
+PWA Configuración del Puzle:
+{
+  "name": "Puzle Tseyor",
+  "short_name": "Puzle", 
+  "id": "org.tseyor.puzle",              // ✅ ID único DIFERENTE
+  "theme_color": "#059669",              // ✅ Verde vs azul del sitio principal
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",                          // ✅ OK (en SU subdominio)
+  "start_url": "/",                     // ✅ OK (en SU subdominio)
+  // ... iconos en /iconos/
+}
 ```
 
 ## 🔧 Cambios necesarios en tseyor.org
@@ -255,3 +252,32 @@ Después del cambio, verificar en DevTools → Application:
 - Usuario puede instalar "Puzle Tseyor" desde puzle.tseyor.org
 - Ambas apps funcionan independientemente
 - No hay conflictos ni interferencias
+
+---
+
+## 📋 **Configuración Final Actualizada (Septiembre 2025)**
+
+### 🔥 **Diferencias específicas implementadas:**
+
+| Aspecto | tseyor.org | puzle.tseyor.org |
+|---------|------------|------------------|
+| **Manifest ID** | `org.tseyor.main` | `org.tseyor.puzle` |
+| **Service Worker** | `tseyor-sw.js` | `sw-puzle.js` |
+| **Manifest file** | `tseyor-manifest.json` | `manifest-puzle.json` |
+| **Cache name** | `workbox-precache-*` | `puzle-tseyor-cache-v1.2` |
+| **Color tema** | `#1e40af` (azul) | `#059669` (verde) |
+| **Iconos** | `/ic/android/`, `/ic/ios/` | `/iconos/` |
+| **Tecnología** | VitePWA + Vue + Laravel | PWA nativo + PHP |
+
+### ✅ **Archivos específicos del puzzle:**
+- `📄 manifest-puzle.json` - Configuración PWA específica
+- `⚙️ sw-puzle.js` - Service Worker independiente  
+- `🎯 puzle-tseyor-cache-v1.2` - Caché completamente separado
+- `📁 /iconos/` - Iconos propios (8 tamaños: 48px a 512px)
+
+### 🚀 **Ubicación y acceso:**
+- **Archivos reales**: `D:\projects\puzle.tseyor.org\`
+- **Enlace en proyecto**: `d:\projects\tseyor\laravel_inertia\puzle.tseyor.org\` (Junction)
+- **URL**: `https://puzle.tseyor.org/`
+
+¡Configuración completamente independiente y sin conflictos! 🎉
