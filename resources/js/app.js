@@ -3,7 +3,7 @@ import "./bootstrap";
 import "../css/app.css";
 
 //import { createApp, h } from "vue";
-import { createSSRApp, h } from 'vue'
+import { createSSRApp, h, nextTick } from 'vue'
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
@@ -18,6 +18,7 @@ import useRoute from '@/composables/useRoute.js';
 import {useNav} from '@/Stores/nav.js';
 import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
 import { usePWA } from '@/composables/usePWA.js';
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js';
 window.route = useRoute()
 
 const appName = "TSEYOR.org";
@@ -110,6 +111,55 @@ createInertiaApp({
       if (typeof window !== 'undefined') {
         const { initializePWA } = usePWA();
         initializePWA();
+
+        // Inicializar Google Analytics
+        const { loadGoogleAnalytics, trackPageView, trackDownload } = useGoogleAnalytics();
+        loadGoogleAnalytics();
+
+        // Variable para controlar tracking duplicado
+        let lastTrackedUrl = null;
+        let trackingTimeout = null;
+
+        // Configurar listener global para descargas
+        document.addEventListener('click', (event) => {
+          const target = event.target.closest('a');
+          if (target) {
+            // Detectar enlaces de descarga
+            const isDownload = target.hasAttribute('download') ||
+                             target.href.match(/\.(pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|mp3|mp4|avi)$/i);
+
+            if (isDownload) {
+              const fileName = target.download || target.href.split('/').pop() || 'unknown_file';
+              const fileExtension = fileName.split('.').pop()?.toLowerCase() || '';
+              const fullUrl = target.href;
+              trackDownload(fileName, fileExtension, fullUrl);
+            }
+          }
+        });
+
+        // Configurar seguimiento automático de navegación con Inertia
+        // Usar evento 'finish' en lugar de 'navigate' para mayor precisión
+        app.config.globalProperties.$inertia.on('finish', (event) => {
+          // Limpiar timeout anterior si existe
+          if (trackingTimeout) {
+            clearTimeout(trackingTimeout);
+          }
+
+          // Usar timeout para evitar múltiples llamadas rápidas
+          trackingTimeout = setTimeout(() => {
+            nextTick(() => {
+              const title = document.title;
+              const url = window.location.href;
+
+              // Evitar tracking duplicado de la misma URL en corto período
+              if (lastTrackedUrl !== url) {
+                // console.log('Inertia navigation finished, tracking page view:', url, title);
+                trackPageView(url, title);
+                lastTrackedUrl = url;
+              }
+            });
+          }, 100); // Pequeño delay para agrupar eventos múltiples
+        });
       }
 
       app.mount(el);

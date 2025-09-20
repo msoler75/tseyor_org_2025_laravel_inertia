@@ -7,9 +7,9 @@ import { ref, onMounted } from 'vue'
 const PWA_CONFIG = {
   // 🔧 Control de popups de notificación
   notifications: {
-    install: true,        // "¡Instala Tseyor!" - Banner de instalación
-    update: true,         // "Nueva versión disponible" - Notificación de actualización
-    offline: true,        // "App lista offline" - Confirmación de funcionalidad offline
+    install: false,        // "¡Instala Tseyor!" - Banner de instalación
+    update: false,         // "Nueva versión disponible" - Notificación de actualización
+    offline: false,        // "App lista offline" - Confirmación de funcionalidad offline
   },
 
   // ⏱️ Tiempo de auto-ocultación (milisegundos)
@@ -114,6 +114,7 @@ export function usePWA() {
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault()
+      console.log('📱 PWA instalable detectada - usando control personalizado')
       deferredPrompt = e
       if (PWA_CONFIG.notifications.install) {
         showInstallPrompt.value = true

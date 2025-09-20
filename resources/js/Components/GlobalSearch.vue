@@ -96,6 +96,7 @@ import useGlobalSearch from "@/Stores/globalSearch.js"
 import traducir from '@/composables/traducciones'
 import { removeAccents, levenshtein } from '@/composables/textutils'
 import useSelectors from "@/Stores/selectors";
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js';
 
 // Constantes para evitar magic numbers
 const SAVE_SEARCH_DELAY_MS = 2000
@@ -109,6 +110,7 @@ const PRIORITY_FACTOR = 0.1
 const SCORE_ROUND_DIVISOR = 10
 
 const selectors = useSelectors();
+const { trackSearch } = useGoogleAnalytics();
 
 const prioridad_grupos = [
     'paginas', // el más prioritario
@@ -413,6 +415,10 @@ function buscar() {
         queryLoading.value = currentQuery
         search.searching = true
         search.includeDescription = false
+
+        // Track search event to Google Analytics
+        trackSearch(currentQuery);
+
         search.searchNow()
         .then(()=>{
             timerGuardarBusqueda = setTimeout(guardarBusqueda, SAVE_SEARCH_DELAY_MS)

@@ -47,4 +47,9 @@ return [
 
     'openai_key' => env('OPEN_AI_KEY', NULL),
 
+    'google_analytics' => [
+        'tracking_id' => env('GOOGLE_ANALYTICS_TRACKING_ID'),
+        'measurement_id' => env('GOOGLE_ANALYTICS_MEASUREMENT_ID'),
+    ],
+
 ];

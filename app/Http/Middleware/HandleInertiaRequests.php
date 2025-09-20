@@ -47,7 +47,10 @@ class HandleInertiaRequests extends Middleware
             'csrf_token' => csrf_token(),
             // obtener fecha y hora del servidor:
             'timestamp_server' => time(),
-            'api_url' => config('app.api_url')
+            'api_url' => config('app.api_url'),
+            'google_analytics' => [
+                'measurement_id' => config('services.google_analytics.measurement_id'),
+            ]
         ]);
 
         // si no tiene el header X-INERTIA:
