@@ -143,14 +143,15 @@ export default defineConfig({
     asyncComponentsPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
-      filename: 'sw.js',
-      manifestFilename: 'pwa-manifest.json',
+      filename: 'tseyor-sw.js',
+      manifestFilename: 'tseyor-manifest.json',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2,ttf,eot}']
       },
       manifest: {
         name: 'Tseyor.org',
         short_name: 'Tseyor',
+        id: 'org.tseyor.main',
         description: 'TSEYOR - Preparándonos para el Salto Cuántico y la creación de las Sociedades Armónicas',
         theme_color: '#1e40af',
         background_color: '#ffffff',
