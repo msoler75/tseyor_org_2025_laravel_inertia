@@ -1,4 +1,7 @@
 import { webApiAvailable, AudioProcessor } from "./audioProcessor.js";
+import { useGoogleAnalytics } from '../composables/useGoogleAnalytics.js';
+
+const { trackVideoPlay, trackAudioPlay } = useGoogleAnalytics();
 
 const player = reactive({
   url: null,
@@ -118,6 +121,16 @@ const player = reactive({
   _handlePlay(event) {
     this._updateState();
     this._logDevEvent("play", event);
+
+    // Google Analytics tracking
+    if (this.music?.title) {
+      if (this.isVideo) {
+        trackVideoPlay(this.music.title, this.url);
+      } else {
+        trackAudioPlay(this.music.title, this.url);
+      }
+    }
+
     window.dispatchEvent(
       new CustomEvent("player-playing", {
         detail: { url: this.url, title: this.music.title },

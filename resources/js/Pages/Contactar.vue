@@ -84,9 +84,11 @@
 
 <script setup>
 import { useForm } from '@inertiajs/vue3'
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 
 const submitted = ref(false)
 const error = ref(false)
+const { trackContactForm } = useGoogleAnalytics()
 
 const form = useForm('inscripcion', {
     nombre: '',
@@ -111,6 +113,8 @@ function submit() {
         preserveScroll: true,
         onSuccess: () => {
             submitted.value = true
+            // Track successful form submission
+            trackContactForm('contacto')
             scrollTop()
         },
         onError: (response) => {

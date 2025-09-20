@@ -12,8 +12,10 @@
 
 <script setup>
 import { Link as InertiaLink } from "@inertiajs/vue3";
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js';
 
 const nav = useNav()
+const { trackEvent, trackDownload } = useGoogleAnalytics();
 
 const props = defineProps(
     {
@@ -114,6 +116,21 @@ const asIF = computed( () => {
 
 
 function handleClick() {
+    // Tracking de Google Analytics para descargas
+    if (props.href && props.href.match(/\.(pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|mp3|mp4|avi)$/i)) {
+        const fileName = props.href.split('/').pop() || 'unknown_file';
+        const fileExtension = fileName.split('.').pop()?.toLowerCase() || '';
+        trackDownload(fileName, fileExtension, props.href);
+    }
+    // Tracking de Google Analytics para enlaces externos
+    else if (props.href && (props.href.startsWith('http') || props.href.startsWith('mailto:') || props.href.startsWith('tel:'))) {
+        trackEvent('click', {
+            link_domain: new URL(props.href).hostname || props.href,
+            link_url: props.href,
+            outbound: true
+        });
+    }
+
     if(props.fadeOut)
         nav.fadeoutPage()
     if (props.preservePage)
