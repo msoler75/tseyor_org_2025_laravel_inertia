@@ -34,7 +34,7 @@
                     <div class="bg-base-100">
                         <div v-for="mode of modes" :key="mode.label"
                             class="flex gap-3 items-center px-4 py-2  hover:bg-base-300 cursor-pointer whitespace-nowrap"
-                            @click="selectors.vistaComunicados = mode.label">
+                            @click="cambiarVistaComunicados(mode.label)">
                             <span class="w-4">
                                 <Icon v-show="selectors.vistaComunicados == mode.label" icon="ph:check" />
                             </span>
@@ -201,6 +201,9 @@
 <script setup>
 
 import useSelectors from '@/Stores/selectors'
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
+
+const { trackUserEngagement } = useGoogleAnalytics()
 
 const VISTA_TARJETAS = 'Vista normal'
 const VISTA_LISTADO = 'Listado'
@@ -357,7 +360,14 @@ function focusBuscar() {
     });
 }
 
+const cambiarVistaComunicados = (nuevaVista) => {
+    const vistaAnterior = selectors.vistaComunicados;
+    selectors.vistaComunicados = nuevaVista;
 
+    // Tracking del cambio de vista
+    trackUserEngagement('comunicados_view_change', `${vistaAnterior} -> ${nuevaVista}`)
+    console.log('📰 Cambio de vista comunicados:', vistaAnterior, '->', nuevaVista)
+}
 
 </script>
 
