@@ -107,10 +107,12 @@ export function useGoogleAnalytics() {
         });
     };
 
-    const trackSearch = (searchTerm) => {
+    const trackSearch = (searchTerm, searchContext = '') => {
         trackEvent('search', {
             search_term: searchTerm,
+            search_context: searchContext,
         });
+        console.log('🔍 Búsqueda:', searchTerm, searchContext ? `en ${searchContext}` : '')
     };
 
     const trackVideoPlay = (videoTitle, videoUrl = '') => {
@@ -134,19 +136,105 @@ export function useGoogleAnalytics() {
     };
 
     const trackContactForm = (formName = 'contact') => {
-        trackEvent('generate_lead', {
+        gtag('event', 'form_submit', {
             form_name: formName,
-        });
-    };
+            page_title: document.title,
+            page_location: window.location.href
+        })
+        console.log('📋 Formulario enviado:', formName)
+    }
 
     const trackUserEngagement = (engagementType, content = '') => {
-        trackEvent('engagement', {
+        gtag('event', 'user_engagement', {
             engagement_type: engagementType,
             content: content,
-        });
-    };
+            page_title: document.title,
+            page_location: window.location.href
+        })
+        console.log('👤 Engagement:', engagementType, content)
+    }
 
-    // Función para configurar el consentimiento de cookies (GDPR)
+    const trackDirectAccess = (contentType, contentTitle) => {
+        const referrer = document.referrer
+        const currentDomain = window.location.hostname
+
+        // Detectar tipo de acceso
+        if (!referrer) {
+            // Sin referrer = acceso directo (URL escrita, marcador, QR, compartido)
+            gtag('event', 'direct_access', {
+                content_type: contentType,
+                content_title: contentTitle,
+                access_method: 'direct_url_or_qr',
+                page_title: document.title,
+                page_location: window.location.href
+            })
+            console.log('📱 Acceso directo detectado:', contentType, contentTitle)
+            return 'direct'
+        } else {
+            // Verificar si viene de dominio externo
+            try {
+                const referrerDomain = new URL(referrer).hostname
+                if (referrerDomain !== currentDomain) {
+                    // Viene de dominio externo
+                    gtag('event', 'external_access', {
+                        content_type: contentType,
+                        content_title: contentTitle,
+                        source_domain: referrerDomain,
+                        referrer_url: referrer,
+                        page_title: document.title,
+                        page_location: window.location.href
+                    })
+                    console.log('🔗 Acceso desde dominio externo:', contentType, contentTitle, 'desde:', referrerDomain)
+                    return 'external'
+                }
+            } catch (error) {
+                // Error al parsear referrer, considerar como directo
+                gtag('event', 'direct_access', {
+                    content_type: contentType,
+                    content_title: contentTitle,
+                    access_method: 'unknown_referrer',
+                    page_title: document.title,
+                    page_location: window.location.href
+                })
+                console.log('📱 Acceso con referrer desconocido:', contentType, contentTitle)
+                return 'direct'
+            }
+        }
+        return 'internal'
+    }
+
+    const trackViewTime = (contentType, contentTitle, viewTimeSeconds) => {
+        // Categorizar el tiempo de visualización
+        let timeCategory = 'very_short' // < 5 segundos
+        if (viewTimeSeconds >= 5 && viewTimeSeconds < 15) timeCategory = 'short'
+        else if (viewTimeSeconds >= 15 && viewTimeSeconds < 30) timeCategory = 'medium'
+        else if (viewTimeSeconds >= 30 && viewTimeSeconds < 60) timeCategory = 'long'
+        else if (viewTimeSeconds >= 60) timeCategory = 'very_long'
+
+        gtag('event', 'view_time', {
+            content_type: contentType,
+            content_title: contentTitle,
+            view_time_seconds: viewTimeSeconds,
+            time_category: timeCategory,
+            page_title: document.title,
+            page_location: window.location.href
+        })
+        console.log('⏱️ Tiempo de visualización:', contentType, viewTimeSeconds + 's', `(${timeCategory})`)
+    }
+
+    return {
+        loadGoogleAnalytics,
+        trackPageView,
+        trackDownload,
+        trackSearch,
+        trackVideoPlay,
+        trackAudioPlay,
+        trackNewsletterSignup,
+        trackContactForm,
+        trackUserEngagement,
+        trackDirectAccess,
+        trackViewTime,
+    }    // Función para configurar el consentimiento de cookies (GDPR)
     const grantConsent = () => {
         if (!gtag) return;
 

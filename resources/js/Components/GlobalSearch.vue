@@ -417,7 +417,7 @@ function buscar() {
         search.includeDescription = false
 
         // Track search event to Google Analytics
-        trackSearch(currentQuery);
+        trackSearch(currentQuery, 'búsqueda_global');
 
         search.searchNow()
         .then(()=>{

@@ -20,7 +20,9 @@
                 <p>{{ sala.descripcion }}</p>
 
                 <div class="flex w-full justify-end">
-                    <a target="_blank" :href="sala.enlace" class=" btn btn-primary after:content-['↗']">Acceder</a>
+                    <a target="_blank" :href="sala.enlace"
+                       @click="trackSalaAcceso"
+                       class=" btn btn-primary after:content-['↗']">Acceder</a>
                 </div>
 
             </div>
@@ -31,7 +33,9 @@
 </template>
 
 <script setup>
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 
+const { trackUserEngagement } = useGoogleAnalytics()
 
 const props = defineProps({
     sala: {
@@ -40,5 +44,8 @@ const props = defineProps({
     }
 });
 
+const trackSalaAcceso = () => {
+    trackUserEngagement('sala_access', `sala: ${props.sala.nombre}`)
+}
 
 </script>

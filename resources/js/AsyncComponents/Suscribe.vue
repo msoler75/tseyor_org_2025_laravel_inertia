@@ -33,6 +33,7 @@
 </template>
 
 <script setup>
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js';
 
 const props = defineProps({
     email: String,
@@ -40,6 +41,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['suscripcion']);
+const { trackNewsletterSignup } = useGoogleAnalytics();
 
 const email = ref(props.email);
 const successMessage = ref('');
@@ -53,6 +55,10 @@ function submitForm() {
         .then(response => {
             successMessage.value = 'Suscripción exitosa';
             errorMessage.value = '';
+
+            // Track newsletter signup to Google Analytics
+            trackNewsletterSignup('boletin_tseyor');
+
             emit('suscripcion', email.value);
         })
         .catch(error => {

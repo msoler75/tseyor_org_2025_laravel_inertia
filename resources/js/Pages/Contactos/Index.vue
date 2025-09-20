@@ -43,14 +43,14 @@
                 <!-- md -->
                 <div role="tablist" class="tabs tabs-lift">
                     <a
-                        @click="vista = 'mapa'"
+                        @click="cambiarVista('mapa')"
                         role="tab"
                         class="tab font-bold uppercase"
                         :class="vista == 'mapa' ? 'tab-active' : ''"
                         >Mapa</a
                     >
                     <a
-                        @click="vista = 'listado'"
+                        @click="cambiarVista('listado')"
                         role="tab"
                         class="tab font-bold uppercase"
                         :class="vista == 'listado' ? 'tab-active' : ''"
@@ -113,6 +113,9 @@
 <script setup>
 import { getImageUrl } from "@/Stores/image.js";
 import { loadGoogleMaps } from "@/composables/google";
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
+
+const { trackUserEngagement } = useGoogleAnalytics()
 
 const props = defineProps({
     paisActivo: { default: () => "" },
@@ -267,5 +270,14 @@ function clickPais(pais) {
     console.log("clickPais", pais);
     paisClick.value = pais;
     cargando.value = true;
+}
+
+const cambiarVista = (nuevaVista) => {
+    const vistaAnterior = vista.value;
+    vista.value = nuevaVista;
+
+    // Tracking del cambio de vista
+    trackUserEngagement('contactos_view_change', `${vistaAnterior} -> ${nuevaVista}`)
+    console.log('🗺️ Cambio de vista contactos:', vistaAnterior, '->', nuevaVista)
 }
 </script>

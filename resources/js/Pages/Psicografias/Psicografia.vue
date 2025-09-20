@@ -47,6 +47,9 @@
 </template>
 
 <script setup>
+import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
+
+const { trackUserEngagement, trackDirectAccess } = useGoogleAnalytics()
 
 const props = defineProps({
     psicografia: {
@@ -64,6 +67,14 @@ const props = defineProps({
 });
 
 function abrirEnPuzle(slug) {
+    // Tracking del evento antes de abrir
+    trackUserEngagement('puzle_open', `psicografia: ${props.psicografia.titulo}`)
+
     window.open(`https://puzle.tseyor.org/?psicografia=${slug}`, "_blank");
 }
+
+onMounted(() => {
+    // Tracking de acceso directo/externo para psicografías
+    trackDirectAccess('psicografia', props.psicografia.titulo)
+})
 </script>
