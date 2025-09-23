@@ -71,6 +71,7 @@
         "vue-advanced-cropper": "^2.8.9",
         "vue-router": "^4.5.0",
         "vue-select": "^4.0.0-beta.6",
+        "vue-zoomable": "^1.2.8",
         "vue2-dropzone-vue3": "^1.1.0",
         "vue3-carousel": "^0.16.0",
         "vue3-lazy-hydration": "^1.2.1",

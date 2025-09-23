@@ -4,6 +4,19 @@ let gtag = null;
 let lastPageViewUrl = null;
 let lastPageViewTime = 0;
 
+// Definir rangos de tiempo con sus categorías
+const timeRanges = [
+    { min: 3600, category: '60min' },  // 60+ minutos
+    { min: 2700, category: '45min' },  // 45-60 minutos
+    { min: 1800, category: '30min' },  // 30-45 minutos
+    { min: 900,  category: '15min' },  // 15-30 minutos
+    { min: 600,  category: '10min' },  // 10-15 minutos
+    { min: 300,  category: '5min' },   // 5-10 minutos
+    { min: 120,  category: '2min' },   // 2-5 minutos
+    { min: 60,   category: '1min' },   // 1-2 minutos
+    { min: 0,    category: '0min' }    // < 1 minuto
+]
+
 export function useGoogleAnalytics() {
     const page = usePage();
     const measurementId = computed(() => page.props?.google_analytics?.measurement_id);
@@ -16,6 +29,7 @@ export function useGoogleAnalytics() {
 
         // Evitar cargar GA múltiples veces
         if (window.gtag) {
+            gtag = window.gtag; // Asegurar que la variable local esté sincronizada
             return;
         }
 
@@ -52,9 +66,23 @@ export function useGoogleAnalytics() {
         }
     };
 
+    // Función auxiliar para asegurar que GA esté inicializado
+    const ensureGoogleAnalytics = () => {
+        if (!gtag && typeof window !== 'undefined' && measurementId.value) {
+            // Verificar si window.gtag existe (puede haberse cargado externamente)
+            if (window.gtag) {
+                gtag = window.gtag;
+            } else {
+                // Auto-inicializar si es necesario
+                loadGoogleAnalytics();
+            }
+        }
+        return !!gtag;
+    };
+
     // Función para enviar eventos de página vista
     const trackPageView = (url = null, title = null) => {
-        if (!gtag || !measurementId.value) return;
+        if (!ensureGoogleAnalytics() || !measurementId.value) return;
 
         const pageUrl = url || window.location.href;
         const pageTitle = title || document.title;
@@ -90,7 +118,7 @@ export function useGoogleAnalytics() {
 
     // Función para enviar eventos personalizados
     const trackEvent = (eventName, parameters = {}) => {
-        if (!gtag) return;
+        if (!ensureGoogleAnalytics()) return;
 
         gtag('event', eventName, parameters);
     };
@@ -136,6 +164,11 @@ export function useGoogleAnalytics() {
     };
 
     const trackContactForm = (formName = 'contact') => {
+        if (!gtag) {
+            console.warn('⚠️ Google Analytics no disponible, no se puede trackear formulario')
+            return
+        }
+
         gtag('event', 'form_submit', {
             form_name: formName,
             page_title: document.title,
@@ -145,6 +178,11 @@ export function useGoogleAnalytics() {
     }
 
     const trackUserEngagement = (engagementType, content = '') => {
+        if (!gtag) {
+            console.warn('⚠️ Google Analytics no disponible, no se puede trackear engagement')
+            return
+        }
+
         gtag('event', 'user_engagement', {
             engagement_type: engagementType,
             content: content,
@@ -155,21 +193,48 @@ export function useGoogleAnalytics() {
     }
 
     const trackDirectAccess = (contentType, contentTitle) => {
+        if (!gtag) {
+            console.warn('⚠️ Google Analytics no disponible, no se puede trackear acceso directo')
+            return 'unknown'
+        }
+
         const referrer = document.referrer
         const currentDomain = window.location.hostname
 
+        // En SPAs con Inertia.js, necesitamos verificar si hay navegación interna previa
+        const hasInternalNavigation = window.history.length > 1
+        const sessionStart = !window.performance ||
+                           window.performance.navigation.type === window.performance.navigation.TYPE_NAVIGATE
+
+        console.log('🔍 Direct Access Debug:', {
+            referrer: referrer,
+            hasInternalNavigation: hasInternalNavigation,
+            sessionStart: sessionStart,
+            historyLength: window.history.length,
+            navigationType: window.performance ? window.performance.navigation.type : 'unknown'
+        })
+
         // Detectar tipo de acceso
         if (!referrer) {
-            // Sin referrer = acceso directo (URL escrita, marcador, QR, compartido)
-            gtag('event', 'direct_access', {
-                content_type: contentType,
-                content_title: contentTitle,
-                access_method: 'direct_url_or_qr',
-                page_title: document.title,
-                page_location: window.location.href
-            })
-            console.log('📱 Acceso directo detectado:', contentType, contentTitle)
-            return 'direct'
+            // Sin referrer - podría ser directo o navegación SPA
+            if (hasInternalNavigation && !sessionStart) {
+                // Probablemente navegación interna SPA
+                console.log('🔄 Navegación interna SPA detectada')
+                return 'internal'
+            } else {
+                // Sin referrer = acceso directo (URL escrita, marcador, QR, compartido)
+                gtag('event', 'direct_access', {
+                    content_type: contentType,
+                    content_title: contentTitle,
+                    access_method: 'direct_url_or_qr',
+                    page_title: document.title,
+                    page_location: window.location.href,
+                    session_start: sessionStart,
+                    history_length: window.history.length
+                })
+                console.log('📱 Acceso directo detectado:', contentType, contentTitle)
+                return 'direct'
+            }
         } else {
             // Verificar si viene de dominio externo
             try {
@@ -182,59 +247,92 @@ export function useGoogleAnalytics() {
                         source_domain: referrerDomain,
                         referrer_url: referrer,
                         page_title: document.title,
-                        page_location: window.location.href
+                        page_location: window.location.href,
+                        session_start: sessionStart,
+                        history_length: window.history.length
                     })
                     console.log('🔗 Acceso desde dominio externo:', contentType, contentTitle, 'desde:', referrerDomain)
                     return 'external'
+                } else {
+                    // Mismo dominio pero con referrer - navegación normal dentro del sitio
+                    console.log('🏠 Navegación interna con referrer del mismo dominio')
+                    return 'internal'
                 }
             } catch (error) {
-                // Error al parsear referrer, considerar como directo
-                gtag('event', 'direct_access', {
-                    content_type: contentType,
-                    content_title: contentTitle,
-                    access_method: 'unknown_referrer',
-                    page_title: document.title,
-                    page_location: window.location.href
-                })
-                console.log('📱 Acceso con referrer desconocido:', contentType, contentTitle)
-                return 'direct'
+                // Error al parsear referrer, considerar como directo solo si es inicio de sesión
+                if (sessionStart) {
+                    gtag('event', 'direct_access', {
+                        content_type: contentType,
+                        content_title: contentTitle,
+                        access_method: 'unknown_referrer',
+                        page_title: document.title,
+                        page_location: window.location.href,
+                        error: error.message
+                    })
+                    console.log('📱 Acceso con referrer desconocido:', contentType, contentTitle)
+                    return 'direct'
+                } else {
+                    console.log('🔄 Error de referrer en navegación interna')
+                    return 'internal'
+                }
             }
         }
-        return 'internal'
     }
 
     const trackViewTime = (contentType, contentTitle, viewTimeSeconds) => {
-        // Categorizar el tiempo de visualización
-        let timeCategory = 'very_short' // < 5 segundos
-        if (viewTimeSeconds >= 5 && viewTimeSeconds < 15) timeCategory = 'short'
-        else if (viewTimeSeconds >= 15 && viewTimeSeconds < 30) timeCategory = 'medium'
-        else if (viewTimeSeconds >= 30 && viewTimeSeconds < 60) timeCategory = 'long'
-        else if (viewTimeSeconds >= 60) timeCategory = 'very_long'
+        if (!ensureGoogleAnalytics()) {
+            console.warn('⚠️ Google Analytics no disponible, no se puede trackear tiempo de visualización')
+            return
+        }
+
+        // Encontrar la categoría correspondiente usando los rangos globales
+        const timeCategory = timeRanges.find(range => viewTimeSeconds >= range.min).category
 
         gtag('event', 'view_time', {
             content_type: contentType,
             content_title: contentTitle,
             view_time_seconds: viewTimeSeconds,
+            view_time_minutes: Math.round(viewTimeSeconds / 60 * 10) / 10, // Redondeado a 1 decimal
             time_category: timeCategory,
             page_title: document.title,
             page_location: window.location.href
         })
-        console.log('⏱️ Tiempo de visualización:', contentType, viewTimeSeconds + 's', `(${timeCategory})`)
+
+        console.log('⏱️ Tiempo de visualización:', contentType, Math.round(viewTimeSeconds / 60 * 10) / 10 + 'min', `(${timeCategory})`)
     }
 
-    return {
-        loadGoogleAnalytics,
-        trackPageView,
-        trackDownload,
-        trackSearch,
-        trackVideoPlay,
-        trackAudioPlay,
-        trackNewsletterSignup,
-        trackContactForm,
-        trackUserEngagement,
-        trackDirectAccess,
-        trackViewTime,
-    }    // Función para configurar el consentimiento de cookies (GDPR)
+    const trackPlayTime = (mediaType, mediaTitle, playTimeSeconds, totalDurationSeconds = null) => {
+        if (!gtag) {
+            console.warn('⚠️ Google Analytics no disponible, no se puede trackear tiempo de reproducción')
+            return
+        }
+
+        // Encontrar la categoría correspondiente usando los rangos globales
+        const timeCategory = timeRanges.find(range => playTimeSeconds >= range.min).category
+
+        // Calcular porcentaje de reproducción si se proporciona la duración total
+        let playProgress = 'unknown'
+        if (totalDurationSeconds && totalDurationSeconds > 0) {
+            const progressPercentage = Math.round((playTimeSeconds / totalDurationSeconds) * 100)
+            playProgress = `${Math.min(progressPercentage, 100)}%`
+        }
+
+        gtag('event', 'media_play_time', {
+            media_type: mediaType, // 'audio' o 'video'
+            media_title: mediaTitle,
+            play_time_seconds: playTimeSeconds,
+            play_time_minutes: Math.round(playTimeSeconds / 60 * 10) / 10,
+            time_category: timeCategory,
+            play_progress: playProgress,
+            total_duration_seconds: totalDurationSeconds,
+            page_title: document.title,
+            page_location: window.location.href
+        })
+
+        console.log('🎵 Tiempo de reproducción:', mediaType, Math.round(playTimeSeconds / 60 * 10) / 10 + 'min', `(${timeCategory})`, playProgress !== 'unknown' ? `- ${playProgress}` : '')
+    }
+
+    // Función para configurar el consentimiento de cookies (GDPR)
     const grantConsent = () => {
         if (!gtag) return;
 
@@ -253,6 +351,7 @@ export function useGoogleAnalytics() {
 
     return {
         loadGoogleAnalytics,
+        ensureGoogleAnalytics,
         trackPageView,
         trackEvent,
         trackDownload,
@@ -262,6 +361,9 @@ export function useGoogleAnalytics() {
         trackNewsletterSignup,
         trackContactForm,
         trackUserEngagement,
+        trackDirectAccess,
+        trackViewTime,
+        trackPlayTime,
         grantConsent,
         denyConsent,
         measurementId

@@ -49,6 +49,7 @@ use Illuminate\Support\Facades\Cookie;
 use App\Http\Controllers\BoletinesController;
 use App\Http\Controllers\SuscriptorController;
 use App\Http\Controllers\McpTokenController;
+use App\Http\Controllers\AnalyticsController;
 
 
 
@@ -487,7 +488,8 @@ Route::get('dev/2',  'App\Http\Controllers\DevController@dev2');
 // Endpoint para MCP (ahora gestionado por opgginc/laravel-mcp-server)
 // Route::match(['get', 'post'], 'mcp', '\Opgginc\LaravelMcpServer\Http\Controllers\McpController');
 
-
+// Analytics - sendBeacon para tracking al cerrar navegador
+Route::post('analytics/beacon', [AnalyticsController::class, 'beacon'])->name('analytics.beacon');
 
 
 ///// FINAL FALLBACK PAGE

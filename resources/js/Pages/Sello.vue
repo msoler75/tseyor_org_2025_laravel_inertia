@@ -22,17 +22,22 @@
   </template>
 
   <script setup>
+  import { ref, onMounted, onUnmounted } from 'vue'
   import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
+  import { useViewTimeTracking } from '@/composables/useViewTimeTracking.js'
 
-  const { trackUserEngagement, trackViewTime } = useGoogleAnalytics()
+  const { trackUserEngagement } = useGoogleAnalytics()
+  const viewTimeTracker = useViewTimeTracking()
+  const { startTracking, stopTracking } = viewTimeTracker
 
   const imageSrc = ref('/almacen/medios/logos/SELLO_TRANSPARENTE_GRANDE.png');
   const isFullscreen = ref(false);
-  const fullscreenStartTime = ref(null);
 
   function openFullscreen() {
     isFullscreen.value = true;
-    fullscreenStartTime.value = Date.now();
+
+    // Iniciar tracking de tiempo de visualización
+    startTracking('sello', 'sello de tseyor')
 
     // Tracking de apertura de pantalla completa
     trackUserEngagement('sello_fullscreen_open', 'sello de tseyor')
@@ -50,20 +55,12 @@
     }
   }
 
-  // Calcular tiempo de visualización
-  if (fullscreenStartTime.value) {
-    const viewTime = Date.now() - fullscreenStartTime.value;
-    const viewTimeSeconds = Math.round(viewTime / 1000);
+  // Detener tracking (automáticamente envía el tiempo)
+  stopTracking()
 
-    // Tracking específico de tiempo de visualización
-    trackViewTime('sello', 'sello de tseyor', viewTimeSeconds)
-
-    // Tracking de cierre con tiempo de visualización
-    trackUserEngagement('sello_fullscreen_close', `tiempo_visualización: ${viewTimeSeconds}s`)
-    console.log('📺 Sello cerrado tras', viewTimeSeconds, 'segundos')
-
-    fullscreenStartTime.value = null;
-  }
+  // Tracking de cierre
+  trackUserEngagement('sello_fullscreen_close', 'cerrado por usuario')
+  console.log('📺 Sello cerrado')
 
   isFullscreen.value = false;
 }
@@ -82,6 +79,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  // stopTracking se encarga de limpiar automáticamente los listeners
+  stopTracking()
 })
   </script>
 

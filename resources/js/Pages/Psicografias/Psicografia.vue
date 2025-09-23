@@ -21,7 +21,7 @@
 
                 <div>{{ psicografia.descripcion }}</div>
 
-                <Content :content="`<img src='${psicografia.imagen}'>`" class="mx-auto" />
+                <Content :content="`<img src='${getSrcUrl(psicografia.imagen)}'>`" class="mx-auto" />
 
 
                     <div class="mt-7 flex justify-end">
@@ -48,6 +48,7 @@
 
 <script setup>
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
+import {getSrcUrl}  from '@/composables/srcutils.js'
 
 const { trackUserEngagement, trackDirectAccess } = useGoogleAnalytics()
 
