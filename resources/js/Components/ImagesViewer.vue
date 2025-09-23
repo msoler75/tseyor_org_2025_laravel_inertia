@@ -232,10 +232,10 @@ const handleScale = (num, flag = false) => {
 
 const changeUrl = (url) => {
     console.log('IV: changeUrl', url)
-    
+
     // Detener tracking anterior
     stopTracking()
-    
+
     state.imgState = 'loading'
     loadImage(url)
         .then(() => {
@@ -267,7 +267,7 @@ const init = () => {
 const handleClose = () => {
     // Detener tracking antes de cerrar
     stopTracking()
-    
+
     state.visible = false
     emit('close')
     // props.on_unmount_v3_ima_preview_app?.()
