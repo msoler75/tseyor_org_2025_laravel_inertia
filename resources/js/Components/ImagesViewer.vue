@@ -6,29 +6,42 @@
             <span class=" loading loading-spinner loading-lg" v-show="state.imgState === 'loading'"
                 aria-hidden="true"></span>
 
-            <div ref="imgContainer" class="fixed left-0 top-0 w-full h-full flex items-center justify-center"
-                @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
-                @mousedown.prevent="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseUp" :style="{
-                    transform: `scale(${style.imgScaleTouch})`,
-                    left: position.x + 'px',
-                    top: position.y + 'px',
-                }">
+            <!-- VueZoomable container -->
+            <VueZoomable
+                style="width: 100vw; height: 100vh;"
+                selector="#imageContent"
+                :min-zoom="0.1"
+                :max-zoom="10"
+                :wheel-enabled="true"
+                :wheel-zoom-step="0.15"
+                :dbl-click-enabled="true"
+                :dbl-click-zoom-step="0.5"
+                :pan-enabled="true"
+                :zoom-enabled="true"
+                :mouse-enabled="true"
+                :touch-enabled="true"
+                :enable-control-button="false"
+                zoom-origin="pointer"
+                v-model:zoom="zoomLevel"
+                v-model:pan="panPosition"
+            >
+                <div id="imageContent" class="w-full h-full flex items-center justify-center">
+                    <!-- Imagen cargada con éxito -->
+                    <img v-show="state.imgState === 'success'"
+                        :src="state.src"
+                        :style="`transform: rotate(${rotationAngle}deg);`"
+                        class="max-w-full max-h-full object-contain pointer-events-none select-none"
+                        alt=""
+                        @load="onImageLoad" />
 
-                <!-- Imagen cargada con éxito -->
-                <img v-show="state.imgState === 'success'"
-                    class="max-w-full max-h-full cursor-move transition-transform duration-200" :src="state.src"
-                    :style="`transform: scale(${style.imgScale}) rotate(${style.imgRotate}deg);`" alt="" />
-
-                <!-- Error de carga de imagen -->
-                <div v-show="state.imgState === 'error'" class="text-gray-700" aria-hidden="true"
-                    :style="`transform: scale(${style.imgScale}) rotate(${style.imgRotate}deg);`">
-                    <Icon icon="ph:image-broken-duotone" class="text-9xl pepet" />
+                    <!-- Error de carga de imagen -->
+                    <div v-show="state.imgState === 'error'">
+                        <Icon icon="ph:image-broken-duotone" />
+                    </div>
                 </div>
-            </div>
-
-            <!-- Botón de cierre -->
+            </VueZoomable>            <!-- Botón de cierre -->
             <button
-                class="z-30 text-2xl absolute flex justify-center items-center top-1 lg:top-12 right-4 lg:right-12 w-9 h-9 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
+                class="z-40 text-2xl absolute flex justify-center items-center top-1 lg:top-12 right-4 lg:right-12 w-9 h-9 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
                 :class="!showFilename ? 'bg-black/30' : 'lg:bg-black/30'" aria-hidden="true"
                 @click="handleClose" v-if="showCloseBtn">
                 <Icon icon="material-symbols-light:close" />
@@ -36,13 +49,13 @@
 
             <!-- Flechas de navegación -->
             <template v-if="visibleArrowBtn">
-                <div class="absolute left-4 lg:left-12 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black/30 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
+                <div class="absolute left-4 lg:left-12 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black/30 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110 z-40"
                     title="Anterior" @click="toggleImg(false)">
                     <button class="w-6 h-6 flex justify-center items-center">
                         <Icon icon="ph:caret-left-duotone" class="text-xl" />
                     </button>
                 </div>
-                <div class="absolute right-4 lg:right-12 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black/30 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110"
+                <div class="absolute right-4 lg:right-12 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black/30 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110 z-40"
                     title="Siguiente" @click="toggleImg(true)">
                     <button class="w-6 h-6 flex justify-center items-center">
                         <Icon icon="ph:caret-right-duotone" class="text-xl" />
@@ -51,7 +64,7 @@
             </template>
 
             <!-- Barra top -->
-            <div class="lg:hidden absolute top-0 left-0 w-full text-4xl bg-black/40 py-2 text-gray-300"
+            <div class="lg:hidden absolute top-0 left-0 w-full text-4xl bg-black/40 py-2 text-gray-300 z-40"
                 v-if="showFilename && showToolbar">
                 <section class="text-center text-lg px-3">
                     {{ currentImageName }}
@@ -60,7 +73,7 @@
 
             <!-- Barra de herramientas -->
             <div class="absolute bottom-0 lg:bottom-[10%] left-0 w-full lg:w-auto lg:left-1/2 lg:-translate-x-1/2 flex flex-col justify-center text-4xl lg:text-2xl
-        bg-black/40 lg:rounded-2xl py-2 text-gray-300
+        bg-black/40 lg:rounded-2xl py-2 text-gray-300 z-40
         " v-if="showToolbar">
                 <section class="flex gap-6 justify-center items-center px-4">
                     <button class="cursor-pointer transition-transform duration-200 hover:scale-110" aria-hidden="true"
@@ -100,6 +113,9 @@
 
 <script setup>
 import { useEventListener } from '@vueuse/core'
+import VueZoomable from 'vue-zoomable'
+import 'vue-zoomable/dist/style.css'
+import { useViewTimeTracking } from '@/composables/useViewTimeTracking.js'
 
 const props = defineProps({
     show: { type: Boolean, default: false },
@@ -112,40 +128,32 @@ const props = defineProps({
     keyboard: { type: Boolean, default: true },
     escClose: { type: Boolean, default: true },
     showCloseBtn: { type: Boolean, default: true },
-    // on_unmount_v3_ima_preview_app: { type: Function }
 })
 
 const emit = defineEmits(['close'])
 
+// Inicializar composable de tracking de tiempo de visualización
+const { startTracking, stopTracking } = useViewTimeTracking()
+
+// Función para detectar si una imagen es una psicografía
+const isPsicography = (imageUrl) => {
+    if (!imageUrl) return false
+    return imageUrl.includes('almacen/medios/psicografias/')
+}
+
 const vImagesWrap = ref(null)
-const imgContainer = ref(null)
-// const disabled = ref(false)
-/*const { x, y, style: dragStyle } = useDraggable(imgContainer, {
-    preventDefault: true,
-    disabled,
-})*/
 
-
-
+// Estado de la imagen
 const state = reactive({
     imgState: 'loading',
     src: '',
     imgIndex: props.index
 })
 
-const position = reactive({ x: 0, y: 0 });
-const style = reactive({
-    imgScale: 1,
-    imgScaleTouch: 1,
-    imgRotate: 0
-})
-
-let initialDistance = null;
-let initialMidpoint = { x: 0, y: 0 };
-let baseScale = 1
-let isDragging = false;
-let lastTouchX = 0;
-let lastTouchY = 0;
+// Variables para VueZoomable
+const zoomLevel = ref(1)
+const panPosition = ref({ x: 0, y: 0 })
+const rotationAngle = ref(0)
 
 const visibleArrowBtn = computed(() => props.images?.length > 1 && props.showArrowBtn)
 const isMultiple = computed(() => props.images?.length > 1)
@@ -164,6 +172,11 @@ const loadImage = (url) => {
     })
 }
 
+const onImageLoad = (event) => {
+    // Ya no necesitamos capturar dimensiones
+    console.log('Imagen cargada')
+}
+
 const handleKeyStroke = (e) => {
     if (!props.keyboard) return false
     if (!props.show) return false
@@ -172,7 +185,7 @@ const handleKeyStroke = (e) => {
     const { key } = e
     if (['s', 'S', 'ArrowDown', '-'].includes(key)) { e.preventDefault(); return handleScale(-0.1, false) }
     if (['w', 'W', 'ArrowUp', '+'].includes(key)) { e.preventDefault(); return handleScale(0.1, false) }
-    if (key === ' ') return initImgSize()
+    if (key === ' ') { e.preventDefault(); return initImgSize() }
     if (key === 'Escape' && props.escClose) return handleClose()
     if (['E', 'e'].includes(key)) return handleRotate(true)
     if (['Q', 'q'].includes(key)) return handleRotate(false)
@@ -182,9 +195,13 @@ const handleKeyStroke = (e) => {
 
 const initImg = () => {
     nextTick(() => {
-        if (props.url !== undefined) return changeUrl(props.url)
+        if (props.url !== undefined) {
+            changeUrl(props.url)
+            return
+        }
         if (Array.isArray(props.images) && props.images?.length > 0) {
-            return changeUrl(props.images[state.imgIndex])
+            changeUrl(props.images[state.imgIndex])
+            return
         } else {
             // console.warn('images is not Array or Array length is 0')
         }
@@ -193,41 +210,46 @@ const initImg = () => {
 
 const initImgSize = () => {
     console.log('IV: initImgSize')
-    style.imgScale = 1;
-    style.imgScaleTouch = 1;
-    style.imgRotate = 0;
-    position.x = 0;
-    position.y = 0;
-    simulateTouches = []
+    zoomLevel.value = 1
+    panPosition.value = { x: 0, y: 0 }
+    rotationAngle.value = 0
 }
 
-
 const handleRotate = (flag) => {
-    style.imgRotate += 90 * (flag ? 1 : -1)
+    rotationAngle.value += 90 * (flag ? 1 : -1)
 }
 
 const handleScale = (num, flag = false) => {
-    if (style.imgScale <= 0.2 && num < 0) return
-    if (flag) {
-        style.imgScale = num
-    } else {
-        style.imgScale += num
-    }
-}
+    const currentScale = zoomLevel.value
+    let newScale = flag ? num : currentScale + num
 
-const handleScroll = (e) => {
-    e.preventDefault()
-    handleScale(e.deltaY < 0 ? 0.05 : -0.05)
+    // Limitar el zoom mínimo y máximo
+    if (newScale <= 0.1 && num < 0) return
+    if (newScale >= 10 && num > 0) return
+
+    zoomLevel.value = newScale
 }
 
 const changeUrl = (url) => {
     console.log('IV: changeUrl', url)
+    
+    // Detener tracking anterior
+    stopTracking()
+    
     state.imgState = 'loading'
     loadImage(url)
         .then(() => {
             state.imgState = 'success'
             state.src = url
-            initImgSize()
+            // Resetear transform cuando cambiamos de imagen
+            nextTick(() => {
+                initImgSize()
+                // Iniciar tracking de la nueva imagen si es psicografía
+                if (isPsicography(url)) {
+                    startTracking('psicografia', currentImageName.value)
+                    console.log('🔮 Iniciando tracking de psicografía:', currentImageName.value)
+                }
+            })
         })
         .catch(() => {
             state.imgState = 'error'
@@ -236,13 +258,16 @@ const changeUrl = (url) => {
 
 const init = () => {
     nextTick(() => {
-        useEventListener(vImagesWrap.value, 'mousewheel', handleScroll, false)
+        // Ya no necesitamos configurar wheel zoom manualmente
         initImgSize()
         initImg()
     })
 }
 
 const handleClose = () => {
+    // Detener tracking antes de cerrar
+    stopTracking()
+    
     state.visible = false
     emit('close')
     // props.on_unmount_v3_ima_preview_app?.()
@@ -267,6 +292,8 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+    // Detener tracking antes de desmontar el componente
+    stopTracking()
     window.removeEventListener('keydown', handleKeyStroke)
 })
 
@@ -278,152 +305,18 @@ watch(() => props.index, (index) => {
     }
 })
 
-
-// arrastrar y redimensionar imagen
-
-
-function handleTouchStart(event) {
-    if (event.touches.length === 1) {
-        isDragging = true;
-        const touch = event.touches[0];
-        lastTouchX = touch.clientX;
-        lastTouchY = touch.clientY;
-    } else if (event.touches.length === 2) {
-        setInitialZoom(event.touches)
+// Watcher para cuando se oculta el componente
+watch(() => props.show, (newShow, oldShow) => {
+    if (oldShow && !newShow) {
+        // El componente se está ocultando, detener tracking
+        stopTracking()
     }
-}
+})
 
 
-function handleTouchMove(event) {
-    event.preventDefault(); // Prevenir el scroll del navegador
-
-    if (isDragging && event.touches.length === 1) {
-        const touch = event.touches[0];
-        const deltaX = touch.clientX - lastTouchX;
-        const deltaY = touch.clientY - lastTouchY;
-
-        position.x += deltaX;
-        position.y += deltaY;
-
-        lastTouchX = touch.clientX;
-        lastTouchY = touch.clientY;
-    } else if (event.touches.length === 2 && initialDistance) {
-        setScalingZoom(event.touches)
-    }
-}
-
-function handleTouchEnd() {
-    isDragging = false;
-    initialDistance = null;
-    initialMidpoint = { x: 0, y: 0 };
-}
-
-
-let simulateTouches = []
-
-function handleMouseDown(event) {
-    // si está la tecla Ctrl pulsada:
-    if (event.ctrlKey) {
-        // no es touch:
-        simulateTouches = [{clientX:event.clientX, clientY:event.clientY}]
-        return;
-    }
-    if (event.button === 0) {
-
-        if(simulateTouches.length > 0) {
-            simulateTouches.push({clientX:event.clientX, clientY:event.clientY})
-            setInitialZoom(simulateTouches)
-            return;
-        }
-
-        isDragging = true;
-        // no es touch:
-        lastTouchX = event.clientX;
-        lastTouchY = event.clientY;
-    }
-}
-
-function handleMouseMove(event) {
-    if (isDragging) {
-        const deltaX = event.clientX - lastTouchX;
-        const deltaY = event.clientY - lastTouchY;
-
-        position.x += deltaX;
-        position.y += deltaY;
-
-        lastTouchX = event.clientX;
-        lastTouchY = event.clientY;
-    } else if(simulateTouches.length > 1) {
-        simulateTouches[1].clientX = event.clientX
-        simulateTouches[1].clientY = event.clientY
-        setScalingZoom(simulateTouches)
-    }
-}
-
-function handleMouseUp() {
-    isDragging = false;
-    if(simulateTouches.length==2)
-        simulateTouches = []
-}
-
-
-
-
-
-// operaciones de Zoom
-function setInitialZoom(touches) {
-    isDragging = false;
-    baseScale = style.imgScaleTouch;
-    const [touch1, touch2] = touches;
-    initialDistance = Math.hypot(
-        touch2.clientX - touch1.clientX,
-        touch2.clientY - touch1.clientY
-    );
-
-    initialMidpoint = {
-        x: (touch1.clientX + touch2.clientX) / 2,
-        y: (touch1.clientY + touch2.clientY) / 2
-    };
-}
-
-function setScalingZoom(touches) {
-
-    const [touch1, touch2] = touches;
-    const currentDistance = Math.hypot(
-        touch2.clientX - touch1.clientX,
-        touch2.clientY - touch1.clientY
-    );
-
-
-    const currentMidpoint = {
-        x: (touch1.clientX + touch2.clientX) / 2,
-        y: (touch1.clientY + touch2.clientY) / 2
-    };
-
-
-    const newScale = baseScale * (currentDistance / initialDistance);
-
-    style.imgScaleTouch = newScale
-
-
-    // calculo de la posición del centro del movimiento touch
-
-    // const scaleFactor = newScale / style.imgScaleTouch;
-
-    // Calcular el desplazamiento basado en el punto medio
-    // const dx = (initialMidpoint.x - touch2.clientX) / scaleFactor;
-    // const dy = (initialMidpoint.y - touch2.clientY) / scaleFactor;
-
-    // position.x -= 0.01*dx;
-    // position.y -=  0.01*dy;
-
-    // Ajustar la posición basada en el movimiento del punto medio
-    //position.x += currentMidpoint.x - initialMidpoint.x;
-    //position.y += currentMidpoint.y - initialMidpoint.y;
-
-
-    console.log({x: position.x, y: position.y, scale: style.imgScale, scaleTouch: style.imgScaleTouch})
-}
+// arrastrar y redimensionar imagen - Manejado por zoompinch
+// Todas las funciones de manejo de touch y mouse han sido removidas
+// ya que zoompinch las maneja internamente
 
 </script>
 
