@@ -48,7 +48,7 @@ class ContenidosController extends Controller
             :
             Contenido::select($campos)
             ->when(!$esAdministrador, function ($query) {
-                $query->where('visibilidad', 'P');
+                $query->publicado();
             })
             ->whereNotIn('coleccion', $colecciones_excluidas)
             ->latest('updated_at')
@@ -120,7 +120,7 @@ class ContenidosController extends Controller
 
         if(false)
         if ($busqueda_valida && !$resultados->count()) // por algun motivo algunas busquedas no las encuentra. En esos casos, buscamos manualmente
-            $resultados = Contenido::where('visibilidad', 'P')->where('titulo', 'LIKE', "%$buscarFiltrado%")
+            $resultados = Contenido::publicado()->where('titulo', 'LIKE', "%$buscarFiltrado%")
                 ->orWhere('texto_busqueda', 'LIKE', "%$buscarFiltrado%")
                 ->paginate(ContenidosController::$ITEMS_SEARCH)
                 ->appends($request->except('page'));

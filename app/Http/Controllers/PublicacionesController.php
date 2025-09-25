@@ -18,8 +18,8 @@ class PublicacionesController extends Controller
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        $query = Publicacion::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
-            ->where('visibilidad', 'P');
+                $query = Publicacion::withFavorito()
+            ->publicada();
 
         if ($buscar) {
             $ids = Publicacion::search($buscar)->get()->pluck('id');

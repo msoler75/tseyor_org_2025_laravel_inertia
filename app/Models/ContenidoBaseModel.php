@@ -225,4 +225,68 @@ class ContenidoBaseModel extends Model
         // Añadimos solo la columna calculada favorito, preservando cualquier select previo
         return $query->selectRaw('CASE WHEN favoritos.id IS NULL THEN 0 ELSE 1 END as favorito');
     }
+
+    /**
+     * Lógica común para filtrar contenido con visibilidad 'P'
+     * Solo aplica el filtro si el modelo tiene el campo 'visibilidad'
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function scopeContenidoVisible($query)
+    {
+        $model = $query->getModel();
+        $table = $model->getTable();
+
+        // Si el modelo tiene 'visibilidad' en fillable, aplicamos el filtro
+        if (in_array('visibilidad', $model->getFillable())) {
+            return $query->where($table . '.visibilidad', 'P');
+        }
+
+        // Si no tiene el campo visibilidad, no aplicamos filtro
+        return $query;
+    }
+
+    /**
+     * Scope para filtrar contenido publicado (masculino)
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePublicado($query)
+    {
+        return $this->scopeContenidoVisible($query);
+    }
+
+    /**
+     * Scope para filtrar contenido publicada (femenino)
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePublicada($query)
+    {
+        return $this->scopeContenidoVisible($query);
+    }
+
+
+    /**
+     * Scope para filtrar contenido en borrador
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeBorrador($query)
+    {
+        $model = $query->getModel();
+        $table = $model->getTable();
+
+        // Si el modelo tiene 'visibilidad' en fillable, aplicamos el filtro
+        if (in_array('visibilidad', $model->getFillable())) {
+            return $query->where($table . '.visibilidad', 'B');
+        }
+
+        // Si no tiene el campo visibilidad, no aplicamos filtro
+        return $query;
+    }
 }

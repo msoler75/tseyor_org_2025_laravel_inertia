@@ -18,8 +18,8 @@ class NormativasController extends Controller
         $categoria = $request->input('categoria');
         $page = $request->input('page', 1);
 
-        $query = Normativa::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
-            ->where('visibilidad', 'P')
+                $query = Normativa::withFavorito()
+            ->publicada()
             ->when($categoria === '_', function ($query) {
                 $query->orderByRaw('LOWER(titulo)');
             })

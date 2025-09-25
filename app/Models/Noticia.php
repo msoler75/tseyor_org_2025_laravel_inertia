@@ -30,7 +30,7 @@ class Noticia extends ContenidoBaseModel
     /* public static function search($term)
     {
         return static::query()
-            ->where('visibilidad', 'P')
+            ->publicada()
             ->where(function ($query) use ($term) {
                 $query->where('titulo', 'LIKE', "%{$term}%")
                     ->orWhere('descripcion', 'LIKE', "%{$term}%")

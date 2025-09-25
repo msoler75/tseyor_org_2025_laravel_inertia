@@ -18,7 +18,7 @@ class VideosController extends Controller
         $buscar = $request->input('buscar');
 
         $query = Video::select(['slug', 'titulo', 'descripcion', 'enlace', 'updated_at'])
-            ->where('visibilidad', 'P');
+            ->publicado();
 
         if ($buscar) {
             $ids = Video::search($buscar)->get()->pluck('id')->toArray();
@@ -26,7 +26,7 @@ class VideosController extends Controller
         }
 
         $resultados = $query
-            ->orderBy('created_at', 'asc')
+            ->ordenado()
             ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends(['buscar' => $buscar/*,  'categoria' => $categoria*/]);
 

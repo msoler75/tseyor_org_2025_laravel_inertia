@@ -19,7 +19,7 @@ class AudiosController extends Controller
 
         $query = Audio::select(['id', 'slug', 'titulo', 'descripcion', 'audio', 'enlace', 'updated_at', 'categoria'])
             ->withFavorito()
-            ->where('visibilidad', 'P')
+            ->publicado()
             ->when($categoria === '_', function ($query) {
                 $query->orderByRaw('LOWER(titulo)');
             })

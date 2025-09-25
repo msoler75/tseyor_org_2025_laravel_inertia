@@ -99,7 +99,7 @@ class ComunicadosController extends Controller
         }
 
         // solo los comunicados publicados
-        $resultados->where('visibilidad', 'P');
+        $resultados->publicado();
 
         //y ahora filtramos por año
         if (is_numeric($año))
@@ -174,11 +174,11 @@ class ComunicadosController extends Controller
 
         if ($comunicado->fecha_comunicado) {
             $siguiente = Comunicado::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'fecha_comunicado'])
-                ->where('visibilidad', 'P')
+                ->publicado()
                 ->where('fecha_comunicado', '>', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'asc')->first();
 
             $anterior = Comunicado::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'fecha_comunicado'])
-                ->where('visibilidad', 'P')
+                ->publicado()
                 ->where('fecha_comunicado', '<', $comunicado->fecha_comunicado)->orderBy('fecha_comunicado', 'desc')->first();
         }
 
@@ -229,7 +229,7 @@ class ComunicadosController extends Controller
             $buscar = $request->input('buscar');
 
             $comunicados = Comunicado::select(['slug', 'titulo', 'descripcion', 'fecha_comunicado'])
-                ->where('visibilidad', 'P')
+                ->publicado()
                 ->latest()->paginate(10)->appends(['buscar' => $buscar]);
 
             return Inertia::render('Comunicados/Archivo', [

@@ -18,8 +18,8 @@ class MeditacionesController extends Controller
         $categoria = $request->input('categoria');
         $page = $request->input('page', 1);
 
-        $query = Meditacion::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
-            ->where('visibilidad', 'P')
+                $query = Meditacion::withFavorito()
+            ->publicada()
             ->when($categoria === '_', function ($query) {
                 $query->orderByRaw('LOWER(titulo)');
             })

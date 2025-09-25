@@ -27,7 +27,7 @@ class PaginasController extends Controller
         $page = $request->input("page", 1);
         $buscar = $request->input('buscar');
         $query = Pagina::select(['ruta', 'titulo', 'visibilidad', 'updated_at'])
-            ->where('visibilidad', 'P');
+            ->publicada();
 
         if ($buscar) {
             $ids = Pagina::search($buscar)->get()->pluck('id')->toArray();
@@ -50,7 +50,7 @@ class PaginasController extends Controller
 
 
         $query = Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion', 'visibilidad', 'updated_at'])
-            ->where('visibilidad', 'P')
+            ->publicada()
             // debe tener el campo texto
             ->where('descubre', TRUE);
 
@@ -105,7 +105,7 @@ class PaginasController extends Controller
     public function portada()
     {
         // Verificar si hay eventos próximos (en los próximos 30 días)
-        $hay_proximos_eventos = Evento::where('visibilidad', 'P')
+        $hay_proximos_eventos = Evento::publicado()
             ->where('fecha_inicio', '>=', now())
             // ->where('fecha_inicio', '<=', now()->addDays(30))
             ->exists();
@@ -115,17 +115,17 @@ class PaginasController extends Controller
             [
                 'hayProximosEventos' => $hay_proximos_eventos,
                 'stats' => Inertia::lazy(function () {
-                    $cc = Comunicado::where('visibilidad', 'P')->count();
+                    $cc = Comunicado::publicado()->count();
                     return
                         [
                             'comunicados' => $cc,
                             'paginas' => $cc * 12 + $cc % 7,
-                            'libros' => Libro::where('visibilidad', 'P')->count(),
+                            'libros' => Libro::publicado()->count(),
                             'usuarios' => User::count(),
-                            'audios' => Audio::where('visibilidad', 'P')->count(),
-                            'entradas' => Entrada::where('visibilidad', 'P')->count(),
-                            'meditaciones' => Meditacion::where('visibilidad', 'P')->count(),
-                            'videos' => Video::where('visibilidad', 'P')->count(),
+                            'audios' => Audio::publicado()->count(),
+                            'entradas' => Entrada::publicado()->count(),
+                            'meditaciones' => Meditacion::publicado()->count(),
+                            'videos' => Video::publicado()->count(),
                             'centros' => Centro::count()
                         ];
                 })
@@ -141,14 +141,14 @@ class PaginasController extends Controller
                 'stats' => Inertia::lazy(function () {
                     return
                         [
-                            'comunicados' => Comunicado::where('visibilidad', 'P')->count(),
-                            'libros' => Libro::where('visibilidad', 'P')->count(),
-                            'audios' => Audio::where('visibilidad', 'P')->count(),
-                            'entradas' => Entrada::where('visibilidad', 'P')->count(),
-                            'videos' => Video::where('visibilidad', 'P')->count(),
-                            'meditaciones' => Meditacion::where('visibilidad', 'P')->count(),
+                            'comunicados' => Comunicado::publicado()->count(),
+                            'libros' => Libro::publicado()->count(),
+                            'audios' => Audio::publicado()->count(),
+                            'entradas' => Entrada::publicado()->count(),
+                            'videos' => Video::publicado()->count(),
+                            'meditaciones' => Meditacion::publicado()->count(),
                             'psicografias' => Psicografia::count(),
-                            'descubre'=>Pagina::where('visibilidad', 'P')->where('descubre', TRUE)->count()
+                            'descubre'=>Pagina::publicado()->where('descubre', TRUE)->count()
                         ];
                 })
             ]

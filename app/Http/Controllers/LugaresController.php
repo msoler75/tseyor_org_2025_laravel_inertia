@@ -17,7 +17,7 @@ class LugaresController extends Controller
         $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
         $resultados = Lugar::select(['nombre', 'slug', 'descripcion', 'imagen'])
-        ->where('visibilidad', 'P');
+        ->publicado();
 
         if ($buscar) {
             $ids = Lugar::search($buscar)->get()->pluck('id')->toArray();
