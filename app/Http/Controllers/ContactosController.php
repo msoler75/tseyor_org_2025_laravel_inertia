@@ -37,7 +37,7 @@ class ContactosController extends Controller
         //dd($buscar);
 
         $query = Contacto::select(['id', 'nombre', 'slug', 'imagen', 'poblacion', 'pais', 'latitud', 'longitud'])
-            ->where('visibilidad', 'P');
+            ->publicado();
 
         if ($pais)
             $query->where('pais', $pais);
@@ -55,7 +55,7 @@ class ContactosController extends Controller
             ->appends($request->except('page'));
 
         $paises = Contacto::selectRaw('pais as codigo, count(*) as total')
-            ->where('visibilidad', 'P')
+            ->publicado()
             ->groupBy('pais')
             ->get();
 

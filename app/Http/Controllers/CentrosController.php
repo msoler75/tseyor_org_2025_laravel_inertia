@@ -65,9 +65,9 @@ class CentrosController extends Controller
         if (!in_array($centro->imagen, $imagenes))
             array_unshift($imagenes, $centro->imagen);
 
-        $eventos = Evento::select(['id', 'titulo', 'slug', 'descripcion', 'fecha_inicio', 'imagen'])->where('centro_id', $centro->id)->where('visibilidad', 'P')->take(4)->latest()->get();
-        $entradas = Entrada::select(['id', 'titulo', 'slug', 'descripcion', 'imagen'])->whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->entradas, -1, PREG_SPLIT_NO_EMPTY))->where('visibilidad', 'P')->latest()->get();
-        $libros = Libro::whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->libros, -1, PREG_SPLIT_NO_EMPTY))->where('visibilidad', 'P')->latest()->get();
+        $eventos = Evento::select(['id', 'titulo', 'slug', 'descripcion', 'fecha_inicio', 'imagen'])->where('centro_id', $centro->id)->publicado()->take(4)->latest()->get();
+        $entradas = Entrada::select(['id', 'titulo', 'slug', 'descripcion', 'imagen'])->whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->entradas, -1, PREG_SPLIT_NO_EMPTY))->publicada()->latest()->get();
+        $libros = Libro::whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->libros, -1, PREG_SPLIT_NO_EMPTY))->publicado()->latest()->get();
 
         $centro->pais = $centro->nombrePais; // Countries::getCountry($centro->pais);
 

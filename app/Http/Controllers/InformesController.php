@@ -86,7 +86,7 @@ class InformesController extends Controller
                 });
             } else {
                 // si no tengo cuenta de usuario, solo puedo ver informes publicados, y que son de equipos no privados
-                $query->where('visibilidad', 'P')
+                $query->publicado()
                     ->where('equipos.oculto', false);
             }
         }

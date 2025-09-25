@@ -65,6 +65,11 @@ Route::group([
     Route::crud('pagina', 'PaginaCrudController');
     Route::crud('termino', 'TerminoCrudController');
     Route::crud('video', 'VideoCrudController');
+
+    // Rutas adicionales para reordenar videos
+    Route::get('video/{id}/move-up', 'VideoCrudController@moveUp')->name('admin.video.move-up');
+    Route::get('video/{id}/move-down', 'VideoCrudController@moveDown')->name('admin.video.move-down');
+
     Route::crud('tutorial', 'TutorialCrudController');
     Route::crud('experiencia', 'ExperienciaCrudController');
     Route::crud('job', 'JobCrudController');

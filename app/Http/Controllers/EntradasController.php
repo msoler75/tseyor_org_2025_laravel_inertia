@@ -18,8 +18,8 @@ class EntradasController extends Controller
         $page = $request->input('page', 1);
 
 
-        $query = Entrada::select(['slug', 'titulo', 'imagen', 'descripcion', 'updated_at', 'published_at', 'categoria'])
-            ->where('visibilidad', 'P');
+                $query = Entrada::withFavorito()
+            ->publicada();
 
         if ($buscar) {
             $ids = Entrada::search($buscar)->get()->pluck('id')->toArray();
@@ -58,11 +58,11 @@ class EntradasController extends Controller
         }
 
         $siguiente = Entrada::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
-            ->where('visibilidad', 'P')
+            ->publicada()
             ->where('published_at', '>', $entrada->published_at)->orderBy('published_at', 'asc')->first();
 
         $anterior = Entrada::select(['id', 'slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
-            ->where('visibilidad', 'P')
+            ->publicada()
             ->where('published_at', '<', $entrada->published_at)->orderBy('published_at', 'desc')->first();
 
         // toma el texto de la entrada, obtiene las imagenes, y de cada una de ellas, obtiene las dimensiones

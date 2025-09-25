@@ -33,7 +33,7 @@ class ExperienciasController extends Controller
         // obtiene los items sin busqueda
         if (!$buscar) {
             $resultados = Experiencia::select(['id', 'nombre', 'fecha', 'lugar', 'texto', 'created_at', 'categoria'])
-                ->where('visibilidad', 'P')
+                ->publicada()
                 ->orderBy('updated_at', 'desc');
         }
 

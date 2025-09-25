@@ -183,7 +183,7 @@ class EquiposController extends Controller
 
         $informes = Informe::where('equipo_id', $equipo->id)
             ->where(function ($query) use ($puedeVerBorradores) {
-                $query->where('visibilidad', 'P')
+                $query->publicado()
                     ->when($puedeVerBorradores, function ($query) {
                         $query->orWhere('visibilidad', 'B');
                     });

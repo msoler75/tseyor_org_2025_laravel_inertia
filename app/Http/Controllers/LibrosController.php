@@ -22,7 +22,7 @@ class LibrosController extends Controller
         $categoria = $request->input('categoria');
 
         $query = Libro::select(['slug', 'titulo', 'descripcion', 'updated_at', 'imagen'])
-            ->where('visibilidad', 'P');
+            ->publicado();
 
         if ($buscar) {
             $ids = Libro::search($buscar)->get()->pluck('id')->toArray();

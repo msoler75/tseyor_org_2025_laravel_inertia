@@ -59,11 +59,11 @@ class GuiasController extends Controller
         // $guias = Guia::select(['nombre', 'slug'])->whereNot('id', $guia->id)->orderBy('nombre')->get();
 
         $siguiente = Guia::select(['id', 'slug', 'nombre', 'imagen'])
-        ->where('visibilidad', 'P')
+        ->publicada()
         ->where('nombre', '>', $guia->nombre)->orderBy('nombre', 'asc')->first();
 
         $anterior = Guia::select(['id', 'slug', 'nombre', 'imagen'])
-        ->where('visibilidad', 'P')
+        ->publicada()
         ->where('nombre', '<', $guia->nombre)->orderBy('nombre', 'desc')->first();
 
 

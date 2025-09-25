@@ -19,7 +19,7 @@ class TutorialesController extends Controller
         $categoria = $request->input('categoria');
 
         $query = Tutorial::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
-            ->where('visibilidad', 'P');
+            ->publicado();
 
         if ($buscar) {
             $ids = Tutorial::search($buscar)->get()->pluck('id')->toArray();
