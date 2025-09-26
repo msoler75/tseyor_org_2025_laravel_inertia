@@ -759,4 +759,52 @@ class Markdown
             }
         }, $texto_md);
     }
+
+
+    /**
+     * Detectar y acortar enlaces en texto con formato Markdown
+     * @param mixed $texto
+     */
+    public static function acortarEnlacesMarkdown($texto)
+    {
+        $service = new \App\Services\EnlaceCortoService();
+
+        $pattern = '/\[(.*?)\]\((https?:\/\/[^\s)]+)\)/i';
+        preg_match_all($pattern, $texto, $matches, PREG_SET_ORDER);
+        $urls_procesadas = [];
+
+        foreach ($matches as $match) {
+            $fullMatch = $match[0];
+            $linkText = $match[1];
+            $url = $match[2];
+
+            if (!isset($urls_procesadas[$url])) {
+                $enlaceCorto = $service->obtenerEnlaceParaUrl($url);
+                $urls_procesadas[$url] = $enlaceCorto ? $enlaceCorto->url_corta : null;
+            }
+
+            $urlCorta = $urls_procesadas[$url];
+            if ($urlCorta) {
+                if (preg_match("/https?:\/\/.*/", $linkText)) {
+                    $linkText = $urlCorta;
+                }
+                $newLink = "[$linkText]($urlCorta)";
+                $texto = str_replace($fullMatch, $newLink, $texto);
+            }
+        }
+
+        // Buscar URLs sueltas (no markdown) y acortarlas usando cache de urls_procesadas
+        $patternUrl = '/(?<!\]\()(?<!\[)(https?:\/\/[\w\-\.\/?#=&;%+~:@!$\*\(\),]+)(?!\))/i';
+        preg_match_all($patternUrl, $texto, $urls_sueltas);
+
+        foreach ($urls_sueltas[0] as $url_suelta) {
+            if (!isset($urls_procesadas[$url_suelta])) {
+                $enlaceCorto = $service->obtenerEnlaceParaUrl($url_suelta);
+                $urls_procesadas[$url_suelta] = $enlaceCorto ? $enlaceCorto->url_corta : null;            }
+            if ($urls_procesadas[$url_suelta]) {
+                $texto = str_replace($url_suelta, $urls_procesadas[$url_suelta], $texto);
+            }
+        }
+        return $texto;
+    }
 }

@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\Pigmalion\ContenidoHelper;
 use App\Pigmalion\StorageItem;
 use App\Models\Favorito;
+use App\Pigmalion\Markdown;
 
 
 /*
@@ -24,7 +25,7 @@ class ContenidoBaseModel extends Model
     use \Illuminate\Database\Eloquent\SoftDeletes;
 
 
-    protected $acortar_enlaces = true; // si es true, al guardar el contenido se crean enlaces cortos automáticos para URLs largas en el campo de texto
+    public $acortar_enlaces = true; // si es true, al guardar el contenido se crean enlaces cortos automáticos para URLs largas en el campo de texto
 
     /**
      * Casts para atributos virtuales como 'favorito' (0/1 -> boolean)
@@ -53,7 +54,15 @@ class ContenidoBaseModel extends Model
             }
 
             // acortar enlaces largos
-            ContenidoHelper::acortarEnlaces($model);
+            if($model->acortar_enlaces && $model->texto) {
+                $texto = Markdown::acortarEnlacesMarkdown($model->texto);
+                if(!$texto != $model->texto)
+                {
+                    $model->texto = $texto;
+                    $model->saveQuietly();
+                    Log::info("Se han acortado algunos enlaces");
+                }
+            }
 
             // Acciones después de que el modelo se haya guardado
             ContenidoHelper::guardarContenido($model);

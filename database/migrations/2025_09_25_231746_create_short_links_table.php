@@ -18,21 +18,21 @@ return new class extends Migration
             $table->string('prefijo', 10)->default('s')->index(); // Prefijo del enlace (s, e, d, etc)
 
             // Campos básicos
-            $table->string('titulo')->nullable(); // Título descriptivo
-            $table->text('descripcion')->nullable(); // Descripción opcional
+            $table->string('titulo', 255)->nullable(); // Título descriptivo
+            $table->string('descripcion', 400)->nullable(); // Descripción opcional
             $table->integer('contenido_id')->nullable(); // Relación con contenido (signed int para compatibilidad)
 
             // Campos SEO específicos
-            $table->string('meta_titulo', 60)->nullable(); // Meta título para SEO (máx 60 chars)
-            $table->string('meta_descripcion', 160)->nullable(); // Meta descripción para SEO (máx 160 chars)
+            $table->string('meta_titulo', 255)->nullable(); // Meta título para SEO (máx 255 chars)
+            $table->string('meta_descripcion', 400)->nullable(); // Meta descripción para SEO (máx 400 chars)
             $table->string('meta_keywords')->nullable(); // Palabras clave separadas por comas
-            $table->string('og_titulo', 95)->nullable(); // Open Graph título (máx 95 chars)
-            $table->text('og_descripcion')->nullable(); // Open Graph descripción
+            $table->string('og_titulo', 255)->nullable(); // Open Graph título (máx 255 chars)
+            $table->string('og_descripcion', 400)->nullable(); // Open Graph descripción (máx 400 chars)
             $table->string('og_imagen')->nullable(); // URL de imagen para Open Graph
             $table->string('og_tipo', 20)->default('website'); // Tipo de contenido OG (website, article, etc)
             $table->string('twitter_card', 20)->default('summary'); // Tipo de Twitter Card
-            $table->string('twitter_titulo', 70)->nullable(); // Twitter título (máx 70 chars)
-            $table->text('twitter_descripcion')->nullable(); // Twitter descripción
+            $table->string('twitter_titulo', 255)->nullable(); // Twitter título (máx 255 chars)
+            $table->string('twitter_descripcion', 400)->nullable(); // Twitter descripción (máx 400 chars)
             $table->string('twitter_imagen')->nullable(); // URL de imagen para Twitter
             $table->string('canonical_url')->nullable(); // URL canónica (si es diferente de la original)
 
