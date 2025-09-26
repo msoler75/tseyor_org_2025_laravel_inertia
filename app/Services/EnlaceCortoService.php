@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 
@@ -23,12 +24,14 @@ class EnlaceCortoService
     ): EnlaceCorto {
         // Validar URL
         if (!filter_var($urlOriginal, FILTER_VALIDATE_URL)) {
+            Log::error('[EnlaceCortoService] URL no válida', ['url' => $urlOriginal]);
             throw new \InvalidArgumentException('URL no válida');
         }
 
         // Detectar automáticamente el prefijo si no se proporciona
         if (!$prefijo) {
             $prefijo = $this->detectarPrefijo($urlOriginal);
+            Log::info('[EnlaceCortoService] Prefijo detectado', ['url' => $urlOriginal, 'prefijo' => $prefijo]);
         }
 
         // Verificar si ya existe un enlace para esta URL
@@ -36,13 +39,14 @@ class EnlaceCortoService
             ->where('prefijo', $prefijo)
             ->where('activo', true)
             ->first();
-
         if ($existing) {
+            Log::info('[EnlaceCortoService] Enlace existente encontrado', ['url' => $urlOriginal, 'prefijo' => $prefijo, 'codigo' => $existing->codigo]);
             return $existing;
         }
 
         // Generar código único
         $codigo = $codigoPersonalizado ?: $this->generarCodigoUnico($prefijo);
+        Log::info('[EnlaceCortoService] Código generado', ['codigo' => $codigo, 'prefijo' => $prefijo]);
 
         // Intentar obtener metadatos y contenido relacionado
         $contenidoRelacionado = $this->buscarContenidoRelacionado($urlOriginal);
@@ -60,23 +64,23 @@ class EnlaceCortoService
             'codigo' => $codigo,
             'url_original' => $urlOriginal,
             'prefijo' => $prefijo,
-            'titulo' => $titulo ?: $metadatos['titulo'],
-            'descripcion' => $descripcion ?: $metadatos['descripcion'],
+            'titulo' => mb_substr($titulo ?: ($metadatos['titulo'] ?? ''), 0, 255),
+            'descripcion' => mb_substr($descripcion ?: ($metadatos['descripcion'] ?? ''), 0, 400),
             'contenido_id' => $contenidoRelacionado?->id,
 
             // Campos SEO
-            'meta_titulo' => $seoData['meta_titulo'] ?? $metadatos['meta_titulo'] ?? null,
-            'meta_descripcion' => $seoData['meta_descripcion'] ?? $metadatos['meta_descripcion'] ?? null,
-            'meta_keywords' => $seoData['meta_keywords'] ?? $metadatos['meta_keywords'] ?? null,
-            'og_titulo' => $seoData['og_titulo'] ?? $metadatos['og_titulo'] ?? null,
-            'og_descripcion' => $seoData['og_descripcion'] ?? $metadatos['og_descripcion'] ?? null,
-            'og_imagen' => $seoData['og_imagen'] ?? $metadatos['og_imagen'] ?? null,
-            'og_tipo' => $seoData['og_tipo'] ?? 'website',
-            'twitter_card' => $seoData['twitter_card'] ?? 'summary',
-            'twitter_titulo' => $seoData['twitter_titulo'] ?? $metadatos['twitter_titulo'] ?? null,
-            'twitter_descripcion' => $seoData['twitter_descripcion'] ?? $metadatos['twitter_descripcion'] ?? null,
-            'twitter_imagen' => $seoData['twitter_imagen'] ?? $metadatos['twitter_imagen'] ?? null,
-            'canonical_url' => $seoData['canonical_url'] ?? null,
+            'meta_titulo' => mb_substr($seoData['meta_titulo'] ?? ($metadatos['meta_titulo'] ?? ''), 0, 255),
+            'meta_descripcion' => mb_substr($seoData['meta_descripcion'] ?? ($metadatos['meta_descripcion'] ?? ''), 0, 400),
+            'meta_keywords' => mb_substr($seoData['meta_keywords'] ?? ($metadatos['meta_keywords'] ?? ''), 0, 255),
+            'og_titulo' => mb_substr($seoData['og_titulo'] ?? ($metadatos['og_titulo'] ?? ''), 0, 255),
+            'og_descripcion' => mb_substr($seoData['og_descripcion'] ?? ($metadatos['og_descripcion'] ?? ''), 0, 400),
+            'og_imagen' => mb_substr($seoData['og_imagen'] ?? ($metadatos['og_imagen'] ?? ''), 0, 255),
+            'og_tipo' => mb_substr($seoData['og_tipo'] ?? 'website', 0, 20),
+            'twitter_card' => mb_substr($seoData['twitter_card'] ?? 'summary', 0, 20),
+            'twitter_titulo' => mb_substr($seoData['twitter_titulo'] ?? ($metadatos['twitter_titulo'] ?? ''), 0, 255),
+            'twitter_descripcion' => mb_substr($seoData['twitter_descripcion'] ?? ($metadatos['twitter_descripcion'] ?? ''), 0, 400),
+            'twitter_imagen' => mb_substr($seoData['twitter_imagen'] ?? ($metadatos['twitter_imagen'] ?? ''), 0, 255),
+            'canonical_url' => mb_substr($seoData['canonical_url'] ?? '', 0, 255),
         ]);
 
         // Trackear creación en Google Analytics
@@ -96,6 +100,7 @@ class EnlaceCortoService
             'url_original' => $urlOriginal
         ]);
 
+        Log::info('[EnlaceCortoService] Enlace creado', ['id' => $enlace->id, 'codigo' => $enlace->codigo, 'prefijo' => $enlace->prefijo, 'url_original' => $enlace->url_original, 'url_corta' => $enlace->url_corta ?? null]);
         return $enlace;
     }
 
@@ -108,7 +113,7 @@ class EnlaceCortoService
     {
         $cacheKey = "enlace_corto:{$prefijo}:{$codigo}";
 
-        $enlace = Cache::remember($cacheKey, config('enlaces_cortos.ttl_cache', 60), function() use ($prefijo, $codigo) {
+        $enlace = Cache::remember($cacheKey, config('enlaces_cortos.ttl_cache', 60), function () use ($prefijo, $codigo) {
             return EnlaceCorto::where('prefijo', $prefijo)
                 ->where('codigo', $codigo)
                 ->activos()
@@ -120,7 +125,7 @@ class EnlaceCortoService
         }
 
         // Incrementar contador (async para no afectar rendimiento)
-        dispatch(function() use ($enlace) {
+        dispatch(function () use ($enlace) {
             $enlace->incrementarClics();
         })->afterResponse();
 
@@ -168,12 +173,12 @@ class EnlaceCortoService
         $path = parse_url($url, PHP_URL_PATH);
 
         // Buscar en el modelo Contenido
-        return \App\Models\Contenido::where(function($query) use ($path) {
+        return \App\Models\Contenido::where(function ($query) use ($path) {
             $query->whereRaw("CONCAT('/', coleccion, '/', COALESCE(slug_ref, id_ref)) = ?", [$path])
-                  ->orWhere('slug_ref', ltrim($path, '/'));
+                ->orWhere('slug_ref', ltrim($path, '/'));
         })
-        ->where('visibilidad', 'P')
-        ->first();
+            ->where('visibilidad', 'P')
+            ->first();
     }
 
     /**
@@ -196,11 +201,37 @@ class EnlaceCortoService
 
         // Extensiones de archivos que se consideran "directos"
         $extensionesArchivos = [
-            'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',  // Documentos
-            'mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac', 'wma',    // Audio
-            'mp4', 'avi', 'mov', 'wmv', 'flv', 'webm',           // Video
-            'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp',          // Imágenes
-            'zip', 'rar', '7z', 'tar', 'gz'                      // Archivos comprimidos
+            'pdf',
+            'doc',
+            'docx',
+            'ppt',
+            'pptx',
+            'xls',
+            'xlsx',  // Documentos
+            'mp3',
+            'wav',
+            'ogg',
+            'm4a',
+            'aac',
+            'flac',
+            'wma',    // Audio
+            'mp4',
+            'avi',
+            'mov',
+            'wmv',
+            'flv',
+            'webm',           // Video
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'svg',
+            'webp',          // Imágenes
+            'zip',
+            'rar',
+            '7z',
+            'tar',
+            'gz'                      // Archivos comprimidos
         ];
 
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
@@ -221,15 +252,30 @@ class EnlaceCortoService
         // Mapeo de tipos de archivo
         $tiposArchivo = [
             'pdf' => 'Documento PDF',
-            'doc' => 'Documento Word', 'docx' => 'Documento Word',
-            'ppt' => 'Presentación PowerPoint', 'pptx' => 'Presentación PowerPoint',
-            'xls' => 'Hoja de cálculo Excel', 'xlsx' => 'Hoja de cálculo Excel',
-            'mp3' => 'Audio MP3', 'wav' => 'Audio WAV', 'ogg' => 'Audio OGG',
-            'm4a' => 'Audio M4A', 'aac' => 'Audio AAC', 'flac' => 'Audio FLAC',
-            'mp4' => 'Video MP4', 'avi' => 'Video AVI', 'mov' => 'Video MOV',
-            'jpg' => 'Imagen JPEG', 'jpeg' => 'Imagen JPEG', 'png' => 'Imagen PNG',
-            'gif' => 'Imagen GIF', 'svg' => 'Imagen SVG', 'webp' => 'Imagen WebP',
-            'zip' => 'Archivo ZIP', 'rar' => 'Archivo RAR', '7z' => 'Archivo 7Z'
+            'doc' => 'Documento Word',
+            'docx' => 'Documento Word',
+            'ppt' => 'Presentación PowerPoint',
+            'pptx' => 'Presentación PowerPoint',
+            'xls' => 'Hoja de cálculo Excel',
+            'xlsx' => 'Hoja de cálculo Excel',
+            'mp3' => 'Audio MP3',
+            'wav' => 'Audio WAV',
+            'ogg' => 'Audio OGG',
+            'm4a' => 'Audio M4A',
+            'aac' => 'Audio AAC',
+            'flac' => 'Audio FLAC',
+            'mp4' => 'Video MP4',
+            'avi' => 'Video AVI',
+            'mov' => 'Video MOV',
+            'jpg' => 'Imagen JPEG',
+            'jpeg' => 'Imagen JPEG',
+            'png' => 'Imagen PNG',
+            'gif' => 'Imagen GIF',
+            'svg' => 'Imagen SVG',
+            'webp' => 'Imagen WebP',
+            'zip' => 'Archivo ZIP',
+            'rar' => 'Archivo RAR',
+            '7z' => 'Archivo 7Z'
         ];
 
         $tipoArchivo = $tiposArchivo[$extension] ?? 'Archivo ' . strtoupper($extension);
@@ -254,11 +300,21 @@ class EnlaceCortoService
     private function obtenerTipoOgParaArchivo(string $extension): string
     {
         $tiposOg = [
-            'mp3' => 'music.song', 'wav' => 'music.song', 'ogg' => 'music.song',
-            'm4a' => 'music.song', 'aac' => 'music.song', 'flac' => 'music.song',
-            'mp4' => 'video.other', 'avi' => 'video.other', 'mov' => 'video.other',
-            'jpg' => 'website', 'jpeg' => 'website', 'png' => 'website',
-            'gif' => 'website', 'svg' => 'website', 'webp' => 'website'
+            'mp3' => 'music.song',
+            'wav' => 'music.song',
+            'ogg' => 'music.song',
+            'm4a' => 'music.song',
+            'aac' => 'music.song',
+            'flac' => 'music.song',
+            'mp4' => 'video.other',
+            'avi' => 'video.other',
+            'mov' => 'video.other',
+            'jpg' => 'website',
+            'jpeg' => 'website',
+            'png' => 'website',
+            'gif' => 'website',
+            'svg' => 'website',
+            'webp' => 'website'
         ];
 
         return $tiposOg[$extension] ?? 'website';
@@ -305,7 +361,8 @@ class EnlaceCortoService
         }
 
         return $metadatos;
-    }    /**
+    }
+    /**
      * Extraer metadatos SEO de una URL
      */
     private function extraerMetadatosSEO(string $url, array $seoDataExistente = []): array
@@ -384,7 +441,6 @@ class EnlaceCortoService
             if (preg_match('/<meta[^>]*name=["\']twitter:image["\'][^>]*content=["\']([^"\']*)["\'][^>]*>/i', $html, $matches)) {
                 $metadatos['twitter_imagen'] = trim($matches[1]);
             }
-
         } catch (\Exception $e) {
             Log::warning('Error extrayendo metadatos SEO', [
                 'url' => $url,
@@ -461,7 +517,6 @@ class EnlaceCortoService
             EnlaceCorto::where('prefijo', $prefijo)
                 ->where('codigo', $codigo)
                 ->update(['ultimo_clic' => now()]);
-
         } catch (\Exception $e) {
             Log::warning('Error actualizando contador de clics', [
                 'prefijo' => $prefijo,
@@ -485,12 +540,14 @@ class EnlaceCortoService
         $existia = false;
         $fueAcortada = false;
 
+        Log::info('[EnlaceCortoService] obtenerEnlaceParaUrl llamada', ['url' => $url]);
         // Buscar enlace existente
         $enlace = EnlaceCorto::where('url_original', $url)
             ->where('activo', true)
             ->first();
 
         if ($enlace) {
+            Log::info('[EnlaceCortoService] Enlace existente reutilizado', ['url' => $url, 'codigo' => $enlace->codigo, 'prefijo' => $enlace->prefijo, 'url_corta' => $enlace->url_corta ?? null]);
             // Trackear reutilización de enlace existente
             try {
                 AnalyticsHelper::trackCreacionEnlace($enlace->prefijo, $enlace->codigo, $url, false);
@@ -506,7 +563,16 @@ class EnlaceCortoService
         // Verificar umbral de longitud SOLO del PATH
         $umbral = config('enlaces_cortos.umbral_longitud_auto', 20);
         $path = parse_url($url, PHP_URL_PATH) ?? '';
-        if (strlen($path) < $umbral) {
+        $longitudPath = strlen($path);
+        Log::info('[EnlaceCortoService] DEBUG umbral', [
+            'url' => $url,
+            'path' => $path,
+            'longitud_path' => $longitudPath,
+            'umbral' => $umbral,
+            'comparacion' => $longitudPath . ' < ' . $umbral . ' = ' . ($longitudPath < $umbral ? 'true' : 'false')
+        ]);
+        if ($longitudPath < $umbral) {
+            Log::info('[EnlaceCortoService] URL no supera umbral de longitud', ['url' => $url, 'longitud' => $longitudPath, 'umbral' => $umbral]);
             // No se acorta, devolver null (la URL original se usará)
             return null;
         }
@@ -514,12 +580,12 @@ class EnlaceCortoService
         // Crear nuevo enlace corto
         try {
             $enlace = $this->crear($url);
+            Log::info('[EnlaceCortoService] Nuevo enlace creado', ['url' => $url, 'codigo' => $enlace->codigo, 'prefijo' => $enlace->prefijo, 'url_corta' => $enlace->url_corta ?? null]);
             $fueAcortada = true;
             $existia = false;
             return $enlace;
-
         } catch (\Exception $e) {
-            Log::error('Error creando enlace corto automático', [
+            Log::error('[EnlaceCortoService] Error creando enlace corto automático', [
                 'url' => $url,
                 'error' => $e->getMessage()
             ]);
@@ -554,7 +620,8 @@ class EnlaceCortoService
             ]);
             return null;
         }
-    }    /**
+    }
+    /**
      * Detectar prefijo automáticamente basado en la URL
      */
     private function detectarPrefijo(string $url): string
@@ -571,4 +638,6 @@ class EnlaceCortoService
             return 'e'; // enlaces generales
         }
     }
+
+
 }

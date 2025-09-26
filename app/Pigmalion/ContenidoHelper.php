@@ -6,11 +6,9 @@ namespace App\Pigmalion;
 use Illuminate\Support\Str;
 use App\Models\Contenido;
 use App\Models\ContenidoBaseModel;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Pigmalion\Countries;
 use App\Pigmalion\StorageItem;
+use Illuminate\Support\Facades\Log;
 
 class ContenidoHelper
 {
@@ -285,48 +283,6 @@ class ContenidoHelper
         return $cambio;
     }
 
-    public static function acortarEnlaces($model)
-    {
-        if(!$model->acortar_enlaces) return;
-        if(!$model->texto) return;
-        $texto = $model->texto;
-
-
-        $service = new \App\Services\EnlaceCortoService();
-
-        // buscar y reemplazar las URL en el texto, es decir, lo que ve el usuario
-        // el texto está en markdown
-        // buscar todos los enlaces que no sean ya cortos
-        $pattern = '/\[(.*?)\]\((https?:\/\/[^\s)]+)\)/i';
-        preg_match_all( $pattern, $texto, matches: $matches, PREG_SET_ORDER);
-        $urls_procesadas = [];  // cache para evitar procesar la misma URL varias veces
-
-        foreach ($matches as $match) {
-            $fullMatch = $match[0]; // El enlace completo [texto](url)
-            $linkText = $match[1];  // El texto del enlace
-            $url = $match[2];       // La URL del enlace
-
-            // usar cache para evitar procesar la misma URL múltiples veces
-            if (!isset($urls_procesadas[$url])) {
-                // crear o buscar el enlace corto usando EnlaceCortoService
-                $enlaceCorto = $service->obtenerEnlaceParaUrl($url);
-                $urls_procesadas[$url] = $enlaceCorto ? $enlaceCorto->url_corta : null;
-
-                if ($enlaceCorto) {
-                    Log::info("Enlace corto creado/encontrado: $url -> {$enlaceCorto->url_corta}");
-                }
-            }
-
-            // usar el enlace corto desde el cache
-            $urlCorta = $urls_procesadas[$url];
-            if ($urlCorta) {
-                $newLink = "[$linkText]($urlCorta)";
-                $texto = str_replace($fullMatch, $newLink, $texto);
-            }
-        }
-
-        $model->texto = $texto;
-    }
 
     /**
      * Manejar el evento "saved" del modelo Contenido.
@@ -410,4 +366,7 @@ class ContenidoHelper
 
         return $seoData;
     }
+
+
+
 }
