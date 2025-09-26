@@ -107,7 +107,7 @@ const props = defineProps({
 })
 
 const textoImagenInsertada = computed(()=>{
-    return `<img src='${props.evento.imagen}' class='hidden'>` + props.evento.texto
+    return `<img src='${props.evento.imagen}' class='hidden'>\n\n` + props.evento.texto
 })
 
 const content = ref(null)
