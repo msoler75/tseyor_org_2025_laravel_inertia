@@ -24,6 +24,8 @@ class ContenidoBaseModel extends Model
     use \Illuminate\Database\Eloquent\SoftDeletes;
 
 
+    protected $acortar_enlaces = true; // si es true, al guardar el contenido se crean enlaces cortos automáticos para URLs largas en el campo de texto
+
     /**
      * Casts para atributos virtuales como 'favorito' (0/1 -> boolean)
      */
@@ -49,6 +51,9 @@ class ContenidoBaseModel extends Model
                 $model->saveQuietly();
                 Log::info("Se han movido imagenes de carpeta temp a destino para " . $model->getMorphClass() . "/" . $model->id);
             }
+
+            // acortar enlaces largos
+            ContenidoHelper::acortarEnlaces($model);
 
             // Acciones después de que el modelo se haya guardado
             ContenidoHelper::guardarContenido($model);
@@ -131,8 +136,6 @@ class ContenidoBaseModel extends Model
             return (new StorageItem($folderCompleto))->relativeLocation;
         return $folderCompleto;
     }
-
-
 
     /**
     * Para PDF

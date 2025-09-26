@@ -28,6 +28,20 @@ class Contenido extends Model
         'fecha',
     ];
 
+    /**
+     * Registrar eventos del modelo
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function (Contenido $contenido) {
+            \App\Pigmalion\ContenidoHelper::onContenidoSaved($contenido);
+        });
+
+
+    }
+
     /*
     public static function search($term)
     {

@@ -45,5 +45,7 @@ class AppServiceProvider extends ServiceProvider
 
         // observamos los cambios en membresías de equipos
         // Membresia::observe(MembresiaObserver::class);
+
+
     }
 }

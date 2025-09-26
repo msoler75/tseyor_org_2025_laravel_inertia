@@ -40,17 +40,16 @@ use App\Http\Controllers\ChatGPTController;
 use App\Http\Controllers\ImagenesController;
 use App\Http\Controllers\TarjetaVisitaController;
 use App\Http\Controllers\EmailsController;
-use App\Http\Controllers\DevController;
 use App\Http\Controllers\Api\ComentariosController;
 use App\Http\Controllers\Admin\JobsController;
-use App\Services\MuularElectronico;
-use App\Pigmalion\SEO;
-use Illuminate\Support\Facades\Cookie;
 use App\Http\Controllers\BoletinesController;
 use App\Http\Controllers\SuscriptorController;
 use App\Http\Controllers\McpTokenController;
 use App\Http\Controllers\AnalyticsController;
-
+use App\Http\Controllers\EnlaceCortoController;
+use App\Pigmalion\SEO;
+use Illuminate\Support\Facades\Cookie;
+use App\Services\MuularElectronico;
 
 
 // a borrar:
@@ -491,6 +490,14 @@ Route::get('dev/2',  'App\Http\Controllers\DevController@dev2');
 // Analytics - sendBeacon para tracking al cerrar navegador
 Route::post('analytics/beacon', [AnalyticsController::class, 'beacon'])->name('analytics.beacon');
 
+
+// API para enlaces cortos públicos (sin auth para URLs del propio dominio)
+Route::post('obtener-enlace', [EnlaceCortoController::class, 'obtener'])->name('obtener.enlace.corto');
+
+// Redirección de enlaces cortos (debe ir antes del fallback)
+Route::get('{prefix}/{code}', [EnlaceCortoController::class, 'redirigir'])
+    ->where('prefix', '^(e|d|a)$')
+    ->where('code', '^[a-zA-Z0-9]+$');
 
 ///// FINAL FALLBACK PAGE
 Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
