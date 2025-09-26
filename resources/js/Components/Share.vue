@@ -17,6 +17,16 @@
             <p class="font-bold text-base-content">Compartir
                 &ldquo;<i>{{ sharing.title }}</i>&ldquo;
             </p>
+
+            <!-- Indicador de enlace corto -->
+            <div v-if="procesandoEnlace" class="flex items-center gap-2 text-sm text-info mb-2">
+                <span class="loading loading-dots loading-xs"></span>
+                Acortando enlace...
+            </div>
+            <div v-else-if="enlaceObtenido && currentUrl !== originalUrl" class="flex items-center gap-2 text-sm text-success mb-2">
+                <Icon icon="ph:check-circle" />
+                Enlace acortado
+            </div>
             <div class="flex flex-wrap justify-start items-center gap-3"
                 :style="{ color: '#eee', textShadow: '1px 1px black' }">
                 <ShareNetwork v-for="network in networks" :network="network.network" :key="network.network"
@@ -57,6 +67,7 @@ const sharing = reactive({
 })
 
 const currentUrl = ref()
+const originalUrl = ref('')
 
 const { copy, copied, isSupported } = useClipboard()
 
@@ -70,6 +81,8 @@ const socialShow = ref(false)
 
 const toggleSocialShow = () => {
     socialShow.value = true;
+    // Crear enlace corto en segundo plano mientras el usuario elige red social
+    prepararEnlaceCorto();
 }
 
 
@@ -79,8 +92,18 @@ function updateMeta() {
     sharing.description = metaDescription ? metaDescription.getAttribute('content') : ''
 }
 
+// Estado para el enlace corto
+const procesandoEnlace = ref(false)
+const enlaceObtenido = ref(false)
+
 onMounted(() => {
-    currentUrl.value = window.location.href.replace(/\?.*/, '')
+    // Usar URL completa inicialmente (solo en cliente)
+    if (typeof window !== 'undefined') {
+        const fullUrl = window.location.href.replace(/\?.*/, '')
+        currentUrl.value = fullUrl
+        originalUrl.value = fullUrl
+    }
+
     updateMeta()
     setTimeout(updateMeta, 250)
 
@@ -89,6 +112,38 @@ onMounted(() => {
         setTimeout(updateMeta, 250)
     })
 })
+
+// Función para obtener enlace corto bajo demanda cuando se abre el modal
+const prepararEnlaceCorto = async () => {
+    if (enlaceObtenido.value || procesandoEnlace.value) {
+        return // Ya se obtuvo o ya se está procesando
+    }
+
+    procesandoEnlace.value = true
+    const { obtenerEnlaceCorto } = useEnlacesCortos()
+
+    try {
+        // Verificar que estamos en el cliente
+        if (typeof window === 'undefined') {
+            console.warn('No se puede obtener enlace corto en SSR')
+            return
+        }
+
+        const fullUrl = window.location.href.replace(/\?.*/, '')
+        const urlCorta = await obtenerEnlaceCorto(fullUrl)
+
+        // Actualizar URL (puede ser la misma si no cumple umbral)
+        currentUrl.value = urlCorta
+        enlaceObtenido.value = true
+
+    } catch (error) {
+        console.warn('No se pudo obtener enlace corto:', error)
+        // Asegurarse de que se marque como obtenido aunque haya error
+        enlaceObtenido.value = true
+    } finally {
+        procesandoEnlace.value = false
+    }
+}
 
 
 const networks = ref([

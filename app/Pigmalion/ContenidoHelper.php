@@ -284,4 +284,130 @@ class ContenidoHelper
         // si ha habido cambios retornamos true
         return $cambio;
     }
+
+    public static function acortarEnlaces($model)
+    {
+        if(!$model->acortar_enlaces) return;
+        if(!$model->texto) return;
+        $texto = $model->texto;
+
+
+        $service = new \App\Services\EnlaceCortoService();
+
+        // buscar y reemplazar las URL en el texto, es decir, lo que ve el usuario
+        // el texto está en markdown
+        // buscar todos los enlaces que no sean ya cortos
+        $pattern = '/\[(.*?)\]\((https?:\/\/[^\s)]+)\)/i';
+        preg_match_all( $pattern, $texto, matches: $matches, PREG_SET_ORDER);
+        $urls_procesadas = [];  // cache para evitar procesar la misma URL varias veces
+
+        foreach ($matches as $match) {
+            $fullMatch = $match[0]; // El enlace completo [texto](url)
+            $linkText = $match[1];  // El texto del enlace
+            $url = $match[2];       // La URL del enlace
+
+            // usar cache para evitar procesar la misma URL múltiples veces
+            if (!isset($urls_procesadas[$url])) {
+                // crear o buscar el enlace corto usando EnlaceCortoService
+                $enlaceCorto = $service->obtenerEnlaceParaUrl($url);
+                $urls_procesadas[$url] = $enlaceCorto ? $enlaceCorto->url_corta : null;
+
+                if ($enlaceCorto) {
+                    Log::info("Enlace corto creado/encontrado: $url -> {$enlaceCorto->url_corta}");
+                }
+            }
+
+            // usar el enlace corto desde el cache
+            $urlCorta = $urls_procesadas[$url];
+            if ($urlCorta) {
+                $newLink = "[$linkText]($urlCorta)";
+                $texto = str_replace($fullMatch, $newLink, $texto);
+            }
+        }
+
+        $model->texto = $texto;
+    }
+
+    /**
+     * Manejar el evento "saved" del modelo Contenido.
+     * Actualizar enlaces cortos relacionados cuando cambie el contenido
+     */
+    public static function onContenidoSaved(Contenido $contenido)
+    {
+        // Solo procesar contenido público
+        if ($contenido->visibilidad !== 'P') {
+            // si no es público no hacer nada
+            return;
+        }
+
+        // Buscar enlaces cortos directamente relacionados con este contenido
+        $enlaceCorto = \App\Models\EnlaceCorto::where('contenido_id', $contenido->id)
+            ->where('activo', true)
+            ->first();
+
+        if (!$enlaceCorto) {
+            return;
+        }
+
+        // Actualizar datos SEO del enlace corto
+        $seoData = self::extraerSeoDelContenido($contenido);
+
+        $enlaceCorto->update([
+            'titulo' => $contenido->titulo,
+            'descripcion' => $contenido->descripcion,
+            'meta_titulo' => $seoData['meta_titulo'],
+            'meta_descripcion' => $seoData['meta_descripcion'],
+            'og_titulo' => $seoData['og_titulo'],
+            'og_descripcion' => $seoData['og_descripcion'],
+            'og_imagen' => $seoData['og_imagen'] ?? null,
+            'twitter_imagen' => $seoData['twitter_imagen'] ?? null,
+            'updated_at' => now()
+        ]);
+
+        Log::info('Enlace corto actualizado desde Contenido', [
+            'contenido_id' => $contenido->id,
+            'enlace_codigo' => $enlaceCorto->codigo,
+            'titulo' => $contenido->titulo,
+            'tipo' => 'contenido_interno'
+        ]);
+    }
+
+    /**
+     * Desactivar enlaces relacionados cuando el contenido no es público
+     */
+    private static function desactivarEnlacesRelacionados(Contenido $contenido)
+    {
+        \App\Models\EnlaceCorto::where('contenido_id', $contenido->id)
+            ->where('activo', true)
+            ->update([
+                'activo' => false,
+                'updated_at' => now()
+            ]);
+
+        Log::info('Enlaces cortos desactivados por cambio de visibilidad', [
+            'contenido_id' => $contenido->id,
+            'nueva_visibilidad' => $contenido->visibilidad
+        ]);
+    }
+
+    /**
+     * Extraer datos SEO del modelo Contenido
+     */
+    private static function extraerSeoDelContenido(Contenido $contenido): array
+    {
+        $seoData = [
+            'meta_titulo' => $contenido->titulo,
+            'meta_descripcion' => $contenido->descripcion,
+            'og_titulo' => $contenido->titulo,
+            'og_descripcion' => $contenido->descripcion,
+        ];
+
+        // Si tiene imagen, agregarla a los metadatos
+        if ($contenido->imagen) {
+            $seoData['og_imagen'] = url($contenido->imagen);
+            $seoData['twitter_imagen'] = url($contenido->imagen);
+        }
+
+        return $seoData;
+    }
 }

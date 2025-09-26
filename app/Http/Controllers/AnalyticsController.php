@@ -115,6 +115,73 @@ class AnalyticsController extends Controller
     }
 
     /**
+     * Trackear clic en enlace corto
+     */
+    public function trackEnlaceCorto(string $prefijo, string $codigo, string $urlDestino, Request $request)
+    {
+        try {
+            $measurementId = config('services.google_analytics.measurement_id');
+            $apiSecret = config('services.google_analytics.api_secret');
+
+            if (!$measurementId || !$apiSecret) {
+                Log::warning('Google Analytics credentials not configured for short links');
+                return;
+            }
+
+            $clientId = $this->generateClientId($request);
+
+            // Preparar payload específico para enlaces cortos
+            $payload = [
+                'client_id' => $clientId,
+                'events' => [
+                    [
+                        'name' => 'enlace_corto_click',
+                        'params' => [
+                            'enlace_codigo' => $codigo,
+                            'enlace_prefijo' => $prefijo,
+                            'enlace_corto' => "/{$prefijo}/{$codigo}",
+                            'url_destino' => $urlDestino,
+                            'user_agent' => $request->userAgent(),
+                            'referer' => $request->header('referer', ''),
+                            'source' => 'enlaces_cortos',
+                            'method' => 'server_redirect'
+                        ]
+                    ]
+                ]
+            ];
+
+            // Enviar a Google Analytics
+            $response = Http::timeout(3)->post(
+                "https://www.google-analytics.com/mp/collect?measurement_id={$measurementId}&api_secret={$apiSecret}",
+                $payload
+            );
+
+            if ($response->successful()) {
+                Log::info('Enlace corto tracked in Google Analytics', [
+                    'prefijo' => $prefijo,
+                    'codigo' => $codigo,
+                    'url_destino' => $urlDestino,
+                    'client_id' => $clientId
+                ]);
+            } else {
+                Log::warning('Failed to track enlace corto in GA', [
+                    'status' => $response->status(),
+                    'prefijo' => $prefijo,
+                    'codigo' => $codigo
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error tracking enlace corto', [
+                'error' => $e->getMessage(),
+                'prefijo' => $prefijo,
+                'codigo' => $codigo,
+                'url_destino' => $urlDestino
+            ]);
+        }
+    }
+
+    /**
      * Generar un client_id consistente para el usuario
      * IMPORTANTE: Debe ser el mismo ID para el mismo usuario durante su sesión/día
      */
