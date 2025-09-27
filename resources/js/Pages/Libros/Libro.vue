@@ -33,7 +33,7 @@
                     </div>
         </PageHeader>
 
-        <PageContent class="max-w-[96ch] py-12 flex gap-10 md:rounded-2xl">
+        <PageWide class="max-w-[96ch] py-12 flex justify-center gap-10 md:rounded-2xl">
                 <ImageShadow
                             :src="libro.imagen"
                             width="300"
@@ -48,7 +48,7 @@
                             @loaded="cargandoPortada = false"
                         />
 
-                <div class="p-6 card bg-base-100 animate-fade-in">
+                <div class="p-6 card shadow bg-base-100 animate-fade-in">
                     <h1 class="text-2xl font-bold mb-4">{{ libro.titulo }}</h1>
                     <p class="text-gray-600 text-sm mb-2 flex justify-between">
                         <Link
@@ -72,15 +72,15 @@
                         </a>
                     </div>
                 </div>
-        </PageContent>
+        </PageWide>
 
-        <PageFooter class="px-4 sm:px-0 container mt-24">
+        <PageWide class="mt-24">
 
             <h2 v-if="relacionados?.length" class="text-xl font-bold mt-8">
                 Libros relacionados
             </h2>
             <GridAppear
-                class="gap-4 mt-4 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(26rem,1fr))]"
+                class="gap-4 mt-4 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(24rem,1fr))]"
             >
                 <CardContent
                     v-for="contenido in relacionados"
@@ -124,7 +124,7 @@
                     </CardContent>
                 </GridAppear>
             </template>
-        </PageFooter>
+        </PageWide>
 
     </Page>
 </template>
