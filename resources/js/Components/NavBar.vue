@@ -123,7 +123,7 @@
                         v-if="$page.props.auth?.user"
                         class="flex sm:items-center"
                     >
-                        <div class="ml-3 relative">
+                        <div class="ml-1 sm:ml-3 relative">
                             <UserMenu />
                         </div>
                     </div>

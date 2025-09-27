@@ -1,18 +1,21 @@
 <template>
+    <div>
     <!-- App layout -->
-    <div class="flex flex-col">
-        <ScrollToTop
-            class="text-4xl fixed right-7 z-40"
-            :class="
-                folderExplorer.seleccionando
-                    ? 'bottom-20'
-                    : player.closed
-                    ? 'bottom-7'
-                    : player.expanded
-                    ? 'bottom-20'
-                    : 'bottom-14'
-            "
-        />
+     <TransitionFade>
+     <div v-if="nav.showScrollTop" class="bottom-toolbar text-4xl fixed right-7 z-40 flex items-center gap-3"
+      :class="
+      [
+          folderExplorer.seleccionando
+                ? 'bottom-20'
+                : player.closed
+                ? 'bottom-7'
+                : player.expanded
+                ? 'bottom-20'
+                : 'bottom-14'
+        ]">
+          <ScrollToTop/>
+     </div>
+     </TransitionFade>
 
         <!-- Loader -->
         <div
@@ -109,6 +112,8 @@
 </template>
 
 <script setup>
+import useSelectors from '@/Stores/selectors';
+import FontSizeControls from '@/Components/FontSizeControls.vue';
 import useUserStore from "@/Stores/user";
 import usePlayer from "@/Stores/player";
 import setTransitionPages from "@/composables/transitionPages.js";
@@ -118,6 +123,8 @@ import PWANotifications from "@/Components/PWANotifications.vue";
 //useRouteimport { useRoute } from 'ziggy-js';
 
 const folderExplorer = useFolderExplorerStore();
+
+// ...existing code... (font controls moved to FontSizeControls component)
 
 // console.log('app initiating...')
 
@@ -261,3 +268,28 @@ function handleInteraction() {
     if (player.requiereInteraccion) player.playPause();
 }
 </script>
+
+<style>
+/* reference to ../../css/app.css handled by build pipeline */
+
+.bottom-toolbar > * {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: 2px solid transparent;
+    cursor: pointer;
+    transition: color 100ms, opacity 100ms;
+}
+.bottom-toolbar > *:hover {
+    color: #f97316; /* approximate Tailwind orange-500 */
+}
+
+/* font button styles moved to component (use utility classes) */
+
+/* Use the CSS variable as root font-size fallback for components that use rem/em */
+:root {
+    font-size: var(--app-font-size, 16px);
+}
+</style>

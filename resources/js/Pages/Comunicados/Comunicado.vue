@@ -1,7 +1,7 @@
 <template>
     <Page>
 
-        <div class="flex justify-between items-center mb-20">
+        <PagePadW class="flex justify-between items-center mb-20">
             <Back>Comunicados</Back>
             <div class="flex gap-2">
                 <Share />
@@ -11,11 +11,14 @@
                 </a>
                 <AdminLinks modelo="comunicado" necesita="administrar contenidos" :contenido="comunicado" />
             </div>
-        </div>
+        </PagePadW>
 
-        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 animate-fade-in px-3 xs:px-4 sm:px-0">
+        <PageContent class="mb-12 relative">
+
+            <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
 
             <div class="prose mx-auto">
+
                 <h1>{{ comunicado.titulo }}</h1>
 
                 <div class="text-sm mb-20 flex justify-between">
@@ -34,7 +37,7 @@
                 <Content :content="comunicado.texto" class="mx-auto" />
             </LazyHydrate>
 
-        </div>
+        </PageContent>
 
 
         <div class="mt-12 grid gap-8 mb-12 grid-cols-1 lg:grid-cols-2">

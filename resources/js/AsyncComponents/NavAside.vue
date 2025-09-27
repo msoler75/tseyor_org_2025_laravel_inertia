@@ -16,6 +16,10 @@
                     <div class="text-2xl leading-6 font-bold font-serif">TSEYOR</div>
                 </div>
             </div>
+
+            <FontSizeControls class="px-6 py-4 border-b border-gray-300 dark:border-gray-600" />
+
+
             <div class="xl:rounded-r transform xl:translate-x-0 ease-in-out transition duration-500
                     flex justify-start items-start h-full w-full sm:w-64 flex-col">
                 <div class="flex flex-col justify-start items-center  w-full
@@ -72,6 +76,7 @@
 
 
 <script setup>
+import FontSizeControls from '@/Components/FontSizeControls.vue';
 import Link from '@/Components/Link.vue';
 
 const nav = useNav()

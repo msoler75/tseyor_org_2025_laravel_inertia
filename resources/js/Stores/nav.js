@@ -74,6 +74,8 @@ const state = reactive({
   navigating: false,
   dontScroll: false,
   hoverDeactivated: false, // para evitar que se active el hover en la reentrada del mouse a la ventana
+  // Scroll-to-top control
+  showScrollTop: false,
   tabHovering: null, // tab en el que el mouse se encuentra durante la desactivación del hover
   enteringTimeout: null,
   activeTab: null,
@@ -237,7 +239,60 @@ const state = reactive({
       behavior,
     });
   },
+  // Scroll-to-top inteligente: busca contenedores .sections y hace scroll en ellos si existen
+  scrollToTopSmart(behavior) {
+    if (!behavior || typeof behavior != "string") behavior = "smooth";
+    const div =
+      document.querySelector("div.sections.snap-proximity") ||
+      document.querySelector("div.sections.smooth-snap") ||
+      document.querySelector("div.sections.scroll-region") ||
+      document.querySelector("div.sections.scroll-smooth");
+    if (div) div.scrollTo({ top: 0, behavior });
+    else window.scrollTo({ top: 0, behavior });
+  },
 });
+
+// ---- Scroll-to-top visibility logic (kept outside reactive state to avoid extra reactivity) ----
+// thresholds and internal markers
+let _heightToShow = 300; // altura de scroll para esta lógica de mostrar/ocultar con scroll
+let _wrapToShow = 120; // nº de pixeles de recorrido scroll arriba para mostrar el boton
+let _wrapToHide = 70; // nº de pixeles de recorrido scroll abajo para ocultar el boton
+
+let _prevY = -10000; // marca de valor inicial sin computar
+let _subiendo = false;
+let _recorridoUp = 0;
+let _recorridoDown = 0;
+
+watch(
+  () => state.scrollY,
+  (y) => {
+    // skip first update (when _prevY is initial sentinel)
+    if (_prevY !== -10000) {
+      const dy = y - _prevY;
+      if (y < _heightToShow) state.showScrollTop = false;
+      else if (dy > 0) {
+        // bajando
+        if (_subiendo) {
+          _recorridoDown = dy;
+        } else {
+          _recorridoDown += dy;
+          if (_recorridoDown > _wrapToHide) state.showScrollTop = false;
+        }
+        _subiendo = false;
+      } else {
+        // subiendo (dy <= 0)
+        if (!_subiendo) {
+          _recorridoUp = dy;
+        } else {
+          _recorridoUp += dy;
+          if (_recorridoUp < -1 * _wrapToShow) state.showScrollTop = true;
+        }
+        _subiendo = true;
+      }
+    }
+    _prevY = y;
+  }
+);
 
 
 state.route = _route
