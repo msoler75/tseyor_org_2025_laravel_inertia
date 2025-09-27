@@ -1,5 +1,9 @@
 <template>
-    <div class="py-[10ch] bg-base-100 sm:max-w-[80ch] mx-auto shadow-xl px-4 sm:px-6">
-        <slot></slot>
+    <div class="bg-base-100 mx-auto shadow-xl px-4 sm:px-6">
+            <slot />
     </div>
 </template>
+
+<script setup>
+// PageContent aplica el contenedor y estilos de caja para el contenido principal.
+</script>

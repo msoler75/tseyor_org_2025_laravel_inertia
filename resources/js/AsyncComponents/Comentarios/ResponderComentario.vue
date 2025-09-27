@@ -7,7 +7,7 @@
                 <textarea class="textarea text-rounded-lg w-full" v-model="texto" placeholder="Escribe tu comentario..."
                     @keydown.ctrl.enter="responder" ref="inputText"></textarea>
                 <div class="w-full flex justify-end">
-                    <button class="btn btn-primary" @click="responder" :disabled="!texto">Enviar</button>
+                    <button class="btn btn-primary mt-2" @click="responder" :disabled="!texto">Enviar</button>
                 </div>
             </form>
             <div v-if="error" class="alert alert-error">

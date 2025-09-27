@@ -1,15 +1,20 @@
 <template>
     <Page>
-
-        <div class="flex justify-between items-center mb-20">
-            <Back>Meditaciones</Back>
-            <div class="flex gap-2">
-                <Share />
-                <AdminLinks modelo="meditacion" necesita="administrar contenidos" :contenido="meditacion" />
+        <PageHeader>
+            <div class="flex justify-between items-center mb-20">
+                <Back>Meditaciones</Back>
+                <div class="flex gap-2">
+                    <Share />
+                    <AdminLinks modelo="meditacion" necesita="administrar contenidos" :contenido="meditacion" />
+                </div>
             </div>
-        </div>
+        </PageHeader>
 
-        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
+        <PageContent class="sm:max-w-[80ch]">
+            <div class="py-[10ch] mb-12 relative">
+
+                <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
+
 
             <div class="prose mx-auto">
                 <h1>{{ meditacion.titulo }}</h1>
@@ -22,7 +27,9 @@
 
             <Content :content="meditacion.texto" class="mx-auto" />
 
-        </div>
+     </div>
+
+        </PageContent>
 
         <Comentarios :url="route('meditacion', meditacion.id)" />
 

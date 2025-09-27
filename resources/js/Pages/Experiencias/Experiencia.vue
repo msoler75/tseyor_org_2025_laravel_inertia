@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back>Experiencias</Back>
             <div class="flex gap-2">
@@ -8,6 +8,7 @@
                 <AdminLinks modelo="experiencia" necesita="administrar experiencias" :contenido="experiencia" />
             </div>
         </div>
+        </PageHeader>
 
         <div class="cloud py-[9ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
 
@@ -38,7 +39,9 @@
 
         </div>
 
-        <Comentarios :url="route('experiencia', experiencia.id)" />
+        <PageFooter>
+            <Comentarios :url="route('experiencia', experiencia.id)" />
+        </PageFooter>
 
     </Page>
 </template>

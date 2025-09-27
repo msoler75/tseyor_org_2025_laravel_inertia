@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <span></span>
             <Back v-if="false" href="/formacion">Formación</Back>
@@ -10,12 +10,18 @@
             </div>
         </div>
 
-        <h1>Tutoriales</h1>
-        <p>Ayudas para cualquier tema: uso práctico de las herramientas de Tseyor, tecnología, etc.</p>
+        <div class="container mx-auto">
+            <h1>Tutoriales</h1>
+            <p>Ayudas para cualquier tema: uso práctico de las herramientas de Tseyor, tecnología, etc.</p>
+        </div>
 
         <div class="flex justify-end mb-5">
             <SearchInput />
         </div>
+
+        </PageHeader>
+
+        <PageWide>
 
         <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
 
@@ -63,6 +69,7 @@
 
             </div>
         </div>
+        </PageWide>
     </Page>
 </template>
 

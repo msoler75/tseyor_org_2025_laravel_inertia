@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-base-200 border-t-2 border-base-3 py-12">
+    <div class="bg-base-200 py-12 border-t-2 border-base-3">
         <div class="container mx-auto space-y-2">
             <div class="mx-auto sm:max-w-[640px]">
                 <h2 class="mb-9">Comentarios</h2>

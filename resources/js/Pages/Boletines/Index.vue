@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <span></span>
             <div class="flex gap-2">
@@ -13,6 +13,10 @@
             <h1>Boletines</h1>
             <p>Boletines informativos y otros documentos para uso de la comunidad Tseyor.</p>
         </div>
+
+        </PageHeader>
+
+        <PageWide>
 
         <ContentMain class="flex justify-end mb-5">
             <SearchInput />
@@ -50,6 +54,8 @@
 
             </div>
         </div>
+
+        </PageWide>
     </Page>
 </template>
 

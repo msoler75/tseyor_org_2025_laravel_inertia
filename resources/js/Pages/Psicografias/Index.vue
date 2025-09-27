@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
             <div class="flex gap-2">
@@ -14,9 +14,13 @@
             <p>Ahora puedes consultar las <Link href="/libros?categoria=Psicografías">monografías</Link> correspondientes en nuestra sección de libros.</p>
         </TitleInfo>
 
-        <ContentMain class="flex justify-end mb-5">
-            <SearchInput />
-        </ContentMain>
+        </PageHeader>
+
+        <PageWide>
+
+            <ContentMain class="flex justify-end mb-5">
+                <SearchInput />
+            </ContentMain>
 
         <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
 
@@ -45,6 +49,8 @@
 
 
         </div>
+
+        </PageWide>
     </Page>
 </template>
 

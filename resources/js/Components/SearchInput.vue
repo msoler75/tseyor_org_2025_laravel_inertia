@@ -9,7 +9,7 @@
             <form @submit.prevent="submit" class="w-full relative flex"
             :class="active?'min-w-full sm:min-w-auto':''"
             >
-              <div class="absolute top-1/2 z-20 left-2 transform scale-110 -translate-y-[.6rem] text-gray-500 dark:text-gray-400"
+              <div class="absolute top-1/2 z-10 left-2 transform scale-110 -translate-y-[.6rem] text-gray-500 dark:text-gray-400"
                 v-if="!active">
                 <Icon v-show="!submitting" icon="ph:magnifying-glass-bold" />
             </div>

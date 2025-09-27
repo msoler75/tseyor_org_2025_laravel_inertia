@@ -1,6 +1,7 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
 
+            <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <span></span>
             <div class="flex gap-2">
@@ -8,6 +9,7 @@
                 <AdminLinks modelo="experiencia" necesita="administrar experiencias" />
             </div>
         </div>
+
 
         <h1>Experiencias Interdimensionales</h1>
         <p>Sueños, meditaciones, extrapolaciones y trabajos grupales.</p>
@@ -19,6 +21,10 @@
         <div class="flex justify-end mb-5">
             <SearchInput />
         </div>
+
+        </PageHeader>
+
+        <PageWide>
 
 
         <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
@@ -72,7 +78,8 @@
 
             </div>
         </div>
-    </div>
+        </PageWide>
+    </Page>
 </template>
 
 

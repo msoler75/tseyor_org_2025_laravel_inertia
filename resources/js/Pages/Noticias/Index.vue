@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <span />
             <div class="flex gap-2">
@@ -9,13 +9,18 @@
             </div>
         </div>
 
-
-        <h1>Noticias</h1>
-        <p>Aquí puedes ver las últimas noticias de Tseyor.</p>
+        <div class="container mx-auto">
+            <h1>Noticias</h1>
+            <p>Aquí puedes ver las últimas noticias de Tseyor.</p>
+        </div>
 
         <ContentMain class="flex justify-end mb-5">
             <SearchInput />
         </ContentMain>
+
+        </PageHeader>
+
+        <PageWide>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
@@ -39,6 +44,8 @@
 
 
         </div>
+
+        </PageWide>
     </Page>
 </template>
 

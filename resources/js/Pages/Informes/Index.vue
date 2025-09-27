@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back v-if="equipo && equipo.slug" :href="route('equipo', equipo.slug)">{{ equipo.nombre }}</Back>
             <Back v-else :href="route('equipos')">Equipos</Back>
@@ -26,6 +26,9 @@
             <SearchInput />
         </div>
 
+        </PageHeader>
+
+        <PageWide>
 
         <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
 
@@ -80,6 +83,8 @@
 
             </div>
         </div>
+
+        </PageWide>
     </Page>
 </template>
 

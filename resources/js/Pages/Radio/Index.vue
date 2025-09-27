@@ -1,15 +1,19 @@
 <template>
-    <Page class="text-center">
+    <Page>
 
-        <h1 class="hidden">Radio Tseyor</h1>
+        <PageHeader>
+            <h1 class="hidden">Radio Tseyor</h1>
 
-        <div class="flex justify-between items-center mb-20">
-            <Back :href="route('biblioteca')">Biblioteca</Back>
-            <div class="flex gap-2">
-                <Share />
-                <AdminLinks modelo="radio-item" necesita="administrar contenidos" />
+            <div class="flex justify-between items-center mb-20">
+                <Back :href="route('biblioteca')">Biblioteca</Back>
+                <div class="flex gap-2">
+                    <Share />
+                    <AdminLinks modelo="radio-item" necesita="administrar contenidos" />
+                </div>
             </div>
-        </div>
+        </PageHeader>
+
+        <PageWide>
 
         <Hero title="" :srcImage="isDark ? darkLogo : lightLogo" srcWidth="1117" srcHeight="801"
 
@@ -26,8 +30,12 @@
             </div>
         </Hero>
 
+        </PageWide>
 
-        <Comentarios url="radio" />
+
+        <PageFooter>
+            <Comentarios url="radio" />
+        </PageFooter>
 
     </Page>
 </template>

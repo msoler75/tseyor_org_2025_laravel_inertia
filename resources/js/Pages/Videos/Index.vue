@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
             <div class="flex gap-2">
@@ -22,6 +22,11 @@
                         class="h-12 mx-auto dark:mix-blend-exclusion" />
                 </a>
             </div>
+        </section>
+
+        </PageHeader>
+
+        <PageWide>
 
             <ContentMain class="flex justify-end mb-5">
                 <SearchInput />
@@ -51,7 +56,7 @@
             </GridAppear>
 
             <pagination class="mt-6" :links="listado.links" />
-        </section>
+        </PageWide>
     </Page>
 </template>
 

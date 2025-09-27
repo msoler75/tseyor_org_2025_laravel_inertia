@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
             <div class="flex gap-2">
@@ -8,6 +8,7 @@
                 <AdminLinks modelo="comunicado" necesita="administrar contenidos" />
             </div>
         </div>
+
 
         <div class="w-full flex flex-wrap gap-7 items-center justify-between mb-16">
 
@@ -79,10 +80,11 @@
                 @search="buscando = true" @blur="blurQuery" />
         </div>
 
+        </PageHeader>
 
-        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <PageWide>
 
-            <div class="grow">
+            <ContentMain class="mb-12">
 
                 <div v-if="!vistaBusquedaCompleta || completo" class="flex justify-between items-center my-1">
 
@@ -191,10 +193,8 @@
                     v-if="!vistaBusquedaCompleta || (vistaBusquedaCompleta && !buscando && listado.data?.length && listado.data[0].extractos)"
                     class="mt-6" :links="listado.links" />
 
-            </div>
-
-
         </ContentMain>
+        </PageWide>
     </Page>
 </template>
 
