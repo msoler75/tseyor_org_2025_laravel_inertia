@@ -1,40 +1,46 @@
 <template>
     <Page>
-
-        <div class="flex justify-between mb-20">
-            <Back :href="route('biblioteca')">Biblioteca</Back>
-            <div class="flex gap-2">
-                <Share />
-                <AdminLinks modelo="entrada" necesita="administrar contenidos" />
+        <PageHeader>
+            <div class="flex justify-between mb-20">
+                <Back :href="route('biblioteca')">Biblioteca</Back>
+                <div class="flex gap-2">
+                    <Share />
+                    <AdminLinks modelo="entrada" necesita="administrar contenidos" />
+                </div>
             </div>
-        </div>
 
-        <h1>Blog</h1>
-        <p>Aquí puedes conocer sobre la vida de la comunidad Tseyor.</p>
+            <div class="container mx-auto">
+                <h1>Blog</h1>
+                <p>Aquí puedes conocer sobre la vida de la comunidad Tseyor.</p>
+            </div>
 
-        <div class="flex justify-end mb-5">
-            <SearchInput />
-        </div>
+            <div class="flex justify-end mb-5">
+                <SearchInput />
+            </div>
+        </PageHeader>
 
-        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <PageWide>
 
-            <div class="w-full grow">
+            <ContentMain class="flex gap-5 flex-wrap md:flex-nowrap">
 
-                <SearchResultsHeader :results="listado" />
+                <div class="w-full grow">
 
-                <div class="grid gap-8" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(18rem, 1fr))` }">
-                    <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data" :imageLeft="false"
-                        :imageHeight="300" :key="contenido.id" :title="contenido.titulo" :image="contenido.imagen"
-                        :href="route('blog.entrada', contenido.slug)"
-                        :date="contenido.published_at" imageClass="h-50" :skeleton="cargando" />
+                    <SearchResultsHeader :results="listado" />
+
+                    <div class="grid gap-8" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(18rem, 1fr))` }">
+                        <CardContent v-if="listado.data.length > 0" v-for="contenido in listado.data" :imageLeft="false"
+                            :imageHeight="300" :key="contenido.id" :title="contenido.titulo" :image="contenido.imagen"
+                            :href="route('blog.entrada', contenido.slug)"
+                            :date="contenido.published_at" imageClass="h-50" :skeleton="cargando" />
+                    </div>
+
+                    <pagination @click="cargando = true" @finish="cargando = false" scroll-to="#main-content" class="mt-6"
+                        :links="listado.links" />
+
                 </div>
 
-                <pagination @click="cargando = true" @finish="cargando = false" scroll-to="#main-content" class="mt-6"
-                    :links="listado.links" />
-
-            </div>
-
-        </ContentMain>
+            </ContentMain>
+        </PageWide>
     </Page>
 </template>
 

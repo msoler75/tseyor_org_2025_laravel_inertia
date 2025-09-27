@@ -1,6 +1,7 @@
 <template>
-    <div class="container py-12 mx-auto">
-        <div class="flex justify-between items-center mb-7">
+    <Page class="!pb-0">
+        <PageHeader>
+        <div class="flex justify-between items-center mb-20">
             <span />
             <div class="flex gap-2">
                 <Share />
@@ -20,6 +21,8 @@
             <ConsultaTabs />
         </div>
 
+    </PageHeader>
+
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
                 <span />
@@ -37,6 +40,8 @@
             </div>
         </ContentBar>
 
+        <PageWide>
+
         <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
                 <Section class="container max-w-[1024px] mx-auto py-12">
                     <GridAppear col-width="16rem" class="gap-5">
@@ -51,9 +56,12 @@
                     </GridAppear>
                 </Section>
         </ContentMain>
-    </div>
 
-      <div class="bg-base-100 w-full md:pb-16" style="--sectionHeight: 300px">
+
+
+    </PageWide>
+
+     <div class="bg-base-100 w-full md:pb-16" style="--sectionHeight: 300px">
     <SectionBook
         titulo="Descarga el libro"
         :slug="libro.slug"
@@ -63,6 +71,8 @@
         <p>Aquí puedes descargar el libro de preguntas y respuestas.</p>
     </SectionBook>
     </div>
+
+    </Page>
 
 </template>
 

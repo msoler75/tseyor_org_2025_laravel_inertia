@@ -1,7 +1,9 @@
 <template>
-    <div class="container py-12 mx-auto mb-16">
+    <Page>
 
-        <div class="flex justify-between items-center mb-7">
+        <PageHeader>
+
+        <div class="flex justify-between items-center mb-20">
             <Back href="biblioteca">Biblioteca Tseyor</Back>
             <div class="flex gap-2">
                 <Share />
@@ -10,12 +12,15 @@
         </div>
 
 
-        <div class="mx-auto mb-16 flex flex-col justify-center items-center">
+        <div class="mx-auto container mb-16 flex flex-col justify-center items-center">
             <h1>Descubre</h1>
             <p>Presentación de algunos temas clave de Tseyor para una mayor comprensión y claridad.</p>
         </div>
 
-        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        </PageHeader>
+
+
+        <PageWide>
 
             <div class="w-full grow">
 
@@ -32,8 +37,8 @@
 
             </div>
 
-        </div>
-    </div>
+        </PageWide>
+        </Page>
 </template>
 
 <script setup>

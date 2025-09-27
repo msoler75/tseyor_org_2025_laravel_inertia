@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back>Publicaciones</Back>
             <div class="flex gap-2">
@@ -9,10 +9,14 @@
             </div>
         </div>
 
+        </PageHeader>
 
-        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
+         <PageContent class="sm:max-w-[80ch]">
+            <div class="py-[10ch] mb-12 relative">
 
-            <div class="prose mx-auto">
+                <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
+
+                <div class="prose mx-auto">
                 <h1>{{ publicacion.titulo }}</h1>
 
                 <div class="text-sm mb-2 flex justify-between">
@@ -24,9 +28,11 @@
             <Content :content="publicacion.texto" class="mx-auto" />
 
         </div>
+        </PageContent>
 
-        <Comentarios :url="route('publicacion', publicacion.id)" />
-
+        <PageFooter>
+            <Comentarios :url="route('publicacion', publicacion.id)" />
+        </PageFooter>
     </Page>
 </template>
 

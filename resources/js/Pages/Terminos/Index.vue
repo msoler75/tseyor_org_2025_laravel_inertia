@@ -1,7 +1,7 @@
 <template>
     <Page>
-
-        <div class="flex justify-between items-center mb-7">
+        <PageHeader>
+        <div class="flex justify-between items-center mb-20">
             <span />
             <div class="flex gap-2">
                 <Share />
@@ -11,7 +11,6 @@
                 <AdminLinks modelo="termino" necesita="administrar contenidos" />
             </div>
         </div>
-
 
         <div class="mx-auto flex flex-col justify-center items-center">
             <h1>Consulta</h1>
@@ -23,6 +22,8 @@
             <SearchInput placeholder="Buscar en glosario..."/>
         </div>
 
+        </PageHeader>
+
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
                 <span />
@@ -33,6 +34,7 @@
             </div>
         </ContentBar>
 
+        <PageWide>
         <div class="w-full flex gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 
             <div class="w-full md:w-[7rem] shrink-0 card bg-base-100 shadow-2xs p-5 h-fit md:sticky md:top-20">
@@ -73,6 +75,7 @@
 
 
         </div>
+        </PageWide>
     </Page>
 </template>
 

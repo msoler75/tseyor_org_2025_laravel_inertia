@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back>Usuarios</Back>
             <span></span>
@@ -9,6 +9,7 @@
                 <AdminLinks modelo="user" necesita="administrar usuarios" :contenido="usuario" />
            </div>
         </div>
+        </PageHeader>
 
         <Sections>
 

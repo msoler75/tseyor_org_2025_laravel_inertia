@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-7">
             <Back :href="route('terminos')" inline>Términos</Back>
             <div class="flex gap-2">
@@ -22,6 +22,8 @@
             <SearchInput :doSearch="false" @search="buscarClick" />
         </div>
 
+        </PageHeader>
+
 
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
@@ -33,7 +35,8 @@
             </div>
         </ContentBar>
 
-        <div class="w-full flex justify-between gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
+        <PageWide>
+            <div class="w-full flex justify-between gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 
             <div class="w-full md:w-[7rem] shrink-0 card bg-base-100 shadow-2xs p-5 h-fit md:sticky md:top-20">
                 <div class="flex flex-wrap md:hidden  gap-2">
@@ -86,6 +89,8 @@
             </ContentMain>
 
 
+
+
             <div class="w-[7rem] card bg-base-100 shadow-2xs p-5 h-fit sticky top-20 opacity-0 hidden lg:flex">
                 <div class="letras grid grid-cols-2 gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2"
@@ -109,11 +114,13 @@
             </Link>
             <span v-else />
         </div>
-
+</PageWide>
     </Page>
 </template>
 
 <script setup>
+import PageHeader from '@/Components/PageHeader.vue';
+
 const props = defineProps({
     termino: {
         type: Object,

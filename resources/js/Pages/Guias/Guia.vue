@@ -1,5 +1,6 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
+        <PageHeader>
         <div class="flex justify-between items-center mb-7">
             <Back :href="route('guias')" inline>Guías</Back>
             <div class="flex gap-2">
@@ -28,6 +29,8 @@
             <SearchInput :doSearch="false" @search="buscarClick" />
         </div>
 
+        </PageHeader>
+
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
                 <Back :href="route('guias')" inline class="opacity-100!"
@@ -52,6 +55,8 @@
             </div>
         </ContentBar>
 
+        <PageWide>
+
         <ContentMain class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
                 <div
@@ -67,7 +72,7 @@
                     />
                 </div>
             </div>
-            <div class="w-full lg:w-2/3 shrink-0 text-left">
+            <div class="w-full lg:w-2/3 shrink-0 text-left bg-base-100 px-4 py-12 sm:px-8 max-w-[60ch] mx-auto lg:mx-0 rounded-lg shadow-2xs">
                 <h1 class="text-center lg:text-left">{{ guia.nombre }}</h1>
                 <h3 class="text-center lg:text-left">{{ guia.descripcion }}</h3>
                 <p class="prose text-gray-600 my-5 text-right">
@@ -119,7 +124,9 @@
             </div>
         </ContentMain>
 
-        <hr class="my-12" />
+
+
+
 
         <div class="mt-12 grid gap-2 mb-12 grid-cols-1 xs:grid-cols-[180px_1fr_180px] sm:grid-cols-[220px_1fr_220px]">
             <CardContent v-if="anterior" :imageLeft="false" :key="anterior.id" :title="'Anterior: ' + anterior.nombre"
@@ -134,7 +141,9 @@
                  <span v-else></span>
         </div>
 
-    </div>
+        </PageWide>
+
+    </Page>
 </template>
 
 <script setup>

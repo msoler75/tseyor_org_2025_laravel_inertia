@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between mb-20">
             <span />
             <div class="flex gap-2">
@@ -17,8 +17,13 @@
             </div>
         </header>
 
+
         <Hero title="Centros Tseyor" subtitle="Descubre nuestros lugares de hermandad y paz interior."
-            buttonLabel="Ver Mapa" :href="route('contactos')" />
+        buttonLabel="Ver Mapa" :href="route('contactos')" />
+
+    </PageHeader>
+
+    <PageWide>
 
         <div class="flex flex-col lg:flex-row gap-12 justify-center relative">
             <div class="mx-auto max-w-[800px] space-y-12">
@@ -99,7 +104,7 @@
 
 
         </div>
-
+    </PageWide>
     </Page>
 </template>
 

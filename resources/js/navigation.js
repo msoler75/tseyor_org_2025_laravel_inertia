@@ -381,6 +381,12 @@ export default [
               icon: "ph:files-duotone",
             },
             {
+              title: "Salas",
+              route: "salas",
+              description: "Salas virtuales de reuniones",
+              icon: "ph:chat-teardrop-text-duotone",
+            },
+            {
               title: "Publicaciones",
               route: "publicaciones",
               description: "Publicaciones de los miembros de la comunidad",

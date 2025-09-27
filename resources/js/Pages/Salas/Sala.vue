@@ -1,6 +1,7 @@
 <template>
     <Page>
 
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back>Todas las Salas</Back>
             <div class="flex gap-2">
@@ -9,11 +10,12 @@
             </div>
         </div>
 
-        <div class="md:max-w-[640px] mx-auto flex flex-col gap-10 mt-12">
+              <h1>Salas virtuales</h1>
 
-            <h1>Salas virtuales</h1>
+        </PageHeader>
 
-            <div class="bg-base-100 shadow-xl p-5 rounded-lg">
+        <PageContent class="max-w-[60ch] mx-auto mb-20 py-12 rounded-xl">
+
 
                 <h2>{{ sala.nombre }}</h2>
 
@@ -25,8 +27,7 @@
                        class=" btn btn-primary after:content-['↗']">Acceder</a>
                 </div>
 
-            </div>
-        </div>
+        </PageContent>
 
 
     </Page>

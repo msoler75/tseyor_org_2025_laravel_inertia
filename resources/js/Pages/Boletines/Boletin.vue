@@ -1,5 +1,6 @@
 <template>
     <Page>
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back>Boletines</Back>
             <div class="flex gap-2">
@@ -12,10 +13,14 @@
                 />
             </div>
         </div>
+        </PageHeader>
 
-        <div
-            class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 animate-fade-in px-3 xs:px-4 sm:px-0"
-        >
+        <PageContent class="sm:max-w-[80ch]">
+
+            <div class="py-[10ch] mb-12 relative">
+
+            <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
+
             <div class="prose mx-auto">
                 <h1>{{ boletin.titulo }}</h1>
 
@@ -33,7 +38,8 @@
             <LazyHydrate>
                 <Content :content="boletin.texto" class="mx-auto" />
             </LazyHydrate>
-        </div>
+            </div>
+        </PageContent>
     </Page>
 </template>
 

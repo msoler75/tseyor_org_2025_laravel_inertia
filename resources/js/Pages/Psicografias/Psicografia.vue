@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back>Psicografías</Back>
             <div class="flex gap-2">
@@ -8,10 +8,13 @@
                 <AdminLinks modelo="psicografia" necesita="administrar contenidos" :contenido="psicografia" />
             </div>
         </div>
+        </PageHeader>
 
-        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
+         <PageContent class="sm:max-w-[80ch]">
 
-            <div class="prose mx-auto">
+            <div class="py-[10ch] mb-12 relative">
+
+                <div class="prose mx-auto">
                 <h1>{{ psicografia.titulo }}</h1>
 
                 <div class="text-sm mb-20 flex justify-between">
@@ -29,9 +32,12 @@
                     </div>
                 </div>
 
-        </div>
 
-        <div class="mt-12 grid gap-8 mb-12 grid-cols-1 lg:grid-cols-2">
+        </div>
+        </PageContent>
+
+         <PageRelated>
+
             <CardContent v-if="anterior" :imageLeft="false" :key="anterior.id" :title="'Anterior: ' + anterior.titulo"
                 class="rounded-none sm:rounded-lg" :image="anterior.imagen" :href="route('psicografia', anterior.slug)"
                 imageClass="h-80" imageWidth="500" />
@@ -39,9 +45,11 @@
                 :title="'Siguiente: ' + siguiente.titulo" :image="siguiente.imagen"
                 :href="route('psicografia', siguiente.slug)"
                 imageClass="h-80" imageWidth="500"/>
-        </div>
+         </PageRelated>
 
+         <PageFooter>
         <Comentarios :url="route('psicografia', psicografia.id)" />
+        </PageFooter>
 
     </Page>
 </template>

@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between mb-20">
             <span />
             <div class="flex gap-2">
@@ -15,6 +15,10 @@
         <div class="flex justify-end mb-5">
             <SearchInput placeholder="Buscar equipo..."/>
         </div>
+
+        </PageHeader>
+
+        <PageWide>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
@@ -54,6 +58,8 @@
             </div>
 
         </div>
+
+        </PageWide>
     </Page>
 </template>
 

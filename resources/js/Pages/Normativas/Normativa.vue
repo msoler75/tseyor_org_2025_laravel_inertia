@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back>Normativas</Back>
             <div class="flex gap-2">
@@ -8,10 +8,16 @@
                 <AdminLinks modelo="normativa" necesita="administrar legal" :contenido="normativa" />
             </div>
         </div>
+        </PageHeader>
 
-        <div class="py-[10ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
 
-            <div class="prose mx-auto">
+  <PageContent class="sm:max-w-[80ch]">
+
+            <div class="py-[10ch] mb-12 relative">
+
+                <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
+
+                <div class="prose mx-auto">
                 <h1>{{ normativa.titulo }}</h1>
 
                 <div class="text-sm mb-2 flex justify-between">
@@ -22,10 +28,13 @@
             <Content :content="normativa.texto" class="mx-auto" />
 
         </div>
+  </PageContent>
 
+        <PageFooter>
         <Comentarios :url="route('normativa', normativa.id)" />
 
-    </Page>
+    </PageFooter>
+</Page>
 </template>
 
 <script setup>

@@ -1,7 +1,7 @@
 <template>
-    <div class="container py-12 mx-auto">
-
-        <div class="flex justify-between items-center mb-7">
+    <Page>
+        <PageHeader>
+        <div class="flex justify-between items-center mb-20">
             <span />
             <div class="flex gap-2">
                 <Share />
@@ -29,6 +29,8 @@
             <SearchInput />
         </div>
 
+        </PageHeader>
+
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
                 <span />
@@ -39,9 +41,11 @@
             </div>
         </ContentBar>
 
-        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap animate-fade-in" :fade-on-navigate="false">
+        <PageWide>
 
-            <Categorias  title="Vibración" :novedades="false" :categorias="categorias" :counters="false" :url="route('guias')"
+        <ContentMain class="animate-fade-in" :fade-on-navigate="false">
+
+            <Categorias v-if="false" title="Vibración" :novedades="false" :categorias="categorias" :counters="false" :url="route('guias')"
             :resultados="!!filtrado" div-class="top-32! min-w-[150px] lg:min-w-[200px]" div-select-class="top-28!"  />
 
             <FadeOnNavigate class="w-full grow">
@@ -60,7 +64,9 @@
 
 
         </ContentMain>
-    </div>
+
+    </PageWide>
+    </Page>
 </template>
 
 <script setup>

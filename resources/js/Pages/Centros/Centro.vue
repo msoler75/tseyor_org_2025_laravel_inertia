@@ -1,13 +1,16 @@
 <template>
     <Page>
-
-        <div class="flex justify-between items-center mb-20">
-            <Back>Centros Tseyor</Back>
-            <div class="flex gap-2">
-                <Share />
-                <AdminLinks modelo="centro" necesita="administrar directorio" :contenido="centro" />
+        <PageHeader>
+            <div class="flex justify-between items-center mb-20">
+                <Back>Centros Tseyor</Back>
+                <div class="flex gap-2">
+                    <Share />
+                    <AdminLinks modelo="centro" necesita="administrar directorio" :contenido="centro" />
+                </div>
             </div>
-        </div>
+        </PageHeader>
+
+        <PageWide>
 
         <TextText :srcImage="centro.imagen" cover full>
             <template #text1>
@@ -67,6 +70,7 @@
             </GridAppear>
         </div>
 
+        </PageWide>
     </Page>
 </template>
 

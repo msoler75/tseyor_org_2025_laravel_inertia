@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back>Videos</Back>
             <div class="flex gap-2">
@@ -8,6 +8,9 @@
                 <AdminLinks modelo="video" necesita="administrar contenidos" :contenido="video" />
             </div>
         </div>
+        </PageHeader>
+
+        <PageWide>
 
         <div class="max-w-full lg:max-w-[640px] mx-auto">
 
@@ -36,6 +39,7 @@
             </div>
 
         </div>
+        </PageWide>
     </Page>
 </template>
 

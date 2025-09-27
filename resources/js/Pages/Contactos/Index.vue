@@ -1,5 +1,6 @@
 <template>
     <Page>
+        <PageHeader>
         <div class="flex justify-between mb-20">
             <span />
             <div class="flex gap-2">
@@ -11,11 +12,15 @@
             </div>
         </div>
 
-        <h1 class="text-center mb-0">Dónde estamos</h1>
+        <h1 class="text-center mb-20">Dónde estamos</h1>
 
         <div class="flex justify-end mb-5 transform lg:translate-y-[3.5rem]">
             <SearchInput class="py-1" />
         </div>
+
+        </PageHeader>
+
+        <PageWide>
 
         <div class="w-full flex gap-5 flex-wrap lg:flex-nowrap">
             <Categorias
@@ -107,6 +112,8 @@
                 </div>
             </div>
         </div>
+
+        </PageWide>
     </Page>
 </template>
 

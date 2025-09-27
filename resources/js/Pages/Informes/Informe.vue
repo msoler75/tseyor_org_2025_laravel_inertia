@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back class="hover:underline" :href="route('equipo.informes', equipo.slug)">Informes del equipo</Back>
             <Link v-if="equipo && equipo.slug && equipo.nombre" :href="route('equipo', equipo.slug)"
@@ -14,11 +14,17 @@
                 <AdminLinks modelo="informe" necesita="administrar equipos" :contenido="informe" :es-autor="soyCoordinador"/>
             </div>
         </div>
+        </PageHeader>
 
 
-        <div class="py-[5ch] bg-base-100 max-w-[80ch] mx-auto shadow-xl mb-12 px-7 md:px-0 animate-fade-in">
+      <PageContent class="sm:max-w-[80ch]">
 
-            <div class="prose mx-auto mb-12">
+            <div class="py-[10ch] mb-12 relative">
+
+                <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
+
+                <div class="prose mx-auto">
+
 
                 <div class="flex justify-end w-full mb-10"></div>
 
@@ -49,8 +55,11 @@
             </div>
 
         </div>
+        </PageContent>
 
-        <Comentarios :url="route('informe', informe.id)" />
+        <PageFooter>
+            <Comentarios :url="route('informe', informe.id)" />
+        </PageFooter>
 
     </Page>
 </template>

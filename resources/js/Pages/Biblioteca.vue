@@ -1,6 +1,7 @@
 <template>
     <Page>
 
+        <PageHeader>
         <div class="flex justify-between mb-20">
             <span/>
             <Share />
@@ -22,31 +23,35 @@
          </TitleInfo>
 
 
-        <!-- Contenedor de Categorías -->
-        <GridAppear class="mt-12 grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Categoría: Libros -->
-            <Link :href="seccion.url" v-for="seccion of secciones" :key="seccion.title" class="card bg-base-100 p-6 rounded-lg shadow-md relative group
-            transition duration-300  hover:shadow-lg antialiased
-            lg:opacity-80 hover:opacity-100
-            ">
+         </PageHeader>
+
+        <PageWide>
+
+            <!-- Contenedor de Categorías -->
+            <GridAppear class="mt-12 grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Categoría: Libros -->
+                <Link :href="seccion.url" v-for="seccion of secciones" :key="seccion.title" class="card bg-base-100 p-6 rounded-lg shadow-md relative group
+                transition duration-300  hover:shadow-lg antialiased
+                lg:opacity-80 hover:opacity-100
+                ">
 
 
-            <h2 class="flex items-center gap-3 text-2xl font-semibold mb-2 group-hover:text-secondary!">
-                <Icon :icon="seccion.icon" />
-                {{ seccion.title }}
-            </h2>
+                <h2 class="flex items-center gap-3 text-2xl font-semibold mb-2 group-hover:text-secondary!">
+                    <Icon :icon="seccion.icon" />
+                    {{ seccion.title }}
+                </h2>
 
-            <p class="opacity-70 group-hover:opacity-100 mb-4">{{ seccion.descripcion }}</p>
-            <div class="flex justify-end gap-4 items-center opacity-50 group-hover:opacity-100 mt-auto">
-                <span :class="seccion.count ? 'opacity-50' : 'opacity-0'">{{ seccion.count }} {{
-                    seccion.collection ? seccion.collection : seccion.title.toLowerCase() }}</span>
-                <Icon icon="ph-arrow-right" />
-            </div>
-            </Link>
+                <p class="opacity-70 group-hover:opacity-100 mb-4">{{ seccion.descripcion }}</p>
+                <div class="flex justify-end gap-4 items-center opacity-50 group-hover:opacity-100 mt-auto">
+                    <span :class="seccion.count ? 'opacity-50' : 'opacity-0'">{{ seccion.count }} {{
+                        seccion.collection ? seccion.collection : seccion.title.toLowerCase() }}</span>
+                    <Icon icon="ph-arrow-right" />
+                </div>
+                </Link>
 
+            </GridAppear>
 
-
-        </GridAppear>
+        </PageWide>
     </Page>
 </template>
 

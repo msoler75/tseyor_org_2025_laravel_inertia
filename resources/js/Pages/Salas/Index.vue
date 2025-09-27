@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between mb-20">
             <span />
             <div class="flex gap-2">
@@ -9,22 +9,25 @@
             </div>
         </div>
 
-        <h1>Salas virtuales</h1>
-        <p>Listado de salas para reuniones virtuales de los distintos equipos de la comunidad Tseyor.</p>
+        <div class="container mx-auto">
+            <h1>Salas virtuales</h1>
+            <p>Listado de salas para reuniones virtuales de los distintos equipos de la comunidad Tseyor.</p>
+        </div>
 
         <div class="flex w-full justify-end mb-5">
             <SearchInput />
         </div>
+        </PageHeader>
 
-        <div class="w-full flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
+        <PageWide>
 
+        <div class="w-full mb-12 flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
 
-            <div class="w-full grow">
 
                 <SearchResultsHeader :results="listado" :valid-search="busquedaValida" />
 
                 <GridAppear class="grid gap-4" col-width="28rem">
-                    <div class="rounded-lg bg-base-100 p-5" v-for="sala in listado.data" :key="sala.id">
+                    <div class="card rounded-lg shadow bg-base-100 p-5" v-for="sala in listado.data" :key="sala.id">
                         <Link :href="route('sala', sala.slug || sala.id)" class="text-lg"><strong>{{ sala.nombre
                             }}</strong></Link>
 
@@ -45,7 +48,7 @@
             </div>
 
 
-        </div>
+        </PageWide>
     </Page>
 </template>
 

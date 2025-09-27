@@ -1,13 +1,17 @@
 <template>
     <Page>
 
-        <div class="flex justify-between items-center mb-20">
-            <Back>Audios</Back>
-            <div class="flex gap-2">
-                <Share/>
-                <AdminLinks modelo="audio" necesita="administrar contenidos" :contenido="audio" />
+        <PageHeader>
+            <div class="flex justify-between items-center mb-20">
+                <Back>Audios</Back>
+                <div class="flex gap-2">
+                    <Share/>
+                    <AdminLinks modelo="audio" necesita="administrar contenidos" :contenido="audio" />
+                </div>
             </div>
-        </div>
+        </PageHeader>
+
+        <PageContent class="max-w-[80ch] py-12 flex gap-10 md:rounded-2xl">
 
         <div class="flex flex-col items-center mb-20">
             <h1>{{ audio.titulo }}</h1>
@@ -41,7 +45,11 @@
             </a>
         </div>
 
-        <Comentarios :url="route('audio', audio.id)" />
+        </PageContent>
+
+        <PageFooter>
+            <Comentarios :url="route('audio', audio.id)" />
+        </PageFooter>
     </Page>
 </template>
 

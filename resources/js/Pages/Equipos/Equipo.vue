@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back>Equipos</Back>
             <EquipoMembresia class="hidden sm:flex mx-auto" :equipo-id="equipo.id" v-model="solicitud"
@@ -11,6 +11,10 @@
                 <AdminLinks modelo="equipo" necesita="administrar equipos" :contenido="equipo" />
             </div>
         </div>
+
+        </PageHeader>
+
+        <PageWide>
 
         <EquipoCabecera :equipo="equipo" class="fixed w-full top-14 transition duration-100"
             :class="useNav().scrollY < 240 ? 'opacity-0 pointer-events-none' : ''" />
@@ -122,6 +126,8 @@
 
             </GridAppear>
         </div>
+
+        </PageWide>
     </Page>
 </template>
 

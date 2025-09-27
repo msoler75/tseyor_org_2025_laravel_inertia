@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
             <div class="flex gap-2">
@@ -26,9 +26,11 @@
     <SearchInput placeholder="Buscar audios..." />
 </div>
 
+</PageHeader>
 
+<PageWide>
 
-        <ContentMain class="mt-6 w-full flex gap-5 flex-wrap md:flex-nowrap md:container md:mx-auto px-2">
+        <ContentMain class="mt-6 w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <Categorias :categorias="categorias" :url="route('audios')" :favoritos="authenticated" select-class="w-full rounded-sm"/>
 
@@ -72,6 +74,7 @@
             </div>
 
         </ContentMain>
+        </PageWide>
     </Page>
 </template>
 

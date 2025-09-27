@@ -1,7 +1,7 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
 
-        <div class="flex justify-between items-center mb-20">
+        <PageHeader>        <div class="flex justify-between items-center mb-20">
             <span />
             <div class="flex gap-2">
                 <Share />
@@ -9,16 +9,20 @@
             </div>
         </div>
 
+        <div class="container mx-auto">
         <h1>Normativas</h1>
         <p>Reglamentos, protocolos, normativas, lineamientos, acuerdos y otros documentos para uso de la comunidad
             Tseyor.
         </p>
+        </div>
 
         <div class="flex justify-end mb-5">
             <SearchInput />
         </div>
+    </PageHeader>
 
 
+    <PageWide>
         <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
 
             <Categorias :categorias="categorias" :url="route('normativas')" columna-breakpoint="md"
@@ -54,7 +58,8 @@
 
             </div>
         </div>
-    </div>
+    </PageWide>
+    </Page>
 </template>
 
 

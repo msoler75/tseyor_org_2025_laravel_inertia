@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back>Comunidad</Back>
             <div class="flex gap-2">
@@ -16,6 +16,9 @@
             <SearchInput />
         </div>
 
+        </PageHeader>
+
+        <PageWide>
 
         <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">
 
@@ -59,6 +62,7 @@
 
             </div>
         </div>
+        </PageWide>
     </Page>
 </template>
 

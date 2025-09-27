@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back :href="route('biblioteca')">Biblioteca</Back>
             <div class="flex gap-2">
@@ -9,10 +9,14 @@
             </div>
         </div>
 
-        <div class="mb-20">
+        <div class="mb-20 container mx-auto">
             <h1>Meditaciones</h1>
             <p>Talleres, meditaciones y otros documentos para uso de la comunidad Tseyor.</p>
         </div>
+
+        </PageHeader>
+
+        <PageWide>
 
         <ContentMain class="flex justify-end mb-5">
             <SearchInput />
@@ -50,6 +54,8 @@
 
             </div>
         </div>
+
+        </PageWide>
     </Page>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back href="/donde-estamos">Dónde estamos</Back>
             <div class="flex gap-2">
@@ -9,7 +9,10 @@
             </div>
         </div>
 
-        <Card class="text-center w-fit space-y-4 sm:p-14! mx-auto">
+        </PageHeader>
+
+        <PageContent class="sm:max-w-[60ch] py-12 rounded-3xl text-center">
+
             <h1 class="text-3xl font-bold mb-4">{{ contacto.nombre }}</h1>
 
             <p class="lg:text-right text-gray-600 text-sm mb-2"> Última actualización:
@@ -38,7 +41,7 @@
             <Link :href="route('centro', contacto.centro?.slug)" class="btn btn-primary">Ver Información del Centro
             </Link>
         </div>
-        </Card>
+        </PageContent>
 
 
     </Page>

@@ -1,7 +1,7 @@
 <template>
 
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between mb-20">
             <span />
             <div class="flex gap-2">
@@ -16,6 +16,10 @@
         <div class="flex justify-end mb-5">
             <SearchInput />
         </div>
+
+        </PageHeader>
+
+        <PageWide>
 
         <SearchResultsHeader :results="listado" />
 
@@ -33,6 +37,8 @@
         </GridAppear>
 
         <pagination class="mt-6" :links="listado.links" />
+
+        </PageWide>
 
     </Page>
 </template>
