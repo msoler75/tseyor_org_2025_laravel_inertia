@@ -94,7 +94,7 @@
 </template>
 
 <script setup>
-import { fechaFormatoEsp } from '@/composables/fechas.js'
+import { fechaFormatoEsp, buildGoogleCalendarDates } from '@/composables/fechas.js'
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 
 const { trackUserEngagement, trackDirectAccess } = useGoogleAnalytics()
@@ -126,27 +126,7 @@ const googleCalendarUrl = computed(() => {
     const e = props.evento
     if (!e) return '#'
 
-    // Helpers
-    function pad(n) { return String(n).padStart(2, '0') }
-
-    // Formatea fecha solo (all-day) como YYYYMMDD
-    function formatDateOnly(dateStr, addDays = 0) {
-        const [y, m, d] = (dateStr || '').split('-').map(Number)
-        if (!y) return ''
-        const dt = new Date(y, m - 1, d)
-        if (addDays) dt.setDate(dt.getDate() + addDays)
-        return `${dt.getFullYear()}${pad(dt.getMonth() + 1)}${pad(dt.getDate())}`
-    }
-
-    // Formatea fecha+hora como instancia UTC (YYYYMMDDTHHMMSSZ)
-    function formatDateTimeLocalToUTC(dateStr, timeStr) {
-        if (!dateStr || !timeStr) return ''
-        const [y, m, d] = dateStr.split('-').map(Number)
-        const [hh, mm, ss] = (timeStr || '').split(':').map(s => Number(s))
-        // Crear Date usando componentes (interpreta como hora local)
-        const local = new Date(y, m - 1, d, hh || 0, mm || 0, ss || 0)
-        return local.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z')
-    }
+    // usamos formatDateOnly y formatDateTimeLocalToUTC importados desde composable
 
     const text = encodeURIComponent(e.titulo || 'Evento')
     const rawDetails = `${e.descripcion || ''}\n\nEvento: ${thisUrl.value || ''}`.trim()
@@ -154,38 +134,7 @@ const googleCalendarUrl = computed(() => {
     const details = encodeURIComponent(rawDetails)
     const location = encodeURIComponent(e.lugar || (e.centro ? e.centro.nombre : ''))
 
-    let start = ''
-    let end = ''
-
-    const hasStartTime = !!e.hora_inicio
-    const hasEndTime = !!e.hora_fin
-    const multiDay = !!e.fecha_fin && e.fecha_fin !== e.fecha_inicio
-
-    if (hasStartTime) {
-        // Evento con hora: formatear como UTC
-        start = formatDateTimeLocalToUTC(e.fecha_inicio, e.hora_inicio)
-
-        if (hasEndTime) {
-            end = formatDateTimeLocalToUTC(e.fecha_fin || e.fecha_inicio, e.hora_fin)
-        } else {
-            // Si no hay hora de fin, asumir 1 hora de duración
-            const [y, m, d] = e.fecha_inicio.split('-').map(Number)
-            const [hh, mm] = (e.hora_inicio || '').split(':').map(Number)
-            const local = new Date(y, m - 1, d, hh || 0, mm || 0)
-            local.setHours(local.getHours() + 1)
-            end = local.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z')
-        }
-    } else {
-        // Evento todo el día
-        start = formatDateOnly(e.fecha_inicio, 0)
-        if (multiDay) {
-            // Google Calendar espera fecha de fin exclusiva: sumar 1 día al último día
-            end = formatDateOnly(e.fecha_fin, 1)
-        } else {
-            // mismo día: fin = siguiente día
-            end = formatDateOnly(e.fecha_inicio, 1)
-        }
-    }
+    const { start, end } = buildGoogleCalendarDates(e)
 
     let url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}`
     if (start && end) url += `&dates=${start}/${end}`
