@@ -1,6 +1,6 @@
 <template>
     <Page>
-
+        <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back v-if="pagina.atras_ruta" :href="pagina.atras_ruta">{{ pagina.atras_texto }}</Back>
             <Back v-else-if="pagina.descubre" :href="route('descubre')">Descubre</Back>
@@ -10,12 +10,21 @@
                 <AdminLinks modelo="pagina" necesita="administrar contenidos" :contenido="pagina" />
             </div>
         </div>
+        </PageHeader>
 
-        <div class="py-14 px-5 md:px-14 card bg-base-100 shadow-2xs mx-auto w-fit">
+
+           <PageContent class="sm:max-w-[80ch]">
+            <div class="py-[10ch] mb-12 relative">
+
+                <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
+
+                <div class="prose mx-auto">
             <h1 class="text-center capitalize">{{ pagina.titulo }}</h1>
             <Content :content="pagina.texto" class="mx-auto animate-fade-in" />
         </div>
 
+            </div>
+        </PageContent>
     </Page>
 </template>
 
