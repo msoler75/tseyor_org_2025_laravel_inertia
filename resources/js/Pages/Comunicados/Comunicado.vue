@@ -16,7 +16,6 @@
 
         <PageContent class="sm:max-w-[80ch]">
             <div class="py-[10ch] mb-12 relative">
-
                 <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
 
                 <div class="prose mx-auto">

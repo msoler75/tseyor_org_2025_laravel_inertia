@@ -1,6 +1,7 @@
 <template>
-    <div class="container py-12 mx-auto">
+    <Page>
 
+        <PageHeader>
         <div class="flex justify-between mb-20">
             <Back :href="route('novedades')">Novedades</Back>
             <div class="flex gap-2">
@@ -9,13 +10,18 @@
             </div>
         </div>
 
-        <h1>Eventos</h1>
-        <p>Cursos y encuentros de la comunidad Tseyor a los que puedes acudir.</p>
+        <div class="container mx-auto">
+            <h1>Eventos</h1>
+            <p>Cursos y encuentros de la comunidad Tseyor a los que puedes acudir.</p>
+        </div>
 
         <div class="flex justify-end mb-5">
             <SearchInput placeholder="Buscar eventos..." />
         </div>
 
+        </PageHeader>
+
+        <PageWide>
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
 
@@ -56,7 +62,8 @@
 
 
         </div>
-    </div>
+        </PageWide>
+    </Page>
 </template>
 
 

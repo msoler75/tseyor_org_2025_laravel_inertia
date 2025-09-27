@@ -1,7 +1,7 @@
 <template>
     <Page>
         <PageHeader>
-        <div class="flex justify-between items-center mb-7">
+        <div class="flex justify-between items-center mb-20">
             <Back :href="route('terminos')" inline>Términos</Back>
             <div class="flex gap-2">
                 <Share />
