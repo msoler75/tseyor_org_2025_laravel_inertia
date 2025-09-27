@@ -8,6 +8,7 @@ use App\Models\Evento;
 use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 class EventosController extends Controller
 {
     public static $ITEMS_POR_PAGINA = 12;
@@ -39,11 +40,16 @@ class EventosController extends Controller
         if ($categoria) {
             $query->where('categoria', '=', $categoria);
         }
+
         if ($buscar) {
-            $query->where(function($q) use ($buscar) {
-                $q->where('titulo', 'like', '%' . $buscar . '%')
-                  ->orWhere('descripcion', 'like', '%' . $buscar . '%');
-            });
+            // Usar Scout para obtener ids relevantes y filtrar la consulta principal
+            $ids = Evento::search($buscar)->get()->pluck('id')->toArray();
+            if (!empty($ids)) {
+                $query->whereIn('eventos.id', $ids);
+            } else {
+                // Si no hay coincidencias por Scout, forzamos una consulta vacía
+                $query->whereRaw('1 = 0');
+            }
         }
 
         // aplicar scope publicado solo si no es editor

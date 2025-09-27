@@ -98,7 +98,7 @@ class Evento extends ContenidoBaseModel
             'title' => $this->titulo,
             'description' => $this->descripcion,
             'content' => Markdown::removeMarkdown($this->texto),
-            // 'categoria' => $this->categoria,
+            'categoria' => $this->categoria,
             'fecha_inicio' => $fechaInicio ? $fechaInicio->format('Y-m-d H:i:s') : null,
             'ano' => $fechaInicio ? $fechaInicio->format('Y') : null,
             'mes' => $fechaInicio ? $fechaInicio->format('m') : null,
