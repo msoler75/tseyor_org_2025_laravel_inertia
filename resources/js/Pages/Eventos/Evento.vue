@@ -27,12 +27,12 @@
                     <span class="mb-2 flex gap-3 items-center">
                         <Icon icon="ph:calendar-check-duotone" class="text-xl" /> Inicia:
                     </span>
-                    <span>{{ fechaEs(evento.fecha_inicio, { month: 'long' }) }}</span>
+                    <span>{{ fechaFormatoEsp(evento.fecha_inicio, { month: 'long' }) }}</span>
                     <template v-if="evento.fecha_fin">
                         <span class="mb-2 flex gap-3 items-center">
                             <Icon icon="ph:calendar-x-duotone" class="text-xl" /> Finaliza:
                         </span>
-                        <span>{{ fechaEs(evento.fecha_fin, { month: 'long' }) }}</span>
+                        <span>{{ fechaFormatoEsp(evento.fecha_fin, { month: 'long' }) }}</span>
                     </template>
                     <template v-if="evento.hora_inicio">
                         <span class="mb-2 flex gap-3">
@@ -94,7 +94,7 @@
 </template>
 
 <script setup>
-import { fechaEs } from '@/composables/textutils.js'
+import { fechaFormatoEsp } from '@/composables/fechas.js'
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 
 const { trackUserEngagement, trackDirectAccess } = useGoogleAnalytics()

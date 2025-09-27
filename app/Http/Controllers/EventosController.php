@@ -16,7 +16,11 @@ class EventosController extends Controller
     {
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
-        $page = $request->input('page', 1);
+    $page = $request->input('page', 1);
+
+    // Permiso para ver borradores
+    $esEditor = optional(auth()->user())->can('administrar social');
+    $query = null;
 
     // Fecha de referencia para la comparación (now)
     $now = Carbon::now()->toDateTimeString();
@@ -28,23 +32,34 @@ class EventosController extends Controller
     // y por fecha DESC para pasados.
     $orderSql = "(COALESCE(fecha_inicio, published_at, '1970-01-01') >= ?) DESC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') >= ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) ASC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') < ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) DESC";
 
+        // Construir la consulta paso a paso
+        $query = Evento::query();
+
+        // filtros
         if ($categoria) {
-            $resultados = Evento::where('categoria', '=', $categoria)
-                ->orderByRaw($orderSql, [$now, $now, $now])
-                ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
-                ->appends(['categoria' => $categoria]);
-        } elseif ($buscar) {
-            $resultados = Evento::where('titulo', 'like', '%' . $buscar . '%')
-                ->orWhere('descripcion', 'like', '%' . $buscar . '%')
-                ->orderByRaw($orderSql, [$now, $now, $now])
-                ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
-                ->appends(['buscar' => $buscar]);
-        } else {
-            $resultados = Evento::orderByRaw($orderSql, [$now, $now, $now])
-                ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
+            $query->where('categoria', '=', $categoria);
+        }
+        if ($buscar) {
+            $query->where(function($q) use ($buscar) {
+                $q->where('titulo', 'like', '%' . $buscar . '%')
+                  ->orWhere('descripcion', 'like', '%' . $buscar . '%');
+            });
         }
 
+        // aplicar scope publicado solo si no es editor
+        if (!$esEditor) {
+            $query->publicado();
+        }
 
+        // paginar y aplicar orden
+        $resultados = $query->orderByRaw($orderSql, [$now, $now, $now])
+            ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
+
+        // appends para mantener filtros en links de paginación
+        $appends = [];
+        if ($categoria) $appends['categoria'] = $categoria;
+        if ($buscar) $appends['buscar'] = $buscar;
+        if (!empty($appends)) $resultados->appends($appends);
 
         $categorias = Evento::selectRaw('categoria as nombre, count(*) as total')
             ->groupBy('categoria')
