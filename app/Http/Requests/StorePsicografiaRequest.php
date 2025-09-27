@@ -35,7 +35,7 @@ class StorePsicografiaRequest extends FormRequest
             'titulo' => 'required|min:2',
             'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('psicografias', 'slug')->ignore($psicografiaId)],
             'descripcion' => 'required|max:65000',
-            'imagen' => 'file|mimes:jpeg,jpg,webp|max:4096',
+            'imagen' => 'file|mimes:jpeg,jpg,webp,png|max:4096',
         ];
 
         return $rules;
