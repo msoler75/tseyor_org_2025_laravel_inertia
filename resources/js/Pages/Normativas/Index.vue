@@ -1,7 +1,8 @@
 <template>
     <Page>
 
-        <PageHeader>        <div class="flex justify-between items-center mb-20">
+        <PageHeader>
+            <div class="flex justify-between items-center mb-20">
             <span />
             <div class="flex gap-2">
                 <Share />

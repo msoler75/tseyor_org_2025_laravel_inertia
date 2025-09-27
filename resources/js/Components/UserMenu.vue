@@ -54,6 +54,8 @@
                 Panel de administrador
             </DropdownLink>
 
+            <FontSizeControls class="pl-4 pb-2"/>
+
             <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
                 API Tokens
             </DropdownLink>

@@ -1,7 +1,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <div class="flex justify-between items-center mb-7">
+        <div class="flex justify-between items-center mb-20">
             <span />
             <div class="flex gap-2">
                 <Share />

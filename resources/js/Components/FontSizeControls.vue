@@ -2,23 +2,23 @@
   <div class="font-controls flex items-center gap-3">
     <button
       type="button"
-      class="btn btn-info w-11 h-11 flex justify-center items-center"
+      class="btn  w-10 h-10 flex gap-1 justify-center items-center"
       aria-label="Disminuir tamaño de fuente"
       @click="decrease"
       title="Disminuir fuente"
     >
-      <span class="icon-small-a" aria-hidden="true">a</span>
-      <span class="icon-sign" aria-hidden="true">−</span>
+      <span class="text-[0.75rem] font-semibold leading-none" aria-hidden="true">a</span>
+      <span class="text-xl font-bold leading-none" aria-hidden="true">−</span>
     </button>
     <button
       type="button"
-      class="btn btn-info w-11 h-11 flex justify-center items-center"
+      class="btn w-10 h-10 flex gap-1 justify-center items-center"
       aria-label="Aumentar tamaño de fuente"
       @click="increase"
       title="Aumentar fuente"
     >
-      <span class="icon-large-A" aria-hidden="true">A</span>
-      <span class="icon-sign plus" aria-hidden="true">+</span>
+      <span class="text-[1.25rem] font-bold leading-none" aria-hidden="true">A</span>
+      <span class="text-xl font-bold leading-none" aria-hidden="true">+</span>
     </button>
   </div>
 </template>
@@ -61,28 +61,3 @@ watch(() => selectors.tamanyoFuente, (val) => applyFontSize(val), { immediate: t
 
 onMounted(() => applyFontSize(selectors.tamanyoFuente));
 </script>
-
-<!-- styles are provided via utility classes on buttons to avoid @apply in single-file component -->
-
-<style scoped>
-.icon-large-A {
-  font-size: 1.45rem;
-  font-weight: 700;
-  line-height: 1;
-  margin-right: 0.07rem;
-}
-.icon-small-a {
-  font-size: .95rem;
-  font-weight: 600;
-  line-height: 1;
-  margin-right: 0.07rem;
-}
-.icon-sign {
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 1;
-}
-.icon-sign.plus {
-  color: #065f46; /* darker green for contrast (optional) */
-}
-</style>

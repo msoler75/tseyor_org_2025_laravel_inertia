@@ -1,7 +1,7 @@
 <template>
     <div class="container py-12 mx-auto">
 
-        <div class="flex justify-between items-center mb-7">
+        <div class="flex justify-between items-center mb-20">
             <Back :href="route('lugares')" inline>Lugares</Back>
             <div class="flex gap-2">
                 <Share />
