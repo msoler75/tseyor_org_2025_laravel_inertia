@@ -9,7 +9,7 @@
             <form @submit.prevent="submit" class="w-full relative flex"
             :class="active?'min-w-full sm:min-w-auto':''"
             >
-              <div class="absolute top-1/2 z-20 left-2 transform scale-110 -translate-y-[.6rem] text-gray-600"
+              <div class="absolute top-1/2 z-20 left-2 transform scale-110 -translate-y-[.6rem] text-gray-500 dark:text-gray-400"
                 v-if="!active">
                 <Icon v-show="!submitting" icon="ph:magnifying-glass-bold" />
             </div>
@@ -26,9 +26,10 @@
 
                 <input class="search-input focus:bg-base-100 bg-transparent shadow-none px-6 py-3 focus:shadow-outline
                     text-left join-item
+                    placeholder:text-gray-500 dark:placeholder:text-gray-400
                     flex-grow"
                     :class="[
-                        active ? 'pl-4' : 'border-gray-500/20 pl-8',
+                        active ? 'pl-4' : 'border-gray-500/50 pl-8',
                         inputClass,
                     ]"
                     @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"

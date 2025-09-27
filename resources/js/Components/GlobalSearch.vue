@@ -11,7 +11,8 @@
                     <Icon v-show="!search.searching" icon="ph:magnifying-glass-bold" class="text-2xl" />
                     <Spinner v-show="search.searching" class="text-2xl" />
                     <div class="grow relative">
-                        <input id="global-search-input" ref="input" class="search-input w-full !pr-8"
+                        <input id="global-search-input" ref="input" class="search-input w-full !pr-8
+                        placeholder:text-gray-500 dark:placeholder:text-gray-400"
                             :value="search.query"
                             @input="handleQueryInput"
                             aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off"

@@ -13,7 +13,7 @@
         <p class="text-center">Equipos de trabajo y departamentos de la UTG.</p>
 
         <div class="flex justify-end mb-5">
-            <SearchInput />
+            <SearchInput placeholder="Buscar equipo..."/>
         </div>
 
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
