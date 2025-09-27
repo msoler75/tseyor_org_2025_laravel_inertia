@@ -63,21 +63,6 @@ export const initials = function (name) {
   return str;
 };
 
-// muestra la fecha en español
-export const fechaEs = function (fecha, options) {
-  // Crear un objeto Date a partir de la fecha
-  const fechaObj = new Date(fecha);
-  // Opciones para el formato de la fecha
-  const defaultOptions = { day: "numeric", month: "short", year: "numeric" };
-
-  var opciones = { ...defaultOptions, ...options };
-
-  console.log({ options, opciones });
-
-  // Formatear la fecha usando toLocaleDateString
-  return fechaObj.toLocaleDateString("es-ES", opciones).replace(/\sde\s/g, "/");
-};
-
 
 export const plural = function (count, label) {
     return `${count} ${label + (count != 1 ? 's' : '')}`

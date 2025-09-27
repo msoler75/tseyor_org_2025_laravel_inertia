@@ -2,7 +2,8 @@
 	<!-- Reusa CardContent internamente para conservar apariencia y props comunes -->
 	<CardContent :title="title" :image="image" :href="href" :description="description" :date="date" :draft="draft">
 		<template #default>
-			<div v-if="futuro" class="mt-2 font-bold text-xs text-secondary text-right">PROXIMAMENTE</div>
+            <div v-if="draft" class="mt-2 font-bold text-xs text-secondary text-right">BORRADOR</div>
+			<div v-else-if="futuro" class="mt-2 font-bold text-xs text-secondary text-right">PROXIMAMENTE</div>
 
 			<div class="absolute right-2 top-2 rounded-xs shadow-lg bg-base-100 text-xl font-bold overflow-hidden">
 				<span class="p-2 inline-block">
@@ -17,7 +18,7 @@
 </template>
 
 <script setup>
-import { fechaEs } from '@/composables/textutils.js'
+import { fechaFormatoEsp } from '@/composables/fechas.js'
 
 const props = defineProps({
 	title: String,
@@ -36,18 +37,15 @@ const fechaFormateada = computed(() => {
 	const raw = props.fechaInicio
 	if (!raw) return ''
 	try {
-		return fechaEs(raw)
+		return fechaFormatoEsp(raw)
 	} catch (e) {
 		return String(raw)
 	}
 })
 
-const futuro = computed(() => {
-	const raw = props.fechaInicio
-	if (!raw) return false
-	const d = new Date(raw)
-	return !isNaN(d) ? d >= new Date() : false
-})
+import { esFechaFutura } from '@/composables/fechas.js'
+
+const futuro = computed(() => esFechaFutura(props.fechaInicio))
 
 // separación de la fecha en dos partes igual que estaba inline en Index.vue
 const fechaMain = computed(() => {

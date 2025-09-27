@@ -17,7 +17,7 @@ class BoletinEmail extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public $tries = 500; // Número máximo de intentos
-    public $queue = 'low_priority'; // Cola de baja prioridad para boletines
+    // Cola definida mediante el trait Queueable (evitar redeclarar $queue)
     // public $backoff = 60; // Tiempo en segundos entre intentos
 
      public function middleware()
@@ -34,6 +34,10 @@ class BoletinEmail extends Mailable implements ShouldQueue
         Log::channel("smtp")->info("Iniciando el constructor de BoletinEmail con boletin_id={$boletin_id} y suscriptor_id={$suscriptor_id}");
         $this->boletin_id = $boletin_id;
         $this->suscriptor_id = $suscriptor_id;
+
+        // Establecer la cola usando el método del trait Queueable para evitar
+        // conflictos de composición de propiedades entre traits y la clase.
+        $this->onQueue('low_priority');
 
         $boletin = Boletin::findOrFail($this->boletin_id);
         $suscriptor = Suscriptor::findOrFail($this->suscriptor_id);
