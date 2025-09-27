@@ -71,10 +71,32 @@ class ImagenesController extends Controller
             return response()->file($imageFullPath, ['Content-Type' => $mime]);
         }
 
-        $format = "webp";
-        $quality = 70;
+        // formato y calidad solicitados (si no vienen, webp por defecto)
+        $formatRequested = $params["fmt"] ?? "webp";
+        $quality = $params["q"] ?? 70;
 
-       // create cache path
+        // decide si el entorno puede generar WebP
+        $gdSupportsWebp = false;
+        if (extension_loaded('gd')) {
+            try {
+                $gdInfo = gd_info();
+                $gdSupportsWebp = !empty($gdInfo['WebP']) || !empty($gdInfo['webp']);
+            } catch (\Throwable $e) {
+                // falla la comprobación, asumimos false
+                $gdSupportsWebp = function_exists('imagecreatefromwebp');
+            }
+        }
+
+        $imagickAvailable = extension_loaded('imagick');
+
+        // Si el cliente pide webp pero el entorno no lo soporta, caer a jpeg
+        $format = $formatRequested;
+        if ($formatRequested === 'webp' && !$gdSupportsWebp && !$imagickAvailable) {
+            // No podemos producir webp, fallback a jpeg
+            $format = 'jpg';
+        }
+
+       // create cache path (usar el formato final)
         $cachePath = 'framework/image_cache/';
         $cacheFilename = md5($imageFullPath . serialize($params)) . '.' . $format;
         $cacheFilePath = $cachePath . $cacheFilename;
@@ -86,11 +108,13 @@ class ImagenesController extends Controller
             $cacheModifiedTime = filemtime($cacheFullPath);
 
             if ($originalModifiedTime <= $cacheModifiedTime) {
-                return response()->file($cacheFullPath, ['Content-Type' => $mime]);
+                // devolver con el mime correspondiente al formato final
+                $cachedMime = ($format === 'webp') ? 'image/webp' : 'image/jpeg';
+                return response()->file($cacheFullPath, ['Content-Type' => $cachedMime]);
             }
         }
 
-        // create image manager with desired driver
+        // create image manager using GD driver (consistent with previous code)
         $manager = new ImageManager(new Driver());
 
         // read image from file system
@@ -103,16 +127,14 @@ class ImagenesController extends Controller
             $this->transformarImagen($image, $params);
         }
 
-        $format = $params["fmt"] ?? "webp";
-
-
-        // browser accept webp format?
-        if ($format == "webp") {
-            $mime = "image/webp";
-            $image->toWebp($quality);
+        // definir mime según formato seleccionado (usar $format que pudo haber cambiado por fallback)
+        if ($format === 'webp') {
+            $mime = 'image/webp';
         } else {
-            $mime = "image/jpeg";
-            $image->toJpeg($quality);
+            // jpg/ jpeg
+            $mime = 'image/jpeg';
+            // Normalizar extensión jpg -> jpeg si es necesario
+            if ($format === 'jpg') $format = 'jpeg';
         }
 
         // create the cache folder if it doesn't exist
@@ -121,7 +143,9 @@ class ImagenesController extends Controller
             File::makeDirectory($folder, 0777, true, true);
         }
 
-        $image->save($cacheFullPath);
+        // Guardar directamente en el formato y calidad solicitados
+        // Intervention permite save(path, quality, format)
+        $image->save($cacheFullPath, $quality, $format);
 
         return response()->file($cacheFullPath, ['Content-Type' => $mime]);
     }
