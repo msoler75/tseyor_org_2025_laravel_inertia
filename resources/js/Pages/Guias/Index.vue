@@ -26,7 +26,7 @@
                 </p>
                 <p>El objetivo de este contacto y <Referencia r="Contacto entre ambas civilizaciones">tutelaje entre civilizaciones</Referencia> es servir de referenciación para que la humanidad planetaria de la Tierra pueda prepararse para la llegada del <Referencia>Rayo Sincronizador</Referencia> que resituará la humanidad a su posición real en el <Referencia>Tiempo Real del Universo</Referencia>.</p>
          </TitleInfo>
-            <SearchInput />
+            <SearchInput placeholder="Buscar guía estelar..."/>
         </div>
 
         </PageHeader>

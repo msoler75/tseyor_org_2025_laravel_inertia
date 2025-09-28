@@ -26,7 +26,7 @@
         </div>
 
         <div class="flex justify-end mb-5">
-            <SearchInput :doSearch="false" @search="buscarClick" />
+            <SearchInput :doSearch="false" @search="buscarClick" placeholder="Buscar guía estelar..."/>
         </div>
 
         </PageHeader>

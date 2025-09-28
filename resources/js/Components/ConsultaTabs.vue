@@ -1,6 +1,6 @@
 <template>
     <div
-        class="tabs tabs-box mb-12 gap-7 bg-base-300 w-fit max-w-full uppercase font-bold"
+        class="tabs tabs-box mb-12 gap-4 md:gap-7 bg-base-300 w-fit max-w-full uppercase font-bold"
     >
         <component
             v-for="(tab, index) of tabsComputed"
@@ -35,7 +35,7 @@ const tabs = [
         title: "Tutores de la Confederación y otros hermanos de las estrellas.",
     },
     {
-        label: 'Preguntas frecuentes',
+        label: 'Preguntas<span class="hidden sm:inline"> frecuentes</span>',
         route: "preguntas",
         title: 'Preguntas frecuentes y sus respuestas',
     },

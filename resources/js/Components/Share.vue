@@ -18,15 +18,6 @@
                 &ldquo;<i>{{ sharing.title }}</i>&ldquo;
             </p>
 
-            <!-- Indicador de enlace corto -->
-            <div v-if="procesandoEnlace" class="flex items-center gap-2 text-sm text-info mb-2">
-                <span class="loading loading-dots loading-xs"></span>
-                Acortando enlace...
-            </div>
-            <div v-else-if="enlaceObtenido && currentUrl !== originalUrl" class="flex items-center gap-2 text-sm text-success mb-2">
-                <Icon icon="ph:check-circle" />
-                Enlace acortado
-            </div>
             <div class="flex flex-wrap justify-start items-center gap-3"
                 :style="{ color: '#eee', textShadow: '1px 1px black' }">
                 <ShareNetwork v-for="network in networks" :network="network.network" :key="network.network"
@@ -46,7 +37,19 @@
                 </div>
             </div>
 
-            <div class="py-3 flex justify-between sm:justify-end gap-5 mt-5">
+            <div class="py-3 flex justify-between sm:justify-between gap-5 mt-5">
+            <!-- Indicador de enlace corto -->
+            <div v-if="procesandoEnlace" class="flex items-center gap-2 text-sm text-info mb-2">
+                <span class="loading loading-dots loading-xs"></span>
+                Acortando enlace...
+            </div>
+            <div v-else-if="enlaceObtenido && currentUrl !== originalUrl" class="flex items-center gap-2 text-sm text-success mb-2">
+                <Icon icon="ph:check-circle" />
+                Enlace acortado
+            </div>
+                <span v-else/>
+
+
                 <button class="btn btn-primary" @click="socialShow = false">Cerrar</button>
             </div>
 
