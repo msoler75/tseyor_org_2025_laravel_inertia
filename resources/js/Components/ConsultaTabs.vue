@@ -30,12 +30,12 @@ const tabs = [
         title: "Conoce los conceptos básicos o palabras clave de la filosofía Tseyor",
     },
     {
-        label: 'Guías&nbsp;<span class="hidden sm:inline">Estelares</span>',
+        label: 'Guías&nbsp;<span class="hidden md:inline">Estelares</span>',
         route: "guias",
         title: "Tutores de la Confederación y otros hermanos de las estrellas.",
     },
     {
-        label: 'Preguntas<span class="hidden sm:inline"> frecuentes</span>',
+        label: 'Preguntas<span class="hidden md:inline"> frecuentes</span>',
         route: "preguntas",
         title: 'Preguntas frecuentes y sus respuestas',
     },
