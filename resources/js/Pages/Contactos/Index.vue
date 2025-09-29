@@ -15,7 +15,7 @@
         <h1 class="text-center mb-20">Dónde estamos</h1>
 
         <div class="flex justify-end mb-5 transform lg:translate-y-[3.5rem]">
-            <SearchInput class="py-1" />
+            <SearchInput class="py-1" placeholder="Buscar contacto..."/>
         </div>
 
         </PageHeader>

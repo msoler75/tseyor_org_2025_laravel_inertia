@@ -12,7 +12,7 @@
         <h1>Usuarios</h1>
 
         <div class="flex justify-end mb-5">
-            <SearchInput />
+            <SearchInput placeholder="Buscar usuario..."/>
         </div>
 
         </PageHeader>

@@ -18,7 +18,7 @@
         </div>
 
         <div class="flex justify-end mb-5">
-            <SearchInput />
+            <SearchInput placeholder="Buscar normativa..." />
         </div>
     </PageHeader>
 

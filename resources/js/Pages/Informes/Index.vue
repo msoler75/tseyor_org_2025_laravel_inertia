@@ -23,7 +23,7 @@
         </template>
 
         <div class="flex justify-end mb-5">
-            <SearchInput />
+            <SearchInput placeholder="Buscar informe..."/>
         </div>
 
         </PageHeader>
