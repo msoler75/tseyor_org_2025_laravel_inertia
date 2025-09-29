@@ -49,7 +49,7 @@
     <SearchInput
     v-if="filtrado || inscripcionesProcesadas.length > 0"
         v-model="query"
-        placeholder="Buscar inscripción..."
+        placeholder="Buscar es inscripciones..."
         class="ml-auto"
       />
       </div>

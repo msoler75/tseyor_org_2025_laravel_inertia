@@ -15,7 +15,7 @@
         </div>
 
         <ContentMain class="flex justify-end mb-5">
-            <SearchInput />
+            <SearchInput placeholder="Buscar noticia..." />
         </ContentMain>
 
         </PageHeader>

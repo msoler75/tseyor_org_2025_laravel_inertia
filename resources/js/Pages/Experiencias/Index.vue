@@ -19,7 +19,7 @@
         </Link>
 
         <div class="flex justify-end mb-5">
-            <SearchInput />
+            <SearchInput placeholder="Buscar en experiencias..."/>
         </div>
 
         </PageHeader>

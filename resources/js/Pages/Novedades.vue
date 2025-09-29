@@ -14,7 +14,7 @@
         <p>Todas las novedades de los contenidos de Tseyor.</p>
 
         <div class="flex justify-end mb-5">
-            <SearchInput />
+            <SearchInput placeholder="Buscar en novedades..."/>
         </div>
 
         </PageHeader>

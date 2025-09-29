@@ -15,7 +15,7 @@
         </div>
 
         <div class="flex w-full justify-end mb-5">
-            <SearchInput />
+            <SearchInput placeholder="Buscar sala..." />
         </div>
         </PageHeader>
 

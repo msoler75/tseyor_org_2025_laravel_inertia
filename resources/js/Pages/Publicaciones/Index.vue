@@ -13,7 +13,7 @@
         <p>Publicaciones de la comunidad Tseyor.</p>
 
         <div class="flex justify-end mb-5">
-            <SearchInput />
+            <SearchInput placeholder="Buscar publicación..." />
         </div>
 
         </PageHeader>

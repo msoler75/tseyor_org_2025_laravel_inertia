@@ -29,7 +29,7 @@
         <PageWide>
 
             <ContentMain class="flex justify-end mb-5">
-                <SearchInput />
+                <SearchInput placeholder="Buscar video..." />
             </ContentMain>
 
             <GridAppear class="mt-2 grid-cols-1 lg:grid-cols-2 gap-7">
