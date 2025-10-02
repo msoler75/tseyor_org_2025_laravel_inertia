@@ -71,11 +71,11 @@ const props = defineProps({
     },
     imageWidth: {
         type: [Number, String],
-        default: 300
+        default: 400
     },
     imageHeight: {
         type: [Number, String],
-        default: 300
+        default: 400
     },
     tag: String,
     tagLink: {type: String, default: ''},
