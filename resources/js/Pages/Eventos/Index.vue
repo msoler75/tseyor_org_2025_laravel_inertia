@@ -34,25 +34,43 @@
 
                 <SearchResultsHeader :results="listado" />
 
+                <div v-if="eventosEnCurso.length > 0" class="mb-8">
+                    <h2 class="text-xl font-semibold mb-4 text-accent">🔴 Eventos en curso</h2>
+                    <div class="grid gap-4"
+                        :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(24rem, 100%), 1fr))` }">
+                        <CardEvent v-for="contenido in eventosEnCurso" :key="`enCurso-${contenido.id}`"
+                            :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
+                            :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
+                            :fecha-fin="contenido.fecha_fin" :hora-inicio="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
+                            :draft="contenido.visibilidad!='P'"
+                            :imageWidth="800"
+                            />
+                    </div>
+                </div>
 
-                <div v-if="eventosProximos.length > 0" class="grid gap-4"
-                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
-                    <CardEvent v-for="contenido in eventosProximos" :key="contenido.id"
-                        :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
-                        :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
-                        :draft="contenido.visibilidad!='P'"
-                        :imageWidth="800"
-                        />
+                <div v-if="eventosProximos.length > 0" :class="eventosEnCurso.length > 0 ? 'mt-8' : ''">
+                    <h2 v-if="eventosEnCurso.length > 0" class="text-xl font-semibold mb-4">Próximos eventos</h2>
+                    <div class="grid gap-4"
+                        :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(24rem, 100%), 1fr))` }">
+                        <CardEvent v-for="contenido in eventosProximos" :key="contenido.id"
+                            :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
+                            :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
+                            :fecha-fin="contenido.fecha_fin" :hora-inicio="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
+                            :draft="contenido.visibilidad!='P'"
+                            :imageWidth="800"
+                            />
+                    </div>
                 </div>
 
                 <div v-if="eventosPasados.length > 0" class="mt-8">
                     <div class="my-6 border-t border-base-200"></div>
                     <h2 class="text-xl font-semibold mb-4">Eventos pasados</h2>
                     <div class="grid gap-4"
-                        :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+                        :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(24rem, 100%), 1fr))` }">
                         <CardEvent v-for="contenido in eventosPasados" :key="`eventosPasados-${contenido.id}`"
                             :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
                             :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
+                            :fecha-fin="contenido.fecha_fin" :hora-inicio="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
                             :draft="contenido.visibilidad!='P'"
                             :imageWidth="800"
                             />
@@ -88,18 +106,43 @@ const props = defineProps({
 const listado = ref(props.listado);
 const categorias = ref(props.categorias)
 
-// Separar eventos próximos y pasados según `fecha_inicio`.
-// Se asume que `fecha_inicio` es una cadena ISO (o similar) legible por Date.
-import { esFechaFutura, aFecha } from '@/composables/fechas.js'
-
-const now = new Date();
+// Separar eventos en curso, próximos y pasados
+import { esFechaFutura, aFecha, esEventoEnCurso } from '@/composables/fechas.js'
 
 const eventsArray = computed(() => Array.isArray(listado.value.data) ? listado.value.data : []);
 
-const eventosProximos = computed(() => eventsArray.value.filter(e => esFechaFutura(e && e.fecha_inicio, now)));
+// Eventos que están actualmente en curso
+const eventosEnCurso = computed(() =>
+    eventsArray.value.filter(e =>
+        esEventoEnCurso(e?.fecha_inicio, e?.fecha_fin, e?.hora_inicio, e?.hora_fin)
+    )
+);
 
-const eventosPasados = computed(() => eventsArray.value.filter(e => {
-    // si no hay fecha o la fecha no es futura, considerar pasado
-    return !esFechaFutura(e && e.fecha_inicio, now);
-}).sort((a, b) => (aFecha(b && b.fecha_inicio) || 0) - (aFecha(a && a.fecha_inicio) || 0)));
+// Eventos futuros que aún no han comenzado
+const eventosProximos = computed(() =>
+    eventsArray.value.filter(e => {
+        // No incluir si está en curso
+        if (esEventoEnCurso(e?.fecha_inicio, e?.fecha_fin, e?.hora_inicio, e?.hora_fin)) {
+            return false;
+        }
+        // Incluir si es fecha futura
+        return esFechaFutura(e?.fecha_inicio);
+    })
+);
+
+// Eventos que ya terminaron
+const eventosPasados = computed(() =>
+    eventsArray.value.filter(e => {
+        // No incluir si está en curso
+        if (esEventoEnCurso(e?.fecha_inicio, e?.fecha_fin, e?.hora_inicio, e?.hora_fin)) {
+            return false;
+        }
+        // No incluir si es futuro
+        if (esFechaFutura(e?.fecha_inicio)) {
+            return false;
+        }
+        // Es pasado
+        return true;
+    }).sort((a, b) => (aFecha(b?.fecha_inicio) || 0) - (aFecha(a?.fecha_inicio) || 0))
+);
 </script>

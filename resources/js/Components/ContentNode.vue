@@ -36,6 +36,7 @@ import Image from "./Image.vue";
 import Link from "./Link.vue";
 import Referencia from "./Referencia.vue";
 import { getImageInfo } from "@/Stores/image.js";
+import { useEnlacesCortos } from "@/composables/useEnlacesCortos.js";
 
 const props = defineProps({
     node: Object,
@@ -43,6 +44,7 @@ const props = defineProps({
 });
 
 const myDomain = getMyDomain()
+const { esEnlaceCorto } = useEnlacesCortos()
 
 const tag = computed(() => {
     if (props.node.tagName == "img" && props.useImage) return Image;
@@ -54,6 +56,10 @@ const tag = computed(() => {
     if (props.node.tagName == "a") {
         const href = props.node.attributes.href;
         if (!href) return "a";
+
+        // Los enlaces cortos deben tratarse como externos, no como navegación Inertia
+        if (esEnlaceCorto(href)) return "a";
+
         if (href.match(/https?:\/\/[^/]+/)?.[0] === myDomain) return Link;
         if (!href.match(/^https?:\/\/[^/]+/))
             // ya es un enlace relativo

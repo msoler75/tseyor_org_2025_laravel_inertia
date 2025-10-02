@@ -146,7 +146,60 @@ export default defineConfig({
       filename: 'tseyor-sw.js',
       manifestFilename: 'tseyor-manifest.json',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2,ttf,eot}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2,ttf,eot}'],
+        // Configuración específica para Laravel/Inertia.js SPA
+        navigateFallback: null, // Deshabilita el fallback automático a index.html
+        runtimeCaching: [
+          {
+            // Cache de navegación (rutas de tu app)
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'pages-cache',
+              networkTimeoutSeconds: 10,
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 24 * 60 * 60, // 24 horas
+              },
+            },
+          },
+          {
+            // Cache de assets estáticos (CSS, JS)
+            urlPattern: /\.(?:js|css)$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'assets-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 días
+              },
+            },
+          },
+          {
+            // Cache de imágenes
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 200,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días
+              },
+            },
+          },
+          {
+            // Cache de fuentes
+            urlPattern: /\.(?:woff|woff2|ttf|eot)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'fonts-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 365 * 24 * 60 * 60, // 1 año
+              },
+            },
+          },
+        ],
       },
       manifest: {
         name: 'Tseyor.org',
