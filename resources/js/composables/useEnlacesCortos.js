@@ -1,3 +1,5 @@
+import { getMyDomain } from './srcutils.js'
+
 /**
  * Composable para gestionar enlaces cortos
  */
@@ -71,12 +73,55 @@ export function useEnlacesCortos() {
 
 
 
+  /**
+   * Detecta si una URL es un enlace corto
+   * Los enlaces cortos tienen prefijos: /d/ (documentos), /a/ (audio), /e/ (eventos/general)
+   *
+   * @param {string} href - URL a verificar (puede ser path relativo o URL completa)
+   * @returns {boolean} - true si es un enlace corto
+   *
+   * @example
+   * esEnlaceCorto('/d/abc123') // true
+   * esEnlaceCorto('https://tseyor.org/d/abc123') // true
+   * esEnlaceCorto('https://otro-sitio.com/d/abc123') // false
+   * esEnlaceCorto('/eventos/encuentro') // false
+   */
+  const esEnlaceCorto = (href) => {
+    if (!href) return false
+
+    let path = href
+
+    // Si es una URL completa, verificar que sea de nuestro dominio
+    try {
+      if (href.match(/^https?:\/\//)) {
+        const url = new URL(href)
+        const miDominio = getMyDomain()
+
+        // Si el origen no coincide, no es un enlace corto nuestro
+        if (url.origin !== miDominio) {
+          return false
+        }
+
+        path = url.pathname
+      }
+    } catch (e) {
+      // Si falla el parsing, usar la URL original
+      path = href
+    }
+
+    // Detectar enlaces cortos por el patrón del path: /d/..., /a/..., /e/...
+    return /^\/[dae]\/[a-zA-Z0-9]+/.test(path)
+  }
+
   return {
     // Función principal - la única que necesitas
     obtenerEnlaceCorto,
 
     // API de bajo nivel (para casos avanzados con metadatos específicos)
-    crear
+    crear,
+
+    // Utilidad para detectar enlaces cortos
+    esEnlaceCorto
   }
 }
 

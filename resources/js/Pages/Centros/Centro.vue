@@ -49,7 +49,8 @@
             <GridAppear col-width="24rem" class="gap-4">
                 <CardEvent v-for="evento in eventos" :key="evento.slug" :title="evento.titulo"
                 :image="evento.imagen" :href="route('evento', evento.slug)" :description="evento.descripcion"
-                :date="evento.updated_at" :fecha-inicio="evento.fecha_inicio"/>
+                :date="evento.updated_at" :fecha-inicio="evento.fecha_inicio" :fecha-fin="evento.fecha_fin"
+                :hora-inicio="evento.hora_inicio" :hora-fin="evento.hora_fin"/>
             </GridAppear>
         </div>
 

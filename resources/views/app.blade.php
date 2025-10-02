@@ -31,7 +31,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/ic/ios/32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/ic/android/android-launchericon-192-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/ic/android/android-launchericon-512-512.png">
-    <link rel="manifest" href="/build/pwa-manifest.json">
+    <link rel="manifest" href="/build/tseyor-manifest.json">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>

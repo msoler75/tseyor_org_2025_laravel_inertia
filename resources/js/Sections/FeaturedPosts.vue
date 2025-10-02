@@ -3,7 +3,7 @@
       <h2 class="text-3xl font-bold mb-4">{{ title }}</h2>
       <div class="grid gap-8"
       :style="{
-        'grid-template-columns': `repeat(auto-fill, minmax(${postWidth}, 1fr))`}">
+        'grid-template-columns': `repeat(auto-fill, minmax(min(${postWidth}, 100%), 1fr))`}">
         <div v-for="(post, index) in posts" :key="index" class="card bg-base-100 shadow-2xs p-6">
           <h3 class="text-xl font-semibold mb-2">{{ post.title }}</h3>
           <small v-if="post.date">{{ post.date }}</small>

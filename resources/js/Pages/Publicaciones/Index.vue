@@ -43,7 +43,7 @@
 
                 <SearchResultsHeader :results="listado" :category="categoriaActiva" />
 
-                <div class="grid gap-2 py-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(24rem, 1fr))` }">
+                <div class="grid gap-2 py-4" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(24rem, 100%), 1fr))` }">
 
                     <Link  v-for="contenido in listado.data" :key="contenido.id" :href="route('publicacion', contenido.slug)"
                         class="hover:text-primary transition-color duration-200 px-5 py-2 h-full flex flex-row items-baseline gap-3 hover:bg-base-200/40 rounded-xl w-full">

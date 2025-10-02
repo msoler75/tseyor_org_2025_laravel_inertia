@@ -1,6 +1,6 @@
 <template>
     <div class="grid justify-center"
-        :style="colWidth ? { 'grid-template-columns': `repeat(auto-fill, minmax(${colWidth}, 1fr))` } : {}">
+        :style="colWidth ? { 'grid-template-columns': `repeat(auto-fill, minmax(min(${colWidth}, 100%), 1fr))` } : {}">
         <slot></slot>
     </div>
 </template>

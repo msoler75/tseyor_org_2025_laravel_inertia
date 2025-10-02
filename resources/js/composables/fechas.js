@@ -140,4 +140,52 @@ export function buildGoogleCalendarDates(evento) {
   return { start, end };
 }
 
-export default { aFecha, esValida, esFechaFutura, fechaFormatoEsp, formatDateOnly, formatDateTimeLocalToUTC, parseLocalDateTime, buildGoogleCalendarDates };
+// Determina si un evento está actualmente en curso.
+// Considera fecha_inicio, fecha_fin, hora_inicio, hora_fin y aplica un margen de seguridad.
+// margenHoras: margen de seguridad en horas (default 2) para compensar cambios de horario/husos horarios
+export function esEventoEnCurso(fechaInicio, fechaFin = null, horaInicio = null, horaFin = null, margenHoras = 2) {
+  if (!fechaInicio) return false
+
+  const ahora = dayjs()
+
+  // Parsear fecha/hora de inicio
+  const inicio = parseLocalDateTime(fechaInicio, horaInicio)
+  if (!inicio) return false
+
+  // Aplicar margen de inicio (restar margenHoras)
+  const inicioConMargen = dayjs(inicio).subtract(margenHoras, 'hour')
+
+  // Si aún no ha comenzado (incluso con margen), no está en curso
+  if (ahora.isBefore(inicioConMargen)) return false
+
+  // Parsear fecha/hora de fin
+  const fechaFinReal = fechaFin || fechaInicio
+  const fin = parseLocalDateTime(fechaFinReal, horaFin)
+
+  // Si no hay hora de fin pero sí hay fecha de fin diferente, asumimos que dura todo el día
+  // hasta el final de fecha_fin
+  let finConMargen
+  if (!fin && fechaFin && fechaFin !== fechaInicio) {
+    // Evento multi-día sin hora específica: fin del día fecha_fin
+    finConMargen = dayjs(fechaFinReal).endOf('day').add(margenHoras, 'hour')
+  } else if (fin) {
+    // Aplicar margen de fin (sumar margenHoras)
+    finConMargen = dayjs(fin).add(margenHoras, 'hour')
+  } else {
+    // Evento de un solo momento/día: si tiene hora_inicio, asumimos 2 horas de duración
+    // si no tiene hora, asumimos todo el día
+    if (horaInicio) {
+      finConMargen = dayjs(inicio).add(2 + margenHoras, 'hour')
+    } else {
+      finConMargen = dayjs(fechaInicio).endOf('day').add(margenHoras, 'hour')
+    }
+  }
+
+  // Si ya pasó el fin (incluso con margen), no está en curso
+  if (ahora.isAfter(finConMargen)) return false
+
+  // Está en curso: ya comenzó y aún no terminó
+  return true
+}
+
+export default { aFecha, esValida, esFechaFutura, fechaFormatoEsp, formatDateOnly, formatDateTimeLocalToUTC, parseLocalDateTime, buildGoogleCalendarDates, esEventoEnCurso };

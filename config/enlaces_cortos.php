@@ -36,8 +36,8 @@ return [
     // Configuración de códigos
     'codigo' => [
         'longitud' => env('ENLACES_CORTOS_CODIGO_LONGITUD', 6),
-        'caracteres' => env('ENLACES_CORTOS_CARACTERES', 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'),
-        'excluir_similares' => true, // Excluir caracteres similares (0, O, l, I, 1)
+        'caracteres' => env('ENLACES_CORTOS_CARACTERES', 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'),
+        'excluir_similares' => true, // Excluir caracteres similares (0, O, o, l, I, i, 1)
     ],
 
     // Configuración de estadísticas

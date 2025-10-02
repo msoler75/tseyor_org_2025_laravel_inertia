@@ -141,7 +141,7 @@ class EnlaceCortoService
         $characters = config('enlaces_cortos.codigo.caracteres');
 
         if (config('enlaces_cortos.codigo.excluir_similares', true)) {
-            $characters = str_replace(['0', 'O', 'l', 'I', '1'], '', $characters);
+            $characters = str_replace(['0', 'O', 'o', 'l', 'I', '1'], '', $characters);
         }
 
         do {

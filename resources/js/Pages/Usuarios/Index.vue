@@ -24,7 +24,7 @@
             <SearchResultsHeader :results="listado" />
 
             <div v-if="listado.data.length > 0" class="grid gap-4"
-                :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(10rem, 1fr))` }">
+                :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(10rem, 100%), 1fr))` }">
                 <div v-if="listado.data.length > 0" v-for="usuario in listado.data" :key="usuario.id"
                     class="card bg-base-100 shadow-2xs p-3 space-y-2">
                     <Avatar :user="usuario" />
