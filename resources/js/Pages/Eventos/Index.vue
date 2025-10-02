@@ -40,7 +40,9 @@
                     <CardEvent v-for="contenido in eventosProximos" :key="contenido.id"
                         :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
                         :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
-                        :draft="contenido.visibilidad!='P'"/>
+                        :draft="contenido.visibilidad!='P'"
+                        :imageWidth="800"
+                        />
                 </div>
 
                 <div v-if="eventosPasados.length > 0" class="mt-8">
@@ -51,7 +53,9 @@
                         <CardEvent v-for="contenido in eventosPasados" :key="`eventosPasados-${contenido.id}`"
                             :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
                             :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
-                            :draft="contenido.visibilidad!='P'"/>
+                            :draft="contenido.visibilidad!='P'"
+                            :imageWidth="800"
+                            />
                     </div>
                 </div>
 
