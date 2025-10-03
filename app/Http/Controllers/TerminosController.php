@@ -90,7 +90,7 @@ class TerminosController extends Controller
             foreach ($tmp as $t) {
                 $x = BusquedasHelper::buscar(Termino::class, $t)->first();
                 if ($x)
-                    $ref_terminos[] = ['nombre' => $t, 'slug' => $x->slug];
+                    $ref_terminos[] = ['nombre' => $x->nombre, 'slug' => $x->slug];
             }
         }
 
