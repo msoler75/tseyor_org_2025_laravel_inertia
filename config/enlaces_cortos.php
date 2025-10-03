@@ -28,10 +28,31 @@ return [
         'audio' => 'a',         // /a/abc123 (archivos de audio MP3, WAV, etc.)
     ],
 
-    // Longitud mínima de URL para que se acorte automáticamente
-    // Longitud mínima del PATH para que se acorte automáticamente
-    // Ejemplo: /eventos/mi-evento-super-largo (sin contar dominio ni protocolo)
-    'umbral_longitud_auto' => env('ENLACES_CORTOS_UMBRAL_AUTO', 12),
+    // Configuración de umbrales para acortar automáticamente
+    'umbrales' => [
+        // Longitud mínima del PATH para que se acorte automáticamente
+        // Ejemplo: /eventos/mi-evento-super-largo (sin contar dominio ni protocolo)
+        'longitud_path' => env('ENLACES_CORTOS_UMBRAL_PATH', 30),
+
+        // Longitud máxima de URL completa para considerar "corta"
+        // URLs más cortas que esto nunca se acortarán
+        'longitud_url_maxima_corta' => env('ENLACES_CORTOS_URL_MAXIMA_CORTA', 60),
+    ],
+
+    // Patrones de URLs que NO deben acortarse (son naturalmente cortas)
+    'patrones_excluidos' => [
+        // URLs con IDs numéricos (generalmente cortas)
+        '\/informes\/\d{1,5}$',
+
+        // URLs muy cortas con slugs cortos
+        '\/[a-z]{1,8}\/[a-z0-9\-]{1,5}$',
+
+        // URLs cortas
+        '\/[a-z]{1,14}$',
+
+        // Páginas principales
+        '^\/$',
+    ],
 
     // Configuración de códigos
     'codigo' => [
