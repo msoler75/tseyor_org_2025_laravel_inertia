@@ -11,22 +11,34 @@
     @blur="onRefBlur"
     >
         <slot></slot>
-</span>
+    </span>
 
+    <!-- Contenedor de posicionamiento floating-ui - siempre presente cuando isOpen -->
     <div
+        v-if="isOpen"
         ref="floating"
-        v-show="isOpen"
         :style="floatingStyles"
         role="tooltip"
-        class="z-20 rounded-xl shadow"
+        class="z-20"
     >
-        <slot name="content"></slot>
+        <!-- Transición aplicada al contenido cuando está listo -->
+        <TransitionAppear
+            name="tooltip"
+            :duration="120"
+            :origin="transformOrigin"
+        >
+            <div v-if="visibleFloating" class="tooltip-content rounded-xl overflow-visible" :class="floatingClass">
+                <slot name="content"></slot>
+                <div ref="arrowRef" :style="arrowStyles" class="absolute rotate-45 z-10"
+                :class="arrowClass"></div>
+            </div>
+        </TransitionAppear>
     </div>
 </template>
 
 <script setup>
 import { ref, nextTick, onMounted, onBeforeUnmount, computed } from 'vue';
-import { useFloating, autoPlacement, autoUpdate } from '@floating-ui/vue';
+import { useFloating, autoPlacement, autoUpdate, arrow } from '@floating-ui/vue';
 import { offset, shift, size } from '@floating-ui/core';
 
 const emit = defineEmits(['activated', 'deactivated', 'preload']);
@@ -34,12 +46,16 @@ const emit = defineEmits(['activated', 'deactivated', 'preload']);
 const props = defineProps({
     persistent: { type: Boolean, default: false },
     activationDelay: { type: Number, default: 500 }, // ms para activar el tooltip
+    floatingClass: { type: String, default: '' },
+    arrowClass: { type: String, default: 'w-3 h-3' },
+    visibleFloating: { type: Boolean, default: true }
 });
 
 const domReference = ref(null);
-
 const floating = ref(null);
+const arrowRef = ref(null);
 const isOpen = ref(false);
+
 
 // listener global para cerrar al tocar fuera (se añade en capture para ignorar stopPropagation)
 function onPointerDownOutside(e) {
@@ -59,12 +75,6 @@ function onPointerDownOutside(e) {
     }
 }
 
-function addOutsideListener() {
-    // usar capture para que se ejecute antes de handlers que hagan stopPropagation
-    window.addEventListener('pointerdown', onPointerDownOutside, true);
-    // fallback para entornos sin pointer events
-    window.addEventListener('touchstart', onPointerDownOutside, true);
-}
 
 function removeOutsideListener() {
     window.removeEventListener('pointerdown', onPointerDownOutside, true);
@@ -86,7 +96,6 @@ const HIDE_DELAY_MS = 120; // retraso al cerrar para permitir clicks dentro del 
 const { floatingStyles, middlewareData, placement, update } = useFloating(domReference, floating, {
     whileElementsMounted: (reference, floating, update) => {
         return autoUpdate(reference, floating, update, {
-            // Configuraciones más conservadoras para evitar recálculos innecesarios
             ancestorScroll: true,
             ancestorResize: true,
             elementResize: true,
@@ -99,7 +108,7 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(domRef
             // Mantener el placement preferido cuando sea posible
             allowedPlacements: ['top', 'bottom', 'left', 'right', 'top-start', 'top-end', 'bottom-start', 'bottom-end'],
         }),
-        offset(6),
+        offset(12),
         // asegurar un margen superior mínimo (p. ej. barra nav con mayor z-index)
         shift({
             padding: { top: 82 }
@@ -114,29 +123,86 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(domRef
                 }
             },
         }),
+        arrow({
+            element: arrowRef,
+            padding: 5, // evitar que la flecha toque los bordes redondeados
+        }),
     ],
 });
 
+// Calcular estilos del arrow dinámicamente
+const arrowStyles = computed(() => {
+    if (!middlewareData.value?.arrow) {
+        return { display: 'none' };
+    }
+
+    const { x, y } = middlewareData.value.arrow;
+    const currentPlacement = placement.value;
+
+    // Determinar el lado estático basado en el placement
+    const staticSide = {
+        top: 'bottom',
+        right: 'left',
+        bottom: 'top',
+        left: 'right',
+    }[currentPlacement.split('-')[0]];
+
+    const styles = {
+        left: x != null ? `${x}px` : '',
+        top: y != null ? `${y}px` : '',
+        right: '',
+        bottom: '',
+        [staticSide]: '-6px', // posicionar 6px fuera del tooltip para compensar el tamaño de 12px
+    };
+
+    return styles;
+});
+
+const transformOrigin = computed(() => {
+    const arrowPos = arrowStyles.value;
+    const floatEl = floating.value;
+
+    if (!floatEl || !middlewareData.value?.arrow) {
+        return 'center center';
+    }
+
+    console.log('Arrow Styles:', arrowPos); // Debug
+
+    const rect = floatEl.getBoundingClientRect();
+
+    // Helper para calcular coordenada basada en posición del arrow
+    const getCoordinate = (positive, negative, dimension) => {
+        if (positive && positive !== '') {
+            return `${parseFloat(positive) + 6}px`;
+        }
+        if (negative && negative !== '') {
+            const offset = parseFloat(negative.replace('px', ''));
+            return `${dimension + (offset < 0 ? offset + 6 : -offset - 6)}px`;
+        }
+        return 'center';
+    };
+
+    const originX = getCoordinate(arrowPos.left, arrowPos.right, rect.width);
+    const originY = getCoordinate(arrowPos.top, arrowPos.bottom, rect.height);
+
+    const transformOrigin = `${originX} ${originY}`;
+    console.log('Computed transformOrigin:', transformOrigin); // Debug
+    return transformOrigin;
+});
 
 function show() {
     // solo emitir cuando pasamos de cerrado a abierto
     if (!isOpen.value) {
         clearAllTimers();
         isOpen.value = true;
-        // esperar al DOM y calcular posición inicial una sola vez
+        // Agregar listener para cerrar al tocar fuera
         nextTick(() => {
-            // Solo actualizar la posición si es realmente necesario
-            if (update) {
-                update();
-            }
-            // empezar a observar cambios en el contenido del tooltip
-            startObserving();
-            // añadir listener global para cerrar al tocar fuera
-            addOutsideListener();
+            window.addEventListener('pointerdown', onPointerDownOutside, true);
+            window.addEventListener('touchstart', onPointerDownOutside, true);
         });
         emit('activated', { text: domReference.value?.innerText });
     } else {
-        // Si ya está abierto, solo limpiar el timer de cierre sin recalcular posición
+        // Si ya está abierto, solo limpiar el timer de cierre
         clearAllTimers();
     }
 }
@@ -178,7 +244,6 @@ function scheduleHideIfNeeded() {
     hideTimer = setTimeout(() => {
         if (!isHoveringReference && !isHoveringFloating) {
             isOpen.value = false;
-            stopObserving();
             emit('deactivated', { text: domReference.value?.innerText });
         }
         hideTimer = null;
@@ -190,8 +255,9 @@ function immediateHide(force = false) {
     if (props.persistent && !force) return;
     clearAllTimers();
     isOpen.value = false;
-    stopObserving();
+    // Remover listener de click fuera
     removeOutsideListener();
+    emit('deactivated', { text: domReference.value?.innerText });
 }
 
 function clearHideTimer() {
@@ -357,16 +423,18 @@ onMounted(() => {
     nextTick(() => {
         const el = floating.value;
         if (!el) return;
-    el.addEventListener('pointerenter', onFloatingPointerEnter);
-    el.addEventListener('pointerdown', clearHideTimer);
-    el.addEventListener('pointerleave', onFloatingPointerLeave);
+        el.addEventListener('pointerenter', onFloatingPointerEnter);
+        el.addEventListener('pointerdown', clearHideTimer);
+        el.addEventListener('pointerleave', onFloatingPointerLeave);
     });
 });
+
 onBeforeUnmount(() => {
     window.removeEventListener('resize', safeUpdate);
     window.removeEventListener('scroll', safeUpdate, true);
     stopObserving();
-    clearAllTimers(); // Limpiar todos los timers
+    clearAllTimers();
+    removeOutsideListener();
     // remover listeners añadidos al elemento flotante si existe
     const el = floating.value;
     if (el) {
@@ -377,3 +445,70 @@ onBeforeUnmount(() => {
 });
 </script>
 
+<style scoped>
+/* Hacer las transiciones más evidentes para debug */
+.tooltip-enter-active {
+    transition: all 0.4s ease-out !important;
+}
+
+.tooltip-leave-active {
+    transition: all 0.3s ease-in !important;
+}
+
+/* Estados más dramáticos para que se vean */
+.tooltip-enter-from {
+    opacity: 0 !important;
+    transform: scale(0.5) translateY(20px) !important;
+}
+
+.tooltip-enter-to {
+    opacity: 1 !important;
+    transform: scale(1) translateY(0px) !important;
+}
+
+.tooltip-leave-from {
+    opacity: 1 !important;
+    transform: scale(1) translateY(0px) !important;
+}
+
+.tooltip-leave-to {
+    opacity: 0 !important;
+    transform: scale(0.7) translateY(-15px) !important;
+}
+
+/* Asegurar que las transformaciones se apliquen */
+.tooltip-content {
+    transform-origin: center center;
+    will-change: transform, opacity;
+}
+
+/* Asegurar que el contenido del tooltip sea visible durante transiciones */
+.tooltip-content {
+    transform-origin: inherit;
+    backface-visibility: hidden;
+    will-change: transform, opacity, filter;
+}
+
+/* Mejorar el rendimiento y visibilidad durante transiciones */
+.tooltip-enter-active .tooltip-content,
+.tooltip-leave-active .tooltip-content {
+    isolation: isolate;
+}
+
+/* Añadir una sombra sutil que también se anime */
+.tooltip-enter-from .tooltip-content {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.tooltip-enter-to .tooltip-content {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tooltip-leave-from .tooltip-content {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tooltip-leave-to .tooltip-content {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+</style>

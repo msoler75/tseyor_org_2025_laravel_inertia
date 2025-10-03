@@ -1,4 +1,4 @@
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
 /**
  * Configuración centralizada de PWA
@@ -144,9 +144,6 @@ export function usePWA() {
     }
   }
 
-  onMounted(() => {
-    initializePWA()
-  })
 
   return {
     updateAvailable,
