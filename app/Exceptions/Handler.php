@@ -41,6 +41,49 @@ class Handler extends ExceptionHandler
         });
     }
 
+    /**
+     * Detectar si el request viene de un bot de red social o mensajería
+     * NO incluye herramientas SEO, motores de búsqueda ni otros crawlers
+     * que necesitan ver el contenido real con metadatos
+     */
+    protected function esBotRedSocial($request): bool
+    {
+        $userAgent = $request->header('User-Agent', '');
+
+        // Lista específica de bots de redes sociales y mensajería
+        // (NO incluye herramientas SEO, Google, Bing, etc.)
+        $redesSocialesYMensajeria = [
+            'facebookexternalhit',      // Facebook
+            'facebookcatalog',          // Facebook Catalog
+            'Facebot',                  // Facebook
+            'Twitterbot',               // Twitter
+            'LinkedInBot',              // LinkedIn
+            'WhatsApp',                 // WhatsApp
+            'TelegramBot',              // Telegram
+            'Slackbot',                 // Slack
+            'Discordbot',               // Discord
+            'Pinterest',                // Pinterest
+            'Pinterestbot',             // Pinterest
+            'instagram',                // Instagram (raro, pero posible)
+            'SkypeUriPreview',          // Skype
+            'Iframely',                 // iframely (preview service)
+            'vkShare',                  // VKontakte
+            'redditbot',                // Reddit
+            'Tumblr',                   // Tumblr
+            'Applebot',                 // Apple (iMessage previews)
+            'developers.google.com/+/web/snippet', // Google+ (deprecado pero por si acaso)
+        ];
+
+        // Verificar si el user agent contiene alguno de los identificadores
+        foreach ($redesSocialesYMensajeria as $bot) {
+            if (stripos($userAgent, $bot) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
 
 
@@ -156,6 +199,64 @@ class Handler extends ExceptionHandler
             return response()->view('mantenimiento', [], 503);
         }
 
+        // Si es un bot de red social, devolver respuesta simple sin Inertia/SEO
+        if ($this->esBotRedSocial($request)) {
+            $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500;
+
+            // Log detallado para debugging de bots
+            Log::warning('Bot detectado en error handler - Evitando Inertia/SEO', [
+                'user_agent' => $request->header('User-Agent'),
+                'url' => $request->fullUrl(),
+                'route' => $request->route() ? $request->route()->getName() : 'N/A',
+                'route_uri' => $request->route() ? $request->route()->uri() : 'N/A',
+                'error_type' => get_class($exception),
+                'error_message' => $exception->getMessage(),
+                'error_file' => $exception->getFile(),
+                'error_line' => $exception->getLine(),
+                'status_code' => $statusCode,
+            ]);
+
+            // Intentar usar la vista errors.bot, con fallback a HTML inline
+            try {
+                return response()->view('errors.bot', [
+                    'codigo' => $statusCode,
+                    'mensaje' => $exception->getMessage(),
+                ], $statusCode);
+            } catch (\Exception $viewException) {
+                // Fallback si la vista no existe (por ejemplo, en deployment incompleto)
+                Log::error('Vista errors.bot no encontrada, usando fallback HTML', [
+                    'view_error' => $viewException->getMessage()
+                ]);
+
+                $appName = config('app.name', 'TSEYOR.org');
+                $appUrl = config('app.url', 'https://tseyor.org');
+
+                $html = <<<HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error {$statusCode} - {$appName}</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{$appName}">
+</head>
+<body style="font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5;">
+    <div style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px;">
+        <div style="font-size: 48px; font-weight: bold; color: #999;">{$statusCode}</div>
+        <h1 style="color: #d32f2f;">Error en el servidor</h1>
+        <p style="color: #666;">El contenido solicitado no está disponible en este momento.</p>
+        <p><a href="{$appUrl}" style="color: #1976d2; text-decoration: none;">← Volver al inicio</a></p>
+    </div>
+</body>
+</html>
+HTML;
+
+                return response($html, $statusCode)->header('Content-Type', 'text/html');
+            }
+        }
+
         // Manejo específico para excepciones de rate limiting (429)
         if ($exception instanceof TooManyRequestsHttpException) {
             $retryAfter = $exception->getHeaders()['Retry-After'] ?? 60;
@@ -236,6 +337,15 @@ class Handler extends ExceptionHandler
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
             'trace' => $exception->getTraceAsString(),
+            // Información adicional de contexto
+            'url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'route' => $request->route() ? $request->route()->getName() : 'N/A',
+            'route_uri' => $request->route() ? $request->route()->uri() : 'N/A',
+            'ip' => $request->ip(),
+            'user_agent' => $request->header('User-Agent'),
+            'referer' => $request->header('Referer'),
+            'is_bot' => $this->esBotRedSocial($request),
         ]);
 
 
