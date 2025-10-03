@@ -6,14 +6,23 @@ Disallow: /
 User-agent: Googlebot
 Allow: /
 Disallow: /admin/
+Disallow: /e/
+Disallow: /d/
+Disallow: /a/
 
 User-agent: Bingbot
 Allow: /
 Disallow: /admin/
+Disallow: /e/
+Disallow: /d/
+Disallow: /a/
 
 User-agent: Yandexbot
 Allow: /
 Disallow: /admin/
+Disallow: /e/
+Disallow: /d/
+Disallow: /a/
 
 # Sitemap
 Sitemap: https://tseyor.org/sitemap.xml

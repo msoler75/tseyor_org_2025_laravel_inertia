@@ -60,15 +60,41 @@ class EnlaceCortoController extends Controller
             ]);
 
             // Mostrar página HTML estática con metadatos SEO
-            return response()->view('enlaces-cortos.preview', [
+            $response = response()->view('enlaces-cortos.preview', [
                 'enlace' => $enlace,
                 'url_destino' => $enlace->url_original,
                 'preview_mode' => $forcePreview,
-            ])->header('Cache-Control', 'public, max-age=86400'); // Cache 24h
+            ]);
+
+            // Headers para optimizar caché y reducir TTFB
+            $response->header('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
+            $response->header('X-Content-Type-Options', 'nosniff');
+            $response->header('X-Frame-Options', 'SAMEORIGIN');
+
+            // IMPORTANTE: Evitar indexación en buscadores (esta página es solo para bots sociales)
+            $response->header('X-Robots-Tag', 'noindex, nofollow');
+
+            // ETag para validación de caché eficiente
+            $etag = md5($enlace->id . $enlace->updated_at);
+            $response->setEtag($etag);
+            $response->setPublic();
+            $response->setMaxAge(86400);
+
+            // isNotModified() compara el ETag del request con el de la respuesta
+            // Si coinciden, modifica la respuesta a 304 Not Modified automáticamente
+            $response->isNotModified(request());
+
+            return $response;
         }
 
-        // Para usuarios normales, redirección directa
-        return redirect($enlace->url_original, 301);
+        // Para usuarios normales y buscadores: redirección directa con noindex
+        $redirectResponse = redirect($enlace->url_original, 301);
+        
+        // IMPORTANTE: Agregar X-Robots-Tag también en redirects para evitar indexación
+        // Esto asegura que Google NO indexe la URL del enlace corto
+        $redirectResponse->header('X-Robots-Tag', 'noindex, nofollow');
+        
+        return $redirectResponse;
     }
 
 
