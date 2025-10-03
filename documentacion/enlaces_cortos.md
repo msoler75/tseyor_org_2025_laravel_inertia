@@ -763,6 +763,110 @@ await obtenerEnlaceCorto('https://example.com/noticia-importante') // → /e/abc
 
 ## 🔍 SEO y Metadatos
 
+### Estrategia SEO: Crawlers vs Redes Sociales
+
+El sistema implementa una estrategia dual para optimizar tanto el SEO en buscadores como la apariencia en redes sociales:
+
+#### 🔍 Para Google y Buscadores (Googlebot, Bingbot, etc.)
+- **Respuesta**: Redirect 301 directo a la URL de destino
+- **Objetivo**: Transferir todo el "SEO juice" al contenido original
+- **Sin indexación del enlace corto**: Los enlaces `/e/xyz` NO aparecen en resultados de búsqueda
+
+#### 📱 Para Redes Sociales (Facebook, Twitter, WhatsApp, etc.)
+- **Respuesta**: Página HTML con metadatos ricos (preview.blade.php)
+- **Objetivo**: Mostrar cards atractivas con imagen, título y descripción
+- **Con meta `noindex, nofollow`**: Evita que buscadores indexen esta vista
+- **Header `X-Robots-Tag: noindex, nofollow`**: Doble protección contra indexación
+
+#### 🧪 Modo Preview (`?preview=1`)
+- **Uso**: Testing de herramientas SEO, validación de metadatos
+- **Respuesta**: Misma vista HTML que bots sociales
+- **Banner informativo**: Indica que es modo testing
+- **También con noindex**: No se indexa esta versión de testing
+
+#### ✅ Ventajas de esta Estrategia
+
+1. **SEO Limpio**: 
+   - Google indexa el contenido real (URL destino), no el enlace corto
+   - Redirect 301 transfiere autoridad y ranking
+   - Sin problemas de contenido duplicado
+
+2. **Compartir Optimizado**:
+   - Facebook/Twitter ven metadatos ricos → cards atractivas
+   - Imágenes Open Graph correctas
+   - Títulos y descripciones personalizados por red
+
+3. **Canonical Correcto**:
+   - El preview apunta con `<link rel="canonical">` a la URL destino
+   - Indica a buscadores cuál es la fuente original
+
+4. **Sin Conflictos**:
+   - Herramientas SEO (Semrush, Seobility) ven el redirect → analizan destino real
+   - Bots sociales ven el preview → generan cards bonitas
+   - Google no indexa el preview → sin duplicados
+
+#### 🛡️ Protección Anti-Indexación (5 Capas)
+
+**Objetivo crítico**: Los enlaces cortos **NUNCA** deben ser indexados por Google, Bing, Yandex ni otros buscadores. Solo el contenido real debe aparecer en resultados de búsqueda.
+
+##### Capas de Protección Implementadas:
+
+1. **Header HTTP `X-Robots-Tag: noindex, nofollow`** ✅
+   - Presente en **TODAS** las respuestas:
+     - Redirects 301 (usuarios y crawlers)
+     - Preview HTML (bots sociales)
+     - Modo preview (?preview=1)
+   - Es la protección **principal** según [Google](https://developers.google.com/search/docs/crawling-indexing/block-indexing)
+
+2. **Meta HTML `<meta name="robots">`** ✅
+   - En `preview.blade.php`: `<meta name="robots" content="noindex, nofollow">`
+   - Protección secundaria para crawlers que solo leen HTML
+   - Visible en el código fuente de la página preview
+
+3. **robots.txt** ✅
+   - `Disallow: /e/`, `/d/`, `/a/` para Googlebot, Bingbot, Yandexbot
+   - Prevención: Buscadores no deberían crawlear estas rutas
+   - Archivo: `public/robots.txt`
+
+4. **Sitemap.xml** ✅
+   - Enlaces cortos **NO incluidos** en sitemap
+   - Solo incluye: Contenido y Páginas
+   - Comando: `php artisan sitemap:generate`
+
+5. **Canonical tag** ✅
+   - `<link rel="canonical" href="{{ $url_destino }}">`
+   - Indica a buscadores: "La URL real es el destino, no este enlace"
+   - En `preview.blade.php`
+
+##### Flujo de Protección:
+
+```
+Googlebot → /e/ABC123
+  ↓
+Detecta: NO es bot social
+  ↓
+Respuesta: 301 Redirect
+  + X-Robots-Tag: noindex, nofollow
+  + Location: /libros/titulo-real
+  ↓
+Google: NO indexa /e/ABC123
+Google: SÍ indexa /libros/titulo-real ✓
+```
+
+##### Testing:
+
+El test `testEnlacesNoIndexadosPorBuscadores()` verifica:
+- ✅ Googlebot recibe X-Robots-Tag: noindex
+- ✅ Bingbot recibe X-Robots-Tag: noindex
+- ✅ Yandexbot recibe X-Robots-Tag: noindex
+- ✅ DuckDuckBot recibe X-Robots-Tag: noindex
+- ✅ Baiduspider recibe X-Robots-Tag: noindex
+- ✅ Yahoo Slurp recibe X-Robots-Tag: noindex
+- ✅ Usuario normal recibe X-Robots-Tag: noindex
+- ✅ Bot social recibe HTML + header + meta noindex
+
+**Resultado**: 100% de cobertura en todos los buscadores principales
+
 ### Campos SEO Disponibles
 
 El sistema extrae y almacena metadatos específicos:
@@ -1294,6 +1398,32 @@ Probar URL: https://tseyor.org/e/codigo123
 - Open Graph metadatos
 - Imagen preview
 - Descripción correcta
+
+#### Google Rich Results Test
+```
+https://search.google.com/test/rich-results
+
+Probar URL: https://tseyor.org/e/codigo123?preview=1
+```
+
+**Verificar**:
+- Structured Data (Schema.org) válido
+- Sin errores de marcado
+- JSON-LD correcto
+
+#### SEMrush Site Audit (opcional)
+```
+https://www.semrush.com/siteaudit/
+
+Probar URL: https://tseyor.org/e/codigo123?preview=1
+```
+
+**Verificar**:
+- Score SEO general
+- Issues críticos resueltos
+- Performance y Core Web Vitals
+
+**Nota**: El modo `?preview=1` es necesario para que herramientas SEO vean el HTML en lugar del redirect 301.
 
 ### Script de Testing Automatizado
 
@@ -1880,10 +2010,15 @@ En `config/enlaces_cortos.php`:
 ### Consideraciones de Performance
 
 1. **Cache de 24 horas** en vista preview (bots sociales)
-2. **Actualización asíncrona** de contadores de clics
-3. **Reutilización** de enlaces existentes (evita duplicados)
-4. **Scraping con timeout** de 5 segundos para URLs externas
-5. **Logging selectivo** solo en development/staging
+2. **ETag para validación eficiente**: Respuestas 304 Not Modified cuando el contenido no cambia
+3. **Headers de caché optimizados**: 
+   - `Cache-Control: public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400`
+   - CDN puede cachear hasta 7 días con `s-maxage`
+   - `stale-while-revalidate` permite servir caché expirado mientras se regenera
+4. **Actualización asíncrona** de contadores de clics
+5. **Reutilización** de enlaces existentes (evita duplicados)
+6. **Scraping con timeout** de 5 segundos para URLs externas
+7. **Logging selectivo** solo en development/staging
 
 ### Seguridad
 
