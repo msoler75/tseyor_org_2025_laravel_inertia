@@ -40,14 +40,34 @@ class EnlaceCortoController extends Controller
         $analyticsController = app(AnalyticsController::class);
         $analyticsController->trackEnlaceCorto($prefijo, $codigo, $enlace->url_original, request());
 
-        // Detectar si es un bot de red social que necesita metadatos
-        if ($this->esRedSocialCompartiendo()) {
-            // Mostrar página HTML estática con metadatos SEO solo para bots
+        // Modo preview forzado para testing (útil para herramientas SEO)
+        // Uso: /e/abc123?preview=1
+        $forcePreview = request()->query('preview') == '1';
+
+        // Detectar si es un bot de red social que necesita metadatos o modo preview forzado
+        if ($this->esRedSocialCompartiendo() || $forcePreview) {
+            // Log para debugging
+            \Illuminate\Support\Facades\Log::info('Mostrando preview de enlace corto', [
+                'url_corta' => request()->fullUrl(),
+                'url_destino' => $enlace->url_original,
+                'user_agent' => request()->header('User-Agent'),
+                'prefijo' => $prefijo,
+                'codigo' => $codigo,
+                'tiene_titulo' => !empty($enlace->titulo),
+                'tiene_og_imagen' => !empty($enlace->og_imagen),
+                'es_bot_social' => $this->esRedSocialCompartiendo(),
+                'preview_forzado' => $forcePreview,
+            ]);
+
+            // Mostrar página HTML estática con metadatos SEO
             return response()->view('enlaces-cortos.preview', [
                 'enlace' => $enlace,
-                'url_destino' => $enlace->url_original
-            ])->header('Cache-Control', 'public, max-age=86400'); // Cache 24h para bots
-        }        // Para usuarios normales, redirección directa
+                'url_destino' => $enlace->url_original,
+                'preview_mode' => $forcePreview,
+            ])->header('Cache-Control', 'public, max-age=86400'); // Cache 24h
+        }
+
+        // Para usuarios normales, redirección directa
         return redirect($enlace->url_original, 301);
     }
 
@@ -96,47 +116,40 @@ class EnlaceCortoController extends Controller
 
     /**
      * Detectar si el request viene de un bot de red social compartiendo el enlace
-     * Usa la librería jaybizzle/crawler-detect que se mantiene actualizada
+     * Lista específica de redes sociales y mensajería
+     * NO incluye herramientas SEO ni motores de búsqueda
      */
     private function esRedSocialCompartiendo(): bool
     {
-        $crawlerDetect = new CrawlerDetect();
+        $userAgent = request()->header('User-Agent', '');
 
-        // Detectar si es un crawler/bot (incluye redes sociales)
-        if ($crawlerDetect->isCrawler()) {
-            $userAgent = request()->header('User-Agent', '');
+        // Lista específica de bots de redes sociales y mensajería
+        // (NO incluye herramientas SEO como Semrush, Seobility, ni Google/Bing)
+        $redesSocialesYMensajeria = [
+            'facebookexternalhit',      // Facebook
+            'facebookcatalog',          // Facebook Catalog
+            'Facebot',                  // Facebook
+            'Twitterbot',               // Twitter
+            'LinkedInBot',              // LinkedIn
+            'WhatsApp',                 // WhatsApp
+            'TelegramBot',              // Telegram
+            'Slackbot',                 // Slack
+            'Discordbot',               // Discord
+            'Pinterest',                // Pinterest
+            'Pinterestbot',             // Pinterest
+            'instagram',                // Instagram
+            'SkypeUriPreview',          // Skype
+            'Iframely',                 // iframely (preview service)
+            'vkShare',                  // VKontakte
+            'redditbot',                // Reddit
+            'Tumblr',                   // Tumblr
+            'Applebot',                 // Apple (iMessage previews)
+        ];
 
-            // Filtrar específicamente bots de redes sociales y mensajería
-            // (excluir motores de búsqueda como Google, Bing que no necesitan preview)
-            $redesSociales = [
-                'facebook',
-                'twitter',
-                'linkedin',
-                'whatsapp',
-                'telegram',
-                'discord',
-                'slack',
-                'pinterest',
-                'instagram',
-                'tiktok',
-                'snapchat',
-                'reddit',
-                'tumblr',
-                'skype',
-                'teams',
-                'signal',
-                'apple', // iMessage
-                'preview',
-                'unfurling',
-                'linkpreview',
-                'opengraph'
-            ];
-
-            // Verificar si el bot detectado es de una red social
-            foreach ($redesSociales as $red) {
-                if (stripos($userAgent, $red) !== false) {
-                    return true;
-                }
+        // Verificar si el user agent contiene alguno de los identificadores
+        foreach ($redesSocialesYMensajeria as $bot) {
+            if (stripos($userAgent, $bot) !== false) {
+                return true;
             }
         }
 
