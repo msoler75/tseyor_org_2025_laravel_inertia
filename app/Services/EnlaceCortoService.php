@@ -560,20 +560,9 @@ class EnlaceCortoService
             return $enlace;
         }
 
-        // Verificar umbral de longitud SOLO del PATH
-        $umbral = config('enlaces_cortos.umbral_longitud_auto', 20);
-        $path = parse_url($url, PHP_URL_PATH) ?? '';
-        $longitudPath = strlen($path);
-        Log::info('[EnlaceCortoService] DEBUG umbral', [
-            'url' => $url,
-            'path' => $path,
-            'longitud_path' => $longitudPath,
-            'umbral' => $umbral,
-            'comparacion' => $longitudPath . ' < ' . $umbral . ' = ' . ($longitudPath < $umbral ? 'true' : 'false')
-        ]);
-        if ($longitudPath < $umbral) {
-            Log::info('[EnlaceCortoService] URL no supera umbral de longitud', ['url' => $url, 'longitud' => $longitudPath, 'umbral' => $umbral]);
-            // No se acorta, devolver null (la URL original se usará)
+        // Verificar si la URL necesita acortarse usando lógica mejorada
+        if (!$this->necesitaAcortarse($url)) {
+            Log::info('[EnlaceCortoService] URL no necesita acortarse', ['url' => $url]);
             return null;
         }
 
@@ -639,5 +628,80 @@ class EnlaceCortoService
         }
     }
 
+    /**
+     * Determinar si una URL necesita acortarse usando lógica inteligente
+     *
+     * @param string $url URL completa a evaluar
+     * @return bool true si necesita acortarse, false si no
+     */
+    public function necesitaAcortarse(string $url): bool
+    {
+        // Extraer el path de la URL
+        $path = parse_url($url, PHP_URL_PATH) ?? '';
+        $longitudUrl = strlen($url);
+        $longitudPath = strlen($path);
+
+        // Obtener configuración
+        $umbralPath = config('enlaces_cortos.umbrales.longitud_path', 30);
+        $urlMaximaCorta = config('enlaces_cortos.umbrales.longitud_url_maxima_corta', 60);
+        $patronesExcluidos = config('enlaces_cortos.patrones_excluidos', []);
+
+        Log::info('[EnlaceCortoService] Evaluando si necesita acortarse', [
+            'url' => $url,
+            'path' => $path,
+            'longitud_url' => $longitudUrl,
+            'longitud_path' => $longitudPath,
+            'umbral_path' => $umbralPath,
+            'url_maxima_corta' => $urlMaximaCorta
+        ]);
+
+        // Regla 1: URLs muy cortas nunca se acortan
+        if ($longitudUrl <= $urlMaximaCorta) {
+            Log::info('[EnlaceCortoService] URL muy corta, no se acorta', [
+                'longitud_url' => $longitudUrl,
+                'umbral_maximo' => $urlMaximaCorta
+            ]);
+            return false;
+        }
+
+        // Regla 2: Verificar patrones excluidos (URLs que por patrón no se acortan)
+        foreach ($patronesExcluidos as $patron) {
+            if (preg_match('/' . $patron . '/', $path)) {
+                Log::info('[EnlaceCortoService] URL coincide con patrón excluido', [
+                    'path' => $path,
+                    'patron' => $patron
+                ]);
+                return false;
+            }
+        }
+
+        // Regla 3: Si el path es corto, probablemente no necesita acortarse
+        if ($longitudPath <= $umbralPath) {
+            Log::info('[EnlaceCortoService] Path corto, no se acorta', [
+                'longitud_path' => $longitudPath,
+                'umbral_path' => $umbralPath
+            ]);
+            return false;
+        }
+
+        // Regla 4: URLs con parámetros GET largos sí necesitan acortarse
+        $query = parse_url($url, PHP_URL_QUERY);
+        if ($query && strlen($query) > 20) {
+            Log::info('[EnlaceCortoService] URL con parámetros largos, sí se acorta', [
+                'query_length' => strlen($query)
+            ]);
+            return true;
+        }
+
+        // Regla 5: Si llegamos aquí, evaluar por longitud total
+        $necesitaAcortar = $longitudUrl > 80; // URLs muy largas siempre se acortan
+
+        Log::info('[EnlaceCortoService] Decisión final basada en longitud total', [
+            'necesita_acortar' => $necesitaAcortar,
+            'longitud_url' => $longitudUrl
+        ]);
+
+        return $necesitaAcortar;
+    }
 
 }
