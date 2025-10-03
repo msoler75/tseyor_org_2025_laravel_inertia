@@ -43,6 +43,6 @@ info.txt
 test-results
 **/*.sql
 **/desktop.ini
-components.d.ts
 auto-imports.d.ts
 puzle.tseyor.org
+components.d.ts
