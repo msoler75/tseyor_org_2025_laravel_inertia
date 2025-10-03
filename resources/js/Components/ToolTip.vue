@@ -27,7 +27,7 @@
             :duration="120"
             :origin="transformOrigin"
         >
-            <div v-if="visibleFloating" class="tooltip-content rounded-xl overflow-visible" :class="floatingClass">
+            <div v-if="internalVisibleFloating" class="tooltip-content rounded-xl overflow-visible" :class="floatingClass">
                 <slot name="content"></slot>
                 <div ref="arrowRef" :style="arrowStyles" class="absolute rotate-45 z-10"
                 :class="arrowClass"></div>
@@ -37,7 +37,6 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useFloating, autoPlacement, autoUpdate, arrow } from '@floating-ui/vue';
 import { offset, shift, size } from '@floating-ui/core';
 
@@ -45,7 +44,7 @@ const emit = defineEmits(['activated', 'deactivated', 'preload']);
 // permitir mantener el tooltip abierto desde fuera
 const props = defineProps({
     persistent: { type: Boolean, default: false },
-    activationDelay: { type: Number, default: 500 }, // ms para activar el tooltip
+    activationDelay: { type: Number, default: 150 }, // ms para activar el tooltip
     floatingClass: { type: String, default: '' },
     arrowClass: { type: String, default: 'w-3 h-3' },
     visibleFloating: { type: Boolean, default: true }
@@ -55,6 +54,10 @@ const domReference = ref(null);
 const floating = ref(null);
 const arrowRef = ref(null);
 const isOpen = ref(false);
+
+// Estado interno para controlar la visibilidad del contenido flotante
+// Permite que la animación se ejecute incluso si visibleFloating cambia inmediatamente
+const internalVisibleFloating = ref(false);
 
 
 // listener global para cerrar al tocar fuera (se añade en capture para ignorar stopPropagation)
@@ -111,7 +114,7 @@ const { floatingStyles, middlewareData, placement, update } = useFloating(domRef
         offset(12),
         // asegurar un margen superior mínimo (p. ej. barra nav con mayor z-index)
         shift({
-            padding: { top: 82 }
+            padding: { top: 84 }
         }),
         size({
             apply({ availableWidth, elements }) {
@@ -190,6 +193,22 @@ const transformOrigin = computed(() => {
     return transformOrigin;
 });
 
+// Watcher para manejar cambios en visibleFloating con nextTick
+// Esto garantiza que la animación se ejecute incluso si el contenido cambia inmediatamente
+watch(() => props.visibleFloating, (newValue) => {
+    if (newValue && isOpen.value) {
+        // Si debe mostrarse y el tooltip está abierto, usar nextTick para permitir la animación
+        nextTick(() => {
+            internalVisibleFloating.value = true;
+            // Reconfigurar listeners cuando el contenido se hace visible
+            setupFloatingListeners();
+        });
+    } else {
+        // Si debe ocultarse, hacerlo inmediatamente
+        internalVisibleFloating.value = false;
+    }
+});
+
 function show() {
     // solo emitir cuando pasamos de cerrado a abierto
     if (!isOpen.value) {
@@ -201,6 +220,16 @@ function show() {
             window.addEventListener('touchstart', onPointerDownOutside, true);
         });
         emit('activated', { text: domReference.value?.innerText });
+
+        // Configurar listeners del elemento flotante
+        setupFloatingListeners();
+
+        // Si visibleFloating ya es true al abrir, activar el contenido interno con nextTick
+        if (props.visibleFloating) {
+            nextTick(() => {
+                internalVisibleFloating.value = true;
+            });
+        }
     } else {
         // Si ya está abierto, solo limpiar el timer de cierre
         clearAllTimers();
@@ -255,6 +284,10 @@ function immediateHide(force = false) {
     if (props.persistent && !force) return;
     clearAllTimers();
     isOpen.value = false;
+    // Resetear el estado interno del contenido flotante
+    internalVisibleFloating.value = false;
+    // Remover listeners del elemento flotante
+    removeFloatingListeners();
     // Remover listener de click fuera
     removeOutsideListener();
     emit('deactivated', { text: domReference.value?.innerText });
@@ -271,6 +304,34 @@ function clearShowTimer() {
 function clearAllTimers() {
     clearHideTimer();
     clearShowTimer();
+}
+
+// Configurar listeners del elemento flotante
+function setupFloatingListeners() {
+    nextTick(() => {
+        const el = floating.value;
+        if (!el) return;
+
+        // Remover listeners existentes para evitar duplicados
+        el.removeEventListener('pointerenter', onFloatingPointerEnter);
+        el.removeEventListener('pointerdown', clearHideTimer);
+        el.removeEventListener('pointerleave', onFloatingPointerLeave);
+
+        // Añadir listeners
+        el.addEventListener('pointerenter', onFloatingPointerEnter);
+        el.addEventListener('pointerdown', clearHideTimer);
+        el.addEventListener('pointerleave', onFloatingPointerLeave);
+    });
+}
+
+// Remover listeners del elemento flotante
+function removeFloatingListeners() {
+    const el = floating.value;
+    if (el) {
+        el.removeEventListener('pointerenter', onFloatingPointerEnter);
+        el.removeEventListener('pointerdown', clearHideTimer);
+        el.removeEventListener('pointerleave', onFloatingPointerLeave);
+    }
 }
 
 // handlers para eventos pointer — se usan en la plantilla (referencia) y en el elemento floating
@@ -419,14 +480,6 @@ function safeUpdate() {
 onMounted(() => {
     window.addEventListener('resize', safeUpdate);
     window.addEventListener('scroll', safeUpdate, true);
-    // listeners para el elemento flotante: cancelar cierre cuando el puntero está dentro
-    nextTick(() => {
-        const el = floating.value;
-        if (!el) return;
-        el.addEventListener('pointerenter', onFloatingPointerEnter);
-        el.addEventListener('pointerdown', clearHideTimer);
-        el.addEventListener('pointerleave', onFloatingPointerLeave);
-    });
 });
 
 onBeforeUnmount(() => {
@@ -435,13 +488,7 @@ onBeforeUnmount(() => {
     stopObserving();
     clearAllTimers();
     removeOutsideListener();
-    // remover listeners añadidos al elemento flotante si existe
-    const el = floating.value;
-    if (el) {
-        el.removeEventListener('pointerenter', onFloatingPointerEnter);
-        el.removeEventListener('pointerdown', clearHideTimer);
-        el.removeEventListener('pointerleave', onFloatingPointerLeave);
-    }
+    removeFloatingListeners();
 });
 </script>
 
