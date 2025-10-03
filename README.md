@@ -8,8 +8,8 @@ Este proyecto es el corazón digital de la organización, donde se publican noti
 
 - **ONG:** Mundo Armónico Tseyor
 - **Propósito:** Portal web, gestión de contenidos, buscador global, automatización de publicaciones y recursos.
-- **Tecnologías principales:** Laravel (backend), Inertia.js (puente), Vue 3 (frontend), MySQL/SQLite (base de datos)
-- **Frontend:** Tailwind CSS 4, DaisyUI 5, editor TipTap (rich text)
+- **Tecnologías principales:** Laravel (backend), Inertia.js (puente), Vue 3 (frontend), MySQL (base de datos)
+- **Frontend:** Vue 3, Tailwind CSS 4, DaisyUI 5, editor TipTap (rich text)
 
 ## 🚀 Stack tecnológico
 

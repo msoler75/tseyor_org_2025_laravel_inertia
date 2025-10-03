@@ -4,19 +4,12 @@
         @preload="onToolTipActivate"
         @deactivated="onToolTipDeactivate"
         :activationDelay="200"
+        :visibleFloating="!!(info|| noEncontrado)"
+        :floatingClass="'bg-base-300 shadow px-3 py-2'"
+        :arrowClass="'bg-base-300 w-3 h-3'"
     >
         <template #content>
-            <div v-if="!info || noEncontrado" class="bg-base-300 p-2 rounded-xl shadow">
-                <div v-if="!info" class="p-3 text-lg mb-2">
-                    <Spinner class="loader" />
-                </div>
-                <template v-else-if="noEncontrado">
-                    <button class="btn btn-xs btn-primary" @click="buscar">
-                        Saber más
-                    </button>
-                </template>
-            </div>
-            <div v-else class="bg-base-300 p-3 rounded shadow">
+            <div v-if="info || noEncontrado" class="bg-base-300 p-3">
                 <h3>{{ info.title }}</h3>
                 <div>
                     <Content :content="info" class="prose max-w-none" />

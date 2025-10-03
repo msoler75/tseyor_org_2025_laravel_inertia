@@ -155,7 +155,7 @@ public function search(Request $request)
 
     // Buscar el término usando Scout
     $resultados = Contenido::search($query)
-        ->publicado()
+        ->where('visibilidad', 'P')
         ->where('coleccion', 'terminos')
         ->get();
 
