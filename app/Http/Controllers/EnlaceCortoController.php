@@ -89,11 +89,11 @@ class EnlaceCortoController extends Controller
 
         // Para usuarios normales y buscadores: redirección directa con noindex
         $redirectResponse = redirect($enlace->url_original, 301);
-        
+
         // IMPORTANTE: Agregar X-Robots-Tag también en redirects para evitar indexación
         // Esto asegura que Google NO indexe la URL del enlace corto
         $redirectResponse->header('X-Robots-Tag', 'noindex, nofollow');
-        
+
         return $redirectResponse;
     }
 
