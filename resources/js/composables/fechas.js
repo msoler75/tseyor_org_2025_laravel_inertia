@@ -141,12 +141,29 @@ export function buildGoogleCalendarDates(evento) {
 }
 
 // Determina si un evento está actualmente en curso.
-// Considera fecha_inicio, fecha_fin, hora_inicio, hora_fin y aplica un margen de seguridad.
+// Considera fecha_inicio, fecha_fin, hora_inicio y aplica un margen de seguridad.
+// Para eventos sin fecha_fin, asume hora_fin = hora_inicio + 2 horas.
+// Para eventos con fecha_fin, asume hora_fin = '22:00'.
+// Para eventos sin hora_inicio, asume duración de 2 horas (todo el día si no hay hora).
 // margenHoras: margen de seguridad en horas (default 2) para compensar cambios de horario/husos horarios
-export function esEventoEnCurso(fechaInicio, fechaFin = null, horaInicio = null, horaFin = null, margenHoras = 2) {
+export function esEventoEnCurso(fechaInicio, horaInicio = null, fechaFin = null, margenHoras = 2) {
   if (!fechaInicio) return false
 
   const ahora = dayjs()
+  let duracionHoras = 2; // Duración por defecto en horas si no hay hora_inicio
+
+  // Calcular hora_fin según reglas
+  let horaFin = null;
+  if (!fechaFin) {
+    // No hay fecha_fin, hora_fin = hora_inicio + 2 horas
+    if (horaInicio) {
+      const inicio = dayjs(horaInicio, 'HH:mm');
+      horaFin = inicio.add(duracionHoras, 'hour').format('HH:mm');
+    }
+  } else {
+    // Hay fecha_fin, hora_fin = '22:00'
+    horaFin = '22:00';
+  }
 
   // Parsear fecha/hora de inicio
   const inicio = parseLocalDateTime(fechaInicio, horaInicio)
@@ -175,7 +192,7 @@ export function esEventoEnCurso(fechaInicio, fechaFin = null, horaInicio = null,
     // Evento de un solo momento/día: si tiene hora_inicio, asumimos 2 horas de duración
     // si no tiene hora, asumimos todo el día
     if (horaInicio) {
-      finConMargen = dayjs(inicio).add(2 + margenHoras, 'hour')
+      finConMargen = dayjs(inicio).add(duracionHoras + margenHoras, 'hour')
     } else {
       finConMargen = dayjs(fechaInicio).endOf('day').add(margenHoras, 'hour')
     }

@@ -114,7 +114,7 @@ const eventsArray = computed(() => Array.isArray(listado.value.data) ? listado.v
 // Eventos que están actualmente en curso
 const eventosEnCurso = computed(() =>
     eventsArray.value.filter(e =>
-        esEventoEnCurso(e?.fecha_inicio, e?.fecha_fin, e?.hora_inicio, e?.hora_fin)
+        esEventoEnCurso(e.fecha_inicio, e.hora_inicio, e.fecha_fin)
     )
 );
 
@@ -122,11 +122,11 @@ const eventosEnCurso = computed(() =>
 const eventosProximos = computed(() =>
     eventsArray.value.filter(e => {
         // No incluir si está en curso
-        if (esEventoEnCurso(e?.fecha_inicio, e?.fecha_fin, e?.hora_inicio, e?.hora_fin)) {
+        if (esEventoEnCurso(e.fecha_inicio, e.hora_inicio, e.fecha_fin)) {
             return false;
         }
         // Incluir si es fecha futura
-        return esFechaFutura(e?.fecha_inicio);
+        return esFechaFutura(e.fecha_inicio);
     })
 );
 
@@ -134,15 +134,15 @@ const eventosProximos = computed(() =>
 const eventosPasados = computed(() =>
     eventsArray.value.filter(e => {
         // No incluir si está en curso
-        if (esEventoEnCurso(e?.fecha_inicio, e?.fecha_fin, e?.hora_inicio, e?.hora_fin)) {
+        if (esEventoEnCurso(e.fecha_inicio, e.hora_inicio, e.fecha_fin)) {
             return false;
         }
         // No incluir si es futuro
-        if (esFechaFutura(e?.fecha_inicio)) {
+        if (esFechaFutura(e.fecha_inicio)) {
             return false;
         }
         // Es pasado
         return true;
-    }).sort((a, b) => (aFecha(b?.fecha_inicio) || 0) - (aFecha(a?.fecha_inicio) || 0))
+    }).sort((a, b) => (aFecha(b.fecha_inicio) || 0) - (aFecha(a.fecha_inicio) || 0))
 );
 </script>

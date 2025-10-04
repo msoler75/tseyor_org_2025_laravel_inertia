@@ -86,4 +86,15 @@ class Contenido extends Model
         return "/". $this->slug_ref;
     return "/" . $this->coleccion . "/" . ($this->slug_ref ?  $this->slug_ref: $this->id_ref);
     }
+
+    /**
+     * Scope para filtrar contenido publicado
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePublicado($query)
+    {
+        return $query->where('visibilidad', 'P');
+    }
 }

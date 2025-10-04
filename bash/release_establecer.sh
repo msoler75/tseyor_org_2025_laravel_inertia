@@ -50,13 +50,17 @@ ln -s "$RELEASE_PATH" "$BASE_DIR/current"
 
 # Limpiar cachés de la nueva release activa
 cd "$BASE_DIR/current" || exit
+php artisan optimize:clear
 php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
-php artisan optimize:clear
-php artisan optimize
+
+# Regenerar cachés optimizados
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
 # Mensaje final
 echo "El enlace 'current' ahora apunta a releases/$RELEASE_NUM"
-echo "Cachés limpiadas en la nueva release activa."
+echo "Cachés limpiadas y regeneradas en la nueva release activa."

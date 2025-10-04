@@ -57,16 +57,26 @@
     <!-- Canonical apunta al contenido original para indicar la fuente real -->
     <link rel="canonical" href="{{ $url_destino }}">
 
+    <!-- Hreflang tags para indicar idioma español -->
+    <link rel="alternate" hreflang="es" href="{{ request()->url() }}">
+    <link rel="alternate" hreflang="x-default" href="{{ request()->url() }}">
+
     <!-- Structured Data (Schema.org) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "name": "{{ addslashes($enlace->titulo ?: $enlace->url_original) }}",
-        "description": "{{ addslashes($enlace->descripcion ?: 'Enlace compartido de Tseyor.org') }}",
+        "name": {{ json_encode($enlace->titulo ?: $enlace->url_original) }},
+        "description": {{ json_encode($enlace->descripcion ?: 'Contenido compartido desde Tseyor - ONG Mundo Armónico Tseyor') }},
         "url": "{{ request()->url() }}",
+        "inLanguage": "es-ES",
         @if($enlace->og_imagen)
-        "image": "{{ $enlace->og_imagen }}",
+        "image": {
+            "@type": "ImageObject",
+            "url": "{{ $enlace->og_imagen }}",
+            "width": 1200,
+            "height": 630
+        },
         @endif
         "mainEntity": {
             "@type": "Thing",
@@ -74,8 +84,27 @@
         },
         "publisher": {
             "@type": "Organization",
-            "name": "Tseyor",
-            "url": "https://tseyor.org"
+            "name": "ONG Mundo Armónico Tseyor",
+            "url": "https://tseyor.org",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://tseyor.org/logo.png"
+            },
+            "sameAs": [
+                "https://www.facebook.com/tseyor",
+                "https://twitter.com/TSEYOR",
+                "https://www.youtube.com/@tseyor",
+                "https://www.instagram.com/tseyor_org"
+            ]
+        },
+        "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [{
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Inicio",
+                "item": "https://tseyor.org"
+            }]
         }
     }
     </script>
@@ -207,6 +236,29 @@
             display: inline-block;
             padding: 10px 0;
         }
+
+        /* Social links styling */
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #333;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .social-links a:hover {
+            background: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -255,16 +307,86 @@
                 </p>
             </section>
 
-            <footer>
-                <h3>Sobre Tseyor</h3>
+            <section>
+                <h2>¿Qué es Tseyor?</h2>
                 <p>
-                    La ONG Mundo Armónico Tseyor es una organización dedicada a la divulgación del autodescubrimiento espiritual,
-                    el desarrollo personal y la creación de un mundo más armónico.
-                    A través de comunicados, talleres, meditaciones y otros recursos,
-                    compartimos herramientas para el crecimiento interior y la transformación consciente.
+                    <strong>Tseyor</strong> es una comunidad internacional dedicada al autodescubrimiento y el desarrollo de la consciencia.
+                    Fundada con el propósito de promover un mundo más armónico, ofrece herramientas prácticas para el crecimiento personal
+                    y espiritual a través de diversas actividades y recursos.
                 </p>
                 <p>
-                    <a href="https://tseyor.org" rel="noopener">Visitar Tseyor.org</a>
+                    Nuestra misión es facilitar el despertar de la consciencia mediante la comprensión de las leyes universales,
+                    el desarrollo de capacidades latentes y la integración de los principios de hermandad, amor y servicio.
+                    Trabajamos en la construcción de una sociedad basada en valores elevados y en armonía con el entorno.
+                </p>
+            </section>
+
+            <section>
+                <h2>Nuestras Actividades</h2>
+                <h3>Comunicados y Enseñanzas</h3>
+                <p>
+                    Regularmente publicamos <strong>comunicados interdimensionales</strong> que ofrecen orientación y reflexiones
+                    sobre temas espirituales, personales y sociales. Estos mensajes provienen de fuentes elevadas de consciencia
+                    y están diseñados para inspirar, guiar y elevar la comprensión de quienes buscan un camino de crecimiento interior.
+                </p>
+
+                <h3>Talleres y Cursos</h3>
+                <p>
+                    Organizamos <strong>talleres prácticos, cursos especializados y retiros</strong> donde los participantes aprenden
+                    técnicas de meditación, relajación, visualización creativa y desarrollo de capacidades intuitivas.
+                    Estas actividades se realizan tanto presencialmente como en formato virtual, permitiendo la participación
+                    de personas de todo el mundo.
+                </p>
+
+                <h3>Meditaciones Guiadas</h3>
+                <p>
+                    Ofrecemos <strong>sesiones de meditación guiada</strong> que facilitan el contacto con estados superiores de consciencia.
+                    Estas prácticas incluyen meditaciones holográficas, trabajos energéticos y ejercicios de introspección
+                    que ayudan a integrar las enseñanzas en la vida cotidiana.
+                </p>
+
+                <h3>Biblioteca y Recursos</h3>
+                <p>
+                    Nuestra <strong>biblioteca digital</strong> contiene libros, documentos, audios y videos con las enseñanzas
+                    y experiencias compartidas a lo largo de los años. Todo este material está disponible gratuitamente
+                    para quienes deseen profundizar en su camino de autodescubrimiento.
+                </p>
+            </section>
+
+            <section>
+                <h2>Únete a Nuestra Comunidad</h2>
+                <p>
+                    Si sientes el llamado al crecimiento personal y espiritual, te invitamos a explorar nuestros recursos,
+                    participar en nuestras actividades y formar parte de esta comunidad global de buscadores de la verdad
+                    y la armonía. Juntos construimos un mundo mejor, más consciente y fraternal.
+                </p>
+                <p>
+                    <strong>Visita nuestro sitio web principal:</strong><br>
+                    <a href="https://tseyor.org" rel="noopener" class="url">https://tseyor.org</a>
+                </p>
+            </section>
+
+            <footer>
+                <h3>Síguenos en Redes Sociales</h3>
+                <p>Conéctate con nosotros y mantente actualizado con nuestras últimas publicaciones, eventos y actividades:</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/tseyor" target="_blank" rel="noopener noreferrer">
+                        📘 Facebook
+                    </a>
+                    <a href="https://twitter.com/TSEYOR" target="_blank" rel="noopener noreferrer">
+                        🐦 X (Twitter)
+                    </a>
+                    <a href="https://www.youtube.com/@tseyor" target="_blank" rel="noopener noreferrer">
+                        ▶️ YouTube
+                    </a>
+                    <a href="https://www.instagram.com/tseyor_org" target="_blank" rel="noopener noreferrer">
+                        📷 Instagram
+                    </a>
+                </div>
+                <p style="margin-top: 20px;">
+                    <small>
+                        © {{ date('Y') }} ONG Mundo Armónico Tseyor. Organización sin ánimo de lucro dedicada al desarrollo de la consciencia.
+                    </small>
                 </p>
             </footer>
         </article>
