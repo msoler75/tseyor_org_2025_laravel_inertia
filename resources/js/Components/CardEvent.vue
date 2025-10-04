@@ -32,7 +32,6 @@ const props = defineProps({
 	fechaInicio: { type: [String, Date], default: null },
 	fechaFin: { type: [String, Date], default: null },
 	horaInicio: { type: String, default: null },
-	horaFin: { type: String, default: null },
     date: { type: [String, Date], default: null }
 })
 
@@ -48,8 +47,8 @@ const fechaFormateada = computed(() => {
 })
 
 // Determina si el evento está actualmente en curso
-const enCurso = computed(() => 
-	esEventoEnCurso(props.fechaInicio, props.fechaFin, props.horaInicio, props.horaFin)
+const enCurso = computed(() =>
+	esEventoEnCurso(props.fechaInicio, props.horaInicio, props.fechaFin)
 )
 
 const futuro = computed(() => {

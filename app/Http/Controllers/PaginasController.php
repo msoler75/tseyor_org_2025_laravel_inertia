@@ -104,10 +104,15 @@ class PaginasController extends Controller
 
     public function portada()
     {
-        // Verificar si hay eventos próximos (en los próximos 30 días)
+        // Verificar si hay eventos próximos o en curso
         $hay_proximos_eventos = Evento::publicado()
-            ->where('fecha_inicio', '>=', now())
-            // ->where('fecha_inicio', '<=', now()->addDays(30))
+            ->where(function($q) {
+                $q->where('fecha_inicio', '>=', now()) // próximos
+                  ->orWhere(function($q2) {
+                      $q2->where('fecha_inicio', '<=', now()) // en curso
+                         ->where('fecha_fin', '>=', now());
+                  });
+            })
             ->exists();
 
         return Inertia::render(

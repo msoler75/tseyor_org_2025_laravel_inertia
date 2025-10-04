@@ -31,12 +31,6 @@ class Evento extends ContenidoBaseModel
         'equipo_id'
     ];
 
-    protected $dates = [
-        'published_at',
-        'fecha_inicio',
-        'fecha_fin',
-    ];
-
     /**
      * Casts para atributos de fecha
      * Eloquent convertirá automáticamente estos campos a Carbon
@@ -46,6 +40,19 @@ class Evento extends ContenidoBaseModel
         'fecha_inicio' => 'datetime',
         'fecha_fin' => 'datetime',
     ];
+
+    /**
+     * Accessors para formatear fechas como strings sin hora
+     */
+    public function getFechaInicioAttribute($value)
+    {
+        return $value ? Carbon::parse($value)->format('Y-m-d') : null;
+    }
+
+    public function getFechaFinAttribute($value)
+    {
+        return $value ? Carbon::parse($value)->format('Y-m-d') : null;
+    }
 
 
     public function centro() // centro presencial donde transcurre el evento
