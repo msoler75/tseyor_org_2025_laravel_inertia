@@ -303,7 +303,7 @@ class EnlaceCortoTest extends TestCase
     {
         // Buscar o crear un enlace corto activo
         $enlace = EnlaceCorto::where('activo', true)->first();
-        
+
         if (!$enlace) {
             $service = new EnlaceCortoService();
             $libro = \App\Models\Libro::publicado()->first();
@@ -311,9 +311,9 @@ class EnlaceCortoTest extends TestCase
                 $enlace = $service->obtenerEnlaceParaUrl(url('/libros/' . $libro->slug));
             }
         }
-        
+
         $this->assertNotNull($enlace, 'Debe existir al menos un enlace corto');
-        
+
         // Lista de User-Agents de buscadores principales
         $crawlers = [
             'Googlebot' => 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
@@ -323,73 +323,73 @@ class EnlaceCortoTest extends TestCase
             'Baiduspider' => 'Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)',
             'Yahoo' => 'Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)',
         ];
-        
+
         fwrite(STDERR, "\n=== Test Anti-Indexación Buscadores ===\n");
         fwrite(STDERR, "Enlace usado: {$enlace->url_corta}\n");
         fwrite(STDERR, "URL destino: {$enlace->url_original}\n\n");
-        
+
         // TEST 1: Verificar que todos los crawlers reciben redirect con X-Robots-Tag
         foreach ($crawlers as $nombre => $userAgent) {
             $response = $this->withHeaders([
                 'User-Agent' => $userAgent,
             ])->get('/' . $enlace->prefijo . '/' . $enlace->codigo);
-            
+
             // Debe ser redirect
             $this->assertTrue(
                 in_array($response->status(), [301, 302]),
                 "{$nombre} debe recibir redirect, recibió: " . $response->status()
             );
-            
+
             // CRÍTICO: Debe tener X-Robots-Tag
             $this->assertTrue(
                 $response->headers->has('X-Robots-Tag'),
                 "{$nombre}: El redirect DEBE tener header X-Robots-Tag"
             );
-            
+
             $robotsTag = $response->headers->get('X-Robots-Tag');
             $this->assertStringContainsString('noindex', $robotsTag, "{$nombre}: debe tener noindex");
             $this->assertStringContainsString('nofollow', $robotsTag, "{$nombre}: debe tener nofollow");
-            
+
             fwrite(STDERR, "✅ {$nombre}: X-Robots-Tag = {$robotsTag}\n");
         }
-        
+
         // TEST 2: Usuario normal también debe tener X-Robots-Tag
         $responseUsuarioNormal = $this->withHeaders([
             'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         ])->get('/' . $enlace->prefijo . '/' . $enlace->codigo);
-        
+
         $this->assertTrue(in_array($responseUsuarioNormal->status(), [301, 302]));
         $this->assertTrue($responseUsuarioNormal->headers->has('X-Robots-Tag'));
         $robotsHeaderUsuario = $responseUsuarioNormal->headers->get('X-Robots-Tag');
         $this->assertStringContainsString('noindex', $robotsHeaderUsuario);
-        
+
         fwrite(STDERR, "✅ Usuario normal: X-Robots-Tag = {$robotsHeaderUsuario}\n");
-        
+
         // TEST 3: Bot social (Facebook) - preview HTML con X-Robots-Tag
         $responseBotSocial = $this->withHeaders([
             'User-Agent' => 'facebookexternalhit/1.1',
         ])->get('/' . $enlace->prefijo . '/' . $enlace->codigo);
-        
+
         $this->assertEquals(200, $responseBotSocial->status(), 'Bot social debe ver preview HTML');
         $this->assertTrue($responseBotSocial->headers->has('X-Robots-Tag'));
         $robotsHeaderBot = $responseBotSocial->headers->get('X-Robots-Tag');
         $this->assertStringContainsString('noindex', $robotsHeaderBot);
-        
+
         // Verificar meta tag en HTML
         $content = $responseBotSocial->getContent();
         $this->assertStringContainsString('<meta name="robots" content="noindex, nofollow"', $content);
-        
+
         fwrite(STDERR, "✅ Bot Social: X-Robots-Tag = {$robotsHeaderBot}\n");
         fwrite(STDERR, "✅ HTML meta robots: noindex presente\n");
-        
+
         // TEST 4: Modo preview (?preview=1)
         $responsePreview = $this->get('/' . $enlace->prefijo . '/' . $enlace->codigo . '?preview=1');
-        
+
         $this->assertEquals(200, $responsePreview->status());
         $this->assertTrue($responsePreview->headers->has('X-Robots-Tag'));
         $robotsHeaderPreview = $responsePreview->headers->get('X-Robots-Tag');
         $this->assertStringContainsString('noindex', $robotsHeaderPreview);
-        
+
         fwrite(STDERR, "✅ Preview Mode: X-Robots-Tag = {$robotsHeaderPreview}\n");
         fwrite(STDERR, "\n🛡️ Conclusión: Enlaces cortos protegidos contra indexación en TODOS los buscadores ✓\n");
     }
