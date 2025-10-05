@@ -9,6 +9,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="view-transition" content="same-origin">
+    
+    @if(isset($noindex) && $noindex)
+    <meta name="robots" content="noindex">
+    @endif
 
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#1e40af">

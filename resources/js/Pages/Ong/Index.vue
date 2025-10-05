@@ -3,6 +3,7 @@
         <Section>
             <Text>
                 <Prose>
+                    <h1 class="hidden">ONG Mundo Armónico Tseyor</h1>
 
                     <img src="/archivos/logos/logo-ong-mundo-armonico.JPG"
                         class="w-full h-auto max-w-[709px] aspect-709/278" alt="ONG Mundo Armónico Tseyor"/>
