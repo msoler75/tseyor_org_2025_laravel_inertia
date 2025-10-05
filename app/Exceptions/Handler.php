@@ -175,7 +175,7 @@ class Handler extends ExceptionHandler
             'titulo' =>  'Contenido no encontrado',
             'mensaje' => 'No se encuentra el recurso solicitado.',
             'alternativas' => $resultados
-        ])->toResponse($request);
+        ])->withViewData(['noindex' => true])->toResponse($request);
     }
 
 
