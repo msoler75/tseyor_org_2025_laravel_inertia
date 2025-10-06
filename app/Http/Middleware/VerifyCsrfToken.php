@@ -23,6 +23,8 @@ class VerifyCsrfToken extends Middleware
         'boletines/suscribir',
         'boletines/configurar/*',
         'boletines/desuscribir/*',
+        'boletines/preparar',
+        'boletines/enviar-pendientes',
         // Enlaces cortos API
         'obtener-enlace',
         // MCP API

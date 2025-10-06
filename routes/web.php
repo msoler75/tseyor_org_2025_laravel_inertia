@@ -500,6 +500,6 @@ Route::get('{prefix}/{code}', [EnlaceCortoController::class, 'redirigir'])
     ->where('code', '^[a-zA-Z0-9]+$');
 
 ///// FINAL FALLBACK PAGE
-Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '[a-z0-9\-\/\.]+')->name('pagina');
+Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '^(?!admin/).*')->name('pagina');
 
 

@@ -187,5 +187,12 @@ return [
             'path' => storage_path('logs/mcp.log'),
             'level' => 'debug',
         ],
+
+        '500' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/500.log'),
+            'level' => 'error',
+            'days' => 7,
+        ],
     ],
 ];
