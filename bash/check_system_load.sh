@@ -4,6 +4,31 @@
 # Lee directamente de /proc para obtener información de carga y procesos
 # Imprime a stdout; redirige desde cron con >> para appendar al log
 
+# Función para obtener el comando del proceso hijo si es un script .sh
+get_child_cmd() {
+    local pid="$1"
+    local original_cmd="$2"
+    # Si es bash ejecutando un .sh, buscar hijos
+    if [[ "$original_cmd" == "/bin/bash "* && "$original_cmd" == *".sh "* ]]; then
+        # Leer hijos desde /proc/<pid>/task/<pid>/children
+        local children_file="/proc/$pid/task/$pid/children"
+        if [ -f "$children_file" ]; then
+            local children
+            read -r children < "$children_file"
+            for child_pid in $children; do
+                if [ -f "/proc/$child_pid/cmdline" ]; then
+                    local child_cmd=$(tr '\0' ' ' < "/proc/$child_pid/cmdline")
+                    if [ -n "$child_cmd" ] && [[ "$child_cmd" != "/bin/bash "* ]]; then
+                        echo "$child_cmd"
+                        return
+                    fi
+                fi
+            done
+        fi
+    fi
+    echo "$original_cmd"
+}
+
 echo "=== Información de Carga del Sistema ==="
 echo "Fecha: $(date)"
 
@@ -97,6 +122,8 @@ if [ -d /proc ] && [ -f /etc/passwd ]; then
             [ -z "$rss" ] && rss="0"
             # Leer comando
             cmd=$(tr '\0' ' ' < "/proc/$pid/cmdline")
+            # Obtener comando del hijo si es un script .sh
+            cmd=$(get_child_cmd "$pid" "$cmd")
             cmd=${cmd:0:100}
             [ -z "$cmd" ] && cmd="[kernel]"
             printf "%-7s %-15s %-9s %s\n" "$pid" "$user" "$rss" "$cmd"

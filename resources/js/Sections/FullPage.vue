@@ -64,8 +64,8 @@ const inFirstSection = ref(true)
 
 // Función para establecer altura fija del viewport
 const setFixedViewportHeight = () => {
-    // Capturar la altura real del viewport sin la barra de direcciones
-    const vh = window.innerHeight;
+    // Usar visualViewport si está disponible (mejor para móviles), sino innerHeight
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     fixedViewportHeight.value = `${vh}px`;
 
     // También actualizar el contenedor si ya está montado
@@ -77,6 +77,9 @@ const setFixedViewportHeight = () => {
 // Función para manejar el evento de scroll
 const handleScroll = () => {
     nav.scrollY = container.value.$el.scrollTop;
+
+    // Guardar la posición de scroll en sessionStorage para restauración
+    sessionStorage.setItem(`fullpage-scroll-${window.location.pathname}`, nav.scrollY);
 
     // Verificar si es la última sección
     const cont = container.value.$el;
@@ -110,12 +113,31 @@ onMounted(() => {
     // Establecer altura fija del viewport ANTES de configurar eventos
     setFixedViewportHeight();
 
+    // Recalcular después de un breve delay para asegurar que visualViewport esté correcto
+    setTimeout(() => {
+        setFixedViewportHeight();
+    }, 100);
+
+    // Restaurar la posición de scroll desde sessionStorage
+    const savedScroll = sessionStorage.getItem(`fullpage-scroll-${window.location.pathname}`);
+    if (savedScroll) {
+        container.value.$el.scrollTo({
+            top: parseInt(savedScroll),
+            behavior: 'instant'
+        });
+    }
+
     handleScroll();
     container.value.$el.addEventListener('scroll', handleScroll, { passive: true });
 
     // Escuchar cambios de orientación en móviles
     window.addEventListener('orientationchange', adjustHeight);
     window.addEventListener('resize', adjustHeight);
+
+    // Escuchar cambios en visualViewport si está disponible
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', setFixedViewportHeight);
+    }
 
     nav.fullPage = true;
     scrollTimer = setTimeout(() => {
@@ -127,6 +149,9 @@ onBeforeUnmount(() => {
     container.value.$el.removeEventListener('scroll', handleScroll);
     window.removeEventListener('orientationchange', adjustHeight);
     window.removeEventListener('resize', adjustHeight);
+    if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', setFixedViewportHeight);
+    }
     nav.fullPage = false;
     clearTimeout(scrollTimer);
 });

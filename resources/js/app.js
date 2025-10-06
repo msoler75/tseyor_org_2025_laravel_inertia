@@ -19,6 +19,13 @@ import {useNav} from '@/Stores/nav.js';
 import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
 import { usePWA } from '@/composables/usePWA.js';
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js';
+
+
+// Deshabilitar restauración automática de scroll del navegador
+/*if (typeof window !== 'undefined') {
+  window.history.scrollRestoration = 'manual';
+}*/
+
 window.route = useRoute()
 
 const appName = "TSEYOR.org";
