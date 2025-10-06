@@ -36,7 +36,7 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('web', function (Request $request) {
             return [
                 // 300 peticiones por minuto por usuario/IP (5 por segundo)
-                Limit::perMinute(300)->by($request->user()?->id ?: $request->ip()),
+                Limit::perMinute(600)->by($request->user()?->id ?: $request->ip()),
                 // 3000 peticiones por hora por usuario/IP
                 Limit::perHour(3000)->by($request->user()?->id ?: $request->ip()),
             ];
@@ -56,9 +56,9 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('command', function (Request $request) {
             return [
                 // Máximo 15 comandos por minuto por usuario
-                Limit::perMinute(15)->by($request->user()?->id ?: $request->ip()),
+                Limit::perMinute(20)->by($request->user()?->id ?: $request->ip()),
                 // Máximo 90 comandos por hora por usuario
-                Limit::perHour(90)->by($request->user()?->id ?: $request->ip()),
+                Limit::perHour(100)->by($request->user()?->id ?: $request->ip()),
             ];
         });
 
