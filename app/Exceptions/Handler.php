@@ -134,8 +134,18 @@ class Handler extends ExceptionHandler
         else if ($this->isJobException($exception)) {
             Log::channel('jobs')->error('Job Exception: ' . $exception->getMessage(), ['exception' => $exception]);
         }
-        else
-        parent::report($exception);
+        else {
+            // Verificar si es un error 500
+            if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+                if ($exception->getStatusCode() >= 500) {
+                    Log::channel('500')->error('500 Error: ' . $exception->getMessage(), ['exception' => $exception]);
+                }
+            } else {
+                // Excepciones no HTTP son generalmente 500
+                Log::channel('500')->error('500 Error: ' . $exception->getMessage(), ['exception' => $exception]);
+            }
+            parent::report($exception);
+        }
     }
 
 

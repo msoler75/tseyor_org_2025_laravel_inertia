@@ -67,7 +67,7 @@ class BoletinEmail extends Mailable implements ShouldQueue
 
         Log::channel("smtp")->info("Datos del boletin: ", [
             'titulo' => $boletin->titulo ?? 'N/A',
-            'texto' => $boletin->texto ?? 'N/A'
+            'texto' => $boletin->texto ? substr($boletin->texto, 0, 200) :  'N/A'
         ]);
         Log::channel("smtp")->info("Datos del suscriptor: ", [
             'email' => $suscriptor->email ?? 'N/A',

@@ -12,6 +12,9 @@ BASEDIR="/home/$DEPLOY_USER/tseyor.org"
 LOGDIR="$BASEDIR/shared/storage/logs"
 LOGFILE="$LOGDIR/boletines.log"
 
+# Log de inicio de ejecución
+echo "[ $(date '+%Y-%m-%d %H:%M:%S') ] Script boletin_preparar.sh iniciado." >> "$LOGFILE"
+
 # --- Validación de argumentos ---
 if [ $# -ne 2 ]; then
   echo "Uso: $0 <TOKEN> <PERIODICIDAD>"
