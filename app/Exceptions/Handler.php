@@ -17,6 +17,7 @@ use Throwable;
 use App\Pigmalion\BusquedasHelper;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Routing\Exceptions\InvalidSignatureException;
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
 
 class Handler extends ExceptionHandler
 {
@@ -155,6 +156,20 @@ class Handler extends ExceptionHandler
 
     public function mostrar404($request, Throwable $exception)
     {
+        // Si es un bot (cualquier crawler), devolver respuesta simple sin búsqueda de alternativas
+        $crawlerDetect = new CrawlerDetect();
+        if ($crawlerDetect->isCrawler($request->header('User-Agent'))) {
+            try {
+                return response()->view('errors.bot', [
+                    'codigo' => 404,
+                    'mensaje' => 'Contenido no encontrado',
+                ], 404);
+            } catch (\Exception $viewException) {
+                // Fallback si la vista no existe
+                return response('Contenido no encontrado', 404);
+            }
+        }
+
         try {
             // to-do: obtener path de la ruta actual y redirigir a la vista de error
             $path = $request->path();
