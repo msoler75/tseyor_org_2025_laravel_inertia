@@ -499,26 +499,11 @@ Route::get('{prefix}/{code}', [EnlaceCortoController::class, 'redirigir'])
     ->where('prefix', '^(e|d|a)$')
     ->where('code', '^[a-zA-Z0-9]+$');
 
-// Bloquear rutas comunes de WordPress y otros CMS para evitar ataques de bots
-$blockedRoutes = [
-    'xmlrpc.php',
-    'wp-login.php',
-    'wp-admin',
-    'wp-cron.php',
-    'wp-config.php',
-    'wp-settings.php',
-    'wp-content',
-    'wp-includes',
-    'readme.html',
-    'license.txt',
-    'wp-json',
-];
 
-foreach ($blockedRoutes as $route) {
-    Route::any($route, function () {
-        abort(404);
-    });
-}
+// Bloquear rutas sospechosas con patrones generales (cualquier ruta que empiece con wp, templates, o sea un archivo .php sospechoso)
+Route::any('{suspicious}', function () {
+    abort(404);
+})->where('suspicious', '^(wp.*|templates.*|.*\.php)$');
 
 ///// FINAL FALLBACK PAGE
 Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '^(?!admin/).*')->name('pagina');
