@@ -42,6 +42,8 @@ export function usePWA() {
 
   // Detectar si la app ya está instalada
   const checkIfInstalled = () => {
+    if (typeof window === 'undefined') return // SSR protection
+
     if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
       isInstalled.value = true
     }
@@ -112,14 +114,16 @@ export function usePWA() {
   const handleInstallPrompt = () => {
     let deferredPrompt = null
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault()
-      console.log('📱 PWA instalable detectada - usando control personalizado')
-      deferredPrompt = e
-      if (PWA_CONFIG.notifications.install) {
-        showInstallPrompt.value = true
-      }
-    })
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault()
+        console.log('📱 PWA instalable detectada - usando control personalizado')
+        deferredPrompt = e
+        if (PWA_CONFIG.notifications.install) {
+          showInstallPrompt.value = true
+        }
+      })
+    }
 
     return {
       install: async () => {

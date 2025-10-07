@@ -4,6 +4,7 @@ namespace App\Pigmalion;
 
 use App\Models\Contenido;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 define('SEARCH_RESULTS_FRAGMENT_SIZE', 300);
 
@@ -314,22 +315,40 @@ class BusquedasHelper
     /**
      *
      */
-    public static function buscarContenidos($buscar, $coleccion = null)
+    public static function buscarContenidos($buscar, $coleccion = null, $formatear = true)
     {
-        $buscar = StrEx::removerAcentos(mb_strtolower($buscar));
+        try {
+            $buscar = StrEx::removerAcentos(mb_strtolower($buscar));
 
-        list($buscarRelevante, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
+            list($buscarRelevante, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
 
-        $resultados =
-            $coleccion ? Contenido::search($buscarRelevante)->where('coleccion', $coleccion)->paginate(7)
-            : Contenido::search($buscarRelevante)->paginate(7); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
+            $resultados =
+                $coleccion ? Contenido::search($buscarRelevante)->where('coleccion', $coleccion)->paginate(7)
+                : Contenido::search($buscarRelevante)->paginate(7); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
 
-        if (strlen($buscarRelevante) < 3)
-            BusquedasHelper::limpiarResultados($resultados, $buscar, true);
-        else
-            BusquedasHelper::formatearResultados($resultados, $buscar, true);
+                if($formatear) {
+                    if (strlen($buscarRelevante) < 3)
+                        BusquedasHelper::limpiarResultados($resultados, $buscar, true);
+                    else
+                        BusquedasHelper::formatearResultados($resultados, $buscar, true);
+                }
 
-        return $resultados;
+            return $resultados;
+        } catch (Throwable $e) {
+            // Log específico para posibles corrupciones de índices TNTSearch
+            Log::channel('500')->error('Posible corrupción de índices TNTSearch en buscarContenidos', [
+                'buscar' => $buscar,
+                'coleccion' => $coleccion,
+                'error_message' => $e->getMessage(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'error_class' => get_class($e),
+                'accion_recomendada' => 'Ejecutar: php artisan scout:delete-index "App\Models\Contenido" && rm storage/indexes/contenidos.index && php artisan scout:import "App\Models\Contenido"'
+            ]);
+
+            // Devolver colección vacía para evitar romper la aplicación
+            return collect([]);
+        }
     }
 
 
