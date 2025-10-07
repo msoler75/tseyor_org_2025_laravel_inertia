@@ -155,37 +155,52 @@ class Handler extends ExceptionHandler
 
     public function mostrar404($request, Throwable $exception)
     {
-        // to-do: obtener path de la ruta actual y redirigir a la vista de error
-        $path = $request->path();
-        $parts = explode("/", $path);
+        try {
+            // to-do: obtener path de la ruta actual y redirigir a la vista de error
+            $path = $request->path();
+            $parts = explode("/", $path);
 
-        $coleccion = null;
-        if (count($parts) > 1)
-            $coleccion = $parts[0];
+            $coleccion = null;
+            if (count($parts) > 1)
+                $coleccion = $parts[0];
 
-        $colecciones_404 = ['nodos', 'archivos', 'almacen'];
-        if (in_array($coleccion, $colecciones_404))
-            return parent::render($request, $exception);
+            $colecciones_404 = ['nodos', 'archivos', 'almacen'];
+            if (in_array($coleccion, $colecciones_404))
+                return parent::render($request, $exception);
 
-        $buscar = preg_replace("/[\?\/\.\-]/", " ", urldecode($parts[count($parts) - 1])); // quitar caracteres no permitidos en $path
+            $buscar = preg_replace("/[\?\/\.\-]/", " ", urldecode($parts[count($parts) - 1])); // quitar caracteres no permitidos en $path
 
-        $resultados = BusquedasHelper::buscarContenidos($buscar, $coleccion);
-        if ($resultados->count() == 0)
-            $resultados = BusquedasHelper::buscarContenidos($buscar);
+            $resultados = BusquedasHelper::buscarContenidos($buscar, $coleccion, false);
 
-        // si solo hay un resultado, redirigimos automáticamente
-        /*if ($resultados->count() == 1) {
-            $primerResultado = $resultados->first();
-            return redirect()->to($primerResultado->url);
-        }*/
+            if ($resultados->count() == 0)
+                $resultados = BusquedasHelper::buscarContenidos($buscar, null, false);
 
-        // $message = $exception->getMessage();
-        return Inertia::render('Error', [
-            'codigo' => 404, //$statusCode,
-            'titulo' =>  'Contenido no encontrado',
-            'mensaje' => 'No se encuentra el recurso solicitado.',
-            'alternativas' => $resultados
-        ])->withViewData(['noindex' => true])->toResponse($request);
+            // si solo hay un resultado, redirigimos automáticamente
+            /*if ($resultados->count() == 1) {
+                $primerResultado = $resultados->first();
+                return redirect()->to($primerResultado->url);
+            }*/
+
+            // $message = $exception->getMessage();
+            return Inertia::render('Error', [
+                'codigo' => 404, //$statusCode,
+                'titulo' =>  'Contenido no encontrado',
+                'mensaje' => 'No se encuentra el recurso solicitado.',
+                'alternativas' => $resultados
+            ])->withViewData(['noindex' => true])->toResponse($request);
+        } catch (Throwable $e) {
+            // Si algo falla en mostrar404, loguear el error y devolver un 404 básico
+            Log::error('Error en mostrar404: ' . $e->getMessage(), [
+                'original_exception' => $exception->getMessage(),
+                'path' => $request->path(),
+                'url' => $request->fullUrl(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response('Contenido no encontrado', 404);
+        }
     }
 
 

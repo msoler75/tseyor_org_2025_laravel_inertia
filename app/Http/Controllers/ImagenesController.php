@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Pigmalion\StorageItem;
@@ -157,19 +158,19 @@ class ImagenesController extends Controller
 
     private function transformarImagen($image, array $params)
     {
+        // Validar y sanitizar parámetros
+        $validatedParams = $this->validarParametrosImagen($params);
+
         // Obtener dimensiones actuales de la imagen
         $currentWidth = $image->width();
         $currentHeight = $image->height();
 
 
         // Variables para almacenar las dimensiones deseadas
-        $width = $params['w'] ?? null;
-        $height = $params['h'] ?? null;
-        $maxWidth = $params['mw'] ?? null;
-        $maxHeight = $params['mh'] ?? null;
-
-        if ($width == "auto") $width = null;
-        if ($height == "auto") $height = null;
+        $width = $validatedParams['w'];
+        $height = $validatedParams['h'];
+        $maxWidth = $validatedParams['mw'];
+        $maxHeight = $validatedParams['mh'];
 
         $cover = array_key_exists('cover', $params);
         $crop = array_key_exists('crop', $params);
@@ -206,6 +207,44 @@ class ImagenesController extends Controller
                 }
             }
         }
+    }
+
+    /**
+     * Valida y sanitiza los parámetros de imagen.
+     * Ignora parámetros inválidos y registra warnings en el log.
+     */
+    private function validarParametrosImagen(array $params): array
+    {
+        $validated = [
+            'w' => null,
+            'h' => null,
+            'mw' => null,
+            'mh' => null,
+        ];
+
+        $paramKeys = ['w', 'h', 'mw', 'mh'];
+
+        foreach ($paramKeys as $key) {
+            if (isset($params[$key])) {
+                $value = $params[$key];
+
+                // "auto" se trata como null
+                if ($value === "auto") {
+                    $validated[$key] = null;
+                    continue;
+                }
+
+                // Verificar si es un número entero positivo
+                if (is_numeric($value) && (int)$value > 0) {
+                    $validated[$key] = (int)$value;
+                } else {
+                    // Parámetro inválido, ignorar y loggear warning
+                    Log::warning("Parámetro de imagen inválido ignorado: {$key}={$value}");
+                }
+            }
+        }
+
+        return $validated;
     }
 
 
