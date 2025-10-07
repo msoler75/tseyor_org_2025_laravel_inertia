@@ -21,6 +21,12 @@ export function useGoogleAnalytics() {
     const page = usePage();
     const measurementId = computed(() => page.props?.google_analytics?.measurement_id);
 
+    // Función helper para limpiar el título de página quitando el sufijo "- TSEYOR.org"
+    const cleanPageTitle = (title) => {
+        return title.replace(/\s*-\s*TSEYOR\.org\s*$/, '').trim()
+        .replace(/\s*TSEYOR$/i, '');
+    };
+
     // Función para cargar Google Analytics
     const loadGoogleAnalytics = () => {
         if (!measurementId.value || typeof window === 'undefined') {
@@ -49,7 +55,7 @@ export function useGoogleAnalytics() {
         // Configuración inicial
         gtag('js', new Date());
         gtag('config', measurementId.value, {
-            page_title: document.title,
+            page_title: cleanPageTitle(document.title), // Usar título limpio
             page_location: window.location.href,
             // Detectar si está ejecutándose como PWA instalada
             custom_map: {
@@ -86,6 +92,7 @@ export function useGoogleAnalytics() {
 
         const pageUrl = url || window.location.href;
         const pageTitle = title || document.title;
+        const cleanTitle = cleanPageTitle(pageTitle); // Limpiar el sufijo para analíticas
         const currentTime = Date.now();
 
         // Evitar tracking duplicado de la misma URL en menos de 1 segundo
@@ -102,7 +109,7 @@ export function useGoogleAnalytics() {
 
         // Método recomendado para SPA: usar gtag config para cada page view
         gtag('config', measurementId.value, {
-            page_title: pageTitle,
+            page_title: cleanTitle, // Usar título limpio
             page_location: pageUrl,
             // Importante para SPAs: enviar page_path relativo
             page_path: new URL(pageUrl).pathname + new URL(pageUrl).search
@@ -110,7 +117,7 @@ export function useGoogleAnalytics() {
 
         // También enviar como evento específico para mayor tracking
         gtag('event', 'page_view', {
-            page_title: pageTitle,
+            page_title: cleanTitle, // Usar título limpio
             page_location: pageUrl,
             page_path: new URL(pageUrl).pathname + new URL(pageUrl).search
         });
@@ -131,7 +138,7 @@ export function useGoogleAnalytics() {
             file_type: fileType,
             file_url: fullUrl,
             page_location: window.location.href,
-            page_title: document.title,
+            page_title: cleanPageTitle(document.title), // Usar título limpio
         });
     };
 
@@ -171,7 +178,7 @@ export function useGoogleAnalytics() {
 
         gtag('event', 'form_submit', {
             form_name: formName,
-            page_title: document.title,
+            page_title: cleanPageTitle(document.title), // Usar título limpio
             page_location: window.location.href
         })
         console.log('📋 Formulario enviado:', formName)
@@ -186,7 +193,7 @@ export function useGoogleAnalytics() {
         gtag('event', 'user_engagement', {
             engagement_type: engagementType,
             content: content,
-            page_title: document.title,
+            page_title: cleanPageTitle(document.title), // Usar título limpio
             page_location: window.location.href
         })
         console.log('👤 Engagement:', engagementType, content)
@@ -227,7 +234,7 @@ export function useGoogleAnalytics() {
                     content_type: contentType,
                     content_title: contentTitle,
                     access_method: 'direct_url_or_qr',
-                    page_title: document.title,
+                    page_title: cleanPageTitle(document.title), // Usar título limpio
                     page_location: window.location.href,
                     session_start: sessionStart,
                     history_length: window.history.length
@@ -246,7 +253,7 @@ export function useGoogleAnalytics() {
                         content_title: contentTitle,
                         source_domain: referrerDomain,
                         referrer_url: referrer,
-                        page_title: document.title,
+                        page_title: cleanPageTitle(document.title), // Usar título limpio
                         page_location: window.location.href,
                         session_start: sessionStart,
                         history_length: window.history.length
@@ -265,7 +272,7 @@ export function useGoogleAnalytics() {
                         content_type: contentType,
                         content_title: contentTitle,
                         access_method: 'unknown_referrer',
-                        page_title: document.title,
+                        page_title: cleanPageTitle(document.title), // Usar título limpio
                         page_location: window.location.href,
                         error: error.message
                     })
@@ -294,7 +301,7 @@ export function useGoogleAnalytics() {
             view_time_seconds: viewTimeSeconds,
             view_time_minutes: Math.round(viewTimeSeconds / 60 * 10) / 10, // Redondeado a 1 decimal
             time_category: timeCategory,
-            page_title: document.title,
+            page_title: cleanPageTitle(document.title), // Usar título limpio
             page_location: window.location.href
         })
 
@@ -325,7 +332,7 @@ export function useGoogleAnalytics() {
             time_category: timeCategory,
             play_progress: playProgress,
             total_duration_seconds: totalDurationSeconds,
-            page_title: document.title,
+            page_title: cleanPageTitle(document.title), // Usar título limpio
             page_location: window.location.href
         })
 
