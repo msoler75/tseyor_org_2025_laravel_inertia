@@ -1,5 +1,15 @@
 <template>
     <Sections white-first>
+
+
+        <div>
+            <div class="container w-full mx-auto mt-4 lg:mt-12 flex justify-end mb-10">
+                <span />
+                <Share />
+            </div>
+        </div>
+
+
         <Section>
             <Text>
                 <Prose>

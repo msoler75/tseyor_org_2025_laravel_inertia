@@ -1,6 +1,8 @@
 <template>
-    <Page class="text-center">
+    <Page>
 
+        <PageHeader>
+            <h1 class="hidden">Radio Tseyor - {{ estado.emisora }}</h1>
         <div class="flex justify-between items-center mb-20">
             <span/>
             <div class="flex gap-2">
@@ -8,31 +10,47 @@
                 <AdminLinks modelo="radioitem" necesita="administrar contenidos" />
             </div>
         </div>
+        </PageHeader>
+
+         <PageWide>
 
         <Hero title="" :srcImage="isDark?'/almacen/medios/logos/radio_tseyor_dark.png':'/almacen/medios/logos/radio_tseyor.png'"
         class="py-8! lg:py-20!"
-        textClass="p-7 gap-4">
+        textClass="lg:p-7 gap-4">
             <div class="flex flex-wrap gap-3 justify-center w-full shrink-0">
-                <div v-for="emisora of emisoras" :key="emisora" class="bg-base-100 rounded-lg shadow-2xs">
+                <div v-for="emisora of emisoras" :key="emisora" class="bg-base-100 rounded-lg shadow-2xs overflow-hidden">
                     <div v-if="estado.emisora == emisora" class="border-primary border-b-4 p-4 font-bold">{{ emisora }}
                     </div>
-                    <Link v-else class="p-4 block" :href="route('radio.emisora', emisora)">{{ emisora }}</Link>
+                    <Link v-else class="p-4 block hover:bg-secondary hover:text-secondary-content" :href="route('radio.emisora', emisora)">{{ emisora }}</Link>
                 </div>
             </div>
 
-            <!-- Botón "Escuchar" cuando se cierra el reproductor -->
-            <div class="mt-16 mb-8 flex justify-center">
-                <div v-if="mostrarBotonEscuchar" >
-                    <button class="btn btn-primary btn-lg" @click="volverAEscuchar">
-                        <Icon icon="ph:play-circle-duotone" class="mr-2 transform scale-200" />
-                        Escuchar
-                    </button>
-                </div>
-                <div v-else class="btn btn-lg text-lg border-opacity-0 text-center">Escuchando:</div>
-            </div>
+            <div class="mt-16 my-8 p-4 sm:p-8 flex flex-col justify-center gap-5 lg:gap-10 card bg-base-100 shadow-xl">
 
-            <div class="mb-24 text-center">
-                <h3 class="min-h-[4rem]">{{ music.title }}</h3>
+                <!-- Botón "Escuchar" cuando se cierra el reproductor -->
+                <div class="flex justify-center">
+                    <div v-if="mostrarBotonEscuchar" >
+                        <button class="w-64 btn btn-primary btn-lg" @click="volverAEscuchar">
+                            <Icon icon="ph:play-circle-duotone" class="mr-2 transform scale-200" />
+                            Escuchar
+                        </button>
+                    </div>
+                    <div v-else class="w-64 btn btn-lg text-lg border-opacity-0 text-center"
+                    @click="player.playPause">
+                        <div class="btn btn-secondary rounded-full flex justify-center items-center p-1 text-4xl transform scale-75"
+                        >
+                            <AudioStateIcon :src="player.music?.src" class="rounded-full overflow-hidden" />
+                        </div>
+                        <span class="w-32">
+                            {{ player.state == 'paused' ? 'PAUSADO' : 'ESCUCHANDO' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <h3>{{ music.title }}</h3>
+                </div>
+
             </div>
 
         </Hero>
@@ -47,8 +65,12 @@
         </div>
 
 
+        </PageWide>
 
-        <Comentarios :url="route('radio.emisora', selectors.emisoraRadio)" />
+
+        <PageFooter>
+            <Comentarios :url="route('radio.emisora', selectors.emisoraRadio)" />
+        </PageFooter>
 
     </Page>
 </template>

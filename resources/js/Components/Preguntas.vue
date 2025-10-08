@@ -5,6 +5,8 @@
             class="py-10 sm:px-10 lg:p-20 max-w-[960px] container mx-auto my-12 bg-base-100 shadow-2xs hyphens-auto md:rounded-3xl md:text-justify">
 
             <h1>{{ titulo }}</h1>
+            <!-- para compartir enlace correctamente -->
+            <h1 class="hidden">Preguntas frecuentes</h1>
 
             <slot />
         </div>

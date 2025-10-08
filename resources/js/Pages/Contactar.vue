@@ -1,5 +1,13 @@
 <template>
     <FondoEstrellado class="w-full relative py-12" id="myform">
+
+        <div>
+            <div class="container w-full mx-auto flex justify-end mb-10">
+                <span />
+                <Share />
+            </div>
+        </div>
+
         <div class="card bg-base-100 shadow-2xs max-w-lg mx-auto p-7 relative animate-fade-in">
             <h1>Contactar con Tseyor</h1>
             <div v-if="error">

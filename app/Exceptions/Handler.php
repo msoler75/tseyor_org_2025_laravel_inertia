@@ -126,6 +126,11 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
+        // No reportar ModelNotFoundException ya que se maneja como 404 y se loguea en canal 'notfound'
+        if ($exception instanceof ModelNotFoundException) {
+            return;
+        }
+
         // Verificar si la excepción está relacionada con el envío de correos
         if ($this->isMailException($exception)) {
             Log::channel('smtp')->error('Mail Exception: ' . $exception->getMessage(), ['exception' => $exception]);
@@ -139,11 +144,17 @@ class Handler extends ExceptionHandler
             // Verificar si es un error 500
             if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
                 if ($exception->getStatusCode() >= 500) {
-                    Log::channel('500')->error('500 Error: ' . $exception->getMessage(), ['exception' => $exception]);
+                    Log::channel('500')->error($exception->getStatusCode() . ' Error: ' . $exception->getMessage(), [
+                        'url' => request()->getRequestUri(),
+                        'exception' => $exception
+                    ]);
                 }
             } else {
                 // Excepciones no HTTP son generalmente 500
-                Log::channel('500')->error('500 Error: ' . $exception->getMessage(), ['exception' => $exception]);
+                Log::channel('500')->error('500 Error: ' . $exception->getMessage(), [
+                    'url' => request()->getRequestUri(),
+                    'exception' => $exception
+                ]);
             }
             parent::report($exception);
         }
@@ -322,8 +333,8 @@ HTML;
             Log::channel('notfound')->info($request->fullUrl());
 
             // si se carga desde otra página (por ejemplo, una imagen) entonces simplemente devolvemos el error
-            $referer = $_SERVER['HTTP_REFERER'] ?? '';
-            $uri = $_SERVER['REQUEST_URI'] ?? '';
+            $referer = $request->header('Referer') ?? '';
+            $uri = $request->getRequestUri();
 
             // si es una imagen cargada desde una página, devuelve 404 normalmente
             if (

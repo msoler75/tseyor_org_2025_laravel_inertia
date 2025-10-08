@@ -50,6 +50,8 @@
 
                 <div class="p-6 card shadow bg-base-100 animate-fade-in">
                     <h1 class="text-2xl font-bold mb-4">{{ libro.titulo }}</h1>
+                    <!-- para compartir enlace correctamente -->
+                    <h1 class="hidden">Libros</h1>
                     <p class="text-gray-600 text-sm mb-2 flex justify-between">
                         <Link
                             :href="`${route('libros')}?categoria=${

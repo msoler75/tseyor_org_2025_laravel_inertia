@@ -12,6 +12,9 @@
             </div>
         </div>
 
+        <!-- para compartir enlace correctamente -->
+        <h1 class="hidden">Glosario</h1>
+
         <div class="mx-auto flex flex-col justify-center items-center">
             <h1>Consulta</h1>
             <ConsultaTabs />

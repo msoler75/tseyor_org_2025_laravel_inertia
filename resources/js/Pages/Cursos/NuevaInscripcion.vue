@@ -1,13 +1,24 @@
 <template>
     <FondoEstrellado class="w-full h-full relative py-12" id="myform">
+
+
+        <div>
+            <div class="container w-full mx-auto flex justify-end mb-10">
+                <span />
+                <Share />
+            </div>
+        </div>
+
+
         <div
             class="card bg-base-100 shadow-2xs max-w-lg mx-auto p-7 relative animate-fade-in"
         >
             <h1>
-                Inscripción al Curso Holístico Tseyor<small
-                    >&nbsp;(gratuito)</small
-                >
+                Inscripción al Curso Holístico Tseyor
             </h1>
+            <small
+                    >&nbsp;(Curso gratuito)</small
+                >
             <div v-if="error">
                 <div class="alert alert-error">
                     <Icon icon="ph:warning-circle-duotone" class="text-2xl" />
@@ -201,7 +212,7 @@
                 </div>
                 <button
                     type="submit"
-                    class="btn btn-primary"
+                    class="text-lg mt-4 btn btn-primary"
                     :disabled="form.processing"
                 >
                     Enviar

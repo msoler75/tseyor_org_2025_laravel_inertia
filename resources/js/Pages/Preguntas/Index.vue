@@ -16,6 +16,8 @@
             </div>
         </div>
 
+        <h1 class="hidden">Preguntas frecuentes</h1>
+
         <div class="mx-auto flex flex-col justify-center items-center">
             <h1>Consulta</h1>
             <ConsultaTabs />
