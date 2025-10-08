@@ -20,6 +20,10 @@
             </div>
         </div>
 
+        <!-- para compartir enlace correctamente -->
+        <h1 class="hidden">{{ guia.nombre }}</h1>
+        <h1 class="hidden">Guía Estelar</h1>
+
         <div class="mx-auto flex flex-col justify-center items-center">
             <h1>Consulta</h1>
             <ConsultaTabs />

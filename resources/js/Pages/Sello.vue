@@ -1,5 +1,14 @@
 <template>
+    <div class="bg-base-100 w-full pt-4 lg:pt-12 pb-10">
+        <div class="px-2 max-w-[120ch] w-full mx-auto flex justify-between ">
+            <span />
+            <Share />
+    </div>
+    </div>
+
     <div class="bg-base-100 p-5 pb-20" v-if="!isFullscreen">
+
+
       <h1>Sello de Tseyor</h1>
       <p>Pulsa en el sello para verlo a pantalla completa.</p>
       <img

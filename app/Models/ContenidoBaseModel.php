@@ -96,9 +96,19 @@ class ContenidoBaseModel extends Model
      */
     public function getDynamicSEOData(): SEOData
     {
-        $image = $this->imagen ? url($this->imagen) : config('seo.image.fallback');
+        $image = $this->imagen ?: config('seo.image.fallback');
+
+        // Si la imagen es una URL completa del mismo dominio, convertirla a ruta relativa
+        if (str_starts_with($image, 'http')) {
+            $parsedImage = parse_url($image);
+            $parsedAppUrl = parse_url(config('app.url'));
+            if ($parsedImage['host'] === $parsedAppUrl['host']) {
+                $image = $parsedImage['path'];
+            }
+        }
+
         return new SEOData(
-            title: $this->titulo ?? $this->nombre ?? $this->name && null,
+            title: $this->titulo ?? $this->nombre ?? $this->name,
             description: $this->descripcion ?? mb_substr(strip_tags($this->texto ?? ""), 0, 400 - 3),
             image: str_replace(" ", "%20", $image),
             author: $this->autor ?? 'tseyor',

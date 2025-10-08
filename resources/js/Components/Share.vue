@@ -75,8 +75,8 @@ const originalUrl = ref('')
 const { copy, copied, isSupported } = useClipboard()
 
 const copyCurrentUrl = () => {
-    copy(currentUrl.value)
-    alert('Se ha copiado el enlace al portapapeles')
+    copy(sharing.title + '\n' + currentUrl.value)
+    alert('Se ha copiado el título y enlace al portapapeles')
 }
 
 // mostrar Modal
@@ -90,7 +90,7 @@ const toggleSocialShow = () => {
 
 
 function updateMeta() {
-    sharing.title = document.title
+    sharing.title = document.title.replace(/(Tseyor)? - TSEYOR\.org$/i, ' - TSEYOR') // removemos sufijo .org
     const metaDescription = document.querySelector('meta[name="description"]')
     sharing.description = metaDescription ? metaDescription.getAttribute('content') : ''
 }

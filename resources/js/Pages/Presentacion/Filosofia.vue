@@ -1,12 +1,16 @@
 <template>
 
-    <div class="container mx-auto py-12">
-        <h1 class="hidden">Filosofía Tseyor</h1>
 
+    <div class="container flex justify-between mx-auto py-12">
         <Back href="/quienes-somos" floatAtY="-100">Quiénes Somos</Back>
+        <Share />
     </div>
 
-    <Sections height="550">
+    <Sections height="550" white-first>
+
+         <!-- para compartir enlace correctamente -->
+
+        <h1 class="hidden">Filosofía Tseyor</h1>
 
         <Hero title="Tiempos de transformación" srcImage="/almacen/medios/paginas/hombre-universo.jpg">
             <p>Nos encontramos en un momento de transformación sin precedentes a nivel cósmico, que nos va a conducir a

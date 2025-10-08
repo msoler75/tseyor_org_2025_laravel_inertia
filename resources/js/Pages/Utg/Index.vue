@@ -1,5 +1,11 @@
 <template>
     <Sections white-first>
+        <div>
+            <div class="container w-full mx-auto mt-4 sm:mt-12 flex justify-end mb-10">
+                <span />
+                <Share />
+            </div>
+        </div>
 
         <Section>
             <TextImage title="Universidad Tseyor de Granada" srcImage="/almacen/medios/logos/utg.jpg" srcWidth="819"

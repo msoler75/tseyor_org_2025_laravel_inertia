@@ -24,7 +24,7 @@
 
             <div class="flex flex-wrap gap-3 justify-center w-full shrink-0">
                 <div v-for="emisora of emisoras" :key="emisora"
-                    class="bg-base-100 rounded-lg shadow-2xs hover:bg-primary transition duration-200">
+                    class="bg-base-100 rounded-lg shadow-2xs hover:bg-secondary hover:text-secondary-content transition duration-200">
                     <Link class="p-4 block" :href="route('radio.emisora', emisora)">{{ emisora }}</Link>
                 </div>
             </div>
