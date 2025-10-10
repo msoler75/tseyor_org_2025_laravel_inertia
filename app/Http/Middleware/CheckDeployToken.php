@@ -10,7 +10,7 @@ class CheckDeployToken
     public function handle(Request $request, Closure $next)
     {
         $token = $request->header('X-Deploy-Token');
-        $expected = config('app.deploy_token');
+        $expected = config('deploy.deploy_token');
         if (!$token || !$expected || !hash_equals($expected, $token)) {
             return response()->json(['message' => 'Acceso no autorizado'], 403);
         }

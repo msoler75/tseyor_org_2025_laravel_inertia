@@ -106,7 +106,7 @@ class DeployHelper
         $defaultHeaders = ['Content-Type: multipart/form-data'];
 
         // Añadir token de seguridad a la cabecera
-        $deployToken = config('app.deploy_token');
+        $deployToken = config('deploy.deploy_token');
         if ($deployToken) {
             $defaultHeaders[] = 'X-Deploy-Token: ' . $deployToken;
         }
