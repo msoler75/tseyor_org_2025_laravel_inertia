@@ -240,8 +240,6 @@ return [
     /**
      * Token de seguridad para despliegues
      */
-    'deploy_token' => env('DEPLOY_TOKEN', null),
-
     'deploy_user' => env('DEPLOY_USER', null),
 
     /**

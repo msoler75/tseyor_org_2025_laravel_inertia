@@ -16,6 +16,9 @@ return [
     // Umbral por defecto para aceptar archivos (segundos)
     'max_age_seconds' => 86400, // 24 horas
 
+    // Configuración de deploy
+    'deploy_token' => env('DEPLOY_TOKEN', null),
+
     // Exclusiones para node_modules (usadas por DeployNodeModules y ReleasePrepare)
     'node_modules_exclusions' => [
         '/.cache/',
