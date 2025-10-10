@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Sala;
+use App\Pigmalion\BusquedasHelper;
 use App\Pigmalion\SEO;
 
 class SalasController extends Controller
@@ -16,12 +17,10 @@ class SalasController extends Controller
         $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
 
-        $query = Sala::query();
+        $query = Sala::select('nombre', 'slug', 'descripcion');
 
-        if($buscar) {
-            $ids = Sala::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('salas.id', $ids);
-        }
+        if($buscar)
+            $query->buscar($buscar);
         else
             $query->orderBy('nombre', 'asc');
 
@@ -31,6 +30,7 @@ class SalasController extends Controller
         return Inertia::render('Salas/Index', [
             'filtrado' => $buscar,
             'listado' => $resultados,
+            'busquedaValida' => BusquedasHelper::validarBusqueda($buscar)
         ])
         ->withViewData(SEO::get('salas'));
     }

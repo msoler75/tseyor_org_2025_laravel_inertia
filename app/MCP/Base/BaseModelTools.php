@@ -4,6 +4,8 @@ namespace App\MCP\Base;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Pigmalion\BusquedasHelper;
+
 abstract class BaseModelTools
 {
     protected ?string $modelName = null; // Nombre singular del modelo (ej: 'comunicado')
@@ -146,14 +148,12 @@ abstract class BaseModelTools
             $categoria = $params['categoria'] ?? null;
             $fillable = (new $modelClass())->getFillable();
             if ($buscar) {
-                if (method_exists($modelClass, 'shouldBeSearchable')) {
-                    $ids = $modelClass::search($buscar);
-                    $query->whereIn('id', $ids);
+                if (method_exists($modelClass, 'buscar')) {
+                    $query->buscar($buscar);
                 } else {
                     $searchableFields = ['titulo', 'nombre', 'descripcion', 'slug'];
                     $foundFields = array_intersect($searchableFields, $fillable);
-                    foreach ($foundFields as $field)
-                        $query->orWhere($field, 'LIKE', "%$buscar%");
+                    BusquedasHelper::buscarQueryFields($buscar, $query, $foundFields);
                 }
             }
             if ($categoria && in_array('categoria', $fillable))

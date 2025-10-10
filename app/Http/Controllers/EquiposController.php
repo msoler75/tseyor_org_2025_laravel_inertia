@@ -45,21 +45,17 @@ class EquiposController extends Controller
         $page = $request->input('page', 1);
         $campos = ['id', 'slug', 'nombre', 'descripcion', 'categoria', 'imagen', 'created_at', 'updated_at'];
 
-        if ($buscar) {
-            // Buscar con Scout y luego obtener solo los campos necesarios
-            $ids = Equipo::search($buscar)->get()->pluck('id');
-            $query = Equipo::select($campos)
-                ->withCount('miembros')
-                ->whereIn('id', $ids);
-        } else {
-            $query = Equipo::withCount('miembros');
-            if ($categoria) {
-                if ($categoria == 'Mis equipos')
-                    $query->whereIn('id', $user->equipos()->pluck('equipo_id'));
-                else
-                    $query->where('categoria', '=', $categoria);
-            }
-        }
+        $query = Equipo::select($campos)
+            ->withCount('miembros');
+
+        if ($buscar)
+            $query->buscar($buscar);
+        else if ($user && $categoria == 'Mis equipos')
+            $query->whereIn('id', $user->equipos()->pluck('equipo_id'));
+        else if ($categoria)
+            $query->where('categoria', '=', $categoria);
+        else
+            $query->latest();
 
         // si el usuario tiene permisos de gestionar equipos
         $ocultarEquipos = $categoria != 'Mis equipos' && Gate::denies('administrar equipos');
@@ -73,7 +69,7 @@ class EquiposController extends Controller
                     });
             });
 
-        $resultados = $query->latest()->paginate(EquiposController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
+        $resultados = $query->paginate(EquiposController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
 
         $resultados->getCollection()->transform(function ($equipo) use ($user) {
             $equipo->soy_miembro = $equipo->miembros->contains('id', optional($user)->id);
@@ -82,11 +78,10 @@ class EquiposController extends Controller
             return $equipo;
         });
 
-        if ($categoria) {
+        if ($categoria)
             $resultados->appends(['categoria' => $categoria]);
-        } elseif ($buscar) {
+        elseif ($buscar)
             $resultados->appends(['buscar' => $buscar]);
-        }
 
         $categorias = (new Equipo())->getCategorias();
         if ($user) {

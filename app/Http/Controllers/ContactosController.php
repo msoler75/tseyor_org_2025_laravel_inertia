@@ -18,23 +18,7 @@ class ContactosController extends Controller
         $buscar = $request->input('buscar');
         $pais = $request->input('pais');
         $page = $request->input('page', 1);
-        // $num_per_page = ContactosController::$ITEMS_POR_PAGINA;
-
-
-        ///
-        /*
-        $test = ["xfaganistna", "chile", "cngo", "bóliVia", "polna", "luxmebog"];
-
-        $results = [];
-        foreach($test as $p) {
-            $results[$p] = Countries::getFuzzyCountryCodes($p);
-        }
-
-        dd($results);
-        */
-        ///
-
-        //dd($buscar);
+        $vista = $request->input('vista', 'mapa');
 
         $query = Contacto::select(['id', 'nombre', 'slug', 'imagen', 'poblacion', 'pais', 'latitud', 'longitud'])
             ->publicado();
@@ -42,11 +26,8 @@ class ContactosController extends Controller
         if ($pais)
             $query->where('pais', $pais);
 
-        if ($buscar) {
-            $ids = Contacto::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('contactos.id', $ids)
-                  ->orderBy('nombre','asc');
-        }
+        if ($buscar)
+            $query->buscar($buscar);
         else
             $query->latest();
 
@@ -73,7 +54,8 @@ class ContactosController extends Controller
             'paisActivo' => $pais,
             'listado' => $resultados,
             'paises' => $paises,
-            'apiKey' => config('services.google_maps.apikey')
+            'apiKey' => config('services.google_maps.apikey'),
+            'vista' => $vista
         ])
             ->withViewData(SEO::get('contactos'));
     }

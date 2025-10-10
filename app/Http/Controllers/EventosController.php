@@ -16,49 +16,35 @@ class EventosController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
-        $categoria = $request->input('categoria');
-    $page = $request->input('page', 1);
+        $page = $request->input('page', 1);
 
-    // Permiso para ver borradores
-    $esEditor = optional(auth()->user())->can('administrar social');
-    $query = null;
+        // Permiso para ver borradores
+        $esEditor = optional(auth()->user())->can('administrar social');
+        $query = null;
 
-    // Fecha de referencia para la comparación (now)
-    $now = Carbon::now()->toDateTimeString();
+        // Fecha de referencia para la comparación (now)
+        $now = Carbon::now()->toDateTimeString();
 
-    // Orden: primeros los eventos futuros más próximos (ASC), luego futuros lejanos,
-    // y al final los eventos pasados en orden inverso (más recientes primero, DESC).
-    // Usamos COALESCE(fecha_inicio, published_at, '1970-01-01') para manejar fechas nulas.
-    // La estrategia es: ordenar por (is_future) DESC, luego por fecha ASC para futuros,
-    // y por fecha DESC para pasados.
-    $orderSql = "(COALESCE(fecha_inicio, published_at, '1970-01-01') >= ?) DESC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') >= ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) ASC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') < ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) DESC";
+        // Orden: primeros los eventos futuros más próximos (ASC), luego futuros lejanos,
+        // y al final los eventos pasados en orden inverso (más recientes primero, DESC).
+        // Usamos COALESCE(fecha_inicio, published_at, '1970-01-01') para manejar fechas nulas.
+        // La estrategia es: ordenar por (is_future) DESC, luego por fecha ASC para futuros,
+        // y por fecha DESC para pasados.
+        $orderSql = "(COALESCE(fecha_inicio, published_at, '1970-01-01') >= ?) DESC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') >= ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) ASC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') < ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) DESC";
 
         // Construir la consulta paso a paso
-        $query = Evento::query();
+        $query = Evento::select("titulo", "slug", "descripcion", "imagen", "fecha_inicio", "fecha_fin", "hora_inicio", "categoria", "updated_at", "published_at", "visibilidad");
 
-        // filtros
-        if ($categoria) {
-            $query->where('categoria', '=', $categoria);
-        }
+        if($buscar)
+            $query->buscar($buscar);
+        else
+            $query->orderByRaw($orderSql, [$now, $now, $now]);
 
-        if ($buscar) {
-            // Usar Scout para obtener ids relevantes y filtrar la consulta principal
-            $ids = Evento::search($buscar)->get()->pluck('id')->toArray();
-            if (!empty($ids)) {
-                $query->whereIn('eventos.id', $ids);
-            } else {
-                // Si no hay coincidencias por Scout, forzamos una consulta vacía
-                $query->whereRaw('1 = 0');
-            }
-        }
-
-        // aplicar scope publicado solo si no es editor
-        if (!$esEditor) {
+        if (!$esEditor)
             $query->publicado();
-        }
 
-        // paginar y aplicar orden
-        $resultados = $query->orderByRaw($orderSql, [$now, $now, $now])
+        // paginar
+        $resultados = $query
             ->paginate(EventosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
 
         // appends para mantener filtros en links de paginación

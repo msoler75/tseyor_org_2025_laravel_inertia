@@ -21,10 +21,9 @@ class UsuariosController extends Controller
 
         $query = User::select(['id', 'name as nombre', 'slug', 'frase', 'created_at']);
 
-        if ($buscar) {
-            $ids = User::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('users.id', $ids);
-        } else
+        if ($buscar)
+            $query->buscar($buscar);
+        else
             $query->latest();
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)

@@ -24,17 +24,14 @@ class LibrosController extends Controller
         $query = Libro::select(['slug', 'titulo', 'descripcion', 'updated_at', 'imagen'])
             ->publicado();
 
-        if ($buscar) {
-            $ids = Libro::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('libros.id', $ids);
-        }
-
-        if (!$categoria)
-            $query->latest();
-        else if ($categoria == '_')
+        if ($buscar)
+            $query->buscar($buscar);
+        else if ($categoria == '_') // todos por orden alfabético
             $query->orderBy('titulo', 'asc');
+        else if ($categoria)
+            $query->where('categoria', $categoria);
         else
-            $query->where('categoria', 'like', '%' . $categoria . '%');
+            $query->latest();
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
@@ -106,7 +103,7 @@ class LibrosController extends Controller
             $categorias = preg_split("/,/", $libro->categoria, -1, PREG_SPLIT_NO_EMPTY);
             $relacionados = Libro::where('id', '!=', $libro->id)
                 ->where(function ($query) use ($categorias) {
-                    foreach ($categorias as $categoria) $query->orWhere('categoria', 'like', '%' . $categoria . '%');
+                    foreach ($categorias as $categoria) $query->orWhere('categoria', $categoria);
                 })
                 // descartamos el mismo libro que estamos mostrando
                 // ->orderByRaw('(CASE WHEN titulo LIKE ? THEN 2 WHEN descripcion LIKE ? THEN 1 ELSE 0 END) DESC', [$libro->titulo . '%', '%' . $libro->titulo . '%'])

@@ -68,4 +68,13 @@ class Audio extends ContenidoBaseModel
     {
         return $this->visibilidad == 'P' && !$this->deleted_at;
     }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->titulo,
+            'categoria' => $this->categoria
+        ];
+    }
 }

@@ -22,19 +22,16 @@ class PsicografiasController extends Controller
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        $query = Psicografia::query();
+        $query = Psicografia::select('*');
 
-        if ($buscar) {
-            $ids = Psicografia::search($buscar)->get()->pluck('id');
-            $query->whereIn('psicografias.id', $ids);
-        }
-
-        if (!$categoria)
-            $query->latest();
-        else if ($categoria == '_')
+        if ($buscar)
+            $query->buscar($buscar);
+        else if ($categoria == '_') // todos por orden alfabético
             $query->orderBy('titulo', 'asc');
+        else if ($categoria)
+            $query->where('categoria', $categoria);
         else
-            $query->where('categoria', 'like', '%' . $categoria . '%');
+            $query->latest();
 
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)

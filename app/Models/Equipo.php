@@ -131,6 +131,21 @@ class Equipo extends ContenidoBaseModel
     }
 
 
+     /**
+     * Searchable: Get the indexable data array for the model.
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->nombre,
+            'content' => $this->descripcion
+        ];
+    }
+
+
 
     public function otorgarPermisosCarpetas($idUsuario)
     {

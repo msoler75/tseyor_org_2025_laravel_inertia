@@ -18,13 +18,11 @@ class NoticiasController extends Controller
         $buscar = $request->input('buscar');
         $page = $request->input('page', 1);
 
-        $query = Noticia::withFavorito()
+        $query = Noticia::select(['slug', 'titulo', 'descripcion', 'updated_at', 'imagen'])->withFavorito()
             ->publicada();
 
-        if ($buscar) {
-            $ids = Noticia::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('noticias.id', $ids);
-        }
+        if ($buscar)
+            $query->buscar($buscar);
 
         $resultados = $query
             ->latest()

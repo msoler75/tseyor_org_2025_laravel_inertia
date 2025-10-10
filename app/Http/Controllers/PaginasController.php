@@ -22,6 +22,7 @@ class PaginasController extends Controller
 {
     public static $ITEMS_POR_PAGINA = 20;
 
+    // esto se usa solo par MCP
     public function index(Request $request)
     {
         $page = $request->input("page", 1);
@@ -29,10 +30,10 @@ class PaginasController extends Controller
         $query = Pagina::select(['ruta', 'titulo', 'visibilidad', 'updated_at'])
             ->publicada();
 
-        if ($buscar) {
-            $ids = Pagina::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('paginas.id', $ids);
-        } else $query->orderBy('ruta');
+        if($buscar)
+            $query->buscar($buscar);
+        else
+            $query->orderBy('ruta');
 
         $resultados = $query->paginate(PaginasController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
@@ -46,18 +47,13 @@ class PaginasController extends Controller
     public function descubre(Request $request)
     {
         $page = $request->input("page", 1);
-        $buscar = $request->input('buscar');
-
 
         $query = Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion', 'visibilidad', 'updated_at'])
             ->publicada()
             // debe tener el campo texto
             ->where('descubre', TRUE);
 
-        if ($buscar) {
-            $ids = Pagina::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('paginas.id', $ids);
-        } else $query->orderBy('ruta');
+       $query->orderBy('ruta');
 
         $resultados = $query->paginate(PaginasController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));

@@ -21,8 +21,7 @@
 
         <PageWide>
 
-        <div class="w-full mb-12 flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
-
+        <div class="w-full mb-12 flex flex-col gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
 
                 <SearchResultsHeader :results="listado" :valid-search="busquedaValida" />
 
@@ -62,6 +61,7 @@ const props = defineProps({
     listado: {
         default: () => { data: [] }
     },
+    busquedaValida: { type: Boolean, default: false }
 });
 
 const listado = ref(props.listado);

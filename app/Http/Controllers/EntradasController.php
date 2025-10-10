@@ -17,14 +17,10 @@ class EntradasController extends Controller
         $buscar = $request->input('buscar');
         $page = $request->input('page', 1);
 
+        $query = Entrada::select('slug', 'titulo', 'imagen', 'updated_at')->publicada();
 
-                $query = Entrada::withFavorito()
-            ->publicada();
-
-        if ($buscar) {
-            $ids = Entrada::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('entradas.id', $ids);
-        }
+        if($buscar)
+            $query->buscar($buscar);
 
         $resultados = $query
             ->orderBy('published_at', 'desc')
@@ -33,7 +29,6 @@ class EntradasController extends Controller
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar, false);
-
 
         return Inertia::render('Entradas/Index', [
             'filtrado' => $buscar,
