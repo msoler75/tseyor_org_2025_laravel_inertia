@@ -21,17 +21,14 @@ class TutorialesController extends Controller
         $query = Tutorial::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
             ->publicado();
 
-        if ($buscar) {
-            $ids = Tutorial::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('tutoriales.id', $ids);
-        }
-
-        if (!$categoria)
-            $query->latest();
-        else if ($categoria == '_')
+        if ($buscar)
+            $query->buscar($buscar);
+        else if ($categoria == '_') // todos por orden alfabético
             $query->orderBy('titulo', 'asc');
+        else if ($categoria)
+            $query->where('categoria', $categoria);
         else
-            $query->where('categoria', 'like', '%' . $categoria . '%');
+            $query->latest();
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));

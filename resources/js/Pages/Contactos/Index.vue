@@ -15,7 +15,7 @@
         <h1 class="text-center mb-20">Dónde estamos</h1>
 
         <div class="flex justify-end mb-5 transform lg:translate-y-[3.5rem]">
-            <SearchInput class="py-1" placeholder="Buscar contacto..."/>
+            <SearchInput class="py-1" placeholder="Buscar contacto..." :arguments="{ vista: vista }"/>
         </div>
 
         </PageHeader>
@@ -121,6 +121,7 @@
 import { getImageUrl } from "@/Stores/image.js";
 import { loadGoogleMaps } from "@/composables/google";
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
+import { router } from '@inertiajs/vue3';
 
 const { trackUserEngagement } = useGoogleAnalytics()
 
@@ -136,9 +137,10 @@ const props = defineProps({
         default: () => [],
     },
     apiKey: { type: String, required: true },
+    vista: { type: String, default: 'mapa' },
 });
 
-const vista = ref("mapa");
+const vista = ref(props.vista);
 const cargando = ref(false);
 const paisClick = ref("");
 // GOOGLE MAPS

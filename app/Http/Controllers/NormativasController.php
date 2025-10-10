@@ -14,40 +14,37 @@ class NormativasController extends Controller
     //
     public function index(Request $request)
     {
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
-        $page = $request->input('page', 1);
 
-                $query = Normativa::withFavorito()
-            ->publicada()
-            ->when($categoria === '_', function ($query) {
-                $query->orderByRaw('LOWER(titulo)');
-            })
-            ->when($categoria && $categoria !== '_', function ($query) use ($categoria) {
-                $query->where('categoria', 'LIKE', "%$categoria%");
-            });
+        $query = Normativa::select(['slug', 'titulo', 'descripcion', 'updated_at'])
+            ->publicado();
 
-        if ($buscar) {
-            $ids = Normativa::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('normativas.id', $ids);
-        }
+        if ($buscar)
+            $query->buscar($buscar);
+        else if ($categoria == '_') // todos por orden alfabético
+            $query->orderBy('titulo', 'asc');
+        else if ($categoria)
+            $query->where('categoria', $categoria);
         else
             $query->latest();
 
-        $resultados = $query
-            ->paginate(self::$ITEMS_POR_PAGINA, ['*'],'page', $page)
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar);
 
+        // obtiene el listado de categorías de los Normativas
         $categorias = (new Normativa())->getCategorias();
 
         return Inertia::render('Normativas/Index', [
-            'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
+            'categoriaActiva' => $categoria,
             'listado' => $resultados,
-            'categorias' => $categorias
+            'categorias' => $categorias,
+            'busquedaValida' => BusquedasHelper::validarBusqueda($buscar)
         ])
             ->withViewData(SEO::get('normativas'));
     }

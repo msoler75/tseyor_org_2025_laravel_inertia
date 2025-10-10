@@ -38,6 +38,8 @@
                 <Categorias :categorias="categorias" :url="route('libros')" columna-breakpoint="xl" select-breakpoint="md"
                     :resultados="!!filtrado" select-class="w-full" />
 
+
+
                 <FadeOnNavigate class="w-full grow">
 
                     <SearchResultsHeader :results="listado" :valid-search="busquedaValida" />
@@ -78,7 +80,7 @@
             </ContentMain>
 
         </PageWide>
-    </PAge>
+    </Page>
 </template>
 
 

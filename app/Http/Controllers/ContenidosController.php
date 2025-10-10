@@ -128,24 +128,15 @@ class ContenidosController extends Controller
 
         // detectar cuando el título coincide con la búsqueda, le damos más peso y reordenamos resultados
 
-        $reorder = false;
+        //$reorder = false;
         $resultados
-            ->transform(function ($item) use ($buscarFiltrado, &$reorder) {
+            ->transform(function ($item) use ($buscarFiltrado) {
                 if($buscarFiltrado==strtolower(StrEx::removerAcentosStrtr($item->titulo)))
                 {
                     $item->__tntSearchScore__+=3.0;
-                    $reorder = true;
                 }
                 return $item;
             });
-
-            // Reordenar resultados si es necesario
-            /*
-            // NO ES NECESARIO
-        if($reorder) {
-            $resultados = $resultados->sortByDesc('__tntSearchScore__');
-        }
-            */
 
 
         if (strlen($buscarFiltrado) < 3)

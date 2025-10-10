@@ -19,20 +19,17 @@ class MeditacionesController extends Controller
         $page = $request->input('page', 1);
 
                 $query = Meditacion::withFavorito()
-            ->publicada()
-            ->when($categoria === '_', function ($query) {
-                $query->orderByRaw('LOWER(titulo)');
-            })
-            ->when($categoria && $categoria !== '_', function ($query) use ($categoria) {
-                $query->where('categoria', 'LIKE', "%$categoria%");
-            });
+            ->publicada();
 
-
-        if ($buscar) {
-            $ids = Meditacion::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('meditaciones.id', $ids);
-        }
-        else if (!$categoria)
+        if ($buscar)
+            $query->buscar($buscar);
+        else if ($categoria=='_') // todos por orden alfabético
+            $query->orderByRaw('LOWER(titulo)');
+        else if (strcasecmp($categoria, 'favoritos') === 0)
+            $query->whereNotNull('favoritos.id');
+        else if($categoria)
+            $query->where('categoria', $categoria);
+        else
             $query->latest();
 
         $resultados = $query

@@ -114,4 +114,5 @@ class Libro extends ContenidoBaseModel
             // schema:
         );
     }
+
 }

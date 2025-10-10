@@ -46,10 +46,8 @@ class InformesController extends Controller
             ->join('equipos', 'informes.equipo_id', '=', 'equipos.id');
 
         // busqueda
-        if ($buscar) {
-            $ids = Informe::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('informes.id', $ids);
-        }
+        if ($buscar)
+            $query->buscar($buscar);
 
         if ($equipo) {
             $query->where('equipo_id', $equipo->id);

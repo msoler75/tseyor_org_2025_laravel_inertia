@@ -18,20 +18,20 @@ class PublicacionesController extends Controller
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-                $query = Publicacion::withFavorito()
+        $query = Publicacion::withFavorito()
             ->publicada();
 
-        if ($buscar) {
-            $ids = Publicacion::search($buscar)->get()->pluck('id');
-            $query->whereIn('publicaciones.id', $ids);
-        }
+        if ($buscar)
+            $query->buscar($buscar);
 
-        if (!$categoria)
-            $query->latest();
-        else if ($categoria == '_')
+        if ($buscar)
+            $query->buscar($buscar);
+        else if ($categoria == '_') // todos por orden alfabético
             $query->orderBy('titulo', 'asc');
+        else if ($categoria)
+            $query->where('categoria', $categoria);
         else
-            $query->where('categoria', 'like', '%' . $categoria . '%');
+            $query->latest();
 
         // devuelve los items recientes segun la busqueda
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, $page)

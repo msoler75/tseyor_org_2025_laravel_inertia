@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Mail\InscripcionEmail;
 use App\Mail\InscripcionConfirmacionEmail;
 use App\Notifications\InscripcionAsignada;
+use App\Pigmalion\BusquedasHelper;
 use Inertia\Inertia;
 
 
@@ -201,10 +202,8 @@ class InscripcionesController extends Controller
 
         $query = Inscripcion::where('user_id', Auth::id());
 
-         if ($buscar) {
-            $ids = Inscripcion::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('inscripciones.id', $ids);
-        }
+        if ($buscar)
+            BusquedasHelper::buscarQueryFields($buscar, $query,  ['nombre', 'ciudad', 'region', 'pais', 'email', 'telefono', 'comentario', 'estado', 'notas']);
 
         // aquí ya aplicamos criterios de ordenación, siendo primeras las inscripciones "abiertas" (no tienen estado finalizado)
         $estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta'];

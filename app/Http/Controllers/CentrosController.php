@@ -23,12 +23,10 @@ class CentrosController extends Controller
 
         $query = Centro::select(['id', 'nombre', 'imagen', 'descripcion', 'pais']);
 
-        if ($buscar) {
-            $ids = Centro::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('centros.id', $ids);
-        } else {
+        if ($buscar)
+            $query->buscar($buscar);
+        else
             $query->latest('created_at');
-        }
 
         $resultados = $query->get();
 

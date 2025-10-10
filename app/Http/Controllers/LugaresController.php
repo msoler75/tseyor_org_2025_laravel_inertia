@@ -16,15 +16,13 @@ class LugaresController extends Controller
     {
         $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
-        $resultados = Lugar::select(['nombre', 'slug', 'descripcion', 'imagen'])
-        ->publicado();
+        $query = Lugar::select(['nombre', 'slug', 'descripcion', 'imagen'])
+            ->publicado();
 
-        if ($buscar) {
-            $ids = Lugar::search($buscar)->get()->pluck('id')->toArray();
-            $resultados->whereIn('lugares.id', $ids);
-        }
+        if ($buscar)
+            $query->buscar($buscar);
 
-        $resultados = $resultados->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
 
         $todos = Lugar::select(['slug', 'nombre', 'categoria'])->take(1000)->get();

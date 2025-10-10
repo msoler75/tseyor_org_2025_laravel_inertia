@@ -4,7 +4,7 @@
             {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}<span v-html="stringArguments"/> :
         </div>
         <div v-else-if="queryString && !validSearch">Demasiados resultados<span v-html="stringArguments"/></div>
-        <div v-else-if="queryString && results.total == 0">No hay resultados<span v-html="stringArguments"/></div>
+        <div v-else-if="queryString && results.total == 0"  class="mb-24">No hay resultados<span v-html="stringArguments"/></div>
     </div>
 </template>
 

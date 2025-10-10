@@ -37,7 +37,8 @@ class BusquedasHelper
         'el',
         'lo',
         'los',
-        'las', // 'la',
+        'las',
+        'la', // es un dilema filtrar esta palabra clave
         'las',
         'un',
         'una',
@@ -87,13 +88,13 @@ class BusquedasHelper
 
     public static function descartarPalabrasComunes($busqueda)
     {
-        $k = "xzzzzzzhhhhhhhx";
-        $busqueda = str_replace("-", $k, $busqueda);
+        $TOKEN_GUION = "xzzzzzzhhhhhhhx";
+        $busqueda = str_replace("-", $TOKEN_GUION, $busqueda);
         // 1. Separar la frase $busqueda en palabras, utilizando espacios y otros símbolos de puntuación como separadores
         $palabras = preg_split('/[\s\p{P}]+/u', StrEx::removerAcentos(mb_strtolower($busqueda)), -1, PREG_SPLIT_NO_EMPTY);
 
-        $palabras = array_map(function ($x) use ($k) {
-            return str_replace($k, "-", $x);
+        $palabras = array_map(function ($x) use ($TOKEN_GUION) {
+            return str_replace($TOKEN_GUION, "-", $x);
         }, $palabras);
 
         // 2. Descartar las palabras habituales, pronombres y artículos
@@ -128,10 +129,10 @@ class BusquedasHelper
      */
     public static function validarBusqueda($busqueda)
     {
-        if (!$busqueda)
+        if (!trim($busqueda))
             return false;
         list($relevante, $comunes) = self::descartarPalabrasComunes($busqueda);
-        return trim($busqueda) && $relevante;
+        return !!$relevante;
     }
 
     public static function formatearResultados($resultados, $busqueda, $soloTitulo = false, $extraeTodos = false)
@@ -361,7 +362,6 @@ class BusquedasHelper
     {
         $busqueda = $querySearch ?? $queryCheck;
         $busqueda = StrEx::removerAcentos(mb_strtolower($busqueda));
-        \App\Models\Comunicado::search($busqueda);
         return BusquedasHelper::validarBusqueda($queryCheck) ? $model::search($busqueda) : $model::whereRaw("1=0");
     }
 
@@ -381,4 +381,43 @@ class BusquedasHelper
         } else
             return ["", $busqueda];
     }
+
+
+    /**
+     * Realiza búsqueda de contenidos usando TNTSearch, separando palabras comunes,
+     * y devuelve los IDs ordenados por score descendente junto con los scores
+     */
+    public static function buscarIdsOrdenadosPorScore($buscar, $model)
+    {
+        $buscar = StrEx::removerAcentos(mb_strtolower($buscar));
+        list($relevantes, $comunes) = self::separarPalabrasComunes($buscar);
+        $items = $model::search($relevantes)->get();
+        $sortedItems = $items->sortByDesc('__tntSearchScore__');
+        $ids = $sortedItems->pluck('id')->toArray();
+        $scores = $sortedItems->pluck('__tntSearchScore__', 'id')->toArray();
+        return ['ids' => $ids, 'scores' => $scores];
+    }
+
+    /**
+     * Dada una query, hace una busqueda WHERE con LIKE en los campos indicados
+     * @param mixed $buscar
+     * @param mixed $query
+     * @param mixed $fields
+     */
+    public static function buscarQueryFields($buscar, $query, $fields) {
+        $buscar = StrEx::removerAcentos(mb_strtolower($buscar));
+        list($relevantes, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
+        // spliteamos el string de palabras relevantes
+        $palabras = explode(' ', $relevantes);
+        // aplicamos cada palabra a buscar en los distintos campos
+        $query->where(function($q) use ($palabras, $fields) {
+            foreach ($fields as $field) {
+                foreach ($palabras as $palabra) {
+                    $q->orWhere($field, 'like', '%' . $palabra . '%');
+                }
+            }
+        });
+        return $query;
+    }
+
 }

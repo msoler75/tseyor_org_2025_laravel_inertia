@@ -20,10 +20,8 @@ class VideosController extends Controller
         $query = Video::select(['slug', 'titulo', 'descripcion', 'enlace', 'updated_at'])
             ->publicado();
 
-        if ($buscar) {
-            $ids = Video::search($buscar)->get()->pluck('id')->toArray();
-            $query->whereIn('videos.id', $ids);
-        }
+        if ($buscar)
+            $query->buscar($buscar);
 
         $resultados = $query
             ->ordenado()
