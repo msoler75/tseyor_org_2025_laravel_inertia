@@ -30,25 +30,23 @@ return [
 
     // Configuración de umbrales para acortar automáticamente
     'umbrales' => [
-        // Longitud mínima del PATH para que se acorte automáticamente
-        // Ejemplo: /eventos/mi-evento-super-largo (sin contar dominio ni protocolo)
-        'longitud_path' => env('ENLACES_CORTOS_UMBRAL_PATH', 30),
-
-        // Longitud máxima de URL completa para considerar "corta"
-        // URLs más cortas que esto nunca se acortarán
-        'longitud_url_maxima_corta' => env('ENLACES_CORTOS_URL_MAXIMA_CORTA', 60),
+        // Longitud mínima del path para que se acorte automáticamente
+        // Paths más largos que esto harán que la URL se acorte
+        // Esto incluye la query! ejemplo: /ruta/larga?con=parametros
+        'longitud_path_acortar' => env('ENLACES_CORTOS_UMBRAL_PATH', 35),
     ],
 
     // Patrones de URLs que NO deben acortarse (son naturalmente cortas)
+    // No se aplican si existe una query string!
     'patrones_excluidos' => [
         // URLs con IDs numéricos (generalmente cortas)
         '\/informes\/\d{1,5}$',
 
-        // URLs muy cortas con slugs cortos
-        '\/[a-z]{1,8}\/[a-z0-9\-]{1,5}$',
+        // URLs de contenidos con slugs muy cortos
+        '\/[a-z]{1,11}\/[a-z0-9\-]{1,7}$',
 
-        // URLs cortas
-        '\/[a-z]{1,14}$',
+        // URLs de página
+        '\/[a-z][a-z\-0-9]{0,14}$',
 
         // Páginas principales
         '^\/$',

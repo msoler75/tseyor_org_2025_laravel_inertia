@@ -97,10 +97,13 @@ class EnlaceCortoTest extends TestCase
             $baseUrl . '/login',                  // Página principal
             $baseUrl . '/libros/abc',             // Slug muy corto
             $baseUrl . '/eventos/test',           // Slug muy corto
+            $baseUrl . '/comunicados/importado-de-229', // URL del usuario que no debe acortarse. ESTE TEST NO DEBE ELIMINARSE, AJUSTAR CONFIG SI ES NECESARIO
         ];        // URLs que SÍ deben acortarse (largas o complejas)
         $urlsLargas = [
-            $baseUrl . '/eventos/convivencias-de-otono-en-la-libelula-con-muchos-detalles-y-actividades',
+            $baseUrl . '/eventos/12?con=parametros+detalles',
+            $baseUrl . '/eventos/convivencias-de-otono-en-la-libelula',
             $baseUrl . '/comunicados/comunicado-especial-sobre-la-situacion-actual-del-mundo-y-nuestras-propuestas',
+            $baseUrl . '/comunicados/importado-de-229-tap-241012-1docx-21869', // URL del usuario que debe acortarse
             $baseUrl . '/libros/el-libro-de-las-ensenanzas-fundamentales-para-el-desarrollo-espiritual',
             $baseUrl . '/blog/2025/09/26/entrada-especial-con-slug-muy-largo-y-muchos-detalles-importantes',
             $baseUrl . '/noticias/noticia-importante-sobre-los-nuevos-desarrollos-tecnologicos-en-tseyor',

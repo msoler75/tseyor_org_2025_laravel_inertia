@@ -638,54 +638,37 @@ class EnlaceCortoService
     {
         // Extraer el path de la URL
         $path = parse_url($url, PHP_URL_PATH) ?? '';
-        $longitudUrl = strlen($url);
+        $query = parse_url($url, component: PHP_URL_QUERY);
         $longitudPath = strlen($path);
+        $longitudQuery = strlen($query ?? '');
 
         // Obtener configuración
-        $umbralPath = config('enlaces_cortos.umbrales.longitud_path', 30);
-        $urlMaximaCorta = config('enlaces_cortos.umbrales.longitud_url_maxima_corta', 60);
+        $umbralLongitud = config('enlaces_cortos.umbrales.longitud_path_acortar', 45);
         $patronesExcluidos = config('enlaces_cortos.patrones_excluidos', []);
 
         Log::info('[EnlaceCortoService] Evaluando si necesita acortarse', [
             'url' => $url,
             'path' => $path,
-            'longitud_url' => $longitudUrl,
             'longitud_path' => $longitudPath,
-            'umbral_path' => $umbralPath,
-            'url_maxima_corta' => $urlMaximaCorta
+            'longitud_query' => $longitudQuery,
+            'umbral_longitud' => $umbralLongitud
         ]);
 
-        // Regla 1: URLs muy cortas nunca se acortan
-        if ($longitudUrl <= $urlMaximaCorta) {
-            Log::info('[EnlaceCortoService] URL muy corta, no se acorta', [
-                'longitud_url' => $longitudUrl,
-                'umbral_maximo' => $urlMaximaCorta
-            ]);
-            return false;
-        }
-
-        // Regla 2: Verificar patrones excluidos (URLs que por patrón no se acortan)
-        foreach ($patronesExcluidos as $patron) {
-            if (preg_match('/' . $patron . '/', $path)) {
-                Log::info('[EnlaceCortoService] URL coincide con patrón excluido', [
-                    'path' => $path,
-                    'patron' => $patron
-                ]);
-                return false;
+        // Regla 1: Verificar patrones excluidos (URLs que por patrón no se acortan)
+        if(!$query) { // no pueden tener query para ser excluidos
+            foreach ($patronesExcluidos as $patron) {
+                if (preg_match('/' . $patron . '/', $path)) {
+                    Log::info('[EnlaceCortoService] URL coincide con patrón excluido', [
+                        'path' => $path,
+                        'patron' => $patron
+                    ]);
+                    return false;
+                }
             }
         }
 
-        // Regla 3: Si el path es corto, probablemente no necesita acortarse
-        if ($longitudPath <= $umbralPath) {
-            Log::info('[EnlaceCortoService] Path corto, no se acorta', [
-                'longitud_path' => $longitudPath,
-                'umbral_path' => $umbralPath
-            ]);
-            return false;
-        }
-
-        // Regla 4: URLs con parámetros GET largos sí necesitan acortarse
-        $query = parse_url($url, PHP_URL_QUERY);
+        // Regla 2: URLs con parámetros GET largos sí necesitan acortarse
+        $query = parse_url($url, component: PHP_URL_QUERY);
         if ($query && strlen($query) > 20) {
             Log::info('[EnlaceCortoService] URL con parámetros largos, sí se acorta', [
                 'query_length' => strlen($query)
@@ -693,15 +676,22 @@ class EnlaceCortoService
             return true;
         }
 
-        // Regla 5: Si llegamos aquí, evaluar por longitud total
-        $necesitaAcortar = $longitudUrl > 80; // URLs muy largas siempre se acortan
+        // Regla 3: Si el path con la query supera el umbral, acortar
+        if (($longitudPath + $longitudQuery) > $umbralLongitud) {
+            Log::info('[EnlaceCortoService] URL larga, sí se acorta', [
+                'longitud_path' => $longitudPath,
+                'longitud_query' => $longitudQuery,
+                'umbral_longitud' => $umbralLongitud
+            ]);
+            return true;
+        }
 
-        Log::info('[EnlaceCortoService] Decisión final basada en longitud total', [
-            'necesita_acortar' => $necesitaAcortar,
-            'longitud_url' => $longitudUrl
+        // Si no cumple ninguna regla de acortamiento, no acortar
+        Log::info('[EnlaceCortoService] URL no necesita acortarse', [
+            'longitud_path' => $longitudPath
         ]);
 
-        return $necesitaAcortar;
+        return false;
     }
 
 }
