@@ -22,7 +22,7 @@
     }
 
     .spinner {
-      animation: rotate 2s linear infinite, dash 1.5s ease-in-out infinite;
+      animation: rotate 1.5s linear infinite, dash 1.25s ease-in-out infinite;
       transform-origin: center;
     }
   </component>
