@@ -19,7 +19,7 @@
         <PageWide>
 
         <ContentMain class="flex justify-end mb-5">
-            <SearchInput placeholder="Buscar boletín..." />
+            <SearchInput placeholder="Buscar en boletines..."/>
         </ContentMain>
 
         <div class="w-full flex gap-7 lg:gap-10 flex-wrap md:flex-nowrap">

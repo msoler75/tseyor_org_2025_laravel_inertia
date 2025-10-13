@@ -38,13 +38,16 @@ const portada = computed(() => page.url == "/");
 const hoverTimeout = ref(null)
 
 function clickedTab(tab) {
-    nav.toggleTab(tab);
-    //console.log(tab.url, typeof tab.url)
-    //if(tab.url&&tab.url!='undefined')
-      //  nav.closeTabs()
+    // Si el tab tiene URL (va a navegar), cerramos submenu solo si hay alguno abierto
+    if(tab.url && tab.url !== 'undefined') {
+        if(nav.activeTab) {
+            nav.closeTabs()
+        }
+    } else {
+        // Si no tiene URL, alternamos el estado del submenu
+        nav.toggleTab(tab);
+    }
 }
-
-
 function enterTab(tab) {
     // Cancelar cualquier timeout previo
     if (hoverTimeout.value) {
@@ -77,22 +80,35 @@ const underscoreLeft = ref(0)
 const underscoreWidth = ref(0)
 
 function updateUnderscore() {
-    const elem = document.querySelector('.nav-tab.hovering')
-    if(!elem) {
-        if(!nav.activeTab)
-            underscoreShow.value = false
+    // Verificar que el componente esté montado
+    if (!container.value) {
         return
     }
-    const containerRect = container.value.getBoundingClientRect()
-    const tabRect = elem.getBoundingClientRect();
-    underscoreShow.value = true
-    underscoreLeft.value = `${tabRect.left - containerRect.left}px`
-    underscoreWidth.value = `${tabRect.width}px`
+
+    // Prioridad: 1. Tab con hover, 2. Tab actual según URL
+    const elem = document.querySelector('.nav-tab.hovering') ||
+                 document.querySelector('.nav-tab.current-tab')
+
+    if(!elem || !elem.getBoundingClientRect) {
+        underscoreShow.value = false
+        return
+    }
+
+    try {
+        const containerRect = container.value.getBoundingClientRect()
+        const tabRect = elem.getBoundingClientRect();
+        underscoreShow.value = true
+        underscoreLeft.value = `${tabRect.left - containerRect.left}px`
+        underscoreWidth.value = `${tabRect.width}px`
+    } catch (error) {
+        // Si hay error durante la medición, ocultar underscore
+        underscoreShow.value = false
+    }
 }
 
 watch(()=>nav.activeTab, (tab) => {
-    if(!tab)
-        underscoreShow.value = false
+    // Recalcular posición del underscore cuando cambia el activeTab
+    nextTick(updateUnderscore)
 })
 
 const underScoreStyle = computed(() => {
@@ -105,11 +121,12 @@ const underScoreStyle = computed(() => {
 
 
 watch(()=>nav.tabHovering, (tab)=> {
-    //nextTick( ()=> {
-       // nextTick( ()=> {
-            updateUnderscore ()
-       // })
-    //})
+    updateUnderscore()
+})
+
+// Recalcular underscore cuando cambia la URL (navegación)
+watch(() => page.url, () => {
+    nextTick(updateUnderscore)
 })
 
 

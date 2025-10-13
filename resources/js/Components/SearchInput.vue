@@ -32,6 +32,7 @@
                         active ? 'pl-4' : 'border-gray-500/50 pl-8',
                         inputClass,
                     ]"
+                    :style="widthForPlaceholder"
                     @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"
                     @focus="onFocus()" @blur="onBlur()" v-model="query" />
 
@@ -190,4 +191,30 @@ const getPageContext = () => {
     return segments.length > 0 ? segments[0] : 'general'
 }
 
+
+const widthForPlaceholder = computed(() => {
+    // Caracteres estrechos que ocupan menos ancho
+    const narrowChars = /[iljft\.,;:!¡¿\?\(\)\[\]{}'"]/g;
+    // Caracteres anchos que ocupan más ancho
+    const wideChars = /[mwMWÑñ@&%#]/g;
+
+    const text = props.placeholder;
+    const length = text.length;
+
+    // Contar caracteres especiales
+    const narrowCount = (text.match(narrowChars) || []).length;
+    const wideCount = (text.match(wideChars) || []).length;
+    const regularCount = length - narrowCount - wideCount;
+
+    // Calcular ancho ajustado
+    // Caracteres estrechos = 0.6ch, regulares = 0.9ch, anchos = 1.2ch
+    const adjustedWidth = (narrowCount * 0.6) + (regularCount * 0.9) + (wideCount * 1.2);
+
+    const baseWidth = 3; // Ancho base en caracteres
+    const totalWidth = baseWidth + adjustedWidth;
+
+    return {
+        width: `${Math.ceil(totalWidth)}ch`
+    };
+});
 </script>

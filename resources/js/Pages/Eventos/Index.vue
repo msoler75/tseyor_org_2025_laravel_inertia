@@ -16,7 +16,7 @@
         </div>
 
         <div class="flex justify-end mb-5">
-            <SearchInput placeholder="Buscar eventos..." inputClass="w-48"/>
+            <SearchInput placeholder="Buscar eventos..."/>
         </div>
 
         </PageHeader>

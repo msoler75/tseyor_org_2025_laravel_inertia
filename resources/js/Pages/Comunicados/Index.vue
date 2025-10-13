@@ -74,7 +74,6 @@
             </span>
 
             <SearchInput :arguments="busqueda" class="ml-auto sel-trans"
-            input-class="min-w-60"
             v-model="query" @focus="focusQuery"
                 placeholder="Buscar en comunicados..."
                 @search="buscando = true" @blur="blurQuery" />
