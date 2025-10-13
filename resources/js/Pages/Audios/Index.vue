@@ -23,7 +23,7 @@
     " />
 -->
 <div class="px-2 flex justify-end">
-    <SearchInput placeholder="Buscar audios..." />
+    <SearchInput placeholder="Buscar audios..."/>
 </div>
 
 </PageHeader>

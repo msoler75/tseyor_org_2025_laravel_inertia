@@ -20,7 +20,7 @@
         </TitleInfo>
 
         <div class="flex w-full justify-between mb-5">
-            <SearchInput v-model="query" class="grow" input-class="min-w-40"
+            <SearchInput v-model="query" class="grow"
             placeholder="Buscar libros...">
                 <div class="flex items-baseline gap-3 pl-1">
                     <input id="titulos" type="checkbox" v-model="selectors.soloTitulosLibros"> <label for="titulos"
