@@ -1,10 +1,11 @@
 <template>
     <TransitionFade>
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md text-gray-200 touch-none"
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md text-gray-200 touch-none text-3xl"
             v-show="show && images?.length" ref="vImagesWrap">
             <!-- Loading -->
-            <span class=" loading loading-spinner loading-lg" v-show="state.imgState === 'loading'"
-                aria-hidden="true"></span>
+             <div class="absolute inset-0 w-full h-full flex items-center justify-center z-50" v-show="state.imgState === 'loading'">
+                <Spinner/>
+             </div>
 
             <!-- VueZoomable container -->
             <VueZoomable
