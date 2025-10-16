@@ -40,6 +40,7 @@ Este archivo contiene información útil para el mantenimiento y la supervisión
 
 *   Para testar envío de mails, iniciar servicios de pruebas: `mailhog.cmd`
 *   Si hay errores constantes de CSRF en `dev.tseyor.org`, borrar todas las cookies de `.tseyor.org`.
+*   Para deshabilitar analytics (Microsoft Clarity y Google Analytics) en desarrollo o testing, añade `?noanalytics` al final de la URL.
 
 ## Otros
 

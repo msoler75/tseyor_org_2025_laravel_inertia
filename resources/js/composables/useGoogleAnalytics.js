@@ -29,7 +29,7 @@ export function useGoogleAnalytics() {
 
     // Función para cargar Google Analytics
     const loadGoogleAnalytics = () => {
-        if (!measurementId.value || typeof window === 'undefined') {
+        if (window.disableAnalytics || !measurementId.value || typeof window === 'undefined') {
             return;
         }
 
@@ -74,7 +74,7 @@ export function useGoogleAnalytics() {
 
     // Función auxiliar para asegurar que GA esté inicializado
     const ensureGoogleAnalytics = () => {
-        if (!gtag && typeof window !== 'undefined' && measurementId.value) {
+        if (!window.disableAnalytics && !gtag && typeof window !== 'undefined' && measurementId.value) {
             // Verificar si window.gtag existe (puede haberse cargado externamente)
             if (window.gtag) {
                 gtag = window.gtag;
