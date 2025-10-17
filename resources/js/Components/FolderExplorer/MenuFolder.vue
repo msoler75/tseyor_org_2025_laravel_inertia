@@ -31,6 +31,11 @@
                     <span>Crear carpeta</span>
                 </div>
 
+                <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"
+                @click="store.call('buscar')">
+                    <Icon icon="ph:magnifying-glass-duotone" />
+                    <span>Buscar</span>
+                </div>
 
                 <div v-if="!store.enRaiz && store.puedeLeer && !store.seleccionando && store.itemsShow.filter(x => !x.padre).length > 1"
                     class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer"

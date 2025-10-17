@@ -1,13 +1,12 @@
 <template>
     <!-- Encabezado -->
     <div class="flex flex-wrap gap-x-12 gap-y-5 items-center mb-16 lg:mb-24" :class="classes">
-        <h1 v-if="title" class="mb-0 flex-shrink-0">{{ title }}</h1>
+        <h1 v-if="title" class="mb-0">{{ title }}</h1>
         <span
             class="flex items-center gap-1 text-sm uppercase btn btn-sm dark:border-1 dark:border-gray-500/25"
             @click="modalInfo = true"
         >
-            {{ labelInfo }}<Icon icon="ph:info"
-        /></span>
+            {{ labelInfo }}<Icon icon="ph:info"/></span>
     </div>
 
     <Modal

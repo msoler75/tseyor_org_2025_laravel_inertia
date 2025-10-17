@@ -115,7 +115,7 @@
                                 !store.seleccionando &&
                                 !store.mostrandoResultadosBusqueda
                             "
-                            class="btn btn-neutral btn-sm btn-icon"
+                            class="hidden sm:inline btn btn-neutral btn-sm btn-icon"
                             title="Buscar archivos"
                             @click="store.call('buscar')"
                         >

@@ -14,8 +14,8 @@
     >
         <!-- Primary Navigation Menu -->
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 relative items-center pointer-events-auto">
+        <div class="max-w-7xl mx-auto px-2 xs:px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 relative items-center pointer-events-auto gap-2">
                 <!-- Hamburger -->
                 <div class="flex items-center lg:hidden">
                     <button
@@ -91,7 +91,7 @@
                     </transition>
                 </ClientOnly>
 
-                <div class="ml-auto flex items-center gap-3"
+                <div class="ml-auto flex items-center gap-2"
                     @mouseover="nav.closeTabs()"
                 >
                     <GlobalSearch />
@@ -123,14 +123,14 @@
                         v-if="$page.props.auth?.user"
                         class="flex sm:items-center"
                     >
-                        <div class="ml-1 sm:ml-3 relative">
+                        <div class="relative">
                             <UserMenu />
                         </div>
                     </div>
                     <Link
                         v-else
                         :href="route('login')"
-                        class="mx-3 text-2xl bg-base-300 rounded-full p-2 shadow-2xs hover:text-secondary"
+                        class="text-2xl bg-base-300 rounded-full p-2 shadow-2xs hover:text-secondary"
                     >
                         <Icon
                             icon="ph:sign-in-duotone"

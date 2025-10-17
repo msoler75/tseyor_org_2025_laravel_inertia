@@ -1,5 +1,7 @@
 import { reactive, watch } from "vue";
 
+// selectores/opciones del usuario que pueden persistir entre sesiones o entre cambios de página
+
 const state = reactive({
   soloTitulosLibros: false,
   archivosVista: "normal",
@@ -7,7 +9,7 @@ const state = reactive({
   mostrarPermisos: false,
   developerMode: false,
   emisoraRadio: null,
-  tamanyoFuente: 16
+  tamanyoFuente: 16,
 });
 
 // avoid registering multiple watchers when useSelectors() is called from many components
