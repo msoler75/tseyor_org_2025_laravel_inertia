@@ -40,7 +40,7 @@ const someUploaded = ref(false)
 const dropzoneOptions = ref({
     url: '/files/upload/file',
     thumbnailWidth: 150,
-    maxFilesize: 50,
+    maxFilesize: 300,
     headers: {
         'X-CSRF-Token': null
     }

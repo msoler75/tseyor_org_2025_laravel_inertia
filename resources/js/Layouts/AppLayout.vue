@@ -1,46 +1,25 @@
 <template>
     <div>
-    <!-- App layout -->
-     <TransitionFade>
-     <div v-if="nav.showScrollTop" class="bottom-toolbar text-4xl fixed right-7 z-40 flex items-center gap-3"
-      :class="
-      [
-          folderExplorer.seleccionando
-                ? 'bottom-20'
-                : player.closed
-                ? 'bottom-7'
-                : player.expanded
-                ? 'bottom-20'
-                : 'bottom-14'
-        ]">
-          <ScrollToTop/>
-     </div>
-     </TransitionFade>
 
-        <!-- Loader -->
-        <div
-            v-if="loader"
-            class="fixed inset-0 flex justify-center items-center z-50 bg-black/50 backdrop-blur-lg"
-        >
-            <Loader class="w-[7.77rem]" :running="true" />
-        </div>
+        <Banner />
+
+        <Tools/>
+
+        <ToolTextSearch/>
 
         <Announcement
             :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'"
         />
+
+        <ClientOnly>
+            <AudioVideoPlayer />
+        </ClientOnly>
 
         <NavAside
             :show="nav.sideBarShow"
             @close="nav.sideBarShow = false"
             class="lg:hidden"
         />
-
-        <Banner />
-
-        <!-- <component :is="dynamicAudioPlayer" v-if="dynamicAudioPlayer" /> -->
-        <ClientOnly>
-            <AudioVideoPlayer />
-        </ClientOnly>
 
         <Modal :show="mostrarMensaje" centered max-width="md">
             <div class="p-5 mt-auto mb-auto">
@@ -69,8 +48,9 @@
             <NavBar />
 
             <!-- Page Content -->
-            <div
+            <div id="page-content"
                 @mouseover="nav.closeTabs()"
+                @click="ui.tools.toggleTools($event)"
                 class="grow relative transition-opacity duration-200"
                 :class="
                     nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''
@@ -112,26 +92,26 @@
 </template>
 
 <script setup>
-import useSelectors from '@/Stores/selectors';
-import FontSizeControls from '@/Components/FontSizeControls.vue';
 import useUserStore from "@/Stores/user";
-import usePlayer from "@/Stores/player";
 import setTransitionPages from "@/composables/transitionPages.js";
-import useFolderExplorerStore from "@/Stores/folderExplorer";
 import PWANotifications from "@/Components/PWANotifications.vue";
+import useUi from "@/Stores/ui";
+
+const ui = useUi();
+const player = ui.player
+const nav = ui.nav
 //import useRoute from "@/composables/useRoute.js";
 //useRouteimport { useRoute } from 'ziggy-js';
 
-const folderExplorer = useFolderExplorerStore();
+// const folderExplorer = useFolderExplorerStore();
 
 // ...existing code... (font controls moved to FontSizeControls component)
 
 // console.log('app initiating...')
 
-const player = usePlayer();
 const userStore = useUserStore();
 const page = usePage();
-const nav = useNav();
+
 //const route = useRoute();
 
 // MENSAJE FLASH
@@ -146,8 +126,6 @@ const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset;
     // console.log('handleScroll', nav.scrollY)
 };
-
-// const dynamicAudioPlayer = ref(null);
 
 // cuando el mouse sale de pantalla
 function handleMouse() {
@@ -174,8 +152,6 @@ function handleMouse() {
     document.addEventListener("click", handleInteraction);
 }
 
-console.log("APP INITIED");
-
 function cargarDatosUsuario() {
     if (!page.props.auth?.user) {
         userStore.saldo = "";
@@ -194,20 +170,9 @@ watch(
     }
 );
 
-// const onlyTabs = typeof window === "undefined"
-//  nav.init(route, nav.onlyTabs()); // en SSR solo las pestañas principales
-//else
-// if (typeof window === "undefined")
-
 nav.init(route);
 
 onMounted(() => {
-    console.log("APP LAYOUT mounted");
-
-    //console.log("route func:", route);
-
-    // inicializamos la navegación pasando la función "route" del componente, en el cliente
-
     // aplicamos configuración de transiciones de pagina (fadeout y scroll)
     setTransitionPages(router);
 
@@ -216,13 +181,6 @@ onMounted(() => {
     handleMouse();
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-
-    // cargamos el componente AudioPlayer más tarde
-    /* setTimeout(() => {
-        import('@/Components/AudioPlayer.vue').then(module => {
-            dynamicAudioPlayer.value = markRaw(module.default);
-        });
-    }, 5000)*/
 
     // mover a la posición indicada
     if (window.location.hash) {
@@ -236,30 +194,12 @@ onMounted(() => {
     if (location.search.includes("verified=1"))
         // redirigimos a dashboard
         router.get(route("dashboard"));
-
-    // TESTING
-    /*
-    setTimeout(()=>{
-        nav.activateTab(nav.items[5])
-    }, 250)
-    */
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener("scroll", handleScroll);
 });
 
-// no se utiliza (no es necesario, la página carga muy rápido)
-const loader = ref(false);
-loader.value = false;
-/*
-axios.get(route('setting', 'navigation'))
-    .then(response => {
-        console.log('response', response.data.value)
-        nav.setItems(response.data.value)
-        loader.value = false
-    })
-*/
 
 // INTERACCION AUDIO
 
@@ -267,24 +207,12 @@ function handleInteraction() {
     // console.log("handleInteraction", player.requiereInteraccion);
     if (player.requiereInteraccion) player.playPause();
 }
+
+
 </script>
 
 <style>
-/* reference to ../../css/app.css handled by build pipeline */
 
-.bottom-toolbar > * {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    outline: 2px solid transparent;
-    cursor: pointer;
-    transition: color 100ms, opacity 100ms;
-}
-.bottom-toolbar > *:hover {
-    color: #f97316; /* approximate Tailwind orange-500 */
-}
 
 /* font button styles moved to component (use utility classes) */
 

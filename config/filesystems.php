@@ -87,6 +87,6 @@ return [
      * Uploads
      */
 
-     'max_upload_size' => 75*1024*1024 // 75 Mb
+     'max_upload_size' => 300*1024*1024 // 300 Mb
 
 ];

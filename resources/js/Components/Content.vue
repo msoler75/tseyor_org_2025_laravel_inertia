@@ -1,5 +1,5 @@
 <template>
-    <Prose class="text-container break-words">
+    <Prose class="prose-text-container break-words">
         <ContentNode :node="arbol" :use-image="optimizeImages" @click="handleClick" />
 
         <ClientOnly>
@@ -220,15 +220,15 @@ defineExpose({ showImage })
 }
 
 
-.text-container :deep(h1) {
+.prose-text-container :deep(h1) {
     @apply text-2xl;
 }
 
-.text-container :deep(h2) {
+.prose-text-container :deep(h2) {
     @apply text-xl;
 }
 
-.text-container :deep(h3) {
+.prose-text-container :deep(h3) {
     @apply text-lg;
 }
 

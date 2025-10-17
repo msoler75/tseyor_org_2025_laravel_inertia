@@ -57,6 +57,7 @@ const mapSubmenu = (submenu) => {
     return {sections}
 }
 
+
 const state = reactive({
   //items: [],
   items: [],
@@ -73,9 +74,10 @@ const state = reactive({
   dontFadeout: false,
   navigating: false,
   dontScroll: false,
-  hoverDeactivated: false, // para evitar que se active el hover en la reentrada del mouse a la ventana
+  hoverDeactivated: false,
+  // Para evitar que se active el hover en la reentrada del mouse a la ventana
   // Scroll-to-top control
-  showScrollTop: false,
+  scrollingUp: false,
   tabHovering: null, // tab en el que el mouse se encuentra durante la desactivación del hover
   enteringTimeout: null,
   activeTab: null,
@@ -269,14 +271,14 @@ watch(
     // skip first update (when _prevY is initial sentinel)
     if (_prevY !== -10000) {
       const dy = y - _prevY;
-      if (y < _heightToShow) state.showScrollTop = false;
+      if (y < _heightToShow) state.scrollingUp = false;
       else if (dy > 0) {
         // bajando
         if (_subiendo) {
           _recorridoDown = dy;
         } else {
           _recorridoDown += dy;
-          if (_recorridoDown > _wrapToHide) state.showScrollTop = false;
+          if (_recorridoDown > _wrapToHide) state.scrollingUp = false;
         }
         _subiendo = false;
       } else {
@@ -285,7 +287,7 @@ watch(
           _recorridoUp = dy;
         } else {
           _recorridoUp += dy;
-          if (_recorridoUp < -1 * _wrapToShow) state.showScrollTop = true;
+          if (_recorridoUp < -1 * _wrapToShow) state.scrollingUp = true;
         }
         _subiendo = true;
       }

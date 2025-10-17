@@ -7,6 +7,7 @@
 
         <div class="fixed top-0 left-0 h-full bg-base-100 shadow-lg transition duration-200 z-50 overflow-y-auto"
             :class="!show ? '-translate-x-full' : ''">
+            <span class="absolute text-2xl right-2 top-2 cursor-pointer" @click="close"><Icon icon="ph:x" /></span>
             <div class="rounded-r xl:hidden flex justify-between w-full p-6 items-center">
 
                 <div class="flex justify-between  items-center space-x-3">

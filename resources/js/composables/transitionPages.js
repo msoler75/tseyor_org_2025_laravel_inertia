@@ -1,7 +1,10 @@
-export default function setTransitionPages(router) {
-  const nav = useNav();
+import useUi from "@/Stores/ui";
 
-  // console.log({page})
+export default function setTransitionPages(router) {
+    const ui = useUi();
+    const nav = ui.nav;
+
+
   const animationPageTransitionDuration = 0;
 
   // Use the router's navigation guard to track route changes
@@ -78,6 +81,7 @@ export default function setTransitionPages(router) {
 
   router.on("navigate", (event) => {
     console.log(`router: navigate. Navigated to ${event.detail.page.url}`);
+    ui.tools.closeTools()
   });
 
   router.on("exception", (event) => {
@@ -109,10 +113,14 @@ export default function setTransitionPages(router) {
             document.title = curTitle.textContent
         }
     })*/
+
   });
 
   router.on("finish", (event) => {
     console.log(`router: finish. Page loaded ${event.detail.visit.url}`);
+
+    ui.tools.detectContent()
+
     // send global event on window
     window.dispatchEvent(new CustomEvent("page-loaded"))
 

@@ -130,7 +130,7 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 const dropzoneOptions = ref({
     url: props.url,
     thumbnailWidth: 150,
-    maxFilesize: 50,
+    maxFilesize: 300,
     multiple: false,
     headers: {
         'X-CSRF-Token': null,

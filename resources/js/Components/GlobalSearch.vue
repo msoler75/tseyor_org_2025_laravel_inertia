@@ -1,9 +1,11 @@
 <template>
     <button type="button"
-        class="w-42 flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-2xs py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700 select-none flex-nowrap shrink-0"
+        class="w-fit flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-2xs py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700 select-none flex-nowrap shrink-0"
         @click="search.opened = true">
         <Icon icon="ph:magnifying-glass-bold" class="mr-2" />
-        Buscar en el sitio...<span class="hidden ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
+        <span class="hidden xs:inline">Buscar en el sitio...</span>
+        <span class="xs:hidden">Buscar...</span>
+            <span class="hidden ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
 
         <Modal :show="search.opened" @close="closeModal" maxWidth="lg">
             <div class="modal-search bg-base-100 flex flex-col text-sm pb-7">
