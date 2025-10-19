@@ -448,6 +448,7 @@ Route::get('boletines/{id}', [BoletinesController::class, 'ver'])->name('boletin
 // DEV/DEPLOY: Agrupadas bajo middleware de seguridad
 Route::middleware('deploy.token')->group(function () {
     Route::post('_sendbuild', 'App\\Http\\Controllers\\DeployController@handlePublicBuildUpload');
+    Route::post('_rollback', 'App\\Http\\Controllers\\DeployController@rollbackPublicBuild');
     Route::post('_sendssr', 'App\\Http\\Controllers\\DeployController@handleSSRUpload');
     Route::post('_sendnodemodules', 'App\\Http\\Controllers\\DeployController@handleNodeModulesUpload');
 });

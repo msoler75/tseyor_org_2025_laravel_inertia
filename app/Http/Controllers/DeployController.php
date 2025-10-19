@@ -53,6 +53,23 @@ class DeployController extends Controller
         }
     }
 
+    /**
+     * Rollback del build público: restaura la versión anterior
+     */
+    public function rollbackPublicBuild(Request $request)
+    {
+        try {
+            Log::channel('deploy')->info("Rollback de FrontEnd a versión anterior");
+
+            Deploy::rollbackPublicBuild();
+
+            return response()->json(['message' => 'Rollback realizado correctamente'], 200);
+        } catch (\Exception $exception) {
+            Log::channel('deploy')->error('Error en rollback de public/build: ' . $exception->getMessage());
+            return response()->json(['error' => $exception->getMessage()], 500);
+        }
+    }
+
 
     public function handleSSRUpload(Request $request)
     {

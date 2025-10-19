@@ -151,6 +151,51 @@ class DeployHelper
         }
     }
 
+    /**
+     * Envía una solicitud de rollback al endpoint especificado
+     */
+    public static function sendRollbackRequest(string $endpoint): array
+    {
+        $ch = curl_init();
+
+        $postFields = [
+            'rollback' => 'true'
+        ];
+
+        $defaultHeaders = ['Content-Type: application/x-www-form-urlencoded'];
+
+        // Añadir token de seguridad a la cabecera
+        $deployToken = config('deploy.deploy_token');
+        if ($deployToken) {
+            $defaultHeaders[] = 'X-Deploy-Token: ' . $deployToken;
+        }
+
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $endpoint,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query($postFields),
+            CURLOPT_HTTPHEADER => $defaultHeaders,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 300,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 5
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        return [
+            'success' => $httpCode == 200,
+            'http_code' => $httpCode,
+            'response' => $response,
+            'error' => $error
+        ];
+    }
+
 
     // parte servidor (recibe el zip y lo extrae)
 
@@ -451,6 +496,35 @@ class DeployHelper
 
         Log::channel('deploy')->info('Renombramos ' . $buildTempPath . ' a ' . $buildPath);
         File::move($buildTempPath, $buildPath);
+    }
+
+    /**
+     * Rollback del build público: renombra build a build_new y build_old a build
+     */
+    public static function rollbackPublicBuild(): void
+    {
+        $buildPath = public_path('build');
+        $buildOldPath = public_path('build_old');
+        $buildNewPath = public_path('build_new');
+
+        Log::channel('deploy')->info("Rollback paths: ", ['buildPath' => $buildPath, 'buildOldPath' => $buildOldPath, 'buildNewPath' => $buildNewPath]);
+
+        if (File::isDirectory($buildNewPath)) {
+            Log::channel('deploy')->info('Borramos carpeta ' . $buildNewPath);
+            File::deleteDirectory($buildNewPath);
+        }
+
+        if (File::isDirectory($buildPath)) {
+            Log::channel('deploy')->info('Renombramos ' . $buildPath . ' a ' . $buildNewPath);
+            File::move($buildPath, $buildNewPath);
+        }
+
+        if (File::isDirectory($buildOldPath)) {
+            Log::channel('deploy')->info('Renombramos ' . $buildOldPath . ' a ' . $buildPath);
+            File::move($buildOldPath, $buildPath);
+        } else {
+            throw new Exception('No hay build_old para rollback');
+        }
     }
 
 
