@@ -49,7 +49,7 @@ class EventosController extends Controller
 
         // appends para mantener filtros en links de paginación
         $appends = [];
-        if ($categoria) $appends['categoria'] = $categoria;
+        // if ($categoria) $appends['categoria'] = $categoria;
         if ($buscar) $appends['buscar'] = $buscar;
         if (!empty($appends)) $resultados->appends($appends);
 
@@ -62,9 +62,9 @@ class EventosController extends Controller
 
         return Inertia::render('Eventos/Index', [
             'filtrado' => $buscar,
-            'categoriaActiva' => $categoria,
+            //'categoriaActiva' => $categoria,
             'listado' => $resultados,
-            'categorias' => $categorias
+            //'categorias' => $categorias
         ])
             ->withViewData(SEO::get('eventos'));
     }
