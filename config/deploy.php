@@ -12,6 +12,7 @@ return [
     'node_modules_endpoint' => $protocol . '://' . $host . '/_sendnodemodules',
     'front_endpoint' => $protocol . '://' . $host . '/_sendbuild',
     'ssr_endpoint' => $protocol . '://' . $host . '/_sendssr',
+    'rollback_endpoint' => $protocol . '://' . $host . '/_rollback',
 
     // Umbral por defecto para aceptar archivos (segundos)
     'max_age_seconds' => 86400, // 24 horas

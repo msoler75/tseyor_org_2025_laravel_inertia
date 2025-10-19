@@ -93,11 +93,27 @@ Si queremos actualizar en la release actual (current) alguna parte del frontend 
 - El comando `deploy:front` sube el contenido de la carpeta de scripts en `/public/build` ya que en DreamHost no funciona `npm run build`
 - El comando `deploy:ssr` sube el archivo `ssr.js` y le hace algunos reemplazos para que las rutas funcionen.
 
+### Rollback del frontend
+
+Si necesitas revertir una actualización del frontend a la versión anterior, puedes usar la opción `--rollback`:
+
+```bash
+php artisan deploy:front --rollback
+```
+
+Este comando:
+- Renombra la carpeta `public/build` actual a `public/build_new`
+- Restaura `public/build_old` como la nueva `public/build`
+- Permite recuperar rápidamente una versión anterior del frontend sin necesidad de redeploy completo
+
+**Nota**: Solo funciona si existe una carpeta `build_old` (creada durante el último deploy).
+
 
 ## Notas importantes
 - **Procura No editar archivos directamente en `releases`**: Si hay algún cambio importante despliega una nueva versión.
 - **El archivo `.env` y la carpeta `storage` son compartidos**: cualquier cambio afecta a todas las releases.
 - **Para rollback**: ejecuta `./release_establecer.sh <número_release>` para apuntar el symlink `current` a una versión anterior. Pero eso no hace rollback de migraciones de base de datos.
+- **Rollback del frontend**: usa `php artisan deploy:front --rollback` para revertir cambios en el frontend sin afectar la release completa.
 - **Permisos**: asegúrate de que los scripts y carpetas tengan los permisos adecuados para el usuario de despliegue.
 - **Logs y workers**: revisa logs y estado de workers tras cada despliegue. Están en `shared/storage/logs`
 
