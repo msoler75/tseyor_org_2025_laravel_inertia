@@ -3,17 +3,21 @@
 
         <Banner />
 
-        <Tools/>
+        <ClientOnly>
+            <Tools/>
+        </ClientOnly>
 
-        <ToolTextSearch/>
-
-        <Announcement
-            :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'"
-        />
+        <ClientOnly>
+            <ToolTextSearch/>
+        </ClientOnly>
 
         <ClientOnly>
             <AudioVideoPlayer />
         </ClientOnly>
+
+        <Announcement
+            :class="nav.fullPage ? 'w-full fixed top-0 z-40' : 'block'"
+        />
 
         <NavAside
             :show="nav.sideBarShow"
@@ -96,6 +100,7 @@ import useUserStore from "@/Stores/user";
 import setTransitionPages from "@/composables/transitionPages.js";
 import PWANotifications from "@/Components/PWANotifications.vue";
 import useUi from "@/Stores/ui";
+import ClientOnly from '@duannx/vue-client-only';
 
 const ui = useUi();
 const player = ui.player

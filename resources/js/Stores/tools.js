@@ -57,12 +57,12 @@ const tools = reactive({
   toggleSearch() {
     this.mostrarBuscarTexto = !this.mostrarBuscarTexto;
     this.mostrarHerramientas = "auto";
-    this.nav.scrollingUp = false;
+    nav.scrollingUp = false;
   },
   closeSearch() {
     this.mostrarBuscarTexto = false;
     this.mostrarHerramientas = "auto";
-    this.nav.scrollingUp = false;
+    nav.scrollingUp = false;
   },
 });
 

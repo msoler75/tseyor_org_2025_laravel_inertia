@@ -1,5 +1,5 @@
 <template>
-    <div class="section" :style="computedStyle">
+    <div class="section overflow-hidden" :style="computedStyle">
         <slot></slot>
     </div>
 </template>

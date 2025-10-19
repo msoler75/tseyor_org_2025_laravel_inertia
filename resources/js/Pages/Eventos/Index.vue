@@ -24,9 +24,10 @@
         <PageWide>
         <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-
-            <Categorias v-if="false" :categorias="categorias" :url="route('eventos')" select-breakpoint="md"
-                div-class="min-w-[24ch] w-full md:w-fit " />
+<!--
+    <Categorias v-if="false" :categorias="categorias" :url="route('eventos')" select-breakpoint="md"
+    div-class="min-w-[24ch] w-full md:w-fit " />
+    -->
 
             <div class="w-full grow">
 
@@ -93,18 +94,18 @@
 <script setup>
 
 const props = defineProps({
-    categoriaActiva: { default: () => '' },
+    //categoriaActiva: { default: () => '' },
     filtrado: { default: () => '' },
     listado: {
         default: () => { data: [] }
     },
-    categorias: {
+    /*categorias: {
         default: () => []
-    }
+    }*/
 });
 
 const listado = ref(props.listado);
-const categorias = ref(props.categorias)
+//const categorias = ref(props.categorias)
 
 // Separar eventos en curso, próximos y pasados
 import { esFechaFutura, aFecha, esEventoEnCurso } from '@/composables/fechas.js'
