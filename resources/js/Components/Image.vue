@@ -1,5 +1,14 @@
 <template>
+    <img
+        v-if="!hydrated"
+        :src="imageSrc"
+        :alt="alt"
+        :title="title"
+        class="is-image"
+        :style="ssrStyles"
+    />
     <component
+        v-else
         :is="errorLoading && errorIcon?Icon: !errorLoading && displaySrc ? 'img' : 'div'"
         ref="img"
         class="is-image transition-opacity duration-200 text-3xl"
@@ -86,6 +95,9 @@ const emit = defineEmits(["loaded", "error"]);
 
 const img = ref();
 
+// flag para controlar render cliente tras hidratacion
+const hydrated = ref(false);
+
 // const myDomain = getMyDomain()
 
 // la imagen que se cargará del servidor
@@ -104,6 +116,9 @@ const isVisible = ref(false);
 // Estado para saber si ya se configuró la imagen final
 const finalImageConfigured = ref(false);
 
+// Comprobamos si estamos en SSR
+const isSSR = typeof window === 'undefined';
+
 function fillUnits(value) {
     let units = "px";
     if (typeof value === "string" && value.match(/\d+\D+/)) units = "";
@@ -116,6 +131,12 @@ const styles = computed(() => {
     };
     if (props.width) s.width = fillUnits(props.width);
     // if (props.height) s.height = fillUnits(props.height)
+    return s;
+});
+
+const ssrStyles = computed(() => {
+    const s = {};
+    if (props.width) s.width = fillUnits(props.width);
     return s;
 });
 
@@ -573,6 +594,9 @@ onMounted(() => {
     console.log(`📏 rootMargin configurado:`, props.rootMargin);
     console.log(`⚡ lazy:`, props.lazy, `priority:`, props.priority);
     isMounted.value = true;
+
+    // marcar como hydrated en el cliente para que la plantilla muestre la versión cliente
+    hydrated.value = true;
 
     // SIEMPRE inicializar IntersectionObserver si lazy loading está habilitado
     if (props.lazy && !props.priority) {

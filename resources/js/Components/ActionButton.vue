@@ -1,5 +1,10 @@
 <template>
-    <component :is="external ? 'a' : Link" :href="href" class="pushable relative inline group btn px-0">
+    <!-- Versión SSR simple: solo el enlace básico -->
+    <a v-if="!hydrated" :href="href" class="btn btn-primary">
+        <slot />
+    </a>
+    <!-- Versión cliente completa: estructura completa con animaciones -->
+    <a v-else :href="href" class="pushable relative inline group btn px-0">
         <div class="w-full front inline-flex items-center gap-3 transition-all duration-300 btn btn-primary">
             <div class="px-2 absolute transition-all left-0 group-hover:left-full group-hover:-translate-x-full">
                 <Icon icon="ph:arrow-right-duotone" class="transform scale-150" />
@@ -8,15 +13,26 @@
                 <slot />
             </div>
         </div>
-    </component>
+        <!-- Sombra: siempre presente en el DOM para mantener la misma estructura en SSR y cliente. -->
+        <div class="shadow hydrated"></div>
+    </a>
 </template>
 
 
 <script setup>
 import Link from '@/Components/Link.vue'
+import { ref, onMounted } from 'vue'
+
 const props = defineProps({
     href: { type: String, required: true },
     external: { type: Boolean, default: false }
+})
+
+// Flag para controlar render cliente tras hidratación
+const hydrated = ref(false)
+
+onMounted(() => {
+    hydrated.value = true
 })
 </script>
 
@@ -28,10 +44,11 @@ const props = defineProps({
     @apply rounded-xl bg-primary;
     border: none;
     cursor: pointer;
+    position: relative;
 }
 
 /** sombra */
-.pushable:after {
+.shadow {
     content: "";
     position: absolute;
     @apply rounded-xl;
@@ -42,6 +59,12 @@ const props = defineProps({
     height: 100%;
     background: rgb(0, 0, 0, .25);
     background: linear-gradient(90deg, rgba(0, 0, 0, .1) 0%, rgba(0, 0, 0, .6) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.shadow.hydrated {
+    opacity: 1;
 }
 
 .pushable .front {
