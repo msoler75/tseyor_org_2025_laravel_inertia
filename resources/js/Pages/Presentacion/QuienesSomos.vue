@@ -3,6 +3,8 @@
 
         <Hero title="¿Quiénes Somos?"
             srcImage="/almacen/medios/paginas/quienes-somos.jpg"
+            src-width="1600"
+            src-height="1200"
             buttonLabel="Conoce nuestros orígenes"
             :href="route('origenes-de-tseyor')">
             <p>

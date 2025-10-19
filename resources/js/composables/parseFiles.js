@@ -1,6 +1,7 @@
 import { getSrcUrl } from "./srcutils";
 
 export const parseFiles = (data) => {
+  if (!data) return [];
   var archivos = [];
   if (Array.isArray(data)) archivos = data;
   else if (typeof data === "string")
