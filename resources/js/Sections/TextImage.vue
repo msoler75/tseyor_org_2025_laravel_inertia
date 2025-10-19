@@ -138,14 +138,34 @@ const imageSlotPresent = computed(() => !!slots.image)
 const actionSlotPresent = computed(() => !!slots.action)
 
 const textdiv = ref(null)
-const textPresent = computed(() => textdiv.value && (textdiv.value.children.length || textdiv.value.innerText))
+const textPresent = computed(() => !!slots.default && slots.default().length > 0)
 
 // Detectar si hay mucho texto para ajustar el espacio de la imagen
 const hasLongText = computed(() => {
-    if (!textdiv.value) return false
-    const textLength = textdiv.value.innerText?.length || 0
-    const hasMultipleParagraphs = textdiv.value.children.length > 1
-    return textLength > 300 || hasMultipleParagraphs
+    const slotContent = slots.default?.()
+    if (!slotContent || slotContent.length === 0) return false
+
+    // Función recursiva para extraer texto plano de VNodes
+    const extractText = (vnodes) => {
+        return vnodes.map(vnode => {
+            if (typeof vnode === 'string') return vnode
+            if (vnode.children) {
+                if (typeof vnode.children === 'string') return vnode.children
+                if (Array.isArray(vnode.children)) return extractText(vnode.children)
+            }
+            return ''
+        }).join('')
+    }
+
+    const text = extractText(slotContent).trim()
+    const textLength = text.length
+
+    // Contar elementos que podrían ser párrafos (elementos con tag 'p' o saltos de línea)
+    const paragraphCount = slotContent.filter(vnode =>
+        vnode.type === 'p' || (typeof vnode === 'string' && vnode.includes('\n'))
+    ).length
+
+    return textLength > 300 || paragraphCount > 1
 })
 
 
