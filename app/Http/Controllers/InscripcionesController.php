@@ -62,6 +62,8 @@ class InscripcionesController extends Controller
         $inscripcion = Inscripcion::create($data);
         $destinatario = 'secretaria@tseyor.org';
 
+        Log::channel('inscripciones')->info("Nueva inscripción creada: {$inscripcion->id} - {$data['nombre']} ({$data['email']})");
+
         // mensaje de confirmación al autor
         Mail::to($data['email'])
             ->bcc('msgp753@gmail.com')
@@ -92,7 +94,7 @@ class InscripcionesController extends Controller
             return redirect()->back()->with('success', 'La inscripción se ha guardado correctamente');
         } else {
             // Devolver un objeto JSON con los errores de validación
-            Log::error("Inscripción. No se pudo guardar la inscripción ", $data);
+            Log::channel('inscripciones')->error("Inscripción. No se pudo guardar la inscripción ", $data);
             return redirect()->back()->withErrors(['No se pudo guardar la inscripción, inténtalo de nuevo']);
         }
     }
@@ -140,12 +142,17 @@ class InscripcionesController extends Controller
             ->count();
 
         if ($inscripcionesActivas >= config('inscripciones.asignacion.max_inscripciones_por_usuario')) {
+            Log::channel('inscripciones')->warning("Asignación fallida: usuario {$usuario->id} ({$usuario->name}) tiene {$inscripcionesActivas} inscripciones activas, límite alcanzado");
             return back()->withErrors([
                 'user_id' => 'El usuario ya tiene el máximo de inscripciones activas permitidas.'
             ]);
         }
 
+        Log::channel('inscripciones')->info("Asignando inscripción {$inscripcion->id} a usuario {$usuario->id} ({$usuario->name}), motivo: {$request->motivo}");
+
         $inscripcion->asignarA($usuario, $request->motivo ?? 'Asignación manual');
+
+        Log::channel('inscripciones')->info("Inscripción {$inscripcion->id} asignada exitosamente a {$usuario->name}");
 
         return back()->with('success', 'Inscripción asignada correctamente');
     }
@@ -156,8 +163,15 @@ class InscripcionesController extends Controller
     public function actualizarEstado(Request $request, Inscripcion $inscripcion)
     {
         // Verificar permisos
-        if (!Auth::user()->hasRole('admin') && $inscripcion->user_id !== Auth::id()) {
-            abort(403);
+        $user = Auth::user();
+        $isAdmin = $user->hasRole('admin');
+        $isAssigned = $inscripcion->user_id === $user->id;
+
+        Log::channel('inscripciones')->info("ActualizarEstado: User {$user->id} ({$user->name}), isAdmin: {$isAdmin}, isAssigned: {$isAssigned}, inscripcion.user_id: {$inscripcion->user_id}");
+
+        if (!$isAdmin && !$isAssigned) {
+            Log::channel('inscripciones')->warning("ActualizarEstado denegado: User {$user->id} no tiene permisos para inscripcion {$inscripcion->id}");
+            abort(403, 'No tienes permisos para cambiar el estado de esta inscripción');
         }
 
         $request->validate([
@@ -165,7 +179,9 @@ class InscripcionesController extends Controller
             'comentario' => 'nullable|string|max:1000'
         ]);
 
-        $inscripcion->actualizarEstado($request->estado, $request->comentario ?? '');
+        Log::channel('inscripciones')->info("ActualizarEstado: Cambiando estado de {$inscripcion->estado} a {$request->estado} para inscripcion {$inscripcion->id}");
+
+        $inscripcion->actualizarEstado($request->estado, $user->name, $request->comentario ?? '');
 
         return back()->with('success', 'Estado actualizado correctamente');
     }
@@ -177,6 +193,7 @@ class InscripcionesController extends Controller
     {
         // Solo el usuario asignado puede rebotar
         if ($inscripcion->user_id !== Auth::id()) {
+            Log::channel('inscripciones')->warning("Rebote denegado: usuario " . Auth::id() . " intentó rebotar inscripción {$inscripcion->id} asignada a {$inscripcion->user_id}");
             abort(403);
         }
 
@@ -184,7 +201,11 @@ class InscripcionesController extends Controller
             'motivo' => 'required|string|min:10|max:500'
         ]);
 
+        Log::channel('inscripciones')->info("Rebotando inscripción {$inscripcion->id} por usuario " . Auth::id() . ", motivo: {$request->motivo}");
+
         $inscripcion->rebotar($request->motivo);
+
+        Log::channel('inscripciones')->info("Inscripción {$inscripcion->id} rebotada exitosamente");
 
         return response()->json([
             'message' => 'Inscripción rebotada correctamente',
@@ -260,13 +281,20 @@ class InscripcionesController extends Controller
         $usuario = User::find($validated['user_id']);
         $inscripciones = Inscripcion::whereIn('id', $validated['inscripciones_ids'])->get();
 
+        Log::channel('inscripciones')->info("Iniciando asignación masiva: " . count($validated['inscripciones_ids']) . " inscripciones a usuario {$usuario->id} ({$usuario->name})");
+
         $asignadas = 0;
         foreach ($inscripciones as $inscripcion) {
             if (!$inscripcion->user_id) { // Solo asignar si no está ya asignada
                 $inscripcion->asignarA($usuario, 'Asignación masiva desde dashboard');
                 $asignadas++;
+                Log::channel('inscripciones')->info("Inscripción {$inscripcion->id} asignada en masa a {$usuario->name}");
+            } else {
+                Log::channel('inscripciones')->info("Inscripción {$inscripcion->id} ya asignada, omitida en asignación masiva");
             }
         }
+
+        Log::channel('inscripciones')->info("Asignación masiva completada: {$asignadas} inscripciones asignadas a {$usuario->name}");
 
         return redirect()->back()->with('success', "{$asignadas} inscripciones asignadas a {$usuario->name}");
     }
@@ -278,6 +306,7 @@ class InscripcionesController extends Controller
     {
         // Solo el usuario asignado o admin puede comentar
         if (!Auth::user()->hasRole('admin') && $inscripcion->user_id !== Auth::id()) {
+            Log::channel('inscripciones')->warning("Comentario denegado: usuario " . Auth::id() . " intentó comentar en inscripción {$inscripcion->id} asignada a {$inscripcion->user_id}");
             abort(403);
         }
 
@@ -285,9 +314,13 @@ class InscripcionesController extends Controller
             'comentario' => 'required|string|max:1000',
         ]);
 
+        Log::channel('inscripciones')->info("Añadiendo comentario a inscripción {$inscripcion->id} por usuario " . Auth::id() . ": {$request->comentario}");
+
         // Centraliza la lógica de nota en el modelo
         $inscripcion->comentar($request->comentario, true); // true indica que es actividad del tutor
         $inscripcion->save();
+
+        Log::channel('inscripciones')->info("Comentario añadido exitosamente a inscripción {$inscripcion->id}");
 
         // Opcional: devolver la inscripción actualizada o solo mensaje
         return response()->json([
@@ -303,6 +336,7 @@ class InscripcionesController extends Controller
     {
         // Verificar que el usuario puede gestionar esta inscripción
         if (!Auth::user()->hasRole('admin') && $inscripcion->user_id !== Auth::id()) {
+            Log::channel('inscripciones')->warning("Actualización de notas denegada: usuario " . Auth::id() . " intentó actualizar notas en inscripción {$inscripcion->id} asignada a {$inscripcion->user_id}");
             abort(403);
         }
 
@@ -310,9 +344,13 @@ class InscripcionesController extends Controller
             'notas' => 'nullable|string'
         ]);
 
+        Log::channel('inscripciones')->info("Actualizando notas de inscripción {$inscripcion->id} por usuario " . Auth::id());
+
         $inscripcion->notas = $request->notas;
         $inscripcion->ultima_actividad = now(); // Marcar actividad del tutor
         $inscripcion->save();
+
+        Log::channel('inscripciones')->info("Notas actualizadas exitosamente para inscripción {$inscripcion->id}");
 
         return back()->with('success', 'Notas actualizadas correctamente');
     }
