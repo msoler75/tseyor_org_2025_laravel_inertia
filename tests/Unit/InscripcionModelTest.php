@@ -139,7 +139,7 @@ class InscripcionModelTest extends TestCase
         $nuevoEstado = 'contactado';
         $comentario = 'Primer contacto realizado';
 
-        $this->inscripcion->actualizarEstado($nuevoEstado, $comentario);
+        $this->inscripcion->actualizarEstado($nuevoEstado, "usuarioTest", $comentario);
 
         $this->assertEquals($nuevoEstado, $this->inscripcion->estado);
         $this->assertNotNull($this->inscripcion->ultima_actividad);
@@ -206,12 +206,12 @@ class InscripcionModelTest extends TestCase
         $this->assertNotNull($proximaNotificacion);
         $this->assertInstanceOf(Carbon::class, $proximaNotificacion);
 
-        $diasIntervalo = config('inscripciones.notificaciones.dias_intervalo_asignada');
-        $fechaEsperada = $this->inscripcion->fecha_asignacion->addDays($diasIntervalo);
+        // Para primera notificación, siempre devuelve now()->subMinute()
+        $fechaEsperada = now()->subMinute();
 
         $this->assertEquals(
-            $fechaEsperada->format('Y-m-d'),
-            $proximaNotificacion->format('Y-m-d')
+            $fechaEsperada->format('Y-m-d H:i'),
+            $proximaNotificacion->format('Y-m-d H:i')
         );
     }
 

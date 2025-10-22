@@ -188,6 +188,12 @@ return [
             'level' => 'debug',
         ],
 
+        'inscripciones' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/inscripciones-' . date('Y-m') . '.log'),
+            'level' => 'info',
+        ],
+
         '500' => [
             'driver' => 'daily',
             'path' => storage_path('logs/500.log'),

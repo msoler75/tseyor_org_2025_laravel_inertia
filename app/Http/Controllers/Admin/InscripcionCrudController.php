@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\InscripcionesAsignadas;
 use App\Notifications\InscripcionReasignada;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class InscripcionCrudController
@@ -79,7 +80,7 @@ class InscripcionCrudController extends CrudController
         $this->aplicarFiltrosBasicos();
         // Log SQL generado por la consulta principal de la lista
         \DB::listen(function ($query) {
-            \Log::info('[SQL Backpack Inscripciones]', [
+            \Log::channel('inscripciones')->info('[SQL Backpack Inscripciones]', [
                 'sql' => $query->sql,
                 'bindings' => $query->bindings,
                 'time' => $query->time
@@ -407,7 +408,7 @@ class InscripcionCrudController extends CrudController
      */
     public function asignarMasiva(Request $request)
     {
-        Log::info('Asignación masiva iniciada', [
+        Log::channel('inscripciones')->info('Asignación masiva iniciada', [
             'inscripcion_ids' => $request->input('inscripcion_ids'),
             'user_id' => $request->input('user_id')
         ]);
@@ -416,7 +417,7 @@ class InscripcionCrudController extends CrudController
         $userId = $request->input('user_id');
 
         if (empty($inscripcionIds) || !$userId) {
-            Log::warning('Asignación masiva falló: parámetros vacíos', [
+            Log::channel('inscripciones')->warning('Asignación masiva falló: parámetros vacíos', [
                 'inscripcion_ids' => $inscripcionIds,
                 'user_id' => $userId
             ]);
@@ -428,7 +429,7 @@ class InscripcionCrudController extends CrudController
 
         $user = User::find($userId);
         if (!$user) {
-            Log::warning('Asignación masiva falló: usuario no encontrado', ['user_id' => $userId]);
+            Log::channel('inscripciones')->warning('Asignación masiva falló: usuario no encontrado', ['user_id' => $userId]);
             return response()->json([
                 'success' => false,
                 'message' => 'Usuario no encontrado'
@@ -445,7 +446,7 @@ class InscripcionCrudController extends CrudController
 
             if (!$inscripcion) {
                 $errores[] = "Inscripción {$id} no encontrada";
-                Log::warning("Inscripción no encontrada", ['id' => $id]);
+                Log::channel('inscripciones')->warning("Inscripción no encontrada", ['id' => $id]);
                 continue;
             }
 
@@ -478,7 +479,7 @@ class InscripcionCrudController extends CrudController
                     'comentario' => $inscripcion->comentario
                 ];
 
-                Log::info("Inscripción {$id} asignada correctamente", [
+                Log::channel('inscripciones')->info("Inscripción {$id} asignada correctamente", [
                     'estado_anterior' => $estadoAnterior,
                     'tutor_anterior' => $tutorAnterior,
                     'nuevo_tutor' => $userId
@@ -486,7 +487,7 @@ class InscripcionCrudController extends CrudController
 
             } catch (\Exception $e) {
                 $errores[] = "Error al asignar inscripción {$id}: " . $e->getMessage();
-                Log::error("Error al asignar inscripción {$id}", [
+                Log::channel('inscripciones')->error("Error al asignar inscripción {$id}", [
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString()
                 ]);
@@ -506,11 +507,11 @@ class InscripcionCrudController extends CrudController
                     }
                 }
             } catch (\Exception $e) {
-                Log::error('Error enviando notificación masiva a tutor: ' . $e->getMessage());
+                Log::channel('inscripciones')->error('Error enviando notificación masiva a tutor: ' . $e->getMessage());
             }
         }
 
-        Log::info('Asignación masiva completada', [
+        Log::channel('inscripciones')->info('Asignación masiva completada', [
             'total_procesadas' => $count,
             'total_errores' => count($errores),
             'procesadas' => $procesadas,
@@ -549,7 +550,8 @@ class InscripcionCrudController extends CrudController
             ]);
         }
 
-        $inscripcion->actualizarEstado($nuevoEstado, $comentario);
+        $user = Auth::user();
+        $inscripcion->actualizarEstado($nuevoEstado, optional($user)->name, $comentario);
 
         return response()->json([
             'success' => true,
@@ -569,7 +571,7 @@ class InscripcionCrudController extends CrudController
             $estado = $request->input('estado');
             if ($estado !== '') {
                 $this->crud->addClause('where', 'estado', '=', $estado);
-                \Log::info('Filtrando por estado: [' . $estado. ']');
+                \Log::channel('inscripciones')->info('Filtrando por estado: [' . $estado. ']');
             }
         }
 

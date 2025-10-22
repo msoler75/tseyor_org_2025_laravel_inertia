@@ -148,7 +148,7 @@ class Inscripcion extends Model
             $usuario->notify(new \App\Notifications\InscripcionAsignada($this));
             $this->ultima_notificacion = now(); // Solo actualizar si la notificación se envía correctamente
         } catch (\Exception $e) {
-            Log::error('Error enviando notificación de asignación a tutor: ' . $e->getMessage());
+            Log::channel('inscripciones')->error('Error enviando notificación de asignación a tutor: ' . $e->getMessage());
             // No establecer ultima_notificacion si falla la notificación
         }
 
@@ -179,7 +179,7 @@ class Inscripcion extends Model
     /**
      * Actualiza el estado con comentario
      */
-    public function actualizarEstado(string $nuevoEstado, string $comentario = ''): void
+    public function actualizarEstado(string $nuevoEstado, string $userName, string $comentario = ''): void
     {
         $estadoAnterior = $this->estado;
         $this->estado = $nuevoEstado;
@@ -187,7 +187,7 @@ class Inscripcion extends Model
 
         $this->save();
 
-        $mensaje = "Cambiado de '{$estadoAnterior}' a '{$nuevoEstado}'";
+        $mensaje = "Cambiado de '{$estadoAnterior}' a '{$nuevoEstado}' por $userName";
         if ($comentario) {
             $mensaje .= ": {$comentario}";
         }
