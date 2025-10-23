@@ -24,7 +24,8 @@ import usePlayer from '@/Stores/player'
 const props = defineProps({
     audios: {
         type: Array,
-        required: true,
+        required: false,
+        default: () => []
     },
     numerados: {
         type: Boolean,

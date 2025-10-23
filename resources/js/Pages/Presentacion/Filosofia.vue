@@ -2,7 +2,7 @@
 
 
     <div class="container flex justify-between mx-auto py-12">
-        <Back href="/quienes-somos" floatAtY="-100">Quiénes Somos</Back>
+        <Back href="/quienes-somos" :floatAtY="-100">Quiénes Somos</Back>
         <Share />
     </div>
 

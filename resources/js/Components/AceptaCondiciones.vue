@@ -1,6 +1,6 @@
 <template>
     <div class="text-justify">
-        <input type="checkbox" class="form-checkbox transform scale-125 translate-x-0.5 -translate-y-1" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" required>
+        <input type="checkbox" class="form-checkbox transform scale-125 translate-x-0.5 -translate-y-1" :checked="modelValue" @change="$emit('update:modelValue', $event.target.checked)" required>
         <span class="ml-1"> He leído y acepto la <a target="_blank" href="/informacion-legal#Política de privacidad" class="underline">política de privacidad</a>
             y doy mi consentimiento para el tratamiento de mis datos personales por parte de TSEYOR con la finalidad de {{ finalidad }}.</span>
         </div>
@@ -9,7 +9,7 @@
 
 <script setup>
 defineProps({
-    modelValue: String,
+    modelValue: Boolean,
     finalidad: String,
 });
 

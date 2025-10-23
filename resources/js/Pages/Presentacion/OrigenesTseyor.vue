@@ -4,7 +4,7 @@
         <h1 class="hidden">Orígenes de Tseyor</h1>
 
         <div class="container flex justify-between items-center mb-20 z-40">
-            <Back href="/quienes-somos" floatAtY="-100">Quiénes Somos</Back>
+            <Back href="/quienes-somos" :floatAtY="-100">Quiénes Somos</Back>
         </div>
 
         <Section>
