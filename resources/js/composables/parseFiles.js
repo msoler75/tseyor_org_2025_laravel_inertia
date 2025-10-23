@@ -11,7 +11,7 @@ export const parseFiles = (data) => {
       console.log("parseFiles1", err);
       archivos = data.split(",").map((x) => x.trim());
     }
-  else return data;
+  else return [];
 
   try {
     const r = [];

@@ -119,8 +119,8 @@ class DeployHelper
             CURLOPT_HTTPHEADER => $mergedHeaders,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 300,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_MAXREDIRS => 5
         ]);
@@ -177,8 +177,8 @@ class DeployHelper
             CURLOPT_HTTPHEADER => $defaultHeaders,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 300,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_MAXREDIRS => 5
         ]);
@@ -352,6 +352,87 @@ class DeployHelper
         $zip->close();
     }
 
+    /**
+     * Valida el contenido del ZIP antes de extraerlo para prevenir path traversal y archivos no permitidos.
+     * @param string $zipPath Ruta al archivo ZIP
+     * @param string $type Tipo de despliegue: 'public_build', 'ssr', 'node_modules'
+     * @throws Exception Si el contenido no es válido
+     */
+    public static function validateZipContent(string $zipPath, string $type): void
+    {
+        if (!file_exists($zipPath)) {
+            throw new Exception("El archivo ZIP no existe: {$zipPath}");
+        }
+
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath) !== TRUE) {
+            throw new Exception("Error al abrir el archivo ZIP para validación: {$zipPath}");
+        }
+
+        // Definir reglas por tipo
+        $rules = self::getValidationRules($type);
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $entry = $zip->getNameIndex($i);
+
+            // Verificar path traversal
+            if (strpos($entry, '..') !== false || strpos($entry, '../') !== false) {
+                $zip->close();
+                throw new Exception("Path traversal detectado en entrada ZIP: {$entry}");
+            }
+
+            // Verificar si la entrada está en whitelist de paths
+            $allowed = false;
+            foreach ($rules['allowedPaths'] as $path) {
+                if (strpos($entry, $path) === 0) {
+                    $allowed = true;
+                    break;
+                }
+            }
+            if (!$allowed) {
+                $zip->close();
+                throw new Exception("Path no permitido en ZIP: {$entry} (tipo: {$type})");
+            }
+
+            // Verificar extensión si no es directorio
+            if (!str_ends_with($entry, '/')) {
+                $extension = strtolower(pathinfo($entry, PATHINFO_EXTENSION));
+                if (!in_array($extension, $rules['allowedExtensions'])) {
+                    $zip->close();
+                    throw new Exception("Extensión no permitida en ZIP: {$extension} para {$entry} (tipo: {$type})");
+                }
+            }
+        }
+
+        $zip->close();
+    }
+
+    /**
+     * Devuelve las reglas de validación para cada tipo de despliegue.
+     */
+    private static function getValidationRules(string $type): array
+    {
+        switch ($type) {
+            case 'public_build':
+                return [
+                    'allowedPaths' => ['assets/', 'images/', 'favicon.ico', 'manifest.json', 'robots.txt', 'sitemap.xml'],
+                    'allowedExtensions' => ['js', 'css', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'json', 'txt', 'xml', 'map']
+                ];
+            case 'ssr':
+                return [
+                    'allowedPaths' => ['ssr.js', 'ssr-manifest.json'],
+                    'allowedExtensions' => ['js', 'json']
+                ];
+            case 'node_modules':
+                return [
+                    'allowedPaths' => ['node_modules/'],
+                    'allowedExtensions' => ['js', 'json', 'map', 'css', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'md', 'txt', 'lock', 'ts', 'd.ts']
+                ];
+            default:
+                throw new Exception("Tipo de despliegue no reconocido: {$type}");
+        }
+    }
+
 
     public static function postInstallCleanup(): void
     {
@@ -464,6 +545,9 @@ class DeployHelper
      */
     public static function installPublicBuildFromZip(string $zipPath): void
     {
+        // Validar contenido del ZIP antes de cualquier operación
+        self::validateZipContent($zipPath, 'public_build');
+
         $buildPath = public_path('build');
         $buildTempPath = public_path('build_temp');
         $buildOldPath = public_path('build_old');
@@ -536,6 +620,9 @@ class DeployHelper
      */
     public static function installSSRFromZip(string $zipPath): void
     {
+        // Validar contenido del ZIP antes de cualquier operación
+        self::validateZipContent($zipPath, 'ssr');
+
         // Realizar backup solo del archivo ssr.js si existe
         $ssrFile = base_path('bootstrap/ssr/ssr.js');
         $ssrBackupFile = base_path('bootstrap/ssr/ssr.js.bak');
@@ -577,13 +664,16 @@ class DeployHelper
      */
     public static function installNodeModulesFromZip(string $zipPath): void
     {
+        // Validar contenido del ZIP antes de cualquier operación
+        self::validateZipContent($zipPath, 'node_modules');
+
         // 1. Crear backup de node_modules existente
         $backupPath = self::backupNodeModules();
 
         // 2. Limpiar node_modules existente
         self::cleanNodeModules();
 
-        // 3. Descomprimir con verificación
+        // 3. Descomprimir
         self::extractZip($zipPath, base_path());
 
         // 4. Limpieza post-instalación

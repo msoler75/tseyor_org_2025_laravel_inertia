@@ -1,5 +1,5 @@
 <template>
-    <Back href="/quienes-somos" floatAtY="-100">Quiénes Somos</Back>
+    <Back href="/quienes-somos" :floatAtY="-100">Quiénes Somos</Back>
     <Sections height="550" white-first>
 
         <div class="container mx-auto text-center my-10">
