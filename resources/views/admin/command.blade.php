@@ -25,6 +25,11 @@
         <button command="db:backup" class="btn btn-success">db:backup</button>
         <button command="down" class="btn btn-success">Activar modo mantenimiento</button>
         <button command="up" class="btn btn-success">Desactivar modo mantenimiento</button>
+        <button command="config:clear" class="btn btn-success">config:clear</button>
+        <button command="route:clear" class="btn btn-success">route:clear</button>
+        <button command="storage:link" class="btn btn-success">storage:link</button>
+        <button command="migrate:status" class="btn btn-success">migrate:status</button>
+        <button command="queue:clear" class="btn btn-success">queue:clear</button>
         <button command="ps aux" class="btn btn-info">Ver procesos del sistema</button>
         <button command="worker:stop" class="btn btn-danger">Detener worker</button>
         <button command="inertia:stop-ssr" class="btn btn-danger">Detener servidor SSR</button>

@@ -23,6 +23,10 @@ class CommandController extends Controller
             'db:backup',
             'down',
             'up',
+            'config:clear',
+            'route:clear',
+            'migrate:status',
+            'queue:clear',
             // 'inertia:stop-ssr', // Comando no disponible consistentemente en contexto web
         ],
         'exec' => [
