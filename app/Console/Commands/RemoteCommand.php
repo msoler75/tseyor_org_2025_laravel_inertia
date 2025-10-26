@@ -54,8 +54,14 @@ class RemoteCommand extends Command
         $this->info("Ejecutando comando remoto: {$command}");
         $this->info("URL: {$url}");
 
+        // Usar timeout mayor para comandos que inician procesos
+        $timeout = 25;
+        if (str_contains($command, 'db:backup')) {
+            $timeout = 300;
+        }
+
         try {
-            $response = Http::withHeaders([
+            $response = Http::timeout($timeout)->withHeaders([
                 'X-Deploy-Token' => $token,
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
@@ -94,10 +100,6 @@ class RemoteCommand extends Command
                     $this->error("Respuesta cruda: {$body}");
                     return 1;
                 }
-
-                // Mostrar toda la respuesta para debugging
-                $this->info("Respuesta completa del servidor:");
-                $this->line(json_encode($data, JSON_PRETTY_PRINT));
 
                 if (isset($data['error'])) {
                     $this->error("Error: {$data['error']}");

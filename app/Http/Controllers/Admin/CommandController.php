@@ -30,11 +30,11 @@ class CommandController extends Controller
             // 'inertia:stop-ssr', // Comando no disponible consistentemente en contexto web
         ],
         'exec' => [
-            // 'pkill -f ssr',
+            'ps aux',
+             'worker:stop',
+            'worker:start',
             'inertia:start-ssr',
             'inertia:stop-ssr',
-            'worker:stop',
-            'ps -ef',
             // './bash/ssr.sh start', // Ejecutar como comando externo
         ],
     ];
@@ -239,16 +239,22 @@ class CommandController extends Controller
             // Usar ps y kill como alternativa a pkill si no está disponible
             $cmd = 'ps aux | grep ssr | grep -v grep | awk \'{print $2}\' | xargs kill -9 2>/dev/null || pkill -f ssr 2>/dev/null || echo "No se pudieron matar procesos SSR"';
         } elseif ($baseCommand === 'inertia:stop-ssr') {
-            $artisanPath = base_path('artisan');
-            $cmd = 'php ' . escapeshellarg($artisanPath) . ' inertia:stop-ssr';
+            $scriptPath = base_path('bash/ssr.sh');
+            $deployUser = config('app.deploy_user');
+            $cmd = 'DEPLOY_USER=' . escapeshellarg($deployUser) . ' bash ' . escapeshellarg($scriptPath) . ' stop';
         } elseif ($baseCommand === 'inertia:start-ssr') {
-            $artisanPath = base_path('artisan');
-            $cmd = 'php ' . escapeshellarg($artisanPath) . ' inertia:start-ssr';
+            $scriptPath = base_path('bash/ssr.sh');
+            $deployUser = config('app.deploy_user');
+            $cmd = 'DEPLOY_USER=' . escapeshellarg($deployUser) . ' bash ' . escapeshellarg($scriptPath) . ' start';
         } elseif ($baseCommand === 'worker:stop') {
             $scriptPath = base_path('bash/worker-stop.sh');
             $deployUser = config('app.deploy_user');
             $cmd = 'DEPLOY_USER=' . escapeshellarg($deployUser) . ' bash ' . escapeshellarg($scriptPath);
-        } elseif ($baseCommand === 'ps' && isset($parts[1]) && $parts[1] === 'aux') {
+        } elseif( $baseCommand === 'worker:start') {
+            $scriptPath = base_path('bash/worker-start.sh');
+            $deployUser = config('app.deploy_user');
+            $cmd = 'DEPLOY_USER=' . escapeshellarg($deployUser) . ' bash ' . escapeshellarg($scriptPath) . ' -q';
+    } elseif ($baseCommand === 'ps' && isset($parts[1]) && $parts[1] === 'aux') {
             // adecuado en entornos BSD/Linux no interactivos
             $cmd = 'ps -ef';
         } else {
@@ -260,8 +266,16 @@ class CommandController extends Controller
         $outputText = '';
 
         try {
-            exec($cmd . ' 2>&1', $output, $exitCode);
-            $outputText = implode("\n", $output);
+            if ($baseCommand === 'worker:start' || $baseCommand === 'inertia:start-ssr') {
+                // Usar timeout para comandos que pueden tardar
+                $result = $this->executeCommandWithTimeout($cmd, 60);
+                $output = $result['output'];
+                $exitCode = $result['exitCode'];
+                $outputText = implode("\n", $output);
+            } else {
+                exec($cmd . ' 2>&1', $output, $exitCode);
+                $outputText = implode("\n", $output);
+            }
         } catch (\Exception $e) {
             Log::error("Error al ejecutar comando externo: {$cmd}", [
                 'error' => $e->getMessage(),
@@ -394,5 +408,87 @@ class CommandController extends Controller
             'output' => $output ?: "Comando {$baseCommand} ejecutado",
             'exitCode' => $exitCode
         ]);
+    }
+
+    private function executeCommandWithTimeout(string $cmd, int $timeoutSeconds): array
+    {
+        $descriptors = [
+            0 => ['pipe', 'r'], // stdin
+            1 => ['pipe', 'w'], // stdout
+            2 => ['pipe', 'w']  // stderr
+        ];
+
+        $process = proc_open($cmd, $descriptors, $pipes);
+
+        if (!is_resource($process)) {
+            return ['output' => ['Error: No se pudo iniciar el proceso'], 'exitCode' => 1];
+        }
+
+        // Cerrar stdin ya que no lo usamos
+        fclose($pipes[0]);
+
+        $output = '';
+        $error = '';
+        $startTime = time();
+
+        // Usar stream_select para esperar con timeout
+        $readStreams = [$pipes[1], $pipes[2]];
+        $writeStreams = null;
+        $exceptStreams = null;
+
+        while (!empty($readStreams)) {
+            $timeout = $timeoutSeconds - (time() - $startTime);
+            if ($timeout <= 0) {
+                // Timeout alcanzado
+                proc_terminate($process);
+                if (is_resource($pipes[1])) {
+                    fclose($pipes[1]);
+                }
+                if (is_resource($pipes[2])) {
+                    fclose($pipes[2]);
+                }
+                proc_close($process);
+                return ['output' => ['Error: Timeout alcanzado'], 'exitCode' => 1];
+            }
+
+            $ready = stream_select($readStreams, $writeStreams, $exceptStreams, $timeout);
+
+            if ($ready === false) {
+                // Error en stream_select
+                break;
+            }
+
+            foreach ($readStreams as $key => $stream) {
+                if (in_array($stream, $readStreams)) {
+                    $data = fread($stream, 8192);
+                    if ($data === false || $data === '') {
+                        if (is_resource($stream)) {
+                            fclose($stream);
+                        }
+                        unset($readStreams[$key]);
+                    } else {
+                        if ($stream === $pipes[1]) {
+                            $output .= $data;
+                        } elseif ($stream === $pipes[2]) {
+                            $error .= $data;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (is_resource($pipes[1])) {
+            fclose($pipes[1]);
+        }
+        if (is_resource($pipes[2])) {
+            fclose($pipes[2]);
+        }
+
+        $exitCode = proc_close($process);
+
+        $fullOutput = $output . $error;
+        $outputLines = explode("\n", trim($fullOutput));
+
+        return ['output' => $outputLines, 'exitCode' => $exitCode];
     }
 }
