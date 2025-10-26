@@ -33,7 +33,7 @@ class DBBackup extends Command
         // donde se guardarán los backups
         $carpeta = storage_path() ."/backups";
 
-        echo "Creando copia...\n";
+        $this->info("Creando copia...");
 
         $databaseName = DB::getDatabaseName();
 
@@ -49,12 +49,12 @@ class DBBackup extends Command
             $dump->start($backupFileName);
 
             // comprimir en zip:
-            echo "Comprimiendo...\n";
+            $this->info("Comprimiendo...");
 
             $zip = new \ZipArchive();
             if ($zip->open($zipFileName, \ZipArchive::CREATE) !== true) {
-                echo "Backup creado correctamente en el archivo: $backupFileName";
-                echo "\nError al crear el archivo ZIP.";
+                $this->info("Backup creado correctamente en el archivo: $backupFileName");
+                $this->error("Error al crear el archivo ZIP.");
                 exit;
             }
 
@@ -67,9 +67,9 @@ class DBBackup extends Command
             // echo "Borramos $backupFileName\n";
             unlink($backupFileName);
 
-            echo "Backup creado correctamente en el archivo: $zipFileName";
+            $this->info("Backup creado correctamente en el archivo: $zipFileName");
         } catch (\Exception $e) {
-            echo "Error al crear el backup: " . $e->getMessage();
+            $this->error("Error al crear el backup: " . $e->getMessage());
         }
     }
 }

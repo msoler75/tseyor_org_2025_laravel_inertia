@@ -1,10 +1,16 @@
 @extends(backpack_view('blank'))
 
-@section('head')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-@endsection
-
 @section('content')
+<style>
+    .swal-modal {
+        width: auto !important;
+    }
+    @media (min-width: 720px) {
+        .swal-modal {
+            min-width: 720px !important;
+        }
+    }
+</style>
 
 <h1>Comandos ARTISAN</h1>
 
@@ -19,9 +25,9 @@
         <button command="db:backup" class="btn btn-success">db:backup</button>
         <button command="down" class="btn btn-success">Activar modo mantenimiento</button>
         <button command="up" class="btn btn-success">Desactivar modo mantenimiento</button>
+        <button command="ps aux" class="btn btn-info">Ver procesos del sistema</button>
         <button command="worker:stop" class="btn btn-danger">Detener worker</button>
         <button command="inertia:stop-ssr" class="btn btn-danger">Detener servidor SSR</button>
-        <button command="pkill -f ssr" class="btn btn-danger">Detener servidor SSR (forzado)</button>
     </div>
 
     <script>

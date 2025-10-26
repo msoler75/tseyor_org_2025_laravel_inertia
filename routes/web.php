@@ -42,6 +42,7 @@ use App\Http\Controllers\TarjetaVisitaController;
 use App\Http\Controllers\EmailsController;
 use App\Http\Controllers\Api\ComentariosController;
 use App\Http\Controllers\Admin\JobsController;
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BoletinesController;
 use App\Http\Controllers\SuscriptorController;
 use App\Http\Controllers\McpTokenController;
@@ -50,7 +51,6 @@ use App\Http\Controllers\EnlaceCortoController;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Cookie;
 use App\Services\MuularElectronico;
-
 
 // a borrar:
 
@@ -109,6 +109,10 @@ Route::post('update-theme', function (Request $request) {
 
 Route::get('settings', [SettingsController::class, 'index'])->name('settings');
 Route::get('settings/{id}', [SettingsController::class, 'show'])->name('setting');
+
+// Rutas especiales de login para admin
+Route::get('admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
+Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login.post');
 
 Route::get('test', function () {
     return Inertia::render('Test', []);
@@ -446,7 +450,7 @@ Route::get('boletines/{id}', [BoletinesController::class, 'ver'])->name('boletin
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // DEV/DEPLOY: Agrupadas bajo middleware de seguridad
-Route::middleware('deploy.token')->group(function () {
+Route::middleware(['deploy.token', 'allowed.ip'])->group(function () {
     Route::post('_sendbuild', 'App\\Http\\Controllers\\DeployController@handlePublicBuildUpload');
     Route::post('_rollback', 'App\\Http\\Controllers\\DeployController@rollbackPublicBuild');
     Route::post('_sendssr', 'App\\Http\\Controllers\\DeployController@handleSSRUpload');

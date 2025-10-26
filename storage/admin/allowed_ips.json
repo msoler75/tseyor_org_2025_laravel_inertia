@@ -1,0 +1,8 @@
+{
+    "allowed_ips": [
+        "::1",
+        "127.0.0.1"
+    ],
+    "last_updated": "2025-10-24T14:05:21.133568Z",
+    "updated_by": "pigmalion.tseyor@gmail.com"
+}

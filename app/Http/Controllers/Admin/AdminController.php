@@ -127,30 +127,6 @@ class AdminController // extends Controller
     }
 
 
-    /**
-     * Se inicia sesión con el usuario deseado.
-     * Para desarrollo y administración
-     * @param mixed $idUser
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function loginAs($idUser)
-    {
-        $user = Auth::user();
-        if (!$user || $user->id !== 1)
-            return response()->json(['message' => 'Acceso no permitido'], 403);
-
-        // cambiamos a nuevo usuario
-        $user = User::find($idUser);
-        if (!$user)
-            return response()->json(['message' => 'usuario no encontrado'], 404);
-
-        Auth::login($user, true); // Autenticar al usuario
-
-        session()->regenerate(); // Regenerar la sesión
-
-        return response()->json(['message' => 'usuario cambiado'], 200);
-    }
-
 
     /**
      * Genera una nueva contraseña para el usuario
