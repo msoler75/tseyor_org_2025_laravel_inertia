@@ -9,7 +9,6 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use App\Notifications\InscripcionesAsignadas;
 use App\Notifications\InscripcionReasignada;
 use Illuminate\Support\Facades\Auth;
@@ -78,14 +77,6 @@ class InscripcionCrudController extends CrudController
 
         // Aplicar filtros básicos desde parámetros GET
         $this->aplicarFiltrosBasicos();
-        // Log SQL generado por la consulta principal de la lista
-        \DB::listen(function ($query) {
-            \Log::channel('inscripciones')->info('[SQL Backpack Inscripciones]', [
-                'sql' => $query->sql,
-                'bindings' => $query->bindings,
-                'time' => $query->time
-            ]);
-        });
 
         // Columnas básicas (sin filtros PRO)
         CRUD::column('id')->type('number')->label('ID')->orderable(true);

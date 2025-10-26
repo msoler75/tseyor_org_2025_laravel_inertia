@@ -22,6 +22,16 @@ class DeployHelper
         }
     }
 
+    public static function checkAllowedIP(): void
+    {
+        $clientIP = \Illuminate\Support\Facades\Request::ip();
+        $allowedIPs = self::getAllowedIPs();
+        if (!in_array($clientIP, $allowedIPs)) {
+            Log::channel('deploy')->warning("IP no autorizada para deploy", ['ip' => $clientIP, 'allowed' => $allowedIPs]);
+            throw new Exception("IP no autorizada para deploy: {$clientIP}");
+        }
+    }
+
 
     public static function createZipFile(
         string $sourcePath,
@@ -840,4 +850,52 @@ class DeployHelper
         return $results;
     }
 
+    public static function getAllowedIPs(): array
+    {
+        $filePath = storage_path('admin/allowed_ips.json');
+
+        if (!file_exists($filePath)) {
+            return [];
+        }
+
+        $json = file_get_contents($filePath);
+        $data = json_decode($json, true);
+
+        return $data['allowed_ips'] ?? [];
+    }
+
+    public static function addAllowedIP(string $ip, string $updatedBy = 'DeployHelper'): void
+    {
+        $filePath = storage_path('admin/allowed_ips.json');
+
+        // Asegurar que el directorio existe
+        if (!is_dir(dirname($filePath))) {
+            @mkdir(dirname($filePath), 0755, true);
+        }
+
+        $data = [
+            'allowed_ips' => [],
+            'last_updated' => now()->toISOString(),
+            'updated_by' => $updatedBy
+        ];
+
+        if (file_exists($filePath)) {
+            $json = file_get_contents($filePath);
+            $temp = json_decode($json, true);
+            if (is_array($temp)) {
+                $data = array_merge($data, $temp);
+            }
+        }
+
+        if (!in_array($ip, $data['allowed_ips'])) {
+            $data['allowed_ips'][] = $ip;
+            $data['last_updated'] = now()->toISOString();
+            $data['updated_by'] = $updatedBy;
+
+            $saved = file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT));
+            if ($saved === false) {
+                Log::error('Failed to save allowed_ips.json from addAllowedIP', ['file' => $filePath, 'ip' => $ip]);
+            }
+        }
+    }
 }

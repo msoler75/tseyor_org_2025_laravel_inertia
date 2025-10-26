@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\WorkerController;
 use App\Http\Controllers\Admin\CommandController;
+use App\Http\Controllers\Admin\AuthController;
 
 // --------------------------
 // Custom Backpack Routes
@@ -138,8 +139,10 @@ Route::group([
     // Radio
     Route::post('radio-item/{id}/toggle', 'RadioItemCrudController@toggle');
 
-    Route::post('loginAs/{idUser}', [AdminController::class, 'loginAs'])->name('admin.loginAs');
+    // login As
+    Route::post('loginAs/{idUser}', [AuthController::class, 'loginAs'])->middleware('allowed.ip')->name('admin.loginAs');
 
+    // otras rutas de utilidad
     Route::get('getlog/{log}', [AdminController::class, 'getLog'] );
     Route::get('list-images{ruta}', [AdminController::class, 'listImages'] )->where(['ruta' => '(\/.+)?'])->name('admin.list-images');
     Route::get('dashboard', [AdminController::class, 'dashboard'] );
@@ -157,3 +160,17 @@ Route::group([
     Route::post('boletin/{id}/enviar-boletin', 'BoletinCrudController@enviarBoletin')->name('boletin.enviar');
 
 }); // this should be the absolute last line of this file
+
+// Command routes - públicas pero protegidas por token o autenticación admin
+Route::middleware('throttle:command')->middleware(['deploy.token', 'allowed.ip'])->group(function () {
+    Route::post('admin/command2', [CommandController::class, 'runCommandPost'])->name('command.remote');
+});
+
+// Ruta de login para admin
+/*Route::get('admin/login', function () {
+    return view('auth.admin-login');
+})->name('admin.login');*/
+
+    // Route::get('admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
+    //Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login.post');
+

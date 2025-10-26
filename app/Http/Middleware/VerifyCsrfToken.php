@@ -29,5 +29,7 @@ class VerifyCsrfToken extends Middleware
         'obtener-enlace',
         // MCP API
         'mcp',
+        // Endpoint de comandos remotos protegido por token
+        'admin/command2',
     ];
 }

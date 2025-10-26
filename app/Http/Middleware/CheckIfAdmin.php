@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CheckIfAdmin
 {
@@ -77,11 +79,13 @@ class CheckIfAdmin
      */
     private function respondToUnauthorizedRequest($request)
     {
+    Log::info("CheckIfAdmin middleware: unauthorized access attempt");
         if ($request->ajax() || $request->wantsJson()) {
             return response(trans('backpack::base.unauthorized'), 401);
         } else {
             // return redirect()->guest(backpack_url('login'));
-            return redirect()->guest('/login');
+            Log::info("CheckIfAdmin middleware: redirecting to admin login");
+            return redirect()->guest('/admin/login?to=' . urlencode($request->fullUrl()));
         }
     }
 
@@ -94,11 +98,17 @@ class CheckIfAdmin
      */
     public function handle($request, Closure $next)
     {
-        if (backpack_auth()->guest()) {
+        // Determine which guard Backpack should use; fall back to app default ('web')
+    $guardName = config('backpack.base.guard') ?: config('auth.defaults.guard', 'web');
+
+    Log::info("CheckIfAdmin middleware auth guard=".$guardName);
+    Log::info("CheckIfAdmin middleware user=".(Auth::guard($guardName)->user() ? Auth::guard($guardName)->user()->name : 'null'));
+
+        if (Auth::guard($guardName)->guest()) {
             return $this->respondToUnauthorizedRequest($request);
         }
 
-        if (! $this->checkIfUserIsAdmin(backpack_user())) {
+        if (! $this->checkIfUserIsAdmin(Auth::guard($guardName)->user())) {
             return $this->respondToUnauthorizedRequest($request);
         }
 

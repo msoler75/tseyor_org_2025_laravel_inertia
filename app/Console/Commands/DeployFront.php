@@ -42,6 +42,10 @@ class DeployFront extends Command
 
                     Deploy::handleResponse($result, $this);
 
+                    if ($result['status'] === 'success') {
+                        $this->info('Si hay algun problema puedes hacer rollback con --rollback');
+                    }
+
                     // File::delete($zipPath);
                 }
                 else {

@@ -7,6 +7,7 @@ $protocol = 'https';
 return [
     'host' => $host,
     'protocol' => $protocol,
+    'url' => $protocol . '://' . $host,
 
     // Endpoints construidos a partir de host/protocol
     'node_modules_endpoint' => $protocol . '://' . $host . '/_sendnodemodules',

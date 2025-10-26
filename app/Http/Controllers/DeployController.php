@@ -27,12 +27,12 @@ class DeployController extends Controller
      */
     public function handlePublicBuildUpload(Request $request)
     {
+
         if (!$request->hasFile('file')) {
             return response()->json(['error' => 'No se ha enviado ningún archivo'], 400);
         }
 
         try {
-
             Log::channel('deploy')->info("Instalando nueva versión de FrontEnd");
 
             $zipPath = Deploy::storeUploadedFile($request, 'public_build');
@@ -80,7 +80,6 @@ class DeployController extends Controller
 
         try {
 
-
             $zipPath = Deploy::storeUploadedFile($request, 'ssr');
 
             // Si llega el flag 'prepare', simplemente mover el ZIP a storage/install y terminar
@@ -109,8 +108,7 @@ class DeployController extends Controller
         }
 
         try {
-
-             $zipPath = Deploy::storeUploadedFile($request, 'node_modules');
+            $zipPath = Deploy::storeUploadedFile($request, 'node_modules');
 
             // Si llega el flag 'prepare', simplemente mover el ZIP a storage/install y terminar
             if ($request->has('prepare')) {
