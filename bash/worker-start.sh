@@ -35,5 +35,6 @@ touch $LOGFILE
   else
     nohup $COMMAND >> $LOGFILE 2>&1 &
   fi
+  echo "Worker iniciado exitosamente."
 ) 9>$LOCKFILE
 
