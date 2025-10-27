@@ -103,6 +103,13 @@ return [
             'level' => 'info',
         ],
 
+        'pwa' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/pwa.log'),
+            'level' => 'debug',
+            'days' => 7,
+        ],
+
         'smtp' => [
             'driver' => 'daily',
             'path' => storage_path('logs/smtp.log'),
