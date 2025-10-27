@@ -108,6 +108,15 @@ Route::post('update-theme', function (Request $request) {
     return response()->json(['success' => true]);
 });
 
+// update font size
+Route::post('update-font-size', function (Request $request) {
+    $fontSize = $request->input('fontSize');
+    Cookie::queue(
+        Cookie::make('fontSize', $fontSize, 60 * 24 * 30, '/', null, request()->isSecure(), false, false, 'lax')
+    );
+    return response()->json(['success' => true]);
+});
+
 Route::get('settings', [SettingsController::class, 'index'])->name('settings');
 Route::get('settings/{id}', [SettingsController::class, 'show'])->name('setting');
 
