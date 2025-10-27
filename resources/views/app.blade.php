@@ -1,10 +1,7 @@
-<!DOCTYPE html>
+<!DOCTYPE html>@php use Illuminate\Support\Facades\Cookie; @endphp
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth"
-    @if(\Illuminate\Support\Facades\Cookie::get('theme') === 'dark')
-        data-theme="dark"
-    @endif
-    >
-
+    data-theme="{{ Cookie::get('theme', 'light') }}"
+    style="--app-font-size: {{ Cookie::get('fontSize', 22) }}px; --text-base: {{ Cookie::get('fontSize', 22) }}px;">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,6 +51,7 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Figtree:wght@400;800&display=fallback">
 
     @if (false && request()->path() == '/')
         <link rel="preload" fetchpriority="high" as="image" href="/almacen/medios/paginas/galaxy.webp"
@@ -83,7 +81,7 @@
     @endif
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased" style="font-size: {{ Cookie::get('fontSize', 16) }}px;">
     <!-- PWA Initial Loader - se muestra desde JavaScript si es PWA -->
     <div id="pwa-initial-loader" class="fixed inset-0 z-50 flex items-center justify-center bg-base-100" style="display: none;">
         <div class="loading loading-ring loading-3xl text-primary"></div>
@@ -116,15 +114,7 @@
 
     @inertia
 
-    <script>
-        (function() {
-          var css = document.createElement('link');
-          css.href = 'https://fonts.bunny.net/css?family=Figtree';
-          css.rel = 'stylesheet';
-          css.type = 'text/css';
-          document.getElementsByTagName('head')[0].appendChild(css);
-        })();
-      </script>
+
 </body>
 
 </html>

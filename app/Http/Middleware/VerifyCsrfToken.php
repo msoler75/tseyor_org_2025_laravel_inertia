@@ -19,6 +19,7 @@ class VerifyCsrfToken extends Middleware
         '_sendnodemodules',
         'usuarios/_comprobar_clave',
         'update-theme',
+        'update-font-size',
         // boletines
         'boletines/suscribir',
         'boletines/configurar/*',

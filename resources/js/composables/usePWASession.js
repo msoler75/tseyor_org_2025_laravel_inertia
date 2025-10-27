@@ -195,7 +195,14 @@ export function usePWASession() {
    * Restaura el estado guardado desde localStorage
    */
   const restoreState = () => {
-    if (typeof window === 'undefined' || !isPWA()) return
+    if (typeof window === 'undefined' || !isPWA()) {
+      log('info', 'No es PWA o no hay window, saltando restauración')
+      hasCheckedRestoration.value = true // Marcar como verificado incluso si no es PWA
+      isRestoring.value = false // Asegurar que no se está restaurando
+      return
+    }
+
+    log('info', '=== VERIFICANDO ESTADO PWA PARA RESTAURACIÓN ===')
 
     try {
       const savedUrl = localStorage.getItem(STORAGE_KEYS.URL)
@@ -204,6 +211,8 @@ export function usePWASession() {
 
       if (!savedUrl || !savedScrollY || !savedTimestamp) {
         log('info', 'No hay estado guardado para restaurar')
+        hasCheckedRestoration.value = true // Marcar como verificado
+        isRestoring.value = false // Asegurar que no se está restaurando
         return
       }
 
@@ -211,6 +220,8 @@ export function usePWASession() {
       if (isNaN(timestamp)) {
         log('warn', 'Timestamp inválido, limpiando estado')
         clearState()
+        hasCheckedRestoration.value = true // Marcar como verificado
+        isRestoring.value = false // Asegurar que no se está restaurando
         return
       }
 
@@ -225,6 +236,8 @@ export function usePWASession() {
       if (now - timestamp > MAX_STATE_AGE) {
         log('warn', 'Estado PWA expirado, limpiando...')
         clearState()
+        hasCheckedRestoration.value = true // Marcar como verificado
+        isRestoring.value = false // Asegurar que no se está restaurando
         return
       }
 
@@ -290,16 +303,25 @@ export function usePWASession() {
       } else if (isRelatedUrl(savedUrl, currentUrl)) {
         // Si estamos en la misma página, solo restaurar scroll
         log('info', 'Misma página, restaurando solo scroll', { scrollY })
+
+        // ACTIVAR loader durante la restauración de scroll
+        isRestoring.value = true
+
         setTimeout(() => {
           window.scrollTo({ top: scrollY, left: 0, behavior: 'instant' })
           log('success', 'Scroll restaurado en misma página', { scrollY })
+          hasCheckedRestoration.value = true // Marcar como verificado
+          isRestoring.value = false // Desactivar loader
         }, 100)
       } else {
         log('info', 'URLs no relacionadas o ya en destino, no se restaura')
+        hasCheckedRestoration.value = true // Marcar como verificado
+        isRestoring.value = false // Asegurar que no se está restaurando
       }
     } catch (error) {
       log('error', 'Error restaurando estado PWA', error)
       isRestoring.value = false
+      hasCheckedRestoration.value = true // Marcar como verificado incluso en error
     }
 
     // Marcar que se ha verificado la restauración

@@ -237,12 +237,23 @@ onMounted(() => {
         hideLoader()
     } else {
         // Para PWA, esperar a que termine la restauración
-        const unwatch = watch(
+        const unwatchRestoring = watch(
             () => isRestoring.value,
             (newValue) => {
                 if (!newValue) {
                     hideLoader()
-                    unwatch()
+                    unwatchRestoring()
+                }
+            }
+        )
+
+        // También verificar si ya se completó la verificación de restauración
+        const unwatchChecked = watch(
+            () => hasCheckedRestoration.value,
+            (newValue) => {
+                if (newValue && !isRestoring.value) {
+                    hideLoader()
+                    unwatchChecked()
                 }
             }
         )
@@ -271,16 +282,6 @@ onMounted(() => {
     if (location.search.includes("verified=1"))
         // redirigimos a dashboard
         router.get(route("dashboard"));
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener("scroll", handleScroll);
-
-    // Limpiar event listeners de PWA y guardar estado final
-    if (pwaCleanup) pwaCleanup();
-    if (isPWA()) {
-        saveState();
-    }
 });
 
 

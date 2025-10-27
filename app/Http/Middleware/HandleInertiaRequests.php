@@ -54,8 +54,10 @@ class HandleInertiaRequests extends Middleware
         ]);
 
         // si no tiene el header X-INERTIA:
-        if(!$request->header('X-Inertia'))
-        $r['initialTheme'] = Cookie::get('theme', 'light');
+        if(!$request->header('X-Inertia')) {
+            $r['initialTheme'] = Cookie::get('theme', 'light');
+            $r['initialFontSize'] = Cookie::get('fontSize', 16);
+        }
 
         // Algunas páginas se van a cachear con page-cache, así que debe estar limpia de sesión
         // si es la url de portada y no existe cabecera http de X-INERTIA:
