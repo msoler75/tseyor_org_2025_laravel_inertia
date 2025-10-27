@@ -48,6 +48,7 @@ use App\Http\Controllers\SuscriptorController;
 use App\Http\Controllers\McpTokenController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\EnlaceCortoController;
+use App\Http\Controllers\PWALogController;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Cookie;
 use App\Services\MuularElectronico;
@@ -498,6 +499,13 @@ Route::post('analytics/beacon', [AnalyticsController::class, 'beacon'])->name('a
 
 // API para enlaces cortos públicos (sin auth para URLs del propio dominio)
 Route::post('obtener-enlace', [EnlaceCortoController::class, 'obtener'])->name('obtener.enlace.corto');
+
+// Rutas de logging PWA (solo en desarrollo)
+if (app()->environment(['local', 'debug'])) {
+    Route::post('pwa-log', [PWALogController::class, 'store']);
+    Route::get('pwa-logs', [PWALogController::class, 'show']);
+    Route::delete('pwa-logs', [PWALogController::class, 'clear']);
+}
 
 // Redirección de enlaces cortos (debe ir antes del fallback)
 Route::get('{prefix}/{code}', [EnlaceCortoController::class, 'redirigir'])

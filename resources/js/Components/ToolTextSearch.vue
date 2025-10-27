@@ -85,12 +85,14 @@ const performSearch = () => {
     currentIndex.value = 0;
     noResults.value = false;
 
+    const term = searchTerm.value.trim();
+
     nextTick(() => {
         const contentContainer = document.querySelector('#page-content');
         if (!contentContainer) return;
 
         const textNodes = getTextNodes(contentContainer);
-        const regex = new RegExp(searchTerm.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
 
         textNodes.forEach(node => {
             const text = node.textContent;

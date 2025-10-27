@@ -35,7 +35,22 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/ic/ios/32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/ic/android/android-launchericon-192-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/ic/android/android-launchericon-512-512.png">
-    <link rel="manifest" href="/build/tseyor-manifest.json">
+    <link rel="manifest" href="/build/tseyor-manifest.v2.json">
+    <!-- Fallback clásico de Windows/Escritorio: favicon.ico (mejorará el icono del acceso directo/shortcut) -->
+    <link rel="shortcut icon" href="/ic/windows11/StoreLogo.scale-100.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="/ic/windows11/Square150x150Logo.scale-100.png">
+    <!-- Meta Tile image for older Windows/Edge uses -->
+    <meta name="msapplication-TileImage" content="/ic/windows11/StoreLogo.scale-100.png">
+
+    <!-- Microsoft / Windows PWA fallbacks (helps Edge/Windows pick correct tile & splash icons) -->
+    <meta name="msapplication-TileColor" content="#0a2245">
+    <meta name="msapplication-square70x70logo" content="/ic/windows11/Square44x44Logo.targetsize-44.png">
+    <meta name="msapplication-square150x150logo" content="/ic/windows11/Square150x150Logo.scale-100.png">
+    <meta name="msapplication-wide310x150logo" content="/ic/windows11/Wide310x150Logo.scale-100.png">
+    <meta name="msapplication-square310x310logo" content="/ic/windows11/LargeTile.scale-100.png">
+    <meta name="msapplication-square44x44logo" content="/ic/windows11/Square44x44Logo.targetsize-44.png">
+    <!-- Explicit SplashScreen (helps some Windows/Edge variants) -->
+    <meta name="msapplication-SplashScreen" content="/ic/windows11/SplashScreen.scale-100.png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
@@ -69,6 +84,36 @@
 </head>
 
 <body class="font-sans antialiased">
+    <!-- PWA Initial Loader - se muestra desde JavaScript si es PWA -->
+    <div id="pwa-initial-loader" class="fixed inset-0 z-50 flex items-center justify-center bg-base-100" style="display: none;">
+        <div class="loading loading-ring loading-3xl text-primary"></div>
+    </div>
+
+    <script>
+        // Mostrar loader inicial si es PWA (detección inmediata)
+        (function() {
+            // Función para detectar si es PWA
+            function isPWA() {
+                if (typeof window === 'undefined') return false;
+                if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true;
+                if (window.navigator && window.navigator.standalone) return true;
+                if (document.referrer && document.referrer.includes('android-app://')) return true;
+                return false;
+            }
+
+            // Si es PWA, mostrar el loader inmediatamente
+            if (isPWA()) {
+                var loader = document.getElementById('pwa-initial-loader');
+                if (loader) {
+                    loader.style.display = 'flex';
+                }
+                // Setear cookie para futuras requests SSR
+                document.cookie = 'is_pwa=true; path=/; max-age=31536000';
+            }
+        })();
+    </script>
+
+
     @inertia
 
     <script>

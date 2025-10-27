@@ -7,7 +7,8 @@ use App\Models\Equipo;
 use App\Models\Membresia;
 use App\Observers\MembresiaObserver;
 use App\Observers\EquipoObserver;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cookie;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {

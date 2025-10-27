@@ -144,14 +144,27 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       filename: 'tseyor-sw.js',
-      manifestFilename: 'tseyor-manifest.json',
+  // Cambiado a nueva versión para forzar invalidación de caché del manifest
+  manifestFilename: 'tseyor-manifest.v2.json',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2,ttf,eot}'],
         // Configuración específica para Laravel/Inertia.js SPA
         navigateFallback: null, // Deshabilita el fallback automático a index.html
         runtimeCaching: [
           {
-            // Cache de navegación (rutas de tu app)
+            // Cache prioritario para la página principal - usar cache primero, actualizar en background
+            urlPattern: ({ url }) => url.pathname === '/',
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'homepage-cache',
+              expiration: {
+                maxEntries: 1, // Solo la página principal
+                maxAgeSeconds: 24 * 60 * 60, // 24 horas
+              },
+            },
+          },
+          {
+            // Cache de navegación (otras rutas de tu app)
             urlPattern: ({ request }) => request.mode === 'navigate',
             handler: 'NetworkFirst',
             options: {
@@ -207,12 +220,13 @@ export default defineConfig({
         id: 'org.tseyor.main',
         description: 'TSEYOR - Preparándonos para el Salto Cuántico y la creación de las Sociedades Armónicas',
         theme_color: '#60a5fa',
-        background_color: '#1a3365',
+        background_color: '#0a2245',
         display: 'standalone',
         orientation: 'portrait-primary',
         scope: '/',
         start_url: '/',
         icons: [
+          // Iconos para Android
           {
             src: '/ic/android/android-launchericon-48-48.png',
             sizes: '48x48',
@@ -232,14 +246,27 @@ export default defineConfig({
             purpose: 'any'
           },
           {
-            src: '/ic/ios/128.png',
-            sizes: '128x128',
+            src: '/ic/android/android-launchericon-144-144.png',
+            sizes: '144x144',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/ic/android/android-launchericon-144-144.png',
-            sizes: '144x144',
+            src: '/ic/android/android-launchericon-192-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/android/android-launchericon-512-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          // Iconos para iOS
+          {
+            src: '/ic/ios/128.png',
+            sizes: '128x128',
             type: 'image/png',
             purpose: 'any'
           },
@@ -256,22 +283,85 @@ export default defineConfig({
             purpose: 'any'
           },
           {
-            src: '/ic/android/android-launchericon-192-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any'
-          },
-          {
             src: '/ic/ios/256.png',
             sizes: '256x256',
             type: 'image/png',
             purpose: 'any'
           },
+          // Iconos específicos para Windows (tamaños targetsize - más importantes para splash screen)
+          {
+            src: '/ic/windows11/Square44x44Logo.targetsize-44.png',
+            sizes: '44x44',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/windows11/Square44x44Logo.targetsize-48.png',
+            sizes: '48x48',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/windows11/Square150x150Logo.scale-100.png',
+            sizes: '150x150',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/windows11/Square150x150Logo.scale-200.png',
+            sizes: '300x300',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/windows11/Wide310x150Logo.scale-100.png',
+            sizes: '310x150',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/windows11/LargeTile.scale-100.png',
+            sizes: '310x310',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/windows11/LargeTile.scale-200.png',
+            sizes: '620x620',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          // Iconos adicionales para mejor compatibilidad
+          {
+            src: '/ic/windows11/Square44x44Logo.scale-200.png',
+            sizes: '88x88',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/windows11/Square44x44Logo.scale-400.png',
+            sizes: '176x176',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/windows11/Square150x150Logo.scale-400.png',
+            sizes: '600x600',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/ic/windows11/LargeTile.scale-400.png',
+            sizes: '1240x1240',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          // Icono principal para maskable (importante para splash screen)
           {
             src: '/ic/android/android-launchericon-512-512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any'
+            purpose: 'maskable'
           }
         ]
       },
@@ -294,9 +384,9 @@ export default defineConfig({
     // noExternal: true,
     external: [
       "Modal",
-      "Page",
       "Footer",
       "NavAside",
+      // "Suscribe",
       "ProcesarImagen",
       "TipTapEditor",
       "TipTapFullMenuBar",

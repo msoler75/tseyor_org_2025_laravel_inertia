@@ -31,5 +31,7 @@ class VerifyCsrfToken extends Middleware
         'mcp',
         // Endpoint de comandos remotos protegido por token
         'admin/command2',
+        // PWA logging API
+        'pwa-log',
     ];
 }

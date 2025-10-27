@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <Banner />
 
         <ClientOnly>
@@ -101,12 +100,20 @@ import setTransitionPages from "@/composables/transitionPages.js";
 import PWANotifications from "@/Components/PWANotifications.vue";
 import useUi from "@/Stores/ui";
 import ClientOnly from '@duannx/vue-client-only';
+import { usePWASession } from "@/composables/usePWASession.js";
+
 
 const ui = useUi();
 const player = ui.player
 const nav = ui.nav
 //import useRoute from "@/composables/useRoute.js";
 //useRouteimport { useRoute } from 'ziggy-js';
+
+// Usar el composable para preservar estado en PWA
+const { isPWA, saveState, restoreState, initStatePreservation, isRestoring, hasCheckedRestoration } = usePWASession();
+
+// Variable para cleanup de PWA
+let pwaCleanup = null;
 
 // const folderExplorer = useFolderExplorerStore();
 
@@ -130,6 +137,15 @@ nav.announce = page.props.anuncio || "";
 const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset;
     // console.log('handleScroll', nav.scrollY)
+
+    // Guardar estado en PWA con throttling (máximo cada 2 segundos)
+    if (isPWA()) {
+        const now = Date.now();
+        if (!handleScroll.lastSave || now - handleScroll.lastSave > 2000) {
+            saveState();
+            handleScroll.lastSave = now;
+        }
+    }
 };
 
 // cuando el mouse sale de pantalla
@@ -175,9 +191,63 @@ watch(
     }
 );
 
+// Guardar estado cuando cambia la página
+watch(
+    () => page.url,
+    () => {
+        // Pequeño delay para asegurar que el scroll se actualice
+        if (isPWA()) {
+            setTimeout(() => {
+                saveState();
+            }, 400);
+        }
+    }
+);
+
+// Ocultar loader inicial cuando se complete la restauración
+watch(
+    () => isRestoring.value,
+    (newValue) => {
+        if (!newValue) {
+            const initialLoader = document.getElementById('pwa-initial-loader')
+            if (initialLoader) {
+                initialLoader.style.display = 'none'
+            }
+        }
+    }
+);
+
 nav.init(route);
 
+restoreState();
+pwaCleanup = initStatePreservation();
+
 onMounted(() => {
+
+    // Ocultar el loader inicial de PWA cuando se complete la restauración
+    const hideLoader = () => {
+        const initialLoader = document.getElementById('pwa-initial-loader')
+        if (initialLoader) {
+            initialLoader.style.display = 'none'
+        }
+    }
+
+    // Si no es PWA, ocultar inmediatamente
+    if (!isPWA()) {
+        hideLoader()
+    } else {
+        // Para PWA, esperar a que termine la restauración
+        const unwatch = watch(
+            () => isRestoring.value,
+            (newValue) => {
+                if (!newValue) {
+                    hideLoader()
+                    unwatch()
+                }
+            }
+        )
+    }
+
     // aplicamos configuración de transiciones de pagina (fadeout y scroll)
     setTransitionPages(router);
 
@@ -186,6 +256,8 @@ onMounted(() => {
     handleMouse();
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
+
+
 
     // mover a la posición indicada
     if (window.location.hash) {
@@ -203,6 +275,12 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     window.removeEventListener("scroll", handleScroll);
+
+    // Limpiar event listeners de PWA y guardar estado final
+    if (pwaCleanup) pwaCleanup();
+    if (isPWA()) {
+        saveState();
+    }
 });
 
 
