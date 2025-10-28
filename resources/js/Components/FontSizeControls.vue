@@ -35,11 +35,8 @@ const FONT_STEP = 1;
 function applyFontSize(size) {
   if (typeof document !== 'undefined') {
     try {
-      // set both our app variable and Tailwind-like variables used in the CSS
-      document.documentElement.style.setProperty('--app-font-size', size + 'px');
+      // set the Tailwind variable used in the CSS
       document.documentElement.style.setProperty('--text-base', size + 'px');
-      // fallback for older or specific CSS using body font-size
-      document.body.style.fontSize = size + 'px';
     } catch (e) {
       // noop
     }
