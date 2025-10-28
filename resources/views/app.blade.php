@@ -1,7 +1,7 @@
 <!DOCTYPE html>@php use Illuminate\Support\Facades\Cookie; @endphp
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth"
     data-theme="{{ Cookie::get('theme', 'light') }}"
-    style="--app-font-size: {{ Cookie::get('fontSize', 22) }}px; --text-base: {{ Cookie::get('fontSize', 22) }}px;">
+    style="--text-base: {{ Cookie::get('fontSize', 22) }}px;">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -81,7 +81,7 @@
     @endif
 </head>
 
-<body class="font-sans antialiased" style="font-size: {{ Cookie::get('fontSize', 16) }}px;">
+<body class="font-sans antialiased">
     <!-- PWA Initial Loader - se muestra desde JavaScript si es PWA -->
     <div id="pwa-initial-loader" class="fixed inset-0 z-50 flex items-center justify-center bg-base-100" style="display: none;">
         <div class="loading loading-ring loading-3xl text-primary"></div>

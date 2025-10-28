@@ -302,6 +302,6 @@ function handleInteraction() {
 
 /* Use the CSS variable as root font-size fallback for components that use rem/em */
 :root {
-    font-size: var(--app-font-size, 16px);
+    font-size: var(--text-base, 16px);
 }
 </style>
