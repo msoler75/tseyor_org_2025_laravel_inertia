@@ -22,6 +22,7 @@ use Laravel\Scout\Searchable;
 use Illuminate\Support\Facades\Cache;
 use App\Notifications\CambioNombreUsuario;
 use App\Notifications\VerificarEmail;
+use App\Traits\BuscableTrait;
 
 define('EQUIPO_ID_INTERIORIZACION', 2);
 
@@ -39,6 +40,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use TwoFactorAuthenticatable;
     use HasRoles;
     use Searchable;
+    use BuscableTrait;
 
     protected $revisionCreationsEnabled = true;
 
