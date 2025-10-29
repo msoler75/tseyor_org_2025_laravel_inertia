@@ -4,6 +4,10 @@ Este es el codebase de la plataforma web oficial de la ONG Mundo Armónico Tseyo
 
 Stack: **Laravel 10 + Backpack + Inertia.js + Vue 3 + Tailwind CSS 4 + DaisyUI 5**.
 
+## Entorno de desarrollo
+- Estamos desarrollando en Windows 10/11 con WSL2 (Ubuntu 22.04).
+- No ejecutes comandos de linux en consola (rm, cp, mv, etc.) desde PowerShell o CMD. Busca sus equivalentes en Windows PowerShell.
+
 ## Arquitectura Principal
 
 **Backend Laravel**:
