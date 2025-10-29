@@ -196,7 +196,7 @@ export function usePWASession() {
    */
   const restoreState = () => {
     if (typeof window === 'undefined' || !isPWA()) {
-      log('info', 'No es PWA o no hay window, saltando restauración')
+      // log('info', 'No es PWA o no hay window, saltando restauración')
       hasCheckedRestoration.value = true // Marcar como verificado incluso si no es PWA
       isRestoring.value = false // Asegurar que no se está restaurando
       return

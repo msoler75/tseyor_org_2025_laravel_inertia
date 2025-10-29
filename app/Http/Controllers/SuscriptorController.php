@@ -79,13 +79,16 @@ class SuscriptorController extends Controller
         return Inertia::render('Boletines/Desuscripcion');
     }
 
-    // Este método muestra la configuración actual del boletín para un suscriptor identificado por su token.
-    // Devuelve una vista con los datos del suscriptor.
     public function mostrarConfiguracion($token)
     {
         $suscriptor = Suscriptor::where('token', $token)->first();
+        $servicioActual = optional($suscriptor)->servicio;
+        // Mostrar bisemanal como quincenal al usuario
+        if ($servicioActual === 'boletin:bisemanal') {
+            $servicioActual = 'boletin:quincenal';
+        }
         return Inertia::render('Boletines/Config', [
-            'servicioActual' => optional($suscriptor)->servicio,
+            'servicioActual' => $servicioActual,
             'email' => optional($suscriptor)->email,
             'token' => $token,
         ]);
@@ -97,11 +100,16 @@ class SuscriptorController extends Controller
     public function configurar(Request $request, $token)
     {
         $request->validate([
-            'servicio' => 'string|in:boletin:semanal,boletin:bisemanal,boletin:mensual,boletin:bimensual,darse_baja',
+            'servicio' => 'string|in:boletin:semanal,boletin:bisemanal,boletin:mensual,boletin:bimensual,boletin:quincenal,darse_baja',
             'email' => 'email',
         ]);
 
         $servicio = $request->servicio ?? 'boletin:mensual';
+
+        // Normalizar bisemanal a quincenal para compatibilidad
+        if ($servicio === 'boletin:bisemanal') {
+            $servicio = 'boletin:quincenal';
+        }
         $suscriptor = Suscriptor::where('token', $token)->first();
         if(!$suscriptor) {
             $suscriptor = Suscriptor::create([

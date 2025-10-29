@@ -28,7 +28,10 @@ class DeploySSR extends Command
 
             Deploy::validateDirectoryExists($sourcePath);
 
-            if (Deploy::createZipFile($sourcePath, $zipPath)) {
+            // Excluir el manifest PWA ya que no es necesario para SSR
+            $exclusions = ['tseyor-manifest.v2.json'];
+
+            if (Deploy::createZipFile($sourcePath, $zipPath, $exclusions)) {
                 $this->info('ZIP creado: ' . basename($zipPath));
 
                 $result = Deploy::sendZipFile(
@@ -39,7 +42,7 @@ class DeploySSR extends Command
 
                 Deploy::handleResponse($result, $this);
 
-                File::delete($zipPath);
+                // File::delete($zipPath);
             }
             else {
                 $this->error('Error al crear el ZIP');

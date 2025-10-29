@@ -11,7 +11,7 @@
       <div>
         <label>
           <input type="radio" v-model="servicio" value="boletin:quincenal" />
-          bisemanal
+          Quincenal
         </label>
       </div>
       <div>
