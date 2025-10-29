@@ -14,7 +14,7 @@ class Suscriptor extends Model
 
     /* servicio puede ser :
     boletin:semanal
-    boletin:bisemanal
+    boletin:quincenal
     boletin:mensual
     boletin:bimensual
     boletin:trimestral

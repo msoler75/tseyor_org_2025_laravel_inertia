@@ -425,12 +425,12 @@ class DeployHelper
         switch ($type) {
             case 'public_build':
                 return [
-                    'allowedPaths' => ['assets/', 'images/', 'favicon.ico', 'manifest.json', 'robots.txt', 'sitemap.xml'],
+                    'allowedPaths' => ['assets/', 'images/', 'favicon.ico', 'tseyor-sw.js', 'tseyor-manifest.v2.json', 'workbox-', 'manifest.json', 'robots.txt', 'sitemap.xml'],
                     'allowedExtensions' => ['js', 'css', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'json', 'txt', 'xml', 'map']
                 ];
             case 'ssr':
                 return [
-                    'allowedPaths' => ['ssr.js', 'ssr-manifest.json'],
+                    'allowedPaths' => ['ssr.js', 'ssr-manifest.json', 'assets/'],
                     'allowedExtensions' => ['js', 'json']
                 ];
             case 'node_modules':

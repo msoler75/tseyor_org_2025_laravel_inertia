@@ -62,7 +62,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./resources/js"),
     },
   },
-  plugins: [
+  plugins: ({ command, ssrBuild }) => [
     tailwindcss(),
     // commonjs(),
     laravel({
@@ -141,7 +141,8 @@ export default defineConfig({
       ],
     }),
     asyncComponentsPlugin(),
-    VitePWA({
+    // Solo incluir VitePWA en builds del cliente, no en SSR
+    ...(ssrBuild ? [] : [VitePWA({
       registerType: 'autoUpdate',
       filename: 'tseyor-sw.js',
   // Cambiado a nueva versión para forzar invalidación de caché del manifest
@@ -368,7 +369,7 @@ export default defineConfig({
       devOptions: {
         enabled: false
       }
-    }),
+    })]),
     viteCompression({
       filter: /bootstrap\/ssr/, // Excluye TODOS los archivos en esta ruta
       threshold: 1024, // Mínimo 1KB para comprimir
