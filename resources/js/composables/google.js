@@ -39,8 +39,17 @@ export function loadGoogleMaps(apiKey, callback, options) {
   if (!options) options = {};
   options = { ...defaultOptions, ...options };
 
+  console.log("loadGoogleMaps - window.google exists:", !!window.google);
+  console.log("loadGoogleMaps - window.google.maps exists:", !!(window.google && window.google.maps));
+  console.log("loadGoogleMaps - callback:", callback);
+  console.log("loadGoogleMaps - window[callback] exists:", !!window[callback]);
+
   if (!window.google || !window.google.maps) {
+    console.log("Creando script de Google Maps");
     const lib = createMapScript(options);
     document.body.appendChild(lib);
-  } else window[callback]();
+  } else {
+    console.log("Google Maps ya cargado, llamando callback directamente");
+    window[callback]();
+  }
 }
