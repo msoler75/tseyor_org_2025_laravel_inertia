@@ -18,7 +18,7 @@
         </span>
         <component :is="dynamicComponent" v-if="full && editingMarkdown" v-model="contenidoMD"
             :toolbarsExclude="['save', 'sub', 'sup', 'katex', 'mermaid', 'htmlPreview', 'catalog', 'github', 'revoke', 'next', 'image']"
-            :footers="[]" :preview="false" />
+            :footers="[]" :preview="false" :noMermaid="true" :noKatex="true" />
     </div>
 </template>
 

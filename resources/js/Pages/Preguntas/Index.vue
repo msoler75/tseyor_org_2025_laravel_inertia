@@ -1,18 +1,17 @@
 <template>
-    <Page class="!pb-0">
+    <Page class="pb-0!">
         <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <span />
-            <div class="flex gap-2">
-                <Share />
+            <div class="flex gap-2 items-center">
                 <Link
                     href="/libros/preguntas-y-respuestas-tseyor"
-                    class="btn btn-xs btn-primary flex gap-2 items-center"
+                    class="btn btn-xs btn-error flex gap-2 items-center"
                     title="Descarga todo el glosario en pdf"
-                >
-                    <Icon icon="ph:download-duotone" />Descargar libro</Link
-                >
-                <AdminLinks modelo="lugar" necesita="administrar contenidos" />
+                    >
+                    <Icon icon="ph:download-duotone" /><span class="hidden sm:inline">Descargar </span>libro
+                </Link>
+                <Share />
             </div>
         </div>
 

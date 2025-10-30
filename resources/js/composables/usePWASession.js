@@ -195,6 +195,15 @@ export function usePWASession() {
       const scrollY = window.scrollY || window.pageYOffset
       const timestamp = Date.now()
 
+      // Si estamos en la página principal con scroll mínimo, borrar el estado en lugar de guardarlo
+      if (window.location.pathname === '/' && scrollY < 150) {
+        localStorage.removeItem(STORAGE_KEYS.URL)
+        localStorage.removeItem(STORAGE_KEYS.SCROLL_Y)
+        localStorage.removeItem(STORAGE_KEYS.TIMESTAMP)
+        log('info', 'Estado PWA borrado (página principal con scroll mínimo)')
+        return
+      }
+
       localStorage.setItem(STORAGE_KEYS.URL, currentUrl)
       localStorage.setItem(STORAGE_KEYS.SCROLL_Y, scrollY.toString())
       localStorage.setItem(STORAGE_KEYS.TIMESTAMP, timestamp.toString())
@@ -446,9 +455,13 @@ export function usePWASession() {
     if (typeof window === 'undefined') return
 
     const initialLoader = document.getElementById('pwa-initial-loader')
+    const loadingMessage = document.getElementById('pwa-loading-message')
     if (initialLoader) {
       log('info', 'Ocultando loader PWA')
       initialLoader.style.display = 'none'
+    }
+    if (loadingMessage) {
+      loadingMessage.style.display = 'none'
     }
   }
 
@@ -495,11 +508,19 @@ export function usePWASession() {
       }
     )
 
-    // Fallback: ocultar loader después de 5 segundos si algo falla
+    // Mostrar mensaje de carga a los 4 segundos
+    setTimeout(() => {
+      const loadingMessage = document.getElementById('pwa-loading-message')
+      if (loadingMessage) {
+        loadingMessage.style.opacity = '1'
+      }
+    }, 4000)
+
+    // Fallback: ocultar loader después de 10 segundos si algo falla
     setTimeout(() => {
       hideLoader()
       log('warn', 'Loader ocultado por timeout de fallback')
-    }, 5000)
+    }, 15000)
   }
 
   /**

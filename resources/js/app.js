@@ -12,7 +12,7 @@ import { ZiggyVue } from "ziggy";
 import { Ziggy } from './ziggy.js'
 import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
-import { registerAsyncComponents } from '../../async_components.d.ts';
+// import { registerAsyncComponents } from 'virtual:async-components';
 //import FloatingVue from 'floating-vue'
 import useRoute from '@/composables/useRoute.js';
 import {useNav} from '@/Stores/nav.js';
@@ -20,6 +20,11 @@ import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
 import { usePWA } from '@/composables/usePWA.js';
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js';
 
+
+// Hacer defineAsyncComponent disponible globalmente para librerías externas
+/*if (typeof window !== 'undefined') {
+  window.defineAsyncComponent = defineAsyncComponent;
+}*/
 
 // Deshabilitar restauración automática de scroll del navegador
 /*if (typeof window !== 'undefined') {
@@ -111,7 +116,7 @@ createInertiaApp({
       // .use(FloatingVue)
       // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs
       // app.config.globalProperties.$nav = useNav()
-      registerAsyncComponents(app);
+      // registerAsyncComponents(app);
       app.component('LazyHydrate', LazyHydrationWrapper);
 
       // Inicializar PWA

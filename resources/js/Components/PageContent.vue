@@ -1,6 +1,6 @@
 <template>
     <div class="bg-base-100 mx-auto shadow-xl px-4 sm:px-6">
-            <slot />
+        <slot />
     </div>
 </template>
 

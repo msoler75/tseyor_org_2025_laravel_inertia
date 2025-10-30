@@ -252,13 +252,15 @@
         <BotonesOperaciones />
     </div>
 
-    <ImagesViewer
-        :show="showImagesViewer"
-        @close="showImagesViewer = false"
-        :images="store.images.map((x) => x + '?mw=2000&mh=2000')"
-        :index="imageIndex"
-        :showFilename="true"
-    />
+    <ClientOnly>
+        <ImagesViewer
+            :show="showImagesViewer"
+            @close="showImagesViewer = false"
+            :images="store.images.map((x) => x + '?mw=2000&mh=2000')"
+            :index="imageIndex"
+            :showFilename="true"
+        />
+    </ClientOnly>
 </template>
 
 <script setup>
@@ -266,6 +268,7 @@ import useFolderExplorerStore from "@/Stores/folderExplorer";
 import useSelectors from "@/Stores/selectors";
 import usePlayer from "@/Stores/player";
 import useUserStore from "@/Stores/user";
+const ImagesViewer = defineAsyncComponent(() => import('../ImagesViewer.vue'))
 
 /*
 const vDisableRightClick = {

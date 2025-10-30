@@ -1,6 +1,6 @@
 <template>
     <nav
-        class="w-full border-gray-300 top-0 z-40 -translate-y-[1px] transition duration-400 select-none pointer-events-none"
+        class="w-full border-gray-300 top-0 z-40 -translate-y-px transition duration-400 select-none pointer-events-none"
         :class="[
             portada ? 'bg-base-100/0' :
                 nav.fullPage
@@ -8,7 +8,7 @@
                 : 'bg-base-200 border-b',
             nav.fullPage ? 'fixed border-gray-300' : 'sticky',
             nav.fullPage && nav.announce && !nav.announceClosed
-                ? 'top-[2rem] '
+                ? 'top-8 '
                 : 'top-0 ',
         ]"
     >
@@ -63,6 +63,7 @@
                     </Link>
                 </div>
 
+
                 <!-- Main Navigation Tabs -->
                 <NavTabs
                     class="hidden h-full lg:flex top-navigation grow justify-center"
@@ -75,6 +76,7 @@
                     <!-- Area for dev tools -->
                 </div>
 
+
                 <ClientOnly>
                     <transition
                         class="hidden lg:flex"
@@ -86,7 +88,7 @@
                         leave-to-class="transform opacity-0 scale-95"
                     >
                         <NavSubmenu
-                            class="absolute top-[120%] mx-[5rem] z-40 w-[calc(100%-10rem)]"
+                            class="absolute top-[120%] mx-20 z-40 w-[calc(100%-10rem)]"
                         />
                     </transition>
                 </ClientOnly>

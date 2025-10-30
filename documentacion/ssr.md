@@ -244,6 +244,10 @@ npm run build -- --mode analyze
 
 ---
 
+## 6. Performance y Optimización
+
+---
+
 ## 7. Troubleshooting
 
 ### Problema: Componente no se hidrata

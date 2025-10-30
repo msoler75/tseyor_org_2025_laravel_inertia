@@ -9,13 +9,16 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { VitePWA } from "vite-plugin-pwa";
 // import ssr from 'vite-plugin-ssr/plugin'
 // import commonjs from 'vite-plugin-commonjs';
-import asyncComponentsPlugin from "./vite-plugin-async-components.js";
+// import asyncComponentsPlugin from "./vite-plugin-async-components.js";
 
 import path from "path";
 // import { fileURLToPath } from 'url';
 
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
+
+// Detectar si es build SSR
+const isSSR = process.argv.includes('--ssr');
 
 export default defineConfig({
   optimizeDeps: {
@@ -39,8 +42,17 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      output: {
-        // format: 'cjs'
+      output: isSSR ? {} : {
+        manualChunks: {
+          base: ['vue', 'vue-router', '@inertiajs/vue3', 'axios', '@vueuse/core'],
+          ui: ['@iconify/vue', 'daisyui'],
+          tiptap: ['@tiptap/starter-kit', '@tiptap/vue-3', '@tiptap/extension-color', '@tiptap/extension-highlight', '@tiptap/extension-image', '@tiptap/extension-link', '@tiptap/extension-table', '@tiptap/extension-table-cell', '@tiptap/extension-table-header', '@tiptap/extension-table-row', '@tiptap/extension-text-align', '@tiptap/extension-text-style', '@tiptap/extension-underline', '@tiptap/extension-superscript'],
+          mdeditor: ['md-editor-v3'],
+          tools: ['vue-advanced-cropper', 'dropzone'],
+          markdown: ['showdown', 'turndown'],
+          search: ['fuse.js'],
+          hydration: ['vue3-lazy-hydration']
+        }
       }
     }
   },
@@ -128,10 +140,10 @@ export default defineConfig({
             "watch",
             "onMounted",
             "onBeforeUnmount",
+            "defineAsyncComponent",
             "onUnmounted",
             "defineEmits",
             "useSlots",
-            "defineAsyncComponent",
             "TransitionGroup",
           ],
           "@inertiajs/vue3": ["router", "usePage", "useForm"],
@@ -140,8 +152,14 @@ export default defineConfig({
         },
       ],
     }),
-    asyncComponentsPlugin(),
-    VitePWA({
+    //asyncComponentsPlugin({
+      //asyncComponents: [
+        // Solo componentes que NO se importan estáticamente en ningún lugar
+        'resources/js/Components/PWANotifications.vue',
+   //   ]
+    //}),
+    // Deshabilita VitePWA en build SSR para evitar duplicados
+    isSSR ? null : VitePWA({
       registerType: 'autoUpdate',
       filename: 'tseyor-sw.js',
   // Cambiado a nueva versión para forzar invalidación de caché del manifest
@@ -150,11 +168,14 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2,ttf,eot}'],
         // Configuración específica para Laravel/Inertia.js SPA
         navigateFallback: null, // Deshabilita el fallback automático a index.html
+        additionalManifestEntries: [
+          { url: '/', revision: '1' }
+        ],
         runtimeCaching: [
           {
-            // Cache prioritario para la página principal - usar cache primero, actualizar en background
+            // Cache prioritario para la página principal - usar cache primero
             urlPattern: ({ url }) => url.pathname === '/',
-            handler: 'StaleWhileRevalidate',
+            handler: 'CacheFirst',
             options: {
               cacheName: 'homepage-cache',
               expiration: {
@@ -376,20 +397,28 @@ export default defineConfig({
       deleteOriginFile: false, // Mantiene los originales
     }),
     visualizer(),
-  ],
+  ].filter(Boolean),
   define: {
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: true,
   },
   ssr: {
     // noExternal: true,
     external: [
-      "Modal",
-      "Footer",
-      "NavAside",
-      // "Suscribe",
-      "ProcesarImagen",
-      "TipTapEditor",
-      "TipTapFullMenuBar",
+        // 'PWANotifications',
+        /*'ImagesViewer',
+        'ModalDropZone',
+        'AudioVideoPlayer',
+        'ShareNetwork',
+        'Tools',
+        'ToolTextSearch',
+        'ToolTip',
+        'TipTapSimpleMenuBar',
+        'AdminLinks',
+        'AudioStateIcon',
+        'ProcesarImagen',
+        'TipTapEditor',
+        'TipTapFullMenuBar',*/
     ],
   },
 });
+
