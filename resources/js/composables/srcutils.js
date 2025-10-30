@@ -42,7 +42,7 @@ function getURLModule() {
 }
 
 export const belongsToCurrentDomain = async function (url) {
-    console.log("belongsToCurrentDomain", url);
+    // console.log("belongsToCurrentDomain", url);
     const hasHost = url.match(/^https?:\/\//);
     if (!hasHost) return true;
 

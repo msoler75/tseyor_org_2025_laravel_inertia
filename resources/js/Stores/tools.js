@@ -25,7 +25,7 @@ const tools = reactive({
     }, 100)
   },
   closeTools() {
-    console.log("CLOSING TOOLS");
+    // console.log("CLOSING TOOLS");
     this.mostrarBuscarTexto = false;
     this.mostrarHerramientas = "auto";
     nav.scrollingUp = false;
