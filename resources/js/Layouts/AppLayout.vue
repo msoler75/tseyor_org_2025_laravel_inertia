@@ -1,7 +1,5 @@
 <template>
     <div>
-        <Banner />
-
         <ClientOnly>
             <Tools/>
         </ClientOnly>
@@ -47,6 +45,7 @@
             </div>
         </Modal>
 
+
         <div class="bg-base-200 grow flex flex-col">
             <NavBar />
 
@@ -90,17 +89,22 @@
         </div>
 
         <!-- Notificaciones PWA -->
-        <PWANotifications />
+        <!-- <PWANotifications /> -->
     </div>
 </template>
 
 <script setup>
 import useUserStore from "@/Stores/user";
 import setTransitionPages from "@/composables/transitionPages.js";
-import PWANotifications from "@/Components/PWANotifications.vue";
+// PWANotifications ahora es asíncrono, registrado globalmente
 import useUi from "@/Stores/ui";
 import ClientOnly from '@duannx/vue-client-only';
 import { usePWASession } from "@/composables/usePWASession.js";
+
+const Tools = defineAsyncComponent(() => import('../Components/Tools.vue'))
+const ToolTextSearch = defineAsyncComponent(() => import('../Components/ToolTextSearch.vue'))
+const AudioVideoPlayer = defineAsyncComponent(() => import('../Components/AudioVideoPlayer.vue'))
+// const NavAside = defineAsyncComponent(() => import('../Components/NavAside.vue'))
 
 
 const ui = useUi();

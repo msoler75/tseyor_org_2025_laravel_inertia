@@ -8,7 +8,7 @@ import { ZiggyVue } from "ziggy";
 import { Ziggy } from './ziggy.js'
 import { JSDOM } from 'jsdom'
 import axios from 'axios'
-import { registerAsyncComponents } from '../../async_components.d.ts';
+// import { registerAsyncComponents } from 'virtual:async-components';
 import AppLayout from "@/Layouts/AppLayout.vue";
 import useRoute from '@/composables/useRoute.js';
 import {useNav} from '@/Stores/nav.js';
@@ -54,7 +54,7 @@ createServer(page =>
         methods: { useNav }
       })
 
-      registerAsyncComponents(app);
+      // registerAsyncComponents(app);
       app.component('LazyHydrate', LazyHydrationWrapper);
 
       return app

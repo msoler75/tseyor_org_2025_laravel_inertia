@@ -79,16 +79,26 @@
     })(window, document, "clarity", "script", "s4eie0h4o2");
 </script>
     @endif
+
+
+    <style>
+.loading-circle {
+    mask-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cg transform-origin='center'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='black' stroke-width='3' opacity='0.25'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 12 12' to='360 12 12' dur='1s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='black' stroke-width='3' stroke-dasharray='10 30 0'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 12 12' to='360 12 12' dur='.75s' repeatCount='indefinite'/%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
+}
+</style>
 </head>
 
 <body class="font-sans antialiased">
-    <!-- PWA Initial Loader - se muestra desde JavaScript si es PWA -->
-    <div id="pwa-initial-loader" class="fixed inset-0 z-50 flex items-center justify-center bg-base-100" style="display: none;">
-        <div class="loading loading-ring loading-3xl text-primary"></div>
+    <!-- PWA Initial Loader - se muestra desde JavaScript si es PWA y hay estado para restaurar -->
+    <div id="pwa-initial-loader" class="fixed inset-0 z-50 flex flex-col gap-4 items-center justify-center bg-base-100" style="display: none;">
+        <div class="loading loading-circle loading-md text-primary"></div>
+        <div id="pwa-loading-message" class="text-center text-lg text-base-content/70 transition-opacity duration-300" style="opacity: 0">
+            Cargando estado previo...
+        </div>
     </div>
 
     <script>
-        // Mostrar loader inicial si es PWA (detección inmediata)
+        // Mostrar loader inicial si es PWA y hay estado para restaurar
         (function() {
             // Función para detectar si es PWA
             function isPWA() {
@@ -99,8 +109,18 @@
                 return false;
             }
 
-            // Si es PWA, mostrar el loader inmediatamente
-            if (isPWA()) {
+            // Función para verificar si hay estado PWA guardado
+            function hasPWAState() {
+                try {
+                    // Verificar si hay URL guardada
+                    return localStorage.getItem('pwa-last-url') !== null;
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            // Si es PWA y hay estado para restaurar, mostrar el loader
+            if (isPWA() && hasPWAState()) {
                 var loader = document.getElementById('pwa-initial-loader');
                 if (loader) {
                     loader.style.display = 'flex';

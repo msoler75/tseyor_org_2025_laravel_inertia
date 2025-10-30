@@ -60,6 +60,7 @@
 
 <script setup>
 import { useClipboard } from '@vueuse/core'
+const ShareNetwork = defineAsyncComponent(() => import('./ShareNetwork.vue'))
 
 const sharing = reactive({
     title: '',

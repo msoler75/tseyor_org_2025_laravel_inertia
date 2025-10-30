@@ -4,14 +4,16 @@
         <PageHeader>
         <div class="flex justify-between items-center mb-20">
             <Back :href="route('preguntas')">Preguntas frecuentes</Back>
-            <Link
-                href="/libros/preguntas-y-respuestas-tseyor"
-                class="btn btn-sm btn-primary flex gap-2 items-center"
-                title="Descarga esta sección en pdf"
-            >
-                <Icon icon="ph:download-duotone" />Descargar libro</Link
-            >
-            <Share />
+            <div class="flex gap-2 items-center">
+                <Link
+                    href="/libros/preguntas-y-respuestas-tseyor"
+                    class="btn btn-xs btn-error flex gap-2 items-center"
+                    title="Descarga todo el glosario en pdf"
+                    >
+                    <Icon icon="ph:download-duotone" /><span class="hidden sm:inline">Descargar </span>libro
+                </Link>
+                <Share />
+            </div>
         </div>
         </PageHeader>
 

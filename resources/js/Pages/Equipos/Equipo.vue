@@ -122,7 +122,9 @@
                     <div class="prose" v-html="MarkdownToHtml(equipo.informacion)" />
                 </Card>
 
-                <EquipoAdmin v-if="soyCoordinador || puedoAdministrar" :equipo="equipo" @updated="reloadEquipo" />
+                <ClientOnly>
+                    <EquipoAdmin v-if="soyCoordinador || puedoAdministrar" :equipo="equipo" @updated="reloadEquipo" />
+                </ClientOnly>
 
             </GridAppear>
         </div>
@@ -132,13 +134,14 @@
 </template>
 
 <script setup>
-import EquipoAdmin from './Partes/EquipoAdmin.vue'
 import EquipoCabecera from './Partes/EquipoCabecera.vue'
 import EquipoInformacion from './Partes/EquipoInformacion.vue'
 import EquipoMembresia from './Partes/EquipoMembresia.vue'
 import CrearInforme from './Partes/CrearInforme.vue'
 import usePlayer from '@/Stores/player'
 import { MarkdownToHtml } from "@/composables/markdown"
+const EquipoAdmin = defineAsyncComponent(() => import('./Partes/EquipoAdmin.vue'))
+
 
 const props = defineProps({
     equipo: {

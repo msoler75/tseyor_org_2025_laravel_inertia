@@ -5,7 +5,7 @@ import { ZiggyVue } from "ziggy";
 import { Ziggy } from "../ziggy.js";
 
 // import { createApp } from "vue";
-import { createApp } from "vue/dist/vue.esm-bundler.js";
+import { createApp, defineAsyncComponent } from "vue/dist/vue.esm-bundler.js";
 
 
 // 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.3/vue.global.min.js'
@@ -26,8 +26,11 @@ import FileManager from "../Components/FileManager.vue";
 import WorkerStatus from "../Components/Admin/WorkerStatus.vue";
 // import AudioVideoPlayer from "../AsyncComponents/AudioVideoPlayer.vue";
 //import AudioStateIcon from "../Components/AudioStateIcon.vue";
-import { registerAsyncComponents } from '../../../async_components.d.ts';
+// import { registerAsyncComponents } from 'virtual:async-components';
 import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
+
+// Hacer defineAsyncComponent disponible globalmente para librerías externas
+window.defineAsyncComponent = defineAsyncComponent;
 
 // only in forms
 const elem = document.querySelector(".page-body form, .admin-dashboard, .vue-component");
@@ -53,7 +56,7 @@ if (elem) {
     })
     .use(ZiggyVue, Ziggy)
 
-      registerAsyncComponents(app);
+      // registerAsyncComponents(app);
       app.component('LazyHydrate', LazyHydrationWrapper);
 
     window.app = app.mount(elem)

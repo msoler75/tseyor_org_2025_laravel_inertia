@@ -17,6 +17,9 @@ import { detectFormat, MarkdownToHtml } from '@/composables/markdown.js'
 // import { VueShowdown } from 'vue-showdown';
 // import { extractImages, extractReferences } from '@/composables/contentUtils.js'
 
+// Componente ImagesViewer cargado de forma asíncrona
+const ImagesViewer = defineAsyncComponent(() => import('./ImagesViewer.vue'))
+
 const props = defineProps({
     content: {
         type: String,

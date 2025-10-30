@@ -109,6 +109,9 @@ const adjustHeight = () => {
     }
 };
 
+// hay que hacerlo aquí para que enseguida se establezca el valor
+nav.fullPage = true;
+
 onMounted(() => {
     // Establecer altura fija del viewport ANTES de configurar eventos
     setFixedViewportHeight();
@@ -139,7 +142,6 @@ onMounted(() => {
         window.visualViewport.addEventListener('resize', setFixedViewportHeight);
     }
 
-    nav.fullPage = true;
     scrollTimer = setTimeout(() => {
         showScrollIcons.value = true;
     }, props.scrollIconsDelay);
