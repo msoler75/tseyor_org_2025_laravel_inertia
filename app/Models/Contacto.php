@@ -66,4 +66,14 @@ class Contacto extends ContenidoBaseModel
      {
          return $this->hasOne(User::class, 'contacto_id');
      }
+
+
+     // para convertir los paises en texto buscable para Scout
+     public function toSearchableArray()
+     {
+         $array = $this->toArray();
+         $array['pais_nombre'] = $this->NombrePais;
+         return $array;
+     }
+
 }
