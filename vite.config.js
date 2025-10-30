@@ -356,12 +356,12 @@ export default defineConfig({
             type: 'image/png',
             purpose: 'any'
           },
-          // Icono principal para maskable (importante para splash screen)
+          // Icono principal (importante para splash screen)
           {
             src: '/ic/android/android-launchericon-512-512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'maskable'
+            purpose: 'any'
           }
         ]
       },

@@ -154,13 +154,25 @@ const contactos = computed(() => props.listado.data);
 const justLoaded = ref(false);
 
 onMounted(() => {
-    console.log("onMounted");
-    // Carga dinámica de la biblioteca de Google Maps con el parámetro de callback
-    if (!justLoaded.value) loadGoogleMaps(props.apiKey, "initMap");
-    justLoaded.value = true;
+    console.log("onMounted - Inicio");
+    console.log("window.google exists:", !!window.google);
+    console.log("window.google.maps exists:", !!(window.google && window.google.maps));
+    console.log("justLoaded:", justLoaded.value);
 
     window.initMap = () => {
-        console.log("initMap", contactos.value);
+        console.log("initMap - Inicio");
+        console.log("contactos.value:", contactos.value);
+        console.log("map.value:", map.value);
+        console.log("mapRef.value:", mapRef.value);
+        if (map.value) {
+            console.log("Map already initialized");
+            return;
+        }
+        if (!mapRef.value) {
+            console.log("mapRef not ready, skipping initMap");
+            return;
+        }
+        console.log("Inicializando mapa");
         // Inicializar el mapa
         map.value = new google.maps.Map(mapRef.value, {
             center: { lat: 0, lng: 0 },
@@ -170,20 +182,38 @@ onMounted(() => {
         colocarMarcadores();
         encuadrarMarcadores();
 
+        console.log("Mapa inicializado completamente");
+
         // si cambian los contactos, recolocamos los marcadores
         watch(contactos, () => {
-            console.log("watch contactos");
+            console.log("watch contactos - Inicio");
+            console.log("contactos cambiaron:", contactos.value);
             borrarMarcadores();
             colocarMarcadores();
             encuadrarMarcadores();
         });
     };
+
+    // Carga dinámica de la biblioteca de Google Maps con el parámetro de callback
+    if (!justLoaded.value) {
+        console.log("Cargando Google Maps");
+        loadGoogleMaps(props.apiKey, "initMap");
+    } else {
+        console.log("Google Maps ya cargado previamente");
+        // Si ya está cargado, llamar initMap directamente
+        if (window.google && window.google.maps) {
+            window.initMap();
+        }
+    }
+    justLoaded.value = true;
 });
 
 const markers = [];
 
 function colocarMarcadores() {
-    console.log("colocarMarcadores", contactos.value);
+    console.log("colocarMarcadores - Inicio");
+    console.log("contactos.value:", contactos.value);
+    console.log("map.value:", map.value);
     // Agregar marcadores para cada contacto
     contactos.value.forEach((contacto) => {
         if (contacto.latitud != null && contacto.longitud != null)
@@ -192,7 +222,12 @@ function colocarMarcadores() {
 }
 
 function encuadrarMarcadores() {
-    if (!markers.length) return;
+    console.log("encuadrarMarcadores - Inicio");
+    console.log("markers.length:", markers.length);
+    if (!markers.length) {
+        console.log("No hay marcadores, saliendo");
+        return;
+    }
 
     // comprobar límites del mapa usando los marcadores
     const bounds = new google.maps.LatLngBounds();
@@ -220,17 +255,19 @@ function encuadrarMarcadores() {
 }
 
 function borrarMarcadores() {
-    console.log("borrarMarcadores", markers);
+    console.log("borrarMarcadores - Inicio");
+    console.log("markers antes:", markers);
     // removemos los markers
     for (let i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
     }
     // delete all items of array markers
     markers.splice(0, markers.length);
+    console.log("markers después:", markers);
 }
 
 function addMarker(contacto) {
-    console.log({ contacto });
+    console.log("addMarker - Inicio para contacto:", contacto.nombre);
     // Crear el marcador en el mapa
     const marker = new google.maps.Marker({
         position: { lat: contacto.latitud, lng: contacto.longitud },
@@ -240,6 +277,7 @@ function addMarker(contacto) {
 
     // guardamos el marker en el array
     markers.push(marker);
+    console.log("Marcador agregado, total markers:", markers.length);
 
     // Crear contenido para la ventana de información
     const content = `

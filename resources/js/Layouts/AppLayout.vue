@@ -106,20 +106,10 @@ import { usePWASession } from "@/composables/usePWASession.js";
 const ui = useUi();
 const player = ui.player
 const nav = ui.nav
-//import useRoute from "@/composables/useRoute.js";
-//useRouteimport { useRoute } from 'ziggy-js';
-
 // Usar el composable para preservar estado en PWA
-const { isPWA, saveState, restoreState, initStatePreservation, isRestoring, hasCheckedRestoration } = usePWASession();
+const { isPWA, initPWA } = usePWASession();
 
-// Variable para cleanup de PWA
-let pwaCleanup = null;
-
-// const folderExplorer = useFolderExplorerStore();
-
-// ...existing code... (font controls moved to FontSizeControls component)
-
-// console.log('app initiating...')
+console.log('app initiating...')
 
 const userStore = useUserStore();
 const page = usePage();
@@ -136,16 +126,7 @@ nav.announce = page.props.anuncio || "";
 
 const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset;
-    // console.log('handleScroll', nav.scrollY)
-
-    // Guardar estado en PWA con throttling (máximo cada 2 segundos)
-    if (isPWA()) {
-        const now = Date.now();
-        if (!handleScroll.lastSave || now - handleScroll.lastSave > 2000) {
-            saveState();
-            handleScroll.lastSave = now;
-        }
-    }
+    // El guardado automático del scroll ahora lo maneja el composable usePWASession
 };
 
 // cuando el mouse sale de pantalla
@@ -191,73 +172,47 @@ watch(
     }
 );
 
-// Guardar estado cuando cambia la página
-watch(
-    () => page.url,
-    () => {
-        // Pequeño delay para asegurar que el scroll se actualice
-        if (isPWA()) {
-            setTimeout(() => {
-                saveState();
-            }, 400);
-        }
-    }
-);
+// Guardar estado cuando cambia la página (ahora manejado por el composable)
+// watch(
+//     () => page.url,
+//     () => {
+//         // Pequeño delay para asegurar que el scroll se actualice
+//         if (isPWA()) {
+//             setTimeout(() => {
+//                 saveState();
+//             }, 400);
+//         }
+//         // Asegurar que el loader esté oculto después de navegación
+//         // POR SI TODO FALLA
+//         setTimeout(() => {
+//             hideLoader()
+//         }, 1900);
+//     }
+// );
 
 // Ocultar loader inicial cuando se complete la restauración
-watch(
-    () => isRestoring.value,
-    (newValue) => {
-        if (!newValue) {
-            const initialLoader = document.getElementById('pwa-initial-loader')
-            if (initialLoader) {
-                initialLoader.style.display = 'none'
-            }
-        }
-    }
-);
+// (Esta lógica ahora está manejada por el composable usePWASession)
+// watch(
+//     () => isRestoring.value,
+//     (newValue) => {
+//         console.log('[PWA] isRestoring cambió a:', newValue)
+//         if (!newValue) {
+//             const initialLoader = document.getElementById('pwa-initial-loader')
+//             if (initialLoader) {
+//                 console.log('[PWA] Ocultando loader inicial')
+//                 initialLoader.style.display = 'none'
+//             }
+//         }
+//     }
+// );
 
 nav.init(route);
 
-restoreState();
-pwaCleanup = initStatePreservation();
+// Inicializar PWA completamente (restauración, preservación de estado, loader)
+initPWA(nav);
 
 onMounted(() => {
-
-    // Ocultar el loader inicial de PWA cuando se complete la restauración
-    const hideLoader = () => {
-        const initialLoader = document.getElementById('pwa-initial-loader')
-        if (initialLoader) {
-            initialLoader.style.display = 'none'
-        }
-    }
-
-    // Si no es PWA, ocultar inmediatamente
-    if (!isPWA()) {
-        hideLoader()
-    } else {
-        // Para PWA, esperar a que termine la restauración
-        const unwatchRestoring = watch(
-            () => isRestoring.value,
-            (newValue) => {
-                if (!newValue) {
-                    hideLoader()
-                    unwatchRestoring()
-                }
-            }
-        )
-
-        // También verificar si ya se completó la verificación de restauración
-        const unwatchChecked = watch(
-            () => hasCheckedRestoration.value,
-            (newValue) => {
-                if (newValue && !isRestoring.value) {
-                    hideLoader()
-                    unwatchChecked()
-                }
-            }
-        )
-    }
+    console.log('[PWA] AppLayout onMounted, isPWA:', isPWA())
 
     // aplicamos configuración de transiciones de pagina (fadeout y scroll)
     setTransitionPages(router);

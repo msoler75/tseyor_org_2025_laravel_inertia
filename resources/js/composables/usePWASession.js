@@ -1,5 +1,18 @@
 import { router } from '@inertiajs/vue3'
-import { usePage } from '@inertiajs/vue3'
+
+/*
+
+AppLayout.initPWA(nav)
+  ↓
+usePWASession.initPWA()
+  ↓
+  ├── restoreState() [maneja navegación automática]
+  ├── initStatePreservation(nav) [watchers de scroll]
+  └── initLoader() [maneja ocultar loader]
+      ↓
+      hideLoader() [oculta el loader PWA]
+
+*/
 
 /**
  * Composable para preservar el estado de sesión en PWA
@@ -25,6 +38,9 @@ export function usePWASession() {
   // Bandera para saber si ya se verificó la restauración
   const hasCheckedRestoration = ref(false)
 
+  // Variable para throttling del scroll
+  let scrollLastSave = null
+
   const log = (level, message, data = null) => {
     const timestamp = new Date().toLocaleTimeString()
     const logEntry = {
@@ -47,31 +63,33 @@ export function usePWASession() {
       // Silenciar errores de localStorage
     }
 
-    // Envío de logs al servidor deshabilitado - mantener infraestructura del servidor para uso futuro
-    // if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    //   try {
-    //     fetch('/pwa-log', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         'X-Requested-With': 'XMLHttpRequest'
-    //       },
-    //       body: JSON.stringify({
-    //         level,
-    //         message,
-    //         data,
-    //         url: logEntry.url,
-    //         timestamp,
-    //         user_agent: navigator.userAgent,
-    //         is_pwa: isPWA()
-    //       })
-    //     }).catch(() => {
-    //       // Silenciar errores de red
-    //     })
-    //   } catch (error) {
-    //     // Silenciar errores de fetch
-    //   }
-    // }
+    // Envío de logs al servidor (siempre activo para debugging PWA)
+    if (typeof window !== 'undefined') {
+      try {
+        fetch('/pwa-log', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify({
+            level,
+            message,
+            data,
+            url: logEntry.url,
+            timestamp,
+            user_agent: navigator.userAgent,
+            is_pwa: isPWA()
+          })
+        }).catch((error) => {
+          console.warn('[PWA] Error enviando log al servidor:', error)
+          log('warn', 'Error enviando log al servidor', { error: error.message || error })
+        })
+      } catch (error) {
+        console.warn('[PWA] Error en fetch de log:', error)
+        log('warn', 'Error en fetch de log', { error: error.message || error })
+      }
+    }
 
     // También mostrar en consola
     const consoleMethod = level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log'
@@ -366,10 +384,26 @@ export function usePWASession() {
    * Inicializa los event listeners para guardar estado
    * Devuelve una función de cleanup
    */
-  const initStatePreservation = () => {
+  const initStatePreservation = (nav = null) => {
     if (typeof window === 'undefined' || !isPWA()) return () => {}
 
     log('info', 'Inicializando preservación de estado PWA')
+
+    // Configurar watcher del scroll si se proporciona nav
+    let unwatchScroll = null
+    if (nav) {
+      unwatchScroll = watch(
+        () => nav.scrollY,
+        () => {
+          // Guardar estado con throttling (máximo cada 2 segundos)
+          const now = Date.now()
+          if (!scrollLastSave || now - scrollLastSave > 2000) {
+            saveState()
+            scrollLastSave = now
+          }
+        }
+      )
+    }
 
     // Configurar inmediatamente los event listeners, pero con protección de inicialización
     const saveEvents = ['beforeunload', 'pagehide', 'visibilitychange']
@@ -395,6 +429,7 @@ export function usePWASession() {
 
     // Cleanup function
     const cleanup = () => {
+      if (unwatchScroll) unwatchScroll()
       saveEvents.forEach(event => {
         window.removeEventListener(event, handleSave)
       })
@@ -404,15 +439,90 @@ export function usePWASession() {
     return cleanup
   }
 
+  /**
+   * Oculta el loader inicial de PWA
+   */
+  const hideLoader = () => {
+    if (typeof window === 'undefined') return
+
+    const initialLoader = document.getElementById('pwa-initial-loader')
+    if (initialLoader) {
+      log('info', 'Ocultando loader PWA')
+      initialLoader.style.display = 'none'
+    }
+  }
+
+  /**
+   * Inicializa el manejo del loader PWA
+   */
+  const initLoader = () => {
+    if (typeof window === 'undefined') return
+
+    // Si no es PWA, ocultar loader inmediatamente
+    if (!isPWA()) {
+      log('info', 'No es PWA, ocultando loader inmediatamente')
+      hideLoader()
+      return
+    }
+
+    log('info', 'Inicializando loader PWA')
+
+    // Verificar si la restauración ya se completó
+    if (hasCheckedRestoration.value && !isRestoring.value) {
+      log('info', 'Restauración ya completada, ocultando loader inmediatamente')
+      hideLoader()
+      return
+    }
+
+    // Configurar watchers para ocultar el loader cuando termine la restauración
+    const unwatchRestoring = watch(
+      () => isRestoring.value,
+      (newValue) => {
+        if (!newValue) {
+          hideLoader()
+          unwatchRestoring()
+        }
+      }
+    )
+
+    const unwatchChecked = watch(
+      () => hasCheckedRestoration.value,
+      (newValue) => {
+        if (newValue && !isRestoring.value) {
+          hideLoader()
+          unwatchChecked()
+        }
+      }
+    )
+
+    // Fallback: ocultar loader después de 5 segundos si algo falla
+    setTimeout(() => {
+      hideLoader()
+      log('warn', 'Loader ocultado por timeout de fallback')
+    }, 5000)
+  }
+
+  /**
+   * Inicializa completamente la sesión PWA
+   * Debe llamarse una sola vez desde el componente principal
+   */
+  const initPWA = (nav = null) => {
+    if (typeof window === 'undefined') return
+
+    // Restaurar estado si es necesario
+    restoreState()
+
+    // Inicializar preservación de estado (scroll automático)
+    initStatePreservation(nav)
+
+    // Inicializar loader
+    initLoader()
+  }
+
   return {
     isPWA,
-    saveState,
-    restoreState,
-    clearState,
-    initStatePreservation,
+    initPWA,
     getLogs,
-    clearLogs,
-    isRestoring,
-    hasCheckedRestoration
+    clearLogs
   }
 }
