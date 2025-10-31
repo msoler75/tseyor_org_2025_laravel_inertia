@@ -6,7 +6,7 @@
     <h1 class="hidden" >{{ store.rutaActual }}</h1>
         <div
             class="w-full sticky border-b border-gray-300 shadow-2xs bg-base-100 px-4 pb-0 sm:px-6 lg:px-8 z-30"
-            :class="[embed ? 'pt-[2rem] top-0' : 'pt-[1rem] lg:pt-[4rem] top-[4rem]']"
+            :class="[embed ? 'pt-8 top-0' : 'pt-4 lg:pt-16 top-16']"
         >
             <div
                 ref="breadcrumb"
@@ -100,7 +100,7 @@
 
                         <button
                             v-if="store.seleccionando"
-                            class="btn btn-neutral btn-sm btn-icon mr-auto"
+                            class="btn btn-neutral btn-sm mr-auto"
                             @click.prevent="store.seleccionarTodos"
                             title="Seleccionar todos"
                         >
@@ -115,7 +115,7 @@
                                 !store.seleccionando &&
                                 !store.mostrandoResultadosBusqueda
                             "
-                            class="hidden sm:inline btn btn-neutral btn-sm btn-icon"
+                            class="hidden sm:inline btn btn-neutral btn-sm"
                             title="Buscar archivos"
                             @click="store.call('buscar')"
                         >
@@ -128,12 +128,12 @@
                         <Dropdown>
                             <template #trigger>
                                 <span
-                                    class="btn btn-neutral btn-sm btn-icon"
+                                    class="btn btn-neutral btn-sm"
                                     title="Ordenar los elementos"
                                 >
                                     <Icon
                                         icon="lucide:arrow-down-wide-narrow"
-                                        class="text-2xl"
+                                        class="transform scale-150"
                                     />
                                 </span>
                             </template>
