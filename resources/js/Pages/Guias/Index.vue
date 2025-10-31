@@ -21,14 +21,13 @@
         </div>
 
 
-        <div class="flex justify-between mb-5">
+                <div class="flex justify-between mb-5">
          <TitleInfo title="" classes="!mb-0">
                 <p>Los Guías Estelares son tutores de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia> que mantienen contacto <Referencia r="telepatía">
                 telepático</Referencia> con el <Referencia>grupo TSEYOR</Referencia> a través del canalizador <Referencia>Chac-Mool</Referencia> <Referencia>Puente</Referencia>.
                 </p>
                 <p>El objetivo de este contacto y <Referencia r="Contacto entre ambas civilizaciones">tutelaje entre civilizaciones</Referencia> es servir de referenciación para que la humanidad planetaria de la Tierra pueda prepararse para la llegada del <Referencia>Rayo Sincronizador</Referencia> que resituará la humanidad a su posición real en el <Referencia>Tiempo Real del Universo</Referencia>.</p>
          </TitleInfo>
-            <SearchInput placeholder="Buscar guía estelar..."/>
         </div>
 
         </PageHeader>

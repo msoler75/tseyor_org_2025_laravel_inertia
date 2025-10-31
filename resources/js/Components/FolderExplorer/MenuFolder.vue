@@ -2,8 +2,8 @@
     <Dropdown v-if="!store.enRaiz && !store.seleccionando" align="right" width="48"
         :class="!store.infoCargada ? 'opacity-50 pointer-events-none' : ''">
         <template #trigger>
-            <div class="btn btn-neutral btn-sm btn-icon cursor-pointer">
-                <Icon icon="mdi:dots-vertical" class="text-xl" />
+            <div class="btn btn-neutral btn-sm cursor-pointer">
+                <Icon icon="mdi:dots-vertical" class="transform scale-150" />
             </div>
         </template>
 
