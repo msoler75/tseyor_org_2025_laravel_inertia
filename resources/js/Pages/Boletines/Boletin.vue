@@ -19,25 +19,23 @@
 
             <div class="py-[10ch] mb-12 relative">
 
-            <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
+                <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
 
-            <div class="prose mx-auto">
-                <h1>{{ boletin.titulo }}</h1>
+                <div class="prose mx-auto">
+                    <h1>{{ boletin.titulo }}</h1>
 
-                <div class="text-sm mb-20 flex justify-between">
-                    <span />
+                    <div class="text-sm mb-20 flex justify-between">
+                        <span />
 
-                    <!-- <a target="_blank" class="btn btn-xs btn-error w-fit flex gap-3" :href="comunicado.pdf"
-                        title="Ver en formato PDF">
-                        <Icon icon="ph:file-pdf" />
-                    </a> -->
-                    <TimeAgo :date="boletin.created_at" :includeTime="true" />
+                        <!-- <a target="_blank" class="btn btn-xs btn-error w-fit flex gap-3" :href="comunicado.pdf"
+                            title="Ver en formato PDF">
+                            <Icon icon="ph:file-pdf" />
+                        </a> -->
+                        <TimeAgo :date="boletin.created_at" :includeTime="true" />
+                    </div>
                 </div>
-            </div>
 
-            <LazyHydrate>
                 <Content :content="boletin.texto" class="mx-auto" />
-            </LazyHydrate>
             </div>
         </PageContent>
     </Page>

@@ -20,7 +20,6 @@ Stack: **Laravel 10 + Backpack + Inertia.js + Vue 3 + Tailwind CSS 4 + DaisyUI 5
 
 **Frontend Vue 3 + Inertia**:
 - **Auto-imports**: Composables, componentes y API de Vue se auto-importan via `unplugin-auto-import`
-- **Componentes asíncronos**: Registrados automáticamente desde `resources/js/AsyncComponents/` via `async_components.d.ts`
 - **Stores reactivos**: En `resources/js/Stores/` (user.js, nav.js, api.js, etc.) usando patrón estado global
 - **SSR habilitado**: Configuración dual en Vite para cliente y servidor
 - **PWA**: Configurado con workbox para funcionalidad offline
@@ -65,7 +64,6 @@ php artisan ziggy:generate  # Regenerar rutas JS
 ## Configuraciones Clave
 
 **Vite config destacable**:
-- Plugin personalizado `vite-plugin-async-components.js` para componentes asíncronos
 - Compresión gzip automática en build
 - Visualizer para análisis de bundle size
 - PWA plugin configurado

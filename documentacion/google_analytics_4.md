@@ -80,7 +80,7 @@ GOOGLE_ANALYTICS_MEASUREMENT_ID=
 #### Formularios de Contacto y Suscripciones
 - **Archivo:** `resources/js/Pages/Contactar.vue`
 - Se trackea automáticamente el envío exitoso de formularios de contacto
-- **Archivo:** `resources/js/AsyncComponents/Suscribe.vue`
+- **Archivo:** `resources/js/Components/Suscribe.vue`
 - Se trackea automáticamente las suscripciones al boletín desde cualquier página
 - **Archivo:** `resources/js/Pages/Profile/Partials/BoletinSuscripcion.vue`
 - Tracking específico para suscripciones desde el perfil de usuario

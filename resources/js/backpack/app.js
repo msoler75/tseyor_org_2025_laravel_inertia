@@ -14,23 +14,16 @@ import { Link } from "@inertiajs/vue3";
 
 import TipTapEditorFullField from "../Components/Backpack/TipTapEditorFullField.vue";
 import TipTapEditorSimpleField from "../Components/Backpack/TipTapEditorSimpleField.vue";
-// import TinyMCEFullField from "../Components/Backpack/TinyMCEFullField.vue";
-// import TinyMCESimpleField from "../Components/Backpack/TinyMCESimpleField.vue";
-// import QuillEditorFullField from "../Components/Backpack/QuillEditorFullField.vue";
-// import QuillEditorSimpleField from "../Components/Backpack/QuillEditorSimpleField.vue";
 import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
 // import JSONEditorField from "../Components/Backpack/JSONEditorField.vue";
 import SelectField from "../Components/Backpack/SelectField.vue";
 import TimeAgo from "../Components/TimeAgo.vue";
 import FileManager from "../Components/FileManager.vue";
 import WorkerStatus from "../Components/Admin/WorkerStatus.vue";
-// import AudioVideoPlayer from "../AsyncComponents/AudioVideoPlayer.vue";
-//import AudioStateIcon from "../Components/AudioStateIcon.vue";
-// import { registerAsyncComponents } from 'virtual:async-components';
 import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
 
 // Hacer defineAsyncComponent disponible globalmente para librerías externas
-window.defineAsyncComponent = defineAsyncComponent;
+// window.defineAsyncComponent = defineAsyncComponent;
 
 // only in forms
 const elem = document.querySelector(".page-body form, .admin-dashboard, .vue-component");
@@ -56,7 +49,6 @@ if (elem) {
     })
     .use(ZiggyVue, Ziggy)
 
-      // registerAsyncComponents(app);
       app.component('LazyHydrate', LazyHydrationWrapper);
 
     window.app = app.mount(elem)
