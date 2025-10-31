@@ -176,40 +176,6 @@ watch(
     }
 );
 
-// Guardar estado cuando cambia la página (ahora manejado por el composable)
-// watch(
-//     () => page.url,
-//     () => {
-//         // Pequeño delay para asegurar que el scroll se actualice
-//         if (isPWA()) {
-//             setTimeout(() => {
-//                 saveState();
-//             }, 400);
-//         }
-//         // Asegurar que el loader esté oculto después de navegación
-//         // POR SI TODO FALLA
-//         setTimeout(() => {
-//             hideLoader()
-//         }, 1900);
-//     }
-// );
-
-// Ocultar loader inicial cuando se complete la restauración
-// (Esta lógica ahora está manejada por el composable usePWASession)
-// watch(
-//     () => isRestoring.value,
-//     (newValue) => {
-//         console.log('[PWA] isRestoring cambió a:', newValue)
-//         if (!newValue) {
-//             const initialLoader = document.getElementById('pwa-initial-loader')
-//             if (initialLoader) {
-//                 console.log('[PWA] Ocultando loader inicial')
-//                 initialLoader.style.display = 'none'
-//             }
-//         }
-//     }
-// );
-
 nav.init(route);
 
 // Inicializar PWA completamente (restauración, preservación de estado, loader)

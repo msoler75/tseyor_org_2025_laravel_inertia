@@ -4,14 +4,11 @@
         <div class="flex justify-between items-center mb-20">
             <Back :href="route('guias')" inline>Guías</Back>
             <div class="flex gap-2">
+                <Link href="/libros/los-guias-estelares" class="btn btn-xs btn-error flex gap-2 items-center"
+                    title='Descarga todo el glosario en pdf'>
+                <Icon icon="ph:download-duotone" /><span class="hidden sm:inline">Descargar </span>libro
+                </Link>
                 <Share />
-                <Link
-                    href="/libros/glosario-terminologico"
-                    class="btn btn-xs btn-primary flex gap-2 items-center"
-                    title="Descarga todo el glosario en pdf"
-                >
-                    <Icon icon="ph:download-duotone" />Descargar libro</Link
-                >
                 <AdminLinks
                     modelo="guia"
                     necesita="administrar contenidos"
