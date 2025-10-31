@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-base-100 mx-auto shadow-xl px-4 sm:px-6">
+    <div class="bg-base-100 mx-auto shadow-xl px-2 sm:px-6">
         <slot />
     </div>
 </template>
