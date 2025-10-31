@@ -1,6 +1,8 @@
 <template>
     <Prose class="prose-text-container break-words">
-        <ContentNode :node="arbol" :use-image="optimizeImages" @click="handleClick" />
+        <LazyHydrate>
+            <ContentNode :node="arbol" :use-image="optimizeImages" @click="handleClick" />
+        </LazyHydrate>
 
         <ClientOnly>
             <ImagesViewer v-if="images?.length" :show="showImagesViewer" @close="showImagesViewer = false"

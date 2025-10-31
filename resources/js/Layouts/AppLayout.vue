@@ -113,7 +113,7 @@ const nav = ui.nav
 // Usar el composable para preservar estado en PWA
 const { isPWA, initPWA } = usePWASession();
 
-console.log('app initiating...')
+// console.log('app initiating...')
 
 const userStore = useUserStore();
 const page = usePage();

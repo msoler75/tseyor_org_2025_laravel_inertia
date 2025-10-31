@@ -9,7 +9,6 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { VitePWA } from "vite-plugin-pwa";
 // import ssr from 'vite-plugin-ssr/plugin'
 // import commonjs from 'vite-plugin-commonjs';
-// import asyncComponentsPlugin from "./vite-plugin-async-components.js";
 
 import path from "path";
 // import { fileURLToPath } from 'url';
@@ -152,12 +151,6 @@ export default defineConfig({
         },
       ],
     }),
-    //asyncComponentsPlugin({
-      //asyncComponents: [
-        // Solo componentes que NO se importan estáticamente en ningún lugar
-        'resources/js/Components/PWANotifications.vue',
-   //   ]
-    //}),
     // Deshabilita VitePWA en build SSR para evitar duplicados
     isSSR ? null : VitePWA({
       registerType: 'autoUpdate',

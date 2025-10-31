@@ -57,7 +57,9 @@
                         <Link v-if="ultimosInformes.length" :href="route('equipo.informes', equipo.slug)"
                             class="text-xs ml-auto flex items-center gap-2 hover:underline">Ver todos</Link>
 
-                        <CrearInforme v-if="soyCoordinador || puedoAdministrar" :equipo="equipo" />
+                        <LazyHydrate>
+                            <CrearInforme v-if="soyCoordinador || puedoAdministrar" :equipo="equipo" />
+                        </LazyHydrate>
 
                     </div>
                     <div v-if="!ultimosInformes.length">
@@ -122,9 +124,9 @@
                     <div class="prose" v-html="MarkdownToHtml(equipo.informacion)" />
                 </Card>
 
-                <ClientOnly>
+                <LazyHydrate>
                     <EquipoAdmin v-if="soyCoordinador || puedoAdministrar" :equipo="equipo" @updated="reloadEquipo" />
-                </ClientOnly>
+                </LazyHydrate>
 
             </GridAppear>
         </div>
@@ -138,9 +140,9 @@ import EquipoCabecera from './Partes/EquipoCabecera.vue'
 import EquipoInformacion from './Partes/EquipoInformacion.vue'
 import EquipoMembresia from './Partes/EquipoMembresia.vue'
 import CrearInforme from './Partes/CrearInforme.vue'
+import EquipoAdmin from './Partes/EquipoAdmin.vue'
 import usePlayer from '@/Stores/player'
 import { MarkdownToHtml } from "@/composables/markdown"
-const EquipoAdmin = defineAsyncComponent(() => import('./Partes/EquipoAdmin.vue'))
 
 
 const props = defineProps({

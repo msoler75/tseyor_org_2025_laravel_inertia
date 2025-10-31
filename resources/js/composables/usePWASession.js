@@ -64,6 +64,7 @@ export function usePWASession() {
     }
 
     // Envío de logs al servidor (siempre activo para debugging PWA)
+    if(false) // desactivado en producción
     if (typeof window !== 'undefined') {
       try {
         fetch('/pwa-log', {
