@@ -19,7 +19,10 @@
                 Última actualización:
                 <TimeAgo :date="audio.updated_at" />
             </p>
-            <p class="badge">{{ audio.categoria }}</p>
+            <div class="my-4 flex items-center gap-4">
+                <Favorito coleccion="audios" :id="audio.id" :inicial="audio.favorito" @change="audioData.favorito = $event" />
+                <span class="badge">{{ audio.categoria }}</span>
+            </div>
             <p>{{ audio.descripcion }}</p>
 
             <div v-if="audio.audio" class="btn pl-2 pr-4 py-2 min-h-auto flex items-center gap-2 w-40"
@@ -67,7 +70,9 @@ const props = defineProps({
     },
 })
 
-const audio = computed(() => ({ ...props.audio, src: srcAudio(props.audio) }))
+const audioData = ref({ ...props.audio })
+
+const audio = computed(() => ({ ...audioData.value, src: srcAudio(audioData.value) }))
 
 function clickPlayPause(audio) {
     const titulo = audio.titulo

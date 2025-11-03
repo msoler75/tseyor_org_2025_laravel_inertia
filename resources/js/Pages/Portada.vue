@@ -415,7 +415,7 @@ const testimonials = ref([
 .section {
     @apply h-dvh snap-center flex flex-col justify-center;
 }
-
+/*
 :deep(.carousel__next) {
     right: -30px;
 }
@@ -429,4 +429,5 @@ const testimonials = ref([
 :deep(.carousel__prev--disabled) {
     opacity: 0;
 }
+    */
 </style>

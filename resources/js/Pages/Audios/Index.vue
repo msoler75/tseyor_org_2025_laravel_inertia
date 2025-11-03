@@ -63,7 +63,7 @@
                                 class="text-xs w-fit hover:text-secondary">{{ audio.categoria }}
                                 </Link>
                                 <span v-else></span>
-                                <Favorito coleccion="audios" :id="audio.id" :inicial="audio.favorito" />
+                                <Favorito coleccion="audios" :id="audio.id" :inicial="audio.favorito" @change="updateFavorito(audio, $event)" />
                             </div>
                         </div>
                     </div>
@@ -126,5 +126,9 @@ function clickPlayPause(audio) {
 function srcAudio(a) {
     if (!a.audio) return a.enlace
     return getSrcUrl(a.audio)
+}
+
+function updateFavorito(audio, nuevoEstado) {
+    audio.favorito = nuevoEstado;
 }
 </script>

@@ -51,9 +51,9 @@ class AudiosController extends Controller
     public function show($id)
     {
         if (is_numeric($id)) {
-            $audio = Audio::findOrFail($id);
+            $audio = Audio::withFavorito()->findOrFail($id);
         } else {
-            $audio = Audio::where('slug', $id)->firstOrFail();
+            $audio = Audio::withFavorito()->where('slug', $id)->firstOrFail();
         }
 
         if (!$audio) {
