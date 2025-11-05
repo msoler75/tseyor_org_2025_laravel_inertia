@@ -65,9 +65,9 @@ function waitForImagesToLoad(selectors, callback) {
     });
 }
 
+
 onMounted(() => {
     console.log('Portada Nueva')
-    nav.fullPage = true;
     waitForImagesToLoad([
         '#fondo img',
         '#montanyas img',
@@ -79,7 +79,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     console.log('Portada Nueva - Desmontando')
-    nav.fullPage=false
     window.removeEventListener('resize', setLayerTops);
 })
 

@@ -209,10 +209,3 @@
 
     </FullPage>
 </template>
-
-
-
-<script setup>
-
-
-</script>
