@@ -42,15 +42,101 @@ export default defineConfig({
     },
     rollupOptions: {
       output: isSSR ? {} : {
-        manualChunks: {
-          base: ['vue', 'vue-router', '@inertiajs/vue3', 'axios', '@vueuse/core'],
-          ui: ['@iconify/vue', 'daisyui'],
-          tiptap: ['@tiptap/starter-kit', '@tiptap/vue-3', '@tiptap/extension-color', '@tiptap/extension-highlight', '@tiptap/extension-image', '@tiptap/extension-link', '@tiptap/extension-table', '@tiptap/extension-table-cell', '@tiptap/extension-table-header', '@tiptap/extension-table-row', '@tiptap/extension-text-align', '@tiptap/extension-text-style', '@tiptap/extension-underline', '@tiptap/extension-superscript'],
-          mdeditor: ['md-editor-v3'],
-          tools: ['vue-advanced-cropper', 'dropzone'],
-          markdown: ['showdown', 'turndown'],
-          search: ['fuse.js'],
-          hydration: ['vue3-lazy-hydration']
+        manualChunks(id) {
+          // ESTRATEGIA SIMPLIFICADA Y ROBUSTA
+          // Solo separamos lo que realmente es pesado y no tiene dependencias circulares
+
+          if (id.includes('node_modules')) {
+            // VUE ECOSYSTEM: Todo junto para evitar dependencias circulares
+            // Incluye: vue, @vue/*, @inertiajs, vue-router, @vueuse, @iconify/vue, etc.
+            if (id.includes('vue') || id.includes('@vue/') ||
+                id.includes('@inertiajs/') || id.includes('@vueuse/') ||
+                id.includes('@iconify/vue')) {
+              return null;
+            }
+
+            // TIPTAP: Editor rico (pesado, ~300KB)
+            if (id.includes('@tiptap/')) {
+              return 'vendor-tiptap';
+            }
+
+            // MD-EDITOR: Editor markdown (pesado, ~200KB)
+            if (id.includes('md-editor-v3')) {
+              return 'vendor-markdown';
+            }
+
+            // RESTO: axios y otras libs pequeñas
+            return null;
+          }
+
+          // COMPONENTES DE LA APP - Agrupación estratégica por funcionalidad
+          if (id.includes('/resources/js/')) {
+
+            // 1. LAYOUT CORE: Componentes de estructura de página (carga temprana)
+            // Agrupa: Page*, Header, Footer, AppLayout (total ~2-3 KB)
+            if (
+                id.includes('LazyHydrationWrapper') ||
+                id.includes('/Components/Header.vue') ||
+                id.includes('/Components/Nav') ||
+                id.includes('/Components/GlobalSearch.vue') ||
+                id.includes('/Components/Link') ||
+                // id.includes('Icon') ||
+                id.includes('/Components/Image') ||
+                id.includes('/Components/DropDown') ||
+                id.includes('/Layouts/AppLayout.vue')) {
+              return 'layout-core';
+            }
+
+
+            if(id.includes('/Components/Page')||
+               id.includes('/Sections/Section.vue') ||
+               id.includes('/Sections/FullPage.vue') ||
+                id.includes('/Sections/Sections.vue')
+            ) {
+                return 'components-pack'
+            }
+
+            /*if(
+               id.includes('/Sections/Hero')||
+               id.includes('/Sections/TextText') ||
+               id.includes('/Sections/TextImage')
+            ) {
+                return 'componentes-hero'
+            }*/
+
+            /* if(
+               id.includes('/Components/Card')
+            ) {
+                return 'componentes-card'
+            }*/
+
+/*
+             if(id.includes('/Components/TextText')||
+
+            ) {
+                return 'componentes-hero'
+            }
+                */
+
+            // 2. UI FORMS: Inputs, Buttons, Checkboxes (carga temprana)
+            // Agrupa todos los controles de formulario (total ~5-7 KB)
+            /*if (id.includes('/Components/Input') ||
+                id.includes('/Components/TextInput.vue') ||
+                id.includes('/Components/TextArea.vue') ||
+                id.includes('/Components/PasswordInput.vue') ||
+                id.includes('/Components/PrimaryButton.vue') ||
+                id.includes('/Components/SecondaryButton.vue') ||
+                id.includes('/Components/DangerButton.vue') ||
+                id.includes('/Components/Checkbox.vue') ||
+                id.includes('/Components/InputLabel.vue')) {
+              return 'components-forms';
+            }*/
+
+            return null;
+
+          }
+
+          return null;
         }
       }
     }
@@ -133,6 +219,7 @@ export default defineConfig({
         {
           vue: [
             "ref",
+            "unref",
             "reactive",
             "nextTick",
             "computed",
@@ -144,6 +231,8 @@ export default defineConfig({
             "defineEmits",
             "useSlots",
             "TransitionGroup",
+            "provide",
+            "inject",
           ],
           "@inertiajs/vue3": ["router", "usePage", "useForm"],
           "@/Stores/nav.js": ["useNav"],

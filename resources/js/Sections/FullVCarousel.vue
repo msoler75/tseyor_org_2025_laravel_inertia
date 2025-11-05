@@ -110,10 +110,10 @@ const onSlideEnd = (data) => {
     nav.scrollY = data.currentSlideIndex * window.innerHeight;
 };
 
+
 onMounted(() => {
     try {
         processSections();
-        nav.fullPage = true;
 
         // Mostrar iconos después de 3 segundos
         scrollTimer = setTimeout(() => {
@@ -122,14 +122,13 @@ onMounted(() => {
     } catch (error) {
         console.warn('Error en FullVCarousel onMounted:', error);
         // Fallback seguro
-        nav.fullPage = false;
         sections.value = [];
         totalSlides.value = 1;
     }
 });
 
 onBeforeUnmount(() => {
-    nav.fullPage = false;
+    // Desactivar modo FullPage en el provide reactivo
     clearTimeout(scrollTimer);
 });
 </script>

@@ -1,7 +1,8 @@
 <script setup>
 defineEmits(['submitted']);
 
-const hasActions = computed(() => !! useSlots().actions);
+// Fix para SSR: Usar $slots en template en lugar de computed con useSlots()
+// useSlots() puede causar hydration mismatch en SSR
 </script>
 
 <template>
@@ -19,14 +20,14 @@ const hasActions = computed(() => !! useSlots().actions);
             <form @submit.prevent="$emit('submitted')">
                 <div
                     class="px-4 py-5 bg-base-100 dark:bg-gray-800 sm:p-6 shadow-2xs"
-                    :class="hasActions ? 'sm:rounded-tl-md sm:rounded-tr-md' : 'sm:rounded-md'"
+                    :class="$slots.actions ? 'sm:rounded-tl-md sm:rounded-tr-md' : 'sm:rounded-md'"
                 >
                     <div class="grid grid-cols-6 gap-6">
                         <slot name="form" />
                     </div>
                 </div>
 
-                <div v-if="hasActions" class="flex items-center justify-end px-4 py-3 bg-gray-50 dark:bg-gray-800 text-right sm:px-6 shadow-2xs sm:rounded-bl-md sm:rounded-br-md">
+                <div v-if="$slots.actions" class="flex items-center justify-end px-4 py-3 bg-gray-50 dark:bg-gray-800 text-right sm:px-6 shadow-2xs sm:rounded-bl-md sm:rounded-br-md">
                     <slot name="actions" />
                 </div>
             </form>
