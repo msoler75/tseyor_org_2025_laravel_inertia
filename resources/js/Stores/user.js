@@ -1,56 +1,92 @@
-import { usePage } from "@inertiajs/vue3";
+import { defineStore } from "pinia"
+import { ref } from "vue"
+import { usePage } from "@inertiajs/vue3"
+import { getApiUrl } from "@/composables/api"
 
-const state = reactive({
-  permisos: [],
-  // cargar los permisos
-  cargarPermisos() {
-    fetch(`${getApiUrl()}/usuario/_permisos`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("permisos response", data);
-        this.permisos = data;
-      })
-      .catch((error) => {
-        console.error("Error al cargar los permisos:", error);
-      });
-  },
-  // comprueba si el usuario dispone de un permiso
-  tienePermiso(permiso) {
-    return this.permisos.includes(permiso);
-  },
-  // eliminar los permisos
-  borrarPermisos() {
-    this.permisos.splice(0, this.permisos.length);
-  },
-  // muular electrónico
-  saldo: "",
-  saldoError: "",
-  // cargar saldo
-  cargarSaldo() {
-    this.saldoError = "";
-    fetch(`${getApiUrl()}/usuario/_saldo_muulares`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("saldo response", data);
-        if (data.error) {
-          console.warn("Error al cargar el saldo:", data.error);
-          this.saldoError = data.error;
-          this.saldo = "Error";
-          return;
+/**
+ * SISTEMA DE GESTIÓN DE USUARIO
+ * ========================
+ *
+ * Store Pinia compatible con SSR que maneja permisos y saldo del usuario.
+ */
+export const useUserStorePinia = defineStore("user", () => {
+    const page = usePage()
+    const isClient = typeof window !== "undefined"
+
+    // Estado inicial desde servidor si está disponible
+    const initialPermisos = page?.props?.userPermisos ?? []
+    const initialSaldo = page?.props?.userSaldo ?? ""
+    const initialSaldoError = page?.props?.userSaldoError ?? ""
+
+    const permisos = ref(initialPermisos)
+    const saldo = ref(initialSaldo)
+    const saldoError = ref(initialSaldoError)
+
+    // Cargar permisos desde API
+    async function cargarPermisos() {
+        if (!isClient) {
+            return
         }
-        this.saldo = data.saldo;
-      })
-      .catch((error) => {
-        console.warn("Error al cargar el saldo:", error);
-        this.saldoError = error;
-        this.saldo = "Error";
-      });
-  },
-});
 
-// carga inicial
-// state.cargarPermisos();
+        try {
+            const response = await fetch(`${getApiUrl()}/usuario/_permisos`)
+            const data = await response.json()
+            console.log("permisos response", data)
+            permisos.value = data
+        } catch (error) {
+            console.error("Error al cargar los permisos:", error)
+        }
+    }
 
+    // Comprobar si el usuario tiene un permiso
+    function tienePermiso(permiso) {
+        return permisos.value.includes(permiso)
+    }
+
+    // Eliminar todos los permisos
+    function borrarPermisos() {
+        permisos.value = []
+    }
+
+    // Cargar saldo desde API
+    async function cargarSaldo() {
+        if (!isClient) {
+            return
+        }
+
+        saldoError.value = ""
+        try {
+            const response = await fetch(`${getApiUrl()}/usuario/_saldo_muulares`)
+            const data = await response.json()
+            console.log("saldo response", data)
+
+            if (data.error) {
+                console.warn("Error al cargar el saldo:", data.error)
+                saldoError.value = data.error
+                saldo.value = "Error"
+                return
+            }
+
+            saldo.value = data.saldo
+        } catch (error) {
+            console.warn("Error al cargar el saldo:", error)
+            saldoError.value = error.message || error
+            saldo.value = "Error"
+        }
+    }
+
+    return {
+        permisos,
+        saldo,
+        saldoError,
+        cargarPermisos,
+        tienePermiso,
+        borrarPermisos,
+        cargarSaldo,
+    }
+})
+
+// Mantener compatibilidad con la API existente
 export default function useUserStore() {
-  return state;
+    return useUserStorePinia()
 }

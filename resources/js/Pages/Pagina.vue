@@ -30,7 +30,7 @@
 
 
 <script setup>
-import {saveImagesInfo} from "@/Stores/image";
+import {saveImagesInfo} from "@/composables/image";
 
 const props = defineProps({
     pagina: {

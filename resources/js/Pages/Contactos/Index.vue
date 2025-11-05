@@ -118,7 +118,7 @@
 </template>
 
 <script setup>
-import { getImageUrl } from "@/Stores/image.js";
+import { getImageUrl } from "@/composables/image.js";
 import { loadGoogleMaps } from "@/composables/google";
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 import { router } from '@inertiajs/vue3';

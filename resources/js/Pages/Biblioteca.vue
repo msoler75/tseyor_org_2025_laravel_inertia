@@ -9,17 +9,17 @@
 
         <!-- Encabezado -->
          <TitleInfo title="Biblioteca Tseyor" label-info="¿qué es?">
-                <p>La Biblioteca Tseyor es el resultado de más de 1800 diálogos <Referencia r="telepatía">
+                <div>La Biblioteca Tseyor es el resultado de más de 1800 diálogos <Referencia r="telepatía">
                 telepáticos</Referencia> con seres humanos de la <Referencia>Confederación de Mundos Habitados
                 de la Galaxia</Referencia>, transmitidos a través de <Referencia>Chac-Mool Puente</Referencia>,
                 <Referencia r="canalización">canalizador</Referencia> de Tseyor.
-                </p>
-                <p>Estas denominadas <q>conversaciones interdimensionales</q> o comunicados se han transcrito en
-                    textos que inspiran libros, monografías, vídeos y audios.</p>
-                <p>Todos los materiales han sido publicados y están preservados por la
+                </div>
+                <div>Estas denominadas <q>conversaciones interdimensionales</q> o comunicados se han transcrito en
+                    textos que inspiran libros, monografías, vídeos y audios.</div>
+                <div>Todos los materiales han sido publicados y están preservados por la
                     <Referencia>Universidad Tseyor de Granada</Referencia> para mantener la integridad del mensaje
                     original y sus obras impresas están registradas por la asociación <Referencia>TSEYOR Centro de
-                    Estudios Socioculturales</Referencia>.</p>
+                    Estudios Socioculturales</Referencia>.</div>
          </TitleInfo>
 
 

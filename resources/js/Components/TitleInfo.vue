@@ -18,7 +18,7 @@
         modal-class="mt-20"
     >
         <div class="p-5 sm:p-12 bg-base-200">
-            <Prose class="mx-auto">
+            <Prose class="mx-auto space-y-5">
                 <slot />
             </Prose>
             <div class="mt-10 flex justify-center">

@@ -11,10 +11,10 @@
 
 
         <TitleInfo title="Audios Tseyor">
-            <p>Relájate y disfruta de los talleres, meditaciones, cuentos y otros materiales de la filosofía de
-                Tseyor.</p>
-                <p>Recuerda que también puedes acceder a la <Link href="/radio">Radio Tseyor</Link> y escuchar nuestra emisora de talleres, meditaciones y talleres cuentos, donde se reproducen estos audios de forma continua.</p>
-            </TitleInfo>
+            <div>Relájate y disfruta de los talleres, meditaciones, cuentos y otros materiales de la filosofía de
+                Tseyor.</div>
+            <div>Recuerda que también puedes acceder a la <Link href="/radio">Radio Tseyor</Link> y escuchar nuestra emisora de talleres, meditaciones y talleres cuentos, donde se reproducen estos audios de forma continua.</div>
+        </TitleInfo>
 
         <!--
     <AudioPlayer id="player" v-if="playFile" :music="playFile" class="mx-auto max-w-[700px]

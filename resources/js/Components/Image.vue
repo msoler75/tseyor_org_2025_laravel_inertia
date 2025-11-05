@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { getImageSize, getImageUrl, isWebPSupported } from "@/Stores/image.js";
+import { getImageSize, getImageUrl, isWebPSupported } from "@/composables/image.js";
 import {belongsToCurrentDomain} from '@/composables/srcutils.js'
 import { Icon } from "@iconify/vue";
 

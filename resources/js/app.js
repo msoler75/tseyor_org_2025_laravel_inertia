@@ -13,10 +13,11 @@ import { Ziggy } from './ziggy.js'
 import { Icon } from "@iconify/vue";
 import { Head } from "@inertiajs/vue3";
 import useRoute from '@/composables/useRoute.js';
-import {useNav} from '@/Stores/nav.js';
+import  useNav from '@/Stores/nav.js';
 import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
 import { usePWA } from '@/composables/usePWA.js';
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js';
+import { createPinia } from 'pinia';
 
 
 // Hacer defineAsyncComponent disponible globalmente para librerías externas
@@ -103,6 +104,7 @@ createInertiaApp({
   setup({ el, App, props, plugin }) {
 
     // const app = createApp({ render: () => h(App, props) })
+      const pinia = createPinia()
       const app = createSSRApp({ render: () => h(App, props) })
       // https://chriswray.dev/posts/how-to-add-components-globally-in-an-inertiajs-application
       .mixin({
@@ -110,6 +112,7 @@ createInertiaApp({
         methods: {useNav}
       })
       .use(plugin)
+      .use(pinia)
       .use(ZiggyVue, Ziggy)
       // .use(FloatingVue)
       // https://laracasts.com/discuss/channels/inertia/import-link-component-globally-in-inertiajs

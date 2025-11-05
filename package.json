@@ -65,6 +65,7 @@
         "jsdom": "^26.0.0",
         "md-editor-v3": "^4.20.0",
         "node-fetch": "^3.3.2",
+        "pinia": "^3.0.4",
         "postcss": "^8.4.45",
         "showdown": "^2.1.0",
         "turndown": "^7.1.2",

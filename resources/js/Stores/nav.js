@@ -1,10 +1,9 @@
-import navigationItems from "../navigation.js";
+import { defineStore } from 'pinia'
+import navigationItems from "@/navigation.js";
 
 const page = usePage()
-//import "../composables/useRoute.js";
-//import { useRoute } from 'ziggy-js';
-//const _route = route // useRoute();
-let _route = ()=>''
+
+let _route = () => ''
 
 const relativeUrl = (url) => {
   if (!url) return "";
@@ -13,297 +12,308 @@ const relativeUrl = (url) => {
   return url.replace(/https?:\/\/[^\/]+/, "");
 };
 
-const mapRoute = (item) => {
+const mapRoute = (item, routeFn) => {
   const nitem = item.route
-    ? { ...item, url: relativeUrl(_route(item.route)) }
+    ? { ...item, url: relativeUrl(routeFn(item.route)) }
     : item;
   if (nitem.url) nitem.url = relativeUrl(nitem.url);
   return nitem;
 };
 
-const mapItem = (item) => {
+const mapItem = (item, routeFn) => {
   if (item.submenu)
     return {
-      ...mapRoute(item),
+      ...mapRoute(item, routeFn),
       hasItems: true,
-      submenu: mapSubmenu(item.submenu),
+      submenu: mapSubmenu(item.submenu, routeFn),
     };
   else
     return {
-      ...mapRoute(item),
+      ...mapRoute(item, routeFn),
       hasItems: false,
     };
 };
 
-const mapGroup = (group) => ({
+const mapGroup = (group, routeFn) => ({
     ...group,
     items: group.items.map((item) =>
-      item.route ? { ...item, url: relativeUrl(_route(item.route)) } : item
+      item.route ? { ...item, url: relativeUrl(routeFn(item.route)) } : item
     ),
   });
 
-
-const mapSubmenu = (submenu) => {
+const mapSubmenu = (submenu, routeFn) => {
     if(!submenu) return null
     const sections = []
     for(const section of submenu.sections) {
         if(typeof section.index !== 'undefined') continue
-        sections.push({groups:[mapGroup(section)]})
+        sections.push({groups:[mapGroup(section, routeFn)]})
     }
     for(const section of submenu.sections) {
         if(typeof section.index !== 'undefined')
-            sections[section.index].groups.push(mapGroup(section))
+            sections[section.index].groups.push(mapGroup(section, routeFn))
     }
     return {sections}
 }
 
+export const useNavStore = defineStore('nav', {
+  state: () => ({
+    items: [],
+    timer: null,
+    announce: false,
+    announceClosed: false,
+    sideBarShow: false,
+    movingFast: true,
+    scrollY: 0,
+    fadingOutPage: false,
+    dontFadeout: false,
+    navigating: false,
+    dontScroll: false,
+    hoverDeactivated: false,
+    scrollingUp: false,
+    tabHovering: null,
+    enteringTimeout: null,
+    activeTab: null,
+    route: null,
+    // Variables para scroll-to-top logic (ahora parte del estado)
+    _heightToShow: 300,
+    _wrapToShow: 120,
+    _wrapToHide: 70,
+    _prevY: -10000,
+    _subiendo: false,
+    _recorridoUp: 0,
+    _recorridoDown: 0,
+  }),
 
-const state = reactive({
-  //items: [],
-  items: [],
-  //ghostTab: null, //?
-  timer: null,
-  announce: false,
-  announceClosed: false,
-  sideBarShow: false,
-  // position: 'sticky',
-  movingFast: true,
-  fullPage: false,
-  scrollY: 0,
-  fadingOutPage: false,
-  dontFadeout: false,
-  navigating: false,
-  dontScroll: false,
-  hoverDeactivated: false,
-  // Para evitar que se active el hover en la reentrada del mouse a la ventana
-  // Scroll-to-top control
-  scrollingUp: false,
-  tabHovering: null, // tab en el que el mouse se encuentra durante la desactivación del hover
-  enteringTimeout: null,
-  activeTab: null,
-  init(_r){
-    _route = _r
-    this.items = navigationItems.map(mapItem);
+  getters: {
+    fullPage: (state) => {
+      // Auto-detectar basado en la ruta (funciona en SSR)
+      return ['/', '/origenes-de-tseyor'].includes(page.url);
+    }
   },
-  _in(tab, url) {
-    // comprueba si la ruta está en alguno de los items del tab
-    if (tab.url && url.indexOf(tab.url) >= 0) return true;
-    if (!tab.hasItems) return false;
-    return !!tab.submenu?.sections
-    .find((section)=>section.groups.find((group) =>
-        group.items.find((item) => {
-        return url.indexOf(item.url) >= 0;
+
+  actions: {
+    init(_r) {
+      _route = _r
+      this.route = _r
+      this.items = navigationItems.map(item => mapItem(item, _r));
+      this._updateCurrent()
+    },
+
+    _in(tab, url) {
+      // comprueba si la ruta está en alguno de los items del tab
+      if (tab.url && url.indexOf(tab.url) >= 0) return true;
+      if (!tab.hasItems) return false;
+      return !!tab.submenu?.sections
+        .find((section)=>section.groups.find((group) =>
+            group.items.find((item) => {
+            return url.indexOf(item.url) >= 0;
+          })
+        ))
+    },
+
+    _updateCurrent() {
+      const url = relativeUrl(page.url)
+      this.items.forEach(tab=>{
+          tab.current = this._in(tab, url)
       })
-    ))
-  },
-  _updateCurrent() {
-    const url = relativeUrl(page.url)
-    this.items.forEach(tab=>{
-        tab.current = state._in(tab, url)
-    })
-},
+    },
+
     _updateActive() {
-    this.activeTab = this.items.find((tab) => tab.open);
-  },
-  setItems(items) {
-    const tabs = items.map(mapItem)
-    for (const tab of tabs) this.items.push(tab);
-        this._updateCurrent()
-  },
-  activateTab(tab) {
-    tab.activating = true;
-    //if (!tab.open || !tab.hasItems) this.closeTabs();
-    //setTimeout(() => {
-        if(tab.open) return
-        this.closeTabs()
-        if(tab.hasItems) {
-            tab.open = true;
-        }
-        this._updateActive()
-      // this.activeTabChange(tab);
-    //}, 1);
-  },
-  toggleTab(tab) {
-    if(!tab.hasItems) return
-    tab.open = !tab.open
-    if(!tab.open) this.closeTabs()
-    this._updateActive()
-    //if (tab.open) this.activeTabChange(tab);
-    //return false;
-  },
-  /*activeTabChange(newTab) {
-    clearTimeout(this.timer);
-    if (newTab) this.ghostTab = newTab;
-    else
-      this.timer = setTimeout(() => {
-        this.ghostTab = activeTab.value;
-      }, 75);
-  },*/
-  closeTab(tab) {
-    if (tab) tab.open = false;
-    this._updateActive()
-  },
-  closeTabs() {
-    for (const tab of this.items) {
-      tab.open = false;
-    }
-    this._updateActive()
-  },
-  deactivateMenu() {
-    // cerramos los submenús
-    this.hoverDeactivated = true;
-    this.closeTabs();
-  },
-  reactivateMenu() {
-    this.hoverDeactivated = false;
-    this.activateHoveredTab()
-  },
-  // cuando pasa el mouse por encima
-  hoverTab(tab) {
-    this.closeTabs()
-    this.tabHovering = tab;
-    if(this.hoverDeactivated) return
-    if (tab.hasItems) this.activateTab(tab);
-    else this.closeTabs();
-  },
-  // cuando el mouse deja el tab
-  unhoverTab(tab) {
-    if (this.tabHovering == tab) {
-        this.tabHovering = null;
-        //if(tab.hasItems)
-          //  this.closeTabs()
-    }
-  },
-  // cuando se recupera la activación de hover
-  activateHoveredTab() {
-    if (this.tabHovering) this.hoverTab(this.tabHovering);
-  },
-  fadeoutPage() {
-    this.fadingOutPage = true;
-    this.dontScroll = true;
-  },
-  scrollToId(id, options) {
-    const defaultOptions = { offset: 0, behavior: "smooth" };
-    let { offset, behavior } = { ...defaultOptions, ...options };
-    if (!offset) offset = 0;
-    id = decodeURIComponent(id);
-    // Obtén el elemento objetivo
-    var objetivo = document.querySelector("#" + id + ",a[name='" + id + "']");
-    if (!objetivo) {
-        id = id.toLowerCase()
-      // Obtener el elemento H1
-      const elems = document.querySelectorAll("h1,h2");
+      this.activeTab = this.items.find((tab) => tab.open);
+    },
 
-      // Recorrer los elementos H1 y H2
-      elems.forEach((heading) => {
-        if (heading.textContent.toLowerCase() === id) objetivo = heading;
-      });
-    }
-    if (objetivo) {
+    setItems(items) {
+      const tabs = items.map(item => mapItem(item, this.route))
+      for (const tab of tabs) this.items.push(tab);
+      this._updateCurrent()
+    },
 
-      const targetY =
-        objetivo.offsetTop -
-        document.querySelector("nav.sticky").offsetHeight +
-        offset;
+    activateTab(tab) {
+      tab.activating = true;
+      if(tab.open) return
+      this.closeTabs()
+      if(tab.hasItems) {
+          tab.open = true;
+      }
+      this._updateActive()
+    },
 
-      // Ajusta la posición del elemento objetivo
+    toggleTab(tab) {
+      if(!tab.hasItems) return
+      tab.open = !tab.open
+      if(!tab.open) this.closeTabs()
+      this._updateActive()
+    },
+
+    closeTab(tab) {
+      if (tab) tab.open = false;
+      this._updateActive()
+    },
+
+    closeTabs() {
+      for (const tab of this.items) {
+        tab.open = false;
+      }
+      this._updateActive()
+    },
+
+    deactivateMenu() {
+      // cerramos los submenús
+      this.hoverDeactivated = true;
+      this.closeTabs();
+    },
+
+    reactivateMenu() {
+      this.hoverDeactivated = false;
+      this.activateHoveredTab()
+    },
+
+    // cuando pasa el mouse por encima
+    hoverTab(tab) {
+      this.closeTabs()
+      this.tabHovering = tab;
+      if(this.hoverDeactivated) return
+      if (tab.hasItems) this.activateTab(tab);
+      else this.closeTabs();
+    },
+
+    // cuando el mouse deja el tab
+    unhoverTab(tab) {
+      if (this.tabHovering == tab) {
+          this.tabHovering = null;
+      }
+    },
+
+    // cuando se recupera la activación de hover
+    activateHoveredTab() {
+      if (this.tabHovering) this.hoverTab(this.tabHovering);
+    },
+
+    fadeoutPage() {
+      this.fadingOutPage = true;
+      this.dontScroll = true;
+    },
+
+    scrollToId(id, options) {
+      const defaultOptions = { offset: 0, behavior: "smooth" };
+      let { offset, behavior } = { ...defaultOptions, ...options };
+      if (!offset) offset = 0;
+      id = decodeURIComponent(id);
+      // Obtén el elemento objetivo
+      var objetivo = document.querySelector("#" + id + ",a[name='" + id + "']");
+      if (!objetivo) {
+          id = id.toLowerCase()
+        // Obtener el elemento H1
+        const elems = document.querySelectorAll("h1,h2");
+
+        // Recorrer los elementos H1 y H2
+        elems.forEach((heading) => {
+          if (heading.textContent.toLowerCase() === id) objetivo = heading;
+        });
+      }
+      if (objetivo) {
+        const targetY =
+          objetivo.offsetTop -
+          document.querySelector("nav.sticky").offsetHeight +
+          offset;
+
+        // Ajusta la posición del elemento objetivo
+        window.scrollTo({
+          top: targetY,
+          behavior,
+        });
+      }
+    },
+
+    scrollToContent(behavior) {
+      const el = document.querySelector("#content-main");
+      if (!el) return false;
+
+      if (!behavior || typeof behaviour != "string") behavior = "smooth";
+
+      // altura del menu top nav
+      const navH = document.querySelector("nav").getBoundingClientRect().height;
+      const posY0 = document.querySelector("body").getBoundingClientRect().top;
+      //obtenemos la posición Y de elemento el del DOM dentro de la página. Ejemplo, si estuviera arriba de todo la posición sería 0, si estuviera a 100 pixeles del comienzo de la página, la posición sería 100. Independiente del scroll de la página
+      var posY = el.getBoundingClientRect().top; // sale negativo muchas veces por el scroll de página, no queremos eso
+      // hemos de restarle el scroll de la página (tiene que quedar un numero positivo. el valor de posY )
+      posY = posY - posY0 - navH * 2.2; // dejamos un espacio extra para la row de SearchInput y otros filtros
+      // nos movemos a la posición posY
       window.scrollTo({
-        top: targetY,
+        top: posY,
         behavior,
       });
-    }
-  },
+      return true;
+    },
 
-  scrollToContent(behavior) {
-    const el = document.querySelector("#content-main");
-    if (!el) return false;
+    scrollToTopPage(behavior) {
+      if (!behavior || typeof behaviour != "string") behavior = "smooth";
+      window.scrollTo({
+        top: 0,
+        behavior,
+      });
+    },
 
-    if (!behavior || typeof behaviour != "string") behavior = "smooth";
+    // Scroll-to-top inteligente: busca contenedores .sections y hace scroll en ellos si existen
+    scrollToTopSmart(behavior) {
+      if (!behavior || typeof behavior != "string") behavior = "smooth";
+      const div =
+        document.querySelector("div.sections.snap-proximity") ||
+        document.querySelector("div.sections.smooth-snap") ||
+        document.querySelector("div.sections.scroll-region") ||
+        document.querySelector("div.sections.scroll-smooth");
+      if (div) div.scrollTo({ top: 0, behavior });
+      else window.scrollTo({ top: 0, behavior });
+    },
 
-    // altura del menu top nav
-    const navH = document.querySelector("nav").getBoundingClientRect().height;
-    const posY0 = document.querySelector("body").getBoundingClientRect().top;
-    //obtenemos la posición Y de elemento el del DOM dentro de la página. Ejemplo, si estuviera arriba de todo la posición sería 0, si estuviera a 100 pixeles del comienzo de la página, la posición sería 100. Independiente del scroll de la página
-    var posY = el.getBoundingClientRect().top; // sale negativo muchas veces por el scroll de página, no queremos eso
-    // hemos de restarle el scroll de la página (tiene que quedar un numero positivo. el valor de posY )
-    posY = posY - posY0 - navH * 2.2; // dejamos un espacio extra para la row de SearchInput y otros filtros
-    // nos movemos a la posición posY
-    window.scrollTo({
-      top: posY,
-      behavior,
-    });
-    return true;
-  },
-  scrollToTopPage(behavior) {
-    if (!behavior || typeof behaviour != "string") behavior = "smooth";
-    window.scrollTo({
-      top: 0,
-      behavior,
-    });
-  },
-  // Scroll-to-top inteligente: busca contenedores .sections y hace scroll en ellos si existen
-  scrollToTopSmart(behavior) {
-    if (!behavior || typeof behavior != "string") behavior = "smooth";
-    const div =
-      document.querySelector("div.sections.snap-proximity") ||
-      document.querySelector("div.sections.smooth-snap") ||
-      document.querySelector("div.sections.scroll-region") ||
-      document.querySelector("div.sections.scroll-smooth");
-    if (div) div.scrollTo({ top: 0, behavior });
-    else window.scrollTo({ top: 0, behavior });
-  },
-});
-
-// ---- Scroll-to-top visibility logic (kept outside reactive state to avoid extra reactivity) ----
-// thresholds and internal markers
-let _heightToShow = 300; // altura de scroll para esta lógica de mostrar/ocultar con scroll
-let _wrapToShow = 120; // nº de pixeles de recorrido scroll arriba para mostrar el boton
-let _wrapToHide = 70; // nº de pixeles de recorrido scroll abajo para ocultar el boton
-
-let _prevY = -10000; // marca de valor inicial sin computar
-let _subiendo = false;
-let _recorridoUp = 0;
-let _recorridoDown = 0;
-
-watch(
-  () => state.scrollY,
-  (y) => {
-    // skip first update (when _prevY is initial sentinel)
-    if (_prevY !== -10000) {
-      const dy = y - _prevY;
-      if (y < _heightToShow) state.scrollingUp = false;
-      else if (dy > 0) {
-        // bajando
-        if (_subiendo) {
-          _recorridoDown = dy;
+    // Método para actualizar el scroll Y y manejar la lógica de scroll-to-top
+    updateScrollY(y) {
+      if (this._prevY !== -10000) {
+        const dy = y - this._prevY;
+        if (y < this._heightToShow) this.scrollingUp = false;
+        else if (dy > 0) {
+          // bajando
+          if (this._subiendo) {
+            this._recorridoDown = dy;
+          } else {
+            this._recorridoDown += dy;
+            if (this._recorridoDown > this._wrapToHide) this.scrollingUp = false;
+          }
+          this._subiendo = false;
         } else {
-          _recorridoDown += dy;
-          if (_recorridoDown > _wrapToHide) state.scrollingUp = false;
+          // subiendo (dy <= 0)
+          if (!this._subiendo) {
+            this._recorridoUp = dy;
+          } else {
+            this._recorridoUp += dy;
+            if (this._recorridoUp < -1 * this._wrapToShow) this.scrollingUp = true;
+          }
+          this._subiendo = true;
         }
-        _subiendo = false;
-      } else {
-        // subiendo (dy <= 0)
-        if (!_subiendo) {
-          _recorridoUp = dy;
-        } else {
-          _recorridoUp += dy;
-          if (_recorridoUp < -1 * _wrapToShow) state.scrollingUp = true;
-        }
-        _subiendo = true;
       }
-    }
-    _prevY = y;
-  }
-);
-
-
-state.route = _route
-
-
-watch(()=>page.url, ()=>{
-    state._updateCurrent()
+      this._prevY = y;
+      this.scrollY = y;
+    },
+  },
 })
 
-export function useNav() {
-  return state;
+// Composable que mantiene la misma API que antes
+export default function useNav() {
+  const store = useNavStore()
+
+  // Watch para actualizar current cuando cambie la URL (solo en cliente)
+  if (typeof window !== 'undefined') {
+    watch(() => page.url, () => {
+      store._updateCurrent()
+    })
+
+    // Watch para el scroll (solo en cliente)
+    watch(() => store.scrollY, (y) => {
+      store.updateScrollY(y)
+    })
+  }
+
+  // Retornar el store directamente para mantener la misma API
+  // Esto permite usar nav.propiedad sin necesidad de .value
+  return store
 }
