@@ -3,6 +3,8 @@
     <button
       type="button"
       class="btn  w-10 h-10 flex gap-1 justify-center items-center"
+      :class="{ 'btn-disabled': theme.fontSize <= FONT_MIN }"
+      :disabled="theme.fontSize <= FONT_MIN"
       aria-label="Disminuir tamaño de fuente"
       @click="decrease"
       title="Disminuir fuente"
@@ -13,6 +15,8 @@
     <button
       type="button"
       class="btn w-10 h-10 flex gap-1 justify-center items-center"
+      :class="{ 'btn-disabled': theme.fontSize >= FONT_MAX }"
+      :disabled="theme.fontSize >= FONT_MAX"
       aria-label="Aumentar tamaño de fuente"
       @click="increase"
       title="Aumentar fuente"
@@ -24,37 +28,20 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue';
-import useSelectors from '@/Stores/selectors';
+import { useTheme } from '@/Stores/theme';
 
-const selectors = useSelectors();
+const theme = useTheme();
 const FONT_MIN = 12;
 const FONT_MAX = 24;
 const FONT_STEP = 1;
 
-function applyFontSize(size) {
-  if (typeof document !== 'undefined') {
-    try {
-      // set the Tailwind variable used in the CSS
-      document.documentElement.style.setProperty('--text-base', size + 'px');
-    } catch (e) {
-      // noop
-    }
-  }
-}
-
 function increase() {
-  const next = Math.min(FONT_MAX, selectors.tamanyoFuente + FONT_STEP);
-  selectors.tamanyoFuente = next;
+  const next = Math.min(FONT_MAX, theme.fontSize + FONT_STEP);
+  theme.fontSize = next;
 }
 
 function decrease() {
-  const next = Math.max(FONT_MIN, selectors.tamanyoFuente - FONT_STEP);
-  selectors.tamanyoFuente = next;
+  const next = Math.max(FONT_MIN, theme.fontSize - FONT_STEP);
+  theme.fontSize = next;
 }
-
-// keep applied value in sync
-watch(() => selectors.tamanyoFuente, (val) => applyFontSize(val), { immediate: true });
-
-onMounted(() => applyFontSize(selectors.tamanyoFuente));
 </script>

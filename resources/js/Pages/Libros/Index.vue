@@ -10,13 +10,13 @@
         </div>
 
         <TitleInfo title="Libros Tseyor">
-            <p>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales
+            <div>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales
                 </Referencia> (o comunicados telepáticos) mantenidas con nuestros <Referencia>Guías Estelares</Referencia>.
-            </p>
+            </div>
 
-            <p>La información se recoge en monografías (recopilación sobre un tema) y volúmenes de comunicados. También podéis encontrar obras vivenciales (memorias de convivencias realizadas por el grupo Tseyor), presentaciones, boletines, y otras obras temáticas.</p>
+            <div>La información se recoge en monografías (recopilación sobre un tema) y volúmenes de comunicados. También podéis encontrar obras vivenciales (memorias de convivencias realizadas por el grupo Tseyor), presentaciones, boletines, y otras obras temáticas.</div>
 
-            <p class="my-3">El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</p>
+            <div class="my-3">El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</div>
         </TitleInfo>
 
         <div class="flex w-full justify-between mb-5">

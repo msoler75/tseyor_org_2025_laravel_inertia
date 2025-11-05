@@ -13,11 +13,11 @@
         <div class="w-full flex flex-wrap gap-7 items-center justify-between mb-16">
 
             <TitleInfo title="Comunicados Tseyor" classes="!mb-0">
-                <p>Los comunicados son transcripciones de las
+                <div>Los comunicados son transcripciones de las
                     conversaciones interdimensionales mantenidas con los hermanos de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia> mediante un proceso de <Referencia>telepatía externa
                     </Referencia> a través de nuestro <Referencia>Chac-Mool</Referencia> <Referencia>Puente</Referencia>.
-                    <p>Estos comunicados son la base principal de la filosofía Tseyor y sirven como referencia para su organización, estructura y funcionamiento.</p>
-                </p>
+                    <div>Estos comunicados son la base principal de la filosofía Tseyor y sirven como referencia para su organización, estructura y funcionamiento.</div>
+                </div>
             </TitleInfo>
 
             <div class="flex-grow flex justify-start md:justify-end">

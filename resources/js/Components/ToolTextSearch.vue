@@ -41,9 +41,6 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue';
-import useUi from '@/Stores/ui';
-
 const ui = useUi();
 
 const showSearch = ref(false);

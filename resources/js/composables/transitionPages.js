@@ -1,4 +1,3 @@
-import useUi from "@/Stores/ui";
 
 export default function setTransitionPages(router) {
     const ui = useUi();

@@ -1,6 +1,6 @@
 <template>
     <div class="relative bg-base-100/0" ref="container"
-    :data-theme="portada && nav.scrollY < PORTADA_SCROLL_THRESHOLD ? 'night' : ''"
+    :data-theme="portada && !nav.navigating && nav.scrollY < PORTADA_SCROLL_THRESHOLD ? 'night' : ''"
     >
         <template v-for="tab, index of nav.items" :key="tab.url">
             <NavLink v-if="!tab.onlyAside" class="nav-tab relative px-4"
@@ -14,7 +14,7 @@
                 :active="tab.open || tab.current">
                 {{ tab.title }}
                 <div v-if="tab.open"
-                    class="hover-helper absolute z-40 -left-[7rem] -right-[7rem] top-[100%] h-8 transform"
+                    class="hover-helper absolute z-40 -left-28 -right-28 top-full h-8 transform"
                     :style="{transform: `translateX(${(5-index)*20}px)`}"/>
             </NavLink>
         </template>

@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import { getImageUrl } from '@/Stores/image.js'
+import { getImageUrl } from '@/composables/image.js'
 import Link from '@/Components/Link.vue'
 
 const props = defineProps({

@@ -97,7 +97,6 @@
 import useUserStore from "@/Stores/user";
 import setTransitionPages from "@/composables/transitionPages.js";
 // PWANotifications ahora es asíncrono, registrado globalmente
-import useUi from "@/Stores/ui";
 import ClientOnly from '@duannx/vue-client-only';
 import { usePWASession } from "@/composables/usePWASession.js";
 

@@ -10,8 +10,9 @@ import { JSDOM } from 'jsdom'
 import axios from 'axios'
 import AppLayout from "@/Layouts/AppLayout.vue";
 import useRoute from '@/composables/useRoute.js';
-import {useNav} from '@/Stores/nav.js';
+import useNav from '@/Stores/nav.js';
 import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
+import { createPinia } from 'pinia';
 import dotenv from 'dotenv';
 
 dotenv.config(); // carga valores de .env en process.env
@@ -43,10 +44,12 @@ createServer(page =>
       const apiUrl = process.env.API_URL || process.env.APP_URL || 'http://localhost';
       props.initialPage.props.api_url = apiUrl;
 
+      const pinia = createPinia()
       const app = createSSRApp({
         render: () => h(App, props),
       })
       .use(plugin)
+      .use(pinia)
       .use(ZiggyVue, Ziggy)
       .mixin({
         components: { Icon, Head },

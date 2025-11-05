@@ -1,72 +1,33 @@
-import { reactive, watch } from "vue";
+import { defineStore } from 'pinia';
 
 // selectores/opciones del usuario que pueden persistir entre sesiones o entre cambios de página
 
-const state = reactive({
-  soloTitulosLibros: false,
-  archivosVista: "normal",
-  vistaComunicados: "",
-  mostrarPermisos: false,
-  developerMode: false,
-  emisoraRadio: null,
-  tamanyoFuente: 16,
+export const useSelectorsStore = defineStore('selectors', {
+  state: () => ({
+    soloTitulosLibros: false,
+    archivosVista: "normal",
+    vistaComunicados: "",
+    mostrarPermisos: false,
+    developerMode: false,
+    emisoraRadio: null,
+  }),
+
+  actions: {
+    // Inicialización del store para SSR y persistencia
+    initializeStore() {
+      // Reserved for future persisted selectors; intentionally left blank
+    },
+  },
 });
 
-// avoid registering multiple watchers when useSelectors() is called from many components
-let _persistInitialized = false;
-
+// Composable que mantiene la misma API que antes
 export default function useSelectors() {
-  if (typeof window !== "undefined" && !_persistInitialized) {
-    try {
-      // Initialize from server props first, then localStorage
-      const page = window.page || {};
-      const initialFontSize = page.props?.initialFontSize || 16;
-      const stored = localStorage.getItem("tseyor_tamanyoFuente");
-      const parsed = stored ? parseInt(stored, 10) : initialFontSize;
-      if (!Number.isNaN(parsed)) state.tamanyoFuente = parsed;
+  const store = useSelectorsStore();
 
-      // If localStorage has a different value than server, sync the cookie
-      if (stored && parseInt(stored, 10) !== initialFontSize) {
-        fetch('/update-font-size', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-          body: JSON.stringify({ fontSize: parseInt(stored, 10) }),
-        }).catch(error => {
-          console.warn('Error syncing font size to server:', error);
-        });
-      }
-    } catch (e) {
-      // ignore localStorage errors (privacy mode, etc.)
-    }
+  // Inicializar el store la primera vez que se usa
+  store.initializeStore();
 
-    // persist changes
-    watch(
-      () => state.tamanyoFuente,
-      (val) => {
-        try {
-          localStorage.setItem("tseyor_tamanyoFuente", String(val));
-          // Also update cookie for server-side persistence
-          fetch('/update-font-size', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Requested-With': 'XMLHttpRequest',
-            },
-            body: JSON.stringify({ fontSize: val }),
-          }).catch(error => {
-            console.warn('Error updating font size on server:', error);
-          });
-        } catch (e) {
-          // ignore
-        }
-      }
-    );
-
-    _persistInitialized = true;
-  }
-
-  return state;
+  // Retornar el store directamente para mantener la misma API
+  // Esto permite usar store.propiedad sin necesidad de .value
+  return store;
 }

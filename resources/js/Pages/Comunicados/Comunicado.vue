@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import {saveImagesInfo} from "@/Stores/image";
+import {saveImagesInfo} from "@/composables/image";
 import { parseFiles } from '@/composables/parseFiles'
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 

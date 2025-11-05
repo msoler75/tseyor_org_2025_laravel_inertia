@@ -1,4 +1,4 @@
-import {getSrcUrl, belongsToCurrentDomain} from '../composables/srcutils'
+import {getSrcUrl, belongsToCurrentDomain} from './srcutils'
 
 const fallback_images = ["f1.jpg", "f2.jpg", "f3.jpg", "f4.jpg"];
 const fallback_folder = "/almacen/medios/imagenes_contenidos_por_defecto";
@@ -15,7 +15,8 @@ return r
 };
 
 // OBTENER INFORMACION (dimensiones) DE UNA IMAGEN
-
+// Cache en memoria para optimización de performance (solo cliente)
+// Estas variables son seguras en SSR porque solo se usan cuando typeof window !== 'undefined'
 const imagenes_cache = {};
 const imagenes_pendientes = [];
 

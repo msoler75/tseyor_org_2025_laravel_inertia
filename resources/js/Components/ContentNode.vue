@@ -35,7 +35,7 @@
 import Image from "./Image.vue";
 import Link from "./Link.vue";
 import Referencia from "./Referencia.vue";
-import { getImageInfo } from "@/Stores/image.js";
+import { getImageInfo } from "@/composables/image.js";
 import { useEnlacesCortos } from "@/composables/useEnlacesCortos.js";
 
 const props = defineProps({

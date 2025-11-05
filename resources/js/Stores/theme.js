@@ -1,158 +1,203 @@
+import { defineStore } from "pinia"
+import { ref, watch } from "vue"
 import { useDark } from "@vueuse/core"
 import { usePage } from "@inertiajs/vue3"
-import { getApiUrl } from "@/Stores/api"
+import { getApiUrl } from "@/composables/api"
+
+const TOGGLE_DEBOUNCE_MS = 200
+const FONT_STORAGE_KEY = "tseyor_tamanyoFuente"
+const DEFAULT_FONT_SIZE = 16
 
 /**
  * SISTEMA DE MANEJO DE TEMAS
  * ========================
  *
- * Este store centraliza el manejo del tema (modo oscuro/claro) en toda la aplicación.
- *
- * FUNCIONAMIENTO:
- * 1. El tema se guarda en localStorage para persistencia del lado del cliente
- * 2. También se guarda en una cookie del servidor para que persista entre visitas
- * 3. El usuario puede recordar su preferencia de tema aunque entre otro día
- *
- * INICIALIZACIÓN:
- * - El tema se inicializa desde el servidor (page.props.initialTheme)
- * - El NavBar es el primer componente que se monta y ejecuta useTheme()
- * - Esto garantiza que el tema se configure correctamente desde el inicio
- *
- * SINCRONIZACIÓN:
- * - localStorage: para persistencia inmediata del lado del cliente
- * - Cookie servidor: para persistencia entre sesiones y SSR
- * - HTML data-theme: para que DaisyUI aplique los estilos correctos
- *
- * USO:
- * - Importar useTheme() en cualquier componente
- * - Todas las instancias comparten el mismo estado reactivo
- * - No hay conflictos entre múltiples componentes
+ * Implementación Pinia compatible con SSR que mantiene la sincronización
+ * entre estado reactivo, localStorage, cookie del servidor y atributo data-theme.
  */
+export const useThemeStore = defineStore("theme", () => {
+    const page = usePage()
+    const initialTheme = page?.props?.initialTheme ?? "light"
+    const initialDark = initialTheme === "dark" || initialTheme === "night"
+    const isClient = typeof window !== "undefined"
+    const initialFontSize = normalizeFontSize(page?.props?.initialFontSize, DEFAULT_FONT_SIZE)
 
-// Store singleton para el tema - garantiza una sola instancia global
-let themeStore = null
-
-/**
- * Hook principal para acceder al sistema de temas
- *
- * PATRÓN SINGLETON:
- * - Solo crea la instancia una vez, independientemente de cuántos componentes lo usen
- * - Garantiza que todos los componentes compartan el mismo estado reactivo
- * - Evita conflictos entre múltiples instancias de useDark()
- *
- * @returns {Object} { isDark: Ref<boolean>, toggleDark: Function }
- */
-export function useTheme() {
-    if (!themeStore) {
-        // INICIALIZACIÓN: Solo se ejecuta la primera vez (normalmente desde NavBar)
-        const page = usePage()
-        const initialTheme = page.props.initialTheme // Viene del servidor (cookie o default)
-
-        // Robustez: aceptar tanto 'night' como 'dark' para modo oscuro
-        let isDarkInitial = initialTheme === "dark" || initialTheme === "night";
-        let themeValue = isDarkInitial ? "night" : "light";
-        if (typeof window !== "undefined") {
-            document.documentElement.setAttribute("data-theme", themeValue);
-        }
-
-        // CONFIGURACIÓN DE VUEUSE/CORE useDark:
-        // - initialValue: true si night, false si light
-        const isDark = useDark({
+    const darkComposable = isClient
+        ? useDark({
             storageKey: "theme",
             selector: "html",
             valueDark: "night",
-            initialValue: isDarkInitial,
-            onChanged: () => {}, // Deshabilitado para control manual
+            initialValue: initialDark,
+            onChanged: () => {},
         })
+        : null
 
-        // CONTROL DE DEBOUNCE: Prevenir cambios muy rápidos del tema
-        let lastToggleTime = 0
-        const TOGGLE_DEBOUNCE_MS = 200
+    const isDark = darkComposable ?? ref(initialDark)
+    const fontSize = ref(initialFontSize)
 
-        /**
-         * Función para alternar entre modo oscuro y claro
-         *
-         * CARACTERÍSTICAS:
-         * - Implementa debounce para evitar clicks dobles accidentales
-         * - Actualiza el estado reactivo (isDark.value)
-         * - Sincroniza con localStorage, cookie y HTML inmediatamente
-         */
-        const toggleDark = () => {
-            const now = Date.now()
+    if (isClient) {
+        watch(
+            isDark,
+            value => {
+                applyTheme(value)
+            },
+            { immediate: true }
+        )
 
-            // Prevenir dobles clicks muy rápidos
-            if (now - lastToggleTime < TOGGLE_DEBOUNCE_MS) {
-                console.log('Toggle ignored due to debounce')
-                return
+        const storedFontSize = readPersistedFontSize()
+        if (storedFontSize !== null) {
+            fontSize.value = storedFontSize
+        }
+
+        applyFontSize(fontSize.value)
+        persistFontSizeLocally(fontSize.value)
+
+        if (storedFontSize !== null && storedFontSize !== initialFontSize) {
+            syncFontSizeToServer(fontSize.value)
+        }
+
+        watch(fontSize, value => {
+            applyFontSize(value)
+            persistFontSizeLocally(value)
+            syncFontSizeToServer(value)
+        })
+    }
+
+    let lastToggleTime = 0
+
+    function applyTheme(value) {
+        if (!isClient) {
+            return
+        }
+
+        const themeValue = value ? "night" : "light"
+
+        document.documentElement.setAttribute("data-theme", themeValue)
+
+        try {
+            localStorage.setItem("theme", themeValue)
+        } catch (error) {
+            console.warn("Error persisting theme locally:", error)
+        }
+
+        try {
+            fetch(`${getApiUrl()}/update-theme`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+                body: JSON.stringify({ theme: themeValue }),
+            }).catch(error => {
+                console.warn("Error updating theme on server:", error)
+            })
+        } catch (error) {
+            console.warn("Error sending theme update:", error)
+        }
+    }
+
+    function applyFontSize(value) {
+        if (!isClient) {
+            return
+        }
+
+        try {
+            document.documentElement.style.setProperty("--text-base", `${value}px`)
+        } catch (error) {
+            console.warn("Error applying font size:", error)
+        }
+    }
+
+    function persistFontSizeLocally(value) {
+        if (!isClient) {
+            return
+        }
+
+        try {
+            localStorage.setItem(FONT_STORAGE_KEY, String(value))
+        } catch (error) {
+            console.warn("Error persisting font size locally:", error)
+        }
+    }
+
+    function syncFontSizeToServer(value) {
+        if (!isClient) {
+            return
+        }
+
+        try {
+            fetch("/update-font-size", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+                body: JSON.stringify({ fontSize: value }),
+            }).catch(error => {
+                console.warn("Error updating font size on server:", error)
+            })
+        } catch (error) {
+            console.warn("Error sending font size update:", error)
+        }
+    }
+
+    function readPersistedFontSize() {
+        if (!isClient) {
+            return null
+        }
+
+        try {
+            const stored = localStorage.getItem(FONT_STORAGE_KEY)
+            if (stored === null) {
+                return null
             }
 
-            console.log('Starting theme toggle from:', isDark.value)
-            lastToggleTime = now
-
-            // Cambiar el valor reactivo (esto actualiza automáticamente localStorage)
-            isDark.value = !isDark.value
-
-            // Sincronizar con cookie del servidor y aplicar cambios visuales
-            updateTheme(isDark.value)
-
-            console.log('Toggle completed to:', isDark.value)
-        }
-
-        // OBJETO DE RETORNO: Estado reactivo y funciones del tema
-        themeStore = {
-            isDark,    // Ref<boolean> - Estado reactivo del tema
-            toggleDark // Function - Alternar tema
+            const parsed = parseInt(stored, 10)
+            return Number.isNaN(parsed) ? null : parsed
+        } catch (error) {
+            console.warn("Error reading persisted font size:", error)
+            return null
         }
     }
 
-    // Retornar la instancia singleton (misma instancia para todos los componentes)
-    return themeStore
+    function setDark(value) {
+        if (darkComposable) {
+            darkComposable.value = value
+        } else {
+            isDark.value = value
+        }
+    }
+
+    function setFontSize(value) {
+        fontSize.value = value
+    }
+
+    function toggleDark() {
+        const now = Date.now()
+
+        if (now - lastToggleTime < TOGGLE_DEBOUNCE_MS) {
+            console.log("Toggle ignored due to debounce")
+            return
+        }
+
+        lastToggleTime = now
+        setDark(!isDark.value)
+    }
+
+    return {
+        isDark,
+        toggleDark,
+        setDark,
+        fontSize,
+        setFontSize,
+    }
+})
+
+export function useTheme() {
+    return useThemeStore()
 }
 
-/**
- * Función interna para sincronizar el tema en todos los niveles
- *
- * RESPONSABILIDADES:
- * 1. Aplicar cambios visuales inmediatos (HTML data-theme para DaisyUI)
- * 2. Actualizar localStorage (ya lo hace useDark automáticamente, pero por consistencia)
- * 3. Sincronizar con cookie del servidor para persistencia entre sesiones
- *
- * FLUJO:
- * - Se ejecuta cada vez que se cambia el tema
- * - No bloquea la UI (cookie update es asíncrono)
- * - Maneja errores de red graciosamente
- *
- * @param {boolean} isDarkMode - true para modo oscuro, false para modo claro
- */
-function updateTheme(isDarkMode) {
-    // PREVENCIÓN SSR: Evitar ejecución en servidor (sin window)
-    if (typeof window === "undefined") {
-        console.log("estamos en SSR")
-        return
-    }
-
-    console.log("updateTheme", isDarkMode)
-    const themeValue = isDarkMode ? "night" : "light"
-
-    // 1. CAMBIOS VISUALES INMEDIATOS: Aplicar atributo data-theme para DaisyUI
-    document.documentElement.setAttribute("data-theme", themeValue)
-
-    // 2. LOCALSTORAGE: Persistencia del lado del cliente (también lo hace useDark)
-    localStorage.setItem("theme", themeValue)
-
-    // 3. COOKIE SERVIDOR: Persistencia entre sesiones (asíncrono, no bloquea UI)
-    try {
-        fetch(`${getApiUrl()}/update-theme`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Requested-With": "XMLHttpRequest",
-            },
-            body: JSON.stringify({ theme: themeValue }),
-        }).catch(error => {
-            console.warn('Error updating theme on server:', error)
-        })
-    } catch (error) {
-        console.warn('Error sending theme update:', error)
-    }
+function normalizeFontSize(value, fallback) {
+    const parsed = typeof value === "string" ? parseInt(value, 10) : Number(value)
+    return Number.isFinite(parsed) ? parsed : fallback
 }

@@ -30,7 +30,6 @@
 </template>
 
 <script setup>
-import useUi from "@/Stores/ui";
 
 const ui = useUi()
 const nav = ui.nav

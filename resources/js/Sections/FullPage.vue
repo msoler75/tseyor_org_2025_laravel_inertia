@@ -109,8 +109,6 @@ const adjustHeight = () => {
     }
 };
 
-// hay que hacerlo aquí para que enseguida se establezca el valor
-nav.fullPage = true;
 
 onMounted(() => {
     // Establecer altura fija del viewport ANTES de configurar eventos
@@ -154,7 +152,6 @@ onBeforeUnmount(() => {
     if (window.visualViewport) {
         window.visualViewport.removeEventListener('resize', setFixedViewportHeight);
     }
-    nav.fullPage = false;
     clearTimeout(scrollTimer);
 });
 
