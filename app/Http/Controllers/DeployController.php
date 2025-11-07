@@ -85,7 +85,7 @@ class DeployController extends Controller
             // Si llega el flag 'prepare', simplemente mover el ZIP a storage/install y terminar
             if ($request->has('prepare')) {
                 $dest = Deploy::moveZipToInstall($zipPath);
-                return response()->json(['message' => 'Archivo guardado para prepare', 'path' => $dest], 200);
+                return response()->json(['message' => 'Archivo guardado en carpeta de instalación', 'path' => $dest], 200);
             }
 
             // Delegar la instalación específica al método apropiado
@@ -113,7 +113,7 @@ class DeployController extends Controller
             // Si llega el flag 'prepare', simplemente mover el ZIP a storage/install y terminar
             if ($request->has('prepare')) {
                 $dest = Deploy::moveZipToInstall($zipPath);
-                return response()->json(['message' => 'Archivo guardado para prepare', 'path' => $dest], 200);
+                return response()->json(['message' => 'Archivo guardado en carpeta de instalación', 'path' => $dest], 200);
             }
 
             // Ejecutar instalación específica (backup, extracción, limpieza)
