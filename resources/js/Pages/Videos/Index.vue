@@ -15,7 +15,7 @@
             <div
                 class="flex flex-wrap justify-center items-center gap-10 card flex-row bg-base-100 shadow-2xs rounded-lg px-2 sm:px-12 py-12 w-fit mx-auto">
                 <a href="https://www.youtube.com/@tseyor" target="_blank"
-                    class="text-blue-600 hover:text-blue-800 font-bold text-2xl">youtube.com/@tseyor</a>
+                    class="text-primary font-bold text-2xl">youtube.com/@tseyor</a>
                 <a href="https://www.youtube.com/@tseyor" target="_blank">
                     <Image src="/almacen/medios/logos/youtube_big_logo.svg" alt="Logo de Youtube"
                         src-width="1000" src-height="223"

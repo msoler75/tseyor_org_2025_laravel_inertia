@@ -11,8 +11,8 @@ use Exception;
 
 class DeployNodeModules extends Command
 {
-    protected $signature = 'deploy:nodemodules';
-    protected $description = 'Comprime node_modules para que funcione SSR y lo envía al servidor';
+    protected $signature = 'deploy:nodemodules {--package= : Nombre del paquete específico a desplegar (ej: @tiptap)}';
+    protected $description = 'Comprime node_modules o un paquete específico para que funcione SSR y lo envía al servidor';
 
     private const SOURCE_DIR = 'node_modules';
     private const ZIP_NAME = 'nodemodules.zip';
@@ -23,8 +23,19 @@ class DeployNodeModules extends Command
     public function handle()
     {
         try {
-            $sourcePath = base_path(self::SOURCE_DIR);
-            $zipPath = storage_path('app/' . self::ZIP_NAME);
+            $package = $this->option('package');
+
+            if ($package && !File::exists(base_path('node_modules/' . $package))) {
+                $this->error("El paquete '{$package}' no existe en node_modules.");
+                return;
+            }
+
+            $sourceDir = $package ? 'node_modules/' . $package : 'node_modules';
+            $zipName = $package ? str_replace('@', 'at', $package) . '.zip' : 'nodemodules.zip';
+            $baseName = $package ?: 'node_modules';
+
+            $sourcePath = base_path($sourceDir);
+            $zipPath = storage_path('app/' . $zipName);
 
             Deploy::validateDirectoryExists($sourcePath);
 
@@ -33,21 +44,29 @@ class DeployNodeModules extends Command
             if (Deploy::createZipFile(
                 $sourcePath,
                 $zipPath,
-                config('deploy.node_modules_exclusions', []),
-                'node_modules'
+                $package ? [] : config('deploy.node_modules_exclusions', []),
+                $baseName
             )) {
+                if (!File::exists($zipPath)) {
+                    $this->error('Error: El ZIP se reportó como creado pero no se encuentra en ' . $zipPath);
+                    return;
+                }
                 $this->info('ZIP creado: ' . basename($zipPath));
 
                 $this->info('Enviando...');
+                $endpoint = config('deploy.node_modules_endpoint');
+                if ($package) {
+                    $endpoint .= '?type=package';
+                }
                 $result = Deploy::sendZipFile(
                     $zipPath,
-                    config('deploy.node_modules_endpoint'),
-                    self::ZIP_NAME,
+                    $endpoint,
+                    $zipName,
                 );
 
                 Deploy::handleResponse($result, $this);
 
-                File::delete($zipPath);
+                // File::delete($zipPath);
             } else {
                 $this->error('Error al crear el ZIP');
             }

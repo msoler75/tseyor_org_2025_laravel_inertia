@@ -21,8 +21,8 @@ const isSSR = process.argv.includes('--ssr');
 
 export default defineConfig({
   optimizeDeps: {
-    // Evitar bundling de estas dependencias
-    // exclude: ["@tiptap/starter-kit", "vue-advanced-cropper", "md-editor-v3"],
+    // Excluir @tiptap de optimización
+    exclude: ['@tiptap/*', 'prosemirror-*'],
     include: [
         // Aquí incluye las dependencias que quieres pre-empaquetar
         'vue',
@@ -41,6 +41,10 @@ export default defineConfig({
       },
     },
     rollupOptions: {
+      external: isSSR ? (id) => {
+        // Solo marcar @tiptap y prosemirror como externos en SSR
+        return id.includes('@tiptap/') || id.includes('prosemirror-');
+      } : undefined,
       output: isSSR ? {} : {
         manualChunks(id) {
           // ESTRATEGIA SIMPLIFICADA Y ROBUSTA
@@ -55,8 +59,8 @@ export default defineConfig({
               return null;
             }
 
-            // TIPTAP: Editor rico (pesado, ~300KB)
-            if (id.includes('@tiptap/')) {
+            // TIPTAP: Editor rico (pesado, ~300KB) - solo en build cliente
+            if (!isSSR && id.includes('@tiptap/')) {
               return 'vendor-tiptap';
             }
 
@@ -157,10 +161,33 @@ export default defineConfig({
     alias: {
       ziggy: path.resolve(__dirname, "vendor/tightenco/ziggy/dist/vue.es.js"),
       "@": path.resolve(__dirname, "./resources/js"),
+      // Usar stub de TipTapEditor en SSR
+      ...(isSSR ? {
+        "@/Components/TipTapEditor.vue": path.resolve(__dirname, "./resources/js/Components/TipTapEditor.ssr.vue"),
+        "@/Components/TipTapFullMenuBar.vue": path.resolve(__dirname, "./resources/js/Components/TipTapEditor.ssr.vue"),
+        "@/Components/TipTapSimpleMenuBar.vue": path.resolve(__dirname, "./resources/js/Components/TipTapEditor.ssr.vue"),
+      } : {}),
     },
   },
   plugins: [
     tailwindcss(),
+    // Plugin para reemplazar TipTap con stub en SSR
+    isSSR && {
+      name: 'replace-tiptap-in-ssr',
+      enforce: 'pre',
+      resolveId(id, importer) {
+        // Reemplazar imports de TipTap con el stub
+        if (id.includes('TipTapEditor.vue') ||
+            id.includes('TipTapFullMenuBar.vue') ||
+            id.includes('TipTapSimpleMenuBar.vue')) {
+          return path.resolve(__dirname, './resources/js/Components/TipTapEditor.ssr.vue');
+        }
+        // Reemplazar imports relativos de TipTap
+        if (importer && id.startsWith('./TipTap') && id.endsWith('.vue')) {
+          return path.resolve(__dirname, './resources/js/Components/TipTapEditor.ssr.vue');
+        }
+      }
+    },
     // commonjs(),
     laravel({
       input: [
@@ -203,11 +230,20 @@ export default defineConfig({
         "resources/js/Sections",
         "resources/js/Layouts",
       ],
+      // Filtrar componentes TipTap durante build SSR
+      exclude: isSSR ? [/TipTap.*\.vue$/] : [],
       // Añade esta sección para resolver componentes
       resolvers: [
         (name) => {
           if (name === "ClientOnly") {
             return { name: "default", from: "@duannx/vue-client-only" };
+          }
+          // Reemplazar TipTap con stub en SSR
+          if (isSSR && name.startsWith('TipTap')) {
+            return {
+              name: "default",
+              from: path.resolve(__dirname, "./resources/js/Components/TipTapEditor.ssr.vue")
+            };
           }
         },
       ],
@@ -484,8 +520,12 @@ export default defineConfig({
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: true,
   },
   ssr: {
-    // noExternal: true,
+    noExternal: [
+      // Removido @tiptap/* y prosemirror-* ya que están en ClientOnly
+    ],
     external: [
+      '@tiptap/*',
+      'prosemirror-*',
         // 'PWANotifications',
         /*'ImagesViewer',
         'ModalDropZone',

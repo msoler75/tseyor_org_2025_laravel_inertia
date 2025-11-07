@@ -1,11 +1,7 @@
 <template>
-    <component :is="status != 'running' ? Link : 'div'" :href="href" class="worker-controls ml-2"
-        style="min-width: 150px">
+    <a v-if="status != 'running'" :href="href" class="worker-controls ml-2" style="min-width: 150px">
         <span class="ml-2">
             <span>{{ status }}</span>
-        </span>
-        <span v-show="status === 'running'" class="ml-2">
-            <i class="la la-check-circle text-green-500" :style="iconStyle"></i>
         </span>
         <span v-show="status == 'stopped'" class="ml-2">
             <i class="la la-exclamation-circle text-orange-500" :style="iconStyle"></i>
@@ -13,12 +9,20 @@
         <span v-show="status == 'error'" class="ml-2">
             <i class="la la-exclamation-circle text-red-500" :style="iconStyle"></i>
         </span>
-    </component>
+    </a>
+    <div v-else class="worker-controls ml-2" style="min-width: 150px">
+        <span class="ml-2">
+            <span>{{ status }}</span>
+        </span>
+        <span class="ml-2">
+            <i class="la la-check-circle text-green-500" :style="iconStyle"></i>
+        </span>
+    </div>
 </template>
 
 <script setup>
-
-import Link from '../Link.vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import axios from 'axios'
 
 const props = defineProps({
     href: {
