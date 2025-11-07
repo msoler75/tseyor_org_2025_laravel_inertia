@@ -72,8 +72,10 @@ class ImagenesController extends Controller
             return response()->file($imageFullPath, ['Content-Type' => $mime]);
         }
 
-        // formato y calidad solicitados (si no vienen, webp por defecto)
-        $formatRequested = $params["fmt"] ?? "webp";
+        // formato y calidad solicitados (si no vienen, webp por defecto, pero png si original es png)
+        $originalFormat = strtolower(pathinfo($imageFullPath, PATHINFO_EXTENSION));
+        $defaultFormat = ($originalFormat === 'png') ? 'png' : 'webp';
+        $formatRequested = $params["fmt"] ?? $defaultFormat;
         $quality = $params["q"] ?? 70;
 
         // decide si el entorno puede generar WebP
@@ -90,11 +92,11 @@ class ImagenesController extends Controller
 
         $imagickAvailable = extension_loaded('imagick');
 
-        // Si el cliente pide webp pero el entorno no lo soporta, caer a jpeg
+        // Si el cliente pide webp pero el entorno no lo soporta, caer a jpeg o png según original
         $format = $formatRequested;
         if ($formatRequested === 'webp' && !$gdSupportsWebp && !$imagickAvailable) {
-            // No podemos producir webp, fallback a jpeg
-            $format = 'jpg';
+            // No podemos producir webp, fallback a png si original es png, sino jpeg
+            $format = ($originalFormat === 'png') ? 'png' : 'jpg';
         }
 
        // create cache path (usar el formato final)
@@ -110,7 +112,13 @@ class ImagenesController extends Controller
 
             if ($originalModifiedTime <= $cacheModifiedTime) {
                 // devolver con el mime correspondiente al formato final
-                $cachedMime = ($format === 'webp') ? 'image/webp' : 'image/jpeg';
+                if ($format === 'webp') {
+                    $cachedMime = 'image/webp';
+                } elseif ($format === 'png') {
+                    $cachedMime = 'image/png';
+                } else {
+                    $cachedMime = 'image/jpeg';
+                }
                 return response()->file($cacheFullPath, ['Content-Type' => $cachedMime]);
             }
         }
@@ -131,6 +139,8 @@ class ImagenesController extends Controller
         // definir mime según formato seleccionado (usar $format que pudo haber cambiado por fallback)
         if ($format === 'webp') {
             $mime = 'image/webp';
+        } elseif ($format === 'png') {
+            $mime = 'image/png';
         } else {
             // jpg/ jpeg
             $mime = 'image/jpeg';

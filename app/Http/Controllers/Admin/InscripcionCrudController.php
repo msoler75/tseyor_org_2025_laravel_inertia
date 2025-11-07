@@ -260,11 +260,11 @@ class InscripcionCrudController extends CrudController
             ->attributes(['rows' => 6])
             ->tab('Gestión de la inscripción');
         // Campo legacy para compatibilidad
-        CRUD::field('asignado')->type('text')
+        /*CRUD::field('asignado')->type('text')
             ->label('Asignado (Campo obsoleto, se mantiene por compatibilidad)')
             ->hint('Campo mantenido por compatibilidad. Usar "Tutor Asignado" preferentemente.')
             ->validationRules('nullable|max:256')
-            ->tab('Gestión de la inscripción');
+            ->tab('Gestión de la inscripción');*/
     }
 
     /**

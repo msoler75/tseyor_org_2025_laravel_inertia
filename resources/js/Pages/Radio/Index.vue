@@ -15,20 +15,20 @@
 
         <PageWide>
 
-        <Hero title="" :srcImage="isDark ? darkLogo : lightLogo" srcWidth="1117" srcHeight="801"
+            <Hero title="" :srcImage="ui.theme.isDark ? darkLogo : lightLogo" srcWidth="1117" srcHeight="801"
 
-            textClass="px-7 gap-4"
-            imageSideClass="max-h-[360px]">
+                textClass="px-7 gap-4"
+                imageSideClass="max-h-[360px]">
 
-            <h3 class="text-center">Elige una emisora:</h3>
+                <h3 class="text-center">Elige una emisora:</h3>
 
-            <div class="flex flex-wrap gap-3 justify-center w-full shrink-0">
-                <div v-for="emisora of emisoras" :key="emisora"
-                    class="bg-base-100 rounded-lg shadow-2xs hover:bg-secondary hover:text-secondary-content transition duration-200">
-                    <Link class="p-4 block" :href="route('radio.emisora', emisora)">{{ emisora }}</Link>
+                <div class="flex flex-wrap gap-3 justify-center w-full shrink-0">
+                    <div v-for="emisora of emisoras" :key="emisora"
+                        class="bg-base-100 rounded-lg shadow-2xs hover:bg-secondary hover:text-secondary-content transition duration-200">
+                        <Link class="p-4 block" :href="route('radio.emisora', emisora)">{{ emisora }}</Link>
+                    </div>
                 </div>
-            </div>
-        </Hero>
+            </Hero>
 
         </PageWide>
 
@@ -42,26 +42,19 @@
 
 
 <script setup>
-import useSelectors from '@/Stores/selectors'
-import { useDark } from "@vueuse/core"
-import usePlayer from '@/Stores/player'
-
-const player = usePlayer()
+const ui = useUi()
+const player = ui.player
 player.autoplay = true
 
 const base = '/almacen/medios/logos/radio_tseyor'
 const lightLogo = base + '.png'
 const darkLogo = base + '_dark.png'
 
-const isDark = useDark();
-const selectors = useSelectors()
-
-
 const props = defineProps({
     emisoras: {}
 });
 
-if (selectors.emisoraRadio)
+if (ui.selectors.emisoraRadio)
     router.visit(route('radio.emisora', selectors.emisoraRadio))
 
 </script>
