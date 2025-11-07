@@ -1,6 +1,6 @@
 <template>
     <div v-if="page.props.auth?.user" class="cursor-pointer" @click="toggleFavorito" :title="favoritoLocal ? 'Quitar de favoritos' : 'Añadir a favoritos'">
-        <Icon icon="ph:heart-duotone" v-show="favoritoLocal" />
+        <Icon icon="ph:heart-fill" v-show="favoritoLocal" class="text-red-500"/>
         <Icon v-show="!favoritoLocal" icon="ph:heart-light"/>
     </div>
 </template>

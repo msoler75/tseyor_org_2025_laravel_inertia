@@ -1,6 +1,6 @@
 <template>
     <div
-        class="tabs tabs-box mb-12 gap-4 md:gap-7 bg-base-300 w-fit max-w-full uppercase font-bold"
+        class="tabs tabs-box tabs-sm xs:tabs-md mb-12 gap-4 md:gap-7 bg-base-300 w-fit max-w-full uppercase font-bold"
     >
         <component
             v-for="(tab, index) of tabsComputed"
@@ -58,7 +58,7 @@ const selected = ref(null);
 const page = usePage();
 
 function IAmHere(url) {
-    console.log("page.url", page.url, "starts with", url, url.replace(/https?:\/\/[^\/]+/, ''), "?");
+    // console.log("page.url", page.url, "starts with", url, url.replace(/https?:\/\/[^\/]+/, ''), "?");
     return selected.value
         ? url == selected.value
         : page.url.startsWith(url.replace(/https?:\/\/[^\/]+/, ""));

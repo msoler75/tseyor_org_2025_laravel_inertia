@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { getImageSize, getImageUrl, isWebPSupported } from "@/composables/image.js";
+import { getImageSize, getImageUrl } from "@/composables/image.js";
 import {belongsToCurrentDomain} from '@/composables/srcutils.js'
 import { Icon } from "@iconify/vue";
 
@@ -314,14 +314,14 @@ async function putImageWithSize(widthOp, heightOp) {
     log("image:putImageWithSize", imageSrc.value, widthOp, heightOp);
     if (widthOp == originalSize.width && heightOp == originalSize.height)
         return putSrcImage(imageSrc.value);
-    const webp = await isWebPSupported();
+    // No forzar fmt, dejar que el servidor decida basado en el formato original
+    // const webp = await isWebPSupported();
     var src =
         imageSrc.value +
         "?w=" +
         Math.round(parseFloat(widthOp)) +
         "&h=" +
         Math.round(parseFloat(heightOp));
-    if (!webp) src += "&fmt=jpg";
     putSrcImage(src);
 }
 

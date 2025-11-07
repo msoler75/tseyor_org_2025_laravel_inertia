@@ -4,6 +4,7 @@ import { useSelectorsStore } from "@/Stores/selectors"
 import { usePlayerStore } from "@/Stores/player"
 import { useToolsStore } from "@/Stores/tools"
 import { useNavStore } from "@/Stores/nav"
+import { useTheme } from "@/Stores/theme"
 
 /**
  * COMPOSABLE UI - Agregador de Stores
@@ -23,6 +24,7 @@ export default function useUi() {
     const selectors = useSelectorsStore()
     const player = usePlayerStore()
     const tools = useToolsStore()
+    const theme = useTheme()
     const nav = useNavStore()
 
     // Retornar objeto con referencias directas a stores
@@ -32,6 +34,7 @@ export default function useUi() {
         selectors,
         player,
         tools,
+        theme,
         nav,
     }
 }

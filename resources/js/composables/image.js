@@ -1,4 +1,4 @@
-import {getSrcUrl, belongsToCurrentDomain} from './srcutils'
+import {getSrcUrl} from './srcutils'
 
 const fallback_images = ["f1.jpg", "f2.jpg", "f3.jpg", "f4.jpg"];
 const fallback_folder = "/almacen/medios/imagenes_contenidos_por_defecto";
@@ -77,37 +77,25 @@ export const getImageSize = async function (url) {
 
 
 function canUseWebP() {
-    // console.log('canUseWebP')
-    var elem = document.createElement("canvas");
-  if (!!(elem.getContext && elem.getContext("2d"))) {
-    // was able or not to get WebP representation
-    const result  = elem.toDataURL("image/webp").indexOf("data:image/webp") == 0;
-    // console.log('canUseWebP ended')
-    return result
-  }
-  // very old browser like IE 8, canvas not supported
-  return false;
+    return new Promise((resolve) => {
+        const webP = new Image();
+        webP.onload = webP.onerror = () => {
+            const result = webP.height === 2;
+            console.log('WebP detection (Image method):', result);
+            resolve(result);
+        };
+        webP.src = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';
+    });
 }
 
 var webp = null;
 
 export const isWebPSupported = async () => {
-  return new Promise(async (resolve, reject) => {
-    if (webp !== null) resolve(webp);
-    webp = canUseWebP();
-    resolve(webp);
-  });
+  if (webp !== null) return webp;
+  webp = await canUseWebP();
+  return webp;
 };
 
-/*
-
-D:\projects\tseyor\laravel_inertia\storage\app\public\profile-photos\fXfEgu28nhgwkB537aojcblsgQ1z36dgw0kTtAlw.png
-
-
-D:\projects\tseyor\laravel_inertia\storage\app/public\almacen/profile-photos/fXfEgu28nhgwkB537aojcblsgQ1z36dgw0kTtAlw.png
-
-
-*/
 
 export const getSrcImageUrl = (url) => {
     const parts = url.split('?')

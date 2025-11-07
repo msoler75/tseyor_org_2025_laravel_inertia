@@ -147,20 +147,17 @@
 </template>
 
 <script setup>
-import { usePage } from "@inertiajs/vue3";
-import useSelectors from "@/Stores/selectors";
-import { useTheme } from "@/Stores/theme";
-
+const ui = useUi()
 const page = usePage();
-const nav = useNav();
-const selectors = useSelectors();
+const nav = ui.nav
+const selectors = ui.selectors
 const portada = computed(() => page.url == "/");
 
 const showingNavigationDropdown = ref(false);
 
 // Usar el store compartido del tema
 
-const { isDark, toggleDark } = useTheme();
+const { isDark, toggleDark } = ui.theme
 
 
 // Forzar sincronización de isDark tras el primer render y reflejar cualquier cambio inicial
