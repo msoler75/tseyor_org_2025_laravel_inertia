@@ -17,6 +17,7 @@ class VerifyCsrfToken extends Middleware
         '_sendbuild',
         '_sendssr',
         '_sendnodemodules',
+        '_rollback',
         'usuarios/_comprobar_clave',
         'update-theme',
         'update-font-size',

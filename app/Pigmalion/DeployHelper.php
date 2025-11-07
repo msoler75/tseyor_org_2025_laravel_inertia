@@ -43,7 +43,14 @@ class DeployHelper
             throw new Exception("Directorio fuente no existe: $sourcePath");
         }
 
-        File::delete($zipPath);
+        Log::info("Creando ZIP desde $sourcePath a $zipPath");
+
+        if (file_exists($zipPath)) {
+            unlink($zipPath);
+        }
+
+        // Normalizar path para Windows
+        $zipPath = str_replace('/', '\\', $zipPath);
 
         $zip = new ZipArchive();
         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) {
@@ -53,12 +60,16 @@ class DeployHelper
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator(
                 $sourcePath,
-                \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS
+                \FilesystemIterator::SKIP_DOTS
             ),
             \RecursiveIteratorIterator::SELF_FIRST
         );
 
+        $filesAdded = 0;
+        $totalFiles = 0;
         foreach ($iterator as $file) {
+            $totalFiles++;
+            Log::info("Encontrado: " . $file->getPathname() . " isDir: " . ($file->isDir() ? 'yes' : 'no'));
             if ($file->isDir()) continue;
 
             // Obtener ruta relativa usando el iterador
@@ -72,12 +83,32 @@ class DeployHelper
                 ? $basePathPrefix . '/' . $relativePath
                 : $relativePath;
 
-            if (self::shouldExclude($file->getRealPath(), $exclusions)) continue;
+            if (self::shouldExclude($file->getRealPath(), $exclusions)) {
+                Log::info("Excluyendo archivo: " . $file->getRealPath());
+                continue;
+            }
 
-            $zip->addFile($file->getRealPath(), $zipPathEntry);
+            Log::info("Añadiendo archivo: " . $file->getRealPath() . " como " . $zipPathEntry);
+            $result = $zip->addFile($file->getRealPath(), $zipPathEntry);
+            if ($result) {
+                $filesAdded++;
+            } else {
+                Log::error("Error añadiendo archivo: " . $file->getRealPath());
+            }
         }
 
-        return $zip->close();
+        Log::info("Archivos totales encontrados: $totalFiles, añadidos: $filesAdded");
+
+        $closeResult = $zip->close();
+        Log::info("ZIP close result: " . ($closeResult ? 'true' : 'false'));
+
+        if ($closeResult && !file_exists($zipPath)) {
+            throw new Exception("ZIP cerrado exitosamente ($filesAdded archivos añadidos) pero el archivo no existe: $zipPath");
+        }
+        if ($filesAdded == 0) {
+            throw new Exception("No hay archivos para comprimir en $sourcePath");
+        }
+        return $closeResult;
     }
 
 
@@ -368,8 +399,13 @@ class DeployHelper
      * @param string $type Tipo de despliegue: 'public_build', 'ssr', 'node_modules'
      * @throws Exception Si el contenido no es válido
      */
-    public static function validateZipContent(string $zipPath, string $type): void
+    public static function validateZipContent(string $zipPath, ?string $type): void
     {
+        if ($type === null) {
+            // No validar para paquetes específicos
+            return;
+        }
+
         if (!file_exists($zipPath)) {
             throw new Exception("El archivo ZIP no existe: {$zipPath}");
         }
@@ -407,7 +443,7 @@ class DeployHelper
             // Verificar extensión si no es directorio
             if (!str_ends_with($entry, '/')) {
                 $extension = strtolower(pathinfo($entry, PATHINFO_EXTENSION));
-                if (!in_array($extension, $rules['allowedExtensions'])) {
+                if (!empty($rules['allowedExtensions']) && !in_array($extension, $rules['allowedExtensions'])) {
                     $zip->close();
                     throw new Exception("Extensión no permitida en ZIP: {$extension} para {$entry} (tipo: {$type})");
                 }
@@ -436,7 +472,7 @@ class DeployHelper
             case 'node_modules':
                 return [
                     'allowedPaths' => ['node_modules/'],
-                    'allowedExtensions' => ['js', 'json', 'map', 'css', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'md', 'txt', 'lock', 'ts', 'd.ts']
+                    'allowedExtensions' => [] // Permitir todas las extensiones
                 ];
             default:
                 throw new Exception("Tipo de despliegue no reconocido: {$type}");
@@ -672,25 +708,30 @@ class DeployHelper
      * @return void
      * @throws \Exception
      */
-    public static function installNodeModulesFromZip(string $zipPath): void
+    public static function installNodeModulesFromZip(string $zipPath, bool $isPackage = false): void
     {
         // Validar contenido del ZIP antes de cualquier operación
-        self::validateZipContent($zipPath, 'node_modules');
+        self::validateZipContent($zipPath, $isPackage ? null : 'node_modules');
 
-        // 1. Crear backup de node_modules existente
-        $backupPath = self::backupNodeModules();
+        if (!$isPackage) {
+            // 1. Crear backup de node_modules existente
+            $backupPath = self::backupNodeModules();
 
-        // 2. Limpiar node_modules existente
-        self::cleanNodeModules();
+            // 2. Limpiar node_modules existente
+            self::cleanNodeModules();
+        }
 
         // 3. Descomprimir
-        self::extractZip($zipPath, base_path());
+        $extractPath = $isPackage ? base_path('node_modules') : base_path();
+        self::extractZip($zipPath, $extractPath);
 
         // 4. Limpieza post-instalación
         self::postInstallCleanup();
 
-        // 5. Limpieza de backups antiguos
-        self::cleanOldNodeModulesBackups();
+        if (!$isPackage) {
+            // 5. Limpieza de backups antiguos
+            self::cleanOldNodeModulesBackups();
+        }
     }
 
 

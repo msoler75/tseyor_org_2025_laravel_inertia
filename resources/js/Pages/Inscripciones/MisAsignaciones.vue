@@ -403,11 +403,13 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Notas de seguimiento
             </label>
-            <TipTapEditor
-              v-model="formNotas.notas"
-              :full="false"
-              class="min-h-[200px]"
-            />
+            <ClientOnly>
+                <TipTapEditor
+                v-model="formNotas.notas"
+                :full="false"
+                class="min-h-[200px]"
+                />
+            </ClientOnly>
           </div>
 
           <div class="flex justify-end space-x-3">

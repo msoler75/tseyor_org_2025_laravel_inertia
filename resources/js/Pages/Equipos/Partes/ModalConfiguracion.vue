@@ -49,7 +49,9 @@
 
                     <div>
                         <label for="anuncio">Anuncio</label>
-                        <TipTapEditor id="anuncio" v-model="edicion.anuncio" />
+                        <ClientOnly>
+                            <TipTapEditor id="anuncio" v-model="edicion.anuncio" />
+                        </ClientOnly>
                         <div v-if="edicion.errors.anuncio" class="error">{{ edicion.errors.anuncio[0] }}</div>
                         <div v-else class="text-sm">Anuncio de caracter general. Se puede dejar en blanco.</div>
                     </div>
@@ -60,7 +62,9 @@
 
                     <div>
                         <label for="reuniones">Reuniones</label>
-                        <TipTapEditor id="reuniones" v-model="edicion.reuniones" />
+                        <ClientOnly>
+                            <TipTapEditor id="reuniones" v-model="edicion.reuniones" />
+                        </ClientOnly>
                         <div v-if="edicion.errors.reuniones" class="error">{{ edicion.errors.reuniones[0] }}
                         </div>
                         <div v-else class="text-sm">Ejemplo: Los lunes a las 13h. Se puede dejar en blanco.
@@ -71,7 +75,9 @@
                 <tab name="Información">
                     <div>
                         <label for="informacion">informacion</label>
-                        <TipTapEditor id="informacion" v-model="edicion.informacion" />
+                        <ClientOnly>
+                            <TipTapEditor id="informacion" v-model="edicion.informacion" />
+                        </ClientOnly>
                         <div v-if="edicion.errors.informacion" class="error">{{ edicion.errors.informacion[0] }}
                         </div>
                         <div v-else class="text-sm">Información adicional del equipo.</div>

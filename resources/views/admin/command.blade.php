@@ -32,7 +32,7 @@
         <button command="ps aux" class="btn btn-info">Ver procesos del sistema</button>
         <button command="worker:start" class="btn btn-danger">Iniciar worker</button>
         <button command="worker:stop" class="btn btn-danger">Detener worker</button>
-        <button command="inertia:stop-ssr" class="btn btn-danger">Iniciar servidor SSR</button>
+        <button command="inertia:start-ssr" class="btn btn-danger">Iniciar servidor SSR</button>
         <button command="inertia:stop-ssr" class="btn btn-danger">Detener servidor SSR</button>
     </div>
 

@@ -116,8 +116,11 @@ class DeployController extends Controller
                 return response()->json(['message' => 'Archivo guardado en carpeta de instalación', 'path' => $dest], 200);
             }
 
-            // Ejecutar instalación específica (backup, extracción, limpieza)
-            Deploy::installNodeModulesFromZip($zipPath);
+            // Determinar si es un despliegue de paquete específico
+            $isPackage = $request->query('type') === 'package';
+
+            // Ejecutar instalación específica (backup solo si no es paquete, extracción, limpieza)
+            Deploy::installNodeModulesFromZip($zipPath, $isPackage);
 
             return response()->json(['status' => 'success']);
         } catch (\Exception $e) {
