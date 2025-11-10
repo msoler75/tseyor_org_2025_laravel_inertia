@@ -31,7 +31,7 @@ class PublicacionesController extends Controller
         else if ($categoria)
             $query->where('categoria', $categoria);
         else
-            $query->latest();
+            $query->latest('updated_at');
 
         // devuelve los items recientes segun la busqueda
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, $page)

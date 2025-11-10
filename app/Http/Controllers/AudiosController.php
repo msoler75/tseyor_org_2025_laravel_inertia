@@ -30,7 +30,7 @@ class AudiosController extends Controller
         else if($categoria)
             $query->where('categoria', $categoria);
         else
-            $query->latest();
+            $query->latest('updated_at');
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));

@@ -23,9 +23,10 @@ class NoticiasController extends Controller
 
         if ($buscar)
             $query->buscar($buscar);
+        else
+            $query->latest('updated_at');
 
         $resultados = $query
-            ->latest()
             ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
 
