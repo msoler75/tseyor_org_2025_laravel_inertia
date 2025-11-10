@@ -1,17 +1,16 @@
 <template>
     <Page>
         <PageHeader>
-        <div class="flex justify-between items-center mb-20">
-            <Back href="/donde-estamos">Dónde estamos</Back>
-            <div class="flex gap-2">
-                <Share />
-                <AdminLinks modelo="contacto" necesita="administrar directorio" :contenido="contacto" />
+            <div class="flex justify-between items-center mb-20">
+                <Back href="/donde-estamos">Dónde estamos</Back>
+                <div class="flex gap-2">
+                    <Share />
+                    <AdminLinks modelo="contacto" necesita="administrar directorio" :contenido="contacto" />
+                </div>
             </div>
-        </div>
-
         </PageHeader>
 
-        <PageContent class="sm:max-w-[60ch] py-12 rounded-3xl text-center">
+        <PageContent class="py-12 sm:rounded-xl sm:max-w-[48ch] text-center">
 
             <h1 class="text-3xl font-bold mb-4">{{ contacto.nombre }}</h1>
 
