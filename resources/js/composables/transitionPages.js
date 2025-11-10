@@ -49,7 +49,7 @@ export default function setTransitionPages(router) {
 
     if (!mismapagina || !mismaSeccion) {
       const fadeoutWhenNavigateTo =
-        /^\/(audios|videos|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|psicografias|ong|utg|normativas|noticias|publicaciones|usuarios|preguntas-frecuentes)\/.+/;
+        /^\/(audios|videos|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|psicografias|ong|utg|normativas|noticias|publicaciones|usuarios|preguntas-frecuentes|confederacion|el-rayo)/;
       if (fadeoutWhenNavigateTo.exec(nuevaRuta.pathname)) {
         console.log("auto fadeOut");
         nav.fadeoutPage();

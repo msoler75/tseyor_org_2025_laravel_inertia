@@ -314,4 +314,5 @@ class ContenidoBaseModel extends Model
         // Si no tiene el campo visibilidad, no aplicamos filtro
         return $query;
     }
+
 }

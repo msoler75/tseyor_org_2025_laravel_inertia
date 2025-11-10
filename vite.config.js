@@ -363,7 +363,7 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'portrait-primary',
         scope: '/',
-        start_url: '/',
+        start_url: '/novedades',
         icons: [
           // Iconos para Android
           {

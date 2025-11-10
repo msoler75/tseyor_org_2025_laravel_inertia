@@ -55,7 +55,7 @@ class EquiposController extends Controller
         else if ($categoria)
             $query->where('categoria', '=', $categoria);
         else
-            $query->latest();
+            $query->latest('updated_at');
 
         // si el usuario tiene permisos de gestionar equipos
         $ocultarEquipos = $categoria != 'Mis equipos' && Gate::denies('administrar equipos');

@@ -63,10 +63,12 @@ class PsicografiaCrudController extends CrudController
             'label' => 'Miniatura',
             'type' => 'custom_html',
             'value' => function($entry) {
-                if(!$entry->imagen)
+                $src = $entry->imagen;
+                if(!$src)
                     return '<span class="text-muted">-</span>';
-                $miniatura = $entry->imagen."?mh=50&mw=50"; // miniatura de la imagen
-                $enlace = $entry->imagen;
+                $src = (new StorageItem($src))->urlPath;
+                $miniatura = $src."?mh=50&mw=50"; // miniatura de la imagen
+                $enlace = $src;
                 return '<a href="' . $enlace . '" target="_blank">
                             <img src="' . $miniatura . '" style="object-fit: cover;" alt="Miniatura">
                         </a>';

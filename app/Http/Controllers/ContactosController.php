@@ -29,7 +29,7 @@ class ContactosController extends Controller
         if ($buscar)
             $query->buscar($buscar);
         else
-            $query->latest();
+            $query->latest('updated_at');
 
         // dd(Countries::getFuzzyCountries($buscar));
         $resultados =$query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)

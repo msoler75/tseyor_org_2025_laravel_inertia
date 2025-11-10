@@ -31,7 +31,7 @@ class PsicografiasController extends Controller
         else if ($categoria)
             $query->where('categoria', $categoria);
         else
-            $query->latest();
+            $query->latest('updated_at');
 
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
@@ -56,7 +56,11 @@ class PsicografiasController extends Controller
     public function json()
     {
         // obtiene los items sin busqueda
-        $resultados = Psicografia::select(['slug', 'titulo', 'descripcion', 'created_at', 'categoria', 'imagen'])->get();
+        $resultados = Psicografia::select("*")->get()
+        ->transform(function ($item) {
+            $item->imagen = $item->imagen ? (new \App\Pigmalion\StorageItem($item->imagen))->urlPath : null;
+            return $item;
+        });
 
         return response()->json($resultados);
     }
