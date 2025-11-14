@@ -80,10 +80,6 @@
             image="https://picsum.photos/300/200" descriptionClass="italic text-blue-500" date="2024-09-15"
             tag="Desc Class" />
 
-        <!-- Card sin auto-scroll -->
-        <CardContent title="Sin Auto-scroll" description="Esta tarjeta tiene desactivado el auto-scroll."
-            image="https://picsum.photos/300/200" :autoScroll="false" date="2024-09-15" tag="No Scroll" />
-
         <!-- Card sin imagen -->
         <CardContent title="Sin Imagen" description="Esta tarjeta no tiene imagen, solo texto." date="2024-09-15"
             tag="Solo Texto" />

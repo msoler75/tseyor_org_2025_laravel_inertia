@@ -31,7 +31,7 @@
             </div>
         </ContentBar>
 
-        <ContentMain class="flex flex-wrap lg:flex-nowrap gap-10">
+        <ScrollToHere class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
                 <div class="w-full h-auto mx-auto">
                     <Image :src="lugar.imagen" :alt="lugar.nombre" class="w-full h-auto" />
@@ -66,7 +66,7 @@
                 </tabs>
             </div>
 
-        </ContentMain>
+        </ScrollToHere>
 
         <hr class="my-12" />
 

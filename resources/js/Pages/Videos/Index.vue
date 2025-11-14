@@ -28,9 +28,9 @@
 
         <PageWide>
 
-            <ContentMain class="flex justify-end mb-5">
+            <ScrollToHere class="flex justify-end mb-5">
                 <SearchInput placeholder="Buscar video..." />
-            </ContentMain>
+            </ScrollToHere>
 
             <GridAppear class="mt-2 grid-cols-1 lg:grid-cols-2 gap-7">
                 <div v-for="video in listado.data" :key="video.id"

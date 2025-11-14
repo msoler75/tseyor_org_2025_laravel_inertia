@@ -30,7 +30,7 @@
 
 <PageWide>
 
-        <ContentMain class="mt-6 w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <ScrollToHere class="mt-6 w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <Categorias :categorias="categorias" :url="route('audios')" :favoritos="authenticated" select-class="w-full rounded-sm"/>
 
@@ -73,7 +73,7 @@
 
             </div>
 
-        </ContentMain>
+        </ScrollToHere>
         </PageWide>
     </Page>
 </template>

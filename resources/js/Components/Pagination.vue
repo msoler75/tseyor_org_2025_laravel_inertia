@@ -26,11 +26,11 @@ const props = defineProps({
     links: Array,
     preserveScroll: {
         type: [Boolean, Function],
-        default: true /* ESTA ES LA DIFERENCIA CON EL LINK DE INERTIA */
+        default: true // cancelamos  el auto-scroll de inertia.js
     },
     preserveState: {
         type: [Boolean, Function, null],
-        default: null
+        default: true // preservamos los componentes cargados
     },
     replace: {
         type: Boolean,

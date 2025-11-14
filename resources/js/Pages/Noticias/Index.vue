@@ -14,9 +14,9 @@
             <p>Aquí puedes ver las últimas noticias de Tseyor.</p>
         </div>
 
-        <ContentMain class="flex justify-end mb-5">
+        <ScrollToHere class="flex justify-end mb-5">
             <SearchInput placeholder="Buscar noticia..." />
-        </ContentMain>
+        </ScrollToHere>
 
         </PageHeader>
 

@@ -20,7 +20,7 @@
 
         <PageWide>
 
-        <div class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <ScrollToHere class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <Categorias :categorias="categorias" :url="route('equipos')" columna-breakpoint="md" select-breakpoint="sm"
                 div-class="w-full md:w-fit " />
@@ -37,7 +37,7 @@
                         class="relative min-h-16" :description="equipo.descripcion" :tag="equipo.categoria"
                         descriptionClass="max-h-[4rem]">
                         <div v-if="equipo.oculto" class="badge badge-error flex mt-2 gap-2 items-center text-xs">
-                            OCULTO
+                            <span>OCULTO</span>
                             <Icon icon="ph:lock-open-duotone" />
                         </div>
                         <div class="flex gap-3 items-center justify-between">
@@ -57,7 +57,7 @@
 
             </div>
 
-        </div>
+        </ScrollToHere>
 
         </PageWide>
     </Page>

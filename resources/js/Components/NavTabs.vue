@@ -10,7 +10,7 @@
                 tab.current ? 'current-tab' : ''
                 ]"
             :href="tab.url"
-                @click="clickedTab(tab)" @mouseover="enterTab(tab)" @mouseout="leaveTab(tab)"
+                @click.stop="clickedTab(tab)" @mouseover="enterTab(tab)" @mouseout="leaveTab(tab)"
                 :active="tab.open || tab.current">
                 {{ tab.title }}
                 <div v-if="tab.open"
@@ -40,6 +40,7 @@ const hoverTimeout = ref(null)
 function clickedTab(tab) {
     // Si el tab tiene URL (va a navegar), cerramos submenu solo si hay alguno abierto
     if(tab.url && tab.url !== 'undefined') {
+        console.log('router: NavTabs: clickedTab', { tabUrl: tab.url, tabTitle: tab.title, time: Date.now() })
         if(nav.activeTab) {
             nav.closeTabs()
         }

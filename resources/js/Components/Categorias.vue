@@ -21,7 +21,7 @@
             <div v-if="title" class="hidden md:inline text-xl font-bold md:mb-4">{{ title }}</div>
         <Link v-for="categoria of categorias" :key="categoria.nombre" :href="categoria.href"
             :class="actual.toLowerCase() == categoria.valor.toLowerCase() ? 'text-primary font-bold' : 'hover:text-secondary'" @click="clickCategoria(categoria.valor)"
-            :only="only" :preserve-state="preserveState" :preserve-scroll="preserveScroll" :replace="replace"
+            :only="only" preserve-page :preserve-state="preserveState" :preserve-scroll="preserveScroll" :replace="replace"
             @finish="emit('finish')">
 
         <span>{{ ucFirst(categoria.nombre) }}</span>
@@ -33,7 +33,6 @@
 <script setup>
 import { router } from '@inertiajs/vue3'
 import { ucFirst } from '@/composables/textutils'
-import Prose from './Prose.vue'
 
 const page = usePage()
 
@@ -54,11 +53,11 @@ const props = defineProps({
     // parametros de link
     preserveScroll: {
         type: [Boolean, Function],
-        default: true /* ESTA ES LA DIFERENCIA CON EL LINK DE INERTIA */
+        default: true // cancelamos  el auto-scroll de inertia.js
     },
     preserveState: {
         type: [Boolean, Function, null],
-        default: null
+        default: true // preservamos los componentes cargados
     },
     replace: {
         type: Boolean,
@@ -160,7 +159,8 @@ function onCategoria(event) {
 
     router.visit(url, {
         preserveScroll: props.preserveScroll,
-        preserveState: props.preserveState, replace: props.replace,
+        preserveState: props.preserveState,
+        replace: props.replace,
         only: props.only,
         onFinish: visit => {
             console.log('Categorias.onFinish')

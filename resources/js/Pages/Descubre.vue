@@ -28,7 +28,7 @@
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
                     :title="contenido.titulo"
                     :description="contenido.descripcion"
-                        :href="contenido.ruta" imageClass="h-60" preserve-page>
+                        :href="contenido.ruta" imageClass="h-60">
                     </CardContent>
                 </GridAppear>
 

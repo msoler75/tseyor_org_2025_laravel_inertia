@@ -13,7 +13,7 @@ export const useToolsStore = defineStore('tools', {
     mostrarTools() {
       const nav = useNav()
       return !this.mostrarBuscarTexto && (
-        this.mostrarHerramientas === true || (this.mostrarHerramientas === 'auto' && nav.scrollingUp)
+        this.mostrarHerramientas === true || (this.mostrarHerramientas === 'auto' && nav.scrollingUp && !nav.navigating)
       )
     },
   },
@@ -41,7 +41,7 @@ export const useToolsStore = defineStore('tools', {
         return;
       }
       const tagNames = ["IMG", "A", "BUTTON", "INPUT", "TEXTAREA"];
-      console.log("CLICKED ON", event.target.tagName);
+      // console.log("CLICKED ON", event.target.tagName);
       if (tagNames.includes(event.target.tagName)) {
         // si es una imagen u otro elemento al que usualmente se le hace click, ignoramos la llamada a tools
         this.closeTools();
