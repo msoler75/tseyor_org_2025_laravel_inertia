@@ -1,153 +1,228 @@
 
 export default function setTransitionPages(router) {
-    const ui = useUi();
-    const nav = ui.nav;
+  const ui = useUi();
+  const nav = ui.nav;
+  // Evitar registrar los mismos listeners más de una vez
+  if (typeof window !== "undefined") {
+    if (window.__transitionPages_setTransitionPagesCalled) {
+      console.log("router: setTransitionPages: already registered, skipping");
+      return;
+    }
+    window.__transitionPages_setTransitionPagesCalled = true;
+  }
 
+  console.log("router: setTransitionPages: registering router listeners");
 
-  const animationPageTransitionDuration = 0;
+  // listen link-clicked events from Link.vue:
+  window.addEventListener("link-clicked", (event) =>
+    nextTick(() => startingNavigate(event))
+  );
 
-  // Use the router's navigation guard to track route changes
-  router.on("start", (event) => {
-    console.log(
-      `router: start. Starting a visit to ${event.detail.visit.url}`,
-      event
-    );
+  function scrollCondition(destinationUrl) {
+    console.log("scrollCondition for", destinationUrl);
+    if(!nav.navigatingFrom) return null
+    const elem = nav.scrollToHereElem();
+    if (!elem) return null;
 
+    let url = destinationUrl;
+    if (!url.match(/^http/)) url = window.location.origin + url;
+    const nuevaRuta = new URL(url);
+    const rutaOrigen = nav.navigatingFrom;
+
+    const p1 = rutaOrigen.pathname.split("/");
+    const p2 = nuevaRuta.pathname.split("/");
+
+    const mismaRuta = rutaOrigen.origin == nuevaRuta.origin && p1[1] == p2[1];
+    const mismaPagina =
+      rutaOrigen.origin + rutaOrigen.pathname ==
+      nuevaRuta.origin + nuevaRuta.pathname;
+
+    if (
+      (elem.classList.contains("if-same-page") && mismaPagina) ||
+      (elem.classList.contains("if-same-path") && mismaRuta)
+    ) {
+
+      const behavior= elem.classList.contains("instant") ? "instant" : "smooth";
+      console.log("go to scroll-to-here with behavior:", behavior);
+      return behavior
+    }
+
+    return null;
+  }
+
+  function startingNavigate(event) {
+    console.log("router: startingNavigate", event.detail.url, event);
+
+    ui.tools.closeTools();
     nav.closeTabs();
 
-    /*if(nav.ignoreScroll) {
-        scrollToCurrentPosition()
-        return
-    }*/
-
-    if (event.detail.visit.url == route("logout")) nav.dontFadeout = true;
-
     nav.navigating = true;
+    nav.navigatingFrom = new URL(window.location);
 
-    const nuevaRuta = event.detail.visit.url;
-    const rutaActual = new URL(window.location);
-    let mismaSeccion = false;
+    console.log("router: start. Navigating from", nav.navigatingFrom);
+    let url = event.detail.url;
 
-    // to-do: si tenemos dos rutas: rutaActual = /glosario/1 y nuevaRuta = /glosario/2 entonces mismaSeccion ha de cambiar a true. Lo mismo si son dos rutas /libros/1 y /libros/juan
-    // por lo tanto hemos de splitear las rutas y ver si coinciden en la primera palabra
-    const p1 = rutaActual.pathname.split("/");
-    const p2 = nuevaRuta.pathname.split("/");
-    mismaSeccion = rutaActual.origin == nuevaRuta.origin && p1[1] == p2[1];
-    // si, quitando la parte de query, son la misma ruta...
-    console.log(
-      "comparing",
-      nuevaRuta.origin + nuevaRuta.pathname,
-      "vs",
-      rutaActual.origin + rutaActual.pathname
-    );
-    const mismapagina =
-      nuevaRuta.origin + nuevaRuta.pathname ==
-      rutaActual.origin + rutaActual.pathname;
-    let scrolling = mismapagina || mismaSeccion;
+    console.log("router: scroll-to-here url:", url, event.detail);
 
-    console.log({ p1, p2, mismapagina, mismaSeccion, scrolling, nav });
+    const behavior = scrollCondition(url);
+    if (behavior == "instant")
+      setTimeout(() => nav.doScrollToHere(behavior), 200);
+    else if (behavior == "smooth") nav.doScrollToHere(behavior);
+    console.log("startingNavigate - preservePage:", nav.preservePage);
+    if (!nav.preservePage) nav.fadingOutPage = true;
+  }
 
-    if (!mismapagina || !mismaSeccion) {
-      const fadeoutWhenNavigateTo =
-        /^\/(audios|videos|comunicados|contactos|entradas|equipos|eventos|experiencias|informes|libros|meditaciones|psicografias|ong|utg|normativas|noticias|publicaciones|usuarios|preguntas-frecuentes|confederacion|el-rayo)/;
-      if (fadeoutWhenNavigateTo.exec(nuevaRuta.pathname)) {
-        console.log("auto fadeOut");
-        nav.fadeoutPage();
-      }
-    }
+  function endedNavigate(event) {
+    console.log("router: endedNavigate", event);
 
-    // aunque esté en la misma sección
-    if (!mismapagina) {
-      const fadeoutWhenNavigateTo =
-        /^\/(comunicados|centros).*/;
-      if (fadeoutWhenNavigateTo.exec(nuevaRuta.pathname)) {
-        console.log("auto fadeOut");
-        nav.fadeoutPage();
-      }
-    }
+    ui.tools.detectContent();
+    ui.tools.closeTools();
 
-    if (nav.fadingOutPage) {
-    } else if (nav.dontScroll) {
-      if (!nav.dontFadeout) nav.fadeoutPage();
+    nav.navigating = false;
+    nav.fadingOutPage = false;
+    nav.preservePage = false;
+
+    const behavior = scrollCondition(event.detail.page.url);
+    // enlace inicial
+    if (window.location.hash) {
+      setTimeout(() => {
+        console.log("scrollto_3_hash");
+        nav.scrollToId(window.location.hash.substring(1), 0);
+      }, 500);
+    } else if (behavior) {
+      nav.doScrollToHere(behavior)
     } else {
-      if (scrolling) {console.log('scrollTo_content_#1');setTimeout(()=>nav.scrollToContent(), 200);}
-      else if (!nav.dontFadeout) nav.fadeoutPage();
-      else {console.log('scrollTo_content_#2');nav.scrollToContent();}
-    }
-
-    nav.dontScroll = false;
-  });
-
-  router.on("navigate", (event) => {
-    console.log(`router: navigate. Navigated to ${event.detail.page.url}`);
-    ui.tools.closeTools()
-  });
-
-  router.on("exception", (event) => {
-    console.log(
-      `router: exception. An unexpected error occurred during an Inertia visit.`
-    );
-    console.log(event.detail.error);
-  });
-
-  router.on("invalid", (event) => {
-    console.log(`router: invalid. An invalid Inertia response was received.`);
-    console.log(event.detail.response);
-  });
-
-  router.on("error", (errors) => {
-    console.log(errors);
-    nav.navigating = false;
-    // reset state
-    nav.dontFadeout = false;
-  });
-
-  router.on("success", (event) => {
-    console.log(
-      `router: success. Successfully made a visit to ${event.detail.page.url}`
-    );
-    /*nextTick(()=>{
-        const curTitle = document.head.querySelector("title[inertia]")
-        if(curTitle) {
-            document.title = curTitle.textContent
-        }
-    })*/
-
-  });
-
-  router.on("finish", (event) => {
-    console.log(`router: finish. Page loaded ${event.detail.visit.url}`);
-
-    ui.tools.detectContent()
-
-    // send global event on window
-    window.dispatchEvent(new CustomEvent("page-loaded"))
-
-    nav.navigating = false;
-    // reset state
-    nav.dontFadeout = false;
-    // nav.ignoreScroll = false
-
-    console.log("nav.fadingOutPage", nav.fadingOutPage);
-    if (nav.fadingOutPage) {
-        console.log('scrollto_2_instant')
+      console.log("tr.scrollto_0_instant");
       window.scrollTo({
         top: 0,
         behavior: "instant",
       });
-      setTimeout(() => {
-        nav.fadingOutPage = false;
-      }, animationPageTransitionDuration);
     }
 
-    // hacemos el scroll al elemento del hash
+    nav.navigating = false;
+  }
 
-    // enlace inicial
-    if (window.location.hash) {
-      setTimeout(() => {
-        console.log('scrollto_3_hash')
-        nav.scrollToId(window.location.hash.substring(1), 0);
-      }, 500);
+  // Helper functions
+  function isPartialReload(event) {
+    const v = event?.detail?.visit || {};
+    return v.only && Array.isArray(v.only) && v.only.length > 0;
+  }
+
+  function isPrefetch(event) {
+    return event?.detail?.visit?.headers?.Purpose === "prefetch";
+  }
+
+
+  // Use the router's navigation guard to track route changes
+  router.on("before", (event) => {
+    console.log("router: before", event);
+    nav.navigatingFrom = new URL(window.location);
+  });
+
+  router.on("success", (event) => {
+    console.log("router: success", event);
+
+    if (isPartialReload(event)) {
+      console.log(
+        "router: success ignored, partial reload with only:",
+        event.detail.visit.only
+      );
+      return;
     }
+  });
+
+  // Use the router's navigation guard to track route changes
+  router.on("start", (event) => {
+    console.log("router: start", event);
+    try {
+      if (isPartialReload(event)) {
+        console.log(
+          "router: start ignored, partial reload with only:",
+          event.detail.visit.only
+        );
+        return;
+      }
+      console.log("router: start checking if prefetch", event.detail);
+      if (isPrefetch(event)) {
+        console.log("router: start ignored, prefetch");
+        return;
+      }
+      const v = event.detail.visit || {};
+      console.log(
+        `router: start. Starting a visit to ${v.url} (id: ${
+          v.id || "<no-id>"
+        }, method: ${v.method || "GET"}) isTrusted: ${
+          event.isTrusted
+        }, timeStamp: ${event.timeStamp}`,
+        { visit: v, event }
+      );
+    } catch (e) {
+      console.log("router: start (error logging event)", event);
+    }
+  });
+
+  router.on("navigate", (event) => {
+    if (isPrefetch(event)) {
+      console.log("router: navigate ignored, prefetch");
+      return;
+    }
+    console.log(
+      `router: navigate. Navigated to ${event.detail.page.url}`,
+      event
+    );
+
+    try {
+      console.log("router: navigate event.detail", event.detail);
+      if (isPartialReload(event)) {
+        console.log(
+          "router: navigate ignored, partial reload with only:",
+          event.detail.visit.only
+        );
+        return;
+      }
+      console.log("router: navigate checking if prefetch", event);
+      if (isPrefetch(event)) {
+        console.log("router: navigate ignored, prefetch");
+        return;
+      }
+      const v = event.detail || {};
+      console.log(
+        `router: navigate. Page navigating to ${v.url} (id: ${
+          v.id || "<no-id>"
+        })`,
+        {
+          visit: v,
+          event,
+        }
+      );
+    } catch (e) {
+      console.log("router: navigate", event);
+    }
+
+    endedNavigate(event);
+  });
+
+  router.on("exception", (event) => {
+    console.log(
+      `router: exception. An unexpected error occurred during an Inertia visit.`,
+      event
+    );
+    // console.log(event.detail.error);
+    // nav.navigating = false
+  });
+
+
+  router.on("invalid", (event) => {
+    console.log(`router: invalid. An invalid Inertia response was received.`);
+    console.log(event.detail.response);
+    nav.navigating = false
+  });
+
+
+  router.on("error", (errors) => {
+    console.error("router: error !!!! - ", errors);
+    nav.navigating = false;
+    // reset state
+    // nav.dontFadeout = false;
   });
 }

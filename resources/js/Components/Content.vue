@@ -139,20 +139,20 @@ onMounted(async () => {
         // Obtener todos los enlaces de desplazamiento
         var scrollLinks = document.querySelectorAll('.footnote-ref a, a.footnote-backref');
 
-        console.log({ scrollLinks })
+        // console.log({ scrollLinks })
 
         // Agregar evento de clic a cada enlace
         scrollLinks.forEach(function (link) {
             link.addEventListener('click', function (event) {
                 event.preventDefault();
 
-                console.log('clicked!')
+                // console.log('clicked!')
 
                 var targetId = this.getAttribute('href').substring(1);
                 var targetElement = document.getElementById(targetId);
 
                 if (targetElement) {
-                    console.log('got target')
+                    // console.log('got target')
                     var offset = 90;
                     var targetRect = targetElement.getBoundingClientRect();
                     var targetOffsetTop = window.scrollY + targetRect.top - offset;
@@ -169,7 +169,7 @@ onMounted(async () => {
 });
 
 function handleClick(event) {
-    console.log('clicked', event.target)
+    // console.log('clicked', event.target)
     if (event.target.tagName == 'IMG') {
         handlePreview(event.target)
     }

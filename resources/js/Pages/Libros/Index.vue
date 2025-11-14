@@ -33,7 +33,7 @@
 
         <PageWide>
 
-            <ContentMain class="w-full flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
+            <ScrollToHere if-same-page class="w-full flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
 
                 <Categorias :categorias="categorias" :url="route('libros')" columna-breakpoint="xl" select-breakpoint="md"
                     :resultados="!!filtrado" select-class="w-full" />
@@ -77,7 +77,7 @@
                 </FadeOnNavigate>
 
 
-            </ContentMain>
+            </ScrollToHere>
 
         </PageWide>
     </Page>

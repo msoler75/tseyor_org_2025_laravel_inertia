@@ -3,7 +3,7 @@
         :preserve-scroll="preserveScroll" :preserve-state="preserveState" :replace="replace" :only="only"
         :on-before="onBefore" :on-start="onStart" :on-progress="onProgress" :on-finish="onFinish"
         :on-cancel-token="onCancelToken" :on-cancel="onCancel" :on-success="onSuccess"
-        :queryStringArrayFormat="queryStringArrayFormat"
+        :prefetch="prefetch"
         @finish="onFinish"
         >
     <slot />
@@ -91,18 +91,18 @@ const props = defineProps(
             type: String,
             default: 'brackets'
         },
+        prefetch: {
+            type: Boolean,
+            default: false
+        },
         preservePage: { // my navigation things
             type: Boolean,
             default: false
-        },
+        }/*,
         autoScroll: {
             type: Boolean,
             default: true
-        },
-        fadeOut: {
-            type: Boolean,
-            default: false
-        }
+        }*/
     }
 )
 
@@ -116,6 +116,7 @@ const asIF = computed( () => {
 
 
 function handleClick() {
+    console.log('router: Link.vue: handleClick', { href: props.href, time: Date.now() });
     // Tracking de Google Analytics para descargas
     if (props.href && props.href.match(/\.(pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|mp3|mp4|avi)$/i)) {
         const fileName = props.href.split('/').pop() || 'unknown_file';
@@ -131,12 +132,17 @@ function handleClick() {
         });
     }
 
-    if(props.fadeOut)
-        nav.fadeoutPage()
+    // create custom event for other parts of the app
+    const customEvent = new CustomEvent('link-clicked', { detail: { url: props.href } });
+    window.dispatchEvent(customEvent);
+
+    console.log('Link.vue clicked, preservePage:', props.preservePage)
     if (props.preservePage)
-        nav.dontFadeout = true
+        nav.preservePage= true
+    /*if(props.fadeOut)
+        nav.fadeoutPage()
     if (!props.autoScroll)
-        nav.dontScroll = true
+        nav.dontScroll = true*/
     if (props.onClick) {
         props.onClick()
     }

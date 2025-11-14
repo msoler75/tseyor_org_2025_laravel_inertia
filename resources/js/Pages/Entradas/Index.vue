@@ -21,7 +21,7 @@
 
         <PageWide>
 
-            <ContentMain class="flex gap-5 flex-wrap md:flex-nowrap">
+            <ScrollToHere class="flex gap-5 flex-wrap md:flex-nowrap">
 
                 <div class="w-full grow">
 
@@ -39,7 +39,7 @@
 
                 </div>
 
-            </ContentMain>
+            </ScrollToHere>
         </PageWide>
     </Page>
 </template>

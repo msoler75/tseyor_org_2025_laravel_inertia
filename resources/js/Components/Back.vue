@@ -2,7 +2,10 @@
     <div to="#afterNav" :disabled="!mounted || inline || !floating">
         <Link :href="enlace"
             class="transition duration-250 flex h-fit gap-2 text-sm items-center hover:text-secondary select-none"
-            :class="calcClass" v-bind="$attrs" :fadeOut="fadeOut">
+            :class="calcClass" v-bind="$attrs"
+            :preserve-state="preserveState"
+            :preserve-page="preservePage"
+            >
         <Icon icon="ph:arrow-left" />
         <div>
             <slot />
@@ -13,6 +16,7 @@
 </template>
 
 <script setup>
+
 const props = defineProps({
     href: String,
     floatAtY: { // en qué posición de scroll Y aparece flotando a la izquierda
@@ -25,9 +29,12 @@ const props = defineProps({
         required: false,
         default: true
     },
-    fadeOut: {
+    preserveState: {
         type: Boolean,
-        required: false,
+        default: false
+    },
+    preservePage: {
+        type: [Boolean, Function, null],
         default: false
     }
 })

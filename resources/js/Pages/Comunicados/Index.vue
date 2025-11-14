@@ -83,7 +83,7 @@
 
         <PageWide>
 
-            <ContentMain class="mb-12">
+            <ScrollToHere class="mb-12">
 
                 <div v-if="!vistaBusquedaCompleta || completo" class="flex justify-between items-center my-1">
 
@@ -192,7 +192,7 @@
                     v-if="!vistaBusquedaCompleta || (vistaBusquedaCompleta && !buscando && listado.data?.length && listado.data[0].extractos)"
                     class="mt-6" :links="listado.links" />
 
-        </ContentMain>
+        </ScrollToHere>
         </PageWide>
     </Page>
 </template>
@@ -353,6 +353,7 @@ function blurQuery() {
 
 function focusBuscar() {
     document.querySelector('.search-input').focus()
+    console.log('scroll_3_to_top_buscar')
     window.scrollTo({
         top: 0,
         behavior: 'smooth'

@@ -62,12 +62,14 @@ export const useNavStore = defineStore('nav', {
     announce: false,
     announceClosed: false,
     sideBarShow: false,
-    movingFast: true,
+    movingFast: true, // actualmente no se usa
     scrollY: 0,
+    navigatingFrom: null,
     fadingOutPage: false,
-    dontFadeout: false,
+    //fadingOutPage: false,
+    preservePage: false,
+    // dontScroll: false,
     navigating: false,
-    dontScroll: false,
     hoverDeactivated: false,
     scrollingUp: false,
     tabHovering: null,
@@ -189,10 +191,10 @@ export const useNavStore = defineStore('nav', {
       if (this.tabHovering) this.hoverTab(this.tabHovering);
     },
 
-    fadeoutPage() {
+    /*fadeoutPage() {
       this.fadingOutPage = true;
       this.dontScroll = true;
-    },
+    },*/
 
     scrollToId(id, options) {
       const defaultOptions = { offset: 0, behavior: "smooth" };
@@ -218,6 +220,7 @@ export const useNavStore = defineStore('nav', {
           offset;
 
         // Ajusta la posición del elemento objetivo
+        console.log('nav.scroll_to_id')
         window.scrollTo({
           top: targetY,
           behavior,
@@ -225,11 +228,20 @@ export const useNavStore = defineStore('nav', {
       }
     },
 
-    scrollToContent(behavior) {
-      const el = document.querySelector("#content-main");
+    scrollToHereElem() {
+      const el = document.querySelector("#scroll-to-here");
+      return el;
+    },
+
+    doScrollToHere(behavior) {
+        console.log('doScrollToHere called with behavior:', behavior);
+      const el = document.querySelector("#scroll-to-here");
       if (!el) return false;
 
-      if (!behavior || typeof behaviour != "string") behavior = "smooth";
+
+      if (!behavior || (typeof behavior != "string")) behavior = "smooth";
+
+      console.log('scrolling to #scroll-to-here', behavior);
 
       // altura del menu top nav
       const navH = document.querySelector("nav").getBoundingClientRect().height;
@@ -239,6 +251,7 @@ export const useNavStore = defineStore('nav', {
       // hemos de restarle el scroll de la página (tiene que quedar un numero positivo. el valor de posY )
       posY = posY - posY0 - navH * 2.2; // dejamos un espacio extra para la row de SearchInput y otros filtros
       // nos movemos a la posición posY
+    console.log('nav.doScrollToHere: scrolling to Y position', posY, 'with behavior', behavior);
       window.scrollTo({
         top: posY,
         behavior,
@@ -248,6 +261,7 @@ export const useNavStore = defineStore('nav', {
 
     scrollToTopPage(behavior) {
       if (!behavior || typeof behaviour != "string") behavior = "smooth";
+      console.log('nav.scroll_to_top_page')
       window.scrollTo({
         top: 0,
         behavior,
@@ -262,6 +276,7 @@ export const useNavStore = defineStore('nav', {
         document.querySelector("div.sections.smooth-snap") ||
         document.querySelector("div.sections.scroll-region") ||
         document.querySelector("div.sections.scroll-smooth");
+        console.log('nav.scroll_to_top_smart')
       if (div) div.scrollTo({ top: 0, behavior });
       else window.scrollTo({ top: 0, behavior });
     },

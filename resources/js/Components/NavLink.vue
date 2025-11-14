@@ -1,6 +1,5 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
-
+import Link from '@/Components/Link.vue';
 
 const nav = useNav()
 
@@ -20,14 +19,11 @@ const classes = computed(() => {
     ].join(' ');
 });
 
-function handleClick() {
-    nav.closeTabs()
-}
+
 </script>
 
 <template>
-    <component :is="href ? Link : 'div'" :href="href" :class="classes"
-        @click="handleClick">
+    <component :is="href ? Link : 'div'" :href="href" :class="classes">
         <slot />
     </component>
 </template>

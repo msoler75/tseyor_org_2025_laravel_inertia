@@ -22,7 +22,7 @@
         </div>
 
 
-                <div class="flex justify-between mb-5">
+        <div class="flex justify-between mb-5">
          <TitleInfo title="" classes="!mb-0">
                 <div>Los Guías Estelares son tutores de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia> que mantienen contacto <Referencia r="telepatía">
                 telepático</Referencia> con el <Referencia>grupo TSEYOR</Referencia> a través del canalizador <Referencia>Chac-Mool</Referencia> <Referencia>Puente</Referencia>.
@@ -45,7 +45,7 @@
 
         <PageWide>
 
-        <ContentMain class="animate-fade-in" :fade-on-navigate="false">
+        <ScrollToHere if-same-path :fade-on-navigate="false">
 
             <Categorias v-if="false" title="Vibración" :novedades="false" :categorias="categorias" :counters="false" :url="route('guias')"
             :resultados="!!filtrado" div-class="top-32! min-w-[150px] lg:min-w-[200px]" div-select-class="top-28!"  />
@@ -54,6 +54,8 @@
 
                 <GridAppear class="gap-8" col-width="12rem">
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :image="contenido.imagen"
+                    preserve-state
+                preserve-page
                         :href="route('guia', contenido.slug)" imageClass="h-60">
                         <div
                             class="text-center p-2 text-xl font-bold transition duration-300 text-primary group-hover:text-secondary  group-hover:drop-shadow-xs">
@@ -65,7 +67,7 @@
             </FadeOnNavigate>
 
 
-        </ContentMain>
+        </ScrollToHere>
 
     </PageWide>
     </Page>

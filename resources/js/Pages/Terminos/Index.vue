@@ -2,7 +2,7 @@
     <Page>
         <PageHeader>
         <div class="flex justify-between items-center mb-20">
-            <span />
+            <span/>
             <div class="flex gap-2">
                 <Link href="/libros/glosario-terminologico" class="btn btn-xs btn-error flex gap-2 items-center"
                     title='Descarga todo el glosario en pdf'>
@@ -21,8 +21,7 @@
             <ConsultaTabs />
         </div>
 
-
-        <div class="flex justify-end mb-12">
+        <div class="flex justify-end mb-5">
             <SearchInput placeholder="Buscar en glosario..."/>
         </div>
 
@@ -39,12 +38,13 @@
         </ContentBar>
 
         <PageWide>
-        <div class="w-full flex gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
+            <div class="w-full flex gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
 
             <div class="w-full md:w-[7rem] shrink-0 card bg-base-100 shadow-2xs p-5 h-fit md:sticky md:top-20">
                 <div class="flex flex-wrap md:hidden  gap-2">
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2 hover:text-secondary"
                         :href="route('terminos') + '?letra=' + letraItem"
+                        preserve-page
                         :class="letraItem == letraActual ? 'font-bold transform scale-110 text-primary' : ''">
                     {{ letraItem }}
                     </Link>
@@ -54,6 +54,7 @@
                     <Link v-for="letraItem, index in letras" :key="index" class="p-2 hover:text-secondary"
                         :style="{ 'grid-column': Math.floor(index / (letras.length / 2)) + 1 }"
                         :href="route('terminos') + '?letra=' + letraItem"
+                        preserve-page
                         :class="letraItem == letraActual ? 'font-bold transform scale-110 text-primary' : ''">
                     {{ letraItem }}
                     </Link>
@@ -61,12 +62,13 @@
             </div>
 
 
-            <ContentMain class="w-full grow" fade-on-navigate>
+            <ScrollToHere if-same-path class="w-full grow" fade-on-navigate>
 
                 <SearchResultsHeader v-if="!letra" :results="listado" />
 
                 <GridAppear class="gap-8 mb-14" :time-lapse="0.01" col-width="16rem">
                     <Link v-for="contenido in listado.data" :key="contenido.id" :href="route('termino', contenido.slug)"
+                        preserve-page
                         class="text-primary hover:text-secondary transition-color duration-200 w-fit card shadow-2xs hover:shadow-lg px-5 py-2 bg-base-100 h-fit">
                     <div v-html="contenido.nombre" class="capitalize lowercase font-bold text-lg" />
                     <div v-if="filtrado" v-html="contenido.descripcion" class="mt-3" />
@@ -75,7 +77,7 @@
 
                 <pagination class="mt-6" :links="listado.links" />
 
-            </ContentMain>
+            </ScrollToHere>
 
 
         </div>

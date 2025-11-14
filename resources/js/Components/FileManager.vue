@@ -127,7 +127,7 @@ const mostrandoImagen = ref(null)
 const mostrandoArchivo = ref(null)
 
 function onFile(item) {
-    console.log('file clicked', item)
+    // console.log('file clicked', item)
     if (item.url.match(/\.(gif|png|webp|svg|jpe?g)$/i))
         mostrandoImagen.value = item
     else if (player.isPlayable(item.url))

@@ -4,7 +4,7 @@
             title }}
         </div>
         <div  :class="classItems?classItems:'flex flex-col gap-7 mb-7'">
-            <component :is="item.disabled?'div':(item.external?'a':Link)" :target="item.target" :href="item.url"
+            <component :is="item.disabled?'div':(item.external?'a':NavLink)" :target="item.target" :href="item.url"
             v-for="item of items" :key="item.url" @click="nav.closeTabs()"
             class="group flex gap-3 p-3 rounded-lg hover:bg-secondary/5 transition duration-100 cursor-pointer relative"
             :class="item.class+(item.disabled?' pointer-events-none':'')">
@@ -25,7 +25,7 @@
 
 
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import NavLink from '@/Components/NavLink.vue'
 
 const nav = useNav()
 

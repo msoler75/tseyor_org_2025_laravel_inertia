@@ -2,7 +2,7 @@
     <Page>
         <PageHeader>
         <div class="flex justify-between items-center mb-20">
-            <Back :href="route('guias')" inline>Guías</Back>
+            <Back :href="route('guias')" inline preserve-page>Guías</Back>
             <div class="flex gap-2">
                 <Link href="/libros/los-guias-estelares" class="btn btn-xs btn-error flex gap-2 items-center"
                     title='Descarga todo el glosario en pdf'>
@@ -31,6 +31,7 @@
         <ContentBar>
             <div class="w-full flex gap-2 items-center justify-between">
                 <Back :href="route('guias')" inline class="opacity-100!"
+                    preserve-page
                     >Guías</Back
                 >
                 <div
@@ -54,7 +55,10 @@
 
         <PageWide>
 
-        <ContentMain class="flex flex-wrap lg:flex-nowrap gap-10">
+        <!-- scroll aqui -->
+        <ScrollToHere if-same-path :fade-on-navigate="true">
+
+        <div class="flex flex-wrap lg:flex-nowrap gap-10">
             <div class="w-full max-w-[350px] mx-auto lg:max-w-full lg:w-1/3">
                 <div
                     class="w-full h-auto mx-auto"
@@ -119,21 +123,24 @@
                     <!-- ... relacionados -->
                 </div>
             </div>
-        </ContentMain>
-
-
+        </div>
+        </ScrollToHere>
 
 
 
         <div class="mt-12 grid gap-2 mb-12 grid-cols-1 xs:grid-cols-[180px_1fr_180px] sm:grid-cols-[220px_1fr_220px]">
             <CardContent v-if="anterior" :imageLeft="false" :key="anterior.id" :title="'Anterior: ' + anterior.nombre"
                 class="rounded-none sm:rounded-lg" :image="anterior.imagen" :href="route('guia', anterior.slug)"
+                preserve-state
+                preserve-page
                imageClass="h-60" />
                <span v-else></span>
                <div/>
             <CardContent v-if="siguiente" :imageLeft="false" :key="siguiente.id" class="rounded-none sm:rounded-lg"
                 :title="'Siguiente: ' + siguiente.nombre" :image="siguiente.imagen"
                 :href="route('guia', siguiente.slug)"
+                preserve-state
+                preserve-page
                  imageClass="h-60" />
                  <span v-else></span>
         </div>

@@ -33,7 +33,7 @@
             </div>
         </ContentBar>
 
-        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <ScrollToHere class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
             <div class="w-full grow">
 
@@ -64,7 +64,7 @@
                     </ul>
                 </div>
             </div>
-        </ContentMain>
+        </ScrollToHere>
     </div>
 </template>
 

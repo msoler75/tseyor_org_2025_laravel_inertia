@@ -11,6 +11,7 @@
             :class="tab.class"
             :title="tab.title"
             @click="selected = tab.url"
+            preserve-state
             preserve-page
             :auto-scroll="false"
         >

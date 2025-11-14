@@ -55,7 +55,7 @@
                 @click="ui.tools.toggleTools($event)"
                 class="grow relative transition-opacity duration-200"
                 :class="
-                    nav.fadingOutPage ? 'opacity-0 pointer-events-none' : ''
+                    nav.fadingOutPage && nav.navigating ? 'opacity-0 pointer-events-none' : ''
                 "
             >
                 <transition
@@ -184,6 +184,7 @@ onMounted(() => {
     console.log('[PWA] AppLayout onMounted, isPWA:', isPWA())
 
     // aplicamos configuración de transiciones de pagina (fadeout y scroll)
+    console.log('router: [AppLayout] calling setTransitionPages');
     setTransitionPages(router);
 
     cargarDatosUsuario();

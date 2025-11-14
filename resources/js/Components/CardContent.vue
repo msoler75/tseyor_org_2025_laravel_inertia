@@ -4,7 +4,7 @@
                 outline-gray-300 dark:outline-transparent outline-[0.4px] hover:outline
                relative" :class="(imageLeft ? 'flex-row' : '')
                 + (draft ? ' bg-base-300' : '')
-                " :preserve-page="preservePage" :auto-scroll="autoScroll">
+                " :preserve-page="preservePage" >
         <div v-if="image || $slots.image" class="shrink-0 overflow-hidden"
             :class="(imageLeft ? 'w-1/3 h-full ' : 'h-40 ') + imageClass">
             <div v-if="$slots.image" class="w-full h-full">
@@ -22,23 +22,26 @@
             }" />
         </div>
         <div v-if="skeleton && (title || tag || description || date)" class="space-y-2 p-4 flex flex-col w-full">
-            <div v-if="title" class="skeleton max-w-full w-[40ch] h-[1.5rem] mb-3" />
-            <div v-if="tag" class="skeleton max-w-full w-[12ch] h-[1.25rem]" />
+            <div v-if="title" class="skeleton max-w-full w-[40ch] h-6 mb-3" />
+            <div v-if="tag" class="skeleton max-w-full w-[12ch] h-5" />
             <template v-if="description">
-                <div class="skeleton w-full h-[1rem]" />
-                <div class="skeleton w-full h-[1rem]" />
-                <div class="skeleton w-full h-[1rem]" />
-                <div class="skeleton w-full h-[1rem]" />
+                <div class="skeleton w-full h-4" />
+                <div class="skeleton w-full h-4" />
+                <div class="skeleton w-full h-4" />
+                <div class="skeleton w-full h-4" />
             </template>
-            <div v-if="date" class="skeleton inline ml-auto mt-auto w-[4rem] h-[.8rem]" />
+            <div v-if="date" class="skeleton inline ml-auto mt-auto w-16 h-[.8rem]" />
             <slot />
         </div>
         <div v-else-if="title || tag || description || date || $slots.default" class="p-4 flex flex-col w-full">
             <h2 v-if="title"
                 class="text-lg text-left font-bold mb-3 transition duration-300 group-hover:text-secondary!  group-hover:drop-shadow-xs leading-5"
                 v-html="title" />
-            <ConditionalLink tag="div" :is-link="!!tagLink" :href="tagLink" v-if="tag" class="flex justify-between mb-3 max-w-full">
-                <div class="truncate overflow-hidden inline-block badge badge-primary badge-outline max-w-[12rem]"
+            <ConditionalLink tag="div" :is-link="!!tagLink" :href="tagLink" v-if="tag" class="flex justify-between mb-3 max-w-full"
+            :preserve-state="preserveState"
+            :preserve-page="preservePage"
+            >
+                <div class="truncate overflow-hidden inline-block badge badge-primary badge-outline max-w-48"
                 :class="tagLink?'hover:text-secondary hover:drop-shadow-xs':''">{{
                     tag }}
                 </div>
@@ -91,8 +94,9 @@ const props = defineProps({
         type: String,
         default: ''
     },
+    preserveState: { type: Boolean, default: false },
     preservePage: { type: Boolean, default: false },
-    autoScroll: { type: Boolean, default: true },
+    //autoScroll: { type: Boolean, default: true },
     gradient: { type: Boolean, default: false },
     skeleton: { type: Boolean, default: false }
 })

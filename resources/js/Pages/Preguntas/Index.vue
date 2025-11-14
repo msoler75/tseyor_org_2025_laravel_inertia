@@ -43,7 +43,7 @@
 
         <PageWide>
 
-        <ContentMain class="w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <ScrollToHere class="w-full flex gap-5 flex-wrap md:flex-nowrap">
                 <Section class="container max-w-[1024px] mx-auto py-12">
                     <GridAppear col-width="16rem" class="gap-5">
                         <CardContent
@@ -56,7 +56,7 @@
                         />
                     </GridAppear>
                 </Section>
-        </ContentMain>
+        </ScrollToHere>
 
 
 

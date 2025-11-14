@@ -167,6 +167,8 @@ class Handler extends ExceptionHandler
 
     public function mostrar404($request, Throwable $exception)
     {
+        // return response('Contenido no encontrado', 404);
+
         // Si es un bot (cualquier crawler), devolver respuesta simple sin búsqueda de alternativas
         $crawlerDetect = new CrawlerDetect();
         if ($crawlerDetect->isCrawler($request->header('User-Agent'))) {
