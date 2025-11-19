@@ -171,9 +171,9 @@
 
 
 <script setup>
-import usePlayer from '@/Stores/player'
+import { usePlayerStore } from '@/Stores/player'
 
-const player = usePlayer()
+const player = usePlayerStore()
 const myvideo = ref(null)
 const width = ref(1080)
 const height = ref(768)
@@ -260,7 +260,6 @@ const formatTime = (ts) => {
 };
 
 onMounted(() => {
-    console.log('AudioPlayer Mounted')
     player.video = myvideo.value
     width.value=Math.min(1080, screen.width)
     height.value=Math.min(768, screen.height)

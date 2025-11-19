@@ -62,7 +62,4 @@ const props = defineProps({
     }
 });
 
-const listado = ref(props.listado)
-const recientes = ref(props.recientes)
-
 </script>

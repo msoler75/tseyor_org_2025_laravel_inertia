@@ -3,7 +3,19 @@
 namespace App;
 
 
-// es un profiler
+/* Es un profiler.
+   Forma de uso:
+
+    Al inicio de la función o método a medir:
+         $t = new T("nombre_metodo", __CLASS__);
+
+    Al finalizar el script:
+        Se puede llamar a App\T::stats() para obtener el reporte.
+
+    Se puede mandar el reporte a un log con:
+        Log::info(App\T::stats());
+
+*/
 
 class T
 {

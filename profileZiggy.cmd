@@ -1,0 +1,6 @@
+@echo off
+echo Ejecutando profiling de Ziggy 10 veces...
+powershell -command "& { $total = 0; for ($i=1; $i -le 10; $i++) { $output = & php artisan app:profile-ziggy 2>&1; $time = [double]$output.Trim(); $total += $time; Write-Host ('Iteracion {0}: {1} ms' -f $i, $time) } $avg = $total / 10; Write-Host ''; Write-Host ('Promedio: {0} ms' -f $avg) }"
+echo.
+echo Presiona cualquier tecla para continuar...
+pause > nul

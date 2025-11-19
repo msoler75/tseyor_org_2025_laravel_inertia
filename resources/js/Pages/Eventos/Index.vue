@@ -104,9 +104,6 @@ const props = defineProps({
     }*/
 });
 
-const listado = ref(props.listado);
-//const categorias = ref(props.categorias)
-
 // Separar eventos en curso, próximos y pasados
 import { esFechaFutura, aFecha, esEventoEnCurso } from '@/composables/fechas.js'
 

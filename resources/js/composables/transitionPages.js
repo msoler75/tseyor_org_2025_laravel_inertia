@@ -2,24 +2,31 @@
 export default function setTransitionPages(router) {
   const ui = useUi();
   const nav = ui.nav;
+
+  const log = ()=>{}
+  //console.log;
+
   // Evitar registrar los mismos listeners más de una vez
   if (typeof window !== "undefined") {
     if (window.__transitionPages_setTransitionPagesCalled) {
-      console.log("router: setTransitionPages: already registered, skipping");
+      log("router: setTransitionPages: already registered, skipping");
       return;
     }
     window.__transitionPages_setTransitionPagesCalled = true;
   }
 
-  console.log("router: setTransitionPages: registering router listeners");
+  log("router: setTransitionPages: registering router listeners");
 
   // listen link-clicked events from Link.vue:
-  window.addEventListener("link-clicked", (event) =>
-    nextTick(() => startingNavigate(event))
+  window.addEventListener("link-clicked", (event) => {
+
+      log('link-clicked', event)
+      nextTick(() => startingNavigate(event))
+    }
   );
 
   function scrollCondition(destinationUrl) {
-    console.log("scrollCondition for", destinationUrl);
+    log("scrollCondition for", destinationUrl);
     if(!nav.navigatingFrom) return null
     const elem = nav.scrollToHereElem();
     if (!elem) return null;
@@ -43,7 +50,7 @@ export default function setTransitionPages(router) {
     ) {
 
       const behavior= elem.classList.contains("instant") ? "instant" : "smooth";
-      console.log("go to scroll-to-here with behavior:", behavior);
+      log("go to scroll-to-here with behavior:", behavior);
       return behavior
     }
 
@@ -51,7 +58,14 @@ export default function setTransitionPages(router) {
   }
 
   function startingNavigate(event) {
-    console.log("router: startingNavigate", event.detail.url, event);
+    log("router: startingNavigate", event.detail.url, event);
+
+    try {
+        window.navigatingTo = new URL(event.detail.url).pathname + new URL(event.detail.url).search + new URL(event.detail.url).hash;
+    }
+    catch(e) {
+        window.navigatingTo = event.detail.url;
+    }
 
     ui.tools.closeTools();
     nav.closeTabs();
@@ -59,21 +73,27 @@ export default function setTransitionPages(router) {
     nav.navigating = true;
     nav.navigatingFrom = new URL(window.location);
 
-    console.log("router: start. Navigating from", nav.navigatingFrom);
+    log("router: start. Navigating from", nav.navigatingFrom);
     let url = event.detail.url;
 
-    console.log("router: scroll-to-here url:", url, event.detail);
+    log("router: scroll-to-here url:", url, event.detail);
 
     const behavior = scrollCondition(url);
     if (behavior == "instant")
       setTimeout(() => nav.doScrollToHere(behavior), 200);
     else if (behavior == "smooth") nav.doScrollToHere(behavior);
-    console.log("startingNavigate - preservePage:", nav.preservePage);
+    log("startingNavigate - preservePage:", nav.preservePage);
     if (!nav.preservePage) nav.fadingOutPage = true;
   }
 
   function endedNavigate(event) {
-    console.log("router: endedNavigate", event);
+    log("router: endedNavigate", event);
+    if (window.lastEndedNavigateUrl === event.detail.page.url && Date.now() - (window.lastEndedNavigateTime || 0) < 500) {
+      log("router: endedNavigate skipped, duplicate within 500ms");
+      return;
+    }
+    window.lastEndedNavigateUrl = event.detail.page.url;
+    window.lastEndedNavigateTime = Date.now();
 
     ui.tools.detectContent();
     ui.tools.closeTools();
@@ -86,13 +106,13 @@ export default function setTransitionPages(router) {
     // enlace inicial
     if (window.location.hash) {
       setTimeout(() => {
-        console.log("scrollto_3_hash");
+        log("scrollto_3_hash");
         nav.scrollToId(window.location.hash.substring(1), 0);
       }, 500);
     } else if (behavior) {
       nav.doScrollToHere(behavior)
     } else {
-      console.log("tr.scrollto_0_instant");
+      log("tr.scrollto_0_instant");
       window.scrollTo({
         top: 0,
         behavior: "instant",
@@ -115,40 +135,48 @@ export default function setTransitionPages(router) {
 
   // Use the router's navigation guard to track route changes
   router.on("before", (event) => {
-    console.log("router: before", event);
+    log("router: before", event);
     nav.navigatingFrom = new URL(window.location);
   });
 
   router.on("success", (event) => {
-    console.log("router: success", event);
+    log("router: success", event);
 
     if (isPartialReload(event)) {
-      console.log(
+      log(
         "router: success ignored, partial reload with only:",
         event.detail.visit.only
       );
       return;
     }
+
+  log('no es partial Reload')
+
+  log('success navigatingTo', window.navigatingTo, 'event.detail.page.url', event.detail.page.url)
+    if(event?.detail?.page?.url ===window.navigatingTo)
+        endedNavigate(event);
+
+
   });
 
   // Use the router's navigation guard to track route changes
   router.on("start", (event) => {
-    console.log("router: start", event);
+    log("router: start", event);
     try {
       if (isPartialReload(event)) {
-        console.log(
+        log(
           "router: start ignored, partial reload with only:",
           event.detail.visit.only
         );
         return;
       }
-      console.log("router: start checking if prefetch", event.detail);
+      log("router: start checking if prefetch", event.detail);
       if (isPrefetch(event)) {
-        console.log("router: start ignored, prefetch");
+        log("router: start ignored, prefetch");
         return;
       }
       const v = event.detail.visit || {};
-      console.log(
+      log(
         `router: start. Starting a visit to ${v.url} (id: ${
           v.id || "<no-id>"
         }, method: ${v.method || "GET"}) isTrusted: ${
@@ -157,36 +185,36 @@ export default function setTransitionPages(router) {
         { visit: v, event }
       );
     } catch (e) {
-      console.log("router: start (error logging event)", event);
+      log("router: start (error logging event)", event);
     }
   });
 
   router.on("navigate", (event) => {
     if (isPrefetch(event)) {
-      console.log("router: navigate ignored, prefetch");
+      log("router: navigate ignored, prefetch");
       return;
     }
-    console.log(
+    log(
       `router: navigate. Navigated to ${event.detail.page.url}`,
       event
     );
 
     try {
-      console.log("router: navigate event.detail", event.detail);
+      log("router: navigate event.detail", event.detail);
       if (isPartialReload(event)) {
-        console.log(
+        log(
           "router: navigate ignored, partial reload with only:",
           event.detail.visit.only
         );
         return;
       }
-      console.log("router: navigate checking if prefetch", event);
+      log("router: navigate checking if prefetch", event);
       if (isPrefetch(event)) {
-        console.log("router: navigate ignored, prefetch");
+        log("router: navigate ignored, prefetch");
         return;
       }
       const v = event.detail || {};
-      console.log(
+      log(
         `router: navigate. Page navigating to ${v.url} (id: ${
           v.id || "<no-id>"
         })`,
@@ -196,14 +224,14 @@ export default function setTransitionPages(router) {
         }
       );
     } catch (e) {
-      console.log("router: navigate", event);
+      log("router: navigate", event);
     }
 
     endedNavigate(event);
   });
 
   router.on("exception", (event) => {
-    console.log(
+    log(
       `router: exception. An unexpected error occurred during an Inertia visit.`,
       event
     );
@@ -213,8 +241,8 @@ export default function setTransitionPages(router) {
 
 
   router.on("invalid", (event) => {
-    console.log(`router: invalid. An invalid Inertia response was received.`);
-    console.log(event.detail.response);
+    log(`router: invalid. An invalid Inertia response was received.`);
+    log(event.detail.response);
     nav.navigating = false
   });
 

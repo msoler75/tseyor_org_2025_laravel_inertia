@@ -2,7 +2,8 @@ import { defineStore } from 'pinia';
 import { webApiAvailable, AudioProcessor } from "../composables/audioProcessor.js";
 import { useGoogleAnalytics } from '../composables/useGoogleAnalytics.js';
 
-const { trackVideoPlay, trackAudioPlay } = useGoogleAnalytics();
+// Mover el destructuring dentro del store para evitar problemas de inicialización
+// const { trackVideoPlay, trackAudioPlay } = useGoogleAnalytics();
 
 export const usePlayerStore = defineStore('player', {
   state: () => ({
@@ -132,6 +133,7 @@ export const usePlayerStore = defineStore('player', {
 
       // Google Analytics tracking
       if (this.music?.title) {
+        const { trackVideoPlay, trackAudioPlay } = useGoogleAnalytics();
         if (this.isVideo) {
           trackVideoPlay(this.music.title, this.url);
         } else {

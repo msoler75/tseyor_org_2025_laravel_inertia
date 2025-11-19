@@ -59,6 +59,8 @@ class ComunicadosController extends Controller
 
         // devuelve los items recientes segun la busqueda
         if ($buscar) {
+            // eliminamos prefijo por si alguien se le ocurre poner "com 45" o "comunicado TAP 45" o la palabra "comunicado"
+            $buscar = preg_replace("/^com(unicado)?\s*/i", "", $buscar);
             list($frase_exacta, $busqueda_sin_frase_exacta) = BusquedasHelper::obtenerFraseExacta($buscar);
             $numero = preg_replace("/TAP|\s+/i", "", $buscar);
             // búsqueda por nº de comunicado, también acepta poner "TAP 33" para indicar que es un comunicado TAP

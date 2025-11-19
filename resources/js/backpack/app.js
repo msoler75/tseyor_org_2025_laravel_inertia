@@ -18,9 +18,11 @@ import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
 // import JSONEditorField from "../Components/Backpack/JSONEditorField.vue";
 import SelectField from "../Components/Backpack/SelectField.vue";
 import TimeAgo from "../Components/TimeAgo.vue";
+import AudioVideoPlayer from "../Components/AudioVideoPlayer.vue";
 import FileManager from "../Components/FileManager.vue";
 import WorkerStatus from "../Components/Admin/WorkerStatus.vue";
 import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
+import { createPinia } from 'pinia';
 
 // Hacer defineAsyncComponent disponible globalmente para librerías externas
 // window.defineAsyncComponent = defineAsyncComponent;
@@ -29,6 +31,7 @@ import { LazyHydrationWrapper } from 'vue3-lazy-hydration';
 const elem = document.querySelector(".page-body form, .admin-dashboard, .vue-component");
 if (elem) {
   console.log("loading vue 3 fields...");
+  const pinia = createPinia()
   const app = createApp({})
   .component("tiptapeditorfullfield", TipTapEditorFullField)
   .component("tiptapeditorsimplefield", TipTapEditorSimpleField)
@@ -41,13 +44,15 @@ if (elem) {
     .component("selectfield", SelectField)
     .component("timeago", TimeAgo)
     .component("filemanager", FileManager)
+    .component("audiovideoplayer", AudioVideoPlayer)
     .component("workerstatus", WorkerStatus)
-    // .component("audiovideoplayer", AudioVideoPlayer)
+     .component("audiovideoplayer", AudioVideoPlayer)
    // .component("audiostateicon", AudioStateIcon)
     .mixin({
       components: { Icon, Link },
     })
     .use(ZiggyVue, Ziggy)
+    .use(pinia)
 
       app.component('LazyHydrate', LazyHydrationWrapper);
 
