@@ -166,9 +166,9 @@ function cargarDatosUsuario() {
     userStore.cargarSaldo();
 }
 
-// si cambia el usuario
+// si cambia el usuario (solo si el ID cambia para evitar llamadas innecesarias)
 watch(
-    () => page.props.auth?.user,
+    () => page.props.auth?.user?.id,
     () => {
         cargarDatosUsuario();
     }
