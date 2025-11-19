@@ -107,6 +107,11 @@ form [bp-field-name='permissions'] .checkbox
     z-index: 1032 !important;
 }
 
+.vue-component .pt-8,
+.component-modal .pt-8 {
+    padding-top: 1rem !important;
+}
+
 
 .tiptap-editor-wrapper.fullscreen {
     display: block;

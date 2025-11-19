@@ -22,16 +22,16 @@
 
         <ScrollToHere class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-            <Categorias :categorias="categorias" :url="route('equipos')" columna-breakpoint="md" select-breakpoint="sm"
+            <Categorias :categorias="props.categorias" :url="route('equipos')" columna-breakpoint="md" select-breakpoint="sm"
                 div-class="w-full md:w-fit " />
 
             <div class="w-full grow">
 
-                <SearchResultsHeader :results="listado" />
+                <SearchResultsHeader :results="props.listado" />
 
-                <GridAppear v-if="listado.data.length > 0" class="gap-4" col-width="24rem">
+                <GridAppear v-if="props.listado.data.length > 0" class="gap-4" col-width="24rem">
 
-                    <CardContent v-for="equipo in listado.data" :key="equipo.id"
+                    <CardContent v-for="equipo in props.listado.data" :key="equipo.id"
                         :image="equipo.imagen || equipo_fallback" :title="equipo.nombre"
                         :href="route('equipo', equipo.slug)" image-left image-class="min-h-[150px]"
                         class="relative min-h-16" :description="equipo.descripcion" :tag="equipo.categoria"
@@ -53,7 +53,7 @@
 
                 </GridAppear>
 
-                <pagination class="mt-6" :links="listado.links" />
+                <pagination class="mt-6" :links="props.listado.links" />
 
             </div>
 
@@ -78,9 +78,5 @@ const props = defineProps({
     }
 });
 
-const listado = ref(props.listado);
-const categorias = ref(props.categorias)
-
 const equipo_fallback = '/almacen/medios/equipos/equipo1.jpg'
-
 </script>

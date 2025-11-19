@@ -81,7 +81,6 @@ class AudioCrudController extends CrudController
 
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
-        //CRUD::addButtonFromModelFunction('top', 'audio_player', 'audioPlayer', 'beginning');
         CRUD::addButtonFromView('top', 'audio_player_component', 'audio_player_component', 'beginning');
     }
 
@@ -138,6 +137,8 @@ class AudioCrudController extends CrudController
                               'Minicápsulas de Aium Om'=>'Minicápsulas de Aium Om',
                               'Guías Estelares'=>'Guías Estelares',
                               'Canciones'=>'Canciones',
+                              'Espacio para la interiorización'=>'Espacio para la interiorización',
+                              'Mensajes al corazón'=>'Mensajes al corazón',
                               'Otros'=>'Otros'],
             'allows_null' => false,
             'default'     => 'Meditaciones',

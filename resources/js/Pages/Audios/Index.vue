@@ -16,12 +16,7 @@
             <div>Recuerda que también puedes acceder a la <Link href="/radio">Radio Tseyor</Link> y escuchar nuestra emisora de talleres, meditaciones y talleres cuentos, donde se reproducen estos audios de forma continua.</div>
         </TitleInfo>
 
-        <!--
-    <AudioPlayer id="player" v-if="playFile" :music="playFile" class="mx-auto max-w-[700px]
-    card shadow-lg bg-base-300 dark:bg-gray-dark-800 rounded-tl-xl sm:rounded-t-xl
-    mb-7
-    " />
--->
+
 <div class="px-2 flex justify-end">
     <SearchInput placeholder="Buscar audios..."/>
 </div>
@@ -94,8 +89,6 @@ const props = defineProps({
         default: () => []
     }
 });
-
-const listado = ref(props.listado);
 
 const player = usePlayer()
 

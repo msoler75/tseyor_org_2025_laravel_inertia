@@ -45,6 +45,11 @@ class EquiposController extends Controller
         $page = $request->input('page', 1);
         $campos = ['id', 'slug', 'nombre', 'descripcion', 'categoria', 'imagen', 'created_at', 'updated_at'];
 
+        Log::info('Equipos index - Request params: ', $request->all());
+        Log::info("Equipos page: " . $page);
+        Log::info("Buscar: " . $buscar);
+        Log::info("Categoria: " . $categoria);
+
         $query = Equipo::select($campos)
             ->withCount('miembros');
 
@@ -69,7 +74,15 @@ class EquiposController extends Controller
                     });
             });
 
+        Log::info($query->toSql());
+        Log::info('Bindings: ', $query->getBindings());
+
         $resultados = $query->paginate(EquiposController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
+
+        Log::info('Resultados total: ' . $resultados->total());
+        Log::info('Resultados per page: ' . $resultados->perPage());
+        Log::info('Current page: ' . $resultados->currentPage());
+        Log::info('Data count: ' . count($resultados->items()));
 
         $resultados->getCollection()->transform(function ($equipo) use ($user) {
             $equipo->soy_miembro = $equipo->miembros->contains('id', optional($user)->id);

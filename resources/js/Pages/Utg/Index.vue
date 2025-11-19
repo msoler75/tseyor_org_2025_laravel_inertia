@@ -23,7 +23,7 @@
         </Section>
 
         <Section class="pb-10">
-            <TextText class="container">
+            <TextText class="container" title="">
                 <template #text1>
                     <blockquote>
                         <p>

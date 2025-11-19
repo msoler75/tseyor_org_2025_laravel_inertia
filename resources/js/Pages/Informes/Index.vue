@@ -104,13 +104,5 @@ const props = defineProps({
     equipo: { type: Object, required: false }
 });
 
-const listado = ref(props.listado);
-// const categorias = ref(props.categorias)
 
-const total = computed(() => {
-    var n = 0
-    for (var c of props.categorias)
-        n += c.valor == '_' ? 0 : c.total
-    return n
-})
 </script>

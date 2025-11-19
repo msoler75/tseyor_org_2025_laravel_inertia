@@ -88,7 +88,7 @@ export default defineConfig({
                 id.includes('/Components/Image') ||
                 id.includes('/Components/DropDown') ||
                 id.includes('/Layouts/AppLayout.vue')) {
-              return 'layout-core';
+              // return 'layout-core'; // Comentado para evitar errores de inicialización
             }
 
 

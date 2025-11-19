@@ -6,7 +6,7 @@
     <FolderExplorer :items="items" :propietarioRef="propietarioRef" @updated="reloadPage"
         :ruta="ruta" :rutaBase="$page.props.auth.user?.id ? 'archivos_raiz' : 'archivos'" />
     <transition name="fade">
-        <div v-if="showOverlay" class="fixed ç inset-0 z-50 flex items-center justify-center bg-black/60  select-none"
+        <div v-if="showOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60  select-none"
             :style="{
                 border: '8px solid ' + (store.puedeEscribir ? '#22c55e' : '#ef4444'),
                 boxSizing: 'border-box',

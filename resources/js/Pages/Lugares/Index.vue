@@ -80,8 +80,5 @@ const props = defineProps({
     }
 });
 
-const listado = ref(props.listado);
-const todos = ref(props.todos)
-
 
 </script>

@@ -20,14 +20,14 @@
     <x-backpack::menu-dropdown-item title="Videos" icon="la la-youtube" :link="backpack_url('video')" />
     <x-backpack::menu-dropdown-item title="Páginas/SEO" icon="la la-pager" :link="backpack_url('pagina')" />
     <x-backpack::menu-dropdown-item title="Radio Tseyor" icon="la la-broadcast-tower" :link="backpack_url('radio-item')" />
-    <x-backpack::menu-dropdown-item title="Tutoriales" icon="la la-chalkboard" :link="backpack_url('tutorial')" />
 </x-backpack::menu-dropdown>
 @endcan
 
 @can('administrar contenidos')
-<x-backpack::menu-dropdown title="Glosario" icon="la la-list-ul">
-    <x-backpack::menu-dropdown-item title="Términos" icon="la la-edit" :link="backpack_url('termino')" />
+<x-backpack::menu-dropdown title="Consulta/Formación" icon="la la-list-ul">
+    <x-backpack::menu-dropdown-item title="Glosario" icon="la la-edit" :link="backpack_url('termino')" />
     <x-backpack::menu-dropdown-item title="Guias Estelares" icon="la la-star" :link="backpack_url('guia')" />
+    <x-backpack::menu-dropdown-item title="Tutoriales" icon="la la-chalkboard" :link="backpack_url('tutorial')" />
 </x-backpack::menu-dropdown>
 @endcan
 

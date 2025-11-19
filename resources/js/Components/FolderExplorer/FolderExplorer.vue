@@ -1,7 +1,7 @@
 <template>
     <div
         class="h-full flex flex-col relative"
-        :class="touchable ? 'touchable' : ''"
+        :class="[attrs.class, touchable ? 'touchable' : '']"
     >
     <h1 class="hidden" >{{ store.rutaActual }}</h1>
         <div
@@ -264,6 +264,7 @@
 </template>
 
 <script setup>
+import { useAttrs } from 'vue'
 import useFolderExplorerStore from "@/Stores/folderExplorer";
 import useSelectors from "@/Stores/selectors";
 import usePlayer from "@/Stores/player";
@@ -312,6 +313,11 @@ const emit = defineEmits([
 ]);
 
 const store = useFolderExplorerStore();
+const attrs = useAttrs();
+
+defineOptions({
+  inheritAttrs: false
+})
 
 store.ruta = props.ruta;
 store.rutaBase = props.rutaBase;

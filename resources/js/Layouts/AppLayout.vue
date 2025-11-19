@@ -102,7 +102,6 @@ import { usePWASession } from "@/composables/usePWASession.js";
 
 const Tools = defineAsyncComponent(() => import('../Components/Tools.vue'))
 const ToolTextSearch = defineAsyncComponent(() => import('../Components/ToolTextSearch.vue'))
-const AudioVideoPlayer = defineAsyncComponent(() => import('../Components/AudioVideoPlayer.vue'))
 // const NavAside = defineAsyncComponent(() => import('../Components/NavAside.vue'))
 
 

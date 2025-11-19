@@ -98,7 +98,5 @@ const props = defineProps({
 });
 
 
-const listado = ref(props.listado);
-
 const letraActual = route().params.letra
 </script>

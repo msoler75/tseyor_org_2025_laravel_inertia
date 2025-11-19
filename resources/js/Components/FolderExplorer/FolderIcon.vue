@@ -1,5 +1,5 @@
 <template>
-    <ConditionalLink :href="href" class="flex gap-3 items-baseline relative" :is-link="isLink">
+    <ConditionalLink :href="href" class="flex gap-3 items-baseline relative" :is-link="isLink" >
         <Icon
             :icon="arrow ? 'charm:folder-symlink' : owner ? 'ph:folder-user-duotone' : private ? 'ph:folder-lock-duotone' : 'ph:folder-duotone'"
             class="text-yellow-500 transform scale-125"

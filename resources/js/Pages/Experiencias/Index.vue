@@ -97,9 +97,6 @@ const props = defineProps({
     }
 });
 
-const listado = ref(props.listado);
-// const categorias = ref(props.categorias)
-
 </script>
 
 <style scoped>

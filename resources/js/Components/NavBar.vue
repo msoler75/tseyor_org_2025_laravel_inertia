@@ -202,8 +202,6 @@ function updateSpecialCaseTheme() {
 
 onMounted(() => {
 
-    console.log('navBar mounted')
-
     // El tema inicial ya se aplica automáticamente en el store
 
     window.addEventListener("keydown", handleKey);

@@ -55,7 +55,6 @@
 
 <script setup>
 
-
 const props = defineProps({
     filtrado: { default: () => '' },
     listado: {
@@ -63,7 +62,5 @@ const props = defineProps({
     },
     busquedaValida: { type: Boolean, default: false }
 });
-
-const listado = ref(props.listado);
 
 </script>
