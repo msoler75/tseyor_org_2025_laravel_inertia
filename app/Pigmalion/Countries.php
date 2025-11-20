@@ -255,7 +255,7 @@ class Countries
 
     public static function getCountry($code)
     {
-        return self::$list[$code];
+        return self::$list[$code] ?? $code;
     }
 
 
