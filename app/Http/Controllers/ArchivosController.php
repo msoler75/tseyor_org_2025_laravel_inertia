@@ -642,7 +642,7 @@ class ArchivosController extends Controller
         $dir = new StorageItem($ruta);
 
         // nombre a buscar
-        $nombre = $request->nombre;
+        $busqueda = $request->nombre;
 
         // ruta donde empezar a buscar
         // $baseUrl = url('');
@@ -666,11 +666,11 @@ class ArchivosController extends Controller
             // la ruta inicial es la primera carpeta donde buscaremos después en disco
             $carpetas_pendientes = [$dir->location];
 
-            Log::info("Nueva busqueda en $ruta. Buscando $nombre ...");
+            Log::info("Nueva busqueda en $ruta. Buscando $busqueda ...");
             Log::info("carpetas_pendientes", $carpetas_pendientes);
 
             // realizamos una rápida búsqueda inicial, usando nodos
-            $nodos = Nodo::search($nombre)->query(function ($query) use ($dir) {
+            $nodos = Nodo::search($busqueda)->query(function ($query) use ($dir) {
                 return $query->whereRaw("ubicacion LIKE '{$dir->location}%'");
             })->take(50)->get();
 
@@ -720,7 +720,7 @@ class ArchivosController extends Controller
 
             $request->session()->put('id_busqueda', $id_busqueda_actual);
             $request->session()->put('buscar_ruta', $dir->location);
-            $request->session()->put('buscar_nombre', $nombre);
+            $request->session()->put('buscar_nombre', $busqueda);
         } else {
 
             // continuación de búsqueda, ahora en el sistema de archivos
@@ -728,10 +728,12 @@ class ArchivosController extends Controller
 
             // recuperamos los parámetros de búsqueda de la sesión
             $carpetas_pendientes = $request->session()->get('carpetas_pendientes');
-            $nombre = $request->session()->get('buscar_nombre');
+            $busqueda = $request->session()->get('buscar_nombre');
             $ruta = $request->session()->get('buscar_ruta');
 
-            Log::info("recuperamos nombre: $nombre, ruta: $ruta");
+            $busqueda = Str::lower(Str::ascii($busqueda));
+
+            Log::info("recuperamos nombre: $busqueda, ruta: $ruta");
             Log::info("recuperamos carpetas_pendientes", $carpetas_pendientes);
 
             // realizamos una busqueda real en disco
@@ -761,7 +763,7 @@ class ArchivosController extends Controller
                 // Comprobar si algún archivo tiene un nombre similar a la cadena de búsqueda
                 foreach ($archivos as $archivo) {
                     Log::info("archivo $archivo");
-                    if ($this->matchSearch(basename($archivo), $nombre))
+                    if ($this->matchSearch(basename($archivo), $busqueda)||pathinfo($archivo, PATHINFO_EXTENSION)==$busqueda)
                         $resultados[] = $this->prepareItemList($dir->disk, $archivo, [
                             'tipo' => 'archivo',
                             'tamano' => Storage::disk($dir->disk)->size($archivo)
@@ -774,7 +776,7 @@ class ArchivosController extends Controller
                     $dir = StorageItem::build($dir->disk, $subcarpeta);
                     Log::info("carpeta $subcarpeta");
 
-                    if ($this->matchSearch(basename($subcarpeta), $nombre)) {
+                    if ($this->matchSearch($subcarpeta, $busqueda)) {
                         $item = $this->prepareItemList($dir->disk, $subcarpeta, [
                             'tipo' => 'carpeta',
                             'archivos' => count($dir->files()),
@@ -825,7 +827,7 @@ class ArchivosController extends Controller
     private function matchSearch($str, $term)
     {
         $str = Str::lower(Str::ascii($str));
-        $term = Str::lower(Str::ascii($term));
+        //$term = Str::lower(Str::ascii($term));
         if (strpos($term, ".") === false) // removemos la extension del archivo
             $str = preg_replace("/\.[^.]{2,8}$/", "", $str);
         if (str_contains($str, $term))
