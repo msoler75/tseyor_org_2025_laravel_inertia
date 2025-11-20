@@ -14,8 +14,9 @@
 
         <div v-if="player.mini" v-show="!player.audioClosed" @mouseleave="collapsePlayer"
         @mousemove="activatePlayer"
-            class="max-w-[24rem] xs:max-w-[32rem] sm:max-w-[42rem] rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden">
-            <div v-if="player.expanded" class="p-2 xs:hidden">
+            class="player-mini max-w-full md:max-w-lg lg:max-w-2xl rounded-tl-3xl fixed bottom-0 right-0 z-50 bg-base-100 border-gray-400 dark:border-white border-t border-l overflow-hidden"
+            :class="{expanded: player.expanded}">
+            <div v-if="player.expanded" class="p-2 sm:hidden">
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
                     class="ml-1 transform duration-300" />
             </div>
@@ -24,7 +25,7 @@
                     v-model="player.currentTime" class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
                     @input="onSeek" ref="progressEl" />
             </div>
-            <div class="mx-auto flex justify-between items-center" :class="[player.expanded ? 'w-full gap-3' : 'pr-4',
+            <div class="mx-auto flex justify-between items-center" :class="[player.expanded ? 'w-full gap-1 sm:gap-3' : 'pr-4',
             player.requiereInteraccion ? 'pointer-events-none' : ''
             ]">
                 <button type="button"
@@ -35,14 +36,14 @@
                 </button>
 
                 <TextAnimation :text="player.music?.title + (player.music?.artist ? ' ' + player.music.artist : '')"
-                    class="hidden xs:block transform duration-300" :class="player.expanded ? '' : 'w-0'"
+                    class="hidden grow sm:block transform duration-300" :class="player.expanded ? '' : 'w-0'"
                      />
 
-                <div class="flex justify-end gap-1 min-w-34 font-mono transform scale-y-150"
+                <div class="flex grow justify-end gap-1 font-mono transform scale-y-150"
                     >
                     <span>{{ formatTime(player.currentTime) }}</span>
-                    /
-                    <span>{{ formatTime(player.duration) }}</span>
+                    <span class="durationTime">/</span>
+                    <span class="durationTime">{{ formatTime(player.duration) }}</span>
                 </div>
 
 
@@ -178,6 +179,9 @@ const myvideo = ref(null)
 const width = ref(1080)
 const height = ref(768)
 
+const TIME_TO_COLLAPSE = 7000
+const TIME_TO_COLLAPSE_LONG = 10000
+
 // expansión de audioplayer
 
 var timerToCollapse = null
@@ -187,14 +191,14 @@ function activatePlayer() {
     clearTimeout(timerToCollapse)
     timerToCollapse = setTimeout(() => {
         player.expanded = false
-    }, 10000)
+    }, TIME_TO_COLLAPSE_LONG)
 }
 
 function collapsePlayer() {
     clearTimeout(timerToCollapse)
     timerToCollapse = setTimeout(() => {
         player.expanded = false
-    }, 7000)
+    }, TIME_TO_COLLAPSE)
 }
 
 
@@ -296,6 +300,14 @@ progress[value]::-webkit-progress-value {
     border-radius: 3px;
     background-size: 70px 40px, 100% 100%, 100% 100%;
 }
+.player-mini .durationTime {
+    display: inline;
+}
 
-@media screen and (max-width: 470px) {}
+@media (max-width: 380px) {
+    .player-mini.expanded .durationTime {
+        display: none;
+    }
+}
+
 </style>
