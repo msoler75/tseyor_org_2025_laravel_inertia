@@ -119,6 +119,7 @@
                         </tbody>
                     </table>
                 </div>
+
             @endcan
 
             @canany(['administrar contenidos'])
@@ -146,6 +147,51 @@
                     </table>
                 </div>
             @endcanany
+
+
+            @can('administrar social')
+                <div class="grow rounded-xs overflow-y-auto border border-gray-500 bg-base-100">
+                    <table class="w-full divide-y divide-gray-500">
+                        <thead class="bg-base-100!">
+                            <tr>
+                                <th colspan=4 class="font-bold mb-3 text-lg px-3 py-4">Cambios de estado en inscripciones:</th>
+                            </tr>
+                            <tr>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Fecha
+                                </th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Cambio
+                                </th>
+                                <th class="px-3 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Tutor Asignado
+                                </th>
+                                <th class="py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-base-100! divide-y divide-gray-500">
+                            @foreach ($cambios_inscripciones as $cambio)
+                                <tr>
+                                    <td class="px-3 py-2 whitespace-nowrap">
+                                        <TimeAgo date="{{ $cambio->created_at }}" />
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        {{ $cambio->user->name ?? '<sistema>' }} cambió inscripción de {{ $cambio->revisionable->nombre ?? 'Desconocido' }} de "{{ $cambio->old_value }}" a "{{ $cambio->new_value }}"
+                                    </td>
+                                    <td class="px-3 py-2 whitespace-nowrap">
+                                        {{ $cambio->revisionable->usuarioAsignado->name ?? 'No asignado' }}
+                                    </td>
+                                    <td class="px-3 py-2 whitespace-nowrap">
+                                        <a title="Editar inscripción" class="btn btn-xs" href="/admin/inscripcion/{{ $cambio->revisionable->id }}/edit">Editar</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endcan
+
 
             @can('administrar archivos')
                 <div class="grow rounded-xs overflow-y-auto border border-gray-500 bg-base-100">

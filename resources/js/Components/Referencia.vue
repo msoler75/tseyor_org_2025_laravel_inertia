@@ -53,6 +53,7 @@ const search = useGlobalSearch(); // Solo para la función buscar()
 const noEncontrado = ref(false);
 const info = ref(null);
 const verGlosario = ref(false);
+const triggerText = ref("");
 
 // Cuando el ToolTip notifica activación le pasamos el texto del trigger o usamos props.r
 function onToolTipActivate(payload) {
@@ -60,24 +61,24 @@ function onToolTipActivate(payload) {
     console.log("Tooltip activated", payload);
 
     // Obtener el texto de búsqueda: props.r > payload.text > slot text
-    const triggerText = props.r || payload.text || getSlotText();
+    triggerText.value = props.r || payload.text || getSlotText();
 
     console.log("triggerText:", triggerText);
 
-    if (!triggerText) {
+    if (!triggerText.value) {
         console.warn("No se pudo obtener texto para el tooltip");
         return;
     }
 
     // Tracking de activación de tooltip
-    trackUserEngagement('tooltip_activate', `referencia: ${triggerText}`)
+    trackUserEngagement('tooltip_activate', `referencia: ${triggerText.value}`)
 
     if (info.value) return;
 
     // Nueva implementación: una sola llamada que busca y devuelve el texto del término
     axios.get(route('buscar.termino'), {
         params: {
-            q: triggerText,
+            q: triggerText.value,
             limite: props.maxLength
         }
     }).then((res) => {
@@ -109,27 +110,27 @@ function onToolTipDeactivate() {
 }
 
 const trackGlosarioClick = () => {
-    const triggerText = props.r || getSlotText();
-    trackUserEngagement('glossary_access', `término: ${triggerText}`)
+    if(!triggerText.value) triggerText.value = props.r || getSlotText();
+    trackUserEngagement('glossary_access', `término: ${triggerText.value}`)
 }
 
 const slots = useSlots();
 
 function buscar() {
     // Obtener el texto de búsqueda desde props.r o del slot
-    const triggerText = props.r || getSlotText();
+    if(!triggerText.value) triggerText.value = props.r || getSlotText();
 
-    if (!triggerText) {
+    if (!triggerText.value) {
         console.warn("No se pudo obtener texto para buscar");
         return;
     }
 
     // Tracking de "saber más"
-    trackUserEngagement('reference_search', `término: ${triggerText}`)
+    trackUserEngagement('reference_search', `término: ${triggerText.value}`)
 
     search.reset();
     search.configure({
-        query: triggerText,
+        query: triggerText.value,
         includeDescription: false,
         restrictToCollections: props.colecciones,
         autoFocus: false,

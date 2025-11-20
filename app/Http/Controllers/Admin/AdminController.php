@@ -45,6 +45,16 @@ class AdminController // extends Controller
 
         $revisiones = Revision::select()->latest()->take(10)->get();
 
+        $cambios_inscripciones = Revision::where('revisionable_type', 'App\Models\Inscripcion')
+            ->where('key', 'estado')
+            ->with('user')
+            ->with(['revisionable' => function($query) {
+                $query->with('usuarioAsignado');
+            }])
+            ->latest()
+            ->take(10)
+            ->get();
+
         $busquedas = Busqueda::select(['query', 'created_at'])->latest()->take(10)->get();
 
         $archivos = Nodo::with('user')->latest()->take(12)->get();
@@ -74,6 +84,7 @@ class AdminController // extends Controller
             'revisiones' => $revisiones,
             'busquedas' => $busquedas,
             'archivos' => $archivos,
+            'cambios_inscripciones' => $cambios_inscripciones,
         ];
         // dd($revisiones);
 

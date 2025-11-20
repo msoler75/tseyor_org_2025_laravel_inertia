@@ -24,6 +24,11 @@ class Revision extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function revisionable()
+    {
+        return $this->morphTo();
+    }
+
     // ACCESSORS
 
     public function getColeccionAttribute()
