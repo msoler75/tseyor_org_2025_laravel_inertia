@@ -136,7 +136,7 @@ function handleClick() {
     const customEvent = new CustomEvent('link-clicked', { detail: { url: props.href } });
     window.dispatchEvent(customEvent);
 
-    console.log('Link.vue clicked, preservePage:', props.preservePage)
+    //console.log('Link.vue clicked, preservePage:', props.preservePage)
     if (props.preservePage)
         nav.preservePage= true
     /*if(props.fadeOut)

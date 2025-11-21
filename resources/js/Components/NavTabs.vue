@@ -10,7 +10,7 @@
                 tab.current ? 'current-tab' : ''
                 ]"
             :href="tab.url"
-                @click.stop="clickedTab(tab)" @mouseover="enterTab(tab)" @mouseout="leaveTab(tab)"
+                @click="clickedTab(tab)" @mouseover="enterTab(tab)" @mouseout="leaveTab(tab)"
                 :active="tab.open || tab.current">
                 {{ tab.title }}
                 <div v-if="tab.open"

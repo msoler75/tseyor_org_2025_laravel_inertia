@@ -79,7 +79,7 @@ export default defineConfig({
             // 1. LAYOUT CORE: Componentes de estructura de página (carga temprana)
             // Agrupa: Page*, Header, Footer, AppLayout (total ~2-3 KB)
             if (
-                id.includes('LazyHydrationWrapper') ||
+                //id.includes('LazyHydrationWrapper') ||
                 id.includes('/Components/Header.vue') ||
                 id.includes('/Components/Nav') ||
                 id.includes('/Components/GlobalSearch.vue') ||
