@@ -107,7 +107,7 @@ const props = defineProps({
 // Separar eventos en curso, próximos y pasados
 import { esFechaFutura, aFecha, esEventoEnCurso } from '@/composables/fechas.js'
 
-const eventsArray = computed(() => Array.isArray(listado.value.data) ? listado.value.data : []);
+const eventsArray = computed(() => Array.isArray(props.listado.data) ? props.listado.data : []);
 
 // Eventos que están actualmente en curso
 const eventosEnCurso = computed(() =>
