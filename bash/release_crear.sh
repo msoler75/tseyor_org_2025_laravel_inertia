@@ -56,6 +56,9 @@ php artisan ziggy:generate
 
 chmod u+x bash/*.sh
 
+echo "Ejecutando 'php artisan release:install' para aplicar los zips desde storage/install..."
+php artisan release:install || echo "Aviso: 'release:install' devolvió error. Revisa los logs."
+
 # Mostrar la carpeta donde se instaló la nueva release
 
 echo "=========================================="
@@ -68,16 +71,14 @@ echo "> cp -r $BASE_DIR/releases/$NEW_RELEASE/bash/release* ."
 
 # Mostrar los siguientes pasos para actualizar a la nueva release
 
-echo "-----------------------------------------"
-echo "- Los siguientes pasos que debes realizar son:"
-echo "./release_establecer.sh $NEW_RELEASE"
-echo "-----------------------------------------"
-echo "- Flujo de frontend actualizado:"
-echo "  1) Desde entorno de desarrollo ejecutar: php artisan release:prepare"
-echo "  2) En el servidor ejecutar: ./release_crear.sh (este script puede ejecutar release:install automáticamente)"
+# echo "-----------------------------------------"
+# echo "- Los siguientes pasos que debes realizar son:"
+# echo "./release_establecer.sh $NEW_RELEASE"
+# echo "-----------------------------------------"
+# echo "- Flujo de frontend actualizado:"
+# echo "  1) Desde entorno de desarrollo ejecutar: php artisan release:prepare"
+# echo "  2) En el servidor ejecutar: ./release_crear.sh (este script puede ejecutar release:install automáticamente)"
 
-# Por defecto no ejecutamos release:install automáticamente a menos que se configure RUN_INSTALL=1
-echo "Ejecutando 'php artisan release:install' para aplicar los zips desde storage/install..."
-php artisan release:install || echo "Aviso: 'release:install' devolvió error. Revisa los logs."
+
 
 
