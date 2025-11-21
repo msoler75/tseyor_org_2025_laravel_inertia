@@ -13,8 +13,6 @@
         <h1>Novedades</h1>
         <p>Todas las novedades de los contenidos de Tseyor.</p>
 
-        <Link href="/pepito">Enlace erróneo</Link>
-
         <div class="flex justify-end mb-5">
             <SearchInput placeholder="Buscar en novedades..."/>
         </div>
