@@ -29,8 +29,8 @@ export function usePWASession() {
     TIMESTAMP: 'pwa-timestamp'
   }
 
-  // Configuración de expiración del estado (1 día en milisegundos)
-  const MAX_STATE_AGE = 1 * 24 * 60 * 60 * 1000
+  // Configuración de expiración del estado (12 horas en milisegundos)
+  const MAX_STATE_AGE = 12 * 60 * 60 * 1000
 
   // Estado reactivo para mostrar loader durante restauración
   const isRestoring = ref(false)
