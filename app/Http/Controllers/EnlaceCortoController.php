@@ -23,6 +23,17 @@ class EnlaceCortoController extends Controller
      */
     public function redirigir(string $prefijo, string $codigo)
     {
+        // DEBUG: Log para detectar si Facebook llega al controlador
+        /*$userAgent = request()->header('User-Agent', '');
+        if (stripos($userAgent, 'facebook') !== false) {
+            \Illuminate\Support\Facades\Log::channel('validation')->info('[EnlaceCortoController] Facebook bot reached controller', [
+                'url' => request()->fullUrl(),
+                'user_agent' => $userAgent,
+                'prefijo' => $prefijo,
+                'codigo' => $codigo,
+            ]);
+        }*/
+
         // Buscar el enlace en la base de datos para obtener metadatos
         $enlace = \App\Models\EnlaceCorto::where('prefijo', $prefijo)
             ->where('codigo', $codigo)

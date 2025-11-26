@@ -1,8 +1,56 @@
-# Bloquear todos los bots por defecto
-User-agent: *
-Disallow: /
+# Permitir crawlers de Facebook (facebookexternalhit y Facebot)
+# IMPORTANTE: Estos deben estar ANTES de la regla general de bloqueo
+User-agent: facebookexternalhit
+Allow: /
+Disallow: /admin/
+# Permitimos acceso a las rutas usadas para previews/redirecciones cortas
+# (/e, /d, /a) para que Facebook pueda leer metadatos y generar tarjetas.
+Allow: /e/
+Allow: /d/
+Allow: /a/
 
-# Permitir acceso solo a bots específicos
+User-agent: Facebot
+Allow: /
+Disallow: /admin/
+# Permitimos acceso a las rutas usadas para previews/redirecciones cortas
+Allow: /e/
+Allow: /d/
+Allow: /a/
+
+# Twitter (Twitterbot) - permitir previews / tarjetas
+User-agent: Twitterbot
+Allow: /
+Disallow: /admin/
+# Permitimos acceso a las rutas usadas para previews/redirecciones cortas
+Allow: /e/
+Allow: /d/
+Allow: /a/
+
+# Instagram previews (usa user-agent con la palabra Instagram)
+User-agent: Instagram
+Allow: /
+Disallow: /admin/
+# Permitimos acceso a las rutas usadas para previews/redirecciones cortas
+Allow: /e/
+Allow: /d/
+Allow: /a/
+
+# TikTok previews (variantes posibles: TikTok, TikTokBot)
+User-agent: TikTok
+Allow: /
+Disallow: /admin/
+Allow: /e/
+Allow: /d/
+Allow: /a/
+
+User-agent: TikTokBot
+Allow: /
+Disallow: /admin/
+Allow: /e/
+Allow: /d/
+Allow: /a/
+
+# Permitir acceso a bots de motores de búsqueda específicos
 User-agent: Googlebot
 Allow: /
 Disallow: /admin/
@@ -24,8 +72,18 @@ Disallow: /e/
 Disallow: /d/
 Disallow: /a/
 
+# Bloquear todos los demás bots por defecto
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /e/
+Disallow: /d/
+Disallow: /a/
+
 # Sitemap
 Sitemap: https://tseyor.org/sitemap.xml
 
-# Comentario: Este archivo permite el acceso solo a Googlebot, Bingbot y Yandexbot,
-# bloqueando el acceso a todos los demás bots. La sección /admin/ está bloqueada para todos.
+# Nota: El archivo por defecto bloquea a la mayoría de bots y permite solo
+# a los listados explícitamente. Se añadió explicitamente a los crawlers de
+# Facebook para que la herramienta de depuración y la generación de tarjetas
+# (Open Graph) puedan acceder al contenido.

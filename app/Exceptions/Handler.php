@@ -245,6 +245,23 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        // DEBUG: Log específico para errores 403 de Facebook
+        $userAgent = $request->header('User-Agent', '');
+        $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500;
+        
+        if (stripos($userAgent, 'facebook') !== false && $statusCode == 403) {
+            Log::error('[FACEBOOK 403 ERROR] Facebook bot received 403', [
+                'url' => $request->fullUrl(),
+                'user_agent' => $userAgent,
+                'exception_type' => get_class($exception),
+                'exception_message' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'route' => $request->route() ? $request->route()->getName() : 'NO_ROUTE',
+                'route_uri' => $request->route() ? $request->route()->uri() : 'NO_ROUTE',
+            ]);
+        }
+
         // Guardar la excepción en el log con información detallada
         // Log::error($exception->getMessage(), ['exception' => $exception]);
 
