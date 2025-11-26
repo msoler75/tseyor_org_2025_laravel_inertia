@@ -195,6 +195,13 @@ return [
             'level' => 'debug',
         ],
 
+        'share' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/share.log'),
+            'level' => 'info',
+            'days' => 14,
+        ],
+
         'inscripciones' => [
             'driver' => 'single',
             'path' => storage_path('logs/inscripciones-' . date('Y-m') . '.log'),

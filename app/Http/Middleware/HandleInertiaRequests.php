@@ -34,6 +34,17 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // DEBUG: Log para detectar si Facebook llega aquí
+        /*$userAgent = $request->header('User-Agent', '');
+        if (stripos($userAgent, 'facebook') !== false) {
+            \Illuminate\Support\Facades\Log::channel('validation')->info('[HandleInertiaRequests] Facebook bot detected', [
+                'url' => $request->fullUrl(),
+                'user_agent' => $userAgent,
+                'method' => $request->method(),
+                'route_uri' => $request->route() ? $request->route()->uri() : 'NO_ROUTE',
+            ]);
+        }*/
+
         $setting = Setting::where('name', 'anuncio')->first();
         $anuncio = optional($setting)->value;
 
