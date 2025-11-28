@@ -154,33 +154,72 @@
                     <table class="w-full divide-y divide-gray-500">
                         <thead class="bg-base-100!">
                             <tr>
-                                <th colspan=4 class="font-bold mb-3 text-lg px-3 py-4">Cambios de estado en inscripciones:</th>
+                                <th colspan=6 class="font-bold mb-3 text-lg px-3 py-4">Cambios recientes en inscripciones:</th>
                             </tr>
                             <tr>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Fecha
-                                </th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Cambio
-                                </th>
-                                <th class="px-3 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Tutor Asignado
-                                </th>
-                                <th class="py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                </th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Autor</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qué cambió</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inscrito</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cambio</th>
+                                <th class="py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                             </tr>
                         </thead>
                         <tbody class="bg-base-100! divide-y divide-gray-500">
                             @foreach ($cambios_inscripciones as $cambio)
+                                @php
+                                    // Normalizar valores potencialmente arrays/objetos a strings para evitar errores en Blade
+                                    $actor_display = $cambio->actor_name ?? '<sistema>';
+                                    if (is_array($actor_display) || is_object($actor_display)) {
+                                        $actor_display = json_encode($actor_display, JSON_UNESCAPED_UNICODE);
+                                    }
+
+                                    $inscrito_display = $cambio->revisionable->nombre ?? 'Desconocido';
+                                    if (is_array($inscrito_display) || is_object($inscrito_display)) {
+                                        $inscrito_display = json_encode($inscrito_display, JSON_UNESCAPED_UNICODE);
+                                    }
+
+                                    // Para tutor/estado
+                                    $tutor_old_display = $cambio->tutor_old_name ?? null;
+                                    $tutor_new_display = $cambio->tutor_new_name ?? null;
+                                    if (is_array($tutor_old_display) || is_object($tutor_old_display)) {
+                                        $tutor_old_display = json_encode($tutor_old_display, JSON_UNESCAPED_UNICODE);
+                                    }
+                                    if (is_array($tutor_new_display) || is_object($tutor_new_display)) {
+                                        $tutor_new_display = json_encode($tutor_new_display, JSON_UNESCAPED_UNICODE);
+                                    }
+
+                                    // Valores antiguos/nuevos para estado (etiquetas)
+                                    $old_value = $cambio->old_value;
+                                    $new_value = $cambio->new_value;
+                                    if (is_array($old_value) || is_object($old_value)) $old_value = json_encode($old_value, JSON_UNESCAPED_UNICODE);
+                                    if (is_array($new_value) || is_object($new_value)) $new_value = json_encode($new_value, JSON_UNESCAPED_UNICODE);
+                                @endphp
                                 <tr>
-                                    <td class="px-3 py-2 whitespace-nowrap">
-                                        <TimeAgo date="{{ $cambio->created_at }}" />
-                                    </td>
+                                    <td class="px-3 py-2 whitespace-nowrap"><TimeAgo date="{{ $cambio->created_at }}" /></td>
+                                    <td class="px-3 py-2">{{ $actor_display }}</td>
                                     <td class="px-3 py-2">
-                                        {{ $cambio->user->name ?? '<sistema>' }} cambió inscripción de {{ $cambio->revisionable->nombre ?? 'Desconocido' }} de "{{ $cambio->old_value }}" a "{{ $cambio->new_value }}"
+                                        @if(isset($cambio->key) && $cambio->key === 'user_id')
+                                            Tutor
+                                        @else
+                                            Estado
+                                        @endif
                                     </td>
-                                    <td class="px-3 py-2 whitespace-nowrap">
-                                        {{ $cambio->revisionable->usuarioAsignado->name ?? 'No asignado' }}
+                                    <td class="px-3 py-2">{{ $inscrito_display }}</td>
+                                    <td class="px-3 py-2">
+                                        @if(isset($cambio->key) && $cambio->key === 'user_id')
+                                            {{-- usar los nombres normalizados desde el controlador --}}
+                                            {{ $tutor_old_display ?? 'No asignado' }} <span class="mx-1">→</span> {{ $tutor_new_display ?? '' }}
+                                        @else
+                                            @php
+                                                // Usar las etiquetas ya calculadas en el controlador si existen
+                                                $oldLabel = $cambio->old_label_display ?? ($old_value ?? $cambio->old_value);
+                                                $newLabel = $cambio->new_label_display ?? ($new_value ?? $cambio->new_value);
+                                                if (is_array($oldLabel) || is_object($oldLabel)) $oldLabel = json_encode($oldLabel, JSON_UNESCAPED_UNICODE);
+                                                if (is_array($newLabel) || is_object($newLabel)) $newLabel = json_encode($newLabel, JSON_UNESCAPED_UNICODE);
+                                            @endphp
+                                            {{ $oldLabel }} <span class="mx-1">→</span> {{ $newLabel }}
+                                        @endif
                                     </td>
                                     <td class="px-3 py-2 whitespace-nowrap">
                                         <a title="Editar inscripción" class="btn btn-xs" href="/admin/inscripcion/{{ $cambio->revisionable->id }}/edit">Editar</a>

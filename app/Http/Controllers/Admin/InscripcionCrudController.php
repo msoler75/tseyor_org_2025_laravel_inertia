@@ -333,8 +333,7 @@ class InscripcionCrudController extends CrudController
         // Notas de seguimiento
         CRUD::column('notas')->type('textarea')->label('Notas de Seguimiento');
 
-        // Campo legacy
-        CRUD::column('asignado')->type('text')->label('Asignado (Legacy)');
+        // Campo legacy removed from views
     }
 
     /**
@@ -364,30 +363,9 @@ class InscripcionCrudController extends CrudController
      */
     public function update()
     {
+        // Validar request y delegar a la implementación traitada.
+        // Dejamos que los observers del modelo `Inscripcion` gestionen notas, actividad y notificaciones.
         $this->crud->setRequest($this->crud->validateRequest());
-        $request = $this->crud->getRequest();
-        $currentEntry = $this->crud->getCurrentEntry();
-        // Marcar actividad para cambios desde el CRUD administrativo
-        $currentEntry->marcarActividad();
-
-        // Si se asigna tutor y el estado es 'nueva' o 'asignada', usar asignarA para notificar
-        if (!empty($request->user_id) && in_array($request->estado, ['', 'nueva', 'asignada'])) {
-            $usuario = User::find($request->user_id);
-            if ($usuario && $currentEntry->user_id != $usuario->id) {
-                $usuarioAntiguo = User::find($currentEntry->user_id);
-                $currentEntry->asignarA($usuario, 'Asignación desde Secretaría de Tseyor');
-                // Actualizar otros campos editados
-                $currentEntry->fill($request->except(['user_id', 'estado', 'fecha_asignacion']));
-                $currentEntry->save();
-                // Notificar al usuario antiguo si existe y es distinto al nuevo
-                if ($usuarioAntiguo && $usuarioAntiguo->id !== $usuario->id) {
-                    $usuarioAntiguo->notify(new InscripcionReasignada($currentEntry, $usuario));
-                }
-                $this->crud->unsetValidation();
-                return redirect()->back()->with('success', 'Inscripción actualizada, tutor notificado y antiguo tutor informado de la reasignación.');
-            }
-        }
-
         $this->crud->unsetValidation();
         return $this->traitUpdate();
     }
@@ -449,7 +427,6 @@ class InscripcionCrudController extends CrudController
                     'user_id' => $userId,
                     'estado' => 'asignada',
                     'fecha_asignacion' => now(),
-                    'asignado' => $user->name // Por compatibilidad
                 ]);
 
                 $count++;
@@ -525,30 +502,7 @@ class InscripcionCrudController extends CrudController
         ]);
     }
 
-    /**
-     * Método para cambiar estado rápidamente
-     */
-    public function cambiarEstado(Request $request, $id)
-    {
-        $inscripcion = \App\Models\Inscripcion::findOrFail($id);
-        $nuevoEstado = $request->input('estado');
-        $comentario = $request->input('comentario', '');
 
-        if (!array_key_exists($nuevoEstado, config('inscripciones.estados'))) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Estado no válido'
-            ]);
-        }
-
-        $user = Auth::user();
-        $inscripcion->actualizarEstado($nuevoEstado, optional($user)->name, $comentario);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Estado actualizado correctamente'
-        ]);
-    }
 
     /**
      * Aplicar filtros básicos (compatibles con versión gratuita)

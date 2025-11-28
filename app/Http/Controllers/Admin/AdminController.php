@@ -45,8 +45,8 @@ class AdminController // extends Controller
 
         $revisiones = Revision::select()->latest()->take(10)->get();
 
-        $cambios_inscripciones = Revision::where('revisionable_type', 'App\Models\Inscripcion')
-            ->where('key', 'estado')
+        $cambios_inscripciones = Revision::where('revisionable_type', 'App\\Models\\Inscripcion')
+            ->whereIn('key', ['estado', 'user_id'])
             ->with('user')
             ->with(['revisionable' => function($query) {
                 $query->with('usuarioAsignado');
@@ -54,6 +54,130 @@ class AdminController // extends Controller
             ->latest()
             ->take(10)
             ->get();
+
+        // Enriquecer cada revisión con tutor antiguo/nuevo cuando aplique.
+        // Para revisiones de `user_id` tomamos old_value/new_value; para revisiones de `estado` buscamos
+        // la última revisión de `user_id` anterior o igual a la fecha de la revisión de estado.
+        $tutorIds = [];
+        foreach ($cambios_inscripciones as $c) {
+            $c->tutor_old_id = null;
+            $c->tutor_new_id = null;
+
+            if ($c->key === 'user_id') {
+                $old = $c->old_value;
+                $new = $c->new_value;
+                if ($old && is_numeric($old)) { $c->tutor_old_id = (int)$old; $tutorIds[] = (int)$old; }
+                if ($new && is_numeric($new)) { $c->tutor_new_id = (int)$new; $tutorIds[] = (int)$new; }
+            } else {
+                // key === 'estado'
+                $userRev = Revision::where('revisionable_type', 'App\\Models\\Inscripcion')
+                    ->where('revisionable_id', $c->revisionable_id)
+                    ->where('key', 'user_id')
+                    ->where('created_at', '<=', $c->created_at)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                $tutorId = $userRev ? ($userRev->new_value ?? $userRev->old_value) : null;
+                if ($tutorId && is_numeric($tutorId)) { $c->tutor_old_id = (int)$tutorId; $tutorIds[] = (int)$tutorId; }
+            }
+        }
+
+        // Precargar usuarios para evitar N+1
+        $usuarios = collect();
+        if (!empty($tutorIds)) {
+            $usuarios = User::whereIn('id', array_values(array_unique($tutorIds)))->get()->keyBy('id');
+        }
+
+        foreach ($cambios_inscripciones as $c) {
+            $c->tutor_old_user = $c->tutor_old_id && $usuarios->has($c->tutor_old_id) ? $usuarios->get($c->tutor_old_id) : null;
+            $c->tutor_new_user = $c->tutor_new_id && $usuarios->has($c->tutor_new_id) ? $usuarios->get($c->tutor_new_id) : null;
+        }
+
+        // Normalizar valores que pueden ser arrays (provienen de la librería de revisiones)
+        foreach ($cambios_inscripciones as $c) {
+            // Preparar etiquetas legibles para estado si aplica (antes de convertir arrays a JSON)
+            $c->old_label_display = null;
+            $c->new_label_display = null;
+            if ($c->key === 'estado') {
+                $oldv = $c->old_value;
+                $newv = $c->new_value;
+
+                // If values are JSON-encoded strings, try to decode to array
+                if (is_string($oldv) && (str_starts_with($oldv, '{') || str_starts_with($oldv, '['))) {
+                    $decoded = json_decode($oldv, true);
+                    if (is_array($decoded)) $oldv = $decoded;
+                }
+                if (is_string($newv) && (str_starts_with($newv, '{') || str_starts_with($newv, '['))) {
+                    $decoded = json_decode($newv, true);
+                    if (is_array($decoded)) $newv = $decoded;
+                }
+
+                // Resolve old label
+                if (is_array($oldv)) {
+                    $c->old_label_display = $oldv['etiqueta'] ?? ($oldv['label'] ?? json_encode($oldv, JSON_UNESCAPED_UNICODE));
+                } elseif (!empty($oldv) && is_string($oldv)) {
+                    $estados = Inscripcion::getEstadosDisponibles();
+                    $candidate = $estados[$oldv] ?? $oldv;
+                    if (is_array($candidate)) {
+                        $c->old_label_display = $candidate['etiqueta'] ?? ($candidate['label'] ?? json_encode($candidate, JSON_UNESCAPED_UNICODE));
+                    } else {
+                        $c->old_label_display = $candidate;
+                    }
+                }
+
+                // Resolve new label
+                if (is_array($newv)) {
+                    $c->new_label_display = $newv['etiqueta'] ?? ($newv['label'] ?? json_encode($newv, JSON_UNESCAPED_UNICODE));
+                } elseif (!empty($newv) && is_string($newv)) {
+                    $estados = $estados ?? Inscripcion::getEstadosDisponibles();
+                    $candidate = $estados[$newv] ?? $newv;
+                    if (is_array($candidate)) {
+                        $c->new_label_display = $candidate['etiqueta'] ?? ($candidate['label'] ?? json_encode($candidate, JSON_UNESCAPED_UNICODE));
+                    } else {
+                        $c->new_label_display = $candidate;
+                    }
+                }
+            }
+
+            // old_value/new_value a string
+            if (is_array($c->old_value)) {
+                $c->old_value = json_encode($c->old_value);
+            }
+            if (is_array($c->new_value)) {
+                $c->new_value = json_encode($c->new_value);
+            }
+
+            // tutor_old_name / tutor_new_name como strings (si existen usuarios, usar nombre)
+            $c->tutor_old_name = null;
+            $c->tutor_new_name = null;
+            if (!empty($c->tutor_old_user) && is_object($c->tutor_old_user)) {
+                $c->tutor_old_name = $c->tutor_old_user->name ?? null;
+            } elseif (!empty($c->tutor_old_id)) {
+                $c->tutor_old_name = 'Usuario #' . $c->tutor_old_id;
+            } elseif (!empty($c->old_value) && is_string($c->old_value)) {
+                $c->tutor_old_name = $c->old_value;
+            }
+
+            if (!empty($c->tutor_new_user) && is_object($c->tutor_new_user)) {
+                $c->tutor_new_name = $c->tutor_new_user->name ?? null;
+            } elseif (!empty($c->tutor_new_id)) {
+                $c->tutor_new_name = 'Usuario #' . $c->tutor_new_id;
+            } elseif (!empty($c->new_value) && is_string($c->new_value)) {
+                $c->tutor_new_name = $c->new_value;
+            }
+
+            // Asegurar que revisionable->nombre es string si es array
+            if (isset($c->revisionable) && is_object($c->revisionable)) {
+                if (isset($c->revisionable->nombre) && is_array($c->revisionable->nombre)) {
+                    $c->revisionable->nombre = json_encode($c->revisionable->nombre);
+                }
+            }
+            // actor_name como string
+            try {
+                $c->actor_name = $c->user?->name ?? '<sistema>';
+            } catch (\Throwable $e) {
+                $c->actor_name = '<sistema>';
+            }
+        }
 
         $busquedas = Busqueda::select(['query', 'created_at'])->latest()->take(10)->get();
 

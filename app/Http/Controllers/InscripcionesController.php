@@ -150,7 +150,12 @@ class InscripcionesController extends Controller
 
         Log::channel('inscripciones')->info("Asignando inscripción {$inscripcion->id} a usuario {$usuario->id} ({$usuario->name}), motivo: {$request->motivo}");
 
-        $inscripcion->asignarA($usuario, $request->motivo ?? 'Asignación manual');
+        // Usar update() para confiar en los observers que centralizan efectos (notas, notificaciones)
+        $inscripcion->update(['user_id' => $usuario->id]);
+        // Añadir motivo como comentario si se proporciona
+        if (!empty($request->motivo)) {
+            $inscripcion->comentar($request->motivo, true);
+        }
 
         Log::channel('inscripciones')->info("Inscripción {$inscripcion->id} asignada exitosamente a {$usuario->name}");
 
@@ -175,13 +180,14 @@ class InscripcionesController extends Controller
         }
 
         $request->validate([
-            'estado' => 'required|in:' . implode(',', array_keys(Inscripcion::getEstadosDisponibles())),
-            'comentario' => 'nullable|string|max:1000'
+            'estado' => 'required|in:' . implode(',', array_keys(Inscripcion::getEstadosDisponibles()))
         ]);
 
         Log::channel('inscripciones')->info("ActualizarEstado: Cambiando estado de {$inscripcion->estado} a {$request->estado} para inscripcion {$inscripcion->id}");
 
-        $inscripcion->actualizarEstado($request->estado, $user->name, $request->comentario ?? '');
+        // Reemplazo de actualizarEstado: asignar estado y guardar. El observer añadirá la nota estándar y actualizará `ultima_actividad`.
+        $inscripcion->estado = $request->estado;
+        $inscripcion->save();
 
         return back()->with('success', 'Estado actualizado correctamente');
     }
@@ -203,7 +209,28 @@ class InscripcionesController extends Controller
 
         Log::channel('inscripciones')->info("Rebotando inscripción {$inscripcion->id} por usuario " . Auth::id() . ", motivo: {$request->motivo}");
 
-        $inscripcion->rebotar($request->motivo);
+
+        // Capturar nombre del tutor anterior antes de modificar el modelo
+        $nombreUsuario = $inscripcion->usuarioAsignado?->name ?? 'Usuario desconocido';
+
+        // Suprimir temporalmente los observers para evitar notas automáticas
+        $inscripcion->setSkipEstadoObserver(true);
+        $inscripcion->setSkipUserObserver(true);
+
+        // Aplicar cambios y persistir
+        $inscripcion->estado = 'rebotada';
+        $inscripcion->user_id = null;
+        $inscripcion->setAttribute('fecha_asignacion', null);
+        $inscripcion->setAttribute('ultima_notificacion', null);
+        $inscripcion->ultima_actividad = now();
+        $inscripcion->save();
+
+        // Restaurar observers
+        $inscripcion->setSkipEstadoObserver(false);
+        $inscripcion->setSkipUserObserver(false);
+
+        // Añadir el comentario manual sobre el rebote (comentar añade nota y hace save)
+        $inscripcion->comentar("Rebotada por {$nombreUsuario}. Motivo: {$request->motivo}");
 
         Log::channel('inscripciones')->info("Inscripción {$inscripcion->id} rebotada exitosamente");
 
@@ -284,15 +311,19 @@ class InscripcionesController extends Controller
         Log::channel('inscripciones')->info("Iniciando asignación masiva: " . count($validated['inscripciones_ids']) . " inscripciones a usuario {$usuario->id} ({$usuario->name})");
 
         $asignadas = 0;
-        foreach ($inscripciones as $inscripcion) {
-            if (!$inscripcion->user_id) { // Solo asignar si no está ya asignada
-                $inscripcion->asignarA($usuario, 'Asignación masiva desde dashboard');
-                $asignadas++;
-                Log::channel('inscripciones')->info("Inscripción {$inscripcion->id} asignada en masa a {$usuario->name}");
-            } else {
-                Log::channel('inscripciones')->info("Inscripción {$inscripcion->id} ya asignada, omitida en asignación masiva");
+        // Suprimir notificaciones individuales durante la asignación masiva
+        Inscripcion::suppressAssignmentNotifications(function () use ($inscripciones, $usuario, &$asignadas) {
+            foreach ($inscripciones as $inscripcion) {
+                if (!$inscripcion->user_id) { // Solo asignar si no está ya asignada
+                    // Asignar mediante update para dejar que los observers gestionen notas/fechas
+                    $inscripcion->update(['user_id' => $usuario->id]);
+                    $asignadas++;
+                    Log::channel('inscripciones')->info("Inscripción {$inscripcion->id} asignada en masa a {$usuario->name}");
+                } else {
+                    Log::channel('inscripciones')->info("Inscripción {$inscripcion->id} ya asignada, omitida en asignación masiva");
+                }
             }
-        }
+        });
 
         Log::channel('inscripciones')->info("Asignación masiva completada: {$asignadas} inscripciones asignadas a {$usuario->name}");
 
