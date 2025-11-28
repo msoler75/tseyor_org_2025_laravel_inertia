@@ -42,6 +42,59 @@ class Inscripcion extends Model
     ];
 
     /**
+     * Flag interno para evitar recursión cuando el modelo se guarda desde los observers
+     */
+    protected bool $skipEstadoObserver = false;
+
+    /**
+     * Flag interno para evitar recursión cuando cambia el tutor (user_id)
+     */
+    protected bool $skipUserObserver = false;
+
+    /**
+     * Public setter to control skipping the estado observer from controllers
+     */
+    public function setSkipEstadoObserver(bool $skip): void
+    {
+        $this->skipEstadoObserver = $skip;
+    }
+
+    /**
+     * Public setter to control skipping the user_id observer from controllers
+     */
+    public function setSkipUserObserver(bool $skip): void
+    {
+        $this->skipUserObserver = $skip;
+    }
+
+    /**
+     * Flag de instancia para suprimir envío de notificaciones de asignación (uso en wrapper/mass)
+     */
+    protected bool $suppress_assignment_notifications = false;
+
+    /**
+     * Flag global para suprimir notificaciones durante operaciones masivas
+     */
+    protected static bool $globalSuppressAssignmentNotifications = false;
+
+    /**
+     * NOTA: ya no usamos almacenamiento temporal en array; los cambios de estado
+     * y de tutor se gestionan directamente en el evento `updating`.
+     */
+
+    /**
+     * Helper para suprimir notificaciones de asignación durante una operación masiva
+     */
+    public static function suppressAssignmentNotifications(callable $callback)
+    {
+        static::$globalSuppressAssignmentNotifications = true;
+        try {
+            return $callback();
+        } finally {
+            static::$globalSuppressAssignmentNotifications = false;
+        }
+    }
+    /**
      * Relación con el usuario asignado
      */
     public function usuarioAsignado(): BelongsTo
@@ -79,6 +132,96 @@ class Inscripcion extends Model
         return config('inscripciones.estados_no_elegibles', []);
     }
 
+    protected static function booted()
+    {
+        static::updating(function ($model) {
+            // Cambio de estado
+            if ($model->isDirty('estado') && empty($model->skipEstadoObserver)) {
+                $estadoAnterior = $model->getOriginal('estado');
+                $estadoNuevo = $model->estado;
+                $actor = auth()->user()?->name ?? 'Sistema';
+
+                // Marcar actividad
+                $model->ultima_actividad = now();
+
+                // Añadir la nota directamente (se guardará en el mismo proceso de save)
+                $fecha = now()->format('d/m/Y H:i');
+                $nota = "- {$fecha} - {$actor}: Cambiado de '{$estadoAnterior}' a '{$estadoNuevo}'";
+                $model->notas = ($model->notas ? $model->notas . "\n" : '') . $nota;
+            }
+
+            // Cambio de tutor (user_id)
+            if ($model->isDirty('user_id') && empty($model->skipUserObserver)) {
+                $userAnteriorId = $model->getOriginal('user_id');
+                $userNuevoId = $model->user_id;
+                $actor = auth()->user()?->name ?? 'Sistema';
+
+                // Marcar actividad
+                $model->ultima_actividad = now();
+
+                // Si se está asignando un tutor y el estado original era 'nueva',
+                // actualizar el estado a 'asignada' automáticamente (si no se cambió explícitamente el estado).
+                $estadoAnterior = $model->getOriginal('estado');
+                if ($userNuevoId && $estadoAnterior === 'nueva' && !$model->isDirty('estado')) {
+                    $model->estado = 'asignada';
+                    // Añadir nota de cambio de estado implícito
+                    $fechaEstado = now()->format('d/m/Y H:i');
+                    $notaEstado = "- {$fechaEstado} - {$actor}: Cambiado de 'nueva' a 'asignada'";
+                    $model->notas = ($model->notas ? $model->notas . "\n" : '') . $notaEstado;
+                }
+
+                if ($userNuevoId && !$userAnteriorId) {
+                    $nuevoNombre = \App\Models\User::find($userNuevoId)?->name ?? 'Usuario desconocido';
+                    $notaUser = "- " . now()->format('d/m/Y H:i') . " - {$actor}: Asignado a {$nuevoNombre}";
+                    // Registrar fecha de asignación cuando se asigna por primera vez
+                    $model->fecha_asignacion = now();
+                } elseif ($userNuevoId && $userAnteriorId && $userNuevoId !== $userAnteriorId) {
+                    $nombreAnterior = \App\Models\User::find($userAnteriorId)?->name ?? 'Usuario desconocido';
+                    $nuevoNombre = \App\Models\User::find($userNuevoId)?->name ?? 'Usuario desconocido';
+                    $notaUser = "- " . now()->format('d/m/Y H:i') . " - {$actor}: Reasignado de {$nombreAnterior} a {$nuevoNombre}";
+                    // Al reasignar, actualizar fecha_asignacion
+                    $model->fecha_asignacion = now();
+                } elseif (!$userNuevoId) {
+                    $nombreAnterior = \App\Models\User::find($userAnteriorId)?->name ?? 'Usuario desconocido';
+                    $notaUser = "- " . now()->format('d/m/Y H:i') . " - {$actor}: Desasignado (antes {$nombreAnterior})";
+                } else {
+                    $notaUser = null;
+                }
+
+                if (!empty($notaUser)) {
+                    $model->notas = ($model->notas ? $model->notas . "\n" : '') . $notaUser;
+                }
+
+                // Enviar notificaciones: nuevo tutor y, si procede, tutor anterior
+                if ($userNuevoId
+                    && empty($model->suppress_assignment_notifications)
+                    && empty(static::$globalSuppressAssignmentNotifications)) {
+                    try {
+                        $usuario = \App\Models\User::find($userNuevoId);
+                        if ($usuario) {
+                            $usuario->notify(new \App\Notifications\InscripcionAsignada($model));
+                            // Marcar ultima_notificacion para persistir en el mismo save
+                            $model->ultima_notificacion = now();
+                        }
+                    } catch (\Exception $e) {
+                        Log::channel('inscripciones')->error('Error enviando notificación de asignación: ' . $e->getMessage());
+                    }
+                }
+
+                if ($userAnteriorId && $userNuevoId && $userAnteriorId !== $userNuevoId) {
+                    try {
+                        $usuarioPrevio = \App\Models\User::find($userAnteriorId);
+                        $usuarioNuevo = \App\Models\User::find($userNuevoId);
+                        if ($usuarioPrevio && $usuarioNuevo) {
+                            $usuarioPrevio->notify(new \App\Notifications\InscripcionReasignada($model, $usuarioNuevo));
+                        }
+                    } catch (\Exception $e) {
+                        Log::channel('inscripciones')->error('Error notificando al tutor anterior sobre reasignación: ' . $e->getMessage());
+                    }
+                }
+            }
+        });
+    }
     /**
      * Verifica si necesita seguimiento automático
      */
@@ -132,68 +275,6 @@ class Inscripcion extends Model
         $this->save();
     }
 
-    /**
-     * Asigna la inscripción a un usuario
-     */
-    public function asignarA(User $usuario, string $motivo = 'Asignación inicial'): void
-    {
-        $this->user_id = $usuario->id;
-        $this->estado = 'asignada';
-        $this->fecha_asignacion = now();
-        $this->ultima_actividad = now(); // Actividad del tutor/admin
-        $this->asignado = $usuario->name; // Campo legacy para compatibilidad
-
-        // Notificar al tutor asignado con la notificación adecuada
-        try {
-            $usuario->notify(new \App\Notifications\InscripcionAsignada($this));
-            $this->ultima_notificacion = now(); // Solo actualizar si la notificación se envía correctamente
-        } catch (\Exception $e) {
-            Log::channel('inscripciones')->error('Error enviando notificación de asignación a tutor: ' . $e->getMessage());
-            // No establecer ultima_notificacion si falla la notificación
-        }
-
-        $this->save(); // Una sola llamada a save() al final
-
-        $this->comentar("Asignada a {$usuario->name}. {$motivo}");
-    }
-
-    /**
-     * Rebota la inscripción con un motivo
-     */
-    public function rebotar(string $motivo): void
-    {
-        $usuarioAnterior = $this->usuarioAsignado;
-
-        $this->estado = 'rebotada';
-        $this->user_id = null;
-        $this->setAttribute('fecha_asignacion', null);
-        $this->setAttribute('ultima_notificacion', null);
-        $this->ultima_actividad = now(); // Actividad del tutor
-
-        $this->save();
-
-        $nombreUsuario = $usuarioAnterior?->name ?? 'Usuario desconocido';
-        $this->comentar("Rebotada por {$nombreUsuario}. Motivo: {$motivo}");
-    }
-
-    /**
-     * Actualiza el estado con comentario
-     */
-    public function actualizarEstado(string $nuevoEstado, string $userName, string $comentario = ''): void
-    {
-        $estadoAnterior = $this->estado;
-        $this->estado = $nuevoEstado;
-        $this->ultima_actividad = now(); // Actividad del tutor
-
-        $this->save();
-
-        $mensaje = "Cambiado de '{$estadoAnterior}' a '{$nuevoEstado}' por $userName";
-        if ($comentario) {
-            $mensaje .= ": {$comentario}";
-        }
-
-        $this->comentar($mensaje);
-    }
 
 
     /**

@@ -49,7 +49,6 @@ Route::group([
 
     // Rutas adicionales para inscripciones
     Route::post('inscripcion/asignar-masiva', 'InscripcionCrudController@asignarMasiva')->name('admin.inscripcion.asignar-masiva');
-    Route::post('inscripcion/{id}/cambiar-estado', 'InscripcionCrudController@cambiarEstado')->name('admin.inscripcion.cambiar-estado');
     Route::crud('meditacion', 'MeditacionCrudController');
     Route::crud('psicografia', 'PsicografiaCrudController');
     Route::crud('publicacion', 'PublicacionCrudController');
