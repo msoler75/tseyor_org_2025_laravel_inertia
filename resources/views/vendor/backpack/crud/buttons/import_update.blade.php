@@ -13,13 +13,15 @@
                 split: location.href.split('/')
             })
 
-            var elem = button.parentNode
-            while (elem.tagName != "TR")
-                elem = elem.parentNode
-            const id = elem.firstChild.firstChild.innerText.replace(/,/g, '')
+            var tr = button.closest('tr');
+            const id = tr.firstChild.innerText.replace(/,/g, '') // quita la marca de miles
 
-
-            // console.log('id', id)
+            if(!id)
+            {
+                alert("No se ha podido obtener el ID del registro a actualizar.");
+                return;
+            }
+             console.log('id', id)
             var fileInput = document.getElementById('word_file');
             fileInput.onchange = function() {
                 var file = fileInput.files[0];
