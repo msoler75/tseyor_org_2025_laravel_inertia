@@ -92,24 +92,30 @@
                         :key="index"
                         :name="seccion.titulo"
                     >
-                        <p
+                        <div
                             v-if="seccion.titulo"
                             :class="`text-${seccion.level-2}xl font-bold mb-4`"
                         >
-                            {{ seccion.titulo }}
-                        </p>
-                        <Prose
-                            v-html="MarkdownToHtml(seccion.texto)"
-                        ></Prose>
+                            <span v-if="isHtml" v-html="seccion.titulo" />
+                            <span v-else>{{ seccion.titulo }}</span>
+                        </div>
+                        <Prose>
+                            <div
+                                v-if="!isHtml"
+                                v-html="MarkdownToHtml(seccion.texto)"
+                            />
+                            <div
+                                v-else
+                                v-html="seccion.texto"
+                            />
+                        </Prose>
                     </div>
 
                     <div v-if="libros" name="Bibliografía">
                         <h2 class="text-2xl font-bold mt-8 mb-4">Bibliografía</h2>
-                        <Prose
-                            v-if="guia.bibliografia"
-                            class="mb-12"
-                            v-html="bibliografiaHtml"
-                        />
+                        <Prose v-if="guia.bibliografia" class="mb-12">
+                            <div v-html="bibliografiaHtml" />
+                        </Prose>
                         <div class="flex flex-wrap gap-10">
                             <Libro3d
                                 v-for="(libro, index) of libros"
@@ -178,10 +184,14 @@ const props = defineProps({
 });
 
 const format = detectFormat(props.guia.texto);
+const isHtml = format.format === "html";
 
 const texto = ref(props.guia.texto);
 
-if (format.format == "html") texto.value = HtmlToMarkdown(texto.value);
+// En SSR evitamos convertir HTML a Markdown (puede depender del DOM).
+// Si el contenido es HTML, lo usamos tal cual; si es Markdown, se procesará a HTML en template.
+// Nota: La conversión HtmlToMarkdown sólo se aplicaría en cliente si alguna vez fuera necesaria.
+// Mantener texto como llegó para preservar SSR consistente.
 
 const bibliografiaHtml = computed(() => MarkdownToHtml(props.guia.bibliografia));
 
@@ -197,8 +207,13 @@ if (matches) {
 }
 
 // divide las secciones segun los títulos en diferentes tabs
-
-const secciones = computed(() => parseMarkdownToSections(texto.value));
+// si es HTML, no intentamos dividir por cabeceras Markdown
+const secciones = computed(() => {
+    if (isHtml) {
+        return parseHtmlToSections(texto.value);
+    }
+    return parseMarkdownToSections(texto.value);
+});
 
 function parseMarkdownToSections(text) {
     const lines = text.split("\n");
@@ -233,6 +248,37 @@ function parseMarkdownToSections(text) {
     // Añadir la última sección al array de secciones
     if (currentSection !== null) {
         sections.push(currentSection);
+    }
+
+    return sections;
+}
+
+// Parser sencillo para HTML: detecta cabeceras h2-h6 (y h4 del caso)
+// y captura el bloque siguiente hasta la próxima cabecera.
+function parseHtmlToSections(html) {
+    const sections = [];
+    // Normalizar espacios para facilitar regex
+    const src = html.replace(/\r\n?|\n/g, "\n");
+    // Encontrar todas las cabeceras
+    const headerRegex = /<h([2-6])[^>]*>(.*?)<\/h\1>/gi;
+    let match;
+    const headers = [];
+    while ((match = headerRegex.exec(src)) !== null) {
+        headers.push({ level: Number(match[1]), titulo: match[2], index: match.index, length: match[0].length });
+    }
+
+    if (headers.length === 0) {
+        // Sin cabeceras: devolver contenido completo como una sección
+        sections.push({ titulo: "", texto: src, level: 2 });
+        return sections;
+    }
+
+    for (let i = 0; i < headers.length; i++) {
+        const h = headers[i];
+        const startContent = h.index + h.length;
+        const endContent = i + 1 < headers.length ? headers[i + 1].index : src.length;
+        const content = src.slice(startContent, endContent).trim();
+        sections.push({ titulo: h.titulo, texto: content, level: h.level });
     }
 
     return sections;

@@ -61,10 +61,18 @@
 
             <div>
                 <h3>Vista previa:</h3>
-                <canvas class="shadow-xl" ref="preview" width="300" height="450" />
+                <canvas class="shadow-xl cursor-pointer" ref="preview" width="600" height="900" @click="showImagesViewer = true" />
+                <p class="text-xs text-center mt-2 opacity-70">Click para ampliar</p>
             </div>
         </div>
         <canvas class="hidden" ref="render" />
+
+        <ImagesViewer
+            :show="showImagesViewer"
+            @close="showImagesViewer = false"
+            :images="[canvasImageUrl]"
+            :initial-index="0"
+        />
     </div>
 </template>
 
@@ -72,14 +80,16 @@
 import { usePage } from '@inertiajs/vue3';
 import { ucFirstAllWords, removeAccents, ucFirst } from '@/composables/textutils.js'
 
+const ImagesViewer = defineAsyncComponent(() => import('@/Components/ImagesViewer.vue'))
+
 const carpeta = '/almacen/medios/muul/tarjeta'
-
-
 
 const page = usePage()
 const user = page.props.auth?.user
 const preview = ref(null)
 const render = ref(null)
+const showImagesViewer = ref(false)
+const canvasImageUrl = ref('')
 
 const datos = ref({
     nombre: user?.name,
@@ -106,7 +116,7 @@ function generarDiseño(cb) {
     if (typeof cb != "function")
         cb = null;
 
-    const canvas = cb ? render.value :preview.value
+    const canvas = cb ? render.value : preview.value
 
     if (!canvas.getContext)
         return;
@@ -114,6 +124,9 @@ function generarDiseño(cb) {
     if (cb) {
         canvas.width = 1441;
         canvas.height = 2150;
+    } else {
+        canvas.width = 600;
+        canvas.height = 900;
     }
 
     var w = canvas.width,
@@ -178,8 +191,12 @@ function generarDiseño(cb) {
             y += step;
         }
 
-        if (cb)
+        if (cb) {
             cb();
+        } else {
+            // Actualizar URL de la imagen para el viewer
+            canvasImageUrl.value = canvas.toDataURL('image/png');
+        }
     }
 
 }
@@ -229,5 +246,11 @@ form label {
 
 form input[type="text"] {
     @apply text-base w-64;
+}
+
+canvas[ref="preview"] {
+    width: 300px;
+    height: 450px;
+    display: block;
 }
 </style>
