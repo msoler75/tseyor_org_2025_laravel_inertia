@@ -76,7 +76,6 @@
 
 
 <script setup>
-import usePlayer from '@/Stores/player'
 import { getSrcUrl } from '@/composables/srcutils.js'
 
 const props = defineProps({

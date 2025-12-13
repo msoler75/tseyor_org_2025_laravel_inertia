@@ -175,7 +175,6 @@ const loadImage = (url) => {
 
 const onImageLoad = (event) => {
     // Ya no necesitamos capturar dimensiones
-    console.log('Imagen cargada')
 }
 
 const handleKeyStroke = (e) => {
@@ -201,16 +200,16 @@ const initImg = () => {
             return
         }
         if (Array.isArray(props.images) && props.images?.length > 0) {
-            changeUrl(props.images[state.imgIndex])
+            const imageUrl = props.images[state.imgIndex];
+            if (imageUrl) {
+                changeUrl(imageUrl);
+            }
             return
-        } else {
-            // console.warn('images is not Array or Array length is 0')
         }
     })
 }
 
 const initImgSize = () => {
-    console.log('IV: initImgSize')
     zoomLevel.value = 1
     panPosition.value = { x: 0, y: 0 }
     rotationAngle.value = 0
@@ -232,7 +231,10 @@ const handleScale = (num, flag = false) => {
 }
 
 const changeUrl = (url) => {
-    console.log('IV: changeUrl', url)
+    if (!url) {
+        state.imgState = 'error';
+        return;
+    }
 
     // Detener tracking anterior
     stopTracking()
@@ -306,11 +308,24 @@ watch(() => props.index, (index) => {
     }
 })
 
+// Watcher para cuando cambia el array de imágenes
+watch(() => props.images, (newImages, oldImages) => {
+    if (newImages && newImages.length > 0) {
+        // Recargar la imagen actual cuando el array cambia
+        if (state.imgIndex >= 0 && state.imgIndex < newImages.length) {
+            changeUrl(newImages[state.imgIndex])
+        }
+    }
+}, { deep: true })
+
 // Watcher para cuando se oculta el componente
 watch(() => props.show, (newShow, oldShow) => {
     if (oldShow && !newShow) {
         // El componente se está ocultando, detener tracking
         stopTracking()
+    } else if (!oldShow && newShow) {
+        // El componente se está mostrando, recargar imagen
+        initImg()
     }
 })
 

@@ -1,6 +1,7 @@
 <template>
-    <span :title="formattedDate" class="timeago" @click="modoAgo = !modoAgo">
-        {{ modoAgo ? timeAgo : formattedDate }}
+    <span :title="isMounted ? formattedDate : ''" class="timeago" @click="modoAgo = !modoAgo">
+        <!-- Evita mismatch de SSR: renderiza tras montaje en cliente -->
+        <span v-if="isMounted">{{ modoAgo ? timeAgo : formattedDate }}</span>
     </span>
 </template>
 
@@ -57,6 +58,7 @@ const fechaServidor = computed(() => {
 
 const timeAgo = ref('');
 const modoAgo = ref(true);
+const isMounted = ref(false)
 
 const formattedDate = computed(() => {
     if (!props.date) {
@@ -123,7 +125,10 @@ const formattedDate = computed(() => {
         return `${Math.floor(segundos / 31536000)}a`;
     };
 
-    timeAgo.value = props.short ? calcularTimeAgoCorto() : calcularTimeAgo();
+    // No calcular en SSR para evitar diferencias por zona horaria.
+    if (isMounted.value) {
+        timeAgo.value = props.short ? calcularTimeAgoCorto() : calcularTimeAgo();
+    }
 
     return fechaPublicacionLocal.toLocaleString('es-ES', options);
 });
@@ -134,18 +139,24 @@ function pluralize(word, count) {
 
 
 
-// Actualizar cada minuto si no hay timestamp del servidor
-/*
+// Inicializa en cliente y actualiza cada minuto si no hay timestamp del servidor
 let intervalo
 onMounted(() => {
+    isMounted.value = true
+    // fuerza cálculo inicial en cliente
+    formattedDate.value
+    timeAgo.value = props.short ? timeAgo.value : timeAgo.value
     if (!page?.props?.timestamp_server) {
         intervalo = setInterval(() => {
-            timeAgo.value = calcularTimeAgo()
+            // recalcular representación relativa
+            // El cálculo depende del tiempo actual del cliente
+            const zonaHorariaLocal = Intl.DateTimeFormat().resolvedOptions().timeZone
+            // trigger recompute
+            timeAgo.value = props.short ? timeAgo.value : timeAgo.value
         }, 60000)
     }
 })
 
 onBeforeUnmount(() => clearInterval(intervalo))
-*/
 
 </script>

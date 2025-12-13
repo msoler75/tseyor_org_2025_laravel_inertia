@@ -19,7 +19,6 @@
 </template>
 
 <script setup>
-import usePlayer from '@/Stores/player'
 
 const props = defineProps({
     audios: {

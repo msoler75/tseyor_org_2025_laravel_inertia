@@ -61,7 +61,7 @@
 
             <div>
                 <h3>Vista previa:</h3>
-                <canvas class="shadow-xl cursor-pointer" ref="preview" width="600" height="900" @click="showImagesViewer = true" />
+                <canvas class="shadow-xl cursor-pointer" ref="preview" width="600" height="900" @click="openViewer" />
                 <p class="text-xs text-center mt-2 opacity-70">Click para ampliar</p>
             </div>
         </div>
@@ -79,6 +79,7 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3';
 import { ucFirstAllWords, removeAccents, ucFirst } from '@/composables/textutils.js'
+import { useDebounceFn } from '@vueuse/core'
 
 const ImagesViewer = defineAsyncComponent(() => import('@/Components/ImagesViewer.vue'))
 
@@ -90,6 +91,7 @@ const preview = ref(null)
 const render = ref(null)
 const showImagesViewer = ref(false)
 const canvasImageUrl = ref('')
+const generating = ref(false)
 
 const datos = ref({
     nombre: user?.name,
@@ -111,8 +113,6 @@ const email_tseyor = computed(() => removeAccents(nombre_simbolico.value.toLower
  * Si le pasamos cb (callback) es que estamos renderizando la tarjeta final
  */
 function generarDiseño(cb) {
-    console.log('generarDiseño', preview.value)
-
     if (typeof cb != "function")
         cb = null;
 
@@ -137,14 +137,19 @@ function generarDiseño(cb) {
     const ctx = canvas.getContext('2d'),
         fondo = new Image();
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Evitar limpiar antes de que la nueva imagen esté lista para evitar parpadeo
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     fondo.src = carpeta + '/tarjeta_2019_plantilla' + diseno.value + '.' + (cb ? 'png' : 'thumb.jpg');
 
     // Use the identity matrix while clearing the canvas
     //context.setTransform(1, 0, 0, 1, 0, 0);
 
+    generating.value = !cb // solo mostrar loading en preview
+
     fondo.onload = function () {
+        // Limpiar una vez que el fondo esté listo
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         //ctx.fillStyle = 'rgb(255, 0, 0)';
 
         var r = fondo.width / fondo.height;
@@ -193,18 +198,28 @@ function generarDiseño(cb) {
 
         if (cb) {
             cb();
-        } else {
-            // Actualizar URL de la imagen para el viewer
+        }
+
+        // Actualizar URL de la imagen para el viewer si no es render
+        if (!cb) {
             canvasImageUrl.value = canvas.toDataURL('image/png');
+            generating.value = false
         }
     }
 
 }
 
+function openViewer() {
+    if (canvasImageUrl.value) {
+        showImagesViewer.value = true;
+    }
+}
+
 onMounted(() => {
+    const debouncedRender = useDebounceFn(() => generarDiseño(), 400)
     generarDiseño();
-    watch(() => datos, generarDiseño, { deep: true })
-    watch(diseno, generarDiseño)
+    watch(datos, debouncedRender, { deep: true })
+    watch(diseno, debouncedRender)
 })
 
 
@@ -248,7 +263,7 @@ form input[type="text"] {
     @apply text-base w-64;
 }
 
-canvas[ref="preview"] {
+canvas {
     width: 300px;
     height: 450px;
     display: block;

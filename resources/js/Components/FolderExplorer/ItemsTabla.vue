@@ -155,7 +155,6 @@
 
 <script setup>
 import useFolderExplorerStore from '@/Stores/folderExplorer';
-import useSelectors from '@/Stores/selectors'
 import { plural } from '@/composables/textutils'
 
 const page = usePage()

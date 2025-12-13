@@ -86,11 +86,8 @@
 
 
 <script setup>
-import useSelectors from '@/Stores/selectors'
-
 
 const selectors = useSelectors()
-
 
 const props = defineProps({
     categoriaActiva: { default: () => '' },

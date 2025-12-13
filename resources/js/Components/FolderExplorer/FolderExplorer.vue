@@ -266,8 +266,6 @@
 <script setup>
 import { useAttrs } from 'vue'
 import useFolderExplorerStore from "@/Stores/folderExplorer";
-import useSelectors from "@/Stores/selectors";
-import usePlayer from "@/Stores/player";
 import useUserStore from "@/Stores/user";
 const ImagesViewer = defineAsyncComponent(() => import('../ImagesViewer.vue'))
 

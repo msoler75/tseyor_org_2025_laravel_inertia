@@ -155,8 +155,7 @@ const portada = computed(() => page.url == "/");
 
 const showingNavigationDropdown = ref(false);
 
-// Usar el store compartido del tema
-
+// Usar el store compartido del tema - ahora con reactividad garantizada
 const { isDark, toggleDark } = ui.theme
 
 

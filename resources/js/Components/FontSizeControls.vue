@@ -28,7 +28,6 @@
 </template>
 
 <script setup>
-import { useTheme } from '@/Stores/theme';
 
 const theme = useTheme();
 const FONT_MIN = 12;
