@@ -215,6 +215,7 @@ export function detectFormat(text) {
   const markdownProbability = markdownMarkersCount / (totalMarkers + 1);
   const htmlProbability = htmlTagsCount / (totalMarkers + 1);
 
+  if(0)
   console.log({
     htmlTagsCount,
     markdownMarkersCount,
