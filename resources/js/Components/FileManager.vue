@@ -54,7 +54,6 @@
 
 
 <script setup>
-import usePlayer from '@/Stores/player'
 
 const props = defineProps({
     ruta: { type: String, required: false, default: "" },

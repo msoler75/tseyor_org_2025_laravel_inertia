@@ -77,13 +77,6 @@
 
 
 <script setup>
-import { router } from '@inertiajs/vue3';
-
-import usePlayer from '@/Stores/player'
-
-import useSelectors from '@/Stores/selectors'
-import { useTheme } from '@/Stores/theme'
-
 const { isDark } = useTheme();
 
 const selectors = useSelectors()

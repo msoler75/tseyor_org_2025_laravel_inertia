@@ -57,7 +57,6 @@
 </template>
 
 <script setup>
-import usePlayer from '@/Stores/player'
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 
 const { trackDirectAccess } = useGoogleAnalytics()

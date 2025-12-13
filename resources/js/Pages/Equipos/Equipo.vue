@@ -141,7 +141,6 @@ import EquipoInformacion from './Partes/EquipoInformacion.vue'
 import EquipoMembresia from './Partes/EquipoMembresia.vue'
 import CrearInforme from './Partes/CrearInforme.vue'
 import EquipoAdmin from './Partes/EquipoAdmin.vue'
-import usePlayer from '@/Stores/player'
 import { MarkdownToHtml } from "@/composables/markdown"
 
 

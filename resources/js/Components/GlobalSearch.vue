@@ -98,7 +98,6 @@
 import useGlobalSearch from "@/Stores/globalSearch.js"
 import traducir from '@/composables/traducciones'
 import { removeAccents, levenshtein } from '@/composables/textutils'
-import useSelectors from "@/Stores/selectors";
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js';
 
 // Constantes para evitar magic numbers

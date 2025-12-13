@@ -130,7 +130,8 @@
                             <td>
                                 <a class="btn btn-xs btn-error w-fit flex gap-3"
                                     :href="route('comunicado.pdf', comunicado.slug)" target="_blank"
-                                    title="Descargar PDF">
+                                    title="Descargar PDF"
+                                    download>
                                     <Icon icon="ph:download-duotone" />
                                 </a>
                             </td>
@@ -199,7 +200,6 @@
 
 <script setup>
 
-import useSelectors from '@/Stores/selectors'
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 
 const { trackUserEngagement } = useGoogleAnalytics()
