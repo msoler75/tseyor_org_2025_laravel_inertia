@@ -121,15 +121,6 @@ class CheckBouncedEmails extends Command
 
         // Definición de patrones y acciones
         $patterns = [
-            // detectado posible spam con oportunidad de desbloquear falso positivo
-            [
-                'patterns' => [
-                    '/false[\s\r\n]positive/i',
-                ],
-                'estado' => 'bloqueado',
-                'accion' => 'manual',
-                'log' => 'Mensaje bloqueado o posible falso positivo. Revisar manualmente.',
-            ],
             // Buzón lleno / Quota excedida (temporal)
             [
                 'patterns' => [
@@ -146,7 +137,25 @@ class CheckBouncedEmails extends Command
                 'accion' => 'temporal',
                 'log' => 'Buzón lleno o cuota excedida. Reintentar más tarde.',
             ],
+            // Mensaje bloqueado / Cuenta bloqueada (IMPORTANTE: DEBE IR ANTES DE "no_existe")
+            // Para evitar que bloqueos temporales por spam se clasifiquen como eliminación definitiva
+            [
+                'patterns' => [
+                    '/Message[\s\r\n]+blocked/i',
+                    '/Account[\s\r\n]+blocked/i',
+                    '/\[CSR\][\s\r\n]+Account[\s\r\n]+blocked/i',
+                    '/5\.7\.1[\s\r\n]+\[CS\][\s\r\n]+Message[\s\r\n]+blocked/i',
+                    '/5\.7\.1[\s\r\n]+\[CSR\][\s\r\n]+Account[\s\r\n]+blocked/i',
+                    '/blocked[\s\r\n]+by[\s\r\n]+security/i',
+                    '/false[\s\r\n]+positive/i',
+                    '/mailchannels\.net/i', // Detectar bloqueos de MailChannels específicamente
+                ],
+                'estado' => 'bloqueado',
+                'accion' => 'manual',
+                'log' => 'Mensaje o cuenta bloqueada temporalmente (posible spam). Revisar manualmente.',
+            ],
             // Cuenta no existe / Usuario desconocido (definitivo)
+            // NOTA: Debe ir DESPUÉS de "bloqueado" para no confundir bloqueos temporales con eliminación definitiva
             [
                 'patterns' => [
                     '/does[\s\r\n]+not[\s\r\n]+exist/i',
@@ -156,7 +165,8 @@ class CheckBouncedEmails extends Command
                     '/wasn\'t[\s\r\n]+found/i',
                     '/User[\s\r\n]+unknown[\s\r\n]+in[\s\r\n]+virtual[\s\r\n]+alias[\s\r\n]+table/i',
                     '/Recipient[\s\r\n]+address[\s\r\n]+rejected/i',
-                    '/could[\s\r\n]+not[\s\r\n]+be[\s\r\n]+delivered/i',
+                    // REMOVIDO: '/could[\s\r\n]+not[\s\r\n]+be[\s\r\n]+delivered/i',
+                    // Este patrón es demasiado genérico y puede capturar bloqueos temporales
                 ],
                 'estado' => 'no_existe',
                 'accion' => 'definitivo',
@@ -198,23 +208,7 @@ class CheckBouncedEmails extends Command
                 'accion' => 'manual',
                 'log' => 'Dominio inválido o error de servidor. Posible corrección.',
             ],
-            // Mensaje bloqueado / Falso positivo (requiere revisión manual)
-            [
-                'patterns' => [
-                    '/Message[\s\r\n]+blocked/i',
-                    '/false[\s\r\n]+positive/i',
-                    '/5\.7\.1[\s\r\n]+\[CS\][\s\r\n]+Message[\s\r\n]+blocked/i',
-                    '/5\.7\.1[\s\r\n]+\[CSR\][\s\r\n]+Account[\s\r\n]+blocked/i',
-                    '/Account[\s\r\n]+blocked/i',
-                    '/\[CSR\][\s\r\n]+Account[\s\r\n]+blocked/i',
-                    '/blocked[\s\r\n]+by[\s\r\n]+security/i',
-                    // '/security[\s\r\n]+policy/i',
-                    // '/mailchannels/i', // MailChannels es el proveedor que genera este error
-                ],
-                'estado' => 'bloqueado',
-                'accion' => 'manual',
-                'log' => 'Mensaje bloqueado o posible falso positivo. Revisar manualmente.',
-            ],
+
             // Error de comunicación (temporal)
             [
                 'patterns' => [
@@ -240,9 +234,15 @@ class CheckBouncedEmails extends Command
 
         // Define aquí todos los correos propios que quieras descartar
         $ownEmails = [
-            env('IMAP_USERNAME')
+            env('IMAP_USERNAME'),
+            env('MAIL_FROM_ADDRESS'),
+            'notificaciones@tseyor.org',
+            'NOTIFICACIONES@TSEYOR.ORG',
             // ...puedes añadir más si usas otros remitentes...
         ];
+
+        // Filtrar valores nulos y normalizar a minúsculas para comparación
+        $ownEmails = array_filter(array_map('strtolower', array_filter($ownEmails)));
 
 
 
@@ -283,9 +283,9 @@ class CheckBouncedEmails extends Command
                 return !preg_match('/^Message-ID: </', $email);
             });
 
-            // Filtrar y descartar los correos propios
+            // Filtrar y descartar los correos propios (ya normalizados a minúsculas)
             $failedEmails = array_filter($allEmails, function ($email) use ($ownEmails) {
-                return !in_array(strtolower($email), array_map('strtolower', $ownEmails));
+                return !in_array(strtolower($email), $ownEmails);
             });
 
             // Elige solo los únicos (por si aparecen varias veces)
@@ -399,7 +399,7 @@ class CheckBouncedEmails extends Command
             if (!$matched) {
                 // Si no es un rebote, ni error, ni patrón conocido, lo consideramos recibido de usuario
                 // Solo si el remitente NO es uno de los propios (no es notificaciones@tseyor.org)
-                if (!in_array(strtolower($from), array_map('strtolower', $ownEmails))) {
+                if (!in_array(strtolower($from), $ownEmails)) {
                     $classified['recibidos_usuario']['elementos'][] = [
                         'from' => $from,
                         'subject' => $subject,

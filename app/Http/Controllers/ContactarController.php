@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\FormularioContactoEmail;
 use App\Mail\FormularioContactoConfirmacionEmail;
 use Illuminate\Mail\Markdown;
+use Illuminate\Support\Facades\Artisan;
 
 class ContactarController extends Controller
 {
@@ -51,6 +52,8 @@ class ContactarController extends Controller
                     $data['comentario'],
                 )
             );
+
+        Artisan::call('schedule:run');
 
         return redirect()->back()->with('success', 'Se ha enviado correctamente');
     }

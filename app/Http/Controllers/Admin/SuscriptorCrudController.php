@@ -45,6 +45,7 @@ class SuscriptorCrudController extends CrudController
 
         // Configurar columnas existentes en el modelo Suscriptor
         CRUD::column('id')->type('number')->label('ID');
+        CRUD::column('updated_at')->type('datetime')->label('Actualizado en');
         CRUD::column('email')->type('email')->label('Correo Electrónico');
         CRUD::column('servicio')->type('text')->label('Servicio');
         CRUD::column('estado')->type('text')->label('Estado');
