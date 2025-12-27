@@ -9,10 +9,10 @@
             <div v-if="srcImage || imageSlotPresent" class="caja-imagen flex flex-col justify-center items-center bg-center" :class="(imageRight ? 'md:order-last ' : '') +
                 (full ? 'justify-center h-full ' : 'py-4 ') +
                 (full && !cover ? 'relative ' : '') +
+                (cover ? 'cover-mode ' : '') +
                 (caption ? 'gap-2 ' : 'gap-1 ') +
                 imageSideClass" :style="cover ? {
-                'background-image': `url(${srcImageBackground})`,
-                'background-size': 'cover'
+                'background-image': `url(${srcImageBackground})`
             } : {}">
                 <slot v-if="imageSlotPresent" name="image" :class="imageClass"/>
                 <template v-else>
@@ -21,8 +21,8 @@
                     <small v-if="caption" class="image-caption text-gray-600 dark:text-gray-200 bg-neutral-500/10">{{ caption }}</small>
                 </template>
             </div>
-            <div class="caja-texto flex flex-col items-center gap-4 mx-auto px-4 xs:px-8 md:px-12 max-w-xl pb-16 md:pb-6"
-                :class="(full ? 'justify-center py-6 h-full ' : 'justify-evenly py-6 min-h-fit ') + textClass">
+            <div class="caja-texto flex flex-col items-center gap-4 mx-auto px-2 xs:px-4 md:px-8 max-w-xl pb-6"
+                :class="(full ? 'justify-center sm:py-6 h-full ' : 'justify-evenly py-6 min-h-fit ') + textClass">
                 <h2 v-if="title" class="text-2xl text-primary font-bold mb-0" :class="titleClass">{{ title }}</h2>
                 <div v-if="subtitle" class="text-lg text-center my-0" v-html="subtitle.replace(/\\n/g, '<br /><br />')"/>
                 <div v-show="textPresent" class="md:my-5 text-justify" ref="textdiv">
@@ -138,7 +138,22 @@ const imageSlotPresent = computed(() => !!slots.image)
 const actionSlotPresent = computed(() => !!slots.action)
 
 const textdiv = ref(null)
+const cajaTexto = ref(null)
 const textPresent = computed(() => !!slots.default && slots.default().length > 0)
+
+// Resetear scroll al inicio y cuando cambie el contenido de texto
+import { watch, nextTick, onMounted } from 'vue'
+
+onMounted(() => {
+    nextTick(() => {
+        if (cajaTexto.value) cajaTexto.value.scrollTop = 0
+    })
+})
+
+watch(textPresent, async () => {
+    await nextTick()
+    if (cajaTexto.value) cajaTexto.value.scrollTop = 0
+})
 
 // Detectar si hay mucho texto para ajustar el espacio de la imagen
 const hasLongText = computed(() => {
@@ -233,14 +248,84 @@ const srcImageBackground = computed(() => {
         gap: 1rem;
     }
 
-    /* Optimización del espacio para párrafos en móvil */
-    .caja-texto {
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-        padding-bottom: 4rem; /* Espacio extra para evitar solapamiento con flecha */
+    /* Ajustes para que la imagen se adapte y el caption sea visible en móvil */
+    .caja-imagen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0;
+        position: relative;
+        min-height: 0;
+        max-height: 55vh; /* limitar la caja para que la img no la sobrepase */
+        overflow: hidden;
     }
 
-    /* Reducir espaciado entre párrafos en móvil */
+    /* Asegurar que la imagen interna se escala dentro de la caja y no se recorta */
+    .caja-imagen .image-h {
+        max-height: 100%;
+        height: auto;
+        display: block;
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
+        margin: 0 auto;
+    }
+
+    /* Poner el texto por encima visualmente cuando sea necesario */
+    .caja-texto {
+        position: relative;
+        z-index: 2;
+    }
+
+    .caja-imagen {
+        z-index: 1;
+    }
+
+    /* Evitar solapamiento: forzar que el grid apile imagen y texto y dar prioridad
+       de altura a la celda de texto cuando ésta crece. Usar filas explícitas: imagen
+       toma su alto natural (auto) y texto puede crecer (1fr). */
+    .with-image {
+        grid-template-columns: 1fr;
+        /* Priorizar crecimiento de la fila de texto: imagen toma su alto natural (auto)
+           y la fila de texto toma el resto con minmax(0, 1fr) para permitir shrink */
+        grid-template-rows: auto minmax(0, 1fr);
+        align-items: start;
+    }
+
+    /* La caja de imagen no debe forzar la altura del grid; permitir que se recorte */
+    .with-image > .caja-imagen {
+        min-height: 0; /* permitir que overflow:hidden funcione */
+        overflow: hidden;
+    }
+
+    /* La caja de texto puede crecer y debe mantener su contenido visible */
+    .with-image > .caja-texto {
+        /* Permitir que la celda de texto crezca y si hace falta haga scroll internamente */
+        min-height: 0;
+        overflow: auto;
+        position: relative;
+        z-index: 3;
+        justify-content: flex-start; /* asegurar inicio del contenido en móvil */
+    }
+
+    /* Si la caja usa background-image (cover mode), mostrar la imagen completa en móvil */
+    .caja-imagen.cover-mode {
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain !important;
+        padding: 0.5rem 0;
+        min-height: 0;
+        max-height: 55vh;
+    }
+
+    /* Asegurar que el caption aparece debajo y se ve */
+    .caja-imagen .image-caption {
+        order: 2;
+        margin-top: 0.5rem;
+    }
+
+   /* Reducir espaciado entre párrafos en móvil */
     .caja-texto :deep(p) {
         margin-top: 0.75rem;
         line-height: 1.5;
@@ -258,6 +343,18 @@ const srcImageBackground = computed(() => {
         max-height: min(50vh, 400px);
     }
 
+    /* Forzar que la imagen dentro de la caja respete el tamaño del padre */
+    .with-image .caja-imagen .image-h {
+        max-height: 100% !important;
+        height: auto;
+        object-fit: contain;
+    }
+
+    /* Si la imagen tiene caption, dejar espacio para el caption dentro de la caja */
+    .with-image .caja-imagen .image-h.has-caption {
+        max-height: calc(100% - 3.5rem) !important;
+    }
+
     .image-caption {
         font-size: 0.8rem;
         padding: 0.25rem 0.5rem;
@@ -267,11 +364,6 @@ const srcImageBackground = computed(() => {
 
 /* Para pantallas muy pequeñas (menos de 400px) */
 @media (max-width: 399px) {
-    .caja-texto {
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-bottom: 5rem; /* Más espacio en pantallas muy pequeñas */
-    }
 
     /* Párrafos aún más compactos en pantallas muy pequeñas */
     .caja-texto :deep(p) {

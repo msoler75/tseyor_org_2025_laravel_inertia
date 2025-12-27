@@ -260,7 +260,7 @@
 
         <Section>
             <TextText title="Suscríbete" />
-            <Suscribe />
+            <Suscribe class="px-4"/>
         </Section>
     </FullPage>
 </template>
