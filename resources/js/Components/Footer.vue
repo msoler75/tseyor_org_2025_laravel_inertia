@@ -1,7 +1,7 @@
 <template>
-    <FadeOnNavigate>
+    <FadeOnNavigate class="w-full h-full">
         <footer
-            class="footer-component w-full bg-gray-900 text-white border-t border-gray-300"
+            class="footer-component flex flex-col justify-evenly w-full h-full bg-gray-900 text-white border-t border-gray-300 overflow-y-auto"
             data-theme="night"
         >
             <div class="px-4 lg:container mx-auto py-14 lg:py-8">
@@ -9,7 +9,7 @@
                     <div
                         v-for="(section, index) in sections"
                         :key="index"
-                        class="space-y-5 lg:space-y-2 mb-7"
+                        class="space-y-5 sm:space-y-4 md:space-y-3 lg:space-y-2 mb-7"
                     >
                         <h3 class="text-lg font-bold">{{ section.title }}</h3>
                         <ul class="list-none space-y-5 lg:space-y-2 pl-0">
@@ -26,14 +26,14 @@
                             </li>
                         </ul>
                     </div>
-                    <div v-if="suscription" class="space-y-5 lg:space-y-2 w-56">
+                    <div v-if="suscription" class="space-y-5 sm:space-y-4 md:space-y-3 lg:space-y-2 w-56">
                         <h3 class="text-lg font-bold">
                             Formulario de suscripción
                         </h3>
                         <!-- Aquí iría tu formulario de suscripción -->
                         <Suscribe />
                     </div>
-                    <div class="space-y-5 lg:space-y-2">
+                    <div class="space-y-5 sm:space-y-4 md:space-y-3 lg:space-y-2 ">
                         <h3 class="text-lg font-bold text-left">
                             Redes Sociales
                         </h3>
