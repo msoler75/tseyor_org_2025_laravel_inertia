@@ -43,7 +43,36 @@ class AdminController // extends Controller
 
         $contenidos_modificados = Contenido::select()->orderBy('updated_at', 'desc')->take(10)->get();
 
-        $revisiones = Revision::select()->latest()->take(10)->get();
+        // Excluir revisiones generadas por el sistema (sin usuario asociado)
+        // Cargar un conjunto mayor de revisiones ordenado por fecha,
+        // deduplicarlas en memoria por (user_id, revisionable_type, revisionable_id)
+        // dejando solo la más reciente por combinación, y además calcular la
+        // última fecha de revisión por `revisionable` (contenido) para mostrarla.
+        $allRevisiones = Revision::with('user')
+            ->whereNotNull('user_id')
+            ->where('user_id', '!=', 1)
+            ->orderBy('created_at', 'desc')
+            ->take(200)
+            ->get();
+
+        // última fecha por contenido (revisionable_type|revisionable_id)
+        $lastFechaPorContenido = $allRevisiones->groupBy(function($item) {
+            return ($item->revisionable_type ?? '') . '|' . ($item->revisionable_id ?? '');
+        })->map(function($group) {
+            return $group->max('created_at');
+        });
+
+        // Deduplicar por (user_id, revisionable_type, revisionable_id) conservando la más reciente
+        $revisiones = $allRevisiones->unique(function($item) {
+                return ($item->user_id ?? '') . '|' . ($item->revisionable_type ?? '') . '|' . ($item->revisionable_id ?? '');
+            })
+            ->values()
+            ->map(function($item) use ($lastFechaPorContenido) {
+                $key = ($item->revisionable_type ?? '') . '|' . ($item->revisionable_id ?? '');
+                $item->revisionable_last_created_at = $lastFechaPorContenido->get($key) ?? $item->created_at;
+                return $item;
+            })
+            ->take(10);
 
         $cambios_inscripciones = Revision::where('revisionable_type', 'App\\Models\\Inscripcion')
             ->whereIn('key', ['estado', 'user_id'])
