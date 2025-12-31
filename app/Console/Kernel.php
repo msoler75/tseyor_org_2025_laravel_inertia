@@ -55,13 +55,13 @@ class Kernel extends ConsoleKernel
                  ->monthlyOn(1, '04:40')
                  ->appendOutputTo(storage_path('logs/boletin-mensual.log'));
 
-        // tseyor.org boletin quincenal (06:10 días 1 y 15)
+        // tseyor.org boletin quincenal (06:15 días 1 y 15)
         $schedule->exec("DEPLOY_USER={$deployUser} " . base_path('bash/boletin_preparar.sh') . " {$boletinToken} quincenal")
-                 ->monthlyOn(1, '06:10')
+                 ->monthlyOn(1, '06:15')
                  ->appendOutputTo(storage_path('logs/boletin-quincenal.log'));
 
         $schedule->exec("DEPLOY_USER={$deployUser} " . base_path('bash/boletin_preparar.sh') . " {$boletinToken} quincenal")
-                 ->monthlyOn(15, '06:10')
+                 ->monthlyOn(15, '06:15')
                  ->appendOutputTo(storage_path('logs/boletin-quincenal.log'));
 
         // tseyor.org boletin semanal (02:30 sábados)

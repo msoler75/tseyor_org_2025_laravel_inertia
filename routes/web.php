@@ -130,7 +130,14 @@ Route::get('test', function () {
 
 Route::get('biblioteca', [PaginasController::class, 'biblioteca'])->name('biblioteca');
 
-Route::/*middleware('page-cache')->*/get('', [PaginasController::class, 'portada'])->name('portada');
+Route::get('', function (Request $request) {
+    // Solo redirigir a /novedades en la carga inicial de la página
+    // (peticiones Inertia desde el cliente envían el header `X-Inertia`)
+    if (auth()->check() && !$request->header('X-Inertia')) {
+        return redirect()->route('dashboard');
+    }
+    return app()->call([PaginasController::class, 'portada']);
+})->name('portada');
 Route::/*middleware('page-cache')->*/get('propuesta',
 function () {
     return Inertia::render('PortadaNueva', []);
