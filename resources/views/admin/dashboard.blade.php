@@ -10,13 +10,6 @@
             <div class="flex flex-wrap gap-5 my-12">
 
                 <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
-                    <div class="font-bold text-lg mb-3">Worker</div>
-                    <div style="min-width: 170px">
-                        <WorkerStatus class="text-xl" href="/admin/job" />
-                    </div>
-                </div>
-
-                <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
                     <div class="font-bold text-lg mb-3">Inscripciones nuevas</div>
                     <div class="flex text-3xl justify-between items-baseline">
                         <span @if ($inscripciones_nuevas) style="color: orange" @endif>{{ $inscripciones_nuevas }}</span>

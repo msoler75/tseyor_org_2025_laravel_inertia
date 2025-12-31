@@ -73,7 +73,7 @@ class JobCrudController extends CrudController
 
         CRUD::addButtonFromView('top', 'detect_audios_to_process', 'detect_audios_to_process', 'start');
 
-        CRUD::addButtonFromView('top', 'worker_buttons', 'worker_buttons', 'end');
+        // CRUD::addButtonFromView('top', 'worker_buttons', 'worker_buttons', 'end');
     }
 
 

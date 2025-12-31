@@ -9,8 +9,12 @@ use Illuminate\Support\Facades\Cache;
 class EmailRateLimited
 {
     private string $rateLimitKey = 'email_rate_limit';
+    private string $pendingKey = 'email_rate_limit_pending';
 
-    public function getMaxLimit($type = "overall"): int
+    /**
+     * Return the maximum send limit for a given job type or overall.
+     */
+    public function getMaxSendLimit($type = "overall"): int
     {
         // Límites específicos por tipo de trabajo
         $limits = [
@@ -28,7 +32,10 @@ class EmailRateLimited
         return $max;
     }
 
-    public function getTimeWindow(): int
+    /**
+     * Return the time window (in seconds) used for rate calculations.
+     */
+    public function getTimeWindowSeconds(): int
     {
         $window = config('mail.rate_limit.window', 3600);
         if ($window <= 0) {
@@ -38,16 +45,18 @@ class EmailRateLimited
         return $window;
     }
 
-    public function canSend(string $jobType): bool
+    /**
+     * Returns true if a job of the given type is allowed to be sent now.
+     */
+    public function isAllowedToSend(string $jobType): bool
     {
         $key = $this->rateLimitKey;
-
         return Cache::lock($key . ':lock', 10)->block(5, function () use ($key, $jobType) {
             $timestamps = Cache::get($key, []);
 
             // Filtrar los timestamps que están dentro de la ventana de tiempo
             $currentTime = time();
-            $timeWindow = $this->getTimeWindow();
+            $timeWindow = $this->getTimeWindowSeconds();
             $validTimestamps = array_filter($timestamps, function ($timestamp) use ($currentTime, $timeWindow) {
                 return ($currentTime - $timestamp['time']) <= $timeWindow;
             });
@@ -56,7 +65,7 @@ class EmailRateLimited
             Cache::put($key, $validTimestamps, $timeWindow);
 
             // Comprobar el límite general (overall)
-            if (count($validTimestamps) >= $this->getMaxLimit()) {
+            if (count($validTimestamps) >= $this->getMaxSendLimit()) {
                 return false;
             }
 
@@ -66,11 +75,29 @@ class EmailRateLimited
             });
 
             // Verificar si el número de envíos está dentro del límite permitido para el jobType
-            return count($jobTimestamps) < $this->getMaxLimit($jobType);
+            return count($jobTimestamps) < $this->getMaxSendLimit($jobType);
         });
     }
 
-    public function increment(string $jobType): void
+    /**
+     * Registra un envío exitoso para el tipo de job dado.
+     *
+     * - Añade un timestamp en la estructura principal (`email_rate_limit`) para
+     *   contabilizar envíos dentro de la ventana configurada.
+     * - Utiliza un `Cache::lock` para evitar condiciones de carrera.
+     * - Además, elimina una entrada de la estructura `pending` (si existe), ya
+     *   que un job que pasa por `increment` significa que se procesó y no debe
+     *   seguir contabilizándose como pendiente.
+     *
+     * Esto permite que la estimación de backlog en `getQueuedJobsCount` sea más
+     * precisa cuando se usan re-lanzamientos (`$job->release($waitTime)`).
+     */
+    /**
+     * Record a successful send for the given job type.
+     * - Adds a timestamp to the main rate-limit structure.
+     * - Removes one pending entry for this type if present.
+     */
+    public function recordSuccessfulSend(string $jobType): void
     {
         $key = $this->rateLimitKey;
 
@@ -81,9 +108,14 @@ class EmailRateLimited
             $timestamps[] = ['type' => $jobType, 'time' => time()];
 
             // Guardar los timestamps válidos en la caché
-            Cache::put($key, $timestamps, $this->getTimeWindow());
+            Cache::put($key, $timestamps, $this->getTimeWindowSeconds());
+
+            // If there were pending entries for this type, remove one (it's been processed)
+            $this->removePendingEntry($jobType);
         });
     }
+
+
 
     /**
      * Process the queued job.
@@ -93,9 +125,8 @@ class EmailRateLimited
     public function handle(object $job, Closure $next): void
     {
         $jobType = get_class($job);
-
-        if ($this->canSend($jobType)) {
-            $this->increment($jobType);
+        if ($this->isAllowedToSend($jobType)) {
+            $this->recordSuccessfulSend($jobType);
             $next($job);
         } else {
             Log::channel('smtp')->info("Rate limit exceeded for job type: {$jobType}. Job will be released.");
@@ -106,17 +137,117 @@ class EmailRateLimited
             // Tiempo de espera diferenciado por tipo de trabajo
             $waitTime = $this->getWaitTime($jobType);
 
+            // Marcar como pendiente en nuestra estructura de pending
+            $this->addPending($jobType);
+
             $job->release($waitTime); // Reencolar el trabajo después del tiempo específico
         }
     }
 
-    private function getWaitTime(string $jobType): int
+    public function getWaitTime(string $jobType): int
     {
         $waitTimes = [
             'App\Mail\InvitacionEquipoEmail' => 60, // 1 minuto para invitaciones (más prioritario)
             'App\Mail\BoletinEmail' => 600, // 10 minutos para boletines (menos prioritario)
         ];
+        // Base/default wait for this job type
+        $baseWait = $waitTimes[$jobType] ?? (config('mail.rate_limit.minutes_waiting', 5) * 60);
 
-        return $waitTimes[$jobType] ?? (config('mail.rate_limit.minutes_waiting', 5) * 60);
+        // Si no podemos calcular la cola (no hay información de backlog), devolvemos el baseWait
+        $maxLimit = $this->getMaxSendLimit();
+        $timeWindow = $this->getTimeWindowSeconds();
+
+        // Intentar calcular cuántos jobs del mismo tipo están pendientes en las colas
+        $queuedCount = $this->getQueuedJobsCount($jobType);
+        if ($queuedCount === null || $maxLimit <= 0) {
+            return $baseWait;
+        }
+
+        // Estimación de índice de este job cuando se vuelva a encolar (se añadirá al final)
+        $index = $queuedCount + 1;
+
+        // Slot (1-based) de ventanas de tamaño $maxLimit
+        $slot = (int) ceil($index / $maxLimit);
+
+        // Calculamos delay como (slot - 1) * timeWindow
+        $calculatedWait = max(0, ($slot - 1) * $timeWindow);
+
+        // Asegurar que al menos devolvemos baseWait para job types más prioritarios
+        $finalWait = max($baseWait, $calculatedWait);
+
+        // Añadir pequeño jitter para evitar stampedes (0..10% de la ventana)
+        // $jitter = rand(0, (int) max(0, floor($timeWindow * 0.1)));
+
+        return $finalWait;
+    }
+
+    /**
+     * Try to count pending jobs of the same type using the cache-backed `pending` list.
+     * Returns null if count cannot be determined.
+     */
+    public function getQueuedJobsCount(string $jobType): ?int
+    {
+        try {
+            // Use cache-backed pending queue to estimate backlog. If absent, return null.
+            $pendingKey = $this->pendingKey;
+
+            $pending = Cache::get($pendingKey, []);
+            if (!is_array($pending)) {
+                return null;
+            }
+
+            $count = 0;
+            foreach ($pending as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+                if (($item['type'] ?? null) === $jobType) {
+                    $count++;
+                }
+            }
+
+            return $count;
+        } catch (\Exception $e) {
+            Log::warning('Could not determine queued jobs count for rate limiter (cache): ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function addPending(string $jobType): void
+    {
+        $pendingKey = $this->pendingKey;
+        Cache::lock($pendingKey . ':lock', 10)->block(5, function () use ($pendingKey, $jobType) {
+            $pending = Cache::get($pendingKey, []);
+            if (!is_array($pending)) {
+                $pending = [];
+            }
+            $pending[] = ['type' => $jobType, 'time' => time()];
+            // Guardar con TTL mayor que la ventana para cubrir reintentos
+            Cache::put($pendingKey, $pending, $this->getTimeWindowSeconds() * 10);
+        });
+    }
+
+    private function removePendingEntry(string $jobType): void
+    {
+        $pendingKey = $this->pendingKey;
+        Cache::lock($pendingKey . ':lock', 10)->block(5, function () use ($pendingKey, $jobType) {
+            $pending = Cache::get($pendingKey, []);
+            if (!is_array($pending) || empty($pending)) {
+                return;
+            }
+
+            $found = null;
+            foreach ($pending as $i => $item) {
+                if (is_array($item) && ($item['type'] ?? null) === $jobType) {
+                    $found = $i;
+                    break;
+                }
+            }
+
+            if ($found !== null) {
+                array_splice($pending, $found, 1);
+                Cache::put($pendingKey, $pending, $this->getTimeWindowSeconds() * 10);
+            }
+        });
     }
 }
