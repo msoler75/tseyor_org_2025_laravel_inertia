@@ -136,7 +136,7 @@ Route::get('', function (Request $request) {
     if (auth()->check() && !$request->header('X-Inertia')) {
         return redirect()->route('dashboard');
     }
-    return app()->call([PaginasController::class, 'portada']);
+    return app()->call([app(PaginasController::class), 'portada']);
 })->name('portada');
 Route::/*middleware('page-cache')->*/get('propuesta',
 function () {
