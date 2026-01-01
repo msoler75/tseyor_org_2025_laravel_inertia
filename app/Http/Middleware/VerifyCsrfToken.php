@@ -27,6 +27,8 @@ class VerifyCsrfToken extends Middleware
         'boletines/desuscribir/*',
         'boletines/preparar',
         'boletines/enviar-pendientes',
+        // Analytics beacon (sendBeacon al cerrar navegador)
+        'analytics/beacon',
         // Enlaces cortos API
         'obtener-enlace',
         // MCP API

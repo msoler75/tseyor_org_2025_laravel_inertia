@@ -46,6 +46,8 @@ class Boletin extends Model
             $suscriptores = Suscriptor::where('servicio', 'boletin:' . $this->tipo)->get();
         }
 
+        // Añadimos el envío a la tabla Email de la Base de Datos, para log interno de mensajería
+
         $destinatarios = $suscriptores->pluck('email')->toArray();
 
         $chunkSize = 2048; // Tamaño máximo del campo "to"
@@ -83,8 +85,25 @@ class Boletin extends Model
             ]);
         }
 
-        foreach ($suscriptores as $suscriptor) {
-            Mail::to($suscriptor->email)->queue(new BoletinEmail($this->id, $suscriptor->id));
+        // Usar el middleware EmailRateLimited para calcular los delays apropiados
+        // Esto asegura que los valores estén sincronizados con la configuración del middleware
+        $rateLimiter = new \App\Jobs\Middleware\EmailRateLimited();
+        $jobType = BoletinEmail::class;
+
+        // Encolar con delays progresivos calculados por el middleware
+        foreach ($suscriptores as $index => $suscriptor) {
+            // Calcular el delay basándose en el estado actual de la cola y el índice
+            $delaySeconds = $rateLimiter->calculateDelayForIndex($jobType, $index);
+
+            // Encolar el job con el delay calculado
+            if ($delaySeconds > 0) {
+                Mail::to($suscriptor->email)
+                    ->later(now()->addSeconds($delaySeconds), new BoletinEmail($this->id, $suscriptor->id));
+            } else {
+                // Si no hay delay, usar queue() normal
+                Mail::to($suscriptor->email)
+                    ->queue(new BoletinEmail($this->id, $suscriptor->id));
+            }
         }
 
         // actualizar el estado del boletín
