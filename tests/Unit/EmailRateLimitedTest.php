@@ -199,4 +199,69 @@ class EmailRateLimitedTest extends TestCase
         // Comprobamos mediante la API pública que hay pendientes para la clase proxy
         $this->assertGreaterThan(0, $mw->getQueuedJobsCount($proxyClass));
     }
+
+    public function test_calculateDelayForIndex_returns_correct_delays_for_batch()
+    {
+        /**
+         * Descripción: Prueba el método calculateDelayForIndex() que permite
+         * pre-calcular delays al encolar jobs en batch, verificando que:
+         * - Los primeros N jobs (dentro del límite) tienen delay 0
+         * - Los siguientes N jobs tienen delay = 1 * window
+         * - Los siguientes N jobs tienen delay = 2 * window
+         * - Considera correctamente los jobs ya pendientes en la cola
+         */
+        $mw = new EmailRateLimited();
+
+        // Configurar valores conocidos
+        config(['mail.rate_limit.max.overall' => 50]);
+        config(['mail.rate_limit.window' => 3600]);
+
+        $jobType = 'App\\Mail\\BoletinEmail';
+        $maxPerWindow = $mw->getMaxSendLimit($jobType); // Obtener límite desde el middleware
+        $window = $mw->getTimeWindowSeconds();
+
+        // Caso 1: Sin jobs pendientes, calcular delays para un batch de 50
+        Cache::forget('email_rate_limit_pending');
+
+        // Primeros N jobs (slot 0) deben tener delay 0
+        for ($i = 0; $i < $maxPerWindow; $i++) {
+            $delay = $mw->calculateDelayForIndex($jobType, $i);
+            $this->assertEquals(0, $delay, "Job {$i} should have 0 delay (slot 0)");
+        }
+
+        // Siguientes N jobs (slot 1) deben tener delay = 1 * window
+        for ($i = $maxPerWindow; $i < $maxPerWindow * 2; $i++) {
+            $delay = $mw->calculateDelayForIndex($jobType, $i);
+            $this->assertEquals($window, $delay, "Job {$i} should have delay of 1 window (slot 1)");
+        }
+
+        // Siguientes N jobs (slot 2) deben tener delay = 2 * window
+        for ($i = $maxPerWindow * 2; $i < $maxPerWindow * 3; $i++) {
+            $delay = $mw->calculateDelayForIndex($jobType, $i);
+            $this->assertEquals(2 * $window, $delay, "Job {$i} should have delay of 2 windows (slot 2)");
+        }
+
+        // Caso 2: Con jobs ya pendientes, verificar que se suman correctamente
+        Cache::forget('email_rate_limit_pending');
+
+        // Simular 10 jobs ya pendientes
+        for ($i = 0; $i < 10; $i++) {
+            $mw->addPending($jobType);
+        }
+
+        // El job en índice 0 del nuevo batch está en posición real 10 (10 pendientes + índice 0)
+        // Por lo tanto debe estar en slot 0 (posición 10 < maxPerWindow)
+        $delay = $mw->calculateDelayForIndex($jobType, 0);
+        $this->assertEquals(0, $delay, "With 10 pending, job at index 0 (real position 10) should be in slot 0");
+
+        // El job en índice 5 está en posición real 15 (10 pendientes + índice 5)
+        // Por lo tanto debe estar en slot 1 (posición 15 / maxPerWindow = 1)
+        $delay = $mw->calculateDelayForIndex($jobType, 5);
+        $this->assertEquals($window, $delay, "With 10 pending, job at index 5 (real position 15) should be in slot 1");
+
+        // El job en índice 20 está en posición real 30 (10 pendientes + índice 20)
+        // Por lo tanto debe estar en slot 2 (posición 30 / maxPerWindow = 2)
+        $delay = $mw->calculateDelayForIndex($jobType, 20);
+        $this->assertEquals(2 * $window, $delay, "With 10 pending, job at index 20 (real position 30) should be in slot 2");
+    }
 }

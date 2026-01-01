@@ -57,25 +57,30 @@ class EmailRateLimited
             // Filtrar los timestamps que están dentro de la ventana de tiempo
             $currentTime = time();
             $timeWindow = $this->getTimeWindowSeconds();
-            $validTimestamps = array_filter($timestamps, function ($timestamp) use ($currentTime, $timeWindow) {
+            $validTimestamps = array_values(array_filter($timestamps, function ($timestamp) use ($currentTime, $timeWindow) {
                 return ($currentTime - $timestamp['time']) <= $timeWindow;
-            });
+            }));
 
-            // Actualizar la caché con los timestamps válidos
+            // IMPORTANTE: Actualizar la caché con los timestamps válidos ANTES de contar
             Cache::put($key, $validTimestamps, $timeWindow);
-
-            // Comprobar el límite general (overall)
-            if (count($validTimestamps) >= $this->getMaxSendLimit()) {
-                return false;
-            }
 
             // Filtrar los timestamps específicos del jobType
             $jobTimestamps = array_filter($validTimestamps, function ($timestamp) use ($jobType) {
                 return $timestamp['type'] === $jobType;
             });
 
+            $jobCount = count($jobTimestamps);
+            $jobLimit = $this->getMaxSendLimit($jobType);
+
+            // Log para debugging
+            if ($jobCount >= $jobLimit) {
+                Log::channel('smtp')->debug("Rate limit check for {$jobType}: {$jobCount}/{$jobLimit} (blocked)");
+            } else {
+                Log::channel('smtp')->debug("Rate limit check for {$jobType}: {$jobCount}/{$jobLimit} (allowed)");
+            }
+
             // Verificar si el número de envíos está dentro del límite permitido para el jobType
-            return count($jobTimestamps) < $this->getMaxSendLimit($jobType);
+            return $jobCount < $jobLimit;
         });
     }
 
@@ -129,13 +134,14 @@ class EmailRateLimited
             $this->recordSuccessfulSend($jobType);
             $next($job);
         } else {
-            Log::channel('smtp')->info("Rate limit exceeded for job type: {$jobType}. Job will be released.");
-
-            // Registrar el fallo en storage/logs/envios_error.log
-            Log::channel('envios_error')->error("Failed to send job of type: {$jobType}. Rate limit exceeded.");
-
             // Tiempo de espera diferenciado por tipo de trabajo
             $waitTime = $this->getWaitTime($jobType);
+
+            Log::channel('smtp')->info("Rate limit exceeded for job type: {$jobType}. Job will be released in {$waitTime}s.");
+
+            // Registrar el fallo en storage/logs/envios_error.log con más contexto
+            $queuedCount = $this->getQueuedJobsCount($jobType) ?? 0;
+            Log::channel('envios_error')->error("Failed to send job of type: {$jobType}. Rate limit exceeded. Queued: {$queuedCount}, Waiting: {$waitTime}s");
 
             // Marcar como pendiente en nuestra estructura de pending
             $this->addPending($jobType);
@@ -221,9 +227,17 @@ class EmailRateLimited
             if (!is_array($pending)) {
                 $pending = [];
             }
+
+            // Limpiar entradas viejas (más de 2 ventanas de tiempo)
+            $currentTime = time();
+            $maxAge = $this->getTimeWindowSeconds() * 2;
+            $pending = array_values(array_filter($pending, function ($item) use ($currentTime, $maxAge) {
+                return is_array($item) && ($currentTime - ($item['time'] ?? 0)) <= $maxAge;
+            }));
+
             $pending[] = ['type' => $jobType, 'time' => time()];
-            // Guardar con TTL mayor que la ventana para cubrir reintentos
-            Cache::put($pendingKey, $pending, $this->getTimeWindowSeconds() * 10);
+            // TTL más razonable: 2 veces la ventana de tiempo
+            Cache::put($pendingKey, $pending, $this->getTimeWindowSeconds() * 2);
         });
     }
 
@@ -249,5 +263,31 @@ class EmailRateLimited
                 Cache::put($pendingKey, $pending, $this->getTimeWindowSeconds() * 10);
             }
         });
+    }
+
+    /**
+     * Calculate the delay (in seconds) for queuing a job at a specific index position.
+     * This allows pre-calculating delays when bulk-queuing jobs to avoid middleware re-queueing.
+     *
+     * @param string $jobType The fully qualified class name of the job (e.g., 'App\Mail\BoletinEmail')
+     * @param int $index The position of this job in the batch (0-based)
+     * @return int The delay in seconds before this job should be processed
+     */
+    public function calculateDelayForIndex(string $jobType, int $index): int
+    {
+        $maxLimit = $this->getMaxSendLimit($jobType);
+        $timeWindow = $this->getTimeWindowSeconds();
+
+        // Obtener cuántos jobs del mismo tipo ya están pendientes
+        $currentQueuedCount = $this->getQueuedJobsCount($jobType) ?? 0;
+
+        // La posición real de este job será: jobs pendientes + índice en el batch actual
+        $actualPosition = $currentQueuedCount + $index;
+
+        // Calcular en qué slot caerá (0-based)
+        $slot = (int) floor($actualPosition / $maxLimit);
+
+        // El delay es slot * timeWindow
+        return $slot * $timeWindow;
     }
 }
