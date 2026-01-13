@@ -160,6 +160,7 @@ return [
         /*
          * Package Service Providers...
          */
+        RalphJSmit\Laravel\SEO\LaravelSEOServiceProvider::class,
 
         /*
          * Application Service Providers...

@@ -144,17 +144,17 @@ class Handler extends ExceptionHandler
             // Verificar si es un error 500
             if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
                 if ($exception->getStatusCode() >= 500) {
-                    Log::channel('500')->error($exception->getStatusCode() . ' Error: ' . $exception->getMessage(), [
-                        'url' => request()->getRequestUri(),
-                        'exception' => $exception
-                    ]);
+                    Log::channel('500')->error(
+                        'HTTP ' . $exception->getStatusCode() . ' | ' . $exception->getMessage() . ' | URL: ' . request()->getRequestUri(),
+                        $this->getErrorContext($exception)
+                    );
                 }
             } else {
                 // Excepciones no HTTP son generalmente 500
-                Log::channel('500')->error('500 Error: ' . $exception->getMessage(), [
-                    'url' => request()->getRequestUri(),
-                    'exception' => $exception
-                ]);
+                Log::channel('500')->error(
+                    '500 Error: ' . $exception->getMessage() . ' | URL: ' . request()->getRequestUri(),
+                    $this->getErrorContext($exception)
+                );
             }
             parent::report($exception);
         }
@@ -478,5 +478,36 @@ HTML;
             'titulo' => 'Error inesperado',
             'mensaje' => $exception->getMessage(),
         ])->toResponse($request);
+    }
+
+    /**
+     * Obtener contexto completo para el logging de errores
+     * Incluye URL, método, IP, user agent y parámetros
+     */
+    private function getErrorContext(Throwable $exception): array
+    {
+        $request = request();
+        
+        return [
+            // Información principal
+            'url' => $request->getRequestUri(),
+            'method' => $request->getMethod(),
+            'ip' => $request->ip(),
+            
+            // Información del usuario
+            'user_id' => auth()->id(),
+            'user_agent' => $request->header('User-Agent'),
+            
+            // Parámetros de la solicitud
+            'query_params' => $request->query(),
+            'form_data' => $request->except(['password', 'password_confirmation', 'token']),
+            
+            // Información adicional
+            'referer' => $request->header('Referer'),
+            'is_crawler' => (new CrawlerDetect())->isCrawler($request->header('User-Agent')),
+            
+            // La excepción
+            'exception' => $exception,
+        ];
     }
 }

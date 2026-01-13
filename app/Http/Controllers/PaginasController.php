@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Pagina;
 use Inertia\Inertia;
 use App\Pigmalion\SEO;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Comunicado;
 use App\Models\Libro;
 use App\Models\Audio;
@@ -115,20 +116,20 @@ class PaginasController extends Controller
             'Portada',
             [
                 'hayProximosEventos' => $hay_proximos_eventos,
-                'stats' => Inertia::lazy(function () {
-                    $cc = Comunicado::publicado()->count();
-                    return
-                        [
-                            'comunicados' => $cc,
-                            'paginas' => $cc * 12 + $cc % 7,
-                            'libros' => Libro::publicado()->count(),
-                            'usuarios' => User::count(),
-                            'audios' => Audio::publicado()->count(),
-                            'entradas' => Entrada::publicado()->count(),
-                            'meditaciones' => Meditacion::publicado()->count(),
-                            'videos' => Video::publicado()->count(),
-                            'centros' => Centro::count()
-                        ];
+                'stats' => Cache::remember('stats_portada', now()->addDay(), function () {
+                        $cc = Comunicado::publicado()->count();
+                        return
+                            [
+                                'comunicados' => $cc,
+                                'paginas' => $cc * 12 + $cc % 7,
+                                'libros' => Libro::publicado()->count(),
+                                'usuarios' => User::count(),
+                                'audios' => Audio::publicado()->count(),
+                                'entradas' => Entrada::publicado()->count(),
+                                'meditaciones' => Meditacion::publicado()->count(),
+                                'videos' => Video::publicado()->count(),
+                                'centros' => Centro::count()
+                            ];
                 })
             ]
         );
@@ -139,18 +140,17 @@ class PaginasController extends Controller
         return Inertia::render(
             'Biblioteca',
             [
-                'stats' => Inertia::lazy(function () {
-                    return
-                        [
-                            'comunicados' => Comunicado::publicado()->count(),
-                            'libros' => Libro::publicado()->count(),
-                            'audios' => Audio::publicado()->count(),
-                            'entradas' => Entrada::publicado()->count(),
-                            'videos' => Video::publicado()->count(),
-                            'meditaciones' => Meditacion::publicado()->count(),
-                            'psicografias' => Psicografia::count(),
-                            'descubre'=>Pagina::publicado()->where('descubre', TRUE)->count()
-                        ];
+                'stats' => Cache::remember('stats_biblioteca', now()->addDay(), function () {
+                    return [
+                        'comunicados' => Comunicado::publicado()->count(),
+                        'libros' => Libro::publicado()->count(),
+                        'audios' => Audio::publicado()->count(),
+                        'entradas' => Entrada::publicado()->count(),
+                        'videos' => Video::publicado()->count(),
+                        'meditaciones' => Meditacion::publicado()->count(),
+                        'psicografias' => Psicografia::count(),
+                        'descubre' => Pagina::publicado()->where('descubre', TRUE)->count()
+                    ];
                 })
             ]
         )
