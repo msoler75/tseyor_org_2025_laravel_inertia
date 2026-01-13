@@ -331,9 +331,9 @@ onMounted(() => {
         lazyOff.value = true;
         nextTick(() => {
             calculaHCounter();
-            router.reload({
+            /*router.reload({
                 only: ["stats"],
-            });
+            });*/
         });
     }, 1500);
 });

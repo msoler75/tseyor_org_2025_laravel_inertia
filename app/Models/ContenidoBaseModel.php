@@ -113,7 +113,7 @@ class ContenidoBaseModel extends Model
         return new SEOData(
             title: $this->titulo ?? $this->nombre ?? $this->name,
             description: $this->descripcion ?? mb_substr(strip_tags($this->texto ?? ""), 0, 400 - 3),
-            image: str_replace(" ", "%20", $image),
+            image: $image,
             author: $this->autor ?? 'tseyor',
             published_time: Carbon::createFromFormat('Y-m-d H:i:s', $this->published_at ?? $this->created_at) ?? null,
             section: $this->categoria ?? ''

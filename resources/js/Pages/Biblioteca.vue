@@ -62,16 +62,6 @@ const props = defineProps({
 
 
 
-
-// https://www.danmatthews.me/posts/lazy-loading-inertia-js
-// cargamos las estadísticas un poco más tarde para que la portada cargue más rápido
-onMounted(() => {
-    router.reload({
-        only: ['stats']
-    })
-})
-
-
 const secciones = ref([
     {
         title: 'Comunicados',

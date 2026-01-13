@@ -103,7 +103,7 @@ class PsicografiaCrudController extends CrudController
             'name'        => 'categoria',
             'label'       => "Categoría",
             'type'        => 'select_from_array',
-            'options'     => ['General' => 'General', 'Palabras Maya'=>'Palabras Maya', 'Aniversarios'=>'Aniversarios', 'Neent' => 'Neent', 'Equipos y Departamentos'=>'Equipos y Departamentos','FractalOm' => 'FractalOm', 'Muulasterios y Casas Tseyor' => 'Muulasterios y Casas Tseyor', 'Priores y Belankiles' => 'Priores y Belankiles', 'Contacto con las bases' => 'Contacto con las bases', 'Eventos' => 'Eventos', 'Perfiles'=>'Perfiles'],
+            'options'     => ['General' => 'General', 'Palabras Maya'=>'Palabras Maya', 'Aniversarios'=>'Aniversarios', 'Neent' => 'Neent', 'Equipos y Departamentos'=>'Equipos y Departamentos','FractalOm' => 'FractalOm', 'Muulasterios y Casas Tseyor' => 'Muulasterios y Casas Tseyor', 'Priores y Belankiles' => 'Priores y Belankiles', 'Contacto con las bases' => 'Contacto con las bases', 'Eventos' => 'Eventos', 'Perfiles'=>'Perfiles','Arcanos Interiorización'=>'Arcanos Interiorización','Otros'=>'Otros'],
             'allows_null' => false,
             'default'     => 'General',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
