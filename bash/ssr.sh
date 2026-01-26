@@ -20,7 +20,7 @@ NVM_DIR="$HOME/.nvm"
 
 # Mostrar uso del script
 usage() {
-    echo "Uso: $0 {start|stop|status}"
+    echo "Uso: $0 {start|stop|restart|status}"
     exit 1
 }
 
@@ -74,6 +74,10 @@ case "$1" in
         ;;
     stop)
         stop_ssr
+        ;;
+    restart)
+        stop_ssr
+        start_ssr
         ;;
     status)
         check_status
