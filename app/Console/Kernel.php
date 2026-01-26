@@ -29,7 +29,12 @@ class Kernel extends ConsoleKernel
              ->hourlyAt(21)
              ->appendOutputTo(storage_path('logs/ssr-start.log'));
 
-                 return;
+        // tseyor.org SSR restart (cada 12 horas)
+        $schedule->exec("DEPLOY_USER={$deployUser} " . base_path('bash/ssr.sh') . ' restart')
+             ->twiceDailyAt(1, 13, 15) // Run the task daily at 1:15 & 13:15
+             ->appendOutputTo(storage_path('logs/ssr-start.log'));
+
+
 
         // ===== COPIAS DE SEGURIDAD =====
         // tseyor.org database backup daily (03:05 diario)
