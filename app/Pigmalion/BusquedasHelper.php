@@ -337,7 +337,7 @@ class BusquedasHelper
             return $resultados;
         } catch (Throwable $e) {
             // Log específico para posibles corrupciones de índices TNTSearch
-            Log::channel('500')->error('Posible corrupción de índices TNTSearch en buscarContenidos', [
+            Log::channel('http-errors')->error('Posible corrupción de índices TNTSearch en buscarContenidos', [
                 'buscar' => $buscar,
                 'coleccion' => $coleccion,
                 'error_message' => $e->getMessage(),

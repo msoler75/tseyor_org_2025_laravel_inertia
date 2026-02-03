@@ -208,9 +208,9 @@ return [
             'level' => 'info',
         ],
 
-        '500' => [
+        'http-errors' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/500.log'),
+            'path' => storage_path('logs/http-errors.log'),
             'level' => 'error',
             'days' => 7,
         ],

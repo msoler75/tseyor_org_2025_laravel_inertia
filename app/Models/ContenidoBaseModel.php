@@ -99,21 +99,38 @@ class ContenidoBaseModel extends Model
      */
     public function getDynamicSEOData(): SEOData
     {
-        $image = $this->imagen ?: config('seo.image.fallback');
+        $imageUrl = config('seo.image.fallback');
 
-        // Si la imagen es una URL completa del mismo dominio, convertirla a ruta relativa
-        if (str_starts_with($image, 'http')) {
-            $parsedImage = parse_url($image);
-            $parsedAppUrl = parse_url(config('app.url'));
-            if ($parsedImage['host'] === $parsedAppUrl['host']) {
-                $image = $parsedImage['path'];
+        // Si existe imagen en el modelo, procesarla con StorageItem
+        if (!empty($this->imagen)) {
+            try {
+                $imagePath = $this->imagen;
+
+                // Detectar el tipo de ruta y usar el método apropiado de StorageItem
+                if (preg_match('#^https?://#', $imagePath)) {
+                    // Es una URL completa (http:// o https://)
+                    $storageItem = StorageItem::fromUrl($imagePath);
+                } elseif (str_starts_with($imagePath, base_path())) {
+                    // Es un full path local del proyecto Laravel
+                    $storageItem = StorageItem::fromPath($imagePath);
+                } else {
+                    // Es una ruta relativa o location de StorageItem
+                    // StorageItem espera rutas tipo /almacen/... o /archivos/...
+                    $storageItem = new StorageItem($imagePath);
+                }
+
+                $imageUrl = $storageItem->url;
+            } catch (\Throwable $e) {
+                // Si hay error al procesar la imagen, usar fallback
+                Log::channel('http-errors')->debug('Error processing SEO image: ' . $e->getMessage());
+                $imageUrl = config('seo.image.fallback');
             }
         }
 
         return new SEOData(
             title: $this->titulo ?? $this->nombre ?? $this->name,
             description: $this->descripcion ?? mb_substr(strip_tags($this->texto ?? ""), 0, 400 - 3),
-            image: $image,
+            image: $imageUrl,
             author: $this->autor ?? 'tseyor',
             published_time: Carbon::createFromFormat('Y-m-d H:i:s', $this->published_at ?? $this->created_at) ?? null,
             section: $this->categoria ?? ''

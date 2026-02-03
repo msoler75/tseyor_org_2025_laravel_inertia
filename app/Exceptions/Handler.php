@@ -119,6 +119,18 @@ class Handler extends ExceptionHandler
     }
 
     /**
+     * Determine if the exception is related to SEO image validation.
+     *
+     * @param  \Throwable  $exception
+     * @return bool
+     */
+    protected function isSEOImageException(Throwable $exception)
+    {
+        return strpos($exception->getMessage(), 'is not a file') !== false
+            || (strpos($exception->getMessage(), 'Path') !== false && strpos(get_class($exception), 'ImageMeta') !== false);
+    }
+
+    /**
      * Report or log an exception.
      *
      * @param  \Throwable  $exception
@@ -128,6 +140,13 @@ class Handler extends ExceptionHandler
     {
         // No reportar ModelNotFoundException ya que se maneja como 404 y se loguea en canal 'notfound'
         if ($exception instanceof ModelNotFoundException) {
+            return;
+        }
+
+        // Ignorar excepciones de validación de imágenes del paquete laravel-seo
+        // Estas ocurren cuando las imágenes están en /almacen/ y no en public/
+        if ($this->isSEOImageException($exception)) {
+            Log::channel('http-errors')->debug('SEO Image validation error (ignored): ' . $exception->getMessage());
             return;
         }
 
@@ -144,14 +163,14 @@ class Handler extends ExceptionHandler
             // Verificar si es un error 500
             if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
                 if ($exception->getStatusCode() >= 500) {
-                    Log::channel('500')->error(
+                    Log::channel('http-errors')->error(
                         'HTTP ' . $exception->getStatusCode() . ' | ' . $exception->getMessage() . ' | URL: ' . request()->getRequestUri(),
                         $this->getErrorContext($exception)
                     );
                 }
             } else {
                 // Excepciones no HTTP son generalmente 500
-                Log::channel('500')->error(
+                Log::channel('http-errors')->error(
                     '500 Error: ' . $exception->getMessage() . ' | URL: ' . request()->getRequestUri(),
                     $this->getErrorContext($exception)
                 );
@@ -248,7 +267,7 @@ class Handler extends ExceptionHandler
         // DEBUG: Log específico para errores 403 de Facebook
         $userAgent = $request->header('User-Agent', '');
         $statusCode = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500;
-        
+
         if (stripos($userAgent, 'facebook') !== false && $statusCode == 403) {
             Log::error('[FACEBOOK 403 ERROR] Facebook bot received 403', [
                 'url' => $request->fullUrl(),
@@ -487,25 +506,25 @@ HTML;
     private function getErrorContext(Throwable $exception): array
     {
         $request = request();
-        
+
         return [
             // Información principal
             'url' => $request->getRequestUri(),
             'method' => $request->getMethod(),
             'ip' => $request->ip(),
-            
+
             // Información del usuario
             'user_id' => auth()->id(),
             'user_agent' => $request->header('User-Agent'),
-            
+
             // Parámetros de la solicitud
             'query_params' => $request->query(),
             'form_data' => $request->except(['password', 'password_confirmation', 'token']),
-            
+
             // Información adicional
             'referer' => $request->header('Referer'),
             'is_crawler' => (new CrawlerDetect())->isCrawler($request->header('User-Agent')),
-            
+
             // La excepción
             'exception' => $exception,
         ];
