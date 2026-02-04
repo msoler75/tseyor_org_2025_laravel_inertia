@@ -119,7 +119,11 @@ class ContenidoBaseModel extends Model
                     $storageItem = new StorageItem($imagePath);
                 }
 
-                $imageUrl = $storageItem->url;
+                // laravel-seo espera una ruta accesible desde public, no una URL completa
+                $imageUrl = $storageItem->urlPath;
+                if (empty($imageUrl)) {
+                    $imageUrl = config('seo.image.fallback');
+                }
             } catch (\Throwable $e) {
                 // Si hay error al procesar la imagen, usar fallback
                 Log::channel('http-errors')->debug('Error processing SEO image: ' . $e->getMessage());
