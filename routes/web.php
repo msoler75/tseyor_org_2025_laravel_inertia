@@ -53,10 +53,14 @@ use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Cookie;
 use App\Services\MuularElectronico;
 
+// Bloquear rutas sospechosas con patrones generales (cualquier ruta que empiece con wp, templates, o sea un archivo .php sospechoso)
+Route::any('{suspicious}', function () {
+    abort(404);
+})->where('suspicious', '^(wp.*|templates.*|.*\.php)$');
+
 // a borrar:
 
 Route::get('glosario/parse', [TerminosController::class, 'parse'])->name('parse');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -337,11 +341,10 @@ Route::get('/dev/test', function () {
 
 
 Route::middleware([
-    'auth:sanctum',
+    'auth',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-
     Route::get('dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
@@ -538,11 +541,6 @@ Route::get('{prefix}/{code}', [EnlaceCortoController::class, 'redirigir'])
     ->where('prefix', '^(e|d|a)$')
     ->where('code', '^[a-zA-Z0-9]+$');
 
-
-// Bloquear rutas sospechosas con patrones generales (cualquier ruta que empiece con wp, templates, o sea un archivo .php sospechoso)
-Route::any('{suspicious}', function () {
-    abort(404);
-})->where('suspicious', '^(wp.*|templates.*|.*\.php)$');
 
 ///// FINAL FALLBACK PAGE
 Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '^(?!admin/).*')->name('pagina');
