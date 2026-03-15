@@ -21,7 +21,7 @@ class Kernel extends ConsoleKernel
 
         // ===== QUEUE WORKER (reemplaza el cron @hourly worker-start.sh) =====
         // Ejecuta workers temporales cada minuto que terminan automáticamente
-        $schedule->command('queue:work --queue=default,low_priority,audio_processing --sleep=3 --tries=10 --stop-when-empty --timeout=120 --max-jobs=300')
+        /*$schedule->command('queue:work --queue=default,low_priority,audio_processing --sleep=3 --tries=10 --stop-when-empty --timeout=120 --max-jobs=300')
                 ->everyFiveMinutes()  // Ejecuta cada 5 minutos
                  ->withoutOverlapping()
                  ->appendOutputTo(storage_path('logs/queue-worker.log'))
@@ -29,25 +29,27 @@ class Kernel extends ConsoleKernel
                  ->after(function () { Log::channel('jobs')->info('Completada tarea: Queue Worker'); })
                  ->onFailure(function () { Log::channel('jobs')->error('Falló tarea: Queue Worker'); })
                  ->onSuccess(function () { Log::channel('jobs')->info('Éxito en tarea: Queue Worker'); });
-
+        */
         // ===== SSR (Server Side Rendering) =====
         // tseyor.org SSR start (minuto 01 cada hora)
-        $schedule->exec("DEPLOY_USER={$deployUser} " . base_path('bash/ssr.sh') . ' start')
+        /*$schedule->exec("DEPLOY_USER={$deployUser} " . base_path('bash/ssr.sh') . ' start')
              ->hourlyAt(21)
              ->appendOutputTo(storage_path('logs/ssr-start.log'))
              ->before(function () { Log::channel('jobs')->info('Iniciando tarea: SSR Start'); })
              ->after(function () { Log::channel('jobs')->info('Completada tarea: SSR Start'); })
              ->onFailure(function () { Log::channel('jobs')->error('Falló tarea: SSR Start'); })
              ->onSuccess(function () { Log::channel('jobs')->info('Éxito en tarea: SSR Start'); });
+        */
 
         // tseyor.org SSR restart (cada 12 horas)
-        $schedule->exec("DEPLOY_USER={$deployUser} " . base_path('bash/ssr.sh') . ' restart')
+        /*$schedule->exec("DEPLOY_USER={$deployUser} " . base_path('bash/ssr.sh') . ' restart')
              ->twiceDailyAt(1, 13, 15) // Run the task daily at 1:15 & 13:15
              ->appendOutputTo(storage_path('logs/ssr-start.log'))
              ->before(function () { Log::channel('jobs')->info('Iniciando tarea: SSR Restart'); })
              ->after(function () { Log::channel('jobs')->info('Completada tarea: SSR Restart'); })
              ->onFailure(function () { Log::channel('jobs')->error('Falló tarea: SSR Restart'); })
              ->onSuccess(function () { Log::channel('jobs')->info('Éxito en tarea: SSR Restart'); });
+        */
 
         Log::channel('jobs')->info('Finalizada ejecución del schedule de tareas programadas');
 
