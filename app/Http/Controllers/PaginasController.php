@@ -149,7 +149,8 @@ class PaginasController extends Controller
                         'videos' => Video::publicado()->count(),
                         'meditaciones' => Meditacion::publicado()->count(),
                         'psicografias' => Psicografia::count(),
-                        'descubre' => Pagina::publicado()->where('descubre', TRUE)->count()
+                        'descubre' => Pagina::publicado()->where('descubre', TRUE)->count(),
+                        'galerias' => Galeria::count(),
                     ];
                 })
             ]

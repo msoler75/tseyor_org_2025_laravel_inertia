@@ -20,6 +20,7 @@
     <x-backpack::menu-dropdown-item title="Videos" icon="la la-youtube" :link="backpack_url('video')" />
     <x-backpack::menu-dropdown-item title="Páginas/SEO" icon="la la-pager" :link="backpack_url('pagina')" />
     <x-backpack::menu-dropdown-item title="Radio Tseyor" icon="la la-broadcast-tower" :link="backpack_url('radio-item')" />
+    <x-backpack::menu-dropdown-item title="Galerías de Arte" icon="la la-images" :link="backpack_url('galeria')" />
 </x-backpack::menu-dropdown>
 @endcan
 
@@ -120,3 +121,5 @@ exit;
 
 
 @endcanany
+
+<x-backpack::menu-item title="Galerias" icon="la la-question" :link="backpack_url('galeria')" />

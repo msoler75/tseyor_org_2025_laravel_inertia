@@ -46,7 +46,6 @@ if (elem) {
     .component("filemanager", FileManager)
     .component("audiovideoplayer", AudioVideoPlayer)
     .component("workerstatus", WorkerStatus)
-     .component("audiovideoplayer", AudioVideoPlayer)
    // .component("audiostateicon", AudioStateIcon)
     .mixin({
       components: { Icon, Link },

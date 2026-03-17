@@ -122,6 +122,14 @@ const secciones = ref([
         count: computed(() => props.stats ? props.stats.descubre : 0),
         collection: 'páginas',
     },
+        {
+        title: 'Galerías de Arte',
+        url: route('galerias'),
+        descripcion: 'Obras de arte de la comunidad de usuarios de tseyor.',
+        icon: 'ph:flower-duotone',
+        count: computed(() => props.stats ? props.stats.galerias : 0),
+        collection: 'galerías',
+    },
     {
         title: 'Radio Tseyor',
         url: route('radio'),

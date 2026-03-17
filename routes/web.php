@@ -40,6 +40,7 @@ use App\Http\Controllers\ChatGPTController;
 use App\Http\Controllers\ImagenesController;
 use App\Http\Controllers\TarjetaVisitaController;
 use App\Http\Controllers\EmailsController;
+use App\Http\Controllers\GaleriaController;
 use App\Http\Controllers\Api\ComentariosController;
 use App\Http\Controllers\Admin\JobsController;
 use App\Http\Controllers\Admin\AuthController;
@@ -466,6 +467,11 @@ Route::get('boletines/suscripcion', [SuscriptorController::class, 'getSuscripcio
 
 // Ruta para visualizar boletines
 Route::get('boletines/{id}', [BoletinesController::class, 'ver'])->name('boletin');
+
+// Rutas para galerías
+Route::get('galerias', [GaleriaController::class, 'index'])->name('galerias');
+Route::get('galeria/{id}', [GaleriaController::class, 'show'])->name('galeria');
+Route::get('galeria/{id}/json', [GaleriaController::class, 'apiShow'])->name('galeria.json');
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

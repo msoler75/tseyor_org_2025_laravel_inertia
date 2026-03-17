@@ -56,14 +56,10 @@ class Nodo extends Model
         return $this->group->nombre; // Reemplaza `nombre` por el nombre del atributo que contiene el nombre del grupo en tu modelo `Grupo`
     }
 
-
-    public function getStickyAttribute(): bool
+    public function getUrlArchivoAttribute()
     {
-        $permisos = octdec($this->permisos);
-        return $permisos & (0b001 << 9);
+        return asset('storage/' . $this->ubicacion);
     }
-
-
 
     /**
      * Obtiene el nodo más cercano siendo el mismo o antecesor de la ubicacion
