@@ -148,6 +148,11 @@ Route::group([
     Route::get('', [AdminController::class, 'dashboard'] );
 
     // administración de tareas
+
+    // Galerías
+    Route::crud('galeria', 'GaleriaCrudController');
+    Route::get('galeria/{id}/scan', 'GaleriaCrudController@scan');
+
     Route::get('jobs/retry-failed-jobs', 'JobsController@retryFailedJobs');
     Route::get('jobs/retry-job/{id}', 'JobsController@retryJob');
     Route::get('jobs/flush', 'JobsController@flushJobs');

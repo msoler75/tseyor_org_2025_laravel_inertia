@@ -15,11 +15,11 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie', 'update-theme', 'update-font-size', 'image_size', '_permisos', '_saldo_muulares', 'comentarios'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'update-theme', 'update-font-size', 'image_size', '_permisos', '_saldo_muulares', 'comentarios', 'archivos/*', 'storage/*'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://dev.tseyor.org'],
+    'allowed_origins' => ['https://dev.tseyor.org', 'http://localhost:5174', 'http://localhost'],
 
     'allowed_origins_patterns' => [],
 
