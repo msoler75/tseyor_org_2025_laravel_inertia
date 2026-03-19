@@ -319,6 +319,8 @@ class ArchivosController extends Controller
             $nodo->ubicacion = $ubicacion;
             $nodo->propietario_usuario = "admin"; // valores por defecto
             $nodo->propietario_grupo = "admin";
+            $nodo->user_id = 1;
+            $nodo->group_id = 1;
             // $nodo->save();
         }
         if (!$nodo->propietario_grupo)
@@ -493,6 +495,7 @@ class ArchivosController extends Controller
         $aclArray = $acl->toArray();
 
         $user = auth()->user();
+        $esAdministrador = optional($user)->hasPermissionTo('administrar archivos');
         $aclUser = optional($user)->accessControlList();
 
         Log::info("calcularInfoArchivos.Paso2:", $info);
@@ -520,16 +523,16 @@ class ArchivosController extends Controller
             if (!($item['padre'] ?? 0)) {
                 $nodoItem = $item['nodo'];
                 Log::info("calcularInfoArchivos para item", $item);
-                $info[$idx]['puedeEscribir'] = $nodoItem ? Gate::allows('escribir', $nodoItem) : false;
+                $info[$idx]['puedeEscribir'] = $esAdministrador ? true : ($nodoItem ? Gate::allows('escribir', $nodoItem) : false);
                 Log::info("puedeEscribir: " . $info[$idx]['puedeEscribir']);
 
-                $info[$idx]['puedeLeer'] = $nodoItem ? Gate::allows('leer', $nodoItem) : false;
+                $info[$idx]['puedeLeer'] = $esAdministrador ? true : ($nodoItem ? Gate::allows('leer', $nodoItem) : false);
                 $nodoContenedor = $primerItem ? $nodoPadre : $nodoCarpeta;
                 $contenedorEsSticky = $nodoContenedor ? $nodoContenedor->sticky : false;
                 $esPropietario = optional($nodoItem)->user_id != optional($user)->id;
 
                 // comprobamos el sticky bit de la carpeta padre del item
-                if ($contenedorEsSticky && !$esPropietario) {
+                if (!$esAdministrador && $contenedorEsSticky && !$esPropietario) {
                     if (!$aclUser && !optional($nodoItem)->tieneAcceso($user, 'escribir'))
                         $info[$idx]['puedeEscribir'] = false;
                 }
@@ -548,8 +551,10 @@ class ArchivosController extends Controller
      */
     private function prepareItemInfo($ruta, $nombre, $tipo, $nodo)
     {
+        $user = auth()->user();
+        $esAdministrador = optional($user)->hasPermissionTo('administrar archivos');
         $info_item = ["nombre" => $nombre, "ruta" => $ruta];
-        if (!$nodo || ($tipo == 'carpeta' && Gate::denies('ejecutar', $nodo)))
+        if (!$nodo || (!$esAdministrador && $tipo == 'carpeta' && Gate::denies('ejecutar', $nodo)))
             $info_item['privada'] = true; // carpeta no accesible
         $info_item['nodo_id'] = optional($nodo)->id ?? null;
         $info_item['permisos'] = optional($nodo)->permisos ?? 0;
