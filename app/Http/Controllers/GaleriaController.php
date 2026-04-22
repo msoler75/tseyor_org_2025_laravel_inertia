@@ -48,14 +48,18 @@ class GaleriaController extends Controller
     /**
      * Mostrar la página de una galería específica.
      *
-     * @param  int  $id
+     * @param  string $id
      * @return \Inertia\Response
      */
     public function show($id)
     {
-        $galeria = Galeria::with(['items.nodo', 'items.user'])->findOrFail($id);
+        if (is_numeric($id)) {
+            $galeria = Galeria::with(['items.nodo', 'items.user'])->findOrFail($id);
+        } else {
+            $galeria = Galeria::with(['items.nodo', 'items.user'])->where('slug', $id)->firstOrFail();
+        }
 
-        return Inertia::render('Galerias/Show', [
+        return Inertia::render('Galerias/Galeria', [
             'galeria' => $galeria,
         ])
             ->withViewData([
@@ -75,7 +79,11 @@ class GaleriaController extends Controller
      */
     public function apiShow($id)
     {
-        $galeria = Galeria::with(['items.nodo', 'items.user'])->findOrFail($id);
+         if (is_numeric($id)) {
+            $galeria = Galeria::with(['items.nodo', 'items.user'])->findOrFail($id);
+        } else {
+            $galeria = Galeria::with(['items.nodo', 'items.user'])->where('slug', $id)->firstOrFail();
+        }
 
         return response()->json([
             'titulo' => $galeria->titulo,
@@ -91,7 +99,7 @@ class GaleriaController extends Controller
                     'user' => $item->user ? [
                         'id' => $item->user->id,
                         'name' => $item->user->name,
-                        'slug' => $item->user->slug ?? null,                        
+                        'slug' => $item->user->slug ?? null,
                         'url' => route('usuario', ['slug' => $item->user->slug ?? $item->user->id])
                     ] : null,
                 ];

@@ -3,6 +3,7 @@ import { markRaw } from "vue";
 
 const APP_PUZLE_URL = "https://puzle.tseyor.org/";
 const APP_MUULAR_URL = "/muular-electronico";
+const APP_TSEYOR_CANVA_URL = "/tseyor-canva";
 
 export default [
   {
@@ -164,6 +165,19 @@ export default [
               route: "meditaciones",
               description: "Meditaciones para el trabajo interior",
               icon: "ph:file-text-duotone",
+            },
+          ],
+        },
+         {
+          title: "Comunidad",
+          class: "flex flex-col gap-1",
+          index: 1,
+          items: [
+            {
+              title: "Galerías de Arte",
+              route: "galerias",
+              description: "Galerías de arte de la comunidad",
+              icon: "ph:image-duotone",
             },
           ],
         },
@@ -446,16 +460,24 @@ export default [
               external: true,
               target: "_blank",
               description: "Juego del puzle con las láminas de abstacción",
-              icon: "ph:file-text-duotone",
+              icon: "ph:puzzle-piece-duotone",
               disabled: false,
             },
             {
+              title: "Tseyor Canva",
+              url: APP_TSEYOR_CANVA_URL,
+              external: true,
+              target: "_self",
+              description: "Aplicación para el diseño de carteles o anuncios",
+              icon: "ph:paint-brush-duotone",
+            },
+            /*{
               title: "Cartas para el autodescubrimiento",
               route: "equipos",
               description: "Meditaciones para el trabajo interior",
               icon: "ph:file-text-duotone",
               disabled: true,
-            },
+            },*/
           ],
         },
       ],

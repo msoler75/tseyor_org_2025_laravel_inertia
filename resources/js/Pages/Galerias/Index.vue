@@ -27,7 +27,11 @@
 
                     <SearchResultsHeader :results="listado" />
 
-                    <div class="grid gap-8" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(18rem, 100%), 1fr))` }">
+                    <div v-if="listado.data.length === 0" class="card bg-base-100 p-6 rounded-lg shadow-md text-center">
+                        <h2 class="text-2xl font-semibold my-20">Próximamente</h2>
+                    </div>
+
+                    <div v-else class="grid gap-8" :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(18rem, 100%), 1fr))` }">
                         <CardContent v-if="listado.data.length > 0" v-for="galeria in listado.data" :imageLeft="false"
                             :imageHeight="300" :key="galeria.id" :title="galeria.titulo" :description="galeria.descripcion"
                             :href="route('galeria', galeria.id)" :image="galeria.imagen_principal"

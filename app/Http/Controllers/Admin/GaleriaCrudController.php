@@ -52,12 +52,16 @@ class GaleriaCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::column('titulo')->label('Título');
-        CRUD::column('descripcion')->label('Descripción');
-        CRUD::column('imagen')->label('Imagen');
-        CRUD::column('ruta')->label('Ruta');
-        CRUD::column('created_at')->label('Creado')->type('datetime');
+        //CRUD::column('created_at')->label('Creado')->type('datetime');
+        CRUD::column('id')->label('id')->type('number');
         CRUD::column('updated_at')->label('Actualizado')->type('datetime');
+        CRUD::column('titulo')->label('Título');
+        //CRUD::column('slug')->label('Slug');
+        // CRUD::column('descripcion')->label('Descripción');
+        CRUD::column('imagen')->label('Imagen')->type('image')
+            // ->prefix('archivos/')
+            ->height('60px');
+        CRUD::column('ruta')->label('Ruta');
     }
 
     public function scan($id)
@@ -90,10 +94,17 @@ class GaleriaCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|string|max:255',
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('galerias', 'slug')->ignore(request()->id)],
             'descripcion' => 'nullable|string',
             'ruta' => 'required|string|max:500',
         ]);
         CRUD::field('titulo');
+        CRUD::addField([
+            'name' => 'slug',
+            'label' => 'Slug',
+            'type' => 'text',
+            'hint' => 'Opcional. Si se deja vacío se genera automáticamente a partir del título.',
+        ]);
         CRUD::field('descripcion');
         CRUD::field('ruta');
 
@@ -116,12 +127,19 @@ class GaleriaCrudController extends CrudController
     {
         CRUD::setValidation([
             'titulo' => 'required|string|max:255',
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('galerias', 'slug')->ignore(request()->id)],
             'descripcion' => 'nullable|string',
             'ruta' => 'required|string|max:500',
             'assign_user_to_all' => 'nullable|exists:users,id',
         ]);
 
         CRUD::field('titulo');
+        CRUD::addField([
+            'name' => 'slug',
+            'label' => 'Slug',
+            'type' => 'text',
+            'hint' => 'Opcional. Si se deja vacío se genera automáticamente a partir del título.',
+        ]);
         CRUD::field('descripcion');
         CRUD::field('ruta');
 

@@ -99,7 +99,8 @@
                     <GlobalSearch />
 
                     <button
-                        @click="toggleDark()"
+                        @click="toggleDark"
+                        type="button"
                         class="my-auto p-1 w-10 h-10 flex justify-center items-center rounded-full bg-base-300 shadow-2xs text-xl sm:ml-6 hover:text-secondary"
                         :aria-label="
                             'Cambiar a modo ' + (isDark ? 'claro' : 'oscuro')
@@ -157,28 +158,6 @@ const showingNavigationDropdown = ref(false);
 
 // Usar el store compartido del tema - ahora con reactividad garantizada
 const { isDark, toggleDark } = ui.theme
-
-
-// Forzar sincronización de isDark tras el primer render y reflejar cualquier cambio inicial
-onMounted(() => {
-    nextTick(() => {
-        // Si el valor inicial no coincide con el data-theme, lo corregimos
-        const htmlTheme = document.documentElement.getAttribute('data-theme');
-        if ((htmlTheme === 'night' && !isDark.value) || (htmlTheme === 'light' && isDark.value)) {
-            isDark.value = htmlTheme === 'night';
-        }
-    });
-});
-
-// Si por alguna razón cambia el data-theme externo, sincronizar el botón
-watch(
-    () => document.documentElement.getAttribute('data-theme'),
-    (newTheme) => {
-        if ((newTheme === 'night' && !isDark.value) || (newTheme === 'light' && isDark.value)) {
-            isDark.value = newTheme === 'night';
-        }
-    }
-);
 
 /*
 function updateDarkState() {

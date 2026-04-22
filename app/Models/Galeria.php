@@ -9,12 +9,19 @@ use App\Models\GaleriaItem;
 use Laravel\Scout\Searchable;
 use App\Pigmalion\StorageItem;
 
+
 class Galeria extends ContenidoBaseModel
 {
     use CrudTrait;
     use Searchable;
 
-    protected $fillable = ['titulo', 'descripcion', 'ruta', 'imagen'];
+    protected $fillable = [
+        'titulo',
+        'slug',
+        'descripcion',
+        'ruta',
+        'imagen'
+    ];
 
     public function items()
     {

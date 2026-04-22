@@ -2,7 +2,6 @@ import { defineStore } from "pinia"
 import { ref, watch } from "vue"
 import { useDark } from "@vueuse/core"
 import { usePage } from "@inertiajs/vue3"
-import { getApiUrl } from "@/composables/api"
 
 const TOGGLE_DEBOUNCE_MS = 200
 const FONT_STORAGE_KEY = "tseyor_tamanyoFuente"
@@ -27,6 +26,7 @@ export const useThemeStore = defineStore("theme", () => {
             storageKey: "theme",
             selector: "html",
             valueDark: "night",
+            valueLight: "light",
             initialValue: initialDark,
             onChanged: () => {},
         })
@@ -81,8 +81,9 @@ export const useThemeStore = defineStore("theme", () => {
         }
 
         try {
-            fetch(`${getApiUrl()}/update-theme`, {
+            fetch("/update-theme", {
                 method: "POST",
+                credentials: "same-origin",
                 headers: {
                     "Content-Type": "application/json",
                     "X-Requested-With": "XMLHttpRequest",
