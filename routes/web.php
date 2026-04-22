@@ -53,6 +53,7 @@ use App\Http\Controllers\PWALogController;
 use App\Pigmalion\SEO;
 use Illuminate\Support\Facades\Cookie;
 use App\Services\MuularElectronico;
+use App\Services\TseyorCanva;
 
 // Bloquear rutas sospechosas con patrones generales (cualquier ruta que empiece con wp, templates, o sea un archivo .php sospechoso)
 Route::any('{suspicious}', function () {
@@ -293,6 +294,7 @@ Route::get('ong/muular', function () {
         ->withViewData(SEO::get('muular'));
 })->name('muular');
 Route::get('muular-electronico', [MuularElectronico::class, 'redirigir']);
+Route::get('tseyor-canva', [TseyorCanva::class, 'redirigir']);
 
 Route::get('utg', [EquiposController::class, 'index_utg'])->name('utg');
 Route::get(
@@ -470,8 +472,8 @@ Route::get('boletines/{id}', [BoletinesController::class, 'ver'])->name('boletin
 
 // Rutas para galerías
 Route::get('galerias', [GaleriaController::class, 'index'])->name('galerias');
-Route::get('galeria/{id}', [GaleriaController::class, 'show'])->name('galeria');
-Route::get('galeria/{id}/json', [GaleriaController::class, 'apiShow'])->name('galeria.json');
+Route::get('galerias/{slug}', [GaleriaController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('galeria');
+Route::get('galerias/{slug}/json', [GaleriaController::class, 'apiShow'])->where('slug', '[a-z0-9\-]+')->name('galeria.json');
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

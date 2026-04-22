@@ -228,6 +228,13 @@ return [
         'jwt_secret' => env('JWT_SECRET', 'cualquier_clave')
     ],
 
+    /**
+     * Canva Tseyor
+     */
+    'tseyor_canva' => [
+        'auth_url' => env('TSEYOR_CANVA_URL') . '/auth/login',
+        'jwt_secret' => env('JWT_SECRET', 'cualquier_otra_clave')
+    ],
 
 
     /**

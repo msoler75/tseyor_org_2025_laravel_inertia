@@ -37,7 +37,7 @@ class MuularElectronico
         if (!$auth_url)
             throw new \Error("Error de configuración");
 
-        return view('redirect-to-muular-electronico', ['url' => $auth_url. ($from ? '?to=' . $from : ''), 'token' => $jwt]);
+        return view('redirect-with-jwt', ['url' => $auth_url. ($from ? '?to=' . $from : ''), 'token' => $jwt]);
     }
 
 
@@ -83,7 +83,7 @@ class MuularElectronico
      * @throws \Error
      * @return string|null
      */
-    private static function jwt(array $extra = null)
+    private static function jwt(array $extra=null)
     {
         // obtiene el usuario actual
         $user = auth()->user();

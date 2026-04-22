@@ -15,6 +15,7 @@ use App\Models\Entrada;
 use App\Models\Meditacion;
 use App\Models\Psicografia;
 use App\Models\Video;
+use App\Models\Galeria;
 use App\Models\Centro;
 use App\Models\Evento;
 use App\Pigmalion\Markdown;

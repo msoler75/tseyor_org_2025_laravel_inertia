@@ -56,9 +56,6 @@ const props = defineProps({
     filtrado: { default: () => "" },
     listado: {
         default: () => { data: [] }
-    },
-    recientes: {
-        default: () => []
     }
 });
 
