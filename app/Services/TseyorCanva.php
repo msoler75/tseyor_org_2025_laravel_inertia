@@ -29,7 +29,7 @@ class TseyorCanva
         // si no ha iniciado sesión, debe redirigir a login
         if (!$jwt)
             return redirect()->route('login',  [
-                'to' => 'muular-electronico' . ($from ? '?from=' . $from : '')
+                'to' => 'tseyor-canva' . ($from ? '?from=' . $from : '')
             ]);
 
         $auth_url = config('app.tseyor_canva.auth_url');

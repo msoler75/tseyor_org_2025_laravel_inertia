@@ -2,8 +2,8 @@ import ApplicationMark from "@/Components/ApplicationMark.vue";
 import { markRaw } from "vue";
 
 const APP_PUZLE_URL = "https://puzle.tseyor.org/";
-const APP_MUULAR_URL = "/muular-electronico";
-const APP_TSEYOR_CANVA_URL = "/tseyor-canva";
+const APP_MUULAR_URL_REDIRECT = "/muular-electronico";
+const APP_TSEYOR_CANVA_URL = "http://localhost:8000";
 
 export default [
   {
@@ -439,7 +439,7 @@ export default [
           items: [
             {
               title: "Muular Electrónico",
-              url: APP_MUULAR_URL,
+              url: APP_MUULAR_URL_REDIRECT,
               external: true,
               target: "_self",
               description: "Intercambio de bienes y servicios",
