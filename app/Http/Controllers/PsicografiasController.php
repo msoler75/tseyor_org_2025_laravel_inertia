@@ -90,8 +90,14 @@ class PsicografiasController extends Controller
         $anterior = Psicografia::select(['id', 'slug', 'titulo', 'imagen', 'updated_at'])
             ->where('titulo', '<', $psicografia->titulo)->orderBy('titulo', 'desc')->first();
 
+        // obtenemos ancho y alto de la imagen original
+        $filepath = (new \App\Pigmalion\StorageItem($psicografia->imagen))->path;
+        list($ancho, $alto) = @getimagesize($filepath);
+
         return Inertia::render('Psicografias/Psicografia', [
             'psicografia' => $psicografia,
+            'ancho'=> $ancho,
+            'alto'=> $alto,
             'siguiente' => $siguiente ?? null,
             'anterior' => $anterior ?? null
         ])

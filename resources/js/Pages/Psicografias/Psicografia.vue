@@ -15,17 +15,16 @@
             <div class="py-[10ch] mb-12 relative">
 
                 <div class="prose mx-auto">
-                <h1>{{ psicografia.titulo }}</h1>
+                    <h1>{{ psicografia.titulo }}</h1>
 
-                <div class="text-sm mb-20 flex justify-between">
-                    <Link :href="route('psicografias')+'?categoria='+psicografia.categoria" class="no-underline badge badge-info hover:badge-secondary">{{ psicografia.categoria }}</Link>
-                    <TimeAgo :date="psicografia.updated_at" :includeTime="false" />
-                </div>
+                    <div class="text-sm mb-20 flex justify-between">
+                        <Link :href="route('psicografias')+'?categoria='+psicografia.categoria" class="no-underline badge text-info-content/75 badge-info hover:badge-secondary">{{ psicografia.categoria }}</Link>
+                        <TimeAgo :date="psicografia.updated_at" :includeTime="false" />
+                    </div>
 
-                <div>{{ psicografia.descripcion }}</div>
+                    <div>{{ psicografia.descripcion }}</div>
 
-                <Content :content="`<img src='${getSrcUrl(psicografia.imagen)}'>`" class="mx-auto" />
-
+                    <Content :content="`<img src='${getSrcUrl(psicografia.imagen)}' alt='${psicografia.titulo}' src-width='${ancho}' src-height='${alto}' class='mx-auto max-h-[70vh]'/>`"/>
 
                     <div class="mt-7 flex justify-end">
                         <button class="btn btn-primary" @click="abrirEnPuzle(psicografia.slug)">Abrir en puzle <Icon icon="ph:arrow-up-right-duotone" /></button>
@@ -63,6 +62,14 @@ const { trackUserEngagement, trackDirectAccess } = useGoogleAnalytics()
 const props = defineProps({
     psicografia: {
         type: Object,
+        required: true,
+    },
+    alto: {
+        type: Number,
+        required: true,
+    },
+    ancho: {
+        type: Number,
         required: true,
     },
     siguiente: {
