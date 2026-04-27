@@ -8,6 +8,7 @@ use App\Models\Evento;
 use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
 use Carbon\Carbon;
+use App\Pigmalion\Countries;
 use Illuminate\Support\Facades\Log;
 class EventosController extends Controller
 {
@@ -33,7 +34,7 @@ class EventosController extends Controller
         $orderSql = "(COALESCE(fecha_inicio, published_at, '1970-01-01') >= ?) DESC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') >= ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) ASC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') < ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) DESC";
 
         // Construir la consulta paso a paso
-        $query = Evento::select("titulo", "slug", "descripcion", "imagen", "fecha_inicio", "fecha_fin", "hora_inicio", "categoria", "updated_at", "published_at", "visibilidad");
+        $query = Evento::select("titulo", "slug", "descripcion", "imagen", "pais", "fecha_inicio", "fecha_fin", "fechas_evento", "hora_inicio", "categoria", "updated_at", "published_at", "visibilidad");
 
         if($buscar)
             $query->buscar($buscar);
@@ -59,6 +60,10 @@ class EventosController extends Controller
 
         if ($buscar)
             BusquedasHelper::formatearResultados($resultados, $buscar, false);
+
+        foreach ($resultados as $idx => $evento) {
+            $evento->pais = Countries::getCountry($evento->pais);
+        }
 
         return Inertia::render('Eventos/Index', [
             'filtrado' => $buscar,

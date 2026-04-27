@@ -31,8 +31,6 @@
 
             <div class="w-full grow">
 
-
-
                 <SearchResultsHeader :results="listado" />
 
                 <div v-if="eventosEnCurso.length > 0" class="mb-8">
@@ -44,6 +42,7 @@
                             :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
                             :fecha-fin="contenido.fecha_fin" :hora-inicio="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
                             :draft="contenido.visibilidad!='P'"
+                            :location="contenido.pais"
                             :imageWidth="800"
                             />
                     </div>
@@ -113,7 +112,24 @@ const eventsArray = computed(() => Array.isArray(props.listado.data) ? props.lis
 const eventosEnCurso = computed(() =>
     eventsArray.value.filter(e =>
         esEventoEnCurso(e.fecha_inicio, e.hora_inicio, e.fecha_fin)
-    )
+    ).map(e => {
+        // si tiene varias fechas (elegimos la próxima en el tiempo )
+        const fechasEvento = splitFechas(e.fechas_evento);
+        console.log(e.titulo, fechasEvento);
+        if(fechasEvento.length <= 1)
+            return e
+        for(const f of fechasEvento) {
+            // las fechas están ordenadas
+            // la primera fecha que sea futura la ponemos como fecha_inicio
+            if(esFechaFutura(f))
+        {
+            console.log(e.titulo, f);
+            return {...e, fecha_inicio: f };
+        }
+        }
+        // no deberíamos llegar hasta aqui, pero si sucede, ponemos la ultima fecha
+        return {...e, fecha_inicio: fechasEvento[fechasEvento.length - 1] };
+    })
 );
 
 // Eventos futuros que aún no han comenzado

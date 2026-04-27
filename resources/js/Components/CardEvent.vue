@@ -2,13 +2,19 @@
 	<!-- Reusa CardContent internamente para conservar apariencia y props comunes -->
 	<CardContent :title="title" :image="image" :href="href" :description="description" :date="date" :draft="draft">
 		<template #default>
+
+
             <div v-if="draft" class="mt-2 font-bold text-xs text-secondary text-right">BORRADOR</div>
 			<div v-else-if="enCurso" class="mt-2 font-bold text-xs text-accent text-right">EN CURSO</div>
 			<div v-else-if="futuro" class="mt-2 font-bold text-xs text-secondary text-right">PRÓXIMAMENTE</div>
 
+            <div class="absolute right-2 top-2 rounded-xs shadow-lg bg-base-100 text-xl font-bold overflow-hidden"></div>
+
+            <span v-if="location" class="absolute top-4 left-4 font-bold badge badge-info uppercase">{{ location }}</span>
+
 			<div class="absolute right-2 top-2 rounded-xs shadow-lg bg-base-100 text-xl font-bold overflow-hidden">
-				<span class="p-2 inline-block">
-					{{ fechaMain }}
+                <span class="p-2 inline-block">
+                    {{ fechaMain }}
 				</span>
 				<div class="bg-primary text-primary-content text-sm text-center p-1">
 					{{ fechaSuffix }}
@@ -26,6 +32,7 @@ const props = defineProps({
 	image: String,
 	href: String,
 	description: String,
+    location: String,
 	draft: { type: Boolean, default: false },
 	// acepta fecha en crudo (por ejemplo evento.fecha_inicio). Mantengo compatibilidad
 	// con la prop antigua 'fecha' si alguien la pasa.

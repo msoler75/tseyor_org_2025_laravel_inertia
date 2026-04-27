@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use Illuminate\Support\Facades\Storage;
 use App\Services\WordImport;
 use App\Models\Evento;
+use App\Pigmalion\Countries;
 
 /**
  * Class EventoCrudController
@@ -16,8 +16,12 @@ use App\Models\Evento;
 class EventoCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
+        store as traitStore;
+    }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation {
+        update as traitUpdate;
+    }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\ReviseOperation\ReviseOperation;
@@ -120,6 +124,28 @@ class EventoCrudController extends CrudController
         CRUD::field('fecha_inicio')->type('date')->wrapper(['style' => 'width: 200px']);
         CRUD::field('fecha_fin')->type('date')->wrapper(['style' => 'width: 200px']);
         CRUD::field('hora_inicio')->type('time')->wrapper(['style' => 'width: 200px']);
+
+        // Campo para fechas repetidas: se renderiza con un campo personalizado (blade + JS)
+        CRUD::addField([
+            'name' => 'fechas_evento',
+            'label' => 'Fechas del evento (evento repetible)',
+            'type' => 'fechas_evento',
+            'wrapper' => ['class' => 'form-group col-md-12']
+        ]);
+
+
+         CRUD::field([   // select_from_array
+            'name' => 'pais',
+            'label' => "País",
+            'type' => 'select_from_array',
+            'options' => Countries::$list,
+            'allows_null' => false,
+            'default' => 'ES',
+            'wrapper' => [
+                'class' => 'form-group col-md-3'
+            ],
+        ]);
+
         CRUD::field('published_at')->type('datetime')->wrapper(['style' => 'width: 260px']);
 
 
@@ -239,6 +265,86 @@ class EventoCrudController extends CrudController
             return response()->json([
                 "error" => $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Store a newly created resource in the database.
+     */
+    public function store()
+    {
+        $this->crud->setRequest($this->crud->validateRequest());
+
+        // Normalize fechas_evento from array inputs
+        $req = $this->crud->getRequest();
+        $this->normalizeFechasEventoRequest($req);
+
+        $this->crud->unsetValidation(); // validation has already been run
+
+        $r = $this->traitStore();
+
+        return $r;
+    }
+
+    /**
+     * Update the specified resource in the database.
+     */
+    public function update()
+    {
+        $this->crud->setRequest($this->crud->validateRequest());
+
+        $req = $this->crud->getRequest();
+        $this->normalizeFechasEventoRequest($req);
+
+        $this->crud->unsetValidation();
+
+        $r = $this->traitUpdate();
+
+        return $r;
+    }
+
+    /**
+     * Normaliza los inputs de fechas desde el request y los inserta en formato CSV
+     * además asegura fecha_inicio y fecha_fin si faltan.
+     */
+    protected function normalizeFechasEventoRequest($req)
+    {
+        $inputDates = $req->input('fechas_evento');
+
+        // Si vienen como string (CSV) convertir a array
+        if (is_string($inputDates)) {
+            $inputDates = array_filter(array_map('trim', explode(',', $inputDates)));
+        }
+
+        if (!is_array($inputDates)) {
+            $inputDates = [];
+        }
+
+        $normalized = [];
+        foreach ($inputDates as $d) {
+            if (empty($d)) continue;
+            try {
+                $normalized[] = \Carbon\Carbon::parse($d)->format('Y-m-d');
+            } catch (\Throwable $e) {
+                // ignorar
+            }
+        }
+
+        $normalized = array_values(array_unique($normalized));
+        sort($normalized);
+
+        // Componer CSV
+        $csv = implode(',', $normalized);
+        $req->request->set('fechas_evento', $csv);
+
+        // Si no hay fecha_inicio especificada, establecer la primera
+        if (empty($req->input('fecha_inicio')) && !empty($normalized)) {
+            $req->request->set('fecha_inicio', $normalized[0]);
+        }
+
+        // Si no hay fecha_fin especificada, establecer la última
+        if (empty($req->input('fecha_fin')) && !empty($normalized)) {
+            $req->request->set('fecha_fin', $normalized[count($normalized) - 1]);
         }
     }
 }
