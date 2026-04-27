@@ -117,7 +117,6 @@ const eventosEnCurso = computed(() =>
     ).map(e => {
         // si tiene varias fechas (elegimos la próxima en el tiempo )
         const fechasEvento = splitFechas(e.fechas_evento);
-        console.log(e.titulo, fechasEvento);
         if(fechasEvento.length <= 1)
             return e
         for(const f of fechasEvento) {
@@ -125,7 +124,6 @@ const eventosEnCurso = computed(() =>
             // la primera fecha que sea futura la ponemos como fecha_inicio
             if(esFechaFutura(f))
         {
-            console.log(e.titulo, f);
             return {...e, fecha_inicio: f };
         }
         }
