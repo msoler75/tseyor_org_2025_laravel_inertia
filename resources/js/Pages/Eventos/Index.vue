@@ -57,6 +57,7 @@
                             :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
                             :fecha-fin="contenido.fecha_fin" :hora-inicio="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
                             :draft="contenido.visibilidad!='P'"
+                            :location="contenido.pais"
                             :imageWidth="800"
                             />
                     </div>
@@ -72,6 +73,7 @@
                             :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
                             :fecha-fin="contenido.fecha_fin" :hora-inicio="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
                             :draft="contenido.visibilidad!='P'"
+                            :location="contenido.pais"
                             :imageWidth="800"
                             />
                     </div>
