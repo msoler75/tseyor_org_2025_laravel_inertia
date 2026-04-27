@@ -17,6 +17,7 @@ import TipTapEditorSimpleField from "../Components/Backpack/TipTapEditorSimpleFi
 import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
 // import JSONEditorField from "../Components/Backpack/JSONEditorField.vue";
 import SelectField from "../Components/Backpack/SelectField.vue";
+import FechasEventoField from "../Components/Backpack/FechasEventoField.vue";
 import TimeAgo from "../Components/TimeAgo.vue";
 import AudioVideoPlayer from "../Components/AudioVideoPlayer.vue";
 import FileManager from "../Components/FileManager.vue";
@@ -42,6 +43,7 @@ if (elem) {
     .component("imagecoverfield", ImageCoverField)
    // .component("jsoneditorfield", JSONEditorField)
     .component("selectfield", SelectField)
+    .component("FechasEventoField", FechasEventoField)
     .component("timeago", TimeAgo)
     .component("filemanager", FileManager)
     .component("audiovideoplayer", AudioVideoPlayer)

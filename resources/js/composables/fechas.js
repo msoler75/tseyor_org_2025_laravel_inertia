@@ -9,7 +9,7 @@ dayjs.extend(customParseFormat)
 dayjs.extend(localizedFormat)
 
 // aFecha: devuelve objeto Date si puede parsear, o null
-export function aFecha(raw) {
+function aFecha(raw) {
   if (!raw) return null
   // Si es Date ya
   if (raw instanceof Date) return isNaN(raw) ? null : raw
@@ -23,17 +23,17 @@ export function aFecha(raw) {
   return lax.isValid() ? lax.toDate() : null
 }
 
-export function esValida(raw) {
+function esValida(raw) {
   return aFecha(raw) !== null
 }
 
-export function esFechaFutura(raw, referencia = new Date()) {
+function esFechaFutura(raw, referencia = new Date()) {
   const d = aFecha(raw)
   if (!d) return false
   return dayjs(d).isAfter(dayjs(referencia)) || dayjs(d).isSame(dayjs(referencia))
 }
 
-export const fechaFormatoEsp = function (fecha, options) {
+const fechaFormatoEsp = function (fecha, options) {
   const d = aFecha(fecha)
   if (!d) return ''
   const defaultOptions = { day: 'numeric', month: 'short', year: 'numeric' }
@@ -42,7 +42,7 @@ export const fechaFormatoEsp = function (fecha, options) {
 }
 
 // Formatea fecha solo (all-day) como YYYYMMDD.
-export function formatDateOnly(dateInput, addDays = 0) {
+function formatDateOnly(dateInput, addDays = 0) {
   const d = aFecha(dateInput);
   if (!d) return '';
   const dt = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -54,7 +54,7 @@ export function formatDateOnly(dateInput, addDays = 0) {
 // Formatea fecha+hora local como instancia UTC para Google Calendar: YYYYMMDDTHHMMSSZ
 // dateInput admite Date, string ISO o 'YYYY-MM-DD' / 'YYYY-MM-DD HH:MM:SS'.
 // timeInput puede ser 'HH:MM' o 'HH:MM:SS'. Si timeInput está vacío, intentará usar la hora presente en dateInput.
-export function formatDateTimeLocalToUTC(dateInput, timeInput) {
+function formatDateTimeLocalToUTC(dateInput, timeInput) {
   if (!dateInput && !timeInput) return ''
 
   // Construir un dayjs en zona local usando formatos conocidos
@@ -79,7 +79,7 @@ export function formatDateTimeLocalToUTC(dateInput, timeInput) {
 
 // Parse dateInput + timeInput into a local Date object (not UTC).
 // Devuelve null si no es posible.
-export function parseLocalDateTime(dateInput, timeInput) {
+function parseLocalDateTime(dateInput, timeInput) {
   if (!dateInput && !timeInput) return null
   // Usar dayjs para parseo local (no UTC)
   let d
@@ -95,7 +95,7 @@ export function parseLocalDateTime(dateInput, timeInput) {
 // Construye start/end para Google Calendar dada la estructura de evento.
 // Devuelve { start, end } donde cada campo es string con formato esperado por Google
 // o '' si no está disponible. Centraliza la lógica usada por la UI.
-export function buildGoogleCalendarDates(evento) {
+function buildGoogleCalendarDates(evento) {
   if (!evento) return { start: '', end: '' };
 
   const hasStartTime = !!evento.hora_inicio;
@@ -146,7 +146,7 @@ export function buildGoogleCalendarDates(evento) {
 // Para eventos con fecha_fin, asume hora_fin = '22:00'.
 // Para eventos sin hora_inicio, asume duración de 2 horas (todo el día si no hay hora).
 // margenHoras: margen de seguridad en horas (default 2) para compensar cambios de horario/husos horarios
-export function esEventoEnCurso(fechaInicio, horaInicio = null, fechaFin = null, margenHoras = 2) {
+function esEventoEnCurso(fechaInicio, horaInicio = null, fechaFin = null, margenHoras = 2) {
   if (!fechaInicio) return false
 
   const ahora = dayjs()
@@ -205,4 +205,23 @@ export function esEventoEnCurso(fechaInicio, horaInicio = null, fechaFin = null,
   return true
 }
 
-export default { aFecha, esValida, esFechaFutura, fechaFormatoEsp, formatDateOnly, formatDateTimeLocalToUTC, parseLocalDateTime, buildGoogleCalendarDates, esEventoEnCurso };
+// para manejar fechas_evento que pueden ser array, JSON string o CSV string
+function splitFechas (fechas){
+    if (!fechas) return [];
+    if (Array.isArray(fechas)) return fechas;
+    try {
+        const parsed = JSON.parse(fechas);
+        if (Array.isArray(parsed)) return parsed;
+    } catch (e) {}
+    // Si no es un array, intentar dividir por comas
+    return fechas.split(",").map(s => s.trim());
+}
+
+function parsearFechasEvento (fechasCompact) {
+    const fl = splitFechas(fechasCompact);
+    return fl
+        .map(f => fechaFormatoEsp(f, { day: "numeric", month: "long", year: "numeric" }));
+}
+
+
+export { aFecha, esValida, esFechaFutura, fechaFormatoEsp, formatDateOnly, formatDateTimeLocalToUTC, parseLocalDateTime, buildGoogleCalendarDates, esEventoEnCurso, splitFechas, parsearFechasEvento };
