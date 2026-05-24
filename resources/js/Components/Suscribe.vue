@@ -1,7 +1,7 @@
 <template>
     <div id="mc_embed_signup" class="max-w-xs">
         <form @submit.prevent="submitForm">
-            <h2 class="hidden text-primary">Suscribe</h2>
+            <div class="hidden text-primary">Suscríbete</div>
             <div id="mc_embed_signup_scroll" class="space-y-4">
                 <div class="grid grid-cols-1">
                     <input
