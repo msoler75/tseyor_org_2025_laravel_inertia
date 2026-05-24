@@ -232,7 +232,7 @@ return [
      * Canva Tseyor
      */
     'tseyor_canva' => [
-        'auth_url' => env('TSEYOR_CANVA_URL') . '/auth/login',
+        'auth_url' => env('TSEYOR_CANVA_URL', 'undefined_canva_url') . '/auth/login',
         'jwt_secret' => env('JWT_SECRET', 'cualquier_otra_clave')
     ],
 

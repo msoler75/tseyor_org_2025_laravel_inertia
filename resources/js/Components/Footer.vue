@@ -10,8 +10,8 @@
                         v-for="(section, index) in sections"
                         :key="index"
                         class="space-y-5 sm:space-y-4 md:space-y-3 lg:space-y-2 mb-7"
-                    >
-                        <h3 class="text-lg font-bold">{{ section.title }}</h3>
+                        >
+                        <div class="title-footer">{{ section.title }}</div>
                         <ul class="list-none space-y-5 lg:space-y-2 pl-0">
                             <li v-for="(item, i) in section.items" :key="i">
                                 <Link
@@ -27,16 +27,12 @@
                         </ul>
                     </div>
                     <div v-if="suscription" class="space-y-5 sm:space-y-4 md:space-y-3 lg:space-y-2 w-56">
-                        <h3 class="text-lg font-bold">
-                            Formulario de suscripción
-                        </h3>
+                        <div class="title-footer">Formulario de suscripción</div>
                         <!-- Aquí iría tu formulario de suscripción -->
                         <Suscribe />
                     </div>
                     <div class="space-y-5 sm:space-y-4 md:space-y-3 lg:space-y-2 ">
-                        <h3 class="text-lg font-bold text-left">
-                            Redes Sociales
-                        </h3>
+                        <div class="title-footer text-left">Redes Sociales</div>
                         <div class="flex justify-start gap-7 lg:gap-4">
                             <a
                                 v-for="(social, i) in socialLinks"
@@ -79,3 +75,11 @@ function encodeUrlAccents(str) {
 
 const nav = useNav();
 </script>
+
+<style scoped>
+@reference "../../css/app.css";
+
+.title-footer {
+    @apply mb-5 text-primary text-lg font-bold;
+}
+</style>
