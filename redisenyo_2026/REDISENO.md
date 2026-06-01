@@ -47,9 +47,9 @@ Reglas de presentación:
 
 ## Promesa transversal: sin dogmas
 
-`Sin dogmas` no debe ser solo un claim de portada. Debe acompañar todo el recorrido del usuario y aparecer justo donde reduce una duda o fricción:
+`Sin dogmas` no debe funcionar como titular principal ni como eslogan dominante. Debe acompañar todo el recorrido del usuario como una garantía breve, colocada justo donde reduce una duda o fricción:
 
-- **Home**: promesa inicial. TSEYOR se presenta como espiritualidad viva, libre y sin dogmas.
+- **Home**: comentario de confianza cerca del hero o de los sellos, no necesariamente dentro del H1. TSEYOR se presenta como una propuesta de autodescubrimiento que se vive desde la experimentación personal.
 - **Caminos de entrada**: el curso y la biblioteca deben comunicar que se puede empezar a explorar sin obligación de creer ni pertenecer de inmediato.
 - **/quienes-somos**: prueba de identidad. Explicar que la comunidad se basa en experimentación, retroalimentación, libertad interior y miembros de una ONG sin ánimo de lucro.
 - **/cursos**: garantía de inscripción. Aclarar que el curso acompaña y ordena, pero no impone creencias.
@@ -89,6 +89,27 @@ Fuentes de texto usadas:
 - `resources/js/Pages/Novedades.vue`
 - `branding.htm`
 
+## Criterio de tono para títulos y contenidos clave
+
+Los títulos principales deben acercarse más al tono institucional y espiritual de la web actual que a fórmulas de marketing. El rediseño puede mejorar jerarquía, claridad y conversión, pero no debe convertir a TSEYOR en una marca con slogans agresivos o excesivamente sintetizados.
+
+Reglas:
+
+- Priorizar títulos que ya viven en la identidad actual: `ONG Mundo Armónico TSEYOR`, `Nuestro proyecto es el despertar a una nueva consciencia`, `Sociedades Armónicas`, `Curso Holístico TSEYOR`, `Biblioteca TSEYOR`.
+- Evitar que `sin dogmas` sea titular principal. Debe aparecer como nota, sello o aclaración breve: `sin imposición`, `desde la experimentación personal`, `sin obligación de creer`.
+- Mantener visible el origen estelar, pero con tono sereno: `La filosofía TSEYOR nace de las comunicaciones con nuestros Guías Estelares...`.
+- Evitar titulares que suenen a campaña genérica de crecimiento personal: `conciencia sin dogmas`, `filosofía estelar para el autodescubrimiento`, `una filosofía cósmica, libre y sin dogmas`, salvo como material exploratorio no recomendado.
+- Los H1 deben ser sobrios, reconocibles y cercanos al contenido existente. Los diferenciales pueden ir en subtítulo, sobrelínea o bloque inmediatamente posterior.
+- Cuando el texto de la web actual sea fuerte, conservarlo y ordenarlo mejor antes de reescribirlo.
+
+Fórmula recomendada para hero:
+
+- Sobrelínea: `ONG Mundo Armónico TSEYOR`
+- H1: `Nuestro proyecto es el despertar a una nueva consciencia`
+- Subtítulo: `y la creación de las Sociedades Armónicas, a través de la transmutación de nuestro pensamiento.`
+- Complemento diferencial breve: `La filosofía TSEYOR nace de las comunicaciones con nuestros Guías Estelares de la Confederación de Mundos Habitados de la Galaxia.`
+- Nota de confianza: `Un camino de experimentación personal, retroalimentación y libertad interior, sin obligación de creer.`
+
 ## `/` Home
 
 Función de la página: explicar en pocos segundos qué es TSEYOR y dirigir a la persona hacia curso, biblioteca, blog, novedades o boletín. La home no debe intentar contener toda la filosofía; debe orientar.
@@ -108,48 +129,54 @@ La home propuesta cumple los ejes centrales de marca:
 
 Riesgos detectados:
 
-- La secuencia inicial puede quedar demasiado larga si `Franja institucional`, `De dónde nace la filosofía Tseyor` y `TSEYOR en una mirada` se implementan como secciones completas. En homepage, deben funcionar como módulos compactos antes de que el usuario tenga que hacer demasiado scroll.
-- El bloque `De dónde nace la filosofía Tseyor` es imprescindible, pero debe estar muy cerca del hero y no competir visualmente con él.
+- La secuencia inicial puede quedar demasiado larga si `Los Guías Estelares`, `Conocimiento libre, ONG y comunidad` y los caminos de entrada se implementan como pantallas completas. En homepage, deben funcionar como módulos compactos y conectados antes de que el usuario tenga que hacer demasiado scroll.
+- El bloque `Los Guías Estelares` es imprescindible, pero debe estar muy cerca del hero y no competir visualmente con él.
 - Falta especificar metadatos SEO, H1 y schema de homepage.
 - Falta definir una prueba de "primeros 5 segundos" y "primeros 30 segundos" para validar implementación.
 
 Recomendación de implementación:
 
-1. Hero potente con diferencial estelar, CTA curso, CTA biblioteca y eventos condicionales.
-2. Debajo del hero, una franja compacta de sellos: `ONG sin ánimo de lucro`, `Sin dogmas`, `Libre descarga`, `Comunidad de miembros`.
-3. Inmediatamente después, bloque breve `De dónde nace la filosofía Tseyor`, con CTA a `/guias` y `/comunicados`.
-4. Después, `TSEYOR en una mirada` como social proof compacto con 3-4 datos.
-5. Luego, caminos de entrada y secciones de conversión.
+1. Hero con tono sereno: `Hacia una nueva consciencia`, CTA curso, CTA biblioteca y eventos condicionales.
+2. Inmediatamente después, bloque breve `Los Guías Estelares`, con CTA a `/guias` y `/comunicados`.
+3. Franja institucional: `Conocimiento libre, ONG y comunidad`, libre descarga, sin ánimo de lucro y miembros reales.
+4. Después, caminos de entrada y secciones de conversión.
+5. La segunda mitad de la home debe quedar para profundización, prueba social y retorno.
 
 No convertir los primeros cuatro módulos en cuatro pantallas completas. La home debe orientar rápido.
 
 Orden optimizado:
 
 1. Hero con promesa clara y diferencial estelar: filosofía de las estrellas, Guías Estelares y Confederación.
-2. Franja institucional: ONG, sin ánimo de lucro, libre descarga y comunidad de miembros.
-3. Origen estelar de la filosofía: Guías Estelares, Confederación y comunicados.
-4. Franja breve de confianza: más de 40 años, biblioteca, comunicados, comunidad.
-5. Caminos de entrada: curso, biblioteca, blog y eventos si existen.
-6. Curso Holístico como conversión principal.
-7. Biblioteca como exploración libre.
-8. Comunidad y Blog como conexión humana.
-9. Testimonios como prueba social.
-10. Filosofía como profundización.
-11. Novedades y boletín como retorno.
+2. Los Guías Estelares: Confederación, ciencia, espiritualidad y experimentación personal.
+3. Conocimiento libre, ONG y comunidad.
+4. Por dónde empezar: curso, biblioteca, temas clave, blog y eventos si existen.
+5. Curso Holístico y Biblioteca TSEYOR como vías principales de conversión y exploración.
+6. Temas clave de TSEYOR: páginas destacadas de `Descubre` con imagen, título y descripción.
+7. Comentarios de nuestros miembros como prueba social.
+8. Blog como vida visible de la comunidad.
+9. Novedades y boletín como retorno.
 
-Este orden corrige el problema de una portada muy contemplativa: primero orienta, luego seduce, y después profundiza.
+Este orden corrige el problema de una portada muy contemplativa y demasiado larga: primero orienta, luego ofrece caminos claros, y después deja la exploración, la prueba social y la retención para la segunda mitad.
 
-### 1. Filosofía de las estrellas, conciencia sin dogmas
+Principio de diseño continuo:
+
+- La home no debe parecer una colección de bloques independientes.
+- Cada sección debe tener personalidad propia, pero formar parte de una narración visual continua.
+- Usar transiciones entre secciones: solapes suaves, cambios progresivos de fondo, líneas visuales, motivos gráficos repetidos, continuidad de imágenes o elementos que conecten un bloque con el siguiente.
+- Evitar repetir el mismo patrón `título + texto + botones + tarjetas` en todas las secciones.
+- Alternar densidad: secciones breves de confianza, zonas visuales amplias, grids de exploración y cierres compactos.
+- Las primeras 4-5 secciones deben sentirse como un recorrido guiado. Después, `Temas clave`, testimonios, blog, novedades y boletín funcionan como profundización, confianza y retención.
+- La singularidad visual debe estar al servicio del contenido: origen estelar, ONG, conocimiento libre, comunidad real y curso gratuito deben reconocerse sin que el diseño se fragmente.
+
+### 1. Hacia una nueva consciencia
 
 Tipo: Hero
 
 Texto:
 
-> La filosofía Tseyor nace de las comunicaciones con nuestros Guías Estelares de la Confederación de Mundos Habitados de la Galaxia.
+> TSEYOR es una ONG dedicada al despertar de la consciencia y la creación de las Sociedades Armónicas.
 >
-> Nuestro proyecto es el despertar a una nueva consciencia y la creación de las Sociedades Armónicas, a través de la transmutación de nuestro pensamiento.
->
-> Mundo Armónico TSEYOR es una ONG sin ánimo de lucro. Nuestra comunidad está conformada por miembros de la ONG que trabajan hacia la instauración de las Sociedades Armónicas de la Galaxia desde una espiritualidad viva, libre y sin dogmas.
+> Nuestros Guías Estelares nos tutelan en este proceso de transformación interior.
 
 Botones CTA:
 
@@ -159,67 +186,42 @@ Botones CTA:
 
 Notas:
 
-- Mostrar `ONG Mundo Armónico TSEYOR` como marca o sobrelínea, no necesariamente como H1. Como titular de conversión funciona mejor `Filosofía de las estrellas, conciencia sin dogmas`, porque comunica el diferencial y el beneficio.
+- Usar `Hacia una nueva consciencia` como H1 principal.
+- Mantener `TSEYOR es una ONG dedicada al despertar de la consciencia y la creación de las Sociedades Armónicas.` como primer texto del hero.
+- El origen estelar debe aparecer en el hero mediante la frase `Nuestros Guías Estelares nos tutelan en este proceso de transformación interior.`
 - Mantener como primera pantalla, pero sustituir el CTA único actual `Quiénes somos` por un CTA de conversión.
 - `Quiénes somos` puede quedar como enlace de navegación, no como CTA principal del hero.
 - `Próximos eventos` debe mantenerse en el primer viewport cuando `hayProximosEventos` sea verdadero. No debe competir con el CTA principal: usarlo como botón auxiliar destacado, por ejemplo bajo los CTAs en móvil y como píldora flotante inferior derecha en escritorio, como en la portada actual.
 - El texto del hero debe dejar claro que se trata de una ONG sin ánimo de lucro, pero sin convertir el hero en una explicación legal.
-- El hero debe incluir `sin dogmas` o una fórmula equivalente muy cercana: `espiritualidad viva, libre y sin dogmas`.
-- El hero debe dejar claro en menos de 30 segundos que la filosofía procede de los Guías Estelares y de la Confederación. Si esto queda solo en secciones inferiores, se pierde el principal factor diferencial.
-- SEO: el H1 o subtítulo debe incluir `filosofía de las estrellas`, `Guías Estelares` o `Confederación de Mundos Habitados de la Galaxia`.
+- `Sin dogmas` no debe ir en el título. Debe aparecer como nota breve de confianza: `sin obligación de creer`, `desde la experimentación personal`, `sin imposición`.
+- Añadir sobre la imagen del hero un badge circular flotante con icono y frase: `Filosofía viva, libre y sin dogmas`.
+- El badge debe funcionar como sello de confianza, no como mensaje principal. Debe verse en escritorio y tablet; en móvil puede reducirse o integrarse bajo el texto si compite con el H1.
+- Riesgo: El hero debe dejar claro en menos de 30 segundos que la filosofía procede de los Guías Estelares y de la Confederación. Si esto queda solo en secciones inferiores, se pierde el principal factor diferencial.
+- SEO: el bloque inmediatamente posterior al hero debe completar el contexto con `Guías Estelares` y `Confederación de Mundos Habitados de la Galaxia`.
 
 Opciones de copy para hero:
 
-- Opción A H1: `Filosofía de las estrellas, conciencia sin dogmas`
-- Opción A subtítulo: `La filosofía TSEYOR nace de las comunicaciones con nuestros Guías Estelares de la Confederación de Mundos Habitados de la Galaxia.`
-- Opción B H1: `TSEYOR: filosofía estelar para el autodescubrimiento`
-- Opción B subtítulo: `Una ONG sin ánimo de lucro que comparte conocimiento gratuito, libre descarga y un camino de retroalimentación sin dogmas.`
-- Opción C H1: `Una filosofía cósmica, libre y sin dogmas`
-- Opción C subtítulo: `Más de 40 años de comunicados, libros y experiencias con los Guías Estelares de la Confederación de Mundos Habitados de la Galaxia.`
+- Versión elegida H1: `Hacia una nueva consciencia`
+- Versión elegida texto: `TSEYOR es una ONG dedicada al despertar de la consciencia y la creación de las Sociedades Armónicas.`
+- Versión elegida complemento: `Nuestros Guías Estelares nos tutelan en este proceso de transformación interior.`
 
-Recomendación: usar la opción A en portada porque comunica el diferencial de marca con más rapidez.
+Recomendación: mantener esta versión por su tono sereno, institucional y cercano a la web actual. No usar `sin dogmas` como titular.
 
 Imagen/diseño:
 
 - Usar una imagen experiencial y humana antes que un fondo solo espacial. La composición de `PortadaNueva.vue` con cielo, montañas y personas funciona mejor si las personas quedan visibles desde el primer viewport.
 - Si se mantiene `FondoEspacio`, añadir una capa visual o imagen secundaria de comunidad para que el visitante vea que hay personas reales detrás del mensaje.
 - Evitar que el texto quede dentro de una tarjeta oscura muy pesada; usar una capa ligera de contraste y mantener mucho aire.
+- Badge flotante: círculo o medallón sobre la imagen, con icono sencillo y el texto `Filosofía viva, libre y sin dogmas`. Debe sentirse integrado en la composición, no como pegatina aislada.
+- El icono puede sugerir luz, consciencia, estrella o brújula interior, evitando símbolos religiosos cerrados.
 
-### 2. ONG sin ánimo de lucro y conocimiento libre
-
-Tipo: Texto normal / franja institucional
-
-Texto:
-
-> Mundo Armónico TSEYOR es una ONG sin ánimo de lucro dedicada al desarrollo humano, el despertar espiritual y la ayuda humanitaria en sus vertientes material y espiritual.
->
-> Todas nuestras actividades se sostienen desde el servicio y la participación de sus miembros. Los contenidos de TSEYOR, incluyendo libros PDF, comunicados, audios y meditaciones, son de libre acceso y descarga.
->
-> La comunidad TSEYOR está conformada por miembros de la ONG que comparten este camino de autodescubrimiento, hermanamiento y retroalimentación, sin dogmas y desde la experimentación personal.
-
-Botones CTA:
-
-- Principal: `Conoce la ONG` -> `/ong`
-- Secundario: `Explorar contenidos libres` -> `/biblioteca`
-
-Notas:
-
-- Debe aparecer inmediatamente después del hero.
-- Motivo: reduce dudas sobre ánimo de lucro, pertenencia y acceso al conocimiento.
-- Mostrar 4 sellos o chips visibles: `ONG sin ánimo de lucro`, `Sin dogmas`, `Contenidos de libre descarga`, `Comunidad de miembros`.
-- Esta sección no debe ser larga; funciona como garantía de confianza.
-
-### 3. De dónde nace la filosofía Tseyor
+### 2. El mensaje desde las estrellas
 
 Tipo: Texto normal / bloque diferencial con imagen
 
 Texto:
 
-> La filosofía Tseyor proviene de las comunicaciones mantenidas con nuestros Guías Estelares, miembros de la Confederación de Mundos Habitados de la Galaxia.
->
-> Todos nuestros materiales se basan en estas conversaciones, recibidas y preservadas durante más de 40 años, que nos guían con paciencia, amor y comprensión en este proceso de cambio de Era.
->
-> Por eso TSEYOR no es una filosofía espiritual común: es una propuesta de autodescubrimiento con origen estelar, abierta a la experimentación personal y sin dogmas.
+> Nuestra filosofía proviene de los Guías Estelares de la Confederación de Mundos Habitados de la Galaxia, integrando ciencia, espiritualidad y experimentación personal.
 
 Botones CTA:
 
@@ -228,59 +230,66 @@ Botones CTA:
 
 Notas:
 
-- Debe aparecer antes de la sección de caminos, curso y biblioteca.
-- Motivo: el visitante debe reconocer el diferencial de TSEYOR en los primeros 30 segundos: Guías Estelares, Confederación y origen estelar de la filosofía.
-- Esta sección ayuda a buscadores y usuarios a diferenciar TSEYOR de una propuesta genérica de crecimiento personal.
+- Debe aparecer inmediatamente después del hero.
+- Motivo: completa el origen estelar mencionado en el hero y evita que el visitante interprete TSEYOR como una filosofía espiritual genérica.
+- Debe mantener un tono sobrio, sin sensacionalismo.
 - Puede usar imagen `/almacen/medios/paginas/todos-los-guias.jpg` o una imagen cósmica clara, pero no puramente abstracta.
-- Debe evitar un tono sensacionalista. El tono correcto es sereno, directo y transparente.
 
-### 4. TSEYOR en una mirada
+### 3. Conocimiento libre, ONG y comunidad
 
-Tipo: Texto normal / franja de confianza
+Tipo: Texto normal / franja institucional
 
 Texto:
 
-> Más de 40 años de intercambio de mensajes, avistamientos y experiencias interdimensionales.
+> Los contenidos de TSEYOR, incluyendo libros, comunicados, audios y meditaciones, son de libre acceso y descarga.
 >
-> Una biblioteca web con libros PDF, comunicados, audios, meditaciones y materiales de libre acceso y descarga.
+> Este conocimiento se comparte desde el servicio y la ayuda humanitaria, en sus vertientes material y espiritual.
 >
-> Una comunidad de miembros de la ONG que trabaja el autodescubrimiento, la ayuda humanitaria y la creación de Sociedades Armónicas desde una filosofía viva, no dogmática.
+> La comunidad está conformada por miembros de la ONG Mundo Armónico TSEYOR.
 
 Botones CTA:
 
-- Principal: `Explorar biblioteca` -> `/biblioteca`
-- Secundario: `Quiénes somos` -> `/quienes-somos`
+- Principal: `Explorar contenidos libres` -> `/biblioteca`
+- Secundario: `Conoce la ONG` -> `/ong`
 
 Notas:
 
-- Esta franja debe ser breve y visual: 3 o 4 datos, no un bloque largo.
-- Puede reutilizar `Tseyor en números`, pero con menos elementos arriba: `Libros`, `Comunicados`, `Audios`, `Voluntarios` o `Centros`.
-- El contador completo puede quedar más abajo si se quiere mantener.
+- Motivo: reduce dudas sobre ánimo de lucro, pertenencia y acceso al conocimiento.
+- Mostrar sellos o chips visibles: `ONG sin ánimo de lucro`, `Contenidos de libre descarga`, `Comunidad de miembros`.
+- `Sin dogmas` puede aparecer como sello secundario o nota de confianza, pero no como título.
+- Esta sección no debe ser larga; funciona como garantía de confianza.
 
-### 5. Elige cómo acercarte a TSEYOR
+Personalidad visual:
+
+- Tono: institucional, claro y sereno.
+- Diseño: franja horizontal compacta, con fondo claro o neutro cálido, sellos visibles y pocas líneas de texto.
+- Color: base luminosa y confiable; evitar exceso de color cósmico aquí para que se perciba como garantía humana e institucional.
+- Diferencia frente a otras secciones: debe sentirse como una certificación de confianza, no como una sección inspiracional.
+
+### 4. Por dónde empezar
 
 Tipo: Texto normal / tarjetas
 
 Texto:
 
-> Puedes empezar por el Curso Holístico, explorar libremente la Biblioteca Tseyor o conocer la vida de la comunidad a través del Blog y las Novedades.
+> (ninguno)
 
 Tarjetas:
 
 - **Curso Holístico Tseyor**  
-  Texto: Aprende con nuestro curso gratuito la base de la filosofía de las estrellas, de parte de nuestros Guías Estelares.  
+  Texto: Una primera guía para comprender el conocimiento TSEYOR y empezar tu proceso.  
   CTA: `Ver curso` -> `/cursos`
 
 - **Biblioteca Tseyor**  
-  Texto: Ofrecemos gratuitamente libros PDF, comunicados, meditaciones, audios, psicografías y materiales de libre descarga procedentes de la Fuente original del Fractal de Tseyor.  
+  Texto: Accede libremente a libros, comunicados, audios, meditaciones y materiales de TSEYOR.  
   CTA: `Entrar en biblioteca` -> `/biblioteca`
 
 - **Blog**  
-  Texto: Aquí puedes conocer sobre la vida de la comunidad Tseyor, sus vivencias, actividades, encuentros e imágenes.  
+  Texto: Conócenos un poco más a través de nuestras vivencias.  
   CTA: `Leer blog` -> `/blog`
 
 - **Próximos eventos**  
-  Texto: Consulta los próximos eventos de la comunidad Tseyor y encuentra rápidamente una actividad a la que puedas asistir.  
+  Texto: Consulta los próximos encuentros, cursos y convivencias.  
   CTA: `Ver eventos` -> `/eventos`  
   Condición: mostrar solo cuando haya eventos programados.
 
@@ -291,137 +300,90 @@ Notas:
 - Si hay eventos activos, esta tarjeta puede aparecer como cuarta opción. Si no hay eventos, se oculta para no crear una vía muerta.
 - Diseño recomendado: tarjetas compactas, no grandes bloques. Cada tarjeta debe tener icono, título, una frase y un botón. En móvil, una por fila.
 
-### 6. Curso Holístico Tseyor
+Personalidad visual:
 
-Tipo: Texto normal con imagen
+- Tono: práctico, orientador y directo.
+- Diseño: panel de decisión con tarjetas compactas, cada una con icono, título, una frase y CTA.
+- Color: cada tarjeta puede tener un acento propio, pero con una jerarquía clara: curso primero, biblioteca segundo, temas clave tercero, blog/eventos como apoyo.
+- Diferencia frente a otras secciones: debe sentirse como una brújula, no como contenido editorial.
+
+### 5. Curso Holístico y Biblioteca TSEYOR
+
+Tipo: Texto normal / bloque principal doble
 
 Texto:
 
-> Aprende con nuestro curso gratuito la base de la filosofía de las estrellas, de parte de nuestros Guías Estelares.
+> El Curso Holístico ayuda a ordenar los fundamentos del conocimiento TSEYOR para quienes se acercan por primera vez.
 >
-> El curso ha sido desarrollado en base a las enseñanzas de nuestros Guías Estelares y funciona bajo el mecanismo de la retroalimentación que nos permite el aprendizaje mutuo, sin dogmas y respetando el proceso de cada persona.
+> Puedes realizarlo online, de forma gratuita y con acompañamiento.
 >
-> Al terminar el curso recibirás tu nombre simbólico.
+> La Biblioteca TSEYOR reúne libros, comunicados, audios, meditaciones y materiales de libre acceso y descarga.
 
 Botones CTA:
 
 - Principal: `Inscríbete gratis` -> `/inscripcion`
-- Secundario: `Ver detalles del curso` -> `/cursos`
+- Secundario: `Explorar biblioteca` -> `/biblioteca`
+- Terciario: `Ver detalles del curso` -> `/cursos`
 
 Notas:
 
-- Esta sección debe tener más peso que Novedades, Blog y Boletín.
-- Texto tomado de `Cursos/Index.vue`.
-- Debe aparecer antes de `La Revolución de la Consciencia`, porque es el objetivo principal de conversión.
+- Esta sección cierra la parte principal de la home.
+- Debe dar más peso visual al curso, porque es la conversión principal, pero la biblioteca debe estar muy visible como vía secundaria para quien quiere explorar primero.
+- El bloque de biblioteca debe decir explícitamente `libre descarga`, no solo `gratuito`, porque esa es una promesa central.
+- El contenido conceptual de `Despertar del sueño de los sentidos` debe quedar como enlace o pieza de `/filosofia`, no como sección propia en home.
 
 Imagen/diseño:
 
-- Usar `/almacen/medios/paginas/curso.png` o una imagen de meditación/personas aprendiendo si existe una más humana.
-- Presentar 4 beneficios debajo del texto: `gratuito`, `sin dogmas`, `con retroalimentación`, `nombre simbólico al terminar`.
-- Repetir CTA de inscripción al final de la sección, no solo arriba.
+- Diseño: composición asimétrica, con el curso como bloque dominante y la biblioteca como bloque complementario.
+- Imagen: usar `/almacen/medios/paginas/curso.png` para curso y `/almacen/medios/portada/biblioteca_tseyor_libros.jpg` para biblioteca si ambas imágenes funcionan juntas.
+- Beneficios visibles: `gratuito`, `sin dogmas`, `con retroalimentación`, `libre descarga`.
+- Color: curso con acento cálido o humano; biblioteca con acento más claro, documental o editorial.
+- Diferencia frente a otras secciones: debe sentirse como el principal punto de acción de la home.
 
-### 7. Biblioteca Tseyor
+### 6. Temas clave de TSEYOR
 
-Tipo: Hero o texto normal con imagen
-
-Texto:
-
-> La Biblioteca Tseyor es el resultado de más de 1800 diálogos telepáticos con seres humanos de la Confederación de Mundos Habitados de la Galaxia, transmitidos a través de Chac-Mool Puente.
->
-> Estas conversaciones interdimensionales se han transcrito en textos que inspiran libros, monografías, vídeos y audios.
->
-> Todos los materiales son de libre acceso y descarga. Han sido publicados y preservados para mantener la integridad del mensaje original.
-
-Botones CTA:
-
-- Principal: `Explorar biblioteca` -> `/biblioteca`
-- Secundario: `Ver comunicados` -> `/comunicados`
-
-Notas:
-
-- Reutiliza el texto más preciso de `Biblioteca.vue`, mejor que el resumen de portada.
-- Puede mostrar accesos directos a libros, comunicados, audios y meditaciones.
-- Debe decir explícitamente `libre descarga`, no solo `gratuito`, porque esa es una promesa central.
-
-Imagen/diseño:
-
-- Usar `/almacen/medios/portada/biblioteca_tseyor_libros.jpg`.
-- Mostrar accesos como chips o tarjetas pequeñas: `Comunicados`, `Libros`, `Audios`, `Meditaciones`.
-- Esta sección debe transmitir gratuidad y abundancia, pero sin saturar con demasiadas categorías.
-
-### 8. La Revolución de la Consciencia
-
-Tipo: Hero o texto normal con imagen
+Tipo: Texto normal / grid de tarjetas dinámicas
 
 Texto:
 
-> La verdadera transformación se logra mediante la autoobservación, el desapego y el sacrificio por la humanidad.
->
-> Con la alquimia de un pensamiento sublimado transmutamos el plomo de nuestra personalidad por el oro del espíritu.
->
-> Te invitamos a compartir este viaje de autodescubrimiento todos juntos. Ya es hora de despertar del sueño de los sentidos.
+> Presentación de algunos temas clave de TSEYOR para una mayor comprensión y claridad.
+
+Contenido:
+
+- Mostrar un grid de tarjetas con las páginas marcadas como `descubre`.
+- Cada tarjeta debe incluir imagen, título y descripción.
+- La tarjeta completa debe enlazar a la página correspondiente.
+- Si `Descubre` cambia de nombre público, mantener internamente la lógica `descubre`, pero presentar la sección con el nombre editorial elegido.
 
 Botones CTA:
 
-- Principal: `Conocer la filosofía` -> `/filosofia`
-- Secundario: `Leer más` -> `/libros/la-revolucion-de-la-consciencia`
+- Principal: `Ver todos los temas` -> `/descubre`
+- Secundario: `Explorar biblioteca` -> `/biblioteca`
 
 Notas:
 
-- Reutiliza la sección actual de portada.
-- Debe actuar como puente hacia `/filosofia`, no solo como enlace a libro.
-- Ubicar después de curso y biblioteca. Es potente, pero más conceptual.
+- Ubicar después del bloque principal `Curso Holístico y Biblioteca TSEYOR`.
+- Motivo: actúa como puente entre la biblioteca y la filosofía, ayudando al visitante a encontrar temas concretos sin entrar directamente en listados largos.
+- Esta sección aprovecha la página actual `/descubre`, que ya lista páginas publicadas con `descubre = true` y muestra imagen, título, descripción y enlace.
+- Evitar que el grid sea demasiado grande en la home: mostrar 6-8 tarjetas como máximo y dejar el resto para `/descubre`.
+- Diseñar tarjetas con imagen visible, título claro y descripción breve. No usar tarjetas demasiado textuales.
+- Posibles nombres públicos: `Temas clave`, `Temas clave de TSEYOR`, `Descubre TSEYOR`, `Para profundizar`.
+- Recomendación: usar `Temas clave de TSEYOR` si se quiere más claridad editorial; usar `Descubre TSEYOR` si se decide conservar el nombre actual de la sección.
 
-### 9. Profundizar en los Guías Estelares
+Personalidad visual:
 
-Tipo: Texto normal con imagen
+- Tono: exploratorio, editorial y visual.
+- Diseño: grid de tarjetas con imágenes reales o simbólicas de cada tema; la imagen debe tener protagonismo.
+- Color: variedad controlada por tarjeta, evitando que todo el bloque parezca una retícula administrativa.
+- Diferencia frente a otras secciones: debe sentirse como una zona de descubrimiento y profundización, no como una repetición de biblioteca.
 
-Texto:
-
-> Recibimos las referencias de nuestros tutores de la Confederación de Mundos Habitados de la Galaxia.
->
-> Todos nuestros materiales se basan en comunicaciones mantenidas con nuestros tutores, quienes con paciencia, amor y comprensión nos guían en este proceso de cambio de Era.
-
-Botones CTA:
-
-- Principal: `Conocer a los Guías Estelares` -> `/guias`
-- Secundario: `Leer comunicados` -> `/comunicados`
-
-Notas:
-
-- Esta sección pasa a ser de profundización porque el origen estelar ya debe aparecer en el hero y en `De dónde nace la filosofía Tseyor`.
-- Puede eliminarse si la home queda demasiado larga, siempre que el bloque temprano de origen estelar exista.
-- Si se mantiene, debe mostrar más detalle y no repetir exactamente el bloque temprano.
-
-### 10. Comunidad Tseyor
-
-Tipo: Hero o texto normal con imagen
-
-Texto:
-
-> Somos una comunidad conformada por miembros de la ONG Mundo Armónico TSEYOR, personas normales y corrientes que trabajan hacia la instauración de las Sociedades Armónicas de la Galaxia.
->
-> Mundo Armónico Tseyor es una ONG dedicada al autodescubrimiento y a la creación de las Sociedades Armónicas en este planeta.
-
-Botones CTA:
-
-- Principal: `Quiénes somos` -> `/quienes-somos`
-- Secundario: `Ver blog` -> `/blog`
-
-Notas:
-
-- El blog funciona aquí como prueba humana y visual.
-- Usar imágenes reales del grupo cuando sea posible.
-- Esta sección debe funcionar como transición natural hacia el Blog.
-- Debe aclarar que la comunidad no es un foro abierto sin estructura, sino una comunidad formada por miembros de la ONG.
-
-### 11. Testimonios
+### 7. Comentarios de nuestros miembros
 
 Tipo: Texto normal / carrusel o tarjetas
 
 Texto:
 
-> Personas que han compartido este camino cuentan cómo han vivido el autodescubrimiento, la retroalimentación, el Curso Holístico y la comunidad Tseyor desde una búsqueda sincera, libre y sin dogmas.
+> Sin texto introductorio. La sección debe mostrar directamente tarjetas con experiencias o comentarios reales de miembros.
 
 Botones CTA:
 
@@ -430,8 +392,8 @@ Botones CTA:
 
 Notas:
 
-- Colocar después de `Comunidad Tseyor` y antes de `Blog`.
-- Motivo: primero se presenta la comunidad, luego se muestra prueba social en voz de personas reales, y después se ofrece el blog para ver fotos, relatos y vida grupal.
+- Colocar después de `Temas clave de TSEYOR` y antes de `Blog`.
+- Motivo: después de mostrar temas, se aporta la voz humana de miembros reales; después el blog amplía con fotos, relatos y vida grupal.
 - No inventar testimonios. Usar citas reales, autorizadas y con nombre simbólico, iniciales o formato anónimo si la persona lo prefiere.
 - Priorizar testimonios que reduzcan objeciones: "sin dogmas", "me sentí acompañado", "pude explorar a mi ritmo", "el curso me ayudó a ordenar la filosofía".
 
@@ -442,7 +404,14 @@ Diseño:
 - Si hay foto real autorizada, usar avatar pequeño. Si no, no usar fotos genéricas.
 - Evitar carruseles automáticos rápidos; mejor tarjetas estáticas o carrusel manual.
 
-### 12. Blog: vida de la comunidad
+Personalidad visual:
+
+- Tono: humano, cercano y sincero.
+- Diseño: tarjetas más cálidas que las de `Temas clave`; menos imagen grande y más voz personal.
+- Color: fondo suave y cálido para diferenciarlo del bloque editorial anterior.
+- Diferencia frente a otras secciones: debe sentirse como voz de comunidad, no como marketing.
+
+### 8. Blog: vida de la comunidad
 
 Tipo: Texto normal / listado de artículos
 
@@ -463,42 +432,43 @@ Notas:
 - No debe competir con el curso; funciona como conexión emocional.
 - Diseño recomendado: grid de 3 cards con imagen grande, título y fecha. Evitar mostrar mucho texto; aquí manda la imagen.
 
-### 13. Novedades
+Personalidad visual:
 
-Tipo: Texto normal / listado de novedades
+- Tono: vivencial, fotográfico y comunitario.
+- Diseño: tarjetas con imagen grande, títulos breves y fechas; priorizar fotos reales del grupo.
+- Color: más abierto y visual que testimonios; puede usar fondos blancos o muy claros para que las fotos respiren.
+- Diferencia frente a otras secciones: debe mostrar vida real, no explicar doctrina ni convertir directamente.
+
+### 9. Novedades y boletín
+
+Tipo: Texto normal / listado compacto + formulario
 
 Texto:
 
 > Todas las novedades de los contenidos de Tseyor.
-
-Botones CTA:
-
-- Principal: `Ver novedades` -> `/novedades`
-- Secundario: `Suscribirme al boletín` -> `/boletines`
-
-Notas:
-
-- Mostrar 3 o 4 novedades recientes.
-- Novedades sirve para retorno y actualidad, no para explicar la esencia a visitantes nuevos.
-- Puede ir después del blog, en formato compacto.
-
-### 14. Suscríbete
-
-Tipo: Texto normal / formulario
-
-Texto:
-
+>
 > Recibe novedades, contenidos y publicaciones recientes de TSEYOR.
 
 Botones CTA:
 
 - Principal: `Suscribirme` -> acción del formulario
-- Secundario: `Ver boletines anteriores` -> `/boletines`
+- Secundario: `Ver novedades` -> `/novedades`
+- Terciario: `Ver boletines anteriores` -> `/boletines`
 
 Notas:
 
+- Mostrar 3 o 4 novedades recientes junto al formulario o justo antes.
+- Novedades y boletín son retención, no explicación principal de TSEYOR.
+- Debe ser el cierre de la home.
 - Mantener el componente `Suscribe`.
 - Reducir fricción: email como campo principal.
+
+Personalidad visual:
+
+- Tono: actual, ligero y de continuidad.
+- Diseño: bloque final compacto, con novedades a un lado y suscripción al otro en escritorio; apilado en móvil.
+- Color: cierre más sobrio, con buen contraste para el formulario.
+- Diferencia frente a otras secciones: debe sentirse como retorno y seguimiento, no como una nueva capa de explicación.
 
 ## `/quienes-somos`
 
@@ -1362,20 +1332,21 @@ Objetivo SEO principal: consolidar la entidad oficial `Mundo Armónico TSEYOR` y
 
 Title recomendado:
 
-> Mundo Armónico TSEYOR | Filosofía de las estrellas sin dogmas
+> Mundo Armónico TSEYOR | Hacia una nueva consciencia
 
 Meta description recomendada:
 
-> ONG sin ánimo de lucro. Filosofía de las estrellas recibida de los Guías Estelares, Curso Holístico gratuito, biblioteca de libre descarga y comunidad TSEYOR.
+> ONG sin ánimo de lucro orientada hacia las Sociedades Armónicas. Guías Estelares, Curso Holístico gratuito, Biblioteca TSEYOR de libre descarga y comunidad.
 
 H1 recomendado:
 
-> Filosofía de las estrellas, conciencia sin dogmas
+> Hacia una nueva consciencia
 
 H2 prioritarios:
 
-- `De dónde nace la filosofía TSEYOR`
-- `ONG sin ánimo de lucro y conocimiento libre`
+- `Los Guías Estelares`
+- `Conocimiento libre y ayuda humanitaria`
+- `Un camino vivo de conocimiento y comunidad`
 - `Curso Holístico TSEYOR`
 - `Biblioteca TSEYOR de libre descarga`
 - `Comunidad TSEYOR`
@@ -1416,7 +1387,7 @@ Prueba de 30 segundos:
 - ¿Se entiende que no hay dogmas?
 - ¿Se entiende que los contenidos son gratuitos o de libre descarga?
 - ¿Se entiende que la comunidad está conformada por miembros de la ONG?
-- ¿Hay caminos claros para empezar: curso, biblioteca, blog, eventos, boletín?
+- ¿Hay caminos claros para empezar: curso, biblioteca, temas clave, blog, eventos, boletín?
 
 Checklist de conversión:
 
@@ -1431,18 +1402,22 @@ Checklist de conversión:
 ## Cambios recomendados respecto al estado actual
 
 - Home: reemplazar el CTA principal `Quiénes somos` por `Comenzar el Curso Holístico`.
-- Home: cambiar el enfoque del hero para que no sea solo `despertar a una nueva consciencia`; debe incluir el diferencial `filosofía de las estrellas`, `Guías Estelares` y `Confederación`.
-- Home: añadir una franja institucional inmediatamente después del hero: ONG sin ánimo de lucro, libre descarga, comunidad de miembros.
-- Home: añadir `sin dogmas` en hero, sellos y franja institucional.
-- Home: añadir la sección temprana `De dónde nace la filosofía Tseyor` antes de caminos, curso y biblioteca.
-- Home: añadir una franja breve de confianza después del hero.
-- Home: añadir una sección temprana de caminos: curso, biblioteca, blog y eventos condicionales.
+- Home: cambiar el enfoque del hero hacia `Hacia una nueva consciencia`, manteniendo ONG, Sociedades Armónicas, transmutación del pensamiento y tutela de los Guías Estelares.
+- Home: añadir la sección temprana `Los Guías Estelares` antes de caminos, curso y biblioteca.
+- Home: añadir la franja institucional `Conocimiento libre, ONG y comunidad`.
+- Home: añadir `sin dogmas` como nota, sello o aclaración contextual, no como titular principal.
+- Home: integrar `Un camino vivo de conocimiento y comunidad` dentro de la franja institucional y del blog, no como sección independiente.
+- Home: añadir una sección temprana `Por dónde empezar`: curso, biblioteca, temas clave, blog y eventos condicionales.
 - Home: mantener `Próximos eventos` como botón condicional en el primer viewport cuando `hayProximosEventos` sea verdadero; idealmente como CTA auxiliar flotante o bajo los CTAs principales, no como sustituto de curso/biblioteca.
 - Home: si hay eventos programados, añadir una cuarta tarjeta condicional `Próximos eventos` en la sección temprana de caminos.
-- Home: incorporar el curso de forma explícita; actualmente el curso no tiene suficiente presencia en la portada.
-- Home: mover `La Revolución de la Consciencia` después de Curso y Biblioteca para que no retrase la conversión principal ni oculte el diferencial estelar.
-- Home: añadir `Testimonios` después de `Comunidad Tseyor` y antes de `Blog`, porque ahí validan la comunidad antes de mostrar relatos e imágenes.
-- Home: mantener `Tseyor en números`, pero como franja breve de confianza arriba o bloque completo después de curso/biblioteca/comunidad.
+- Home: incorporar el curso y la biblioteca en un bloque principal doble, con más peso para el curso y biblioteca como exploración libre.
+- Home: añadir `Temas clave de TSEYOR` después del bloque curso/biblioteca, reutilizando las páginas marcadas como `descubre` con imagen, título y descripción.
+- Home: mover `Despertar del sueño de los sentidos` a `/filosofia` o convertirlo en enlace contextual, no mantenerlo como sección propia de portada.
+- Home: integrar `La tutela de los Guías Estelares` dentro del hero y `El mensaje desde las estrellas`, evitando una sección repetida.
+- Home: añadir `Comentarios de nuestros miembros` después de `Temas clave de TSEYOR` y antes de `Blog`, porque ahí la exploración temática se valida con voz humana.
+- Home: fusionar `Novedades` y `Suscríbete` en un bloque final de retención.
+- Home: diseñar la portada como una narración visual continua, con secciones singulares pero conectadas mediante transiciones, ritmo, fondos y motivos comunes.
+- Home: si se mantiene `TSEYOR en números`, ubicarlo como franja breve de confianza o bloque secundario después de curso/biblioteca/comunidad.
 - Quienes somos: cambiar enlaces antiguos `/entradas` por `/blog`.
 - Quienes somos: reforzar desde el hero que Mundo Armónico TSEYOR es una ONG sin ánimo de lucro y que la comunidad está conformada por miembros.
 - Quienes somos: reforzar `filosofía viva, no dogmática` también como sello visible.

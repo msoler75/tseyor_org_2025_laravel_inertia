@@ -10,6 +10,7 @@ use App\Models\Comunicado;
 use App\Models\Libro;
 use App\Models\Entrada;
 use App\Models\Noticia;
+use App\Models\Evento;
 use App\Pigmalion\Markdown;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -115,8 +116,38 @@ class BoletinesController extends Controller
                 $fin->translatedFormat('F Y');
         }
 
+        // Rango de fechas para próximos eventos (mirando hacia adelante)
+        $eventos_inicio = \Carbon\Carbon::today();
+        switch ($tipo) {
+            case 'semanal':
+                $eventos_fin = \Carbon\Carbon::now()->endOfWeek();
+                break;
+            case 'quincenal':
+                $dia = $hoy->day;
+                if ($dia <= 14) {
+                    // Primera quincena: la entrante es 15 a fin de mes
+                    $eventos_fin = \Carbon\Carbon::now()->endOfMonth();
+                } else {
+                    // Segunda quincena: la entrante es 1-14 del próximo mes
+                    $eventos_fin = \Carbon\Carbon::now()->addMonth()->day(14)->endOfDay();
+                }
+                break;
+            case 'mensual':
+                $eventos_fin = \Carbon\Carbon::now()->endOfMonth();
+                break;
+            default: // bimestral
+                $eventos_fin = \Carbon\Carbon::now()->addMonth()->endOfMonth();
+                break;
+        }
+
         // Parametrización de tipos de contenido
         $tiposContenido = [
+            'eventos' => [
+                'model' => Evento::class,
+                'date_field' => 'fecha_inicio',
+                'section_title' => 'Próximos Eventos',
+                'url_prefix' => '/eventos/',
+            ],
             'noticias' => [
                 'model' => Noticia::class,
                 'date_field' => 'published_at',
@@ -147,8 +178,10 @@ class BoletinesController extends Controller
         $hayContenido = false;
 
         foreach ($tiposContenido as $key => $info) {
-            $items = $info['model']::where($info['date_field'], '>=', $inicio)
-                ->where($info['date_field'], '<=', $fin)
+            $inicioPeriodo = $key === 'eventos' ? $eventos_inicio : $inicio;
+            $finPeriodo = $key === 'eventos' ? $eventos_fin : $fin;
+            $items = $info['model']::where($info['date_field'], '>=', $inicioPeriodo)
+                ->where($info['date_field'], '<=', $finPeriodo)
                 ->get();
             Log::channel('boletines')->info('generarBoletin: Contenidos encontrados', [
                 'tipo' => $key,
