@@ -13,12 +13,14 @@ use App\Models\Busqueda;
 use App\Models\Inscripcion;
 use App\Models\Job;
 use App\Models\JobFailed;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Pigmalion\StorageItem;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Notifications\CambioPassword;
+use Illuminate\Support\Str;
 
 class AdminController // extends Controller
 {
@@ -223,7 +225,11 @@ class AdminController // extends Controller
         // está la app en modo mantenimiento? (down/up)
         $en_mantenimiento = app()->isDownForMaintenance();
 
+        $deploySessionToken = Str::random(32);
+        Cache::put('deploy_session_token', $deploySessionToken, now()->addHours(2));
+
         $data = [
+            'deploy_session_token' => $deploySessionToken,
             //'ultimos_informes' => $ultimos_informes,
             'users_creados' => $users_creados,
             'users_activos' => $users_activos,
