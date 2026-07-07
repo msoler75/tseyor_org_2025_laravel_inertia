@@ -36,15 +36,15 @@ const props = defineProps({
 	draft: { type: Boolean, default: false },
 	// acepta fecha en crudo (por ejemplo evento.fecha_inicio). Mantengo compatibilidad
 	// con la prop antigua 'fecha' si alguien la pasa.
-	fechaInicio: { type: [String, Date], default: null },
-	fechaFin: { type: [String, Date], default: null },
-	horaInicio: { type: String, default: null },
+	dateStart: { type: [String, Date], default: null },
+	dateEnd: { type: [String, Date], default: null },
+	timeStart: { type: String, default: null },
     date: { type: [String, Date], default: null }
 })
 
-// formateo interno: preferir fechaInicio sobre fecha (compatibilidad)
+// formateo interno: preferir dateStart sobre fecha (compatibilidad)
 const fechaFormateada = computed(() => {
-	const raw = props.fechaInicio
+	const raw = props.dateStart
 	if (!raw) return ''
 	try {
 		return fechaFormatoEsp(raw)
@@ -55,13 +55,13 @@ const fechaFormateada = computed(() => {
 
 // Determina si el evento está actualmente en curso
 const enCurso = computed(() =>
-	esEventoEnCurso(props.fechaInicio, props.horaInicio, props.fechaFin)
+	esEventoEnCurso(props.dateStart, props.timeStart, props.fechaFin)
 )
 
 const futuro = computed(() => {
 	// Solo mostrar "PRÓXIMAMENTE" si no está en curso y está en el futuro
 	if (enCurso.value) return false
-	return esFechaFutura(props.fechaInicio)
+	return esFechaFutura(props.dateStart)
 })
 
 // separación de la fecha en dos partes igual que estaba inline en Index.vue

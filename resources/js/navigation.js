@@ -470,6 +470,7 @@ export default [
               target: "_self",
               description: "Aplicación para el diseño de carteles o anuncios",
               icon: "ph:paint-brush-duotone",
+              disabled: true,
             },
             /*{
               title: "Cartas para el autodescubrimiento",

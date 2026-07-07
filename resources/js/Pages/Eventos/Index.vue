@@ -39,8 +39,8 @@
                         :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(24rem, 100%), 1fr))` }">
                         <CardEvent v-for="contenido in eventosEnCurso" :key="`enCurso-${contenido.id}`"
                             :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
-                            :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
-                            :fecha-fin="contenido.fecha_fin" :hora-inicio="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
+                            :description="contenido.descripcion" :date-start="contenido.fecha_inicio"
+                            :date-end="contenido.fecha_fin" :time-start="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
                             :draft="contenido.visibilidad!='P'"
                             :location="contenido.pais"
                             :imageWidth="800"
@@ -54,8 +54,8 @@
                         :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(24rem, 100%), 1fr))` }">
                         <CardEvent v-for="contenido in eventosProximos" :key="contenido.id"
                             :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
-                            :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
-                            :fecha-fin="contenido.fecha_fin" :hora-inicio="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
+                            :description="contenido.descripcion" :date-start="contenido.fecha_inicio"
+                            :date-end="contenido.fecha_fin" :time-start="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
                             :draft="contenido.visibilidad!='P'"
                             :location="contenido.pais"
                             :imageWidth="800"
@@ -70,8 +70,8 @@
                         :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(24rem, 100%), 1fr))` }">
                         <CardEvent v-for="contenido in eventosPasados" :key="`eventosPasados-${contenido.id}`"
                             :title="contenido.titulo" :image="contenido.imagen" :href="route('evento', contenido.slug)"
-                            :description="contenido.descripcion" :fecha-inicio="contenido.fecha_inicio"
-                            :fecha-fin="contenido.fecha_fin" :hora-inicio="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
+                            :description="contenido.descripcion" :date-start="contenido.fecha_inicio"
+                            :date-end="contenido.fecha_fin" :time-start="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
                             :draft="contenido.visibilidad!='P'"
                             :location="contenido.pais"
                             :imageWidth="800"

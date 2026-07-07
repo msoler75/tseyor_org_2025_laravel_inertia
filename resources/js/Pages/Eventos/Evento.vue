@@ -50,7 +50,8 @@
                             Fechas:
                         </span>
                         <div class="flex flex-col gap-1">
-                            <span v-for="fecha of fechasEvento" :key="fecha">{{ fecha }}</span>
+                            <span v-for="fecha of fechasEvento" :key="fecha"
+                            :class="[esFechaFutura(fecha)?'font-bold':'opacity-50']">{{ fecha }}</span>
                         </div>
                     </template>
                     <template v-else>
@@ -59,14 +60,15 @@
                                 icon="ph:calendar-check-duotone"
                                 class="text-xl"
                             />
-                            Inicia:
+                            <span v-if="evento.fecha_fin!=evento.fecha_inicio">Inicia:</span>
+                            <span v-else>Fecha:</span>
                         </span>
                         <span>{{
                             fechaFormatoEsp(evento.fecha_inicio, {
                                 month: "long",
                             })
                         }}</span>
-                        <template v-if="evento.fecha_fin">
+                        <template v-if="evento.fecha_fin&&evento.fecha_fin!=evento.fecha_inicio">
                             <span class="mb-2 flex gap-3 items-center">
                                 <Icon
                                     icon="ph:calendar-x-duotone"
@@ -147,6 +149,18 @@
                                 >{{ evento.equipo.nombre }}</Link
                             >
                         </template>
+                        <template v-if="evento.pais" class="mb-2 flex gap-3">
+                            <span class="mb-2 flex gap-3">
+                                <Icon
+                                    icon="ph:globe"
+                                    class="text-xl"
+                                />
+                                País:
+                            </span>
+                            <div
+                                >{{ evento.pais }}</div
+                            >
+                        </template>
 
                         <div class="mt-6 col-span-2 flex justify-center">
                             <a
@@ -217,6 +231,7 @@
 <script setup>
 import {
     fechaFormatoEsp,
+    esFechaFutura,
     buildGoogleCalendarDates,
     parsearFechasEvento
 } from "@/composables/fechas.js";

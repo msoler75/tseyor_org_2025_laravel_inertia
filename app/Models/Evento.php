@@ -56,32 +56,42 @@ class Evento extends ContenidoBaseModel
      */
     public function getFechaInicioAttribute($value)
     {
-        // Si hay un grupo de fechas (evento repetible), retornar la primera fecha del conjunto
+        // Si hay valor directo en la BD, usarlo
+        if (!is_null($value)) {
+            try {
+                return Carbon::parse($value)->format('Y-m-d');
+            } catch (\Throwable $e) {}
+        }
+
+        // Fallback: si no hay fecha_inicio pero hay fechas_evento, usar la primera
         try {
             $fechas = $this->getFechasEventoNormalized();
             if (!empty($fechas)) {
                 return Carbon::parse($fechas[0])->format('Y-m-d');
             }
-        } catch (\Throwable $e) {
-            // fallthrough
-        }
+        } catch (\Throwable $e) {}
 
-        return $value ? Carbon::parse($value)->format('Y-m-d') : null;
+        return null;
     }
 
     public function getFechaFinAttribute($value)
     {
-        // Si hay un grupo de fechas (evento repetible), retornar la última fecha del conjunto
+        // Si hay valor directo en la BD, usarlo
+        if (!is_null($value)) {
+            try {
+                return Carbon::parse($value)->format('Y-m-d');
+            } catch (\Throwable $e) {}
+        }
+
+        // Fallback: si no hay fecha_fin pero hay fechas_evento, usar la última
         try {
             $fechas = $this->getFechasEventoNormalized();
             if (!empty($fechas)) {
                 return Carbon::parse($fechas[count($fechas) - 1])->format('Y-m-d');
             }
-        } catch (\Throwable $e) {
-            // fallthrough
-        }
+        } catch (\Throwable $e) {}
 
-        return $value ? Carbon::parse($value)->format('Y-m-d') : null;
+        return null;
     }
 
 

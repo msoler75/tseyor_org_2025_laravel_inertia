@@ -146,7 +146,7 @@ Route::get('', function (Request $request) {
 })->name('portada');
 Route::/*middleware('page-cache')->*/get('propuesta',
 function () {
-    return Inertia::render('PortadaNueva', []);
+    return Inertia::render('PortadaNueva3', []);
 })->name('portada.propuesta');
 
 Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades');

@@ -62,8 +62,13 @@ class EventosController extends Controller
             BusquedasHelper::formatearResultados($resultados, $buscar, false);
 
         foreach ($resultados as $idx => $evento) {
+            //echo $evento->pais."<br>";
             $evento->pais = Countries::getCountry($evento->pais);
         }
+
+        // to-do: imprimir lista con [id_evento y pais]:
+        //dd($resultados[1]->pais);
+        //dd($resultados);
 
         return Inertia::render('Eventos/Index', [
             'filtrado' => $buscar,
@@ -88,6 +93,9 @@ class EventosController extends Controller
         if (!$evento || (!$publicado && !$borrador && !$editor)) {
             abort(404);
         }
+
+        if($evento->pais)
+            $evento->pais = Countries::getCountry($evento->pais);
 
         return Inertia::render('Eventos/Evento', [
             'evento' => $evento
