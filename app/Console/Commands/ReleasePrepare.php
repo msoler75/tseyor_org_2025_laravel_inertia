@@ -12,7 +12,7 @@ use Exception;
 
 class ReleasePrepare extends Command
 {
-    protected $signature = 'release:prepare';
+    protected $signature = 'release:prepare {--session-token= : Token temporal del dashboard admin para bypass de IP}';
     protected $description = 'Crea los zips de nodemodules, front (public/build) y ssr.js y los envía al servidor para una nueva release';
 
     public function handle()
@@ -68,12 +68,18 @@ class ReleasePrepare extends Command
                 if (Deploy::createZipFile($job['source'], $job['zip'], $exclusions, $basePrefix)) {
                     $this->info('ZIP creado: ' . basename($job['zip']));
 
+                    $extraHeaders = [];
+                    $sessionToken = $this->option('session-token');
+                    if ($sessionToken) {
+                        $extraHeaders[] = 'X-Deploy-Session-Token: ' . $sessionToken;
+                    }
+
                     $this->info('Enviando con flag prepare...');
                     $result = Deploy::sendZipFile(
                         $job['zip'],
                         $job['endpoint'],
                         $job['zip_name'],
-                        [],
+                        $extraHeaders,
                         ['prepare' => '1']
                     );
 
