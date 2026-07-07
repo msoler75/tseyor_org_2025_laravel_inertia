@@ -11,7 +11,7 @@ use Exception;
 
 class DeployNodeModules extends Command
 {
-    protected $signature = 'deploy:nodemodules {--package= : Nombre del paquete específico a desplegar (ej: @tiptap)}';
+    protected $signature = 'deploy:nodemodules {--package= : Nombre del paquete específico a desplegar (ej: @tiptap)} {--session-token= : Token temporal del dashboard admin para bypass de IP}';
     protected $description = 'Comprime node_modules o un paquete específico para que funcione SSR y lo envía al servidor';
 
     private const SOURCE_DIR = 'node_modules';
@@ -53,6 +53,12 @@ class DeployNodeModules extends Command
                 }
                 $this->info('ZIP creado: ' . basename($zipPath));
 
+                $extraHeaders = [];
+                $sessionToken = $this->option('session-token');
+                if ($sessionToken) {
+                    $extraHeaders[] = 'X-Deploy-Session-Token: ' . $sessionToken;
+                }
+
                 $this->info('Enviando...');
                 $endpoint = config('deploy.node_modules_endpoint');
                 if ($package) {
@@ -62,6 +68,7 @@ class DeployNodeModules extends Command
                     $zipPath,
                     $endpoint,
                     $zipName,
+                    $extraHeaders,
                 );
 
                 Deploy::handleResponse($result, $this);

@@ -11,7 +11,7 @@ use Exception;
 
 class DeploySSR extends Command
 {
-    protected $signature = 'deploy:ssr';
+    protected $signature = 'deploy:ssr {--session-token= : Token temporal del dashboard admin para bypass de IP}';
     protected $description = 'Comprime los contenidos de la carpeta bootstrap/ssr y los envía por CURL';
 
 
@@ -34,10 +34,17 @@ class DeploySSR extends Command
             if (Deploy::createZipFile($sourcePath, $zipPath, $exclusions)) {
                 $this->info('ZIP creado: ' . basename($zipPath));
 
+                $extraHeaders = [];
+                $sessionToken = $this->option('session-token');
+                if ($sessionToken) {
+                    $extraHeaders[] = 'X-Deploy-Session-Token: ' . $sessionToken;
+                }
+
                 $result = Deploy::sendZipFile(
                     $zipPath,
                     config('deploy.ssr_endpoint'),
-                    self::ZIP_NAME
+                    self::ZIP_NAME,
+                    $extraHeaders,
                 );
 
                 Deploy::handleResponse($result, $this);
