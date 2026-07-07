@@ -11,7 +11,7 @@ use Exception;
 
 class DeployFront extends Command
 {
-    protected $signature = 'deploy:front {--rollback : Realizar rollback a la versión anterior}';
+    protected $signature = 'deploy:front {--rollback : Realizar rollback a la versión anterior} {--session-token= : Token temporal del dashboard admin para bypass de IP}';
     protected $description = 'Comprime los contenidos de la carpeta public/build y los envía por CURL, o realiza rollback si se especifica --rollback';
 
 
@@ -34,10 +34,17 @@ class DeployFront extends Command
                 if (Deploy::createZipFile($sourcePath, $zipPath)) {
                     $this->info('ZIP creado: ' . basename($zipPath));
 
+                    $extraHeaders = [];
+                    $sessionToken = $this->option('session-token');
+                    if ($sessionToken) {
+                        $extraHeaders[] = 'X-Deploy-Session-Token: ' . $sessionToken;
+                    }
+
                     $result = Deploy::sendZipFile(
                         $zipPath,
                         config('deploy.front_endpoint'),
-                        self::ZIP_NAME
+                        self::ZIP_NAME,
+                        $extraHeaders,
                     );
 
                     Deploy::handleResponse($result, $this);

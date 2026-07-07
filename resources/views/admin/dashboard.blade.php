@@ -16,13 +16,7 @@
                     </div>
                 </div>
 
-                <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
-                    <div class="font-bold text-lg mb-3">Deploy Token</div>
-                    <div class="text-xs break-all select-all font-mono bg-gray-100 p-2 rounded">
-                        {{ $deploy_session_token }}
-                    </div>
-                    <div class="text-xs text-gray-500 mt-1">Válido 2h. Úsalo con: <code class="bg-gray-200 px-1 rounded">--session-token</code></div>
-                </div>
+
 
                 <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
                     <div class="font-bold text-lg mb-3">Inscripciones nuevas</div>
@@ -396,5 +390,17 @@
         </div>
 
     </div>
+
+    @if(Auth::user()?->name === 'admin')
+        <div class="mt-12 max-w-sm">
+            <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
+                <div class="font-bold text-lg mb-3">Deploy Token</div>
+                <div class="text-xs break-all select-all font-mono bg-gray-100 p-2 rounded">
+                    {{ $deploy_session_token }}
+                </div>
+                <div class="text-xs text-gray-500 mt-1">Válido 2h. Úsalo con: <code class="bg-gray-200 px-1 rounded">--session-token</code></div>
+            </div>
+        </div>
+    @endif
 
 @endsection
