@@ -15,6 +15,7 @@ import { Link } from "@inertiajs/vue3";
 import TipTapEditorFullField from "../Components/Backpack/TipTapEditorFullField.vue";
 import TipTapEditorSimpleField from "../Components/Backpack/TipTapEditorSimpleField.vue";
 import ImageCoverField from "../Components/Backpack/ImageCoverField.vue";
+import EventoImagenesField from "../Components/Backpack/EventoImagenesField.vue";
 // import JSONEditorField from "../Components/Backpack/JSONEditorField.vue";
 import SelectField from "../Components/Backpack/SelectField.vue";
 import FechasEventoField from "../Components/Backpack/FechasEventoField.vue";
@@ -41,6 +42,7 @@ if (elem) {
     //.component("tinymcefullfield", TinyMCEFullField)
     //.component("tinymcesimplefield", TinyMCESimpleField)
     .component("imagecoverfield", ImageCoverField)
+    .component("eventoimagenesfield", EventoImagenesField)
    // .component("jsoneditorfield", JSONEditorField)
     .component("selectfield", SelectField)
     .component("FechasEventoField", FechasEventoField)

@@ -118,7 +118,21 @@ class EventoCrudController extends CrudController
 
         CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder]);
 
-        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'from' => 'texto']);
+        // Reemplazar el campo imagen simple por el gestor de imágenes múltiples
+        // NOTA: imagen NO se elimina del field list porque Backpack usa getStrippedSaveRequest
+        // que filtra el request a solo los field names registrados.
+        CRUD::field('imagen')->type('hidden');
+        $this->crud->removeFields(['imagenes']);
+
+        CRUD::addField([
+            'name' => 'imagenes',
+            'label' => 'Imágenes del evento',
+            'type' => 'evento_imagenes',
+            'attributes' => [
+                'folder' => $folder,
+                'cover-name' => 'imagen',
+            ],
+        ]);
 
 
         CRUD::field('fecha_inicio')->type('date')->wrapper(['style' => 'width: 200px']);
@@ -269,6 +283,33 @@ class EventoCrudController extends CrudController
     }
 
     /**
+     * Procesa el array de imágenes: la primera es la portada (imagen),
+     * el resto se guardan en el JSON imagenes.
+     */
+    protected function normalizeImagenesRequest($req)
+    {
+        $imagenesRaw = $req->input('imagenes');
+
+        if (is_string($imagenesRaw)) {
+            $imagenesRaw = json_decode($imagenesRaw, true);
+        }
+
+        if (!is_array($imagenesRaw) || empty($imagenesRaw)) {
+            $req->request->set('imagen', '');
+            $req->request->set('imagenes', []);
+            return;
+        }
+
+        $imagenesRaw = array_values(array_filter($imagenesRaw));
+
+        // Primera imagen = portada
+        $req->request->set('imagen', $imagenesRaw[0]);
+
+        // El resto van al array imagenes
+        $req->request->set('imagenes', array_slice($imagenesRaw, 1));
+    }
+
+    /**
      * Store a newly created resource in the database.
      */
     public function store()
@@ -278,6 +319,7 @@ class EventoCrudController extends CrudController
         // Normalize fechas_evento from array inputs
         $req = $this->crud->getRequest();
         $this->normalizeFechasEventoRequest($req);
+        $this->normalizeImagenesRequest($req);
 
         $this->crud->unsetValidation(); // validation has already been run
 
@@ -295,6 +337,7 @@ class EventoCrudController extends CrudController
 
         $req = $this->crud->getRequest();
         $this->normalizeFechasEventoRequest($req);
+        $this->normalizeImagenesRequest($req);
 
         $this->crud->unsetValidation();
 

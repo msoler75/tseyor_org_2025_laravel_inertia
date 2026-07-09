@@ -28,12 +28,18 @@
         <div class="container py-7 mx-auto space-y-12">
             <div class="mx-auto grid gap-12 md:grid-cols-2 items-start">
                 <div class="w-full">
-                    <div class="lg:max-w-[500px]">
-                        <Image
+                    <div class="lg:max-w-[500px] space-y-4">
+                        <Image v-for="(url, i) in displayImages" :key="url"
+                            :src="url"
+                            :alt="'Imagen del evento ' + (i + 1)"
+                            class="w-full cursor-pointer"
+                            @click="openViewer(i)"
+                        />
+                        <Image v-if="!displayImages.length && evento.imagen"
                             :src="evento.imagen"
                             alt="Imagen del evento"
-                            class="w-full mb-4"
-                            @click="showImage"
+                            class="w-full mb-4 cursor-pointer"
+                            @click="openViewer(0)"
                         />
                     </div>
                 </div>
@@ -203,6 +209,13 @@
             </div>
         </div>
 
+        <ImagesViewer
+            :show="showViewer"
+            :images="allImages"
+            :index="viewerStartIndex"
+            @close="showViewer = false"
+        />
+
         <Modal :show="showModal" @close="showModal=false" maxWidth="lg" class="rounded-xl" >
             <div class="p-5 space-y-5">
 
@@ -251,6 +264,41 @@ const props = defineProps({
 
 const fechasEvento = computed(() => parsearFechasEvento(props.evento.fechas_evento));
 
+const displayImages = computed(() => {
+    if (props.evento.imagenes && props.evento.imagenes.length > 0) {
+        return props.evento.imagenes
+    }
+    if (props.evento.imagen) {
+        return [props.evento.imagen]
+    }
+    return []
+})
+
+const allImages = computed(() => {
+    const images = []
+    if (props.evento.imagen) {
+        images.push(props.evento.imagen)
+    }
+    if (props.evento.imagenes && props.evento.imagenes.length > 0) {
+        props.evento.imagenes.forEach(img => {
+            if (img && !images.includes(img)) {
+                images.push(img)
+            }
+        })
+    }
+    return images
+})
+
+const showViewer = ref(false)
+const viewerStartIndex = ref(0)
+
+function openViewer(index) {
+    const url = displayImages.value[index]
+    viewerStartIndex.value = allImages.value.indexOf(url)
+    if (viewerStartIndex.value === -1) viewerStartIndex.value = 0
+    showViewer.value = true
+}
+
 const textoImagenInsertada = computed(() => {
     return (
         `<img src='${props.evento.imagen}' class='hidden'>\n\n` +
@@ -259,22 +307,6 @@ const textoImagenInsertada = computed(() => {
 });
 
 const content = ref(null);
-
-async function showImage() {
-    // Intentar abrir la imagen desde el único componente Content
-    if (
-        content &&
-        content.value &&
-        typeof content.value.showImage === "function"
-    ) {
-        content.value.showImage(0);
-        return;
-    }
-    console.warn(
-        "Content component no expone showImage o ref no inicializada",
-        content && content.value
-    );
-}
 
 // Construir URL para Google Calendar
 const googleCalendarUrl = computed(() => {
