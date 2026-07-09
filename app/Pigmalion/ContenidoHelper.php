@@ -274,6 +274,26 @@ class ContenidoHelper
             $cambio = true;
         }
 
+        // mover imágenes del array imagenes desde temp a la carpeta de medios
+        $imagenes = $objeto->imagenes ?? [];
+        if (is_array($imagenes) && count($imagenes) > 0) {
+            $nuevasImagenes = [];
+            foreach ($imagenes as $img) {
+                if ($img && strpos($img, 'temp/') !== false) {
+                    $nuevoNombre = $hacia . "/" . basename($img);
+                    $destino = (new StorageItem($nuevoNombre))->location;
+                    if (StorageItem::copy($img, $destino)) {
+                        (new StorageItem($img))->delete();
+                    }
+                    $nuevasImagenes[] = $destino;
+                    $cambio = true;
+                } else {
+                    $nuevasImagenes[] = $img;
+                }
+            }
+            $objeto->imagenes = $nuevasImagenes;
+        }
+
         /*if($objeto->imagen&& strpos($objeto->imagen, 'medios/') === 0) {
             $objeto->imagen = '/almacen/'.$objeto->imagen;
             $cambio = true;

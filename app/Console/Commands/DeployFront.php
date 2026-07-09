@@ -49,7 +49,7 @@ class DeployFront extends Command
 
                     Deploy::handleResponse($result, $this);
 
-                    if ($result['status'] === 'success') {
+                    if ($result['success']) {
                         $this->info('Si hay algun problema puedes hacer rollback con --rollback');
                     }
 

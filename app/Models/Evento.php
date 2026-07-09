@@ -22,6 +22,7 @@ class Evento extends ContenidoBaseModel
         'categoria',
         'texto',
         'imagen',
+        'imagenes',
         'published_at',
         'fecha_inicio',
         'fecha_fin',
@@ -44,6 +45,27 @@ class Evento extends ContenidoBaseModel
         'fecha_fin' => 'datetime',
     ];
 
+
+    // ACCESOR: CSV string → array
+    public function getImagenesAttribute($value): array
+    {
+        if (is_null($value) || $value === '' || $value === '[]') {
+            return [];
+        }
+        if (is_array($value)) {
+            return $value;
+        }
+        return array_values(array_filter(array_map('trim', explode(',', $value))));
+    }
+
+    // MUTATOR: array → CSV string
+    public function setImagenesAttribute($value): void
+    {
+        if (is_array($value)) {
+            $value = implode(',', array_values(array_filter($value)));
+        }
+        $this->attributes['imagenes'] = $value ?: null;
+    }
 
     // ACCESOR
      public function getNombrePaisAttribute()
@@ -94,6 +116,26 @@ class Evento extends ContenidoBaseModel
         return null;
     }
 
+
+    /**
+     * Devuelve todas las imágenes del evento: la portada (imagen) más las adicionales (imagenes).
+     * La portada siempre es el primer elemento.
+     */
+    public function getTodasLasImagenesAttribute(): array
+    {
+        $images = [];
+        if ($this->imagen) {
+            $images[] = $this->imagen;
+        }
+        if ($this->imagenes && is_array($this->imagenes)) {
+            foreach ($this->imagenes as $img) {
+                if ($img && $img !== $this->imagen) {
+                    $images[] = $img;
+                }
+            }
+        }
+        return $images;
+    }
 
     public function centro() // centro presencial donde transcurre el evento
     {
