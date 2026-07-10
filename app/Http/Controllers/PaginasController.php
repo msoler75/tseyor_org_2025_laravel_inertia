@@ -114,7 +114,7 @@ class PaginasController extends Controller
             ->exists();
 
         return Inertia::render(
-            'Portada',
+            'Portada2',
             [
                 'hayProximosEventos' => $hay_proximos_eventos,
                 'stats' => Cache::remember('stats_portada', now()->addDay(), function () {
