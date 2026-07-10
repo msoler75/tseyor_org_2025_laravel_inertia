@@ -243,7 +243,19 @@ Route::get('centros', [CentrosController::class, 'index'])->name('centros');
 Route::get('centros/{slug}', [CentrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('centro');
 
 Route::get('quienes-somos', function () {
-    return Inertia::render('Presentacion/QuienesSomos2', [])
+    return Inertia::render('Presentacion/QuienesSomos2', [
+        'entradasRecientes' => \App\Models\Entrada::publicada()
+            ->latest('published_at')
+            ->limit(4)
+            ->get(['slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
+            ->map(fn($e) => [
+                'slug' => $e->slug,
+                'titulo' => $e->titulo,
+                'imagen' => $e->imagen,
+                'descripcion' => $e->descripcion,
+                'fecha' => $e->published_at ? date('j M Y', strtotime($e->published_at)) : '',
+            ]),
+    ])
         ->withViewData(SEO::get('quienes-somos'));
 })->name('quienes-somos');
 
