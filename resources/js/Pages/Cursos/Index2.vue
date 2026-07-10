@@ -8,8 +8,6 @@
                 title="Curso Holístico Tseyor"
                 srcImage="/almacen/medios/paginas/curso.png"
                 srcWidth="373" srcHeight="482"
-                buttonLabel="Inscríbete gratis"
-                :href="route('cursos.inscripcion.nueva')"
             >
                 <p class="text-lg">Un curso <strong>gratuito</strong>, guiado y sin dogmas para conocer la filosofía de las estrellas que nos transmiten nuestros Guías Estelares.</p>
                 <p class="text-lg">Se vive desde la retroalimentación y la experimentación personal. Al terminarlo recibirás tu <strong>nombre simbólico</strong>.</p>
@@ -19,7 +17,10 @@
                     <span class="badge badge-accent">Con acompañamiento</span>
                     <span class="badge badge-ghost">Nombre simbólico al terminar</span>
                 </div>
-                <Link href="/libros/curso-holistico-tseyor" class="btn btn-ghost btn-sm mt-2">Ver el material del curso</Link>
+                <Link href="/libros/curso-holistico-tseyor" class="btn btn-ghost btn-sm mt-2">Ver el material del curso <sup class="text-[8px] opacity-50">55%</sup></Link>
+                <template #action>
+                    <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary">Inscríbete gratis <sup class="text-[8px] opacity-50">85%</sup></Link>
+                </template>
             </Hero>
         </Section>
 
@@ -52,8 +53,8 @@
                     },
                 ]" />
                 <div class="flex justify-center gap-3">
-                    <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary">Empezar el curso gratis</Link>
-                    <Link :href="route('filosofia')" class="btn btn-secondary">Conocer la filosofía</Link>
+                    <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary">Empezar el curso gratis <sup class="text-[8px] opacity-50">80%</sup></Link>
+                    <Link :href="route('filosofia')" class="btn btn-secondary">Conocer la filosofía <sup class="text-[8px] opacity-50">25%</sup></Link>
                 </div>
             </div>
         </Section>
@@ -62,17 +63,19 @@
         <Section class="py-12 container lg:max-w-[1024px]">
             <EvaluacionSeccion seccion="Libro del curso" :idoneidad="80" :claridad="85" :composicion="80" :posicion="75" />
             <TextImage title="Libro del Curso"
-                textClass="container"
-                buttonLabel="Descargar Libro" href="/libros/curso-holistico-tseyor">
+                textClass="container">
                 <template v-slot:image>
                     <Libro3d :libro="libro" alt="Curso Holístico Tseyor"/>
                 </template>
                 <p class="text-lg">El curso se basa en un libro de enseñanzas de nuestros Guías Estelares, con cuentos y reflexiones filosóficas.</p>
                 <p class="text-sm text-gray-500 mt-2">Puedes leer el material antes o durante el curso. Descarga gratuita.</p>
                 <div class="flex flex-wrap gap-3 mt-3">
-                    <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary btn-sm">Inscribirme al curso</Link>
-                    <Link href="/libros/curso-holistico-tseyor" class="btn btn-ghost btn-sm">Descargar libro</Link>
+                    <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary btn-sm">Inscribirme al curso <sup class="text-[8px] opacity-50">55%</sup></Link>
+                    <Link href="/libros/curso-holistico-tseyor" class="btn btn-ghost btn-sm">Descargar libro <sup class="text-[8px] opacity-50">70%</sup></Link>
                 </div>
+                <template #action>
+                    <Link href="/libros/curso-holistico-tseyor" class="btn btn-primary">Descargar Libro <sup class="text-[8px] opacity-50">70%</sup></Link>
+                </template>
             </TextImage>
         </Section>
 
@@ -81,7 +84,7 @@
             <EvaluacionSeccion seccion="Próximos cursos" :idoneidad="50" :claridad="60" :composicion="60" :posicion="65" />
             <FeaturedPosts v-if="proximosCursos.length" title="Próximos cursos" :posts="cursos" />
             <div class="container text-center">
-                <Link :href="route('eventos')" class="btn btn-primary">Ver todos los eventos</Link>
+                <Link :href="route('eventos')" class="btn btn-primary">Ver todos los eventos <sup class="text-[8px] opacity-50">35%</sup></Link>
             </div>
         </Section>
 
@@ -89,15 +92,16 @@
         <Section>
             <EvaluacionSeccion seccion="CTA final inscripción" :idoneidad="90" :claridad="90" :composicion="80" :posicion="85" />
             <Hero title="Comienza tu camino de autodescubrimiento"
-                buttonLabel="Inscribirme gratuitamente"
-                :href="route('cursos.inscripcion.nueva')"
                 srcWidth="2432" srcHeight="1664" srcImage="/almacen/medios/paginas/inscribirse.jpg"
                 class="py-20">
                 <p>Sin compromiso, sin dogmas, sin coste. Solo tú y tu experiencia.</p>
                 <div class="flex flex-wrap justify-center gap-3 mt-4">
-                    <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary btn-lg">Inscribirme gratis</Link>
-                    <Link :href="route('biblioteca')" class="btn btn-secondary btn-sm">Explorar biblioteca</Link>
+                    <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary btn-lg">Inscribirme gratis <sup class="text-[8px] opacity-50">90%</sup></Link>
+                    <Link :href="route('biblioteca')" class="btn btn-secondary btn-sm">Explorar biblioteca <sup class="text-[8px] opacity-50">5%</sup></Link>
                 </div>
+                <template #action>
+                    <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary">Inscribirme gratuitamente <sup class="text-[8px] opacity-50">85%</sup></Link>
+                </template>
             </Hero>
         </Section>
 

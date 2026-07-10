@@ -7,9 +7,7 @@
             <Hero title="¿Quiénes Somos?"
                 srcImage="/almacen/medios/paginas/quienes-somos.jpg"
                 src-width="1600"
-                src-height="1200"
-                buttonLabel="Conoce nuestros orígenes"
-                :href="route('origenes-de-tseyor')">
+                src-height="1200">
                 <p><strong>Mundo Armónico TSEYOR</strong> es una ONG sin ánimo de lucro dedicada al autodescubrimiento, la ayuda humanitaria y la creación de Sociedades Armónicas.</p>
                 <p>Nuestra filosofía proviene de la experimentación de la filosofía cósmico-crística que nos traen nuestros Guías Estelares. Es una filosofía viva, no dogmática, en estos tiempos de transformación.</p>
                 <div class="flex flex-wrap justify-center gap-2 mt-4">
@@ -20,7 +18,8 @@
                     <span class="badge badge-neutral text-xs">Sin dogmas</span>
                 </div>
                 <template #action>
-                    <Link :href="route('cursos')" class="btn btn-secondary btn-sm">Ver Curso Holístico</Link>
+                    <Link :href="route('origenes-de-tseyor')" class="btn btn-primary">Conoce nuestros orígenes <sup class="text-[8px] opacity-50">60%</sup></Link>
+                    <Link :href="route('cursos')" class="btn btn-secondary btn-sm">Ver Curso Holístico <sup class="text-[8px] opacity-50">25%</sup></Link>
                 </template>
             </Hero>
         </Section>
@@ -47,16 +46,18 @@
         <Section>
             <EvaluacionSeccion seccion="Chac-Mool Puente" :idoneidad="85" :claridad="80" :composicion="70" :posicion="70" />
             <TextImage title="Chac-Mool Puente: el canal de comunicación"
-                srcImage="/almacen/medios/paginas/Puente.jpg" buttonLabel="Ver Comunicados"
-                href="/comunicados"
+                srcImage="/almacen/medios/paginas/Puente.jpg"
                 image-right
                 gridClass="md:grid-cols-[2fr_1fr]">
                 <p>Los comunicados son conversaciones interdimensionales realizadas telepáticamente por nuestro hermano Chac-Mool Puente, intermediario entre los dos mundos.</p>
                 <p>Conversaciones con la Confederación de Mundos Habitados de la Galaxia para impulsar sociedades sin líderes y la auténtica libertad del individuo.</p>
-                <Link :href="route('biblioteca')" class="btn btn-secondary btn-sm mt-2">Explorar biblioteca</Link>
+                <Link :href="route('biblioteca')" class="btn btn-secondary btn-sm mt-2">Explorar biblioteca <sup class="text-[8px] opacity-50">15%</sup></Link>
                 <div class="mt-4">
-                    <Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="link link-hover text-sm">Preguntas frecuentes sobre los Guías Estelares →</Link>
+                    <Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="link link-hover text-sm">Preguntas frecuentes sobre los Guías Estelares → <sup class="text-[8px] opacity-50">35%</sup></Link>
                 </div>
+                <template #action>
+                    <Link href="/comunicados" class="btn btn-primary">Ver Comunicados <sup class="text-[8px] opacity-50">75%</sup></Link>
+                </template>
             </TextImage>
         </Section>
 
@@ -64,10 +65,13 @@
         <Section>
             <EvaluacionSeccion seccion="¿Dónde estamos?" :idoneidad="75" :claridad="85" :composicion="80" :posicion="85" />
             <TextImage title="¿Donde estamos?" srcImage="/almacen/medios/paginas/mapa.jpg"
-                buttonLabel="Ver Mapa" :href="route('contactos')" image-right>
+                image-right>
                 <p>Encuentra un centro o representante de Mundo Armónico TSEYOR cerca de ti.</p>
                 <p>Estamos creciendo. Si aún no hay uno en tu zona, ¡anímate a crear uno! Únete a nuestro proyecto y te acompañaremos en el camino.</p>
-                <Link :href="route('cursos')" class="btn btn-secondary btn-sm mt-2">Quiero unirme</Link>
+                <Link :href="route('cursos')" class="btn btn-secondary btn-sm mt-2">Quiero unirme <sup class="text-[8px] opacity-50">40%</sup></Link>
+                <template #action>
+                    <Link :href="route('contactos')" class="btn btn-primary">Ver Mapa <sup class="text-[8px] opacity-50">70%</sup></Link>
+                </template>
             </TextImage>
         </Section>
 
@@ -85,7 +89,7 @@
                             <li><Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="link link-hover">¿Es esto una secta?</Link></li>
                             <li><Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="link link-hover">¿Qué significa la palabra Tseyor?</Link></li>
                         </ul>
-                        <Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="btn btn-ghost btn-xs">Ver más →</Link>
+                        <Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="btn btn-ghost btn-xs">Ver más → <sup class="text-[8px] opacity-50">15%</sup></Link>
                     </div>
                     <div class="card bg-base-200 p-5 rounded-xl space-y-3">
                         <h3 class="font-bold text-sm">Guías Estelares</h3>
@@ -94,7 +98,7 @@
                             <li><Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="link link-hover">¿Por qué están aquí?</Link></li>
                             <li><Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="link link-hover">¿Por qué no se presentan?</Link></li>
                         </ul>
-                        <Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="btn btn-ghost btn-xs">Ver más →</Link>
+                        <Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="btn btn-ghost btn-xs">Ver más → <sup class="text-[8px] opacity-50">15%</sup></Link>
                     </div>
                     <div class="card bg-base-200 p-5 rounded-xl space-y-3">
                         <h3 class="font-bold text-sm">Salto Cuántico</h3>
@@ -103,7 +107,7 @@
                             <li><Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="link link-hover">¿Cómo nos afectará?</Link></li>
                             <li><Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="link link-hover">¿Podemos prepararnos?</Link></li>
                         </ul>
-                        <Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="btn btn-ghost btn-xs">Ver más →</Link>
+                        <Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="btn btn-ghost btn-xs">Ver más → <sup class="text-[8px] opacity-50">15%</sup></Link>
                     </div>
                 </div>
             </div>
@@ -112,10 +116,12 @@
         <!-- 6. CTA final -->
         <Section>
             <EvaluacionSeccion seccion="CTA final" :idoneidad="85" :claridad="90" :composicion="80" :posicion="85" />
-            <Hero title="Quiero ser de Tseyor" buttonLabel="Curso Holístico"
-                :href="route('cursos')" textClass="space-y-8">
+            <Hero title="Quiero ser de Tseyor" textClass="space-y-8">
                 <p>Para formar parte de la comunidad de miembros de la ONG debes realizar nuestro Curso Holístico, totalmente gratuito.</p>
-                <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary btn-lg mt-4">Inscríbete</Link>
+                <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary btn-lg mt-4">Inscríbete <sup class="text-[8px] opacity-50">90%</sup></Link>
+                <template #action>
+                    <Link :href="route('cursos')" class="btn btn-primary">Curso Holístico <sup class="text-[8px] opacity-50">60%</sup></Link>
+                </template>
             </Hero>
         </Section>
 
