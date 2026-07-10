@@ -53,224 +53,201 @@
             </Hero>
         </Section>
 
-        <!-- 3. Conocimiento libre, ONG y comunidad -->
+        <!-- 3. ONG y comunidad -->
         <Section>
-            <EvaluacionSeccion seccion="Conocimiento libre, ONG y comunidad" :idoneidad="85" :claridad="80" :composicion="70" :posicion="85" />
+            <EvaluacionSeccion seccion="ONG y comunidad" :idoneidad="90" :claridad="85" :composicion="80" :posicion="85" />
             <div class="container mx-auto py-16 px-4">
-                <div class="flex flex-wrap justify-center gap-3 mb-8">
-                    <span class="badge badge-primary text-xs">ONG sin ánimo de lucro</span>
-                    <span class="badge badge-secondary text-xs">Contenidos de libre descarga</span>
-                    <span class="badge badge-accent text-xs">Comunidad de miembros</span>
-                    <span class="badge badge-ghost text-xs">Sin dogmas</span>
+                <h2 class="text-center mb-4">Una ONG de ayuda humanitaria</h2>
+                <p class="text-center text-gray-500 mb-4 max-w-2xl mx-auto">Mundo Armónico TSEYOR es una organización sin ánimo de lucro legalmente constituida, dedicada a la ayuda humanitaria, el desarrollo sostenible y el despertar de la consciencia.</p>
+                <div class="flex flex-wrap justify-center gap-3 mb-10">
+                    <span class="badge badge-primary">ONG sin ánimo de lucro</span>
+                    <span class="badge badge-secondary">Ayuda humanitaria</span>
+                    <span class="badge badge-accent">Formación cultural</span>
+                    <span class="badge badge-ghost">Cooperación al desarrollo</span>
+                    <span class="badge badge-neutral">Conocimiento libre</span>
                 </div>
-                <div class="max-w-3xl mx-auto text-center space-y-4">
-                    <p class="text-lg">Los contenidos de TSEYOR, incluyendo libros, comunicados, audios y meditaciones, son de libre acceso y descarga.</p>
-                    <p class="text-lg">Este conocimiento se comparte desde el servicio y la ayuda humanitaria, en sus vertientes material y espiritual.</p>
-                    <p class="text-lg">La comunidad está conformada por miembros de la ONG Mundo Armónico TSEYOR.</p>
-                </div>
-                <div class="flex flex-wrap justify-center gap-3 mt-8">
-                    <Link href="/biblioteca" class="btn btn-primary">
-                        <Icon icon="ph:books-duotone" />Explorar contenidos libres
-                    </Link>
-                    <Link href="/ong" class="btn btn-secondary">
-                        <Icon icon="ph:handshake-duotone" />Conoce la ONG
-                    </Link>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <div class="card bg-base-200 p-6 rounded-xl text-center space-y-3 md:col-span-2 md:row-span-1">
+                        <Icon icon="ph:hand-heart-duotone" class="text-5xl text-primary mx-auto" />
+                        <h3 class="font-bold text-lg">Mundo Armónico TSEYOR</h3>
+                        <p class="text-sm">ONG legalmente constituida que canaliza ayuda humanitaria: alimentación, salud, formación cultural y cooperación al desarrollo en comunidades necesitadas. Todo ello desde el servicio desinteresado y el conocimiento libre.</p>
+                        <div class="flex flex-wrap justify-center gap-2 mt-2">
+                            <span class="badge badge-outline badge-sm">Alimentación</span>
+                            <span class="badge badge-outline badge-sm">Salud</span>
+                            <span class="badge badge-outline badge-sm">Formación</span>
+                            <span class="badge badge-outline badge-sm">Cooperación</span>
+                            <span class="badge badge-outline badge-sm">Sostenibilidad</span>
+                        </div>
+                        <Link href="/ong" class="btn btn-primary btn-sm mt-2">Conoce la ONG y sus proyectos</Link>
+                    </div>
+                    <div class="card bg-base-200 p-6 rounded-xl text-center space-y-3">
+                        <Icon icon="ph:users-three-duotone" class="text-4xl text-accent mx-auto" />
+                        <h3 class="font-bold">Comunidad de miembros</h3>
+                        <p class="text-sm">Personas comprometidas con el servicio, el autodescubrimiento y la creación de Sociedades Armónicas.</p>
+                        <Link href="/quienes-somos" class="btn btn-accent btn-sm">Conócenos</Link>
+                    </div>
+                    <div class="card bg-base-200 p-6 rounded-xl text-center space-y-3">
+                        <Icon icon="ph:books-duotone" class="text-4xl text-secondary mx-auto" />
+                        <h3 class="font-bold">Contenido libre y gratuito</h3>
+                        <p class="text-sm">Libros, comunicados, audios, meditaciones y vídeos de acceso gratuito para todos.</p>
+                        <Link href="/biblioteca" class="btn btn-secondary btn-sm">Explorar biblioteca</Link>
+                    </div>
                 </div>
             </div>
         </Section>
 
-        <!-- 4. Por dónde empezar -->
+        <!-- 4. Descubre (tarjetas de las páginas "Descubre") -->
         <Section>
-            <EvaluacionSeccion seccion="Por dónde empezar" :idoneidad="80" :claridad="90" :composicion="85" :posicion="80" />
+            <EvaluacionSeccion seccion="Descubre" :idoneidad="85" :claridad="80" :composicion="75" :posicion="80" />
+            <div class="container mx-auto py-16 px-4 overflow-hidden">
+                <h2 class="text-center mb-4">Descubre TSEYOR</h2>
+                <p class="text-center text-gray-500 mb-10 max-w-2xl mx-auto">Explora los temas fundamentales que articulan el conocimiento y la práctica TSEYOR.</p>
+                <GridFill col-width="16rem" class="gap-6">
+                    <CardContent v-for="pagina in paginasDescubre" :key="pagina.ruta"
+                        :href="pagina.ruta"
+                        :title="pagina.titulo"
+                        :image="pagina.imagen"
+                        imageHeight="194" />
+                </GridFill>
+                <div class="text-center mt-8">
+                    <Link href="/descubre" class="btn btn-primary">Ver todos los temas</Link>
+                </div>
+            </div>
+        </Section>
+
+        <!-- 5. Por dónde empezar (curso + biblioteca + blog + eventos) -->
+        <Section>
+            <EvaluacionSeccion seccion="Por dónde empezar" :idoneidad="85" :claridad="90" :composicion="85" :posicion="85" />
             <div class="container mx-auto py-16 px-4">
-                <h2 class="text-center mb-12">Por dónde empezar</h2>
+                <h2 class="text-center mb-4">¿Por dónde empezar?</h2>
+                <p class="text-center text-gray-500 mb-10">Elige tu puerta de entrada al mundo TSEYOR.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
                     <Link href="/cursos" class="card bg-base-200 hover:bg-base-300 transition p-6 rounded-xl flex flex-col items-center text-center gap-3">
                         <Icon icon="ph:graduation-cap-duotone" class="text-4xl text-primary" />
-                        <h3 class="font-bold">Curso Holístico Tseyor</h3>
-                        <p class="text-sm">Una primera guía para comprender el conocimiento TSEYOR y empezar tu proceso.</p>
-                        <span class="btn btn-primary btn-sm mt-auto">Ver curso</span>
+                        <h3 class="font-bold">Curso Holístico</h3>
+                        <p class="text-sm">Guía inicial gratuita para ordenar el conocimiento TSEYOR.</p>
+                        <span class="btn btn-primary btn-sm mt-auto">Comenzar</span>
                     </Link>
                     <Link href="/biblioteca" class="card bg-base-200 hover:bg-base-300 transition p-6 rounded-xl flex flex-col items-center text-center gap-3">
                         <Icon icon="ph:books-duotone" class="text-4xl text-secondary" />
-                        <h3 class="font-bold">Biblioteca Tseyor</h3>
-                        <p class="text-sm">Accede libremente a libros, comunicados, audios, meditaciones y materiales.</p>
-                        <span class="btn btn-secondary btn-sm mt-auto">Entrar en biblioteca</span>
+                        <h3 class="font-bold">Biblioteca</h3>
+                        <p class="text-sm">Accede libremente a todos los materiales.</p>
+                        <span class="btn btn-secondary btn-sm mt-auto">Explorar</span>
                     </Link>
                     <Link href="/blog" class="card bg-base-200 hover:bg-base-300 transition p-6 rounded-xl flex flex-col items-center text-center gap-3">
                         <Icon icon="ph:pencil-line-duotone" class="text-4xl text-accent" />
                         <h3 class="font-bold">Blog</h3>
-                        <p class="text-sm">Conócenos un poco más a través de nuestras vivencias.</p>
-                        <span class="btn btn-accent btn-sm mt-auto">Leer blog</span>
+                        <p class="text-sm">Vivencias y experiencias de la comunidad.</p>
+                        <span class="btn btn-accent btn-sm mt-auto">Leer</span>
                     </Link>
                     <Link v-if="hayProximosEventos" href="/eventos" class="card bg-base-200 hover:bg-base-300 transition p-6 rounded-xl flex flex-col items-center text-center gap-3">
                         <Icon icon="ph:calendar-duotone" class="text-4xl text-warning" />
-                        <h3 class="font-bold">Próximos eventos</h3>
-                        <p class="text-sm">Consulta los próximos encuentros, cursos y convivencias.</p>
-                        <span class="btn btn-warning btn-sm mt-auto">Ver eventos</span>
+                        <h3 class="font-bold">Eventos</h3>
+                        <p class="text-sm">Encuentros, cursos y convivencias.</p>
+                        <span class="btn btn-warning btn-sm mt-auto">Ver</span>
                     </Link>
                 </div>
             </div>
         </Section>
 
-        <!-- 5. Curso Holístico y Biblioteca TSEYOR -->
+        <!-- 6. Vida de la comunidad (blog + novedades + boletín) -->
         <Section>
-            <EvaluacionSeccion seccion="Curso y Biblioteca (detalle)" :idoneidad="85" :claridad="80" :composicion="75" :posicion="70" />
+            <EvaluacionSeccion seccion="Vida de la comunidad" :idoneidad="80" :claridad="85" :composicion="80" :posicion="75" />
             <div class="container mx-auto py-16 px-4">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
-                    <div class="space-y-4">
-                        <h2 class="text-3xl font-bold">Curso Holístico Tseyor</h2>
-                        <p>El Curso Holístico ayuda a ordenar los fundamentos del conocimiento TSEYOR para quienes se acercan por primera vez.</p>
-                        <p>Puedes realizarlo online, de forma gratuita y con acompañamiento.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="badge badge-primary">Gratuito</span>
-                            <span class="badge badge-secondary">Sin dogmas</span>
-                            <span class="badge badge-accent">Con retroalimentación</span>
-                        </div>
-                        <div class="flex flex-wrap gap-3 mt-4">
-                            <Link href="/inscripcion" class="btn btn-primary">
-                                <Icon icon="ph:note-pencil-duotone" />Inscríbete gratis
-                            </Link>
-                            <Link href="/cursos" class="btn btn-ghost">
-                                Ver detalles del curso
-                            </Link>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <h2 class="text-3xl font-bold">Biblioteca TSEYOR</h2>
-                        <p>La Biblioteca TSEYOR reúne libros, comunicados, audios, meditaciones y materiales de libre acceso y descarga.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="badge badge-primary">Libre descarga</span>
-                            <span class="badge badge-secondary">Libros PDF</span>
-                            <span class="badge badge-accent">Audios</span>
-                        </div>
-                        <div class="flex flex-wrap gap-3 mt-4">
-                            <Link href="/biblioteca" class="btn btn-secondary">
-                                <Icon icon="ph:books-duotone" />Explorar biblioteca
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </Section>
-
-        <!-- 6. Temas clave de TSEYOR -->
-        <Section>
-            <EvaluacionSeccion seccion="Temas clave de TSEYOR" :idoneidad="80" :claridad="75" :composicion="70" :posicion="75" />
-            <div class="container mx-auto py-16 px-4">
-                <h2 class="text-center mb-4">Temas clave de TSEYOR</h2>
-                <p class="text-center text-gray-500 mb-12 max-w-2xl mx-auto">Presentación de algunos temas clave de TSEYOR para una mayor comprensión y claridad.</p>
-                <div v-if="temasClave?.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                    <Link v-for="tema in temasClave.slice(0, 6)" :key="tema.id" :href="tema.ruta"
-                        class="card bg-base-200 hover:bg-base-300 transition rounded-xl overflow-hidden">
-                        <figure v-if="tema.imagen" class="h-40 overflow-hidden">
-                            <img :src="tema.imagen" :alt="tema.titulo" class="w-full h-full object-cover" />
-                        </figure>
-                        <div class="p-4 space-y-2">
-                            <h3 class="font-bold">{{ tema.titulo }}</h3>
-                            <p class="text-sm line-clamp-2">{{ tema.descripcion }}</p>
-                        </div>
-                    </Link>
-                </div>
-                <div v-else class="text-center text-gray-500">
-                    <p>Próximamente más temas.</p>
-                </div>
-                <div class="flex justify-center gap-3 mt-8">
-                    <Link href="/descubre" class="btn btn-primary">Ver todos los temas</Link>
-                    <Link href="/biblioteca" class="btn btn-secondary">Explorar biblioteca</Link>
-                </div>
-            </div>
-        </Section>
-
-        <!-- 7. Comentarios de nuestros miembros -->
-        <Section>
-            <EvaluacionSeccion seccion="Testimonios" :idoneidad="60" :claridad="65" :composicion="65" :posicion="70" />
-            <div class="container mx-auto py-16 px-4">
-                <h2 class="text-center mb-4">Voces de la comunidad</h2>
-                <p class="text-center text-gray-500 mb-12 max-w-2xl mx-auto">Personas que participan en TSEYOR comparten su experiencia.</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                    <div v-for="testimonio in testimonios" :key="testimonio.name"
-                        class="card bg-base-200 p-6 rounded-xl space-y-3">
-                        <p class="italic text-sm">"{{ testimonio.text }}"</p>
-                        <div>
-                            <p class="font-bold text-sm">{{ testimonio.name }}</p>
-                            <p class="text-xs text-gray-500">{{ testimonio.role }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex justify-center mt-8">
-                    <Link href="/blog" class="btn btn-primary">Conoce más experiencias en el blog</Link>
-                </div>
-            </div>
-        </Section>
-
-        <!-- 8. Blog: vida de la comunidad -->
-        <Section>
-            <EvaluacionSeccion seccion="Blog en home" :idoneidad="75" :claridad="75" :composicion="70" :posicion="65" />
-            <div class="container mx-auto py-16 px-4">
-                <h2 class="text-center mb-4">Blog: vida de la comunidad</h2>
-                <p class="text-center text-gray-500 mb-12">Aquí puedes conocer sobre la vida de la comunidad Tseyor.</p>
-                <div v-if="entradasRecientes?.length" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                    <Link v-for="entrada in entradasRecientes.slice(0, 3)" :key="entrada.id" :href="entrada.ruta"
-                        class="card bg-base-200 hover:bg-base-300 transition rounded-xl overflow-hidden">
-                        <figure v-if="entrada.imagen" class="h-48 overflow-hidden">
-                            <img :src="entrada.imagen" :alt="entrada.titulo" class="w-full h-full object-cover" />
-                        </figure>
-                        <div class="p-4">
-                            <p class="text-xs text-gray-500">{{ entrada.fecha }}</p>
-                            <h3 class="font-bold mt-1">{{ entrada.titulo }}</h3>
-                        </div>
-                    </Link>
-                </div>
-                <div v-else class="text-center text-gray-500 mb-8">
-                    <p>Conoce algunas de nuestras aventuras en este camino del autorreconocimiento; podrás vernos en muchas fotografías de eventos que hemos realizado.</p>
-                </div>
-                <div class="flex justify-center mt-8">
-                    <Link href="/blog" class="btn btn-primary">Leer blog</Link>
-                </div>
-            </div>
-        </Section>
-
-        <!-- 9. Novedades y boletín -->
-        <Section>
-            <EvaluacionSeccion seccion="Novedades y boletín" :idoneidad="70" :claridad="80" :composicion="75" :posicion="60" />
-            <div class="container mx-auto py-16 px-4">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
-                    <div class="space-y-4">
-                        <h2 class="text-3xl font-bold">Novedades</h2>
-                        <p>Todas las novedades de los contenidos de Tseyor.</p>
-                        <div v-if="novedadesRecientes?.length" class="space-y-3">
-                            <Link v-for="novedad in novedadesRecientes.slice(0, 4)" :key="novedad.id" :href="novedad.ruta"
+                <h2 class="text-center mb-4">Vida de la comunidad</h2>
+                <p class="text-center text-gray-500 mb-10 max-w-2xl mx-auto">Novedades, artículos del blog y boletín informativo de TSEYOR.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                    <div class="space-y-4 lg:col-span-2">
+                        <h3 class="font-bold text-lg">Últimas novedades</h3>
+                        <div v-if="novedadesRecientes?.length" class="space-y-2">
+                            <Link v-for="novedad in novedadesRecientes.slice(0, 3)" :key="novedad.id" :href="novedad.ruta"
                                 class="block p-3 bg-base-200 rounded-lg hover:bg-base-300 transition">
-                                <p class="font-medium">{{ novedad.titulo }}</p>
+                                <p class="font-medium text-sm">{{ novedad.titulo }}</p>
                                 <p class="text-xs text-gray-500">{{ novedad.fecha }}</p>
                             </Link>
                         </div>
-                        <div class="flex flex-wrap gap-3">
+                        <div v-if="entradasRecientes?.length" class="space-y-3 mt-6">
+                            <h3 class="font-bold text-lg">Blog</h3>
+                            <Link v-for="entrada in entradasRecientes.slice(0, 2)" :key="entrada.id" :href="entrada.ruta"
+                                class="block p-3 bg-base-200 rounded-lg hover:bg-base-300 transition">
+                                <p class="font-medium text-sm">{{ entrada.titulo }}</p>
+                                <p class="text-xs text-gray-500">{{ entrada.fecha }}</p>
+                            </Link>
+                        </div>
+                        <div class="flex flex-wrap gap-3 mt-4">
                             <Link href="/novedades" class="btn btn-primary btn-sm">Ver novedades</Link>
+                            <Link href="/blog" class="btn btn-secondary btn-sm">Leer blog</Link>
                         </div>
                     </div>
                     <div class="space-y-4">
-                        <h2 class="text-3xl font-bold">Boletín</h2>
-                        <p>Recibe novedades, contenidos y publicaciones recientes de TSEYOR.</p>
+                        <h3 class="font-bold text-lg">Boletín</h3>
+                        <p class="text-sm text-gray-500">Recibe las últimas novedades de TSEYOR en tu correo.</p>
                         <Suscribe />
                     </div>
                 </div>
             </div>
         </Section>
+
+        <!-- 7. Preguntas frecuentes -->
+        <Section>
+            <EvaluacionSeccion seccion="Preguntas frecuentes" :idoneidad="85" :claridad="90" :composicion="85" :posicion="85" />
+            <div class="container mx-auto py-16 px-4 max-w-4xl">
+                <h2 class="text-center mb-4">Preguntas frecuentes</h2>
+                <p class="text-center text-gray-500 mb-10 max-w-2xl mx-auto">Las dudas más comunes sobre TSEYOR, los Guías Estelares y el Salto Cuántico.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="card bg-base-200 p-5 rounded-xl space-y-3">
+                        <h3 class="font-bold text-sm">Sobre TSEYOR</h3>
+                        <ul class="text-sm space-y-2">
+                            <li><Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="link link-hover">¿Qué es el grupo Tseyor?</Link></li>
+                            <li><Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="link link-hover">¿Es esto una secta?</Link></li>
+                            <li><Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="link link-hover">¿Qué significa la palabra Tseyor?</Link></li>
+                        </ul>
+                        <Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="btn btn-ghost btn-xs">Ver más →</Link>
+                    </div>
+                    <div class="card bg-base-200 p-5 rounded-xl space-y-3">
+                        <h3 class="font-bold text-sm">Guías Estelares</h3>
+                        <ul class="text-sm space-y-2">
+                            <li><Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="link link-hover">¿Cómo contactan con nosotros?</Link></li>
+                            <li><Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="link link-hover">¿Por qué están aquí?</Link></li>
+                            <li><Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="link link-hover">¿Por qué no se presentan?</Link></li>
+                        </ul>
+                        <Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="btn btn-ghost btn-xs">Ver más →</Link>
+                    </div>
+                    <div class="card bg-base-200 p-5 rounded-xl space-y-3">
+                        <h3 class="font-bold text-sm">Salto Cuántico</h3>
+                        <ul class="text-sm space-y-2">
+                            <li><Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="link link-hover">¿En qué consiste el cambio?</Link></li>
+                            <li><Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="link link-hover">¿Cómo nos afectará?</Link></li>
+                            <li><Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="link link-hover">¿Podemos prepararnos?</Link></li>
+                        </ul>
+                        <Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="btn btn-ghost btn-xs">Ver más →</Link>
+                    </div>
+                </div>
+            </div>
+        </Section>
+
+        <!-- 8. CTA final -->
+        <Section>
+            <EvaluacionSeccion seccion="CTA final" :idoneidad="85" :claridad="90" :composicion="80" :posicion="85" />
+            <Hero title="Comienza tu viaje" textClass="space-y-6">
+                <p>El camino del autodescubrimiento está abierto para ti. Sin dogmas, desde tu propia experiencia.</p>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <Link href="/cursos/inscripcion/nueva" class="btn btn-primary">Inscríbete al curso gratuito</Link>
+                    <Link href="/biblioteca" class="btn btn-secondary">Explorar contenidos libres</Link>
+                </div>
+            </Hero>
+        </Section>
+
     </Sections>
 </template>
 
 <script setup>
 import EvaluacionSeccion from "@/Components/EvaluacionSeccion.vue"
-import { ref } from "vue"
+import CardContent from "@/Components/CardContent.vue"
+import GridFill from "@/Components/GridFill.vue"
 
 defineProps({
     hayProximosEventos: Boolean,
-    temasClave: {
-        type: Array,
-        default: () => [],
-    },
     entradasRecientes: {
         type: Array,
         default: () => [],
@@ -279,25 +256,9 @@ defineProps({
         type: Array,
         default: () => [],
     },
-    testimonios: {
+    paginasDescubre: {
         type: Array,
-        default: () => [
-            {
-                name: "Ana",
-                role: "Alumna del curso",
-                text: "El curso me ayudó a ordenar la filosofía y a encontrar respuestas que buscaba desde hace años. Me sentí acompañada en todo momento.",
-            },
-            {
-                name: "Carlos",
-                role: "Miembro de la comunidad",
-                text: "Encontré un espacio donde puedo explorar mi espiritualidad sin dogmas, a mi ritmo, y con personas afines.",
-            },
-            {
-                name: "Marta",
-                role: "Participante de encuentros",
-                text: "La biblioteca me permitió investigar a mi ritmo antes de decidirme a hacer el curso. Todo es gratuito y de libre acceso.",
-            },
-        ],
+        default: () => [],
     },
 })
 </script>

@@ -131,7 +131,13 @@ class PaginasController extends Controller
                                 'videos' => Video::publicado()->count(),
                                 'centros' => Centro::count()
                             ];
-                })
+                }),
+                'paginasDescubre' => Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion'])
+                    ->publicada()
+                    ->where('descubre', TRUE)
+                    ->orderBy('ruta')
+                    ->limit(16)
+                    ->get()
             ]
         );
     }

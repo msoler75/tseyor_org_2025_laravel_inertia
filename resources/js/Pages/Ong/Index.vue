@@ -99,6 +99,33 @@
         </SectionBook>
 
         <Section>
+            <EvaluacionSeccion seccion="Voluntarios" :idoneidad="95" :claridad="90" :composicion="85" :posicion="90" />
+            <TextImage title="Voluntarios TSEYOR" srcImage="/almacen/medios/paginas/quienes-somos.jpg" image-right>
+                <p>Ser voluntario en TSEYOR es <strong>formar parte activa de una comunidad viva</strong>. No hay cargos ni jerarquías — todos somos aprendices, todos compartimos y crecemos juntos.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-base-200/50 p-4 rounded-xl text-left">
+                        <h4 class="font-bold text-sm">Divulgación del mensaje</h4>
+                        <p class="text-xs mt-1">Compartimos la filosofía cósmico-crística a través de conversaciones, escritos y encuentros.</p>
+                    </div>
+                    <div class="bg-base-200/50 p-4 rounded-xl text-left">
+                        <h4 class="font-bold text-sm">Talleres vivenciales</h4>
+                        <p class="text-xs mt-1">Participamos en experiencias prácticas de autodescubrimiento y conexión grupal.</p>
+                    </div>
+                    <div class="bg-base-200/50 p-4 rounded-xl text-left">
+                        <h4 class="font-bold text-sm">Convivencias y viajes</h4>
+                        <p class="text-xs mt-1">Compartimos momentos de encuentro presencial, aprendizaje colectivo y naturaleza.</p>
+                    </div>
+                    <div class="bg-base-200/50 p-4 rounded-xl text-left">
+                        <h4 class="font-bold text-sm">Aprendizaje continuo</h4>
+                        <p class="text-xs mt-1">Todos enseñamos y todos aprendemos. El Curso Holístico es nuestra guía compartida.</p>
+                    </div>
+                </div>
+                <p class="text-sm mt-4 italic">No se necesita experiencia previa ni conocimientos especiales. Solo las ganas de crecer y servir.</p>
+                <Link :href="route('cursos.inscripcion.nueva')" class="btn btn-primary btn-sm mt-4">Quiero ser voluntario</Link>
+            </TextImage>
+        </Section>
+
+        <Section>
             <TextImage title="Muular" srcImage="/almacen/medios/paginas/muular.png" buttonLabel="Conoce el Muular"
                 :href="route('muular')" image-right>
                 <p>La moneda social y espiritual de Tseyor</p>
