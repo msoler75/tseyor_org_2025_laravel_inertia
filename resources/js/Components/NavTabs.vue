@@ -1,6 +1,5 @@
 <template>
     <div class="relative bg-base-100/0" ref="container"
-    :data-theme="portada && !nav.navigating && nav.scrollY < PORTADA_SCROLL_THRESHOLD ? 'night' : ''"
     >
         <template v-for="tab, index of nav.items" :key="tab.url">
             <NavLink v-if="!tab.onlyAside" class="nav-tab relative px-4"
