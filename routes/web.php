@@ -144,10 +144,6 @@ Route::get('', function (Request $request) {
     }
     return app()->call([app(PaginasController::class), 'portada']);
 })->name('portada');
-Route::/*middleware('page-cache')->*/get('propuesta',
-function () {
-    return Inertia::render('PortadaNueva3', []);
-})->name('portada.propuesta');
 
 Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades');
 Route::get('buscar', [ContenidosController::class, 'search'])->name('buscar');
@@ -247,7 +243,7 @@ Route::get('centros', [CentrosController::class, 'index'])->name('centros');
 Route::get('centros/{slug}', [CentrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('centro');
 
 Route::get('quienes-somos', function () {
-    return Inertia::render('Presentacion/QuienesSomos', [])
+    return Inertia::render('Presentacion/QuienesSomos2', [])
         ->withViewData(SEO::get('quienes-somos'));
 })->name('quienes-somos');
 
@@ -257,7 +253,7 @@ Route::get('origenes-de-tseyor', function () {
 })->name('origenes-de-tseyor');
 
 Route::get('filosofia', function () {
-    return Inertia::render('Presentacion/Filosofia', [])
+    return Inertia::render('Presentacion/Filosofia2', [])
         ->withViewData(SEO::get('filosofia'));
 })->name('filosofia');
 
