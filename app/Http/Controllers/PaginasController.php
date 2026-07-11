@@ -137,7 +137,19 @@ class PaginasController extends Controller
                     ->where('descubre', TRUE)
                     ->orderBy('ruta')
                     ->limit(16)
-                    ->get()
+                    ->get(),
+                'entradasRecientes' => \App\Models\Entrada::publicada()
+                    ->latest('published_at')
+                    ->limit(4)
+                    ->get(['slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
+                    ->map(fn($e) => [
+                        'slug' => $e->slug,
+                        'titulo' => $e->titulo,
+                        'imagen' => $e->imagen,
+                        'descripcion' => $e->descripcion,
+                        'fecha' => $e->published_at ? date('j M Y', strtotime($e->published_at)) : '',
+                        'ruta' => route('entrada', $e->slug),
+                    ]),
             ]
         );
     }

@@ -23,6 +23,7 @@
             </div>
             <div class="caja-texto flex flex-col items-center gap-4 mx-auto px-2 xs:px-4 md:px-8 max-w-xl pb-6"
                 :class="(full ? 'justify-center sm:py-6 h-full ' : 'justify-evenly py-6 min-h-fit ') + textClass">
+                <div v-if="aboveTitle" class="inline-block px-3.5 py-1.5 mb-4 text-[10px] font-bold tracking-widest uppercase bg-indigo-100 text-indigo-600 rounded-full border border-indigo-200 font-display">{{ aboveTitle }}</div>
                 <h2 v-if="title" class="text-2xl text-primary font-bold mb-0" :class="titleClass">{{ title }}</h2>
                 <div v-if="subtitle" class="text-lg text-center my-0" v-html="subtitle.replace(/\\n/g, '<br /><br />')"/>
                 <div v-show="textPresent" class="md:my-5 text-justify" ref="textdiv">
@@ -47,6 +48,10 @@ import  {useSlots} from 'vue'
 
 const props = defineProps({
     title: {
+        type: String,
+        required: false
+    },
+    aboveTitle: {
         type: String,
         required: false
     },

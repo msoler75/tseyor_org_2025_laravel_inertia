@@ -1,5 +1,5 @@
 <template>
-    <TextImage :title="title" :subtitle="subtitle" :srcImage="srcImage" :buttonLabel="buttonLabel" :href="href"
+    <TextImage :title="title" :aboveTitle="aboveTitle" :subtitle="subtitle" :srcImage="srcImage" :buttonLabel="buttonLabel" :href="href"
         :src-width="srcWidth" :src-height="srcHeight" :imageRight="imageRight" :imageClass="imageClass"
         :imageSideClass="imageSideClass" :titleClass="titleClass" :textClass="textClass" :full="full" :cover="cover"
         :caption="caption"
@@ -18,6 +18,10 @@
 
 defineProps({
     title: {
+        type: String,
+        required: false
+    },
+    aboveTitle: {
         type: String,
         required: false
     },

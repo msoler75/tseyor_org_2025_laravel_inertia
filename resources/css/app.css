@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @plugin "@tailwindcss/typography";
@@ -10,8 +11,8 @@
 @plugin "daisyui/theme" {
     name: "light";
     default: true;
-    --color-primary: #284f9d;
-    --color-secondary: #cc5c2c;
+    --color-primary: #1d55c8;
+    --color-secondary: #f6ad55;
     --color-info: #90cdf4;
     --color-base-100: "#fff";
     --color-base-200: "#F3FAFF";
@@ -36,7 +37,8 @@
 
 @theme {
     --breakpoint-xs: 475px;
-    --font-sans: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-sans: "Hanken Grotesk", "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
     --font-weight-bold: 600;
 }
 
