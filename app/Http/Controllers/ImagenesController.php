@@ -217,6 +217,15 @@ class ImagenesController extends Controller
                 }
             }
         }
+
+        // Aplicar sharpening automático si la imagen se redujo
+        $sharpLevel = $validatedParams['sharp'];
+        if ($sharpLevel === null) {
+            $sharpLevel = 15;
+        }
+        if ($sharpLevel > 0 && ($image->width() < $currentWidth || $image->height() < $currentHeight)) {
+            $image->sharpen($sharpLevel);
+        }
     }
 
     /**
@@ -230,9 +239,10 @@ class ImagenesController extends Controller
             'h' => null,
             'mw' => null,
             'mh' => null,
+            'sharp' => null,
         ];
 
-        $paramKeys = ['w', 'h', 'mw', 'mh'];
+        $paramKeys = ['w', 'h', 'mw', 'mh', 'sharp'];
 
         foreach ($paramKeys as $key) {
             if (isset($params[$key])) {
@@ -244,11 +254,15 @@ class ImagenesController extends Controller
                     continue;
                 }
 
-                // Verificar si es un número entero positivo
-                if (is_numeric($value) && (int)$value > 0) {
+                if ($key === 'sharp') {
+                    if (is_numeric($value) && (int)$value >= 0 && (int)$value <= 100) {
+                        $validated[$key] = (int)$value;
+                    } else {
+                        Log::warning("Parámetro de imagen inválido ignorado: {$key}={$value}");
+                    }
+                } else if (is_numeric($value) && (int)$value > 0) {
                     $validated[$key] = (int)$value;
                 } else {
-                    // Parámetro inválido, ignorar y loggear warning
                     Log::warning("Parámetro de imagen inválido ignorado: {$key}={$value}");
                 }
             }

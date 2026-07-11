@@ -2,7 +2,7 @@
     <nav
         class="w-full border-gray-300 top-0 z-40 -translate-y-px transition duration-400 select-none pointer-events-none"
         :class="[
-            portada ? 'bg-base-100/0' :
+            portada ? (nav.scrollY<240?'bg-base-100/0':'bg-base-100 shadow-sm') :
                 nav.fullPage
                 ? 'bg-base-200/20 hover:bg-base-200/100 transition duration-200'
                 : 'bg-base-200 border-b',
