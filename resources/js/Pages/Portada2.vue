@@ -7,14 +7,17 @@
     >
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            <div class="max-w-2xl bg-base-100/80 backdrop-blur-xs rounded-4xl p-7">
+            <div class="max-w-2xl bg-base-100/90 backdrop-blur-xs rounded-4xl p-7 relative mt-12">
+
+                <img src="/almacen/medios/portada/libelula.png?w=200" class="absolute right-10 -top-20"/>
+
                 <div class="inline-block px-1 py-1.5 text-xs font-bold tracking-widest uppercase text-primary font-display">
-                    ONG MUNDO ARMÓNICO TSEYOR
+                    ONG 
                 </div>
 
                 <h1 class="text-4xl sm:text-5xl md:text-6xl font-display font-black text-secondary tracking-tight leading-[1.1] mb-8">
-                    <span class="">Despertando a</span> <br class="hidden sm:inline" /><span class="text-primary
-                    ">una nueva consciencia</span>
+                    <span class="">MUNDO ARMÓNICO </span> <br class="hidden sm:inline" /><span class="text-primary
+                    ">TSEYOR</span>
                 </h1>
 
                 <p class="text-lg md:text-xl text-base-content/90 leading-relaxed mb-8 max-w-2xl font-light">
@@ -22,9 +25,9 @@
                 </p>
 
                 <div class="flex items-center gap-3 mb-10 max-w-2xl">
-                    <Info class="w-5 h-4 text-primary shrink-0 mt-0.5" />
+                    <Info class="w-5 h-4 text-primary shrink-0" />
                     <p class="text-sm text-primary/80 font-semibold leading-relaxed p-0 m-0">
-                        No nos creas, compruébalo. Este es un camino de experimentación personal.
+                        Experimentación libre para el autodescubrimiento, sin dogmas.
                     </p>
                 </div>
 
@@ -95,7 +98,7 @@
         <div class="absolute inset-0 bg-[radial-gradient(#4f46e504_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div class="text-center max-w-full mx-auto mb-16">
-                <Image class="mx-auto w-[320px] mb-8" src="/almacen/medios/logos/ong.jpg"/>
+                <Image class="mx-auto w-[340px] mb-8 shadow" src="/almacen/medios/logos/ong.jpg"/>
                 <h2 class="text-3xl sm:text-4xl font-display font-black text-primary tracking-tight mb-6">
                     Una ONG de ayuda humanitaria
                 </h2>
@@ -398,11 +401,11 @@
                         <h3 class="font-display font-bold text-base-content text-sm uppercase tracking-wider">Sobre TSEYOR</h3>
                     </div>
                     <ul class="space-y-3">
-                        <li><Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Qué es el grupo Tseyor?</Link></li>
-                        <li><Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Es esto una secta?</Link></li>
-                        <li><Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Qué significa la palabra Tseyor?</Link></li>
+                        <li><Link :href="route('preguntas.seccion', 'parte-3-sobre-tseyor')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Qué es el grupo Tseyor?</Link></li>
+                        <li><Link :href="route('preguntas.seccion', 'parte-3-sobre-tseyor')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Es esto una secta?</Link></li>
+                        <li><Link :href="route('preguntas.seccion', 'parte-3-sobre-tseyor')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Qué significa la palabra Tseyor?</Link></li>
                     </ul>
-                    <Link href="/preguntas-frecuentes/parte-3-sobre-tseyor" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:text-base-content transition-colors">
+                    <Link :href="route('preguntas.seccion', 'parte-3-sobre-tseyor')" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:text-base-content transition-colors">
                         Ver más <ChevronRight class="w-3 h-3" /> <sup class="text-[8px] opacity-50">15%</sup>
                     </Link>
                 </div>
@@ -414,11 +417,11 @@
                         <h3 class="font-display font-bold text-base-content text-sm uppercase tracking-wider">Guías Estelares</h3>
                     </div>
                     <ul class="space-y-3">
-                        <li><Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Cómo contactan con nosotros?</Link></li>
-                        <li><Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Por qué están aquí?</Link></li>
-                        <li><Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Por qué no se presentan?</Link></li>
+                        <li><Link :href="route('preguntas.seccion', 'parte-1-extraterrestres')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Cómo contactan con nosotros?</Link></li>
+                        <li><Link :href="route('preguntas.seccion', 'parte-1-extraterrestres')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Por qué están aquí?</Link></li>
+                        <li><Link :href="route('preguntas.seccion', 'parte-1-extraterrestres')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Por qué no se presentan?</Link></li>
                     </ul>
-                    <Link href="/preguntas-frecuentes/parte-1-extraterrestres" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:text-base-content transition-colors">
+                    <Link :href="route('preguntas.seccion', 'parte-1-extraterrestres')" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:text-base-content transition-colors">
                         Ver más <ChevronRight class="w-3 h-3" /> <sup class="text-[8px] opacity-50">15%</sup>
                     </Link>
                 </div>
@@ -430,11 +433,11 @@
                         <h3 class="font-display font-bold text-base-content text-sm uppercase tracking-wider">Salto Cuántico</h3>
                     </div>
                     <ul class="space-y-3">
-                        <li><Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿En qué consiste el cambio?</Link></li>
-                        <li><Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Cómo nos afectará?</Link></li>
-                        <li><Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Podemos prepararnos?</Link></li>
+                        <li><Link :href="route('preguntas.seccion', 'parte-2-el-salto-cuantico')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿En qué consiste el cambio?</Link></li>
+                        <li><Link :href="route('preguntas.seccion', 'parte-2-el-salto-cuantico')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Cómo nos afectará?</Link></li>
+                        <li><Link :href="route('preguntas.seccion', 'parte-2-el-salto-cuantico')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Podemos prepararnos?</Link></li>
                     </ul>
-                    <Link href="/preguntas-frecuentes/parte-2-el-salto-cuantico" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:text-base-content transition-colors">
+                    <Link :href="route('preguntas.seccion', 'parte-2-el-salto-cuantico')" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:text-base-content transition-colors">
                         Ver más <ChevronRight class="w-3 h-3" /> <sup class="text-[8px] opacity-50">15%</sup>
                     </Link>
                 </div>
@@ -458,7 +461,7 @@
                         El camino del autodescubrimiento profundo está totalmente abierto para ti. Sin dogmas restrictivos, desde tu propia experiencia inteligente y libre de discernimiento.
                     </p>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link href="/cursos/inscripcion/nueva" class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest shadow-sm transition-all duration-300 hover:bg-base-200">
+                        <Link href="/inscripcion" class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest shadow-sm transition-all duration-300 hover:bg-base-200">
                             Inscríbete al curso gratuito <sup class="text-[8px] opacity-50">90%</sup>
                         </Link>
                         <Link href="/biblioteca" class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/20 font-bold text-xs uppercase tracking-widest transition-all text-center">
