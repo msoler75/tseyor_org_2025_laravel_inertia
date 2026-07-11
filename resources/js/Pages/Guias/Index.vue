@@ -22,13 +22,23 @@
         </div>
 
 
-        <div class="flex justify-between mb-5">
+        <div class="flex justify-start mb-5 gap-5">
          <TitleInfo title="" classes="!mb-0">
                 <div>Los Guías Estelares son tutores de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia> que mantienen contacto <Referencia r="telepatía">
-                telepático</Referencia> con el <Referencia>grupo TSEYOR</Referencia> a través del canalizador <Referencia>Chac-Mool</Referencia> <Referencia>Puente</Referencia>.
+                telepático</Referencia> con el <Referencia>grupo TSEYOR</Referencia> a través del canalizador <Referencia r="canalizador">Chac-Mool Puente</Referencia>.
                 </div>
                 <div>El objetivo de este contacto y <Referencia r="Contacto entre ambas civilizaciones">tutelaje entre civilizaciones</Referencia> es servir de referenciación para que la humanidad planetaria de la Tierra pueda prepararse para la llegada del <Referencia>Rayo Sincronizador</Referencia> que resituará la humanidad a su posición real en el <Referencia>Tiempo Real del Universo</Referencia>.</div>
          </TitleInfo>
+
+          <TitleInfo title="" labelInfo="¿Cómo contactan?" classes="!mb-0">
+                <div>La mayoría de veces se comunican <Referencia r="telepatía">telepáticamente</Referencia> vía nuestro canal <Referencia r="canalizador">Chac-Mool Puente</Referencia>.</div>
+                <div>La mayoría de ellos vive en otros planetas distantes mientras que algunos residen en bases en este planeta.</div>
+                </TitleInfo>
+
+            <div class="ml-auto flex gap-3">
+                <Link href="/preguntas-frecuentes/extraterrestres" class="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-widest hover:gap-3 transition-all">
+                            Saber más<Icon icon="ph:arrow-right"/>
+                </Link></div>
         </div>
 
         </PageHeader>
@@ -69,7 +79,18 @@
 
         </ScrollToHere>
 
+
+        <div class="flex justify-start mb-5 gap-5 mt-14">
+            <div class="ml-auto flex gap-3">
+                <Link href="/preguntas-frecuentes/extraterrestres" class="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-widest hover:gap-3 transition-all">
+                    Saber más<Icon icon="ph:arrow-right"/>
+                </Link>
+            </div>
+        </div>
+
     </PageWide>
+
+
     </Page>
 </template>
 
