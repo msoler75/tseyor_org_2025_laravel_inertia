@@ -50,41 +50,41 @@
 
          <!-- Stats -->
         <div class="pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Link href="/origenes-de-tseyor" class="bg-base-100/90 backdrop-blur-sm p-4 rounded-2xl border border-base-300/60 shadow-lg flex items-center gap-4 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
-                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
-                        <Clock class="w-5 h-5" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <Link href="/origenes-de-tseyor" class="group bg-base-100/80 backdrop-blur-lg p-4 sm:p-5 rounded-2xl border border-base-300/50 shadow-lg hover:shadow-2xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
                     <div>
-                        <span class="block text-lg font-black text-base-content font-display leading-tight">+40 años</span>
-                        <span class="block text-[10px] font-bold text-base-content/40 tracking-widest uppercase mt-0.5">de trayectoria</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight tracking-tight">+40 años</span>
+                        <span class="block text-[11px] font-semibold text-base-content/40 tracking-widest uppercase mt-0.5">de trayectoria</span>
                     </div>
                 </Link>
-                <Link href="/libros" class="bg-base-100/90 backdrop-blur-sm p-4 rounded-2xl border border-base-300/60 shadow-lg flex items-center gap-4 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
-                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
-                        <BookOpen class="w-5 h-5" />
+                <Link href="/libros" class="group bg-base-100/80 backdrop-blur-lg p-4 sm:p-5 rounded-2xl border border-base-300/50 shadow-lg hover:shadow-2xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M12 6v7"/><path d="M9 9h6"/></svg>
                     </div>
                     <div>
-                        <span class="block text-lg font-black text-base-content font-display leading-tight">+300 libros</span>
-                        <span class="block text-[10px] font-bold text-base-content/40 tracking-widest uppercase mt-0.5">disponibles gratis</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight tracking-tight">+300 libros</span>
+                        <span class="block text-[11px] font-semibold text-base-content/40 tracking-widest uppercase mt-0.5">disponibles gratis</span>
                     </div>
                 </Link>
-                <Link href="/comunicados" class="bg-base-100/90 backdrop-blur-sm p-4 rounded-2xl border border-base-300/60 shadow-lg flex items-center gap-4 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
-                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
-                        <MessageSquare class="w-5 h-5" />
+                <Link href="/comunicados" class="group bg-base-100/80 backdrop-blur-lg p-4 sm:p-5 rounded-2xl border border-base-300/50 shadow-lg hover:shadow-2xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
                     </div>
                     <div>
-                        <span class="block text-lg font-black text-base-content font-display leading-tight">+1.500</span>
-                        <span class="block text-[10px] font-bold text-base-content/40 tracking-widest uppercase mt-0.5">comunicados de guías</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight tracking-tight">+1.500</span>
+                        <span class="block text-[11px] font-semibold text-base-content/40 tracking-widest uppercase mt-0.5">comunicados de guías</span>
                     </div>
                 </Link>
-                <Link href="/biblioteca" class="bg-base-100/90 backdrop-blur-sm p-4 rounded-2xl border border-base-300/60 shadow-lg flex items-center gap-4 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
-                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
-                        <Infinity class="w-5 h-5" />
+                <Link href="/biblioteca" class="group bg-base-100/80 backdrop-blur-lg p-4 sm:p-5 rounded-2xl border border-base-300/50 shadow-lg hover:shadow-2xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M3 16v5h5"/><path d="M21 16v5h-5"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
                     </div>
                     <div>
-                        <span class="block text-lg font-black text-base-content font-display leading-tight">Biblioteca</span>
-                        <span class="block text-[10px] font-bold text-base-content/40 tracking-widest uppercase mt-0.5">descarga libre</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight tracking-tight">Biblioteca</span>
+                        <span class="block text-[11px] font-semibold text-base-content/40 tracking-widest uppercase mt-0.5">descarga libre</span>
                     </div>
                 </Link>
             </div>
@@ -445,20 +445,21 @@
             <div class="rounded-3xl p-8 sm:p-14 lg:p-20 text-center text-white relative overflow-hidden">
                 <div class="max-w-2xl mx-auto">
                     <span class="inline-block text-xs font-bold tracking-widest bg-white/15 text-white/90 border border-white/20 uppercase px-3 py-1.5 rounded-full mb-6 font-display backdrop-blur-sm">
-                        EL MOMENTO ES AHORA
+                        TU PUERTA DE ENTRADA
                     </span>
                     <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight leading-tight mb-6 text-white">
-                        Comienza tu viaje
+                        Inscríbete al curso gratuito
                     </h2>
                     <p class="text-white/70 leading-relaxed mb-10 text-sm sm:text-base font-light max-w-xl mx-auto">
-                        El camino del autodescubrimiento profundo está totalmente abierto para ti. Sin dogmas restrictivos, desde tu propia experiencia inteligente y libre de discernimiento.
+                        El curso holístico es la puerta de entrada a la comunidad. En él conocerás la filosofía, las herramientas de trabajo interior y el camino para integrarte como voluntario en la ONG. Es gratuito, vivo y abierto para ti.
                     </p>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link href="/cursos" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest shadow-lg transition-all duration-300 hover:bg-base-200 hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0">
-                            Inscríbete al curso gratuito <sup class="text-[8px] opacity-50">90%</sup>
+                        <Link href="/cursos" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest shadow-lg transition-all duration-300 hover:bg-base-200 hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-105 active:translate-y-0">
+                            Quiero inscribirme ahora
+                            <ArrowRight class="w-4 h-4 inline-block ml-1.5 -mt-0.5 group-hover:translate-x-1 transition-transform" />
                         </Link>
-                        <Link href="/biblioteca" class="w-full sm:w-auto px-6 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 font-bold text-xs uppercase tracking-widest transition-all text-center backdrop-blur-sm">
-                            Explorar contenidos libres <sup class="text-[8px] opacity-50">15%</sup>
+                        <Link href="/biblioteca" class="w-full sm:w-auto px-6 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 font-bold text-xs uppercase tracking-widest transition-all text-center backdrop-blur-sm hover:scale-105">
+                            Ver contenidos libres primero
                         </Link>
                     </div>
                 </div>
