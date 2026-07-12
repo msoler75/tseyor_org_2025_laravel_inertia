@@ -7,6 +7,8 @@ import Components from "unplugin-vue-components/vite";
 import AutoImport from "unplugin-auto-import/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 import { VitePWA } from "vite-plugin-pwa";
+
+const isDev = process.env.NODE_ENV !== 'production';
 // import ssr from 'vite-plugin-ssr/plugin'
 // import commonjs from 'vite-plugin-commonjs';
 
@@ -22,7 +24,7 @@ const isSSR = process.argv.includes('--ssr');
 export default defineConfig({
   optimizeDeps: {
     // Excluir @tiptap de optimización
-    exclude: ['@tiptap/*', 'prosemirror-*'],
+    exclude: ['@tiptap/*', 'prosemirror-*', 'virtual:pwa-register'],
     include: [
         // Aquí incluye las dependencias que quieres pre-empaquetar
         'vue',
@@ -511,13 +513,13 @@ export default defineConfig({
         enabled: false
       }
     }),
-    viteCompression({
+    isDev ? null : viteCompression({
       filter: /bootstrap\/ssr/, // Excluye TODOS los archivos en esta ruta
       threshold: 1024, // Mínimo 1KB para comprimir
       algorithm: "gzip", // Algoritmo principal
       deleteOriginFile: false, // Mantiene los originales
     }),
-    visualizer(),
+    !isDev && !isSSR ? visualizer() : null,
   ].filter(Boolean),
   define: {
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: true,

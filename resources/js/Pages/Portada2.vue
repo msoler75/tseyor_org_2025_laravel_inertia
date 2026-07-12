@@ -1,15 +1,15 @@
 <template>
-    <h1 class="hidden">Despertando a una nueva consciencia</h1>
+    <h1 class="hidden">ONG Mundo Armónico TSEYOR</h1>
 
     <!-- Hero -->
-    <section id="hero" class="relative overflow-hidden pt-16 pb-24 md:py-32"
+    <section id="hero" class="relative overflow-hidden py-16 md:pt-24"
     style="background: url(/almacen/medios/portada/portada_tseyor_2026_hero.jpg) center center; background-size: cover"
     >
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div class="max-w-2xl bg-base-100/90 backdrop-blur-xs rounded-4xl p-7 relative mt-12">
 
-                <img src="/almacen/medios/portada/libelula.png?w=200" class="absolute right-10 -top-20"/>
+                <img src="/almacen/medios/portada/libelula.png?w=180" class="absolute right-10 -top-18"/>
 
                 <div class="inline-block px-1 py-1.5 text-xs font-bold tracking-widest uppercase text-primary font-display">
                     ONG 
@@ -32,10 +32,10 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                    <Link href="/cursos" class="flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-content font-bold text-xs uppercase tracking-widest hover:bg-primary/90 transition-all shadow-md transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer group">
-                        Comenzar el Curso
+                    <a href="#sabiduria" @click.prevent="scrollSeccion('sabiduria')" class="flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-content font-bold text-xs uppercase tracking-widest hover:bg-primary/90 transition-all shadow-md transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer group">
+                        Explorar TSEYOR
                         <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    </a>
                     <Link href="/biblioteca" class="flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-base-100 border border-base-300 hover:border-primary/40 text-base-content/80 hover:bg-base-200 font-bold text-xs transition-all uppercase tracking-widest shadow-sm">
                         <BookOpen class="w-4 h-4 text-primary" />
                         Biblioteca
@@ -47,142 +47,55 @@
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Stats -->
-    <section class="bg-base-100 py-12 border-t border-b border-base-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+         <!-- Stats -->
+        <div class="pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Link href="/origenes-de-tseyor" class="bg-base-100 p-6 rounded-3xl border border-base-300 shadow-sm flex items-center gap-4 hover:shadow-md hover:border-primary/30 transition-all duration-300">
-                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                        <Clock class="w-6 h-6" />
+                <Link href="/origenes-de-tseyor" class="bg-base-100/90 backdrop-blur-sm p-4 rounded-2xl border border-base-300/60 shadow-lg flex items-center gap-4 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
+                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
+                        <Clock class="w-5 h-5" />
                     </div>
                     <div>
-                        <span class="block text-2xl font-black text-base-content font-display leading-tight">+40 años</span>
-                        <span class="block text-xs font-bold text-base-content/50 tracking-widest uppercase mt-0.5">de trayectoria</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight">+40 años</span>
+                        <span class="block text-[10px] font-bold text-base-content/40 tracking-widest uppercase mt-0.5">de trayectoria</span>
                     </div>
                 </Link>
-                <Link href="/libros" class="bg-base-100 p-6 rounded-3xl border border-base-300 shadow-sm flex items-center gap-4 hover:shadow-md hover:border-primary/30 transition-all duration-300">
-                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                        <BookOpen class="w-6 h-6" />
+                <Link href="/libros" class="bg-base-100/90 backdrop-blur-sm p-4 rounded-2xl border border-base-300/60 shadow-lg flex items-center gap-4 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
+                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
+                        <BookOpen class="w-5 h-5" />
                     </div>
                     <div>
-                        <span class="block text-2xl font-black text-base-content font-display leading-tight">+300 libros</span>
-                        <span class="block text-xs font-bold text-base-content/50 tracking-widest uppercase mt-0.5">disponibles gratis</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight">+300 libros</span>
+                        <span class="block text-[10px] font-bold text-base-content/40 tracking-widest uppercase mt-0.5">disponibles gratis</span>
                     </div>
                 </Link>
-                <Link href="/comunicados"  class="bg-base-100 p-6 rounded-3xl border border-base-300 shadow-sm flex items-center gap-4 hover:shadow-md hover:border-primary/30 transition-all duration-300">
-                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                        <MessageSquare class="w-6 h-6" />
+                <Link href="/comunicados" class="bg-base-100/90 backdrop-blur-sm p-4 rounded-2xl border border-base-300/60 shadow-lg flex items-center gap-4 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
+                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
+                        <MessageSquare class="w-5 h-5" />
                     </div>
                     <div>
-                        <span class="block text-2xl font-black text-base-content font-display leading-tight">+1.500</span>
-                        <span class="block text-xs font-bold text-base-content/50 tracking-widest uppercase mt-0.5">comunicados de nuestros guías</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight">+1.500</span>
+                        <span class="block text-[10px] font-bold text-base-content/40 tracking-widest uppercase mt-0.5">comunicados de guías</span>
                     </div>
                 </Link>
-                <Link href="/biblioteca" class="bg-base-100 p-6 rounded-3xl border border-base-300 shadow-sm flex items-center gap-4 hover:shadow-md hover:border-primary/30 transition-all duration-300">
-                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                        <Infinity class="w-6 h-6" />
+                <Link href="/biblioteca" class="bg-base-100/90 backdrop-blur-sm p-4 rounded-2xl border border-base-300/60 shadow-lg flex items-center gap-4 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
+                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
+                        <Infinity class="w-5 h-5" />
                     </div>
                     <div>
-                        <span class="block text-2xl font-black text-base-content font-display leading-tight">Biblioteca</span>
-                        <span class="block text-xs font-bold text-base-content/50 tracking-widest uppercase mt-0.5">descarga libre</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight">Biblioteca</span>
+                        <span class="block text-[10px] font-bold text-base-content/40 tracking-widest uppercase mt-0.5">descarga libre</span>
                     </div>
                 </Link>
             </div>
         </div>
     </section>
 
-    <!-- ONG -->
-    <section id="ong" class="py-24 bg-base-200 border-t border-b border-base-300 relative">
-        <div class="absolute inset-0 bg-[radial-gradient(#4f46e504_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            <div class="text-center max-w-full mx-auto mb-16">
-                <Image class="mx-auto w-[340px] mb-8 shadow" src="/almacen/medios/logos/ong.jpg"/>
-                <h2 class="text-3xl sm:text-4xl font-display font-black text-primary tracking-tight mb-6">
-                    Una ONG de ayuda humanitaria
-                </h2>
-                <div class="flex flex-wrap justify-center gap-3 max-w-full mx-auto text-base-content/60">
-                    <span class="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-base-300 bg-base-100 text-xs font-bold shadow-xs uppercase tracking-wider">
-                        <CheckCircle2 class="w-3.5 h-3.5 shrink-0 text-primary" />
-                        Sin ánimo de lucro
-                    </span>
-                    <span class="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-base-300 bg-base-100 text-xs font-bold shadow-xs uppercase tracking-wider">
-                        <CheckCircle2 class="w-3.5 h-3.5 shrink-0 text-primary" />
-                        Ayuda humanitaria
-                    </span>
-                    <span class="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-base-300 bg-base-100 text-xs font-bold shadow-xs uppercase tracking-wider">
-                        <CheckCircle2 class="w-3.5 h-3.5 shrink-0 text-primary" />
-                        Cooperación al desarrollo
-                    </span>
-                    <span class="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-base-300 bg-base-100 text-xs font-bold shadow-xs uppercase tracking-wider">
-                        <CheckCircle2 class="w-3.5 h-3.5 shrink-0 text-primary" />
-                        Conocimiento libre y abierto
-                    </span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
-                <div class="md:col-span-5 comunidad-bg text-white/90 p-8 sm:p-10 rounded-3xl flex flex-col justify-between shadow-xl relative overflow-hidden group border border-base-300">
-                    <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-base-100/5 rounded-full blur-2xl group-hover:scale-110 transition-transform pointer-events-none"></div>
-                    <div>
-                        <div class="w-12 h-12 rounded-xl bg-base-100 flex items-center justify-center text-primary mb-8">
-                            <Users class="w-6 h-6" />
-                        </div>
-                        <h3 class="text-2xl sm:text-3xl font-display font-bold tracking-tight mb-4 text-white">
-                            Comunidad de miembros
-                        </h3>
-                        <p class="leading-relaxed mb-8 text-md font-light">
-                            Únete a miles de personas en todo el mundo compartiendo un ideal puro de paz, apoyo recíproco, estudio consciente y evolución espiritual.
-                        </p>
-                        <div class="flex items-center gap-3 mb-8">
-                            <div class="flex -space-x-2.5 overflow-hidden">
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-base-300 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-base-300 object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-base-300 object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-base-300 object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-base-300 object-cover" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-base-300 object-cover" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                            </div>
-                            <span class="text-xs font-bold bg-base-100 px-2.5 py-1 rounded-full text-base-content uppercase tracking-widest">+1.2k activos</span>
-                        </div>
-                    </div>
-                    <Link href="/ong" class="w-full text-center py-3.5 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest transition-all shadow-md hover:bg-base-200">
-                        Conoce la ONG y sus proyectos <sup class="text-[8px] opacity-50">75%</sup>
-                    </Link>
-                </div>
-
-                <div class="md:col-span-7 bg-base-100 p-8 sm:p-10 rounded-3xl border border-base-300 flex flex-col justify-between shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
-                    <Link  href="/biblioteca">
-                        <div class="h-48 sm:h-56 w-full rounded-2xl overflow-hidden mb-6 relative bg-base-200">
-                            <img src="/almacen/medios/portada/biblioteca_tseyor_2026.jpg" alt="Biblioteca Tseyor"
-                                class="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
-                            />
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 left-4 text-primary-content text-xs font-bold tracking-widest uppercase bg-primary px-3 py-1.5 rounded-full">
-                                BIBLIOTECA VIRTUAL
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-display font-bold text-base-content tracking-tight mb-3">
-                            Contenido libre y gratuito
-                        </h3>
-                        <p class="text-base-content/80 leading-relaxed mb-6 text-md font-light">
-                            Accede a mas de 400 libros, cientos de audios de meditaciones y reflexiones, vídeos, psicografías y mucho más, sin registro obligatorio ni cuotas.
-                        </p>
-                    </Link>
-                    <div class="border-t border-base-300 pt-4 flex items-center justify-between">
-                        <Link href="/biblioteca" class="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-widest hover:gap-3 transition-all">
-                            Acceder a la biblioteca ahora
-                            <ArrowRight class="w-4 h-4" />
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Wisdom: El mensaje desde las estrellas -->
-    <section id="sabiduria" class="py-24 overflow-hidden bg-base-100">
+    <section id="sabiduria" class="relative py-24 md:py-32 overflow-hidden bg-base-100">
+       
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
                 <div class="lg:col-span-5 relative min-h-[400px] lg:h-[540px] rounded-3xl overflow-hidden shadow-md group">
@@ -204,25 +117,118 @@
                     </h2>
 
                     <p class="text-base-content/60 leading-relaxed mb-6 font-light text-base">
-                        Nuestra filosofía proviene de los <b>Guías Estelares</b> de la <b>Confederación de Mundos Habitados de la Galaxia</b>, integrando ciencia, espiritualidad y experimentación personal. Una cosmovisión integradora que nos invita a trascender dogmas caducos, explorar las infinitas capacidades de la consciencia y participar activamente en la creación de Sociedades Armónicas planetarias.
+                        Nuestra filosofía proviene de los <b>Guías Estelares</b> de la <b>Confederación de Mundos Habitados de la Galaxia</b>, quienes nos tutelan para trascender dogmas caducos, explorar las infinitas capacidades de la consciencia humana, y así participar activamente en la creación de las futuras Sociedades Armónicas en este planeta.
                     </p>
 
                     <div class="border-l-4 border-primary bg-primary/10 p-5 rounded-r-3xl mb-8">
                         <p class="text-primary/80 italic font-semibold text-sm">
-                            "No se trata de creer en la presencia cósmica de los Guías Estelares, sino de comprobarlo a través de la propia experimentación personal."
+                            "No se trata de creer, sino de comprobar a través de la propia experimentación personal."
                         </p>
                     </div>
 
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-
-                        <Link href="/guias" class="flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-content font-bold text-xs uppercase tracking-widest hover:bg-primary/90 transition-all shadow-md transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer group">
-                            <Compass class="w-4 h-4" />
-                            Conocer a los Guías Estelares
-                            <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        <Link href="/guias" class="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-base-100 border border-base-300 hover:border-primary/40 text-base-content/80 hover:bg-base-200 font-bold text-xs uppercase tracking-widest transition-all text-center shadow-sm">
+                            <Compass class="w-4 h-4 text-primary" />
+                             Conocer a los Guías Estelares
+                             <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
                         <Link href="/comunicados" class="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-base-100 border border-base-300 hover:border-primary/40 text-base-content/80 hover:bg-base-200 font-bold text-xs uppercase tracking-widest transition-all text-center shadow-sm">
                             <FileText class="w-4 h-4 text-primary" />
-                            Leer comunicados <sup class="text-[8px] opacity-50">35%</sup>
+                            Leer sus comunicados
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Sigue leyendo -->
+     <div class="absolute w-full my-24 mx-auto text-base-content/80 flex justify-center text-xs items-center uppercase tracking-wider gap-3">Sigue leyendo <ArrowDown class="w-4 h-4 text-primary"/>.</div>    
+    </section>
+
+    <!-- Comunidad de trabajo interior -->
+    <section id="comunidad" class="py-24 bg-base-200 border-t border-b border-base-300 relative">
+        <div class="absolute inset-0 bg-[radial-gradient(#4f46e504_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="text-center max-w-3xl mx-auto mb-16 flex flex-col items-center">
+                <div class="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 font-display">
+                    COMUNIDAD DE VOLUNTARIOS
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-display font-black text-primary tracking-tight mb-4">
+                    Autoconocimiento y crecimiento compartido
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
+                <div class="md:col-span-8 bg-gradient-to-br from-primary to-primary/80 text-white p-8 sm:p-10 rounded-3xl flex flex-col justify-between shadow-xl relative overflow-hidden group border border-base-300">
+                    <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/5 rounded-full blur-2xl group-hover:scale-110 transition-transform pointer-events-none"></div>
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-white mb-8 backdrop-blur-sm">
+                            <HeartHandshake class="w-6 h-6" />
+                        </div>
+                        <h3 class="text-2xl sm:text-3xl font-display font-bold tracking-tight mb-4 text-white">
+                            Un camino que se recorre acompañado
+                        </h3>
+                        <p class="leading-relaxed mb-6 text-md font-light text-white/80">
+                            En TSEYOR no caminas solo. Nuestra comunidad es el espacio donde compartir tus experiencias, aprender de los demás y avanzar juntos en el autoconocimiento, guiados por las referencias que nos entregan los Guías Estelares.
+                        </p>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start gap-3 text-sm text-white/70">
+                                <CheckCircle2 class="w-4 h-4 shrink-0 mt-0.5 text-white/60" />
+                                <span><b class="text-white">Reflexión y meditación</b> — herramientas para el autoconocimiento y el crecimiento personal</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-sm text-white/70">
+                                <CheckCircle2 class="w-4 h-4 shrink-0 mt-0.5 text-white/60" />
+                                <span><b class="text-white">Diálogo y aprendizaje mutuo</b> — compartir experiencias desde el respeto y la escucha sincera</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-sm text-white/70">
+                                <CheckCircle2 class="w-4 h-4 shrink-0 mt-0.5 text-white/60" />
+                                <span><b class="text-white">Guías Estelares</b> — nos orientan como tutores en este proceso hacia una nueva consciencia</span>
+                            </li>
+                        </ul>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="flex -space-x-2.5 overflow-hidden">
+                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
+                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
+                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
+                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
+                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
+                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
+                            </div>
+                            <span class="text-xs font-bold bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full text-white uppercase tracking-widest border border-white/10">+1.2k activos</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 justify-between">
+                      <Link href="/quienes-somos" class="w-full text-center py-3.5 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest transition-all shadow-md hover:bg-base-200">
+                            Conoce quiénes somos
+                        </Link>
+                        <Link href="/ong" class="w-full text-center py-3.5 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest transition-all shadow-md hover:bg-base-200">
+                            Conoce la ONG y sus proyectos
+                        </Link>
+                    </div>
+                </div>
+
+                <div class="md:col-span-4 bg-base-100 p-8 sm:p-10 rounded-3xl border border-base-300 flex flex-col justify-between shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
+                    <Link  href="/biblioteca">
+                        <div class="h-48 sm:h-56 w-full rounded-2xl overflow-hidden mb-6 relative bg-base-200">
+                            <img src="/almacen/medios/portada/biblioteca_tseyor_2026.jpg" alt="Biblioteca Tseyor"
+                                class="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+                            />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 text-primary-content text-xs font-bold tracking-widest uppercase bg-primary px-3 py-1.5 rounded-full">
+                                BIBLIOTECA TSEYOR
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold text-base-content tracking-tight mb-3">
+                            Contenido libre y gratuito
+                        </h3>
+                        <p class="text-base-content/80 leading-relaxed mb-6 text-md font-light">
+                            Accede a mas de 400 libros, cientos de audios de meditaciones y reflexiones, vídeos, psicografías y mucho más. Todo basado en las referencias de nuestros Guías Estelares.
+                        </p>
+                    </Link>
+                    <div class="border-t border-base-300 pt-4 flex items-center justify-between">
+                        <Link href="/biblioteca" class="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-widest hover:gap-3 transition-all">
+                            Acceder a la biblioteca ahora
+                            <ArrowRight class="w-4 h-4" />
                         </Link>
                     </div>
                 </div>
@@ -230,58 +236,44 @@
         </div>
     </section>
 
-    <!-- Por dónde empezar -->
-    <section class="py-24 bg-base-200 border-t border-b border-base-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-xl mx-auto mb-14">
-                <h2 class="text-primary text-3xl font-display font-black text-base-content tracking-tight">
-                    ¿Por dónde empezar?
-                </h2>
-                <p class="text-base-content/90 text-md mt-2">
-                    Ponemos a tu alcance diversas puertas de entrada para iniciar este viaje interior.
-                </p>
+    <!-- Medita ahora -->
+    <section class="relative min-h-[500px] sm:min-h-[600px] bg-cover bg-center bg-no-repeat flex flex-col border-t border-b border-base-300"
+        style="background-image: url('/almacen/medios/portada/mujer_meditando.jpg'); background-position: 25% center">
+
+        <div class="absolute inset-0 bg-gradient-to-l from-black/20 via-black/10 to-black/40"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col grow">
+
+            <div class="flex justify-end items-start pt-8 sm:pt-16">
+                <div class="w-full sm:max-w-sm bg-base-100/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl border border-base-300/40">
+                    <div class="inline-block px-3 py-1 mb-3 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 font-display">
+                        Meditación diaria
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-display font-black text-base-content tracking-tight leading-tight">
+                        Siéntate y conecta con tu universo interior
+                    </h3>
+                    <p class="text-base-content/60 text-sm mt-2 leading-relaxed font-light">
+                        Meditaciones y reflexiones de nuestros Guías Estelares para el autoconocimiento y el despertar de nuestra consciencia. 
+                    </p>
+                    <div class="mt-5 w-full flex items-center justify-center gap-3 px-5 py-3.5 rounded-full bg-primary text-primary-content font-bold text-xs uppercase tracking-widest shadow-md cursor-default">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        Escuchar meditación diaria
+                    </div>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                <Link href="/cursos" class="bg-base-100 p-6 rounded-3xl border border-base-300 hover:border-primary/30 hover:shadow-md transition-all duration-300 flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/20">
-                        <BookMarked class="w-6 h-6" />
-                    </div>
-                    <div>
-                        <h4 class="font-display font-bold text-base-content text-base mb-1">Curso Holístico</h4>
-                        <p class="text-base-content/60 text-sm leading-relaxed font-light">Formación libre guiada por tutores experimentados para profundizar en el autoanálisis mental.</p>
-                        <span class="text-primary font-bold text-xs uppercase tracking-wider mt-2 inline-block">Comenzar <sup class="text-[8px] opacity-50">85%</sup></span>
-                    </div>
+            <div class="grow"></div>
+
+            <div class="pb-8 sm:pb-12 flex flex-wrap items-center gap-3">
+                <Link href="/audios" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all shadow-lg group">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    <span>Biblioteca de audios</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                 </Link>
-                <Link href="/biblioteca" class="bg-base-100 p-6 rounded-3xl border border-base-300 hover:border-primary/30 hover:shadow-md transition-all duration-300 flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/20">
-                        <BookOpen class="w-6 h-6" />
-                    </div>
-                    <div>
-                        <h4 class="font-display font-bold text-base-content text-base mb-1">Biblioteca Virtual</h4>
-                        <p class="text-base-content/60 text-sm leading-relaxed font-light">Acceso directo a todos los libros inspirados, comunicados ordenados y grabaciones de conferencias.</p>
-                        <span class="text-primary font-bold text-xs uppercase tracking-wider mt-2 inline-block">Explorar <sup class="text-[8px] opacity-50">25%</sup></span>
-                    </div>
-                </Link>
-                <Link href="/blog" class="bg-base-100 p-6 rounded-3xl border border-base-300 hover:border-primary/30 hover:shadow-md transition-all duration-300 flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/20">
-                        <FileText class="w-6 h-6" />
-                    </div>
-                    <div>
-                        <h4 class="font-display font-bold text-base-content text-base mb-1">Blog de la comunidad</h4>
-                        <p class="text-base-content/60 text-sm leading-relaxed font-light">Crónicas de encuentros, eventos, convivencias, experiencias de campo y otros momentos históricos del grupo.</p>
-                        <span class="text-primary font-bold text-xs uppercase tracking-wider mt-2 inline-block">Leer <sup class="text-[8px] opacity-50">20%</sup></span>
-                    </div>
-                </Link>
-                <Link v-if="hayProximosEventos" href="/eventos" class="bg-base-100 p-6 rounded-3xl border border-base-300 hover:border-primary/30 hover:shadow-md transition-all duration-300 flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/20">
-                        <Calendar class="w-6 h-6" />
-                    </div>
-                    <div>
-                        <h4 class="font-display font-bold text-base-content text-base mb-1">Eventos y Encuentros</h4>
-                        <p class="text-base-content/60 text-sm leading-relaxed font-light">Entérate de las próximas reuniones presenciales y videoconferencias abiertas para el diálogo sincero.</p>
-                        <span class="text-primary font-bold text-xs uppercase tracking-wider mt-2 inline-block">Ver <sup class="text-[8px] opacity-50">10%</sup></span>
-                    </div>
+                <Link href="/radio" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all shadow-lg group">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                    <span>Radio TSEYOR 24h</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                 </Link>
             </div>
         </div>
@@ -446,25 +438,26 @@
     </section>
 
     <!-- CTA final -->
-    <section class="py-24 relative overflow-hidden bg-base-100">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-neutral border border-neutral rounded-3xl p-8 sm:p-14 lg:p-20 text-center text-white relative overflow-hidden shadow-xl">
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,#4f46e520,transparent_50%)]"></div>
-                <div class="relative max-w-2xl mx-auto">
-                    <span class="inline-block text-xs font-bold tracking-widest bg-primary/10 text-primary/70 border border-primary/20 uppercase px-3 py-1.5 rounded-full mb-6 font-display">
+    <section class="py-24 relative overflow-hidden bg-cover bg-center"
+        style="background-image: url('/almacen/medios/portada/final.jpg'); background-size: cover">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/80 to-primary/85"></div>
+        <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="rounded-3xl p-8 sm:p-14 lg:p-20 text-center text-white relative overflow-hidden">
+                <div class="max-w-2xl mx-auto">
+                    <span class="inline-block text-xs font-bold tracking-widest bg-white/15 text-white/90 border border-white/20 uppercase px-3 py-1.5 rounded-full mb-6 font-display backdrop-blur-sm">
                         EL MOMENTO ES AHORA
                     </span>
-                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight leading-tight mb-6">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight leading-tight mb-6 text-white">
                         Comienza tu viaje
                     </h2>
-                    <p class="text-white/60 leading-relaxed mb-10 text-sm sm:text-base font-light">
+                    <p class="text-white/70 leading-relaxed mb-10 text-sm sm:text-base font-light max-w-xl mx-auto">
                         El camino del autodescubrimiento profundo está totalmente abierto para ti. Sin dogmas restrictivos, desde tu propia experiencia inteligente y libre de discernimiento.
                     </p>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link href="/inscripcion" class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest shadow-sm transition-all duration-300 hover:bg-base-200">
+                        <Link href="/cursos" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest shadow-lg transition-all duration-300 hover:bg-base-200 hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0">
                             Inscríbete al curso gratuito <sup class="text-[8px] opacity-50">90%</sup>
                         </Link>
-                        <Link href="/biblioteca" class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/20 font-bold text-xs uppercase tracking-widest transition-all text-center">
+                        <Link href="/biblioteca" class="w-full sm:w-auto px-6 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 font-bold text-xs uppercase tracking-widest transition-all text-center backdrop-blur-sm">
                             Explorar contenidos libres <sup class="text-[8px] opacity-50">15%</sup>
                         </Link>
                     </div>
@@ -479,6 +472,7 @@ import Suscribe from "@/Components/Suscribe.vue"
 
 import {
   ArrowRight,
+  ArrowDown,
   BookOpen,
   Calendar,
   Info,
@@ -488,13 +482,16 @@ import {
   Compass,
   FileText,
   CheckCircle2,
-  Users,
-  BookMarked,
+  HeartHandshake,
   ChevronRight,
   HelpCircle,
   Sparkles,
   Mail,
 } from 'lucide-vue-next'
+
+const scrollSeccion = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 
 defineProps({
     hayProximosEventos: Boolean,
@@ -528,14 +525,5 @@ defineProps({
   animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.comunidad-bg {
-background-color: #1d55c8 ;
-background:
-linear-gradient(115deg, transparent 75%, rgba(0,32,128,.1) 75%) 0 0,
-linear-gradient(245deg, transparent 75%, rgba(0,32,128,.1) 75%) 0 0,
-linear-gradient(115deg, transparent 75%, rgba(0,32,128,.1) 75%) 10px -20px,
-linear-gradient(245deg, transparent 75%, rgba(0,32,128,.1) 75%) 10px -20px,
-#249;
-background-size: 20px 40px;
-}
+
 </style>
