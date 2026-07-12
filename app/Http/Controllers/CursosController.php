@@ -17,10 +17,12 @@ class CursosController extends Controller
             ->where('categoria', 'Cursos')->latest()->take(2)->get();
 
         $libro = Libro::where('slug', 'curso-holistico-tseyor')->first();
+        $libroGuias = Libro::where('slug', 'los-guias-estelares')->first();
 
         return Inertia::render('Cursos/Index2', [
             'proximosCursos' => $proximosCursos,
-            'libro' => $libro
+            'libro' => $libro,
+            'libroGuias' => $libroGuias,
         ])
         ->withViewData(SEO::get('cursos'));
     }

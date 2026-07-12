@@ -146,7 +146,7 @@
     </section>
 
     <!-- Comunidad de trabajo interior -->
-    <section id="comunidad" class="py-24 bg-base-200 border-t border-b border-base-300 relative">
+    <section id="comunidad" class="py-32 bg-base-200 border-t border-b border-base-300 relative">
         <div class="absolute inset-0 bg-[radial-gradient(#4f46e504_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div class="text-center max-w-3xl mx-auto mb-16 flex flex-col items-center">
@@ -182,7 +182,7 @@
                             </li>
                             <li class="flex items-start gap-3 text-sm text-white/70">
                                 <CheckCircle2 class="w-4 h-4 shrink-0 mt-0.5 text-white/60" />
-                                <span><b class="text-white">Guías Estelares</b> — nos orientan como tutores en este proceso hacia una nueva consciencia</span>
+                                <span><b class="text-white">Amistad y hermanamiento</b> — como una familia que crece unida superando obstáculos</span>
                             </li>
                         </ul>
                         <div class="flex items-center gap-3 mb-6">
@@ -237,7 +237,7 @@
     </section>
 
     <!-- Medita ahora -->
-    <section class="relative min-h-[500px] sm:min-h-[600px] bg-cover bg-center bg-no-repeat flex flex-col border-t border-b border-base-300"
+    <section class="relative min-h-[500px] sm:min-h-[640px] bg-cover bg-center bg-no-repeat flex flex-col border-t border-b border-base-300"
         style="background-image: url('/almacen/medios/portada/mujer_meditando.jpg'); background-position: 25% center">
 
         <div class="absolute inset-0 bg-gradient-to-l from-black/20 via-black/10 to-black/40"></div>
@@ -477,9 +477,7 @@ import {
   BookOpen,
   Calendar,
   Info,
-  Clock,
-  MessageSquare,
-  Infinity,
+
   Compass,
   FileText,
   CheckCircle2,
