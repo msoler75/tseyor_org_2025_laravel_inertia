@@ -3,14 +3,14 @@
     <div class="flex flex-wrap gap-x-12 gap-y-5 items-center mb-16 lg:mb-24" :class="classes">
         <h1 v-if="title" class="mb-0">{{ title }}</h1>
         <span
-            class="flex items-center gap-1 text-sm uppercase btn btn-sm dark:border-1 dark:border-gray-500/25"
+            class="flex items-center gap-1 text-sm uppercase btn btn-sm bg-base-100 dark:border-1 dark:border-gray-500/25"
             @click="modalInfo = true"
         >
             {{ labelInfo }}<Icon icon="ph:info"/></span>
     </div>
 
     <Modal
-        title="¿Qué es la Biblioteca Tseyor?"
+        :title="modalTitle"
         class="max-w-3xl"
         :show="modalInfo"
         @close="modalInfo = false"
@@ -41,6 +41,10 @@ const props = defineProps({
     labelInfo: {
         type: String,
         default: "¿qué son?"
+    },
+    modalTitle: {
+        type: String,
+        default: "¿Qué es la Biblioteca Tseyor?"
     },
     classes: {
         type: String,

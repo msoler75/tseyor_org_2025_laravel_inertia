@@ -16,42 +16,48 @@
         <!-- para compartir enlace correctamente -->
         <h1 class="hidden">Guías Estelares</h1>
 
-        <div class="mx-auto flex flex-col justify-center items-center">
-            <h1>Consulta</h1>
-            <ConsultaTabs />
+        <div class="mx-auto flex flex-col justify-center items-center mb-12">
+            <h1>Guías Estelares</h1>
+            <p class="text-base sm:text-lg text-base-content/60 mt-3 max-w-2xl text-center leading-relaxed">
+                Conoce a los tutores de la Confederación de Mundos Habitados que nos guían en este proceso de despertar de la consciencia.
+            </p>
         </div>
 
 
-        <div class="flex justify-start mb-5 gap-5">
-         <TitleInfo title="" classes="!mb-0">
-                <div>Los Guías Estelares son tutores de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia> que mantienen contacto <Referencia r="telepatía">
-                telepático</Referencia> con el <Referencia>grupo TSEYOR</Referencia> a través del canalizador <Referencia r="canalizador">Chac-Mool Puente</Referencia>.
+        <div class="flex justify-start mb-5 gap-5 flex-wrap">
+            <TitleInfo title="" modalTitle="¿Qué son los Guías Estelares?" classes="!mb-0">
+                <p>Los Guías Estelares son tutores de la <Referencia>Confederación de Mundos Habitados de la Galaxia</Referencia> que mantienen contacto <Referencia r="telepatía">telepático</Referencia> con el <Referencia>grupo TSEYOR</Referencia> a través del canalizador <Referencia r="canalizador">Chac-Mool Puente</Referencia>.</p>
+                <p>El objetivo de este contacto y <Referencia r="Contacto entre ambas civilizaciones">tutelaje entre civilizaciones</Referencia> es servir de referenciación para que la humanidad planetaria de la Tierra pueda prepararse para la llegada del <Referencia>Rayo Sincronizador</Referencia> que resituará la humanidad a su posición real en el <Referencia>Tiempo Real del Universo</Referencia>.</p>
+                <div class="mt-6 pt-4 border-t border-base-300">
+                    <p class="font-bold mb-2">Preguntas frecuentes relacionadas:</p>
+                    <ul class="space-y-1">
+                        <li><Link href="/preguntas-frecuentes/extraterrestres#_Toc301129892" class="no-underline font-medium text-primary hover:text-secondary">¿Existen materialmente o son seres de otra dimensión?</Link></li>
+                        <li><Link href="/preguntas-frecuentes/extraterrestres#_Toc301129896" class="no-underline font-medium text-primary hover:text-secondary">¿Cómo es la tecnología de los HM? ¿Cómo son sus naves?</Link></li>
+                        <li><Link href="/preguntas-frecuentes/extraterrestres#_Toc301129944" class="no-underline font-medium text-primary hover:text-secondary">¿Cómo puede alguien tomar contacto con los HM?</Link></li>
+                    </ul>
                 </div>
-                <div>El objetivo de este contacto y <Referencia r="Contacto entre ambas civilizaciones">tutelaje entre civilizaciones</Referencia> es servir de referenciación para que la humanidad planetaria de la Tierra pueda prepararse para la llegada del <Referencia>Rayo Sincronizador</Referencia> que resituará la humanidad a su posición real en el <Referencia>Tiempo Real del Universo</Referencia>.</div>
-         </TitleInfo>
+            </TitleInfo>
 
-          <TitleInfo title="" labelInfo="¿Cómo contactan?" classes="!mb-0">
-                <div>La mayoría de veces se comunican <Referencia r="telepatía">telepáticamente</Referencia> vía nuestro canal <Referencia r="canalizador">Chac-Mool Puente</Referencia>.</div>
-                <div>La mayoría de ellos vive en otros planetas distantes mientras que algunos residen en bases en este planeta.</div>
-                </TitleInfo>
+            <TitleInfo title="" labelInfo="¿Cómo contactan?" modalTitle="¿Cómo contactan los Guías Estelares?" classes="!mb-0">
+                <p>La mayoría de veces se comunican <Referencia r="telepatía">telepáticamente</Referencia> vía nuestro canal <Referencia r="canalizador">Chac-Mool Puente</Referencia>.</p>
+                <p>La mayoría de ellos vive en otros planetas distantes mientras que algunos residen en bases en este planeta.</p>
+                <div class="mt-6 pt-4 border-t border-base-300">
+                    <p class="font-bold mb-2">Preguntas frecuentes relacionadas:</p>
+                    <ul class="space-y-1">
+                        <li><Link href="/preguntas-frecuentes/extraterrestres#_Toc301129944" class="no-underline font-medium text-primary hover:text-secondary">¿Cómo puede alguien tomar contacto con los HM?</Link></li>
+                        <li><Link href="/preguntas-frecuentes/extraterrestres#_Toc301129938" class="no-underline font-medium text-primary hover:text-secondary">¿Por qué no se presentan y arreglan la situación mundial?</Link></li>
+                    </ul>
+                </div>
+            </TitleInfo>
 
-            <div class="ml-auto flex gap-3">
+            <div class="ml-auto flex gap-3 self-center">
                 <Link href="/preguntas-frecuentes/extraterrestres" class="flex items-center gap-2 font-bold text-primary text-xs uppercase tracking-widest hover:gap-3 transition-all">
                             Saber más<Icon icon="ph:arrow-right"/>
-                </Link></div>
+                </Link>
+            </div>
         </div>
 
         </PageHeader>
-
-        <ContentBar>
-            <div class="w-full flex gap-2 items-center justify-between">
-                <span />
-                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Consulta
-                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
-                </div>
-                <span />
-            </div>
-        </ContentBar>
 
         <PageWide>
 

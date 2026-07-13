@@ -1,54 +1,33 @@
 <template>
-    <div class="flex flex-wrap justify-between items-center gap-3"
-    :class="active?'min-w-full sm:min-w-auto':''">
+    <div class="flex flex-wrap items-center gap-3">
         <slot></slot>
 
-        <div class="flex items-center"
-        :class="active?'min-w-full sm:min-w-auto':''"
-        >
-            <form @submit.prevent="submit" class="w-full relative flex"
-            :class="active?'min-w-full sm:min-w-auto':''"
-            >
-              <div class="absolute top-1/2 z-10 left-2 transform scale-110 -translate-y-[.6rem] text-gray-500 dark:text-gray-400"
-                v-if="!active">
-                <Icon v-show="!submitting" icon="ph:magnifying-glass-bold" />
-            </div>
+        <div class="flex items-center ml-auto w-full">
+            <form @submit.prevent="submit" class="w-full relative flex">
+            <div class="flex w-full rounded-xl overflow-hidden border border-gray-500/50 relative">
+                <div class="relative flex-1">
+                    <input class="search-input focus:bg-base-100 bg-transparent px-6 py-3 border-0 outline-none
+                        text-left
+                        placeholder:text-gray-500 dark:placeholder:text-gray-400
+                        w-full"
+                        :class="inputClass + (query ? ' pr-10' : '')"
+                        @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"
+                        @focus="onFocus()" @blur="onBlur()" v-model="query" />
+                    <button v-if="query" type="button" @click="clearInput()"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-orange-500 hover:opacity-80 cursor-pointer"
+                        tabindex="-1" aria-label="Limpiar búsqueda" title="Limpiar búsqueda">
+                        <Icon icon="jam:rubber" class="text-lg" />
+                    </button>
+                </div>
 
-
-            <div class="join w-full sm:w-fit">
-                  <button v-if="active" type="submit" @click.prevent="submit" class="btn btn-md btn-primary
-                  rounded-l-xl h-full" :disabled="submitting || (query == savedQuery && !cambiado)">
-                    <span class="hidden xs:inline">Buscar</span>
-                    <Spinner v-show="submitting" class="text-2xl"/>
-                    <Icon v-show="!submitting" class="text-2xl" icon="ph:magnifying-glass-bold" />
+                <button v-if="query" type="submit" @click.prevent="submit"
+                    class="btn btn-md btn-primary rounded-none border-0 shadow-none h-full"
+                    :disabled="submitting">
+                    <Spinner v-show="submitting" class="text-xl" />
+                    <Icon v-show="!submitting" class="text-xl" icon="ph:magnifying-glass-bold" />
                 </button>
-
-
-                <input class="search-input focus:bg-base-100 bg-transparent shadow-none px-6 py-3 focus:shadow-outline
-                    text-left join-item
-                    placeholder:text-gray-500 dark:placeholder:text-gray-400
-                    flex-grow"
-                    :class="[
-                        active ? 'pl-4' : 'border-gray-500/50 pl-8',
-                        inputClass,
-                    ]"
-                    :style="widthForPlaceholder"
-                    @keydown.Esc="clearInput" autocomplete="off" type="text" :name="keyword" :placeholder="placeholder"
-                    @focus="onFocus()" @blur="onBlur()" v-model="query" />
-
-                      <button
-                      v-if="query"
-                                type="button"
-                                @click="clearInput()"
-                                class="h-full btn join-item text-orange-500 border-l-0 border-1 border-gray-500 text-3xl cursor-pointer hover:opacity-100"
-                                :class="query?'opacity-80':'opacity-20 pointer-events-none'"
-                                tabindex="-1"
-                                aria-label="Limpiar búsqueda"
-                                title="Limpiar búsqueda"
-                            >
-                            <Icon icon="jam:rubber" />
-                </button>
-
+                <Icon v-else icon="ph:magnifying-glass-bold"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none text-xl" />
             </div>
             </form>
         </div>
@@ -85,7 +64,6 @@ const props = defineProps({
 })
 
 const query = ref(props.modelValue);
-const active = computed(()=>query.value||focused.value)
 const currentUrl = ref('');
 const savedQuery = ref('');
 const focused = ref(false)
@@ -170,7 +148,6 @@ function onBlur() {
     focused.value = false
 }
 
-// Función para determinar el contexto de búsqueda basado en la URL
 const getPageContext = () => {
     const path = window.location.pathname.toLowerCase()
 
@@ -191,30 +168,4 @@ const getPageContext = () => {
     return segments.length > 0 ? segments[0] : 'general'
 }
 
-
-const widthForPlaceholder = computed(() => {
-    // Caracteres estrechos que ocupan menos ancho
-    const narrowChars = /[iljft\.,;:!¡¿\?\(\)\[\]{}'"]/g;
-    // Caracteres anchos que ocupan más ancho
-    const wideChars = /[mwMWÑñ@&%#]/g;
-
-    const text = props.placeholder;
-    const length = text.length;
-
-    // Contar caracteres especiales
-    const narrowCount = (text.match(narrowChars) || []).length;
-    const wideCount = (text.match(wideChars) || []).length;
-    const regularCount = length - narrowCount - wideCount;
-
-    // Calcular ancho ajustado
-    // Caracteres estrechos = 0.6ch, regulares = 0.9ch, anchos = 1.2ch
-    const adjustedWidth = (narrowCount * 0.6) + (regularCount * 0.9) + (wideCount * 1.2);
-
-    const baseWidth = 3; // Ancho base en caracteres
-    const totalWidth = baseWidth + adjustedWidth;
-
-    return {
-        width: `${Math.ceil(totalWidth)}ch`
-    };
-});
 </script>

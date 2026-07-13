@@ -22,36 +22,10 @@
         <h1 class="hidden">Guía Estelar</h1>
 
         <div class="mx-auto flex flex-col justify-center items-center">
-            <h1>Consulta</h1>
-            <ConsultaTabs />
+            <h1>Guías Estelares</h1>
         </div>
 
         </PageHeader>
-
-        <ContentBar>
-            <div class="w-full flex gap-2 items-center justify-between">
-                <Back :href="route('guias')" inline class="opacity-100!"
-                    preserve-page
-                    >Guías</Back
-                >
-                <div
-                    @click="useNav().scrollToTopPage"
-                    class="flex items-center gap-2 font-bold"
-                >
-                    Consulta
-                    <Icon
-                        icon="ph:arrow-circle-up-duotone"
-                        class="transform scale-150"
-                    />
-                </div>
-                <Back
-                    :href="route('guias')"
-                    inline
-                    class="pointer-events-none opacity-0!"
-                    >Guías</Back
-                >
-            </div>
-        </ContentBar>
 
         <PageWide>
 

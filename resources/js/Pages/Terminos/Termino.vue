@@ -17,8 +17,7 @@
         <h1 class="hidden">{{ termino.nombre }}</h1>
 
         <div class="mx-auto flex flex-col justify-center items-center">
-            <h1>Consulta</h1>
-            <ConsultaTabs />
+            <h1>Glosario</h1>
         </div>
 
         <div class="flex justify-end mb-5">
@@ -26,16 +25,6 @@
         </div>
 
         </PageHeader>
-
-        <ContentBar>
-            <div class="w-full flex gap-2 items-center justify-between">
-                <Back :href="route('terminos')" inline preserve-page class="opacity-100!">Términos</Back>
-                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Consulta
-                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
-                </div>
-                <Back :href="route('terminos')" inline class="pointer-events-none opacity-0!">Términos</Back>
-            </div>
-        </ContentBar>
 
         <PageWide>
             <div class="w-full flex justify-between gap-7 lg:gap-12 flex-wrap md:flex-nowrap">

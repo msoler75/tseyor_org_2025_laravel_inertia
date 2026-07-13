@@ -13,29 +13,17 @@
             </div>
         </div>
 
-        <!-- para compartir enlace correctamente -->
-        <h1 class="hidden">Glosario</h1>
-
-        <div class="mx-auto flex flex-col justify-center items-center">
-            <h1>Consulta</h1>
-            <ConsultaTabs />
-        </div>
-
-        <div class="flex justify-end mb-5">
-            <SearchInput placeholder="Buscar en glosario..."/>
+        <div class="mx-auto flex flex-col justify-center items-center mb-12">
+            <h1>Glosario</h1>
+            <p class="text-base sm:text-lg text-base-content/60 mt-3 max-w-2xl text-center leading-relaxed">
+                Explora los conceptos y términos clave de la filosofía Tseyor explicados de forma clara y sencilla.
+            </p>
+            <div class="mt-6 w-full flex justify-end">
+                <SearchInput placeholder="Buscar en glosario..."/>
+            </div>
         </div>
 
         </PageHeader>
-
-        <ContentBar>
-            <div class="w-full flex gap-2 items-center justify-between">
-                <span />
-                <div @click="useNav().scrollToTopPage" class="flex items-center gap-2 font-bold">Consulta
-                    <Icon icon="ph:arrow-circle-up-duotone" class="transform scale-150" />
-                </div>
-                <span />
-            </div>
-        </ContentBar>
 
         <PageWide>
             <div class="w-full flex gap-7 lg:gap-12 flex-wrap md:flex-nowrap">
