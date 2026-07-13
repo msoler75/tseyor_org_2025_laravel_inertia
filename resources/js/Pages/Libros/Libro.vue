@@ -14,7 +14,7 @@
             </div>
 
              <div
-                        class="card bg-base-100 shadow-2xl w-fit h-fit flex sm:hidden justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0
+                        class="card bg-base-100 shadow-2xl w-fit h-fit flex md:hidden justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0
                         transition duration-500 ease-in-out"
                         :class="cargandoPortada ? 'opacity-0' : ''"
                     >
@@ -23,7 +23,7 @@
                             width="300"
                             height="450"
                             :alt="libro.titulo"
-                            class="object-fit rounded-[2px] sm:min-w-[300px]
+                            class="object-fit rounded-xs sm:min-w-[300px]
                              transition duration-200"
                             :style="{
                                 'view-transition-name': `imagen-libro-${libro.id}`,
@@ -39,9 +39,9 @@
                             width="300"
                             height="450"
                             :alt="libro.titulo"
-                            class="object-fit rounded-[2px] sm:min-w-[300px]
+                            class="object-fit rounded-xs sm:min-w-[300px]
                              transition duration-200
-                             hidden sm:block"
+                             hidden md:block"
                             :style="{
                                 'view-transition-name': `imagen-libro-${libro.id}`,
                             }"
@@ -49,7 +49,7 @@
                         />
 
                 <div class="p-6 card shadow bg-base-100 animate-fade-in">
-                    <h1 class="text-2xl font-bold mb-4">{{ libro.titulo }}</h1>
+                    <h1 class="text-3xl font-bold mb-4">{{ libro.titulo }}</h1>
                     <!-- para compartir enlace correctamente -->
                     <h1 class="hidden">Libros</h1>
                     <p class="text-gray-600 text-sm mb-2 flex justify-between">

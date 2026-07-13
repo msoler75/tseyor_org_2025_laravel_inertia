@@ -182,7 +182,7 @@
                             </li>
                             <li class="flex items-start gap-3 text-sm text-white/70">
                                 <CheckCircle2 class="w-4 h-4 shrink-0 mt-0.5 text-white/60" />
-                                <span><b class="text-white">Amistad y hermanamiento</b> — como una familia que crece unida superando obstáculos</span>
+                                <span><b class="text-white">Amistad y hermanamiento</b> — como una familia que crece unida superando obstáculos y apoyándose</span>
                             </li>
                         </ul>
                         <div class="flex items-center gap-3 mb-6">
@@ -236,8 +236,70 @@
         </div>
     </section>
 
+    <!-- FAQ -->
+    <section class="py-24 bg-base-200 border-t border-b border-base-300">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12 flex flex-col items-center">
+                <div class="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 font-display">
+                    ACLARA TUS INQUIETUDES
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-display font-black text-base-content tracking-tight">
+                    Preguntas frecuentes
+                </h2>
+                <p class="text-base-content/60 mt-4 text-sm font-light leading-relaxed max-w-xl">
+                    Respuestas directas a las dudas más habituales antes de dar el paso.
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <details class="group rounded-2xl bg-base-100 border border-base-200/60 p-5 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between gap-4 font-display font-bold text-base">
+                        ¿Cómo se comunican los Guías Estelares con vosotros?
+                        <ChevronDown class="w-5 h-5 text-base-content/40 shrink-0 transition-transform group-open:rotate-180" />
+                    </summary>
+                    <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-200/60 pt-4">
+                        Mayormente a través de nuestro <b>canalizador Chac-Mool Puente</b> mediante la <b>telepatía externa</b>. Este proceso lleva más de 40 años documentándose y está disponible públicamente en nuestra web.
+                    </p>
+                </details>
+                <details class="group rounded-2xl bg-base-100 border border-base-200/60 p-5 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between gap-4 font-display font-bold text-base">
+                        ¿Hay que tener alguna creencia para participar?
+                        <ChevronDown class="w-5 h-5 text-base-content/40 shrink-0 transition-transform group-open:rotate-180" />
+                    </summary>
+                    <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-200/60 pt-4">
+                        Ninguna. No hay dogmas, no hay credo que suscribir. Puedes ser ateo, agnóstico, espiritual o religioso. Lo único que se pide es apertura para explorar y disposición para compartir desde el respeto. Cada persona vive su proceso a su ritmo.
+                    </p>
+                </details>
+                <details class="group rounded-2xl bg-base-100 border border-base-200/60 p-5 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between gap-4 font-display font-bold text-base">
+                        ¿Hay que pagar algo? ¿Hay compromiso?
+                        <ChevronDown class="w-5 h-5 text-base-content/40 shrink-0 transition-transform group-open:rotate-180" />
+                    </summary>
+                    <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-200/60 pt-4">
+                        No y no. Todo es gratuito: libros, audios, curso, eventos. Y no hay compromiso: puedes explorar, leer, escuchar y participar sin ninguna obligación. Tampoco hay plazos ni permanencia. Si en cualquier momento decides que esto no es para ti, no pasa nada.
+                    </p>
+                </details>
+                <details class="group rounded-2xl bg-base-100 border border-base-200/60 p-5 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between gap-4 font-display font-bold text-base">
+                        ¿Cómo puedo empezar?
+                        <ChevronDown class="w-5 h-5 text-base-content/40 shrink-0 transition-transform group-open:rotate-180" />
+                    </summary>
+                    <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-200/60 pt-4">
+                        La puerta de entrada recomendada es el <Link href="/cursos" class="text-primary hover:underline">curso holístico</Link>: es gratuito, tutelado y te da el contexto completo. También puedes explorar la <Link href="/biblioteca" class="text-primary hover:underline">biblioteca</Link> con cientos de libros gratis, o escuchar las <Link href="/audios" class="text-primary hover:underline">meditaciones</Link> para empezar a familiarizarte.
+                    </p>
+                </details>
+            </div>
+
+            <div class="text-center mt-10">
+                <Link href="/preguntas-frecuentes" class="text-xs font-bold text-primary hover:text-base-content transition-colors uppercase tracking-widest">
+                    Ver todas las preguntas frecuentes →
+                </Link>
+            </div>
+        </div>
+    </section>
+
     <!-- Medita ahora -->
-    <section class="relative min-h-[500px] sm:min-h-[640px] bg-cover bg-center bg-no-repeat flex flex-col border-t border-b border-base-300"
+    <section class="relative min-h-[500px] sm:min-h-[740px] max-h-[90vh] bg-cover bg-center bg-no-repeat flex flex-col border-t border-b border-base-300"
         style="background-image: url('/almacen/medios/portada/mujer_meditando.jpg'); background-position: 25% center">
 
         <div class="absolute inset-0 bg-gradient-to-l from-black/20 via-black/10 to-black/40"></div>
@@ -320,37 +382,38 @@
         </div>
     </section>
 
-    <!-- Community Life -->
-    <section id="vida" class="py-24 bg-base-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row items-baseline justify-between mb-12 border-b border-base-300 pb-4">
-                <h3 class="text-3xl font-display font-black text-pimary tracking-tight">
-                    Vida de la comunidad
-                </h3>
-                <Link href="/blog" class="text-xs font-bold text-primary flex items-center gap-1 hover:text-base-content transition-colors uppercase tracking-wider">
-                    Ver todo el blog
-                    <ArrowRight class="w-3.5 h-3.5" />
-                </Link>
+    <!-- Rostros de la comunidad -->
+    <section class="py-24 bg-base-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+            <div class="text-center max-w-2xl mx-auto flex flex-col items-center">
+                <span class="inline-block text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 px-3 py-1 mb-4 font-display">
+                    GENTE REAL
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight">
+                    Así es nuestra comunidad
+                </h2>
+                <p class="text-base-content/60 mt-3 text-sm leading-relaxed max-w-lg">
+                    Instantáneas de nuestra vida compartida: encuentros, talleres, convivencias.
+                </p>
             </div>
+        </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-                <div v-if="entradasRecientes?.length" v-for="entrada in entradasRecientes.slice(0, 4)" :key="entrada.id"
-                    class="flex flex-col sm:flex-row gap-6 bg-base-100 p-5 rounded-3xl border border-base-300 hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300">
-                    <div class="sm:w-1/3 h-44 rounded-2xl overflow-hidden shrink-0 relative bg-base-200">
-                        <img :src="entrada.imagen" :alt="entrada.titulo" class="absolute inset-0 w-full h-full object-cover" />
-                    </div>
-                    <div class="grow flex flex-col justify-between py-1">
-                        <div>
-                            <span class="text-xs font-bold text-base-content/50 tracking-widest uppercase block mb-1.5">{{ entrada.fecha }}</span>
-                            <h4 class="font-display font-bold text-base-content text-lg mb-2">{{ entrada.titulo }}</h4>
-                            <p class="text-base-content/60 text-sm leading-relaxed font-light">{{ entrada.descripcion.substr(0, 128) + "..." }}</p>
-                        </div>
-                        <Link :href="entrada.ruta" class="text-xs font-bold text-primary mt-4 block uppercase tracking-widest hover:text-base-content transition-colors">Leer artículo →</Link>
-                    </div>
+        <div v-if="totalFotos" class="grid grid-cols-8 gap-2 px-4 sm:px-8 max-w-7xl mx-auto">
+            <Link v-for="entrada in entradasRecientes.slice(0, totalFotos)" :key="entrada.id" :href="entrada.ruta"
+                class="aspect-square rounded-xl overflow-hidden relative group bg-base-300">
+                <img :src="entrada.imagen" :alt="entrada.titulo"
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
+                    <span class="text-white text-[10px] font-bold leading-tight truncate">{{ entrada.titulo }}</span>
                 </div>
-            </div>
+            </Link>
+        </div>
 
-                
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 text-center">
+            <Link href="/quienes-somos" class="btn btn-primary rounded-full px-8 shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 active:translate-y-0">
+                Conoce a las personas
+                <ArrowRight class="w-4 h-4 ml-1.5 -mt-0.5" />
+            </Link>
         </div>
     </section>
 
@@ -367,74 +430,6 @@
                 </div>
             </div>
         </Card>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq" class="py-24 bg-base-200 border-t border-b border-base-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16 flex flex-col items-center">
-                <div class="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 font-display">
-                    ACLARA TUS INQUIETUDES
-                </div>
-                <h2 class="text-3xl sm:text-4xl font-display font-black text-base-content tracking-tight">
-                    Preguntas frecuentes
-                </h2>
-                <p class="text-base-content/60 mt-4 text-sm font-light leading-relaxed">
-                    Explora las respuestas a las preguntas más comunes sobre TSEYOR, los Guías Estelares y el Salto Cuántico.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                <div class="bg-base-100 rounded-3xl border border-base-300 overflow-hidden shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 space-y-4">
-                    <div class="flex items-center gap-3 border-b border-base-200 pb-3">
-                        <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-                            <HelpCircle class="w-4.5 h-4.5" />
-                        </div>
-                        <h3 class="font-display font-bold text-base-content text-sm uppercase tracking-wider">Sobre TSEYOR</h3>
-                    </div>
-                    <ul class="space-y-3">
-                        <li><Link :href="route('preguntas.seccion', 'parte-3-sobre-tseyor')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Qué es el grupo Tseyor?</Link></li>
-                        <li><Link :href="route('preguntas.seccion', 'parte-3-sobre-tseyor')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Es esto una secta?</Link></li>
-                        <li><Link :href="route('preguntas.seccion', 'parte-3-sobre-tseyor')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Qué significa la palabra Tseyor?</Link></li>
-                    </ul>
-                    <Link :href="route('preguntas.seccion', 'parte-3-sobre-tseyor')" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:text-base-content transition-colors">
-                        Ver más <ChevronRight class="w-3 h-3" /> <sup class="text-[8px] opacity-50">15%</sup>
-                    </Link>
-                </div>
-                <div class="bg-base-100 rounded-3xl border border-base-300 overflow-hidden shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 space-y-4">
-                    <div class="flex items-center gap-3 border-b border-base-200 pb-3">
-                        <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-                            <Compass class="w-4.5 h-4.5" />
-                        </div>
-                        <h3 class="font-display font-bold text-base-content text-sm uppercase tracking-wider">Guías Estelares</h3>
-                    </div>
-                    <ul class="space-y-3">
-                        <li><Link :href="route('preguntas.seccion', 'parte-1-extraterrestres')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Cómo contactan con nosotros?</Link></li>
-                        <li><Link :href="route('preguntas.seccion', 'parte-1-extraterrestres')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Por qué están aquí?</Link></li>
-                        <li><Link :href="route('preguntas.seccion', 'parte-1-extraterrestres')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Por qué no se presentan?</Link></li>
-                    </ul>
-                    <Link :href="route('preguntas.seccion', 'parte-1-extraterrestres')" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:text-base-content transition-colors">
-                        Ver más <ChevronRight class="w-3 h-3" /> <sup class="text-[8px] opacity-50">15%</sup>
-                    </Link>
-                </div>
-                <div class="bg-base-100 rounded-3xl border border-base-300 overflow-hidden shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 space-y-4">
-                    <div class="flex items-center gap-3 border-b border-base-200 pb-3">
-                        <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-                            <Sparkles class="w-4.5 h-4.5" />
-                        </div>
-                        <h3 class="font-display font-bold text-base-content text-sm uppercase tracking-wider">Salto Cuántico</h3>
-                    </div>
-                    <ul class="space-y-3">
-                        <li><Link :href="route('preguntas.seccion', 'parte-2-el-salto-cuantico')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿En qué consiste el cambio?</Link></li>
-                        <li><Link :href="route('preguntas.seccion', 'parte-2-el-salto-cuantico')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Cómo nos afectará?</Link></li>
-                        <li><Link :href="route('preguntas.seccion', 'parte-2-el-salto-cuantico')" class="text-sm text-base-content/60 hover:text-primary transition-colors">¿Podemos prepararnos?</Link></li>
-                    </ul>
-                    <Link :href="route('preguntas.seccion', 'parte-2-el-salto-cuantico')" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:text-base-content transition-colors">
-                        Ver más <ChevronRight class="w-3 h-3" /> <sup class="text-[8px] opacity-50">15%</sup>
-                    </Link>
-                </div>
-            </div>
-        </div>
     </section>
 
     <!-- CTA final -->
@@ -469,7 +464,9 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Suscribe from "@/Components/Suscribe.vue"
+
 
 import {
   ArrowRight,
@@ -477,22 +474,54 @@ import {
   BookOpen,
   Calendar,
   Info,
-
+  ChevronDown,
   Compass,
   FileText,
   CheckCircle2,
   HeartHandshake,
+  ChevronLeft,
   ChevronRight,
   HelpCircle,
   Sparkles,
   Mail,
 } from 'lucide-vue-next'
 
+const fotosContainer = ref(null)
+
+function scrollFotos(dir) {
+    if (!fotosContainer.value) return
+    const scrollAmount = fotosContainer.value.clientWidth * 0.8
+    fotosContainer.value.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' })
+}
+
 const scrollSeccion = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
-defineProps({
+// Lenis — smooth scroll con inercia natural (carga lazy)
+let lenisInstance
+
+onMounted(async () => {
+    try {
+        const Lenis = (await import('lenis')).default
+
+        lenisInstance = new Lenis({
+            lerp: 0.08,
+            smoothWheel: true,
+            orientation: 'vertical',
+            autoRaf: true,
+            wheelMultiplier: 1,
+        })
+    } catch (e) {
+        console.warn('Lenis no pudo cargarse, scroll nativo intacto')
+    }
+})
+
+onUnmounted(() => {
+    if (lenisInstance) lenisInstance.destroy()
+})
+
+const props = defineProps({
     hayProximosEventos: Boolean,
     paginasDescubre: {
         type: Array,
@@ -502,6 +531,15 @@ defineProps({
         type: Array,
         default: () => [],
     },
+})
+
+const COLS = 8
+const MAX_ROWS = 3
+const totalFotos = computed(() => {
+    const max = COLS * MAX_ROWS
+    const available = props.entradasRecientes?.length ?? 0
+    const capped = Math.min(available, max)
+    return Math.floor(capped / COLS) * COLS
 })
 </script>
 
@@ -526,3 +564,5 @@ defineProps({
 
 
 </style>
+
+

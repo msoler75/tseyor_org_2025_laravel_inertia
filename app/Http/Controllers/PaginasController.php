@@ -140,7 +140,7 @@ class PaginasController extends Controller
                     ->get(),
                 'entradasRecientes' => \App\Models\Entrada::publicada()
                     ->latest('published_at')
-                    ->limit(4)
+                    ->limit(24)
                     ->get(['slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
                     ->map(fn($e) => [
                         'slug' => $e->slug,
