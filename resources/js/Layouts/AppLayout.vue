@@ -9,7 +9,7 @@
         </ClientOnly>
 
         <ClientOnly>
-            <AudioVideoPlayer />
+            <AudioVideoPlayer v-if="$page.component !== 'Portada3'" />
         </ClientOnly>
 
         <Announcement

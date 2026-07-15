@@ -1,115 +1,80 @@
 <template>
+    <div class="container flex justify-between mx-auto px-4 py-8 md:py-12">
+        <Back href="/quienes-somos" :floatAtY="-100">Quiénes Somos</Back>
+        <Share />
+    </div>
+
     <Sections white-first>
 
-        <div>
-            <div class="container w-full mx-auto mt-4 lg:mt-12 flex justify-end mb-10">
-                <span />
-                <Share />
-            </div>
-        </div>
-
-        <!-- Hero -->
+        <!-- Presentación -->
         <Section>
-            <EvaluacionSeccion seccion="Hero ONG" :idoneidad="90" :claridad="85" :composicion="85" :posicion="90" />
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-                    <div class="lg:col-span-6">
-                        <div class="inline-block px-3 py-1 mb-5 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 font-display">
-                            ONG MUNDO ARMÓNICO TSEYOR
-                        </div>
-                        <img src="/archivos/logos/logo-ong-mundo-armonico.JPG"
-                            class="w-full h-auto max-w-[500px] mb-6" alt="ONG Mundo Armónico Tseyor"/>
-                        <p class="text-base-content/60 text-base leading-relaxed font-light">
-                            Un espacio de cooperación, desarrollo humano y evolución consciente, reconocido oficialmente y al servicio de la humanidad.
-                        </p>
-                    </div>
-                    <div class="lg:col-span-6 space-y-5">
-                        <div class="bg-base-100 rounded-3xl border border-base-300 p-6 shadow-sm">
-                            <p class="text-sm text-base-content/80 leading-relaxed italic font-light">
-                                "Se está preparando un gran cambio y ello comportará también grandes dificultades. Nuestro grupo, el grupo Tseyor, pondrá su granito de arena para paliarlas."
-                            </p>
-                        </div>
-                        <div class="bg-base-100 rounded-3xl border border-base-300 p-6 shadow-sm border-l-4 border-l-primary">
-                            <p class="text-sm text-base-content/80 leading-relaxed italic font-light">
-                                "Habéis recibido cantidad de información; muchos estómagos necesitan de dicho alimento espiritual. Ahí también está una parte importante de la ayuda humanitaria."
-                            </p>
-                        </div>
-                    </div>
-                </div>
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+                <img
+                    src="/archivos/logos/logo-ong-mundo-armonico.JPG"
+                    class="w-full max-w-md h-auto mx-auto mb-10"
+                    alt="ONG Mundo Armónico TSEYOR"
+                >
+
+                <span class="inline-block text-xs font-bold uppercase tracking-[0.28em] text-primary/60 mb-5 font-display">
+                    ONG Mundo Armónico TSEYOR
+                </span>
+
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-display font-black leading-tight tracking-tight">
+                    Una comunidad de voluntarios
+                    <span class="text-primary">al servicio de las personas</span>
+                </h1>
+
+                <p class="text-lg text-base-content/70 max-w-3xl mx-auto mt-7 leading-relaxed">
+                    Reunimos a personas implicadas en el proyecto TSEYOR que colaboran, cada una desde sus capacidades,
+                    para impulsar ayuda humanitaria, formación, acompañamiento y cooperación.
+                </p>
+
+                <p class="text-base text-base-content/60 max-w-2xl mx-auto mt-4 leading-relaxed">
+                    Todos aportamos y todos seguimos aprendiendo. La filosofía se hace visible en la forma de servir,
+                    relacionarnos y trabajar juntos por el bien común.
+                </p>
+
+                <a href="#proyectos" class="btn btn-primary rounded-full px-8 shadow-lg mt-9">
+                    Conocer nuestra labor
+                    <ArrowRight class="w-4 h-4" />
+                </a>
             </div>
         </Section>
 
-        <!-- Objetivos -->
+        <!-- Misión -->
         <Section>
-            <EvaluacionSeccion seccion="Objetivos" :idoneidad="85" :claridad="80" :composicion="85" :posicion="85" />
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div class="text-center max-w-3xl mx-auto mb-14">
-                    <div class="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 font-display">
-                        NUESTRO PROPÓSITO
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+                <span class="inline-block text-xs font-bold uppercase tracking-[0.28em] text-primary/60 mb-5 font-display">
+                    Nuestra misión
+                </span>
+
+                <h2 class="text-3xl sm:text-4xl font-display font-black leading-tight tracking-tight">
+                    Contribuir a una sociedad más armónica, justa y solidaria
+                </h2>
+
+                <p class="text-lg text-base-content/70 mt-7 leading-relaxed">
+                    Entendemos la ayuda de una manera integral: atender necesidades concretas y, al mismo tiempo,
+                    favorecer el desarrollo humano, la autonomía, el equilibrio y el hermanamiento.
+                </p>
+
+                <div class="mt-10 divide-y divide-base-300/60 border-y border-base-300/60">
+                    <div v-for="ambito in ambitos" :key="ambito.titulo" class="py-6">
+                        <h3 class="text-xl font-display font-bold">{{ ambito.titulo }}</h3>
+                        <p class="text-base text-base-content/65 mt-2 leading-relaxed">{{ ambito.texto }}</p>
                     </div>
-                    <h2 class="text-3xl sm:text-4xl font-display font-black text-base-content tracking-tight">
-                        Objetivos de la ONG
-                    </h2>
-                    <p class="text-base-content/60 text-sm font-light mt-3 leading-relaxed">
-                        El objeto general de esta Asociación es la cooperación en la consecución de una sociedad armónica, justa y solidaria, partiendo de una verdadera conciencia de la solidaridad, que contribuya a la participación social, a la reflexión sobre las causas de la injusticia y a la creación de sociedades armónicas.
+                </div>
+
+                <div class="mt-9 border-l-4 border-primary pl-5">
+                    <p class="text-base text-base-content/65 leading-relaxed">
+                        Nuestros Estatutos recogen estos fines, dan forma legal a la organización y permiten que las
+                        iniciativas se desarrollen con responsabilidad, continuidad y transparencia.
                     </p>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <Heart class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Ayuda humanitaria</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Proporcionar ayuda humanitaria a personas, grupos y colectivos: alimentación, medios, equipos, semillas y recursos de salud.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <Leaf class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Desarrollo sostenible</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Cooperar a favor de un desarrollo humano sostenible que respete el equilibrio con el entorno natural.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <GraduationCap class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Formación cultural</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Aportar formación cultural, científica y técnica a personas y grupos que la demanden y no tengan acceso a la misma.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <Hand class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Acción solidaria</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Realizar actividades que redunden en el beneficio de personas y colectivos, sobre todo de los más necesitados, y en casos de catástrofes.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <ClipboardList class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Gestión de proyectos</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Apoyo para la gestión de proyectos en comunidades empobrecidas que persigan un desarrollo endógeno sostenible.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <Megaphone class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Sensibilización</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Sensibilizar a la población en valores de armonía, cooperación, solidaridad, justicia social y respeto entre los seres humanos.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group sm:col-span-2 lg:col-span-3 max-w-2xl mx-auto">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <Sprout class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Salud y alimentación</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Proporcionar medios y formación en el ámbito de la salud, la alimentación, la agricultura, la expresión de ideas y sentimientos que despierten los potenciales creativos en armonía con el entorno natural.</p>
-                    </div>
-                </div>
-
-                <div class="text-center mt-10">
-                    <Link :href="estatutosUrl" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-neutral text-neutral-content font-bold text-xs uppercase tracking-widest hover:bg-primary transition-all shadow-sm">
-                        Ver Estatutos completos
+                    <Link
+                        v-if="estatutosUrl"
+                        :href="estatutosUrl"
+                        class="inline-flex items-center gap-2 text-primary font-bold mt-4 hover:underline"
+                    >
+                        Consultar los Estatutos
                         <ArrowRight class="w-4 h-4" />
                     </Link>
                 </div>
@@ -118,153 +83,143 @@
 
         <!-- Proyectos -->
         <Section>
-            <EvaluacionSeccion seccion="Proyectos" :idoneidad="90" :claridad="85" :composicion="85" :posicion="85" />
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div class="text-center max-w-3xl mx-auto mb-14">
-                    <div class="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 font-display">
-                        INICIATIVAS DE LA ONG
-                    </div>
-                    <h2 class="text-3xl sm:text-4xl font-display font-black text-base-content tracking-tight">
-                        Proyectos activos
-                    </h2>
-                    <p class="text-base-content/60 text-sm font-light mt-3 leading-relaxed">
-                        Estos son los proyectos que impulsamos desde la ONG Mundo Armónico Tseyor para construir las bases de una Sociedad Armónica planetaria.
-                    </p>
-                </div>
+            <div id="proyectos" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 scroll-mt-24">
+                <span class="inline-block text-xs font-bold uppercase tracking-[0.28em] text-primary/60 mb-5 font-display">
+                    Proyectos activos
+                </span>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <Users class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Crear espacios de reunión</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Donde poder retroalimentar ideas, pensamientos y proyectos.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <Palette class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Espacios creativos</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Crear espacios creativos de arte y ciencia para la expresión libre del ser.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <Handshake class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Redes de intercambio</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Tejer redes de intercambio de bienes y servicios entre la comunidad.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <Heart class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Hermandad y amistad</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Fomentar la amistad y el hermanamiento en espacios seguros y protegidos.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <Globe class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Puentes intercivilizaciones</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Crear puentes de unión con civilizaciones de otros mundos.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <BookOpen class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Filosofía Tseyor</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Interiorizar el pensamiento mediante las prácticas de la filosofía Tseyor.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <HeartPulse class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Sanación y autosanación</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Preparar espacios de sanación mediante los canales oportunos.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 p-6 flex flex-col items-start gap-4 group">
-                        <div class="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                            <UtensilsCrossed class="w-5 h-5" />
-                        </div>
-                        <h4 class="font-display font-bold text-base-content text-sm leading-snug">Alimentos solidarios</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Programas de alimentos para personas necesitadas.</p>
-                    </div>
+                <h2 class="text-3xl sm:text-4xl font-display font-black leading-tight tracking-tight">
+                    Distintas formas de una misma labor
+                </h2>
+
+                <p class="text-lg text-base-content/70 mt-7 leading-relaxed">
+                    Las iniciativas cambian y crecen según las necesidades y las personas que participan, pero todas
+                    comparten un mismo sentido de servicio.
+                </p>
+
+                <div class="mt-10 divide-y divide-base-300/60 border-y border-base-300/60">
+                    <article v-for="proyecto in proyectos" :key="proyecto.titulo" class="py-6">
+                        <h3 class="text-xl font-display font-bold">{{ proyecto.titulo }}</h3>
+                        <p class="text-base text-base-content/65 mt-2 leading-relaxed">{{ proyecto.texto }}</p>
+                    </article>
                 </div>
             </div>
         </Section>
 
-        <SectionBook
-            titulo="Libro: ONG Mundo Armónico Tseyor"
-            slug="la-ong-mundo-armonico-tseyor"
-            portada="/almacen/medios/libros/227/La%20ONG%20Mundo%20Armonico%20Tseyor.jpg"
-            enlace="/libros/la-ong-mundo-armonico-tseyor"
-            buttonLabel="Ver en Biblioteca">
-            <p>Todo el material recopilado de la ONG de Tseyor, desde julio de 2010 que la Confederación nos propuso su creación.</p>
-        </SectionBook>
-
+        <!-- Voluntariado -->
         <Section>
-            <EvaluacionSeccion seccion="Voluntarios" :idoneidad="95" :claridad="90" :composicion="85" :posicion="90" />
-            <TextImage title="Voluntarios TSEYOR" srcImage="/almacen/medios/paginas/quienes-somos.jpg" image-right>
-                <p>Ser voluntario en TSEYOR es <strong>formar parte activa de una comunidad viva</strong>. No hay cargos ni jerarquías — todos somos aprendices, todos compartimos y crecemos juntos.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                    <div class="bg-base-100 rounded-3xl border border-base-300 p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300">
-                        <h4 class="font-bold text-base text-base-content mb-1">Divulgación del mensaje</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Compartimos la filosofía cósmico-crística a través de conversaciones, escritos y encuentros.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300">
-                        <h4 class="font-bold text-base text-base-content mb-1">Talleres vivenciales</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Participamos en experiencias prácticas de autodescubrimiento y conexión grupal.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300">
-                        <h4 class="font-bold text-base text-base-content mb-1">Convivencias y viajes</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Compartimos momentos de encuentro presencial, aprendizaje colectivo y naturaleza.</p>
-                    </div>
-                    <div class="bg-base-100 rounded-3xl border border-base-300 p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300">
-                        <h4 class="font-bold text-base text-base-content mb-1">Aprendizaje continuo</h4>
-                        <p class="text-sm text-base-content/60 leading-relaxed font-light">Todos enseñamos y todos aprendemos. El Curso Holístico es nuestra guía compartida.</p>
-                    </div>
-                </div>
-                <p class="text-base text-base-content/60 mt-4 italic font-light">No se necesita experiencia previa ni conocimientos especiales. Solo las ganas de crecer y servir.</p>
-                <Link :href="route('cursos.inscripcion.nueva')" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-content font-bold text-xs uppercase tracking-widest hover:bg-primary/90 transition-all shadow-sm mt-4">
-                    Quiero ser voluntario
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+                <span class="inline-block text-xs font-bold uppercase tracking-[0.28em] text-primary/60 mb-5 font-display">
+                    Voluntariado
+                </span>
+
+                <h2 class="text-3xl sm:text-4xl font-display font-black leading-tight tracking-tight">
+                    La ONG somos las personas que la hacemos posible
+                </h2>
+
+                <p class="text-lg text-base-content/70 mt-7 leading-relaxed">
+                    Unas personas colaboran en tareas administrativas; otras, en organización, divulgación,
+                    acompañamiento, formación, comunicación o logística. Cada función es necesaria y cada aportación suma.
+                </p>
+
+                <p class="text-lg text-base-content/70 mt-5 leading-relaxed">
+                    No actuamos desde una posición de superioridad ni como poseedores de respuestas definitivas.
+                    Somos aprendices de la filosofía TSEYOR que procuramos llevar sus principios a la práctica mediante
+                    el servicio, la cooperación y el trabajo compartido.
+                </p>
+
+                <p class="text-2xl sm:text-3xl font-display font-bold text-primary mt-10 leading-snug">
+                    Todos aportamos. Todos aprendemos. Todos formamos parte de la acción.
+                </p>
+
+                <Link
+                    :href="voluntariadoUrl || route('contactos')"
+                    class="btn btn-primary rounded-full px-8 shadow-lg mt-9"
+                >
+                    Quiero colaborar
                     <ArrowRight class="w-4 h-4" />
                 </Link>
-            </TextImage>
+            </div>
         </Section>
 
+        <!-- Documentación -->
         <Section>
-            <TextImage title="Muular" srcImage="/almacen/medios/paginas/muular.png" buttonLabel="Conoce el Muular"
-                :href="route('muular')" image-right>
-                <p class="text-base text-base-content/60 font-light">La moneda social y espiritual de Tseyor</p>
-            </TextImage>
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+                <span class="inline-block text-xs font-bold uppercase tracking-[0.28em] text-primary/60 mb-5 font-display">
+                    Conocer más
+                </span>
+
+                <h2 class="text-3xl sm:text-4xl font-display font-black leading-tight tracking-tight">
+                    Origen, fundamentos y desarrollo de la ONG
+                </h2>
+
+                <p class="text-lg text-base-content/65 max-w-2xl mx-auto mt-6 leading-relaxed">
+                    La biblioteca reúne la historia de Mundo Armónico TSEYOR, sus Estatutos y los documentos que explican
+                    su evolución y sus ámbitos de actuación.
+                </p>
+
+                <Link
+                    href="/libros/la-ong-mundo-armonico-tseyor"
+                    class="btn rounded-full bg-base-100 border border-base-300 hover:border-primary/40 px-8 mt-9"
+                >
+                    Ver documentación en la Biblioteca
+                    <ArrowRight class="w-4 h-4" />
+                </Link>
+            </div>
         </Section>
 
     </Sections>
 </template>
 
 <script setup>
-import {
-    ArrowRight,
-    Heart,
-    Leaf,
-    GraduationCap,
-    Hand,
-    ClipboardList,
-    Megaphone,
-    Sprout,
-    Users,
-    Palette,
-    Handshake,
-    Globe,
-    BookOpen,
-    HeartPulse,
-    UtensilsCrossed,
-} from 'lucide-vue-next'
+import { ArrowRight } from 'lucide-vue-next'
 
 defineProps({
     estatutosUrl: {
         type: String,
-        required: false
-    }
+        default: '',
+    },
+    voluntariadoUrl: {
+        type: String,
+        default: '',
+    },
 })
+
+const ambitos = [
+    {
+        titulo: 'Ayuda y acompañamiento',
+        texto: 'Apoyamos a personas y comunidades mediante recursos, alimentos, presencia cercana y acciones solidarias.',
+    },
+    {
+        titulo: 'Formación y divulgación',
+        texto: 'Compartimos conocimientos, talleres y materiales que favorecen el autoconocimiento y el desarrollo humano.',
+    },
+    {
+        titulo: 'Salud, alimentación y equilibrio',
+        texto: 'Impulsamos iniciativas relacionadas con el bienestar integral, la alimentación y la sanación y autosanación.',
+    },
+    {
+        titulo: 'Cooperación y comunidad',
+        texto: 'Creamos espacios de encuentro y redes de colaboración basadas en el respeto, la hermandad y el bien común.',
+    },
+]
+
+const proyectos = [
+    {
+        titulo: 'Encuentro y hermanamiento',
+        texto: 'Reuniones, convivencias y espacios en los que compartir experiencias, necesidades e iniciativas.',
+    },
+    {
+        titulo: 'Formación, divulgación y creatividad',
+        texto: 'Cursos, talleres, publicaciones y actividades de arte, ciencia y expresión al servicio del desarrollo humano.',
+    },
+    {
+        titulo: 'Salud y acompañamiento',
+        texto: 'Prácticas y espacios orientados al equilibrio, la sanación y autosanación y el apoyo cercano entre personas.',
+    },
+    {
+        titulo: 'Ayuda solidaria y cooperación',
+        texto: 'Alimentos, recursos y redes de colaboración para responder a necesidades concretas y apoyar proyectos comunitarios.',
+    },
+]
 </script>

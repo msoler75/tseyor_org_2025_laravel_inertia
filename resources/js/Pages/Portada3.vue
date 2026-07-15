@@ -1,23 +1,19 @@
 <template>
-    <h1 class="hidden">ONG Mundo Armónico TSEYOR</h1>
-
     <!-- Hero -->
     <section id="hero" class="relative overflow-hidden py-16 md:pt-24"
     style="background: url(/almacen/medios/portada/portada_tseyor_2026_hero.jpg) center center; background-size: cover"
     >
-
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div class="max-w-2xl bg-base-100/90 backdrop-blur-xs rounded-4xl p-7 relative mt-12">
 
-                <img src="/almacen/medios/portada/libelula.png?w=180" class="absolute right-10 -top-18"/>
+                <img src="/almacen/medios/portada/libelula.png?w=180" alt="" class="absolute right-10 -top-18"/>
 
                 <div class="inline-block px-1 py-1.5 text-xs font-bold tracking-widest uppercase text-primary font-display">
-                    ONG 
+                    ONG
                 </div>
 
                 <h1 class="text-4xl sm:text-5xl md:text-6xl font-display font-black text-secondary tracking-tight leading-[1.1] mb-8">
-                    <span class="">MUNDO ARMÓNICO </span> <br class="hidden sm:inline" /><span class="text-primary
-                    ">TSEYOR</span>
+                    <span>MUNDO ARMÓNICO </span> <br class="hidden sm:inline" /><span class="text-primary">TSEYOR</span>
                 </h1>
 
                 <p class="text-lg md:text-xl text-base-content/90 leading-relaxed mb-8 max-w-2xl font-light">
@@ -48,7 +44,7 @@
             </div>
         </div>
 
-         <!-- Stats -->
+        <!-- Stats -->
         <div class="pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <Link href="/origenes-de-tseyor" class="group bg-base-100/80 backdrop-blur-lg p-4 sm:p-5 rounded-2xl border border-base-300/50 shadow-lg hover:shadow-2xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4">
@@ -65,7 +61,7 @@
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M12 6v7"/><path d="M9 9h6"/></svg>
                     </div>
                     <div>
-                        <span class="block text-lg font-black text-base-content font-display leading-tight tracking-tight">+300 libros</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight tracking-tight">+{{ formatearNumero(stats.libros) }} libros</span>
                         <span class="block text-[11px] font-semibold text-base-content/40 tracking-widest uppercase mt-0.5">disponibles gratis</span>
                     </div>
                 </Link>
@@ -74,28 +70,46 @@
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
                     </div>
                     <div>
-                        <span class="block text-lg font-black text-base-content font-display leading-tight tracking-tight">+1.500</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight tracking-tight">+{{ formatearNumero(stats.comunicados) }}</span>
                         <span class="block text-[11px] font-semibold text-base-content/40 tracking-widest uppercase mt-0.5">comunicados de guías</span>
                     </div>
                 </Link>
-                <Link href="/biblioteca" class="group bg-base-100/80 backdrop-blur-lg p-4 sm:p-5 rounded-2xl border border-base-300/50 shadow-lg hover:shadow-2xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4">
+                <Link href="/ong" class="group bg-base-100/80 backdrop-blur-lg p-4 sm:p-5 rounded-2xl border border-base-300/50 shadow-lg hover:shadow-2xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-4">
                     <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M3 16v5h5"/><path d="M21 16v5h-5"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
                     <div>
-                        <span class="block text-lg font-black text-base-content font-display leading-tight tracking-tight">Biblioteca</span>
-                        <span class="block text-[11px] font-semibold text-base-content/40 tracking-widest uppercase mt-0.5">descarga libre</span>
+                        <span class="block text-lg font-black text-base-content font-display leading-tight tracking-tight">Nuestra ONG</span>
+                        <span class="block text-[11px] font-semibold text-base-content/40 tracking-widest uppercase mt-0.5">Ayuda humanitaria</span>
                     </div>
                 </Link>
             </div>
         </div>
     </section>
 
+    <!-- ¿Por dónde empezar? -->
+    <section class="hidden py-6 bg-base-200 border-b border-base-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+            <span class="text-sm font-bold text-base-content/60 uppercase tracking-widest text-center sm:text-left">¿Por dónde empezar?</span>
+            <div class="flex flex-wrap items-center justify-center gap-2">
+                <Link href="/cursos" class="px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider hover:bg-primary/20 transition-all border border-primary/20">
+                    Curso Holístico
+                </Link>
+                <Link href="/biblioteca" class="px-4 py-2 rounded-full bg-base-100 text-base-content/70 text-xs font-bold uppercase tracking-wider hover:bg-base-300 transition-all border border-base-300">
+                    Biblioteca
+                </Link>
+                <Link href="/meditaciones" class="px-4 py-2 rounded-full bg-base-100 text-base-content/70 text-xs font-bold uppercase tracking-wider hover:bg-base-300 transition-all border border-base-300">
+                    Meditaciones
+                </Link>
+                <Link href="/eventos" class="px-4 py-2 rounded-full bg-base-100 text-base-content/70 text-xs font-bold uppercase tracking-wider hover:bg-base-300 transition-all border border-base-300">
+                    Próximos encuentros
+                </Link>
+            </div>
+        </div>
+    </section>
 
     <!-- Wisdom: El mensaje desde las estrellas -->
     <section id="sabiduria" class="relative py-24 md:py-32 overflow-hidden bg-base-100">
-       
-
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
                 <div class="lg:col-span-5 relative min-h-[400px] lg:h-[540px] rounded-3xl overflow-hidden shadow-md group">
@@ -103,6 +117,7 @@
                         src="/almacen/medios/paginas/todos-los-guias.jpg"
                         alt="Guías Estelares"
                         class="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
+                        loading="lazy"
                     />
                     <div class="absolute inset-0 bg-gradient-to-t from-neutral/70 via-transparent to-transparent"></div>
                 </div>
@@ -141,8 +156,7 @@
             </div>
         </div>
 
-    <!-- Sigue leyendo -->
-     <div class="absolute w-full my-24 mx-auto text-base-content/80 flex justify-center text-xs items-center uppercase tracking-wider gap-3">Sigue leyendo <ArrowDown class="w-4 h-4 text-primary"/>.</div>    
+        <div class="absolute w-full my-24 mx-auto text-base-content/80 flex justify-center text-xs items-center uppercase tracking-wider gap-3">Sigue leyendo <ArrowDown class="w-4 h-4 text-primary"/>.</div>
     </section>
 
     <!-- Comunidad de trabajo interior -->
@@ -187,18 +201,14 @@
                         </ul>
                         <div class="flex items-center gap-3 mb-6">
                             <div class="flex -space-x-2.5 overflow-hidden">
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
-                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="" />
+                                <img v-for="img in usuariosImagenes.slice(0, 6)" :key="img" :src="img" alt=""
+                                    class="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" loading="lazy" />
                             </div>
-                            <span class="text-xs font-bold bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full text-white uppercase tracking-widest border border-white/10">+1.2k activos</span>
+                            <span class="text-xs font-bold bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full text-white uppercase tracking-widest border border-white/10">{{stats.usuarios}}+ miembros activos</span>
                         </div>
                     </div>
-                    <div class="flex gap-4 justify-between">
-                      <Link href="/quienes-somos" class="w-full text-center py-3.5 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest transition-all shadow-md hover:bg-base-200">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <Link href="/quienes-somos" class="w-full text-center py-3.5 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest transition-all shadow-md hover:bg-base-200">
                             Conoce quiénes somos
                         </Link>
                         <Link href="/ong" class="w-full text-center py-3.5 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest transition-all shadow-md hover:bg-base-200">
@@ -208,10 +218,11 @@
                 </div>
 
                 <div class="md:col-span-4 bg-base-100 p-8 sm:p-10 rounded-3xl border border-base-300 flex flex-col justify-between shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
-                    <Link  href="/biblioteca">
+                    <Link href="/biblioteca">
                         <div class="h-48 sm:h-56 w-full rounded-2xl overflow-hidden mb-6 relative bg-base-200">
                             <img src="/almacen/medios/portada/biblioteca_tseyor_2026.jpg" alt="Biblioteca Tseyor"
                                 class="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+                                loading="lazy"
                             />
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                             <div class="absolute bottom-4 left-4 text-primary-content text-xs font-bold tracking-widest uppercase bg-primary px-3 py-1.5 rounded-full">
@@ -222,7 +233,7 @@
                             Contenido libre y gratuito
                         </h3>
                         <p class="text-base-content/80 leading-relaxed mb-6 text-md font-light">
-                            Accede a mas de 400 libros, cientos de audios de meditaciones y reflexiones, vídeos, psicografías y mucho más. Todo basado en las referencias de nuestros Guías Estelares.
+                            Cientos de libros, audios de meditaciones y reflexiones, vídeos, psicografías y mucho más. Todo basado en las referencias de nuestros Guías Estelares.
                         </p>
                     </Link>
                     <div class="border-t border-base-300 pt-4 flex items-center justify-between">
@@ -233,6 +244,174 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Medita ahora -->
+    <section class="relative min-h-[500px] sm:min-h-[740px] max-h-[90vh] bg-cover bg-center bg-no-repeat flex flex-col border-t border-b border-base-300"
+        style="background-image: url('/almacen/medios/portada/mujer_meditando.jpg'); background-position: 25% center">
+
+        <div class="absolute inset-0 bg-gradient-to-l from-black/20 via-black/10 to-black/40"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col grow">
+
+            <div class="flex justify-end items-start pt-8 sm:pt-16">
+                <div class="w-full sm:max-w-sm">
+                    <div class="relative bg-base-100/80 backdrop-blur-xl rounded-3xl p-7 sm:p-8 shadow-2xl border border-white/10 overflow-hidden">
+                        <div class="absolute -top-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="absolute -bottom-16 -left-16 w-32 h-32 bg-secondary/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-primary">Meditación diaria</span>
+                        </div>
+
+                        <h2 class="text-xl sm:text-2xl font-display font-black text-base-content tracking-tight leading-tight">
+                            Siéntate y conecta con tu universo interior
+                        </h2>
+                        <p class="text-base-content/50 text-sm mt-2 leading-relaxed font-light">
+                            Meditaciones y reflexiones de nuestros Guías Estelares para el autoconocimiento y el despertar de nuestra consciencia.
+                        </p>
+
+                        <!-- Play button -->
+                        <button @click="toggleMeditacion" class="mt-6 w-full flex items-center justify-center gap-3 px-5 py-3.5 rounded-full bg-primary text-primary-content font-bold text-xs uppercase tracking-widest shadow-md hover:bg-primary/90 transition-all cursor-pointer">
+                            <svg v-if="esMeditacionActiva && player.state === 'playing'" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+                            <svg v-else class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            <template v-if="esMeditacionActiva && player.state === 'playing'">Escuchando</template>
+                            <template v-else>Escuchar meditación diaria</template>
+                        </button>
+
+                        <!-- Waveform visualization -->
+                        <Transition name="waveform">
+                            <div v-if="esMeditacionActiva" class="mt-3 bg-base-200/50 rounded-2xl p-5 border border-base-300/30">
+                            <div class="flex items-end gap-[3px] h-8 mb-3">
+                                <span v-for="i in 24" :key="i"
+                                    class="w-[3px] rounded-full transition-all duration-150"
+                                    :class="player.state === 'playing'
+                                        ? 'bg-primary/60 animate-waveform'
+                                        : 'bg-base-content/10'"
+                                    :style="player.state === 'playing' ? { animationDelay: `${i * 0.08}s`, height: `${Math.random() * 100}%` } : { height: '30%' }">
+                                </span>
+                            </div>
+
+                            <!-- Title marquee -->
+                            <div class="overflow-hidden relative" style="mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);">
+                                <p class="text-sm font-semibold text-base-content whitespace-nowrap animate-marquee">
+                                    <span>{{ meditacionActual?.titulo }}</span>
+                                    <span class="inline-block mx-8 opacity-0">|</span>
+                                    <span>{{ meditacionActual?.titulo }}</span>
+                                </p>
+                            </div>
+
+                            <!-- Time + Progress -->
+                            <div class="mt-1.5 flex items-center gap-3">
+                                <div @click="seekBar" class="flex-1 h-2 -my-0.5 flex items-center cursor-pointer group">
+                                    <div class="w-full h-1 rounded-full bg-base-300/60 overflow-hidden group-hover:h-1.5 transition-all">
+                                        <div class="h-full rounded-full bg-gradient-to-r from-primary to-primary/60"
+                                            :style="{ width: player.duration > 0 ? `${(player.currentTime / player.duration) * 100}%` : '0%' }">
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-[11px] font-mono text-base-content/40 tabular-nums shrink-0">
+                                    {{ tiempoActual }} / {{ duracionTotal }}
+                                </span>
+                            </div>
+                            </div>
+                        </Transition>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grow"></div>
+
+            <div class="pb-8 sm:pb-12 flex flex-wrap items-center gap-3">
+                <Link href="/audios" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all shadow-lg group">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    <span>Biblioteca de audios</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </Link>
+                <Link href="/radio" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all shadow-lg group">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                    <span>Radio TSEYOR 24h</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </Link>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filosofía -->
+    <section id="filosofia" class="py-24 bg-base-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16 flex flex-col items-center">
+                <div class="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 font-display">
+                    FILOSOFÍA TSEYOR
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-display font-black text-primary tracking-tight">
+                    Un primer vistazo a la filosofía TSEYOR
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Link v-for="pagina in paginasFilosofia" :key="pagina.ruta" :href="pagina.ruta"
+                    class="bg-base-100 rounded-3xl border border-base-300 overflow-hidden shadow-sm hover:shadow-md hover:border-primary/40 transition-all duration-300 flex flex-col justify-between h-full group">
+                    <div>
+                        <div class="h-56 relative overflow-hidden bg-base-200">
+                            <img :src="pagina.imagen+'?w=440'" :alt="pagina.titulo" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                        </div>
+                        <div class="p-5">
+                            <h4 class="font-display font-bold text-base-content text-lg mb-2">{{ pagina.titulo }}</h4>
+                            <p class="text-base-content/60 text-sm leading-relaxed font-light">{{ pagina.descripcion }}</p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <span class="text-xs font-bold text-primary flex items-center gap-1 hover:text-base-content transition-colors uppercase tracking-wider">
+                            Saber más <ChevronRight class="w-3 h-3" />
+                        </span>
+                    </div>
+                </Link>
+            </div>
+
+            <div class="text-center mt-10">
+                <Link href="/filosofia" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-neutral-content font-bold text-xs uppercase tracking-widest hover:bg-primary/80 transition-all shadow-sm">
+                    Explorar todos los temas
+                    <ArrowRight class="w-4 h-4" />
+                </Link>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rostros de la comunidad -->
+    <section class="py-24 bg-base-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+            <div class="text-center max-w-2xl mx-auto flex flex-col items-center">
+                <span class="inline-block text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 px-3 py-1 mb-4 font-display">
+                    GENTE REAL
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight">
+                    Así es nuestra comunidad
+                </h2>
+                <p class="text-base-content/60 mt-3 text-sm leading-relaxed max-w-lg">
+                    Instantáneas de nuestra vida compartida: encuentros, talleres, convivencias.
+                </p>
+            </div>
+        </div>
+
+        <div v-if="entradasRecientes?.length" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 gap-2 px-4 sm:px-8 max-w-7xl mx-auto">
+            <Link v-for="entrada in entradasRecientes.slice(0, 24)" :key="entrada.slug" :href="entrada.ruta"
+                class="aspect-square rounded-xl overflow-hidden relative group bg-base-300">
+                <img :src="entrada.imagen" :alt="entrada.titulo"
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
+                    <span class="text-white text-[10px] font-bold leading-tight truncate">{{ entrada.titulo }}</span>
+                </div>
+            </Link>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 text-center">
+            <Link href="/quienes-somos" class="btn btn-primary rounded-full px-8 shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 active:translate-y-0">
+                Conoce a las personas
+                <ArrowRight class="w-4 h-4 ml-1.5 -mt-0.5" />
+            </Link>
         </div>
     </section>
 
@@ -298,131 +477,12 @@
         </div>
     </section>
 
-    <!-- Medita ahora -->
-    <section class="relative min-h-[500px] sm:min-h-[740px] max-h-[90vh] bg-cover bg-center bg-no-repeat flex flex-col border-t border-b border-base-300"
-        style="background-image: url('/almacen/medios/portada/mujer_meditando.jpg'); background-position: 25% center">
-
-        <div class="absolute inset-0 bg-gradient-to-l from-black/20 via-black/10 to-black/40"></div>
-
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col grow">
-
-            <div class="flex justify-end items-start pt-8 sm:pt-16">
-                <div class="w-full sm:max-w-sm bg-base-100/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl border border-base-300/40">
-                    <div class="inline-block px-3 py-1 mb-3 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 font-display">
-                        Meditación diaria
-                    </div>
-                    <h3 class="text-xl sm:text-2xl font-display font-black text-base-content tracking-tight leading-tight">
-                        Siéntate y conecta con tu universo interior
-                    </h3>
-                    <p class="text-base-content/60 text-sm mt-2 leading-relaxed font-light">
-                        Meditaciones y reflexiones de nuestros Guías Estelares para el autoconocimiento y el despertar de nuestra consciencia. 
-                    </p>
-                    <div class="mt-5 w-full flex items-center justify-center gap-3 px-5 py-3.5 rounded-full bg-primary text-primary-content font-bold text-xs uppercase tracking-widest shadow-md cursor-default">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                        Escuchar meditación diaria
-                    </div>
-                </div>
-            </div>
-
-            <div class="grow"></div>
-
-            <div class="pb-8 sm:pb-12 flex flex-wrap items-center gap-3">
-                <Link href="/audios" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all shadow-lg group">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-                    <span>Biblioteca de audios</span>
-                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-                </Link>
-                <Link href="/radio" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest transition-all shadow-lg group">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-                    <span>Radio TSEYOR 24h</span>
-                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-                </Link>
-            </div>
-        </div>
-    </section>
-
-    <!-- Descubre -->
-    <section id="descubre" class="py-24 bg-base-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-16 flex flex-col items-center">
-                <div class="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 font-display">
-                    FILOSOFÍA TSEYOR
-                </div>
-                <h2 class="text-3xl sm:text-4xl font-display font-black text-primary tracking-tight">
-                    Temas clave de nuestra filosofía
-                </h2>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Link v-for="pagina in paginasDescubre" :key="pagina.ruta" :href="pagina.ruta"
-                    class="bg-base-100 rounded-3xl border border-base-300 overflow-hidden shadow-sm hover:shadow-md hover:border-primary/40 transition-all duration-300 flex flex-col justify-between h-full group">
-                    <div>
-                        <div class="h-56 relative overflow-hidden bg-base-200">
-                            <img :src="pagina.imagen+'?w=440'" :alt="pagina.titulo" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        </div>
-                        <div class="p-5">
-                            <h4 class="font-display font-bold text-base-content text-lg mb-2">{{ pagina.titulo }}</h4>
-                            <p class="text-base-content/60 text-sm leading-relaxed font-light">{{ pagina.descripcion }}</p>
-                        </div>
-                    </div>
-                    <div class="p-5 pt-0">
-                        <span class="text-xs font-bold text-primary flex items-center gap-1 hover:text-base-content transition-colors uppercase tracking-wider">
-                            Saber más <ChevronRight class="w-3 h-3" />
-                        </span>
-                    </div>
-                </Link>
-            </div>
-
-            <div class="text-center mt-10">
-                <Link href="/filosofia" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-neutral-content font-bold text-xs uppercase tracking-widest hover:bg-primary/80 transition-all shadow-sm">
-                    Ir a la filosofía TSEYOR <sup class="text-[8px] opacity-50">55%</sup>
-                    <ArrowRight class="w-4 h-4" />
-                </Link>
-            </div>
-        </div>
-    </section>
-
-    <!-- Rostros de la comunidad -->
-    <section class="py-24 bg-base-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-            <div class="text-center max-w-2xl mx-auto flex flex-col items-center">
-                <span class="inline-block text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full border border-primary/20 px-3 py-1 mb-4 font-display">
-                    GENTE REAL
-                </span>
-                <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight">
-                    Así es nuestra comunidad
-                </h2>
-                <p class="text-base-content/60 mt-3 text-sm leading-relaxed max-w-lg">
-                    Instantáneas de nuestra vida compartida: encuentros, talleres, convivencias.
-                </p>
-            </div>
-        </div>
-
-        <div v-if="totalFotos" class="grid grid-cols-8 gap-2 px-4 sm:px-8 max-w-7xl mx-auto">
-            <Link v-for="entrada in entradasRecientes.slice(0, totalFotos)" :key="entrada.id" :href="entrada.ruta"
-                class="aspect-square rounded-xl overflow-hidden relative group bg-base-300">
-                <img :src="entrada.imagen" :alt="entrada.titulo"
-                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
-                    <span class="text-white text-[10px] font-bold leading-tight truncate">{{ entrada.titulo }}</span>
-                </div>
-            </Link>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 text-center">
-            <Link href="/quienes-somos" class="btn btn-primary rounded-full px-8 shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 active:translate-y-0">
-                Conoce a las personas
-                <ArrowRight class="w-4 h-4 ml-1.5 -mt-0.5" />
-            </Link>
-        </div>
-    </section>
-
-    <section  class="py-24 bg-base-300">
+    <section class="py-24 bg-base-300">
         <Card class="max-w-3xl mx-auto">
             <div class="flex flex-col items-center text-center">
                 <div class="flex items-center gap-3 mb-4">
                     <Mail class="w-5 text-primary" />
-                    <h4 class="text-xl font-display font-bold text-base-content mb-0">Boletín TSEYOR</h4>
+                    <h2 class="text-xl font-display font-bold text-base-content mb-0">Boletín TSEYOR</h2>
                 </div>
                 <p class="text-base-content/60 text-sm mb-6 max-w-xl">Recibe puntualmente en tu correo electrónico las últimas actualizaciones de comunicados, nuevos libros en PDF y la programación de nuestros próximos encuentros virtuales gratuitos.</p>
                 <div class="mx-auto">
@@ -450,7 +510,7 @@
                     </p>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/cursos" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest shadow-lg transition-all duration-300 hover:bg-base-200 hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-105 active:translate-y-0">
-                            Quiero inscribirme ahora
+                            Conocer el curso
                             <ArrowRight class="w-4 h-4 inline-block ml-1.5 -mt-0.5 group-hover:translate-x-1 transition-transform" />
                         </Link>
                         <Link href="/biblioteca" class="w-full sm:w-auto px-6 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 font-bold text-xs uppercase tracking-widest transition-all text-center backdrop-blur-sm hover:scale-105">
@@ -466,7 +526,8 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Suscribe from "@/Components/Suscribe.vue"
-
+import usePlayer from '@/Stores/player.js'
+import { getSrcUrl } from '@/composables/srcutils.js'
 
 import {
   ArrowRight,
@@ -475,36 +536,28 @@ import {
   Calendar,
   Info,
   ChevronDown,
+  ChevronRight,
   Compass,
   FileText,
   CheckCircle2,
   HeartHandshake,
-  ChevronLeft,
-  ChevronRight,
-  HelpCircle,
-  Sparkles,
   Mail,
 } from 'lucide-vue-next'
 
-const fotosContainer = ref(null)
-
-function scrollFotos(dir) {
-    if (!fotosContainer.value) return
-    const scrollAmount = fotosContainer.value.clientWidth * 0.8
-    fotosContainer.value.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' })
-}
+const player = usePlayer()
 
 const scrollSeccion = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
-// Lenis — smooth scroll con inercia natural (carga lazy)
 let lenisInstance
 
 onMounted(async () => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReduced) return
+
     try {
         const Lenis = (await import('lenis')).default
-
         lenisInstance = new Lenis({
             lerp: 0.08,
             smoothWheel: true,
@@ -523,7 +576,11 @@ onUnmounted(() => {
 
 const props = defineProps({
     hayProximosEventos: Boolean,
-    paginasDescubre: {
+    stats: {
+        type: Object,
+        default: () => ({}),
+    },
+    paginasFilosofia: {
         type: Array,
         default: () => [],
     },
@@ -531,16 +588,54 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    usuariosImagenes: {
+        type: Array,
+        default: () => [],
+    },
+    meditaciones: {
+        type: Array,
+        default: () => [],
+    },
 })
 
-const COLS = 8
-const MAX_ROWS = 3
-const totalFotos = computed(() => {
-    const max = COLS * MAX_ROWS
-    const available = props.entradasRecientes?.length ?? 0
-    const capped = Math.min(available, max)
-    return Math.floor(capped / COLS) * COLS
+function formatoDuracion(segundos) {
+    if (!segundos || !isFinite(segundos)) return '0:00'
+    const m = Math.floor(segundos / 60)
+    const s = Math.floor(segundos % 60)
+    return `${m}:${s.toString().padStart(2, '0')}`
+}
+
+const tiempoActual = computed(() => formatoDuracion(player.currentTime))
+const duracionTotal = computed(() => formatoDuracion(player.duration))
+
+function formatearNumero(n) {
+    if (n == null) return '0'
+    return n.toLocaleString('es-ES')
+}
+
+const meditacionActual = computed(() => props.meditaciones[0] || null)
+const meditacionUrl = computed(() => meditacionActual.value ? getSrcUrl(meditacionActual.value.audio) : null)
+
+const esMeditacionActiva = computed(() => {
+    if (!player.music || !meditacionUrl.value) return false
+    return player.music.src === meditacionUrl.value
 })
+
+function toggleMeditacion() {
+    if (!meditacionActual.value || !meditacionUrl.value) return
+    if (esMeditacionActiva.value) {
+        player.playPause()
+    } else {
+        player.play(meditacionUrl.value, meditacionActual.value.titulo)
+    }
+}
+
+function seekBar(e) {
+    if (!player.duration || player.duration <= 0) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const ratio = (e.clientX - rect.left) / rect.width
+    player.seek(ratio * player.duration)
+}
 </script>
 
 <style scoped>
@@ -554,6 +649,49 @@ const totalFotos = computed(() => {
   to { opacity: 1; transform: scale(1); }
 }
 
+@keyframes ring-pulse {
+  0% { opacity: 1; transform: scale(0.95); }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes waveform {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ring-pulse {
+  animation: ring-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-waveform {
+  animation: waveform 0.8s ease-in-out infinite alternate;
+}
+
+.animate-marquee {
+  animation: marquee 15s linear infinite;
+}
+
+.waveform-enter-active {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.waveform-leave-active {
+  transition: all 0.3s ease-in;
+}
+.waveform-enter-from {
+  opacity: 0;
+  transform: translateY(-16px);
+}
+.waveform-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out forwards;
 }
@@ -561,8 +699,4 @@ const totalFotos = computed(() => {
 .animate-scaleUp {
   animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
-
 </style>
-
-

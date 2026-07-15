@@ -71,6 +71,22 @@ class PaginaCrudController extends CrudController
         ]);
 
         $this->crud->addColumn([
+            'name' => 'filosofia',
+            'label' => 'Filo',
+            'type' => 'boolean',
+            'orderable' => true,
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'orden',
+            'label' => 'Ord.',
+            'type' => 'number',
+            'orderable' => true,
+        ]);
+
+        $this->crud->orderBy('orden', 'ASC');
+
+        $this->crud->addColumn([
             'name' => 'imagen',
             'label' => 'imagen_seo',
             'type' => 'custom_html',
@@ -135,6 +151,8 @@ class PaginaCrudController extends CrudController
         CRUD::setFromDb(); // set fields from db columns.
 
     CRUD::field('descubre')->type('checkbox')->label('¿Descubre?')->hint('Marca si esta página es destacada para la sección especial.');
+    CRUD::field('filosofia')->type('checkbox')->label('¿Filosofía?')->hint('Marca si esta página pertenece a la sección de filosofía.');
+    CRUD::field('orden')->type('number')->label('Orden')->hint('Orden de aparición en portada (menor = primero).');
     CRUD::field('descripcion')->type('textarea')->hint('Descripción corta para el SEO.');
 
         $folder = $this->getMediaFolder();

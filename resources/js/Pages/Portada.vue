@@ -24,7 +24,7 @@
                             <Icon icon="ph:arrow-right-duotone"
                             class="transform scale-150"/>PRÓXIMOS EVENTOS</Link>
                     </div>
-                </Hero>                
+                </Hero>
             </FondoEspacio>
         </Section>
 
@@ -179,7 +179,7 @@
                 </Link>
                 <Link
                     class="btn flex-col h-auto p-4 border border-gray-500"
-                    :href="route('meditaciones')"
+                    :href="route('audios')"
                 >
                     <Counter
                         :to="stats.meditaciones"

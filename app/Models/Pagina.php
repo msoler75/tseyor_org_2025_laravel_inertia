@@ -21,10 +21,26 @@ class Pagina extends ContenidoBaseModel
         'descripcion',
         'texto',
         'descubre',
+        'filosofia',
+        'orden',
         'palabras_clave',
         'imagen',
         'visibilidad'
     ];
+
+    protected static function booted()
+    {
+        static::saving(function ($pagina) {
+            if ($pagina->filosofia) {
+                if (!$pagina->atras_ruta) {
+                    $pagina->atras_ruta = '/filosofia';
+                }
+                if (!$pagina->atras_texto) {
+                    $pagina->atras_texto = '← Filosofía';
+                }
+            }
+        });
+    }
 
 
     /**
