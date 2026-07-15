@@ -101,6 +101,61 @@ class PaginasController extends Controller
     }
 
 
+    public function filosofia()
+    {
+        return Inertia::render('Filosofia')
+            ->withViewData(SEO::get('filosofia'));
+    }
+
+    public function temas()
+    {
+        $categorias = [
+            ['key' => 'El cambio de era', 'icono' => 'ph:planet-duotone'],
+            ['key' => 'Quiénes somos realmente', 'icono' => 'ph:sparkle-duotone'],
+            ['key' => 'El camino de autodescubrimiento', 'icono' => 'ph:eye-duotone'],
+            ['key' => 'Hacia las Sociedades Armónicas', 'icono' => 'ph:users-three-duotone'],
+        ];
+
+        $categoriaPorSlug = [
+            'confederacion-de-mundos-habitados-de-la-galaxia' => 'El cambio de era',
+            'el-rayo-sincronizador' => 'El cambio de era',
+            'salto-cuantico' => 'El cambio de era',
+            'especializacion' => 'Quiénes somos realmente',
+            'la-autoobservacion' => 'El camino de autodescubrimiento',
+            'retroalimentacion' => 'Hacia las Sociedades Armónicas',
+            'espejos' => 'Hacia las Sociedades Armónicas',
+            'las-sociedades-armonicas' => 'Hacia las Sociedades Armónicas',
+        ];
+
+        $paginas = Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion', 'orden'])
+            ->publicada()
+            ->where('filosofia', TRUE)
+            ->orderBy('orden')
+            ->get();
+
+        $groups = [];
+        foreach ($paginas as $pagina) {
+            $cat = $categoriaPorSlug[$pagina->ruta] ?? 'Otras';
+            $groups[$cat][] = $pagina;
+        }
+
+        $paginasPorCategoria = [];
+        foreach ($categorias as $cat) {
+            if (isset($groups[$cat['key']])) {
+                $paginasPorCategoria[] = [
+                    'categoria' => $cat['key'],
+                    'icono' => $cat['icono'],
+                    'paginas' => $groups[$cat['key']],
+                ];
+            }
+        }
+
+        return Inertia::render('Filosofia/Temas', [
+            'paginasPorCategoria' => $paginasPorCategoria,
+        ])
+            ->withViewData(SEO::get('filosofia'));
+    }
+
     public function portada()
     {
         $hay_proximos_eventos = Evento::publicado()

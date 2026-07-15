@@ -161,13 +161,19 @@ export default [
           title: "Filosofía",
           items: [
             {
-              title: "Nuestra filosofía",
-              route: "filosofia",
-              description: "Filosofía de las estrellas, conciencia, autodescubrimiento y Sociedades Armónicas.",
-              icon: "ph:fish-simple-duotone",
-            },
-            {
-              title: "Guías Estelares",
+               title: "Nuestra filosofía",
+               route: "filosofia",
+               description: "Filosofía de las estrellas, conciencia, autodescubrimiento y Sociedades Armónicas.",
+               icon: "ph:fish-simple-duotone",
+             },
+             {
+               title: "Todos los temas",
+               route: "filosofia.temas",
+               description: "Explora todos los temas de la filosofía TSEYOR organizados por categoría.",
+               icon: "ph:list-dashes-duotone",
+             },
+             {
+               title: "Guías Estelares",
               route: "guias",
               description: "Conoce a los Guías Estelares de la Confederación de Mundos Habitados de la Galaxia.",
               icon: "ph:user-gear-duotone",

@@ -264,17 +264,8 @@ Route::get('origenes-de-tseyor', function () {
         ->withViewData(SEO::get('origenes-de-tseyor'));
 })->name('origenes-de-tseyor');
 
-Route::get('filosofia', function () {
-    return Inertia::render('Filosofia', [
-        'paginasDescubre' => \App\Models\Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion'])
-            ->publicada()
-            ->where('filosofia', TRUE)
-            ->orderBy('orden')
-            ->limit(16)
-            ->get(),
-    ])
-        ->withViewData(SEO::get('filosofia'));
-})->name('filosofia');
+Route::get('filosofia/temas', [PaginasController::class, 'temas'])->name('filosofia.temas');
+Route::get('filosofia', [PaginasController::class, 'filosofia'])->name('filosofia');
 
 Route::get('cursos', [CursosController::class, 'index'])->name('cursos');
 

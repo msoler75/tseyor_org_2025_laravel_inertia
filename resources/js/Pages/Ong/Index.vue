@@ -34,10 +34,21 @@
                     relacionarnos y trabajar juntos por el bien común.
                 </p>
 
-                <a href="#proyectos" class="btn btn-primary rounded-full px-8 shadow-lg mt-9">
-                    Conocer nuestra labor
-                    <ArrowRight class="w-4 h-4" />
-                </a>
+                <div class="flex flex-wrap justify-center gap-4 mt-9">
+                    <Link href="/donar" class="btn btn-primary rounded-full px-8 shadow-lg">
+                        Donar ahora
+                        <Icon icon="ph:heart-duotone" class="text-lg" />
+                    </Link>
+                    <Link href="/centros" class="btn btn-secondary rounded-full px-8">
+                        Buscar un centro
+                        <Icon icon="ph:map-pin-duotone" class="text-lg" />
+                    </Link>
+                </div>
+                <div class="mt-5">
+                    <a href="#proyectos" class="text-sm text-base-content/50 hover:text-base-content transition-colors">
+                        Conocer nuestros proyectos →
+                    </a>
+                </div>
             </div>
         </Section>
 
@@ -119,7 +130,7 @@
 
                 <p class="text-lg text-base-content/70 mt-7 leading-relaxed">
                     Unas personas colaboran en tareas administrativas; otras, en organización, divulgación,
-                    acompañamiento, formación, comunicación o logística. Cada función es necesaria y cada aportación suma.
+                    acompañamiento, formación, documentación, comunicación o logística. Cada función es necesaria y cada aportación suma.
                 </p>
 
                 <p class="text-lg text-base-content/70 mt-5 leading-relaxed">
@@ -142,29 +153,38 @@
             </div>
         </Section>
 
-        <!-- Documentación -->
+        <!-- Hazte voluntario -->
         <Section>
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
                 <span class="inline-block text-xs font-bold uppercase tracking-[0.28em] text-primary/60 mb-5 font-display">
-                    Conocer más
+                    Únete al equipo
                 </span>
 
                 <h2 class="text-3xl sm:text-4xl font-display font-black leading-tight tracking-tight">
-                    Origen, fundamentos y desarrollo de la ONG
+                    ¿Quieres formar parte de la ONG?
                 </h2>
 
                 <p class="text-lg text-base-content/65 max-w-2xl mx-auto mt-6 leading-relaxed">
-                    La biblioteca reúne la historia de Mundo Armónico TSEYOR, sus Estatutos y los documentos que explican
-                    su evolución y sus ámbitos de actuación.
+                    El primer paso es realizar el <strong>Curso Holístico TSEYOR</strong>, donde conocerás las bases
+                    de la filosofía y te prepararás para colaborar activamente en los proyectos de la ONG.
                 </p>
 
-                <Link
-                    href="/libros/la-ong-mundo-armonico-tseyor"
-                    class="btn rounded-full bg-base-100 border border-base-300 hover:border-primary/40 px-8 mt-9"
-                >
-                    Ver documentación en la Biblioteca
-                    <ArrowRight class="w-4 h-4" />
-                </Link>
+                <div class="flex flex-wrap justify-center gap-4 mt-9">
+                    <Link
+                        :href="route('cursos.inscripcion.nueva')"
+                        class="btn btn-primary rounded-full px-8 shadow-lg"
+                    >
+                        Hazte voluntario
+                        <Icon icon="ph:hand-heart-duotone" class="text-lg" />
+                    </Link>
+                    <Link
+                        href="/libros/la-ong-mundo-armonico-tseyor"
+                        class="btn rounded-full bg-base-100 border border-base-300 hover:border-primary/40 px-8"
+                    >
+                        Documentación de la ONG
+                        <ArrowRight class="w-4 h-4" />
+                    </Link>
+                </div>
             </div>
         </Section>
 
