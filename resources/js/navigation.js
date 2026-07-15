@@ -178,12 +178,41 @@ export default [
               description: "El origen del contacto y la historia del grupo.",
               icon: "ph:shooting-star-duotone",
             },
-            {
-              title: "Descubre",
-              route: "descubre",
-              description: "Temas clave presentados de forma introductoria.",
+          ],
+        },
+        {
+          title: "Temas clave de TSEYOR",
+          items: [
+             {
+              title: "El Rayo Sincronizador",
+              url: "/el-rayo-sincronizador",
+              description: "El rayo que marca el cambio de ciclo cósmico.",
               icon: "ph:lightbulb-duotone",
             },
+             {
+              title: "Sociedades Armónicas",
+              url: "/las-sociedades-armonicas",
+              description: "El modelo de convivencia fraternal hacia el que caminamos.",
+              icon: "ph:handshake-duotone",
+            },
+            {
+              title: "Especialización",
+              url: "/especializacion",
+              description: "Descubre tu talento único al servicio de la comunidad.",
+              icon: "ph:gear-six-duotone",
+            },
+            {
+              title: "Retroalimentación",
+              url: "/retroalimentacion",
+              description: "El aprendizaje colectivo a través del grupo.",
+              icon: "ph:arrows-counter-clockwise-duotone",
+            },
+            {
+              title: "Espejos",
+              url: "/espejos",
+              description: "El principio del espejo y el autoconocimiento.",
+              icon: "ph:eye-duotone",
+            }
           ],
         },
       ],

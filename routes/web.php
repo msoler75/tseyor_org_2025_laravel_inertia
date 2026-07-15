@@ -243,7 +243,7 @@ Route::get('centros', [CentrosController::class, 'index'])->name('centros');
 Route::get('centros/{slug}', [CentrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('centro');
 
 Route::get('quienes-somos', function () {
-    return Inertia::render('Presentacion/QuienesSomos2', [
+    return Inertia::render('QuienesSomos/index', [
         'entradasRecientes' => \App\Models\Entrada::publicada()
             ->latest('published_at')
             ->limit(4)
@@ -260,12 +260,19 @@ Route::get('quienes-somos', function () {
 })->name('quienes-somos');
 
 Route::get('origenes-de-tseyor', function () {
-    return Inertia::render('Presentacion/OrigenesTseyor', [])
+    return Inertia::render('QuienesSomos/OrigenesDeTseyor', [])
         ->withViewData(SEO::get('origenes-de-tseyor'));
 })->name('origenes-de-tseyor');
 
 Route::get('filosofia', function () {
-    return Inertia::render('Presentacion/Filosofia2', [])
+    return Inertia::render('Filosofia', [
+        'paginasDescubre' => \App\Models\Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion'])
+            ->publicada()
+            ->where('filosofia', TRUE)
+            ->orderBy('orden')
+            ->limit(16)
+            ->get(),
+    ])
         ->withViewData(SEO::get('filosofia'));
 })->name('filosofia');
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Pagina;
 use Inertia\Inertia;
 use App\Pigmalion\SEO;
+use App\Pigmalion\DiskUtil;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Comunicado;
 use App\Models\Libro;
@@ -102,43 +103,50 @@ class PaginasController extends Controller
 
     public function portada()
     {
-        // Verificar si hay eventos próximos o en curso
         $hay_proximos_eventos = Evento::publicado()
             ->where(function($q) {
-                $q->where('fecha_inicio', '>=', now()) // próximos
+                $q->where('fecha_inicio', '>=', now())
                   ->orWhere(function($q2) {
-                      $q2->where('fecha_inicio', '<=', now()) // en curso
+                      $q2->where('fecha_inicio', '<=', now())
                          ->where('fecha_fin', '>=', now());
                   });
             })
             ->exists();
 
+        $stats = Cache::remember('stats_portada', now()->addDay(), function () {
+            return [
+                'comunicados' => Comunicado::publicado()->count(),
+                'libros' => Libro::publicado()->count(),
+                'usuarios' => User::count(),
+                'audios' => Audio::publicado()->count(),
+                'entradas' => Entrada::publicado()->count(),
+                'meditaciones' => Meditacion::publicado()->count(),
+                'videos' => Video::publicado()->count(),
+                'centros' => Centro::count()
+            ];
+        });
+
+        $usuariosImagenes = DiskUtil::obtenerImagenes('/almacen/medios/portada/usuarios');
+        shuffle($usuariosImagenes);
+
         return Inertia::render(
-            'Portada2',
+            'Portada3',
             [
                 'hayProximosEventos' => $hay_proximos_eventos,
-                'stats' => Cache::remember('stats_portada', now()->addDay(), function () {
-                        $cc = Comunicado::publicado()->count();
-                        return
-                            [
-                                'comunicados' => $cc,
-                                'paginas' => $cc * 12 + $cc % 7,
-                                'libros' => Libro::publicado()->count(),
-                                'usuarios' => User::count(),
-                                'audios' => Audio::publicado()->count(),
-                                'entradas' => Entrada::publicado()->count(),
-                                'meditaciones' => Meditacion::publicado()->count(),
-                                'videos' => Video::publicado()->count(),
-                                'centros' => Centro::count()
-                            ];
-                }),
-                'paginasDescubre' => Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion'])
+                'stats' => $stats,
+                'paginasFilosofia' => Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion'])
                     ->publicada()
-                    ->where('descubre', TRUE)
-                    ->orderBy('ruta')
-                    ->limit(16)
+                    ->where('filosofia', TRUE)
+                    ->where(function ($q) {
+                        $q->where('ruta', 'like', '%rayo%')
+                          ->orWhere('ruta', 'like', '%sociedades%')
+                          ->orWhere('ruta', 'like', '%confederacion%')
+                          ->orWhere('ruta', 'like', '%observacion%');
+                    })
+                    ->orderBy('orden')
+                    ->limit(4)
                     ->get(),
-                'entradasRecientes' => \App\Models\Entrada::publicada()
+                'entradasRecientes' => Entrada::publicada()
                     ->latest('published_at')
                     ->limit(24)
                     ->get(['slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
@@ -150,6 +158,11 @@ class PaginasController extends Controller
                         'fecha' => $e->published_at ? date('j M Y', strtotime($e->published_at)) : '',
                         'ruta' => route('entrada', $e->slug),
                     ]),
+                'usuariosImagenes' => $usuariosImagenes,
+                'meditaciones' => Audio::publicado()
+                    ->latest()
+                    ->limit(20)
+                    ->get(['id', 'titulo', 'slug', 'audio']),
             ]
         );
     }
@@ -168,7 +181,6 @@ class PaginasController extends Controller
                         'videos' => Video::publicado()->count(),
                         'meditaciones' => Meditacion::publicado()->count(),
                         'psicografias' => Psicografia::count(),
-                        'descubre' => Pagina::publicado()->where('descubre', TRUE)->count(),
                         'galerias' => Galeria::count(),
                     ];
                 })

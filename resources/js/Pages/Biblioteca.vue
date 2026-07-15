@@ -85,14 +85,6 @@ const secciones = ref([
         count: computed(() => props.stats ? props.stats.audios : 0)
     },
     {
-        title: 'Blogs',
-        url: route('entradas'),
-        descripcion: 'Lee los artículos escritos por miembros de nuestra comunidad. Aprende sobre nuestras vivencias, reflexiones y perspectivas únicas.',
-        icon: "ph:pencil-line-duotone",
-        count: computed(() => props.stats ? props.stats.entradas : 0),
-        collection: 'artículos'
-    },
-    {
         title: 'Vídeos',
         url: route('videos'),
         descripcion: 'Visita nuestro canal de YouTube y descubre los vídeos que comparten las actividades, eventos y enseñanzas de Tseyor.',
@@ -114,15 +106,7 @@ const secciones = ref([
         icon: "ph:image-duotone",
         count: computed(() => props.stats ? props.stats.psicografias : 0)
     },
-     {
-        title: 'Descubre',
-        url: route('descubre'),
-        descripcion: 'Presentación de algunos conceptos centrales de Tseyor, para ofrecer un primer contacto inspirador y claro.',
-        icon: "ph:lightbulb-duotone",
-        count: computed(() => props.stats ? props.stats.descubre : 0),
-        collection: 'páginas',
-    },
-        {
+    {
         title: 'Galerías de Arte',
         url: route('galerias'),
         descripcion: 'Obras de arte de la comunidad de usuarios de tseyor.',
@@ -136,6 +120,14 @@ const secciones = ref([
         descripcion: 'Sintoniza nuestra radio 24/7 y escucha comunicados, entrevistas y talleres que nutren el espíritu.',
         icon: "ph:radio-duotone",
         count: 0
-    }
+    },
+        {
+        title: 'Blogs',
+        url: route('entradas'),
+        descripcion: 'Lee los artículos escritos por miembros de nuestra comunidad. Aprende sobre nuestras vivencias, reflexiones y perspectivas únicas.',
+        icon: "ph:pencil-line-duotone",
+        count: computed(() => props.stats ? props.stats.entradas : 0),
+        collection: 'artículos'
+    },
 ])
 </script>
