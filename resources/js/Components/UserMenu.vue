@@ -19,7 +19,7 @@
         </template>
 
         <template #content>
-            <div class="px-3 py-2 space-y-2">
+            <div class="px-3 py-3">
                 <div class="text-base font-semibold text-base-content leading-tight">{{ $page.props.auth.user.name }}</div>
             </div>
 
@@ -27,7 +27,7 @@
 
             <div class="px-1 py-1">
                 <Link href="/miembros"
-                    class="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-base-200/50 transition-colors duration-150">
+                    class="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-base-200/50 transition-colors duration-150 whitespace-nowrap">
                     <Icon icon="ph:user-circle-duotone" class="text-lg text-base-content/50" />
                     Mi Panel
                 </Link>
@@ -36,7 +36,7 @@
             <div class="border-t border-base-300" />
 
             <div class="px-1 py-1">
-                <form @submit.prevent="logout">
+                <form @submit.prevent="logout" class="whitespace-nowrap">
                     <DropdownLink as="button">
                         Cerrar Sesión
                     </DropdownLink>
