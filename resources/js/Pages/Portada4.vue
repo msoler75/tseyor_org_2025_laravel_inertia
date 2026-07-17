@@ -12,8 +12,8 @@
                     ONG
                 </div>
 
-                <h1 class="text-4xl sm:text-5xl md:text-6xl font-display font-black text-secondary tracking-tight leading-[1.1] mb-8">
-                    <span>MUNDO ARMÓNICO </span> <br class="hidden sm:inline" /><span class="text-primary">TSEYOR</span>
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-display font-black tracking-tight leading-[1.1] mb-8">
+                    <span class="text-mundo-armonico">MUNDO ARMÓNICO </span> <br class="hidden sm:inline" /><span class="text-primary">TSEYOR</span>
                 </h1>
 
                 <p class="text-lg md:text-xl text-base-content/90 leading-relaxed mb-8 max-w-2xl font-light">
@@ -21,9 +21,9 @@
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                    <a href="#guias-estelares" @click.prevent="scrollSeccion('guias-estelares')" class="flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-content font-bold text-xs uppercase tracking-widest hover:bg-primary/90 transition-all shadow-md transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer group">
-                        Explorar TSEYOR
-                        <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <a href="#hero-stats" @click.prevent="scrollSeccion('hero-stats')" class="flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-primary-content font-bold text-xs uppercase tracking-widest hover:bg-primary/90 transition-all shadow-md transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer group">
+                        Sigue explorando
+                        <ArrowDown class="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
                     </a>
                     <Link href="/biblioteca" class="flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-base-100 border border-base-300 hover:border-primary/40 text-base-content/80 hover:bg-base-200 font-bold text-xs transition-all uppercase tracking-widest shadow-sm">
                         <BookOpen class="w-4 h-4 text-primary" />
@@ -38,7 +38,7 @@
     </section>
 
     <!-- Social proof: stats -->
-    <div class="bg-primary/5 border-y border-base-200">
+    <div id="hero-stats" class="bg-primary/5 border-y border-base-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
             <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-base-content/50">
                 <span class="font-bold uppercase tracking-wider text-[11px] text-base-content/30">Comunidad</span>
@@ -90,6 +90,12 @@
                             Leer sus comunicados
                         </Link>
                     </div>
+                    <div class="mt-12 text-center">
+                        <a href="#filosofia" @click.prevent="scrollSeccion('filosofia')" class="inline-flex items-center gap-1.5 text-xs text-base-content/50 hover:text-primary transition-colors uppercase tracking-widest font-bold">
+                            Sigue explorando
+                            <ChevronDown class="w-3.5 h-3.5" />
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,7 +146,7 @@
     </section>
 
     <!-- ONG -->
-    <section class="py-24 lg:py-32 bg-base-100">
+    <section id="ong" class="py-24 lg:py-32 bg-base-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div class="order-2 lg:order-1">
@@ -178,7 +184,7 @@
                 </div>
 
                 <div class="order-1 lg:order-2 relative min-h-[300px] lg:min-h-[400px] rounded-2xl overflow-hidden bg-base-200">
-                    <img src="/almacen/medios/portada/portada_tseyor_2026_hero.jpg" alt="ONG Tseyor"
+                    <img src="/almacen/medios/portada/ong3.jpg" alt="ONG Tseyor"
                         class="absolute inset-0 w-full h-full object-cover"
                         loading="lazy" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
@@ -493,6 +499,7 @@ import { getSrcUrl } from '@/composables/srcutils.js'
 
 import {
   ArrowRight,
+  ArrowDown,
   BookOpen,
   Calendar,
   ChevronDown,
@@ -575,6 +582,10 @@ const duracionTotal = computed(() => formatoDuracion(player.duration))
 </script>
 
 <style scoped>
+.text-mundo-armonico {
+    color: #f08015;
+}
+
 @keyframes waveform {
   0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
   50% { transform: scaleY(1); opacity: 1; }
