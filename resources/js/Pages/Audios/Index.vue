@@ -11,9 +11,17 @@
 
 
         <TitleInfo title="Audios Tseyor">
+            <template #actions>
+                <Link href="/radio"
+                    class="flex items-center gap-2 text-sm font-medium text-primary hover:text-secondary transition-colors whitespace-nowrap">
+                    Escuchar Radio Tseyor
+                    <Icon icon="ph:arrow-right-duotone" class="text-lg" />
+                </Link>
+            </template>
+
             <div>Relájate y disfruta de los talleres, meditaciones, cuentos y otros materiales de la filosofía de
                 Tseyor.</div>
-            <div>Recuerda que también puedes acceder a la <Link href="/radio">Radio Tseyor</Link> y escuchar nuestra emisora de talleres, meditaciones y talleres cuentos, donde se reproducen estos audios de forma continua.</div>
+            <div>Recuerda que también puedes acceder a la <Link href="/radio">Radio Tseyor</Link> y escuchar nuestra emisora de talleres, meditaciones y cuentos, donde se reproducen estos audios de forma continua.</div>
         </TitleInfo>
 
 

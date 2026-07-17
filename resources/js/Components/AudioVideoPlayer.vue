@@ -1,5 +1,5 @@
 <template>
-    <div class="audio-player select-none">
+    <div class="audio-player select-none" tabindex="-1">
 
         <Modal modal-class="video-player select-none" :show="!player.videoClosed" centered
             max-width="3xl">

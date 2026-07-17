@@ -6,7 +6,11 @@
             class="flex items-center gap-1 text-sm uppercase btn btn-sm bg-base-100 dark:border-1 dark:border-gray-500/25"
             @click="modalInfo = true"
         >
-            {{ labelInfo }}<Icon icon="ph:info"/></span>
+            {{ labelInfo }}<Icon icon="ph:info"/>
+        </span>
+        <div class="ml-auto">
+            <slot name="actions" />
+        </div>
     </div>
 
     <Modal
