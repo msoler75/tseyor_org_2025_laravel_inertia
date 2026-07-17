@@ -8,7 +8,7 @@
                 tab == nav.tabHovering ? 'hovering' : '',
                 tab.current ? 'current-tab' : ''
                 ]"
-            :href="tab.hasItems ? undefined : tab.url"
+            :href="tab.url"
                 @click="clickedTab(tab)" @mouseover="enterTab(tab)" @mouseout="leaveTab(tab)"
                 :active="tab.open || tab.current" :data-nav-tab="index">
                 {{ tab.title }}
@@ -38,7 +38,7 @@ const hoverTimeout = ref(null)
 
 function clickedTab(tab) {
     if(tab.hasItems) {
-        nav.toggleTab(tab)
+        nav.closeTabs()
         return
     }
     if(tab.url && tab.url !== 'undefined') {
