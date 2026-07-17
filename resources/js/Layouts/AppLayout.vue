@@ -9,7 +9,7 @@
         </ClientOnly>
 
         <ClientOnly>
-            <AudioVideoPlayer v-if="$page.component !== 'Portada3'" />
+            <AudioVideoPlayer v-if="$page.component !== 'Portada3' && $page.component !== 'Portada4'" />
         </ClientOnly>
 
         <Announcement

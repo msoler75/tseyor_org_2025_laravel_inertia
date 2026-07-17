@@ -241,7 +241,7 @@
     </section>
 
     <!-- Medita ahora -->
-    <section class="relative py-24 lg:py-32 bg-base-900 overflow-hidden">
+    <section class="relative bg-base-900 overflow-hidden min-h-[660px] lg:min-h-[740px] flex flex-col">
         <div class="absolute inset-0">
             <img src="/almacen/medios/portada/mujer_meditando.jpg" alt=""
                 class="w-full h-full object-cover"
@@ -249,7 +249,7 @@
             <div class="absolute inset-0 bg-gradient-to-r from-base-content/80 via-base-content/40 to-base-content/20"></div>
         </div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="relative flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
             <div class="max-w-lg ml-auto">
                 <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
                     <div class="flex items-center gap-2 mb-4">
@@ -303,7 +303,7 @@
             </div>
         </div>
 
-        <div class="relative mt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap gap-2">
+        <div class="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full pb-8 lg:pb-10 flex flex-wrap gap-2">
             <Link href="/audios" class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-white text-xs font-bold uppercase tracking-wider transition-all">
                 Biblioteca de audios
             </Link>
