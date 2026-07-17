@@ -122,7 +122,7 @@ const underScoreStyle = computed(() => {
 
 
 watch(()=>nav.tabHovering, (tab)=> {
-    updateUnderscore()
+    if (tab) updateUnderscore()
 })
 
 // Recalcular underscore cuando cambia la URL (navegación)
