@@ -103,7 +103,7 @@ class PaginasController extends Controller
 
     public function filosofia()
     {
-        return Inertia::render('Filosofia')
+        return Inertia::render('Filosofia2')
             ->withViewData(SEO::get('filosofia'));
     }
 
@@ -156,7 +156,7 @@ class PaginasController extends Controller
             ->withViewData(SEO::get('filosofia'));
     }
 
-    public function portada()
+    public function portada($component = 'Portada4')
     {
         $hay_proximos_eventos = Evento::publicado()
             ->where(function($q) {
@@ -185,7 +185,7 @@ class PaginasController extends Controller
         shuffle($usuariosImagenes);
 
         return Inertia::render(
-            'Portada3',
+            $component,
             [
                 'hayProximosEventos' => $hay_proximos_eventos,
                 'stats' => $stats,
