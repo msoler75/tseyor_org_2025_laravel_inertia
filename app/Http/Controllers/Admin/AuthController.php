@@ -23,7 +23,9 @@ class AuthController extends Controller
         $guard = config('backpack.base.guard') ?: config('auth.defaults.guard', 'web');
         Log::info("AuthController: performing login for user {$user->id} using guard={$guard}");
         Auth::guard($guard)->login($user, $remember);
-        session()->regenerate(); // Regenerar la sesión
+        // No llamar session()->regenerate(): Auth::guard()->login() ya regenera la sesión internamente.
+        // Llamarlo dos veces provoca que el navegador reciba un Set-Cookie con un session_id
+        // que puede no coincidir, y además puede causar race conditions con location.reload().
     }
 
     public function showLoginForm()
@@ -74,7 +76,10 @@ class AuthController extends Controller
 
         $this->performLogin($user, true); // Autenticar al usuario con el guard correcto
 
-        return response()->json(['message' => 'usuario cambiado'], 200);
+        // Devolvemos URL de redirect para que el frontend navegue con window.location.href.
+        return response()->json([
+            'redirect' => url()->previous(),
+        ], 200);
     }
 
 }
