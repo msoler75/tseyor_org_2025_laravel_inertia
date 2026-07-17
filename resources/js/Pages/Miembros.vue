@@ -122,8 +122,8 @@
 
         <section class="mb-12">
             <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
-                <Icon icon="ph:wrench-duotone" class="text-xl" />
-                Herramientas
+                <Icon icon="ph:users-four-duotone" class="text-xl" />
+                Trabajos de la comunidad
             </h2>
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <Link :href="route('equipos')"
@@ -132,8 +132,8 @@
                         <Icon icon="ph:users-duotone" class="text-2xl" />
                     </div>
                     <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Explorar Equipos</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Descubre y únete a equipos de trabajo</p>
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Equipos</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Colabora en equipos de trabajo</p>
                     </div>
                 </Link>
 
@@ -148,28 +148,58 @@
                     </div>
                 </Link>
 
-                <Link :href="route('novedades')"
+                <Link :href="route('archivos0')"
                     class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
                     <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:clock-counter-clockwise-duotone" class="text-2xl" />
+                        <Icon icon="ph:archive-duotone" class="text-2xl" />
                     </div>
                     <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Novedades</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Últimas actualizaciones y contenido reciente</p>
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Archivos</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Documentos y recursos compartidos</p>
                     </div>
                 </Link>
 
-                <Link v-if="$page.props.auth.user?.tiene_inscripciones_asignadas" :href="route('inscripciones.mis-asignaciones')"
+                <Link :href="route('trabajos.arte')"
                     class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:clipboard-text-duotone" class="text-2xl" />
+                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 group-hover:bg-violet-500 group-hover:text-white transition-colors duration-200">
+                        <Icon icon="ph:palette-duotone" class="text-2xl" />
                     </div>
                     <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Gestión de inscritos</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Administra inscripciones asignadas</p>
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Trabajos de Arte</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Creaciones artísticas de la comunidad</p>
                     </div>
                 </Link>
 
+                <Link :href="route('usuarios')"
+                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
+                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-200">
+                        <Icon icon="ph:user-list-duotone" class="text-2xl" />
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Usuarios</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Conoce a los miembros de la comunidad</p>
+                    </div>
+                </Link>
+
+                <Link :href="route('salas')"
+                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
+                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 group-hover:bg-teal-500 group-hover:text-white transition-colors duration-200">
+                        <Icon icon="ph:chat-circle-duotone" class="text-2xl" />
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Salas</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Espacios de conversación y encuentro</p>
+                    </div>
+                </Link>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
+                <Icon icon="ph:wrench-duotone" class="text-xl" />
+                Herramientas de la comunidad
+            </h2>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <a href="/tseyor-canva"
                     class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
                     <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-200">
