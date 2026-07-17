@@ -83,7 +83,7 @@ const sections = computed(() => {
                 { label: 'Mi Perfil',      icon: 'ph:user-circle-duotone',       color: 'primary',   to: route('usuario', uid) },
                 { label: 'Mis Archivos',   icon: 'ph:folder-duotone',             color: 'accent',    to: route('mis_archivos') },
                 { label: 'Mis Equipos',    icon: 'ph:users-three-duotone',        color: 'secondary', to: '/equipos?categoria=Mis equipos' },
-                { label: 'Mi Cuenta',      icon: 'ph:gear-six-duotone',           color: 'neutral',   to: route('profile.show') },
+                { label: 'Mi Cuenta',      icon: 'ph:gear-six-duotone',           color: 'primary',   to: route('profile.show') },
             ]
         },
         {
@@ -107,7 +107,7 @@ const sections = computed(() => {
             show: props.esIniciado,
             items: [
                 { label: 'Interiorización', icon: 'solar:meditation-round-bold-duotone', color: 'accent',  to: route('equipo', 'iniciados-interiorizacion') },
-                { label: 'Carpeta de iniciados',        icon: 'ph:folder-duotone',  color: 'primary', to: '/archivos/interiorizacion' },
+                { label: 'Carpeta de iniciados',        icon: 'ph:folder-duotone',  color: 'primary', to: '/archivos/equipos/interiorizacion' },
             ]
         },
         {
