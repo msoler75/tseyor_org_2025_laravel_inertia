@@ -159,11 +159,16 @@ export const useNavStore = defineStore('nav', {
       this._updateActive()
     },
 
-    closeTabs() {
+    closeTabs(origin) {
+      if (origin === 'hover' && Date.now() - (this._keyboardTime || 0) < 200) return
       for (const tab of this.items) {
         tab.open = false;
       }
       this._updateActive()
+    },
+
+    _setKeyboardTime() {
+      this._keyboardTime = Date.now()
     },
 
     deactivateMenu() {
@@ -179,7 +184,7 @@ export const useNavStore = defineStore('nav', {
 
     // cuando pasa el mouse por encima
     hoverTab(tab) {
-      this.closeTabs()
+      this.closeTabs('hover')
       this.tabHovering = tab;
       if(this.hoverDeactivated) return
       if (tab.hasItems) this.activateTab(tab);
@@ -267,7 +272,7 @@ export const useNavStore = defineStore('nav', {
     },
 
     scrollToTopPage(behavior) {
-      if (!behavior || typeof behaviour != "string") behavior = "smooth";
+      if (!behavior || typeof behavior != "string") behavior = "smooth";
       console.log('nav.scroll_to_top_page')
       window.scrollTo({
         top: 0,

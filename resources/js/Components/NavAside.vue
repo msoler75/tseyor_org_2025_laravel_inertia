@@ -28,23 +28,18 @@
                 bg-base-200
                 text-left text-base leading-4
                 ">
-                    <template v-for="tab, index in nav.items" :key="index">
+                    <template v-for="tab, index in visibleTabs" :key="index">
                         <label class="w-full rounded-none mb-0" :class="tab.hasItems ? 'collapse collapse-arrow' : ''">
                             <Link v-if="!tab.hasItems && ('url' in tab)" :href="tab.url"
                                 class="px-4 py-5 block transition duration-200 hover:bg-base-300" @click="close">{{
                                     tab.title }}</Link>
                             <template v-else>
-                                <input v-if="tab.hasItems" type="checkbox" :v-model="tab.open"
+                                <input v-if="tab.hasItems" type="checkbox" v-model="tab.open"
                                     @change="toggle(tab, $event)" />
-                                <div class="collapse-title">{{ tab.title }}</div>
+                                <div class="collapse-title !px-4 !py-5 !min-h-0">{{ tab.title }}</div>
                                 <div class="collapse-content px-0 bg-base-100/50" v-if="tab.hasItems">
                                     <template v-for="section, index of tab.submenu.sections" :key="index">
                                         <template v-for="group, index of section.groups" :key="index">
-                                    <div @click.prevent.stop="null" v-if="group.title != tab.title"
-                                            class="px-5 mt-4 font-bold text-xs opacity-75 uppercase">
-                                            {{ group.title }}</div>
-                                        <div v-else class="mt-2" />
-
                                         <component :is="item.disabled ? 'div' : (item.external ? 'a' : Link)"
                                             :target="item.target" :href="item.url"
                                             v-for="item of group.items" :key="item.url" @click="close"
@@ -89,6 +84,67 @@ const props = defineProps({
     }
 });
 
+const relativeUrl = (url) => url ? url.replace(/^https?:\/\/[^\/]+/, '') : ''
+
+const visibleTabs = computed(() => {
+    const tabs = []
+
+    const EVENTOS_URL = relativeUrl(route('eventos'))
+
+    for (const tab of nav.items) {
+        if (!tab.hasItems) {
+            tabs.push(tab)
+            continue
+        }
+
+        const mobileItems = tab.submenu.sections.flatMap(s =>
+            s.groups.flatMap(g =>
+                g.items.filter(item =>
+                    item.mobileShow && item.url !== EVENTOS_URL
+                )
+            )
+        )
+
+        const tabUrl = tab.url || ''
+        const hasSubItems = mobileItems.some(i => i.url !== tabUrl)
+
+        if (!hasSubItems && tabUrl) {
+            tabs.push({ ...tab, hasItems: false, submenu: null })
+            continue
+        }
+
+        if (!hasSubItems) continue
+
+        tabs.push({
+            ...tab,
+            submenu: {
+                ...tab.submenu,
+                sections: tab.url && !mobileItems.some(i => i.url === tab.url)
+                    ? [{
+                        title: tab.title,
+                        groups: [{
+                            items: [
+                                ...mobileItems,
+                                { title: 'Más...', url: tab.url, icon: tab.icon },
+                            ]
+                        }]
+                    }]
+                    : [{ title: tab.title, groups: [{ items: mobileItems }] }],
+            }
+        })
+    }
+
+    const inicioIdx = tabs.findIndex(t => t.title === 'Inicio')
+    tabs.splice(inicioIdx + 1, 0, {
+        title: 'Eventos',
+        icon: 'ph:calendar-duotone',
+        url: EVENTOS_URL,
+        hasItems: false,
+    })
+
+    return tabs
+})
+
 const emit = defineEmits(['close']);
 
 const close = () => {
@@ -97,12 +153,13 @@ const close = () => {
 };
 
 const toggle = (tab, event) => {
-    // nav.toggleTab(tab)
-    const elem = event.target
-    console.log('toggle', tab, elem)
-    if (!tab.open) {
+    // Mutex: si se abre un tab, cerrar los demás
+    if (tab.open) {
+        nav.items.forEach(t => {
+            if (t !== tab && t.hasItems) t.open = false
+        })
         setTimeout(() => {
-            elem.scrollIntoView({ behavior: 'smooth' })
+            event.target.closest('label').scrollIntoView({ behavior: 'smooth' })
         }, 300)
     }
 }
