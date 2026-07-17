@@ -366,6 +366,7 @@ Route::middleware([
         $user = auth()->user();
         return Inertia::render('Miembros', [
             'misEquipos' => $user ? $user->equipos()->count() : 0,
+            'esMuul' => $user && $user->grupos()->where('slug', 'muul')->exists(),
         ]);
     })->name('miembros');
 });
