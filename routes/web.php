@@ -140,7 +140,7 @@ Route::get('', function (Request $request) {
     // Solo redirigir a /novedades en la carga inicial de la página
     // (peticiones Inertia desde el cliente envían el header `X-Inertia`)
     if (auth()->check() && !$request->header('X-Inertia')) {
-        return redirect()->route('dashboard');
+        return redirect()->route('miembros');
     }
     return app()->call([app(PaginasController::class), 'portada']);
 })->name('portada');
@@ -278,6 +278,7 @@ Route::get('cursos', [CursosController::class, 'index'])->name('cursos');
 
 Route::get('radio', [RadioController::class, 'index'])->name('radio');
 Route::get('radio/{emisora}', [RadioController::class, 'emisora'])->name('radio.emisora');
+Route::get('radio-manifest.json', [RadioManifestController::class, 'manifest'])->name('radio.manifest');
 
 Route::get('inscripcion', function () {
     return Inertia::render('Cursos/NuevaInscripcion', [])
@@ -361,9 +362,12 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('miembros', function () {
+        $user = auth()->user();
+        return Inertia::render('Miembros', [
+            'misEquipos' => $user ? $user->equipos()->count() : 0,
+        ]);
+    })->name('miembros');
 });
 
 
