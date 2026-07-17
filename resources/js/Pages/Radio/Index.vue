@@ -33,6 +33,8 @@
         </PageWide>
 
 
+        <RadioInstallButton />
+
         <PageFooter>
             <Comentarios url="radio" />
         </PageFooter>

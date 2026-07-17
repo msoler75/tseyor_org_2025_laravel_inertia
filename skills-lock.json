@@ -37,6 +37,12 @@
       "skillPath": "skills/image/SKILL.md",
       "computedHash": "179c3e3a8b786b90361ee135279cc8d42e4082e3f545cd7b484a00db27be1dca"
     },
+    "impeccable": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/impeccable/SKILL.md",
+      "computedHash": "a0de0cab25a37c9a1a787aa4b690b1f7cfaa6d7ac83a8424f66863b457d9d668"
+    },
     "landing-page-design": {
       "source": "skills-shell/skills",
       "sourceType": "github",

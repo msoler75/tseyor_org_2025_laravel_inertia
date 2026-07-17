@@ -11,12 +11,14 @@
     <meta name="robots" content="noindex">
     @endif
 
+    @php $isRadioHost = str_starts_with(request()->getHost(), 'radio.'); @endphp
+
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#1e40af">
+    <meta name="theme-color" content="{{ $isRadioHost ? '#60a5fa' : '#1e40af' }}">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Tseyor">
+    <meta name="apple-mobile-web-app-title" content="{{ $isRadioHost ? 'Radio Tseyor' : 'Tseyor' }}">
     <link rel="apple-touch-icon" href="/ic/ios/180.png">
     <link rel="apple-touch-icon" sizes="57x57" href="/ic/ios/57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/ic/ios/60.png">
@@ -32,7 +34,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/ic/ios/32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/ic/android/android-launchericon-192-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/ic/android/android-launchericon-512-512.png">
-    <link rel="manifest" href="/build/tseyor-manifest.v2.json">
+    <link rel="manifest" href="{{ $isRadioHost ? route('radio.manifest') : '/build/tseyor-manifest.v2.json' }}">
     <!-- Fallback clásico de Windows/Escritorio: favicon.ico (mejorará el icono del acceso directo/shortcut) -->
     <link rel="shortcut icon" href="/ic/windows11/StoreLogo.scale-100.png">
     <link rel="icon" type="image/png" sizes="256x256" href="/ic/windows11/Square150x150Logo.scale-100.png">
