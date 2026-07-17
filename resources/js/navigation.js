@@ -1,10 +1,3 @@
-import ApplicationMark from "@/Components/ApplicationMark.vue";
-import { markRaw } from "vue";
-
-const APP_PUZLE_URL = "https://puzle.tseyor.org/";
-const APP_MUULAR_URL_REDIRECT = "/muular-electronico";
-const APP_TSEYOR_CANVA_URL = "/tseyor-canva";
-
 export default [
   {
     title: "Inicio",
@@ -30,12 +23,14 @@ export default [
               route: "cursos",
               description: "Aprende gratis la base de la filosofía de las estrellas, con acompañamiento y sin dogmas.",
               icon: "ph:chalkboard-teacher-duotone",
+              mobileShow: true,
             },
             {
               title: "Inscríbete gratis",
               route: "cursos.inscripcion.nueva",
               description: "Comienza el curso online y explora sin dogmas.",
               icon: "ph:note-pencil-duotone",
+              mobileShow: true,
             },
           ],
         },
@@ -73,6 +68,39 @@ export default [
     submenu: {
       sections: [
         {
+          title: "Popular",
+          items: [
+            {
+              title: "Comunicados",
+              route: "comunicados",
+              description: "Comunicados recibidos de los Guías Estelares y la Confederación.",
+              icon: "ph:flying-saucer-duotone",
+              mobileShow: true,
+            },
+            {
+              title: "Audios",
+              route: "audios",
+              description: "Meditaciones, talleres, cuentos, canciones y materiales sonoros.",
+              icon: "ph:music-notes-duotone",
+              mobileShow: true,
+            },
+            {
+              title: "Libros",
+              route: "libros",
+              description: "Libros y monografías sobre la filosofía TSEYOR.",
+              icon: "ph:book-bookmark-duotone",
+              mobileShow: true,
+            },
+            {
+              title: "Meditaciones",
+              route: "meditaciones",
+              description: "Prácticas para el trabajo interior.",
+              icon: "ph:file-text-duotone",
+              mobileShow: true,
+            },
+          ],
+        },
+        {
           title: "Biblioteca",
           items: [
             {
@@ -81,56 +109,17 @@ export default [
               description: "Libros, comunicados, audios y materiales de libre descarga.",
               icon: "ph:books-duotone",
             },
-          ],
-        },
-        {
-            title: "Comunidad",
-            index:0,
-            items: [
-             {
-              title: "Galerías",
-              route: "galerias",
-              description: "Fotografías, arte y memoria visual de la comunidad.",
-              icon: "ph:image-duotone",
-            }]
-        },
-        {
-          title: "Documentos",
-          items: [
-            {
-              title: "Comunicados",
-              route: "comunicados",
-              description: "Comunicados recibidos de los Guías Estelares y la Confederación.",
-              icon: "ph:flying-saucer-duotone",
-            },
-            {
-              title: "Libros",
-              route: "libros",
-              description: "Libros y monografías sobre la filosofía TSEYOR.",
-              icon: "ph:book-bookmark-duotone",
-            },
-            {
-              title: "Meditaciones",
-              route: "meditaciones",
-              description: "Prácticas para el trabajo interior.",
-              icon: "ph:file-text-duotone",
-            },
-          ],
-        },
-        {
-          title: "Media",
-          items: [
-            {
-              title: "Audios",
-              route: "audios",
-              description: "Meditaciones, talleres, cuentos, canciones y materiales sonoros.",
-              icon: "ph:music-notes-duotone",
-            },
             {
               title: "Radio Tseyor",
               route: "radio",
               description: "Escucha la radio online de TSEYOR.",
               icon: "ph:radio-duotone",
+            },
+            {
+              title: "Psicografías",
+              route: "psicografias",
+              description: "Láminas para el trabajo de abstracción.",
+              icon: "ph:image-duotone",
             },
             {
               title: "Vídeos",
@@ -139,14 +128,13 @@ export default [
               icon: "ph:youtube-logo-duotone",
             },
             {
-              title: "Psicografías",
-              route: "psicografias",
-              description: "Láminas para el trabajo de abstracción.",
+              title: "Galerías",
+              route: "galerias",
+              description: "Fotografías, arte y memoria visual de la comunidad.",
               icon: "ph:image-duotone",
             },
           ],
         },
-
       ],
     },
   },
@@ -161,10 +149,11 @@ export default [
           title: "Filosofía",
           items: [
             {
-               title: "Nuestra filosofía",
-               route: "filosofia",
-               description: "Filosofía de las estrellas, conciencia, autodescubrimiento y Sociedades Armónicas.",
-               icon: "ph:fish-simple-duotone",
+              title: "Nuestra filosofía",
+                route: "filosofia",
+                description: "Filosofía de las estrellas, conciencia, autodescubrimiento y Sociedades Armónicas.",
+                icon: "ph:fish-simple-duotone",
+                mobileShow: true,
              },
              {
                title: "Todos los temas",
@@ -173,10 +162,11 @@ export default [
                icon: "ph:list-dashes-duotone",
              },
              {
-               title: "Guías Estelares",
-              route: "guias",
-              description: "Conoce a los Guías Estelares de la Confederación de Mundos Habitados de la Galaxia.",
-              icon: "ph:user-gear-duotone",
+              title: "Guías Estelares",
+               route: "guias",
+               description: "Conoce a los Guías Estelares de la Confederación de Mundos Habitados de la Galaxia.",
+               icon: "ph:user-gear-duotone",
+               mobileShow: true,
             },
             {
               title: "Orígenes de TSEYOR",
@@ -236,9 +226,10 @@ export default [
           items: [
             {
               title: "Quiénes somos",
-              route: "quienes-somos",
-              description: "Conoce la comunidad TSEYOR, su origen, propósito y forma de trabajar.",
-              icon: "ph:users-three-duotone",
+               route: "quienes-somos",
+               description: "Conoce la comunidad TSEYOR, su origen, propósito y forma de trabajar.",
+               icon: "ph:users-three-duotone",
+               mobileShow: true,
             },
             {
               title: "ONG Mundo Armónico TSEYOR",
@@ -277,9 +268,10 @@ export default [
             },
             {
               title: "Contactar",
-              route: "contactar",
-              description: "Ponte en contacto con nosotros.",
-              icon: "ph:envelope-duotone",
+               route: "contactar",
+               description: "Ponte en contacto con nosotros.",
+               icon: "ph:envelope-duotone",
+               mobileShow: true,
             },
           ],
         },
@@ -298,15 +290,17 @@ export default [
           items: [
             {
               title: "Novedades",
-              route: "novedades",
-              description: "Los contenidos más recientes de TSEYOR.",
-              icon: "ph:clock-counter-clockwise-duotone",
+               route: "novedades",
+               description: "Los contenidos más recientes de TSEYOR.",
+               icon: "ph:clock-counter-clockwise-duotone",
+               mobileShow: true,
             },
             {
               title: "Eventos",
-              route: "eventos",
-              description: "Cursos, convivencias y encuentros próximos.",
-              icon: "ph:calendar-duotone",
+               route: "eventos",
+               description: "Cursos, convivencias y encuentros próximos.",
+               icon: "ph:calendar-duotone",
+               mobileShow: true,
             },
             {
               title: "Noticias",
@@ -351,132 +345,11 @@ export default [
       ],
     },
   },
-    {
+  {
     title: "Blog",
     icon: "ph:pencil-line-duotone",
     route: "blog",
     open: false,
-    /*submenu: {
-      sections: [
-        {
-          title: "Blog",
-          items: [
-            {
-              title: "Blog",
-              route: "blog",
-              description: "Vivencias, encuentros, imágenes y vida de la comunidad TSEYOR.",
-              icon: "ph:pencil-line-duotone",
-            },
-          ],
-        },
-      ],
-    },*/
-  },
-  {
-    title: "Miembros",
-    icon: "ph:globe-duotone",
-    open: false,
-    submenu: {
-      header: "Para miembros de TSEYOR",
-      sections: [
-        {
-          title: "Equipos",
-          items: [
-            {
-              title: "Equipos",
-              route: "equipos",
-              description: "Equipos de trabajo.",
-              icon: "ph:users-four-duotone",
-            },
-            {
-              title: "Usuarios",
-              route: "usuarios",
-              description: "Listado de usuarios.",
-              icon: "ph:users-duotone",
-            },
-            {
-              title: "Informes",
-              route: "informes",
-              description: "Informes de los equipos.",
-              icon: "ph:files-duotone",
-            },
-            {
-              title: "Salas",
-              route: "salas",
-              description: "Salas virtuales de reuniones.",
-              icon: "ph:chat-teardrop-text-duotone",
-            },
-          ],
-        },
-        {
-          title: "Documentación y comunidad",
-          items: [
-            {
-              title: "Normativas",
-              route: "normativas",
-              description: "Estatutos, protocolos y normativas.",
-              icon: "ph:hand-palm-duotone",
-            },
-            {
-              title: "Archivos",
-              route: "archivos0",
-              description: "Archivos y documentos en carpetas.",
-              icon: "ph:archive-box-duotone",
-            },
-            {
-              title: "Experiencias",
-              route: "experiencias",
-              description: "Experiencias compartidas por miembros y participantes.",
-              icon: "ph:butterfly-duotone",
-            },
-            {
-              title: "Publicaciones",
-              route: "publicaciones",
-              description: "Publicaciones de los miembros de la comunidad.",
-              icon: "ph:flower-duotone",
-              disabled: true,
-            },
-          ],
-        },
-        {
-          title: "Herramientas",
-          items: [
-            {
-              title: "Muular Electrónico",
-              url: APP_MUULAR_URL_REDIRECT,
-              external: true,
-              target: "_blank",
-              rel: "noopener noreferrer",
-              description: "Intercambio de bienes y servicios.",
-              icon: "ph:swap-duotone",
-            },
-            {
-              title: "Sello de TSEYOR",
-              route: "sello",
-              description: "Meditación con el sello de TSEYOR.",
-              component: markRaw(ApplicationMark),
-            },
-            {
-              title: "Juego del puzle",
-              url: APP_PUZLE_URL,
-              external: true,
-              target: "_blank",
-              description: "Juego del puzle con las láminas de abstracción.",
-              icon: "ph:puzzle-piece-duotone",
-            },
-            {
-              title: "TSEYOR Canva",
-              url: APP_TSEYOR_CANVA_URL,
-              external: true,
-              target: "_blank",
-              rel: "noopener noreferrer",
-              description: "Aplicación para el diseño de carteles o anuncios.",
-              icon: "ph:paint-brush-duotone",
-              disabled: true,
-            },
-          ],
-        },
-      ],
-    },
+    mobileShow: true,
   },
 ];
