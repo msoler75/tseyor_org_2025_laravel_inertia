@@ -27,7 +27,7 @@ class FortifyServiceProvider extends ServiceProvider
             public function toResponse($request)
             {
                 // Log::info('Registrado   *****');
-                return redirect('/dashboard');
+                return redirect('/miembros');
             }
         });
 
@@ -47,7 +47,7 @@ class FortifyServiceProvider extends ServiceProvider
                     return Inertia::location($request->to);
                 }
                 // 3. Redirigir al dashboard por defecto
-                return redirect('/dashboard');
+                return redirect('/miembros');
             }
         });
     }
