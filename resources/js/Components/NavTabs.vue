@@ -71,7 +71,9 @@ function leaveTab(tab) {
     }
 
     nav.unhoverTab(tab)
-    nextTick(updateUnderscore)
+    // NO actualizamos underscore aquí — que se quede en la última posición.
+    // Si lo actualizamos, el underscore se oculta en left:0 y al volver a aparecer
+    // en el siguiente tab, la transición lo anima desde 0 en vez de desde su posición.
 }
 
 const underscoreShow = ref(false)
