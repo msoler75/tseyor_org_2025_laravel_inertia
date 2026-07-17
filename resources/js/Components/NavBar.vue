@@ -56,7 +56,7 @@
                     class="hidden lg:flex shrink-0 items-center"
                     @mouseover="nav.closeTabs()"
                 >
-                    <Link :href="route('portada')" >
+                    <Link :href="route('portada')" class="focus-visible:outline-2 focus-visible:outline-secondary rounded-full">
                         <ApplicationMark class="w-12 h-12 border-2 hover:ring-4 ring-secondary "/>
                     </Link>
                 </div>
@@ -67,12 +67,7 @@
                     class="hidden h-full lg:flex top-navigation grow justify-center"
                 />
 
-                <div
-                    v-if="false && selectors.developerMode"
-                    class="mx-auto flex gap-2"
-                >
-                    <!-- Area for dev tools -->
-                </div>
+
 
 
                 <ClientOnly>
@@ -178,11 +173,7 @@ function updateSpecialCaseTheme() {
 
 onMounted(() => {
 
-    // El tema inicial ya se aplica automáticamente en el store
-
     window.addEventListener("keydown", handleKey);
-
-    window.addEventListener("mousemove", handleMouse);
 
     watch(
         () => `${nav.scrollY}+${portada.value}`,
@@ -195,18 +186,9 @@ onMounted(() => {
 
 });
 
-
-function handleMouse(event) {
-    // si el mouse se mueve muy rápido, entenderemos que el usuario no quiere ir al menú
-    // console.log("mousemove", event.movementX, event.movementY);
-    /*if (Math.abs(event.movementX) + Math.abs(event.movementY)>200) {
-        nav.closeTabs();
-        nav.movingFast = true
-    }
-    else {
-        nav.movingFast = false
-    }*/
-}
+onBeforeUnmount(() => {
+    window.removeEventListener("keydown", handleKey);
+});
 
 ////////////////////////
 // DEV LOGINS

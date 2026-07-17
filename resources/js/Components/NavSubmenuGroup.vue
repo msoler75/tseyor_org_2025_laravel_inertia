@@ -6,7 +6,7 @@
         <div  :class="classItems?classItems:'flex flex-col gap-7 mb-7'">
             <component :is="item.disabled?'div':(item.external?'a':NavLink)" :target="item.target" :href="item.url"
             v-for="item of items" :key="item.url" @click="nav.closeTabs()"
-            class="group flex gap-3 p-3 rounded-lg hover:bg-secondary/5 transition duration-100 cursor-pointer relative"
+            class="group flex gap-3 p-3 rounded-lg hover:bg-secondary/5 focus-visible:bg-secondary/10 focus-visible:ring-2 focus-visible:ring-primary transition duration-100 cursor-pointer relative"
             :class="item.class+(item.disabled?' pointer-events-none':'')">
                 <div class="flex justify-start" style="min-width:2.2rem">
                     <Icon v-if="item.icon":icon="item.icon" class="text-3xl text-primary group-hover:text-secondary shrink-0" :class="item.disabled?'text-gray-500!':''"/>
