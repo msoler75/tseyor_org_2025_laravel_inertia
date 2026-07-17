@@ -68,6 +68,8 @@
         </PageWide>
 
 
+        <RadioInstallButton />
+
         <PageFooter>
             <Comentarios :url="route('radio.emisora', selectors.emisoraRadio)" />
         </PageFooter>

@@ -25,6 +25,16 @@ import { createPinia } from 'pinia';
   window.defineAsyncComponent = defineAsyncComponent;
 }*/
 
+// Suprimir errores de extensiones del navegador que no son de la app
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', (event) => {
+    const msg = event.reason?.message || ''
+    if (msg.includes('Cannot find menu item with id')) {
+      event.preventDefault()
+    }
+  })
+}
+
 // Deshabilitar restauración automática de scroll del navegador
 /*if (typeof window !== 'undefined') {
   window.history.scrollRestoration = 'manual';
