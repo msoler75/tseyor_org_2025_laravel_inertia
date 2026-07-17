@@ -103,12 +103,19 @@ export const useNavStore = defineStore('nav', {
 
     _in(tab, url) {
       // comprueba si la ruta está en alguno de los items del tab
-      if (tab.url && url.indexOf(tab.url) >= 0) return true;
+      if (tab.url) {
+        if (tab.url === '/') {
+          if (url === '/' || url === '') return true;
+        } else {
+          if (url === tab.url || url.startsWith(tab.url + '/')) return true;
+        }
+      }
       if (!tab.hasItems) return false;
       return !!tab.submenu?.sections
         .find((section)=>section.groups.find((group) =>
             group.items.find((item) => {
-            return url.indexOf(item.url) >= 0;
+            if (!item.url) return false;
+            return item.url === '/' ? (url === '/' || url === '') : (url === item.url || url.startsWith(item.url + '/'));
           })
         ))
     },
