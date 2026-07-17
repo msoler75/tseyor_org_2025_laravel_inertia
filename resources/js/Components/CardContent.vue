@@ -122,7 +122,7 @@ const descriptionFinal = computed(() => {
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: linear-gradient(to bottom, transparent 70%, #fff 100%);
-    pointer-events: none; /* Permite interactuar con el texto subyacente */
+    background-image: linear-gradient(to bottom, transparent 70%, var(--color-base-100) 100%);
+    pointer-events: none;
 }
 </style>
