@@ -22,54 +22,23 @@
 
         <template #content>
             <!-- Account Management -->
-            <div class="font-bold px-4 py-2">
-                <Link href="/dashboard">{{ $page.props.auth.user.name }}</Link>
+            <div class="font-bold px-4 py-2 text-gray-800 dark:text-gray-200">
+                {{ $page.props.auth.user.name }}
             </div>
 
-            <DropdownLink :href="route('mis_archivos')">
-                Mis Archivos
-            </DropdownLink>
+            <div class="px-2 pb-2">
+                <Link href="/miembros"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary hover:text-secondary border border-primary/20 transition-all duration-200 text-sm font-semibold">
+                    <Icon icon="ph:user-circle-duotone" class="text-xl" />
+                    Mi Panel
+                    <Icon icon="ph:arrow-right" class="ml-auto text-lg" />
+                </Link>
+            </div>
 
-            <DropdownLink href="/equipos?categoria=Mis equipos">
-                Mis Equipos
-            </DropdownLink>
-
-            <DropdownLink v-if="$page.props.auth.user?.tiene_inscripciones_asignadas" :href="route('inscripciones.mis-asignaciones')">
-                Gestión de inscritos
-            </DropdownLink>
-
-            <DropdownLink :href="route('usuario', $page.props.auth.user.id)">
-                Mi perfil público
-            </DropdownLink>
-
-            <DropdownLink v-if="false" href="/muul">
-                Espacio Muul
-            </DropdownLink>
-
-            <DropdownLink :href="route('profile.show')">
-                Mi Cuenta
-            </DropdownLink>
-
-            <DropdownLink v-if="userStore.permisos.length" href="/admin/dashboard" as="a">
-                Panel de administrador
-            </DropdownLink>
-
-            <FontSizeControls class="pl-4 pb-2"/>
-
-            <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
-                API Tokens
-            </DropdownLink>
-
-            <div v-if="userStore.saldo != ''" class="border-t border-gray-200 dark:border-gray-600" />
-
-            <DropdownLink as="a" href="/muular-electronico" v-if="userStore.saldo != '' && userStore.saldo != 'Error'"
-                title="Muular electrónico">
-                Saldo: <span class="font-bold">{{ userStore.saldo }}</span> <small>muulares</small>
-            </DropdownLink>
+            <FontSizeControls class="pl-3 pb-2"/>
 
             <div class="border-t border-gray-200 dark:border-gray-600" />
 
-            <!-- Authentication -->
             <form @submit.prevent="logout">
                 <DropdownLink as="button">
                     Cerrar Sesión
