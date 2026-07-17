@@ -245,7 +245,7 @@ function cambiarUsuario() {
     console.log('cambiarUsuario')
     axios.post(route('admin.loginAs', props.usuario.id))
     .then((response) => {
-        location.reload()
+        window.location.href = response.data.redirect
     })
 }
 

@@ -100,7 +100,10 @@ return [
     'middleware_class' => [
         App\Http\Middleware\CheckIfAdmin::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \Backpack\CRUD\app\Http\Middleware\AuthenticateSession::class,
+        // \Backpack\CRUD\app\Http\Middleware\AuthenticateSession::class,
+        // Desactivado: captura al admin al construirse y guarda su password_hash en sesión,
+        // rompiendo loginAs al dejar user_id del target + hash del admin.
+        // Jetstream's AuthenticateSession detecta el mismatch y hace logout.
         // \Backpack\CRUD\app\Http\Middleware\UseBackpackAuthGuardInsteadOfDefaultAuthGuard::class,
     ],
 
