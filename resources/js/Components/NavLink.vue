@@ -8,7 +8,7 @@ const props = defineProps({
     active: Boolean,
 });
 
-const baseClass = 'inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 focus:outline-hidden transition duration-150 ease-in-out';
+const baseClass = 'inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 focus-visible:outline-2 focus-visible:outline-secondary transition duration-150 ease-in-out';
 
 const classes = computed(() => {
     return [
@@ -23,7 +23,7 @@ const classes = computed(() => {
 </script>
 
 <template>
-    <component :is="href ? Link : 'div'" :href="href" :class="classes">
+    <component :is="href ? Link : 'button'" :class="classes" v-bind="href ? { href } : { type: 'button' }">
         <slot />
     </component>
 </template>
