@@ -2,8 +2,8 @@
     <div class="flex flex-wrap items-center gap-3">
         <slot></slot>
 
-        <div class="flex items-center ml-auto w-full">
-            <form @submit.prevent="submit" class="w-full relative flex">
+        <div class="flex items-center ml-auto" :class="compact ? '' : 'w-full'">
+            <form @submit.prevent="submit" class="relative flex" :class="compact ? '' : 'w-full'">
             <div class="flex w-full rounded-xl overflow-hidden border border-gray-500/50 relative">
                 <div class="relative flex-1">
                     <input class="search-input focus:bg-base-100 bg-transparent px-6 py-3 border-0 outline-none
@@ -60,7 +60,8 @@ const props = defineProps({
     },
     arguments: {},
     doSearch: { type: Boolean, default: true },
-    reloadOnClear: {type: Boolean, default: true} // al limpiar, se recarga la página
+    reloadOnClear: {type: Boolean, default: true},
+    compact: { type: Boolean, default: false },
 })
 
 const query = ref(props.modelValue);
