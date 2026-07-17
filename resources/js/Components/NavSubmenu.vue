@@ -10,7 +10,7 @@
                     :key="index"/>
                 </div>
             </div>
-            <div v-if="nav.activeTab.submenu?.footer" v-html="nav.activeTab.submenu?.footer" class="p-5 bg-base-100" />
+            <div v-if="nav.activeTab.submenu?.footer" class="p-5 bg-base-100">{{ nav.activeTab.submenu?.footer }}</div>
         </div>
     </div>
 </template>

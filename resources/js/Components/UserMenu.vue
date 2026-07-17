@@ -53,7 +53,8 @@ import useUserStore from '@/Stores/user'
 const userStore = useUserStore()
 
 const logout = () => {
-    userStore.borrarPermisos()
-    router.post(route('logout'));
+    router.post(route('logout'), {}, {
+        onSuccess: () => userStore.borrarPermisos()
+    });
 };
 </script>
