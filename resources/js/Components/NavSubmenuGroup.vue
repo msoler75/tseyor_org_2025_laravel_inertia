@@ -4,7 +4,7 @@
             title }}
         </div>
         <div  :class="classItems?classItems:'flex flex-col gap-7 mb-7'">
-            <component :is="item.disabled?'div':(item.external?'a':NavLink)" :target="item.target" :href="item.url"
+            <component :is="item.disabled?'div':(item.external?'a':NavLink)" :target="item.target" :href="item.url" :rel="item.external ? 'noopener noreferrer' : undefined"
             v-for="item of items" :key="item.url" @click="nav.closeTabs()"
             class="group flex gap-3 p-3 rounded-lg hover:bg-secondary/5 focus-visible:bg-secondary/10 focus-visible:ring-2 focus-visible:ring-primary transition duration-100 cursor-pointer relative"
             :class="item.class+(item.disabled?' pointer-events-none':'')">

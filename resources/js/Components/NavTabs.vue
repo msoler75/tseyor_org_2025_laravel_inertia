@@ -85,8 +85,8 @@ function updateUnderscore() {
     }
 
     // Prioridad: 1. Tab con hover, 2. Tab actual según URL
-    const elem = document.querySelector('.nav-tab.hovering') ||
-                 document.querySelector('.nav-tab.current-tab')
+    const targetTab = nav.tabHovering || nav.items.find(t => t.current)
+    const elem = targetTab ? container.value.querySelector(`[data-nav-tab="${nav.items.indexOf(targetTab)}"]`) : null
 
     if(!elem || !elem.getBoundingClientRect) {
         underscoreShow.value = false
