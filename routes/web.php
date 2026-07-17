@@ -369,6 +369,10 @@ Route::middleware([
             'esMuul' => $user && $user->grupos()->where('slug', 'muul')->exists(),
         ]);
     })->name('miembros');
+
+    Route::get('trabajos-arte', function () {
+        return Inertia::render('TrabajosArte');
+    })->name('trabajos.arte');
 });
 
 
