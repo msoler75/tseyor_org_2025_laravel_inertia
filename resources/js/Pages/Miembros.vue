@@ -1,357 +1,176 @@
 <template>
     <div class="py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <div class="flex items-center gap-5 mb-10">
-            <Avatar imageClass="w-16 h-16 ring-4 ring-secondary/30 rounded-full" :user="$page.props.auth.user" :link="false" />
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">
-                    Bienvenid@, {{ $page.props.auth.user.name }}
-                </h1>
-                <p class="text-gray-500 dark:text-gray-400 mt-1">Tu espacio personal en TSEYOR</p>
+        <div class="flex items-center gap-3 mb-8 sm:mb-10">
+            <Avatar imageClass="w-11 h-11 sm:w-14 sm:h-14 ring-2 ring-secondary/30 rounded-full" :user="$page.props.auth.user" :link="false" />
+            <div class="min-w-0 flex-1">
+                <h1 class="text-lg sm:text-2xl font-bold text-base-content my-0">{{ $page.props.auth.user.name }}</h1>
+                <p class="text-sm text-base-content/40 my-0">Tu espacio en TSEYOR</p>
             </div>
+            <FontSizeControls />
         </div>
 
-        <section class="mb-12">
-            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
-                <Icon icon="ph:user-duotone" class="text-xl" />
-                mi espacio
-            </h2>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <Link :href="route('usuario', $page.props.auth.user.id)"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:user-circle-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Mi Perfil</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Tu perfil público y datos personales</p>
-                    </div>
-                </Link>
-
-                <Link :href="route('mis_archivos')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:folder-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Mis Archivos</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Tus documentos, imágenes y recursos</p>
-                    </div>
-                </Link>
-
-                <Link href="/equipos?categoria=Mis equipos"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:users-three-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Mis Equipos</h3>
-                        <p v-if="misEquipos > 0" class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Participas en {{ misEquipos }} equipo{{ misEquipos !== 1 ? 's' : '' }}</p>
-                        <p v-else class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Aún no formas parte de ningún equipo</p>
-                    </div>
-                </Link>
-
-                <Link :href="route('profile.show')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:gear-six-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Mi Cuenta</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Configuración de tu cuenta y preferencias</p>
-                    </div>
-                </Link>
-            </div>
-        </section>
-
-        <section class="mb-12">
-            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
-                <Icon icon="ph:coin-duotone" class="text-xl" />
-                Muular
-            </h2>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <a v-if="userStore.saldo !== 'Error'" href="/muular-electronico"
-                    class="group col-span-1 sm:col-span-2 lg:col-span-2 relative overflow-hidden rounded-xl bg-gradient-to-br from-rose-500 via-rose-600 to-rose-700 shadow-md hover:shadow-xl transition-all duration-300">
-                    <div class="absolute inset-0 opacity-[0.06]">
-                        <Icon icon="ph:currency-circle-dollar-duotone" class="text-[300px] absolute -right-16 -top-16 text-white" />
-                    </div>
-                    <div class="relative p-6">
-                        <div class="flex items-center gap-4">
-                            <div class="shrink-0 w-14 h-14 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-                                <Icon icon="ph:currency-circle-dollar-duotone" class="text-3xl text-white" />
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-white/90 text-lg">Muular Electrónico</h3>
-                                <p class="text-white/60 text-sm">Tu moneda digital TSEYOR</p>
-                            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div v-for="section in sections" :key="section.id"
+                :class="section.wide ? 'md:col-span-2' : ''"
+                class="border border-base-300 rounded-xl overflow-hidden bg-base-100">
+                <div class="bg-base-200/80 px-4 py-2 flex items-center gap-2 border-b border-base-300">
+                    <Icon :icon="section.titleIcon" class="text-base" :class="section.titleColor" />
+                    <span class="text-sm font-semibold text-base-content/60 uppercase tracking-wider">{{ section.title }}</span>
+                </div>
+                <div class="p-2 grid gap-1" :class="section.wide && section.items.length >= 3 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2'">
+                    <component
+                        v-for="item in section.items.filter(i => i.show !== false)"
+                        :key="item.label"
+                        :is="item.external ? 'a' : Link"
+                        :href="item.to"
+                        :target="item.external ? '_blank' : undefined"
+                        :rel="item.external ? 'noopener noreferrer' : undefined"
+                        class="group flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-base-200/50 transition-colors duration-150">
+                        <div class="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center transition-colors duration-200"
+                            :class="iconClasses(item.color)">
+                            <Icon :icon="item.icon" class="text-4xl" />
                         </div>
-                        <div class="mt-5 flex items-baseline gap-2">
-                            <span class="text-5xl font-bold tracking-tight text-white">{{ userStore.saldo ?? '0' }}</span>
-                            <span class="text-white/60 text-lg font-medium">muulares</span>
+                        <div class="min-w-0">
+                            <span class="text-sm font-semibold text-base-content/70">{{ item.label }}</span>
+                            <span v-if="item.badge" class="text-sm font-bold ml-1.5" :class="item.badgeClasses">{{ item.badge }}</span>
                         </div>
-                        <div class="mt-4 flex items-center gap-2 text-white/80 text-sm font-medium group-hover:text-white transition-colors">
-                            <span>Gestionar mi muular</span>
-                            <Icon icon="ph:arrow-right" class="text-lg transition-transform group-hover:translate-x-1" />
-                        </div>
-                    </div>
-                </a>
-                <a v-else href="/contactar"
-                    class="group col-span-1 sm:col-span-2 lg:col-span-2 relative overflow-hidden rounded-xl bg-gradient-to-br from-rose-500/80 to-rose-700/80 shadow-md hover:shadow-xl transition-all duration-300 border-2 border-dashed border-rose-300 dark:border-rose-600">
-                    <div class="relative p-6 flex items-center gap-5">
-                        <div class="shrink-0 w-14 h-14 flex items-center justify-center rounded-full bg-white/20">
-                            <Icon icon="ph:currency-circle-dollar-duotone" class="text-3xl text-white" />
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-white text-lg">Muular Electrónico</h3>
-                            <p class="text-white/70 text-sm mt-1">Solicita tu muular electrónico y únete a la economía TSEYOR</p>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="/muular"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 group-hover:bg-rose-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:info-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">¿Qué es el Muular?</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Conoce nuestra moneda de intercambio</p>
-                    </div>
-                </a>
+                    </component>
+                </div>
             </div>
-        </section>
-
-        <section class="mb-12">
-            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
-                <Icon icon="ph:users-four-duotone" class="text-xl" />
-                Trabajos de la comunidad
-            </h2>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <Link :href="route('equipos')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:users-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Equipos</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Colabora en equipos de trabajo</p>
-                    </div>
-                </Link>
-
-                <Link :href="route('experiencias')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:star-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Experiencias</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Comparte y lee experiencias de la comunidad</p>
-                    </div>
-                </Link>
-
-                <Link :href="route('archivos0')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 group-hover:bg-sky-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:archive-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Archivos</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Documentos y recursos compartidos</p>
-                    </div>
-                </Link>
-
-                <Link :href="route('trabajos.arte')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 group-hover:bg-violet-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:palette-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Trabajos de Arte</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Creaciones artísticas de la comunidad</p>
-                    </div>
-                </Link>
-
-                <Link :href="route('usuarios')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:user-list-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Usuarios</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Conoce a los miembros de la comunidad</p>
-                    </div>
-                </Link>
-
-                <Link :href="route('salas')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 group-hover:bg-teal-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:chat-circle-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Salas</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Espacios de conversación y encuentro</p>
-                    </div>
-                </Link>
-            </div>
-        </section>
-
-        <section class="mb-12">
-            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
-                <Icon icon="ph:wrench-duotone" class="text-xl" />
-                Herramientas de la comunidad
-            </h2>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <a href="/tseyor-canva"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:palette-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">CANVA Tseyor</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Herramienta de diseño colaborativo</p>
-                    </div>
-                </a>
-
-                <a href="https://puzle.tseyor.org/" target="_blank" rel="noopener noreferrer"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 group-hover:bg-teal-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:puzzle-piece-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Puzle</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Explora el puzle holográfico cuántico</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <section v-if="esIniciado" class="mb-12">
-            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
-                <Icon icon="ph:flower-lotus-duotone" class="text-xl" />
-                Iniciados en Interiorización
-            </h2>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <Link :href="route('equipo', 'iniciados-interiorizacion')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-indigo-200 dark:border-indigo-800 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:compass-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Espacio de Interiorización</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Accede al espacio del equipo</p>
-                    </div>
-                </Link>
-
-                <a href="/archivos/interiorizacion"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-indigo-200 dark:border-indigo-800 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:folder-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Archivos</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Documentos y recursos de interiorización</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <section v-if="esMuul" class="mb-12">
-            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
-                <Icon icon="ph:star-four-duotone" class="text-xl" />
-                Espacio Muul
-            </h2>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <a href="/muul"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-amber-200 dark:border-amber-800 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:compass-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Espacio Muul</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Tu centro de recursos muul</p>
-                    </div>
-                </a>
-
-                <Link :href="route('tarjeta.visita')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-amber-200 dark:border-amber-800 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:identification-card-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Tarjeta de Visita</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Crea y personaliza tu tarjeta de presentación</p>
-                    </div>
-                </Link>
-
-                <a href="/muul/correos.tseyor"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-amber-200 dark:border-amber-800 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:envelope-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Correos @tseyor.org</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Gestiona tu correo electrónico TSEYOR</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <section class="mb-12">
-            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
-                <Icon icon="ph:globe-duotone" class="text-xl" />
-                Herramientas de la comunidad
-            </h2>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <Link :href="route('archivos0')"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-900/30 text-slate-600 dark:text-slate-400 group-hover:bg-slate-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:archive-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Archivos de la comunidad</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Documentos, presentaciones y recursos compartidos</p>
-                    </div>
-                </Link>
-            </div>
-        </section>
-
-        <section v-if="userStore.permisos.length">
-            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
-                <Icon icon="ph:shield-check-duotone" class="text-xl" />
-                Administración
-            </h2>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <a href="/admin/dashboard"
-                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200">
-                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 group-hover:bg-red-500 group-hover:text-white transition-colors duration-200">
-                        <Icon icon="ph:shield-duotone" class="text-2xl" />
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Panel de Administración</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Gestiona contenidos, usuarios y configuración</p>
-                    </div>
-                </a>
-            </div>
-        </section>
+        </div>
     </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { usePage, Link } from '@inertiajs/vue3'
 import useUserStore from '@/Stores/user'
 
+const page = usePage()
 const userStore = useUserStore()
 
-defineProps({
-    misEquipos: {
-        type: Number,
-        default: 0
-    },
-    esMuul: {
-        type: Boolean,
-        default: false
-    },
-    esIniciado: {
-        type: Boolean,
-        default: false
+const props = defineProps({
+    misEquipos: { type: Number, default: 0 },
+    esMuul: { type: Boolean, default: false },
+    esIniciado: { type: Boolean, default: false }
+})
+
+const iconClasses = (color) => {
+    const map = {
+        primary: 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white',
+        secondary: 'bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white',
+        accent: 'bg-accent/10 text-accent group-hover:bg-accent group-hover:text-white',
+        warning: 'bg-warning/10 text-warning group-hover:bg-warning group-hover:text-white',
+        neutral: 'bg-neutral/10 text-neutral group-hover:bg-neutral group-hover:text-white',
+        error: 'bg-error/10 text-error group-hover:bg-error group-hover:text-white',
+        success: 'bg-success/10 text-success group-hover:bg-success group-hover:text-white',
     }
+    return map[color] || map.primary
+}
+
+const sections = computed(() => {
+    const uid = page.props.auth.user.id
+    const hasMuular = userStore.saldo !== 'Error'
+
+    const all = [
+        {
+            id: 'mi-espacio',
+            title: 'mi espacio',
+            titleIcon: 'ph:user-duotone',
+            titleColor: 'text-primary',
+            wide: true,
+            items: [
+                { label: 'Mi Perfil',      icon: 'ph:user-circle-duotone',       color: 'primary',   to: route('usuario', uid) },
+                { label: 'Mis Archivos',   icon: 'ph:folder-duotone',             color: 'accent',    to: route('mis_archivos') },
+                { label: 'Mis Equipos',    icon: 'ph:users-three-duotone',        color: 'secondary', to: '/equipos?categoria=Mis equipos' },
+                { label: 'Mi Cuenta',      icon: 'ph:gear-six-duotone',           color: 'neutral',   to: route('profile.show') },
+            ]
+        },
+        {
+            id: 'muular',
+            title: 'muular electrónico',
+            titleIcon: 'ph:coin-duotone',
+            titleColor: 'text-secondary',
+            wide: !props.esIniciado,
+            items: [
+                { label: 'Muulares',     icon: 'ph:currency-circle-dollar-duotone', color: 'secondary', to: '/muular-electronico', badge: userStore.saldo ?? '0', badgeClasses: 'text-info-content bg-info rounded-md p-1', show: hasMuular },
+                { label: 'Solicitar',  icon: 'ph:currency-circle-dollar-duotone', color: 'warning',   to: '/contactar',                                   show: !hasMuular },
+                { label: '¿Qué es?',   icon: 'ph:info-duotone',                   color: 'primary',   to: '/muular' },
+            ]
+        },
+        {
+            id: 'iniciados',
+            title: 'iniciados (interiorización)',
+            titleIcon: 'solar:meditation-round-bold-duotone',
+            titleColor: 'text-accent',
+            wide: false,
+            show: props.esIniciado,
+            items: [
+                { label: 'Interiorización', icon: 'solar:meditation-round-bold-duotone', color: 'accent',  to: route('equipo', 'iniciados-interiorizacion') },
+                { label: 'Carpeta de iniciados',        icon: 'ph:folder-duotone',  color: 'primary', to: '/archivos/interiorizacion' },
+            ]
+        },
+        {
+            id: 'trabajos',
+            title: 'trabajos de la comunidad',
+            titleIcon: 'ph:users-four-duotone',
+            titleColor: 'text-accent',
+            wide: true,
+            items: [
+                { label: 'Equipos',      icon: 'ph:users-duotone',   color: 'secondary', to: route('equipos') },
+                { label: 'Experiencias', icon: 'whh:thinking',    color: 'accent',    to: route('experiencias') },
+                { label: 'Archivos',     icon: 'ph:archive-duotone', color: 'primary',   to: route('archivos0') },
+                { label: 'Arte',         icon: 'ph:palette-duotone', color: 'warning',   to: route('trabajos.arte') },
+            ]
+        },
+        {
+            id: 'herramientas',
+            title: 'herramientas',
+            titleIcon: 'ph:wrench-duotone',
+            titleColor: 'text-warning',
+            wide: false,
+            items: [
+                { label: 'Tseyor Canva', icon: 'ph:palette-duotone',     color: 'accent',  to: '/tseyor-canva' },
+                { label: 'Puzle', icon: 'ph:puzzle-piece-duotone', color: 'primary', to: 'https://puzle.tseyor.org/', external: true },
+            ]
+        },
+        {
+            id: 'comunidad',
+            title: 'comunidad',
+            titleIcon: 'ph:user-list-duotone',
+            titleColor: 'text-primary',
+            wide: false,
+            items: [
+                { label: 'Usuarios', icon: 'ph:users-duotone',        color: 'primary',   to: route('usuarios') },
+                { label: 'Salas',    icon: 'ph:chat-circle-duotone',  color: 'secondary', to: route('salas') },
+            ]
+        },
+        {
+            id: 'espacio-muul',
+            title: 'espacio muul',
+            titleIcon: 'icon-park-twotone:eagle',
+            titleColor: 'text-primary',
+            wide: true,
+            show: props.esMuul,
+            items: [
+                { label: 'Espacio Muul',   icon: 'icon-park-twotone:eagle',             color: 'accent',    to: '/muul' },
+                { label: 'Tarjeta Visita', icon: 'ph:identification-card-duotone', color: 'primary',   to: route('tarjeta.visita') },
+                { label: 'Correos @tseyor.org',        icon: 'ph:envelope-duotone',            color: 'secondary', to: '/muul/correos.tseyor' },
+            ]
+        },
+        {
+            id: 'admin',
+            title: 'administración',
+            titleIcon: 'ph:shield-check-duotone',
+            titleColor: 'text-error',
+            wide: false,
+            show: userStore.permisos.length > 0,
+            items: [
+                { label: 'Panel Admin', icon: 'ph:shield-duotone', color: 'error', to: '/admin/dashboard' },
+            ]
+        },
+    ]
+
+    return all.filter(s => s.show !== false)
 })
 </script>
