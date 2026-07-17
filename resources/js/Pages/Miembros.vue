@@ -224,6 +224,36 @@
             </div>
         </section>
 
+        <section v-if="esIniciado" class="mb-12">
+            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
+                <Icon icon="ph:flower-lotus-duotone" class="text-xl" />
+                Iniciados en Interiorización
+            </h2>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <Link :href="route('equipo', 'iniciados-interiorizacion')"
+                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-indigo-200 dark:border-indigo-800 transition-all duration-200">
+                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-200">
+                        <Icon icon="ph:compass-duotone" class="text-2xl" />
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Espacio de Interiorización</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Accede al espacio del equipo</p>
+                    </div>
+                </Link>
+
+                <a href="/archivos/interiorizacion"
+                    class="group flex items-start gap-4 p-5 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md border border-indigo-200 dark:border-indigo-800 transition-all duration-200">
+                    <div class="shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-200">
+                        <Icon icon="ph:folder-duotone" class="text-2xl" />
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-secondary transition-colors">Archivos</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Documentos y recursos de interiorización</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
         <section v-if="esMuul" class="mb-12">
             <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-5 flex items-center gap-2">
                 <Icon icon="ph:star-four-duotone" class="text-xl" />
@@ -316,6 +346,10 @@ defineProps({
         default: 0
     },
     esMuul: {
+        type: Boolean,
+        default: false
+    },
+    esIniciado: {
         type: Boolean,
         default: false
     }
