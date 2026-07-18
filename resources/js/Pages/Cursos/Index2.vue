@@ -45,7 +45,7 @@
                         </div>
                     </div>
                     <div class="hidden justify-center [@media(min-width:870px)]:flex">
-                        <img src="/almacen/medios/paginas/curso.png" alt="Curso Holístico Tseyor" class="max-h-96 object-contain drop-shadow-2xl" />
+                        <Image src="/almacen/medios/paginas/curso.png" src-width="373" src-height="482" alt="Curso Holístico Tseyor" class="max-h-96 object-contain drop-shadow-2xl" />
                     </div>
                 </div>
             </div>
@@ -124,7 +124,7 @@
                             <h3 class="font-display font-bold text-base mb-0">Eliges tu modalidad</h3>
                         </div>
                         <p class="text-sm text-base-content/60 leading-relaxed mt-3 lg:mt-10">
-                            Presencial en un 
+                            Presencial en un
                             <Link href="/donde-estamos" class="text-primary hover:underline font-medium">centro cerca</Link> de ti
                             u online por videoconferencia.
                         </p>
