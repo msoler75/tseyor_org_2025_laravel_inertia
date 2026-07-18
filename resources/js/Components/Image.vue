@@ -1,11 +1,11 @@
 <template>
     <img
         v-if="!hydrated"
-        :src="imageSrc"
+        :src="placeholderSrc"
         :alt="alt"
         :title="title"
         class="is-image"
-        :style="ssrStyles"
+        :style="placeholderStyles"
     />
     <component
         v-else
@@ -156,11 +156,20 @@ const styles = computed(() => {
     return s;
 });
 
-const ssrStyles = computed(() => {
+const placeholderStyles = computed(() => {
     const s = {};
     if (props.width) s.width = fillUnits(props.width);
+    else if (props.srcWidth) s.width = fillUnits(props.srcWidth);
+    if (props.height) s.height = fillUnits(props.height);
+    else if (props.srcHeight) s.height = fillUnits(props.srcHeight);
     return s;
 });
+
+const placeholderSrc = computed(() => {
+    const w = getPixels(props.srcWidth) || getPixels(props.width) || 1
+    const h = getPixels(props.srcHeight) || getPixels(props.height) || 1
+    return `data:image/svg+xml,%3Csvg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E`
+})
 
 function getPixels(value) {
     if (typeof value === "number") return value;
