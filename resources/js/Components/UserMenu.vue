@@ -19,7 +19,7 @@
         </template>
 
         <template #content>
-            <div class="px-3 py-3">
+            <div class="px-3 py-3 min-w-40">
                 <div class="text-base font-semibold text-base-content leading-tight">{{ $page.props.auth.user.name }}</div>
             </div>
 
