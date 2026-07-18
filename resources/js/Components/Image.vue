@@ -92,6 +92,10 @@ const props = defineProps({
     quality: {
         type: Number,
         default: null
+    },
+    debug: {
+        type: Boolean,
+        default: false,
     }
 });
 
@@ -110,9 +114,9 @@ const enableImageLogs = ref(
 );
 
 // Función de logging condicional para el componente Image
-const log = (message, ...args) => {
-    if (enableImageLogs.value) {
-        log(`[Image] ${message}`, ...args);
+const dbg = (message, ...args) => {
+    if (props.debug || enableImageLogs.value) {
+        console.log(`[Image] ${props.src?.substring(0, 60) || '(no src)'} — ${message}`, ...args)
     }
 };
 
@@ -195,53 +199,49 @@ Hay varios tipos de situaciones:
 */
 
 function init() {
-    // if (!isClient) return // No ejecutamos en SSR
-
-    /*log(
-        "image:init()",
-        props.src,
-        "fallback:",
-        props.fallback,
-        "props.width:",
-        props.width,
-        "props.height:",
-        props.height
-    );*/
-
     if (!imageSrc.value) return;
+
+    dbg(`init() optimize=${props.optimize} srcWidth=${props.srcWidth} srcHeight=${props.srcHeight} width=${props.width} height=${props.height} priority=${props.priority}`)
 
     // si es una url absoluta y corresponde a otro servidor o no queremos optimización (1)
     if (
         !belongsToCurrentDomain(imageSrc.value) ||
-        //imageSrc.value.match(/https?:\/\/[^/]+/)?.[0] === myDomain ||
         !props.optimize
-    )
+    ) {
+        dbg(`→ (1) externa u optimize=false → putSrcImage directo`)
         return putSrcImage(imageSrc.value);
+    }
 
     // si ya está la imagen redimensionada (2)
-    if (imageSrc.value.match(/\?[wh]=/)) return putSrcImage(imageSrc.value);
+    if (imageSrc.value.match(/\?[wh]=/)) {
+        dbg(`→ (2) ya tiene ?w= o ?h= → putSrcImage directo`)
+        return putSrcImage(imageSrc.value);
+    }
 
     // Se ha establecido el tamaño mediante props (width y height) (3)
-    if (props.width && props.height)
-        // return putImageWithSize(props.width, props.height)
+    if (props.width && props.height) {
+        dbg(`→ (3) width+height props → putFakeImage(${props.width}x${props.height})`)
         return putFakeImage(props.width, props.height);
+    }
 
     // Se conoce el tamaño original de la imagen (4)
-    if (props.srcWidth && props.srcHeight)
+    if (props.srcWidth && props.srcHeight) {
+        dbg(`→ (4) srcWidth+srcHeight conocidos → putFakeImage(${props.srcWidth}x${props.srcHeight})`)
         return putFakeImage(
             getPixels(props.srcWidth),
             getPixels(props.srcHeight)
         );
+    }
 
-    if (!isClient) return; // No ejecutamos en SSR
+    if (!isClient) return;
 
     // Se debe recalcular sus dimensiones óptimas de visualización (5)
-    // así que primero se debe solicitar sus dimensiones originales al servidor
+    dbg(`→ (5) solicitando dimensiones al servidor...`)
     getImageSize(imageSrc.value)
         .then((originalSize) => {
-            log("getImageSize", imageSrc.value, { originalSize });
+            dbg("getImageSize result", { originalSize });
             if(originalSize.width==-1) {
-                // no existe la imagen, se usa la imagen fallback
+                dbg("imagen no existe, usando fallback")
                 emit('error')
                 if(props.fallback)
                     putSrcImage(props.fallback)
@@ -252,6 +252,7 @@ function init() {
             putFakeImage(originalSize.width, originalSize.height);
         })
         .catch((err) => {
+            dbg("ERROR getImageSize", err.message)
             console.warn('Imagen '+imageSrc.value+' no existe', err);
             errorLoading.value = true;
             emit('error')
@@ -287,46 +288,41 @@ function getDOMElement(ref) {
 }
 
 function putFakeImage(width, height) {
-    log("putFakeImage", width, height);
+    dbg(`putFakeImage(originalSize=${width}x${height})`)
     originalSize.width = width;
     originalSize.height = height;
     // generar una imagen transparent SVG con formato URI, debe tener ancho igual a size.width y alto igual a size.height
     displaySrc.value = `data:image/svg+xml,%3Csvg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E`;
 
-    if (!isClient) return; // No ejecutamos en SSR
+    if (!isClient) return;
     requestAnimationFrame(() => {
-        // obtenemos las dimensiones reales de visualización
         if (isMounted.value) {
             const domElement = getDOMElement(img.value);
-            log(
-                "after put fake image",
-                imageSrc.value,
-                "dimensions are",
-                domElement?.offsetWidth,
-                domElement?.offsetHeight
-            );
-            putImageWithSize(domElement?.offsetWidth, domElement?.offsetHeight);
+            const w = domElement?.offsetWidth
+            const h = domElement?.offsetHeight
+            dbg(`DOM dimensions after placeholder: ${w}x${h} (isMounted=true)`)
+            putImageWithSize(w, h);
         } else {
-            log("repeat fake image");
-            putFakeImage(width, height); // esperamos un poco más
+            dbg("repeat fake image (isMounted=false, retrying...)")
+            putFakeImage(width, height);
         }
-    }); // ya debe estar renderizado
+    });
 }
 
 async function putImageWithSize(widthOp, heightOp) {
-    // if (!isClient) return // No ejecutamos en SSR
-    log("image:putImageWithSize", imageSrc.value, widthOp, heightOp);
-    if (widthOp == originalSize.width && heightOp == originalSize.height)
+    dbg(`putImageWithSize(display=${widthOp}x${heightOp} original=${originalSize.width}x${originalSize.height})`)
+    if (widthOp == originalSize.width && heightOp == originalSize.height) {
+        dbg(`→ mismas dimensiones que original, putSrcImage sin redimension`)
         return putSrcImage(imageSrc.value);
-    // No forzar fmt, dejar que el servidor decida basado en el formato original
-    // const webp = await isWebPSupported();
+    }
     var src =
         imageSrc.value +
         "?w=" +
         Math.round(parseFloat(widthOp)) +
         "&h=" +
         Math.round(parseFloat(heightOp))
-        + (props.quality? 'q='+props.quality : '')
+        + (props.quality ? '&q='+props.quality : '')
+    dbg(`→ URL construida: ${src}`)
     putSrcImage(src);
 }
 
@@ -337,7 +333,7 @@ var scrollFallbackInterval = null;
 function startScrollFallback() {
     if (scrollFallbackInterval) return; // Ya está iniciado
 
-    log("🔄 Iniciando sistema de fallback basado en scroll");
+    dbg("🔄 Iniciando sistema de fallback basado en scroll");
 
     const checkVisibility = () => {
         if (isVisible.value) return;
@@ -351,7 +347,7 @@ function startScrollFallback() {
         const distanceFromViewport = rect.top - windowHeight;
 
         if (distanceFromViewport <= triggerDistance) {
-            log("🎯🔄 FALLBACK SCROLL: Elemento detectado como visible!");
+            dbg("🎯🔄 FALLBACK SCROLL: Elemento detectado como visible!");
             isVisible.value = true;
 
             // Limpiar el interval de fallback
@@ -372,12 +368,12 @@ function startScrollFallback() {
 // Inicializar IntersectionObserver desde el comienzo
 function initIntersectionObserver() {
     if (!isClient) {
-        log("⚠️ No está en cliente, no se puede inicializar observer");
+        dbg("⚠️ No está en cliente, no se puede inicializar observer");
         return;
     }
 
     if (observer) {
-        log("⚠️ Observer ya existe, evitando recrear");
+        dbg("⚠️ Observer ya existe, evitando recrear");
         return;
     }
 
@@ -388,7 +384,7 @@ function initIntersectionObserver() {
         return;
     }
 
-    log("🔧 Inicializando IntersectionObserver con configuración:", {
+    dbg("🔧 Inicializando IntersectionObserver con configuración:", {
         rootMargin: props.rootMargin,
         lazy: props.lazy,
         priority: props.priority,
@@ -398,7 +394,7 @@ function initIntersectionObserver() {
     // Verificar que el formato del rootMargin sea correcto
     const rootMarginFormatted = props.rootMargin.includes(' ') ? props.rootMargin : `${props.rootMargin} 0px ${props.rootMargin} 0px`;
 
-    log("📐 rootMargin formateado:", rootMarginFormatted);
+    dbg("📐 rootMargin formateado:", rootMarginFormatted);
 
     const options = {
         root: null, // viewport
@@ -408,11 +404,11 @@ function initIntersectionObserver() {
 
     observer = new IntersectionObserver(handleIntersection, options);
 
-    log("✅ IntersectionObserver creado exitosamente con opciones:", options);
+    dbg("✅ IntersectionObserver creado exitosamente con opciones:", options);
 
     // Verificar que el observer se creó correctamente
     if (observer.rootMargin) {
-        log("🎯 Observer rootMargin confirmado:", observer.rootMargin);
+        dbg("🎯 Observer rootMargin confirmado:", observer.rootMargin);
     } else {
         console.warn("⚠️ Observer no tiene rootMargin, puede ser un problema de formato");
     }
@@ -421,12 +417,12 @@ function initIntersectionObserver() {
     if (img.value) {
         const domElement = getDOMElement(img.value);
         if (domElement) {
-            log("🎯 Elemento img ya disponible, iniciando observación inmediata");
+            dbg("🎯 Elemento img ya disponible, iniciando observación inmediata");
             observer.observe(domElement);
 
             // Debug: información del elemento
             const rect = domElement.getBoundingClientRect();
-            log("📊 Info del elemento al iniciar observación:", {
+            dbg("📊 Info del elemento al iniciar observación:", {
                 top: rect.top,
                 bottom: rect.bottom,
                 height: rect.height,
@@ -437,7 +433,7 @@ function initIntersectionObserver() {
             console.warn("⚠️ No se pudo obtener elemento DOM válido desde img.value");
         }
     } else {
-        log("⏳ Elemento img no disponible aún, esperando...");
+        dbg("⏳ Elemento img no disponible aún, esperando...");
     }
 }
 
@@ -447,7 +443,7 @@ function handleIntersection(entries) {
         const rect = entry.boundingClientRect;
         const rootBounds = entry.rootBounds;
 
-        log("📡 IntersectionObserver callback activado:", {
+        dbg("📡 IntersectionObserver callback activado:", {
             isIntersecting: entry.isIntersecting,
             intersectionRatio: entry.intersectionRatio,
             rootMargin: props.rootMargin,
@@ -476,8 +472,8 @@ function handleIntersection(entries) {
         });
 
         if (entry.isIntersecting) {
-            log("👁️✅ ¡INTERSECCIÓN DETECTADA POR OBSERVER!");
-            log("📊 Detalles críticos:", {
+            dbg("👁️✅ ¡INTERSECCIÓN DETECTADA POR OBSERVER!");
+            dbg("📊 Detalles críticos:", {
                 intersectionRatio: entry.intersectionRatio,
                 distanceFromViewportTop: rect.top,
                 distanceFromViewportBottom: rect.top - window.innerHeight,
@@ -490,10 +486,10 @@ function handleIntersection(entries) {
 
             // Dejar de observar una vez detectada la visibilidad
             observer.unobserve(entry.target);
-            log("🔚 IntersectionObserver: dejando de observar elemento tras detección exitosa");
+            dbg("🔚 IntersectionObserver: dejando de observar elemento tras detección exitosa");
         } else {
-            log("👁️❌ Elemento aún NO visible");
-            log("📍 Posición actual:", {
+            dbg("👁️❌ Elemento aún NO visible");
+            dbg("📍 Posición actual:", {
                 elementTop: rect.top,
                 viewportHeight: window.innerHeight,
                 distanceToEnterViewport: rect.top - window.innerHeight,
@@ -512,36 +508,36 @@ const shouldLoadEagerly = computed(() => {
 let finalSrc = null;
 
 function putSrcImage(src) {
-    log("📥 putSrcImage called with:", src, "rootMargin:", props.rootMargin);
+    dbg(`putSrcImage(src=${src?.substring(0, 80)})`)
 
     finalSrc = src;
     finalImageConfigured.value = true;
 
     if (shouldLoadEagerly.value) {
         // Cargar inmediatamente para imágenes prioritarias o sin lazy loading
-        log("🚀 Cargando inmediatamente (shouldLoadEagerly=true)");
+        dbg("🚀 Cargando inmediatamente (shouldLoadEagerly=true)");
         loadFinalImage();
     } else if (isVisible.value) {
         // Si ya fue detectada como visible por IntersectionObserver, cargar inmediatamente
-        log("👁️ Imagen ya visible, cargando inmediatamente");
+        dbg("👁️ Imagen ya visible, cargando inmediatamente");
         loadFinalImage();
     } else {
         // Esperar a que IntersectionObserver detecte visibilidad
-        log("⏳ Esperando detección de visibilidad con rootMargin:", props.rootMargin);
-        log("📊 Estado actual: isVisible=", isVisible.value, "finalImageConfigured=", finalImageConfigured.value);
+        dbg("⏳ Esperando detección de visibilidad con rootMargin:", props.rootMargin);
+        dbg("📊 Estado actual: isVisible=", isVisible.value, "finalImageConfigured=", finalImageConfigured.value);
 
         // Asegurar que el observer esté observando este elemento
         if (observer && img.value) {
             const domElement = getDOMElement(img.value);
             if (domElement) {
-                log("👀 Iniciando observación del elemento:", domElement.className || domElement.tagName);
+                dbg("👀 Iniciando observación del elemento:", domElement.className || domElement.tagName);
                 observer.observe(domElement);
             } else {
                 console.warn("⚠️ No se pudo obtener elemento DOM válido para observación");
             }
         } else if (!observer && img.value) {
             // No hay observer disponible, usar fallback de scroll
-            log("🔄 No hay observer disponible, iniciando fallback de scroll");
+            dbg("🔄 No hay observer disponible, iniciando fallback de scroll");
             startScrollFallback();
         } else {
             console.warn("⚠️ Observer o img no disponible:", { observer: !!observer, img: !!img.value });
@@ -554,11 +550,11 @@ function putSrcImage(src) {
                 if (observer && img.value) {
                     const domElement = getDOMElement(img.value);
                     if (domElement) {
-                        log("🔄 Reintentando observación en nextTick");
+                        dbg("🔄 Reintentando observación en nextTick");
                         observer.observe(domElement);
                     }
                 } else if (!observer && img.value) {
-                    log("🔄 Iniciando fallback en nextTick");
+                    dbg("🔄 Iniciando fallback en nextTick");
                     startScrollFallback();
                 }
             });
@@ -568,18 +564,18 @@ function putSrcImage(src) {
 
 let imageElem = null;
 function loadFinalImage() {
-    log("🖼️ loadFinalImage starting with:", finalSrc);
+    dbg(`loadFinalImage() finalSrc=${finalSrc?.substring(0, 80)}`)
 
     // Evitar cargas duplicadas
     /*if (imageLoaded.value || !finalSrc) {
-        log("⚠️ Evitando carga duplicada:", { imageLoaded: imageLoaded.value, finalSrc: !!finalSrc });
+        dbg("⚠️ Evitando carga duplicada:", { imageLoaded: imageLoaded.value, finalSrc: !!finalSrc });
         return;
     }*/
 
     imageElem = new Image();
     imageElem.src = finalSrc;
     imageElem.onload = () => {
-        log("✅ Imagen cargada exitosamente:", finalSrc);
+        dbg(`✅ loadFinalImage OK`)
         imageLoaded.value = true;
         emit("loaded");
         displaySrc.value = imageElem.src;
@@ -596,7 +592,7 @@ function loadFinalImage() {
             const domElement = getDOMElement(img.value);
             if (domElement) {
                 observer.unobserve(domElement);
-                log("🔚 Observer desconectado tras carga exitosa");
+                dbg("🔚 Observer desconectado tras carga exitosa");
             }
         }
     };
@@ -609,9 +605,8 @@ function loadFinalImage() {
 }
 
 onMounted(() => {
-    log(`🚀 IMAGE MOUNTED: ${imageSrc.value}`);
-    log(`📏 rootMargin configurado:`, props.rootMargin);
-    log(`⚡ lazy:`, props.lazy, `priority:`, props.priority);
+    dbg(`IMAGE MOUNTED`)
+    dbg(`rootMargin: ${props.rootMargin} lazy: ${props.lazy} priority: ${props.priority}`)
     isMounted.value = true;
 
     // marcar como hydrated en el cliente para que la plantilla muestre la versión cliente
@@ -620,7 +615,7 @@ onMounted(() => {
     // SIEMPRE inicializar IntersectionObserver si lazy loading está habilitado
     if (props.lazy && !props.priority) {
         initIntersectionObserver();
-        log("📡 IntersectionObserver inicializado desde onMounted");
+        dbg("📡 IntersectionObserver inicializado desde onMounted");
     }
 
     // Inicializar la carga de la imagen
@@ -630,7 +625,7 @@ onMounted(() => {
 // Watcher para asegurar que el observer esté observando cuando el elemento esté listo
 watch(img, (newImg) => {
     if (newImg && !imageLoaded.value && props.lazy && !props.priority) {
-        log("🔍 Elemento img detectado en watcher, iniciando observación con rootMargin:", props.rootMargin);
+        dbg("🔍 Elemento img detectado en watcher, iniciando observación con rootMargin:", props.rootMargin);
 
         // Obtener el elemento DOM real
         const domElement = getDOMElement(newImg);
@@ -639,7 +634,7 @@ watch(img, (newImg) => {
             observer.observe(domElement);
         } else if (domElement && !observer) {
             // No hay observer, usar fallback
-            log("🔄 No hay observer en watcher, iniciando fallback de scroll");
+            dbg("🔄 No hay observer en watcher, iniciando fallback de scroll");
             startScrollFallback();
         } else {
             console.warn("⚠️ No se pudo obtener elemento DOM válido:", newImg);
@@ -651,7 +646,7 @@ watch(img, (newImg) => {
 watch(isVisible, (newIsVisible) => {
     if (newIsVisible && finalImageConfigured.value && finalSrc && !imageLoaded.value) {
         const detectionMethod = observer ? "IntersectionObserver" : "ScrollFallback";
-        log(`✅ isVisible cambió a true (método: ${detectionMethod}), cargando imagen final`);
+        dbg(`isVisible=true (method: ${detectionMethod}), loading final image`)
 
         loadFinalImage();
     }
