@@ -1,7 +1,7 @@
 <template>
     <!-- Hero -->
     <section id="hero" class="relative overflow-hidden py-16 md:pt-24"
-    style="background: url(/almacen/medios/portada/portada_tseyor_2026_hero.jpg) center center; background-size: cover"
+    :style="styleHero"
     >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div class="max-w-2xl bg-base-100/90 backdrop-blur-xs rounded-4xl p-7 relative mt-12">
@@ -60,7 +60,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div class="relative min-h-[300px] lg:min-h-[450px] rounded-2xl overflow-hidden bg-base-200 order-2 lg:order-1">
-                    <img src="/almacen/medios/paginas/todos-los-guias.jpg" alt="Guías Estelares"
+                    <Image src="/almacen/medios/paginas/todos-los-guias.jpg" alt="Guías Estelares"
+                        src-width="1920" src-height="1348"
                         class="absolute inset-0 w-full h-full object-cover"
                         loading="lazy" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
@@ -121,7 +122,7 @@
                     class="bg-base-100 rounded-3xl border border-base-300 overflow-hidden shadow-sm hover:shadow-md hover:border-primary/40 transition-all duration-300 flex flex-col justify-between h-full group">
                     <div>
                         <div class="h-48 relative overflow-hidden bg-base-200">
-                            <img :src="pagina.imagen" :alt="pagina.titulo" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                            <img :src="pagina.imagen+'?w=500'" :alt="pagina.titulo" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
                         </div>
                         <div class="p-5">
                             <h4 class="font-display font-bold text-base-content text-lg mb-2">{{ pagina.titulo }}</h4>
@@ -184,7 +185,8 @@
                 </div>
 
                 <div class="order-1 lg:order-2 relative min-h-[300px] lg:min-h-[400px] rounded-2xl overflow-hidden bg-base-200">
-                    <img src="/almacen/medios/portada/ong3.jpg" alt="ONG Tseyor"
+                    <Image src="/almacen/medios/portada/ong3.jpg" alt="ONG Tseyor"
+                        src-width="1672" src-height="941"
                         class="absolute inset-0 w-full h-full object-cover"
                         loading="lazy" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
@@ -233,7 +235,7 @@
                         <Link v-for="(entrada, i) in entradasRecientes.slice(0, 6)" :key="entrada.slug" :href="entrada.ruta"
                             class="relative aspect-square rounded-xl overflow-hidden group bg-base-200"
                             :class="i === 0 ? 'row-span-2 col-span-2' : ''">
-                            <img :src="entrada.imagen" :alt="entrada.titulo"
+                            <img :src="entrada.imagen+'?w=550'" :alt="entrada.titulo"
                                 class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                 loading="lazy" />
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
@@ -249,7 +251,8 @@
     <!-- Medita ahora -->
     <section class="relative bg-base-900 overflow-hidden min-h-[660px] lg:min-h-[740px] flex flex-col">
         <div class="absolute inset-0">
-            <img src="/almacen/medios/portada/mujer_meditando.jpg" alt=""
+            <Image src="/almacen/medios/portada/mujer_meditando.jpg" alt=""
+                src-width="2172" src-height="724"
                 class="w-full h-full object-cover"
                 style="object-position: 25% center" />
             <div class="absolute inset-0 bg-gradient-to-r from-base-content/80 via-base-content/40 to-base-content/20"></div>
@@ -327,7 +330,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div class="relative min-h-[300px] lg:min-h-[400px] rounded-2xl overflow-hidden bg-base-200 order-2 lg:order-1">
-                    <img src="/almacen/medios/portada/biblioteca_tseyor_2026.jpg" alt="Biblioteca Tseyor"
+                    <Image src="/almacen/medios/portada/biblioteca_tseyor_2026.jpg" alt="Biblioteca Tseyor"
+                        src-width="1448" src-height="1086"
                         class="absolute inset-0 w-full h-full object-cover"
                         loading="lazy" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
@@ -465,7 +469,9 @@
     <!-- CTA final -->
     <section class="relative py-24 lg:py-32 overflow-hidden">
         <div class="absolute inset-0">
-            <img src="/almacen/medios/portada/final.jpg" alt=""
+            <Image src="/almacen/medios/portada/final.jpg" alt=""
+                quality="50"
+                src-width="1916" src-height="821"
                 class="w-full h-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/85 to-primary/80"></div>
         </div>
@@ -579,6 +585,15 @@ function formatoDuracion(segundos) {
 
 const tiempoActual = computed(() => formatoDuracion(player.currentTime))
 const duracionTotal = computed(() => formatoDuracion(player.duration))
+
+
+const styleHero = ref({})
+
+onMounted(()=>{
+    styleHero.value = {background: 'url(/almacen/medios/portada/portada_tseyor_2026_hero.jpg?w='+screen.width*1.2+') center center', 'background-size': 'cover'}
+})
+
+
 </script>
 
 <style scoped>
