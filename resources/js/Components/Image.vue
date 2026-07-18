@@ -89,6 +89,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    quality: {
+        type: Number,
+        default: null
+    }
 });
 
 const emit = defineEmits(["loaded", "error"]);
@@ -321,7 +325,8 @@ async function putImageWithSize(widthOp, heightOp) {
         "?w=" +
         Math.round(parseFloat(widthOp)) +
         "&h=" +
-        Math.round(parseFloat(heightOp));
+        Math.round(parseFloat(heightOp))
+        + (props.quality? 'q='+props.quality : '')
     putSrcImage(src);
 }
 
