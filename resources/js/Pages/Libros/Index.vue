@@ -9,15 +9,16 @@
             </div>
         </div>
 
-        <TitleInfo title="Libros Tseyor">
-            <div>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales
-                </Referencia> (o comunicados telepáticos) mantenidas con nuestros <Referencia>Guías Estelares</Referencia>.
-            </div>
-
-            <div>La información se recoge en monografías (recopilación sobre un tema) y volúmenes de comunicados. También podéis encontrar obras vivenciales (memorias de convivencias realizadas por el grupo Tseyor), presentaciones, boletines, y otras obras temáticas.</div>
-
-            <div class="my-3">El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</div>
-        </TitleInfo>
+        <div class="flex justify-between items-start">
+            <TitleInfo title="Libros Tseyor">
+                <div>Libros que recogen toda la información de las <Referencia r="comunicados">conversaciones interdimensionales</Referencia>
+                    (o comunicados telepáticos) mantenidas con nuestros <Referencia>Guías Estelares</Referencia>.
+                </div>
+                <div>La información se recoge en monografías (recopilación sobre un tema) y volúmenes de comunicados. También podéis encontrar obras vivenciales (memorias de convivencias realizadas por el grupo Tseyor), presentaciones, boletines, y otras obras temáticas.</div>
+                <div class="my-3">El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</div>
+            </TitleInfo>
+            <FontSizeControls/>
+        </div>
 
         <div class="flex items-center justify-between gap-4 mb-5">
             <div class="flex items-center gap-2 shrink-0">
@@ -54,13 +55,13 @@
                     </GridAppear>
 
                     <GridAppear v-else
-                        class="grid gap-4 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(22rem,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(24rem,1fr))]"
+                        class="grid gap-4 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(22rem,1fr))]"
                         col-width="">
                         <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
                             :image="contenido.imagen" :href="route('libro', contenido.slug)"
                             :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
-                            image-left class="h-[43vw] xs:h-[200px] lg:h-[300px] 2xl:h-[355px]"
-                            imageClass="w-1/3 xs:h-full sm:w-[150px]  lg:w-[200px] lg:h-[300px] 2xl:w-[250px] 2xl:h-[355px]"
+                            imageClass="w-1/3 h-full   sm:w-[130px] lg:w-[170px]"
+                            image-left class="h-[43vw] sm:h-[200px] lg:h-[250px]"
                             image-contained :image-view-transition-name="`imagen-libro-${contenido.id}`">
                             <template #imagex>
                                 <div class="flex  w-full h-full items-center justify-center">
