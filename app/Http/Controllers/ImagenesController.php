@@ -76,7 +76,7 @@ class ImagenesController extends Controller
         $originalFormat = strtolower(pathinfo($imageFullPath, PATHINFO_EXTENSION));
         $defaultFormat = ($originalFormat === 'png') ? 'png' : 'webp';
         $formatRequested = $params["fmt"] ?? $defaultFormat;
-        $quality = $params["q"] ?? 70;
+        $quality = (int) ($params["q"] ?? 70);
 
         // decide si el entorno puede generar WebP
         $gdSupportsWebp = false;
@@ -155,8 +155,11 @@ class ImagenesController extends Controller
         }
 
         // Guardar directamente en el formato y calidad solicitados
-        // Intervention permite save(path, quality, format)
-        $image->save($cacheFullPath, $quality, $format);
+        // IMPORTANT: usar named argument 'quality:' — Intervention Image v3 filtra
+        // opciones por nombre con ARRAY_FILTER_USE_KEY. Con argumentos posicionales
+        // las claves son 0,1 y no coinciden con 'quality','strip' → se descartan.
+        \Illuminate\Support\Facades\Log::info("ImagenesController: saving format=$format quality=$quality path=$cacheFilename");
+        $image->save($cacheFullPath, quality: $quality);
 
         return response()->file($cacheFullPath, ['Content-Type' => $mime]);
     }
