@@ -19,7 +19,7 @@ class CursosController extends Controller
         $libro = Libro::where('slug', 'curso-holistico-tseyor')->first();
         $libroGuias = Libro::where('slug', 'los-guias-estelares')->first();
 
-        return Inertia::render('Cursos/Index2', [
+        return Inertia::render('Cursos/Index', [
             'proximosCursos' => $proximosCursos,
             'libro' => $libro,
             'libroGuias' => $libroGuias,
