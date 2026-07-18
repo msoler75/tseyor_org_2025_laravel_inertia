@@ -145,10 +145,6 @@ Route::get('', function (Request $request) {
     return app()->call([app(PaginasController::class), 'portada']);
 })->name('portada');
 
-Route::get('portada3', function () {
-    return app()->call([app(PaginasController::class), 'portada'], ['component' => 'Portada3']);
-})->name('portada.anterior');
-
 Route::get('novedades', [ContenidosController::class, 'index'])->name('novedades');
 Route::get('buscar', [ContenidosController::class, 'search'])->name('buscar');
 Route::post('buscar', [ContenidosController::class, 'searchStore'])->name('busqueda.guardar');
@@ -247,7 +243,7 @@ Route::get('centros', [CentrosController::class, 'index'])->name('centros');
 Route::get('centros/{slug}', [CentrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('centro');
 
 Route::get('quienes-somos', function () {
-    return Inertia::render('QuienesSomos/QuienesSomos2', [
+    return Inertia::render('QuienesSomos/Index', [
         'entradasRecientes' => \App\Models\Entrada::publicada()
             ->latest('published_at')
             ->limit(4)
@@ -270,9 +266,6 @@ Route::get('origenes-de-tseyor', function () {
 
 Route::get('filosofia/temas', [PaginasController::class, 'temas'])->name('filosofia.temas');
 Route::get('filosofia', [PaginasController::class, 'filosofia'])->name('filosofia');
-Route::get('filosofia2', function () {
-    return Inertia::render('Filosofia2')->withViewData(SEO::get('filosofia'));
-})->name('filosofia2');
 
 Route::get('cursos', [CursosController::class, 'index'])->name('cursos');
 
@@ -300,7 +293,7 @@ Route::post('contactar/enviar', [ContactarController::class, 'send'])->name('con
 Route::get('contactar/test', [ContactarController::class, 'test'])->name('contactar.test');
 
 Route::get('ong', function () {
-    return Inertia::render('Ong/Ong2', ['estatutosUrl'=>'/normativas/estatutos-ong-mundo-armonico-tseyor'])
+    return Inertia::render('Ong/Index', ['estatutosUrl'=>'/normativas/estatutos-ong-mundo-armonico-tseyor'])
         ->withViewData(SEO::get('ong'));
 })->name('ong');
 Route::get('ong/muular', function () {
