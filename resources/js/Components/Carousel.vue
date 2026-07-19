@@ -35,7 +35,7 @@
                 role="tab"
                 :aria-selected="i === current"
                 :aria-label="'Imagen ' + (i + 1) + ' de ' + images.length"
-                class="carousel-dot rounded-full transition-all duration-300 bg-white/60 min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-1 focus-visible:bg-white/80"
+                class="carousel-dot rounded-full transition-all duration-300 min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-1"
                 :class="{ active: i === current }"
                 @click="goTo(i)"
                 @keydown.stop="handleDotKeydown($event, i)"
@@ -148,7 +148,7 @@ onBeforeUnmount(() => {
     width: 8px;
     height: 8px;
     border-radius: 9999px;
-    background: currentColor;
+    background: rgb(255 255 255 / 0.6);
     transition: width 300ms ease;
 }
 
