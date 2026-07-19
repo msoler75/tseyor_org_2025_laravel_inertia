@@ -141,15 +141,6 @@
                                 mismo de la sociedad, pacíficamente, mediante el ejemplo, la amistad, el servicio y el amor.
                             </p>
 
-                            <!-- Transición: pregunta puente -->
-                            <div class="flex gap-3 mt-8 pt-6 border-t border-base-200/60">
-                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                                    <Icon icon="ph:chat-circle-duotone" class="text-primary text-sm" />
-                                </div>
-                                <p class="text-sm text-base-content/50 italic leading-relaxed">
-                                    "Si existe un mensaje cósmico, ¿quién es el ser humano al que va dirigido?"
-                                </p>
-                            </div>
                         </div>
                     </article>
 
@@ -212,15 +203,6 @@
                                 </div>
                             </div>
 
-                            <!-- Transición: pregunta puente -->
-                            <div class="flex gap-3 mt-8 pt-6 border-t border-base-200/60">
-                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                                    <Icon icon="ph:chat-circle-duotone" class="text-primary text-sm" />
-                                </div>
-                                <p class="text-sm text-base-content/50 italic leading-relaxed">
-                                    "Si somos más de lo que aparentamos, ¿cómo se explora y verifica todo esto?"
-                                </p>
-                            </div>
                         </div>
                     </article>
 
@@ -271,15 +253,6 @@
                             </p>
                         </div>
 
-                        <!-- Transición: pregunta puente -->
-                        <div class="flex gap-3 mt-8 pt-6 border-t border-base-200/60">
-                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                                <Icon icon="ph:chat-circle-duotone" class="text-primary text-sm" />
-                            </div>
-                            <p class="text-sm text-base-content/50 italic leading-relaxed">
-                                "Y cuando una persona despierta, ¿qué ocurre con quienes le rodean?"
-                            </p>
-                        </div>
                     </article>
 
                     <!-- Transformación individual y colectiva (última sección, tratamiento visual diferenciado) -->

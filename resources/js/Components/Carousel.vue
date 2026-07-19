@@ -1,6 +1,6 @@
 <template>
     <div
-        class="relative inset-0"
+        class="absolute inset-0"
         role="region"
         aria-roledescription="carousel"
         aria-label="Carrusel de imagenes"
