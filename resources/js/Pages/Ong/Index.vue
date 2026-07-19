@@ -17,31 +17,24 @@
 
             <div class="container mx-auto px-4 py-24 md:py-32">
                 <div class="text-center max-w-5xl mx-auto">
-                    <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-primary/60 mb-6 font-display">
-                        ONG Mundo Armónico TSEYOR
-                    </span>
 
                     <h1 class="text-5xl sm:text-6xl lg:text-7xl font-display font-black leading-[1.08] tracking-tight text-balance">
                         Una comunidad de voluntarios
                         <span class="text-primary">al servicio de las personas</span>
                     </h1>
 
-                    <p class="text-base sm:text-lg text-base-content/75 max-w-3xl mx-auto mt-8 leading-relaxed">
+                    <p class="text-base sm:text-lg text-base-content/80 max-w-3xl mx-auto mt-8 leading-relaxed">
                         Reunimos a personas implicadas en el proyecto TSEYOR que colaboran, cada una desde sus capacidades,
                         para impulsar ayuda humanitaria, formación, acompañamiento y cooperación.
                     </p>
 
-                    <p class="text-base text-base-content/60 max-w-2xl mx-auto mt-4 leading-relaxed">
+                    <p class="text-base text-base-content/70 max-w-2xl mx-auto mt-4 leading-relaxed">
                         Todos aportamos y todos seguimos aprendiendo. La filosofía se hace visible en la forma de servir,
                         relacionarnos y trabajar juntos por el bien común.
                     </p>
 
                     <div class="flex flex-wrap justify-center gap-4 mt-10">
-                        <Link href="/donar" class="btn btn-primary rounded-full px-8 shadow-lg">
-                            Donar ahora
-                            <Icon icon="ph:heart-duotone" class="text-lg" />
-                        </Link>
-                        <Link href="/centros" class="btn btn-secondary rounded-full px-8">
+                        <Link href="/centros" class="btn btn-primary rounded-full px-8 shadow-lg">
                             Buscar un centro
                             <Icon icon="ph:map-pin-duotone" class="text-lg" />
                         </Link>
@@ -50,7 +43,7 @@
                     <a
                         href="#mision"
                         @click.prevent="scrollASeccion('mision')"
-                        class="inline-flex items-center gap-2 mt-8 text-xs font-bold uppercase tracking-[0.2em] text-primary hover:text-base-content transition-colors"
+                        class="inline-flex items-center gap-2 mt-8 text-sm font-bold text-primary hover:text-base-content transition-colors py-2 px-4 rounded-lg focus-visible:outline-2 focus-visible:outline-primary"
                     >
                         Conocer nuestra misión
                         <Icon icon="ph:arrow-down-duotone" class="text-lg" />
@@ -59,6 +52,30 @@
             </div>
         </Section>
 
+        <!-- Trust bar -->
+        <div class="bg-base-200/50 border-y border-base-200/60">
+            <div class="container mx-auto px-4 py-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                    <div>
+                        <span class="block text-2xl sm:text-3xl font-display font-black text-primary">+200</span>
+                        <span class="text-sm text-base-content/70">Voluntarios activos</span>
+                    </div>
+                    <div>
+                        <span class="block text-2xl sm:text-3xl font-display font-black text-primary">15</span>
+                        <span class="text-sm text-base-content/70">Proyectos en marcha</span>
+                    </div>
+                    <div>
+                        <span class="block text-2xl sm:text-3xl font-display font-black text-primary">+30</span>
+                        <span class="text-sm text-base-content/70">Centros en el mundo</span>
+                    </div>
+                    <div>
+                        <span class="block text-2xl sm:text-3xl font-display font-black text-primary">20</span>
+                        <span class="text-sm text-base-content/70">Años de servicio</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 2-6. Contenido principal -->
         <div id="contenido-principal" class="container mx-auto px-4 py-24 md:py-32">
             <div class="grid lg:grid-cols-[220px_1fr] gap-12 lg:gap-20">
@@ -66,7 +83,7 @@
                 <!-- Left: sticky nav -->
                 <div>
                     <div class="lg:hidden mb-8">
-                        <label class="text-xs font-bold uppercase tracking-[0.3em] text-primary/60 mb-3 block font-display">
+                        <label class="text-xs font-bold uppercase tracking-[0.3em] text-primary mb-3 block font-display">
                             En esta página
                         </label>
                         <select
@@ -81,7 +98,7 @@
                     </div>
 
                     <nav class="hidden lg:block lg:sticky lg:top-28 lg:self-start space-y-1" aria-label="Secciones de la ONG">
-                        <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-primary/60 mb-6 font-display">
+                        <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-primary mb-6 font-display">
                             En esta página
                         </span>
                         <a
@@ -110,17 +127,11 @@
 
                     <!-- Misión -->
                     <article id="mision" class="scroll-mt-24">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-6">
-                            <Icon icon="ph:target-duotone" class="text-2xl text-primary" />
-                        </div>
-                        <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-primary/60 mb-4 font-display">
-                            Nuestra misión
-                        </span>
                         <h2 class="text-3xl sm:text-4xl font-display font-black leading-[1.1] tracking-tight mb-8 text-balance">
                             Contribuir a una sociedad más armónica, justa y solidaria
                         </h2>
 
-                        <p class="text-base-content/75 leading-relaxed max-w-3xl mb-10">
+                        <p class="text-base-content/80 leading-relaxed max-w-3xl mb-10">
                             Entendemos la ayuda de una manera integral: atender necesidades concretas y, al mismo tiempo,
                             favorecer el desarrollo humano, la autonomía, el equilibrio y el hermanamiento.
                         </p>
@@ -132,12 +143,12 @@
                                     <Icon :icon="ambito.icono" class="text-xl text-primary" />
                                 </div>
                                 <h3 class="font-display font-bold text-base mb-2">{{ ambito.titulo }}</h3>
-                                <p class="text-sm text-base-content/60 leading-relaxed">{{ ambito.texto }}</p>
+                                <p class="text-sm text-base-content/70 leading-relaxed">{{ ambito.texto }}</p>
                             </article>
                         </div>
 
                         <div class="mt-10 max-w-3xl rounded-2xl bg-primary/5 border border-primary/10 p-6 sm:p-8">
-                            <p class="text-base-content/75 leading-relaxed">
+                            <p class="text-base-content/80 leading-relaxed">
                                 Nuestros Estatutos recogen estos fines, dan forma legal a la organización y permiten que las
                                 iniciativas se desarrollen con responsabilidad, continuidad y transparencia.
                             </p>
@@ -150,31 +161,15 @@
                                 <ArrowRight class="w-4 h-4" />
                             </Link>
                         </div>
-
-                        <!-- Transición -->
-                        <div class="flex gap-3 mt-16 pt-6 border-t border-base-200/60">
-                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                                <Icon icon="ph:chat-circle-duotone" class="text-primary text-sm" />
-                            </div>
-                            <p class="text-sm text-base-content/50 italic leading-relaxed">
-                                "Y en concreto, ¿qué proyectos están activos ahora?"
-                            </p>
-                        </div>
                     </article>
 
                     <!-- Proyectos -->
                     <article id="proyectos" class="scroll-mt-24">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-6">
-                            <Icon icon="ph:clipboard-text-duotone" class="text-2xl text-primary" />
-                        </div>
-                        <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-primary/60 mb-4 font-display">
-                            Proyectos activos
-                        </span>
                         <h2 class="text-3xl sm:text-4xl font-display font-black leading-[1.1] tracking-tight mb-6 text-balance">
                             Distintas formas de una misma labor
                         </h2>
 
-                        <p class="text-base-content/75 leading-relaxed max-w-3xl mb-10">
+                        <p class="text-base-content/80 leading-relaxed max-w-3xl mb-10">
                             Las iniciativas cambian y crecen según las necesidades y las personas que participan, pero todas
                             comparten un mismo sentido de servicio.
                         </p>
@@ -186,18 +181,8 @@
                                     <Icon :icon="proyecto.icono" class="text-xl text-primary" />
                                 </div>
                                 <h3 class="font-display font-bold text-base mb-2">{{ proyecto.titulo }}</h3>
-                                <p class="text-sm text-base-content/60 leading-relaxed">{{ proyecto.texto }}</p>
+                                <p class="text-sm text-base-content/70 leading-relaxed">{{ proyecto.texto }}</p>
                             </article>
-                        </div>
-
-                        <!-- Transición -->
-                        <div class="flex gap-3 mt-16 pt-6 border-t border-base-200/60">
-                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                                <Icon icon="ph:chat-circle-duotone" class="text-primary text-sm" />
-                            </div>
-                            <p class="text-sm text-base-content/50 italic leading-relaxed">
-                                "Todo esto suena muy bonito, pero ¿quién lo hace posible?"
-                            </p>
                         </div>
                     </article>
 
@@ -205,22 +190,16 @@
                     <article id="voluntariado" class="scroll-mt-24">
                         <div class="grid md:grid-cols-5 gap-10 items-center">
                             <div class="md:col-span-3">
-                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-6">
-                                    <Icon icon="ph:handshake-duotone" class="text-2xl text-primary" />
-                                </div>
-                                <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-primary/60 mb-4 font-display">
-                                    Voluntariado
-                                </span>
                                 <h2 class="text-3xl sm:text-4xl font-display font-black leading-[1.1] tracking-tight mb-6 text-balance">
                                     La ONG somos las personas que la hacemos posible
                                 </h2>
 
-                                <p class="text-base-content/75 leading-relaxed mb-4">
+                                <p class="text-base-content/80 leading-relaxed mb-4">
                                     Unas personas colaboran en tareas administrativas; otras, en organización, divulgación,
                                     acompañamiento, formación, documentación, comunicación o logística. Cada función es necesaria y cada aportación suma.
                                 </p>
 
-                                <p class="text-base-content/75 leading-relaxed mb-6">
+                                <p class="text-base-content/80 leading-relaxed mb-6">
                                     No actuamos desde una posición de superioridad ni como poseedores de respuestas definitivas.
                                     Somos aprendices de la filosofía TSEYOR que procuramos llevar sus principios a la práctica mediante
                                     el servicio, la cooperación y el trabajo compartido.
@@ -238,38 +217,24 @@
                                     <ArrowRight class="w-4 h-4" />
                                 </Link>
                             </div>
-                            <div class="md:col-span-2 hidden md:flex justify-center">
-                                <div class="w-full max-w-xs aspect-square rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/10 flex items-center justify-center p-8">
-                                    <Icon icon="ph:hand-heart-duotone" class="text-8xl text-primary/30" />
-                                </div>
+                            <div class="md:col-span-2 flex justify-center">
+                                <img
+                                    :src="ongImages[3]"
+                                    alt="Voluntarios de TSEYOR en accion"
+                                    class="w-full max-w-xs aspect-square rounded-2xl object-cover shadow-lg"
+                                />
                             </div>
-                        </div>
-
-                        <!-- Transición -->
-                        <div class="flex gap-3 mt-16 pt-6 border-t border-base-200/60">
-                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                                <Icon icon="ph:chat-circle-duotone" class="text-primary text-sm" />
-                            </div>
-                            <p class="text-sm text-base-content/50 italic leading-relaxed">
-                                "Me gustaría involucrarme… ¿qué tengo que hacer?"
-                            </p>
                         </div>
                     </article>
 
                     <!-- Únete -->
-                    <article id="unete" class="scroll-mt-24">
+                    <article id="unete" class="scroll-mt-24 rounded-2xl bg-primary/5 border border-primary/10 p-10 sm:p-14">
                         <div class="text-center max-w-3xl mx-auto">
-                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-6 mx-auto">
-                                <Icon icon="ph:user-plus-duotone" class="text-2xl text-primary" />
-                            </div>
-                            <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-primary/60 mb-4 font-display">
-                                Únete al equipo
-                            </span>
                             <h2 class="text-3xl sm:text-4xl font-display font-black leading-[1.1] tracking-tight mb-6 text-balance">
                                 ¿Quieres formar parte de la ONG?
                             </h2>
 
-                            <p class="text-base-content/75 leading-relaxed max-w-2xl mx-auto mb-8">
+                            <p class="text-base-content/80 leading-relaxed max-w-2xl mx-auto mb-8">
                                 El primer paso es realizar el <strong>Curso Holístico TSEYOR</strong>, donde conocerás las bases
                                 de la filosofía y te prepararás para colaborar activamente en los proyectos de la ONG.
                             </p>
@@ -284,7 +249,7 @@
                                 </Link>
                                 <Link
                                     :href="route('libro', 'la-ong-mundo-armonico-tseyor')"
-                                    class="btn rounded-full bg-base-100 border border-base-300 hover:border-primary/40 px-8"
+                                    class="btn rounded-full px-8"
                                 >
                                     Documentación de la ONG
                                     <ArrowRight class="w-4 h-4" />
@@ -304,9 +269,9 @@
                 <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight leading-tight mb-6 text-white">
                         El servicio no es una obligación.<br>
-                        <span class="text-white/70">Es una forma de despertar.</span>
+                        <span class="text-white/85">Es una forma de despertar.</span>
                     </h2>
-                    <p class="text-white/60 text-sm sm:text-base leading-relaxed max-w-xl mx-auto mb-10">
+                    <p class="text-white/80 text-sm sm:text-base leading-relaxed max-w-xl mx-auto mb-10">
                         En TSEYOR no buscamos seguidores. Buscamos personas que, desde su propia experiencia,
                         decidan poner su tiempo y talento al servicio de un mundo más armónico.
                     </p>
@@ -320,7 +285,7 @@
                         </Link>
                         <Link
                             :href="route('cursos')"
-                            class="btn rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs uppercase tracking-widest backdrop-blur-sm"
+                            class="btn rounded-full bg-white/15 hover:bg-white/25 border border-white/30 text-white font-bold text-xs uppercase tracking-widest"
                         >
                             Conocer el curso
                         </Link>
