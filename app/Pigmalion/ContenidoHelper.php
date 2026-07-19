@@ -271,6 +271,11 @@ class ContenidoHelper
 
             $objeto->imagen = $destino;
 
+            // Generar LQIP si el modelo tiene el método
+            if (method_exists($objeto, 'generarLqip')) {
+                $objeto->generarLqip();
+            }
+
             $cambio = true;
         }
 

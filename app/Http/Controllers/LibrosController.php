@@ -21,7 +21,7 @@ class LibrosController extends Controller
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        $query = Libro::select(['slug', 'titulo', 'descripcion', 'updated_at', 'imagen'])
+        $query = Libro::select(['slug', 'titulo', 'descripcion', 'updated_at', 'imagen', 'imagen_lqip'])
             ->publicado();
 
         if ($buscar)

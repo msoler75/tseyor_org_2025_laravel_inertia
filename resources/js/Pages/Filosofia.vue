@@ -1,6 +1,6 @@
 <template>
     <div class="container flex justify-between mx-auto px-4 py-8 md:py-12">
-        <Back href="/quienes-somos" :floatAtY="-100">Quiénes Somos</Back>
+        <span></span>
         <Share />
     </div>
 

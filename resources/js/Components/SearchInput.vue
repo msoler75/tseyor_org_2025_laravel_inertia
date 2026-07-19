@@ -39,6 +39,8 @@
 import { router } from '@inertiajs/vue3';
 import { useGoogleAnalytics } from '@/composables/useGoogleAnalytics.js'
 
+const nav = useNav()
+
 const { trackSearch } = useGoogleAnalytics()
 
 const props = defineProps({
@@ -70,7 +72,7 @@ const savedQuery = ref('');
 const focused = ref(false)
 // let reloadTimeout = null;
 
-const emit = defineEmits(['update:modelValue', 'search', 'focus', 'blur-xs']);
+const emit = defineEmits(['update:modelValue', 'search', 'focus', 'blur-xs', 'click', 'finish']);
 
 onMounted(() => {
     currentUrl.value = window.location.href.replace(/\?.*/, '');
@@ -112,7 +114,12 @@ const submit = () => {
     trackSearch(query.value, pageContext)
 
     console.log('router.get args', args)
-    router.get(currentUrl.value, args, { preserveScroll: true})
+    nav.navigating = true
+    emit('click')
+    router.get(currentUrl.value, args, {
+        preserveScroll: true,
+        onFinish: () => emit('finish'),
+    })
     emit('search', query.value);
 };
 
@@ -122,7 +129,11 @@ const clearInput = () => {
 
     if(!props.reloadOnClear) return
 
-    router.get(currentUrl.value);
+    emit('click')
+    nav.navigating = true
+    router.get(currentUrl.value, {}, {
+        onFinish: () => emit('finish'),
+    });
 
     /*if (reloadTimeout) {
         clearTimeout(reloadTimeout);

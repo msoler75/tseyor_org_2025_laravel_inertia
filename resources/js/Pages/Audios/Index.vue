@@ -25,54 +25,60 @@
         </TitleInfo>
 
 
-<div class="px-2 flex justify-end">
-    <SearchInput placeholder="Buscar audios..."/>
-</div>
+    <div class="px-2 flex justify-end">
+        <SearchInput placeholder="Buscar audios..." @click="cargando = true" @finish="cargando = false"/>
+    </div>
 
 </PageHeader>
 
 <PageWide>
 
-        <ScrollToHere class="mt-6 w-full flex gap-5 flex-wrap md:flex-nowrap">
+        <ScrollToHere :fade-on-navigate="false" class="w-full flex gap-5 flex-wrap md:flex-nowrap">
 
-            <Categorias :categorias="categorias" :url="route('audios')" :favoritos="authenticated" select-class="w-full rounded-sm"/>
+            <Categorias :categorias="categorias" :url="route('audios')" :favoritos="authenticated" select-class="w-full rounded-sm"
+               :resultados="!!filtrado" @click="cargando = true" @finish="cargando = false" />
 
             <div class="w-full grow">
 
-                <SearchResultsHeader :results="listado"/>
+                <SearchResultsHeader :results="listado" :loading="cargando"/>
 
-                <GridAppear v-if="listado.data.length > 0" class="gap-4 max-w-full"
-                    :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(24rem, 100%), 1fr))` }">
-                    <div v-for="audio in listado.data.map(a => ({ ...a, src: srcAudio(a) }))" :key="audio.id"
-                        class="card flex-row shadow-2xs bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
-                        style="max-width: calc(100vw - 14px)">
+                <FadeOnNavigate>
 
-                        <div v-if="audio.audio" class="btn p-0 w-12 h-12 min-h-auto text-3xl"
-                            :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'"
-                            @click="clickPlayPause(audio)" :title="audio.src">
-                            <AudioStateIcon :src="audio.src" />
-                        </div>
-                        <a target="_blank" v-else :href="audio.enlace" class="btn p-0 w-12 h-12 min-h-auto text-3xl"
-                            title="abrir enlace">
-                            <Icon icon="ph:arrow-up-right-duotone" />
-                        </a>
+                    <GridAppear v -if= "listado.data.length > 0" class="gap-4 max-w-full"
+                        :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(24rem, 100%), 1fr))` }">
+                        <div v-for="audio in listado.data.map(a => ({ ...a, src: srcAudio(a) }))" :key="audio.id"
+                            class="card flex-row shadow-2xs bg-base-100 p-4 items-center gap-2 sm:gap-4 lg:gap-6"
+                            style="max-width: calc(100vw - 14px)">
 
-                        <div class="flex flex-col gap-2 mr-auto w-full">
-                            <Link :href="route('audio', audio.slug)"
-                                class="text-base font-bold my-0 leading-5 text-primary hover:text-secondary w-fit">{{ audio.titulo }}
-                            </Link>
-                            <div class="flex justify-between">
-                                <Link v-if="!categoriaActiva||categoriaActiva=='Favoritos'" :href="`${route('audios')}?categoria=${audio.categoria}`"
-                                class="text-xs w-fit hover:text-secondary">{{ audio.categoria }}
+                            <div v-if="audio.audio" class="btn p-0 w-12 h-12 min-h-auto text-3xl"
+                                :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'"
+                                @click="clickPlayPause(audio)" :title="audio.src">
+                                <AudioStateIcon :src="audio.src" />
+                            </div>
+                            <a target="_blank" v-else :href="audio.enlace" class="btn p-0 w-12 h-12 min-h-auto text-3xl"
+                                title="abrir enlace">
+                                <Icon icon="ph:arrow-up-right-duotone" />
+                            </a>
+
+                            <div class="flex flex-col gap-2 mr-auto w-full">
+                                <Link :href="route('audio', audio.slug)"
+                                    class="text-base font-bold my-0 leading-5 text-primary hover:text-secondary w-fit">{{ audio.titulo }}
                                 </Link>
-                                <span v-else></span>
-                                <Favorito coleccion="audios" :id="audio.id" :inicial="audio.favorito" @change="updateFavorito(audio, $event)" />
+                                <div class="flex justify-between">
+                                    <Link v-if="!categoriaActiva||categoriaActiva=='Favoritos'" :href="`${route('audios')}?categoria=${audio.categoria}`"
+                                    class="text-xs w-fit hover:text-secondary">{{ audio.categoria }}
+                                    </Link>
+                                    <span v-else></span>
+                                    <Favorito coleccion="audios" :id="audio.id" :inicial="audio.favorito" @change="updateFavorito(audio, $event)" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </GridAppear>
+                    </GridAppear>
 
-                <pagination class="mt-6" :links="listado.links" />
+                    <pagination class="mt-6" :links="listado.links" @click="cargando = true" @finish="cargando = false" />
+
+
+                </FadeOnNavigate>
 
             </div>
 
@@ -96,6 +102,8 @@ const props = defineProps({
         default: () => []
     }
 });
+
+const cargando = ref(false)
 
 const player = usePlayer()
 

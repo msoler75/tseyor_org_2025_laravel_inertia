@@ -10,27 +10,29 @@
             <div v-if="$slots.image" class="w-full h-full">
                 <slot name="image" />
             </div>
-            <div v-else-if="skeleton" class="skeleton w-full h-full rounded-none"></div>
+            <div v-else-if="skeleton" class="skeleton w-full h-full rounded"></div>
             <div v-else-if="imageContained"
-                class="w-full h-full bg-center transition duration-300 group-hover:scale-105"
+                class="w-full h-full relative transition duration-300 group-hover:scale-105"
                 :class="skeleton ? 'skeleton' : ''">
-                <Image class="w-full h-full" :src="image" :optimize="false"/>
+                <div v-if="lqip" class="absolute inset-0 bg-center bg-cover"
+                    :style="{ backgroundImage: `url(${lqip})` }" />
+                <Image v-if="!lqipOnly" class="w-full h-full relative" :src="image" :lqip="lqip" :optimize="false" />
             </div>
             <div v-else class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
                 'background-image': `url('${getImageUrl(image)}?cover&w=${imageWidth}${imageHeight != 'auto' ? '&h=' + imageHeight : ''}')`,
                 'view-transition-name': imageViewTransitionName
             }" />
         </div>
-        <div v-if="skeleton && (title || tag || description || date)" class="space-y-2 p-4 flex flex-col w-full">
-            <div v-if="title" class="skeleton max-w-full w-[40ch] h-6 mb-3" />
-            <div v-if="tag" class="skeleton max-w-full w-[12ch] h-5" />
+        <div v-if="skeleton && (title || tag || description || date)" class="p-4 flex flex-col w-full gap-3">
+            <div v-if="title" class="skeleton h-5 w-3/4 rounded" />
+            <div v-if="tag" class="skeleton h-4 w-1/3 rounded" />
             <template v-if="description">
-                <div class="skeleton w-full h-4" />
-                <div class="skeleton w-full h-4" />
-                <div class="skeleton w-full h-4" />
-                <div class="skeleton w-full h-4" />
+                <div class="skeleton h-3 w-full rounded" />
+                <div class="skeleton h-3 w-11/12 rounded" />
+                <div class="skeleton h-3 w-4/5 rounded" />
+                <div class="skeleton h-3 w-2/3 rounded" />
             </template>
-            <div v-if="date" class="skeleton inline ml-auto mt-auto w-16 h-[.8rem]" />
+            <div v-if="date" class="skeleton h-3 w-16 rounded self-end mt-auto" />
             <slot />
         </div>
         <div v-else-if="title || tag || description || date || $slots.default" class="p-4 flex flex-col w-full">
@@ -98,7 +100,9 @@ const props = defineProps({
     preservePage: { type: Boolean, default: false },
     //autoScroll: { type: Boolean, default: true },
     gradient: { type: Boolean, default: false },
-    skeleton: { type: Boolean, default: false }
+    skeleton: { type: Boolean, default: false },
+    lqip: { type: String, default: null },
+    lqipOnly: { type: Boolean, default: false },
 })
 
 const descriptionFinal = computed(() => {

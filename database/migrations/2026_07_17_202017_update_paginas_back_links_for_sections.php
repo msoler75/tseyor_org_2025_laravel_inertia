@@ -7,41 +7,41 @@ return new class extends Migration
 {
     private array $backLinks = [
         // Section: Curso
-        'inscripcion'            => ['ruta' => 'cursos',         'texto' => '← Curso'],
-        'mis-primeros-pasos'     => ['ruta' => 'cursos',         'texto' => '← Curso'],
-        'preguntas'              => ['ruta' => 'cursos',         'texto' => '← Curso'],
-        'terminos'               => ['ruta' => 'cursos',         'texto' => '← Curso'],
+        'inscripcion'            => ['ruta' => 'cursos',         'texto' => 'Curso'],
+        'mis-primeros-pasos'     => ['ruta' => 'cursos',         'texto' => 'Curso'],
+        'preguntas'              => ['ruta' => 'cursos',         'texto' => 'Curso'],
+        'terminos'               => ['ruta' => 'cursos',         'texto' => 'Curso'],
 
         // Section: Biblioteca
-        'comunicados'            => ['ruta' => 'biblioteca',     'texto' => '← Biblioteca'],
-        'audios'                 => ['ruta' => 'biblioteca',     'texto' => '← Biblioteca'],
-        'libros'                 => ['ruta' => 'biblioteca',     'texto' => '← Biblioteca'],
-        'meditaciones'           => ['ruta' => 'biblioteca',     'texto' => '← Biblioteca'],
-        'radio'                  => ['ruta' => 'biblioteca',     'texto' => '← Biblioteca'],
-        'psicografias'           => ['ruta' => 'biblioteca',     'texto' => '← Biblioteca'],
-        'videos'                 => ['ruta' => 'biblioteca',     'texto' => '← Biblioteca'],
-        'galerias'               => ['ruta' => 'biblioteca',     'texto' => '← Biblioteca'],
+        'comunicados'            => ['ruta' => 'biblioteca',     'texto' => 'Biblioteca'],
+        'audios'                 => ['ruta' => 'biblioteca',     'texto' => 'Biblioteca'],
+        'libros'                 => ['ruta' => 'biblioteca',     'texto' => 'Biblioteca'],
+        'meditaciones'           => ['ruta' => 'biblioteca',     'texto' => 'Biblioteca'],
+        'radio'                  => ['ruta' => 'biblioteca',     'texto' => 'Biblioteca'],
+        'psicografias'           => ['ruta' => 'biblioteca',     'texto' => 'Biblioteca'],
+        'videos'                 => ['ruta' => 'biblioteca',     'texto' => 'Biblioteca'],
+        'galerias'               => ['ruta' => 'biblioteca',     'texto' => 'Biblioteca'],
 
         // Section: Filosofía
-        'guias'                  => ['ruta' => 'filosofia',      'texto' => '← Filosofía'],
-        'origenes-de-tseyor'     => ['ruta' => 'filosofia',      'texto' => '← Filosofía'],
+        'guias'                  => ['ruta' => 'filosofia',      'texto' => 'Filosofía'],
+        'origenes-de-tseyor'     => ['ruta' => 'filosofia',      'texto' => 'Filosofía'],
 
         // Section: Quiénes somos
-        'ong'                    => ['ruta' => 'quienes-somos',  'texto' => '← Quiénes somos'],
-        'asociacion'             => ['ruta' => 'quienes-somos',  'texto' => '← Quiénes somos'],
-        'utg'                    => ['ruta' => 'quienes-somos',  'texto' => '← Quiénes somos'],
-        'contactos'              => ['ruta' => 'quienes-somos',  'texto' => '← Quiénes somos'],
-        'centros'                => ['ruta' => 'quienes-somos',  'texto' => '← Quiénes somos'],
-        'contactar'              => ['ruta' => 'quienes-somos',  'texto' => '← Quiénes somos'],
+        'ong'                    => ['ruta' => 'quienes-somos',  'texto' => 'Quiénes somos'],
+        'asociacion'             => ['ruta' => 'quienes-somos',  'texto' => 'Quiénes somos'],
+        'utg'                    => ['ruta' => 'quienes-somos',  'texto' => 'Quiénes somos'],
+        'contactos'              => ['ruta' => 'quienes-somos',  'texto' => 'Quiénes somos'],
+        'centros'                => ['ruta' => 'quienes-somos',  'texto' => 'Quiénes somos'],
+        'contactar'              => ['ruta' => 'quienes-somos',  'texto' => 'Quiénes somos'],
 
         // Section: Novedades
-        'eventos'                => ['ruta' => 'novedades',      'texto' => '← Novedades'],
-        'noticias'               => ['ruta' => 'novedades',      'texto' => '← Novedades'],
-        'boletines'              => ['ruta' => 'novedades',      'texto' => '← Novedades'],
+        'eventos'                => ['ruta' => 'novedades',      'texto' => 'Novedades'],
+        'noticias'               => ['ruta' => 'novedades',      'texto' => 'Novedades'],
+        'boletines'              => ['ruta' => 'novedades',      'texto' => 'Novedades'],
 
         // Section: Miembros
-        'equipos'                => ['ruta' => 'miembros',       'texto' => '← Miembros'],
-        'usuarios'               => ['ruta' => 'miembros',       'texto' => '← Miembros'],
+        'equipos'                => ['ruta' => 'miembros',       'texto' => 'Miembros'],
+        'usuarios'               => ['ruta' => 'miembros',       'texto' => 'Miembros'],
     ];
 
     private array $filosofiaTematicas = [
@@ -72,7 +72,7 @@ return new class extends Migration
             ->whereIn('ruta', $this->filosofiaTematicas)
             ->update([
                 'atras_ruta' => 'filosofia/temas',
-                'atras_texto' => '← Todos los temas',
+                'atras_texto' => 'Todos los temas',
             ]);
     }
 

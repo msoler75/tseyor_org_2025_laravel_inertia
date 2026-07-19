@@ -14,39 +14,36 @@
             </div>
 
              <div
-                        class="card bg-base-100 shadow-2xl w-fit h-fit flex md:hidden justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0
-                        transition duration-500 ease-in-out"
-                        :class="cargandoPortada ? 'opacity-0' : ''"
+                        class="card bg-base-100 shadow-2xl flex md:hidden justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0"
                     >
-                        <ImageShadow
+                        <Image
                             :src="libro.imagen"
+                            :lqip="libro.imagen_lqip"
                             width="300"
-                            height="450"
                             :alt="libro.titulo"
-                            class="object-fit rounded-xs sm:min-w-[300px]
-                             transition duration-200"
+                            :optimize="false"
+                            class="object-contain rounded-xs sm:min-w-[300px] shadow-xl shadow-black/20"
                             :style="{
                                 'view-transition-name': `imagen-libro-${libro.id}`,
                             }"
-                            @loaded="cargandoPortada = false"
                         />
                     </div>
         </PageHeader>
 
         <PageWide class="max-w-[96ch] py-12 flex justify-center gap-10 md:rounded-2xl">
-                <ImageShadow
-                            :src="libro.imagen"
-                            width="300"
-                            height="450"
-                            :alt="libro.titulo"
-                            class="object-fit rounded-xs sm:min-w-[300px]
-                             transition duration-200
-                             hidden md:block"
-                            :style="{
-                                'view-transition-name': `imagen-libro-${libro.id}`,
-                            }"
-                            @loaded="cargandoPortada = false"
-                        />
+                <div class="shrink-0 hidden md:block">
+                    <Image
+                        :src="libro.imagen"
+                        :lqip="libro.imagen_lqip"
+                        width="300"
+                        :alt="libro.titulo"
+                        :optimize="false"
+                        class="object-contain rounded-xs shadow-xl shadow-black/20"
+                        :style="{
+                            'view-transition-name': `imagen-libro-${libro.id}`,
+                        }"
+                    />
+                </div>
 
                 <div class="p-6 card shadow bg-base-100 animate-fade-in">
                     <h1 class="text-3xl font-bold mb-4">{{ libro.titulo }}</h1>

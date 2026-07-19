@@ -27,28 +27,28 @@
             </div>
 
             <SearchInput v-model="query" compact
-            placeholder="Buscar libros..." />
+            placeholder="Buscar libros..." @click="cargando = true" @finish="cargando = false" />
         </div>
 
         </PageHeader>
 
         <PageWide>
 
-            <ScrollToHere if-same-page class="w-full flex gap-5 flex-wrap xl:flex-nowrap" :fade-on-navigate="false">
+            <ScrollToHere :fade-on-navigate="false" class="w-full flex gap-5 flex-wrap xl:flex-nowrap">
 
                 <Categorias :categorias="categorias" :url="route('libros')" columna-breakpoint="xl" select-breakpoint="md"
-                    :resultados="!!filtrado" select-class="w-full" />
+                    :resultados="!!filtrado" select-class="w-full"
+                    @click="cargando = true" @finish="cargando = false" />
 
+                <div class="w-full grow">
 
+                    <SearchResultsHeader :results="listado" :loading="cargando" />
 
-                <FadeOnNavigate class="w-full grow">
-
-                    <SearchResultsHeader :results="listado" :valid-search="busquedaValida" />
+                    <FadeOnNavigate>
 
                     <GridAppear v-if="selectors.soloTitulosLibros" class="max-w-full grid gap-4" col-width="100%">
                         <div v-for="libro in listado.data" :key="libro.id"
                             class="card shadow-2xs bg-base-100 p-5 hover:text-primary transition-colors duration-250">
-
                             <Link :href="route('libro', libro.slug)" class="flex items-center gap-3 text-primary font-bold">
                             <span v-html="libro.titulo" /><span class="shrink-0 -order-1">📘</span></Link>
                         </div>
@@ -62,21 +62,23 @@
                             :description="contenido.descripcion" :date="contenido.published_at" :tag="contenido.categoria"
                             imageClass="w-1/3 h-full   sm:w-[130px] lg:w-[170px]"
                             image-left class="h-[43vw] sm:h-[200px] lg:h-[250px]"
-                            image-contained :image-view-transition-name="`imagen-libro-${contenido.id}`">
+                            image-contained :image-view-transition-name="`imagen-libro-${contenido.id}`"
+                            :lqip="contenido.imagen_lqip"
+                            lqip-only>
                             <template #imagex>
-                                <div class="flex  w-full h-full items-center justify-center">
+                                <div class="flex w-full h-full items-center justify-center bg-center bg-cover bg-no-repeat"
+                                    :style="contenido.imagen_lqip ? { backgroundImage: `url(${contenido.imagen_lqip})`, filter: 'blur(8px)' } : {}">
                                     <Libro3d :libro="contenido" imageClass="w-[120px] lg:w-[180px] 2xl:w-[213px]" />
                                 </div>
                             </template>
                         </CardContent>
-
                     </GridAppear>
 
+                    </FadeOnNavigate>
 
-                    <pagination class="mt-6" :links="listado.links" />
+                    <pagination class="mt-6" :links="listado.links" @click="cargando = true" @finish="cargando = false" />
 
-                </FadeOnNavigate>
-
+                </div>
 
             </ScrollToHere>
 
@@ -103,5 +105,7 @@ const props = defineProps({
 });
 
 const query = ref(props.filtrado)
+
+const cargando = ref(false)
 
 </script>
