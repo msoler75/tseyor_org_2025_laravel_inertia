@@ -21,14 +21,36 @@ const props = defineProps({
 
 const el = ref(null)
 
-onMounted(() => {
-    var d = 0.0;
-    console.log('EL', { el }, props.timeLapse)
+function triggerAnimation() {
+    if (!el.value) return
+    el.value.classList.remove('appear')
+    var d = 0.0
     for (let i = 0; i < el.value.children.length; i++) {
         el.value.children[i].style.setProperty('--a-delay', d + 's')
         d += props.timeLapse
     }
-    el.value.classList.add('appear')
+    // Doble rAF: el primero procesa la eliminación de .appear y los CSS vars,
+    // el segundo añade .appear para que las animaciones arranquen con sus delays
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            el.value?.classList.add('appear')
+        })
+    })
+}
+
+let observer = null
+
+onMounted(() => {
+    triggerAnimation()
+    if (!el.value) return
+    observer = new MutationObserver(() => {
+        triggerAnimation()
+    })
+    observer.observe(el.value, { childList: true, subtree: false })
+})
+
+onBeforeUnmount(() => {
+    observer?.disconnect()
 })
 </script>
 

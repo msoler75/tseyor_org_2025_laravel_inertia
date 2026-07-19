@@ -27,6 +27,7 @@ class Libro extends ContenidoBaseModel
         'descripcion',
         'categoria',
         'imagen',
+        'imagen_lqip',
         'edicion',
         'paginas',
         'pdf',
@@ -93,9 +94,33 @@ class Libro extends ContenidoBaseModel
             // guardamos
             $this->saveQuietly();
         }
-
     }
 
+    /**
+     * Genera LQIP (placeholder) para la imagen de portada del libro.
+     * Redimensiona a 170px de ancho manteniendo ratio, sharpen, JPEG quality 60.
+     */
+    public function generarLqip(): void
+    {
+        if (!$this->imagen) return;
+
+        try {
+            $sti = new \App\Pigmalion\StorageItem($this->imagen);
+            if (!$sti->exists()) return;
+
+            $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+            $image = $manager->read($sti->path);
+            $currentWidth = $image->width();
+            $image->scale(width: 170);
+            if ($image->width() < $currentWidth || $image->height() < $currentWidth) {
+                $image->sharpen(15);
+            }
+            $blob = $image->toJpeg(quality: 60)->toFilePointer();
+            $this->imagen_lqip = 'data:image/jpeg;base64,' . base64_encode(stream_get_contents($blob));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("No se pudo generar LQIP para #{$this->id}: {$e->getMessage()}");
+        }
+    }
 
 
     // SEO

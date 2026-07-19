@@ -1,7 +1,8 @@
 <template>
     <div class="text-xl font-bold">
-        <div v-if="queryString && results.total > 0" :class="classes">
-            {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}<span v-html="stringArguments"/> :
+        <div v-if="loading" class="mb-5">Cargando...</div>
+        <div v-else-if="results.total > 0" :class="classes">
+            {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}<span v-html="stringArguments"/> <template v-if="queryString">:</template>
         </div>
         <div v-else-if="queryString && !validSearch">Demasiados resultados<span v-html="stringArguments"/></div>
         <div v-else-if="queryString && results.total == 0"  class="mb-24">No hay resultados<span v-html="stringArguments"/></div>
@@ -21,7 +22,8 @@ const props = defineProps({
     classes: {default: 'mb-5'},
     category: {},
     arguments: {},
-    validSearch: {type: Boolean, default: true}
+    validSearch: {type: Boolean, default: true},
+    loading: {type: Boolean, default: false},
 })
 
 const queryString = ref()

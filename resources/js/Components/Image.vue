@@ -5,14 +5,15 @@
         :alt="alt"
         :title="title"
         class="is-image"
+        :class="{ 'blur-lg scale-110': isImagePlaceholder }"
         :style="placeholderStyles"
     />
     <component
         v-else
-        :is="errorLoading && errorIcon?Icon: !errorLoading && displaySrc ? 'img' : 'div'"
+        :is="errorLoading && errorIcon ? Icon : 'img'"
         ref="img"
-        class="is-image transition-opacity duration-200 text-3xl"
-        :src="displaySrc"
+        class="is-image transition-opacity duration-500 text-3xl"
+        :src="displaySrc || null"
         :alt="alt"
         :title="title"
         icon="ph:image-broken-duotone"
@@ -96,7 +97,11 @@ const props = defineProps({
     debug: {
         type: Boolean,
         default: false,
-    }
+    },
+    lqip: {
+        type: String,
+        default: null,
+    },
 });
 
 const emit = defineEmits(["loaded", "error"]);
@@ -166,9 +171,25 @@ const placeholderStyles = computed(() => {
 });
 
 const placeholderSrc = computed(() => {
+    if (props.lqip) return props.lqip
     const w = getPixels(props.srcWidth) || getPixels(props.width) || 1
     const h = getPixels(props.srcHeight) || getPixels(props.height) || 1
+    if (imageSrc.value && (props.srcWidth || props.width)) {
+        return imageSrc.value + '?w=40&q=10'
+    }
     return `data:image/svg+xml,%3Csvg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E`
+})
+
+const isImagePlaceholder = computed(() => !!(imageSrc.value && (props.srcWidth || props.width)))
+
+watch(placeholderSrc, (val) => {
+    if (val.startsWith('data:image/svg')) {
+        dbg(`🧩 placeholderSrc=SVG(${val.length}B)`)
+    } else if (val.startsWith('data:image/')) {
+        dbg(`🖼️ placeholderSrc=LQIP_base64(${val.substring(0,60)}... ${(val.length/1024).toFixed(1)}KB)`)
+    } else {
+        dbg(`📸 placeholderSrc=URL(${val.substring(0,60)})`)
+    }
 })
 
 function getPixels(value) {
@@ -210,7 +231,7 @@ Hay varios tipos de situaciones:
 function init() {
     if (!imageSrc.value) return;
 
-    dbg(`init() optimize=${props.optimize} srcWidth=${props.srcWidth} srcHeight=${props.srcHeight} width=${props.width} height=${props.height} priority=${props.priority}`)
+    dbg(`init() optimize=${props.optimize} srcWidth=${props.srcWidth} srcHeight=${props.srcHeight} width=${props.width} height=${props.height} priority=${props.priority} lqip=${props.lqip ? 'YES ('+props.lqip.substring(0,40)+'...)' : 'no'}`)
 
     // si es una url absoluta y corresponde a otro servidor o no queremos optimización (1)
     if (
@@ -585,9 +606,11 @@ function loadFinalImage() {
     imageElem.src = finalSrc;
     imageElem.onload = () => {
         dbg(`✅ loadFinalImage OK`)
-        imageLoaded.value = true;
-        emit("loaded");
         displaySrc.value = imageElem.src;
+        nextTick(() => {
+            imageLoaded.value = true;
+        })
+        emit("loaded");
         imageElem = null;
 
         // Limpiar fallback de scroll si está activo
@@ -678,6 +701,18 @@ onBeforeUnmount(() => {
 // si cambia la imagen, reiniciamos el componente y la carga
 watch(
     () => props.src,
-    () => init()
+    () => {
+        displaySrc.value = ''
+        imageLoaded.value = false
+        errorLoading.value = false
+        isVisible.value = false
+        finalImageConfigured.value = false
+        finalSrc = null
+        if (observer && img.value) {
+            const domElement = getDOMElement(img.value)
+            if (domElement) observer.unobserve(domElement)
+        }
+        nextTick(init)
+    }
 );
 </script>
