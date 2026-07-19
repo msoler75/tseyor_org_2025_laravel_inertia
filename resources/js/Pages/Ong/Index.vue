@@ -34,7 +34,7 @@
                     </p>
 
                     <div class="flex flex-wrap justify-center gap-4 mt-10">
-                        <Link href="/centros" class="btn btn-primary rounded-full px-8 shadow-lg">
+                        <Link href="/donde-estamos" class="btn btn-primary rounded-full px-8 shadow-lg">
                             Buscar un centro
                             <Icon icon="ph:map-pin-duotone" class="text-lg" />
                         </Link>
@@ -51,30 +51,6 @@
                 </div>
             </div>
         </Section>
-
-        <!-- Trust bar -->
-        <div class="bg-base-200/50 border-y border-base-200/60">
-            <div class="container mx-auto px-4 py-8">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                    <div>
-                        <span class="block text-2xl sm:text-3xl font-display font-black text-primary">+200</span>
-                        <span class="text-sm text-base-content/70">Voluntarios activos</span>
-                    </div>
-                    <div>
-                        <span class="block text-2xl sm:text-3xl font-display font-black text-primary">15</span>
-                        <span class="text-sm text-base-content/70">Proyectos en marcha</span>
-                    </div>
-                    <div>
-                        <span class="block text-2xl sm:text-3xl font-display font-black text-primary">+30</span>
-                        <span class="text-sm text-base-content/70">Centros en el mundo</span>
-                    </div>
-                    <div>
-                        <span class="block text-2xl sm:text-3xl font-display font-black text-primary">20</span>
-                        <span class="text-sm text-base-content/70">Años de servicio</span>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- 2-6. Contenido principal -->
         <div id="contenido-principal" class="container mx-auto px-4 py-24 md:py-32">
@@ -227,37 +203,6 @@
                         </div>
                     </article>
 
-                    <!-- Únete -->
-                    <article id="unete" class="scroll-mt-24 rounded-2xl bg-primary/5 border border-primary/10 p-10 sm:p-14">
-                        <div class="text-center max-w-3xl mx-auto">
-                            <h2 class="text-3xl sm:text-4xl font-display font-black leading-[1.1] tracking-tight mb-6 text-balance">
-                                ¿Quieres formar parte de la ONG?
-                            </h2>
-
-                            <p class="text-base-content/80 leading-relaxed max-w-2xl mx-auto mb-8">
-                                El primer paso es realizar el <strong>Curso Holístico TSEYOR</strong>, donde conocerás las bases
-                                de la filosofía y te prepararás para colaborar activamente en los proyectos de la ONG.
-                            </p>
-
-                            <div class="flex flex-wrap justify-center gap-4">
-                                <Link
-                                    :href="route('cursos.inscripcion.nueva')"
-                                    class="btn btn-primary rounded-full px-8 shadow-lg"
-                                >
-                                    Hazte voluntario
-                                    <Icon icon="ph:hand-heart-duotone" class="text-lg" />
-                                </Link>
-                                <Link
-                                    :href="route('libro', 'la-ong-mundo-armonico-tseyor')"
-                                    class="btn rounded-full px-8"
-                                >
-                                    Documentación de la ONG
-                                    <ArrowRight class="w-4 h-4" />
-                                </Link>
-                            </div>
-                        </div>
-                    </article>
-
                 </div>
             </div>
         </div>
@@ -275,10 +220,17 @@
                         En TSEYOR no buscamos seguidores. Buscamos personas que, desde su propia experiencia,
                         decidan poner su tiempo y talento al servicio de un mundo más armónico.
                     </p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <Link
+                            href="/donar"
+                            class="btn rounded-full bg-white text-base-content border-0 hover:bg-base-200 px-8 shadow-lg font-bold text-xs uppercase tracking-widest transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105"
+                        >
+                            Donar ahora
+                            <Icon icon="ph:heart-duotone" class="text-lg" />
+                        </Link>
                         <Link
                             :href="route('cursos.inscripcion.nueva')"
-                            class="btn rounded-full bg-white text-base-content border-0 hover:bg-base-200 px-8 shadow-lg font-bold text-xs uppercase tracking-widest transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105"
+                            class="btn rounded-full bg-white/15 hover:bg-white/25 border border-white/30 text-white font-bold text-xs uppercase tracking-widest"
                         >
                             Quiero colaborar
                             <ArrowRight class="w-4 h-4 inline ml-1.5 -mt-0.5" />
@@ -288,6 +240,12 @@
                             class="btn rounded-full bg-white/15 hover:bg-white/25 border border-white/30 text-white font-bold text-xs uppercase tracking-widest"
                         >
                             Conocer el curso
+                        </Link>
+                        <Link
+                            :href="route('libro', 'la-ong-mundo-armonico-tseyor')"
+                            class="btn rounded-full bg-white/15 hover:bg-white/25 border border-white/30 text-white font-bold text-xs uppercase tracking-widest"
+                        >
+                            Documentación de la ONG
                         </Link>
                     </div>
                 </div>
@@ -307,7 +265,6 @@ const claves = [
     { ancla: 'mision', titulo: 'Nuestra misión' },
     { ancla: 'proyectos', titulo: 'Proyectos activos' },
     { ancla: 'voluntariado', titulo: 'Voluntariado' },
-    { ancla: 'unete', titulo: 'Únete al equipo' },
 ]
 
 function saltarASeccion(e) {
