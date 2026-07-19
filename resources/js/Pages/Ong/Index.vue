@@ -1,13 +1,20 @@
 <template>
-    <div class="container flex justify-between mx-auto px-4 py-8 md:py-12">
-        <Back href="/quienes-somos" :floatAtY="-100">Quiénes Somos</Back>
-        <Share />
-    </div>
 
-    <Sections white-first>
+    <Sections white-first class="relative">
+
+        <div class="relative h-[550px] max-h-[70vh]">
+            <Carousel :images="ongImages" alt="ONG Tseyor" class="h-full w-full shadow-none" />
+            <div class="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-[oklch(0.97_0.005_260)] to-transparent pointer-events-none z-10"></div>
+        </div>
 
         <!-- 1. Hero: Presentación -->
         <Section>
+
+            <div class="container flex justify-between mx-auto px-4 pt-7 md:pt-12 z-10 relative">
+                <Back :href="route('quienes-somos')">Quienes Somos</Back>
+                <Share />
+            </div>
+
             <div class="container mx-auto px-4 py-24 md:py-32">
                 <div class="text-center max-w-5xl mx-auto">
                     <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-primary/60 mb-6 font-display">
@@ -328,6 +335,8 @@
 <script setup>
 
 const activeSection = ref('mision')
+
+const ongImages = Array.from({ length: 6 }, (_, i) => `/almacen/medios/portada/ong${i + 1}.jpg`)
 
 const claves = [
     { ancla: 'mision', titulo: 'Nuestra misión' },
