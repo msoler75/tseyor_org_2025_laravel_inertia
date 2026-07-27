@@ -185,11 +185,7 @@
                 </div>
 
                 <div class="order-1 lg:order-2 relative min-h-[300px] lg:min-h-[400px] rounded-2xl overflow-hidden bg-base-200">
-                    <Image src="/almacen/medios/portada/ong3.jpg" alt="ONG Tseyor"
-                        src-width="1672" src-height="941"
-                        class="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                    <Carousel :images="ongImages" alt="ONG Tseyor" />
                 </div>
             </div>
         </div>
@@ -253,7 +249,7 @@
         <div class="absolute inset-0">
             <Image src="/almacen/medios/portada/mujer_meditando.jpg" alt=""
                 src-width="2172" src-height="724"
-                quality="50"
+                :quality="50"
                 class="w-full h-full object-cover"
                 style="object-position: 25% center" />
             <div class="absolute inset-0 bg-gradient-to-r from-base-content/80 via-base-content/40 to-base-content/20"></div>
@@ -520,6 +516,8 @@ import {
 } from 'lucide-vue-next'
 
 const player = usePlayer()
+
+const ongImages = Array.from({ length: 6 }, (_, i) => `/almacen/medios/portada/ong${i + 1}.jpg`)
 
 const scrollSeccion = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
