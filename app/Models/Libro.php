@@ -105,8 +105,14 @@ class Libro extends ContenidoBaseModel
         if (!$this->imagen) return;
 
         try {
-            $sti = new \App\Pigmalion\StorageItem($this->imagen);
+            // Strip domain if imagen is a full URL
+            $path = preg_replace('#^https?://[^/]+#', '', $this->imagen);
+
+            $sti = new \App\Pigmalion\StorageItem($path);
             if (!$sti->exists()) return;
+
+            // Normalize imagen to path-only (no domain)
+            $this->imagen = $path;
 
             $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
             $image = $manager->read($sti->path);
