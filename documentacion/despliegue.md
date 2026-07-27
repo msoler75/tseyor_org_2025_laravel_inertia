@@ -120,41 +120,9 @@ Este comando:
 ## Opcional
 
 - **Mejora de rendimiento Ziggy:**
-  En `vendor/tightenco/ziggy/src/Ziggy.php`, en el constructor, se recomienda añadir la caché de rutas como se indica más abajo para ahorrar entre 10 y 56 ms por petición.
-- **Aumentar límite de resultados en búsquedas:**
-  En `TNTSearch -> SQLiteEngine.php`, en el método `loadConfig`, añade:
-  ```php
-  $this->maxDocs = $config['maxDocs'] ?? 500;
-  ```
+  Se aplica automáticamente en cada `composer install/update` mediante el comando `php artisan ziggy:patch-cache`, que añade caché en disco a las rutas de Ziggy (ahorra 10-56 ms por request). Es idempotente: no hace nada si ya está aplicado.
 - **Problemas de CSRF en dev.tseyor.org:**
   Si hay errores constantes, borra todas las cookies de `.tseyor.org`.
-
-## 🧩 Código de optimización Ziggy sugerido
-
-En el constructor de `vendor/tightenco/ziggy/src/Ziggy.php`:
-
-```php
-if (!static::$cache) {
-    // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
-    $cache_routes = base_path("bootstrap/cache/routes-v7.php");
-    $cache_ziggy = base_path("bootstrap/cache/ziggy2.json");
-    if (
-        !file_exists($cache_ziggy) ||
-        !file_exists($cache_routes) ||
-        filemtime($cache_routes) > filemtime($cache_ziggy)
-    ) {
-        static::$cache = $this->nameKeyedRoutes();
-        file_put_contents($cache_ziggy, static::$cache->toJson());
-    } else {
-        try {
-            $ziggy_content = file_get_contents($cache_ziggy);
-            static::$cache = collect(json_decode($ziggy_content, true));
-        } catch (\Exception $e) {
-            static::$cache = $this->nameKeyedRoutes(); // por si hubiera algun error
-        }
-    }
-}
-```
 
 ## Referencias
 - Consulta [`configuracion_inicial.md`](./configuracion_inicial.md) para la configuración inicial.
