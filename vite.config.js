@@ -23,23 +23,7 @@ const isSSR = process.argv.includes('--ssr');
 
 export default defineConfig({
   optimizeDeps: {
-    entries: ['resources/js/app.js'],
-    exclude: [
-      '@tiptap/*',
-      'prosemirror-*',
-      'virtual:pwa-register',
-      'dayjs',
-      'fuse.js',
-      'sortablejs',
-      'lucide-vue-next',
-      'lenis',
-    ],
-    include: [
-      'axios',
-      'showdown',
-      'turndown',
-      'dropzone',
-    ],
+    exclude: ['@tiptap/*', 'prosemirror-*', 'virtual:pwa-register', '@floating-ui/*'],
   },
   server: {
     watch: {
