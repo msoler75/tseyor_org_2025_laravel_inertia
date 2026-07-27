@@ -1,10 +1,16 @@
 <template>
+
+<div class="absolute top-0 right-0 w-full h-96 opacity-30 pointer-events-none z--10">
+    <img src="/almacen/medios/paginas/filosofia2_dark.png" class="w-full h-full object-cover" alt="" />
+    <div class="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-base-200"></div>
+</div>
+
     <div class="container flex justify-between mx-auto px-4 py-8 md:py-12">
         <span></span>
         <Share />
     </div>
 
-    <Sections height="550">
+    <Sections height="550" class="z-10 relative">
 
         <!-- 1. Introducción -->
         <Section>

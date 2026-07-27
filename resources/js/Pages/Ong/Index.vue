@@ -18,6 +18,7 @@
             <div class="container mx-auto px-4 py-24 md:py-32">
                 <div class="text-center max-w-5xl mx-auto">
 
+
                     <h1 class="text-5xl sm:text-6xl lg:text-7xl font-display font-black leading-[1.08] tracking-tight text-balance">
                         Una comunidad de voluntarios
                         <span class="text-primary">al servicio de las personas</span>
@@ -32,6 +33,13 @@
                         Todos aportamos y todos seguimos aprendiendo. La filosofía se hace visible en la forma de servir,
                         relacionarnos y trabajar juntos por el bien común.
                     </p>
+
+
+                    <img
+                        src="/archivos/logos/logo-ong-mundo-armonico.JPG"
+                        alt="ONG Mundo Armónico TSEYOR"
+                        class="h-20 sm:h-24 mx-auto mb-8"
+                    />
 
                     <div class="flex flex-wrap justify-center gap-4 mt-10">
                         <Link href="/donde-estamos" class="btn btn-primary rounded-full px-8 shadow-lg">

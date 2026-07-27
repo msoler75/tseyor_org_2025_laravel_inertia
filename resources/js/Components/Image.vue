@@ -91,7 +91,7 @@ const props = defineProps({
         default: false,
     },
     quality: {
-        type: Number,
+        type: [Number, String],
         default: null
     },
     debug: {
