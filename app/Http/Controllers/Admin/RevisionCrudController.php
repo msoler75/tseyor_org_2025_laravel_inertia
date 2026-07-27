@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\CRUD\app\Library\Widget;
 use App\Models\Revision;
 
 /**
@@ -36,19 +37,11 @@ class RevisionCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        // CRUD::setFromDb(); // set columns from db columns.
-
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
-
-         $this->crud->addColumn([
+        $this->crud->addColumn([
             'name'  => 'tituloContenido',
             'label' => 'Contenido',
             'type'  => 'text'
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'coleccion',
@@ -74,6 +67,28 @@ class RevisionCrudController extends CrudController
             'type' => 'datetime',
         ]);
 
+        $colecciones = Revision::select('revisionable_type')
+            ->distinct()
+            ->pluck('revisionable_type')
+            ->mapWithKeys(function ($type) {
+                $coleccion = str_replace("App\\Models\\", "", $type);
+                $coleccion = strtolower($coleccion);
+                $coleccion .= substr($coleccion, -1) == 'n' ? 'es' : 's';
+                return [$type => ucfirst($coleccion)];
+            })
+            ->toArray();
+
+        Widget::add([
+            'name'          => 'revision_collection_filter',
+            'type'          => 'revision_collection_filter',
+            'viewNamespace' => 'vendor.backpack.crud.filters',
+            'section'       => 'before_content',
+            'colecciones'   => $colecciones,
+        ]);
+
+        if (request()->filled('revisionable_type')) {
+            $this->crud->addClause('where', 'revisionable_type', request('revisionable_type'));
+        }
     }
 
 
