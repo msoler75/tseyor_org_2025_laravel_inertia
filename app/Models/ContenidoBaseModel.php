@@ -45,6 +45,11 @@ class ContenidoBaseModel extends Model
             Log::info("ContenidoBaseModel::saving");
             // Acciones antes de guardar el modelo
             ContenidoHelper::rellenarSlugImagenYDescripcion($model);
+
+            // Deduplicar imagenes del texto: reemplazar copias locales del sello y guias
+            if ($model instanceof \App\Models\Comunicado) {
+                \App\Services\ImageDeduplicationService::deduplicate($model);
+            }
         });
 
         static::saved(function ($model) {

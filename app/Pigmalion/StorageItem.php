@@ -105,6 +105,11 @@ class StorageItem
         $disk = $this->disk;
         if ($disk == "public")
             $r =   preg_replace("#^almacen\/?#", "", $r);
+
+        // Strip query string — paths like /almacen/.../img.jpg?w=200
+        // are valid as URLs but not as filesystem paths
+        $r = preg_replace('#\?.*$#', '', $r);
+
         return $r;
     }
 
