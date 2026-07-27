@@ -23,16 +23,28 @@ const isSSR = process.argv.includes('--ssr');
 
 export default defineConfig({
   optimizeDeps: {
-    // Excluir @tiptap de optimización
-    exclude: ['@tiptap/*', 'prosemirror-*', 'virtual:pwa-register'],
-    include: [
-        // Aquí incluye las dependencias que quieres pre-empaquetar
-        'vue',
-        'vue-router',
-        '@inertiajs/vue3/server',
-        'axios'
-        // ... otras dependencias críticas
+    entries: ['resources/js/app.js'],
+    exclude: [
+      '@tiptap/*',
+      'prosemirror-*',
+      'virtual:pwa-register',
+      'dayjs',
+      'fuse.js',
+      'sortablejs',
+      'lucide-vue-next',
+      'lenis',
     ],
+    include: [
+      'axios',
+      'showdown',
+      'turndown',
+      'dropzone',
+    ],
+  },
+  server: {
+    watch: {
+      ignored: ['**/vendor/**', '**/storage/**', '**/tests/**', '**/.git/**'],
+    },
   },
   build: {
     sourcemap: false,
@@ -199,7 +211,7 @@ export default defineConfig({
         "resources/css/admin.css", // Asegúrate de que admin.css no se importe desde JS
       ],
       ssr: "resources/js/ssr.js",
-      refresh: true,
+      refresh: ['resources/views/**/*.blade.php'],
     }),
     {
       name: "ziggy",
