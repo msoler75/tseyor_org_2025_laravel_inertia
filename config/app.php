@@ -173,8 +173,7 @@ return [
         App\Providers\RouteServiceProvider::class,
          App\Providers\FortifyServiceProvider::class,
          App\Providers\JetstreamServiceProvider::class,
-         TeamTNT\Scout\TNTSearchScoutServiceProvider::class,
-         Silber\PageCache\LaravelServiceProvider::class
+          TeamTNT\Scout\TNTSearchScoutServiceProvider::class
     ])->toArray(),
 
     /*

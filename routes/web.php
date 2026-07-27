@@ -26,6 +26,7 @@ use App\Http\Controllers\ContenidosController;
 use App\Http\Controllers\CursosController;
 use App\Http\Controllers\SalasController;
 use App\Http\Controllers\RadioController;
+use App\Http\Controllers\RadioManifestController;
 use App\Http\Controllers\InscripcionesController;
 use App\Http\Controllers\ExperienciasController;
 use App\Http\Controllers\ContactarController;

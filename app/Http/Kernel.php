@@ -50,7 +50,6 @@ class Kernel extends HttpKernel
 
 
     protected $routeMiddleware = [
-        'page-cache' => \Silber\PageCache\Middleware\CacheResponse::class,
         'deploy.token' => \App\Http\Middleware\CheckDeployToken::class,
         'allowed.ip' => \App\Http\Middleware\CheckAllowedIP::class,
         'boletin.token' => \App\Http\Middleware\CheckBoletinToken::class,
