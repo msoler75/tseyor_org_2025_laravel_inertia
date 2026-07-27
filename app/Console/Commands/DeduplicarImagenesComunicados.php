@@ -3,9 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\Comunicado;
-use App\Services\ImageDeduplicationService;
+use App\Pigmalion\ImageHasher;
 use App\Pigmalion\Markdown;
 use App\Pigmalion\StorageItem;
+use App\Services\ImageDeduplicationService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
