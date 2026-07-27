@@ -52,6 +52,9 @@
     <meta name="msapplication-SplashScreen" content="/ic/windows11/SplashScreen.scale-100.png">
 
     <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap">
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Figtree:wght@400;800&display=fallback">
 
