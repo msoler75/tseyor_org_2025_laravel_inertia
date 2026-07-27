@@ -157,7 +157,7 @@ export default defineConfig({
   }, */
   resolve: {
     alias: {
-      ziggy: path.resolve(__dirname, "vendor/tightenco/ziggy/dist/vue.es.js"),
+      ziggy: path.resolve(__dirname, "vendor/tightenco/ziggy/dist/index.js"),
       "@": path.resolve(__dirname, "./resources/js"),
       // Usar stub de TipTapEditor en SSR
       ...(isSSR ? {
