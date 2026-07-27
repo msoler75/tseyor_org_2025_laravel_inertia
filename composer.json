@@ -32,8 +32,8 @@
         "silber/page-cache": "1.0.9",
         "spatie/laravel-permission": "^5.10",
         "spatie/laravel-sitemap": "^7.0",
-        "teamtnt/laravel-scout-tntsearch-driver": "^13.2",
-        "teamtnt/tntsearch": "^4.2",
+        "teamtnt/laravel-scout-tntsearch-driver": "^16.1",
+        "teamtnt/tntsearch": "^5.0",
         "tightenco/ziggy": "^1.0",
         "webklex/laravel-imap": "^6.2"
     },
@@ -66,7 +66,8 @@
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php artisan ziggy:patch-cache"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
@@ -74,7 +75,10 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "post-install-cmd": ["php artisan storage:link"]
+        "post-install-cmd": [
+            "php artisan storage:link",
+            "@php artisan ziggy:patch-cache"
+        ]
     },
     "extra": {
         "laravel": {
