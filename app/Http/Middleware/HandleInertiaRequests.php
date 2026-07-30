@@ -4,10 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-// use Tightenco\Ziggy\Ziggy;
-// use App\T;
-use App\Models\Setting;
-// use Illuminate\Support\Facades\Log;
+use App\Services\AnuncioService;
 use Illuminate\Support\Facades\Cookie;
 
 class HandleInertiaRequests extends Middleware
@@ -45,34 +42,16 @@ class HandleInertiaRequests extends Middleware
             ]);
         }*/
 
-        $setting = Setting::where('name', 'anuncio')->first();
-        $anuncio = optional($setting)->value;
-
-        $avisoMantenimiento = Setting::where('name', 'aviso_mantenimiento')->first();
-        $mantenimiento = null;
-        if ($avisoMantenimiento && $avisoMantenimiento->value) {
-            $data = json_decode($avisoMantenimiento->value, true);
-            if ($data && !empty($data['inicio'])) {
-                $ahora = now('UTC');
-                $inicio = \Carbon\Carbon::parse($data['inicio']);
-                $fin = isset($data['fin']) ? \Carbon\Carbon::parse($data['fin']) : null;
-
-                if ($inicio <= $ahora && $fin && $fin < $ahora) {
-                    $mantenimiento = null;
-                } else {
-                    $data['esta_vigente'] = $inicio <= $ahora && $fin && $fin >= $ahora;
-                    $mantenimiento = $data;
-                }
-            }
-        }
+        $anuncioService = app(AnuncioService::class);
+        $banner = $anuncioService->getBannerData();
 
         // llamada normal
         $r = array_merge(parent::share($request), [
             'flash' => [
                 'message' => fn() => $request->session()->get('message')
             ],
-            'anuncio' => $anuncio,
-            'mantenimiento' => $mantenimiento,
+            'anuncio' => $banner['anuncio'],
+            'mantenimiento' => $banner['mantenimiento'],
             'meta_image_default' => config('seo.image.fallback'),
             'csrf_token' => csrf_token(),
             // obtener fecha y hora del servidor:
