@@ -14,9 +14,9 @@ abstract class BaseModelTools
 
     protected ?string $controllerClass = null; // Ejemplo: \App\Http\Controllers\EventosController
     protected array $methods = [
-        'listar' => 'index',
-        'buscar' => 'index',
-        'ver' => 'show',
+        'listar' => ['method' => 'index', 'args' => ['request']],
+        'buscar' => ['method' => 'index', 'args' => ['request']],
+        'ver' => ['method' => 'show', 'args' => ['request', 'id']],
     ];
 
     // Formato recomendado:
@@ -83,7 +83,16 @@ abstract class BaseModelTools
     {
         if (!array_key_exists($verb, $this->methods))
             throw new \InvalidArgumentException("El verbo '$verb' no está definido en los métodos requeridos.");
-        return $this->methods[$verb];
+        $def = $this->methods[$verb];
+        return is_array($def) ? $def['method'] : $def;
+    }
+
+    public function getMethodArgs($verb): array
+    {
+        if (!array_key_exists($verb, $this->methods))
+            return ['request'];
+        $def = $this->methods[$verb];
+        return is_array($def) ? ($def['args'] ?? ['request']) : ['request'];
     }
 
     public function getRequiredPermissions($verb): ?string
@@ -305,15 +314,6 @@ abstract class BaseModelTools
 
         $id = $params['id'] ?? $params['slug'] ?? null;
 
-        if ($toolName == 'listar') {
-            // Para ArchivosController::list se requieren tres argumentos: Request, ruta, json
-            $ruta = $params['ruta'] ?? '';
-            $json = true;
-            $controller = $this->getControllerClass();
-            $controllerMethod = $this->getMethod($toolName);
-            $response = app($controller)->{$controllerMethod}($request, $ruta, $json);
-            return $response;
-        }
         if ($toolName == 'buscar') {
             $page = $params['num_pagina'] ?? $params['page'] ?? $params['pagina'] ?? 1;
             $request->request->add(['page' => $page]);
@@ -321,18 +321,19 @@ abstract class BaseModelTools
 
         $controller = $this->getControllerClass();
         $controllerMethod = $this->getMethod($toolName);
+        $args = $this->getMethodArgs($toolName);
 
-        $reflection = new \ReflectionMethod($controller, $controllerMethod);
-        $paramsReflection = $reflection->getParameters();
-        if (count($paramsReflection) === 2 && $paramsReflection[0]->getType() && $paramsReflection[0]->getType()->getName() === Request::class) {
-            $response = app($controller)->{$controllerMethod}($request, $id);
-        } else if (count($paramsReflection) === 1 && $paramsReflection[0]->getType() && $paramsReflection[0]->getType()->getName() === Request::class) {
-            // revisar si el parámetro es de tipo Request
-            $response = app($controller)->{$controllerMethod}($request);
-        } else {
-            $response = app($controller)->{$controllerMethod}($id);
-        }
-        return $response;
+        $resolvedArgs = array_map(function ($arg) use ($request, $id, $params) {
+            return match ($arg) {
+                'request' => $request,
+                'id' => $id,
+                'ruta' => $params['ruta'] ?? '',
+                'json' => true,
+                default => $id,
+            };
+        }, $args);
+
+        return app($controller)->{$controllerMethod}(...$resolvedArgs);
     }
 
     public function onBuscar(array $params, object $baseTool) {
