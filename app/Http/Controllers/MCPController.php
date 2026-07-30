@@ -83,6 +83,9 @@ class MCPController extends Controller
             'campos_entrada' => ['App\MCP\InfoCamposTool', 'campos_entrada'],
             'campos_noticia' => ['App\MCP\InfoCamposTool', 'campos_noticia'],
             'capabilities' => ['App\MCP\InfoCamposTool', 'capabilities'],
+            // Mantenimiento
+            'consultar_mantenimiento' => ['App\\MCP\\Tools\\ConsultarMantenimientoTool', 'handle'],
+            'anunciar_mantenimiento' => ['App\\MCP\\Tools\\AnunciarMantenimientoTool', 'handle'],
             // MCP protocol handshake
             'initialize' => ['App\Http\Controllers\MCPController', 'mcp_initialize'],
         ];

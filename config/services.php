@@ -45,7 +45,9 @@ return [
         'kbps' => env('AUDIO_CONVERTER_KBPS', '24k')
     ],
 
-    'openai_key' => env('OPEN_AI_KEY', NULL),
+    'openrouter_key' => env('OPENROUTER_API_KEY', ''),
+
+    'openrouter_model' => env('OPENROUTER_MODEL', 'openai/gpt-4o-mini'),
 
     'google_analytics' => [
         'tracking_id' => env('GOOGLE_ANALYTICS_TRACKING_ID'),

@@ -174,6 +174,36 @@ return [
         ]
     ],
     [
+        'name' => 'consultar_mantenimiento',
+        'description' => 'Consulta el estado actual del aviso de mantenimiento programado en el sitio web. Devuelve si hay un aviso configurado, su estado (próximo, en curso, finalizado, sin aviso), y los datos completos si existe. No requiere permisos especiales para lectura.',
+        'parameters' => [
+            [
+                'name' => 'token',
+                'type' => 'string',
+                'description' => 'Token MCP para autenticación. Opcional para lectura.',
+                'required' => false,
+            ]
+        ]
+    ],
+    [
+        'name' => 'anunciar_mantenimiento',
+        'description' => 'Establece un aviso/announcement de próximo mantenimiento auto-caducable en el sitio web. El agente MCP extrae los campos del email de DreamHost y los envía estructurados como JSON. Solo existe un aviso activo a la vez (se sobrescribe). El aviso aparece en el banner del sitio antes y durante el mantenimiento, y desaparece automáticamente al finalizar. Requiere token MCP con permisos de administración.',
+        'parameters' => [
+            [
+                'name' => 'datos',
+                'type' => 'object',
+                'description' => 'Objeto JSON con los campos del aviso: titulo (string, requerido), descripcion (string), inicio (string ISO 8601 UTC, requerido), fin (string ISO 8601 UTC, requerido), duracion_estimada (string), zona_horaria_original (string), url_info (string), raw_email_text (string).',
+                'required' => true,
+            ],
+            [
+                'name' => 'token',
+                'type' => 'string',
+                'description' => 'Token MCP para autenticación o autorización. Requiere permisos de administración.',
+                'required' => true,
+            ]
+        ]
+    ],
+    [
         'name' => 'info',
         'description' => 'Lista entidades (tipos de contenido) y proporciona información sobre una entidad, sus campos y formato. También muestra los filtros disponibles para la tool "listar" o "buscar". Si no se indica entidad, devuelve la lista de entidades. Ejemplos: {} sin parámetros para devolver la lista de entidades; {"entidad": "libro"} para ver la información de la entidad "libro".',
         'parameters' => [

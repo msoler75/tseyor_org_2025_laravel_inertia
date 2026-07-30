@@ -278,6 +278,8 @@ return [
         \App\MCP\Tools\EditarTool::class,
         \App\MCP\Tools\EliminarTool::class,
         \App\MCP\Tools\InfoTool::class,
+        \App\MCP\Tools\ConsultarMantenimientoTool::class,
+        \App\MCP\Tools\AnunciarMantenimientoTool::class,
 
     ],
 

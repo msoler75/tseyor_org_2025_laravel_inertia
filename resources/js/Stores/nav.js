@@ -61,6 +61,7 @@ export const useNavStore = defineStore('nav', {
     timer: null,
     announce: false,
     announceClosed: false,
+    mantenimiento: null,
     sideBarShow: false,
     movingFast: true, // actualmente no se usa
     scrollY: 0,

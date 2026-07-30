@@ -264,7 +264,7 @@ abstract class BaseTool implements ToolInterface
         if (is_object($modelo)) {
             return Str::lower(class_basename($modelo));
         } elseif (is_string($modelo)) {
-            return 'App\\MCP\\' . Str::ucfirst($modelo) . 'Tools';
+            return 'App\\MCP\\' . Str::studly($modelo) . 'Tools';
         } else {
             throw new \InvalidArgumentException('El parámetro $modelo debe ser un objeto o una cadena de texto');
         }
