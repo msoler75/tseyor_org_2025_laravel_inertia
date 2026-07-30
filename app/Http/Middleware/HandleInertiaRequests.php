@@ -48,12 +48,31 @@ class HandleInertiaRequests extends Middleware
         $setting = Setting::where('name', 'anuncio')->first();
         $anuncio = optional($setting)->value;
 
+        $avisoMantenimiento = Setting::where('name', 'aviso_mantenimiento')->first();
+        $mantenimiento = null;
+        if ($avisoMantenimiento && $avisoMantenimiento->value) {
+            $data = json_decode($avisoMantenimiento->value, true);
+            if ($data && !empty($data['inicio'])) {
+                $ahora = now('UTC');
+                $inicio = \Carbon\Carbon::parse($data['inicio']);
+                $fin = isset($data['fin']) ? \Carbon\Carbon::parse($data['fin']) : null;
+
+                if ($inicio <= $ahora && $fin && $fin < $ahora) {
+                    $mantenimiento = null;
+                } else {
+                    $data['esta_vigente'] = $inicio <= $ahora && $fin && $fin >= $ahora;
+                    $mantenimiento = $data;
+                }
+            }
+        }
+
         // llamada normal
         $r = array_merge(parent::share($request), [
             'flash' => [
                 'message' => fn() => $request->session()->get('message')
             ],
             'anuncio' => $anuncio,
+            'mantenimiento' => $mantenimiento,
             'meta_image_default' => config('seo.image.fallback'),
             'csrf_token' => csrf_token(),
             // obtener fecha y hora del servidor:

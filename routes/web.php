@@ -531,6 +531,14 @@ Route::get('dev/2',  'App\Http\Controllers\DevController@dev2');
 
 
 // Endpoint MCP (opgginc/laravel-mcp-server v2 - route-driven)
+Route::get('/aviso-mantenimiento', function () {
+    $setting = \App\Models\Setting::where('name', 'aviso_mantenimiento')->first();
+    $data = $setting ? json_decode($setting->value, true) : null;
+    return \Inertia\Inertia::render('AvisoMantenimiento', [
+        'aviso' => $data,
+    ]);
+})->name('aviso-mantenimiento');
+
 Route::mcp('/mcp')
     ->setServerInfo(
         name: 'Tseyor MCP Server',

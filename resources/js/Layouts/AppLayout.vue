@@ -125,6 +125,7 @@ const TIME_NAV_INACTIVE = 600;
 var timerActivateNav = null;
 
 nav.announce = page.props.anuncio || "";
+nav.mantenimiento = page.props.mantenimiento || null;
 
 const handleScroll = () => {
     nav.scrollY = window.scrollY || window.pageYOffset;

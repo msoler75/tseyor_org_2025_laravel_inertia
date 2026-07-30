@@ -14,7 +14,7 @@ class ChatGPTController extends Controller
         if (!$texto)
             abort(400, "Debe especificar el texto");
 
-        $apikey = config("services.openai_key", null);
+        $apikey = config("services.openrouter_key", null);
         if (!$apikey)
             abort(400, "No se ha configurado la clave API de OpenAI");
 

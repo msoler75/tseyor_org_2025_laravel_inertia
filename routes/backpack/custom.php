@@ -65,6 +65,9 @@ Route::group([
     Route::crud('pagina', 'PaginaCrudController');
     Route::crud('termino', 'TerminoCrudController');
     Route::crud('video', 'VideoCrudController');
+    Route::get('aviso-mantenimiento/edit', 'AvisoMantenimientoController@edit')->name('aviso-mantenimiento.edit');
+    Route::put('aviso-mantenimiento', 'AvisoMantenimientoController@update')->name('aviso-mantenimiento.update');
+    Route::post('aviso-mantenimiento/analizar-email', 'AvisoMantenimientoController@analizarEmail')->name('aviso-mantenimiento.analizar-email');
 
     // Rutas adicionales para reordenar videos
     Route::get('video/{id}/move-up', 'VideoCrudController@moveUp')->name('admin.video.move-up');
