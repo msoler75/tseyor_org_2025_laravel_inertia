@@ -5,10 +5,7 @@
     >
         <div class="text-transparent hidden sm:block">.....</div>
         <div class="text-sm text-center flex-1">
-            <template v-if="nav.announce">
-                <span v-html="nav.announce" />
-            </template>
-            <template v-else-if="nav.mantenimiento">
+            <template v-if="nav.mantenimiento">
                 <span v-if="nav.mantenimiento.esta_vigente" class="font-semibold">En curso: </span>
                 <span v-else class="font-semibold">Próximo mantenimiento: </span>
                 <span>{{ nav.mantenimiento.titulo }}</span>
@@ -20,6 +17,9 @@
                         class="underline ml-2 hover:text-white/80"
                     >Más información</a>
                 </template>
+            </template>
+            <template v-else-if="nav.announce">
+                <span v-html="nav.announce" />
             </template>
         </div>
         <button
