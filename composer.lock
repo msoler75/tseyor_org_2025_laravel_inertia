@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2c2bde2e3ec1b8f7a95fa9b574315b06",
+    "content-hash": "718e4c9783ed6bd9ebe4e349bc420af4",
     "packages": [
         {
             "name": "backpack/basset",
@@ -4477,20 +4477,20 @@
         },
         {
             "name": "opgginc/laravel-mcp-server",
-            "version": "v1.5.5",
+            "version": "v2.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opgginc/laravel-mcp-server.git",
-                "reference": "e493f7c8ab85d755e503e2ac8de1a547444e68f0"
+                "reference": "f7a7e351ed6450c251779259ab6b389921c30ec9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opgginc/laravel-mcp-server/zipball/e493f7c8ab85d755e503e2ac8de1a547444e68f0",
-                "reference": "e493f7c8ab85d755e503e2ac8de1a547444e68f0",
+                "url": "https://api.github.com/repos/opgginc/laravel-mcp-server/zipball/f7a7e351ed6450c251779259ab6b389921c30ec9",
+                "reference": "f7a7e351ed6450c251779259ab6b389921c30ec9",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^9.0||^10.0||^11.0||^12.0",
+                "illuminate/contracts": "^9.0||^10.0||^11.0||^12.0||^13.0",
                 "php": "^8.2",
                 "spatie/laravel-package-tools": "^1.16"
             },
@@ -4537,9 +4537,9 @@
             ],
             "support": {
                 "issues": "https://github.com/opgginc/laravel-mcp-server/issues",
-                "source": "https://github.com/opgginc/laravel-mcp-server/tree/v1.5.5"
+                "source": "https://github.com/opgginc/laravel-mcp-server/tree/v2.0.6"
             },
-            "time": "2025-10-24T06:34:16+00:00"
+            "time": "2026-04-05T11:33:54+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",

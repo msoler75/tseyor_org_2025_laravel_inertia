@@ -17,12 +17,12 @@ class ArchivoTools extends BaseModelTools
 
     // Mapear métodos base a métodos del controlador
     protected array $methods = [
-        'listar' => 'list', // lista una carpeta
-        'buscar' => 'buscar',
-        'ver' => null, // ver datos del archivo o carpeta
-        'crear' => 'uploadFile', // subir archivo
-        'editar' => 'rename', // renombrar archivo
-        'eliminar' => 'delete',
+        'listar' => ['method' => 'list', 'args' => ['request', 'ruta', 'json']],
+        'buscar' => ['method' => 'buscar', 'args' => ['request']],
+        'ver' => null,
+        'crear' => ['method' => 'uploadFile', 'args' => ['request']],
+        'editar' => ['method' => 'rename', 'args' => ['request']],
+        'eliminar' => ['method' => 'delete', 'args' => ['ruta']],
     ];
 
     protected array $required = [

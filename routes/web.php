@@ -530,12 +530,23 @@ Route::get('dev/2',  'App\Http\Controllers\DevController@dev2');
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// Endpoint para MCP
-// Route::post('mcp', [\App\Http\Controllers\MCPController::class, 'handle'])->name('mcp.handle');
-// Route::get('mcp', [\App\Http\Controllers\MCPController::class, 'handle']);
-
-// Endpoint para MCP (ahora gestionado por opgginc/laravel-mcp-server)
-// Route::match(['get', 'post'], 'mcp', '\Opgginc\LaravelMcpServer\Http\Controllers\McpController');
+// Endpoint MCP (opgginc/laravel-mcp-server v2 - route-driven)
+Route::mcp('/mcp')
+    ->setServerInfo(
+        name: 'Tseyor MCP Server',
+        version: '2.0.0',
+        title: 'Tseyor MCP',
+        description: 'Servidor MCP para interactuar con los contenidos de tseyor.org',
+    )
+    ->tools([
+        \App\MCP\Tools\VerTool::class,
+        \App\MCP\Tools\ListarTool::class,
+        \App\MCP\Tools\BuscarTool::class,
+        \App\MCP\Tools\CrearTool::class,
+        \App\MCP\Tools\EditarTool::class,
+        \App\MCP\Tools\EliminarTool::class,
+        \App\MCP\Tools\InfoTool::class,
+    ]);
 
 // Analytics - sendBeacon para tracking al cerrar navegador
 Route::post('analytics/beacon', [AnalyticsController::class, 'beacon'])->name('analytics.beacon');
