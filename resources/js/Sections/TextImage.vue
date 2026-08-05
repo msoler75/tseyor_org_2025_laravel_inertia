@@ -16,7 +16,7 @@
             } : {}">
                 <slot v-if="imageSlotPresent" name="image" :class="imageClass"/>
                 <template v-else>
-                    <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :class="[imageClass, caption ? 'has-caption' : '']" :width="srcWidth" :height="srcHeight"
+                    <Image v-if="!cover" :src="srcImage" :alt="title" class="image-h" :class="[imageClass, caption ? 'has-caption' : '']"
                     :src-width="srcWidth" :src-height="srcHeight" :lazy="imageLazy" :root-margin="imageRootMargin" :priority="imagePriority"/>
                     <small v-if="caption" class="image-caption text-gray-600 dark:text-gray-200 bg-neutral-500/10">{{ caption }}</small>
                 </template>

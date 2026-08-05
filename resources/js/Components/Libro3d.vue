@@ -7,8 +7,8 @@
   <div class="book">
     <img
       :alt="libro.titulo"
-      :src="libro.imagen"
-      />
+      :src="libro.imagen + '?w=240&sharp=15'"
+    />
   </div>
 </Link>
 </template>
