@@ -230,11 +230,18 @@ const handleScale = (num, flag = false) => {
     zoomLevel.value = newScale
 }
 
+// Token que identifica la carga más reciente. Cualquier loadImage que no
+// corresponda al token actual (p.ej. un preload de la primera imagen que aún
+// está en vuelo) se ignora para no sobrescribir la imagen solicitada.
+let loadToken = 0
+
 const changeUrl = (url) => {
     if (!url) {
         state.imgState = 'error';
         return;
     }
+
+    const token = ++loadToken
 
     // Detener tracking anterior
     stopTracking()
@@ -242,6 +249,7 @@ const changeUrl = (url) => {
     state.imgState = 'loading'
     loadImage(url)
         .then(() => {
+            if (token !== loadToken) return // carga obsoleta, ignorar
             state.imgState = 'success'
             state.src = url
             // Resetear transform cuando cambiamos de imagen
@@ -255,6 +263,7 @@ const changeUrl = (url) => {
             })
         })
         .catch(() => {
+            if (token !== loadToken) return // carga obsoleta, ignorar
             state.imgState = 'error'
         })
 }
@@ -310,6 +319,10 @@ watch(() => props.index, (index) => {
 
 // Watcher para cuando cambia el array de imágenes
 watch(() => props.images, (newImages, oldImages) => {
+    // Si el visor está cerrado, no recargar: evita el flicker de spinner+imagen
+    // que ocurría al re-renderizar el padre (p.ej. el .map() de Libro genera
+    // un array nuevo cada render y disparaba un reload durante el cierre).
+    if (!props.show) return
     if (newImages && newImages.length > 0) {
         // Recargar la imagen actual cuando el array cambia
         if (state.imgIndex >= 0 && state.imgIndex < newImages.length) {
@@ -324,7 +337,9 @@ watch(() => props.show, (newShow, oldShow) => {
         // El componente se está ocultando, detener tracking
         stopTracking()
     } else if (!oldShow && newShow) {
-        // El componente se está mostrando, recargar imagen
+        // El componente se está mostrando: reiniciar al índice solicitado
+        // (evita conservar el índice navegado en la sesión anterior) y cargar
+        state.imgIndex = props.index
         initImg()
     }
 })

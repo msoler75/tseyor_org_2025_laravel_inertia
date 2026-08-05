@@ -14,14 +14,16 @@
             </div>
 
              <div
-                        class="card bg-base-100 shadow-2xl flex md:hidden justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0"
+                        class="card bg-base-100 shadow-2xl flex md:hidden justify-center mx-auto md:sticky md:top-20 mb-14 md:mb-0 cursor-zoom-in"
+                        @click="viewPortada()"
                     >
                         <Image
                             :src="libro.imagen"
                             :lqip="libro.imagen_lqip"
                             width="300"
                             :alt="libro.titulo"
-                            :optimize="false"
+                            :optimize="true"
+                            :sharpen="15"
                             class="object-contain rounded-xs sm:min-w-[300px] shadow-xl shadow-black/20"
                             :style="{
                                 'view-transition-name': `imagen-libro-${libro.id}`,
@@ -31,13 +33,14 @@
         </PageHeader>
 
         <PageWide class="max-w-[96ch] py-12 flex justify-center gap-10 md:rounded-2xl">
-                <div class="shrink-0 hidden md:block">
+                <div class="shrink-0 hidden md:block cursor-zoom-in" @click="viewPortada()">
                     <Image
                         :src="libro.imagen"
                         :lqip="libro.imagen_lqip"
                         width="300"
                         :alt="libro.titulo"
-                        :optimize="false"
+                        :optimize="true"
+                        :sharpen="15"
                         class="object-contain rounded-xs shadow-xl shadow-black/20"
                         :style="{
                             'view-transition-name': `imagen-libro-${libro.id}`,
@@ -94,6 +97,7 @@
                     image-contained
                     class="h-[44vw] xs:h-[200px] lg:h-[300px]"
                     imageClass="w-1/3 h-full sm:w-[150px] sm:h-[250px] lg:w-[200px] lg:h-[300px]"
+                    :sharpen="15"
                 >
                     <template #imagex>
                         <div class="flex w-full h-full items-center justify-center">
@@ -125,11 +129,25 @@
             </template>
         </PageWide>
 
+        <ClientOnly>
+            <ImagesViewer
+                :show="showImagesViewer"
+                @close="showImagesViewer = false"
+                :images="viewerImages"
+                :index="imageIndex"
+                :showFilename="true"
+            />
+        </ClientOnly>
     </Page>
 </template>
 
 <script setup>
 import { getSrcUrl } from "@/composables/srcutils.js";
+
+// Cargado asíncrono para no pesarlo en el bundle inicial
+const ImagesViewer = defineAsyncComponent(() =>
+    import("@/Components/ImagesViewer.vue"),
+);
 
 const props = defineProps({
     libro: {
@@ -158,6 +176,34 @@ const edicionPaginas = computed(() => {
 });
 
 const cargandoPortada = ref(true);
+
+// Portadas del libro actual + libros y guías relacionados
+const showImagesViewer = ref(false);
+const imageIndex = ref(0);
+const images = computed(() => {
+    const portadas = [];
+
+    if (props.libro.imagen) portadas.push(props.libro.imagen);
+    props.relacionados?.forEach((rel) => {
+        if (rel.imagen) portadas.push(rel.imagen);
+    });
+    props.guias?.forEach((guia) => {
+        if (guia.imagen) portadas.push(guia.imagen);
+    });
+
+    return portadas;
+});
+
+// Memorizado: evita regenerar un array nuevo en cada re-render del padre,
+// que disparaba el watcher de props.images del visor (flicker al cerrar)
+const viewerImages = computed(() =>
+    images.value.map((x) => x + "?mw=3000&mh=3000"),
+);
+
+function viewPortada() {
+    imageIndex.value = 0;
+    showImagesViewer.value = true;
+}
 </script>
 
 <style scoped>
