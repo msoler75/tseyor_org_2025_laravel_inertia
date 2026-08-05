@@ -224,7 +224,7 @@ class ImagenesController extends Controller
         // Aplicar sharpening automático si la imagen se redujo
         $sharpLevel = $validatedParams['sharp'];
         if ($sharpLevel === null) {
-            $sharpLevel = 15;
+            $sharpLevel = 7;
         }
         if ($sharpLevel > 0 && ($image->width() < $currentWidth || $image->height() < $currentHeight)) {
             $image->sharpen($sharpLevel);

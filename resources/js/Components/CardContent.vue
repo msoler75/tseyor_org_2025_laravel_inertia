@@ -16,7 +16,7 @@
                 :class="skeleton ? 'skeleton' : ''">
                 <div v-if="lqip" class="absolute inset-0 bg-center bg-cover"
                     :style="{ backgroundImage: `url(${lqip})` }" />
-                <Image v-if="!lqipOnly" class="w-full h-full relative" :src="image" :lqip="lqip" :optimize="false" />
+                <Image v-if="!lqipOnly" class="w-full h-full relative" :src="image" :lqip="lqip" :optimize="!!sharpen" :sharpen="sharpen" />
             </div>
             <div v-else class="w-full h-full bg-cover bg-center transition duration-300 group-hover:scale-110" :style="{
                 'background-image': `url('${getImageUrl(image)}?cover&w=${imageWidth}${imageHeight != 'auto' ? '&h=' + imageHeight : ''}')`,
@@ -103,6 +103,7 @@ const props = defineProps({
     skeleton: { type: Boolean, default: false },
     lqip: { type: String, default: null },
     lqipOnly: { type: Boolean, default: false },
+    sharpen: { type: [Number, String], default: null },
 })
 
 const descriptionFinal = computed(() => {

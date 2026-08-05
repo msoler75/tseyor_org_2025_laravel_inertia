@@ -94,6 +94,10 @@ const props = defineProps({
         type: [Number, String],
         default: null
     },
+    sharpen: {
+        type: [Number, String],
+        default: null
+    },
     debug: {
         type: Boolean,
         default: false,
@@ -248,10 +252,26 @@ function init() {
         return putSrcImage(imageSrc.value);
     }
 
-    // Se ha establecido el tamaño mediante props (width y height) (3)
+    // Se ha establecido el tamaño mediante props (width y height),
+    // así que se carga directamente con ?w=width y ?h=height
     if (props.width && props.height) {
-        dbg(`→ (3) width+height props → putFakeImage(${props.width}x${props.height})`)
-        return putFakeImage(props.width, props.height);
+        // width/height son las dimensiones deseadas; se ignora 'auto' o NaN
+        const w = getPixels(props.width);
+        const h = getPixels(props.height);
+        const hasW = w && !Number.isNaN(w);
+        const hasH = h && !Number.isNaN(h);
+        if (hasW || hasH) {
+            dbg(`→ (3) width=${props.width}x${props.height} (deseadas) → putSrcImage(?w=&h=)`)
+            let qs = "";
+            if (hasW) qs += "w=" + w;
+            if (hasH) qs += (qs ? "&" : "") + "h=" + h;
+            return putSrcImage(
+                imageSrc.value + "?" + qs +
+                (props.quality ? "&q=" + props.quality : "") +
+                (props.sharpen != null ? "&sharp=" + props.sharpen : "")
+            );
+        }
+        // width y height no son numéricos → se cae a la rama (4)/(5)
     }
 
     // Se conoce el tamaño original de la imagen (4)
@@ -352,6 +372,7 @@ async function putImageWithSize(widthOp, heightOp) {
         "&h=" +
         Math.round(parseFloat(heightOp))
         + (props.quality ? '&q='+props.quality : '')
+        + (props.sharpen != null ? '&sharp='+props.sharpen : '')
     dbg(`→ URL construida: ${src}`)
     putSrcImage(src);
 }
