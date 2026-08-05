@@ -79,18 +79,24 @@ class ImageDeduplicationService
 
             $repl = $match['path'];
 
-            if ($match['tipo'] === 'logo' && isset($firstPageSet[$imgPath])) {
-                $repl = '/almacen/medios/logos/sello_tseyor_64.png';
+            // Para logos: siempre usar el sello transparente grande mostrado a 64x64.
+            if ($match['tipo'] === 'logo') {
+                $repl = '/almacen/medios/logos/SELLO_TRANSPARENTE_GRANDE.png';
             }
 
-            if ($match['tipo'] !== 'logo') {
-                $width = $attrDims[0] ?? null;
-                if ($width === null && $sti->exists()) {
-                    $dims = @getimagesize($sti->path);
-                    if ($dims) $width = $dims[0];
-                }
-                if ($width && $width > 0) {
-                    $repl .= "?w={$width}";
+            // Para guias: la dimensión de visualización se mantiene con el sufijo
+            // {width=...,height=...} (formato propio de la app), que se conserva al
+            // reemplazar la ruta. Si la imagen original no lo tiene, se añade con
+            // ancho fijo 220 (altura proporcional) para que la canónica no se muestre enorme.
+            $addDims = null;
+            if ($match['tipo'] === 'logo') {
+                $addDims = [64, 64];
+            } elseif ($attrDims === null) {
+                $dims = @getimagesize($sti->path);
+                if ($dims && $dims[0] > 0 && $dims[1] > 0) {
+                    $targetW = 220;
+                    $targetH = (int) round($dims[1] * ($targetW / $dims[0]));
+                    $addDims = [$targetW, $targetH];
                 }
             }
 
@@ -105,6 +111,7 @@ class ImageDeduplicationService
                 'method' => $match['method'] ?? '?',
                 'distance' => $match['distance'] ?? null,
                 'similarity' => $match['similarity'] ?? null,
+                'add_dims' => $addDims,
             ];
         }
 
@@ -117,6 +124,11 @@ class ImageDeduplicationService
 
         foreach ($changes as $ch) {
             $nuevoTexto = self::replaceMarkdownImage($nuevoTexto, $ch['original'], $ch['reemplazo']);
+
+            // Para guias sin {width=,height=} previo: fijar dimensiones con el sufijo propio
+            if ($ch['add_dims'] !== null) {
+                $nuevoTexto = self::ensureImageDims($nuevoTexto, $ch['reemplazo'], $ch['add_dims']);
+            }
 
             if ($nuevaImagen === $ch['original']) {
                 $nuevaImagen = self::normalizeImagenField($ch['reemplazo'], $ch['tipo']);
@@ -271,6 +283,21 @@ class ImageDeduplicationService
         return preg_replace(
             "#!\[([^\]]*)\]\({$escaped}\)(\{[^}]*\})?#",
             "![$1]($newPath)$2",
+            $texto
+        );
+    }
+
+    /**
+     * Añade el sufijo {width=W,height=H} después de la imagen si no lo tiene ya.
+     * Se usa para fijar las dimensiones de una guía canónica sin inyectar ?w= en la URL.
+     */
+    private static function ensureImageDims(string $texto, string $path, array $dims): string
+    {
+        [$w, $h] = $dims;
+        $escaped = preg_quote($path, '#');
+        return preg_replace(
+            "#!\[([^\]]*)\]\({$escaped}\)(\{[^}]*\})?#",
+            "![$1]($path){width=$w,height=$h}",
             $texto
         );
     }
