@@ -154,9 +154,12 @@ public function search(Request $request)
     }
 
     // Buscar el término usando Scout
+    // Nota: no usar ->where() sobre el Builder de Scout (TNTSearch v16 + Scout v11
+    // lo serializa mal: genera `where 0 = visibilidad`). Usar ->query() como en ArchivosController.
     $resultados = Contenido::search($query)
-        ->where('visibilidad', 'P')
-        ->where('coleccion', 'terminos')
+        ->query(function ($sub) {
+            return $sub->where('visibilidad', 'P')->where('coleccion', 'terminos');
+        })
         ->get();
 
     if ($resultados->isEmpty()) {
