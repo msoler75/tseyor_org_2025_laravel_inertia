@@ -51,3 +51,5 @@ stats.html
 .skill*
 skill*
 .windsurf/
+# Local AI runtime state
+.atl/
