@@ -53,3 +53,4 @@ skill*
 .windsurf/
 # Local AI runtime state
 .atl/
+.codegraph/
