@@ -640,7 +640,7 @@ class ArchivosController extends Controller
     {
         $ruta = $request->ruta;
 
-        if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
+        if (strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
         }
 
@@ -847,7 +847,7 @@ class ArchivosController extends Controller
      */
     public function almacen(string $ruta)
     {
-        if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
+        if (strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
         }
 
@@ -872,7 +872,7 @@ class ArchivosController extends Controller
     {
         // Log::info("Descargar $ruta");
 
-        if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
+        if (strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
         }
 
@@ -1174,7 +1174,7 @@ class ArchivosController extends Controller
         }
 
         // Verificar si la ruta contiene saltos de carpeta
-        if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
+        if (strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
             return response()->json(['error' => 'Ruta relativa no permitida'], 400);
         }
 
@@ -1398,7 +1398,7 @@ class ArchivosController extends Controller
 
         $ruta = $request->folder;
 
-        if ($ruta == ".." || strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
+        if (strpos($ruta, "../") !== false || strpos($ruta, "/..") !== false) {
             return response()->json(['error' => 'No se permiten saltos de carpeta'], 400);
         }
 
