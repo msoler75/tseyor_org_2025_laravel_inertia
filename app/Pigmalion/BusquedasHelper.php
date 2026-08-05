@@ -324,7 +324,9 @@ class BusquedasHelper
             list($buscarRelevante, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
 
             $resultados =
-                $coleccion ? Contenido::search($buscarRelevante)->where('coleccion', $coleccion)->paginate(7)
+                $coleccion ? Contenido::search($buscarRelevante)
+                    ->query(fn($sub) => $sub->where('coleccion', $coleccion))
+                    ->paginate(7)
                 : Contenido::search($buscarRelevante)->paginate(7); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
 
                 if($formatear) {
