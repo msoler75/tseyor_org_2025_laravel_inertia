@@ -1,6 +1,5 @@
 <template>
     <ToolTip
-        ref="tt"
         @preload="onToolTipActivate"
         @deactivated="onToolTipDeactivate"
         :activationDelay="200"
@@ -47,7 +46,7 @@ const props = defineProps({
 import useGlobalSearch from "@/Stores/globalSearch.js";
 
 const viendoToolTip = ref(false);
-const tt = ref(null);
+// const tt = ref(null);
 const search = useGlobalSearch(); // Solo para la función buscar()
 
 const noEncontrado = ref(false);

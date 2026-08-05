@@ -14,7 +14,7 @@
                             Curso Holístico Tseyor
                         </h1>
                         <p class="text-lg text-base-content/70 leading-relaxed mb-4">
-                            La puerta de entrada a una filosofía viva, unas herramientas de autoconocimiento y una comunidad que te acompaña. Un curso tutelado por los Guías Estelares, donde todos aprendemos de todos.
+                            La puerta de entrada a una filosofía viva, unas herramientas de autoconocimiento y una comunidad que te acompaña. Un curso tutelado por los <Referencia>Guías Estelares</Referencia>, donde todos aprendemos de todos.
                         </p>
                         <div class="flex flex-wrap gap-x-6 gap-y-2 mb-6">
                             <span class="inline-flex items-center gap-2 text-sm text-base-content/70">
@@ -39,7 +39,7 @@
                                  Quiero inscribirme
                                  <ArrowRight class="w-4 h-4 ml-1" />
                              </Link>
-                            <a href="#material-del-curso" @click.prevent="scrollToMaterial" class="w-full sm:w-auto text-center py-3.5 px-8 rounded-full bg-base-100 border border-base-300 hover:border-primary/40 text-base-content/80 hover:bg-base-200 font-bold text-xs uppercase tracking-widest transition-all shadow-sm whitespace-nowrap">
+                            <a href="#material-del-curso" @click.prevent="scrollToMaterial" class="w-full sm:w-auto text-center py-3.5 px-8 rounded-full btn btn-ghost border border-base-300 hover:border-primary/40 text-base-content/80 hover:bg-base-200 shadow-sm whitespace-nowrap">
                                 Ver el material del curso
                             </a>
                         </div>
@@ -56,48 +56,48 @@
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <span class="inline-block text-xs font-bold tracking-widest uppercase text-primary/60 font-display mb-2">Contenido</span>
                 <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight mb-3">Qué aprenderás</h2>
-                <p class="text-base-content/60 max-w-xl mx-auto mb-10 sm:mb-14">
-                    El curso recorre las enseñanzas fundamentales que los Guías Estelares han transmitido a lo largo de más de 40 años.
+                <p class="text-base-content/70 max-w-xl mx-auto mb-10 sm:mb-14">
+                    El curso recorre las enseñanzas fundamentales que los <Referencia>Guías Estelares</Referencia> han transmitido a lo largo de más de 40 años.
                 </p>
 
                 <div class="grid sm:grid-cols-2 gap-1 lg:gap-5 max-w-4xl mx-auto text-left">
-                    <div class="p-6 py-1 sm:py-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
+                    <div class="p-6 sm:p-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
+                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
                             <Icon icon="hugeicons:scroll-01" class="w-5 h-5 lg:w-7 lg:h-7" />
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">Los mensajes de los Guías</h3>
-                            <p class="text-sm text-base-content/60 leading-relaxed">Conocerás a los Guías Estelares, su papel como tutores y el contenido de sus comunicaciones.</p>
+                            <p class="text-sm text-base-content/70 leading-relaxed">Conocerás a los <Referencia>Guías Estelares</Referencia>, su papel como tutores y el contenido de sus comunicaciones.</p>
                         </div>
                     </div>
 
-                    <div class="p-6 py-1 sm:py-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
+                    <div class="p-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
+                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
                             <Icon icon="lucide:heart" class="w-5 h-5 lg:w-7 lg:h-7" />
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">La filosofía cósmico-crística</h3>
-                            <p class="text-sm text-base-content/60 leading-relaxed">Los principios de hermandad galáctica, el despertar de la conciencia y las Sociedades Armónicas.</p>
+                            <p class="text-sm text-base-content/70 leading-relaxed">Los principios de <Referencia>hermandad galáctica</Referencia>, el despertar de la conciencia y las <Referencia>Sociedades Armónicas</Referencia>.</p>
                         </div>
                     </div>
 
-                    <div class="p-6 py-1 sm:py-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
+                    <div class="p-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
+                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
                             <Icon icon="hugeicons:idea" class="w-5 h-5 lg:w-7 lg:h-7" />
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">Herramientas de autoconocimiento</h3>
-                            <p class="text-sm text-base-content/60 leading-relaxed">Prácticas de meditación, reflexión interior y trabajo personal para tu propio descubrimiento.</p>
+                            <p class="text-sm text-base-content/70 leading-relaxed">Prácticas de meditación, reflexión interior y trabajo personal para tu propio autodescubrimiento.</p>
                         </div>
                     </div>
 
-                    <div class="p-6 py-1 sm:py-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
+                    <div class="p-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
+                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
                             <Icon icon="hugeicons:hand-helping" class="w-5 h-5 lg:w-7 lg:h-7" />
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">Organización y voluntariado</h3>
-                            <p class="text-sm text-base-content/60 leading-relaxed">Cómo está estructurada TSEYOR como ONG, sus estamentos, su funcionamiento y cómo integrarte si así lo deseas.</p>
+                            <p class="text-sm text-base-content/70 leading-relaxed">Cómo está estructurada TSEYOR como ONG, sus estamentos, su funcionamiento y cómo integrarte si así lo deseas.</p>
                         </div>
                     </div>
                 </div>
@@ -116,14 +116,14 @@
                             <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold font-display shrink-0">1</div>
                             <h3 class="font-display font-bold text-base mb-0">Te inscribes</h3>
                         </div>
-                        <p class="text-sm text-base-content/60 leading-relaxed mt-3 lg:mt-10">Rellena el <Link :href="route('cursos.inscripcion.nueva')" class="text-primary hover:underline font-medium">formulario</Link> y nos pondremos en contacto contigo para empezar.</p>
+                        <p class="text-sm text-base-content/70 leading-relaxed mt-3 lg:mt-10">Rellena el <Link :href="route('cursos.inscripcion.nueva')" class="text-primary hover:underline font-medium">formulario</Link> y nos pondremos en contacto contigo para empezar.</p>
                     </div>
                     <div class="flex flex-col items-start p-4 lg:p-6 rounded-2xl bg-base-100 border border-base-200/60 shadow-sm">
                         <div class="flex lg:flex-col items-center lg:items-start gap-3 lg:gap-4 w-full">
                             <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold font-display shrink-0">2</div>
                             <h3 class="font-display font-bold text-base mb-0">Eliges tu modalidad</h3>
                         </div>
-                        <p class="text-sm text-base-content/60 leading-relaxed mt-3 lg:mt-10">
+                        <p class="text-sm text-base-content/70 leading-relaxed mt-3 lg:mt-10">
                             Presencial en un
                             <Link href="/donde-estamos" class="text-primary hover:underline font-medium">centro cerca</Link> de ti
                             u online por videoconferencia.
@@ -135,14 +135,14 @@
                             <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold font-display shrink-0">3</div>
                             <h3 class="font-display font-bold text-base mb-0">Lectura del libro</h3>
                         </div>
-                        <p class="text-sm text-base-content/60 leading-relaxed mt-3 lg:mt-10">Lectura atenta y grupal del <a href="#material-del-curso" @click.prevent="scrollToMaterial" class="text-primary hover:underline font-medium cursor-pointer">libro del curso</a>, durante 7 capítulos, resolviendo dudas y compartiendo impresiones.</p>
+                        <p class="text-sm text-base-content/70 leading-relaxed mt-3 lg:mt-10">Lectura atenta y grupal del <a href="#material-del-curso" @click.prevent="scrollToMaterial" class="text-primary hover:underline font-medium cursor-pointer">libro del curso</a>, durante 7 capítulos, resolviendo dudas y compartiendo impresiones.</p>
                     </div>
                     <div class="flex flex-col items-start p-4 lg:p-6 rounded-2xl bg-base-100 border border-base-200/60 shadow-sm">
                         <div class="flex lg:flex-col items-center lg:items-start gap-3 lg:gap-4 w-full">
                             <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold font-display shrink-0">4</div>
                             <h3 class="font-display font-bold text-base mb-0">Nombre simbólico</h3>
                         </div>
-                        <p class="text-sm text-base-content/60 leading-relaxed mt-3 lg:mt-10">Al completar el curso, los Guías Estelares te otorgan tu <Link href="/glosario/nombre-simbolico" class="text-primary hover:underline font-medium">nombre simbólico</Link> dentro de TSEYOR.</p>
+                        <p class="text-sm text-base-content/70 leading-relaxed mt-3 lg:mt-10">Al completar el curso, los Guías Estelares te otorgan tu <Link href="/glosario/nombre-simbolico" class="text-primary hover:underline font-medium">nombre simbólico</Link> dentro de TSEYOR.</p>
                     </div>
                 </div>
 
@@ -175,11 +175,11 @@
                         <p class="text-base text-base-content/70 leading-relaxed mb-4">
                             El curso se basa en un libro de relatos y enseñanzas transmitidas por los Guías Estelares. Cada capítulo abre una puerta a la reflexión, el autoconocimiento y el diálogo compartido.
                         </p>
-                        <p class="text-sm text-base-content/50 mb-6">
+                        <p class="text-sm text-base-content/70 mb-6">
                             Puedes descargarlo gratuitamente.
                         </p>
                         <Link href="/libros/curso-holistico-tseyor" class="btn btn-primary rounded-full px-8 shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105">
-                            Descargar el libro
+                            Descargar el libro del curso
                         </Link>
                     </div>
                 </div>
@@ -187,7 +187,7 @@
                 <!-- Separador -->
                 <div class="flex items-center gap-4 my-16">
                     <div class="flex-1 h-px bg-base-300"></div>
-                    <span class="text-xs font-bold tracking-widest uppercase text-base-content/30">Material complementario</span>
+                    <span class="text-xs font-bold tracking-widest uppercase text-base-content/50">Material complementario</span>
                     <div class="flex-1 h-px bg-base-300"></div>
                 </div>
 
@@ -198,14 +198,14 @@
                     </div>
                     <div class="md:order-1 md:text-left text-center">
                         <h3 class="text-2xl sm:text-3xl font-display font-bold tracking-tight mb-3">Lectura complementaria</h3>
-                        <p class="text-sm text-base-content/60 leading-relaxed mb-4">
+                        <p class="text-sm text-base-content/70 leading-relaxed mb-4">
                             Conoce la historia del grupo TSEYOR y su relación con los Guías Estelares, con más de 40 años de experiencias de contactismo.
                         </p>
-                        <p class="text-sm text-base-content/40 mb-6">
+                        <p class="text-sm text-base-content/70 mb-6">
                             Lectura complementaria gratuita.
                         </p>
                         <Link :href="`/libros/${libroGuias.slug}`" class="btn btn-ghost rounded-full border border-base-300 hover:border-primary/40 hover:bg-base-200 transition-all">
-                            Descargar el libro
+                            Descargar Los Guías Estelares
                         </Link>
                     </div>
                 </div>
@@ -215,7 +215,6 @@
         <!-- 5. Preguntas frecuentes -->
         <Section class="py-16">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                <span class="inline-block text-xs font-bold tracking-widest uppercase text-primary/60 font-display mb-2 text-center w-full">FAQ</span>
                 <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight mb-10 text-center">Preguntas frecuentes</h2>
 
                 <div class="space-y-4">
@@ -224,7 +223,7 @@
                             ¿Cuánto tiempo dura el curso?
                             <ChevronDown class="w-5 h-5 text-base-content/40 shrink-0 transition-transform group-open:rotate-180" />
                         </summary>
-                        <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-200/60 pt-4">
+                        <p class="mt-4 text-sm text-base-content/75 leading-relaxed border-t border-base-200/60 pt-4">
                             Son 7 capítulos que se leen en grupo al ritmo que marque la dinámica del grupo. No hay una duración fija: puede ser desde unas pocas semanas hasta varios meses, según la frecuencia de las reuniones.
                         </p>
                     </details>
@@ -233,7 +232,7 @@
                             ¿Necesito conocimientos previos?
                             <ChevronDown class="w-5 h-5 text-base-content/40 shrink-0 transition-transform group-open:rotate-180" />
                         </summary>
-                        <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-200/60 pt-4">
+                        <p class="mt-4 text-sm text-base-content/75 leading-relaxed border-t border-base-200/60 pt-4">
                             Ninguno. El curso es la puerta de entrada. No se requiere experiencia previa en meditación, filosofía ni ningún conocimiento especial. Solo ganas de explorar y compartir.
                         </p>
                     </details>
@@ -242,8 +241,8 @@
                             ¿Qué son los Guías Estelares?
                             <ChevronDown class="w-5 h-5 text-base-content/40 shrink-0 transition-transform group-open:rotate-180" />
                         </summary>
-                        <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-200/60 pt-4">
-                            Seres de otros mundos que se comunican con el grupo TSEYOR desde hace más de 40 años. Su mensaje promueve el despertar de la conciencia, la hermandad galáctica y las Sociedades Armónicas. En el curso los conocerás a través del libro y las sesiones grupales.
+                        <p class="mt-4 text-sm text-base-content/75 leading-relaxed border-t border-base-200/60 pt-4">
+                            Seres de otros mundos que se comunican con el grupo TSEYOR desde hace más de 40 años. Su mensaje promueve el despertar de la conciencia, la <Referencia>hermandad galáctica</Referencia> y las <Referencia>Sociedades Armónicas</Referencia>. En el curso los conocerás a través del libro y las sesiones grupales.
                         </p>
                     </details>
                     <details class="group rounded-2xl bg-base-100 border border-base-200/60 p-5 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
@@ -251,8 +250,8 @@
                             ¿Qué consigo al finalizar el curso?
                             <ChevronDown class="w-5 h-5 text-base-content/40 shrink-0 transition-transform group-open:rotate-180" />
                         </summary>
-                        <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-200/60 pt-4">
-                            Al completar el curso, recibes tu <Link href="/glosario/nombre-simbolico" class="text-primary hover:underline">nombre simbólico</Link> dentro de TSEYOR, un nombre que los Guías Estelares te otorgan y que representa tu esencia. También pasas a formar parte de la comunidad TSEYOR si así lo deseas.
+                        <p class="mt-4 text-sm text-base-content/75 leading-relaxed border-t border-base-200/60 pt-4">
+                            Al completar el curso, recibes tu <Referencia r="nombre simbolico">nombre simbólico</Referencia> dentro de TSEYOR, un nombre que los Guías Estelares te otorgan y que representa tu esencia. También pasas a formar parte de la comunidad TSEYOR si así lo deseas.
                         </p>
                     </details>
                     <details class="group rounded-2xl bg-base-100 border border-base-200/60 p-5 cursor-pointer [&_summary::-webkit-details-marker]:hidden">
@@ -268,20 +267,86 @@
             </div>
         </Section>
 
-        <!-- 6. CTA final -->
+        <!-- 6. Testimonios -->
+        <Section v-if="testimonios.length" class="py-16 bg-base-200/50 overflow-hidden">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-10 lg:px-16">
+                    <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight mb-3">Quiénes ya lo han vivido</h2>
+                    <p class="text-base-content/70 leading-relaxed">
+                        Personas de distintos países comparten qué les ha aportado el curso y la comunidad TSEYOR. Desliza o usa las flechas para ver más.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Carousel a ancho completo de ventana -->
+            <div class="relative">
+                <button
+                    type="button"
+                    aria-label="Ver testimonios anteriores"
+                    @click="scrollTestimonios(-1)"
+                    :class="testimoniosAtStart ? 'opacity-0 pointer-events-none' : 'opacity-100'"
+                    class="absolute left-3 sm:left-4 -translate-y-2 top-1/2 z-20 hidden lg:inline-flex items-center justify-center w-11 h-11 rounded-full bg-base-100 border border-base-300 shadow-md hover:border-primary/40 hover:bg-base-200 text-base-content/70 hover:text-primary transition-opacity duration-700 ease-out"
+                >
+                    <ChevronLeft class="w-5 h-5" />
+                </button>
+                <button
+                    type="button"
+                    aria-label="Ver más testimonios"
+                    @click="scrollTestimonios(1)"
+                    :class="testimoniosAtEnd ? 'opacity-0 pointer-events-none' : 'opacity-100'"
+                    class="absolute right-3 sm:right-4 -translate-y-2 top-1/2 z-20 hidden lg:inline-flex items-center justify-center w-11 h-11 rounded-full bg-base-100 border border-base-300 shadow-md hover:border-primary/40 hover:bg-base-200 text-base-content/70 hover:text-primary transition-opacity duration-700 ease-out"
+                >
+                    <ChevronRight class="w-5 h-5" />
+                </button>
+
+                <!-- Degradado de disolución en el borde derecho (por encima de las tarjetas, debajo del botón) -->
+                <div
+                    aria-hidden="true"
+                    :class="testimoniosAtEnd ? 'opacity-0' : 'opacity-100'"
+                    class="pointer-events-none absolute inset-y-0 right-0 w-40 sm:w-56 z-10 bg-linear-to-l from-base-200 from-15% via-75% via-base-200/40 to-transparent transition-opacity duration-700 ease-out"
+                ></div>
+
+                <!-- Fila scrolleable a ancho completo -->
+                <div
+                    ref="testimoniosScroller"
+                    @scroll="onTestimoniosScroll"
+                    :style="{ paddingLeft: testimoniosStartPadding }"
+                    class="flex gap-6 overflow-x-auto px-4 sm:px-6 pb-4 motion-safe:scroll-smooth [scrollbar-width:thin] [scrollbar-color:var(--color-base-300)_transparent]"
+                >
+                    <figure
+                        v-for="(testimonio, index) in testimonios"
+                        :key="index"
+                        class="flex flex-col w-[280px] sm:w-[320px] lg:w-[340px] shrink-0 rounded-2xl bg-base-100 border border-base-200/60 shadow-sm p-6"
+                    >
+                        <div class="text-sm sm:text-base text-base-content/80 leading-relaxed flex-1">
+                            «{{ testimonio.frase }}»
+                        </div>
+                        <figcaption class="mt-5 pt-4 border-t border-base-200/60 flex items-center gap-3">
+                            <Image :src="testimonio.imagen" width="48" height="48" :alt="`Testimonio de ${testimonio.nombre}`" class="w-12 h-12 rounded-full object-cover shrink-0" />
+                            <div class="min-w-0">
+                                <div class="font-display font-bold text-base leading-tight">{{ testimonio.nombre }}</div>
+                                <div class="text-sm text-base-content/70">{{ testimonio.pais }}</div>
+                            </div>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </Section>
+
+        <!-- 7. CTA final -->
         <Section class="py-24 relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/80 to-primary/85"></div>
+            <div class="absolute inset-0 bg-linear-to-r from-primary/90 via-primary/80 to-primary/85"></div>
             <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="rounded-3xl p-8 sm:p-14 lg:p-20 text-center text-white relative overflow-hidden">
                     <div class="max-w-2xl mx-auto">
                         <span class="inline-block text-xs font-bold tracking-widest uppercase text-white/50 font-display mb-4">
-                            EMPIEZA CUANDO QUIERAS
+                            EMPEZAMOS A PETICIÓN DE LOS ALUMNOS
                         </span>
                         <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight leading-tight mb-6 text-white">
                             Inscríbete al curso gratuito
                         </h2>
                         <p class="text-white/70 leading-relaxed mb-10 text-sm sm:text-base font-light max-w-xl mx-auto">
-                            Sin compromiso, sin dogmas, sin coste. Solo tú y tu experiencia.
+                            Sin compromiso, sin dogmas, sin coste. Los grupos se forman online o presenciales según las solicitudes que recibimos. Solo tú y tu experiencia.
                         </p>
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <Link :href="route('cursos.inscripcion.nueva')" class="whitespace-nowrap w-full sm:w-auto px-8 py-4 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest shadow-lg transition-all duration-300 hover:bg-base-200 hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-105 active:translate-y-0">
@@ -302,10 +367,11 @@
 
 <script setup>
 
-import { ArrowRight, CheckCircle2, Users, Star, ChevronDown } from 'lucide-vue-next'
+import { computed } from 'vue'
+import { ArrowRight, CheckCircle2, Users, Star, ChevronDown, ChevronLeft, ChevronRight, Quote } from 'lucide-vue-next'
 import { Link } from '@inertiajs/vue3'
 
-defineProps({
+const props = defineProps({
     libro: {
         type: Object,
         required: true,
@@ -314,10 +380,84 @@ defineProps({
         type: Object,
         required: true,
     },
-    proximosCursos: {
+    testimonios: {
         type: Array,
         default: () => [],
     },
+})
+
+// Mezcla los testimonios en orden aleatorio en cada carga
+const testimonios = computed(() => {
+    const mezclados = [...props.testimonios]
+    for (let i = mezclados.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [mezclados[i], mezclados[j]] = [mezclados[j], mezclados[i]]
+    }
+    return mezclados
+})
+
+// --- Lógica del carousel de testimonios ---
+const testimoniosScroller = ref(null)
+const testimoniosAtStart = ref(true)
+const testimoniosAtEnd = ref(false)
+
+// Centra la primera tarjeta respecto a un contenedor virtual de 1280px
+// en pantallas mayores: padding-left = (anchoVentana - 1280) / 2
+const testimoniosStartPadding = ref('')
+
+function actualizarPaddingInicio() {
+    const ancho = window.innerWidth
+    if (ancho > 1280) {
+        testimoniosStartPadding.value = `${Math.round((ancho - 1280) / 2)}px`
+    } else {
+        testimoniosStartPadding.value = ''
+    }
+    // Recalcula los botones tras cambiar el padding
+    requestAnimationFrame(() => updateTestimoniosButtons())
+}
+
+function updateTestimoniosButtons() {
+    const el = testimoniosScroller.value
+    if (!el) return
+    // El "inicio" real no es scrollLeft 0: con snap-mandatory la primera
+    // tarjeta queda alineada al borde, dejando scrollLeft = padding inicial.
+    const umbralInicio = (testimoniosStartPadding.value ? parseFloat(testimoniosStartPadding.value) : 0) + 4
+    testimoniosAtStart.value = el.scrollLeft <= umbralInicio
+    // Se considera "final" cuando queda poco por recorrer, no solo en el último píxel:
+    // margen = 20% del ancho visible (o 64px como máximo).
+    const restante = el.scrollWidth - (el.scrollLeft + el.clientWidth)
+    const umbralFinal = Math.min(64, el.clientWidth * 0.2)
+    testimoniosAtEnd.value = restante <= umbralFinal
+}
+
+function scrollTestimonios(direction) {
+    const el = testimoniosScroller.value
+    if (!el) return
+    // Desplaza una "ventana" hacia la izquierda o la derecha
+    const desplazamiento = direction * el.clientWidth
+    el.scrollBy({
+        left: desplazamiento,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    })
+}
+
+function onTestimoniosScroll() {
+    updateTestimoniosButtons()
+}
+
+let resizeHandler = null
+
+onMounted(() => {
+    actualizarPaddingInicio()
+    updateTestimoniosButtons()
+    resizeHandler = () => actualizarPaddingInicio()
+    window.addEventListener('resize', resizeHandler)
+})
+
+onBeforeUnmount(() => {
+    if (resizeHandler) {
+        window.removeEventListener('resize', resizeHandler)
+    }
 })
 
 function scrollToMaterial() {
