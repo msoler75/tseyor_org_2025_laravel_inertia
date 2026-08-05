@@ -90,7 +90,7 @@ export const useNavStore = defineStore('nav', {
   getters: {
     fullPage: (state) => {
       // Auto-detectar basado en la ruta (funciona en SSR)
-      return ['/', '/origenes-de-tseyor'].includes(page.url);
+      return ['/origenes-de-tseyor'].includes(page.url);
     }
   },
 

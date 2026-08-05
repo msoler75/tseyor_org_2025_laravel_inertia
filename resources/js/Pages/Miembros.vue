@@ -242,11 +242,9 @@ const panelLayouts = computed(() => {
     const map = new Map()
     for (const s of sections.value) {
         const count = s.items.filter(i => i.show !== false).length
-        const colSpan = count >= 4 ? 'sm:col-span-2 md:col-span-4'
-            : count === 3 ? 'sm:col-span-2 md:col-span-3'
+        const colSpan = count >= 3 ? 'sm:col-span-2 md:col-span-4'
             : 'sm:col-span-1 md:col-span-2'
-        const innerCols = count >= 4 ? 'grid-cols-2 md:grid-cols-4'
-            : count === 3 ? 'grid-cols-3'
+        const innerCols = count >= 3 ? 'grid-cols-2 sm:grid-cols-4'
             : count === 2 ? 'grid-cols-2'
             : 'grid-cols-1'
         map.set(s.id, { colSpan, innerCols })
