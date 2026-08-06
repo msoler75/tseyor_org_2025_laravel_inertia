@@ -462,15 +462,15 @@ function onTestimoniosScroll() {
 
 function actualizarPosicionTestimonios() {
     const el = testimoniosScroller.value
-    if (!el || !testimonios.length) return
+    if (!el || !testimonios.value.length) return
 
     const maxScroll = el.scrollWidth - el.clientWidth
     if (maxScroll <= 0) return
 
     // Proporción del scroll (0 = inicio, 1 = final) → índice estimado
     const progress = el.scrollLeft / maxScroll
-    const indice = Math.round(progress * (testimonios.length - 1)) + 1
-    testimoniosPosition.value = Math.max(1, Math.min(testimonios.length, indice))
+    const indice = Math.round(progress * (testimonios.value.length - 1)) + 1
+    testimoniosPosition.value = Math.max(1, Math.min(testimonios.value.length, indice))
 }
 
 // Navegación por teclado del carrusel (H7: flexibility & efficiency)
