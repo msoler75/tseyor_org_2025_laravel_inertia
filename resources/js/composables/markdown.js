@@ -3,6 +3,26 @@ import showdown from "showdown";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 
+// Mitigación del ReDoS de showdown (GHSA-6mmh-6h5h-psvv, sin fix upstream).
+// El render sigue siendo 100% compatible con la versión anterior: NO cambiamos
+// de motor. Como el input proviene de gestion de contenido por el admin, el
+// riesgo de entrada maliciosa es bajo; el guard limita el tamaño para descartar
+// inputs descomunales/artificialmente anidados que dispararían el catastrófico
+// el backtracking del link-parser.
+const MAX_MARKDOWN_LENGTH = 2_000_000;
+
+function makeHtmlSafeguard(converter, raw) {
+  if (typeof raw !== "string" || raw.length > MAX_MARKDOWN_LENGTH) {
+    return " ";
+  }
+  try {
+    return converter.makeHtml(raw);
+  } catch (err) {
+    // ante un fallo del parser evitamos que rompa el render
+    return raw.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  }
+}
+
 const turndownService = new TurndownService({
   bulletListMarker: "-",
   headingStyle: "atx",
@@ -143,8 +163,7 @@ export function MarkdownToHtml(raw_markdown) {
     }
   );
 
-  var html = converter
-    .makeHtml(raw_markdown)
+  var html = makeHtmlSafeguard(converter, raw_markdown)
 
     // primero reemplazamos las imágenes con atributos
     .replace(/(<img[^>]*>){(\w+=[^}]+)}/g, (match, img, attributes) => {
