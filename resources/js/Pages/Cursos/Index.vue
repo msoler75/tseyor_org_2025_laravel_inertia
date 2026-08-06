@@ -371,24 +371,13 @@
             </div>
         </Section>
 
-        <!-- Volver arriba -->
-        <button
-            v-if="showBackToTop"
-            type="button"
-            aria-label="Volver arriba"
-            @click="scrollToTop"
-            class="fixed bottom-6 right-6 z-40 inline-flex items-center justify-center w-11 h-11 rounded-full bg-primary text-primary-content shadow-lg hover:bg-primary/90 transition-all duration-300 hover:-translate-y-0.5"
-        >
-            <ArrowUp class="w-5 h-5" />
-        </button>
-
     </Sections>
 </template>
 
 <script setup>
 
 import { ref } from 'vue'
-import { ArrowRight, ArrowUp, CheckCircle2, Users, Star, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { ArrowRight, CheckCircle2, Users, Star, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { Link } from '@inertiajs/vue3'
 
 const props = defineProps({
@@ -425,9 +414,6 @@ const testimoniosAtStart = ref(true)
 const testimoniosAtEnd = ref(false)
 // Posición visible del carrusel (1-based) para el contador y aria-live
 const testimoniosPosition = ref(1)
-
-// --- Botón "volver arriba" ---
-const showBackToTop = ref(false)
 
 // Centra la primera tarjeta respecto a un contenedor virtual de 1280px
 // en pantallas mayores: padding-left = (anchoVentana - 1280) / 2
@@ -492,12 +478,7 @@ function onTestimoniosKeydown(event) {
     }
 }
 
-function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
-}
-
 let resizeHandler = null
-let scrollHandler = null
 
 onMounted(() => {
     barajarTestimonios()
@@ -506,16 +487,11 @@ onMounted(() => {
     actualizarPosicionTestimonios()
     resizeHandler = () => actualizarPaddingInicio()
     window.addEventListener('resize', resizeHandler)
-    scrollHandler = () => { showBackToTop.value = window.scrollY > 600 }
-    window.addEventListener('scroll', scrollHandler, { passive: true })
 })
 
 onBeforeUnmount(() => {
     if (resizeHandler) {
         window.removeEventListener('resize', resizeHandler)
-    }
-    if (scrollHandler) {
-        window.removeEventListener('scroll', scrollHandler)
     }
 })
 
