@@ -114,6 +114,25 @@ class CursosController extends Controller
         $libro = Libro::where('slug', 'curso-holistico-tseyor')->first();
         $libroGuias = Libro::where('slug', 'los-guias-estelares')->first();
 
+        // Libro3d y la plantilla esperan un objeto con .slug, .imagen, .portada, .titulo.
+        // Si no existe en BD, usamos un respaldo para no romper la página.
+        if (!$libro) {
+            $libro = (object) [
+                'slug' => 'curso-holistico-tseyor',
+                'imagen' => '/almacen/medios/paginas/curso.png',
+                'portada' => null,
+                'titulo' => 'Curso Holístico Tseyor',
+            ];
+        }
+        if (!$libroGuias) {
+            $libroGuias = (object) [
+                'slug' => 'los-guias-estelares',
+                'imagen' => '/almacen/medios/paginas/curso.png',
+                'portada' => null,
+                'titulo' => 'Los Guías Estelares',
+            ];
+        }
+
         return Inertia::render('Cursos/Index', [
             'libro' => $libro,
             'libroGuias' => $libroGuias,
