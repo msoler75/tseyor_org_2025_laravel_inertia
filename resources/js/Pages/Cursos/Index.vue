@@ -460,27 +460,17 @@ function onTestimoniosScroll() {
     actualizarPosicionTestimonios()
 }
 
-// Encuentra la tarjeta cuyo borde izquierdo está más cerca del borde del scroller
 function actualizarPosicionTestimonios() {
     const el = testimoniosScroller.value
     if (!el || !testimonios.length) return
 
-    const figures = el.querySelectorAll('figure')
-    if (!figures.length) return
+    const maxScroll = el.scrollWidth - el.clientWidth
+    if (maxScroll <= 0) return
 
-    const scrollerLeft = el.getBoundingClientRect().left
-    let mejor = 1
-    let mejorDist = Infinity
-
-    figures.forEach((fig, i) => {
-        const dist = Math.abs(fig.getBoundingClientRect().left - scrollerLeft)
-        if (dist < mejorDist) {
-            mejorDist = dist
-            mejor = i + 1
-        }
-    })
-
-    testimoniosPosition.value = mejor
+    // Proporción del scroll (0 = inicio, 1 = final) → índice estimado
+    const progress = el.scrollLeft / maxScroll
+    const indice = Math.round(progress * (testimonios.length - 1)) + 1
+    testimoniosPosition.value = Math.max(1, Math.min(testimonios.length, indice))
 }
 
 // Navegación por teclado del carrusel (H7: flexibility & efficiency)
