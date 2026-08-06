@@ -296,7 +296,12 @@
                     <ChevronRight class="w-5 h-5" />
                 </button>
 
-                <!-- Degradado de disolución en el borde derecho (por encima de las tarjetas, debajo del botón) -->
+                <!-- Degradados de disolución en los bordes (por encima de las tarjetas, debajo de los botones) -->
+                <div
+                    aria-hidden="true"
+                    :class="testimoniosAtStart ? 'opacity-0' : 'opacity-100'"
+                    class="pointer-events-none absolute inset-y-0 left-0 w-40 sm:w-56 z-10 bg-linear-to-r from-base-200 from-15% via-75% via-base-200/40 to-transparent transition-opacity duration-700 ease-out"
+                ></div>
                 <div
                     aria-hidden="true"
                     :class="testimoniosAtEnd ? 'opacity-0' : 'opacity-100'"
