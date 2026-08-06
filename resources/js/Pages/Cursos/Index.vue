@@ -465,8 +465,13 @@ function actualizarPosicionTestimonios() {
     const el = testimoniosScroller.value
     if (!el || !testimonios.length) return
     const primeraTarjeta = el.querySelector('figure')
-    const anchoTarjetaGap = (primeraTarjeta ? primeraTarjeta.offsetWidth : 320) + 24 // + gap-6
-    const indice = Math.max(1, Math.min(testimonios.length, Math.round(el.scrollLeft / anchoTarjetaGap) + 1))
+    if (!primeraTarjeta) return
+    const paso = primeraTarjeta.offsetWidth + 24 // card width + gap-6
+    // El paddingLeft inicial (testimoniosStartPadding) desplaza la primera tarjeta;
+    // scrollLeft efectivo = scrollLeft - padding para que la posición parta de 0 en la tarjeta 1.
+    const paddingInicial = testimoniosStartPadding.value ? parseFloat(testimoniosStartPadding.value) : 0
+    const scrollEfectivo = Math.max(0, el.scrollLeft - paddingInicial)
+    const indice = Math.max(1, Math.min(testimonios.length, Math.round(scrollEfectivo / paso) + 1))
     testimoniosPosition.value = indice
 }
 
