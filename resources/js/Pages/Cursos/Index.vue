@@ -306,9 +306,14 @@
                 <!-- Fila scrolleable a ancho completo -->
                 <div
                     ref="testimoniosScroller"
+                    role="region"
+                    aria-roledescription="carrusel"
+                    aria-label="Testimonios de alumnos"
+                    tabindex="0"
                     @scroll="onTestimoniosScroll"
+                    @keydown="onTestimoniosKeydown"
                     :style="{ paddingLeft: testimoniosStartPadding }"
-                    class="flex gap-6 overflow-x-auto px-4 sm:px-6 pb-4 motion-safe:scroll-smooth [scrollbar-width:thin] [scrollbar-color:var(--color-base-300)_transparent]"
+                    class="flex gap-6 overflow-x-auto px-4 sm:px-6 pb-4 motion-safe:scroll-smooth [scrollbar-width:thin] [scrollbar-color:var(--color-base-300)_transparent] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-2xl"
                 >
                     <figure
                         v-for="testimonio in testimonios"
@@ -326,6 +331,16 @@
                             </div>
                         </figcaption>
                     </figure>
+                </div>
+
+                <!-- Contador de posición del carrusel (visible + aria-live) -->
+                <div class="flex items-center justify-center gap-3 mt-2 pb-1">
+                    <span
+                        aria-live="polite"
+                        class="text-xs font-bold tracking-widest uppercase text-base-content/70 font-display tabular-nums"
+                    >
+                        {{ testimoniosPosition }} / {{ testimonios.length }}
+                    </span>
                 </div>
             </div>
         </Section>
@@ -359,13 +374,24 @@
             </div>
         </Section>
 
+        <!-- Volver arriba -->
+        <button
+            v-if="showBackToTop"
+            type="button"
+            aria-label="Volver arriba"
+            @click="scrollToTop"
+            class="fixed bottom-6 right-6 z-40 inline-flex items-center justify-center w-11 h-11 rounded-full bg-primary text-primary-content shadow-lg hover:bg-primary/90 transition-all duration-300 hover:-translate-y-0.5"
+        >
+            <ArrowUp class="w-5 h-5" />
+        </button>
+
     </Sections>
 </template>
 
 <script setup>
 
 import { ref } from 'vue'
-import { ArrowRight, CheckCircle2, Users, Star, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { ArrowRight, ArrowUp, CheckCircle2, Users, Star, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { Link } from '@inertiajs/vue3'
 
 const props = defineProps({
@@ -400,6 +426,11 @@ function barajarTestimonios() {
 const testimoniosScroller = ref(null)
 const testimoniosAtStart = ref(true)
 const testimoniosAtEnd = ref(false)
+// Posición visible del carrusel (1-based) para el contador y aria-live
+const testimoniosPosition = ref(1)
+
+// --- Botón "volver arriba" ---
+const showBackToTop = ref(false)
 
 // Centra la primera tarjeta respecto a un contenedor virtual de 1280px
 // en pantallas mayores: padding-left = (anchoVentana - 1280) / 2
@@ -443,21 +474,51 @@ function scrollTestimonios(direction) {
 
 function onTestimoniosScroll() {
     updateTestimoniosButtons()
+    actualizarPosicionTestimonios()
+}
+
+// Calcula qué tarjeta está más cerca del borde izquierdo visible
+function actualizarPosicionTestimonios() {
+    const el = testimoniosScroller.value
+    if (!el || !testimonios.length) return
+    const primeraTarjeta = el.querySelector('figure')
+    const anchoTarjetaGap = (primeraTarjeta ? primeraTarjeta.offsetWidth : 320) + 24 // + gap-6
+    const indice = Math.max(1, Math.min(testimonios.length, Math.round(el.scrollLeft / anchoTarjetaGap) + 1))
+    testimoniosPosition.value = indice
+}
+
+// Navegación por teclado del carrusel (H7: flexibility & efficiency)
+function onTestimoniosKeydown(event) {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault()
+        scrollTestimonios(event.key === 'ArrowLeft' ? -1 : 1)
+    }
+}
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
 }
 
 let resizeHandler = null
+let scrollHandler = null
 
 onMounted(() => {
     barajarTestimonios()
     actualizarPaddingInicio()
     updateTestimoniosButtons()
+    actualizarPosicionTestimonios()
     resizeHandler = () => actualizarPaddingInicio()
     window.addEventListener('resize', resizeHandler)
+    scrollHandler = () => { showBackToTop.value = window.scrollY > 600 }
+    window.addEventListener('scroll', scrollHandler, { passive: true })
 })
 
 onBeforeUnmount(() => {
     if (resizeHandler) {
         window.removeEventListener('resize', resizeHandler)
+    }
+    if (scrollHandler) {
+        window.removeEventListener('scroll', scrollHandler)
     }
 })
 
