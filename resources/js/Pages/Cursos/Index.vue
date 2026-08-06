@@ -13,23 +13,23 @@
                         <h1 class="text-4xl sm:text-5xl font-display font-black tracking-tight leading-tight mb-4">
                             Curso Holístico Tseyor
                         </h1>
-                        <p class="text-lg text-base-content/70 leading-relaxed mb-4">
+                        <p class="text-lg text-base-content/80 leading-relaxed mb-4">
                             La puerta de entrada a una filosofía viva, unas herramientas de autoconocimiento y una comunidad que te acompaña. Un curso tutelado por los <Referencia>Guías Estelares</Referencia>, donde todos aprendemos de todos.
                         </p>
                         <div class="flex flex-wrap gap-x-6 gap-y-2 mb-6">
-                            <span class="inline-flex items-center gap-2 text-sm text-base-content/70">
+                            <span class="inline-flex items-center gap-2 text-sm text-base-content/80">
                                 <CheckCircle2 class="w-4 h-4 text-primary" />
                                 100% gratuito
                             </span>
-                            <span class="inline-flex items-center gap-2 text-sm text-base-content/70">
+                            <span class="inline-flex items-center gap-2 text-sm text-base-content/80">
                                 <CheckCircle2 class="w-4 h-4 text-primary" />
                                 Tutelado
                             </span>
-                            <span class="inline-flex items-center gap-2 text-sm text-base-content/70">
+                            <span class="inline-flex items-center gap-2 text-sm text-base-content/80">
                                 <CheckCircle2 class="w-4 h-4 text-primary" />
                                 En comunidad
                             </span>
-                            <span class="inline-flex items-center gap-2 text-sm text-base-content/70">
+                            <span class="inline-flex items-center gap-2 text-sm text-base-content/80">
                                 <CheckCircle2 class="w-4 h-4 text-primary" />
                                 7 capítulos
                             </span>
@@ -55,18 +55,18 @@
         <Section class="py-16 md:py-20 bg-base-200/50">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight mb-3">Qué aprenderás</h2>
-                <p class="text-base-content/70 max-w-xl mx-auto mb-10 sm:mb-14">
+                <p class="text-base-content/80 max-w-xl mx-auto mb-10 sm:mb-14">
                     El curso recorre las enseñanzas fundamentales que los <Referencia>Guías Estelares</Referencia> han transmitido a lo largo de más de 40 años.
                 </p>
 
-                <div class="grid sm:grid-cols-2 gap-1 lg:gap-5 max-w-4xl mx-auto text-left">
+                <div class="grid sm:grid-cols-2 gap-4 lg:gap-5 max-w-4xl mx-auto text-left">
                     <div class="p-6 rounded-2xl bg-base-100 flex flex-col items-start gap-4">
                         <div class="w-12 h-12 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0">
                             <Icon icon="hugeicons:scroll-01" class="w-6 h-6" />
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">Los mensajes de los Guías</h3>
-                            <p class="text-sm text-base-content/70 leading-relaxed">Conocerás a los <Referencia>Guías Estelares</Referencia>, su papel como tutores y el contenido de sus comunicaciones.</p>
+                            <p class="text-sm text-base-content/80 leading-relaxed">Conocerás a los <Referencia>Guías Estelares</Referencia>, su papel como tutores y el contenido de sus comunicaciones.</p>
                         </div>
                     </div>
 
@@ -76,7 +76,7 @@
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">La filosofía cósmico-crística</h3>
-                            <p class="text-sm text-base-content/70 leading-relaxed">Los principios de <Referencia>hermandad galáctica</Referencia>, el despertar de la conciencia y las <Referencia>Sociedades Armónicas</Referencia>.</p>
+                            <p class="text-sm text-base-content/80 leading-relaxed">Los principios de <Referencia>hermandad galáctica</Referencia>, el despertar de la conciencia y las <Referencia>Sociedades Armónicas</Referencia>.</p>
                         </div>
                     </div>
 
@@ -86,7 +86,7 @@
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">Herramientas de autoconocimiento</h3>
-                            <p class="text-sm text-base-content/70 leading-relaxed">Prácticas de meditación, reflexión interior y trabajo personal para tu propio autodescubrimiento.</p>
+                            <p class="text-sm text-base-content/80 leading-relaxed">Prácticas de meditación, reflexión interior y trabajo personal para tu propio autodescubrimiento.</p>
                         </div>
                     </div>
 
@@ -96,7 +96,7 @@
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">Organización y voluntariado</h3>
-                            <p class="text-sm text-base-content/70 leading-relaxed">Cómo está estructurada TSEYOR como ONG, sus estamentos, su funcionamiento y cómo integrarte si así lo deseas.</p>
+                            <p class="text-sm text-base-content/80 leading-relaxed">Cómo está estructurada TSEYOR como ONG, sus estamentos, su funcionamiento y cómo integrarte si así lo deseas.</p>
                         </div>
                     </div>
                 </div>
@@ -114,33 +114,33 @@
                             <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold font-display shrink-0">1</div>
                             <h3 class="font-display font-bold text-base mb-0">Te inscribes</h3>
                         </div>
-                        <p class="text-sm text-base-content/70 leading-relaxed mt-3 lg:mt-10">Rellena el <Link :href="route('cursos.inscripcion.nueva')" class="text-primary hover:underline font-medium">formulario</Link> y nos pondremos en contacto contigo para empezar.</p>
+                        <p class="text-sm text-base-content/80 leading-relaxed mt-3 lg:mt-10">Rellena el <Link :href="route('cursos.inscripcion.nueva')" class="text-primary hover:underline font-medium">formulario</Link> y nos pondremos en contacto contigo para empezar.</p>
                     </div>
                     <div class="flex flex-col items-start p-4 lg:p-6 rounded-2xl bg-base-100 border border-base-200/60 shadow-sm">
                         <div class="flex lg:flex-col items-center lg:items-start gap-3 lg:gap-4 w-full">
                             <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold font-display shrink-0">2</div>
                             <h3 class="font-display font-bold text-base mb-0">Eliges tu modalidad</h3>
                         </div>
-                        <p class="text-sm text-base-content/70 leading-relaxed mt-3 lg:mt-10">
+                        <p class="text-sm text-base-content/80 leading-relaxed mt-3 lg:mt-10">
                             Presencial en un
                             <Link href="/donde-estamos" class="text-primary hover:underline font-medium">centro cerca</Link> de ti
                             u online por videoconferencia.
                         </p>
-                        <Link href="/donde-estamos" class="text-xs text-primary/60 hover:text-primary transition-colors mt-3">Encuentra nuestros centros →</Link>
+                        <Link href="/donde-estamos" class="text-xs text-primary/80 hover:text-primary transition-colors mt-3">Encuentra nuestros centros →</Link>
                     </div>
                     <div class="flex flex-col items-start p-4 lg:p-6 rounded-2xl bg-base-100 border border-base-200/60 shadow-sm">
                         <div class="flex lg:flex-col items-center lg:items-start gap-3 lg:gap-4 w-full">
                             <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold font-display shrink-0">3</div>
                             <h3 class="font-display font-bold text-base mb-0">Lectura del libro</h3>
                         </div>
-                        <p class="text-sm text-base-content/70 leading-relaxed mt-3 lg:mt-10">Lectura atenta y grupal del <a href="#material-del-curso" @click.prevent="scrollToMaterial" class="text-primary hover:underline font-medium cursor-pointer">libro del curso</a>, durante 7 capítulos, resolviendo dudas y compartiendo impresiones.</p>
+                        <p class="text-sm text-base-content/80 leading-relaxed mt-3 lg:mt-10">Lectura atenta y grupal del <a href="#material-del-curso" @click.prevent="scrollToMaterial" class="text-primary hover:underline font-medium cursor-pointer">libro del curso</a>, durante 7 capítulos, resolviendo dudas y compartiendo impresiones.</p>
                     </div>
                     <div class="flex flex-col items-start p-4 lg:p-6 rounded-2xl bg-base-100 border border-base-200/60 shadow-sm">
                         <div class="flex lg:flex-col items-center lg:items-start gap-3 lg:gap-4 w-full">
                             <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold font-display shrink-0">4</div>
                             <h3 class="font-display font-bold text-base mb-0">Nombre simbólico</h3>
                         </div>
-                        <p class="text-sm text-base-content/70 leading-relaxed mt-3 lg:mt-10">Al completar el curso, los Guías Estelares te otorgan tu <Link href="/glosario/nombre-simbolico" class="text-primary hover:underline font-medium">nombre simbólico</Link> dentro de TSEYOR.</p>
+                        <p class="text-sm text-base-content/80 leading-relaxed mt-3 lg:mt-10">Al completar el curso, los Guías Estelares te otorgan tu <Link href="/glosario/nombre-simbolico" class="text-primary hover:underline font-medium">nombre simbólico</Link> dentro de TSEYOR.</p>
                     </div>
                 </div>
 
@@ -172,7 +172,7 @@
                         <p class="text-base text-base-content/70 leading-relaxed mb-4">
                             El curso se basa en un libro de relatos y enseñanzas transmitidas por los Guías Estelares. Cada capítulo abre una puerta a la reflexión, el autoconocimiento y el diálogo compartido.
                         </p>
-                        <p class="text-sm text-base-content/70 mb-6">
+                        <p class="text-sm text-base-content/80 mb-6">
                             Puedes descargarlo gratuitamente.
                         </p>
                         <Link href="/libros/curso-holistico-tseyor" class="btn btn-primary rounded-full px-8 shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105">
@@ -195,10 +195,10 @@
                     </div>
                     <div class="md:order-1 md:text-left text-center">
                         <h3 class="text-2xl sm:text-3xl font-display font-bold tracking-tight mb-3">Lectura complementaria</h3>
-                        <p class="text-sm text-base-content/70 leading-relaxed mb-4">
+                        <p class="text-sm text-base-content/80 leading-relaxed mb-4">
                             Conoce la historia del grupo TSEYOR y su relación con los Guías Estelares, con más de 40 años de experiencias de contactismo.
                         </p>
-                        <p class="text-sm text-base-content/70 mb-6">
+                        <p class="text-sm text-base-content/80 mb-6">
                             Lectura complementaria gratuita.
                         </p>
                         <Link :href="`/libros/${libroGuias.slug}`" class="btn btn-ghost rounded-full border border-base-300 hover:border-primary/40 hover:bg-base-200 transition-all">
@@ -327,7 +327,7 @@
                             <Image :src="testimonio.imagen" width="48" height="48" :alt="`Testimonio de ${testimonio.nombre}`" class="w-12 h-12 rounded-full object-cover shrink-0" />
                             <div class="min-w-0">
                                 <div class="font-display font-bold text-base leading-tight">{{ testimonio.nombre }}</div>
-                                <div class="text-sm text-base-content/70">{{ testimonio.pais }}</div>
+                                <div class="text-sm text-base-content/80">{{ testimonio.pais }}</div>
                             </div>
                         </figcaption>
                     </figure>
@@ -351,14 +351,11 @@
             <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="rounded-3xl p-8 sm:p-14 lg:p-20 text-center text-white relative overflow-hidden">
                     <div class="max-w-2xl mx-auto">
-                        <span class="inline-block text-xs font-bold tracking-widest uppercase text-white/50 font-display mb-4">
-                            EMPEZAMOS A PETICIÓN DE LOS ALUMNOS
-                        </span>
                         <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tight leading-tight mb-6 text-white">
                             Inscríbete al curso gratuito
                         </h2>
-                        <p class="text-white/70 leading-relaxed mb-10 text-sm sm:text-base font-light max-w-xl mx-auto">
-                            Sin compromiso, sin dogmas, sin coste. Los grupos se forman online o presenciales según las solicitudes que recibimos. Solo tú y tu experiencia.
+                        <p class="text-white/90 leading-relaxed mb-10 text-sm sm:text-base font-light max-w-xl mx-auto">
+                            Empezamos cuando recibimos solicitudes de tu zona, online o presencial. Sin compromiso, sin dogmas, sin coste. Solo tú y tu experiencia.
                         </p>
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <Link :href="route('cursos.inscripcion.nueva')" class="whitespace-nowrap w-full sm:w-auto px-8 py-4 rounded-full bg-white text-base-content font-bold text-xs uppercase tracking-widest shadow-lg transition-all duration-300 hover:bg-base-200 hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-105 active:translate-y-0">
