@@ -54,16 +54,15 @@
         <!-- 2. Qué aprenderás -->
         <Section class="py-16 md:py-20 bg-base-200/50">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <span class="inline-block text-xs font-bold tracking-widest uppercase text-primary/60 font-display mb-2">Contenido</span>
                 <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight mb-3">Qué aprenderás</h2>
                 <p class="text-base-content/70 max-w-xl mx-auto mb-10 sm:mb-14">
                     El curso recorre las enseñanzas fundamentales que los <Referencia>Guías Estelares</Referencia> han transmitido a lo largo de más de 40 años.
                 </p>
 
                 <div class="grid sm:grid-cols-2 gap-1 lg:gap-5 max-w-4xl mx-auto text-left">
-                    <div class="p-6 sm:p-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
-                            <Icon icon="hugeicons:scroll-01" class="w-5 h-5 lg:w-7 lg:h-7" />
+                    <div class="p-6 rounded-2xl bg-base-100 flex flex-col items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0">
+                            <Icon icon="hugeicons:scroll-01" class="w-6 h-6" />
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">Los mensajes de los Guías</h3>
@@ -71,9 +70,9 @@
                         </div>
                     </div>
 
-                    <div class="p-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
-                            <Icon icon="lucide:heart" class="w-5 h-5 lg:w-7 lg:h-7" />
+                    <div class="p-6 rounded-2xl bg-base-100 flex flex-col items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0">
+                            <Icon icon="lucide:heart" class="w-6 h-6" />
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">La filosofía cósmico-crística</h3>
@@ -81,9 +80,9 @@
                         </div>
                     </div>
 
-                    <div class="p-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
-                            <Icon icon="hugeicons:idea" class="w-5 h-5 lg:w-7 lg:h-7" />
+                    <div class="p-6 rounded-2xl bg-base-100 flex flex-col items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0">
+                            <Icon icon="hugeicons:idea" class="w-6 h-6" />
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">Herramientas de autoconocimiento</h3>
@@ -91,9 +90,9 @@
                         </div>
                     </div>
 
-                    <div class="p-6 rounded-2xl bg-base-100 flex flex-col lg:flex-row items-start gap-5">
-                        <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0 mt-1">
-                            <Icon icon="hugeicons:hand-helping" class="w-5 h-5 lg:w-7 lg:h-7" />
+                    <div class="p-6 rounded-2xl bg-base-100 flex flex-col items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-linear-to-br from-primary to-primary/70 shadow-inner flex items-center justify-center text-white shrink-0">
+                            <Icon icon="hugeicons:hand-helping" class="w-6 h-6" />
                         </div>
                         <div class="min-w-0">
                             <h3 class="font-display font-bold text-base mb-1.5">Organización y voluntariado</h3>
@@ -107,7 +106,6 @@
         <!-- 3. Cómo funciona -->
         <Section class="py-16">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <span class="inline-block text-xs font-bold tracking-widest uppercase text-primary/60 font-display mb-2">Experiencia tutelada</span>
                 <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight mb-10">Cómo se vive el curso</h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
@@ -170,7 +168,6 @@
                         </div>
                     </div>
                     <div class="md:text-left text-center">
-                        <span class="inline-block text-xs font-bold tracking-widest uppercase text-primary font-display mb-2">El libro del curso</span>
                         <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight mb-4">Curso Holístico Tseyor</h2>
                         <p class="text-base text-base-content/70 leading-relaxed mb-4">
                             El curso se basa en un libro de relatos y enseñanzas transmitidas por los Guías Estelares. Cada capítulo abre una puerta a la reflexión, el autoconocimiento y el diálogo compartido.
@@ -187,7 +184,7 @@
                 <!-- Separador -->
                 <div class="flex items-center gap-4 my-16">
                     <div class="flex-1 h-px bg-base-300"></div>
-                    <span class="text-xs font-bold tracking-widest uppercase text-base-content/50">Material complementario</span>
+                    <span class="text-xs font-bold tracking-widest uppercase text-base-content/70">Material complementario</span>
                     <div class="flex-1 h-px bg-base-300"></div>
                 </div>
 
@@ -259,7 +256,7 @@
                             ¿Qué pasa después de inscribirme?
                             <ChevronDown class="w-5 h-5 text-base-content/40 shrink-0 transition-transform group-open:rotate-180" />
                         </summary>
-                        <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-200/60 pt-4">
+                        <p class="mt-4 text-sm text-base-content/75 leading-relaxed border-t border-base-200/60 pt-4">
                             Te pondrás en contacto con el grupo más cercano a tu zona o con el grupo online. Ellos te indicarán cuándo comienza la próxima lectura grupal y cómo incorporarte. No hay fechas fijas: el curso arranca cuando hay un grupo listo.
                         </p>
                     </details>
@@ -285,7 +282,7 @@
                     aria-label="Ver testimonios anteriores"
                     @click="scrollTestimonios(-1)"
                     :class="testimoniosAtStart ? 'opacity-0 pointer-events-none' : 'opacity-100'"
-                    class="absolute left-3 sm:left-4 -translate-y-2 top-1/2 z-20 hidden lg:inline-flex items-center justify-center w-11 h-11 rounded-full bg-base-100 border border-base-300 shadow-md hover:border-primary/40 hover:bg-base-200 text-base-content/70 hover:text-primary transition-opacity duration-700 ease-out"
+                    class="absolute left-3 sm:left-4 -translate-y-2 top-1/2 z-20 inline-flex items-center justify-center w-11 h-11 rounded-full bg-base-100 border border-base-300 shadow-md hover:border-primary/40 hover:bg-base-200 text-base-content/70 hover:text-primary transition-opacity duration-700 ease-out"
                 >
                     <ChevronLeft class="w-5 h-5" />
                 </button>
@@ -294,7 +291,7 @@
                     aria-label="Ver más testimonios"
                     @click="scrollTestimonios(1)"
                     :class="testimoniosAtEnd ? 'opacity-0 pointer-events-none' : 'opacity-100'"
-                    class="absolute right-3 sm:right-4 -translate-y-2 top-1/2 z-20 hidden lg:inline-flex items-center justify-center w-11 h-11 rounded-full bg-base-100 border border-base-300 shadow-md hover:border-primary/40 hover:bg-base-200 text-base-content/70 hover:text-primary transition-opacity duration-700 ease-out"
+                    class="absolute right-3 sm:right-4 -translate-y-2 top-1/2 z-20 inline-flex items-center justify-center w-11 h-11 rounded-full bg-base-100 border border-base-300 shadow-md hover:border-primary/40 hover:bg-base-200 text-base-content/70 hover:text-primary transition-opacity duration-700 ease-out"
                 >
                     <ChevronRight class="w-5 h-5" />
                 </button>
@@ -314,8 +311,8 @@
                     class="flex gap-6 overflow-x-auto px-4 sm:px-6 pb-4 motion-safe:scroll-smooth [scrollbar-width:thin] [scrollbar-color:var(--color-base-300)_transparent]"
                 >
                     <figure
-                        v-for="(testimonio, index) in testimonios"
-                        :key="index"
+                        v-for="testimonio in testimonios"
+                        :key="testimonio.nombre"
                         class="flex flex-col w-[280px] sm:w-[320px] lg:w-[340px] shrink-0 rounded-2xl bg-base-100 border border-base-200/60 shadow-sm p-6"
                     >
                         <div class="text-sm sm:text-base text-base-content/80 leading-relaxed flex-1">
@@ -353,7 +350,7 @@
                                 Inscribirme gratis
                                 <ArrowRight class="w-4 h-4 inline ml-1.5 -mt-0.5" />
                             </Link>
-                            <Link :href="route('biblioteca')" class="whitespace-nowrap w-full sm:w-auto px-6 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 font-bold text-xs uppercase tracking-widest transition-all text-center backdrop-blur-sm hover:scale-105">
+                            <Link :href="route('biblioteca')" class="whitespace-nowrap w-full sm:w-auto px-6 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 font-bold text-xs uppercase tracking-widest transition-all text-center hover:scale-105">
                                 Explorar contenidos libres
                             </Link>
                         </div>
@@ -367,8 +364,8 @@
 
 <script setup>
 
-import { computed } from 'vue'
-import { ArrowRight, CheckCircle2, Users, Star, ChevronDown, ChevronLeft, ChevronRight, Quote } from 'lucide-vue-next'
+import { ref } from 'vue'
+import { ArrowRight, CheckCircle2, Users, Star, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { Link } from '@inertiajs/vue3'
 
 const props = defineProps({
@@ -386,15 +383,18 @@ const props = defineProps({
     },
 })
 
-// Mezcla los testimonios en orden aleatorio en cada carga
-const testimonios = computed(() => {
+// Mezcla los testimonios en una única pasada (al montar) para que el carrusel
+// no cambie de orden en cada re-render y las keys permanezcan estables.
+const testimonios = ref([])
+
+function barajarTestimonios() {
     const mezclados = [...props.testimonios]
     for (let i = mezclados.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [mezclados[i], mezclados[j]] = [mezclados[j], mezclados[i]]
     }
-    return mezclados
-})
+    testimonios.value = mezclados
+}
 
 // --- Lógica del carousel de testimonios ---
 const testimoniosScroller = ref(null)
@@ -448,6 +448,7 @@ function onTestimoniosScroll() {
 let resizeHandler = null
 
 onMounted(() => {
+    barajarTestimonios()
     actualizarPaddingInicio()
     updateTestimoniosButtons()
     resizeHandler = () => actualizarPaddingInicio()
