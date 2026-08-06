@@ -460,19 +460,27 @@ function onTestimoniosScroll() {
     actualizarPosicionTestimonios()
 }
 
-// Calcula qué tarjeta está más cerca del borde izquierdo visible
+// Encuentra la tarjeta cuyo borde izquierdo está más cerca del borde del scroller
 function actualizarPosicionTestimonios() {
     const el = testimoniosScroller.value
     if (!el || !testimonios.length) return
-    const primeraTarjeta = el.querySelector('figure')
-    if (!primeraTarjeta) return
-    const paso = primeraTarjeta.offsetWidth + 24 // card width + gap-6
-    // El paddingLeft inicial (testimoniosStartPadding) desplaza la primera tarjeta;
-    // scrollLeft efectivo = scrollLeft - padding para que la posición parta de 0 en la tarjeta 1.
-    const paddingInicial = testimoniosStartPadding.value ? parseFloat(testimoniosStartPadding.value) : 0
-    const scrollEfectivo = Math.max(0, el.scrollLeft - paddingInicial)
-    const indice = Math.max(1, Math.min(testimonios.length, Math.round(scrollEfectivo / paso) + 1))
-    testimoniosPosition.value = indice
+
+    const figures = el.querySelectorAll('figure')
+    if (!figures.length) return
+
+    const scrollerLeft = el.getBoundingClientRect().left
+    let mejor = 1
+    let mejorDist = Infinity
+
+    figures.forEach((fig, i) => {
+        const dist = Math.abs(fig.getBoundingClientRect().left - scrollerLeft)
+        if (dist < mejorDist) {
+            mejorDist = dist
+            mejor = i + 1
+        }
+    })
+
+    testimoniosPosition.value = mejor
 }
 
 // Navegación por teclado del carrusel (H7: flexibility & efficiency)
