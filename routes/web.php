@@ -360,7 +360,7 @@ Route::middleware([
         $user = auth()->user();
         $inscripcionesPendientes = 0;
         if ($user) {
-            $estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta'];
+            $estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada'];
             $inscripcionesPendientes = \App\Models\Inscripcion::where('user_id', $user->id)
                 ->whereNotIn('estado', $estadosFinalizados)
                 ->count();
