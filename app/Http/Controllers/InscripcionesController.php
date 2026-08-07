@@ -254,7 +254,7 @@ class InscripcionesController extends Controller
             BusquedasHelper::buscarQueryFields($buscar, $query,  ['nombre', 'ciudad', 'region', 'pais', 'email', 'telefono', 'comentario', 'estado', 'notas']);
 
         // aquí ya aplicamos criterios de ordenación, siendo primeras las inscripciones "abiertas" (no tienen estado finalizado)
-        $estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta'];
+        $estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada'];
         $query->orderByRaw('CASE WHEN estado IN ("' . implode('","', $estadosFinalizados) . '") THEN 1 ELSE 0 END')
               ->orderByDesc('fecha_asignacion');
 
