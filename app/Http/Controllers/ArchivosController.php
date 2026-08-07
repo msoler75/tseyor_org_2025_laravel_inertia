@@ -328,6 +328,8 @@ class ArchivosController extends Controller
     {
         if ($ubicacion == 'mis_archivos') return null;
 
+        $ubicacion = ltrim($ubicacion, '/');
+
         $nodo = Nodo::select(['nodos.*', 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             ->leftJoin('users', 'users.id', '=', 'user_id')
             ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
