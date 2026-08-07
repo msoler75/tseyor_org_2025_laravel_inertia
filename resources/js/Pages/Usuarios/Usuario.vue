@@ -14,6 +14,7 @@
         <Sections>
 
             <Section class="mx-auto flex flex-col items-center py-20">
+                <div class="w-full 2xl:max-w-3xl flex flex-col items-center">
                 <Avatar :link="false" :user="usuario" image-class="w-64 h-64" text-class="text-5xl"/>
 
                 <div v-if="soyYo" class="flex justify-center my-2">
@@ -69,6 +70,7 @@
                         </select>
                         <input type="submit" class="btn btn-primary" value="Agregar al Equipo" :disabled="!equipoSeleccionado">
                     </form>
+                </div>
                 </div>
 
             </Section>
