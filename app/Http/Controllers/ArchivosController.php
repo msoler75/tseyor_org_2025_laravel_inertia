@@ -649,7 +649,7 @@ class ArchivosController extends Controller
         $item = array_merge($item, $options);
         if (isset($options['nombre']))
             $item['nombre_original'] = $nombre;
-        $item['url'] = rtrim(($ruta && $disk == 'public' ? '/almacen' : '') . '/' . $prefix . $ruta, '/');
+        $item['url'] = rtrim(($ruta && $disk == 'public' ? '/almacen' : ($disk == 'archivos' ? '/archivos' : '')) . '/' . $prefix . $ruta, '/');
         return $item;
     }
 
