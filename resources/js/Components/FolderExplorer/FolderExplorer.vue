@@ -186,7 +186,11 @@
                 class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14"
             >
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
-                <div>No hay archivos</div>
+                <div v-if="store.ruta === 'mis_archivos'" class="text-center max-w-md">
+                    <p>No hay archivos todavía.</p>
+                    <p class="text-base text-base-content/60 mt-2">Ahora puedes subir tus archivos personales aquí, en tu espacio privado.</p>
+                </div>
+                <div v-else>No hay archivos</div>
             </div>
             <div
                 v-else-if="
