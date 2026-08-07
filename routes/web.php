@@ -359,17 +359,20 @@ Route::middleware([
     Route::get('miembros', function () {
         $user = auth()->user();
         $inscripcionesPendientes = 0;
+        $inscripcionesTotales = 0;
         if ($user) {
             $estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada'];
             $inscripcionesPendientes = \App\Models\Inscripcion::where('user_id', $user->id)
                 ->whereNotIn('estado', $estadosFinalizados)
                 ->count();
+            $inscripcionesTotales = \App\Models\Inscripcion::where('user_id', $user->id)->count();
         }
         return Inertia::render('Miembros', [
             'misEquipos' => $user ? $user->equipos()->count() : 0,
             'esMuul' => $user && $user->grupos()->where('slug', 'muul')->exists(),
             'esIniciado' => $user && $user->equipos()->where('slug', 'iniciados-interiorizacion')->exists(),
             'inscripcionesPendientes' => $inscripcionesPendientes,
+            'inscripcionesTotales' => $inscripcionesTotales,
         ]);
     })->name('miembros');
 

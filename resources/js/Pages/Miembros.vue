@@ -81,7 +81,8 @@ const props = defineProps({
     misEquipos: { type: Number, default: 0 },
     esMuul: { type: Boolean, default: false },
     esIniciado: { type: Boolean, default: false },
-    inscripcionesPendientes: { type: Number, default: 0 }
+    inscripcionesPendientes: { type: Number, default: 0 },
+    inscripcionesTotales: { type: Number, default: 0 }
 })
 
 const iconClasses = (color) => {
@@ -185,10 +186,10 @@ const sections = computed(() => {
             title: 'administración',
             titleIcon: 'ph:shield-check-duotone',
             titleColor: 'text-error',
-            show: userStore.permisos.length > 0 || props.inscripcionesPendientes > 0,
+            show: userStore.permisos.length > 0 || props.inscripcionesTotales > 0,
             items: [
                 { label: 'Panel Admin', icon: 'ph:shield-duotone', color: 'error', to: '/admin/dashboard', native: true, show: userStore.permisos.length > 0 },
-                { label: 'Inscripciones', icon: 'ph:clipboard-text-duotone', color: 'warning', to: route('inscripciones.mis-asignaciones'), badge: props.inscripcionesPendientes > 0 ? String(props.inscripcionesPendientes) : '', badgeClasses: 'bg-warning/20 text-warning text-xs font-bold px-1.5 py-0.5 rounded', show: props.inscripcionesPendientes > 0 },
+                { label: 'Inscripciones', icon: 'ph:clipboard-text-duotone', color: 'warning', to: route('inscripciones.mis-asignaciones'), badge: props.inscripcionesPendientes > 0 ? String(props.inscripcionesPendientes) : '✓', badgeClasses: props.inscripcionesPendientes > 0 ? 'bg-warning/20 text-warning text-xs font-bold px-1.5 py-0.5 rounded' : 'bg-success/20 text-success text-xs font-bold px-1.5 py-0.5 rounded', show: props.inscripcionesTotales > 0 },
             ]
         },
     ]
