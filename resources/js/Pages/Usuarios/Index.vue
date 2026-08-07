@@ -19,7 +19,7 @@
 
         <PageWide>
 
-        <div class="w-full grow">
+         <div class="w-full grow pb-[100px]">
 
             <SearchResultsHeader :results="props.listado" />
 
