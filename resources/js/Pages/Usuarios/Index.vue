@@ -23,13 +23,14 @@
 
             <SearchResultsHeader :results="props.listado" />
 
-            <div v-if="props.listado.data.length > 0" class="grid gap-4"
-                :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(10rem, 100%), 1fr))` }">
+            <div v-if="props.listado.data.length > 0" class="grid gap-x-6 gap-y-5"
+                :style="{ 'grid-template-columns': `repeat(auto-fill, minmax(min(14rem, 100%), 1fr))` }">
                 <div v-if="props.listado.data.length > 0" v-for="usuario in props.listado.data" :key="usuario.id"
-                    class="card bg-base-100 shadow-2xs p-3 space-y-2">
-                    <Avatar :user="usuario" />
-                    <Link :href="route('usuario', { id: usuario.slug || usuario.id })" class="text-center">
-                    {{ usuario.name }}
+                    class="flex items-center gap-4 min-w-0">
+                    <Avatar :user="usuario" imageClass="w-16 h-16 shrink-0" />
+                    <Link :href="route('usuario', { id: usuario.slug || usuario.id })"
+                        class="flex-1 min-w-0 text-base font-bold leading-snug break-words hover:text-primary transition-colors">
+                        {{ usuario.nombre || usuario.name }}
                     </Link>
                 </div>
             </div>

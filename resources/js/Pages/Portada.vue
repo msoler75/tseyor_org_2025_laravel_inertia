@@ -343,13 +343,13 @@
                         Contenido libre y gratuito para tu camino
                     </h2>
                     <p class="text-base-content/60 leading-relaxed mb-8">
-                        Cientos de libros, audios de meditaciones, vídeos, psicografías, comunicados de los Guías Estelares y mucho más. Todo basado en las referencias transmitidas a TSEYOR. Todo gratis, sin registro, sin condiciones.
+                        Cientos de libros en versión digital, audios de meditaciones, vídeos, psicografías y comunicados de los Guías Estelares. Todo de descarga libre y gratuita, sin registro ni condiciones.
                     </p>
 
                     <div class="grid grid-cols-2 gap-4 mb-8">
                         <Link href="/libros" class="flex items-center gap-3 p-4 rounded-xl bg-base-200/50 hover:bg-primary/5 border border-base-200 hover:border-primary/20 transition-all group">
                             <span class="text-2xl font-display font-black text-primary">{{ formatearNumero(stats.libros) }}</span>
-                            <span class="text-xs font-bold text-base-content/50 uppercase tracking-wider leading-tight">Libros<br/>gratis</span>
+                            <span class="text-xs font-bold text-base-content/50 uppercase tracking-wider leading-tight">Libros<br/>digitales</span>
                         </Link>
                         <Link href="/audios" class="flex items-center gap-3 p-4 rounded-xl bg-base-200/50 hover:bg-primary/5 border border-base-200 hover:border-primary/20 transition-all group">
                             <span class="text-2xl font-display font-black text-primary">{{ formatearNumero(stats.audios) }}</span>
@@ -397,7 +397,7 @@
                         <ChevronDown class="w-4 h-4 text-base-content/30 shrink-0 transition-transform group-open:rotate-180" />
                     </summary>
                     <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-100 pt-4">
-                        A través de nuestro canalizador <strong>Chac-Mool Puente</strong> mediante la <strong>telepatía externa</strong>. Este proceso lleva más de 40 años documentándose y está disponible públicamente en la web. No hay trance ni pérdida de consciencia — es una comunicación lúcida y verificable.
+                        A través de nuestro <Referencia r="canalizador">canalizador</Referencia> <Referencia r="Chac-Mool Puente">Chac-Mool Puente</Referencia> mediante la <Referencia r="telepatía externa">telepatía externa</Referencia>. Este proceso lleva más de 40 años documentándose y está disponible públicamente en la web. No hay trance ni pérdida de consciencia — es una comunicación lúcida y verificable.
                     </p>
                 </details>
                 <details class="group rounded-xl bg-base-100 border border-base-200 p-5 cursor-pointer [&_summary::-webkit-details-marker]:hidden hover:border-primary/20 transition-colors">
@@ -424,7 +424,7 @@
                         <ChevronDown class="w-4 h-4 text-base-content/30 shrink-0 transition-transform group-open:rotate-180" />
                     </summary>
                     <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-100 pt-4">
-                        No y no. Todo es gratuito: libros, audios, curso, eventos. Y no hay compromiso: puedes explorar, leer, escuchar y participar sin ninguna obligación. Tampoco hay plazos ni permanencia.
+                        No tenemos ánimo de lucro. Consultar los contenidos en línea —libros y audios en versión digital— y hacer nuestro curso es gratuito: sin suscripciones, pagos ocultos ni permanencia. La participación es la que implica aportar: los eventos presenciales se costean compartiendo los gastos de alojamiento y manutención, y quienes quieren ser socios de la asociación colaboran con una cuota voluntaria, libremente.
                     </p>
                 </details>
                 <details class="group rounded-xl bg-base-100 border border-base-200 p-5 cursor-pointer [&_summary::-webkit-details-marker]:hidden hover:border-primary/20 transition-colors">

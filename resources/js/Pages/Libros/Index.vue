@@ -16,6 +16,7 @@
                 </div>
                 <div>La información se recoge en monografías (recopilación sobre un tema) y volúmenes de comunicados. También podéis encontrar obras vivenciales (memorias de convivencias realizadas por el grupo Tseyor), presentaciones, boletines, y otras obras temáticas.</div>
                 <div class="my-3">El autor de todas las obras es la <Referencia>Universidad Tseyor de Granada</Referencia>.</div>
+<div class="my-3">Todos los libros están disponibles en <strong>versión digital de descarga gratuita</strong>. Los ejemplares impresos solo se editan en tiradas ocasionales, reservadas a los miembros del grupo.</div>
             </TitleInfo>
             <FontSizeControls/>
         </div>

@@ -26,6 +26,12 @@ export default defineConfig({
     exclude: ['@tiptap/*', 'prosemirror-*', 'virtual:pwa-register', '@floating-ui/*'],
   },
   server: {
+    host: true,
+    hmr: {
+      host: 'vite.164.68.107.151.sslip.io',
+      clientPort: 443,
+      protocol: 'wss',
+    },
     watch: {
       ignored: ['**/vendor/**', '**/storage/**', '**/tests/**', '**/.git/**'],
     },
