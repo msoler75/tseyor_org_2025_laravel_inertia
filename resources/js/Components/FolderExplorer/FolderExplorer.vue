@@ -188,7 +188,6 @@
                 "
                 class="flex flex-col justify-center items-center gap-7 text-xl py-12 mb-14"
             >
-                <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
                 <div v-if="store.ruta === 'mis_archivos'" class="text-center max-w-md">
                     <p class="mb-4">No hay archivos todavía.</p>
                     <p class="text-base text-base-content/60 mb-6">Crea tu carpeta personal para empezar a subir archivos privados.</p>

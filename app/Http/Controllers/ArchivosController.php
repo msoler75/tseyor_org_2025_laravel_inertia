@@ -110,6 +110,30 @@ class ArchivosController extends Controller
         return response()->json(['ok' => true], 200);
     }
 
+    /**
+     * Filtra una lista de rutas de carpetas eliminando las que están
+     * contenidas dentro de otra carpeta de la misma lista.
+     */
+    private static function carpetasRaiz(array $carpetas): array
+    {
+        // Ordenar por longitud para procesar las más cortas (raíces) primero
+        usort($carpetas, fn($a, $b) => strlen($a) - strlen($b));
+        $raices = [];
+        foreach ($carpetas as $carpeta) {
+            $esHija = false;
+            foreach ($raices as $raiz) {
+                if (str_starts_with($carpeta . '/', $raiz . '/')) {
+                    $esHija = true;
+                    break;
+                }
+            }
+            if (!$esHija) {
+                $raices[] = $carpeta;
+            }
+        }
+        return $raices;
+    }
+
 
     /**
      * Para el gestor de archivos o Media Manager
@@ -396,6 +420,10 @@ class ArchivosController extends Controller
 
         $nodos = $this->nodosDeUsuario($user->id);
 
+        // Recopilar carpetas para filtrar archivos contenidos en ellas
+        $carpetas = $nodos->where('es_carpeta', true)->pluck('ubicacion')
+            ->map(fn($u) => ltrim($u, '/'))->toArray();
+
         $items = [
             [
                 'nombre' => '.',
@@ -413,6 +441,17 @@ class ArchivosController extends Controller
 
         // $nodos->shift();
         foreach ($nodos as $nodo) {
+
+            // Omitir archivos/carpetas que están dentro de una carpeta ya listada
+            $ubicacion = ltrim($nodo->ubicacion, '/');
+            $dentroDeCarpeta = false;
+            foreach ($carpetas as $carpeta) {
+                if ($ubicacion !== $carpeta && str_starts_with($ubicacion, $carpeta . '/')) {
+                    $dentroDeCarpeta = true;
+                    break;
+                }
+            }
+            if ($dentroDeCarpeta) continue;
 
             $sti = new StorageItem($nodo->ubicacion);
             if (!$sti->exists()) {
@@ -693,16 +732,24 @@ class ArchivosController extends Controller
         // es una nueva búsqueda o el id de busqueda es otro
         if (!$id_busqueda || $id_busqueda != $id_busqueda_actual) {
 
+            // realizamos una rápida búsqueda inicial, usando nodos
+            if ($dir->location === 'mis_archivos' && $user) {
+                $nodos = Nodo::search($busqueda)->query(function ($query) use ($user) {
+                    return $query->where('user_id', $user->id);
+                })->take(50)->get();
+            } else {
+                $nodos = Nodo::search($busqueda)->query(function ($query) use ($dir) {
+                    return $query->whereRaw("ubicacion LIKE '{$dir->location}%'");
+                })->take(50)->get();
+            }
+
             // la ruta inicial es la primera carpeta donde buscaremos después en disco
-            $carpetas_pendientes = [$dir->location];
+            $carpetas_pendientes = $dir->location === 'mis_archivos'
+                ? self::carpetasRaiz($nodos->where('es_carpeta', true)->pluck('ubicacion')->toArray())
+                : [$dir->location];
 
             Log::info("Nueva busqueda en $ruta. Buscando $busqueda ...");
             Log::info("carpetas_pendientes", $carpetas_pendientes);
-
-            // realizamos una rápida búsqueda inicial, usando nodos
-            $nodos = Nodo::search($busqueda)->query(function ($query) use ($dir) {
-                return $query->whereRaw("ubicacion LIKE '{$dir->location}%'");
-            })->take(50)->get();
 
             $resultados = [];
 
@@ -846,6 +893,7 @@ class ArchivosController extends Controller
 
         if ($id_busqueda_actual)
             $response['id_busqueda'] = $id_busqueda_actual;
+
 
         return response()->json($response, 200);
     }
