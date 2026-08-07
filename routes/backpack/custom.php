@@ -142,7 +142,7 @@ Route::group([
     Route::post('radio-item/{id}/toggle', 'RadioItemCrudController@toggle');
 
     // login As
-    Route::post('loginAs/{idUser}', [AuthController::class, 'loginAs'])->middleware('allowed.ip')->name('admin.loginAs');
+    Route::post('loginAs/{idUser}', [AuthController::class, 'loginAs'])->middleware('auth')->name('admin.loginAs');
 
     // otras rutas de utilidad
     Route::get('getlog/{log}', [AdminController::class, 'getLog'] );
