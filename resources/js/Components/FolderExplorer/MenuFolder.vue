@@ -1,5 +1,5 @@
 <template>
-    <Dropdown v-if="!store.enRaiz && !store.seleccionando" align="right" width="48"
+    <Dropdown v-if="!store.enRaiz && !store.seleccionando && !store.misArchivosVacio" align="right" width="48"
         :class="!store.infoCargada ? 'opacity-50 pointer-events-none' : ''">
         <template #trigger>
             <div class="btn btn-neutral btn-sm cursor-pointer">
@@ -59,7 +59,7 @@
                 <span v-else>Ver usuario</span>
                 </Link>
 
-                <Share>
+                <Share v-if="!store.esMisArchivos">
                     <div class="flex gap-x items-center px-4 py-2 hover:bg-base-100 cursor-pointer whitespace-nowrap">
                         <Icon icon="ph:share-network-duotone" />
                         <span>Compartir</span>

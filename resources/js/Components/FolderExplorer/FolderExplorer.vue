@@ -83,6 +83,7 @@
                     <div class="ml-auto flex gap-x">
                         <button
                             class="btn btn-neutral btn-sm"
+                            :class="store.esMisArchivos && !itemsOrdenados.length ? 'opacity-30 pointer-events-none' : ''"
                             @click.prevent="toggleVista"
                             title="Cambiar vista"
                         >
@@ -116,6 +117,7 @@
                                 !store.mostrandoResultadosBusqueda
                             "
                             class="hidden sm:inline btn btn-neutral btn-sm"
+                            :class="store.esMisArchivos && !itemsOrdenados.length ? 'opacity-30 pointer-events-none' : ''"
                             title="Buscar archivos"
                             @click="store.call('buscar')"
                         >
@@ -187,8 +189,12 @@
             >
                 <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
                 <div v-if="store.ruta === 'mis_archivos'" class="text-center max-w-md">
-                    <p>No hay archivos todavía.</p>
-                    <p class="text-base text-base-content/60 mt-2">Ahora puedes subir tus archivos personales aquí, en tu espacio privado.</p>
+                    <p class="mb-4">No hay archivos todavía.</p>
+                    <p class="text-base text-base-content/60 mb-6">Crea tu carpeta personal para empezar a subir archivos privados.</p>
+                    <button class="btn btn-primary" @click="crearCarpetaPersonal">
+                        <Icon icon="ph:folder-plus-duotone" class="text-lg" />
+                        Crear mi carpeta personal
+                    </button>
                 </div>
                 <div v-else>No hay archivos</div>
             </div>
@@ -805,6 +811,12 @@ const toggleVista = () => {
     selectors.archivosVista =
         selectors.archivosVista === "grid" ? "lista" : "grid";
     console.log(selectors.value);
+};
+
+const crearCarpetaPersonal = () => {
+    axios.post('/mis_archivos/crear-personal').then(() => {
+        window.location.reload()
+    })
 };
 
 // copia datos de una fuente (de tipo objeto o de tipo array) a un destino, concretamente la clave k

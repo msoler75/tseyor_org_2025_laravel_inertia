@@ -88,6 +88,28 @@ class ArchivosController extends Controller
         return $this->list($request, $request->path(), false);
     }
 
+    public function crearCarpetaPersonal(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) return response()->json(['error' => 'No autorizado'], 401);
+
+        $folderPath = 'personal/' . $user->name;
+        $sti = new StorageItem($folderPath);
+
+        if (!$sti->exists()) {
+            Storage::disk($sti->disk)->makeDirectory($sti->relativeLocation);
+        }
+
+        Nodo::crear($sti->relativeLocation, true, $user);
+        $nodo = Nodo::where('ubicacion', $sti->relativeLocation)->first();
+        if ($nodo) {
+            $nodo->permisos = '1700';
+            $nodo->save();
+        }
+
+        return response()->json(['ok' => true], 200);
+    }
+
 
     /**
      * Para el gestor de archivos o Media Manager
