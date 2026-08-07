@@ -583,7 +583,7 @@ class ArchivosController extends Controller
         $info_item['permisos'] = optional($nodo)->permisos ?? 0;
         if ($nodo)
             $info_item['propietario'] = [
-                'usuario' => ['id' => $nodo->user_id, 'nombre' => $nodo->propietario_usuario],
+                'usuario' => ['id' => $nodo->user_id, 'nombre' => $nodo->user?->name],
                 'grupo' => ['id' => $nodo->group_id, 'nombre' => $nodo->propietario_grupo]
             ];
         if ($tipo == 'carpeta') {
