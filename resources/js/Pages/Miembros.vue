@@ -34,6 +34,7 @@
                             :href="item.to"
                             :target="item.external ? '_blank' : undefined"
                             :rel="item.external ? 'noopener noreferrer' : undefined"
+                            :title="item.tooltip"
                             class="group flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-base-200/50 transition-colors duration-150">
                             <div class="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center transition-colors duration-200"
                                 :class="iconClasses(item.color)">
@@ -41,7 +42,7 @@
                             </div>
                             <div class="min-w-0">
                                 <span class="text-sm font-semibold text-base-content/70">{{ item.label }}</span>
-                                <span v-if="item.badge" class="text-sm font-bold ml-1.5" :class="item.badgeClasses">{{ item.badge }}</span>
+                                <span v-if="item.badge" class="text-sm font-bold ml-1.5" :class="item.badgeClasses" :title="item.badgeTitle">{{ item.badge }}</span>
                             </div>
                         </component>
                     </div>
@@ -109,10 +110,10 @@ const sections = computed(() => {
             titleIcon: 'ph:user-duotone',
             titleColor: 'text-primary',
             items: [
-                { label: 'Mi Perfil',      icon: 'ph:user-circle-duotone',       color: 'primary',   to: route('usuario', uid) },
-                { label: 'Mis Archivos',   icon: 'ph:folder-duotone',             color: 'accent',    to: route('mis_archivos') },
-                { label: 'Mis Equipos',    icon: 'ph:users-three-duotone',        color: 'secondary', to: '/equipos?categoria=Mis equipos' },
-                { label: 'Mi Cuenta',      icon: 'ph:gear-six-duotone',           color: 'primary',   to: route('profile.show') },
+                { label: 'Mi Perfil',      icon: 'ph:user-circle-duotone',       color: 'primary',   to: route('usuario', uid), tooltip: 'Ver tu perfil público' },
+                { label: 'Mis Archivos',   icon: 'ph:folder-duotone',             color: 'accent',    to: route('mis_archivos'), tooltip: 'Gestionar tus archivos' },
+                { label: 'Mis Equipos',    icon: 'ph:users-three-duotone',        color: 'secondary', to: '/equipos?categoria=Mis equipos', tooltip: 'Ver tus equipos' },
+                { label: 'Mi Cuenta',      icon: 'ph:gear-six-duotone',           color: 'primary',   to: route('profile.show'), tooltip: 'Configuración de tu cuenta' },
             ]
         },
         {
@@ -121,9 +122,9 @@ const sections = computed(() => {
             titleIcon: 'ph:coin-duotone',
             titleColor: 'text-secondary',
             items: [
-                { label: 'Muulares',     icon: 'ph:currency-circle-dollar-duotone', color: 'secondary', to: '/muular-electronico', badge: userStore.saldo ?? '0', badgeClasses: 'text-info-content bg-info rounded-md p-1', show: hasMuular, external: true },
-                { label: 'Solicitar',  icon: 'ph:currency-circle-dollar-duotone', color: 'warning',   to: '/contactar',                                   show: !hasMuular },
-                { label: '¿Qué es?',   icon: 'ph:info-duotone',                   color: 'primary',   to: '/muular' },
+                { label: 'Muulares',     icon: 'ph:currency-circle-dollar-duotone', color: 'secondary', to: '/muular-electronico', badge: userStore.saldo ?? '0', badgeClasses: 'text-info-content bg-info rounded-md p-1', show: hasMuular, external: true, tooltip: 'Tu saldo de muulares' },
+                { label: 'Solicitar',  icon: 'ph:currency-circle-dollar-duotone', color: 'warning',   to: '/contactar',                                   show: !hasMuular, tooltip: 'Solicitar muulares electrónicos' },
+                { label: '¿Qué es?',   icon: 'ph:info-duotone',                   color: 'primary',   to: '/muular', tooltip: 'Información sobre el muular electrónico' },
             ]
         },
         {
@@ -133,8 +134,8 @@ const sections = computed(() => {
             titleColor: 'text-accent',
             show: props.esIniciado,
             items: [
-                { label: 'Interiorización', icon: 'solar:meditation-round-bold-duotone', color: 'accent',  to: route('equipo', 'iniciados-interiorizacion') },
-                { label: 'Carpeta de iniciados',        icon: 'ph:folder-duotone',  color: 'primary', to: '/archivos/equipos/interiorizacion' },
+                { label: 'Interiorización', icon: 'solar:meditation-round-bold-duotone', color: 'accent',  to: route('equipo', 'iniciados-interiorizacion'), tooltip: 'Acceder al equipo de interiorización' },
+                { label: 'Carpeta de iniciados',        icon: 'ph:folder-duotone',  color: 'primary', to: '/archivos/equipos/interiorizacion', tooltip: 'Archivos del equipo de interiorización' },
             ]
         },
         {
@@ -143,10 +144,10 @@ const sections = computed(() => {
             titleIcon: 'ph:users-four-duotone',
             titleColor: 'text-accent',
             items: [
-                { label: 'Equipos',      icon: 'ph:users-duotone',   color: 'secondary', to: route('equipos') },
-                { label: 'Experiencias', icon: 'whh:thinking',    color: 'accent',    to: route('experiencias') },
-                { label: 'Archivos',     icon: 'ph:archive-duotone', color: 'primary',   to: route('archivos0') },
-                { label: 'Arte',         icon: 'ph:palette-duotone', color: 'warning',   to: route('trabajos.arte') },
+                { label: 'Equipos',      icon: 'ph:users-duotone',   color: 'secondary', to: route('equipos'), tooltip: 'Explorar equipos de trabajo' },
+                { label: 'Experiencias', icon: 'whh:thinking',    color: 'accent',    to: route('experiencias'), tooltip: 'Experiencias compartidas' },
+                { label: 'Archivos',     icon: 'ph:archive-duotone', color: 'primary',   to: route('archivos0'), tooltip: 'Archivos de la comunidad' },
+                { label: 'Arte',         icon: 'ph:palette-duotone', color: 'warning',   to: route('trabajos.arte'), tooltip: 'Galería de trabajos artísticos' },
             ]
         },
         {
@@ -155,8 +156,8 @@ const sections = computed(() => {
             titleIcon: 'ph:wrench-duotone',
             titleColor: 'text-warning',
             items: [
-                { label: 'Tseyor Canva', icon: 'ph:palette-duotone',     color: 'accent',  to: '/tseyor-canva', external: true },
-                { label: 'Puzle', icon: 'ph:puzzle-piece-duotone', color: 'primary', to: 'https://puzle.tseyor.org/', external: true },
+                { label: 'Tseyor Canva', icon: 'ph:palette-duotone',     color: 'accent',  to: '/tseyor-canva', external: true, tooltip: 'Plantillas y diseños en Canva' },
+                { label: 'Puzle', icon: 'ph:puzzle-piece-duotone', color: 'primary', to: 'https://puzle.tseyor.org/', external: true, tooltip: 'Juego del puzle de Tseyor' },
             ]
         },
         {
@@ -165,8 +166,8 @@ const sections = computed(() => {
             titleIcon: 'ph:user-list-duotone',
             titleColor: 'text-primary',
             items: [
-                { label: 'Usuarios', icon: 'ph:users-duotone',        color: 'primary',   to: route('usuarios') },
-                { label: 'Salas',    icon: 'ph:chat-circle-duotone',  color: 'secondary', to: route('salas') },
+                { label: 'Usuarios', icon: 'ph:users-duotone',        color: 'primary',   to: route('usuarios'), tooltip: 'Listado de miembros' },
+                { label: 'Salas',    icon: 'ph:chat-circle-duotone',  color: 'secondary', to: route('salas'), tooltip: 'Salas de chat' },
             ]
         },
         {
@@ -176,9 +177,9 @@ const sections = computed(() => {
             titleColor: 'text-primary',
             show: props.esMuul,
             items: [
-                { label: 'Espacio Muul',   icon: 'icon-park-twotone:eagle',             color: 'accent',    to: '/muul' },
-                { label: 'Tarjeta Visita', icon: 'ph:identification-card-duotone', color: 'primary',   to: route('tarjeta.visita') },
-                { label: 'Correos @tseyor.org',        icon: 'ph:envelope-duotone',            color: 'secondary', to: '/muul/correos.tseyor' },
+                { label: 'Espacio Muul',   icon: 'icon-park-twotone:eagle',             color: 'accent',    to: '/muul', tooltip: 'Portal del espacio Muul' },
+                { label: 'Tarjeta Visita', icon: 'ph:identification-card-duotone', color: 'primary',   to: route('tarjeta.visita'), tooltip: 'Tu tarjeta de visita' },
+                { label: 'Correos @tseyor.org',        icon: 'ph:envelope-duotone',            color: 'secondary', to: '/muul/correos.tseyor', tooltip: 'Gestión de correos @tseyor.org' },
             ]
         },
         {
@@ -188,8 +189,8 @@ const sections = computed(() => {
             titleColor: 'text-error',
             show: userStore.permisos.length > 0 || props.inscripcionesTotales > 0,
             items: [
-                { label: 'Panel Admin', icon: 'ph:shield-duotone', color: 'error', to: '/admin/dashboard', native: true, show: userStore.permisos.length > 0 },
-                { label: 'Inscripciones', icon: 'ph:clipboard-text-duotone', color: 'warning', to: route('inscripciones.mis-asignaciones'), badge: props.inscripcionesPendientes > 0 ? String(props.inscripcionesPendientes) : '✓', badgeClasses: props.inscripcionesPendientes > 0 ? 'bg-warning/20 text-warning text-xs font-bold px-1.5 py-0.5 rounded' : 'bg-success/20 text-success text-xs font-bold px-1.5 py-0.5 rounded', show: props.inscripcionesTotales > 0 },
+                { label: 'Panel Admin', icon: 'ph:shield-duotone', color: 'error', to: '/admin/dashboard', native: true, show: userStore.permisos.length > 0, tooltip: 'Panel de administración' },
+                { label: 'Inscripciones al curso', icon: 'ph:clipboard-text-duotone', color: 'warning', to: route('inscripciones.mis-asignaciones'), badge: props.inscripcionesPendientes > 0 ? String(props.inscripcionesPendientes) : '✓', badgeClasses: props.inscripcionesPendientes > 0 ? 'bg-warning/20 text-warning text-xs font-bold px-1.5 py-0.5 rounded' : 'bg-success/20 text-success text-xs font-bold px-1.5 py-0.5 rounded', badgeTitle: props.inscripcionesPendientes > 0 ? '' : 'No tienes inscripciones pendientes', show: props.inscripcionesTotales > 0, tooltip: 'Gestionar inscripciones al curso asignadas' },
             ]
         },
     ]
