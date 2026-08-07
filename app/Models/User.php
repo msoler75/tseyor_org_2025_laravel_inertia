@@ -298,8 +298,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'id' => $this->id,
-            // <- Always include the primary key
-            'nombre' => $this->name,
+            'name' => $this->name,
         ];
     }
 
