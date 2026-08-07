@@ -131,6 +131,7 @@
                             <template #trigger>
                                 <span
                                     class="btn btn-neutral btn-sm"
+                                    :class="store.esMisArchivos && !itemsOrdenados.length ? 'opacity-30 pointer-events-none' : ''"
                                     title="Ordenar los elementos"
                                 >
                                     <Icon
