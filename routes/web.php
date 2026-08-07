@@ -160,6 +160,7 @@ Route::get('filemanager{ruta}', [ArchivosController::class, 'filemanager'])->whe
 Route::get('almacen{ruta}', [ArchivosController::class, 'descargar'])->where(['ruta' => '(\/.+)?'])->name('storage');
 Route::get('storage{ruta}', [ArchivosController::class, 'descargar'])->where(['ruta' => '(\/.+)?'])->name('storage.classic');
 Route::get('mis_archivos', [ArchivosController::class, 'archivos'])->name('mis_archivos');
+Route::post('mis_archivos/crear-personal', [ArchivosController::class, 'crearCarpetaPersonal'])->name('mis_archivos.crear-personal');
 Route::get('archivos_raiz', [ArchivosController::class, 'archivos'])->name('archivos_raiz');
 
 Route::get('nodos/{id}', [NodosController::class, 'show'])->name('nodo');

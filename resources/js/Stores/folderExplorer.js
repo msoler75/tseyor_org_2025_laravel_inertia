@@ -52,6 +52,11 @@ export const useFolderExplorerStore = defineStore('folderExplorer', {
       return this.items[0]?.ruta == "mis_archivos"
     },
 
+    // mis archivos está vacío?
+    misArchivosVacio() {
+      return this.esMisArchivos && this.itemsShow.filter(i => !i.padre && !i.actual && !i.eliminado).length === 0
+    },
+
     // ruta actual
     rutaActual() {
       return this.itemsShow.length ? this.itemsShow[0].ruta : ""
