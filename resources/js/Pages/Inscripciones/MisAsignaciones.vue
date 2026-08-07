@@ -49,7 +49,8 @@
     <SearchInput
     v-if="filtrado || inscripcionesProcesadas.length > 0"
         v-model="query"
-        placeholder="Buscar en inscripciones..."
+        placeholder="Buscar por nombre o email o ciudad..."
+        auto-width
         class="ml-auto"
       />
       </div>
