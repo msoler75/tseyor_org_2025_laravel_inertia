@@ -995,7 +995,13 @@ class ArchivosController extends Controller
         $this->borrarCacheCarpetas($dir->location);
 
         // creamos su nodo
-        Nodo::crear($dir->location . '/' . $filename, false, auth()->user());
+        $nodo = Nodo::crear($dir->location . '/' . $filename, false, auth()->user());
+
+        // Los archivos en /personal son privados (solo el propietario)
+        if (str_starts_with($folder, 'personal/')) {
+            $nodo->permisos = '1700';
+            $nodo->save();
+        }
 
         // Obtener la URL pública del archivo
         //$baseUrl = Storage::disk($disk)->url('');
