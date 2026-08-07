@@ -23,9 +23,10 @@ class AuthController extends Controller
         $guard = config('backpack.base.guard') ?: config('auth.defaults.guard', 'web');
         Log::info("AuthController: performing login for user {$user->id} using guard={$guard}");
         Auth::guard($guard)->login($user, $remember);
-        // No llamar session()->regenerate(): Auth::guard()->login() ya regenera la sesión internamente.
-        // Llamarlo dos veces provoca que el navegador reciba un Set-Cookie con un session_id
-        // que puede no coincidir, y además puede causar race conditions con location.reload().
+        // Update session password hash so AuthenticateSession doesn't log us out
+        if ($user->getAuthPassword()) {
+            session()->put('password_hash_' . $guard, $user->getAuthPassword());
+        }
     }
 
     public function showLoginForm()
