@@ -87,6 +87,18 @@ return [
      * Uploads
      */
 
-     'max_upload_size' => 300*1024*1024 // 300 Mb
+    'max_upload_size' => 300*1024*1024, // 300 Mb
+
+    /*
+    |--------------------------------------------------------------------------
+    | Archivos personales
+    |--------------------------------------------------------------------------
+    |
+    | Ruta base dentro del disco 'archivos' donde se almacenan los archivos
+    | personales de cada usuario. Se concatena con el nombre de usuario.
+    | Ejemplo: 'archivos/personal' → archivos/personal/Liceo/
+    |
+    */
+    'personal_base' => env('ARCHIVOS_PERSONAL_BASE', 'archivos/personal'),
 
 ];
