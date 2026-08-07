@@ -44,7 +44,12 @@ export const useFolderExplorerStore = defineStore('folderExplorer', {
   getters: {
     // estamos en la raíz?
     enRaiz() {
-      return this.items[1]?.tipo === "disco" || this.items[0]?.ruta == "mis_archivos"
+      return this.items[1]?.tipo === "disco"
+    },
+
+    // estamos en mis archivos?
+    esMisArchivos() {
+      return this.items[0]?.ruta == "mis_archivos"
     },
 
     // ruta actual
