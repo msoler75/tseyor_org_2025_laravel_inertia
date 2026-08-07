@@ -93,7 +93,7 @@ class ArchivosController extends Controller
         $user = auth()->user();
         if (!$user) return response()->json(['error' => 'No autorizado'], 401);
 
-        $folderPath = 'archivos/personal/' . $user->name;
+        $folderPath = config('filesystems.personal_base') . '/' . $user->name;
         $sti = new StorageItem($folderPath);
 
         if (!$sti->exists()) {
@@ -1027,7 +1027,7 @@ class ArchivosController extends Controller
 
         // Redirigir mis_archivos a la carpeta personal del usuario
         if ($folder === 'mis_archivos' || str_starts_with($folder, 'mis_archivos/') || str_starts_with($folder, 'mis_archivos')) {
-            $folder = 'archivos/personal/' . auth()->user()->name . substr($folder, strlen('mis_archivos'));
+            $folder = config('filesystems.personal_base') . '/' . auth()->user()->name . substr($folder, strlen('mis_archivos'));
         }
 
         $dir = new StorageItem($folder);
@@ -1069,8 +1069,9 @@ class ArchivosController extends Controller
         // creamos su nodo
         $nodo = Nodo::crear($dir->location . '/' . $filename, false, auth()->user());
 
-        // Los archivos en /archivos/personal son privados (solo el propietario)
-        if (str_contains($folder, 'archivos/personal/')) {
+        // Los archivos en la carpeta personal son privados (solo el propietario)
+        $personalBase = config('filesystems.personal_base');
+        if (str_contains($folder, $personalBase . '/')) {
             $nodo->permisos = '1700';
             $nodo->save();
         }
