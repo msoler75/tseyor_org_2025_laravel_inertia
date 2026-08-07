@@ -192,9 +192,10 @@
                 <div v-if="store.ruta === 'mis_archivos'" class="text-center max-w-md">
                     <p class="mb-4">No hay archivos todavía.</p>
                     <p class="text-base text-base-content/60 mb-6">Crea tu carpeta personal para empezar a subir archivos privados.</p>
-                    <button class="btn btn-primary" @click="crearCarpetaPersonal">
-                        <Icon icon="ph:folder-plus-duotone" class="text-lg" />
-                        Crear mi carpeta personal
+                    <button class="btn btn-primary" :disabled="creandoCarpeta" @click="crearCarpetaPersonal">
+                        <Spinner v-if="creandoCarpeta" class="text-lg mr-2" />
+                        <Icon v-else icon="ph:folder-plus-duotone" class="text-lg" />
+                        {{ creandoCarpeta ? 'Creando...' : 'Crear mi carpeta personal' }}
                     </button>
                 </div>
                 <div v-else>No hay archivos</div>
@@ -814,7 +815,9 @@ const toggleVista = () => {
     console.log(selectors.value);
 };
 
+const creandoCarpeta = ref(false)
 const crearCarpetaPersonal = () => {
+    creandoCarpeta.value = true
     axios.post('/mis_archivos/crear-personal').then(() => {
         window.location.reload()
     })
