@@ -198,7 +198,23 @@
                         {{ creandoCarpeta ? 'Creando...' : 'Crear mi carpeta personal' }}
                     </button>
                 </div>
-                <div v-else>No hay archivos</div>
+                <div v-else-if="store.puedeEscribir" class="flex flex-col items-center gap-4 text-center max-w-lg">
+                    <div class="w-32 h-32 rounded-2xl border-2 border-dashed border-base-content/20 flex items-center justify-center bg-base-200/50">
+                        <Icon icon="ph:cloud-arrow-up-duotone" class="text-5xl text-base-content/30" />
+                    </div>
+                    <div>
+                        <p class="text-xl font-semibold text-base-content/70">Arrastra archivos aquí</p>
+                        <p class="text-base text-base-content/40 mt-1">o haz clic para seleccionarlos</p>
+                    </div>
+                    <button class="btn btn-outline btn-sm mt-2" @click="store.call('subirArchivos')">
+                        <Icon icon="ph:upload-duotone" class="text-lg" />
+                        Subir archivos
+                    </button>
+                </div>
+                <div v-else>
+                    <Icon icon="ph:warning-diamond-duotone" class="text-4xl" />
+                    <div>No hay archivos</div>
+                </div>
             </div>
             <div
                 v-else-if="
