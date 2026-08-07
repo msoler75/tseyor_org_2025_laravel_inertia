@@ -382,7 +382,8 @@ class ArchivosController extends Controller
                 'tamano' => 0,
                 'archivos' => 0,
                 'subcarpetas' => 0,
-                'url' => route('mis_archivos')
+                'url' => route('mis_archivos'),
+                'puedeEscribir' => true,
             ]
         ];
 
@@ -951,6 +952,11 @@ class ArchivosController extends Controller
         }
 
         $ofolder = $folder;
+
+        // Redirigir mis_archivos a la carpeta personal del usuario
+        if ($folder === 'mis_archivos' || str_starts_with($folder, 'mis_archivos/') || str_starts_with($folder, 'mis_archivos')) {
+            $folder = 'personal/' . auth()->user()->name . substr($folder, strlen('mis_archivos'));
+        }
 
         $dir = new StorageItem($folder);
 
