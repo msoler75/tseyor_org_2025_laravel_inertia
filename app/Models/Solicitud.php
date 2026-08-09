@@ -66,6 +66,15 @@ class Solicitud extends Model
         return optional($this->coordinador)->name;
     }
 
+    public function verEquipoButton()
+    {
+        $slug = optional($this->equipo)->slug;
+        if (!$slug) return '';
+        return '<a href="/equipos/' . $slug . '?solicitudes" target="_blank" class="btn btn-sm btn-link" title="Ver equipo">
+            <i class="la la-users"></i> Ver equipo
+        </a>';
+    }
+
 
 
 }
