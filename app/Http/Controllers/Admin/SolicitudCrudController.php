@@ -91,7 +91,7 @@ class SolicitudCrudController extends CrudController
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
 
-        $this->crud->addButtonFromView('line', 'ver_equipo', 'custom.buttons.ver_equipo', 'end');
+        $this->crud->addButton('line', 'ver_equipo', 'model_function', 'verEquipoButton', 'end');
 
     }
 
