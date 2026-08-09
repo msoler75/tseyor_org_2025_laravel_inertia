@@ -63,12 +63,27 @@ class SolicitudCrudController extends CrudController
             'name' => 'NombreUsuario',
             'label' => 'Usuario',
             'orderable'   => true,
+            'type' => 'closure',
+            'function' => function ($entry) {
+                $user = $entry->usuario;
+                if (!$user) return '-';
+                $slug = $user->slug ?: $user->id;
+                return '<a href="/usuarios/' . $slug . '" target="_blank">' . e($user->name) . '</a>';
+            },
+            'escaped' => false,
         ]);
 
         $this->crud->addColumn([
             'name' => 'NombreEquipo',
             'label' => 'Equipo',
             'orderable'   => true,
+            'type' => 'closure',
+            'function' => function ($entry) {
+                $equipo = $entry->equipo;
+                if (!$equipo) return '-';
+                return '<a href="/equipos/' . e($equipo->slug) . '?solicitudes" target="_blank">' . e($equipo->nombre) . '</a>';
+            },
+            'escaped' => false,
         ]);
 
         $this->crud->addColumn([
