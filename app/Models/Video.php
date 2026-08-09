@@ -29,6 +29,49 @@ class Video extends ContenidoBaseModel
     |--------------------------------------------------------------------------
     */
 
+    protected static function booted()
+    {
+        static::saving(function ($video) {
+            if (is_null($video->orden)) return;
+
+            $original = $video->getOriginal('orden');
+
+            if (!$video->exists) {
+                static::where('orden', '>=', $video->orden)->increment('orden');
+            } elseif ($video->orden != $original) {
+                if ($video->orden > $original) {
+                    static::where('id', '!=', $video->id)
+                        ->where('orden', '>', $original)
+                        ->where('orden', '<=', $video->orden)
+                        ->decrement('orden');
+                } else {
+                    static::where('id', '!=', $video->id)
+                        ->where('orden', '>=', $video->orden)
+                        ->where('orden', '<', $original)
+                        ->increment('orden');
+                }
+            }
+        });
+
+        static::saved(function ($video) {
+            if (is_null($video->orden)) return;
+            // Recompactar para eliminar cualquier hueco
+            static::reordenar();
+        });
+    }
+
+    public static function reordenar()
+    {
+        $videos = static::whereNotNull('orden')->orderBy('orden')->get();
+        $i = 1;
+        foreach ($videos as $v) {
+            if ($v->orden != $i) {
+                \DB::table('videos')->where('id', $v->id)->update(['orden' => $i]);
+            }
+            $i++;
+        }
+    }
+
     /**
      * Botón para mover el video hacia arriba en el orden
      */
