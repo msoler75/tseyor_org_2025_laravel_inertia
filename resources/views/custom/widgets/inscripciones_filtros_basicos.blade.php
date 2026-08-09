@@ -11,8 +11,8 @@
                     <label for="estado_filter">Estado:</label>
                     <select name="estado" id="estado_filter" class="form-control" onchange="reiniciarPaginacionYSubmit(this.form)" autocomplete="off">
                         <option value="">Todos los estados</option>
-                        <option value="_abiertas" {{ request('estado') == '_abiertas' ? 'selected' : '' }}>Abiertas</option>
-                        <option value="_cerradas" {{ request('estado') == '_cerradas' ? 'selected' : '' }}>Cerradas</option>
+                        <option value="_abiertas" {{ request('estado') == '_abiertas' ? 'selected' : '' }}>Todas las abiertas</option>
+                        <option value="_cerradas" {{ request('estado') == '_cerradas' ? 'selected' : '' }}>Todas las cerradas</option>
                         @foreach(config('inscripciones.estados') as $key => $valores)
                             <option value="{{ $key }}" {{ request('estado') == $key ? 'selected' : '' }}>
                                 {{ $valores['etiqueta'] }}
