@@ -223,9 +223,7 @@ class AdminController // extends Controller
             ->count();
 
         $estadosCerrados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada'];
-        $inscripciones_abiertas = Inscripcion::whereNotIn('estado', $estadosCerrados)
-            ->where('estado', '!=', 'nuevo')
-            ->count();
+        $inscripciones_abiertas = Inscripcion::whereNotIn('estado', $estadosCerrados)->count();
 
         $tareas_pendientes = Job::count();
 
