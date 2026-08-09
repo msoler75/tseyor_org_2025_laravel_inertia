@@ -34,6 +34,8 @@ class Video extends ContenidoBaseModel
      */
     public function getMoveUpButton()
     {
+        if (is_null($this->orden)) return '';
+
         $previousVideo = static::where('orden', '<', $this->orden)
             ->orderBy('orden', 'desc')
             ->first();
@@ -54,6 +56,8 @@ class Video extends ContenidoBaseModel
      */
     public function getMoveDownButton()
     {
+        if (is_null($this->orden)) return '';
+
         $nextVideo = static::where('orden', '>', $this->orden)
             ->orderBy('orden', 'asc')
             ->first();
