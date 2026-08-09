@@ -17,7 +17,7 @@ class VideosController extends Controller
         $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
 
-        $query = Video::select(['slug', 'titulo', 'descripcion', 'enlace', 'updated_at'])
+        $query = Video::select(['id', 'slug', 'titulo', 'descripcion', 'enlace', 'updated_at'])
             ->publicado();
 
         if ($buscar)
