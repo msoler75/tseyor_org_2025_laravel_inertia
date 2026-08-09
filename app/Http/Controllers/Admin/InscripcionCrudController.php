@@ -514,7 +514,13 @@ class InscripcionCrudController extends CrudController
         // Filtro por estado (asegurar coincidencia exacta y sin espacios extra)
         if ($request->filled('estado')) {
             $estado = $request->input('estado');
-            if ($estado !== '') {
+            if ($estado === '_abiertas') {
+                $cerrados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada'];
+                $this->crud->addClause('whereNotIn', 'estado', $cerrados);
+            } elseif ($estado === '_cerradas') {
+                $cerrados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada'];
+                $this->crud->addClause('whereIn', 'estado', $cerrados);
+            } elseif ($estado !== '') {
                 $this->crud->addClause('where', 'estado', '=', $estado);
                 \Log::channel('inscripciones')->info('Filtrando por estado: [' . $estado. ']');
             }
