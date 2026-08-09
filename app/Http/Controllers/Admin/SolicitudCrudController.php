@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\CRUD\app\Library\Widget;
 
 /**
  * Class SolicitudCrudController
@@ -38,6 +39,13 @@ class SolicitudCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+
+        // Widget de equipos con solicitudes pendientes
+        Widget::add()
+            ->to('before_content')
+            ->type('view')
+            ->view('custom.widgets.solicitudes_equipos_pendientes');
+
         // CRUD::setFromDb(); // set columns from db columns.
 
         /**
@@ -82,6 +90,8 @@ class SolicitudCrudController extends CrudController
 
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
+
+        $this->crud->addButtonFromView('line', 'ver_equipo', 'custom.buttons.ver_equipo', 'end');
 
     }
 
