@@ -31,6 +31,30 @@
                 </div>
 
                 <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
+                    <div class="font-bold text-lg mb-3">Solicitudes equipos</div>
+                    <div class="flex text-3xl justify-between items-baseline">
+                        <span @if ($solicitudes_pendientes) style="color: orange" @endif>{{ $solicitudes_pendientes }}</span>
+                        @if ($solicitudes_pendientes)
+                            <a class="text-base text-right font-normal" href="/admin/solicitud">Revisar</a>
+                        @else
+                            <i class="la la-check-circle text-green-500"></i>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
+                    <div class="font-bold text-lg mb-3">Inscripciones abiertas</div>
+                    <div class="flex text-3xl justify-between items-baseline">
+                        <span @if ($inscripciones_abiertas) style="color: orange" @endif>{{ $inscripciones_abiertas }}</span>
+                        @if ($inscripciones_abiertas)
+                            <a class="text-base text-right font-normal" href="/admin/inscripcion">Revisar</a>
+                        @else
+                            <i class="la la-check-circle text-green-500"></i>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
                     <div class="font-bold text-lg mb-3">Tareas pendientes</div>
                     <div class="flex text-3xl justify-between items-baseline">
                         <span @if ($tareas_pendientes) style="color: orange" @endif>{{ $tareas_pendientes }}</span>

@@ -218,6 +218,15 @@ class AdminController // extends Controller
 
         $inscripciones_nuevas = Inscripcion::where('estado', 'nuevo')->count();
 
+        $solicitudes_pendientes = \App\Models\Solicitud::whereNull('fecha_aceptacion')
+            ->whereNull('fecha_denegacion')
+            ->count();
+
+        $estadosCerrados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada'];
+        $inscripciones_abiertas = Inscripcion::whereNotIn('estado', $estadosCerrados)
+            ->where('estado', '!=', 'nuevo')
+            ->count();
+
         $tareas_pendientes = Job::count();
 
         $tareas_fallidas = JobFailed::count();
@@ -237,6 +246,8 @@ class AdminController // extends Controller
             'contenidos_creados' => $contenidos_creados,
             'contenidos_modificados' => $contenidos_modificados,
             'inscripciones_nuevas' => $inscripciones_nuevas,
+            'solicitudes_pendientes' => $solicitudes_pendientes,
+            'inscripciones_abiertas' => $inscripciones_abiertas,
             'tareas_pendientes' => $tareas_pendientes,
             'tareas_fallidas' => $tareas_fallidas,
             'en_mantenimiento' => $en_mantenimiento,
