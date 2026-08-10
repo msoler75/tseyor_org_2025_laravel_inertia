@@ -1,0 +1,5 @@
+{
+  "GHSA-rmmh-p597-ppvv": "showdown ReDoS en parsing de links. No hay fix upstream. Uso interno (admin) con input sanitizado; riesgo aceptado.",
+  "GHSA-cr32-g25g-vxjj": "showdown XSS en metadata title. No hay fix upstream. Markdown renderizado solo por usuarios autorizados (admin/equipo); riesgo aceptado.",
+  "GHSA-22g5-r2x5-97cx": "showdown stored XSS por table header ID injection. No hay fix upstream. Mismo contexto de uso autorizado; riesgo aceptado."
+}

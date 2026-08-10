@@ -11,7 +11,8 @@
     "build-client": "vite build",
     "build-server": "vite build --ssr",
     "ziggy": "php artisan ziggy:generate",
-    "test": "vitest run"
+    "test": "vitest run",
+    "audit": "npx --yes better-npm-audit audit"
   },
   "devDependencies": {
     "@iconify/vue": "^4.1.2",
