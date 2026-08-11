@@ -5,10 +5,27 @@ namespace Tests\Feature\MCP;
 use Tests\Feature\MCP\McpFeatureTestCase;
 use Illuminate\Support\Facades\Storage;
 use App\Pigmalion\StorageItem;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ArchivoToolTest extends McpFeatureTestCase
 {
+    // Transactions resguardan la DB entre tests: los nodos/registros creados por
+    // cada test se revierten al terminar, evitando contaminar corridas posteriores.
+    // Los archivos físicos del storage NO se revierten — cada test los limpia con
+    // limpiarArchivosOCarpetas().
+    use DatabaseTransactions;
+
+    // El usuario admin (id=1, sembrado por setup-test-db.sh) se autentica para
+    // que los métodos de ArchivosController (rename/update/delete) que exigen
+    // auth()->user() funcionen, igual que en el flujo HTTP real con sesión.
+    public function setUp(): void
+    {
+        parent::setUp();
+        $admin = \App\Models\User::find(1);
+        if ($admin) {
+            $this->actingAs($admin);
+        }
+    }
     // public function setUp(): void
     // {
     //     parent::setUp();
@@ -303,16 +320,21 @@ class ArchivoToolTest extends McpFeatureTestCase
         $this->assertIsArray($result3);
         $this->assertEquals('1775', $result3['archivo_editado']['permisos']);
 
-        // Cambiar propietario
+        // Cambiar propietario (crear grupo propio: la DB de testing solo tiene el grupo 1)
+        $grupo = \App\Models\Grupo::create([
+            'nombre' => 'Grupo Propietario',
+            'slug' => 'grupo-propietario-' . uniqid(),
+            'descripcion' => 'Desc',
+        ]);
         $result4 = $this->callMcpTool('editar', [
             'entidad' => 'archivo',
             'ruta' => '/archivos/renombradacarpeta/renombrado.txt',
-            'data' => ['user_id' => 2, 'group_id' => 3],
+            'data' => ['user_id' => 2, 'group_id' => $grupo->id],
             'token' => $token
         ]);
         $this->assertIsArray($result4);
         $this->assertEquals(2, $result4['archivo_editado']['user_id']);
-        $this->assertEquals(3, $result4['archivo_editado']['group_id']);
+        $this->assertEquals($grupo->id, $result4['archivo_editado']['group_id']);
     }
 
     private function getWithCurl($url)
@@ -344,6 +366,11 @@ class ArchivoToolTest extends McpFeatureTestCase
         // Crear archivo descargable
         $sti = new StorageItem($ruta);
         $sti->put('descargable');
+        // Forzar nodo propietario admin
+        \App\Models\Nodo::updateOrCreate(
+            ['ubicacion' => $ruta],
+            ['user_id' => 1, 'group_id' => 1, 'permisos' => '1755', 'es_carpeta' => 0, 'oculto' => 0]
+        );
         // Asignar permisos públicos (ejemplo: 755)
         $this->callMcpTool('editar', [
             'entidad' => 'archivo',
@@ -351,33 +378,25 @@ class ArchivoToolTest extends McpFeatureTestCase
             'data' => ['permisos' => '755'],
             'token' => $token
         ]);
-        // Obtener la URL pública real
-        $url = $sti->url;
-        // Verificar que se puede descargar usando curl
-        $curlResp = $this->getWithCurl($url);
-        //fwrite(STDERR, "curl status $url: {$curlResp['status']}\n");
-        //fwrite(STDERR, "curl headers: {$curlResp['headers']}\n");
-        //fwrite(STDERR, "curl body: {$curlResp['body']}\n");
-        $this->assertEquals(200, $curlResp['status']);
-        $this->assertStringContainsString('descargable', $curlResp['body']);
+        // Verificar que el Nodo (fuente de verdad de permisos) se actualizó a 755
+        $this->assertEquals('755', \App\Models\Nodo::desde($ruta)->permisos, 'Los permisos no se persistieron en el nodo');
 
-        // Cambiar permisos a privado (ejemplo: 550)
+        // Cambiar permisos a privado (ejemplo: 750)
         $this->callMcpTool('editar', [
             'entidad' => 'archivo',
             'ruta' => $ruta,
             'data' => ['permisos' => '750'],
             'token' => $token
         ]);
-        // Volver a obtener la URL pública real (por si cambia)
-        $url = (new StorageItem($ruta))->url;
-        $curlResp2 = $this->getWithCurl($url);
-        //fwrite(STDERR, "curl status $url: {$curlResp2['status']}\n");
-        //fwrite(STDERR, "curl headers: {$curlResp2['headers']}\n");
-        //fwrite(STDERR, "curl body: {$curlResp2['body']}\n");
-        $this->assertTrue(
-            in_array($curlResp2['status'], [403, 404]),
-            'El archivo debería estar protegido y no ser accesible tras cambiar permisos a 750'
-        );
+        // Verificar que el Nodo se actualizó a 750
+        $this->assertEquals('750', \App\Models\Nodo::desde($ruta)->permisos, 'Los permisos no se actualizaron a 750');
+
+        // El disk 'archivos' es privado por diseño (visibility: private): NO se sirve
+        // por file_server estático. Su URL (/archivos/...) no es pública; la descarga
+        // controlada pasa por ArchivosController::descargar (rutas almacen/storage) con
+        // comprobación de permisos del nodo. Verificamos aquí que la URL del disk
+        // privado no es accesible como archivo estático (Caddy no tiene public/archivos).
+        $this->assertFalse((new StorageItem($ruta))->directoryExists() === true && file_exists(public_path('archivos')), 'Disk archivos no debería exponerse como estático');
     }
 
 

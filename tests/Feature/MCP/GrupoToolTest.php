@@ -2,26 +2,17 @@
 
 namespace Tests\Feature\MCP;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class GrupoToolTest extends McpFeatureTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-    }
-
-    protected function tearDown(): void
-    {
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        parent::tearDown();
-    }
+    use DatabaseTransactions;
 
     public function test_listar_grupos()
     {
-        \App\Models\Grupo::truncate();
         $pp = 12; // Valor por defecto para paginación de grupos
+        // Datos base sembrados por setup-test-db.sh (grupo 1) — cuentan en el listado
+        $base = \App\Models\Grupo::count();
         for ($i = 0; $i < $pp + 4; $i++) {
             \App\Models\Grupo::create([
                 'nombre' => 'Grupo ' . $i,
@@ -32,7 +23,7 @@ class GrupoToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'grupo']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('grupos', $result);
-        $this->assertEquals($pp + 4, count($result['grupos']));
+        $this->assertEquals($pp + 4 + $base, count($result['grupos']));
         // buscar un grupo específico
         $result = $this->callMcpTool('listar', ['entidad' => 'grupo', 'buscar' => 'Grupo 1']);
         $this->assertIsArray($result);
@@ -47,7 +38,6 @@ class GrupoToolTest extends McpFeatureTestCase
 
     public function test_ver_grupo()
     {
-        \App\Models\Grupo::truncate();
         $grupo = \App\Models\Grupo::create([
             'nombre' => 'Grupo Test',
             'slug' => 'grupo-test-' . uniqid(),
@@ -61,7 +51,6 @@ class GrupoToolTest extends McpFeatureTestCase
 
     public function test_crear_grupo()
     {
-        \App\Models\Grupo::truncate();
         $params = [
             'entidad' => 'grupo',
             'data' => [
@@ -77,7 +66,6 @@ class GrupoToolTest extends McpFeatureTestCase
 
     public function test_editar_grupo()
     {
-        \App\Models\Grupo::truncate();
         $grupo = \App\Models\Grupo::create([
             'nombre' => 'Editar Grupo',
             'slug' => 'editar-grupo-' . uniqid(),
@@ -98,7 +86,6 @@ class GrupoToolTest extends McpFeatureTestCase
 
     public function test_eliminar_grupo()
     {
-        \App\Models\Grupo::truncate();
         $grupo = \App\Models\Grupo::create([
             'nombre' => 'Eliminar Grupo',
             'slug' => 'eliminar-grupo-' . uniqid(),
@@ -118,8 +105,6 @@ class GrupoToolTest extends McpFeatureTestCase
 
     public function test_no_eliminar_grupo_con_nodos_asociados()
     {
-        \App\Models\Grupo::truncate();
-        \App\Models\Nodo::truncate();
         $grupo = \App\Models\Grupo::create([
             'nombre' => 'Grupo Con Nodos',
             'slug' => 'grupo-con-nodos-' . uniqid(),
