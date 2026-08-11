@@ -22,11 +22,15 @@
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
-        <!-- <env name="DB_CONNECTION" value="sqlite"/> -->
-        <!-- <env name="DB_DATABASE" value=":memory:"/> -->
+        <!-- DB de testing DEDICADA: web_tseyor_org_2024_testing (esquema clonado,
+             sin datos). Se recrea con scripts/setup-test-db.sh. NUNCA apuntar a la
+             DB real: los tests hacen truncate/delete y eso borraría producción. -->
+        <env name="DB_DATABASE" value="web_tseyor_org_2024_testing"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <!-- TNTSearch: índices aislados para testing (se limpian en el setUp de los tests) -->
+        <env name="TNTSEARCH_STORAGE" value="storage/indexes_test"/>
     </php>
 </phpunit>
