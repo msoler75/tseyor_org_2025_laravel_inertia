@@ -321,19 +321,58 @@ abstract class BaseModelTools
 
         $controller = $this->getControllerClass();
         $controllerMethod = $this->getMethod($toolName);
-        $args = $this->getMethodArgs($toolName);
 
-        $resolvedArgs = array_map(function ($arg) use ($request, $id, $params) {
-            return match ($arg) {
-                'request' => $request,
-                'id' => $id,
-                'ruta' => $params['ruta'] ?? '',
-                'json' => true,
-                default => $id,
-            };
-        }, $args);
+        $resolvedArgs = $this->resolveControllerArgs($controller, $controllerMethod, $request, $id, $params);
 
         return app($controller)->{$controllerMethod}(...$resolvedArgs);
+    }
+
+    /**
+     * Resuelve los argumentos para llamar al método del controlador según su
+     * firma real (Reflection), en lugar de un mapeo posicional ciego.
+     *
+     * Esto evita que un método como show($id) reciba el Request como primer
+     * argumento cuando la definición de $methods declara ['request', 'id'].
+     */
+    protected function resolveControllerArgs(string $controller, string $method, Request $request, $id, array $params): array
+    {
+        $reflection = new \ReflectionMethod($controller, $method);
+        $args = [];
+
+        foreach ($reflection->getParameters() as $parameter) {
+            $type = $parameter->getType();
+            $name = $parameter->getName();
+
+            // Parámetro tipado como Request (o subtipo) → inyectar el request
+            if ($type && !$type->isBuiltin() && is_a($type->getName(), Request::class, true)) {
+                $args[] = $request;
+                continue;
+            }
+
+            // Parámetro booleano 'json' → true
+            if ($name === 'json') {
+                $args[] = true;
+                continue;
+            }
+
+            // Parámetro de ruta ('ruta', 'rutaReq', etc.) → la ruta del params (o cadena vacía)
+            if (str_starts_with($name, 'ruta')) {
+                $args[] = $params['ruta'] ?? '';
+                continue;
+            }
+
+            // Parámetro de id (id, idEquipo, slug, etc.) → el id o slug del params
+            if ($name === 'id' || $name === 'slug' || str_ends_with($name, 'Id')) {
+                $args[] = $id;
+                continue;
+            }
+
+            // Fallback: usar el valor por defecto del parámetro si es opcional,
+            // o el id en caso contrario
+            $args[] = $parameter->isOptional() ? $parameter->getDefaultValue() : $id;
+        }
+
+        return $args;
     }
 
     public function onBuscar(array $params, object $baseTool) {
