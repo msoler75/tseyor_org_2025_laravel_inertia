@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class EventoToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_evento()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'evento']);
@@ -30,26 +33,28 @@ class EventoToolTest extends McpFeatureTestCase
 
     public function test_listar_eventos()
     {
-        \App\Models\Evento::truncate();
         $pp = \App\Http\Controllers\EventosController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 4; $i++) {
-            \App\Models\Evento::create([
-                'titulo' => 'Evento ' . $i,
-                'slug' => 'evento-' . $i . '-' . uniqid(),
-                'descripcion' => 'Desc ' . $i,
-                'categoria' => 'general',
-                'texto' => 'Texto ' . $i,
-                'imagen' => null,
-                'published_at' => now(),
-                'fecha_inicio' => now(),
-                'fecha_fin' => now()->addDay(),
-                'hora_inicio' => '10:00',
-                'visibilidad' => 'P',
-                'centro_id' => null,
-                'sala_id' => null,
-                'equipo_id' => null,
-            ]);
-        }
+        \App\Models\Evento::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 4; $i++) {
+                \App\Models\Evento::create([
+                    'titulo' => 'Evento ' . $i,
+                    'slug' => 'evento-' . $i . '-' . uniqid(),
+                    'descripcion' => 'Desc ' . $i,
+                    'categoria' => 'general',
+                    'texto' => 'Texto ' . $i,
+                    'imagen' => null,
+                    'published_at' => now(),
+                    'fecha_inicio' => now(),
+                    'fecha_fin' => now()->addDay(),
+                    'hora_inicio' => '10:00',
+                    'visibilidad' => 'P',
+                    'centro_id' => null,
+                    'sala_id' => null,
+                    'equipo_id' => null,
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Evento::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'evento']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -73,7 +78,6 @@ class EventoToolTest extends McpFeatureTestCase
 
     public function test_ver_evento()
     {
-        \App\Models\Evento::truncate();
         $evento = \App\Models\Evento::create([
             'titulo' => 'Evento Test',
             'slug' => 'evento-test-' . uniqid(),
@@ -98,7 +102,6 @@ class EventoToolTest extends McpFeatureTestCase
 
     public function test_crear_evento()
     {
-        \App\Models\Evento::truncate();
         $now = now()->format('Y-m-d H:i:s');
         $params = [
             'entidad' => 'evento',
@@ -126,7 +129,6 @@ class EventoToolTest extends McpFeatureTestCase
 
     public function test_editar_evento()
     {
-        \App\Models\Evento::truncate();
         $evento = \App\Models\Evento::create([
             'titulo' => 'Editar Evento',
             'slug' => 'editar-evento-' . uniqid(),
@@ -158,7 +160,6 @@ class EventoToolTest extends McpFeatureTestCase
 
     public function test_eliminar_evento()
     {
-        \App\Models\Evento::truncate();
         $evento = \App\Models\Evento::create([
             'titulo' => 'Eliminar Evento',
             'slug' => 'eliminar-evento-' . uniqid(),

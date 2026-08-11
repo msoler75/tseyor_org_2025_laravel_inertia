@@ -3,37 +3,31 @@
 namespace Tests\Feature\MCP;
 
 use App\Models\Centro;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CentroToolTest extends McpFeatureTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-    }
-
-    public function tearDown(): void
-    {
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        parent::tearDown();
-    }
+    use DatabaseTransactions;
 
     public function test_listar_centros()
     {
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        Centro::truncate();
         $pp = \App\Http\Controllers\CentrosController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 2; $i++){
-            Centro::create([
-                'nombre' => 'Casa Tseyor ' . $i,
-                'descripcion' => 'Desc ' . $i,
-                'imagen' => '/almacen/centro' . $i . '.jpg',
-                'pais' => 'ES',
-                'poblacion' => 'Ciudad ' . $i,
-                'contacto_id' => null,
-            ]);
-        }
+        // withoutEvents: sin hooks de ContenidoBaseModel (slug, contenido, logs)
+        // ni syncing TNT. Slug se provee explícitamente porque la DB lo requiere.
+        Centro::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 2; $i++) {
+                Centro::create([
+                    'nombre' => 'Casa Tseyor ' . $i,
+                    'slug' => 'casa-tseyor-' . $i,
+                    'descripcion' => 'Desc ' . $i,
+                    'imagen' => '/almacen/centro' . $i . '.jpg',
+                    'pais' => 'ES',
+                    'poblacion' => 'Ciudad ' . $i,
+                    'contacto_id' => null,
+                ]);
+            }
+        });
+        $this->makeAllSearchable(Centro::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'centro']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -43,11 +37,18 @@ class CentroToolTest extends McpFeatureTestCase
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
         $this->assertEquals(2, count($result['listado']['data']));
-        // buscar un centro específico
+        // buscar un centro específico.
+        // OJO: la fuzziness de TNT (distance=2) matchea números cercanos
+        // ("50" también devuelve "Casa Tseyor 5/9/10..."), así que NO
+        // asumimos count == 1: verificamos que el centro buscado ESTÁ en
+        // los resultados.
         $result = $this->callMcpTool('listar', ['entidad' => 'centro', 'buscar' => $pp]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertEquals(1, count($result['listado']['data']));
+        $nombres = array_map(function ($c) {
+            return is_array($c) ? ($c['nombre'] ?? null) : ($c->nombre ?? null);
+        }, $result['listado']['data']);
+        $this->assertContains('Casa Tseyor ' . $pp, $nombres);
         // buscar un centro que no existe
         $result = $this->callMcpTool('listar', ['entidad' => 'centro', 'buscar' => 'Inexistente']);
         $this->assertIsArray($result);
@@ -57,7 +58,6 @@ class CentroToolTest extends McpFeatureTestCase
 
     public function test_ver_centro()
     {
-        Centro::truncate();
         $centro = Centro::create([
             'nombre' => 'Centro Test',
             'slug' => 'centro-test-' . uniqid(),
@@ -75,7 +75,6 @@ class CentroToolTest extends McpFeatureTestCase
 
     public function test_crear_centro()
     {
-        Centro::truncate();
         $params = [
             'entidad' => 'centro',
             'data' => [
@@ -95,7 +94,6 @@ class CentroToolTest extends McpFeatureTestCase
 
     public function test_editar_centro()
     {
-        Centro::truncate();
         $centro = Centro::create([
             'nombre' => 'Editar Centro',
             'slug' => 'editar-centro-' . uniqid(),
@@ -120,7 +118,6 @@ class CentroToolTest extends McpFeatureTestCase
 
     public function test_eliminar_centro()
     {
-        Centro::truncate();
         $centro = Centro::create([
             'nombre' => 'Eliminar Centro',
             'slug' => 'eliminar-centro-' . uniqid(),

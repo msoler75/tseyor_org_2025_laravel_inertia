@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class PsicografiaToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_psicografia()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'psicografia']);
@@ -21,17 +24,19 @@ class PsicografiaToolTest extends McpFeatureTestCase
 
     public function test_listar_psicografias()
     {
-        \App\Models\Psicografia::truncate();
         $pp = 14; // PsicografiasController usa paginate(14)
-        for ($i = 0; $i < $pp + 3; $i++) {
-            \App\Models\Psicografia::create([
-                'titulo' => 'Psicografia ' . $i,
-                'slug' => 'psicografia-' . $i . '-' . uniqid(),
-                'categoria' => 'arte',
-                'descripcion' => 'Desc ' . $i,
-                'imagen' => '/img/psicografia' . $i . '.jpg',
-            ]);
-        }
+        \App\Models\Psicografia::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 3; $i++) {
+                \App\Models\Psicografia::create([
+                    'titulo' => 'Psicografia ' . $i,
+                    'slug' => 'psicografia-' . $i . '-' . uniqid(),
+                    'categoria' => 'arte',
+                    'descripcion' => 'Desc ' . $i,
+                    'imagen' => '/img/psicografia' . $i . '.jpg',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Psicografia::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'psicografia']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -55,7 +60,6 @@ class PsicografiaToolTest extends McpFeatureTestCase
 
     public function test_ver_psicografia()
     {
-        \App\Models\Psicografia::truncate();
         $psicografia = \App\Models\Psicografia::create([
             'titulo' => 'Psicografia Test',
             'slug' => 'psicografia-test-' . uniqid(),
@@ -71,7 +75,6 @@ class PsicografiaToolTest extends McpFeatureTestCase
 
     public function test_crear_psicografia()
     {
-        \App\Models\Psicografia::truncate();
         $params = [
             'entidad' => 'psicografia',
             'data' => [
@@ -89,7 +92,6 @@ class PsicografiaToolTest extends McpFeatureTestCase
 
     public function test_editar_psicografia()
     {
-        \App\Models\Psicografia::truncate();
         $psicografia = \App\Models\Psicografia::create([
             'titulo' => 'Editar Psicografia',
             'slug' => 'editar-psicografia-' . uniqid(),
@@ -112,7 +114,6 @@ class PsicografiaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_psicografia()
     {
-        \App\Models\Psicografia::truncate();
         $psicografia = \App\Models\Psicografia::create([
             'titulo' => 'Eliminar Psicografia',
             'slug' => 'eliminar-psicografia-' . uniqid(),

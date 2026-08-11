@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class GuiaToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_guia()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'guia']);
@@ -30,7 +33,6 @@ class GuiaToolTest extends McpFeatureTestCase
 
     public function test_listar_guias()
     {
-        \App\Models\Guia::truncate();
         $pp = \App\Http\Controllers\GuiasController::$ITEMS_POR_PAGINA;
         for ($i = 0; $i < $pp + 2; $i++) {
             \App\Models\Guia::create([
@@ -45,6 +47,7 @@ class GuiaToolTest extends McpFeatureTestCase
                 'visibilidad' => 'P',
             ]);
         }
+        $this->makeAllSearchable(\App\Models\Guia::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'guia']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -68,7 +71,6 @@ class GuiaToolTest extends McpFeatureTestCase
 
     public function test_ver_guia()
     {
-        \App\Models\Guia::truncate();
         $guia = \App\Models\Guia::create([
             'nombre' => 'Guia Test',
             'slug' => 'guia-test-' . uniqid(),
@@ -88,7 +90,6 @@ class GuiaToolTest extends McpFeatureTestCase
 
     public function test_crear_guia()
     {
-        \App\Models\Guia::truncate();
         $params = [
             'entidad' => 'guia',
             'data' => [
@@ -110,7 +111,6 @@ class GuiaToolTest extends McpFeatureTestCase
 
     public function test_editar_guia()
     {
-        \App\Models\Guia::truncate();
         $guia = \App\Models\Guia::create([
             'nombre' => 'Editar Guia',
             'slug' => 'editar-guia-' . uniqid(),
@@ -137,7 +137,6 @@ class GuiaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_guia()
     {
-        \App\Models\Guia::truncate();
         $guia = \App\Models\Guia::create([
             'nombre' => 'Eliminar Guia',
             'slug' => 'eliminar-guia-' . uniqid(),

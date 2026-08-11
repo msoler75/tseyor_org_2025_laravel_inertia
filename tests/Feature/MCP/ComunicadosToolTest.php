@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\MCP;
 
-use App\MCP\ComunicadosTool;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 use App\Models\Comunicado;
-use Tests\TestCase;
 
 class ComunicadosToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
+
     public function test_listar_comunicados2()
     {
         $result = $this->callMcpTool('listar', ['entidad' => 'comunicado']);
@@ -18,22 +20,24 @@ class ComunicadosToolTest extends McpFeatureTestCase
 
     public function test_listar_comunicados()
     {
-        Comunicado::truncate();
         $pp = \App\Http\Controllers\ComunicadosController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp+2; $i++) {
-            $comunicado = new Comunicado([
-                'titulo' => 'Titulo ' . $i,
-                'numero' => $i + 100,
-                'categoria' => 1,
-                'descripcion' => 'Desc ' . $i,
-                'texto' => 'Texto ' . $i,
-                'visibilidad' => 'P',
-                'fecha_comunicado' => now()->toDateString(),
-                'ano' => date('Y'),
-                'slug' => 'slug-' . $i . '-' . uniqid(),
-            ]);
-            $comunicado->save();
-        }
+        Comunicado::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp+2; $i++) {
+                $comunicado = new Comunicado([
+                    'titulo' => 'Titulo ' . $i,
+                    'numero' => $i + 100,
+                    'categoria' => 1,
+                    'descripcion' => 'Desc ' . $i,
+                    'texto' => 'Texto ' . $i,
+                    'visibilidad' => 'P',
+                    'fecha_comunicado' => now()->toDateString(),
+                    'ano' => date('Y'),
+                    'slug' => 'slug-' . $i . '-' . uniqid(),
+                ]);
+                $comunicado->save();
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Comunicado::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'comunicado']);
         // Si la respuesta viene anidada en content[0][text], decodificar el JSON
         if (isset($result['content'][0]['text'])) {
@@ -69,7 +73,6 @@ class ComunicadosToolTest extends McpFeatureTestCase
 
     public function test_ver_comunicado()
     {
-        Comunicado::truncate();
         $comunicado = new Comunicado([
             'titulo' => 'Ver Comunicado',
             'numero' => 99,
@@ -98,7 +101,6 @@ class ComunicadosToolTest extends McpFeatureTestCase
 
     public function test_crear_comunicado()
     {
-        Comunicado::truncate();
         $params = [
             'entidad' => 'comunicado',
             'data' => [
@@ -120,7 +122,6 @@ class ComunicadosToolTest extends McpFeatureTestCase
 
     public function test_editar_comunicado()
     {
-        Comunicado::truncate();
         $comunicado = new Comunicado([
             'titulo' => 'Original',
             'numero' => 1,
@@ -158,7 +159,6 @@ class ComunicadosToolTest extends McpFeatureTestCase
 
     public function test_eliminar_comunicado()
     {
-        Comunicado::truncate();
         $comunicado = new Comunicado([
             'titulo' => 'Eliminar Comunicado',
             'numero' => 9999,

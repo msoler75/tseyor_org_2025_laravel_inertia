@@ -3,36 +3,27 @@
 namespace Tests\Feature\MCP;
 
 use App\Models\Contacto;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ContactoToolTest extends McpFeatureTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-    }
-
-    public function tearDown(): void
-    {
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        parent::tearDown();
-    }
+    use DatabaseTransactions;
 
     public function test_listar_contactos()
     {
-        Contacto::truncate();
         $pp = \App\Http\Controllers\ContactosController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 5; $i++) {
-            Contacto::create([
-                'nombre' => 'Contacto ' . $i,
-                'slug' => 'contacto-' . $i . '-' . uniqid(),
-                'pais' => 'ES',
-                'poblacion' => 'Ciudad ' . $i,
-                'visibilidad' => 'P',
-            ]);
-        }
+        Contacto::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 5; $i++) {
+                Contacto::create([
+                    'nombre' => 'Contacto ' . $i,
+                    'slug' => 'contacto-' . $i . '-' . uniqid(),
+                    'pais' => 'ES',
+                    'poblacion' => 'Ciudad ' . $i,
+                    'visibilidad' => 'P',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Contacto::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'contacto']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -57,7 +48,6 @@ class ContactoToolTest extends McpFeatureTestCase
 
     public function test_ver_contacto()
     {
-        Contacto::truncate();
         $slug = 'contacto-test-' . uniqid();
         Contacto::create([
                 'nombre' => 'Contacto Test',
@@ -74,7 +64,6 @@ class ContactoToolTest extends McpFeatureTestCase
 
     public function test_crear_contacto()
     {
-        Contacto::truncate();
         $params = [
             'entidad' => 'contacto',
             'data' => [
@@ -103,7 +92,6 @@ class ContactoToolTest extends McpFeatureTestCase
 
     public function test_eliminar_contacto()
     {
-        Contacto::truncate();
         $contacto = Contacto::create([
             'nombre' => 'Eliminar Contacto',
             'slug' => 'eliminar-contacto-' . uniqid(),

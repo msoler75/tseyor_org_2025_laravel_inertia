@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class SalaToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_sala()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'sala']);
@@ -22,17 +25,18 @@ class SalaToolTest extends McpFeatureTestCase
     public function test_listar_salas()
     {
         // remover foreign key constraints to allow truncation
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\Sala::truncate();
         $pp = \App\Http\Controllers\SalasController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 2; $i++) {
-            \App\Models\Sala::create([
-                'nombre' => 'Sala ' . $i,
-                'slug' => 'sala-' . $i . '-' . uniqid(),
-                'descripcion' => 'Desc ' . $i,
-                'enlace' => 'https://enlace' . $i . '.com',
-            ]);
-        }
+        \App\Models\Sala::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 2; $i++) {
+                \App\Models\Sala::create([
+                    'nombre' => 'Sala ' . $i,
+                    'slug' => 'sala-' . $i . '-' . uniqid(),
+                    'descripcion' => 'Desc ' . $i,
+                    'enlace' => 'https://enlace' . $i . '.com',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Sala::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'sala']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -56,8 +60,6 @@ class SalaToolTest extends McpFeatureTestCase
 
     public function test_ver_sala()
     {
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\Sala::truncate();
         $sala = \App\Models\Sala::create([
             'nombre' => 'Sala Test',
             'slug' => 'sala-test-' . uniqid(),
@@ -72,8 +74,6 @@ class SalaToolTest extends McpFeatureTestCase
 
     public function test_crear_sala()
     {
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\Sala::truncate();
         $params = [
             'entidad' => 'sala',
             'data' => [
@@ -90,8 +90,6 @@ class SalaToolTest extends McpFeatureTestCase
 
     public function test_editar_sala()
     {
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\Sala::truncate();
         $sala = \App\Models\Sala::create([
             'nombre' => 'Editar Sala',
             'slug' => 'editar-sala-' . uniqid(),
@@ -113,8 +111,6 @@ class SalaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_sala()
     {
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\Sala::truncate();
         $sala = \App\Models\Sala::create([
             'nombre' => 'Eliminar Sala',
             'slug' => 'eliminar-sala-' . uniqid(),

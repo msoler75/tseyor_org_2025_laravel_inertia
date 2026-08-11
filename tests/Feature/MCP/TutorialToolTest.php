@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class TutorialToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_tutorial()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'tutorial']);
@@ -21,7 +24,6 @@ class TutorialToolTest extends McpFeatureTestCase
 
     public function test_listar_tutoriales()
     {
-        \App\Models\Tutorial::truncate();
         $pp = \App\Http\Controllers\TutorialesController::$ITEMS_POR_PAGINA;
         for ($i = 0; $i < $pp + 5; $i++) {
             \App\Models\Tutorial::create([
@@ -34,6 +36,7 @@ class TutorialToolTest extends McpFeatureTestCase
                 'visibilidad' => 'P',
             ]);
         }
+        $this->makeAllSearchable(\App\Models\Tutorial::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'tutorial']);
         $this->assertIsArray($result);
         // fwrite(STDERR, print_r($result, true));
@@ -58,7 +61,6 @@ class TutorialToolTest extends McpFeatureTestCase
 
     public function test_ver_tutorial()
     {
-        \App\Models\Tutorial::truncate();
         $tutorial = \App\Models\Tutorial::create([
             'titulo' => 'Tutorial Test',
             'slug' => 'tutorial-test-' . uniqid(),
@@ -76,7 +78,6 @@ class TutorialToolTest extends McpFeatureTestCase
 
     public function test_crear_tutorial()
     {
-        \App\Models\Tutorial::truncate();
         $params = [
             'entidad' => 'tutorial',
             'data' => [
@@ -96,7 +97,6 @@ class TutorialToolTest extends McpFeatureTestCase
 
     public function test_editar_tutorial()
     {
-        \App\Models\Tutorial::truncate();
         $tutorial = \App\Models\Tutorial::create([
             'titulo' => 'Editar Tutorial',
             'slug' => 'editar-tutorial-' . uniqid(),
@@ -121,7 +121,6 @@ class TutorialToolTest extends McpFeatureTestCase
 
     public function test_eliminar_tutorial()
     {
-        \App\Models\Tutorial::truncate();
         $tutorial = \App\Models\Tutorial::create([
             'titulo' => 'Eliminar Tutorial',
             'slug' => 'eliminar-tutorial-' . uniqid(),
