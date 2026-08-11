@@ -2,18 +2,15 @@
 
 namespace Tests\Feature\MCP;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class InformeToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
+
     protected function setUp(): void
     {
         parent::setUp();
-        // Forzar limpieza y evitar duplicados de slug
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\Informe::truncate();
-        \App\Models\Equipo::truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         // Usar firstOrCreate para evitar duplicados si por alguna razón no se vacía
         \App\Models\Equipo::firstOrCreate(
             ['id' => 1],
@@ -47,20 +44,22 @@ class InformeToolTest extends McpFeatureTestCase
 
     public function test_listar_informes()
     {
-        \App\Models\Informe::truncate();
         $pp = \App\Http\Controllers\InformesController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 2; $i++) {
-            \App\Models\Informe::create([
-                'titulo' => 'Informe ' . $i,
-                'categoria' => 'anual',
-                'equipo_id' => 1,
-                'descripcion' => 'Desc ' . $i,
-                'texto' => 'Texto ' . $i,
-                'audios' => json_encode([]),
-                'archivos' => json_encode([]),
-                'visibilidad' => 'P',
-            ]);
-        }
+        \App\Models\Informe::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 2; $i++) {
+                \App\Models\Informe::create([
+                    'titulo' => 'Informe ' . $i,
+                    'categoria' => 'anual',
+                    'equipo_id' => 1,
+                    'descripcion' => 'Desc ' . $i,
+                    'texto' => 'Texto ' . $i,
+                    'audios' => json_encode([]),
+                    'archivos' => json_encode([]),
+                    'visibilidad' => 'P',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Informe::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'informe']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -84,7 +83,6 @@ class InformeToolTest extends McpFeatureTestCase
 
     public function test_ver_informe()
     {
-        \App\Models\Informe::truncate();
         $informe = \App\Models\Informe::create([
             'titulo' => 'Informe Test',
             'categoria' => 'anual',
@@ -103,7 +101,6 @@ class InformeToolTest extends McpFeatureTestCase
 
     public function test_crear_informe()
     {
-        \App\Models\Informe::truncate();
         $params = [
             'entidad' => 'informe',
             'data' => [
@@ -124,7 +121,6 @@ class InformeToolTest extends McpFeatureTestCase
 
     public function test_editar_informe()
     {
-        \App\Models\Informe::truncate();
         $informe = \App\Models\Informe::create([
             'titulo' => 'Editar Informe',
             'categoria' => 'anual',
@@ -150,11 +146,11 @@ class InformeToolTest extends McpFeatureTestCase
 
     public function test_eliminar_informe()
     {
-        \App\Models\Informe::truncate();
+        // Un informe SIN equipo asociado sí se puede eliminar
         $informe = \App\Models\Informe::create([
             'titulo' => 'Eliminar Informe',
             'categoria' => 'anual',
-            'equipo_id' => 1,
+            'equipo_id' => null,
             'descripcion' => 'Desc',
             'texto' => 'Texto',
             'audios' => json_encode([]),
@@ -169,5 +165,28 @@ class InformeToolTest extends McpFeatureTestCase
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('informes', ['id' => $informe->id]);
+
+        // Un informe asociado a un equipo NO se puede eliminar (checkDeleteable)
+        $informeConEquipo = \App\Models\Informe::create([
+            'titulo' => 'Informe Con Equipo',
+            'categoria' => 'anual',
+            'equipo_id' => 1,
+            'descripcion' => 'Desc',
+            'texto' => 'Texto',
+            'audios' => json_encode([]),
+            'archivos' => json_encode([]),
+            'visibilidad' => 'P',
+        ]);
+        $params2 = [
+            'entidad' => 'informe',
+            'id' => $informeConEquipo->id,
+            'force' => true,
+            'token' => config('mcp-server.tokens.admin')
+        ];
+        $result = $this->callMcpTool('eliminar', $params2);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('error', $result);
+        $this->assertStringContainsString('asociado a un equipo', $result['error']);
+        $this->assertDatabaseHas('informes', ['id' => $informeConEquipo->id]);
     }
 }

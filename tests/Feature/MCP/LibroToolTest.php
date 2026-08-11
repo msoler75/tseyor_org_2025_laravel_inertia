@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class LibroToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_libro()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'libro']);
@@ -30,21 +33,23 @@ class LibroToolTest extends McpFeatureTestCase
 
     public function test_listar_libros()
     {
-        \App\Models\Libro::truncate();
         $pp = \App\Http\Controllers\LibrosController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 3; $i++) {
-            \App\Models\Libro::create([
-                'titulo' => 'Libro ' . $i . ($i < $pp+2?' extra' : ''),
-                'slug' => 'libro-' . $i . '-' . uniqid(),
-                'descripcion' => 'Desc ' . $i,
-                'categoria' => 'novela',
-                'imagen' => '/img/libro' . $i . '.jpg',
-                'edicion' => 1,
-                'paginas' => 100 + $i,
-                'pdf' => '/pdf/libro' . $i . '.pdf',
-                'visibilidad' => 'P',
-            ]);
-        }
+        \App\Models\Libro::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 3; $i++) {
+                \App\Models\Libro::create([
+                    'titulo' => 'Libro ' . $i . ($i < $pp+2?' extra' : ''),
+                    'slug' => 'libro-' . $i . '-' . uniqid(),
+                    'descripcion' => 'Desc ' . $i,
+                    'categoria' => 'novela',
+                    'imagen' => '/img/libro' . $i . '.jpg',
+                    'edicion' => 1,
+                    'paginas' => 100 + $i,
+                    'pdf' => '/pdf/libro' . $i . '.pdf',
+                    'visibilidad' => 'P',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Libro::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'libro']);
         // fwrite(STDERR, print_r($result, true));
         $this->assertIsArray($result);
@@ -74,7 +79,6 @@ class LibroToolTest extends McpFeatureTestCase
 
     public function test_ver_libro()
     {
-        \App\Models\Libro::truncate();
         $libro = \App\Models\Libro::create([
             'titulo' => 'Libro Test',
             'slug' => 'libro-test-' . uniqid(),
@@ -94,7 +98,6 @@ class LibroToolTest extends McpFeatureTestCase
 
     public function test_crear_libro()
     {
-        \App\Models\Libro::truncate();
         $params = [
             'entidad' => 'libro',
             'data' => [
@@ -116,7 +119,6 @@ class LibroToolTest extends McpFeatureTestCase
 
     public function test_editar_libro()
     {
-        \App\Models\Libro::truncate();
         $libro = \App\Models\Libro::create([
             'titulo' => 'Editar Libro',
             'slug' => 'editar-libro-' . uniqid(),
@@ -143,7 +145,6 @@ class LibroToolTest extends McpFeatureTestCase
 
     public function test_eliminar_libro()
     {
-        \App\Models\Libro::truncate();
         $libro = \App\Models\Libro::create([
             'titulo' => 'Eliminar Libro',
             'slug' => 'eliminar-libro-' . uniqid(),

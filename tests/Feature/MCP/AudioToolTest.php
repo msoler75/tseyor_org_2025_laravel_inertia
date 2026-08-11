@@ -2,24 +2,29 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 use App\Models\Audio;
 
 class AudioToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_listar_audios()
     {
-        Audio::truncate();
         $pp = \App\Http\Controllers\AudiosController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 2; $i++) {
-            Audio::create([
-                'titulo' => 'Audio ' . $i,
-                'slug' => 'audio-' . $i . '-' . uniqid(),
-                'descripcion' => 'Desc ' . $i,
-                'categoria' => 'general',
-                'audio' => '/almacen/audio' . $i . '.mp3',
-                'visibilidad' => 'P',
-            ]);
-        }
+        Audio::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 2; $i++) {
+                Audio::create([
+                    'titulo' => 'Audio ' . $i,
+                    'slug' => 'audio-' . $i . '-' . uniqid(),
+                    'descripcion' => 'Desc ' . $i,
+                    'categoria' => 'general',
+                    'audio' => '/almacen/audio' . $i . '.mp3',
+                    'visibilidad' => 'P',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Audio::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'audio']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -43,7 +48,6 @@ class AudioToolTest extends McpFeatureTestCase
 
     public function test_ver_audio()
     {
-        Audio::truncate();
         $audio = Audio::create([
             'titulo' => 'Audio Test',
             'slug' => 'audio-test-' . uniqid(),
@@ -61,7 +65,6 @@ class AudioToolTest extends McpFeatureTestCase
 
     public function test_crear_audio()
     {
-        Audio::truncate();
         $params = [
             'entidad' => 'audio',
             'data' => [
@@ -80,7 +83,6 @@ class AudioToolTest extends McpFeatureTestCase
 
     public function test_editar_audio()
     {
-        Audio::truncate();
         $audio = Audio::create([
             'titulo' => 'Editar Audio',
             'slug' => 'editar-audio-' . uniqid(),
@@ -104,7 +106,6 @@ class AudioToolTest extends McpFeatureTestCase
 
     public function test_eliminar_audio()
     {
-        Audio::truncate();
         $audio = Audio::create([
             'titulo' => 'Eliminar Audio',
             'slug' => 'eliminar-audio-' . uniqid(),

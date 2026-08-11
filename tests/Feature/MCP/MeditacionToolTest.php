@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class MeditacionToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_meditacion()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'meditacion']);
@@ -36,19 +39,21 @@ class MeditacionToolTest extends McpFeatureTestCase
 
     public function test_listar_meditaciones()
     {
-        \App\Models\Meditacion::truncate();
         $pp = \App\Http\Controllers\MeditacionesController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 4; $i++) {
-            \App\Models\Meditacion::create([
-                'titulo' => 'Meditacion ' . $i,
-                'slug' => 'meditacion-' . $i . '-' . uniqid(),
-                'categoria' => 'relajacion',
-                'descripcion' => 'Desc ' . $i,
-                'texto' => 'Texto ' . $i,
-                'audios' => json_encode([]),
-                'visibilidad' => 'P',
-            ]);
-        }
+        \App\Models\Meditacion::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 4; $i++) {
+                \App\Models\Meditacion::create([
+                    'titulo' => 'Meditacion ' . $i,
+                    'slug' => 'meditacion-' . $i . '-' . uniqid(),
+                    'categoria' => 'relajacion',
+                    'descripcion' => 'Desc ' . $i,
+                    'texto' => 'Texto ' . $i,
+                    'audios' => json_encode([]),
+                    'visibilidad' => 'P',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Meditacion::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'meditacion']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -73,7 +78,6 @@ class MeditacionToolTest extends McpFeatureTestCase
 
     public function test_ver_meditacion()
     {
-        \App\Models\Meditacion::truncate();
         $meditacion = \App\Models\Meditacion::create([
             'titulo' => 'Meditacion Test',
             'slug' => 'meditacion-test-' . uniqid(),
@@ -91,7 +95,6 @@ class MeditacionToolTest extends McpFeatureTestCase
 
     public function test_crear_meditacion()
     {
-        \App\Models\Meditacion::truncate();
         $params = [
             'entidad' => 'meditacion',
             'data' => [
@@ -111,7 +114,6 @@ class MeditacionToolTest extends McpFeatureTestCase
 
     public function test_editar_meditacion()
     {
-        \App\Models\Meditacion::truncate();
         $meditacion = \App\Models\Meditacion::create([
             'titulo' => 'Editar Meditacion',
             'slug' => 'editar-meditacion-' . uniqid(),
@@ -136,7 +138,6 @@ class MeditacionToolTest extends McpFeatureTestCase
 
     public function test_eliminar_meditacion()
     {
-        \App\Models\Meditacion::truncate();
         $meditacion = \App\Models\Meditacion::create([
             'titulo' => 'Eliminar Meditacion',
             'slug' => 'eliminar-meditacion-' . uniqid(),

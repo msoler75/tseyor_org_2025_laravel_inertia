@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class VideoToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_video()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'video']);
@@ -21,7 +24,6 @@ class VideoToolTest extends McpFeatureTestCase
 
     public function test_listar_videos()
     {
-        \App\Models\Video::truncate();
         $pp = \App\Http\Controllers\VideosController::$ITEMS_POR_PAGINA;
         // crear algunos videos de prueba
         for ($i = 0; $i < $pp + 4; $i++) {
@@ -33,6 +35,7 @@ class VideoToolTest extends McpFeatureTestCase
                 'visibilidad' => 'P',
             ]);
         }
+        $this->makeAllSearchable(\App\Models\Video::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'video']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -56,7 +59,6 @@ class VideoToolTest extends McpFeatureTestCase
 
     public function test_ver_video()
     {
-        \App\Models\Video::truncate();
         $video = \App\Models\Video::create([
             'titulo' => 'Video Test',
             'slug' => 'video-test-' . uniqid(),
@@ -72,7 +74,6 @@ class VideoToolTest extends McpFeatureTestCase
 
     public function test_crear_video()
     {
-        \App\Models\Video::truncate();
         $params = [
             'entidad' => 'video',
             'data' => [
@@ -90,7 +91,6 @@ class VideoToolTest extends McpFeatureTestCase
 
     public function test_editar_video()
     {
-        \App\Models\Video::truncate();
         $video = \App\Models\Video::create([
             'titulo' => 'Editar Video',
             'slug' => 'editar-video-' . uniqid(),
@@ -113,7 +113,6 @@ class VideoToolTest extends McpFeatureTestCase
 
     public function test_eliminar_video()
     {
-        \App\Models\Video::truncate();
         $video = \App\Models\Video::create([
             'titulo' => 'Eliminar Video',
             'slug' => 'eliminar-video-' . uniqid(),

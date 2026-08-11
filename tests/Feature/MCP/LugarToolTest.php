@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class LugarToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_lugar()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'lugar']);
@@ -30,21 +33,23 @@ class LugarToolTest extends McpFeatureTestCase
 
     public function test_listar_lugares()
     {
-        \App\Models\Lugar::truncate();
         $pp = 12; // LugaresController usa paginate(12)
-        for ($i = 0; $i < $pp + 2; $i++) {
-            \App\Models\Lugar::create([
-                'nombre' => 'Lugar ' . $i,
-                'slug' => 'lugar-' . $i . '-' . uniqid(),
-                'descripcion' => 'Desc ' . $i,
-                'categoria' => 'parque',
-                'imagen' => '/img/lugar' . $i . '.jpg',
-                'texto' => 'Texto ' . $i,
-                'libros' => '',
-                'relacionados' => '',
-                'visibilidad' => 'P',
-            ]);
-        }
+        \App\Models\Lugar::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 2; $i++) {
+                \App\Models\Lugar::create([
+                    'nombre' => 'Lugar ' . $i,
+                    'slug' => 'lugar-' . $i . '-' . uniqid(),
+                    'descripcion' => 'Desc ' . $i,
+                    'categoria' => 'parque',
+                    'imagen' => '/img/lugar' . $i . '.jpg',
+                    'texto' => 'Texto ' . $i,
+                    'libros' => '',
+                    'relacionados' => '',
+                    'visibilidad' => 'P',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Lugar::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'lugar']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -68,7 +73,6 @@ class LugarToolTest extends McpFeatureTestCase
 
     public function test_ver_lugar()
     {
-        \App\Models\Lugar::truncate();
         $lugar = \App\Models\Lugar::create([
             'nombre' => 'Lugar Test',
             'slug' => 'lugar-test-' . uniqid(),
@@ -88,7 +92,6 @@ class LugarToolTest extends McpFeatureTestCase
 
     public function test_crear_lugar()
     {
-        \App\Models\Lugar::truncate();
         $params = [
             'entidad' => 'lugar',
             'data' => [
@@ -110,7 +113,6 @@ class LugarToolTest extends McpFeatureTestCase
 
     public function test_editar_lugar()
     {
-        \App\Models\Lugar::truncate();
         $lugar = \App\Models\Lugar::create([
             'nombre' => 'Editar Lugar',
             'slug' => 'editar-lugar-' . uniqid(),
@@ -137,7 +139,6 @@ class LugarToolTest extends McpFeatureTestCase
 
     public function test_eliminar_lugar()
     {
-        \App\Models\Lugar::truncate();
         $lugar = \App\Models\Lugar::create([
             'nombre' => 'Eliminar Lugar',
             'slug' => 'eliminar-lugar-' . uniqid(),

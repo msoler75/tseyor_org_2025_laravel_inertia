@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class UsuarioToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_usuario()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'usuario']);
@@ -31,19 +34,22 @@ class UsuarioToolTest extends McpFeatureTestCase
     public function test_listar_usuarios()
     {
         // remover foreign key constraints to allow truncation
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\User::truncate();
         $pp = \App\Http\Controllers\UsuariosController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp+6; $i++) {
-            \App\Models\User::create([
-                'name' => 'usuario ' . $i,
-                'slug' => 'usuario-' . $i . '-' . uniqid(),
-                'email' => 'usuario' . $i . '@test.com',
-                'password' => bcrypt('password'),
-                'frase' => 'Frase ' . $i,
-                'profile_photo_path' => '',
-            ]);
-        }
+        // Datos base sembrados por setup-test-db.sh (users 1 y 2) — cuentan en las páginas
+        $base = \App\Models\User::count();
+        \App\Models\User::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp+6; $i++) {
+                \App\Models\User::create([
+                    'name' => 'usuario ' . $i,
+                    'slug' => 'usuario-' . $i . '-' . uniqid(),
+                    'email' => 'usuario' . $i . '@test.com',
+                    'password' => bcrypt('password'),
+                    'frase' => 'Frase ' . $i,
+                    'profile_photo_path' => '',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\User::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'usuario']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -52,7 +58,7 @@ class UsuarioToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'usuario', 'page' => 2]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertEquals(6, count($result['listado']['data']));
+        $this->assertEquals(6 + $base, count($result['listado']['data']));
         // buscar un usuario específico
         $result = $this->callMcpTool('listar', ['entidad' => 'usuario', 'buscar' => $pp]);
         $this->assertIsArray( $result);
@@ -66,8 +72,6 @@ class UsuarioToolTest extends McpFeatureTestCase
 
     public function test_ver_usuario()
     {
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\User::truncate();
         $usuario = \App\Models\User::create([
             'name' => 'usuario Test',
             'slug' => 'usuario-test-' . uniqid(),
@@ -84,8 +88,6 @@ class UsuarioToolTest extends McpFeatureTestCase
 
     public function test_crear_usuario()
     {
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\User::truncate();
         $params = [
             'entidad' => 'usuario',
             'data' => [
@@ -105,8 +107,6 @@ class UsuarioToolTest extends McpFeatureTestCase
 
     public function test_editar_usuario()
     {
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\User::truncate();
         $usuario = \App\Models\User::create([
             'name' => 'Editar usuario',
             'slug' => 'editar-usuario-' . uniqid(),
@@ -130,9 +130,6 @@ class UsuarioToolTest extends McpFeatureTestCase
 
     public function test_eliminar_usuario()
     {
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        \App\Models\User::truncate();
-        \App\Models\Nodo::truncate();
         $usuario = \App\Models\User::create([
             'name' => 'Eliminar usuario',
             'slug' => 'eliminar-usuario-' . uniqid(),

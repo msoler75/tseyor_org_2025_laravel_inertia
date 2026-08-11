@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class NoticiaToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_noticia()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'noticia']);
@@ -30,18 +33,21 @@ class NoticiaToolTest extends McpFeatureTestCase
 
     public function test_listar_noticias()
     {
-        \App\Models\Noticia::truncate();
         $pp = \App\Http\Controllers\NoticiasController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp*2 + 5; $i++) {
-            \App\Models\Noticia::create([
-                'titulo' => 'Noticia ' . $i . ($i < $pp + 3 ? '' : ' extra'),
-                'descripcion' => 'Desc ' . $i,
-                'texto' => 'Texto ' . $i,
-                'published_at' => now()->toDateString(),
-                'imagen' => '/img/noticia' . $i . '.jpg',
-                'visibilidad' => 'P',
-            ]);
-        }
+        \App\Models\Noticia::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp*2 + 5; $i++) {
+                \App\Models\Noticia::create([
+                    'titulo' => 'Noticia ' . $i . ($i < $pp + 3 ? '' : ' extra'),
+                    'slug' => 'noticia-' . $i . '-' . uniqid(),
+                    'descripcion' => 'Desc ' . $i,
+                    'texto' => 'Texto ' . $i,
+                    'published_at' => now()->toDateString(),
+                    'imagen' => '/img/noticia' . $i . '.jpg',
+                    'visibilidad' => 'P',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Noticia::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'noticia']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -65,7 +71,6 @@ class NoticiaToolTest extends McpFeatureTestCase
 
     public function test_ver_noticia()
     {
-        \App\Models\Noticia::truncate();
         $noticia = \App\Models\Noticia::create([
             'titulo' => 'Noticia Test',
             'descripcion' => 'Desc',
@@ -82,7 +87,6 @@ class NoticiaToolTest extends McpFeatureTestCase
 
     public function test_crear_noticia()
     {
-        \App\Models\Noticia::truncate();
         $params = [
             'entidad' => 'noticia',
             'data' => [
@@ -101,7 +105,6 @@ class NoticiaToolTest extends McpFeatureTestCase
 
     public function test_editar_noticia()
     {
-        \App\Models\Noticia::truncate();
         $noticia = \App\Models\Noticia::create([
             'titulo' => 'Editar Noticia',
             'descripcion' => 'Desc',
@@ -125,7 +128,6 @@ class NoticiaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_noticia()
     {
-        \App\Models\Noticia::truncate();
         $noticia = \App\Models\Noticia::create([
             'titulo' => 'Eliminar Noticia',
             'descripcion' => 'Desc',

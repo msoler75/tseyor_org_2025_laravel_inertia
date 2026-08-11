@@ -3,36 +3,29 @@
 namespace Tests\Feature\MCP;
 
 use App\Models\Entrada;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class EntradaToolTest extends McpFeatureTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-    }
-
-    public function tearDown(): void
-    {
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        parent::tearDown();
-    }
+    use DatabaseTransactions;
 
     public function test_listar_entradas()
     {
-        Entrada::truncate();
         $pp = \App\Http\Controllers\EntradasController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 2; $i++) {
-            Entrada::create([
-                'titulo' => 'Entrada ' . $i,
-                'slug' => 'entrada-' . $i . '-' . uniqid(),
-                'texto' => 'texto md ' . uniqid(),
-                'descripcion' => 'Desc ' . $i,
-                'categoria' => 'general',
-                'visibilidad' => 'P',
-            ]);
-        }
+        Entrada::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 2; $i++) {
+                Entrada::create([
+                    'titulo' => 'Entrada ' . $i,
+                    'slug' => 'entrada-' . $i . '-' . uniqid(),
+                    'texto' => 'texto md ' . uniqid(),
+                    'descripcion' => 'Desc ' . $i,
+                    'categoria' => 'general',
+                    'published_at' => now()->toDateString(),
+                    'visibilidad' => 'P',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Entrada::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'entrada']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -58,7 +51,6 @@ class EntradaToolTest extends McpFeatureTestCase
 
     public function test_ver_entrada()
     {
-        Entrada::truncate();
         $entrada = Entrada::create([
             'titulo' => 'Entrada Test',
             'slug' => 'entrada-test-' . uniqid(),
@@ -75,7 +67,6 @@ class EntradaToolTest extends McpFeatureTestCase
 
     public function test_crear_entrada()
     {
-        Entrada::truncate();
         $params = [
             'entidad' => 'entrada',
             'data' => [
@@ -94,7 +85,6 @@ class EntradaToolTest extends McpFeatureTestCase
 
     public function test_editar_entrada()
     {
-        Entrada::truncate();
         $entrada = Entrada::create([
             'titulo' => 'Editar Entrada',
             'slug' => 'editar-entrada-' . uniqid(),
@@ -118,7 +108,6 @@ class EntradaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_entrada()
     {
-        Entrada::truncate();
         $entrada = Entrada::create([
             'titulo' => 'Eliminar Entrada',
             'slug' => 'eliminar-entrada-' . uniqid(),

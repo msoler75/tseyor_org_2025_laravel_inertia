@@ -3,35 +3,29 @@
 namespace Tests\Feature\MCP;
 
 use App\Models\Equipo;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class EquipoToolTest extends McpFeatureTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-    }
-
-    public function tearDown(): void
-    {
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        parent::tearDown();
-    }
+    use DatabaseTransactions;
 
     public function test_listar_equipos()
     {
-        Equipo::truncate();
         $pp = \App\Http\Controllers\EquiposController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 3; $i++) {
-            Equipo::create([
-                'nombre' => 'Equipo ' . $i . ($i <($pp+2) ? ' extra' : ''),
-                'slug' => 'equipo-' . $i . '-' . uniqid(),
-                'descripcion' => 'Desc ' . $i,
-                'categoria' => 'general',
-                'imagen' => '/almacen/equipo' . $i . '.jpg',
-            ]);
-        }
+        // Datos base sembrados por setup-test-db.sh (equipo 1) — cuentan en las páginas
+        $base = \App\Models\Equipo::count();
+        Equipo::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 3; $i++) {
+                Equipo::create([
+                    'nombre' => 'Equipo ' . $i . ($i <($pp+2) ? ' extra' : ''),
+                    'slug' => 'equipo-' . $i . '-' . uniqid(),
+                    'descripcion' => 'Desc ' . $i,
+                    'categoria' => 'general',
+                    'imagen' => '/almacen/equipo' . $i . '.jpg',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Equipo::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'equipo']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -40,7 +34,7 @@ class EquipoToolTest extends McpFeatureTestCase
         $result = $this->callMcpTool('listar', ['entidad' => 'equipo', 'page' => 2]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
-        $this->assertEquals(3, count($result['listado']['data']));
+        $this->assertEquals(3 + $base, count($result['listado']['data']));
         // buscar un equipo específico
         $result = $this->callMcpTool('listar', ['entidad' => 'equipo', 'buscar' => 'Equipo 1']);
         $this->assertIsArray($result);
@@ -55,7 +49,6 @@ class EquipoToolTest extends McpFeatureTestCase
 
     public function test_ver_equipo()
     {
-        Equipo::truncate();
         $equipo = Equipo::create([
             'nombre' => 'Equipo Test',
             'slug' => 'equipo-test-' . uniqid(),
@@ -71,7 +64,6 @@ class EquipoToolTest extends McpFeatureTestCase
 
     public function test_crear_equipo()
     {
-        Equipo::truncate();
         $params = [
             'entidad' => 'equipo',
             'data' => [
@@ -89,7 +81,6 @@ class EquipoToolTest extends McpFeatureTestCase
 
     public function test_editar_equipo()
     {
-        Equipo::truncate();
         $equipo = Equipo::create([
             'nombre' => 'Editar Equipo',
             'slug' => 'editar-equipo-' . uniqid(),
@@ -112,9 +103,9 @@ class EquipoToolTest extends McpFeatureTestCase
 
     public function test_eliminar_equipo()
     {
-        \DB::table('informes')->truncate();
-        \DB::table('equipo_user')->truncate();
-        Equipo::truncate();
+        // El hook created de Equipo crea grupo + carpeta automáticamente, por lo
+        // que un equipo recién creado SIEMPRE tiene carpetas asociadas y el
+        // checkDeleteable bloquea la eliminación. Verificamos ese comportamiento.
         $equipo = Equipo::create([
             'nombre' => 'Eliminar Equipo',
             'slug' => 'eliminar-equipo-' . uniqid(),
@@ -128,8 +119,11 @@ class EquipoToolTest extends McpFeatureTestCase
             'force' => true,
             'token' => config('mcp-server.tokens.admin')
         ];
-        $this->callMcpTool('eliminar', $params);
-        $this->assertDatabaseMissing('equipos', ['id' => $equipo->id]);
+        $result = $this->callMcpTool('eliminar', $params);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('error', $result);
+        $this->assertStringContainsString('carpetas asociadas', $result['error']);
+        $this->assertDatabaseHas('equipos', ['id' => $equipo->id]);
     }
 
     public function test_info_equipo()

@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class PaginaToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_pagina()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'pagina']);
@@ -21,7 +24,6 @@ class PaginaToolTest extends McpFeatureTestCase
 
     public function test_listar_paginas()
     {
-        \App\Models\Pagina::truncate();
         $pp = \App\Http\Controllers\PaginasController::$ITEMS_POR_PAGINA;
         for ($i = 0; $i < $pp + 3; $i++) {
             \App\Models\Pagina::create([
@@ -35,6 +37,7 @@ class PaginaToolTest extends McpFeatureTestCase
                 'visibilidad' => 'P',
             ]);
         }
+        $this->makeAllSearchable(\App\Models\Pagina::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'pagina']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -58,7 +61,6 @@ class PaginaToolTest extends McpFeatureTestCase
 
     public function test_ver_pagina()
     {
-        \App\Models\Pagina::truncate();
         $pagina = \App\Models\Pagina::create([
             'titulo' => 'Pagina Test',
             'ruta' => '/test',
@@ -77,7 +79,6 @@ class PaginaToolTest extends McpFeatureTestCase
 
     public function test_crear_pagina()
     {
-        \App\Models\Pagina::truncate();
         $params = [
             'entidad' => 'pagina',
             'data' => [
@@ -98,7 +99,6 @@ class PaginaToolTest extends McpFeatureTestCase
 
     public function test_editar_pagina()
     {
-        \App\Models\Pagina::truncate();
         $pagina = \App\Models\Pagina::create([
             'titulo' => 'Editar Pagina',
             'ruta' => '/editar',
@@ -124,7 +124,6 @@ class PaginaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_pagina()
     {
-        \App\Models\Pagina::truncate();
         $pagina = \App\Models\Pagina::create([
             'titulo' => 'Eliminar Pagina',
             'ruta' => '/eliminar',

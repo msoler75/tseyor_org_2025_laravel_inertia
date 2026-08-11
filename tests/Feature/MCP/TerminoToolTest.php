@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\MCP;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 class TerminoToolTest extends McpFeatureTestCase
 {
+    use DatabaseTransactions;
     public function test_info_termino()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'termino']);
@@ -21,19 +24,21 @@ class TerminoToolTest extends McpFeatureTestCase
 
     public function test_listar_terminos()
     {
-        \App\Models\Termino::truncate();
         $pp = \App\Http\Controllers\TerminosController::$ITEMS_POR_PAGINA;
-        for ($i = 0; $i < $pp + 3; $i++) {
-            \App\Models\Termino::create([
-                'nombre' => 'Termino ' . $i,
-                'slug' => 'termino-' . $i . '-' . uniqid(),
-                'descripcion' => 'Desc ' . $i,
-                'texto' => 'Texto ' . $i,
-                'ref_terminos' => '',
-                'ref_libros' => '',
-                'visibilidad' => 'P',
-            ]);
-        }
+        \App\Models\Termino::withoutEvents(function () use ($pp) {
+            for ($i = 0; $i < $pp + 3; $i++) {
+                \App\Models\Termino::create([
+                    'nombre' => 'Termino ' . $i,
+                    'slug' => 'termino-' . $i . '-' . uniqid(),
+                    'descripcion' => 'Desc ' . $i,
+                    'texto' => 'Texto ' . $i,
+                    'ref_terminos' => '',
+                    'ref_libros' => '',
+                    'visibilidad' => 'P',
+                ]);
+            }
+        });
+        $this->makeAllSearchable(\App\Models\Termino::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'termino']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -57,7 +62,6 @@ class TerminoToolTest extends McpFeatureTestCase
 
     public function test_ver_termino()
     {
-        \App\Models\Termino::truncate();
         $termino = \App\Models\Termino::create([
             'nombre' => 'Termino Test',
             'slug' => 'termino-test-' . uniqid(),
@@ -75,7 +79,6 @@ class TerminoToolTest extends McpFeatureTestCase
 
     public function test_crear_termino()
     {
-        \App\Models\Termino::truncate();
         $params = [
             'entidad' => 'termino',
             'data' => [
@@ -95,7 +98,6 @@ class TerminoToolTest extends McpFeatureTestCase
 
     public function test_editar_termino()
     {
-        \App\Models\Termino::truncate();
         $termino = \App\Models\Termino::create([
             'nombre' => 'Editar Termino',
             'slug' => 'editar-termino-' . uniqid(),
@@ -120,7 +122,6 @@ class TerminoToolTest extends McpFeatureTestCase
 
     public function test_eliminar_termino()
     {
-        \App\Models\Termino::truncate();
         $termino = \App\Models\Termino::create([
             'nombre' => 'Eliminar Termino',
             'slug' => 'eliminar-termino-' . uniqid(),
