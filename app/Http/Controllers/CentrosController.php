@@ -20,6 +20,7 @@ class CentrosController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
+        $page = $request->input('page', 1);
 
         $query = Centro::select(['id', 'nombre', 'imagen', 'descripcion', 'pais']);
 
@@ -28,18 +29,20 @@ class CentrosController extends Controller
         else
             $query->latest('created_at');
 
-        $resultados = $query->get();
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+            ->appends($request->except('page'));
 
         // Traducir el código ISO del país a su nombre correspondiente
         $paises = [];
-        foreach ($resultados as $centro) {
+        $resultados->getCollection()->transform(function ($centro) use (&$paises) {
             $codigo = $centro->pais;
             $centro->pais = Countries::getCountry($centro->pais);
             $paises[] = ["codigo"=>$codigo, "nombre"=>$centro->pais];
-        }
+            return $centro;
+        });
 
         return Inertia::render('Centros/Index', [
-            'centros' => $resultados,
+            'listado' => $resultados,
             'paises' => $paises
         ])
             ->withViewData(SEO::get('centros'));

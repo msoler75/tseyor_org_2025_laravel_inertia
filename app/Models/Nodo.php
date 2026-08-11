@@ -68,12 +68,14 @@ class Nodo extends Model
     {
         if ($ubicacion == 'mis_archivos') return null;
 
+        // Normalizar la ruta sin slash inicial para comparar contra la columna,
+        // que puede estar guardada con o sin slash (/archivos/x vs archivos/x).
         $ubicacion = ltrim($ubicacion, '/');
 
         $nodo = Nodo::select(['nodos.*']) //, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
             //->leftJoin('users', 'users.id', '=', 'user_id')
             //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
-            ->whereRaw("? LIKE CONCAT(nodos.ubicacion, '%')", [$ubicacion])
+            ->whereRaw("? LIKE CONCAT(TRIM(LEADING '/' FROM nodos.ubicacion), '%')", [$ubicacion])
             ->orderByRaw('LENGTH(nodos.ubicacion) DESC')
             ->first();
 
