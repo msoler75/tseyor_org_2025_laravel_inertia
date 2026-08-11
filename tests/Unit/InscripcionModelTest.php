@@ -6,12 +6,14 @@ use Tests\TestCase;
 use App\Models\Inscripcion;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Carbon\Carbon;
 use App\Notifications\InscripcionAsignada;
 
 class InscripcionModelTest extends TestCase
 {
+    use DatabaseTransactions;
+
     private User $usuario;
     private Inscripcion $inscripcion;
 
@@ -19,9 +21,6 @@ class InscripcionModelTest extends TestCase
     {
         parent::setUp();
         Notification::fake();
-
-        // Limpiar inscripciones existentes
-        DB::table('inscripciones')->truncate();
 
         // Crear o encontrar usuario de prueba
         $usuarioExistente = User::where('email', 'usuario_test_model@tseyor.org')->first();

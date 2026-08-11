@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Equipo;
 use App\Models\Nodo;
 use App\Models\Acl;

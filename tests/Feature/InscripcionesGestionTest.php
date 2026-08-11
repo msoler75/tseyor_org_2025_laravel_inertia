@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Support\Fakes\NotificationFakeVerbose;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +31,7 @@ class AdminNotifiable
 
 class InscripcionesGestionTest extends TestCase
 {
+    use DatabaseTransactions;
 
      public function test_notificacion_caducidad_envia_a_supervisor_email()
     {
@@ -96,8 +97,6 @@ class InscripcionesGestionTest extends TestCase
     {
         parent::setUp();
         Notification::swap(new NotificationFakeVerbose());
-        // Eliminar todas las inscripciones
-        DB::table('inscripciones')->truncate();
         // Solo crear el usuario de test si no existe
         if (!User::where('email', 'tutor_test@tseyor.org')->exists()) {
             User::create([
