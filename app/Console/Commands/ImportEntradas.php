@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Imports\EntradaImport;
+use Illuminate\Console\Command;
 
 class ImportEntradas extends Command
 {

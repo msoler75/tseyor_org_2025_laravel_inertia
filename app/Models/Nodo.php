@@ -4,17 +4,19 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Laravel\Scout\Searchable;
 use Illuminate\Support\Facades\Log;
+use Laravel\Scout\Searchable;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 class Nodo extends Model
 {
     use CrudTrait;
+    use RevisionableTrait;
     use Searchable;
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    use \Illuminate\Database\Eloquent\SoftDeletes;
+    use SoftDeletes;
 
     protected $revisionCreationsEnabled = true;
 
@@ -29,9 +31,8 @@ class Nodo extends Model
         // O null si no tiene grupo por defecto
         'es_carpeta' => 1,
         // Por ejemplo, un valor booleano como valor predeterminado
-        'oculto' => 0 // oculto por el sistema, por defecto no
+        'oculto' => 0, // oculto por el sistema, por defecto no
     ];
-
 
     public function user()
     {
@@ -42,8 +43,6 @@ class Nodo extends Model
     {
         return $this->belongsTo(Grupo::class, 'group_id', 'id');
     }
-
-
 
     // accesors
     public function getNombreUsuarioAttribute()
@@ -58,7 +57,7 @@ class Nodo extends Model
 
     public function getUrlArchivoAttribute()
     {
-        return asset('storage/' . $this->ubicacion);
+        return asset('storage/'.$this->ubicacion);
     }
 
     /**
@@ -66,61 +65,59 @@ class Nodo extends Model
      */
     public static function desde($ubicacion): ?Nodo
     {
-        if ($ubicacion == 'mis_archivos') return null;
+        if ($ubicacion == 'mis_archivos') {
+            return null;
+        }
 
         // Normalizar la ruta sin slash inicial para comparar contra la columna,
         // que puede estar guardada con o sin slash (/archivos/x vs archivos/x).
         $ubicacion = ltrim($ubicacion, '/');
 
-        $nodo = Nodo::select(['nodos.*']) //, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
-            //->leftJoin('users', 'users.id', '=', 'user_id')
-            //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
+        $nodo = Nodo::select(['nodos.*']) // , 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+            // ->leftJoin('users', 'users.id', '=', 'user_id')
+            // ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
             ->whereRaw("? LIKE CONCAT(TRIM(LEADING '/' FROM nodos.ubicacion), '%')", [$ubicacion])
             ->orderByRaw('LENGTH(nodos.ubicacion) DESC')
             ->first();
 
-        if (!$nodo) {
+        if (! $nodo) {
             // crea un nodo por con los permisos por defecto
-            $nodo = new Nodo();
+            $nodo = new Nodo;
             $nodo->ubicacion = $ubicacion;
-            //$nodo->propietario_usuario = "admin"; // valores por defecto
-            //$nodo->propietario_grupo = "admin";
+            // $nodo->propietario_usuario = "admin"; // valores por defecto
+            // $nodo->propietario_grupo = "admin";
             // $nodo->save();
         }
+
         return $nodo;
     }
-
 
     /**
      * Obtiene todos los nodos de un usuario
      */
     public static function de($idUser)
     {
-        return Nodo::select(['nodos.*']) //, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
-            //->leftJoin('users', 'users.id', '=', 'user_id')
-            //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
+        return Nodo::select(['nodos.*']) // , 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+            // ->leftJoin('users', 'users.id', '=', 'user_id')
+            // ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
             ->where('nodos.user_id', '=', $idUser)
             ->orderByRaw('LENGTH(nodos.ubicacion) DESC')
             ->get();
     }
-
 
     /**
      * Obtiene todos los nodos de la carpeta, sin incluir el nodo de la carpeta
      */
     public static function hijos($ubicacion)
     {
-        return Nodo::select(['nodos.*']) //, 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
-            //->leftJoin('users', 'users.id', '=', 'user_id')
-            //->leftJoin('grupos', 'grupos.id', '=', 'group_id')
-            ->where('nodos.ubicacion', 'LIKE', $ubicacion . '/%')
-            ->whereRaw("LENGTH(nodos.ubicacion) - LENGTH(REPLACE(nodos.ubicacion, '/', '')) = " . (substr_count($ubicacion, '/') + 1))
+        return Nodo::select(['nodos.*']) // , 'grupos.slug as propietario_grupo', 'users.slug as propietario_usuario'])
+            // ->leftJoin('users', 'users.id', '=', 'user_id')
+            // ->leftJoin('grupos', 'grupos.id', '=', 'group_id')
+            ->where('nodos.ubicacion', 'LIKE', $ubicacion.'/%')
+            ->whereRaw("LENGTH(nodos.ubicacion) - LENGTH(REPLACE(nodos.ubicacion, '/', '')) = ".(substr_count($ubicacion, '/') + 1))
             ->orderByRaw('LENGTH(nodos.ubicacion) ASC')
             ->get();
     }
-
-
-
 
     /**
      * Renombra los nodos afectados por cambios en la ubicacion
@@ -131,7 +128,7 @@ class Nodo extends Model
         Nodo::where('ubicacion', 'like', "$from/%")
             ->orWhere('ubicacion', $from)
             ->update([
-                'ubicacion' => DB::raw("CONCAT('$to', SUBSTRING(ubicacion, LENGTH('$from') + 1))")
+                'ubicacion' => DB::raw("CONCAT('$to', SUBSTRING(ubicacion, LENGTH('$from') + 1))"),
             ]);
     }
 
@@ -167,22 +164,20 @@ class Nodo extends Model
                 'user_id' => optional($user)->id ?? 1,
                 'group_id' => $padre ? $padre->group_id : 1,
                 'permisos' => $padre ? $padre->permisos : decoct($permisos_defecto),
-                'es_carpeta' => $es_carpeta
+                'es_carpeta' => $es_carpeta,
             ]
         );
     }
 
-
-
-
     /**
      * Comprueba con la ACL si tiene el acceso a un nodo en concreto
      */
-    public function tieneAcceso(?User $user, string $verbo = null)
+    public function tieneAcceso(?User $user, ?string $verbo = null)
     {
         $aclist = optional($user)->accessControlList();
-        if (!$aclist)
+        if (! $aclist) {
             return false;
+        }
 
         // Log::info("Nodo::tieneAcceso " . $user->name . ", verbo: $verbo");
 
@@ -195,7 +190,6 @@ class Nodo extends Model
         }
         $aclListArray = $aclist->toArray();
         // Log::info("AclList de " . optional($user)->name . ":", $aclListArray);
-
 
         // tiene acceso global para todos los nodos?
         /*
@@ -230,7 +224,7 @@ class Nodo extends Model
         // tiene acceso a una carpeta padre?
 
         // parece que los LIKE no funcionan aquí:
-        //if ($aclist->where("'$nodo->ubicacion'", 'LIKE', "CONCAT(ubicacion, '%')")->count() > 0)
+        // if ($aclist->where("'$nodo->ubicacion'", 'LIKE', "CONCAT(ubicacion, '%')")->count() > 0)
         //  return true;
 
         // Log::info("Estamos mirando el nodo:", $this->toArray());
@@ -246,9 +240,6 @@ class Nodo extends Model
         return false;
     }
 
-
-
-
     // SCOUT searchable
 
     public function toSearchableArray(): array
@@ -257,7 +248,7 @@ class Nodo extends Model
             'id' => $this->id,
             // <- Always include the primary key
             'title' => basename($this->ubicacion),
-            'ubicacion' => $this->ubicacion
+            'ubicacion' => $this->ubicacion,
         ];
     }
 }

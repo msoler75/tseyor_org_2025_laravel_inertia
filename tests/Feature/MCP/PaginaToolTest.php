@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\PaginasController;
+use App\Models\Pagina;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class PaginaToolTest extends McpFeatureTestCase
 {
     use DatabaseTransactions;
+
     public function test_info_pagina()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'pagina']);
@@ -24,20 +27,20 @@ class PaginaToolTest extends McpFeatureTestCase
 
     public function test_listar_paginas()
     {
-        $pp = \App\Http\Controllers\PaginasController::$ITEMS_POR_PAGINA;
+        $pp = PaginasController::$ITEMS_POR_PAGINA;
         for ($i = 0; $i < $pp + 3; $i++) {
-            \App\Models\Pagina::create([
-                'titulo' => 'Pagina ' . $i,
-                'ruta' => '/ruta-' . $i,
-                'atras_ruta' => '/atras-' . $i,
-                'atras_texto' => 'Atras ' . $i,
-                'descripcion' => 'Desc ' . $i,
-                'texto' => 'Texto ' . $i,
-                'palabras_clave' => 'clave' . $i,
+            Pagina::create([
+                'titulo' => 'Pagina '.$i,
+                'ruta' => '/ruta-'.$i,
+                'atras_ruta' => '/atras-'.$i,
+                'atras_texto' => 'Atras '.$i,
+                'descripcion' => 'Desc '.$i,
+                'texto' => 'Texto '.$i,
+                'palabras_clave' => 'clave'.$i,
                 'visibilidad' => 'P',
             ]);
         }
-        $this->makeAllSearchable(\App\Models\Pagina::class);
+        $this->makeAllSearchable(Pagina::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'pagina']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -61,7 +64,7 @@ class PaginaToolTest extends McpFeatureTestCase
 
     public function test_ver_pagina()
     {
-        $pagina = \App\Models\Pagina::create([
+        $pagina = Pagina::create([
             'titulo' => 'Pagina Test',
             'ruta' => '/test',
             'atras_ruta' => '/atras',
@@ -91,7 +94,7 @@ class PaginaToolTest extends McpFeatureTestCase
                 'palabras_clave' => 'clave',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('paginas', ['ruta' => $params['data']['ruta']]);
@@ -99,7 +102,7 @@ class PaginaToolTest extends McpFeatureTestCase
 
     public function test_editar_pagina()
     {
-        $pagina = \App\Models\Pagina::create([
+        $pagina = Pagina::create([
             'titulo' => 'Editar Pagina',
             'ruta' => '/editar',
             'atras_ruta' => '/atras-editar',
@@ -114,9 +117,9 @@ class PaginaToolTest extends McpFeatureTestCase
             'entidad' => 'pagina',
             'id' => $pagina->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('paginas', ['id' => $pagina->id, 'descripcion' => $nuevaDescripcion]);
@@ -124,7 +127,7 @@ class PaginaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_pagina()
     {
-        $pagina = \App\Models\Pagina::create([
+        $pagina = Pagina::create([
             'titulo' => 'Eliminar Pagina',
             'ruta' => '/eliminar',
             'atras_ruta' => '/atras-eliminar',
@@ -138,7 +141,7 @@ class PaginaToolTest extends McpFeatureTestCase
             'entidad' => 'pagina',
             'id' => $pagina->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('paginas', ['id' => $pagina->id]);

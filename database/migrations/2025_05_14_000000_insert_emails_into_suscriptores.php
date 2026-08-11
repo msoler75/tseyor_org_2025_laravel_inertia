@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Illuminate\Database\QueryException;
 
 return new class extends Migration
 {
@@ -29,8 +29,8 @@ return new class extends Migration
                 } catch (QueryException $e) {
                     // Ignorar errores de duplicados y continuar
                     if ($e->getCode() !== '23000') { // Código SQL para violación de clave única
-                        //throw $e;
-                        \Log::error('Error al insertar el email (no por duplicado): ' . $email . ' - ' . $e->getMessage());
+                        // throw $e;
+                        Log::error('Error al insertar el email (no por duplicado): '.$email.' - '.$e->getMessage());
                     }
                 }
             }

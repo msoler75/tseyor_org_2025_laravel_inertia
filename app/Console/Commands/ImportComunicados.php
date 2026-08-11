@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Imports\ComunicadoImport;
+use Illuminate\Console\Command;
 
 class ImportComunicados extends Command
 {
@@ -29,7 +29,7 @@ class ImportComunicados extends Command
 
         $publicar = $this->argument('publicar');
 
-        if ($publicar == "publicar") {
+        if ($publicar == 'publicar') {
             ComunicadoImport::publicarComunicados();
         } else {
             $this->info("$this->description");

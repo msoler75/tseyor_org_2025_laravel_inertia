@@ -18,12 +18,11 @@ return new class extends Migration
             $table->string('slug');
             $table->string('descripcion');
             $table->text('texto');
-            // campos de fecha habituales: created_at, updated_at, deleted_at   
+            // campos de fecha habituales: created_at, updated_at, deleted_at
             $table->timestamps();
 
-
             // y ahora quiero insertar 3 registros en la tabla:
-           
+
             /*
             INSERT INTO preguntas (titulo, slug, descripcion, texto, created_at, updated_at)
 VALUES
@@ -32,7 +31,6 @@ VALUES
     ('Parte 3. Sobre Tseyor', 'parte-3-sobre-tseyor', 'Qué o qué es Tseyor, quiénes lo forman, qué es lo que buscamos, etc.', 'preguntas3.html', NOW(), NOW());
     */
 
-            
         });
     }
 

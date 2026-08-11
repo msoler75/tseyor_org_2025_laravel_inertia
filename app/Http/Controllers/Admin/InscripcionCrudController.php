@@ -2,34 +2,41 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Inscripcion;
+use App\Models\User;
+use App\Notifications\InscripcionesAsignadas;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Widget;
+use Backpack\ReviseOperation\ReviseOperation;
 use Carbon\Carbon;
-use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Notifications\InscripcionesAsignadas;
-use App\Notifications\InscripcionReasignada;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Class InscripcionCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class InscripcionCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
+    use CreateOperation {
         store as traitStore;
     }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation {
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation {
         update as traitUpdate;
     }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -38,8 +45,8 @@ class InscripcionCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Inscripcion::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/inscripcion');
+        CRUD::setModel(Inscripcion::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/inscripcion');
         CRUD::setEntityNameStrings('inscripción', 'inscripciones');
 
         // Configurar permisos
@@ -52,6 +59,7 @@ class InscripcionCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -84,8 +92,9 @@ class InscripcionCrudController extends CrudController
         CRUD::column('created_at')->type('closure')->label('Fecha Inscripción')
             ->function(function ($entry) {
                 $dateTime = Carbon::parse($entry->created_at);
-                return '<span title="' . $dateTime->format('d/m/Y H:i') . '">' .
-                       $dateTime->diffForHumans() . '</span>';
+
+                return '<span title="'.$dateTime->format('d/m/Y H:i').'">'.
+                       $dateTime->diffForHumans().'</span>';
             })->escaped(false);
 
         CRUD::column('estado')->type('closure')->label('Estado')
@@ -100,20 +109,21 @@ class InscripcionCrudController extends CrudController
                     'finalizado' => 'bg-success',
                     'nocontesta' => 'bg-secondary',
                     'duplicada' => 'bg-dark',
-                    'nointeresado' => 'bg-dark'
+                    'nointeresado' => 'bg-dark',
                 ];
                 $estado = $entry->estado;
                 $colorClass = $colores[$estado] ?? 'bg-secondary';
                 if ($estado === 'nueva') {
                     $texto = 'Nueva';
-                } elseif (isset($estados[$estado]['etiqueta']) && !empty($estados[$estado]['etiqueta'])) {
+                } elseif (isset($estados[$estado]['etiqueta']) && ! empty($estados[$estado]['etiqueta'])) {
                     $texto = $estados[$estado]['etiqueta'];
-                } elseif (!empty($estado)) {
+                } elseif (! empty($estado)) {
                     $texto = $estado;
                 } else {
                     $texto = 'Sin estado';
                 }
-                return '<span class="badge ' . $colorClass . '">' . $texto . '</span>';
+
+                return '<span class="badge '.$colorClass.'">'.$texto.'</span>';
             })->escaped(false);
 
         CRUD::column('nombre')->type('text')->label('Nombre')->orderable(true);
@@ -123,8 +133,9 @@ class InscripcionCrudController extends CrudController
         CRUD::column('usuario_asignado')->type('closure')->label('Tutor Asignado')
             ->function(function ($entry) {
                 if ($entry->usuarioAsignado) {
-                    return '<i class="la la-user"></i> ' . $entry->usuarioAsignado->name;
+                    return '<i class="la la-user"></i> '.$entry->usuarioAsignado->name;
                 }
+
                 return '<span class="text-muted">Sin asignar</span>';
             })->escaped(false)->orderable(false)->searchable(false);
 
@@ -162,16 +173,17 @@ class InscripcionCrudController extends CrudController
             })->escaped(false);
             */
 
-         CRUD::column('ultima_actividad')->type('closure')->label('Última Notificación')
+        CRUD::column('ultima_actividad')->type('closure')->label('Última Notificación')
             ->function(function ($entry) {
                 if ($entry->ultima_actividad) {
                     $fecha = Carbon::parse($entry->ultima_actividad);
                     $dias = $fecha->diffInDays(now());
                     $class = $dias > 7 ? 'text-danger' : ($dias > 3 ? 'text-warning' : 'text-success');
 
-                    return '<span class="' . $class . '" title="' . $fecha->format('d/m/Y H:i') . '">' .
-                           $fecha->diffForHumans() . '</span>';
+                    return '<span class="'.$class.'" title="'.$fecha->format('d/m/Y H:i').'">'.
+                           $fecha->diffForHumans().'</span>';
                 }
+
                 return '<span class="text-muted">-</span>';
             })->escaped(false);
 
@@ -194,16 +206,19 @@ class InscripcionCrudController extends CrudController
         CRUD::enableBulkActions();
 
         // Configurar atributos personalizados para las filas
-        CRUD::setOperationSetting('tableRowAttributes', function($entry) {
+        CRUD::setOperationSetting('tableRowAttributes', function ($entry) {
             return [
                 'data-entry-id' => $entry->id,
-                'data-id' => $entry->id
+                'data-id' => $entry->id,
             ];
         });
-    }    /**
+    }
+
+    /**
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
@@ -220,7 +235,6 @@ class InscripcionCrudController extends CrudController
 
         // Pestaña 2: Gestión de la inscripción
 
-
         $this->crud->addField([
             'name' => 'user_id',
             'label' => 'Tutor Asignado',
@@ -233,7 +247,7 @@ class InscripcionCrudController extends CrudController
             'tab' => 'Gestión de la inscripción',
         ]);
 
-             CRUD::field('estado')->type('select_from_array')
+        CRUD::field('estado')->type('select_from_array')
             ->options(collect(config('inscripciones.estados'))->mapWithKeys(function ($item, $key) {
                 return [$key => $item['etiqueta']];
             })->toArray())
@@ -271,6 +285,7 @@ class InscripcionCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -282,6 +297,7 @@ class InscripcionCrudController extends CrudController
      * Define what happens when the Show operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-show
+     *
      * @return void
      */
     protected function setupShowOperation()
@@ -315,14 +331,16 @@ class InscripcionCrudController extends CrudController
         CRUD::column('estado')->type('closure')->label('Estado')
             ->function(function ($entry) {
                 $estados = config('inscripciones.estados');
+
                 return $estados[$entry->estado]['etiqueta'] ?? $entry->estado;
             });
 
         CRUD::column('usuario_asignado')->type('closure')->label('Tutor Asignado')
             ->function(function ($entry) {
                 if ($entry->usuarioAsignado) {
-                    return '<i class="la la-user"></i> ' . $entry->usuarioAsignado->name;
+                    return '<i class="la la-user"></i> '.$entry->usuarioAsignado->name;
                 }
+
                 return '<span class="text-muted">Sin asignar</span>';
             })->escaped(false);
 
@@ -339,7 +357,7 @@ class InscripcionCrudController extends CrudController
     /**
      * Store a newly created resource in the database.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store()
     {
@@ -347,19 +365,20 @@ class InscripcionCrudController extends CrudController
         $request = $this->crud->getRequest();
 
         // Si se asigna tutor y el estado es 'nueva' o 'asignada', o  forzar estado 'asignada' y fecha de asignación
-        if (!empty($request->user_id) && in_array($request->estado, ['nueva', 'asignada', ''])) {
+        if (! empty($request->user_id) && in_array($request->estado, ['nueva', 'asignada', ''])) {
             $request->merge(['estado' => 'asignada']);
             $request->merge(['fecha_asignacion' => now()]);
         }
 
         $this->crud->unsetValidation();
+
         return $this->traitStore();
     }
 
     /**
      * Update the specified resource in the database.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update()
     {
@@ -367,10 +386,9 @@ class InscripcionCrudController extends CrudController
         // Dejamos que los observers del modelo `Inscripcion` gestionen notas, actividad y notificaciones.
         $this->crud->setRequest($this->crud->validateRequest());
         $this->crud->unsetValidation();
+
         return $this->traitUpdate();
     }
-
-
 
     /**
      * Método personalizado para asignar masivamente inscripciones
@@ -379,29 +397,31 @@ class InscripcionCrudController extends CrudController
     {
         Log::channel('inscripciones')->info('Asignación masiva iniciada', [
             'inscripcion_ids' => $request->input('inscripcion_ids'),
-            'user_id' => $request->input('user_id')
+            'user_id' => $request->input('user_id'),
         ]);
 
         $inscripcionIds = $request->input('inscripcion_ids', []);
         $userId = $request->input('user_id');
 
-        if (empty($inscripcionIds) || !$userId) {
+        if (empty($inscripcionIds) || ! $userId) {
             Log::channel('inscripciones')->warning('Asignación masiva falló: parámetros vacíos', [
                 'inscripcion_ids' => $inscripcionIds,
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Selecciona inscripciones y un tutor'
+                'message' => 'Selecciona inscripciones y un tutor',
             ]);
         }
 
         $user = User::find($userId);
-        if (!$user) {
+        if (! $user) {
             Log::channel('inscripciones')->warning('Asignación masiva falló: usuario no encontrado', ['user_id' => $userId]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Usuario no encontrado'
+                'message' => 'Usuario no encontrado',
             ]);
         }
 
@@ -411,11 +431,12 @@ class InscripcionCrudController extends CrudController
         $inscripcionesNotificar = [];
 
         foreach ($inscripcionIds as $id) {
-            $inscripcion = \App\Models\Inscripcion::find($id);
+            $inscripcion = Inscripcion::find($id);
 
-            if (!$inscripcion) {
+            if (! $inscripcion) {
                 $errores[] = "Inscripción {$id} no encontrada";
-                Log::channel('inscripciones')->warning("Inscripción no encontrada", ['id' => $id]);
+                Log::channel('inscripciones')->warning('Inscripción no encontrada', ['id' => $id]);
+
                 continue;
             }
 
@@ -434,7 +455,7 @@ class InscripcionCrudController extends CrudController
                     'id' => $id,
                     'estado_anterior' => $estadoAnterior,
                     'tutor_anterior' => $tutorAnterior,
-                    'nuevo_tutor' => $userId
+                    'nuevo_tutor' => $userId,
                 ];
 
                 // Para notificación masiva
@@ -444,20 +465,20 @@ class InscripcionCrudController extends CrudController
                     'email' => $inscripcion->email,
                     'telefono' => $inscripcion->telefono,
                     'ciudad' => $inscripcion->ciudad,
-                    'comentario' => $inscripcion->comentario
+                    'comentario' => $inscripcion->comentario,
                 ];
 
                 Log::channel('inscripciones')->info("Inscripción {$id} asignada correctamente", [
                     'estado_anterior' => $estadoAnterior,
                     'tutor_anterior' => $tutorAnterior,
-                    'nuevo_tutor' => $userId
+                    'nuevo_tutor' => $userId,
                 ]);
 
             } catch (\Exception $e) {
-                $errores[] = "Error al asignar inscripción {$id}: " . $e->getMessage();
+                $errores[] = "Error al asignar inscripción {$id}: ".$e->getMessage();
                 Log::channel('inscripciones')->error("Error al asignar inscripción {$id}", [
                     'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
                 ]);
             }
         }
@@ -468,14 +489,14 @@ class InscripcionCrudController extends CrudController
                 $user->notify(new InscripcionesAsignadas($inscripcionesNotificar));
                 // Actualizar ultima_notificacion de cada inscripción notificada
                 foreach ($inscripcionIds as $id) {
-                    $inscripcion = \App\Models\Inscripcion::find($id);
+                    $inscripcion = Inscripcion::find($id);
                     if ($inscripcion) {
                         $inscripcion->ultima_notificacion = now();
                         $inscripcion->save();
                     }
                 }
             } catch (\Exception $e) {
-                Log::channel('inscripciones')->error('Error enviando notificación masiva a tutor: ' . $e->getMessage());
+                Log::channel('inscripciones')->error('Error enviando notificación masiva a tutor: '.$e->getMessage());
             }
         }
 
@@ -483,12 +504,12 @@ class InscripcionCrudController extends CrudController
             'total_procesadas' => $count,
             'total_errores' => count($errores),
             'procesadas' => $procesadas,
-            'errores' => $errores
+            'errores' => $errores,
         ]);
 
         $message = "Se asignaron {$count} inscripciones a {$user->name}";
         if (count($errores) > 0) {
-            $message .= ". Errores: " . implode(', ', $errores);
+            $message .= '. Errores: '.implode(', ', $errores);
         }
 
         return response()->json([
@@ -497,12 +518,10 @@ class InscripcionCrudController extends CrudController
             'debug' => [
                 'procesadas' => $count,
                 'errores' => count($errores),
-                'detalles' => $procesadas
-            ]
+                'detalles' => $procesadas,
+            ],
         ]);
     }
-
-
 
     /**
      * Aplicar filtros básicos (compatibles con versión gratuita)
@@ -522,7 +541,7 @@ class InscripcionCrudController extends CrudController
                 $this->crud->addClause('whereIn', 'estado', $cerrados);
             } elseif ($estado !== '') {
                 $this->crud->addClause('where', 'estado', '=', $estado);
-                \Log::channel('inscripciones')->info('Filtrando por estado: [' . $estado. ']');
+                \Log::channel('inscripciones')->info('Filtrando por estado: ['.$estado.']');
             }
         }
 
@@ -539,12 +558,12 @@ class InscripcionCrudController extends CrudController
             $buscar = $request->input('buscar');
             $this->crud->addClause('where', function ($query) use ($buscar) {
                 $query->where('nombre', 'like', "%{$buscar}%")
-                      ->orWhere('email', 'like', "%{$buscar}%")
-                      ->orWhere('telefono', 'like', "%{$buscar}%")
-                      ->orWhere('ciudad', 'like', "%{$buscar}%")
-                      ->orWhere('pais', 'like', "%{$buscar}%")
-                      ->orWhere('region', 'like', "%{$buscar}%")
-                      ->orWhere('notas', 'like', "%{$buscar}%");
+                    ->orWhere('email', 'like', "%{$buscar}%")
+                    ->orWhere('telefono', 'like', "%{$buscar}%")
+                    ->orWhere('ciudad', 'like', "%{$buscar}%")
+                    ->orWhere('pais', 'like', "%{$buscar}%")
+                    ->orWhere('region', 'like', "%{$buscar}%")
+                    ->orWhere('notas', 'like', "%{$buscar}%");
             });
         }
     }

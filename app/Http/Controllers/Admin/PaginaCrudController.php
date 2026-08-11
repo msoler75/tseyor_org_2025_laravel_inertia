@@ -2,26 +2,35 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Pagina;
+use App\Services\WordImport;
+use App\Traits\CrudContenido;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Widget;
-use App\Services\WordImport;
-use App\Models\Pagina;
+use Backpack\ReviseOperation\ReviseOperation;
+use Illuminate\Validation\Rule;
 
 /**
  * Class PaginaCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class PaginaCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
+    use CreateOperation;
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -31,7 +40,7 @@ class PaginaCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Pagina::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/pagina');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/pagina');
         CRUD::setEntityNameStrings('página', 'páginas');
     }
 
@@ -39,6 +48,7 @@ class PaginaCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -50,24 +60,23 @@ class PaginaCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
-        //add div row using 'div' widget and make other widgets inside it to be in a row
+        // add div row using 'div' widget and make other widgets inside it to be in a row
         Widget::add()->to('before_content')->type('div')->class('row')->content([
 
-            //widget made using fluent syntax
+            // widget made using fluent syntax
             Widget::make()
                 ->type('card')
                 ->class('card bg-dark text-white mb-1') // optional
                 ->content([
-                    'body' => 'Sistema híbrido de páginas que aporta múltiples funciones: <strong>1) Fallback automático</strong> - captura URLs no definidas en rutas y muestra contenido desde base de datos. <strong>2) Proveedor SEO universal</strong> - todas las páginas (con o sin controlador específico) pueden obtener sus metadatos SEO desde aquí. <strong>3) Palabras clave para buscador</strong> - Indexa contenido para el buscador interno y <strong>4) Enlaces de regreso</strong> - gestiona enlaces de navegación a una sección superior.'
-                ])
-
+                    'body' => 'Sistema híbrido de páginas que aporta múltiples funciones: <strong>1) Fallback automático</strong> - captura URLs no definidas en rutas y muestra contenido desde base de datos. <strong>2) Proveedor SEO universal</strong> - todas las páginas (con o sin controlador específico) pueden obtener sus metadatos SEO desde aquí. <strong>3) Palabras clave para buscador</strong> - Indexa contenido para el buscador interno y <strong>4) Enlaces de regreso</strong> - gestiona enlaces de navegación a una sección superior.',
+                ]),
 
         ]);
 
         $this->crud->addColumn([
             'name' => 'titulo',
             'label' => 'Título',
-            'type' => 'text'
+            'type' => 'text',
         ]);
 
         $this->crud->addColumn([
@@ -90,16 +99,18 @@ class PaginaCrudController extends CrudController
             'name' => 'imagen',
             'label' => 'imagen_seo',
             'type' => 'custom_html',
-            'value' => function($entry) {
-                if(!$entry->imagen)
+            'value' => function ($entry) {
+                if (! $entry->imagen) {
                     return '<span class="text-muted">-</span>';
-                $miniatura = $entry->imagen."?mh=50&mw=50"; // miniatura de la imagen
+                }
+                $miniatura = $entry->imagen.'?mh=50&mw=50'; // miniatura de la imagen
                 $enlace = $entry->imagen;
-                return '<a href="' . $enlace . '" target="_blank">
-                            <img src="' . $miniatura . '" style="object-fit: cover;" alt="Miniatura">
+
+                return '<a href="'.$enlace.'" target="_blank">
+                            <img src="'.$miniatura.'" style="object-fit: cover;" alt="Miniatura">
                         </a>';
             },
-            'escaped' => false
+            'escaped' => false,
         ]);
 
         $this->crud->addColumn([
@@ -111,9 +122,8 @@ class PaginaCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'ruta',
             'label' => 'Ruta',
-            'type' => 'text'
+            'type' => 'text',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'visibilidad',
@@ -121,7 +131,7 @@ class PaginaCrudController extends CrudController
             'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
-            }
+            },
         ]);
 
         CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
@@ -135,29 +145,30 @@ class PaginaCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         $this->crud->setValidation([
             'titulo' => 'required|min:3',
-            'ruta' => [ \Illuminate\Validation\Rule::unique('paginas', 'ruta')->ignore($this->crud->getCurrentEntryId()) ],
+            'ruta' => [Rule::unique('paginas', 'ruta')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'max:400',
             // 'texto' => 'required',
             'ruta_regreso' => 'max:255',
-            'regreso_nombre' => 'max:64'
+            'regreso_nombre' => 'max:64',
         ]);
 
         CRUD::setFromDb(); // set fields from db columns.
 
-    CRUD::field('descubre')->type('checkbox')->label('¿Descubre?')->hint('Marca si esta página es destacada para la sección especial.');
-    CRUD::field('filosofia')->type('checkbox')->label('¿Filosofía?')->hint('Marca si esta página pertenece a la sección de filosofía.');
-    CRUD::field('orden')->type('number')->label('Orden')->hint('Orden de aparición en portada (menor = primero).');
-    CRUD::field('descripcion')->type('textarea')->hint('Descripción corta para el SEO.');
+        CRUD::field('descubre')->type('checkbox')->label('¿Descubre?')->hint('Marca si esta página es destacada para la sección especial.');
+        CRUD::field('filosofia')->type('checkbox')->label('¿Filosofía?')->hint('Marca si esta página pertenece a la sección de filosofía.');
+        CRUD::field('orden')->type('number')->label('Orden')->hint('Orden de aparición en portada (menor = primero).');
+        CRUD::field('descripcion')->type('textarea')->hint('Descripción corta para el SEO.');
 
         $folder = $this->getMediaFolder();
 
-        CRUD::field('imagen')->type('image_cover')->label('Imagen SEO')->attributes(['folder' => $folder, 'can-delete'=>true]);
+        CRUD::field('imagen')->type('image_cover')->label('Imagen SEO')->attributes(['folder' => $folder, 'can-delete' => true]);
 
         $folder = $this->getMediaFolder();
 
@@ -178,13 +189,13 @@ class PaginaCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
     }
-
 
     public function show($id)
     {
@@ -193,17 +204,15 @@ class PaginaCrudController extends CrudController
         return $pagina->visibilidad != 'P' ? redirect("/{$pagina->ruta}?borrador") : redirect("/{$pagina->ruta}");
     }
 
-
     public function importCreate()
     {
         $contenido = Pagina::create([
-            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-            "texto" => ""
+            'titulo' => 'Importado de '.$_FILES['file']['name'].'_'.substr(str_shuffle('0123456789'), 0, 5),
+            'texto' => '',
         ]);
 
         return $this->importUpdate($contenido->id);
     }
-
 
     public function importUpdate($id)
     {
@@ -211,7 +220,7 @@ class PaginaCrudController extends CrudController
 
         try {
             // inicializa el importador en base a $_FILES
-            $imported = new WordImport();
+            $imported = new WordImport;
 
             // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
             $imported->copyImagesTo($this->getMediaFolder($contenido), true);
@@ -222,11 +231,11 @@ class PaginaCrudController extends CrudController
             $contenido->save();
 
             return response()->json([
-                "id" => $contenido->id
+                'id' => $contenido->id,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                "error" => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

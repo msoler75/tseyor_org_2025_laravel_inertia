@@ -3,14 +3,15 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up()
     {
         DB::table('paginas')
             ->where('filosofia', true)
             ->where(function ($q) {
                 $q->whereNull('atras_ruta')
-                  ->orWhere('atras_ruta', 'filosofia');
+                    ->orWhere('atras_ruta', 'filosofia');
             })
             ->update([
                 'atras_ruta' => 'filosofia/temas',

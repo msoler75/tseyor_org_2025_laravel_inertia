@@ -2,22 +2,20 @@
 
 namespace App\Pigmalion;
 
+use Exception;
+use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Console\Command;
 use ZipArchive;
-use Exception;
 
 class DeployHelper
 {
-
     // parte cliente (genera el zip y lo envia)
-
 
     public static function validateDirectoryExists(string $path): void
     {
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             throw new Exception("Directorio no existe: $path");
         }
     }
@@ -26,12 +24,11 @@ class DeployHelper
     {
         $clientIP = \Illuminate\Support\Facades\Request::ip();
         $allowedIPs = self::getAllowedIPs();
-        if (!in_array($clientIP, $allowedIPs)) {
-            Log::channel('deploy')->warning("IP no autorizada para deploy", ['ip' => $clientIP, 'allowed' => $allowedIPs]);
+        if (! in_array($clientIP, $allowedIPs)) {
+            Log::channel('deploy')->warning('IP no autorizada para deploy', ['ip' => $clientIP, 'allowed' => $allowedIPs]);
             throw new Exception("IP no autorizada para deploy: {$clientIP}");
         }
     }
-
 
     public static function createZipFile(
         string $sourcePath,
@@ -39,7 +36,7 @@ class DeployHelper
         array $exclusions = [],
         string $basePathPrefix = ''
     ): bool {
-        if (!File::isDirectory($sourcePath)) {
+        if (! File::isDirectory($sourcePath)) {
             throw new Exception("Directorio fuente no existe: $sourcePath");
         }
 
@@ -52,8 +49,8 @@ class DeployHelper
         // Normalizar path para Windows
         $zipPath = str_replace('/', '\\', $zipPath);
 
-        $zip = new ZipArchive();
-        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) {
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
             throw new Exception("Error al crear archivo ZIP: $zipPath");
         }
 
@@ -69,8 +66,10 @@ class DeployHelper
         $totalFiles = 0;
         foreach ($iterator as $file) {
             $totalFiles++;
-            Log::info("Encontrado: " . $file->getPathname() . " isDir: " . ($file->isDir() ? 'yes' : 'no'));
-            if ($file->isDir()) continue;
+            Log::info('Encontrado: '.$file->getPathname().' isDir: '.($file->isDir() ? 'yes' : 'no'));
+            if ($file->isDir()) {
+                continue;
+            }
 
             // Obtener ruta relativa usando el iterador
             $relativePath = $iterator->getSubPathName();
@@ -80,51 +79,54 @@ class DeployHelper
 
             // Aplicar prefijo base si existe
             $zipPathEntry = $basePathPrefix
-                ? $basePathPrefix . '/' . $relativePath
+                ? $basePathPrefix.'/'.$relativePath
                 : $relativePath;
 
             if (self::shouldExclude($file->getRealPath(), $exclusions)) {
-                Log::info("Excluyendo archivo: " . $file->getRealPath());
+                Log::info('Excluyendo archivo: '.$file->getRealPath());
+
                 continue;
             }
 
-            Log::info("Añadiendo archivo: " . $file->getRealPath() . " como " . $zipPathEntry);
+            Log::info('Añadiendo archivo: '.$file->getRealPath().' como '.$zipPathEntry);
             $result = $zip->addFile($file->getRealPath(), $zipPathEntry);
             if ($result) {
                 $filesAdded++;
             } else {
-                Log::error("Error añadiendo archivo: " . $file->getRealPath());
+                Log::error('Error añadiendo archivo: '.$file->getRealPath());
             }
         }
 
         Log::info("Archivos totales encontrados: $totalFiles, añadidos: $filesAdded");
 
         $closeResult = $zip->close();
-        Log::info("ZIP close result: " . ($closeResult ? 'true' : 'false'));
+        Log::info('ZIP close result: '.($closeResult ? 'true' : 'false'));
 
-        if ($closeResult && !file_exists($zipPath)) {
+        if ($closeResult && ! file_exists($zipPath)) {
             throw new Exception("ZIP cerrado exitosamente ($filesAdded archivos añadidos) pero el archivo no existe: $zipPath");
         }
         if ($filesAdded == 0) {
             throw new Exception("No hay archivos para comprimir en $sourcePath");
         }
+
         return $closeResult;
     }
-
 
     private static function shouldExclude(string $path, array $exclusions)
     {
         $path = str_replace('\\', '/', $path);
 
         foreach ($exclusions as $pattern) {
-            if (str_contains($path, $pattern)) return true;
-            if (fnmatch($pattern, basename($path))) return true;
+            if (str_contains($path, $pattern)) {
+                return true;
+            }
+            if (fnmatch($pattern, basename($path))) {
+                return true;
+            }
         }
 
         return false;
     }
-
-
 
     public static function sendZipFile(
         string $zipPath,
@@ -133,7 +135,7 @@ class DeployHelper
         array $headers = [],
         array $extraPost = []
     ): array {
-        if (!File::exists($zipPath)) {
+        if (! File::exists($zipPath)) {
             throw new Exception("Archivo ZIP no encontrado: $zipPath");
         }
 
@@ -141,7 +143,7 @@ class DeployHelper
 
         // Construir campos POST, permitiendo añadir valores extra (por ejemplo 'prepare')
         $postFields = array_merge([
-            'file' => new \CURLFile($zipPath, 'application/zip', $fileName)
+            'file' => new \CURLFile($zipPath, 'application/zip', $fileName),
         ], $extraPost);
 
         $defaultHeaders = ['Content-Type: multipart/form-data'];
@@ -149,7 +151,7 @@ class DeployHelper
         // Añadir token de seguridad a la cabecera
         $deployToken = config('deploy.deploy_token');
         if ($deployToken) {
-            $defaultHeaders[] = 'X-Deploy-Token: ' . $deployToken;
+            $defaultHeaders[] = 'X-Deploy-Token: '.$deployToken;
         }
         $mergedHeaders = array_merge($defaultHeaders, $headers);
 
@@ -163,7 +165,7 @@ class DeployHelper
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS => 5
+            CURLOPT_MAXREDIRS => 5,
         ]);
 
         $response = curl_exec($ch);
@@ -175,17 +177,16 @@ class DeployHelper
             'success' => $httpCode == 200,
             'http_code' => $httpCode,
             'response' => $response,
-            'error' => $error
+            'error' => $error,
         ];
     }
-
 
     public static function handleResponse(array $result, Command $command): void
     {
         if ($result['success']) {
-            $command->info('Envío exitoso: ' . $result['response']);
+            $command->info('Envío exitoso: '.$result['response']);
         } else {
-            $command->error("Error {$result['http_code']}: " . $result['response']);
+            $command->error("Error {$result['http_code']}: ".$result['response']);
             if ($result['error']) {
                 $command->error("CURL Error: {$result['error']}");
             }
@@ -200,7 +201,7 @@ class DeployHelper
         $ch = curl_init();
 
         $postFields = [
-            'rollback' => 'true'
+            'rollback' => 'true',
         ];
 
         $defaultHeaders = ['Content-Type: application/x-www-form-urlencoded'];
@@ -208,7 +209,7 @@ class DeployHelper
         // Añadir token de seguridad a la cabecera
         $deployToken = config('deploy.deploy_token');
         if ($deployToken) {
-            $defaultHeaders[] = 'X-Deploy-Token: ' . $deployToken;
+            $defaultHeaders[] = 'X-Deploy-Token: '.$deployToken;
         }
 
         curl_setopt_array($ch, [
@@ -221,7 +222,7 @@ class DeployHelper
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS => 5
+            CURLOPT_MAXREDIRS => 5,
         ]);
 
         $response = curl_exec($ch);
@@ -233,21 +234,19 @@ class DeployHelper
             'success' => $httpCode == 200,
             'http_code' => $httpCode,
             'response' => $response,
-            'error' => $error
+            'error' => $error,
         ];
     }
 
-
     // parte servidor (recibe el zip y lo extrae)
-
 
     public static function storeUploadedFile(Request $request, string $prefix): string
     {
-        $zipPath = storage_path("app/temp/tmp_" . $prefix . "_" . now()->timestamp . '.zip');
+        $zipPath = storage_path('app/temp/tmp_'.$prefix.'_'.now()->timestamp.'.zip');
         $request->file('file')->move(dirname($zipPath), basename($zipPath));
 
-        if (!file_exists($zipPath)) {
-            throw new Exception("Error al guardar el archivo ZIP");
+        if (! file_exists($zipPath)) {
+            throw new Exception('Error al guardar el archivo ZIP');
         }
 
         return $zipPath;
@@ -260,11 +259,11 @@ class DeployHelper
     public static function moveZipToInstall(string $zipPath): string
     {
         $installDir = storage_path('install');
-        if (!File::isDirectory($installDir)) {
+        if (! File::isDirectory($installDir)) {
             File::makeDirectory($installDir, 0755, true, true);
         }
 
-        $dest = $installDir . DIRECTORY_SEPARATOR . basename($zipPath);
+        $dest = $installDir.DIRECTORY_SEPARATOR.basename($zipPath);
 
         // Si ya existe, sobrescribir
         if (File::exists($dest)) {
@@ -272,24 +271,23 @@ class DeployHelper
         }
 
         // Intentar mover el archivo. Si falla, lanzar excepción para que el controlador la maneje.
-        if (!File::move($zipPath, $dest)) {
+        if (! File::move($zipPath, $dest)) {
             throw new Exception("No se pudo mover el ZIP a: {$dest}");
         }
 
         Log::channel('deploy')->info("Archivo preparado movido a: {$dest}");
+
         return $dest;
     }
-
-
-
 
     public static function backupNodeModules(): string
     {
         $nodeModulesPath = base_path('node_modules');
         $backupPath = self::generateUniqueBackupPath();
 
-        if (!File::isDirectory($nodeModulesPath)) {
-            Log::channel('deploy')->info("No existe node_modules para hacer backup.");
+        if (! File::isDirectory($nodeModulesPath)) {
+            Log::channel('deploy')->info('No existe node_modules para hacer backup.');
+
             return '';
         }
 
@@ -300,14 +298,16 @@ class DeployHelper
 
         if (File::move($nodeModulesPath, $backupPath)) {
             Log::channel('deploy')->info("Backup de node_modules creado en: {$backupPath}");
+
             return $backupPath;
         }
 
-        Log::channel('deploy')->warning("Renombrado falló, intentando copiar node_modules.");
+        Log::channel('deploy')->warning('Renombrado falló, intentando copiar node_modules.');
         // self::copyDirectoryUsingOS($nodeModulesPath, $backupPath);
 
         if (File::copyDirectory($nodeModulesPath, $backupPath)) {
             Log::channel('deploy')->info("Backup de node_modules creado por copia en: {$backupPath}");
+
             return $backupPath;
         }
 
@@ -316,7 +316,8 @@ class DeployHelper
             return $backupPath;
         }*/
 
-        Log::channel('deploy')->error("No se pudo crear el backup de node_modules.");
+        Log::channel('deploy')->error('No se pudo crear el backup de node_modules.');
+
         return '';
     }
 
@@ -326,12 +327,11 @@ class DeployHelper
 
         if (File::isDirectory($nodeModulesPath)) {
             File::deleteDirectory($nodeModulesPath);
-            Log::channel('deploy')->info("Directorio node_modules eliminado.");
+            Log::channel('deploy')->info('Directorio node_modules eliminado.');
         } else {
-            Log::channel('deploy')->info("No existe node_modules para limpiar.");
+            Log::channel('deploy')->info('No existe node_modules para limpiar.');
         }
     }
-
 
     private static function executeCommand(string $command): bool
     {
@@ -339,12 +339,14 @@ class DeployHelper
 
         if ($exitCode !== 0) {
             Log::channel('deploy')->error("Error ejecutando comando: {$command}");
-            Log::channel('deploy')->error("Output: " . implode("\n", $output));
+            Log::channel('deploy')->error('Output: '.implode("\n", $output));
+
             return false;
         }
 
         return true;
     }
+
     public static function renameDirectoryUsingOS(string $oldPath, string $newPath): bool
     {
         $oldPath = escapeshellarg($oldPath);
@@ -366,27 +368,25 @@ class DeployHelper
             ? "xcopy /E /I /Q {$source} {$destination}"
             : "cp -R {$source} {$destination}";
 
-        if (!self::executeCommand($command)) {
+        if (! self::executeCommand($command)) {
             throw new Exception("Error al copiar directorio: {$source} a {$destination}");
         }
     }
-
-
 
     public static function extractZip(string $zipPath, string $extractPath): void
     {
         set_time_limit(300); // 5 minutos para operaciones largas
 
-        if (!file_exists($zipPath)) {
+        if (! file_exists($zipPath)) {
             throw new Exception("El archivo ZIP no existe: {$zipPath}");
         }
 
         $zip = new ZipArchive;
-        if ($zip->open($zipPath) !== TRUE) {
+        if ($zip->open($zipPath) !== true) {
             throw new Exception("Error al abrir el archivo ZIP: {$zipPath}");
         }
 
-        if (!$zip->extractTo($extractPath)) {
+        if (! $zip->extractTo($extractPath)) {
             throw new Exception("Error en la extracción del ZIP al directorio: {$extractPath}");
         }
 
@@ -395,8 +395,10 @@ class DeployHelper
 
     /**
      * Valida el contenido del ZIP antes de extraerlo para prevenir path traversal y archivos no permitidos.
-     * @param string $zipPath Ruta al archivo ZIP
-     * @param string $type Tipo de despliegue: 'public_build', 'ssr', 'node_modules'
+     *
+     * @param  string  $zipPath  Ruta al archivo ZIP
+     * @param  string  $type  Tipo de despliegue: 'public_build', 'ssr', 'node_modules'
+     *
      * @throws Exception Si el contenido no es válido
      */
     public static function validateZipContent(string $zipPath, ?string $type): void
@@ -406,12 +408,12 @@ class DeployHelper
             return;
         }
 
-        if (!file_exists($zipPath)) {
+        if (! file_exists($zipPath)) {
             throw new Exception("El archivo ZIP no existe: {$zipPath}");
         }
 
         $zip = new ZipArchive;
-        if ($zip->open($zipPath) !== TRUE) {
+        if ($zip->open($zipPath) !== true) {
             throw new Exception("Error al abrir el archivo ZIP para validación: {$zipPath}");
         }
 
@@ -435,15 +437,15 @@ class DeployHelper
                     break;
                 }
             }
-            if (!$allowed) {
+            if (! $allowed) {
                 $zip->close();
                 throw new Exception("Path no permitido en ZIP: {$entry} (tipo: {$type})");
             }
 
             // Verificar extensión si no es directorio
-            if (!str_ends_with($entry, '/')) {
+            if (! str_ends_with($entry, '/')) {
                 $extension = strtolower(pathinfo($entry, PATHINFO_EXTENSION));
-                if (!empty($rules['allowedExtensions']) && !in_array($extension, $rules['allowedExtensions'])) {
+                if (! empty($rules['allowedExtensions']) && ! in_array($extension, $rules['allowedExtensions'])) {
                     $zip->close();
                     throw new Exception("Extensión no permitida en ZIP: {$extension} para {$entry} (tipo: {$type})");
                 }
@@ -462,23 +464,22 @@ class DeployHelper
             case 'public_build':
                 return [
                     'allowedPaths' => ['assets/', 'images/', 'favicon.ico', 'tseyor-sw.js', 'tseyor-manifest.v2.json', 'workbox-', 'manifest.json', 'robots.txt', 'sitemap.xml'],
-                    'allowedExtensions' => ['js', 'css', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'json', 'txt', 'xml', 'map']
+                    'allowedExtensions' => ['js', 'css', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'json', 'txt', 'xml', 'map'],
                 ];
             case 'ssr':
                 return [
                     'allowedPaths' => ['ssr.js', 'ssr-manifest.json', 'assets/'],
-                    'allowedExtensions' => ['js', 'json']
+                    'allowedExtensions' => ['js', 'json'],
                 ];
             case 'node_modules':
                 return [
                     'allowedPaths' => ['node_modules/'],
-                    'allowedExtensions' => [] // Permitir todas las extensiones
+                    'allowedExtensions' => [], // Permitir todas las extensiones
                 ];
             default:
                 throw new Exception("Tipo de despliegue no reconocido: {$type}");
         }
     }
-
 
     public static function postInstallCleanup(): void
     {
@@ -494,16 +495,14 @@ class DeployHelper
         }*/
     }
 
-
     public static function cleanTempFiles($zipPath = null)
     {
         if ($zipPath && File::exists($zipPath)) {
             File::delete($zipPath);
         }
 
-        array_map('unlink', glob(sys_get_temp_dir() . '/php*'));
+        array_map('unlink', glob(sys_get_temp_dir().'/php*'));
     }
-
 
     public static function generateUniqueBackupPath(): string
     {
@@ -524,14 +523,13 @@ class DeployHelper
     public static function cleanOldNodeModulesBackups(int $maxBackups = 3): void
     {
         $backups = File::glob(base_path('_node_modules_backup_*'));
-        usort($backups, fn($a, $b) => filemtime($b) <=> filemtime($a));
+        usort($backups, fn ($a, $b) => filemtime($b) <=> filemtime($a));
 
         foreach (array_slice($backups, $maxBackups) as $backup) {
             File::deleteDirectory($backup);
             Log::channel('deploy')->info("Backup antiguo eliminado: {$backup}");
         }
     }
-
 
     /**
      * Reemplaza algunas cadenas de texto en los archivos recibidos
@@ -544,7 +542,7 @@ class DeployHelper
         $files = self::resolveFilePaths($source);
 
         foreach ($files as $filePath) {
-            if (!File::exists($filePath)) {
+            if (! File::exists($filePath)) {
                 throw new Exception("El archivo no existe en la ruta: {$filePath}");
             }
 
@@ -553,7 +551,7 @@ class DeployHelper
             $content = File::get($filePath);
 
             // primero mira si existe la cadena buscada $from  en $content
-            if(str_contains(    $content, $from)) {
+            if (str_contains($content, $from)) {
                 $updatedContent = str_replace($from, $to, $content);
                 File::put($filePath, $updatedContent);
             }
@@ -569,6 +567,7 @@ class DeployHelper
         // Si contiene wildcard (*)
         if (str_contains($sourcePattern, '*')) {
             $foundFiles = glob($fullPath, GLOB_BRACE);
+
             return array_filter($foundFiles, 'is_file');
         }
 
@@ -576,18 +575,14 @@ class DeployHelper
         return [base_path($sourcePattern)];
     }
 
+    // INSTALACIONES
 
-// INSTALACIONES
-
-
-
-     /**
+    /**
      * Instala un ZIP de public/build: extrae en build_temp, aplica reemplazos,
      * mueve build a build_old y build_temp a build.
      * Lanza excepciones en caso de error.
-     * @param string $zipPath
-     * @return void
-     * @throws \Exception
+     *
+     * @throws Exception
      */
     public static function installPublicBuildFromZip(string $zipPath): void
     {
@@ -598,7 +593,7 @@ class DeployHelper
         $buildTempPath = public_path('build_temp');
         $buildOldPath = public_path('build_old');
 
-        Log::channel('deploy')->info("Paths: ", ['buildPath' => $buildPath, 'buildTempPath' => $buildTempPath, 'buildOldPath' => $buildOldPath]);
+        Log::channel('deploy')->info('Paths: ', ['buildPath' => $buildPath, 'buildTempPath' => $buildTempPath, 'buildOldPath' => $buildOldPath]);
 
         if (File::isDirectory($buildTempPath)) {
             File::deleteDirectory($buildTempPath);
@@ -615,16 +610,16 @@ class DeployHelper
         }
 
         if (File::isDirectory($buildOldPath)) {
-            Log::channel('deploy')->info('Borramos carpeta ' . $buildOldPath);
+            Log::channel('deploy')->info('Borramos carpeta '.$buildOldPath);
             File::deleteDirectory($buildOldPath);
         }
 
         if (File::isDirectory($buildPath)) {
-            Log::channel('deploy')->info('Renombramos ' . $buildPath . ' a ' . $buildOldPath);
+            Log::channel('deploy')->info('Renombramos '.$buildPath.' a '.$buildOldPath);
             File::move($buildPath, $buildOldPath);
         }
 
-        Log::channel('deploy')->info('Renombramos ' . $buildTempPath . ' a ' . $buildPath);
+        Log::channel('deploy')->info('Renombramos '.$buildTempPath.' a '.$buildPath);
         File::move($buildTempPath, $buildPath);
     }
 
@@ -637,32 +632,30 @@ class DeployHelper
         $buildOldPath = public_path('build_old');
         $buildNewPath = public_path('build_new');
 
-        Log::channel('deploy')->info("Rollback paths: ", ['buildPath' => $buildPath, 'buildOldPath' => $buildOldPath, 'buildNewPath' => $buildNewPath]);
+        Log::channel('deploy')->info('Rollback paths: ', ['buildPath' => $buildPath, 'buildOldPath' => $buildOldPath, 'buildNewPath' => $buildNewPath]);
 
         if (File::isDirectory($buildNewPath)) {
-            Log::channel('deploy')->info('Borramos carpeta ' . $buildNewPath);
+            Log::channel('deploy')->info('Borramos carpeta '.$buildNewPath);
             File::deleteDirectory($buildNewPath);
         }
 
         if (File::isDirectory($buildPath)) {
-            Log::channel('deploy')->info('Renombramos ' . $buildPath . ' a ' . $buildNewPath);
+            Log::channel('deploy')->info('Renombramos '.$buildPath.' a '.$buildNewPath);
             File::move($buildPath, $buildNewPath);
         }
 
         if (File::isDirectory($buildOldPath)) {
-            Log::channel('deploy')->info('Renombramos ' . $buildOldPath . ' a ' . $buildPath);
+            Log::channel('deploy')->info('Renombramos '.$buildOldPath.' a '.$buildPath);
             File::move($buildOldPath, $buildPath);
         } else {
             throw new Exception('No hay build_old para rollback');
         }
     }
 
-
     /**
      * Instala un ZIP de SSR: hace backup de ssr.js, extrae y aplica reemplazos.
-     * @param string $zipPath
-     * @return void
-     * @throws \Exception
+     *
+     * @throws Exception
      */
     public static function installSSRFromZip(string $zipPath): void
     {
@@ -676,7 +669,7 @@ class DeployHelper
             File::delete($ssrBackupFile);
         }
         if (File::exists($ssrFile)) {
-            Log::channel('deploy')->info('Backup de ' . $ssrFile . ' a ' . $ssrBackupFile);
+            Log::channel('deploy')->info('Backup de '.$ssrFile.' a '.$ssrBackupFile);
             File::copy($ssrFile, $ssrBackupFile);
         }
 
@@ -696,24 +689,22 @@ class DeployHelper
             Log::channel('deploy')->info('Archivos actualizados: ', $files);
         }
 
-        if (!(File::exists($extractPath . '/ssr.js') && File::exists($extractPath . '/ssr-manifest.json'))) {
-            throw new \Exception('El archivo .zip no contiene los archivos SSR necesarios');
+        if (! (File::exists($extractPath.'/ssr.js') && File::exists($extractPath.'/ssr-manifest.json'))) {
+            throw new Exception('El archivo .zip no contiene los archivos SSR necesarios');
         }
     }
 
-
     /**
      * Instala node_modules desde un ZIP: hace backup, limpia node_modules, extrae y limpia.
-     * @param string $zipPath
-     * @return void
-     * @throws \Exception
+     *
+     * @throws Exception
      */
     public static function installNodeModulesFromZip(string $zipPath, bool $isPackage = false): void
     {
         // Validar contenido del ZIP antes de cualquier operación
         self::validateZipContent($zipPath, $isPackage ? null : 'node_modules');
 
-        if (!$isPackage) {
+        if (! $isPackage) {
             // 1. Crear backup de node_modules existente
             $backupPath = self::backupNodeModules();
 
@@ -728,12 +719,11 @@ class DeployHelper
         // 4. Limpieza post-instalación
         self::postInstallCleanup();
 
-        if (!$isPackage) {
+        if (! $isPackage) {
             // 5. Limpieza de backups antiguos
             self::cleanOldNodeModulesBackups();
         }
     }
-
 
     // instalación de todo desde los archivos en la carpeta storage/install
 
@@ -741,13 +731,11 @@ class DeployHelper
      * Busca en storage/install los zips más recientes para public_build, ssr y node_modules
      * y ejecuta las instalaciones llamando a los métodos correspondientes.
      * Devuelve un array con el resultado por cada elemento.
-     *
-     * @return array
      */
     public static function installAllFromStorageInstall(): array
     {
         $installDir = storage_path('install');
-        if (!File::isDirectory($installDir)) {
+        if (! File::isDirectory($installDir)) {
             throw new Exception("Directorio de instalación no encontrado: {$installDir}");
         }
 
@@ -762,7 +750,7 @@ class DeployHelper
         // Primera pasada: encontrar el archivo más reciente para cada patrón
         $latestFiles = [];
         foreach ($patterns as $key => $pattern) {
-            $files = File::glob($installDir . DIRECTORY_SEPARATOR . $pattern) ?: [];
+            $files = File::glob($installDir.DIRECTORY_SEPARATOR.$pattern) ?: [];
             if (empty($files)) {
                 $latestFiles[$key] = null;
             } else {
@@ -773,9 +761,9 @@ class DeployHelper
             }
         }
 
-    // Si falta alguno, no ejecutar ninguna instalación
-    $missing = array_filter($latestFiles, fn($v) => $v === null);
-        if (!empty($missing)) {
+        // Si falta alguno, no ejecutar ninguna instalación
+        $missing = array_filter($latestFiles, fn ($v) => $v === null);
+        if (! empty($missing)) {
             foreach ($latestFiles as $k => $v) {
                 if ($v === null) {
                     Log::channel('deploy')->warning("No se encontró zip para {$k} en {$installDir}");
@@ -786,12 +774,13 @@ class DeployHelper
             }
 
             Log::channel('deploy')->warning('Faltan uno o más zips en storage/install; no se ejecutará ninguna instalación.');
+
             return $results;
         }
 
         // Comprobar que los archivos encontrados sean recientes (últimas 24 horas)
         foreach ($latestFiles as $k => $filePath) {
-            if (!file_exists($filePath)) {
+            if (! file_exists($filePath)) {
                 Log::channel('deploy')->error("Archivo no existe al comprobar antigüedad: {$filePath}");
                 throw new Exception("Archivo no existe al comprobar antigüedad: {$filePath}");
             }
@@ -810,7 +799,7 @@ class DeployHelper
             }
         }
         // Intentar adquirir lock para evitar concurrencia (archivo simple con timestamp)
-        $lockFile = $installDir . DIRECTORY_SEPARATOR . '.install_lock';
+        $lockFile = $installDir.DIRECTORY_SEPARATOR.'.install_lock';
         $now = time();
         $lockAcquired = false;
 
@@ -853,7 +842,7 @@ class DeployHelper
             } catch (Exception $e) {
                 $results[$key]['status'] = 'error';
                 $results[$key]['message'] = $e->getMessage();
-                Log::channel('deploy')->error("Error instalando {$key} desde {$latest}: " . $e->getMessage());
+                Log::channel('deploy')->error("Error instalando {$key} desde {$latest}: ".$e->getMessage());
             }
         }
 
@@ -865,16 +854,16 @@ class DeployHelper
                 break;
             }
         }
-        if (!$hadErrors) {
+        if (! $hadErrors) {
             foreach ($processedFiles as $file) {
                 try {
-                    $installedName = $file . '.installed';
+                    $installedName = $file.'.installed';
                     if (File::exists($file)) {
                         File::move($file, $installedName);
                         Log::channel('deploy')->info("Archivo procesado renombrado a: {$installedName}");
                     }
                 } catch (Exception $e) {
-                    Log::channel('deploy')->error("Error renombrando archivo procesado {$file}: " . $e->getMessage());
+                    Log::channel('deploy')->error("Error renombrando archivo procesado {$file}: ".$e->getMessage());
                     // No change to results statuses — el instalador ya terminó OK;
                     // solo informamos del fallo del renombrado.
                 }
@@ -895,7 +884,7 @@ class DeployHelper
     {
         $filePath = storage_path('admin/allowed_ips.json');
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             return [];
         }
 
@@ -910,14 +899,14 @@ class DeployHelper
         $filePath = storage_path('admin/allowed_ips.json');
 
         // Asegurar que el directorio existe
-        if (!is_dir(dirname($filePath))) {
+        if (! is_dir(dirname($filePath))) {
             @mkdir(dirname($filePath), 0755, true);
         }
 
         $data = [
             'allowed_ips' => [],
             'last_updated' => now()->toISOString(),
-            'updated_by' => $updatedBy
+            'updated_by' => $updatedBy,
         ];
 
         if (file_exists($filePath)) {
@@ -928,7 +917,7 @@ class DeployHelper
             }
         }
 
-        if (!in_array($ip, $data['allowed_ips'])) {
+        if (! in_array($ip, $data['allowed_ips'])) {
             $data['allowed_ips'][] = $ip;
             $data['last_updated'] = now()->toISOString();
             $data['updated_by'] = $updatedBy;

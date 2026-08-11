@@ -27,16 +27,17 @@ class Hash extends Command
     {
         $archivo = $this->argument('file');
 
-        if(!$archivo) {
-            die("Se debe especificar el archivo");
+        if (! $archivo) {
+            exit('Se debe especificar el archivo');
         }
 
-        if(!file_exists($archivo))
-        die("No se ha encontrado el archivo especificado");
+        if (! file_exists($archivo)) {
+            exit('No se ha encontrado el archivo especificado');
+        }
 
         $hash = md5_file($archivo);
 
-        echo "hash (md5): $hash". PHP_EOL;
-        echo "tamaño: ".filesize($archivo) . " bytes".PHP_EOL;
+        echo "hash (md5): $hash".PHP_EOL;
+        echo 'tamaño: '.filesize($archivo).' bytes'.PHP_EOL;
     }
 }

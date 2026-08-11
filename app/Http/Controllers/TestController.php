@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Comunicado;
 use App\Pigmalion\Markdown;
+use Illuminate\Http\Request;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
-use App\Models\Contenido;
-use App\Models\User;
-
 
 class TestController extends Controller
 {
@@ -23,12 +20,12 @@ class TestController extends Controller
             ->orderBy('id')
             ->paginate();
 
-        //$docx = 'D:\tseyor.org\biblioteca\comunicados\nuevos\doc\(47) 051014.docx';
-        //$md = Markdown::fromDocx($docx);
-        //return Markdown::toHtml($md);
-        //echo "notas: " . Markdown::$notasEncontradas;
+        // $docx = 'D:\tseyor.org\biblioteca\comunicados\nuevos\doc\(47) 051014.docx';
+        // $md = Markdown::fromDocx($docx);
+        // return Markdown::toHtml($md);
+        // echo "notas: " . Markdown::$notasEncontradas;
 
-        return view("tests.docx", ['comunicados' => $comunicados]);
+        return view('tests.docx', ['comunicados' => $comunicados]);
     }
 
     public function docxShow(Request $request, $num)
@@ -44,48 +41,45 @@ class TestController extends Controller
         // buscar en $carpeta algun archivo que tenga este patrón de nombre : ($num) *.docx
         $archivo = glob("$carpeta/($num) *.docx");
         // si ha encontrado un archivo
-        if ($archivo && count($archivo))
+        if ($archivo && count($archivo)) {
             $md = Markdown::fromDocx($archivo[0]);
-        else
-            $md = "<no encontrado>";
+        } else {
+            $md = '<no encontrado>';
+        }
 
-        return view("tests.docx", ['page' => $page, 'comunicados' => $comunicados, 'md' => $md, 'html' => Markdown::toHtml($md), 'archivo' => $archivo[0] ?? "<no encontrado>", 'notas' => Markdown::$notasEncontradas]);
+        return view('tests.docx', ['page' => $page, 'comunicados' => $comunicados, 'md' => $md, 'html' => Markdown::toHtml($md), 'archivo' => $archivo[0] ?? '<no encontrado>', 'notas' => Markdown::$notasEncontradas]);
     }
 
     public function word2pdf()
     {
         $carpeta = 'D:\documentos\TSEYOR\comunicados';
 
-        $archivo = $carpeta . "/(47) 051014.docx";
+        $archivo = $carpeta.'/(47) 051014.docx';
 
         // Cargar el archivo de Word
-        $dompath = realpath(base_path() . "/vendor/dompdf/dompdf");
+        $dompath = realpath(base_path().'/vendor/dompdf/dompdf');
 
-        Settings::setPdfRenderer("DomPDF", $dompath);
+        Settings::setPdfRenderer('DomPDF', $dompath);
 
         $phpWord = IOFactory::load($archivo);
 
         // Guardar el archivo en formato PDF
         $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
-        $pdfPath = $carpeta . "/(47) 051014.pdf";
+        $pdfPath = $carpeta.'/(47) 051014.pdf';
         $pdfWriter->save($pdfPath);
 
         // Descargar el archivo PDF convertido
         return response()->download($pdfPath)->deleteFileAfterSend(true);
     }
 
-    public function word2md() {
+    public function word2md()
+    {
 
         $carpeta = 'C:\Users\Marcel\Downloads';
 
-        $archivo = $carpeta . "/(1278) 240908 (1).docx";
+        $archivo = $carpeta.'/(1278) 240908 (1).docx';
 
         // Cargar el archivo de Word
-        echo "<pre>".Markdown::fromDocx($archivo)."</pre>";
+        echo '<pre>'.Markdown::fromDocx($archivo).'</pre>';
     }
-
-
-
-
-
 }

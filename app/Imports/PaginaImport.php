@@ -6,7 +6,6 @@ use App\Models\Pagina;
 
 class PaginaImport
 {
-
     public static function importar()
     {
 
@@ -18,8 +17,8 @@ class PaginaImport
         foreach ($paginas as $ruta => $pagina) {
             $existePagina = Pagina::where('ruta', $ruta)->exists();
 
-            if (!$existePagina) {
-                $nuevaPagina = new Pagina();
+            if (! $existePagina) {
+                $nuevaPagina = new Pagina;
                 $nuevaPagina->titulo = $pagina['title'];
                 $nuevaPagina->ruta = $ruta;
                 $nuevaPagina->descripcion = $pagina['description'];

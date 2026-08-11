@@ -1,10 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use App\Models\Guia;
 use App\Pigmalion\Markdown;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Log;
 
 return new class extends Migration
@@ -22,13 +20,14 @@ return new class extends Migration
         foreach ($guias as $guia) {
             try {
                 // Solo convertir si el campo texto tiene contenido
-                if (!empty($guia->texto)) {
+                if (! empty($guia->texto)) {
 
                     // Detectar si el texto ya es Markdown (contiene ## o más # sin etiquetas HTML)
                     $esMarkdown = $this->esFormatoMarkdown($guia->texto);
 
                     if ($esMarkdown) {
                         Log::info("Guía ID {$guia->id}: {$guia->nombre} ya está en formato Markdown, omitiendo conversión");
+
                         continue;
                     }
 
@@ -53,13 +52,13 @@ return new class extends Migration
 
                     Log::info("Guía ID {$guia->id} convertida exitosamente");
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error("Error al convertir guía ID {$guia->id}: {$e->getMessage()}");
                 // Continuar con la siguiente guía en caso de error
             }
         }
 
-        Log::info("Conversión de guías finalizada");
+        Log::info('Conversión de guías finalizada');
     }
 
     /**
@@ -91,9 +90,9 @@ return new class extends Migration
         // Restaurar datos desde el backup SQL
         $sqlFile = base_path('guias.sql');
 
-        if (!file_exists($sqlFile)) {
+        if (! file_exists($sqlFile)) {
             Log::error("No se encontró el archivo de backup: {$sqlFile}");
-            throw new \Exception("Archivo de backup no encontrado: {$sqlFile}");
+            throw new Exception("Archivo de backup no encontrado: {$sqlFile}");
         }
 
         Log::info("Restaurando guías desde backup: {$sqlFile}");
@@ -102,8 +101,8 @@ return new class extends Migration
         $sql = file_get_contents($sqlFile);
 
         // Ejecutar el SQL
-        \DB::unprepared($sql);
+        DB::unprepared($sql);
 
-        Log::info("Restauración completada desde backup");
+        Log::info('Restauración completada desde backup');
     }
 };

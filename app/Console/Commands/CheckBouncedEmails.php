@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Webklex\IMAP\Facades\Client;
 use App\Models\Suscriptor;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Webklex\IMAP\Facades\Client;
 
 define('MARCAR_COMO_LEIDOS', true);
 define('DEV_TESTING_MODE', false); // si es pone a true, leemos y luego guardamos los datos en un archivo .json
@@ -16,21 +16,24 @@ define('DEV_TESTING_MODE', false); // si es pone a true, leemos y luego guardamo
 class CheckBouncedEmails extends Command
 {
     protected $signature = 'check-bounced {mailbox} {--hours=48}';
+
     protected $description = 'Revisa todos los mensajes de las ultimas {hours} horas del buzón indicado y marca el estado de los suscriptores según el tipo de rebote. Elimina los suscriptores que devolvieron un error definitivo.';
 
     public function handle()
     {
         // si faltan argumentos, mostrar ayuda:
-        if (!$this->argument('mailbox')) {
+        if (! $this->argument('mailbox')) {
             $this->error('Falta el argumento "mailbox".');
             $this->info($this->getSynopsis());
+
             return;
         }
 
         $emailWebmaster = config('mail.webmaster_email');
-        if (!$emailWebmaster || !is_string($emailWebmaster) || trim($emailWebmaster) === '') {
-            $this->error("EMAIL_WEBMASTER no está definido correctamente en el .env");
-            Log::channel('mailing')->error("EMAIL_WEBMASTER no está definido correctamente en el .env");
+        if (! $emailWebmaster || ! is_string($emailWebmaster) || trim($emailWebmaster) === '') {
+            $this->error('EMAIL_WEBMASTER no está definido correctamente en el .env');
+            Log::channel('mailing')->error('EMAIL_WEBMASTER no está definido correctamente en el .env');
+
             return;
         }
 
@@ -70,15 +73,17 @@ class CheckBouncedEmails extends Command
                 $this->info("Conexión IMAP OK con '$mailbox'");
                 Log::channel('mailing')->info("Conexión IMAP OK con '$mailbox'");
             } catch (\Exception $e) {
-                $this->error("Error conectando a IMAP: " . $e->getMessage());
-                Log::channel('mailing')->error("Error conectando a IMAP: " . $e->getMessage());
+                $this->error('Error conectando a IMAP: '.$e->getMessage());
+                Log::channel('mailing')->error('Error conectando a IMAP: '.$e->getMessage());
+
                 return;
             }
 
             $folder = $client->getFolder('INBOX');
-            if (!$folder) {
-                $this->error("No se encontró la carpeta INBOX.");
-                Log::channel('mailing')->error("No se encontró la carpeta INBOX.");
+            if (! $folder) {
+                $this->error('No se encontró la carpeta INBOX.');
+                Log::channel('mailing')->error('No se encontró la carpeta INBOX.');
+
                 return;
             }
 
@@ -88,22 +93,21 @@ class CheckBouncedEmails extends Command
 
             // Solo consultar correos no leídos (unseen)
             $messages = $folder->messages()->unseen()->since($since)->get();
-            $this->info("Mensajes NO LEÍDOS recuperados con filtro since($maxHours h): " . $messages->count());
-            Log::channel('mailing')->info("Mensajes NO LEÍDOS recuperados con filtro since($maxHours h): " . $messages->count());
+            $this->info("Mensajes NO LEÍDOS recuperados con filtro since($maxHours h): ".$messages->count());
+            Log::channel('mailing')->info("Mensajes NO LEÍDOS recuperados con filtro since($maxHours h): ".$messages->count());
 
             // Si sigue sin mensajes, prueba sin filtro de fecha pero solo no leídos
             if ($messages->count() === 0) {
                 $messages = $folder->messages()->unseen()->get();
-                $this->warn("No se encontraron mensajes no leídos recientes. Recuperando TODOS los NO LEÍDOS: " . $messages->count());
-                Log::channel('mailing')->warning("No se encontraron mensajes no leídos recientes. Recuperando TODOS los NO LEÍDOS: " . $messages->count());
+                $this->warn('No se encontraron mensajes no leídos recientes. Recuperando TODOS los NO LEÍDOS: '.$messages->count());
+                Log::channel('mailing')->warning('No se encontraron mensajes no leídos recientes. Recuperando TODOS los NO LEÍDOS: '.$messages->count());
             }
 
-
-            $this->info("Conectado a IMAP. Mensajes recuperados: " . $messages->count());
-            Log::channel('mailing')->info("Conectado a IMAP. Mensajes recuperados: " . $messages->count());
+            $this->info('Conectado a IMAP. Mensajes recuperados: '.$messages->count());
+            Log::channel('mailing')->info('Conectado a IMAP. Mensajes recuperados: '.$messages->count());
 
             // Guardar mensajes procesados en un JSON para debug en desarrollo
-            //if (App::environment('local', 'development')) {
+            // if (App::environment('local', 'development')) {
             if (DEV_TESTING_MODE) {
                 $this->info('Modo Desarrollo: Guardamos mensajes al archivo bounced_debug.json');
                 $debugMessages = [];
@@ -244,8 +248,6 @@ class CheckBouncedEmails extends Command
         // Filtrar valores nulos y normalizar a minúsculas para comparación
         $ownEmails = array_filter(array_map('strtolower', array_filter($ownEmails)));
 
-
-
         foreach ($messages as $message) {
             $totalRead++;
             // Obtener datos según el origen
@@ -261,7 +263,8 @@ class CheckBouncedEmails extends Command
                 $body = $message->getTextBody();
             }
             if ($date instanceof Carbon && $date->lt($since)) {
-                Log::channel('mailing')->debug("Correo omitido por antigüedad: " . $subject);
+                Log::channel('mailing')->debug('Correo omitido por antigüedad: '.$subject);
+
                 continue;
             }
 
@@ -280,12 +283,12 @@ class CheckBouncedEmails extends Command
 
             // eliminamos los correos que empiezan por "Message-ID: <" porque provienen de: Message-ID: <91adb0626921197a37f4dea9e92f7d17@tseyor.org>
             $allEmails = array_filter($allEmails, function ($email) {
-                return !preg_match('/^Message-ID: </', $email);
+                return ! preg_match('/^Message-ID: </', $email);
             });
 
             // Filtrar y descartar los correos propios (ya normalizados a minúsculas)
             $failedEmails = array_filter($allEmails, function ($email) use ($ownEmails) {
-                return !in_array(strtolower($email), $ownEmails);
+                return ! in_array(strtolower($email), $ownEmails);
             });
 
             // Elige solo los únicos (por si aparecen varias veces)
@@ -396,10 +399,10 @@ class CheckBouncedEmails extends Command
                     }
                 }
             }
-            if (!$matched) {
+            if (! $matched) {
                 // Si no es un rebote, ni error, ni patrón conocido, lo consideramos recibido de usuario
                 // Solo si el remitente NO es uno de los propios (no es notificaciones@tseyor.org)
-                if (!in_array(strtolower($from), $ownEmails)) {
+                if (! in_array(strtolower($from), $ownEmails)) {
                     $classified['recibidos_usuario']['elementos'][] = [
                         'from' => $from,
                         'subject' => $subject,
@@ -420,12 +423,12 @@ class CheckBouncedEmails extends Command
             }
 
             // Marcar como leído si corresponde (solo si es objeto IMAP)
-            if (!$fromJson && $marcarComoLeidos) {
+            if (! $fromJson && $marcarComoLeidos) {
                 try {
                     $message->setFlag('Seen');
                     Log::channel('mailing')->debug("Correo marcado como leído: $subject");
                 } catch (\Exception $e) {
-                    Log::channel('mailing')->error("No se pudo marcar como leído: $subject - " . $e->getMessage());
+                    Log::channel('mailing')->error("No se pudo marcar como leído: $subject - ".$e->getMessage());
                 }
             }
         }
@@ -436,89 +439,96 @@ class CheckBouncedEmails extends Command
         // Mostrar estadísticas por consola
         $this->info("Correos leídos de IMAP: $totalRead");
         foreach ($classified as $tipo => $data) {
-            $this->info("  $tipo: " . $data['conteo']);
+            $this->info("  $tipo: ".$data['conteo']);
         }
-        Log::channel('mailing')->info("Estadísticas: " . json_encode($classified));
+        Log::channel('mailing')->info('Estadísticas: '.json_encode($classified));
 
         // --------- Generar informe completo y enviar por correo ---------
         $informe = [];
         $fechaInforme = Carbon::now()->format('Y-m-d');
         $informe[] = "INFORME DE CORREOS RECIBIDOS\n";
-        $informe[] = "Fecha: " . Carbon::now()->toDateTimeString();
+        $informe[] = 'Fecha: '.Carbon::now()->toDateTimeString();
         $informe[] = "Buzón: $mailbox";
         $informe[] = "Correos leídos: $totalRead";
-        $informe[] = "Estadísticas:";
+        $informe[] = 'Estadísticas:';
         foreach ($classified as $tipo => $data) {
             if ($data['conteo'] > 0) {
-                $informe[] = "  $tipo: " . $data['conteo'];
+                $informe[] = "  $tipo: ".$data['conteo'];
             }
         }
         $informe[] = "\n--- Clasificación de correos por categoría ---";
         foreach ($classified as $cat => $data) {
-            if ($cat === 'recibidos_usuario') continue; // Sección especial al final
-            if (count($data['elementos']) === 0) continue; // Omitir categorías vacías
-            $informe[] = strtoupper($cat) . " (" . count($data['elementos']) . ")";
+            if ($cat === 'recibidos_usuario') {
+                continue;
+            } // Sección especial al final
+            if (count($data['elementos']) === 0) {
+                continue;
+            } // Omitir categorías vacías
+            $informe[] = strtoupper($cat).' ('.count($data['elementos']).')';
             // Mostrar solo los emails, uno por línea
             foreach ($data['elementos'] as $item) {
                 if (isset($item['email'])) {
                     $informe[] = $item['email'];
                 }
             }
-            $informe[] = "";
+            $informe[] = '';
         }
 
-        if(count($falsos_positivos) > 0)
-            $informe[] = "--- FALSOS POSITIVOS DETECTADOS ---";
+        if (count($falsos_positivos) > 0) {
+            $informe[] = '--- FALSOS POSITIVOS DETECTADOS ---';
+        }
         foreach ($falsos_positivos as $fp) {
-            $informe[] = "- " . $fp['email'] . " | " . $fp['subject'] . " | from: " . $fp['from'];
+            $informe[] = '- '.$fp['email'].' | '.$fp['subject'].' | from: '.$fp['from'];
             if ($fp['enlace']) {
-                $informe[] = "    Enlace de reporte: " . $fp['enlace'];
+                $informe[] = '    Enlace de reporte: '.$fp['enlace'];
             }
         }
-        if(count($classified['recibidos_usuario']['elementos']) > 0)
+        if (count($classified['recibidos_usuario']['elementos']) > 0) {
             $informe[] = "\n--- MENSAJES RECIBIDOS DE USUARIOS ---";
-        foreach ($classified['recibidos_usuario']['elementos'] as $msg) {
-            $informe[] = "De: " . $msg['from'];
-            $informe[] = "Asunto: " . $msg['subject'];
-            $informe[] = "Contenido:";
-            $informe[] = $msg['body'];
-            $informe[] = str_repeat("-", 40);
         }
-        $informe[] = "\nAcceso directo al buzón webmail: " . (env('WEBMAIL_URL') ?: 'https://webmail.dreamhost.com/?clearSession=true&_user=notificaciones@tseyor.org');
+        foreach ($classified['recibidos_usuario']['elementos'] as $msg) {
+            $informe[] = 'De: '.$msg['from'];
+            $informe[] = 'Asunto: '.$msg['subject'];
+            $informe[] = 'Contenido:';
+            $informe[] = $msg['body'];
+            $informe[] = str_repeat('-', 40);
+        }
+        $informe[] = "\nAcceso directo al buzón webmail: ".(env('WEBMAIL_URL') ?: 'https://webmail.dreamhost.com/?clearSession=true&_user=notificaciones@tseyor.org');
 
         $informeTxt = implode("\n", $informe);
 
-        if(!count($falsos_positivos) && !count($classified['recibidos_usuario']['elementos'])) {
-            $this->info("No se encontraron rebotes ni mensajes de usuarios.");
-            Log::channel('mailing')->info("No se encontraron rebotes ni mensajes de usuarios.");
+        if (! count($falsos_positivos) && ! count($classified['recibidos_usuario']['elementos'])) {
+            $this->info('No se encontraron rebotes ni mensajes de usuarios.');
+            Log::channel('mailing')->info('No se encontraron rebotes ni mensajes de usuarios.');
+
             return;
         }
 
-        Log::channel('mailing')->info("Informe generado:\n" . $informeTxt);
+        Log::channel('mailing')->info("Informe generado:\n".$informeTxt);
         // En entorno de desarrollo, guardar el informe en storage/app/informe.txt en vez de enviarlo por correo
         if (DEV_TESTING_MODE) {
-            //if (App::environment('local', 'development')) {
+            // if (App::environment('local', 'development')) {
             Storage::disk('local')->put('informe.txt', $informeTxt);
-            $this->info("Informe guardado en storage/app/informe.txt");
+            $this->info('Informe guardado en storage/app/informe.txt');
         } else {
             // En producción, enviar por correo
             try {
-                Mail::raw($informeTxt, function ($message) use ($mailbox, $emailWebmaster, $fechaInforme) {
+                Mail::raw($informeTxt, function ($message) use ($emailWebmaster, $fechaInforme) {
                     $message->to(trim($emailWebmaster, '"'))
-                        ->subject("Respuestas a notificaciones@tseyor.org {" . $fechaInforme . "}");
+                        ->subject('Respuestas a notificaciones@tseyor.org {'.$fechaInforme.'}');
                 });
-                $this->info("Informe enviado a " . $emailWebmaster);
+                $this->info('Informe enviado a '.$emailWebmaster);
             } catch (\Exception $e) {
-                $this->error("No se pudo enviar el informe por correo: " . $e->getMessage());
-                Log::channel('mailing')->error("No se pudo enviar el informe por correo: " . $e->getMessage());
+                $this->error('No se pudo enviar el informe por correo: '.$e->getMessage());
+                Log::channel('mailing')->error('No se pudo enviar el informe por correo: '.$e->getMessage());
             }
         }
     }
 
     public function getSynopsis(bool $short = false): string
     {
-        return "Uso: php artisan suscriptores:check-bounced <mailbox> [--hours=48]\n\n" .
-               "Ejemplo: php artisan suscriptores:check-bounced notificaciones --hours=24";
+        return "Uso: php artisan suscriptores:check-bounced <mailbox> [--hours=48]\n\n".
+               'Ejemplo: php artisan suscriptores:check-bounced notificaciones --hours=24';
     }
 
     public function getHelp(): string

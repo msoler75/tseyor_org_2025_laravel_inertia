@@ -1,24 +1,21 @@
 <?php
 
-
 namespace App\Pigmalion;
 
-use Illuminate\Support\Str;
 use App\Models\Contenido;
 use App\Models\ContenidoBaseModel;
-use App\Pigmalion\Countries;
-use App\Pigmalion\StorageItem;
+use App\Models\EnlaceCorto;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ContenidoHelper
 {
-
     public static function generarTeaser($texto, $longitudMaxima = 400)
     {
         // Verificar si la longitud del texto es mayor que la longitud máxima permitida
         if (strlen($texto) > $longitudMaxima) {
             // Recortar el texto a la longitud máxima y agregar puntos suspensivos al final
-            $teaser = mb_substr($texto, 0, $longitudMaxima - 3) . '...';
+            $teaser = mb_substr($texto, 0, $longitudMaxima - 3).'...';
         } else {
             // Si el texto es menor o igual a la longitud máxima, no es necesario recortarlo
             $teaser = $texto;
@@ -29,44 +26,46 @@ class ContenidoHelper
 
     public static function removerTitulo($descripcion, $titulo)
     {
-        $patron = '/' . preg_quote($titulo, '/') . '/i';
+        $patron = '/'.preg_quote($titulo, '/').'/i';
+
         return trim(preg_replace($patron, '', $descripcion));
     }
 
     public static function rellenarSlugImagenYDescripcion($objeto)
     {
-        Log::info("ContenidoBaseModel::rellenarSlugImagenYDescripcion");
+        Log::info('ContenidoBaseModel::rellenarSlugImagenYDescripcion');
         $fillable = $objeto->getFillable();
 
         // rellenamos slug si existe y está vacío
         if (in_array('slug', $fillable) && empty($objeto->slug)) {
-            $candidatos = ["titulo", "nombre"];
+            $candidatos = ['titulo', 'nombre'];
             foreach ($candidatos as $campo) {
                 if (in_array($campo, $fillable)) {
                     // $prefijo = $objeto->numero ? $objeto->numero . "-" : "";
                     $prefijo = '';
-                    $objeto->slug = substr(Str::slug($prefijo . $objeto->{$campo}), 0, 255);
+                    $objeto->slug = substr(Str::slug($prefijo.$objeto->{$campo}), 0, 255);
                     // dd($objeto->slug);
                     break;
                 }
             }
         }
-        if (!in_array('texto', $fillable))
+        if (! in_array('texto', $fillable)) {
             return;
+        }
 
-        $texto = "";
+        $texto = '';
         if (
             (in_array('imagen', $fillable) && empty($objeto->imagen))
             || (in_array('descripcion', $fillable) && empty($objeto->descripcion))
         ) {
-            //$parsedown = new Parsedown();
-            //$texto = $parsedown->text($objeto->texto);
-            $texto = Str::markdown($objeto->texto ?? "");
+            // $parsedown = new Parsedown();
+            // $texto = $parsedown->text($objeto->texto);
+            $texto = Str::markdown($objeto->texto ?? '');
         }
         // Rellenamos imagen (si está vacía) con el contenido del texto (si existe)
         if (in_array('imagen', $fillable) && empty($objeto->imagen)) {
 
-            Log::info("ContenidoHelper::rellenarSlugImagenYDescripcion: buscamos imagen del contenido");
+            Log::info('ContenidoHelper::rellenarSlugImagenYDescripcion: buscamos imagen del contenido');
 
             $matches = [];
             preg_match_all('/<img [^>]*src=["\']([^"\']+)/i', $texto, $matches);
@@ -76,14 +75,15 @@ class ContenidoHelper
 
                 Log::info("imageUrl: $imageUrl");
 
-                if (!preg_match("/^https?:/", $imageUrl)) {
+                if (! preg_match('/^https?:/', $imageUrl)) {
 
-                    //$imagePath = str_replace(url('/'), '', $imageUrl); // Obtener la ruta relativa de la imagen
+                    // $imagePath = str_replace(url('/'), '', $imageUrl); // Obtener la ruta relativa de la imagen
                     $absolutePath = (new StorageItem(urldecode($imageUrl)))->path;
                     Log::info("path: $absolutePath");
 
-                    if (!file_exists($absolutePath)) {
+                    if (! file_exists($absolutePath)) {
                         Log::info("file not found: $absolutePath");
+
                         continue;
                     }
 
@@ -106,21 +106,24 @@ class ContenidoHelper
 
         // cambiamos las imagenes de portada del contenido en el caso de los guías, poniendo la imagen sin texto
         if (in_array('imagen', $fillable)) {
-            $objeto->imagen = preg_replace("#/medios/guias/con_nombre/(.*)\.jpg#", "/medios/guias/$1.jpg", $objeto->imagen);
-            if (strpos($objeto->imagen, '/medios/guias/') !== false)
+            $objeto->imagen = preg_replace("#/medios/guias/con_nombre/(.*)\.jpg#", '/medios/guias/$1.jpg', $objeto->imagen);
+            if (strpos($objeto->imagen, '/medios/guias/') !== false) {
                 $objeto->imagen = strtolower($objeto->imagen);
+            }
         }
 
-        $titulo = $objeto->titulo ?? $objeto->nombre ?? "";
+        $titulo = $objeto->titulo ?? $objeto->nombre ?? '';
 
         // generamos una descripción a partir del texto si es necesario
         if (in_array('descripcion', $fillable) && empty($objeto->descripcion)) {
             $descripcion = strip_tags($texto);
-            $descripcion = \App\Pigmalion\Markdown::removeMarkdown($descripcion);
+            $descripcion = Markdown::removeMarkdown($descripcion);
             $descripcion = str_replace("\n", ' ', $descripcion); // Agregar espacio entre líneas
-            if ($titulo) $descripcion = self::removerTitulo($descripcion, $titulo);
+            if ($titulo) {
+                $descripcion = self::removerTitulo($descripcion, $titulo);
+            }
             $descripcion = self::generarTeaser($descripcion);
-            //$descripcion = rtrim($descripcion, "!,.-");
+            // $descripcion = rtrim($descripcion, "!,.-");
             $objeto->descripcion = $descripcion;
         }
 
@@ -131,11 +134,11 @@ class ContenidoHelper
 
         // revisa si el campo de "visibilidad" de la publicación tiene la fecha a NULL
         if (in_array('visibilidad', $fillable) && in_array('published_at', $fillable)) {
-            if ($objeto->visibilidad != "B" && !$objeto->published_at)
+            if ($objeto->visibilidad != 'B' && ! $objeto->published_at) {
                 $objeto->published_at = date('Y-m-d H:i:s');
+            }
         }
     }
-
 
     public static function guardarContenido(ContenidoBaseModel $model)
     {
@@ -150,7 +153,7 @@ class ContenidoHelper
 
         if ($contenido == null) {
             // Crear un nuevo modelo Contenido
-            $contenido = new Contenido();
+            $contenido = new Contenido;
             $contenido->coleccion = $coleccion;
             $contenido->id_ref = $model->id;
         }
@@ -160,10 +163,16 @@ class ContenidoHelper
         // si existe atributo pais, lo convertimos
         if (isset($model->pais)) {
             $values = [Countries::getCountry($model->pais)];
-            if (isset($model->provincia)) $values[] = $model->provincia;
-            if (isset($model->poblacion)) $values[] = $model->poblacion;
-            if (isset($model->descripcion)) $values[] = $model->descripcion;
-            $descripcion = implode(" ", $values);
+            if (isset($model->provincia)) {
+                $values[] = $model->provincia;
+            }
+            if (isset($model->poblacion)) {
+                $values[] = $model->poblacion;
+            }
+            if (isset($model->descripcion)) {
+                $values[] = $model->descripcion;
+            }
+            $descripcion = implode(' ', $values);
         }
 
         $contenido->titulo = $model->titulo ?? $model->nombre;
@@ -171,20 +180,22 @@ class ContenidoHelper
         $contenido->descripcion = $descripcion;
         $contenido->imagen = $model->imagen ?? null;
         $contenido->fecha = $model->published_at ?? $model->updated_at ?? null;
-        $contenido->visibilidad = $model->visibilidad  ?? 'P';
-        if ($model->oculto) $contenido->visibilidad = 'O';
+        $contenido->visibilidad = $model->visibilidad ?? 'P';
+        if ($model->oculto) {
+            $contenido->visibilidad = 'O';
+        }
         $contenido->deleted_at = $model->deleted_at ?? null;
 
-        if (strlen($contenido->descripcion) > 400)
+        if (strlen($contenido->descripcion) > 400) {
             $contenido->descripcion = mb_substr($contenido->descripcion, 0, 399);
+        }
 
         // obtiene el texto que también servirá para indexar el buscador
         $contenido->texto_busqueda = $model->getTextoContenidoBuscador();
 
         if (isset($model->numero)) {
-            $contenido->texto_busqueda .= " " . $model->numero;
+            $contenido->texto_busqueda .= ' '.$model->numero;
         }
-
 
         // Guardar el modelo en la base de datos
         $contenido->save();
@@ -201,14 +212,13 @@ class ContenidoHelper
         }
     }
 
-
     public static function removerContenido($objeto)
     {
         $coleccion = $objeto->getTable();
         $contenido = Contenido::where('coleccion', $coleccion)
             ->where('id_ref', $objeto->id)->first();
 
-        Log::info("ContenidoHelper::removerContenido, ", ['coleccion' => $coleccion, 'id' => $objeto->id, 'contenido' => $contenido]);
+        Log::info('ContenidoHelper::removerContenido, ', ['coleccion' => $coleccion, 'id' => $objeto->id, 'contenido' => $contenido]);
 
         if ($contenido) {
             // elimina el contenido asociado
@@ -220,6 +230,7 @@ class ContenidoHelper
      * Analiza el texto y mueve las imagenes de la carpeta temporal a la carpeta de medios
      * este método modifica el texto del modelo (si existe el campo texto)
      * Importante: Se asume que el campo 'texto' está en MARKDOWN
+     *
      * @return true si ha habido cambios
      **/
     public static function moverImagenesContenido($objeto)
@@ -228,19 +239,20 @@ class ContenidoHelper
         $desde = ContenidoBaseModel::getCarpetaMediosTemp();
         $hacia = $objeto->getCarpetaMedios();
 
-        Log::info("moverImagenesContenido " . ($objeto->texto ?? ''), ['hacia' => $hacia, 'imagen'=>$objeto->imagen]);
+        Log::info('moverImagenesContenido '.($objeto->texto ?? ''), ['hacia' => $hacia, 'imagen' => $objeto->imagen]);
         if ($objeto->texto ?? '') {
             $texto = $objeto->texto;
 
-            $imagenes_movidas = \App\Pigmalion\Markdown::moverImagenes($texto, $desde, $hacia);
+            $imagenes_movidas = Markdown::moverImagenes($texto, $desde, $hacia);
             if (count($imagenes_movidas)) {
                 $objeto->texto = $texto;
                 if ($objeto->imagen ?? '') {
-                    Log::info("imagen del objeto: " . $objeto->imagen);
+                    Log::info('imagen del objeto: '.$objeto->imagen);
                     foreach ($imagenes_movidas as $mov) {
                         // cambia la referencia de la imagen del contenido de carpeta temporal a la de la carpeta de medios
-                        if ($objeto->imagen == $mov['desde'])
+                        if ($objeto->imagen == $mov['desde']) {
                             $objeto->imagen = $mov['a'];
+                        }
                     }
                 }
 
@@ -249,24 +261,25 @@ class ContenidoHelper
         }
 
         $imagen = $objeto->imagen;
-        if($imagen)
+        if ($imagen) {
             Log::info("Imagen=$imagen");
+        }
         if ($imagen && strpos($imagen, 'temp/') !== false) {
 
             // renombramos la imagen
-            $nuevoNombre = $hacia . "/" . basename($imagen);
+            $nuevoNombre = $hacia.'/'.basename($imagen);
 
             $disk = 'public';
             Log::info("move1: $disk: $imagen -> $nuevoNombre");
 
             $origen = $imagen;
-            $destino =(new StorageItem($nuevoNombre))->location;
+            $destino = (new StorageItem($nuevoNombre))->location;
 
-            Log::info("move2: $disk: ", ['origen'=>$origen, 'nuevoNombre'=>$nuevoNombre, 'destino'=>$destino]);
+            Log::info("move2: $disk: ", ['origen' => $origen, 'nuevoNombre' => $nuevoNombre, 'destino' => $destino]);
 
             // movemos la imagen a la nueva carpeta
             if (StorageItem::copy($imagen, $destino)) {
-                (new StorageItem( $imagen))->delete();
+                (new StorageItem($imagen))->delete();
             }
 
             $objeto->imagen = $destino;
@@ -285,7 +298,7 @@ class ContenidoHelper
             $nuevasImagenes = [];
             foreach ($imagenes as $img) {
                 if ($img && strpos($img, 'temp/') !== false) {
-                    $nuevoNombre = $hacia . "/" . basename($img);
+                    $nuevoNombre = $hacia.'/'.basename($img);
                     $destino = (new StorageItem($nuevoNombre))->location;
                     if (StorageItem::copy($img, $destino)) {
                         (new StorageItem($img))->delete();
@@ -308,7 +321,6 @@ class ContenidoHelper
         return $cambio;
     }
 
-
     /**
      * Manejar el evento "saved" del modelo Contenido.
      * Actualizar enlaces cortos relacionados cuando cambie el contenido
@@ -322,11 +334,11 @@ class ContenidoHelper
         }
 
         // Buscar enlaces cortos directamente relacionados con este contenido
-        $enlaceCorto = \App\Models\EnlaceCorto::where('contenido_id', $contenido->id)
+        $enlaceCorto = EnlaceCorto::where('contenido_id', $contenido->id)
             ->where('activo', true)
             ->first();
 
-        if (!$enlaceCorto) {
+        if (! $enlaceCorto) {
             return;
         }
 
@@ -342,14 +354,14 @@ class ContenidoHelper
             'og_descripcion' => $seoData['og_descripcion'],
             'og_imagen' => $seoData['og_imagen'] ?? null,
             'twitter_imagen' => $seoData['twitter_imagen'] ?? null,
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         Log::info('Enlace corto actualizado desde Contenido', [
             'contenido_id' => $contenido->id,
             'enlace_codigo' => $enlaceCorto->codigo,
             'titulo' => $contenido->titulo,
-            'tipo' => 'contenido_interno'
+            'tipo' => 'contenido_interno',
         ]);
     }
 
@@ -358,16 +370,16 @@ class ContenidoHelper
      */
     private static function desactivarEnlacesRelacionados(Contenido $contenido)
     {
-        \App\Models\EnlaceCorto::where('contenido_id', $contenido->id)
+        EnlaceCorto::where('contenido_id', $contenido->id)
             ->where('activo', true)
             ->update([
                 'activo' => false,
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
         Log::info('Enlaces cortos desactivados por cambio de visibilidad', [
             'contenido_id' => $contenido->id,
-            'nueva_visibilidad' => $contenido->visibilidad
+            'nueva_visibilidad' => $contenido->visibilidad,
         ]);
     }
 
@@ -391,7 +403,4 @@ class ContenidoHelper
 
         return $seoData;
     }
-
-
-
 }

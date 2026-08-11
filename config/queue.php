@@ -58,7 +58,6 @@ return [
             'after_commit' => false,
         ],
 
-
     ],
 
     /*
@@ -93,8 +92,6 @@ return [
         'database' => env('DB_CONNECTION', 'mysql'),
         'table' => 'failed_jobs',
     ],
-
-
 
     /*
     | Maximum time processing queue un controller, in seconds

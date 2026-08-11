@@ -1,12 +1,12 @@
 <?php
 
-
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Validator;
 use App\Models\Comunicado;
 use App\Rules\DropzoneRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 // https://github.com/jargoud/laravel-backpack-dropzone
 
@@ -23,7 +23,7 @@ class StoreComunicadoRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -32,7 +32,7 @@ class StoreComunicadoRequest extends FormRequest
 
         return [
             'titulo' => 'required|min:7|max:255',
-            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('comunicados', 'slug')->ignore($comunicadoId) ],
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('comunicados', 'slug')->ignore($comunicadoId)],
             'texto' => 'required',
             'numero' => 'required|numeric|min:1|max:99999',
             'categoria' => 'required',
@@ -48,8 +48,6 @@ class StoreComunicadoRequest extends FormRequest
         ];
     }
 
-
-
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
@@ -61,19 +59,19 @@ class StoreComunicadoRequest extends FormRequest
             $existingComunicado = Comunicado::where('numero', $num)
                 ->where('categoria', $categoria);
 
-            if (!empty ($comunicadoId))
-                $existingComunicado->where('id', '!=', $comunicadoId); // Excluir el comunicado actual en caso de actualización
+            if (! empty($comunicadoId)) {
+                $existingComunicado->where('id', '!=', $comunicadoId);
+            } // Excluir el comunicado actual en caso de actualización
 
             $existingComunicado = $existingComunicado->exists();
 
-            if ($existingComunicado)
+            if ($existingComunicado) {
                 $validator->errors()->add('numero', 'Ya existe otro comunicado con este número y categoría');
+            }
         });
     }
 
-
-
-       /**
+    /**
      * Get the error messages for the defined validation rules.
      *
      * @return array<string, string>

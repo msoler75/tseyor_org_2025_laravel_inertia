@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Suscriptor;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class SuscriptorController extends Controller
 {
@@ -32,14 +32,16 @@ class SuscriptorController extends Controller
                 'servicio' => $boletin_por_defecto,
                 'estado' => 'ok',
             ]);
+
             //  Suscriptor existente actualizado
             return response()->json(['message' => 'Suscripción exitosa']);
         }
 
         // podemos importar el token desde el request
         $token = $request->token;
-        if(!$token)
+        if (! $token) {
             $token = bin2hex(random_bytes(16));
+        }
 
         // nos aseguramos que el token sea único
         while (Suscriptor::where('token', $token)->exists()) {
@@ -54,7 +56,8 @@ class SuscriptorController extends Controller
                 'estado' => 'ok',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error al crear suscriptor: ' . $e->getMessage());
+            Log::error('Error al crear suscriptor: '.$e->getMessage());
+
             return response()->json(['message' => 'Error al crear suscriptor'], 500);
         }
 
@@ -68,8 +71,10 @@ class SuscriptorController extends Controller
     public function desuscribir($token)
     {
         $suscriptor = Suscriptor::where('token', $token)->first();
-        if($suscriptor)
+        if ($suscriptor) {
             $suscriptor->delete();
+        }
+
         return Inertia::render('Boletines/Desuscripcion');
     }
 
@@ -87,6 +92,7 @@ class SuscriptorController extends Controller
         if ($servicioActual === 'boletin:bisemanal') {
             $servicioActual = 'boletin:quincenal';
         }
+
         return Inertia::render('Boletines/Config', [
             'servicioActual' => $servicioActual,
             'email' => optional($suscriptor)->email,
@@ -111,7 +117,7 @@ class SuscriptorController extends Controller
             $servicio = 'boletin:quincenal';
         }
         $suscriptor = Suscriptor::where('token', $token)->first();
-        if(!$suscriptor) {
+        if (! $suscriptor) {
             $suscriptor = Suscriptor::create([
                 'email' => $request->email,
                 'token' => $token,
@@ -122,6 +128,7 @@ class SuscriptorController extends Controller
 
         if ($servicio === 'darse_baja') {
             $suscriptor->delete();
+
             return response()->json(['message' => 'Te has dado de baja del boletín.']);
         }
 
@@ -137,7 +144,7 @@ class SuscriptorController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'Usuario no autenticado'], 401);
         }
 

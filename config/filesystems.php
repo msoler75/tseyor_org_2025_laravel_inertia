@@ -51,7 +51,7 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
-/*
+        /*
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -81,13 +81,10 @@ return [
         public_path('almacen') => storage_path('app/public'),
     ],
 
-
-
     /**
      * Uploads
      */
-
-    'max_upload_size' => 300*1024*1024, // 300 Mb
+    'max_upload_size' => 300 * 1024 * 1024, // 300 Mb
 
     /*
     |--------------------------------------------------------------------------

@@ -11,7 +11,7 @@ return [
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
             'texto' => ['type' => 'string', 'description' => 'Contenido en markdown'],
             'video' => ['type' => 'string', 'description' => 'Enlace al video'],
-            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador']
-        ]
+            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador'],
+        ],
     ],
 ];

@@ -4,18 +4,19 @@ namespace App\Console\Commands;
 
 // Endpoint centralizado en config/deploy.php
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use App\Pigmalion\DeployHelper as Deploy;
 use Exception;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class DeployFront extends Command
 {
     protected $signature = 'deploy:front {--rollback : Realizar rollback a la versión anterior} {--session-token= : Token temporal del dashboard admin para bypass de IP}';
+
     protected $description = 'Comprime los contenidos de la carpeta public/build y los envía por CURL, o realiza rollback si se especifica --rollback';
 
-
     private const SOURCE_DIR = 'public/build';
+
     private const ZIP_NAME = 'build.zip';
 
     public function handle()
@@ -27,17 +28,17 @@ class DeployFront extends Command
                 Deploy::handleResponse($result, $this);
             } else {
                 $sourcePath = base_path(self::SOURCE_DIR);
-                $zipPath = storage_path('app/' . self::ZIP_NAME);
+                $zipPath = storage_path('app/'.self::ZIP_NAME);
 
                 Deploy::validateDirectoryExists($sourcePath);
 
                 if (Deploy::createZipFile($sourcePath, $zipPath)) {
-                    $this->info('ZIP creado: ' . basename($zipPath));
+                    $this->info('ZIP creado: '.basename($zipPath));
 
                     $extraHeaders = [];
                     $sessionToken = $this->option('session-token');
                     if ($sessionToken) {
-                        $extraHeaders[] = 'X-Deploy-Session-Token: ' . $sessionToken;
+                        $extraHeaders[] = 'X-Deploy-Session-Token: '.$sessionToken;
                     }
 
                     $result = Deploy::sendZipFile(
@@ -54,8 +55,7 @@ class DeployFront extends Command
                     }
 
                     // File::delete($zipPath);
-                }
-                else {
+                } else {
                     $this->error('Error al crear el ZIP');
                 }
             }
@@ -63,8 +63,4 @@ class DeployFront extends Command
             $this->error($e->getMessage());
         }
     }
-
-
-
-
 }

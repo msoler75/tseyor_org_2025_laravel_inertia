@@ -1,57 +1,57 @@
 <?php
+
 namespace Tests\Unit;
 
-use Tests\TestCase;
-use App\Services\EnlaceCortoService;
 use App\Models\EnlaceCorto;
+use App\Models\Libro;
+use App\Services\EnlaceCortoService;
+use Illuminate\Support\Facades\Cache;
+use Tests\TestCase;
 
 class EnlaceCortoTest extends TestCase
 {
-
-
-     public function testUrlCortaGeneradaCorrectamente()
+    public function test_url_corta_generada_correctamente()
     {
         $enlace = new EnlaceCorto([
             'codigo' => 'ABC123',
             'prefijo' => 'e',
             'url_original' => 'https://tseyor.org/eventos/convivencias-de-otono-la-libelula',
         ]);
-        $urlEsperada = rtrim(config('enlaces_cortos.dominios.principal'), '/') . '/e/ABC123';
+        $urlEsperada = rtrim(config('enlaces_cortos.dominios.principal'), '/').'/e/ABC123';
         $this->assertEquals($urlEsperada, $enlace->url_corta);
     }
 
-
-    public function testCrearEnlaceCortoParaVariasUrls()
+    public function test_crear_enlace_corto_para_varias_urls()
     {
-         $baseUrl = rtrim(config('app.url'), '/');
-        $service = new EnlaceCortoService();
+        $baseUrl = rtrim(config('app.url'), '/');
+        $service = new EnlaceCortoService;
         $urls = [
-             $baseUrl . '/eventos/convivencias-de-otono-la-libelula',
-             $baseUrl . '/eventos/convivencias-de-primavera-el-colibri',
-             $baseUrl . '/blog/2025/09/26/entrada-especial-con-slug-muy-largo-y-detalles',
-             $baseUrl . '/recursos/documentos/guia-avanzada-2025.pdf?version=2.1',
-             $baseUrl . '/audios/charla/2025/09/26/audio-charla-final.mp3?user=juan',
-             $baseUrl . '/eventos/encuentro-internacional-2025',
-             $baseUrl . '/presentaciones/ponencia-innovacion.pptx?ref=abc123',
-             $baseUrl . '/musica/ambiental/relax.wav',
-             $baseUrl . '/blog/2025/09/26/entrada-especial?utm_source=twitter',
-             $baseUrl . '/inscripciones/curso-avanzado?step=2',
-             $baseUrl . '/archivo_con_nombre_muy_largo_y_detalles.docx',
-             $baseUrl . '/descargas/manual.xlsx?download=true',
-             $baseUrl . '/galeria/imagen_con_nombre_largo.jpg',
-             $baseUrl . '/streaming/video_con_nombre_largo.m4a',
-             $baseUrl . '/otros/archivo-aleatorio.ogg',
-             $baseUrl . '/doble/carp/1.pdf',
-             $baseUrl . '/archivos/equipos/divulgacion/archivo.ppt',
-             $baseUrl . '/archivos/equipos/agora-del-junantal/archivo.xls',
-             $baseUrl . '/archivos/equipos/divulgacion/archivo.doc',
-             $baseUrl . '/archivos/equipos/divulgacion/archivo.aac',
-             $baseUrl . '/archivos/equipos/divulgacion/archivo.wma',
+            $baseUrl.'/eventos/convivencias-de-otono-la-libelula',
+            $baseUrl.'/eventos/convivencias-de-primavera-el-colibri',
+            $baseUrl.'/blog/2025/09/26/entrada-especial-con-slug-muy-largo-y-detalles',
+            $baseUrl.'/recursos/documentos/guia-avanzada-2025.pdf?version=2.1',
+            $baseUrl.'/audios/charla/2025/09/26/audio-charla-final.mp3?user=juan',
+            $baseUrl.'/eventos/encuentro-internacional-2025',
+            $baseUrl.'/presentaciones/ponencia-innovacion.pptx?ref=abc123',
+            $baseUrl.'/musica/ambiental/relax.wav',
+            $baseUrl.'/blog/2025/09/26/entrada-especial?utm_source=twitter',
+            $baseUrl.'/inscripciones/curso-avanzado?step=2',
+            $baseUrl.'/archivo_con_nombre_muy_largo_y_detalles.docx',
+            $baseUrl.'/descargas/manual.xlsx?download=true',
+            $baseUrl.'/galeria/imagen_con_nombre_largo.jpg',
+            $baseUrl.'/streaming/video_con_nombre_largo.m4a',
+            $baseUrl.'/otros/archivo-aleatorio.ogg',
+            $baseUrl.'/doble/carp/1.pdf',
+            $baseUrl.'/archivos/equipos/divulgacion/archivo.ppt',
+            $baseUrl.'/archivos/equipos/agora-del-junantal/archivo.xls',
+            $baseUrl.'/archivos/equipos/divulgacion/archivo.doc',
+            $baseUrl.'/archivos/equipos/divulgacion/archivo.aac',
+            $baseUrl.'/archivos/equipos/divulgacion/archivo.wma',
         ];
         $resultados = [];
         foreach ($urls as $url) {
             $enlace = $service->crear($url);
-            if(!$enlace) {
+            if (! $enlace) {
                 $resultados[] = [
                     'original' => $url,
                     'url_corta' => $url,
@@ -61,14 +61,14 @@ class EnlaceCortoTest extends TestCase
                     'original' => $url,
                     'url_corta' => $enlace->url_corta,
                 ];
-            };
+            }
         }
         // Imprimir resultados para inspección manual
         // fwrite(STDERR, print_r($resultados, true));
         $this->assertCount(count($urls), $resultados);
         foreach ($resultados as $res) {
             if (empty($res['url_corta'])) {
-                fwrite(STDERR, "FALLA: " . $res['original'] . " => url_corta vacío\n");
+                fwrite(STDERR, 'FALLA: '.$res['original']." => url_corta vacío\n");
             }
             $this->assertNotEmpty($res['url_corta']);
         }
@@ -77,41 +77,41 @@ class EnlaceCortoTest extends TestCase
     /**
      * Test del método necesitaAcortarse con diferentes tipos de URLs
      */
-    public function testNecesitaAcortarse()
+    public function test_necesita_acortarse()
     {
-        $service = new EnlaceCortoService();
+        $service = new EnlaceCortoService;
         $baseUrl = rtrim(config('app.url'), '/');
 
         // URLs que NO deben acortarse (son cortas o coinciden con patrones excluidos)
         $urlsCortas = [
-            $baseUrl . '/informes/552',           // Patrón excluido: números
-            $baseUrl . '/informes/1234',          // Patrón excluido: números
-            $baseUrl . '/experiencias/42',        // Patrón excluido: números
-            $baseUrl . '/nodos/15',               // Patrón excluido: números
-            $baseUrl . '/settings/3',             // Patrón excluido: números
-            $baseUrl . '/',                       // Página principal
-            $baseUrl . '/inicio',                 // Página principal
-            $baseUrl . '/radio',                  // Página principal
-            $baseUrl . '/mapa',                   // Página principal
-            $baseUrl . '/contacto',               // Página principal
-            $baseUrl . '/login',                  // Página principal
-            $baseUrl . '/libros/abc',             // Slug muy corto
-            $baseUrl . '/eventos/test',           // Slug muy corto
-            $baseUrl . '/comunicados/importado-de-229', // URL del usuario que no debe acortarse. ESTE TEST NO DEBE ELIMINARSE, AJUSTAR CONFIG SI ES NECESARIO
+            $baseUrl.'/informes/552',           // Patrón excluido: números
+            $baseUrl.'/informes/1234',          // Patrón excluido: números
+            $baseUrl.'/experiencias/42',        // Patrón excluido: números
+            $baseUrl.'/nodos/15',               // Patrón excluido: números
+            $baseUrl.'/settings/3',             // Patrón excluido: números
+            $baseUrl.'/',                       // Página principal
+            $baseUrl.'/inicio',                 // Página principal
+            $baseUrl.'/radio',                  // Página principal
+            $baseUrl.'/mapa',                   // Página principal
+            $baseUrl.'/contacto',               // Página principal
+            $baseUrl.'/login',                  // Página principal
+            $baseUrl.'/libros/abc',             // Slug muy corto
+            $baseUrl.'/eventos/test',           // Slug muy corto
+            $baseUrl.'/comunicados/importado-de-229', // URL del usuario que no debe acortarse. ESTE TEST NO DEBE ELIMINARSE, AJUSTAR CONFIG SI ES NECESARIO
         ];        // URLs que SÍ deben acortarse (largas o complejas)
         $urlsLargas = [
-            $baseUrl . '/eventos/12?con=parametros+detalles',
-            $baseUrl . '/eventos/convivencias-de-otono-en-la-libelula',
-            $baseUrl . '/comunicados/comunicado-especial-sobre-la-situacion-actual-del-mundo-y-nuestras-propuestas',
-            $baseUrl . '/comunicados/importado-de-229-tap-241012-1docx-21869', // URL del usuario que debe acortarse
-            $baseUrl . '/libros/el-libro-de-las-ensenanzas-fundamentales-para-el-desarrollo-espiritual',
-            $baseUrl . '/blog/2025/09/26/entrada-especial-con-slug-muy-largo-y-muchos-detalles-importantes',
-            $baseUrl . '/noticias/noticia-importante-sobre-los-nuevos-desarrollos-tecnologicos-en-tseyor',
-            $baseUrl . '/recursos/documentos/guia-completa-para-principiantes-en-el-camino-espiritual.pdf',
-            $baseUrl . '/eventos/encuentro-internacional-de-hermanos-mayores-2025-en-madrid?registro=abierto&descuento=10',
-            $baseUrl . '/cursos/curso-avanzado-de-meditacion-y-desarrollo-personal-nivel-3?inscripcion=activa',
-            $baseUrl . '/audios/charlas/2025/charla-magistral-sobre-la-evolucion-de-la-conciencia-humana.mp3',
-            $baseUrl . '/guias/guia-practica-para-la-aplicacion-de-los-principios-universales-en-la-vida-diaria',
+            $baseUrl.'/eventos/12?con=parametros+detalles',
+            $baseUrl.'/eventos/convivencias-de-otono-en-la-libelula',
+            $baseUrl.'/comunicados/comunicado-especial-sobre-la-situacion-actual-del-mundo-y-nuestras-propuestas',
+            $baseUrl.'/comunicados/importado-de-229-tap-241012-1docx-21869', // URL del usuario que debe acortarse
+            $baseUrl.'/libros/el-libro-de-las-ensenanzas-fundamentales-para-el-desarrollo-espiritual',
+            $baseUrl.'/blog/2025/09/26/entrada-especial-con-slug-muy-largo-y-muchos-detalles-importantes',
+            $baseUrl.'/noticias/noticia-importante-sobre-los-nuevos-desarrollos-tecnologicos-en-tseyor',
+            $baseUrl.'/recursos/documentos/guia-completa-para-principiantes-en-el-camino-espiritual.pdf',
+            $baseUrl.'/eventos/encuentro-internacional-de-hermanos-mayores-2025-en-madrid?registro=abierto&descuento=10',
+            $baseUrl.'/cursos/curso-avanzado-de-meditacion-y-desarrollo-personal-nivel-3?inscripcion=activa',
+            $baseUrl.'/audios/charlas/2025/charla-magistral-sobre-la-evolucion-de-la-conciencia-humana.mp3',
+            $baseUrl.'/guias/guia-practica-para-la-aplicacion-de-los-principios-universales-en-la-vida-diaria',
         ];
 
         // Verificar URLs que NO deben acortarse
@@ -136,16 +136,17 @@ class EnlaceCortoTest extends TestCase
     /**
      * Test específico para URLs con slugs largos que sí deben acortarse
      */
-    public function testGeneracionEnlacesSlugLargos()
+    public function test_generacion_enlaces_slug_largos()
     {
-        $service = new EnlaceCortoService();
+        $service = new EnlaceCortoService;
         $baseUrl = rtrim(config('app.url'), '/');
 
         $urlsConSlugLargo = [
-            $baseUrl . '/eventos/convivencias-de-otono-en-la-hermosa-libelula-con-actividades-especiales',
-            $baseUrl . '/comunicados/comunicado-extraordinario-sobre-la-nueva-era-de-luz-y-amor-universal',
-            $baseUrl . '/libros/manual-completo-de-ensenanzas-para-el-despertar-de-la-conciencia-cristica',
-        ];        foreach ($urlsConSlugLargo as $url) {
+            $baseUrl.'/eventos/convivencias-de-otono-en-la-hermosa-libelula-con-actividades-especiales',
+            $baseUrl.'/comunicados/comunicado-extraordinario-sobre-la-nueva-era-de-luz-y-amor-universal',
+            $baseUrl.'/libros/manual-completo-de-ensenanzas-para-el-despertar-de-la-conciencia-cristica',
+        ];
+        foreach ($urlsConSlugLargo as $url) {
             // Verificar que necesita acortarse
             $necesitaAcortar = $service->necesitaAcortarse($url);
             $this->assertTrue($necesitaAcortar, "URL con slug largo debería necesitar acortarse: $url");
@@ -157,7 +158,7 @@ class EnlaceCortoTest extends TestCase
             $this->assertTrue($fueAcortada, "URL con slug largo debería haberse acortado: $url");
             $this->assertNotNull($enlace, "debería haberse creado un enlace para: $url");
             $this->assertNotEmpty($enlace->url_corta, "El enlace corto no debería estar vacío para: $url");
-            $this->assertStringContainsString('/e/', $enlace->url_corta, "URL corta debe contener prefijo '/e/': " . $enlace->url_corta);
+            $this->assertStringContainsString('/e/', $enlace->url_corta, "URL corta debe contener prefijo '/e/': ".$enlace->url_corta);
         }
     }
 
@@ -165,7 +166,7 @@ class EnlaceCortoTest extends TestCase
      * Test de acceso desde bots de redes sociales (Facebook, Twitter, etc.)
      * Verifica que se devuelvan los metadatos Open Graph correctamente
      */
-    public function testAccesoDesdeBotsRedesSociales()
+    public function test_acceso_desde_bots_redes_sociales()
     {
         // Buscar un enlace corto existente que apunte a la página de un libro (sin .pdf)
         // La URL debe ser del tipo: /libros/{slug} (página del libro, no el PDF)
@@ -176,12 +177,12 @@ class EnlaceCortoTest extends TestCase
             ->first();
 
         // Si no existe ningún enlace a libro, crear uno usando un libro publicado real
-        if (!$enlace) {
-            $libro = \App\Models\Libro::publicado()->first();
+        if (! $enlace) {
+            $libro = Libro::publicado()->first();
             $this->assertNotNull($libro, 'Debe existir al menos un libro publicado en la base de datos para ejecutar este test');
 
-            $service = new EnlaceCortoService();
-            $urlLibro = url('/libros/' . $libro->slug);
+            $service = new EnlaceCortoService;
+            $urlLibro = url('/libros/'.$libro->slug);
 
             // Crear el enlace corto
             $enlace = $service->crear($urlLibro);
@@ -200,7 +201,7 @@ class EnlaceCortoTest extends TestCase
         // Simular petición desde bot de Facebook
         $response = $this->withHeaders([
             'User-Agent' => 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
-        ])->get('/' . $enlace->prefijo . '/' . $enlace->codigo);
+        ])->get('/'.$enlace->prefijo.'/'.$enlace->codigo);
 
         // Verificar que se devuelve HTML con metadatos (no una redirección)
         $response->assertStatus(200);
@@ -216,16 +217,16 @@ class EnlaceCortoTest extends TestCase
         $this->assertStringContainsString('og:image', $content, 'Debe contener meta tag og:image');
 
         // Verificar contenido específico de los metadatos si están disponibles
-        if (!empty($enlace->og_titulo)) {
+        if (! empty($enlace->og_titulo)) {
             $this->assertStringContainsString($enlace->og_titulo, $content, 'El título OG debe estar en el HTML');
         }
-        if (!empty($enlace->og_descripcion)) {
+        if (! empty($enlace->og_descripcion)) {
             $this->assertStringContainsString($enlace->og_descripcion, $content, 'La descripción OG debe estar en el HTML');
         }
-        if (!empty($enlace->titulo)) {
+        if (! empty($enlace->titulo)) {
             $this->assertStringContainsString($enlace->titulo, $content, 'El título debe estar en el HTML');
         }
-        if (!empty($enlace->og_imagen)) {
+        if (! empty($enlace->og_imagen)) {
             $this->assertStringContainsString($enlace->og_imagen, $content, 'La imagen OG debe estar en el HTML');
         }
 
@@ -236,46 +237,46 @@ class EnlaceCortoTest extends TestCase
         $this->assertStringContainsString('twitter:card', $content, 'Debe contener meta tag twitter:card');
 
         // Limpiar caché entre peticiones
-        \Illuminate\Support\Facades\Cache::flush();
+        Cache::flush();
 
         // Ahora simular petición desde usuario normal (debe redirigir)
         $responseNormal = $this->withHeaders([
             'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        ])->get('/' . $enlace->prefijo . '/' . $enlace->codigo);
+        ])->get('/'.$enlace->prefijo.'/'.$enlace->codigo);
 
         // Verificar que redirige (puede ser 301 o 302)
         $this->assertTrue(
             in_array($responseNormal->status(), [301, 302]),
-            'Usuario normal debe recibir redirección (301 o 302), recibió: ' . $responseNormal->status()
+            'Usuario normal debe recibir redirección (301 o 302), recibió: '.$responseNormal->status()
         );
         $responseNormal->assertRedirect($enlace->url_original);
 
         // Log para debugging
         fwrite(STDERR, "\n=== Test Bot Redes Sociales ===\n");
-        fwrite(STDERR, "Enlace usado: " . $enlace->url_corta . "\n");
-        fwrite(STDERR, "URL original: " . $enlace->url_original . "\n");
-        fwrite(STDERR, "Prefijo: " . $enlace->prefijo . " | Código: " . $enlace->codigo . "\n");
-        fwrite(STDERR, "Título OG: " . ($enlace->og_titulo ?? 'N/A') . "\n");
-        fwrite(STDERR, "Descripción OG: " . substr($enlace->og_descripcion ?? 'N/A', 0, 80) . "...\n");
-        fwrite(STDERR, "Status code bot: 200 (preview) | Status code usuario: " . $responseNormal->status() . " (redirect)\n");
+        fwrite(STDERR, 'Enlace usado: '.$enlace->url_corta."\n");
+        fwrite(STDERR, 'URL original: '.$enlace->url_original."\n");
+        fwrite(STDERR, 'Prefijo: '.$enlace->prefijo.' | Código: '.$enlace->codigo."\n");
+        fwrite(STDERR, 'Título OG: '.($enlace->og_titulo ?? 'N/A')."\n");
+        fwrite(STDERR, 'Descripción OG: '.substr($enlace->og_descripcion ?? 'N/A', 0, 80)."...\n");
+        fwrite(STDERR, 'Status code bot: 200 (preview) | Status code usuario: '.$responseNormal->status()." (redirect)\n");
     }
 
     /**
      * Test de modo preview forzado con parámetro ?preview=1
      * Útil para testing y depuración de metadatos
      */
-    public function testModoPreviewForzado()
+    public function test_modo_preview_forzado()
     {
         // Buscar cualquier enlace corto activo en la base de datos
         $enlace = EnlaceCorto::where('activo', true)->first();
 
         // Si no existe ninguno, crear uno desde un contenido real
-        if (!$enlace) {
-            $service = new EnlaceCortoService();
-            $libro = \App\Models\Libro::publicado()->first();
+        if (! $enlace) {
+            $service = new EnlaceCortoService;
+            $libro = Libro::publicado()->first();
 
             if ($libro) {
-                $urlLibro = url('/libros/' . $libro->slug);
+                $urlLibro = url('/libros/'.$libro->slug);
                 $enlace = $service->obtenerEnlaceParaUrl($urlLibro);
             }
         }
@@ -283,7 +284,7 @@ class EnlaceCortoTest extends TestCase
         $this->assertNotNull($enlace, 'Debe existir al menos un enlace corto en la BD');
 
         // Acceder con parámetro preview=1 (sin user-agent de bot)
-        $response = $this->get('/' . $enlace->prefijo . '/' . $enlace->codigo . '?preview=1');
+        $response = $this->get('/'.$enlace->prefijo.'/'.$enlace->codigo.'?preview=1');
 
         // Debe mostrar la vista preview en lugar de redirigir
         $response->assertStatus(200);
@@ -302,16 +303,16 @@ class EnlaceCortoTest extends TestCase
      * Prueba múltiples crawlers: Google, Bing, Yandex, DuckDuckGo, etc.
      * Verifica que TODAS las respuestas tengan X-Robots-Tag: noindex, nofollow
      */
-    public function testEnlacesNoIndexadosPorBuscadores()
+    public function test_enlaces_no_indexados_por_buscadores()
     {
         // Buscar o crear un enlace corto activo
         $enlace = EnlaceCorto::where('activo', true)->first();
 
-        if (!$enlace) {
-            $service = new EnlaceCortoService();
-            $libro = \App\Models\Libro::publicado()->first();
+        if (! $enlace) {
+            $service = new EnlaceCortoService;
+            $libro = Libro::publicado()->first();
             if ($libro) {
-                $enlace = $service->obtenerEnlaceParaUrl(url('/libros/' . $libro->slug));
+                $enlace = $service->obtenerEnlaceParaUrl(url('/libros/'.$libro->slug));
             }
         }
 
@@ -335,12 +336,12 @@ class EnlaceCortoTest extends TestCase
         foreach ($crawlers as $nombre => $userAgent) {
             $response = $this->withHeaders([
                 'User-Agent' => $userAgent,
-            ])->get('/' . $enlace->prefijo . '/' . $enlace->codigo);
+            ])->get('/'.$enlace->prefijo.'/'.$enlace->codigo);
 
             // Debe ser redirect
             $this->assertTrue(
                 in_array($response->status(), [301, 302]),
-                "{$nombre} debe recibir redirect, recibió: " . $response->status()
+                "{$nombre} debe recibir redirect, recibió: ".$response->status()
             );
 
             // CRÍTICO: Debe tener X-Robots-Tag
@@ -359,7 +360,7 @@ class EnlaceCortoTest extends TestCase
         // TEST 2: Usuario normal también debe tener X-Robots-Tag
         $responseUsuarioNormal = $this->withHeaders([
             'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        ])->get('/' . $enlace->prefijo . '/' . $enlace->codigo);
+        ])->get('/'.$enlace->prefijo.'/'.$enlace->codigo);
 
         $this->assertTrue(in_array($responseUsuarioNormal->status(), [301, 302]));
         $this->assertTrue($responseUsuarioNormal->headers->has('X-Robots-Tag'));
@@ -371,7 +372,7 @@ class EnlaceCortoTest extends TestCase
         // TEST 3: Bot social (Facebook) - preview HTML con X-Robots-Tag
         $responseBotSocial = $this->withHeaders([
             'User-Agent' => 'facebookexternalhit/1.1',
-        ])->get('/' . $enlace->prefijo . '/' . $enlace->codigo);
+        ])->get('/'.$enlace->prefijo.'/'.$enlace->codigo);
 
         $this->assertEquals(200, $responseBotSocial->status(), 'Bot social debe ver preview HTML');
         $this->assertTrue($responseBotSocial->headers->has('X-Robots-Tag'));
@@ -386,7 +387,7 @@ class EnlaceCortoTest extends TestCase
         fwrite(STDERR, "✅ HTML meta robots: noindex presente\n");
 
         // TEST 4: Modo preview (?preview=1)
-        $responsePreview = $this->get('/' . $enlace->prefijo . '/' . $enlace->codigo . '?preview=1');
+        $responsePreview = $this->get('/'.$enlace->prefijo.'/'.$enlace->codigo.'?preview=1');
 
         $this->assertEquals(200, $responsePreview->status());
         $this->assertTrue($responsePreview->headers->has('X-Robots-Tag'));
@@ -397,4 +398,3 @@ class EnlaceCortoTest extends TestCase
         fwrite(STDERR, "\n🛡️ Conclusión: Enlaces cortos protegidos contra indexación en TODOS los buscadores ✓\n");
     }
 }
-

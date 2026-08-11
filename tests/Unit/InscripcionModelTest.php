@@ -2,19 +2,21 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Models\Inscripcion;
 use App\Models\User;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Carbon\Carbon;
 use App\Notifications\InscripcionAsignada;
+use App\Notifications\InscripcionReasignada;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Notification;
+use Tests\TestCase;
 
 class InscripcionModelTest extends TestCase
 {
     use DatabaseTransactions;
 
     private User $usuario;
+
     private Inscripcion $inscripcion;
 
     protected function setUp(): void
@@ -43,11 +45,9 @@ class InscripcionModelTest extends TestCase
             'ciudad' => 'Test Ciudad',
             'region' => 'Test Región',
             'pais' => 'Test País',
-            'ultima_actividad' => now() // Simular el comportamiento del controller
+            'ultima_actividad' => now(), // Simular el comportamiento del controller
         ]);
     }
-
-
 
     public function test_inscripcion_nueva_debe_tener_ultima_actividad()
     {
@@ -60,7 +60,7 @@ class InscripcionModelTest extends TestCase
             'ciudad' => 'Madrid',
             'region' => 'Comunidad de Madrid',
             'pais' => 'España',
-            'ultima_actividad' => now()
+            'ultima_actividad' => now(),
         ]);
 
         $this->assertNotNull($inscripcion->ultima_actividad);
@@ -381,7 +381,7 @@ class InscripcionModelTest extends TestCase
 
     // asignaciones
 
-     public function test_assign_sends_notification_and_adds_note_and_updates_fecha_asignacion()
+    public function test_assign_sends_notification_and_adds_note_and_updates_fecha_asignacion()
     {
         Notification::fake();
 
@@ -527,6 +527,6 @@ class InscripcionModelTest extends TestCase
         $ins->refresh();
 
         // El tutor anterior (tutor1) debe recibir InscripcionReasignada
-        Notification::assertSentTo($tutor1, \App\Notifications\InscripcionReasignada::class);
+        Notification::assertSentTo($tutor1, InscripcionReasignada::class);
     }
 }

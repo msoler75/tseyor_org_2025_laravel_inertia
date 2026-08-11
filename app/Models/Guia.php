@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
-use Laravel\Scout\Searchable;
 use App\Traits\EsCategorizable;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Laravel\Scout\Searchable;
 
 class Guia extends ContenidoBaseModel
 {
     use CrudTrait;
-    use Searchable;
     use EsCategorizable;
+    use Searchable;
 
     // incluye la categoría 'todos'
-    public $incluyeCategoriaTodos = "Todos";
+    public $incluyeCategoriaTodos = 'Todos';
 
     protected $fillable = [
         'nombre',
@@ -25,9 +24,8 @@ class Guia extends ContenidoBaseModel
         'imagen',
         'bibliografia',
         'libros',
-        'visibilidad'
+        'visibilidad',
     ];
-
 
     // obtiene el texto para el buscador, lo que nos interesa que encuentre de este contenido
     public function getTextoContenidoBuscador()
@@ -43,5 +41,4 @@ class Guia extends ContenidoBaseModel
     {
         return $this->visibilidad == 'P';
     }
-
 }

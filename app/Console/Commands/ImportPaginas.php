@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Imports\PaginaImport;
+use Illuminate\Console\Command;
 
 class ImportPaginas extends Command
 {
@@ -26,7 +26,7 @@ class ImportPaginas extends Command
      */
     public function handle()
     {
-        echo $this->description . "\n";
+        echo $this->description."\n";
         if ($this->confirm('¿Está seguro de que desea importar las páginas? Esto borrará los registros actuales.')) {
             PaginaImport::importar();
             $this->info('¡Las páginas se importaron correctamente!');

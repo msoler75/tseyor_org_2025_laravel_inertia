@@ -2,19 +2,17 @@
 
 namespace Tests;
 
-use Illuminate\Support\Facades\Log;
 use App\Pigmalion\StrEx;
+use Illuminate\Support\Facades\Log;
 
 class BenchmarkAccentRemover
 {
     /**
      * Para ver cual es más rápido
      */
-
     public static function benchmark($texto)
     {
         $reps = 100;
-
 
         // Función 1: removerAcentosIconv
         $start = microtime(true);
@@ -48,7 +46,6 @@ class BenchmarkAccentRemover
         $end = microtime(true);
         $time4 = $end - $start;
 
-
         // Función 4: removerAcentosEreg
         $start = microtime(true);
         for ($i = 0; $i < $reps; $i++) {
@@ -58,11 +55,10 @@ class BenchmarkAccentRemover
         $time5 = $end - $start;
 
         // Resultados
-        Log::info("Tiempo removerAcentosIconv: " . $time1 . " segundos");
-        Log::info("Tiempo removerAcentosStrtr: " . $time2 . " segundos");
-        Log::info("Tiempo removerAcentosRegx1: " . $time3 . " segundos");
-        Log::info("Tiempo removerAcentosRegx2: " . $time4 . " segundos");
-        Log::info("Tiempo removerAcentosEreg : " . $time5 . " segundos");
+        Log::info('Tiempo removerAcentosIconv: '.$time1.' segundos');
+        Log::info('Tiempo removerAcentosStrtr: '.$time2.' segundos');
+        Log::info('Tiempo removerAcentosRegx1: '.$time3.' segundos');
+        Log::info('Tiempo removerAcentosRegx2: '.$time4.' segundos');
+        Log::info('Tiempo removerAcentosEreg : '.$time5.' segundos');
     }
-
 }

@@ -2,50 +2,52 @@
 
 namespace App\Pigmalion;
 
+use App\Models\Nodo;
 use Illuminate\Support\Facades\Log;
-
 
 define('FORCE_RENAME_COPYING', 0);
 
 class RenameHelper
 {
-
     /**
      * Renombra un archivo o carpeta que está en una carpeta $folder de viejo nombre $oldName a $newName
      **/
 
-
-
     /**
      * Renombra un archivo o una carpeta
-     * @param mixed $source  Ruta absoluta
-     * @param mixed $destination  Ruta absoluta
+     *
+     * @param  mixed  $source  Ruta absoluta
+     * @param  mixed  $destination  Ruta absoluta
      * @return bool
      */
     public static function safe_rename($source, $destination)
     {
         Log::info("safe_rename($source, $destination)");
 
-        if (!file_exists($source)) {
+        if (! file_exists($source)) {
             Log::error("El archivo $source no existe");
+
             return false;
         }
 
         // Verifica si el destino es una subcarpeta del origen
-        if (strpos($destination, $source . DIRECTORY_SEPARATOR) === 0) {
-            Log::error("El destino es una subcarpeta del origen. Operación no permitida.");
+        if (strpos($destination, $source.DIRECTORY_SEPARATOR) === 0) {
+            Log::error('El destino es una subcarpeta del origen. Operación no permitida.');
+
             return false;
         }
 
         // Intenta usar primero Storage
-        if (!FORCE_RENAME_COPYING && StorageItem::move(StorageItem::fromPath($source)->location, StorageItem::fromPath($destination)->location)) {
+        if (! FORCE_RENAME_COPYING && StorageItem::move(StorageItem::fromPath($source)->location, StorageItem::fromPath($destination)->location)) {
             Log::info("Se ha movido con StorageItem::move($source, $destination)");
+
             return true;
         }
 
         // Intenta renombrar directamente
-        if (!FORCE_RENAME_COPYING && @rename($source, $destination)) {
+        if (! FORCE_RENAME_COPYING && @rename($source, $destination)) {
             Log::info("Se ha renombrado con rename($source, $destination)");
+
             return true;
         }
 
@@ -55,35 +57,38 @@ class RenameHelper
 
         // intento de copiar atómico
         // Fase de copia al destino
-        $nodo = \App\Models\Nodo::create([
+        $nodo = Nodo::create([
             'ubicacion' => StorageItem::fromPath($destination)->location,
-            'oculto' => 1
+            'oculto' => 1,
         ]);
         if ($isFile) {
-            if (!@copy($source, $destination)) {
+            if (! @copy($source, $destination)) {
                 Log::error("Fallo al copiar el archivo: $source");
                 $nodo->forceDelete();
+
                 return false;
             }
         } else {
-            if (!self::copyRecursive($source, $destination, $source)) {
+            if (! self::copyRecursive($source, $destination, $source)) {
                 Log::error("Fallo al copiar la carpeta: $source");
                 self::cleanup($destination);
                 $nodo->forceDelete();
+
                 return false;
             }
         }
 
-
         // Eliminar el original solo después de un commit exitoso
         if ($isFile) {
-            if (!@unlink($source)) {
+            if (! @unlink($source)) {
                 Log::error("Fallo al eliminar el archivo original: $source");
+
                 return false;
             }
         } else {
-            if (!self::cleanup($source)) {
+            if (! self::cleanup($source)) {
                 Log::error("Fallo al eliminar el directorio original: $source");
+
                 return false;
             }
         }
@@ -92,18 +97,20 @@ class RenameHelper
 
         return true;
     }
+
     private static function copyRecursive($source, $destination, $baseSource)
     {
-        Log::info('Copiando ' . $source . ' a ' . $destination);
+        Log::info('Copiando '.$source.' a '.$destination);
 
-         // Verifica si el destino es una subcarpeta del origen
-         if (strpos($destination, $source . DIRECTORY_SEPARATOR) === 0) {
-            Log::error("El destino es una subcarpeta del origen. Operación de copiado no permitida.");
+        // Verifica si el destino es una subcarpeta del origen
+        if (strpos($destination, $source.DIRECTORY_SEPARATOR) === 0) {
+            Log::error('El destino es una subcarpeta del origen. Operación de copiado no permitida.');
+
             return false;
         }
 
-        if (!is_dir($destination)) {
-            if (!mkdir($destination, 0777, true)) {
+        if (! is_dir($destination)) {
+            if (! mkdir($destination, 0777, true)) {
                 return false;
             }
         }
@@ -112,19 +119,21 @@ class RenameHelper
 
         while (($file = readdir($dir)) !== false) {
             if ($file != '.' && $file != '..') {
-                $srcFile = $source . '/' . $file;
-                $destFile = $destination . '/' . $file;
+                $srcFile = $source.'/'.$file;
+                $destFile = $destination.'/'.$file;
 
                 // Solo copiar si el archivo o directorio está dentro del directorio base
                 if (strpos($srcFile, $baseSource) === 0) {
                     if (is_dir($srcFile)) {
-                        if (!self::copyRecursive($srcFile, $destFile, $baseSource)) {
+                        if (! self::copyRecursive($srcFile, $destFile, $baseSource)) {
                             closedir($dir);
+
                             return false;
                         }
                     } else {
-                        if (!copy($srcFile, $destFile)) {
+                        if (! copy($srcFile, $destFile)) {
                             closedir($dir);
+
                             return false;
                         }
                     }
@@ -133,6 +142,7 @@ class RenameHelper
         }
 
         closedir($dir);
+
         return true;
     }
 
@@ -145,8 +155,9 @@ class RenameHelper
         if (is_dir($path)) {
             $files = array_diff(scandir($path), ['.', '..']);
             foreach ($files as $file) {
-                self::cleanup($path . '/' . $file);
+                self::cleanup($path.'/'.$file);
             }
+
             return rmdir($path);
         }
 

@@ -21,8 +21,7 @@ class TestMail extends Mailable
         public $message,
         public ?string $url = null,
         public $attachment = null
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -52,7 +51,7 @@ class TestMail extends Mailable
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {
@@ -65,9 +64,8 @@ class TestMail extends Mailable
         ];
     }
 
-
     public function __toString(): string
     {
-        return "TestMail";
+        return 'TestMail';
     }
 }

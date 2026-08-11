@@ -2,7 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -24,36 +29,36 @@ class CheckIfAdmin
      * does not have a '/home' route, use something you've built for your users
      * (again - users, not admins).
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable|null  $user
+     * @param  Authenticatable|null  $user
      * @return bool
      */
     private function checkIfUserIsAdmin($user)
     {
         // Verificar si el usuario tiene algún rol administrativo
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
         // Convertir a instancia de User del modelo específico
-        $userModel = \App\Models\User::find($user->getAuthIdentifier());
+        $userModel = User::find($user->getAuthIdentifier());
 
-        if (!$userModel) {
+        if (! $userModel) {
             return false;
         }
 
         // Verificar roles administrativos usando Spatie Permission
-        if($userModel->hasAnyRole([
+        if ($userModel->hasAnyRole([
             'superadministrador',
             'administrador',
             'secretaria',
             'comunicador',
-            'editor'
+            'editor',
         ])) {
             return true;
         }
 
         // Verificar permisos específicos
-        if($userModel->hasAnyPermission([
+        if ($userModel->hasAnyPermission([
             'administrar usuarios',
             'administrar contenidos',
             'administrar equipos',
@@ -63,7 +68,7 @@ class CheckIfAdmin
             'avanzado',
             'administrar experiencias',
             'administrar legal',
-            'coordinar equipo'
+            'coordinar equipo',
         ])) {
             return true;
         }
@@ -74,35 +79,35 @@ class CheckIfAdmin
     /**
      * Answer to unauthorized access request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     * @param  Request  $request
+     * @return Response|RedirectResponse
      */
     private function respondToUnauthorizedRequest($request)
     {
-    Log::info("CheckIfAdmin middleware: unauthorized access attempt");
+        Log::info('CheckIfAdmin middleware: unauthorized access attempt');
         if ($request->ajax() || $request->wantsJson()) {
             return response(trans('backpack::base.unauthorized'), 401);
         } else {
             // return redirect()->guest(backpack_url('login'));
-            Log::info("CheckIfAdmin middleware: redirecting to admin login");
-            return redirect()->guest('/admin/login?to=' . urlencode($request->fullUrl()));
+            Log::info('CheckIfAdmin middleware: redirecting to admin login');
+
+            return redirect()->guest('/admin/login?to='.urlencode($request->fullUrl()));
         }
     }
 
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         // Determine which guard Backpack should use; fall back to app default ('web')
-    $guardName = config('backpack.base.guard') ?: config('auth.defaults.guard', 'web');
+        $guardName = config('backpack.base.guard') ?: config('auth.defaults.guard', 'web');
 
-    Log::info("CheckIfAdmin middleware auth guard=".$guardName);
-    Log::info("CheckIfAdmin middleware user=".(Auth::guard($guardName)->user() ? Auth::guard($guardName)->user()->name : 'null'));
+        Log::info('CheckIfAdmin middleware auth guard='.$guardName);
+        Log::info('CheckIfAdmin middleware user='.(Auth::guard($guardName)->user() ? Auth::guard($guardName)->user()->name : 'null'));
 
         if (Auth::guard($guardName)->guest()) {
             return $this->respondToUnauthorizedRequest($request);

@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Pagina;
-use Inertia\Inertia;
-use App\Pigmalion\SEO;
-use App\Pigmalion\DiskUtil;
-use Illuminate\Support\Facades\Cache;
-use App\Models\Comunicado;
-use App\Models\Libro;
 use App\Models\Audio;
-use App\Models\User;
-use App\Models\Entrada;
-use App\Models\Meditacion;
-use App\Models\Psicografia;
-use App\Models\Video;
-use App\Models\Galeria;
 use App\Models\Centro;
+use App\Models\Comunicado;
+use App\Models\Entrada;
 use App\Models\Evento;
+use App\Models\Galeria;
+use App\Models\Libro;
+use App\Models\Meditacion;
+use App\Models\Pagina;
+use App\Models\Psicografia;
+use App\Models\User;
+use App\Models\Video;
+use App\Pigmalion\DiskUtil;
 use App\Pigmalion\Markdown;
+use App\Pigmalion\SEO;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Inertia\Inertia;
 
 class PaginasController extends Controller
 {
@@ -28,15 +28,16 @@ class PaginasController extends Controller
     // esto se usa solo par MCP
     public function index(Request $request)
     {
-        $page = $request->input("page", 1);
+        $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
         $query = Pagina::select(['ruta', 'titulo', 'visibilidad', 'updated_at'])
             ->publicada();
 
-        if($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else
+        } else {
             $query->orderBy('ruta');
+        }
 
         $resultados = $query->paginate(PaginasController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
@@ -49,14 +50,14 @@ class PaginasController extends Controller
 
     public function descubre(Request $request)
     {
-        $page = $request->input("page", 1);
+        $page = $request->input('page', 1);
 
         $query = Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion', 'visibilidad', 'updated_at'])
             ->publicada()
             // debe tener el campo texto
-            ->where('descubre', TRUE);
+            ->where('descubre', true);
 
-       $query->orderBy('ruta');
+        $query->orderBy('ruta');
 
         $resultados = $query->paginate(PaginasController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
@@ -72,20 +73,22 @@ class PaginasController extends Controller
         $path = $request->path();
 
         // se añadió este parámetro opcional para hacer posible los test
-        if ($ruta)
+        if ($ruta) {
             $path = $ruta;
+        }
 
         // \Log::info("PaginasController::show $path");
 
         $pagina = Pagina::where('ruta', $path)->first();
 
-        if (!$pagina)
+        if (! $pagina) {
             abort(404);
+        }
 
         $borrador = request()->has('borrador');
         $publicado = $pagina->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$publicado && !$borrador && !$editor) {
+        if (! $publicado && ! $borrador && ! $editor) {
             abort(404); // Item no encontrado o no autorizado
         }
 
@@ -95,11 +98,10 @@ class PaginasController extends Controller
 
         return Inertia::render('Pagina', [
             'pagina' => $pagina,
-            'imagenesInfo' => $imagenesInfo
+            'imagenesInfo' => $imagenesInfo,
         ])
             ->withViewData(SEO::from($pagina));
     }
-
 
     public function filosofia()
     {
@@ -129,7 +131,7 @@ class PaginasController extends Controller
 
         $paginas = Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion', 'orden'])
             ->publicada()
-            ->where('filosofia', TRUE)
+            ->where('filosofia', true)
             ->orderBy('orden')
             ->get();
 
@@ -159,12 +161,12 @@ class PaginasController extends Controller
     public function portada($component = 'Portada')
     {
         $hay_proximos_eventos = Evento::publicado()
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->where('fecha_inicio', '>=', now())
-                  ->orWhere(function($q2) {
-                      $q2->where('fecha_inicio', '<=', now())
-                         ->where('fecha_fin', '>=', now());
-                  });
+                    ->orWhere(function ($q2) {
+                        $q2->where('fecha_inicio', '<=', now())
+                            ->where('fecha_fin', '>=', now());
+                    });
             })
             ->exists();
 
@@ -177,7 +179,7 @@ class PaginasController extends Controller
                 'entradas' => Entrada::publicado()->count(),
                 'meditaciones' => Meditacion::publicado()->count(),
                 'videos' => Video::publicado()->count(),
-                'centros' => Centro::count()
+                'centros' => Centro::count(),
             ];
         });
 
@@ -191,12 +193,12 @@ class PaginasController extends Controller
                 'stats' => $stats,
                 'paginasFilosofia' => Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion'])
                     ->publicada()
-                    ->where('filosofia', TRUE)
+                    ->where('filosofia', true)
                     ->where(function ($q) {
                         $q->where('ruta', 'like', '%rayo%')
-                          ->orWhere('ruta', 'like', '%sociedades%')
-                          ->orWhere('ruta', 'like', '%confederacion%')
-                          ->orWhere('ruta', 'like', '%observacion%');
+                            ->orWhere('ruta', 'like', '%sociedades%')
+                            ->orWhere('ruta', 'like', '%confederacion%')
+                            ->orWhere('ruta', 'like', '%observacion%');
                     })
                     ->orderBy('orden')
                     ->limit(4)
@@ -205,7 +207,7 @@ class PaginasController extends Controller
                     ->latest('published_at')
                     ->limit(24)
                     ->get(['slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
-                    ->map(fn($e) => [
+                    ->map(fn ($e) => [
                         'slug' => $e->slug,
                         'titulo' => $e->titulo,
                         'imagen' => $e->imagen,
@@ -238,7 +240,7 @@ class PaginasController extends Controller
                         'psicografias' => Psicografia::count(),
                         'galerias' => Galeria::count(),
                     ];
-                })
+                }),
             ]
         )
             ->withViewData(SEO::get('biblioteca'));

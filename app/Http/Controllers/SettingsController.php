@@ -2,22 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Setting;
+use Illuminate\Http\Request;
 
 class SettingsController extends Controller
 {
-
     public function index(Request $request)
     {
         $settings = Setting::get();
 
-        foreach ($settings as $idx => $setting)
+        foreach ($settings as $idx => $setting) {
             $settings[$idx]->value = json_decode($setting->value, true);
+        }
 
         return response()->json(['settings' => $settings], 200);
     }
-
 
     public function show($id)
     {

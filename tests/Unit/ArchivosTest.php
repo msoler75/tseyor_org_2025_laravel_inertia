@@ -2,15 +2,12 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
-use App\Pigmalion\StorageItem;
 use App\Pigmalion\RenameHelper;
-use Illuminate\Support\Facades\Log;
+use App\Pigmalion\StorageItem;
+use Tests\TestCase;
 
 class ArchivosTest extends TestCase
 {
-
-
     protected function creaArchivo($ubicacion)
     {
         $s = new StorageItem($ubicacion);
@@ -18,12 +15,12 @@ class ArchivosTest extends TestCase
         // comprueba si existe
         if (file_exists($path)) {
             $this->assertFalse(is_dir($path), "Ya existe $ubicacion pero no es un archivo");
+
             return;
         }
         // crea un archivo vacio
-        file_put_contents($path, "");
+        file_put_contents($path, '');
     }
-
 
     protected function creaCarpeta($ubicacion)
     {
@@ -32,13 +29,12 @@ class ArchivosTest extends TestCase
         // comprueba si existe la carpeta en $path
         if (file_exists($path)) {
             $this->assertTrue(is_dir($path), "Ya existe $ubicacion pero no es una carpeta");
+
             return;
         }
         // crea una carpeta
         mkdir($path, 0777, true);
     }
-
-
 
     private function borrar($ubicacion)
     {
@@ -52,9 +48,10 @@ class ArchivosTest extends TestCase
         if (is_dir($path)) {
             $files = array_diff(scandir($path), ['.', '..']);
             foreach ($files as $file) {
-                $s = StorageItem::fromPath($path . '/' . $file);
+                $s = StorageItem::fromPath($path.'/'.$file);
                 $this->borrar($s->location);
             }
+
             return rmdir($path);
         }
 
@@ -65,16 +62,16 @@ class ArchivosTest extends TestCase
     public function test_rename()
     {
         // preparamos origen
-        $this->creaCarpeta("/archivos/test1");
-        $this->creaCarpeta("/archivos/test1/sub1");
-        $this->creaCarpeta("/archivos/test1/sub2");
-        $this->creaArchivo("/archivos/test1/sub1/archivo1.txt");
+        $this->creaCarpeta('/archivos/test1');
+        $this->creaCarpeta('/archivos/test1/sub1');
+        $this->creaCarpeta('/archivos/test1/sub2');
+        $this->creaArchivo('/archivos/test1/sub1/archivo1.txt');
 
         // preparamos destino
-        $this->borrar("/archivos/test1ren");
+        $this->borrar('/archivos/test1ren');
 
-        $source = (new StorageItem("/archivos/test1"))->path;
-        $destination = (new StorageItem("/archivos/test1ren"))->path;
+        $source = (new StorageItem('/archivos/test1'))->path;
+        $destination = (new StorageItem('/archivos/test1ren'))->path;
 
         $this->assertTrue(file_exists($source));
         $this->assertFalse(file_exists($destination));
@@ -83,11 +80,11 @@ class ArchivosTest extends TestCase
 
         // comprobar si se ha renombrado bien
         // no existe carpeta original
-        $this->assertFalse(file_exists((new StorageItem("/archivos/test1"))->path));
+        $this->assertFalse(file_exists((new StorageItem('/archivos/test1'))->path));
         // sí existe carpeta destino y todos sus contenidos
-        $this->assertTrue(file_exists((new StorageItem("/archivos/test1ren"))->path));
-        $this->assertTrue(file_exists((new StorageItem("/archivos/test1ren/sub1"))->path));
-        $this->assertTrue(file_exists((new StorageItem("/archivos/test1ren/sub2"))->path));
-        $this->assertTrue(file_exists((new StorageItem("/archivos/test1ren/sub1/archivo1.txt"))->path));
+        $this->assertTrue(file_exists((new StorageItem('/archivos/test1ren'))->path));
+        $this->assertTrue(file_exists((new StorageItem('/archivos/test1ren/sub1'))->path));
+        $this->assertTrue(file_exists((new StorageItem('/archivos/test1ren/sub2'))->path));
+        $this->assertTrue(file_exists((new StorageItem('/archivos/test1ren/sub1/archivo1.txt'))->path));
     }
 }

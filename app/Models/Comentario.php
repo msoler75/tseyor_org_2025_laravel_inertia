@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Comentario extends Model
 {
     use CrudTrait;
-    use \Illuminate\Database\Eloquent\SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'url',
         'texto',
         'user_id',
         'respuesta_a',
-        'eliminado'
+        'eliminado',
     ];
-
 
     public function user()
     {
@@ -28,17 +28,17 @@ class Comentario extends Model
 
     public function getShortUrlAttribute()
     {
-        $base = url("");
-        return str_replace($base, "", $this->url);
-    }
+        $base = url('');
 
+        return str_replace($base, '', $this->url);
+    }
 
     public function getAutorAttribute()
     {
         $user = $this->user;
+
         return $user->name;
     }
-
 
     public function getTituloContenidoAttribute()
     {
@@ -47,19 +47,21 @@ class Comentario extends Model
          entonces podemos extraer la primera palabra y será la colección, y la segunda es el id
          */
         try {
-            $base = url("");
-            $url = str_replace($base, "", $this->url);
+            $base = url('');
+            $url = str_replace($base, '', $this->url);
             $parts = preg_split("/\//", $url, -1, PREG_SPLIT_NO_EMPTY);
             $coleccion = $parts[0];
             $id = $parts[1];
 
             $contenido = Contenido::select(['titulo', 'coleccion', 'id_ref'])->where('coleccion', $coleccion)->where('id_ref', $id)->first();
-            if ($contenido)
-                return  $contenido->titulo;
+            if ($contenido) {
+                return $contenido->titulo;
+            }
         } catch (\Exception $e) {
             // Manejo de excepciones
             //   \Log::error('Error al obtener el título del contenido: ' . $e->getMessage());
         }
-        return "<Título no encontrado>";
+
+        return '<Título no encontrado>';
     }
 }

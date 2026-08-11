@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\MCP;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-
+use App\Http\Controllers\ComunicadosController;
 use App\Models\Comunicado;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ComunicadosToolTest extends McpFeatureTestCase
 {
@@ -17,27 +17,26 @@ class ComunicadosToolTest extends McpFeatureTestCase
         $this->assertIsArray($result, 'La respuesta de MCP no es un array');
     }
 
-
     public function test_listar_comunicados()
     {
-        $pp = \App\Http\Controllers\ComunicadosController::$ITEMS_POR_PAGINA;
+        $pp = ComunicadosController::$ITEMS_POR_PAGINA;
         Comunicado::withoutEvents(function () use ($pp) {
-            for ($i = 0; $i < $pp+2; $i++) {
+            for ($i = 0; $i < $pp + 2; $i++) {
                 $comunicado = new Comunicado([
-                    'titulo' => 'Titulo ' . $i,
+                    'titulo' => 'Titulo '.$i,
                     'numero' => $i + 100,
                     'categoria' => 1,
-                    'descripcion' => 'Desc ' . $i,
-                    'texto' => 'Texto ' . $i,
+                    'descripcion' => 'Desc '.$i,
+                    'texto' => 'Texto '.$i,
                     'visibilidad' => 'P',
                     'fecha_comunicado' => now()->toDateString(),
                     'ano' => date('Y'),
-                    'slug' => 'slug-' . $i . '-' . uniqid(),
+                    'slug' => 'slug-'.$i.'-'.uniqid(),
                 ]);
                 $comunicado->save();
             }
         });
-        $this->makeAllSearchable(\App\Models\Comunicado::class);
+        $this->makeAllSearchable(Comunicado::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'comunicado']);
         // Si la respuesta viene anidada en content[0][text], decodificar el JSON
         if (isset($result['content'][0]['text'])) {
@@ -82,7 +81,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
             'visibilidad' => 'P',
             'fecha_comunicado' => now()->toDateString(),
             'ano' => date('Y'),
-            'slug' => 'ver-comunicado-' . uniqid(),
+            'slug' => 'ver-comunicado-'.uniqid(),
         ]);
         $comunicado->save();
         $result = $this->callMcpTool('ver', ['entidad' => 'comunicado', 'id' => $comunicado->slug]);
@@ -112,9 +111,9 @@ class ComunicadosToolTest extends McpFeatureTestCase
                 'visibilidad' => 'P',
                 'fecha_comunicado' => now()->toDateString(),
                 'ano' => date('Y'),
-                'slug' => 'test-comunicado'
+                'slug' => 'test-comunicado',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('comunicados', ['slug' => 'test-comunicado']);
@@ -131,7 +130,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
             'visibilidad' => 'P',
             'fecha_comunicado' => now()->toDateString(),
             'ano' => date('Y'),
-            'slug' => 'actualizar-comunicado-' . uniqid(),
+            'slug' => 'actualizar-comunicado-'.uniqid(),
         ]);
         $comunicado->save();
         $params = [
@@ -148,7 +147,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
                 'ano' => $comunicado->ano,
                 'slug' => $comunicado->slug,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $result = $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('comunicados', [
@@ -168,19 +167,18 @@ class ComunicadosToolTest extends McpFeatureTestCase
             'visibilidad' => 'P',
             'fecha_comunicado' => now()->toDateString(),
             'ano' => date('Y'),
-            'slug' => 'eliminar-comunicado-' . uniqid(),
+            'slug' => 'eliminar-comunicado-'.uniqid(),
         ]);
         $comunicado->save();
         $this->callMcpTool('eliminar', [
             'entidad' => 'comunicado',
             'id' => $comunicado->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ]);
         $existe = Comunicado::withTrashed()->find($comunicado->id);
         $this->assertDatabaseMissing('comunicados', ['id' => $comunicado->id]);
     }
-
 
     // test de campos de comunicado
     public function test_info_comunicado()
@@ -197,7 +195,7 @@ class ComunicadosToolTest extends McpFeatureTestCase
         $this->assertIsArray($comunicado['parametros_listar']);
         $this->assertIsArray($comunicado['campos']);
         $campos_esperados = [
-            'titulo', 'descripcion', 'texto', 'fecha_comunicado', 'categoria', 'ano', 'imagen', 'visibilidad'
+            'titulo', 'descripcion', 'texto', 'fecha_comunicado', 'categoria', 'ano', 'imagen', 'visibilidad',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $comunicado['campos'], "Falta el campo '$campo'");

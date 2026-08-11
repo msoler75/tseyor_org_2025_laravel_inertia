@@ -4,8 +4,8 @@ namespace App\MCP\Tools;
 
 use App\MCP\Base\BaseTool;
 use App\Models\Setting;
-use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ConsultarMantenimientoTool extends BaseTool
 {
@@ -25,7 +25,7 @@ class ConsultarMantenimientoTool extends BaseTool
 
         $setting = Setting::where('name', 'aviso_mantenimiento')->first();
 
-        if (!$setting || !$setting->value || $setting->value === '{}') {
+        if (! $setting || ! $setting->value || $setting->value === '{}') {
             return [
                 'existe' => false,
                 'estado' => 'sin_aviso',
@@ -34,7 +34,7 @@ class ConsultarMantenimientoTool extends BaseTool
         }
 
         $data = json_decode($setting->value, true);
-        if (!$data || empty($data['inicio'])) {
+        if (! $data || empty($data['inicio'])) {
             return [
                 'existe' => false,
                 'estado' => 'sin_aviso',

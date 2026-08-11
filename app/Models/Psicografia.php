@@ -2,36 +2,33 @@
 
 namespace App\Models;
 
-use App\Models\ContenidoBaseModel;
+use App\Traits\EsCategorizable;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Laravel\Scout\Searchable;
-use App\Traits\EsCategorizable;
 
 class Psicografia extends ContenidoBaseModel
 {
     use CrudTrait;
-    use Searchable;
     use EsCategorizable;
+    use Searchable;
 
     // incluye la categoría 'todas'
-    public $incluyeCategoriaTodos = "Todas";
+    public $incluyeCategoriaTodos = 'Todas';
 
     protected $fillable = [
         'titulo',
         'slug',
         'categoria',
         'descripcion',
-        'imagen'
+        'imagen',
     ];
 
-    public function getCarpetaMedios(bool $formatoRutaRelativa= false) : string
+    public function getCarpetaMedios(bool $formatoRutaRelativa = false): string
     {
         return '/almacen/medios/psicografias';
     }
 
-
     // SCOUT
-
 
     /**
      * Get the indexable data array for the model.

@@ -2,22 +2,28 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use App\Models\Comentario;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
  * Class ComentarioCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class ComentarioCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ShowOperation;
+    use UpdateOperation;
     // use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
@@ -28,7 +34,7 @@ class ComentarioCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Comentario::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/comentario');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/comentario');
         CRUD::setEntityNameStrings('comentario', 'comentarios');
     }
 
@@ -36,6 +42,7 @@ class ComentarioCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -45,7 +52,6 @@ class ComentarioCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
         CRUD::column('autor')->type('text');
 
         CRUD::column('shortUrl')->type('text');
@@ -59,6 +65,7 @@ class ComentarioCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
@@ -70,16 +77,16 @@ class ComentarioCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+        CRUD::field('user_id')->type('text')->label('user_id')->attributes(['readonly' => 'readonly']);
 
-        CRUD::field('user_id')->type("text")->label("user_id")->attributes(['readonly' => 'readonly']);
-
-        CRUD::field('autor')->type("text")->attributes(['readonly' => 'readonly'])->before('user_id');
+        CRUD::field('autor')->type('text')->attributes(['readonly' => 'readonly'])->before('user_id');
     }
 
     /**
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()

@@ -2,19 +2,20 @@
 
 namespace App\Notifications;
 
+use App\Models\Equipo;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
-use App\Models\User;
-use App\Models\Equipo;
 
 class DenegadoEquipo extends Notification implements ShouldQueue
 {
     use Queueable;
 
     private Equipo $equipo;
+
     private User $usuario;
 
     /**
@@ -41,19 +42,20 @@ class DenegadoEquipo extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $equipoUrl = url('/equipos/' . $this->equipo->slug);
+        $equipoUrl = url('/equipos/'.$this->equipo->slug);
 
-        $subject = 'Tu solicitud a "' . $this->equipo->nombre . '" ha sido denegada';
+        $subject = 'Tu solicitud a "'.$this->equipo->nombre.'" ha sido denegada';
 
         $linea1 = $subject;
-        Log::channel('notificaciones')->info('[DenegadoEquipo] Enviando a: ' . ($this->usuario->email ?? 'sin email') . ' | Nombre: ' . $this->usuario->name . ' | Equipo: ' . $this->equipo->nombre . ' | Asunto: ' . $subject);
+        Log::channel('notificaciones')->info('[DenegadoEquipo] Enviando a: '.($this->usuario->email ?? 'sin email').' | Nombre: '.$this->usuario->name.' | Equipo: '.$this->equipo->nombre.' | Asunto: '.$subject);
 
         return (new MailMessage)
             ->subject($subject)
-            ->greeting('¡Hola ' . $this->usuario->name . '!')
-            ->line($linea1 . '. Puedes volver a solicitarlo más adelante.')
+            ->greeting('¡Hola '.$this->usuario->name.'!')
+            ->line($linea1.'. Puedes volver a solicitarlo más adelante.')
             ->action('Ver equipo', $equipoUrl);
     }
+
     /**
      * Get the array representation of the notification.
      *
@@ -63,7 +65,7 @@ class DenegadoEquipo extends Notification implements ShouldQueue
     {
         return [
             'equipo' => ['nombre' => $this->equipo->nombre, 'slug' => $this->equipo->slug, 'id' => $this->equipo->id],
-            'user' => ['nombre' => $this->usuario->name, 'id' => $this->usuario->id]
+            'user' => ['nombre' => $this->usuario->name, 'id' => $this->usuario->id],
         ];
     }
 }

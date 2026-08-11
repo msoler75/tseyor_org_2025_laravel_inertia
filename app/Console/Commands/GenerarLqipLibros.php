@@ -4,13 +4,13 @@ namespace App\Console\Commands;
 
 use App\Models\Libro;
 use Illuminate\Console\Command;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
-use App\Pigmalion\StorageItem;
+use Intervention\Image\ImageManager;
 
 class GenerarLqipLibros extends Command
 {
     protected $signature = 'libros:generar-lqip {--force : Resobreescribir LQIPs existentes}';
+
     protected $description = 'Genera imágenes LQIP (base64) para todos los libros y las guarda en BD';
 
     public function handle(): int
@@ -19,17 +19,19 @@ class GenerarLqipLibros extends Command
 
         if ($libros->isEmpty()) {
             $this->info('No hay libros con imagen.');
+
             return 0;
         }
 
-        $manager = new ImageManager(new Driver());
+        $manager = new ImageManager(new Driver);
         $count = 0;
         $skipped = 0;
         $failed = 0;
 
         foreach ($libros as $libro) {
-            if ($libro->imagen_lqip && !$this->option('force')) {
+            if ($libro->imagen_lqip && ! $this->option('force')) {
                 $skipped++;
+
                 continue;
             }
 

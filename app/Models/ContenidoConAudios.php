@@ -8,16 +8,13 @@ namespace App\Models;
 
 class ContenidoConAudios extends ContenidoBaseModel
 {
-
     protected $fillable = [
-        'audios'
+        'audios',
     ];
 
     protected $casts = [
         'audios' => 'array',
     ];
-
-  
 
     /**
      * Nombre de los archivos de audio, por defecto
@@ -27,9 +24,7 @@ class ContenidoConAudios extends ContenidoBaseModel
         $fecha = $this->created_at->format('ymd');
         $audios = $this->audios;
         $multiple = count($audios) > 1;
-        return "$fecha ". ($multiple ? " " . ('a' + $index) : "") . ".mp3";
+
+        return "$fecha ".($multiple ? ' '.('a' + $index) : '').'.mp3';
     }
-
-    
-
 }

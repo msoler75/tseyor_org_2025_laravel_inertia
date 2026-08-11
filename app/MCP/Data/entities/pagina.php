@@ -12,7 +12,7 @@ return [
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
             'texto' => ['type' => 'string', 'description' => 'Contenido en markdown'],
             'palabras_clave' => ['type' => 'string', 'description' => 'Palabras clave SEO'],
-            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador']
-        ]
+            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador'],
+        ],
     ],
 ];

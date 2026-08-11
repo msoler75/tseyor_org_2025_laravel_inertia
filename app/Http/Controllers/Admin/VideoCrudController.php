@@ -2,23 +2,32 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Video;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
+use Illuminate\Validation\Rule;
 use Prologue\Alerts\Facades\Alert;
 
 /**
  * Class VideoCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class VideoCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -27,8 +36,8 @@ class VideoCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Video::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/video');
+        CRUD::setModel(Video::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/video');
         CRUD::setEntityNameStrings('video', 'videos');
     }
 
@@ -36,6 +45,7 @@ class VideoCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -44,17 +54,17 @@ class VideoCrudController extends CrudController
         $this->crud->orderBy('orden', 'ASC');
 
         $this->crud->addColumn([
-            'name'  => 'orden',
+            'name' => 'orden',
             'label' => 'Orden',
-            'type'  => 'number',
+            'type' => 'number',
             'orderable' => true,
-            'searchLogic' => false
+            'searchLogic' => false,
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'titulo',
+            'name' => 'titulo',
             'label' => 'Título',
-            'type'  => 'text'
+            'type' => 'text',
         ]);
 
         $this->crud->addColumn([
@@ -64,12 +74,12 @@ class VideoCrudController extends CrudController
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
+            'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
-            }
+            },
         ]);
 
         // Añadir botones para mover arriba/abajo
@@ -81,14 +91,15 @@ class VideoCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         $this->crud->setValidation([
             'titulo' => 'required|min:2',
-            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('videos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
-            'orden' => 'nullable|integer|min:0'
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('videos', 'slug')->ignore($this->crud->getCurrentEntryId())],
+            'orden' => 'nullable|integer|min:0',
         ]);
         // CRUD::setFromDb(); // set fields from db columns.
 
@@ -96,24 +107,24 @@ class VideoCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+        CRUD::field('titulo')->type('text');
 
-         CRUD::field('titulo')->type('text');
+        CRUD::field('slug')->type('text')->hint('Puedes dejarlo en blanco');
 
-         CRUD::field('slug')->type('text')->hint('Puedes dejarlo en blanco');;
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
 
-         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
+        CRUD::field('enlace')->type('text')->hint('Enlace al vídeo de youtube.');
 
-         CRUD::field('enlace')->type('text')->hint('Enlace al vídeo de youtube.');
+        CRUD::field('orden')->type('number')->hint('Número para ordenar los videos. Valores más bajos aparecen primero.');
 
-         CRUD::field('orden')->type('number')->hint('Número para ordenar los videos. Valores más bajos aparecen primero.');
-
-         CRUD::field('visibilidad')->type('visibilidad');
+        CRUD::field('visibilidad')->type('visibilidad');
     }
 
     /**
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()

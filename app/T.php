@@ -2,7 +2,6 @@
 
 namespace App;
 
-
 /* Es un profiler.
    Forma de uso:
 
@@ -20,14 +19,15 @@ namespace App;
 class T
 {
     protected $startTime;
+
     protected $str;
 
     public static $stats = [];
 
-    public function __construct( $str, $classname = null)
+    public function __construct($str, $classname = null)
     {
         $this->startTime = microtime(true);
-        $this->str = $classname."::".$str;
+        $this->str = $classname.'::'.$str;
     }
 
     public function __destruct()
@@ -41,17 +41,18 @@ class T
         ];
     }
 
-    public static function stats() {
+    public static function stats()
+    {
 
         $methodStats = [];
 
-        $out = "";
+        $out = '';
 
         foreach (self::$stats as $stat) {
             $methodName = $stat['str'];
             $executionTime = $stat['time'];
 
-            if (!isset($methodStats[$methodName])) {
+            if (! isset($methodStats[$methodName])) {
                 $methodStats[$methodName] = [
                     'str' => $methodName,
                     'count' => 1,
@@ -63,16 +64,16 @@ class T
             }
         }
 
-         // Ordenar el arreglo $methodStats de mayor a menor tiempo de ejecución
-    usort($methodStats, function ($a, $b) {
-        return 1000*$b['totalTime'] - 1000*$a['totalTime'];
-    });
+        // Ordenar el arreglo $methodStats de mayor a menor tiempo de ejecución
+        usort($methodStats, function ($a, $b) {
+            return 1000 * $b['totalTime'] - 1000 * $a['totalTime'];
+        });
 
         foreach ($methodStats as $methodName => $stats) {
-            $out .= "Method: ".$stats['str'] . PHP_EOL;
-            $out .="Call count: " . $stats['count'] . PHP_EOL;
-            $out .="Total time: " . $stats['totalTime'] . " milliseconds" . PHP_EOL;
-            $out .=PHP_EOL;
+            $out .= 'Method: '.$stats['str'].PHP_EOL;
+            $out .= 'Call count: '.$stats['count'].PHP_EOL;
+            $out .= 'Total time: '.$stats['totalTime'].' milliseconds'.PHP_EOL;
+            $out .= PHP_EOL;
         }
 
         return $out;

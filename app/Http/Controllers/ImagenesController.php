@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Pigmalion\StorageItem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
-use App\Pigmalion\StorageItem;
-use Illuminate\Support\Facades\Cache;
-
+use Intervention\Image\ImageManager;
 
 class ImagenesController extends Controller
 {
-
     /**
      * Quita la primera barra si es necesario
      */
@@ -27,35 +24,36 @@ class ImagenesController extends Controller
         if (strpos($ruta, 'almacen') === 0) {
             $ruta = substr($ruta, 8);
         }
+
         return $ruta;
     }
-
 
     public function size(Request $request)
     {
         $url = $request->input('url');
-        if (!$url)
+        if (! $url) {
             abort(400, 'Debe especificar la URL de la imagen');
+        }
 
         // obtenemos las dimensiones de la imagen
         $r = self::info([$url]);
 
         $info = $r[$url];
 
-        if(!$info)
-        // retorna respuesta json
-        return response()->json(['error' => 'No se encontró la imagen'], 404)
-        // expira en 1 minuto
-        ->header('Expires', gmdate('D, d M Y H:i:s', time() + 60 ) . ' GMT');
+        if (! $info) {
+            // retorna respuesta json
+            return response()->json(['error' => 'No se encontró la imagen'], 404)
+            // expira en 1 minuto
+                ->header('Expires', gmdate('D, d M Y H:i:s', time() + 60).' GMT');
+        }
 
         // retorna respuesta json
         return response()->json(['width' => $info[0] ?? -1, 'height' => $info[1] ?? -1], 200)
         // cache de un año que no tenga que revalidarse:
             ->header('Cache-Control', 'public, max-age=2592000')
             // expira en 1 año
-            ->header('Expires', gmdate('D, d M Y H:i:s', time() + 31536000) . ' GMT');
+            ->header('Expires', gmdate('D, d M Y H:i:s', time() + 31536000).' GMT');
     }
-
 
     public function descargar(Request $request, $rutaImagen)
     {
@@ -67,7 +65,6 @@ class ImagenesController extends Controller
 
         $params = $request->input();
 
-
         if (empty($params)) {
             return response()->file($imageFullPath, ['Content-Type' => $mime]);
         }
@@ -75,15 +72,15 @@ class ImagenesController extends Controller
         // formato y calidad solicitados (si no vienen, webp por defecto, pero png si original es png)
         $originalFormat = strtolower(pathinfo($imageFullPath, PATHINFO_EXTENSION));
         $defaultFormat = ($originalFormat === 'png') ? 'png' : 'webp';
-        $formatRequested = $params["fmt"] ?? $defaultFormat;
-        $quality = (int) ($params["q"] ?? 70);
+        $formatRequested = $params['fmt'] ?? $defaultFormat;
+        $quality = (int) ($params['q'] ?? 70);
 
         // decide si el entorno puede generar WebP
         $gdSupportsWebp = false;
         if (extension_loaded('gd')) {
             try {
                 $gdInfo = gd_info();
-                $gdSupportsWebp = !empty($gdInfo['WebP']) || !empty($gdInfo['webp']);
+                $gdSupportsWebp = ! empty($gdInfo['WebP']) || ! empty($gdInfo['webp']);
             } catch (\Throwable $e) {
                 // falla la comprobación, asumimos false
                 $gdSupportsWebp = function_exists('imagecreatefromwebp');
@@ -94,15 +91,15 @@ class ImagenesController extends Controller
 
         // Si el cliente pide webp pero el entorno no lo soporta, caer a jpeg o png según original
         $format = $formatRequested;
-        if ($formatRequested === 'webp' && !$gdSupportsWebp && !$imagickAvailable) {
+        if ($formatRequested === 'webp' && ! $gdSupportsWebp && ! $imagickAvailable) {
             // No podemos producir webp, fallback a png si original es png, sino jpeg
             $format = ($originalFormat === 'png') ? 'png' : 'jpg';
         }
 
-       // create cache path (usar el formato final)
+        // create cache path (usar el formato final)
         $cachePath = 'framework/image_cache/';
-        $cacheFilename = md5($imageFullPath . serialize($params)) . '.' . $format;
-        $cacheFilePath = $cachePath . $cacheFilename;
+        $cacheFilename = md5($imageFullPath.serialize($params)).'.'.$format;
+        $cacheFilePath = $cachePath.$cacheFilename;
         $cacheFullPath = storage_path($cacheFilePath);
 
         // check if image exists in cache
@@ -119,18 +116,18 @@ class ImagenesController extends Controller
                 } else {
                     $cachedMime = 'image/jpeg';
                 }
+
                 return response()->file($cacheFullPath, ['Content-Type' => $cachedMime]);
             }
         }
 
         // create image manager using GD driver (consistent with previous code)
-        $manager = new ImageManager(new Driver());
+        $manager = new ImageManager(new Driver);
 
         // read image from file system
         $image = $manager->read($imageFullPath);
 
-        if(count($params))
-        {
+        if (count($params)) {
             ini_set('memory_limit', '256M');
             // Apply image transformations
             $this->transformarImagen($image, $params);
@@ -145,12 +142,14 @@ class ImagenesController extends Controller
             // jpg/ jpeg
             $mime = 'image/jpeg';
             // Normalizar extensión jpg -> jpeg si es necesario
-            if ($format === 'jpg') $format = 'jpeg';
+            if ($format === 'jpg') {
+                $format = 'jpeg';
+            }
         }
 
         // create the cache folder if it doesn't exist
         $folder = dirname($cacheFullPath);
-        if (!File::exists($folder)) {
+        if (! File::exists($folder)) {
             File::makeDirectory($folder, 0777, true, true);
         }
 
@@ -158,16 +157,11 @@ class ImagenesController extends Controller
         // IMPORTANT: usar named argument 'quality:' — Intervention Image v3 filtra
         // opciones por nombre con ARRAY_FILTER_USE_KEY. Con argumentos posicionales
         // las claves son 0,1 y no coinciden con 'quality','strip' → se descartan.
-        \Illuminate\Support\Facades\Log::info("ImagenesController: saving format=$format quality=$quality path=$cacheFilename");
+        Log::info("ImagenesController: saving format=$format quality=$quality path=$cacheFilename");
         $image->save($cacheFullPath, quality: $quality);
 
         return response()->file($cacheFullPath, ['Content-Type' => $mime]);
     }
-
-
-
-
-
 
     private function transformarImagen($image, array $params)
     {
@@ -177,7 +171,6 @@ class ImagenesController extends Controller
         // Obtener dimensiones actuales de la imagen
         $currentWidth = $image->width();
         $currentHeight = $image->height();
-
 
         // Variables para almacenar las dimensiones deseadas
         $width = $validatedParams['w'];
@@ -189,19 +182,30 @@ class ImagenesController extends Controller
         $crop = array_key_exists('crop', $params);
         $contain = array_key_exists('contain', $params);
 
-
         // Si se especifica 'cover' y dimensiones están definidas
         if ($cover && ($width || $height)) {
-            if ($width == null) $width = $currentWidth;
-            if ($height == null) $height = $currentHeight;
+            if ($width == null) {
+                $width = $currentWidth;
+            }
+            if ($height == null) {
+                $height = $currentHeight;
+            }
             $image->cover($width, $height);
-        } else if ($crop && ($width || $height)) {
-            if ($width == null) $width = $currentWidth;
-            if ($height == null) $height = $currentHeight;
+        } elseif ($crop && ($width || $height)) {
+            if ($width == null) {
+                $width = $currentWidth;
+            }
+            if ($height == null) {
+                $height = $currentHeight;
+            }
             $image->crop($width, $height);
-        } else   if ($contain && ($width || $height)) {
-            if ($width == null) $width = $currentWidth;
-            if ($height == null) $height = $currentHeight;
+        } elseif ($contain && ($width || $height)) {
+            if ($width == null) {
+                $width = $currentWidth;
+            }
+            if ($height == null) {
+                $height = $currentHeight;
+            }
             $image->contain($width, $height);
         } else {
             // Redimensionar manteniendo el aspect ratio sin 'cover'
@@ -252,19 +256,20 @@ class ImagenesController extends Controller
                 $value = $params[$key];
 
                 // "auto" se trata como null
-                if ($value === "auto") {
+                if ($value === 'auto') {
                     $validated[$key] = null;
+
                     continue;
                 }
 
                 if ($key === 'sharp') {
-                    if (is_numeric($value) && (int)$value >= 0 && (int)$value <= 100) {
-                        $validated[$key] = (int)$value;
+                    if (is_numeric($value) && (int) $value >= 0 && (int) $value <= 100) {
+                        $validated[$key] = (int) $value;
                     } else {
                         Log::warning("Parámetro de imagen inválido ignorado: {$key}={$value}");
                     }
-                } else if (is_numeric($value) && (int)$value > 0) {
-                    $validated[$key] = (int)$value;
+                } elseif (is_numeric($value) && (int) $value > 0) {
+                    $validated[$key] = (int) $value;
                 } else {
                     Log::warning("Parámetro de imagen inválido ignorado: {$key}={$value}");
                 }
@@ -274,24 +279,23 @@ class ImagenesController extends Controller
         return $validated;
     }
 
-
     public function mockupLibro($rutaImagen)
     {
         $rutaImagen = urldecode($rutaImagen);
         // Generar una clave única para el caché basada en la ruta de la imagen
-        $cacheKey = 'mockup_libro_' . md5($rutaImagen);
+        $cacheKey = 'mockup_libro_'.md5($rutaImagen);
 
         // Intentar recuperar la imagen del caché
         $mockupPath = Cache::remember($cacheKey, now()->addDays(365), function () use ($rutaImagen) {
-            $fondoPath = storage_path("app/public/medios/mockups/seo-libros-bg.jpg");
+            $fondoPath = storage_path('app/public/medios/mockups/seo-libros-bg.jpg');
             $sti = new StorageItem($rutaImagen);
             $libroImagenPath = $sti->path;
 
-            $manager = new ImageManager(new Driver());
+            $manager = new ImageManager(new Driver);
 
             // Crear las instancias de Image
             $fondo = $manager->read($fondoPath);
-            $libro =  $manager->read($libroImagenPath);
+            $libro = $manager->read($libroImagenPath);
 
             // Calcular las dimensiones para la portada del libro
             $altoPortada = $fondo->height() * 0.9;    // 90% del alto del fondo
@@ -308,7 +312,7 @@ class ImagenesController extends Controller
             $fondo = $fondo->place($libro, 'top-left', $posX, $posY);
 
             // Generar un nombre único para el archivo de salida
-            $outputPath = storage_path('app/public/mockups/' . md5($rutaImagen) . '.jpg');
+            $outputPath = storage_path('app/public/mockups/'.md5($rutaImagen).'.jpg');
 
             // Asegurar que el directorio existe
             File::makeDirectory(dirname($outputPath), 0755, true, true);
@@ -324,21 +328,20 @@ class ImagenesController extends Controller
         return response()->file($mockupPath);
     }
 
-
     // devuelve la información de las dimensiones de un array de imágenes
     // usaremos doble cache: una cache individual para cada imagen, y una cache para cada grupo de imágenes
 
     // info para una imagen dada una url
     private static function info1(string $url)
     {
-        $cache_key = "imagen_info_".$url;
+        $cache_key = 'imagen_info_'.$url;
 
         return Cache::remember($cache_key, now()->addDays(365), function () use ($url) {
             $sti = new StorageItem($url);
             $fullpath = $sti->path;
 
             // Verificar si el archivo existe
-            if (!file_exists($fullpath)) {
+            if (! file_exists($fullpath)) {
                 return false;
             }
 
@@ -350,6 +353,7 @@ class ImagenesController extends Controller
 
             // Para otros formatos, usar getimagesize
             $info = @getimagesize($fullpath);
+
             return $info;
         });
     }
@@ -360,13 +364,13 @@ class ImagenesController extends Controller
     private static function getSvgDimensions(string $filePath)
     {
         $svgContent = file_get_contents($filePath);
-        if (!$svgContent) {
+        if (! $svgContent) {
             return false;
         }
 
         // Crear un objeto SimpleXMLElement
         $xml = simplexml_load_string($svgContent);
-        if (!$xml) {
+        if (! $xml) {
             return false;
         }
 
@@ -375,18 +379,18 @@ class ImagenesController extends Controller
 
         // Intentar obtener width y height de los atributos
         if (isset($xml['width'])) {
-            $width = self::parseNumericValue((string)$xml['width']);
+            $width = self::parseNumericValue((string) $xml['width']);
         }
         if (isset($xml['height'])) {
-            $height = self::parseNumericValue((string)$xml['height']);
+            $height = self::parseNumericValue((string) $xml['height']);
         }
 
         // Si no tenemos dimensiones, intentar obtenerlas del viewBox
         if (($width === null || $height === null) && isset($xml['viewBox'])) {
-            $viewBox = explode(' ', (string)$xml['viewBox']);
+            $viewBox = explode(' ', (string) $xml['viewBox']);
             if (count($viewBox) >= 4) {
-                $width = $width ?? (float)$viewBox[2];
-                $height = $height ?? (float)$viewBox[3];
+                $width = $width ?? (float) $viewBox[2];
+                $height = $height ?? (float) $viewBox[3];
             }
         }
 
@@ -398,13 +402,13 @@ class ImagenesController extends Controller
 
         // Retornar en el mismo formato que getimagesize
         return [
-            0 => (int)$width,
-            1 => (int)$height,
+            0 => (int) $width,
+            1 => (int) $height,
             2 => IMAGETYPE_UNKNOWN, // SVG no tiene un tipo específico en getimagesize
             3 => "width=\"{$width}\" height=\"{$height}\"",
             'mime' => 'image/svg+xml',
             'channels' => null,
-            'bits' => null
+            'bits' => null,
         ];
     }
 
@@ -415,24 +419,30 @@ class ImagenesController extends Controller
     {
         // Remover unidades comunes y convertir a número
         $numericValue = preg_replace('/[^0-9.]/', '', $value);
-        return $numericValue !== '' ? (float)$numericValue : null;
+
+        return $numericValue !== '' ? (float) $numericValue : null;
     }
 
     public static function info(array $imagenes)
     {
-        if (count($imagenes) == 0) return [];
-        if (count($imagenes) == 1) return [$imagenes[0] => self::info1($imagenes[0])];
+        if (count($imagenes) == 0) {
+            return [];
+        }
+        if (count($imagenes) == 1) {
+            return [$imagenes[0] => self::info1($imagenes[0])];
+        }
 
         $group_id = md5(json_encode($imagenes));
-        $cache_key = "imagenes_info_group_" . $group_id;
+        $cache_key = 'imagenes_info_group_'.$group_id;
 
         return Cache::remember($cache_key, now()->addDays(365), function () use ($imagenes) {
 
             $r = [];
             foreach ($imagenes as $url) {
                 $info = ImagenesController::info1($url);
-                if ($info)
+                if ($info) {
                     $r[$url] = $info;
+                }
             }
 
             return $r;

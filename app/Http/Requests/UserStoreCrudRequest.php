@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\UniqueUserName;
+use Illuminate\Foundation\Http\FormRequest;
 
 class UserStoreCrudRequest extends FormRequest
 {
@@ -26,8 +26,8 @@ class UserStoreCrudRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'     => ['required', new UniqueUserName],
-            'email'    => 'required|unique:'.config('permission.table_names.users', 'users').',email',
+            'name' => ['required', new UniqueUserName],
+            'email' => 'required|unique:'.config('permission.table_names.users', 'users').',email',
             'password' => 'required|confirmed',
         ];
     }

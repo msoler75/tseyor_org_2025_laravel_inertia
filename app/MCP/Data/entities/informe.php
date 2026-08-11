@@ -8,32 +8,32 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los informes. Ejemplo: "Finanzas"'
+                'description' => 'Texto a buscar en los informes. Ejemplo: "Finanzas"',
             ],
             [
                 'name' => 'equipo',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar informes por ID o slug de equipo. Ejemplo: 2'
+                'description' => 'Filtrar informes por ID o slug de equipo. Ejemplo: 2',
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de informe. Ejemplo: "Anual"'
+                'description' => 'Filtrar por categoría de informe. Ejemplo: "Anual"',
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023'
+                'description' => 'Filtrar por año. Ejemplo: 2023',
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia"'
-            ]
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia"',
+            ],
         ],
         'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del informe'],
@@ -43,7 +43,7 @@ return [
             'texto' => ['type' => 'string', 'description' => 'Contenido en markdown'],
             'audios' => ['type' => 'array', 'description' => 'Lista de archivos de audio asociados'],
             'archivos' => ['type' => 'array', 'description' => 'Lista de archivos adjuntos'],
-            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador']
-        ]
+            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador'],
+        ],
     ],
 ];

@@ -6,7 +6,6 @@ use App\Models\Comunicado;
 use App\Pigmalion\ImageHasher;
 use App\Pigmalion\Markdown;
 use App\Pigmalion\StorageItem;
-use App\Services\ImageDeduplicationService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -33,8 +32,11 @@ class DeduplicarImagenesComunicados extends Command
     protected array $guideCanonicals = [];
 
     protected float $colorThreshold;
+
     protected float $guideThreshold;
+
     protected int $dhashThreshold;
+
     protected bool $dryRun = false;
 
     protected array $stats = [
@@ -72,6 +74,7 @@ class DeduplicarImagenesComunicados extends Command
 
         if (empty($this->canonicals)) {
             $this->error('No se encontraron imágenes canónicas.');
+
             return self::FAILURE;
         }
 
@@ -103,7 +106,7 @@ class DeduplicarImagenesComunicados extends Command
         if ($logoDir->directoryExists()) {
             foreach ($logoDir->files() as $fp) {
                 $fn = basename($fp);
-                if (preg_match('/^sello/i', $fn) && !preg_match('/\.svg$/i', $fn)) {
+                if (preg_match('/^sello/i', $fn) && ! preg_match('/\.svg$/i', $fn)) {
                     $sti = new StorageItem($fp);
                     $hash = ImageHasher::hash($sti->path);
                     if ($hash) {
@@ -203,7 +206,7 @@ class DeduplicarImagenesComunicados extends Command
 
         $allPaths = array_unique(array_merge(
             Markdown::images($texto),
-            !empty($imagenField) ? [$imagenField] : []
+            ! empty($imagenField) ? [$imagenField] : []
         ));
 
         $localPaths = [];
@@ -229,7 +232,7 @@ class DeduplicarImagenesComunicados extends Command
             }
 
             $sti = new StorageItem($imgPath);
-            if (!$sti->exists()) {
+            if (! $sti->exists()) {
                 continue;
             }
 
@@ -300,6 +303,7 @@ class DeduplicarImagenesComunicados extends Command
 
         if ($this->dryRun) {
             $this->stats['eliminados'] += count($changes);
+
             return;
         }
 
@@ -322,7 +326,7 @@ class DeduplicarImagenesComunicados extends Command
         }
 
         if ($nuevoTexto !== $texto || $nuevaImagen !== $imagenField) {
-            \Illuminate\Support\Facades\DB::table('comunicados')
+            DB::table('comunicados')
                 ->where('id', $comunicado->id)
                 ->update([
                     'texto' => $nuevoTexto,
@@ -365,13 +369,14 @@ class DeduplicarImagenesComunicados extends Command
     /**
      * Three-pass matching.
      *
-     * @param array{0:int,1:int}|null $attrDims [w,h] from {width=,height=} attributes
+     * @param  array{0:int,1:int}|null  $attrDims  [w,h] from {width=,height=} attributes
      */
     protected function matchImage(string $imagePath, string $logicalPath, array $firstPageSet, ?array $attrDims = null): ?array
     {
         $dhash = ImageHasher::findBestMatch($imagePath, $this->canonicals, $this->dhashThreshold);
         if ($dhash !== null) {
             $this->stats['dhash']++;
+
             return $dhash;
         }
 
@@ -382,15 +387,16 @@ class DeduplicarImagenesComunicados extends Command
 
         [$w, $h] = $dims;
 
-        if (isset($firstPageSet[$logicalPath]) && !empty($this->logoCanonicals)) {
+        if (isset($firstPageSet[$logicalPath]) && ! empty($this->logoCanonicals)) {
             $logo = ImageHasher::findBestColorMatch($imagePath, $this->logoCanonicals, $this->colorThreshold);
             if ($logo !== null) {
                 $this->stats['color_logo']++;
+
                 return $logo;
             }
         }
 
-        if (!empty($this->guideCanonicals)) {
+        if (! empty($this->guideCanonicals)) {
             $candidates = [];
             foreach ($this->guideCanonicals as $gc) {
                 if (ImageHasher::similarDimensions($w, $h, $gc['width'], $gc['height'])) {
@@ -398,13 +404,14 @@ class DeduplicarImagenesComunicados extends Command
                 }
             }
 
-            if (!empty($candidates)) {
+            if (! empty($candidates)) {
                 $guia = ImageHasher::findBestColorMatch($imagePath, $candidates, $this->guideThreshold);
                 if ($guia !== null) {
                     $this->stats['color_guia']++;
                     if ($attrDims !== null) {
                         $this->stats['attrs_usados']++;
                     }
+
                     return $guia;
                 }
             }
@@ -421,13 +428,14 @@ class DeduplicarImagenesComunicados extends Command
         foreach (Markdown::images($firstPageText) as $img) {
             $set[$img] = true;
         }
+
         return $set;
     }
 
     /**
      * Extract {width=X,height=Y} attributes from markdown images.
      *
-     * @return array<string, array{0:int,1:int}>  path => [w, h]
+     * @return array<string, array{0:int,1:int}> path => [w, h]
      */
     protected function extractImageAttributes(string $texto): array
     {
@@ -441,7 +449,7 @@ class DeduplicarImagenesComunicados extends Command
         );
 
         foreach ($matches as $m) {
-            $attrs[$m[1]] = [(int)$m[2], (int)$m[3]];
+            $attrs[$m[1]] = [(int) $m[2], (int) $m[3]];
         }
 
         return $attrs;
@@ -451,14 +459,17 @@ class DeduplicarImagenesComunicados extends Command
     {
         if ($tipo === 'guia_con_nombre') {
             $normalized = preg_replace('#/medios/guias/con_nombre/(.*)\.jpg#i', '/medios/guias/$1.jpg', $path);
+
             return strtolower($normalized);
         }
+
         return $path;
     }
 
     protected function replaceMarkdownImage(string $texto, string $oldPath, string $newPath): string
     {
         $escaped = preg_quote($oldPath, '#');
+
         return preg_replace(
             "#!\[([^\]]*)\]\({$escaped}\)(\{[^}]*\})?#",
             "![$1]($newPath)$2",
@@ -474,6 +485,7 @@ class DeduplicarImagenesComunicados extends Command
     {
         [$w, $h] = $dims;
         $escaped = preg_quote($path, '#');
+
         return preg_replace(
             "#!\[([^\]]*)\]\({$escaped}\)(\{[^}]*\})?#",
             "![$1]($path){width=$w,height=$h}",
@@ -497,7 +509,7 @@ class DeduplicarImagenesComunicados extends Command
 
     protected function comunicadoUrl(Comunicado $c): string
     {
-        return url('/comunicados/' . ($c->slug ?: $c->id));
+        return url('/comunicados/'.($c->slug ?: $c->id));
     }
 
     protected function printSummary(): void

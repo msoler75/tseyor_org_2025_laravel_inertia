@@ -6,12 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Preguntas extends Model
 {
-
     protected $fillable = [
         'titulo',
         'slug',
         'descripcion',
-        'texto'
+        'texto',
     ];
-
 }

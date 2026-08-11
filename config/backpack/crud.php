@@ -1,5 +1,10 @@
 <?php
 
+use Backpack\CRUD\app\Library\Uploaders\MultipleFiles;
+use Backpack\CRUD\app\Library\Uploaders\SingleBase64Image;
+use Backpack\CRUD\app\Library\Uploaders\SingleFile;
+use Backpack\CRUD\app\Library\Uploaders\Support\FileNameGenerator;
+
 /**
  * Backpack\CRUD preferences.
  */
@@ -12,7 +17,7 @@ return [
     |-------------------
     */
 
-    'show_translatable_field_icon'     => true,
+    'show_translatable_field_icon' => true,
     'translatable_field_icon_position' => 'right', // left or right
 
     'locales' => [
@@ -392,7 +397,7 @@ return [
         // "es_US" => "Spanish (United States)",
         // "es_UY" => "Spanish (Uruguay)",
         // "es_VE" => "Spanish (Venezuela)",
-         "es" => "Spanish",
+        'es' => 'Spanish',
         // "sw_KE" => "Swahili (Kenya)",
         // "sw_TZ" => "Swahili (Tanzania)",
         // "sw" => "Swahili",
@@ -469,12 +474,12 @@ return [
     // the uploaders for the `withFiles` macro
     'uploaders' => [
         'withFiles' => [
-            'image'           => \Backpack\CRUD\app\Library\Uploaders\SingleBase64Image::class,
-            'upload'          => \Backpack\CRUD\app\Library\Uploaders\SingleFile::class,
-            'upload_multiple' => \Backpack\CRUD\app\Library\Uploaders\MultipleFiles::class,
+            'image' => SingleBase64Image::class,
+            'upload' => SingleFile::class,
+            'upload_multiple' => MultipleFiles::class,
         ],
     ],
 
-    'file_name_generator' => \Backpack\CRUD\app\Library\Uploaders\Support\FileNameGenerator::class,
+    'file_name_generator' => FileNameGenerator::class,
 
 ];

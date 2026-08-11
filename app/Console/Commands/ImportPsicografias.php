@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Imports\PsicografiaImport;
+use Illuminate\Console\Command;
 
 class ImportPsicografias extends Command
 {

@@ -20,7 +20,7 @@ class Invitacion extends Model
         'error',
         'accepted_at',
         'declined_at',
-        'sent_at'
+        'sent_at',
     ];
 
     protected $dates = [

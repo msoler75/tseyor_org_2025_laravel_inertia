@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 
 class Pagina extends ContenidoBaseModel
@@ -25,19 +24,18 @@ class Pagina extends ContenidoBaseModel
         'orden',
         'palabras_clave',
         'imagen',
-        'visibilidad'
+        'visibilidad',
     ];
 
     protected static function booted()
     {
         static::saving(function ($pagina) {
-            if ($pagina->filosofia && !$pagina->atras_ruta) {
+            if ($pagina->filosofia && ! $pagina->atras_ruta) {
                 $pagina->atras_ruta = '/filosofia/temas';
                 $pagina->atras_texto = '← Todos los temas';
             }
         });
     }
-
 
     /**
      * Función heredable para cada modelo
@@ -45,14 +43,11 @@ class Pagina extends ContenidoBaseModel
     public function getTextoContenidoBuscador()
     {
         // incluimos la descripcion breve (SEO) y las palabras clave
-        return rtrim($this->descripcion, "\t\n .") . ". " . $this->palabras_clave;
-        //html_entity_decode(strip_tags($this->palabras_clave));
+        return rtrim($this->descripcion, "\t\n .").'. '.$this->palabras_clave;
+        // html_entity_decode(strip_tags($this->palabras_clave));
     }
 
-
-
-
-     public function getCarpetaMedios(bool $formatoRutaRelativa= false) : string
+    public function getCarpetaMedios(bool $formatoRutaRelativa = false): string
     {
         return '/almacen/medios/paginas';
     }

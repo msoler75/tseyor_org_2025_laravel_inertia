@@ -2,29 +2,36 @@
 
 namespace App\Mail;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Email;
 
 class InscripcionConfirmacionEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     public $nombre;
+
     public $fecha;
+
     public $ciudad;
+
     public $region;
+
     public $pais;
+
     public $email;
+
     public $telefono;
+
     public $comentario;
 
     public function __construct(string $nombre, string $dia, string $mes, string $anyo, string $ciudad, string $region, string $pais, string $email, string $telefono, string $comentario)
     {
         $this->nombre = $nombre;
-        $this->fecha = \Carbon\Carbon::create($anyo, $mes, $dia)->format('d/m/Y');
+        $this->fecha = Carbon::create($anyo, $mes, $dia)->format('d/m/Y');
         $this->ciudad = $ciudad;
         $this->region = $region;
         $this->pais = $pais;
@@ -45,10 +52,9 @@ class InscripcionConfirmacionEmail extends Mailable implements ShouldQueue
                 'pais' => $this->pais,
                 'email' => $this->email,
                 'telefono' => $this->telefono,
-                'comentario' => $this->comentario
+                'comentario' => $this->comentario,
             ]);
     }
-
 
     public function __toString(): string
     {

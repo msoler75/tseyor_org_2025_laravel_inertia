@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Models\Sala;
 use App\Pigmalion\BusquedasHelper;
 use App\Pigmalion\SEO;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class SalasController extends Controller
 {
@@ -19,20 +19,21 @@ class SalasController extends Controller
 
         $query = Sala::select('nombre', 'slug', 'descripcion');
 
-        if($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else
+        } else {
             $query->orderBy('nombre', 'asc');
+        }
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
-                ->appends($request->except('page'));
+            ->appends($request->except('page'));
 
         return Inertia::render('Salas/Index', [
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'busquedaValida' => BusquedasHelper::validarBusqueda($buscar)
+            'busquedaValida' => BusquedasHelper::validarBusqueda($buscar),
         ])
-        ->withViewData(SEO::get('salas'));
+            ->withViewData(SEO::get('salas'));
     }
 
     public function show($id)
@@ -43,13 +44,13 @@ class SalasController extends Controller
             $sala = Sala::where('slug', $id)->firstOrFail();
         }
 
-        if (!$sala) {
+        if (! $sala) {
             abort(404); // Manejo de audio no encontrada
         }
 
         return Inertia::render('Salas/Sala', [
-            'sala' => $sala
+            'sala' => $sala,
         ])
-       ->withViewData(SEO::from($sala));
+            ->withViewData(SEO::from($sala));
     }
 }

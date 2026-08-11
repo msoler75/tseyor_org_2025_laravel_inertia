@@ -18,7 +18,7 @@ return [
             // 'tsy.es',     // Dominio corto oficial
             // 'amor.es',    // Dominio temático
             // 'luz.info',   // Dominio espiritual
-        ]
+        ],
     ],
 
     // Prefijos para diferentes tipos de enlaces

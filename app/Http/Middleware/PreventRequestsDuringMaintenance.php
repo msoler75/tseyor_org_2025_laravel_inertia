@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance as Middleware;
-use Illuminate\Support\Facades\Auth;
 
 class PreventRequestsDuringMaintenance extends Middleware
 {
@@ -15,9 +14,7 @@ class PreventRequestsDuringMaintenance extends Middleware
     protected $except = [
         'admin',
         'admin/*',
-        'almacen/medios/mantenimiento.png'
+        'almacen/medios/mantenimiento.png',
         // Permite acceso a todas las rutas que comiencen con admin/
     ];
-
-
 }

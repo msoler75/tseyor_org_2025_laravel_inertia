@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Email;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Gate;
 
 class EmailsController extends Controller
 {
@@ -17,7 +16,7 @@ class EmailsController extends Controller
 
         $esAdministrador = optional($user)->hasPermissionTo('administrar archivos');
 
-        if (!$esAdministrador) {
+        if (! $esAdministrador) {
             abort(403, 'No tienes permisos');
         }
 
@@ -34,8 +33,7 @@ class EmailsController extends Controller
 
         return Inertia::render('Emails/Index', [
             'listado' => $resultados,
-            'email' => $email
+            'email' => $email,
         ]);
     }
-
 }

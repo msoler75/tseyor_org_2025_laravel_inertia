@@ -6,22 +6,21 @@ use Illuminate\Support\Facades\Process;
 
 class WorkerController
 {
-
-    protected $scriptPath = "";
-
+    protected $scriptPath = '';
 
     public function __construct()
     {
         $this->scriptPath = base_path('bash/');
     }
 
-    private function runDeployCommand($command) {
+    private function runDeployCommand($command)
+    {
         $deploy_user = config('app.deploy_user');
         // Pasar la variable de entorno DEPLOY_USER directamente en el comando
         $result = Process::run("DEPLOY_USER={$deploy_user} {$command}");
+
         return $result;
     }
-
 
     public function checkWorkerStatus()
     {
@@ -31,7 +30,7 @@ class WorkerController
 
             if ($result->successful()) {
                 $output = trim($result->output());
-                if ($output === "0") {
+                if ($output === '0') {
                     return response()->json(['status' => 'stopped']);
                 } else {
                     return response()->json(['status' => 'running', 'pid' => $output]);
@@ -40,14 +39,13 @@ class WorkerController
                 return response()->json([
                     'error' => 'error',
                     'details' => $result->errorOutput(),
-                    'output' => $result->output()
+                    'output' => $result->output(),
                 ], 500);
             }
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
 
     public function startWorker()
     {

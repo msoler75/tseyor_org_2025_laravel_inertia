@@ -1,7 +1,15 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\AuthServiceProvider;
+use App\Providers\EventServiceProvider;
+use App\Providers\FortifyServiceProvider;
+use App\Providers\JetstreamServiceProvider;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
+use RalphJSmit\Laravel\SEO\LaravelSEOServiceProvider;
+use TeamTNT\Scout\TNTSearchScoutServiceProvider;
 
 return [
     /*
@@ -160,20 +168,20 @@ return [
         /*
          * Package Service Providers...
          */
-        RalphJSmit\Laravel\SEO\LaravelSEOServiceProvider::class,
+        LaravelSEOServiceProvider::class,
 
         /*
          * Application Service Providers...
          */
-         App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
+        AppServiceProvider::class,
+        AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         // App\Providers\BaseServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-         App\Providers\FortifyServiceProvider::class,
-         App\Providers\JetstreamServiceProvider::class,
-          TeamTNT\Scout\TNTSearchScoutServiceProvider::class
+        EventServiceProvider::class,
+        RouteServiceProvider::class,
+        FortifyServiceProvider::class,
+        JetstreamServiceProvider::class,
+        TNTSearchScoutServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -192,57 +200,46 @@ return [
         // 'Image' => Intervention\Image\Facades\Image::class
     ])->toArray(),
 
-
-
-
     /**
      * La umask establece los permisos que se deben restar de los permisos predeterminados totales del sistema de archivos
      * para determinar los permisos reales que se aplicarán al nuevo archivo o carpeta.
      * La umask es una configuración en el sistema operativo Unix y Linux que controla los permisos predeterminados
      * que se aplican a los archivos y carpetas recién creados.
      *  */
-    'umask' => "0022",
-
-
+    'umask' => '0022',
 
     /**
      * Invitaciones a los equipos
      */
-    'invitaciones' =>  [
+    'invitaciones' => [
         // 'max_por_hora' => 50, // Número máximo de invitaciones por hora. Este parámetro es global, afecta a todos los equipos.
-                          // Por ejemplo, si son 50 invitaciones, y un equipo A hace 40 invitaciones, en el mismo momento el equipo B solo podrá realizar 10.
+        // Por ejemplo, si son 50 invitaciones, y un equipo A hace 40 invitaciones, en el mismo momento el equipo B solo podrá realizar 10.
         // 'minutos_espera' => 20, // minutos que espera a reintentar el envío si es que superó el límite
         'dias_caducidad' => 30, // al pasar ese tiempo, la invitación caduca
         'mostrar_dias_antiguedad' => 90, // muestras las invitaciones de los últimos 90 días
     ],
 
-
     /**
      * Muular electrónico
      */
-
     'muular_electronico' => [
-        'auth_url' => env('MUULAR_ELECTRONICO_URL') . '/api/auth.php',
-        'saldo_url' => env('MUULAR_ELECTRONICO_URL')  . '/api/saldo.php',
-        'jwt_secret' => env('JWT_SECRET', 'cualquier_clave')
+        'auth_url' => env('MUULAR_ELECTRONICO_URL').'/api/auth.php',
+        'saldo_url' => env('MUULAR_ELECTRONICO_URL').'/api/saldo.php',
+        'jwt_secret' => env('JWT_SECRET', 'cualquier_clave'),
     ],
 
     /**
      * Canva Tseyor
      */
     'tseyor_canva' => [
-        'auth_url' => env('TSEYOR_CANVA_URL', 'undefined_canva_url') . '/auth/login',
-        'jwt_secret' => env('JWT_SECRET', 'cualquier_otra_clave')
+        'auth_url' => env('TSEYOR_CANVA_URL', 'undefined_canva_url').'/auth/login',
+        'jwt_secret' => env('JWT_SECRET', 'cualquier_otra_clave'),
     ],
-
 
     /**
      * Boletines
      */
-
-     'suscripcion' => 'boletin:mensual',
-
-
+    'suscripcion' => 'boletin:mensual',
 
     /**
      * Token de seguridad para despliegues

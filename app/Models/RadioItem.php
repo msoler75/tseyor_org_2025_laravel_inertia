@@ -4,21 +4,23 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 class RadioItem extends Model
 {
-    use \Illuminate\Database\Eloquent\SoftDeletes;
-    use \Venturecraft\Revisionable\RevisionableTrait;
     use CrudTrait;
+    use RevisionableTrait;
+    use SoftDeletes;
 
-    protected $table = "radio";
+    protected $table = 'radio';
 
     protected $fillable = [
         'titulo',
         'url',
         'duracion',
         'categoria',
-        'desactivado'
+        'desactivado',
     ];
 
     // revisionable se aplica a nuevos contenidos
@@ -30,5 +32,4 @@ class RadioItem extends Model
     {
         return basename($this->audio);
     }
-
 }

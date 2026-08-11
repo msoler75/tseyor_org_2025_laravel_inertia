@@ -2,8 +2,8 @@
 
 namespace Tests\Support\Fakes;
 
-use Illuminate\Support\Testing\Fakes\NotificationFake;
 use Exception;
+use Illuminate\Support\Testing\Fakes\NotificationFake;
 
 class NotificationFakeVerbose extends NotificationFake
 {
@@ -12,11 +12,11 @@ class NotificationFakeVerbose extends NotificationFake
         try {
             parent::assertSentTo($notifiable, $notification, $callback);
         } catch (\Throwable $e) {
-            $msg = "[NotificationFakeVerbose] assertSentTo failed";
+            $msg = '[NotificationFakeVerbose] assertSentTo failed';
             if ($context) {
                 $msg .= " | Context: $context";
             }
-            $msg .= "\n" . $e->getMessage();
+            $msg .= "\n".$e->getMessage();
             throw new Exception($msg, $e->getCode(), $e);
         }
     }
@@ -26,11 +26,11 @@ class NotificationFakeVerbose extends NotificationFake
         try {
             parent::assertNotSentTo($notifiable, $notification, $callback);
         } catch (\Throwable $e) {
-            $msg = "[NotificationFakeVerbose] assertNotSentTo failed";
+            $msg = '[NotificationFakeVerbose] assertNotSentTo failed';
             if ($context) {
                 $msg .= " | Context: $context";
             }
-            $msg .= "\n" . $e->getMessage();
+            $msg .= "\n".$e->getMessage();
             throw new Exception($msg, $e->getCode(), $e);
         }
     }
@@ -40,11 +40,11 @@ class NotificationFakeVerbose extends NotificationFake
         try {
             parent::assertSentToTimes($notifiable, $notification, $times);
         } catch (\Throwable $e) {
-            $msg = "[NotificationFakeVerbose] assertSentToTimes failed";
+            $msg = '[NotificationFakeVerbose] assertSentToTimes failed';
             if ($context) {
                 $msg .= " | Context: $context";
             }
-            $msg .= "\n" . $e->getMessage();
+            $msg .= "\n".$e->getMessage();
             throw new Exception($msg, $e->getCode(), $e);
         }
     }
@@ -54,11 +54,11 @@ class NotificationFakeVerbose extends NotificationFake
         try {
             parent::assertNothingSent();
         } catch (\Throwable $e) {
-            $msg = "[NotificationFakeVerbose] assertNothingSent failed";
+            $msg = '[NotificationFakeVerbose] assertNothingSent failed';
             if ($context) {
                 $msg .= " | Context: $context";
             }
-            $msg .= "\n" . $e->getMessage();
+            $msg .= "\n".$e->getMessage();
             throw new Exception($msg, $e->getCode(), $e);
         }
     }

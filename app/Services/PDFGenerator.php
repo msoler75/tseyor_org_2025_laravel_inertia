@@ -1,19 +1,20 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Models\ContenidoBaseModel;
+use App\Pigmalion\Markdown;
 use App\Pigmalion\StorageItem;
-use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
-class PDFGenerator {
-
+class PDFGenerator
+{
     /**
      * Genera el pdf de un contenido
-     * @param ContenidoBaseModel $contenido
-     * @return \Illuminate\Http\Response
+     *
+     * @return Response
      */
     public static function generatePdf(ContenidoBaseModel $contenido, string $vista = 'contenido-pdf')
     {
@@ -26,7 +27,7 @@ class PDFGenerator {
         $headers = [
             'Content-Type' => 'application/pdf',
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Content-Disposition' => 'inline; filename="' . $contenido->pdf_filename  . '"',
+            'Content-Disposition' => 'inline; filename="'.$contenido->pdf_filename.'"',
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ];
@@ -47,47 +48,48 @@ class PDFGenerator {
             $r = $w / $h;
             $h = 250;
             $w = $h * $r;
-            return str_replace("width=" . $match[1] . ",height=" . $match[2], "width=$w,height=$h", $match[0]);
+
+            return str_replace('width='.$match[1].',height='.$match[2], "width=$w,height=$h", $match[0]);
         }, $texto);
 
+        $html = Markdown::toHtml($texto);
 
-        $html = \App\Pigmalion\Markdown::toHtml($texto);
-
-        $startP = strpos($html, "<p");
+        $startP = strpos($html, '<p');
         $previousHasImage = false;
         $previousStartP = 0;
         while ($startP !== false) {
-            $endP = strpos($html, "</p>", $startP);
+            $endP = strpos($html, '</p>', $startP);
             $part = substr($html, $startP, $endP - $startP + 4);
             // echo "($startP, $endP) ".str_replace("<", "&lt;", $part)."<hr>";
-            if (strpos($part, "<img") !== false) {
-                $partReplace = "<p has-image " . substr($part, 2);
+            if (strpos($part, '<img') !== false) {
+                $partReplace = '<p has-image '.substr($part, 2);
                 $html = str_replace($part, $partReplace, $html);
                 $part = $partReplace;
                 $thisHasImage = true;
-            } else
+            } else {
                 $thisHasImage = false;
-
+            }
 
             // aquí comprobamos si este párrafo p, además de tener una imagen, tiene texto <em>
-            if($thisHasImage && preg_match("/<em>(.*)<\/em>/", $part, $matches)) {
+            if ($thisHasImage && preg_match("/<em>(.*)<\/em>/", $part, $matches)) {
                 $nota = $matches[1];
-                preg_match("/<img [^>]+>/", $part, $matches);
+                preg_match('/<img [^>]+>/', $part, $matches);
                 $img = $matches[0];
                 $html = str_replace($part, "<p has-image>$img</p><p image-note>$nota</p>", $html);
                 $thisHasImage = false; // borramos el flag
             }
 
             // genera un element figure con la imagen y el pie de foto
-            else if ($previousHasImage && !$thisHasImage) {
-                $endTag = strpos($part, ">");
+            elseif ($previousHasImage && ! $thisHasImage) {
+                $endTag = strpos($part, '>');
                 $ppart = substr($part, 0, $endTag);
                 if (preg_match('/style=.+text-align:\s*center/', $ppart)) {
                     $bothParts = substr($html, $previousStartP, $endP - $previousStartP + 4);
                     // si termina en < lo quitamos
-                    if(substr($bothParts, -1) === "<")
+                    if (substr($bothParts, -1) === '<') {
                         $bothParts = substr($bothParts, 0, -1);
-                    preg_match("/<img [^>]+>/", $bothParts, $matches);
+                    }
+                    preg_match('/<img [^>]+>/', $bothParts, $matches);
                     $img = $matches[0];
                     preg_match("/<p[^>]*>(.*)<\/p>/", $part, $matches);
                     $nota = $matches[1];
@@ -98,7 +100,7 @@ class PDFGenerator {
 
             $previousHasImage = $thisHasImage;
             $previousStartP = $startP;
-            $startP = strpos($html, "<p", $startP + 1);
+            $startP = strpos($html, '<p', $startP + 1);
         }
 
         // dd($html);
@@ -121,18 +123,19 @@ class PDFGenerator {
                 // si hay error descargando la imagen, reintentamos
 
                 //   codificamos el contenido de la imagen en base64
-                return '<img' . $matches[1] . 'src="data:image/png;base64,' . base64_encode($raw) . '"';
+                return '<img'.$matches[1].'src="data:image/png;base64,'.base64_encode($raw).'"';
             }
 
             $fullpath = realpath((new StorageItem(urldecode($matches[2])))->path);
-            //dd($matches);
+            // dd($matches);
             // $prefix = ""; // "file://";
             // $r = '<img' . $matches[1] . 'src="' . $prefix.$fullpath .'"'; // método 1
             // dd($fullpath);
-            if (!$fullpath) {
+            if (! $fullpath) {
                 return $matches[0];
             }
-            $r = '<img' . $matches[1] . 'src="data:image/png;base64,' . base64_encode(file_get_contents($fullpath)) . '"'; // método 2
+            $r = '<img'.$matches[1].'src="data:image/png;base64,'.base64_encode(file_get_contents($fullpath)).'"'; // método 2
+
             return $r;
         }, $html);
 
@@ -141,7 +144,6 @@ class PDFGenerator {
             'titulo' => $contenido->titulo ?? $contenido->nombre,
             'texto' => $html,
         ]);
-
 
         // guardamos el pdf generado
         StorageItem::ensureDirExists(dirname($pdf_full_path));
@@ -155,6 +157,4 @@ class PDFGenerator {
         // return response($pdf->stream($nombreArchivo), 200, $headers);
         return response()->file($pdf_full_path, $headers);
     }
-
-
 }

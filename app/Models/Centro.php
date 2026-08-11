@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
 use App\Pigmalion\Countries;
 use App\Traits\TieneImagen;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 
 class Centro extends ContenidoBaseModel
 {
     use CrudTrait;
-    use \Illuminate\Database\Eloquent\SoftDeletes;
-    use TieneImagen;
     use Searchable;
+    use SoftDeletes;
+    use TieneImagen;
 
     protected $fillable = [
         'nombre',
@@ -24,10 +24,8 @@ class Centro extends ContenidoBaseModel
         'libros',
         'poblacion',
         'pais',
-        'contacto_id'
+        'contacto_id',
     ];
-
-
 
     public function contacto() // contacto relacionado con este centro
     {
@@ -35,13 +33,9 @@ class Centro extends ContenidoBaseModel
             ->publicado();
     }
 
-
     // ACCESOR
     public function getNombrePaisAttribute()
     {
         return Countries::getCountry($this->pais);
     }
-
-
-
 }

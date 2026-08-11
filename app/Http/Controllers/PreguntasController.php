@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use App\Models\Preguntas;
 use App\Models\Libro;
+use App\Models\Preguntas;
 use App\Pigmalion\SEO;
+use Inertia\Inertia;
 
 class PreguntasController extends Controller
 {
@@ -44,7 +43,7 @@ class PreguntasController extends Controller
 
         return Inertia::render('Preguntas/Index', [
             'secciones' => $secciones,
-            'libro' => $libro
+            'libro' => $libro,
         ])
             ->withViewData(SEO::get('preguntas-frecuentes'));
     }
@@ -61,11 +60,11 @@ class PreguntasController extends Controller
         $file = $preguntas->texto;
 
         // obtener la ruta ./resources/preguntas/{$f}
-        $contenido_html = file_get_contents(base_path('resources/preguntas/' . $file));
+        $contenido_html = file_get_contents(base_path('resources/preguntas/'.$file));
 
         return Inertia::render('Preguntas/PreguntasSeccion', [
             'titulo' => $preguntas->titulo,
-            'texto' => $contenido_html
+            'texto' => $contenido_html,
         ])
             ->withViewData(SEO::from($preguntas));
     }

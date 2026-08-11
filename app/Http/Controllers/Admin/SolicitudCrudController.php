@@ -2,22 +2,29 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Solicitud;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Widget;
 
 /**
  * Class SolicitudCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class SolicitudCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -26,8 +33,8 @@ class SolicitudCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Solicitud::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/solicitud');
+        CRUD::setModel(Solicitud::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/solicitud');
         CRUD::setEntityNameStrings('solicitud', 'solicitudes');
     }
 
@@ -35,6 +42,7 @@ class SolicitudCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -52,23 +60,25 @@ class SolicitudCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
-         $this->crud->addColumn([
+        $this->crud->addColumn([
             'name' => 'created_at',
             'label' => 'Realizada',
-            'orderable'   => true,
+            'orderable' => true,
         ]);
 
-         $this->crud->addColumn([
+        $this->crud->addColumn([
             'name' => 'NombreUsuario',
             'label' => 'Usuario',
-            'orderable'   => true,
+            'orderable' => true,
             'type' => 'closure',
             'function' => function ($entry) {
                 $user = $entry->usuario;
-                if (!$user) return '-';
+                if (! $user) {
+                    return '-';
+                }
                 $slug = $user->slug ?: $user->id;
-                return '<a href="/usuarios/' . $slug . '" target="_blank">' . e($user->name) . '</a>';
+
+                return '<a href="/usuarios/'.$slug.'" target="_blank">'.e($user->name).'</a>';
             },
             'escaped' => false,
         ]);
@@ -76,12 +86,15 @@ class SolicitudCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'NombreEquipo',
             'label' => 'Equipo',
-            'orderable'   => true,
+            'orderable' => true,
             'type' => 'closure',
             'function' => function ($entry) {
                 $equipo = $entry->equipo;
-                if (!$equipo) return '-';
-                return '<a href="/equipos/' . e($equipo->slug) . '?solicitudes" target="_blank">' . e($equipo->nombre) . '</a>';
+                if (! $equipo) {
+                    return '-';
+                }
+
+                return '<a href="/equipos/'.e($equipo->slug).'?solicitudes" target="_blank">'.e($equipo->nombre).'</a>';
             },
             'escaped' => false,
         ]);
@@ -89,20 +102,19 @@ class SolicitudCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'fecha_aceptacion',
             'label' => 'Aceptado',
-            'type' => 'datetime'
+            'type' => 'datetime',
         ]);
 
         $this->crud->addColumn([
             'name' => 'fecha_denegacion',
             'label' => 'Denegado',
-            'type' => 'datetime'
+            'type' => 'datetime',
         ]);
 
         $this->crud->addColumn([
             'name' => 'NombreCoordinador',
             'label' => 'Coordinador',
         ]);
-
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
 
@@ -114,6 +126,7 @@ class SolicitudCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
@@ -125,17 +138,16 @@ class SolicitudCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+        CRUD::field('user_id')->attributes(['disabled' => 'disabled']);
 
-         CRUD::field('user_id')->attributes(['disabled'=>'disabled']);
-
-
-         CRUD::field('equipo_id')->type('select')->model('App\Models\Equipo');
+        CRUD::field('equipo_id')->type('select')->model('App\Models\Equipo');
     }
 
     /**
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()

@@ -2,22 +2,31 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Sala;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
+use Illuminate\Validation\Rule;
 
 /**
  * Class SalaCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class SalaCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -26,8 +35,8 @@ class SalaCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Sala::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/sala');
+        CRUD::setModel(Sala::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/sala');
         CRUD::setEntityNameStrings('sala', 'salas');
     }
 
@@ -35,14 +44,15 @@ class SalaCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
     {
         $this->crud->addColumn([
-            'name'  => 'nombre',
+            'name' => 'nombre',
             'label' => 'Nombre',
-            'type'  => 'text'
+            'type' => 'text',
         ]);
 
         $this->crud->addColumn([
@@ -59,13 +69,14 @@ class SalaCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         $this->crud->setValidation([
             'nombre' => 'required',
-            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('salas', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('salas', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'enlace' => 'required',
         ]);
         CRUD::setFromDb(); // set fields from db columns.
@@ -74,23 +85,22 @@ class SalaCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+        CRUD::field('enlace')->type('url');
 
-         CRUD::field('enlace')->type('url');
-
-         CRUD::field('slug')->hint('Puedes dejarlo en blanco');
+        CRUD::field('slug')->hint('Puedes dejarlo en blanco');
     }
 
     /**
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
     }
-
 
     public function show($id)
     {

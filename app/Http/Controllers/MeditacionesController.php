@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
-use Illuminate\Http\Request;
 use App\Models\Meditacion;
-use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
+use App\Pigmalion\SEO;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class MeditacionesController extends Controller
 {
     public static $ITEMS_POR_PAGINA = 10;
+
     //
     public function index(Request $request)
     {
@@ -18,39 +19,39 @@ class MeditacionesController extends Controller
         $categoria = $request->input('categoria');
         $page = $request->input('page', 1);
 
-                $query = Meditacion::withFavorito()
+        $query = Meditacion::withFavorito()
             ->publicada();
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else if ($categoria=='_') // todos por orden alfabético
+        } elseif ($categoria == '_') { // todos por orden alfabético
             $query->orderByRaw('LOWER(titulo)');
-        else if (strcasecmp($categoria, 'favoritos') === 0)
+        } elseif (strcasecmp($categoria, 'favoritos') === 0) {
             $query->whereNotNull('favoritos.id');
-        else if($categoria)
+        } elseif ($categoria) {
             $query->where('categoria', $categoria);
-        else
+        } else {
             $query->latest('updated_at');
+        }
 
         $resultados = $query
             ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
 
-        if ($buscar)
+        if ($buscar) {
             BusquedasHelper::formatearResultados($resultados, $buscar);
+        }
 
-        $categorias = (new Meditacion())->getCategorias();
+        $categorias = (new Meditacion)->getCategorias();
 
         return Inertia::render('Meditaciones/Index', [
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'categorias' => $categorias
+            'categorias' => $categorias,
         ])
             ->withViewData(SEO::get('meditaciones'));
     }
-
-
 
     public function show($id)
     {
@@ -61,9 +62,9 @@ class MeditacionesController extends Controller
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $meditacion->visibilidad == 'P';
+        $publicado = $meditacion->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$meditacion || (!$publicado && !$borrador && !$editor)) {
+        if (! $meditacion || (! $publicado && ! $borrador && ! $editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 

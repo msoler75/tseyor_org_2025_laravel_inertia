@@ -2,22 +2,22 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Log;
-use App\Models\User;
 use Illuminate\Notifications\Notification;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 
 class ValidacionCorreo extends Notification implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     public $user;
-    public $verificationUrl;
 
+    public $verificationUrl;
 
     public function __construct(User $user)
     {
@@ -30,20 +30,19 @@ class ValidacionCorreo extends Notification implements ShouldQueue
         );
     }
 
-
-        /**
+    /**
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
     {
-        Log::channel('notificaciones')->info('[ValidacionCorreo] Enviando a: ' . ($this->user->email ?? 'sin email') . ' | Nombre: ' . $this->user->name);
-        return (new MailMessage)
-                    ->subject('Validación de correo')
-                    ->greeting('¡Hola '.$this->user->name.'!')
-                    ->line('Necesitamos que valides tu dirección de correo electrónico.')
-                    ->action('Validar correo', $this->verificationUrl);
-    }
+        Log::channel('notificaciones')->info('[ValidacionCorreo] Enviando a: '.($this->user->email ?? 'sin email').' | Nombre: '.$this->user->name);
 
+        return (new MailMessage)
+            ->subject('Validación de correo')
+            ->greeting('¡Hola '.$this->user->name.'!')
+            ->line('Necesitamos que valides tu dirección de correo electrónico.')
+            ->action('Validar correo', $this->verificationUrl);
+    }
 
     public function via($notifiable)
     {
@@ -51,13 +50,12 @@ class ValidacionCorreo extends Notification implements ShouldQueue
     }
 
     /**
-    * Determine if the notification should be sent.
-    */
-   public function shouldSend(object $notifiable, string $channel): bool
-   {
-       return !$this->user->hasVerifiedEmail();
-   }
-
+     * Determine if the notification should be sent.
+     */
+    public function shouldSend(object $notifiable, string $channel): bool
+    {
+        return ! $this->user->hasVerifiedEmail();
+    }
 
     public function toArray()
     {
@@ -68,7 +66,6 @@ class ValidacionCorreo extends Notification implements ShouldQueue
         ];
     }
 
-
     public function toDatabase()
     {
         return [
@@ -77,7 +74,6 @@ class ValidacionCorreo extends Notification implements ShouldQueue
             'verification_url' => $this->verificationUrl,
         ];
     }
-
 
     public function __toString(): string
     {

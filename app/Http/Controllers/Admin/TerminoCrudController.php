@@ -2,26 +2,36 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Imports\GlosarioImport;
+use App\Models\Termino;
+use App\Traits\CrudContenido;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Widget;
-use App\Imports\GlosarioImport;
+use Backpack\ReviseOperation\ReviseOperation;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Rule;
 
 /**
  * Class TerminCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class TerminoCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
+    use CreateOperation;
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -30,8 +40,8 @@ class TerminoCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Termino::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/termino');
+        CRUD::setModel(Termino::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/termino');
         CRUD::setEntityNameStrings('término', 'términos');
     }
 
@@ -39,6 +49,7 @@ class TerminoCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -50,21 +61,18 @@ class TerminoCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
-
-        //add div row using 'div' widget and make other widgets inside it to be in a row
+        // add div row using 'div' widget and make other widgets inside it to be in a row
         Widget::add()->to('before_content')->type('div')->class('row')->content([
 
-            //widget made using fluent syntax
+            // widget made using fluent syntax
             Widget::make()
                 ->type('card')
                 ->class('card bg-dark text-white mb-1') // optional
                 ->content([
-                    'body' => 'Términos del glosario. No se incluyen términos de Guías Estelares ni de Lugares, como bases o planetas, porque estos van en sus propios tipos de contenidos. Se pueden importar todos los términos del glosario importando el archivo .docx del glosario entero y pulsar en \'Crear desde Word\''
-                ])
-
+                    'body' => 'Términos del glosario. No se incluyen términos de Guías Estelares ni de Lugares, como bases o planetas, porque estos van en sus propios tipos de contenidos. Se pueden importar todos los términos del glosario importando el archivo .docx del glosario entero y pulsar en \'Crear desde Word\'',
+                ]),
 
         ]);
-
 
         CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end ');
     }
@@ -73,14 +81,15 @@ class TerminoCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         $this->crud->setValidation([
             'nombre' => 'required|min:1',
-            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('terminos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
-            'descripcion' => 'required|max:400'
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('terminos', 'slug')->ignore($this->crud->getCurrentEntryId())],
+            'descripcion' => 'required|max:400',
         ]);
         // $this->crud->setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
@@ -89,10 +98,9 @@ class TerminoCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+        $folder = '/medios/terminos';
 
-        $folder = "/medios/terminos";
-
-        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
 
         CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder])->after('descripcion');
 
@@ -103,14 +111,13 @@ class TerminoCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
     }
-
-
 
     public function importCreate()
     {
@@ -119,15 +126,14 @@ class TerminoCrudController extends CrudController
 
             return response()->json([
                 // "result" => "Archivo word copiado. Ahora procesará todos los términos",
-                "redirect" => "/admin/termino/importando/paso1"
+                'redirect' => '/admin/termino/importando/paso1',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                "error" => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
-
 
     public function importando1()
     {
@@ -143,10 +149,12 @@ class TerminoCrudController extends CrudController
             $terminado = GlosarioImport::procesar();
             if ($terminado) {
                 Cache::forget('letras_glosario');
+
                 return "Proceso terminado.<script>setTimeout(()=>{window.location.href='/admin/termino'},3000)</script>";
-            } else
+            } else {
                 return "Procesando términos del glosario...
         <script>setTimeout(()=>{window.location.href='/admin/termino/importando/paso2'},1000)</script>";
+            }
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
@@ -226,10 +234,10 @@ vuestro planeta, que se denomina *Cocoon*. Ahí podréis observar cómo son mis 
         }
     }
 
-
     public function show($id)
     {
-        $termino = \App\Models\Termino::find($id);
+        $termino = Termino::find($id);
+
         return $termino->visibilidad == 'P' ? redirect("/glosario/$id") : redirect("/glosario/$id?borrador");
     }
 }

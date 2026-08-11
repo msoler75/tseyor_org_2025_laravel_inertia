@@ -12,11 +12,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
 Route::group([
-    'namespace'  => 'Backpack\PermissionManager\app\Http\Controllers',
-    'prefix'     => config('backpack.base.route_prefix', 'admin'),
+    'namespace' => 'Backpack\PermissionManager\app\Http\Controllers',
+    'prefix' => config('backpack.base.route_prefix', 'admin'),
     'middleware' => ['web', backpack_middleware()],
 ], function () {
     Route::crud('permission', 'PermissionCrudController');
@@ -25,8 +23,8 @@ Route::group([
 });
 
 Route::group([
-    'namespace'  => 'App\Http\Controllers\Admin',
-    'prefix'     => config('backpack.base.route_prefix', 'admin'),
+    'namespace' => 'App\Http\Controllers\Admin',
+    'prefix' => config('backpack.base.route_prefix', 'admin'),
     'middleware' => ['web', backpack_middleware()],
 ], function () {
     // Route::crud('permission', 'PermissionCrudController');

@@ -15,9 +15,8 @@ class Revision extends Model
     use CrudTrait;
 
     protected $table = 'revisions';
+
     protected $fillable = [''];
-
-
 
     public function user()
     {
@@ -33,25 +32,27 @@ class Revision extends Model
 
     public function getColeccionAttribute()
     {
-        $coleccion = str_replace("App\\Models\\", "", $this->revisionable_type);
+        $coleccion = str_replace('App\\Models\\', '', $this->revisionable_type);
         $coleccion = strtolower($coleccion);
         // si $coleccion termina en "n", añadimos "es", y si no, añadimos "s":
         $coleccion .= substr($coleccion, -1) == 'n' ? 'es' : 's';
+
         return $coleccion;
     }
 
     public function getContenidoUrlAttribute()
     {
-        return '/' . $this->coleccion . "/" . $this->revisionable_id;
+        return '/'.$this->coleccion.'/'.$this->revisionable_id;
     }
-
 
     public function getAutorAttribute()
     {
         $user = $this->user;
-        if ($user)
+        if ($user) {
             return $user->name;
-        return "<sistema>";
+        }
+
+        return '<sistema>';
     }
 
     public function getTituloContenidoAttribute()
@@ -60,31 +61,37 @@ class Revision extends Model
         $modelClass = app()->make($this->revisionable_type);
 
         // si el modelo tiene softdelete
-        if (method_exists($modelClass, 'withTrashed'))
+        if (method_exists($modelClass, 'withTrashed')) {
             // Carga del registro específico con el ID dado
             $contenido = $modelClass::withTrashed()->find($this->revisionable_id);
-        else
-            // Carga del registro específico con el ID dado
+        } else { // Carga del registro específico con el ID dado
             $contenido = $modelClass::find($this->revisionable_id);
+        }
 
-        if ($contenido)
-            return $contenido->titulo ?? $contenido->nombre ?? $contenido->ruta ?? "";
-        return "";
+        if ($contenido) {
+            return $contenido->titulo ?? $contenido->nombre ?? $contenido->ruta ?? '';
+        }
+
+        return '';
     }
 
     public function getOperacionAttribute()
     {
-        if ($this->key == 'created_at')
-            return "🔨 Creado";
-        if ($this->key == 'deleted_at')
-            return "🗑️ Borrado";
-        return "Modificado";
+        if ($this->key == 'created_at') {
+            return '🔨 Creado';
+        }
+        if ($this->key == 'deleted_at') {
+            return '🗑️ Borrado';
+        }
+
+        return 'Modificado';
     }
 
     public function getRevisionUrlAttribute()
     {
-        $coleccion = str_replace("App\\Models\\", "", $this->revisionable_type);
+        $coleccion = str_replace('App\\Models\\', '', $this->revisionable_type);
         $coleccion = strtolower($coleccion);
-        return "/admin/" . $coleccion . "/{$this->revisionable_id}/revise";
+
+        return '/admin/'.$coleccion."/{$this->revisionable_id}/revise";
     }
 }

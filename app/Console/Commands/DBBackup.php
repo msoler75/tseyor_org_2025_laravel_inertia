@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Druidfi\Mysqldump;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class DBBackup extends Command
 {
@@ -31,16 +31,16 @@ class DBBackup extends Command
         $this->info("$this->description");
 
         // donde se guardarán los backups
-        $carpeta = storage_path() ."/backups";
+        $carpeta = storage_path().'/backups';
 
-        $this->info("Creando copia...");
+        $this->info('Creando copia...');
 
         $databaseName = DB::getDatabaseName();
 
         // Obtiene todos los nombres de las tablas de la base de datos
         $config = DB::getConfig();
-        $backupFileName = $carpeta . "/" . $databaseName . '_backup_' . Carbon::now()->timestamp . '.sql';
-        $zipFileName  = $backupFileName . ".zip";
+        $backupFileName = $carpeta.'/'.$databaseName.'_backup_'.Carbon::now()->timestamp.'.sql';
+        $zipFileName = $backupFileName.'.zip';
 
         $url = "mysql:host={$config['host']}:{$config['port']};dbname={$config['database']}";
 
@@ -49,12 +49,12 @@ class DBBackup extends Command
             $dump->start($backupFileName);
 
             // comprimir en zip:
-            $this->info("Comprimiendo...");
+            $this->info('Comprimiendo...');
 
-            $zip = new \ZipArchive();
+            $zip = new \ZipArchive;
             if ($zip->open($zipFileName, \ZipArchive::CREATE) !== true) {
                 $this->info("Backup creado correctamente en el archivo: $backupFileName");
-                $this->error("Error al crear el archivo ZIP.");
+                $this->error('Error al crear el archivo ZIP.');
                 exit;
             }
 
@@ -69,7 +69,7 @@ class DBBackup extends Command
 
             $this->info("Backup creado correctamente en el archivo: $zipFileName");
         } catch (\Exception $e) {
-            $this->error("Error al crear el backup: " . $e->getMessage());
+            $this->error('Error al crear el backup: '.$e->getMessage());
         }
     }
 }

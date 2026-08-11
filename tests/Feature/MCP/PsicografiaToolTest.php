@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Models\Psicografia;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class PsicografiaToolTest extends McpFeatureTestCase
 {
     use DatabaseTransactions;
+
     public function test_info_psicografia()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'psicografia']);
@@ -25,18 +27,18 @@ class PsicografiaToolTest extends McpFeatureTestCase
     public function test_listar_psicografias()
     {
         $pp = 14; // PsicografiasController usa paginate(14)
-        \App\Models\Psicografia::withoutEvents(function () use ($pp) {
+        Psicografia::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 3; $i++) {
-                \App\Models\Psicografia::create([
-                    'titulo' => 'Psicografia ' . $i,
-                    'slug' => 'psicografia-' . $i . '-' . uniqid(),
+                Psicografia::create([
+                    'titulo' => 'Psicografia '.$i,
+                    'slug' => 'psicografia-'.$i.'-'.uniqid(),
                     'categoria' => 'arte',
-                    'descripcion' => 'Desc ' . $i,
-                    'imagen' => '/img/psicografia' . $i . '.jpg',
+                    'descripcion' => 'Desc '.$i,
+                    'imagen' => '/img/psicografia'.$i.'.jpg',
                 ]);
             }
         });
-        $this->makeAllSearchable(\App\Models\Psicografia::class);
+        $this->makeAllSearchable(Psicografia::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'psicografia']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -60,14 +62,14 @@ class PsicografiaToolTest extends McpFeatureTestCase
 
     public function test_ver_psicografia()
     {
-        $psicografia = \App\Models\Psicografia::create([
+        $psicografia = Psicografia::create([
             'titulo' => 'Psicografia Test',
-            'slug' => 'psicografia-test-' . uniqid(),
+            'slug' => 'psicografia-test-'.uniqid(),
             'categoria' => 'arte',
             'descripcion' => 'Desc',
             'imagen' => '/img/psicografia-test.jpg',
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'psicografia', 'slug' => $psicografia->slug]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'psicografia', 'slug' => $psicografia->slug]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('psicografia', $result);
         $this->assertEquals($psicografia->slug, $result['psicografia']['slug'] ?? $result['psicografia']->slug ?? null);
@@ -79,12 +81,12 @@ class PsicografiaToolTest extends McpFeatureTestCase
             'entidad' => 'psicografia',
             'data' => [
                 'titulo' => 'Nueva Psicografia',
-                'slug' => 'nueva-psicografia-' . uniqid(),
+                'slug' => 'nueva-psicografia-'.uniqid(),
                 'categoria' => 'arte',
                 'descripcion' => 'Descripción de prueba',
                 'imagen' => '/img/nueva-psicografia.jpg',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('psicografias', ['slug' => $params['data']['slug']]);
@@ -92,9 +94,9 @@ class PsicografiaToolTest extends McpFeatureTestCase
 
     public function test_editar_psicografia()
     {
-        $psicografia = \App\Models\Psicografia::create([
+        $psicografia = Psicografia::create([
             'titulo' => 'Editar Psicografia',
-            'slug' => 'editar-psicografia-' . uniqid(),
+            'slug' => 'editar-psicografia-'.uniqid(),
             'categoria' => 'arte',
             'descripcion' => 'Desc',
             'imagen' => '/img/editar-psicografia.jpg',
@@ -104,9 +106,9 @@ class PsicografiaToolTest extends McpFeatureTestCase
             'entidad' => 'psicografia',
             'id' => $psicografia->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('psicografias', ['id' => $psicografia->id, 'descripcion' => $nuevaDescripcion]);
@@ -114,9 +116,9 @@ class PsicografiaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_psicografia()
     {
-        $psicografia = \App\Models\Psicografia::create([
+        $psicografia = Psicografia::create([
             'titulo' => 'Eliminar Psicografia',
-            'slug' => 'eliminar-psicografia-' . uniqid(),
+            'slug' => 'eliminar-psicografia-'.uniqid(),
             'categoria' => 'arte',
             'descripcion' => 'Desc',
             'imagen' => '/img/eliminar-psicografia.jpg',
@@ -125,7 +127,7 @@ class PsicografiaToolTest extends McpFeatureTestCase
             'entidad' => 'psicografia',
             'id' => $psicografia->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('psicografias', ['id' => $psicografia->id]);

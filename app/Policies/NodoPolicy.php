@@ -7,7 +7,8 @@ use App\Models\Nodo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
-//use Illuminate\Support\Facades\Cache;
+
+// use Illuminate\Support\Facades\Cache;
 
 /**
  * Esta clase simula los permisos de linux con usuarios y grupos.
@@ -56,10 +57,8 @@ use Illuminate\Support\Facades\Log;
  *
  * For directories, the user can access them, and access details about files in the directory.
  **/
-
 class NodoPolicy
 {
-
     /**
      * funciones básicas para comprobar permisos.
      */
@@ -78,7 +77,6 @@ class NodoPolicy
         return $this->permisoNodo($user, $nodo, 0b001) ? true : $nodo->tieneAcceso($user, 'ejecutar');
     }
 
-
     /**
      * Usa la máscara de bits para saber si hay permisos de lectura para este nodo
      *
@@ -89,7 +87,7 @@ class NodoPolicy
     public function permisoNodo(?User $user, Nodo $nodo, int $bits): bool
     {
         try {
-            //if (!$nodo)
+            // if (!$nodo)
             //  return false;
 
             // Log::info("permisosNodo($bits) : $nodo->permisos");
@@ -102,15 +100,17 @@ class NodoPolicy
             if ($user) {
 
                 // Verificar el permiso del propietario (owner)
-                if ($nodo->user_id && $nodo->user_id === $user->id && ($permisos & ($bits << 6)) !== 0)
+                if ($nodo->user_id && $nodo->user_id === $user->id && ($permisos & ($bits << 6)) !== 0) {
                     return true;
+                }
 
                 // Verificar el permiso del grupo
                 if ($user && $nodo->group_id) {
 
                     // verificar si el permiso está concedido para el grupo
-                    if (($permisos & ($bits << 3)) !== 0 && $user->enGrupo($nodo->group_id))
+                    if (($permisos & ($bits << 3)) !== 0 && $user->enGrupo($nodo->group_id)) {
                         return true;
+                    }
                 }
             }
 
@@ -120,6 +120,7 @@ class NodoPolicy
 
         } catch (\Exception $e) {
             Log::error($e->getMessage(), ['exception' => $e]);
+
             // La ruta no existe o hay un error al obtener los metadatos
             return false;
         }

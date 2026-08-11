@@ -4,27 +4,26 @@ namespace App\Console\Commands;
 
 // Endpoints centralizados en config/deploy.php
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use App\Pigmalion\DeployHelper as Deploy;
 use Exception;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class DeploySSR extends Command
 {
     protected $signature = 'deploy:ssr {--session-token= : Token temporal del dashboard admin para bypass de IP}';
+
     protected $description = 'Comprime los contenidos de la carpeta bootstrap/ssr y los envía por CURL';
 
-
     private const SOURCE_DIR = 'bootstrap/ssr';
+
     private const ZIP_NAME = 'ssr.zip';
-
-
 
     public function handle()
     {
         try {
             $sourcePath = base_path(self::SOURCE_DIR);
-            $zipPath = storage_path('app/' . self::ZIP_NAME);
+            $zipPath = storage_path('app/'.self::ZIP_NAME);
 
             Deploy::validateDirectoryExists($sourcePath);
 
@@ -32,12 +31,12 @@ class DeploySSR extends Command
             $exclusions = ['tseyor-manifest.v2.json'];
 
             if (Deploy::createZipFile($sourcePath, $zipPath, $exclusions)) {
-                $this->info('ZIP creado: ' . basename($zipPath));
+                $this->info('ZIP creado: '.basename($zipPath));
 
                 $extraHeaders = [];
                 $sessionToken = $this->option('session-token');
                 if ($sessionToken) {
-                    $extraHeaders[] = 'X-Deploy-Session-Token: ' . $sessionToken;
+                    $extraHeaders[] = 'X-Deploy-Session-Token: '.$sessionToken;
                 }
 
                 $result = Deploy::sendZipFile(
@@ -50,8 +49,7 @@ class DeploySSR extends Command
                 Deploy::handleResponse($result, $this);
 
                 // File::delete($zipPath);
-            }
-            else {
+            } else {
                 $this->error('Error al crear el ZIP');
             }
 
@@ -59,10 +57,4 @@ class DeploySSR extends Command
             $this->error($e->getMessage());
         }
     }
-
-
-
-
-
-
 }

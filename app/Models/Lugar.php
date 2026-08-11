@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 
 class Lugar extends ContenidoBaseModel
@@ -24,7 +23,7 @@ class Lugar extends ContenidoBaseModel
         'texto',
         'libros',
         'relacionados',
-        'visibilidad'
+        'visibilidad',
     ];
 
     /**
@@ -34,5 +33,4 @@ class Lugar extends ContenidoBaseModel
     {
         return $this->visibilidad == 'P';
     }
-
 }

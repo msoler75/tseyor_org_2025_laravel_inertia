@@ -31,18 +31,17 @@ return [
     ],
 
     'google_maps' => [
-        'apikey' => env('GOOGLE_MAPS_API_KEY')
+        'apikey' => env('GOOGLE_MAPS_API_KEY'),
     ],
 
-
     'word_to_markdown' => [
-        'url' => env('WORD_TO_MD_URL')
+        'url' => env('WORD_TO_MD_URL'),
     ],
 
     'audio_converter' => [
         'url' => env('AUDIO_CONVERTER_URL'),
         'frecuencia' => env('AUDIO_CONVERTER_FRECUENCIA', 22050),
-        'kbps' => env('AUDIO_CONVERTER_KBPS', '24k')
+        'kbps' => env('AUDIO_CONVERTER_KBPS', '24k'),
     ],
 
     'openrouter_key' => env('OPENROUTER_API_KEY', ''),

@@ -204,7 +204,7 @@ return [
 
         'inscripciones' => [
             'driver' => 'single',
-            'path' => storage_path('logs/inscripciones-' . date('Y-m') . '.log'),
+            'path' => storage_path('logs/inscripciones-'.date('Y-m').'.log'),
             'level' => 'info',
         ],
 

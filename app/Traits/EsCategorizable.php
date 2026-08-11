@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Cache;
@@ -12,7 +11,6 @@ use Illuminate\Support\Facades\Log;
  */
 trait EsCategorizable
 {
-
     // si queremos que el modelo sea de tipo simple en las categorías, hay que poner true o false en el modelo
     // protected $categoriaSimple = true;
 
@@ -21,7 +19,6 @@ trait EsCategorizable
 
     // si queremos filtrar categorias, hemos de definir esta función
     // private function incluyeCategoria(array $categoria_nombre_total): bool { return true; }
-
 
     /**
      * Elimina la cache de categorias cuando hay cambios en algun item
@@ -39,7 +36,7 @@ trait EsCategorizable
         });
     }
 
-    function getCampoCategoria()
+    public function getCampoCategoria()
     {
         return $this->campoCategoria ?? 'categoria';
     }
@@ -51,25 +48,27 @@ trait EsCategorizable
     {
         $startTime = microtime(true);
 
-        if ($items)
+        if ($items) {
             return $this->obtenerContadoresCategoriasMultiples($items);
+        }
 
-        $cache_label = $this->getTable() . "_categorias";
+        $cache_label = $this->getTable().'_categorias';
 
         $un_año = 60 * 24 * 365; // tiempo de cache: 1 año
 
         // return Cache::remember($cache_label, $un_año, function () {
         // que nombre del campo para categorizar, que use $campoCategoria, y si no existe, usar 'categoria'
 
-        if (!$this->categoriaSimple) {
+        if (! $this->categoriaSimple) {
             $items = $this->select($this->getCampoCategoria())->get();
             $c = $this->obtenerContadoresCategoriasMultiples($items);
         } else {
             $c = $this->obtenerContadoresCategoriasSimples();
         }
 
-        if ($this->incluyeCategoriaTodos)
+        if ($this->incluyeCategoriaTodos) {
             array_unshift($c, ['nombre' => $this->incluyeCategoriaTodos, 'valor' => '_', 'total' => count($items)]);
+        }
 
         //            return $c;
         // });
@@ -77,9 +76,9 @@ trait EsCategorizable
         $endTime = microtime(true);
         $duration = $endTime - $startTime;
 
-        Log::info("Experiencia::getCategorias: " . $duration . " ms");
+        Log::info('Experiencia::getCategorias: '.$duration.' ms');
 
-        if(method_exists($this, 'incluyeCategoria')) {
+        if (method_exists($this, 'incluyeCategoria')) {
             $c = array_filter($c, function ($cat) {
                 return $this->incluyeCategoria($cat);
             });
@@ -88,11 +87,11 @@ trait EsCategorizable
         return $c;
     }
 
-
     public function obtenerContadoresCategoriasSimples()
     {
         $campo = $this->getCampoCategoria();
-        return $this->selectRaw($campo . ' as nombre, count(*) as total')
+
+        return $this->selectRaw($campo.' as nombre, count(*) as total')
             ->groupBy($campo)
             ->get()->toArray();
     }
@@ -113,10 +112,10 @@ trait EsCategorizable
 
         $campo = $this->getCampoCategoria();
         foreach ($items as $item) {
-            $categoriasItem = explode(',', /*$item->categoria*/ $item[$campo]);
+            $categoriasItem = explode(',', /* $item->categoria */ $item[$campo]);
             foreach ($categoriasItem as $categoria) {
                 $categoria = trim($categoria);
-                if (!empty($categoria)) {
+                if (! empty($categoria)) {
                     if (isset($c[$categoria])) {
                         $c[$categoria]++;
                     } else {
@@ -140,7 +139,7 @@ trait EsCategorizable
      */
     public function clearCategories()
     {
-        $cache_label = $this->getTable() . "_categorias";
+        $cache_label = $this->getTable().'_categorias';
 
         Cache::forget($cache_label);
     }

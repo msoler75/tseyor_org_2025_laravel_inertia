@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 
 class ClearImageCache extends Command
 {
@@ -43,13 +42,14 @@ class ClearImageCache extends Command
             $files = scandir($cachePath);
             foreach ($files as $file) {
                 if ($file !== '.' && $file !== '..') {
-                    unlink($cachePath . '/' . $file);
+                    unlink($cachePath.'/'.$file);
                 }
             }
             $this->info('Image cache cleared successfully.');
         } else {
             $this->info('Image cache directory does not exist.');
         }
+
         return 0;
     }
 }

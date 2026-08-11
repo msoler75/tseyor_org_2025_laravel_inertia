@@ -21,7 +21,7 @@ class AnunciarMantenimientoTool extends BaseTool
 
         $datos = $params['datos'] ?? $params['data'] ?? null;
 
-        if (empty($datos) || !is_array($datos)) {
+        if (empty($datos) || ! is_array($datos)) {
             return [
                 'error' => 'Se requiere el parámetro "datos" con un objeto JSON con los campos del aviso de mantenimiento',
                 'campos_esperados' => [
@@ -55,7 +55,7 @@ class AnunciarMantenimientoTool extends BaseTool
             'duracion_estimada' => $datos['duracion_estimada'] ?? '',
             'url_info' => $datos['url_info'] ?? '',
             'raw_email_text' => $datos['raw_email_text'] ?? '',
-        ], fn($v) => $v !== null && $v !== '');
+        ], fn ($v) => $v !== null && $v !== '');
 
         $setting = Setting::firstOrNew(['name' => 'aviso_mantenimiento']);
         $setting->description = $data['titulo'];

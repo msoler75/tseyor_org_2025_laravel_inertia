@@ -3,11 +3,11 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use App\Rules\UniqueUserName;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
-use App\Rules\UniqueUserName;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {

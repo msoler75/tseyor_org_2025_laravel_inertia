@@ -2,25 +2,34 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use App\Services\WordImport;
 use App\Models\Normativa;
+use App\Services\WordImport;
+use App\Traits\CrudContenido;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
+use Illuminate\Validation\Rule;
 
 /**
  * Class NormativaCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class NormativaCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
+    use CreateOperation;
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -30,7 +39,7 @@ class NormativaCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Normativa::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/normativa');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/normativa');
         CRUD::setEntityNameStrings('normativa', 'normativas');
     }
 
@@ -38,6 +47,7 @@ class NormativaCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -46,22 +56,20 @@ class NormativaCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'id',
             'label' => 'id',
-            'type' => 'number'
+            'type' => 'number',
         ]);
 
         $this->crud->addColumn([
             'name' => 'titulo',
             'label' => 'Título',
-            'type' => 'text'
+            'type' => 'text',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'updated_at',
             'label' => 'Modificado',
             'type' => 'datetime',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'categoria',
@@ -75,7 +83,7 @@ class NormativaCrudController extends CrudController
             'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
-            }
+            },
         ]);
 
         CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
@@ -89,14 +97,15 @@ class NormativaCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         $this->crud->setValidation([
             'titulo' => 'required|min:8',
-            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('normativas', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
-            'descripcion' => 'required|max:400'
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('normativas', 'slug')->ignore($this->crud->getCurrentEntryId())],
+            'descripcion' => 'required|max:400',
         ]);
         // $this->crud->setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
@@ -105,21 +114,20 @@ class NormativaCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
-
         CRUD::field([   // select_from_array
             'name' => 'categoria',
-            'label' => "Categoría",
+            'label' => 'Categoría',
             'type' => 'select_from_array',
-            'options' => ['General'=>'General', 'Muulasterios'=>'Muulasterios', 'Elecciones'=>'Elecciones', 'Otros'=>'Otros'],
+            'options' => ['General' => 'General', 'Muulasterios' => 'Muulasterios', 'Elecciones' => 'Elecciones', 'Otros' => 'Otros'],
             'allows_null' => false,
             'default' => 'General',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
             'wrapper' => [
-                'class' => 'form-group col-md-3'
+                'class' => 'form-group col-md-3',
             ],
         ])->after('slug');
 
-        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
 
         CRUD::field('texto')->type('tiptap_editor');
 
@@ -127,15 +135,16 @@ class NormativaCrudController extends CrudController
 
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
         CRUD::field('published_at')->label('Fecha de aprobación')->type('datetime')->attributes(['step' => 1])->hint('Cuando fue aprobado el documento por primera vez o en la última actualización aprobada')
-        ->wrapper([
-                'class' => 'form-group col-md-3'
-        ]);
+            ->wrapper([
+                'class' => 'form-group col-md-3',
+            ]);
     }
 
     /**
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -143,22 +152,18 @@ class NormativaCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
-
     public function show($id)
     {
         $normativa = Normativa::find($id);
+
         return $normativa->visibilidad == 'P' ? redirect("/normativas/$id") : redirect("/normativas/$id?borrador");
     }
-
-
-
 
     public function importCreate()
     {
         $contenido = Normativa::create([
-            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-            "texto" => ""
+            'titulo' => 'Importado de '.$_FILES['file']['name'].'_'.substr(str_shuffle('0123456789'), 0, 5),
+            'texto' => '',
         ]);
 
         return $this->importUpdate($contenido->id);
@@ -170,7 +175,7 @@ class NormativaCrudController extends CrudController
 
         try {
             // inicializa el importador en base a $_FILES
-            $imported = new WordImport();
+            $imported = new WordImport;
 
             // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
             $imported->copyImagesTo($this->getMediaFolder($contenido), true);
@@ -181,11 +186,11 @@ class NormativaCrudController extends CrudController
             $contenido->save();
 
             return response()->json([
-                "id" => $contenido->id
+                'id' => $contenido->id,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                "error" => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

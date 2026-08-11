@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
-use Illuminate\Http\Request;
 use App\Models\Publicacion;
-use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
+use App\Pigmalion\SEO;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PublicacionesController extends Controller
 {
@@ -21,37 +21,38 @@ class PublicacionesController extends Controller
         $query = Publicacion::withFavorito()
             ->publicada();
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
+        }
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else if ($categoria == '_') // todos por orden alfabético
+        } elseif ($categoria == '_') { // todos por orden alfabético
             $query->orderBy('titulo', 'asc');
-        else if ($categoria)
+        } elseif ($categoria) {
             $query->where('categoria', $categoria);
-        else
+        } else {
             $query->latest('updated_at');
+        }
 
         // devuelve los items recientes segun la busqueda
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, $page)
             ->appends($request->except('page'));
 
-        if ($buscar)
+        if ($buscar) {
             BusquedasHelper::formatearResultados($resultados, $buscar);
+        }
 
-        $categorias = (new Publicacion())->getCategorias();
+        $categorias = (new Publicacion)->getCategorias();
 
         return Inertia::render('Publicaciones/Index', [
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'categorias' => $categorias
+            'categorias' => $categorias,
         ])
             ->withViewData(SEO::get('publicaciones'));
     }
-
-
 
     public function show($id)
     {
@@ -62,9 +63,9 @@ class PublicacionesController extends Controller
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $publicacion->visibilidad == 'P';
+        $publicado = $publicacion->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$publicacion || (!$publicado && !$borrador && !$editor)) {
+        if (! $publicacion || (! $publicado && ! $borrador && ! $editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 

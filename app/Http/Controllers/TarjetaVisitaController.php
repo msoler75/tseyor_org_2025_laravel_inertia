@@ -2,29 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\InstantEmail;
-use Illuminate\Mail\Mailables\Attachment;
 use App\Pigmalion\SEO;
+use Illuminate\Http\Request;
+use Illuminate\Mail\Mailables\Attachment;
+use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
 
 class TarjetaVisitaController extends Controller
 {
-
     public function index()
     {
 
         $user = auth()->user();
 
-        if (!$user)
+        if (! $user) {
             return redirect('/login');
+        }
         // abort(401, 'Acceso no autorizado');
 
-        //mirar si pertenece al grupo "muul"
-        $is_admin = $user->name=='admin';
-        if (!$is_admin &&  !$user->grupos()->where('slug', 'muul')->exists())
+        // mirar si pertenece al grupo "muul"
+        $is_admin = $user->name == 'admin';
+        if (! $is_admin && ! $user->grupos()->where('slug', 'muul')->exists()) {
             abort(403, 'Debes ser Muul para ver esta página');
+        }
 
         return Inertia::render('Muul/TarjetaVisita', [])
             ->withViewData(SEO::get('muul/tarjetavisita'));
@@ -35,8 +36,9 @@ class TarjetaVisitaController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user)
+        if (! $user) {
             abort(401, 'Acceso no autorizado');
+        }
 
         // Validar los datos
         $data = $request->validate([
@@ -48,17 +50,16 @@ class TarjetaVisitaController extends Controller
 
         $destinatario = $data['email_tseyor'];
 
-
         // Adjuntar la imagen al correo con un nombre personalizado
         $imagenPath = $request->file('imagen')->path();
         $nombreImagenOriginal = $request->file('imagen')->getClientOriginalName();
-        $nombreImagenNuevo = 'tarjetaVisita_' . $data['nombre_tseyor'] . '_' . time() . '.' . $request->file('imagen')->getClientOriginalExtension();
+        $nombreImagenNuevo = 'tarjetaVisita_'.$data['nombre_tseyor'].'_'.time().'.'.$request->file('imagen')->getClientOriginalExtension();
 
         Mail::to($destinatario)
             ->bcc('msgp753@gmail.com')
             ->send(
                 new InstantEmail(
-                    "emails.tarjeta-visita",
+                    'emails.tarjeta-visita',
                     [
                         'subject' => 'Tu tarjeta de visita TSEYOR',
                         'nombre' => $data['nombre_tseyor'],
@@ -66,8 +67,8 @@ class TarjetaVisitaController extends Controller
                         'attachments' => [
                             Attachment::fromPath($imagenPath)
                                 ->as($nombreImagenNuevo)
-                                ->withMime($request->file('imagen')->getMimeType())
-                        ]
+                                ->withMime($request->file('imagen')->getMimeType()),
+                        ],
                     ]
                 )
             );
@@ -75,5 +76,4 @@ class TarjetaVisitaController extends Controller
         return redirect()->back()->with('success', 'Se ha enviado correctamente');
 
     }
-
 }

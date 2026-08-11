@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EnlaceCorto;
 use App\Services\EnlaceCortoService;
-use App\Http\Controllers\AnalyticsController;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
-use Jaybizzle\CrawlerDetect\CrawlerDetect;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EnlaceCortoController extends Controller
 {
@@ -35,12 +34,12 @@ class EnlaceCortoController extends Controller
         }*/
 
         // Buscar el enlace en la base de datos para obtener metadatos
-        $enlace = \App\Models\EnlaceCorto::where('prefijo', $prefijo)
+        $enlace = EnlaceCorto::where('prefijo', $prefijo)
             ->where('codigo', $codigo)
             ->where('activo', true)
             ->first();
 
-        if (!$enlace) {
+        if (! $enlace) {
             abort(404, 'Enlace no encontrado o expirado');
         }
 
@@ -58,14 +57,14 @@ class EnlaceCortoController extends Controller
         // Detectar si es un bot de red social que necesita metadatos o modo preview forzado
         if ($this->esRedSocialCompartiendo() || $forcePreview) {
             // Log para debugging
-            \Illuminate\Support\Facades\Log::info('Mostrando preview de enlace corto', [
+            Log::info('Mostrando preview de enlace corto', [
                 'url_corta' => request()->fullUrl(),
                 'url_destino' => $enlace->url_original,
                 'user_agent' => request()->header('User-Agent'),
                 'prefijo' => $prefijo,
                 'codigo' => $codigo,
-                'tiene_titulo' => !empty($enlace->titulo),
-                'tiene_og_imagen' => !empty($enlace->og_imagen),
+                'tiene_titulo' => ! empty($enlace->titulo),
+                'tiene_og_imagen' => ! empty($enlace->og_imagen),
                 'es_bot_social' => $this->esRedSocialCompartiendo(),
                 'preview_forzado' => $forcePreview,
             ]);
@@ -86,7 +85,7 @@ class EnlaceCortoController extends Controller
             $response->header('X-Robots-Tag', 'noindex, nofollow');
 
             // ETag para validación de caché eficiente
-            $etag = md5($enlace->id . $enlace->updated_at);
+            $etag = md5($enlace->id.$enlace->updated_at);
             $response->setEtag($etag);
             $response->setPublic();
             $response->setMaxAge(86400);
@@ -108,8 +107,6 @@ class EnlaceCortoController extends Controller
         return $redirectResponse;
     }
 
-
-
     /**
      * Obtener enlace corto para una URL (crea si no existe)
      * Todo se calcula automáticamente en el backend: prefijo, SEO, etc.
@@ -117,25 +114,25 @@ class EnlaceCortoController extends Controller
     public function obtener(Request $request): JsonResponse
     {
         $request->validate([
-            'url' => 'required|url|max:2000'
+            'url' => 'required|url|max:2000',
         ]);
 
         $url = $request->url;
         $creado = false;
         $fueAcortada = false;
 
-        $enlace = $this->enlaceService->obtenerEnlaceParaUrl($url, $fueAcortada );
+        $enlace = $this->enlaceService->obtenerEnlaceParaUrl($url, $fueAcortada);
 
-        if (!$fueAcortada) {
+        if (! $fueAcortada) {
             // URL no supera el umbral de longitud
             return response()->json([
                 'url_corta' => $url,
                 'fue_acortada' => false,
-                'razon' => 'URL no supera el umbral de longitud'
+                'razon' => 'URL no supera el umbral de longitud',
             ]);
         }
 
-        if (!$enlace) {
+        if (! $enlace) {
             // Error al crear enlace
             return response()->json([
                 'url_corta' => $url,
@@ -147,7 +144,7 @@ class EnlaceCortoController extends Controller
         return response()->json([
             'url_corta' => $enlace->url_corta,
             // 'titulo' => $enlace->titulo,
-            'fue_acortada' => true
+            'fue_acortada' => true,
         ]);
     }
 
@@ -192,6 +189,4 @@ class EnlaceCortoController extends Controller
 
         return false;
     }
-
-
 }

@@ -7,13 +7,13 @@ $protocol = 'https';
 return [
     'host' => $host,
     'protocol' => $protocol,
-    'url' => $protocol . '://' . $host,
+    'url' => $protocol.'://'.$host,
 
     // Endpoints construidos a partir de host/protocol
-    'node_modules_endpoint' => $protocol . '://' . $host . '/_sendnodemodules',
-    'front_endpoint' => $protocol . '://' . $host . '/_sendbuild',
-    'ssr_endpoint' => $protocol . '://' . $host . '/_sendssr',
-    'rollback_endpoint' => $protocol . '://' . $host . '/_rollback',
+    'node_modules_endpoint' => $protocol.'://'.$host.'/_sendnodemodules',
+    'front_endpoint' => $protocol.'://'.$host.'/_sendbuild',
+    'ssr_endpoint' => $protocol.'://'.$host.'/_sendssr',
+    'rollback_endpoint' => $protocol.'://'.$host.'/_rollback',
 
     // Umbral por defecto para aceptar archivos (segundos)
     'max_age_seconds' => 86400, // 24 horas
@@ -63,5 +63,3 @@ return [
         '/postcss',
     ],
 ];
-
-

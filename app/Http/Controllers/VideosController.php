@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
-use Illuminate\Http\Request;
 use App\Models\Video;
-use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
+use App\Pigmalion\SEO;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class VideosController extends Controller
 {
     public static $ITEMS_POR_PAGINA = 10;
+
     //
     public function index(Request $request)
     {
@@ -20,17 +21,18 @@ class VideosController extends Controller
         $query = Video::select(['id', 'slug', 'titulo', 'descripcion', 'enlace', 'updated_at'])
             ->publicado();
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
+        }
 
         $resultados = $query
             ->ordenado()
             ->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
-            ->appends(['buscar' => $buscar/*,  'categoria' => $categoria*/]);
+            ->appends(['buscar' => $buscar/* ,  'categoria' => $categoria */]);
 
-        if ($buscar)
+        if ($buscar) {
             BusquedasHelper::formatearResultados($resultados, $buscar);
-
+        }
 
         // $categorias = (new Normativa())->getCategorias();
 
@@ -43,8 +45,6 @@ class VideosController extends Controller
             ->withViewData(SEO::get('videos'));
     }
 
-
-
     public function show($id)
     {
         if (is_numeric($id)) {
@@ -54,9 +54,9 @@ class VideosController extends Controller
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $video->visibilidad == 'P';
+        $publicado = $video->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$video || (!$publicado && !$borrador && !$editor)) {
+        if (! $video || (! $publicado && ! $borrador && ! $editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 

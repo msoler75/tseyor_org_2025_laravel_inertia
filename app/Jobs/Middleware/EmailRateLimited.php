@@ -3,18 +3,19 @@
 namespace App\Jobs\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class EmailRateLimited
 {
     private string $rateLimitKey = 'email_rate_limit';
+
     private string $pendingKey = 'email_rate_limit_pending';
 
     /**
      * Return the maximum send limit for a given job type or overall.
      */
-    public function getMaxSendLimit($type = "overall"): int
+    public function getMaxSendLimit($type = 'overall'): int
     {
         // Límites específicos por tipo de trabajo
         $limits = [
@@ -23,12 +24,14 @@ class EmailRateLimited
             'overall' => config('mail.rate_limit.max.overall', 50),
         ];
 
-        $max = $limits[$type] ?? config('mail.rate_limit.max.' . $type, 50);
+        $max = $limits[$type] ?? config('mail.rate_limit.max.'.$type, 50);
 
         if ($max <= 0) {
             Log::warning('Invalid max limit for email rate limiter. Defaulting to 50.');
+
             return 50;
         }
+
         return $max;
     }
 
@@ -40,8 +43,10 @@ class EmailRateLimited
         $window = config('mail.rate_limit.window', 3600);
         if ($window <= 0) {
             Log::warning('Invalid time window for email rate limiter. Defaulting to 3600 seconds.');
+
             return 3600;
         }
+
         return $window;
     }
 
@@ -51,7 +56,8 @@ class EmailRateLimited
     public function isAllowedToSend(string $jobType): bool
     {
         $key = $this->rateLimitKey;
-        return Cache::lock($key . ':lock', 10)->block(5, function () use ($key, $jobType) {
+
+        return Cache::lock($key.':lock', 10)->block(5, function () use ($key, $jobType) {
             $timestamps = Cache::get($key, []);
 
             // Filtrar los timestamps que están dentro de la ventana de tiempo
@@ -106,7 +112,7 @@ class EmailRateLimited
     {
         $key = $this->rateLimitKey;
 
-        Cache::lock($key . ':lock', 10)->block(5, function () use ($key, $jobType) {
+        Cache::lock($key.':lock', 10)->block(5, function () use ($key, $jobType) {
             $timestamps = Cache::get($key, []);
 
             // Agregar el nuevo envío con su tipo y timestamp
@@ -120,12 +126,10 @@ class EmailRateLimited
         });
     }
 
-
-
     /**
      * Process the queued job.
      *
-     * @param  \Closure(object): void  $next
+     * @param  Closure(object): void  $next
      */
     public function handle(object $job, Closure $next): void
     {
@@ -198,13 +202,13 @@ class EmailRateLimited
             $pendingKey = $this->pendingKey;
 
             $pending = Cache::get($pendingKey, []);
-            if (!is_array($pending)) {
+            if (! is_array($pending)) {
                 return null;
             }
 
             $count = 0;
             foreach ($pending as $item) {
-                if (!is_array($item)) {
+                if (! is_array($item)) {
                     continue;
                 }
                 if (($item['type'] ?? null) === $jobType) {
@@ -214,7 +218,8 @@ class EmailRateLimited
 
             return $count;
         } catch (\Exception $e) {
-            Log::warning('Could not determine queued jobs count for rate limiter (cache): ' . $e->getMessage());
+            Log::warning('Could not determine queued jobs count for rate limiter (cache): '.$e->getMessage());
+
             return null;
         }
     }
@@ -222,9 +227,9 @@ class EmailRateLimited
     public function addPending(string $jobType): void
     {
         $pendingKey = $this->pendingKey;
-        Cache::lock($pendingKey . ':lock', 10)->block(5, function () use ($pendingKey, $jobType) {
+        Cache::lock($pendingKey.':lock', 10)->block(5, function () use ($pendingKey, $jobType) {
             $pending = Cache::get($pendingKey, []);
-            if (!is_array($pending)) {
+            if (! is_array($pending)) {
                 $pending = [];
             }
 
@@ -244,9 +249,9 @@ class EmailRateLimited
     private function removePendingEntry(string $jobType): void
     {
         $pendingKey = $this->pendingKey;
-        Cache::lock($pendingKey . ':lock', 10)->block(5, function () use ($pendingKey, $jobType) {
+        Cache::lock($pendingKey.':lock', 10)->block(5, function () use ($pendingKey, $jobType) {
             $pending = Cache::get($pendingKey, []);
-            if (!is_array($pending) || empty($pending)) {
+            if (! is_array($pending) || empty($pending)) {
                 return;
             }
 
@@ -269,8 +274,8 @@ class EmailRateLimited
      * Calculate the delay (in seconds) for queuing a job at a specific index position.
      * This allows pre-calculating delays when bulk-queuing jobs to avoid middleware re-queueing.
      *
-     * @param string $jobType The fully qualified class name of the job (e.g., 'App\Mail\BoletinEmail')
-     * @param int $index The position of this job in the batch (0-based)
+     * @param  string  $jobType  The fully qualified class name of the job (e.g., 'App\Mail\BoletinEmail')
+     * @param  int  $index  The position of this job in the batch (0-based)
      * @return int The delay in seconds before this job should be processed
      */
     public function calculateDelayForIndex(string $jobType, int $index): int

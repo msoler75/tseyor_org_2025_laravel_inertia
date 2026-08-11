@@ -8,38 +8,38 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los contactos. Ejemplo: "Juan"'
+                'description' => 'Texto a buscar en los contactos. Ejemplo: "Juan"',
             ],
             [
                 'name' => 'pais',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por país. Ejemplo: "ES"'
+                'description' => 'Filtrar por país. Ejemplo: "ES"',
             ],
             [
                 'name' => 'poblacion',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por población. Ejemplo: "Madrid"'
+                'description' => 'Filtrar por población. Ejemplo: "Madrid"',
             ],
             [
                 'name' => 'provincia',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por provincia. Ejemplo: "Madrid"'
+                'description' => 'Filtrar por provincia. Ejemplo: "Madrid"',
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023'
+                'description' => 'Filtrar por año. Ejemplo: 2023',
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia"'
-            ]
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "relevancia"',
+            ],
         ],
         'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre del contacto'],
@@ -57,7 +57,7 @@ return [
             'longitud' => ['type' => 'string', 'description' => 'Longitud'],
             'centro_id' => ['type' => 'int', 'description' => 'ID del centro asociado'],
             'user_id' => ['type' => 'int', 'description' => 'ID del usuario asociado'],
-            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador']
-        ]
+            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador'],
+        ],
     ],
 ];

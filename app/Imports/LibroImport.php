@@ -3,24 +3,25 @@
 namespace App\Imports;
 
 use App\Models\Libro;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
-use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Fpdi;
+use Smalot\PdfParser\Parser;
 
 class LibroImport
 {
-
     public static function importar()
     {
 
-        function mb_ucfirst($string, $encoding = "UTF-8")
+        function mb_ucfirst($string, $encoding = 'UTF-8')
         {
             $firstChar = mb_substr($string, 0, 1, $encoding);
             $then = mb_substr($string, 1, null, $encoding);
-            return mb_strtoupper($firstChar, $encoding) . $then;
+
+            return mb_strtoupper($firstChar, $encoding).$then;
         }
 
         /*function convertirFecha($dateString)
@@ -60,7 +61,7 @@ class LibroImport
 
         function obtenerNumPaginasSmalot($pdf)
         {
-            $parser = new \Smalot\PdfParser\Parser();
+            $parser = new Parser;
             try {
 
                 $pdf = $parser->parseFile($pdf);
@@ -70,37 +71,40 @@ class LibroImport
                 return $pageCount;
             } catch (\Exception $e) {
             }
+
             return null;
         }
 
-        function obtenerNumPaginas($pdfPath) {
+        function obtenerNumPaginas($pdfPath)
+        {
             try {
-            $pdf = new FPDI();
-            $pageCount = $pdf->setSourceFile($pdfPath);
-            return $pageCount;
-        } catch (\Exception $e) {
-        }
-        return null;
-        }
+                $pdf = new Fpdi;
+                $pageCount = $pdf->setSourceFile($pdfPath);
 
+                return $pageCount;
+            } catch (\Exception $e) {
+            }
+
+            return null;
+        }
 
         // borra todos los libros
-        Libro::whereRaw("true")->forceDelete();
+        Libro::whereRaw('true')->forceDelete();
 
         $carpeta_web_original = 'd:\tseyor.org';
-        $carpeta_libros = $carpeta_web_original . '\biblioteca\libros';
+        $carpeta_libros = $carpeta_web_original.'\biblioteca\libros';
 
         $palabras_a_capitalizar = [
-            "juul", "junantal", "agora", "ágora", "muul", "aumnor", "adonáis", "adonais", "rasbek", "aium", "om", "melcor", "shilcars", "uommo", "atlantis", "christian",
-            "noiwanak", "mo", "rhaum", "beh", "sayab", "tseek", "suut", "oksah", "ich", "kat", "tseyor", "puente", "pueblo", "orsil", "montevives", "tegoyo",
-            "agguniom", "albus", "ignus", "puerto", "rico", "tantra", "yoga", "arca", "tara", "grihal", "perú", "méxico", "chile", "barcelona", "granada", "universidad", "neent"
+            'juul', 'junantal', 'agora', 'ágora', 'muul', 'aumnor', 'adonáis', 'adonais', 'rasbek', 'aium', 'om', 'melcor', 'shilcars', 'uommo', 'atlantis', 'christian',
+            'noiwanak', 'mo', 'rhaum', 'beh', 'sayab', 'tseek', 'suut', 'oksah', 'ich', 'kat', 'tseyor', 'puente', 'pueblo', 'orsil', 'montevives', 'tegoyo',
+            'agguniom', 'albus', 'ignus', 'puerto', 'rico', 'tantra', 'yoga', 'arca', 'tara', 'grihal', 'perú', 'méxico', 'chile', 'barcelona', 'granada', 'universidad', 'neent',
         ];
 
-        $palabras_a_mayusculas = ["ong", "g.a.t.o.", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi", "xii", "tap"];
+        $palabras_a_mayusculas = ['ong', 'g.a.t.o.', 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'tap'];
 
-        $htmlFiles = glob($carpeta_libros . '\\*.html');
+        $htmlFiles = glob($carpeta_libros.'\\*.html');
 
-        $dates = json_decode(@file_get_contents($carpeta_libros . '\.files'), true);
+        $dates = json_decode(@file_get_contents($carpeta_libros.'\.files'), true);
 
         echo "Preparando datos:\n";
         $dataLibros = [];
@@ -108,16 +112,21 @@ class LibroImport
         foreach ($htmlFiles as $htmlFile) {
 
             $file = basename($htmlFile);
-            if ($file == 'index.html') continue;
-            if ($file == 'menu.html') continue;
+            if ($file == 'index.html') {
+                continue;
+            }
+            if ($file == 'menu.html') {
+                continue;
+            }
 
             // Leer el contenido del archivo
             $content = file_get_contents($htmlFile);
 
             // Utilizar una expresión regular para extraer el comentario que contiene los datos
             preg_match('/<!--(.*?)-->/s', $content, $matches);
-            if (!isset($matches[1]))
-                die("Error al obtener la información");
+            if (! isset($matches[1])) {
+                exit('Error al obtener la información');
+            }
 
             // Extraer los valores de los atributos del elemento HTML
             $commentContent = $matches[1];
@@ -127,14 +136,19 @@ class LibroImport
 
             $data = [];
             foreach ($commentData as $field) {
-                if (!$field) continue;
-                if (strpos($field, "=") === FALSE) continue;
-                list($key, $value) = explode('=', $field, 2);
-                $data[trim($key)] = trim(preg_replace("/;\s*$/", "", $value)); //quitamos el punto y coma final
+                if (! $field) {
+                    continue;
+                }
+                if (strpos($field, '=') === false) {
+                    continue;
+                }
+                [$key, $value] = explode('=', $field, 2);
+                $data[trim($key)] = trim(preg_replace("/;\s*$/", '', $value)); // quitamos el punto y coma final
             }
 
-            if (!isset($data['titulo']))
-                die("Título no encontrado para $file");
+            if (! isset($data['titulo'])) {
+                exit("Título no encontrado para $file");
+            }
 
             $titulo = mb_strtolower($data['titulo']);
 
@@ -159,41 +173,38 @@ class LibroImport
 
             // var_dump($frases_titulo);
 
-            //echo implode(". ", $frases_titulo);;
-            //die;
+            // echo implode(". ", $frases_titulo);;
+            // die;
 
-            $data['titulo'] = implode(". ", $frases_titulo);
-
+            $data['titulo'] = implode('. ', $frases_titulo);
 
             // echo "- " . $data['titulo'] . "\n";
 
-            $data['pdf_fuente'] = $carpeta_web_original . '\\' . preg_replace("/^pdf\//", "/biblioteca/libros/pdf/", urldecode($data['pdf']));
-            $data['imagen_fuente'] = $carpeta_web_original . '\\' . urldecode($data['image']);
+            $data['pdf_fuente'] = $carpeta_web_original.'\\'.preg_replace("/^pdf\//", '/biblioteca/libros/pdf/', urldecode($data['pdf']));
+            $data['imagen_fuente'] = $carpeta_web_original.'\\'.urldecode($data['image']);
 
+            if (! file_exists($data['pdf_fuente'])) {
+                exit('Fichero no encontrado: '.$data['pdf_fuente']);
+            }
 
-            if (!file_exists($data['pdf_fuente']))
-                die("Fichero no encontrado: " . $data['pdf_fuente']);
-
-            if (!file_exists($data['imagen_fuente']))
-                die("Fichero no encontrado: " . $data['imagen_fuente']);
-
+            if (! file_exists($data['imagen_fuente'])) {
+                exit('Fichero no encontrado: '.$data['imagen_fuente']);
+            }
 
             $data['file'] = $file;
             $dataLibros[] = $data;
         }
 
         echo "-----------------------------------\n";
-        echo "Procesando " . count($dataLibros) . " libros...\n";
-
-
+        echo 'Procesando '.count($dataLibros)." libros...\n";
 
         foreach ($dataLibros as $data) {
 
-            echo $data['titulo'] . "\n";
+            echo $data['titulo']."\n";
 
-            if (preg_match("/Mono/i", $data['categoria']))
+            if (preg_match('/Mono/i', $data['categoria'])) {
                 $data['categoria'] = 'Monografías';
-
+            }
 
             // Crear un nuevo modelo Libro con los datos extraídos
             $libro = new Libro([
@@ -205,17 +216,13 @@ class LibroImport
                 // 'paginas' => isset($data['paginas']) && is_numeric($data['paginas']) ? $data['paginas'] : null
             ]);
 
-
-
-
-
             // Guardar el modelo en la base de datos para que se cree el ID
             $libro->save();
 
-            $media_folder = "medios/libros/" . $libro->id;
+            $media_folder = 'medios/libros/'.$libro->id;
 
-            $imagen_destino = $media_folder . "/" . basename($data['imagen_fuente']);
-            $pdf_destino = $media_folder . "/" . basename($data['pdf_fuente']);
+            $imagen_destino = $media_folder.'/'.basename($data['imagen_fuente']);
+            $pdf_destino = $media_folder.'/'.basename($data['pdf_fuente']);
 
             $imagen_destino_path = Storage::disk('public')->path($imagen_destino);
             $pdf_destino_path = Storage::disk('public')->path($pdf_destino);
@@ -223,17 +230,14 @@ class LibroImport
             copy($data['imagen_fuente'], $imagen_destino_path);
             copy($data['pdf_fuente'], $pdf_destino_path);
 
-
-
-
             // Actualizar los campos de imagen y pdf
             $update = [
-                'imagen' => '/almacen/' . $imagen_destino,
+                'imagen' => '/almacen/'.$imagen_destino,
                 'pdf' => $pdf_destino,
             ];
 
             $paginas = obtenerNumPaginas($data['pdf_fuente']);
-            if($paginas) {
+            if ($paginas) {
                 $update['paginas'] = $paginas;
             }
 
@@ -257,9 +261,6 @@ class LibroImport
         }
     }
 
-
-
-
     public static function fusionarCategoriasSimilares()
     {
         // conteo de las categorías:
@@ -270,7 +271,7 @@ class LibroImport
             $categoriasLibro = explode(',', $libro->categoria);
             foreach ($categoriasLibro as $categoria) {
                 $categoria = trim($categoria);
-                if (!empty($categoria)) {
+                if (! empty($categoria)) {
                     if (isset($categorias[$categoria])) {
                         $categorias[$categoria]++;
                     } else {
@@ -298,11 +299,10 @@ class LibroImport
                     break;
                 }
             }
-            if (!$encontrada) {
+            if (! $encontrada) {
                 $categoriasFusionadas[$categoria] = $contador;
             }
         }
-
 
         foreach ($libros as $libro) {
             // Para cada libro, miramos sus categorías y asignamos la categoría fusionada correspondiente
@@ -310,7 +310,7 @@ class LibroImport
             $categoriasFinales = [];
             foreach ($categoriasLibro as $categoria) {
                 $categoria = trim($categoria);
-                if (!empty($categoria)) {
+                if (! empty($categoria)) {
                     $categoriaFinal = $categoria;
                     foreach ($categoriasFusionadas as $fusionada => $contador) {
                         similar_text($categoria, $fusionada, $percent);

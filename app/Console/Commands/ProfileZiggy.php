@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Tightenco\Ziggy\Ziggy;
 
 class ProfileZiggy extends Command
 {
@@ -26,12 +27,12 @@ class ProfileZiggy extends Command
     public function handle()
     {
         // Asegurar que la clase esté cargada y el cache limpio para medir solo el constructor
-        new \Tightenco\Ziggy\Ziggy();
-        \Tightenco\Ziggy\Ziggy::clearRoutes();
+        new Ziggy;
+        Ziggy::clearRoutes();
 
         // Ahora medir el constructor (que cargará las rutas)
         $start = microtime(true);
-        $ziggy = new \Tightenco\Ziggy\Ziggy();
+        $ziggy = new Ziggy;
         $end = microtime(true);
         $time = ($end - $start) * 1000;
         $this->line(number_format($time, 2));

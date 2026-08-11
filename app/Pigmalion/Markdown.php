@@ -2,18 +2,20 @@
 
 namespace App\Pigmalion;
 
-use Illuminate\Support\Str;
-use PhpOffice\PhpWord\IOFactory;
-use Illuminate\Support\Facades\Storage;
-use League\HTMLToMarkdown\HtmlConverter;
+use App\Services\EnlaceCortoService;
 use Illuminate\Support\Facades\Log;
-use App\Pigmalion\DOMHelper;
-use App\Pigmalion\StorageItem;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use League\HTMLToMarkdown\HtmlConverter;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Writer\HTML;
 
 class Markdown
 {
     public static $notasEncontradas = 0;
+
     public static $imagenesExtraidas = [];
+
     public static $carpetaCreada = null;
 
     /**
@@ -32,7 +34,8 @@ class Markdown
             foreach ($attr_matches as $attr_match) {
                 $values[] = "{$attr_match[1]}={$attr_match[2]}";
             }
-            return str_replace('<img', '<img ' . implode(' ', $values), $img);
+
+            return str_replace('<img', '<img '.implode(' ', $values), $img);
         }, $html);
 
         // Reemplazar párrafos con estilos
@@ -49,14 +52,17 @@ class Markdown
         // Expresión regular para encontrar URLs con dominios específicos
         $patron = '/(<a[^>]+>)?\b(https?:\/\/)?(www\.)?(tseyor\.(?:org|com))\b(\/[\?&A-Za-z\-\=\/0-9\.]*)?(<\/a>)?/ui';
         // Reemplazar las URLs encontradas por enlaces clicables si no están en formato html
-        if (false)
+        if (false) {
             $html = preg_replace_callback($patron, function ($match) {
                 dd($match);
-                $path = $match[5] ?? "";
-                if ($path == "/")
-                    $path = "";
-                return '<a target="_blank" href="https://tseyor.org' . $path . '">tseyor.org' . $path . '</a>';
+                $path = $match[5] ?? '';
+                if ($path == '/') {
+                    $path = '';
+                }
+
+                return '<a target="_blank" href="https://tseyor.org'.$path.'">tseyor.org'.$path.'</a>';
             }, $html);
+        }
 
         // si enlace está partido:
         // $html = preg_replace("$<a href=.*tseyor.</[^>]+>.*(org|com)</.*>$", '<a target="_blank" href="https://tseyor.org">tseyor.org</a>', $html);
@@ -66,10 +72,11 @@ class Markdown
         // $html = str_replace("\n", '', $html);
 
         // dar formato html a notas al pie
-        $html = preg_replace('/\[\^(\d+)\]/ui', '<sup>$1</sup>', $html); //[^1]
+        $html = preg_replace('/\[\^(\d+)\]/ui', '<sup>$1</sup>', $html); // [^1]
 
-        if (preg_match("/<table/ui", $html))
+        if (preg_match('/<table/ui', $html)) {
             $html = self::_toHtmlTables($html);
+        }
 
         return $html;
     }
@@ -79,12 +86,12 @@ class Markdown
      */
     private static function _toHtmlTables($html)
     {
-        $dom = new \DOMDocument();
+        $dom = new \DOMDocument;
 
         // dd(mb_detect_encoding($html, 'UTF-8', true));
 
         // Cargar el HTML en el objeto DomDocument, suprimiendo los errores de carga
-        @$dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+        @$dom->loadHTML('<?xml encoding="UTF-8">'.$html);
 
         // Establecer la codificación del documento a UTF-8
         $dom->encoding = 'UTF-8';
@@ -112,7 +119,6 @@ class Markdown
             $contenidoHTML .= $td->ownerDocument->saveHTML($nodo);
         }
 
-
         // procesamos el interior de la celda
         $contenidoHTML = self::toHtml($contenidoHTML);
 
@@ -122,8 +128,9 @@ class Markdown
 
     /**
      * Carga un archivo word y extrae el contenido y lo transforma en formato markdown
-     * @param string $docx es el archivo .docx que queremos convertir a markdown
-     * @param string $carpetaImagenes es la carpeta donde se guardan las imagenes
+     *
+     * @param  string  $docx  es el archivo .docx que queremos convertir a markdown
+     * @param  string  $carpetaImagenes  es la carpeta donde se guardan las imagenes
      **/
     public static function fromDocx($docx, $carpetaImagenes = null)
     {
@@ -133,36 +140,35 @@ class Markdown
         $phpWord = IOFactory::load($docx);
 
         // Convertimos el documento a HTML
-        $htmlWriter = new \PhpOffice\PhpWord\Writer\HTML($phpWord);
+        $htmlWriter = new HTML($phpWord);
         $htmlContent = $htmlWriter->getContent();
-        Log::info("Html from docx: " . $htmlContent);
+        Log::info('Html from docx: '.$htmlContent);
 
         // removemos span de texto por defecto
-        //$htmlContent = preg_replace('&<span style="(?:font-family:\s*[^;]*;\s?|font-size:\s?1\dpt;\s?)+">([^<]*)</span>&', '$1', $htmlContent);
+        // $htmlContent = preg_replace('&<span style="(?:font-family:\s*[^;]*;\s?|font-size:\s?1\dpt;\s?)+">([^<]*)</span>&', '$1', $htmlContent);
         $htmlContent = self::arreglarNotas($phpWord, $htmlContent);
 
-        Log::info("Html final from docx after Foot notes rework: " . $htmlContent);
+        Log::info('Html final from docx after Foot notes rework: '.$htmlContent);
 
         $spanLimpio = true;
 
         // a veces devuelve un valor "", no sé porqué, por limpiar los "span"
         $htmlContent1 = self::limpiarHtml($htmlContent);
-        if (!$htmlContent1 && $htmlContent) {
+        if (! $htmlContent1 && $htmlContent) {
             $htmlContent1 = self::limpiarHtml($htmlContent, false);
             $spanLimpio = false;
         }
         $htmlContent = $htmlContent1;
 
         // die($htmlContent);
-        Log::info("Html final from docx limpiarHtml: " . $htmlContent);
+        Log::info('Html final from docx limpiarHtml: '.$htmlContent);
 
-
-        if (trim($htmlContent))
+        if (trim($htmlContent)) {
             $htmlContent = self::extraerBody($htmlContent);
+        }
 
         return self::toMarkdown($htmlContent, $carpetaImagenes, $spanLimpio);
     }
-
 
     /**
      * Convierte a formato Markdown desde Html
@@ -171,20 +177,20 @@ class Markdown
     {
 
         // generar una carpeta aleatoria
-        if (!$carpetaImagenes)
-            $carpetaImagenes = 'temp/' . Str::random(16);
+        if (! $carpetaImagenes) {
+            $carpetaImagenes = 'temp/'.Str::random(16);
+        }
 
-        //$html = self::extraerImagenes($html, $carpetaImagenes);
+        // $html = self::extraerImagenes($html, $carpetaImagenes);
 
         // convertimos a formato desde HTML a markdown
-        $converter = new HtmlConverter();
+        $converter = new HtmlConverter;
         $markdown = $converter->convert($html);
 
         $markdown = self::extraerImagenes($markdown, $carpetaImagenes);
 
         // por si quedó algun div de página lo quitamos
         $markdown = preg_replace('/<div style="page:\s*page\d+">/ui', '', $markdown);
-
 
         // si no se limpió en su momento, se hace ahora
         // if(!$spanLimpio)
@@ -198,7 +204,6 @@ class Markdown
         return $markdown;
     }
 
-
     public static function limpiarHtml($html, $limpiarSpan = true)
     {
 
@@ -207,26 +212,26 @@ class Markdown
         // Mantener saltos de línea, retorno de carro y tabulaciones al eliminar caracteres no imprimibles
         $html = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]|[\x0D]/u', '', $html);
 
-
         // removemos estilos de celda de tabla
-        $html = preg_replace("/<td style=[^>]+>/ui", "<td>", $html);
+        $html = preg_replace('/<td style=[^>]+>/ui', '<td>', $html);
 
         // eliminar atributo lang
-        $html = preg_replace("&\slang=[^\s>]+&", "$1", $html);
+        $html = preg_replace("&\slang=[^\s>]+&", '$1', $html);
 
         // se ha observado este error en documentos word:
-        $html = preg_replace("&text-decoration=underline\s?&", "text-decoration:underline", $html);
+        $html = preg_replace("&text-decoration=underline\s?&", 'text-decoration:underline', $html);
 
-        if ($limpiarSpan)
+        if ($limpiarSpan) {
             $html = preg_replace_callback(
                 '&<span\s+style=([^>]+)>([^<]*)</span>&',
                 function ($match) {
                     // var_dump($match);
-                    if (!$match[2])
-                        return "";
+                    if (! $match[2]) {
+                        return '';
+                    }
 
                     $styles = $match[1];
-                    //remove first and last char
+                    // remove first and last char
                     $styles = substr($styles, 1, strlen($styles) - 2);
                     $tmp = preg_split("/;\s?/", $styles, -1, PREG_SPLIT_NO_EMPTY);
                     $bold = false;
@@ -237,41 +242,43 @@ class Markdown
                         $p = preg_split("/\:\s?/", $s);
                         $key = trim($p[0]);
                         $v = trim($p[1]);
-                        if ($key == "font-style" && $v == "italic")
+                        if ($key == 'font-style' && $v == 'italic') {
                             $italic = true;
-                        else if ($key == "font-weight" && $v == "bold")
+                        } elseif ($key == 'font-weight' && $v == 'bold') {
                             $bold = true;
-                        else if ($key == "text-decoration" && $v == "underline")
+                        } elseif ($key == 'text-decoration' && $v == 'underline') {
                             $underline = true;
-                        else if (!in_array($key, ['font-family', 'font-size', 'color', 'margin-bottom', 'margin-top']))
+                        } elseif (! in_array($key, ['font-family', 'font-size', 'color', 'margin-bottom', 'margin-top'])) {
                             $finalStyles[] = "$key=$v";
+                        }
                     }
 
-                    $pre = "";
-                    $tail = "";
+                    $pre = '';
+                    $tail = '';
                     if (count($finalStyles)) {
-                        $pre = '<span style="' . implode('; ', $finalStyles) . '">';
+                        $pre = '<span style="'.implode('; ', $finalStyles).'">';
                         $tail = '</span>';
                     }
                     if ($italic) {
-                        $pre .= "<i>";
-                        $tail = "</i>" . $tail;
+                        $pre .= '<i>';
+                        $tail = '</i>'.$tail;
                     }
                     if ($bold) {
-                        $pre .= "<b>";
-                        $tail = "</b>" . $tail;
+                        $pre .= '<b>';
+                        $tail = '</b>'.$tail;
                     }
                     if ($underline) {
-                        $pre .= "<u>";
-                        $tail = "</u>" . $tail;
+                        $pre .= '<u>';
+                        $tail = '</u>'.$tail;
                     }
 
                     // echo $match[2] . " - " . $styles . " - ". $match[0]. "<br>";
 
-                    return $pre . $match[2] . $tail;
+                    return $pre.$match[2].$tail;
                 },
                 $html
             );
+        }
 
         // dd(substr($html, 0, 2500));
 
@@ -281,7 +288,7 @@ class Markdown
             function ($match) {
                 $styles = $match[1];
 
-                //remove first and last char
+                // remove first and last char
                 $styles = substr($styles, 1, strlen($styles) - 2);
                 $tmp = preg_split("/;\s?/", $styles, -1, PREG_SPLIT_NO_EMPTY);
                 $bold = false;
@@ -293,77 +300,76 @@ class Markdown
                     $p = preg_split("/\:\s?/", $s);
                     $key = trim($p[0]);
                     $v = trim($p[1]);
-                    if ($key == "font-style" && $v == "italic")
+                    if ($key == 'font-style' && $v == 'italic') {
                         $italic = true;
-                    else if ($key == "font-weight" && $v == "bold")
+                    } elseif ($key == 'font-weight' && $v == 'bold') {
                         $bold = true;
-                    else if ($key == "text-decoration" && $v == "underline")
+                    } elseif ($key == 'text-decoration' && $v == 'underline') {
                         $underline = true;
-                    else if ($key == "text-align" && $v == "center")
+                    } elseif ($key == 'text-align' && $v == 'center') {
                         $center = true;
-                    else if (!in_array($key, ['font-family', 'font-size', 'color', 'margin-bottom', 'margin-top', 'text-align']))
+                    } elseif (! in_array($key, ['font-family', 'font-size', 'color', 'margin-bottom', 'margin-top', 'text-align'])) {
                         $finalStyles[] = "$key=$v";
+                    }
                 }
 
-                $pre = "<p>";
-                $tail = "</p>";
+                $pre = '<p>';
+                $tail = '</p>';
                 if (count($finalStyles)) {
-                    $pre = '<p style="' . implode('; ', $finalStyles) . '">';
+                    $pre = '<p style="'.implode('; ', $finalStyles).'">';
                 }
                 if ($center) {
-                    $pre .= "{style=text-align:center}";
+                    $pre .= '{style=text-align:center}';
                 }
                 if ($italic) {
-                    $pre .= "<i>";
-                    $tail = "</i>" . $tail;
-                    dd("DONT!");
+                    $pre .= '<i>';
+                    $tail = '</i>'.$tail;
+                    dd('DONT!');
                 }
                 if ($bold) {
-                    $pre .= "<b>";
-                    $tail = "</b>" . $tail;
-                    dd("DONT!");
+                    $pre .= '<b>';
+                    $tail = '</b>'.$tail;
+                    dd('DONT!');
                 }
                 if ($underline) {
-                    $pre .= "<u>";
-                    $tail = "</u>" . $tail;
-                    dd("DONT!");
+                    $pre .= '<u>';
+                    $tail = '</u>'.$tail;
+                    dd('DONT!');
                 }
-                //if($center)
-                //dd($pre . $match[2] . $tail);
+                // if($center)
+                // dd($pre . $match[2] . $tail);
 
                 // echo $match[2] . " - " . $styles . " - ". $match[0]. "<br>";
 
-                return $pre . $match[2] . $tail;
+                return $pre.$match[2].$tail;
             },
             $html
         );
 
-
-
         // eliminar titulos
-        $html = preg_replace("&<h\d>(.*?)</h\d>&", "<p><b>$1</b></p>", $html);
+        $html = preg_replace("&<h\d>(.*?)</h\d>&", '<p><b>$1</b></p>', $html);
 
         // unir estilos repetidos
         for ($i = 0; $i < 3; $i++) {
-            $html = preg_replace("&<i>(.*?)</i><i>(.*?)</i>&", "<i>$1$2</i>", $html);
-            $html = preg_replace("&<b>(.*?)</b><b>(.*?)</b>&", "<b>$1$2</b>", $html);
-            $html = preg_replace("&<u>(.*?)</u><u>(.*?)</u>&", "<u>$1$2</u>", $html);
+            $html = preg_replace('&<i>(.*?)</i><i>(.*?)</i>&', '<i>$1$2</i>', $html);
+            $html = preg_replace('&<b>(.*?)</b><b>(.*?)</b>&', '<b>$1$2</b>', $html);
+            $html = preg_replace('&<u>(.*?)</u><u>(.*?)</u>&', '<u>$1$2</u>', $html);
             $html = preg_replace(
-                "&<span style=.text-decoration:underline[^>]{1,3}>(.*?)</span><span style=.text-decoration:underline[^>]{1,3}>(.*?)</span>&",
+                '&<span style=.text-decoration:underline[^>]{1,3}>(.*?)</span><span style=.text-decoration:underline[^>]{1,3}>(.*?)</span>&',
                 "<span style='text-decoration:underline'>$1$2</span>",
                 $html
             );
-            $html = preg_replace_callback("&<a href=([^>]+)>(.*?)</a><a href=([^>]+)>(.*?)</a>&", function ($match) {
-                if ($match[1] == $match[3])
+            $html = preg_replace_callback('&<a href=([^>]+)>(.*?)</a><a href=([^>]+)>(.*?)</a>&', function ($match) {
+                if ($match[1] == $match[3]) {
                     return "<a href={$match[3]}>{$match[2]}{$match[4]}</a>";
+                }
+
                 return $match[0];
             }, $html);
         }
 
-
         return $html;
     }
-
 
     public static function arreglarNotas($phpWord, $htmlContent)
     {
@@ -372,7 +378,7 @@ class Markdown
         $footNotes = $phpWord->getFootnotes()->getItems();
         // dd($footNotes);
 
-        Log::info("footnotes: " . count($footNotes));
+        Log::info('footnotes: '.count($footNotes));
         $numNote = 0;
         // dd($footNotes);
         if ($footNotes && count($footNotes)) {
@@ -381,42 +387,44 @@ class Markdown
                 $numNote++;
                 $id = $note->getRelationId();
                 // para evitar repeticiones
-                if (isset($relationsDone[$id]))
+                if (isset($relationsDone[$id])) {
                     continue;
+                }
                 $relationsDone[$id] = 1;
 
-                $primerTexto = "";
+                $primerTexto = '';
                 $idx = 0;
                 // buscamos el primer texto relevante
                 $elements = $note->getElements();
-                while ($idx < count($elements) && (!$primerTexto || strlen($primerTexto) < 7)) {
-                    if (method_exists($elements[$idx], "getText")) {
+                while ($idx < count($elements) && (! $primerTexto || strlen($primerTexto) < 7)) {
+                    if (method_exists($elements[$idx], 'getText')) {
                         $str = $elements[$idx]->getText();
-                        if (trim($str))
+                        if (trim($str)) {
                             $primerTexto = $str;
+                        }
                     }
                     $idx++;
                 }
 
                 if ($primerTexto) {
                     // buscamos el texto
-                    preg_match_all("#>\s*" . str_replace(["#", "(", ")", "[", "]"], ["\\#", "\\(", "\\)", "\\[", "\\]"], $primerTexto) . "#", $htmlContent, $matches, PREG_OFFSET_CAPTURE);
+                    preg_match_all("#>\s*".str_replace(['#', '(', ')', '[', ']'], ['\\#', '\\(', '\\)', '\\[', '\\]'], $primerTexto).'#', $htmlContent, $matches, PREG_OFFSET_CAPTURE);
 
                     if (count($matches[0])) {
                         // nos interesa el ultimo match (las notas están al final)
                         $pos = $matches[0][count($matches[0]) - 1][1];
-                    } else
-                        // si no encuentra el patrón, buscamos la posición de ese texto desde el final del documento
+                    } else { // si no encuentra el patrón, buscamos la posición de ese texto desde el final del documento
                         $pos = strrpos($htmlContent, $primerTexto);
+                    }
 
-                    if ($pos === FALSE) {
+                    if ($pos === false) {
                         // nota no encontrada. La añadiremos manualmente al final del documento
-                        $string = "";
+                        $string = '';
                         for ($idx = 0; $idx < count($elements); $idx++) {
                             $string .= $elements[$idx]->getText();
                         }
-                        $string = '<sup id="note-' . $numNote . '">' . $numNote . '</sup> ' . $string;
-                        $htmlContent = preg_replace("#<" . "/body>#", "<p>$string</p><" . "/body>", $htmlContent);
+                        $string = '<sup id="note-'.$numNote.'">'.$numNote.'</sup> '.$string;
+                        $htmlContent = preg_replace('#<'.'/body>#', "<p>$string</p><".'/body>', $htmlContent);
                         Log::info("Nota $numNote no encontrada: '$primerTexto...' La añadimos manualmente al final del documento");
                     } else {
                         // buscamos desde esa posición hacia atrás, el párrafo "<p"
@@ -428,7 +436,7 @@ class Markdown
                         // buscamos el final de etiqueta
                         $pos = strpos($htmlContent, '>', $pos);
                         // insertamos el número de nota
-                        $htmlContent = substr($htmlContent, 0, $pos) . '><sup id="note-' . $numNote . '">' . $id . '</sup> ' . substr($htmlContent, $pos + 1);
+                        $htmlContent = substr($htmlContent, 0, $pos).'><sup id="note-'.$numNote.'">'.$id.'</sup> '.substr($htmlContent, $pos + 1);
                         // echo $id . ' ' . $primerTexto . ' ' . $pos . '<br>';
                     }
                 }
@@ -463,7 +471,7 @@ class Markdown
                     $offset = $m[1];
                     $id = $matches[1][$idx][0];
                     $html = $m[0];
-                    $notas[] = ["id" => $id, "offset" => $offset, "html" => $html];
+                    $notas[] = ['id' => $id, 'offset' => $offset, 'html' => $html];
                     $minOffset = min($minOffset, $offset);
                     $maxEnd = max($maxEnd, $offset + strlen($html));
                 }
@@ -491,7 +499,6 @@ class Markdown
         return $htmlContent;
     }
 
-
     /**
      * Extrae las imagenes (codificadas en base64) y las guardamos en la carpeta $carpetaImagenes
      * Admite markdown y HTML de entrada
@@ -517,8 +524,8 @@ class Markdown
 
             // Decodificar los datos base64 y guardar la imagen en disco
             $imageData = base64_decode($data);
-            $imageName = 'image_' . $key . '.' . $type;
-            $imagePath = $storagePathImagenes . '/' . $imageName;
+            $imageName = 'image_'.$key.'.'.$type;
+            $imagePath = $storagePathImagenes.'/'.$imageName;
 
             // añadimos la imagen copiada a la lista de imagenes
             $imagenes[] = Storage::disk('public')->path($imagePath);
@@ -531,19 +538,19 @@ class Markdown
 
             $baseUrl = config('app.url');
             // dd($baseUrl, $imageUrl);
-            $imageUrl = str_replace($baseUrl, "", $imageUrl);
+            $imageUrl = str_replace($baseUrl, '', $imageUrl);
 
-            Log::info("orig=" . substr($orig, 0, 80) . "..., type=$type, imagePath=$imagePath, imageUrl=$imageUrl");
+            Log::info('orig='.substr($orig, 0, 80)."..., type=$type, imagePath=$imagePath, imageUrl=$imageUrl");
 
             // Reemplazar el enlace de la imagen codificada por la URL pública de la imagen guardada
-            if (str_starts_with($orig, "![")) // era markdown
-                $source = str_replace($match, "![](" . $imageUrl . ")", $source);
-            else
+            if (str_starts_with($orig, '![')) { // era markdown
+                $source = str_replace($match, '![]('.$imageUrl.')', $source);
+            } else {
                 $source = str_replace($match, "src='$imageUrl'", $source);
+            }
         }
 
         // ahora verificamos si hay imagenes que son de rutas URL absolutas, las descargamos y las copiamos a la ruta $carpetaImagenes
-
 
         $pattern = '/\]\((http.*?)\)/';
 
@@ -568,19 +575,21 @@ class Markdown
                     // si hay error descargando la imagen, reintentamos
                     if ($raw === false) {
                         sleep(2);
-                    } else break;
+                    } else {
+                        break;
+                    }
                 }
 
                 // copiamos la imagen descargada a la carpeta $carpetaImagenes, con el mismo nombre
-                $imageName = preg_replace("/\?.*/ui", "", basename(urldecode($url)));
-                $imagePath = $storagePathImagenes . '/' . $imageName;
+                $imageName = preg_replace("/\?.*/ui", '', basename(urldecode($url)));
+                $imagePath = $storagePathImagenes.'/'.$imageName;
                 Storage::disk('public')->put($imagePath, $raw);
 
                 // añadimos la imagen copiada a la lista de imagenes
                 $imagenes[] = Storage::disk('public')->path($imagePath);
 
                 // Reemplazar el enlace de la imagen codificada por la URL aquí guardada
-                $source = str_replace($match, str_replace(["(", ")"], [urlencode("("), urlencode(")")], $imagePath), $source);
+                $source = str_replace($match, str_replace(['(', ')'], [urlencode('('), urlencode(')')], $imagePath), $source);
             }
         }
 
@@ -592,13 +601,11 @@ class Markdown
         return $source;
     }
 
-
     public static function extraerBody($html)
     {
         try {
-            $dom = new \DOMDocument();
-            $dom->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-
+            $dom = new \DOMDocument;
+            $dom->loadHTML('<?xml encoding="UTF-8">'.$html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
             // Extraemos el body
             $bodyContent = '';
@@ -611,14 +618,15 @@ class Markdown
                     foreach ($nodes as $node2) {
                         $bodyContent .= $dom->saveHTML($node2);
                     }
-                } else
+                } else {
                     $bodyContent .= $dom->saveHTML($node);
+                }
             }
+
             return $bodyContent;
         } catch (\Exception $e) {
             Log::error($e);
         }
-
 
         // Encuentra el inicio del body
         $startBody = strpos($html, '<body>');
@@ -633,23 +641,21 @@ class Markdown
         if (preg_match_all("/<div style=.page:\s?page[^>]+>/u", $bodyContent, $matches, PREG_OFFSET_CAPTURE)) {
             $divHtml = $matches[0][0][0];
             $pos = $matches[0][0][1];
-            $bodyContent = substr($bodyContent, 0, $pos) . substr($bodyContent, $pos + strlen($divHtml));
-            $pos = strrpos($bodyContent, "</div>");
-            $bodyContent = substr($bodyContent, 0, $pos) . substr($bodyContent, $pos + strlen("</div>"));
+            $bodyContent = substr($bodyContent, 0, $pos).substr($bodyContent, $pos + strlen($divHtml));
+            $pos = strrpos($bodyContent, '</div>');
+            $bodyContent = substr($bodyContent, 0, $pos).substr($bodyContent, $pos + strlen('</div>'));
         }
 
         return $bodyContent;
     }
 
-
-
-
     /**
      * Mueve las imagenes de $carpetaOrigen a $carpetaDestino
      * Modifica el texto en formato markdown
-     * @param string $md Texto en formato markdown
-     * @param string $carpetaOrigen Ruta de la carpeta de origen
-     * @param string $carpetaDestino Ruta de la carpeta de destino
+     *
+     * @param  string  $md  Texto en formato markdown
+     * @param  string  $carpetaOrigen  Ruta de la carpeta de origen
+     * @param  string  $carpetaDestino  Ruta de la carpeta de destino
      * @return array Arreglo de imagenes movidas
      */
     public static function moverImagenes(&$md, $carpetaOrigen, $carpetaDestino, $disk = 'public'): array
@@ -661,16 +667,16 @@ class Markdown
         // Log::info("Markdown::moverImagenes $disk: $carpetaOrigen -> $carpetaDestino");
 
         // busca todas las imagenes en $md que estén en carpetaOrigen
-        $expCarpetaOrigen = str_replace(["/"], ["\\/"], $carpetaOrigen);
+        $expCarpetaOrigen = str_replace(['/'], ['\\/'], $carpetaOrigen);
         Log::info("/!\[(.*)\]\(($expCarpetaOrigen\/[^\)]*)\)/");
         $md = preg_replace_callback("&!\[(.*)\]\(($expCarpetaOrigen\/[^\)]*)\)&", function ($matches) use ($carpetaDestino, &$imagenes_movidas, $disk) {
 
-            Log::info("match: " . print_r($matches, true));
+            Log::info('match: '.print_r($matches, true));
             // extraemos el nombre de la imagen
             $imagen = $matches[2];
 
             // renombramos la imagen
-            $nuevoNombre = $carpetaDestino . "/" . basename($imagen);
+            $nuevoNombre = $carpetaDestino.'/'.basename($imagen);
 
             Log::info("move1: $disk: $imagen -> $nuevoNombre");
 
@@ -686,15 +692,17 @@ class Markdown
 
                 // guardamos el movimiento de archivo
                 $imagenes_movidas[] = ['desde' => $imagen, 'a' => $nuevoNombre];
+
                 // reemplazamos el enlace con el nuevo nombre
-                return "![" . $matches[1] . "](" . $nuevoNombre . ")";
+                return '!['.$matches[1].']('.$nuevoNombre.')';
             }
 
             // o lo dejamos como estaba
             return $matches[0];
         }, $md);
 
-        Log::info("moverImagenes: " . print_r($imagenes_movidas, true));
+        Log::info('moverImagenes: '.print_r($imagenes_movidas, true));
+
         return $imagenes_movidas;
     }
 
@@ -702,10 +710,11 @@ class Markdown
     {
         // $content = preg_replace('/\bimg\b/', '', $content); // Eliminar la palabra "img" (??)
         // eliminamos caracters de markdown
-        $content = preg_replace("/[#*_]/u", "", $content); // elimina caracteres de formato
-        $content = preg_replace("/!?\[([^]]*)\]\(.+\)/u", "$1", $content); // elimina urls
-        $content = preg_replace("/--+\n/u", "", $content); // elimina titulos
-        $content = preg_replace("/\{.*?\}/u", "", $content); // eliminamos marcas de estilo especiales
+        $content = preg_replace('/[#*_]/u', '', $content); // elimina caracteres de formato
+        $content = preg_replace("/!?\[([^]]*)\]\(.+\)/u", '$1', $content); // elimina urls
+        $content = preg_replace("/--+\n/u", '', $content); // elimina titulos
+        $content = preg_replace("/\{.*?\}/u", '', $content); // eliminamos marcas de estilo especiales
+
         return $content;
     }
 
@@ -714,7 +723,9 @@ class Markdown
      */
     public static function removeImages($texto)
     {
-        if (!$texto) return '';
+        if (! $texto) {
+            return '';
+        }
 
         // Eliminar imágenes en markdown ![alt](url)
         $texto = preg_replace('/!\[([^\]]*)\]\([^)]+\)/', '', $texto);
@@ -731,7 +742,6 @@ class Markdown
         return trim($texto);
     }
 
-
     // devuelve las primeras $num imágenes de un texto en markdown
     public static function images($md, $num = 99)
     {
@@ -742,9 +752,11 @@ class Markdown
         foreach ($matches[2] as $url) {
             $r[] = $url;
             $i++; // solo las primeras $num imagenes
-            if ($i >= $num)
+            if ($i >= $num) {
                 break;
+            }
         }
+
         return $r;
     }
 
@@ -753,21 +765,21 @@ class Markdown
         return preg_replace_callback('#\]\((.+?)\)#', function ($m) {
             $url = $m[1];
             if (preg_match('/^https?:\/\//', $url)) {
-                return '](' . $url . ')';
+                return ']('.$url.')';
             } else {
-                return '](' . url($url) . ')';
+                return ']('.url($url).')';
             }
         }, $texto_md);
     }
 
-
     /**
      * Detectar y acortar enlaces en texto con formato Markdown
-     * @param mixed $texto
+     *
+     * @param  mixed  $texto
      */
     public static function acortarEnlacesMarkdown($texto)
     {
-        $service = new \App\Services\EnlaceCortoService();
+        $service = new EnlaceCortoService;
 
         $pattern = '/\[(.*?)\]\((https?:\/\/[^\s)]+)\)/i';
         preg_match_all($pattern, $texto, $matches, PREG_SET_ORDER);
@@ -778,7 +790,7 @@ class Markdown
             $linkText = $match[1];
             $url = $match[2];
 
-            if (!isset($urls_procesadas[$url])) {
+            if (! isset($urls_procesadas[$url])) {
                 $enlaceCorto = $service->obtenerEnlaceParaUrl($url);
                 $urls_procesadas[$url] = $enlaceCorto ? $enlaceCorto->url_corta : null;
             }
@@ -798,13 +810,15 @@ class Markdown
         preg_match_all($patternUrl, $texto, $urls_sueltas);
 
         foreach ($urls_sueltas[0] as $url_suelta) {
-            if (!isset($urls_procesadas[$url_suelta])) {
+            if (! isset($urls_procesadas[$url_suelta])) {
                 $enlaceCorto = $service->obtenerEnlaceParaUrl($url_suelta);
-                $urls_procesadas[$url_suelta] = $enlaceCorto ? $enlaceCorto->url_corta : null;            }
+                $urls_procesadas[$url_suelta] = $enlaceCorto ? $enlaceCorto->url_corta : null;
+            }
             if ($urls_procesadas[$url_suelta]) {
                 $texto = str_replace($url_suelta, $urls_procesadas[$url_suelta], $texto);
             }
         }
+
         return $texto;
     }
 }

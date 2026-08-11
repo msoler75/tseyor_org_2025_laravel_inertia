@@ -2,19 +2,20 @@
 
 namespace App\Notifications;
 
+use App\Models\Equipo;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
-use App\Models\User;
-use App\Models\Equipo;
 
 class BienvenidaEquipo extends Notification implements ShouldQueue
 {
     use Queueable;
 
     private Equipo $equipo;
+
     private User $usuario;
 
     /**
@@ -41,27 +42,29 @@ class BienvenidaEquipo extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $equipoUrl = url('/equipos/' . $this->equipo->slug);
+        $equipoUrl = url('/equipos/'.$this->equipo->slug);
 
         $esCoordinador = $this->equipo->coordinadores->contains('id', $this->usuario->id);
         $subject =
-            $esCoordinador ? 'Ahora coordinas el equipo "' . $this->equipo->nombre . '"' :
-                '¡Eres miembro del equipo "' . $this->equipo->nombre . '"!';
+            $esCoordinador ? 'Ahora coordinas el equipo "'.$this->equipo->nombre.'"' :
+                '¡Eres miembro del equipo "'.$this->equipo->nombre.'"!';
 
         $linea1 = $subject;
 
-        if($this->equipo->oculto)
-            $linea1 .= " Este es un equipo privado, así que recuerda iniciar sesión para poder ir a la página del equipo.";
+        if ($this->equipo->oculto) {
+            $linea1 .= ' Este es un equipo privado, así que recuerda iniciar sesión para poder ir a la página del equipo.';
+        }
 
-        Log::channel('notificaciones')->info('[BienvenidaEquipo] Enviando a: ' . ($this->usuario->email ?? 'sin email') . ' | Nombre: ' . $this->usuario->name . ' | Equipo: ' . $this->equipo->nombre . ' | Asunto: ' . $subject);
+        Log::channel('notificaciones')->info('[BienvenidaEquipo] Enviando a: '.($this->usuario->email ?? 'sin email').' | Nombre: '.$this->usuario->name.' | Equipo: '.$this->equipo->nombre.' | Asunto: '.$subject);
 
         return (new MailMessage)
             ->subject($subject)
-            ->greeting('¡Hola ' . $this->usuario->name . '!')
+            ->greeting('¡Hola '.$this->usuario->name.'!')
             ->line($linea1)
             ->action('Ver equipo', $equipoUrl)
-            ->line("Si has recibido este mensaje por error o no deseas estar en el equipo, puedes darte de baja en cualquier momento.");
+            ->line('Si has recibido este mensaje por error o no deseas estar en el equipo, puedes darte de baja en cualquier momento.');
     }
+
     /**
      * Get the array representation of the notification.
      *
@@ -71,7 +74,7 @@ class BienvenidaEquipo extends Notification implements ShouldQueue
     {
         return [
             'equipo' => ['nombre' => $this->equipo->nombre, 'slug' => $this->equipo->slug, 'id' => $this->equipo->id],
-            'user' => ['nombre' => $this->usuario->name, 'id' => $this->usuario->id]
+            'user' => ['nombre' => $this->usuario->name, 'id' => $this->usuario->id],
         ];
     }
 }

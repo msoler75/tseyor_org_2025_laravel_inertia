@@ -2,29 +2,28 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use App\Models\Informe;
-use App\Models\User;
-use App\Models\Comentario;
-use App\Models\Nodo;
-use App\Models\Contenido;
-use App\Models\Revision;
+use App\Http\Controllers\Controller;
 use App\Models\Busqueda;
+use App\Models\Comentario;
+use App\Models\Contenido;
+use App\Models\Informe;
 use App\Models\Inscripcion;
 use App\Models\Job;
 use App\Models\JobFailed;
+use App\Models\Nodo;
+use App\Models\Revision;
+use App\Models\Solicitud;
+use App\Models\User;
+use App\Notifications\CambioPassword;
+use App\Pigmalion\StorageItem;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use App\Pigmalion\StorageItem;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
-use App\Notifications\CambioPassword;
 use Illuminate\Support\Str;
 
 class AdminController // extends Controller
 {
-
     public function dashboard()
     {
 
@@ -58,20 +57,21 @@ class AdminController // extends Controller
             ->get();
 
         // última fecha por contenido (revisionable_type|revisionable_id)
-        $lastFechaPorContenido = $allRevisiones->groupBy(function($item) {
-            return ($item->revisionable_type ?? '') . '|' . ($item->revisionable_id ?? '');
-        })->map(function($group) {
+        $lastFechaPorContenido = $allRevisiones->groupBy(function ($item) {
+            return ($item->revisionable_type ?? '').'|'.($item->revisionable_id ?? '');
+        })->map(function ($group) {
             return $group->max('created_at');
         });
 
         // Deduplicar por (user_id, revisionable_type, revisionable_id) conservando la más reciente
-        $revisiones = $allRevisiones->unique(function($item) {
-                return ($item->user_id ?? '') . '|' . ($item->revisionable_type ?? '') . '|' . ($item->revisionable_id ?? '');
-            })
+        $revisiones = $allRevisiones->unique(function ($item) {
+            return ($item->user_id ?? '').'|'.($item->revisionable_type ?? '').'|'.($item->revisionable_id ?? '');
+        })
             ->values()
-            ->map(function($item) use ($lastFechaPorContenido) {
-                $key = ($item->revisionable_type ?? '') . '|' . ($item->revisionable_id ?? '');
+            ->map(function ($item) use ($lastFechaPorContenido) {
+                $key = ($item->revisionable_type ?? '').'|'.($item->revisionable_id ?? '');
                 $item->revisionable_last_created_at = $lastFechaPorContenido->get($key) ?? $item->created_at;
+
                 return $item;
             })
             ->take(10);
@@ -79,7 +79,7 @@ class AdminController // extends Controller
         $cambios_inscripciones = Revision::where('revisionable_type', 'App\\Models\\Inscripcion')
             ->whereIn('key', ['estado', 'user_id'])
             ->with('user')
-            ->with(['revisionable' => function($query) {
+            ->with(['revisionable' => function ($query) {
                 $query->with('usuarioAsignado');
             }])
             ->latest()
@@ -97,8 +97,14 @@ class AdminController // extends Controller
             if ($c->key === 'user_id') {
                 $old = $c->old_value;
                 $new = $c->new_value;
-                if ($old && is_numeric($old)) { $c->tutor_old_id = (int)$old; $tutorIds[] = (int)$old; }
-                if ($new && is_numeric($new)) { $c->tutor_new_id = (int)$new; $tutorIds[] = (int)$new; }
+                if ($old && is_numeric($old)) {
+                    $c->tutor_old_id = (int) $old;
+                    $tutorIds[] = (int) $old;
+                }
+                if ($new && is_numeric($new)) {
+                    $c->tutor_new_id = (int) $new;
+                    $tutorIds[] = (int) $new;
+                }
             } else {
                 // key === 'estado'
                 $userRev = Revision::where('revisionable_type', 'App\\Models\\Inscripcion')
@@ -108,13 +114,16 @@ class AdminController // extends Controller
                     ->orderBy('created_at', 'desc')
                     ->first();
                 $tutorId = $userRev ? ($userRev->new_value ?? $userRev->old_value) : null;
-                if ($tutorId && is_numeric($tutorId)) { $c->tutor_old_id = (int)$tutorId; $tutorIds[] = (int)$tutorId; }
+                if ($tutorId && is_numeric($tutorId)) {
+                    $c->tutor_old_id = (int) $tutorId;
+                    $tutorIds[] = (int) $tutorId;
+                }
             }
         }
 
         // Precargar usuarios para evitar N+1
         $usuarios = collect();
-        if (!empty($tutorIds)) {
+        if (! empty($tutorIds)) {
             $usuarios = User::whereIn('id', array_values(array_unique($tutorIds)))->get()->keyBy('id');
         }
 
@@ -135,17 +144,21 @@ class AdminController // extends Controller
                 // If values are JSON-encoded strings, try to decode to array
                 if (is_string($oldv) && (str_starts_with($oldv, '{') || str_starts_with($oldv, '['))) {
                     $decoded = json_decode($oldv, true);
-                    if (is_array($decoded)) $oldv = $decoded;
+                    if (is_array($decoded)) {
+                        $oldv = $decoded;
+                    }
                 }
                 if (is_string($newv) && (str_starts_with($newv, '{') || str_starts_with($newv, '['))) {
                     $decoded = json_decode($newv, true);
-                    if (is_array($decoded)) $newv = $decoded;
+                    if (is_array($decoded)) {
+                        $newv = $decoded;
+                    }
                 }
 
                 // Resolve old label
                 if (is_array($oldv)) {
                     $c->old_label_display = $oldv['etiqueta'] ?? ($oldv['label'] ?? json_encode($oldv, JSON_UNESCAPED_UNICODE));
-                } elseif (!empty($oldv) && is_string($oldv)) {
+                } elseif (! empty($oldv) && is_string($oldv)) {
                     $estados = Inscripcion::getEstadosDisponibles();
                     $candidate = $estados[$oldv] ?? $oldv;
                     if (is_array($candidate)) {
@@ -158,7 +171,7 @@ class AdminController // extends Controller
                 // Resolve new label
                 if (is_array($newv)) {
                     $c->new_label_display = $newv['etiqueta'] ?? ($newv['label'] ?? json_encode($newv, JSON_UNESCAPED_UNICODE));
-                } elseif (!empty($newv) && is_string($newv)) {
+                } elseif (! empty($newv) && is_string($newv)) {
                     $estados = $estados ?? Inscripcion::getEstadosDisponibles();
                     $candidate = $estados[$newv] ?? $newv;
                     if (is_array($candidate)) {
@@ -180,19 +193,19 @@ class AdminController // extends Controller
             // tutor_old_name / tutor_new_name como strings (si existen usuarios, usar nombre)
             $c->tutor_old_name = null;
             $c->tutor_new_name = null;
-            if (!empty($c->tutor_old_user) && is_object($c->tutor_old_user)) {
+            if (! empty($c->tutor_old_user) && is_object($c->tutor_old_user)) {
                 $c->tutor_old_name = $c->tutor_old_user->name ?? null;
-            } elseif (!empty($c->tutor_old_id)) {
-                $c->tutor_old_name = 'Usuario #' . $c->tutor_old_id;
-            } elseif (!empty($c->old_value) && is_string($c->old_value)) {
+            } elseif (! empty($c->tutor_old_id)) {
+                $c->tutor_old_name = 'Usuario #'.$c->tutor_old_id;
+            } elseif (! empty($c->old_value) && is_string($c->old_value)) {
                 $c->tutor_old_name = $c->old_value;
             }
 
-            if (!empty($c->tutor_new_user) && is_object($c->tutor_new_user)) {
+            if (! empty($c->tutor_new_user) && is_object($c->tutor_new_user)) {
                 $c->tutor_new_name = $c->tutor_new_user->name ?? null;
-            } elseif (!empty($c->tutor_new_id)) {
-                $c->tutor_new_name = 'Usuario #' . $c->tutor_new_id;
-            } elseif (!empty($c->new_value) && is_string($c->new_value)) {
+            } elseif (! empty($c->tutor_new_id)) {
+                $c->tutor_new_name = 'Usuario #'.$c->tutor_new_id;
+            } elseif (! empty($c->new_value) && is_string($c->new_value)) {
                 $c->tutor_new_name = $c->new_value;
             }
 
@@ -213,12 +226,11 @@ class AdminController // extends Controller
         $busquedas = Busqueda::select(['query', 'created_at'])->latest()->take(10)->get();
 
         $archivos = Nodo::with('user')->latest()->take(12)->get();
-        //dd($archivos->toArray()[0]);
-
+        // dd($archivos->toArray()[0]);
 
         $inscripciones_nuevas = Inscripcion::where('estado', 'nuevo')->count();
 
-        $solicitudes_pendientes = \App\Models\Solicitud::whereNull('fecha_aceptacion')
+        $solicitudes_pendientes = Solicitud::whereNull('fecha_aceptacion')
             ->whereNull('fecha_denegacion')
             ->count();
 
@@ -237,7 +249,7 @@ class AdminController // extends Controller
 
         $data = [
             'deploy_session_token' => $deploySessionToken,
-            //'ultimos_informes' => $ultimos_informes,
+            // 'ultimos_informes' => $ultimos_informes,
             'users_creados' => $users_creados,
             'users_activos' => $users_activos,
             'comentarios' => $comentarios,
@@ -260,7 +272,6 @@ class AdminController // extends Controller
         return view('admin.dashboard', $data);
     }
 
-
     /**
      * Devuelve el contenido de un archivo de log
      */
@@ -269,242 +280,248 @@ class AdminController // extends Controller
         $logsFolder = storage_path('logs');
 
         // evitar hacker
-        if (strpos($log, "..") !== false || strpos($log, "/") !== false || strpos($log, "\\") !== false)
+        if (strpos($log, '..') !== false || strpos($log, '/') !== false || strpos($log, '\\') !== false) {
             return response()->json(['content' => '']);
+        }
 
         $file = "$logsFolder/$log";
 
         // si no existe
-        if (!file_exists($file))
+        if (! file_exists($file)) {
             return response()->json(['content' => '']);
+        }
 
         // si el archivo es más grande de 5 mb, solo leemos los ultimos 5 mb del archivo
         $size = filesize($file);
-        if ($size  > 5 * 1024 * 1024)
+        if ($size > 5 * 1024 * 1024) {
             $content = file_get_contents($file, false, null, $size - 5 * 1024 * 1024);
-        else
+        } else {
             $content = file_get_contents($file);
+        }
+
         return response()->json(['content' => $content]);
     }
 
-
     /**
      * Lista las imagenes de una carpeta
-     * @param mixed $ruta
-     * @return mixed|\Illuminate\Http\JsonResponse
+     *
+     * @param  mixed  $ruta
+     * @return mixed|JsonResponse
      */
     public function listImages($ruta)
     {
         $loc = new StorageItem($ruta);
 
-        if (!$loc->directoryExists())
+        if (! $loc->directoryExists()) {
             return response()->json([], 400);
+        }
 
         $imagenes = $loc->listImages();
+
         // return json response
         return response()->json($imagenes);
     }
 
-
-
     /**
      * Genera una nueva contraseña para el usuario
-     * @param \Illuminate\Http\Request $request
-     * @return mixed|\Illuminate\Http\JsonResponse
+     *
+     * @return mixed|JsonResponse
      */
     public function newPassword(Request $request)
     {
 
         $user_id = $request->user_id;
-        \Log::info("newPassword", $request->all());
-        \Log::info("user_id: " . $user_id);
-        if (!$user_id) abort(400);
+        \Log::info('newPassword', $request->all());
+        \Log::info('user_id: '.$user_id);
+        if (! $user_id) {
+            abort(400);
+        }
         $user = User::findOrFail($user_id);
 
-        $words = array(
-            "amor",
-            "mente",
-            "observar",
-            "trascendente",
-            "unidad",
-            "cambio",
-            "divulgar",
-            "armonizar",
-            "equilibrio",
-            "muul",
-            "baksaj",
-            "diversidad",
-            "celeste",
-            "kundalini",
-            "grupal",
-            "cielo",
-            "ritmo",
-            "equidad",
-            "infinito",
-            "trinidad",
-            "estrella",
-            "plasma",
-            "salud",
-            "ong",
-            "mundo",
-            "utg",
-            "universidad",
-            "sandalia",
-            "baston",
-            "protege",
-            "manto",
-            "movimiento",
-            "claridad",
-            "humildad",
-            "hermandad",
-            "confianza",
-            "camino",
-            "predica",
-            "corazon",
-            "estelar",
-            "cayado",
-            "baculo",
-            "ancestral",
-            "libertad",
-            "libre",
-            "uno",
-            "dos",
-            "tres",
-            "cuatro",
-            "cinco",
-            "seis",
-            "siete",
-            "ocho",
-            "nueve",
-            "diez",
-            "once",
-            "doce",
-            "trece",
-            "intruso",
-            "dispersion",
-            "cyborg",
-            "crea",
-            "crear",
-            "voluntario",
-            "forzado",
-            "auto",
-            "autoctono",
-            "oriundo",
-            "primigenio",
-            "aguila",
-            "holograma",
-            "ilusion",
-            "fantasia",
-            "apego",
-            "desapego",
-            "sombra",
-            "sombras",
-            "piensa",
-            "pancreas",
-            "pan",
-            "vino",
-            "sangre",
-            "tierra",
-            "linfatico",
-            "reconocer",
-            "cristo",
-            "cosmico",
-            "interior",
-            "proteccion",
-            "alcanzar",
-            "tutelar",
-            "replica",
-            "replicas",
-            "realidad",
-            "mundos",
-            "h1",
-            "h2",
-            "h3",
-            "aium",
-            "rasbek",
-            "shilcars",
-            "melcor",
-            "orjain",
-            "noiwanak",
-            "jalied",
-            "melinus",
-            "mo",
-            "rhaum",
-            "seiph",
-            "orsil",
-            "aumnor",
-            "leer",
-            "asumir",
-            "vaciar",
-            "odres",
-            "fractales",
-            "mezclar",
-            "lodo",
-            "agua",
-            "limpiar",
-            "ejemplo",
-            "peques",
-            "sanar",
-            "agregado",
-            "transformar",
-            "transformarse",
-            "cambiar",
-            "monje",
-            "pensamiento",
-            "espejo",
-            "testo",
-            "transmutar",
-            "luz",
-            "rompui",
-            "om",
-            "pedir",
-            "neent",
-            "aum",
-            "retro",
-            "retroalimenta",
-            "sinhio",
-            "paraguas",
-            "protector",
-            "cafe",
-            "prometeo",
-            "fractal",
-            "xendra",
-            "orbe",
-            "esfera",
-            "arte",
-            "ciencia",
-            "espiritual",
-            "espiritualidad",
-            "ondulatorio",
-            "terapia",
-            "retiro",
-            "guerrero",
-            "prior",
-            "norte",
-            "este",
-            "oeste",
-            "sur",
-            "sentimiento",
-            "trascendente",
-            "abiotica",
-            "norte",
-            "oscuridad",
-            "entropia",
-            "feliz",
-            "romper",
-            "beh",
-            "sayab",
-            "tseek",
-            "suut",
-            "kat",
-            "oksah",
-            "ich",
-            "grihal"
-        );
+        $words = [
+            'amor',
+            'mente',
+            'observar',
+            'trascendente',
+            'unidad',
+            'cambio',
+            'divulgar',
+            'armonizar',
+            'equilibrio',
+            'muul',
+            'baksaj',
+            'diversidad',
+            'celeste',
+            'kundalini',
+            'grupal',
+            'cielo',
+            'ritmo',
+            'equidad',
+            'infinito',
+            'trinidad',
+            'estrella',
+            'plasma',
+            'salud',
+            'ong',
+            'mundo',
+            'utg',
+            'universidad',
+            'sandalia',
+            'baston',
+            'protege',
+            'manto',
+            'movimiento',
+            'claridad',
+            'humildad',
+            'hermandad',
+            'confianza',
+            'camino',
+            'predica',
+            'corazon',
+            'estelar',
+            'cayado',
+            'baculo',
+            'ancestral',
+            'libertad',
+            'libre',
+            'uno',
+            'dos',
+            'tres',
+            'cuatro',
+            'cinco',
+            'seis',
+            'siete',
+            'ocho',
+            'nueve',
+            'diez',
+            'once',
+            'doce',
+            'trece',
+            'intruso',
+            'dispersion',
+            'cyborg',
+            'crea',
+            'crear',
+            'voluntario',
+            'forzado',
+            'auto',
+            'autoctono',
+            'oriundo',
+            'primigenio',
+            'aguila',
+            'holograma',
+            'ilusion',
+            'fantasia',
+            'apego',
+            'desapego',
+            'sombra',
+            'sombras',
+            'piensa',
+            'pancreas',
+            'pan',
+            'vino',
+            'sangre',
+            'tierra',
+            'linfatico',
+            'reconocer',
+            'cristo',
+            'cosmico',
+            'interior',
+            'proteccion',
+            'alcanzar',
+            'tutelar',
+            'replica',
+            'replicas',
+            'realidad',
+            'mundos',
+            'h1',
+            'h2',
+            'h3',
+            'aium',
+            'rasbek',
+            'shilcars',
+            'melcor',
+            'orjain',
+            'noiwanak',
+            'jalied',
+            'melinus',
+            'mo',
+            'rhaum',
+            'seiph',
+            'orsil',
+            'aumnor',
+            'leer',
+            'asumir',
+            'vaciar',
+            'odres',
+            'fractales',
+            'mezclar',
+            'lodo',
+            'agua',
+            'limpiar',
+            'ejemplo',
+            'peques',
+            'sanar',
+            'agregado',
+            'transformar',
+            'transformarse',
+            'cambiar',
+            'monje',
+            'pensamiento',
+            'espejo',
+            'testo',
+            'transmutar',
+            'luz',
+            'rompui',
+            'om',
+            'pedir',
+            'neent',
+            'aum',
+            'retro',
+            'retroalimenta',
+            'sinhio',
+            'paraguas',
+            'protector',
+            'cafe',
+            'prometeo',
+            'fractal',
+            'xendra',
+            'orbe',
+            'esfera',
+            'arte',
+            'ciencia',
+            'espiritual',
+            'espiritualidad',
+            'ondulatorio',
+            'terapia',
+            'retiro',
+            'guerrero',
+            'prior',
+            'norte',
+            'este',
+            'oeste',
+            'sur',
+            'sentimiento',
+            'trascendente',
+            'abiotica',
+            'norte',
+            'oscuridad',
+            'entropia',
+            'feliz',
+            'romper',
+            'beh',
+            'sayab',
+            'tseek',
+            'suut',
+            'kat',
+            'oksah',
+            'ich',
+            'grihal',
+        ];
 
         $index = mt_rand(0, count($words) - 1);
 
-        $password = $words[$index] . '.' . mt_rand(1000, 9999);
+        $password = $words[$index].'.'.mt_rand(1000, 9999);
         \Log::info("nueva contraseña para {$user->name}: $password");
 
         $user->update(['password' => bcrypt($password)]);

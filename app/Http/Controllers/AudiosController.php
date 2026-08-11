@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Models\Audio;
 use App\Pigmalion\SEO;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AudiosController extends Controller
 {
@@ -21,16 +21,17 @@ class AudiosController extends Controller
             ->withFavorito()
             ->publicado();
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else if ($categoria=='_') // todos por orden alfabético
+        } elseif ($categoria == '_') { // todos por orden alfabético
             $query->orderByRaw('LOWER(titulo)');
-        else if (strcasecmp($categoria, 'favoritos') === 0)
+        } elseif (strcasecmp($categoria, 'favoritos') === 0) {
             $query->whereNotNull('favoritos.id');
-        else if($categoria)
+        } elseif ($categoria) {
             $query->where('categoria', $categoria);
-        else
+        } else {
             $query->latest('updated_at');
+        }
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
@@ -43,7 +44,7 @@ class AudiosController extends Controller
             'filtrado' => $buscar,
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
-            'categorias' => $categorias
+            'categorias' => $categorias,
         ])
             ->withViewData(SEO::get('audios'));
     }
@@ -56,12 +57,12 @@ class AudiosController extends Controller
             $audio = Audio::withFavorito()->where('slug', $id)->firstOrFail();
         }
 
-        if (!$audio) {
+        if (! $audio) {
             abort(404); // Manejo de audio no encontrada
         }
 
         return Inertia::render('Audios/Audio', [
-            'audio' => $audio
+            'audio' => $audio,
         ])
             ->withViewData(SEO::from($audio));
     }

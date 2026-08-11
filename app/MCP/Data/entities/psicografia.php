@@ -9,7 +9,7 @@ return [
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'categoria' => ['type' => 'string', 'description' => 'Categoría'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
-            'imagen' => ['type' => 'string', 'description' => 'Ruta o URL de la imagen']
-        ]
+            'imagen' => ['type' => 'string', 'description' => 'Ruta o URL de la imagen'],
+        ],
     ],
 ];

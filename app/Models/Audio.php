@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
-use Illuminate\Support\Facades\Log;
-use Laravel\Scout\Searchable;
 use App\Pigmalion\StorageItem;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Laravel\Scout\Searchable;
 
 class Audio extends ContenidoBaseModel
 {
     use CrudTrait;
     use Searchable;
+
     /**
      * El nombre de la tabla asociada al modelo.
      *
@@ -27,7 +26,7 @@ class Audio extends ContenidoBaseModel
         'enlace',
         'audio',
         'visibilidad',
-        'duracion'
+        'duracion',
     ];
 
     // cuando se guarde el audio:
@@ -37,9 +36,9 @@ class Audio extends ContenidoBaseModel
 
         // corregimos la ruta del audio
         static::saved(function ($model) {
-            \Log::info("Audio saved: ", ['model' => $model]);
-            if (str_starts_with($model->audio, "medios")) {
-                $model->audio = "/almacen/" . $model->audio;
+            \Log::info('Audio saved: ', ['model' => $model]);
+            if (str_starts_with($model->audio, 'medios')) {
+                $model->audio = '/almacen/'.$model->audio;
                 $model->saveQuietly(); // guardamos sin generar eventos
             }
 
@@ -48,7 +47,7 @@ class Audio extends ContenidoBaseModel
             $filename = basename($model->audio);
             $loc = new StorageItem($folder);
             $path = $loc->path;
-            $files = glob($path."/*");
+            $files = glob($path.'/*');
             foreach ($files as $file) {
                 if (basename($file) != $filename) {
                     unlink($file);
@@ -57,8 +56,6 @@ class Audio extends ContenidoBaseModel
         });
     }
 
-
-
     // SCOUT
 
     /**
@@ -66,7 +63,7 @@ class Audio extends ContenidoBaseModel
      */
     public function shouldBeSearchable(): bool
     {
-        return $this->visibilidad == 'P' && !$this->deleted_at;
+        return $this->visibilidad == 'P' && ! $this->deleted_at;
     }
 
     public function toSearchableArray(): array
@@ -74,7 +71,7 @@ class Audio extends ContenidoBaseModel
         return [
             'id' => $this->id,
             'title' => $this->titulo,
-            'categoria' => $this->categoria
+            'categoria' => $this->categoria,
         ];
     }
 }

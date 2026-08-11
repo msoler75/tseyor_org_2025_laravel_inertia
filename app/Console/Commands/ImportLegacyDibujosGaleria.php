@@ -23,31 +23,36 @@ class ImportLegacyDibujosGaleria extends Command
     {
         $file = (string) $this->argument('file');
 
-        if (!is_file($file) || !is_readable($file)) {
+        if (! is_file($file) || ! is_readable($file)) {
             $this->error("No se puede leer el archivo JSON: {$file}");
+
             return self::FAILURE;
         }
 
         $raw = file_get_contents($file);
         if ($raw === false) {
             $this->error("No se pudo cargar el archivo JSON: {$file}");
+
             return self::FAILURE;
         }
 
         $data = json_decode($raw, true);
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             $this->error('El archivo no contiene un JSON valido.');
+
             return self::FAILURE;
         }
 
         $dibujos = $data['Dibujos'] ?? null;
-        if (!is_array($dibujos)) {
+        if (! is_array($dibujos)) {
             $this->error('No se encontro la seccion Dibujos en el JSON.');
+
             return self::FAILURE;
         }
 
         if (count($dibujos) === 0) {
             $this->warn('La seccion Dibujos esta vacia. No hay nada que importar.');
+
             return self::SUCCESS;
         }
 
@@ -66,15 +71,17 @@ class ImportLegacyDibujosGaleria extends Command
         $primeraImagen = null;
 
         foreach ($dibujos as $index => $item) {
-            if (!is_array($item)) {
+            if (! is_array($item)) {
                 $saltados++;
+
                 continue;
             }
 
             $url = trim((string) ($item['url'] ?? ''));
             if ($url === '') {
-                $this->warn('Item sin url en indice ' . $index . '. Se omite.');
+                $this->warn('Item sin url en indice '.$index.'. Se omite.');
                 $saltados++;
+
                 continue;
             }
 
@@ -125,10 +132,10 @@ class ImportLegacyDibujosGaleria extends Command
         }
 
         $this->info('Importacion completada.');
-        $this->line('Galeria creada con ID: ' . $galeria->id);
-        $this->line('Items importados: ' . $importados);
-        $this->line('Items sin usuario asignado: ' . $sinUsuario);
-        $this->line('Items omitidos: ' . $saltados);
+        $this->line('Galeria creada con ID: '.$galeria->id);
+        $this->line('Items importados: '.$importados);
+        $this->line('Items sin usuario asignado: '.$sinUsuario);
+        $this->line('Items omitidos: '.$saltados);
         $this->line('Seccion Fotografia: ignorada.');
 
         return self::SUCCESS;
@@ -145,14 +152,14 @@ class ImportLegacyDibujosGaleria extends Command
             ->get()
             ->each(function (User $user) use (&$map): void {
                 $nameKey = $this->normalizeAuthorKey((string) $user->name);
-                if ($nameKey !== '' && !isset($map[$nameKey])) {
+                if ($nameKey !== '' && ! isset($map[$nameKey])) {
                     $map[$nameKey] = $user->id;
                 }
 
                 $slug = (string) ($user->slug ?? '');
                 if ($slug !== '') {
                     $slugKey = $this->normalizeAuthorKey($slug);
-                    if ($slugKey !== '' && !isset($map[$slugKey])) {
+                    if ($slugKey !== '' && ! isset($map[$slugKey])) {
                         $map[$slugKey] = $user->id;
                     }
                 }
@@ -186,7 +193,7 @@ class ImportLegacyDibujosGaleria extends Command
 
     private function appendAutorToDescripcion(string $descripcion, string $autor): string
     {
-        $lineaAutor = 'Autor: ' . $autor;
+        $lineaAutor = 'Autor: '.$autor;
 
         if ($descripcion === '') {
             return $lineaAutor;
@@ -196,6 +203,6 @@ class ImportLegacyDibujosGaleria extends Command
             return $descripcion;
         }
 
-        return $descripcion . PHP_EOL . PHP_EOL . $lineaAutor;
+        return $descripcion.PHP_EOL.PHP_EOL.$lineaAutor;
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\WorkerController;
-use App\Http\Controllers\Admin\CommandController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\CommandController;
+use App\Http\Controllers\Admin\WorkerController;
+use Illuminate\Support\Facades\Route;
 
 // --------------------------
 // Custom Backpack Routes
@@ -13,17 +13,18 @@ use App\Http\Controllers\Admin\AuthController;
 // Routes you generate using Backpack\Generators will be placed here.
 
 Route::group([
-    'prefix'     => config('backpack.base.route_prefix', 'admin'),
+    'prefix' => config('backpack.base.route_prefix', 'admin'),
     'middleware' => array_merge(
         (array) config('backpack.base.web_middleware', 'web'),
         (array) config('backpack.base.middleware_key', 'admin'),
         ['throttle:admin']
     ),
-    'namespace'  => 'App\Http\Controllers\Admin',
+    'namespace' => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
     // Route::get('dashboard', 'Backpack\dashboard')->name('dashboard');
-    Route::get('logout', function() {
+    Route::get('logout', function () {
         auth()->logout();
+
         return redirect('/');
     });
     Route::post('user/new-password', [AdminController::class, 'newPassword']);
@@ -110,7 +111,6 @@ Route::group([
     Route::get('termino/importando/paso2', 'TerminoCrudController@importando2');
     Route::get('termino/importando/test', 'TerminoCrudController@test');
 
-
     Route::get('search/{model}', 'SearchModelController@index');
 
     // Worker routes con throttling restrictivo
@@ -129,14 +129,12 @@ Route::group([
         Route::post('command', [CommandController::class, 'runCommandPost'])->name('command.run');
     });
 
-
     Route::get('archivos', function () {
         return view('admin.archivos');
-    } );
+    });
     Route::get('logs', function () {
         return view('admin.logs');
-    } );
-
+    });
 
     // Radio
     Route::post('radio-item/{id}/toggle', 'RadioItemCrudController@toggle');
@@ -145,10 +143,10 @@ Route::group([
     Route::post('loginAs/{idUser}', [AuthController::class, 'loginAs'])->middleware('auth')->name('admin.loginAs');
 
     // otras rutas de utilidad
-    Route::get('getlog/{log}', [AdminController::class, 'getLog'] );
-    Route::get('list-images{ruta}', [AdminController::class, 'listImages'] )->where(['ruta' => '(\/.+)?'])->name('admin.list-images');
-    Route::get('dashboard', [AdminController::class, 'dashboard'] );
-    Route::get('', [AdminController::class, 'dashboard'] );
+    Route::get('getlog/{log}', [AdminController::class, 'getLog']);
+    Route::get('list-images{ruta}', [AdminController::class, 'listImages'])->where(['ruta' => '(\/.+)?'])->name('admin.list-images');
+    Route::get('dashboard', [AdminController::class, 'dashboard']);
+    Route::get('', [AdminController::class, 'dashboard']);
 
     // administración de tareas
 
@@ -161,7 +159,6 @@ Route::group([
     Route::get('jobs/flush', 'JobsController@flushJobs');
     Route::get('jobs/detect-audios-to-process', 'JobsController@detectAudiosToProcess');
     // queue  batch
-
 
     // enviar boletin
     Route::post('boletin/{id}/enviar-boletin', 'BoletinCrudController@enviarBoletin')->name('boletin.enviar');
@@ -178,6 +175,5 @@ Route::middleware('throttle:command')->middleware(['deploy.token', 'allowed.ip']
     return view('auth.admin-login');
 })->name('admin.login');*/
 
-    // Route::get('admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
-    //Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login.post');
-
+// Route::get('admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
+// Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login.post');

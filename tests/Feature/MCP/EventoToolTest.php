@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\EventosController;
+use App\Models\Evento;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class EventoToolTest extends McpFeatureTestCase
 {
     use DatabaseTransactions;
+
     public function test_info_evento()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'evento']);
@@ -20,7 +23,7 @@ class EventoToolTest extends McpFeatureTestCase
         $this->assertIsArray($evento['parametros_listar']);
         $this->assertIsArray($evento['campos']);
         $campos_esperados = [
-            'titulo', 'slug', 'descripcion', 'categoria', 'texto', 'imagen', 'published_at', 'fecha_inicio', 'fecha_fin', 'hora_inicio', 'visibilidad', 'centro_id', 'sala_id', 'equipo_id'
+            'titulo', 'slug', 'descripcion', 'categoria', 'texto', 'imagen', 'published_at', 'fecha_inicio', 'fecha_fin', 'hora_inicio', 'visibilidad', 'centro_id', 'sala_id', 'equipo_id',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $evento['campos'], "Falta el campo '$campo'");
@@ -33,15 +36,15 @@ class EventoToolTest extends McpFeatureTestCase
 
     public function test_listar_eventos()
     {
-        $pp = \App\Http\Controllers\EventosController::$ITEMS_POR_PAGINA;
-        \App\Models\Evento::withoutEvents(function () use ($pp) {
+        $pp = EventosController::$ITEMS_POR_PAGINA;
+        Evento::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 4; $i++) {
-                \App\Models\Evento::create([
-                    'titulo' => 'Evento ' . $i,
-                    'slug' => 'evento-' . $i . '-' . uniqid(),
-                    'descripcion' => 'Desc ' . $i,
+                Evento::create([
+                    'titulo' => 'Evento '.$i,
+                    'slug' => 'evento-'.$i.'-'.uniqid(),
+                    'descripcion' => 'Desc '.$i,
                     'categoria' => 'general',
-                    'texto' => 'Texto ' . $i,
+                    'texto' => 'Texto '.$i,
                     'imagen' => null,
                     'published_at' => now(),
                     'fecha_inicio' => now(),
@@ -54,7 +57,7 @@ class EventoToolTest extends McpFeatureTestCase
                 ]);
             }
         });
-        $this->makeAllSearchable(\App\Models\Evento::class);
+        $this->makeAllSearchable(Evento::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'evento']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -78,9 +81,9 @@ class EventoToolTest extends McpFeatureTestCase
 
     public function test_ver_evento()
     {
-        $evento = \App\Models\Evento::create([
+        $evento = Evento::create([
             'titulo' => 'Evento Test',
-            'slug' => 'evento-test-' . uniqid(),
+            'slug' => 'evento-test-'.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'general',
             'texto' => 'Texto',
@@ -94,7 +97,7 @@ class EventoToolTest extends McpFeatureTestCase
             'sala_id' => null,
             'equipo_id' => null,
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'evento', 'slug' => $evento->slug]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'evento', 'slug' => $evento->slug]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('evento', $result);
         $this->assertEquals($evento->slug, $result['evento']['slug'] ?? $result['evento']->slug ?? null);
@@ -107,7 +110,7 @@ class EventoToolTest extends McpFeatureTestCase
             'entidad' => 'evento',
             'data' => [
                 'titulo' => 'Nuevo Evento',
-                'slug' => 'nuevo-evento-' . uniqid(),
+                'slug' => 'nuevo-evento-'.uniqid(),
                 'descripcion' => 'Descripción de prueba',
                 'categoria' => 'test',
                 'texto' => 'Texto de prueba',
@@ -121,7 +124,7 @@ class EventoToolTest extends McpFeatureTestCase
                 'sala_id' => null,
                 'equipo_id' => null,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('eventos', ['slug' => $params['data']['slug']]);
@@ -129,9 +132,9 @@ class EventoToolTest extends McpFeatureTestCase
 
     public function test_editar_evento()
     {
-        $evento = \App\Models\Evento::create([
+        $evento = Evento::create([
             'titulo' => 'Editar Evento',
-            'slug' => 'editar-evento-' . uniqid(),
+            'slug' => 'editar-evento-'.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'general',
             'texto' => 'Texto',
@@ -150,9 +153,9 @@ class EventoToolTest extends McpFeatureTestCase
             'entidad' => 'evento',
             'id' => $evento->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('eventos', ['id' => $evento->id, 'descripcion' => $nuevaDescripcion]);
@@ -160,9 +163,9 @@ class EventoToolTest extends McpFeatureTestCase
 
     public function test_eliminar_evento()
     {
-        $evento = \App\Models\Evento::create([
+        $evento = Evento::create([
             'titulo' => 'Eliminar Evento',
-            'slug' => 'eliminar-evento-' . uniqid(),
+            'slug' => 'eliminar-evento-'.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'general',
             'texto' => 'Texto',
@@ -180,7 +183,7 @@ class EventoToolTest extends McpFeatureTestCase
             'entidad' => 'evento',
             'id' => $evento->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('eventos', ['id' => $evento->id]);

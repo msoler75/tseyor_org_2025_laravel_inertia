@@ -8,7 +8,7 @@ class Profiler
 
     public static function calling($identifier)
     {
-        if (!isset(self::$calls[$identifier])) {
+        if (! isset(self::$calls[$identifier])) {
             self::$calls[$identifier] = [
                 'count' => 0,
                 'totalTime' => 0,

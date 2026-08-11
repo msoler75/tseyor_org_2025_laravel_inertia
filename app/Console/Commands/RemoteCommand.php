@@ -38,16 +38,18 @@ class RemoteCommand extends Command
             // Usar localhost para desarrollo
             $url = 'http://localhost:80/admin/command2';
         } else {
-            $url = config('deploy.url', 'http://localhost') . '/admin/command2';
+            $url = config('deploy.url', 'http://localhost').'/admin/command2';
         }
 
-        if (!$token) {
+        if (! $token) {
             $this->error('El token de deploy no está configurado en el archivo .env (DEPLOY_TOKEN)');
+
             return 1;
         }
 
         if (empty($command)) {
             $this->error('El comando es requerido');
+
             return 1;
         }
 
@@ -82,12 +84,19 @@ class RemoteCommand extends Command
 
                         if (is_array($errorData) && isset($errorData['props'])) {
                             $props = $errorData['props'];
-                            $this->error("Error del servidor:");
-                            if (isset($props['codigo'])) $this->error("Código: {$props['codigo']}");
-                            if (isset($props['titulo'])) $this->error("Título: {$props['titulo']}");
-                            if (isset($props['mensaje'])) $this->error("Mensaje: {$props['mensaje']}");
+                            $this->error('Error del servidor:');
+                            if (isset($props['codigo'])) {
+                                $this->error("Código: {$props['codigo']}");
+                            }
+                            if (isset($props['titulo'])) {
+                                $this->error("Título: {$props['titulo']}");
+                            }
+                            if (isset($props['mensaje'])) {
+                                $this->error("Mensaje: {$props['mensaje']}");
+                            }
                             // Mostrar props completos para debugging
                             $this->line(json_encode($props, JSON_PRETTY_PRINT));
+
                             return 1;
                         }
                     }
@@ -96,8 +105,9 @@ class RemoteCommand extends Command
                 $data = $response->json();
 
                 if ($data === null) {
-                    $this->error("La respuesta no es JSON válido");
+                    $this->error('La respuesta no es JSON válido');
                     $this->error("Respuesta cruda: {$body}");
+
                     return 1;
                 }
 
@@ -106,6 +116,7 @@ class RemoteCommand extends Command
                     if (isset($data['message'])) {
                         $this->error("Mensaje: {$data['message']}");
                     }
+
                     return 1;
                 }
 
@@ -117,20 +128,22 @@ class RemoteCommand extends Command
                 $this->info("Código de salida: {$exitCode}");
 
                 if ($output) {
-                    $this->line("Salida del comando:");
+                    $this->line('Salida del comando:');
                     $this->line($output);
                 } else {
-                    $this->warn("No hay salida del comando");
+                    $this->warn('No hay salida del comando');
                 }
 
                 return $exitCode;
             } else {
                 $this->error("Error HTTP: {$response->status()}");
                 $this->error("Respuesta: {$response->body()}");
+
                 return 1;
             }
         } catch (\Exception $e) {
             $this->error("Error de conexión: {$e->getMessage()}");
+
             return 1;
         }
     }

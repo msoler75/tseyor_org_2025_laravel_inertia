@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Revision;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Widget;
-use App\Models\Revision;
 
 /**
  * Class RevisionCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class RevisionCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use ListOperation;
+    use ShowOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -25,7 +28,7 @@ class RevisionCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Revision::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/revision');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/revision');
         CRUD::setEntityNameStrings('revision', 'revisiones');
     }
 
@@ -33,14 +36,15 @@ class RevisionCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
     {
         $this->crud->addColumn([
-            'name'  => 'tituloContenido',
+            'name' => 'tituloContenido',
             'label' => 'Contenido',
-            'type'  => 'text'
+            'type' => 'text',
         ]);
 
         $this->crud->addColumn([
@@ -71,19 +75,20 @@ class RevisionCrudController extends CrudController
             ->distinct()
             ->pluck('revisionable_type')
             ->mapWithKeys(function ($type) {
-                $coleccion = str_replace("App\\Models\\", "", $type);
+                $coleccion = str_replace('App\\Models\\', '', $type);
                 $coleccion = strtolower($coleccion);
                 $coleccion .= substr($coleccion, -1) == 'n' ? 'es' : 's';
+
                 return [$type => ucfirst($coleccion)];
             })
             ->toArray();
 
         Widget::add([
-            'name'          => 'revision_collection_filter',
-            'type'          => 'revision_collection_filter',
+            'name' => 'revision_collection_filter',
+            'type' => 'revision_collection_filter',
             'viewNamespace' => 'vendor.backpack.crud.filters',
-            'section'       => 'before_content',
-            'colecciones'   => $colecciones,
+            'section' => 'before_content',
+            'colecciones' => $colecciones,
         ]);
 
         if (request()->filled('revisionable_type')) {
@@ -91,12 +96,10 @@ class RevisionCrudController extends CrudController
         }
     }
 
-
-
-
     public function show($id)
     {
         $revision = Revision::findOrFail($id);
+
         return redirect($revision->revisionUrl);
     }
 }

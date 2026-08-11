@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Models\Busqueda;
 use App\Models\Contenido;
 use App\Pigmalion\BusquedasHelper;
-use App\Models\Busqueda;
 use App\Pigmalion\SEO;
 use App\Pigmalion\StrEx;
-
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ContenidosController extends Controller
 {
     public static $ITEMS_POR_PAGINA = 64;
+
     public static $ITEMS_SEARCH = 64;
 
     /**
@@ -28,38 +28,37 @@ class ContenidosController extends Controller
         $esAdministrador = $user && $user->hasPermissionTo('administrar contenidos');
 
         // no aparecen en novedades
-        $colecciones_excluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', /*'lugares',*/ 'guias', 'experiencias'];
+        $colecciones_excluidas = ['paginas', 'informes', 'normativas', 'audios', 'meditaciones', 'terminos', /* 'lugares', */ 'guias', 'experiencias'];
 
         $page = $request->input('page', 1);
 
         $campos = ['slug_ref', 'titulo', 'imagen', 'descripcion', 'fecha', 'coleccion', 'visibilidad'];
 
-        if($request->has('description')) {
+        if ($request->has('description')) {
             $campos[] = 'description';
         }
 
         $resultados = $buscar ?
             Contenido::search($buscar)
-            ->query(function ($query) use ($colecciones_excluidas) {
-                return $query->whereNotIn('coleccion', $colecciones_excluidas);
-            })
-            ->paginate(ContenidosController::$ITEMS_POR_PAGINA, 'page', $page)
-            ->appends(['buscar' => $buscar])
+                ->query(function ($query) use ($colecciones_excluidas) {
+                    return $query->whereNotIn('coleccion', $colecciones_excluidas);
+                })
+                ->paginate(ContenidosController::$ITEMS_POR_PAGINA, 'page', $page)
+                ->appends(['buscar' => $buscar])
             :
             Contenido::select($campos)
-            ->when(!$esAdministrador, function ($query) {
-                $query->publicado();
-            })
-            ->whereNotIn('coleccion', $colecciones_excluidas)
-            ->latest('updated_at')
-            ->paginate(ContenidosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
+                ->when(! $esAdministrador, function ($query) {
+                    $query->publicado();
+                })
+                ->whereNotIn('coleccion', $colecciones_excluidas)
+                ->latest('updated_at')
+                ->paginate(ContenidosController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
 
         return Inertia::render('Novedades', [
             'filtrado' => $buscar,
-            'listado' => $resultados
+            'listado' => $resultados,
         ])->withViewData(SEO::get('novedades'));
     }
-
 
     /**
      * Buscador global
@@ -68,7 +67,7 @@ class ContenidosController extends Controller
     public function search(Request $request)
     {
         $buscar = $request->input('query');
-        $buscar = str_replace("-", " ", $buscar);
+        $buscar = str_replace('-', ' ', $buscar);
 
         $collections = $request->input('collections');
 
@@ -77,8 +76,8 @@ class ContenidosController extends Controller
         // se puede utilizar un comando al comienzo de la búsqueda para indicar en qué colección buscar
         // ejemplo: com 33, buscaría comunicados con 33
         $comandos = ['com\.?|comunicado' => 'comunicados', 'libro' => 'libros', 'blog' => 'entradas', 'articulo' => 'noticias,entradas',
-        'evento' => 'eventos', 'noticia' => 'noticias', 'informe' => 'informes', 'normativa' => 'normativas',
-        'audio' => 'audios', 'meditacion' => 'meditaciones', 'glosario' => 'terminos', 'termino' => 'terminos', 'psicografia'=>'psicografias'];
+            'evento' => 'eventos', 'noticia' => 'noticias', 'informe' => 'informes', 'normativa' => 'normativas',
+            'audio' => 'audios', 'meditacion' => 'meditaciones', 'glosario' => 'terminos', 'termino' => 'terminos', 'psicografia' => 'psicografias'];
 
         foreach ($comandos as $key => $value) {
             // si $buscar empieza por 'blog' entonces solo buscamos en blogs
@@ -88,17 +87,17 @@ class ContenidosController extends Controller
                 $buscar = implode(' ', $palabras);
                 $collections = $value;
                 // caso especial
-                if ($value == "comunicados") {
+                if ($value == 'comunicados') {
                     if (is_numeric($buscar) && strlen($buscar) < 3) {
-                        $numero = preg_replace("/^0+/", "", $buscar);
-                        $buscar = str_pad($numero, 2, "0", STR_PAD_LEFT) . " " . str_pad($numero, 3, "0", STR_PAD_LEFT) . " " . $buscar;
+                        $numero = preg_replace('/^0+/', '', $buscar);
+                        $buscar = str_pad($numero, 2, '0', STR_PAD_LEFT).' '.str_pad($numero, 3, '0', STR_PAD_LEFT).' '.$buscar;
                     }
                 }
                 break;
             }
         }
 
-        list($buscarFiltrado, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
+        [$buscarFiltrado, $comunes] = BusquedasHelper::separarPalabrasComunes($buscar);
 
         // https://github.com/teamtnt/laravel-scout-tntsearch-driver?tab=readme-ov-file#constraints
         $filtro = new Contenido;
@@ -116,39 +115,38 @@ class ContenidosController extends Controller
             Contenido::where('id', '-1')
         )->paginate(ContenidosController::$ITEMS_SEARCH);
 
-        //dd((Contenido::search($buscarFiltrado))->get()->toArray());
+        // dd((Contenido::search($buscarFiltrado))->get()->toArray());
 
-        if(false)
-        if ($busqueda_valida && !$resultados->count()) // por algun motivo algunas busquedas no las encuentra. En esos casos, buscamos manualmente
-            $resultados = Contenido::publicado()->where('titulo', 'LIKE', "%$buscarFiltrado%")
-                ->orWhere('texto_busqueda', 'LIKE', "%$buscarFiltrado%")
-                ->paginate(ContenidosController::$ITEMS_SEARCH)
-                ->appends($request->except('page'));
-
+        if (false) {
+            if ($busqueda_valida && ! $resultados->count()) { // por algun motivo algunas busquedas no las encuentra. En esos casos, buscamos manualmente
+                $resultados = Contenido::publicado()->where('titulo', 'LIKE', "%$buscarFiltrado%")
+                    ->orWhere('texto_busqueda', 'LIKE', "%$buscarFiltrado%")
+                    ->paginate(ContenidosController::$ITEMS_SEARCH)
+                    ->appends($request->except('page'));
+            }
+        }
 
         // detectar cuando el título coincide con la búsqueda, le damos más peso y reordenamos resultados
 
-        //$reorder = false;
+        // $reorder = false;
         $resultados
             ->transform(function ($item) use ($buscarFiltrado) {
-                if($buscarFiltrado==strtolower(StrEx::removerAcentosStrtr($item->titulo)))
-                {
-                    $item->__tntSearchScore__+=3.0;
+                if ($buscarFiltrado == strtolower(StrEx::removerAcentosStrtr($item->titulo))) {
+                    $item->__tntSearchScore__ += 3.0;
                 }
+
                 return $item;
             });
 
-
-        if (strlen($buscarFiltrado) < 3)
+        if (strlen($buscarFiltrado) < 3) {
             BusquedasHelper::limpiarResultados($resultados, $buscar, true);
-        else
+        } else {
             BusquedasHelper::formatearResultados($resultados, $buscar, true);
-
-
+        }
 
         return response()->json([
             'listado' => $resultados,
-            'busquedaValida' => BusquedasHelper::validarBusqueda($buscar)
+            'busquedaValida' => BusquedasHelper::validarBusqueda($buscar),
         ], 200);
     }
 
@@ -160,10 +158,11 @@ class ContenidosController extends Controller
         // si nos pasan el click_url es que en esa búsqueda se ha realizado un click
         $data = $request->input();
 
-        $base = url("");
+        $base = url('');
         // limpia la url
-        if (isset($data['click_url']))
-            $data['click_url'] = str_replace($base, "", $data['click_url']);
+        if (isset($data['click_url'])) {
+            $data['click_url'] = str_replace($base, '', $data['click_url']);
+        }
 
         // almacenamos el session id
         // $data['session_id'] = session()->getId();
@@ -171,9 +170,11 @@ class ContenidosController extends Controller
         if ($data['id'] ?? null) {
             $busqueda = Busqueda::findOrFail($data['id']);
             $busqueda->update($data);
+
             return response()->json(['id' => $busqueda->id], 200);
         } else {
             $busqueda = Busqueda::create($data);
+
             return response()->json(['id' => $busqueda->id], 200);
         }
     }

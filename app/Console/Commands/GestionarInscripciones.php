@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Inscripcion;
-use App\Models\User;
-use App\Notifications\InscripcionesSeguimiento;
+use App\Notifications\InscripcionCaducada;
 use App\Notifications\InscripcionesReporte;
+use App\Notifications\InscripcionesSeguimiento;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
 
 class GestionarInscripciones extends Command
@@ -35,15 +35,15 @@ class GestionarInscripciones extends Command
         $inscripcionId = $this->option('id');
 
         // Detectar inscripciones caducadas antes de notificar (solo si no es ID específico)
-        if (!$inscripcionId) {
+        if (! $inscripcionId) {
             $this->detectarInscripcionesCaducadas();
         }
 
-        if (!$soloReporte) {
+        if (! $soloReporte) {
             $this->enviarNotificacionesSeguimiento($inscripcionId);
         }
 
-        if (!$soloSeguimiento && !$inscripcionId) {
+        if (! $soloSeguimiento && ! $inscripcionId) {
             $this->enviarReporteAdministrador();
         }
 
@@ -61,9 +61,9 @@ class GestionarInscripciones extends Command
 
         $inscripcionesCaducables = Inscripcion::with('usuarioAsignado')
             ->whereNotIn('estado', $estadosFinales)
-            ->where(function($query) use ($fechaLimite) {
+            ->where(function ($query) use ($fechaLimite) {
                 $query->where('ultima_actividad', '<=', $fechaLimite)
-                      ->orWhereNull('ultima_actividad'); // Para registros sin actividad registrada
+                    ->orWhereNull('ultima_actividad'); // Para registros sin actividad registrada
             })
             ->get();
 
@@ -78,7 +78,7 @@ class GestionarInscripciones extends Command
             $inscripcion->comentar('Inscripción marcada como caducada automáticamente por inactividad.');
 
             // Crear notificación con datos preservados
-            $notificacion = new \App\Notifications\InscripcionCaducada($inscripcion, $estadoAnterior, $fechaUltimaActividad);
+            $notificacion = new InscripcionCaducada($inscripcion, $estadoAnterior, $fechaUltimaActividad);
             if ($inscripcion->usuarioAsignado) {
                 $inscripcion->usuarioAsignado->notify($notificacion);
             }
@@ -103,8 +103,8 @@ class GestionarInscripciones extends Command
         $estadosFinales = config('inscripciones.notificaciones.estados_finales') ?? [];
         $estadosSeguimiento = config('inscripciones.notificaciones.estados_seguimiento');
 
-        $this->line("Estados finales: " . implode(', ', $estadosFinales));
-        $this->line("Estados seguimiento: " . implode(', ', $estadosSeguimiento));
+        $this->line('Estados finales: '.implode(', ', $estadosFinales));
+        $this->line('Estados seguimiento: '.implode(', ', $estadosSeguimiento));
 
         $query = Inscripcion::with('usuarioAsignado')
             ->whereNotNull('user_id')
@@ -120,21 +120,22 @@ class GestionarInscripciones extends Command
 
         if ($inscripcionId && $inscripciones->isEmpty()) {
             $this->error("No se encontró la inscripción con ID: {$inscripcionId} o no cumple los criterios de seguimiento");
+
             return;
         }
 
-        $this->line("Total inscripciones encontradas: " . $inscripciones->count());
+        $this->line('Total inscripciones encontradas: '.$inscripciones->count());
 
         $enviadas = 0;
         $agrupadasPorUsuario = [];
 
         foreach ($inscripciones as $inscripcion) {
-            $this->line("Evaluando inscripción #{$inscripcion->id} - Estado: {$inscripcion->estado} - Usuario: " . ($inscripcion->usuarioAsignado?->name ?? 'Sin usuario'));
+            $this->line("Evaluando inscripción #{$inscripcion->id} - Estado: {$inscripcion->estado} - Usuario: ".($inscripcion->usuarioAsignado?->name ?? 'Sin usuario'));
 
             $proximaNotificacion = $inscripcion->proximaNotificacion();
-            $this->line("  - Próxima notificación: " . ($proximaNotificacion ? $proximaNotificacion->format('Y-m-d H:i') : 'null'));
-            $this->line("  - Es pasado: " . ($proximaNotificacion && $proximaNotificacion->isPast() ? 'SÍ' : 'NO'));
-            $this->line("  - Tiene usuario asignado: " . ($inscripcion->usuarioAsignado ? 'SÍ' : 'NO'));
+            $this->line('  - Próxima notificación: '.($proximaNotificacion ? $proximaNotificacion->format('Y-m-d H:i') : 'null'));
+            $this->line('  - Es pasado: '.($proximaNotificacion && $proximaNotificacion->isPast() ? 'SÍ' : 'NO'));
+            $this->line('  - Tiene usuario asignado: '.($inscripcion->usuarioAsignado ? 'SÍ' : 'NO'));
 
             if ($proximaNotificacion && $proximaNotificacion->isPast() && $inscripcion->usuarioAsignado) {
                 $usuarioId = $inscripcion->usuarioAsignado->id;
@@ -142,32 +143,38 @@ class GestionarInscripciones extends Command
                 $agrupadasPorUsuario[$usuarioId]['inscripciones'][] = $inscripcion;
                 $this->line("  - AÑADIDA al grupo de usuario {$inscripcion->usuarioAsignado->name}");
             } else {
-                $this->line("  - NO añadida - no cumple criterios");
+                $this->line('  - NO añadida - no cumple criterios');
             }
         }
 
-        $this->line("Usuarios con inscripciones a notificar: " . count($agrupadasPorUsuario));
+        $this->line('Usuarios con inscripciones a notificar: '.count($agrupadasPorUsuario));
 
         $config = config('inscripciones.notificaciones');
 
         foreach ($agrupadasPorUsuario as $grupo) {
             $usuario = $grupo['usuario'];
-            $this->line("Procesando usuario: {$usuario->name} con " . count($grupo['inscripciones']) . " inscripciones");
+            $this->line("Procesando usuario: {$usuario->name} con ".count($grupo['inscripciones']).' inscripciones');
 
             // Usar siempre dias_intervalo_asignada para estado 'asignada'
-            $inscripcionesNotificables = array_filter($grupo['inscripciones'], function ($inscripcion) use ($config, $estadosFinales) {
+            $inscripcionesNotificables = array_filter($grupo['inscripciones'], function ($inscripcion) use ($config) {
                 if ($inscripcion->estado === 'asignada') {
-                    if (!$inscripcion->ultima_notificacion) return true;
+                    if (! $inscripcion->ultima_notificacion) {
+                        return true;
+                    }
                     $diasDesdeUltimaNotificacion = now()->diffInDays($inscripcion->ultima_notificacion);
+
                     return $diasDesdeUltimaNotificacion >= $config['dias_intervalo_asignada'];
                 } else {
-                    if(!$inscripcion->ultima_notificacion) return true;
+                    if (! $inscripcion->ultima_notificacion) {
+                        return true;
+                    }
                     $diasDesdeUltimaNotificacion = now()->diffInDays($inscripcion->ultima_notificacion);
+
                     return $diasDesdeUltimaNotificacion >= $config['dias_intervalo'];
                 }
             });
 
-            $this->line("  - Inscripciones notificables después del filtro: " . count($inscripcionesNotificables));
+            $this->line('  - Inscripciones notificables después del filtro: '.count($inscripcionesNotificables));
 
             // si hay inscripciones pendientes y no se ha notificado recientemente
             if (count($inscripcionesNotificables) > 0) {
@@ -179,16 +186,16 @@ class GestionarInscripciones extends Command
                         break;
                     }
                 }
-                $this->line("Enviando recordatorio de seguimiento a: {$usuario->name} (" . count($inscripcionesNotificables) . " inscripciones)");
+                $this->line("Enviando recordatorio de seguimiento a: {$usuario->name} (".count($inscripcionesNotificables).' inscripciones)');
                 $usuario->notify(new InscripcionesSeguimiento($pendientesDeContacto));
                 foreach ($inscripcionesNotificables as $inscripcion) {
                     $inscripcion->ultima_notificacion = now();
                     $inscripcion->save();
-                    $inscripcion->comentar("Notificación de seguimiento enviada automáticamente");
+                    $inscripcion->comentar('Notificación de seguimiento enviada automáticamente');
                 }
                 $enviadas++;
             } else {
-                $this->line("  - NO se envía notificación - no hay inscripciones notificables");
+                $this->line('  - NO se envía notificación - no hay inscripciones notificables');
             }
         }
 
@@ -255,7 +262,7 @@ class GestionarInscripciones extends Command
                         $inscripcion->ultima_actividad->diffInDays(now()) :
                         $inscripcion->fecha_asignacion->diffInDays(now()),
                     'fecha_asignacion' => $inscripcion->fecha_asignacion?->format('d/m/Y'),
-                    'ultima_actividad' => $inscripcion->ultima_actividad?->format('d/m/Y') ?? 'Nunca'
+                    'ultima_actividad' => $inscripcion->ultima_actividad?->format('d/m/Y') ?? 'Nunca',
                 ];
             }));
 
@@ -268,13 +275,14 @@ class GestionarInscripciones extends Command
             })
             ->map(function ($inscripciones, $tutorId) {
                 $tutor = $inscripciones->first();
+
                 return [
                     'tutor_id' => $tutorId,
                     'tutor_nombre' => $tutor['tutor'],
                     'total_incidencias' => $inscripciones->count(),
                     'inscripciones_afectadas' => $inscripciones->pluck('nombre')->toArray(),
                     'promedio_dias_inactividad' => round($inscripciones->avg('dias_sin_actividad')),
-                    'riesgo' => $inscripciones->count() >= 3 ? 'ALTO' : 'MEDIO'
+                    'riesgo' => $inscripciones->count() >= 3 ? 'ALTO' : 'MEDIO',
                 ];
             })
             ->sortByDesc('total_incidencias')
@@ -293,7 +301,7 @@ class GestionarInscripciones extends Command
                     'nombre' => $inscripcion->nombre,
                     'tutor' => $inscripcion->usuarioAsignado?->name ?? 'Sin asignar',
                     'dias_desde_asignacion' => $inscripcion->fecha_asignacion?->diffInDays(now()) ?? 0,
-                    'fecha_asignacion' => $inscripcion->fecha_asignacion?->format('d/m/Y H:i')
+                    'fecha_asignacion' => $inscripcion->fecha_asignacion?->format('d/m/Y H:i'),
                 ];
             }));
 
@@ -309,6 +317,7 @@ class GestionarInscripciones extends Command
             })
             ->map(function ($inscripciones, $tutorId) {
                 $tutor = $inscripciones->first();
+
                 return [
                     'tutor_id' => $tutorId,
                     'tutor_nombre' => $tutor->usuarioAsignado?->name ?? 'Usuario eliminado',
@@ -316,9 +325,9 @@ class GestionarInscripciones extends Command
                     'rebotes_recientes' => $inscripciones->map(function ($ins) {
                         return [
                             'nombre' => $ins->nombre,
-                            'fecha' => $ins->updated_at->format('d/m/Y')
+                            'fecha' => $ins->updated_at->format('d/m/Y'),
                         ];
-                    })->toArray()
+                    })->toArray(),
                 ];
             })
             ->sortByDesc('total_rebotes')
@@ -336,7 +345,7 @@ class GestionarInscripciones extends Command
                     'nombre' => $inscripcion->nombre,
                     'tutor' => $inscripcion->usuarioAsignado?->name ?? 'Sin asignar',
                     'dias_estancada' => $inscripcion->ultima_actividad?->diffInDays(now()) ?? 0,
-                    'ultima_actividad' => $inscripcion->ultima_actividad?->format('d/m/Y') ?? 'Nunca'
+                    'ultima_actividad' => $inscripcion->ultima_actividad?->format('d/m/Y') ?? 'Nunca',
                 ];
             }));
 
@@ -367,10 +376,11 @@ class GestionarInscripciones extends Command
             ->groupBy('user_id')
             ->map(function ($inscripciones, $tutorId) {
                 $tutor = $inscripciones->first();
+
                 return [
                     'tutor_nombre' => $tutor->usuarioAsignado?->name ?? 'Usuario eliminado',
                     'inscripciones_activas' => count($inscripciones),
-                    'ultima_actividad' => $inscripciones->max('ultima_actividad')?->format('d/m/Y')
+                    'ultima_actividad' => $inscripciones->max('ultima_actividad')?->format('d/m/Y'),
                 ];
             })
             ->sortByDesc('inscripciones_activas')
@@ -399,7 +409,7 @@ class GestionarInscripciones extends Command
                     'dias_sin_actividad' => $diasSinActividad,
                     'ultima_actividad' => $ultimaActividad?->format('d/m/Y') ?? 'Nunca',
                     'estados_inscripciones' => $inscripciones->pluck('estado')->unique()->toArray(),
-                    'inscripciones_nombres' => $inscripciones->pluck('nombre')->toArray()
+                    'inscripciones_nombres' => $inscripciones->pluck('nombre')->toArray(),
                 ];
             })
             ->filter(function ($tutor) {
@@ -439,8 +449,8 @@ class GestionarInscripciones extends Command
                 'tiempo_promedio_resolucion_dias' => round($tiempoPromedioResolucion ?? 0, 1),
                 'tutores_mas_activos' => $tutoresActivos->toArray(),
                 'tutores_inactivos' => $tutoresInactivos->toArray(),
-                'periodo_analizado' => '3 meses (desde ' . $fechaLimite->format('d/m/Y') . ')'
-            ]
+                'periodo_analizado' => '3 meses (desde '.$fechaLimite->format('d/m/Y').')',
+            ],
         ];
     }
 }

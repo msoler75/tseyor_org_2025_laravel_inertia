@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Models\Grupo;
+use App\Models\Nodo;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class GrupoToolTest extends McpFeatureTestCase
@@ -12,12 +14,12 @@ class GrupoToolTest extends McpFeatureTestCase
     {
         $pp = 12; // Valor por defecto para paginación de grupos
         // Datos base sembrados por setup-test-db.sh (grupo 1) — cuentan en el listado
-        $base = \App\Models\Grupo::count();
+        $base = Grupo::count();
         for ($i = 0; $i < $pp + 4; $i++) {
-            \App\Models\Grupo::create([
-                'nombre' => 'Grupo ' . $i,
-                'slug' => 'grupo-' . $i . '-' . uniqid(),
-                'descripcion' => 'Desc ' . $i,
+            Grupo::create([
+                'nombre' => 'Grupo '.$i,
+                'slug' => 'grupo-'.$i.'-'.uniqid(),
+                'descripcion' => 'Desc '.$i,
             ]);
         }
         $result = $this->callMcpTool('listar', ['entidad' => 'grupo']);
@@ -38,9 +40,9 @@ class GrupoToolTest extends McpFeatureTestCase
 
     public function test_ver_grupo()
     {
-        $grupo = \App\Models\Grupo::create([
+        $grupo = Grupo::create([
             'nombre' => 'Grupo Test',
-            'slug' => 'grupo-test-' . uniqid(),
+            'slug' => 'grupo-test-'.uniqid(),
             'descripcion' => 'Desc',
         ]);
         $result = $this->callMcpTool('ver', ['entidad' => 'grupo', 'slug' => $grupo->slug]);
@@ -55,10 +57,10 @@ class GrupoToolTest extends McpFeatureTestCase
             'entidad' => 'grupo',
             'data' => [
                 'nombre' => 'Nuevo Grupo',
-                'slug' => 'nuevo-grupo-' . uniqid(),
+                'slug' => 'nuevo-grupo-'.uniqid(),
                 'descripcion' => 'Descripción de prueba',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('grupos', ['slug' => $params['data']['slug']]);
@@ -66,9 +68,9 @@ class GrupoToolTest extends McpFeatureTestCase
 
     public function test_editar_grupo()
     {
-        $grupo = \App\Models\Grupo::create([
+        $grupo = Grupo::create([
             'nombre' => 'Editar Grupo',
-            'slug' => 'editar-grupo-' . uniqid(),
+            'slug' => 'editar-grupo-'.uniqid(),
             'descripcion' => 'Desc',
         ]);
         $nuevaDescripcion = 'Descripción editada';
@@ -76,9 +78,9 @@ class GrupoToolTest extends McpFeatureTestCase
             'entidad' => 'grupo',
             'id' => $grupo->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('grupos', ['id' => $grupo->id, 'descripcion' => $nuevaDescripcion]);
@@ -86,18 +88,18 @@ class GrupoToolTest extends McpFeatureTestCase
 
     public function test_eliminar_grupo()
     {
-        $grupo = \App\Models\Grupo::create([
+        $grupo = Grupo::create([
             'nombre' => 'Eliminar Grupo',
-            'slug' => 'eliminar-grupo-' . uniqid(),
+            'slug' => 'eliminar-grupo-'.uniqid(),
             'descripcion' => 'Desc',
         ]);
         // Eliminar definitivamente todos los nodos asociados (incluyendo soft deleted)
-        \App\Models\Nodo::withTrashed()->where('group_id', $grupo->id)->forceDelete();
+        Nodo::withTrashed()->where('group_id', $grupo->id)->forceDelete();
         $params = [
             'entidad' => 'grupo',
             'id' => $grupo->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('grupos', ['id' => $grupo->id]);
@@ -105,13 +107,13 @@ class GrupoToolTest extends McpFeatureTestCase
 
     public function test_no_eliminar_grupo_con_nodos_asociados()
     {
-        $grupo = \App\Models\Grupo::create([
+        $grupo = Grupo::create([
             'nombre' => 'Grupo Con Nodos',
-            'slug' => 'grupo-con-nodos-' . uniqid(),
+            'slug' => 'grupo-con-nodos-'.uniqid(),
             'descripcion' => 'Desc',
         ]);
         // Asociar un nodo a este grupo
-        \App\Models\Nodo::create([
+        Nodo::create([
             'ubicacion' => 'test',
             'permisos' => '1755',
             'user_id' => 1,
@@ -122,7 +124,7 @@ class GrupoToolTest extends McpFeatureTestCase
             'entidad' => 'grupo',
             'id' => $grupo->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $result = $this->callMcpTool('eliminar', $params);
         $this->assertIsArray($result);
@@ -146,7 +148,7 @@ class GrupoToolTest extends McpFeatureTestCase
         $campos_esperados = [
             'nombre',
             'slug',
-            'descripcion'
+            'descripcion',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $grupo['campos'], "Falta el campo '$campo'");

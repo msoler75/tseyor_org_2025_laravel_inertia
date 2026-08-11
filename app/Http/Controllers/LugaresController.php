@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Models\Libro;
 use App\Models\Lugar;
 use App\Pigmalion\SEO;
-use App\Models\Libro;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class LugaresController extends Controller
 {
@@ -19,8 +19,9 @@ class LugaresController extends Controller
         $query = Lugar::select(['nombre', 'slug', 'descripcion', 'imagen'])
             ->publicado();
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
+        }
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
@@ -29,12 +30,10 @@ class LugaresController extends Controller
 
         return Inertia::render('Lugares/Index', [
             'listado' => $resultados,
-            'todos' => $todos
+            'todos' => $todos,
         ])
             ->withViewData(SEO::get('lugares'));
     }
-
-
 
     public function show($id)
     {
@@ -45,16 +44,16 @@ class LugaresController extends Controller
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $lugar->visibilidad == 'P';
+        $publicado = $lugar->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$lugar || (!$publicado && !$borrador && !$editor)) {
+        if (! $lugar || (! $publicado && ! $borrador && ! $editor)) {
             abort(404);
         }
 
         $libros = [];
 
         // obtiene el campo 'libros' de $lugar, y separa por comas, y obtiene el slug
-        if($lugar->libros) {
+        if ($lugar->libros) {
             $slugs = preg_split("/[\s,]+/", $lugar->libros, -1, PREG_SPLIT_NO_EMPTY);
             $libros = Libro::whereIn('slug', $slugs)->get()->toArray();
         }
@@ -64,7 +63,7 @@ class LugaresController extends Controller
         return Inertia::render('Lugares/Lugar', [
             'lugares' => $lugares,
             'lugar' => $lugar,
-            'libros' => $libros
+            'libros' => $libros,
         ])
             ->withViewData(SEO::from($lugar));
     }

@@ -2,6 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Comunicado;
+use App\Models\Entrada;
+use App\Models\Evento;
+use App\Models\Libro;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -24,11 +28,12 @@ class CheckShareCommand extends Command
         $samples = max(1, (int) $this->option('samples'));
         $saveToOption = $this->option('save-to');
 
-        $baseSaveDir = $saveToOption ? rtrim($saveToOption, "\\/") : storage_path('share_results');
+        $baseSaveDir = $saveToOption ? rtrim($saveToOption, '\\/') : storage_path('share_results');
 
-        if (!is_dir($baseSaveDir)) {
-            if (!@mkdir($baseSaveDir, 0755, true)) {
+        if (! is_dir($baseSaveDir)) {
+            if (! @mkdir($baseSaveDir, 0755, true)) {
                 $this->error("No se pudo crear el directorio de resultados: {$baseSaveDir}");
+
                 return 1;
             }
         }
@@ -59,13 +64,14 @@ class CheckShareCommand extends Command
 
         // Filtrar por --only (coma-separado)
         $onlyOpt = trim((string) $this->option('only'));
-        if (!empty($onlyOpt)) {
+        if (! empty($onlyOpt)) {
             $onlyList = array_map('trim', explode(',', $onlyOpt));
             $networks = array_filter($networks, function ($k) use ($onlyList) {
                 return in_array($k, $onlyList, true) || in_array(strtolower($k), array_map('strtolower', $onlyList), true);
             }, ARRAY_FILTER_USE_KEY);
             if (empty($networks)) {
                 $this->error('No hay redes que coincidan con --only. Revisa los nombres.');
+
                 return 1;
             }
         }
@@ -79,7 +85,7 @@ class CheckShareCommand extends Command
             'saved_files' => [],
         ];
 
-        $this->info("Iniciando comprobación: {$samples} url(s) por tipo x " . count($networks) . " redes = " . ($samples * count($contents) * count($networks)) . " peticiones");
+        $this->info("Iniciando comprobación: {$samples} url(s) por tipo x ".count($networks).' redes = '.($samples * count($contents) * count($networks)).' peticiones');
 
         foreach ($networks as $networkName => $userAgent) {
             $stats['per_network'][$networkName] = ['total' => 0, 'per_code' => []];
@@ -107,9 +113,9 @@ class CheckShareCommand extends Command
                     // Guardar la respuesta completa (headers + body)
                     $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $networkName);
                     $fileName = sprintf('%s_%s_%s_%s.html', date('Ymd_His'), $safeName, $content, $id);
-                    $filePath = $baseSaveDir . DIRECTORY_SEPARATOR . $fileName;
+                    $filePath = $baseSaveDir.DIRECTORY_SEPARATOR.$fileName;
 
-                    $saved = @file_put_contents($filePath, $result['raw'] ?? "");
+                    $saved = @file_put_contents($filePath, $result['raw'] ?? '');
                     if ($saved === false) {
                         $this->warn("No se pudo guardar respuesta en: {$filePath}");
                     } else {
@@ -117,7 +123,7 @@ class CheckShareCommand extends Command
                     }
 
                     // Breve output de estado
-                    $this->info("   Resultado: HTTP {$code} -> " . ($saved ? basename($filePath) : 'no-saved'));
+                    $this->info("   Resultado: HTTP {$code} -> ".($saved ? basename($filePath) : 'no-saved'));
 
                     // Log detallado en canal 'share'
                     try {
@@ -131,7 +137,7 @@ class CheckShareCommand extends Command
                             'info' => $result['info'] ?? null,
                         ]);
                     } catch (\Exception $e) {
-                        $this->warn('No se pudo escribir en el log share: ' . $e->getMessage());
+                        $this->warn('No se pudo escribir en el log share: '.$e->getMessage());
                     }
 
                     // Pequeña pausa para evitar generar demasiadas peticiones en rafaga
@@ -143,7 +149,7 @@ class CheckShareCommand extends Command
         // Mostrar resumen
         $this->line('');
         $this->info('Resumen de comprobación:');
-        $this->line('Total peticiones: ' . $stats['total']);
+        $this->line('Total peticiones: '.$stats['total']);
 
         ksort($stats['per_code']);
         foreach ($stats['per_code'] as $code => $count) {
@@ -161,12 +167,12 @@ class CheckShareCommand extends Command
         }
 
         $this->line('');
-        $this->info('Archivos guardados: ' . count($stats['saved_files']));
-        if (!empty($stats['saved_files'])) {
-            $this->line('Directorio: ' . $baseSaveDir);
+        $this->info('Archivos guardados: '.count($stats['saved_files']));
+        if (! empty($stats['saved_files'])) {
+            $this->line('Directorio: '.$baseSaveDir);
             $this->line('Ejemplos (5 primeros):');
             foreach (array_slice($stats['saved_files'], 0, 5) as $f) {
-                $this->line('  - ' . $f);
+                $this->line('  - '.$f);
             }
         }
 
@@ -183,10 +189,10 @@ class CheckShareCommand extends Command
     {
         // Mapear slug de contenido a modelo Eloquent
         $map = [
-            'libros' => \App\Models\Libro::class,
-            'comunicados' => \App\Models\Comunicado::class,
-            'blog' => \App\Models\Entrada::class,
-            'evento' => \App\Models\Evento::class,
+            'libros' => Libro::class,
+            'comunicados' => Comunicado::class,
+            'blog' => Entrada::class,
+            'evento' => Evento::class,
         ];
 
         $modelClass = $map[$content] ?? null;
@@ -199,7 +205,7 @@ class CheckShareCommand extends Command
                     return random_int(1, (int) $max);
                 }
             } catch (\Exception $e) {
-                $this->warn("No se pudo consultar el modelo {$modelClass}: " . $e->getMessage());
+                $this->warn("No se pudo consultar el modelo {$modelClass}: ".$e->getMessage());
             }
         } else {
             $this->warn("No existe mapeo de modelo para contenido: {$content}");
@@ -273,10 +279,10 @@ class CheckShareCommand extends Command
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
-        if (!empty($headers)) {
+        if (! empty($headers)) {
             $hdrs = [];
             foreach ($headers as $k => $v) {
-                $hdrs[] = $k . ': ' . $v;
+                $hdrs[] = $k.': '.$v;
             }
             curl_setopt($ch, CURLOPT_HTTPHEADER, $hdrs);
         }
@@ -305,9 +311,9 @@ class CheckShareCommand extends Command
         }
 
         // Construir contenido a guardar: status-line + headers + body
-        $statusLine = isset($info['protocol']) ? "HTTP/" . ($info['protocol'] / 10) : '';
+        $statusLine = isset($info['protocol']) ? 'HTTP/'.($info['protocol'] / 10) : '';
         // Preferimos usar el header raw tal cual
-        $saveRaw = "--REQUEST-URL: {$url}\n--USER-AGENT: {$userAgent}\n--HTTP-CODE: {$httpCode}\n\n" . ($headers ?? '') . "\n" . ($body ?? '');
+        $saveRaw = "--REQUEST-URL: {$url}\n--USER-AGENT: {$userAgent}\n--HTTP-CODE: {$httpCode}\n\n".($headers ?? '')."\n".($body ?? '');
 
         if ($raw === false) {
             $saveRaw = "--REQUEST-URL: {$url}\n--USER-AGENT: {$userAgent}\n--ERROR: {$error}\n";

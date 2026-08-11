@@ -5,24 +5,26 @@ namespace App\Console\Commands;
 // Endpoints centralizados en config/deploy.php
 // Se usan mediante config('deploy.*')
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use App\Pigmalion\DeployHelper as Deploy;
 use Exception;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class ReleasePrepare extends Command
 {
     protected $signature = 'release:prepare {--session-token= : Token temporal del dashboard admin para bypass de IP}';
+
     protected $description = 'Crea los zips de nodemodules, front (public/build) y ssr.js y los envía al servidor para una nueva release';
 
     public function handle()
     {
-    // Imprimir descripción del comando
-    $this->info('Descripción: ' . $this->description);
+        // Imprimir descripción del comando
+        $this->info('Descripción: '.$this->description);
 
-    // Confirmación previa a la ejecución: verificar que se corrió npm run build-all
-        if (!$this->confirm('¿Has ejecutado "npm run build-all" previamente?')) {
+        // Confirmación previa a la ejecución: verificar que se corrió npm run build-all
+        if (! $this->confirm('¿Has ejecutado "npm run build-all" previamente?')) {
             $this->info('Operación cancelada. Ejecuta "npm run build-all" antes de continuar.');
+
             return 0;
         }
 
@@ -35,8 +37,8 @@ class ReleasePrepare extends Command
                 'zip_name' => 'nodemodules.zip',
                 'options' => [
                     'exclusions' => config('deploy.node_modules_exclusions', []),
-                    'basePrefix' => 'node_modules'
-                ]
+                    'basePrefix' => 'node_modules',
+                ],
             ],
             [
                 'name' => 'front',
@@ -44,7 +46,7 @@ class ReleasePrepare extends Command
                 'zip' => storage_path('app/build.zip'),
                 'endpoint' => config('deploy.front_endpoint'),
                 'zip_name' => 'build.zip',
-                'options' => []
+                'options' => [],
             ],
             [
                 'name' => 'ssr',
@@ -52,8 +54,8 @@ class ReleasePrepare extends Command
                 'zip' => storage_path('app/ssr.zip'),
                 'endpoint' => config('deploy.ssr_endpoint'),
                 'zip_name' => 'ssr.zip',
-                'options' => []
-            ]
+                'options' => [],
+            ],
         ];
 
         foreach ($jobs as $job) {
@@ -66,12 +68,12 @@ class ReleasePrepare extends Command
                 $basePrefix = $job['options']['basePrefix'] ?? '';
 
                 if (Deploy::createZipFile($job['source'], $job['zip'], $exclusions, $basePrefix)) {
-                    $this->info('ZIP creado: ' . basename($job['zip']));
+                    $this->info('ZIP creado: '.basename($job['zip']));
 
                     $extraHeaders = [];
                     $sessionToken = $this->option('session-token');
                     if ($sessionToken) {
-                        $extraHeaders[] = 'X-Deploy-Session-Token: ' . $sessionToken;
+                        $extraHeaders[] = 'X-Deploy-Session-Token: '.$sessionToken;
                     }
 
                     $this->info('Enviando con flag prepare...');
@@ -93,7 +95,7 @@ class ReleasePrepare extends Command
                     $this->error("Error al crear ZIP para {$job['name']}");
                 }
             } catch (Exception $e) {
-                $this->error("Error en {$job['name']}: " . $e->getMessage());
+                $this->error("Error en {$job['name']}: ".$e->getMessage());
             }
         }
 

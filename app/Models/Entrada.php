@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 
 class Entrada extends ContenidoBaseModel
@@ -19,10 +18,10 @@ class Entrada extends ContenidoBaseModel
         'texto',
         'imagen',
         'published_at',
-        'visibilidad'
+        'visibilidad',
     ];
 
     protected $dates = [
-        'published_at'
+        'published_at',
     ];
 }

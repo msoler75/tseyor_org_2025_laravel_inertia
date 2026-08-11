@@ -2,45 +2,42 @@
 
 namespace App\Models;
 
+use App\Notifications\CambioNombreUsuario;
+use App\Notifications\VerificarEmail;
+use App\Traits\BuscableTrait;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
+// use App\Models\Permiso;
+use Illuminate\Support\Facades\Log;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Facades\Log;
-// use App\Models\Permiso;
-use App\Models\Equipo;
-use App\Models\Grupo;
-use App\Models\Membresia;
-use App\Models\Invitacion;
-use Spatie\Permission\Traits\HasRoles;
 use Laravel\Scout\Searchable;
-use Illuminate\Support\Facades\Cache;
-use App\Notifications\CambioNombreUsuario;
-use App\Notifications\VerificarEmail;
-use App\Traits\BuscableTrait;
+use Spatie\Permission\Traits\HasRoles;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 define('EQUIPO_ID_INTERIORIZACION', 2);
 
-
 class User extends Authenticatable implements MustVerifyEmail
 {
+    use BuscableTrait;
     use CrudTrait;
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    use \Illuminate\Database\Eloquent\SoftDeletes;
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
+    use HasRoles;
     use HasTeams;
     use Notifiable;
-    use TwoFactorAuthenticatable;
-    use HasRoles;
+    use RevisionableTrait;
     use Searchable;
-    use BuscableTrait;
+    use SoftDeletes;
+    use TwoFactorAuthenticatable;
 
     protected $revisionCreationsEnabled = true;
 
@@ -53,29 +50,32 @@ class User extends Authenticatable implements MustVerifyEmail
 
         static::saved(function ($user) {
 
-            if (!static::$creatingUser && $user->wasChanged('name')) {
+            if (! static::$creatingUser && $user->wasChanged('name')) {
                 // El campo 'name' ha cambiado
                 // Aquí puedes realizar las acciones que necesites
                 // evitaremos si solo han cambiado mayusculas o minúsculas
                 $originalName = $user->getOriginal('name');
                 $newName = $user->name;
-                if(strtolower($originalName) != strtolower($newName))
-                    $user->notify(new CambioNombreUsuario());
+                if (strtolower($originalName) != strtolower($newName)) {
+                    $user->notify(new CambioNombreUsuario);
+                }
             }
 
             // rellena la frase, si está está vacía
-            if (trim($user->frase) == "") $user->generarFrase();
+            if (trim($user->frase) == '') {
+                $user->generarFrase();
+            }
         });
 
         static::created(function ($user) {
             static::$creatingUser = true; // para evitar activaciones del evento saved
 
             // usuario nuevo, hemos de verificar si aceptó alguna invitación a equipo
-            $invitaciones =  Invitacion::where('email', $user->email)
+            $invitaciones = Invitacion::where('email', $user->email)
                 ->whereNotIn('estado', ['caducada', 'fallida', 'declinada'])
                 ->whereNotNull('accepted_at')->get();
 
-            Log::info("USUARIO CREADO: invitaciones:", ["invitaciones"=>$invitaciones]);
+            Log::info('USUARIO CREADO: invitaciones:', ['invitaciones' => $invitaciones]);
 
             // recorrer todas las invitaciones, y para cada una, incluimos al usuario en el equipo
             foreach ($invitaciones as $invitacion) {
@@ -100,7 +100,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'frase',
-        'profile_photo_path'
+        'profile_photo_path',
     ];
 
     /**
@@ -133,7 +133,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_url',
         'tiene_inscripciones_asignadas',
     ];
-
 
     public function contacto() // contacto relacionado con este usuario
     {
@@ -174,7 +173,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function inscripcionesAsignadas()
     {
-        return $this->hasMany(\App\Models\Inscripcion::class, 'user_id');
+        return $this->hasMany(Inscripcion::class, 'user_id');
     }
 
     /**
@@ -190,7 +189,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isFavorito($coleccion, $id_ref)
     {
-        return \App\Models\Favorito::where('user_id', $this->id)
+        return Favorito::where('user_id', $this->id)
             ->where('coleccion', $coleccion)
             ->where('id_ref', $id_ref)
             ->exists();
@@ -201,21 +200,23 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $user = $this;
 
-    // sin cache
-    $r =  $user->grupos()->where('grupos.id', $grupo_id)->count();
-    Log::info("user {$user->id} in grupo {$grupo_id} = {$r}");
+        // sin cache
+        $r = $user->grupos()->where('grupos.id', $grupo_id)->count();
+        Log::info("user {$user->id} in grupo {$grupo_id} = {$r}");
+
         return $r >= 1;
 
         // con cache
-        $cacheKey = 'user_grupos_in_' . $this->id . '_group_' . $grupo_id;
+        $cacheKey = 'user_grupos_in_'.$this->id.'_group_'.$grupo_id;
         $cacheTime = 30;
+
         return Cache::remember($cacheKey, $cacheTime, function () use ($user, $grupo_id) {
             return $user->grupos()->where('grupos.id', $grupo_id)->exists();
         });
     }
 
-
-    public function esIniciado() {
+    public function esIniciado()
+    {
         return $this->equipos()->pluck('equipos.id')->contains(EQUIPO_ID_INTERIORIZACION);
     }
 
@@ -247,7 +248,6 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->saveQuietly();
     }
 
-
     // ACCESOR
 
     public function getGruposJSONAttribute()
@@ -259,16 +259,18 @@ class User extends Authenticatable implements MustVerifyEmail
                 'label' => $grupo->nombre,
             ];
         });
+
         return $gruposWithoutPivot->toJson();
     }
 
     public function getBoletinSuscripcionAttribute()
     {
         $suscriptor = Suscriptor::where('email', $this->email)
-        ->where('servicio','LIKE', 'boletin:%')->first();
+            ->where('servicio', 'LIKE', 'boletin:%')->first();
 
         if ($suscriptor) {
             $tipoSuscripcion = str_replace('boletin:', '', $suscriptor->servicio);
+
             return [
                 'tipo' => $tipoSuscripcion,
                 'token' => $suscriptor->token,
@@ -286,7 +288,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getTieneInscripcionesAsignadasAttribute()
     {
-        return \App\Models\Inscripcion::where('user_id', $this->getKey())->exists();
+        return Inscripcion::where('user_id', $this->getKey())->exists();
     }
 
     /**
@@ -301,7 +303,6 @@ class User extends Authenticatable implements MustVerifyEmail
             'name' => $this->name,
         ];
     }
-
 
     /**
      * Notificación customizada de verificación de Email

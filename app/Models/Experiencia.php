@@ -2,28 +2,33 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
 use App\Traits\EsCategorizable;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 
 class Experiencia extends ContenidoBaseModel
 {
     use CrudTrait;
     use EsCategorizable;
+
     protected $categoriaSimple = true;
 
     protected function incluyeCategoria($categoria_nombre_total): bool
     {
-        if ($categoria_nombre_total['nombre'] != self::$CATEGORIA_INTERIORIZACION) return true;
+        if ($categoria_nombre_total['nombre'] != self::$CATEGORIA_INTERIORIZACION) {
+            return true;
+        }
 
         $user = auth()->user();
-        if (!$user) return false;
+        if (! $user) {
+            return false;
+        }
 
-        if ($user->can('administrar experiencias')) return true;
+        if ($user->can('administrar experiencias')) {
+            return true;
+        }
 
         return $user->esIniciado();
     }
-
 
     // PARA EL FORMULARIO
     // el valor es la descripción de la categoría

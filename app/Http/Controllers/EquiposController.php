@@ -2,33 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Mail\InvitacionEquipoEmail;
 use App\Models\Equipo;
-use App\Models\NodoCarpeta;
+use App\Models\Informe;
 use App\Models\Invitacion;
+use App\Models\Nodo;
 use App\Models\Solicitud;
 use App\Models\User;
-use App\Models\Nodo;
-use Illuminate\Support\Facades\Log;
-use App\Models\Acl;
-use App\Models\Informe;
-use App\Pigmalion\SEO;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\URL;
-use App\Mail\InvitacionEquipoEmail;
-use App\Mail\IncorporacionEquipoEmail;
-use Illuminate\Support\Facades\Gate;
-use Carbon\Carbon;
-use App\Notifications\SolicitudEquipo;
 use App\Notifications\AbandonoEquipo;
 use App\Notifications\DenegadoEquipo;
 use App\Notifications\InvitacionDeclinada;
-use Illuminate\Support\Facades\Notification;
+use App\Notifications\SolicitudEquipo;
+use App\Pigmalion\SEO;
 use App\Pigmalion\StorageItem;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class EquiposController extends Controller
 {
@@ -46,25 +43,26 @@ class EquiposController extends Controller
         $campos = ['id', 'slug', 'nombre', 'descripcion', 'categoria', 'imagen', 'created_at', 'updated_at'];
 
         Log::info('Equipos index - Request params: ', $request->all());
-        Log::info("Equipos page: " . $page);
-        Log::info("Buscar: " . $buscar);
-        Log::info("Categoria: " . $categoria);
+        Log::info('Equipos page: '.$page);
+        Log::info('Buscar: '.$buscar);
+        Log::info('Categoria: '.$categoria);
 
         $query = Equipo::select($campos)
             ->withCount('miembros');
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else if ($user && $categoria == 'Mis equipos')
+        } elseif ($user && $categoria == 'Mis equipos') {
             $query->whereIn('id', $user->equipos()->pluck('equipo_id'));
-        else if ($categoria)
+        } elseif ($categoria) {
             $query->where('categoria', '=', $categoria);
-        else
+        } else {
             $query->latest('updated_at');
+        }
 
         // si el usuario tiene permisos de gestionar equipos
         $ocultarEquipos = $categoria != 'Mis equipos' && Gate::denies('administrar equipos');
-        if (!$buscar && $ocultarEquipos)
+        if (! $buscar && $ocultarEquipos) {
             $query->where(function ($q) use ($user) {
                 $q->whereNull('oculto')
                     ->orWhere('oculto', 0)
@@ -73,41 +71,45 @@ class EquiposController extends Controller
                         $subQuery->where('users.id', optional($user)->id);
                     });
             });
+        }
 
         Log::info($query->toSql());
         Log::info('Bindings: ', $query->getBindings());
 
         $resultados = $query->paginate(EquiposController::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
 
-        Log::info('Resultados total: ' . $resultados->total());
-        Log::info('Resultados per page: ' . $resultados->perPage());
-        Log::info('Current page: ' . $resultados->currentPage());
-        Log::info('Data count: ' . count($resultados->items()));
+        Log::info('Resultados total: '.$resultados->total());
+        Log::info('Resultados per page: '.$resultados->perPage());
+        Log::info('Current page: '.$resultados->currentPage());
+        Log::info('Data count: '.count($resultados->items()));
 
         $resultados->getCollection()->transform(function ($equipo) use ($user) {
             $equipo->soy_miembro = $equipo->miembros->contains('id', optional($user)->id);
             $equipo->soy_coordinador = $equipo->coordinadores->contains('id', optional($user)->id);
             unset($equipo->miembros, $equipo->coordinadores);
+
             return $equipo;
         });
 
-        if ($categoria)
+        if ($categoria) {
             $resultados->appends(['categoria' => $categoria]);
-        elseif ($buscar)
+        } elseif ($buscar) {
             $resultados->appends(['buscar' => $buscar]);
+        }
 
-        $categorias = (new Equipo())->getCategorias();
+        $categorias = (new Equipo)->getCategorias();
         if ($user) {
             $mis_equipos = $user->equipos()->count();
-            if ($mis_equipos)
+            if ($mis_equipos) {
                 array_unshift($categorias, ['nombre' => 'Mis equipos', 'total' => $mis_equipos]);
+            }
         }
 
         return Inertia::render('Equipos/Index', [
             'filtrado' => $buscar,
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
-            'categorias' => $categorias
+            'categorias' => $categorias,
         ])->withViewData(SEO::get('equipos'));
     }
 
@@ -118,11 +120,9 @@ class EquiposController extends Controller
     {
         $equipo = Equipo::with(['miembros' => function ($query) {
             $query->select('users.id', 'users.name as nombre', 'users.slug', 'profile_photo_path as avatar')
-                ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END") // Ordenar los coordinadores primero
-                // ->take(30)
-            ;
+                ->orderByRaw("CASE WHEN equipo_user.rol = 'coordinador' THEN 0 ELSE 1 END"); // Ordenar los coordinadores primero
+            // ->take(30)
         }]);
-
 
         if (is_numeric($id)) {
             $equipo = $equipo->findOrFail($id);
@@ -178,10 +178,11 @@ class EquiposController extends Controller
         }
 
         // si el usuario tiene permisos de gestionar equipos
-        $permisoVerEquipo = !$equipo->oculto || $soyMiembro || $puedoAdministrar;
+        $permisoVerEquipo = ! $equipo->oculto || $soyMiembro || $puedoAdministrar;
 
-        if (!$permisoVerEquipo)
+        if (! $permisoVerEquipo) {
             abort(403, 'No tienes permisos para ver este equipo');
+        }
 
         $equipo->solicitudesPendientes = $solicitudes;
 
@@ -201,15 +202,14 @@ class EquiposController extends Controller
             ->get()
             ->toArray();
 
-
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
             'carpetas' => $carpetas,
             'ultimosArchivos' => // Inertia::lazy(function () use ($equipo) {
-            //return
+            // return
             $this->ultimosArchivos($equipo)
             // ;
-            //})
+            // })
             ,
             'ultimosInformes' => $informes,
             'miSolicitud' => $solicitud,
@@ -229,7 +229,6 @@ class EquiposController extends Controller
             ->withViewData(SEO::from($equipo));
     }
 
-
     /**
      * Últimos archivos del equipo
      */
@@ -239,7 +238,7 @@ class EquiposController extends Controller
         $NUM_ARCHIVOS_ULTIMOS = 10;
         $DIAS_CACHE = 1;
 
-        $cacheKey = "equipo_ultimos_archivos_" . $equipo->id;
+        $cacheKey = 'equipo_ultimos_archivos_'.$equipo->id;
         $archivos = Cache::remember($cacheKey, now()->addDays($DIAS_CACHE), function () use ($equipo) {
             $carpetas = $equipo->carpetas()->get();
             $ultimosArchivosEquipo = [];
@@ -271,10 +270,12 @@ class EquiposController extends Controller
             $nodo = Nodo::desde($archivo['url']);
             if (Gate::allows('leer', $nodo)) {
                 $archivos_final[] = $archivo;
-                if (count($archivos_final) >= $NUM_ARCHIVOS_ULTIMOS)
+                if (count($archivos_final) >= $NUM_ARCHIVOS_ULTIMOS) {
                     break;
+                }
             }
         }
+
         return $archivos_final;
     }
 
@@ -295,13 +296,11 @@ class EquiposController extends Controller
             'Utg/Index',
             [
                 'estatutosUrl' => '/utg/estatutos',
-                'departamentos' => $departamentos
+                'departamentos' => $departamentos,
             ]
         )
             ->withViewData(SEO::get('utg'));
     }
-
-
 
     /**
      ** Crea un nuevo equipo
@@ -323,7 +322,7 @@ class EquiposController extends Controller
             'slug' => Str::slug($validatedData['nombre']),
             'imagen' => $validatedData['imagen'],
             'descripcion' => $validatedData['descripcion'],
-            'user_id' => $user->id ?? 1
+            'user_id' => $user->id ?? 1,
         ]);
 
         if ($equipo) {
@@ -334,20 +333,19 @@ class EquiposController extends Controller
         }
     }
 
-
     /**
      ** Guarda datos del equipo
      */
     public function update(Request $request, $idEquipo)
     {
-        Log::info("Equipo.update");
+        Log::info('Equipo.update');
 
         $equipo = Equipo::findOrFail($idEquipo);
 
         $puedoAdministrar = Gate::allows('administrar equipos');
 
         // Verificar si el usuario es un coordinador del equipo
-        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
+        if (! $puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -358,7 +356,7 @@ class EquiposController extends Controller
             'imagen' => 'image|mimes:jpeg,png,jpg,gif|max:64000', // Ajustar las reglas de validación según tus necesidades
             'anuncio' => 'max:400',
             'reuniones' => 'max:255',
-            'informacion' => 'max:65000'
+            'informacion' => 'max:65000',
         ]);
 
         Log::info(var_export($validatedData, true));
@@ -375,15 +373,14 @@ class EquiposController extends Controller
         $newImage = $request->file('imagen');
         if ($newImage) {
             $path = $newImage->store('medios/equipos', ['disk' => 'public']);
-            $equipo->imagen = str_replace(url(''), "", Storage::disk('public')->url($path));
-            Log::info("path Imagen: " . $path . " -> Equipo.imagen=" . $equipo->imagen);
+            $equipo->imagen = str_replace(url(''), '', Storage::disk('public')->url($path));
+            Log::info('path Imagen: '.$path.' -> Equipo.imagen='.$equipo->imagen);
         }
 
         $equipo->save();
 
         return response()->json($equipo->toArray(), 200);
     }
-
 
     /**
      * Agrega un usuario a un equipo
@@ -396,7 +393,7 @@ class EquiposController extends Controller
 
         $puedoAdministrar = Gate::allows('administrar equipos');
 
-        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
+        if (! $puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -405,7 +402,6 @@ class EquiposController extends Controller
 
         return response()->json(['message' => 'El usuario fue añadido al equipo'], 200);
     }
-
 
     /**
      * Elimina un usuario de un equipo
@@ -418,7 +414,7 @@ class EquiposController extends Controller
 
         $puedoAdministrar = Gate::allows('administrar equipos');
 
-        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
+        if (! $puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -429,15 +425,15 @@ class EquiposController extends Controller
         $idNuevoCoordinador = $equipo->asignarCoordinador($idUsuario);
 
         $message = 'El usuario fue removido del equipo';
-        if ($idNuevoCoordinador)
+        if ($idNuevoCoordinador) {
             return response()->json([
                 'message' => $message,
-                'nuevoCoordinador' => $idNuevoCoordinador
+                'nuevoCoordinador' => $idNuevoCoordinador,
             ]);
+        }
 
         return response()->json(['message' => $message], 200);
     }
-
 
     /**
      * Modificamos el estado o rol de un usuario en un equipo
@@ -451,12 +447,13 @@ class EquiposController extends Controller
         $puedoAdministrar = Gate::allows('administrar equipos');
 
         // solo podemos actualizar los miembros si somos coordinadores
-        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
+        if (! $puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
-        if ($rol == 'miembro')
-            $rol = NULL;
+        if ($rol == 'miembro') {
+            $rol = null;
+        }
 
         // Actualizamos el rol del usuario en el equipo
         $equipo->miembros()->updateExistingPivot($idUsuario, ['rol' => $rol]);
@@ -470,21 +467,18 @@ class EquiposController extends Controller
         $idNuevoCoordinador = $equipo->asignarCoordinador($idUsuario);
 
         $message = 'El usuario fue actualizado dentro del equipo';
-        if ($idNuevoCoordinador)
+        if ($idNuevoCoordinador) {
             return response()->json([
                 'message' => $message,
-                'nuevoCoordinador' => $idNuevoCoordinador
+                'nuevoCoordinador' => $idNuevoCoordinador,
             ]);
+        }
 
         return response()->json(['message' => $message], 200);
     }
 
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // INVITACIONES
-
 
     /**
      * Historial de invitaciones pendientes o con error
@@ -537,7 +531,7 @@ class EquiposController extends Controller
         $validatedData = $request->validate([
             'correos' => 'array',
             'correos.*' => 'email',
-            'usuarios' => 'array'
+            'usuarios' => 'array',
         ]);
 
         $equipo = Equipo::findOrFail($idEquipo);
@@ -545,7 +539,7 @@ class EquiposController extends Controller
         $puedoAdministrar = Gate::allows('administrar equipos');
 
         // Verificar si el usuario es un coordinador del equipo
-        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
+        if (! $puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -561,6 +555,7 @@ class EquiposController extends Controller
             // Verificar si el correo ya está asociado al equipo
             if ($equipo->miembros->where('email', $correo)->first()) {
                 $yaSonMiembros[] = $correo;
+
                 continue;
             }
 
@@ -568,15 +563,16 @@ class EquiposController extends Controller
             // dentro de los días de antiguedad
             if (
                 Invitacion::where('equipo_id', $idEquipo)->where('email', $correo)
-                ->whereRaw('COALESCE(sent_at, created_at) >= ?', [Carbon::now()->subDays($diasAntiguedad)])
-                ->first()
+                    ->whereRaw('COALESCE(sent_at, created_at) >= ?', [Carbon::now()->subDays($diasAntiguedad)])
+                    ->first()
             ) {
                 $invitacionReciente[] = $correo;
+
                 continue;
             }
 
             // Generar el token para la invitación
-            $token = sha1(time() . $correo);
+            $token = sha1(time().$correo);
 
             // Verificar si el usuario ya tiene una cuenta
             $usuario = User::where('email', $correo)->first();
@@ -587,7 +583,7 @@ class EquiposController extends Controller
                 'equipo_id' => $idEquipo,
                 'email' => $correo,
                 'token' => $token,
-                'user_id' => $user_id
+                'user_id' => $user_id,
             ]);
 
             $invitados[] = $correo;
@@ -596,7 +592,7 @@ class EquiposController extends Controller
             try {
                 Mail::to($correo)->send(new InvitacionEquipoEmail($invitacion));
             } catch (\Exception $e) {
-                return response()->json(['error' => 'Error del servidor. No se ha podido enviar la invitación: ' . $e->getMessage()], 500);
+                return response()->json(['error' => 'Error del servidor. No se ha podido enviar la invitación: '.$e->getMessage()], 500);
             }
         }
 
@@ -606,21 +602,23 @@ class EquiposController extends Controller
             // Cargar el usuario
             $usuario = User::find($id);
 
-
-            if (!$usuario) {
+            if (! $usuario) {
                 $noEncontrados[] = $id;
+
                 continue; // el usuario debería existir
             }
 
             $correo = $usuario->email;
-            if (!$correo) {
+            if (! $correo) {
                 $noEncontrados[] = $id;
+
                 continue;
             }
 
             // Verificar si el usuario ya es miembro del equipo
             if ($equipo->miembros->where('id', $usuario->id)->first()) {
                 $yaSonMiembros[] = $id;
+
                 continue;
             }
 
@@ -631,9 +629,9 @@ class EquiposController extends Controller
                 ->first()
             ) {
                 $invitacionReciente[] = $id;
+
                 continue;
             }
-
 
             // Verificar si ya se envió una invitación a ese usuario
             if (Invitacion::where('equipo_id', $idEquipo)
@@ -641,18 +639,19 @@ class EquiposController extends Controller
                 ->where('user_id', $id)->first()
             ) {
                 $invitacionReciente[] = $id;
+
                 continue;
             }
 
             // Generar el token para la invitación
-            $token = sha1(time() . $id);
+            $token = sha1(time().$id);
 
             // Crear la invitación en la base de datos
             $invitacion = Invitacion::create([
                 'equipo_id' => $idEquipo,
                 'email' => $correo,
                 'token' => $token,
-                'user_id' => $usuario->id
+                'user_id' => $usuario->id,
             ]);
 
             $invitados[] = $usuario->id;
@@ -661,7 +660,7 @@ class EquiposController extends Controller
             try {
                 Mail::to($correo)->send(new InvitacionEquipoEmail($invitacion));
             } catch (\Exception $e) {
-                return response()->json(['error' => 'Error del servidor. No se ha podido enviar la invitación: ' . $e->getMessage()], 500);
+                return response()->json(['error' => 'Error del servidor. No se ha podido enviar la invitación: '.$e->getMessage()], 500);
             }
         }
 
@@ -676,7 +675,7 @@ class EquiposController extends Controller
         $puedoAdministrar = Gate::allows('administrar equipos');
 
         // Verificar si el usuario es un coordinador del equipo
-        if (!$puedoAdministrar && Gate::denies('esCoordinador', $invitacion->equipo)) {
+        if (! $puedoAdministrar && Gate::denies('esCoordinador', $invitacion->equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -688,12 +687,11 @@ class EquiposController extends Controller
         try {
             Mail::to($invitacion->email)->send(new InvitacionEquipoEmail($invitacion));
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Error del servidor. No se ha podido reenviar la invitación: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error del servidor. No se ha podido reenviar la invitación: '.$e->getMessage()], 500);
         }
 
         return response()->json(['message' => 'Invitación reenviada.'], 200);
     }
-
 
     public function cancelInvitation($id)
     {
@@ -703,7 +701,7 @@ class EquiposController extends Controller
         $puedoAdministrar = Gate::allows('administrar equipos');
 
         // Verificar si el usuario es un coordinador del equipo
-        if (!$puedoAdministrar && Gate::denies('esCoordinador', $invitacion->equipo)) {
+        if (! $puedoAdministrar && Gate::denies('esCoordinador', $invitacion->equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -723,7 +721,7 @@ class EquiposController extends Controller
         $puedoAdministrar = Gate::allows('administrar equipos');
 
         // Verificar si el usuario es un coordinador del equipo
-        if (!$puedoAdministrar && Gate::denies('esCoordinador', $invitacion->equipo)) {
+        if (! $puedoAdministrar && Gate::denies('esCoordinador', $invitacion->equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -731,7 +729,6 @@ class EquiposController extends Controller
 
         return response()->json(['message' => 'Invitación eliminada.'], 200);
     }
-
 
     /**
      * Enlace accedido por el usuario
@@ -741,13 +738,14 @@ class EquiposController extends Controller
         $invitacion = Invitacion::where('token', $token)->first();
 
         // invitación no válida
-        if (!$invitacion)
-            return redirect("/equipos")->with('message', 'La invitación ha caducado o ya ha sido procesada.');
+        if (! $invitacion) {
+            return redirect('/equipos')->with('message', 'La invitación ha caducado o ya ha sido procesada.');
+        }
 
         $urlEquipo = route('equipo', $invitacion->equipo->slug);
 
         // a donde va el usuario
-        $urlDestino = $invitacion->equipo->oculto ? "/equipos" : $urlEquipo;
+        $urlDestino = $invitacion->equipo->oculto ? '/equipos' : $urlEquipo;
 
         // verificamos si el destinatario tiene su cuenta creada
         $usuarioInvitado = User::where('email', $invitacion->email)->first();
@@ -768,7 +766,7 @@ class EquiposController extends Controller
         }
 
         // el usuario ya había aceptado y está pulsando otra vez el enlace, pero tal vez aun no ha creado su cuenta
-        if ($daysElapsed <= $diasValidez && $invitacion->accepted_at && !$invitacion->user_id && !$usuarioInvitado) {
+        if ($daysElapsed <= $diasValidez && $invitacion->accepted_at && ! $invitacion->user_id && ! $usuarioInvitado) {
             // el usuario invitado aun no ha creado su cuenta
             return redirect($registroUrl)->with('message', 'Regístrese para aceptar la invitación.');
         }
@@ -785,8 +783,7 @@ class EquiposController extends Controller
         // Esto implica que cuando el usuario se registre, habrá que verificar si tiene invitaciones a equipos que haya aceptado
 
         // marcamos invitaciones previas al mismo destinatario como declinadas
-        $invitacionesPendientes = Invitacion
-            ::where('equipo_id', $invitacion->equipo_id)
+        $invitacionesPendientes = Invitacion::where('equipo_id', $invitacion->equipo_id)
             ->where('email', $invitacion->email)
             ->whereNull('accepted_at')
             ->whereNull('declined_at')
@@ -797,28 +794,27 @@ class EquiposController extends Controller
             $invitacionOld->update(['estado' => 'declinada', 'declined_at' => Carbon::now()]);
         }
 
-
         if ($usuarioInvitado) {
             // Asociar al usuario al equipo y marcar la invitación como aceptada
             $usuarioInvitado->equipos()->attach($invitacion->equipo_id);
 
             $mensaje = "Invitación aceptada. ¡Ya eres parte del equipo '{$invitacion->equipo->nombre}'!";
 
-            if (!$user) $mensaje .= " Recuerda iniciar sesión con tu cuenta.";
+            if (! $user) {
+                $mensaje .= ' Recuerda iniciar sesión con tu cuenta.';
+            }
 
             $user = auth()->user();
 
-            if ($invitacion->equipo->oculto && !$user)
-                $mensaje = " Para ver tu equipo debes iniciar sesión con tu cuenta.";
+            if ($invitacion->equipo->oculto && ! $user) {
+                $mensaje = ' Para ver tu equipo debes iniciar sesión con tu cuenta.';
+            }
 
             return redirect($urlDestino)->with('message', $mensaje);
         }
 
-
-
         return redirect($registroUrl)->with('message', 'Regístrese para aceptar la invitación.');
     }
-
 
     /**
      *  Enlace accedido por el usuario
@@ -828,13 +824,14 @@ class EquiposController extends Controller
         $invitacion = Invitacion::where('token', $token)->first();
 
         // invitación no válida
-        if (!$invitacion)
-            return redirect("/equipos")->with('message', 'La invitación ha caducado o ya ha sido procesada.');
+        if (! $invitacion) {
+            return redirect('/equipos')->with('message', 'La invitación ha caducado o ya ha sido procesada.');
+        }
 
         $urlEquipo = route('equipo', $invitacion->equipo->slug);
 
         // a donde va el usuario
-        $urlDestino = $invitacion->equipo->oculto ? "/equipos" : $urlEquipo;
+        $urlDestino = $invitacion->equipo->oculto ? '/equipos' : $urlEquipo;
 
         // Verificar si la invitación ya fue aceptada o declinada previamente
         if ($invitacion->accepted_at || $invitacion->declined_at) {
@@ -863,11 +860,9 @@ class EquiposController extends Controller
         return redirect($urlDestino)->with('message', 'Invitación declinada.');
     }
 
-
-    //////////////////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////////////////////////
     // SOLICITUDES
-    //////////////////////////////////////////////////////////////////////////////////////////
-
+    // ////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * listar historial de solicitudes resueltas
@@ -879,7 +874,7 @@ class EquiposController extends Controller
 
         $puedoAdministrar = Gate::allows('administrar equipos');
 
-        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
+        if (! $puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -888,7 +883,7 @@ class EquiposController extends Controller
             ->with('coordinador')
             ->where('equipo_id', $idEquipo)
             ->whereRaw('(fecha_aceptacion IS NOT NULL OR fecha_denegacion IS NOT NULL)')
-            ->orderByRaw("COALESCE(fecha_aceptacion, fecha_denegacion, created_at) DESC")
+            ->orderByRaw('COALESCE(fecha_aceptacion, fecha_denegacion, created_at) DESC')
             ->take(150)->get();
 
         return response()->json($solicitudes, 200);
@@ -902,35 +897,34 @@ class EquiposController extends Controller
         $user = auth()->user();
 
         // debe ser un usuario registrado e iniciada su sesión
-        if (!$user)
+        if (! $user) {
             return response()->json(['error' => 'Debe iniciar sesión'], 401);
+        }
 
         $equipo = Equipo::findOrFail($idEquipo);
 
         // comprueba si no tenía ya una solicitud previa
         if (
             Solicitud::where('user_id', $user->id)
-            ->where('equipo_id', $idEquipo)
-            ->whereNull('fecha_aceptacion')
-            ->whereNull('fecha_denegacion')
-            ->exists()
-        )
+                ->where('equipo_id', $idEquipo)
+                ->whereNull('fecha_aceptacion')
+                ->whereNull('fecha_denegacion')
+                ->exists()
+        ) {
             return response()->json(['error' => 'Ya tiene una solicitud previa'], 400);
+        }
 
         // crea la solicitud
         $solicitud = Solicitud::create([
             'user_id' => $user->id,
-            'equipo_id' => $idEquipo
+            'equipo_id' => $idEquipo,
         ]);
-
 
         // notificamos a los coordinadores del equipo
         Notification::send($equipo->coordinadores, new SolicitudEquipo($equipo));
 
         return response()->json(['message' => 'Solicitud enviada', 'solicitud' => $solicitud], 200);
     }
-
-
 
     /**
      * método auxiliar
@@ -946,17 +940,19 @@ class EquiposController extends Controller
         $puedoAdministrar = Gate::allows('administrar equipos');
 
         // verificar si es coordinador del equipo
-        if (!$puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
+        if (! $puedoAdministrar && Gate::denies('esCoordinador', $equipo)) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
         // comprueba si estaba pendiente
-        if ($solicitud->fecha_aceptacion)
+        if ($solicitud->fecha_aceptacion) {
             return response()->json(['message' => 'Ya fue aceptada previamente'], 200);
+        }
 
         // comprueba si estaba denegada
-        if ($solicitud->fecha_denegacion)
+        if ($solicitud->fecha_denegacion) {
             return response()->json(['message' => 'Ya fue denegada previamente'], 400);
+        }
 
         return $solicitud;
     }
@@ -971,7 +967,7 @@ class EquiposController extends Controller
         // la marca como aceptada
         $solicitud->update([
             'fecha_aceptacion' => now(),
-            'por_user_id' => auth()->user()->id
+            'por_user_id' => auth()->user()->id,
         ]);
 
         $solicitante = $solicitud->usuario;
@@ -985,7 +981,6 @@ class EquiposController extends Controller
         return response()->json(['message' => 'Solicitud aceptada'], 200);
     }
 
-
     /**
      * Deniega una solicitud de incorporación al equipo
      */
@@ -996,7 +991,7 @@ class EquiposController extends Controller
         // la marca como denegada
         $solicitud->update([
             'fecha_denegacion' => now(),
-            'por_user_id' => auth()->user()->id
+            'por_user_id' => auth()->user()->id,
         ]);
 
         $solicitante = $solicitud->usuario;
@@ -1007,8 +1002,6 @@ class EquiposController extends Controller
         return response()->json(['message' => 'Solicitud denegada'], 200);
     }
 
-
-
     /**
      * El usuario abandona un equipo
      */
@@ -1017,8 +1010,9 @@ class EquiposController extends Controller
         $user = auth()->user();
 
         // debe ser un usuario registrado e iniciada su sesión
-        if (!$user)
+        if (! $user) {
             return response()->json(['error' => 'Debe iniciar sesión'], 401);
+        }
 
         $equipo = Equipo::findOrFail($idEquipo);
 
@@ -1032,14 +1026,13 @@ class EquiposController extends Controller
         return response()->json(['message' => 'Has abandonado el equipo'], 200);
     }
 
-
     /**
      * Da de baja al usuario del equipo y remueve sus permisos
      */
     private function bajaUsuario(User $user, Equipo $equipo)
     {
         // Verificar si el usuario ya es miembro del equipo
-        if (!$equipo->esMiembro($user->id)) {
+        if (! $equipo->esMiembro($user->id)) {
             return response()->json(['error' => 'No eres del equipo'], 400);
         }
 

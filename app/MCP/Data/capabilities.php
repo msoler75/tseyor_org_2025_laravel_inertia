@@ -1,4 +1,5 @@
 <?php
+
 // MCP/capabilities.php
 
 /**
@@ -32,8 +33,8 @@ return [
                 'type' => 'string',
                 'description' => 'Token MCP para autenticación o autorización. Opcional salvo que la entidad requiera permisos.',
                 'required' => false,
-            ]
-        ]
+            ],
+        ],
     ],
     [
         'name' => 'listar',
@@ -49,15 +50,15 @@ return [
                 'name' => 'num_pagina',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 2.'
+                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 2.',
             ],
             [
                 'name' => 'token',
                 'type' => 'string',
                 'description' => 'Token MCP para autenticación o autorización. Opcional salvo que la entidad requiera permisos.',
                 'required' => false,
-            ]
-        ]
+            ],
+        ],
     ],
     [
         'name' => 'buscar',
@@ -75,19 +76,19 @@ return [
                 'description' => 'Frase o palabra clave a buscar en la colección.',
                 'required' => true,
             ],
-                       [
+            [
                 'name' => 'num_pagina',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 2.'
+                'description' => 'Número de página para paginación (empieza en 1). Ejemplo: 2.',
             ],
             [
                 'name' => 'token',
                 'type' => 'string',
                 'description' => 'Token MCP para autenticación o autorización. Opcional salvo que la entidad requiera permisos.',
                 'required' => false,
-            ]
-        ]
+            ],
+        ],
     ],
     [
         'name' => 'crear',
@@ -110,8 +111,8 @@ return [
                 'type' => 'string',
                 'description' => 'Token MCP para autenticación o autorización.',
                 'required' => false,
-            ]
-        ]
+            ],
+        ],
     ],
     [
         'name' => 'editar',
@@ -140,8 +141,8 @@ return [
                 'type' => 'string',
                 'description' => 'Token MCP para autenticación o autorización.',
                 'required' => true,
-            ]
-        ]
+            ],
+        ],
     ],
     [
         'name' => 'eliminar',
@@ -170,8 +171,8 @@ return [
                 'type' => 'string',
                 'description' => 'Token MCP para autenticación o autorización.',
                 'required' => true,
-            ]
-        ]
+            ],
+        ],
     ],
     [
         'name' => 'consultar_mantenimiento',
@@ -182,8 +183,8 @@ return [
                 'type' => 'string',
                 'description' => 'Token MCP para autenticación. Opcional para lectura.',
                 'required' => false,
-            ]
-        ]
+            ],
+        ],
     ],
     [
         'name' => 'anunciar_mantenimiento',
@@ -200,8 +201,8 @@ return [
                 'type' => 'string',
                 'description' => 'Token MCP para autenticación o autorización. Requiere permisos de administración.',
                 'required' => true,
-            ]
-        ]
+            ],
+        ],
     ],
     [
         'name' => 'info',
@@ -212,7 +213,7 @@ return [
                 'type' => 'string',
                 'description' => 'El nombre de la entidad de la se solicita información. Por ejemplo: "libro", "comunicado", "audio", "equipo", etc.',
                 'required' => true,
-            ]
-        ]
-    ]
+            ],
+        ],
+    ],
 ];

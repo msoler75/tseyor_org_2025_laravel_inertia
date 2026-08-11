@@ -9,6 +9,29 @@ use App\MCP\Tools\EliminarTool;
 use App\MCP\Tools\InfoTool;
 use App\MCP\Tools\ListarTool;
 use App\MCP\Tools\VerTool;
+use App\Models\Audio;
+use App\Models\Centro;
+use App\Models\Comunicado;
+use App\Models\Contacto;
+use App\Models\Entrada;
+use App\Models\Equipo;
+use App\Models\Evento;
+use App\Models\Guia;
+use App\Models\Informe;
+use App\Models\Libro;
+use App\Models\Lugar;
+use App\Models\Meditacion;
+use App\Models\Normativa;
+use App\Models\Noticia;
+use App\Models\Pagina;
+use App\Models\Psicografia;
+use App\Models\Sala;
+use App\Models\Termino;
+use App\Models\Tutorial;
+use App\Models\User;
+use App\Models\Video;
+use Laravel\Scout\EngineManager;
+use Laravel\Scout\ModelObserver;
 use Tests\TestCase;
 
 abstract class McpFeatureTestCase extends TestCase
@@ -45,7 +68,7 @@ abstract class McpFeatureTestCase extends TestCase
         }
 
         try {
-            return (new $class())->handle($arguments);
+            return (new $class)->handle($arguments);
         } catch (\Throwable $e) {
             // Devolver el mensaje real de negocio (p.ej. checkDeleteable) como
             // error, igual que el flujo HTTP expone el mensaje de la excepción.
@@ -71,11 +94,11 @@ abstract class McpFeatureTestCase extends TestCase
         //     necesitan búsqueda reindexan explícitamente con makeAllSearchable().
         $tntDir = config('scout.tntsearch.storage');
         if (is_dir($tntDir)) {
-            foreach (glob($tntDir . '/*.index') ?: [] as $file) {
+            foreach (glob($tntDir.'/*.index') ?: [] as $file) {
                 @unlink($file);
             }
         }
-        app(\Laravel\Scout\EngineManager::class)->forgetEngines();
+        app(EngineManager::class)->forgetEngines();
         $this->disableSearchSyncingForAllSearchableModels();
     }
 
@@ -90,30 +113,30 @@ abstract class McpFeatureTestCase extends TestCase
     private function disableSearchSyncingForAllSearchableModels(): void
     {
         $searchable = [
-            \App\Models\Audio::class,
-            \App\Models\Centro::class,
-            \App\Models\Comunicado::class,
-            \App\Models\Contacto::class,
-            \App\Models\Entrada::class,
-            \App\Models\Equipo::class,
-            \App\Models\Evento::class,
-            \App\Models\Guia::class,
-            \App\Models\Informe::class,
-            \App\Models\Libro::class,
-            \App\Models\Lugar::class,
-            \App\Models\Meditacion::class,
-            \App\Models\Normativa::class,
-            \App\Models\Noticia::class,
-            \App\Models\Pagina::class,
-            \App\Models\Psicografia::class,
-            \App\Models\Sala::class,
-            \App\Models\Termino::class,
-            \App\Models\Tutorial::class,
-            \App\Models\User::class,
-            \App\Models\Video::class,
+            Audio::class,
+            Centro::class,
+            Comunicado::class,
+            Contacto::class,
+            Entrada::class,
+            Equipo::class,
+            Evento::class,
+            Guia::class,
+            Informe::class,
+            Libro::class,
+            Lugar::class,
+            Meditacion::class,
+            Normativa::class,
+            Noticia::class,
+            Pagina::class,
+            Psicografia::class,
+            Sala::class,
+            Termino::class,
+            Tutorial::class,
+            User::class,
+            Video::class,
         ];
         foreach ($searchable as $class) {
-            \Laravel\Scout\ModelObserver::disableSyncingFor($class);
+            ModelObserver::disableSyncingFor($class);
         }
     }
 

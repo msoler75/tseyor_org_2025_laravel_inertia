@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guia;
+use App\Models\Libro;
+use App\Pigmalion\BusquedasHelper;
+use App\Pigmalion\SEO;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\Libro;
-use App\Models\Guia;
-use App\Pigmalion\SEO;
-use Illuminate\Support\Facades\Cache;
-use App\Pigmalion\BusquedasHelper;
 
 class LibrosController extends Controller
 {
-
     public static $ITEMS_POR_PAGINA = 20;
 
     public function index(Request $request)
@@ -24,30 +22,32 @@ class LibrosController extends Controller
         $query = Libro::select(['slug', 'titulo', 'descripcion', 'updated_at', 'imagen', 'imagen_lqip'])
             ->publicado();
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else if ($categoria == '_') // todos por orden alfabético
+        } elseif ($categoria == '_') { // todos por orden alfabético
             $query->orderBy('titulo', 'asc');
-        else if ($categoria)
+        } elseif ($categoria) {
             $query->where('categoria', $categoria);
-        else
+        } else {
             $query->latest('updated_at');
+        }
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
 
-        if ($buscar)
+        if ($buscar) {
             BusquedasHelper::formatearResultados($resultados, $buscar);
+        }
 
         // obtiene el listado de categorías de los Libros
-        $categorias = (new Libro())->getCategorias();
+        $categorias = (new Libro)->getCategorias();
 
         return Inertia::render('Libros/Index', [
             'filtrado' => $buscar,
             'categoriaActiva' => $categoria,
             'listado' => $resultados,
             'categorias' => $categorias,
-            'busquedaValida' => BusquedasHelper::validarBusqueda($buscar)
+            'busquedaValida' => BusquedasHelper::validarBusqueda($buscar),
         ])
             ->withViewData(SEO::get('libros'));
     }
@@ -63,10 +63,9 @@ class LibrosController extends Controller
         $borrador = request()->has('borrador');
         $publicado = $libro->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$libro || (!$publicado && !$borrador && !$editor)) {
+        if (! $libro || (! $publicado && ! $borrador && ! $editor)) {
             abort(404);
         }
-
 
         $palabrasClave = [];
 
@@ -78,32 +77,33 @@ class LibrosController extends Controller
 
                 foreach ($tituloPalabras as $palabra) {
                     // Filtrar palabras de menos de 3 letras y palabras comunes
-                    if (strlen($palabra) > 2 && !in_array($palabra, BusquedasHelper::$palabrasComunes)) {
+                    if (strlen($palabra) > 2 && ! in_array($palabra, BusquedasHelper::$palabrasComunes)) {
                         $palabrasClave[] = $palabra;
                     }
                 }
 
-                if (!empty($palabrasClave)) {
+                if (! empty($palabrasClave)) {
                     $query->where(function ($query) use ($palabrasClave) {
                         foreach ($palabrasClave as $clave) {
-                            $query->orWhere('descripcion', 'like', '%' . $clave . '%')
-                                ->orWhere('titulo', 'like', '%' . $clave . '%');
+                            $query->orWhere('descripcion', 'like', '%'.$clave.'%')
+                                ->orWhere('titulo', 'like', '%'.$clave.'%');
                         }
                     });
                 }
             })
             // descartamos el mismo libro que estamos mostrando
-            ->orderByRaw('(CASE WHEN titulo LIKE ? THEN 2 WHEN descripcion LIKE ? THEN 1 ELSE 0 END) DESC', [$libro->titulo . '%', '%' . $libro->titulo . '%'])
+            ->orderByRaw('(CASE WHEN titulo LIKE ? THEN 2 WHEN descripcion LIKE ? THEN 1 ELSE 0 END) DESC', [$libro->titulo.'%', '%'.$libro->titulo.'%'])
             ->take(8)
             ->get();
 
-
         // si no ha encontrado ninguno buscamos de la misma categoría
         if ($relacionados->count() == 0) {
-            $categorias = preg_split("/,/", $libro->categoria, -1, PREG_SPLIT_NO_EMPTY);
+            $categorias = preg_split('/,/', $libro->categoria, -1, PREG_SPLIT_NO_EMPTY);
             $relacionados = Libro::where('id', '!=', $libro->id)
                 ->where(function ($query) use ($categorias) {
-                    foreach ($categorias as $categoria) $query->orWhere('categoria', $categoria);
+                    foreach ($categorias as $categoria) {
+                        $query->orWhere('categoria', $categoria);
+                    }
                 })
                 // descartamos el mismo libro que estamos mostrando
                 // ->orderByRaw('(CASE WHEN titulo LIKE ? THEN 2 WHEN descripcion LIKE ? THEN 1 ELSE 0 END) DESC', [$libro->titulo . '%', '%' . $libro->titulo . '%'])
@@ -111,17 +111,15 @@ class LibrosController extends Controller
                 ->get();
         }
 
-
         // busca los guías asociados a este libro. Sea por la descripción, o por la bibliografía asociada a cada guía
         $descripcion_tokens = preg_split("/[,.\(\)\t\s\n\r]/", strtolower(BusquedasHelper::descartarPalabrasComunes($libro->descripcion)[0]), -1, PREG_SPLIT_NO_EMPTY);
         $descripcion_tokens = array_map(function ($m) {
-            return "\\b" . $m . "\\b";
+            return '\\b'.$m.'\\b';
         }, $descripcion_tokens);
-        $descripcion_en_or = implode("|", $descripcion_tokens);
-        $guias = Guia::select('nombre', 'slug', 'imagen')->where('libros', 'like', '%' . $libro->slug . '%')
+        $descripcion_en_or = implode('|', $descripcion_tokens);
+        $guias = Guia::select('nombre', 'slug', 'imagen')->where('libros', 'like', '%'.$libro->slug.'%')
             ->orWhereRaw('LOWER(nombre) REGEXP ?', [$descripcion_en_or])
             ->get();
-
 
         // $palabras = implode(" ", $palabrasClave);
 
@@ -133,7 +131,7 @@ class LibrosController extends Controller
         return Inertia::render('Libros/Libro', [
             'libro' => $libro,
             'relacionados' => $relacionados,
-            'guias' => $guias
+            'guias' => $guias,
         ])
             ->withViewData(SEO::from($libro));
     }

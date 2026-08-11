@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Jobs\TestJob;
+use Illuminate\Console\Command;
 
 class DispatchTestJobs extends Command
 {

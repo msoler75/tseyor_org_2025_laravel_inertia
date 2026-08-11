@@ -1,5 +1,6 @@
 <?php
 
+use App\Pigmalion\SpanishTokenizer;
 
 return [
 
@@ -140,9 +141,7 @@ return [
         ],
     ],
 
-
-
-/*
+    /*
 |--------------------------------------------------------------------------
 | TNTSearch Configuration
 |--------------------------------------------------------------------------
@@ -155,7 +154,7 @@ return [
 |
 */
     'tntsearch' => [
-        'storage' => env('TNTSEARCH_STORAGE', storage_path('indexes')), //place where the index files will be stored
+        'storage' => env('TNTSEARCH_STORAGE', storage_path('indexes')), // place where the index files will be stored
         'fuzziness' => env('TNTSEARCH_FUZZINESS', true),
         'fuzzy' => [
             'prefix_length' => 2,
@@ -165,8 +164,7 @@ return [
         'asYouType' => env('TNTSEARCH_ASYOUTYPE', false),
         'searchBoolean' => env('TNTSEARCH_BOOLEAN', false),
         'maxDocs' => env('TNTSEARCH_MAX_DOCS', 500),
-        'tokenizer' => App\Pigmalion\SpanishTokenizer::class
+        'tokenizer' => SpanishTokenizer::class,
     ],
-
 
 ];

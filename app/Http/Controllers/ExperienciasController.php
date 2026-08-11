@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
-use Illuminate\Http\Request;
 use App\Models\Experiencia;
 use App\Pigmalion\BusquedasHelper;
 use App\Pigmalion\SEO;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
+
 // use App\Mail\ExperienciasNuevaEmail;
 
 class ExperienciasController extends Controller
@@ -31,35 +32,38 @@ class ExperienciasController extends Controller
             Experiencia::latest()->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page);
 
         // obtiene los items sin busqueda
-        if (!$buscar) {
+        if (! $buscar) {
             $resultados = Experiencia::select(['id', 'nombre', 'fecha', 'lugar', 'texto', 'created_at', 'categoria'])
                 ->publicada()
                 ->orderBy('updated_at', 'desc');
         }
 
         // parámetros
-        if ($categoria)
+        if ($categoria) {
             $resultados = $resultados->where('categoria', $categoria);
+        }
 
         // ver si el usuario es iniciado
         $user = auth()->user();
-        if (!$user || (!$user->esIniciado() && !$user->can('administrar experiencias')))
+        if (! $user || (! $user->esIniciado() && ! $user->can('administrar experiencias'))) {
             $resultados->where('categoria', '!=', Experiencia::$CATEGORIA_INTERIORIZACION);
+        }
 
         $resultados = $resultados
             ->paginate(ExperienciasController::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends(['buscar' => $buscar, 'categoria' => $categoria]);
 
-        if ($buscar)
+        if ($buscar) {
             BusquedasHelper::formatearResultados($resultados, $buscar);
+        }
 
-        $categorias = (new Experiencia())->getCategorias();
+        $categorias = (new Experiencia)->getCategorias();
 
         return Inertia::render('Experiencias/Index', [
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'categorias' => $categorias
+            'categorias' => $categorias,
         ])
             ->withViewData(SEO::get('experiencias'));
     }
@@ -67,7 +71,6 @@ class ExperienciasController extends Controller
     /**
      * Muestra el formulario de nueva experiencia
      */
-
     public function nueva()
     {
         $categorias = Experiencia::$categorias;
@@ -76,7 +79,6 @@ class ExperienciasController extends Controller
             ->withViewData(SEO::get('experiencia.nueva'));
     }
 
-
     public function show($id)
     {
         $experiencia = Experiencia::findOrFail($id);
@@ -84,12 +86,12 @@ class ExperienciasController extends Controller
         $borrador = request()->has('borrador');
         $publicado = $experiencia->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar experiencias');
-        if (!$experiencia || (!$publicado && !$borrador && !$editor)) {
+        if (! $experiencia || (! $publicado && ! $borrador && ! $editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
-        if (!$editor && Gate::denies('view', $experiencia)) {
-            abort(403, "No puedes ver esta experiencia");
+        if (! $editor && Gate::denies('view', $experiencia)) {
+            abort(403, 'No puedes ver esta experiencia');
         }
 
         $experiencia['titulo'] = $experiencia['nombre'];
@@ -112,19 +114,18 @@ class ExperienciasController extends Controller
             'categoria' => 'required',
             'texto' => 'required|min:64|max:65000',
             // solo archivos aceptables: pdf, word, doc, docx:
-            'archivo' => 'nullable|mimes:txt,pdf,doc,docx'
+            'archivo' => 'nullable|mimes:txt,pdf,doc,docx',
         ]);
 
         if ($data['fecha'] == null) {
             $data['fecha'] = Carbon::now()->format('d M Y');
         }
 
-
         // se tiene que guardar el archivo, si lo hay, en la carpeta medios/experiencias/{año} del disco public de storage
         if ($request->hasFile('archivo')) {
             $archivo = $request->file('archivo');
             // se ha de poner en la carpeta según el año actual
-            $carpeta = "medios/experiencias/" . date("Y");
+            $carpeta = 'medios/experiencias/'.date('Y');
             $rutaArchivo = $archivo->store($carpeta, 'public');
             $data['archivo'] = $rutaArchivo;
         }
@@ -155,7 +156,8 @@ class ExperienciasController extends Controller
             return redirect()->back()->with('success', 'La experiencia se ha guardado correctamente');
         } else {
             // Devolver un objeto JSON con los errores de validación
-            Log::error("Formulario de experiencias. No se pudo guardar la experiencia ", $data);
+            Log::error('Formulario de experiencias. No se pudo guardar la experiencia ', $data);
+
             return redirect()->back()->withErrors(['No se pudo guardar la experiencia, inténtalo de nuevo']);
         }
     }

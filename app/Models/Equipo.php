@@ -2,23 +2,21 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Models\ContenidoBaseModel;
-use Laravel\Scout\Searchable;
+use App\Notifications\BienvenidaEquipo;
+use App\Pigmalion\StorageItem;
 use App\Traits\EsCategorizable;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use App\Pigmalion\StorageItem;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\BienvenidaEquipo;
+use Laravel\Scout\Searchable;
 
 class Equipo extends ContenidoBaseModel
 {
     use CrudTrait;
-    use Searchable;
     use EsCategorizable;
+    use Searchable;
 
     protected $fillable = [
         'nombre',
@@ -34,7 +32,7 @@ class Equipo extends ContenidoBaseModel
         'ocultarCarpetas',
         'ocultarArchivos',
         'ocultarMiembros',
-        'ocultarSolicitudes'
+        'ocultarSolicitudes',
     ];
 
     public static function boot()
@@ -45,8 +43,9 @@ class Equipo extends ContenidoBaseModel
 
         static::created(function ($equipo) {
             $slug = $equipo->slug ?? Str::slug($equipo->nombre);
-            if (!$equipo->slug)
+            if (! $equipo->slug) {
                 $equipo->slug = $slug;
+            }
 
             // Crea un nuevo grupo con el mismo nombre del equipo
             $grupo = Grupo::create(['nombre' => $equipo->nombre, 'slug' => $slug]);
@@ -96,13 +95,11 @@ class Equipo extends ContenidoBaseModel
         return $this->hasMany(Informe::class, 'equipo_id', 'id');
     }
 
-
     // accesors
     public function getCreadorNombreAttribute()
     {
         return $this->creador->name;
     }
-
 
     // métodos
     public function esCoordinador($user_id)
@@ -111,7 +108,6 @@ class Equipo extends ContenidoBaseModel
             return $coordinador->id === $user_id;
         });
     }
-
 
     public function esMiembro($user_id)
     {
@@ -127,11 +123,10 @@ class Equipo extends ContenidoBaseModel
      */
     public function shouldBeSearchable(): bool
     {
-        return !$this->oculto;
+        return ! $this->oculto;
     }
 
-
-     /**
+    /**
      * Searchable: Get the indexable data array for the model.
      *
      * @return array<string, mixed>
@@ -141,11 +136,9 @@ class Equipo extends ContenidoBaseModel
         return [
             'id' => $this->id,
             'title' => $this->nombre,
-            'content' => $this->descripcion
+            'content' => $this->descripcion,
         ];
     }
-
-
 
     public function otorgarPermisosCarpetas($idUsuario)
     {
@@ -155,7 +148,7 @@ class Equipo extends ContenidoBaseModel
                 [
                     'user_id' => $idUsuario,
                     'nodo_id' => $carpeta->id,
-                    'verbos' => 'leer,escribir,ejecutar'
+                    'verbos' => 'leer,escribir,ejecutar',
                 ]
             );
         }
@@ -177,14 +170,13 @@ class Equipo extends ContenidoBaseModel
         Acl::clearCache(User::find($idUsuario));
     }
 
-
     /**
      * Comprueba si el equipo no dispone de coordinadores, en tal caso asigna el miembro más antiguo como tal
      */
     public function asignarCoordinador($idUsuarioExcluir = 0)
     {
         // si no quedan coordinadores, hemos de asignar alguno de entre los miembros del equipo, siendo los candidatos los más antiguos
-        if (!$this->coordinadores()->count()) {
+        if (! $this->coordinadores()->count()) {
             $miembroMasAntiguo = $this->miembros()
                 ->where('users.id', '!=', $idUsuarioExcluir) // filtramos los miembros con id distinto al usuario que se acaba de modificar
                 ->oldest('equipo_user.created_at') // ordenamos los miembros por fecha de membresia
@@ -196,6 +188,7 @@ class Equipo extends ContenidoBaseModel
                 $this->miembros()->updateExistingPivot($nuevoCoordinador->id, ['rol' => 'coordinador']);
                 // le damos permisos
                 $this->otorgarPermisosCarpetas($nuevoCoordinador->id);
+
                 return $nuevoCoordinador->id;
             }
         }
@@ -203,15 +196,19 @@ class Equipo extends ContenidoBaseModel
 
     /**
      * Crea la carpeta del equipo
-     * @throws \Error
+     *
      * @return void
+     *
+     * @throws \Error
      */
     public function crearCarpeta()
     {
-        if (!$this->slug) throw new \Error("Falta slug del equipo");
+        if (! $this->slug) {
+            throw new \Error('Falta slug del equipo');
+        }
 
         // Ruta de la carpeta en el sistema de archivos
-        $carpetaEquipo = '/archivos/equipos/' . $this->slug;
+        $carpetaEquipo = '/archivos/equipos/'.$this->slug;
 
         // obtenemos el id del usuario propietario, debería ser el propietario del equipo
         $id_user = 1; // admin   //$equipo->user_id ?? auth()->id() ?? 1;
@@ -230,16 +227,15 @@ class Equipo extends ContenidoBaseModel
             'ubicacion' => $carpetaEquipo,
             'user_id' => $id_user,
             'group_id' => $this->group_id,
-            'permisos' => decoct($permisos) // convertimos a representación decimal
+            'permisos' => decoct($permisos), // convertimos a representación decimal
         ]);
 
         // Crea la carpeta
         $loc = new StorageItem($carpetaEquipo);
-        if (!$loc->directoryExists())
+        if (! $loc->directoryExists()) {
             $loc->makeDirectory();
+        }
     }
-
-
 
     // ACCESOR
 
@@ -249,9 +245,10 @@ class Equipo extends ContenidoBaseModel
         $usersWithoutPivot = $users->map(function ($user) {
             return [
                 'value' => $user->id,
-                'label' => $user->name //"{$user->name} <{$user->email}>"
+                'label' => $user->name, // "{$user->name} <{$user->email}>"
             ];
         });
+
         return $usersWithoutPivot->toJson();
     }
 
@@ -261,13 +258,13 @@ class Equipo extends ContenidoBaseModel
         $usersWithoutPivot = $users->map(function ($user) {
             return [
                 'value' => $user->id,
-                'label' => $user->name // "{$user->name} <{$user->email}>"
+                'label' => $user->name, // "{$user->name} <{$user->email}>"
             ];
         });
+
         return $usersWithoutPivot->toJson();
     }
 }
-
 
 class Membresia extends Pivot
 {
@@ -281,7 +278,7 @@ class Membresia extends Pivot
     protected function rol(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value ?? 'miembro',
+            get: fn ($value) => $value ?? 'miembro',
         );
     }
 
@@ -303,13 +300,11 @@ class Membresia extends Pivot
     }
 }
 
-
-
 class MembresiaObserver
 {
     public function created(Membresia $membresia): void
     {
-        Log::info("MembresiaObserver: created", $membresia->toArray());
+        Log::info('MembresiaObserver: created', $membresia->toArray());
         // obtenemos el equipo
         $equipo = Equipo::findOrFail($membresia->equipo_id);
 
@@ -319,7 +314,7 @@ class MembresiaObserver
 
         $miembro = User::find($membresia->user_id);
         if ($membresia->rol == 'coordinador') {
-            //darle el permiso de 'coordinar equipo' al usuario user_id
+            // darle el permiso de 'coordinar equipo' al usuario user_id
             $miembro->givePermissionTo('coordinar equipo');
             // otorgamos permisos de administración de las carpetas del equipo
             $equipo->otorgarPermisosCarpetas($membresia->user_id);
@@ -330,13 +325,13 @@ class MembresiaObserver
 
     public function updated(Membresia $membresia): void
     {
-        Log::info("MembresiaObserver: updated", $membresia->toArray());
+        Log::info('MembresiaObserver: updated', $membresia->toArray());
         // habrá cambiado el rol u otros atributos de la relación.
         // obtenemos el equipo
         $equipo = Equipo::findOrFail($membresia->equipo_id);
         $miembro = User::find($membresia->user_id);
         if ($membresia->rol == 'coordinador') {
-            //darle el permiso de 'coordinar equipo' al usuario user_id
+            // darle el permiso de 'coordinar equipo' al usuario user_id
             $miembro->givePermissionTo('coordinar equipo');
             // otorgamos permisos de administración de las carpetas del equipo
             $equipo->otorgarPermisosCarpetas($membresia->user_id);
@@ -352,7 +347,7 @@ class MembresiaObserver
 
     public function deleted(Membresia $membresia): void
     {
-        Log::info("MembresiaObserver: deleted", $membresia->toArray());
+        Log::info('MembresiaObserver: deleted', $membresia->toArray());
         // obtenemos el equipo
         $equipo = Equipo::findOrFail($membresia->equipo_id);
 

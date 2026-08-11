@@ -8,26 +8,26 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los libros. Ejemplo: "Cien años de soledad"'
+                'description' => 'Texto a buscar en los libros. Ejemplo: "Cien años de soledad"',
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de libro. Ejemplo: "Novela"'
+                'description' => 'Filtrar por categoría de libro. Ejemplo: "Novela"',
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023'
+                'description' => 'Filtrar por año. Ejemplo: 2023',
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"'
-            ]
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"',
+            ],
         ],
         'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título del libro'],
@@ -39,7 +39,7 @@ return [
             'edicion' => ['type' => 'string', 'description' => 'Edición del libro'],
             'paginas' => ['type' => 'int', 'description' => 'Número de páginas'],
             'pdf' => ['type' => 'string', 'description' => 'Ruta o URL del PDF'],
-            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador']
-        ]
+            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador'],
+        ],
     ],
 ];

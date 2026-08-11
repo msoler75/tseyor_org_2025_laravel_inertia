@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use App\Services\AnuncioService;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 class Setting extends Model
 {
     use CrudTrait;
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    use \Illuminate\Database\Eloquent\SoftDeletes;
+    use RevisionableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',

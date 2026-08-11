@@ -8,20 +8,20 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en las publicaciones. Ejemplo: "Informe"'
+                'description' => 'Texto a buscar en las publicaciones. Ejemplo: "Informe"',
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de publicación. Ejemplo: "Documentación"'
+                'description' => 'Filtrar por categoría de publicación. Ejemplo: "Documentación"',
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"'
-            ]
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"',
+            ],
         ],
         'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título de la publicación'],
@@ -33,7 +33,7 @@ return [
             'published_at' => ['type' => 'string', 'description' => 'Fecha de publicación (YYYY-MM-DD)'],
             'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador'],
             'user_id' => ['type' => 'int', 'description' => 'ID del autor'],
-            'equipo_id' => ['type' => 'int', 'description' => 'ID del equipo asociado']
-        ]
+            'equipo_id' => ['type' => 'int', 'description' => 'ID del equipo asociado'],
+        ],
     ],
 ];

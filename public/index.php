@@ -2,14 +2,15 @@
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
+
 // use Illuminate\Support\Facades\Log;
 
 //  use App\T;
 
 // sleep(2);
-//xdebug_info();
+// xdebug_info();
 // phpinfo();
-//die;
+// die;
 
 define('LARAVEL_START', microtime(true));
 
@@ -27,9 +28,6 @@ define('LARAVEL_START', microtime(true));
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
 }
-
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -63,15 +61,12 @@ error_reporting(E_ALL);
 error_reporting(-1);
 ini_set('error_reporting', E_ALL);
 
-
-
-
 $response = $kernel->handle(
     $request = Request::capture()
 );
 
 // Log::info(App\T::stats());
-//die;
+// die;
 
 $response->send();
 

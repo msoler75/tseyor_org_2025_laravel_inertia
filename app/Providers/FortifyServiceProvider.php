@@ -8,13 +8,13 @@ use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Fortify\Fortify;
 use Inertia\Inertia;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\RegisterResponse;
-use Illuminate\Support\Facades\Log;
+use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -23,7 +23,8 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->instance(RegisterResponse::class, new class implements RegisterResponse {
+        $this->app->instance(RegisterResponse::class, new class implements RegisterResponse
+        {
             public function toResponse($request)
             {
                 // Log::info('Registrado   *****');
@@ -31,14 +32,16 @@ class FortifyServiceProvider extends ServiceProvider
             }
         });
 
-        $this->app->instance(LoginResponse::class, new class implements LoginResponse {
+        $this->app->instance(LoginResponse::class, new class implements LoginResponse
+        {
             public function toResponse($request)
             {
                 // Log::info('Ha iniciado sesión   *****');
                 // 1. Redirigir a la intended de Laravel si existe
                 if (session()->has('url.intended')) {
                     $intended = session('url.intended');
-                    Log::info('Redirigimos a intended: ' . $intended);
+                    Log::info('Redirigimos a intended: '.$intended);
+
                     return Inertia::location($intended);
                 }
                 // 2. Redirigir a "to" si existe
@@ -46,12 +49,12 @@ class FortifyServiceProvider extends ServiceProvider
                     // Log::info('Redirigimos a parámetro to: ' . $request->input('to'));
                     return Inertia::location($request->to);
                 }
+
                 // 3. Redirigir al dashboard por defecto
                 return redirect('/miembros');
             }
         });
     }
-
 
     /**
      * Bootstrap any application services.
@@ -77,5 +80,4 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
     }
-
 }

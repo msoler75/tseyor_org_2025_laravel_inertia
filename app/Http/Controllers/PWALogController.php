@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class PWALogController extends Controller
 {
@@ -19,7 +18,7 @@ class PWALogController extends Controller
                 'all_data' => $request->all(),
                 'headers' => $request->headers->all(),
                 'method' => $request->method(),
-                'url' => $request->fullUrl()
+                'url' => $request->fullUrl(),
             ]);
 
             $data = $request->validate([
@@ -29,7 +28,7 @@ class PWALogController extends Controller
                 'url' => 'nullable|string',
                 'timestamp' => 'nullable|string',
                 'user_agent' => 'nullable|string',
-                'is_pwa' => 'nullable|boolean'
+                'is_pwa' => 'nullable|boolean',
             ]);
 
             Log::info('PWALogController: Validación exitosa', ['validated_data' => $data]);
@@ -67,7 +66,7 @@ class PWALogController extends Controller
                 'url' => $data['url'],
                 'data' => $data['data'],
                 'is_pwa' => $data['is_pwa'],
-                'user_agent' => $request->userAgent()
+                'user_agent' => $request->userAgent(),
             ]);
 
             Log::info('PWALogController: Log guardado en canal PWA');
@@ -78,7 +77,7 @@ class PWALogController extends Controller
             Log::error('Error guardando log PWA', [
                 'error' => $e->getMessage(),
                 'request' => $request->all(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
@@ -90,13 +89,13 @@ class PWALogController extends Controller
      */
     public function show()
     {
-        if (!app()->environment(['local', 'debug'])) {
+        if (! app()->environment(['local', 'debug'])) {
             abort(404);
         }
 
         $logFile = storage_path('logs/pwa-debug.log');
 
-        if (!file_exists($logFile)) {
+        if (! file_exists($logFile)) {
             return response()->json(['logs' => [], 'message' => 'No hay logs disponibles']);
         }
 
@@ -112,7 +111,7 @@ class PWALogController extends Controller
                     'message' => $matches[3],
                     'url' => $matches[4],
                     'is_pwa' => $matches[5] === 'YES',
-                    'data' => json_decode($matches[6], true)
+                    'data' => json_decode($matches[6], true),
                 ];
             }
         }
@@ -120,7 +119,7 @@ class PWALogController extends Controller
         return response()->json([
             'logs' => $logs,
             'total' => count($logs),
-            'file_size' => filesize($logFile)
+            'file_size' => filesize($logFile),
         ]);
     }
 
@@ -129,7 +128,7 @@ class PWALogController extends Controller
      */
     public function clear()
     {
-        if (!app()->environment(['local', 'debug'])) {
+        if (! app()->environment(['local', 'debug'])) {
             abort(404);
         }
 
@@ -148,7 +147,7 @@ class PWALogController extends Controller
     private function ensureLogDirectoryExists()
     {
         $logDir = storage_path('logs');
-        if (!is_dir($logDir)) {
+        if (! is_dir($logDir)) {
             mkdir($logDir, 0755, true);
         }
     }

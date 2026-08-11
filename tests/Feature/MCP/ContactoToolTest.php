@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\ContactosController;
 use App\Models\Contacto;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -11,19 +12,19 @@ class ContactoToolTest extends McpFeatureTestCase
 
     public function test_listar_contactos()
     {
-        $pp = \App\Http\Controllers\ContactosController::$ITEMS_POR_PAGINA;
+        $pp = ContactosController::$ITEMS_POR_PAGINA;
         Contacto::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 5; $i++) {
                 Contacto::create([
-                    'nombre' => 'Contacto ' . $i,
-                    'slug' => 'contacto-' . $i . '-' . uniqid(),
+                    'nombre' => 'Contacto '.$i,
+                    'slug' => 'contacto-'.$i.'-'.uniqid(),
                     'pais' => 'ES',
-                    'poblacion' => 'Ciudad ' . $i,
+                    'poblacion' => 'Ciudad '.$i,
                     'visibilidad' => 'P',
                 ]);
             }
         });
-        $this->makeAllSearchable(\App\Models\Contacto::class);
+        $this->makeAllSearchable(Contacto::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'contacto']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -48,13 +49,13 @@ class ContactoToolTest extends McpFeatureTestCase
 
     public function test_ver_contacto()
     {
-        $slug = 'contacto-test-' . uniqid();
+        $slug = 'contacto-test-'.uniqid();
         Contacto::create([
-                'nombre' => 'Contacto Test',
-                'slug' => $slug,
-                'pais' => 'ES',
-                'poblacion' => 'Ciudad Test',
-                'visibilidad' => 'P',
+            'nombre' => 'Contacto Test',
+            'slug' => $slug,
+            'pais' => 'ES',
+            'poblacion' => 'Ciudad Test',
+            'visibilidad' => 'P',
         ]);
         $result = $this->callMcpTool('ver', ['entidad' => 'contacto', 'id' => $slug]);
         $this->assertIsArray($result);
@@ -68,12 +69,12 @@ class ContactoToolTest extends McpFeatureTestCase
             'entidad' => 'contacto',
             'data' => [
                 'nombre' => 'Nuevo Contacto',
-                'slug' => 'nuevo-contacto-' . uniqid(),
+                'slug' => 'nuevo-contacto-'.uniqid(),
                 'pais' => 'ES',
                 'poblacion' => 'Ciudad Nueva',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $crear = $this->callMcpTool('crear', $params);
         $contactoId = $crear['contacto_creado']['id'] ?? null;
@@ -82,9 +83,9 @@ class ContactoToolTest extends McpFeatureTestCase
             'entidad' => 'contacto',
             'id' => $contactoId,
             'data' => [
-                'nombre' => $nuevoNombre
+                'nombre' => $nuevoNombre,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $response = $this->callMcpTool('editar', $paramsEditar);
         $this->assertDatabaseHas('contactos', ['id' => $contactoId, 'nombre' => $nuevoNombre]);
@@ -94,7 +95,7 @@ class ContactoToolTest extends McpFeatureTestCase
     {
         $contacto = Contacto::create([
             'nombre' => 'Eliminar Contacto',
-            'slug' => 'eliminar-contacto-' . uniqid(),
+            'slug' => 'eliminar-contacto-'.uniqid(),
             'pais' => 'ES',
             'poblacion' => 'Ciudad Eliminar',
         ]);
@@ -102,7 +103,7 @@ class ContactoToolTest extends McpFeatureTestCase
             'entidad' => 'contacto',
             'id' => $contacto->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('contactos', ['id' => $contacto->id]);
@@ -121,7 +122,7 @@ class ContactoToolTest extends McpFeatureTestCase
         $this->assertIsArray($contacto['parametros_listar']);
         $this->assertIsArray($contacto['campos']);
         $campos_esperados = [
-            'nombre', 'slug', 'imagen', 'pais', 'poblacion', 'provincia', 'direccion', 'codigo', 'telefono', 'social', 'email', 'latitud', 'longitud', 'centro_id', 'user_id', 'visibilidad'
+            'nombre', 'slug', 'imagen', 'pais', 'poblacion', 'provincia', 'direccion', 'codigo', 'telefono', 'social', 'email', 'latitud', 'longitud', 'centro_id', 'user_id', 'visibilidad',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $contacto['campos'], "Falta el campo '$campo'");
